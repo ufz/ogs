@@ -15,11 +15,85 @@
 #include <fstream>
 #include <vector>
 
+#ifndef _WIN32
+#ifndef __APPLE__
+#include <cfenv>
+#endif  // __APPLE__
+#endif  // _WIN32
+
+#include "AddProcessDataToMesh.h"
 #include "Applications/InSituLib/Adaptor.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/RunTime.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "ProcessLib/Process.h"
+
+namespace ProcessLib
+{
+struct OutputFile
+{
+    OutputFile(std::string const& directory, OutputType const type,
+               std::string const& prefix, std::string const& suffix,
+               std::string const& mesh_name, int const timestep, double const t,
+               int const iteration, int const data_mode_,
+               bool const compression_,
+               std::set<std::string> const& outputnames,
+               unsigned int const n_files)
+        : name(constructFilename(type, prefix, suffix, mesh_name, timestep, t,
+                                 iteration)),
+          path(BaseLib::joinPaths(directory, name)),
+          type(type),
+          data_mode(data_mode_),
+          compression(compression_),
+          outputnames(outputnames),
+          n_files(n_files)
+    {
+    }
+
+    std::string const name;
+    std::string const path;
+    OutputType const type;
+
+    //! Chooses vtk's data mode for output following the enumeration given
+    /// in the vtkXMLWriter: {Ascii, Binary, Appended}.  See vtkXMLWriter
+    /// documentation
+    /// http://www.vtk.org/doc/nightly/html/classvtkXMLWriter.html
+    int const data_mode;
+
+    //! Enables or disables zlib-compression of the output files.
+    bool const compression;
+    std::set<std::string> outputnames;
+    unsigned int n_files;
+
+    static std::string constructFilename(OutputType const type,
+                                         std::string prefix, std::string suffix,
+                                         std::string mesh_name,
+                                         int const timestep, double const t,
+                                         int const iteration)
+    {
+        std::map<OutputType, std::string> filetype_to_extension = {
+            {OutputType::vtk, "vtu"}, {OutputType::xdmf, "xdmf"}};
+
+        try
+        {
+            std::string extension = filetype_to_extension.at(type);
+            return BaseLib::constructFormattedFileName(prefix, mesh_name,
+                                                       timestep, t, iteration) +
+                   BaseLib::constructFormattedFileName(suffix, mesh_name,
+                                                       timestep, t, iteration) +
+                   "." + extension;
+        }
+        catch (std::out_of_range&)
+        {
+            OGS_FATAL(
+                "No supported file type provided. Read `{:s}' from <output><type> \
+                in prj file. Supported: VTK, XDMF.",
+                type);
+        }
+    }
+};
+}  // namespace ProcessLib
 
 namespace
 {
@@ -54,11 +128,88 @@ std::string constructPVDName(std::string const& output_directory,
                                   output_file_prefix, mesh_name, 0, 0, 0) +
                                   ".pvd");
 }
+
+std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>>
+computeDofTablesForSubmesh(ProcessLib::Process const& process,
+                           MeshLib::Mesh const& submesh,
+                           std::size_t const num_processes)
+{
+    std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>>
+        submesh_dof_tables;
+    submesh_dof_tables.reserve(num_processes);
+
+    for (std::size_t i = 0; i < num_processes; ++i)
+    {
+        submesh_dof_tables.push_back(
+            process.getDOFTable(i).deriveBoundaryConstrainedMap(
+                MeshLib::MeshSubset{submesh, submesh.getNodes()}));
+    }
+
+    return submesh_dof_tables;
+}
+
+std::vector<NumLib::LocalToGlobalIndexMap const*> toNonOwning(
+    std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>> const&
+        dof_tables)
+{
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table_pointers;
+
+    dof_table_pointers.reserve(dof_tables.size());
+    transform(cbegin(dof_tables), cend(dof_tables),
+              back_inserter(dof_table_pointers),
+              [](std::unique_ptr<NumLib::LocalToGlobalIndexMap> const& p)
+              { return p.get(); });
+
+    return dof_table_pointers;
+}
+
+void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
+                   bool const compress_output, int const data_mode)
+{
+    DBUG("Writing output to '{:s}'.", file_name);
+
+    // Store floating-point exception handling. Output of NaN's triggers
+    // floating point exceptions. Because we are not debugging VTK (or other
+    // libraries) at this point, the possibly set exceptions are temporary
+    // disabled and restored before end of the function.
+#ifndef _WIN32
+#ifndef __APPLE__
+    fenv_t fe_env;
+    fegetenv(&fe_env);
+    fesetenv(FE_DFL_ENV);  // Set default environment effectively disabling
+                           // exceptions.
+#endif                     //_WIN32
+#endif                     //__APPLE__
+
+    MeshLib::IO::VtuInterface vtu_interface(&mesh, data_mode, compress_output);
+    vtu_interface.writeToFile(file_name);
+
+    // Restore floating-point exception handling.
+#ifndef _WIN32
+#ifndef __APPLE__
+    fesetenv(&fe_env);
+#endif  //_WIN32
+#endif  //__APPLE__
+}
+
+void outputMeshVtk(ProcessLib::OutputFile const& output_file,
+                   MeshLib::IO::PVDFile& pvd_file,
+                   MeshLib::Mesh const& mesh,
+                   double const t)
+{
+    if (output_file.type == ProcessLib::OutputType::vtk)
+    {
+        pvd_file.addVTUFile(output_file.name, t);
+    }
+
+    outputMeshVtk(output_file.path, mesh, output_file.compression,
+                  output_file.data_mode);
+}
 }  // namespace
 
 namespace ProcessLib
 {
-bool Output::shallDoOutput(int timestep, double const t)
+bool Output::isOutputStep(int timestep, double const t) const
 {
     auto const fixed_output_time = std::lower_bound(
         cbegin(_fixed_output_times), cend(_fixed_output_times), t);
@@ -91,6 +242,16 @@ bool Output::shallDoOutput(int timestep, double const t)
     }
 
     return false;
+}
+bool Output::isOutputProcess(const int process_id, const Process& process) const
+{
+    return process.isMonolithicSchemeUsed()
+           // For the staggered scheme for the coupling, only the last process,
+           // which gives the latest solution within a coupling loop, is allowed
+           // to make output.
+           || process_id == static_cast<int>(_process_to_pvd_file.size() /
+                                             _mesh_names_for_output.size()) -
+                                1;
 }
 
 Output::Output(std::string directory, OutputType file_type,
@@ -142,8 +303,7 @@ void Output::addProcess(ProcessLib::Process const& process)
     }
 }
 
-// TODO return a reference.
-MeshLib::IO::PVDFile* Output::findPVDFile(
+MeshLib::IO::PVDFile& Output::findPVDFile(
     Process const& process,
     const int process_id,
     std::string const& mesh_name_for_output)
@@ -172,68 +332,8 @@ MeshLib::IO::PVDFile* Output::findPVDFile(
             "Aborting.");
     }
 
-    return pvd_file;
+    return *pvd_file;
 }
-
-struct Output::OutputFile
-{
-    OutputFile(std::string const& directory, OutputType const type,
-               std::string const& prefix, std::string const& suffix,
-               std::string const& mesh_name, int const timestep, double const t,
-               int const iteration, int const data_mode_,
-               bool const compression_,
-               std::set<std::string> const& outputnames,
-               unsigned int const n_files)
-        : name(constructFilename(type, prefix, suffix, mesh_name, timestep, t,
-                                 iteration)),
-          path(BaseLib::joinPaths(directory, name)),
-          type(type),
-          data_mode(data_mode_),
-          compression(compression_),
-          outputnames(outputnames),
-          n_files(n_files)
-    {
-    }
-
-    std::string const name;
-    std::string const path;
-    OutputType const type;
-    //! Chooses vtk's data mode for output following the enumeration given
-    /// in the vtkXMLWriter: {Ascii, Binary, Appended}.  See vtkXMLWriter
-    /// documentation
-    /// http://www.vtk.org/doc/nightly/html/classvtkXMLWriter.html
-    int const data_mode;
-    //! Enables or disables zlib-compression of the output files.
-    bool const compression;
-    std::set<std::string> outputnames;
-    unsigned int n_files;
-    static std::string constructFilename(OutputType const type,
-                                         std::string prefix, std::string suffix,
-                                         std::string mesh_name,
-                                         int const timestep, double const t,
-                                         int const iteration)
-    {
-        std::map<OutputType, std::string> filetype_to_extension = {
-            {OutputType::vtk, "vtu"}, {OutputType::xdmf, "xdmf"}};
-
-        try
-        {
-            std::string extension = filetype_to_extension.at(type);
-            return BaseLib::constructFormattedFileName(prefix, mesh_name,
-                                                       timestep, t, iteration) +
-                   BaseLib::constructFormattedFileName(suffix, mesh_name,
-                                                       timestep, t, iteration) +
-                   "." + extension;
-        }
-        catch (std::out_of_range&)
-        {
-            OGS_FATAL(
-                "No supported file type provided. Read `{:s}' from <output><type> \
-                    in prj file. Supported: VTK, XDMF.",
-                type);
-        }
-    }
-};
 
 void Output::outputMeshXdmf(
     OutputFile const& output_file,
@@ -258,20 +358,65 @@ void Output::outputMeshXdmf(
     };
 }
 
-void Output::outputMesh(OutputFile const& output_file,
-                        MeshLib::IO::PVDFile* const pvd_file,
-                        MeshLib::Mesh const& mesh,
-                        double const t)
+void Output::outputMeshes(
+    const Process& process, const int process_id, const int timestep,
+    const double t, const int iteration,
+    std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes)
 {
-    DBUG("output to {:s}", output_file.path);
-
-    if (output_file.type == OutputType::vtk)
+    if (_output_file_type == ProcessLib::OutputType::vtk)
     {
-        pvd_file->addVTUFile(output_file.name, t);
-    }
+        for (auto const& mesh : meshes)
+        {
+            OutputFile const file(
+                _output_directory, _output_file_type, _output_file_prefix,
+                _output_file_suffix, mesh.get().getName(), timestep, t,
+                iteration, _output_file_data_mode, _output_file_compression,
+                _output_data_specification.output_variables, 1);
 
-    makeOutput(output_file.path, mesh, output_file.compression,
-               output_file.data_mode);
+            auto& pvd_file =
+                findPVDFile(process, process_id, mesh.get().getName());
+            ::outputMeshVtk(file, pvd_file, mesh, t);
+        }
+    }
+    else if (_output_file_type == ProcessLib::OutputType::xdmf)
+    {
+        std::string name = meshes[0].get().getName();
+        OutputFile const file(
+            _output_directory, _output_file_type, _output_file_prefix, "", name,
+            timestep, t, iteration, _output_file_data_mode,
+            _output_file_compression,
+            _output_data_specification.output_variables, _n_files);
+
+        outputMeshXdmf(std::move(file), std::move(meshes), timestep, t);
+    }
+}
+
+MeshLib::Mesh const& Output::prepareSubmesh(
+    std::string const& submesh_output_name, Process const& process,
+    const int process_id, double const t,
+    std::vector<GlobalVector*> const& xs) const
+{
+    auto& submesh = *BaseLib::findElementOrError(
+        begin(_meshes), end(_meshes),
+        [&submesh_output_name](auto const& m)
+        { return m->getName() == submesh_output_name; },
+        "Need mesh '" + submesh_output_name + "' for the output.");
+
+    DBUG("Found {:d} nodes for output at mesh '{:s}'.",
+         submesh.getNumberOfNodes(), submesh.getName());
+
+    // TODO do not recreate everytime when doing output
+    auto const submesh_dof_tables =
+        computeDofTablesForSubmesh(process, submesh, xs.size());
+
+    auto const submesh_dof_table_pointers = toNonOwning(submesh_dof_tables);
+
+    bool const output_secondary_variables = false;
+    addProcessDataToSubMesh(
+        t, xs, process_id, submesh, submesh_dof_table_pointers, process,
+        output_secondary_variables, _output_data_specification);
+
+    return submesh;
 }
 
 void Output::doOutputAlways(Process const& process,
@@ -279,119 +424,42 @@ void Output::doOutputAlways(Process const& process,
                             int const timestep,
                             const double t,
                             int const iteration,
-                            std::vector<GlobalVector*> const& x)
+                            std::vector<GlobalVector*> const& xs)
 {
     BaseLib::RunTime time_output;
     time_output.start();
 
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    dof_tables.reserve(x.size());
-    for (std::size_t i = 0; i < x.size(); ++i)
-    {
-        dof_tables.push_back(&process.getDOFTable(i));
-    }
-
-    bool output_secondary_variable = true;
-    // Need to add variables of process to vtu even no output takes place.
-    addProcessDataToMesh(t, x, process_id, process.getMesh(), dof_tables,
-                         dof_tables, process.getProcessVariables(process_id),
-                         process.getSecondaryVariables(),
-                         output_secondary_variable,
-                         process.getIntegrationPointWriter(process.getMesh()),
+    // Need to add variables of process to vtu even if no output takes place.
+    bool const output_secondary_variables = true;
+    addProcessDataToMesh(t, xs, process_id, process.getMesh(), process,
+                         output_secondary_variables,
                          _output_data_specification);
 
-    // For the staggered scheme for the coupling, only the last process, which
-    // gives the latest solution within a coupling loop, is allowed to make
-    // output.
-    if (!(process_id == static_cast<int>(_process_to_pvd_file.size() /
-                                         _mesh_names_for_output.size()) -
-                            1 ||
-          process.isMonolithicSchemeUsed()))
+    if (!isOutputProcess(process_id, process))
     {
         return;
     }
 
-    auto output_bulk_mesh =
-        [&](std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes)
-    {
-        MeshLib::IO::PVDFile* pvd_file = nullptr;
-        if (_output_file_type == ProcessLib::OutputType::vtk)
-        {
-            for (auto const& mesh : meshes)
-            {
-                OutputFile const file(
-                    _output_directory, _output_file_type, _output_file_prefix,
-                    _output_file_suffix, mesh.get().getName(), timestep, t,
-                    iteration, _output_file_data_mode, _output_file_compression,
-                    _output_data_specification.output_variables, 1);
-
-                pvd_file =
-                    findPVDFile(process, process_id, mesh.get().getName());
-                outputMesh(file, pvd_file, mesh, t);
-            }
-        }
-        else if (_output_file_type == ProcessLib::OutputType::xdmf)
-        {
-            std::string name = meshes[0].get().getName();
-            OutputFile const file(
-                _output_directory, _output_file_type, _output_file_prefix, "",
-                name, timestep, t, iteration, _output_file_data_mode,
-                _output_file_compression,
-                _output_data_specification.output_variables, _n_files);
-
-            outputMeshXdmf(std::move(file), std::move(meshes), timestep, t);
-        }
-    };
-
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> output_meshes;
     for (auto const& mesh_output_name : _mesh_names_for_output)
     {
-        // process related output
         if (process.getMesh().getName() == mesh_output_name)
         {
+            // process related output
             output_meshes.push_back(process.getMesh());
-            continue;
         }
-        // mesh related output
-        auto& non_bulk_mesh = *BaseLib::findElementOrError(
-            begin(_meshes), end(_meshes),
-            [&mesh_output_name](auto const& m)
-            { return m->getName() == mesh_output_name; },
-            "Need mesh '" + mesh_output_name + "' for the output.");
-
-        std::vector<MeshLib::Node*> const& nodes = non_bulk_mesh.getNodes();
-        DBUG("Found {:d} nodes for output at mesh '{:s}'.", nodes.size(),
-             non_bulk_mesh.getName());
-
-        std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>>
-            mesh_dof_tables;
-        mesh_dof_tables.reserve(x.size());
-        for (std::size_t i = 0; i < x.size(); ++i)
+        else
         {
-            mesh_dof_tables.push_back(
-                process.getDOFTable(i).deriveBoundaryConstrainedMap(
-                    MeshLib::MeshSubset{non_bulk_mesh, nodes}));
+            // mesh related output
+            auto const& submesh =
+                prepareSubmesh(mesh_output_name, process, process_id, t, xs);
+            output_meshes.push_back(submesh);
         }
-        std::vector<NumLib::LocalToGlobalIndexMap const*>
-            mesh_dof_table_pointers;
-        mesh_dof_table_pointers.reserve(mesh_dof_tables.size());
-        transform(cbegin(mesh_dof_tables), cend(mesh_dof_tables),
-                  back_inserter(mesh_dof_table_pointers),
-                  [](std::unique_ptr<NumLib::LocalToGlobalIndexMap> const& p)
-                  { return p.get(); });
-
-        output_secondary_variable = false;
-        addProcessDataToMesh(
-            t, x, process_id, non_bulk_mesh, dof_tables,
-            mesh_dof_table_pointers, process.getProcessVariables(process_id),
-            process.getSecondaryVariables(), output_secondary_variable,
-            process.getIntegrationPointWriter(non_bulk_mesh),
-            _output_data_specification);
-
-        output_meshes.push_back(non_bulk_mesh);
     }
 
-    output_bulk_mesh(std::move(output_meshes));
+    outputMeshes(process, process_id, timestep, t, iteration,
+                 std::move(output_meshes));
+
     INFO("[time] Output of timestep {:d} took {:g} s.", timestep,
          time_output.elapsed());
 }
@@ -401,11 +469,11 @@ void Output::doOutput(Process const& process,
                       int const timestep,
                       const double t,
                       int const iteration,
-                      std::vector<GlobalVector*> const& x)
+                      std::vector<GlobalVector*> const& xs)
 {
-    if (shallDoOutput(timestep, t))
+    if (isOutputStep(timestep, t))
     {
-        doOutputAlways(process, process_id, timestep, t, iteration, x);
+        doOutputAlways(process, process_id, timestep, t, iteration, xs);
     }
 #ifdef USE_INSITU
     // Note: last time step may be output twice: here and in
@@ -420,11 +488,11 @@ void Output::doOutputLastTimestep(Process const& process,
                                   int const timestep,
                                   const double t,
                                   int const iteration,
-                                  std::vector<GlobalVector*> const& x)
+                                  std::vector<GlobalVector*> const& xs)
 {
-    if (!shallDoOutput(timestep, t))
+    if (!isOutputStep(timestep, t))
     {
-        doOutputAlways(process, process_id, timestep, t, iteration, x);
+        doOutputAlways(process, process_id, timestep, t, iteration, xs);
     }
 #ifdef USE_INSITU
     InSituLib::CoProcess(process.getMesh(), t, timestep, true,
@@ -436,7 +504,7 @@ void Output::doOutputNonlinearIteration(Process const& process,
                                         const int process_id,
                                         int const timestep, const double t,
                                         int const iteration,
-                                        std::vector<GlobalVector*> const& x)
+                                        std::vector<GlobalVector*> const& xs)
 {
     if (!_output_nonlinear_iteration_results)
     {
@@ -446,19 +514,9 @@ void Output::doOutputNonlinearIteration(Process const& process,
     BaseLib::RunTime time_output;
     time_output.start();
 
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    for (std::size_t i = 0; i < x.size(); ++i)
-    {
-        dof_tables.push_back(&process.getDOFTable(i));
-    }
-
     bool const output_secondary_variable = true;
-    addProcessDataToMesh(t, x, process_id, process.getMesh(), dof_tables,
-                         dof_tables, process.getProcessVariables(process_id),
-                         process.getSecondaryVariables(),
-                         output_secondary_variable,
-                         process.getIntegrationPointWriter(process.getMesh()),
-                         _output_data_specification);
+    addProcessDataToMesh(t, xs, process_id, process.getMesh(), process,
+                         output_secondary_variable, _output_data_specification);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
@@ -480,8 +538,8 @@ void Output::doOutputNonlinearIteration(Process const& process,
         BaseLib::joinPaths(_output_directory, output_file_name);
 
     DBUG("output iteration results to {:s}", output_file_path);
-    makeOutput(output_file_path, process.getMesh(), _output_file_compression,
-               _output_file_data_mode);
+    outputMeshVtk(output_file_path, process.getMesh(), _output_file_compression,
+                  _output_file_data_mode);
     INFO("[time] Output took {:g} s.", time_output.elapsed());
 }
 }  // namespace ProcessLib

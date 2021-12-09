@@ -73,7 +73,7 @@ private:
 /// Integration point data stored as field data (contrary to point or cell
 /// data), as plain double arrays. The data is supplemented with information in
 /// JSON format, which is stored as array of characters.
-void addIntegrationPointWriter(
+void addIntegrationPointDataToMesh(
     MeshLib::Mesh& mesh,
     std::vector<std::unique_ptr<IntegrationPointWriter>> const&
         integration_point_writer);
