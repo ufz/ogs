@@ -45,7 +45,7 @@ class LocalDataInitializer final
         }
     };
 
-    struct Is2ndOrderElement
+    struct Is2ndOrderElementOfSuitableDimension
     {
         template <typename ElementTraits>
         constexpr bool operator()(ElementTraits*) const
@@ -97,7 +97,7 @@ public:
             // 2nd order only on 2nd order elements
             using EnabledElementTraits =
                 decltype(BaseLib::TMP::filter<EnabledElementTraitsLagrange>(
-                    std::declval<Is2ndOrderElement>()));
+                    std::declval<Is2ndOrderElementOfSuitableDimension>()));
 
             BaseLib::TMP::foreach<EnabledElementTraits>(
                 [this]<typename ET>(ET*)
