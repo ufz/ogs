@@ -10,5 +10,8 @@ if(OGS_BUILD_GUI)
         Raster2PointCloud ApplicationsFileIO BaseLib GitInfoLib tclap
         VtkVisFilter
     )
+    if(OGS_USE_CONAN)
+        target_link_libraries(Raster2PointCloud ${CONAN_LIBS})
+    endif()
     install(TARGETS Raster2PointCloud RUNTIME DESTINATION bin)
 endif()
