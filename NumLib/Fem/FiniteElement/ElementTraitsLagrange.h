@@ -98,5 +98,5 @@ OGS_SPECIALIZE_ELEMENT_TRAITS_LAGRANGE(Pyramid13, ShapePyra13);
 #undef OGS_SPECIALIZE_ELEMENT_TRAITS_LAGRANGE
 
 using AllElementTraitsLagrange =
-    BaseLib::TMP::Map_t<ElementTraitsLagrange, MeshLib::AllElements>;
+    BaseLib::TMP::Map_t<ElementTraitsLagrange, MeshLib::AllElementTypes>;
 }  // namespace NumLib
