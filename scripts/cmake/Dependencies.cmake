@@ -150,6 +150,8 @@ CPMFindPackage(
 if(Boost_ADDED)
     add_library(Boost::boost INTERFACE IMPORTED)
     target_include_directories(Boost::boost INTERFACE "${Boost_SOURCE_DIR}")
+else()
+    target_include_directories(Boost::boost INTERFACE "${Boost_INCLUDE_DIR}")
 endif()
 
 CPMFindPackage(
