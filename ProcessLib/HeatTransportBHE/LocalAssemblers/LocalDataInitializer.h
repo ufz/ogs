@@ -21,73 +21,7 @@
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
 #include "ProcessLib/HeatTransportBHE/BHE/BHETypes.h"
-
-#ifndef OGS_MAX_ELEMENT_DIM
-static_assert(false, "The macro OGS_MAX_ELEMENT_DIM is undefined.");
-#endif
-
-#ifndef OGS_MAX_ELEMENT_ORDER
-static_assert(false, "The macro OGS_MAX_ELEMENT_ORDER is undefined.");
-#endif
-
-// The following macros decide which element types will be compiled, i.e.
-// which element types will be available for use in simulations.
-
-#ifdef OGS_ENABLE_ELEMENT_SIMPLEX
-#define ENABLED_ELEMENT_TYPE_SIMPLEX 1u
-#else
-#define ENABLED_ELEMENT_TYPE_SIMPLEX 0u
-#endif
-
-#ifdef OGS_ENABLE_ELEMENT_CUBOID
-#define ENABLED_ELEMENT_TYPE_CUBOID 1u << 1
-#else
-#define ENABLED_ELEMENT_TYPE_CUBOID 0u
-#endif
-
-#ifdef OGS_ENABLE_ELEMENT_PRISM
-#define ENABLED_ELEMENT_TYPE_PRISM 1u << 2
-#else
-#define ENABLED_ELEMENT_TYPE_PRISM 0u
-#endif
-
-#ifdef OGS_ENABLE_ELEMENT_PYRAMID
-#define ENABLED_ELEMENT_TYPE_PYRAMID 1u << 3
-#else
-#define ENABLED_ELEMENT_TYPE_PYRAMID 0u
-#endif
-
-// Dependent element types.
-// All enabled element types
-#define OGS_ENABLED_ELEMENTS                                          \
-    ((ENABLED_ELEMENT_TYPE_SIMPLEX) | (ENABLED_ELEMENT_TYPE_CUBOID) | \
-     (ENABLED_ELEMENT_TYPE_PYRAMID) | (ENABLED_ELEMENT_TYPE_PRISM))
-
-// Include only what is needed (Well, the conditions are not sharp).
-#if OGS_ENABLED_ELEMENTS != 0
-#include "NumLib/Fem/ShapeFunction/ShapeLine2.h"
-#include "NumLib/Fem/ShapeFunction/ShapeLine3.h"
-#endif
-
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_SIMPLEX) != 0
-#include "NumLib/Fem/ShapeFunction/ShapeTet10.h"
-#include "NumLib/Fem/ShapeFunction/ShapeTet4.h"
-#endif
-
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_CUBOID) != 0
-#include "NumLib/Fem/ShapeFunction/ShapeHex20.h"
-#include "NumLib/Fem/ShapeFunction/ShapeHex8.h"
-#endif
-
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PRISM) != 0
-#include "NumLib/Fem/ShapeFunction/ShapePrism15.h"
-#include "NumLib/Fem/ShapeFunction/ShapePrism6.h"
-#endif
-
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PYRAMID) != 0
-#include "NumLib/Fem/ShapeFunction/ShapePyra13.h"
-#include "NumLib/Fem/ShapeFunction/ShapePyra5.h"
-#endif
+#include "ProcessLib/Utils/EnabledElements.h"
 
 namespace ProcessLib
 {
@@ -106,6 +40,16 @@ template <typename LocalAssemblerInterface,
           typename... ConstructorArgs>
 class LocalDataInitializer final
 {
+    template <unsigned DIM>
+    struct IsNDElement
+    {
+        template <typename ElementTraits>
+        constexpr bool operator()(ElementTraits*) const
+        {
+            return ElementTraits::Element::dimension == DIM;
+        }
+    };
+
 public:
     using LADataIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
 
@@ -113,71 +57,35 @@ public:
         NumLib::LocalToGlobalIndexMap const& dof_table)
         : _dof_table(dof_table)
     {
-        // REMARKS: At the moment, only a 3D mesh (soil) with 1D elements (BHE)
-        // are supported.
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_CUBOID) != 0 && \
-    OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
-        _builder[std::type_index(typeid(MeshLib::Hex))] =
-            makeLocalAssemblerBuilder<NumLib::ShapeHex8>();
-#endif
+        // 3D soil elements
+        using Enabled3DElementTraits =
+            decltype(BaseLib::TMP::filter<EnabledElementTraitsLagrange>(
+                std::declval<IsNDElement<3>>()));
 
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_CUBOID) != 0 && \
-    OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Hex20))] =
-            makeLocalAssemblerBuilder<NumLib::ShapeHex20>();
-#endif
+        BaseLib::TMP::foreach<Enabled3DElementTraits>(
+            [this]<typename ET>(ET*)
+            {
+                using MeshElement = typename ET::Element;
+                using ShapeFunction = typename ET::ShapeFunction;
 
-        // /// Simplices ////////////////////////////////////////////////
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_SIMPLEX) != 0 && \
-    OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
-        _builder[std::type_index(typeid(MeshLib::Tet))] =
-            makeLocalAssemblerBuilder<NumLib::ShapeTet4>();
-#endif
+                _builder[std::type_index(typeid(MeshElement))] =
+                    makeLocalAssemblerBuilder<ShapeFunction>();
+            });
 
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_SIMPLEX) != 0 && \
-    OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Tet10))] =
-            makeLocalAssemblerBuilder<NumLib::ShapeTet10>();
-#endif
+        // 1D BHE elements
+        using Enabled1DElementTraits =
+            decltype(BaseLib::TMP::filter<EnabledElementTraitsLagrange>(
+                std::declval<IsNDElement<1>>()));
 
-        // /// Prisms ////////////////////////////////////////////////////
+        BaseLib::TMP::foreach<Enabled1DElementTraits>(
+            [this]<typename ET>(ET*)
+            {
+                using MeshElement = typename ET::Element;
+                using ShapeFunction = typename ET::ShapeFunction;
 
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PRISM) != 0 && \
-    OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
-        _builder[std::type_index(typeid(MeshLib::Prism))] =
-            makeLocalAssemblerBuilder<NumLib::ShapePrism6>();
-#endif
-
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PRISM) != 0 && \
-    OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Prism15))] =
-            makeLocalAssemblerBuilder<NumLib::ShapePrism15>();
-#endif
-
-        // /// Pyramids //////////////////////////////////////////////////
-
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PYRAMID) != 0 && \
-    OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
-        _builder[std::type_index(typeid(MeshLib::Pyramid))] =
-            makeLocalAssemblerBuilder<NumLib::ShapePyra5>();
-#endif
-
-#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PYRAMID) != 0 && \
-    OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Pyramid13))] =
-            makeLocalAssemblerBuilder<NumLib::ShapePyra13>();
-#endif
-        // /// Lines ///////////////////////////////////
-
-#if OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
-        _builder[std::type_index(typeid(MeshLib::Line))] =
-            makeLocalAssemblerBuilderBHE<NumLib::ShapeLine2>();
-#endif
-
-#if OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Line3))] =
-            makeLocalAssemblerBuilderBHE<NumLib::ShapeLine3>();
-#endif
+                _builder[std::type_index(typeid(MeshElement))] =
+                    makeLocalAssemblerBuilderBHE<ShapeFunction>();
+            });
     }
 
     /// Returns data pointer to the newly created local assembler data.
@@ -300,12 +208,6 @@ private:
     std::unordered_map<std::type_index, LADataBuilder> _builder;
 
     NumLib::LocalToGlobalIndexMap const& _dof_table;
-};  // namespace HeatTransportBHE
+};
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
-
-#undef ENABLED_ELEMENT_TYPE_SIMPLEX
-#undef ENABLED_ELEMENT_TYPE_CUBOID
-#undef ENABLED_ELEMENT_TYPE_PYRAMID
-#undef ENABLED_ELEMENT_TYPE_PRISM
-#undef OGS_ENABLED_ELEMENTS

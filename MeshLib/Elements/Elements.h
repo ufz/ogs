@@ -21,3 +21,16 @@
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
+
+namespace MeshLib
+{
+
+/// A list of types listing all mesh element types supported by OGS.
+///
+/// This type alias is intended for template metaprogramming et al., not for
+/// direct use/instantiation.
+using AllElementTypes =
+    std::tuple<Point, Line, Line3, Quad, Quad8, Quad9, Hex, Hex20, Tri, Tri6,
+               Tet, Tet10, Prism, Prism15, Pyramid, Pyramid13>;
+
+}  // namespace MeshLib
