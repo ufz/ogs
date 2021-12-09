@@ -65,11 +65,11 @@ public:
         BaseLib::TMP::foreach<Enabled3DElementTraits>(
             [this]<typename ET>(ET*)
             {
-                using Elt = typename ET::Element;
-                using Shp = typename ET::ShapeFunction;
+                using MeshElement = typename ET::Element;
+                using ShapeFunction = typename ET::ShapeFunction;
 
-                _builder[std::type_index(typeid(Elt))] =
-                    makeLocalAssemblerBuilder<Shp>();
+                _builder[std::type_index(typeid(MeshElement))] =
+                    makeLocalAssemblerBuilder<ShapeFunction>();
             });
 
         // 1D BHE elements
@@ -80,11 +80,11 @@ public:
         BaseLib::TMP::foreach<Enabled1DElementTraits>(
             [this]<typename ET>(ET*)
             {
-                using Elt = typename ET::Element;
-                using Shp = typename ET::ShapeFunction;
+                using MeshElement = typename ET::Element;
+                using ShapeFunction = typename ET::ShapeFunction;
 
-                _builder[std::type_index(typeid(Elt))] =
-                    makeLocalAssemblerBuilderBHE<Shp>();
+                _builder[std::type_index(typeid(MeshElement))] =
+                    makeLocalAssemblerBuilderBHE<ShapeFunction>();
             });
     }
 

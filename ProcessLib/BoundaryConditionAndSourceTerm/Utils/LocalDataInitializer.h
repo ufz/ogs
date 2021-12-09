@@ -84,12 +84,13 @@ public:
             BaseLib::TMP::foreach<EnabledElementTraits>(
                 [this]<typename ET>(ET*)
                 {
-                    using Elt = typename ET::Element;
+                    using MeshElement = typename ET::Element;
                     // this will use linear shape functions on higher order
                     // elements and the linear shape function on linear elements
-                    using LowShp = typename ET::LowerOrderShapeFunction;
-                    _builder[std::type_index(typeid(Elt))] =
-                        makeLocalAssemblerBuilder<LowShp>();
+                    using LowerOrderShapeFunction =
+                        typename ET::LowerOrderShapeFunction;
+                    _builder[std::type_index(typeid(MeshElement))] =
+                        makeLocalAssemblerBuilder<LowerOrderShapeFunction>();
                 });
         }
         else if (shapefunction_order == 2)
@@ -102,10 +103,10 @@ public:
             BaseLib::TMP::foreach<EnabledElementTraits>(
                 [this]<typename ET>(ET*)
                 {
-                    using Elt = typename ET::Element;
-                    using Shp2ndOrder = typename ET::ShapeFunction;
-                    _builder[std::type_index(typeid(Elt))] =
-                        makeLocalAssemblerBuilder<Shp2ndOrder>();
+                    using MeshElement = typename ET::Element;
+                    using ShapeFunction2ndOrder = typename ET::ShapeFunction;
+                    _builder[std::type_index(typeid(MeshElement))] =
+                        makeLocalAssemblerBuilder<ShapeFunction2ndOrder>();
                 });
         }
     }

@@ -62,10 +62,10 @@ public:
         BaseLib::TMP::foreach<EnabledElementTraits>(
             [this]<typename ET>(ET*)
             {
-                using Elt = typename ET::Element;
-                using Shp = typename ET::ShapeFunction;
-                _builder[std::type_index(typeid(Elt))] =
-                    makeLocalAssemblerBuilder<Shp>();
+                using MeshElement = typename ET::Element;
+                using ShapeFunction = typename ET::ShapeFunction;
+                _builder[std::type_index(typeid(MeshElement))] =
+                    makeLocalAssemblerBuilder<ShapeFunction>();
             });
     }
 
