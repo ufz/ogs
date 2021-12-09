@@ -7,7 +7,7 @@
             <name>LiquidFlow</name>
             <type>LIQUID_FLOW</type>
             <integration_order>2</integration_order>
-             <process_variables>
+            <process_variables>
                 <process_variable>pressure</process_variable>
             </process_variables>
             <specific_body_force>0 0 -9.8</specific_body_force>
@@ -33,11 +33,11 @@
                             <reference_value>1000.0</reference_value>
                             <independent_variable>
                                 <variable_name>phase_pressure
-                                  </variable_name>
+                                </variable_name>
                                 <reference_condition>1e5
-                                  </reference_condition>
+                                </reference_condition>
                                 <slope>4.6511627906976743356e-10
-                                  </slope>
+                                </slope>
                             </independent_variable>
                         </property>
                     </properties>
@@ -112,7 +112,18 @@
         <parameter>
             <name>k</name>
             <type>Constant</type>
-            <values>1.e-12 0.0  0.0  5.e-12 </values>
+            <!--Permeability tensor in the local coordinate system on the
+            inclined plane. Its components associated with the off plane
+            direction have to be set to zero. In other words, the local
+            permeability tensor has to input as a diagonal block of the full
+            size tensor in the global coordinate system. The bases of the
+            local coordinate system has to be defined in order to rotate
+            this local tensor to the global coordinate system.-->
+            <values>1.e-12 0.0  0.0
+                0.0  5.e-12  0.0
+                0.0 0.0 0.0</values>
+            <use_local_coordinate_system>true
+            </use_local_coordinate_system>
         </parameter>
         <parameter>
             <name>p0</name>
@@ -129,7 +140,28 @@
             <type>Constant</type>
             <value>1.0e+6</value>
         </parameter>
+        <parameter>
+            <name>b0</name>
+            <type>Constant</type>
+            <values> -0.5000001748438417 0.0 0.8660253028382761</values>
+        </parameter>
+        <parameter>
+            <name>b1</name>
+            <type>Constant</type>
+            <values>0.0 -1.0 0.0</values>
+        </parameter>
+        <parameter>
+            <name>b2</name>
+            <!-- off plane direction -->
+            <type>Constant</type>
+            <values>0.8660253028382761 0.0 0.5000001748438417</values>
+        </parameter>
     </parameters>
+    <local_coordinate_system>
+        <basis_vector_0>b0</basis_vector_0>
+        <basis_vector_1>b1</basis_vector_1>
+        <basis_vector_2>b2</basis_vector_2>
+    </local_coordinate_system>
     <process_variables>
         <process_variable>
             <name>pressure</name>
@@ -139,12 +171,12 @@
             <boundary_conditions>
                 <boundary_condition>
                     <type>Dirichlet</type>
-                     <mesh>geometry_top</mesh>
+                    <mesh>geometry_top</mesh>
                     <parameter>p_top</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <type>Dirichlet</type>
-                     <mesh>geometry_bottom</mesh>
+                    <mesh>geometry_bottom</mesh>
                     <parameter>p_bottom</parameter>
                 </boundary_condition>
             </boundary_conditions>

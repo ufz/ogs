@@ -80,16 +80,14 @@ private:
 
     // Types for displacement.
     using ShapeMatricesTypeDisplacement =
-        ShapeMatrixPolicyType<ShapeFunctionDisplacement,
-                              ShapeFunctionDisplacement::DIM>;
+        ShapeMatrixPolicyType<ShapeFunctionDisplacement, GlobalDim>;
     using HMatricesType =
         HMatrixPolicyType<ShapeFunctionDisplacement, GlobalDim>;
     using HMatrixType = typename HMatricesType::HMatrixType;
 
     // Types for pressure.
     using ShapeMatricesTypePressure =
-        ShapeMatrixPolicyType<ShapeFunctionPressure,
-                              ShapeFunctionPressure::DIM>;
+        ShapeMatrixPolicyType<ShapeFunctionPressure, GlobalDim>;
 
     // Types for the integration point data
     using IntegrationPointDataType =
@@ -98,8 +96,7 @@ private:
                                      ShapeMatricesTypePressure,
                                      GlobalDim>;
 
-    using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;
-    using DimVectorType = typename ShapeMatricesTypePressure::DimVectorType;
+    using GlobalDimVectorType = Eigen::Matrix<double, GlobalDim, 1>;
 
     HydroMechanicsProcessData<GlobalDim>& _process_data;
 

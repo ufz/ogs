@@ -118,13 +118,13 @@ struct EigenDynamicShapeMatrixPolicy
 };
 
 #ifdef OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
-template <typename ShapeFunction, int GlobalDim = ShapeFunction::DIM>
+template <typename ShapeFunction, int GlobalDim>
 using ShapeMatrixPolicyType =
     EigenDynamicShapeMatrixPolicy<ShapeFunction, GlobalDim>;
 
 const unsigned OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG = 1;
 #else
-template <typename ShapeFunction, int GlobalDim = ShapeFunction::DIM>
+template <typename ShapeFunction, int GlobalDim>
 using ShapeMatrixPolicyType =
     EigenFixedShapeMatrixPolicy<ShapeFunction, GlobalDim>;
 
