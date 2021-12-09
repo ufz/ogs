@@ -1,3 +1,5 @@
+# cmake-lint: disable=R0912,R0915,C0103
+
 # Supply include directories and compiler flags
 get_directory_property(INCLUDE_DIRS INCLUDE_DIRECTORIES)
 set(CMAKE_REQUIRED_FLAGS "-c")
@@ -34,19 +36,35 @@ function(_check_header_compilation target)
     endforeach()
 
     get_target_property(INCLUDE_DIRS ${target} INCLUDE_DIRECTORIES)
+    get_target_property(
+        INTERFACE_INCLUDE_DIRS ${target} INTERFACE_INCLUDE_DIRECTORIES
+    )
+    if(INTERFACE_INCLUDE_DIRS)
+        list(APPEND INCLUDE_DIRS ${INTERFACE_INCLUDE_DIRS})
+    endif()
     get_target_property(LINK_LIBS ${target} LINK_LIBRARIES)
-    foreach(lib ${LINK_LIBS})
+    # Transitive dependencies are not resolved
+    foreach(lib ${LINK_LIBS} spdlog::spdlog Boost::boost Eigen3::Eigen
+                nlohmann_json::nlohmann_json
+    )
         # Ignore non-existing targets or interface libs
         if(NOT TARGET ${lib})
             continue()
         endif()
         get_target_property(LIB_TYPE ${lib} TYPE)
         if(LIB_TYPE STREQUAL "INTERFACE_LIBRARY")
-            continue()
+            get_target_property(
+                TARGET_INCLUDE_DIRS ${lib} INTERFACE_INCLUDE_DIRECTORIES
+            )
+        else()
+            get_target_property(TARGET_INCLUDE_DIRS ${lib} INCLUDE_DIRECTORIES)
         endif()
-        get_target_property(TARGET_INCLUDE_DIRS ${lib} INCLUDE_DIRECTORIES)
         if(TARGET_INCLUDE_DIRS)
-            list(APPEND INCLUDE_DIRS ${TARGET_INCLUDE_DIRS})
+            if("${TARGET_INCLUDE_DIRS}" MATCHES ".*<BUILD_INTERFACE:([^>]*)")
+                list(APPEND INCLUDE_DIRS ${CMAKE_MATCH_1})
+            else()
+                list(APPEND INCLUDE_DIRS ${TARGET_INCLUDE_DIRS})
+            endif()
         endif()
     endforeach()
     list(REMOVE_DUPLICATES INCLUDE_DIRS)

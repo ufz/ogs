@@ -122,7 +122,7 @@ CPMFindPackage(
 if(Eigen3_ADDED)
     add_library(Eigen3::Eigen INTERFACE IMPORTED)
     target_include_directories(
-        Eigen3::Eigen SYSTEM INTERFACE ${Eigen3_SOURCE_DIR}
+        Eigen3::Eigen SYSTEM INTERFACE ${Eigen3_SOURCE_DIR} ${OpenMP_CXX_INCLUDE_DIRS}
     )
 endif()
 
