@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "BaseLib/Error.h"
 #include "MathLib/Integration/GaussLegendreTri.h"
 #include "MathLib/TemplateWeightedPoint.h"
 
