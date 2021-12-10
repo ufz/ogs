@@ -73,3 +73,25 @@ AddTest(
     expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu epsilon epsilon 5e-6 1e-5
     expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu sigma sigma 200.0 200.0
 )
+
+#PETSc
+AddTest(
+    NAME ParallelFEM_ThermoRichardsMechanics_3D_ThermoElastic_Stress_Analysis
+    PATH ThermoRichardsMechanics/Simple3DThermoMechanicsFromTM
+    RUNTIME 45
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cube_1e3.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 3
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    cube_1e3_tm_ts_17_t_72000_000000_0.vtu cube_1e3_tm_ts_17_t_72000_000000_0.vtu velocity velocity 1e-10 1e-9
+    cube_1e3_tm_ts_17_t_72000_000000_1.vtu cube_1e3_tm_ts_17_t_72000_000000_1.vtu velocity velocity 1e-10 1e-9
+    cube_1e3_tm_ts_17_t_72000_000000_0.vtu cube_1e3_tm_ts_17_t_72000_000000_0.vtu displacement displacement 1e-10 1e-9
+    cube_1e3_tm_ts_17_t_72000_000000_1.vtu cube_1e3_tm_ts_17_t_72000_000000_1.vtu displacement displacement 1e-10 1e-9
+    cube_1e3_tm_ts_17_t_72000_000000_0.vtu cube_1e3_tm_ts_17_t_72000_000000_0.vtu sigma sigma 1e-7 1e-9
+    cube_1e3_tm_ts_17_t_72000_000000_1.vtu cube_1e3_tm_ts_17_t_72000_000000_1.vtu sigma sigma 1e-7 1e-9
+    cube_1e3_tm_ts_17_t_72000_000000_0.vtu cube_1e3_tm_ts_17_t_72000_000000_0.vtu epsilon epsilon 1e-10 1e-9
+    cube_1e3_tm_ts_17_t_72000_000000_1.vtu cube_1e3_tm_ts_17_t_72000_000000_1.vtu epsilon epsilon 1e-10 1e-9
+)
