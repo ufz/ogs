@@ -214,23 +214,26 @@ inline void computeMappingMatrices(
         // J^-1, dshape/dx
         shapemat.invJ.noalias() = shapemat.J.inverse();
 
-        auto const nnodes(shapemat.dNdr.cols());
-        auto const ele_dim(shapemat.dNdr.rows());
         assert(shapemat.dNdr.rows() == ele.getDimension());
         const unsigned global_dim = ele_local_coord.getGlobalDimension();
-        if (global_dim == ele_dim)
+        if (global_dim == T_SHAPE_FUNC::DIM)
         {
-            shapemat.dNdx.topLeftCorner(ele_dim, nnodes).noalias() =
-                shapemat.invJ * shapemat.dNdr;
+            shapemat.dNdx
+                .template topLeftCorner<T_SHAPE_FUNC::DIM,
+                                        T_SHAPE_FUNC::NPOINTS>()
+                .noalias() = shapemat.invJ * shapemat.dNdr;
         }
         else
         {
             auto const& matR =
-                ele_local_coord.getRotationMatrixToGlobal();  // 3 x 3
-            auto invJ_dNdr = shapemat.invJ * shapemat.dNdr;
-            auto dshape_global =
-                matR.topLeftCorner(3u, ele_dim) * invJ_dNdr;  // 3 x nnodes
-            shapemat.dNdx = dshape_global.topLeftCorner(global_dim, nnodes);
+                (ele_local_coord.getRotationMatrixToGlobal().topLeftCorner(
+                     global_dim, T_SHAPE_FUNC::DIM))
+                    .eval();
+
+            auto const invJ_dNdr = shapemat.invJ * shapemat.dNdr;
+            auto const dshape_global = matR * invJ_dNdr;
+            shapemat.dNdx =
+                dshape_global.topLeftCorner(global_dim, T_SHAPE_FUNC::NPOINTS);
         }
     }
 }
