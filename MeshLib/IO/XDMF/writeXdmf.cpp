@@ -30,10 +30,10 @@ using namespace BaseLib;
 namespace MeshLib::IO
 {
 // similar definition in Location.h - XDMF uses capital letters
-// Actually there is no correspondece for "IntegrationPoint" in XDMF Format
-// specification
+// There is no correspondece for "IntegrationPoint" in XDMF Format
+// specification - add it as "Other"
 constexpr char const* mesh_item_type_strings[] = {"Node", "Edge", "Face",
-                                                  "Cell", "IntegrationPoint"};
+                                                  "Cell", "Other"};
 
 // Transforms MeshItemType into string
 static std::string meshItemTypeString(
