@@ -17,8 +17,15 @@ namespace BaseLib
 class ConfigTree;
 }
 
+namespace ParameterLib
+{
+class ParameterBase;
+}
+
 namespace MaterialPropertyLib
 {
+class Property;
+
 std::unique_ptr<Property> createOrthotropicEmbeddedFracturePermeability(
     int const geometry_dimension, BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
