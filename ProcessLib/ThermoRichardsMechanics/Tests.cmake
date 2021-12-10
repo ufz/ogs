@@ -95,3 +95,25 @@ AddTest(
     cube_1e3_tm_ts_17_t_72000_000000_0.vtu cube_1e3_tm_ts_17_t_72000_000000_0.vtu epsilon epsilon 1e-10 1e-9
     cube_1e3_tm_ts_17_t_72000_000000_1.vtu cube_1e3_tm_ts_17_t_72000_000000_1.vtu epsilon epsilon 1e-10 1e-9
 )
+
+AddTest(
+    NAME ParallelFEM_ThermoRichardsMechanics_FullySaturatedFlowMechanics
+    PATH ThermoRichardsMechanics/FullySaturatedFlowMechanics/PETSc
+    RUNTIME 10
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS flow_fully_saturated_petsc.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 2
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    flow_fully_saturated_ts_2_t_2_000000_0.vtu flow_fully_saturated_ts_2_t_2_000000_0.vtu pressure pressure 1e-10 1e-9
+    flow_fully_saturated_ts_2_t_2_000000_0.vtu flow_fully_saturated_ts_2_t_2_000000_0.vtu velocity velocity 1e-10 1e-9
+    flow_fully_saturated_ts_2_t_2_000000_1.vtu flow_fully_saturated_ts_2_t_2_000000_1.vtu velocity velocity 1e-10 1e-9
+    flow_fully_saturated_ts_2_t_2_000000_0.vtu flow_fully_saturated_ts_2_t_2_000000_0.vtu displacement displacement 1e-10 1e-9
+    flow_fully_saturated_ts_2_t_2_000000_1.vtu flow_fully_saturated_ts_2_t_2_000000_1.vtu displacement displacement 1e-10 1e-9
+    flow_fully_saturated_ts_2_t_2_000000_0.vtu flow_fully_saturated_ts_2_t_2_000000_0.vtu sigma sigma 1e-10 1e-9
+    flow_fully_saturated_ts_2_t_2_000000_1.vtu flow_fully_saturated_ts_2_t_2_000000_1.vtu sigma sigma 1e-10 1e-9
+    flow_fully_saturated_ts_2_t_2_000000_0.vtu flow_fully_saturated_ts_2_t_2_000000_0.vtu epsilon epsilon 1e-10 1e-9
+    flow_fully_saturated_ts_2_t_2_000000_1.vtu flow_fully_saturated_ts_2_t_2_000000_1.vtu epsilon epsilon 1e-10 1e-9
+)
