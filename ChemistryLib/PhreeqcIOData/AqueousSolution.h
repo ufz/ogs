@@ -61,6 +61,8 @@ struct AqueousSolution
 
     void print(std::ostream& os, std::size_t const chemical_system_id) const;
 
+    /// When this option is enabled, the pe value will be fixed over time by
+    /// adding or removing atmospheric oxygen.
     bool const fixing_pe;
     double const temperature;
     double const pressure;
