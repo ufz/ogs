@@ -17,10 +17,19 @@ namespace BaseLib
 class ConfigTree;
 }
 
+namespace MeshLib
+{
+class Mesh;
+}
+
+namespace NumLib
+{
+class LocalToGlobalIndexMap;
+}
+
 namespace ParameterLib
 {
-template <typename T>
-struct Parameter;
+struct ParameterBase;
 }
 
 namespace ProcessLib
