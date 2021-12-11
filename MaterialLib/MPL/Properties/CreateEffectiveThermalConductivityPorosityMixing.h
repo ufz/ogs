@@ -11,7 +11,7 @@
 
 #include <memory>
 
-namespace Baselib
+namespace BaseLib
 {
 class ConfigTree;
 }
