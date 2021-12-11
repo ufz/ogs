@@ -18,7 +18,7 @@ class ConfigTree;
 
 namespace ParameterLib
 {
-class CoordinateSystem;
+struct CoordinateSystem;
 }
 
 namespace MaterialPropertyLib
