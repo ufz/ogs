@@ -14,6 +14,7 @@
 #include <Eigen/Eigen>
 #include <vector>
 
+#include "BaseLib/DynamicSpan.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Function/Interpolation.h"
