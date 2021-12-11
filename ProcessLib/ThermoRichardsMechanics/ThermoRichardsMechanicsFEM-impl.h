@@ -486,13 +486,12 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             // s.t. it corresponds to the mechanical part only.
             sigma_sw = sigma_sw_prev;
 
-            using DimMatrix = Eigen::Matrix<double, 3, 3>;
             auto const sigma_sw_dot =
                 MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
-                    solid_phase
-                        .property(MPL::PropertyType::swelling_stress_rate)
-                        .template value<DimMatrix>(variables, variables_prev,
-                                                   x_position, t, dt));
+                    MPL::formEigenTensor<3>(
+                        solid_phase[MPL::PropertyType::swelling_stress_rate]
+                            .value(variables, variables_prev, x_position, t,
+                                   dt)));
             sigma_sw += sigma_sw_dot * dt;
 
             // !!! Misusing volumetric strain for mechanical volumetric
@@ -603,15 +602,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
         {
-            using DimMatrix = Eigen::Matrix<double, 3, 3>;
             auto const dsigma_sw_dS_L =
                 MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
-                    solid_phase
-                        .property(MPL::PropertyType::swelling_stress_rate)
-                        .template dValue<DimMatrix>(
-                            variables, variables_prev,
-                            MPL::Variable::liquid_saturation, x_position, t,
-                            dt));
+                    MPL::formEigenTensor<3>(
+                        solid_phase
+                            .property(MPL::PropertyType::swelling_stress_rate)
+                            .dValue(variables, variables_prev,
+                                    MPL::Variable::liquid_saturation,
+                                    x_position, t, dt)));
             local_Jac
                 .template block<displacement_size, pressure_size>(
                     displacement_index, pressure_index)
@@ -1380,13 +1378,13 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             // s.t. it corresponds to the mechanical part only.
             sigma_sw = sigma_sw_prev;
 
-            using DimMatrix = Eigen::Matrix<double, 3, 3>;
             auto const sigma_sw_dot =
                 MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
-                    solid_phase
-                        .property(MPL::PropertyType::swelling_stress_rate)
-                        .template value<DimMatrix>(variables, variables_prev,
-                                                   x_position, t, dt));
+                    MPL::formEigenTensor<3>(
+                        solid_phase
+                            .property(MPL::PropertyType::swelling_stress_rate)
+                            .value(variables, variables_prev, x_position, t,
+                                   dt)));
             sigma_sw += sigma_sw_dot * dt;
 
             // !!! Misusing volumetric strain for mechanical volumetric

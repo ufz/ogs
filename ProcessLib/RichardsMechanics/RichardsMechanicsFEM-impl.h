@@ -53,13 +53,12 @@ void updateSwellingStressAndVolumetricStrain(
         sigma_sw = sigma_sw_prev;
         if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
         {
-            using DimMatrix = Eigen::Matrix<double, 3, 3>;
             auto const sigma_sw_dot =
                 MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
-                    solid_phase
-                        .property(MPL::PropertyType::swelling_stress_rate)
-                        .template value<DimMatrix>(variables, variables_prev,
-                                                   x_position, t, dt));
+                    MPL::formEigenTensor<3>(
+                        solid_phase[MPL::PropertyType::swelling_stress_rate]
+                            .value(variables, variables_prev, x_position, t,
+                                   dt)));
             sigma_sw += sigma_sw_dot * dt;
 
             // !!! Misusing volumetric strain for mechanical volumetric
@@ -569,13 +568,12 @@ void RichardsMechanicsLocalAssembler<
             if (solid_phase.hasProperty(
                     MPL::PropertyType::swelling_stress_rate))
             {
-                using DimMatrix = Eigen::Matrix<double, 3, 3>;
                 auto const sigma_sw_dot =
                     MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
-                        solid_phase
-                            .property(MPL::PropertyType::swelling_stress_rate)
-                            .template value<DimMatrix>(
-                                variables, variables_prev, x_position, t, dt));
+                        MPL::formEigenTensor<3>(
+                            solid_phase[MPL::PropertyType::swelling_stress_rate]
+                                .value(variables, variables_prev, x_position, t,
+                                       dt)));
                 sigma_sw += sigma_sw_dot * dt;
 
                 // !!! Misusing volumetric strain for mechanical volumetric
