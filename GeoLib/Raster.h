@@ -65,6 +65,7 @@ public:
             static_cast<unsigned long>(std::distance(begin, end));
         if (number_of_input_values != _header.n_cols * _header.n_rows)
         {
+            delete[] _raster_data;
             throw std::out_of_range(
                 "Number of raster data mismatch, need " +
                 std::to_string(_header.n_cols * _header.n_rows) +
