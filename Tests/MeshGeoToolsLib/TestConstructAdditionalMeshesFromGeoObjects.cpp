@@ -17,6 +17,11 @@
 #include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
 #include "MeshGeoToolsLib/SearchLength.h"
 #include "MeshLib/Mesh.h"
+
+#ifdef USE_PETSC
+#include "MeshLib/NodePartitionedMesh.h"
+#endif
+
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "Tests/GeoLib/CreateTestPoints.h"
 
@@ -25,8 +30,16 @@ TEST(ConstructAdditionalMeshesFromGeoObjects, PointMesh)
     // create 10x10x10 mesh using 1000 hexahedra
     const double length = 10.0;
     const std::size_t n_subdivisions = 10;
+
+#ifdef USE_PETSC
+    std::unique_ptr<MeshLib::NodePartitionedMesh> mesh =
+        std::make_unique<MeshLib::NodePartitionedMesh>(
+            *MeshLib::MeshGenerator::generateRegularHexMesh(length,
+                                                            n_subdivisions));
+#else
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::MeshGenerator::generateRegularHexMesh(length, n_subdivisions));
+#endif
 
     // create geometry: for every mesh node exactly one point
     GeoLib::GEOObjects geometries;
@@ -55,8 +68,16 @@ TEST(ConstructAdditionalMeshesFromGeoObjects, PointMeshLargeSearchRadius)
     // create 10x10x10 mesh using 1000 hexahedra
     const double length = 10.0;
     const std::size_t n_subdivisions = 10;
+#ifdef USE_PETSC
+
+    std::unique_ptr<MeshLib::NodePartitionedMesh> mesh =
+        std::make_unique<MeshLib::NodePartitionedMesh>(
+            *MeshLib::MeshGenerator::generateRegularHexMesh(length,
+                                                            n_subdivisions));
+#else
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::MeshGenerator::generateRegularHexMesh(length, n_subdivisions));
+#endif
 
     // create geometry: for every mesh node exactly one point
     GeoLib::GEOObjects geometries;
