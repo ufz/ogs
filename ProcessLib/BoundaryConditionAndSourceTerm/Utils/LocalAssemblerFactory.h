@@ -89,7 +89,7 @@ public:
                     // elements and the linear shape function on linear elements
                     using LowerOrderShapeFunction =
                         typename ET::LowerOrderShapeFunction;
-                    _builder[std::type_index(typeid(MeshElement))] =
+                    Base::_builders[std::type_index(typeid(MeshElement))] =
                         LocAsmBuilderFactory<LowerOrderShapeFunction>::create();
                 });
         }
@@ -105,7 +105,7 @@ public:
                 {
                     using MeshElement = typename ET::Element;
                     using ShapeFunction2ndOrder = typename ET::ShapeFunction;
-                    _builder[std::type_index(typeid(MeshElement))] =
+                    Base::_builders[std::type_index(typeid(MeshElement))] =
                         LocAsmBuilderFactory<ShapeFunction2ndOrder>::create();
                 });
         }
