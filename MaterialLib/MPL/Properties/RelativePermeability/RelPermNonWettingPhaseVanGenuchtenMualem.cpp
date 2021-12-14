@@ -18,9 +18,17 @@
 #include "BaseLib/Error.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/CheckVanGenuchtenExponentRange.h"
+#include "MathLib/Nonlinear/Root1D.h"
 
 namespace MaterialPropertyLib
 {
+double computeVanGenuchtenMualemValue(const double S_L, const double S_L_r,
+                                      const double S_L_max, const double m)
+{
+    const double Se = (S_L - S_L_r) / (S_L_max - S_L_r);
+    return std::sqrt(1.0 - Se) * std::pow(1.0 - std::pow(Se, 1.0 / m), 2.0 * m);
+}
+
 RelPermNonWettingPhaseVanGenuchtenMualem::
     RelPermNonWettingPhaseVanGenuchtenMualem(std::string name,
                                              const double S_L_r,
@@ -47,7 +55,8 @@ PropertyDataType RelPermNonWettingPhaseVanGenuchtenMualem::value(
             variable_array[static_cast<int>(Variable::liquid_saturation)]),
         S_L_r_, S_L_max_);
 
-    const double krel = computeValue(S_L);
+    const double krel =
+        computeVanGenuchtenMualemValue(S_L, S_L_r_, S_L_max_, m_);
     return std::max(krel_min_, krel);
 }
 
@@ -70,20 +79,6 @@ PropertyDataType RelPermNonWettingPhaseVanGenuchtenMualem::dValue(
         return 0.0;
     }
 
-    return computeDerivative(S_L);
-}
-
-double RelPermNonWettingPhaseVanGenuchtenMualem::computeValue(
-    const double S_L) const
-{
-    const double Se = (S_L - S_L_r_) / (S_L_max_ - S_L_r_);
-    return std::sqrt(1.0 - Se) *
-           std::pow(1.0 - std::pow(Se, 1.0 / m_), 2.0 * m_);
-}
-
-double RelPermNonWettingPhaseVanGenuchtenMualem::computeDerivative(
-    const double S_L) const
-{
     if (std::fabs(S_L - S_L_max_) < std::numeric_limits<double>::epsilon())
     {
         return 0.0;
@@ -99,28 +94,23 @@ double RelPermNonWettingPhaseVanGenuchtenMualem::computeDerivative(
                 std::pow(val2, 2.0 * m_ - 1.0)) /
            (S_L_max_ - S_L_r_);
 }
+
 double RelPermNonWettingPhaseVanGenuchtenMualem::
     computeSaturationForMinimumRelativePermeability() const
 {
-    double S_for_k_rel_min = 0.5 * (S_L_r_ + S_L_max_);
-    const double tolerance = 1.e-16;
-    const double r0 = computeValue(S_for_k_rel_min) - krel_min_;
-    for (int iterations = 0; iterations < 1000; ++iterations)
+    auto f = [this](double S_L) -> double
     {
-        const double r = computeValue(S_for_k_rel_min) - krel_min_;
-        S_for_k_rel_min = std::clamp(S_for_k_rel_min, S_L_r_, S_L_max_);
-        S_for_k_rel_min -= r / computeDerivative(S_for_k_rel_min);
+        return computeVanGenuchtenMualemValue(S_L, this->S_L_r_, this->S_L_max_,
+                                              this->m_) -
+               this->krel_min_;
+    };
 
-        if (std::fabs(r / r0) < tolerance)
-        {
-            return S_for_k_rel_min;
-        }
-    }
+    auto root_finder =
+        MathLib::Nonlinear::makeRegulaFalsi<MathLib::Nonlinear::Pegasus>(
+            f, S_L_r_, S_L_max_);
 
-    OGS_FATAL(
-        "The given minimum relative permeability, {:g}, is  not "
-        "associated with the saturation  in the range of '('{:f}, {:f}')'. "
-        "Please try another one in '(0, 1)', which should be close to zero",
-        krel_min_, S_L_r_, S_L_max_);
+    root_finder.step(1000);
+
+    return root_finder.getResult();
 }
 }  // namespace MaterialPropertyLib
