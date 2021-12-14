@@ -85,6 +85,8 @@ std::vector<GeoLib::Point*> generateQuadPoints(
             begin, end, number_of_subdivisions);
         quad_points.insert(quad_points.end(), intermediate_points.begin(),
                            --intermediate_points.end());
+        delete intermediate_points.back();  // Release last point, other points
+                                            // are managed by GEOObjects.
     };
 
     addPointsOnLine(points[0], points[1], number_of_subdivisions_per_edge[0]);
