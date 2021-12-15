@@ -24,7 +24,7 @@
         if [ "$BUILD_TESTS" = true ]; then $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target tests ; fi
 
         if [ "$BUILD_CTEST" = true ]; then
-          ctest_timeout=15
+          ctest_timeout=60
           preset_postfix=""
           if [ "$BUILD_CTEST_LARGE" = true ]; then
             ctest_timeout=90
