@@ -45,6 +45,7 @@
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
+#include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "NumLib/Function/Interpolation.h"
@@ -187,6 +188,8 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             material_id, t, pos, pg_int_pt, T_int_pt, pc_int_pt);
 
         _saturation[ip] = Sw;
+        vars[static_cast<int>(
+            MaterialPropertyLib::Variable::liquid_saturation)] = Sw;
 
         double dSwdpc =
             (pc_int_pt > two_phase_material_model.getCapillaryPressure(
@@ -383,16 +386,6 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                          w * N.transpose() * heat_capacity_water *
                              density_water * velocity_wet.transpose() * dNdx;
 
-        double const heat_conductivity_dry_solid =
-            _process_data.material->getThermalConductivityDrySolid(pg_int_pt,
-                                                                   T_int_pt);
-        double const heat_conductivity_wet_solid =
-            _process_data.material->getThermalConductivityWetSolid(pg_int_pt,
-                                                                   T_int_pt);
-        double const heat_conductivity_unsaturated =
-            _process_data.material->calculateUnsatHeatConductivity(
-                t, pos, Sw, heat_conductivity_dry_solid,
-                heat_conductivity_wet_solid);
         // Laplace
         Kgp.noalias() += (mol_density_nonwet * x_gas_nonwet * lambda_nonwet) *
                              laplace_operator +
@@ -435,13 +428,55 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                 (air_mol_mass * enthalpy_nonwet_gas -
                  water_mol_mass * enthalpy_nonwet_vapor) *
                 d_x_gas_nonwet_d_pc * diffusion_operator;
-        Ket.noalias() +=
-            dNdx.transpose() * heat_conductivity_unsaturated * dNdx * w +
-            (1 - Sw) * porosity * diffusion_coeff_component_gas *
-                mol_density_nonwet *
-                (air_mol_mass * enthalpy_nonwet_gas -
-                 water_mol_mass * enthalpy_nonwet_vapor) *
-                d_x_gas_nonwet_d_T * diffusion_operator;
+
+        if (medium.hasProperty(
+                MaterialPropertyLib::PropertyType::thermal_conductivity))
+        {
+            auto const lambda =
+                medium
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_conductivity)
+                    .value(vars, pos, t, dt);
+
+            GlobalDimMatrixType const heat_conductivity_unsaturated =
+                MaterialPropertyLib::formEigenTensor<GlobalDim>(lambda);
+
+            Ket.noalias() +=
+                dNdx.transpose() * heat_conductivity_unsaturated * dNdx * w +
+                (1 - Sw) * porosity * diffusion_coeff_component_gas *
+                    mol_density_nonwet *
+                    (air_mol_mass * enthalpy_nonwet_gas -
+                     water_mol_mass * enthalpy_nonwet_vapor) *
+                    d_x_gas_nonwet_d_T * diffusion_operator;
+        }
+        else
+        {
+            auto const thermal_conductivity_solid =
+                solid_phase
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_conductivity)
+                    .value(vars, pos, t, dt);
+
+            auto const thermal_conductivity_fluid =
+                liquid_phase
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_conductivity)
+                    .template value<double>(vars, pos, t, dt) *
+                Sw;
+
+            GlobalDimMatrixType const heat_conductivity_unsaturated =
+                MaterialPropertyLib::formEffectiveThermalConductivity<
+                    GlobalDim>(thermal_conductivity_solid,
+                               thermal_conductivity_fluid, porosity);
+
+            Ket.noalias() +=
+                dNdx.transpose() * heat_conductivity_unsaturated * dNdx * w +
+                (1 - Sw) * porosity * diffusion_coeff_component_gas *
+                    mol_density_nonwet *
+                    (air_mol_mass * enthalpy_nonwet_gas -
+                     water_mol_mass * enthalpy_nonwet_vapor) *
+                    d_x_gas_nonwet_d_T * diffusion_operator;
+        }
 
         if (_process_data.has_gravity)
         {
