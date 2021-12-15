@@ -44,6 +44,15 @@ std::unique_ptr<Property> createRelPermNonWettingPhaseVanGenuchtenMualem(
         //! \ogs_file_param{properties__property__RelativePermeabilityNonWettingPhaseVanGenuchtenMualem__min_relative_permeability}
         config.getConfigParameter<double>("min_relative_permeability");
 
+    if (min_relative_permeability <= 0.0 || min_relative_permeability > 1.0)
+    {
+        OGS_FATAL(
+            "The value for min_relative_permeability of "
+            "RelativePermeabilityNonWettingPhaseVanGenuchtenMualem is {:g}, "
+            "which falls outside of the range of (0, 1]",
+            min_relative_permeability);
+    }
+
     return std::make_unique<RelPermNonWettingPhaseVanGenuchtenMualem>(
         property_name, residual_liquid_saturation, residual_gas_saturation,
         exponent, min_relative_permeability);
