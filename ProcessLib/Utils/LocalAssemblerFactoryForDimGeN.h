@@ -15,13 +15,20 @@
 
 namespace ProcessLib
 {
+/**
+ * Creates local assemblers for mesh elements with dimension greater than or
+ * equal to \c MinElementDim.
+ *
+ * This local assembler factory supports a single type of shape functions, i.e.,
+ * all primary variables are discretized with the same shape function.
+ */
 template <int MinElementDim,
           typename LocalAssemblerInterface,
           template <typename, typename, int>
           class LocalAssemblerImplementation,
           int GlobalDim,
           typename... ConstructorArgs>
-class LocalAssemberFactoryForDimGeN final
+class LocalAssemblerFactoryForDimGreaterEqualN final
     : public GenericLocalAssemblerFactory<LocalAssemblerInterface,
                                           ConstructorArgs...>
 {
@@ -43,7 +50,7 @@ class LocalAssemberFactoryForDimGeN final
     };
 
 public:
-    explicit LocalAssemberFactoryForDimGeN(
+    explicit LocalAssemblerFactoryForDimGreaterEqualN(
         NumLib::LocalToGlobalIndexMap const& dof_table)
         : Base{dof_table}
     {
@@ -73,11 +80,11 @@ template <typename LocalAssemblerInterface,
           int GlobalDim,
           typename... ConstructorArgs>
 using LocalAssemberFactory =
-    LocalAssemberFactoryForDimGeN<1,
-                                  LocalAssemblerInterface,
-                                  LocalAssemblerImplementation,
-                                  GlobalDim,
-                                  ConstructorArgs...>;
+    LocalAssemblerFactoryForDimGreaterEqualN<1,
+                                             LocalAssemblerInterface,
+                                             LocalAssemblerImplementation,
+                                             GlobalDim,
+                                             ConstructorArgs...>;
 
 /// Mechanics processes in OGS are defined in 2D and 3D only.
 template <typename LocalAssemblerInterface,
@@ -86,9 +93,9 @@ template <typename LocalAssemblerInterface,
           int GlobalDim,
           typename... ConstructorArgs>
 using LocalAssemberFactorySD =
-    LocalAssemberFactoryForDimGeN<2,
-                                  LocalAssemblerInterface,
-                                  LocalAssemblerImplementation,
-                                  GlobalDim,
-                                  ConstructorArgs...>;
+    LocalAssemblerFactoryForDimGreaterEqualN<2,
+                                             LocalAssemblerInterface,
+                                             LocalAssemblerImplementation,
+                                             GlobalDim,
+                                             ConstructorArgs...>;
 }  // namespace ProcessLib

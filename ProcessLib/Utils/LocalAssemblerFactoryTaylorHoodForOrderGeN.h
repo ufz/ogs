@@ -77,7 +77,7 @@ template <int MinShapeFctOrder,
           class LocalAssemblerImplementation,
           int GlobalDim,
           typename... ConstructorArgs>
-class LocalAssemblerFactoryTaylorHoodForOrderGeN final
+class LocalAssemblerFactoryTaylorHoodForOrderGreaterEqualN final
     : public ProcessLib::GenericLocalAssemblerFactory<LocalAssemblerInterface,
                                                       ConstructorArgs...>
 {
@@ -115,7 +115,7 @@ class LocalAssemblerFactoryTaylorHoodForOrderGeN final
     };
 
 public:
-    explicit LocalAssemblerFactoryTaylorHoodForOrderGeN(
+    explicit LocalAssemblerFactoryTaylorHoodForOrderGreaterEqualN(
         NumLib::LocalToGlobalIndexMap const& dof_table)
         : Base(dof_table)
     {
@@ -150,11 +150,12 @@ template <typename LocalAssemblerInterface,
           int GlobalDim,
           typename... ConstructorArgs>
 using LocalAssemblerFactoryHM =
-    LocalAssemblerFactoryTaylorHoodForOrderGeN<1,
-                                               LocalAssemblerInterface,
-                                               LocalAssemblerImplementation,
-                                               GlobalDim,
-                                               ConstructorArgs...>;
+    LocalAssemblerFactoryTaylorHoodForOrderGreaterEqualN<
+        1,
+        LocalAssemblerInterface,
+        LocalAssemblerImplementation,
+        GlobalDim,
+        ConstructorArgs...>;
 
 /// Stokes flow in OGS is defined for higher order elements only.
 template <typename LocalAssemblerInterface,
@@ -163,10 +164,11 @@ template <typename LocalAssemblerInterface,
           int GlobalDim,
           typename... ConstructorArgs>
 using LocalAssemblerFactoryStokes =
-    LocalAssemblerFactoryTaylorHoodForOrderGeN<2,
-                                               LocalAssemblerInterface,
-                                               LocalAssemblerImplementation,
-                                               GlobalDim,
-                                               ConstructorArgs...>;
+    LocalAssemblerFactoryTaylorHoodForOrderGreaterEqualN<
+        2,
+        LocalAssemblerInterface,
+        LocalAssemblerImplementation,
+        GlobalDim,
+        ConstructorArgs...>;
 
 }  // namespace ProcessLib
