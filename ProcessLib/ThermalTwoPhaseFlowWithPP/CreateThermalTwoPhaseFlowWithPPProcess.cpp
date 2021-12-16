@@ -48,6 +48,9 @@ void checkMPLProperties(
     std::array const required_property_vapor_component = {
         MaterialPropertyLib::specific_heat_capacity};
 
+    std::array const required_property_dry_air_component = {
+        MaterialPropertyLib::specific_heat_capacity};
+
     for (auto const& m : media)
     {
         auto const& gas_phase = m.second->phase("Gas");
@@ -61,6 +64,8 @@ void checkMPLProperties(
         // TODO (BM): should use index to identify components (same for impl.h)
         checkRequiredProperties(gas_phase.component("w"),
                                 required_property_vapor_component);
+        checkRequiredProperties(gas_phase.component("a"),
+                                required_property_dry_air_component);
     }
 }
 

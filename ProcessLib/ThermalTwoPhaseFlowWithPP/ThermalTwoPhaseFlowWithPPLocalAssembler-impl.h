@@ -182,6 +182,8 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         auto const& gas_phase = medium.phase("Gas");
 
         auto const& vapor_component = gas_phase.component("w");
+        auto const& dry_air_component = gas_phase.component("a");
+
         auto const density_water =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t, dt);
@@ -250,8 +252,10 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         _pressure_wetting[ip] = pg_int_pt - pc_int_pt;
         // heat capacity of nonwet phase
         double const heat_capacity_dry_gas =
-            _process_data.material->getSpecificHeatCapacityAir(pg_int_pt,
-                                                               T_int_pt);
+            dry_air_component
+                .property(
+                    MaterialPropertyLib::PropertyType::specific_heat_capacity)
+                .template value<double>(vars, pos, t, dt);
         const double heat_capacity_water_vapor =
             vapor_component
                 .property(

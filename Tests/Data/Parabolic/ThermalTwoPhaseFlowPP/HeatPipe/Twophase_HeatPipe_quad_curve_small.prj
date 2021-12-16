@@ -104,10 +104,10 @@
     <media>
         <medium id="0">
             <phases>
-				<phase>
+                <phase>
                     <type>Gas</type>
-					<components>
-					    <component>
+                    <components>
+                        <component>
                             <name>w</name>
                             <properties>
                                 <property>
@@ -117,9 +117,19 @@
                                 </property>
                             </properties>
                         </component>
-					</components>
+                        <component>
+                            <name>a</name>
+                            <properties>
+                                <property>
+                                    <name>specific_heat_capacity</name>
+                                    <type>Constant</type>
+                                    <value>733</value>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
                     <properties>
-						<property>
+                        <property>
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value> 1.8e-5 </value>
