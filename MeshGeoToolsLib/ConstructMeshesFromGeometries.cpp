@@ -9,6 +9,10 @@
 
 #include "ConstructMeshesFromGeometries.h"
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include "BaseLib/Logging.h"
 #include "BoundaryElementsSearcher.h"
 #include "GeoLib/GEOObjects.h"
@@ -65,6 +69,10 @@ constructAdditionalMeshesFromGeometries(
                 MeshLib::cloneElements(
                     boundary_element_searcher.getBoundaryElements(
                         geometry, multiple_nodes_allowed))));
+
+#ifdef USE_PETSC
+            MPI_Barrier(MPI_COMM_WORLD);
+#endif
         }
     }
     return additional_meshes;

@@ -9,6 +9,10 @@
 
 #include "BoundaryElementsAtPoint.h"
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include "GeoLib/Point.h"
 #include "MathLib/Point3d.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
@@ -25,6 +29,27 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
     : _mesh(mesh), _point(point)
 {
     auto const node_ids = mshNodeSearcher.getMeshNodeIDs(_point);
+
+#ifdef USE_PETSC
+    std::size_t const number_of_found_nodes_at_rank = node_ids.size();
+    std::size_t number_of_total_found_nodes = 0;
+
+    MPI_Allreduce(&number_of_found_nodes_at_rank, &number_of_total_found_nodes,
+                  1, MPI_UNSIGNED_LONG, MPI_SUM, MPI_COMM_WORLD);
+
+    if (number_of_total_found_nodes == 0)
+    {
+        OGS_FATAL(
+            "BoundaryElementsAtPoint: the mesh node searcher was unable to "
+            "locate the point ({:f}, {:f}, {:f}) in the mesh.",
+            _point[0], _point[1], _point[2]);
+    }
+
+    if (number_of_found_nodes_at_rank == 0)
+    {
+        return;
+    }
+#else
     if (node_ids.empty())
     {
         OGS_FATAL(
@@ -32,10 +57,13 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
             "locate the point ({:f}, {:f}, {:f}) in the mesh.",
             _point[0], _point[1], _point[2]);
     }
+#endif
+
     if (node_ids.size() == 1)
     {
         std::array<MeshLib::Node*, 1> const nodes = {
             {const_cast<MeshLib::Node*>(_mesh.getNode(node_ids[0]))}};
+
         _boundary_elements.push_back(new MeshLib::Point{nodes, node_ids[0]});
         return;
     }
