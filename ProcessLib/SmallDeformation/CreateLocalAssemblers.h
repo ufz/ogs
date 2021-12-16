@@ -13,7 +13,7 @@
 
 #include "BaseLib/Logging.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "ProcessLib/Utils/LocalAssemblerFactoryForDimGeN.h"
+#include "ProcessLib/Utils/LocalAssemblerFactoryForDimGreaterEqualN.h"
 
 namespace ProcessLib
 {

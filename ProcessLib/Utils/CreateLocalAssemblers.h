@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "BaseLib/Logging.h"
-#include "LocalAssemblerFactoryForDimGeN.h"
+#include "LocalAssemblerFactoryForDimGreaterEqualN.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace ProcessLib

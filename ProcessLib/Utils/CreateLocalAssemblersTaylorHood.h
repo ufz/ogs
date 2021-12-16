@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "BaseLib/Logging.h"
-#include "LocalAssemblerFactoryTaylorHoodForOrderGeN.h"
+#include "LocalAssemblerFactoryTaylorHoodForOrderGreaterEqualN.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace ProcessLib
