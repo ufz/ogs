@@ -867,8 +867,8 @@ AddTest(
     Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu pressure pressure 1e-6 1e-10
     Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu H H 1e-10 1e-16
     Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Do Do 1e-10 1e-16
-    Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sf Sf 1e-10 1e-16
-    Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sa Sa 1e-10 1e-16
+    Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sf Sf 3e-10 1e-16
+    Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sa Sa 2e-10 1e-16
     Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sin Sin 1e-10 1e-16
     Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Xs_m Xs_m 1e-10 1e-16
     Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Xi_m Xi_m 1e-10 1e-16

@@ -310,7 +310,7 @@ AddTest(
         EXECUTABLE_ARGS line_source_term_x_0.5_y_0.5.prj
         TESTER vtkdiff
         DIFF_DATA
-        3D_line_source_term_ts_1_t_1.000000.vtu 3D_line_source_term_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
+        3D_line_source_term_ts_1_t_1.000000.vtu 3D_line_source_term_ts_1_t_1.000000.vtu temperature temperature 2e-15 0.0
         3D_line_source_term_ts_1_t_1.000000.vtu 3D_line_source_term_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 7e-15 7e-13
         REQUIREMENTS NOT OGS_USE_MPI
 )

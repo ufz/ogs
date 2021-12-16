@@ -353,7 +353,7 @@ AddTest(
 
     results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu xnCG xnCG 1e-8 1e-8
 
-    results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu xmCG xmCG 1e-8 1e-8
+    results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu xmCG xmCG 1.2e-8 1e-8
 
     results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu xmWL xmWL 1e-8 1e-8
 

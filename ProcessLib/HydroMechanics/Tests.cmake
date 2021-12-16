@@ -568,7 +568,7 @@ AddTest(
     DIFF_DATA
     HM_NodalSourceTem_ts_100_t_86400.000000.vtu HM_NodalSourceTem_ts_100_t_86400.000000.vtu pressure pressure 1.0e-8 0.0
     HM_NodalSourceTem_ts_100_t_86400.000000.vtu HM_NodalSourceTem_ts_100_t_86400.000000.vtu displacement displacement 1.0e-15 0.0
-    HM_NodalSourceTem_ts_100_t_86400.000000.vtu HM_NodalSourceTem_ts_100_t_86400.000000.vtu sigma sigma 1.0e-8 0.0
+    HM_NodalSourceTem_ts_100_t_86400.000000.vtu HM_NodalSourceTem_ts_100_t_86400.000000.vtu sigma sigma 1.5e-8 0.0
     HM_NodalSourceTem_ts_100_t_86400.000000.vtu HM_NodalSourceTem_ts_100_t_86400.000000.vtu epsilon epsilon 1.0e-15 0.0
 )
 

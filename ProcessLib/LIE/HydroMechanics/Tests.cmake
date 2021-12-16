@@ -200,6 +200,6 @@ AddTest(
     expected_single_fracture_3compartments_flow_CHZ_sigma0_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_sigma0_ts_356_t_500.000000.vtu strain_yy strain_yy 1e-15 1e-15
     expected_single_fracture_3compartments_flow_CHZ_sigma0_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_sigma0_ts_356_t_500.000000.vtu strain_xy strain_xy 1e-15 1e-15
     expected_single_fracture_3compartments_flow_CHZ_sigma0_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_sigma0_ts_356_t_500.000000.vtu stress_xx stress_xx 3e-10 1e-15
-    expected_single_fracture_3compartments_flow_CHZ_sigma0_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_sigma0_ts_356_t_500.000000.vtu stress_yy stress_yy 1e-12 1e-15
+    expected_single_fracture_3compartments_flow_CHZ_sigma0_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_sigma0_ts_356_t_500.000000.vtu stress_yy stress_yy 1e-12 1.5e-15
     expected_single_fracture_3compartments_flow_CHZ_sigma0_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_sigma0_ts_356_t_500.000000.vtu velocity velocity 1e-15 1e-15
 )

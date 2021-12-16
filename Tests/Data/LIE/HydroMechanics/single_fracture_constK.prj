@@ -324,7 +324,7 @@
         <vtkdiff>
             <regex>single_fracture_constK_ts_.*.vtu</regex>
             <field>displacement</field>
-            <absolute_tolerance>1e-16</absolute_tolerance>
+            <absolute_tolerance>2e-16</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

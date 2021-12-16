@@ -91,7 +91,7 @@ AddTest(
     DIFF_DATA
     GLOB cohesive_zone_load_path_ts_*.vtu displacement displacement 1e-16 0
     GLOB cohesive_zone_load_path_ts_*.vtu displacement_jump1 displacement_jump1 1e-16 0
-    GLOB cohesive_zone_load_path_ts_*.vtu sigma_xx sigma_xx 1e-6 0
+    GLOB cohesive_zone_load_path_ts_*.vtu sigma_xx sigma_xx 1.8e-6 0
     GLOB cohesive_zone_load_path_ts_*.vtu sigma_yy sigma_yy 1e-6 0
     GLOB cohesive_zone_load_path_ts_*.vtu sigma_zz sigma_zz 1e-6 0
     GLOB cohesive_zone_load_path_ts_*.vtu sigma_xy sigma_xy 1e-6 0
@@ -169,7 +169,7 @@ AddTest(
     expected_coulomb_load_path_ts_200_t_2.000000.vtu coulomb_load_path_ts_200_t_2.000000.vtu displacement_jump1 displacement_jump1 1e-16 0
     expected_coulomb_load_path_ts_401_t_4.000000.vtu coulomb_load_path_ts_401_t_4.000000.vtu displacement_jump1 displacement_jump1 1e-16 0
     expected_coulomb_load_path_ts_100_t_1.000000.vtu coulomb_load_path_ts_100_t_1.000000.vtu sigma_xx sigma_xx 1e-6 1.3e-6
-    expected_coulomb_load_path_ts_200_t_2.000000.vtu coulomb_load_path_ts_200_t_2.000000.vtu sigma_xx sigma_xx 1e-6 1.3e-6
+    expected_coulomb_load_path_ts_200_t_2.000000.vtu coulomb_load_path_ts_200_t_2.000000.vtu sigma_xx sigma_xx 1e-6 1.8e-6
     expected_coulomb_load_path_ts_401_t_4.000000.vtu coulomb_load_path_ts_401_t_4.000000.vtu sigma_xx sigma_xx 1e-6 1.3e-6
     expected_coulomb_load_path_ts_100_t_1.000000.vtu coulomb_load_path_ts_100_t_1.000000.vtu sigma_yy sigma_yy 1e-6 1e-6
     expected_coulomb_load_path_ts_200_t_2.000000.vtu coulomb_load_path_ts_200_t_2.000000.vtu sigma_yy sigma_yy 1e-6 1e-6
