@@ -72,6 +72,51 @@ struct IntegrationPointData final
         material_state_variables->pushBackState();
     }
 
+    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
+    computeElasticTangentStiffness(
+        double const t,
+        ParameterLib::SpatialPosition const& x_position,
+        double const dt,
+        double const temperature)
+    {
+        namespace MPL = MaterialPropertyLib;
+
+        MPL::VariableArray variable_array;
+        MPL::VariableArray variable_array_prev;
+
+        auto const null_state = solid_material.createMaterialStateVariables();
+
+        using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+
+        variable_array[static_cast<int>(MPL::Variable::stress)].emplace<KV>(
+            KV::Zero());
+        variable_array[static_cast<int>(MPL::Variable::mechanical_strain)]
+            .emplace<KV>(KV::Zero());
+        variable_array[static_cast<int>(MPL::Variable::temperature)]
+            .emplace<double>(temperature);
+
+        variable_array_prev[static_cast<int>(MPL::Variable::stress)]
+            .emplace<KV>(KV::Zero());
+        variable_array_prev[static_cast<int>(MPL::Variable::mechanical_strain)]
+            .emplace<KV>(KV::Zero());
+        variable_array_prev[static_cast<int>(MPL::Variable::temperature)]
+            .emplace<double>(temperature);
+
+        auto&& solution =
+            solid_material.integrateStress(variable_array_prev, variable_array,
+                                           t, x_position, dt, *null_state);
+
+        if (!solution)
+        {
+            OGS_FATAL("Computation of elastic tangent stiffness failed.");
+        }
+
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C =
+            std::move(std::get<2>(*solution));
+
+        return C;
+    }
+
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
         MaterialPropertyLib::VariableArray const& variable_array,
         double const t,

@@ -178,8 +178,10 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             pressure_size, displacement_size>::Zero(pressure_size,
                                                     displacement_size);
 
-    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material =
-        *_process_data.solid_materials[0];
+    auto const& solid_material =
+        MaterialLib::Solids::selectSolidConstitutiveRelation(
+            _process_data.solid_materials, _process_data.material_ids,
+            _element.getID());
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -536,8 +538,10 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
                                                          pressure_size);
 
-    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material =
-        *_process_data.solid_materials[0];
+    auto const& solid_material =
+        MaterialLib::Solids::selectSolidConstitutiveRelation(
+            _process_data.solid_materials, _process_data.material_ids,
+            _element.getID());
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
