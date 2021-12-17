@@ -15,6 +15,9 @@
 #include <vector>
 
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/Logging.h"
+#include "MathLib/LinAlg/LinearSolverOptions.h"
+#include "MathLib/LinAlg/LinearSolverOptionsParser.h"
 #include "MathLib/LinAlg/Lis/LisOption.h"
 
 namespace MathLib
@@ -22,6 +25,8 @@ namespace MathLib
 
 class EigenVector;
 class EigenMatrix;
+class LisMatrix;
+class LisVector;
 
 /**
  * Linear solver using Lis library with Eigen matrix and vector objects
@@ -64,6 +69,7 @@ public:
 
 private:
     LisOption lis_option_;
+    bool solve(LisMatrix& A, LisVector& b, LisVector& x);
     std::string lis_options_;
 };
 
