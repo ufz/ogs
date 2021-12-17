@@ -12,8 +12,8 @@
 
 #include <cassert>
 
-#include "CreateLocalAssemblers.h"
 #include "MeshLib/Elements/Utils.h"
+#include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"
 
 namespace ProcessLib
 {
@@ -88,12 +88,8 @@ void StokesFlowProcess<GlobalDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    // Todo: may move LocalDataInitializer.h and CreateLocalAssemblers.h which
-    // are identical to those in such processes as HydroMechanics,
-    // RichardsMechanics, and etc, into a common place.
-    ProcessLib::StokesFlow::createLocalAssemblers<GlobalDim,
-                                                  LocalAssemblerData>(
-        mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
+    ProcessLib::createLocalAssemblersStokes<GlobalDim, LocalAssemblerData>(
+        mesh.getElements(), dof_table, _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     _process_data.pressure_interpolated =

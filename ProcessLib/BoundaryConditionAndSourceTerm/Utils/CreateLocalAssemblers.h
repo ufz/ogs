@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "BaseLib/Logging.h"
-#include "LocalDataInitializer.h"
+#include "LocalAssemblerFactory.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace ProcessLib
@@ -34,21 +34,20 @@ void createLocalAssemblers(
     static_assert(
         GlobalDim == 1 || GlobalDim == 2 || GlobalDim == 3,
         "Meshes with dimension greater than three are not supported.");
-    // Shape matrices initializer
-    using LocalDataInitializer =
-        LocalDataInitializer<LocalAssemblerInterface,
-                             LocalAssemblerImplementation, GlobalDim,
-                             ExtraCtorArgs...>;
+
+    using LocalAssemblerFactory =
+        LocalAssemblerFactory<LocalAssemblerInterface,
+                              LocalAssemblerImplementation, GlobalDim,
+                              ExtraCtorArgs...>;
 
     DBUG("Create local assemblers.");
-    // Populate the vector of local assemblers.
-    local_assemblers.resize(mesh_elements.size());
 
-    LocalDataInitializer initializer(dof_table, shapefunction_order);
+    LocalAssemblerFactory factory(dof_table, shapefunction_order);
+    local_assemblers.resize(mesh_elements.size());
 
     DBUG("Calling local assembler builder for all mesh elements.");
     GlobalExecutor::transformDereferenced(
-        initializer, mesh_elements, local_assemblers,
+        factory, mesh_elements, local_assemblers,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
 }  // namespace detail

@@ -12,8 +12,8 @@
 #include <vector>
 
 #include "BaseLib/Logging.h"
-#include "LocalDataInitializer.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "ProcessLib/Utils/LocalAssemblerFactoryForDimGreaterEqualN.h"
 
 namespace ProcessLib
 {
@@ -30,21 +30,19 @@ void createLocalAssemblers(
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
     ExtraCtorArgs&&... extra_ctor_args)
 {
-    // Shape matrices initializer
-    using LocalDataInitializer =
-        LocalDataInitializer<LocalAssemblerInterface,
-                             LocalAssemblerImplementation, GlobalDim,
-                             ExtraCtorArgs...>;
+    using LocAsmFactory =
+        ProcessLib::LocalAssemberFactorySD<LocalAssemblerInterface,
+                                           LocalAssemblerImplementation,
+                                           GlobalDim, ExtraCtorArgs...>;
 
     DBUG("Create local assemblers.");
-    // Populate the vector of local assemblers.
-    local_assemblers.resize(mesh_elements.size());
 
-    LocalDataInitializer initializer(dof_table);
+    LocAsmFactory factory(dof_table);
+    local_assemblers.resize(mesh_elements.size());
 
     DBUG("Calling local assembler builder for all mesh elements.");
     GlobalExecutor::transformDereferenced(
-        initializer, mesh_elements, local_assemblers,
+        factory, mesh_elements, local_assemblers,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
 
