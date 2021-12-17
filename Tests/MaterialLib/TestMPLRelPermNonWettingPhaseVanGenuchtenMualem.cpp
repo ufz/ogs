@@ -141,4 +141,12 @@ TEST(MaterialPropertyLib, RelPermNonWettingPhaseVanGenuchtenMualem)
         ASSERT_NEAR(dkrel_dS, factor * (k_rel_i_1 - k_rel_i_0) / perturbation,
                     6.0e-8);
     }
+
+    // Test the calculation of the liquid saturation for the minimum relative
+    // permeability.
+    MPL::RelPermNonWettingPhaseVanGenuchtenMualem k_non_wetting(
+        "dummy", 0.1, 0.4, 0.3288590604, 1.e-9);
+    ASSERT_NEAR(0.59999999552634464,
+                k_non_wetting.computeSaturationForMinimumRelativePermeability(),
+                1.0e-16);
 }
