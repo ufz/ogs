@@ -52,7 +52,8 @@ class EigenDirectLinearSolver final : public EigenLinearSolverBase
 public:
     bool solve(Matrix& A, Vector const& b, Vector& x, EigenOption& opt) override
     {
-        INFO("-> solve with {:s}", EigenOption::getSolverName(opt.solver_type));
+        INFO("-> solve with Eigen direct linear solver {:s}",
+             EigenOption::getSolverName(opt.solver_type));
         if (!A.isCompressed())
         {
             A.makeCompressed();
@@ -86,7 +87,7 @@ class EigenIterativeLinearSolver final : public EigenLinearSolverBase
 public:
     bool solve(Matrix& A, Vector const& b, Vector& x, EigenOption& opt) override
     {
-        INFO("-> solve with {:s} (precon {:s})",
+        INFO("-> solve with Eigen iterative linear solver {:s} (precon {:s})",
              EigenOption::getSolverName(opt.solver_type),
              EigenOption::getPreconName(opt.precon_type));
         solver_.setTolerance(opt.error_tolerance);
