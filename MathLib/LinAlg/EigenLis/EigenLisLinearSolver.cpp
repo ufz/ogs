@@ -22,15 +22,9 @@
 
 namespace MathLib
 {
-EigenLisLinearSolver::EigenLisLinearSolver(
-    const std::string /*solver_name*/, BaseLib::ConfigTree const* const option)
-    : lis_option_(option)
-{
-}
-
 EigenLisLinearSolver::EigenLisLinearSolver(std::string const& /*solver_name*/,
                                            std::string const& lis_options)
-    : lis_option_(nullptr), lis_options_(lis_options)
+    : lis_options_(lis_options)
 {
 }
 

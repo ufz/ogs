@@ -22,7 +22,6 @@
 #include "MathLib/LinAlg/RowColumnIndices.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
 
-#include "LisOption.h"
 #include "LisCheck.h"
 
 namespace MathLib
