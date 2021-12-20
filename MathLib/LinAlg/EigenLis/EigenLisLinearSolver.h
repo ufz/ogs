@@ -14,8 +14,6 @@
 
 #include <vector>
 
-#include "BaseLib/ConfigTree.h"
-#include "BaseLib/Logging.h"
 #include "MathLib/LinAlg/LinearSolverOptions.h"
 #include "MathLib/LinAlg/LinearSolverOptionsParser.h"
 

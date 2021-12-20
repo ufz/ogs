@@ -14,7 +14,7 @@
 #include <omp.h>
 #endif
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/Logging.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/Lis/LisMatrix.h"
