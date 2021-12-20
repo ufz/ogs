@@ -224,8 +224,10 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         KuT;
     KuT.setZero(displacement_size, temperature_size);
 
-    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material =
-        *_process_data.solid_materials[0];
+    auto const& solid_material =
+        MaterialLib::Solids::selectSolidConstitutiveRelation(
+            _process_data.solid_materials, _process_data.material_ids,
+            _element.getID());
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -297,8 +299,10 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 ->property(MaterialPropertyLib::PropertyType::biot_coefficient)
                 .template value<double>(vars, x_position, t, dt);
 
+        auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
+            t, x_position, dt, static_cast<double>(T_int_pt));
         auto const solid_skeleton_compressibility =
-            1 / solid_material.getBulkModulus(t, x_position);
+            1 / solid_material.getBulkModulus(t, x_position, &C_el);
 
         auto const beta_SR = (1 - alpha) * solid_skeleton_compressibility;
 
