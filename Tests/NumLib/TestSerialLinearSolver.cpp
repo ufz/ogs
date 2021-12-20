@@ -127,7 +127,12 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     BaseLib::ConfigTree conf(t_root, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
 
-    GlobalLinearSolver ls("solver_name", &conf);
+    auto const linear_solver_parser =
+        MathLib::LinearSolverOptionsParser<GlobalLinearSolver>{};
+    auto const solver_options =
+        linear_solver_parser.parseNameAndOptions("", &conf);
+    GlobalLinearSolver ls{std::get<0>(solver_options),
+                          std::get<1>(solver_options)};
     ls.solve(*A, *rhs, *x);
 
     // copy solution to double vector

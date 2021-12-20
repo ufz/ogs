@@ -20,19 +20,18 @@
 #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
+#include "MathLib/LinAlg/Eigen/LinearSolverOptionsParser.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/LinAlg/LinAlg.h"
 
-#if defined(USE_LIS)
-#include "MathLib/LinAlg/EigenLis/EigenLisLinearSolver.h"
-#endif
-
 #ifdef USE_LIS
-#include "MathLib/LinAlg/Lis/LisLinearSolver.h"
+#include "MathLib/LinAlg/EigenLis/EigenLisLinearSolver.h"
+#include "MathLib/LinAlg/EigenLis/LinearSolverOptionsParser.h"
 #include "MathLib/LinAlg/Lis/LisVector.h"
 #endif
 
 #ifdef USE_PETSC
+#include "MathLib/LinAlg/PETSc/LinearSolverOptionsParser.h"
 #include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
@@ -208,8 +207,12 @@ void checkLinearSolverInterface(T_MATRIX& A,
 
     MathLib::finalizeMatrixAssembly(A);
 
-    // solve
-    T_LINEAR_SOLVER ls("dummy_name", &ls_option);
+    auto const linear_solver_parser =
+        MathLib::LinearSolverOptionsParser<T_LINEAR_SOLVER>{};
+    auto const solver_options =
+        linear_solver_parser.parseNameAndOptions("", &ls_option);
+    T_LINEAR_SOLVER ls{std::get<0>(solver_options),
+                       std::get<1>(solver_options)};
     ls.solve(A, rhs, x);
 
     ASSERT_ARRAY_NEAR(ex1.exH, x, ex1.dim_eqs, 1e-5);
@@ -273,7 +276,12 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
     // solve
     T_VECTOR y(b, deep_copy);
     y.setZero();
-    T_LINEAR_SOLVER ls(prefix_name, &ls_option);
+    std::string temp_prefix_name = prefix_name;
+    auto const solver_options =
+        MathLib::LinearSolverOptionsParser<T_LINEAR_SOLVER>{}
+            .parseNameAndOptions(std::move(temp_prefix_name), &ls_option);
+    T_LINEAR_SOLVER ls(std::get<0>(solver_options),
+                       std::get<1>(solver_options));
     EXPECT_TRUE(ls.solve(A, b, y));
 
     EXPECT_GT(ls.getNumberOfIterations(), 0u);
@@ -286,6 +294,7 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
 
 }  // end namespace
 
+#if not defined(USE_LIS) and not defined(USE_PETSC)
 TEST(Math, CheckInterface_Eigen)
 {
     // set solver options using Boost property tree
@@ -305,6 +314,7 @@ TEST(Math, CheckInterface_Eigen)
     checkLinearSolverInterface<MathLib::EigenMatrix, MathLib::EigenVector,
                                MathLib::EigenLinearSolver, IntType>(A, conf);
 }
+#endif
 
 #if defined(USE_LIS)
 TEST(Math, CheckInterface_EigenLis)
