@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include <vector>
-
 #include <lis.h>
+
+#include <vector>
 
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/Lis/LisOption.h"
@@ -41,14 +41,30 @@ public:
                          BaseLib::ConfigTree const*const option);
 
     /**
+     * Constructor
+     * @param solver_name A name used as a prefix for command line options
+     *                    if there are such options available.
+     * @param lis_options string containing the options for LIS library; options
+     * will be applied in the solve method.
+     */
+    EigenLisLinearSolver(std::string const& solver_name,
+                         std::string const& lis_options);
+    /**
      * copy linear solvers options
+     * @param lis_options string containing the options for LIS library; options
+     * will be applied in the solve method.
      */
     void setOption(const LisOption& option) { lis_option_ = option; }
+    void setOption(std::string const& lis_options)
+    {
+        lis_options_ = lis_options;
+    }
 
     bool solve(EigenMatrix &A, EigenVector& b, EigenVector &x);
 
 private:
     LisOption lis_option_;
+    std::string lis_options_;
 };
 
 } // MathLib

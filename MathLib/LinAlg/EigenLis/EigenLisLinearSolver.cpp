@@ -29,6 +29,12 @@ EigenLisLinearSolver::EigenLisLinearSolver(
 {
 }
 
+EigenLisLinearSolver::EigenLisLinearSolver(std::string const& /*solver_name*/,
+                                           std::string const& lis_options)
+    : lis_option_(nullptr), lis_options_(lis_options)
+{
+}
+
 bool EigenLisLinearSolver::solve(EigenMatrix& A_, EigenVector& b_,
                                  EigenVector& x_)
 {
