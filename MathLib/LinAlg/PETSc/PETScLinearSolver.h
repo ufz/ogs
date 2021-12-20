@@ -16,12 +16,9 @@
 
 #pragma once
 
-#include <string>
-
 #include <petscksp.h>
 
-
-#include "BaseLib/ConfigTree.h"
+#include <string>
 
 #include "PETScMatrix.h"
 #include "PETScVector.h"
@@ -38,16 +35,6 @@ namespace MathLib
 class PETScLinearSolver
 {
 public:
-    /*!
-        Constructor
-        \param prefix  Name used to distinguish the options in the command
-                       line for this solver. It can be the name of the PDE
-                       that owns an instance of this class.
-        \param option  Petsc options, which will be inserted into the global
-                       petsc options database.
-    */
-    PETScLinearSolver(const std::string prefix,
-                      BaseLib::ConfigTree const* const option);
     /*!
         Constructor
         \param prefix  Name used to distinguish the options in the command

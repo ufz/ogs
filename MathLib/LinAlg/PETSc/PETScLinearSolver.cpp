@@ -17,62 +17,9 @@
 #include "PETScLinearSolver.h"
 
 #include "BaseLib/RunTime.h"
-#include "MathLib/LinAlg/LinearSolverOptions.h"
 
 namespace MathLib
 {
-PETScLinearSolver::PETScLinearSolver(const std::string /*prefix*/,
-                                     BaseLib::ConfigTree const* const option)
-{
-    // Insert options into petsc database. Default options are given in the
-    // string below.
-    std::string petsc_options =
-        "-ksp_type cg -pc_type bjacobi -ksp_rtol 1e-16 -ksp_max_it 10000";
-
-    std::string prefix;
-
-    if (option)
-    {
-        ignoreOtherLinearSolvers(*option, "petsc");
-
-        //! \ogs_file_param{prj__linear_solvers__linear_solver__petsc}
-        if (auto const subtree = option->getConfigSubtreeOptional("petsc"))
-        {
-            if (auto const parameters =
-                    //! \ogs_file_param{prj__linear_solvers__linear_solver__petsc__parameters}
-                subtree->getConfigParameterOptional<std::string>("parameters"))
-            {
-                petsc_options = *parameters;
-            }
-
-            if (auto const pre =
-                    //! \ogs_file_param{prj__linear_solvers__linear_solver__petsc__prefix}
-                subtree->getConfigParameterOptional<std::string>("prefix"))
-            {
-                if (!pre->empty())
-                    prefix = *pre + "_";
-            }
-        }
-    }
-#if PETSC_VERSION_LT(3, 7, 0)
-    PetscOptionsInsertString(petsc_options.c_str());
-#else
-    PetscOptionsInsertString(nullptr, petsc_options.c_str());
-#endif
-
-    KSPCreate(PETSC_COMM_WORLD, &solver_);
-
-    KSPGetPC(solver_, &pc_);
-
-    if (!prefix.empty())
-    {
-        KSPSetOptionsPrefix(solver_, prefix.c_str());
-    }
-
-    KSPSetInitialGuessNonzero(solver_, PETSC_TRUE);
-    KSPSetFromOptions(solver_);  // set run-time options
-}
-
 PETScLinearSolver::PETScLinearSolver(std::string const& prefix,
                                      std::string const& petsc_options)
 {
