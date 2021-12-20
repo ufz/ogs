@@ -48,6 +48,17 @@ public:
     */
     PETScLinearSolver(const std::string prefix,
                       BaseLib::ConfigTree const* const option);
+    /*!
+        Constructor
+        \param prefix  Name used to distinguish the options in the command
+                       line for this solver. It can be the name of the PDE
+                       that owns an instance of this class.
+        \param petsc_options PETSc options string which is passed to PETSc lib
+        and inserted in the PETSc option database (see
+        https://petsc.org/release/docs/manualpages/Sys/PetscOptionsInsertString.html).
+    */
+    PETScLinearSolver(std::string const& prefix,
+                      std::string const& petsc_options);
 
     ~PETScLinearSolver() { KSPDestroy(&solver_); }
     // TODO check if some args in LinearSolver interface can be made const&.

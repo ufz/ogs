@@ -73,6 +73,28 @@ PETScLinearSolver::PETScLinearSolver(const std::string /*prefix*/,
     KSPSetFromOptions(solver_);  // set run-time options
 }
 
+PETScLinearSolver::PETScLinearSolver(std::string const& prefix,
+                                     std::string const& petsc_options)
+{
+#if PETSC_VERSION_LT(3, 7, 0)
+    PetscOptionsInsertString(petsc_options.c_str());
+#else
+    PetscOptionsInsertString(nullptr, petsc_options.c_str());
+#endif
+
+    KSPCreate(PETSC_COMM_WORLD, &solver_);
+
+    KSPGetPC(solver_, &pc_);
+
+    if (!prefix.empty())
+    {
+        KSPSetOptionsPrefix(solver_, prefix.c_str());
+    }
+
+    KSPSetInitialGuessNonzero(solver_, PETSC_TRUE);
+    KSPSetFromOptions(solver_);  // set run-time options
+}
+
 bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
 {
     BaseLib::RunTime wtimer;
