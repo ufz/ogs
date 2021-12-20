@@ -33,6 +33,16 @@ class Medium;
  *       &S^L_{\mbox{max}}& \mbox{maximum saturation of wetting phase,}\\
  *       &m\, \in (0, 1) &    \mbox{ exponent.}\\
  *    \f}
+ *
+ *  The derivative of the relative permeability with respect to saturation is
+ *  computed as
+ *  \f[\frac{\mathrm{d} k_{rel}^n}{\mathrm{d}S^L}=
+ *  -(\dfrac{[1-S_e^{1/m}]^{2m}}{2\sqrt{1-S_e}}+2\sqrt{1-S_e}
+ *  {(1-S_e^{1/m})}^{2*m-1}
+ *   S_e^{1/m-1})/(S^L_\mbox{max}-S^L_r) \f]
+ *   As \f$S^L \to S^L_\mbox{max}\f$, or \f$S_e \to 1\f$,
+ *  \f$\dfrac{[1-S_e^{1/m}]^{2m}}{2\sqrt{1-S_e}}\f$ has a limit of zero.
+ *
  */
 class RelPermNonWettingPhaseVanGenuchtenMualem final : public Property
 {
@@ -74,6 +84,13 @@ public:
                             ParameterLib::SpatialPosition const& pos,
                             double const t, double const dt) const override;
 
+    /**
+     * Computes the saturation that gives the minimum relative permeability by
+     * using the Regula–Falsi Method.
+     * @return \f$ S^L\f$ that gives the minimum relative permeability.
+     */
+    double computeSaturationForMinimumRelativePermeability() const;
+
 private:
     const double S_L_r_;     ///< Residual saturation of wetting phase.
     const double S_L_max_;   ///< Maximum saturation of wetting phase.
@@ -81,31 +98,5 @@ private:
     const double krel_min_;  ///< Minimum relative permeability.
     const double
         S_L_for_krel_min_;  ///< Liquid saturation that gives \c krel_min_.
-
-    /**
-     *
-     * @param S_L Liquid saturation.
-     * @return \return \\return \f$k_{rel}^n \f$.
-     */
-    double computeValue(const double S_L) const;
-    /**
-     *  Computes
-     * \f[\frac{\mathrm{d} k_{rel}^n}{\mathrm{d}S^L}=
-     * -(\dfrac{[1-S_e^{1/m}]^{2m}}{2\sqrt{1-S_e}}+2\sqrt{1-S_e}
-     * {(1-S_e^{1/m})}^{2*m-1}
-     *  S_e^{1/m-1})/(S^L_\mbox{max}-S^L_r) \f]
-     *  As \f$S^L \to S^L_\mbox{max}\f$, or \f$S_e \to 1\f$,
-     * \f$\dfrac{[1-S_e^{1/m}]^{2m}}{2\sqrt{1-S_e}}\f$ has
-     * limit zero.
-     * @param S_L Liquid saturation.
-     * @return \return \f$ \frac{\mathrm{d} k_{rel}^n}{\mathrm{d}S^L} \f$.
-     */
-    double computeDerivative(const double S_L) const;
-    /**
-     * Computes the saturation that gives the minimum relative permeability by
-     * using the Newton-Raphson method.
-     * @return \f$ S^L\f$ that gives the minimum relative permeability.
-     */
-    double computeSaturationForMinimumRelativePermeability() const;
 };
 }  // namespace MaterialPropertyLib
