@@ -19,7 +19,6 @@
 
 namespace MathLib
 {
-
 class EigenVector;
 class EigenMatrix;
 class LisMatrix;
@@ -50,11 +49,11 @@ public:
         lis_options_ = lis_options;
     }
 
-    bool solve(EigenMatrix &A, EigenVector& b, EigenVector &x);
+    bool solve(EigenMatrix& A, EigenVector& b, EigenVector& x);
 
 private:
     bool solve(LisMatrix& A, LisVector& b, LisVector& x);
     std::string lis_options_;
 };
 
-} // MathLib
+}  // namespace MathLib
