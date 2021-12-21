@@ -161,6 +161,12 @@ private:
     //! Given times that steps have to reach.
     std::vector<double> const _fixed_output_times;
 
+    //! Holds the PVD files associated with each process.
+    //!
+    //! Each \c process_id of each Process (in the current simulation) has a PVD
+    //! file in this map for each element of #_mesh_names_for_output. I.e., the
+    //! number of elements in this map is (roughly):
+    //! <no. of processes> x <no. of process IDs per process> x <no. of meshes>.
     std::multimap<Process const*, MeshLib::IO::PVDFile> _process_to_pvd_file;
 
     OutputDataSpecification const _output_data_specification;
