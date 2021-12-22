@@ -134,6 +134,10 @@
                             <type>Constant</type>
                             <value> 1.8e-5 </value>
                         </property>
+                        <property>
+                            <name>density</name>
+                            <type>IdealGasLaw</type>
+                        </property>
                     </properties>
                 </phase>
                 <phase>
