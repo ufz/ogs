@@ -14,8 +14,6 @@
 
 #include "GEOObjects.h"
 
-#include <fstream>
-
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
 #include "Station.h"
