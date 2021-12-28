@@ -46,11 +46,31 @@ GEOObjects::~GEOObjects()
     }
 }
 
-void GEOObjects::addPointVec(std::unique_ptr<std::vector<Point*>> points,
-                             std::string& name,
-                             std::unique_ptr<std::map<std::string, std::size_t>>
-                                 pnt_id_name_map,
-                             double eps)
+//void GEOObjects::addPointVec(std::unique_ptr<std::vector<Point*>> points,
+//                             std::string& name,
+//                             std::unique_ptr<std::map<std::string, std::size_t>>
+//                                 pnt_id_name_map,
+//                             double eps)
+//{
+//    isUniquePointVecName(name);
+//    if (!points || points->empty())
+//    {
+//        DBUG(
+//            "GEOObjects::addPointVec(): Failed to create PointVec, because "
+//            "there aren't any points in the given vector.");
+//        return;
+//    }
+//    _pnt_vecs.push_back(new PointVec(name, std::move(points),
+//                                     std::move(pnt_id_name_map),
+//                                     PointVec::PointType::POINT, eps));
+//    _callbacks->addPointVec(name);
+//}
+
+void GEOObjects::addPointVec(
+    std::unique_ptr<std::vector<Point*>> points,
+    std::string& name,
+    std::map<std::string, std::size_t>&& pnt_id_name_map,
+    double const eps)
 {
     isUniquePointVecName(name);
     if (!points || points->empty())
@@ -442,8 +462,7 @@ bool GEOObjects::mergePoints(std::vector<std::string> const& geo_names,
     const std::size_t n_geo_names(geo_names.size());
 
     auto merged_points = std::make_unique<std::vector<GeoLib::Point*>>();
-    auto merged_pnt_names =
-        std::make_unique<std::map<std::string, std::size_t>>();
+    std::map<std::string, std::size_t> merged_pnt_names;
 
     for (std::size_t j(0); j < n_geo_names; ++j)
     {
@@ -473,7 +492,7 @@ bool GEOObjects::mergePoints(std::vector<std::string> const& geo_names,
             std::string const& item_name(pnt_vec->getItemNameByID(k));
             if (!item_name.empty())
             {
-                merged_pnt_names->insert(
+                merged_pnt_names.insert(
                     std::make_pair(item_name, pnt_offsets[j] + k));
             }
         }
