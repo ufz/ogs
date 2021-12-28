@@ -74,6 +74,18 @@ public:
         }
     }
 
+    TemplateVec(std::string&& name, std::unique_ptr<std::vector<T*>> data_vec,
+                NameIdMap&& elem_name_map)
+        : _name(std::move(name)),
+          _data_vec(std::move(data_vec)),
+          _name_id_map(std::move(elem_name_map))
+    {
+        if (_data_vec == nullptr)
+        {
+            OGS_FATAL("Constructor TemplateVec: vector of data elements is a nullptr.");
+        }
+    }
+
     /**
      * destructor, deletes all data elements
      */
