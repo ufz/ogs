@@ -42,10 +42,7 @@ void generateSinglePointGeometry(GeoLib::Point const& point,
     auto points = std::make_unique<std::vector<GeoLib::Point*>>();
     points->push_back(new GeoLib::Point{point});
 
-    std::unique_ptr<std::map<std::string, std::size_t>> name_map(
-        new std::map<std::string, std::size_t>{
-            {std::move(point_name), 0},
-        });
+    std::map<std::string, std::size_t> name_map{{std::move(point_name), 0}};
 
     geometry.addPointVec(std::move(points), geometry_name, std::move(name_map));
 }
@@ -61,7 +58,8 @@ void generatePolylineGeometry(GeoLib::Point const& point0,
         point0, point1, number_of_subdivisions);
     auto points = std::make_unique<std::vector<GeoLib::Point*>>(
         intermediate_points.begin(), intermediate_points.end());
-    geometry.addPointVec(std::move(points), geometry_name, nullptr);
+    geometry.addPointVec(std::move(points), geometry_name,
+                         std::map<std::string, std::size_t>{});
     auto const& point_vec = *geometry.getPointVecObj(geometry_name);
 
     std::vector<std::size_t> polyline_point_ids(point_vec.getVector()->size());
@@ -158,7 +156,7 @@ int generateQuadGeometry(GeoLib::Point const& point0,
 
     geometry.addPointVec(
         generateQuadPoints(edge_points, number_of_subdivisions), geometry_name,
-        nullptr);
+        std::map<std::string, std::size_t>{});
     auto const& point_vec = *geometry.getPointVecObj(geometry_name);
 
     std::vector<std::size_t> polyline_point_ids(point_vec.getVector()->size() +

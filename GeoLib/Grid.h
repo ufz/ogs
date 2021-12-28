@@ -365,7 +365,7 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
                                                         llf[1] + j * dy,
                                                         llf[2] + (k + 1) * dz));
                     geo_obj->addPointVec(std::move(points), grid_names.back(),
-                                         nullptr);
+                                         std::map<std::string, std::size_t>{});
                 }
 
                 auto plys = std::make_unique<std::vector<GeoLib::Polyline*>>();

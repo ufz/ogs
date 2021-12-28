@@ -70,7 +70,8 @@ bool TetGenInterface::readTetGenGeometry(std::string const& geo_fname,
         delete nodes[k];
     }
     std::string geo_name(BaseLib::extractBaseNameWithoutExtension(geo_fname));
-    geo_objects.addPointVec(std::move(points), geo_name);
+    geo_objects.addPointVec(std::move(points), geo_name,
+                            std::map<std::string, std::size_t>{});
     const std::vector<std::size_t>& id_map(
         geo_objects.getPointVecObj(geo_name)->getIDMap());
 

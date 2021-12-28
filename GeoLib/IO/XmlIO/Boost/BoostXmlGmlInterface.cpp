@@ -63,8 +63,8 @@ bool BoostXmlGmlInterface::readFile(const std::string& fname)
     for (auto st : doc->getConfigSubtreeList("points"))
     {
         auto points = std::make_unique<std::vector<GeoLib::Point*>>();
-        auto pnt_names = std::make_unique<MapNameId>();
-        readPoints(st, *points, *pnt_names);
+        MapNameId pnt_names;
+        readPoints(st, *points, pnt_names);
         _geo_objects.addPointVec(std::move(points), geo_name,
                                  std::move(pnt_names));
     }

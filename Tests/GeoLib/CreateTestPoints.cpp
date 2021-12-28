@@ -19,7 +19,7 @@ void createSetOfTestPointsAndAssociatedNames(GeoLib::GEOObjects& geo_objs,
                                              GeoLib::Point const& shift)
 {
     auto pnts = std::make_unique<std::vector<GeoLib::Point*>>();
-    auto pnt_name_map = std::make_unique<std::map<std::string, std::size_t>>();
+    std::map<std::string, std::size_t> pnt_name_map{};
 
     for (std::size_t k(0); k < pnts_per_edge; k++)
     {
@@ -35,7 +35,7 @@ void createSetOfTestPointsAndAssociatedNames(GeoLib::GEOObjects& geo_objs,
                 std::string pnt_name(name + "-" + std::to_string(i) + "-" +
                                      std::to_string(j) + "-" +
                                      std::to_string(k));
-                pnt_name_map->emplace(pnt_name, id);
+                pnt_name_map.emplace(pnt_name, id);
             }
         }
     }

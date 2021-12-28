@@ -36,12 +36,12 @@ void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
 {
     // copy data
     auto pnts = std::make_unique<std::vector<GeoLib::Point*>>();
-    auto pnt_names = std::make_unique<std::map<std::string, std::size_t>>();
+    std::map<std::string, std::size_t> pnt_names{};
     std::size_t cnt(0);
     for (std::size_t id : node_ids)
     {
         pnts->push_back(new GeoLib::Point(*(nodes[id]), cnt));
-        pnt_names->insert(std::pair<std::string, std::size_t>(
+        pnt_names.insert(std::pair<std::string, std::size_t>(
             geo_name + "-PNT-" + std::to_string(cnt), cnt));
         cnt++;
     }
@@ -265,7 +265,7 @@ int main(int argc, char* argv[])
 
     double const eps(std::numeric_limits<double>::epsilon());
     auto surface_pnts = std::make_unique<std::vector<GeoLib::Point*>>();
-    auto name_id_map = std::make_unique<std::map<std::string, std::size_t>>();
+    std::map<std::string, std::size_t> name_id_map{};
 
     // insert first point
     surface_pnts->push_back(
@@ -273,7 +273,7 @@ int main(int argc, char* argv[])
     {
         std::string element_name;
         pnt_vec->getNameOfElementByID(0, element_name);
-        name_id_map->insert(
+        name_id_map.insert(
             std::pair<std::string, std::size_t>(element_name, 0));
     }
     for (std::size_t k(1); k < n_merged_pnts; ++k)
@@ -286,7 +286,7 @@ int main(int argc, char* argv[])
                 new GeoLib::Point(pnts_with_id[k], surface_pnts->size()));
             std::string element_name;
             pnt_vec->getNameOfElementByID(k, element_name);
-            name_id_map->insert(std::pair<std::string, std::size_t>(
+            name_id_map.insert(std::pair<std::string, std::size_t>(
                 element_name, surface_pnts->size() - 1));
         }
     }

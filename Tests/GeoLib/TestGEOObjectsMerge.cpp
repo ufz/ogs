@@ -97,7 +97,7 @@ TEST(GeoLib, GEOObjectsMergePointsAndPolylines)
     std::string geometry_0("GeometryWithPntsAndPolyline");
     geo_objs.addPointVec(std::move(pnts),
                          geometry_0,
-                         nullptr,
+                         std::map<std::string, std::size_t>{},
                          std::numeric_limits<double>::epsilon());
 
     // *** insert polyline
@@ -146,7 +146,7 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
     std::string geometry_0("Geometry0");
     geo_objs.addPointVec(std::move(pnts_0),
                          geometry_0,
-                         nullptr,
+                         std::map<std::string, std::size_t>{},
                          std::numeric_limits<double>::epsilon());
 
     // *** insert a named polyline into geometry
@@ -175,7 +175,7 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
     std::string geometry_1("Geometry1");
     geo_objs.addPointVec(std::move(pnts_1),
                          geometry_1,
-                         nullptr,
+                         std::map<std::string, std::size_t>{},
                          std::numeric_limits<double>::epsilon());
 
     // *** insert a named polyline into geometry

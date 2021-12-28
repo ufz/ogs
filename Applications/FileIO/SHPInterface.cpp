@@ -103,7 +103,8 @@ void SHPInterface::readPoints(const SHPHandle& hSHP, int numberOfElements,
             points->push_back(pnt);
         }
 
-        _geoObjects.addPointVec(std::move(points), listName);
+        _geoObjects.addPointVec(std::move(points), listName,
+                                std::map<std::string, std::size_t>{});
         SHPDestroyObject(hSHPObject);  // de-allocate SHPObject
     }
 }
@@ -170,7 +171,8 @@ void SHPInterface::readPolylines(const SHPHandle& hSHP, int numberOfElements,
         SHPDestroyObject(hSHPObject);  // de-allocate SHPObject
     }
 
-    _geoObjects.addPointVec(std::move(pnts), listName);
+    _geoObjects.addPointVec(std::move(pnts), listName,
+                            std::map<std::string, std::size_t>{});
     GeoLib::PointVec const& points(*(_geoObjects.getPointVecObj(listName)));
     std::vector<std::size_t> const& pnt_id_map(points.getIDMap());
 

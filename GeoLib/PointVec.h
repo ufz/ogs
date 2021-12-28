@@ -71,9 +71,7 @@ public:
                  nullptr,
              PointType type = PointVec::PointType::POINT,
              double rel_eps = std::numeric_limits<double>::epsilon());
-    PointVec(std::string&& name,
-             std::unique_ptr<std::vector<Point*>>
-                 points,
+    PointVec(std::string& name, std::unique_ptr<std::vector<Point*>> points,
              std::map<std::string, std::size_t>&& name_id_map,
              PointType type = PointVec::PointType::POINT,
              double rel_eps = std::numeric_limits<double>::epsilon());

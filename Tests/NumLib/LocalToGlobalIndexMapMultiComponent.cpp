@@ -43,7 +43,8 @@ public:
         ply_pnts->push_back(new GeoLib::Point(1.0, 0.0, 0.0));
 
         std::string geometry_0("GeometryWithPntsAndPolyline");
-        geo_objs.addPointVec(std::move(ply_pnts), geometry_0, nullptr);
+        geo_objs.addPointVec(std::move(ply_pnts), geometry_0,
+                             std::map<std::string, std::size_t>{});
 
         auto ply = new GeoLib::Polyline(*geo_objs.getPointVec(geometry_0));
 

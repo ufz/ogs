@@ -92,7 +92,8 @@ void convertPoints(DBFHandle dbf_handle,
     }
     else
     {
-        geo_objs.addPointVec(std::move(points), points_group_name);
+        geo_objs.addPointVec(std::move(points), points_group_name,
+                             std::map<std::string, std::size_t>{});
     }
 
     if (station)

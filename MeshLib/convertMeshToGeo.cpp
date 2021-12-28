@@ -42,7 +42,8 @@ std::string convertMeshNodesToGeoPoints(MeshLib::Mesh const& mesh,
 
     auto geoobject_name = mesh.getName();  // Possibly modified when adding
                                            // points to the geo objects.
-    geo_objects.addPointVec(std::move(points), geoobject_name, nullptr, eps);
+    geo_objects.addPointVec(std::move(points), geoobject_name,
+                            std::map<std::string, std::size_t>{}, eps);
     return geoobject_name;
 }
 

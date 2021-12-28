@@ -85,7 +85,7 @@ int XmlGmlInterface::readFile(const QString& fileName)
     auto surfaces = std::make_unique<std::vector<GeoLib::Surface*>>();
 
     using MapNameId = std::map<std::string, std::size_t>;
-    auto pnt_names = std::make_unique<MapNameId>();
+    MapNameId pnt_names;
     auto ply_names = std::make_unique<MapNameId>();
     auto sfc_names = std::make_unique<MapNameId>();
 
@@ -108,13 +108,7 @@ int XmlGmlInterface::readFile(const QString& fileName)
         }
         else if (nodeName.compare("points") == 0)
         {
-            readPoints(type_node, points.get(), pnt_names.get());
-
-            // if names-map is empty, set it to nullptr because it is not needed
-            if (pnt_names->empty())
-            {
-                pnt_names.reset(nullptr);
-            }
+            readPoints(type_node, points.get(), &pnt_names);
             _geo_objs.addPointVec(std::move(points), gliName,
                                   std::move(pnt_names));
         }

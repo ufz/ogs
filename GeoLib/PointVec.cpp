@@ -126,12 +126,11 @@ PointVec::PointVec(
     }
 }
 
-PointVec::PointVec(std::string&& name,
+PointVec::PointVec(std::string& name,
                    std::unique_ptr<std::vector<Point*>> points,
                    std::map<std::string, std::size_t>&& name_id_map,
                    PointType type, double rel_eps)
-    : TemplateVec<Point>(std::move(name), std::move(points),
-                         std::move(name_id_map)),
+    : TemplateVec<Point>(name, std::move(points), std::move(name_id_map)),
       _type(type),
       _aabb(_data_vec->begin(), _data_vec->end()),
       _rel_eps(rel_eps * (_aabb.getMaxPoint() - _aabb.getMinPoint()).norm()),

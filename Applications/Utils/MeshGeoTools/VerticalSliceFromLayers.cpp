@@ -106,7 +106,8 @@ std::vector<std::string> createGeometries(
         std::string geo_name(std::to_string(i));
         std::unique_ptr<std::vector<GeoLib::Point*>> points(
             createPoints(pnt_start, pnt_end, resolution));
-        geo.addPointVec(std::move(points), geo_name);
+        geo.addPointVec(std::move(points), geo_name,
+                        std::map<std::string, std::size_t>{});
 
         auto lines = std::make_unique<std::vector<GeoLib::Polyline*>>();
         lines->push_back(createPolyline(*geo.getPointVec(geo_name)));
@@ -166,7 +167,8 @@ void mergeGeometries(GeoLib::GEOObjects& geo,
         lines->push_back(line);
     }
 
-    geo.addPointVec(std::move(points), merged_geo_name);
+    geo.addPointVec(std::move(points), merged_geo_name,
+                    std::map<std::string, std::size_t>{});
     geo.addPolylineVec(std::move(lines), merged_geo_name);
 }
 

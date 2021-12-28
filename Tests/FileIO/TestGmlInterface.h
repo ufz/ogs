@@ -27,7 +27,7 @@ public:
     std::string geo_name = "TestData";
 
     std::vector<GeoLib::Point> test_pnts;
-    std::map<std::string, std::size_t> pnt_name_id_map;
+    GeoLib::PointVec::NameIdMap pnt_name_id_map;
 
     TestGmlInterface()
     {
@@ -49,13 +49,13 @@ public:
         test_pnts.emplace_back(3,3,0,8);
         auto points = std::make_unique<std::vector<GeoLib::Point*>>(9);
 
-        std::unique_ptr<std::map<std::string, std::size_t>> cpy_name_id_map{
-            new std::map<std::string, std::size_t>};
+        GeoLib::PointVec::NameIdMap cpy_name_id_map;
         std::size_t pos(0);
-        for (auto p : test_pnts) {
+        for (auto p : test_pnts)
+        {
             (*points)[pos] = new GeoLib::Point(p);
-            pnt_name_id_map["p"+std::to_string(pos)] = pos;
-            (*cpy_name_id_map)["p"+std::to_string(pos)] = pos;
+            pnt_name_id_map["p" + std::to_string(pos)] = pos;
+            cpy_name_id_map["p" + std::to_string(pos)] = pos;
             pos++;
         }
 

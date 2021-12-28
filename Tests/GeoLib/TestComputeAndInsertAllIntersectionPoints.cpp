@@ -43,7 +43,8 @@ TEST(GeoLib, TestComputeAndInsertAllIntersectionPoints)
         pnts->push_back(new GeoLib::Point(10.0, 1.0, 0.0, 12));
         pnts->push_back(new GeoLib::Point(11.0, -1.0, 0.0, 13));
 
-        geo_objs.addPointVec(std::move(pnts), geo_name);
+        geo_objs.addPointVec(std::move(pnts), geo_name,
+                             std::map<std::string, std::size_t>{});
     }
 
     // *** create polylines

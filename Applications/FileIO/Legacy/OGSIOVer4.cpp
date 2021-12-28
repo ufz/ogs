@@ -526,13 +526,12 @@ bool readGLIFileV4(const std::string& fname,
     }
 
     // read names of points into vector of strings
-    auto pnt_id_names_map = std::unique_ptr<std::map<std::string, std::size_t>>{
-        new std::map<std::string, std::size_t>};
+    std::map<std::string, std::size_t> pnt_id_names_map;
 
     bool zero_based_idx(true);
     auto pnt_vec = std::make_unique<std::vector<GeoLib::Point*>>();
     INFO("GeoLib::readGLIFile(): read points from stream.");
-    tag = readPoints(in, pnt_vec.get(), zero_based_idx, pnt_id_names_map.get());
+    tag = readPoints(in, pnt_vec.get(), zero_based_idx, &pnt_id_names_map);
     INFO("GeoLib::readGLIFile(): \t ok, {:d} points read.", pnt_vec->size());
 
     unique_name = BaseLib::extractBaseName(fname);

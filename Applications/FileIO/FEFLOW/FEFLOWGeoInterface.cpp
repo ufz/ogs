@@ -91,7 +91,8 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
     if (points)
     {
         geo_objects.addPointVec(
-            std::unique_ptr<std::vector<GeoLib::Point*>>(points), project_name);
+            std::unique_ptr<std::vector<GeoLib::Point*>>(points), project_name,
+            std::map<std::string, std::size_t>{});
     }
     if (lines)
     {

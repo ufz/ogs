@@ -58,7 +58,7 @@ public:
      */
     TemplateVec(std::string name, std::unique_ptr<std::vector<T*>> data_vec,
                 std::unique_ptr<NameIdMap> elem_name_map = nullptr)
-        : _name(std::move(name)),
+        : _name(name),
           _data_vec(std::move(data_vec)),
           _name_id_map_ptr(std::move(elem_name_map)),
           _name_id_map(NameIdMap{})
@@ -74,9 +74,9 @@ public:
         }
     }
 
-    TemplateVec(std::string&& name, std::unique_ptr<std::vector<T*>> data_vec,
+    TemplateVec(std::string name, std::unique_ptr<std::vector<T*>> data_vec,
                 NameIdMap&& elem_name_map)
-        : _name(std::move(name)),
+        : _name(name),
           _data_vec(std::move(data_vec)),
           _name_id_map(std::move(elem_name_map))
     {
