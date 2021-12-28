@@ -289,16 +289,6 @@ public:
     /// Read access to surfaces w/o using a name.
     std::vector<SurfaceVec*> const& getSurfaces() const { return _sfc_vecs; }
 
-    /**
-     * vector manages pointers to PointVec objects
-     */
-    std::vector<PointVec*> _pnt_vecs;
-
-    /** vector manages pointers to PolylineVec objects */
-    std::vector<PolylineVec*> _ply_vecs;
-    /** vector manages pointers to SurfaceVec objects */
-    std::vector<SurfaceVec*> _sfc_vecs;
-
     std::unique_ptr<Callbacks> _callbacks{new Callbacks};
 
     std::function<void(std::string const&)> addPolylineVecCallback =
@@ -320,6 +310,16 @@ public:
         [](std::string const& /*unused*/) {};
 
 private:
+    /**
+     * vector manages pointers to PointVec objects
+     */
+    std::vector<PointVec*> _pnt_vecs;
+
+    /** vector manages pointers to PolylineVec objects */
+    std::vector<PolylineVec*> _ply_vecs;
+    /** vector manages pointers to SurfaceVec objects */
+    std::vector<SurfaceVec*> _sfc_vecs;
+
     /**
      * Method merges points from different geometries into one geometry. This
      * is a helper method for GEOObjects::mergeGeometries().
