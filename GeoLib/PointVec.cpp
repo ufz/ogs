@@ -116,7 +116,7 @@ PointVec::PointVec(
     // create the inverse mapping
     _id_to_name_map.resize(_data_vec->size());
     // fetch the names from the name id map
-    for (auto p : *_name_id_map)
+    for (auto p : *_name_id_map_ptr)
     {
         if (p.second >= _id_to_name_map.size())
         {
@@ -143,8 +143,8 @@ void PointVec::push_back(Point* pnt, std::string const* const name)
     }
 
     std::map<std::string, std::size_t>::const_iterator it(
-        _name_id_map->find(*name));
-    if (it != _name_id_map->end())
+        _name_id_map_ptr->find(*name));
+    if (it != _name_id_map_ptr->end())
     {
         _id_to_name_map.emplace_back("");
         WARN("PointVec::push_back(): two points share the name {:s}.",
@@ -154,7 +154,7 @@ void PointVec::push_back(Point* pnt, std::string const* const name)
 
     std::size_t id(uniqueInsert(pnt));
     _pnt_id_map.push_back(id);
-    (*_name_id_map)[*name] = id;
+    (*_name_id_map_ptr)[*name] = id;
     _id_to_name_map.push_back(*name);
 }
 
@@ -202,12 +202,12 @@ void PointVec::correctNameIDMapping()
 {
     // create mapping id -> name using the std::vector id_names
     std::vector<std::string> id_names(_pnt_id_map.size(), std::string(""));
-    for (auto& id_name_pair : *_name_id_map)
+    for (auto& id_name_pair : *_name_id_map_ptr)
     {
         id_names[id_name_pair.second] = id_name_pair.first;
     }
 
-    for (auto it = _name_id_map->begin(); it != _name_id_map->end();)
+    for (auto it = _name_id_map_ptr->begin(); it != _name_id_map_ptr->end();)
     {
         // extract the id associated with the name
         const std::size_t id(it->second);
@@ -223,7 +223,7 @@ void PointVec::correctNameIDMapping()
             if (id_names[_pnt_id_map[id]].length() != 0)
             {
                 // point has already a name, erase the second occurrence
-                it = _name_id_map->erase(it);
+                it = _name_id_map_ptr->erase(it);
             }
             else
             {
