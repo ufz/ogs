@@ -60,16 +60,17 @@ public:
                 std::unique_ptr<NameIdMap> elem_name_map = nullptr)
         : _name(std::move(name)),
           _data_vec(std::move(data_vec)),
-          _name_id_map_ptr(std::move(elem_name_map))
+          _name_id_map_ptr(std::move(elem_name_map)),
+          _name_id_map(NameIdMap{})
     {
         if (_data_vec == nullptr)
         {
             OGS_FATAL("Constructor TemplateVec: vector of data elements is a nullptr.");
         }
 
-        if (!_name_id_map_ptr)
+        if (_name_id_map_ptr)
         {
-            _name_id_map_ptr = std::make_unique<NameIdMap>();
+            _name_id_map = *_name_id_map_ptr;
         }
     }
 
@@ -95,10 +96,16 @@ public:
     std::string getName () const { return _name; }
 
     /// Returns the begin of the name id mapping structure
-    NameIdMap::const_iterator getNameIDMapBegin() const { return _name_id_map_ptr->cbegin(); }
+    NameIdMap::const_iterator getNameIDMapBegin() const
+    {
+        return _name_id_map.cbegin();
+    }
 
     /// Returns the end of the name id mapping structure
-    NameIdMap::const_iterator getNameIDMapEnd() const { return _name_id_map_ptr->cend(); }
+    NameIdMap::const_iterator getNameIDMapEnd() const
+    {
+        return _name_id_map.cend();
+    }
 
     /**
      * @return the number of data elements
@@ -118,9 +125,9 @@ public:
      */
     bool getElementIDByName (const std::string& name, std::size_t &id) const
     {
-        auto it (_name_id_map_ptr->find (name));
+        auto it (_name_id_map.find (name));
 
-        if (it != _name_id_map_ptr->end())
+        if (it != _name_id_map.end())
         {
             id = it->second;
             return true;
@@ -154,7 +161,7 @@ public:
     {
         // search in map for id
         auto it = findFirstElementByID(id);
-        if (it == _name_id_map_ptr->end()) {
+        if (it == _name_id_map.end()) {
             return false;
         }
         element_name = it->first;
@@ -164,7 +171,7 @@ public:
     /// Return the name of an element based on its ID.
     void setNameOfElementByID (std::size_t id, std::string const& element_name)
     {
-        _name_id_map_ptr->insert(NameIdPair(element_name, id));
+        _name_id_map.insert(NameIdPair(element_name, id));
     }
 
     /**
@@ -198,10 +205,10 @@ public:
         }
 
         std::map<std::string, std::size_t>::const_iterator it(
-            _name_id_map_ptr->find(*name)
+            _name_id_map.find(*name)
         );
-        if (it == _name_id_map_ptr->end()) {
-            _name_id_map_ptr->insert(NameIdPair(*name, _data_vec->size() - 1));
+        if (it == _name_id_map.end()) {
+            _name_id_map.insert(NameIdPair(*name, _data_vec->size() - 1));
         } else {
             WARN(
                 "Name '{:s}' exists already. The object will be inserted "
@@ -215,14 +222,14 @@ public:
     {
         // Erase id if found in map.
         auto it = findFirstElementByID(id);
-        if (it != _name_id_map_ptr->end())
+        if (it != _name_id_map.end())
         {
-            _name_id_map_ptr->erase(it);
+            _name_id_map.erase(it);
         }
 
         if (!name.empty()) {
             //insert new or revised name
-            _name_id_map_ptr->insert(NameIdPair(name, id));
+            _name_id_map.insert(NameIdPair(name, id));
         }
     }
 
@@ -231,7 +238,7 @@ private:
     NameIdMap::const_iterator
     findFirstElementByID(std::size_t const& id) const
     {
-        return std::find_if(_name_id_map_ptr->begin(), _name_id_map_ptr->end(),
+        return std::find_if(_name_id_map.begin(), _name_id_map.end(),
             [id](NameIdPair const& elem) { return elem.second == id; });
     }
 
@@ -254,6 +261,6 @@ protected:
      * store names associated with the element ids
      */
     std::unique_ptr<NameIdMap> _name_id_map_ptr;
-    //NameIdMap _name_id_map;
+    NameIdMap _name_id_map;
 };
 } // end namespace GeoLib
