@@ -141,7 +141,8 @@ void GEOObjects::addStationVec(std::unique_ptr<std::vector<Point*>> stations,
                                std::string& name)
 {
     isUniquePointVecName(name);
-    _pnt_vecs.push_back(new PointVec(name, std::move(stations), nullptr,
+    _pnt_vecs.push_back(new PointVec(name, std::move(stations),
+                                     std::map<std::string, std::size_t>{},
                                      PointVec::PointType::STATION));
     _callbacks->addStationVec(name);
 }

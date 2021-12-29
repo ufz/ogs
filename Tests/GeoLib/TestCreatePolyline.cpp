@@ -21,8 +21,10 @@ struct GeoLibCreatePolyline : public testing::Test
         points->push_back(new GeoLib::Point{0.0, 0.0, 0.0});
         points->push_back(new GeoLib::Point{1.0, 1.0, 1.0});
         points->push_back(new GeoLib::Point{0.5, 0.5, 0.5});
-        point_vec =
-            std::make_unique<GeoLib::PointVec>("test", std::move(points));
+        std::string point_vec_name("test");
+        point_vec = std::make_unique<GeoLib::PointVec>(
+            point_vec_name, std::move(points),
+            std::map<std::string, std::size_t>{});
     }
 
     std::unique_ptr<std::vector<GeoLib::Point*>> points;
