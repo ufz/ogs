@@ -46,12 +46,10 @@ GEOObjects::~GEOObjects()
     }
 }
 
-
-void GEOObjects::addPointVec(
-    std::unique_ptr<std::vector<Point*>> points,
-    std::string& name,
-    std::map<std::string, std::size_t>&& pnt_id_name_map,
-    double const eps)
+void GEOObjects::addPointVec(std::unique_ptr<std::vector<Point*>> points,
+                             std::string& name,
+                             PointVec::NameIdMap&& pnt_id_name_map,
+                             double const eps)
 {
     isUniquePointVecName(name);
     if (!points || points->empty())

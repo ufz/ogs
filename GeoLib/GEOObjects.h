@@ -90,7 +90,7 @@ public:
     void addPointVec(
         std::unique_ptr<std::vector<Point*>> points,
         std::string& name,
-        std::map<std::string, std::size_t>&& pnt_id_name_map,
+        PointVec::NameIdMap&& pnt_id_name_map,
         double const eps = std::sqrt(std::numeric_limits<double>::epsilon()));
 
     /**
