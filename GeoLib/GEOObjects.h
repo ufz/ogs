@@ -87,12 +87,6 @@ public:
      * @param pnt_id_name_map names corresponding to the points
      * @param eps relative tolerance value for testing of point uniqueness
      */
-    //void addPointVec(
-    //    std::unique_ptr<std::vector<Point*>> points,
-    //    std::string& name,
-    //    std::unique_ptr<std::map<std::string, std::size_t>> pnt_id_name_map =
-    //        nullptr,
-    //    double eps = std::sqrt(std::numeric_limits<double>::epsilon()));
     void addPointVec(
         std::unique_ptr<std::vector<Point*>> points,
         std::string& name,
