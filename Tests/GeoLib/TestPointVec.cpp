@@ -39,14 +39,6 @@ protected:
     std::string const name;
 };
 
-// Testing nullptr input vector.
-TEST_F(PointVecTest, TestPointVecCtorNullptr)
-{
-    ASSERT_THROW(
-        GeoLib::PointVec(name, nullptr, std::map<std::string, std::size_t>{}),
-        std::runtime_error);
-}
-
 // Testing empty input vector.
 TEST_F(PointVecTest, TestPointVecCtorEmpty)
 {

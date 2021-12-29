@@ -59,11 +59,11 @@ public:
     TemplateVec(std::string name, std::unique_ptr<std::vector<T*>> data_vec,
                 std::unique_ptr<NameIdMap> elem_name_map = nullptr)
         : _name(name),
-          _data_vec(std::move(data_vec)),
+          _data_vec(*data_vec),
           _name_id_map_ptr(std::move(elem_name_map)),
           _name_id_map(NameIdMap{})
     {
-        if (_data_vec == nullptr)
+        if (data_vec == nullptr)
         {
             OGS_FATAL("Constructor TemplateVec: vector of data elements is a nullptr.");
         }
@@ -77,13 +77,21 @@ public:
     TemplateVec(std::string name, std::unique_ptr<std::vector<T*>> data_vec,
                 NameIdMap&& elem_name_map)
         : _name(name),
-          _data_vec(std::move(data_vec)),
+          _data_vec(*data_vec),
           _name_id_map(std::move(elem_name_map))
     {
-        if (_data_vec == nullptr)
+        if (data_vec == nullptr)
         {
             OGS_FATAL("Constructor TemplateVec: vector of data elements is a nullptr.");
         }
+    }
+
+    TemplateVec(std::string const& name, std::vector<T*>&& data_vec,
+                NameIdMap&& elem_name_map)
+        : _name(name),
+          _data_vec(std::move(data_vec)),
+          _name_id_map(std::move(elem_name_map))
+    {
     }
 
     /**
@@ -93,7 +101,7 @@ public:
     {
         for (std::size_t k(0); k < size(); k++)
         {
-            delete (*_data_vec)[k];
+            delete _data_vec[k];
         }
     }
 
@@ -122,13 +130,13 @@ public:
     /**
      * @return the number of data elements
      */
-    std::size_t size () const { return _data_vec->size(); }
+    std::size_t size () const { return _data_vec.size(); }
 
     /**
      * get a pointer to a standard vector containing the data elements
      * @return the data elements
      */
-    const std::vector<T*>* getVector () const { return _data_vec.get(); }
+    const std::vector<T*>* getVector () const { return &_data_vec; }
 
     /**
      * search the vector of names for the ID of the geometric element with the given name
@@ -154,7 +162,7 @@ public:
         bool ret (getElementIDByName (name, id));
         if (ret)
         {
-            return (*_data_vec)[id];
+            return _data_vec[id];
         }
 
         return nullptr;
@@ -196,9 +204,9 @@ public:
      */
     bool getNameOfElement (const T* data, std::string& name) const
     {
-        for (std::size_t k(0); k < _data_vec->size(); k++)
+        for (std::size_t k(0); k < _data_vec.size(); k++)
         {
-            if ((*_data_vec)[k] == data)
+            if (_data_vec[k] == data)
             {
                 return getNameOfElementByID(k, name);
             }
@@ -210,7 +218,7 @@ public:
     /// Adds a new element to the vector.
     virtual void push_back (T* data_element, std::string const* const name = nullptr)
     {
-        _data_vec->push_back (data_element);
+        _data_vec.push_back (data_element);
         if (!name || name->empty())
         {
             return;
@@ -220,7 +228,7 @@ public:
             _name_id_map.find(*name)
         );
         if (it == _name_id_map.end()) {
-            _name_id_map.insert(NameIdPair(*name, _data_vec->size() - 1));
+            _name_id_map.insert(NameIdPair(*name, _data_vec.size() - 1));
         } else {
             WARN(
                 "Name '{:s}' exists already. The object will be inserted "
@@ -266,9 +274,9 @@ protected:
     std::string _name;
 
     /**
-     * pointer to a vector of data elements
+     * vector of data elements
      */
-    std::unique_ptr<std::vector <T*>> _data_vec;
+    std::vector<T*> _data_vec;
     /**
      * store names associated with the element ids
      */
