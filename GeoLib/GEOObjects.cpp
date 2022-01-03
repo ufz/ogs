@@ -236,17 +236,6 @@ bool GEOObjects::removePolylineVec(std::string const& name)
     return false;
 }
 
-void GEOObjects::addSurfaceVec(
-    std::unique_ptr<std::vector<Surface*>> sfc,
-    const std::string& name,
-    std::unique_ptr<std::map<std::string, std::size_t>>
-        sfc_names)
-{
-    _sfc_vecs.push_back(
-        new SurfaceVec(name, std::move(sfc), std::move(sfc_names)));
-    _callbacks->addSurfaceVec(name);
-}
-
 void GEOObjects::addSurfaceVec(std::vector<Surface*>&& sfc,
                                const std::string& name,
                                SurfaceVec::NameIdMap&& sfc_names)

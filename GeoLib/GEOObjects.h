@@ -179,10 +179,6 @@ public:
     bool removePolylineVec(const std::string &name);
 
     /** Adds a vector of surfaces with the given name to GEOObjects. */
-    void addSurfaceVec(std::unique_ptr<std::vector<Surface*>> sfc,
-                       const std::string& name,
-                       std::unique_ptr<std::map<std::string, std::size_t>>
-                           sfc_names = nullptr);
     void addSurfaceVec(std::vector<Surface*>&& sfc,
                        const std::string& name,
                        SurfaceVec::NameIdMap&& sfc_names);
