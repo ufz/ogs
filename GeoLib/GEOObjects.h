@@ -92,6 +92,10 @@ public:
         std::string& name,
         PointVec::NameIdMap&& pnt_id_name_map,
         double const eps = std::sqrt(std::numeric_limits<double>::epsilon()));
+    void addPointVec(
+        std::vector<Point*>&& points, std::string& name,
+        PointVec::NameIdMap&& pnt_id_name_map,
+        double const eps = std::sqrt(std::numeric_limits<double>::epsilon()));
 
     /**
      * Returns the point vector with the given name.
