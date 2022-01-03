@@ -183,6 +183,9 @@ public:
                        const std::string& name,
                        std::unique_ptr<std::map<std::string, std::size_t>>
                            sfc_names = nullptr);
+    void addSurfaceVec(std::vector<Surface*>&& sfc,
+                       const std::string& name,
+                       SurfaceVec::NameIdMap&& sfc_names);
 
     /**
      * Copies the surfaces in the vector to the SurfaceVec with the given name.
