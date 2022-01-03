@@ -44,7 +44,7 @@ std::array<double, 3> parsePointCoordinates(It& it)
 
 namespace FileIO
 {
-int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
+int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>& boreholes,
                                        const std::string& filename)
 {
     std::ifstream in(filename.c_str());
@@ -101,7 +101,7 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
                 if (newBorehole != nullptr)
                 {
                     newBorehole->setDepth((*newBorehole)[2] - depth);
-                    boreholes->push_back(newBorehole);
+                    boreholes.push_back(newBorehole);
                 }
                 cName = *fields.begin();
                 it = fields.begin();
@@ -121,11 +121,11 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
     if (newBorehole != nullptr)
     {
         newBorehole->setDepth((*newBorehole)[2] - depth);
-        boreholes->push_back(newBorehole);
+        boreholes.push_back(newBorehole);
     }
     in.close();
 
-    if (boreholes->empty())
+    if (boreholes.empty())
     {
         return 0;
     }

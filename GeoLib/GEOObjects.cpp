@@ -470,7 +470,7 @@ bool GEOObjects::mergePoints(std::vector<std::string> const& geo_names,
 {
     const std::size_t n_geo_names(geo_names.size());
 
-    auto merged_points = std::make_unique<std::vector<GeoLib::Point*>>();
+    std::vector<GeoLib::Point*> merged_points{};
     std::map<std::string, std::size_t> merged_pnt_names;
 
     for (std::size_t j(0); j < n_geo_names; ++j)
@@ -496,7 +496,7 @@ bool GEOObjects::mergePoints(std::vector<std::string> const& geo_names,
         std::size_t const n_pnts(pnts->size());
         for (std::size_t k(0); k < n_pnts; ++k)
         {
-            merged_points->push_back(
+            merged_points.push_back(
                 new GeoLib::Point(*(*pnts)[k], pnt_offsets[j] + k));
             std::string const& item_name(pnt_vec->getItemNameByID(k));
             if (!item_name.empty())
@@ -724,7 +724,7 @@ int geoPointsToStations(GEOObjects& geo_objects, std::string const& geo_name,
         markUnusedPoints(geo_objects, geo_name, transfer_pnts);
     }
 
-    auto stations = std::make_unique<std::vector<GeoLib::Point*>>();
+    std::vector<GeoLib::Point*> stations{};
     for (std::size_t i = 0; i < n_pnts; ++i)
     {
         if (!transfer_pnts[i])
@@ -736,9 +736,9 @@ int geoPointsToStations(GEOObjects& geo_objects, std::string const& geo_name,
         {
             name = "Station " + std::to_string(i);
         }
-        stations->push_back(new GeoLib::Station(pnts[i], name));
+        stations.push_back(new GeoLib::Station(pnts[i], name));
     }
-    if (!stations->empty())
+    if (!stations.empty())
     {
         geo_objects.addStationVec(std::move(stations), stn_name);
     }

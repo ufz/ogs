@@ -47,7 +47,7 @@ public:
     /// plane and will be used for mesh generation and to define the modeling
     /// region
     static void readSuperMesh(std::ifstream& in, unsigned dimension,
-                              std::vector<GeoLib::Point*>*& points,
+                              std::vector<GeoLib::Point*>& points,
                               std::vector<GeoLib::Polyline*>*& lines);
 
 private:

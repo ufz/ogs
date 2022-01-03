@@ -55,7 +55,7 @@ public:
                                     const std::string& filename);
 
     /// Imports borehole data from a file in GMS-format.
-    static int readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
+    static int readBoreholesFromGMS(std::vector<GeoLib::Point*>& boreholes,
                                     const std::string& filename);
 
     /// Reads a GMS *.3dm file and converts it to an CFEMesh.

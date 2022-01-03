@@ -47,13 +47,14 @@ public:
         test_pnts.emplace_back(3,1,0,6);
         test_pnts.emplace_back(3,2,0,7);
         test_pnts.emplace_back(3,3,0,8);
-        auto points = std::make_unique<std::vector<GeoLib::Point*>>(9);
+        std::vector<GeoLib::Point*> points;
+        points.reserve(9);
 
         GeoLib::PointVec::NameIdMap cpy_name_id_map;
         std::size_t pos(0);
         for (auto p : test_pnts)
         {
-            (*points)[pos] = new GeoLib::Point(p);
+            points.push_back(new GeoLib::Point(p));
             pnt_name_id_map["p" + std::to_string(pos)] = pos;
             cpy_name_id_map["p" + std::to_string(pos)] = pos;
             pos++;

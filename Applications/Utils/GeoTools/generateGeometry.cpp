@@ -39,8 +39,8 @@ void generateSinglePointGeometry(GeoLib::Point const& point,
                                  std::string& geometry_name,
                                  GeoLib::GEOObjects& geometry)
 {
-    auto points = std::make_unique<std::vector<GeoLib::Point*>>();
-    points->push_back(new GeoLib::Point{point});
+    std::vector<GeoLib::Point*> points{};
+    points.push_back(new GeoLib::Point{point});
 
     GeoLib::PointVec::NameIdMap name_map{{std::move(point_name), 0}};
 
@@ -56,8 +56,8 @@ void generatePolylineGeometry(GeoLib::Point const& point0,
 {
     auto intermediate_points = GeoLib::generateEquidistantPoints(
         point0, point1, number_of_subdivisions);
-    auto points = std::make_unique<std::vector<GeoLib::Point*>>(
-        intermediate_points.begin(), intermediate_points.end());
+    std::vector<GeoLib::Point*> points(intermediate_points.begin(),
+                                       intermediate_points.end());
     geometry.addPointVec(std::move(points), geometry_name,
                          GeoLib::PointVec::NameIdMap{});
     auto const& point_vec = *geometry.getPointVecObj(geometry_name);
@@ -73,19 +73,19 @@ void generatePolylineGeometry(GeoLib::Point const& point0,
                             std::move(name_map));
 }
 
-std::unique_ptr<std::vector<GeoLib::Point*>> generateQuadPoints(
+std::vector<GeoLib::Point*> generateQuadPoints(
     std::array<GeoLib::Point, 4> const& points,
     std::array<int, 4> const& number_of_subdivisions_per_edge)
 {
-    auto quad_points = std::make_unique<std::vector<GeoLib::Point*>>();
+    std::vector<GeoLib::Point*> quad_points{};
 
     auto addPointsOnLine = [&quad_points](auto const& begin, auto const& end,
                                           auto const number_of_subdivisions)
     {
         auto intermediate_points = GeoLib::generateEquidistantPoints(
             begin, end, number_of_subdivisions);
-        quad_points->insert(quad_points->end(), intermediate_points.begin(),
-                            --intermediate_points.end());
+        quad_points.insert(quad_points.end(), intermediate_points.begin(),
+                           --intermediate_points.end());
     };
 
     addPointsOnLine(points[0], points[1], number_of_subdivisions_per_edge[0]);

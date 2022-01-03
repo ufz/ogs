@@ -42,56 +42,56 @@ protected:
 // Testing empty input vector.
 TEST_F(PointVecTest, TestPointVecCtorEmpty)
 {
-    auto ps_ptr = std::make_unique<VectorOfPoints>();
+    VectorOfPoints ps_ptr{};
     ASSERT_THROW(GeoLib::PointVec(name, std::move(ps_ptr),
-                                  std::map<std::string, std::size_t>{}),
+                                  GeoLib::PointVec::NameIdMap{}),
                  std::runtime_error);
 }
 
 // Testing input vector with single point.
 TEST_F(PointVecTest, TestPointVecCtorSinglePoint)
 {
-    auto ps_ptr = std::make_unique<VectorOfPoints>();
-    ps_ptr->push_back(new GeoLib::Point(0, 0, 0, 0));
+    VectorOfPoints ps_ptr{};
+    ps_ptr.push_back(new GeoLib::Point(0, 0, 0, 0));
     auto point_vec = std::make_unique<GeoLib::PointVec>(
-        name, std::move(ps_ptr), std::map<std::string, std::size_t>{});
+        name, std::move(ps_ptr), GeoLib::PointVec::NameIdMap{});
     ASSERT_EQ(std::size_t(1), point_vec->size());
 }
 
 // Testing input vector with two different points.
 TEST_F(PointVecTest, TestPointVecCtorTwoDiffPoints)
 {
-    auto ps_ptr = std::make_unique<VectorOfPoints>();
-    ps_ptr->push_back(new GeoLib::Point(0, 0, 0, 0));
-    ps_ptr->push_back(new GeoLib::Point(1, 0, 0, 1));
+    VectorOfPoints ps_ptr{};
+    ps_ptr.push_back(new GeoLib::Point(0, 0, 0, 0));
+    ps_ptr.push_back(new GeoLib::Point(1, 0, 0, 1));
 
     auto point_vec = std::make_unique<GeoLib::PointVec>(
-        name, std::move(ps_ptr), std::map<std::string, std::size_t>{});
+        name, std::move(ps_ptr), GeoLib::PointVec::NameIdMap{});
     ASSERT_EQ(std::size_t(2), point_vec->size());
 }
 
 // Testing input vector with two equal points.
 TEST_F(PointVecTest, TestPointVecCtorTwoEqualPoints)
 {
-    auto ps_ptr = std::make_unique<VectorOfPoints>();
-    ps_ptr->push_back(new GeoLib::Point(0, 0, 0, 0));
-    ps_ptr->push_back(new GeoLib::Point(0, 0, 0, 1));
+    VectorOfPoints ps_ptr{};
+    ps_ptr.push_back(new GeoLib::Point(0, 0, 0, 0));
+    ps_ptr.push_back(new GeoLib::Point(0, 0, 0, 1));
 
     auto point_vec = std::make_unique<GeoLib::PointVec>(
-        name, std::move(ps_ptr), std::map<std::string, std::size_t>{});
+        name, std::move(ps_ptr), GeoLib::PointVec::NameIdMap{});
     ASSERT_EQ(std::size_t(1), point_vec->size());
 }
 
 // Testing input vector with single point.
 TEST_F(PointVecTest, TestPointVecPushBack)
 {
-    auto ps_ptr = std::make_unique<VectorOfPoints>();
-    ps_ptr->push_back(new GeoLib::Point(0, 0, 0, 0));
-    ps_ptr->push_back(new GeoLib::Point(1, 0, 0, 1));
-    ps_ptr->push_back(new GeoLib::Point(0, 1, 0, 2));
-    ps_ptr->push_back(new GeoLib::Point(0, 0, 1, 3));
+    VectorOfPoints ps_ptr{};
+    ps_ptr.push_back(new GeoLib::Point(0, 0, 0, 0));
+    ps_ptr.push_back(new GeoLib::Point(1, 0, 0, 1));
+    ps_ptr.push_back(new GeoLib::Point(0, 1, 0, 2));
+    ps_ptr.push_back(new GeoLib::Point(0, 0, 1, 3));
     GeoLib::PointVec point_vec(name, std::move(ps_ptr),
-                               std::map<std::string, std::size_t>{});
+                               GeoLib::PointVec::NameIdMap{});
 
     ASSERT_EQ(std::size_t(0), point_vec.getIDMap()[0]);
     ASSERT_EQ(std::size_t(1), point_vec.getIDMap()[1]);
@@ -191,18 +191,19 @@ TEST_F(PointVecTest, TestPointVecPushBack)
 // Testing random input points.
 TEST_F(PointVecTest, TestPointVecCtorRandomPoints)
 {
-    auto ps_ptr = std::make_unique<VectorOfPoints>();
-    generateRandomPoints(*ps_ptr, 10000);
+    VectorOfPoints ps_ptr{};
+    generateRandomPoints(ps_ptr, 10000);
 
     auto point_vec = std::make_unique<GeoLib::PointVec>(
-        name, std::move(ps_ptr), std::map<std::string, std::size_t>{});
+        name, std::move(ps_ptr), GeoLib::PointVec::NameIdMap{});
 }
+
 TEST_F(PointVecTest, TestPointVecCtorRandomPointsLargeEps)
 {
-    auto ps_ptr = std::make_unique<VectorOfPoints>();
-    generateRandomPoints(*ps_ptr, 10000);
+    VectorOfPoints ps_ptr{};
+    generateRandomPoints(ps_ptr, 10000);
 
     auto point_vec = std::make_unique<GeoLib::PointVec>(
-        name, std::move(ps_ptr), std::map<std::string, std::size_t>{},
+        name, std::move(ps_ptr), GeoLib::PointVec::NameIdMap{},
         GeoLib::PointVec::PointType::POINT, 1e-2);
 }

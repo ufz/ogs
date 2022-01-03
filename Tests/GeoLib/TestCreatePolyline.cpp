@@ -17,17 +17,15 @@ struct GeoLibCreatePolyline : public testing::Test
 {
     GeoLibCreatePolyline()
     {
-        auto points = std::make_unique<std::vector<GeoLib::Point*>>();
-        points->push_back(new GeoLib::Point{0.0, 0.0, 0.0});
-        points->push_back(new GeoLib::Point{1.0, 1.0, 1.0});
-        points->push_back(new GeoLib::Point{0.5, 0.5, 0.5});
+        points.push_back(new GeoLib::Point{0.0, 0.0, 0.0});
+        points.push_back(new GeoLib::Point{1.0, 1.0, 1.0});
+        points.push_back(new GeoLib::Point{0.5, 0.5, 0.5});
         std::string point_vec_name("test");
         point_vec = std::make_unique<GeoLib::PointVec>(
-            point_vec_name, std::move(points),
-            std::map<std::string, std::size_t>{});
+            point_vec_name, std::move(points), GeoLib::PointVec::NameIdMap{});
     }
 
-    std::unique_ptr<std::vector<GeoLib::Point*>> points;
+    std::vector<GeoLib::Point*> points;
     std::unique_ptr<GeoLib::PointVec> point_vec;
 };
 

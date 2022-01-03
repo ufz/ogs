@@ -49,7 +49,7 @@ protected:
 private:
     /// Reads GeoLib::Point-objects from an xml-file
     void readPoints(const QDomNode& pointsRoot,
-                    std::vector<GeoLib::Point*>* points,
+                    std::vector<GeoLib::Point*>& points,
                     std::map<std::string, std::size_t>* pnt_names);
 
     /// Reads GeoLib::Polyline-objects from an xml-file

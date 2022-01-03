@@ -32,11 +32,11 @@ TEST(GeoLib, DuplicateGeometry)
     std::size_t n_pnts(rand() % 1000 + 100);
     int box_size(std::rand());
     double half_box_size(box_size / 2);
-    auto pnts = std::make_unique<std::vector<GeoLib::Point*>>();
-    pnts->reserve(n_pnts);
+    std::vector<GeoLib::Point*> pnts{};
+    pnts.reserve(n_pnts);
     for (int k(0); k < static_cast<int>(n_pnts); k++)
     {
-        pnts->push_back(
+        pnts.push_back(
             new GeoLib::Point(std::rand() % box_size - half_box_size,
                               std::rand() % box_size - half_box_size,
                               std::rand() % box_size - half_box_size));

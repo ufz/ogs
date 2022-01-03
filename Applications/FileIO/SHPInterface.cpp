@@ -90,7 +90,7 @@ void SHPInterface::readPoints(const SHPHandle& hSHP, int numberOfElements,
 {
     if (numberOfElements > 0)
     {
-        auto points = std::make_unique<std::vector<GeoLib::Point*>>();
+        std::vector<GeoLib::Point*> points{};
         SHPObject* hSHPObject;
 
         for (int i = 0; i < numberOfElements; i++)
@@ -100,7 +100,7 @@ void SHPInterface::readPoints(const SHPHandle& hSHP, int numberOfElements,
             auto* pnt =
                 new GeoLib::Point(*(hSHPObject->padfX), *(hSHPObject->padfY),
                                   *(hSHPObject->padfZ));
-            points->push_back(pnt);
+            points.push_back(pnt);
         }
 
         _geoObjects.addPointVec(std::move(points), listName,
@@ -114,8 +114,8 @@ void SHPInterface::readStations(const SHPHandle& hSHP, int numberOfElements,
 {
     if (numberOfElements > 0)
     {
-        auto stations = std::make_unique<std::vector<GeoLib::Point*>>();
-        stations->reserve(numberOfElements);
+        std::vector<GeoLib::Point*> stations{};
+        stations.reserve(numberOfElements);
         SHPObject* hSHPObject;
 
         for (int i = 0; i < numberOfElements; i++)
@@ -126,7 +126,7 @@ void SHPInterface::readStations(const SHPHandle& hSHP, int numberOfElements,
                                                *(hSHPObject->padfX),
                                                *(hSHPObject->padfY),
                                                *(hSHPObject->padfZ));
-            stations->push_back(stn);
+            stations.push_back(stn);
         }
 
         _geoObjects.addStationVec(std::move(stations), listName);
@@ -141,7 +141,7 @@ void SHPInterface::readPolylines(const SHPHandle& hSHP, int numberOfElements,
     {
         return;
     }
-    auto pnts = std::make_unique<std::vector<GeoLib::Point*>>();
+    std::vector<GeoLib::Point*> pnts{};
     auto lines = std::make_unique<std::vector<GeoLib::Polyline*>>();
 
     std::size_t pnt_id(0);
@@ -162,7 +162,7 @@ void SHPInterface::readPolylines(const SHPHandle& hSHP, int numberOfElements,
             // for each point in that polyline
             for (int j = firstPnt; j < lastPnt; ++j)
             {
-                pnts->push_back(new GeoLib::Point(
+                pnts.push_back(new GeoLib::Point(
                     *(hSHPObject->padfX + j), *(hSHPObject->padfY + j),
                     *(hSHPObject->padfZ + j), pnt_id));
                 pnt_id++;

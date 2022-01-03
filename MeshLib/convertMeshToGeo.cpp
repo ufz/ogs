@@ -32,11 +32,11 @@ std::string convertMeshNodesToGeoPoints(MeshLib::Mesh const& mesh,
                                         double const eps,
                                         GeoLib::GEOObjects& geo_objects)
 {
-    auto points = std::make_unique<std::vector<GeoLib::Point*>>();
-    points->reserve(mesh.getNumberOfNodes());
+    std::vector<GeoLib::Point*> points{};
+    points.reserve(mesh.getNumberOfNodes());
 
     std::transform(begin(mesh.getNodes()), end(mesh.getNodes()),
-                   std::back_inserter(*points),
+                   std::back_inserter(points),
                    [](MeshLib::Node const* node_ptr)
                    { return new GeoLib::Point(*node_ptr, node_ptr->getID()); });
 

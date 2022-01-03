@@ -38,13 +38,13 @@ void deleteSurfaces(std::unique_ptr<std::vector<GeoLib::Surface*>> surfaces)
         delete surface;
     }
 }
-void deleteGeometry(std::unique_ptr<std::vector<GeoLib::Point*>> points,
+void deleteGeometry(std::vector<GeoLib::Point*>& points,
                     std::unique_ptr<std::vector<GeoLib::Polyline*>>
                         polylines,
                     std::unique_ptr<std::vector<GeoLib::Surface*>>
                         surfaces)
 {
-    for (GeoLib::Point* point : *points)
+    for (GeoLib::Point* point : points)
     {
         delete point;
     }
@@ -80,7 +80,7 @@ int XmlGmlInterface::readFile(const QString& fileName)
 
     std::string gliName("[NN]");
 
-    auto points = std::make_unique<std::vector<GeoLib::Point*>>();
+    std::vector<GeoLib::Point*> points{};
     auto polylines = std::make_unique<std::vector<GeoLib::Polyline*>>();
     auto surfaces = std::make_unique<std::vector<GeoLib::Surface*>>();
 
@@ -99,7 +99,7 @@ int XmlGmlInterface::readFile(const QString& fileName)
             if (type_node.toElement().text().isEmpty())
             {
                 ERR("XmlGmlInterface::readFile(): <name>-tag is empty.");
-                deleteGeometry(std::move(points), std::move(polylines),
+                deleteGeometry(points, std::move(polylines),
                                std::move(surfaces));
                 return 0;
             }
@@ -108,7 +108,7 @@ int XmlGmlInterface::readFile(const QString& fileName)
         }
         else if (nodeName.compare("points") == 0)
         {
-            readPoints(type_node, points.get(), &pnt_names);
+            readPoints(type_node, points, &pnt_names);
             _geo_objs.addPointVec(std::move(points), gliName,
                                   std::move(pnt_names));
         }
@@ -173,7 +173,7 @@ int XmlGmlInterface::readFile(const QString& fileName)
 }
 
 void XmlGmlInterface::readPoints(const QDomNode& pointsRoot,
-                                 std::vector<GeoLib::Point*>* points,
+                                 std::vector<GeoLib::Point*>& points,
                                  std::map<std::string, std::size_t>* pnt_names)
 {
     char* pEnd;
@@ -182,7 +182,7 @@ void XmlGmlInterface::readPoints(const QDomNode& pointsRoot,
     {
         _idx_map.insert(std::pair<std::size_t, std::size_t>(
             strtol((point.attribute("id")).toStdString().c_str(), &pEnd, 10),
-            points->size()));
+            points.size()));
         GeoLib::Point* p = new GeoLib::Point(point.attribute("x").toDouble(),
                                              point.attribute("y").toDouble(),
                                              point.attribute("z").toDouble(),
@@ -190,10 +190,10 @@ void XmlGmlInterface::readPoints(const QDomNode& pointsRoot,
         if (point.hasAttribute("name"))
         {
             pnt_names->insert(std::pair<std::string, std::size_t>(
-                point.attribute("name").toStdString(), points->size()));
+                point.attribute("name").toStdString(), points.size()));
         }
 
-        points->push_back(p);
+        points.push_back(p);
         point = point.nextSiblingElement();
     }
 }

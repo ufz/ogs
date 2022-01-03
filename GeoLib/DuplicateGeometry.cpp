@@ -40,9 +40,9 @@ void DuplicateGeometry::duplicate(std::string const& input_name)
         return;
     }
 
-    auto new_pnts = std::make_unique<std::vector<GeoLib::Point*>>();
-    new_pnts->reserve(pnts->size());
-    std::transform(pnts->cbegin(), pnts->cend(), std::back_inserter(*new_pnts),
+    std::vector<GeoLib::Point*> new_pnts{};
+    new_pnts.reserve(pnts->size());
+    std::transform(pnts->cbegin(), pnts->cend(), std::back_inserter(new_pnts),
                    [](GeoLib::Point* point)
                    { return new GeoLib::Point(*point); });
     PointVec::NameIdMap pnt_name_id_map(

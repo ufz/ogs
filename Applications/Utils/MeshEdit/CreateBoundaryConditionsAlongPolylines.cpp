@@ -35,12 +35,12 @@ void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
                                 GeoLib::GEOObjects& geometry_sets)
 {
     // copy data
-    auto pnts = std::make_unique<std::vector<GeoLib::Point*>>();
+    std::vector<GeoLib::Point*> pnts{};
     GeoLib::PointVec::NameIdMap pnt_names{};
     std::size_t cnt(0);
     for (std::size_t id : node_ids)
     {
-        pnts->push_back(new GeoLib::Point(*(nodes[id]), cnt));
+        pnts.push_back(new GeoLib::Point(*(nodes[id]), cnt));
         pnt_names.insert(std::pair<std::string, std::size_t>(
             geo_name + "-PNT-" + std::to_string(cnt), cnt));
         cnt++;
@@ -264,12 +264,12 @@ int main(int argc, char* argv[])
               { return p0 < p1; });
 
     double const eps(std::numeric_limits<double>::epsilon());
-    auto surface_pnts = std::make_unique<std::vector<GeoLib::Point*>>();
+    std::vector<GeoLib::Point*> surface_pnts{};
     GeoLib::PointVec::NameIdMap name_id_map{};
 
     // insert first point
-    surface_pnts->push_back(
-        new GeoLib::Point(pnts_with_id[0], surface_pnts->size()));
+    surface_pnts.push_back(
+        new GeoLib::Point(pnts_with_id[0], surface_pnts.size()));
     {
         std::string element_name;
         pnt_vec->getNameOfElementByID(0, element_name);
@@ -282,12 +282,12 @@ int main(int argc, char* argv[])
         const GeoLib::Point& p1(pnts_with_id[k]);
         if (std::abs(p0[0] - p1[0]) > eps || std::abs(p0[1] - p1[1]) > eps)
         {
-            surface_pnts->push_back(
-                new GeoLib::Point(pnts_with_id[k], surface_pnts->size()));
+            surface_pnts.push_back(
+                new GeoLib::Point(pnts_with_id[k], surface_pnts.size()));
             std::string element_name;
             pnt_vec->getNameOfElementByID(k, element_name);
             name_id_map.insert(std::pair<std::string, std::size_t>(
-                element_name, surface_pnts->size() - 1));
+                element_name, surface_pnts.size() - 1));
         }
     }
 

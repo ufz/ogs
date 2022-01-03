@@ -36,7 +36,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
 
     FEM_CLASS fem_class;
     FEM_DIM fem_dim;
-    std::vector<GeoLib::Point*>* points = nullptr;
+    std::vector<GeoLib::Point*> points;
     std::vector<GeoLib::Polyline*>* lines = nullptr;
 
     bool isXZplane = false;
@@ -243,9 +243,9 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
             (*nod)[2] = (*nod)[1];
             (*nod)[1] = 0.0;
         }
-        if (points)
+        if (!points.empty())
         {
-            for (auto* pt : *points)
+            for (auto* pt : points)
             {
                 (*pt)[2] = (*pt)[1];
                 (*pt)[1] = .0;

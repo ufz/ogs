@@ -706,10 +706,10 @@ void MainWindow::loadFile(ImportFileType::type t, const QString& fileName)
     {
         if (fi.suffix().toLower() == "txt")  // GMS borehole files
         {
-            auto boreholes = std::make_unique<std::vector<GeoLib::Point*>>();
+            std::vector<GeoLib::Point*> boreholes;
             std::string name = fi.baseName().toStdString();
 
-            if (GMSInterface::readBoreholesFromGMS(boreholes.get(),
+            if (GMSInterface::readBoreholesFromGMS(boreholes,
                                                    fileName.toStdString()))
             {
                 _project.getGEOObjects().addStationVec(std::move(boreholes),

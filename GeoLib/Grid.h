@@ -339,31 +339,30 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
                 grid_names.push_back(name);
 
                 {
-                    auto points =
-                        std::make_unique<std::vector<GeoLib::Point*>>();
-                    points->push_back(new GeoLib::Point(
+                    std::vector<GeoLib::Point*> points{};
+                    points.push_back(new GeoLib::Point(
                         llf[0] + i * dx, llf[1] + j * dy, llf[2] + k * dz));
-                    points->push_back(new GeoLib::Point(llf[0] + i * dx,
-                                                        llf[1] + (j + 1) * dy,
-                                                        llf[2] + k * dz));
-                    points->push_back(new GeoLib::Point(llf[0] + (i + 1) * dx,
-                                                        llf[1] + (j + 1) * dy,
-                                                        llf[2] + k * dz));
-                    points->push_back(new GeoLib::Point(llf[0] + (i + 1) * dx,
-                                                        llf[1] + j * dy,
-                                                        llf[2] + k * dz));
-                    points->push_back(new GeoLib::Point(llf[0] + i * dx,
-                                                        llf[1] + j * dy,
-                                                        llf[2] + (k + 1) * dz));
-                    points->push_back(new GeoLib::Point(llf[0] + i * dx,
-                                                        llf[1] + (j + 1) * dy,
-                                                        llf[2] + (k + 1) * dz));
-                    points->push_back(new GeoLib::Point(llf[0] + (i + 1) * dx,
-                                                        llf[1] + (j + 1) * dy,
-                                                        llf[2] + (k + 1) * dz));
-                    points->push_back(new GeoLib::Point(llf[0] + (i + 1) * dx,
-                                                        llf[1] + j * dy,
-                                                        llf[2] + (k + 1) * dz));
+                    points.push_back(new GeoLib::Point(llf[0] + i * dx,
+                                                       llf[1] + (j + 1) * dy,
+                                                       llf[2] + k * dz));
+                    points.push_back(new GeoLib::Point(llf[0] + (i + 1) * dx,
+                                                       llf[1] + (j + 1) * dy,
+                                                       llf[2] + k * dz));
+                    points.push_back(new GeoLib::Point(llf[0] + (i + 1) * dx,
+                                                       llf[1] + j * dy,
+                                                       llf[2] + k * dz));
+                    points.push_back(new GeoLib::Point(llf[0] + i * dx,
+                                                       llf[1] + j * dy,
+                                                       llf[2] + (k + 1) * dz));
+                    points.push_back(new GeoLib::Point(llf[0] + i * dx,
+                                                       llf[1] + (j + 1) * dy,
+                                                       llf[2] + (k + 1) * dz));
+                    points.push_back(new GeoLib::Point(llf[0] + (i + 1) * dx,
+                                                       llf[1] + (j + 1) * dy,
+                                                       llf[2] + (k + 1) * dz));
+                    points.push_back(new GeoLib::Point(llf[0] + (i + 1) * dx,
+                                                       llf[1] + j * dy,
+                                                       llf[2] + (k + 1) * dz));
                     geo_obj->addPointVec(std::move(points), grid_names.back(),
                                          PointVec::NameIdMap{});
                 }

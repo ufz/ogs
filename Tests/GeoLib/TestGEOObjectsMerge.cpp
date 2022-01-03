@@ -87,12 +87,12 @@ TEST(GeoLib, GEOObjectsMergePointsAndPolylines)
     std::vector<std::string> names;
 
     // *** insert points to vector
-    auto pnts = std::make_unique<std::vector<GeoLib::Point*>>();
-    pnts->reserve(4);
-    pnts->push_back(new GeoLib::Point(0.0, 0.0, 0.0));
-    pnts->push_back(new GeoLib::Point(1.0, 0.0, 0.0));
-    pnts->push_back(new GeoLib::Point(1.0, 1.0, 0.0));
-    pnts->push_back(new GeoLib::Point(0.0, 1.0, 0.0));
+    std::vector<GeoLib::Point*> pnts{};
+    pnts.reserve(4);
+    pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
+    pnts.push_back(new GeoLib::Point(1.0, 0.0, 0.0));
+    pnts.push_back(new GeoLib::Point(1.0, 1.0, 0.0));
+    pnts.push_back(new GeoLib::Point(0.0, 1.0, 0.0));
 
     std::string geometry_0("GeometryWithPntsAndPolyline");
     geo_objs.addPointVec(std::move(pnts),
@@ -136,12 +136,12 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
     std::vector<std::string> names;
 
     // *** insert first set of points to vector (for first polyline)
-    auto pnts_0 = std::make_unique<std::vector<GeoLib::Point*>>();
-    pnts_0->reserve(4);
-    pnts_0->push_back(new GeoLib::Point(0.0, 0.0, 0.0));
-    pnts_0->push_back(new GeoLib::Point(1.0, 0.0, 0.0));
-    pnts_0->push_back(new GeoLib::Point(1.0, 1.0, 0.0));
-    pnts_0->push_back(new GeoLib::Point(0.0, 1.0, 0.0));
+    std::vector<GeoLib::Point*> pnts_0{};
+    pnts_0.reserve(4);
+    pnts_0.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
+    pnts_0.push_back(new GeoLib::Point(1.0, 0.0, 0.0));
+    pnts_0.push_back(new GeoLib::Point(1.0, 1.0, 0.0));
+    pnts_0.push_back(new GeoLib::Point(0.0, 1.0, 0.0));
 
     std::string geometry_0("Geometry0");
     geo_objs.addPointVec(std::move(pnts_0),
@@ -165,12 +165,12 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
         std::move(plys_0), geometry_0, std::move(names_map_0));
     names.push_back(geometry_0);
 
-    auto pnts_1 = std::make_unique<std::vector<GeoLib::Point*>>();
-    pnts_1->reserve(4);
-    pnts_1->push_back(new GeoLib::Point(0.0, 0.0, 0.0));
-    pnts_1->push_back(new GeoLib::Point(1.0, 0.0, 0.0));
-    pnts_1->push_back(new GeoLib::Point(1.0, 1.0, 0.0));
-    pnts_1->push_back(new GeoLib::Point(0.0, 1.0, 0.0));
+    std::vector<GeoLib::Point*> pnts_1{};
+    pnts_1.reserve(4);
+    pnts_1.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
+    pnts_1.push_back(new GeoLib::Point(1.0, 0.0, 0.0));
+    pnts_1.push_back(new GeoLib::Point(1.0, 1.0, 0.0));
+    pnts_1.push_back(new GeoLib::Point(0.0, 1.0, 0.0));
 
     std::string geometry_1("Geometry1");
     geo_objs.addPointVec(std::move(pnts_1),
