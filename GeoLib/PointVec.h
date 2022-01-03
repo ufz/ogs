@@ -44,8 +44,6 @@ public:
         STATION = 1
     };
 
-    using NameIdMap = TemplateVec<Point>::NameIdMap;
-
     /**
      * Constructor initializes the name of the PointVec object,
      * the internal pointer _pnt_vec to the raw points and the internal
@@ -64,10 +62,6 @@ public:
      * with the value of rel_eps gives the real tolerance \f$tol\f$. Two points
      * \f$p_0, p_1 \f$ are identical iff \f$|p_1 - p_0| \le tol.\f$
      */
-    PointVec(std::string& name, std::unique_ptr<std::vector<Point*>> points,
-             NameIdMap&& name_id_map,
-             PointType type = PointVec::PointType::POINT,
-             double rel_eps = std::numeric_limits<double>::epsilon());
     PointVec(std::string& name, std::vector<Point*> points,
              NameIdMap&& name_id_map,
              PointType type = PointVec::PointType::POINT,
