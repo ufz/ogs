@@ -88,11 +88,6 @@ public:
      * @param eps relative tolerance value for testing of point uniqueness
      */
     void addPointVec(
-        std::unique_ptr<std::vector<Point*>> points,
-        std::string& name,
-        PointVec::NameIdMap&& pnt_id_name_map,
-        double const eps = std::sqrt(std::numeric_limits<double>::epsilon()));
-    void addPointVec(
         std::vector<Point*>&& points, std::string& name,
         PointVec::NameIdMap&& pnt_id_name_map,
         double const eps = std::sqrt(std::numeric_limits<double>::epsilon()));
@@ -123,8 +118,6 @@ public:
     bool removePointVec(const std::string &name);
 
     /// Adds a vector of stations with the given name and colour to GEOObjects.
-    void addStationVec(
-        std::unique_ptr<std::vector<Point *>> stations, std::string &name);
     void addStationVec(std::vector<Point*>&& stations, std::string& name);
 
     /// Returns the station vector with the given name.

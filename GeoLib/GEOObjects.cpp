@@ -46,25 +46,6 @@ GEOObjects::~GEOObjects()
     }
 }
 
-void GEOObjects::addPointVec(std::unique_ptr<std::vector<Point*>> points,
-                             std::string& name,
-                             PointVec::NameIdMap&& pnt_id_name_map,
-                             double const eps)
-{
-    isUniquePointVecName(name);
-    if (!points || points->empty())
-    {
-        DBUG(
-            "GEOObjects::addPointVec(): Failed to create PointVec, because "
-            "there aren't any points in the given vector.");
-        return;
-    }
-    _pnt_vecs.push_back(new PointVec(name, std::move(points),
-                                     std::move(pnt_id_name_map),
-                                     PointVec::PointType::POINT, eps));
-    _callbacks->addPointVec(name);
-}
-
 void GEOObjects::addPointVec(std::vector<Point*>&& points,
                              std::string& name,
                              PointVec::NameIdMap&& pnt_id_name_map,
@@ -133,16 +114,6 @@ bool GEOObjects::removePointVec(std::string const& name)
     DBUG("GEOObjects::removePointVec() - No entry found with name '{:s}'.",
          name);
     return false;
-}
-
-void GEOObjects::addStationVec(std::unique_ptr<std::vector<Point*>> stations,
-                               std::string& name)
-{
-    isUniquePointVecName(name);
-    _pnt_vecs.push_back(new PointVec(name, std::move(stations),
-                                     std::map<std::string, std::size_t>{},
-                                     PointVec::PointType::STATION));
-    _callbacks->addStationVec(name);
 }
 
 void GEOObjects::addStationVec(std::vector<Point*>&& stations,
