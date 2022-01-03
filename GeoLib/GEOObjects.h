@@ -125,6 +125,7 @@ public:
     /// Adds a vector of stations with the given name and colour to GEOObjects.
     void addStationVec(
         std::unique_ptr<std::vector<Point *>> stations, std::string &name);
+    void addStationVec(std::vector<Point*>&& stations, std::string& name);
 
     /// Returns the station vector with the given name.
     const std::vector<GeoLib::Point*>* getStationVec(
