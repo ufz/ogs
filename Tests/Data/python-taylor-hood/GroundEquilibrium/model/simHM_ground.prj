@@ -286,4 +286,32 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <!--primary field-->
+        <vtkdiff>
+            <file>simHM_ground_ts_1_t_1000000.000000_ref.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>simHM_ground_ts_1_t_1000000.000000_ref.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <!--secondary field-->
+        <vtkdiff>
+            <file>simHM_ground_ts_1_t_1000000.000000_ref.vtu</file>
+            <field>sigma</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>simHM_ground_ts_1_t_1000000.000000_ref.vtu</file>
+            <field>DarcyVelocity</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
