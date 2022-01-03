@@ -137,10 +137,6 @@ public:
      * @param name The geometry to which the given Polyline objects should be added.
      * @param ply_names map of names and ids that are corresponding to the polylines
      */
-    void addPolylineVec(std::unique_ptr<std::vector<Polyline*>> lines,
-                        const std::string& name,
-                        std::unique_ptr<std::map<std::string, std::size_t>>
-                            ply_names = nullptr);
     void addPolylineVec(std::vector<Polyline*>&& lines,
                         std::string const& name,
                         PolylineVec::NameIdMap&& ply_names);

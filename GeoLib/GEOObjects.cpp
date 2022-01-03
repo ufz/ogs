@@ -145,26 +145,6 @@ const std::vector<GeoLib::Point*>* GEOObjects::getStationVec(
     return nullptr;
 }
 
-void GEOObjects::addPolylineVec(
-    std::unique_ptr<std::vector<Polyline*>> lines, const std::string& name,
-    std::unique_ptr<std::map<std::string, std::size_t>> ply_names)
-{
-    assert(lines);
-    auto lines_end = std::remove_if(
-        lines->begin(), lines->end(),
-        [](auto const* polyline) { return polyline->getNumberOfPoints() < 2; });
-    lines->erase(lines_end, lines->end());
-
-    if (lines->empty())
-    {
-        return;
-    }
-
-    _ply_vecs.push_back(
-        new PolylineVec(name, std::move(lines), std::move(ply_names)));
-    _callbacks->addPolylineVec(name);
-}
-
 void GEOObjects::addPolylineVec(std::vector<Polyline*>&& lines,
                                 std::string const& name,
                                 PolylineVec::NameIdMap&& ply_names)
