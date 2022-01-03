@@ -68,6 +68,10 @@ public:
              NameIdMap&& name_id_map,
              PointType type = PointVec::PointType::POINT,
              double rel_eps = std::numeric_limits<double>::epsilon());
+    PointVec(std::string& name, std::vector<Point*> points,
+             NameIdMap&& name_id_map,
+             PointType type = PointVec::PointType::POINT,
+             double rel_eps = std::numeric_limits<double>::epsilon());
 
     /**
      * Method adds a Point to the (internal) standard vector and takes the
