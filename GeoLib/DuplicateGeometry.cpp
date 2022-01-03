@@ -68,10 +68,9 @@ void DuplicateGeometry::duplicate(std::string const& input_name)
     if (sfcs)
     {
         auto new_sfcs = copySurfacesVector(*sfcs);
-        auto sfc_name_id_map =
-            std::make_unique<std::map<std::string, std::size_t>>(
-                _geo_objects.getSurfaceVecObj(input_name)->getNameIDMapBegin(),
-                _geo_objects.getSurfaceVecObj(input_name)->getNameIDMapEnd());
+        GeoLib::SurfaceVec::NameIdMap sfc_name_id_map{
+            _geo_objects.getSurfaceVecObj(input_name)->getNameIDMapBegin(),
+            _geo_objects.getSurfaceVecObj(input_name)->getNameIDMapEnd()};
         _geo_objects.addSurfaceVec(std::move(new_sfcs), _output_name,
                                    std::move(sfc_name_id_map));
     }
@@ -100,12 +99,11 @@ std::vector<GeoLib::Polyline*> DuplicateGeometry::copyPolylinesVector(
     return new_lines;
 }
 
-std::unique_ptr<std::vector<Surface*>> DuplicateGeometry::copySurfacesVector(
+std::vector<Surface*> DuplicateGeometry::copySurfacesVector(
     std::vector<Surface*> const& surfaces) const
 {
     std::size_t const n_sfc = surfaces.size();
-    auto new_surfaces =
-        std::make_unique<std::vector<GeoLib::Surface*>>(n_sfc, nullptr);
+    std::vector<GeoLib::Surface*> new_surfaces{n_sfc, nullptr};
 
     for (std::size_t i = 0; i < n_sfc; ++i)
     {
@@ -113,16 +111,16 @@ std::unique_ptr<std::vector<Surface*>> DuplicateGeometry::copySurfacesVector(
         {
             continue;
         }
-        (*new_surfaces)[i] =
+        new_surfaces[i] =
             new GeoLib::Surface(*_geo_objects.getPointVec(_output_name));
 
         std::size_t const n_tris(surfaces[i]->getNumberOfTriangles());
         for (std::size_t j = 0; j < n_tris; ++j)
         {
             GeoLib::Triangle const* t = (*surfaces[i])[j];
-            (*new_surfaces)[i]->addTriangle(t->getPoint(0)->getID(),
-                                            t->getPoint(1)->getID(),
-                                            t->getPoint(2)->getID());
+            new_surfaces[i]->addTriangle(t->getPoint(0)->getID(),
+                                         t->getPoint(1)->getID(),
+                                         t->getPoint(2)->getID());
         }
     }
     return new_surfaces;

@@ -45,10 +45,6 @@ bool BoostXmlGmlInterface::readFile(const std::string& fname)
     doc->ignoreConfigAttribute("xsi:noNamespaceSchemaLocation");
     doc->ignoreConfigAttribute("xmlns:ogs");
 
-    auto surfaces = std::make_unique<std::vector<GeoLib::Surface*>>();
-    using MapNameId = std::map<std::string, std::size_t>;
-    auto sfc_names = std::make_unique<MapNameId>();
-
     //! \ogs_file_param{gml__name}
     auto geo_name = doc->getConfigParameter<std::string>("name");
     if (geo_name.empty())
@@ -78,14 +74,15 @@ bool BoostXmlGmlInterface::readFile(const std::string& fname)
                       ply_names);
     }
 
+    std::vector<GeoLib::Surface*> surfaces{};
+    SurfaceVec::NameIdMap sfc_names{};
+
     //! \ogs_file_param{gml__surfaces}
     for (auto st : doc->getConfigSubtreeList("surfaces"))
     {
-        readSurfaces(st,
-                     *surfaces,
-                     *_geo_objects.getPointVec(geo_name),
+        readSurfaces(st, surfaces, *_geo_objects.getPointVec(geo_name),
                      _geo_objects.getPointVecObj(geo_name)->getIDMap(),
-                     *sfc_names);
+                     sfc_names);
     }
 
     if (!polylines.empty())
@@ -94,7 +91,7 @@ bool BoostXmlGmlInterface::readFile(const std::string& fname)
                                     std::move(ply_names));
     }
 
-    if (!surfaces->empty())
+    if (!surfaces.empty())
     {
         _geo_objects.addSurfaceVec(std::move(surfaces), geo_name,
                                    std::move(sfc_names));

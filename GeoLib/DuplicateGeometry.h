@@ -56,8 +56,8 @@ private:
         std::vector<GeoLib::Polyline*> const& polylines) const;
 
     // creates a deep copy of the surface vector
-    std::unique_ptr<std::vector<GeoLib::Surface*>> copySurfacesVector(
-        std::vector<GeoLib::Surface*> const& surfaces) const;
+    std::vector<Surface*> copySurfacesVector(
+        std::vector<Surface*> const& surfaces) const;
 
     std::string _output_name;
     GeoLib::GEOObjects& _geo_objects;

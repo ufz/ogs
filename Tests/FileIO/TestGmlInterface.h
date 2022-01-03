@@ -159,18 +159,19 @@ public:
         const std::vector<std::size_t> pnt_id_map(
             geo_objects.getPointVecObj(geo_name)->getIDMap());
 
-        auto sfcs = std::make_unique<std::vector<GeoLib::Surface*>>(2);
-        auto sfc_names = std::make_unique<std::map<std::string, std::size_t>>();
-        (*sfcs)[0] = new GeoLib::Surface(*points);
-        (*sfcs)[0]->addTriangle(pnt_id_map[0], pnt_id_map[3], pnt_id_map[1]);
-        (*sfcs)[0]->addTriangle(pnt_id_map[1], pnt_id_map[3], pnt_id_map[4]);
-        (*sfcs)[0]->addTriangle(pnt_id_map[1], pnt_id_map[4], pnt_id_map[2]);
-        (*sfcs)[0]->addTriangle(pnt_id_map[2], pnt_id_map[4], pnt_id_map[5]);
-        (*sfc_names)["FirstSurface"] = 0;
-        (*sfcs)[1] = new GeoLib::Surface(*points);
-        (*sfcs)[1]->addTriangle(pnt_id_map[3], pnt_id_map[6], pnt_id_map[8]);
-        (*sfcs)[1]->addTriangle(pnt_id_map[3], pnt_id_map[8], pnt_id_map[5]);
-        (*sfc_names)["SecondSurface"] = 1;
+        std::vector<GeoLib::Surface*> sfcs{2};
+        GeoLib::SurfaceVec::NameIdMap sfc_names{};
+        sfcs[0] = new GeoLib::Surface(*points);
+        sfcs[0]->addTriangle(pnt_id_map[0], pnt_id_map[3], pnt_id_map[1]);
+        sfcs[0]->addTriangle(pnt_id_map[1], pnt_id_map[3], pnt_id_map[4]);
+        sfcs[0]->addTriangle(pnt_id_map[1], pnt_id_map[4], pnt_id_map[2]);
+        sfcs[0]->addTriangle(pnt_id_map[2], pnt_id_map[4], pnt_id_map[5]);
+        sfc_names["FirstSurface"] = 0;
+
+        sfcs[1] = new GeoLib::Surface(*points);
+        sfcs[1]->addTriangle(pnt_id_map[3], pnt_id_map[6], pnt_id_map[8]);
+        sfcs[1]->addTriangle(pnt_id_map[3], pnt_id_map[8], pnt_id_map[5]);
+        sfc_names["SecondSurface"] = 1;
         geo_objects.addSurfaceVec(std::move(sfcs), geo_name,
                                   std::move(sfc_names));
     }

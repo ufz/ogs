@@ -285,9 +285,8 @@ bool GEOObjects::appendSurfaceVec(const std::vector<Surface*>& surfaces,
 
     // the copy is needed because addSurfaceVec is passing it to SurfaceVec
     // ctor, which needs write access to the surface vector.
-    auto sfc = std::make_unique<std::vector<GeoLib::Surface*>>(begin(surfaces),
-                                                               end(surfaces));
-    addSurfaceVec(std::move(sfc), name);
+    std::vector<GeoLib::Surface*> sfc{begin(surfaces), end(surfaces)};
+    addSurfaceVec(std::move(sfc), name, SurfaceVec::NameIdMap{});
     return false;
 }
 
@@ -562,9 +561,8 @@ void GEOObjects::mergeSurfaces(std::vector<std::string> const& geo_names,
 
     const std::size_t n_geo_names(geo_names.size());
     std::vector<std::size_t> sfc_offsets(n_geo_names, 0);
-    auto merged_sfcs = std::make_unique<std::vector<GeoLib::Surface*>>();
-    auto merged_sfc_names =
-        std::make_unique<std::map<std::string, std::size_t>>();
+    std::vector<GeoLib::Surface*> merged_sfcs{};
+    SurfaceVec::NameIdMap merged_sfc_names{};
     for (std::size_t j(0); j < n_geo_names; j++)
     {
         const std::vector<GeoLib::Surface*>* sfcs(
@@ -587,14 +585,12 @@ void GEOObjects::mergeSurfaces(std::vector<std::string> const& geo_names,
                     const std::size_t id2(id_map[pnt_offsets[j] + (*tri)[2]]);
                     kth_sfc_new->addTriangle(id0, id1, id2);
                 }
-                merged_sfcs->push_back(kth_sfc_new);
+                merged_sfcs.push_back(kth_sfc_new);
 
                 if (this->getSurfaceVecObj(geo_names[j])
                         ->getNameOfElementByID(k, tmp_name))
                 {
-                    merged_sfc_names->insert(
-                        std::pair<std::string, std::size_t>(
-                            tmp_name, sfc_offsets[j] + k));
+                    merged_sfc_names.emplace(tmp_name, sfc_offsets[j] + k);
                 }
             }
             if (n_geo_names - 1 > j)
@@ -603,7 +599,7 @@ void GEOObjects::mergeSurfaces(std::vector<std::string> const& geo_names,
             }
         }
     }
-    if (!merged_sfcs->empty())
+    if (!merged_sfcs.empty())
     {
         this->addSurfaceVec(std::move(merged_sfcs), merged_geo_name,
                             std::move(merged_sfc_names));
