@@ -54,10 +54,10 @@ private:
 
     /// Reads GeoLib::Polyline-objects from an xml-file
     void readPolylines(const QDomNode& polylinesRoot,
-                       std::vector<GeoLib::Polyline*>* polylines,
+                       std::vector<GeoLib::Polyline*>& polylines,
                        std::vector<GeoLib::Point*> const& points,
                        const std::vector<std::size_t>& pnt_id_map,
-                       std::map<std::string, std::size_t>* ply_names);
+                       GeoLib::PolylineVec::NameIdMap& ply_names);
 
     /// Reads GeoLib::Surface-objects from an xml-file
     void readSurfaces(const QDomNode& surfacesRoot,

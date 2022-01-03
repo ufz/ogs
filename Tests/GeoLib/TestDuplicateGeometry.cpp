@@ -74,7 +74,7 @@ TEST(GeoLib, DuplicateGeometry)
     // add polylines
     {
         int const n_plys = std::rand() % 10 + 1;
-        auto plys = std::make_unique<std::vector<GeoLib::Polyline*>>();
+        std::vector<GeoLib::Polyline*> plys{};
         for (int i = 0; i < n_plys; ++i)
         {
             int const n_ply_pnts = std::rand() % 100 + 2;
@@ -83,9 +83,10 @@ TEST(GeoLib, DuplicateGeometry)
             {
                 line->addPoint(std::rand() % n_pnts);
             }
-            plys->push_back(line);
+            plys.push_back(line);
         }
-        geo.addPolylineVec(std::move(plys), input_name);
+        geo.addPolylineVec(std::move(plys), input_name,
+                           GeoLib::PolylineVec::NameIdMap{});
     }
 
     // duplicate polylines

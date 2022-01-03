@@ -37,7 +37,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
     FEM_CLASS fem_class;
     FEM_DIM fem_dim;
     std::vector<GeoLib::Point*> points;
-    std::vector<GeoLib::Polyline*>* lines = nullptr;
+    std::vector<GeoLib::Polyline*> lines{};
 
     bool isXZplane = false;
 
@@ -232,8 +232,8 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
     else
     {
         opt_material_ids->resize(mesh->getNumberOfElements());
-        setMaterialIDs(fem_class, fem_dim, lines, vec_elementsets, vec_elements,
-                       *opt_material_ids);
+        setMaterialIDs(fem_class, fem_dim, &lines, vec_elementsets,
+                       vec_elements, *opt_material_ids);
     }
 
     if (isXZplane)

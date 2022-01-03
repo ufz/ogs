@@ -20,18 +20,17 @@
 #include "GeoLib/Utils.h"
 #include "InfoLib/GitInfo.h"
 
-std::tuple<std::unique_ptr<std::vector<GeoLib::Polyline*>>,
-           std::unique_ptr<std::map<std::string, std::size_t>>>
+std::tuple<std::vector<GeoLib::Polyline*>, GeoLib::PolylineVec::NameIdMap>
 appendNamedPolyline(std::unique_ptr<GeoLib::Polyline> polyline,
                     std::string&& polyline_name)
 {
-    auto lines = std::make_unique<std::vector<GeoLib::Polyline*>>();
-    auto name_map = std::make_unique<std::map<std::string, std::size_t>>();
+    std::vector<GeoLib::Polyline*> lines{};
+    GeoLib::PolylineVec::NameIdMap name_map{};
 
-    lines->push_back(polyline.release());
-    (*name_map)[std::move(polyline_name)] = lines->size() - 1;
+    lines.push_back(polyline.release());
+    name_map[std::move(polyline_name)] = lines.size() - 1;
 
-    return {std::move(lines), std::move(name_map)};
+    return {lines, name_map};
 }
 
 void generateSinglePointGeometry(GeoLib::Point const& point,

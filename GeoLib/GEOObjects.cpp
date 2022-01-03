@@ -513,9 +513,8 @@ void GEOObjects::mergePolylines(std::vector<std::string> const& geo_names,
     const std::size_t n_geo_names(geo_names.size());
     std::vector<std::size_t> ply_offsets(n_geo_names, 0);
 
-    auto merged_polylines = std::make_unique<std::vector<GeoLib::Polyline*>>();
-    auto merged_ply_names =
-        std::make_unique<std::map<std::string, std::size_t>>();
+    std::vector<GeoLib::Polyline*> merged_polylines{};
+    PolylineVec::NameIdMap merged_ply_names;
 
     std::vector<GeoLib::Point*> const* merged_points(
         this->getPointVecObj(merged_geo_name)->getVector());
@@ -542,13 +541,11 @@ void GEOObjects::mergePolylines(std::vector<std::string> const& geo_names,
                     kth_ply_new->addPoint(
                         id_map[pnt_offsets[j] + kth_ply_old->getPointID(i)]);
                 }
-                merged_polylines->push_back(kth_ply_new);
+                merged_polylines.push_back(kth_ply_new);
                 if (this->getPolylineVecObj(geo_names[j])
                         ->getNameOfElementByID(k, tmp_name))
                 {
-                    merged_ply_names->insert(
-                        std::pair<std::string, std::size_t>(
-                            tmp_name, ply_offsets[j] + k));
+                    merged_ply_names.emplace(tmp_name, ply_offsets[j] + k);
                 }
             }
             if (n_geo_names - 1 > j)
@@ -558,7 +555,7 @@ void GEOObjects::mergePolylines(std::vector<std::string> const& geo_names,
         }
     }
 
-    if (!merged_polylines->empty())
+    if (!merged_polylines.empty())
     {
         this->addPolylineVec(std::move(merged_polylines), merged_geo_name,
                              std::move(merged_ply_names));

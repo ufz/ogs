@@ -38,11 +38,10 @@ namespace GeoLib
  * */
 template <class T> class TemplateVec
 {
-protected:
+public:
     using NameIdPair = std::pair<std::string, std::size_t>;
     using NameIdMap = std::map<std::string, std::size_t>;
 
-public:
     /**
      * Constructor of class TemlateVec.
      * @param name unique name of the project the elements belonging to.

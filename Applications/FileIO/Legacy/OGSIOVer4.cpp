@@ -155,8 +155,8 @@ void readPolylinePointVector(const std::string& fname,
 **************************************************************************/
 /** read a single Polyline from stream in into the ply_vec-vector */
 std::string readPolyline(std::istream& in,
-                         std::vector<GeoLib::Polyline*>* ply_vec,
-                         std::map<std::string, std::size_t>& ply_vec_names,
+                         std::vector<GeoLib::Polyline*>& ply_vec,
+                         GeoLib::PolylineVec::NameIdMap& ply_vec_names,
                          std::vector<GeoLib::Point*>& pnt_vec,
                          bool zero_based_indexing,
                          const std::vector<std::size_t>& pnt_id_map,
@@ -252,8 +252,8 @@ std::string readPolyline(std::istream& in,
     if (type != 100)
     {
         ply_vec_names.insert(
-            std::pair<std::string, std::size_t>(name_of_ply, ply_vec->size()));
-        ply_vec->push_back(ply);
+            std::pair<std::string, std::size_t>(name_of_ply, ply_vec.size()));
+        ply_vec.push_back(ply);
     }
 
     return line;
@@ -271,7 +271,7 @@ polyline 08/2005 CC parameter 01/2010 TF changed signature of function
 **************************************************************************/
 /** reads polylines */
 std::string readPolylines(std::istream& in,
-                          std::vector<GeoLib::Polyline*>* ply_vec,
+                          std::vector<GeoLib::Polyline*>& ply_vec,
                           std::map<std::string, std::size_t>& ply_vec_names,
                           std::vector<GeoLib::Point*>& pnt_vec,
                           bool zero_based_indexing,
@@ -545,8 +545,8 @@ bool readGLIFileV4(const std::string& fname,
     const std::string path = BaseLib::extractPath(fname);
 
     // read names of plys into temporary string-vec
-    auto ply_names = std::make_unique<std::map<std::string, std::size_t>>();
-    auto ply_vec = std::make_unique<std::vector<GeoLib::Polyline*>>();
+    GeoLib::PolylineVec::NameIdMap ply_names{};
+    std::vector<GeoLib::Polyline*> ply_vec{};
     GeoLib::PointVec& point_vec(
         *const_cast<GeoLib::PointVec*>(geo.getPointVecObj(unique_name)));
     auto* geo_pnt_vec(
@@ -555,17 +555,17 @@ bool readGLIFileV4(const std::string& fname,
     {
         INFO("GeoLib::readGLIFile(): read polylines from stream.");
         tag = readPolylines(
-            in, ply_vec.get(), *ply_names, *geo_pnt_vec, zero_based_idx,
+            in, ply_vec, ply_names, *geo_pnt_vec, zero_based_idx,
             geo.getPointVecObj(unique_name)->getIDMap(), path, errors);
         INFO("GeoLib::readGLIFile(): \t ok, {:d} polylines read.",
-             ply_vec->size());
+             ply_vec.size());
     }
     else
     {
         INFO("GeoLib::readGLIFile(): tag #POLYLINE not found.");
     }
 
-    if (!ply_vec->empty())
+    if (!ply_vec.empty())
     {
         geo.addPolylineVec(std::move(ply_vec), unique_name,
                            std::move(ply_names));

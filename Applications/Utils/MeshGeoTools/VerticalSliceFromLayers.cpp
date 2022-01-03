@@ -107,9 +107,10 @@ std::vector<std::string> createGeometries(
         geo.addPointVec(std::move(points), geo_name,
                         GeoLib::PointVec::NameIdMap{});
 
-        auto lines = std::make_unique<std::vector<GeoLib::Polyline*>>();
-        lines->push_back(createPolyline(*geo.getPointVec(geo_name)));
-        geo.addPolylineVec(std::move(lines), geo_name);
+        std::vector<GeoLib::Polyline*> lines{};
+        lines.push_back(createPolyline(*geo.getPointVec(geo_name)));
+        geo.addPolylineVec(std::move(lines), geo_name,
+                           GeoLib::PolylineVec::NameIdMap{});
 
         MeshGeoToolsLib::GeoMapper mapper(geo, geo_name);
         mapper.mapOnMesh(layer.get());
@@ -126,7 +127,7 @@ void mergeGeometries(GeoLib::GEOObjects& geo,
                      std::string& merged_geo_name)
 {
     std::vector<GeoLib::Point*> points{};
-    auto lines = std::make_unique<std::vector<GeoLib::Polyline*>>();
+    std::vector<GeoLib::Polyline*> lines{};
 
     auto layer_pnts = *geo.getPointVec(geo_names[0]);
     std::size_t const pnts_per_line = layer_pnts.size();
@@ -162,12 +163,13 @@ void mergeGeometries(GeoLib::GEOObjects& geo,
         }
         // close polygon
         line->addPoint(line->getPointID(0));
-        lines->push_back(line);
+        lines.push_back(line);
     }
 
     geo.addPointVec(std::move(points), merged_geo_name,
                     GeoLib::PointVec::NameIdMap{});
-    geo.addPolylineVec(std::move(lines), merged_geo_name);
+    geo.addPolylineVec(std::move(lines), merged_geo_name,
+                       GeoLib::PolylineVec::NameIdMap{});
 }
 
 /// rotates the merged geometry into the XY-plane

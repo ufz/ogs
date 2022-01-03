@@ -491,22 +491,22 @@ void GMSHPolygonTree::writeAdditionalPointData(std::size_t& pnt_id_offset,
             dynamic_cast<GMSHAdaptiveMeshDensity*>(&_mesh_density_strategy))
     {
         std::vector<GeoLib::Point*> pnts{};
-        auto plys = std::make_unique<std::vector<GeoLib::Polyline*>>();
-        adaptive_mesh_density->getQuadTreeGeometry(pnts, *plys);
+        std::vector<GeoLib::Polyline*> plys{};
+        adaptive_mesh_density->getQuadTreeGeometry(pnts, plys);
         std::string quad_tree_geo("QuadTree");
         _geo_objs.addPointVec(std::move(pnts), quad_tree_geo,
                               GeoLib::PointVec::NameIdMap{});
         std::vector<std::size_t> const& id_map(
             (_geo_objs.getPointVecObj(quad_tree_geo))->getIDMap());
-        for (std::size_t k(0); k < plys->size(); k++)
+        for (std::size_t k(0); k < plys.size(); k++)
         {
-            for (std::size_t j(0); j < (*plys)[k]->getNumberOfPoints(); j++)
+            for (std::size_t j(0); j < plys[k]->getNumberOfPoints(); j++)
             {
-                ((*plys)[k])
-                    ->setPointID(j, id_map[((*plys)[k])->getPointID(j)]);
+                (plys[k])->setPointID(j, id_map[(plys[k])->getPointID(j)]);
             }
         }
-        _geo_objs.addPolylineVec(std::move(plys), quad_tree_geo);
+        _geo_objs.addPolylineVec(std::move(plys), quad_tree_geo,
+                                 GeoLib::PolylineVec::NameIdMap{});
     }
 #endif
 }

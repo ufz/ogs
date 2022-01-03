@@ -142,7 +142,7 @@ void SHPInterface::readPolylines(const SHPHandle& hSHP, int numberOfElements,
         return;
     }
     std::vector<GeoLib::Point*> pnts{};
-    auto lines = std::make_unique<std::vector<GeoLib::Polyline*>>();
+    std::vector<GeoLib::Polyline*> lines{};
 
     std::size_t pnt_id(0);
     // for each polyline
@@ -191,7 +191,7 @@ void SHPInterface::readPolylines(const SHPHandle& hSHP, int numberOfElements,
                 INFO(
                     "Polygon {:d} consists of {:d} parts (PolylineIDs "
                     "{:d}-{:d}).",
-                    i, noOfParts, lines->size(), lines->size() + noOfParts - 1);
+                    i, noOfParts, lines.size(), lines.size() + noOfParts - 1);
             }
 
             int const firstPnt = *(hSHPObject->panPartStart + p);
@@ -208,11 +208,12 @@ void SHPInterface::readPolylines(const SHPHandle& hSHP, int numberOfElements,
                 pnt_id++;
             }
             // add polyline to polyline vector
-            lines->push_back(line);
+            lines.push_back(line);
         }
         SHPDestroyObject(hSHPObject);  // de-allocate SHPObject
     }
-    _geoObjects.addPolylineVec(std::move(lines), listName);
+    _geoObjects.addPolylineVec(std::move(lines), listName,
+                               GeoLib::PolylineVec::NameIdMap{});
 }
 
 void SHPInterface::readPolygons(const SHPHandle& hSHP, int numberOfElements,

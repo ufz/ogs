@@ -51,10 +51,11 @@ public:
         ply->addPoint(0);
         ply->addPoint(1);
 
-        auto plys = std::make_unique<std::vector<GeoLib::Polyline*>>();
-        plys->push_back(ply);
+        std::vector<GeoLib::Polyline*> plys{};
+        plys.push_back(ply);
 
-        geo_objs.addPolylineVec(std::move(plys), geometry_0, nullptr);
+        geo_objs.addPolylineVec(std::move(plys), geometry_0,
+                                GeoLib::PolylineVec::NameIdMap{});
 
         auto search_length = std::make_unique<MGTL::SearchLength>();
         MGTL::MeshNodeSearcher const& searcher_nodes =

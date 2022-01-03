@@ -112,14 +112,14 @@ public:
 
         auto const& pnt_vec = *(geo_objects.getPointVecObj(geo_name));
 
-        auto lines = std::make_unique<std::vector<GeoLib::Polyline*>>(5);
-        auto name_map = std::make_unique<std::map<std::string, std::size_t>>();
+        std::vector<GeoLib::Polyline*> lines{5};
+        GeoLib::PolylineVec::NameIdMap name_map{};
 
-        createPolyline(pnt_vec, *(lines.get()), 0, {0, 1, 2}, *name_map, "left");
-        createPolyline(pnt_vec, *(lines.get()), 1, {3, 4, 5}, *name_map, "center");
-        createPolyline(pnt_vec, *(lines.get()), 2, {0, 3}, *name_map, "line1");
-        createPolyline(pnt_vec, *(lines.get()), 3, {3, 6}, *name_map, "line2");
-        createPolyline(pnt_vec, *(lines.get()), 4, {6, 7, 8}, *name_map, "right");
+        createPolyline(pnt_vec, lines, 0, {0, 1, 2}, name_map, "left");
+        createPolyline(pnt_vec, lines, 1, {3, 4, 5}, name_map, "center");
+        createPolyline(pnt_vec, lines, 2, {0, 3}, name_map, "line1");
+        createPolyline(pnt_vec, lines, 3, {3, 6}, name_map, "line2");
+        createPolyline(pnt_vec, lines, 4, {6, 7, 8}, name_map, "right");
         geo_objects.addPolylineVec(std::move(lines), geo_name,
                                    std::move(name_map));
     }

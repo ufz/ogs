@@ -37,7 +37,7 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
 
     unsigned dimension = 0;
     std::vector<GeoLib::Point*> points{};
-    std::vector<GeoLib::Polyline*>* lines = nullptr;
+    std::vector<GeoLib::Polyline*> lines{};
 
     bool isXZplane = false;
 
@@ -101,11 +101,10 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
         geo_objects.addPointVec(std::move(points), project_name,
                                 GeoLib::PointVec::NameIdMap{});
     }
-    if (lines)
+    if (!lines.empty())
     {
-        geo_objects.addPolylineVec(
-            std::unique_ptr<std::vector<GeoLib::Polyline*>>(lines),
-            project_name);
+        geo_objects.addPolylineVec(std::move(lines), project_name,
+                                   GeoLib::PolylineVec::NameIdMap{});
     }
 
 }
@@ -147,7 +146,7 @@ void FEFLOWGeoInterface::readPoints(QDomElement& nodesEle,
 void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
                                        unsigned dimension,
                                        std::vector<GeoLib::Point*>& points,
-                                       std::vector<GeoLib::Polyline*>*& lines)
+                                       std::vector<GeoLib::Polyline*>& lines)
 {
     // get XML strings
     std::ostringstream oss;
@@ -192,7 +191,6 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
     }
 
     // #polygons
-    lines = new std::vector<GeoLib::Polyline*>();
     QDomElement polygonsEle = docElem.firstChildElement("polygons");
     if (polygonsEle.isNull())
     {
@@ -218,7 +216,7 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
             QString str_ptId_list = xmlEle.text().simplified();
             {
                 auto* line = new GeoLib::Polyline(points);
-                lines->push_back(line);
+                lines.push_back(line);
                 std::istringstream ss(str_ptId_list.toStdString());
                 for (std::size_t i = 0; i < n_points; i++)
                 {

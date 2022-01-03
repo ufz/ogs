@@ -52,7 +52,7 @@ private:
     void duplicate(std::string const& input_name);
 
     // creates a deep copy of the polyline vector
-    std::unique_ptr<std::vector<GeoLib::Polyline*>> copyPolylinesVector(
+    std::vector<GeoLib::Polyline*> copyPolylinesVector(
         std::vector<GeoLib::Polyline*> const& polylines) const;
 
     // creates a deep copy of the surface vector

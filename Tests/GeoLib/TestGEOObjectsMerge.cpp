@@ -107,9 +107,10 @@ TEST(GeoLib, GEOObjectsMergePointsAndPolylines)
     ply->addPoint(2);
     ply->addPoint(3);
     ply->addPoint(0);
-    auto plys = std::make_unique<std::vector<GeoLib::Polyline*>>();
-    plys->push_back(ply);
-    geo_objs.addPolylineVec(std::move(plys), geometry_0, nullptr);
+    std::vector<GeoLib::Polyline*> plys{};
+    plys.push_back(ply);
+    geo_objs.addPolylineVec(std::move(plys), geometry_0,
+                            GeoLib::PolylineVec::NameIdMap{});
     names.push_back(geometry_0);
 
     // *** insert set of points number
@@ -156,10 +157,10 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
     ply_00->addPoint(2);
     ply_00->addPoint(3);
     ply_00->addPoint(0);
-    auto plys_0 = std::make_unique<std::vector<GeoLib::Polyline*>>();
-    plys_0->push_back(ply_00);
-    auto names_map_0 = std::make_unique<std::map<std::string, std::size_t>>();
-    names_map_0->insert(
+    std::vector<GeoLib::Polyline*> plys_0{};
+    plys_0.push_back(ply_00);
+    GeoLib::PolylineVec::NameIdMap names_map_0{};
+    names_map_0.insert(
         std::pair<std::string, std::size_t>("Polyline0FromGeometry0", 0));
     geo_objs.addPolylineVec(
         std::move(plys_0), geometry_0, std::move(names_map_0));
@@ -185,13 +186,13 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
     auto* ply_11(new GeoLib::Polyline(*geo_objs.getPointVec(geometry_1)));
     ply_11->addPoint(2);
     ply_11->addPoint(3);
-    auto plys_1 = std::make_unique<std::vector<GeoLib::Polyline*>>();
-    plys_1->push_back(ply_10);
-    plys_1->push_back(ply_11);
-    auto names_map_1 = std::make_unique<std::map<std::string, std::size_t>>();
-    names_map_1->insert(
+    std::vector<GeoLib::Polyline*> plys_1{};
+    plys_1.push_back(ply_10);
+    plys_1.push_back(ply_11);
+    GeoLib::PolylineVec::NameIdMap names_map_1{};
+    names_map_1.insert(
         std::pair<std::string, std::size_t>("Polyline0FromGeometry1", 0));
-    names_map_1->insert(
+    names_map_1.insert(
         std::pair<std::string, std::size_t>("Polyline1FromGeometry1", 1));
     geo_objs.addPolylineVec(
         std::move(plys_1), geometry_1, std::move(names_map_1));

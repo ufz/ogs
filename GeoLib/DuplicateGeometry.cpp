@@ -56,10 +56,9 @@ void DuplicateGeometry::duplicate(std::string const& input_name)
     if (plys)
     {
         auto new_plys = copyPolylinesVector(*plys);
-        auto ply_name_id_map =
-            std::make_unique<std::map<std::string, std::size_t>>(
-                _geo_objects.getPolylineVecObj(input_name)->getNameIDMapBegin(),
-                _geo_objects.getPolylineVecObj(input_name)->getNameIDMapEnd());
+        PolylineVec::NameIdMap ply_name_id_map{
+            _geo_objects.getPolylineVecObj(input_name)->getNameIDMapBegin(),
+            _geo_objects.getPolylineVecObj(input_name)->getNameIDMapEnd()};
         _geo_objects.addPolylineVec(std::move(new_plys), _output_name,
                                     std::move(ply_name_id_map));
     }
@@ -78,13 +77,11 @@ void DuplicateGeometry::duplicate(std::string const& input_name)
     }
 }
 
-std::unique_ptr<std::vector<GeoLib::Polyline*>>
-DuplicateGeometry::copyPolylinesVector(
+std::vector<GeoLib::Polyline*> DuplicateGeometry::copyPolylinesVector(
     std::vector<GeoLib::Polyline*> const& polylines) const
 {
     std::size_t const n_plys = polylines.size();
-    auto new_lines =
-        std::make_unique<std::vector<GeoLib::Polyline*>>(n_plys, nullptr);
+    std::vector<GeoLib::Polyline*> new_lines{n_plys, nullptr};
 
     for (std::size_t i = 0; i < n_plys; ++i)
     {
@@ -92,12 +89,12 @@ DuplicateGeometry::copyPolylinesVector(
         {
             continue;
         }
-        (*new_lines)[i] =
+        new_lines[i] =
             new GeoLib::Polyline(*_geo_objects.getPointVec(_output_name));
         std::size_t const nLinePnts(polylines[i]->getNumberOfPoints());
         for (std::size_t j = 0; j < nLinePnts; ++j)
         {
-            (*new_lines)[i]->addPoint(polylines[i]->getPointID(j));
+            new_lines[i]->addPoint(polylines[i]->getPointID(j));
         }
     }
     return new_lines;

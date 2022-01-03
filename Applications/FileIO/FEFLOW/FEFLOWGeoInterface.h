@@ -48,7 +48,7 @@ public:
     /// region
     static void readSuperMesh(std::ifstream& in, unsigned dimension,
                               std::vector<GeoLib::Point*>& points,
-                              std::vector<GeoLib::Polyline*>*& lines);
+                              std::vector<GeoLib::Polyline*>& lines);
 
 private:
     //// read point data in Supermesh
