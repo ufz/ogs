@@ -55,36 +55,6 @@ public:
      * of the element and the value for std::size_t stands for an index in
      * the data_vec.
      */
-    TemplateVec(std::string name, std::unique_ptr<std::vector<T*>> data_vec,
-                std::unique_ptr<NameIdMap> elem_name_map = nullptr)
-        : _name(name),
-          _data_vec(*data_vec),
-          _name_id_map_ptr(std::move(elem_name_map)),
-          _name_id_map(NameIdMap{})
-    {
-        if (data_vec == nullptr)
-        {
-            OGS_FATAL("Constructor TemplateVec: vector of data elements is a nullptr.");
-        }
-
-        if (_name_id_map_ptr)
-        {
-            _name_id_map = *_name_id_map_ptr;
-        }
-    }
-
-    TemplateVec(std::string name, std::unique_ptr<std::vector<T*>> data_vec,
-                NameIdMap&& elem_name_map)
-        : _name(name),
-          _data_vec(*data_vec),
-          _name_id_map(std::move(elem_name_map))
-    {
-        if (data_vec == nullptr)
-        {
-            OGS_FATAL("Constructor TemplateVec: vector of data elements is a nullptr.");
-        }
-    }
-
     TemplateVec(std::string const& name, std::vector<T*>&& data_vec,
                 NameIdMap&& elem_name_map)
         : _name(name),
@@ -279,7 +249,6 @@ protected:
     /**
      * store names associated with the element ids
      */
-    std::unique_ptr<NameIdMap> _name_id_map_ptr;
     NameIdMap _name_id_map;
 };
 } // end namespace GeoLib
