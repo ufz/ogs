@@ -165,6 +165,25 @@ void GEOObjects::addPolylineVec(
     _callbacks->addPolylineVec(name);
 }
 
+void GEOObjects::addPolylineVec(std::vector<Polyline*>&& lines,
+                                std::string const& name,
+                                PolylineVec::NameIdMap&& ply_names)
+{
+    auto lines_end = std::remove_if(
+        lines.begin(), lines.end(),
+        [](auto const* polyline) { return polyline->getNumberOfPoints() < 2; });
+    lines.erase(lines_end, lines.end());
+
+    if (lines.empty())
+    {
+        return;
+    }
+
+    _ply_vecs.push_back(
+        new PolylineVec(name, std::move(lines), std::move(ply_names)));
+    _callbacks->addPolylineVec(name);
+}
+
 bool GEOObjects::appendPolylineVec(const std::vector<Polyline*>& polylines,
                                    const std::string& name)
 {

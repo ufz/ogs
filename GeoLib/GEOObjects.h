@@ -141,6 +141,9 @@ public:
                         const std::string& name,
                         std::unique_ptr<std::map<std::string, std::size_t>>
                             ply_names = nullptr);
+    void addPolylineVec(std::vector<Polyline*>&& lines,
+                        std::string const& name,
+                        PolylineVec::NameIdMap&& ply_names);
 
     /** copies the pointers to the polylines in the vector to the PolylineVec with provided name.
      * the pointers are managed by the GEOObjects, i.e. GEOObjects will delete the Polylines at the
