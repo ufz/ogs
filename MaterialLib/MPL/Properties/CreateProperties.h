@@ -42,6 +42,7 @@
 #include "CreateStrainDependentPermeability.h"
 #include "CreateTemperatureDependentDiffusion.h"
 #include "CreateTransportPorosityFromMassBalance.h"
+#include "CreateVermaPruessModel.h"
 #include "Density/CreateWaterVapourDensity.h"
 #include "Enthalpy/CreateLinearWaterVapourLatentHeat.h"
 #include "Enthalpy/CreateWaterVapourLatentHeatWithCriticalTemperature.h"
