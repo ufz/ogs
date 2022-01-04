@@ -34,6 +34,7 @@ include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
 if(OGS_USE_NETCDF)
     set(CONAN_REQUIRES ${CONAN_REQUIRES} netcdf-cxx/4.3.1-3@bilke/testing)
+    set(CONAN_OPTIONS netcdf:dap=False)
 endif()
 
 if(NOT DEFINED CONAN_REQUIRES)
