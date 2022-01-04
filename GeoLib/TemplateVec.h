@@ -232,12 +232,10 @@ private:
     }
 
 protected:
-    /** copy constructor doesn't have an implementation */
-    // compiler does not create a (possible unwanted) copy constructor
-    TemplateVec (const TemplateVec &);
-    /** assignment operator doesn't have an implementation */
-    // this way the compiler does not create a (possible unwanted) assignment operator
-    TemplateVec& operator= (const TemplateVec& rhs);
+    TemplateVec(TemplateVec const&) = delete;
+    TemplateVec(TemplateVec&&) = delete;
+    TemplateVec& operator=(TemplateVec const& rhs) = delete;
+    TemplateVec& operator=(TemplateVec&& rhs) = delete;
 
     /** the name of the object */
     std::string _name;
