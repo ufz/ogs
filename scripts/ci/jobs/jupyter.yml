@@ -41,14 +41,11 @@ build jupyter:
     - >
       docker run --rm -v $PWD:/home/jovyan/work --user `id -u $USER` --group-add users
       --workdir /home/jovyan/work $DOCKER_TAG_JUPYTER_PETSC
-      bash -c "find Tests/Notebooks -type f -iname '*.ipynb' -not -path \"*.ipynb_checkpoints*\" | xargs -n1 jupyter nbconvert --execute --inplace"
-    - >
-      docker run --rm -v $PWD:/home/jovyan/work --user `id -u $USER` --group-add users
-      --workdir /home/jovyan/work $DOCKER_TAG_JUPYTER_PETSC
-      bash -c "find Tests/Notebooks -type f -iname '*.ipynb' -not -path \"*.ipynb_checkpoints*\" | xargs -n1 nb2hugo --site-dir web --section docs/benchmarks/notebooks --template Tests/Notebooks/nbconvert_templates/collapsed.md.j2"
+      bash -c "cd Tests/Notebooks && find . -type f -iname '*.ipynb' -not -path \"*.ipynb_checkpoints*\" | xargs -n1 python testrunner.py --out _out --hugo"
   artifacts:
     name: container
     paths:
       - web/content/docs/benchmarks/notebooks
       - web/static/docs/benchmarks/notebooks
-      - Tests/Notebooks/**/*.ipynb
+      - Tests/Notebooks/_out/**/*.html
+      - Tests/Notebooks/_out/**/out.txt

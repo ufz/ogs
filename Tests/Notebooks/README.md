@@ -7,3 +7,13 @@ Install [nbdime](https://nbdime.readthedocs.io) and enable [git integration](htt
 ```bash
 nbdime config-git --enable --global
 ```
+
+## testrunner
+
+```bash
+# in virtualenv:
+pip install -r requirements.txt
+PATH=~/code/ogs/build/release/bin:$PATH python testrunner.py --out _out SimpleMechanics.ipynb
+```
+
+In Notebook do checks with `assert False` or `raise SystemExit()` on failure.
