@@ -36,7 +36,8 @@ namespace GeoLib
  *
  * Instances are classes PolylineVec and SurfaceVec.
  * */
-template <class T> class TemplateVec
+template <class T>
+class TemplateVec
 {
 public:
     using NameIdPair = std::pair<std::string, std::size_t>;
@@ -66,7 +67,7 @@ public:
     /**
      * destructor, deletes all data elements
      */
-    virtual ~TemplateVec ()
+    virtual ~TemplateVec()
     {
         for (std::size_t k(0); k < size(); k++)
         {
@@ -77,12 +78,12 @@ public:
     /** sets the name of the vector of geometric objects
      * the data elements belonging to
      * \param n the name as standard string */
-    void setName (const std::string & n) { _name = n; }
+    void setName(const std::string& n) { _name = n; }
     /**
      * the name, the data element belonging to
      * @return the name of the object
      */
-    std::string getName () const { return _name; }
+    std::string getName() const { return _name; }
 
     /// Returns the begin of the name id mapping structure
     NameIdMap::const_iterator getNameIDMapBegin() const
@@ -99,22 +100,23 @@ public:
     /**
      * @return the number of data elements
      */
-    std::size_t size () const { return _data_vec.size(); }
+    std::size_t size() const { return _data_vec.size(); }
 
     /**
      * get a pointer to a standard vector containing the data elements
      * @return the data elements
      */
-    const std::vector<T*>* getVector () const { return &_data_vec; }
+    const std::vector<T*>* getVector() const { return &_data_vec; }
 
     /**
-     * search the vector of names for the ID of the geometric element with the given name
+     * search the vector of names for the ID of the geometric element with the
+     * given name
      * @param name the name of the geometric element
      * @param id the id of the geometric element
      */
-    bool getElementIDByName (const std::string& name, std::size_t &id) const
+    bool getElementIDByName(const std::string& name, std::size_t& id) const
     {
-        auto it (_name_id_map.find (name));
+        auto it(_name_id_map.find(name));
 
         if (it != _name_id_map.end())
         {
@@ -125,10 +127,10 @@ public:
     }
 
     /// Returns an element with the given name.
-    const T* getElementByName (const std::string& name) const
+    const T* getElementByName(const std::string& name) const
     {
         std::size_t id;
-        bool ret (getElementIDByName (name, id));
+        bool ret(getElementIDByName(name, id));
         if (ret)
         {
             return _data_vec[id];
@@ -146,11 +148,12 @@ public:
      * @return if there is name associated with the given id:
      * true, else false
      */
-    bool getNameOfElementByID (std::size_t id, std::string& element_name) const
+    bool getNameOfElementByID(std::size_t id, std::string& element_name) const
     {
         // search in map for id
         auto it = findFirstElementByID(id);
-        if (it == _name_id_map.end()) {
+        if (it == _name_id_map.end())
+        {
             return false;
         }
         element_name = it->first;
@@ -158,7 +161,7 @@ public:
     }
 
     /// Return the name of an element based on its ID.
-    void setNameOfElementByID (std::size_t id, std::string const& element_name)
+    void setNameOfElementByID(std::size_t id, std::string const& element_name)
     {
         _name_id_map.insert(NameIdPair(element_name, id));
     }
@@ -171,7 +174,7 @@ public:
      * found and the data element has a name)
      * @return if element is found and has a name: true, else false
      */
-    bool getNameOfElement (const T* data, std::string& name) const
+    bool getNameOfElement(const T* data, std::string& name) const
     {
         for (std::size_t k(0); k < _data_vec.size(); k++)
         {
@@ -185,20 +188,23 @@ public:
     }
 
     /// Adds a new element to the vector.
-    virtual void push_back (T* data_element, std::string const* const name = nullptr)
+    virtual void push_back(T* data_element,
+                           std::string const* const name = nullptr)
     {
-        _data_vec.push_back (data_element);
+        _data_vec.push_back(data_element);
         if (!name || name->empty())
         {
             return;
         }
 
         std::map<std::string, std::size_t>::const_iterator it(
-            _name_id_map.find(*name)
-        );
-        if (it == _name_id_map.end()) {
+            _name_id_map.find(*name));
+        if (it == _name_id_map.end())
+        {
             _name_id_map.insert(NameIdPair(*name, _data_vec.size() - 1));
-        } else {
+        }
+        else
+        {
             WARN(
                 "Name '{:s}' exists already. The object will be inserted "
                 "without a name",
@@ -216,19 +222,19 @@ public:
             _name_id_map.erase(it);
         }
 
-        if (!name.empty()) {
-            //insert new or revised name
+        if (!name.empty())
+        {
+            // insert new or revised name
             _name_id_map.insert(NameIdPair(name, id));
         }
     }
 
 private:
-
-    NameIdMap::const_iterator
-    findFirstElementByID(std::size_t const& id) const
+    NameIdMap::const_iterator findFirstElementByID(std::size_t const& id) const
     {
         return std::find_if(_name_id_map.begin(), _name_id_map.end(),
-            [id](NameIdPair const& elem) { return elem.second == id; });
+                            [id](NameIdPair const& elem)
+                            { return elem.second == id; });
     }
 
 protected:
@@ -249,4 +255,4 @@ protected:
      */
     NameIdMap _name_id_map;
 };
-} // end namespace GeoLib
+}  // end namespace GeoLib
