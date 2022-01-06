@@ -114,13 +114,13 @@ PointVec::PointVec(std::string const& name, std::vector<Point*>&& points,
     // create the inverse mapping
     _id_to_name_map.resize(_data_vec.size());
     // fetch the names from the name id map
-    for (auto p : _name_id_map)
+    for (auto& [name, id] : _name_id_map)
     {
-        if (p.second >= _id_to_name_map.size())
+        if (id >= _id_to_name_map.size())
         {
             continue;
         }
-        _id_to_name_map[p.second] = p.first;
+        _id_to_name_map[id] = name;
     }
 }
 std::size_t PointVec::push_back(Point* pnt)
@@ -263,7 +263,7 @@ void PointVec::resetInternalDataStructures()
         _aabb.getMinPoint(), _aabb.getMaxPoint(), _rel_eps));
 
     GeoLib::Point* ret_pnt(nullptr);
-    for (auto const p : _data_vec)
+    for (auto const &p : _data_vec)
     {
         _oct_tree->addPoint(p, ret_pnt);
     }
