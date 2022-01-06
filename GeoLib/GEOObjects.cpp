@@ -65,6 +65,12 @@ void GEOObjects::addPointVec(std::vector<Point*>&& points,
     _callbacks->addPointVec(name);
 }
 
+void GEOObjects::addPointVec(std::vector<Point*>&& points, std::string& name,
+                             double const eps)
+{
+    addPointVec(std::move(points), name, {}, eps);
+}
+
 const std::vector<Point*>* GEOObjects::getPointVec(
     const std::string& name) const
 {

@@ -93,6 +93,17 @@ public:
         double const eps = std::sqrt(std::numeric_limits<double>::epsilon()));
 
     /**
+     * Adds a vector of points with the given name to GEOObjects. This is an
+     * overloaded version without the need to pass a name-to-id-map.
+     * @param points vector of pointers to points
+     * @param name the project name
+     * @param eps relative tolerance value for testing of point uniqueness
+     */
+    void addPointVec(
+        std::vector<Point*>&& points, std::string& name,
+        double const eps = std::sqrt(std::numeric_limits<double>::epsilon()));
+
+    /**
      * Returns the point vector with the given name.
      */
     const std::vector<Point*>* getPointVec(const std::string &name) const;
