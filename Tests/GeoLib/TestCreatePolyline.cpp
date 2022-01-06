@@ -17,6 +17,7 @@ struct GeoLibCreatePolyline : public testing::Test
 {
     GeoLibCreatePolyline()
     {
+        std::vector<GeoLib::Point*> points;
         points.push_back(new GeoLib::Point{0.0, 0.0, 0.0});
         points.push_back(new GeoLib::Point{1.0, 1.0, 1.0});
         points.push_back(new GeoLib::Point{0.5, 0.5, 0.5});
@@ -24,7 +25,6 @@ struct GeoLibCreatePolyline : public testing::Test
             "test", std::move(points), GeoLib::PointVec::NameIdMap{});
     }
 
-    std::vector<GeoLib::Point*> points;
     std::unique_ptr<GeoLib::PointVec> point_vec;
 };
 
