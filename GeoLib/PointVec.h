@@ -46,15 +46,12 @@ public:
 
     /**
      * Constructor initializes the name of the PointVec object,
-     * the internal pointer _pnt_vec to the raw points and the internal
-     * pointer the vector of names of the points
-     * and sets the type of PointVec.
-     * @param name the name of the point group
-     * @param points Pointer to a vector of pointers to GeoLib::Points.
-     * @attention{PointVec will take the ownership of (the pointer to)
-     * the vector, i.e. it deletes the vector in the destructor! The class
-     * takes also the ownership of the GeoLib::Points the pointers within
-     * the vector points at, i.e. it delete the points!}
+     * and moves the points vector into the internal data structure.
+     * @param name the name of the point set
+     * @param points R-value reference to a vector of pointers to
+     * GeoLib::Points.
+     * @attention{The PointVec object takes the ownership of the GeoLib::Points
+     * in the points vector, i.e. it delete the points during destruction!}
      * @param name_id_map A std::map that stores the relation name to point.
      * @param type the type of the point, \sa enum PointType
      * @param rel_eps This is a relative error tolerance value for the test of
@@ -64,6 +61,13 @@ public:
      */
     PointVec(std::string const& name, std::vector<Point*>&& points,
              NameIdMap&& name_id_map,
+             PointType const type = PointVec::PointType::POINT,
+             double const rel_eps = std::numeric_limits<double>::epsilon());
+    /**
+     * This constructor is similar to the above constructor with the
+     * exception that the NameIdMap must not be passed.
+     */
+    PointVec(std::string const& name, std::vector<Point*>&& points,
              PointType const type = PointVec::PointType::POINT,
              double const rel_eps = std::numeric_limits<double>::epsilon());
 

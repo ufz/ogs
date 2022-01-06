@@ -123,6 +123,13 @@ PointVec::PointVec(std::string const& name, std::vector<Point*>&& points,
         _id_to_name_map[id] = name;
     }
 }
+
+PointVec::PointVec(std::string const& name, std::vector<Point*>&& points,
+                   PointType const type, double const rel_eps)
+    : PointVec(name, std::move(points), NameIdMap{}, type, rel_eps)
+{
+}
+
 std::size_t PointVec::push_back(Point* pnt)
 {
     _pnt_id_map.push_back(uniqueInsert(pnt));
