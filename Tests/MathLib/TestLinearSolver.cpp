@@ -15,6 +15,8 @@
 
 #include <gtest/gtest.h>
 
+#include <tuple>
+
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
@@ -211,8 +213,7 @@ void checkLinearSolverInterface(T_MATRIX& A,
         MathLib::LinearSolverOptionsParser<T_LINEAR_SOLVER>{};
     auto const solver_options =
         linear_solver_parser.parseNameAndOptions("", &ls_option);
-    T_LINEAR_SOLVER ls{std::get<0>(solver_options),
-                       std::get<1>(solver_options)};
+    T_LINEAR_SOLVER ls(std::make_from_tuple<T_LINEAR_SOLVER>(solver_options));
     ls.solve(A, rhs, x);
 
     ASSERT_ARRAY_NEAR(ex1.exH, x, ex1.dim_eqs, 1e-5);
@@ -280,8 +281,7 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
     auto const solver_options =
         MathLib::LinearSolverOptionsParser<T_LINEAR_SOLVER>{}
             .parseNameAndOptions(std::move(temp_prefix_name), &ls_option);
-    T_LINEAR_SOLVER ls(std::get<0>(solver_options),
-                       std::get<1>(solver_options));
+    T_LINEAR_SOLVER ls(std::make_from_tuple<T_LINEAR_SOLVER>(solver_options));
     EXPECT_TRUE(ls.solve(A, b, y));
 
     EXPECT_GT(ls.getNumberOfIterations(), 0u);
