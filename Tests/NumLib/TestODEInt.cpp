@@ -25,23 +25,31 @@
 
 namespace TestODEInt
 {
-#ifndef USE_PETSC
+#if defined(USE_PETSC)
 std::unique_ptr<GlobalLinearSolver> createLinearSolver()
 {
-    return std::make_unique<GlobalLinearSolver>("", nullptr);
+    std::string const petsc_options =
+        "-ksp_type bcgs -pc_type sor -ksp_rtol 1e-24 -ksp_max_it 100 "
+        "-ksp_initial_guess_nonzero false";
+    return std::make_unique<GlobalLinearSolver>("", petsc_options);
+}
+#elif defined(USE_LIS)
+std::unique_ptr<GlobalLinearSolver> createLinearSolver()
+{
+    auto const solver_options =
+        MathLib::LinearSolverOptionsParser<GlobalLinearSolver>{}
+            .parseNameAndOptions("", nullptr);
+    return std::make_unique<GlobalLinearSolver>(std::get<0>(solver_options),
+                                                std::get<1>(solver_options));
 }
 #else
 std::unique_ptr<GlobalLinearSolver> createLinearSolver()
 {
-    const char xml[] =
-        "<petsc><parameters>"
-        "-ksp_type bcgs -pc_type sor -ksp_rtol 1e-24 -ksp_max_it 100 "
-        "-ksp_initial_guess_nonzero false"
-        "</parameters></petsc>";
-    auto const ptree = Tests::readXml(xml);
-    BaseLib::ConfigTree config(ptree, "", BaseLib::ConfigTree::onerror,
-                               BaseLib::ConfigTree::onwarning);
-    return std::make_unique<GlobalLinearSolver>("", &config);
+    auto const solver_options =
+        MathLib::LinearSolverOptionsParser<GlobalLinearSolver>{}
+            .parseNameAndOptions("", nullptr);
+    return std::make_unique<GlobalLinearSolver>(std::get<0>(solver_options),
+                                                std::get<1>(solver_options));
 }
 #endif
 

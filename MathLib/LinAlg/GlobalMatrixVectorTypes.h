@@ -17,37 +17,39 @@
 //
 #if defined(USE_LIS)
 
-    #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
-    #include "MathLib/LinAlg/Eigen/EigenVector.h"
-    #include "MathLib/LinAlg/EigenLis/EigenLisLinearSolver.h"
+#include "MathLib/LinAlg/Eigen/EigenMatrix.h"
+#include "MathLib/LinAlg/Eigen/EigenVector.h"
+#include "MathLib/LinAlg/EigenLis/EigenLisLinearSolver.h"
+#include "MathLib/LinAlg/EigenLis/LinearSolverOptionsParser.h"
 
-    using GlobalVector = MathLib::EigenVector;
-    using GlobalMatrix = MathLib::EigenMatrix;
+using GlobalVector = MathLib::EigenVector;
+using GlobalMatrix = MathLib::EigenMatrix;
 
-    using GlobalLinearSolver = MathLib::EigenLisLinearSolver;
+using GlobalLinearSolver = MathLib::EigenLisLinearSolver;
 
 #elif defined(USE_PETSC)
-    #include "MathLib/LinAlg/PETSc/PETScVector.h"
-    #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
-    #include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
+#include "MathLib/LinAlg/PETSc/LinearSolverOptionsParser.h"
+#include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
+#include "MathLib/LinAlg/PETSc/PETScMatrix.h"
+#include "MathLib/LinAlg/PETSc/PETScVector.h"
 
-    using GlobalVector = MathLib::PETScVector;
-    using GlobalMatrix = MathLib::PETScMatrix;
+using GlobalVector = MathLib::PETScVector;
+using GlobalMatrix = MathLib::PETScMatrix;
 
-    using GlobalLinearSolver = MathLib::PETScLinearSolver;
+using GlobalLinearSolver = MathLib::PETScLinearSolver;
 
 #else
-    #include "MathLib/LinAlg/Eigen/EigenVector.h"
-    #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
-    #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
+#include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
+#include "MathLib/LinAlg/Eigen/EigenMatrix.h"
+#include "MathLib/LinAlg/Eigen/EigenVector.h"
+#include "MathLib/LinAlg/Eigen/LinearSolverOptionsParser.h"
 
-    using GlobalVector = MathLib::EigenVector;
-    using GlobalMatrix = MathLib::EigenMatrix;
+using GlobalVector = MathLib::EigenVector;
+using GlobalMatrix = MathLib::EigenMatrix;
 
-    using GlobalLinearSolver = MathLib::EigenLinearSolver;
+using GlobalLinearSolver = MathLib::EigenLinearSolver;
 
 #endif
-
 
 /// A type used for indexing of global vectors and matrices. It is equal to the
 /// GlobalMatrix::IndexType and the GlobalVector::IndexType.

@@ -23,11 +23,9 @@
 #include <unsupported/Eigen/src/IterativeSolvers/Scaling.h>
 #endif
 
-#include "BaseLib/ConfigTree.h"
 #include "EigenMatrix.h"
 #include "EigenTools.h"
 #include "EigenVector.h"
-#include "MathLib/LinAlg/LinearSolverOptions.h"
 
 namespace MathLib
 {
@@ -54,7 +52,8 @@ class EigenDirectLinearSolver final : public EigenLinearSolverBase
 public:
     bool solve(Matrix& A, Vector const& b, Vector& x, EigenOption& opt) override
     {
-        INFO("-> solve with {:s}", EigenOption::getSolverName(opt.solver_type));
+        INFO("-> solve with Eigen direct linear solver {:s}",
+             EigenOption::getSolverName(opt.solver_type));
         if (!A.isCompressed())
         {
             A.makeCompressed();
@@ -88,7 +87,7 @@ class EigenIterativeLinearSolver final : public EigenLinearSolverBase
 public:
     bool solve(Matrix& A, Vector const& b, Vector& x, EigenOption& opt) override
     {
-        INFO("-> solve with {:s} (precon {:s})",
+        INFO("-> solve with Eigen iterative linear solver {:s} (precon {:s})",
              EigenOption::getSolverName(opt.solver_type),
              EigenOption::getPreconName(opt.precon_type));
         solver_.setTolerance(opt.error_tolerance);
@@ -219,18 +218,12 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
 
 }  // namespace details
 
-EigenLinearSolver::EigenLinearSolver(const std::string& /*solver_name*/,
-                                     const BaseLib::ConfigTree* const option)
+EigenLinearSolver::EigenLinearSolver(std::string const& /*solver_name*/,
+                                     EigenOption const& option)
+    : option_(option)
 {
     using Matrix = EigenMatrix::RawMatrixType;
 
-    if (option)
-    {
-        setOption(*option);
-    }
-
-    // TODO for my taste it is much too unobvious that the default solver type
-    //      currently is SparseLU.
     switch (option_.solver_type)
     {
         case EigenOption::SolverType::SparseLU:
@@ -265,66 +258,6 @@ EigenLinearSolver::EigenLinearSolver(const std::string& /*solver_name*/,
 }
 
 EigenLinearSolver::~EigenLinearSolver() = default;
-
-void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)
-{
-    ignoreOtherLinearSolvers(option, "eigen");
-    //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen}
-    auto const ptSolver = option.getConfigSubtreeOptional("eigen");
-    if (!ptSolver)
-    {
-        return;
-    }
-
-    if (auto solver_type =
-            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__solver_type}
-        ptSolver->getConfigParameterOptional<std::string>("solver_type"))
-    {
-        option_.solver_type = MathLib::EigenOption::getSolverType(*solver_type);
-    }
-    if (auto precon_type =
-            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__precon_type}
-        ptSolver->getConfigParameterOptional<std::string>("precon_type"))
-    {
-        option_.precon_type = MathLib::EigenOption::getPreconType(*precon_type);
-    }
-    if (auto error_tolerance =
-            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__error_tolerance}
-        ptSolver->getConfigParameterOptional<double>("error_tolerance"))
-    {
-        option_.error_tolerance = *error_tolerance;
-    }
-    if (auto max_iteration_step =
-            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__max_iteration_step}
-        ptSolver->getConfigParameterOptional<int>("max_iteration_step"))
-    {
-        option_.max_iterations = *max_iteration_step;
-    }
-    if (auto scaling =
-            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__scaling}
-        ptSolver->getConfigParameterOptional<bool>("scaling"))
-    {
-#ifdef USE_EIGEN_UNSUPPORTED
-        option_.scaling = *scaling;
-#else
-        OGS_FATAL(
-            "The code is not compiled with the Eigen unsupported modules. "
-            "scaling is not available.");
-#endif
-    }
-    if (auto restart =
-            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__restart}
-        ptSolver->getConfigParameterOptional<int>("restart"))
-    {
-#ifdef USE_EIGEN_UNSUPPORTED
-        option_.restart = *restart;
-#else
-        OGS_FATAL(
-            "The code is not compiled with the Eigen unsupported modules. "
-            "GMRES/GMRES option restart is not available.");
-#endif
-    }
-}
 
 bool EigenLinearSolver::solve(EigenMatrix& A, EigenVector& b, EigenVector& x)
 {

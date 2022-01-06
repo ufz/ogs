@@ -16,12 +16,9 @@
 
 #pragma once
 
-#include <string>
-
 #include <petscksp.h>
 
-
-#include "BaseLib/ConfigTree.h"
+#include <string>
 
 #include "PETScMatrix.h"
 #include "PETScVector.h"
@@ -43,11 +40,12 @@ public:
         \param prefix  Name used to distinguish the options in the command
                        line for this solver. It can be the name of the PDE
                        that owns an instance of this class.
-        \param option  Petsc options, which will be inserted into the global
-                       petsc options database.
+        \param petsc_options PETSc options string which is passed to PETSc lib
+        and inserted in the PETSc option database (see
+        https://petsc.org/release/docs/manualpages/Sys/PetscOptionsInsertString.html).
     */
-    PETScLinearSolver(const std::string prefix,
-                      BaseLib::ConfigTree const* const option);
+    PETScLinearSolver(std::string const& prefix,
+                      std::string const& petsc_options);
 
     ~PETScLinearSolver() { KSPDestroy(&solver_); }
     // TODO check if some args in LinearSolver interface can be made const&.

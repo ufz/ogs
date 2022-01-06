@@ -15,24 +15,25 @@
 
 #include <gtest/gtest.h>
 
+#include <tuple>
+
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
+#include "MathLib/LinAlg/Eigen/LinearSolverOptionsParser.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/LinAlg/LinAlg.h"
 
-#if defined(USE_LIS)
-#include "MathLib/LinAlg/EigenLis/EigenLisLinearSolver.h"
-#endif
-
 #ifdef USE_LIS
-#include "MathLib/LinAlg/Lis/LisLinearSolver.h"
+#include "MathLib/LinAlg/EigenLis/EigenLisLinearSolver.h"
+#include "MathLib/LinAlg/EigenLis/LinearSolverOptionsParser.h"
 #include "MathLib/LinAlg/Lis/LisVector.h"
 #endif
 
 #ifdef USE_PETSC
+#include "MathLib/LinAlg/PETSc/LinearSolverOptionsParser.h"
 #include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
@@ -208,8 +209,11 @@ void checkLinearSolverInterface(T_MATRIX& A,
 
     MathLib::finalizeMatrixAssembly(A);
 
-    // solve
-    T_LINEAR_SOLVER ls("dummy_name", &ls_option);
+    auto const linear_solver_parser =
+        MathLib::LinearSolverOptionsParser<T_LINEAR_SOLVER>{};
+    auto const solver_options =
+        linear_solver_parser.parseNameAndOptions("", &ls_option);
+    T_LINEAR_SOLVER ls(std::make_from_tuple<T_LINEAR_SOLVER>(solver_options));
     ls.solve(A, rhs, x);
 
     ASSERT_ARRAY_NEAR(ex1.exH, x, ex1.dim_eqs, 1e-5);
@@ -273,7 +277,11 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
     // solve
     T_VECTOR y(b, deep_copy);
     y.setZero();
-    T_LINEAR_SOLVER ls(prefix_name, &ls_option);
+    std::string temp_prefix_name = prefix_name;
+    auto const solver_options =
+        MathLib::LinearSolverOptionsParser<T_LINEAR_SOLVER>{}
+            .parseNameAndOptions(std::move(temp_prefix_name), &ls_option);
+    T_LINEAR_SOLVER ls(std::make_from_tuple<T_LINEAR_SOLVER>(solver_options));
     EXPECT_TRUE(ls.solve(A, b, y));
 
     EXPECT_GT(ls.getNumberOfIterations(), 0u);
@@ -286,6 +294,7 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
 
 }  // end namespace
 
+#if not defined(USE_LIS) and not defined(USE_PETSC)
 TEST(Math, CheckInterface_Eigen)
 {
     // set solver options using Boost property tree
@@ -305,6 +314,7 @@ TEST(Math, CheckInterface_Eigen)
     checkLinearSolverInterface<MathLib::EigenMatrix, MathLib::EigenVector,
                                MathLib::EigenLinearSolver, IntType>(A, conf);
 }
+#endif
 
 #if defined(USE_LIS)
 TEST(Math, CheckInterface_EigenLis)
@@ -336,23 +346,23 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_basic)
     const bool is_global_size = false;
     MathLib::PETScVector b(2, is_global_size);
 
-    const char xml[] =
-        "<petsc>"
-        "  <parameters>"
-        "    -ptest1_ksp_type bcgs "
-        "    -ptest1_ksp_rtol 1.e-8 "
-        "    -ptest1_ksp_atol 1.e-50 "
-        "    -ptest1_ksp_max_it 1000 "
-        "    -ptest1_pc_type bjacobi"
-        "  </parameters>"
-        "  <prefix>ptest1</prefix>"
-        "</petsc>";
-    auto const ptree = Tests::readXml(xml);
+    boost::property_tree::ptree petsc_solver;
+    boost::property_tree::ptree parameters;
+    boost::property_tree::ptree prefix;
+    parameters.put("parameters",
+                   "-ptest1_ksp_type bcgs "
+                   "-ptest1_ksp_rtol 1.e-8 "
+                   "-ptest1_ksp_atol 1.e-50 "
+                   "-ptest1_ksp_max_it 1000 "
+                   "-ptest1_pc_type bjacobi");
+    prefix.put("prefix", "ptest1");
+    petsc_solver.put_child("petsc", parameters);
+    petsc_solver.put_child("petsc", prefix);
 
     checkLinearSolverInterface<MathLib::PETScMatrix, MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
         A, b, "",
-        BaseLib::ConfigTree(ptree, "", BaseLib::ConfigTree::onerror,
+        BaseLib::ConfigTree(petsc_solver, "", BaseLib::ConfigTree::onerror,
                             BaseLib::ConfigTree::onwarning));
 }
 
@@ -368,23 +378,22 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
     const bool is_global_size = false;
     MathLib::PETScVector b(2, is_global_size);
 
-    const char xml[] =
-        "<petsc>"
-        "  <parameters>"
-        "    -ptest2_ksp_type chebyshev "
-        "    -ptest2_ksp_rtol 1.e-8 "
-        "    -ptest2_ksp_atol 1.e-50"
-        "    -ptest2_ksp_max_it 1000 "
-        "    -ptest2_pc_type sor"
-        "  </parameters>"
-        "  <prefix>ptest2</prefix>"
-        "</petsc>";
-    auto const ptree = Tests::readXml(xml);
-
+    boost::property_tree::ptree petsc_solver;
+    boost::property_tree::ptree parameters;
+    boost::property_tree::ptree prefix;
+    parameters.put("parameters",
+                   "-ptest2_ksp_type chebyshev "
+                   "-ptest2_ksp_rtol 1.e-8 "
+                   "-ptest2_ksp_atol 1.e-50 "
+                   "-ptest2_ksp_max_it 1000 "
+                   "-ptest2_pc_type sor");
+    prefix.put("prefix", "ptest2");
+    petsc_solver.put_child("petsc", parameters);
+    petsc_solver.put_child("petsc", prefix);
     checkLinearSolverInterface<MathLib::PETScMatrix, MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
         A, b, "",
-        BaseLib::ConfigTree(ptree, "", BaseLib::ConfigTree::onerror,
+        BaseLib::ConfigTree(petsc_solver, "", BaseLib::ConfigTree::onerror,
                             BaseLib::ConfigTree::onwarning));
 }
 
@@ -400,25 +409,25 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
     const bool is_global_size = false;
     MathLib::PETScVector b(2, is_global_size);
 
-    const char xml[] =
-        "<petsc>"
-        "  <parameters>"
-        "    -ptest3_ksp_type gmres "
-        "    -ptest3_ksp_rtol 1.e-8 "
-        "    -ptest3_ksp_gmres_restart 20 "
-        "    -ptest3_ksp_gmres_classicalgramschmidt "
-        "    -ptest3_pc_type gamg "
-        "    -ptest3_pc_gamg_type agg "
-        "    -ptest3_pc_gamg_agg_nsmooths 2"
-        "  </parameters>"
-        "  <prefix>ptest3</prefix>"
-        "</petsc>";
-    auto const ptree = Tests::readXml(xml);
+    boost::property_tree::ptree petsc_solver;
+    boost::property_tree::ptree parameters;
+    boost::property_tree::ptree prefix;
+    parameters.put("parameters",
+                   "-ptest3_ksp_type gmres "
+                   "-ptest3_ksp_rtol 1.e-8 "
+                   "-ptest3_ksp_gmres_restart 20 "
+                   "-ptest3_ksp_gmres_classicalgramschmidt "
+                   "-ptest3_pc_type gamg "
+                   "-ptest3_pc_gamg_type agg "
+                   "-ptest3_pc_gamg_agg_nsmooths 2");
+    prefix.put("prefix", "ptest3");
+    petsc_solver.put_child("petsc", parameters);
+    petsc_solver.put_child("petsc", prefix);
 
     checkLinearSolverInterface<MathLib::PETScMatrix, MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
         A, b, "",
-        BaseLib::ConfigTree(ptree, "", BaseLib::ConfigTree::onerror,
+        BaseLib::ConfigTree(petsc_solver, "", BaseLib::ConfigTree::onerror,
                             BaseLib::ConfigTree::onwarning));
 }
 

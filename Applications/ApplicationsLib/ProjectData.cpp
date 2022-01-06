@@ -1142,10 +1142,16 @@ void ProjectData::parseLinearSolvers(BaseLib::ConfigTree const& config)
     {
         //! \ogs_file_param{prj__linear_solvers__linear_solver__name}
         auto const name = conf.getConfigParameter<std::string>("name");
+        auto const linear_solver_parser =
+            MathLib::LinearSolverOptionsParser<GlobalLinearSolver>{};
+        auto const solver_options =
+            linear_solver_parser.parseNameAndOptions("", &conf);
+
         BaseLib::insertIfKeyUniqueElseError(
             _linear_solvers,
             name,
-            std::make_unique<GlobalLinearSolver>("", &conf),
+            std::make_unique<GlobalLinearSolver>(std::get<0>(solver_options),
+                                                 std::get<1>(solver_options)),
             "The linear solver name is not unique");
     }
 }

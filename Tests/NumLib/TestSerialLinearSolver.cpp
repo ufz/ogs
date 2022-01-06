@@ -14,6 +14,7 @@
 
 #include <cmath>
 #include <memory>
+#include <tuple>
 #include <vector>
 
 #include "BaseLib/ConfigTree.h"
@@ -127,7 +128,12 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     BaseLib::ConfigTree conf(t_root, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
 
-    GlobalLinearSolver ls("solver_name", &conf);
+    auto const linear_solver_parser =
+        MathLib::LinearSolverOptionsParser<GlobalLinearSolver>{};
+    auto const solver_options =
+        linear_solver_parser.parseNameAndOptions("", &conf);
+    GlobalLinearSolver ls(
+        std::make_from_tuple<GlobalLinearSolver>(solver_options));
     ls.solve(*A, *rhs, *x);
 
     // copy solution to double vector
