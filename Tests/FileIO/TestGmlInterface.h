@@ -52,7 +52,7 @@ public:
 
         GeoLib::PointVec::NameIdMap cpy_name_id_map;
         std::size_t pos(0);
-        for (auto p : test_pnts)
+        for (auto& p : test_pnts)
         {
             points.push_back(new GeoLib::Point(p));
             pnt_name_id_map["p" + std::to_string(pos)] = pos;
