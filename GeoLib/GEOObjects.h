@@ -306,16 +306,6 @@ public:
 
 private:
     /**
-     * vector manages pointers to PointVec objects
-     */
-    std::vector<PointVec*> _pnt_vecs;
-
-    /** vector manages pointers to PolylineVec objects */
-    std::vector<PolylineVec*> _ply_vecs;
-    /** vector manages pointers to SurfaceVec objects */
-    std::vector<SurfaceVec*> _sfc_vecs;
-
-    /**
      * Method merges points from different geometries into one geometry. This
      * is a helper method for GEOObjects::mergeGeometries().
      * @param geo_names The vector of names of the geometries to merge.
@@ -357,6 +347,14 @@ private:
     void mergeSurfaces(std::vector<std::string> const& geo_names,
                        std::string const& merged_geo_name,
                        std::vector<std::size_t> const& pnt_offsets);
+
+    /** vector manages pointers to PointVec objects */
+    std::vector<PointVec*> _pnt_vecs;
+    /** vector manages pointers to PolylineVec objects */
+    std::vector<PolylineVec*> _ply_vecs;
+    /** vector manages pointers to SurfaceVec objects */
+    std::vector<SurfaceVec*> _sfc_vecs;
+
 };
 
 /// Constructs a station-vector based on the points of a given geometry.
