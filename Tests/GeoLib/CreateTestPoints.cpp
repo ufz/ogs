@@ -32,9 +32,9 @@ void createSetOfTestPointsAndAssociatedNames(GeoLib::GEOObjects& geo_objs,
                 std::size_t const id(i + offset);
                 pnts.push_back(new GeoLib::Point(
                     i + shift[0], j + shift[1], k + shift[2], id));
-                std::string pnt_name(name + "-" + std::to_string(i) + "-" +
-                                     std::to_string(j) + "-" +
-                                     std::to_string(k));
+                std::string const pnt_name(name + "-" + std::to_string(i) +
+                                           "-" + std::to_string(j) + "-" +
+                                           std::to_string(k));
                 pnt_name_map.emplace(pnt_name, id);
             }
         }
