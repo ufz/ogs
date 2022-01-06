@@ -42,51 +42,51 @@ protected:
 // Testing empty input vector.
 TEST_F(PointVecTest, TestPointVecCtorEmpty)
 {
-    VectorOfPoints ps_ptr;
-    ASSERT_THROW(GeoLib::PointVec(name, std::move(ps_ptr)), std::runtime_error);
+    VectorOfPoints points;
+    ASSERT_THROW(GeoLib::PointVec(name, std::move(points)), std::runtime_error);
 }
 
 // Testing input vector with single point.
 TEST_F(PointVecTest, TestPointVecCtorSinglePoint)
 {
-    VectorOfPoints ps_ptr;
-    ps_ptr.push_back(new GeoLib::Point(0, 0, 0, 0));
-    GeoLib::PointVec const point_vec(name, std::move(ps_ptr));
+    VectorOfPoints points;
+    points.push_back(new GeoLib::Point(0, 0, 0, 0));
+    GeoLib::PointVec const point_vec(name, std::move(points));
     ASSERT_EQ(std::size_t(1), point_vec.size());
 }
 
 // Testing input vector with two different points.
 TEST_F(PointVecTest, TestPointVecCtorTwoDiffPoints)
 {
-    VectorOfPoints ps_ptr;
-    ps_ptr.push_back(new GeoLib::Point(0, 0, 0, 0));
-    ps_ptr.push_back(new GeoLib::Point(1, 0, 0, 1));
+    VectorOfPoints points;
+    points.push_back(new GeoLib::Point(0, 0, 0, 0));
+    points.push_back(new GeoLib::Point(1, 0, 0, 1));
 
-    GeoLib::PointVec const point_vec(name, std::move(ps_ptr));
+    GeoLib::PointVec const point_vec(name, std::move(points));
     ASSERT_EQ(std::size_t(2), point_vec.size());
 }
 
 // Testing input vector with two equal points.
 TEST_F(PointVecTest, TestPointVecCtorTwoEqualPoints)
 {
-    VectorOfPoints ps_ptr;
-    ps_ptr.push_back(new GeoLib::Point(0, 0, 0, 0));
-    ps_ptr.push_back(new GeoLib::Point(0, 0, 0, 1));
+    VectorOfPoints points;
+    points.push_back(new GeoLib::Point(0, 0, 0, 0));
+    points.push_back(new GeoLib::Point(0, 0, 0, 1));
 
-    GeoLib::PointVec const point_vec(name, std::move(ps_ptr));
+    GeoLib::PointVec const point_vec(name, std::move(points));
     ASSERT_EQ(std::size_t(1), point_vec.size());
 }
 
 // Testing input vector with single point.
 TEST_F(PointVecTest, TestPointVecPushBack)
 {
-    VectorOfPoints ps_ptr;
-    ps_ptr.push_back(new GeoLib::Point(0, 0, 0, 0));
-    ps_ptr.push_back(new GeoLib::Point(1, 0, 0, 1));
-    ps_ptr.push_back(new GeoLib::Point(0, 1, 0, 2));
-    ps_ptr.push_back(new GeoLib::Point(0, 0, 1, 3));
+    VectorOfPoints points;
+    points.push_back(new GeoLib::Point(0, 0, 0, 0));
+    points.push_back(new GeoLib::Point(1, 0, 0, 1));
+    points.push_back(new GeoLib::Point(0, 1, 0, 2));
+    points.push_back(new GeoLib::Point(0, 0, 1, 3));
 
-    GeoLib::PointVec point_vec(name, std::move(ps_ptr));
+    GeoLib::PointVec point_vec(name, std::move(points));
     ASSERT_EQ(std::size_t(0), point_vec.getIDMap()[0]);
     ASSERT_EQ(std::size_t(1), point_vec.getIDMap()[1]);
     ASSERT_EQ(std::size_t(2), point_vec.getIDMap()[2]);
@@ -185,18 +185,18 @@ TEST_F(PointVecTest, TestPointVecPushBack)
 // Testing random input points.
 TEST_F(PointVecTest, TestPointVecCtorRandomPoints)
 {
-    VectorOfPoints ps_ptr;
-    generateRandomPoints(ps_ptr, 10000);
+    VectorOfPoints points;
+    generateRandomPoints(points, 10000);
 
     auto point_vec =
-        std::make_unique<GeoLib::PointVec>(name, std::move(ps_ptr));
+        std::make_unique<GeoLib::PointVec>(name, std::move(points));
 }
 
 TEST_F(PointVecTest, TestPointVecCtorRandomPointsLargeEps)
 {
-    VectorOfPoints ps_ptr;
-    generateRandomPoints(ps_ptr, 10000);
+    VectorOfPoints points;
+    generateRandomPoints(points, 10000);
 
     auto point_vec = std::make_unique<GeoLib::PointVec>(
-        name, std::move(ps_ptr), GeoLib::PointVec::PointType::POINT, 1e-2);
+        name, std::move(points), GeoLib::PointVec::PointType::POINT, 1e-2);
 }
