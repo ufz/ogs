@@ -32,7 +32,7 @@ std::string convertMeshNodesToGeoPoints(MeshLib::Mesh const& mesh,
                                         double const eps,
                                         GeoLib::GEOObjects& geo_objects)
 {
-    std::vector<GeoLib::Point*> points{};
+    std::vector<GeoLib::Point*> points;
     points.reserve(mesh.getNumberOfNodes());
 
     std::transform(begin(mesh.getNodes()), end(mesh.getNodes()),
@@ -42,8 +42,7 @@ std::string convertMeshNodesToGeoPoints(MeshLib::Mesh const& mesh,
 
     auto geoobject_name = mesh.getName();  // Possibly modified when adding
                                            // points to the geo objects.
-    geo_objects.addPointVec(std::move(points), geoobject_name,
-                            std::map<std::string, std::size_t>{}, eps);
+    geo_objects.addPointVec(std::move(points), geoobject_name, {}, eps);
     return geoobject_name;
 }
 
@@ -109,7 +108,7 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
     auto const [materialIds, bounds] = get_material_ids_and_bounds();
     // elements to surface triangles conversion
     const unsigned nMatGroups(bounds.second - bounds.first + 1);
-    std::vector<GeoLib::Surface*> sfcs{};
+    std::vector<GeoLib::Surface*> sfcs;
     sfcs.reserve(nMatGroups);
     std::string const geoobject_name =
         convertMeshNodesToGeoPoints(mesh, eps, geo_objects);

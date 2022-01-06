@@ -50,7 +50,7 @@ bool createSurface(GeoLib::Polyline const& ply,
     }
 
     // create new GEOObjects and insert a copy of the polyline
-    std::vector<GeoLib::Point*> polyline_points{};
+    std::vector<GeoLib::Point*> polyline_points;
     GeoLib::GEOObjects geo;
     auto ply_points = ply.getPointsVec();
     std::transform(ply_points.begin(), ply_points.end(),
@@ -65,7 +65,7 @@ bool createSurface(GeoLib::Polyline const& ply,
     {
         polyline->addPoint(ply.getPointID(k));
     }
-    std::vector<GeoLib::Polyline*> polylines{};
+    std::vector<GeoLib::Polyline*> polylines;
     polylines.push_back(polyline.release());
     geo.addPolylineVec(std::move(polylines), ply_name,
                        GeoLib::PolylineVec::NameIdMap{});

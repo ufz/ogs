@@ -490,8 +490,8 @@ void GMSHPolygonTree::writeAdditionalPointData(std::size_t& pnt_id_offset,
     if (auto* adaptive_mesh_density =
             dynamic_cast<GMSHAdaptiveMeshDensity*>(&_mesh_density_strategy))
     {
-        std::vector<GeoLib::Point*> pnts{};
-        std::vector<GeoLib::Polyline*> plys{};
+        std::vector<GeoLib::Point*> pnts;
+        std::vector<GeoLib::Polyline*> plys;
         adaptive_mesh_density->getQuadTreeGeometry(pnts, plys);
         std::string quad_tree_geo("QuadTree");
         _geo_objs.addPointVec(std::move(pnts), quad_tree_geo,

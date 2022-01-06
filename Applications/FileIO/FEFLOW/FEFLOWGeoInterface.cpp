@@ -36,8 +36,8 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
     }
 
     unsigned dimension = 0;
-    std::vector<GeoLib::Point*> points{};
-    std::vector<GeoLib::Polyline*> lines{};
+    std::vector<GeoLib::Point*> points;
+    std::vector<GeoLib::Polyline*> lines;
 
     bool isXZplane = false;
 

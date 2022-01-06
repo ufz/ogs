@@ -38,20 +38,20 @@ public:
         mesh_items_all_nodes =
             std::make_unique<MeL::MeshSubset>(*mesh, mesh->getNodes());
 
-        std::vector<GeoLib::Point*> ply_pnts{};
+        std::vector<GeoLib::Point*> ply_pnts;
         ply_pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
         ply_pnts.push_back(new GeoLib::Point(1.0, 0.0, 0.0));
 
         std::string geometry_0("GeometryWithPntsAndPolyline");
         geo_objs.addPointVec(std::move(ply_pnts), geometry_0,
-                             std::map<std::string, std::size_t>{});
+                             GeoLib::PointVec::NameIdMap{});
 
         auto ply = new GeoLib::Polyline(*geo_objs.getPointVec(geometry_0));
 
         ply->addPoint(0);
         ply->addPoint(1);
 
-        std::vector<GeoLib::Polyline*> plys{};
+        std::vector<GeoLib::Polyline*> plys;
         plys.push_back(ply);
 
         geo_objs.addPolylineVec(std::move(plys), geometry_0,

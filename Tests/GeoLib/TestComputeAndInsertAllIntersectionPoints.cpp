@@ -26,7 +26,7 @@ TEST(GeoLib, TestComputeAndInsertAllIntersectionPoints)
 
     {
         // *** insert points in vector
-        std::vector<GeoLib::Point*> pnts{};
+        std::vector<GeoLib::Point*> pnts;
         pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0, 0));
         pnts.push_back(new GeoLib::Point(11.0, 0.0, 0.0, 1));
 
@@ -44,7 +44,7 @@ TEST(GeoLib, TestComputeAndInsertAllIntersectionPoints)
         pnts.push_back(new GeoLib::Point(11.0, -1.0, 0.0, 13));
 
         geo_objs.addPointVec(std::move(pnts), geo_name,
-                             std::map<std::string, std::size_t>{});
+                             GeoLib::PointVec::NameIdMap{});
     }
 
     // *** create polylines

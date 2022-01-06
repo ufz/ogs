@@ -18,8 +18,8 @@ void createSetOfTestPointsAndAssociatedNames(GeoLib::GEOObjects& geo_objs,
                                              std::size_t const pnts_per_edge,
                                              GeoLib::Point const& shift)
 {
-    std::vector<GeoLib::Point*> pnts{};
-    GeoLib::PointVec::NameIdMap pnt_name_map{};
+    std::vector<GeoLib::Point*> pnts;
+    GeoLib::PointVec::NameIdMap pnt_name_map;
 
     for (std::size_t k(0); k < pnts_per_edge; k++)
     {

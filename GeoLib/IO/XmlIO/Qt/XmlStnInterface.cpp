@@ -56,7 +56,7 @@ int XmlStnInterface::readFile(const QString& fileName)
     {
         // read all the station lists
         QDomNodeList stationList = lists.at(i).childNodes();
-        std::vector<GeoLib::Point*> stations{};
+        std::vector<GeoLib::Point*> stations;
         std::string stnName("[NN]");
 
         for (int j = 0; j < stationList.count(); j++)

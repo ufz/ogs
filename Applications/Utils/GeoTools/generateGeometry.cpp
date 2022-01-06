@@ -24,8 +24,8 @@ std::tuple<std::vector<GeoLib::Polyline*>, GeoLib::PolylineVec::NameIdMap>
 appendNamedPolyline(std::unique_ptr<GeoLib::Polyline> polyline,
                     std::string&& polyline_name)
 {
-    std::vector<GeoLib::Polyline*> lines{};
-    GeoLib::PolylineVec::NameIdMap name_map{};
+    std::vector<GeoLib::Polyline*> lines;
+    GeoLib::PolylineVec::NameIdMap name_map;
 
     lines.push_back(polyline.release());
     name_map[std::move(polyline_name)] = lines.size() - 1;
@@ -38,7 +38,7 @@ void generateSinglePointGeometry(GeoLib::Point const& point,
                                  std::string& geometry_name,
                                  GeoLib::GEOObjects& geometry)
 {
-    std::vector<GeoLib::Point*> points{};
+    std::vector<GeoLib::Point*> points;
     points.push_back(new GeoLib::Point{point});
 
     GeoLib::PointVec::NameIdMap name_map{{std::move(point_name), 0}};
@@ -76,7 +76,7 @@ std::vector<GeoLib::Point*> generateQuadPoints(
     std::array<GeoLib::Point, 4> const& points,
     std::array<int, 4> const& number_of_subdivisions_per_edge)
 {
-    std::vector<GeoLib::Point*> quad_points{};
+    std::vector<GeoLib::Point*> quad_points;
 
     auto addPointsOnLine = [&quad_points](auto const& begin, auto const& end,
                                           auto const number_of_subdivisions)

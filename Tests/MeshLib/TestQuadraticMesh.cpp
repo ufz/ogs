@@ -229,7 +229,7 @@ TEST(MeshLib, QuadraticOrderMesh_LineQuad)
         auto* ply = new GeoLib::Polyline(pnts);
         ply->addPoint(0);
         ply->addPoint(1);
-        std::vector<GeoLib::Polyline*> plys{};
+        std::vector<GeoLib::Polyline*> plys;
         plys.push_back(ply);
         GeoLib::PolylineVec ply_vec("", std::move(plys),
                                     GeoLib::PolylineVec::NameIdMap{});

@@ -35,8 +35,8 @@ void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
                                 GeoLib::GEOObjects& geometry_sets)
 {
     // copy data
-    std::vector<GeoLib::Point*> pnts{};
-    GeoLib::PointVec::NameIdMap pnt_names{};
+    std::vector<GeoLib::Point*> pnts;
+    GeoLib::PointVec::NameIdMap pnt_names;
     std::size_t cnt(0);
     for (std::size_t id : node_ids)
     {
@@ -264,8 +264,8 @@ int main(int argc, char* argv[])
               { return p0 < p1; });
 
     double const eps(std::numeric_limits<double>::epsilon());
-    std::vector<GeoLib::Point*> surface_pnts{};
-    GeoLib::PointVec::NameIdMap name_id_map{};
+    std::vector<GeoLib::Point*> surface_pnts;
+    GeoLib::PointVec::NameIdMap name_id_map;
 
     // insert first point
     surface_pnts.push_back(

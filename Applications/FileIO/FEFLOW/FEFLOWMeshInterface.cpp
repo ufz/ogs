@@ -37,7 +37,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
     FEM_CLASS fem_class;
     FEM_DIM fem_dim;
     std::vector<GeoLib::Point*> points;
-    std::vector<GeoLib::Polyline*> lines{};
+    std::vector<GeoLib::Polyline*> lines;
 
     bool isXZplane = false;
 

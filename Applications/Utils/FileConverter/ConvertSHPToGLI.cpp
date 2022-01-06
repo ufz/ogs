@@ -40,7 +40,7 @@ void convertPoints(DBFHandle dbf_handle,
     int n_records(DBFGetRecordCount(dbf_handle));
     INFO("Reading {:d} records.", n_records);
 
-    std::vector<GeoLib::Point*> points{};
+    std::vector<GeoLib::Point*> points;
     points.reserve(n_records);
 
     std::string name;

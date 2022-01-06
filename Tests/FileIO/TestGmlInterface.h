@@ -113,7 +113,7 @@ public:
         auto const& pnt_vec = *(geo_objects.getPointVecObj(geo_name));
 
         std::vector<GeoLib::Polyline*> lines{5};
-        GeoLib::PolylineVec::NameIdMap name_map{};
+        GeoLib::PolylineVec::NameIdMap name_map;
 
         createPolyline(pnt_vec, lines, 0, {0, 1, 2}, name_map, "left");
         createPolyline(pnt_vec, lines, 1, {3, 4, 5}, name_map, "center");
@@ -160,7 +160,7 @@ public:
             geo_objects.getPointVecObj(geo_name)->getIDMap());
 
         std::vector<GeoLib::Surface*> sfcs{2};
-        GeoLib::SurfaceVec::NameIdMap sfc_names{};
+        GeoLib::SurfaceVec::NameIdMap sfc_names;
         sfcs[0] = new GeoLib::Surface(*points);
         sfcs[0]->addTriangle(pnt_id_map[0], pnt_id_map[3], pnt_id_map[1]);
         sfcs[0]->addTriangle(pnt_id_map[1], pnt_id_map[3], pnt_id_map[4]);

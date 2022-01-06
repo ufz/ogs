@@ -362,8 +362,8 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
         return false;
     }
 
-    std::vector<GeoLib::Point*> points{};
-    std::vector<GeoLib::Polyline*> lines{};
+    std::vector<GeoLib::Point*> points;
+    std::vector<GeoLib::Polyline*> lines;
     std::vector<std::string> pnt_names;
     std::vector<std::string> line_names;
 
@@ -403,7 +403,7 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
         return false;
     }
 
-    GeoLib::PointVec::NameIdMap name_id_map{};
+    GeoLib::PointVec::NameIdMap name_id_map;
     {
         std::size_t const n_names(pnt_names.size());
         for (std::size_t i = 0; i < n_names; ++i)
@@ -472,7 +472,7 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
                 delete ply;
             return false;
         }
-        GeoLib::PolylineVec::NameIdMap line_id_map{};
+        GeoLib::PolylineVec::NameIdMap line_id_map;
         {
             std::size_t const n_names(line_names.size());
             for (std::size_t i = 0; i < n_names; ++i)

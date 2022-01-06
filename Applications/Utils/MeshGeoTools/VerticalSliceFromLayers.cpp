@@ -48,7 +48,7 @@ std::vector<GeoLib::Point*> createPoints(MathLib::Point3d const& start,
                                          MathLib::Point3d const& end,
                                          std::size_t const n_intervals)
 {
-    std::vector<GeoLib::Point*> points{};
+    std::vector<GeoLib::Point*> points;
     points.push_back(new GeoLib::Point(start, 0));
     double const length = std::sqrt(MathLib::sqrDist(start, end));
     double const interval = length / n_intervals;
@@ -107,7 +107,7 @@ std::vector<std::string> createGeometries(
         geo.addPointVec(std::move(points), geo_name,
                         GeoLib::PointVec::NameIdMap{});
 
-        std::vector<GeoLib::Polyline*> lines{};
+        std::vector<GeoLib::Polyline*> lines;
         lines.push_back(createPolyline(*geo.getPointVec(geo_name)));
         geo.addPolylineVec(std::move(lines), geo_name,
                            GeoLib::PolylineVec::NameIdMap{});
@@ -126,8 +126,8 @@ void mergeGeometries(GeoLib::GEOObjects& geo,
                      std::vector<std::string> const& geo_names,
                      std::string& merged_geo_name)
 {
-    std::vector<GeoLib::Point*> points{};
-    std::vector<GeoLib::Polyline*> lines{};
+    std::vector<GeoLib::Point*> points;
+    std::vector<GeoLib::Polyline*> lines;
 
     auto layer_pnts = *geo.getPointVec(geo_names[0]);
     std::size_t const pnts_per_line = layer_pnts.size();

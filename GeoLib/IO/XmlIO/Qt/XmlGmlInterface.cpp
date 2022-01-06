@@ -78,14 +78,13 @@ int XmlGmlInterface::readFile(const QString& fileName)
 
     std::string gliName("[NN]");
 
-    std::vector<GeoLib::Point*> points{};
-    std::vector<GeoLib::Polyline*> polylines{};
-    std::vector<GeoLib::Surface*> surfaces{};
+    std::vector<GeoLib::Point*> points;
+    std::vector<GeoLib::Polyline*> polylines;
+    std::vector<GeoLib::Surface*> surfaces;
 
-    using MapNameId = std::map<std::string, std::size_t>;
-    MapNameId pnt_names;
-    MapNameId ply_names{};
-    GeoLib::SurfaceVec::NameIdMap sfc_names{};
+    GeoLib::PointVec::NameIdMap pnt_names;
+    GeoLib::PolylineVec::NameIdMap ply_names;
+    GeoLib::SurfaceVec::NameIdMap sfc_names;
 
     QDomNodeList geoTypes = docElement.childNodes();
     for (int i = 0; i < geoTypes.count(); i++)
