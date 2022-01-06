@@ -274,7 +274,7 @@ bool GEOObjects::appendSurfaceVec(const std::vector<Surface*>& surfaces,
 
     // the copy is needed because addSurfaceVec is passing it to SurfaceVec
     // ctor, which needs write access to the surface vector.
-    std::vector<GeoLib::Surface*> sfc{begin(surfaces), end(surfaces)};
+    std::vector<GeoLib::Surface*> sfc(begin(surfaces), end(surfaces));
     addSurfaceVec(std::move(sfc), name, SurfaceVec::NameIdMap{});
     return false;
 }
