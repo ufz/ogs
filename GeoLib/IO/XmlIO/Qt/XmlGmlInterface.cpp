@@ -23,7 +23,7 @@
 
 namespace
 {
-void deletePolylines(std::vector<GeoLib::Polyline*>& polylines)
+void deletePolylines(std::vector<GeoLib::Polyline*>&& polylines)
 {
     for (GeoLib::Polyline* line : polylines)
     {
@@ -31,23 +31,23 @@ void deletePolylines(std::vector<GeoLib::Polyline*>& polylines)
     }
 }
 
-void deleteSurfaces(std::vector<GeoLib::Surface*>& surfaces)
+void deleteSurfaces(std::vector<GeoLib::Surface*>&& surfaces)
 {
     for (GeoLib::Surface* surface : surfaces)
     {
         delete surface;
     }
 }
-void deleteGeometry(std::vector<GeoLib::Point*>& points,
-                    std::vector<GeoLib::Polyline*>& polylines,
-                    std::vector<GeoLib::Surface*>& surfaces)
+void deleteGeometry(std::vector<GeoLib::Point*>&& points,
+                    std::vector<GeoLib::Polyline*>&& polylines,
+                    std::vector<GeoLib::Surface*>&& surfaces)
 {
     for (GeoLib::Point* point : points)
     {
         delete point;
     }
-    deletePolylines(polylines);
-    deleteSurfaces(surfaces);
+    deletePolylines(std::move(polylines));
+    deleteSurfaces(std::move(surfaces));
 }
 }  // namespace
 
@@ -96,7 +96,8 @@ int XmlGmlInterface::readFile(const QString& fileName)
             if (type_node.toElement().text().isEmpty())
             {
                 ERR("XmlGmlInterface::readFile(): <name>-tag is empty.");
-                deleteGeometry(points, polylines, surfaces);
+                deleteGeometry(std::move(points), std::move(polylines),
+                               std::move(surfaces));
                 return 0;
             }
 
