@@ -62,10 +62,10 @@ public:
      * with the value of rel_eps gives the real tolerance \f$tol\f$. Two points
      * \f$p_0, p_1 \f$ are identical iff \f$|p_1 - p_0| \le tol.\f$
      */
-    PointVec(std::string& name, std::vector<Point*> points,
+    PointVec(std::string const& name, std::vector<Point*>&& points,
              NameIdMap&& name_id_map,
-             PointType type = PointVec::PointType::POINT,
-             double rel_eps = std::numeric_limits<double>::epsilon());
+             PointType const type = PointVec::PointType::POINT,
+             double const rel_eps = std::numeric_limits<double>::epsilon());
 
     /**
      * Method adds a Point to the (internal) standard vector and takes the

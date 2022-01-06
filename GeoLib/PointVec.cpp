@@ -19,8 +19,9 @@
 
 namespace GeoLib
 {
-PointVec::PointVec(std::string& name, std::vector<Point*> points,
-                   NameIdMap&& name_id_map, PointType type, double rel_eps)
+PointVec::PointVec(std::string const& name, std::vector<Point*>&& points,
+                   NameIdMap&& name_id_map, PointType const type,
+                   double const rel_eps)
     : TemplateVec<Point>(name, std::move(points), std::move(name_id_map)),
       _type(type),
       _aabb(_data_vec.begin(), _data_vec.end()),
