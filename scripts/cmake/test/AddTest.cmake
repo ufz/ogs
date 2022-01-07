@@ -108,9 +108,8 @@ function(AddTest)
     endif()
 
     if("${AddTest_EXECUTABLE}" STREQUAL "ogs")
-        set(AddTest_EXECUTABLE_ARGS
-            -o ${AddTest_BINARY_PATH_NATIVE}
-            ${AddTest_EXECUTABLE_ARGS}
+        set(AddTest_EXECUTABLE_ARGS -o ${AddTest_BINARY_PATH_NATIVE}
+                                    ${AddTest_EXECUTABLE_ARGS}
         )
         set(AddTest_WORKING_DIRECTORY ${AddTest_SOURCE_PATH})
     endif()
@@ -249,7 +248,10 @@ function(AddTest)
     if(AddTest_TESTER STREQUAL "diff")
         foreach(FILE ${AddTest_DIFF_DATA})
             get_filename_component(FILE_EXPECTED ${FILE} NAME)
-            list(APPEND TESTER_COMMAND "${SELECTED_DIFF_TOOL_PATH} \
+            list(
+                APPEND
+                TESTER_COMMAND
+                "${SELECTED_DIFF_TOOL_PATH} \
                 ${TESTER_ARGS} ${AddTest_TESTER_ARGS} ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
                 ${AddTest_BINARY_PATH}/${FILE}"
             )
@@ -403,8 +405,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
             "-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
             "-DFILES_TO_DELETE=${FILES_TO_DELETE}"
             -DWORKING_DIRECTORY=${AddTest_WORKING_DIRECTORY}
-            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME}.txt
-            -P
+            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME}.txt -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
     if(DEFINED AddTest_DEPENDS)
@@ -423,16 +424,16 @@ Use six arguments version of AddTest with absolute and relative tolerances"
         list(APPEND labels large)
     endif()
 
-    set_tests_properties(${TEST_NAME}
-        PROPERTIES
-            COST ${AddTest_RUNTIME}
-            DISABLED ${AddTest_DISABLED}
-            LABELS "${labels}"
+    set_tests_properties(
+        ${TEST_NAME} PROPERTIES COST ${AddTest_RUNTIME} DISABLED
+                                ${AddTest_DISABLED} LABELS "${labels}"
     )
     # Disabled for the moment, does not work with CI under load
+    # ~~~
     # if(NOT OGS_COVERAGE)
     #     set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT ${timeout})
     # endif()
+    # ~~~
 
     add_dependencies(ctest ${AddTest_EXECUTABLE})
     add_dependencies(ctest-large ${AddTest_EXECUTABLE})
@@ -472,19 +473,15 @@ Use six arguments version of AddTest with absolute and relative tolerances"
             -DVTKJS_CONVERTER=${VTKJS_CONVERTER}
             -DBINARY_PATH=${AddTest_BINARY_PATH}
             -DVTKJS_OUTPUT_PATH=${PROJECT_SOURCE_DIR}/web/static/vis/${AddTest_PATH}
-            "-DVIS_FILES=${AddTest_VIS}"
-            -DGLOB_MODE=${GLOB_MODE}
-            -DLOG_FILE_BASE=${PROJECT_BINARY_DIR}/logs/${TESTER_NAME}
-            -P
+            "-DVIS_FILES=${AddTest_VIS}" -DGLOB_MODE=${GLOB_MODE}
+            -DLOG_FILE_BASE=${PROJECT_BINARY_DIR}/logs/${TESTER_NAME} -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
             --debug-output
         WORKING_DIRECTORY ${AddTest_SOURCE_PATH}
     )
-    set_tests_properties(${TESTER_NAME}
-        PROPERTIES
-            DEPENDS ${TEST_NAME}
-            DISABLED ${AddTest_DISABLED}
-            LABELS "tester;${labels}"
+    set_tests_properties(
+        ${TESTER_NAME} PROPERTIES DEPENDS ${TEST_NAME} DISABLED
+                                  ${AddTest_DISABLED} LABELS "tester;${labels}"
     )
 
 endfunction()
