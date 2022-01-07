@@ -386,7 +386,13 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
         case EigenOption::SolverType::BiCGSTABL:
         {
 #ifdef USE_EIGEN_UNSUPPORTED
+#if EIGEN_VERSION_AT_LEAST(3, 4, 90)
             return createIterativeSolver<Eigen::BiCGSTABL>(precon_type);
+#else
+            OGS_FATAL(
+                "BiCGSTABL requires at least Eigen version 3.4.90"
+            );
+#endif
 #else
             OGS_FATAL(
                 "The code is not compiled with the Eigen unsupported modules. "
@@ -410,7 +416,13 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
         case EigenOption::SolverType::IDRS:
         {
 #ifdef USE_EIGEN_UNSUPPORTED
+#if EIGEN_VERSION_AT_LEAST(3, 4, 90)
             return createIterativeSolver<Eigen::IDRS>(precon_type);
+#else
+            OGS_FATAL(
+                "IDRS requires at least Eigen version 3.4.90"
+            );
+#endif
 #else
             OGS_FATAL(
                 "The code is not compiled with the Eigen unsupported modules. "
@@ -420,7 +432,13 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
         case EigenOption::SolverType::IDRSTABL:
         {
 #ifdef USE_EIGEN_UNSUPPORTED
+#if EIGEN_VERSION_AT_LEAST(3, 4, 90)
             return createIterativeSolver<Eigen::IDRSTABL>(precon_type);
+#else
+            OGS_FATAL(
+                "IDRSTABL requires at least Eigen version 3.4.90"
+            );
+#endif
 #else
             OGS_FATAL(
                 "The code is not compiled with the Eigen unsupported modules. "
