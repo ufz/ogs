@@ -43,6 +43,8 @@ public:
               std::unique_ptr<Dump>&& dump,
               Knobs&& knobs);
 
+    ~PhreeqcIO();
+
     void initialize() override;
 
     void initializeChemicalSystemConcrete(

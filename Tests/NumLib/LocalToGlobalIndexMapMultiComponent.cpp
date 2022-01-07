@@ -90,10 +90,10 @@ public:
 
         MeL::MeshSubset components_boundary{*mesh_items_boundary};
 
-        dof_map_boundary.reset(dof_map->deriveBoundaryConstrainedMap(
+        dof_map_boundary = dof_map->deriveBoundaryConstrainedMap(
             0,  // variable id
             {selected_component},
-            std::move(components_boundary)));
+            std::move(components_boundary));
     }
 
     // Multi-component version.
@@ -114,10 +114,10 @@ public:
 
         MeL::MeshSubset components_boundary{*mesh_items_boundary};
 
-        dof_map_boundary.reset(dof_map->deriveBoundaryConstrainedMap(
+        dof_map_boundary = dof_map->deriveBoundaryConstrainedMap(
             0,  // variable id
             selected_components,
-            std::move(components_boundary)));
+            std::move(components_boundary));
     }
 
     template <NL::ComponentOrder order>

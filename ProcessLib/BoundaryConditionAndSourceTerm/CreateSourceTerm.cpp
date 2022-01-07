@@ -65,10 +65,10 @@ std::unique_ptr<SourceTerm> createSourceTerm(
 
     if (type == "Nodal")
     {
-        std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table_source_term(
+        auto dof_table_source_term =
             dof_table_bulk.deriveBoundaryConstrainedMap(
                 variable_id, {*config.component_id},
-                std::move(source_term_mesh_subset)));
+                std::move(source_term_mesh_subset));
         return ProcessLib::createNodalSourceTerm(
             config.config, config.mesh, std::move(dof_table_source_term),
             source_term_mesh.getID(), variable_id, *config.component_id,
@@ -77,10 +77,10 @@ std::unique_ptr<SourceTerm> createSourceTerm(
 
     if (type == "Line" || type == "Volumetric")
     {
-        std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table_source_term(
+        auto dof_table_source_term =
             dof_table_bulk.deriveBoundaryConstrainedMap(
                 variable_id, {*config.component_id},
-                std::move(source_term_mesh_subset)));
+                std::move(source_term_mesh_subset));
         auto const& bulk_mesh_dimension =
             dof_table_bulk.getMeshSubset(variable_id, *config.component_id)
                 .getMesh()
@@ -94,9 +94,9 @@ std::unique_ptr<SourceTerm> createSourceTerm(
     if (type == "Python")
     {
 #ifdef OGS_USE_PYTHON
-        std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table_source_term(
+        auto dof_table_source_term =
             dof_table_bulk.deriveBoundaryConstrainedMap(
-                std::move(source_term_mesh_subset)));
+                std::move(source_term_mesh_subset));
 
         return ProcessLib::createPythonSourceTerm(
             config.config, config.mesh, std::move(dof_table_source_term),

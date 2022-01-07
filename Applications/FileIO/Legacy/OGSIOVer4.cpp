@@ -310,7 +310,7 @@ std::string readSurface(std::istream& in,
                         std::vector<GeoLib::Polygon*>& polygon_vec,
                         std::vector<GeoLib::Surface*>& sfc_vec,
                         std::map<std::string, std::size_t>& sfc_names,
-                        const std::vector<GeoLib::Polyline*>& ply_vec,
+                        const std::vector<GeoLib::Polyline*>* const ply_vec,
                         const std::map<std::string, std::size_t>& ply_vec_names,
                         GeoLib::PointVec& pnt_vec, std::string const& path,
                         std::vector<std::string>& errors)
@@ -367,6 +367,11 @@ std::string readSurface(std::istream& in,
                    (line.find('#') == std::string::npos) &&
                    (line.find('$') == std::string::npos))
             {
+                if (ply_vec == nullptr)
+                {
+                    OGS_FATAL("The polyline vector is not allocated.");
+                }
+
                 // we did read the name of a polyline -> search the id for
                 // polyline
                 auto it(ply_vec_names.find(line));
@@ -376,10 +381,10 @@ std::string readSurface(std::istream& in,
                 }
                 else
                 {
-                    ply_id = ply_vec.size();
+                    ply_id = ply_vec->size();
                 }
 
-                if (ply_id == ply_vec.size())
+                if (ply_id == ply_vec->size())
                 {
                     WARN("readSurface(): polyline for surface not found!");
                     errors.emplace_back(
@@ -426,20 +431,27 @@ std::string readSurface(std::istream& in,
     else
     {
         // surface created by polygon
-        if (ply_id != std::numeric_limits<std::size_t>::max() &&
-            ply_id != ply_vec.size())
+        if (ply_id != std::numeric_limits<std::size_t>::max())
         {
-            if (ply_vec[ply_id]->isClosed())
+            if (ply_vec == nullptr)
             {
-                polygon_vec.push_back(
-                    new GeoLib::Polygon(*(ply_vec[ply_id]), true));
+                OGS_FATAL("The polyline vector is not allocated.");
             }
-            else
+
+            if (ply_id != ply_vec->size())
             {
-                WARN(
-                    "readSurface(): cannot create surface {:s} from polyline "
-                    "{:d} since polyline is not closed.",
-                    name, ply_id);
+                if ((*ply_vec)[ply_id]->isClosed())
+                {
+                    polygon_vec.push_back(
+                        new GeoLib::Polygon(*((*ply_vec)[ply_id]), true));
+                }
+                else
+                {
+                    WARN(
+                        "readSurface(): cannot create surface {:s} from "
+                        "polyline {:d} since polyline is not closed.",
+                        name, ply_id);
+                }
             }
         }
     }
@@ -458,7 +470,7 @@ std::string readSurface(std::istream& in,
 std::string readSurfaces(
     std::istream& in, std::vector<GeoLib::Surface*>& sfc_vec,
     std::map<std::string, std::size_t>& sfc_names,
-    const std::vector<GeoLib::Polyline*>& ply_vec,
+    const std::vector<GeoLib::Polyline*>* const ply_vec,
     const std::map<std::string, std::size_t>& ply_vec_names,
     GeoLib::PointVec& pnt_vec, const std::string& path,
     std::vector<std::string>& errors, GeoLib::GEOObjects& geo,
@@ -587,7 +599,7 @@ bool readGLIFileV4(const std::string& fname,
     {
         INFO("GeoLib::readGLIFile(): read surfaces from stream.");
 
-        readSurfaces(in, sfc_vec, sfc_names, *geo.getPolylineVec(unique_name),
+        readSurfaces(in, sfc_vec, sfc_names, geo.getPolylineVec(unique_name),
                      ply_names_copy, point_vec, path, errors, geo, unique_name,
                      gmsh_path);
         INFO("GeoLib::readGLIFile(): \tok, {:d} surfaces read.",

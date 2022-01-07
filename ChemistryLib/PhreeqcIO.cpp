@@ -308,6 +308,11 @@ PhreeqcIO::PhreeqcIO(GlobalLinearSolver& linear_solver,
     }
 }
 
+PhreeqcIO::~PhreeqcIO()
+{
+    DestroyIPhreeqc(phreeqc_instance_id);
+}
+
 void PhreeqcIO::initialize()
 {
     _num_chemical_systems = chemical_system_index_map.size();

@@ -63,8 +63,8 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
 
     // Create local DOF table from intersected mesh subsets for the given
     // variable and component ids.
-    _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
-        variable_id, {component_id}, std::move(bc_mesh_subset)));
+    _dof_table_boundary = dof_table_bulk.deriveBoundaryConstrainedMap(
+        variable_id, {component_id}, std::move(bc_mesh_subset));
 
     auto const& bc_elements(_bc_mesh.getElements());
     _local_assemblers.resize(bc_elements.size());

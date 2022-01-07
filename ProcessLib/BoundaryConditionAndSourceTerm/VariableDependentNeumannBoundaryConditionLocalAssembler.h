@@ -25,7 +25,8 @@ struct VariableDependentNeumannBoundaryConditionData
     ParameterLib::Parameter<double> const& coefficient_other_variable;
     ParameterLib::Parameter<double> const& coefficient_mixed_variables;
     // Used for mapping boundary nodes to bulk nodes.
-    NumLib::LocalToGlobalIndexMap const& dof_table_boundary_other_variable;
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap>
+        dof_table_boundary_other_variable;
 };
 
 template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
@@ -84,7 +85,7 @@ public:
         auto const indices_current_variable =
             NumLib::getIndices(mesh_item_id, dof_table_boundary);
         auto const indices_other_variable = NumLib::getIndices(
-            mesh_item_id, _data.dof_table_boundary_other_variable);
+            mesh_item_id, *_data.dof_table_boundary_other_variable);
         std::vector<double> const local_current_variable =
             x[process_id]->get(indices_current_variable);
         std::vector<double> const local_other_variable =
