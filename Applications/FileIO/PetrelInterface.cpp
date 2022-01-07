@@ -26,14 +26,11 @@
 
 namespace FileIO
 {
-PetrelInterface::PetrelInterface(std::list<std::string>& sfc_fnames,
-                                 std::list<std::string>& well_path_fnames,
+PetrelInterface::PetrelInterface(std::list<std::string> const& sfc_fnames,
+                                 std::list<std::string> const& well_path_fnames,
                                  std::string& unique_model_name,
                                  GeoLib::GEOObjects* geo_obj)
-    : _unique_name(unique_model_name),
-      pnt_vec(new std::vector<GeoLib::Point*>),
-      well_vec(new std::vector<GeoLib::Point*>),
-      ply_vec(new std::vector<GeoLib::Polyline*>)
+    : _unique_name(unique_model_name)
 {
     for (std::list<std::string>::const_iterator it(sfc_fnames.begin());
          it != sfc_fnames.end();
@@ -44,7 +41,7 @@ PetrelInterface::PetrelInterface(std::list<std::string>& sfc_fnames,
         if (in)
         {
             INFO("PetrelInterface::PetrelInterface(): \tdone.");
-            readPetrelSurface(in);
+            readPetrelSurfacePoints(in);
             in.close();
         }
         else
@@ -77,21 +74,15 @@ PetrelInterface::PetrelInterface(std::list<std::string>& sfc_fnames,
         }
     }
 
-    // store data in GEOObject
-    geo_obj->addPointVec(std::move(*pnt_vec), _unique_name,
-                         GeoLib::PointVec::NameIdMap{});
-    if (!well_vec->empty())
+    // move data to GEOObject
+    geo_obj->addPointVec(std::move(pnt_vec), _unique_name);
+    if (!well_vec.empty())
     {
-        geo_obj->addStationVec(std::move(*well_vec), _unique_name);
-    }
-    if (!ply_vec->empty())
-    {
-        geo_obj->addPolylineVec(std::move(*ply_vec), _unique_name,
-                                GeoLib::PolylineVec::NameIdMap{});
+        geo_obj->addStationVec(std::move(well_vec), _unique_name);
     }
 }
 
-void PetrelInterface::readPetrelSurface(std::istream& in)
+void PetrelInterface::readPetrelSurfacePoints(std::istream& in)
 {
     char buffer[MAX_COLS_PER_ROW];
     in.getline(buffer, MAX_COLS_PER_ROW);
@@ -114,19 +105,13 @@ void PetrelInterface::readPetrelSurface(std::istream& in)
         }
 
         // read points
-        std::size_t idx(pnt_vec->size());
         while (in)
         {
-            pnt_vec->push_back(new GeoLib::Point);
-            in >> *((*pnt_vec)[idx]);
-            if (!in)
+            auto point = std::make_unique<GeoLib::Point>();
+            in >> *point;
+            if (in)
             {
-                delete (*pnt_vec)[idx];
-                pnt_vec->pop_back();
-            }
-            else
-            {
-                idx++;
+                pnt_vec.push_back(point.release());
             }
         }
     }
@@ -217,7 +202,7 @@ void PetrelInterface::readPetrelWellTrace(std::istream& in)
         double const depth = 0.0;
         std::string const borehole_name = "";
         int const date = 0;
-        well_vec->push_back(new GeoLib::StationBorehole(
+        well_vec.push_back(new GeoLib::StationBorehole(
             well_head_x, well_head_y, well_kb, depth, borehole_name, date));
 
         // read well type
@@ -276,8 +261,7 @@ void PetrelInterface::readPetrelWellTraceData(std::istream& in)
             stream >> md;
             stream >> x >> y >> z;
             //            pnt_vec->push_back (new GeoLib::Point (x,y,z));
-            static_cast<GeoLib::StationBorehole*>(
-                (*well_vec)[well_vec->size() - 1])
+            static_cast<GeoLib::StationBorehole*>(well_vec.back())
                 ->addSoilLayer(x, y, z, "unknown");
             stream >> tvd >> dx >> dy >> azim >> incl >> dls;
         }
