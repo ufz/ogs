@@ -58,14 +58,13 @@ bool TetGenInterface::readTetGenGeometry(std::string const& geo_fname,
         BaseLib::cleanupVectorElements(nodes);
         return false;
     }
-    const std::size_t nNodes(nodes.size());
     std::vector<GeoLib::Point*> points;
-    points.reserve(nNodes);
-    for (std::size_t k(0); k < nNodes; ++k)
-    {
-        points.push_back(new GeoLib::Point(*(nodes[k]), nodes[k]->getID()));
-        delete nodes[k];
-    }
+    points.reserve(nodes.size());
+    std::transform(nodes.begin(), nodes.end(), std::back_inserter(points),
+                   [](auto const* node)
+                   { return new GeoLib::Point(*node, node->getID()); });
+    BaseLib::cleanupVectorElements(nodes);
+
     std::string geo_name(BaseLib::extractBaseNameWithoutExtension(geo_fname));
     geo_objects.addPointVec(std::move(points), geo_name,
                             GeoLib::PointVec::NameIdMap{});
