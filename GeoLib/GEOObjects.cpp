@@ -589,30 +589,21 @@ void GEOObjects::renameGeometry(std::string const& old_name,
                                 std::string const& new_name)
 {
     _callbacks->renameGeometry(old_name, new_name);
-    for (auto* pnt_vec : _pnt_vecs)
+
+    auto rename = [&old_name, &new_name](auto const& container)
     {
-        if (pnt_vec->getName() == old_name)
+        auto it = std::find_if(container.begin(), container.end(),
+                               [&old_name](auto const item)
+                               { return item->getName() == old_name; });
+        if (it != container.end())
         {
-            pnt_vec->setName(new_name);
-            break;
+            (*it)->setName(new_name);
         }
-    }
-    for (auto* ply_vec : _ply_vecs)
-    {
-        if (ply_vec->getName() == old_name)
-        {
-            ply_vec->setName(new_name);
-            break;
-        }
-    }
-    for (auto* sfc_vec : _sfc_vecs)
-    {
-        if (sfc_vec->getName() == old_name)
-        {
-            sfc_vec->setName(new_name);
-            break;
-        }
-    }
+    };
+
+    rename(_pnt_vecs);
+    rename(_ply_vecs);
+    rename(_sfc_vecs);
 }
 
 void markUnusedPoints(GEOObjects const& geo_objects,
