@@ -23,6 +23,11 @@ EigenOption::EigenOption()
 #ifdef USE_EIGEN_UNSUPPORTED
     scaling = false;
     restart = 30;
+    l = 2;
+    s = 4;
+    angle = 0.7;
+    smoothing = false;
+    residualupdate = false;
 #endif
 }
 
@@ -36,6 +41,18 @@ EigenOption::SolverType EigenOption::getSolverType(
     if (solver_name == "BiCGSTAB")
     {
         return SolverType::BiCGSTAB;
+    }
+    if (solver_name == "BiCGSTABL")
+    {
+        return SolverType::BiCGSTABL;
+    }
+    if (solver_name == "IDRS")
+    {
+        return SolverType::IDRS;
+    }
+    if (solver_name == "IDRSTABL")
+    {
+        return SolverType::IDRSTABL;
     }
     if (solver_name == "SparseLU")
     {
@@ -80,6 +97,12 @@ std::string EigenOption::getSolverName(SolverType const solver_type)
             return "CG";
         case SolverType::BiCGSTAB:
             return "BiCGSTAB";
+        case SolverType::BiCGSTABL:
+            return "BiCGSTABL";
+        case SolverType::IDRS:
+            return "IDRS";
+        case SolverType::IDRSTABL:
+            return "IDRSTABL";
         case SolverType::SparseLU:
             return "SparseLU";
         case SolverType::PardisoLU:

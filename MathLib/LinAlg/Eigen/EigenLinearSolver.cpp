@@ -19,7 +19,7 @@
 #endif
 
 #ifdef USE_EIGEN_UNSUPPORTED
-#include <unsupported/Eigen/src/IterativeSolvers/GMRES.h>
+#include <unsupported/Eigen/IterativeSolvers>
 #include <unsupported/Eigen/src/IterativeSolvers/Scaling.h>
 #endif
 
@@ -94,6 +94,16 @@ public:
         solver_.setMaxIterations(opt.max_iterations);
         MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setRestart(
             opt.restart);
+        MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setL(
+            opt.l);
+        MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setS(
+            opt.s);
+        MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setSmoothing(
+            opt.smoothing);
+        MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setAngle(
+            opt.angle);
+        MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setResidualUpdate(
+            opt.residualupdate);
 
         if (!A.isCompressed())
         {
@@ -124,6 +134,11 @@ public:
 private:
     T_SOLVER solver_;
     void setRestart(int const /*restart*/) {}
+    void setL(int const /*l*/) {}
+    void setS(int const /*s*/) {}
+    void setAngle(double const /*angle*/) {}
+    void setSmoothing(bool const /*smoothing*/) {}
+    void setResidualUpdate(bool const /*residual update*/) {}
 };
 
 /// Specialization for (all) three preconditioners separately
@@ -152,6 +167,177 @@ void EigenIterativeLinearSolver<
 {
     solver_.set_restart(restart);
     INFO("-> set restart value: {:d}", solver_.get_restart());
+}
+
+/// BiCGSTABL
+template <>
+void EigenIterativeLinearSolver<
+    Eigen::BiCGSTABL<EigenMatrix::RawMatrixType,
+                 Eigen::IdentityPreconditioner>>::setL(int const l)
+{
+    solver_.setL(l);
+}
+
+template <>
+void EigenIterativeLinearSolver<Eigen::BiCGSTABL<
+    EigenMatrix::RawMatrixType,
+    Eigen::DiagonalPreconditioner<double>>>::setL(int const l)
+{
+    solver_.setL(l);
+}
+
+template <>
+void EigenIterativeLinearSolver<
+    Eigen::BiCGSTABL<EigenMatrix::RawMatrixType,
+                 Eigen::IncompleteLUT<double>>>::setL(int const l)
+{
+    solver_.setL(l);
+}
+
+/// IDRS
+template <>
+void EigenIterativeLinearSolver<
+    Eigen::IDRS<EigenMatrix::RawMatrixType,
+                 Eigen::IdentityPreconditioner>>::setS(int const s)
+{
+    solver_.setS(s);
+}
+
+template <>
+void EigenIterativeLinearSolver<Eigen::IDRS<
+    EigenMatrix::RawMatrixType,
+    Eigen::DiagonalPreconditioner<double>>>::setS(int const s)
+{
+    solver_.setS(s);
+}
+
+template <>
+void EigenIterativeLinearSolver<
+    Eigen::IDRS<EigenMatrix::RawMatrixType,
+                 Eigen::IncompleteLUT<double>>>::setS(int const s)
+{
+    solver_.setS(s);
+}
+
+template <>
+void EigenIterativeLinearSolver<
+    Eigen::IDRS<EigenMatrix::RawMatrixType,
+                 Eigen::IdentityPreconditioner>>::setAngle(double const angle)
+{
+    solver_.setAngle(angle);
+}
+
+template <>
+void EigenIterativeLinearSolver<Eigen::IDRS<
+    EigenMatrix::RawMatrixType,
+    Eigen::DiagonalPreconditioner<double>>>::setAngle(double const angle)
+{
+    solver_.setAngle(angle);
+}
+
+template <>
+void EigenIterativeLinearSolver<
+    Eigen::IDRS<EigenMatrix::RawMatrixType,
+                 Eigen::IncompleteLUT<double>>>::setAngle(double const angle)
+{
+    solver_.setAngle(angle);
+}
+
+template <>
+void EigenIterativeLinearSolver<
+    Eigen::IDRS<EigenMatrix::RawMatrixType,
+                 Eigen::IdentityPreconditioner>>::setSmoothing(bool const smoothing)
+{
+    solver_.setSmoothing(smoothing);
+}
+
+template <>
+void EigenIterativeLinearSolver<Eigen::IDRS<
+    EigenMatrix::RawMatrixType,
+    Eigen::DiagonalPreconditioner<double>>>::setSmoothing(bool const smoothing)
+{
+    solver_.setSmoothing(smoothing);
+}
+
+template <>
+void EigenIterativeLinearSolver<
+    Eigen::IDRS<EigenMatrix::RawMatrixType,
+                 Eigen::IncompleteLUT<double>>>::setSmoothing(bool const smoothing)
+{
+    solver_.setSmoothing(smoothing);
+}
+
+template <>
+void EigenIterativeLinearSolver<
+    Eigen::IDRS<EigenMatrix::RawMatrixType,
+                 Eigen::IdentityPreconditioner>>::setResidualUpdate(bool const residualupdate)
+{
+    solver_.setResidualUpdate(residualupdate);
+}
+
+template <>
+void EigenIterativeLinearSolver<Eigen::IDRS<
+    EigenMatrix::RawMatrixType,
+    Eigen::DiagonalPreconditioner<double>>>::setResidualUpdate(bool const residualupdate)
+{
+    solver_.setResidualUpdate(residualupdate);
+}
+
+template <>
+void EigenIterativeLinearSolver<
+    Eigen::IDRS<EigenMatrix::RawMatrixType,
+                 Eigen::IncompleteLUT<double>>>::setResidualUpdate(bool const residualupdate)
+{
+    solver_.setResidualUpdate(residualupdate);
+}
+
+/// IDRSTABL
+template <>
+void EigenIterativeLinearSolver<
+    Eigen::IDRSTABL<EigenMatrix::RawMatrixType,
+                 Eigen::IdentityPreconditioner>>::setS(int const s)
+{
+    solver_.setS(s);
+}
+
+template <>
+void EigenIterativeLinearSolver<Eigen::IDRSTABL<
+    EigenMatrix::RawMatrixType,
+    Eigen::DiagonalPreconditioner<double>>>::setS(int const s)
+{
+    solver_.setS(s);
+}
+
+template <>
+void EigenIterativeLinearSolver<
+    Eigen::IDRSTABL<EigenMatrix::RawMatrixType,
+                 Eigen::IncompleteLUT<double>>>::setS(int const s)
+{
+    solver_.setS(s);
+}
+
+template <>
+void EigenIterativeLinearSolver<
+    Eigen::IDRSTABL<EigenMatrix::RawMatrixType,
+                 Eigen::IdentityPreconditioner>>::setL(int const l)
+{
+    solver_.setL(l);
+}
+
+template <>
+void EigenIterativeLinearSolver<Eigen::IDRSTABL<
+    EigenMatrix::RawMatrixType,
+    Eigen::DiagonalPreconditioner<double>>>::setL(int const l)
+{
+    solver_.setL(l);
+}
+
+template <>
+void EigenIterativeLinearSolver<
+    Eigen::IDRSTABL<EigenMatrix::RawMatrixType,
+                 Eigen::IncompleteLUT<double>>>::setL(int const l)
+{
+    solver_.setL(l);
 }
 
 template <template <typename, typename> class Solver, typename Precon>
@@ -197,6 +383,16 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
         {
             return createIterativeSolver<Eigen::BiCGSTAB>(precon_type);
         }
+        case EigenOption::SolverType::BiCGSTABL:
+        {
+#ifdef USE_EIGEN_UNSUPPORTED
+            return createIterativeSolver<Eigen::BiCGSTABL>(precon_type);
+#else
+            OGS_FATAL(
+                "The code is not compiled with the Eigen unsupported modules. "
+                "Linear solver type BiCGSTABL is not available.");
+#endif
+        }
         case EigenOption::SolverType::CG:
         {
             return createIterativeSolver<EigenCGSolver>(precon_type);
@@ -209,6 +405,26 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
             OGS_FATAL(
                 "The code is not compiled with the Eigen unsupported modules. "
                 "Linear solver type GMRES is not available.");
+#endif
+        }
+        case EigenOption::SolverType::IDRS:
+        {
+#ifdef USE_EIGEN_UNSUPPORTED
+            return createIterativeSolver<Eigen::IDRS>(precon_type);
+#else
+            OGS_FATAL(
+                "The code is not compiled with the Eigen unsupported modules. "
+                "Linear solver type IDRS is not available.");
+#endif
+        }
+        case EigenOption::SolverType::IDRSTABL:
+        {
+#ifdef USE_EIGEN_UNSUPPORTED
+            return createIterativeSolver<Eigen::IDRSTABL>(precon_type);
+#else
+            OGS_FATAL(
+                "The code is not compiled with the Eigen unsupported modules. "
+                "Linear solver type IDRSTABL is not available.");
 #endif
         }
         default:
@@ -235,8 +451,11 @@ EigenLinearSolver::EigenLinearSolver(std::string const& /*solver_name*/,
             return;
         }
         case EigenOption::SolverType::BiCGSTAB:
+        case EigenOption::SolverType::BiCGSTABL:
         case EigenOption::SolverType::CG:
         case EigenOption::SolverType::GMRES:
+        case EigenOption::SolverType::IDRS:
+        case EigenOption::SolverType::IDRSTABL:
             solver_ = details::createIterativeSolver(option_.solver_type,
                                                      option_.precon_type);
             return;
