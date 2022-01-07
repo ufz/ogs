@@ -118,7 +118,7 @@ private:
     void setMaterialIDs(
         FEM_CLASS const& fem_class,
         FEM_DIM const& fem_dim,
-        std::vector<GeoLib::Polyline*>* const& lines,
+        std::vector<GeoLib::Polyline*> const& lines,
         std::vector<std::vector<std::size_t>> const& vec_elementsets,
         std::vector<MeshLib::Element*> const& vec_elements,
         std::vector<int>& material_ids);
