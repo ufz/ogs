@@ -32,12 +32,10 @@ PetrelInterface::PetrelInterface(std::list<std::string> const& sfc_fnames,
                                  GeoLib::GEOObjects* geo_obj)
     : _unique_name(unique_model_name)
 {
-    for (std::list<std::string>::const_iterator it(sfc_fnames.begin());
-         it != sfc_fnames.end();
-         ++it)
+    for (auto const& surface_fname : sfc_fnames)
     {
         INFO("PetrelInterface::PetrelInterface(): open surface file.");
-        std::ifstream in((*it).c_str());
+        std::ifstream in(surface_fname);
         if (in)
         {
             INFO("PetrelInterface::PetrelInterface(): \tdone.");
@@ -49,16 +47,14 @@ PetrelInterface::PetrelInterface(std::list<std::string> const& sfc_fnames,
             WARN(
                 "PetrelInterface::PetrelInterface(): \tCould not open file "
                 "{:s}.",
-                it->c_str());
+                surface_fname);
         }
     }
 
-    for (std::list<std::string>::const_iterator it(well_path_fnames.begin());
-         it != well_path_fnames.end();
-         ++it)
+    for (auto const& well_path_fname : well_path_fnames)
     {
         INFO("PetrelInterface::PetrelInterface(): open well path file.");
-        std::ifstream in((*it).c_str());
+        std::ifstream in(well_path_fname);
         if (in)
         {
             INFO("PetrelInterface::PetrelInterface(): \tdone.");
@@ -70,7 +66,7 @@ PetrelInterface::PetrelInterface(std::list<std::string> const& sfc_fnames,
             WARN(
                 "PetrelInterface::PetrelInterface(): \tCould not open well "
                 "path file {:s}.",
-                it->c_str());
+                well_path_fname);
         }
     }
 
