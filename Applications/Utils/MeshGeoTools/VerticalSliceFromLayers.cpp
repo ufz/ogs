@@ -44,13 +44,12 @@
 #include "MeshLib/Node.h"
 
 /// creates a vector of sampling points based on the specified resolution
-std::unique_ptr<std::vector<GeoLib::Point*>> createPoints(
-    MathLib::Point3d const& start,
-    MathLib::Point3d const& end,
-    std::size_t const n_intervals)
+std::vector<GeoLib::Point*> createPoints(MathLib::Point3d const& start,
+                                         MathLib::Point3d const& end,
+                                         std::size_t const n_intervals)
 {
-    auto points = std::make_unique<std::vector<GeoLib::Point*>>();
-    points->push_back(new GeoLib::Point(start, 0));
+    std::vector<GeoLib::Point*> points;
+    points.push_back(new GeoLib::Point(start, 0));
     double const length = std::sqrt(MathLib::sqrDist(start, end));
     double const interval = length / n_intervals;
 
@@ -58,11 +57,11 @@ std::unique_ptr<std::vector<GeoLib::Point*>> createPoints(
                             (end[2] - start[2]));
     for (std::size_t i = 1; i < n_intervals; ++i)
     {
-        points->push_back(new GeoLib::Point(
+        points.push_back(new GeoLib::Point(
             start[0] + ((i * interval) / length * vec[0]),
             start[1] + ((i * interval) / length * vec[1]), 0, i));
     }
-    points->push_back(new GeoLib::Point(end, n_intervals));
+    points.push_back(new GeoLib::Point(end, n_intervals));
     return points;
 }
 
@@ -104,13 +103,14 @@ std::vector<std::string> createGeometries(
         }
 
         std::string geo_name(std::to_string(i));
-        std::unique_ptr<std::vector<GeoLib::Point*>> points(
-            createPoints(pnt_start, pnt_end, resolution));
-        geo.addPointVec(std::move(points), geo_name);
+        auto points(createPoints(pnt_start, pnt_end, resolution));
+        geo.addPointVec(std::move(points), geo_name,
+                        GeoLib::PointVec::NameIdMap{});
 
-        auto lines = std::make_unique<std::vector<GeoLib::Polyline*>>();
-        lines->push_back(createPolyline(*geo.getPointVec(geo_name)));
-        geo.addPolylineVec(std::move(lines), geo_name);
+        std::vector<GeoLib::Polyline*> lines;
+        lines.push_back(createPolyline(*geo.getPointVec(geo_name)));
+        geo.addPolylineVec(std::move(lines), geo_name,
+                           GeoLib::PolylineVec::NameIdMap{});
 
         MeshGeoToolsLib::GeoMapper mapper(geo, geo_name);
         mapper.mapOnMesh(layer.get());
@@ -126,8 +126,8 @@ void mergeGeometries(GeoLib::GEOObjects& geo,
                      std::vector<std::string> const& geo_names,
                      std::string& merged_geo_name)
 {
-    auto points = std::make_unique<std::vector<GeoLib::Point*>>();
-    auto lines = std::make_unique<std::vector<GeoLib::Polyline*>>();
+    std::vector<GeoLib::Point*> points;
+    std::vector<GeoLib::Polyline*> lines;
 
     auto layer_pnts = *geo.getPointVec(geo_names[0]);
     std::size_t const pnts_per_line = layer_pnts.size();
@@ -137,12 +137,12 @@ void mergeGeometries(GeoLib::GEOObjects& geo,
     for (std::size_t i = 0; i < pnts_per_line; ++i)
     {
         std::size_t const idx = pnts_per_line - i - 1;
-        points->push_back(new GeoLib::Point(*layer_pnts[i], idx));
+        points.push_back(new GeoLib::Point(*layer_pnts[i], idx));
         last_line_idx[i] = idx;
     }
     for (std::size_t j = 1; j < n_layers; ++j)
     {
-        GeoLib::Polyline* line = new GeoLib::Polyline(*points);
+        GeoLib::Polyline* line = new GeoLib::Polyline(points);
         for (std::size_t i = 0; i < pnts_per_line; ++i)
         {
             line->addPoint(last_line_idx[i]);
@@ -153,21 +153,23 @@ void mergeGeometries(GeoLib::GEOObjects& geo,
             // check if for current point the lower layer boundary is actually
             // located below the upper boundary
             std::size_t idx = last_line_idx[pnts_per_line - i - 1];
-            if ((*(*points)[idx])[2] > (*layer_pnts[i])[2])
+            if ((*points[idx])[2] > (*layer_pnts[i])[2])
             {
-                idx = points->size();
-                points->push_back(new GeoLib::Point(*layer_pnts[i], idx));
+                idx = points.size();
+                points.push_back(new GeoLib::Point(*layer_pnts[i], idx));
                 last_line_idx[pnts_per_line - i - 1] = idx;
             }
             line->addPoint(idx);
         }
         // close polygon
         line->addPoint(line->getPointID(0));
-        lines->push_back(line);
+        lines.push_back(line);
     }
 
-    geo.addPointVec(std::move(points), merged_geo_name);
-    geo.addPolylineVec(std::move(lines), merged_geo_name);
+    geo.addPointVec(std::move(points), merged_geo_name,
+                    GeoLib::PointVec::NameIdMap{});
+    geo.addPolylineVec(std::move(lines), merged_geo_name,
+                       GeoLib::PolylineVec::NameIdMap{});
 }
 
 /// rotates the merged geometry into the XY-plane

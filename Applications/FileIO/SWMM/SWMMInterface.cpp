@@ -362,8 +362,8 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
         return false;
     }
 
-    auto points = std::make_unique<std::vector<GeoLib::Point*>>();
-    auto lines = std::make_unique<std::vector<GeoLib::Polyline*>>();
+    std::vector<GeoLib::Point*> points;
+    std::vector<GeoLib::Polyline*> lines;
     std::vector<std::string> pnt_names;
     std::vector<std::string> line_names;
 
@@ -375,41 +375,41 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
         if (line == "[COORDINATES]" || line == "[VERTICES]" ||
             line == "[SYMBOLS]")
         {
-            if (!readCoordinates<GeoLib::Point>(in, *points, pnt_names))
+            if (!readCoordinates<GeoLib::Point>(in, points, pnt_names))
             {
-                BaseLib::cleanupVectorElements(*points, *lines);
+                BaseLib::cleanupVectorElements(points, lines);
                 return false;
             }
         }
         if (line == "[Polygons]" && add_subcatchments)
         {
-            if (!readPolygons(in, *lines, line_names, *points, pnt_names))
+            if (!readPolygons(in, lines, line_names, points, pnt_names))
             {
-                BaseLib::cleanupVectorElements(*points, *lines);
+                BaseLib::cleanupVectorElements(points, lines);
                 return false;
             }
         }
     }
 
-    if (points->empty())
+    if (points.empty())
     {
         ERR("No points found in file");
         return false;
     }
-    if (points->size() != pnt_names.size())
+    if (points.size() != pnt_names.size())
     {
         ERR("Length of point vector and point name vector do not match.");
-        BaseLib::cleanupVectorElements(*points, *lines);
+        BaseLib::cleanupVectorElements(points, lines);
         return false;
     }
 
-    auto name_id_map = std::make_unique<std::map<std::string, std::size_t>>();
+    GeoLib::PointVec::NameIdMap name_id_map;
     {
         std::size_t const n_names(pnt_names.size());
         for (std::size_t i = 0; i < n_names; ++i)
         {
             if (!pnt_names[i].empty())
-                name_id_map->insert(std::make_pair(pnt_names[i], i));
+                name_id_map.insert(std::make_pair(pnt_names[i], i));
         }
     }
 
@@ -422,39 +422,39 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
         if (line == "[JUNCTIONS]")
         {
             INFO("Reading point elevation...");
-            if (!addPointElevation(in, *points, *name_id_map))
+            if (!addPointElevation(in, points, name_id_map))
             {
-                BaseLib::cleanupVectorElements(*points, *lines);
+                BaseLib::cleanupVectorElements(points, lines);
                 return false;
             }
         }
         if (line == "[CONDUITS]")
         {
             INFO("Reading conduits...");
-            if (!readLinksAsPolylines(in, *lines, line_names, *points,
-                                      *name_id_map))
+            if (!readLinksAsPolylines(in, lines, line_names, points,
+                                      name_id_map))
             {
-                BaseLib::cleanupVectorElements(*points, *lines);
+                BaseLib::cleanupVectorElements(points, lines);
                 return false;
             }
         }
         else if (line == "[PUMPS]")
         {
             INFO("Reading pumps...");
-            if (!readLinksAsPolylines(in, *lines, line_names, *points,
-                                      *name_id_map))
+            if (!readLinksAsPolylines(in, lines, line_names, points,
+                                      name_id_map))
             {
-                BaseLib::cleanupVectorElements(*points, *lines);
+                BaseLib::cleanupVectorElements(points, lines);
                 return false;
             }
         }
         else if (line == "[WEIRS]")
         {
             INFO("Reading weirs...");
-            if (!readLinksAsPolylines(in, *lines, line_names, *points,
-                                      *name_id_map))
+            if (!readLinksAsPolylines(in, lines, line_names, points,
+                                      name_id_map))
             {
-                BaseLib::cleanupVectorElements(*points, *lines);
+                BaseLib::cleanupVectorElements(points, lines);
                 return false;
             }
         }
@@ -462,28 +462,27 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
 
     geo_objects.addPointVec(std::move(points), geo_name,
                             std::move(name_id_map));
-    if (!lines->empty())
+    if (!lines.empty())
     {
-        if (lines->size() != line_names.size())
+        if (lines.size() != line_names.size())
         {
             ERR("Length of line vector and line name vector do not match.");
             geo_objects.removePointVec(geo_name);
-            for (auto ply : *lines)
+            for (auto ply : lines)
                 delete ply;
             return false;
         }
-        auto line_id_map =
-            std::make_unique<std::map<std::string, std::size_t>>();
+        GeoLib::PolylineVec::NameIdMap line_id_map;
         {
             std::size_t const n_names(line_names.size());
             for (std::size_t i = 0; i < n_names; ++i)
             {
-                line_id_map->insert(std::make_pair(line_names[i], i));
+                line_id_map.insert(std::make_pair(line_names[i], i));
             }
         }
         std::vector<std::size_t> const& pnt_id_map(
             geo_objects.getPointVecObj(geo_name)->getIDMap());
-        for (GeoLib::Polyline* polyline : *lines)
+        for (GeoLib::Polyline* polyline : lines)
         {
             for (std::size_t i = 0; i < polyline->getNumberOfPoints(); ++i)
             {

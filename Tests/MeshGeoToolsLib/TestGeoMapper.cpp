@@ -53,12 +53,13 @@ TEST_F(MeshGeoToolsLibGeoMapper, PointsOnSurfaceMesh)
     {
         GeoLib::GEOObjects geo_obj;
         std::string geo_name("TestGeoMapperPoints");
-        auto points = std::make_unique<std::vector<GeoLib::Point*>>();
-        points->reserve(size(pnts));
-        transform(cbegin(pnts), cend(pnts), back_inserter(*points),
+        std::vector<GeoLib::Point*> points;
+        points.reserve(size(pnts));
+        transform(cbegin(pnts), cend(pnts), back_inserter(points),
                   [](auto& p) { return new GeoLib::Point(p); });
 
-        geo_obj.addPointVec(std::move(points), geo_name);
+        geo_obj.addPointVec(std::move(points), geo_name,
+                            GeoLib::PointVec::NameIdMap{});
         MeshGeoToolsLib::GeoMapper geo_mapper(geo_obj, geo_name);
 
         geo_mapper.mapOnMesh(_surface_mesh.get());

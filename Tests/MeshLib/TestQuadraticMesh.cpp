@@ -229,10 +229,10 @@ TEST(MeshLib, QuadraticOrderMesh_LineQuad)
         auto* ply = new GeoLib::Polyline(pnts);
         ply->addPoint(0);
         ply->addPoint(1);
-        std::unique_ptr<std::vector<GeoLib::Polyline*>> plys(
-            new std::vector<GeoLib::Polyline*>());
-        plys->push_back(ply);
-        GeoLib::PolylineVec ply_vec("", std::move(plys));
+        std::vector<GeoLib::Polyline*> plys;
+        plys.push_back(ply);
+        GeoLib::PolylineVec ply_vec("", std::move(plys),
+                                    GeoLib::PolylineVec::NameIdMap{});
 
         linear_mesh = MeshGeoToolsLib::appendLinesAlongPolylines(
             *linear_quad_mesh, ply_vec);

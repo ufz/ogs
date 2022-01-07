@@ -19,26 +19,24 @@
 
 namespace GeoLib
 {
-PointVec::PointVec(
-    const std::string& name, std::unique_ptr<std::vector<Point*>> points,
-    std::unique_ptr<std::map<std::string, std::size_t>> name_id_map,
-    PointType type, double rel_eps)
+PointVec::PointVec(std::string const& name, std::vector<Point*>&& points,
+                   NameIdMap&& name_id_map, PointType const type,
+                   double const rel_eps)
     : TemplateVec<Point>(name, std::move(points), std::move(name_id_map)),
       _type(type),
-      _aabb(_data_vec->begin(), _data_vec->end()),
+      _aabb(_data_vec.begin(), _data_vec.end()),
       _rel_eps(rel_eps * (_aabb.getMaxPoint() - _aabb.getMinPoint()).norm()),
       _oct_tree(OctTree<GeoLib::Point, 16>::createOctTree(
           _aabb.getMinPoint(), _aabb.getMaxPoint(), _rel_eps))
 {
-    assert(_data_vec);
-    std::size_t const number_of_all_input_pnts(_data_vec->size());
+    std::size_t const number_of_all_input_pnts(_data_vec.size());
 
     // correct the ids if necessary
-    for (std::size_t k(0); k < _data_vec->size(); ++k)
+    for (std::size_t k(0); k < _data_vec.size(); ++k)
     {
-        if ((*_data_vec)[k]->getID() == std::numeric_limits<std::size_t>::max())
+        if (_data_vec[k]->getID() == std::numeric_limits<std::size_t>::max())
         {
-            (*_data_vec)[k]->setID(k);
+            _data_vec[k]->setID(k);
         }
     }
 
@@ -47,16 +45,16 @@ PointVec::PointVec(
     _pnt_id_map.resize(number_of_all_input_pnts);
     std::iota(_pnt_id_map.begin(), _pnt_id_map.end(), 0);
     GeoLib::Point* ret_pnt(nullptr);
-    for (std::size_t k(0); k < _data_vec->size(); ++k)
+    for (std::size_t k(0); k < _data_vec.size(); ++k)
     {
-        GeoLib::Point* const pnt((*_data_vec)[k]);
+        GeoLib::Point* const pnt(_data_vec[k]);
         if (!_oct_tree->addPoint(pnt, ret_pnt))
         {
             assert(ret_pnt != nullptr);
             _pnt_id_map[pnt->getID()] = ret_pnt->getID();
             rm_pos.push_back(k);
-            delete (*_data_vec)[k];
-            (*_data_vec)[k] = nullptr;
+            delete _data_vec[k];
+            _data_vec[k] = nullptr;
         }
         else
         {
@@ -65,8 +63,8 @@ PointVec::PointVec(
     }
 
     auto const data_vec_end =
-        std::remove(_data_vec->begin(), _data_vec->end(), nullptr);
-    _data_vec->erase(data_vec_end, _data_vec->end());
+        std::remove(_data_vec.begin(), _data_vec.end(), nullptr);
+    _data_vec.erase(data_vec_end, _data_vec.end());
 
     // decrement the ids according to the number of removed points (==k) before
     // the j-th point (positions of removed points are stored in the vector
@@ -101,29 +99,35 @@ PointVec::PointVec(
     }
 
     // set value of the point id to the position of the point within _data_vec
-    for (std::size_t k(0); k < _data_vec->size(); ++k)
+    for (std::size_t k(0); k < _data_vec.size(); ++k)
     {
-        (*_data_vec)[k]->setID(k);
+        _data_vec[k]->setID(k);
     }
 
-    if (number_of_all_input_pnts > _data_vec->size())
+    if (number_of_all_input_pnts > _data_vec.size())
     {
         WARN("PointVec::PointVec(): there are {:d} double points.",
-             number_of_all_input_pnts - _data_vec->size());
+             number_of_all_input_pnts - _data_vec.size());
     }
 
     correctNameIDMapping();
     // create the inverse mapping
-    _id_to_name_map.resize(_data_vec->size());
+    _id_to_name_map.resize(_data_vec.size());
     // fetch the names from the name id map
-    for (auto p : *_name_id_map)
+    for (auto& [name, id] : _name_id_map)
     {
-        if (p.second >= _id_to_name_map.size())
+        if (id >= _id_to_name_map.size())
         {
             continue;
         }
-        _id_to_name_map[p.second] = p.first;
+        _id_to_name_map[id] = name;
     }
+}
+
+PointVec::PointVec(std::string const& name, std::vector<Point*>&& points,
+                   PointType const type, double const rel_eps)
+    : PointVec(name, std::move(points), NameIdMap{}, type, rel_eps)
+{
 }
 
 std::size_t PointVec::push_back(Point* pnt)
@@ -143,8 +147,8 @@ void PointVec::push_back(Point* pnt, std::string const* const name)
     }
 
     std::map<std::string, std::size_t>::const_iterator it(
-        _name_id_map->find(*name));
-    if (it != _name_id_map->end())
+        _name_id_map.find(*name));
+    if (it != _name_id_map.end())
     {
         _id_to_name_map.emplace_back("");
         WARN("PointVec::push_back(): two points share the name {:s}.",
@@ -154,7 +158,7 @@ void PointVec::push_back(Point* pnt, std::string const* const name)
 
     std::size_t id(uniqueInsert(pnt));
     _pnt_id_map.push_back(id);
-    (*_name_id_map)[*name] = id;
+    _name_id_map[*name] = id;
     _id_to_name_map.push_back(*name);
 }
 
@@ -165,9 +169,9 @@ std::size_t PointVec::uniqueInsert(Point* pnt)
     {
         // set value of the point id to the position of the point within
         // _data_vec
-        pnt->setID(_data_vec->size());
-        _data_vec->push_back(pnt);
-        return _data_vec->size() - 1;
+        pnt->setID(_data_vec.size());
+        _data_vec.push_back(pnt);
+        return _data_vec.size() - 1;
     }
 
     // pnt is outside of OctTree object
@@ -179,9 +183,9 @@ std::size_t PointVec::uniqueInsert(Point* pnt)
         _oct_tree.reset(GeoLib::OctTree<GeoLib::Point, 16>::createOctTree(
             _aabb.getMinPoint(), _aabb.getMaxPoint(), _rel_eps));
         // add all points that are already in the _data_vec
-        for (std::size_t k(0); k < _data_vec->size(); ++k)
+        for (std::size_t k(0); k < _data_vec.size(); ++k)
         {
-            GeoLib::Point* const p((*_data_vec)[k]);
+            GeoLib::Point* const p(_data_vec[k]);
             _oct_tree->addPoint(p, ret_pnt);
         }
         // add the new point
@@ -189,9 +193,9 @@ std::size_t PointVec::uniqueInsert(Point* pnt)
         _oct_tree->addPoint(pnt, ret_pnt);
         // set value of the point id to the position of the point within
         // _data_vec
-        pnt->setID(_data_vec->size());
-        _data_vec->push_back(pnt);
-        return _data_vec->size() - 1;
+        pnt->setID(_data_vec.size());
+        _data_vec.push_back(pnt);
+        return _data_vec.size() - 1;
     }
 
     delete pnt;
@@ -202,12 +206,12 @@ void PointVec::correctNameIDMapping()
 {
     // create mapping id -> name using the std::vector id_names
     std::vector<std::string> id_names(_pnt_id_map.size(), std::string(""));
-    for (auto& id_name_pair : *_name_id_map)
+    for (auto& id_name_pair : _name_id_map)
     {
         id_names[id_name_pair.second] = id_name_pair.first;
     }
 
-    for (auto it = _name_id_map->begin(); it != _name_id_map->end();)
+    for (auto it = _name_id_map.begin(); it != _name_id_map.end();)
     {
         // extract the id associated with the name
         const std::size_t id(it->second);
@@ -223,7 +227,7 @@ void PointVec::correctNameIDMapping()
             if (id_names[_pnt_id_map[id]].length() != 0)
             {
                 // point has already a name, erase the second occurrence
-                it = _name_id_map->erase(it);
+                it = _name_id_map.erase(it);
             }
             else
             {
@@ -258,7 +262,7 @@ void PointVec::resetInternalDataStructures()
     auto const& max(_aabb.getMaxPoint());
     double const rel_eps(_rel_eps / (max - min).norm());
 
-    _aabb = GeoLib::AABB(_data_vec->begin(), _data_vec->end());
+    _aabb = GeoLib::AABB(_data_vec.begin(), _data_vec.end());
 
     _rel_eps = rel_eps * (_aabb.getMaxPoint() - _aabb.getMinPoint()).norm();
 
@@ -266,7 +270,7 @@ void PointVec::resetInternalDataStructures()
         _aabb.getMinPoint(), _aabb.getMaxPoint(), _rel_eps));
 
     GeoLib::Point* ret_pnt(nullptr);
-    for (auto const p : *_data_vec)
+    for (auto const &p : _data_vec)
     {
         _oct_tree->addPoint(p, ret_pnt);
     }

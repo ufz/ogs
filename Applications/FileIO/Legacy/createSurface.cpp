@@ -50,23 +50,25 @@ bool createSurface(GeoLib::Polyline const& ply,
     }
 
     // create new GEOObjects and insert a copy of the polyline
-    auto polyline_points = std::make_unique<std::vector<GeoLib::Point*>>();
+    std::vector<GeoLib::Point*> polyline_points;
     GeoLib::GEOObjects geo;
     auto ply_points = ply.getPointsVec();
     std::transform(ply_points.begin(), ply_points.end(),
-                   std::back_inserter(*polyline_points),
+                   std::back_inserter(polyline_points),
                    [](auto const* p) { return new GeoLib::Point(*p); });
     std::string ply_name = "temporary_polyline_name";
-    geo.addPointVec(std::move(polyline_points), ply_name);
+    geo.addPointVec(std::move(polyline_points), ply_name,
+                    std::map<std::string, std::size_t>{});
     auto polyline =
         std::make_unique<GeoLib::Polyline>(*geo.getPointVec(ply_name));
     for (std::size_t k(0); k < ply.getNumberOfPoints(); ++k)
     {
         polyline->addPoint(ply.getPointID(k));
     }
-    auto polylines = std::make_unique<std::vector<GeoLib::Polyline*>>();
-    polylines->push_back(polyline.release());
-    geo.addPolylineVec(std::move(polylines), ply_name);
+    std::vector<GeoLib::Polyline*> polylines;
+    polylines.push_back(polyline.release());
+    geo.addPolylineVec(std::move(polylines), ply_name,
+                       GeoLib::PolylineVec::NameIdMap{});
 
     // use GMSHInterface to create a mesh from the closed polyline
     auto const geo_names = geo.getGeometryNames();

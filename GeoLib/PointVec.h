@@ -46,31 +46,30 @@ public:
 
     /**
      * Constructor initializes the name of the PointVec object,
-     * the internal pointer _pnt_vec to the raw points and the internal
-     * pointer the vector of names of the points
-     * and sets the type of PointVec.
-     * @param name the name of the point group
-     * @param points Pointer to a vector of pointers to GeoLib::Points.
-     * @attention{PointVec will take the ownership of (the pointer to)
-     * the vector, i.e. it deletes the vector in the destructor! The class
-     * takes also the ownership of the GeoLib::Points the pointers within
-     * the vector points at, i.e. it delete the points!}
+     * and moves the points vector into the internal data structure.
+     * @param name the name of the point set
+     * @param points R-value reference to a vector of pointers to
+     * GeoLib::Points.
+     * @attention{The PointVec object takes the ownership of the GeoLib::Points
+     * in the points vector, i.e. it delete the points during destruction!}
      * @param name_id_map A std::map that stores the relation name to point.
-     * @attention{PointVec will take the ownership of the vector, i.e. it
-     * deletes the names.}
      * @param type the type of the point, \sa enum PointType
      * @param rel_eps This is a relative error tolerance value for the test of
      * identical points. The size of the axis aligned bounding box multiplied
      * with the value of rel_eps gives the real tolerance \f$tol\f$. Two points
      * \f$p_0, p_1 \f$ are identical iff \f$|p_1 - p_0| \le tol.\f$
      */
-    PointVec(const std::string& name,
-             std::unique_ptr<std::vector<Point*>>
-                 points,
-             std::unique_ptr<std::map<std::string, std::size_t>> name_id_map =
-                 nullptr,
-             PointType type = PointVec::PointType::POINT,
-             double rel_eps = std::numeric_limits<double>::epsilon());
+    PointVec(std::string const& name, std::vector<Point*>&& points,
+             NameIdMap&& name_id_map,
+             PointType const type = PointVec::PointType::POINT,
+             double const rel_eps = std::numeric_limits<double>::epsilon());
+    /**
+     * This constructor is similar to the above constructor with the
+     * exception that the NameIdMap must not be passed.
+     */
+    PointVec(std::string const& name, std::vector<Point*>&& points,
+             PointType const type = PointVec::PointType::POINT,
+             double const rel_eps = std::numeric_limits<double>::epsilon());
 
     /**
      * Method adds a Point to the (internal) standard vector and takes the

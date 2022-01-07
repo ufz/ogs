@@ -88,11 +88,20 @@ public:
      * @param eps relative tolerance value for testing of point uniqueness
      */
     void addPointVec(
-        std::unique_ptr<std::vector<Point*>> points,
-        std::string& name,
-        std::unique_ptr<std::map<std::string, std::size_t>> pnt_id_name_map =
-            nullptr,
-        double eps = std::sqrt(std::numeric_limits<double>::epsilon()));
+        std::vector<Point*>&& points, std::string& name,
+        PointVec::NameIdMap&& pnt_id_name_map,
+        double const eps = std::sqrt(std::numeric_limits<double>::epsilon()));
+
+    /**
+     * Adds a vector of points with the given name to GEOObjects. This is an
+     * overloaded version without the need to pass a name-to-id-map.
+     * @param points vector of pointers to points
+     * @param name the project name
+     * @param eps relative tolerance value for testing of point uniqueness
+     */
+    void addPointVec(
+        std::vector<Point*>&& points, std::string& name,
+        double const eps = std::sqrt(std::numeric_limits<double>::epsilon()));
 
     /**
      * Returns the point vector with the given name.
@@ -120,8 +129,7 @@ public:
     bool removePointVec(const std::string &name);
 
     /// Adds a vector of stations with the given name and colour to GEOObjects.
-    void addStationVec(
-        std::unique_ptr<std::vector<Point *>> stations, std::string &name);
+    void addStationVec(std::vector<Point*>&& stations, std::string& name);
 
     /// Returns the station vector with the given name.
     const std::vector<GeoLib::Point*>* getStationVec(
@@ -140,10 +148,9 @@ public:
      * @param name The geometry to which the given Polyline objects should be added.
      * @param ply_names map of names and ids that are corresponding to the polylines
      */
-    void addPolylineVec(std::unique_ptr<std::vector<Polyline*>> lines,
-                        const std::string& name,
-                        std::unique_ptr<std::map<std::string, std::size_t>>
-                            ply_names = nullptr);
+    void addPolylineVec(std::vector<Polyline*>&& lines,
+                        std::string const& name,
+                        PolylineVec::NameIdMap&& ply_names);
 
     /** copies the pointers to the polylines in the vector to the PolylineVec with provided name.
      * the pointers are managed by the GEOObjects, i.e. GEOObjects will delete the Polylines at the
@@ -183,10 +190,9 @@ public:
     bool removePolylineVec(const std::string &name);
 
     /** Adds a vector of surfaces with the given name to GEOObjects. */
-    void addSurfaceVec(std::unique_ptr<std::vector<Surface*>> sfc,
+    void addSurfaceVec(std::vector<Surface*>&& sfc,
                        const std::string& name,
-                       std::unique_ptr<std::map<std::string, std::size_t>>
-                           sfc_names = nullptr);
+                       SurfaceVec::NameIdMap&& sfc_names);
 
     /**
      * Copies the surfaces in the vector to the SurfaceVec with the given name.
@@ -289,16 +295,6 @@ public:
     /// Read access to surfaces w/o using a name.
     std::vector<SurfaceVec*> const& getSurfaces() const { return _sfc_vecs; }
 
-    /**
-     * vector manages pointers to PointVec objects
-     */
-    std::vector<PointVec*> _pnt_vecs;
-
-    /** vector manages pointers to PolylineVec objects */
-    std::vector<PolylineVec*> _ply_vecs;
-    /** vector manages pointers to SurfaceVec objects */
-    std::vector<SurfaceVec*> _sfc_vecs;
-
     std::unique_ptr<Callbacks> _callbacks{new Callbacks};
 
     std::function<void(std::string const&)> addPolylineVecCallback =
@@ -362,6 +358,14 @@ private:
     void mergeSurfaces(std::vector<std::string> const& geo_names,
                        std::string const& merged_geo_name,
                        std::vector<std::size_t> const& pnt_offsets);
+
+    /** vector manages pointers to PointVec objects */
+    std::vector<PointVec*> _pnt_vecs;
+    /** vector manages pointers to PolylineVec objects */
+    std::vector<PolylineVec*> _ply_vecs;
+    /** vector manages pointers to SurfaceVec objects */
+    std::vector<SurfaceVec*> _sfc_vecs;
+
 };
 
 /// Constructs a station-vector based on the points of a given geometry.

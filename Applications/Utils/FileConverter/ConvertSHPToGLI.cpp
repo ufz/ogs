@@ -40,8 +40,8 @@ void convertPoints(DBFHandle dbf_handle,
     int n_records(DBFGetRecordCount(dbf_handle));
     INFO("Reading {:d} records.", n_records);
 
-    auto points = std::make_unique<std::vector<GeoLib::Point*>>();
-    points->reserve(n_records);
+    std::vector<GeoLib::Point*> points;
+    points.reserve(n_records);
 
     std::string name;
     for (int k = 0; k < n_records; k++)
@@ -76,12 +76,12 @@ void convertPoints(DBFHandle dbf_handle,
         if (station)
         {
             GeoLib::Station* pnt(GeoLib::Station::createStation(name, x, y, z));
-            points->push_back(pnt);
+            points.push_back(pnt);
         }
         else
         {
             GeoLib::Point* pnt(new GeoLib::Point(x, y, z));
-            points->push_back(pnt);
+            points.push_back(pnt);
         }
     }
 
@@ -92,7 +92,8 @@ void convertPoints(DBFHandle dbf_handle,
     }
     else
     {
-        geo_objs.addPointVec(std::move(points), points_group_name);
+        geo_objs.addPointVec(std::move(points), points_group_name,
+                             GeoLib::PointVec::NameIdMap{});
     }
 
     if (station)

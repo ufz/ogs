@@ -38,22 +38,24 @@ public:
         mesh_items_all_nodes =
             std::make_unique<MeL::MeshSubset>(*mesh, mesh->getNodes());
 
-        auto ply_pnts = std::make_unique<std::vector<GeoLib::Point*>>();
-        ply_pnts->push_back(new GeoLib::Point(0.0, 0.0, 0.0));
-        ply_pnts->push_back(new GeoLib::Point(1.0, 0.0, 0.0));
+        std::vector<GeoLib::Point*> ply_pnts;
+        ply_pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
+        ply_pnts.push_back(new GeoLib::Point(1.0, 0.0, 0.0));
 
         std::string geometry_0("GeometryWithPntsAndPolyline");
-        geo_objs.addPointVec(std::move(ply_pnts), geometry_0, nullptr);
+        geo_objs.addPointVec(std::move(ply_pnts), geometry_0,
+                             GeoLib::PointVec::NameIdMap{});
 
         auto ply = new GeoLib::Polyline(*geo_objs.getPointVec(geometry_0));
 
         ply->addPoint(0);
         ply->addPoint(1);
 
-        auto plys = std::make_unique<std::vector<GeoLib::Polyline*>>();
-        plys->push_back(ply);
+        std::vector<GeoLib::Polyline*> plys;
+        plys.push_back(ply);
 
-        geo_objs.addPolylineVec(std::move(plys), geometry_0, nullptr);
+        geo_objs.addPolylineVec(std::move(plys), geometry_0,
+                                GeoLib::PolylineVec::NameIdMap{});
 
         auto search_length = std::make_unique<MGTL::SearchLength>();
         MGTL::MeshNodeSearcher const& searcher_nodes =

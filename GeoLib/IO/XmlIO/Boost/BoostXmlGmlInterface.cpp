@@ -45,13 +45,6 @@ bool BoostXmlGmlInterface::readFile(const std::string& fname)
     doc->ignoreConfigAttribute("xsi:noNamespaceSchemaLocation");
     doc->ignoreConfigAttribute("xmlns:ogs");
 
-    auto polylines = std::make_unique<std::vector<GeoLib::Polyline*>>();
-    auto surfaces = std::make_unique<std::vector<GeoLib::Surface*>>();
-
-    using MapNameId = std::map<std::string, std::size_t>;
-    auto ply_names = std::make_unique<MapNameId>();
-    auto sfc_names = std::make_unique<MapNameId>();
-
     //! \ogs_file_param{gml__name}
     auto geo_name = doc->getConfigParameter<std::string>("name");
     if (geo_name.empty())
@@ -62,40 +55,43 @@ bool BoostXmlGmlInterface::readFile(const std::string& fname)
     //! \ogs_file_param{gml__points}
     for (auto st : doc->getConfigSubtreeList("points"))
     {
-        auto points = std::make_unique<std::vector<GeoLib::Point*>>();
-        auto pnt_names = std::make_unique<MapNameId>();
-        readPoints(st, *points, *pnt_names);
+        std::vector<GeoLib::Point*> points;
+        GeoLib::PointVec::NameIdMap pnt_names;
+        readPoints(st, points, pnt_names);
         _geo_objects.addPointVec(std::move(points), geo_name,
                                  std::move(pnt_names));
     }
 
+    std::vector<GeoLib::Polyline*> polylines;
+    GeoLib::PolylineVec::NameIdMap ply_names;
     //! \ogs_file_param{gml__polylines}
     for (auto st : doc->getConfigSubtreeList("polylines"))
     {
         readPolylines(st,
-                      *polylines,
+                      polylines,
                       *_geo_objects.getPointVec(geo_name),
                       _geo_objects.getPointVecObj(geo_name)->getIDMap(),
-                      *ply_names);
+                      ply_names);
     }
+
+    std::vector<GeoLib::Surface*> surfaces;
+    SurfaceVec::NameIdMap sfc_names;
 
     //! \ogs_file_param{gml__surfaces}
     for (auto st : doc->getConfigSubtreeList("surfaces"))
     {
-        readSurfaces(st,
-                     *surfaces,
-                     *_geo_objects.getPointVec(geo_name),
+        readSurfaces(st, surfaces, *_geo_objects.getPointVec(geo_name),
                      _geo_objects.getPointVecObj(geo_name)->getIDMap(),
-                     *sfc_names);
+                     sfc_names);
     }
 
-    if (!polylines->empty())
+    if (!polylines.empty())
     {
         _geo_objects.addPolylineVec(std::move(polylines), geo_name,
                                     std::move(ply_names));
     }
 
-    if (!surfaces->empty())
+    if (!surfaces.empty())
     {
         _geo_objects.addSurfaceVec(std::move(surfaces), geo_name,
                                    std::move(sfc_names));

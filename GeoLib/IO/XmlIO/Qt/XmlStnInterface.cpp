@@ -56,7 +56,7 @@ int XmlStnInterface::readFile(const QString& fileName)
     {
         // read all the station lists
         QDomNodeList stationList = lists.at(i).childNodes();
-        auto stations = std::make_unique<std::vector<GeoLib::Point*>>();
+        std::vector<GeoLib::Point*> stations;
         std::string stnName("[NN]");
 
         for (int j = 0; j < stationList.count(); j++)
@@ -69,17 +69,15 @@ int XmlStnInterface::readFile(const QString& fileName)
             }
             else if (station_type.compare("stations") == 0)
             {
-                readStations(station_node, stations.get(),
-                             fileName.toStdString());
+                readStations(station_node, stations, fileName.toStdString());
             }
             else if (station_type.compare("boreholes") == 0)
             {
-                readStations(station_node, stations.get(),
-                             fileName.toStdString());
+                readStations(station_node, stations, fileName.toStdString());
             }
         }
 
-        if (!stations->empty())
+        if (!stations.empty())
         {
             _geo_objs.addStationVec(std::move(stations), stnName);
         }
@@ -89,7 +87,7 @@ int XmlStnInterface::readFile(const QString& fileName)
 }
 
 void XmlStnInterface::readStations(const QDomNode& stationsRoot,
-                                   std::vector<GeoLib::Point*>* stations,
+                                   std::vector<GeoLib::Point*>& stations,
                                    const std::string& station_file_name)
 {
     QDomElement station = stationsRoot.firstChildElement();
@@ -154,7 +152,7 @@ void XmlStnInterface::readStations(const QDomNode& stationsRoot,
                     s->addSensorDataFromCSV(BaseLib::copyPathToFileName(
                         sensor_data_file_name, station_file_name));
                 }
-                stations->push_back(s);
+                stations.push_back(s);
             }
             else if (station.nodeName().compare("borehole") == 0)
             {
@@ -176,7 +174,7 @@ void XmlStnInterface::readStations(const QDomNode& stationsRoot,
                     }
                 }
 
-                stations->push_back(s);
+                stations.push_back(s);
             }
         }
         else
