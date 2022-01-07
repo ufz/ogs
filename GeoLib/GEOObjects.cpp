@@ -254,25 +254,15 @@ void GEOObjects::addSurfaceVec(std::vector<Surface*>&& sfc,
 bool GEOObjects::appendSurfaceVec(const std::vector<Surface*>& surfaces,
                                   const std::string& name)
 {
-    // search vector
-    std::size_t idx(0);
-    bool nfound(true);
-    for (idx = 0; idx < _sfc_vecs.size() && nfound; idx++)
+    auto surface_vec_to_append_it =
+        std::find_if(_sfc_vecs.begin(), _sfc_vecs.end(),
+                     [&name](auto const* surface_vec)
+                     { return surface_vec->getName() == name; });
+    if (surface_vec_to_append_it != _sfc_vecs.end())
     {
-        if (_sfc_vecs[idx]->getName() == name)
+        for (auto& surface : surfaces)
         {
-            nfound = false;
-        }
-    }
-
-    if (!nfound)
-    {
-        idx--;
-        std::size_t n_sfcs(surfaces.size());
-        // append surfaces
-        for (std::size_t k(0); k < n_sfcs; k++)
-        {
-            _sfc_vecs[idx]->push_back(surfaces[k]);
+            (*surface_vec_to_append_it)->push_back(surface);
         }
         _callbacks->appendSurfaceVec(name);
         return true;
