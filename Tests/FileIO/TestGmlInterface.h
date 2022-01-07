@@ -67,7 +67,7 @@ public:
     void checkPointProperties()
     {
         auto const& pointvec(*geo_objects.getPointVecObj(geo_name));
-        auto const& read_points(*pointvec.getVector());
+        auto const& read_points(pointvec.getVector());
         EXPECT_EQ(test_pnts.size(), read_points.size());
         for (std::size_t k(0); k<test_pnts.size(); ++k) {
             GeoLib::Point const& read_pnt = *read_points[k];
@@ -98,7 +98,7 @@ public:
             std::string const& name)
         {
             auto const & pnt_id_map(pnt_vec.getIDMap());
-            lines[line_id] = new GeoLib::Polyline(*(pnt_vec.getVector()));
+            lines[line_id] = new GeoLib::Polyline(pnt_vec.getVector());
             for (auto pnt_id : pnt_ids)
             {
                 lines[line_id]->addPoint(pnt_id_map[pnt_id]);
@@ -186,11 +186,14 @@ public:
             EXPECT_EQ(ids[2], tri[2]);
         };
 
-        auto checkSurface = [&checkTriangleIDs](GeoLib::SurfaceVec const& sfcs,
-            std::size_t sfc_id, std::vector<std::array<std::size_t,3>> tri_ids,
-            std::string const& name)
+        auto checkSurface =
+            [&checkTriangleIDs](GeoLib::SurfaceVec const& sfcs,
+                                std::size_t sfc_id,
+                                std::vector<std::array<std::size_t, 3>>
+                                    tri_ids,
+                                std::string const& name)
         {
-            auto const& sfc_vec = *(sfcs.getVector());
+            auto const& sfc_vec = sfcs.getVector();
             auto const& sfc = *(sfc_vec[sfc_id]);
             EXPECT_EQ(tri_ids.size(), sfc.getNumberOfTriangles());
             for (std::size_t k(0); k < tri_ids.size(); ++k)

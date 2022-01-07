@@ -106,7 +106,7 @@ public:
      * get a pointer to a standard vector containing the data elements
      * @return the data elements
      */
-    const std::vector<T*>* getVector() const { return &_data_vec; }
+    std::vector<T*> const& getVector() const { return _data_vec; }
 
     /**
      * search the vector of names for the ID of the geometric element with the

@@ -326,26 +326,26 @@ bool XmlGmlInterface::write()
     const GeoLib::PointVec* pnt_vec(_geo_objs.getPointVecObj(export_name));
     if (pnt_vec)
     {
-        const std::vector<GeoLib::Point*>* points(pnt_vec->getVector());
+        auto const& points(pnt_vec->getVector());
 
-        if (!points->empty())
+        if (!points.empty())
         {
-            auto const nPoints = points->size();
+            auto const nPoints = points.size();
             for (std::size_t i = 0; i < nPoints; i++)
             {
                 QDomElement pointTag = doc.createElement("point");
                 pointTag.setAttribute("id", QString::number(i));
                 pointTag.setAttribute(
                     "x",
-                    QString::number((*(*points)[i])[0], 'f',
+                    QString::number((*points[i])[0], 'f',
                                     std::numeric_limits<double>::digits10));
                 pointTag.setAttribute(
                     "y",
-                    QString::number((*(*points)[i])[1], 'f',
+                    QString::number((*points[i])[1], 'f',
                                     std::numeric_limits<double>::digits10));
                 pointTag.setAttribute(
                     "z",
-                    QString::number((*(*points)[i])[2], 'f',
+                    QString::number((*points[i])[2], 'f',
                                     std::numeric_limits<double>::digits10));
 
                 std::string const& point_name(pnt_vec->getItemNameByID(i));
@@ -377,51 +377,42 @@ bool XmlGmlInterface::write()
         _geo_objs.getPolylineVecObj(export_name));
     if (ply_vec)
     {
-        const std::vector<GeoLib::Polyline*>* polylines(ply_vec->getVector());
+        auto const& polylines(ply_vec->getVector());
 
-        if (polylines)
+        if (!polylines.empty())
         {
-            if (!polylines->empty())
+            QDomElement plyListTag = doc.createElement("polylines");
+            root.appendChild(plyListTag);
+            auto const nPolylines = polylines.size();
+            for (std::size_t i = 0; i < nPolylines; i++)
             {
-                QDomElement plyListTag = doc.createElement("polylines");
-                root.appendChild(plyListTag);
-                auto const nPolylines = polylines->size();
-                for (std::size_t i = 0; i < nPolylines; i++)
+                QDomElement polylineTag = doc.createElement("polyline");
+                polylineTag.setAttribute("id", QString::number(i));
+
+                std::string ply_name;
+                if (ply_vec->getNameOfElementByID(i, ply_name))
                 {
-                    QDomElement polylineTag = doc.createElement("polyline");
-                    polylineTag.setAttribute("id", QString::number(i));
-
-                    std::string ply_name;
-                    if (ply_vec->getNameOfElementByID(i, ply_name))
-                    {
-                        polylineTag.setAttribute(
-                            "name", QString::fromStdString(ply_name));
-                    }
-                    else
-                    {
-                        ply_name = std::to_string(i);
-                        polylineTag.setAttribute(
-                            "name", QString::fromStdString(ply_name));
-                    }
-
-                    plyListTag.appendChild(polylineTag);
-
-                    auto const nPoints = (*polylines)[i]->getNumberOfPoints();
-                    for (std::size_t j = 0; j < nPoints; j++)
-                    {
-                        QDomElement plyPointTag = doc.createElement("pnt");
-                        polylineTag.appendChild(plyPointTag);
-                        QDomText plyPointText = doc.createTextNode(
-                            QString::number(((*polylines)[i])->getPointID(j)));
-                        plyPointTag.appendChild(plyPointText);
-                    }
+                    polylineTag.setAttribute("name",
+                                             QString::fromStdString(ply_name));
                 }
-            }
-            else
-            {
-                INFO(
-                    "XmlGmlInterface::write(): Polyline vector is empty, no "
-                    "polylines written to file.");
+                else
+                {
+                    ply_name = std::to_string(i);
+                    polylineTag.setAttribute("name",
+                                             QString::fromStdString(ply_name));
+                }
+
+                plyListTag.appendChild(polylineTag);
+
+                auto const nPoints = polylines[i]->getNumberOfPoints();
+                for (std::size_t j = 0; j < nPoints; j++)
+                {
+                    QDomElement plyPointTag = doc.createElement("pnt");
+                    polylineTag.appendChild(plyPointTag);
+                    QDomText plyPointText = doc.createTextNode(
+                        QString::number((polylines[i])->getPointID(j)));
+                    plyPointTag.appendChild(plyPointText);
+                }
             }
         }
     }
@@ -436,51 +427,47 @@ bool XmlGmlInterface::write()
     const GeoLib::SurfaceVec* sfc_vec(_geo_objs.getSurfaceVecObj(export_name));
     if (sfc_vec)
     {
-        const std::vector<GeoLib::Surface*>* surfaces(sfc_vec->getVector());
+        auto const& surfaces(sfc_vec->getVector());
 
-        if (surfaces)
+        if (!surfaces.empty())
         {
-            if (!surfaces->empty())
+            QDomElement sfcListTag = doc.createElement("surfaces");
+            root.appendChild(sfcListTag);
+            auto const nSurfaces = surfaces.size();
+            for (std::size_t i = 0; i < nSurfaces; i++)
             {
-                QDomElement sfcListTag = doc.createElement("surfaces");
-                root.appendChild(sfcListTag);
-                auto const nSurfaces = surfaces->size();
-                for (std::size_t i = 0; i < nSurfaces; i++)
+                QDomElement surfaceTag = doc.createElement("surface");
+                surfaceTag.setAttribute("id", QString::number(i));
+
+                std::string sfc_name;
+                if (sfc_vec->getNameOfElementByID(i, sfc_name))
                 {
-                    QDomElement surfaceTag = doc.createElement("surface");
-                    surfaceTag.setAttribute("id", QString::number(i));
+                    surfaceTag.setAttribute("name",
+                                            QString::fromStdString(sfc_name));
+                }
 
-                    std::string sfc_name;
-                    if (sfc_vec->getNameOfElementByID(i, sfc_name))
-                    {
-                        surfaceTag.setAttribute(
-                            "name", QString::fromStdString(sfc_name));
-                    }
+                sfcListTag.appendChild(surfaceTag);
 
-                    sfcListTag.appendChild(surfaceTag);
-
-                    // writing the elements compromising the surface
-                    std::size_t nElements =
-                        ((*surfaces)[i])->getNumberOfTriangles();
-                    for (std::size_t j = 0; j < nElements; j++)
-                    {
-                        QDomElement elementTag = doc.createElement("element");
-                        elementTag.setAttribute(
-                            "p1", QString::number((*(*(*surfaces)[i])[j])[0]));
-                        elementTag.setAttribute(
-                            "p2", QString::number((*(*(*surfaces)[i])[j])[1]));
-                        elementTag.setAttribute(
-                            "p3", QString::number((*(*(*surfaces)[i])[j])[2]));
-                        surfaceTag.appendChild(elementTag);
-                    }
+                // writing the elements compromising the surface
+                std::size_t nElements = (surfaces[i])->getNumberOfTriangles();
+                for (std::size_t j = 0; j < nElements; j++)
+                {
+                    QDomElement elementTag = doc.createElement("element");
+                    elementTag.setAttribute(
+                        "p1", QString::number((*(*surfaces[i])[j])[0]));
+                    elementTag.setAttribute(
+                        "p2", QString::number((*(*surfaces[i])[j])[1]));
+                    elementTag.setAttribute(
+                        "p3", QString::number((*(*surfaces[i])[j])[2]));
+                    surfaceTag.appendChild(elementTag);
                 }
             }
-            else
-            {
-                INFO(
-                    "XmlGmlInterface::write(): Surface vector is empty, no "
-                    "surfaces written to file.");
-            }
+        }
+        else
+        {
+            INFO(
+                "XmlGmlInterface::write(): Surface vector is empty, no "
+                "surfaces written to file.");
         }
     }
     else

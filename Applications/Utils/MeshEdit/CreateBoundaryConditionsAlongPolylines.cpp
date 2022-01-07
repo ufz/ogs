@@ -101,7 +101,7 @@ void writeBCsAndGeometry(GeoLib::GEOObjects& geometry_sets,
 
     GeoLib::PointVec const* pnt_vec_objs(
         geometry_sets.getPointVecObj(geo_name));
-    std::vector<GeoLib::Point*> const& pnts(*(pnt_vec_objs->getVector()));
+    auto const& pnts(pnt_vec_objs->getVector());
     std::ofstream bc_out(out_fname + ".bc");
     for (std::size_t k(0); k < pnts.size(); k++)
     {
@@ -250,13 +250,13 @@ int main(int argc, char* argv[])
     }
 
     GeoLib::PointVec const* pnt_vec(geometry_sets.getPointVecObj(merge_name));
-    std::vector<GeoLib::Point*> const* merged_pnts(pnt_vec->getVector());
+    auto const& merged_pnts(pnt_vec->getVector());
 
     std::vector<GeoLib::Point> pnts_with_id;
-    const std::size_t n_merged_pnts(merged_pnts->size());
+    const std::size_t n_merged_pnts(merged_pnts.size());
     for (std::size_t k(0); k < n_merged_pnts; ++k)
     {
-        pnts_with_id.emplace_back(*((*merged_pnts)[k]), k);
+        pnts_with_id.emplace_back(*(merged_pnts[k]), k);
     }
 
     std::sort(pnts_with_id.begin(), pnts_with_id.end(),

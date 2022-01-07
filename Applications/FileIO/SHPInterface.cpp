@@ -199,7 +199,7 @@ void SHPInterface::readPolylines(const SHPHandle& hSHP, int numberOfElements,
                                     ? *(hSHPObject->panPartStart + p + 1)
                                     : noOfPoints;
 
-            auto* line = new GeoLib::Polyline(*points.getVector());
+            auto* line = new GeoLib::Polyline(points.getVector());
 
             // create polyline
             for (int j = firstPnt; j < lastPnt; ++j)

@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
 
     std::vector<MeshLib::Node*> const& mesh_nodes(mesh->getNodes());
     GeoLib::PolylineVec const* ply_vec(geo_objs.getPolylineVecObj(geo_name));
-    std::vector<GeoLib::Polyline*> const& plys(*(ply_vec->getVector()));
+    auto const& plys(ply_vec->getVector());
 
     for (std::size_t j(0); j < plys.size(); j++)
     {

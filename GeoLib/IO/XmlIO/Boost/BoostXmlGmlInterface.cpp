@@ -286,15 +286,8 @@ bool BoostXmlGmlInterface::write()
         return false;
     }
 
-    std::vector<GeoLib::Point*> const* const pnts(pnt_vec->getVector());
-    if (!pnts)
-    {
-        ERR("BoostXmlGmlInterface::write(): No vector of points within the "
-            "geometry '{:s}'.",
-            export_name);
-        return false;
-    }
-    if (pnts->empty())
+    auto const& pnts(pnt_vec->getVector());
+    if (pnts.empty())
     {
         ERR("BoostXmlGmlInterface::write(): No points within the geometry "
             "'{:s}'.",
@@ -312,13 +305,13 @@ bool BoostXmlGmlInterface::write()
 
     geometry_set.add("name", export_name);
     auto& pnts_tag = geometry_set.add("points", "");
-    for (std::size_t k(0); k < pnts->size(); k++)
+    for (std::size_t k(0); k < pnts.size(); k++)
     {
         auto& pnt_tag = pnts_tag.add("point", "");
         pnt_tag.put("<xmlattr>.id", k);
-        pnt_tag.put("<xmlattr>.x", (*((*pnts)[k]))[0]);
-        pnt_tag.put("<xmlattr>.y", (*((*pnts)[k]))[1]);
-        pnt_tag.put("<xmlattr>.z", (*((*pnts)[k]))[2]);
+        pnt_tag.put("<xmlattr>.x", (*pnts[k])[0]);
+        pnt_tag.put("<xmlattr>.y", (*pnts[k])[1]);
+        pnt_tag.put("<xmlattr>.z", (*pnts[k])[2]);
         std::string const& point_name(pnt_vec->getItemNameByID(k));
         if (!point_name.empty())
         {
@@ -348,8 +341,8 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
         return;
     }
 
-    std::vector<GeoLib::Surface*> const* const surfaces(sfc_vec->getVector());
-    if (!surfaces || surfaces->empty())
+    auto const& surfaces(sfc_vec->getVector());
+    if (surfaces.empty())
     {
         INFO(
             "BoostXmlGmlInterface::addSurfacesToPropertyTree(): No surfaces "
@@ -359,9 +352,9 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
     }
 
     auto& surfaces_tag = geometry_set.add("surfaces", "");
-    for (std::size_t i = 0; i < surfaces->size(); ++i)
+    for (std::size_t i = 0; i < surfaces.size(); ++i)
     {
-        GeoLib::Surface const* const surface((*surfaces)[i]);
+        GeoLib::Surface const* const surface(surfaces[i]);
         std::string sfc_name;
         sfc_vec->getNameOfElement(surface, sfc_name);
         auto& surface_tag = surfaces_tag.add("surface", "");
@@ -394,8 +387,8 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
         return;
     }
 
-    std::vector<GeoLib::Polyline*> const* const polylines(vec->getVector());
-    if (!polylines || polylines->empty())
+    auto const& polylines(vec->getVector());
+    if (polylines.empty())
     {
         INFO(
             "BoostXmlGmlInterface::addPolylinesToPropertyTree(): No polylines "
@@ -405,9 +398,9 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
     }
 
     auto& polylines_tag = geometry_set.add("polylines", "");
-    for (std::size_t i = 0; i < polylines->size(); ++i)
+    for (std::size_t i = 0; i < polylines.size(); ++i)
     {
-        GeoLib::Polyline const* const polyline((*polylines)[i]);
+        GeoLib::Polyline const* const polyline(polylines[i]);
         std::string ply_name;
         vec->getNameOfElement(polyline, ply_name);
         auto& polyline_tag = polylines_tag.add("polyline", "");
