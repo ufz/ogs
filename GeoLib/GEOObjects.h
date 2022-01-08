@@ -365,7 +365,6 @@ private:
     std::vector<PolylineVec*> _ply_vecs;
     /** vector manages pointers to SurfaceVec objects */
     std::vector<SurfaceVec*> _sfc_vecs;
-
 };
 
 /// Constructs a station-vector based on the points of a given geometry.

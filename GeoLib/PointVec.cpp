@@ -270,7 +270,7 @@ void PointVec::resetInternalDataStructures()
         _aabb.getMinPoint(), _aabb.getMaxPoint(), _rel_eps));
 
     GeoLib::Point* ret_pnt(nullptr);
-    for (auto const &p : _data_vec)
+    for (auto const& p : _data_vec)
     {
         _oct_tree->addPoint(p, ret_pnt);
     }
