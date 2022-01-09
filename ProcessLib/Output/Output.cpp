@@ -377,7 +377,7 @@ MeshLib::Mesh const& Output::prepareSubmesh(
     bool const output_secondary_variables = false;
 
     // TODO Under the assumption that xs.size() and submesh do not change during
-    // the simulation, process output data should not be recreated everytime,
+    // the simulation, process output data should not be recreated every time,
     // but should rather be computed only once and stored for later reuse.
     auto const process_output_data =
         createProcessOutputData(process, xs.size(), submesh);

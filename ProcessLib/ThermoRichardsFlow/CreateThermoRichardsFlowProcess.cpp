@@ -88,7 +88,7 @@ std::unique_ptr<Process> createThermoRichardsFlowProcess(
     const bool use_monolithic_scheme =
         !(coupling_scheme && (*coupling_scheme == "staggered"));
 
-    /// \section processvariablestrf Processs Variables
+    /// \section processvariablestrf Process Variables
 
     //! \ogs_file_param{prj__processes__process__THERMO_RICHARDS_FLOW__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
