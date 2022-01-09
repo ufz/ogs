@@ -1,7 +1,7 @@
 /**
  * \file
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -187,21 +187,18 @@ void TESProcess::initializeSecondaryVariables()
 
     add2nd("vapour_partial_pressure",
            {1,
-            [&](auto&&... args) -> GlobalVector const& {
-                return computeVapourPartialPressure(args...);
-            },
+            [&](auto&&... args) -> GlobalVector const&
+            { return computeVapourPartialPressure(args...); },
             nullptr});
     add2nd("relative_humidity",
            {1,
-            [&](auto&&... args) -> GlobalVector const& {
-                return computeRelativeHumidity(args...);
-            },
+            [&](auto&&... args) -> GlobalVector const&
+            { return computeRelativeHumidity(args...); },
             nullptr});
     add2nd("equilibrium_loading",
            {1,
-            [&](auto&&... args) -> GlobalVector const& {
-                return computeEquilibriumLoading(args...);
-            },
+            [&](auto&&... args) -> GlobalVector const&
+            { return computeEquilibriumLoading(args...); },
             nullptr});
 }
 

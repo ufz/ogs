@@ -3,7 +3,7 @@
  * \brief Computes the areas associated nodes of the surface mesh.
  *
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"
-            "Copyright (c) 2012-2021, OpenGeoSys Community "
+            "Copyright (c) 2012-2022, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> mesh_in(

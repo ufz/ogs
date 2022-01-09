@@ -1,7 +1,7 @@
 /**
  * \file
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -48,7 +48,7 @@ struct overloaded : Ts...
     using Ts::operator()...;
 };
 template <class... Ts>
-overloaded(Ts...)->overloaded<Ts...>;
+overloaded(Ts...) -> overloaded<Ts...>;
 
 template <typename DataBlock>
 std::ostream& operator<<(std::ostream& os,
@@ -574,7 +574,8 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             for (auto const& surface_site : surface)
             {
                 std::visit(
-                    overloaded{[&os](DensityBasedSurfaceSite const& s) {
+                    overloaded{[&os](DensityBasedSurfaceSite const& s)
+                               {
                                    os << s.name << " " << s.site_density << " "
                                       << s.specific_surface_area << " "
                                       << s.mass << "\n";

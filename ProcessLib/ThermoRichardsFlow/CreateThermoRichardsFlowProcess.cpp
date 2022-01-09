@@ -1,7 +1,7 @@
 /**
  * \file
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -88,7 +88,7 @@ std::unique_ptr<Process> createThermoRichardsFlowProcess(
     const bool use_monolithic_scheme =
         !(coupling_scheme && (*coupling_scheme == "staggered"));
 
-    /// \section processvariablestrf Processs Variables
+    /// \section processvariablestrf Process Variables
 
     //! \ogs_file_param{prj__processes__process__THERMO_RICHARDS_FLOW__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
@@ -99,7 +99,8 @@ std::unique_ptr<Process> createThermoRichardsFlowProcess(
         process_variables;
     if (use_monolithic_scheme)  // monolithic scheme.
     {
-        /// Primary process variables as they appear in the global component vector:
+        /// Primary process variables as they appear in the global component
+        /// vector:
         auto per_process_variables = findProcessVariables(
             variables, pv_config,
             {//! \ogs_file_param_special{prj__processes__process__THERMO_RICHARDS_FLOW__process_variables__temperature}

@@ -5,7 +5,7 @@
  * \brief  Unit tests for In-Situ mesh source
  *
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -298,7 +298,8 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
                       cellUnsignedArray->GetNumberOfTuples());
 
             auto get_field_data =
-                [&vtkMesh](std::string const array_name) -> vtkDataArray* {
+                [&vtkMesh](std::string const array_name) -> vtkDataArray*
+            {
                 return vtkDataArray::SafeDownCast(
                     vtkMesh->GetFieldData()->GetAbstractArray(
                         array_name.c_str()));

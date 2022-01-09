@@ -1,5 +1,5 @@
 ###
-# Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+# Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
 # Distributed under a Modified BSD License.
 # See accompanying file LICENSE.txt or
 # http://www.opengeosys.org/project/license
@@ -160,21 +160,21 @@ class BC(OpenGeoSys.BHENetwork):
                 if_success = True
             # return to OGS
             return (True, if_success, cur_Tin_val, cur_flowrate)
-        
+
     def serverCommunication(self, t, dt, Tin_val, Tout_val, flowrate):
         # write results in file for proof of concept
         tin_file = open("T_in.txt", "a")
         tin_file.write(str(t) + str(Tin_val) + "\n")
         tin_file.close()
-        
+
         tout_file = open("T_out.txt", "a")
         tout_file.write(str(t) + str(Tout_val) + "\n")
         tout_file.close()
-        
+
         flowrate_file = open("flowrate.txt", "a")
         flowrate_file.write(str(t) + str(flowrate) + "\n")
         flowrate_file.close()
-        
+
         return (Tin_val, flowrate)
 
 

@@ -1,7 +1,7 @@
 /**
  * \file
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -96,7 +96,7 @@ decltype(auto) computeOutputMeshDofTables(
 
     auto const n_processes = bulk_mesh_dof_tables.size();
 
-    // TODO Currently these d.o.f. tables will be recomputed everytime we write
+    // TODO Currently these d.o.f. tables will be recomputed every time we write
     // output. That should be avoided in the future.
     auto container_that_owns_output_mesh_dof_tables =
         computeDofTablesForSubmesh(process, output_mesh, n_processes);

@@ -1,7 +1,7 @@
 /**
  * \file
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -63,7 +63,8 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     {
         using namespace std::string_literals;
         for (
-            /// Primary process variables as they appear in the global component vector:
+            /// Primary process variables as they appear in the global component
+            /// vector:
             auto const& variable_name :
             {//! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__process_variables__displacement}
              "displacement"s,

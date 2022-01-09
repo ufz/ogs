@@ -4,7 +4,7 @@
  * \date May 21, 2013
  *
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -28,13 +28,13 @@ TEST(GeoLib, GEOObjectsMergePoints)
     GeoLib::Point shift(0.0, 0.0, 0.0);
     names.emplace_back("PointSet0");
     int const points_per_edge = 8;
-    createSetOfTestPointsAndAssociatedNames(
-        geo_objs, names[0], points_per_edge, shift);
+    createSetOfTestPointsAndAssociatedNames(geo_objs, names[0], points_per_edge,
+                                            shift);
 
     // *** insert set of points number 1
     names.emplace_back("PointSet1");
-    createSetOfTestPointsAndAssociatedNames(
-        geo_objs, names[1], points_per_edge, shift);
+    createSetOfTestPointsAndAssociatedNames(geo_objs, names[1], points_per_edge,
+                                            shift);
 
     // *** merge geometries
     std::string merged_geometries_name("MergedEqualPointSet");
@@ -54,8 +54,8 @@ TEST(GeoLib, GEOObjectsMergePoints)
     // *** insert "shifted" set of points
     shift[0] += 1e-4;
     names.emplace_back("ShiftedPointSet");
-    createSetOfTestPointsAndAssociatedNames(
-        geo_objs, names[2], points_per_edge, shift);
+    createSetOfTestPointsAndAssociatedNames(geo_objs, names[2], points_per_edge,
+                                            shift);
 
     // *** merge PointSet0, PointSet1 and ShiftedPointSet
     merged_geometries_name = "MergedShiftedPointSet";
@@ -115,8 +115,8 @@ TEST(GeoLib, GEOObjectsMergePointsAndPolylines)
     GeoLib::Point shift(0.0, 0.0, 0.0);
     names.emplace_back("PointSet0");
     int const points_per_edge = 8;
-    createSetOfTestPointsAndAssociatedNames(
-        geo_objs, names[1], points_per_edge, shift);
+    createSetOfTestPointsAndAssociatedNames(geo_objs, names[1], points_per_edge,
+                                            shift);
 
     // *** merge geometries
     std::string merged_geometries_name("MergedQuadGeoAndPointSet");
@@ -158,8 +158,8 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
     GeoLib::PolylineVec::NameIdMap names_map_0;
     names_map_0.insert(
         std::pair<std::string, std::size_t>("Polyline0FromGeometry0", 0));
-    geo_objs.addPolylineVec(
-        std::move(plys_0), geometry_0, std::move(names_map_0));
+    geo_objs.addPolylineVec(std::move(plys_0), geometry_0,
+                            std::move(names_map_0));
     names.push_back(geometry_0);
 
     std::vector<GeoLib::Point*> pnts_1;
@@ -188,8 +188,8 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
         std::pair<std::string, std::size_t>("Polyline0FromGeometry1", 0));
     names_map_1.insert(
         std::pair<std::string, std::size_t>("Polyline1FromGeometry1", 1));
-    geo_objs.addPolylineVec(
-        std::move(plys_1), geometry_1, std::move(names_map_1));
+    geo_objs.addPolylineVec(std::move(plys_1), geometry_1,
+                            std::move(names_map_1));
     names.push_back(geometry_1);
 
     // *** merge geometries

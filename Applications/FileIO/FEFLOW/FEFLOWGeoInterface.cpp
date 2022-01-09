@@ -1,6 +1,6 @@
 /**
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -106,7 +106,6 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
         geo_objects.addPolylineVec(std::move(lines), project_name,
                                    GeoLib::PolylineVec::NameIdMap{});
     }
-
 }
 
 void FEFLOWGeoInterface::readPoints(QDomElement& nodesEle,
