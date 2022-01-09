@@ -48,7 +48,7 @@ struct overloaded : Ts...
     using Ts::operator()...;
 };
 template <class... Ts>
-overloaded(Ts...)->overloaded<Ts...>;
+overloaded(Ts...) -> overloaded<Ts...>;
 
 template <typename DataBlock>
 std::ostream& operator<<(std::ostream& os,
@@ -574,7 +574,8 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             for (auto const& surface_site : surface)
             {
                 std::visit(
-                    overloaded{[&os](DensityBasedSurfaceSite const& s) {
+                    overloaded{[&os](DensityBasedSurfaceSite const& s)
+                               {
                                    os << s.name << " " << s.site_density << " "
                                       << s.specific_surface_area << " "
                                       << s.mass << "\n";

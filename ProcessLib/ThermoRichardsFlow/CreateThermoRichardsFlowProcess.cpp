@@ -99,7 +99,8 @@ std::unique_ptr<Process> createThermoRichardsFlowProcess(
         process_variables;
     if (use_monolithic_scheme)  // monolithic scheme.
     {
-        /// Primary process variables as they appear in the global component vector:
+        /// Primary process variables as they appear in the global component
+        /// vector:
         auto per_process_variables = findProcessVariables(
             variables, pv_config,
             {//! \ogs_file_param_special{prj__processes__process__THERMO_RICHARDS_FLOW__process_variables__temperature}

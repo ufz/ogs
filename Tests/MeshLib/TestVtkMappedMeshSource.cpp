@@ -298,7 +298,8 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
                       cellUnsignedArray->GetNumberOfTuples());
 
             auto get_field_data =
-                [&vtkMesh](std::string const array_name) -> vtkDataArray* {
+                [&vtkMesh](std::string const array_name) -> vtkDataArray*
+            {
                 return vtkDataArray::SafeDownCast(
                     vtkMesh->GetFieldData()->GetAbstractArray(
                         array_name.c_str()));

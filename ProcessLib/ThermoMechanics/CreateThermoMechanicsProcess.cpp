@@ -78,7 +78,8 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         process_variables;
     if (use_monolithic_scheme)  // monolithic scheme.
     {
-        /// Primary process variables as they appear in the global component vector:
+        /// Primary process variables as they appear in the global component
+        /// vector:
         auto per_process_variables = findProcessVariables(
             variables, pv_config,
             {//! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__process_variables__temperature}
@@ -135,7 +136,6 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, local_coordinate_system, config);
-
 
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;

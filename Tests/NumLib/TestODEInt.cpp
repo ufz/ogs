@@ -162,10 +162,10 @@ struct TestCase;
 //                 comparing the numerical to the analytical solution
 //
 // /////////////////////////////////////
-#define TESTCASESLIST                                  \
-    TCLITEM(ODE1, BackwardEuler, 1e-14, 0.2)           \
-    TCLSEP TCLITEM(ODE2, BackwardEuler, 1.5e-10, 2e-3) \
-        TCLSEP TCLITEM(ODE3, BackwardEuler, 1e-9, 0.028)
+#define TESTCASESLIST                                                  \
+    TCLITEM(ODE1, BackwardEuler, 1e-14, 0.2)                           \
+    TCLSEP TCLITEM(ODE2, BackwardEuler, 1.5e-10, 2e-3) TCLSEP TCLITEM( \
+        ODE3, BackwardEuler, 1e-9, 0.028)
 
 #define TCLITEM(ODE, TIMEDISC, TOL_PICARD_NEWTON, TOL_ANALYT)         \
     template <>                                                       \

@@ -96,10 +96,11 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         }
         else
         {
-            coupling_scheme_parameter = 0.5;  // default value recommended [Mikelic & Wheeler]
+            coupling_scheme_parameter =
+                0.5;  // default value recommended [Mikelic & Wheeler]
         }
         DBUG("Using value {:g} for coupling parameter of staggered scheme.",
-              coupling_scheme_parameter);
+             coupling_scheme_parameter);
     }
 
     /// \section processvariableshm Process Variables
@@ -117,7 +118,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 
     if (use_monolithic_scheme)  // monolithic scheme.
     {
-        /// Primary process variables as they appear in the global component vector:
+        /// Primary process variables as they appear in the global component
+        /// vector:
         auto per_process_variables = findProcessVariables(
             variables, pv_config,
             {//! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__process_variables__pressure}

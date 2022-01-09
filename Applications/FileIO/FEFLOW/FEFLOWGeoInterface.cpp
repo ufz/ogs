@@ -106,7 +106,6 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
         geo_objects.addPolylineVec(std::move(lines), project_name,
                                    GeoLib::PolylineVec::NameIdMap{});
     }
-
 }
 
 void FEFLOWGeoInterface::readPoints(QDomElement& nodesEle,

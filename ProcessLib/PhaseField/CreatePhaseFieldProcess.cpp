@@ -63,7 +63,8 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     {
         using namespace std::string_literals;
         for (
-            /// Primary process variables as they appear in the global component vector:
+            /// Primary process variables as they appear in the global component
+            /// vector:
             auto const& variable_name :
             {//! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__process_variables__displacement}
              "displacement"s,

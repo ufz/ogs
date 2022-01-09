@@ -186,8 +186,8 @@ bool TetGenInterface::parseSmeshFacets(
                 idx_map.push_back(sfc_marker);
                 surfaces.push_back(new GeoLib::Surface(points));
             }
-            surfaces[idx]->addTriangle(
-                point_ids[0], point_ids[1], point_ids[2]);
+            surfaces[idx]->addTriangle(point_ids[0], point_ids[1],
+                                       point_ids[2]);
         }
         else
         {
@@ -262,8 +262,8 @@ MeshLib::Mesh* TetGenInterface::readTetGenMesh(std::string const& nodes_fname,
 
     MeshLib::Properties properties;
     // Transmit material values if there is any material value != 0
-    if (std::any_of(
-            materials.cbegin(), materials.cend(), [](int m) { return m != 0; }))
+    if (std::any_of(materials.cbegin(), materials.cend(),
+                    [](int m) { return m != 0; }))
     {
         auto* const mat_props = properties.createNewPropertyVector<int>(
             "MaterialIDs", MeshLib::MeshItemType::Cell);
@@ -298,8 +298,8 @@ bool TetGenInterface::readNodesFromStream(std::ifstream& ins,
             continue;
         }
         // read header line
-        bool header_okay = parseNodesFileHeader(
-            line, n_nodes, dim, n_attributes, boundary_markers);
+        bool header_okay = parseNodesFileHeader(line, n_nodes, dim,
+                                                n_attributes, boundary_markers);
         if (!header_okay)
         {
             return false;
