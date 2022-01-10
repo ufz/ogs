@@ -41,11 +41,12 @@ build jupyter:
     - >
       docker run --rm -v $PWD:/home/jovyan/work --user `id -u $USER` --group-add users
       --workdir /home/jovyan/work $DOCKER_TAG_JUPYTER_PETSC
-      bash -c "cd Tests/Notebooks && find . -type f -iname '*.ipynb' -not -path \"*.ipynb_checkpoints*\" | xargs -n1 python testrunner.py --out _out --hugo"
+      bash -c "cd Tests/Data && find . -type f -iname '*.ipynb' -not -path \"*.ipynb_checkpoints*\" | xargs python Notebooks/testrunner.py --out _out --hugo"
   artifacts:
     name: container
+    when: always
     paths:
       - web/content/docs/benchmarks/notebooks
       - web/static/docs/benchmarks/notebooks
-      - Tests/Notebooks/_out/**/*.html
-      - Tests/Notebooks/_out/**/out.txt
+      - Tests/Data/_out/**/*.html
+      - Tests/Data/_out/**/out.txt

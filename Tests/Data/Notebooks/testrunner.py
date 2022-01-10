@@ -8,6 +8,22 @@ from timeit import default_timer as timer
 from datetime import timedelta
 
 
+def save_to_website(exec_notebook_file, web_path):
+    from nb2hugo.writer import HugoWriter
+
+    # TODO do not write if it has no frontmatter OR return frontmatter with draft: true
+    writer = HugoWriter()
+    writer.convert(
+        exec_notebook_file,
+        web_path,
+        "docs/benchmarks/notebooks",
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "nbconvert_templates/collapsed.md.j2",
+        ),
+    )
+
+
 # Script arguments
 parser = argparse.ArgumentParser(description="Jupyter notebook testrunner.")
 parser.add_argument("notebooks", metavar="N", nargs="+", help="Notebooks to test.")
@@ -15,23 +31,31 @@ parser.add_argument("--out", default="./", help="Output directory.")
 parser.add_argument(
     "--hugo", action="store_true", help="Convert successful notebooks to web site."
 )
+parser.add_argument(
+    "--timeout", default="600", type=int, help="Cell execution timeout."
+)
 args = parser.parse_args()
 
 # Path setup
 testrunner_script_path = os.path.dirname(os.path.abspath(__file__))
-ogs_source_path = os.path.abspath(testrunner_script_path + "/../..")
+ogs_source_path = os.path.abspath(os.path.join(testrunner_script_path, "../../.."))
 if "OGS_DATA_DIR" not in os.environ:
-    os.environ["OGS_DATA_DIR"] = ogs_source_path + "/Tests/Data"
-os.environ["OGS_TESTRUNNER_OUT_DIR"] = args.out
+    os.environ["OGS_DATA_DIR"] = os.path.join(ogs_source_path, "Tests/Data")
 os.makedirs(args.out, exist_ok=True)
 success = True
 
 for notebook_file_path in args.notebooks:
     notebook_success = True
+    notebook_basename = os.path.splitext(notebook_file_path)[0]
+    notebook_output_path = os.path.join(
+        args.out, os.path.relpath(notebook_basename, start=os.environ["OGS_DATA_DIR"])
+    )
+    os.makedirs(notebook_output_path, exist_ok=True)
+    os.environ["OGS_TESTRUNNER_OUT_DIR"] = notebook_output_path
 
     with open(notebook_file_path) as f:
         nb = nbformat.read(f, as_version=4)
-    ep = ExecutePreprocessor(timeout=600, kernel_name="python3")
+    ep = ExecutePreprocessor(timeout=args.timeout, kernel_name="python3")
 
     # 1. Run the notebook
     start = timer()
@@ -52,9 +76,8 @@ for notebook_file_path in args.notebooks:
     (body, resources) = html_exporter.from_notebook_node(nb)
 
     # write new notebook
-    # TODO preserve relative file structure in output
     notebook_filename = os.path.basename(notebook_file_path)
-    exec_notebook_file = args.out + "/" + notebook_filename
+    exec_notebook_file = os.path.join(notebook_output_path, notebook_filename)
     with open(exec_notebook_file, "w", encoding="utf-8") as f:
         nbformat.write(nb, f)
 
@@ -62,18 +85,7 @@ for notebook_file_path in args.notebooks:
     if notebook_success:
         status_string += "[Passed] "
         if args.hugo:
-            # Save to website
-            from nb2hugo.writer import HugoWriter
-
-            writer = HugoWriter()
-            web_path = ogs_source_path + "/web"
-            writer.convert(
-                exec_notebook_file,
-                web_path,
-                "docs/benchmarks/notebooks",
-                testrunner_script_path + "/nbconvert_templates/collapsed.md.j2",
-            )
-            # TODO do not write if it has no frontmatter OR return frontmatter with draft: true
+            save_to_website(exec_notebook_file, os.path.join(ogs_source_path, "web"))
     else:
         status_string += "[Failed] "
         # Save to html
