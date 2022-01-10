@@ -75,18 +75,20 @@ std::unique_ptr<TimeLoop> createTimeLoop(
         }
     }
 
-    const auto minmax_iter = std::minmax_element(
-        per_process_data.begin(),
-        per_process_data.end(),
-        [](std::unique_ptr<ProcessData> const& a,
-           std::unique_ptr<ProcessData> const& b)
-        { return (a->timestepper->end() < b->timestepper->end()); });
+    const auto minmax_iter =
+        std::minmax_element(per_process_data.begin(),
+                            per_process_data.end(),
+                            [](std::unique_ptr<ProcessData> const& a,
+                               std::unique_ptr<ProcessData> const& b) {
+                                return (a->timestep_algorithm->end() <
+                                        b->timestep_algorithm->end());
+                            });
     const double start_time =
         per_process_data[minmax_iter.first - per_process_data.begin()]
-            ->timestepper->begin();
+            ->timestep_algorithm->begin();
     const double end_time =
         per_process_data[minmax_iter.second - per_process_data.begin()]
-            ->timestepper->end();
+            ->timestep_algorithm->end();
 
     return std::make_unique<TimeLoop>(
         std::move(output), std::move(per_process_data), max_coupling_iterations,
