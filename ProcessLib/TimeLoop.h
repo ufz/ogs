@@ -49,6 +49,8 @@ public:
     ~TimeLoop();
 
 private:
+    NumLib::NonlinearSolverStatus doNonlinearIteration(
+        double const t, double const dt, std::size_t const timesteps);
     /**
      * This function fills the vector of solutions of coupled processes of
      * processes, _solutions_of_coupled_processes, and initializes the vector

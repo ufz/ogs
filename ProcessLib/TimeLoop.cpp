@@ -520,10 +520,6 @@ void TimeLoop::initialize()
  */
 bool TimeLoop::loop()
 {
-    // All _per_process_data share the first process.
-    bool const is_staggered_coupling =
-        !isMonolithicProcess(*_per_process_data[0]);
-
     bool non_equilibrium_initial_residuum_computed = false;
     double t = _start_time;
     std::size_t accepted_steps = 0;
@@ -555,30 +551,7 @@ bool TimeLoop::loop()
             non_equilibrium_initial_residuum_computed = true;
         }
 
-        preTimestepForAllProcesses(t, dt, _per_process_data,
-                                   _process_solutions);
-
-        if (is_staggered_coupling)
-        {
-            nonlinear_solver_status =
-                solveCoupledEquationSystemsByStaggeredScheme(t, dt, timesteps);
-        }
-        else
-        {
-            nonlinear_solver_status =
-                solveUncoupledEquationSystems(t, dt, timesteps);
-        }
-
-        // Run post time step only if the last iteration was successful.
-        // Otherwise it runs the risks to get the same errors as in the last
-        // iteration, an exception thrown in assembly, for example.
-        if (nonlinear_solver_status.error_norms_met)
-        {
-            postTimestepForAllProcesses(
-                t, dt, _per_process_data, _process_solutions,
-                _process_solutions_prev, _xdot_vector_ids);
-        }
-
+        nonlinear_solver_status = doNonlinearIteration(t, dt, timesteps);
         INFO("[time] Time step #{:d} took {:g} s.", timesteps,
              time_timestep.elapsed());
 
@@ -624,6 +597,39 @@ bool TimeLoop::loop()
     }
 
     return nonlinear_solver_status.error_norms_met;
+}
+
+NumLib::NonlinearSolverStatus TimeLoop::doNonlinearIteration(
+    double const t, double const dt, std::size_t const timesteps)
+{
+    preTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
+
+    // All _per_process_data share the first process.
+    bool const is_staggered_coupling =
+        !isMonolithicProcess(*_per_process_data[0]);
+    NumLib::NonlinearSolverStatus nonlinear_solver_status;
+
+    if (is_staggered_coupling)
+    {
+        nonlinear_solver_status =
+            solveCoupledEquationSystemsByStaggeredScheme(t, dt, timesteps);
+    }
+    else
+    {
+        nonlinear_solver_status =
+            solveUncoupledEquationSystems(t, dt, timesteps);
+    }
+
+    // Run post time step only if the last iteration was successful.
+    // Otherwise it runs the risks to get the same errors as in the last
+    // iteration, an exception thrown in assembly, for example.
+    if (nonlinear_solver_status.error_norms_met)
+    {
+        postTimestepForAllProcesses(t, dt, _per_process_data,
+                                    _process_solutions, _process_solutions_prev,
+                                    _xdot_vector_ids);
+    }
+    return nonlinear_solver_status;
 }
 
 static NumLib::NonlinearSolverStatus solveMonolithicProcess(
