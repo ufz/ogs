@@ -29,10 +29,7 @@ endif()
 
 # GNU-like compiler
 if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
-    if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-        message(STATUS "Set release compiler flags")
-        add_compile_options(-O3)
-    elseif(NOT STL_NO_DEBUG)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT STL_NO_DEBUG)
         # Enable assertions in STL in debug mode.
         add_compile_options(
             -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_ASSERT -D_GLIBCXX_DEBUG_PEDASSERT
