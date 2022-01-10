@@ -1,3 +1,21 @@
+<!--
+This benchmark simulates a soil column with fluid injection at the bottom and
+a production well at the top. It is taken from from the literature.
+
+The fluid enters and leaves only via the source and sink in the domain, there
+is no flow across the boundaries. The displacements at the bottom are fixed,
+whereas there is a vertical traction applied on top. Originally the problem is
+one-dimensional, for simulation with OpenGeoSys it is created in two dimensions
+with corresponding boundary conditions.
+
+ 	
+The gravity related terms are neglected in both: the Darcy velocity and the
+momentum balance equation.
+
+A more detailed description of the used staggered scheme and the problem is
+provided online:
+https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/injectionproduction/
+-->
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <meshes>
