@@ -41,7 +41,7 @@ build jupyter:
     - >
       docker run --rm -v $PWD:/home/jovyan/work --user `id -u $USER` --group-add users
       --workdir /home/jovyan/work $DOCKER_TAG_JUPYTER_PETSC
-      bash -c "cd Tests/Data && find . -type f -iname '*.ipynb' -not -path \"*.ipynb_checkpoints*\" | xargs python Notebooks/testrunner.py --out _out --hugo"
+      bash -c "cd Tests/Data &&  find . -type f -iname '*.ipynb' | grep -vP '\.ipynb_checkpoints|\.ci-skip.ipynb$' | xargs python Notebooks/testrunner.py --out _out --hugo"
   artifacts:
     name: container
     when: always
