@@ -1,3 +1,9 @@
+<!--
+In this Benchmark, OGS simulation results are compared to an analytical 
+solution of a problem assuming the fluid is an ideal gas and using 
+Darcy’s law with neglected body force.
+More details are provided in the attached pdf-file.
+-->
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>quad_1x10.vtu</mesh>
