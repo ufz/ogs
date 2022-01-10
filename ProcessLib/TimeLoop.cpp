@@ -318,9 +318,9 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
             return ppd->timestep_algorithm->getTimeStep().timeStepNumber() == 0;
         });
 
-    for (std::size_t i = 0; i < _per_process_data.size(); i++)
+    auto computeSolutionError = [this, t](auto const i) -> double
     {
-        auto& ppd = *_per_process_data[i];
+        auto const& ppd = *_per_process_data[i];
         const auto& timestep_algorithm = ppd.timestep_algorithm;
 
         auto& time_disc = ppd.time_disc;
@@ -339,6 +339,15 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
                        : time_disc->computeRelativeChangeFromPreviousTimestep(
                              x, x_prev, norm_type))
                 : 0.;
+        return solution_error;
+    };
+
+    for (std::size_t i = 0; i < _per_process_data.size(); i++)
+    {
+        auto& ppd = *_per_process_data[i];
+        const auto& timestep_algorithm = ppd.timestep_algorithm;
+
+        const double solution_error = computeSolutionError(i);
 
         timestep_algorithm->setAccepted(
             ppd.nonlinear_solver_status.error_norms_met);
