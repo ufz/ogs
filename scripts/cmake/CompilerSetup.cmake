@@ -120,6 +120,24 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
         # processor
         add_compile_options(-xHOST)
     endif()
+
+    # Linker: prefer lld > gold > regular
+    foreach(_linker lld gold)
+        execute_process(
+            COMMAND ${CMAKE_CXX_COMPILER} -fuse-ld=${_linker} -Wl,--version
+            ERROR_QUIET
+            OUTPUT_VARIABLE _linker_version
+        )
+        if("${_linker_version}" MATCHES "LLD")
+            add_link_options(-fuse-ld=lld)
+            message(STATUS "Using lld linker. (${_linker_version})")
+            break()
+        elseif("${_linker_version}" MATCHES "GNU gold")
+            add_link_options(-fuse-ld=gold)
+            message(STATUS "Using GNU gold linker. (${_linker_version})")
+            break()
+        endif()
+    endforeach()
 endif()
 
 if(MSVC)
