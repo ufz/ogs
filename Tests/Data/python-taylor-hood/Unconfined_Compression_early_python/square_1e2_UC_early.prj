@@ -1,3 +1,23 @@
+<!--
+We solve a hydro-mechanical linear biphasic model (small deformation, linear
+elastic, Darcy flow, incompressible constituents) in square domain where on
+the top boundary a constant displacement boundary is applied. On the right
+boundary a constant pressure boundary equals zero and zeros traction boundary
+are applied. All other boundaries are constrained in their normal direction
+and all boundaries except for outer radius are sealed. The fluid is allowed to
+escape through the right boundary. The drainage process can be concluded into
+two stages. During drainage, the total stress is the sum of effective stresses
+in the solid and the pore pressure. Once the material is fully drained, the
+pore pressure is zero, so that stress- and displacement fields are determined
+exclusively by the properties of the solid skeleton. An axisymmetric domain is
+used in this model. The mesh is refined based on the distance to the outer
+radius.
+In this problem, it is assumed that the biot coefficient $$\alpha = 1$$ and the
+storage $$S$$ term is neglected.
+
+A detailed problem description is provided online:
+https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compression/
+-->
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh axially_symmetric="true">square_1x1_quad8_1e2.vtu</mesh>
