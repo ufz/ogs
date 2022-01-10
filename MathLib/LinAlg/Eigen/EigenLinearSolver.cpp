@@ -80,6 +80,102 @@ private:
     T_SOLVER solver_;
 };
 
+// implementations for some iterative linear solver methods --------------------
+
+// restart
+template <typename Solver>
+void setRestartImpl(Solver&, int const)
+{
+    DBUG("-> restart is not implemented for this linear solver.");
+}
+
+template <typename Matrix, typename Precon>
+void setRestartImpl(Eigen::GMRES<Matrix, Precon>& solver, int const restart)
+{
+    solver.set_restart(restart);
+    INFO("-> set restart value: {:d}", solver.get_restart());
+}
+
+// L
+template <typename Solver>
+void setLImpl(Solver&, int const)
+{
+    DBUG("-> setL() is not implemented for this linear solver.");
+}
+
+template <typename Matrix, typename Precon>
+void setLImpl(Eigen::BiCGSTABL<Matrix, Precon>& solver, int const l)
+{
+    solver.setL(l);
+}
+
+template <typename Matrix, typename Precon>
+void setLImpl(Eigen::IDRSTABL<Matrix, Precon>& solver, int const l)
+{
+    solver.setL(l);
+}
+
+// S
+template <typename Solver>
+void setSImpl(Solver&, int const)
+{
+    DBUG("-> setS() is not implemented for this linear solver.");
+}
+
+template <typename Matrix, typename Precon>
+void setSImpl(Eigen::IDRS<Matrix, Precon>& solver, int const s)
+{
+    solver.setS(s);
+}
+
+template <typename Matrix, typename Precon>
+void setSImpl(Eigen::IDRSTABL<Matrix, Precon>& solver, int const s)
+{
+    solver.setS(s);
+}
+
+// angle
+template <typename Solver>
+void setAngleImpl(Solver&, double const)
+{
+    DBUG("-> setAngle() is not implemented for this linear solver.");
+}
+
+template <typename Matrix, typename Precon>
+void setAngleImpl(Eigen::IDRS<Matrix, Precon>& solver, double const angle)
+{
+    solver.setAngle(angle);
+}
+
+// smoothing
+template <typename Solver>
+void setSmoothingImpl(Solver&, bool const)
+{
+    DBUG("-> setSmoothing() is not implemented for this linear solver.");
+}
+
+template <typename Matrix, typename Precon>
+void setSmoothingImpl(Eigen::IDRS<Matrix, Precon>& solver, bool const smoothing)
+{
+    solver.setSmoothing(smoothing);
+}
+
+// residual update
+template <typename Solver>
+void setResidualUpdateImpl(Solver&, bool const)
+{
+    DBUG("-> setResidualUpdate() is not implemented for this linear solver.");
+}
+
+template <typename Matrix, typename Precon>
+void setResidualUpdateImpl(Eigen::IDRS<Matrix, Precon>& solver,
+                           bool const residual_update)
+{
+    solver.setResidualUpdate(residual_update);
+}
+
+// -----------------------------------------------------------------------------
+
 /// Template class for Eigen iterative linear solvers
 template <class T_SOLVER>
 class EigenIterativeLinearSolver final : public EigenLinearSolverBase
@@ -133,212 +229,19 @@ public:
 
 private:
     T_SOLVER solver_;
-    void setRestart(int const /*restart*/) {}
-    void setL(int const /*l*/) {}
-    void setS(int const /*s*/) {}
-    void setAngle(double const /*angle*/) {}
-    void setSmoothing(bool const /*smoothing*/) {}
-    void setResidualUpdate(bool const /*residual update*/) {}
+    void setRestart(int const restart) { setRestartImpl(solver_, restart); }
+    void setL(int const l) { setLImpl(solver_, l); }
+    void setS(int const s) { setSImpl(solver_, s); }
+    void setAngle(double const angle) { setAngleImpl(solver_, angle); }
+    void setSmoothing(bool const smoothing)
+    {
+        setSmoothingImpl(solver_, smoothing);
+    }
+    void setResidualUpdate(bool const residual_update)
+    {
+        setResidualUpdateImpl(solver_, residual_update);
+    }
 };
-
-/// Specialization for (all) three preconditioners separately
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::GMRES<EigenMatrix::RawMatrixType,
-                 Eigen::IdentityPreconditioner>>::setRestart(int const restart)
-{
-    solver_.set_restart(restart);
-    INFO("-> set restart value: {:d}", solver_.get_restart());
-}
-
-template <>
-void EigenIterativeLinearSolver<Eigen::GMRES<
-    EigenMatrix::RawMatrixType,
-    Eigen::DiagonalPreconditioner<double>>>::setRestart(int const restart)
-{
-    solver_.set_restart(restart);
-    INFO("-> set restart value: {:d}", solver_.get_restart());
-}
-
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::GMRES<EigenMatrix::RawMatrixType,
-                 Eigen::IncompleteLUT<double>>>::setRestart(int const restart)
-{
-    solver_.set_restart(restart);
-    INFO("-> set restart value: {:d}", solver_.get_restart());
-}
-
-/// BiCGSTABL
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::BiCGSTABL<EigenMatrix::RawMatrixType,
-                 Eigen::IdentityPreconditioner>>::setL(int const l)
-{
-    solver_.setL(l);
-}
-
-template <>
-void EigenIterativeLinearSolver<Eigen::BiCGSTABL<
-    EigenMatrix::RawMatrixType,
-    Eigen::DiagonalPreconditioner<double>>>::setL(int const l)
-{
-    solver_.setL(l);
-}
-
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::BiCGSTABL<EigenMatrix::RawMatrixType,
-                 Eigen::IncompleteLUT<double>>>::setL(int const l)
-{
-    solver_.setL(l);
-}
-
-/// IDRS
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::IDRS<EigenMatrix::RawMatrixType,
-                 Eigen::IdentityPreconditioner>>::setS(int const s)
-{
-    solver_.setS(s);
-}
-
-template <>
-void EigenIterativeLinearSolver<Eigen::IDRS<
-    EigenMatrix::RawMatrixType,
-    Eigen::DiagonalPreconditioner<double>>>::setS(int const s)
-{
-    solver_.setS(s);
-}
-
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::IDRS<EigenMatrix::RawMatrixType,
-                 Eigen::IncompleteLUT<double>>>::setS(int const s)
-{
-    solver_.setS(s);
-}
-
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::IDRS<EigenMatrix::RawMatrixType,
-                 Eigen::IdentityPreconditioner>>::setAngle(double const angle)
-{
-    solver_.setAngle(angle);
-}
-
-template <>
-void EigenIterativeLinearSolver<Eigen::IDRS<
-    EigenMatrix::RawMatrixType,
-    Eigen::DiagonalPreconditioner<double>>>::setAngle(double const angle)
-{
-    solver_.setAngle(angle);
-}
-
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::IDRS<EigenMatrix::RawMatrixType,
-                 Eigen::IncompleteLUT<double>>>::setAngle(double const angle)
-{
-    solver_.setAngle(angle);
-}
-
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::IDRS<EigenMatrix::RawMatrixType,
-                 Eigen::IdentityPreconditioner>>::setSmoothing(bool const smoothing)
-{
-    solver_.setSmoothing(smoothing);
-}
-
-template <>
-void EigenIterativeLinearSolver<Eigen::IDRS<
-    EigenMatrix::RawMatrixType,
-    Eigen::DiagonalPreconditioner<double>>>::setSmoothing(bool const smoothing)
-{
-    solver_.setSmoothing(smoothing);
-}
-
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::IDRS<EigenMatrix::RawMatrixType,
-                 Eigen::IncompleteLUT<double>>>::setSmoothing(bool const smoothing)
-{
-    solver_.setSmoothing(smoothing);
-}
-
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::IDRS<EigenMatrix::RawMatrixType,
-                 Eigen::IdentityPreconditioner>>::setResidualUpdate(bool const residualupdate)
-{
-    solver_.setResidualUpdate(residualupdate);
-}
-
-template <>
-void EigenIterativeLinearSolver<Eigen::IDRS<
-    EigenMatrix::RawMatrixType,
-    Eigen::DiagonalPreconditioner<double>>>::setResidualUpdate(bool const residualupdate)
-{
-    solver_.setResidualUpdate(residualupdate);
-}
-
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::IDRS<EigenMatrix::RawMatrixType,
-                 Eigen::IncompleteLUT<double>>>::setResidualUpdate(bool const residualupdate)
-{
-    solver_.setResidualUpdate(residualupdate);
-}
-
-/// IDRSTABL
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::IDRSTABL<EigenMatrix::RawMatrixType,
-                 Eigen::IdentityPreconditioner>>::setS(int const s)
-{
-    solver_.setS(s);
-}
-
-template <>
-void EigenIterativeLinearSolver<Eigen::IDRSTABL<
-    EigenMatrix::RawMatrixType,
-    Eigen::DiagonalPreconditioner<double>>>::setS(int const s)
-{
-    solver_.setS(s);
-}
-
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::IDRSTABL<EigenMatrix::RawMatrixType,
-                 Eigen::IncompleteLUT<double>>>::setS(int const s)
-{
-    solver_.setS(s);
-}
-
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::IDRSTABL<EigenMatrix::RawMatrixType,
-                 Eigen::IdentityPreconditioner>>::setL(int const l)
-{
-    solver_.setL(l);
-}
-
-template <>
-void EigenIterativeLinearSolver<Eigen::IDRSTABL<
-    EigenMatrix::RawMatrixType,
-    Eigen::DiagonalPreconditioner<double>>>::setL(int const l)
-{
-    solver_.setL(l);
-}
-
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::IDRSTABL<EigenMatrix::RawMatrixType,
-                 Eigen::IncompleteLUT<double>>>::setL(int const l)
-{
-    solver_.setL(l);
-}
 
 template <template <typename, typename> class Solver, typename Precon>
 std::unique_ptr<EigenLinearSolverBase> createIterativeSolver()
