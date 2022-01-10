@@ -47,12 +47,32 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<1>::value(
     double const dt) const
 {
     auto const& medium = std::get<Medium*>(scale_);
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
+
+    // Assuming there is either a gas phase or a liquid phase or both.
+    auto const gas_phase =
+        medium->hasPhase("Gas") ? &medium->phase("Gas") : nullptr;
+    auto const liquid_phase = medium->hasPhase("AqueousLiquid")
+                                  ? &medium->phase("AqueousLiquid")
+                                  : nullptr;
+    // Assuming there is always a solid phase.
     auto const& solid_phase = medium->phase("Solid");
+
+    auto const gas_thermal_conductivity =
+        gas_phase
+            ? gas_phase
+                  ->property(
+                      MaterialPropertyLib::PropertyType::thermal_conductivity)
+                  .template value<double>(variable_array, pos, t, dt)
+            : 0.;
+
     auto const liquid_thermal_conductivity =
         liquid_phase
-            .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
-            .template value<double>(variable_array, pos, t, dt);
+            ? liquid_phase
+                  ->property(
+                      MaterialPropertyLib::PropertyType::thermal_conductivity)
+                  .template value<double>(variable_array, pos, t, dt)
+            : 0.;
+
     auto const solid_thermal_conductivity =
         solid_phase
             .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
@@ -60,13 +80,18 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<1>::value(
 
     auto const porosity =
         std::get<double>(variable_array[static_cast<int>(Variable::porosity)]);
-
     auto const S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    auto const S_G = 1. - S_L;
+
+    auto const phi_G = porosity * S_G;
+    auto const phi_L = porosity * S_L;
+    auto const phi_S = 1. - porosity;
 
     double const effective_thermal_conductivity =
-        (1.0 - porosity) * solid_thermal_conductivity +
-        porosity * liquid_thermal_conductivity * S_L;
+        phi_G * gas_thermal_conductivity + phi_L * liquid_thermal_conductivity +
+        phi_S * solid_thermal_conductivity;
+
     return effective_thermal_conductivity;
 }
 template <>
@@ -109,12 +134,31 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::value(
     double const dt) const
 {
     auto const& medium = std::get<Medium*>(scale_);
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    // Assuming there is either a gas phase or a liquid phase or both.
+    auto const gas_phase =
+        medium->hasPhase("Gas") ? &medium->phase("Gas") : nullptr;
+    auto const liquid_phase = medium->hasPhase("AqueousLiquid")
+                                  ? &medium->phase("AqueousLiquid")
+                                  : nullptr;
+    // Assuming there is always a solid phase.
     auto const& solid_phase = medium->phase("Solid");
+
+    auto const gas_thermal_conductivity =
+        gas_phase
+            ? gas_phase
+                  ->property(
+                      MaterialPropertyLib::PropertyType::thermal_conductivity)
+                  .template value<double>(variable_array, pos, t, dt)
+            : 0.;
+
     auto const liquid_thermal_conductivity =
         liquid_phase
-            .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
-            .template value<double>(variable_array, pos, t, dt);
+            ? liquid_phase
+                  ->property(
+                      MaterialPropertyLib::PropertyType::thermal_conductivity)
+                  .template value<double>(variable_array, pos, t, dt)
+            : 0.;
+
     auto solid_thermal_conductivity = formEigenTensor<GlobalDim>(
         solid_phase
             .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
@@ -125,6 +169,11 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::value(
 
     auto const S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    auto const S_G = 1. - S_L;
+
+    auto const phi_G = porosity * S_G;
+    auto const phi_L = porosity * S_L;
+    auto const phi_S = 1. - porosity;
 
     // Local coordinate transformation is only applied for the case that the
     // initial solid thermal conductivity is given with orthotropic assumption.
@@ -137,11 +186,12 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::value(
         solid_thermal_conductivity =
             e.transpose() * solid_thermal_conductivity * e;
     }
+    auto const I = Eigen::Matrix<double, GlobalDim, GlobalDim>::Identity();
     Eigen::Matrix<double, GlobalDim, GlobalDim> const
-        effective_thermal_conductivity =
-            (1.0 - porosity) * solid_thermal_conductivity +
-            porosity * liquid_thermal_conductivity *
-                Eigen::Matrix<double, GlobalDim, GlobalDim>::Identity() * S_L;
+        effective_thermal_conductivity = (phi_G * gas_thermal_conductivity +
+                                          phi_L * liquid_thermal_conductivity) *
+                                             I +
+                                         phi_S * solid_thermal_conductivity;
     return effective_thermal_conductivity;
 }
 
