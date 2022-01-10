@@ -215,21 +215,9 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
     cv.muGR = gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
                   .template value<double>(variables, pos, t, dt);
 
-    // gas phase thermal conductivity
-    cv.lambdaGR =
-        gas_phase
-            .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
-            .template value<double>(variables, pos, t, dt);
-
     // liquid phase viscosity
     cv.muLR =
         liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-            .template value<double>(variables, pos, t, dt);
-
-    // liquid phase thermal conductivity
-    cv.lambdaLR =
-        liquid_phase
-            .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .template value<double>(variables, pos, t, dt);
 
     return cv;
