@@ -32,6 +32,16 @@ namespace FileIO
 {
 TetGenInterface::TetGenInterface() = default;
 
+auto constructPointsFromNodes(std::vector<MeshLib::Node*> nodes)
+{
+    std::vector<GeoLib::Point*> points;
+    points.reserve(nodes.size());
+    std::transform(nodes.begin(), nodes.end(), std::back_inserter(points),
+                   [](auto const* node)
+                   { return new GeoLib::Point(*node, node->getID()); });
+    return points;
+}
+
 bool TetGenInterface::readTetGenGeometry(std::string const& geo_fname,
                                          GeoLib::GEOObjects& geo_objects)
 {
@@ -58,11 +68,7 @@ bool TetGenInterface::readTetGenGeometry(std::string const& geo_fname,
         BaseLib::cleanupVectorElements(nodes);
         return false;
     }
-    std::vector<GeoLib::Point*> points;
-    points.reserve(nodes.size());
-    std::transform(nodes.begin(), nodes.end(), std::back_inserter(points),
-                   [](auto const* node)
-                   { return new GeoLib::Point(*node, node->getID()); });
+    auto points = constructPointsFromNodes(nodes);
     BaseLib::cleanupVectorElements(nodes);
 
     std::string geo_name(BaseLib::extractBaseNameWithoutExtension(geo_fname));
