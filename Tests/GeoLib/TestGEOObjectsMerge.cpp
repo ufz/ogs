@@ -202,12 +202,10 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
 
     GeoLib::PolylineVec const* const ply_vec_objs =
         geo_objs.getPolylineVecObj(merged_geometries_name);
-    std::vector<GeoLib::Polyline*> const* const polylines =
-        ply_vec_objs->getVector();
+    auto const& polylines = ply_vec_objs->getVector();
 
     // check number of polylines
-    ASSERT_TRUE(polylines != nullptr);
-    ASSERT_EQ(3u, polylines->size());
+    ASSERT_EQ(3u, polylines.size());
 
     // check names of polylines
     ASSERT_TRUE(ply_vec_objs->getElementByName("Polyline0FromGeometry0") !=

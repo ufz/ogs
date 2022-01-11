@@ -580,7 +580,7 @@ std::unique_ptr<Polyline> createPolyline(GeoLib::PointVec const& points_vec,
                                          std::vector<std::size_t>&& point_ids)
 {
     auto const& point_id_map = points_vec.getIDMap();
-    auto polyline = std::make_unique<Polyline>(*(points_vec.getVector()));
+    auto polyline = std::make_unique<Polyline>(points_vec.getVector());
     for (auto point_id : point_ids)
     {
         if (point_id >= point_id_map.size())

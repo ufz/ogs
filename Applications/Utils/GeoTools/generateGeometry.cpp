@@ -61,7 +61,7 @@ void generatePolylineGeometry(GeoLib::Point const& point0,
                          GeoLib::PointVec::NameIdMap{});
     auto const& point_vec = *geometry.getPointVecObj(geometry_name);
 
-    std::vector<std::size_t> polyline_point_ids(point_vec.getVector()->size());
+    std::vector<std::size_t> polyline_point_ids(point_vec.getVector().size());
     std::iota(begin(polyline_point_ids), end(polyline_point_ids), 0);
 
     auto [lines, name_map] = appendNamedPolyline(
@@ -160,7 +160,7 @@ int generateQuadGeometry(GeoLib::Point const& point0,
         GeoLib::PointVec::NameIdMap{});
     auto const& point_vec = *geometry.getPointVecObj(geometry_name);
 
-    std::vector<std::size_t> polyline_point_ids(point_vec.getVector()->size() +
+    std::vector<std::size_t> polyline_point_ids(point_vec.getVector().size() +
                                                 1);
     std::iota(begin(polyline_point_ids), end(polyline_point_ids), 0);
     polyline_point_ids.back() = polyline_point_ids.front();

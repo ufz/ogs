@@ -44,7 +44,7 @@ constructAdditionalMeshesFromGeometries(
         // name.
         auto const& vec_name = geometry_vec->getName();
 
-        auto const& vec_data = *geometry_vec->getVector();
+        auto const& vec_data = geometry_vec->getVector();
 
         auto const vec_size = geometry_vec->size();
         for (std::size_t i = 0; i < vec_size; ++i)

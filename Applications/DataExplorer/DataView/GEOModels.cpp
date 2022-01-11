@@ -181,7 +181,7 @@ void GEOModels::connectPolylineSegments(
 
     if (plyVec)
     {
-        std::vector<GeoLib::Polyline*> const& polylines = *plyVec->getVector();
+        auto const& polylines = plyVec->getVector();
         std::vector<GeoLib::Polyline*> ply_list;
         std::transform(indexlist.begin(), indexlist.end(),
                        std::back_inserter(ply_list),

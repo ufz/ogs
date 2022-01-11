@@ -106,7 +106,7 @@ public:
      * get a pointer to a standard vector containing the data elements
      * @return the data elements
      */
-    const std::vector<T*>* getVector() const { return &_data_vec; }
+    std::vector<T*> const& getVector() const { return _data_vec; }
 
     /**
      * search the vector of names for the ID of the geometric element with the
@@ -163,7 +163,7 @@ public:
     /// Return the name of an element based on its ID.
     void setNameOfElementByID(std::size_t id, std::string const& element_name)
     {
-        _name_id_map.insert(NameIdPair(element_name, id));
+        _name_id_map[element_name] = id;
     }
 
     /**
@@ -197,18 +197,17 @@ public:
             return;
         }
 
-        std::map<std::string, std::size_t>::const_iterator it(
-            _name_id_map.find(*name));
+        auto it(_name_id_map.find(*name));
         if (it == _name_id_map.end())
         {
-            _name_id_map.insert(NameIdPair(*name, _data_vec.size() - 1));
+            _name_id_map[*name] = _data_vec.size() - 1;
         }
         else
         {
             WARN(
                 "Name '{:s}' exists already. The object will be inserted "
                 "without a name",
-                name->c_str());
+                *name);
         }
     }
 
@@ -225,7 +224,7 @@ public:
         if (!name.empty())
         {
             // insert new or revised name
-            _name_id_map.insert(NameIdPair(name, id));
+            _name_id_map[name] = id;
         }
     }
 
