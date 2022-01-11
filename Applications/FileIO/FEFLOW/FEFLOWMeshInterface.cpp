@@ -232,7 +232,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
     else
     {
         opt_material_ids->resize(mesh->getNumberOfElements());
-        setMaterialIDs(fem_class, fem_dim, &lines, vec_elementsets,
+        setMaterialIDs(fem_class, fem_dim, lines, vec_elementsets,
                        vec_elements, *opt_material_ids);
     }
 
@@ -702,7 +702,7 @@ void FEFLOWMeshInterface::readELEMENTALSETS(
 void FEFLOWMeshInterface::setMaterialIDs(
     FEM_CLASS const& fem_class,
     FEM_DIM const& fem_dim,
-    std::vector<GeoLib::Polyline*>* const& lines,
+    std::vector<GeoLib::Polyline*> const& lines,
     std::vector<std::vector<std::size_t>> const& vec_elementsets,
     std::vector<MeshLib::Element*> const& vec_elements,
     std::vector<int>& material_ids)
@@ -720,22 +720,22 @@ void FEFLOWMeshInterface::setMaterialIDs(
             }
         }
     }
-    else if (lines && !lines->empty())
+    else if (!lines.empty())
     {
         for (std::size_t i = 0; i < vec_elements.size(); ++i)
         {
             MeshLib::Node const gpt =
                 MeshLib::getCenterOfGravity(*vec_elements[i]);
             std::size_t matId = 0;
-            for (std::size_t j = 0; j < lines->size(); j++)
+            for (std::size_t j = 0; j < lines.size(); j++)
             {
-                GeoLib::Polyline* poly = (*lines)[j];
-                if (!poly->isClosed())
+                GeoLib::Polyline const& poly = *lines[j];
+                if (!poly.isClosed())
                 {
                     continue;
                 }
 
-                GeoLib::Polygon polygon(*poly, true);
+                GeoLib::Polygon polygon(poly, true);
                 if (polygon.isPntInPolygon(gpt))
                 {
                     matId = j;

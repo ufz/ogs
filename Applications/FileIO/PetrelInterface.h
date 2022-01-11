@@ -34,8 +34,8 @@ namespace FileIO
 class PetrelInterface final
 {
 public:
-    PetrelInterface(std::list<std::string> &sfc_fnames,
-                    std::list<std::string> &well_path_fnames,
+    PetrelInterface(std::list<std::string> const&sfc_fnames,
+                    std::list<std::string> const&well_path_fnames,
                     std::string &unique_model_name,
                     GeoLib::GEOObjects* geo_obj);
 
@@ -45,13 +45,12 @@ public:
     PetrelInterface& operator=(PetrelInterface&&) = delete;
 
 private:
-    void readPetrelSurface (std::istream &in);
+    void readPetrelSurfacePoints(std::istream& in);
     void readPetrelWellTrace (std::istream &in);
     void readPetrelWellTraceData (std::istream &in);
     std::string _unique_name;
-    std::vector<GeoLib::Point*>* pnt_vec;
-    std::vector<GeoLib::Point*>* well_vec;
-    std::vector<GeoLib::Polyline*>* ply_vec;
+    std::vector<GeoLib::Point*> pnt_vec;
+    std::vector<GeoLib::Point*> well_vec;
     static const std::size_t MAX_COLS_PER_ROW = 256;
 };
 } // end namespace FileIO

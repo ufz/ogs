@@ -21,36 +21,6 @@
 #include "BaseLib/Logging.h"
 #include "GeoLib/Triangle.h"
 
-namespace
-{
-void deletePolylines(std::vector<GeoLib::Polyline*>&& polylines)
-{
-    for (GeoLib::Polyline* line : polylines)
-    {
-        delete line;
-    }
-}
-
-void deleteSurfaces(std::vector<GeoLib::Surface*>&& surfaces)
-{
-    for (GeoLib::Surface* surface : surfaces)
-    {
-        delete surface;
-    }
-}
-void deleteGeometry(std::vector<GeoLib::Point*>&& points,
-                    std::vector<GeoLib::Polyline*>&& polylines,
-                    std::vector<GeoLib::Surface*>&& surfaces)
-{
-    for (GeoLib::Point* point : points)
-    {
-        delete point;
-    }
-    deletePolylines(std::move(polylines));
-    deleteSurfaces(std::move(surfaces));
-}
-}  // namespace
-
 namespace GeoLib
 {
 namespace IO
@@ -96,8 +66,7 @@ int XmlGmlInterface::readFile(const QString& fileName)
             if (type_node.toElement().text().isEmpty())
             {
                 ERR("XmlGmlInterface::readFile(): <name>-tag is empty.");
-                deleteGeometry(std::move(points), std::move(polylines),
-                               std::move(surfaces));
+                BaseLib::cleanupVectorElements(surfaces, polylines, points);
                 return 0;
             }
 

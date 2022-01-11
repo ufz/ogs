@@ -295,19 +295,29 @@ std::size_t findIndex(Container const& container,
     return std::distance(container.begin(), it);
 }
 
-/** Util function to cleanup vectors */
-template <typename T1, typename T2>
-void cleanupVectorElements(std::vector<T1*> const& items,
-                           std::vector<T2*> const& dependent_items)
+/** Function to destruct objects stored in a container as pointers. */
+template <typename T>
+void cleanupVectorElements(std::vector<T*>& items)
 {
-    for (auto dependent_item : dependent_items)
-    {
-        delete dependent_item;
-    }
     for (auto item : items)
     {
         delete item;
     }
+    items.clear();
+}
+
+/** Util function to cleanup the memory of multiple containers containing
+ * pointers to objects. Sometimes, there are dependencies between the pointer
+ * items in the containers. For instance, a GeoLib::Polyline or a
+ * GeoLib::Surface depends on the GeoLib::Point pointers stored in a
+ * std::vector<GeoLib::Point*>. Then, the dependent items have to cleaned up
+ * before the GeoLib::Point objects are deleted. A similar relation exists
+ * between MeshLib::Element objects and MeshLib::Node objects.*/
+template <typename T1, typename... Args>
+void cleanupVectorElements(std::vector<T1*>& dependent_items, Args&&... args)
+{
+    cleanupVectorElements(dependent_items);
+    cleanupVectorElements(std::forward<Args>(args)...);
 }
 
 /// Checks if any of the elements in the given list is true.
