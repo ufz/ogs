@@ -729,13 +729,13 @@ void FEFLOWMeshInterface::setMaterialIDs(
             std::size_t matId = 0;
             for (std::size_t j = 0; j < lines.size(); j++)
             {
-                GeoLib::Polyline* poly = lines[j];
-                if (!poly->isClosed())
+                GeoLib::Polyline const& poly = *lines[j];
+                if (!poly.isClosed())
                 {
                     continue;
                 }
 
-                GeoLib::Polygon polygon(*poly, true);
+                GeoLib::Polygon polygon(poly, true);
                 if (polygon.isPntInPolygon(gpt))
                 {
                     matId = j;
