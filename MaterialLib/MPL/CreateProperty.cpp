@@ -129,6 +129,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createKozenyCarmanModel(config, parameters);
     }
 
+    if (boost::iequals(property_type, "VermaPruess"))
+    {
+        return createVermaPruessModel(config, parameters);
+    }
+
     if (boost::iequals(property_type, "PermeabilityOrthotropicPowerLaw"))
     {
         return createPermeabilityOrthotropicPowerLaw(config,
