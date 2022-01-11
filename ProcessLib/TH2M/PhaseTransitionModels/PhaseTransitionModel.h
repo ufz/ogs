@@ -112,11 +112,9 @@ struct PhaseTransitionModel
 
         // check for minimum requirement definitions in media object
         std::array const required_gas_properties = {
-            MaterialPropertyLib::viscosity, MaterialPropertyLib::density,
-            MaterialPropertyLib::thermal_conductivity};
+            MaterialPropertyLib::viscosity, MaterialPropertyLib::density};
         std::array const required_liquid_properties = {
-            MaterialPropertyLib::viscosity, MaterialPropertyLib::density,
-            MaterialPropertyLib::thermal_conductivity};
+            MaterialPropertyLib::viscosity, MaterialPropertyLib::density};
 
         for (auto const& m : media)
         {
