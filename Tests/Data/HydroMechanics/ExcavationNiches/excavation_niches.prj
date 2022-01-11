@@ -73,7 +73,7 @@
                 <property>
                     <name>permeability</name>
                     <type>Constant</type>
-                    <value>1e-19</value>
+                    <value>1e-19 0.0 0.0 1e-19</value>
                 </property>
                 <property>
                     <name>reference_temperature</name>
