@@ -22,6 +22,16 @@
 
 namespace GeoLib
 {
+/// Function to find PointVec, PolylineVec, or SurfaceVec pointers that are
+/// stored in the container
+template <typename Container>
+auto findVectorByName(Container const& container, std::string const& name)
+{
+    return std::find_if(container.begin(), container.end(),
+                        [&name](auto const* vector)
+                        { return vector->getName() == name; });
+}
+
 void markUnusedPoints(GEOObjects const& geo_objects,
                       std::string const& geo_name,
                       std::vector<bool>& transfer_pnts);
@@ -163,10 +173,7 @@ bool GEOObjects::appendPolylineVec(const std::vector<Polyline*>& polylines,
 {
     // find an already existing PolylineVec object the given polylines will be
     // appended to
-    auto polyline_vec_it =
-        std::find_if(_ply_vecs.begin(), _ply_vecs.end(),
-                     [&name](auto* const polyline_vec)
-                     { return polyline_vec->getName() == name; });
+    auto polyline_vec_it = findVectorByName(_ply_vecs, name);
     if (polyline_vec_it == _ply_vecs.end())
     {
         return false;
@@ -242,10 +249,7 @@ void GEOObjects::addSurfaceVec(std::vector<Surface*>&& sfc,
 bool GEOObjects::appendSurfaceVec(const std::vector<Surface*>& surfaces,
                                   const std::string& name)
 {
-    auto surface_vec_to_append_it =
-        std::find_if(_sfc_vecs.begin(), _sfc_vecs.end(),
-                     [&name](auto const* surface_vec)
-                     { return surface_vec->getName() == name; });
+    auto surface_vec_to_append_it = findVectorByName(_sfc_vecs, name);
     if (surface_vec_to_append_it != _sfc_vecs.end())
     {
         for (auto& surface : surfaces)
@@ -266,13 +270,10 @@ bool GEOObjects::appendSurfaceVec(const std::vector<Surface*>& surfaces,
 const std::vector<Surface*>* GEOObjects::getSurfaceVec(
     const std::string& name) const
 {
-    std::size_t size(_sfc_vecs.size());
-    for (std::size_t i = 0; i < size; i++)
+    auto surface_vec_it = findVectorByName(_sfc_vecs, name);
+    if (surface_vec_it != _sfc_vecs.end())
     {
-        if (_sfc_vecs[i]->getName() == name)
-        {
-            return &_sfc_vecs[i]->getVector();
-        }
+        return &(*surface_vec_it)->getVector();
     }
     DBUG("GEOObjects::getSurfaceVec() - No entry found with name '{:s}'.",
          name);
@@ -282,14 +283,12 @@ const std::vector<Surface*>* GEOObjects::getSurfaceVec(
 bool GEOObjects::removeSurfaceVec(const std::string& name)
 {
     _callbacks->removeSurfaceVec(name);
-    for (auto it(_sfc_vecs.begin()); it != _sfc_vecs.end(); ++it)
+    auto const it = findVectorByName(_sfc_vecs, name);
+    if (it != _sfc_vecs.end())
     {
-        if ((*it)->getName() == name)
-        {
-            delete *it;
-            _sfc_vecs.erase(it);
-            return true;
-        }
+        delete *it;
+        _sfc_vecs.erase(it);
+        return true;
     }
 
     DBUG("GEOObjects::removeSurfaceVec() - No entry found with name '{:s}'.",
@@ -299,13 +298,10 @@ bool GEOObjects::removeSurfaceVec(const std::string& name)
 
 const SurfaceVec* GEOObjects::getSurfaceVecObj(const std::string& name) const
 {
-    std::size_t size(_sfc_vecs.size());
-    for (std::size_t i = 0; i < size; i++)
+    auto surface_vec_it = findVectorByName(_sfc_vecs, name);
+    if (surface_vec_it != _sfc_vecs.end())
     {
-        if (_sfc_vecs[i]->getName() == name)
-        {
-            return _sfc_vecs[i];
-        }
+        return *surface_vec_it;
     }
     DBUG("GEOObjects::getSurfaceVecObj() - No entry found with name '{:s}'.",
          name);
@@ -327,23 +323,9 @@ bool GEOObjects::isUniquePointVecName(std::string& name) const
 
 bool GEOObjects::isPntVecUsed(const std::string& name) const
 {
-    // search dependent data structures (Polyline)
-    for (auto polyline : _ply_vecs)
-    {
-        if (polyline->getName() == name)
-        {
-            return true;
-        }
-    }
-    for (auto surface : _sfc_vecs)
-    {
-        if (surface->getName() == name)
-        {
-            return true;
-        }
-    }
-
-    return false;
+    // search for dependent PolylineVecs or SurfaceVecs
+    return findVectorByName(_ply_vecs, name) != _ply_vecs.end() ||
+           findVectorByName(_sfc_vecs, name) != _sfc_vecs.end();
 }
 
 void GEOObjects::getStationVectorNames(std::vector<std::string>& names) const
@@ -580,9 +562,7 @@ void GEOObjects::renameGeometry(std::string const& old_name,
 
     auto rename = [&old_name, &new_name](auto const& container)
     {
-        auto it = std::find_if(container.begin(), container.end(),
-                               [&old_name](auto const item)
-                               { return item->getName() == old_name; });
+        auto it = findVectorByName(container, old_name);
         if (it != container.end())
         {
             (*it)->setName(new_name);
@@ -768,12 +748,10 @@ GeoLib::GeoObject const* GEOObjects::getGeoObject(
 std::size_t GEOObjects::exists(const std::string& geometry_name) const
 {
     std::size_t const size(_pnt_vecs.size());
-    for (std::size_t i = 0; i < size; i++)
+    auto const it = findVectorByName(_pnt_vecs, geometry_name);
+    if (it != _pnt_vecs.end())
     {
-        if (_pnt_vecs[i]->getName() == geometry_name)
-        {
-            return i;
-        }
+        return std::distance(_pnt_vecs.begin(), it);
     }
 
     // HACK for enabling conversion of files without loading the associated
