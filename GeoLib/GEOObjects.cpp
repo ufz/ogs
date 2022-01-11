@@ -14,6 +14,7 @@
 
 #include "GEOObjects.h"
 
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
 #include "Station.h"
@@ -29,21 +30,8 @@ GEOObjects::GEOObjects() = default;
 
 GEOObjects::~GEOObjects()
 {
-    // delete surfaces
-    for (auto& surface : _sfc_vecs)
-    {
-        delete surface;
-    }
-    // delete polylines
-    for (auto& polyline : _ply_vecs)
-    {
-        delete polyline;
-    }
-    // delete points
-    for (auto& point : _pnt_vecs)
-    {
-        delete point;
-    }
+    // delete all SurfaceVecs, PolylineVec, and PointVecs
+    BaseLib::cleanupVectorElements(_sfc_vecs, _ply_vecs, _pnt_vecs);
 }
 
 void GEOObjects::addPointVec(std::vector<Point*>&& points,

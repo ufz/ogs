@@ -55,10 +55,7 @@ bool TetGenInterface::readTetGenGeometry(std::string const& geo_fname,
     if (!readNodesFromStream(poly_stream, nodes))
     {
         // remove nodes read until now
-        for (auto& node : nodes)
-        {
-            delete node;
-        }
+        BaseLib::cleanupVectorElements(nodes);
         return false;
     }
     const std::size_t nNodes(nodes.size());
@@ -80,10 +77,7 @@ bool TetGenInterface::readTetGenGeometry(std::string const& geo_fname,
                           *geo_objects.getPointVec(geo_name), id_map))
     {
         // remove surfaces read until now but keep the points
-        for (std::size_t k = 0; k < surfaces.size(); k++)
-        {
-            delete surfaces[k];
-        }
+        BaseLib::cleanupVectorElements(surfaces);
     }
     geo_objects.addSurfaceVec(std::move(surfaces), geo_name,
                               GeoLib::SurfaceVec::NameIdMap{});
@@ -245,10 +239,7 @@ MeshLib::Mesh* TetGenInterface::readTetGenMesh(std::string const& nodes_fname,
     if (!readNodesFromStream(ins_nodes, nodes))
     {
         // remove nodes read until now
-        for (auto& node : nodes)
-        {
-            delete node;
-        }
+        BaseLib::cleanupVectorElements(nodes);
         return nullptr;
     }
 
