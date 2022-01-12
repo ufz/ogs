@@ -55,6 +55,7 @@ set(OGS_PETSC_CONFIG_OPTIONS "" CACHE STRING
 option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
 option(OGS_BUILD_UTILS "Should the utilities programs be built?" ON)
 option(OGS_BUILD_TESTING "Should the tests be built?" ON)
+cmake_dependent_option(OGS_TEST_NOTEBOOKS "Should notebooks be tested?" ON "OGS_BUILD_TESTING" OFF)
 
 if(MSVC)
     set(CMD_COMMAND "cmd;/c")
