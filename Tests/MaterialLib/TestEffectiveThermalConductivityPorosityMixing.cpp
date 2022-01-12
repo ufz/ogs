@@ -17,43 +17,62 @@
 #include "ParameterLib/CoordinateSystem.h"
 #include "TestMPL.h"
 
+std::string phase(std::string name, double thermal_conductivity)
+{
+    std::stringstream m;
+    m << "<phase>\n";
+    m << "<type>" << name << "</type>";
+    m << "<properties>";
+    m << "  <property>";
+    m << "    <name>thermal_conductivity</name>";
+    m << "    <type>Constant</type>";
+    m << "    <value>" << thermal_conductivity << "</value>";
+    m << "  </property> ";
+    m << "</properties>";
+    m << "</phase>";
+    return m.str();
+};
+
+std::string porosity(double phi)
+{
+    std::stringstream m;
+    m << "  <property>";
+    m << "    <name>porosity</name>";
+    m << "    <type>Constant</type>";
+    m << "    <value>" << phi << "</value>";
+    m << "  </property> ";
+    return m.str();
+};
+
+std::string thermal_conductivity()
+{
+    std::stringstream m;
+    m << "  <property> ";
+    m << "    <name>thermal_conductivity</name>";
+    m << "    <type>EffectiveThermalConductivityPorosityMixing</type>";
+    m << "  </property> ";
+    return m.str();
+}
+
+const std::string material_liquid_solid =
+    "<medium><phases>" + phase("AqueousLiquid", 0.123) + phase("Solid", 0.923) +
+    "</phases><properties>" + porosity(0.12) + thermal_conductivity() +
+    "</properties></medium>";
+
+const std::string material_gas_solid =
+    "<medium><phases>" + phase("Gas", 0.123) + phase("Solid", 0.923) +
+    "</phases><properties>" + porosity(0.12) + thermal_conductivity() +
+    "</properties></medium>";
+const std::string material_gas_liquid_solid =
+    "<medium><phases>" + phase("Gas", 0.123) + phase("AqueousLiquid", 0.456) +
+    phase("Solid", 0.789) + "</phases><properties>" + porosity(0.12) +
+    thermal_conductivity() + "</properties></medium>";
+
 TEST(MaterialPropertyLib,
      EffectiveThermalConductivityPorosityMixingLiquidSolid1D)
 {
-    std::string m =
-        "<medium>"
-        "<phases><phase><type>AqueousLiquid</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.123</value>"
-        "  </property> "
-        "</properties>"
-        "</phase>"
-        "<phase><type>Solid</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.923</value>"
-        "  </property> "
-        "</properties>"
-        "</phase></phases>"
-        "<properties>"
-        "  <property>"
-        "    <name>porosity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.12</value>"
-        "  </property> "
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>EffectiveThermalConductivityPorosityMixing</type>"
-        "  </property> "
-        "</properties>"
-        "</medium>";
-
-    auto const& medium = Tests::createTestMaterial(std::move(m), 1);
+    auto const& medium =
+        Tests::createTestMaterial(std::move(material_liquid_solid), 1);
 
     MaterialPropertyLib::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
@@ -73,40 +92,8 @@ TEST(MaterialPropertyLib,
 TEST(MaterialPropertyLib,
      EffectiveThermalConductivityPorosityMixingLiquidSolid2D)
 {
-    std::string m =
-        "<medium>"
-        "<phases><phase><type>AqueousLiquid</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.123</value>"
-        "  </property> "
-        "</properties>"
-        "</phase>"
-        "<phase><type>Solid</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.923</value>"
-        "  </property> "
-        "</properties>"
-        "</phase></phases>"
-        "<properties>"
-        "  <property>"
-        "    <name>porosity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.12</value>"
-        "  </property> "
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>EffectiveThermalConductivityPorosityMixing</type>"
-        "  </property> "
-        "</properties>"
-        "</medium>";
-
-    auto const& medium = Tests::createTestMaterial(std::move(m), 2);
+    auto const& medium =
+        Tests::createTestMaterial(std::move(material_liquid_solid), 2);
 
     MaterialPropertyLib::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
@@ -126,40 +113,8 @@ TEST(MaterialPropertyLib,
 TEST(MaterialPropertyLib,
      EffectiveThermalConductivityPorosityMixingLiquidSolid3D)
 {
-    std::string m =
-        "<medium>"
-        "<phases><phase><type>AqueousLiquid</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.123</value>"
-        "  </property> "
-        "</properties>"
-        "</phase>"
-        "<phase><type>Solid</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.923</value>"
-        "  </property> "
-        "</properties>"
-        "</phase></phases>"
-        "<properties>"
-        "  <property>"
-        "    <name>porosity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.12</value>"
-        "  </property> "
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>EffectiveThermalConductivityPorosityMixing</type>"
-        "  </property> "
-        "</properties>"
-        "</medium>";
-
-    auto const& medium = Tests::createTestMaterial(std::move(m), 3);
+    auto const& medium =
+        Tests::createTestMaterial(std::move(material_liquid_solid), 3);
 
     MaterialPropertyLib::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
@@ -179,40 +134,8 @@ TEST(MaterialPropertyLib,
 
 TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingGasSolid1D)
 {
-    std::string m =
-        "<medium>"
-        "<phases><phase><type>Gas</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.123</value>"
-        "  </property> "
-        "</properties>"
-        "</phase>"
-        "<phase><type>Solid</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.923</value>"
-        "  </property> "
-        "</properties>"
-        "</phase></phases>"
-        "<properties>"
-        "  <property>"
-        "    <name>porosity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.12</value>"
-        "  </property> "
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>EffectiveThermalConductivityPorosityMixing</type>"
-        "  </property> "
-        "</properties>"
-        "</medium>";
-
-    auto const& medium = Tests::createTestMaterial(std::move(m), 1);
+    auto const& medium =
+        Tests::createTestMaterial(std::move(material_gas_solid), 1);
     MaterialPropertyLib::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
     double const time = std::numeric_limits<double>::quiet_NaN();
@@ -231,40 +154,8 @@ TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingGasSolid1D)
 
 TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingGasSolid2D)
 {
-    std::string m =
-        "<medium>"
-        "<phases><phase><type>Gas</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.123</value>"
-        "  </property> "
-        "</properties>"
-        "</phase>"
-        "<phase><type>Solid</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.923</value>"
-        "  </property> "
-        "</properties>"
-        "</phase></phases>"
-        "<properties>"
-        "  <property>"
-        "    <name>porosity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.12</value>"
-        "  </property> "
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>EffectiveThermalConductivityPorosityMixing</type>"
-        "  </property> "
-        "</properties>"
-        "</medium>";
-
-    auto const& medium = Tests::createTestMaterial(std::move(m), 2);
+    auto const& medium =
+        Tests::createTestMaterial(std::move(material_gas_solid), 2);
     MaterialPropertyLib::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
     double const time = std::numeric_limits<double>::quiet_NaN();
@@ -283,40 +174,8 @@ TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingGasSolid2D)
 
 TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingGasSolid3D)
 {
-    std::string m =
-        "<medium>"
-        "<phases><phase><type>Gas</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.123</value>"
-        "  </property> "
-        "</properties>"
-        "</phase>"
-        "<phase><type>Solid</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.923</value>"
-        "  </property> "
-        "</properties>"
-        "</phase></phases>"
-        "<properties>"
-        "  <property>"
-        "    <name>porosity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.12</value>"
-        "  </property> "
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>EffectiveThermalConductivityPorosityMixing</type>"
-        "  </property> "
-        "</properties>"
-        "</medium>";
-
-    auto const& medium = Tests::createTestMaterial(std::move(m), 3);
+    auto const& medium =
+        Tests::createTestMaterial(std::move(material_gas_solid), 3);
     MaterialPropertyLib::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
     double const time = std::numeric_limits<double>::quiet_NaN();
@@ -336,49 +195,8 @@ TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingGasSolid3D)
 TEST(MaterialPropertyLib,
      EffectiveThermalConductivityPorosityMixingGasLiquidSolid1D)
 {
-    std::string m =
-        "<medium>"
-        "<phases><phase><type>Gas</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.123</value>"
-        "  </property> "
-        "</properties>"
-        "</phase>"
-        "<phase><type>AqueousLiquid</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.456</value>"
-        "  </property> "
-        "</properties>"
-        "</phase>"
-        "<phase><type>Solid</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.789</value>"
-        "  </property> "
-        "</properties>"
-        "</phase></phases>"
-        "<properties>"
-        "  <property>"
-        "    <name>porosity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.12</value>"
-        "  </property> "
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>EffectiveThermalConductivityPorosityMixing</type>"
-        "  </property> "
-        "</properties>"
-        "</medium>";
-
-    auto const& medium = Tests::createTestMaterial(std::move(m), 1);
+    auto const& medium =
+        Tests::createTestMaterial(std::move(material_gas_liquid_solid), 1);
 
     MaterialPropertyLib::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
@@ -399,49 +217,8 @@ TEST(MaterialPropertyLib,
 TEST(MaterialPropertyLib,
      EffectiveThermalConductivityPorosityMixingGasLiquidSolid2D)
 {
-    std::string m =
-        "<medium>"
-        "<phases><phase><type>Gas</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.123</value>"
-        "  </property> "
-        "</properties>"
-        "</phase>"
-        "<phase><type>AqueousLiquid</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.456</value>"
-        "  </property> "
-        "</properties>"
-        "</phase>"
-        "<phase><type>Solid</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.789</value>"
-        "  </property> "
-        "</properties>"
-        "</phase></phases>"
-        "<properties>"
-        "  <property>"
-        "    <name>porosity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.12</value>"
-        "  </property> "
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>EffectiveThermalConductivityPorosityMixing</type>"
-        "  </property> "
-        "</properties>"
-        "</medium>";
-
-    auto const& medium = Tests::createTestMaterial(std::move(m), 2);
+    auto const& medium =
+        Tests::createTestMaterial(std::move(material_gas_liquid_solid), 2);
 
     MaterialPropertyLib::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
@@ -462,49 +239,8 @@ TEST(MaterialPropertyLib,
 TEST(MaterialPropertyLib,
      EffectiveThermalConductivityPorosityMixingGasLiquidSolid3D)
 {
-    std::string m =
-        "<medium>"
-        "<phases><phase><type>Gas</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.123</value>"
-        "  </property> "
-        "</properties>"
-        "</phase>"
-        "<phase><type>AqueousLiquid</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.456</value>"
-        "  </property> "
-        "</properties>"
-        "</phase>"
-        "<phase><type>Solid</type>"
-        "<properties>"
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.789</value>"
-        "  </property> "
-        "</properties>"
-        "</phase></phases>"
-        "<properties>"
-        "  <property>"
-        "    <name>porosity</name>"
-        "    <type>Constant</type>"
-        "    <value>0.12</value>"
-        "  </property> "
-        "  <property>"
-        "    <name>thermal_conductivity</name>"
-        "    <type>EffectiveThermalConductivityPorosityMixing</type>"
-        "  </property> "
-        "</properties>"
-        "</medium>";
-
-    auto const& medium = Tests::createTestMaterial(std::move(m), 3);
+    auto const& medium =
+        Tests::createTestMaterial(std::move(material_gas_liquid_solid), 3);
 
     MaterialPropertyLib::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
