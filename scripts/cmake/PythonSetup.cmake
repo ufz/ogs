@@ -34,16 +34,30 @@ if(OGS_USE_POETRY)
         set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/bin/python)
         if(MSVC)
             set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/Scripts/python.exe)
-            set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/Scripts CACHE INTERNAL "")
+            set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/Scripts
+                CACHE INTERNAL ""
+            )
         else()
-            set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/bin CACHE INTERNAL "")
+            set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/bin
+                CACHE INTERNAL ""
+            )
         endif()
-        file(WRITE ${PROJECT_BINARY_DIR}/.python_packages "")
         if(OGS_BUILD_TESTING)
-            file(WRITE ${PROJECT_BINARY_DIR}/.python_packages
+            # Start with Notebook requirements.txt and then add to
+            # .python_packages file dynamically
+            configure_file(
+                ${PROJECT_SOURCE_DIR}/Tests/Data/Notebooks/requirements.txt
+                ${PROJECT_BINARY_DIR}/.python_packages COPYONLY
+            )
+            file(APPEND ${PROJECT_BINARY_DIR}/.python_packages
                  "snakemake=${ogs.minimum_version.snakemake}\n"
             )
-            set(SNAKEMAKE ${LOCAL_VIRTUALENV_BIN_DIR}/snakemake CACHE FILEPATH "" FORCE)
+
+            set(SNAKEMAKE ${LOCAL_VIRTUALENV_BIN_DIR}/snakemake CACHE FILEPATH
+                                                                      "" FORCE
+            )
+        else()
+            file(WRITE ${PROJECT_BINARY_DIR}/.python_packages "")
         endif()
     endif()
 endif()

@@ -17,6 +17,8 @@ build jupyter:
         export DOCKER_TAG_JUPYTER_PETSC="ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-petsc-jupyter:latest"
       fi
     # Jupyter container
+    # TODO: use Tests/Date/Notebooks/requirements.txt in ogs_jupyter.py
+    # TODO: or better: migrate requirements.txt to versions.json
     - >
       poetry run ogscm compiler.py ogs.py ogs_jupyter.py -B -R --ogs ../..
       --build_args ' --progress=plain'
