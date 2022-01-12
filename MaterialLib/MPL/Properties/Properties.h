@@ -31,6 +31,7 @@
 #include "Function.h"
 #include "GasPressureDependentPermeability.h"
 #include "IdealGasLaw.h"
+#include "IdealGasLawBinaryMixture.h"
 #include "Linear.h"
 #include "OrthotropicEmbeddedFracturePermeability.h"
 #include "Parameter.h"

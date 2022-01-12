@@ -30,6 +30,7 @@
 #include "CreateFunction.h"
 #include "CreateGasPressureDependentPermeability.h"
 #include "CreateIdealGasLaw.h"
+#include "CreateIdealGasLawBinaryMixture.h"
 #include "CreateKozenyCarmanModel.h"
 #include "CreateLinear.h"
 #include "CreateOrthotropicEmbeddedFracturePermeability.h"
