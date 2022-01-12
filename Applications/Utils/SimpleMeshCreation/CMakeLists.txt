@@ -1,7 +1,4 @@
-set(TOOLS generateStructuredMesh)
-if(OGS_BUILD_GUI)
-    list(APPEND TOOLS createMeshElemPropertiesFromASCRaster)
-endif()
+set(TOOLS generateStructuredMesh createMeshElemPropertiesFromASCRaster)
 
 foreach(tool ${TOOLS})
     ogs_add_executable(${tool} ${tool}.cpp)
