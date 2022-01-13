@@ -18,6 +18,21 @@
 
 namespace NumLib
 {
+/**
+ * Compute and return the relative change of solutions between two
+ * successive time steps by \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
+ *
+ * @param x         The current solution
+ * @param x_old     The previous solution
+ * @param norm_type The norm type of global vector
+ * @return          \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
+ *
+ */
+double computeRelativeChangeFromPreviousTimestep(
+    GlobalVector const& x,
+    GlobalVector const& x_old,
+    MathLib::VecNormType norm_type);
+
 //! \addtogroup ODESolver
 //! @{
 
@@ -97,23 +112,6 @@ public:
     //! Sets the initial condition.
     virtual void setInitialState(const double t0) = 0;
 
-    /**
-     * Compute and return the relative change of solutions between two
-     * successive time steps by \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
-     *
-     * @param x         The current solution
-     * @param x_old     The previous solution
-     * @param norm_type The norm type of global vector
-     * @return          \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
-     *
-     * @warning the value of x_old is changed to x - x_old after this
-     * computation.
-     */
-    double computeRelativeChangeFromPreviousTimestep(
-        GlobalVector const& x,
-        GlobalVector const& x_old,
-        MathLib::VecNormType norm_type);
-
     /*! Indicate that the computation of a new timestep is being started now.
      *
      * \warning Currently changing timestep sizes are not supported. Thus,
@@ -150,9 +148,6 @@ public:
         GlobalVector& y, GlobalVector const& x_old) const = 0;  // = x_old
 
     virtual ~TimeDiscretization() = default;
-
-protected:
-    std::unique_ptr<GlobalVector> _dx;  ///< Used to store \f$ u_{n+1}-u_{n}\f$.
 };
 
 //! Backward Euler scheme.

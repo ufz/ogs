@@ -15,22 +15,17 @@
 
 namespace NumLib
 {
-double TimeDiscretization::computeRelativeChangeFromPreviousTimestep(
-    GlobalVector const& x,
-    GlobalVector const& x_old,
-    MathLib::VecNormType norm_type)
+double computeRelativeChangeFromPreviousTimestep(GlobalVector const& x,
+                                                 GlobalVector const& x_old,
+                                                 MathLib::VecNormType norm_type)
 {
     if (norm_type == MathLib::VecNormType::INVALID)
     {
         OGS_FATAL("An invalid norm type has been passed");
     }
 
-    if (!_dx)
-    {
-        _dx = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
-    }
-
-    auto& dx = *_dx;
+    // Stores \f$ u_{n+1}-u_{n}\f$.
+    GlobalVector dx;
     MathLib::LinAlg::copy(x, dx);  // copy x to dx.
 
     // dx = x - x_old --> x - dx --> dx

@@ -332,7 +332,6 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
             return 0.0;
         }
 
-        auto& time_disc = ppd.time_disc;
         auto const& x = *_process_solutions[i];
         auto const& x_prev = *_process_solutions_prev[i];
 
@@ -342,8 +341,8 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
                         : MathLib::VecNormType::NORM2;
 
         const double solution_error =
-            time_disc->computeRelativeChangeFromPreviousTimestep(x, x_prev,
-                                                                 norm_type);
+            NumLib::computeRelativeChangeFromPreviousTimestep(x, x_prev,
+                                                              norm_type);
         return solution_error;
     };
 
