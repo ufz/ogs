@@ -26,13 +26,13 @@ std::tuple<bool, double> EvolutionaryPIDcontroller::next(
     const bool is_previous_step_accepted = _is_accepted;
 
     const double e_n = solution_error;
-    const double zero_threshlod = std::numeric_limits<double>::epsilon();
+    const double zero_threshold = std::numeric_limits<double>::epsilon();
     // step rejected.
     if (e_n > _tol)
     {
         _is_accepted = false;
 
-        double h_new = (e_n > zero_threshlod) ? _ts_current.dt() * _tol / e_n
+        double h_new = (e_n > zero_threshold) ? _ts_current.dt() * _tol / e_n
                                               : 0.5 * _ts_current.dt();
 
         h_new = limitStepSize(h_new, is_previous_step_accepted);
@@ -64,11 +64,11 @@ std::tuple<bool, double> EvolutionaryPIDcontroller::next(
         const double h_n = _ts_current.dt();
         double h_new = h_n;
 
-        if (e_n > zero_threshlod)
+        if (e_n > zero_threshold)
         {
-            if (_e_n_minus1 > zero_threshlod)
+            if (_e_n_minus1 > zero_threshold)
             {
-                if (_e_n_minus2 > zero_threshlod)
+                if (_e_n_minus2 > zero_threshold)
                 {
                     h_new = std::pow(_e_n_minus1 / e_n, _kP) *
                             std::pow(_tol / e_n, _kI) *
