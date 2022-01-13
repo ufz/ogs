@@ -6,7 +6,7 @@ check header:
   needs: [ meta, ci_images ]
   variables:
     BUILD_DIR: "../build/check-header"
-    CMAKE_ARGS: "-DOGS_CHECK_HEADER_COMPILATION=ON -DOGS_BUILD_GUI=ON -DBUILD_SHARED_LIBS=ON"
+    CMAKE_ARGS: "-DOGS_CHECK_HEADER_COMPILATION=ON -DOGS_BUILD_GUI=ON -DBUILD_SHARED_LIBS=OFF"
   image: $CONTAINER_GCC_GUI_IMAGE
   script:
     - rm -rf $BUILD_DIR
