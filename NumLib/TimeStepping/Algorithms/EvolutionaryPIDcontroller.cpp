@@ -47,7 +47,7 @@ std::tuple<bool, double> EvolutionaryPIDcontroller::next(
             "\t or the simulation will be halted.",
             _tol, h_new);
 
-        return std::make_tuple(false, h_new);
+        return std::make_tuple(_is_accepted, h_new);
     }
 
     // step accepted.
@@ -57,7 +57,7 @@ std::tuple<bool, double> EvolutionaryPIDcontroller::next(
     {
         _e_n_minus1 = e_n;
 
-        return std::make_tuple(true, _h0);
+        return std::make_tuple(_is_accepted, _h0);
     }
     else
     {
@@ -94,7 +94,7 @@ std::tuple<bool, double> EvolutionaryPIDcontroller::next(
         _e_n_minus2 = _e_n_minus1;
         _e_n_minus1 = e_n;
 
-        return std::make_tuple(true, h_new);
+        return std::make_tuple(_is_accepted, h_new);
     }
 
     return {};
