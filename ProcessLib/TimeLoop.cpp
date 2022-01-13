@@ -322,6 +322,15 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
     {
         auto const& ppd = *_per_process_data[i];
         const auto& timestep_algorithm = ppd.timestep_algorithm;
+        if (!timestep_algorithm->isSolutionErrorComputationNeeded())
+        {
+            return 0.0;
+        }
+        if (t == timestep_algorithm->begin())
+        {
+            // Always accepts the zeroth step
+            return 0.0;
+        }
 
         auto& time_disc = ppd.time_disc;
         auto const& x = *_process_solutions[i];
@@ -333,12 +342,8 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
                         : MathLib::VecNormType::NORM2;
 
         const double solution_error =
-            (timestep_algorithm->isSolutionErrorComputationNeeded())
-                ? ((t == timestep_algorithm->begin())
-                       ? 0.  // Always accepts the zeroth step
-                       : time_disc->computeRelativeChangeFromPreviousTimestep(
-                             x, x_prev, norm_type))
-                : 0.;
+            time_disc->computeRelativeChangeFromPreviousTimestep(x, x_prev,
+                                                                 norm_type);
         return solution_error;
     };
 
