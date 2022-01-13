@@ -24,8 +24,9 @@ mfront_behaviours_check_library(
 )
 
 target_link_libraries(
-    MaterialLib_SolidModels_MFront PUBLIC BaseLib NumLib OgsMFrontBehaviour
-    PRIVATE MathLib MeshLib
+    MaterialLib_SolidModels_MFront PUBLIC BaseLib NumLib MFrontGenericInterface
+                                          OgsMFrontBehaviour
+    PRIVATE MathLib MeshLib ParameterLib
 )
 
 # Disable warnings for generated OgsMFrontBehaviour
@@ -38,9 +39,6 @@ target_compile_options(
 
 target_include_directories(
     MaterialLib_SolidModels_MFront PUBLIC ThirdParty/MGIS/include
-)
-target_link_libraries(
-    MaterialLib_SolidModels_MFront PUBLIC MFrontGenericInterface
 )
 target_compile_definitions(
     MaterialLib_SolidModels_MFront PRIVATE OGS_USE_MFRONT
