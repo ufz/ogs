@@ -356,10 +356,11 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
         timestep_algorithm->setAccepted(
             ppd.nonlinear_solver_status.error_norms_met);
 
-        auto [step_accepted, timestepper_dt] = timestep_algorithm->next(
-            solution_error, ppd.nonlinear_solver_status.number_iterations);
+        auto [previous_step_accepted, timestepper_dt] =
+            timestep_algorithm->next(
+                solution_error, ppd.nonlinear_solver_status.number_iterations);
 
-        if (!step_accepted &&
+        if (!previous_step_accepted &&
             // In case of FixedTimeStepping, which makes
             // timestep_algorithm->next(...) return false when the ending time
             // is reached.
