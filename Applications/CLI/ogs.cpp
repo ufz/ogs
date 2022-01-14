@@ -50,117 +50,8 @@
 #include "ogs_embedded_python.h"
 #endif
 
-int main(int argc, char* argv[])
-{
-    // Parse CLI arguments.
-    TCLAP::CmdLine cmd(
-        "OpenGeoSys-6 software.\n"
-        "Copyright (c) 2012-2022, OpenGeoSys Community "
-        "(http://www.opengeosys.org) "
-        "Distributed under a Modified BSD License. "
-        "See accompanying file LICENSE.txt or "
-        "http://www.opengeosys.org/project/license\n"
-        "version: " +
-            GitInfoLib::GitInfo::ogs_version + "\n" +
-            "CMake arguments: " + CMakeInfoLib::CMakeInfo::cmake_args,
-        ' ',
-        GitInfoLib::GitInfo::ogs_version + "\n\n" +
-            "CMake arguments: " + CMakeInfoLib::CMakeInfo::cmake_args);
-
-    TCLAP::ValueArg<std::string> reference_path_arg(
-        "r", "reference",
-        "Run output result comparison after successful simulation comparing to "
-        "all files in the given path. This requires test definitions to be "
-        "present in the project file.",
-        false, "", "PATH");
-    cmd.add(reference_path_arg);
-
-    TCLAP::UnlabeledValueArg<std::string> project_arg(
-        "project-file",
-        "Path to the ogs6 project file.",
-        true,
-        "",
-        "PROJECT_FILE");
-    cmd.add(project_arg);
-
-    TCLAP::MultiArg<std::string> xml_patch_files(
-        "p", "xml-patch",
-        "the xml patch file(s) which is (are) applied (in the given order) to "
-        "the PROJECT_FILE",
-        false, "");
-    cmd.add(xml_patch_files);
-
-    TCLAP::SwitchArg write_prj("",
-                               "write-prj",
-                               "Writes processed project file to output "
-                               "path / [prj_base_name]_processed.prj.");
-    cmd.add(write_prj);
-
-    TCLAP::ValueArg<std::string> outdir_arg("o", "output-directory",
-                                            "the output directory to write to",
-                                            false, "", "PATH");
-    cmd.add(outdir_arg);
-
-    TCLAP::ValueArg<std::string> meshdir_arg(
-        "m", "mesh-input-directory",
-        "the directory where the meshes are read from, default is PROJECT_FILE "
-        "directory",
-        false, "", "PATH");
-    cmd.add(meshdir_arg);
-
-    TCLAP::ValueArg<std::string> log_level_arg(
-        "l", "log-level",
-        "the verbosity of logging messages: none, error, warn, info, debug, "
-        "all",
-        false,
-#ifdef NDEBUG
-        "info",
-#else
-        "all",
-#endif
-        "LOG_LEVEL");
-    cmd.add(log_level_arg);
-
-    TCLAP::SwitchArg nonfatal_arg("",
-                                  "config-warnings-nonfatal",
-                                  "warnings from parsing the configuration "
-                                  "file will not trigger program abortion");
-    cmd.add(nonfatal_arg);
-
-    TCLAP::SwitchArg unbuffered_cout_arg("", "unbuffered-std-out",
-                                         "use unbuffered standard output");
-    cmd.add(unbuffered_cout_arg);
-
-#ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
-                // currently
-    TCLAP::SwitchArg enable_fpe_arg("", "enable-fpe",
-                                    "enables floating point exceptions");
-    cmd.add(enable_fpe_arg);
-#endif  // _WIN32
-
-    cmd.parse(argc, argv);
-
-    // deactivate buffer for standard output if specified
-    if (unbuffered_cout_arg.isSet())
-    {
-        std::cout.setf(std::ios::unitbuf);
-    }
-
-    BaseLib::setConsoleLogLevel(log_level_arg.getValue());
-    spdlog::set_pattern("%^%l:%$ %v");
-    spdlog::set_error_handler(
-        [](const std::string& msg)
-        {
-            std::cerr << "spdlog error: " << msg << std::endl;
-            OGS_FATAL("spdlog logger error occurred.");
-        });
-
-    INFO("This is OpenGeoSys-6 version {:s}.",
-         GitInfoLib::GitInfo::ogs_version);
-
 #ifndef _WIN32  // On windows this command line option is not present.
-    // Enable floating point exceptions
-    if (enable_fpe_arg.isSet())
+void enableFloatingPointExceptions()
     {
 #ifdef __APPLE__
 #ifdef __SSE__
@@ -171,6 +62,136 @@ int main(int argc, char* argv[])
 #endif  // __APPLE__
     }
 #endif  // _WIN32
+void setConsoleLogLevel(TCLAP::ValueArg<std::string> const& log_level_arg)
+{
+    BaseLib::setConsoleLogLevel(log_level_arg.getValue());
+    spdlog::set_pattern("%^%l:%$ %v");
+    spdlog::set_error_handler(
+        [](const std::string& msg)
+        {
+            std::cerr << "spdlog error: " << msg << std::endl;
+            OGS_FATAL("spdlog logger error occurred.");
+        });
+}
+
+struct CommandLineArguments final
+{
+    CommandLineArguments(int argc, char* argv[])
+    {
+        // Parse CLI arguments.
+        TCLAP::CmdLine cmd(
+            "OpenGeoSys-6 software.\n"
+            "Copyright (c) 2012-2022, OpenGeoSys Community "
+            "(http://www.opengeosys.org) "
+            "Distributed under a Modified BSD License. "
+            "See accompanying file LICENSE.txt or "
+            "http://www.opengeosys.org/project/license\n"
+            "version: " +
+                GitInfoLib::GitInfo::ogs_version + "\n" +
+                "CMake arguments: " + CMakeInfoLib::CMakeInfo::cmake_args,
+            ' ',
+            GitInfoLib::GitInfo::ogs_version + "\n\n" +
+                "CMake arguments: " + CMakeInfoLib::CMakeInfo::cmake_args);
+
+        TCLAP::ValueArg<std::string> log_level_arg(
+            "l", "log-level",
+            "the verbosity of logging messages: none, error, warn, info, "
+            "debug, "
+            "all",
+            false,
+#ifdef NDEBUG
+            "info",
+#else
+            "all",
+#endif
+            "LOG_LEVEL");
+
+#ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
+                // currently
+        TCLAP::SwitchArg enable_fpe_arg("", "enable-fpe",
+                                        "enables floating point exceptions");
+#endif  // _WIN32
+        TCLAP::SwitchArg unbuffered_cout_arg("", "unbuffered-std-out",
+                                             "use unbuffered standard output");
+
+        TCLAP::ValueArg<std::string> reference_path_arg(
+            "r", "reference",
+            "Run output result comparison after successful simulation "
+            "comparing to all files in the given path. This requires test "
+            "definitions to be present in the project file.",
+            false, "", "PATH");
+
+        TCLAP::UnlabeledValueArg<std::string> project_arg(
+            "project-file",
+            "Path to the ogs6 project file.",
+            true,
+            "",
+            "PROJECT_FILE");
+
+        TCLAP::MultiArg<std::string> xml_patch_files_arg(
+            "p", "xml-patch",
+            "the xml patch file(s) which is (are) applied (in the given order) "
+            "to the PROJECT_FILE",
+            false, "");
+
+        TCLAP::ValueArg<std::string> outdir_arg(
+            "o", "output-directory", "the output directory to write to", false,
+            "", "PATH");
+
+        TCLAP::SwitchArg nonfatal_arg("",
+                                      "config-warnings-nonfatal",
+                                      "warnings from parsing the configuration "
+                                      "file will not trigger program abortion");
+        cmd.add(reference_path_arg);
+        cmd.add(project_arg);
+        cmd.add(xml_patch_files_arg);
+        cmd.add(outdir_arg);
+        cmd.add(log_level_arg);
+        cmd.add(nonfatal_arg);
+        cmd.add(unbuffered_cout_arg);
+#ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
+                // currently
+        cmd.add(enable_fpe_arg);
+#endif  // _WIN32
+
+        cmd.parse(argc, argv);
+
+        reference_path = reference_path_arg.getValue();
+        reference_path_is_set = reference_path_arg.isSet();
+        project = project_arg.getValue();
+        xml_patch_file_names = xml_patch_files_arg.getValue();
+        outdir = outdir_arg.getValue();
+        nonfatal = nonfatal_arg.getValue();
+
+        // deactivate buffer for standard output if specified
+        if (unbuffered_cout_arg.isSet())
+        {
+            std::cout.setf(std::ios::unitbuf);
+        }
+
+        setConsoleLogLevel(log_level_arg);
+#ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
+        if (enable_fpe_arg.isSet())
+        {
+            enableFloatingPointExceptions();
+        }
+#endif  // _WIN32
+    }
+
+    std::string reference_path;
+    std::string project;
+    std::vector<std::string> xml_patch_file_names;
+    std::string outdir;
+    bool nonfatal;
+    bool reference_path_is_set;
+};
+
+int main(int argc, char* argv[])
+{
+    CommandLineArguments cli_arg(argc, argv);
+
+    INFO("This is OpenGeoSys-6 version {:s}.",
+         GitInfoLib::GitInfo::ogs_version);
 
 #ifdef OGS_USE_PYTHON
     pybind11::scoped_interpreter guard = ApplicationsLib::setupEmbeddedPython();
@@ -215,19 +236,16 @@ int main(int argc, char* argv[])
                 write_prj.getValue(), outdir_arg.getValue());
 
             auto project_config = BaseLib::makeConfigTree(
-                project_arg.getValue(), !nonfatal_arg.getValue(),
-                "OpenGeoSysProject", prj_stream);
+                cli_arg.project, !cli_arg.nonfatal, "OpenGeoSysProject",
+                cli_arg.xml_patch_file_names);
 
-            BaseLib::setProjectDirectory(
-                BaseLib::extractPath(project_arg.getValue()));
-            std::string const meshdir = meshdir_arg.getValue().empty()
-                                            ? BaseLib::getProjectDirectory()
-                                            : meshdir_arg.getValue();
+            BaseLib::setProjectDirectory(BaseLib::extractPath(cli_arg.project));
 
-            ProjectData project(project_config, BaseLib::getProjectDirectory(),
-                                outdir_arg.getValue(), meshdir);
+            ProjectData project(project_config,
+                                BaseLib::getProjectDirectory(),
+                                cli_arg.outdir);
 
-            if (!reference_path_arg.isSet())
+            if (!cli_arg.reference_path_is_set)
             {  // Ignore the test_definition section.
                 project_config.ignoreConfigParameter("test_definition");
             }
@@ -237,8 +255,7 @@ int main(int argc, char* argv[])
                     std::make_unique<ApplicationsLib::TestDefinition>(
                         //! \ogs_file_param{prj__test_definition}
                         project_config.getConfigSubtree("test_definition"),
-                        reference_path_arg.getValue(),
-                        outdir_arg.getValue());
+                        cli_arg.reference_path, cli_arg.outdir);
                 if (test_definition->numberOfTests() == 0)
                 {
                     OGS_FATAL(
