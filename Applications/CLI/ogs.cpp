@@ -209,6 +209,9 @@ int main(int argc, char* argv[])
     std::unique_ptr<ApplicationsLib::TestDefinition> test_definition;
     auto ogs_status = EXIT_SUCCESS;
 
+#if defined(USE_PETSC)
+    vtkSmartPointer<vtkMPIController> controller;
+#endif
     try
     {
         bool solver_succeeded = false;
@@ -216,8 +219,7 @@ int main(int argc, char* argv[])
             ApplicationsLib::LinearSolverLibrarySetup
                 linear_solver_library_setup(argc, argv);
 #if defined(USE_PETSC)
-            vtkSmartPointer<vtkMPIController> controller =
-                vtkSmartPointer<vtkMPIController>::New();
+            controller = vtkSmartPointer<vtkMPIController>::New();
             controller->Initialize(&argc, &argv, 1);
             vtkMPIController::SetGlobalController(controller);
 
