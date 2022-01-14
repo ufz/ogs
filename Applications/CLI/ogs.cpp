@@ -212,6 +212,7 @@ int main(int argc, char* argv[])
 #if defined(USE_PETSC)
     vtkSmartPointer<vtkMPIController> controller;
 #endif
+    std::unique_ptr<ProjectData> project;
     try
     {
         bool solver_succeeded = false;
@@ -242,10 +243,6 @@ int main(int argc, char* argv[])
                 cli_arg.xml_patch_file_names);
 
             BaseLib::setProjectDirectory(BaseLib::extractPath(cli_arg.project));
-
-            ProjectData project(project_config,
-                                BaseLib::getProjectDirectory(),
-                                cli_arg.outdir);
 
             if (!cli_arg.reference_path_is_set)
             {  // Ignore the test_definition section.
@@ -283,8 +280,13 @@ int main(int argc, char* argv[])
             project_config.ignoreConfigParameter("insitu");
 #endif
 
+            project =
+                std::make_unique<ProjectData>(project_config,
+                                              BaseLib::getProjectDirectory(),
+                                              cli_arg.outdir);
+
             INFO("Initialize processes.");
-            for (auto& p : project.getProcesses())
+            for (auto& p : project->getProcesses())
             {
                 p->initialize();
             }
@@ -295,7 +297,7 @@ int main(int argc, char* argv[])
 
             INFO("Solve processes.");
 
-            auto& time_loop = project.getTimeLoop();
+            auto& time_loop = project->getTimeLoop();
             time_loop.initialize();
             solver_succeeded = time_loop.loop();
 
