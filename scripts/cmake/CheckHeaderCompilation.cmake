@@ -101,6 +101,9 @@ function(_check_header_compilation target)
         if("${file}" MATCHES ".*Window\\.h") # Ignore Qt Window files
             continue()
         endif()
+        if("${file}" MATCHES "ui_.*\\.h") # Ignore Qt-generated ui files
+            continue()
+        endif()
 
         string(REPLACE "${PROJECT_SOURCE_DIR}/" "" TEST_NAME ${file})
         string(REPLACE "." "_" TEST_NAME ${TEST_NAME})
