@@ -311,6 +311,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
     bool all_process_steps_accepted = true;
     // Get minimum time step size among step sizes of all processes.
     double dt = std::numeric_limits<double>::max();
+    constexpr double eps = std::numeric_limits<double>::epsilon();
 
     bool const is_initial_step = std::any_of(
         _per_process_data.begin(), _per_process_data.end(),
@@ -364,8 +365,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
             // In case of FixedTimeStepping, which makes
             // timestep_algorithm->next(...) return false when the ending time
             // is reached.
-            t + std::numeric_limits<double>::epsilon() <
-                timestep_algorithm->end())
+            t + eps < timestep_algorithm->end())
         {
             // Not all processes have accepted steps.
             all_process_steps_accepted = false;
@@ -379,9 +379,8 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
             all_process_steps_accepted = false;
         }
 
-        if (timestepper_dt > std::numeric_limits<double>::epsilon() ||
-            std::abs(t - timestep_algorithm->end()) <
-                std::numeric_limits<double>::epsilon())
+        if (timestepper_dt > eps ||
+            std::abs(t - timestep_algorithm->end()) < eps)
         {
             dt = std::min(timestepper_dt, dt);
         }
@@ -405,8 +404,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
         }
         else
         {
-            if (t < _end_time || std::abs(t - _end_time) <
-                                     std::numeric_limits<double>::epsilon())
+            if (t < _end_time || std::abs(t - _end_time) < eps)
             {
                 t -= prev_dt;
                 rejected_steps++;
@@ -424,7 +422,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
     dt = NumLib::possiblyClampDtToNextFixedTime(t, dt,
                                                 _output->getFixedOutputTimes());
     // Check whether the time stepping is stabilized
-    if (std::abs(dt - prev_dt) < std::numeric_limits<double>::epsilon())
+    if (std::abs(dt - prev_dt) < eps)
     {
         if (_last_step_rejected)
         {
@@ -466,8 +464,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
         }
         else
         {
-            if (t < _end_time || std::abs(t - _end_time) <
-                                     std::numeric_limits<double>::epsilon())
+            if (t < _end_time || std::abs(t - _end_time) < eps)
             {
                 WARN(
                     "Time step {:d} was rejected {:d} times and it will be "
