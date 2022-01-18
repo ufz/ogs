@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <meshes>
-        <mesh axially_symmetric="true">quarter_002_2nd.vtu</mesh>
-        <mesh axially_symmetric="true">quarter_circle_geometry_bottom.vtu</mesh>
-        <mesh axially_symmetric="true">quarter_circle_geometry_left.vtu</mesh>
-        <mesh axially_symmetric="true">quarter_circle_geometry_out.vtu</mesh>
-        <mesh axially_symmetric="true">quarter_circle_geometry_center.vtu</mesh>
-    </meshes>
+    <mesh axially_symmetric="true">quarter_002_2nd.vtu</mesh>
+    <geometry>quarter_circle_geometry.gml</geometry>
+    <search_length_algorithm>
+        <type>fixed</type>
+        <value>0.001</value>
+    </search_length_algorithm>
     <processes>
         <process>
             <name>PointHeatSource</name>
@@ -141,6 +140,7 @@
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <reltols>1e-14 1e-12 1e-13 1e-13</reltols>
+                    <abstols>1e-6 1e-5 1e-13 1e-13</abstols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -160,7 +160,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>PointHeatSource</prefix>
+            <prefix>PointHeatSource_gml</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -242,13 +242,15 @@
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>quarter_circle_geometry_bottom</mesh>
+                    <geometrical_set>quarter_circle_geometry</geometrical_set>
+                    <geometry>bottom</geometry>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>quarter_circle_geometry_left</mesh>
+                    <geometrical_set>quarter_circle_geometry</geometrical_set>
+                    <geometry>left</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
@@ -262,7 +264,8 @@
             <initial_condition>pressure_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>quarter_circle_geometry_out</mesh>
+                    <geometrical_set>quarter_circle_geometry</geometrical_set>
+                    <geometry>out</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>pressure_bc_left</parameter>
@@ -276,7 +279,8 @@
             <initial_condition>temperature_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>quarter_circle_geometry_out</mesh>
+                    <geometrical_set>quarter_circle_geometry</geometrical_set>
+                    <geometry>out</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>temperature_bc_left</parameter>
@@ -284,7 +288,8 @@
             </boundary_conditions>
             <source_terms>
                 <source_term>
-                    <mesh>quarter_circle_geometry_center</mesh>
+                    <geometrical_set>quarter_circle_geometry</geometrical_set>
+                    <geometry>center</geometry>
                     <type>Nodal</type>
                     <parameter>temperature_source_term</parameter>
                 </source_term>
