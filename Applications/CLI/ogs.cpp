@@ -215,29 +215,23 @@ int main(int argc, char* argv[])
     std::unique_ptr<ProjectData> project;
     try
     {
-        bool solver_succeeded = false;
-        {
-            ApplicationsLib::LinearSolverLibrarySetup
-                linear_solver_library_setup(argc, argv);
+        ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
+            argc, argv);
 #if defined(USE_PETSC)
-            controller = vtkSmartPointer<vtkMPIController>::New();
-            controller->Initialize(&argc, &argv, 1);
-            vtkMPIController::SetGlobalController(controller);
+        controller = vtkSmartPointer<vtkMPIController>::New();
+        controller->Initialize(&argc, &argv, 1);
+        vtkMPIController::SetGlobalController(controller);
 
-            {  // Can be called only after MPI_INIT.
-                int mpi_rank;
-                MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
-                spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
-            }
+        {  // Can be called only after MPI_INIT.
+            int mpi_rank;
+            MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
+            spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
+        }
 #endif
 
-            run_time.start();
+        run_time.start();
 
-            std::stringstream prj_stream;
-            BaseLib::prepareProjectFile(
-                prj_stream, project_arg.getValue(), xml_patch_files.getValue(),
-                write_prj.getValue(), outdir_arg.getValue());
-
+        {
             auto project_config = BaseLib::makeConfigTree(
                 cli_arg.project, !cli_arg.nonfatal, "OpenGeoSysProject",
                 cli_arg.xml_patch_file_names);
@@ -295,12 +289,18 @@ int main(int argc, char* argv[])
             checkAndInvalidate(project_config);
             BaseLib::ConfigTree::assertNoSwallowedErrors();
 
-            INFO("Solve processes.");
-
             auto& time_loop = project->getTimeLoop();
             time_loop.initialize();
-            solver_succeeded = time_loop.loop();
+        }
 
+        bool solver_succeeded = false;
+        {
+            INFO("Solve processes.");
+            auto& time_loop = project->getTimeLoop();
+            solver_succeeded = time_loop.loop();
+        }
+
+        {
 #ifdef USE_INSITU
             if (isInsituConfigured)
                 InSituLib::Finalize();
@@ -310,13 +310,20 @@ int main(int argc, char* argv[])
 #if defined(USE_PETSC)
             controller->Finalize(1);
 #endif
-        }  // This nested scope ensures that everything that could possibly
-           // possess a ConfigTree is destructed before the final check below is
-           // done.
+            // This nested scope ensures that everything that could possibly
+            // possess a ConfigTree is destructed before the final check below
+            // is done.
 
-        BaseLib::ConfigTree::assertNoSwallowedErrors();
+            INFO("cleanup:  ProjectData ...");
+            auto* project_pointer = project.release();
+            delete project_pointer;
+            INFO("cleanup:  ProjectData done.");
 
-        ogs_status = solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
+            //INFO("cleanup:  BaseLib::ConfigTree::assertNoSwallowedErrors()...");
+            //BaseLib::ConfigTree::assertNoSwallowedErrors();
+
+            ogs_status = solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
+        }
     }
     catch (std::exception& e)
     {
