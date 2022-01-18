@@ -7,7 +7,7 @@ execute_process(
 )
 
 if(EXIT_CODE STREQUAL "0")
-    if(NOT DEFINED ENV{CI})
+    if(NOT DEFINED ENV{CI} AND NOT CAT_LOG)
         file(WRITE ${LOG_FILE} "${LOG}")
     endif()
 else()

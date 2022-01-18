@@ -1,4 +1,4 @@
-# cmake-lint: disable=C0103
+# cmake-lint: disable=C0103,R0915
 function(NotebookTest)
 
     if(NOT OGS_BUILD_CLI OR NOT OGS_BUILD_TESTING OR NOT OGS_TEST_NOTEBOOKS)
@@ -74,10 +74,24 @@ function(NotebookTest)
         list(APPEND labels large)
     endif()
 
+    if(MSVC AND ${CMAKE_VERSION} VERSION_LESS 3.22)
+        message(
+            WARNING "Notebook tests are disabled on Windows when CMake < 3.22!"
+        )
+        return()
+    endif()
+
+    if(${CMAKE_VERSION} VERSION_LESS 3.22)
+        set(_prop_env ENVIRONMENT PATH=$<TARGET_FILE_DIR:ogs>:$ENV{PATH})
+    else()
+        set(_prop_env ENVIRONMENT_MODIFICATION
+                      PATH=path_list_prepend:$<TARGET_FILE_DIR:ogs>
+        )
+    endif()
+
     set_tests_properties(
         ${TEST_NAME}
-        PROPERTIES ENVIRONMENT
-                   PATH=$<TARGET_FILE_DIR:ogs>:$ENV{PATH}
+        PROPERTIES ${_prop_env}
                    COST
                    ${NotebookTest_RUNTIME}
                    DISABLED
