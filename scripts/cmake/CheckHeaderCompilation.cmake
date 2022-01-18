@@ -82,8 +82,19 @@ function(_check_header_compilation target)
             ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
         )
     endif()
-    get_target_property(COMPILE_DEFINITIONS ${target} _target_defs)
-    set(CMAKE_REQUIRED_DEFINITIONS ${_target_defs} ${DEFS_CLEANED})
+
+    get_target_property(_target_defs ${target} COMPILE_DEFINITIONS)
+    foreach(def ${_target_defs})
+        # strip generator expressions
+        if(${def} MATCHES "\\$<.*")
+            continue()
+        endif()
+        if(${def} MATCHES ".*[0-9]\\(.*")
+            continue()
+        endif()
+        list(APPEND DEFS_CLEANED "-D${def}")
+    endforeach()
+    set(CMAKE_REQUIRED_DEFINITIONS ${DEFS_CLEANED})
 
     foreach(file ${SOURCE_FILES})
 
