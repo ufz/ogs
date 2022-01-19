@@ -340,6 +340,7 @@ AddTest(
     NAME HT_FaultedCube_rev0
     PATH Parabolic/HT/FaultedCube
     EXECUTABLE_ARGS Ra_795_fault_bcgs_jacobi.prj
+    RUNTIME 12
     EXECUTABLE ogs
     WRAPPER time
     TESTER vtkdiff

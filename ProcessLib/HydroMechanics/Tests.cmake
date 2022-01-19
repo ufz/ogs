@@ -215,6 +215,7 @@ AddTest(
     NAME HydroMechanics_hollow_sphere
     PATH HydroMechanics/Principal_Stress/Hollow_Sphere
     EXECUTABLE ogs
+    RUNTIME 7
     EXECUTABLE_ARGS sphere.prj
     WRAPPER time
     TESTER vtkdiff

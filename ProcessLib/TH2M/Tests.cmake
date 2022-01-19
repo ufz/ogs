@@ -366,6 +366,7 @@ AddTest(
 AddTest(
     NAME TH2M_TH_unsaturated_heatpipe_slab
     PATH TH2M/TH_unsaturated/heatpipe_slab_static_gas
+    RUNTIME 40
     EXECUTABLE ogs
     EXECUTABLE_ARGS heatpipe_slab_static_gas.prj
     WRAPPER time

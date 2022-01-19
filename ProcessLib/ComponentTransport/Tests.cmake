@@ -67,6 +67,7 @@ AddTest(
     NAME 2D_ComponentTransport_StaggeredScheme_ConcentrationDiffusionAndStorage
     PATH Parabolic/ComponentTransport/StaggeredScheme
     EXECUTABLE ogs
+    RUNTIME 8
     EXECUTABLE_ARGS ConcentrationDiffusionAndStorage.prj
     WRAPPER time
     TESTER vtkdiff
@@ -163,7 +164,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 4
+    RUNTIME 7
     DIFF_DATA
     box_ogsOutput_ts_0_t_0.000000_expected.vtu box_ogsOutput_ts_0_t_0.000000.vtu concentration concentration 5e-7 5e-10
     box_ogsOutput_ts_20_t_100000.000000_expected.vtu box_ogsOutput_ts_20_t_100000.000000.vtu concentration concentration 5e-7 5e-10
@@ -424,6 +425,7 @@ AddTest(
     NAME 2D_StaggeredScheme_ComponentTransport_TracerSimulation
     PATH Parabolic/ComponentTransport/TracerSimulation
     EXECUTABLE ogs
+    RUNTIME 11
     EXECUTABLE_ARGS TracerSimulation.prj
     WRAPPER time
     TESTER vtkdiff
