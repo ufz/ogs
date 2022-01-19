@@ -86,7 +86,7 @@ assert False
 raise SystemExit()
 ```
 
-Add Python dependencies to `Tests/Data/Notebooks/requirements.txt`.
+Add Python dependencies to `web/data/versions.json` (under `python/notebook_requirements`).
 
 ### Run with ctest
 
@@ -109,7 +109,7 @@ Make sure to have a Python virtual environment enabled and installed the require
 ```bash
 virtualenv .venv
 source .venv/bin/activate
-pip install -r Tests/Data/Notebooks/requirements.txt
+pip install $(jq -r '.python.notebook_requirements | join(" ")' path/to/ogs/web/data/versions.json)
 ```
 
 This is handled **automatically** when using [Poetry]({{< ref "python-env.md#poetry" >}}).

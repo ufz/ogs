@@ -5,6 +5,10 @@ set(Python3_FIND_FRAMEWORK LAST)
 if(OGS_USE_POETRY)
     find_program(POETRY poetry)
     if(POETRY)
+        set(OGS_PYTHON_PACKAGES ""
+            CACHE INTERNAL
+                  "List of Python packages to be installed via poetry."
+        )
         set(Python3_FIND_STRATEGY VERSION)
         find_package(
             Python3 ${ogs.minimum_version.python} COMPONENTS Interpreter
@@ -43,21 +47,18 @@ if(OGS_USE_POETRY)
             )
         endif()
         if(OGS_BUILD_TESTING)
-            # Start with Notebook requirements.txt and then add to
-            # .python_packages file dynamically
-            configure_file(
-                ${PROJECT_SOURCE_DIR}/Tests/Data/Notebooks/requirements.txt
-                ${PROJECT_BINARY_DIR}/.python_packages COPYONLY
+            # Notebook requirements from versions.json
+            foreach(var ${ogs.python.notebook_requirements})
+                list(APPEND OGS_PYTHON_PACKAGES
+                     "${ogs.python.notebook_requirements_${var}}"
+                )
+            endforeach()
+            list(APPEND OGS_PYTHON_PACKAGES
+                 "snakemake=${ogs.minimum_version.snakemake}"
             )
-            file(APPEND ${PROJECT_BINARY_DIR}/.python_packages
-                 "snakemake=${ogs.minimum_version.snakemake}\n"
-            )
-
             set(SNAKEMAKE ${LOCAL_VIRTUALENV_BIN_DIR}/snakemake CACHE FILEPATH
                                                                       "" FORCE
             )
-        else()
-            file(WRITE ${PROJECT_BINARY_DIR}/.python_packages "")
         endif()
     endif()
 endif()

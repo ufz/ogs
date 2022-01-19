@@ -55,7 +55,9 @@ set(OGS_PETSC_CONFIG_OPTIONS "" CACHE STRING
 option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
 option(OGS_BUILD_UTILS "Should the utilities programs be built?" ON)
 option(OGS_BUILD_TESTING "Should the tests be built?" ON)
-cmake_dependent_option(OGS_TEST_NOTEBOOKS "Should notebooks be tested?" ON "OGS_BUILD_TESTING" OFF)
+cmake_dependent_option(
+    OGS_TEST_NOTEBOOKS "Should notebooks be tested?" ON "OGS_BUILD_TESTING" OFF
+)
 
 if(MSVC)
     set(CMD_COMMAND "cmd;/c")
@@ -230,7 +232,10 @@ if(POETRY)
     # Caches a hash of requested Python packages when they were successfully
     # installed. On subsequent runs compare new hash to cached. If equal do
     # nothing.
-    file(STRINGS ${PROJECT_BINARY_DIR}/.python_packages OGS_PYTHON_PACKAGES)
+    get_property(
+        _addtest_python_packages GLOBAL PROPERTY AddTest_PYTHON_PACKAGES
+    )
+    list(APPEND OGS_PYTHON_PACKAGES ${_addtest_python_packages})
     list(REMOVE_DUPLICATES OGS_PYTHON_PACKAGES)
     list(SORT OGS_PYTHON_PACKAGES)
     string(SHA1 _ogs_python_packages_sha1 "${OGS_PYTHON_PACKAGES}")

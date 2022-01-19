@@ -440,11 +440,11 @@ Use six arguments version of AddTest with absolute and relative tolerances"
 
     if(AddTest_PYTHON_PACKAGES)
         if(POETRY)
-            string(REPLACE ";" "\n" PYTHON_PACKAGES
-                           "${AddTest_PYTHON_PACKAGES}"
-            )
-            file(APPEND ${PROJECT_BINARY_DIR}/.python_packages
-                 "${PYTHON_PACKAGES}\n"
+            # Info has to be passed by global property because it is not
+            # possible to set cache variables from inside a function.
+            set_property(
+                GLOBAL APPEND PROPERTY AddTest_PYTHON_PACKAGES
+                                       ${AddTest_PYTHON_PACKAGES}
             )
         else()
             message(
