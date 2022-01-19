@@ -89,6 +89,7 @@ build linux debug with sanitizers:
       -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=OFF
       -DOGS_ADDRESS_SANITIZER=ON
       -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON
+      -DOGS_CTEST_MAX_RUNTIME=5
     UBSAN_OPTIONS: "print_stacktrace=1"
     LSAN_OPTIONS: "suppressions=$CI_PROJECT_DIR/scripts/test/leak_sanitizer.suppressions"
 
