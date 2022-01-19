@@ -11,12 +11,22 @@
 
 #include <memory>
 
+namespace BaseLib
+{
+class ConfigTree;
+}
+
+namespace ParameterLib
+{
+struct CoordinateSystem;
+}
+
 namespace MaterialPropertyLib
 {
 class Property;
 
 std::unique_ptr<Property> createEffectiveThermalConductivityPorosityMixing(
-        int const geometry_dimension,
-        BaseLib::ConfigTree const& config,
-        ParameterLib::CoordinateSystem const* const local_coordinate_system);
+    int const geometry_dimension,
+    BaseLib::ConfigTree const& config,
+    ParameterLib::CoordinateSystem const* const local_coordinate_system);
 }  // namespace MaterialPropertyLib

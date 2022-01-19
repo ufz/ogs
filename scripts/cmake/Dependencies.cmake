@@ -123,6 +123,7 @@ if(Eigen3_ADDED)
     add_library(Eigen3::Eigen INTERFACE IMPORTED)
     target_include_directories(
         Eigen3::Eigen SYSTEM INTERFACE ${Eigen3_SOURCE_DIR}
+                                       ${OpenMP_CXX_INCLUDE_DIRS}
     )
 endif()
 
@@ -150,6 +151,8 @@ CPMFindPackage(
 if(Boost_ADDED)
     add_library(Boost::boost INTERFACE IMPORTED)
     target_include_directories(Boost::boost INTERFACE "${Boost_SOURCE_DIR}")
+else()
+    target_include_directories(Boost::boost INTERFACE "${Boost_INCLUDE_DIR}")
 endif()
 
 CPMFindPackage(
@@ -218,11 +221,10 @@ else()
         if(ZLIB_ADDED)
             list(APPEND HDF5_LIBRARIES zlibstatic)
         endif()
-        set(HDF5_C_INCLUDE_DIR ${HDF5_SOURCE_DIR}/src)
-        set(HDF5_INCLUDE_DIR ${HDF5_SOURCE_DIR}/src)
-        target_include_directories(
-            hdf5-static INTERFACE ${HDF5_BINARY_DIR} ${HDF5_INCLUDE_DIR}
-        )
+        set(HDF5_INCLUDE_DIRS ${HDF5_SOURCE_DIR}/src ${HDF5_BINARY_DIR})
+        set(HDF5_C_INCLUDE_DIRS ${HDF5_INCLUDE_DIRS})
+        set(HDF5_C_INCLUDE_DIR ${HDF5_INCLUDE_DIRS})
+        target_include_directories(hdf5-static INTERFACE ${HDF5_INCLUDE_DIRS})
     else()
         find_package(HDF5 REQUIRED)
     endif()

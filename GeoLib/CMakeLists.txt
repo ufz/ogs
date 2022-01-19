@@ -14,7 +14,7 @@ ogs_add_library(GeoLib ${SOURCES})
 
 target_link_libraries(
     GeoLib
-    PUBLIC BaseLib MathLib $<$<BOOL:${OGS_BUILD_GUI}>:rapidxml>
+    PUBLIC BaseLib Eigen3::Eigen MathLib $<$<BOOL:${OGS_BUILD_GUI}>:rapidxml>
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::Xml>
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::XmlPatterns>
     PRIVATE tet

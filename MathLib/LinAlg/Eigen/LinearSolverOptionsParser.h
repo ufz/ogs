@@ -15,6 +15,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
+#include "EigenLinearSolver.h"
 #include "EigenOption.h"
 #include "MathLib/LinAlg/LinearSolverOptions.h"
 #include "MathLib/LinAlg/LinearSolverOptionsParser.h"

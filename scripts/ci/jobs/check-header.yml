@@ -6,7 +6,7 @@ check header:
   needs: [ meta, ci_images ]
   variables:
     BUILD_DIR: "../build/check-header"
-    CMAKE_ARGS: "-DOGS_CHECK_HEADER_COMPILATION=ON -DOGS_BUILD_GUI=ON -DBUILD_SHARED_LIBS=ON"
+    CMAKE_ARGS: "-DOGS_CHECK_HEADER_COMPILATION=ON -DOGS_BUILD_GUI=ON -DBUILD_SHARED_LIBS=OFF -DOGS_USE_POETRY=OFF"
   image: $CONTAINER_GCC_GUI_IMAGE
   script:
     - rm -rf $BUILD_DIR
@@ -16,5 +16,4 @@ check header:
       cmake ../../ogs -G Ninja
       $CMAKE_ARGS
       -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-      -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES || true
-    - cat CMakeFiles/CMakeError.log
+      -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES || (cat CMakeFiles/CMakeError.log; exit 1)

@@ -10,8 +10,10 @@
 
 #pragma once
 
-#include <phreeqcpp/Solution.h>
+// clang-format off
 #include <phreeqcpp/common/phrqtype.h>
+#include <phreeqcpp/Solution.h>
+// clang-format on
 
 #include <memory>
 

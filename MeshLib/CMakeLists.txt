@@ -43,7 +43,9 @@ target_link_libraries(
            $<$<TARGET_EXISTS:petsc>:petsc>
 )
 
-target_include_directories(MeshLib PUBLIC ${VTK_INCLUDE_DIRS})
+target_include_directories(
+    MeshLib PUBLIC ${VTK_INCLUDE_DIRS} ${HDF5_INCLUDE_DIRS}
+)
 
 target_compile_definitions(
     MeshLib

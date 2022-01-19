@@ -7,6 +7,10 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#pragma once
+
+#include <cstddef>
+
 namespace BaseLib
 {
 template <typename T>

@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "Mesh.h"
+#include "Node.h"
 
 namespace MeshLib
 {
@@ -36,10 +37,7 @@ public:
         createTable(mesh);
     }
 
-    std::size_t size() const
-    {
-        return _data.size();
-    }
+    std::size_t size() const { return _data.size(); }
 
     std::size_t getNodeDegree(std::size_t const node_id) const
     {
@@ -69,8 +67,8 @@ public:
             std::vector<std::size_t>& row = _data[node_id];
             row.reserve(connected_nodes.size());
             std::transform(connected_nodes.cbegin(), connected_nodes.cend(),
-                std::back_inserter(row),
-                [](Node const* const n) { return n->getID(); });
+                           std::back_inserter(row),
+                           [](Node const* const n) { return n->getID(); });
         }
     }
 
@@ -78,4 +76,4 @@ private:
     std::vector<std::vector<std::size_t>> _data;
 };
 
-}   // namespace MeshLib
+}  // namespace MeshLib

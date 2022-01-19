@@ -19,6 +19,8 @@ class ConfigTree;
 
 namespace MaterialPropertyLib
 {
+class Property;
+
 std::unique_ptr<Property> createEmbeddedFracturePermeability(
     int const geometry_dimension, BaseLib::ConfigTree const& config);
 }  // namespace MaterialPropertyLib
