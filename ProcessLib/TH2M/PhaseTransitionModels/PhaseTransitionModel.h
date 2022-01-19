@@ -75,9 +75,6 @@ struct PhaseTransitionModelVariables
     // viscosities
     double muGR = 0.;
     double muLR = 0.;
-    // thermal conductivities
-    double lambdaGR = 0.;
-    double lambdaLR = 0.;
 
     double diffusion_coefficient_vapour = 0.;
     double diffusion_coefficient_solvate = 0.;
