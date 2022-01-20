@@ -16,7 +16,6 @@
 #include "ConstraintDirichletBoundaryCondition.h"
 #include "CreateDirichletBoundaryConditionWithinTimeInterval.h"
 #include "DirichletBoundaryCondition.h"
-#include "DirichletBoundaryConditionWithinTimeInterval.h"
 #include "HCNonAdvectiveFreeComponentFlowBoundaryCondition.h"
 #include "NeumannBoundaryCondition.h"
 #include "NormalTractionBoundaryCondition.h"
