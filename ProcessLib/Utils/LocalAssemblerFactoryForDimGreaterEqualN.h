@@ -79,7 +79,7 @@ template <typename LocalAssemblerInterface,
           class LocalAssemblerImplementation,
           int GlobalDim,
           typename... ConstructorArgs>
-using LocalAssemberFactory =
+using LocalAssemblerFactory =
     LocalAssemblerFactoryForDimGreaterEqualN<1,
                                              LocalAssemblerInterface,
                                              LocalAssemblerImplementation,
@@ -92,7 +92,7 @@ template <typename LocalAssemblerInterface,
           class LocalAssemblerImplementation,
           int GlobalDim,
           typename... ConstructorArgs>
-using LocalAssemberFactorySD =
+using LocalAssemblerFactorySD =
     LocalAssemblerFactoryForDimGreaterEqualN<2,
                                              LocalAssemblerInterface,
                                              LocalAssemblerImplementation,
