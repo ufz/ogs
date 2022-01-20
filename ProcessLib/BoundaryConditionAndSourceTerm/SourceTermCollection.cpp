@@ -23,8 +23,9 @@ void SourceTermCollection::addSourceTermsForProcessVariables(
          ++variable_id)
     {
         ProcessVariable& pv = process_variables[variable_id];
-        auto sts = pv.createSourceTerms(dof_table, variable_id,
-                                        integration_order, _parameters);
+        auto sts =
+            pv.createSourceTerms(dof_table, variable_id, integration_order,
+                                 _parameters, process_variables);
 
         std::move(sts.begin(), sts.end(), std::back_inserter(_source_terms));
     }

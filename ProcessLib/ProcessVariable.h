@@ -76,18 +76,23 @@ public:
 
     /// Returns the number of components of the process variable.
     int getNumberOfGlobalComponents() const { return _n_components; }
+
     std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryConditions(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
         unsigned const integration_order,
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
             parameters,
-        Process const& process);
+        Process const& process,
+        std::vector<std::reference_wrapper<ProcessVariable>> const&
+            all_process_variables_for_this_process);
 
     std::vector<std::unique_ptr<SourceTerm>> createSourceTerms(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
         unsigned const integration_order,
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
-            parameters);
+            parameters,
+        std::vector<std::reference_wrapper<ProcessVariable>> const&
+            all_process_variables_for_this_process);
 
     ParameterLib::Parameter<double> const& getInitialCondition() const
     {

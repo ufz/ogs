@@ -37,7 +37,9 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     const MeshLib::Mesh& bulk_mesh, const int variable_id,
     const unsigned integration_order, const unsigned shapefunction_order,
     const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
-    const Process& process)
+    const Process& process,
+    [[maybe_unused]] std::vector<std::reference_wrapper<ProcessVariable>> const&
+        all_process_variables_for_this_process)
 {
     // Surface mesh and bulk mesh must have equal axial symmetry flags!
     if (config.boundary_mesh.isAxiallySymmetric() !=
@@ -91,9 +93,9 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     {
 #ifdef OGS_USE_PYTHON
         return ProcessLib::createPythonBoundaryCondition(
-            config.config, config.boundary_mesh, dof_table, bulk_mesh.getID(),
+            config.config, config.boundary_mesh, dof_table, bulk_mesh,
             variable_id, *config.component_id, integration_order,
-            shapefunction_order, bulk_mesh.getDimension());
+            shapefunction_order, all_process_variables_for_this_process);
 #else
         OGS_FATAL("OpenGeoSys has not been built with Python support.");
 #endif

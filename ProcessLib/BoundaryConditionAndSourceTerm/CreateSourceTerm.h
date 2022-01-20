@@ -13,33 +13,34 @@
 #include <memory>
 #include <vector>
 
-#include "ParameterLib/Parameter.h"
-
 namespace MeshLib
 {
 class Mesh;
-}
+}  // namespace MeshLib
 
 namespace NumLib
 {
 class LocalToGlobalIndexMap;
 }  // namespace NumLib
 
-namespace ProcessLib
+namespace ParameterLib
 {
-class SourceTerm;
-class NodalSourceTerm;
-struct SourceTermConfig;
-}  // namespace ProcessLib
+struct ParameterBase;
+}  // namespace ParameterLib
 
 namespace ProcessLib
 {
+class ProcessVariable;
+class SourceTerm;
+struct SourceTermConfig;
+
 std::unique_ptr<SourceTerm> createSourceTerm(
     const SourceTermConfig& config,
-    const NumLib::LocalToGlobalIndexMap& dof_table_bulk,
-    const MeshLib::Mesh& source_term_mesh, const int variable_id,
-    const unsigned integration_order, const unsigned shapefunction_order,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
-        parameters);
+    const NumLib::LocalToGlobalIndexMap& dof_table_bulk, const MeshLib::Mesh& source_term_mesh,
+    const int variable_id, const unsigned integration_order,
+    const unsigned shapefunction_order,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    std::vector<std::reference_wrapper<ProcessVariable>> const&
+        all_process_variables_for_this_process);
 
 }  // namespace ProcessLib

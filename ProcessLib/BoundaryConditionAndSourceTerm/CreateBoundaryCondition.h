@@ -31,6 +31,7 @@ namespace ProcessLib
 class BoundaryCondition;
 struct BoundaryConditionConfig;
 class Process;
+class ProcessVariable;
 
 std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     const BoundaryConditionConfig& config,
@@ -38,6 +39,8 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     const MeshLib::Mesh& bulk_mesh, const int variable_id,
     const unsigned integration_order, const unsigned shapefunction_order,
     const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
-    const Process& process);
+    const Process& process,
+    std::vector<std::reference_wrapper<ProcessVariable>> const&
+        all_process_variables_for_this_process);
 
 }  // namespace ProcessLib
