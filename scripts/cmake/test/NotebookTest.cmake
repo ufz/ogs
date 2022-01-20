@@ -36,6 +36,7 @@ function(NotebookTest)
     endif()
 
     if(DEFINED OGS_CTEST_MAX_RUNTIME)
+        # Skip tests that would require too long to execute.
         if(${NotebookTest_RUNTIME} GREATER ${OGS_CTEST_MAX_RUNTIME})
             return()
         endif()
@@ -56,7 +57,7 @@ function(NotebookTest)
     set(_exe_args Notebooks/testrunner.py --out ${Data_BINARY_DIR}
                   ${NotebookTest_SOURCE_DIR}/${NotebookTest_NAME}
     )
-    string(REPLACE "/" "_" TEST_NAME_UNDERSCORE ${TEST_NAME})
+
     add_test(
         NAME ${TEST_NAME}
         COMMAND
@@ -75,6 +76,8 @@ function(NotebookTest)
     endif()
 
     if(MSVC AND ${CMAKE_VERSION} VERSION_LESS 3.22)
+        # ENVIRONMENT_MODIFICATION parameter of set_tests_properties() is
+        # required to correctly set the PATH environment variable on Windows.
         message(
             WARNING "Notebook tests are disabled on Windows when CMake < 3.22!"
         )
@@ -82,6 +85,7 @@ function(NotebookTest)
     endif()
 
     if(${CMAKE_VERSION} VERSION_LESS 3.22)
+        # This branch applies to *nix only.
         set(_prop_env ENVIRONMENT PATH=$<TARGET_FILE_DIR:ogs>:$ENV{PATH})
     else()
         set(_prop_env ENVIRONMENT_MODIFICATION

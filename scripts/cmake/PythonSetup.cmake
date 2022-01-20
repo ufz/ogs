@@ -4,6 +4,7 @@
 set(Python3_FIND_FRAMEWORK LAST)
 if(OGS_USE_POETRY)
     find_program(POETRY poetry)
+    # See web/content/docs/devguide/packages/python-env.md for docs on Poetry
     if(POETRY)
         set(OGS_PYTHON_PACKAGES ""
             CACHE INTERNAL
