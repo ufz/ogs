@@ -55,6 +55,9 @@ set(OGS_PETSC_CONFIG_OPTIONS "" CACHE STRING
 option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
 option(OGS_BUILD_UTILS "Should the utilities programs be built?" ON)
 option(OGS_BUILD_TESTING "Should the tests be built?" ON)
+cmake_dependent_option(
+    OGS_TEST_NOTEBOOKS "Should notebooks be tested?" ON "OGS_BUILD_TESTING" OFF
+)
 
 if(MSVC)
     set(CMD_COMMAND "cmd;/c")
@@ -226,12 +229,28 @@ endif()
 include(UnityBuildSettings)
 
 if(POETRY)
-    file(STRINGS ${PROJECT_BINARY_DIR}/.python_packages OGS_PYTHON_PACKAGES)
-    list(REMOVE_DUPLICATES OGS_PYTHON_PACKAGES)
-    execute_process(
-        COMMAND ${CMD_COMMAND} poetry add ${OGS_PYTHON_PACKAGES}
-        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    # Caches a hash of requested Python packages when they were successfully
+    # installed. On subsequent runs compare new hash to cached. If equal do
+    # nothing.
+    get_property(
+        _addtest_python_packages GLOBAL PROPERTY AddTest_PYTHON_PACKAGES
     )
+    list(APPEND OGS_PYTHON_PACKAGES ${_addtest_python_packages})
+    list(REMOVE_DUPLICATES OGS_PYTHON_PACKAGES)
+    list(SORT OGS_PYTHON_PACKAGES)
+    string(SHA1 _ogs_python_packages_sha1 "${OGS_PYTHON_PACKAGES}")
+    if(NOT ${_ogs_python_packages_sha1} STREQUAL "${_OGS_PYTHON_PACKAGES_SHA1}")
+        execute_process(
+            COMMAND ${CMD_COMMAND} poetry add ${OGS_PYTHON_PACKAGES}
+            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+            RESULT_VARIABLE _return_code
+        )
+        if(${_return_code} EQUAL 0)
+            set(_OGS_PYTHON_PACKAGES_SHA1 "${_ogs_python_packages_sha1}"
+                CACHE INTERNAL ""
+            )
+        endif()
+    endif()
 endif()
 
 file(WRITE ${PROJECT_BINARY_DIR}/disabled-tests.log "${DISABLED_TESTS_LOG}")

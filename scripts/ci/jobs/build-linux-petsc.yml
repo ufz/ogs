@@ -3,9 +3,13 @@ build linux petsc:
     - .template-build-linux
     - .test-artifacts
   tags:
-    - envinf1-shell
+    - envinf
+    - shell
   needs: [meta]
   timeout: 2h
   variables:
     BUILD_CTEST_LARGE_ON_MASTER: "true"
     CMAKE_PRESET: release-petsc
+    # default python on arch is 3.10; there are no vtk wheels for it (VTUInterface)
+    CMAKE_ARGS: >-
+      -DPython3_EXECUTABLE=/usr/bin/python3.9

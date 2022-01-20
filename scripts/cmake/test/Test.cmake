@@ -48,6 +48,13 @@ enable_testing() # Enable CTest
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/MeshTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/OgsTest.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/NotebookTest.cmake)
+
+# Check notebook testrunner
+NotebookTest(NOTEBOOKFILE Notebooks/FailingNotebook.ci-skip.ipynb RUNTIME 2)
+if(TEST nb-Notebooks/FailingNotebook)
+    set_tests_properties(nb-Notebooks/FailingNotebook PROPERTIES WILL_FAIL TRUE)
+endif()
 
 if(CMAKE_CONFIGURATION_TYPES)
     set(CONFIG_PARAMETER --build-config "$<CONFIGURATION>")

@@ -17,6 +17,8 @@ build jupyter:
         export DOCKER_TAG_JUPYTER_PETSC="ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-petsc-jupyter:latest"
       fi
     # Jupyter container
+    # TODO: use Tests/Date/Notebooks/requirements.txt in ogs_jupyter.py
+    # TODO: or better: migrate requirements.txt to versions.json
     - >
       poetry run ogscm compiler.py ogs.py ogs_jupyter.py -B -R --ogs ../..
       --build_args ' --progress=plain'
@@ -41,14 +43,12 @@ build jupyter:
     - >
       docker run --rm -v $PWD:/home/jovyan/work --user `id -u $USER` --group-add users
       --workdir /home/jovyan/work $DOCKER_TAG_JUPYTER_PETSC
-      bash -c "find Tests/Notebooks -type f -iname '*.ipynb' -not -path \"*.ipynb_checkpoints*\" | xargs -n1 jupyter nbconvert --execute --inplace"
-    - >
-      docker run --rm -v $PWD:/home/jovyan/work --user `id -u $USER` --group-add users
-      --workdir /home/jovyan/work $DOCKER_TAG_JUPYTER_PETSC
-      bash -c "find Tests/Notebooks -type f -iname '*.ipynb' -not -path \"*.ipynb_checkpoints*\" | xargs -n1 nb2hugo --site-dir web --section docs/benchmarks/notebooks --template Tests/Notebooks/nbconvert_templates/collapsed.md.j2"
+      bash -c "cd Tests/Data &&  find . -type f -iname '*.ipynb' | grep -vP '\.ipynb_checkpoints|\.ci-skip.ipynb$' | xargs python Notebooks/testrunner.py --out _out --hugo"
   artifacts:
     name: container
+    when: always
     paths:
       - web/content/docs/benchmarks/notebooks
       - web/static/docs/benchmarks/notebooks
-      - Tests/Notebooks/**/*.ipynb
+      - Tests/Data/_out/**/*.html
+      - Tests/Data/_out/**/out.txt

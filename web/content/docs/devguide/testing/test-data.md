@@ -60,3 +60,71 @@ In the OGS-cli outputting to `[build-dir]/Tests/Data` is already handled (via th
 In code `BaseLib::BuildInfo::data_path` (from `BuildInfo.h`) references the data source directory and `BaseLib::BuildInfo::data_binary_path` references the data output directory.
 
 For adding new data files simply commit the new files as usual.
+
+## Notebook testing
+
+Full Jupyter Notebooks based workflows can be tested too. Create the notebook in `Tests/Data`. Configure input and output directories:
+
+```python
+import os
+
+# Second parameter to get() is important if you want to run
+# the notebook standalone.
+data_dir = os.environ.get('OGS_DATA_DIR', '../../../Data')
+out_dir = os.environ.get('OGS_TESTRUNNER_OUT_DIR', '_out')
+
+if not os.path.exists(out_dir):
+    os.makedirs(out_dir)
+os.chdir(out_dir)
+
+# ...
+# Run ogs; get input data from `data_dir`; write to `out_dir
+
+# Verify results; on failure assert with:
+assert False
+# or
+raise SystemExit()
+```
+
+Add Python dependencies to `web/data/versions.json` (under `python/notebook_requirements`).
+
+### Run with ctest
+
+Add to ctest with:
+
+```cmake
+NotebookTest(NOTEBOOKFILE Notebooks/SimpleMechanics.ipynb RUNTIME 10)
+```
+
+Then e.g. run with:
+
+```bash
+ctest -R nb -j 4 --output-on-failure
+```
+
+### Run manually with testrunner.py
+
+Make sure to have a Python virtual environment enabled and installed the requirements for your notebook. E.g.:
+
+```bash
+virtualenv .venv
+source .venv/bin/activate
+pip install $(jq -r '.python.notebook_requirements | join(" ")' path/to/ogs/web/data/versions.json)
+```
+
+This is handled **automatically** when using [Poetry]({{< ref "python-env.md#poetry" >}}).
+
+Also make sure to have `ogs` or other required tools in the `PATH`:
+
+```bash
+export PATH=./path/to/build/release/bin:$PATH
+```
+
+Run all notebooks in `Tests/Data` (ignoring notebooks with `.ci-skip.` in their filename) with the notebook `testrunner.py`:
+
+```bash
+cd Tests/Data
+find . -type f -iname '*.ipynb' \
+  | grep -vP '\.ipynb_checkpoints|\.ci-skip.ipynb$' \
+  | xargs python Notebooks/testrunner.py --out _out
+```

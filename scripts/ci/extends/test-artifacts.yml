@@ -8,6 +8,9 @@
       - build/*/make.txt
       - build/*/*.zip
       - build/*/*.tar.gz
+      # Notebook testrunner:
+      - build/**/*.ipynb.html
+      - build/**/out.txt
     expire_in: 1 week
     reports:
       junit:
