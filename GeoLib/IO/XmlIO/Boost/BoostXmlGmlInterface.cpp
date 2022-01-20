@@ -41,19 +41,19 @@ bool BoostXmlGmlInterface::readFile(const std::string& fname)
     auto doc = BaseLib::makeConfigTree(fname, true, "OpenGeoSysGLI");
 
     // ignore attributes related to XML schema
-    doc->ignoreConfigAttribute("xmlns:xsi");
-    doc->ignoreConfigAttribute("xsi:noNamespaceSchemaLocation");
-    doc->ignoreConfigAttribute("xmlns:ogs");
+    doc.ignoreConfigAttribute("xmlns:xsi");
+    doc.ignoreConfigAttribute("xsi:noNamespaceSchemaLocation");
+    doc.ignoreConfigAttribute("xmlns:ogs");
 
     //! \ogs_file_param{gml__name}
-    auto geo_name = doc->getConfigParameter<std::string>("name");
+    auto geo_name = doc.getConfigParameter<std::string>("name");
     if (geo_name.empty())
     {
         OGS_FATAL("BoostXmlGmlInterface::readFile(): <name> tag is empty.");
     }
 
     //! \ogs_file_param{gml__points}
-    for (auto st : doc->getConfigSubtreeList("points"))
+    for (auto st : doc.getConfigSubtreeList("points"))
     {
         std::vector<GeoLib::Point*> points;
         GeoLib::PointVec::NameIdMap pnt_names;
@@ -65,7 +65,7 @@ bool BoostXmlGmlInterface::readFile(const std::string& fname)
     std::vector<GeoLib::Polyline*> polylines;
     GeoLib::PolylineVec::NameIdMap ply_names;
     //! \ogs_file_param{gml__polylines}
-    for (auto st : doc->getConfigSubtreeList("polylines"))
+    for (auto st : doc.getConfigSubtreeList("polylines"))
     {
         readPolylines(st,
                       polylines,
@@ -78,7 +78,7 @@ bool BoostXmlGmlInterface::readFile(const std::string& fname)
     SurfaceVec::NameIdMap sfc_names;
 
     //! \ogs_file_param{gml__surfaces}
-    for (auto st : doc->getConfigSubtreeList("surfaces"))
+    for (auto st : doc.getConfigSubtreeList("surfaces"))
     {
         readSurfaces(st, surfaces, *_geo_objects.getPointVec(geo_name),
                      _geo_objects.getPointVecObj(geo_name)->getIDMap(),

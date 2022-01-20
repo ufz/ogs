@@ -75,7 +75,7 @@ bool any_ode_solver_libs_available()
 
 template <unsigned NumEquations>
 std::unique_ptr<MathLib::ODE::ODESolver<NumEquations>> make_ode_solver(
-    boost::property_tree::ptree const& conf)
+    boost::property_tree::ptree&& conf)
 {
     // Make sure testrunner does not crash if we haven't built with support for
     // any external ODE solver lib.
@@ -86,7 +86,8 @@ std::unique_ptr<MathLib::ODE::ODESolver<NumEquations>> make_ode_solver(
         return nullptr;
     }
 
-    BaseLib::ConfigTree config(conf, "", BaseLib::ConfigTree::onerror,
+    BaseLib::ConfigTree config(std::move(conf), "",
+                               BaseLib::ConfigTree::onerror,
                                BaseLib::ConfigTree::onwarning);
     return MathLib::ODE::createODESolver<NumEquations>(config);
 }
@@ -129,7 +130,7 @@ TEST(MathLibCVodeTest, Exponential)
     const double t0 = 0.0;
 
     auto tree = boost::property_tree::ptree{};
-    auto ode_solver = make_ode_solver<1>(tree);
+    auto ode_solver = make_ode_solver<1>(std::move(tree));
 
     ASSERT_EQ(any_ode_solver_libs_available(), !!ode_solver);
     // Don't run the test if the ODE solver could not be constructed.
@@ -171,7 +172,7 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
     const double t0 = 0.0;
 
     auto tree = boost::property_tree::ptree{};
-    auto ode_solver = make_ode_solver<1>(tree);
+    auto ode_solver = make_ode_solver<1>(std::move(tree));
 
     ASSERT_EQ(any_ode_solver_libs_available(), !!ode_solver);
     // Don't run the test if the ODE solver could not be constructed.
@@ -236,7 +237,7 @@ TEST(MathLibCVodeTest, ExponentialWithJacobian)
     const double t0 = 0.0;
 
     auto tree = boost::property_tree::ptree{};
-    auto ode_solver = make_ode_solver<1>(tree);
+    auto ode_solver = make_ode_solver<1>(std::move(tree));
 
     ASSERT_EQ(any_ode_solver_libs_available(), !!ode_solver);
     // Don't run the test if the ODE solver could not be constructed.
@@ -280,7 +281,7 @@ TEST(MathLibCVodeTest, ExponentialWithJacobianNewton)
     boost::property_tree::ptree tree;
     tree.put("linear_multistep_method", "BDF");
     tree.put("nonlinear_solver_iteration", "Newton");
-    auto ode_solver = make_ode_solver<1>(tree);
+    auto ode_solver = make_ode_solver<1>(std::move(tree));
 
     ASSERT_EQ(any_ode_solver_libs_available(), !!ode_solver);
     // Don't run the test if the ODE solver could not be constructed.

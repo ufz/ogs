@@ -254,7 +254,7 @@ public:
     /*!
      * Creates a new instance wrapping the given Boost Property Tree.
      *
-     * \param tree the Boost Property Tree to be wrapped
+     * \param top_level_tree the top level Boost Property Tree
      * \param filename the file from which the \c tree has been read
      * \param error_cb callback function to be called on error.
      * \param warning_cb callback function to be called on warning.
@@ -266,18 +266,10 @@ public:
      * Defaults are strict: By default, both callbacks are set to the same
      * function, i.e., warnings will also result in program abortion!
      */
-    explicit ConfigTree(PTree const& tree,
+    explicit ConfigTree(PTree&& top_level_tree,
                         std::string filename,
                         Callback error_cb,
                         Callback warning_cb);
-
-    /*! This constructor is deleted in order to prevent the user from passing
-     * temporary instances of \c PTree.
-     * Doing so would lead to a dangling reference \c tree_ and to program
-     * crash.
-     */
-    explicit ConfigTree(PTree&&, std::string const&, Callback const&,
-                        Callback const&) = delete;
 
     //! copying is not compatible with the semantics of this class
     ConfigTree(ConfigTree const&) = delete;
@@ -637,8 +629,13 @@ private:
     //! returns a short string at suitable for error/warning messages
     static std::string shortString(std::string const& s);
 
+    //! Root of the tree.
+    //!
+    //! Owned by all ConfigTree instances that might access any part of it.
+    std::shared_ptr<PTree const> top_level_tree_;
+
     //! The wrapped tree.
-    boost::property_tree::ptree const* tree_;
+    PTree const* tree_;
 
     //! A path printed in error/warning messages.
     std::string path_;

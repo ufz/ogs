@@ -27,8 +27,8 @@ namespace
 {
 std::unique_ptr<LookupTable> createTestLookupTable(const char xml[])
 {
-    auto const ptree = Tests::readXml(xml);
-    BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
+    auto ptree = Tests::readXml(xml);
+    BaseLib::ConfigTree conf(std::move(ptree), "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
 
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;

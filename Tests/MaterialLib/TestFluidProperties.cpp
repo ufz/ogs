@@ -28,8 +28,8 @@ using ArrayType = MaterialLib::Fluid::FluidProperty::ArrayType;
 
 std::unique_ptr<FluidProperties> createTestFluidProperties(const char xml[])
 {
-    auto const ptree = Tests::readXml(xml);
-    BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
+    auto ptree = Tests::readXml(xml);
+    BaseLib::ConfigTree conf(std::move(ptree), "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("fluid");
     return createFluidProperties(sub_config);
