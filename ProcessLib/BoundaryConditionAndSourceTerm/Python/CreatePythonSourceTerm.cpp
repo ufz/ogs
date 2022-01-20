@@ -74,9 +74,9 @@ std::unique_ptr<SourceTerm> createPythonSourceTerm(
         dof_table->getGlobalComponent(variable_id, component_id);
     return std::make_unique<ProcessLib::SourceTerms::Python::PythonSourceTerm>(
         std::move(dof_table),
-        ProcessLib::SourceTerms::Python::PythonSourceTerm::Data{
-            source_term, global_component_id, source_term_mesh,
-            all_process_variables_for_this_process, shapefunction_order},
+        ProcessLib::SourceTerms::Python::PythonStData{
+            {source_term, global_component_id, source_term_mesh,
+             all_process_variables_for_this_process, shapefunction_order}},
         integration_order, global_dim, flush_stdout);
 }
 

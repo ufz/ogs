@@ -2,6 +2,7 @@ ogs_add_library(
     ProcessLibBoundaryConditionAndSourceTermPython
     PythonBoundaryCondition.cpp
     PythonBoundaryCondition.h
+    PythonBoundaryConditionLocalAssemblerInterface.h
     PythonBoundaryConditionLocalAssembler.h
     PythonBoundaryConditionPythonSideInterface.h
     BHEInflowPythonBoundaryCondition.h
@@ -12,6 +13,13 @@ ogs_add_library(
     PythonSourceTerm.h
     PythonSourceTermLocalAssembler.h
     PythonSourceTermPythonSideInterface.h
+    Utils/BcAndStLocalAssemblerImpl.h
+    Utils/BcOrStData.h
+    Utils/CollectAndInterpolateNodalDof.cpp
+    Utils/CollectAndInterpolateNodalDof.h
+    Utils/CreateLocalAssemblers.h
+    Utils/LocalAssemblerFactoryPython.h
+    Utils/NsAndWeight.h
 )
 
 target_compile_definitions(
