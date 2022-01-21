@@ -90,9 +90,20 @@ MeshLib::Mesh const& findMeshInConfig(
 
 namespace ProcessLib
 {
+bool parseCompensateNonEquilibriumInitialResiduum(
+    BaseLib::ConfigTree const& config)
+{
+    auto const compensate_non_equilibrium_initial_residuum_ptr =
+        //! \ogs_file_param{prj__process_variables__process_variable__compensate_non_equilibrium_initial_residuum}
+        config.getConfigParameterOptional<bool>(
+            "compensate_non_equilibrium_initial_residuum");
+
+    return (compensate_non_equilibrium_initial_residuum_ptr &&
+            *compensate_non_equilibrium_initial_residuum_ptr);
+}
+
 ProcessVariable::ProcessVariable(
-    BaseLib::ConfigTree const& config,
-    MeshLib::Mesh& mesh,
+    BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::map<std::string,
@@ -110,7 +121,9 @@ ProcessVariable::ProcessVariable(
       _initial_condition(ParameterLib::findParameter<double>(
           //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
           config.getConfigParameter<std::string>("initial_condition"),
-          parameters, _n_components, &mesh))
+          parameters, _n_components, &mesh)),
+      _compensate_non_equilibrium_initial_residuum(
+          parseCompensateNonEquilibriumInitialResiduum(config))
 {
     DBUG("Constructing process variable {:s}", _name);
 
@@ -189,7 +202,9 @@ ProcessVariable::ProcessVariable(ProcessVariable&& other)
       _deactivated_subdomains(std::move(other._deactivated_subdomains)),
       _initial_condition(std::move(other._initial_condition)),
       _bc_configs(std::move(other._bc_configs)),
-      _source_term_configs(std::move(other._source_term_configs))
+      _source_term_configs(std::move(other._source_term_configs)),
+      _compensate_non_equilibrium_initial_residuum(
+          other._compensate_non_equilibrium_initial_residuum)
 {
 }
 

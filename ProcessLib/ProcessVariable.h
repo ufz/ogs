@@ -96,6 +96,11 @@ public:
 
     unsigned getShapeFunctionOrder() const { return _shapefunction_order; }
 
+    bool compensateNonEquilibriumInitialResiduum() const
+    {
+        return _compensate_non_equilibrium_initial_residuum;
+    }
+
 private:
     std::string const _name;
     MeshLib::Mesh& _mesh;
@@ -132,6 +137,8 @@ private:
 
     std::vector<BoundaryConditionConfig> _bc_configs;
     std::vector<SourceTermConfig> _source_term_configs;
+
+    const bool _compensate_non_equilibrium_initial_residuum;
 };
 
 }  // namespace ProcessLib
