@@ -8,6 +8,8 @@
  *
  */
 
+#pragma once
+
 #include <cassert>
 
 #include "MathLib/Point3d.h"

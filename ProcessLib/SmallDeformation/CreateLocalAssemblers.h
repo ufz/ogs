@@ -31,9 +31,9 @@ void createLocalAssemblers(
     ExtraCtorArgs&&... extra_ctor_args)
 {
     using LocAsmFactory =
-        ProcessLib::LocalAssemberFactorySD<LocalAssemblerInterface,
-                                           LocalAssemblerImplementation,
-                                           GlobalDim, ExtraCtorArgs...>;
+        ProcessLib::LocalAssemblerFactorySD<LocalAssemblerInterface,
+                                            LocalAssemblerImplementation,
+                                            GlobalDim, ExtraCtorArgs...>;
 
     DBUG("Create local assemblers.");
 

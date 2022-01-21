@@ -59,7 +59,9 @@ bool isConvertibleToDouble(std::string const& s)
 /// Wraps a string into double ticks.
 std::string safeString(std::string const& s)
 {
-    return "\"" + s + "\"";
+    std::stringstream ss;
+    ss << std::quoted(s);
+    return ss.str();
 }
 
 /// Tries to find a vtkdiff executable by testing 'path/vtkdiff --version' calls

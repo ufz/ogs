@@ -209,7 +209,7 @@ Eigen::Vector3d ComponentTransportProcess::getFlux(
 void ComponentTransportProcess::
     setCoupledTermForTheStaggeredSchemeToLocalAssemblers(int const process_id)
 {
-    DBUG("Set the coupled term for the staggered scheme to local assembers.");
+    DBUG("Set the coupled term for the staggered scheme to local assemblers.");
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(

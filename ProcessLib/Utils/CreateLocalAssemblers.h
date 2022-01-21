@@ -30,9 +30,9 @@ void createLocalAssemblers(
         GlobalDim == 1 || GlobalDim == 2 || GlobalDim == 3,
         "Meshes with dimension greater than three are not supported.");
 
-    using LocAsmFactory = LocalAssemberFactory<LocalAssemblerInterface,
-                                               LocalAssemblerImplementation,
-                                               GlobalDim, ExtraCtorArgs...>;
+    using LocAsmFactory = LocalAssemblerFactory<LocalAssemblerInterface,
+                                                LocalAssemblerImplementation,
+                                                GlobalDim, ExtraCtorArgs...>;
 
     DBUG("Create local assemblers.");
 
