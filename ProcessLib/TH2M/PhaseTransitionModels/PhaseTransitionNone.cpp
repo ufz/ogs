@@ -56,8 +56,8 @@ PhaseTransitionModelVariables PhaseTransitionNone::updateConstitutiveVariables(
     PhaseTransitionModelVariables cv = phase_transition_model_variables;
 
     // C-component is only component in the gas phase
-    cv.xnCG = 1.;
-    cv.xmCG = 1.;
+    cv.xnWG = 0.;
+    cv.xmWG = 0.;
 
     auto const M =
         gas_phase.property(MaterialPropertyLib::PropertyType::molar_mass)
