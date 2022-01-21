@@ -6,11 +6,11 @@ if(OGS_USE_MFRONT)
     find_program(MFRONT mfront)
     if(NOT MFRONT)
         BuildExternalProject(
-            TFEL GIT_REPOSITORY https://github.com/thelfer/tfel.git
+            TFEL
+            GIT_REPOSITORY https://github.com/thelfer/tfel.git
             GIT_TAG rliv-${ogs.minimum_version.tfel-rliv}
-            CMAKE_ARGS
-                -DCMAKE_INSTALL_RPATH=<INSTALL_DIR>/lib
-                -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
+            CMAKE_ARGS -DCMAKE_INSTALL_RPATH=<INSTALL_DIR>/lib
+                       -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
         )
         set(TFELHOME ${PROJECT_BINARY_DIR}/_ext/TFEL CACHE PATH "")
     endif()
@@ -41,6 +41,9 @@ if(OGS_USE_PETSC)
         if(ENV{CXX})
             list(APPEND _configure_opts --with-cxx=$ENV{CXX})
         endif()
+        if(OGS_INSTALL_PETSC)
+            set(_petsc_install_dir INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
+        endif()
         BuildExternalProject(
             PETSc
             LOG_OUTPUT_ON_FAILURE ON
@@ -52,9 +55,13 @@ if(OGS_USE_PETSC)
                 ${OGS_PETSC_CONFIG_OPTIONS}
             BUILD_IN_SOURCE ON
             BUILD_COMMAND make -j all
-            INSTALL_COMMAND make -j install
+            INSTALL_COMMAND make -j install ${_petsc_install_dir}
         )
-        set(PETSC_DIR ${PROJECT_BINARY_DIR}/_ext/PETSc CACHE PATH "" FORCE)
+        if(OGS_INSTALL_PETSC)
+            set(PETSC_DIR ${CMAKE_INSTALL_PREFIX} CACHE PATH "" FORCE)
+        else()
+            set(PETSC_DIR ${PROJECT_BINARY_DIR}/_ext/PETSc CACHE PATH "" FORCE)
+        endif()
         find_package(PETSc ${ogs.minimum_version.petsc} REQUIRED)
     endif()
 
