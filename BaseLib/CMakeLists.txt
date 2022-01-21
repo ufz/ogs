@@ -12,7 +12,6 @@ target_link_libraries(
     BaseLib
     PUBLIC Boost::boost
            spdlog::spdlog
-           std::filesystem
            tclap
            $<$<BOOL:${MSVC}>:WinMM> # needed for timeGetTime
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::Xml>
