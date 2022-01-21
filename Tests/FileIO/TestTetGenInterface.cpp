@@ -26,7 +26,6 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshInformation.h"
 #include "MeshLib/Node.h"
-#include "filesystem.h"
 
 // read TetGen geometry
 TEST(FileIO, TetGenSmeshReader)

@@ -19,7 +19,6 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
-#include "filesystem.h"
 #ifdef USE_PETSC
 #include <petsc.h>
 

@@ -19,7 +19,6 @@
 #include "BaseLib/StringTools.h"
 #include "GeoLib/GEOObjects.h"
 #include "InfoLib/TestInfo.h"
-#include "filesystem.h"
 
 class OGSIOVer4InterfaceTest : public ::testing::Test
 {

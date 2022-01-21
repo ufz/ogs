@@ -21,7 +21,6 @@
 #include "BaseLib/FileTools.h"
 #include "Error.h"
 #include "Logging.h"
-#include "filesystem.h"
 
 namespace BaseLib
 {

@@ -21,7 +21,6 @@
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "InfoLib/TestInfo.h"
 #include "Tests/FileIO/TestGmlInterface.h"
-#include "filesystem.h"
 
 TEST_F(TestGmlInterface, BoostXmlGmlWriterReaderTest)
 {

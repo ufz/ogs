@@ -26,7 +26,6 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/convertMeshToGeo.h"
-#include "filesystem.h"
 
 namespace FileIO
 {

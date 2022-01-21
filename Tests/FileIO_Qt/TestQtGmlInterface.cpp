@@ -21,7 +21,6 @@
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "InfoLib/TestInfo.h"
 #include "Tests/FileIO/TestGmlInterface.h"
-#include "filesystem.h"
 
 TEST_F(TestGmlInterface, QtXmlGmlWriterReaderTest)
 {

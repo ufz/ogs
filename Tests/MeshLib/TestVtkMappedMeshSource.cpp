@@ -32,7 +32,6 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
-#include "filesystem.h"
 
 // Creates a mesh with different types of data (double, int, etc.) and point,
 // cell, or integration point properties.

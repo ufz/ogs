@@ -18,7 +18,6 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
-#include "filesystem.h"
 
 namespace InSituLib
 {

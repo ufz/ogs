@@ -107,8 +107,3 @@ endif()
 if(OGS_USE_MPI)
     find_package(MPI REQUIRED)
 endif()
-
-configure_file(
-    ${PROJECT_SOURCE_DIR}/BaseLib/filesystem.h.in
-    ${PROJECT_BINARY_DIR}/BaseLib/filesystem.h
-)
