@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include <filesystem.h>
-#include <string>
+#include <filesystem>
 #include <sstream>
+#include <string>
 
 namespace BaseLib
 {
@@ -49,5 +49,5 @@ protected:
 /// \returns 0 if string is empty, or if there is an error, and 1 otherwise.
 int writeStringToFile(std::string content,
                       std::filesystem::path const& file_path);
-} // namespace IO
-} // namespace BaseLib
+}  // namespace IO
+}  // namespace BaseLib

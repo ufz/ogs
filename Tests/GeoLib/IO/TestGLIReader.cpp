@@ -13,6 +13,7 @@
 #include <gtest/gtest.h>
 
 #include <cstdio>
+#include <filesystem>
 #include <fstream>
 
 #include "Applications/FileIO/Legacy/OGSIOVer4.h"
@@ -24,11 +25,12 @@ class OGSIOVer4InterfaceTest : public ::testing::Test
 {
 public:
     OGSIOVer4InterfaceTest()
-        : _test_path(fs::temp_directory_path() /= BaseLib::randomString(32)),
+        : _test_path(std::filesystem::temp_directory_path() /=
+                     BaseLib::randomString(32)),
           _gli_fname(_test_path),
           _surface_fname(_test_path)
     {
-        fs::create_directory(_test_path);
+        std::filesystem::create_directory(_test_path);
         std::ofstream gli_out(_gli_fname /= "test.gli");
         gli_out << "#POINTS\n";
         gli_out << "0 0 0 0\n";
@@ -42,12 +44,15 @@ public:
         _surface_fname /= "Surface.tin";
     }
 
-    ~OGSIOVer4InterfaceTest() override { fs::remove_all(_test_path); }
+    ~OGSIOVer4InterfaceTest() override
+    {
+        std::filesystem::remove_all(_test_path);
+    }
 
 protected:
-    const fs::path _test_path;
-    fs::path _gli_fname;
-    fs::path _surface_fname;
+    const std::filesystem::path _test_path;
+    std::filesystem::path _gli_fname;
+    std::filesystem::path _surface_fname;
 };
 
 TEST_F(OGSIOVer4InterfaceTest, SimpleTIN)

@@ -76,8 +76,10 @@ bool createSurface(GeoLib::Polyline const& ply,
         0.0, 0, geo_names, false, false);
 
     // write to random file in temp directory
-    auto geo_file = fs::temp_directory_path() /= BaseLib::randomString(32);
-    auto msh_file = fs::temp_directory_path() /= BaseLib::randomString(32);
+    auto geo_file = std::filesystem::temp_directory_path() /=
+        BaseLib::randomString(32);
+    auto msh_file = std::filesystem::temp_directory_path() /=
+        BaseLib::randomString(32);
 
     BaseLib::IO::writeStringToFile(gmsh_io.writeToString(), geo_file);
     // Using GMSH's vtk output here so we don't have to deal with GMSH and it's
@@ -98,7 +100,8 @@ bool createSurface(GeoLib::Polyline const& ply,
         WARN("The surface mesh could not be created.");
         return false;
     }
-    if (!(fs::remove(geo_file) && fs::remove(msh_file)))
+    if (!(std::filesystem::remove(geo_file) &&
+          std::filesystem::remove(msh_file)))
     {
         WARN("Could not remove temporary files in createSurface.");
     }

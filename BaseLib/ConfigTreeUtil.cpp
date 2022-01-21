@@ -16,6 +16,7 @@
 #include <xml_patch.h>
 
 #include <boost/property_tree/xml_parser.hpp>
+#include <filesystem>
 #include <regex>
 
 #include "BaseLib/FileTools.h"
@@ -55,7 +56,7 @@ void traverse_recursive(
     boost::property_tree::ptree& parent,
     boost::property_tree::ptree::path_type const& child_path,
     boost::property_tree::ptree& child,
-    fs::path const& bench_dir,
+    std::filesystem::path const& bench_dir,
     T& method)
 {
     using boost::property_tree::ptree;
@@ -69,8 +70,8 @@ void traverse_recursive(
 }
 
 template <typename T>
-void traverse(boost::property_tree::ptree& parent, const fs::path bench_dir,
-              T& method)
+void traverse(boost::property_tree::ptree& parent,
+              const std::filesystem::path bench_dir, T& method)
 {
     traverse_recursive(parent, "", parent, bench_dir, method);
 }
@@ -79,7 +80,7 @@ void replaceIncludes(
     [[maybe_unused]] boost::property_tree::ptree const& parent,
     [[maybe_unused]] boost::property_tree::ptree::path_type const& child_path,
     boost::property_tree::ptree& child,
-    fs::path const& bench_dir)
+    std::filesystem::path const& bench_dir)
 {
     using boost::property_tree::ptree;
     for (auto& [key, tree] : child)
@@ -87,7 +88,7 @@ void replaceIncludes(
         if (key == "include")
         {
             auto filename = tree.get<std::string>("<xmlattr>.file");
-            if (auto const filepath = fs::path(filename);
+            if (auto const filepath = std::filesystem::path(filename);
                 filepath.is_relative())
             {
                 filename = (bench_dir / filepath).string();
@@ -259,7 +260,8 @@ ConfigTreeTopLevel makeConfigTree(const std::string& filepath,
 
         if (toplevel_tag == "OpenGeoSysProject")
         {
-            traverse(ptree, fs::path(prj_file).parent_path(), replaceIncludes);
+            traverse(ptree, std::filesystem::path(prj_file).parent_path(),
+                     replaceIncludes);
         }
     }
     catch (boost::property_tree::xml_parser_error const& e)

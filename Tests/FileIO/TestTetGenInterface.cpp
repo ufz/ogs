@@ -14,6 +14,7 @@
 
 #include <gtest/gtest.h>
 
+#include <filesystem>
 #include <limits>
 #include <memory>
 #include <vector>
@@ -62,7 +63,8 @@ TEST(FileIO, DISABLED_TetGenSmeshInterface)
 
     std::string const tg_new_name(BaseLib::randomString(32));
     std::string const output_name =
-        (fs::temp_directory_path() /= tg_new_name + ".smesh").string();
+        (std::filesystem::temp_directory_path() /= tg_new_name + ".smesh")
+            .string();
     std::cout << output_name << std::endl;
     std::vector<MeshLib::Node> attr_pnts;
     FileIO::TetGenInterface tgi;
