@@ -75,9 +75,6 @@ struct PhaseTransitionModelVariables
     // viscosities
     double muGR = 0.;
     double muLR = 0.;
-    // thermal conductivities
-    double lambdaGR = 0.;
-    double lambdaLR = 0.;
 
     double diffusion_coefficient_vapour = 0.;
     double diffusion_coefficient_solvate = 0.;
@@ -112,11 +109,9 @@ struct PhaseTransitionModel
 
         // check for minimum requirement definitions in media object
         std::array const required_gas_properties = {
-            MaterialPropertyLib::viscosity, MaterialPropertyLib::density,
-            MaterialPropertyLib::thermal_conductivity};
+            MaterialPropertyLib::viscosity, MaterialPropertyLib::density};
         std::array const required_liquid_properties = {
-            MaterialPropertyLib::viscosity, MaterialPropertyLib::density,
-            MaterialPropertyLib::thermal_conductivity};
+            MaterialPropertyLib::viscosity, MaterialPropertyLib::density};
 
         for (auto const& m : media)
         {

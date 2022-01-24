@@ -69,10 +69,6 @@ PhaseTransitionModelVariables PhaseTransitionNone::updateConstitutiveVariables(
                    .template value<double>(variables, pos, t, dt);
     cv.muGR = gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
                   .template value<double>(variables, pos, t, dt);
-    cv.lambdaGR =
-        gas_phase
-            .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
-            .template value<double>(variables, pos, t, dt);
 
     cv.rhoCGR = cv.rhoGR;
 
@@ -84,11 +80,6 @@ PhaseTransitionModelVariables PhaseTransitionNone::updateConstitutiveVariables(
 
     cv.muLR =
         liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-            .template value<double>(variables, pos, t, dt);
-
-    cv.lambdaLR =
-        liquid_phase
-            .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .template value<double>(variables, pos, t, dt);
 
     cv.rhoWLR = cv.rhoLR;

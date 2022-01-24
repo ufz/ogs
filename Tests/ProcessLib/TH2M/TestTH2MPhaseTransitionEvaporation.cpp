@@ -36,8 +36,6 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
 
     auto const diffusion_coefficient_vapour = 2.6e-6;
 
-    auto const thermal_conductivity_air = 0.2;
-    auto const thermal_conductivity_water = 0.6;
     auto const viscosity_air = 1.e-5;
     auto const viscosity_water = 1.e-3;
 
@@ -80,8 +78,6 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
     m << "<properties>\n";
     m << Tests::makeConstantPropertyElement("viscosity", viscosity_air);
     m << Tests::makeConstantPropertyElement("density", density_air);
-    m << Tests::makeConstantPropertyElement("thermal_conductivity",
-                                            thermal_conductivity_air);
     m << "</properties>\n";
     m << "</phase>\n";
 
@@ -93,8 +89,6 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
     m << "<properties>\n";
     m << Tests::makeConstantPropertyElement("viscosity", viscosity_water);
     m << Tests::makeConstantPropertyElement("density", density_water);
-    m << Tests::makeConstantPropertyElement("thermal_conductivity",
-                                            thermal_conductivity_water);
     m << Tests::makeConstantPropertyElement("specific_heat_capacity",
                                             specific_heat_capacity_water);
     m << "</properties>\n";
@@ -149,9 +143,7 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
     double const uG = hG - pGR / density_air;
     double const uL = hL;
     double const muGR = viscosity_air;
-    double const lambdaGR = thermal_conductivity_air;
     double const muLR = viscosity_water;
-    double const lambdaLR = thermal_conductivity_water;
 
     ASSERT_NEAR(density_air, cv.rhoGR, 1.0e-10);
     ASSERT_NEAR(density_water, cv.rhoLR, 1.0e-10);
@@ -172,7 +164,5 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
     ASSERT_NEAR(diffusion_coefficient_vapour, cv.diffusion_coefficient_vapour,
                 1.0e-10);
     ASSERT_NEAR(muGR, cv.muGR, 1.0e-10);
-    ASSERT_NEAR(lambdaGR, cv.lambdaGR, 1.0e-10);
     ASSERT_NEAR(muLR, cv.muLR, 1.0e-10);
-    ASSERT_NEAR(lambdaLR, cv.lambdaLR, 1.0e-10);
 }

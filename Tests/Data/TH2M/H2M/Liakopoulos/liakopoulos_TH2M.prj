@@ -180,6 +180,10 @@
                     <type>Constant</type>
                     <value>0.2975</value>
                 </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
+                </property>
             </properties>
         </medium>
     </media>

@@ -178,6 +178,11 @@
                     <value>0.3</value>
                 </property>
 
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
+                </property>
+
             </properties>
         </medium>
     </media>
