@@ -13,13 +13,13 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <filesystem>
 #include <regex>
 #include <vector>
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
-#include "filesystem.h"
 #ifdef USE_PETSC
 #include <petsc.h>
 
@@ -178,8 +178,8 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
             // TODO: insert rank into regex for mpi case
             DBUG("vtkdiff regex is '{}'.", *regex_string);
             auto const regex = std::regex(*regex_string);
-            for (auto const& p :
-                 fs::directory_iterator(fs::path(reference_path)))
+            for (auto const& p : std::filesystem::directory_iterator(
+                     std::filesystem::path(reference_path)))
             {
                 auto const filename = p.path().filename().string();
                 if (std::regex_match(filename, regex))

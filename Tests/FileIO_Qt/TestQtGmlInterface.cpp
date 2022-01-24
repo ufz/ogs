@@ -21,13 +21,13 @@
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "InfoLib/TestInfo.h"
 #include "Tests/FileIO/TestGmlInterface.h"
-#include "filesystem.h"
 
 TEST_F(TestGmlInterface, QtXmlGmlWriterReaderTest)
 {
     // Writer test
     std::string test_data_file =
-        (fs::temp_directory_path() /= BaseLib::randomString(32)).string();
+        (std::filesystem::temp_directory_path() /= BaseLib::randomString(32))
+            .string();
 
     GeoLib::IO::XmlGmlInterface xml(geo_objects);
     xml.export_name = geo_name;

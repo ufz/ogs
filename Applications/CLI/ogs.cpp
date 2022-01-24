@@ -44,7 +44,6 @@
 #include "InfoLib/GitInfo.h"
 #include "NumLib/NumericsConfig.h"
 #include "ProcessLib/TimeLoop.h"
-#include "filesystem.h"
 
 #ifdef OGS_USE_PYTHON
 #include "ogs_embedded_python.h"

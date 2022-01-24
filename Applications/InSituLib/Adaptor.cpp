@@ -18,7 +18,6 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
-#include "filesystem.h"
 
 namespace InSituLib
 {
@@ -41,12 +40,12 @@ void Initialize(BaseLib::ConfigTree const& scripts_config,
     {
         auto scriptPath =
             //! \ogs_file_param{prj__insitu__scripts__script__name}
-            fs::path(script_config.getConfigParameter<std::string>("name"));
+            std::filesystem::path(script_config.getConfigParameter<std::string>("name"));
         if (scriptPath.is_relative())
         {
-            scriptPath = fs::path(path) / scriptPath;
+            scriptPath = std::filesystem::path(path) / scriptPath;
         }
-        if (!fs::exists(scriptPath))
+        if (!std::filesystem::exists(scriptPath))
         {
             ERR("In-situ script {:s} does not exist!", scriptPath.string());
         }
@@ -89,10 +88,10 @@ void CoProcess(MeshLib::Mesh const& mesh, double const time,
         vtkSource->Update();
         dataDescription->GetInputDescriptionByName("input")->SetGrid(
             vtkSource->GetOutput());
-        auto const cwd = fs::current_path();
-        fs::current_path(std::move(output_directory));
+        auto const cwd = std::filesystem::current_path();
+        std::filesystem::current_path(std::move(output_directory));
         Processor->CoProcess(dataDescription.GetPointer());
-        fs::current_path(cwd);
+        std::filesystem::current_path(cwd);
         INFO("End InSitu process.");
     }
 }

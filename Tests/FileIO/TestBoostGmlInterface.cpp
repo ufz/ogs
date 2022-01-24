@@ -21,14 +21,13 @@
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "InfoLib/TestInfo.h"
 #include "Tests/FileIO/TestGmlInterface.h"
-#include "filesystem.h"
 
 TEST_F(TestGmlInterface, BoostXmlGmlWriterReaderTest)
 {
     // Writer test
-    std::string test_data_file =
-        (fs::temp_directory_path() /= BaseLib::randomString(32) + ".gml")
-            .string();
+    std::string test_data_file = (std::filesystem::temp_directory_path() /=
+                                  BaseLib::randomString(32) + ".gml")
+                                     .string();
 
     GeoLib::IO::BoostXmlGmlInterface xml(geo_objects);
     xml.export_name = geo_name;

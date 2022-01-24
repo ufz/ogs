@@ -32,7 +32,6 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
-#include "filesystem.h"
 
 // Creates a mesh with different types of data (double, int, etc.) and point,
 // cell, or integration point properties.
@@ -156,7 +155,8 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
 
     ASSERT_TRUE(mesh != nullptr);
     std::string test_data_file =
-        (fs::temp_directory_path() /= BaseLib::randomString(32)).string();
+        (std::filesystem::temp_directory_path() /= BaseLib::randomString(32))
+            .string();
 
     // -- Test VtkMappedMeshSource, i.e. OGS mesh to VTK mesh
     vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
