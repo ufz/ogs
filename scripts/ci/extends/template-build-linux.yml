@@ -19,7 +19,13 @@
     - |
       if [[ -z "$TARGETS" ]]; then
 
-        $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target package > >(tee $log_file)
+        if [ "$BUILD_PACKAGE" = false ]; then
+          build_package=""
+        else
+          build_package="--target package"
+        fi
+
+        $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET ${build_package} > >(tee $log_file)
 
         if [ "$BUILD_TESTS" = true ]; then $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target tests ; fi
 

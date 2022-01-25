@@ -79,6 +79,7 @@ build linux debug with sanitizers:
   tags: [envinf2-shell]
   needs: [meta]
   variables:
+    BUILD_PACKAGE: "false"
     CMAKE_PRESET: debug
     CMAKE_ARGS: >-
       -DCMAKE_C_COMPILER=/usr/bin/clang
