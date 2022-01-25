@@ -73,3 +73,107 @@ AddTest(
     expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu epsilon epsilon 5e-6 1e-5
     expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu sigma sigma 200.0 200.0
 )
+
+#PETSc
+AddTest(
+    NAME ParallelFEM_ThermoRichardsMechanics_3D_ThermoElastic_Stress_Analysis
+    PATH ThermoRichardsMechanics/Simple3DThermoMechanicsFromTM
+    RUNTIME 45
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cube_1e3.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 3
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    cube_1e3_tm_ts_17_t_72000_000000_0.vtu cube_1e3_tm_ts_17_t_72000_000000_0.vtu velocity velocity 1e-10 1e-9
+    cube_1e3_tm_ts_17_t_72000_000000_1.vtu cube_1e3_tm_ts_17_t_72000_000000_1.vtu velocity velocity 1e-10 1e-9
+    cube_1e3_tm_ts_17_t_72000_000000_0.vtu cube_1e3_tm_ts_17_t_72000_000000_0.vtu displacement displacement 1e-10 1e-9
+    cube_1e3_tm_ts_17_t_72000_000000_1.vtu cube_1e3_tm_ts_17_t_72000_000000_1.vtu displacement displacement 1e-10 1e-9
+    cube_1e3_tm_ts_17_t_72000_000000_0.vtu cube_1e3_tm_ts_17_t_72000_000000_0.vtu sigma sigma 1e-7 1e-9
+    cube_1e3_tm_ts_17_t_72000_000000_1.vtu cube_1e3_tm_ts_17_t_72000_000000_1.vtu sigma sigma 1e-7 1e-9
+    cube_1e3_tm_ts_17_t_72000_000000_0.vtu cube_1e3_tm_ts_17_t_72000_000000_0.vtu epsilon epsilon 1e-10 1e-9
+    cube_1e3_tm_ts_17_t_72000_000000_1.vtu cube_1e3_tm_ts_17_t_72000_000000_1.vtu epsilon epsilon 1e-10 1e-9
+)
+
+AddTest(
+    NAME ParallelFEM_ThermoRichardsMechanics_FullySaturatedFlowMechanics
+    PATH ThermoRichardsMechanics/FullySaturatedFlowMechanics/PETSc
+    RUNTIME 10
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS flow_fully_saturated_petsc.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 2
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    flow_fully_saturated_ts_2_t_2_000000_0.vtu flow_fully_saturated_ts_2_t_2_000000_0.vtu pressure pressure 1e-10 1e-9
+    flow_fully_saturated_ts_2_t_2_000000_0.vtu flow_fully_saturated_ts_2_t_2_000000_0.vtu velocity velocity 1e-10 1e-9
+    flow_fully_saturated_ts_2_t_2_000000_1.vtu flow_fully_saturated_ts_2_t_2_000000_1.vtu velocity velocity 1e-10 1e-9
+    flow_fully_saturated_ts_2_t_2_000000_0.vtu flow_fully_saturated_ts_2_t_2_000000_0.vtu displacement displacement 1e-10 1e-9
+    flow_fully_saturated_ts_2_t_2_000000_1.vtu flow_fully_saturated_ts_2_t_2_000000_1.vtu displacement displacement 1e-10 1e-9
+    flow_fully_saturated_ts_2_t_2_000000_0.vtu flow_fully_saturated_ts_2_t_2_000000_0.vtu sigma sigma 1e-10 1e-9
+    flow_fully_saturated_ts_2_t_2_000000_1.vtu flow_fully_saturated_ts_2_t_2_000000_1.vtu sigma sigma 1e-10 1e-9
+    flow_fully_saturated_ts_2_t_2_000000_0.vtu flow_fully_saturated_ts_2_t_2_000000_0.vtu epsilon epsilon 1e-10 1e-9
+    flow_fully_saturated_ts_2_t_2_000000_1.vtu flow_fully_saturated_ts_2_t_2_000000_1.vtu epsilon epsilon 1e-10 1e-9
+)
+
+AddTest(
+    NAME ParallelFEM_ThermoRichardsMechanics_point_heat_injection
+    PATH ThermoRichardsMechanics/PointHeatSource
+    RUNTIME 45
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS point_heat_source_2D.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 3
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    PointHeatSource_ts_10_t_50000_000000_0.vtu PointHeatSource_ts_10_t_50000_000000_0.vtu displacement displacement 1e-10 1.0e-9
+    PointHeatSource_ts_10_t_50000_000000_0.vtu PointHeatSource_ts_10_t_50000_000000_0.vtu pressure pressure 1e-10 1.0e-6
+    PointHeatSource_ts_10_t_50000_000000_0.vtu PointHeatSource_ts_10_t_50000_000000_0.vtu temperature temperature 1e-10 1.0e-9
+    PointHeatSource_ts_10_t_50000_000000_0.vtu PointHeatSource_ts_10_t_50000_000000_0.vtu epsilon epsilon 1e-10 1.0e-9
+    PointHeatSource_ts_10_t_50000_000000_0.vtu PointHeatSource_ts_10_t_50000_000000_0.vtu sigma sigma 1e-10 1.0e-6
+#
+    PointHeatSource_ts_10_t_50000_000000_1.vtu PointHeatSource_ts_10_t_50000_000000_1.vtu displacement displacement 1e-10 1.0e-9
+    PointHeatSource_ts_10_t_50000_000000_1.vtu PointHeatSource_ts_10_t_50000_000000_1.vtu pressure pressure 1e-10 1.0e-6
+    PointHeatSource_ts_10_t_50000_000000_1.vtu PointHeatSource_ts_10_t_50000_000000_1.vtu temperature temperature 1e-10 1.0e-9
+    PointHeatSource_ts_10_t_50000_000000_1.vtu PointHeatSource_ts_10_t_50000_000000_1.vtu epsilon epsilon 1e-10 1.0e-9
+    PointHeatSource_ts_10_t_50000_000000_1.vtu PointHeatSource_ts_10_t_50000_000000_1.vtu sigma sigma 1e-10 1.0e-6
+#
+    PointHeatSource_ts_10_t_50000_000000_2.vtu PointHeatSource_ts_10_t_50000_000000_2.vtu displacement displacement 1e-10 1.0e-9
+    PointHeatSource_ts_10_t_50000_000000_2.vtu PointHeatSource_ts_10_t_50000_000000_2.vtu pressure pressure 1e-10 1.0e-6
+    PointHeatSource_ts_10_t_50000_000000_2.vtu PointHeatSource_ts_10_t_50000_000000_2.vtu temperature temperature 1e-10 1.0e-9
+    PointHeatSource_ts_10_t_50000_000000_2.vtu PointHeatSource_ts_10_t_50000_000000_2.vtu epsilon epsilon 1e-10 1.0e-9
+    PointHeatSource_ts_10_t_50000_000000_2.vtu PointHeatSource_ts_10_t_50000_000000_2.vtu sigma sigma 1e-10 1.0e-6
+)
+
+AddTest(
+    NAME ParallelFEM_ThermoRichardsMechanics_point_heat_injection_gml
+    PATH ThermoRichardsMechanics/PointHeatSource
+    RUNTIME 45
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS point_heat_source_2D_gml.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 3
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    PointHeatSource_gml_ts_10_t_50000_000000_0.vtu PointHeatSource_gml_ts_10_t_50000_000000_0.vtu displacement displacement 1e-10 1.0e-9
+    PointHeatSource_gml_ts_10_t_50000_000000_0.vtu PointHeatSource_gml_ts_10_t_50000_000000_0.vtu pressure pressure 1e-10 1.0e-6
+    PointHeatSource_gml_ts_10_t_50000_000000_0.vtu PointHeatSource_gml_ts_10_t_50000_000000_0.vtu temperature temperature 1e-10 1.0e-9
+    PointHeatSource_gml_ts_10_t_50000_000000_0.vtu PointHeatSource_gml_ts_10_t_50000_000000_0.vtu epsilon epsilon 1e-10 1.0e-9
+    PointHeatSource_gml_ts_10_t_50000_000000_0.vtu PointHeatSource_gml_ts_10_t_50000_000000_0.vtu sigma sigma 1e-10 1.0e-6
+#
+    PointHeatSource_gml_ts_10_t_50000_000000_1.vtu PointHeatSource_gml_ts_10_t_50000_000000_1.vtu displacement displacement 1e-10 1.0e-9
+    PointHeatSource_gml_ts_10_t_50000_000000_1.vtu PointHeatSource_gml_ts_10_t_50000_000000_1.vtu pressure pressure 1e-10 1.0e-6
+    PointHeatSource_gml_ts_10_t_50000_000000_1.vtu PointHeatSource_gml_ts_10_t_50000_000000_1.vtu temperature temperature 1e-10 1.0e-9
+    PointHeatSource_gml_ts_10_t_50000_000000_1.vtu PointHeatSource_gml_ts_10_t_50000_000000_1.vtu epsilon epsilon 1e-10 1.0e-9
+    PointHeatSource_gml_ts_10_t_50000_000000_1.vtu PointHeatSource_gml_ts_10_t_50000_000000_1.vtu sigma sigma 1e-10 1.0e-6
+#
+    PointHeatSource_gml_ts_10_t_50000_000000_2.vtu PointHeatSource_gml_ts_10_t_50000_000000_2.vtu displacement displacement 1e-10 1.0e-9
+    PointHeatSource_gml_ts_10_t_50000_000000_2.vtu PointHeatSource_gml_ts_10_t_50000_000000_2.vtu pressure pressure 1e-10 1.0e-6
+    PointHeatSource_gml_ts_10_t_50000_000000_2.vtu PointHeatSource_gml_ts_10_t_50000_000000_2.vtu temperature temperature 1e-10 1.0e-9
+    PointHeatSource_gml_ts_10_t_50000_000000_2.vtu PointHeatSource_gml_ts_10_t_50000_000000_2.vtu epsilon epsilon 1e-10 1.0e-9
+    PointHeatSource_gml_ts_10_t_50000_000000_2.vtu PointHeatSource_gml_ts_10_t_50000_000000_2.vtu sigma sigma 1e-10 1.0e-6
+)
