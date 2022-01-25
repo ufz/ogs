@@ -243,7 +243,10 @@ if(POETRY)
     list(REMOVE_DUPLICATES OGS_PYTHON_PACKAGES)
     list(SORT OGS_PYTHON_PACKAGES)
     string(SHA1 _ogs_python_packages_sha1 "${OGS_PYTHON_PACKAGES}")
-    if(NOT ${_ogs_python_packages_sha1} STREQUAL "${_OGS_PYTHON_PACKAGES_SHA1}")
+    list(LENGTH OGS_PYTHON_PACKAGES OGS_PYTHON_PACKAGES_LENGTH)
+    if(NOT ${_ogs_python_packages_sha1} STREQUAL "${_OGS_PYTHON_PACKAGES_SHA1}"
+       AND ${OGS_PYTHON_PACKAGES_LENGTH} GREATER 0
+    )
         execute_process(
             COMMAND ${CMD_COMMAND} poetry add ${OGS_PYTHON_PACKAGES}
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
