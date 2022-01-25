@@ -1,2 +1,6 @@
 [virtualenvs]
 in-project = true
+
+# https://github.com/python-poetry/poetry/issues/4210
+[experimental]
+new-installer = false
