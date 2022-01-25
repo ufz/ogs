@@ -125,7 +125,6 @@
         <processes>
             <process ref="RM">
                 <nonlinear_solver>nonlinear_solver</nonlinear_solver>
-                <compensate_non_equilibrium_initial_residuum>true</compensate_non_equilibrium_initial_residuum>
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
@@ -243,6 +242,8 @@
             <name>displacement</name>
             <components>2</components>
             <order>2</order>
+            <compensate_non_equilibrium_initial_residuum>
+                true</compensate_non_equilibrium_initial_residuum>
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
@@ -264,6 +265,8 @@
         <process_variable>
             <name>pressure</name>
             <components>1</components>
+            <compensate_non_equilibrium_initial_residuum>
+                true</compensate_non_equilibrium_initial_residuum>
             <order>1</order>
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
@@ -357,7 +360,7 @@
         <vtkdiff>
             <regex>orthotropic_swelling_xy_ts_.*.vtu</regex>
             <field>porosity</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

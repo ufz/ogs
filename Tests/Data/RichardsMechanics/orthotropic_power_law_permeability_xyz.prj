@@ -122,7 +122,6 @@
         <processes>
             <process ref="RM">
                 <nonlinear_solver>nonlinear_solver</nonlinear_solver>
-                <compensate_non_equilibrium_initial_residuum>true</compensate_non_equilibrium_initial_residuum>
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
@@ -257,6 +256,8 @@
             <name>displacement</name>
             <components>2</components>
             <order>2</order>
+            <compensate_non_equilibrium_initial_residuum>
+                true</compensate_non_equilibrium_initial_residuum>
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
@@ -293,6 +294,8 @@
             <name>pressure</name>
             <components>1</components>
             <order>1</order>
+            <compensate_non_equilibrium_initial_residuum>
+                true</compensate_non_equilibrium_initial_residuum>
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
