@@ -253,6 +253,12 @@ if(POETRY)
             set(_OGS_PYTHON_PACKAGES_SHA1 "${_ogs_python_packages_sha1}"
                 CACHE INTERNAL ""
             )
+        else()
+            message(
+                FATAL_ERROR
+                    "Installation of Python packages via poetry failed!\n"
+                    "To disable poetry set OGS_USE_POETRY=OFF."
+            )
         endif()
     endif()
 endif()
