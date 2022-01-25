@@ -253,10 +253,6 @@ int main(int argc, char* argv[])
             project_config.checkAndInvalidate();
             BaseLib::ConfigTree::assertNoSwallowedErrors();
 
-            BaseLib::ConfigTree::assertNoSwallowedErrors();
-
-            BaseLib::ConfigTree::assertNoSwallowedErrors();
-
             INFO("Solve processes.");
 
             auto& time_loop = project.getTimeLoop();
