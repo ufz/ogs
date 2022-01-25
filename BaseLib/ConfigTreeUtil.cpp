@@ -17,7 +17,6 @@
 
 #include <boost/property_tree/xml_parser.hpp>
 #include <filesystem>
-#include <iostream>
 #include <regex>
 
 #include "BaseLib/FileTools.h"
@@ -128,15 +127,13 @@ void replaceIncludes(std::stringstream& prj_stream,
     prj_stream.str("");  // Empty stream
     prj_stream << xmlbuff;
 
-    // print for debugging
-    // std::cout << prj_stream.str() << std::endl;
-
     xmlFree(xmlbuff);
     xmlFreeDoc(doc);
 }
 
 // Applies a patch file to the prj content in prj_stream.
-void patchStream(std::string patch_file, std::stringstream& prj_stream)
+void patchStream(std::string patch_file, std::stringstream& prj_stream,
+                 bool after_includes = false)
 {
     auto patch = xmlParseFile(patch_file.c_str());
     if (patch == NULL)
@@ -156,6 +153,28 @@ void patchStream(std::string patch_file, std::stringstream& prj_stream)
     for (node = node ? node->children : NULL; node; node = node->next)
     {
         if (node->type != XML_ELEMENT_NODE)
+        {
+            continue;
+        }
+        bool node_after_includes = false;
+        xmlAttr* attribute = node->properties;
+        while (attribute)
+        {
+            // Check for after_includes-attribute
+            xmlChar* value =
+                xmlNodeListGetString(node->doc, attribute->children, 1);
+            if (!strcmp(reinterpret_cast<const char*>(attribute->name),
+                        "after_includes") &&
+                !strcmp(reinterpret_cast<const char*>(value), "true"))
+            {
+                node_after_includes = true;
+            }
+
+            xmlFree(value);
+            attribute = attribute->next;
+        }
+
+        if (after_includes != node_after_includes)
         {
             continue;
         }
@@ -204,7 +223,7 @@ void patchStream(std::string patch_file, std::stringstream& prj_stream)
 // Will set prj_file to the actual .prj file and returns the final prj file
 // content in prj_stream.
 void readAndPatchPrj(std::stringstream& prj_stream, std::string& prj_file,
-                     std::vector<std::string> patch_files)
+                     std::vector<std::string>& patch_files)
 {
     // Extract base project file path if an xml (patch) file is given as prj
     // file and it contains the base_file attribute.
@@ -266,8 +285,19 @@ ConfigTree makeConfigTree(const std::string& filepath,
 {
     std::string prj_file = filepath;
     std::stringstream prj_stream;
-    readAndPatchPrj(prj_stream, prj_file, patch_files);
+
+    std::vector<std::string> patch_files_copy = patch_files;
+    readAndPatchPrj(prj_stream, prj_file, patch_files_copy);
     replaceIncludes(prj_stream, std::filesystem::path(prj_file).parent_path());
+    // re-apply xml patches to stream
+    if (!patch_files_copy.empty())
+    {
+        for (const auto& patch_file : patch_files_copy)
+        {
+            patchStream(patch_file, prj_stream, true);
+        }
+        xmlCleanupParser();
+    }
 
     ConfigTree::PTree ptree;
 
