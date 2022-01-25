@@ -353,7 +353,7 @@ AddTest(
 
     results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu xnCG xnCG 1e-8 1e-8
 
-    results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu xmCG xmCG 1e-8 1e-8
+    results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu xmCG xmCG 1.2e-8 1e-8
 
     results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu xmWL xmWL 1e-8 1e-8
 
@@ -366,6 +366,7 @@ AddTest(
 AddTest(
     NAME TH2M_TH_unsaturated_heatpipe_slab
     PATH TH2M/TH_unsaturated/heatpipe_slab_static_gas
+    RUNTIME 40
     EXECUTABLE ogs
     EXECUTABLE_ARGS heatpipe_slab_static_gas.prj
     WRAPPER time

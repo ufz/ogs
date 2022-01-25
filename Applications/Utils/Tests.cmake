@@ -15,6 +15,7 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Bode
     EXECUTABLE MapGeometryToMeshSurface
     EXECUTABLE_ARGS -m BodeComplex.msh -i BodeEZG_Fliessgewaesser.gml -a -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Bode/BodeEZG_Fliessgewaesser-Mapped.gml
+    RUNTIME 7
     TESTER gmldiff
     DIFF_DATA BodeEZG_Fliessgewaesser-Mapped.gml 1e-10 1e-10
 )
@@ -25,6 +26,7 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Naegelstedt
     EXECUTABLE MapGeometryToMeshSurface
     EXECUTABLE_ARGS -m SmallTest.vtu -i RiverNetwork.gml -a -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Naegelstedt/RiverNetwork-Mapped.gml
+    RUNTIME 7
     TESTER diff
     DIFF_DATA RiverNetwork-Mapped.gml
 )

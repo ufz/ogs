@@ -47,9 +47,9 @@ inline MathLib::Point3d operator*(MATRIX const& mat, MathLib::Point3d const& p)
 inline
 double sqrDist(MathLib::Point3d const& p0, MathLib::Point3d const& p1)
 {
-    return (Eigen::Map<Eigen::Vector3d>(const_cast<double*>(p0.getCoords())) -
-            Eigen::Map<Eigen::Vector3d>(const_cast<double*>(p1.getCoords())))
-        .squaredNorm();
+    return (p0[0] - p1[0]) * (p0[0] - p1[0]) +
+           (p0[1] - p1[1]) * (p0[1] - p1[1]) +
+           (p0[2] - p1[2]) * (p0[2] - p1[2]);
 }
 
 /// Computes the squared distance between the orthogonal projection of the two

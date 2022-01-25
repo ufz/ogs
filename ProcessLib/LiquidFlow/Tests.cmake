@@ -60,7 +60,7 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     standard_solution_buildup_test_ts_107_t_424800.000000.vtu buildup_test_ts_107_t_424800.000000.vtu pressure pressure 1.6e-5 0.0
-    standard_solution_buildup_test_ts_211_t_720000.000000.vtu buildup_test_ts_211_t_720000.000000.vtu pressure pressure 5e-5 0.0
+    standard_solution_buildup_test_ts_211_t_720000.000000.vtu buildup_test_ts_211_t_720000.000000.vtu pressure pressure 5.8e-5 0.0
 )
 
 AddTest(

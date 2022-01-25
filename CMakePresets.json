@@ -304,6 +304,13 @@
       }
     },
     {
+      "name": "debug",
+      "configurePreset": "debug",
+      "inherits": [
+        "release"
+      ]
+    },
+    {
       "name": "release-all-large",
       "configurePreset": "release-all",
       "inherits": [

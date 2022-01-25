@@ -350,7 +350,8 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
     auto const local_x = x[process_id]->get(indices);
 
     cache.clear();
-    auto cache_vec = MathLib::createZeroedVector<LocalVectorType>(
+    auto cache_vec = MathLib::createZeroedVector<
+        Eigen::Matrix<double, 1, Eigen::Dynamic, Eigen::RowMajor>>(
         cache, n_integration_points);
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
