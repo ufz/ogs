@@ -14,6 +14,7 @@
 #include <tuple>
 
 #include "AbstractJacobianAssembler.h"
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/ODESolver/ODESystem.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
@@ -114,6 +115,7 @@ public:
 
     void preAssemble(const double t, double const dt,
                      GlobalVector const& x) final;
+
     void assemble(const double t, double const dt,
                   std::vector<GlobalVector*> const& x,
                   std::vector<GlobalVector*> const& xdot, int const process_id,
@@ -306,6 +308,11 @@ protected:
      */
     virtual std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
     getDOFTableForExtrapolatorData() const;
+
+    /// \return The global indices for the entries of the global residuum
+    /// vector that do not need initial non-equilibrium compensation.
+    std::vector<GlobalIndexType>
+    getIndicesOfResiduumWithoutInitialCompensation() const override;
 
 private:
     void initializeExtrapolator();

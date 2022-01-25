@@ -48,6 +48,14 @@ public:
     virtual void preAssemble(const double t, double const dt,
                              GlobalVector const& x) = 0;
 
+    /// \return The global indices for the entries of the global residuum
+    /// vector that do not need initial non-equilibrium compensation.
+    virtual std::vector<GlobalIndexType>
+    getIndicesOfResiduumWithoutInitialCompensation() const
+    {
+        return {};
+    }
+
     //! Assemble \c M, \c K and \c b at the provided state (\c t, \c x).
     virtual void assemble(const double t, double const dt,
                           std::vector<GlobalVector*> const& x,
