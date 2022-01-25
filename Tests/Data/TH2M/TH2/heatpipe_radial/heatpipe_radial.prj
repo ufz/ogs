@@ -278,7 +278,6 @@
         <processes>
             <process ref="TH2M">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
-                <compensate_non_equilibrium_initial_residuum>false</compensate_non_equilibrium_initial_residuum>
 
                 <!-- <convergence_criterion>
                     <type>DeltaX</type>

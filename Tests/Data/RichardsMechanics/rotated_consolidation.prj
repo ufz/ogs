@@ -149,7 +149,6 @@
                     <norm_type>NORM2</norm_type>
                     <abstols>1e-8 1e-14 1e-14</abstols>
                 </convergence_criterion>
-                <compensate_non_equilibrium_initial_residuum>false</compensate_non_equilibrium_initial_residuum>
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>

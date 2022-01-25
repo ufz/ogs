@@ -149,7 +149,6 @@
                     <!--type>Residual</type>
                     <abstol>1e-8</abstol-->
                 </convergence_criterion>
-                <compensate_non_equilibrium_initial_residuum>false</compensate_non_equilibrium_initial_residuum>
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
