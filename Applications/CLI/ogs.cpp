@@ -33,7 +33,7 @@
 #include <vtkSmartPointer.h>
 #endif
 
-// BaseLib
+#include "Applications/ApplicationsLib/Simulation.h"
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/ProjectData.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
@@ -77,93 +77,6 @@ void setConsoleLogLevel(std::string const& log_level)
         });
 }
 
-class OGS final
-{
-public:
-    void initializeDataStructures(
-        std::string&& project, std::vector<std::string>&& xml_patch_file_names,
-        bool reference_path_is_set, std::string&& reference_path, bool nonfatal,
-        std::string&& outdir)
-    {
-        auto project_config = BaseLib::makeConfigTree(
-            project, !nonfatal, "OpenGeoSysProject", xml_patch_file_names);
-
-        BaseLib::setProjectDirectory(BaseLib::extractPath(project));
-
-        if (!reference_path_is_set)
-        {  // Ignore the test_definition section.
-            project_config.ignoreConfigParameter("test_definition");
-        }
-        else
-        {
-            test_definition = std::make_unique<ApplicationsLib::TestDefinition>(
-                //! \ogs_file_param{prj__test_definition}
-                project_config.getConfigSubtree("test_definition"),
-                reference_path, outdir);
-            if (test_definition->numberOfTests() == 0)
-            {
-                OGS_FATAL(
-                    "No tests were constructed from the test definitions, "
-                    "but reference solutions path was given.");
-            }
-
-            INFO("Cleanup possible output files before running ogs.");
-            BaseLib::removeFiles(test_definition->getOutputFiles());
-        }
-#ifdef USE_INSITU
-        auto isInsituConfigured = false;
-        //! \ogs_file_param{prj__insitu}
-        if (auto t = project_config.getConfigSubtreeOptional("insitu"))
-        {
-            InSituLib::Initialize(
-                //! \ogs_file_param{prj__insitu__scripts}
-                t->getConfigSubtree("scripts"),
-                BaseLib::extractPath(project_arg.getValue()));
-            isInsituConfigured = true;
-        }
-#else
-        project_config.ignoreConfigParameter("insitu");
-#endif
-
-        project_data = std::make_unique<ProjectData>(
-            project_config, BaseLib::getProjectDirectory(), outdir);
-
-        INFO("Initialize processes.");
-        for (auto& p : project_data->getProcesses())
-        {
-            p->initialize();
-        }
-
-        // Check intermediately that config parsing went fine.
-        checkAndInvalidate(project_config);
-        BaseLib::ConfigTree::assertNoSwallowedErrors();
-
-        auto& time_loop = project_data->getTimeLoop();
-        time_loop.initialize();
-    }
-
-    bool executeSimulation()
-    {
-        INFO("Solve processes.");
-        auto& time_loop = project_data->getTimeLoop();
-        return time_loop.loop();
-    }
-
-    ~OGS()
-    {
-#if defined(USE_PETSC)
-            controller->Finalize(1);
-#endif
-    }
-
-private:
-#if defined(USE_PETSC)
-    vtkSmartPointer<vtkMPIController> controller;
-#endif
-    std::unique_ptr<ProjectData> project_data;
-    std::unique_ptr<ApplicationsLib::TestDefinition> test_definition;
-};
-
 int main(int argc, char* argv[])
 {
     CommandLineArgumentParser cli_arg(argc, argv);
@@ -194,121 +107,18 @@ int main(int argc, char* argv[])
     std::unique_ptr<ApplicationsLib::TestDefinition> test_definition;
     auto ogs_status = EXIT_SUCCESS;
 
-#if defined(USE_PETSC)
-    vtkSmartPointer<vtkMPIController> controller;
-#endif
-    std::unique_ptr<ProjectData> project;
     try
     {
-        ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
-            argc, argv);
-#if defined(USE_PETSC)
-        controller = vtkSmartPointer<vtkMPIController>::New();
-        controller->Initialize(&argc, &argv, 1);
-        vtkMPIController::SetGlobalController(controller);
-
-        {  // Can be called only after MPI_INIT.
-            int mpi_rank;
-            MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
-            spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
-        }
-#endif
-
+        Simulation ogs(argc, argv);
         run_time.start();
+        ogs.initializeDataStructures(
+            std::move(cli_arg.project), std::move(cli_arg.xml_patch_file_names),
+            cli_arg.reference_path_is_set, std::move(cli_arg.reference_path),
+            cli_arg.nonfatal, std::move(cli_arg.outdir));
+        bool solver_succeeded = ogs.executeSimulation();
 
-        {
-            auto project_config = BaseLib::makeConfigTree(
-                cli_arg.project, !cli_arg.nonfatal, "OpenGeoSysProject",
-                cli_arg.xml_patch_file_names);
-
-            BaseLib::setProjectDirectory(BaseLib::extractPath(cli_arg.project));
-
-            if (!cli_arg.reference_path_is_set)
-            {  // Ignore the test_definition section.
-                project_config.ignoreConfigParameter("test_definition");
-            }
-            else
-            {
-                test_definition =
-                    std::make_unique<ApplicationsLib::TestDefinition>(
-                        //! \ogs_file_param{prj__test_definition}
-                        project_config.getConfigSubtree("test_definition"),
-                        cli_arg.reference_path, cli_arg.outdir);
-                if (test_definition->numberOfTests() == 0)
-                {
-                    OGS_FATAL(
-                        "No tests were constructed from the test definitions, "
-                        "but reference solutions path was given.");
-                }
-
-                INFO("Cleanup possible output files before running ogs.");
-                BaseLib::removeFiles(test_definition->getOutputFiles());
-            }
-#ifdef USE_INSITU
-            auto isInsituConfigured = false;
-            //! \ogs_file_param{prj__insitu}
-            if (auto t = project_config->getConfigSubtreeOptional("insitu"))
-            {
-                InSituLib::Initialize(
-                    //! \ogs_file_param{prj__insitu__scripts}
-                    t->getConfigSubtree("scripts"),
-                    BaseLib::extractPath(project_arg.getValue()));
-                isInsituConfigured = true;
-            }
-#else
-            project_config.ignoreConfigParameter("insitu");
-#endif
-
-            project =
-                std::make_unique<ProjectData>(project_config,
-                                              BaseLib::getProjectDirectory(),
-                                              cli_arg.outdir);
-
-            INFO("Initialize processes.");
-            for (auto& p : project->getProcesses())
-            {
-                p->initialize();
-            }
-
-            // Check intermediately that config parsing went fine.
-            checkAndInvalidate(project_config);
-            BaseLib::ConfigTree::assertNoSwallowedErrors();
-
-            auto& time_loop = project->getTimeLoop();
-            time_loop.initialize();
-        }
-
-        bool solver_succeeded = false;
-        {
-            INFO("Solve processes.");
-            auto& time_loop = project->getTimeLoop();
-            solver_succeeded = time_loop.loop();
-        }
-
-        {
-#ifdef USE_INSITU
-            if (isInsituConfigured)
-                InSituLib::Finalize();
-#endif
-            INFO("[time] Execution took {:g} s.", run_time.elapsed());
-
-#if defined(USE_PETSC)
-            controller->Finalize(1);
-#endif
-            // This nested scope ensures that everything that could possibly
-            // possess a ConfigTree is destructed before the final check below
-            // is done.
-
-            INFO("cleanup:  ProjectData ...");
-            auto* project_pointer = project.release();
-            delete project_pointer;
-            INFO("cleanup:  ProjectData done.");
-
-            //INFO("cleanup:  BaseLib::ConfigTree::assertNoSwallowedErrors()...");
-            //BaseLib::ConfigTree::assertNoSwallowedErrors();
-
-            ogs_status = solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
-        }
+        INFO("[time] Execution took {:g} s.", run_time.elapsed());
+        ogs_status = solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
     }
     catch (std::exception& e)
     {
