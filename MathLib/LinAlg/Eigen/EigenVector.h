@@ -78,6 +78,17 @@ public:
     /// add entry
     void add(IndexType rowId, double v) { vec_[rowId] += v; }
 
+    /// set entries
+    template <class T_SUBVEC>
+    void set(const std::vector<IndexType>& pos, const T_SUBVEC& sub_vec)
+    {
+        auto const length = pos.size();
+        for (std::size_t i = 0; i < length; ++i)
+        {
+            set(pos[i], sub_vec[i]);
+        }
+    }
+
     /// add entries
     template <class T_SUBVEC>
     void add(const std::vector<IndexType>& pos, const T_SUBVEC& sub_vec)
