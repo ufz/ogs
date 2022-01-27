@@ -17,6 +17,7 @@
 
 #include <boost/property_tree/xml_parser.hpp>
 #include <filesystem>
+#include <iostream>
 #include <regex>
 
 #include "BaseLib/FileTools.h"
@@ -25,70 +26,113 @@
 
 namespace BaseLib
 {
-// Adapted from
-// https://stackoverflow.com/questions/8154107/how-do-i-merge-update-a-boostproperty-treeptree/8175833
-template <typename T>
-void traverse_recursive(
-    boost::property_tree::ptree& parent,
-    boost::property_tree::ptree::path_type const& child_path,
-    boost::property_tree::ptree& child,
-    std::filesystem::path const& bench_dir,
-    T& method)
-{
-    using boost::property_tree::ptree;
 
-    method(parent, child_path, child, bench_dir);
-    for (auto& [key, tree] : child)
+auto read_file(std::string_view path) -> std::string
+{
+    constexpr auto read_size = std::size_t(4096);
+    auto stream = std::ifstream(path.data());
+    stream.exceptions(std::ios_base::badbit);
+
+    auto out = std::string();
+    auto buf = std::string(read_size, '\0');
+    while (stream.read(&buf[0], read_size))
     {
-        ptree::path_type const cur_path = child_path / ptree::path_type(key);
-        traverse_recursive(child, cur_path, tree, bench_dir, method);
+        out.append(buf, 0, stream.gcount());
     }
+    out.append(buf, 0, stream.gcount());
+    return out;
 }
 
-template <typename T>
-void traverse(boost::property_tree::ptree& parent,
-              const std::filesystem::path bench_dir, T& method)
+void traverseIncludes(xmlDoc* doc, xmlNode* node,
+                      std::filesystem::path const& prj_dir)
 {
-    traverse_recursive(parent, "", parent, bench_dir, method);
-}
-
-void replaceIncludes(
-    [[maybe_unused]] boost::property_tree::ptree const& parent,
-    [[maybe_unused]] boost::property_tree::ptree::path_type const& child_path,
-    boost::property_tree::ptree& child,
-    std::filesystem::path const& bench_dir)
-{
-    using boost::property_tree::ptree;
-    for (auto& [key, tree] : child)
+    xmlNode* cur_node = nullptr;
+    for (cur_node = node; cur_node; cur_node = cur_node->next)
     {
-        if (key == "include")
+        if (cur_node->type != XML_ELEMENT_NODE ||
+            cur_node->type == XML_TEXT_NODE)
         {
-            auto filename = tree.get<std::string>("<xmlattr>.file");
+            continue;
+        }
+        if (!strcmp(reinterpret_cast<const char*>(cur_node->name), "include"))
+        {
+            auto include_file = xmlGetProp(cur_node, xmlCharStrdup("file"));
+            if (include_file == NULL)
+            {
+                OGS_FATAL(
+                    "Error while processing includes in prj file. Error in "
+                    "element '{:s}' on line {:d}: no file attribute given!",
+                    cur_node->name, cur_node->line);
+            }
+            std::string filename(reinterpret_cast<char*>(include_file));
             if (auto const filepath = std::filesystem::path(filename);
                 filepath.is_relative())
             {
-                filename = (bench_dir / filepath).string();
+                filename = (prj_dir / filepath).string();
+            }
+
+            if (!std::filesystem::exists(filename))
+            {
+                OGS_FATAL(
+                    "Error while processing includes in prj file. Error in "
+                    "element '{:s}' on line {:d}: Include file is not "
+                    "existing: "
+                    "{:s}!",
+                    cur_node->name, cur_node->line, include_file);
             }
             INFO("Including {:s} into project file.", filename);
 
-            ptree include_tree;
-            read_xml(filename, include_tree,
-                     boost::property_tree::xml_parser::no_comments |
-                         boost::property_tree::xml_parser::trim_whitespace);
+            std::string xml = read_file(filename);
+            xmlNodePtr pNewNode = nullptr;
+            xmlParseInNodeContext(cur_node->parent, xml.c_str(),
+                                  (int)xml.length(), 0, &pNewNode);
+            if (pNewNode != nullptr)
+            {
+                // add new xml node to parent
+                xmlNode* pChild = pNewNode;
+                while (pChild != nullptr)
+                {
+                    xmlAddChild(cur_node->parent, xmlCopyNode(pChild, 1));
+                    pChild = pChild->next;
+                }
+                xmlFreeNode(pNewNode);
+            }
 
-            // Can only insert subtree at child
-            auto& tmp_tree = child.put_child("include", include_tree);
-
-            // Move subtree above child
-            std::move(tmp_tree.begin(), tmp_tree.end(), back_inserter(child));
-
-            // Erase child
-            child.erase("include");
-
-            // There can only be one include under a parent element!
-            break;
+            // Cleanup and continue on next node
+            auto next_node = cur_node->next;
+            xmlUnlinkNode(cur_node);
+            xmlFreeNode(cur_node);
+            cur_node = next_node;
         }
+        traverseIncludes(doc, cur_node->children, prj_dir);
     }
+    xmlFreeNode(cur_node);
+}
+
+void replaceIncludes(std::stringstream& prj_stream,
+                     std::filesystem::path const& prj_dir)
+{
+    auto doc =
+        xmlParseMemory(prj_stream.str().c_str(), prj_stream.str().size());
+    if (doc == NULL)
+    {
+        OGS_FATAL("Error reading project file from memory.");
+    }
+
+    auto root_node = xmlDocGetRootElement(doc);
+    traverseIncludes(doc, root_node, prj_dir);
+
+    xmlChar* xmlbuff;
+    int buffersize;
+    xmlDocDumpMemory(doc, &xmlbuff, &buffersize);
+    prj_stream.str("");  // Empty stream
+    prj_stream << xmlbuff;
+
+    // print for debugging
+    // std::cout << prj_stream.str() << std::endl;
+
+    xmlFree(xmlbuff);
+    xmlFreeDoc(doc);
 }
 
 // Applies a patch file to the prj content in prj_stream.
@@ -223,6 +267,7 @@ ConfigTree makeConfigTree(const std::string& filepath,
     std::string prj_file = filepath;
     std::stringstream prj_stream;
     readAndPatchPrj(prj_stream, prj_file, patch_files);
+    replaceIncludes(prj_stream, std::filesystem::path(prj_file).parent_path());
 
     ConfigTree::PTree ptree;
 
@@ -233,12 +278,6 @@ ConfigTree makeConfigTree(const std::string& filepath,
         read_xml(prj_stream, ptree,
                  boost::property_tree::xml_parser::no_comments |
                      boost::property_tree::xml_parser::trim_whitespace);
-
-        if (toplevel_tag == "OpenGeoSysProject")
-        {
-            traverse(ptree, std::filesystem::path(prj_file).parent_path(),
-                     replaceIncludes);
-        }
     }
     catch (boost::property_tree::xml_parser_error const& e)
     {
