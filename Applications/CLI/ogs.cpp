@@ -16,6 +16,8 @@
 #include <chrono>
 #include <sstream>
 
+#include "CommandLineArgumentParser.h"
+
 #ifndef _WIN32
 #ifdef __APPLE__
 #ifdef __SSE__
@@ -52,19 +54,20 @@
 
 #ifndef _WIN32  // On windows this command line option is not present.
 void enableFloatingPointExceptions()
-    {
+{
 #ifdef __APPLE__
 #ifdef __SSE__
-        _MM_SET_EXCEPTION_MASK(_MM_GET_EXCEPTION_MASK() & ~_MM_MASK_INVALID);
+    _MM_SET_EXCEPTION_MASK(_MM_GET_EXCEPTION_MASK() & ~_MM_MASK_INVALID);
 #endif  // __SSE__
 #else
-        feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
+    feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
 #endif  // __APPLE__
-    }
+}
 #endif  // _WIN32
-void setConsoleLogLevel(TCLAP::ValueArg<std::string> const& log_level_arg)
+
+void setConsoleLogLevel(std::string const& log_level)
 {
-    BaseLib::setConsoleLogLevel(log_level_arg.getValue());
+    BaseLib::setConsoleLogLevel(log_level);
     spdlog::set_pattern("%^%l:%$ %v");
     spdlog::set_error_handler(
         [](const std::string& msg)
@@ -74,121 +77,103 @@ void setConsoleLogLevel(TCLAP::ValueArg<std::string> const& log_level_arg)
         });
 }
 
-struct CommandLineArguments final
+class OGS final
 {
-    CommandLineArguments(int argc, char* argv[])
+public:
+    void initializeDataStructures(
+        std::string&& project, std::vector<std::string>&& xml_patch_file_names,
+        bool reference_path_is_set, std::string&& reference_path, bool nonfatal,
+        std::string&& outdir)
     {
-        // Parse CLI arguments.
-        TCLAP::CmdLine cmd(
-            "OpenGeoSys-6 software.\n"
-            "Copyright (c) 2012-2022, OpenGeoSys Community "
-            "(http://www.opengeosys.org) "
-            "Distributed under a Modified BSD License. "
-            "See accompanying file LICENSE.txt or "
-            "http://www.opengeosys.org/project/license\n"
-            "version: " +
-                GitInfoLib::GitInfo::ogs_version + "\n" +
-                "CMake arguments: " + CMakeInfoLib::CMakeInfo::cmake_args,
-            ' ',
-            GitInfoLib::GitInfo::ogs_version + "\n\n" +
-                "CMake arguments: " + CMakeInfoLib::CMakeInfo::cmake_args);
+        auto project_config = BaseLib::makeConfigTree(
+            project, !nonfatal, "OpenGeoSysProject", xml_patch_file_names);
 
-        TCLAP::ValueArg<std::string> log_level_arg(
-            "l", "log-level",
-            "the verbosity of logging messages: none, error, warn, info, "
-            "debug, "
-            "all",
-            false,
-#ifdef NDEBUG
-            "info",
+        BaseLib::setProjectDirectory(BaseLib::extractPath(project));
+
+        if (!reference_path_is_set)
+        {  // Ignore the test_definition section.
+            project_config.ignoreConfigParameter("test_definition");
+        }
+        else
+        {
+            test_definition = std::make_unique<ApplicationsLib::TestDefinition>(
+                //! \ogs_file_param{prj__test_definition}
+                project_config.getConfigSubtree("test_definition"),
+                reference_path, outdir);
+            if (test_definition->numberOfTests() == 0)
+            {
+                OGS_FATAL(
+                    "No tests were constructed from the test definitions, "
+                    "but reference solutions path was given.");
+            }
+
+            INFO("Cleanup possible output files before running ogs.");
+            BaseLib::removeFiles(test_definition->getOutputFiles());
+        }
+#ifdef USE_INSITU
+        auto isInsituConfigured = false;
+        //! \ogs_file_param{prj__insitu}
+        if (auto t = project_config.getConfigSubtreeOptional("insitu"))
+        {
+            InSituLib::Initialize(
+                //! \ogs_file_param{prj__insitu__scripts}
+                t->getConfigSubtree("scripts"),
+                BaseLib::extractPath(project_arg.getValue()));
+            isInsituConfigured = true;
+        }
 #else
-            "all",
+        project_config.ignoreConfigParameter("insitu");
 #endif
-            "LOG_LEVEL");
 
-#ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
-                // currently
-        TCLAP::SwitchArg enable_fpe_arg("", "enable-fpe",
-                                        "enables floating point exceptions");
-#endif  // _WIN32
-        TCLAP::SwitchArg unbuffered_cout_arg("", "unbuffered-std-out",
-                                             "use unbuffered standard output");
+        project_data = std::make_unique<ProjectData>(
+            project_config, BaseLib::getProjectDirectory(), outdir);
 
-        TCLAP::ValueArg<std::string> reference_path_arg(
-            "r", "reference",
-            "Run output result comparison after successful simulation "
-            "comparing to all files in the given path. This requires test "
-            "definitions to be present in the project file.",
-            false, "", "PATH");
-
-        TCLAP::UnlabeledValueArg<std::string> project_arg(
-            "project-file",
-            "Path to the ogs6 project file.",
-            true,
-            "",
-            "PROJECT_FILE");
-
-        TCLAP::MultiArg<std::string> xml_patch_files_arg(
-            "p", "xml-patch",
-            "the xml patch file(s) which is (are) applied (in the given order) "
-            "to the PROJECT_FILE",
-            false, "");
-
-        TCLAP::ValueArg<std::string> outdir_arg(
-            "o", "output-directory", "the output directory to write to", false,
-            "", "PATH");
-
-        TCLAP::SwitchArg nonfatal_arg("",
-                                      "config-warnings-nonfatal",
-                                      "warnings from parsing the configuration "
-                                      "file will not trigger program abortion");
-        cmd.add(reference_path_arg);
-        cmd.add(project_arg);
-        cmd.add(xml_patch_files_arg);
-        cmd.add(outdir_arg);
-        cmd.add(log_level_arg);
-        cmd.add(nonfatal_arg);
-        cmd.add(unbuffered_cout_arg);
-#ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
-                // currently
-        cmd.add(enable_fpe_arg);
-#endif  // _WIN32
-
-        cmd.parse(argc, argv);
-
-        reference_path = reference_path_arg.getValue();
-        reference_path_is_set = reference_path_arg.isSet();
-        project = project_arg.getValue();
-        xml_patch_file_names = xml_patch_files_arg.getValue();
-        outdir = outdir_arg.getValue();
-        nonfatal = nonfatal_arg.getValue();
-
-        // deactivate buffer for standard output if specified
-        if (unbuffered_cout_arg.isSet())
+        INFO("Initialize processes.");
+        for (auto& p : project_data->getProcesses())
         {
-            std::cout.setf(std::ios::unitbuf);
+            p->initialize();
         }
 
-        setConsoleLogLevel(log_level_arg);
-#ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
-        if (enable_fpe_arg.isSet())
-        {
-            enableFloatingPointExceptions();
-        }
-#endif  // _WIN32
+        // Check intermediately that config parsing went fine.
+        checkAndInvalidate(project_config);
+        BaseLib::ConfigTree::assertNoSwallowedErrors();
+
+        auto& time_loop = project_data->getTimeLoop();
+        time_loop.initialize();
     }
 
-    std::string reference_path;
-    std::string project;
-    std::vector<std::string> xml_patch_file_names;
-    std::string outdir;
-    bool nonfatal;
-    bool reference_path_is_set;
+    bool executeSimulation()
+    {
+        INFO("Solve processes.");
+        auto& time_loop = project_data->getTimeLoop();
+        return time_loop.loop();
+    }
+
+    ~OGS()
+    {
+#if defined(USE_PETSC)
+            controller->Finalize(1);
+#endif
+    }
+
+private:
+#if defined(USE_PETSC)
+    vtkSmartPointer<vtkMPIController> controller;
+#endif
+    std::unique_ptr<ProjectData> project_data;
+    std::unique_ptr<ApplicationsLib::TestDefinition> test_definition;
 };
 
 int main(int argc, char* argv[])
 {
-    CommandLineArguments cli_arg(argc, argv);
+    CommandLineArgumentParser cli_arg(argc, argv);
+    setConsoleLogLevel(cli_arg.log_level);
+#ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
+    if (cli_arg.enable_fpe_is_set)
+    {
+        enableFloatingPointExceptions();
+    }
+#endif  // _WIN32
 
     INFO("This is OpenGeoSys-6 version {:s}.",
          GitInfoLib::GitInfo::ogs_version);
