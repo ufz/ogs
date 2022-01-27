@@ -208,8 +208,6 @@
             <name>temperature</name>
             <components>1</components>
             <order>1</order>
-            <compensate_non_equilibrium_initial_residuum>
-                true</compensate_non_equilibrium_initial_residuum>
             <initial_condition>temperature_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
