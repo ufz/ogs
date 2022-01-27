@@ -102,9 +102,29 @@ In this case you have just one patch file.
 
 ---
 
-Both methods, include and patch, can be combined.
+<div class='note'>
 
----
+### Combination of include and patch method
+
+When both methods are combined the logical order is the following:
+
+1. Apply patches
+2. Insert includes
+3. Apply patches marked with `after_includes="true"`-attribute only.
+
+Example:
+
+```xml
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="cube_1e0.prj">
+    <!-- The first line is run before the includes: -->
+    <replace sel="/*/mesh/text()">cube_1x1x1_hex_1e1.vtu</replace>
+    <!-- The following is evaluated after the includes are run: -->
+    <replace sel="/*/time_loop/output/prefix/text()" after_includes="true">cube_1e1</replace>
+</OpenGeoSysProjectDiff>
+```
+
+</div>
 
 ## Check project file syntax with `xmllint`
 
