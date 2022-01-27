@@ -76,6 +76,7 @@ build linux debug with sanitizers:
   extends:
     - .template-build-linux
     - .test-artifacts
+    - .rules-master-manual
   tags: [envinf2-shell]
   needs: [meta]
   variables:
