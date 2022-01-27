@@ -90,10 +90,10 @@ private:
     bool _warning = false;
 };
 
-BaseLib::ConfigTree makeConfigTree(boost::property_tree::ptree const& ptree,
+BaseLib::ConfigTree makeConfigTree(boost::property_tree::ptree&& ptree,
                                    Callbacks& cbs)
 {
-    return BaseLib::ConfigTree(ptree, "FILENAME", cbs.get_error_cb(),
+    return BaseLib::ConfigTree(std::move(ptree), "FILENAME", cbs.get_error_cb(),
                                cbs.get_warning_cb());
 }
 
@@ -103,7 +103,7 @@ TEST(BaseLibConfigTree, Empty)
     Callbacks cbs;
 
     {
-        auto const conf = makeConfigTree(ptree, cbs);
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
         (void)conf;
     }  // ConfigTree destroyed here
 
@@ -131,11 +131,11 @@ TEST(BaseLibConfigTree, Get)
         "<vector>0 1 2 3 4</vector>"
         "<vector_bad1>x 1 2a</vector_bad1>"
         "<vector_bad2>0 1 2a</vector_bad2>";
-    auto const ptree = Tests::readXml(xml);
+    auto ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
-        auto const conf = makeConfigTree(ptree, cbs);
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
 
         EXPECT_EQ(5.6e-4, conf.getConfigParameter<double>(
                               "double"));  // read certain types
@@ -277,11 +277,11 @@ TEST(BaseLibConfigTree, IncompleteParse)
         "<tag>this data won't be read</tag>"
         "<pt x=\"0.5\">1</pt>"
         "<pt2 x=\"0.5\" y=\"1.0\" z=\"2.0\" />";
-    auto const ptree = Tests::readXml(xml);
+    auto ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
-        auto const conf = makeConfigTree(ptree, cbs);
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
 
         EXPECT_EQ(5.6, conf.getConfigParameter<double>("double"));
         EXPECT_ERR_WARN(cbs, false, false);
@@ -318,11 +318,11 @@ TEST(BaseLibConfigTree, CheckRange)
         "<int>0</int>"
         "<int>1</int>"
         "<int>2</int>";
-    auto const ptree = Tests::readXml(xml);
+    auto ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
-        auto const conf = makeConfigTree(ptree, cbs);
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
 
         {
             // check that std::distance can be computed twice in a row
@@ -356,11 +356,11 @@ TEST(BaseLibConfigTree, GetSubtreeList)
         "<val><int>0</int></val>"
         "<val><int>1</int></val>"
         "<val><int>2</int></val>";
-    auto const ptree = Tests::readXml(xml);
+    auto ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
-        auto const conf = makeConfigTree(ptree, cbs);
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
 
         auto const expected_empty_list =
             conf.getConfigParameterList("nonexistent_list");
@@ -387,11 +387,11 @@ TEST(BaseLibConfigTree, GetParamList)
         "<int>2</int>"
         "<int2 a=\"b\">3</int2>"
         "<int3>4<error/></int3>";
-    auto const ptree = Tests::readXml(xml);
+    auto ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
-        auto const conf = makeConfigTree(ptree, cbs);
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
 
         auto const expected_empty_list =
             conf.getConfigParameterList("nonexistent_list");
@@ -436,11 +436,11 @@ TEST(BaseLibConfigTree, GetValueList)
         "<int>0</int>"
         "<int>1</int>"
         "<int>2</int>";
-    auto const ptree = Tests::readXml(xml);
+    auto ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
-        auto const conf = makeConfigTree(ptree, cbs);
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
 
         auto const expected_empty_list =
             conf.getConfigParameterList<int>("nonexistent_list");
@@ -468,11 +468,11 @@ TEST(BaseLibConfigTree, NoConversion)
         "<bool>true</bool>"
         "<ign/>"
         "<ign2/><ign2/><ign2/>";
-    auto const ptree = Tests::readXml(xml);
+    auto ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
-        auto const conf = makeConfigTree(ptree, cbs);
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
 
         EXPECT_ANY_THROW(conf.getConfigParameter<int>("int"));
         EXPECT_ERR_WARN(cbs, true, false);
@@ -519,11 +519,11 @@ TEST(BaseLibConfigTree, NoConversion)
 TEST(BaseLibConfigTree, BadKeynames)
 {
     const char xml[] = "";
-    auto const ptree = Tests::readXml(xml);
+    auto ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
-        auto const conf = makeConfigTree(ptree, cbs);
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
 
         for (auto tag : {"<", "Z", ".", "$", "0", "", "/", "_", "a__"})
         {
@@ -563,11 +563,11 @@ TEST(BaseLibConfigTree, StringLiterals)
     const char xml[] =
         "<s>test</s>"
         "<t>Test</t>";
-    auto const ptree = Tests::readXml(xml);
+    auto ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
-        auto const conf = makeConfigTree(ptree, cbs);
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
 
         EXPECT_EQ("test", conf.getConfigParameter<std::string>("s", "XX"));
         EXPECT_ERR_WARN(cbs, false, false);
@@ -589,11 +589,11 @@ TEST(BaseLibConfigTree, MoveConstruct)
         "<s>test</s>"
         "<t>Test</t>"
         "<u>data</u>";
-    auto const ptree = Tests::readXml(xml);
+    auto ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
-        auto conf = makeConfigTree(ptree, cbs);
+        auto conf = makeConfigTree(std::move(ptree), cbs);
 
         EXPECT_EQ("test", conf.getConfigParameter<std::string>("s", "XX"));
         EXPECT_ERR_WARN(cbs, false, false);
@@ -637,7 +637,7 @@ TEST(BaseLibConfigTree, MoveAssign)
 
     Callbacks cbs;
     {
-        auto conf = makeConfigTree(ptree, cbs);
+        auto conf = makeConfigTree(boost::property_tree::ptree(ptree), cbs);
 
         EXPECT_EQ("test", conf.getConfigParameter<std::string>("s", "XX"));
         EXPECT_ERR_WARN(cbs, false, false);
@@ -650,7 +650,7 @@ TEST(BaseLibConfigTree, MoveAssign)
 
         // test that read status of data is transferred in move assignment
         {
-            auto u2 = makeConfigTree(ptree, cbs);
+            auto u2 = makeConfigTree(boost::property_tree::ptree(ptree), cbs);
             u2 = std::move(u);
             // Expect warning because u2 has not been traversed
             // entirely before assignment.
@@ -660,7 +660,8 @@ TEST(BaseLibConfigTree, MoveAssign)
 
         // test that read status of children is transferred in move construction
         {
-            auto conf2 = makeConfigTree(ptree, cbs);
+            auto conf2 =
+                makeConfigTree(boost::property_tree::ptree(ptree), cbs);
             conf2 = std::move(conf);
             // Expect warning because conf2 has not been traversed
             // entirely before assignment.
@@ -674,5 +675,36 @@ TEST(BaseLibConfigTree, MoveAssign)
         }
         EXPECT_ERR_WARN(cbs, false, false);
     }  // ConfigTree destroyed here
+    EXPECT_ERR_WARN(cbs, false, false);
+}
+
+TEST(BaseLibConfigTree, ChildLivesOnIfParentDies)
+{
+    const char xml[] =
+        "<s>test</s>"
+        "<t>Test</t>"
+        "<u>data</u>";
+    auto ptree = Tests::readXml(xml);
+
+    Callbacks cbs;
+
+    {
+        std::optional<BaseLib::ConfigTree> opt_child;
+
+        {
+            auto const parent = makeConfigTree(std::move(ptree), cbs);
+            opt_child = parent.getConfigSubtree("s");
+
+            // do something with parent after subtree access
+            EXPECT_EQ("Test", parent.getConfigParameter<std::string>("t"));
+        }  // parent goes out of scope
+
+        EXPECT_ERR_WARN(cbs, false,
+                        true);  // warning because <u> has not been read.
+
+        // do something with the child
+        EXPECT_EQ("test", opt_child->getValue<std::string>());
+    }
+
     EXPECT_ERR_WARN(cbs, false, false);
 }

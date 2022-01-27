@@ -202,20 +202,20 @@ int main(int argc, char* argv[])
             BaseLib::setProjectDirectory(
                 BaseLib::extractPath(project_arg.getValue()));
 
-            ProjectData project(*project_config,
+            ProjectData project(project_config,
                                 BaseLib::getProjectDirectory(),
                                 outdir_arg.getValue());
 
             if (!reference_path_arg.isSet())
             {  // Ignore the test_definition section.
-                project_config->ignoreConfigParameter("test_definition");
+                project_config.ignoreConfigParameter("test_definition");
             }
             else
             {
                 test_definition =
                     std::make_unique<ApplicationsLib::TestDefinition>(
                         //! \ogs_file_param{prj__test_definition}
-                        project_config->getConfigSubtree("test_definition"),
+                        project_config.getConfigSubtree("test_definition"),
                         reference_path_arg.getValue(),
                         outdir_arg.getValue());
                 if (test_definition->numberOfTests() == 0)
@@ -240,7 +240,7 @@ int main(int argc, char* argv[])
                 isInsituConfigured = true;
             }
 #else
-            project_config->ignoreConfigParameter("insitu");
+            project_config.ignoreConfigParameter("insitu");
 #endif
 
             INFO("Initialize processes.");
@@ -250,11 +250,7 @@ int main(int argc, char* argv[])
             }
 
             // Check intermediately that config parsing went fine.
-            project_config.checkAndInvalidate();
-            BaseLib::ConfigTree::assertNoSwallowedErrors();
-
-            BaseLib::ConfigTree::assertNoSwallowedErrors();
-
+            checkAndInvalidate(project_config);
             BaseLib::ConfigTree::assertNoSwallowedErrors();
 
             INFO("Solve processes.");

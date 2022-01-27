@@ -25,30 +25,6 @@
 
 namespace BaseLib
 {
-ConfigTreeTopLevel::ConfigTreeTopLevel(const std::string& filepath,
-                                       const bool be_ruthless,
-                                       ConfigTree::PTree&& ptree)
-    : ptree_(std::move(ptree)),
-      ctree_(ptree_, filepath, ConfigTree::onerror,
-             be_ruthless ? ConfigTree::onerror : ConfigTree::onwarning)
-{
-}
-
-ConfigTree const& ConfigTreeTopLevel::operator*() const
-{
-    return ctree_;
-}
-
-ConfigTree const* ConfigTreeTopLevel::operator->() const
-{
-    return &ctree_;
-}
-
-void ConfigTreeTopLevel::checkAndInvalidate()
-{
-    ::BaseLib::checkAndInvalidate(ctree_);
-}
-
 // Adapted from
 // https://stackoverflow.com/questions/8154107/how-do-i-merge-update-a-boostproperty-treeptree/8175833
 template <typename T>
@@ -239,10 +215,10 @@ void readAndPatchPrj(std::stringstream& prj_stream, std::string& prj_file,
     }
 }
 
-ConfigTreeTopLevel makeConfigTree(const std::string& filepath,
-                                  const bool be_ruthless,
-                                  const std::string& toplevel_tag,
-                                  const std::vector<std::string>& patch_files)
+ConfigTree makeConfigTree(const std::string& filepath,
+                          const bool be_ruthless,
+                          const std::string& toplevel_tag,
+                          const std::vector<std::string>& patch_files)
 {
     std::string prj_file = filepath;
     std::stringstream prj_stream;
@@ -272,9 +248,12 @@ ConfigTreeTopLevel makeConfigTree(const std::string& filepath,
 
     DBUG("Project configuration from file '{:s}' read.", filepath);
 
-    if (auto child = ptree.get_child_optional(toplevel_tag))
+    if (auto opt_child = ptree.get_child_optional(toplevel_tag))
     {
-        return ConfigTreeTopLevel(filepath, be_ruthless, std::move(*child));
+        auto const callback =
+            be_ruthless ? ConfigTree::onerror : ConfigTree::onwarning;
+
+        return ConfigTree(std::move(*opt_child), filepath, callback, callback);
     }
     OGS_FATAL("Tag <{:s}> has not been found in file `{:s}'.", toplevel_tag,
               filepath);

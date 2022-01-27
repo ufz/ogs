@@ -31,11 +31,12 @@ const char ConfigTree::pathseparator = '/';
 const std::string ConfigTree::key_chars_start = "abcdefghijklmnopqrstuvwxyz";
 const std::string ConfigTree::key_chars = key_chars_start + "_0123456789";
 
-ConfigTree::ConfigTree(PTree const& tree,
+ConfigTree::ConfigTree(ConfigTree::PTree&& top_level_tree,
                        std::string filename,
                        Callback error_cb,
                        Callback warning_cb)
-    : tree_(&tree),
+    : top_level_tree_(std::make_shared<PTree>(std::move(top_level_tree))),
+      tree_(top_level_tree_.get()),
       filename_(std::move(filename)),
       onerror_(std::move(error_cb)),
       onwarning_(std::move(warning_cb))
@@ -52,7 +53,8 @@ ConfigTree::ConfigTree(PTree const& tree,
 
 ConfigTree::ConfigTree(PTree const& tree, ConfigTree const& parent,
                        std::string const& root)
-    : tree_(&tree),
+    : top_level_tree_(parent.top_level_tree_),
+      tree_(&tree),
       path_(joinPaths(parent.path_, root)),
       filename_(parent.filename_),
       onerror_(parent.onerror_),
@@ -62,7 +64,8 @@ ConfigTree::ConfigTree(PTree const& tree, ConfigTree const& parent,
 }
 
 ConfigTree::ConfigTree(ConfigTree&& other)
-    : tree_(other.tree_),
+    : top_level_tree_(std::move(other.top_level_tree_)),
+      tree_(other.tree_),
       path_(std::move(other.path_)),
       filename_(std::move(other.filename_)),
       visited_params_(std::move(other.visited_params_)),
@@ -98,6 +101,7 @@ ConfigTree& ConfigTree::operator=(ConfigTree&& other)
 {
     checkAndInvalidate();
 
+    top_level_tree_ = std::move(other.top_level_tree_);
     tree_ = other.tree_;
     other.tree_ = nullptr;
     path_ = std::move(other.path_);

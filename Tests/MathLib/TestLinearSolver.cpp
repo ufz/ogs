@@ -305,7 +305,8 @@ TEST(Math, CheckInterface_Eigen)
     t_solver.put("error_tolerance", 1e-15);
     t_solver.put("max_iteration_step", 1000);
     t_root.put_child("eigen", t_solver);
-    BaseLib::ConfigTree conf(t_root, "", BaseLib::ConfigTree::onerror,
+    BaseLib::ConfigTree conf(std::move(t_root), "",
+                             BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
 
     using IntType = MathLib::EigenMatrix::IndexType;
@@ -322,7 +323,8 @@ TEST(Math, CheckInterface_EigenLis)
     // set solver options using Boost property tree
     boost::property_tree::ptree t_root;
     t_root.put("lis", "-i cg -p none -tol 1e-15 -maxiter 1000");
-    BaseLib::ConfigTree conf(t_root, "", BaseLib::ConfigTree::onerror,
+    BaseLib::ConfigTree conf(std::move(t_root), "",
+                             BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
 
     using IntType = MathLib::EigenMatrix::IndexType;
@@ -362,7 +364,8 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_basic)
     checkLinearSolverInterface<MathLib::PETScMatrix, MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
         A, b, "",
-        BaseLib::ConfigTree(petsc_solver, "", BaseLib::ConfigTree::onerror,
+        BaseLib::ConfigTree(std::move(petsc_solver), "",
+                            BaseLib::ConfigTree::onerror,
                             BaseLib::ConfigTree::onwarning));
 }
 
@@ -393,7 +396,8 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
     checkLinearSolverInterface<MathLib::PETScMatrix, MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
         A, b, "",
-        BaseLib::ConfigTree(petsc_solver, "", BaseLib::ConfigTree::onerror,
+        BaseLib::ConfigTree(std::move(petsc_solver), "",
+                            BaseLib::ConfigTree::onerror,
                             BaseLib::ConfigTree::onwarning));
 }
 
@@ -427,7 +431,8 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
     checkLinearSolverInterface<MathLib::PETScMatrix, MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
         A, b, "",
-        BaseLib::ConfigTree(petsc_solver, "", BaseLib::ConfigTree::onerror,
+        BaseLib::ConfigTree(std::move(petsc_solver), "",
+                            BaseLib::ConfigTree::onerror,
                             BaseLib::ConfigTree::onwarning));
 }
 

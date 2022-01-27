@@ -125,7 +125,8 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
         t_root.put_child("eigen", t_solver);
     }
     t_root.put("lis", "-i cg -p none -tol 1e-16 -maxiter 1000");
-    BaseLib::ConfigTree conf(t_root, "", BaseLib::ConfigTree::onerror,
+    BaseLib::ConfigTree conf(std::move(t_root), "",
+                             BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
 
     auto const linear_solver_parser =
