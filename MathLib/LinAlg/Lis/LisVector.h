@@ -89,13 +89,23 @@ public:
     /// return a raw Lis vector object
     LIS_VECTOR& getRawVector() { return vec_; }
 
-    ///
+    /// set entries
+    template <class T_SUBVEC>
+    void set(const std::vector<IndexType>& pos, const T_SUBVEC& sub_vec)
+    {
+        for (std::size_t i = 0; i < pos.size(); ++i)
+        {
+            set(pos[i], sub_vec[i]);
+        }
+    }
+
+    /// add entries
     template <class T_SUBVEC>
     void add(const std::vector<IndexType>& pos, const T_SUBVEC& sub_vec)
     {
         for (std::size_t i = 0; i < pos.size(); ++i)
         {
-            this->add(pos[i], sub_vec[i]);
+            add(pos[i], sub_vec[i]);
         }
     }
 
