@@ -38,15 +38,7 @@
                 </time_stepping>
             </process>
         </processes>
-        <output>
-            <type>VTK</type>
-            <prefix>cube_1e0</prefix>
-            <variables>
-                <variable> pressure </variable>
-                <variable> v      </variable>
-            </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
-        </output>
+        <include file="cube_output.xml" />
     </time_loop>
     <parameters>
         <parameter>
