@@ -21,67 +21,23 @@
 #include "ProcessLib/Output/CreateOutput.h"
 namespace
 {
-void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
-                       NumLib::EquationSystem& eq_sys,
-                       NumLib::ConvergenceCriterion& conv_crit,
-                       NumLib::NonlinearSolverTag nl_tag)
-{
-    using Tag = NumLib::NonlinearSolverTag;
-    switch (nl_tag)
-    {
-        case Tag::Picard:
-        {
-            using EqSys = NumLib::NonlinearSystem<Tag::Picard>;
-            auto& eq_sys_ = static_cast<EqSys&>(eq_sys);
-            if (auto* nl_solver =
-                    dynamic_cast<NumLib::NonlinearSolver<Tag::Picard>*>(
-                        &nonlinear_solver);
-                nl_solver != nullptr)
-            {
-                nl_solver->setEquationSystem(eq_sys_, conv_crit);
-            }
-            else
-            {
-                OGS_FATAL(
-                    "Could not cast nonlinear solver to Picard type solver.");
-            }
-            break;
-        }
-        case Tag::Newton:
-        {
-            using EqSys = NumLib::NonlinearSystem<Tag::Newton>;
-            auto& eq_sys_ = static_cast<EqSys&>(eq_sys);
-
-            if (auto* nl_solver =
-                    dynamic_cast<NumLib::NonlinearSolver<Tag::Newton>*>(
-                        &nonlinear_solver);
-                nl_solver != nullptr)
-            {
-                nl_solver->setEquationSystem(eq_sys_, conv_crit);
-            }
-#ifdef USE_PETSC
-            else if (auto* nl_solver =
-                         dynamic_cast<NumLib::PETScNonlinearSolver*>(
-                             &nonlinear_solver);
-                     nl_solver != nullptr)
-            {
-                nl_solver->setEquationSystem(eq_sys_, conv_crit);
-            }
-#endif  // USE_PETSC
-            else
-            {
-                OGS_FATAL(
-                    "Could not cast nonlinear solver to Newton type solver.");
-            }
-            break;
-        }
-    }
-}
-
 bool isMonolithicProcess(ProcessLib::ProcessData const& process_data)
 {
     return process_data.process.isMonolithicSchemeUsed();
 }
+
+void updateDeactivatedSubdomains(
+    std::vector<std::unique_ptr<ProcessLib::ProcessData>> const&
+        per_process_data,
+    double const t)
+{
+    for (auto& process_data : per_process_data)
+    {
+        process_data->process.updateDeactivatedSubdomains(
+            t, process_data->process_id);
+    }
+}
+
 }  // namespace
 
 namespace ProcessLib
@@ -256,14 +212,10 @@ void calculateNonEquilibriumInitialResiduum(
     INFO("Calculate non-equilibrium initial residuum.");
     for (auto& process_data : per_process_data)
     {
-        auto& ode_sys = *process_data->tdisc_ode_sys;
-
         auto& time_disc = *process_data->time_disc;
         auto& nonlinear_solver = process_data->nonlinear_solver;
-        auto& conv_crit = *process_data->conv_crit;
 
-        auto const nl_tag = process_data->nonlinear_solver_tag;
-        setEquationSystem(nonlinear_solver, ode_sys, conv_crit, nl_tag);
+        setEquationSystem(*process_data);
         // dummy values to handle the time derivative terms more or less
         // correctly, i.e. to ignore them.
         double const t = 0;
@@ -284,12 +236,10 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     auto& process = process_data.process;
     int const process_id = process_data.process_id;
     auto& time_disc = *process_data.time_disc;
-    auto& conv_crit = *process_data.conv_crit;
     auto& ode_sys = *process_data.tdisc_ode_sys;
     auto& nonlinear_solver = process_data.nonlinear_solver;
-    auto const nl_tag = process_data.nonlinear_solver_tag;
 
-    setEquationSystem(nonlinear_solver, ode_sys, conv_crit, nl_tag);
+    setEquationSystem(process_data);
 
     // Note: Order matters!
     // First advance to the next timestep, then set known solutions at that
@@ -362,15 +312,15 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
     // Get minimum time step size among step sizes of all processes.
     double dt = std::numeric_limits<double>::max();
 
-    bool is_initial_step = false;
+    bool const is_initial_step = std::any_of(
+        _per_process_data.begin(), _per_process_data.end(),
+        [](auto const& ppd) -> bool
+        { return ppd->timestepper->getTimeStep().timeStepNumber() == 0; });
+
     for (std::size_t i = 0; i < _per_process_data.size(); i++)
     {
         auto& ppd = *_per_process_data[i];
         const auto& timestepper = ppd.timestepper;
-        if (timestepper->getTimeStep().timeStepNumber() == 0)
-        {
-            is_initial_step = true;
-        }
 
         auto& time_disc = ppd.time_disc;
         auto const& x = *_process_solutions[i];
@@ -570,10 +520,6 @@ void TimeLoop::initialize()
  */
 bool TimeLoop::loop()
 {
-    // All _per_process_data share the first process.
-    bool const is_staggered_coupling =
-        !isMonolithicProcess(*_per_process_data[0]);
-
     bool non_equilibrium_initial_residuum_computed = false;
     double t = _start_time;
     std::size_t accepted_steps = 0;
@@ -596,12 +542,7 @@ bool TimeLoop::loop()
             "=== Time stepping at step #{:d} and time {:g} with step size {:g}",
             timesteps, t, dt);
 
-        // Check element deactivation:
-        for (auto& process_data : _per_process_data)
-        {
-            process_data->process.updateDeactivatedSubdomains(
-                t, process_data->process_id);
-        }
+        updateDeactivatedSubdomains(_per_process_data, t);
 
         if (!non_equilibrium_initial_residuum_computed)
         {
@@ -610,30 +551,7 @@ bool TimeLoop::loop()
             non_equilibrium_initial_residuum_computed = true;
         }
 
-        preTimestepForAllProcesses(t, dt, _per_process_data,
-                                   _process_solutions);
-
-        if (is_staggered_coupling)
-        {
-            nonlinear_solver_status =
-                solveCoupledEquationSystemsByStaggeredScheme(t, dt, timesteps);
-        }
-        else
-        {
-            nonlinear_solver_status =
-                solveUncoupledEquationSystems(t, dt, timesteps);
-        }
-
-        // Run post time step only if the last iteration was successful.
-        // Otherwise it runs the risks to get the same errors as in the last
-        // iteration, an exception thrown in assembly, for example.
-        if (nonlinear_solver_status.error_norms_met)
-        {
-            postTimestepForAllProcesses(
-                t, dt, _per_process_data, _process_solutions,
-                _process_solutions_prev, _xdot_vector_ids);
-        }
-
+        nonlinear_solver_status = doNonlinearIteration(t, dt, timesteps);
         INFO("[time] Time step #{:d} took {:g} s.", timesteps,
              time_timestep.elapsed());
 
@@ -679,6 +597,39 @@ bool TimeLoop::loop()
     }
 
     return nonlinear_solver_status.error_norms_met;
+}
+
+NumLib::NonlinearSolverStatus TimeLoop::doNonlinearIteration(
+    double const t, double const dt, std::size_t const timesteps)
+{
+    preTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
+
+    // All _per_process_data share the first process.
+    bool const is_staggered_coupling =
+        !isMonolithicProcess(*_per_process_data[0]);
+    NumLib::NonlinearSolverStatus nonlinear_solver_status;
+
+    if (is_staggered_coupling)
+    {
+        nonlinear_solver_status =
+            solveCoupledEquationSystemsByStaggeredScheme(t, dt, timesteps);
+    }
+    else
+    {
+        nonlinear_solver_status =
+            solveUncoupledEquationSystems(t, dt, timesteps);
+    }
+
+    // Run post time step only if the last iteration was successful.
+    // Otherwise it runs the risks to get the same errors as in the last
+    // iteration, an exception thrown in assembly, for example.
+    if (nonlinear_solver_status.error_norms_met)
+    {
+        postTimestepForAllProcesses(t, dt, _per_process_data,
+                                    _process_solutions, _process_solutions_prev,
+                                    _xdot_vector_ids);
+    }
+    return nonlinear_solver_status;
 }
 
 static NumLib::NonlinearSolverStatus solveMonolithicProcess(

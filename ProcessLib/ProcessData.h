@@ -70,4 +70,7 @@ struct ProcessData
 
     Process& process;
 };
+
+void setEquationSystem(ProcessData const& process_data);
+
 }  // namespace ProcessLib

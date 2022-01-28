@@ -7,7 +7,9 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  */
+#include <algorithm>
 #include <functional>
+#include <iterator>
 #include <memory>
 #include <nlohmann/json_fwd.hpp>
 #include <vector>
