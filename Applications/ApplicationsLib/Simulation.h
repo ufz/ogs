@@ -34,11 +34,11 @@ class Simulation final
 {
 public:
     Simulation(int argc, char* argv[])
-        : linear_solver_library_setup(argc, argv)
+        : linear_solver_library_setup(argc, argv),
 #if defined(USE_PETSC)
-          ,
-          controller(vtkSmartPointer<vtkMPIController>::New())
+          controller(vtkSmartPointer<vtkMPIController>::New()),
 #endif
+          test_definition{std::nullopt}
     {
 #if defined(USE_PETSC)
         controller->Initialize(&argc, &argv, 1);
@@ -68,7 +68,7 @@ public:
         }
         else
         {
-            test_definition = std::make_unique<ApplicationsLib::TestDefinition>(
+            test_definition = ApplicationsLib::TestDefinition(
                 //! \ogs_file_param{prj__test_definition}
                 project_config.getConfigSubtree("test_definition"),
                 reference_path, outdir);
@@ -121,6 +121,11 @@ public:
         return time_loop.loop();
     }
 
+    std::optional<ApplicationsLib::TestDefinition> getTestDefinition()
+    {
+        return test_definition;
+    }
+
     ~Simulation()
     {
 #ifdef USE_INSITU
@@ -140,5 +145,5 @@ private:
     vtkSmartPointer<vtkMPIController> controller;
 #endif
     std::unique_ptr<ProjectData> project_data;
-    std::unique_ptr<ApplicationsLib::TestDefinition> test_definition;
+    std::optional<ApplicationsLib::TestDefinition> test_definition;
 };
