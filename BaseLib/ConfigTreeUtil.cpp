@@ -26,20 +26,9 @@
 namespace BaseLib
 {
 
-auto read_file(std::string_view path) -> std::string
+bool isEqual(const unsigned char* a, std::string const& b)
 {
-    constexpr auto read_size = std::size_t(4096);
-    auto stream = std::ifstream(path.data());
-    stream.exceptions(std::ios_base::badbit);
-
-    auto out = std::string();
-    auto buf = std::string(read_size, '\0');
-    while (stream.read(&buf[0], read_size))
-    {
-        out.append(buf, 0, stream.gcount());
-    }
-    out.append(buf, 0, stream.gcount());
-    return out;
+    return std::string{reinterpret_cast<const char*>(a)} == b;
 }
 
 void traverseIncludes(xmlDoc* doc, xmlNode* node,
@@ -53,17 +42,21 @@ void traverseIncludes(xmlDoc* doc, xmlNode* node,
         {
             continue;
         }
-        if (!strcmp(reinterpret_cast<const char*>(cur_node->name), "include"))
+        if (isEqual(cur_node->name, "include"))
+        // if (!strcmp(reinterpret_cast<const char*>(cur_node->name),
+        // "include"))
         {
-            auto include_file = xmlGetProp(cur_node, xmlCharStrdup("file"));
-            if (include_file == NULL)
+            auto include_file_char_pointer =
+                xmlGetProp(cur_node, xmlCharStrdup("file"));
+            if (include_file_char_pointer == nullptr)
             {
                 OGS_FATAL(
                     "Error while processing includes in prj file. Error in "
                     "element '{:s}' on line {:d}: no file attribute given!",
                     cur_node->name, cur_node->line);
             }
-            std::string filename(reinterpret_cast<char*>(include_file));
+            std::string filename(
+                reinterpret_cast<char*>(include_file_char_pointer));
             if (auto const filepath = std::filesystem::path(filename);
                 filepath.is_relative())
             {
@@ -77,11 +70,19 @@ void traverseIncludes(xmlDoc* doc, xmlNode* node,
                     "element '{:s}' on line {:d}: Include file is not "
                     "existing: "
                     "{:s}!",
-                    cur_node->name, cur_node->line, include_file);
+                    cur_node->name, cur_node->line, include_file_char_pointer);
             }
             INFO("Including {:s} into project file.", filename);
 
-            std::string xml = read_file(filename);
+            const std::ifstream input_stream(filename, std::ios_base::binary);
+            if (input_stream.fail())
+            {
+                OGS_FATAL("Failed to open file {s}!", filename);
+            }
+            std::stringstream buffer;
+            buffer << input_stream.rdbuf();
+            const std::string xml = buffer.str();
+
             xmlNodePtr pNewNode = nullptr;
             xmlParseInNodeContext(cur_node->parent, xml.c_str(),
                                   (int)xml.length(), 0, &pNewNode);
@@ -113,7 +114,7 @@ void replaceIncludes(std::stringstream& prj_stream,
 {
     auto doc =
         xmlParseMemory(prj_stream.str().c_str(), prj_stream.str().size());
-    if (doc == NULL)
+    if (doc == nullptr)
     {
         OGS_FATAL("Error reading project file from memory.");
     }
@@ -132,25 +133,25 @@ void replaceIncludes(std::stringstream& prj_stream,
 }
 
 // Applies a patch file to the prj content in prj_stream.
-void patchStream(std::string patch_file, std::stringstream& prj_stream,
+void patchStream(std::string const& patch_file, std::stringstream& prj_stream,
                  bool after_includes = false)
 {
     auto patch = xmlParseFile(patch_file.c_str());
-    if (patch == NULL)
+    if (patch == nullptr)
     {
         OGS_FATAL("Error reading XML diff file {:s}.", patch_file);
     }
 
     auto doc =
         xmlParseMemory(prj_stream.str().c_str(), prj_stream.str().size());
-    if (doc == NULL)
+    if (doc == nullptr)
     {
         OGS_FATAL("Error reading project file from memory.");
     }
 
     auto node = xmlDocGetRootElement(patch);
     int rc = 0;
-    for (node = node ? node->children : NULL; node; node = node->next)
+    for (node = node ? node->children : nullptr; node; node = node->next)
     {
         if (node->type != XML_ELEMENT_NODE)
         {
@@ -163,9 +164,8 @@ void patchStream(std::string patch_file, std::stringstream& prj_stream,
             // Check for after_includes-attribute
             xmlChar* value =
                 xmlNodeListGetString(node->doc, attribute->children, 1);
-            if (!strcmp(reinterpret_cast<const char*>(attribute->name),
-                        "after_includes") &&
-                !strcmp(reinterpret_cast<const char*>(value), "true"))
+            if (isEqual(attribute->name, "after_includes") &&
+                isEqual(value, "true"))
             {
                 node_after_includes = true;
             }
@@ -179,15 +179,15 @@ void patchStream(std::string patch_file, std::stringstream& prj_stream,
             continue;
         }
 
-        if (!strcmp(reinterpret_cast<const char*>(node->name), "add"))
+        if (isEqual(node->name, "add"))
         {
             rc = xml_patch_add(doc, node);
         }
-        else if (!strcmp(reinterpret_cast<const char*>(node->name), "replace"))
+        else if (isEqual(node->name, "replace"))
         {
             rc = xml_patch_replace(doc, node);
         }
-        else if (!strcmp(reinterpret_cast<const char*>(node->name), "remove"))
+        else if (isEqual(node->name, "remove"))
         {
             rc = xml_patch_remove(doc, node);
         }
