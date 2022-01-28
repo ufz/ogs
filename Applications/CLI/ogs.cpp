@@ -97,7 +97,8 @@ int main(int argc, char* argv[])
         INFO("OGS started on {:s}.", time_str);
     }
 
-    std::unique_ptr<ApplicationsLib::TestDefinition> test_definition;
+    std::optional<ApplicationsLib::TestDefinition> test_definition{
+        std::nullopt};
     auto ogs_status = EXIT_SUCCESS;
 
     try
@@ -109,6 +110,7 @@ int main(int argc, char* argv[])
             cli_arg.reference_path_is_set, std::move(cli_arg.reference_path),
             cli_arg.nonfatal, std::move(cli_arg.outdir));
         bool solver_succeeded = ogs.executeSimulation();
+        test_definition = ogs.getTestDefinition();
 
         INFO("[time] Execution took {:g} s.", run_time.elapsed());
         ogs_status = solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
@@ -131,7 +133,7 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    if (test_definition == nullptr)
+    if (!test_definition)
     {
         // There are no tests, so just exit;
         return ogs_status;
