@@ -34,19 +34,12 @@
 #endif
 
 #include "Applications/ApplicationsLib/Simulation.h"
-#include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
-#include "Applications/ApplicationsLib/ProjectData.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
-#include "Applications/InSituLib/Adaptor.h"
-#include "BaseLib/ConfigTreeUtil.h"
 #include "BaseLib/DateTools.h"
-#include "BaseLib/FileTools.h"
-#include "BaseLib/PrjProcessing.h"
+#include "BaseLib/Error.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/RunTime.h"
-#include "InfoLib/CMakeInfo.h"
 #include "InfoLib/GitInfo.h"
-#include "NumLib/NumericsConfig.h"
-#include "ProcessLib/TimeLoop.h"
 
 #ifdef OGS_USE_PYTHON
 #include "ogs_embedded_python.h"
