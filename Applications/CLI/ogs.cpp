@@ -90,6 +90,12 @@ int main(int argc, char* argv[])
         false, "");
     cmd.add(xml_patch_files);
 
+    TCLAP::SwitchArg write_prj("",
+                               "write-prj",
+                               "Writes processed project file to output "
+                               "path / [prj_base_name]_processed.prj.");
+    cmd.add(write_prj);
+
     TCLAP::ValueArg<std::string> outdir_arg("o", "output-directory",
                                             "the output directory to write to",
                                             false, "", "PATH");
@@ -197,8 +203,9 @@ int main(int argc, char* argv[])
             run_time.start();
 
             std::stringstream prj_stream;
-            BaseLib::prepareProjectFile(prj_stream, project_arg.getValue(),
-                                        xml_patch_files.getValue());
+            BaseLib::prepareProjectFile(
+                prj_stream, project_arg.getValue(), xml_patch_files.getValue(),
+                write_prj.getValue(), outdir_arg.getValue());
 
             auto project_config = BaseLib::makeConfigTree(
                 project_arg.getValue(), !nonfatal_arg.getValue(),

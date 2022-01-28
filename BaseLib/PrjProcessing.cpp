@@ -19,7 +19,6 @@
 
 namespace BaseLib
 {
-
 bool isEqual(const unsigned char* a, std::string const& b)
 {
     return std::string{reinterpret_cast<const char*>(a)} == b;
@@ -273,7 +272,8 @@ void readAndPatchPrj(std::stringstream& prj_stream, std::string& prj_file,
 
 void prepareProjectFile(std::stringstream& prj_stream,
                         const std::string& filepath,
-                        const std::vector<std::string>& patch_files)
+                        const std::vector<std::string>& patch_files,
+                        bool write_prj, const std::string& out_directory)
 {
     std::string prj_file = filepath;
 
@@ -288,7 +288,7 @@ void prepareProjectFile(std::stringstream& prj_stream,
             patchStream(patch_file, prj_stream, true);
         }
     }
-    if (true)
+    if (write_prj)
     {
         // pretty-print
         xmlKeepBlanksDefault(0);
@@ -300,8 +300,9 @@ void prepareProjectFile(std::stringstream& prj_stream,
         // xmlThrDefTreeIndentString("");
         auto doc =
             xmlParseMemory(prj_stream.str().c_str(), prj_stream.str().size());
-        auto prj_out =
-            std::filesystem::path(prj_file).parent_path() / "_project.prj";
+        auto prj_out = std::string(std::filesystem::path(out_directory) /
+                                   std::filesystem::path(prj_file).stem()) +
+                       "_processed.prj";
         xmlSaveFormatFileEnc(prj_out.c_str(), doc, "utf-8", 1);
         xmlFreeDoc(doc);
     }

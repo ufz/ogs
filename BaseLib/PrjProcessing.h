@@ -24,5 +24,6 @@ namespace BaseLib
  */
 void prepareProjectFile(std::stringstream& prj_stream,
                         const std::string& filepath,
-                        const std::vector<std::string>& patch_files = {});
+                        const std::vector<std::string>& patch_files,
+                        bool write_prj, const std::string& out_directory);
 }  // namespace BaseLib
