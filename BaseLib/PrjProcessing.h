@@ -16,11 +16,13 @@
 namespace BaseLib
 {
 /**
- * @brief Applies includes and patch files to project file.
+ * \brief Applies includes and patch files to project file.
  *
- * @param prj_stream The processed prj as a stringstream.
- * @param filepath    The prj file.
- * @param patch_files Optional patch files.
+ * \param prj_stream    The processed prj as a stringstream.
+ * \param filepath      The prj file.
+ * \param patch_files   Optional patch files.
+ * \param write_prj     Write the processed project file to disk?
+ * \param out_directory The directory to write the processed file to.
  */
 void prepareProjectFile(std::stringstream& prj_stream,
                         const std::string& filepath,

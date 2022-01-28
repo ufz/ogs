@@ -14,30 +14,26 @@
 #include <libxml/tree.h>
 #include <xml_patch.h>
 
+#include <filesystem>
+#include <fstream>
+
 #include "Error.h"
+#include "FileTools.h"
 #include "Logging.h"
 
 namespace BaseLib
 {
-bool isEqual(const unsigned char* a, std::string const& b)
-{
-    return std::string{reinterpret_cast<const char*>(a)} == b;
-}
-
 void traverseIncludes(xmlDoc* doc, xmlNode* node,
                       std::filesystem::path const& prj_dir)
 {
     xmlNode* cur_node = nullptr;
     for (cur_node = node; cur_node; cur_node = cur_node->next)
     {
-        if (cur_node->type != XML_ELEMENT_NODE ||
-            cur_node->type == XML_TEXT_NODE)
+        if (cur_node->type != XML_ELEMENT_NODE)
         {
             continue;
         }
-        if (isEqual(cur_node->name, "include"))
-        // if (!strcmp(reinterpret_cast<const char*>(cur_node->name),
-        // "include"))
+        if (xmlStrEqual(cur_node->name, xmlCharStrdup("include")))
         {
             auto include_file_char_pointer =
                 xmlGetProp(cur_node, xmlCharStrdup("file"));
@@ -48,8 +44,10 @@ void traverseIncludes(xmlDoc* doc, xmlNode* node,
                     "element '{:s}' on line {:d}: no file attribute given!",
                     cur_node->name, cur_node->line);
             }
+            auto filename_length = xmlStrlen(include_file_char_pointer);
             std::string filename(
-                reinterpret_cast<char*>(include_file_char_pointer));
+                reinterpret_cast<char*>(include_file_char_pointer),
+                filename_length);
             if (auto const filepath = std::filesystem::path(filename);
                 filepath.is_relative())
             {
@@ -157,8 +155,8 @@ void patchStream(std::string const& patch_file, std::stringstream& prj_stream,
             // Check for after_includes-attribute
             xmlChar* value =
                 xmlNodeListGetString(node->doc, attribute->children, 1);
-            if (isEqual(attribute->name, "after_includes") &&
-                isEqual(value, "true"))
+            if (xmlStrEqual(attribute->name, xmlCharStrdup("after_includes")) &&
+                xmlStrEqual(value, xmlCharStrdup("true")))
             {
                 node_after_includes = true;
             }
@@ -172,15 +170,15 @@ void patchStream(std::string const& patch_file, std::stringstream& prj_stream,
             continue;
         }
 
-        if (isEqual(node->name, "add"))
+        if (xmlStrEqual(node->name, xmlCharStrdup("add")))
         {
             rc = xml_patch_add(doc, node);
         }
-        else if (isEqual(node->name, "replace"))
+        else if (xmlStrEqual(node->name, xmlCharStrdup("replace")))
         {
             rc = xml_patch_replace(doc, node);
         }
-        else if (isEqual(node->name, "remove"))
+        else if (xmlStrEqual(node->name, xmlCharStrdup("remove")))
         {
             rc = xml_patch_remove(doc, node);
         }
@@ -261,12 +259,9 @@ void readAndPatchPrj(std::stringstream& prj_stream, std::string& prj_file,
     }
 
     // apply xml patches to stream
-    if (!patch_files.empty())
+    for (const auto& patch_file : patch_files)
     {
-        for (const auto& patch_file : patch_files)
-        {
-            patchStream(patch_file, prj_stream);
-        }
+        patchStream(patch_file, prj_stream);
     }
 }
 
@@ -279,15 +274,17 @@ void prepareProjectFile(std::stringstream& prj_stream,
 
     std::vector<std::string> patch_files_copy = patch_files;
     readAndPatchPrj(prj_stream, prj_file, patch_files_copy);
-    replaceIncludes(prj_stream, std::filesystem::path(prj_file).parent_path());
+    // LB TODO later: replace canonical with absolute when a mesh input dir
+    // ogs parameter is implemented.
+    replaceIncludes(prj_stream,
+                    std::filesystem::canonical(std::filesystem::path(prj_file))
+                        .parent_path());
     // re-apply xml patches to stream
-    if (!patch_files_copy.empty())
+    for (const auto& patch_file : patch_files_copy)
     {
-        for (const auto& patch_file : patch_files_copy)
-        {
-            patchStream(patch_file, prj_stream, true);
-        }
+        patchStream(patch_file, prj_stream, true);
     }
+
     if (write_prj)
     {
         // pretty-print
@@ -297,13 +294,15 @@ void prepareProjectFile(std::stringstream& prj_stream,
         // not work. 2 spaces are default.
         //
         // xmlThrDefIndentTreeOutput(1);
-        // xmlThrDefTreeIndentString("");
+        // xmlThrDefTreeIndentString("    "); // 4 spaces indent
         auto doc =
             xmlParseMemory(prj_stream.str().c_str(), prj_stream.str().size());
-        auto prj_out = std::string(std::filesystem::path(out_directory) /
-                                   std::filesystem::path(prj_file).stem()) +
+        auto prj_out = (std::filesystem::path(out_directory) /
+                        std::filesystem::path(filepath).stem())
+                           .string() +
                        "_processed.prj";
         xmlSaveFormatFileEnc(prj_out.c_str(), doc, "utf-8", 1);
+        INFO("Processed project file written to {:s}.", prj_out);
         xmlFreeDoc(doc);
     }
     xmlCleanupParser();

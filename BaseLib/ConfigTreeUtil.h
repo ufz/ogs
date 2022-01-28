@@ -20,7 +20,7 @@ namespace BaseLib
  * \param be_ruthless  see ConfigTreeTopLevel::ConfigTreeTopLevel()
  * \param toplevel_tag name of the outermost tag in the XML file. The returned
  *                     ConfigTree is rooted one level below that tag.
- * \param patch_files  optional vector of strings with patch file paths.
+ * \param prj_stream   content of the (pre-processed) prj file.
  *
  * The parameter \c toplevel_tag is provided for compatibility with our existing
  * configuration files whose toplevel tags are written in camel case, which

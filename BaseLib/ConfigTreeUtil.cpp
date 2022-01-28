@@ -60,7 +60,6 @@ ConfigTree makeConfigTreeFromFile(const std::string& filepath,
     {
         std::stringstream buffer;
         buffer << file.rdbuf();
-        file.close();
 
         return makeConfigTree(filepath, be_ruthless, toplevel_tag, buffer);
     }
