@@ -77,3 +77,14 @@ set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "DataExplorer"
 set(CPACK_NSIS_MENU_LINKS ${CPACK_NSIS_MENU_LINKS} "bin/DataExplorer.exe"
                           "Data Explorer" PARENT_SCOPE
 )
+
+if(MSVC)
+    # Install qt libraries
+    get_target_property(mocExe Qt5::moc IMPORTED_LOCATION)
+    get_filename_component(qtBinDir "${mocExe}" DIRECTORY)
+    find_program(DEPLOYQT_EXECUTABLE windeployqt PATHS "${qtBinDir}" NO_DEFAULT_PATH)
+    set(DEPLOY_OPTIONS [[bin/DataExplorer.exe --dir . --libdir bin --plugindir plugins]])
+    configure_file(${PROJECT_SOURCE_DIR}/scripts/cmake/packaging/deployapp.cmake.in deployapp.cmake @ONLY)
+    install(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/deployapp.cmake)
+    install(FILES ${PROJECT_SOURCE_DIR}/scripts/cmake/packaging/qt.conf TYPE BIN)
+endif()
