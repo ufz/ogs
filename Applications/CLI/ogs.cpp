@@ -103,14 +103,14 @@ int main(int argc, char* argv[])
 
     try
     {
-        Simulation ogs(argc, argv);
+        Simulation simulation(argc, argv);
         run_time.start();
-        ogs.initializeDataStructures(
+        simulation.initializeDataStructures(
             std::move(cli_arg.project), std::move(cli_arg.xml_patch_file_names),
             cli_arg.reference_path_is_set, std::move(cli_arg.reference_path),
             cli_arg.nonfatal, std::move(cli_arg.outdir));
-        bool solver_succeeded = ogs.executeSimulation();
-        test_definition = ogs.getTestDefinition();
+        bool solver_succeeded = simulation.executeSimulation();
+        test_definition = simulation.getTestDefinition();
 
         INFO("[time] Execution took {:g} s.", run_time.elapsed());
         ogs_status = solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
