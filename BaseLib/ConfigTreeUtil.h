@@ -11,7 +11,6 @@
 #pragma once
 
 #include "ConfigTree.h"
-#include "Logging.h"
 
 namespace BaseLib
 {
@@ -45,6 +44,10 @@ namespace BaseLib
 ConfigTree makeConfigTree(std::string const& filepath,
                           bool const be_ruthless,
                           std::string const& toplevel_tag,
-                          const std::vector<std::string>& patch_files = {});
+                          std::stringstream& prj_stream);
+
+ConfigTree makeConfigTreeFromFile(const std::string& filepath,
+                                  const bool be_ruthless,
+                                  const std::string& toplevel_tag);
 
 }  // namespace BaseLib

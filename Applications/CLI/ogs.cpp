@@ -39,6 +39,7 @@
 #include "BaseLib/ConfigTreeUtil.h"
 #include "BaseLib/DateTools.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/PrjProcessing.h"
 #include "BaseLib/RunTime.h"
 #include "InfoLib/CMakeInfo.h"
 #include "InfoLib/GitInfo.h"
@@ -195,9 +196,13 @@ int main(int argc, char* argv[])
 
             run_time.start();
 
+            std::stringstream prj_stream;
+            BaseLib::prepareProjectFile(prj_stream, project_arg.getValue(),
+                                        xml_patch_files.getValue());
+
             auto project_config = BaseLib::makeConfigTree(
                 project_arg.getValue(), !nonfatal_arg.getValue(),
-                "OpenGeoSysProject", xml_patch_files.getValue());
+                "OpenGeoSysProject", prj_stream);
 
             BaseLib::setProjectDirectory(
                 BaseLib::extractPath(project_arg.getValue()));
