@@ -107,7 +107,7 @@ double IterationNumberBasedTimeStepping::findMultiplier(
         }
     }
 
-    if (!_accepted && (multiplier >= 1.0))
+    if (!_is_accepted && (multiplier >= 1.0))
     {
         return *std::min_element(_multiplier_vector.begin(),
                                  _multiplier_vector.end());
@@ -134,11 +134,6 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
     }
 
     return std::clamp(dt, _min_dt, _max_dt);
-}
-
-bool IterationNumberBasedTimeStepping::accepted() const
-{
-    return _accepted;
 }
 
 bool IterationNumberBasedTimeStepping::canReduceTimestepSize() const
