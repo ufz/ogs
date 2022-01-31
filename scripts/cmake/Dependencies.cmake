@@ -51,7 +51,7 @@ endif()
 CPMAddPackage(
     NAME exprtk
     GITHUB_REPOSITORY ArashPartow/exprtk
-    GIT_TAG 772884eb09eb648808a5151a077faf97fa127426
+    GIT_TAG 806c519c91fd08ba4fa19380dbf3f6e42de9e2d1
     DOWNLOAD_ONLY YES
 )
 if(exprtk_ADDED)
