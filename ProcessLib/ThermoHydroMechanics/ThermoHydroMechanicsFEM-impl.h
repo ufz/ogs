@@ -487,8 +487,11 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                  K_pT_thermal_osmosis / fluid_compressibility) *
                 dNdx_T * w;
 
-            /* TODO (Joerg) Temperature changes due to X, which are usually
-             * discarded as being very small.
+            /* TODO (Joerg) Temperature changes due to thermal dilatation of the
+             * fluid, which are usually discarded as being very small.
+             * Zhou et al. (10.1016/S0020-7683(98)00089-4) states that:
+             * "Biot (1956) neglected this term and it is included here for
+             * completeness"
              * Keeping the code here in the case these are needed for the named
              * effects in the future.
 
