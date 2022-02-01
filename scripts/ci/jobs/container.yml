@@ -35,7 +35,7 @@ container:
       --cvode --ccache
       --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
-      --base_image 'centos:8' --ompi 4.0.5 --mpi_benchmarks
+      --ompi 4.0.5 --mpi_benchmarks
     # test ogs can run in container
     - |
       for sif in _out/images/*.sif; do
