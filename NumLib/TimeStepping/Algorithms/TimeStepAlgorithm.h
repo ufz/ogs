@@ -99,12 +99,12 @@ public:
                                           int number_iterations) = 0;
 
     /// return if current time step is accepted or not
-    virtual bool accepted() const = 0;
+    virtual bool accepted() const { return _is_accepted; }
 
     /// Set the status of the step.
     /// \param accepted A boolean parameter is needed to indicated whether the
     /// step is accepted or not.
-    virtual void setAcceptedOrNot(const bool accepted) { (void)accepted; };
+    void setAccepted(const bool accepted) { _is_accepted = accepted; }
 
     /// return a history of time step sizes
     const std::vector<double>& getTimeStepSizeHistory() const
@@ -132,6 +132,7 @@ protected:
 
     /// a vector of time step sizes
     std::vector<double> _dt_vector;
+    bool _is_accepted = true;
 };
 
 /// If any of the fixed times will be reached with given time increment, it will

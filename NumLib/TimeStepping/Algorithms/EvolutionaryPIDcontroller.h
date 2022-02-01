@@ -63,20 +63,12 @@ public:
           _rel_h_max(rel_h_max),
           _tol(tol),
           _e_n_minus1(0.),
-          _e_n_minus2(0.),
-          _is_accepted(true)
+          _e_n_minus2(0.)
     {
     }
 
     std::tuple<bool, double> next(double solution_error,
                                   int number_iterations) override;
-
-    bool accepted() const override { return _is_accepted; }
-
-    void setAcceptedOrNot(const bool accepted) override
-    {
-        _is_accepted = accepted;
-    }
 
     bool isSolutionErrorComputationNeeded() const override { return true; }
 
@@ -100,8 +92,6 @@ private:
 
     double _e_n_minus1;  ///< \f$e_{n-1}\f$.
     double _e_n_minus2;  ///< \f$e_{n-2}\f$.
-
-    bool _is_accepted;
 
     /**
      * Forced the computed time step size in the given range

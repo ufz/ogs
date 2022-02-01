@@ -95,9 +95,6 @@ public:
     std::tuple<bool, double> next(double solution_error,
                                   int number_iterations) override;
 
-    bool accepted() const override;
-    void setAcceptedOrNot(bool accepted) override { _accepted = accepted; };
-
     bool isSolutionErrorComputationNeeded() const override { return true; }
 
     bool canReduceTimestepSize() const override;
@@ -126,8 +123,6 @@ private:
     int _iter_times = 0;
 
     bool _previous_time_step_accepted = true;
-    /// True, if the current time step is accepted.
-    bool _accepted = true;
 };
 
 }  // namespace NumLib

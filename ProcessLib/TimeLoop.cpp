@@ -314,13 +314,14 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
 
     bool const is_initial_step = std::any_of(
         _per_process_data.begin(), _per_process_data.end(),
-        [](auto const& ppd) -> bool
-        { return ppd->timestepper->getTimeStep().timeStepNumber() == 0; });
+        [](auto const& ppd) -> bool {
+            return ppd->timestep_algorithm->getTimeStep().timeStepNumber() == 0;
+        });
 
     for (std::size_t i = 0; i < _per_process_data.size(); i++)
     {
         auto& ppd = *_per_process_data[i];
-        const auto& timestepper = ppd.timestepper;
+        const auto& timestep_algorithm = ppd.timestep_algorithm;
 
         auto& time_disc = ppd.time_disc;
         auto const& x = *_process_solutions[i];
@@ -332,29 +333,25 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
                         : MathLib::VecNormType::NORM2;
 
         const double solution_error =
-            (timestepper->isSolutionErrorComputationNeeded())
-                ? ((t == timestepper->begin())
+            (timestep_algorithm->isSolutionErrorComputationNeeded())
+                ? ((t == timestep_algorithm->begin())
                        ? 0.  // Always accepts the zeroth step
                        : time_disc->computeRelativeChangeFromPreviousTimestep(
                              x, x_prev, norm_type))
                 : 0.;
 
-        if (!ppd.nonlinear_solver_status.error_norms_met)
-        {
-            timestepper->setAcceptedOrNot(false);
-        }
-        else
-        {
-            timestepper->setAcceptedOrNot(true);
-        }
+        timestep_algorithm->setAccepted(
+            ppd.nonlinear_solver_status.error_norms_met);
 
-        auto [step_accepted, timestepper_dt] = timestepper->next(
+        auto [step_accepted, timestepper_dt] = timestep_algorithm->next(
             solution_error, ppd.nonlinear_solver_status.number_iterations);
 
         if (!step_accepted &&
-            // In case of FixedTimeStepping, which makes timestepper->next(...)
-            // return false when the ending time is reached.
-            t + std::numeric_limits<double>::epsilon() < timestepper->end())
+            // In case of FixedTimeStepping, which makes
+            // timestep_algorithm->next(...) return false when the ending time
+            // is reached.
+            t + std::numeric_limits<double>::epsilon() <
+                timestep_algorithm->end())
         {
             // Not all processes have accepted steps.
             all_process_steps_accepted = false;
@@ -369,7 +366,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
         }
 
         if (timestepper_dt > std::numeric_limits<double>::epsilon() ||
-            std::abs(t - timestepper->end()) <
+            std::abs(t - timestep_algorithm->end()) <
                 std::numeric_limits<double>::epsilon())
         {
             dt = std::min(timestepper_dt, dt);
@@ -436,13 +433,13 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
     for (std::size_t i = 0; i < _per_process_data.size(); i++)
     {
         const auto& ppd = *_per_process_data[i];
-        auto& timestepper = ppd.timestepper;
+        auto& timestep_algorithm = ppd.timestep_algorithm;
         if (all_process_steps_accepted)
         {
-            timestepper->resetCurrentTimeStep(dt);
+            timestep_algorithm->resetCurrentTimeStep(dt);
         }
 
-        if (t == timestepper->begin())
+        if (t == timestep_algorithm->begin())
         {
             continue;
         }
@@ -676,7 +673,7 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
                 "for process #{:d}.",
                 timestep_id, t, process_id);
 
-            if (!process_data->timestepper->canReduceTimestepSize())
+            if (!process_data->timestep_algorithm->canReduceTimestepSize())
             {
                 // save unsuccessful solution
                 _output->doOutputAlways(

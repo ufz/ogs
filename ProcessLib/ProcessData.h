@@ -22,14 +22,15 @@ namespace ProcessLib
 {
 struct ProcessData
 {
-    ProcessData(std::unique_ptr<NumLib::TimeStepAlgorithm>&& timestepper_,
-                NumLib::NonlinearSolverTag const nonlinear_solver_tag_,
-                NumLib::NonlinearSolverBase& nonlinear_solver_,
-                std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
-                std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
-                int const process_id_,
-                Process& process_)
-        : timestepper(std::move(timestepper_)),
+    ProcessData(
+        std::unique_ptr<NumLib::TimeStepAlgorithm>&& timestep_algorithm_,
+        NumLib::NonlinearSolverTag const nonlinear_solver_tag_,
+        NumLib::NonlinearSolverBase& nonlinear_solver_,
+        std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
+        std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
+        int const process_id_,
+        Process& process_)
+        : timestep_algorithm(std::move(timestep_algorithm_)),
           nonlinear_solver_tag(nonlinear_solver_tag_),
           nonlinear_solver(nonlinear_solver_),
           nonlinear_solver_status{true, 0},
@@ -41,7 +42,7 @@ struct ProcessData
     }
 
     ProcessData(ProcessData&& pd)
-        : timestepper(std::move(pd.timestepper)),
+        : timestep_algorithm(std::move(pd.timestep_algorithm)),
           nonlinear_solver_tag(pd.nonlinear_solver_tag),
           nonlinear_solver(pd.nonlinear_solver),
           nonlinear_solver_status(pd.nonlinear_solver_status),
@@ -53,7 +54,7 @@ struct ProcessData
     {
     }
 
-    std::unique_ptr<NumLib::TimeStepAlgorithm> timestepper;
+    std::unique_ptr<NumLib::TimeStepAlgorithm> timestep_algorithm;
 
     //! Tag containing the missing type information necessary to cast the
     //! other members of this struct to their concrety types.
