@@ -103,7 +103,9 @@ int main(int argc, char* argv[])
 
     TCLAP::ValueArg<std::string> meshdir_arg(
         "m", "mesh-input-directory",
-        "the directory where the meshes are read from", false, "", "PATH");
+        "the directory where the meshes are read from, default is PROJECT_FILE "
+        "directory",
+        false, "", "PATH");
     cmd.add(meshdir_arg);
 
     TCLAP::ValueArg<std::string> log_level_arg(
@@ -218,9 +220,12 @@ int main(int argc, char* argv[])
 
             BaseLib::setProjectDirectory(
                 BaseLib::extractPath(project_arg.getValue()));
+            std::string const meshdir = meshdir_arg.getValue().empty()
+                                            ? BaseLib::getProjectDirectory()
+                                            : meshdir_arg.getValue();
 
             ProjectData project(project_config, BaseLib::getProjectDirectory(),
-                                outdir_arg.getValue(), meshdir_arg.getValue());
+                                outdir_arg.getValue(), meshdir);
 
             if (!reference_path_arg.isSet())
             {  // Ignore the test_definition section.
