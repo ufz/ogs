@@ -1,29 +1,29 @@
 <?xml version="1.0"?>
-<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+<VTKFile type="UnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64" compressor="vtkZLibDataCompressor">
   <UnstructuredGrid>
     <FieldData>
-      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="40" format="appended" RangeMin="45"                   RangeMax="121"                  offset="0"                   />
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="26" format="appended" RangeMin="45"                   RangeMax="121"                  offset="0"                   />
     </FieldData>
     <Piece NumberOfPoints="61"                   NumberOfCells="60"                  >
       <PointData>
-        <DataArray type="Float64" Name="HeatFlux" format="appended" RangeMin="-0"                   RangeMax="-0"                   offset="88"                  />
-        <DataArray type="Float64" Name="heat_flux_x" format="appended" RangeMin="-0.01796471603"       RangeMax="0.50324524873"        offset="136"                 />
-        <DataArray type="Float64" Name="temperature" format="appended" RangeMin="273.13870441"         RangeMax="273.29596855"         offset="296"                 />
+        <DataArray type="Float64" Name="HeatFlux" format="appended" RangeMin="-4.8521187068e-14"    RangeMax="4.8521187068e-14"     offset="92"                  />
+        <DataArray type="Float64" Name="heat_flux" format="appended" RangeMin="-0.01796471603"       RangeMax="0.50324524873"        offset="176"                 />
+        <DataArray type="Float64" Name="temperature" format="appended" RangeMin="273.13870441"         RangeMax="273.29596855"         offset="392"                 />
       </PointData>
       <CellData>
-        <DataArray type="Int32" Name="MaterialIDs" format="appended" RangeMin="0"                    RangeMax="0"                    offset="428"                 />
+        <DataArray type="Int32" Name="MaterialIDs" format="appended" RangeMin="0"                    RangeMax="0"                    offset="544"                 />
       </CellData>
       <Points>
-        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="60"                   offset="468"                 />
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="60"                   offset="604"                 />
       </Points>
       <Cells>
-        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="700"                 />
-        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="876"                 />
-        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="1060"                />
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="856"                 />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="1052"                />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="1256"                />
       </Cells>
     </Piece>
   </UnstructuredGrid>
   <AppendedData encoding="base64">
-   _AQAAAACAAAAoAAAAMAAAAA==eF4z0zPWM9I1M9VNTzU2sjBNMTBM1kvJLCqp1DMyMDIwMDeyMDQ1MTM0AwDKtgnXAQAAAACAAADoAQAAEQAAAA==eF5jYACDBoZReljTALoMHoE=AQAAAACAAADoAQAAZAAAAA==eF5jOLHk+FSpB/YMH65dV9h+1p6hIWh9eOqk/QwMG9ovHQuzZ2BgeBVnLAPkM2h4lz60A9IHZs9duo8RyEg4nAXiMxRMNNgHohlavtiC6YSde8E0QwOEz+AB5Y+CgQIAU0QgNA==AQAAAACAAADoAQAAUAAAAA==eF67atnquUek0EGMQ07JQqjQgSv2y69MIJ1iVymfBqSvlz/OBtFrV/9MBdFRF/LSQPSO/alg2qc4DUynpULoqjQInQKl00bpQUEDAIU6qso=AQAAAACAAADwAAAADAAAAA==eF5jYBhZAAAA8AABAQAAAACAAAC4BQAAnAAAAA==eF59yTkOAQAARNEplQqFQiEiIiJi3/d9P9Mc2REcwHy/fF/612cDY5u5AF4EL4GXwSvgVfAaeB28Ad4Eb4G3wTvgXfAeeB98AD4EH4GPwSfgU/AZ+Bx8Ab4EX4GvwTfg2+wG1y67wbXPbnAdshtcx+wG1ym7wXXObnBdshtc1+wG1y27wXXPbnA9shtcz+wG1yu7wfX+8S+zGCQEAQAAAACAAADAAwAAcQAAAA==eF5dxbMBAwAAALDatm3b/9/VoZ2SJYHAT5BDHOYIRznGcU5wklOc5gxnOcd5LnCRS1zmCle5xnVucJNb3OYOd7nHfR7wkEc85glPecZzXvCSV7zmDW95x3s+8JFPfOYLX/nGd37wk1/85s//L9CvDhE=AQAAAACAAADgAQAAeAAAAA==eF4txcEKQQEAADBJkiRJkiRJkiRJkvSSJEmSJEmSJEmSJJ/vYLssHPqLOOqY40446ZTTzjjrnPMuuOiSy6646prrbrjpltvuuOue+x448NAjjz3x1DPPvfDSK6+98dY7733w0SefffHVN9/98NMvv/3x1z8+Jw5NAQAAAACAAAA8AAAADAAAAA==eF5jZiYfAAAVrgC1
+   _AQAAAAAAAAAAgAAAAAAAABoAAAAAAAAAIgAAAAAAAAA=eF4z0zPRM9Q1MzLXTTdMNTNNMTJMTNRLySwqqQQAUuAHPA==AQAAAAAAAAAAgAAAAAAAAOgBAAAAAAAAHAAAAAAAAAA=eF4rsOW6vjhAey8DBDSM0sOLLoDEry0AShgj0w==AQAAAAAAAAAAgAAAAAAAAOgBAAAAAAAAgQAAAAAAAAA=eF7zPrbk+FSpB/aT3l+7rrD9rP2VzKD14amT9rfqr2u/dCzMfj277Ks4Y5n9mjEbNbxLH9rZcW0/OHvu0n1aMf1P4g9n2cm3vnZMn2iwz+Nhlcj+5i+2bwJ3yJVm7dwL4q+LqLeN7T/0VeOK394CW67riwO0R2k604VQGgDRU9hdAQAAAAAAAAAAgAAAAAAAAOgBAAAAAAAAUAAAAAAAAAA=eF67atnquUek0EGMQ07JQqjQgSv2y69MIJ1iVymfBqSvlz/OBtFrV/9MBdFRF/LSQPSO/alg2qc4DUynpULoqjQInQKl00bpQUEDAIU6qso=AQAAAAAAAAAAgAAAAAAAAPAAAAAAAAAADAAAAAAAAAA=eF5jYBhZAAAA8AABAQAAAAAAAAAAgAAAAAAAALgFAAAAAAAAnAAAAAAAAAA=eF59yTkOAQAARNEplQqFQiEiIiJi3/d9P9Mc2REcwHy/fF/612cDY5u5AF4EL4GXwSvgVfAaeB28Ad4Eb4G3wTvgXfAeeB98AD4EH4GPwSfgU/AZ+Bx8Ab4EX4GvwTfg2+wG1y67wbXPbnAdshtcx+wG1ym7wXXObnBdshtc1+wG1y27wXXPbnA9shtcz+wG1yu7wfX+8S+zGCQEAQAAAAAAAAAAgAAAAAAAAMADAAAAAAAAcQAAAAAAAAA=eF5dxbMBAwAAALDatm3b/9/VoZ2SJYHAT5BDHOYIRznGcU5wklOc5gxnOcd5LnCRS1zmCle5xnVucJNb3OYOd7nHfR7wkEc85glPecZzXvCSV7zmDW95x3s+8JFPfOYLX/nGd37wk1/85s//L9CvDhE=AQAAAAAAAAAAgAAAAAAAAOABAAAAAAAAeAAAAAAAAAA=eF4txcEKQQEAADBJkiRJkiRJkiRJkvSSJEmSJEmSJEmSJJ/vYLssHPqLOOqY40446ZTTzjjrnPMuuOiSy6646prrbrjpltvuuOue+x448NAjjz3x1DPPvfDSK6+98dY7733w0SefffHVN9/98NMvv/3x1z8+Jw5NAQAAAAAAAAAAgAAAAAAAADwAAAAAAAAADAAAAAAAAAA=eF5jZiYfAAAVrgC1
   </AppendedData>
 </VTKFile>
