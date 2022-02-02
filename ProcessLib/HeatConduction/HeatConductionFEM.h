@@ -17,6 +17,7 @@
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/VariableType.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
@@ -36,19 +37,7 @@ class HeatConductionLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
 public:
-    virtual std::vector<double> const& getIntPtHeatFluxX(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtHeatFluxY(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtHeatFluxZ(
+    virtual std::vector<double> const& getIntPtHeatFlux(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
@@ -144,9 +133,7 @@ public:
                                   specific_heat_capacity)
                     .template value<double>(vars, pos, t, dt);
             auto const density =
-                medium
-                    .property(
-                        MaterialPropertyLib::PropertyType::density)
+                medium.property(MaterialPropertyLib::PropertyType::density)
                     .template value<double>(vars, pos, t, dt);
 
             local_K.noalias() += sm.dNdx.transpose() * k * sm.dNdx * sm.detJ *
@@ -226,9 +213,7 @@ public:
                                   specific_heat_capacity)
                     .template value<double>(vars, pos, t, dt);
             auto const density =
-                medium
-                    .property(
-                        MaterialPropertyLib::PropertyType::density)
+                medium.property(MaterialPropertyLib::PropertyType::density)
                     .template value<double>(vars, pos, t, dt);
 
             laplace.noalias() += sm.dNdx.transpose() * k * sm.dNdx * w;
@@ -293,34 +278,57 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
 
-    std::vector<double> const& getIntPtHeatFluxX(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
+    std::vector<double> const& getIntPtHeatFlux(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override
     {
-        assert(!_heat_fluxes.empty());
-        return _heat_fluxes[0];
-    }
+        int const process_id = 0;  // monolithic case.
+        auto const indices =
+            NumLib::getIndices(_element.getID(), *dof_table[process_id]);
+        assert(!indices.empty());
+        auto const& local_x = x[process_id]->get(indices);
 
-    std::vector<double> const& getIntPtHeatFluxY(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_heat_fluxes.size() > 1);
-        return _heat_fluxes[1];
-    }
+        auto const T_nodal_values = Eigen::Map<const NodalVectorType>(
+            local_x.data(), ShapeFunction::NPOINTS);
 
-    std::vector<double> const& getIntPtHeatFluxZ(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_heat_fluxes.size() > 2);
-        return _heat_fluxes[2];
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
+        MaterialPropertyLib::VariableArray vars;
+
+        double const dt = std::numeric_limits<double>::quiet_NaN();
+        cache.clear();
+        auto cache_mat = MathLib::createZeroedMatrix<
+            Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, GlobalDim, n_integration_points);
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            pos.setIntegrationPoint(ip);
+            auto const& sm = _shape_matrices[ip];
+            // get the local temperature and put it in the variable array for
+            // access in MPL
+            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+                sm.N.dot(T_nodal_values);
+
+            auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                medium
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_conductivity)
+                    .value(vars, pos, t, dt));
+
+            // heat flux only computed for output.
+            cache_mat.col(ip).noalias() = -k * sm.dNdx * T_nodal_values;
+        }
+
+        return cache;
     }
 
 private:
