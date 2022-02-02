@@ -65,17 +65,14 @@ struct PhaseTransitionModelVariables
     double xnWL = 0.;
     double xmWL = 0.;
 
-    // molar fraction derivatives
-    double dxnWG_dpGR = 0.;
-    double dxnWG_dpCap = 0.;
-    double dxnWG_dT = 0.;
-
     // mass fraction derivatives
     double dxmWG_dpGR = 0.;
     double dxmWG_dpCap = 0.;
-
-    double dxmWL_dpLR = 0.;
     double dxmWG_dT = 0.;
+
+    double dxmWL_dpGR = 0.;
+    double dxmWL_dpCap = 0.;
+    double dxmWL_dpLR = 0.;
     double dxmWL_dT = 0.;
 
     // viscosities

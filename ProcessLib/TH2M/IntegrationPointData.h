@@ -154,6 +154,9 @@ struct IntegrationPointData final
     double muLR = std::numeric_limits<double>::quiet_NaN();
 
     GlobalDimMatrixType lambda;
+    GlobalDimVectorType d_CG;
+    GlobalDimVectorType d_WG;
+
     GlobalDimVectorType w_GS;
     GlobalDimVectorType w_LS;
 
