@@ -298,6 +298,19 @@ AddTest(
     flow_pressure_boundary_ts_100_t_4000.000000.vtu flow_pressure_boundary_ts_100_t_4000.000000.vtu displacement displacement 1e-12 0
 )
 
+# flow_pressure_boundary
+AddTest(
+    NAME HydroMechanics_IdealGas_flow_pressure_boundary_python
+    PATH HydroMechanics/IdealGas/flow_pressure_boundary
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS flow_pressure_boundary_python.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    flow_pressure_boundary_ts_100_t_4000.000000.vtu flow_pressure_boundary_ts_100_t_4000.000000.vtu pressure pressure 0 1e-13
+    flow_pressure_boundary_ts_100_t_4000.000000.vtu flow_pressure_boundary_ts_100_t_4000.000000.vtu displacement displacement 1e-12 0
+)
 # Permeability models
 AddTest(
     NAME HydroMechanics_Permeability_EmbeddedFracture_square
