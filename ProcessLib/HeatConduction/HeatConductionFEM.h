@@ -71,10 +71,7 @@ public:
           _shape_matrices(
               NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                         GlobalDim>(
-                  element, is_axially_symmetric, _integration_method)),
-          _heat_fluxes(
-              GlobalDim,
-              std::vector<double>(_integration_method.getNumberOfPoints()))
+                  element, is_axially_symmetric, _integration_method))
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
         // matrices.
@@ -229,46 +226,6 @@ public:
         local_rhs.noalias() -= laplace * x + storage * x_dot;
     }
 
-    void computeSecondaryVariableConcrete(
-        double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& /*local_x_dot*/) override
-    {
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
-        auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
-        MaterialPropertyLib::VariableArray vars;
-
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            pos.setIntegrationPoint(ip);
-            auto const& sm = _shape_matrices[ip];
-            // get the local temperature and put it in the variable array for
-            // access in MPL
-            double T_int_pt = 0.0;
-            NumLib::shapeFunctionInterpolate(local_x, sm.N, T_int_pt);
-            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-                T_int_pt;
-
-            auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                medium
-                    .property(
-                        MaterialPropertyLib::PropertyType::thermal_conductivity)
-                    .value(vars, pos, t, dt));
-            // heat flux only computed for output.
-            GlobalDimVectorType const heat_flux = -k * sm.dNdx * local_x;
-
-            for (int d = 0; d < GlobalDim; ++d)
-            {
-                _heat_fluxes[d][ip] = heat_flux[d];
-            }
-        }
-    }
-
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
@@ -338,8 +295,6 @@ private:
     IntegrationMethod const _integration_method;
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
         _shape_matrices;
-
-    std::vector<std::vector<double>> _heat_fluxes;
 };
 
 }  // namespace HeatConduction
