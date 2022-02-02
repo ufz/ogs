@@ -121,6 +121,11 @@ void ComponentTransportProcess::setInitialConditionsConcreteProcess(
         return;
     }
 
+    std::for_each(
+        x.begin(), x.end(),
+        [](auto const process_solution)
+        { MathLib::LinAlg::setLocalAccessibleVector(*process_solution); });
+
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
@@ -303,6 +308,9 @@ void ComponentTransportProcess::solveReactionEquation(
     A.setZero();
     rhs.setZero();
 
+    MathLib::finalizeMatrixAssembly(A);
+    MathLib::finalizeVectorAssembly(rhs);
+
     // compute A
     MathLib::LinAlg::copy(M, A);
     MathLib::LinAlg::aypx(A, 1.0 / dt, K);
@@ -318,11 +326,13 @@ void ComponentTransportProcess::solveReactionEquation(
 
     auto& linear_solver =
         _process_data.chemical_solver_interface->linear_solver;
+    MathLib::LinAlg::setLocalAccessibleVector(*x[process_id]);
     linear_solver.solve(A, rhs, *x[process_id]);
 
     NumLib::GlobalMatrixProvider::provider.releaseMatrix(M);
     NumLib::GlobalMatrixProvider::provider.releaseMatrix(K);
     NumLib::GlobalVectorProvider::provider.releaseVector(b);
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(A);
     NumLib::GlobalVectorProvider::provider.releaseVector(rhs);
 }
 

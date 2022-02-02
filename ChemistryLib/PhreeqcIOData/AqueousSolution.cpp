@@ -14,6 +14,7 @@
 #include <ostream>
 
 #include "ChemistryLib/Common/ChargeBalance.h"
+#include "MathLib/LinAlg/LinAlg.h"
 #include "MeshLib/PropertyVector.h"
 
 namespace ChemistryLib
@@ -27,6 +28,7 @@ void AqueousSolution::print(std::ostream& os,
 
     os << "pressure " << pressure << "\n";
 
+    MathLib::LinAlg::setLocalAccessibleVector(*pH);
     switch (charge_balance)
     {
         case ChargeBalance::pH:
@@ -49,6 +51,7 @@ void AqueousSolution::print(std::ostream& os,
 
     for (auto const& component : components)
     {
+        MathLib::LinAlg::setLocalAccessibleVector(*component.amount);
         os << component.name << " " << (*component.amount)[chemical_system_id];
         component.chemical_formula.empty()
             ? os << "\n"
