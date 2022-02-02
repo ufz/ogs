@@ -22,5 +22,7 @@ struct HeatConductionProcessData
 
     /// If set mass lumping will be applied to the equation.
     bool const mass_lumping;
+
+    int const mesh_space_dimension;
 };
 }  // namespace ProcessLib::HeatConduction

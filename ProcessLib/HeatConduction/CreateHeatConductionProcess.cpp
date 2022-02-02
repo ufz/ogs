@@ -15,6 +15,7 @@
 #include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "MeshLib/Utils/GetSpaceDimension.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
@@ -77,7 +78,9 @@ std::unique_ptr<Process> createHeatConductionProcess(
         //! \ogs_file_param{prj__processes__process__HEAT_CONDUCTION__mass_lumping}
         config.getConfigParameter<bool>("mass_lumping", false);
 
-    HeatConductionProcessData process_data{std::move(media_map), mass_lumping};
+    HeatConductionProcessData process_data{
+        std::move(media_map), mass_lumping,
+        MeshLib::getSpaceDimension(mesh.getNodes())};
 
     SecondaryVariableCollection secondary_variables;
 
