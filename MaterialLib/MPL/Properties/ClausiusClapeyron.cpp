@@ -63,22 +63,6 @@ double ClausiusClapeyron::molarMass(
         scale);
 }
 
-double ClausiusClapeyron::dMolarMass(
-    std::variant<Medium*, Phase*, Component*> const scale,
-    VariableArray const& variable_array, Variable const primary_variable,
-    ParameterLib::SpatialPosition const& pos, double const t,
-    double const dt) const
-{
-    return std::visit(
-        [&variable_array, &primary_variable, &pos, t, dt](auto&& s) -> double
-        {
-            return s->property(PropertyType::molar_mass)
-                .template dValue<double>(variable_array, primary_variable, pos,
-                                         t, dt);
-        },
-        scale);
-}
-
 PropertyDataType ClausiusClapeyron::value(
     VariableArray const& variable_array,
     ParameterLib::SpatialPosition const& pos, double const t,
@@ -112,16 +96,17 @@ PropertyDataType ClausiusClapeyron::dValue(
 {
     const double T = std::get<double>(
         variable_array[static_cast<int>(Variable::temperature)]);
-
     const double M = molarMass(scale_, variable_array, pos, t, dt);
-    const double dM =
-        dMolarMass(scale_, variable_array, primary_variable, pos, t, dt);
 
     if (T > T_critical_)
     {
         return 0.;
     }
     if (T < T_triple_)
+    {
+        return 0.;
+    }
+    if (primary_variable == Variable::phase_pressure)
     {
         return 0.;
     }
@@ -133,15 +118,11 @@ PropertyDataType ClausiusClapeyron::dValue(
 
     if (primary_variable == Variable::temperature)
     {
-        return p_vap * dh / R * ((1. / T_ref_ - 1. / T) * dM + M / (T * T));
-    }
-    if (primary_variable == Variable::phase_pressure)
-    {
-        return p_vap * dh / R * (1. / T_ref_ - 1. / T) * dM;
+        return p_vap * M * dh / (R * T * T);
     }
     OGS_FATAL(
         "ClausiusClapeyron::dValue is implemented for derivatives with respect "
-        "to phase pressure or temperature only.");
+        "to phase pressure and temperature only.");
 }
 
 PropertyDataType ClausiusClapeyron::d2Value(
