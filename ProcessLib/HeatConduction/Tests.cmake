@@ -273,6 +273,19 @@ AddTest(
         REQUIREMENTS NOT OGS_USE_MPI
 )
 
+# tests for line source term implementation with inclined elements
+AddTest(
+        NAME HeatConduction_2D_LineSourceTermLeft_inclined_elements
+        PATH Parabolic/T/2D_source_term_tests/line_source_term_left
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS source_term_left_r.prj
+        TESTER vtkdiff
+        DIFF_DATA
+        source_term_left_r_ts_1_t_1.000000.vtu source_term_left_r_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
+        source_term_left_r_ts_1_t_1.000000.vtu source_term_left_r_ts_1_t_1.000000.vtu heat_flux heat_flux 1e-15 0.0
+        REQUIREMENTS NOT OGS_USE_MPI
+)
+
 # For the special setup with a 'dirac' line source term at x=0.5 the
 # analytical solution in 2 dimensions is valid:
 # u(x,y) = -ln(sqrt((x-0.5)^2))/(2 * Pi)
