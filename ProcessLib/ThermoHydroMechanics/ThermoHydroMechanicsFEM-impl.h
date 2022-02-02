@@ -192,11 +192,6 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     typename ShapeMatricesTypePressure::NodalMatrixType MTT;
     MTT.setZero(temperature_size, temperature_size);
 
-    typename ShapeMatricesTypeDisplacement::template MatrixType<
-        temperature_size, displacement_size>
-        MTu;
-    MTu.setZero(temperature_size, displacement_size);
-
     typename ShapeMatricesTypePressure::NodalMatrixType KTT;
     KTT.setZero(temperature_size, temperature_size);
 
@@ -481,38 +476,42 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // temperature equation, pressure part
         //
-        KTp.noalias() +=
-            fluid_density * c_f * N_T.transpose() * (dNdx_T * T).transpose() *
-                K_over_mu * dNdx_p * w -
-            dNdx_T.transpose() * T_int_pt * K_pT_thermal_osmosis * dNdx_p * w;
+        KTp.noalias() += fluid_density * c_f * N_T.transpose() *
+                         (dNdx_T * T).transpose() * K_over_mu * dNdx_p * w;
 
-        // Add heat sink on MTu, KTT, KTp and fw when fluid_compressibility != 0
         if (fluid_compressibility != 0)
         {
-            local_rhs.template segment<temperature_size>(temperature_index)
-                .noalias() +=
-                dNdx_T.transpose() *
-                (-T_int_pt * fluid_volumetric_thermal_expansion_coefficient /
-                 fluid_compressibility) *
-                fluid_density * K_over_mu * b * w;
-
-            MTu.noalias() +=
-                (-T_int_pt *
-                 Invariants::trace(solid_linear_thermal_expansion_coefficient) /
-                 solid_skeleton_compressibility) *
-                N_T.transpose() * identity2.transpose() * B * w;
-
             KTT.noalias() +=
                 dNdx_T.transpose() *
                 (-T_int_pt * fluid_volumetric_thermal_expansion_coefficient *
                  K_pT_thermal_osmosis / fluid_compressibility) *
                 dNdx_T * w;
 
-            KTp.noalias() +=
+            /* TODO (Joerg) Temperature changes due to thermal dilatation of the
+             * fluid, which are usually discarded as being very small.
+             * Zhou et al. (10.1016/S0020-7683(98)00089-4) states that:
+             * "Biot (1956) neglected this term and it is included here for
+             * completeness"
+             * Keeping the code here in the case these are needed for the named
+             * effects in the future.
+
+            local_rhs.template segment<temperature_size>(temperature_index)
+                .noalias() +=
+                dNdx_T.transpose() *
+                (-T_int_pt * fluid_volumetric_thermal_expansion_coefficient /
+                 fluid_compressibility) *
+                fluid_density * K_over_mu * b * w;
+            MTu part for rhs and Jacobian:
+                (-T_int_pt *
+                 Invariants::trace(solid_linear_thermal_expansion_coefficient) /
+                 solid_skeleton_compressibility) *
+                N_T.transpose() * identity2.transpose() * B * w;
+            KTp part for rhs and Jacobian:
                 dNdx_T.transpose() *
                 (T_int_pt * fluid_volumetric_thermal_expansion_coefficient *
                  K_over_mu / fluid_compressibility) *
                 dNdx_p * w;
+             */
         }
     }
     // temperature equation, temperature part
@@ -526,12 +525,6 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         .template block<temperature_size, pressure_size>(temperature_index,
                                                          pressure_index)
         .noalias() -= KTp;
-
-    // temperature equation,displacement part
-    local_Jac
-        .template block<temperature_size, displacement_size>(temperature_index,
-                                                             displacement_index)
-        .noalias() += MTu / dt;
 
     // displacement equation, temperature part
     local_Jac
