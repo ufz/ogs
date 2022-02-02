@@ -101,6 +101,11 @@ int main(int argc, char* argv[])
                                             false, "", "PATH");
     cmd.add(outdir_arg);
 
+    TCLAP::ValueArg<std::string> meshdir_arg(
+        "m", "mesh-input-directory",
+        "the directory where the meshes are read from", false, "", "PATH");
+    cmd.add(meshdir_arg);
+
     TCLAP::ValueArg<std::string> log_level_arg(
         "l", "log-level",
         "the verbosity of logging messages: none, error, warn, info, debug, "
@@ -214,9 +219,8 @@ int main(int argc, char* argv[])
             BaseLib::setProjectDirectory(
                 BaseLib::extractPath(project_arg.getValue()));
 
-            ProjectData project(project_config,
-                                BaseLib::getProjectDirectory(),
-                                outdir_arg.getValue());
+            ProjectData project(project_config, BaseLib::getProjectDirectory(),
+                                outdir_arg.getValue(), meshdir_arg.getValue());
 
             if (!reference_path_arg.isSet())
             {  // Ignore the test_definition section.

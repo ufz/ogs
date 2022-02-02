@@ -283,8 +283,9 @@ ProjectData::ProjectData() = default;
 
 ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
                          std::string const& project_directory,
-                         std::string const& output_directory)
-    : _mesh_vec(readMeshes(project_config, project_directory))
+                         std::string const& output_directory,
+                         std::string const& mesh_directory)
+    : _mesh_vec(readMeshes(project_config, mesh_directory))
 {
     if (auto const python_script =
             //! \ogs_file_param{prj__python_script}
