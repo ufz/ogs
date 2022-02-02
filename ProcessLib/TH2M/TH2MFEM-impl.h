@@ -522,28 +522,27 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_cv.dk_over_mu_L_dp_cap =
             ip_data.k_S * dk_rel_L_ds_L * ip_cv.ds_L_dp_cap / ip_data.muLR;
 
-        GlobalDimVectorType const w_GS =
-            k_over_mu_G * c.rhoGR * b - k_over_mu_G * gradpGR;
-        GlobalDimVectorType const w_LS = k_over_mu_L * gradpCap +
-                                         k_over_mu_L * c.rhoLR * b -
-                                         k_over_mu_L * gradpGR;
+        ip_data.w_GS = k_over_mu_G * c.rhoGR * b - k_over_mu_G * gradpGR;
+        ip_data.w_LS = k_over_mu_L * gradpCap + k_over_mu_L * c.rhoLR * b -
+                       k_over_mu_L * gradpGR;
 
         ip_cv.drho_GR_h_w_eff_dp_GR_Npart =
-            c.drho_GR_dp_GR * c.hG * w_GS +
+            c.drho_GR_dp_GR * c.hG * ip_data.w_GS +
             c.rhoGR * c.hG * k_over_mu_G * c.drho_GR_dp_GR * b;
         ip_cv.drho_GR_h_w_eff_dp_GR_gradNpart =
             -c.rhoGR * c.hG * k_over_mu_G - c.rhoLR * c.hL * k_over_mu_L;
 
         ip_cv.drho_LR_h_w_eff_dp_cap_Npart =
-            -drho_LR_dp_cap * c.hL * w_LS -
+            -drho_LR_dp_cap * c.hL * ip_data.w_LS -
             c.rhoLR * c.hL * k_over_mu_L * drho_LR_dp_cap * b;
         ip_cv.drho_LR_h_w_eff_dp_cap_gradNpart =
             // TODO (naumov) why the minus sign??????
             -c.rhoLR * c.hL * k_over_mu_L;
 
-        ip_cv.drho_GR_h_w_eff_dT =
-            c.drho_GR_dT * c.hG * w_GS + c.rhoGR * c.dh_G_dT * w_GS +
-            drho_LR_dT * c.hL * w_LS + c.rhoLR * c.dh_L_dT * w_LS;
+        ip_cv.drho_GR_h_w_eff_dT = c.drho_GR_dT * c.hG * ip_data.w_GS +
+                                   c.rhoGR * c.dh_G_dT * ip_data.w_GS +
+                                   drho_LR_dT * c.hL * ip_data.w_LS +
+                                   c.rhoLR * c.dh_L_dT * ip_data.w_LS;
         // TODO (naumov) + k_over_mu_G * drho_GR_dT * b + k_over_mu_L *
         // drho_LR_dT * b
 
@@ -827,9 +826,6 @@ void TH2MLocalAssembler<
                              temperature_size + displacement_size;
     assert(local_x.size() == matrix_size);
 
-    auto const gas_pressure = Eigen::Map<VectorType<gas_pressure_size> const>(
-        local_x.data() + gas_pressure_index, gas_pressure_size);
-
     auto const capillary_pressure =
         Eigen::Map<VectorType<capillary_pressure_size> const>(
             local_x.data() + capillary_pressure_index, capillary_pressure_size);
@@ -968,11 +964,8 @@ void TH2MLocalAssembler<
         auto const BuT = Bu.transpose().eval();
 
         double const pCap = Np.dot(capillary_pressure);
-
-        GlobalDimVectorType const gradpGR = gradNp * gas_pressure;
-        GlobalDimVectorType const gradpCap = gradNp * capillary_pressure;
-
         double const pCap_dot = Np.dot(capillary_pressure_dot);
+
         auto& beta_T_SR = ip.beta_T_SR;
 
         auto const I =
@@ -1029,13 +1022,6 @@ void TH2MLocalAssembler<
 
         auto const k_over_mu_G = (k_S * ip.k_rel_G / ip.muGR).eval();
         auto const k_over_mu_L = (k_S * ip.k_rel_L / ip.muLR).eval();
-
-        GlobalDimVectorType const w_GS =
-            k_over_mu_G * ip.rhoGR * b - k_over_mu_G * gradpGR;
-
-        GlobalDimVectorType const w_LS = k_over_mu_L * gradpCap +
-                                         k_over_mu_L * ip.rhoLR * b -
-                                         k_over_mu_L * gradpGR;
 
         // ---------------------------------------------------------------------
         // C-component equation
@@ -1169,10 +1155,11 @@ void TH2MLocalAssembler<
         fT.noalias() -= NTT * rho_u_eff_dot * w;
 
         fT.noalias() +=
-            gradNTT * (ip.rhoGR * h_G * w_GS + ip.rhoLR * h_L * w_LS) * w;
+            gradNTT * (ip.rhoGR * h_G * ip.w_GS + ip.rhoLR * h_L * ip.w_LS) * w;
 
         fT.noalias() +=
-            NTT * (ip.rhoGR * w_GS.transpose() + ip.rhoLR * w_LS.transpose()) *
+            NTT *
+            (ip.rhoGR * ip.w_GS.transpose() + ip.rhoLR * ip.w_LS.transpose()) *
             b * w;
 
         // ---------------------------------------------------------------------
@@ -1433,13 +1420,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto const k_over_mu_G = (k_S * ip.k_rel_G / ip.muGR).eval();
         auto const k_over_mu_L = (k_S * ip.k_rel_L / ip.muLR).eval();
-
-        GlobalDimVectorType const w_GS =
-            k_over_mu_G * ip.rhoGR * b - k_over_mu_G * gradpGR;
-
-        GlobalDimVectorType const w_LS = k_over_mu_L * gradpCap +
-                                         k_over_mu_L * ip.rhoLR * b -
-                                         k_over_mu_L * gradpGR;
 
         // ---------------------------------------------------------------------
         // C-component equation
@@ -1815,7 +1795,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         // fT_2
         fT.noalias() +=
-            gradNTT * (ip.rhoGR * h_G * w_GS + ip.rhoLR * h_L * w_LS) * w;
+            gradNTT * (ip.rhoGR * h_G * ip.w_GS + ip.rhoLR * h_L * ip.w_LS) * w;
 
         // dfT_2/dp_GR
         local_Jac
@@ -1845,7 +1825,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         // fT_3
         fT.noalias() +=
-            NTT * (ip.rhoGR * w_GS.transpose() + ip.rhoLR * w_LS.transpose()) *
+            NTT *
+            (ip.rhoGR * ip.w_GS.transpose() + ip.rhoLR * ip.w_LS.transpose()) *
             b * w;
 
         // ---------------------------------------------------------------------
@@ -1963,120 +1944,22 @@ std::vector<double> const&
 TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                    IntegrationMethod, DisplacementDim>::
     getIntPtDarcyVelocityGas(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    auto const num_intpts = _ip_data.size();
-
-    constexpr int process_id = 0;  // monolithic scheme;
-    auto const indices =
-        NumLib::getIndices(_element.getID(), *dof_table[process_id]);
-    assert(!indices.empty());
-    auto const local_x = x[process_id]->get(indices);
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
 
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
         double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
-        cache, DisplacementDim, num_intpts);
-
-    auto const pGR =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            gas_pressure_size> const>(local_x.data() + gas_pressure_index,
-                                      gas_pressure_size);
-    auto const pCap =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            capillary_pressure_size> const>(
-            local_x.data() + capillary_pressure_index, capillary_pressure_size);
-    auto const T =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            temperature_size> const>(local_x.data() + temperature_index,
-                                     temperature_size);
-
-    unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
-
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
-
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
-    auto const& gas_phase = medium.phase("Gas");
-
-    MPL::VariableArray vars;
+        cache, DisplacementDim, n_integration_points);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        pos.setIntegrationPoint(ip);
-
-        auto& ip_data = _ip_data[ip];
-        auto const& N_p = ip_data.N_p;
-
-        vars[static_cast<int>(MPL::Variable::temperature)] =
-            N_p.dot(T);  // N_p = N_T
-        double const pGR_int_p = N_p.dot(pGR);
-        vars[static_cast<int>(MPL::Variable::phase_pressure)] = pGR_int_p;
-        double const pCap_int_p = N_p.dot(pCap);
-        vars[static_cast<int>(MPL::Variable::capillary_pressure)] = pCap_int_p;
-
-        // TODO (naumov) Temporary value not used by current material
-        // models. Need extension of secondary variables interface.
-        double const dt = std::numeric_limits<double>::quiet_NaN();
-
-        auto const mu_GR = gas_phase.property(MPL::PropertyType::viscosity)
-                               .template value<double>(vars, pos, t, dt);
-
-        auto& eps = ip_data.eps;
-
-        {
-            // Note: if Bishop model is available, ip_data.s_L in the following
-            // computation should be replaced with the Bishop value.
-            auto const sigma_total =
-                (ip_data.sigma_eff -
-                 ip_data.alpha_B * (pGR_int_p - ip_data.s_L * pCap_int_p) *
-                     Invariants::identity2)
-                    .eval();
-
-            vars[static_cast<int>(MPL::Variable::total_stress)]
-                .emplace<SymmetricTensor>(
-                    MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                        sigma_total));
-        }
-
-        vars[static_cast<int>(MPL::Variable::volumetric_strain)] =
-            Invariants::trace(eps);
-        vars[static_cast<int>(MPL::Variable::equivalent_plastic_strain)] =
-            _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
-        vars[static_cast<int>(MPL::Variable::mechanical_strain)]
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps);
-
-        GlobalDimMatrixType k_S = MPL::formEigenTensor<DisplacementDim>(
-            medium.property(MPL::PropertyType::permeability)
-                .value(vars, pos, t, dt));
-
-        auto const s_L = medium.property(MPL::PropertyType::saturation)
-                             .template value<double>(vars, pos, t, dt);
-
-        vars[static_cast<int>(MPL::Variable::liquid_saturation)] = s_L;
-
-        auto const k_rel =
-            medium
-                .property(
-                    MPL::PropertyType::relative_permeability_nonwetting_phase)
-                .template value<double>(vars, pos, t, dt);
-
-        auto const k_over_mu = k_S * k_rel / mu_GR;
-
-        vars[static_cast<int>(MPL::Variable::molar_mass)] = 0.1;
-        auto const rho_GR = gas_phase.property(MPL::PropertyType::density)
-                                .template value<double>(vars, pos, t, dt);
-        auto const& b = _process_data.specific_body_force;
-
-        // Compute the velocity
-        auto const& dNdx_p = _ip_data[ip].dNdx_p;
-        cache_matrix.col(ip).noalias() =
-            -k_over_mu * dNdx_p * pGR + k_over_mu * rho_GR * b;
+        cache_matrix.col(ip).noalias() = _ip_data[ip].w_GS;
     }
 
     return cache;
@@ -2088,134 +1971,22 @@ std::vector<double> const&
 TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                    IntegrationMethod, DisplacementDim>::
     getIntPtDarcyVelocityLiquid(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    auto const num_intpts = _ip_data.size();
-
-    constexpr int process_id = 0;  // monolithic scheme;
-    auto const indices =
-        NumLib::getIndices(_element.getID(), *dof_table[process_id]);
-    assert(!indices.empty());
-    auto const local_x = x[process_id]->get(indices);
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
 
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
         double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
-        cache, DisplacementDim, num_intpts);
-
-    auto const pGR =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            gas_pressure_size> const>(local_x.data() + gas_pressure_index,
-                                      gas_pressure_size);
-    auto const pCap =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            capillary_pressure_size> const>(
-            local_x.data() + capillary_pressure_index, capillary_pressure_size);
-    auto const pLR = pGR - pCap;
-    auto const T =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            temperature_size> const>(local_x.data() + temperature_index,
-                                     temperature_size);
-
-    unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
-
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
-
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
-    auto const& liquid_phase = medium.phase("AqueousLiquid");
-
-    MPL::VariableArray vars;
+        cache, DisplacementDim, n_integration_points);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        pos.setIntegrationPoint(ip);
-
-        auto& ip_data = _ip_data[ip];
-        auto const& N_p = ip_data.N_p;
-
-        vars[static_cast<int>(MPL::Variable::temperature)] = N_p.dot(T);
-        vars[static_cast<int>(MPL::Variable::phase_pressure)] = N_p.dot(pGR);
-
-        double const pGR_int_p = N_p.dot(pGR);
-        double const pCap_int_p = N_p.dot(pCap);
-        vars[static_cast<int>(MPL::Variable::capillary_pressure)] = pCap_int_p;
-
-        vars[static_cast<int>(MPL::Variable::liquid_phase_pressure)] =
-            N_p.dot(pLR);
-
-        // TODO (naumov) Temporary value not used by current material
-        // models. Need extension of secondary variables interface.
-        double const dt = std::numeric_limits<double>::quiet_NaN();
-
-        auto const mu_LR = liquid_phase.property(MPL::PropertyType::viscosity)
-                               .template value<double>(vars, pos, t, dt);
-
-        auto& eps = ip_data.eps;
-
-        {
-            // Note: if Bishop model is available, ip_data.s_L in the following
-            // computation should be replaced with the Bishop value.
-            auto const sigma_total =
-                (ip_data.sigma_eff -
-                 ip_data.alpha_B * (pGR_int_p - ip_data.s_L * pCap_int_p) *
-                     Invariants::identity2)
-                    .eval();
-
-            vars[static_cast<int>(MPL::Variable::total_stress)]
-                .emplace<SymmetricTensor>(
-                    MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                        sigma_total));
-        }
-        vars[static_cast<int>(MPL::Variable::volumetric_strain)] =
-            Invariants::trace(eps);
-        vars[static_cast<int>(MPL::Variable::equivalent_plastic_strain)] =
-            _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
-        vars[static_cast<int>(MPL::Variable::mechanical_strain)]
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps);
-
-        GlobalDimMatrixType k_S = MPL::formEigenTensor<DisplacementDim>(
-            medium.property(MPL::PropertyType::permeability)
-                .value(vars, pos, t, dt));
-
-        auto const s_L = medium.property(MPL::PropertyType::saturation)
-                             .template value<double>(vars, pos, t, dt);
-
-        vars[static_cast<int>(MPL::Variable::liquid_saturation)] = s_L;
-
-        auto const k_rel =
-            medium.property(MPL::PropertyType::relative_permeability)
-                .template value<double>(vars, pos, t, dt);
-
-        auto const k_over_mu = k_S * k_rel / mu_LR;
-
-        vars[static_cast<int>(MPL::Variable::molar_fraction)] = 1.0;
-
-        auto const cCL = [&]()
-        {
-            if (liquid_phase.hasProperty(MPL::PropertyType::concentration))
-            {
-                return liquid_phase.property(MPL::PropertyType::concentration)
-                    .template value<double>(vars, pos, t, dt);  // in mol*m^(-3)
-            }
-            return 0.;
-        }();
-
-        vars[static_cast<int>(MPL::Variable::concentration)] = cCL;
-
-        auto const rho_LR = liquid_phase.property(MPL::PropertyType::density)
-                                .template value<double>(vars, pos, t, dt);
-        auto const& b = _process_data.specific_body_force;
-
-        // Compute the velocity
-        auto const& dNdx_p = _ip_data[ip].dNdx_p;
-        cache_matrix.col(ip).noalias() =
-            -k_over_mu * dNdx_p * pLR + k_over_mu * rho_LR * b;
+        cache_matrix.col(ip).noalias() = _ip_data[ip].w_LS;
     }
 
     return cache;

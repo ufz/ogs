@@ -27,6 +27,8 @@ struct IntegrationPointData final
 {
     using GlobalDimMatrixType =
         typename ShapeMatricesTypePressure::GlobalDimMatrixType;
+    using GlobalDimVectorType =
+        typename ShapeMatricesTypePressure::GlobalDimVectorType;
     explicit IntegrationPointData(
         MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
             solid_material)
@@ -128,6 +130,8 @@ struct IntegrationPointData final
     double muLR = std::numeric_limits<double>::quiet_NaN();
 
     GlobalDimMatrixType lambda;
+    GlobalDimVectorType w_GS;
+    GlobalDimVectorType w_LS;
 
     double thermal_volume_strain = std::numeric_limits<double>::quiet_NaN();
     double beta_T_SR = std::numeric_limits<double>::quiet_NaN();
