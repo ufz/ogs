@@ -30,6 +30,10 @@ $ ogs --help
    -o <PATH>,  --output-directory <PATH>
      the output directory to write to
 
+   --write-prj
+     Writes processed project file to output path /
+     [prj_base_name]_processed.prj.
+
    -p <>,  --xml-patch <>  (accepted multiple times)
      the xml patch file(s) which is (are) applied (in the given order) to
      the PROJECT_FILE
