@@ -325,7 +325,7 @@ AddTest(
         TESTER vtkdiff
         DIFF_DATA
         3D_line_source_term_restricted_ts_1_t_1.000000.vtu 3D_line_source_term_restricted_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
-        3D_line_source_term_restricted_ts_1_t_1.000000.vtu 3D_line_source_term_restricted_ts_1_t_1.000000.vtu heat_flux heat_flux 1.1e-15 5e-12
+        3D_line_source_term_restricted_ts_1_t_1.000000.vtu 3D_line_source_term_restricted_ts_1_t_1.000000.vtu heat_flux heat_flux 1.1e-14 5e-12
         REQUIREMENTS NOT OGS_USE_MPI
 )
 
