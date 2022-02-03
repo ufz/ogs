@@ -497,14 +497,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 identity2.transpose() * C_el.inverse() * sigma_sw_prev;
         }
 
-        if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
+        if (medium->hasProperty(MPL::PropertyType::transport_porosity))
         {
             variables_prev[static_cast<int>(
                 MPL::Variable::transport_porosity)] =
                 ip_data.transport_porosity_prev;
 
             ip_data.transport_porosity =
-                solid_phase.property(MPL::PropertyType::transport_porosity)
+                medium->property(MPL::PropertyType::transport_porosity)
                     .template value<double>(variables, variables_prev,
                                             x_position, t, dt);
             variables[static_cast<int>(MPL::Variable::transport_porosity)] =
@@ -1222,14 +1222,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 identity2.transpose() * C_el.inverse() * sigma_sw_prev;
         }
 
-        if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
+        if (medium->hasProperty(MPL::PropertyType::transport_porosity))
         {
             variables_prev[static_cast<int>(
                 MPL::Variable::transport_porosity)] =
                 ip_data.transport_porosity_prev;
 
             ip_data.transport_porosity =
-                solid_phase.property(MPL::PropertyType::transport_porosity)
+                medium->property(MPL::PropertyType::transport_porosity)
                     .template value<double>(variables, variables_prev,
                                             x_position, t, dt);
             variables[static_cast<int>(MPL::Variable::transport_porosity)] =
