@@ -25,7 +25,6 @@ namespace BaseLib
  * Implementation from Scott Meyers : Modern effective c++ , Item 10 Scoped
  * enums
  */
-
 template <typename E>
 constexpr auto to_underlying(E e) noexcept
 {
