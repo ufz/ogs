@@ -11,7 +11,6 @@
 #pragma once
 
 #include "ConfigTree.h"
-#include "Logging.h"
 
 namespace BaseLib
 {
@@ -21,7 +20,7 @@ namespace BaseLib
  * \param be_ruthless  see ConfigTreeTopLevel::ConfigTreeTopLevel()
  * \param toplevel_tag name of the outermost tag in the XML file. The returned
  *                     ConfigTree is rooted one level below that tag.
- * \param patch_files  optional vector of strings with patch file paths.
+ * \param prj_stream   content of the (pre-processed) prj file.
  *
  * The parameter \c toplevel_tag is provided for compatibility with our existing
  * configuration files whose toplevel tags are written in camel case, which
@@ -45,6 +44,10 @@ namespace BaseLib
 ConfigTree makeConfigTree(std::string const& filepath,
                           bool const be_ruthless,
                           std::string const& toplevel_tag,
-                          const std::vector<std::string>& patch_files = {});
+                          std::stringstream& prj_stream);
+
+ConfigTree makeConfigTreeFromFile(const std::string& filepath,
+                                  const bool be_ruthless,
+                                  const std::string& toplevel_tag);
 
 }  // namespace BaseLib

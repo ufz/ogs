@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProjectDiff base_file="cube_1e0.prj">
     <replace sel="/*/mesh/text()">cube_1x1x1_hex_1e3.vtu</replace>
-    <replace sel="/*/time_loop/output/prefix/text()">cube_1e3</replace>
+    <replace sel="/*/time_loop/output/prefix/text()" after_includes="true">cube_1e3</replace>
 </OpenGeoSysProjectDiff>

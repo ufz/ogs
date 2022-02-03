@@ -4,12 +4,20 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
         NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}
         PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
         EXECUTABLE ogs
-        EXECUTABLE_ARGS cube_${mesh_size}.xml
+        EXECUTABLE_ARGS cube_${mesh_size}.xml --write-prj
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
         cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
     )
+
+    if(TEST SteadyStateDiffusion_cube_1x1x1_${mesh_size} AND DIFF_TOOL_PATH)
+        set(_processed_path Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_${mesh_size}_processed.prj)
+        add_test(NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}_prj_diff
+            COMMAND ${DIFF_TOOL_PATH} ${Data_SOURCE_DIR}/${_processed_path} ${Data_BINARY_DIR}/${_processed_path})
+        set_tests_properties(SteadyStateDiffusion_cube_1x1x1_${mesh_size}_prj_diff
+            PROPERTIES LABELS "default" DEPENDS SteadyStateDiffusion_cube_1x1x1_${mesh_size})
+    endif()
 
     AddTest(
         NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}_Newton

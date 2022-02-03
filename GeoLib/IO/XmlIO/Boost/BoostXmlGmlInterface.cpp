@@ -38,7 +38,7 @@ BoostXmlGmlInterface::BoostXmlGmlInterface(GeoLib::GEOObjects& geo_objs)
 bool BoostXmlGmlInterface::readFile(const std::string& fname)
 {
     //! \todo Reading geometries is always strict.
-    auto doc = BaseLib::makeConfigTree(fname, true, "OpenGeoSysGLI");
+    auto doc = BaseLib::makeConfigTreeFromFile(fname, true, "OpenGeoSysGLI");
 
     // ignore attributes related to XML schema
     doc.ignoreConfigAttribute("xmlns:xsi");
