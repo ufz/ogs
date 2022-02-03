@@ -203,6 +203,31 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                          _local_assemblers,
                          &LocalAssemblerInterface::getIntPtDarcyVelocity));
 
+    _secondary_variables.addSecondaryVariable(
+        "fluid_density",
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtFluidDensity));
+
+    _secondary_variables.addSecondaryVariable(
+        "viscosity",
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtViscosity));
+
+    _process_data.element_fluid_density =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "fluid_density_avg",
+            MeshLib::MeshItemType::Cell, 1);
+
+    _process_data.element_viscosity = MeshLib::getOrCreateMeshProperty<double>(
+        const_cast<MeshLib::Mesh&>(mesh), "viscosity_avg",
+        MeshLib::MeshItemType::Cell, 1);
+
+    _process_data.element_stresses = MeshLib::getOrCreateMeshProperty<double>(
+        const_cast<MeshLib::Mesh&>(mesh), "stress_avg",
+        MeshLib::MeshItemType::Cell,
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim>::RowsAtCompileTime);
+
     _process_data.pressure_interpolated =
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "pressure_interpolated",

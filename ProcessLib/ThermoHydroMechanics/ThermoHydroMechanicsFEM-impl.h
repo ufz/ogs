@@ -232,10 +232,10 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             medium->property(MaterialPropertyLib::PropertyType::permeability)
                 .value(vars, x_position, t, dt));
 
-    crv.fluid_density =
+    auto const fluid_density =
         liquid_phase.property(MaterialPropertyLib::PropertyType::density)
             .template value<double>(vars, x_position, t, dt);
-    auto const fluid_density = crv.fluid_density;
+    ip_data_output.fluid_density = fluid_density;
     vars.density = fluid_density;
 
     auto const drho_dp =
@@ -251,10 +251,10 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             liquid_phase, vars, fluid_density, x_position, t, dt);
 
     // Use the viscosity model to compute the viscosity
-    auto const viscosity =
+    ip_data_output.viscosity =
         liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
             .template value<double>(vars, x_position, t, dt);
-    crv.K_over_mu = intrinsic_permeability / viscosity;
+    crv.K_over_mu = intrinsic_permeability / ip_data_output.viscosity;
 
     auto const& b = _process_data.specific_body_force;
 
@@ -550,8 +550,9 @@ void ThermoHydroMechanicsLocalAssembler<
         //
         //  RHS, pressure part
         //
+        double const fluid_density = _ip_data_output[ip].fluid_density;
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
-            dNdx_p.transpose() * crv.fluid_density * crv.K_over_mu * b * w;
+            dNdx_p.transpose() * fluid_density * crv.K_over_mu * b * w;
         //
         // pressure equation, temperature part (M_pT)
         //
@@ -568,12 +569,12 @@ void ThermoHydroMechanicsLocalAssembler<
         KTT.noalias() += dNdx_T.transpose() *
                          crv.effective_thermal_conductivity * dNdx_T * w;
         K_TT_advection.noalias() += N_T.transpose() * velocity.transpose() *
-                                    dNdx_T * crv.fluid_density * crv.c_f * w;
+                                    dNdx_T * fluid_density * crv.c_f * w;
 
         if (apply_full_upwind)
         {
             node_flux_q.noalias() -=
-                crv.fluid_density * crv.c_f * velocity.transpose() * dNdx_T * w;
+                fluid_density * crv.c_f * velocity.transpose() * dNdx_T * w;
             max_velocity_magnitude =
                 std::max(max_velocity_magnitude, velocity.norm());
         }
@@ -596,7 +597,7 @@ void ThermoHydroMechanicsLocalAssembler<
                          crv.K_pT_thermal_osmosis * dNdx_p * w;
 
         // linearized darcy
-        dKTT_dp.noalias() -= crv.fluid_density * crv.c_f * N_T.transpose() *
+        dKTT_dp.noalias() -= fluid_density * crv.c_f * N_T.transpose() *
                              (dNdx_T * T).transpose() * crv.K_over_mu * dNdx_p *
                              w;
 
@@ -732,6 +733,36 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
     return cache;
 }
 
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
+          int DisplacementDim>
+std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunction, DisplacementDim>::
+    getIntPtFluidDensity(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointScalarData(
+        _ip_data_output,
+        &IntegrationPointDataForOutput<DisplacementDim>::fluid_density, cache);
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
+          int DisplacementDim>
+std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunction, DisplacementDim>::
+    getIntPtViscosity(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointScalarData(
+        _ip_data_output,
+        &IntegrationPointDataForOutput<DisplacementDim>::viscosity, cache);
+}
+
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 void ThermoHydroMechanicsLocalAssembler<
@@ -741,23 +772,22 @@ void ThermoHydroMechanicsLocalAssembler<
                                      Eigen::VectorXd const& local_x_dot)
 {
     auto const p = local_x.template segment<pressure_size>(pressure_index);
+    auto const T =
+        local_x.template segment<temperature_size>(temperature_index);
 
-    NumLib::interpolateToHigherOrderNodes<
-        ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
-        DisplacementDim>(_element, _is_axially_symmetric, p,
-                         *_process_data.pressure_interpolated);
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
 
-    auto T = local_x.template segment<temperature_size>(temperature_index);
+    double fluid_density_avg = 0;
+    double viscosity_avg = 0;
 
-    NumLib::interpolateToHigherOrderNodes<
-        ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
-        DisplacementDim>(_element, _is_axially_symmetric, T,
-                         *_process_data.temperature_interpolated);
+    using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+    KV sigma_avg = KV::Zero();
 
-    int const n_integration_points = _integration_method.getNumberOfPoints();
-    for (int ip = 0; ip < n_integration_points; ip++)
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& N_u = _ip_data[ip].N_u;
+        auto& ip_data = _ip_data[ip];
+        auto const& N_u = ip_data.N_u;
 
         ParameterLib::SpatialPosition const x_position{
             std::nullopt, _element.getID(), ip,
@@ -768,7 +798,33 @@ void ThermoHydroMechanicsLocalAssembler<
 
         updateConstitutiveRelations(local_x, local_x_dot, x_position, t, dt,
                                     _ip_data[ip], _ip_data_output[ip]);
+
+        fluid_density_avg += _ip_data_output[ip].fluid_density;
+        viscosity_avg += _ip_data_output[ip].viscosity;
+        sigma_avg += ip_data.sigma_eff;
     }
+
+    fluid_density_avg /= n_integration_points;
+    viscosity_avg /= n_integration_points;
+    sigma_avg /= n_integration_points;
+
+    (*_process_data.element_fluid_density)[_element.getID()] =
+        fluid_density_avg;
+    (*_process_data.element_viscosity)[_element.getID()] = viscosity_avg;
+
+    Eigen::Map<KV>(&(*_process_data.element_stresses)[_element.getID() *
+                                                      KV::RowsAtCompileTime]) =
+        MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_avg);
+
+    NumLib::interpolateToHigherOrderNodes<
+        ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
+        DisplacementDim>(_element, _is_axially_symmetric, p,
+                         *_process_data.pressure_interpolated);
+
+    NumLib::interpolateToHigherOrderNodes<
+        ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
+        DisplacementDim>(_element, _is_axially_symmetric, T,
+                         *_process_data.temperature_interpolated);
 }
 }  // namespace ThermoHydroMechanics
 }  // namespace ProcessLib

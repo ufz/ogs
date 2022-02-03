@@ -149,6 +149,9 @@ struct IntegrationPointDataForOutput
     // elements.
     DimVector velocity = DimVector::Constant(
         DisplacementDim, std::numeric_limits<double>::quiet_NaN());
+
+    double fluid_density = std::numeric_limits<double>::quiet_NaN();
+    double viscosity = std::numeric_limits<double>::quiet_NaN();
 };
 
 template <int DisplacementDim>
@@ -167,7 +170,6 @@ struct ConstitutiveRelationsValues
     double c_f;
     double effective_volumetric_heat_capacity;
     double fluid_compressibility;
-    double fluid_density;
     double porosity;
     double rho;
 
