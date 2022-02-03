@@ -55,16 +55,17 @@ public:
 
     /// Constructs project data by parsing provided configuration.
     ///
-    /// \param project_config Configuration as read from the prj file.
+    /// \param project_config    Configuration as read from the prj file.
     /// \param project_directory Where to look for files referenced in the
     ///                          \c config_tree.
     /// \param output_directory  Where to write simulation output files to.
+    /// \param mesh_directory    Directory where meshes are read from.
     ProjectData(BaseLib::ConfigTree const& project_config,
                 std::string const& project_directory,
-                std::string const& output_directory);
+                std::string const& output_directory,
+                std::string const& mesh_directory);
 
     ProjectData(ProjectData&) = delete;
-
 
     //
     // Process interface

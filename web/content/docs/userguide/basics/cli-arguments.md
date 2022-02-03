@@ -27,6 +27,9 @@ $ ogs --help
    -l <LOG_LEVEL>,  --log-level <LOG_LEVEL>
      the verbosity of logging messages: none, error, warn, info, debug, all
 
+   -m <PATH>,  --mesh-input-directory <PATH>
+     the directory where the meshes are read from, default is project file directory
+
    -o <PATH>,  --output-directory <PATH>
      the output directory to write to
 

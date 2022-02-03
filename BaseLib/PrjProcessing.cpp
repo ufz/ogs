@@ -274,10 +274,8 @@ void prepareProjectFile(std::stringstream& prj_stream,
 
     std::vector<std::string> patch_files_copy = patch_files;
     readAndPatchPrj(prj_stream, prj_file, patch_files_copy);
-    // LB TODO later: replace canonical with absolute when a mesh input dir
-    // ogs parameter is implemented.
     replaceIncludes(prj_stream,
-                    std::filesystem::canonical(std::filesystem::path(prj_file))
+                    std::filesystem::absolute(std::filesystem::path(prj_file))
                         .parent_path());
     // re-apply xml patches to stream
     for (const auto& patch_file : patch_files_copy)

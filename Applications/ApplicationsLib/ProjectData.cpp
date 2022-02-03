@@ -139,10 +139,10 @@ void readGeometry(std::string const& fname, GeoLib::GEOObjects& geo_objects)
 
 std::unique_ptr<MeshLib::Mesh> readSingleMesh(
     BaseLib::ConfigTree const& mesh_config_parameter,
-    std::string const& project_directory)
+    std::string const& directory)
 {
     std::string const mesh_file = BaseLib::copyPathToFileName(
-        mesh_config_parameter.getValue<std::string>(), project_directory);
+        mesh_config_parameter.getValue<std::string>(), directory);
     DBUG("Reading mesh file '{:s}'.", mesh_file);
 
     auto mesh = std::unique_ptr<MeshLib::Mesh>(
@@ -170,7 +170,7 @@ std::unique_ptr<MeshLib::Mesh> readSingleMesh(
 }
 
 std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
-    BaseLib::ConfigTree const& config, std::string const& project_directory)
+    BaseLib::ConfigTree const& config, std::string const& directory)
 {
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
 
@@ -181,10 +181,10 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
         DBUG("Reading multiple meshes.");
         //! \ogs_file_param{prj__meshes__mesh}
         auto const configs = optional_meshes->getConfigParameterList("mesh");
-        std::transform(
-            configs.begin(), configs.end(), std::back_inserter(meshes),
-            [&project_directory](auto const& mesh_config)
-            { return readSingleMesh(mesh_config, project_directory); });
+        std::transform(configs.begin(), configs.end(),
+                       std::back_inserter(meshes),
+                       [&directory](auto const& mesh_config)
+                       { return readSingleMesh(mesh_config, directory); });
     }
     else
     {  // Read single mesh with geometry.
@@ -193,14 +193,14 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
             "meshes input. See "
             "https://www.opengeosys.org/docs/tools/meshing-submeshes/"
             "constructmeshesfromgeometry/ tool for conversion.");
-        //! \ogs_file_param{prj__mesh}
-        meshes.push_back(readSingleMesh(config.getConfigParameter("mesh"),
-                                        project_directory));
+        meshes.push_back(
+            //! \ogs_file_param{prj__mesh}
+            readSingleMesh(config.getConfigParameter("mesh"), directory));
 
         std::string const geometry_file = BaseLib::copyPathToFileName(
             //! \ogs_file_param{prj__geometry}
             config.getConfigParameter<std::string>("geometry"),
-            project_directory);
+            directory);
         GeoLib::GEOObjects geoObjects;
         readGeometry(geometry_file, geoObjects);
 
@@ -283,8 +283,9 @@ ProjectData::ProjectData() = default;
 
 ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
                          std::string const& project_directory,
-                         std::string const& output_directory)
-    : _mesh_vec(readMeshes(project_config, project_directory))
+                         std::string const& output_directory,
+                         std::string const& mesh_directory)
+    : _mesh_vec(readMeshes(project_config, mesh_directory))
 {
     if (auto const python_script =
             //! \ogs_file_param{prj__python_script}
