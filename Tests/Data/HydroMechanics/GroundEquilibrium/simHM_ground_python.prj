@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--units: kg, m, s, K and derived units: N, Pa=N/m², Da=m² -->
+<!--DESCRIPTION: 
+        * simple ground model
+        * hydrostatic conditions
+        * fields initialized such that ground is in equilibrium
+        * with InitialPressureZero system finds equilibrium in 1 step
+  -->
+<OpenGeoSysProject>
+    <meshes>
+        <mesh>mesh_domain_trans.vtu</mesh>
+        <mesh>mesh_boundary_surf.vtu</mesh>
+        <mesh>mesh_boundary_down.vtu</mesh>
+        <mesh>mesh_boundary_left.vtu</mesh>
+        <mesh>mesh_boundary_right.vtu</mesh>
+    </meshes>
+    <python_script>pythonBCsOGS.py</python_script> <!--/home/cbs/gitprojects/CBS/Glacier2py/-->
+    <processes>
+        <process>
+            <name>HM</name>
+            <type>HYDRO_MECHANICS</type>
+            <!--define the numerical integration order -->
+            <!--(polynomial degree to which exact integration is possible) -->
+            <!--for the displacement element order = 2 it has to be chosen:-->
+            <integration_order>3</integration_order>
+            <dimension>2</dimension>
+            <!--define the constitutive behavior:  the material group IDs will be defined in parameters. -->
+            <constitutive_relation>
+                <type>LinearElasticIsotropic</type>
+                <youngs_modulus>YoungModulus</youngs_modulus>
+                <poissons_ratio>PoissonRatio</poissons_ratio>
+            </constitutive_relation>
+            <!--define initial effective stress state by parameter-->
+            <initial_stress>InitialEffectiveStressField</initial_stress>
+            <process_variables>
+                <pressure>pressure</pressure>
+                <displacement>displacement</displacement>
+            </process_variables>
+            <!--gravity constant -->
+            <specific_body_force>0 -9.81</specific_body_force>
+            <!--define the output quantities derived from the primary variables-->
+            <secondary_variables>
+                <secondary_variable internal_name="sigma" output_name="sigma"/>
+                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable internal_name="velocity" output_name="DarcyVelocity"/>
+            </secondary_variables>
+        </process>
+    </processes>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+		                <!-- Gas means fluid with pressure-dependent density -->
+                    <type>Gas</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Parameter</type>
+                            <parameter_name>ViscosityWater</parameter_name>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>DensityWater</parameter_name>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>DensitySolid</parameter_name>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+              <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.2</value>
+              </property>
+              <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>1.0</value>
+              </property>
+              <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1.25e-9</value> <!--m²-->
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value> <!--K-->
+                </property>
+            </properties>
+        </medium>
+    </media>
+    <parameters>
+        <!-- Material parameters -->
+        <parameter>
+            <name>YoungModulus</name>
+            <type>Constant</type>
+            <value>1.e6</value> <!--Pa-->
+        </parameter>
+        <parameter>
+            <name>PoissonRatio</name>
+             <type>Constant</type>
+            <value>0.40</value>
+        </parameter>
+        <parameter>
+            <name>DensitySolid</name>
+            <type>Constant</type>
+            <value>3000</value> <!--kg/m³-->
+        </parameter>
+        <parameter>
+            <name>ViscosityWater</name>
+            <type>Constant</type>
+            <value>1.e-3</value> <!--Pa*s-->
+        </parameter>
+        <parameter>
+            <name>DensityWater</name>
+            <type>Constant</type>
+            <value>1000</value> <!--kg/m³-->
+        </parameter>
+        <!-- Initial and boundary values -->
+        <parameter>
+            <name>AmbientPressure</name>
+            <type>Constant</type>
+            <values>0</values>
+        </parameter>
+        <parameter>
+            <name>InitialPressureZero</name>
+            <type>Constant</type>
+            <values>0</values>
+        </parameter>
+        <parameter>
+            <name>InitialPressureField</name>
+            <type>Function</type>
+            <expression>-1000*9.81*y</expression>
+        </parameter>
+        <parameter>
+            <name>PressureProfile</name>
+            <type>Function</type>
+            <expression>-1000*9.81*y</expression>
+        </parameter>
+        <parameter>
+            <name>InitialDisplacementZero</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>ZeroDisplacement</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>InitialEffectiveStressZero</name>
+            <type>Constant</type>
+            <values>0 0 0 0</values>
+        </parameter>
+        <parameter>
+            <name>InitialEffectiveStressField</name> <!--effective stress!-->
+            <type>Function</type>
+            <expression> 0.4 / (1-0.4) * ((0.2-1.0)*1000 + (1-0.2)*3000) * 9.81*y</expression><!--xx-->
+            <expression>                          ((0.2-1.0)*1000 + (1-0.2)*3000) * 9.81*y</expression><!--yy-->
+            <expression> 0.4 / (1-0.4) * ((0.2-1.0)*1000 + (1-0.2)*3000) * 9.81*y</expression><!--zz-->
+            <expression>0.0</expression><!--xy-->
+        </parameter>
+    </parameters>
+    <process_variables>
+        <process_variable>
+            <name>pressure</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>InitialPressureField</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>mesh_boundary_surf</mesh>
+                    <type>Python</type>
+                    <bc_object>AmbientPressure_py</bc_object>
+                    <flush_stdout>true</flush_stdout>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>mesh_boundary_right</mesh>
+                    <type>Python</type>
+                    <bc_object>PressureProfile_py</bc_object>
+                    <flush_stdout>true</flush_stdout>
+                </boundary_condition>
+                <!--no flow (free) boundary conditions elsewhere-->
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <!--for displacement, the element order must be 2, because the mesh consists of the 8 node rectangles-->
+            <order>2</order>
+            <initial_condition>InitialDisplacementZero</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>mesh_boundary_left</mesh>
+                    <type>Python</type>
+                    <component>0</component>
+                    <bc_object>LateralDisplacement_py</bc_object>
+                    <flush_stdout>true</flush_stdout>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>mesh_boundary_down</mesh>
+                    <type>Python</type>
+                    <component>1</component>
+                    <bc_object>BottomDisplacement_py</bc_object>
+                    <flush_stdout>true</flush_stdout>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>mesh_boundary_right</mesh>
+                    <type>Python</type>
+                    <component>0</component>
+                    <bc_object>NormalStressProfile_py</bc_object>
+                    <flush_stdout>true</flush_stdout>
+                </boundary_condition>
+                <!--free boundary on the surface-->
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <time_loop>
+        <processes>
+            <process ref="HM">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>PerComponentDeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstols>1e-8 1e-8 1e-8</abstols>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0</t_initial>
+                    <t_end>1e6</t_end><!--seconds-->
+                    <!--incompressible poro-elastic problem without hydraulic flow: time scale irrelevant-->
+                    <timesteps>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>1e6</delta_t><!--seconds-->
+                            <!-- i.e.: repeat one time a time step with size of delta_t -->
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>simHM_ground_python</prefix>
+            <timesteps>
+                <pair>
+                    <repeat>100</repeat>
+                    <each_steps>1</each_steps>
+                    <!-- i.e.: do a hundred times the output at each step -->
+                </pair>
+            </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>sigma</variable>
+            </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+        </output>
+    </time_loop>    
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>100</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <precon_type>DIAGONAL</precon_type>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+</OpenGeoSysProject>
