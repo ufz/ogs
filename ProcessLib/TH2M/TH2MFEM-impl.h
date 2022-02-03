@@ -374,6 +374,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_data.diffusion_coefficient_solvate = c.diffusion_coefficient_solvate;
 
         ip_data.h_G = c.hG;
+        ip_data.h_CG = c.hCG;
+        ip_data.h_WG = c.hWG;
         ip_data.h_L = c.hL;
         ip_data.pWGR = c.pWGR;
 
@@ -1216,6 +1218,10 @@ void TH2MLocalAssembler<
             gradNTT * (ip.rhoGR * h_G * ip.w_GS + ip.rhoLR * h_L * ip.w_LS) * w;
 
         fT.noalias() +=
+            gradNTT *
+            (ip.rhoCGR * ip.h_CG * ip.d_CG + ip.rhoWGR * ip.h_WG * ip.d_WG) * w;
+
+        fT.noalias() +=
             NTT *
             (ip.rhoGR * ip.w_GS.transpose() + ip.rhoLR * ip.w_LS.transpose()) *
             b * w;
@@ -1886,6 +1892,10 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             NTT *
             (ip.rhoGR * ip.w_GS.transpose() + ip.rhoLR * ip.w_LS.transpose()) *
             b * w;
+
+        fT.noalias() +=
+            gradNTT *
+            (ip.rhoCGR * ip.h_CG * ip.d_CG + ip.rhoWGR * ip.h_WG * ip.d_WG) * w;
 
         // ---------------------------------------------------------------------
         //  - displacement equation
