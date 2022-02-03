@@ -35,6 +35,8 @@
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
                 <secondary_variable internal_name="saturation" output_name="saturation"/>
                 <secondary_variable internal_name="velocity" output_name="velocity"/>
+                <secondary_variable internal_name="liquid_density" output_name="liquid_density"/>
+                <secondary_variable internal_name="viscosity" output_name="viscosity"/>
             </secondary_variables>
             <initial_stress>sigma0</initial_stress>
         </process>
@@ -241,6 +243,8 @@
                 <variable>epsilon</variable>
                 <variable>saturation</variable>
                 <variable>velocity</variable>
+                <variable>liquid_density</variable>
+                <variable>viscosity</variable>
             </variables>
         </output>
     </time_loop>
@@ -499,6 +503,30 @@
         <vtkdiff>
             <regex>A2_ts_.*.vtu</regex>
             <field>temperature</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>A2_ts_.*.vtu</regex>
+            <field>liquid_density</field>
+            <absolute_tolerance>3e-12</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>A2_ts_.*.vtu</regex>
+            <field>liquid_density_avg</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>A2_ts_.*.vtu</regex>
+            <field>viscosity</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>A2_ts_.*.vtu</regex>
+            <field>viscosity_avg</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
