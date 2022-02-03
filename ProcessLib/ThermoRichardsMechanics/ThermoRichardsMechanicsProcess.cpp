@@ -199,6 +199,12 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     add_secondary_variable("dry_density_solid", 1,
                            &LocalAssemblerIF::getIntPtDryDensitySolid);
 
+    add_secondary_variable("liquid_density", 1,
+                           &LocalAssemblerIF::getIntPtLiquidDensity);
+
+    add_secondary_variable("viscosity", 1,
+                           &LocalAssemblerIF::getIntPtViscosity);
+
     //
     // enable output of internal variables defined by material models
     //
@@ -212,6 +218,15 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
     process_data_.element_porosity = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "porosity_avg",
+        MeshLib::MeshItemType::Cell, 1);
+
+    process_data_.element_liquid_density =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "liquid_density_avg",
+            MeshLib::MeshItemType::Cell, 1);
+
+    process_data_.element_viscosity = MeshLib::getOrCreateMeshProperty<double>(
+        const_cast<MeshLib::Mesh&>(mesh), "viscosity_avg",
         MeshLib::MeshItemType::Cell, 1);
 
     process_data_.element_stresses = MeshLib::getOrCreateMeshProperty<double>(
