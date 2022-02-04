@@ -47,7 +47,7 @@ if(OGS_USE_PYTHON)
     )
 endif()
 
-ogs_add_executable(ogs ogs.cpp)
+ogs_add_executable(ogs ogs.cpp CommandLineArgumentParser.cpp)
 
 target_link_libraries(
     ogs
