@@ -10,18 +10,17 @@
  *
  */
 
-#include <spdlog/spdlog.h>
-
 #include "Simulation.h"
+
+#include <spdlog/spdlog.h>
 
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/ProjectData.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
 #include "Applications/InSituLib/Adaptor.h"
 #include "BaseLib/ConfigTreeUtil.h"
-#include "BaseLib/DateTools.h"
 #include "BaseLib/FileTools.h"
-#include "BaseLib/RunTime.h"
+#include "BaseLib/PrjProcessing.h"
 #include "NumLib/NumericsConfig.h"
 #include "ProcessLib/TimeLoop.h"
 
@@ -46,13 +45,15 @@ Simulation::Simulation(int argc, char* argv[])
 
 void Simulation::initializeDataStructures(
     std::string&& project, std::vector<std::string>&& xml_patch_file_names,
-    bool reference_path_is_set, std::string&& reference_path, bool nonfatal,
-    std::string&& outdir)
+    bool const reference_path_is_set, std::string&& reference_path,
+    bool const nonfatal, std::string&& outdir, std::string&& mesh_dir,
+    bool const write_prj)
 {
+    std::stringstream prj_stream;
+    BaseLib::prepareProjectFile(prj_stream, project, xml_patch_file_names,
+                                write_prj, outdir);
     auto project_config = BaseLib::makeConfigTree(
-        project, !nonfatal, "OpenGeoSysProject", xml_patch_file_names);
-
-    BaseLib::setProjectDirectory(BaseLib::extractPath(project));
+        project, !nonfatal, "OpenGeoSysProject", prj_stream);
 
     if (!reference_path_is_set)
     {  // Ignore the test_definition section.
@@ -90,7 +91,7 @@ void Simulation::initializeDataStructures(
 #endif
 
     project_data = std::make_unique<ProjectData>(
-        project_config, BaseLib::getProjectDirectory(), outdir);
+        project_config, BaseLib::getProjectDirectory(), outdir, mesh_dir);
 
     INFO("Initialize processes.");
     for (auto& p : project_data->getProcesses())
