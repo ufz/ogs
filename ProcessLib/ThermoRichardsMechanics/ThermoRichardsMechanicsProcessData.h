@@ -57,6 +57,8 @@ struct ThermoRichardsMechanicsProcessData
 
     MeshLib::PropertyVector<double>* element_saturation = nullptr;
     MeshLib::PropertyVector<double>* element_porosity = nullptr;
+    MeshLib::PropertyVector<double>* element_liquid_density = nullptr;
+    MeshLib::PropertyVector<double>* element_viscosity = nullptr;
     MeshLib::PropertyVector<double>* element_stresses = nullptr;
     MeshLib::PropertyVector<double>* temperature_interpolated = nullptr;
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;

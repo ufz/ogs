@@ -388,6 +388,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps_m = ip_data.eps_m;
         eps.noalias() = B * u;
         auto const& sigma_eff = ip_data.sigma_eff;
+        auto& rho_LR = ip_data.liquid_density;
+        auto& mu = ip_data.viscosity;
         auto& S_L = ip_data.saturation;
         auto const S_L_prev = ip_data.saturation_prev;
         auto const alpha =
@@ -404,9 +406,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::grain_compressibility)] =
             beta_SR;
 
-        auto const rho_LR =
-            liquid_phase.property(MPL::PropertyType::density)
-                .template value<double>(variables, x_position, t, dt);
+        rho_LR = liquid_phase.property(MPL::PropertyType::density)
+                     .template value<double>(variables, x_position, t, dt);
         auto const& b = process_data_.specific_body_force;
 
         S_L = medium->property(MPL::PropertyType::saturation)
@@ -623,9 +624,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const k_rel =
             medium->property(MPL::PropertyType::relative_permeability)
                 .template value<double>(variables, x_position, t, dt);
-        auto const mu =
-            liquid_phase.property(MPL::PropertyType::viscosity)
-                .template value<double>(variables, x_position, t, dt);
+        mu = liquid_phase.property(MPL::PropertyType::viscosity)
+                 .template value<double>(variables, x_position, t, dt);
 
         // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
@@ -1055,6 +1055,36 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
+std::vector<double> const&
+ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
+                                      IntegrationMethod, DisplacementDim>::
+    getIntPtLiquidDensity(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointScalarData(
+        ip_data_, &IpData::liquid_density, cache);
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
+          typename IntegrationMethod, int DisplacementDim>
+std::vector<double> const&
+ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
+                                      IntegrationMethod, DisplacementDim>::
+    getIntPtViscosity(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointScalarData(ip_data_,
+                                                     &IpData::viscosity, cache);
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
+          typename IntegrationMethod, int DisplacementDim>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                            ShapeFunction, IntegrationMethod,
                                            DisplacementDim>::
@@ -1093,6 +1123,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     double saturation_avg = 0;
     double porosity_avg = 0;
+    double liquid_density_avg = 0;
+    double viscosity_avg = 0;
 
     using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
     KV sigma_avg = KV::Zero();
@@ -1138,6 +1170,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps = ip_data.eps;
         eps.noalias() = B * u;
         auto& eps_m = ip_data.eps_m;
+        auto& rho_LR = ip_data.liquid_density;
+        auto& mu = ip_data.viscosity;
         auto& S_L = ip_data.saturation;
         auto const S_L_prev = ip_data.saturation_prev;
         S_L = medium->property(MPL::PropertyType::saturation)
@@ -1241,12 +1275,10 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 phi;
         }
 
-        auto const mu =
-            liquid_phase.property(MPL::PropertyType::viscosity)
-                .template value<double>(variables, x_position, t, dt);
-        auto const rho_LR =
-            liquid_phase.property(MPL::PropertyType::density)
-                .template value<double>(variables, x_position, t, dt);
+        mu = liquid_phase.property(MPL::PropertyType::viscosity)
+                 .template value<double>(variables, x_position, t, dt);
+        rho_LR = liquid_phase.property(MPL::PropertyType::density)
+                     .template value<double>(variables, x_position, t, dt);
 
         // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
@@ -1322,14 +1354,21 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         saturation_avg += S_L;
         porosity_avg += phi;
+        liquid_density_avg += rho_LR;
+        viscosity_avg += mu;
         sigma_avg += sigma_eff;
     }
     saturation_avg /= n_integration_points;
     porosity_avg /= n_integration_points;
+    viscosity_avg /= n_integration_points;
+    liquid_density_avg /= n_integration_points;
     sigma_avg /= n_integration_points;
 
     (*process_data_.element_saturation)[element_.getID()] = saturation_avg;
     (*process_data_.element_porosity)[element_.getID()] = porosity_avg;
+    (*process_data_.element_liquid_density)[element_.getID()] =
+        liquid_density_avg;
+    (*process_data_.element_viscosity)[element_.getID()] = viscosity_avg;
 
     Eigen::Map<KV>(&(*process_data_.element_stresses)[element_.getID() *
                                                       KV::RowsAtCompileTime]) =

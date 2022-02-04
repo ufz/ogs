@@ -74,6 +74,8 @@ struct IntegrationPointData final
         std::numeric_limits<double>::quiet_NaN();
     double dry_density_pellet_unsaturated =
         std::numeric_limits<double>::quiet_NaN();
+    double liquid_density = std::numeric_limits<double>::quiet_NaN();
+    double viscosity = std::numeric_limits<double>::quiet_NaN();
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
