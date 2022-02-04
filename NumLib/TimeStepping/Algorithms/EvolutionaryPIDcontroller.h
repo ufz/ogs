@@ -16,11 +16,6 @@
 
 #include "TimeStepAlgorithm.h"
 
-namespace BaseLib
-{
-class ConfigTree;
-}
-
 namespace NumLib
 {
 /**
@@ -107,10 +102,5 @@ private:
     double limitStepSize(const double h_new,
                          const bool previous_step_accepted) const;
 };
-
-/// Create an EvolutionaryPIDcontroller time stepper from the given
-/// configuration
-std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
-    BaseLib::ConfigTree const& config);
 
 }  // end of namespace NumLib

@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "BaseLib/ConfigTree.h"
+#include "NumLib/TimeStepping/Algorithms/CreateEvolutionaryPIDcontroller.h"
 #include "NumLib/TimeStepping/Algorithms/EvolutionaryPIDcontroller.h"
 #include "NumLib/TimeStepping/TimeStep.h"
 #include "Tests/TestTools.h"

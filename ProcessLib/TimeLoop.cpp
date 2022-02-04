@@ -311,6 +311,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
     bool all_process_steps_accepted = true;
     // Get minimum time step size among step sizes of all processes.
     double dt = std::numeric_limits<double>::max();
+    constexpr double eps = std::numeric_limits<double>::epsilon();
 
     bool const is_initial_step = std::any_of(
         _per_process_data.begin(), _per_process_data.end(),
@@ -318,12 +319,20 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
             return ppd->timestep_algorithm->getTimeStep().timeStepNumber() == 0;
         });
 
-    for (std::size_t i = 0; i < _per_process_data.size(); i++)
+    auto computeSolutionError = [this, t](auto const i) -> double
     {
-        auto& ppd = *_per_process_data[i];
+        auto const& ppd = *_per_process_data[i];
         const auto& timestep_algorithm = ppd.timestep_algorithm;
+        if (!timestep_algorithm->isSolutionErrorComputationNeeded())
+        {
+            return 0.0;
+        }
+        if (t == timestep_algorithm->begin())
+        {
+            // Always accepts the zeroth step
+            return 0.0;
+        }
 
-        auto& time_disc = ppd.time_disc;
         auto const& x = *_process_solutions[i];
         auto const& x_prev = *_process_solutions_prev[i];
 
@@ -333,25 +342,30 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
                         : MathLib::VecNormType::NORM2;
 
         const double solution_error =
-            (timestep_algorithm->isSolutionErrorComputationNeeded())
-                ? ((t == timestep_algorithm->begin())
-                       ? 0.  // Always accepts the zeroth step
-                       : time_disc->computeRelativeChangeFromPreviousTimestep(
-                             x, x_prev, norm_type))
-                : 0.;
+            NumLib::computeRelativeChangeFromPreviousTimestep(x, x_prev,
+                                                              norm_type);
+        return solution_error;
+    };
+
+    for (std::size_t i = 0; i < _per_process_data.size(); i++)
+    {
+        auto& ppd = *_per_process_data[i];
+        const auto& timestep_algorithm = ppd.timestep_algorithm;
+
+        const double solution_error = computeSolutionError(i);
 
         timestep_algorithm->setAccepted(
             ppd.nonlinear_solver_status.error_norms_met);
 
-        auto [step_accepted, timestepper_dt] = timestep_algorithm->next(
-            solution_error, ppd.nonlinear_solver_status.number_iterations);
+        auto [previous_step_accepted, timestepper_dt] =
+            timestep_algorithm->next(
+                solution_error, ppd.nonlinear_solver_status.number_iterations);
 
-        if (!step_accepted &&
+        if (!previous_step_accepted &&
             // In case of FixedTimeStepping, which makes
             // timestep_algorithm->next(...) return false when the ending time
             // is reached.
-            t + std::numeric_limits<double>::epsilon() <
-                timestep_algorithm->end())
+            t + eps < timestep_algorithm->end())
         {
             // Not all processes have accepted steps.
             all_process_steps_accepted = false;
@@ -365,9 +379,8 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
             all_process_steps_accepted = false;
         }
 
-        if (timestepper_dt > std::numeric_limits<double>::epsilon() ||
-            std::abs(t - timestep_algorithm->end()) <
-                std::numeric_limits<double>::epsilon())
+        if (timestepper_dt > eps ||
+            std::abs(t - timestep_algorithm->end()) < eps)
         {
             dt = std::min(timestepper_dt, dt);
         }
@@ -391,8 +404,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
         }
         else
         {
-            if (t < _end_time || std::abs(t - _end_time) <
-                                     std::numeric_limits<double>::epsilon())
+            if (t < _end_time || std::abs(t - _end_time) < eps)
             {
                 t -= prev_dt;
                 rejected_steps++;
@@ -410,7 +422,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
     dt = NumLib::possiblyClampDtToNextFixedTime(t, dt,
                                                 _output->getFixedOutputTimes());
     // Check whether the time stepping is stabilized
-    if (std::abs(dt - prev_dt) < std::numeric_limits<double>::epsilon())
+    if (std::abs(dt - prev_dt) < eps)
     {
         if (_last_step_rejected)
         {
@@ -452,8 +464,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
         }
         else
         {
-            if (t < _end_time || std::abs(t - _end_time) <
-                                     std::numeric_limits<double>::epsilon())
+            if (t < _end_time || std::abs(t - _end_time) < eps)
             {
                 WARN(
                     "Time step {:d} was rejected {:d} times and it will be "
