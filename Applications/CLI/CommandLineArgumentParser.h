@@ -23,7 +23,9 @@ struct CommandLineArgumentParser final
     std::string project;
     std::vector<std::string> xml_patch_file_names;
     std::string outdir;
+    std::string mesh_dir;
     std::string log_level;
+    bool write_prj;
     bool nonfatal;
     bool reference_path_is_set;
 #ifndef _WIN32

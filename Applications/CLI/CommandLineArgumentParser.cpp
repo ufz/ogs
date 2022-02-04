@@ -10,10 +10,11 @@
  *
  */
 
-#include <tclap/CmdLine.h>
-
 #include "CommandLineArgumentParser.h"
 
+#include <tclap/CmdLine.h>
+
+#include "BaseLib/FileTools.h"
 #include "InfoLib/CMakeInfo.h"
 #include "InfoLib/GitInfo.h"
 
@@ -79,6 +80,15 @@ CommandLineArgumentParser::CommandLineArgumentParser(int argc, char* argv[])
                                             "the output directory to write to",
                                             false, "", "PATH");
 
+    TCLAP::ValueArg<std::string> mesh_dir_arg(
+        "m", "mesh-input-directory",
+        "the directory where the meshes are read from", false, "", "PATH");
+
+    TCLAP::SwitchArg write_prj_arg("",
+                                   "write-prj",
+                                   "Writes processed project file to output "
+                                   "path / [prj_base_name]_processed.prj.");
+
     TCLAP::SwitchArg nonfatal_arg("",
                                   "config-warnings-nonfatal",
                                   "warnings from parsing the configuration "
@@ -87,6 +97,8 @@ CommandLineArgumentParser::CommandLineArgumentParser(int argc, char* argv[])
     cmd.add(project_arg);
     cmd.add(xml_patch_files_arg);
     cmd.add(outdir_arg);
+    cmd.add(mesh_dir_arg);
+    cmd.add(write_prj_arg);
     cmd.add(log_level_arg);
     cmd.add(nonfatal_arg);
     cmd.add(unbuffered_cout_arg);
@@ -100,10 +112,16 @@ CommandLineArgumentParser::CommandLineArgumentParser(int argc, char* argv[])
     reference_path = reference_path_arg.getValue();
     reference_path_is_set = reference_path_arg.isSet();
     project = project_arg.getValue();
+
+    BaseLib::setProjectDirectory(BaseLib::extractPath(project));
+
     xml_patch_file_names = xml_patch_files_arg.getValue();
     outdir = outdir_arg.getValue();
+    mesh_dir = mesh_dir_arg.getValue().empty() ? BaseLib::getProjectDirectory()
+                                               : mesh_dir_arg.getValue();
     nonfatal = nonfatal_arg.getValue();
     log_level = log_level_arg.getValue();
+    write_prj = write_prj_arg.getValue();
 
     // deactivate buffer for standard output if specified
     if (unbuffered_cout_arg.isSet())
