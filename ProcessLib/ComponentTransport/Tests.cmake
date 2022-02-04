@@ -880,3 +880,23 @@ AddTest(
     Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sulphide Sulphide 1e-10 1e-16
     RUNTIME 40
 )
+
+# single mesh with PETSc enabled.
+AddTest(
+    NAME ParallelFEM_CalciteDissolution_SingleMesh
+    PATH Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS calcitePorosityChange.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 1
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    calcitePorosityChange_ts_210_t_21000_000000_0.vtu calcitePorosityChange_ts_210_t_21000_000000_0.vtu pressure pressure 1e-6 1e-10
+    calcitePorosityChange_ts_210_t_21000_000000_0.vtu calcitePorosityChange_ts_210_t_21000_000000_0.vtu Ca Ca 1e-10 1e-16
+    calcitePorosityChange_ts_210_t_21000_000000_0.vtu calcitePorosityChange_ts_210_t_21000_000000_0.vtu Cl Cl 1e-10 1e-16
+    calcitePorosityChange_ts_210_t_21000_000000_0.vtu calcitePorosityChange_ts_210_t_21000_000000_0.vtu H H 1e-10 1e-16
+    calcitePorosityChange_ts_210_t_21000_000000_0.vtu calcitePorosityChange_ts_210_t_21000_000000_0.vtu Mg Mg 1e-10 1e-16
+    calcitePorosityChange_ts_210_t_21000_000000_0.vtu calcitePorosityChange_ts_210_t_21000_000000_0.vtu Calcite_avg Calcite_avg 1e-10 1e-16
+    calcitePorosityChange_ts_210_t_21000_000000_0.vtu calcitePorosityChange_ts_210_t_21000_000000_0.vtu porosity_avg porosity_avg 1e-10 1e-16
+)
