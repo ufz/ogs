@@ -18,7 +18,7 @@ class NodalSourceTerm final : public SourceTerm
 {
 public:
     explicit NodalSourceTerm(
-        std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table,
+        std::unique_ptr<NumLib::LocalToGlobalIndexMap> source_term_dof_table,
         std::size_t const source_term_mesh_id, MeshLib::Mesh const& st_mesh,
         const int variable_id, const int component_id,
         ParameterLib::Parameter<double> const& parameter);
