@@ -55,8 +55,9 @@ public:
     };
 
 public:
-    Output(std::string directory, OutputType const type, std::string prefix,
-           std::string suffix, bool const compress_output, unsigned int n_files,
+    Output(std::string directory, OutputType const file_type,
+           std::string file_prefix, std::string file_suffix,
+           bool const compress_output, unsigned int n_files,
            std::string const& data_mode,
            bool const output_nonlinear_iteration_results,
            std::vector<PairRepeatEachSteps> repeats_each_steps,
