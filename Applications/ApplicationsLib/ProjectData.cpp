@@ -1125,8 +1125,15 @@ void ProjectData::parseTimeLoop(BaseLib::ConfigTree const& config,
 {
     DBUG("Reading time loop configuration.");
 
+    bool const compensate_non_equilibrium_initial_residuum = std::any_of(
+        std::begin(_process_variables),
+        std::end(_process_variables),
+        [](auto const& process_variable)
+        { return process_variable.compensateNonEquilibriumInitialResiduum(); });
+
     _time_loop = ProcessLib::createTimeLoop(
-        config, output_directory, _processes, _nonlinear_solvers, _mesh_vec);
+        config, output_directory, _processes, _nonlinear_solvers, _mesh_vec,
+        compensate_non_equilibrium_initial_residuum);
 
     if (!_time_loop)
     {

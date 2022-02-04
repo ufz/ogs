@@ -135,7 +135,6 @@
                     <norm_type>NORM2</norm_type>
                     <reltols>1e-10 1e0 1e-9</reltols>
                 </convergence_criterion>
-                <compensate_non_equilibrium_initial_residuum>false</compensate_non_equilibrium_initial_residuum>
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>

@@ -66,7 +66,8 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<Process>> const& processes,
     std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>> const&
-        nonlinear_solvers)
+        nonlinear_solvers,
+    bool const compensate_non_equilibrium_initial_residuum)
 {
     std::vector<std::unique_ptr<ProcessData>> per_process_data;
     int process_id = 0;
@@ -100,11 +101,6 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
         auto conv_crit = NumLib::createConvergenceCriterion(
             //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion}
             pcs_config.getConfigSubtree("convergence_criterion"));
-
-        auto const compensate_non_equilibrium_initial_residuum =
-            //! \ogs_file_param{prj__time_loop__processes__process__compensate_non_equilibrium_initial_residuum}
-            pcs_config.getConfigParameter<bool>(
-                "compensate_non_equilibrium_initial_residuum", false);
 
         //! \ogs_file_param{prj__time_loop__processes__process__output}
         auto output = pcs_config.getConfigSubtreeOptional("output");

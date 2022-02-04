@@ -44,6 +44,17 @@ void NonlinearSolver<NonlinearSolverTag::Picard>::
     _r_neq = &NumLib::GlobalVectorProvider::provider.getVector(_r_neq_id);
     MathLib::LinAlg::matMult(A, *x[process_id], *_r_neq);
     MathLib::LinAlg::axpy(*_r_neq, -1.0, rhs);  // res -= rhs
+
+    // Set the values of the selected entries of _r_neq, which are associated
+    // with the equations that do not need initial residual compensation, to
+    // zero.
+    const auto selected_global_indices =
+        _equation_system->getIndicesOfResiduumWithoutInitialCompensation();
+
+    std::vector<double> zero_entries(selected_global_indices.size(), 0.0);
+    _r_neq->set(selected_global_indices, zero_entries);
+
+    MathLib::LinAlg::finalizeAssembly(*_r_neq);
 }
 
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
@@ -224,6 +235,17 @@ void NonlinearSolver<NonlinearSolverTag::Newton>::
     _equation_system->assemble(x, x_prev, process_id);
     _r_neq = &NumLib::GlobalVectorProvider::provider.getVector(_r_neq_id);
     _equation_system->getResidual(*x[process_id], *x_prev[process_id], *_r_neq);
+
+    // Set the values of the selected entries of _r_neq, which are associated
+    // with the equations that do not need initial residual compensation, to
+    // zero.
+    const auto selected_global_indices =
+        _equation_system->getIndicesOfResiduumWithoutInitialCompensation();
+    std::vector<double> zero_entries(selected_global_indices.size(), 0.0);
+
+    _r_neq->set(selected_global_indices, zero_entries);
+
+    MathLib::LinAlg::finalizeAssembly(*_r_neq);
 }
 
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(

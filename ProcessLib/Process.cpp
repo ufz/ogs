@@ -432,4 +432,53 @@ NumLib::IterationResult Process::postIteration(const GlobalVector& x)
     return postIterationConcreteProcess(x);
 }
 
+std::vector<GlobalIndexType>
+Process::getIndicesOfResiduumWithoutInitialCompensation() const
+{
+    std::vector<GlobalIndexType> indices;
+
+    for (std::size_t process_id = 0; process_id < _process_variables.size();
+         process_id++)
+    {
+        auto const& dof_table_of_process = getDOFTable(process_id);
+
+        auto const& per_process_variables = _process_variables[process_id];
+        for (std::size_t variable_id = 0;
+             variable_id < per_process_variables.size();
+             variable_id++)
+        {
+            auto const& pv = per_process_variables[variable_id];
+            DBUG("Set the initial condition of variable {:s} of process {:d}.",
+                 pv.get().getName().data(), process_id);
+
+            if ((pv.get().compensateNonEquilibriumInitialResiduum()))
+            {
+                continue;
+            }
+
+            auto const num_comp = pv.get().getNumberOfGlobalComponents();
+
+            for (int component_id = 0; component_id < num_comp; ++component_id)
+            {
+                auto const& mesh_subset = dof_table_of_process.getMeshSubset(
+                    variable_id, component_id);
+                auto const mesh_id = mesh_subset.getMeshID();
+                for (auto const* node : mesh_subset.getNodes())
+                {
+                    MeshLib::Location const l(
+                        mesh_id, MeshLib::MeshItemType::Node, node->getID());
+
+                    auto global_index =
+                        std::abs(dof_table_of_process.getGlobalIndex(
+                            l, variable_id, component_id));
+
+                    indices.push_back(global_index);
+                }
+            }
+        }
+    }
+
+    return indices;
+}
+
 }  // namespace ProcessLib

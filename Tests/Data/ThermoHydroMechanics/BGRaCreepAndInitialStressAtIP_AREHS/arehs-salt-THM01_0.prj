@@ -425,8 +425,6 @@
                     <reltols>1e-7 1e-5 1.e-5 1.e-6</reltols>
                     <abstols>1e-10 1e-10 1.e-10 1.e-10</abstols>
                 </convergence_criterion>
-                <compensate_non_equilibrium_initial_residuum>false
-                </compensate_non_equilibrium_initial_residuum>
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>

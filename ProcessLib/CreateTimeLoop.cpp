@@ -23,7 +23,8 @@ std::unique_ptr<TimeLoop> createTimeLoop(
     const std::vector<std::unique_ptr<Process>>& processes,
     const std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>>&
         nonlinear_solvers,
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+    bool const compensate_non_equilibrium_initial_residuum)
 {
     auto const& coupling_config
         //! \ogs_file_param{prj__time_loop__global_process_coupling}
@@ -61,7 +62,8 @@ std::unique_ptr<TimeLoop> createTimeLoop(
 
     auto per_process_data = createPerProcessData(
         //! \ogs_file_param{prj__time_loop__processes}
-        config.getConfigSubtree("processes"), processes, nonlinear_solvers);
+        config.getConfigSubtree("processes"), processes, nonlinear_solvers,
+        compensate_non_equilibrium_initial_residuum);
 
     if (coupling_config)
     {

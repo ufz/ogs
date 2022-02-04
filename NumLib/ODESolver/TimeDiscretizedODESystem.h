@@ -86,6 +86,14 @@ public:
                   std::vector<GlobalVector*> const& x_prev,
                   int const process_id) override;
 
+    /// \return The global indices for the entries of the global residuum
+    /// vector that do not need initial non-equilibrium compensation.
+    std::vector<GlobalIndexType>
+    getIndicesOfResiduumWithoutInitialCompensation() const override
+    {
+        return _ode.getIndicesOfResiduumWithoutInitialCompensation();
+    }
+
     void getResidual(GlobalVector const& x_new_timestep,
                      GlobalVector const& x_prev,
                      GlobalVector& res) const override;
@@ -184,6 +192,14 @@ public:
     void assemble(std::vector<GlobalVector*> const& x_new_timestep,
                   std::vector<GlobalVector*> const& x_prev,
                   int const process_id) override;
+
+    /// \return The global indices for the entries of the global residuum
+    /// vector that do not need initial non-equilibrium compensation.
+    std::vector<GlobalIndexType>
+    getIndicesOfResiduumWithoutInitialCompensation() const override
+    {
+        return _ode.getIndicesOfResiduumWithoutInitialCompensation();
+    }
 
     void getA(GlobalMatrix& A) const override
     {

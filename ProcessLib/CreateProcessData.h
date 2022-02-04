@@ -18,6 +18,7 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<Process>> const& processes,
     std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>> const&
-        nonlinear_solvers);
+        nonlinear_solvers,
+    bool const compensate_non_equilibrium_initial_residuum);
 
 }  // namespace ProcessLib

@@ -41,6 +41,11 @@ public:
                           std::vector<GlobalVector*> const& x_prev,
                           int const process_id) = 0;
 
+    /// \return The global indices for the entries of the global residuum
+    /// vector that do not need initial non-equilibrium compensation.
+    virtual std::vector<GlobalIndexType>
+    getIndicesOfResiduumWithoutInitialCompensation() const = 0;
+
     /*! Writes the residual at point \c x to \c res.
      *
      * \pre assemble() must have been called before with the same argument \c x.
@@ -93,6 +98,11 @@ public:
     virtual void assemble(std::vector<GlobalVector*> const& x,
                           std::vector<GlobalVector*> const& x_prev,
                           int const process_id) = 0;
+
+    /// \return The global indices for the entries of the global residuum
+    /// vector that do not need initial non-equilibrium compensation.
+    virtual std::vector<GlobalIndexType>
+    getIndicesOfResiduumWithoutInitialCompensation() const = 0;
 
     //! Writes the linearized equation system matrix to \c A.
     //! \pre assemble() must have been called before.
