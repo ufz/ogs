@@ -1056,23 +1056,33 @@ void TH2MLocalAssembler<
 
         auto const advection_C_G = (ip.rhoCGR * k_over_mu_G).eval();
         auto const advection_C_L = (ip.rhoCLR * k_over_mu_L).eval();
-        auto const diffusion_C_G_p =
+
+        auto const diffusion_CGpGR =
             -(phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dpGR).eval();
-        auto const diffusion_C_L_p =
-            -(phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dpLR).eval();
-        auto const diffusion_C_G_T =
+        auto const diffusion_CLpGR =
+            -(phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dpGR).eval();
+
+        auto const diffusion_CGpCap =
+            -(phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dpCap).eval();
+        auto const diffusion_CLpCap =
+            -(phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dpCap).eval();
+
+        auto const diffusion_CGT =
             -(phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dT).eval();
-        auto const diffusion_C_L_T =
+        auto const diffusion_CLT =
             -(phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dT).eval();
 
         auto const advection_C = (advection_C_G + advection_C_L).eval();
-        auto const diffusion_C_p = (diffusion_C_G_p + diffusion_C_L_p).eval();
-        auto const diffusion_C_T = (diffusion_C_G_T + diffusion_C_L_T).eval();
+        auto const diffusion_C_pGR = (diffusion_CGpGR + diffusion_CLpGR).eval();
+        auto const diffusion_C_pCap =
+            (diffusion_CGpCap + diffusion_CLpCap).eval();
+        auto const diffusion_C_T = (diffusion_CGT + diffusion_CLT).eval();
 
-        LCpG.noalias() += gradNpT * (advection_C + diffusion_C_p) * gradNp * w;
+        LCpG.noalias() +=
+            gradNpT * (advection_C + diffusion_C_pGR) * gradNp * w;
 
-        LCpC.noalias() -=
-            gradNpT * (advection_C_L + diffusion_C_L_p) * gradNp * w;
+        LCpC.noalias() +=
+            gradNpT * (diffusion_C_pCap - advection_C_L) * gradNp * w;
 
         LCT.noalias() += gradNpT * (diffusion_C_T)*gradNp * w;
 
@@ -1117,23 +1127,33 @@ void TH2MLocalAssembler<
 
         auto const advection_W_G = (ip.rhoWGR * k_over_mu_G).eval();
         auto const advection_W_L = (ip.rhoWLR * k_over_mu_L).eval();
-        auto const diffusion_W_G_p =
+
+        auto const diffusion_WGpGR =
             (phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dpGR).eval();
-        auto const diffusion_W_L_p =
-            (phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dpLR).eval();
-        auto const diffusion_W_G_T =
+        auto const diffusion_WLpGR =
+            (phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dpGR).eval();
+
+        auto const diffusion_WGpCap =
+            (phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dpCap).eval();
+        auto const diffusion_WLpCap =
+            (phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dpCap).eval();
+
+        auto const diffusion_WGT =
             (phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dT).eval();
-        auto const diffusion_W_L_T =
+        auto const diffusion_WLT =
             (phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dT).eval();
 
         auto const advection_W = (advection_W_G + advection_W_L).eval();
-        auto const diffusion_W_p = (diffusion_W_G_p + diffusion_W_L_p).eval();
-        auto const diffusion_W_T = (diffusion_W_G_T + diffusion_W_L_T).eval();
+        auto const diffusion_W_pGR = (diffusion_WGpGR + diffusion_WLpGR).eval();
+        auto const diffusion_W_pCap =
+            (diffusion_WGpCap + diffusion_WLpCap).eval();
+        auto const diffusion_W_T = (diffusion_WGT + diffusion_WLT).eval();
 
-        LWpG.noalias() += gradNpT * (advection_W + diffusion_W_p) * gradNp * w;
+        LWpG.noalias() +=
+            gradNpT * (advection_W + diffusion_W_pGR) * gradNp * w;
 
-        LWpC.noalias() -=
-            gradNpT * (advection_W_L + diffusion_W_L_p) * gradNp * w;
+        LWpC.noalias() +=
+            gradNpT * (diffusion_W_pCap - advection_W_L) * gradNp * w;
 
         LWT.noalias() += gradNpT * (diffusion_W_T)*gradNp * w;
 
