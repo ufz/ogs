@@ -269,7 +269,6 @@ static std::set<std::string> addPrimaryVariablesToMesh(
     auto const x_copy = copySolutionVector(x);
     std::set<std::string> names_of_already_output_variables;
 
-    int global_component_offset = 0;
     int global_component_offset_next = 0;
 
     auto const* const bulk_node_id_map = getBulkNodeIdMapForPetscIfNecessary(
@@ -283,7 +282,7 @@ static std::set<std::string> addPrimaryVariablesToMesh(
 
         // increase global component offset even if we do not add anything in
         // this iteration
-        global_component_offset = global_component_offset_next;
+        int global_component_offset = global_component_offset_next;
         global_component_offset_next += n_components;
 
         if (output_variables.find(pv.getName()) == output_variables.cend())
