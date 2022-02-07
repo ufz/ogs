@@ -17,13 +17,13 @@ Some of these options are enabled by default ("*Defaults* to *ON*") otherwise th
 
 CMake switches to enable / disable parts of OGS.
 
-- `OGS_BUILD_CLI` - Builds the simulator. *Defaults* to *ON*. If set to *OFF* all processes are also disabled.
+- `OGS_BUILD_CLI` - Builds the simulator. *Defaults* to *ON*. If set to *OFF* all processes are also disabled (see variable `OGS_BUILD_PROCESSES` below).
 - `OGS_BUILD_GUI` - Builds the Data Explorer. *Defaults* to *OFF*.
 - `OGS_BUILD_TESTING` - Builds the test executables. *Defaults* to *ON*.
 - `OGS_BUILD_UTILS` - Builds several utilities.
 - `OGS_BUILD_PROCESS_X` - For enabling/disabling compilation of process `X`.
   Run the CMake-Gui to see a list of processes.
-- `OGS_BUILD_PROCESSES` - A `;`-separated list specifying processes to build. *Defaults* to an *empty string*. This will alter the `OGS_BUILD_PROCESS_X`-options. For e.g. building just the two processes `HT` and `LIE`: `-DOGS_BUILD_PROCESSES="HT;LIE"`. Setting this variable back to an empty string **does not reset** the `OGS_BUILD_PROCESS_X`-options. You can also set it to *OFF* to disable all processes.
+- `OGS_BUILD_PROCESSES` - A `;`-separated list specifying processes to build, e.g. `-DOGS_BUILD_PROCESSES="HT;LIE"`. *Defaults* to `ON` which means all processes are built. You can also set it to *OFF* to disable all processes.
 
 ### Debugging
 
