@@ -1,14 +1,10 @@
 # Collect the process libraries in interface library
 add_library(Processes INTERFACE)
 
-foreach(process ${_processes_list})
-    if(OGS_BUILD_PROCESS_${process})
-        add_subdirectory(${process})
-        target_link_libraries(Processes INTERFACE ${process})
-        set_target_properties(
-            ${process} PROPERTIES JOB_POOL_COMPILE heavy_tasks
-        )
-    endif()
+foreach(process ${_enabled_processes})
+    add_subdirectory(${process})
+    target_link_libraries(Processes INTERFACE ${process})
+    set_target_properties(${process} PROPERTIES JOB_POOL_COMPILE heavy_tasks)
 endforeach()
 
 get_source_files(SOURCES)

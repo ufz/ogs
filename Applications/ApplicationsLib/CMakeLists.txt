@@ -8,19 +8,14 @@ ogs_add_library(ApplicationsLib ${LIB_SOURCES})
 target_link_libraries(
     ApplicationsLib
     PUBLIC BaseLib GeoLib NumLib
-    PRIVATE CMakeInfoLib
-            MathLib
-            MeshLib
-            MeshGeoToolsLib
+    PRIVATE CMakeInfoLib MathLib MeshLib MeshGeoToolsLib
             $<$<BOOL:${OGS_USE_PYTHON}>:pybind11::pybind11>
             $<$<BOOL:${OGS_USE_PETSC}>:petsc>
 )
 
 if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR OGS_BUILD_TESTING)
     target_link_libraries(
-        ApplicationsLib
-        PUBLIC Processes
-        PRIVATE ParameterLib ProcessLib
+        ApplicationsLib PUBLIC Processes PRIVATE ParameterLib ProcessLib
     )
 elseif(OGS_BUILD_GUI)
     target_link_libraries(ApplicationsLib PRIVATE nlohmann_json::nlohmann_json)
@@ -36,12 +31,10 @@ target_compile_definitions(
 )
 
 # Set cpp definitions if the cmake option is enabled for the given process.
-foreach(process ${_processes_list})
-    if(OGS_BUILD_PROCESS_${process})
-        string(TOUPPER "OGS_BUILD_PROCESS_${process}" EnableProcess)
-        set_property(
-            TARGET ApplicationsLib APPEND PROPERTY COMPILE_DEFINITIONS
-                                                   ${EnableProcess}
-        )
-    endif()
+foreach(process ${_enabled_processes})
+    string(TOUPPER "OGS_BUILD_PROCESS_${process}" EnableProcess)
+    set_property(
+        TARGET ApplicationsLib APPEND PROPERTY COMPILE_DEFINITIONS
+                                               ${EnableProcess}
+    )
 endforeach()
