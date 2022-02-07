@@ -14,7 +14,7 @@
                 <process_variable>temperature</process_variable>
             </process_variables>
             <secondary_variables>
-                <secondary_variable internal_name="heat_flux_x" output_name="heat_flux_x"/>
+                <secondary_variable internal_name="heat_flux" output_name="heat_flux"/>
             </secondary_variables>
         </process>
     </processes>
@@ -54,7 +54,7 @@
             </timesteps>
             <variables>
                 <variable> temperature </variable>
-                <variable> heat_flux_x </variable>
+                <variable> heat_flux </variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

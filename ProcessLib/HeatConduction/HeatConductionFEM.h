@@ -17,6 +17,7 @@
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/VariableType.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
@@ -36,19 +37,7 @@ class HeatConductionLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
 public:
-    virtual std::vector<double> const& getIntPtHeatFluxX(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtHeatFluxY(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtHeatFluxZ(
+    virtual std::vector<double> const& getIntPtHeatFlux(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
@@ -82,10 +71,7 @@ public:
           _shape_matrices(
               NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                         GlobalDim>(
-                  element, is_axially_symmetric, _integration_method)),
-          _heat_fluxes(
-              GlobalDim,
-              std::vector<double>(_integration_method.getNumberOfPoints()))
+                  element, is_axially_symmetric, _integration_method))
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
         // matrices.
@@ -144,9 +130,7 @@ public:
                                   specific_heat_capacity)
                     .template value<double>(vars, pos, t, dt);
             auto const density =
-                medium
-                    .property(
-                        MaterialPropertyLib::PropertyType::density)
+                medium.property(MaterialPropertyLib::PropertyType::density)
                     .template value<double>(vars, pos, t, dt);
 
             local_K.noalias() += sm.dNdx.transpose() * k * sm.dNdx * sm.detJ *
@@ -226,9 +210,7 @@ public:
                                   specific_heat_capacity)
                     .template value<double>(vars, pos, t, dt);
             auto const density =
-                medium
-                    .property(
-                        MaterialPropertyLib::PropertyType::density)
+                medium.property(MaterialPropertyLib::PropertyType::density)
                     .template value<double>(vars, pos, t, dt);
 
             laplace.noalias() += sm.dNdx.transpose() * k * sm.dNdx * w;
@@ -244,10 +226,30 @@ public:
         local_rhs.noalias() -= laplace * x + storage * x_dot;
     }
 
-    void computeSecondaryVariableConcrete(
-        double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& /*local_x_dot*/) override
+    Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
+        const unsigned integration_point) const override
     {
+        auto const& N = _shape_matrices[integration_point].N;
+
+        // assumes N is stored contiguously in memory
+        return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
+    }
+
+    std::vector<double> const& getIntPtHeatFlux(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override
+    {
+        int const process_id = 0;  // monolithic case.
+        auto const indices =
+            NumLib::getIndices(_element.getID(), *dof_table[process_id]);
+        assert(!indices.empty());
+        auto const& local_x = x[process_id]->get(indices);
+
+        auto const T_nodal_values = Eigen::Map<const NodalVectorType>(
+            local_x.data(), ShapeFunction::NPOINTS);
+
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
@@ -258,69 +260,32 @@ public:
             *_process_data.media_map->getMedium(_element.getID());
         MaterialPropertyLib::VariableArray vars;
 
+        double const dt = std::numeric_limits<double>::quiet_NaN();
+        cache.clear();
+        auto cache_mat = MathLib::createZeroedMatrix<
+            Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, GlobalDim, n_integration_points);
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
             auto const& sm = _shape_matrices[ip];
             // get the local temperature and put it in the variable array for
             // access in MPL
-            double T_int_pt = 0.0;
-            NumLib::shapeFunctionInterpolate(local_x, sm.N, T_int_pt);
             vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-                T_int_pt;
+                sm.N.dot(T_nodal_values);
 
             auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium
                     .property(
                         MaterialPropertyLib::PropertyType::thermal_conductivity)
                     .value(vars, pos, t, dt));
+
             // heat flux only computed for output.
-            GlobalDimVectorType const heat_flux = -k * sm.dNdx * local_x;
-
-            for (int d = 0; d < GlobalDim; ++d)
-            {
-                _heat_fluxes[d][ip] = heat_flux[d];
-            }
+            cache_mat.col(ip).noalias() = -k * sm.dNdx * T_nodal_values;
         }
-    }
 
-    Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
-        const unsigned integration_point) const override
-    {
-        auto const& N = _shape_matrices[integration_point].N;
-
-        // assumes N is stored contiguously in memory
-        return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
-    }
-
-    std::vector<double> const& getIntPtHeatFluxX(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(!_heat_fluxes.empty());
-        return _heat_fluxes[0];
-    }
-
-    std::vector<double> const& getIntPtHeatFluxY(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_heat_fluxes.size() > 1);
-        return _heat_fluxes[1];
-    }
-
-    std::vector<double> const& getIntPtHeatFluxZ(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(_heat_fluxes.size() > 2);
-        return _heat_fluxes[2];
+        return cache;
     }
 
 private:
@@ -330,8 +295,6 @@ private:
     IntegrationMethod const _integration_method;
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
         _shape_matrices;
-
-    std::vector<std::vector<double>> _heat_fluxes;
 };
 
 }  // namespace HeatConduction

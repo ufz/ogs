@@ -46,32 +46,17 @@ void HeatConductionProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
+    int const mesh_space_dimension = _process_data.mesh_space_dimension;
+
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(
-        mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
+        mesh_space_dimension, mesh.getElements(), dof_table, _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     _secondary_variables.addSecondaryVariable(
-        "heat_flux_x",
+        "heat_flux",
         makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
-            &HeatConductionLocalAssemblerInterface::getIntPtHeatFluxX));
-
-    if (mesh.getDimension() > 1)
-    {
-        _secondary_variables.addSecondaryVariable(
-            "heat_flux_y",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &HeatConductionLocalAssemblerInterface::getIntPtHeatFluxY));
-    }
-    if (mesh.getDimension() > 2)
-    {
-        _secondary_variables.addSecondaryVariable(
-            "heat_flux_z",
-            makeExtrapolator(
-                1, getExtrapolator(), _local_assemblers,
-                &HeatConductionLocalAssemblerInterface::getIntPtHeatFluxZ));
-    }
+            mesh_space_dimension, getExtrapolator(), _local_assemblers,
+            &HeatConductionLocalAssemblerInterface::getIntPtHeatFlux));
 }
 
 void HeatConductionProcess::assembleConcreteProcess(

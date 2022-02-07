@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <meshes>
-        <mesh>line_1_lines_1e2.vtu</mesh>
-        <mesh>SourceTermDomain.vtu</mesh>
-        <mesh>line_1_geometry_left.vtu</mesh>
-        <mesh>line_1_geometry_right.vtu</mesh>
+        <mesh>mesh_r.vtu</mesh>
+        <mesh>mesh_r_left.vtu</mesh>
+        <mesh>mesh_r_right.vtu</mesh>
     </meshes>
     <processes>
         <process>
@@ -34,11 +33,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
-                    <t_end> 39062500 </t_end>
+                    <t_end> 1 </t_end>
                     <timesteps>
                         <pair>
-                            <repeat>500</repeat>
-                            <delta_t>78125</delta_t>
+                            <repeat>1</repeat>
+                            <delta_t>1</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -46,11 +45,11 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>line_1_line_1e2</prefix>
+            <prefix>source_term_left_r</prefix>
             <timesteps>
                 <pair>
-                    <repeat> 1 </repeat>
-                    <each_steps> 500 </each_steps>
+                    <repeat> 10000 </repeat>
+                    <each_steps> 1 </each_steps>
                 </pair>
             </timesteps>
             <variables>
@@ -67,22 +66,17 @@
                 <property>
                     <name>thermal_conductivity</name>
                     <type>Constant</type>
-                    <value>5</value>
+                    <value>1</value>
                 </property>
                 <property>
                     <name>specific_heat_capacity</name>
                     <type>Constant</type>
-                    <value>1000</value>
+                    <value>1</value>
                 </property>
                 <property>
                     <name>density</name>
                     <type>Constant</type>
-                    <value>2500</value>
-                </property>
-                <property>
-                    <name>reference_temperature</name>
-                    <type>Constant</type>
-                    <value>293.15</value>
+                    <value>1</value>
                 </property>
             </properties>
         </medium>
@@ -91,17 +85,12 @@
         <parameter>
             <name>T0</name>
             <type>Constant</type>
-            <value>273.15</value>
+            <value>0</value>
         </parameter>
         <parameter>
-            <name>T1</name>
+            <name>HeatSource</name>
             <type>Constant</type>
-            <value>274.15</value>
-        </parameter>
-        <parameter>
-            <name>st_param</name>
-            <type>Constant</type>
-            <value>5</value>
+            <value>1</value>
         </parameter>
     </parameters>
     <process_variables>
@@ -112,21 +101,16 @@
             <initial_condition>T0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>line_1_geometry_left</mesh>
+                    <mesh>mesh_r_right</mesh>
                     <type>Dirichlet</type>
-                    <parameter>T1</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <mesh>line_1_geometry_right</mesh>
-                    <type>Dirichlet</type>
-                    <parameter>T1</parameter>
+                    <parameter>T0</parameter>
                 </boundary_condition>
             </boundary_conditions>
             <source_terms>
                 <source_term>
-                    <mesh>SourceTermDomain</mesh>
-                    <type>Volumetric</type>
-                    <parameter>st_param</parameter>
+                    <mesh>mesh_r_left</mesh>
+                    <type>Line</type>
+                    <parameter>HeatSource</parameter>
                 </source_term>
             </source_terms>
         </process_variable>
