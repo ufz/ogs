@@ -214,9 +214,7 @@ add_subdirectory(MeshLib)
 add_subdirectory(MeshGeoToolsLib)
 add_subdirectory(NumLib)
 
-if(OGS_BUILD_PROCESS_ComponentTransport
-   OR OGS_BUILD_PROCESS_RichardsComponentTransport
-)
+if(_build_chemistry_lib)
     add_subdirectory(ChemistryLib)
 endif()
 

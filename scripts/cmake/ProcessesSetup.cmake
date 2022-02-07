@@ -72,3 +72,10 @@ else()
     set(_enabled_processes ${OGS_BUILD_PROCESSES})
     message(STATUS "Enabled processes: ${OGS_BUILD_PROCESSES}")
 endif()
+
+if("${OGS_BUILD_PROCESSES}" STREQUAL "ON" OR "RichardsComponentTransport"
+                                             IN_LIST OGS_BUILD_PROCESSES
+   OR "ComponentTransport" IN_LIST OGS_BUILD_PROCESSES
+)
+    set(_build_chemistry_lib ON)
+endif()
