@@ -69,11 +69,11 @@ private:
     void createBHEBoundaryConditionTopBottom(
         std::vector<std::vector<MeshLib::Node*>> const& all_bhe_nodes);
 #ifdef OGS_USE_PYTHON
+    void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                    const double t, const double dt,
+                                    int const process_id) override;
     NumLib::IterationResult postIterationConcreteProcess(
         GlobalVector const& x) override;
-    void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
-                                     const double t, const double dt,
-                                     int const process_id) override;
 #endif
 
     HeatTransportBHEProcessData _process_data;

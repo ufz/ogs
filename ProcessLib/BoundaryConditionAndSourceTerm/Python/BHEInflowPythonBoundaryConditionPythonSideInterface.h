@@ -61,10 +61,13 @@ public:
     }
 
     /*!
-     * transfer BHE network dataframe to python script where function
+     * Transfer BHE network dataframe to python script where function
      * serverCommunication takes t, dt, Tin_val, Tout_val, BHE_flowrate as
-     * arguments and returns updated Tin_val and flowrate after each time step
-     * specific use case: interface between OGS and SimulationX via TCP/IP
+     * arguments and returns updated Tin_val and flowrate which will be used
+     * as (python) boundary conditions for the next time step.
+     * The communication happens in preTimestep so that the updated values
+     * are used in the current time step.
+     * Specific use case: Interface between OGS and SimulationX via TCP/IP
      * where OGS is connected as one client
      *
      * \return a tuple (BHE Tin value, BHE flow rate for all BHEs from
