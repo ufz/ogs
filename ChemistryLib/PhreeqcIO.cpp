@@ -68,11 +68,14 @@ void setAqueousSolution(std::vector<double> const& concentrations,
     for (unsigned component_id = 0; component_id < components.size();
          ++component_id)
     {
+        MathLib::LinAlg::setLocalAccessibleVector(
+            *components[component_id].amount);
         components[component_id].amount->set(chemical_system_id,
                                              concentrations[component_id]);
     }
 
     // pH
+    MathLib::LinAlg::setLocalAccessibleVector(*aqueous_solution.pH);
     aqueous_solution.pH->set(chemical_system_id, concentrations.back());
 }
 
@@ -759,6 +762,8 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                 case ItemType::pH:
                 {
                     // Update pH value
+                    MathLib::LinAlg::setLocalAccessibleVector(
+                        *aqueous_solution->pH);
                     aqueous_solution->pH->set(
                         chemical_system_id,
                         std::pow(10, -accepted_items[item_id]));
@@ -777,6 +782,8 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                     auto& component = BaseLib::findElementOrError(
                         components.begin(), components.end(), compare_by_name,
                         "Could not find component '" + item_name + "'.");
+                    MathLib::LinAlg::setLocalAccessibleVector(
+                        *component.amount);
                     component.amount->set(chemical_system_id,
                                           accepted_items[item_id]);
                     break;

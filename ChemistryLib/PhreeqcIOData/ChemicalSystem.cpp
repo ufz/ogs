@@ -24,9 +24,7 @@ void ChemicalSystem::initialize(std::size_t const num_chemical_systems)
         MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
             num_chemical_systems);
 
-    aqueous_solution->pe->resize(num_chemical_systems);
-    std::fill(aqueous_solution->pe->begin(), aqueous_solution->pe->end(),
-              aqueous_solution->pe0);
+    aqueous_solution->pe->resize(num_chemical_systems, aqueous_solution->pe0);
 
     auto& components = aqueous_solution->components;
     for (auto& component : components)
