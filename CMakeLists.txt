@@ -272,3 +272,5 @@ include(scripts/cmake/MarkVariablesAdvanced.cmake)
 unset(PRE_INSTALL_RUN CACHE)
 
 include(Features)
+
+printEnabledProcesses()
