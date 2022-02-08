@@ -23,7 +23,7 @@ The axis-normal displacements along the symmetry (inner) boundaries were set to 
 The heat coming from the point source is propagated through the medium, causing the fluid and the solid to expand at different rates.
 The resulting pore pressure (gradient) is triggering a thermally driven consolidation process caused by the fluid flow away from the heat source until equilibrium is reached.
 The corresponding derivation of the analytical solution can be found in the works cited below.
-The main project input file is `square_1e2.prj`. Geometry and mesh are stored in `square_1x1.gml` and `quarter_002_2nd.vtu`.
+The main project input file is `pointheatsource_quadratic-mesh.prj`. Geometry and mesh are stored in `quarter_circle_geometry.gml` and `quarter_002_2nd.vtu`.
 
 ## Equations
 
