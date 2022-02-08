@@ -1,5 +1,5 @@
 +++
-project = "ThermoHydroMechanics/Linear/Point_injection/square_1e2.prj"
+project = "ThermoHydroMechanics/Linear/Point_injection/pointheatsource_quadratic-mesh.prj"
 
 author = "Jörg Buchwald"
 date = "2019-08-05T12:39:58+01:00"
