@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <!--
 This benchmark simulates a soil column with fluid injection at the bottom and
 a production well at the top. It is taken from from the literature.
@@ -16,7 +17,6 @@ A more detailed description of the used staggered scheme and the problem is
 provided online:
 https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/injectionproduction/
 -->
-<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh>mesh_domain.vtu</mesh>
@@ -137,7 +137,7 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/injectionproduction/
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>InjectionProduction1D_Mono_python</prefix>
+            <prefix>InjectionProduction1D_Mono_Python</prefix>
             <variables>
                 <variable>displacement</variable>
                 <variable>pressure</variable>
@@ -243,30 +243,4 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/injectionproduction/
             </eigen>
         </linear_solver>
     </linear_solvers>
-    <test_definition>
-        <vtkdiff>
-            <file>InjectionProduction1D_Mono_ts_1_t_86400.000000.vtu</file>
-            <field>pressure_interpolated</field>
-            <absolute_tolerance>1e-9<!-- pressure is of order 2e6 Pa --></absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <file>InjectionProduction1D_Mono_ts_1_t_86400.000000.vtu</file>
-            <field>displacement</field>
-            <absolute_tolerance>1e-16</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <file>InjectionProduction1D_Mono_ts_1_t_86400.000000.vtu</file>
-            <field>epsilon</field>
-            <absolute_tolerance>1e-16</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <file>InjectionProduction1D_Mono_ts_1_t_86400.000000.vtu</file>
-            <field>sigma</field>
-            <absolute_tolerance>1e-8 <!-- sigma is of order 4e5 Pa --></absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
-        </vtkdiff>
-    </test_definition>
 </OpenGeoSysProject>

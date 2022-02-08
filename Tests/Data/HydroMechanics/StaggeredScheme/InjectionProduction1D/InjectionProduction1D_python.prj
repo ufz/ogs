@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 This benchmark simulates a soil column with fluid injection at the bottom and
 a production well at the top. It is taken from from the literature.
@@ -16,7 +17,6 @@ A more detailed description of the used staggered scheme and the problem is
 provided online:
 https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/injectionproduction/
 -->
-<?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <meshes>
         <mesh>mesh_domain.vtu</mesh>
@@ -179,7 +179,7 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/injectionproduction/
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>InjectionProduction1D_python</prefix>
+            <prefix>InjectionProduction1D_Python</prefix>
             <variables>
                 <variable>displacement</variable>
                 <variable>pressure</variable>
