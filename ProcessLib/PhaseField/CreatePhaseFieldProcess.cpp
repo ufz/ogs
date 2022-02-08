@@ -132,6 +132,11 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         "crack_length_scale", parameters, 1);
     DBUG("Use '{:s}' as crack length scale.", crack_length_scale.name);
 
+    // Characteristic_length
+    auto const characteristic_length =
+        //! \ogs_file_param{prj__processes__process__PHASE_FIELD__characteristic_length}
+        config.getConfigParameter<double>("characteristic_length", 1.0);
+
     // Solid density
     auto const& solid_density = ParameterLib::findParameter<double>(
         config,
@@ -187,14 +192,41 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         {
             return PhaseFieldModel::AT1;
         }
-        else if (phasefield_model_string == "AT2")
+        if (phasefield_model_string == "AT2")
         {
             return PhaseFieldModel::AT2;
         }
+        if (phasefield_model_string == "COHESIVE")
+        {
+            return PhaseFieldModel::COHESIVE;
+        }
         OGS_FATAL(
-            "phasefield_model must be 'AT1' or 'AT2' but '{:s}' "
+            "phasefield_model must be 'AT1', 'AT2' or 'COHESIVE' but '{:s}' "
             "was given",
             phasefield_model_string.c_str());
+    }();
+
+    auto const softening_curve = [&]
+    {
+        auto const softening_curve_string =
+            //! \ogs_file_param{prj__processes__process__PHASE_FIELD__softening_curve}
+            config.getConfigParameterOptional<std::string>("softening_curve");
+        if (softening_curve_string)
+        {
+            if (*softening_curve_string == "Linear")
+            {
+                return SofteningCurve::Linear;
+            }
+            if (*softening_curve_string == "Exponential")
+            {
+                return SofteningCurve::Exponential;
+            }
+            OGS_FATAL(
+                "softening_curve must be 'Linear' or 'Exponential' but '{:s}' "
+                "was given",
+                softening_curve_string->c_str());
+        }
+        return SofteningCurve::Linear;  // default
     }();
 
     auto const energy_split_model = [&]
@@ -207,9 +239,13 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         {
             return EnergySplitModel::Isotropic;
         }
-        else if (energy_split_model_string == "VolumetricDeviatoric")
+        if (energy_split_model_string == "VolumetricDeviatoric")
         {
             return EnergySplitModel::VolDev;
+        }
+        if (energy_split_model_string == "EffectiveStress")
+        {
+            return EnergySplitModel::EffectiveStress;
         }
         OGS_FATAL(
             "energy_split_model must be 'Isotropic' or 'VolumetricDeviatoric' "
@@ -217,13 +253,34 @@ std::unique_ptr<Process> createPhaseFieldProcess(
             energy_split_model_string);
     }();
 
+    std::unique_ptr<DegradationDerivative> degradation_derivative;
+    if (phasefield_model == PhaseFieldModel::COHESIVE)
+    {
+        degradation_derivative =
+            std::make_unique<COHESIVE_DegradationDerivative>(
+                characteristic_length, softening_curve);
+    }
+    else
+    {
+        degradation_derivative = std::make_unique<AT_DegradationDerivative>();
+    }
+
     PhaseFieldProcessData<DisplacementDim> process_data{
-        materialIDs(mesh),   std::move(solid_constitutive_relations),
-        residual_stiffness,  crack_resistance,
-        crack_length_scale,  solid_density,
-        specific_body_force, hydro_crack,
-        crack_pressure,      irreversible_threshold,
-        phasefield_model,    energy_split_model};
+        materialIDs(mesh),
+        std::move(solid_constitutive_relations),
+        residual_stiffness,
+        crack_resistance,
+        crack_length_scale,
+        solid_density,
+        specific_body_force,
+        hydro_crack,
+        crack_pressure,
+        irreversible_threshold,
+        phasefield_model,
+        energy_split_model,
+        softening_curve,
+        characteristic_length,
+        std::move(degradation_derivative)};
 
     SecondaryVariableCollection secondary_variables;
 

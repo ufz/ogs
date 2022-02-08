@@ -92,8 +92,10 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         auto& eps = _ip_data[ip].eps;
         eps.noalias() = B * u;
         double const k = _process_data.residual_stiffness(t, x_position)[0];
+        double const ls = _process_data.crack_length_scale(t, x_position)[0];
         double const d_ip = N.dot(d);
-        double const degradation = d_ip * d_ip * (1 - k) + k;
+        double const degradation =
+            _process_data.degradation_derivative->degradation(d_ip, k, ls);
         _ip_data[ip].updateConstitutiveRelation(
             t, x_position, dt, u, degradation,
             _process_data.energy_split_model);
@@ -122,7 +124,6 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
             (B.transpose() * sigma - N_u.transpose() * rho_sr * b -
              local_pressure * N_u.transpose() * dNdx * d) *
             w;
-
         local_Jac.noalias() +=
             B.transpose() * (degradation * C_tensile + C_compressive) * B * w;
     }
@@ -159,6 +160,10 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         local_pressure = _process_data.pressure;
     }
 
+    double const k = _process_data.residual_stiffness(t, x_position)[0];
+    double const ls = _process_data.crack_length_scale(t, x_position)[0];
+    double const gc = _process_data.crack_resistance(t, x_position)[0];
+
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
@@ -167,12 +172,13 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
 
-        double const gc = _process_data.crack_resistance(t, x_position)[0];
-        double const ls = _process_data.crack_length_scale(t, x_position)[0];
-
-        double const k = _process_data.residual_stiffness(t, x_position)[0];
         double const d_ip = N.dot(d);
-        double const degradation = d_ip * d_ip * (1 - k) + k;
+        double const degradation =
+            _process_data.degradation_derivative->degradation(d_ip, k, ls);
+        double const degradation_df1 =
+            _process_data.degradation_derivative->degradation_df1(d_ip, ls);
+        double const degradation_df2 =
+            _process_data.degradation_derivative->degradation_df2(d_ip, ls);
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
                 _element, N);
@@ -207,10 +213,10 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         }
 
         local_Jac.noalias() +=
-            (2 * N.transpose() * N * strain_energy_tensile) * w;
+            (N.transpose() * N * degradation_df2 * strain_energy_tensile) * w;
 
         local_rhs.noalias() -=
-            (N.transpose() * N * d * 2 * strain_energy_tensile -
+            (N.transpose() * degradation_df1 * strain_energy_tensile -
              local_pressure * dNdx.transpose() * N_u * u) *
             w;
 
@@ -218,28 +224,38 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         {
             case PhaseFieldModel::AT1:
             {
-                local_Jac.noalias() +=
-                    gc * 0.75 * dNdx.transpose() * dNdx * ls * w;
+                auto const local_Jac_AT1 =
+                    (gc * 0.75 * dNdx.transpose() * dNdx * ls * w).eval();
+                local_Jac.noalias() += local_Jac_AT1;
 
                 local_rhs.noalias() -=
-                    gc *
-                    (-0.375 * N.transpose() / ls +
-                     0.75 * dNdx.transpose() * dNdx * ls * d) *
-                    w;
+                    gc * (-0.375 * N.transpose() / ls) * w + local_Jac_AT1 * d;
                 break;
             }
             case PhaseFieldModel::AT2:
             {
-                local_Jac.noalias() +=
-                    gc *
-                    (N.transpose() * N / ls + dNdx.transpose() * dNdx * ls) * w;
+                auto const local_Jac_AT2 =
+                    (gc *
+                     (N.transpose() * N / ls + dNdx.transpose() * dNdx * ls) *
+                     w)
+                        .eval();
+                local_Jac.noalias() += local_Jac_AT2;
 
                 local_rhs.noalias() -=
-                    gc *
-                    ((N.transpose() * N / ls + dNdx.transpose() * dNdx * ls) *
-                         d -
-                     N.transpose() / ls) *
-                    w;
+                    local_Jac_AT2 * d - gc * (N.transpose() / ls) * w;
+                break;
+            }
+            case PhaseFieldModel::COHESIVE:
+            {
+                auto const local_Jac_COHESIVE =
+                    (2.0 / boost::math::double_constants::pi * gc *
+                     (-N.transpose() * N / ls + dNdx.transpose() * dNdx * ls) *
+                     w)
+                        .eval();
+
+                local_Jac.noalias() += local_Jac_COHESIVE;
+
+                local_rhs.noalias() -= local_Jac_COHESIVE * d;
                 break;
             }
         }
@@ -340,6 +356,8 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     double element_surface_energy = 0.0;
     double element_pressure_work = 0.0;
 
+    double const gc = _process_data.crack_resistance(t, x_position)[0];
+    double const ls = _process_data.crack_length_scale(t, x_position)[0];
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
@@ -347,10 +365,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         auto const& w = _ip_data[ip].integration_weight;
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
-        double const d_ip = N.dot(d);
         auto pressure_ip = _process_data.pressure;
-        double const gc = _process_data.crack_resistance(t, x_position)[0];
-        double const ls = _process_data.crack_length_scale(t, x_position)[0];
 
         typename ShapeMatricesType::template MatrixType<DisplacementDim,
                                                         displacement_size>
@@ -367,6 +382,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
 
         element_elastic_energy += _ip_data[ip].elastic_energy * w;
 
+        double const d_ip = N.dot(d);
         switch (_process_data.phasefield_model)
         {
             case PhaseFieldModel::AT1:
@@ -383,6 +399,14 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                                           ((1 - d_ip) * (1 - d_ip) / ls +
                                            (dNdx * d).dot((dNdx * d)) * ls) *
                                           w;
+                break;
+            }
+            case PhaseFieldModel::COHESIVE:
+            {
+                element_surface_energy +=
+                    gc / boost::math::double_constants::pi *
+                    ((1 - d_ip * d_ip) / ls + (dNdx * d).dot((dNdx * d)) * ls) *
+                    w;
                 break;
             }
         }

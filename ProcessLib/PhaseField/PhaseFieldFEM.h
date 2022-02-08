@@ -105,6 +105,15 @@ struct IntegrationPointData final
                             degradation, bulk_modulus, mu, eps);
                 break;
             }
+            case EnergySplitModel::EffectiveStress:
+            {
+                std::tie(sigma, sigma_tensile, C_tensile, C_compressive,
+                         strain_energy_tensile,
+                         elastic_energy) = MaterialLib::Solids::Phasefield::
+                    calculateIsotropicDegradedStressWithRankineEnergy<
+                        DisplacementDim>(degradation, bulk_modulus, mu, eps);
+                break;
+            }
         }
 
         history_variable =
