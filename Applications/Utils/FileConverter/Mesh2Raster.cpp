@@ -9,6 +9,7 @@
 
 #include <tclap/CmdLine.h>
 
+#include <filesystem>
 #include <fstream>
 #include <memory>
 #include <string>
@@ -77,7 +78,15 @@ int main(int argc, char* argv[])
     double const half_cell = cellsize / 2.0;
 
     // raster header
-    std::ofstream out(output_arg.getValue());
+    std::string output_name = output_arg.getValue();
+    std::string const ext = ".asc";
+    if (std::filesystem::path(output_name).extension() != ext)
+    {
+        WARN("Adding extension '*.asc' to output file name '{:s}'.",
+             output_name);
+        output_name += ext;
+    }
+    std::ofstream out(output_name);
     out << "ncols         " << n_cols + 1 << "\n";
     out << "nrows         " << n_rows + 1 << "\n";
     out << std::fixed << "xllcorner     " << (min[0] - half_cell) << "\n";
@@ -151,6 +160,6 @@ int main(int argc, char* argv[])
         out << "\n";
     }
     out.close();
-    INFO("Result written to {:s}", output_arg.getValue());
+    INFO("Result written to {:s}", output_name);
     return 0;
 }
