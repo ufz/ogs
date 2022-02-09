@@ -41,10 +41,8 @@ public:
 
     /// return current integration order.
     unsigned getIntegrationOrder() const { return _order; }
-
     /// return the number of sampling points
     unsigned getNumberOfPoints() const { return _n_sampl_pt; }
-
     /**
      * get coordinates of a integration point
      *
@@ -65,6 +63,10 @@ public:
      */
     static MathLib::WeightedPoint getWeightedPoint(unsigned const order, unsigned const igp)
     {
+        // For the case of order = 4, it
+        // causes `assertion `rank == num_nodes' failed`
+        // in the SVD decomposition in the least square extrapolation.
+        // Therefore for the case of order = 4, the rule of order 3 is used.
         switch (order)
         {
             case 1:
@@ -72,6 +74,8 @@ public:
             case 2:
                 return getWeightedPoint<MathLib::GaussLegendrePyramid<2>>(igp);
             case 3:
+                return getWeightedPoint<MathLib::GaussLegendrePyramid<3>>(igp);
+            case 4:
                 return getWeightedPoint<MathLib::GaussLegendrePyramid<3>>(igp);
         }
         OGS_FATAL("Integration order {:d} not implemented for pyramids.",
@@ -90,8 +94,12 @@ public:
      * @param order    the number of integration points
      * @return the number of points
      */
-    static unsigned getNumberOfPoints(unsigned order)
+    static unsigned getNumberOfPoints(unsigned const order)
     {
+        // For the case of order = 4, it
+        // causes `assertion `rank == num_nodes' failed`
+        // in the SVD decomposition in the least square extrapolation.
+        // Therefore for the case of order = 4, the rule of order 3 is used.
         switch (order)
         {
             case 1:
@@ -99,6 +107,8 @@ public:
             case 2:
                 return MathLib::GaussLegendrePyramid<2>::NPoints;
             case 3:
+                return MathLib::GaussLegendrePyramid<3>::NPoints;
+            case 4:
                 return MathLib::GaussLegendrePyramid<3>::NPoints;
         }
         OGS_FATAL("Integration order {:d} not implemented for pyramids.",
