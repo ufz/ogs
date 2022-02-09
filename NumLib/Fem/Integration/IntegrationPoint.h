@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "MathLib/TemplateWeightedPoint.h"
+#include "MathLib/WeightedPoint.h"
 
 namespace NumLib
 {
@@ -21,8 +21,6 @@ namespace NumLib
 class IntegrationPoint
 {
 public:
-    using WeightedPoint = MathLib::TemplateWeightedPoint<double, double, 1>;
-
     /// IntegrationPoint constructor for given order.
     explicit IntegrationPoint(unsigned /* order */) {}
 
@@ -38,7 +36,7 @@ public:
     // clang-format off
     /// \copydoc IntegrationGaussLegendreRegular::getWeightedPoint(unsigned) const
     // clang-format on
-    static WeightedPoint getWeightedPoint(unsigned igp)
+    static MathLib::WeightedPoint getWeightedPoint(unsigned const igp)
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
@@ -46,17 +44,17 @@ public:
     // clang-format off
     /// \copydoc IntegrationGaussLegendreRegular::getWeightedPoint(unsigned, unsigned)
     // clang-format on
-    static WeightedPoint getWeightedPoint(unsigned order, unsigned igp)
+    static MathLib::WeightedPoint getWeightedPoint(unsigned const order, unsigned const igp)
     {
         (void)order;
         (void)igp;
-        return WeightedPoint({{1}}, 1);
+        return MathLib::WeightedPoint(1);
     }
 
     template <typename Method>
-    static WeightedPoint getWeightedPoint(unsigned /*igp*/)
+    static MathLib::WeightedPoint getWeightedPoint(unsigned /*igp*/)
     {
-        return WeightedPoint({{1}}, 1);
+        return MathLib::WeightedPoint(1);
     }
 
     /// Get the number of integration points.

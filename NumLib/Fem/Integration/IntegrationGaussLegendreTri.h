@@ -16,7 +16,7 @@
 
 #include "BaseLib/Error.h"
 #include "MathLib/Integration/GaussLegendreTri.h"
-#include "MathLib/TemplateWeightedPoint.h"
+#include "MathLib/WeightedPoint.h"
 
 namespace NumLib
 {
@@ -37,8 +37,6 @@ namespace NumLib
 class IntegrationGaussLegendreTri
 {
 public:
-    using WeightedPoint = MathLib::TemplateWeightedPoint<double, double, 2>;
-
     /**
      * Construct this object with the given integration order
      *
@@ -68,7 +66,7 @@ public:
      * @param igp      The integration point index
      * @return a weighted point
      */
-    WeightedPoint getWeightedPoint(unsigned igp) const
+    MathLib::WeightedPoint getWeightedPoint(unsigned const igp) const
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
@@ -80,7 +78,7 @@ public:
      * @param igp      the sampling point id
      * @return weight
      */
-    static WeightedPoint getWeightedPoint(unsigned order, unsigned igp)
+    static MathLib::WeightedPoint getWeightedPoint(unsigned const order, unsigned const igp)
     {
         switch (order)
         {
@@ -98,9 +96,9 @@ public:
     }
 
     template <typename Method>
-    static WeightedPoint getWeightedPoint(unsigned igp)
+    static MathLib::WeightedPoint getWeightedPoint(unsigned const igp)
     {
-        return WeightedPoint(Method::X[igp], 0.5 * Method::W[igp]);
+        return MathLib::WeightedPoint(Method::X[igp], 0.5 * Method::W[igp]);
     }
 
     /**

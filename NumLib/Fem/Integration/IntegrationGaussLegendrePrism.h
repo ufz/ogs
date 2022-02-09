@@ -12,7 +12,7 @@
 
 #include "MathLib/Integration/GaussLegendre.h"
 #include "MathLib/Integration/GaussLegendreTri.h"
-#include "MathLib/TemplateWeightedPoint.h"
+#include "MathLib/WeightedPoint.h"
 
 namespace NumLib
 {
@@ -22,8 +22,6 @@ namespace NumLib
 class IntegrationGaussLegendrePrism
 {
 public:
-    using WeightedPoint = MathLib::TemplateWeightedPoint<double, double, 3>;
-
     /**
      * Construct this object with the given integration order
      *
@@ -50,7 +48,7 @@ public:
     // clang-format off
     /// \copydoc NumLib::IntegrationGaussLegendreRegular::getWeightedPoint(unsigned) const
     // clang-format on
-    WeightedPoint getWeightedPoint(unsigned igp) const
+    MathLib::WeightedPoint getWeightedPoint(unsigned igp) const
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
@@ -58,7 +56,7 @@ public:
     // clang-format off
     /// \copydoc NumLib::IntegrationGaussLegendreRegular::getWeightedPoint(unsigned, unsigned)
     // clang-format on
-    static WeightedPoint getWeightedPoint(unsigned order, unsigned igp)
+    static MathLib::WeightedPoint getWeightedPoint(unsigned const order, unsigned const igp)
     {
         (void)order;
         const unsigned gp_r = igp % 3;
@@ -69,11 +67,11 @@ public:
         rst[2] = MathLib::GaussLegendre<2>::X[gp_t];
         double w = MathLib::GaussLegendreTri<2>::W[gp_r] * 0.5 *
                    MathLib::GaussLegendre<2>::W[gp_t];
-        return WeightedPoint(rst, w);
+        return MathLib::WeightedPoint(rst, w);
     }
 
     template <typename Method>
-    static WeightedPoint getWeightedPoint(unsigned igp)
+    static MathLib::WeightedPoint getWeightedPoint(unsigned const igp)
     {
         return WeightedPoint(Method::X[igp], Method::W[igp]);
     }
