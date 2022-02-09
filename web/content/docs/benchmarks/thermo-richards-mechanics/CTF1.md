@@ -17,7 +17,7 @@ This test simulates the coupled thermal hydraulic processes in
 
 The description of this test can be found in
 the paper by Wang et al. [[2]](#2). In the calculation, the formula of
-specific heat capacity of solid phase represent has already taken account of
+specific heat capacity of solid phase has already taken account of
  the porosity factor.
 
 The following figures compare the results of this test against the results
