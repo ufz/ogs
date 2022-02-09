@@ -6,10 +6,13 @@
         <process>
             <name>LiquidFlow</name>
             <type>LIQUID_FLOW</type>
-            <integration_order>3</integration_order>
+            <integration_order>4</integration_order>
             <process_variables>
                 <process_variable>pressure</process_variable>
             </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="darcy_velocity" output_name="v"/>
+            </secondary_variables>
             <specific_body_force>0.0 0.0 -9.81</specific_body_force>
         </process>
     </processes>
@@ -96,6 +99,7 @@
             </timesteps>
             <variables>
                 <variable> pressure </variable>
+                <variable> v </variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
