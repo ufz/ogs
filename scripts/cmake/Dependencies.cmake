@@ -99,9 +99,7 @@ if(OGS_USE_PYTHON)
     )
 endif()
 
-if(OGS_BUILD_PROCESS_ComponentTransport
-   OR OGS_BUILD_PROCESS_RichardsComponentTransport
-)
+if(_build_chemistry_lib)
     CPMAddPackage(
         NAME iphreeqc
         GITHUB_REPOSITORY ufz/iphreeqc
