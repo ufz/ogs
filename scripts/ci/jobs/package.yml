@@ -1,0 +1,18 @@
+create cpm cache:
+  stage: package
+  needs: [meta]
+  tags: [shell, envinf]
+  variables:
+    BUILD_DIR: "../build/cpm"
+  script:
+    - rm -rf $BUILD_DIR
+    - mkdir -p $BUILD_DIR
+    - cd $BUILD_DIR
+    - cmake ../../ogs -B . -G Ninja --preset release-all -DOGS_USE_POETRY=OFF -DCPM_SOURCE_CACHE=./cpm
+    - find cpm -type f | grep -i "\.git" | xargs rm -rf
+    - VERSION=$(find cpm -type f -print0 | sort -z | xargs -r0  sha1sum | awk '{print $1}' | sha1sum | awk '{print $1}')
+    - echo "VERSION=${VERSION}"
+    - tar -czf cpm.tar.gz cpm
+    - >
+      curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cpm.tar.gz \
+        ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cpm/${VERSION}/cpm.tar.gz
