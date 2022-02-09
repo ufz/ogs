@@ -50,9 +50,8 @@ endif()
 
 CPMAddPackage(
     NAME exprtk
-    # Archived from
-    # https://archive.softwareheritage.org/browse/directory/1cfa7d45f0ec8c0f72674b2258bc5f0705203975/
-    URL https://gitlab.opengeosys.org/ogs/libs/library-snapshots/-/raw/main/exprtk/swh_1_dir_1cfa7d45f0ec8c0f72674b2258bc5f0705203975.tar.gz
+    GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/exprtk.git
+    GIT_TAG 2a5c62b93c9661470e69be572f22d821308b6f61
     DOWNLOAD_ONLY YES
 )
 if(exprtk_ADDED)
