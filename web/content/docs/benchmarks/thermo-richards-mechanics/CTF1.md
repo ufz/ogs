@@ -11,6 +11,9 @@ weight = 70
     parent = "thermo-richards-mechanics"
 
 +++
+
+{{< data-link >}}
+
 This test simulates the coupled thermal hydraulic processes in
  In the CTF1 experiment carried out by Villar et al. [[1]](#1).
 
