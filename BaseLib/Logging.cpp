@@ -14,6 +14,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
+#include <iostream>
 #include <map>
 
 #ifdef USE_PETSC
@@ -46,5 +47,17 @@ void setConsoleLogLevel(std::string const& level_string)
     }
     console->set_level(level->second);
     spdlog::set_default_logger(console);
+}
+
+void initOGSLogger(std::string const& log_level)
+{
+    BaseLib::setConsoleLogLevel(log_level);
+    spdlog::set_pattern("%^%l:%$ %v");
+    spdlog::set_error_handler(
+        [](const std::string& msg)
+        {
+            std::cerr << "spdlog error: " << msg << std::endl;
+            OGS_FATAL("spdlog logger error occurred.");
+        });
 }
 }  // namespace BaseLib

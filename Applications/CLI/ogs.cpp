@@ -53,22 +53,10 @@ void enableFloatingPointExceptions()
 }
 #endif  // _WIN32
 
-void setConsoleLogLevel(std::string const& log_level)
-{
-    BaseLib::setConsoleLogLevel(log_level);
-    spdlog::set_pattern("%^%l:%$ %v");
-    spdlog::set_error_handler(
-        [](const std::string& msg)
-        {
-            std::cerr << "spdlog error: " << msg << std::endl;
-            OGS_FATAL("spdlog logger error occurred.");
-        });
-}
-
 int main(int argc, char* argv[])
 {
     CommandLineArgumentParser cli_arg(argc, argv);
-    setConsoleLogLevel(cli_arg.log_level);
+    BaseLib::initOGSLogger(cli_arg.log_level);
 #ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
     if (cli_arg.enable_fpe_is_set)
     {
