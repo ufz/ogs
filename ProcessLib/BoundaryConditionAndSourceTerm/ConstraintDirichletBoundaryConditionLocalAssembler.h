@@ -86,6 +86,7 @@ public:
                 _surface_element, is_axially_symmetric, _integration_method);
 
         auto const bulk_face_id = bulk_ids[_surface_element.getID()].second;
+        auto const& bulk_element = *bulk_mesh.getElement(_bulk_element_id);
 
         auto const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -94,8 +95,8 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
             auto const& wp = _integration_method.getWeightedPoint(ip);
-            auto bulk_element_point = MeshLib::getBulkElementPoint(
-                bulk_mesh, _bulk_element_id, bulk_face_id, wp);
+            auto bulk_element_point =
+                MeshLib::getBulkElementPoint(bulk_element, bulk_face_id, wp);
             _ip_data.emplace_back(shape_matrices[ip].detJ,
                                   shape_matrices[ip].integralMeasure,
                                   wp.getWeight(),

@@ -76,6 +76,9 @@ public:
             _data.bulk_element_ids[Base::_element.getID()];
         std::size_t const bulk_face_id =
             _data.bulk_face_ids[Base::_element.getID()];
+        auto const& bulk_element =
+            *_data.process.getMesh().getElement(bulk_element_id);
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             auto const& n_and_weight = Base::_ns_and_weights[ip];
@@ -83,8 +86,8 @@ public:
             auto const& w = n_and_weight.weight;
             auto const& wp = Base::_integration_method.getWeightedPoint(ip);
 
-            auto const bulk_element_point = MeshLib::getBulkElementPoint(
-                _data.process.getMesh(), bulk_element_id, bulk_face_id, wp);
+            auto const bulk_element_point =
+                MeshLib::getBulkElementPoint(bulk_element, bulk_face_id, wp);
 
             double int_pt_value = 0.0;
             NumLib::shapeFunctionInterpolate(local_values, N, int_pt_value);
