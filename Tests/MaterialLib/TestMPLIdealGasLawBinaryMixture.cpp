@@ -150,7 +150,7 @@ TEST(MaterialPropertyLib, IdealGasLawBinaryMixture)
                         return (plus - minus) / (2 * eps);
                     };
 
-                // Pertubation of gas pressure
+                // Perturbation of gas pressure
                 auto const eps_pGR = 10.;
 
                 vars[static_cast<int>(MPL::Variable::phase_pressure)] =
@@ -176,7 +176,7 @@ TEST(MaterialPropertyLib, IdealGasLawBinaryMixture)
 
                 vars[static_cast<int>(MPL::Variable::phase_pressure)] = pGR;
 
-                // Pertubation of capillary pressure
+                // Perturbation of capillary pressure
                 auto const eps_pCap = 1.;
 
                 vars[static_cast<int>(MPL::Variable::capillary_pressure)] =
@@ -203,7 +203,7 @@ TEST(MaterialPropertyLib, IdealGasLawBinaryMixture)
                 vars[static_cast<int>(MPL::Variable::capillary_pressure)] =
                     pCap;
 
-                // Pertubation of temperature
+                // Perturbation of temperature
                 auto const eps_T = .01;
 
                 vars[static_cast<int>(MPL::Variable::temperature)] = T + eps_T;
