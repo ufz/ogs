@@ -2,6 +2,12 @@ create cpm cache:
   stage: package
   needs: [meta]
   tags: [shell, envinf]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      changes:
+        - scripts/cmake/CMakeSetup.cmake
+        - scripts/cmake/Dependencies.cmake
+        - scripts/ci/jobs/package.yml
   variables:
     BUILD_DIR: "../build/cpm"
   script:
@@ -16,3 +22,30 @@ create cpm cache:
     - >
       curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cpm.tar.gz \
         ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cpm/${VERSION}/cpm.tar.gz
+
+offline configure:
+  stage: package
+  needs:
+    - job: meta
+    - job: create cpm cache
+      optional: true
+  tags: [shell, envinf]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+  variables:
+    BUILD_DIR: "../build/offline"
+  script:
+    - VERSION=$(jq -r '.cpm.cache_hash' web/data/versions.json)
+    - rm -rf $BUILD_DIR
+    - mkdir -p $BUILD_DIR
+    - cd $BUILD_DIR
+    - >
+      wget --no-verbose --header "JOB-TOKEN: $CI_JOB_TOKEN" \
+        ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cpm/${VERSION}/cpm.tar.gz
+    - tar xf cpm.tar.gz
+    # Disable network access for CMake run
+    # Not yet tested: mfront, petsc (build via ExternalProject_Add)
+    - >
+      firejail --noprofile --net=none --blacklist=/usr/bin/mfront --read-write=${CI_BUILDS_DIR} \
+        cmake ../../ogs -B . -G Ninja --preset release \
+          -DOGS_USE_PYTHON=OFF -DOGS_USE_POETRY=OFF -DCPM_SOURCE_CACHE=./cpm
