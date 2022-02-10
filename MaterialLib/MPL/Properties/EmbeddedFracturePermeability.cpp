@@ -12,7 +12,6 @@
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
-#include "MathLib/KelvinVector.h"
 
 namespace MaterialPropertyLib
 {
@@ -25,6 +24,8 @@ EmbeddedFracturePermeability<DisplacementDim>::EmbeddedFracturePermeability(
     double const initial_aperture,
     double const mean_fracture_distance,
     double const threshold_strain,
+    ParameterLib::Parameter<double> const& fracture_rotation_xy,
+    ParameterLib::Parameter<double> const& fracture_rotation_yz,
     double const jacobian_factor)
     : _n(fracture_normal),
       _n_const(fracture_normal_is_constant),
@@ -32,6 +33,8 @@ EmbeddedFracturePermeability<DisplacementDim>::EmbeddedFracturePermeability(
       _b0(initial_aperture),
       _a(mean_fracture_distance),
       _e0(threshold_strain),
+      _phi_xy(fracture_rotation_xy),
+      _phi_yz(fracture_rotation_yz),
       _jf(jacobian_factor)
 {
     name_ = std::move(name);
@@ -51,7 +54,7 @@ void EmbeddedFracturePermeability<DisplacementDim>::checkScale() const
 template <int DisplacementDim>
 PropertyDataType EmbeddedFracturePermeability<DisplacementDim>::value(
     VariableArray const& variable_array,
-    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    ParameterLib::SpatialPosition const& pos, double const t,
     double const /*dt*/) const
 {
     Eigen::Matrix<double, 3, 1> const n = [&]
@@ -66,16 +69,23 @@ PropertyDataType EmbeddedFracturePermeability<DisplacementDim>::value(
         return (Eigen::Matrix<double, 3, 1>)e_s.eigenvectors().col(2);
     }();
 
+    auto const rotMat_xy =
+        Eigen::AngleAxisd(_phi_xy(t, pos)[0], Eigen::Vector3d::UnitZ());
+    auto const rotMat_yz =
+        Eigen::AngleAxisd(_phi_yz(t, pos)[0], Eigen::Vector3d::UnitX());
+
+    Eigen::Matrix<double, 3, 1> const n_r = rotMat_yz * (rotMat_xy * n);
+
     auto const eps = MathLib::KelvinVector::kelvinVectorToTensor(
         std::get<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
             variable_array[static_cast<int>(Variable::mechanical_strain)]));
-    double const e_n = (eps * n).dot(n.transpose());
+    double const e_n = (eps * n_r).dot(n_r.transpose());
     double const H_de = (e_n > _e0) ? 1.0 : 0.0;
     double const b_f = _b0 + H_de * _a * (e_n - _e0);
     double const coeff = H_de * (b_f / _a) * ((b_f * b_f / 12.0) - _k);
 
     Eigen::Matrix3d I = Eigen::Matrix3d::Identity();
-    return (coeff * (I - n * n.transpose()) + _k * I)
+    return (coeff * (I - n_r * n_r.transpose()) + _k * I)
         .template topLeftCorner<DisplacementDim, DisplacementDim>()
         .eval();
 }
@@ -83,7 +93,7 @@ PropertyDataType EmbeddedFracturePermeability<DisplacementDim>::value(
 template <int DisplacementDim>
 PropertyDataType EmbeddedFracturePermeability<DisplacementDim>::dValue(
     VariableArray const& variable_array, Variable const primary_variable,
-    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    ParameterLib::SpatialPosition const& pos, double const t,
     double const /*dt*/) const
 {
     if (primary_variable != Variable::mechanical_strain)
@@ -105,14 +115,21 @@ PropertyDataType EmbeddedFracturePermeability<DisplacementDim>::dValue(
         return (Eigen::Matrix<double, 3, 1>)e_s.eigenvectors().col(2);
     }();
 
+    auto const rotMat_xy =
+        Eigen::AngleAxisd(_phi_xy(t, pos)[0], Eigen::Vector3d::UnitZ());
+    auto const rotMat_yz =
+        Eigen::AngleAxisd(_phi_yz(t, pos)[0], Eigen::Vector3d::UnitX());
+
+    Eigen::Matrix<double, 3, 1> const n_r = rotMat_yz * (rotMat_xy * n);
+
     auto const eps = MathLib::KelvinVector::kelvinVectorToTensor(
         std::get<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
             variable_array[static_cast<int>(Variable::mechanical_strain)]));
-    double const e_n = (eps * n).dot(n.transpose());
+    double const e_n = (eps * n_r).dot(n_r.transpose());
     double const H_de = (e_n > _e0) ? 1.0 : 0.0;
     double const b_f = _b0 + H_de * _a * (e_n - _e0);
 
-    Eigen::Matrix3d const M = n * n.transpose();
+    Eigen::Matrix3d const M = n_r * n_r.transpose();
     return Eigen::MatrixXd(
         _jf * H_de * (b_f * b_f / 4 - _k) *
         MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(

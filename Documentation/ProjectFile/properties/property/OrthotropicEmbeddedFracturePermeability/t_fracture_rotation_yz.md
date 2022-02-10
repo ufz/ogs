@@ -1,1 +1,1 @@
-The angle by which the three fracture normals are rotated in the yz-plane.
+The angle in radians by which the three fracture normals are rotated in the yz-plane.

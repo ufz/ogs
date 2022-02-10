@@ -11,6 +11,7 @@
 
 #include "MaterialLib/MPL/Property.h"
 #include "MathLib/KelvinVector.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MaterialPropertyLib
 {
@@ -56,6 +57,8 @@ private:
     double const _b0;
     double const _a;
     double const _e0;
+    ParameterLib::Parameter<double> const& _phi_xy;
+    ParameterLib::Parameter<double> const& _phi_yz;
     double const _jf;
 
 public:
@@ -67,6 +70,8 @@ public:
         double const initial_aperture,
         double const mean_fracture_distance,
         double const threshold_strain,
+        ParameterLib::Parameter<double> const& fracture_rotation_xy,
+        ParameterLib::Parameter<double> const& fracture_rotation_yz,
         double const jacobian_factor);
 
     static int const KelvinVectorSize =
