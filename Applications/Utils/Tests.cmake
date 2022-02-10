@@ -246,6 +246,39 @@ AddTest(
                quad_9node_partitioned_cell_properties_val2.bin
 )
 
+############################################
+##############Testing partmesh##############
+##############ALL Quadratic#################
+############################################
+AddTest(
+    NAME partmesh_mesh_for_QuadraticTriangle_ogsmetis
+    PATH NodePartitionedMesh/QuadraticElements/Quad_triangle
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad_triangle
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i basicQuadTri.vtu --ogs2metis -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad_triangle
+)
+
+AddTest(
+    NAME partmesh_mesh_for_QuadraticTriangle
+    PATH NodePartitionedMesh/QuadraticElements/Quad_triangle
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad_triangle
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 2 -i basicQuadTri.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad_triangle
+    REQUIREMENTS NOT APPLE
+    DEPENDS partmesh-partmesh_mesh_for_QuadraticTriangle_ogsmetis
+    TESTER diff
+    DIFF_DATA  basicQuadTri_partitioned_cell_properties_cfg2.bin
+               basicQuadTri_partitioned_msh_cfg2.bin
+               basicQuadTri_partitioned_msh_ele_g2.bin
+               basicQuadTri_partitioned_cell_properties_val2.bin
+               basicQuadTri_partitioned_msh_ele2.bin
+               basicQuadTri_partitioned_msh_nod2.bin
+)
+
+############################################
+############################################
+############################################
+
 # Regression test for https://github.com/ufz/ogs/issues/1845 fixed in
 # https://github.com/ufz/ogs/pull/2237
 # checkMesh crashed when encountered Line3 element.
