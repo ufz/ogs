@@ -14,9 +14,74 @@
 
 namespace MeshLib
 {
-MathLib::Point3d getBulkElementPoint(Line const& /*line*/,
+/// Maps the given 0d end point \c wp of a line to the corresponding 1d point
+/// on the line.
+///
+/// The result is given in local coordinates of the line element.
+MathLib::Point3d getBulkElementPoint(
+    Line const& /*only used for overload resolution*/,
+    std::size_t const face_id,
+    MathLib::WeightedPoint const& wp);
+
+/// Maps the given lower dimensional boundary point \c wp of a line, i.e. the 1d
+/// integration point given in local coordinates of a line, to higher
+/// dimensional point of the triangle face (defined by the triangle element and
+/// the face id) also in local coordinates of the triangle element.
+///
+/// \param tri the triangle element
+/// \param face_id the id of the triangle face the point will be mapped on
+/// \param wp the integration point of the lower dimensional element
+/// \return the mapped point
+MathLib::Point3d getBulkElementPoint(Tri const& tri,
                                      std::size_t const face_id,
-                                     MathLib::WeightedPoint const& /*wp*/)
+                                     MathLib::WeightedPoint const& wp);
+
+/// Maps the given lower dimensional boundary point \c wp of a line, i.e. the 1d
+/// integration point given in local coordinates of a line, to higher
+/// dimensional point of the quad face (defined by the quad element and the face
+/// id) also in local coordinates of the quad face.
+///
+/// \param quad the quad element
+/// \param face_id the id of the quad face the point will be mapped on
+/// \param wp the integration point of the lower dimensional element
+/// \return the mapped point
+MathLib::Point3d getBulkElementPoint(Quad const& quad,
+                                     std::size_t const face_id,
+                                     MathLib::WeightedPoint const& wp);
+
+/// Maps the given 2d boundary point \c wp of a hexahedron face to the
+/// corresponding 3d point of the hexahedron.
+///
+/// The input and output coordinates are natural coordinates of the quad and
+/// hex, respectively.
+MathLib::Point3d getBulkElementPoint(Hex const& hex,
+                                     std::size_t const face_id,
+                                     MathLib::WeightedPoint const& wp);
+
+/// Maps the given lower dimensional 2d boundary point \c wp of a triangle
+/// element, given in local coordinates of the quad or triangle, to a 3d point
+/// existing on a tet face also in local coordinates.
+MathLib::Point3d getBulkElementPoint(Tet const& tet,
+                                     std::size_t const face_id,
+                                     MathLib::WeightedPoint const& wp);
+
+/// Maps the given lower dimensional 2d boundary point \c wp of a quad or
+/// triangle element, given in local coordinates of the quad or triangle, to a
+/// 3d point existing on a prism face also in local coordinates.
+MathLib::Point3d getBulkElementPoint(Prism const& prism,
+                                     std::size_t const face_id,
+                                     MathLib::WeightedPoint const& wp);
+
+/// Maps the given lower dimensional 2d boundary point \c wp of a quad or
+/// triangle element, given in local coordinates of the quad or triangle, to a
+/// 3d point existing on a pyramid face also in local coordinates.
+MathLib::Point3d getBulkElementPoint(Pyramid const& pyramid,
+                                     std::size_t const face_id,
+                                     MathLib::WeightedPoint const& wp);
+
+MathLib::Point3d getBulkElementPoint(Line const&,
+                                     std::size_t const face_id,
+                                     MathLib::WeightedPoint const&)
 {
     switch (face_id)
     {
