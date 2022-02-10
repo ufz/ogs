@@ -12,76 +12,13 @@
 
 #include <array>
 
-namespace MeshLib
+namespace
 {
 /// Maps the given 0d end point \c wp of a line to the corresponding 1d point
 /// on the line.
 ///
 /// The result is given in local coordinates of the line element.
-MathLib::Point3d getBulkElementPoint(
-    Line const& /*only used for overload resolution*/,
-    std::size_t const face_id,
-    MathLib::WeightedPoint const& wp);
-
-/// Maps the given lower dimensional boundary point \c wp of a line, i.e. the 1d
-/// integration point given in local coordinates of a line, to higher
-/// dimensional point of the triangle face (defined by the triangle element and
-/// the face id) also in local coordinates of the triangle element.
-///
-/// \param tri the triangle element
-/// \param face_id the id of the triangle face the point will be mapped on
-/// \param wp the integration point of the lower dimensional element
-/// \return the mapped point
-MathLib::Point3d getBulkElementPoint(Tri const& tri,
-                                     std::size_t const face_id,
-                                     MathLib::WeightedPoint const& wp);
-
-/// Maps the given lower dimensional boundary point \c wp of a line, i.e. the 1d
-/// integration point given in local coordinates of a line, to higher
-/// dimensional point of the quad face (defined by the quad element and the face
-/// id) also in local coordinates of the quad face.
-///
-/// \param quad the quad element
-/// \param face_id the id of the quad face the point will be mapped on
-/// \param wp the integration point of the lower dimensional element
-/// \return the mapped point
-MathLib::Point3d getBulkElementPoint(Quad const& quad,
-                                     std::size_t const face_id,
-                                     MathLib::WeightedPoint const& wp);
-
-/// Maps the given 2d boundary point \c wp of a hexahedron face to the
-/// corresponding 3d point of the hexahedron.
-///
-/// The input and output coordinates are natural coordinates of the quad and
-/// hex, respectively.
-MathLib::Point3d getBulkElementPoint(Hex const& hex,
-                                     std::size_t const face_id,
-                                     MathLib::WeightedPoint const& wp);
-
-/// Maps the given lower dimensional 2d boundary point \c wp of a triangle
-/// element, given in local coordinates of the quad or triangle, to a 3d point
-/// existing on a tet face also in local coordinates.
-MathLib::Point3d getBulkElementPoint(Tet const& tet,
-                                     std::size_t const face_id,
-                                     MathLib::WeightedPoint const& wp);
-
-/// Maps the given lower dimensional 2d boundary point \c wp of a quad or
-/// triangle element, given in local coordinates of the quad or triangle, to a
-/// 3d point existing on a prism face also in local coordinates.
-MathLib::Point3d getBulkElementPoint(Prism const& prism,
-                                     std::size_t const face_id,
-                                     MathLib::WeightedPoint const& wp);
-
-/// Maps the given lower dimensional 2d boundary point \c wp of a quad or
-/// triangle element, given in local coordinates of the quad or triangle, to a
-/// 3d point existing on a pyramid face also in local coordinates.
-MathLib::Point3d getBulkElementPoint(Pyramid const& pyramid,
-                                     std::size_t const face_id,
-                                     MathLib::WeightedPoint const& wp);
-
-MathLib::Point3d getBulkElementPoint(Line const&,
-                                     std::size_t const face_id,
-                                     MathLib::WeightedPoint const&)
+MathLib::Point3d getBulkElementPointLine(std::size_t const face_id)
 {
     switch (face_id)
     {
@@ -94,9 +31,16 @@ MathLib::Point3d getBulkElementPoint(Line const&,
     }
 }
 
-MathLib::Point3d getBulkElementPoint(Tri const& /*tri*/,
-                                     std::size_t const face_id,
-                                     MathLib::WeightedPoint const& wp)
+/// Maps the given lower dimensional boundary point \c wp of a line, i.e. the 1d
+/// integration point given in local coordinates of a line, to higher
+/// dimensional point of the triangle face (defined by the triangle element and
+/// the face id) also in local coordinates of the triangle element.
+///
+/// \param face_id the id of the triangle face the point will be mapped on
+/// \param wp the integration point of the lower dimensional element
+/// \return the mapped point
+MathLib::Point3d getBulkElementPointTri(std::size_t const face_id,
+                                        MathLib::WeightedPoint const& wp)
 {
     switch (face_id)
     {
@@ -113,9 +57,16 @@ MathLib::Point3d getBulkElementPoint(Tri const& /*tri*/,
     }
 }
 
-MathLib::Point3d getBulkElementPoint(Quad const& /*quad*/,
-                                     std::size_t const face_id,
-                                     MathLib::WeightedPoint const& wp)
+/// Maps the given lower dimensional boundary point \c wp of a line, i.e. the 1d
+/// integration point given in local coordinates of a line, to higher
+/// dimensional point of the quad face (defined by the quad element and the face
+/// id) also in local coordinates of the quad face.
+///
+/// \param face_id the id of the quad face the point will be mapped on
+/// \param wp the integration point of the lower dimensional element
+/// \return the mapped point
+MathLib::Point3d getBulkElementPointQuad(std::size_t const face_id,
+                                         MathLib::WeightedPoint const& wp)
 {
     switch (face_id)
     {
@@ -134,9 +85,13 @@ MathLib::Point3d getBulkElementPoint(Quad const& /*quad*/,
     }
 }
 
-MathLib::Point3d getBulkElementPoint(Hex const& /*hex*/,
-                                     std::size_t const face_id,
-                                     MathLib::WeightedPoint const& wp)
+/// Maps the given 2d boundary point \c wp of a hexahedron face to the
+/// corresponding 3d point of the hexahedron.
+///
+/// The input and output coordinates are natural coordinates of the quad and
+/// hex, respectively.
+MathLib::Point3d getBulkElementPointHex(std::size_t const face_id,
+                                        MathLib::WeightedPoint const& wp)
 {
     switch (face_id)
     {
@@ -161,9 +116,11 @@ MathLib::Point3d getBulkElementPoint(Hex const& /*hex*/,
     }
 }
 
-MathLib::Point3d getBulkElementPoint(Prism const& /*prism*/,
-                                     std::size_t const face_id,
-                                     MathLib::WeightedPoint const& wp)
+/// Maps the given lower dimensional 2d boundary point \c wp of a quad or
+/// triangle element, given in local coordinates of the quad or triangle, to a
+/// 3d point existing on a prism face also in local coordinates.
+MathLib::Point3d getBulkElementPointPrism(std::size_t const face_id,
+                                          MathLib::WeightedPoint const& wp)
 {
     switch (face_id)
     {
@@ -186,9 +143,11 @@ MathLib::Point3d getBulkElementPoint(Prism const& /*prism*/,
     }
 }
 
-MathLib::Point3d getBulkElementPoint(Pyramid const& /*pyramid*/,
-                                     std::size_t const face_id,
-                                     MathLib::WeightedPoint const& wp)
+/// Maps the given lower dimensional 2d boundary point \c wp of a quad or
+/// triangle element, given in local coordinates of the quad or triangle, to a
+/// 3d point existing on a pyramid face also in local coordinates.
+MathLib::Point3d getBulkElementPointPyramid(std::size_t const face_id,
+                                            MathLib::WeightedPoint const& wp)
 {
     switch (face_id)
     {
@@ -212,9 +171,11 @@ MathLib::Point3d getBulkElementPoint(Pyramid const& /*pyramid*/,
     }
 }
 
-MathLib::Point3d getBulkElementPoint(Tet const& /*tet*/,
-                                     std::size_t const face_id,
-                                     MathLib::WeightedPoint const& wp)
+/// Maps the given lower dimensional 2d boundary point \c wp of a triangle
+/// element, given in local coordinates of the quad or triangle, to a 3d point
+/// existing on a tet face also in local coordinates.
+MathLib::Point3d getBulkElementPointTet(std::size_t const face_id,
+                                        MathLib::WeightedPoint const& wp)
 {
     switch (face_id)
     {
@@ -232,113 +193,46 @@ MathLib::Point3d getBulkElementPoint(Tet const& /*tet*/,
     }
 }
 
-}  // namespace MeshLib
-
-static MathLib::Point3d getBulkElementPoint0D(MeshLib::Mesh const& mesh,
-                                              std::size_t const bulk_element_id,
-                                              std::size_t const bulk_face_id,
-                                              MathLib::WeightedPoint const& wp)
-{
-    using namespace MeshLib;
-
-    auto const* element = mesh.getElement(bulk_element_id);
-    if (element->getCellType() == CellType::LINE2)
-    {
-        Line const& line(*dynamic_cast<Line const*>(element));
-        return getBulkElementPoint(line, bulk_face_id, wp);
-    }
-    OGS_FATAL("Wrong cell type '{:s}' or functionality not yet implemented.",
-              CellType2String(element->getCellType()));
-}
-
-static MathLib::Point3d getBulkElementPoint1D(MeshLib::Mesh const& mesh,
-                                              std::size_t const bulk_element_id,
-                                              std::size_t const bulk_face_id,
-                                              MathLib::WeightedPoint const& wp)
-{
-    using namespace MeshLib;
-
-    auto const* element = mesh.getElement(bulk_element_id);
-    if (element->getCellType() == CellType::QUAD4)
-    {
-        Quad const& quad(*dynamic_cast<Quad const*>(element));
-        return getBulkElementPoint(quad, bulk_face_id, wp);
-    }
-    if (element->getCellType() == CellType::TRI3)
-    {
-        Tri const& tri = *static_cast<Tri const*>(element);
-        return getBulkElementPoint(tri, bulk_face_id, wp);
-    }
-    OGS_FATAL("Wrong cell type '{:s}' or functionality not yet implemented.",
-              CellType2String(element->getCellType()));
-}
-
-static MathLib::Point3d getBulkElementPoint2D(MeshLib::Mesh const& mesh,
-                                              std::size_t bulk_element_id,
-                                              std::size_t bulk_face_id,
-                                              MathLib::WeightedPoint const& wp)
-{
-    using namespace MeshLib;
-
-    auto const* element = mesh.getElement(bulk_element_id);
-    if (element->getCellType() == CellType::HEX8)
-    {
-        Hex const& hex = *static_cast<Hex const*>(element);
-        return getBulkElementPoint(hex, bulk_face_id, wp);
-    }
-    if (element->getCellType() == CellType::PRISM6)
-    {
-        Prism const& prism = *static_cast<Prism const*>(element);
-        return getBulkElementPoint(prism, bulk_face_id, wp);
-    }
-    if (element->getCellType() == CellType::PYRAMID5)
-    {
-        Pyramid const& pyramid = *static_cast<Pyramid const*>(element);
-        return getBulkElementPoint(pyramid, bulk_face_id, wp);
-    }
-    if (element->getCellType() == CellType::TET4)
-    {
-        Tet const& tet = *static_cast<Tet const*>(element);
-        return getBulkElementPoint(tet, bulk_face_id, wp);
-    }
-    OGS_FATAL("Wrong cell type '{:s}' or functionality not yet implemented.",
-              CellType2String(element->getCellType()));
-}
-
-// TODO disable the 3d elements in the local assembler creator
-static MathLib::Point3d getBulkElementPoint3D(
-    MeshLib::Mesh const& /*mesh*/,
-    std::size_t /*bulk_element_id*/,
-    std::size_t /*bulk_face_id*/,
-    MathLib::WeightedPoint const& /*wp*/)
-{
-    return MathLib::ORIGIN;
-}
+}  // namespace
 
 namespace MeshLib
 {
-MathLib::Point3d getBulkElementPoint(Mesh const& mesh,
-                                     std::size_t const bulk_element_id,
-                                     std::size_t const bulk_face_id,
-                                     MathLib::WeightedPoint const& wp)
+MathLib::Point3d getBulkElementPoint(
+    MeshLib::Element const& bulk_element,
+    std::size_t const bulk_face_id,
+    MathLib::WeightedPoint const& point_on_face)
 {
-    switch (wp.getDimension())
+    if (point_on_face.getDimension() == 3)
     {
-        case 0:
-            return getBulkElementPoint0D(
-                mesh, bulk_element_id, bulk_face_id, wp);
-        case 1:
-            return getBulkElementPoint1D(
-                mesh, bulk_element_id, bulk_face_id, wp);
-        case 2:
-            return getBulkElementPoint2D(
-                mesh, bulk_element_id, bulk_face_id, wp);
-        case 3:
-            return getBulkElementPoint3D(
-                mesh, bulk_element_id, bulk_face_id, wp);
+        // TODO disable the 3d elements in the local assembler creator
+        return MathLib::ORIGIN;
     }
 
-    OGS_FATAL("Weighted point dimension of {} not supported.",
-              wp.getDimension());
+    auto const cell_type = bulk_element.getCellType();
+
+    switch (cell_type)
+    {
+            // 3D bulk elements
+        case CellType::HEX8:
+            return getBulkElementPointHex(bulk_face_id, point_on_face);
+        case CellType::PRISM6:
+            return getBulkElementPointPrism(bulk_face_id, point_on_face);
+        case CellType::PYRAMID5:
+            return getBulkElementPointPyramid(bulk_face_id, point_on_face);
+        case CellType::TET4:
+            return getBulkElementPointTet(bulk_face_id, point_on_face);
+            // 2D bulk elements
+        case CellType::QUAD4:
+            return getBulkElementPointQuad(bulk_face_id, point_on_face);
+        case CellType::TRI3:
+            return getBulkElementPointTri(bulk_face_id, point_on_face);
+            // 1D bulk elements
+        case CellType::LINE2:
+            return getBulkElementPointLine(bulk_face_id);
+        default:
+            OGS_FATAL(
+                "Wrong cell type '{:s}' or functionality not yet implemented.",
+                CellType2String(cell_type));
+    }
 }
 }  // namespace MeshLib
