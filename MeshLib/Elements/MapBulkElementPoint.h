@@ -31,22 +31,14 @@ MathLib::Point3d getBulkElementPoint(Line const& line,
 /// integration point given in local coordinates of a line, to higher
 /// dimensional point of the triangle face (defined by the triangle element and
 /// the face id) also in local coordinates of the triangle element.
-/// \param tri the triangle element
-/// \param face_id the id of the triangle face the point will be mapped on
-/// \param wp the integration point of the lower dimensional element
-/// \return the mapped point
 MathLib::Point3d getBulkElementPoint(Tri const& tri,
                                      std::size_t const face_id,
                                      MathLib::WeightedPoint const& wp);
 
 /// Maps the given lower dimensional boundary point \c wp of a line, i.e. the 1d
-/// integration point given in local coordinates of a line, to higher dimensional
-/// point of the quad face (defined by the quad element and the face id) also in
-/// local coordinates of the quad face.
-/// \param quad the quad element
-/// \param face_id the id of the quad face the point will be mapped on
-/// \param wp the integration point of the lower dimensional element
-/// \return the mapped point
+/// integration point given in local coordinates of a line, to higher
+/// dimensional point of the quad face (defined by the quad element and the face
+/// id) also in local coordinates of the quad face.
 MathLib::Point3d getBulkElementPoint(Quad const& quad,
                                      std::size_t const face_id,
                                      MathLib::WeightedPoint const& wp);
