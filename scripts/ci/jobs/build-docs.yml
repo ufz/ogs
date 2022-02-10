@@ -42,7 +42,7 @@ build docs:
     - NUM_DOX_WARNINGS=`cat DoxygenWarnings.log|grep warning:|grep -v 'too many nodes'|wc -l|xargs`
     - echo "doxygen_warnings $NUM_DOX_WARNINGS" >> metrics.txt
     - |
-      if [[ ( "$NUM_DOX_WARNINGS" > "$DOX_WARNINGS_THRESHOLD" ) ]]; then
+      if [[ ( "$NUM_DOX_WARNINGS" -gt "$DOX_WARNINGS_THRESHOLD" ) ]]; then
         echo "Error: Number of Doxygen warnings exceeded threshold –> $NUM_DOX_WARNINGS > $DOX_WARNINGS_THRESHOLD"
         exit 1
       fi
