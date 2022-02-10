@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <iosfwd>
+#include <iterator>
 #include <string>
 #include <vector>
 
@@ -97,9 +98,8 @@ struct Output
         std::copy_if(accepted_items.cbegin(),
                      accepted_items.cend(),
                      std::back_inserter(matching_items),
-                     [&item_type](OutputItem const& accepted_item) {
-                         return accepted_item.item_type == item_type;
-                     });
+                     [&item_type](OutputItem const& accepted_item)
+                     { return accepted_item.item_type == item_type; });
         return matching_items;
     }
 
