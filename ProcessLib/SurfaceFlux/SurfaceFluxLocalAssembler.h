@@ -104,14 +104,17 @@ public:
                        std::vector<GlobalVector*> const&)>
                        getFlux) override
     {
+        auto const& bulk_element = *bulk_mesh.getElement(_bulk_element_id);
+
         auto get_surface_normal =
-            [this, &bulk_mesh](
-                MeshLib::Element const& surface_element) -> Eigen::Vector3d {
+            [this, &bulk_element](
+                MeshLib::Element const& surface_element) -> Eigen::Vector3d
+        {
             Eigen::Vector3d surface_element_normal;
             if (surface_element.getGeomType() == MeshLib::MeshElemType::LINE)
             {
-                auto const bulk_normal = MeshLib::FaceRule::getSurfaceNormal(
-                    *bulk_mesh.getElements()[_bulk_element_id]);
+                auto const bulk_normal =
+                    MeshLib::FaceRule::getSurfaceNormal(bulk_element);
                 auto const l0 = Eigen::Map<Eigen::Vector3d const>(
                     _surface_element.getNode(0)->getCoords());
                 auto const l1 = Eigen::Map<Eigen::Vector3d const>(
@@ -144,8 +147,8 @@ public:
         {
             auto const& wp = _integration_method.getWeightedPoint(ip);
 
-            auto const bulk_element_point = MeshLib::getBulkElementPoint(
-                bulk_mesh, _bulk_element_id, _bulk_face_id, wp);
+            auto const bulk_element_point =
+                MeshLib::getBulkElementPoint(bulk_element, _bulk_face_id, wp);
             auto const bulk_flux =
                 getFlux(_bulk_element_id, bulk_element_point, t, x);
             for (int component_id(0);
