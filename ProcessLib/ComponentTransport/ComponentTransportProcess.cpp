@@ -136,16 +136,6 @@ void ComponentTransportProcess::setInitialConditionsConcreteProcess(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::initializeChemicalSystem,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t);
-
-    BaseLib::RunTime time_phreeqc;
-    time_phreeqc.start();
-
-    _chemical_solver_interface->executeSpeciationCalculation(0. /*dt*/);
-
-    extrapolateIntegrationPointValuesToNodes(
-        t, _chemical_solver_interface->getIntPtProcessSolutions(), x);
-
-    INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
 }
 
 void ComponentTransportProcess::assembleConcreteProcess(
@@ -334,37 +324,6 @@ void ComponentTransportProcess::solveReactionEquation(
     NumLib::GlobalVectorProvider::provider.releaseVector(b);
     NumLib::GlobalMatrixProvider::provider.releaseMatrix(A);
     NumLib::GlobalVectorProvider::provider.releaseVector(rhs);
-}
-
-void ComponentTransportProcess::extrapolateIntegrationPointValuesToNodes(
-    const double t,
-    std::vector<GlobalVector*> const& integration_point_values_vectors,
-    std::vector<GlobalVector*>& nodal_values_vectors)
-{
-    auto& extrapolator = getExtrapolator();
-    auto const extrapolatables =
-        NumLib::makeExtrapolatable(_local_assemblers,
-                                   &ComponentTransportLocalAssemblerInterface::
-                                       getInterpolatedLocalSolution);
-
-    for (unsigned transport_process_id = 0;
-         transport_process_id < integration_point_values_vectors.size();
-         ++transport_process_id)
-    {
-        auto const& pv = _process_variables[transport_process_id + 1][0].get();
-        auto const& int_pt_C =
-            integration_point_values_vectors[transport_process_id];
-
-        extrapolator.extrapolate(pv.getNumberOfGlobalComponents(),
-                                 extrapolatables, t, {int_pt_C},
-                                 {_local_to_global_index_map.get()});
-
-        auto const& nodal_values = extrapolator.getNodalValues();
-        MathLib::LinAlg::copy(nodal_values,
-                              *nodal_values_vectors[transport_process_id + 1]);
-        MathLib::LinAlg::finalizeAssembly(
-            *nodal_values_vectors[transport_process_id + 1]);
-    }
 }
 
 void ComponentTransportProcess::computeSecondaryVariableConcrete(

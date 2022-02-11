@@ -130,11 +130,6 @@ public:
                                NumLib::EquationSystem& ode_sys,
                                int const process_id) override;
 
-    void extrapolateIntegrationPointValuesToNodes(
-        const double t,
-        std::vector<GlobalVector*> const& integration_point_values_vectors,
-        std::vector<GlobalVector*>& nodal_values_vectors) override;
-
     void computeSecondaryVariableConcrete(double const /*t*/,
                                           double const /*dt*/,
                                           std::vector<GlobalVector*> const& x,

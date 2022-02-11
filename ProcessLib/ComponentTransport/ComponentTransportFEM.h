@@ -186,12 +186,6 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
-    virtual std::vector<double> const& getInterpolatedLocalSolution(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& int_pt_x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const = 0;
-
 private:
     virtual void initializeChemicalSystemConcrete(
         Eigen::VectorXd const& /*local_x*/, double const /*t*/) = 0;
@@ -1291,29 +1285,6 @@ public:
                                              interpolated_values[ip]);
         }
         return interpolated_values;
-    }
-
-    std::vector<double> const& getInterpolatedLocalSolution(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& int_pt_x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        assert(_process_data.chemical_solver_interface);
-        assert(int_pt_x.size() == 1);
-
-        cache.clear();
-
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-        for (unsigned ip(0); ip < n_integration_points; ++ip)
-        {
-            auto const& chemical_system_id = _ip_data[ip].chemical_system_id;
-            auto const c_int_pt = int_pt_x[0]->get(chemical_system_id);
-            cache.push_back(c_int_pt);
-        }
-
-        return cache;
     }
 
     void computeSecondaryVariableConcrete(
