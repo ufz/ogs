@@ -620,6 +620,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         }
 
         //
+        // displacement equation, temperature part
+        local_Jac
+            .template block<displacement_size, temperature_size>(
+                displacement_index, temperature_index)
+            .noalias() -= B.transpose() *
+                          (C * solid_linear_thermal_expansivity_vector) * N * w;
+
+        //
         // pressure equation, displacement part.
         //
         Kpu.noalias() += N.transpose() * S_L * rho_LR * alpha *
@@ -910,6 +918,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     //
     // -- Jacobian
     //
+
     // temperature equation.
     local_Jac
         .template block<temperature_size, temperature_size>(temperature_index,

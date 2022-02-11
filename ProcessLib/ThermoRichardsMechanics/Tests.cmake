@@ -108,6 +108,20 @@ AddTest(
     CTF1_14.000000.vtu CTF1_14.000000.vtu temperature temperature 1e-10 1e-12
 )
 
+AddTest(
+    NAME ThermoRichardsMechanics_CreepBGRa_SimpleAxisymmetricCreep
+    PATH ThermoRichardsMechanics/SimpleAxisymmetricCreep
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS SimpleAxisymmetricCreep.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    DIFF_DATA
+    expected_SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu displacement displacement 1e-13 1e-10
+    expected_SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu sigma sigma 2e-7 0
+    expected_SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu epsilon epsilon 1e-11 0
+)
+
 #PETSc
 AddTest(
     NAME ParallelFEM_ThermoRichardsMechanics_3D_ThermoElastic_Stress_Analysis
