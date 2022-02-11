@@ -27,13 +27,14 @@ public:
      *
      * @param order     integration order (default 2)
      */
-    explicit IntegrationGaussLegendrePyramid(unsigned order = 2) : _order(order)
+    explicit IntegrationGaussLegendrePyramid(unsigned const order = 2)
+        : _order(order)
     {
         this->setIntegrationOrder(order);
     }
 
     /// Change the integration order.
-    void setIntegrationOrder(unsigned order)
+    void setIntegrationOrder(unsigned const order)
     {
         _order = order;
         _n_sampl_pt = getNumberOfPoints(_order);
@@ -61,7 +62,8 @@ public:
      * @param igp      the sampling point id
      * @return weight
      */
-    static MathLib::WeightedPoint getWeightedPoint(unsigned const order, unsigned const igp)
+    static MathLib::WeightedPoint getWeightedPoint(unsigned const order,
+                                                   unsigned const igp)
     {
         // For the case of order = 4, it
         // causes `assertion `rank == num_nodes' failed`
@@ -83,7 +85,7 @@ public:
     }
 
     template <typename Method>
-    static MathLib::WeightedPoint getWeightedPoint(unsigned igp)
+    static MathLib::WeightedPoint getWeightedPoint(unsigned const igp)
     {
         return MathLib::WeightedPoint(Method::X[igp], Method::W[igp]);
     }
