@@ -5,10 +5,17 @@ include(BuildExternalProject)
 if(OGS_USE_MFRONT)
     find_program(MFRONT mfront)
     if(NOT MFRONT)
+        set(_tfel_source GIT_REPOSITORY https://github.com/thelfer/tfel.git
+                         GIT_TAG rliv-${ogs.minimum_version.tfel-rliv}
+        )
+        if(DEFINED OGS_EXTERNAL_DEPENDENCIES_CACHE)
+            set(_tfel_source
+                URL
+                ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/tfel-rliv-${ogs.minimum_version.tfel-rliv}.zip
+            )
+        endif()
         BuildExternalProject(
-            TFEL
-            GIT_REPOSITORY https://github.com/thelfer/tfel.git
-            GIT_TAG rliv-${ogs.minimum_version.tfel-rliv}
+            TFEL ${_tfel_source}
             CMAKE_ARGS -DCMAKE_INSTALL_RPATH=<INSTALL_DIR>/lib
                        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
         )
@@ -44,11 +51,18 @@ if(OGS_USE_PETSC)
         if(OGS_INSTALL_PETSC)
             set(_petsc_install_dir INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
         endif()
+        set(_petsc_source GIT_REPOSITORY https://gitlab.com/petsc/petsc.git
+                          GIT_TAG v${ogs.minimum_version.petsc}
+        )
+        if(DEFINED OGS_EXTERNAL_DEPENDENCIES_CACHE)
+            set(_petsc_source
+                URL
+                ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/petsc-v${ogs.minimum_version.petsc}.zip
+            )
+        endif()
         BuildExternalProject(
-            PETSc
+            PETSc ${_petsc_source}
             LOG_OUTPUT_ON_FAILURE ON
-            GIT_REPOSITORY https://gitlab.com/petsc/petsc.git
-            GIT_TAG v${ogs.minimum_version.petsc}
             CONFIGURE_COMMAND
                 ./configure --download-f2cblaslapack=1 --prefix=<INSTALL_DIR>
                 --with-debugging=$<CONFIG:Debug> ${_configure_opts}
@@ -79,10 +93,17 @@ endif()
 if(OGS_USE_LIS)
     find_package(LIS)
     if(NOT LIS_FOUND)
+        set(_lis_source GIT_REPOSITORY https://github.com/anishida/lis.git
+                        GIT_TAG ${ogs.minimum_version.lis}
+        )
+        if(DEFINED OGS_EXTERNAL_DEPENDENCIES_CACHE)
+            set(_lis_source
+                URL
+                ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/lis-${ogs.minimum_version.lis}.zip
+            )
+        endif()
         BuildExternalProject(
-            LIS
-            GIT_REPOSITORY https://github.com/anishida/lis.git
-            GIT_TAG ${ogs.minimum_version.lis}
+            LIS ${_lis_source}
             CONFIGURE_COMMAND ./configure --enable-omp --prefix=<INSTALL_DIR>
             BUILD_IN_SOURCE ON
             BUILD_COMMAND make -j
