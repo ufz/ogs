@@ -8,13 +8,19 @@ create cpm cache:
         - scripts/cmake/CMakeSetup.cmake
         - scripts/cmake/Dependencies.cmake
         - scripts/ci/jobs/package.yml
+        - scripts/cmake/ExternalDependencies.cmake
+        - web/data/versions.json
   variables:
     BUILD_DIR: "../build/cpm"
   script:
+    - TFEL_RLIV_VERSION=$(jq -r '.minimum_version."tfel-rliv"' web/data/versions.json)
+    - PETSC_VERSION=$(jq -r '.minimum_version.petsc' web/data/versions.json)
+    - LIS_VERSION=$(jq -r '.minimum_version.lis' web/data/versions.json)
     - rm -rf $BUILD_DIR
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
-    - cmake ../../ogs -B . -G Ninja --preset release-all -DOGS_USE_POETRY=OFF -DCPM_SOURCE_CACHE=./cpm
+    # cpm:
+    - cmake ../../ogs -B . -G Ninja --preset release -DOGS_USE_POETRY=OFF -DCPM_SOURCE_CACHE=./cpm
     - find cpm -type f | grep -i "\.git" | xargs rm -rf
     - VERSION=$(find cpm -type f -print0 | sort -z | xargs -r0  sha1sum | awk '{print $1}' | sha1sum | awk '{print $1}')
     - echo "VERSION=${VERSION}"
@@ -22,6 +28,19 @@ create cpm cache:
     - >
       curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cpm.tar.gz \
         ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cpm/${VERSION}/cpm.tar.gz
+    # external dependencies:
+    - mkdir ext
+    - cd ext
+    - wget --no-verbose --output-document tfel-rliv-${TFEL_RLIV_VERSION}.zip https://github.com/thelfer/tfel/archive/refs/heads/rliv-${TFEL_RLIV_VERSION}.zip
+    - wget --no-verbose --output-document petsc-v${PETSC_VERSION}.zip https://gitlab.com/petsc/petsc/-/archive/v${PETSC_VERSION}/petsc-v${PETSC_VERSION}.zip
+    - wget --no-verbose --output-document lis-${LIS_VERSION}.zip https://github.com/anishida/lis/archive/refs/tags/${LIS_VERSION}.zip
+    - cd ..
+    - EXT_VERSION=$(find ext -type f -print0 | sort -z | xargs -r0  sha1sum | awk '{print $1}' | sha1sum | awk '{print $1}')
+    - echo "EXT_VERSION=${EXT_VERSION}"
+    - tar -czf ext.tar.gz ext
+    - >
+      curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ext.tar.gz \
+        ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/external-dependencies/${EXT_VERSION}/ext.tar.gz
 
 offline configure:
   stage: package
@@ -36,6 +55,7 @@ offline configure:
     BUILD_DIR: "../build/offline"
   script:
     - VERSION=$(jq -r '.cpm.cache_hash' web/data/versions.json)
+    - EXT_VERSION=$(jq -r '.ext.cache_hash' web/data/versions.json)
     - rm -rf $BUILD_DIR
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
@@ -43,9 +63,16 @@ offline configure:
       wget --no-verbose --header "JOB-TOKEN: $CI_JOB_TOKEN" \
         ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cpm/${VERSION}/cpm.tar.gz
     - tar xf cpm.tar.gz
-    # Disable network access for CMake run
-    # Not yet tested: mfront, petsc (build via ExternalProject_Add)
     - >
+      wget --no-verbose --header "JOB-TOKEN: $CI_JOB_TOKEN" \
+        ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/external-dependencies/${EXT_VERSION}/ext.tar.gz
+    - tar xf ext.tar.gz
+    # Disable network access for CPM CMake run, does not work with petsc.
+    - |
       firejail --noprofile --net=none --blacklist=/usr/bin/mfront --read-write=${CI_BUILDS_DIR} \
         cmake ../../ogs -B . -G Ninja --preset release \
           -DOGS_USE_PYTHON=OFF -DOGS_USE_POETRY=OFF -DCPM_SOURCE_CACHE=./cpm
+      rm CMakeCache.txt
+      cmake ../../ogs -B . -G Ninja --preset release-petsc \
+        -DOGS_USE_PYTHON=OFF -DOGS_USE_POETRY=OFF -DCPM_SOURCE_CACHE=./cpm \
+        -DOGS_USE_MFRONT=ON -DOGS_USE_LIS=ON -DOGS_EXTERNAL_DEPENDENCIES_CACHE=./ext
