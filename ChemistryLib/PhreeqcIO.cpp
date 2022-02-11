@@ -444,7 +444,9 @@ void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
     std::ifstream in(dump_file);
     if (!in)
     {
-        OGS_FATAL("Could not open phreeqc dump file '{:s}'.", dump_file);
+        // return if phreeqc dump file doesn't exist. Normally, this happens in
+        // the first time step.
+        return;
     }
 
     _dump->readDumpFile(in, _num_chemical_systems);
