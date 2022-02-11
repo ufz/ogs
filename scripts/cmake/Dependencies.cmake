@@ -443,6 +443,16 @@ if(OGS_BUILD_TESTING)
     endif()
 endif()
 
+if(OGS_BUILD_UTILS)
+    CPMAddPackage(
+        NAME metis
+        GITHUB_REPOSITORY scibuilder/metis
+        GIT_TAG 982842a5ace9b3da2b2800817eb9e5fd3b42966b
+        DOWNLOAD_ONLY YES
+    )
+    include(${PROJECT_SOURCE_DIR}/scripts/cmake/MetisSetup.cmake)
+endif()
+
 # Disable warnings
 if(WIN32 AND VTK_ADDED)
     list(APPEND DISABLE_WARNINGS_TARGETS vtksys)

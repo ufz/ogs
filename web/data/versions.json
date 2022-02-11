@@ -43,5 +43,8 @@
       "nbconvert==6.4.0",
       "pillow=9.0.0"
     ]
+  },
+  "cpm": {
+    "cache_hash": "7190f14f7413a6954d2464f4a8e7016864eb8bc3"
   }
 }
