@@ -290,7 +290,7 @@
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <!-- <abstols>1e-09 1e-09 1e-09 1e-6 1e-6</abstols> -->
-                    <reltols>1e-09 1e-12 1e-09 1e-09 1e-09</reltols>
+                    <reltols>1e-9 1e-12 1e-9 1e-9 1e-9</reltols>
                 </convergence_criterion>
 
                 <time_discretization>
