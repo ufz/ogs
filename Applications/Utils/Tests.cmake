@@ -333,6 +333,33 @@ AddTest(
 )
 ################################################
 
+##############Quadratic Line#####################
+AddTest(
+    NAME partmesh_mesh_for_QuadraticLine_ogsmetis
+    PATH NodePartitionedMesh/QuadraticElements/Quad_line
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad_line
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i basicQuadLine.vtu --ogs2metis -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad_line
+)
+
+AddTest(
+    NAME partmesh_mesh_for_QuadraticLine
+    PATH NodePartitionedMesh/QuadraticElements/Quad_line
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad_line
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 2 -i basicQuadLine.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad_line
+    REQUIREMENTS NOT APPLE
+    DEPENDS partmesh-partmesh_mesh_for_QuadraticLine_ogsmetis
+    TESTER diff
+    DIFF_DATA   basicQuadLine_partitioned_cell_properties_cfg2.bin
+                basicQuadLine_partitioned_cell_properties_val2.bin
+                basicQuadLine_partitioned_msh_cfg2.bin
+                basicQuadLine_partitioned_msh_ele2.bin
+                basicQuadLine_partitioned_msh_ele_g2.bin
+                basicQuadLine_partitioned_msh_nod2.bin
+)
+################################################
+
 
 
 ############################################
