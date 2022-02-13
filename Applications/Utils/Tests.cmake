@@ -250,6 +250,9 @@ AddTest(
 ##############Testing partmesh##############
 ##############ALL Quadratic#################
 ############################################
+
+
+##############Quadratic Triangle##############
 AddTest(
     NAME partmesh_mesh_for_QuadraticTriangle_ogsmetis
     PATH NodePartitionedMesh/QuadraticElements/Quad_triangle
@@ -274,6 +277,36 @@ AddTest(
                basicQuadTri_partitioned_msh_ele2.bin
                basicQuadTri_partitioned_msh_nod2.bin
 )
+################################################
+
+##############Quadratic Tet#####################
+AddTest(
+    NAME partmesh_mesh_for_QuadraticTet_ogsmetis
+    PATH NodePartitionedMesh/QuadraticElements/Quad_tet
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad_tet
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i basicQuadTet.vtu --ogs2metis -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad_tet
+)
+
+AddTest(
+    NAME partmesh_mesh_for_QuadraticTet
+    PATH NodePartitionedMesh/QuadraticElements/Quad_tet
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad_tet
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 2 -i basicQuadTet.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad_tet
+    REQUIREMENTS NOT APPLE
+    DEPENDS partmesh-partmesh_mesh_for_QuadraticTet_ogsmetis
+    TESTER diff
+    DIFF_DATA   basicQuadTet_partitioned_cell_properties_cfg2.bin
+                basicQuadTet_partitioned_cell_properties_val2.bin
+                basicQuadTet_partitioned_msh_cfg2.bin
+                basicQuadTet_partitioned_msh_ele2.bin
+                basicQuadTet_partitioned_msh_ele_g2.bin
+                basicQuadTet_partitioned_msh_nod2.bin
+)
+################################################
+
+
 
 ############################################
 ############################################
