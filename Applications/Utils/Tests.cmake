@@ -306,6 +306,33 @@ AddTest(
 )
 ################################################
 
+##############Quadratic Hex#####################
+AddTest(
+    NAME partmesh_mesh_for_QuadraticHex_ogsmetis
+    PATH NodePartitionedMesh/QuadraticElements/Quad_hex
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad_hex
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i basicQuadHex.vtu --ogs2metis -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad_hex
+)
+
+AddTest(
+    NAME partmesh_mesh_for_QuadraticHex
+    PATH NodePartitionedMesh/QuadraticElements/Quad_hex
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad_hex
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 2 -i basicQuadHex.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad_hex
+    REQUIREMENTS NOT APPLE
+    DEPENDS partmesh-partmesh_mesh_for_QuadraticHex_ogsmetis
+    TESTER diff
+    DIFF_DATA   basicQuadHex_partitioned_cell_properties_cfg2.bin
+                basicQuadHex_partitioned_cell_properties_val2.bin
+                basicQuadHex_partitioned_msh_cfg2.bin
+                basicQuadHex_partitioned_msh_ele2.bin
+                basicQuadHex_partitioned_msh_ele_g2.bin
+                basicQuadHex_partitioned_msh_nod2.bin
+)
+################################################
+
 
 
 ############################################
