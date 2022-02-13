@@ -246,12 +246,6 @@ AddTest(
                quad_9node_partitioned_cell_properties_val2.bin
 )
 
-############################################
-##############Testing partmesh##############
-##############ALL Quadratic#################
-############################################
-
-
 ##############Quadratic Triangle##############
 AddTest(
     NAME partmesh_mesh_for_QuadraticTriangle_ogsmetis
@@ -359,12 +353,6 @@ AddTest(
                 basicQuadLine_partitioned_msh_nod2.bin
 )
 ################################################
-
-
-
-############################################
-############################################
-############################################
 
 # Regression test for https://github.com/ufz/ogs/issues/1845 fixed in
 # https://github.com/ufz/ogs/pull/2237
