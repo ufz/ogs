@@ -8,7 +8,7 @@ append_source_files(SOURCES Common)
 ogs_add_library(ChemistryLib ${SOURCES})
 
 target_link_libraries(
-    ChemistryLib PUBLIC Eigen3::Eigen iphreeqc PRIVATE BaseLib NumLib
+    ChemistryLib PUBLIC Eigen3::Eigen iphreeqc PRIVATE BaseLib MaterialLib NumLib
 )
 
 # See https://github.com/ufz/ogs/pull/2982#issuecomment-641086788

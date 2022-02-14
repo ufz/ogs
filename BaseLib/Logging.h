@@ -16,9 +16,11 @@
 #include <memory>
 #include <string>
 
+#include "baselib_export.h"
+
 namespace BaseLib
 {
-extern std::shared_ptr<spdlog::logger> console;
+extern BASELIB_EXPORT std::shared_ptr<spdlog::logger> console;
 void setConsoleLogLevel(std::string const& level_string);
 
 }  // namespace BaseLib
