@@ -14,7 +14,7 @@ append_source_files(SOURCES SurfaceFlux)
 append_source_files(SOURCES Output)
 append_source_files(SOURCES Utils)
 
-ogs_add_library(ProcessLib ${SOURCES})
+ogs_add_library(ProcessLib GENERATE_EXPORT_HEADER ${SOURCES})
 
 if(OGS_USE_PYTHON)
     add_subdirectory(BoundaryConditionAndSourceTerm/Python)

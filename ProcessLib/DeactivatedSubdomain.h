@@ -20,6 +20,8 @@
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MathLib/Point3d.h"
 
+#include "processlib_export.h"
+
 namespace MeshLib
 {
 class Mesh;
@@ -102,6 +104,6 @@ struct DeactivatedSubdomain
     /// the surface of the deactivated subdomain/excavation.
     ParameterLib::Parameter<double> const* const boundary_value_parameter;
 
-    static const std::string zero_parameter_name;
+    PROCESSLIB_EXPORT static const std::string zero_parameter_name;
 };
 }  // namespace ProcessLib
