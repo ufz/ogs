@@ -6,6 +6,10 @@ CPMAddPackage(
 )
 include("${json-cmake_SOURCE_DIR}/JSONParser.cmake")
 file(READ ${PROJECT_SOURCE_DIR}/web/data/versions.json jsonFileString)
+set_property(
+    DIRECTORY . APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+                                "${PROJECT_SOURCE_DIR}/web/data/versions.json"
+)
 sbeParseJson(ogs jsonFileString)
 # Provides variables, e.g. ogs.minimum_version.gcc. Output all variables with
 # ~~~
