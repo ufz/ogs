@@ -149,6 +149,9 @@ bool parseHeader(std::ifstream& in, std::string& mesh_name)
         {
             mesh_name = line.substr(5, line.length() - 5);
             BaseLib::trim(mesh_name, ' ');
+            // replace chars that will prevent writing the file
+            std::replace(mesh_name.begin(), mesh_name.end(), '/', '-');
+            std::replace(mesh_name.begin(), mesh_name.end(), '\\', '-');
         }
         else if (line.substr(0, 1) == "}")
         {
@@ -619,6 +622,12 @@ MeshLib::Mesh* readData(std::ifstream& in,
                 ERR("Error parsing PROPERTIES");
                 return nullptr;
             }
+        }
+        else if (str[0] == "REGION")
+        {
+            // Allows grouping of multiple surfaces into groups.
+            // Ignored for now.
+            continue;
         }
         else if (type == DataType::PLINE && str[0] == "ILINE")
         {
