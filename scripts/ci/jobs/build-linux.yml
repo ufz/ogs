@@ -56,7 +56,7 @@ build linux (no deps, no procs):
   variables:
     BUILD_TESTS: "false"
     BUILD_CTEST: "false"
-    BUILD_PROCESSES: "SteadyStateDiffusion"
+    CMAKE_ARGS: -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
     CMAKE_PRESET: ci-simplest
 
 build linux arch:

@@ -8,7 +8,6 @@ stages:
 variables:
   # Build config
   BUILD_TYPE: Release
-  BUILD_PROCESSES: "ON" # or OFF or ;-separated list of processes
   BUILD_TESTS: "true"
   BUILD_CTEST: "true"
   CPU_TARGET: ivybridge # envinf1 has oldest cpu
