@@ -2,13 +2,25 @@
 # ${PROJECT_BINARY_DIR}/_ext
 include(BuildExternalProject)
 
+set(OGS_EXTERNAL_DEPENDENCIES_CACHE ""
+    CACHE PATH "Directory containing source archives of external dependencies."
+)
+
 if(OGS_USE_MFRONT)
-    find_program(MFRONT mfront)
+    set(_tfel_source GIT_REPOSITORY https://github.com/thelfer/tfel.git GIT_TAG
+                     rliv-${ogs.minimum_version.tfel-rliv}
+    )
+    set(_tfel_source_file
+        ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/tfel-rliv-${ogs.minimum_version.tfel-rliv}.zip
+    )
+    if(EXISTS ${_tfel_source_file})
+        set(_tfel_source URL ${_tfel_source_file})
+    else()
+        find_program(MFRONT mfront)
+    endif()
     if(NOT MFRONT)
         BuildExternalProject(
-            TFEL
-            GIT_REPOSITORY https://github.com/thelfer/tfel.git
-            GIT_TAG rliv-${ogs.minimum_version.tfel-rliv}
+            TFEL ${_tfel_source}
             CMAKE_ARGS -DCMAKE_INSTALL_RPATH=<INSTALL_DIR>/lib
                        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
         )
@@ -27,9 +39,18 @@ if(OGS_USE_PETSC)
         set(PETSC_EXECUTABLE_RUNS YES)
     endif()
 
-    if(NOT OGS_PETSC_CONFIG_OPTIONS)
+    set(_petsc_source GIT_REPOSITORY https://gitlab.com/petsc/petsc.git GIT_TAG
+                      v${ogs.minimum_version.petsc}
+    )
+    set(_petsc_source_file
+        ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/petsc-v${ogs.minimum_version.petsc}.zip
+    )
+    if(EXISTS ${_petsc_source_file})
+        set(_petsc_source URL ${_petsc_source_file})
+    elseif(NOT OGS_PETSC_CONFIG_OPTIONS)
         find_package(PETSc ${ogs.minimum_version.petsc})
     endif()
+
     if(NOT PETSC_FOUND)
         set(_configure_opts "")
         if(NOT "--download-fc=1" IN_LIST OGS_PETSC_CONFIG_OPTIONS)
@@ -44,11 +65,11 @@ if(OGS_USE_PETSC)
         if(OGS_INSTALL_PETSC)
             set(_petsc_install_dir INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
         endif()
+
+        unset(ENV{PETSC_DIR})
         BuildExternalProject(
-            PETSc
+            PETSc ${_petsc_source}
             LOG_OUTPUT_ON_FAILURE ON
-            GIT_REPOSITORY https://gitlab.com/petsc/petsc.git
-            GIT_TAG v${ogs.minimum_version.petsc}
             CONFIGURE_COMMAND
                 ./configure --download-f2cblaslapack=1 --prefix=<INSTALL_DIR>
                 --with-debugging=$<CONFIG:Debug> ${_configure_opts}
@@ -77,12 +98,20 @@ if(OGS_USE_PETSC)
 endif()
 
 if(OGS_USE_LIS)
-    find_package(LIS)
+    set(_lis_source GIT_REPOSITORY https://github.com/anishida/lis.git GIT_TAG
+                    ${ogs.minimum_version.lis}
+    )
+    set(_lis_source_file
+        ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/lis-${ogs.minimum_version.lis}.zip
+    )
+    if(EXISTS ${_lis_source_file})
+        set(_lis_source URL ${_lis_source_file})
+    else()
+        find_package(LIS)
+    endif()
     if(NOT LIS_FOUND)
         BuildExternalProject(
-            LIS
-            GIT_REPOSITORY https://github.com/anishida/lis.git
-            GIT_TAG ${ogs.minimum_version.lis}
+            LIS ${_lis_source}
             CONFIGURE_COMMAND ./configure --enable-omp --prefix=<INSTALL_DIR>
             BUILD_IN_SOURCE ON
             BUILD_COMMAND make -j
