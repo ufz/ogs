@@ -244,13 +244,13 @@
         <vtkdiff>
             <file>triaxtest_output_ts_99_t_0.484319.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>6e-9</absolute_tolerance>
+            <absolute_tolerance>1e-7</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>triaxtest_output_ts_199_t_1.000000.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>9e-8</absolute_tolerance>
+            <absolute_tolerance>1e-7</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <!--material-specific internal variable-->
