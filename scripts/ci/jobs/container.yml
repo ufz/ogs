@@ -42,12 +42,15 @@ container:
         singularity exec $sif ogs --version
       done
     # Data Explorer container
+    # TODO: to enable -DOGS_BUILD_CLI=OFF the interface of ApplicationsLib
+    #       needed by the Data Explorer needs to be decoupled from the Process
+    #       stuff
     - >
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --cvode --ccache
       --cpu-target $CPU_TARGET
-      --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_CLI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_BUILD_TESTING=OFF'
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_UTILS=OFF -DOGS_BUILD_TESTING=OFF'
       --gui
   artifacts:
     name: container
