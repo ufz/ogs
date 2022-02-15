@@ -18,7 +18,7 @@ sbeParseJson(ogs jsonFileString)
 #   endforeach()
 # ~~~
 
-# Overwriting indiviual entries
+# Overwriting individual entries
 set(OGS_DEPENDENCY_VERSIONS ""
     CACHE STRING "Overwrite versions.json; syntax: 'key=value;key=value'"
 )
