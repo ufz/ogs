@@ -553,7 +553,8 @@ bool parseSurface(std::ifstream& in,
 template <typename T>
 MeshLib::Mesh* createMesh(std::ifstream& in, DataType type,
                           std::string& mesh_name,
-                          MeshLib::Properties& mesh_prop, T parser)
+                          MeshLib::Properties& mesh_prop, T parser,
+                          bool flip_elevation)
 {
     std::vector<MeshLib::Node*> nodes;
     std::vector<MeshLib::Element*> elems;
@@ -564,6 +565,11 @@ MeshLib::Mesh* createMesh(std::ifstream& in, DataType type,
 
     if (return_val)
     {
+        if (flip_elevation)
+        {
+            std::for_each(nodes.begin(), nodes.end(),
+                          [](MeshLib::Node* n) { (*n)[2] *= -1; });
+        }
         return new MeshLib::Mesh(mesh_name, nodes, elems, mesh_prop);
     }
     ERR("Error parsing {:s} {:s}.", dataType2ShortString(type), mesh_name);
@@ -584,6 +590,7 @@ MeshLib::Mesh* readData(std::ifstream& in,
     MeshLib::Properties mesh_prop;
     mesh_prop.createNewPropertyVector<int>(mat_id_name,
                                            MeshLib::MeshItemType::Cell, 1);
+    bool flip_elevation = false;
     std::string line;
     while (std::getline(in, line))
     {
@@ -594,12 +601,16 @@ MeshLib::Mesh* readData(std::ifstream& in,
         }
         if (str[0] == "GOCAD_ORIGINAL_COORDINATE_SYSTEM")
         {
-            Gocad::CoordinateSystem coordinate_system;
+            CoordinateSystem coordinate_system;
             if (!coordinate_system.parse(in))
             {
                 ERR("Error parsing coordinate system.");
                 return nullptr;
             }
+            flip_elevation = (coordinate_system.z_positive ==
+                              CoordinateSystem::ZPOSITIVE::Depth)
+                                 ? true
+                                 : false;
         }
         else if (str[0] == "GEOLOGICAL_FEATURE" ||
                  str[0] == "GEOLOGICAL_TYPE" ||
@@ -631,11 +642,11 @@ MeshLib::Mesh* readData(std::ifstream& in,
         }
         else if (type == DataType::PLINE && str[0] == "ILINE")
         {
-            return createMesh(in, type, mesh_name, mesh_prop, parseLine);
+            return createMesh(in, type, mesh_name, mesh_prop, parseLine, flip_elevation);
         }
         else if (type == DataType::TSURF && str[0] == "TFACE")
         {
-            return createMesh(in, type, mesh_name, mesh_prop, parseSurface);
+            return createMesh(in, type, mesh_name, mesh_prop, parseSurface, flip_elevation);
         }
         else
         {
