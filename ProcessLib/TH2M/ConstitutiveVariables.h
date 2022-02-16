@@ -85,6 +85,8 @@ struct ConstitutiveVariables
     double dfW_3a_dp_cap = std::numeric_limits<double>::quiet_NaN();
     double dfW_3a_dT = std::numeric_limits<double>::quiet_NaN();
     double ds_L_dp_cap = std::numeric_limits<double>::quiet_NaN();
+    double chi_s_L = std::numeric_limits<double>::quiet_NaN();
+    double dchi_ds_L = std::numeric_limits<double>::quiet_NaN();
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
