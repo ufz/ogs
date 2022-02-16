@@ -16,11 +16,20 @@ CPMAddPackage(
     GIT_TAG d98828f54f6974717798e63195cfbf08fe2daad0
     DOWNLOAD_ONLY YES
 )
+# To be replaced later. See
+# https://gitlab.kitware.com/cmake/cmake/-/issues/22831
+CPMAddPackage(
+    NAME findmkl_cmake
+    GITHUB_REPOSITORY bilke/findmkl_cmake
+    GIT_TAG c8a6db75ae33b580cfc7d09d5b68493229793c33
+    DOWNLOAD_ONLY YES
+)
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
     "${PROJECT_SOURCE_DIR}/scripts/cmake"
     "${PROJECT_SOURCE_DIR}/scripts/cmake/jedbrown"
     "${PROJECT_SOURCE_DIR}/scripts/cmake/vector-of-bool"
+    "${findmkl_cmake_SOURCE_DIR}/cmake"
     "${cmake-modules_SOURCE_DIR}"
 )
 

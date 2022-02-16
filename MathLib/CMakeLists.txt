@@ -41,7 +41,9 @@ if(OGS_USE_LIS)
 endif()
 if(OGS_USE_MKL)
     target_include_directories(MathLib PRIVATE ${MKL_INCLUDE_DIR})
-    target_link_libraries(MathLib PUBLIC ${MKL_LIBRARIES})
+    target_link_libraries(MathLib PRIVATE ${MKL_LIBRARIES})
+    target_link_options(MathLib PUBLIC ${MKL_LINK_FLAGS})
+    target_compile_definitions(MathLib PRIVATE ${MKL_DEFINITIONS})
 endif()
 
 target_compile_definitions(
