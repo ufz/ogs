@@ -1,0 +1,1 @@
+The angle in radians by which the fracture normal is rotated in the xy-plane.

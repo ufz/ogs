@@ -10,12 +10,13 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "EmbeddedFracturePermeability.h"
-#include "ParameterLib/Parameter.h"
+#include "ParameterLib/Utils.h"
 
 namespace MaterialPropertyLib
 {
 std::unique_ptr<Property> createEmbeddedFracturePermeability(
-    int const geometry_dimension, BaseLib::ConfigTree const& config)
+    int const geometry_dimension, BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     if ((geometry_dimension != 2) && (geometry_dimension != 3))
     {
@@ -74,6 +75,20 @@ std::unique_ptr<Property> createEmbeddedFracturePermeability(
             "determined as the third principal stress vector.");
     }
 
+    std::string const fracture_rotation_xy_param_name =
+        //! \ogs_file_param{properties__property__EmbeddedFracturePermeability__fracture_rotation_xy}
+        config.getConfigParameter<std::string>("fracture_rotation_xy");
+
+    auto const& phi_xy = ParameterLib::findParameter<double>(
+        fracture_rotation_xy_param_name, parameters, 0, nullptr);
+
+    std::string const fracture_rotation_yz_param_name =
+        //! \ogs_file_param{properties__property__EmbeddedFracturePermeability__fracture_rotation_yz}
+        config.getConfigParameter<std::string>("fracture_rotation_yz");
+
+    auto const& phi_yz = ParameterLib::findParameter<double>(
+        fracture_rotation_yz_param_name, parameters, 0, nullptr);
+
     auto const jf =
         //! \ogs_file_param{properties__property__EmbeddedFracturePermeability__jacobian_factor}
         config.getConfigParameter<double>("jacobian_factor", 0.);
@@ -81,9 +96,10 @@ std::unique_ptr<Property> createEmbeddedFracturePermeability(
     if (geometry_dimension == 2)
     {
         return std::make_unique<EmbeddedFracturePermeability<2>>(
-            std::move(property_name), n, n_const, k, b0, a, e0, jf);
+            std::move(property_name), n, n_const, k, b0, a, e0, phi_xy, phi_yz,
+            jf);
     }
     return std::make_unique<EmbeddedFracturePermeability<3>>(
-        std::move(property_name), n, n_const, k, b0, a, e0, jf);
+        std::move(property_name), n, n_const, k, b0, a, e0, phi_xy, phi_yz, jf);
 }
 }  // namespace MaterialPropertyLib

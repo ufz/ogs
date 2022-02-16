@@ -112,7 +112,8 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
 
     if (boost::iequals(property_type, "EmbeddedFracturePermeability"))
     {
-        return createEmbeddedFracturePermeability(geometry_dimension, config);
+        return createEmbeddedFracturePermeability(geometry_dimension, config,
+                                                  parameters);
     }
 
     if (boost::iequals(property_type,

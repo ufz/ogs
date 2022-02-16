@@ -79,6 +79,8 @@
                     <mean_frac_distance>0.01</mean_frac_distance>
                     <threshold_strain>1e-5</threshold_strain>
                     <fracture_normal>1 0 0</fracture_normal>
+                    <fracture_rotation_xy>zero</fracture_rotation_xy>
+                    <fracture_rotation_yz>zero</fracture_rotation_yz>
                 </property>
             </properties>
         </medium>
@@ -164,6 +166,11 @@
             <name>displacementTop</name>
             <type>Constant</type>
             <value>1e-4</value>
+        </parameter>
+        <parameter>
+            <name>zero</name>
+            <type>Constant</type>
+            <value>0</value>
         </parameter>
     </parameters>
     <process_variables>
