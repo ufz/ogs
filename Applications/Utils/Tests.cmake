@@ -246,6 +246,114 @@ AddTest(
                quad_9node_partitioned_cell_properties_val2.bin
 )
 
+##############Quadratic Triangle##############
+AddTest(
+    NAME partmesh_mesh_for_QuadraticTriangle_ogsmetis
+    PATH NodePartitionedMesh/QuadraticElements/Quad_triangle
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad_triangle
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i basicQuadTri.vtu --ogs2metis -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad_triangle
+)
+
+AddTest(
+    NAME partmesh_mesh_for_QuadraticTriangle
+    PATH NodePartitionedMesh/QuadraticElements/Quad_triangle
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad_triangle
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 2 -i basicQuadTri.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad_triangle
+    REQUIREMENTS NOT APPLE
+    DEPENDS partmesh-partmesh_mesh_for_QuadraticTriangle_ogsmetis
+    TESTER diff
+    DIFF_DATA  basicQuadTri_partitioned_cell_properties_cfg2.bin
+               basicQuadTri_partitioned_msh_cfg2.bin
+               basicQuadTri_partitioned_msh_ele_g2.bin
+               basicQuadTri_partitioned_cell_properties_val2.bin
+               basicQuadTri_partitioned_msh_ele2.bin
+               basicQuadTri_partitioned_msh_nod2.bin
+)
+################################################
+
+##############Quadratic Tet#####################
+AddTest(
+    NAME partmesh_mesh_for_QuadraticTet_ogsmetis
+    PATH NodePartitionedMesh/QuadraticElements/Quad_tet
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad_tet
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i basicQuadTet.vtu --ogs2metis -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad_tet
+)
+
+AddTest(
+    NAME partmesh_mesh_for_QuadraticTet
+    PATH NodePartitionedMesh/QuadraticElements/Quad_tet
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad_tet
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 2 -i basicQuadTet.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad_tet
+    REQUIREMENTS NOT APPLE
+    DEPENDS partmesh-partmesh_mesh_for_QuadraticTet_ogsmetis
+    TESTER diff
+    DIFF_DATA   basicQuadTet_partitioned_cell_properties_cfg2.bin
+                basicQuadTet_partitioned_cell_properties_val2.bin
+                basicQuadTet_partitioned_msh_cfg2.bin
+                basicQuadTet_partitioned_msh_ele2.bin
+                basicQuadTet_partitioned_msh_ele_g2.bin
+                basicQuadTet_partitioned_msh_nod2.bin
+)
+################################################
+
+##############Quadratic Hex#####################
+AddTest(
+    NAME partmesh_mesh_for_QuadraticHex_ogsmetis
+    PATH NodePartitionedMesh/QuadraticElements/Quad_hex
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad_hex
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i basicQuadHex.vtu --ogs2metis -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad_hex
+)
+
+AddTest(
+    NAME partmesh_mesh_for_QuadraticHex
+    PATH NodePartitionedMesh/QuadraticElements/Quad_hex
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad_hex
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 2 -i basicQuadHex.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad_hex
+    REQUIREMENTS NOT APPLE
+    DEPENDS partmesh-partmesh_mesh_for_QuadraticHex_ogsmetis
+    TESTER diff
+    DIFF_DATA   basicQuadHex_partitioned_cell_properties_cfg2.bin
+                basicQuadHex_partitioned_cell_properties_val2.bin
+                basicQuadHex_partitioned_msh_cfg2.bin
+                basicQuadHex_partitioned_msh_ele2.bin
+                basicQuadHex_partitioned_msh_ele_g2.bin
+                basicQuadHex_partitioned_msh_nod2.bin
+)
+################################################
+
+##############Quadratic Line#####################
+AddTest(
+    NAME partmesh_mesh_for_QuadraticLine_ogsmetis
+    PATH NodePartitionedMesh/QuadraticElements/Quad_line
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad_line
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i basicQuadLine.vtu --ogs2metis -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad_line
+)
+
+AddTest(
+    NAME partmesh_mesh_for_QuadraticLine
+    PATH NodePartitionedMesh/QuadraticElements/Quad_line
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad_line
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 2 -i basicQuadLine.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad_line
+    REQUIREMENTS NOT APPLE
+    DEPENDS partmesh-partmesh_mesh_for_QuadraticLine_ogsmetis
+    TESTER diff
+    DIFF_DATA   basicQuadLine_partitioned_cell_properties_cfg2.bin
+                basicQuadLine_partitioned_cell_properties_val2.bin
+                basicQuadLine_partitioned_msh_cfg2.bin
+                basicQuadLine_partitioned_msh_ele2.bin
+                basicQuadLine_partitioned_msh_ele_g2.bin
+                basicQuadLine_partitioned_msh_nod2.bin
+)
+################################################
+
 # Regression test for https://github.com/ufz/ogs/issues/1845 fixed in
 # https://github.com/ufz/ogs/pull/2237
 # checkMesh crashed when encountered Line3 element.
