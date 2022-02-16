@@ -17,6 +17,10 @@ namespace BaseLib
 {
 class ConfigTree;
 }
+namespace ParameterLib
+{
+class ParameterBase;
+}
 
 namespace MaterialPropertyLib
 {
