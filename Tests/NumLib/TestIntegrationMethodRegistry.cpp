@@ -174,3 +174,33 @@ TYPED_TEST(NumLibIntegrationMethodRegistryTest, OrderZeroForbidden)
 
     ASSERT_ANY_THROW(this->getGenericIntegrationMethod(order));
 }
+
+// Assert that we don't forget any integration method in this test suite.
+TYPED_TEST(NumLibIntegrationMethodRegistryTest, CheckWeTestUpToMaxOrder)
+{
+    using MeshElementType = TypeParam;
+
+    if constexpr (std::is_same_v<MeshElementType, MeshLib::Point>)
+    {
+        // Points are special. For them all integration schemes for all
+        // integration orders are the same.
+        return;
+    }
+
+    using IntegrationPolicy =
+        NumLib::GaussLegendreIntegrationPolicy<MeshElementType>;
+    using NonGenericIntegrationMethod =
+        typename IntegrationPolicy::IntegrationMethod;
+
+    unsigned const cutoff = 100;  // Way beyond everything we ever expect.
+    unsigned const order =
+        getMaximumIntegrationOrderOfTemplatedIntegrationMethod<
+            NonGenericIntegrationMethod>(cutoff);
+
+    ASSERT_EQ(this->max_order, order)
+        << "The maximum integration order used in this unit test suite differs "
+           "from the (apparent) maximum integration order of the current "
+           "integration method. Either we forgot to set the proper integration "
+           "order in this unit test suite or the determination of the maximum "
+           "integration order in the current unit test is wrong.";
+}
