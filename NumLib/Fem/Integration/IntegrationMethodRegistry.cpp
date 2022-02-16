@@ -162,15 +162,6 @@ initIntegrationMethods()
     return integration_methods_by_mesh_element_type;
 }
 
-//! The actual integration method registry.
-//!
-//! A mapping \code [mesh element type] -> [list of integration
-//! methods]\endcode, where each entry in the list corresponds to integration
-//! order 0, 1, 2, ...
-static const std::unordered_map<std::type_index,
-                                std::vector<NumLib::GenericIntegrationMethod>>
-    integration_methods_by_mesh_element_type = initIntegrationMethods();
-
 namespace NumLib::IntegrationMethodRegistry
 {
 GenericIntegrationMethod const& getIntegrationMethod(
@@ -183,6 +174,22 @@ GenericIntegrationMethod const& getIntegrationMethod(
         // does matter.
         OGS_FATAL("An integration order of 0 is not supported.");
     }
+
+    // The actual integration method registry.
+    //
+    // A mapping \code [mesh element type] -> [list of integration
+    // methods]\endcode, where each entry in the list corresponds to integration
+    // order 0, 1, 2, ...
+    //
+    // Having this as a static __local__ variable circumvents the static
+    // initialization order fiasco we would have if this was a static __global__
+    // variable. The fiasco arises, because this registry uses static global
+    // data from MathLib. Currently (Feb 2022) we cannot circumvent the problem
+    // with constinit due to lack of compiler support.
+    static const std::unordered_map<
+        std::type_index,
+        std::vector<NumLib::GenericIntegrationMethod>>
+        integration_methods_by_mesh_element_type = initIntegrationMethods();
 
     if (auto it =
             integration_methods_by_mesh_element_type.find(mesh_element_type);
