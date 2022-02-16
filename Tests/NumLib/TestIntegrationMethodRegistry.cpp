@@ -31,6 +31,82 @@ struct ConvertListType<OldListType<Ts...>, NewListType>
 template <typename InputList, template <typename...> typename NewListType>
 using ConvertListType_t =
     typename ConvertListType<InputList, NewListType>::type;
+
+template <typename IntegrationMethod>
+static unsigned getMaximumIntegrationOrderOfTemplatedIntegrationMethod(
+    unsigned const order_cutoff)
+{
+    unsigned order = 1;
+    int num_int_pts_last_iteration = -1;
+
+    // trying all integration orders until one fails
+    for (; order < order_cutoff; ++order)
+    {
+        int num_int_pts = -1;
+        try
+        {
+            IntegrationMethod int_meth{order};
+            num_int_pts = int_meth.getNumberOfPoints();
+            unsigned const int_pt = 0;  // integration point zero should work
+                                        // for any valid integration order
+            int_meth.getWeightedPoint(int_pt);
+        }
+        catch (...)
+        {
+            // Integration method or weighted point is not available, so we have
+            // exceeded the maximum integration order.
+            --order;
+            break;
+        }
+
+        if (num_int_pts <= num_int_pts_last_iteration)
+        {
+            // The number of integration points is not greater than for the
+            // preceding integration order, so we have exceeded the maximum
+            // integration order.
+            --order;
+            break;
+        }
+
+        num_int_pts_last_iteration = num_int_pts;
+    }
+
+    EXPECT_NE(order_cutoff, order)
+        << "We hit the order cutoff. Determination of the maximum integration "
+           "order in this unit test is wrong";
+
+    return order;
+}
+
+template <typename MeshElementType>
+static unsigned getMaximumIntegrationOrderFromIntegrationMethodRegistry(
+    unsigned const order_cutoff)
+{
+    unsigned order = 1;
+
+    // trying all integration orders until one fails
+    for (; order < order_cutoff; ++order)
+    {
+        try
+        {
+            NumLib::IntegrationMethodRegistry::getIntegrationMethod<
+                MeshElementType>(order);
+        }
+        catch (...)
+        {
+            // Integration method or weighted point is not available, so we have
+            // exceeded the maximum integration order.
+            --order;
+            break;
+        }
+    }
+
+    EXPECT_NE(order_cutoff, order)
+        << "We hit the order cutoff. Determination of the maximum integration "
+           "order in this unit test is wrong";
+
+    return order;
+}
 }  // namespace
 
 namespace MathLib
@@ -203,4 +279,28 @@ TYPED_TEST(NumLibIntegrationMethodRegistryTest, CheckWeTestUpToMaxOrder)
            "integration method. Either we forgot to set the proper integration "
            "order in this unit test suite or the determination of the maximum "
            "integration order in the current unit test is wrong.";
+}
+
+// Assert that the integration method registry contains all integration orders
+// of the underlying integration methods.
+TYPED_TEST(NumLibIntegrationMethodRegistryTest, MaxOrderFromRegistry)
+{
+    using MeshElementType = TypeParam;
+
+    if constexpr (std::is_same_v<MeshElementType, MeshLib::Prism> ||
+                  std::is_same_v<MeshElementType, MeshLib::Prism15>)
+    {
+        GTEST_SKIP() << "Prisms currently behave rather special and cannot be "
+                        "tested with the logic in this test.";
+    }
+
+    unsigned const cutoff = 100;  // Way beyond everything we ever expect.
+    unsigned const order =
+        getMaximumIntegrationOrderFromIntegrationMethodRegistry<
+            MeshElementType>(cutoff);
+
+    ASSERT_EQ(this->max_order, order)
+        << "The maximum integration order tested in this unit test suite "
+           "differs from the maximum integration order deposited in the "
+           "integration method registry for the current mesh element type";
 }
