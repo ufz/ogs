@@ -554,7 +554,7 @@ template <typename T>
 MeshLib::Mesh* createMesh(std::ifstream& in, DataType type,
                           std::string& mesh_name,
                           MeshLib::Properties& mesh_prop, T parser,
-                          bool flip_elevation)
+                          bool const flip_elevation)
 {
     std::vector<MeshLib::Node*> nodes;
     std::vector<MeshLib::Element*> elems;
@@ -608,13 +608,12 @@ MeshLib::Mesh* readData(std::ifstream& in,
                 return nullptr;
             }
             flip_elevation = (coordinate_system.z_positive ==
-                              CoordinateSystem::ZPOSITIVE::Depth)
-                                 ? true
-                                 : false;
+                              CoordinateSystem::ZPOSITIVE::Depth);
         }
         else if (str[0] == "GEOLOGICAL_FEATURE" ||
                  str[0] == "GEOLOGICAL_TYPE" ||
-                 str[0] == "STRATIGRAPHIC_POSITION")
+                 str[0] == "STRATIGRAPHIC_POSITION" ||
+                 str[0] == "REGION")
         {
             // geological and stratigraphic information - currently ignored
         }
@@ -634,19 +633,15 @@ MeshLib::Mesh* readData(std::ifstream& in,
                 return nullptr;
             }
         }
-        else if (str[0] == "REGION")
-        {
-            // Allows grouping of multiple surfaces into groups.
-            // Ignored for now.
-            continue;
-        }
         else if (type == DataType::PLINE && str[0] == "ILINE")
         {
-            return createMesh(in, type, mesh_name, mesh_prop, parseLine, flip_elevation);
+            return createMesh(in, type, mesh_name, mesh_prop, parseLine,
+                              flip_elevation);
         }
         else if (type == DataType::TSURF && str[0] == "TFACE")
         {
-            return createMesh(in, type, mesh_name, mesh_prop, parseSurface, flip_elevation);
+            return createMesh(in, type, mesh_name, mesh_prop, parseSurface,
+                              flip_elevation);
         }
         else
         {
