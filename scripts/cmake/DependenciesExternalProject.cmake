@@ -24,6 +24,10 @@ if(OGS_USE_MFRONT)
             CMAKE_ARGS -DCMAKE_INSTALL_RPATH=<INSTALL_DIR>/lib
                        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
         )
+        message(
+            STATUS
+                "ExternalProject_Add(): added package TFEL@rliv-${ogs.minimum_version.tfel-rliv}"
+        )
         set(TFELHOME ${PROJECT_BINARY_DIR}/_ext/TFEL CACHE PATH "")
     endif()
     list(APPEND CMAKE_INSTALL_RPATH ${TFELHOME}/lib)
@@ -78,6 +82,10 @@ if(OGS_USE_PETSC)
             BUILD_COMMAND make -j all
             INSTALL_COMMAND make -j install ${_petsc_install_dir}
         )
+        message(
+            STATUS
+                "ExternalProject_Add(): added package PETSc@${ogs.minimum_version.petsc}"
+        )
         if(OGS_INSTALL_PETSC)
             set(PETSC_DIR ${CMAKE_INSTALL_PREFIX} CACHE PATH "" FORCE)
         else()
@@ -116,6 +124,10 @@ if(OGS_USE_LIS)
             BUILD_IN_SOURCE ON
             BUILD_COMMAND make -j
             INSTALL_COMMAND make -j install
+        )
+        message(
+            STATUS
+                "ExternalProject_Add(): added package LIS@${ogs.minimum_version.lis}"
         )
         set(ENV{LIS_ROOT_DIR} ${PROJECT_BINARY_DIR}/_ext/LIS)
         find_package(LIS REQUIRED)
