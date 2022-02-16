@@ -19,7 +19,7 @@ class ConfigTree;
 }
 namespace ParameterLib
 {
-class ParameterBase;
+struct ParameterBase;
 }
 
 namespace MaterialPropertyLib
