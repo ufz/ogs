@@ -16,12 +16,16 @@
 
 namespace MathLib
 {
-
-/// Gauss-Legendre quadrature on pyramid
+/// Gauss-Legendre quadrature on pyramid.
 ///
+/// The integration points and the weights can be computed by using a python
+/// code
+///  <a href="https://github.com/nschloe/quadpy">quadpy</a>.
+///  Also see \cite Felippa2004 .
 /// \tparam ORDER   integration order.
 template <unsigned ORDER>
-struct GaussLegendrePyramid {
+struct GaussLegendrePyramid
+{
     static MATHLIB_EXPORT const unsigned Order = ORDER;
     static MATHLIB_EXPORT const unsigned NPoints = ORDER;
     static MATHLIB_EXPORT const std::array<std::array<double, 3>, NPoints> X;
@@ -29,7 +33,8 @@ struct GaussLegendrePyramid {
 };
 
 template <>
-struct GaussLegendrePyramid<2> {
+struct GaussLegendrePyramid<2>
+{
     static MATHLIB_EXPORT const unsigned Order = 2;
     static MATHLIB_EXPORT const unsigned NPoints = 5;
     static MATHLIB_EXPORT const std::array<std::array<double, 3>, NPoints> X;
@@ -37,7 +42,8 @@ struct GaussLegendrePyramid<2> {
 };
 
 template <>
-struct GaussLegendrePyramid<3> {
+struct GaussLegendrePyramid<3>
+{
     static MATHLIB_EXPORT const unsigned Order = 3;
     static MATHLIB_EXPORT const unsigned NPoints = 13;
     static MATHLIB_EXPORT const std::array<std::array<double, 3>, NPoints> X;
