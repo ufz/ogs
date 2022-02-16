@@ -17,3 +17,19 @@ sbeParseJson(ogs jsonFileString)
 #     message("${var} = ${${var}}")
 #   endforeach()
 # ~~~
+
+# Overwriting individual entries
+set(OGS_DEPENDENCY_VERSIONS ""
+    CACHE STRING "Overwrite versions.json; syntax: 'key=value;key=value'"
+)
+
+foreach(version ${OGS_DEPENDENCY_VERSIONS})
+    if("${version}" MATCHES "^(.*)=(.*)$")
+        message(
+            STATUS
+                "Overwriting versions.json: ogs.${CMAKE_MATCH_1} = ${CMAKE_MATCH_2} (default ${ogs.${CMAKE_MATCH_1}})"
+        )
+        # cmake-lint: disable=C0103
+        set(ogs.${CMAKE_MATCH_1} ${CMAKE_MATCH_2})
+    endif()
+endforeach()
