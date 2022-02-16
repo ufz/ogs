@@ -8,6 +8,8 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0.prj)
     if(OGS_USE_MKL)
         OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0_mkl.xml)
+        set_tests_properties(ogs-Mechanics/Linear/cube_1e0_mkl PROPERTIES
+            DEPENDS ogs-Mechanics/Linear/cube_1e0) # Prevent race condition
     endif()
     OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0_simple_shear.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/MaterialForces/bar.prj)
