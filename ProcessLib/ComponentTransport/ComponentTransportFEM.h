@@ -1144,6 +1144,151 @@ public:
         }
     }
 
+    void assembleWithJacobianComponentTransportEquation(
+        double const t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data, int const component_id)
+    {
+        auto const concentration_index =
+            first_concentration_index + component_id * concentration_size;
+
+        auto const p = local_x.template segment<pressure_size>(pressure_index);
+        auto const c =
+            local_x.template segment<concentration_size>(concentration_index);
+        auto const cdot =
+            local_xdot.segment<concentration_size>(concentration_index);
+
+        NodalVectorType T;
+        if (_process_data.temperature)
+        {
+            T = _process_data.temperature->getNodalValuesOnElement(_element, t);
+        }
+
+        auto local_Jac = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
+            local_Jac_data, concentration_size, concentration_size);
+        auto local_rhs = MathLib::createZeroedVector<LocalSegmentVectorType>(
+            local_b_data, concentration_size);
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        auto const& b = _process_data.specific_body_force;
+
+        MaterialPropertyLib::VariableArray vars;
+        MaterialPropertyLib::VariableArray vars_prev;
+
+        GlobalDimMatrixType const& I(
+            GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
+
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
+        auto const& phase = medium.phase("AqueousLiquid");
+        auto const& component = phase.component(
+            _transport_process_variables[component_id].get().getName());
+
+        for (unsigned ip(0); ip < n_integration_points; ++ip)
+        {
+            pos.setIntegrationPoint(ip);
+
+            auto& ip_data = _ip_data[ip];
+            auto const& N = ip_data.N;
+            auto const& dNdx = ip_data.dNdx;
+            auto const& w = ip_data.integration_weight;
+            auto& phi = ip_data.porosity;
+            auto const& phi_prev = ip_data.porosity_prev;
+
+            double const p_ip = N.dot(p);
+            double const c_ip = N.dot(c);
+
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::phase_pressure)] = p_ip;
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::concentration)] = c_ip;
+
+            if (_process_data.temperature)
+            {
+                vars[static_cast<int>(
+                    MaterialPropertyLib::Variable::temperature)] = N.dot(T);
+            }
+
+            // porosity
+            {
+                vars_prev[static_cast<int>(
+                    MaterialPropertyLib::Variable::porosity)] = phi_prev;
+
+                phi = _process_data.chemically_induced_porosity_change
+                          ? phi_prev
+                          : medium[MaterialPropertyLib::PropertyType::porosity]
+                                .template value<double>(vars, vars_prev, pos, t,
+                                                        dt);
+
+                vars[static_cast<int>(
+                    MaterialPropertyLib::Variable::porosity)] = phi;
+            }
+
+            auto const R =
+                component[MaterialPropertyLib::PropertyType::retardation_factor]
+                    .template value<double>(vars, pos, t, dt);
+
+            auto const alpha_T = medium.template value<double>(
+                MaterialPropertyLib::PropertyType::transversal_dispersivity);
+            auto const alpha_L = medium.template value<double>(
+                MaterialPropertyLib::PropertyType::longitudinal_dispersivity);
+
+            auto const rho = phase[MaterialPropertyLib::PropertyType::density]
+                                 .template value<double>(vars, pos, t, dt);
+            // first-order decay constant
+            auto const alpha =
+                component[MaterialPropertyLib::PropertyType::decay_rate]
+                    .template value<double>(vars, pos, t, dt);
+
+            auto const Dp = MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                component[MaterialPropertyLib::PropertyType::pore_diffusion]
+                    .value(vars, pos, t, dt));
+
+            auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                medium[MaterialPropertyLib::PropertyType::permeability].value(
+                    vars, pos, t, dt));
+            auto const mu = phase[MaterialPropertyLib::PropertyType::viscosity]
+                                .template value<double>(vars, pos, t, dt);
+            // Darcy flux
+            GlobalDimVectorType const q =
+                _process_data.has_gravity
+                    ? GlobalDimVectorType(-k / mu * (dNdx * p - rho * b))
+                    : GlobalDimVectorType(-k / mu * dNdx * p);
+
+            double const q_magnitude = q.norm();
+            // hydrodymanic dispersion
+            GlobalDimMatrixType const D =
+                q_magnitude != 0.0
+                    ? GlobalDimMatrixType(phi * Dp + alpha_T * q_magnitude * I +
+                                          (alpha_L - alpha_T) / q_magnitude *
+                                              q * q.transpose())
+                    : GlobalDimMatrixType(phi * Dp);
+
+            // matrix assembly
+            local_Jac.noalias() +=
+                w * rho *
+                (N.transpose() * phi * R * (alpha + 1 / dt) * N +
+                 dNdx.transpose() * D * dNdx);
+
+            local_rhs.noalias() -=
+                w * rho *
+                (N.transpose() * phi * R * N * (cdot + alpha * c) +
+                 dNdx.transpose() * D * dNdx * c);
+
+            assert(!_process_data.non_advective_form);
+            local_Jac.noalias() +=
+                w * rho * N.transpose() * q.transpose() * dNdx;
+
+            local_rhs.noalias() -=
+                w * rho * N.transpose() * q.transpose() * dNdx * c;
+        }
+    }
+
     void assembleReactionEquationConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
