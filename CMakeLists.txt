@@ -154,6 +154,10 @@ else()
         ${OGS_EIGEN_DYNAMIC_SHAPE_MATRICES}
     )
 endif()
+
+cmake_dependent_option(
+    OGS_EIGEN_USE_MKL "Defines EIGEN_USE_MKL_ALL." OFF "OGS_USE_MKL" OFF
+)
 # Eigen End
 
 # Debug

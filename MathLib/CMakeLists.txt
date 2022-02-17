@@ -40,10 +40,10 @@ if(OGS_USE_LIS)
     target_include_directories(MathLib PUBLIC ${LIS_INCLUDE_DIR})
 endif()
 if(OGS_USE_MKL)
-    target_include_directories(MathLib PRIVATE ${MKL_INCLUDE_DIR})
-    target_link_libraries(MathLib PRIVATE ${MKL_LIBRARIES})
+    target_include_directories(MathLib PUBLIC ${MKL_INCLUDE_DIR})
+    target_link_libraries(MathLib PUBLIC ${MKL_LIBRARIES})
     target_link_options(MathLib PUBLIC ${MKL_LINK_FLAGS})
-    target_compile_definitions(MathLib PRIVATE ${MKL_DEFINITIONS})
+    target_compile_definitions(MathLib PUBLIC ${MKL_DEFINITIONS})
 endif()
 
 target_compile_definitions(
@@ -57,5 +57,6 @@ target_compile_definitions(
         $<$<BOOL:${OGS_USE_EIGEN_UNSUPPORTED}>:USE_EIGEN_UNSUPPORTED>
         $<$<BOOL:${OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN}>:EIGEN_INITIALIZE_MATRICES_BY_NAN>
         $<$<CONFIG:Debug>:EIGEN_INITIALIZE_MATRICES_BY_NAN>
+        $<$<AND:$<BOOL:${OGS_USE_MKL}>,$<BOOL:${OGS_EIGEN_USE_MKL}>>:EIGEN_USE_MKL_ALL>
     PRIVATE $<$<BOOL:${OGS_USE_MKL}>:USE_MKL>
 )
