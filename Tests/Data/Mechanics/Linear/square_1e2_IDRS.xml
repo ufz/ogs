@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="square_1e2.prj">
+    <add sel="/*/linear_solvers/linear_solver" pos="after">
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                  <solver_type>IDRS</solver_type>
+                  <precon_type>DIAGONAL</precon_type>
+                  <max_iteration_step>10000</max_iteration_step>
+                  <error_tolerance>1e-16</error_tolerance>
+            </eigen>
+        </linear_solver>
+    </add>
+    <remove sel="/*/linear_solvers/linear_solver[1]" />
+</OpenGeoSysProjectDiff>
