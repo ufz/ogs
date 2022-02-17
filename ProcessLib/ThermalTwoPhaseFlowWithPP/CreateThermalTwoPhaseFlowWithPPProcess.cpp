@@ -11,6 +11,8 @@
 
 #include <cassert>
 
+#include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
@@ -24,6 +26,49 @@ namespace ProcessLib
 {
 namespace ThermalTwoPhaseFlowWithPP
 {
+void checkMPLProperties(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
+{
+    std::array const required_property_medium = {
+        MaterialPropertyLib::PropertyType::porosity,
+        MaterialPropertyLib::PropertyType::permeability};
+
+    std::array const required_property_solid_phase = {
+        MaterialPropertyLib::PropertyType::specific_heat_capacity,
+        MaterialPropertyLib::PropertyType::density};
+
+    std::array const required_property_liquid_phase = {
+        MaterialPropertyLib::PropertyType::viscosity,
+        MaterialPropertyLib::PropertyType::specific_heat_capacity,
+        MaterialPropertyLib::PropertyType::density};
+
+    std::array const required_property_gas_phase = {
+        MaterialPropertyLib::PropertyType::viscosity};
+
+    std::array const required_property_vapor_component = {
+        MaterialPropertyLib::specific_heat_capacity};
+
+    std::array const required_property_dry_air_component = {
+        MaterialPropertyLib::specific_heat_capacity};
+
+    for (auto const& m : media)
+    {
+        auto const& gas_phase = m.second->phase("Gas");
+        checkRequiredProperties(*m.second, required_property_medium);
+        checkRequiredProperties(gas_phase, required_property_gas_phase);
+        checkRequiredProperties(m.second->phase("AqueousLiquid"),
+                                required_property_liquid_phase);
+        checkRequiredProperties(m.second->phase("Solid"),
+                                required_property_solid_phase);
+
+        // TODO (BM): should use index to identify components (same for impl.h)
+        checkRequiredProperties(gas_phase.component("w"),
+                                required_property_vapor_component);
+        checkRequiredProperties(gas_phase.component("a"),
+                                required_property_dry_air_component);
+    }
+}
+
 std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     std::string name,
     MeshLib::Mesh& mesh,
@@ -34,7 +79,8 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+        curves,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "THERMAL_TWOPHASE_WITH_PP");
@@ -87,12 +133,6 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
 
     // Parameter for the density of the solid.
 
-    auto const& density_solid = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__density_solid}
-        "density_solid", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as density_solid parameter.", density_solid.name);
-
     // Parameter for the latent heat of evaporation.
     auto const& latent_heat_evaporation = ParameterLib::findParameter<double>(
         config,
@@ -108,12 +148,20 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
         createThermalTwoPhaseFlowWithPPMaterialProperties(
             mat_config, materialIDs(mesh), parameters);
 
-    ThermalTwoPhaseFlowWithPPProcessData process_data{specific_body_force,
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
+    DBUG(
+        "Check the media properties of ThermalTwoPhaseFlowWithPP  process ...");
+    checkMPLProperties(media);
+    DBUG("Media properties verified.");
+
+    ThermalTwoPhaseFlowWithPPProcessData process_data{std::move(media_map),
+                                                      specific_body_force,
                                                       has_gravity,
                                                       mass_lumping,
                                                       diff_coeff_b,
                                                       diff_coeff_a,
-                                                      density_solid,
                                                       latent_heat_evaporation,
                                                       std::move(material)};
 

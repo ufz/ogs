@@ -49,9 +49,13 @@ void checkMPLProperties(
         MaterialPropertyLib::PropertyType::thermal_conductivity,
         MaterialPropertyLib::PropertyType::storage};
 
+    std::array<MaterialPropertyLib::PropertyType, 0> const
+        required_gas_properties{};
+
     MaterialPropertyLib::checkMaterialSpatialDistributionMap(
         mesh, media_map, required_property_medium,
-        required_property_solid_phase, required_property_liquid_phase);
+        required_property_solid_phase, required_property_liquid_phase,
+        required_gas_properties);
 }
 
 std::unique_ptr<Process> createHTProcess(

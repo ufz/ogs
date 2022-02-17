@@ -57,8 +57,6 @@ public:
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&&
             liquid_viscosity,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>&&
-            gas_density,
-        std::unique_ptr<MaterialLib::Fluid::FluidProperty>&&
             gas_viscosity,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
             intrinsic_permeability_models,

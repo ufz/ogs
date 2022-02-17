@@ -49,19 +49,6 @@ createThermalTwoPhaseFlowWithPPMaterialProperties(
         std::move(std::get<0>(two_phase_model_tuple));
     auto const& fluid_config = std::get<1>(two_phase_model_tuple);
 
-    // Get fluid properties
-    auto const& spec_heat_capacity_solid_conf =
-        //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__material_property__specific_heat_capacity_solid}
-        fluid_config.getConfigSubtree("specific_heat_capacity_solid");
-    auto specific_heat_capacity_solid =
-        MaterialLib::Fluid::createSpecificFluidHeatCapacityModel(
-            spec_heat_capacity_solid_conf);
-    auto const& spec_heat_capacity_water_conf =
-        //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__material_property__specific_heat_capacity_water}
-        fluid_config.getConfigSubtree("specific_heat_capacity_water");
-    auto specific_heat_capacity_water =
-        MaterialLib::Fluid::createSpecificFluidHeatCapacityModel(
-            spec_heat_capacity_water_conf);
     auto const& spec_heat_capacity_air_conf =
         //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__material_property__specific_heat_capacity_air}
         fluid_config.getConfigSubtree("specific_heat_capacity_air");
@@ -93,8 +80,6 @@ createThermalTwoPhaseFlowWithPPMaterialProperties(
 
     return std::make_unique<ThermalTwoPhaseFlowWithPPMaterialProperties>(
         std::move(two_phase_material_model),
-        std::move(specific_heat_capacity_solid),
-        std::move(specific_heat_capacity_water),
         std::move(specific_heat_capacity_air),
         std::move(specific_heat_capacity_vapor),
         std::move(thermal_conductivity_dry_solid),
