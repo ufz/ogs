@@ -225,3 +225,37 @@ AddTest(
     PointHeatSource_gml_ts_10_t_50000_000000_2.vtu PointHeatSource_gml_ts_10_t_50000_000000_2.vtu epsilon epsilon 1e-10 1.0e-9
     PointHeatSource_gml_ts_10_t_50000_000000_2.vtu PointHeatSource_gml_ts_10_t_50000_000000_2.vtu sigma sigma 1e-10 1.0e-6
 )
+
+AddTest(
+    NAME ParallelFEM_ThermoRichardsMechanics_TaskCDECOVALEX2023
+    PATH ThermoRichardsMechanics/TaskCDECOVALEX2023
+    RUNTIME 30
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS Decovalex-0.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 3
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+#
+    Decovalex-0_ts_10_t_864000_000000_0.vtu Decovalex-0_ts_10_t_864000_000000_0.vtu displacement displacement 1e-10 1.0e-9
+    Decovalex-0_ts_10_t_864000_000000_0.vtu Decovalex-0_ts_10_t_864000_000000_0.vtu pressure pressure 1e-10 1.0e-6
+    Decovalex-0_ts_10_t_864000_000000_0.vtu Decovalex-0_ts_10_t_864000_000000_0.vtu saturation saturation 1e-10 1.0e-6
+    Decovalex-0_ts_10_t_864000_000000_0.vtu Decovalex-0_ts_10_t_864000_000000_0.vtu temperature temperature 1e-10 1.0e-9
+    Decovalex-0_ts_10_t_864000_000000_0.vtu Decovalex-0_ts_10_t_864000_000000_0.vtu epsilon epsilon 1e-10 1.0e-9
+    Decovalex-0_ts_10_t_864000_000000_0.vtu Decovalex-0_ts_10_t_864000_000000_0.vtu sigma sigma 1e-10 1.0e-6
+#
+    Decovalex-0_ts_10_t_864000_000000_1.vtu Decovalex-0_ts_10_t_864000_000000_1.vtu displacement displacement 1e-10 1.0e-9
+    Decovalex-0_ts_10_t_864000_000000_1.vtu Decovalex-0_ts_10_t_864000_000000_1.vtu pressure pressure 1e-10 1.0e-6
+    Decovalex-0_ts_10_t_864000_000000_1.vtu Decovalex-0_ts_10_t_864000_000000_1.vtu saturation saturation 1e-10 1.0e-6
+    Decovalex-0_ts_10_t_864000_000000_1.vtu Decovalex-0_ts_10_t_864000_000000_1.vtu temperature temperature 1e-10 1.0e-9
+    Decovalex-0_ts_10_t_864000_000000_1.vtu Decovalex-0_ts_10_t_864000_000000_1.vtu epsilon epsilon 1e-10 1.0e-9
+    Decovalex-0_ts_10_t_864000_000000_1.vtu Decovalex-0_ts_10_t_864000_000000_1.vtu sigma sigma 1e-10 1.0e-6
+#
+    Decovalex-0_ts_10_t_864000_000000_2.vtu Decovalex-0_ts_10_t_864000_000000_2.vtu displacement displacement 1e-10 1.0e-9
+    Decovalex-0_ts_10_t_864000_000000_2.vtu Decovalex-0_ts_10_t_864000_000000_2.vtu pressure pressure 1e-10 1.0e-6
+    Decovalex-0_ts_10_t_864000_000000_2.vtu Decovalex-0_ts_10_t_864000_000000_2.vtu saturation saturation 1e-10 1.0e-6
+    Decovalex-0_ts_10_t_864000_000000_2.vtu Decovalex-0_ts_10_t_864000_000000_2.vtu temperature temperature 1e-10 1.0e-9
+    Decovalex-0_ts_10_t_864000_000000_2.vtu Decovalex-0_ts_10_t_864000_000000_2.vtu epsilon epsilon 1e-10 1.0e-9
+    Decovalex-0_ts_10_t_864000_000000_2.vtu Decovalex-0_ts_10_t_864000_000000_2.vtu sigma sigma 1e-10 1.0e-6
+)
