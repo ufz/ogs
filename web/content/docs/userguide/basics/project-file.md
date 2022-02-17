@@ -44,6 +44,14 @@ The `<include file="other_file.xml" />`-tag allows to include the content of ano
 </process>
 ```
 
+<div class='note'>
+
+### <i class="far fa-exclamation-triangle"></i>  Note on file encoding
+
+Please do not use `UTF-8 with BOM`-encoding! The BOM-marker from the included file will be included somewhere in the middle of the final prj-file and this will cause OGS' ConfigTree to crash. In a text editor you typically can convert a file to other encodings. Please also check your text editor for default encodings on creating new files. In general `UTF-8` or `ISO 8859-1` should be fine.
+
+</div>
+
 ## Option 2: Apply patch files to the project file
 
 Patch files contain `<replace>`, `<add>` and `<remove>`-elements with [XPath](https://en.wikipedia.org/wiki/XPath)-selectors to modify a specific part of the project file (in-memory during run-time):
