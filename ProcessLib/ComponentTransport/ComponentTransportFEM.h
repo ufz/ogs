@@ -1015,6 +1015,28 @@ public:
         }
     }
 
+    void assembleWithJacobianForStaggeredScheme(
+        double const t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& local_xdot, int const process_id,
+        std::vector<double>& /*local_M_data*/,
+        std::vector<double>& /*local_K_data*/,
+        std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data) override
+    {
+        if (process_id == _process_data.hydraulic_process_id)
+        {
+            assembleWithJacobianHydraulicEquation(t, dt, local_x, local_xdot,
+                                                  local_b_data, local_Jac_data);
+        }
+        else
+        {
+            int const component_id = process_id - 1;
+            assembleWithJacobianComponentTransportEquation(
+                t, dt, local_x, local_xdot, local_b_data, local_Jac_data,
+                component_id);
+        }
+    }
+
     void assembleReactionEquationConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
