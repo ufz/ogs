@@ -52,9 +52,9 @@ IntegrationGaussLegendreRegular<3>::getPositionIndices(unsigned order,
 }
 
 template <unsigned N_DIM>
-inline MathLib::TemplateWeightedPoint<double, double, N_DIM>
-IntegrationGaussLegendreRegular<N_DIM>::getWeightedPoint(unsigned order,
-                                                         unsigned igp)
+inline MathLib::WeightedPoint
+IntegrationGaussLegendreRegular<N_DIM>::getWeightedPoint(unsigned const order,
+                                                         unsigned const igp)
 {
     assert(igp < std::pow(order, N_DIM));
     std::array<unsigned, N_DIM> const pos = getPositionIndices(order, igp);
@@ -75,7 +75,7 @@ IntegrationGaussLegendreRegular<N_DIM>::getWeightedPoint(unsigned order,
 
 template <unsigned N_DIM>
 template <typename Method>
-inline MathLib::TemplateWeightedPoint<double, double, N_DIM>
+inline MathLib::WeightedPoint
 IntegrationGaussLegendreRegular<N_DIM>::getWeightedPoint(
     std::array<unsigned, N_DIM> const& pos)
 {
@@ -87,7 +87,6 @@ IntegrationGaussLegendreRegular<N_DIM>::getWeightedPoint(
         weight *= Method::W[pos[d]];
     }
 
-    return MathLib::TemplateWeightedPoint<double, double, N_DIM>(coords,
-                                                                 weight);
+    return MathLib::WeightedPoint(coords, weight);
 }
 }  // namespace NumLib

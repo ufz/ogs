@@ -17,7 +17,7 @@
 
 #include "BaseLib/Error.h"
 #include "MathLib/Integration/GaussLegendre.h"
-#include "MathLib/TemplateWeightedPoint.h"
+#include "MathLib/WeightedPoint.h"
 
 namespace NumLib
 {
@@ -29,9 +29,6 @@ template <unsigned N_DIM>
 class IntegrationGaussLegendreRegular
 {
 public:
-    using WeightedPoint =
-        typename MathLib::TemplateWeightedPoint<double, double, N_DIM>;
-
     /// Create IntegrationGaussLegendreRegular of the given Gauss-Legendre
     /// integration order.
     ///
@@ -58,7 +55,7 @@ public:
     ///
     /// @param igp       The integration point index
     /// @return a weighted point
-    WeightedPoint getWeightedPoint(unsigned igp) const
+    MathLib::WeightedPoint getWeightedPoint(unsigned const igp) const
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
@@ -76,7 +73,8 @@ public:
     /// @param order     The number of integration points
     /// @param igp       The integration point index
     /// @return a weighted point
-    static WeightedPoint getWeightedPoint(unsigned order, unsigned igp);
+    static MathLib::WeightedPoint getWeightedPoint(unsigned const order,
+                                                   unsigned const igp);
 
 private:
     /// Computes weighted point using given integration method.
@@ -84,7 +82,7 @@ private:
     /// \tparam Method  Integration method to use.
     /// \param  pos     Point indices computed by getPositionIndices.
     template <typename Method>
-    static WeightedPoint getWeightedPoint(
+    static MathLib::WeightedPoint getWeightedPoint(
         std::array<unsigned, N_DIM> const& pos);
 
 private:

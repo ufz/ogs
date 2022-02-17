@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "FiniteElement/TemplateIsoparametric.h"
+#include "MathLib/WeightedPoint.h"
 #include "MeshLib/Elements/Element.h"
 
 namespace NumLib
@@ -55,7 +56,7 @@ initShapeMatrices(MeshLib::Element const& e, bool const is_axially_symmetric,
 {
     int const n_integration_points = integration_method.getNumberOfPoints();
 
-    std::vector<typename IntegrationMethod::WeightedPoint> points;
+    std::vector<MathLib::WeightedPoint> points;
     points.reserve(n_integration_points);
     for (int ip = 0; ip < n_integration_points; ++ip)
     {

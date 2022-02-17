@@ -64,7 +64,7 @@ struct GaussLegendreIntegrationPolicy<MeshLib::Tri6>
 template <>
 struct GaussLegendreIntegrationPolicy<MeshLib::Tet>
 {
-    using MeshElement = MeshLib::Tri;
+    using MeshElement = MeshLib::Tet;
     using IntegrationMethod = NumLib::IntegrationGaussLegendreTet;
 };
 
