@@ -1037,6 +1037,113 @@ public:
         }
     }
 
+    void assembleWithJacobianHydraulicEquation(
+        double const t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data)
+    {
+        auto const p = local_x.template segment<pressure_size>(pressure_index);
+        auto const c = local_x.template segment<concentration_size>(
+            first_concentration_index);
+
+        auto const pdot = local_xdot.segment<pressure_size>(pressure_index);
+        auto const cdot =
+            local_xdot.segment<concentration_size>(first_concentration_index);
+
+        auto local_Jac = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
+            local_Jac_data, pressure_size, pressure_size);
+        auto local_rhs = MathLib::createZeroedVector<LocalSegmentVectorType>(
+            local_b_data, pressure_size);
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        auto const& b = _process_data.specific_body_force;
+
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
+        auto const& phase = medium.phase("AqueousLiquid");
+
+        MaterialPropertyLib::VariableArray vars;
+        MaterialPropertyLib::VariableArray vars_prev;
+
+        for (unsigned ip(0); ip < n_integration_points; ++ip)
+        {
+            pos.setIntegrationPoint(ip);
+
+            auto& ip_data = _ip_data[ip];
+            auto const& N = ip_data.N;
+            auto const& dNdx = ip_data.dNdx;
+            auto const& w = ip_data.integration_weight;
+            auto& phi = ip_data.porosity;
+            auto const& phi_prev = ip_data.porosity_prev;
+
+            double const p_ip = N.dot(p);
+            double const c_ip = N.dot(c);
+
+            double const cdot_ip = N.dot(cdot);
+
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::phase_pressure)] = p_ip;
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::concentration)] = c_ip;
+
+            //  porosity
+            {
+                vars_prev[static_cast<int>(
+                    MaterialPropertyLib::Variable::porosity)] = phi_prev;
+
+                phi = _process_data.chemically_induced_porosity_change
+                          ? phi_prev
+                          : medium[MaterialPropertyLib::PropertyType::porosity]
+                                .template value<double>(vars, vars_prev, pos, t,
+                                                        dt);
+
+                vars[static_cast<int>(
+                    MaterialPropertyLib::Variable::porosity)] = phi;
+            }
+
+            auto const rho = phase[MaterialPropertyLib::PropertyType::density]
+                                 .template value<double>(vars, pos, t, dt);
+
+            auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                medium[MaterialPropertyLib::PropertyType::permeability].value(
+                    vars, pos, t, dt));
+
+            auto const mu = phase[MaterialPropertyLib::PropertyType::viscosity]
+                                .template value<double>(vars, pos, t, dt);
+
+            auto const drho_dp =
+                phase[MaterialPropertyLib::PropertyType::density]
+                    .template dValue<double>(
+                        vars, MaterialPropertyLib::Variable::phase_pressure,
+                        pos, t, dt);
+            auto const drho_dc =
+                phase[MaterialPropertyLib::PropertyType::density]
+                    .template dValue<double>(
+                        vars, MaterialPropertyLib::Variable::concentration, pos,
+                        t, dt);
+
+            // matrix assembly
+            local_Jac.noalias() += w * N.transpose() * phi * drho_dp / dt * N +
+                                   w * dNdx.transpose() * rho * k / mu * dNdx;
+
+            local_rhs.noalias() -=
+                w * N.transpose() * phi *
+                    (drho_dp * N * pdot + drho_dc * cdot_ip) +
+                w * rho * dNdx.transpose() * k / mu * dNdx * p;
+
+            if (_process_data.has_gravity)
+            {
+                local_rhs.noalias() +=
+                    w * rho * dNdx.transpose() * k / mu * rho * b;
+            }
+        }
+    }
+
     void assembleReactionEquationConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
