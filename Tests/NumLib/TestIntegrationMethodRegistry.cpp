@@ -160,9 +160,8 @@ static std::unordered_map<std::type_index, unsigned> initMapTypeToMaxOrder()
     add(typeid(Hex20), 4);
     add(typeid(Tet), 4);
     add(typeid(Tet10), 4);
-    add(typeid(Prism), 1);  // Actually, there is only one unique integration
-                            // method for prisms, currently.
-    add(typeid(Prism15), 1);
+    add(typeid(Prism), 4);
+    add(typeid(Prism15), 4);
     add(typeid(Pyramid), 3);
     add(typeid(Pyramid13), 3);
 
