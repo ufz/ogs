@@ -109,6 +109,12 @@ void ComponentTransportProcess::initializeConcreteProcess(
         makeExtrapolator(
             mesh.getDimension(), getExtrapolator(), _local_assemblers,
             &ComponentTransportLocalAssemblerInterface::getIntPtDarcyVelocity));
+
+    _secondary_variables.addSecondaryVariable(
+        "molar_flux",
+        makeExtrapolator(
+            mesh.getDimension(), getExtrapolator(), _local_assemblers,
+            &ComponentTransportLocalAssemblerInterface::getIntPtMolarFlux));
 }
 
 void ComponentTransportProcess::setInitialConditionsConcreteProcess(
