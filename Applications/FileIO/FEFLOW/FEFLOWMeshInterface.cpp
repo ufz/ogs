@@ -232,8 +232,8 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
     else
     {
         opt_material_ids->resize(mesh->getNumberOfElements());
-        setMaterialIDs(fem_class, fem_dim, lines, vec_elementsets,
-                       vec_elements, *opt_material_ids);
+        setMaterialIDs(fem_class, fem_dim, lines, vec_elementsets, vec_elements,
+                       *opt_material_ids);
     }
 
     if (isXZplane)

@@ -213,4 +213,4 @@ GenericIntegrationMethod const& getIntegrationMethod(
         "No integration methods are available for mesh elements of type {}",
         mesh_element_type.name());
 }
-}  // namespace NumLib
+}  // namespace NumLib::IntegrationMethodRegistry

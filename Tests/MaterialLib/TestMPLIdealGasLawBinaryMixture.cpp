@@ -146,9 +146,7 @@ TEST(MaterialPropertyLib, IdealGasLawBinaryMixture)
                 // Check derivatives via central differences
                 auto central_difference =
                     [&](double plus, double minus, double eps)
-                    {
-                        return (plus - minus) / (2 * eps);
-                    };
+                { return (plus - minus) / (2 * eps); };
 
                 // Perturbation of gas pressure
                 auto const eps_pGR = 10.;

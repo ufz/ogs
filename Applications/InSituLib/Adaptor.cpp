@@ -40,7 +40,8 @@ void Initialize(BaseLib::ConfigTree const& scripts_config,
     {
         auto scriptPath =
             //! \ogs_file_param{prj__insitu__scripts__script__name}
-            std::filesystem::path(script_config.getConfigParameter<std::string>("name"));
+            std::filesystem::path(
+                script_config.getConfigParameter<std::string>("name"));
         if (scriptPath.is_relative())
         {
             scriptPath = std::filesystem::path(path) / scriptPath;
