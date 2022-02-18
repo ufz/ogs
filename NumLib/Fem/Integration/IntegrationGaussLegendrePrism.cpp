@@ -18,22 +18,19 @@ namespace
 template <int OrderGaussLegendreTri, int OrderGaussLegendre>
 MathLib::WeightedPoint getWeightedPointConcrete(unsigned const igp)
 {
-    assert(igp < MathLib::GaussLegendreTri<OrderGaussLegendreTri>::NPoints *
-                     OrderGaussLegendre);
+    using GL = MathLib::GaussLegendre<OrderGaussLegendre>;
+    using GLT = MathLib::GaussLegendreTri<OrderGaussLegendreTri>;
 
-    const unsigned gp_r =
-        igp % MathLib::GaussLegendreTri<OrderGaussLegendreTri>::NPoints;
-    const unsigned gp_t =
-        (unsigned)(igp /
-                   MathLib::GaussLegendreTri<OrderGaussLegendreTri>::NPoints);
-    std::array<double, 3> rst;
-    rst[0] = MathLib::GaussLegendreTri<OrderGaussLegendreTri>::X[gp_r][0];
-    rst[1] = MathLib::GaussLegendreTri<OrderGaussLegendreTri>::X[gp_r][1];
-    rst[2] = MathLib::GaussLegendre<OrderGaussLegendre>::X[gp_t];
-    double const w = MathLib::GaussLegendreTri<OrderGaussLegendreTri>::W[gp_r] *
-                     0.5 * MathLib::GaussLegendre<OrderGaussLegendre>::W[gp_t];
+    assert(igp < GLT::NPoints * OrderGaussLegendre);
 
-    return MathLib::WeightedPoint(rst, w);
+    const unsigned gp_r = igp % GLT::NPoints;
+    const unsigned gp_t = igp / GLT::NPoints;
+
+    std::array<double, 3> rst{GLT::X[gp_r][0], GLT::X[gp_r][1], GL::X[gp_t]};
+
+    double const weight = GLT::W[gp_r] * 0.5 * GL::W[gp_t];
+
+    return MathLib::WeightedPoint(rst, weight);
 }
 }  // namespace
 
