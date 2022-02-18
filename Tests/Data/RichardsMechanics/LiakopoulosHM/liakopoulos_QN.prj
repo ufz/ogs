@@ -139,7 +139,7 @@
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstols>1e-6 1e-10 1e-10</abstols>
+                    <abstols>1e-8 1e-10 1e-10</abstols>
                     <!--Toleranzen pressure u_x u_y-->
                 </convergence_criterion>
                 <time_discretization>

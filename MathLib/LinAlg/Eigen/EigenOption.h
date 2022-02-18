@@ -22,6 +22,9 @@ struct EigenOption final
     {
         CG,
         BiCGSTAB,
+        BiCGSTABL,
+        IDRS,
+        IDRSTABL,
         SparseLU,
         PardisoLU,
         GMRES
@@ -48,6 +51,11 @@ struct EigenOption final
     bool scaling;
     /// Restart value for the GMRES solver
     int restart;
+    int l;
+    int s;
+    double angle;
+    bool smoothing;
+    bool residualupdate;
 #endif
 
     /// Constructor

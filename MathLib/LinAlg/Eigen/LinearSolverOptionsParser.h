@@ -103,6 +103,61 @@ struct LinearSolverOptionsParser<EigenLinearSolver> final
                 "GMRES/GMRES option restart is not available.");
 #endif
         }
+        if (auto l =
+            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__l}
+            config->getConfigParameterOptional<int>("l"))
+        {
+#ifdef USE_EIGEN_UNSUPPORTED
+            options.l = *l;
+#else
+            OGS_FATAL(
+                "The code is not compiled with the Eigen unsupported modules.");
+#endif
+        }
+        if (auto s =
+            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__s}
+            config->getConfigParameterOptional<int>("s"))
+        {
+#ifdef USE_EIGEN_UNSUPPORTED
+            options.s = *s;
+#else
+            OGS_FATAL(
+                "The code is not compiled with the Eigen unsupported modules.");
+#endif
+        }
+        if (auto smoothing =
+            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__smoothing}
+            config->getConfigParameterOptional<int>("smoothing"))
+        {
+#ifdef USE_EIGEN_UNSUPPORTED
+            options.smoothing = *smoothing;
+#else
+            OGS_FATAL(
+                "The code is not compiled with the Eigen unsupported modules.");
+#endif
+        }
+        if (auto angle =
+            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__angle}
+            config->getConfigParameterOptional<int>("angle"))
+        {
+#ifdef USE_EIGEN_UNSUPPORTED
+            options.angle = *angle;
+#else
+            OGS_FATAL(
+                "The code is not compiled with the Eigen unsupported modules.");
+#endif
+        }
+        if (auto residualupdate =
+            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__residual_update}
+            config->getConfigParameterOptional<int>("residual_update"))
+        {
+#ifdef USE_EIGEN_UNSUPPORTED
+            options.residualupdate = *residualupdate;
+#else
+            OGS_FATAL(
+                "The code is not compiled with the Eigen unsupported modules.");
+#endif
+        }
         return {prefix, options};
     }
 };

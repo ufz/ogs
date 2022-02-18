@@ -50,21 +50,63 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>INFINITY_N</norm_type>
-                    <abstol>1e-12</abstol>
+                    <abstol>1e-13</abstol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
                 <time_stepping>
-                    <type>IterationNumberBasedTimeStepping</type>
+                    <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
                     <t_end>1</t_end>
-                    <initial_dt>0.001</initial_dt>
-                    <minimum_dt>1.e-3</minimum_dt>
-                    <maximum_dt>1.e-1</maximum_dt>
-                    <number_iterations>1   5   10   15</number_iterations>
-                    <multiplier>1.2 1.0 0.8 0.6</multiplier>
+                    <timesteps>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.001</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.0012</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.00144</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.001728</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.002074</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.002488</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.002986</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.003583</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>2</repeat>
+                            <delta_t>0.0043</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>188</repeat>
+                            <delta_t>0.00516</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.004863</delta_t>
+                        </pair>
+                    </timesteps>
                 </time_stepping>
+
             </process>
         </processes>
         <output>
@@ -229,7 +271,7 @@
     <test_definition>
         <!--primary field-->
         <vtkdiff>
-            <file>triaxtest_output_ts_99_t_0.484319.vtu</file>
+            <file>triaxtest_output_ts_99_t_0.484339.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
@@ -242,20 +284,20 @@
         </vtkdiff>
         <!--secondary field-->
         <vtkdiff>
-            <file>triaxtest_output_ts_99_t_0.484319.vtu</file>
+            <file>triaxtest_output_ts_99_t_0.484339.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>6e-9</absolute_tolerance>
+            <absolute_tolerance>1e-7</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>triaxtest_output_ts_199_t_1.000000.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>9e-8</absolute_tolerance>
+            <absolute_tolerance>1e-7</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <!--material-specific internal variable-->
         <vtkdiff>
-            <file>triaxtest_output_ts_99_t_0.484319.vtu</file>
+            <file>triaxtest_output_ts_99_t_0.484339.vtu</file>
             <field>PreConsolidationPressure</field>
             <absolute_tolerance>3e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>

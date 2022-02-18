@@ -19,7 +19,7 @@
 #endif
 
 #ifdef USE_EIGEN_UNSUPPORTED
-#include <unsupported/Eigen/src/IterativeSolvers/GMRES.h>
+#include <unsupported/Eigen/IterativeSolvers>
 #include <unsupported/Eigen/src/IterativeSolvers/Scaling.h>
 #endif
 
@@ -80,6 +80,102 @@ private:
     T_SOLVER solver_;
 };
 
+// implementations for some iterative linear solver methods --------------------
+
+// restart
+template <typename Solver>
+void setRestartImpl(Solver&, int const)
+{
+    DBUG("-> restart is not implemented for this linear solver.");
+}
+
+template <typename Matrix, typename Precon>
+void setRestartImpl(Eigen::GMRES<Matrix, Precon>& solver, int const restart)
+{
+    solver.set_restart(restart);
+    INFO("-> set restart value: {:d}", solver.get_restart());
+}
+
+// L
+template <typename Solver>
+void setLImpl(Solver&, int const)
+{
+    DBUG("-> setL() is not implemented for this linear solver.");
+}
+
+template <typename Matrix, typename Precon>
+void setLImpl(Eigen::BiCGSTABL<Matrix, Precon>& solver, int const l)
+{
+    solver.setL(l);
+}
+
+template <typename Matrix, typename Precon>
+void setLImpl(Eigen::IDRSTABL<Matrix, Precon>& solver, int const l)
+{
+    solver.setL(l);
+}
+
+// S
+template <typename Solver>
+void setSImpl(Solver&, int const)
+{
+    DBUG("-> setS() is not implemented for this linear solver.");
+}
+
+template <typename Matrix, typename Precon>
+void setSImpl(Eigen::IDRS<Matrix, Precon>& solver, int const s)
+{
+    solver.setS(s);
+}
+
+template <typename Matrix, typename Precon>
+void setSImpl(Eigen::IDRSTABL<Matrix, Precon>& solver, int const s)
+{
+    solver.setS(s);
+}
+
+// angle
+template <typename Solver>
+void setAngleImpl(Solver&, double const)
+{
+    DBUG("-> setAngle() is not implemented for this linear solver.");
+}
+
+template <typename Matrix, typename Precon>
+void setAngleImpl(Eigen::IDRS<Matrix, Precon>& solver, double const angle)
+{
+    solver.setAngle(angle);
+}
+
+// smoothing
+template <typename Solver>
+void setSmoothingImpl(Solver&, bool const)
+{
+    DBUG("-> setSmoothing() is not implemented for this linear solver.");
+}
+
+template <typename Matrix, typename Precon>
+void setSmoothingImpl(Eigen::IDRS<Matrix, Precon>& solver, bool const smoothing)
+{
+    solver.setSmoothing(smoothing);
+}
+
+// residual update
+template <typename Solver>
+void setResidualUpdateImpl(Solver&, bool const)
+{
+    DBUG("-> setResidualUpdate() is not implemented for this linear solver.");
+}
+
+template <typename Matrix, typename Precon>
+void setResidualUpdateImpl(Eigen::IDRS<Matrix, Precon>& solver,
+                           bool const residual_update)
+{
+    solver.setResidualUpdate(residual_update);
+}
+
+// -----------------------------------------------------------------------------
+
 /// Template class for Eigen iterative linear solvers
 template <class T_SOLVER>
 class EigenIterativeLinearSolver final : public EigenLinearSolverBase
@@ -94,6 +190,16 @@ public:
         solver_.setMaxIterations(opt.max_iterations);
         MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setRestart(
             opt.restart);
+        MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setL(
+            opt.l);
+        MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setS(
+            opt.s);
+        MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setSmoothing(
+            opt.smoothing);
+        MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setAngle(
+            opt.angle);
+        MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setResidualUpdate(
+            opt.residualupdate);
 
         if (!A.isCompressed())
         {
@@ -123,36 +229,19 @@ public:
 
 private:
     T_SOLVER solver_;
-    void setRestart(int const /*restart*/) {}
+    void setRestart(int const restart) { setRestartImpl(solver_, restart); }
+    void setL(int const l) { setLImpl(solver_, l); }
+    void setS(int const s) { setSImpl(solver_, s); }
+    void setAngle(double const angle) { setAngleImpl(solver_, angle); }
+    void setSmoothing(bool const smoothing)
+    {
+        setSmoothingImpl(solver_, smoothing);
+    }
+    void setResidualUpdate(bool const residual_update)
+    {
+        setResidualUpdateImpl(solver_, residual_update);
+    }
 };
-
-/// Specialization for (all) three preconditioners separately
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::GMRES<EigenMatrix::RawMatrixType,
-                 Eigen::IdentityPreconditioner>>::setRestart(int const restart)
-{
-    solver_.set_restart(restart);
-    INFO("-> set restart value: {:d}", solver_.get_restart());
-}
-
-template <>
-void EigenIterativeLinearSolver<Eigen::GMRES<
-    EigenMatrix::RawMatrixType,
-    Eigen::DiagonalPreconditioner<double>>>::setRestart(int const restart)
-{
-    solver_.set_restart(restart);
-    INFO("-> set restart value: {:d}", solver_.get_restart());
-}
-
-template <>
-void EigenIterativeLinearSolver<
-    Eigen::GMRES<EigenMatrix::RawMatrixType,
-                 Eigen::IncompleteLUT<double>>>::setRestart(int const restart)
-{
-    solver_.set_restart(restart);
-    INFO("-> set restart value: {:d}", solver_.get_restart());
-}
 
 template <template <typename, typename> class Solver, typename Precon>
 std::unique_ptr<EigenLinearSolverBase> createIterativeSolver()
@@ -197,6 +286,22 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
         {
             return createIterativeSolver<Eigen::BiCGSTAB>(precon_type);
         }
+        case EigenOption::SolverType::BiCGSTABL:
+        {
+#ifdef USE_EIGEN_UNSUPPORTED
+#if EIGEN_VERSION_AT_LEAST(3, 4, 90)
+            return createIterativeSolver<Eigen::BiCGSTABL>(precon_type);
+#else
+            OGS_FATAL(
+                "BiCGSTABL requires at least Eigen version 3.4.90"
+            );
+#endif
+#else
+            OGS_FATAL(
+                "The code is not compiled with the Eigen unsupported modules. "
+                "Linear solver type BiCGSTABL is not available.");
+#endif
+        }
         case EigenOption::SolverType::CG:
         {
             return createIterativeSolver<EigenCGSolver>(precon_type);
@@ -209,6 +314,38 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
             OGS_FATAL(
                 "The code is not compiled with the Eigen unsupported modules. "
                 "Linear solver type GMRES is not available.");
+#endif
+        }
+        case EigenOption::SolverType::IDRS:
+        {
+#ifdef USE_EIGEN_UNSUPPORTED
+#if EIGEN_VERSION_AT_LEAST(3, 4, 90)
+            return createIterativeSolver<Eigen::IDRS>(precon_type);
+#else
+            OGS_FATAL(
+                "IDRS requires at least Eigen version 3.4.90"
+            );
+#endif
+#else
+            OGS_FATAL(
+                "The code is not compiled with the Eigen unsupported modules. "
+                "Linear solver type IDRS is not available.");
+#endif
+        }
+        case EigenOption::SolverType::IDRSTABL:
+        {
+#ifdef USE_EIGEN_UNSUPPORTED
+#if EIGEN_VERSION_AT_LEAST(3, 4, 90)
+            return createIterativeSolver<Eigen::IDRSTABL>(precon_type);
+#else
+            OGS_FATAL(
+                "IDRSTABL requires at least Eigen version 3.4.90"
+            );
+#endif
+#else
+            OGS_FATAL(
+                "The code is not compiled with the Eigen unsupported modules. "
+                "Linear solver type IDRSTABL is not available.");
 #endif
         }
         default:
@@ -235,8 +372,11 @@ EigenLinearSolver::EigenLinearSolver(std::string const& /*solver_name*/,
             return;
         }
         case EigenOption::SolverType::BiCGSTAB:
+        case EigenOption::SolverType::BiCGSTABL:
         case EigenOption::SolverType::CG:
         case EigenOption::SolverType::GMRES:
+        case EigenOption::SolverType::IDRS:
+        case EigenOption::SolverType::IDRSTABL:
             solver_ = details::createIterativeSolver(option_.solver_type,
                                                      option_.precon_type);
             return;

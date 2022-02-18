@@ -205,7 +205,7 @@
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <!--                    <abstols>1e-09 1e-09 1e-10 1e-6 1e-6</abstols> -->
-                    <reltols>1e-5 1e-5 1e-6 1e-8 1e-8</reltols>
+                    <reltols>1e-6 1e-6 1e-7 1e-9 1e-9</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>

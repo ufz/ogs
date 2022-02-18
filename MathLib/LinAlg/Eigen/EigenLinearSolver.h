@@ -52,6 +52,11 @@ protected:
     EigenOption option_;
     std::unique_ptr<EigenLinearSolverBase> solver_;
     void setRestart();
+    void setL();
+    void setS();
+    void setSmoothing();
+    void setAngle();
+    void setResidualUpdate();
 };
 
 }  // namespace MathLib
