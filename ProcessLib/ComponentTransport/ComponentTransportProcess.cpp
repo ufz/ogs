@@ -48,6 +48,9 @@ ComponentTransportProcess::ComponentTransportProcess(
       _surfaceflux(std::move(surfaceflux)),
       _chemical_solver_interface(std::move(chemical_solver_interface))
 {
+    // Todo(renchao): Need to adapt for the multi-component case.
+    _molar_flow_rate = MeshLib::getOrCreateMeshProperty<double>(
+        mesh, "MolarFlowRate", MeshLib::MeshItemType::Node, 1);
 }
 
 void ComponentTransportProcess::initializeConcreteProcess(
@@ -187,6 +190,17 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
         process_id, M, K, b, Jac);
+
+    if (process_id == _process_data.hydraulic_process_id)
+    {
+        return;
+    }
+
+    // b is the negated residumm used in the Newton's method.
+    // Here negating b is to recover the primitive residuum.
+    transformVariableFromGlobalVector(b, 0 /*variable id*/,
+                                      *_local_to_global_index_map,
+                                      *_molar_flow_rate, std::negate<double>());
 }
 
 Eigen::Vector3d ComponentTransportProcess::getFlux(
