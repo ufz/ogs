@@ -13,7 +13,7 @@
 
 #include <cassert>
 
-namespace NumLib
+namespace
 {
 template <int OrderGaussLegendreTri, int OrderGaussLegendre>
 MathLib::WeightedPoint getWeightedPointConcrete(unsigned const igp)
@@ -35,6 +35,10 @@ MathLib::WeightedPoint getWeightedPointConcrete(unsigned const igp)
 
     return MathLib::WeightedPoint(rst, w);
 }
+}  // namespace
+
+namespace NumLib
+{
 
 void IntegrationGaussLegendrePrism::setIntegrationOrder(unsigned const order)
 {
