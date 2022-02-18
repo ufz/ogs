@@ -6,6 +6,11 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e5.prj RUNTIME 200)
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_quad8_traction_top.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0.prj)
+    if(OGS_USE_MKL)
+        OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0_mkl.xml)
+        set_tests_properties(ogs-Mechanics/Linear/cube_1e0_mkl PROPERTIES
+            DEPENDS ogs-Mechanics/Linear/cube_1e0) # Prevent race condition
+    endif()
     OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0_simple_shear.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/MaterialForces/bar.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/MaterialForces/bar_3D.prj RUNTIME 40)

@@ -71,6 +71,7 @@ build linux arch:
       -DBUILD_SHARED_LIBS=ON
       -DOGS_USE_POETRY=OFF
       -DOGS_TEST_NOTEBOOKS=OFF
+      -DOGS_USE_MKL=ON
 
 build linux debug with sanitizers:
   extends:

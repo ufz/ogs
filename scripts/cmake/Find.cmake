@@ -101,9 +101,31 @@ find_package(GEOTIFF)
 
 if(OGS_USE_MKL)
     find_package(MKL REQUIRED)
+    find_file(MKL_SETVARS setvars.sh PATHS ${MKL_ROOT_DIR} ${MKL_ROOT_DIR}/..
+                                           ${MKL_ROOT_DIR}/../..
+              NO_DEFAULT_PATH
+    )
 endif()
 
 # Check MPI package
 if(OGS_USE_MPI)
     find_package(MPI REQUIRED)
 endif()
+
+# Prints instructions for setting MKL runtime environment.
+function(printMKLUsage)
+    if(NOT OGS_USE_MKL)
+        return()
+    endif()
+    if(MKL_SETVARS)
+        message(
+            STATUS
+                "NOTE: Please run `source ${MKL_SETVARS}` to set LD_LIBRARY_PATH for MKL!\n"
+        )
+    else()
+        message(
+            STATUS
+                "NOTE: Please set LD_LIBRARY_PATH with `export LD_LIBRARY_PATH=${MKL_LIBRARY_DIR}`!\n"
+        )
+    endif()
+endfunction()
