@@ -13,15 +13,25 @@
 
 #include <cassert>
 
+#include "BaseLib/Error.h"
+
 namespace
 {
+template <int OrderGaussLegendreTri, int OrderGaussLegendre>
+constexpr unsigned getNumberOfPointsConcrete()
+{
+    return MathLib::GaussLegendreTri<OrderGaussLegendreTri>::NPoints *
+           OrderGaussLegendre;
+}
+
 template <int OrderGaussLegendreTri, int OrderGaussLegendre>
 MathLib::WeightedPoint getWeightedPointConcrete(unsigned const igp)
 {
     using GL = MathLib::GaussLegendre<OrderGaussLegendre>;
     using GLT = MathLib::GaussLegendreTri<OrderGaussLegendreTri>;
 
-    assert(igp < GLT::NPoints * OrderGaussLegendre);
+    assert(igp < (getNumberOfPointsConcrete<OrderGaussLegendreTri,
+                                            OrderGaussLegendre>()));
 
     const unsigned gp_r = igp % GLT::NPoints;
     const unsigned gp_t = igp / GLT::NPoints;
@@ -36,7 +46,6 @@ MathLib::WeightedPoint getWeightedPointConcrete(unsigned const igp)
 
 namespace NumLib
 {
-
 void IntegrationGaussLegendrePrism::setIntegrationOrder(unsigned const order)
 {
     _order = order;
@@ -46,13 +55,49 @@ void IntegrationGaussLegendrePrism::setIntegrationOrder(unsigned const order)
 MathLib::WeightedPoint IntegrationGaussLegendrePrism::getWeightedPoint(
     unsigned const order, unsigned const igp)
 {
-    return (order < 2) ? getWeightedPointConcrete<2, 2>(igp)
-                       : getWeightedPointConcrete<4, 3>(igp);
+    // Note: These cases must correspod strictly to the logic in
+    // getNumberOfPoints()!
+    switch (order)
+    {
+        case 1:
+            return getWeightedPointConcrete<1, 1>(igp);
+        case 2:
+            return getWeightedPointConcrete<2, 2>(igp);
+        case 3:
+            // The combination <4, 3> has been chosen to allow extrapolation
+            // from the set of integration points on Prism13 elements for the
+            // third integration order. <3, 3> would not be sufficient.
+            return getWeightedPointConcrete<4, 3>(igp);
+        case 4:
+            return getWeightedPointConcrete<4, 4>(igp);
+        default:
+            OGS_FATAL(
+                "Integration order {} not supported for integration on prisms.",
+                order);
+    }
 }
 
 unsigned IntegrationGaussLegendrePrism::getNumberOfPoints(unsigned const order)
 {
-    return (order < 2) ? MathLib::GaussLegendreTri<2>::NPoints * 2
-                       : MathLib::GaussLegendreTri<4>::NPoints * 3;
+    // Note: These cases must correspod strictly to the logic in
+    // getWeightedPoint()!
+    switch (order)
+    {
+        case 1:
+            return getNumberOfPointsConcrete<1, 1>();
+        case 2:
+            return getNumberOfPointsConcrete<2, 2>();
+        case 3:
+            // The combination <4, 3> has been chosen to allow extrapolation
+            // from the set of integration points on Prism13 elements for the
+            // third integration order. <3, 3> would not be sufficient.
+            return getNumberOfPointsConcrete<4, 3>();
+        case 4:
+            return getNumberOfPointsConcrete<4, 4>();
+        default:
+            OGS_FATAL(
+                "Integration order {} not supported for integration on prisms.",
+                order);
+    }
 }
 }  // namespace NumLib
