@@ -216,6 +216,17 @@ entries:
             last: Mikelic
         -   first: M.F.
             last: Wheeler
+    verruijt2009:
+        type: book
+        title: 'An introduction to soil dynamics'
+        publisher: Springer Science and Business Media
+        year: '2009'
+        note: ''
+        doi: https://doi.org/10.1007/978-90-481-3441-0
+        url: https://link.springer.com/book/10.1007/978-90-481-3441-0
+        author:
+        -   first: A.
+            last: Verruijt
     biretal:2008:
         type: techreport
         title: '{DECOVALEX-THMC} {P}roject, {T}ask {D}: {L}ong-term permeability/porosity

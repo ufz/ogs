@@ -499,6 +499,23 @@ AddTest(
 )
 
 AddTest(
+    NAME Staggered_MandelCryer
+    PATH HydroMechanics/StaggeredScheme/MandelCryer
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS MandelCryerStaggered.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 170
+    DIFF_DATA
+    reference_results_MandelCryerStaggered_ts_1_t_0.010000.vtu results_MandelCryerStaggered_ts_1_t_0.010000.vtu displacement displacement 1e-4 0
+    reference_results_MandelCryerStaggered_ts_1_t_0.010000.vtu results_MandelCryerStaggered_ts_1_t_0.010000.vtu pressure pressure 1e-1 0
+    reference_results_MandelCryerStaggered_ts_1_t_0.010000.vtu results_MandelCryerStaggered_ts_1_t_0.010000.vtu velocity velocity 1e-1 0
+    reference_results_MandelCryerStaggered_ts_1_t_0.010000.vtu results_MandelCryerStaggered_ts_1_t_0.010000.vtu epsilon epsilon 1e-4 0
+    reference_results_MandelCryerStaggered_ts_1_t_0.010000.vtu results_MandelCryerStaggered_ts_1_t_0.010000.vtu sigma sigma 1e-1 0
+)
+
+AddTest(
     NAME HydroMechanics_hm1_1Dbeam
     PATH HydroMechanics/Verification
     EXECUTABLE ogs
