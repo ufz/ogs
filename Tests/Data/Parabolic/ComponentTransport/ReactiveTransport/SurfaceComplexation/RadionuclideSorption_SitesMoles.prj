@@ -481,7 +481,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>RadionuclideSorption</prefix>
+            <prefix>RadionuclideSorption_SiteMoles</prefix>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
@@ -808,49 +808,49 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <regex>RadionuclideSorption_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <regex>RadionuclideSorption_SiteMoles_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
             <field>pressure</field>
             <absolute_tolerance>1e-6</absolute_tolerance>
             <relative_tolerance>1e-10</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>RadionuclideSorption_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <regex>RadionuclideSorption_SiteMoles_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
             <field>darcy_velocity</field>
             <absolute_tolerance>1e-10</absolute_tolerance>
             <relative_tolerance>1e-6</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>RadionuclideSorption_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <regex>RadionuclideSorption_SiteMoles_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
             <field>Na</field>
             <absolute_tolerance>1e-10</absolute_tolerance>
             <relative_tolerance>1e-16</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>RadionuclideSorption_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <regex>RadionuclideSorption_SiteMoles_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
             <field>Cl</field>
             <absolute_tolerance>1e-10</absolute_tolerance>
             <relative_tolerance>1e-16</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>RadionuclideSorption_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <regex>RadionuclideSorption_SiteMoles_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
             <field>Ca</field>
             <absolute_tolerance>1e-10</absolute_tolerance>
             <relative_tolerance>1e-16</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>RadionuclideSorption_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <regex>RadionuclideSorption_SiteMoles_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
             <field>C(4)</field>
             <absolute_tolerance>1e-10</absolute_tolerance>
             <relative_tolerance>1e-16</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>RadionuclideSorption_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <regex>RadionuclideSorption_SiteMoles_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
             <field>H</field>
             <absolute_tolerance>1e-10</absolute_tolerance>
             <relative_tolerance>1e-16</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>RadionuclideSorption_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <regex>RadionuclideSorption_SiteMoles_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
             <field>U(6)</field>
             <absolute_tolerance>1e-10</absolute_tolerance>
             <relative_tolerance>1e-16</relative_tolerance>
