@@ -188,19 +188,19 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t, dt);
 
-        double const Sw = two_phase_material_model.getSaturation(
-            material_id, t, pos, pg_int_pt, T_int_pt, pc_int_pt);
+        double const Sw =
+            medium.property(MaterialPropertyLib::PropertyType::saturation)
+                .template value<double>(vars, pos, t, dt);
 
         _saturation[ip] = Sw;
         vars[static_cast<int>(
             MaterialPropertyLib::Variable::liquid_saturation)] = Sw;
 
         double dSwdpc =
-            (pc_int_pt > two_phase_material_model.getCapillaryPressure(
-                             material_id, t, pos, pg_int_pt, T_int_pt, 0.0))
-                ? 0.0
-                : two_phase_material_model.getSaturationDerivative(
-                      material_id, t, pos, pg_int_pt, T_int_pt, Sw);
+            medium.property(MaterialPropertyLib::PropertyType::saturation)
+                .template dValue<double>(
+                    vars, MaterialPropertyLib::Variable::capillary_pressure,
+                    pos, t, dt);
 
         double const p_vapor_nonwet =
             _process_data.material->calculateVaporPressureNonwet(
