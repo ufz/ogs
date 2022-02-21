@@ -273,7 +273,10 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
                 .template value<double>(vars, pos, t, dt);
         double const latent_heat_evaporation =
-            _process_data.latent_heat_evaporation(t, pos)[0];
+            vapor_component
+                .property(
+                    MaterialPropertyLib::PropertyType::specific_latent_heat)
+                .template value<double>(vars, pos, t, dt);
 
         double const enthalpy_nonwet_gas =
             _process_data.material->getAirEnthalpySimple(

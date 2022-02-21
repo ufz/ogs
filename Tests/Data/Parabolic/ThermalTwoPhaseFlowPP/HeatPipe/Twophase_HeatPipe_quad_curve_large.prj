@@ -96,7 +96,6 @@
             </secondary_variables>
             <specific_body_force>0</specific_body_force>
             <mass_lumping> true </mass_lumping>
-            <latent_heat_evaporation> latent_heat_evp </latent_heat_evaporation>
         </process>
     </processes>
     <media>
@@ -117,6 +116,11 @@
                                     <name>specific_heat_capacity</name>
                                     <type>Constant</type>
                                     <value>4187</value>
+                                </property>
+								<property>
+                                    <name>specific_latent_heat</name>
+                                    <type>Constant</type>
+                                    <value>2258000</value>
                                 </property>
                             </properties>
                         </component>
@@ -244,11 +248,6 @@
             <name>henry_const</name>
             <type>Constant</type>
             <value>7.65e-6</value>
-        </parameter>
-        <parameter>
-            <name>latent_heat_evp</name>
-            <type>Constant</type>
-            <value>2258000</value>
         </parameter>
         <parameter>
             <name>constant_porosity_parameter</name>

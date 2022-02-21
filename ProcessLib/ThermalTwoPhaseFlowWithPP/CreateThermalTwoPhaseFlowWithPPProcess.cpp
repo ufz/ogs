@@ -51,6 +51,9 @@ void checkMPLProperties(
     std::array const required_property_vapor_component = {
         MaterialPropertyLib::diffusion};
 
+    std::array const required_property_vapor_component = {
+        MaterialPropertyLib::specific_latent_heat};
+
     std::array const required_property_dry_air_component = {
         MaterialPropertyLib::specific_heat_capacity};
 
@@ -125,16 +128,6 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__mass_lumping}
     auto mass_lumping = config.getConfigParameter<bool>("mass_lumping");
 
-    // Parameter for the density of the solid.
-
-    // Parameter for the latent heat of evaporation.
-    auto const& latent_heat_evaporation = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__latent_heat_evaporation}
-        "latent_heat_evaporation", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as latent_heat_evaporation parameter.",
-         latent_heat_evaporation.name);
-
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");
 
@@ -154,7 +147,6 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
                                                       specific_body_force,
                                                       has_gravity,
                                                       mass_lumping,
-                                                      latent_heat_evaporation,
                                                       std::move(material)};
 
     return std::make_unique<ThermalTwoPhaseFlowWithPPProcess>(

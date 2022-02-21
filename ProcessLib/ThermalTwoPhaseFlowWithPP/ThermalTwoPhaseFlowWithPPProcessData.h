@@ -28,7 +28,6 @@ struct ThermalTwoPhaseFlowWithPPProcessData
 
     bool const has_gravity;
     bool const has_mass_lumping;
-    ParameterLib::Parameter<double> const& latent_heat_evaporation;
     std::unique_ptr<ThermalTwoPhaseFlowWithPPMaterialProperties> material;
 };
 
