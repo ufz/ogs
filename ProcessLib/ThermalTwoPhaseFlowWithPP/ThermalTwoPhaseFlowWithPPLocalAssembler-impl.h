@@ -364,7 +364,9 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                 .template value<double>(vars, pos, t, dt);
         double const lambda_nonwet = k_rel_nonwet / mu_nonwet;
         double const diffusion_coeff_component_gas =
-            _process_data.diffusion_coeff_component_b(t, pos)[0];
+            vapor_component
+                .property(MaterialPropertyLib::PropertyType::diffusion)
+                .template value<double>(vars, pos, t, dt);
 
         // wet
         double const k_rel_wet =

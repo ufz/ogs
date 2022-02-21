@@ -48,6 +48,9 @@ void checkMPLProperties(
     std::array const required_property_vapor_component = {
         MaterialPropertyLib::specific_heat_capacity};
 
+    std::array const required_property_vapor_component = {
+        MaterialPropertyLib::diffusion};
+
     std::array const required_property_dry_air_component = {
         MaterialPropertyLib::specific_heat_capacity};
 
@@ -121,15 +124,6 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
 
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__mass_lumping}
     auto mass_lumping = config.getConfigParameter<bool>("mass_lumping");
-    // diffusion coeff
-    auto const& diff_coeff_b = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__diffusion_coeff_component_b}
-        "diffusion_coeff_component_b", parameters, 1, &mesh);
-    auto const& diff_coeff_a = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__diffusion_coeff_component_a}
-        "diffusion_coeff_component_a", parameters, 1, &mesh);
 
     // Parameter for the density of the solid.
 
@@ -160,8 +154,6 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
                                                       specific_body_force,
                                                       has_gravity,
                                                       mass_lumping,
-                                                      diff_coeff_b,
-                                                      diff_coeff_a,
                                                       latent_heat_evaporation,
                                                       std::move(material)};
 

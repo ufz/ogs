@@ -96,8 +96,6 @@
             </secondary_variables>
             <specific_body_force>0</specific_body_force>
             <mass_lumping> true </mass_lumping>
-            <diffusion_coeff_component_b> diff_coef_b </diffusion_coeff_component_b>
-            <diffusion_coeff_component_a> diff_coef_a </diffusion_coeff_component_a>
             <latent_heat_evaporation> latent_heat_evp </latent_heat_evaporation>
         </process>
     </processes>
@@ -111,6 +109,11 @@
                             <name>w</name>
                             <properties>
                                 <property>
+                                    <name>diffusion</name>
+                                    <type>Constant</type>
+                                    <value>2.6e-6</value>
+                                </property>
+								<property>
                                     <name>specific_heat_capacity</name>
                                     <type>Constant</type>
                                     <value>4187</value>
@@ -241,16 +244,6 @@
             <name>henry_const</name>
             <type>Constant</type>
             <value>7.65e-6</value>
-        </parameter>
-        <parameter>
-            <name>diff_coef_b</name>
-            <type>Constant</type>
-            <value>2.6e-6</value>
-        </parameter>
-        <parameter>
-            <name>diff_coef_a</name>
-            <type>Constant</type>
-            <value>0.0</value>
         </parameter>
         <parameter>
             <name>latent_heat_evp</name>
