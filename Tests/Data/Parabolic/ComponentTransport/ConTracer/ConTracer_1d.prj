@@ -268,7 +268,7 @@
     <nonlinear_solvers>
         <nonlinear_solver>
             <name>basic_picard</name>
-            <type>Picard</type>
+            <type>Newton</type>
             <max_iter>10</max_iter>
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>
