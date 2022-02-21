@@ -27,17 +27,13 @@ public:
      *
      * @param order     integration order (default 2)
      */
-    explicit IntegrationGaussLegendrePrism(unsigned order = 2)
+    explicit IntegrationGaussLegendrePrism(unsigned const order)
     {
         this->setIntegrationOrder(order);
     }
 
     /// Change the integration order.
-    void setIntegrationOrder(unsigned /*order*/)
-    {
-        _order = 2;  // fixed
-        _n_sampl_pt = getNumberOfPoints(_order);
-    }
+    void setIntegrationOrder(unsigned const order);
 
     /// return current integration order.
     unsigned getIntegrationOrder() const { return _order; }
@@ -48,7 +44,7 @@ public:
     // clang-format off
     /// \copydoc NumLib::IntegrationGaussLegendreRegular::getWeightedPoint(unsigned) const
     // clang-format on
-    MathLib::WeightedPoint getWeightedPoint(unsigned igp) const
+    MathLib::WeightedPoint getWeightedPoint(unsigned const igp) const
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
@@ -56,24 +52,13 @@ public:
     // clang-format off
     /// \copydoc NumLib::IntegrationGaussLegendreRegular::getWeightedPoint(unsigned, unsigned)
     // clang-format on
-    static MathLib::WeightedPoint getWeightedPoint(unsigned const order, unsigned const igp)
-    {
-        (void)order;
-        const unsigned gp_r = igp % 3;
-        const auto gp_t = (unsigned)(igp / 3);
-        std::array<double, 3> rst;
-        rst[0] = MathLib::GaussLegendreTri<2>::X[gp_r][0];
-        rst[1] = MathLib::GaussLegendreTri<2>::X[gp_r][1];
-        rst[2] = MathLib::GaussLegendre<2>::X[gp_t];
-        double w = MathLib::GaussLegendreTri<2>::W[gp_r] * 0.5 *
-                   MathLib::GaussLegendre<2>::W[gp_t];
-        return MathLib::WeightedPoint(rst, w);
-    }
+    static MathLib::WeightedPoint getWeightedPoint(unsigned const order,
+                                                   unsigned const igp);
 
     template <typename Method>
     static MathLib::WeightedPoint getWeightedPoint(unsigned const igp)
     {
-        return WeightedPoint(Method::X[igp], Method::W[igp]);
+        return MathLib::WeightedPoint(Method::X[igp], Method::W[igp]);
     }
 
     /**
@@ -82,12 +67,7 @@ public:
      * @param order    the number of integration points
      * @return the number of points
      */
-    static unsigned getNumberOfPoints(unsigned order)
-    {
-        if (order == 2)
-            return 6;
-        return 0;
-    }
+    static unsigned getNumberOfPoints(unsigned const order);
 
 private:
     unsigned _order{2};

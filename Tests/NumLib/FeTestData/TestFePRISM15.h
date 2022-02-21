@@ -28,11 +28,11 @@ public:
     static const unsigned dim = 3;
     static const unsigned e_nnodes = MeshElementType::n_all_nodes;
     static const unsigned n_sample_pt_order2 = 6;
-    static const unsigned n_sample_pt_order3 = 6;  // TODO no implementation yet
+    static const unsigned n_sample_pt_order3 = 21;
     static const unsigned global_dim = MeshElementType::dimension;
-    const double perturbation = 0.2;
+    const double perturbation = 0.0;
 
-    /// create a 15 node prism element with curved edges
+    /// create a 15 node prism element:
     MeshElementType* createMeshElement()
     {
         auto** nodes = new MeshLib::Node*[e_nnodes];

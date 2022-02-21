@@ -131,13 +131,11 @@ static void putIntegrationMethodsForDim3(
     putIntegrationMethodsFor<MeshLib::Tet10>(
         integration_methods_by_mesh_element_type, 4);
 
-    // TODO max order 2? cf. IntegrationGaussLegendrePrism::getNumberOfPoints
-    // (only order 2)
     putIntegrationMethodsFor<MeshLib::Prism>(
-        integration_methods_by_mesh_element_type, 2);
+        integration_methods_by_mesh_element_type, 4);
 
     putIntegrationMethodsFor<MeshLib::Prism15>(
-        integration_methods_by_mesh_element_type, 2);
+        integration_methods_by_mesh_element_type, 4);
 
     putIntegrationMethodsFor<MeshLib::Pyramid>(
         integration_methods_by_mesh_element_type, 3);

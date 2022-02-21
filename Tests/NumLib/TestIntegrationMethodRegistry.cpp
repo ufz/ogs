@@ -160,9 +160,8 @@ static std::unordered_map<std::type_index, unsigned> initMapTypeToMaxOrder()
     add(typeid(Hex20), 4);
     add(typeid(Tet), 4);
     add(typeid(Tet10), 4);
-    add(typeid(Prism), 1);  // Actually, there is only one unique integration
-                            // method for prisms, currently.
-    add(typeid(Prism15), 1);
+    add(typeid(Prism), 4);
+    add(typeid(Prism15), 4);
     add(typeid(Pyramid), 3);
     add(typeid(Pyramid13), 3);
 
@@ -286,13 +285,6 @@ TYPED_TEST(NumLibIntegrationMethodRegistryTest, CheckWeTestUpToMaxOrder)
 TYPED_TEST(NumLibIntegrationMethodRegistryTest, MaxOrderFromRegistry)
 {
     using MeshElementType = TypeParam;
-
-    if constexpr (std::is_same_v<MeshElementType, MeshLib::Prism> ||
-                  std::is_same_v<MeshElementType, MeshLib::Prism15>)
-    {
-        GTEST_SKIP() << "Prisms currently behave rather special and cannot be "
-                        "tested with the logic in this test.";
-    }
 
     unsigned const cutoff = 100;  // Way beyond everything we ever expect.
     unsigned const order =
