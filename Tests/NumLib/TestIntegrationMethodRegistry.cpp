@@ -286,13 +286,6 @@ TYPED_TEST(NumLibIntegrationMethodRegistryTest, MaxOrderFromRegistry)
 {
     using MeshElementType = TypeParam;
 
-    if constexpr (std::is_same_v<MeshElementType, MeshLib::Prism> ||
-                  std::is_same_v<MeshElementType, MeshLib::Prism15>)
-    {
-        GTEST_SKIP() << "Prisms currently behave rather special and cannot be "
-                        "tested with the logic in this test.";
-    }
-
     unsigned const cutoff = 100;  // Way beyond everything we ever expect.
     unsigned const order =
         getMaximumIntegrationOrderFromIntegrationMethodRegistry<
