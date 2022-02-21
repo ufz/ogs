@@ -201,6 +201,20 @@
                     <independent_variable>capillary_pressure</independent_variable>
                 </property>
                 <property>
+                    <name>relative_permeability</name>
+                    <type>RelativePermeabilityUdell</type>
+                    <residual_liquid_saturation>0.0</residual_liquid_saturation>
+                    <residual_gas_saturation>0.0</residual_gas_saturation>
+                    <min_relative_permeability>0.</min_relative_permeability>
+                </property>
+                <property>
+                    <name>relative_permeability_nonwetting_phase</name>
+                    <type>RelativePermeabilityUdellNonwettingPhase</type>
+                    <residual_liquid_saturation>0.0</residual_liquid_saturation>
+                    <residual_gas_saturation>0.0</residual_gas_saturation>
+                    <min_relative_permeability>0.</min_relative_permeability>
+                </property>
+                <property>
                     <name>thermal_conductivity</name>
                     <type>SoilThermalConductivitySomerton</type>
                     <dry_thermal_conductivity>k_T_dry</dry_thermal_conductivity>

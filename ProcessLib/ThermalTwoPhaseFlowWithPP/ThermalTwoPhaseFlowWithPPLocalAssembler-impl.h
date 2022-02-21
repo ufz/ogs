@@ -360,8 +360,10 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
 
         // nonwet
         double const k_rel_nonwet =
-            two_phase_material_model.getNonwetRelativePermeability(
-                t, pos, _pressure_wetting[ip], T_int_pt, Sw);
+            medium
+                .property(MaterialPropertyLib::PropertyType::
+                              relative_permeability_nonwetting_phase)
+                .template value<double>(vars, pos, t, dt);
         auto const mu_nonwet =
             gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
                 .template value<double>(vars, pos, t, dt);
@@ -373,8 +375,10 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
 
         // wet
         double const k_rel_wet =
-            two_phase_material_model.getWetRelativePermeability(
-                t, pos, pg_int_pt, T_int_pt, Sw);
+            medium
+                .property(
+                    MaterialPropertyLib::PropertyType::relative_permeability)
+                .template value<double>(vars, pos, t, dt);
         auto const mu_wet =
             liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
                 .template value<double>(vars, pos, t, dt);
