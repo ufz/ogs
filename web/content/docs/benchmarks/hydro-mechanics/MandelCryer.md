@@ -2,7 +2,7 @@
 date = "2022-01-25"
 title = "Mandel-Cryer Effect"
 weight = 151
-project = "HydroMechanics/StaggeredScheme/MandelCryer/MandelCryer.prj"
+project = "HydroMechanics/StaggeredScheme/MandelCryer/MandelCryerStaggered.prj"
 author = "Dominik Kern"
 
 [menu]
