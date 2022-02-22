@@ -168,7 +168,7 @@ AddTest(
 )
 AddTest(
     NAME ThermoRichardsFlow_TaskCDECOVALEX2023
-    PATH ThermoRichardsFlow/SimplifiedMechanics/TaskCDECOVALEX2023
+    PATH ThermoRichardsFlow/TaskCDECOVALEX2023
     EXECUTABLE ogs
     EXECUTABLE_ARGS Decovalex-0-TRF.prj
     WRAPPER time
