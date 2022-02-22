@@ -66,6 +66,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                          std::vector<double>& local_K_data,
                          std::vector<double>& local_b_data)
 {
+    using MaterialLib::PhysicalConstant::CelsiusZeroInKelvin;
     using MaterialLib::PhysicalConstant::IdealGasConstant;
 
     auto const local_matrix_size = local_x.size();
@@ -309,17 +310,15 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                 .template value<double>(vars, pos, t, dt);
 
         double const enthalpy_nonwet_gas =
-            _process_data.material->getAirEnthalpySimple(
-                T_int_pt, heat_capacity_dry_gas, pg_int_pt);
+            heat_capacity_dry_gas * (T_int_pt - CelsiusZeroInKelvin) +
+            IdealGasConstant * (T_int_pt - CelsiusZeroInKelvin) / air_mol_mass;
 
         double const enthalpy_wet =
-            _process_data.material->getLiquidWaterEnthalpySimple(
-                T_int_pt, heat_capacity_water, _pressure_wetting[ip]);
+            heat_capacity_water * (T_int_pt - CelsiusZeroInKelvin);
 
         double const enthalpy_nonwet_vapor =
-            _process_data.material->getWaterVaporEnthalpySimple(
-                T_int_pt, heat_capacity_water_vapor, pg_int_pt,
-                latent_heat_evaporation);
+            heat_capacity_water_vapor * (T_int_pt - CelsiusZeroInKelvin) +
+            latent_heat_evaporation;
         double const enthalpy_nonwet =
             enthalpy_nonwet_gas * X_gas_nonwet +
             enthalpy_nonwet_vapor * (1 - X_gas_nonwet);
