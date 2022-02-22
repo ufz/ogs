@@ -181,6 +181,21 @@ AddTest(
     expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000.000000.vtu temperature temperature 1e-2 5e-5
 )
 
+AddTest(
+    NAME ThermoRichardsFlow_TaskCDECOVALEX2023_Picard
+    PATH ThermoRichardsFlow/TaskCDECOVALEX2023/WithPicardNonLinearSolverAndPETSc
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS Decovalex-0-TRF.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
+    DIFF_DATA
+    expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000.000000.vtu pressure pressure 3e5 15
+    expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000.000000.vtu saturation saturation 1e-2 2e-3
+    expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000.000000.vtu temperature temperature 1e-2 1.0
+)
+
 #PETSc
 AddTest(
     NAME ParallelFEM_ThermoRichardsFlow_comp_TRMuni_unsaturated-TRuni_unsaturated
@@ -196,4 +211,29 @@ AddTest(
     expected_TRMuni_unsat_ts_10_t_1.000000.vtu TRuni_unsat_ts_10_t_1_000000_0.vtu temperature temperature 5e-5 1e-10
     expected_TRMuni_unsat_ts_10_t_1.000000.vtu TRuni_unsat_ts_10_t_1_000000_0.vtu pressure pressure 5e-5 1e-6
     expected_TRMuni_unsat_ts_10_t_1.000000.vtu TRuni_unsat_ts_10_t_1_000000_0.vtu saturation saturation 5e-5 1e-10
+)
+
+AddTest(
+    NAME ParallelFEM_ThermoRichardsFlow_TaskCDECOVALEX2023_Picard
+    PATH ThermoRichardsFlow/TaskCDECOVALEX2023/WithPicardNonLinearSolverAndPETSc
+    RUNTIME 5
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS Decovalex-0-TRF.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 3
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+#
+    Decovalex-THuni-0_ts_10_t_864000_000000_0.vtu Decovalex-THuni-0_ts_10_t_864000_000000_0.vtu pressure pressure 1e-10 1.0e-6
+    Decovalex-THuni-0_ts_10_t_864000_000000_0.vtu Decovalex-THuni-0_ts_10_t_864000_000000_0.vtu saturation saturation 1e-10 1.0e-6
+    Decovalex-THuni-0_ts_10_t_864000_000000_0.vtu Decovalex-THuni-0_ts_10_t_864000_000000_0.vtu temperature temperature 1e-10 1.0e-9
+#
+    Decovalex-THuni-0_ts_10_t_864000_000000_1.vtu Decovalex-THuni-0_ts_10_t_864000_000000_1.vtu pressure pressure 1e-10 1.0e-6
+    Decovalex-THuni-0_ts_10_t_864000_000000_1.vtu Decovalex-THuni-0_ts_10_t_864000_000000_1.vtu saturation saturation 1e-10 1.0e-6
+    Decovalex-THuni-0_ts_10_t_864000_000000_1.vtu Decovalex-THuni-0_ts_10_t_864000_000000_1.vtu temperature temperature 1e-10 1.0e-9
+#
+    Decovalex-THuni-0_ts_10_t_864000_000000_2.vtu Decovalex-THuni-0_ts_10_t_864000_000000_2.vtu pressure pressure 1e-10 1.0e-6
+    Decovalex-THuni-0_ts_10_t_864000_000000_2.vtu Decovalex-THuni-0_ts_10_t_864000_000000_2.vtu saturation saturation 1e-10 1.0e-6
+    Decovalex-THuni-0_ts_10_t_864000_000000_2.vtu Decovalex-THuni-0_ts_10_t_864000_000000_2.vtu temperature temperature 1e-10 1.0e-9
 )
