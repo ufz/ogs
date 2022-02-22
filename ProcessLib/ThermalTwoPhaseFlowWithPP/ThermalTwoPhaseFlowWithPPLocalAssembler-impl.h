@@ -67,9 +67,6 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                          std::vector<double>& local_b_data)
 {
     using MaterialLib::PhysicalConstant::IdealGasConstant;
-    auto const& water_mol_mass =
-        MaterialLib::PhysicalConstant::MolarMass::Water;
-    auto const& air_mol_mass = MaterialLib::PhysicalConstant::MolarMass::Air;
 
     auto const local_matrix_size = local_x.size();
 
@@ -183,6 +180,15 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
 
         auto const& vapor_component = gas_phase.component("w");
         auto const& dry_air_component = gas_phase.component("a");
+
+        auto const water_mol_mass =
+            vapor_component
+                .property(MaterialPropertyLib::PropertyType::molar_mass)
+                .template value<double>(vars, pos, t, dt);
+        auto const air_mol_mass =
+            dry_air_component
+                .property(MaterialPropertyLib::PropertyType::molar_mass)
+                .template value<double>(vars, pos, t, dt);
 
         auto const density_water =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)

@@ -50,16 +50,13 @@ void checkMPLProperties(
         MaterialPropertyLib::PropertyType::viscosity};
 
     std::array const required_property_vapor_component = {
-        MaterialPropertyLib::specific_heat_capacity};
-
-    std::array const required_property_vapor_component = {
-        MaterialPropertyLib::diffusion};
-
-    std::array const required_property_vapor_component = {
+        MaterialPropertyLib::specific_heat_capacity,
+        MaterialPropertyLib::diffusion, MaterialPropertyLib::molar_mass,
         MaterialPropertyLib::specific_latent_heat};
 
     std::array const required_property_dry_air_component = {
-        MaterialPropertyLib::specific_heat_capacity};
+        MaterialPropertyLib::specific_heat_capacity,
+        MaterialPropertyLib::molar_mass};
 
     for (auto const& m : media)
     {
@@ -147,11 +144,9 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     checkMPLProperties(media);
     DBUG("Media properties verified.");
 
-    ThermalTwoPhaseFlowWithPPProcessData process_data{std::move(media_map),
-                                                      specific_body_force,
-                                                      has_gravity,
-                                                      mass_lumping,
-                                                      std::move(material)};
+    ThermalTwoPhaseFlowWithPPProcessData process_data{
+        std::move(media_map), specific_body_force, has_gravity, mass_lumping,
+        std::move(material)};
 
     return std::make_unique<ThermalTwoPhaseFlowWithPPProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,

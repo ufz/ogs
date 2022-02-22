@@ -108,6 +108,11 @@
                             <name>w</name>
                             <properties>
                                 <property>
+                                    <name>molar_mass</name>
+                                    <type>Constant</type>
+                                    <value>0.018016</value>
+                                </property>							
+                                <property>
                                     <name>diffusion</name>
                                     <type>Constant</type>
                                     <value>2.6e-6</value>
@@ -127,6 +132,11 @@
                         <component>
                             <name>a</name>
                             <properties>
+                                <property>
+                                    <name>molar_mass</name>
+                                    <type>Constant</type>
+                                    <value>0.02897</value>
+                                </property>							
                                 <property>
                                     <name>specific_heat_capacity</name>
                                     <type>Constant</type>
