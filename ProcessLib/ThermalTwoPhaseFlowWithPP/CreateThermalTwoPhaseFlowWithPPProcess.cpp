@@ -52,7 +52,8 @@ void checkMPLProperties(
     std::array const required_property_vapor_component = {
         MaterialPropertyLib::specific_heat_capacity,
         MaterialPropertyLib::diffusion, MaterialPropertyLib::molar_mass,
-        MaterialPropertyLib::specific_latent_heat};
+        MaterialPropertyLib::specific_latent_heat,
+        MaterialPropertyLib::vapour_pressure};
 
     std::array const required_property_dry_air_component = {
         MaterialPropertyLib::specific_heat_capacity,

@@ -127,6 +127,16 @@
                                     <type>Constant</type>
                                     <value>2258000</value>
                                 </property>
+                                <property>
+                                    <name>vapour_pressure</name>
+                                    <type>ClausiusClapeyron</type>
+                                    <triple_temperature>273.16</triple_temperature>
+                                    <triple_pressure>611.66</triple_pressure>
+                                    <critical_temperature>647.096</critical_temperature>
+                                    <critical_pressure>22.064e6</critical_pressure>
+                                    <reference_temperature>373.15</reference_temperature>
+                                    <reference_pressure>101325</reference_pressure>
+                                </property>								
                             </properties>
                         </component>
                         <component>

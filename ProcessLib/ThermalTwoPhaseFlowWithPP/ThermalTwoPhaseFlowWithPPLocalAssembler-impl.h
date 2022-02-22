@@ -138,6 +138,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
 
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
+    // clean-up
     auto const& two_phase_material_model =
         _process_data.material->getTwoPhaseMaterialModel();
     const int material_id =
@@ -193,6 +194,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         auto const density_water =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t, dt);
+        double const mol_density_water = density_water / water_mol_mass;
 
         double const Sw =
             medium.property(MaterialPropertyLib::PropertyType::saturation)
@@ -208,9 +210,42 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                     vars, MaterialPropertyLib::Variable::capillary_pressure,
                     pos, t, dt);
 
-        double const p_vapor_nonwet =
-            _process_data.material->calculateVaporPressureNonwet(
-                pc_int_pt, T_int_pt, density_water);
+        // specific latent heat of evaporation
+        double const latent_heat_evaporation =
+            vapor_component
+                .property(
+                    MaterialPropertyLib::PropertyType::specific_latent_heat)
+                .template value<double>(vars, pos, t, dt);
+
+        vars[static_cast<int>(
+            MaterialPropertyLib::Variable::enthalpy_of_evaporation)] =
+            latent_heat_evaporation;
+
+        // saturated vapor pressure
+        double const p_sat =
+            vapor_component
+                .property(MaterialPropertyLib::PropertyType::vapour_pressure)
+                .template value<double>(vars, pos, t, dt);
+        double const dp_sat_dT =
+            vapor_component
+                .property(MaterialPropertyLib::PropertyType::vapour_pressure)
+                .template dValue<double>(
+                    vars, MaterialPropertyLib::Variable::temperature, pos, t,
+                    dt);
+
+        // Kelvin-Laplace correction for menisci
+        double const K = std::exp(-pc_int_pt / mol_density_water /
+                                  ideal_gas_constant_times_T_int_pt);
+        double const dK_dT = pc_int_pt / mol_density_water /
+                             ideal_gas_constant_times_T_int_pt / T_int_pt * K;
+
+        // vapor pressure inside pore space (water partial pressure in gas
+        // phase)
+        double const p_vapor_nonwet = p_sat * K;
+        double const d_p_vapor_nonwet_d_T = dp_sat_dT * K + p_sat * dK_dT;
+        double const d_p_vapor_nonwet_d_pc =
+            p_vapor_nonwet *
+            (-1 / mol_density_water / ideal_gas_constant_times_T_int_pt);
         // partial pressure of gas component
         double const p_gas_nonwet = pg_int_pt - p_vapor_nonwet;
         // molar fraction of gas component in nonwet phase
@@ -223,16 +258,9 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             (x_gas_nonwet + x_vapor_nonwet * water_mol_mass / air_mol_mass);
         double const mol_density_nonwet =
             pg_int_pt / ideal_gas_constant_times_T_int_pt;
-        double const mol_density_water = density_water / water_mol_mass;
 
         double const d_mol_density_nonwet_d_pg =
             1 / ideal_gas_constant_times_T_int_pt;
-        double const d_p_vapor_nonwet_d_T =
-            _process_data.material->calculateDerivativedPgwdT(
-                pc_int_pt, T_int_pt, density_water);
-        double const d_p_vapor_nonwet_d_pc =
-            _process_data.material->calculateDerivativedPgwdPC(
-                pc_int_pt, T_int_pt, density_water);
         double const d_mol_density_nonwet_d_T =
             -pg_int_pt / ideal_gas_constant_times_T_int_pt / T_int_pt;
         double const d_x_gas_nonwet_d_pg =
@@ -251,9 +279,10 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                 .template value<double>(vars, pos, t, dt);
         // Derivative of nonwet phase density in terms of T
         double const d_density_nonwet_d_T =
-            _process_data.material->calculatedDensityNonwetdT(
-                p_gas_nonwet, p_vapor_nonwet, pc_int_pt, T_int_pt,
-                density_water);
+            -((p_gas_nonwet * air_mol_mass + p_vapor_nonwet * water_mol_mass) /
+              ideal_gas_constant_times_T_int_pt / T_int_pt) +
+            (water_mol_mass - air_mol_mass) * d_p_vapor_nonwet_d_T /
+                ideal_gas_constant_times_T_int_pt;
 
         _pressure_wetting[ip] = pg_int_pt - pc_int_pt;
         // heat capacity of nonwet phase
@@ -277,11 +306,6 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             solid_phase
                 .property(
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
-                .template value<double>(vars, pos, t, dt);
-        double const latent_heat_evaporation =
-            vapor_component
-                .property(
-                    MaterialPropertyLib::PropertyType::specific_latent_heat)
                 .template value<double>(vars, pos, t, dt);
 
         double const enthalpy_nonwet_gas =
