@@ -16,8 +16,6 @@
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
-#include "ProcessLib/ThermalTwoPhaseFlowWithPP/CreateThermalTwoPhaseFlowWithPPMaterialProperties.h"
-#include "ProcessLib/ThermalTwoPhaseFlowWithPP/ThermalTwoPhaseFlowWithPPMaterialProperties.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 #include "ThermalTwoPhaseFlowWithPPProcess.h"
 #include "ThermalTwoPhaseFlowWithPPProcessData.h"
@@ -130,30 +128,20 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__mass_lumping}
     auto mass_lumping = config.getConfigParameter<bool>("mass_lumping");
 
-    //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__material_property}
-    auto const& mat_config = config.getConfigSubtree("material_property");
-
-    std::unique_ptr<ThermalTwoPhaseFlowWithPPMaterialProperties> material =
-        createThermalTwoPhaseFlowWithPPMaterialProperties(
-            mat_config, materialIDs(mesh), parameters);
-
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
-    DBUG(
-        "Check the media properties of ThermalTwoPhaseFlowWithPP  process ...");
+    DBUG("Check the media properties of ThermalTwoPhaseFlowWithPP process ...");
     checkMPLProperties(media);
     DBUG("Media properties verified.");
 
     ThermalTwoPhaseFlowWithPPProcessData process_data{
-        std::move(media_map), specific_body_force, has_gravity, mass_lumping,
-        std::move(material)};
+        std::move(media_map), specific_body_force, has_gravity, mass_lumping};
 
     return std::make_unique<ThermalTwoPhaseFlowWithPPProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(process_data), std::move(secondary_variables), mat_config,
-        curves);
+        std::move(process_data), std::move(secondary_variables), curves);
 }
 
 }  // namespace ThermalTwoPhaseFlowWithPP

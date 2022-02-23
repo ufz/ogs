@@ -11,7 +11,6 @@
 #pragma once
 
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
-#include "ThermalTwoPhaseFlowWithPPMaterialProperties.h"
 
 namespace ProcessLib
 {
@@ -28,7 +27,6 @@ struct ThermalTwoPhaseFlowWithPPProcessData
 
     bool const has_gravity;
     bool const has_mass_lumping;
-    std::unique_ptr<ThermalTwoPhaseFlowWithPPMaterialProperties> material;
 };
 
 }  // namespace ThermalTwoPhaseFlowWithPP

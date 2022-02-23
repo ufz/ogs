@@ -31,14 +31,13 @@ template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType,
           typename NodalMatrixType>
 struct IntegrationPointData final
 {
-    explicit IntegrationPointData(
-        NodalRowVectorType const& N_, GlobalDimNodalMatrixType const& dNdx_,
-        ThermalTwoPhaseFlowWithPPMaterialProperties const& material_property_,
-        double const& integration_weight_, NodalMatrixType const mass_operator_,
-        NodalMatrixType const diffusion_operator_)
+    explicit IntegrationPointData(NodalRowVectorType const& N_,
+                                  GlobalDimNodalMatrixType const& dNdx_,
+                                  double const& integration_weight_,
+                                  NodalMatrixType const mass_operator_,
+                                  NodalMatrixType const diffusion_operator_)
         : N(N_),
           dNdx(dNdx_),
-          mat_property(material_property_),
           integration_weight(integration_weight_),
           mass_operator(mass_operator_),
           diffusion_operator(diffusion_operator_)
@@ -46,7 +45,6 @@ struct IntegrationPointData final
     }
     NodalRowVectorType const N;
     GlobalDimNodalMatrixType const dNdx;
-    ThermalTwoPhaseFlowWithPPMaterialProperties const& mat_property;
     double const integration_weight;
     NodalMatrixType const mass_operator;
     NodalMatrixType const diffusion_operator;
@@ -120,7 +118,7 @@ public:
             auto const& sm = shape_matrices[ip];
             const double integration_factor = sm.integralMeasure * sm.detJ;
             _ip_data.emplace_back(
-                sm.N, sm.dNdx, *_process_data.material,
+                sm.N, sm.dNdx,
                 sm.integralMeasure * sm.detJ *
                     _integration_method.getWeightedPoint(ip).getWeight(),
                 sm.N.transpose() * sm.N * integration_factor *
