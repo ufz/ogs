@@ -51,6 +51,28 @@ std::vector<std::pair<double, std::string>> readPvd(
     return timeseries;
 }
 
+template <typename T>
+bool copyPropertyVector(MeshLib::Properties const& properties,
+                        MeshLib::PropertyVectorBase* destination_pv)
+{
+    if (!dynamic_cast<MeshLib::PropertyVector<T>*>(destination_pv))
+    {
+        return false;
+    }
+
+    auto const* pv = properties.getPropertyVector<T>(
+        destination_pv->getPropertyName(), destination_pv->getMeshItemType(),
+        destination_pv->getNumberOfGlobalComponents());
+
+    assert(pv != nullptr);
+
+    std::copy(
+        std::begin(*pv), std::end(*pv),
+        std::begin(dynamic_cast<MeshLib::PropertyVector<T>&>(*destination_pv)));
+
+    return true;
+}
+
 int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
@@ -134,25 +156,20 @@ int main(int argc, char* argv[])
             OGS_FATAL("Could not read mesh from '{:s}'.",
                       BaseLib::joinPaths(pvd_file_dir, filename));
         }
-        auto const& properties = mesh->getProperties();
-        for (auto& [name, main_pv] : main_mesh->getProperties())
+        // We have to copy the values because the xdmf writer remembers the data
+        // pointers. Therefore replacing the properties will not work.
+        for (auto& [name, pv] : main_mesh->getProperties())
         {
-            if (!properties.existsPropertyVector<double>(
-                    main_pv->getPropertyName(), main_pv->getMeshItemType(),
-                    main_pv->getNumberOfGlobalComponents()))
+            if (copyPropertyVector<double>(mesh->getProperties(), pv) ||
+                copyPropertyVector<int>(mesh->getProperties(), pv) ||
+                copyPropertyVector<char>(mesh->getProperties(), pv))
             {
                 continue;
             }
-
-            auto const* pv = properties.getPropertyVector<double>(
-                main_pv->getPropertyName(), main_pv->getMeshItemType(),
-                main_pv->getNumberOfGlobalComponents());
-
-            assert(pv != nullptr);
-
-            std::copy(std::begin(*pv), std::end(*pv),
-                      std::begin(dynamic_cast<MeshLib::PropertyVector<double>&>(
-                          *main_pv)));
+            OGS_FATAL(
+                "Could not copy property vector '{:s}' from '{:s}' mesh to the "
+                "main_mesh.",
+                name, BaseLib::joinPaths(pvd_file_dir, filename));
         }
 
         mesh_xdmf_hdf_writer->writeStep(time);
