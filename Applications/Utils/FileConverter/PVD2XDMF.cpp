@@ -161,8 +161,14 @@ int main(int argc, char* argv[])
         for (auto& [name, pv] : main_mesh->getProperties())
         {
             if (copyPropertyVector<double>(mesh->getProperties(), pv) ||
+                copyPropertyVector<float>(mesh->getProperties(), pv) ||
                 copyPropertyVector<int>(mesh->getProperties(), pv) ||
-                copyPropertyVector<char>(mesh->getProperties(), pv))
+                copyPropertyVector<long>(mesh->getProperties(), pv) ||
+                copyPropertyVector<unsigned>(mesh->getProperties(), pv) ||
+                copyPropertyVector<unsigned long>(mesh->getProperties(), pv) ||
+                copyPropertyVector<std::size_t>(mesh->getProperties(), pv) ||
+                copyPropertyVector<char>(mesh->getProperties(), pv) ||
+                copyPropertyVector<unsigned char>(mesh->getProperties(), pv))
             {
                 continue;
             }
