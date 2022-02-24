@@ -47,7 +47,7 @@ void checkMPLProperties(
     std::array const required_property_gas_phase = {
         MaterialPropertyLib::PropertyType::viscosity};
 
-    std::array const required_property_vapor_component = {
+    std::array const required_property_vapour_component = {
         MaterialPropertyLib::specific_heat_capacity,
         MaterialPropertyLib::diffusion, MaterialPropertyLib::molar_mass,
         MaterialPropertyLib::specific_latent_heat,
@@ -69,7 +69,7 @@ void checkMPLProperties(
 
         // TODO (BM): should use index to identify components (same for impl.h)
         checkRequiredProperties(gas_phase.component("w"),
-                                required_property_vapor_component);
+                                required_property_vapour_component);
         checkRequiredProperties(gas_phase.component("a"),
                                 required_property_dry_air_component);
     }
