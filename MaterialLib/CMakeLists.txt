@@ -34,7 +34,6 @@ append_source_files(SOURCES PorousMedium/UnsaturatedProperty/CapillaryPressure)
 append_source_files(
     SOURCES PorousMedium/UnsaturatedProperty/RelativePermeability
 )
-append_source_files(SOURCES TwoPhaseModels)
 
 ogs_add_library(MaterialLib GENERATE_EXPORT_HEADER ${SOURCES})
 
