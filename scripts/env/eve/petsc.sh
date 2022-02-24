@@ -5,7 +5,10 @@ else
 fi
 
 source $DIR/mpi.sh
-module load petsc/3.12.4_maint_foss_2019b
+
+module load petsc/3.16.4_maint_foss_2020b
+module load HDF5/1.10.7
+
 echo -e "Note: If you want to run a simulation on the cluster be aware of the "\
      "mixed CPU architecture. There are Sandy-Bridge-based nodes (orte-28, "\
      "frontend2) as well as Skylake-based nodes (orte-40, frontend1)"\
