@@ -118,7 +118,8 @@ int main(int argc, char* argv[])
     // subsequent time step.
     std::unique_ptr<MeshLib::Mesh> main_mesh;
 
-    std::filesystem::path output_file_path{"/tmp/test.xdmf"};
+    std::filesystem::path const output_file_path{
+        BaseLib::dropFileExtension(pvd_file_arg.getValue()) + ".xdmf"};
     std::set<std::string> variable_output_names;
     std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;
     // read first file in the time series; it is determining variables.
