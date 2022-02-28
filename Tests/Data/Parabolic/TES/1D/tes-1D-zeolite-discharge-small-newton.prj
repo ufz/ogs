@@ -65,16 +65,8 @@
                     <t_end>     0.1 </t_end>
                     <timesteps>
                         <pair>
-                            <repeat> 10 </repeat>
+                            <repeat> 1 </repeat>
                             <delta_t> 0.001 </delta_t>
-                        </pair>
-                        <pair>
-                            <repeat> 10 </repeat>
-                            <delta_t> 0.002 </delta_t>
-                        </pair>
-                        <pair>
-                            <repeat> 12 </repeat>
-                            <delta_t> 0.005 </delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
