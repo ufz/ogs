@@ -612,8 +612,7 @@ MeshLib::Mesh* readData(std::ifstream& in,
         }
         else if (str[0] == "GEOLOGICAL_FEATURE" ||
                  str[0] == "GEOLOGICAL_TYPE" ||
-                 str[0] == "STRATIGRAPHIC_POSITION" ||
-                 str[0] == "REGION")
+                 str[0] == "STRATIGRAPHIC_POSITION" || str[0] == "REGION")
         {
             // geological and stratigraphic information - currently ignored
         }
