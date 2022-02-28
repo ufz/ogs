@@ -16,7 +16,7 @@
     "boost": "1.69.0",
     "eigen": "9441d94dccccd5db8d64179516fdc5b53994a047",
     "vtk": "8.2.0",
-    "petsc": "3.11.2",
+    "petsc": "3.16.3",
     "qt": "5.14.2",
     "python": "3.6",
     "snakemake": "5.27.4",
