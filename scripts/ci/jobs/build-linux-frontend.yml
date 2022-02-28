@@ -14,3 +14,20 @@ build linux frontend:
   before_script:
     - !reference [.template-build-linux, before_script]
     - source scripts/env/eve/cli.sh
+
+build linux frontend petsc:
+  extends:
+    - .template-build-linux
+    - .test-artifacts
+    - .rules-master-manual
+  tags:
+    - frontend2
+  needs: [meta]
+  allow_failure: true
+  variables:
+    CCACHE_DIR: "/data/ogs/.ccache"
+    CMAKE_PRESET: release-petsc
+    CMAKE_ARGS: "-DOGS_CPU_ARCHITECTURE=generic"
+  before_script:
+    - !reference [.template-build-linux, before_script]
+    - source scripts/env/eve/petsc.sh
