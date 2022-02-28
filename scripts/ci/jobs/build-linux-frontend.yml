@@ -10,9 +10,7 @@ build linux frontend:
   variables:
     CCACHE_DIR: "/data/ogs/.ccache"
     CMAKE_PRESET: release
-    CMAKE_ARGS: "-DOGS_USE_PYTHON=OFF -DOGS_CPU_ARCHITECTURE=generic"
+    CMAKE_ARGS: "-DOGS_CPU_ARCHITECTURE=generic"
   before_script:
     - !reference [.template-build-linux, before_script]
     - source scripts/env/eve/cli.sh
-    # For poetry dependencies
-    - module load Python/3.8.6
