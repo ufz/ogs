@@ -2,14 +2,18 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e0.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e2.prj)
     if(OGS_USE_EIGEN_UNSUPPORTED)
-        if(OGS_BUILD_CLI)
-            OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_IDRS.xml)
+        OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_IDRS.xml)
+        if(TEST ogs-Mechanics/Linear/square_1e2_IDRS)
             set_tests_properties(ogs-Mechanics/Linear/square_1e2_IDRS PROPERTIES
                 DEPENDS ogs-Mechanics/Linear/square_1e2) # Prevent race condition
-            OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_IDRSTABL.xml)
+        endif()
+        OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_IDRSTABL.xml)
+        if(TEST ogs-Mechanics/Linear/square_1e2_IDRSTABL)
             set_tests_properties(ogs-Mechanics/Linear/square_1e2_IDRSTABL PROPERTIES
                 DEPENDS ogs-Mechanics/Linear/square_1e2_IDRS) # Prevent race condition
-            OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_BiCGSTABL.xml)
+        endif()
+        OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_BiCGSTABL.xml)
+        if(TEST ogs-Mechanics/Linear/square_1e2_BiCGSTABL)
             set_tests_properties(ogs-Mechanics/Linear/square_1e2_BiCGSTABL PROPERTIES
                 DEPENDS ogs-Mechanics/Linear/square_1e2_IDRSTABL) # Prevent race condition
         endif()
@@ -20,8 +24,8 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_quad8_traction_top.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0.prj)
     if(OGS_USE_MKL)
-        if(OGS_BUILD_CLI)
-            OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0_mkl.xml)
+        OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0_mkl.xml)
+        if(TEST ogs-Mechanics/Linear/cube_1e0_mkl)
             set_tests_properties(ogs-Mechanics/Linear/cube_1e0_mkl PROPERTIES
                 DEPENDS ogs-Mechanics/Linear/cube_1e0) # Prevent race condition
         endif()
