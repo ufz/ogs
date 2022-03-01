@@ -123,6 +123,17 @@ function(AddTest)
         string(PREPEND AddTest_NAME "LARGE_")
     endif()
 
+    if(DEFINED OGS_EXCLUDE_CTESTS)
+        foreach(regexp ${OGS_EXCLUDE_CTESTS})
+            if("${AddTest_NAME}" MATCHES "${regexp}")
+                message(
+                    STATUS "Disabled by OGS_EXCLUDE_CTESTS: ${AddTest_NAME}"
+                )
+                return()
+            endif()
+        endforeach()
+    endif()
+
     # --- Implement wrappers ---
     # check if exe is part of build
     if(NOT TARGET ${AddTest_EXECUTABLE})

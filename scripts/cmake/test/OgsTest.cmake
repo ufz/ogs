@@ -38,6 +38,17 @@ function(OgsTest)
         string(APPEND OgsTest_NAME_WE "-LARGE")
     endif()
 
+    if(DEFINED OGS_EXCLUDE_CTESTS)
+        foreach(regexp ${OGS_EXCLUDE_CTESTS})
+            if("${OgsTest_NAME}" MATCHES "${regexp}")
+                message(
+                    STATUS "Disabled by OGS_EXCLUDE_CTESTS: ${OgsTest_NAME}"
+                )
+                return()
+            endif()
+        endforeach()
+    endif()
+
     set(OgsTest_SOURCE_DIR "${Data_SOURCE_DIR}/${OgsTest_DIR}")
     set(OgsTest_BINARY_DIR "${Data_BINARY_DIR}/${OgsTest_DIR}")
     file(MAKE_DIRECTORY ${OgsTest_BINARY_DIR})
