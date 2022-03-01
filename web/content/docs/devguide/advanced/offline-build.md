@@ -29,7 +29,7 @@ On the [cpm package page](https://gitlab.opengeosys.org/ogs/ogs/-/packages/1) do
 Unarchive the cpm cache into a directory. Configure OGS as usual but point to the extracted cpm cache:
 
 ```bash
-cmake -S . --preset release -DCPM_SOURCE_DIR=./path/to/cpm
+cmake --preset release -DCPM_SOURCE_DIR=./path/to/cpm
 ```
 
 There will be some CMake warnings from CPM regarding missing git repositories in the cache. You can ignore them.
@@ -48,5 +48,5 @@ On the [external dependencies package page](https://gitlab.opengeosys.org/ogs/og
 Unarchive the external dependencies cache into a directory. Configure OGS as usual but point to the extracted external dependencies cache:
 
 ```bash
-cmake -S . --preset release -DOGS_EXTERNAL_DEPENDENCIES_CACHE=./path/to/ext
+cmake --preset release -DOGS_EXTERNAL_DEPENDENCIES_CACHE=./path/to/ext
 ```

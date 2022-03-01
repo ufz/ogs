@@ -41,11 +41,11 @@ We provide CMake configuration presets defined in [CMakePresets.json](https://gi
 
 ### Configure with a preset
 
-In the source directory run `cmake`:
+In the source directory run `cmake` with a preset:
 
 ```bash
-# Usage: cmake -S [path-to-source] --preset=[preset-name]
-cmake -S . --preset release
+# Usage: cmake --preset=[preset-name]
+cmake --preset release
 ```
 
 This will create a build-directory outside the source tree (`../build/release`) with the default CMake options and the Release configuration.
@@ -93,7 +93,7 @@ You can create a `CMakeUserPresets.json` file in the root source directory with 
 To use the Ninja build tool you need to configure in the Visual Studio command line. In the Start menu under *Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}* you find a application link to *x64 Native Tools Command Prompt for VS {{< dataFile "versions.minimum_version.msvc.year" >}}*. This starts a command line setup for Visual Studio 64-bit. Now you can use a Ninja preset:
 
 ```bash
-cmake -S . --preset=release
+cmake --preset=release
 ```
 
 #### <i class="far fa-exclamation-triangle"></i> Multi-configuration with Conan and Visual Studio
@@ -101,8 +101,8 @@ cmake -S . --preset=release
 With Conan one build directory corresponds to one configuration. If you want to have e.g. a release and a debug build you need to create two build directories. This is nothing new to Linux / GCC user but differs to Visual Studios default behavior having just one build-folder / project with different configurations. A typical Visual Studio setup with both Release and Debug configs would be initialized as follows:
 
 ```bash
-cmake -S . --preset=msvc-release
-cmake -S . --preset=msvc-debug
+cmake --preset=msvc-release
+cmake --preset=msvc-debug
 ```
 
 Please also note that in Visual Studio you have to choose the correct configuration (i.e. when opening the solution-file in the release-folder you have to switch the Visual Studio configuration to **Release**)!
@@ -151,7 +151,7 @@ CMake comes with a graphical tool called **cmake-gui**. You can find it in the *
 A more convenient way of running cmake on the command line is to use the `ccmake` tool. This is a shell tool but with some graphical user interface. To use it just run `ccmake` instead of `cmake`:
 
 ```bash
-ccmake -S . --preset=release
+ccmake --preset=release
 ```
 
 First press <kbd>C</kbd> to **Configure**. You are now presented the available configuration options. You can navigate in the list with the cursor keys and toggle / alter options with <kbd>Enter</kbd>. You may also press <kbd>T</kbd> to toggle (previously hidden) advanced options. Press <kbd>C</kbd> again until the **Generate**-option becomes visible. Press <kbd>G</kbd> to generate the project files and exit `ccmake`.

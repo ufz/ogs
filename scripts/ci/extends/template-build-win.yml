@@ -15,7 +15,7 @@
     - mkdir build
     # Create symlink https://stackoverflow.com/a/34905638/80480
     - cmd /c mklink /D build\$env:CMAKE_PRESET $env:CI_PROJECT_DIR\$build_directory_full
-    - $cmake_cmd = "cmake -S . --preset=$env:CMAKE_PRESET -Wno-dev $env:CMAKE_ARGS"
+    - $cmake_cmd = "cmake --preset=$env:CMAKE_PRESET -Wno-dev $env:CMAKE_ARGS"
     - $cmake_cmd
     - Invoke-Expression $cmake_cmd
     - cmake --build --preset=$env:CMAKE_PRESET --target package | Tee-Object -FilePath $log_file
