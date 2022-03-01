@@ -14,3 +14,4 @@ module load Ninja/1.10.1
 # Tools
 module load ccache/3.3.3
 module load git-lfs
+module load Python/3.8.6

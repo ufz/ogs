@@ -10,9 +10,25 @@ build linux frontend:
   variables:
     CCACHE_DIR: "/data/ogs/.ccache"
     CMAKE_PRESET: release
-    CMAKE_ARGS: "-DOGS_USE_PYTHON=OFF -DOGS_CPU_ARCHITECTURE=generic"
+    # pip installed modules segfault
+    CMAKE_ARGS: "-DOGS_CPU_ARCHITECTURE=generic -DOGS_EXCLUDE_CTESTS=HeatTransportBHE_"
   before_script:
     - !reference [.template-build-linux, before_script]
     - source scripts/env/eve/cli.sh
-    # For poetry dependencies
-    - module load Python/3.8.6
+
+build linux frontend petsc:
+  extends:
+    - .template-build-linux
+    - .test-artifacts
+    - .rules-master-manual
+  tags:
+    - frontend2
+  needs: [meta]
+  allow_failure: true
+  variables:
+    CCACHE_DIR: "/data/ogs/.ccache"
+    CMAKE_PRESET: release-petsc
+    CMAKE_ARGS: "-DOGS_CPU_ARCHITECTURE=generic"
+  before_script:
+    - !reference [.template-build-linux, before_script]
+    - source scripts/env/eve/petsc.sh

@@ -52,6 +52,17 @@ function(MeshTest)
         set(MeshTest_WORKING_DIRECTORY ${MeshTest_BINARY_PATH})
     endif()
 
+    if(DEFINED OGS_EXCLUDE_CTESTS)
+        foreach(regexp ${OGS_EXCLUDE_CTESTS})
+            if("${MeshTest_NAME}" MATCHES "${regexp}")
+                message(
+                    STATUS "Disabled by OGS_EXCLUDE_CTESTS: ${MeshTest_NAME}"
+                )
+                return()
+            endif()
+        endforeach()
+    endif()
+
     # --- Implement wrappers ---
     # check requirements, disable if not met
     if(${MeshTest_REQUIREMENTS})
@@ -190,8 +201,7 @@ function(MeshTest)
             "-DFILES_TO_DELETE=${FILES_TO_DELETE}"
             -DSTDOUT_FILE_PATH=${MeshTest_STDOUT_FILE_PATH}
             -DWORKING_DIRECTORY=${MeshTest_WORKING_DIRECTORY}
-            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME}.log
-            -P
+            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME}.log -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
     current_dir_as_list(ProcessLib labels)
@@ -200,15 +210,10 @@ function(MeshTest)
     else()
         list(APPEND labels large)
     endif()
-    set_tests_properties(${TEST_NAME}
-        PROPERTIES
-            COST ${MeshTest_RUNTIME}
-            LABELS "meshtest;${labels}"
+    set_tests_properties(
+        ${TEST_NAME} PROPERTIES COST ${MeshTest_RUNTIME} LABELS
+                                "meshtest;${labels}"
     )
-    # Disabled for the moment, does not work with CI under load
-    # if(NOT OGS_COVERAGE)
-    #     set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT ${timeout})
-    # endif()
 
     if(TARGET ${MeshTest_EXECUTABLE})
         add_dependencies(ctest ${MeshTest_EXECUTABLE})
@@ -230,16 +235,14 @@ function(MeshTest)
             -DVTKJS_OUTPUT_PATH=${PROJECT_SOURCE_DIR}/web/static/vis/${MeshTest_PATH}
             "-DVIS_FILES=${MeshTest_VIS}"
             -DLOG_FILE_BASE=${PROJECT_BINARY_DIR}/logs/${TESTER_NAME}
-            -DGLOB_MODE=${GLOB_MODE}
-            -P
+            -DGLOB_MODE=${GLOB_MODE} -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
             --debug-output
         WORKING_DIRECTORY ${MeshTest_SOURCE_PATH}
     )
-    set_tests_properties(${TESTER_NAME}
-        PROPERTIES
-            DEPENDS ${TEST_NAME}
-            LABELS "tester;${labels}"
+    set_tests_properties(
+        ${TESTER_NAME} PROPERTIES DEPENDS ${TEST_NAME} LABELS
+                                  "tester;${labels}"
     )
 
 endfunction()
