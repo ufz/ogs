@@ -44,7 +44,7 @@ ctest --preset release -j 6 --label-regex Utils # run 6 tests in parallel which 
 **To sum up:** from a clean source directory you can fully configure, build and test ogs with these 3 commands:
 
 ```bash
-cmake -S . --preset release
+cmake --preset release
 cmake --build --preset release
 ctest --preset release
 ```
