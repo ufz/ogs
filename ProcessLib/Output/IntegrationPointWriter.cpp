@@ -105,11 +105,10 @@ void addIntegrationPointDataToMesh(
     }
 }
 
-IntegrationPointMetaData getIntegrationPointMetaData(MeshLib::Mesh const& mesh,
-                                                     std::string const& name)
+IntegrationPointMetaData getIntegrationPointMetaData(
+    MeshLib::Properties const& properties, std::string const& name)
 {
-    if (!mesh.getProperties().existsPropertyVector<char>(
-            "IntegrationPointMetaData"))
+    if (!properties.existsPropertyVector<char>("IntegrationPointMetaData"))
     {
         OGS_FATAL(
             "Integration point data '{:s}' is present in the vtk field data "
@@ -118,7 +117,7 @@ IntegrationPointMetaData getIntegrationPointMetaData(MeshLib::Mesh const& mesh,
             name);
     }
     auto const& mesh_property_ip_meta_data =
-        *mesh.getProperties().template getPropertyVector<char>(
+        *properties.template getPropertyVector<char>(
             "IntegrationPointMetaData");
 
     if (mesh_property_ip_meta_data.getMeshItemType() !=

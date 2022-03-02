@@ -298,7 +298,8 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
             continue;
         }
 
-        auto const ip_meta_data = getIntegrationPointMetaData(mesh, name);
+        auto const ip_meta_data =
+            getIntegrationPointMetaData(mesh.getProperties(), name);
 
         // Check the number of components.
         if (ip_meta_data.n_components !=
