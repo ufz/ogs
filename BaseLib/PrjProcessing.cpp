@@ -16,6 +16,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <regex>
 
 #include "Error.h"
 #include "FileTools.h"
@@ -74,9 +75,14 @@ void traverseIncludes(xmlDoc* doc, xmlNode* node,
             buffer << input_stream.rdbuf();
             const std::string xml = buffer.str();
 
+            // Replace lines containing <?xml ... ?>
+            std::regex xmlDeclaration("<\\?xml.*?>");
+            const std::string xml_filtered =
+                std::regex_replace(xml, xmlDeclaration, "");
+
             xmlNodePtr pNewNode = nullptr;
-            xmlParseInNodeContext(cur_node->parent, xml.c_str(),
-                                  (int)xml.length(), 0, &pNewNode);
+            xmlParseInNodeContext(cur_node->parent, xml_filtered.c_str(),
+                                  (int)xml_filtered.length(), 0, &pNewNode);
             if (pNewNode != nullptr)
             {
                 // add new xml node to parent
