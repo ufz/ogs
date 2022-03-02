@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <process>
     <name>SteadyStateDiffusion</name>
     <type>STEADY_STATE_DIFFUSION</type>
