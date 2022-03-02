@@ -433,7 +433,7 @@ if(VTK_ADDED AND OPENMP_FOUND AND TARGET vtkFiltersStatistics)
 endif()
 # end VTK ###
 
-if(OGS_BUILD_TESTING)
+if(OGS_BUILD_TESTING OR OGS_BUILD_UTILS)
     CPMAddPackage(
         NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
         GIT_TAG f0183a5e173dfa25d1e41c47bc919296a1991093
