@@ -29,11 +29,12 @@ namespace ProcessLib
 namespace ThermalTwoPhaseFlowWithPP
 {
 /**
- * \brief A class to simulate the nonisothermal two-phase flow process
- * with phase change phenomena between wetting phase and nonwetting phase in
- * porous media. Note that the phase change here can be caused by evaporation,
- * or by condensation, or by dissolution. The phase appearance and vanish
- * are also taken into account.
+ * \brief A class to simulate the nonisothermal two-phase flow process with
+ * phase change in porous media. Here the phase change is caused by
+ * evaporation/condensation of the heavy component in the liquid phase.
+ * Currently only the liquid phase is allowed to disappear due to the assumption
+ * of a pure liquid phase. For the formulation of non-isothermal material
+ * properties, see \cite Class_2002.
  */
 class ThermalTwoPhaseFlowWithPPProcess final : public Process
 {
