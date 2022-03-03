@@ -564,7 +564,6 @@ AddTest(
 )
 if (OGS_USE_PYTHON)
     # same but using Python BCs
-    # TODO are output file name the same as above? Will they be overwritten during the CI run?
     AddTest(
         NAME MonolithicInjectionProduction1DPython
         PATH HydroMechanics/StaggeredScheme/InjectionProduction1D
@@ -601,7 +600,6 @@ AddTest(
 )
 if (OGS_USE_PYTHON)
     # same but using Python BCs
-    # TODO are output file name the same as above? Will they be overwritten during the CI run?
     AddTest(
         NAME StaggeredInjectionProduction1DPython
         PATH HydroMechanics/StaggeredScheme/InjectionProduction1D
