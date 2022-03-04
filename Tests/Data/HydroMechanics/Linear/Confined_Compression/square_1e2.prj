@@ -289,7 +289,7 @@
         </vtkdiff>
         <vtkdiff>
             <regex>square_1e2_ts_.*.vtu</regex>
-            <field>HydraulicFlow</field>
+            <field>MassFlowRate</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
