@@ -14,6 +14,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Hex.h"
 #include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Prism.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
@@ -93,6 +94,52 @@ std::unique_ptr<MeshLib::Quad9> convertLinearToQuadratic<MeshLib::Quad9>(
     return std::make_unique<MeshLib::Quad9>(nodes, e.getID());
 }
 
+/// Special case for Prism15
+template <>
+std::unique_ptr<MeshLib::Prism15> convertLinearToQuadratic<MeshLib::Prism15>(
+    MeshLib::Element const& e)
+{
+    int const n_all_nodes = MeshLib::Prism15::n_all_nodes;
+    int const n_base_nodes = MeshLib::Prism15::n_base_nodes;
+    assert(n_base_nodes == e.getNumberOfBaseNodes());
+
+    // Copy base nodes of element to the quadratic element new nodes'.
+    std::array<MeshLib::Node*, n_all_nodes> nodes{};
+    for (int i = 0; i < n_base_nodes; i++)
+    {
+        nodes[i] = const_cast<MeshLib::Node*>(e.getNode(i));
+    }
+
+    // For each edge create a middle node.
+    int const number_of_edges = e.getNumberOfEdges();
+    for (int i = 0; i < 3; i++)
+    {
+        auto const& a = *e.getEdgeNode(i, 0);
+        auto const& b = *e.getEdgeNode(i, 1);
+
+        nodes[n_base_nodes + i] = new MeshLib::Node(
+            (a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2);
+    }
+    for (int i = 3; i < 6; i++)
+    {
+        auto const& a = *e.getEdgeNode(i + 3, 0);
+        auto const& b = *e.getEdgeNode(i + 3, 1);
+
+        nodes[n_base_nodes + i] = new MeshLib::Node(
+            (a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2);
+    }
+    for (int i = 6; i < number_of_edges; i++)
+    {
+        auto const& a = *e.getEdgeNode(i - 3, 0);
+        auto const& b = *e.getEdgeNode(i - 3, 1);
+
+        nodes[n_base_nodes + i] = new MeshLib::Node(
+            (a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2);
+    }
+
+    return std::make_unique<MeshLib::Prism15>(nodes, e.getID());
+}
+
 /// Return a new quadratic element corresponding to the linear element's type.
 std::unique_ptr<MeshLib::Element> createQuadraticElement(
     MeshLib::Element const& e, bool const add_centre_node)
@@ -120,6 +167,10 @@ std::unique_ptr<MeshLib::Element> createQuadraticElement(
     if (e.getCellType() == MeshLib::CellType::HEX8)
     {
         return convertLinearToQuadratic<MeshLib::Hex20>(e);
+    }
+    if (e.getCellType() == MeshLib::CellType::PRISM6)
+    {
+        return convertLinearToQuadratic<MeshLib::Prism15>(e);
     }
 
     OGS_FATAL("Mesh element type {:s} is not supported",
