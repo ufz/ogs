@@ -24,7 +24,7 @@ if(OGS_USE_MFRONT)
     endif()
     if(NOT MFRONT)
         BuildExternalProject(
-            TFEL ${_tfel_source}
+            TFEL ${_tfel_source} ${_install_dir}
             CMAKE_ARGS -DCMAKE_INSTALL_RPATH=<INSTALL_DIR>/lib
                        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
         )
@@ -32,7 +32,11 @@ if(OGS_USE_MFRONT)
             STATUS
                 "ExternalProject_Add(): added package TFEL@rliv-${ogs.minimum_version.tfel-rliv}"
         )
-        set(TFELHOME ${PROJECT_BINARY_DIR}/_ext/TFEL CACHE PATH "")
+        if(OGS_INSTALL_EXTERNAL_DEPENDENCIES)
+            set(TFELHOME ${CMAKE_INSTALL_PREFIX} CACHE PATH "" FORCE)
+        else()
+            set(TFELHOME ${PROJECT_BINARY_DIR}/_ext/TFEL CACHE PATH "" FORCE)
+        endif()
     endif()
     list(APPEND CMAKE_INSTALL_RPATH ${TFELHOME}/lib)
 endif()
