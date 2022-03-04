@@ -370,50 +370,36 @@ if(OGS_USE_CVODE)
 endif()
 
 # VTK ###
-set(VTK_COMPONENTS vtkIOXML vtkIOLegacy)
-if(OGS_BUILD_GUI)
-    list(
-        APPEND
-        VTK_COMPONENTS
-        vtkIOExport
-        vtkImagingCore
-        vtkInteractionStyle
-        vtkInteractionWidgets
-        vtkGUISupportQt
-        vtkRenderingOpenGL2
-        vtkRenderingContextOpenGL2
-        vtkFiltersTexture
-        vtkRenderingAnnotation
-        vtkRenderingCore
-    )
-    if(OGS_BUILD_UTILS)
-        list(APPEND VTK_COMPONENTS vtkFiltersParallel)
+unset(VTK_OPTIONS)
+foreach(option_index ${ogs.libraries.vtk.options})
+    if(${ogs.libraries.vtk.options_${option_index}.condition})
+        foreach(cmake_index ${ogs.libraries.vtk.options_${option_index}.cmake})
+            string(
+                REPLACE
+                    "="
+                    " "
+                    cmake_option
+                    "${ogs.libraries.vtk.options_${option_index}.cmake_${cmake_index}}"
+            )
+            list(APPEND VTK_OPTIONS ${cmake_option})
+        endforeach()
+
     endif()
-endif()
-if(OGS_USE_MPI)
-    list(APPEND VTK_COMPONENTS vtkIOParallelXML vtkParallelMPI)
-endif()
+endforeach()
+
 # TODO: if(OGS_INSITU) find_package(ParaView REQUIRED) end()
+unset(VTK_COMPONENTS)
+foreach(opt ${VTK_OPTIONS})
+    if("${opt}" MATCHES "^Module_(.*) ON")
+        list(APPEND VTK_COMPONENTS ${CMAKE_MATCH_1})
+    endif()
+endforeach()
 find_package(VTK ${ogs.minimum_version.vtk} QUIET COMPONENTS ${VTK_COMPONENTS})
 
 if(VTK_FOUND)
     include(${VTK_USE_FILE})
 else()
-    list(
-        APPEND
-        VTK_OPTIONS
-        "BUILD_SHARED_LIBS OFF"
-        "BUILD_TESTING OFF"
-        "VTK_BUILD_EXAMPLES OFF"
-        "VTK_BUILD_TESTING OFF"
-        "VTK_ENABLE_WRAPPING OFF"
-        "VTK_Group_Rendering OFF"
-        "VTK_Group_StandAlone OFF"
-        "VTK_USE_64BIT_IDS ON"
-    )
-    foreach(comp ${VTK_COMPONENTS})
-        list(APPEND VTK_OPTIONS "Module_${comp} ON")
-    endforeach()
+    list(APPEND VTK_OPTIONS "BUILD_SHARED_LIBS OFF")
 
     # Workaround for configuration error in [vtk]/CMake/vtkGroups.cmake:43
     set(VTK_Group_Rendering OFF CACHE BOOL "")

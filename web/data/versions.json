@@ -49,5 +49,48 @@
   },
   "ext": {
     "cache_hash": "2887a47993a6288fbfa2594a6c19cffb442b8130"
+  },
+  "libraries": {
+    "vtk": {
+      "options": [
+        {
+          "condition": "1",
+          "cmake": [
+            "VTK_Group_Rendering=OFF",
+            "VTK_Group_StandAlone=OFF",
+            "BUILD_TESTING=OFF",
+            "VTK_BUILD_EXAMPLES=OFF",
+            "VTK_BUILD_TESTING=OFF",
+            "VTK_ENABLE_WRAPPING=OFF",
+            "VTK_USE_64BIT_IDS=ON",
+            "Module_vtkIOXML=ON",
+            "Module_vtkIOLegacy=ON"
+          ]
+        },
+        {
+          "condition": "OGS_USE_MPI",
+          "cmake": [
+            "Module_vtkIOParallelXML=ON",
+            "Module_vtkParallelMPI=ON"
+          ]
+        },
+        {
+          "condition": "OGS_BUILD_GUI",
+          "cmake": [
+            "Module_vtkIOExport=ON",
+            "Module_vtkImagingCore=ON",
+            "Module_vtkInteractionStyle=ON",
+            "Module_vtkInteractionWidgets=ON",
+            "Module_vtkGUISupportQt=ON",
+            "Module_vtkRenderingOpenGL2=ON",
+            "Module_vtkRenderingContextOpenGL2=ON",
+            "Module_vtkFiltersTexture=ON",
+            "Module_vtkRenderingAnnotation=ON",
+            "Module_vtkRenderingCore=ON",
+            "Module_vtkFiltersParallel=ON"
+          ]
+        }
+      ]
+    }
   }
 }
