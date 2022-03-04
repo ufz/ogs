@@ -6,6 +6,10 @@ set(OGS_EXTERNAL_DEPENDENCIES_CACHE ""
     CACHE PATH "Directory containing source archives of external dependencies."
 )
 
+if(OGS_INSTALL_EXTERNAL_DEPENDENCIES)
+    set(_install_dir INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
+endif()
+
 if(OGS_USE_MFRONT)
     set(_tfel_source GIT_REPOSITORY https://github.com/thelfer/tfel.git GIT_TAG
                      rliv-${ogs.minimum_version.tfel-rliv}
@@ -66,9 +70,6 @@ if(OGS_USE_PETSC)
         if(ENV{CXX})
             list(APPEND _configure_opts --with-cxx=$ENV{CXX})
         endif()
-        if(OGS_INSTALL_PETSC)
-            set(_petsc_install_dir INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
-        endif()
 
         unset(ENV{PETSC_DIR})
         BuildExternalProject(
@@ -80,13 +81,13 @@ if(OGS_USE_PETSC)
                 ${OGS_PETSC_CONFIG_OPTIONS}
             BUILD_IN_SOURCE ON
             BUILD_COMMAND make -j all
-            INSTALL_COMMAND make -j install ${_petsc_install_dir}
+            INSTALL_COMMAND make -j install ${_install_dir}
         )
         message(
             STATUS
                 "ExternalProject_Add(): added package PETSc@${ogs.minimum_version.petsc}"
         )
-        if(OGS_INSTALL_PETSC)
+        if(OGS_INSTALL_EXTERNAL_DEPENDENCIES)
             set(PETSC_DIR ${CMAKE_INSTALL_PREFIX} CACHE PATH "" FORCE)
         else()
             set(PETSC_DIR ${PROJECT_BINARY_DIR}/_ext/PETSc CACHE PATH "" FORCE)

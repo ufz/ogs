@@ -52,9 +52,10 @@ endif()
 set(OGS_PETSC_CONFIG_OPTIONS "" CACHE STRING
                                       "Additional PETSc configuration options."
 )
-cmake_dependent_option(
-    OGS_INSTALL_PETSC "Install CPM petsc into CMAKE_INSTALL_PREFIX?" OFF
-    OGS_USE_PETSC OFF
+option(
+    OGS_INSTALL_EXTERNAL_DEPENDENCIES
+    "Should the external dependencies (TFEL, PETSc, LIS) be installed? Set CMAKE_INSTALL_PREFIX as well!"
+    OFF
 )
 option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
 option(OGS_BUILD_UTILS "Should the utilities programs be built?" ON)
