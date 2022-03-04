@@ -104,35 +104,9 @@ public:
                        std::vector<GlobalVector*> const&)>
                        getFlux) override
     {
-        auto get_surface_normal =
-            [this, &bulk_mesh](
-                MeshLib::Element const& surface_element) -> Eigen::Vector3d {
-            Eigen::Vector3d surface_element_normal;
-            if (surface_element.getGeomType() == MeshLib::MeshElemType::LINE)
-            {
-                auto const bulk_normal = MeshLib::FaceRule::getSurfaceNormal(
-                    *bulk_mesh.getElements()[_bulk_element_id]);
-                auto const l0 = Eigen::Map<Eigen::Vector3d const>(
-                    _surface_element.getNode(0)->getCoords());
-                auto const l1 = Eigen::Map<Eigen::Vector3d const>(
-                    _surface_element.getNode(1)->getCoords());
-                Eigen::Vector3d const line = l1 - l0;
-                surface_element_normal = line.cross(bulk_normal);
-            }
-            else
-            {
-                surface_element_normal =
-                    MeshLib::FaceRule::getSurfaceNormal(surface_element);
-            }
-            surface_element_normal.normalize();
-            // At the moment (2016-09-28) the surface normal is not oriented
-            // according to the right hand rule. Thus for an intuitive flux
-            // output, i.e., inflow has positive sign, outflow has negative
-            // sign, the normal must not be multiplied by -1.
-            return surface_element_normal;
-        };
+        auto const& bulk_element = *bulk_mesh.getElement(_bulk_element_id);
         auto const surface_element_normal =
-            get_surface_normal(_surface_element);
+            getSurfaceNormal(_surface_element, bulk_element);
 
         double element_area = 0.0;
         std::size_t const n_integration_points =
@@ -144,8 +118,8 @@ public:
         {
             auto const& wp = _integration_method.getWeightedPoint(ip);
 
-            auto const bulk_element_point = MeshLib::getBulkElementPoint(
-                bulk_mesh, _bulk_element_id, _bulk_face_id, wp);
+            auto const bulk_element_point =
+                MeshLib::getBulkElementPoint(bulk_element, _bulk_face_id, wp);
             auto const bulk_flux =
                 getFlux(_bulk_element_id, bulk_element_point, t, x);
             for (int component_id(0);
@@ -174,6 +148,36 @@ public:
     }
 
 private:
+    static Eigen::Vector3d getSurfaceNormal(
+        MeshLib::Element const& surface_element,
+        MeshLib::Element const& bulk_element)
+    {
+        Eigen::Vector3d surface_element_normal;
+
+        if (surface_element.getGeomType() == MeshLib::MeshElemType::LINE)
+        {
+            auto const bulk_normal =
+                MeshLib::FaceRule::getSurfaceNormal(bulk_element);
+            auto const l0 = Eigen::Map<Eigen::Vector3d const>(
+                surface_element.getNode(0)->getCoords());
+            auto const l1 = Eigen::Map<Eigen::Vector3d const>(
+                surface_element.getNode(1)->getCoords());
+            Eigen::Vector3d const line = l1 - l0;
+            surface_element_normal = line.cross(bulk_normal);
+        }
+        else
+        {
+            surface_element_normal =
+                MeshLib::FaceRule::getSurfaceNormal(surface_element);
+        }
+        surface_element_normal.normalize();
+        // At the moment (2016-09-28) the surface normal is not oriented
+        // according to the right hand rule. Thus for an intuitive flux
+        // output, i.e., inflow has positive sign, outflow has negative
+        // sign, the normal must not be multiplied by -1.
+        return surface_element_normal;
+    };
+
     MeshLib::Element const& _surface_element;
 
     std::vector<double> _detJ_times_integralMeasure;
