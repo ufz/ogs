@@ -372,7 +372,7 @@ endif()
 # VTK ###
 unset(VTK_OPTIONS)
 foreach(option_index ${ogs.libraries.vtk.options})
-    if(${ogs.libraries.vtk.options_${option_index}.condition})
+    if(${ogs.libraries.vtk.options_${option_index}.condition.cmake})
         foreach(cmake_index ${ogs.libraries.vtk.options_${option_index}.cmake})
             string(
                 REPLACE
