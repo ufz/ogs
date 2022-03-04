@@ -45,7 +45,7 @@ LiquidFlowProcess::LiquidFlowProcess(
     DBUG("Create Liquid flow process.");
 
     _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "HydraulicFlow", MeshLib::MeshItemType::Node, 1);
+        mesh, "VolumetricFlowRate", MeshLib::MeshItemType::Node, 1);
 }
 
 void LiquidFlowProcess::initializeConcreteProcess(

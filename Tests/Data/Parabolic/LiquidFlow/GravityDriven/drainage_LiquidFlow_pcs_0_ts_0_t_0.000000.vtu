@@ -6,7 +6,7 @@
     </FieldData>
     <Piece NumberOfPoints="4056"                 NumberOfCells="7840"                >
       <PointData>
-        <DataArray type="Float64" Name="HydraulicFlow" format="appended" RangeMin="0"                    RangeMax="0"                    offset="84"                  />
+        <DataArray type="Float64" Name="VolumetricFlowRate" format="appended" RangeMin="0"                    RangeMax="0"                    offset="84"                  />
         <DataArray type="Float64" Name="pressure" format="appended" RangeMin="0"                    RangeMax="0"                    offset="200"                 />
         <DataArray type="Float64" Name="v" NumberOfComponents="2" format="appended" RangeMin="9.81e-06"             RangeMax="9.81e-06"             offset="316"                 />
       </PointData>
