@@ -172,6 +172,8 @@ private:
 
     std::unique_ptr<ChemistryLib::ChemicalSolverInterface>
         _chemical_solver_interface;
+
+    MeshLib::PropertyVector<double>* _molar_flow_rate = nullptr;
 };
 
 }  // namespace ComponentTransport

@@ -186,6 +186,12 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
+    virtual std::vector<double> const& getIntPtMolarFlux(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const = 0;
+
 private:
     virtual void initializeChemicalSystemConcrete(
         Eigen::VectorXd const& /*local_x*/, double const /*t*/) = 0;
@@ -1622,6 +1628,115 @@ public:
             _process_data.chemical_solver_interface->computeSecondaryVariable(
                 ele_id, chemical_system_indices);
         }
+    }
+
+    std::vector<double> const& getIntPtMolarFlux(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
+        std::vector<double>& cache) const override
+    {
+        std::vector<double> local_x_vec;
+
+        auto const n_processes = x.size();
+        for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
+        {
+            auto const indices =
+                NumLib::getIndices(_element.getID(), *dof_tables[process_id]);
+            assert(!indices.empty());
+            auto const local_solution = x[process_id]->get(indices);
+            local_x_vec.insert(std::end(local_x_vec),
+                               std::begin(local_solution),
+                               std::end(local_solution));
+        }
+        auto const local_x = MathLib::toVector(local_x_vec);
+
+        auto const p = local_x.template segment<pressure_size>(pressure_index);
+        auto const c = local_x.template segment<concentration_size>(
+            first_concentration_index);
+
+        auto const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        cache.clear();
+        auto cache_mat = MathLib::createZeroedMatrix<
+            Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, GlobalDim, n_integration_points);
+
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        auto const& b = _process_data.specific_body_force;
+
+        MaterialPropertyLib::VariableArray vars;
+
+        GlobalDimMatrixType const& I(
+            GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
+
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
+        auto const& phase = medium.phase("AqueousLiquid");
+
+        int const component_id = 0;
+        auto const& component = phase.component(
+            _transport_process_variables[component_id].get().getName());
+
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            auto const& ip_data = _ip_data[ip];
+            auto const& N = ip_data.N;
+            auto const& dNdx = ip_data.dNdx;
+            auto const& phi = ip_data.porosity;
+
+            pos.setIntegrationPoint(ip);
+
+            double const p_ip = N.dot(p);
+            double const c_ip = N.dot(c);
+
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::concentration)] = c_ip;
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::phase_pressure)] = p_ip;
+            vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
+                phi;
+
+            double const dt = std::numeric_limits<double>::quiet_NaN();
+
+            auto const& k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                medium[MaterialPropertyLib::PropertyType::permeability].value(
+                    vars, pos, t, dt));
+            auto const mu = phase[MaterialPropertyLib::PropertyType::viscosity]
+                                .template value<double>(vars, pos, t, dt);
+            auto const rho = phase[MaterialPropertyLib::PropertyType::density]
+                                 .template value<double>(vars, pos, t, dt);
+
+            // Darcy flux
+            GlobalDimVectorType const q =
+                _process_data.has_gravity
+                    ? GlobalDimVectorType(-k / mu * (dNdx * p - rho * b))
+                    : GlobalDimVectorType(-k / mu * dNdx * p);
+
+            auto const alpha_T = medium.template value<double>(
+                MaterialPropertyLib::PropertyType::transversal_dispersivity);
+            auto const alpha_L = medium.template value<double>(
+                MaterialPropertyLib::PropertyType::longitudinal_dispersivity);
+            auto const Dp = MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                component[MaterialPropertyLib::PropertyType::pore_diffusion]
+                    .value(vars, pos, t, dt));
+
+            double const q_magnitude = q.norm();
+            // hydrodymanic dispersion
+            GlobalDimMatrixType const D =
+                q_magnitude != 0.0
+                    ? GlobalDimMatrixType(phi * Dp + alpha_T * q_magnitude * I +
+                                          (alpha_L - alpha_T) / q_magnitude *
+                                              q * q.transpose())
+                    : GlobalDimMatrixType(phi * Dp);
+
+            cache_mat.col(ip).noalias() = q * c_ip - phi * D * dNdx * c;
+        }
+
+        return cache;
     }
 
     void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
