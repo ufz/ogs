@@ -53,14 +53,14 @@ struct SurfaceFluxData final
             "'{:s}'\n",
             mesh_name, surfaceflux_pv_name);
 
-        auto& surface_mesh = *BaseLib::findElementOrError(
+        auto& surfaceflux_mesh = *BaseLib::findElementOrError(
             meshes.begin(), meshes.end(),
             [&mesh_name](auto const& m) { return mesh_name == m->getName(); },
             "Expected to find a mesh named " + mesh_name +
                 " for the surfaceflux calculation.");
 
         return std::make_unique<SurfaceFluxData>(
-            surface_mesh, std::move(surfaceflux_pv_name));
+            surfaceflux_mesh, std::move(surfaceflux_pv_name));
     }
 
     void integrate(std::vector<GlobalVector*> const& x, double const t,
