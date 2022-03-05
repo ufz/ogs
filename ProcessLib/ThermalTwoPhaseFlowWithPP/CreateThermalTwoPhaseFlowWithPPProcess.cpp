@@ -16,8 +16,6 @@
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
-#include "ProcessLib/ThermalTwoPhaseFlowWithPP/CreateThermalTwoPhaseFlowWithPPMaterialProperties.h"
-#include "ProcessLib/ThermalTwoPhaseFlowWithPP/ThermalTwoPhaseFlowWithPPMaterialProperties.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 #include "ThermalTwoPhaseFlowWithPPProcess.h"
 #include "ThermalTwoPhaseFlowWithPPProcessData.h"
@@ -31,7 +29,11 @@ void checkMPLProperties(
 {
     std::array const required_property_medium = {
         MaterialPropertyLib::PropertyType::porosity,
-        MaterialPropertyLib::PropertyType::permeability};
+        MaterialPropertyLib::PropertyType::permeability,
+        MaterialPropertyLib::PropertyType::saturation,
+        MaterialPropertyLib::PropertyType::relative_permeability,
+        MaterialPropertyLib::PropertyType::
+            relative_permeability_nonwetting_phase};
 
     std::array const required_property_solid_phase = {
         MaterialPropertyLib::PropertyType::specific_heat_capacity,
@@ -45,11 +47,15 @@ void checkMPLProperties(
     std::array const required_property_gas_phase = {
         MaterialPropertyLib::PropertyType::viscosity};
 
-    std::array const required_property_vapor_component = {
-        MaterialPropertyLib::specific_heat_capacity};
+    std::array const required_property_vapour_component = {
+        MaterialPropertyLib::specific_heat_capacity,
+        MaterialPropertyLib::diffusion, MaterialPropertyLib::molar_mass,
+        MaterialPropertyLib::specific_latent_heat,
+        MaterialPropertyLib::vapour_pressure};
 
     std::array const required_property_dry_air_component = {
-        MaterialPropertyLib::specific_heat_capacity};
+        MaterialPropertyLib::specific_heat_capacity,
+        MaterialPropertyLib::molar_mass};
 
     for (auto const& m : media)
     {
@@ -63,7 +69,7 @@ void checkMPLProperties(
 
         // TODO (BM): should use index to identify components (same for impl.h)
         checkRequiredProperties(gas_phase.component("w"),
-                                required_property_vapor_component);
+                                required_property_vapour_component);
         checkRequiredProperties(gas_phase.component("a"),
                                 required_property_dry_air_component);
     }
@@ -121,55 +127,21 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
 
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__mass_lumping}
     auto mass_lumping = config.getConfigParameter<bool>("mass_lumping");
-    // diffusion coeff
-    auto const& diff_coeff_b = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__diffusion_coeff_component_b}
-        "diffusion_coeff_component_b", parameters, 1, &mesh);
-    auto const& diff_coeff_a = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__diffusion_coeff_component_a}
-        "diffusion_coeff_component_a", parameters, 1, &mesh);
-
-    // Parameter for the density of the solid.
-
-    // Parameter for the latent heat of evaporation.
-    auto const& latent_heat_evaporation = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__latent_heat_evaporation}
-        "latent_heat_evaporation", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as latent_heat_evaporation parameter.",
-         latent_heat_evaporation.name);
-
-    //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__material_property}
-    auto const& mat_config = config.getConfigSubtree("material_property");
-
-    std::unique_ptr<ThermalTwoPhaseFlowWithPPMaterialProperties> material =
-        createThermalTwoPhaseFlowWithPPMaterialProperties(
-            mat_config, materialIDs(mesh), parameters);
 
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
-    DBUG(
-        "Check the media properties of ThermalTwoPhaseFlowWithPP  process ...");
+    DBUG("Check the media properties of ThermalTwoPhaseFlowWithPP process ...");
     checkMPLProperties(media);
     DBUG("Media properties verified.");
 
-    ThermalTwoPhaseFlowWithPPProcessData process_data{std::move(media_map),
-                                                      specific_body_force,
-                                                      has_gravity,
-                                                      mass_lumping,
-                                                      diff_coeff_b,
-                                                      diff_coeff_a,
-                                                      latent_heat_evaporation,
-                                                      std::move(material)};
+    ThermalTwoPhaseFlowWithPPProcessData process_data{
+        std::move(media_map), specific_body_force, has_gravity, mass_lumping};
 
     return std::make_unique<ThermalTwoPhaseFlowWithPPProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(process_data), std::move(secondary_variables), mat_config,
-        curves);
+        std::move(process_data), std::move(secondary_variables), curves);
 }
 
 }  // namespace ThermalTwoPhaseFlowWithPP
