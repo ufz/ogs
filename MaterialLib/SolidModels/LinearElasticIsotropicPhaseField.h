@@ -165,6 +165,71 @@ calculateIsotropicDegradedStress(
                            strain_energy_tensile, elastic_energy);
 }
 
+template <int DisplacementDim>
+std::tuple<MathLib::KelvinVector::KelvinVectorType<
+               DisplacementDim> /* sigma_real */,
+           MathLib::KelvinVector::KelvinVectorType<
+               DisplacementDim> /* sigma_tensile */,
+           MathLib::KelvinVector::KelvinMatrixType<
+               DisplacementDim> /* C_tensile */,
+           MathLib::KelvinVector::KelvinMatrixType<
+               DisplacementDim> /* C_compressive */,
+           double /* strain_energy_tensile */, double /* elastic_energy */
+           >
+calculateIsotropicDegradedStressWithRankineEnergy(
+    double const degradation,
+    double const bulk_modulus,
+    double const mu,
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const& eps)
+{
+    static int const KelvinVectorSize =
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+    using KelvinVector =
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+    using KelvinMatrix =
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
+    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    // calculation of deviatoric parts
+    auto const& P_dev = Invariants::deviatoric_projection;
+    KelvinVector const epsd_curr = P_dev * eps;
+
+    // Hydrostatic part for the stress and the tangent.
+    double const eps_curr_trace = Invariants::trace(eps);
+
+    KelvinMatrix C_tensile = KelvinMatrix::Zero();
+    KelvinMatrix C_compressive = KelvinMatrix::Zero();
+
+    KelvinVector const sigma_tensile =
+        bulk_modulus * eps_curr_trace * Invariants::identity2 +
+        2 * mu * epsd_curr;
+    // The maximum principal stress
+    auto sigma_tensor =
+        MathLib::KelvinVector::kelvinVectorToTensor(sigma_tensile);
+    Eigen::SelfAdjointEigenSolver<decltype(sigma_tensor)>
+        selfAdjoint_eigen_solver(sigma_tensor);
+    double const max_principle_stress =
+        selfAdjoint_eigen_solver
+            .eigenvalues()[2];  // selfAdjoint_eigen_solver function gives an
+                                // ascending sequence.
+    //
+    double const E0 = 9.0 * mu * bulk_modulus / (3.0 * bulk_modulus + mu);
+    auto hs = [&](double const v) { return heaviside(v); };
+    //
+    double const strain_energy_tensile = 0.5 * max_principle_stress *
+                                         max_principle_stress *
+                                         hs(max_principle_stress) / E0;
+    double const elastic_energy =
+        degradation * (bulk_modulus / 2 * eps_curr_trace * eps_curr_trace +
+                       mu * epsd_curr.transpose() * epsd_curr);
+    //
+    C_tensile.template topLeftCorner<3, 3>().setConstant(bulk_modulus);
+    C_tensile.noalias() += 2 * mu * P_dev * KelvinMatrix::Identity();
+    KelvinVector const sigma_real = degradation * sigma_tensile;
+
+    return std::make_tuple(sigma_real, sigma_tensile, C_tensile, C_compressive,
+                           strain_energy_tensile, elastic_energy);
+}
+
 }  // namespace Phasefield
 }  // namespace Solids
 }  // namespace MaterialLib
