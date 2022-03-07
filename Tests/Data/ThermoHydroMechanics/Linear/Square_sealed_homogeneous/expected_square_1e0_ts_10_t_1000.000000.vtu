@@ -8,7 +8,7 @@
     </FieldData>
     <Piece NumberOfPoints="8" NumberOfCells="1">
       <PointData>
-        <DataArray type="Float64" Name="HydraulicFlow" format="binary" RangeMin="-7.1054273576e-14" RangeMax="1.1368683772e-13">
+        <DataArray type="Float64" Name="MassFlowRate" format="binary" RangeMin="-7.1054273576e-14" RangeMax="1.1368683772e-13">
           AQAAAACAAABAAAAAHQAAAA==eJxjYAABk71gikEBSgvYQmgHKP2jHhcNAM1YCHU=
         </DataArray>
         <DataArray type="Float64" Name="NodalForces" NumberOfComponents="2" format="binary" RangeMin="3.1622776602e+149" RangeMax="nan">
