@@ -22,7 +22,7 @@
       <PointData>
         <DataArray type="Float64" Name="ElasticStrain" NumberOfComponents="4" format="appended" RangeMin="0.0014606358378"      RangeMax="0.0014606358378"      offset="1376"                />
         <DataArray type="Float64" Name="EquivalentPlasticStrain" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1492"                />
-        <DataArray type="Float64" Name="HydraulicFlow" format="appended" RangeMin="-0.00133460709"       RangeMax="-2.6149137228e-07"    offset="1552"                />
+        <DataArray type="Float64" Name="MassFlowRate" format="appended" RangeMin="-0.00133460709"       RangeMax="-2.6149137228e-07"    offset="1552"                />
         <DataArray type="Float64" Name="NodalForces" NumberOfComponents="2" format="appended" RangeMin="104719.75512"         RangeMax="249488.22271"         offset="1644"                />
         <DataArray type="Float64" Name="displacement" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="0.0014211611768"      offset="1752"                />
         <DataArray type="Float64" Name="dry_density_solid" format="appended" RangeMin="1581.2872628"         RangeMax="1581.2872628"         offset="1828"                />

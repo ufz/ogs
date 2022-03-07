@@ -348,7 +348,7 @@
         </vtkdiff>
         <vtkdiff>
             <regex>RichardsFlow_2d_small_masslumping_ts_.*.vtu</regex>
-            <field>HydraulicFlow</field>
+            <field>MassFlowRate</field>
             <absolute_tolerance>1e-13</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>

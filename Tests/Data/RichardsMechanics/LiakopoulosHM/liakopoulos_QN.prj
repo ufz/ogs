@@ -446,7 +446,7 @@
     <test_definition>
         <vtkdiff>
             <regex>liakopoulos_QN_t_.*.vtu</regex>
-            <field>HydraulicFlow</field>
+            <field>MassFlowRate</field>
             <absolute_tolerance>2e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
