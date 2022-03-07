@@ -15,7 +15,7 @@ endif()
 
 # Ground equilibrium
 AddTest(
-    NAME GroundEquilibrium
+    NAME HydroMechanics_GroundEquilibrium
     PATH HydroMechanics/GroundEquilibrium
     EXECUTABLE ogs
     EXECUTABLE_ARGS simHM_ground.prj
