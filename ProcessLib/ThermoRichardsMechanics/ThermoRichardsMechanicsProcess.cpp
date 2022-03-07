@@ -48,7 +48,7 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
         mesh, "MassFlowRate", MeshLib::MeshItemType::Node, 1);
 
     heat_flux_ = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "HeatFlux", MeshLib::MeshItemType::Node, 1);
+        mesh, "HeatFlowRate", MeshLib::MeshItemType::Node, 1);
 
     // TODO (naumov) remove ip suffix. Probably needs modification of the mesh
     // properties, s.t. there is no "overlapping" with cell/point data.

@@ -13,7 +13,7 @@
     </FieldData>
     <Piece NumberOfPoints="1230"                 NumberOfCells="1158"                >
       <PointData>
-        <DataArray type="Float64" Name="HeatFlux" format="appended" RangeMin="-2.2779986786e-09"    RangeMax="3.6675360205"         offset="335544"              />
+        <DataArray type="Float64" Name="HeatFlowRate" format="appended" RangeMin="-2.2779986786e-09"    RangeMax="3.6675360205"         offset="335544"              />
         <DataArray type="Float64" Name="MassFlowRate" format="appended" RangeMin="-7.0318570934e-17"    RangeMax="3.0944575253e-17"     offset="344664"              />
         <DataArray type="Float64" Name="NodalForces" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="21258715.613"         offset="351416"              />
         <DataArray type="Float64" Name="displacement" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="0.0001118263354"      offset="358364"              />
