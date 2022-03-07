@@ -6,7 +6,7 @@
     </FieldData>
     <Piece NumberOfPoints="1003"                 NumberOfCells="200"                 >
       <PointData>
-        <DataArray type="Float64" Name="HydraulicFlow" format="appended" RangeMin="-2.4274966115e-09"    RangeMax="6.4956255065e-11"     offset="92"                  />
+        <DataArray type="Float64" Name="MassFlowRate" format="appended" RangeMin="-2.4274966115e-09"    RangeMax="6.4956255065e-11"     offset="92"                  />
         <DataArray type="Float64" Name="NodalForces" NumberOfComponents="2" format="appended" RangeMin="3.1622776602e+149"    RangeMax="-nan"                 offset="3680"                />
         <DataArray type="Float64" Name="capillary_pressure" format="appended" RangeMin="0"                    RangeMax="6295.1315534"         offset="7416"                />
         <DataArray type="Float64" Name="capillary_pressure_interpolated" format="appended" RangeMin="5553.679229"          RangeMax="6295.1315534"         offset="10148"               />

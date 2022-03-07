@@ -44,7 +44,7 @@ TH2MProcess<DisplacementDim>::TH2MProcess(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 
     _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "HydraulicFlow", MeshLib::MeshItemType::Node, 1);
+        mesh, "MassFlowRate", MeshLib::MeshItemType::Node, 1);
 
     // TODO (naumov) remove ip suffix. Probably needs modification of the mesh
     // properties, s.t. there is no "overlapping" with cell/point data.
