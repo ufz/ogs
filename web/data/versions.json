@@ -54,7 +54,10 @@
     "vtk": {
       "options": [
         {
-          "condition": "1",
+          "condition": {
+            "cmake": "ON",
+            "ogscm": "True"
+          },
           "cmake": [
             "VTK_Group_Rendering=OFF",
             "VTK_Group_StandAlone=OFF",
@@ -68,14 +71,20 @@
           ]
         },
         {
-          "condition": "OGS_USE_MPI",
+          "condition": {
+            "cmake": "OGS_USE_MPI",
+            "ogscm": "toolchain.CC == \"mpicc\""
+          },
           "cmake": [
             "Module_vtkIOParallelXML=ON",
             "Module_vtkParallelMPI=ON"
           ]
         },
         {
-          "condition": "OGS_BUILD_GUI",
+          "condition": {
+            "cmake": "OGS_BUILD_GUI",
+            "ogscm": "local_args.gui"
+          },
           "cmake": [
             "Module_vtkIOExport=ON",
             "Module_vtkImagingCore=ON",
