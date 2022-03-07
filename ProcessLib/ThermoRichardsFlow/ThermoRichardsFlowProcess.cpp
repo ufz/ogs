@@ -40,7 +40,7 @@ ThermoRichardsFlowProcess::ThermoRichardsFlowProcess(
       _process_data(std::move(process_data))
 {
     _heat_flux = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "HeatFlux", MeshLib::MeshItemType::Node, 1);
+        mesh, "HeatFlowRate", MeshLib::MeshItemType::Node, 1);
 
     _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "MassFlowRate", MeshLib::MeshItemType::Node, 1);
