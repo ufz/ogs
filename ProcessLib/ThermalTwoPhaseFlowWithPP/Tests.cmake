@@ -1,5 +1,5 @@
 AddTest(
-    NAME 2D_Thermal_TwoPhase_heatpipe
+    NAME 2D_Thermal_TwoPhase_heatpipe_small
     PATH Parabolic/ThermalTwoPhaseFlowPP/HeatPipe
     RUNTIME 10
     EXECUTABLE ogs
@@ -13,7 +13,7 @@ AddTest(
     ref_t_10000.000000.vtu thermaltwophaseflow_small_ts_100_t_10000.000000.vtu temperature temperature 1e-8 1e-10
 )
 AddTest(
-    NAME 2D_Thermal_TwoPhase_heatpipe
+    NAME 2D_Thermal_TwoPhase_heatpipe_large
     PATH Parabolic/ThermalTwoPhaseFlowPP/HeatPipe
     RUNTIME 170
     EXECUTABLE ogs
