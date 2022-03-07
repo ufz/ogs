@@ -149,7 +149,7 @@ AddTest(
     expected_TRMuni_unsaturated_bishopstest_ts_10_t_1.000000.vtu TRuni_unsaturated_bishopstest_ts_10_t_1.000000.vtu temperature temperature 5e-5 1e-10
     expected_TRMuni_unsaturated_bishopstest_ts_10_t_1.000000.vtu TRuni_unsaturated_bishopstest_ts_10_t_1.000000.vtu pressure pressure 5e-2 1e-6
     expected_TRMuni_unsaturated_bishopstest_ts_10_t_1.000000.vtu TRuni_unsaturated_bishopstest_ts_10_t_1.000000.vtu saturation saturation 5e-5 1e-10
-    expected_TRMuni_unsaturated_bishopstest_ts_10_t_1.000000.vtu TRuni_unsaturated_bishopstest_ts_10_t_1.000000.vtu HydraulicFlow HydraulicFlow 1e-9 1e-4
+    expected_TRMuni_unsaturated_bishopstest_ts_10_t_1.000000.vtu TRuni_unsaturated_bishopstest_ts_10_t_1.000000.vtu MassFlowRate MassFlowRate 1e-9 1e-4
 )
 AddTest(
     NAME ThermoRichardsFlow_comp_TRMhyd_bishopstest-TRiso_bishopstest
@@ -164,7 +164,7 @@ AddTest(
     expected_TRMhyd_unsaturated_bishopstest_ts_10_t_1.000000.vtu TRhyd_unsaturated_bishopstest_ts_10_t_1.000000.vtu temperature temperature 5e-5 1e-10
     expected_TRMhyd_unsaturated_bishopstest_ts_10_t_1.000000.vtu TRhyd_unsaturated_bishopstest_ts_10_t_1.000000.vtu pressure pressure 5e-2 1e-6
     expected_TRMhyd_unsaturated_bishopstest_ts_10_t_1.000000.vtu TRhyd_unsaturated_bishopstest_ts_10_t_1.000000.vtu saturation saturation 5e-5 1e-10
-    expected_TRMhyd_unsaturated_bishopstest_ts_10_t_1.000000.vtu TRhyd_unsaturated_bishopstest_ts_10_t_1.000000.vtu HydraulicFlow HydraulicFlow 1e-9 1e-4
+    expected_TRMhyd_unsaturated_bishopstest_ts_10_t_1.000000.vtu TRhyd_unsaturated_bishopstest_ts_10_t_1.000000.vtu MassFlowRate MassFlowRate 1e-9 1e-4
 )
 AddTest(
     NAME ThermoRichardsFlow_TaskCDECOVALEX2023
