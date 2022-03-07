@@ -6,7 +6,7 @@
     </FieldData>
     <Piece NumberOfPoints="61"                   NumberOfCells="60"                  >
       <PointData>
-        <DataArray type="Float64" Name="HeatFlux" format="appended" RangeMin="-0.019142305707"      RangeMax="0.28357580612"        offset="92"                  />
+        <DataArray type="Float64" Name="HeatFlowRate" format="appended" RangeMin="-0.019142305707"      RangeMax="0.28357580612"        offset="92"                  />
         <DataArray type="Float64" Name="heat_flux" format="appended" RangeMin="3.2897924385e-11"     RangeMax="0.28322664544"        offset="648"                 />
         <DataArray type="Float64" Name="temperature" format="appended" RangeMin="273.15"               RangeMax="274.15"               offset="1360"                />
       </PointData>
