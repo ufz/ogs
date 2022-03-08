@@ -508,8 +508,7 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
     auto const& reaction_rates = phreeqc_io._reaction_rates;
     if (!reaction_rates.empty())
     {
-        os << "RATES"
-           << "\n";
+        os << "RATES\n";
         os << reaction_rates << "\n";
     }
 
@@ -531,10 +530,8 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             }
         }
 
-        os << "USE solution none"
-           << "\n";
-        os << "END"
-           << "\n\n";
+        os << "USE solution none\n";
+        os << "END\n\n";
 
         os << "USE solution " << chemical_system_id + 1 << "\n\n";
 
@@ -563,8 +560,7 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             {
                 kinetic_reactant.print(os, chemical_system_id);
             }
-            os << "-steps " << phreeqc_io._dt << "\n"
-               << "\n";
+            os << "-steps " << phreeqc_io._dt << "\n\n";
         }
 
         auto const& surface = phreeqc_io._chemical_system->surface;
@@ -581,13 +577,11 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             if (std::holds_alternative<DensityBasedSurfaceSite>(
                     surface.front()))
             {
-                os << "-sites_units density"
-                   << "\n";
+                os << "-sites_units density\n";
             }
             else
             {
-                os << "-sites_units absolute"
-                   << "\n";
+                os << "-sites_units absolute\n";
             }
 
             for (auto const& surface_site : surface)
@@ -611,8 +605,7 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             // overlook the effect of the buildup of charges onto the surface
             if (std::holds_alternative<MoleBasedSurfaceSite>(surface.front()))
             {
-                os << "-no_edl"
-                   << "\n";
+                os << "-no_edl\n";
             }
 
             os << "SAVE solution " << chemical_system_id + 1 << "\n";
@@ -634,8 +627,7 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             os << "SAVE solution " << chemical_system_id + 1 << "\n";
         }
 
-        os << "END"
-           << "\n\n";
+        os << "END\n\n";
     }
 
     auto const& dump = phreeqc_io._dump;
