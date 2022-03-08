@@ -39,6 +39,21 @@ AddTest(
     mesh2D.vtu gravity_driven_ts_1_t_1.000000.vtu AnalyticPressure pressure 1e-8 1e-8
     mesh2D.vtu gravity_driven_ts_1_t_1.000000.vtu v_ref v 1e-8 1e-8
 )
+
+AddTest(
+    NAME LiquidFlow_GravityDriven_2D_XZ
+    PATH Parabolic/LiquidFlow/GravityDriven
+    RUNTIME 1
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS gravity_driven_XZ.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    mesh2D.vtu gravity_driven_XZ_ts_1_t_1.000000.vtu AnalyticPressure pressure 1e-8 1e-8
+    mesh2D_XZ.vtu gravity_driven_XZ_ts_1_t_1.000000.vtu v v 1e-8 1e-8
+)
+
 AddTest(
     NAME LiquidFlow_AxisymTheis
     PATH Parabolic/LiquidFlow/AxiSymTheis
