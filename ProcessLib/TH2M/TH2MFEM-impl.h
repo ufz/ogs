@@ -177,6 +177,19 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         vars[static_cast<int>(MPL::Variable::liquid_saturation)] = ip_data.s_L;
 
+        auto const chi = [&medium, pos, t, dt](double const s_L)
+        {
+            MPL::VariableArray vs;
+            vs[static_cast<int>(MPL::Variable::liquid_saturation)] = s_L;
+            return medium.property(MPL::PropertyType::bishops_effective_stress)
+                .template value<double>(vs, pos, t, dt);
+        };
+        ip_cv.chi_s_L = chi(ip_data.s_L);
+        ip_cv.dchi_ds_L =
+            medium.property(MPL::PropertyType::bishops_effective_stress)
+                .template dValue<double>(vars, MPL::Variable::liquid_saturation,
+                                         pos, t, dt);
+
         auto const Bu =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
@@ -190,11 +203,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
         {
-            // Note: if Bishop model is available, ip_data.s_L in the following
-            // computation should be replaced with the Bishop value.
             auto const sigma_total =
                 (_ip_data[ip].sigma_eff - ip_data.alpha_B *
-                                              (pGR - ip_data.s_L * pCap) *
+                                              (pGR - ip_cv.chi_s_L * pCap) *
                                               Invariants::identity2)
                     .eval();
 
@@ -918,7 +929,7 @@ void TH2MLocalAssembler<
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    updateConstitutiveVariables(
+    auto const ip_constitutive_variables = updateConstitutiveVariables(
         Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
         Eigen::Map<Eigen::VectorXd const>(local_x_dot.data(),
                                           local_x_dot.size()),
@@ -928,6 +939,7 @@ void TH2MLocalAssembler<
     {
         pos.setIntegrationPoint(int_point);
         auto& ip = _ip_data[int_point];
+        auto& ip_cv = ip_constitutive_variables[int_point];
 
         auto const& Np = ip.N_p;
         auto const& NT = Np;
@@ -1168,7 +1180,7 @@ void TH2MLocalAssembler<
 
         KUpG.noalias() -= (BuT * alpha_B * m * Np) * w;
 
-        KUpC.noalias() += (BuT * alpha_B * s_L * m * Np) * w;
+        KUpC.noalias() += (BuT * alpha_B * ip_cv.chi_s_L * m * Np) * w;
 
         fU.noalias() -= (BuT * ip.sigma_eff - Nu_op.transpose() * rho * b) * w;
 
@@ -1835,17 +1847,18 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         KUpG.noalias() -= (BuT * alpha_B * m * Np) * w;
 
-        // dfU_2/dp_GR part i.e. part of the d(KUpG*p_GR)/dp_GR derivative is
-        // dKUpG/dp_GR + KUpG. The former is zero, the latter is handled below.
+        // dfU_2/dp_GR = dKUpG/dp_GR * p_GR + KUpG. The former is zero, the
+        // latter is handled below.
 
-        KUpC.noalias() += (BuT * alpha_B * s_L * m * Np) * w;
+        KUpC.noalias() += (BuT * alpha_B * ip_cv.chi_s_L * m * Np) * w;
 
-        // dfU_2/dp_LR part i.e. part of the d(KUpC*p_cap)/dp_LR derivative is
-        // dKUpC/dp_LR + KUpC. The latter is handled below, the former here:
+        // dfU_2/dp_cap = dKUpC/dp_cap * p_cap + KUpC. The former is handled
+        // here, the latter below.
         local_Jac
             .template block<displacement_size, W_size>(displacement_index,
                                                        W_index)
-            .noalias() += BuT * alpha_B * ip_cv.ds_L_dp_cap * pCap * m * Np * w;
+            .noalias() += BuT * alpha_B * ip_cv.dchi_ds_L * ip_cv.ds_L_dp_cap *
+                          pCap * m * Np * w;
 
         local_Jac
             .template block<displacement_size, displacement_size>(
