@@ -485,6 +485,16 @@ void PhreeqcIO::writeInputsToFile(double const dt)
 
 std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
 {
+    bool const fixing_pe =
+        phreeqc_io._chemical_system->aqueous_solution->fixing_pe;
+    if (fixing_pe)
+    {
+        os << "PHASES\n"
+           << "Fix_pe\n"
+           << "e- = e-\n"
+           << "log_k 0.0\n\n";
+    }
+
     os << phreeqc_io._knobs << "\n";
 
     os << *phreeqc_io._output << "\n";
@@ -530,14 +540,18 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
 
         auto const& equilibrium_reactants =
             phreeqc_io._chemical_system->equilibrium_reactants;
-        if (!equilibrium_reactants.empty())
+        if (!equilibrium_reactants.empty() || fixing_pe)
         {
             os << "EQUILIBRIUM_PHASES " << chemical_system_id + 1 << "\n";
             for (auto const& equilibrium_reactant : equilibrium_reactants)
             {
                 equilibrium_reactant.print(os, chemical_system_id);
             }
-            os << "\n";
+            fixing_pe
+                ? os << "Fix_pe "
+                     << -phreeqc_io._chemical_system->aqueous_solution->pe0
+                     << " O2(g)\n\n"
+                : os << "\n";
         }
 
         auto const& kinetic_reactants =
