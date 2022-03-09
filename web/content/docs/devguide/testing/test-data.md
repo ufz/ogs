@@ -112,7 +112,7 @@ source .venv/bin/activate
 pip install $(jq -r '.python.notebook_requirements | join(" ")' path/to/ogs/web/data/versions.json)
 ```
 
-This is handled **automatically** when using [Poetry]({{< ref "python-env.md#poetry" >}}).
+This is handled **automatically** when `OGS_USE_PIP=ON`.
 
 Also make sure to have `ogs` or other required tools in the `PATH`:
 

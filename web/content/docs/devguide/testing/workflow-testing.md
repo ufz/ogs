@@ -16,7 +16,7 @@ We use the workflow manager [Snakemake](https://snakemake.readthedocs.io) to tes
 ## Requirements
 
 - [Snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html) >= {{< dataFile "versions.minimum_version.snakemake" >}}
-    - If you use [Poetry]({{< ref "python-env.md#poetry" >}}) then `snakemake` is installed in your virtual environment in your build-directory automatically. You can then call it via `poetry run snakemake ...`.
+    - If you use `OGS_USE_PIP=ON` then `snakemake` is installed in your virtual environment in your build-directory automatically. You can then call it via `.venv/bin/snakemake ...` (inside your build directory).
 - On Windows only:
     - The `tee`-utility in the `PATH` (can be installed from https://sourceforge.net/projects/unxutils)
 
