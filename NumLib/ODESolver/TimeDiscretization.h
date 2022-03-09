@@ -132,16 +132,7 @@ public:
     //! \f$.
     void getXdot(GlobalVector const& x_at_new_timestep,
                  GlobalVector const& x_old,
-                 GlobalVector& xdot) const
-    {
-        namespace LinAlg = MathLib::LinAlg;
-
-        double const dt = getCurrentTimeIncrement();
-
-        // xdot = 1/dt * x_at_new_timestep - x_old
-        getWeightedOldX(xdot, x_old);
-        LinAlg::axpby(xdot, 1. / dt, -1.0, x_at_new_timestep);
-    }
+                 GlobalVector& xdot) const;
 
     //! Returns \f$ x_O \f$.
     virtual void getWeightedOldX(
@@ -155,7 +146,6 @@ class BackwardEuler final : public TimeDiscretization
 {
 public:
     void setInitialState(const double t0) override { _t = t0; }
-
     void nextTimestep(const double t, const double delta_t) override
     {
         _t = t;
@@ -165,14 +155,7 @@ public:
     double getCurrentTime() const override { return _t; }
     double getCurrentTimeIncrement() const override { return _delta_t; }
     void getWeightedOldX(GlobalVector& y,
-                         GlobalVector const& x_old) const override
-    {
-        namespace LinAlg = MathLib::LinAlg;
-
-        // y = x_old / delta_t
-        LinAlg::copy(x_old, y);
-        LinAlg::scale(y, 1.0 / _delta_t);
-    }
+                         GlobalVector const& x_old) const override;
 
 private:
     double _t = std::numeric_limits<double>::quiet_NaN();  //!< \f$ t_C \f$
