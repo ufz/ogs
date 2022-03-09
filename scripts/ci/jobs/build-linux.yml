@@ -69,7 +69,7 @@ build linux arch:
     CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
       -DBUILD_SHARED_LIBS=ON
-      -DOGS_USE_POETRY=OFF
+      -DOGS_USE_PIP=OFF
       -DOGS_TEST_NOTEBOOKS=OFF
       -DOGS_USE_MKL=ON
 
@@ -87,7 +87,7 @@ build linux debug with sanitizers:
       -DCMAKE_C_COMPILER=/usr/bin/clang
       -DCMAKE_CXX_COMPILER=/usr/bin/clang++
       -DBUILD_SHARED_LIBS=ON
-      -DOGS_USE_POETRY=OFF
+      -DOGS_USE_PIP=OFF
       -DOGS_COMPILE_FLAGS=-O3;-fno-var-tracking
       -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=OFF
       -DOGS_ADDRESS_SANITIZER=ON
