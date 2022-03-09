@@ -11,7 +11,7 @@ build linux frontend:
     CCACHE_DIR: "/data/ogs/.ccache"
     CMAKE_PRESET: release
     # pip installed modules segfault
-    CMAKE_ARGS: "-DOGS_CPU_ARCHITECTURE=generic -DOGS_EXCLUDE_CTESTS=HeatTransportBHE_ -DOGS_TEST_NOTEBOOKS=OFF"
+    CMAKE_ARGS: "-DOGS_CPU_ARCHITECTURE=generic -DOGS_EXCLUDE_CTESTS=HeatTransportBHE_"
   before_script:
     - !reference [.template-build-linux, before_script]
     - source scripts/env/eve/cli.sh
@@ -28,7 +28,7 @@ build linux frontend petsc:
   variables:
     CCACHE_DIR: "/data/ogs/.ccache"
     CMAKE_PRESET: release-petsc
-    CMAKE_ARGS: "-DOGS_CPU_ARCHITECTURE=generic -DOGS_TEST_NOTEBOOKS=OFF"
+    CMAKE_ARGS: "-DOGS_CPU_ARCHITECTURE=generic"
   before_script:
     - !reference [.template-build-linux, before_script]
     - source scripts/env/eve/petsc.sh

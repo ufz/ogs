@@ -1,7 +1,7 @@
 # cmake-lint: disable=C0103,R0915
 function(NotebookTest)
 
-    if(NOT OGS_BUILD_CLI OR NOT OGS_BUILD_TESTING OR NOT OGS_TEST_NOTEBOOKS)
+    if(NOT OGS_BUILD_CLI OR NOT OGS_BUILD_TESTING OR NOT OGS_USE_PIP)
         return()
     endif()
     set(options DISABLED)
