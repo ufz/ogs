@@ -450,7 +450,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
     add_dependencies(ctest-large ${AddTest_EXECUTABLE})
 
     if(AddTest_PYTHON_PACKAGES)
-        if(POETRY)
+        if(OGS_USE_PIP)
             # Info has to be passed by global property because it is not
             # possible to set cache variables from inside a function.
             set_property(
@@ -463,7 +463,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                     "Warning: Benchmark ${AddTest_NAME} requires these "
                     "Python packages: ${AddTest_PYTHON_PACKAGES}!\n Make sure to "
                     "have them installed in your current Python environment OR "
-                    "install the Poetry package manager for Python!"
+                    "set OGS_USE_PIP=ON!"
             )
         endif()
     endif()

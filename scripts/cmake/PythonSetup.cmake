@@ -2,65 +2,47 @@
 
 # prefer unix location over frameworks (Apple-only)
 set(Python3_FIND_FRAMEWORK LAST)
-if(OGS_USE_POETRY)
-    find_program(POETRY poetry)
-    # See web/content/docs/devguide/packages/python-env.md for docs on Poetry
-    if(POETRY)
-        set(OGS_PYTHON_PACKAGES ""
-            CACHE INTERNAL
-                  "List of Python packages to be installed via poetry."
+if(OGS_USE_PIP)
+    set(OGS_PYTHON_PACKAGES ""
+        CACHE INTERNAL "List of Python packages to be installed via pip."
+    )
+    set(Python3_FIND_STRATEGY VERSION)
+    find_package(
+        Python3 ${ogs.minimum_version.python} COMPONENTS Interpreter REQUIRED
+    )
+
+    if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
+        execute_process(
+            COMMAND ${Python3_EXECUTABLE} -m venv .venv
+            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         )
-        set(Python3_FIND_STRATEGY VERSION)
-        find_package(
-            Python3 ${ogs.minimum_version.python} COMPONENTS Interpreter
-            REQUIRED
+        unset(_OGS_PYTHON_PACKAGES_SHA1 CACHE)
+    endif()
+    set(Python3_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
+    set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/bin/python)
+    if(MSVC)
+        set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/Scripts/python.exe)
+        set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/Scripts
+            CACHE INTERNAL ""
         )
-        configure_file(
-            ${PROJECT_SOURCE_DIR}/scripts/python/poetry.in.toml
-            ${PROJECT_BINARY_DIR}/poetry.toml COPYONLY
+    else()
+        set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/bin
+            CACHE INTERNAL ""
         )
-        if(NOT EXISTS ${PROJECT_BINARY_DIR}/pyproject.toml)
-            configure_file(
-                ${PROJECT_SOURCE_DIR}/scripts/python/pyproject.in.toml
-                ${PROJECT_BINARY_DIR}/pyproject.toml
-            )
-        endif()
-        if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
-            execute_process(
-                COMMAND ${CMD_COMMAND} poetry env use ${Python3_EXECUTABLE}
-                WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-            )
-            execute_process(
-                COMMAND ${CMD_COMMAND} poetry install
-                WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-            )
-        endif()
-        set(Python3_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
-        set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/bin/python)
-        if(MSVC)
-            set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/Scripts/python.exe)
-            set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/Scripts
-                CACHE INTERNAL ""
-            )
-        else()
-            set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/bin
-                CACHE INTERNAL ""
-            )
-        endif()
-        if(OGS_BUILD_TESTING)
-            # Notebook requirements from versions.json
-            foreach(var ${ogs.python.notebook_requirements})
-                list(APPEND OGS_PYTHON_PACKAGES
-                     "${ogs.python.notebook_requirements_${var}}"
-                )
-            endforeach()
+    endif()
+    if(OGS_BUILD_TESTING)
+        # Notebook requirements from versions.json
+        foreach(var ${ogs.python.notebook_requirements})
             list(APPEND OGS_PYTHON_PACKAGES
-                 "snakemake=${ogs.minimum_version.snakemake}"
+                 "${ogs.python.notebook_requirements_${var}}"
             )
-            set(SNAKEMAKE ${LOCAL_VIRTUALENV_BIN_DIR}/snakemake CACHE FILEPATH
-                                                                      "" FORCE
-            )
-        endif()
+        endforeach()
+        list(APPEND OGS_PYTHON_PACKAGES
+             "snakemake==${ogs.minimum_version.snakemake}"
+        )
+        set(SNAKEMAKE ${LOCAL_VIRTUALENV_BIN_DIR}/snakemake CACHE FILEPATH ""
+                                                                  FORCE
+        )
     endif()
 endif()
 
@@ -72,7 +54,7 @@ if(OGS_USE_PYTHON)
 else()
     find_package(Python3 ${ogs.minimum_version.python} COMPONENTS Interpreter)
 endif()
-if(POETRY)
+if(OGS_USE_PIP)
     if(MSVC)
         file(TO_NATIVE_PATH "${Python3_ROOT_DIR}/Lib/site-packages"
              Python3_VIRTUALENV_SITEPACKAGES

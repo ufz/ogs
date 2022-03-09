@@ -39,9 +39,7 @@ if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.16)
     )
 endif()
 option(OGS_USE_PYTHON "Interface with Python" ON)
-option(OGS_USE_POETRY
-       "Enables automatic Python virtual environment handling with poetry." ON
-)
+option(OGS_USE_PIP "Enables automatic Python virtual environment handling." ON)
 cmake_dependent_option(
     OGS_BUILD_SWMM "Should the SWMM interface be built?" ON "WIN32" OFF
 )
@@ -244,7 +242,7 @@ endif()
 
 include(UnityBuildSettings)
 
-if(POETRY)
+if(OGS_USE_PIP)
     # Caches a hash of requested Python packages when they were successfully
     # installed. On subsequent runs compare new hash to cached. If equal do
     # nothing.
@@ -259,10 +257,16 @@ if(POETRY)
     if(NOT ${_ogs_python_packages_sha1} STREQUAL "${_OGS_PYTHON_PACKAGES_SHA1}"
        AND ${OGS_PYTHON_PACKAGES_LENGTH} GREATER 0
     )
+        string(REPLACE ";" "\n" REQUIREMENTS_CONTENT "${OGS_PYTHON_PACKAGES}")
+        file(WRITE ${PROJECT_BINARY_DIR}/requirements.txt
+             ${REQUIREMENTS_CONTENT}
+        )
         execute_process(
-            COMMAND ${CMD_COMMAND} poetry add ${OGS_PYTHON_PACKAGES}
+            COMMAND ${LOCAL_VIRTUALENV_BIN_DIR}/pip install -r requirements.txt
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
             RESULT_VARIABLE _return_code
+            OUTPUT_VARIABLE _out
+            ERROR_VARIABLE _err
         )
         if(${_return_code} EQUAL 0)
             set(_OGS_PYTHON_PACKAGES_SHA1 "${_ogs_python_packages_sha1}"
@@ -271,8 +275,8 @@ if(POETRY)
         else()
             message(
                 FATAL_ERROR
-                    "Installation of Python packages via poetry failed!\n"
-                    "To disable poetry set OGS_USE_POETRY=OFF."
+                    "Installation of Python packages via pip failed!\n"
+                    "To disable pip set OGS_USE_PIP=OFF.\n\n${_out}\n${_err}"
             )
         endif()
     endif()
