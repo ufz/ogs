@@ -24,15 +24,23 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 
-/// Re-ordering mesh elements to correct Data Explorer 5 meshes to work with
-/// Data Explorer 6.
-void reorderNodes(std::vector<MeshLib::Element*>& elements)
+/**
+ * \brief Reverses order of nodes. In particular, this fixes issues between OGS5
+ * and OGS6 meshes.
+ *
+ * \param elements  Mesh elements whose nodes should be reordered
+ * \param forced    If true, nodes are reordered for all
+ * elements, if false it is first checked if the node order is correct according
+ * to OGS6 element definitions.
+ */
+void reverseNodeOrder(std::vector<MeshLib::Element*>& elements,
+                      bool const forced)
 {
     std::size_t n_corrected_elements = 0;
     std::size_t const nElements(elements.size());
     for (std::size_t i = 0; i < nElements; ++i)
     {
-        if (elements[i]->testElementNodeOrder())
+        if (!forced && elements[i]->testElementNodeOrder())
         {
             continue;
         }
@@ -81,9 +89,10 @@ void reorderNodes(std::vector<MeshLib::Element*>& elements)
     INFO("Corrected {:d} elements.", n_corrected_elements);
 }
 
-/// Re-ordering prism elements to correct OGS6 meshes with and without
+/// Fixes inconsistencies between VTK's and OGS' node order for prism elements.
+/// In particular, this fixes issues between OGS6 meshes with and without
 /// InSitu-Lib
-void reorderNodes2(std::vector<MeshLib::Element*>& elements)
+void fixVtkInconsistencies(std::vector<MeshLib::Element*>& elements)
 {
     std::size_t const nElements(elements.size());
     for (std::size_t i = 0; i < nElements; ++i)
@@ -107,6 +116,7 @@ void reorderNodes2(std::vector<MeshLib::Element*>& elements)
     }
 }
 
+/// Orders the base nodes of each elements before its non-linear nodes.
 void reorderNonlinearNodes(MeshLib::Mesh& mesh)
 {
     std::vector<MeshLib::Node*> base_nodes;
@@ -149,10 +159,11 @@ int main(int argc, char* argv[])
         "Reorders mesh nodes in elements to make old or incorrectly ordered "
         "meshes compatible with OGS6.\n"
         "Three options are available:\n"
-        "Method 1: Re-ordering between DataExplorer 5 and DataExplorer 6 "
-        "(mostly reverses order of the nodes for all element types\n"
-        "Method 2: Re-ordering after introducing InSitu-Lib to OGS6 (only "
-        "adjusts to top and bottom surfaces of prism elements\n"
+        "Method 0: Reversing order of nodes for all elements.\n"
+        "Method 1: Reversing order of nodes unless it's perceived correct by "
+        "OGS6 standards. This is the default selection.\n"
+        "Method 2: Fixing node ordering issues between VTK and OGS6 (only "
+        "applies to prism-elements)\n"
         "Method 3: Re-ordering of mesh node vector such that all base nodes "
         "are sorted before all nonlinear nodes.\n\n"
         "OpenGeoSys-6 software, version " +
@@ -162,7 +173,7 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
-    std::vector<int> method_ids{1, 2, 3};
+    std::vector<int> method_ids{0, 1, 2, 3};
     TCLAP::ValuesConstraint<int> allowed_values(method_ids);
     TCLAP::ValueArg<int> method_arg("m", "method",
                                     "reordering method selection", false, 1,
@@ -187,14 +198,16 @@ int main(int argc, char* argv[])
     }
 
     INFO("Reordering nodes... ");
-    if (!method_arg.isSet() || method_arg.getValue() == 1)
+    if (!method_arg.isSet() || method_arg.getValue() < 2)
     {
-        reorderNodes(
-            const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()));
+        bool const forced = (method_arg.getValue() == 0);
+        reverseNodeOrder(
+            const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()),
+            forced);
     }
     else if (method_arg.getValue() == 2)
     {
-        reorderNodes2(
+        fixVtkInconsistencies(
             const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()));
     }
     else if (method_arg.getValue() == 3)
