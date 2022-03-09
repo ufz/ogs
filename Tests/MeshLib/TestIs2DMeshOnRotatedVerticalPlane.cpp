@@ -157,7 +157,7 @@ TEST(MeshLib, Is2DMeshOnRotatedVerticalPlane)
         element_nodes[2] = new MeshLib::Node(1.0, 0.0, 1.0, 2);
         element_nodes[3] = new MeshLib::Node(0.0, 0.0, 1.0, 3);
 
-        auto const expected_space_dimension = 2u;
+        auto const expected_space_dimension = 3u;
         testAsVerticalPlaneMesh(expected_space_dimension, element_nodes);
     }
 
