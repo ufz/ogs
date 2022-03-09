@@ -13,3 +13,4 @@ build linux petsc:
     # default python on arch is 3.10; there are no vtk wheels for it (VTUInterface)
     CMAKE_ARGS: >-
       -DPython3_EXECUTABLE=/usr/bin/python3.9
+      -DOGS_USE_PIP=ON

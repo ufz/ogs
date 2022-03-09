@@ -14,6 +14,7 @@ build win:
       -DOGS_CI_TESTRUNNER_REPEAT=1
       -DOGS_$USE_PYTHON
       -DOGS_BUILD_PROCESS_TH2M=OFF
+      -DOGS_USE_PIP=ON
   parallel:
     matrix:
       - USE_PYTHON: ["USE_PYTHON=ON", "USE_PYTHON=OFF"]

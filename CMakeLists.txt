@@ -39,7 +39,7 @@ if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.16)
     )
 endif()
 option(OGS_USE_PYTHON "Interface with Python" ON)
-option(OGS_USE_PIP "Enables automatic Python virtual environment handling." ON)
+option(OGS_USE_PIP "Enables automatic Python virtual environment handling." OFF)
 cmake_dependent_option(
     OGS_BUILD_SWMM "Should the SWMM interface be built?" ON "WIN32" OFF
 )

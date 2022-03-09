@@ -20,7 +20,7 @@ create cpm cache:
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
     # cpm:
-    - cmake ../../ogs -B . -G Ninja --preset release -DOGS_USE_PIP=OFF -DCPM_SOURCE_CACHE=./cpm
+    - cmake ../../ogs -B . -G Ninja --preset release -DCPM_SOURCE_CACHE=./cpm
     - find cpm -type f | grep -i "\.git" | xargs rm -rf
     - VERSION=$(find cpm -type f -print0 | sort -z | xargs -r0  sha1sum | awk '{print $1}' | sha1sum | awk '{print $1}')
     - echo "VERSION=${VERSION}"
@@ -71,8 +71,8 @@ offline configure:
     - |
       firejail --noprofile --net=none --blacklist=/usr/bin/mfront --read-write=${CI_BUILDS_DIR} \
         cmake ../../ogs -B . -G Ninja --preset release \
-          -DOGS_USE_PYTHON=OFF -DOGS_USE_PIP=OFF -DCPM_SOURCE_CACHE=./cpm
+          -DOGS_USE_PYTHON=OFF -DCPM_SOURCE_CACHE=./cpm
       rm CMakeCache.txt
       cmake ../../ogs -B . -G Ninja --preset release-petsc \
-        -DOGS_USE_PYTHON=OFF -DOGS_USE_PIP=OFF -DCPM_SOURCE_CACHE=./cpm \
+        -DOGS_USE_PYTHON=OFF -DCPM_SOURCE_CACHE=./cpm \
         -DOGS_USE_MFRONT=ON -DOGS_USE_LIS=ON -DOGS_EXTERNAL_DEPENDENCIES_CACHE=./ext

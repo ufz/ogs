@@ -19,13 +19,13 @@ if(OGS_USE_PIP)
         unset(_OGS_PYTHON_PACKAGES_SHA1 CACHE)
     endif()
     set(Python3_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
-    set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/bin/python)
     if(MSVC)
         set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/Scripts/python.exe)
         set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/Scripts
             CACHE INTERNAL ""
         )
     else()
+        set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/bin/python)
         set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/bin
             CACHE INTERNAL ""
         )

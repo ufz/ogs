@@ -369,7 +369,11 @@ Use six arguments version of AddTest with absolute and relative tolerances"
 
             get_filename_component(FILE_EXPECTED ${GML_FILE} NAME)
             if(WIN32)
-                string(REPLACE " " "\\ " PY_EXE ${Python3_EXECUTABLE})
+                file(TO_NATIVE_PATH "${Python3_EXECUTABLE}" PY_EXE)
+                # Dirty hack for Windows Python paths with spaces:
+                string(REPLACE "Program Files" "\"Program Files\"" PY_EXE
+                               ${PY_EXE}
+                )
             else()
                 set(PY_EXE ${Python3_EXECUTABLE})
             endif()
