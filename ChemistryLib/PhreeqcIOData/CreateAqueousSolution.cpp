@@ -23,6 +23,9 @@ namespace PhreeqcIOData
 std::unique_ptr<AqueousSolution> createAqueousSolution(
     BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh)
 {
+    //! \ogs_file_attr{prj__chemical_system__solution__fixing_pe}
+    auto const fixing_pe = config.getConfigAttribute<bool>("fixing_pe", false);
+
     //! \ogs_file_param{prj__chemical_system__solution__temperature}
     auto const temperature = config.getConfigParameter<double>("temperature");
 
@@ -39,8 +42,9 @@ std::unique_ptr<AqueousSolution> createAqueousSolution(
 
     auto charge_balance = createChargeBalance(config);
 
-    return std::make_unique<AqueousSolution>(
-        temperature, pressure, pe, pe0, std::move(components), charge_balance);
+    return std::make_unique<AqueousSolution>(fixing_pe, temperature, pressure,
+                                             pe, pe0, std::move(components),
+                                             charge_balance);
 }
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

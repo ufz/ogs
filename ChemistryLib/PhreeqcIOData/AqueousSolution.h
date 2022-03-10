@@ -45,11 +45,12 @@ struct Component
 
 struct AqueousSolution
 {
-    AqueousSolution(double temperature_, double pressure_,
-                    MeshLib::PropertyVector<double>* pe_, double const pe0_,
-                    std::vector<Component>&& components_,
+    AqueousSolution(bool const fixing_pe_, double temperature_,
+                    double pressure_, MeshLib::PropertyVector<double>* pe_,
+                    double const pe0_, std::vector<Component>&& components_,
                     ChargeBalance charge_balance_)
-        : temperature(temperature_),
+        : fixing_pe(fixing_pe_),
+          temperature(temperature_),
           pressure(pressure_),
           pe(pe_),
           pe0(pe0_),
@@ -60,6 +61,9 @@ struct AqueousSolution
 
     void print(std::ostream& os, std::size_t const chemical_system_id) const;
 
+    /// When this option is enabled, the pe value will be fixed over time by
+    /// adding or removing atmospheric oxygen.
+    bool const fixing_pe;
     double const temperature;
     double const pressure;
     std::unique_ptr<GlobalVector> pH;
