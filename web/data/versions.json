@@ -41,6 +41,7 @@
       "https://github.com/bilke/nb2hugo/archive/e27dc02df2be1ce19e4a6f52d197c2e2a6ca520c.zip",
       "ipykernel==6.9.1",
       "nbconvert==6.4.0",
+      "ipython_genutils==0.2.0",
       "pillow=9.0.0"
     ]
   },
