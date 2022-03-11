@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Configure CMake
-        run: cmake -B ${{ env.build }} -DCMAKE_BUILD_TYPE=${{ env.config }} -DOGS_BUILD_PROCESS_TH2M=OFF -DOGS_USE_PYTHON=OFF -DOGS_USE_UNITY_BUILDS=OFF -DOGS_BUILD_TESTING=OFF
+        run: cmake -B ${{ env.build }} -DCMAKE_BUILD_TYPE=${{ env.config }} -DOGS_BUILD_PROCESS_TH2M=OFF -DOGS_USE_PYTHON=OFF -DOGS_USE_UNITY_BUILDS=OFF -DOGS_BUILD_TESTING=OFF -DOGS_ENABLE_ELEMENT_PRISM=OFF -DOGS_ENABLE_ELEMENT_PYRAMID=OFF -DOGS_MAX_ELEMENT_DIM=2
 
       # Build is not required unless generated source files are used
       # - name: Build CMake
