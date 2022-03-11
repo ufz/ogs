@@ -19,6 +19,7 @@
 namespace MeshLib
 {
 class Mesh;
+class Properties;
 }
 
 namespace ProcessLib
@@ -92,6 +93,6 @@ struct IntegrationPointMetaData
 /// Returns integration point meta data for the given field name.
 ///
 /// The data is read from a JSON encoded string stored in field data array.
-IntegrationPointMetaData getIntegrationPointMetaData(MeshLib::Mesh const& mesh,
-                                                     std::string const& name);
+IntegrationPointMetaData getIntegrationPointMetaData(
+    MeshLib::Properties const& properties, std::string const& name);
 }  // namespace ProcessLib
