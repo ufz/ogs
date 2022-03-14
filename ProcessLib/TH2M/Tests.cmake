@@ -309,3 +309,59 @@ AddTest(
     IfG_ts_110_t_10000.000000.vtu IfG_ts_110_t_10000.000000.vtu porosity porosity 1e-14 1e-12
     IfG_ts_110_t_10000.000000.vtu IfG_ts_110_t_10000.000000.vtu saturation saturation 1e-14 1e-12
 )
+
+###PETSc
+AddTest(
+    NAME Parallel_TH2M_THM_point_heatsource
+    PATH TH2M/THM/sphere
+    RUNTIME 40
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS point_heatsource.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 3
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    # partition 0
+    result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu gas_pressure_interpolated gas_pressure_interpolated 7e-7 2e-3
+    result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu capillary_pressure_interpolated capillary_pressure_interpolated 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu temperature_interpolated temperature_interpolated 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu displacement displacement 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu liquid_pressure_interpolated liquid_pressure_interpolated 7e-7 2e-3
+    result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu velocity_gas velocity_gas 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu velocity_liquid velocity_liquid 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu sigma sigma 3e-4 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu epsilon epsilon 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu liquid_density liquid_density 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu gas_density gas_density 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu porosity porosity 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu saturation saturation 1e-8 1e-8
+    # partition 1
+    result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu gas_pressure_interpolated gas_pressure_interpolated 7e-7 2e-3
+    result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu capillary_pressure_interpolated capillary_pressure_interpolated 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu temperature_interpolated temperature_interpolated 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu displacement displacement 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu liquid_pressure_interpolated liquid_pressure_interpolated 7e-7 2e-3
+    result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu velocity_gas velocity_gas 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu velocity_liquid velocity_liquid 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu sigma sigma 2e-4 4e-4
+    result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu epsilon epsilon 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu liquid_density liquid_density 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu gas_density gas_density 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu porosity porosity 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu saturation saturation 1e-8 1e-8
+    # partition 2
+    result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu gas_pressure_interpolated gas_pressure_interpolated 7e-7 1e-3
+    result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu capillary_pressure_interpolated capillary_pressure_interpolated 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu temperature_interpolated temperature_interpolated 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu displacement displacement 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu liquid_pressure_interpolated liquid_pressure_interpolated 7e-7 1e-3
+    result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu velocity_gas velocity_gas 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu velocity_liquid velocity_liquid 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu sigma sigma 2e-4 4e-3
+    result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu epsilon epsilon 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu liquid_density liquid_density 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu gas_density gas_density 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu porosity porosity 1e-8 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu saturation saturation 1e-8 1e-8
+)
