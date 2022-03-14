@@ -8,10 +8,9 @@ build mac:
   needs: [meta]
   variables:
     CHECK_WARNINGS: "true"
-    CMAKE_PRESET: release
+    CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
       -DOGS_INSTALL_DEPENDENCIES=ON
-      -DOGS_USE_MFRONT=ON
   parallel:
     matrix:
       - ARCHITECTURE: ["amd64", "arm64"]

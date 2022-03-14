@@ -67,10 +67,10 @@ build linux arch:
   needs: [meta]
   variables:
     CMAKE_PRESET: release-all
+    # default python on arch is 3.10; there are no vtk wheels for it (VTUInterface)
     CMAKE_ARGS: >-
+      -DPython3_EXECUTABLE=/usr/bin/python3.9
       -DBUILD_SHARED_LIBS=ON
-      -DOGS_USE_POETRY=OFF
-      -DOGS_TEST_NOTEBOOKS=OFF
       -DOGS_USE_MKL=ON
 
 build linux debug with sanitizers:
@@ -87,7 +87,6 @@ build linux debug with sanitizers:
       -DCMAKE_C_COMPILER=/usr/bin/clang
       -DCMAKE_CXX_COMPILER=/usr/bin/clang++
       -DBUILD_SHARED_LIBS=ON
-      -DOGS_USE_POETRY=OFF
       -DOGS_COMPILE_FLAGS=-O3;-fno-var-tracking
       -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=OFF
       -DOGS_ADDRESS_SANITIZER=ON

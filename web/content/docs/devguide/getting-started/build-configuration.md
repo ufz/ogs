@@ -72,7 +72,7 @@ You can create a `CMakeUserPresets.json` file in the root source directory with 
       "name": "my-release",
       "inherits": "release",
       "cacheVariables": {
-        "OGS_USE_POETRY": "OFF"
+        "OGS_USE_PIP": "ON"
       }
     }
   ]

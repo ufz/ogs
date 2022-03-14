@@ -1,6 +1,8 @@
 find_program(FASTCOV_PATH NAMES fastcov fastcov.py)
-if(NOT FASTCOV_PATH AND NOT POETRY)
-    message(FATAL_ERROR "Code coverage requires either fastcov or poetry.")
+if(NOT FASTCOV_PATH AND NOT OGS_USE_PIP)
+    message(
+        FATAL_ERROR "Code coverage requires either fastcov or OGS_USE_PIP=ON."
+    )
 endif()
 
 # https://github.com/linux-test-project/lcov/pull/125
@@ -17,25 +19,20 @@ include(CodeCoverage)
 append_coverage_compiler_flags()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Og")
 
+# cmake-lint: disable=C0103
 if(NOT FASTCOV_PATH)
-    execute_process(
-        COMMAND ${CMD_COMMAND} poetry add fastcov==1.10
-        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-    )
-    find_program(
-        FASTCOV_PATH
-        NAMES fastcov
-        HINTS ${LOCAL_VIRTUALENV_BIN_DIR} REQUIRED
-        NO_DEFAULT_PATH
-    )
+    list(APPEND OGS_PYTHON_PACKAGES "fastcov==1.14")
+    set(FASTCOV_PATH ${LOCAL_VIRTUALENV_BIN_DIR}/fastcov CACHE INTERNAL "")
 endif()
 
 if(DEFINED ENV{CI})
     set(COVERAGE_ADDITIONAL_ARGS SKIP_HTML)
 endif()
 
+# ~~~
 # TODO: segfault in MeshLibMappedPropertyVector.Double|Int
 # TODO: segfault in TestVtkMeshConverter.Conversion
+# ~~~
 setup_target_for_coverage_fastcov(
     NAME
     testrunner_coverage

@@ -36,13 +36,13 @@
   },
   "python": {
     "notebook_requirements": [
-      "https://github.com/joergbuchwald/ogs6py/archive/0f9e738e2ee469c8bde4204b2151238973417694.zip",
-      "https://github.com/joergbuchwald/VTUinterface/archive/refs/heads/master.zip",
-      "https://github.com/bilke/nb2hugo/archive/e27dc02df2be1ce19e4a6f52d197c2e2a6ca520c.zip",
+      "git+https://github.com/joergbuchwald/ogs6py@0f9e738e2ee469c8bde4204b2151238973417694#egg=ogs6py",
+      "git+https://github.com/joergbuchwald/VTUinterface@master#egg=VTUinterface",
+      "git+https://github.com/bilke/nb2hugo@e27dc02df2be1ce19e4a6f52d197c2e2a6ca520c#egg=nb2hugo",
       "ipykernel==6.9.1",
       "nbconvert==6.4.0",
       "ipython_genutils==0.2.0",
-      "pillow=9.0.0"
+      "pillow==9.0.0"
     ]
   },
   "cpm": {

@@ -143,7 +143,8 @@
       "name": "_all",
       "hidden": true,
       "cacheVariables": {
-        "OGS_USE_MFRONT": "ON"
+        "OGS_USE_MFRONT": "ON",
+        "OGS_USE_PIP": "ON"
       }
     },
     {
@@ -176,8 +177,7 @@
       "inherits": "release",
       "cacheVariables": {
         "OGS_BUILD_UTILS": "OFF",
-        "OGS_USE_PYTHON": "OFF",
-        "OGS_USE_POETRY": "OFF"
+        "OGS_USE_PYTHON": "OFF"
       }
     },
     {
@@ -185,7 +185,6 @@
       "inherits": "release-all",
       "cacheVariables": {
         "OGS_USE_PYTHON": "OFF",
-        "OGS_USE_POETRY": "OFF",
         "OGS_USE_UNITY_BUILDS": "OFF"
       }
     }

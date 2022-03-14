@@ -10,18 +10,20 @@ code coverage:
     # default python on arch is 3.10; there are no vtk wheels for it (VTUInterface)
     CMAKE_ARGS: >-
       -DPython3_EXECUTABLE=/usr/bin/python3.9
+      -DOGS_USE_PIP=ON
   before_script:
     - !reference [.template-build-linux, before_script]
     # Shortcut to the generated pages:
     - echo '<meta http-equiv="REFRESH" content="0;URL=build/coverage/coverage_report/index.html">' >> Coverage.html
   after_script:
     - cd ../build/coverage
-    - poetry run fastcov --branch-coverage -C testrunner_coverage.info ctest_coverage.info --lcov -o coverage.info
-    - poetry run fastcov --branch-coverage -C testrunner_coverage.info ctest_coverage.info -o coverage.json
+    - source .venv/bin/activate
+    - fastcov --branch-coverage -C testrunner_coverage.info ctest_coverage.info --lcov -o coverage.info
+    - fastcov --branch-coverage -C testrunner_coverage.info ctest_coverage.info -o coverage.json
     - genhtml --branch-coverage --demangle-cpp -o coverage_report coverage.info
     - wget https://raw.github.com/eriwen/lcov-to-cobertura-xml/master/lcov_cobertura/lcov_cobertura.py
-    - poetry run python lcov_cobertura.py coverage.info --base-dir $CI_PROJECT_DIR
-    - poetry run ./generate_coverage_vis_data.py
+    - python lcov_cobertura.py coverage.info --base-dir $CI_PROJECT_DIR
+    - ./generate_coverage_vis_data.py
   artifacts:
     when: always
     paths:
