@@ -2,6 +2,7 @@
 <OpenGeoSysProject>
     <meshes>
         <mesh axially_symmetric="true">domain.vtu</mesh>
+        <mesh axially_symmetric="true">domain_bc.vtu</mesh>
         <mesh axially_symmetric="true">geometry_left.vtu</mesh>
         <mesh axially_symmetric="true">geometry_center.vtu</mesh>
         <mesh axially_symmetric="true">geometry_out.vtu</mesh>
@@ -356,7 +357,7 @@
             <boundary_conditions>
 
                 <boundary_condition>
-                    <mesh>domain</mesh>
+                    <mesh>domain_bc</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
