@@ -136,7 +136,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         *chemical_system, user_punch, use_high_precision, project_file_name);
 
     return std::make_unique<PhreeqcIOData::PhreeqcIO>(
-        *linear_solver, std::move(project_file_name),
+        mesh, *linear_solver, std::move(project_file_name),
         std::move(path_to_database), std::move(chemical_system),
         std::move(reaction_rates), std::move(user_punch), std::move(output),
         std::move(dump), std::move(knobs));
@@ -185,7 +185,7 @@ createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
         config.getConfigSubtreeOptional("equilibrium_reactants"), mesh);
 
     return std::make_unique<PhreeqcKernelData::PhreeqcKernel>(
-        *linear_solver, mesh.getNumberOfBaseNodes(),
+        mesh, *linear_solver, mesh.getNumberOfBaseNodes(),
         process_id_to_component_name_map, std::move(path_to_database),
         std::move(aqueous_solution), std::move(equilibrium_reactants),
         std::move(kinetic_reactants), std::move(reaction_rates));

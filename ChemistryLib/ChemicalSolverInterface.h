@@ -12,6 +12,7 @@
 
 #include "MaterialLib/MPL/VariableType.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
+#include "MeshLib/Mesh.h"
 
 namespace MaterialPropertyLib
 {
@@ -28,9 +29,16 @@ namespace ChemistryLib
 class ChemicalSolverInterface
 {
 public:
-    ChemicalSolverInterface(GlobalLinearSolver& linear_solver_)
-        : linear_solver(linear_solver_)
+    ChemicalSolverInterface(MeshLib::Mesh const& mesh,
+                            GlobalLinearSolver& linear_solver_)
+        : _mesh(mesh), linear_solver(linear_solver_)
     {
+    }
+
+    std::vector<std::size_t> const& getElementIDs()
+    {
+        return *_mesh.getProperties().template getPropertyVector<std::size_t>(
+            "bulk_element_ids", MeshLib::MeshItemType::Cell, 1);
     }
 
     virtual void initialize() {}
@@ -96,6 +104,7 @@ public:
 
 public:
     std::vector<GlobalIndexType> chemical_system_index_map;
+    MeshLib::Mesh const& _mesh;
     /// specify the linear solver used to solve the linearized reaction
     /// equation.
     GlobalLinearSolver& linear_solver;

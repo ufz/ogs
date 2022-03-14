@@ -33,7 +33,8 @@ struct UserPunch;
 class PhreeqcIO final : public ChemicalSolverInterface
 {
 public:
-    PhreeqcIO(GlobalLinearSolver& linear_solver,
+    PhreeqcIO(MeshLib::Mesh const& mesh,
+              GlobalLinearSolver& linear_solver,
               std::string const& project_file_name,
               std::string&& database,
               std::unique_ptr<ChemicalSystem>&& chemical_system,
