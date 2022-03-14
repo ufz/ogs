@@ -24,22 +24,21 @@ class Node;
  * The space dimension is computed by accounting the non-zero norms of
  *  \f$\mathbf x\f$, \f$\mathbf y\f$, \f$\mathbf z\f$, which are
  *  the coordinates of all nodes of the mesh. With this concept,
- *  the space dimension of a mesh is:
- *    - 1, if the mesh is 1D and and the mesh is parallel either to
- *         \f$x\f$, \f$y\f$ or to \f$z\f$ axis.
- *    - 2, if the mesh is 1D but it contains inclined elements on the origin
- *         coordinate plane of \f$x-y,\, y-z,\, \text{or }\, x-z\f$.
- *         That means the coordinates of all nodes are
- *         \f$(x, y, 0)\f$, \f$(x, 0, z)\f$ or \f$(0, y, z)\f$.
- *    - 3, if the mesh is 1D and but it is not on any origin
- *         coordinate plane of \f$x-y,\, y-z,\, \text{or }\, x-z\f$.
- *    - 2, if the mesh is 2D and it is on the origin
- *         coordinate plane of \f$x-y,\, y-z,\, \text{or }\, x-z\f$.
- *    - 2, if the mesh is 2D and it is on vertical or horizontal plane
- *         that is parallel to the the origin coordinate
- *         plane of \f$x-y,\, y-z,\, \text{or }\, x-z\f$ but with an offset.
- *    - 3, if the mesh contains inclined 2D elements.
- *    - 3, if the mesh contains 3D elements.
+ *  the space dimension is:
+ *    - 1, if all nodes are on a line that is parallel to
+ *         \f$x\f$ axis.
+ *    - 2, if all nodes are on a line that is parallel to
+ *         \f$y\f$ axis.
+ *    - 3, if all nodes are on a line that is parallel to
+ *         \f$z\f$ axis.
+ *    - 2, if all nodes are distributed on a plane that is parallel
+ *         to the origin coordinate plane of \f$x-y\f$ (including the case of
+ *         mesh with 1D inclined elements).
+ *    - 3, if all nodes are distributed on a plane that is parallel
+ *         to the origin coordinate plane of \f$y-z\f$ or \f$x-z\f$ (including
+ *         the case of mesh with 1D inclined elements)..
+ *    - 3, if all nodes are scattered in 3D space (e.g. mesh with inclined 1D,
+ *         2D elements, 3D elements).
  */
 int getSpaceDimension(std::vector<Node*> const& nodes);
 };  // namespace MeshLib
