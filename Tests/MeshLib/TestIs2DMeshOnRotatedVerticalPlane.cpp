@@ -149,6 +149,18 @@ TEST(MeshLib, Is2DMeshOnRotatedVerticalPlane)
         testAsVerticalPlaneMesh(expected_space_dimension, element_nodes);
     }
 
+    // 2D mesh on y-z plane:
+    {
+        std::array<MeshLib::Node*, 4> element_nodes;
+        element_nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0, 0);
+        element_nodes[1] = new MeshLib::Node(0.0, 1.0, 0.0, 1);
+        element_nodes[2] = new MeshLib::Node(0.0, 1.0, 1.0, 2);
+        element_nodes[3] = new MeshLib::Node(0.0, 0.0, 1.0, 3);
+
+        auto const expected_space_dimension = 3u;
+        testAsVerticalPlaneMesh(expected_space_dimension, element_nodes);
+    }
+
     // 2D mesh on x-z plane:
     {
         std::array<MeshLib::Node*, 4> element_nodes;
