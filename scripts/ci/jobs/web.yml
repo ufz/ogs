@@ -32,6 +32,7 @@ preview web site:
       changes:
         - web/**/*
         - scripts/ci/jobs/web.yml
+        - Tests/Data/**/*.ipynb
   artifacts:
     expose_as: "Web Preview"
     paths:
