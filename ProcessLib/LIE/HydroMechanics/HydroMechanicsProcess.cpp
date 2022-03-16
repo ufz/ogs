@@ -439,7 +439,7 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
 
         _process_data.mesh_prop_hydraulic_flow =
             MeshLib::getOrCreateMeshProperty<double>(
-                const_cast<MeshLib::Mesh&>(mesh), "HydraulicFlow",
+                const_cast<MeshLib::Mesh&>(mesh), "MassFlowRate",
                 MeshLib::MeshItemType::Node, 1);
         assert(_process_data.mesh_prop_hydraulic_flow->size() ==
                mesh.getNumberOfNodes());

@@ -398,8 +398,8 @@ AddTest(
     LF_cube_1e3_calculatesurfaceflux_cube_1x1x1_hex_1e3_complete_surface_ts_2_t_0.864000.vtu LF_cube_1e3_calculatesurfaceflux_cube_1x1x1_hex_1e3_complete_surface_ts_2_t_0.864000.vtu specific_flux specific_flux 1e-7 1e-13
     LF_cube_1e3_calculatesurfaceflux_ts_1_t_0.432000_expected.vtu LF_cube_1e3_calculatesurfaceflux_cube_1x1x1_hex_1e3_ts_1_t_0.432000.vtu pressure pressure 1e-7 1e-13
     LF_cube_1e3_calculatesurfaceflux_ts_2_t_0.864000_expected.vtu LF_cube_1e3_calculatesurfaceflux_cube_1x1x1_hex_1e3_ts_2_t_0.864000.vtu pressure pressure 1e-7 1e-13
-    LF_cube_1e3_calculatesurfaceflux_ts_1_t_0.432000_expected.vtu LF_cube_1e3_calculatesurfaceflux_cube_1x1x1_hex_1e3_ts_1_t_0.432000.vtu HydraulicFlow HydraulicFlow 1e-13 0
-    LF_cube_1e3_calculatesurfaceflux_ts_2_t_0.864000_expected.vtu LF_cube_1e3_calculatesurfaceflux_cube_1x1x1_hex_1e3_ts_2_t_0.864000.vtu HydraulicFlow HydraulicFlow 1e-13 0
+    LF_cube_1e3_calculatesurfaceflux_ts_1_t_0.432000_expected.vtu LF_cube_1e3_calculatesurfaceflux_cube_1x1x1_hex_1e3_ts_1_t_0.432000.vtu VolumetricFlowRate VolumetricFlowRate 1e-13 0
+    LF_cube_1e3_calculatesurfaceflux_ts_2_t_0.864000_expected.vtu LF_cube_1e3_calculatesurfaceflux_cube_1x1x1_hex_1e3_ts_2_t_0.864000.vtu VolumetricFlowRate VolumetricFlowRate 1e-13 0
 )
 
 AddTest(
@@ -484,7 +484,7 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf pressure pressure 1e-7 1e-13
-    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf HydraulicFlow HydraulicFlow 1e-7 1e-13
+    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf VolumetricFlowRate VolumetricFlowRate 1e-7 1e-13
     square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf MaterialIDs MaterialIDs 1e-7 1e-13
     square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf v v 1e-7 1e-13
     square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_right_boundary.xdmf pressure pressure 1e-7 1e-13
@@ -505,7 +505,7 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf pressure pressure 1e-7 1e-13
-    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf HydraulicFlow HydraulicFlow 1e-7 1e-13
+    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf VolumetricFlowRate VolumetricFlowRate 1e-7 1e-13
     square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf MaterialIDs MaterialIDs 1e-7 1e-13
     square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf v v 1e-7 1e-13
     square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_right_boundary.xdmf pressure pressure 1e-7 1e-13

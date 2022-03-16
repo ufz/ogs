@@ -517,7 +517,7 @@
         </vtkdiff>
         <vtkdiff>
             <regex>THM_confined_compression_liquid_ts_.*.vtu</regex>
-            <field>HydraulicFlow</field>
+            <field>MassFlowRate</field>
             <absolute_tolerance>0.</absolute_tolerance>
             <relative_tolerance>0.</relative_tolerance>
         </vtkdiff>

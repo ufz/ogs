@@ -7,7 +7,7 @@
     <Piece NumberOfPoints="121"                  NumberOfCells="100"                 >
       <PointData>
         <DataArray type="Float64" Name="D1_left_bottom_N1_right" format="appended" RangeMin="1"                    RangeMax="1.6753144833"         offset="92"                  />
-        <DataArray type="Float64" Name="HeatFlux" format="appended" RangeMin="-0.2351800407"        RangeMax="0.5412505295"         offset="1236"                />
+        <DataArray type="Float64" Name="HeatFlowRate" format="appended" RangeMin="-0.2351800407"        RangeMax="0.5412505295"         offset="1236"                />
         <DataArray type="Float64" Name="Linear_1_to_minus1" format="appended" RangeMin="-1"                   RangeMax="1"                    offset="2588"                />
         <DataArray type="Float64" Name="heat_flux" NumberOfComponents="2" format="appended" RangeMin="0.34938450892"        RangeMax="1.0051420911"         offset="2716"                />
         <DataArray type="Float64" Name="temperature" format="appended" RangeMin="0"                    RangeMax="0.69387794795"        offset="5212"                />

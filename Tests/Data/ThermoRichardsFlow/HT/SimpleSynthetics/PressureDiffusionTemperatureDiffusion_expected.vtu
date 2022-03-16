@@ -9,8 +9,8 @@
     </FieldData>
     <Piece NumberOfPoints="1089"                 NumberOfCells="1024"                >
       <PointData>
-        <DataArray type="Float64" Name="HeatFlux" format="appended" RangeMin="-0.0936765625"        RangeMax="0.0936765625"         offset="576"                 />
-        <DataArray type="Float64" Name="HydraulicFlow" format="appended" RangeMin="-6.25e-16"            RangeMax="6.25e-16"             offset="2360"                />
+        <DataArray type="Float64" Name="HeatFlowRate" format="appended" RangeMin="-0.0936765625"        RangeMax="0.0936765625"         offset="576"                 />
+        <DataArray type="Float64" Name="MassFlowRate" format="appended" RangeMin="-6.25e-16"            RangeMax="6.25e-16"             offset="2360"                />
         <DataArray type="Float64" Name="T" format="appended" RangeMin="1"                    RangeMax="2"                    offset="4520"                />
         <DataArray type="Float64" Name="darcy_velocity" NumberOfComponents="2" format="appended" RangeMin="2e-11"                RangeMax="2e-11"                offset="5924"                />
         <DataArray type="Float64" Name="dry_density_solid" format="appended" RangeMin="0"                    RangeMax="0"                    offset="14128"               />

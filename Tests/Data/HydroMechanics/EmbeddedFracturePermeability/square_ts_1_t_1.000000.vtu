@@ -9,7 +9,7 @@
     </FieldData>
     <Piece NumberOfPoints="9"                    NumberOfCells="1"                   >
       <PointData>
-        <DataArray type="Float64" Name="HydraulicFlow" format="appended" RangeMin="-5e-11"               RangeMax="5e-11"                offset="664"                 />
+        <DataArray type="Float64" Name="MassFlowRate" format="appended" RangeMin="-5e-11"               RangeMax="5e-11"                offset="664"                 />
         <DataArray type="Float64" Name="NodalForces" NumberOfComponents="2" format="appended" RangeMin="2.9515836866e-12"     RangeMax="73260.07326"          offset="752"                 />
         <DataArray type="Float64" Name="displacement" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="0.00010879675866"     offset="960"                 />
         <DataArray type="Float64" Name="epsilon" NumberOfComponents="4" format="appended" RangeMin="0.00010879675866"     RangeMax="0.00010879675866"     offset="1088"                />

@@ -43,7 +43,7 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 
     _heat_flux = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "HeatFlux", MeshLib::MeshItemType::Node, 1);
+        mesh, "HeatFlowRate", MeshLib::MeshItemType::Node, 1);
 
     _integration_point_writer.emplace_back(
         std::make_unique<IntegrationPointWriter>(

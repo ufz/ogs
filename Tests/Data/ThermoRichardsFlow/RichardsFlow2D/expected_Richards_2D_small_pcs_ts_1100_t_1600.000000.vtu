@@ -9,8 +9,8 @@
     </FieldData>
     <Piece NumberOfPoints="153"                  NumberOfCells="100"                 >
       <PointData>
-        <DataArray type="Float64" Name="HeatFlux" format="appended" RangeMin="-0"                   RangeMax="-0"                   offset="804"                 />
-        <DataArray type="Float64" Name="HydraulicFlow" format="appended" RangeMin="-7.5897282373e-08"    RangeMax="0.00020942186182"     offset="880"                 />
+        <DataArray type="Float64" Name="HeatFlowRate" format="appended" RangeMin="-0"                   RangeMax="-0"                   offset="804"                 />
+        <DataArray type="Float64" Name="MassFlowRate" format="appended" RangeMin="-7.5897282373e-08"    RangeMax="0.00020942186182"     offset="880"                 />
         <DataArray type="Float64" Name="pressure" format="appended" RangeMin="-21500"               RangeMax="0"                    offset="1516"                />
         <DataArray type="Float64" Name="saturation" format="appended" RangeMin="0.45452590796"        RangeMax="1.0011632834"         offset="1772"                />
         <DataArray type="Float64" Name="temperature" format="appended" RangeMin="0"                    RangeMax="0"                    offset="2048"                />

@@ -45,7 +45,7 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 
     _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "HydraulicFlow", MeshLib::MeshItemType::Node, 1);
+        mesh, "MassFlowRate", MeshLib::MeshItemType::Node, 1);
 
     _integration_point_writer.emplace_back(
         std::make_unique<IntegrationPointWriter>(
