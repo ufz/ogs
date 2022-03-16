@@ -886,3 +886,23 @@ AddTest(
     DIFF_DATA
     TestGeometry_point.gml TestGeometry_point.gml
 )
+
+MeshTest(
+    NAME NodeOrdering_M0
+    PATH MeshLib/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    EXECUTABLE NodeReordering
+    EXECUTABLE_ARGS -i ReorderTestMesh.vtu -o ${Data_BINARY_DIR}/MeshLib/ReorderTestMeshM0.vtu -m 0
+    REQUIREMENTS NOT (OGS_USE_MPI)
+    DIFF_DATA ReorderTestMeshM0.vtu ReorderTestMeshM0.vtu 1.e-16
+)
+
+MeshTest(
+    NAME NodeOrdering_M1
+    PATH MeshLib/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    EXECUTABLE NodeReordering
+    EXECUTABLE_ARGS -i ReorderTestMesh.vtu -o ${Data_BINARY_DIR}/MeshLib/ReorderTestMeshM1.vtu -m 1
+    REQUIREMENTS NOT (OGS_USE_MPI)
+    DIFF_DATA ReorderTestMeshM1.vtu ReorderTestMeshM1.vtu 1.e-16
+)
