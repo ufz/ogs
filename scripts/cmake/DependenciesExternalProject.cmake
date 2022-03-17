@@ -123,12 +123,16 @@ if(OGS_USE_LIS)
         find_package(LIS)
     endif()
     if(NOT LIS_FOUND)
+        if(BUILD_SHARED_LIBS)
+            set(_lis_config_args --enable-shared)
+        endif()
         BuildExternalProject(
             LIS ${_lis_source}
             CONFIGURE_COMMAND ./configure --enable-omp --prefix=<INSTALL_DIR>
+                              ${_lis_config_args}
             BUILD_IN_SOURCE ON
             BUILD_COMMAND make -j
-            INSTALL_COMMAND make -j install
+            INSTALL_COMMAND make -j install ${_install_dir}
         )
         message(
             STATUS
