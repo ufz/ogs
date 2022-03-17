@@ -34,9 +34,23 @@ int getSpaceDimension(std::vector<Node*> const& nodes)
         }
     }
 
-    return static_cast<int>(std::count_if(
+    // Z coordinate norm is not zero whichever 1D, 2D or 3D mesh:
+    if (x_magnitude[2] > 0)
+    {
+        return 3;
+    }
+
+    const auto computed_dimension = std::count_if(
         x_magnitude.begin(), x_magnitude.end(),
         [](const double x_i_magnitude)
-        { return x_i_magnitude > std::numeric_limits<double>::epsilon(); }));
+        { return x_i_magnitude > std::numeric_limits<double>::epsilon(); });
+
+    // 1D mesh in y direction:
+    if (computed_dimension == 1 && x_magnitude[1] > 0)
+    {
+        return 2;
+    }
+
+    return static_cast<int>(computed_dimension);
 }
 };  // namespace MeshLib
