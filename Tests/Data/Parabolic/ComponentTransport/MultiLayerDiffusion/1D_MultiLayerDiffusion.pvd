@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="1D_MultiLayerDiffusion_ts_0_t_0.000000.vtu"/>
+    <DataSet timestep="31536000000" group="" part="0" file="1D_MultiLayerDiffusion_ts_1_t_31536000000.000000.vtu"/>
+    <DataSet timestep="315360000000" group="" part="0" file="1D_MultiLayerDiffusion_ts_10_t_315360000000.000000.vtu"/>
+    <DataSet timestep="3153600000000" group="" part="0" file="1D_MultiLayerDiffusion_ts_100_t_3153600000000.000000.vtu"/>
+    <DataSet timestep="31536000000000" group="" part="0" file="1D_MultiLayerDiffusion_ts_1000_t_31536000000000.000000.vtu"/>
+  </Collection>
+</VTKFile>
