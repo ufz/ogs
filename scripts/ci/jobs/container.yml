@@ -1,7 +1,7 @@
 # Built for Sandy Bridge (envinf1) and newer
 container:
   stage: package
-  tags: [envinf2-shell]
+  tags: [envinf, shell]
   needs: [meta]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
