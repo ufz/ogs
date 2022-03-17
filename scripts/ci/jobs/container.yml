@@ -24,7 +24,7 @@ container:
     - >
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
-      --cvode --ccache --mfront
+      --cvode --ccache --cpmcache --mfront
       --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_BUILD_TESTING=OFF'
       $DOCKER_TAG_SERIAL
@@ -32,7 +32,7 @@ container:
     - >
       poetry run ogscm compiler.py mpi.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
-      --cvode --ccache
+      --cvode --ccache --cpmcache
       --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_BUILD_TESTING=OFF'
       --ompi 4.0.5 --mpi_benchmarks
@@ -48,7 +48,7 @@ container:
     - >
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
-      --cvode --ccache
+      --cvode --ccache --cpmcache
       --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_BUILD_UTILS=OFF -DOGS_BUILD_TESTING=OFF'
       --gui
