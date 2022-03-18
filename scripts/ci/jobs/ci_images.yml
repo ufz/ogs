@@ -51,7 +51,7 @@ ci_images:
       --version_file ../../web/data/versions.json
       --tag $CONTAINER_GCC_GUI_IMAGE --upload
     - poetry run ogscm compiler.py ogs.py --build --ogs off
-      --pm conan --compiler clang --compiler_version 9 --ccache
+      --compiler clang --compiler_version 9 --ccache
       --version_file ../../web/data/versions.json
       --tag $CONTAINER_CLANG_IMAGE --upload
     - cd ${CI_PROJECT_DIR}
