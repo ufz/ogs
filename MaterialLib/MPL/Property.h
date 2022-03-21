@@ -36,7 +36,12 @@ using PropertyDataType =
 
 /// Conversion of a vector to PropertyDataType for different sizes of the
 /// vector.
-/// \attention It cannot distinguish between 2x2 matrix and 4x1 vector.
+///
+/// \attention This method cannot distinguish between 2x2 matrix and 4x1 vector.
+///
+/// \note If the \c values vector stores all elements of a 2x2 or 3x3 matrix
+/// (i.e. the general case for 2x2 and 3x3 matrices), it is assumed to be in row
+/// major storage order.
 PropertyDataType fromVector(std::vector<double> const& values);
 
 /// This class is the base class for any material property of any
