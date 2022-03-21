@@ -57,6 +57,7 @@ deploy web site:
       changes:
         - web/**/*
         - scripts/ci/jobs/web.yml
+        - Tests/Data/**/*.ipynb
     - if: '$CI_COMMIT_BRANCH == "master"'
       when: manual
       allow_failure: true
