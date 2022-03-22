@@ -88,12 +88,16 @@ This order is used, e.g., to display the per component convergence of the non-li
 * [TwoPhaseFlow with PP](https://doxygen.opengeosys.org/d0/d3f/namespaceProcessLib_1_1TwoPhaseFlowWithPP.html#processvariablestpfwpp)
 * [TwoPhaseFlow with Prho](https://doxygen.opengeosys.org/d4/de4/namespaceProcessLib_1_1TwoPhaseFlowWithPrho.html#processvariablestpfwprho)
 
-## Kelvin mapping
+## <a name="symmetric-tensors"></a>  Symmetric tensors and Kelvin mapping
 
 To map the elasticity/stiffness tensor OpenGeoSys internally uses a Kelvin mapping with an adapted component ordering for computational reasons \[[1](https://arxiv.org/abs/1605.09606)\].
-For 2D, the Kelvin-Vector of the stress tensor looks like $\sigma=(\sigma_{xx},\sigma_{yy},\sigma_{zz},\sqrt{2}\sigma_{xy})$ whereas the 3D version reads as $\sigma=(\sigma_{xx},\sigma_{yy},\sigma_{zz},\sqrt{2}\sigma_{xy}, \sqrt{2}\sigma_{yz},\sqrt{2}\sigma_{xz})$. The actual output consists of the full (symmetric) tensor elements (without the factor $\sqrt{2}$) retaining the same order.
+For 2D, the Kelvin-Vector of the stress tensor looks like $\sigma=(\sigma_{xx},\sigma_{yy},\sigma_{zz},\sqrt{2}\sigma_{xy})$ whereas the 3D version reads as $\sigma=(\sigma_{xx},\sigma_{yy},\sigma_{zz},\sqrt{2}\sigma_{xy}, \sqrt{2}\sigma_{yz},\sqrt{2}\sigma_{xz})$.
 
 For Kelvin mapping also see the [conversion function documentation](https://doxygen.opengeosys.org/d6/dce/namespacemathlib_1_1kelvinvector#ad78b122c10e91732e95181b6c9a92486).
+
+The input and output of symmetric tensors consists of the full (symmetric) tensor elements (without the factor $\sqrt{2}$), retaining the same order.
+I.e., Input and output components are be $\sigma=(\sigma_{xx},\sigma_{yy},\sigma_{zz},\sigma_{xy})$
+and $\sigma=(\sigma_{xx},\sigma_{yy},\sigma_{zz},\sigma_{xy},\sigma_{yz},\sigma_{xz})$, respectively.
 
 ## Staggered Scheme
 

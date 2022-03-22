@@ -39,7 +39,9 @@ PropertyDataType fromVector(std::vector<double> const& values)
         case 4:
         {
             using M = Eigen::Matrix2d;
-            return M{Eigen::Map<M const>{values.data(), 2, 2}};
+            // the values vector is in row major order
+            using MRM = Eigen::Matrix<double, 2, 2, Eigen::RowMajor>;
+            return M{Eigen::Map<MRM const>{values.data(), 2, 2}};
         }
         case 6:
         {
@@ -50,7 +52,9 @@ PropertyDataType fromVector(std::vector<double> const& values)
         case 9:
         {
             using M = Eigen::Matrix3d;
-            return M{Eigen::Map<M const>{values.data(), 3, 3}};
+            // the values vector is in row major order
+            using MRM = Eigen::Matrix<double, 3, 3, Eigen::RowMajor>;
+            return M{Eigen::Map<MRM const>{values.data(), 3, 3}};
         }
         default:
         {
