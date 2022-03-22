@@ -354,6 +354,17 @@ AddTest(
 )
 ################################################
 
+if(SNAKEMAKE AND TEE_TOOL_PATH AND BASH_TOOL_PATH)
+    add_test(NAME snakemake_partmesh_mixed_elements
+        COMMAND bash -c "export PATH=$<TARGET_FILE_DIR:partmesh>:$PATH && ${SNAKEMAKE} -j 4 \
+            --config input_dir=${Data_SOURCE_DIR}/Utils/GMSH2OGS \
+            -s ${PROJECT_SOURCE_DIR}/scripts/snakemake/workflows/partmesh.smk \
+            ${Data_BINARY_DIR}/Utils/GMSH2OGS/{linear,quadratic}_mesh/{2,4,8,12}"
+    )
+    set_tests_properties(snakemake_partmesh_mixed_elements
+        PROPERTIES LABELS "default")
+endif()
+
 # Regression test for https://github.com/ufz/ogs/issues/1845 fixed in
 # https://github.com/ufz/ogs/pull/2237
 # checkMesh crashed when encountered Line3 element.
