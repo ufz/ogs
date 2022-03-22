@@ -41,9 +41,9 @@ Singularity per default mounts your home directory and also passes your current 
 - *CentOS 6/7 / RedHat*: Install via [EPEL](https://sylabs.io/guides/3.0/user-guide/installation.html#install-the-centos-rhel-package-using-yum).
 - *Ubuntu 20.04 / Debian Sid*:
   ```
-  wget http://ftp.us.debian.org/debian/pool/main/s/singularity-container/singularity-container_3.5.2+ds1-1_amd64.deb
+  wget http://ftp.us.debian.org/debian/pool/main/s/singularity-container/singularity-container_3.9.6+ds1-1_amd64.deb
   sudo apt install containernetworking-plugins squashfs-tools
-  sudo dpkg -i singularity-container_3.5.2+ds1-1_amd64.deb
+  sudo dpkg -i singularity-container_3.9.6+ds1-1_amd64.deb
   ```
   - **OR** install [Homebrew](https://docs.brew.sh/Homebrew-on-Linux) package `singularity`.
 - If you do not have one of the above OS versions [install Singularity from source](https://sylabs.io/guides/3.5/user-guide/quick_start.html#quick-installation-steps).
