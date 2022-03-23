@@ -422,7 +422,7 @@ endif()
 if(OGS_BUILD_TESTING OR OGS_BUILD_UTILS)
     CPMAddPackage(
         NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
-        GIT_TAG f0183a5e173dfa25d1e41c47bc919296a1991093
+        GIT_TAG aa76480b883572e42dbc3c088729006a888e79eb
     )
     if(vtkdiff_ADDED)
         install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)
