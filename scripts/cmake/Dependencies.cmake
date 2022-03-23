@@ -223,6 +223,17 @@ else()
         set(HDF5_C_INCLUDE_DIRS ${HDF5_INCLUDE_DIRS})
         set(HDF5_C_INCLUDE_DIR ${HDF5_INCLUDE_DIRS})
         target_include_directories(hdf5-static INTERFACE ${HDF5_INCLUDE_DIRS})
+        if(OGS_USE_MKL AND WIN32)
+            # In this case the hdf5 build fails with, e.g.:
+            # ~~~
+            # H5system.c(710): error C2065: 'timezone': undeclared identifier
+            # ~~~
+            # Reason is that the H5_HAVE_VISUAL_STUDIO-symbol is not defined
+            # anymore!?
+            target_compile_definitions(
+                hdf5-static PRIVATE -DH5_HAVE_VISUAL_STUDIO
+            )
+        endif()
     else()
         find_package(HDF5 REQUIRED)
     endif()
