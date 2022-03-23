@@ -176,6 +176,9 @@ void Process::setInitialConditions(
     MathLib::LinAlg::finalizeAssembly(x);
     MathLib::LinAlg::copy(x, x_prev);  // pushState
 
+    MathLib::LinAlg::setLocalAccessibleVector(x);
+    MathLib::LinAlg::setLocalAccessibleVector(x_prev);
+
     setInitialConditionsConcreteProcess(process_solutions, t, process_id);
 }
 

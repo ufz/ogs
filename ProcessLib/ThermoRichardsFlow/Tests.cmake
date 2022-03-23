@@ -180,3 +180,20 @@ AddTest(
     expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000.000000.vtu saturation saturation 2e-3 2e-3
     expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000.000000.vtu temperature temperature 1e-2 5e-5
 )
+
+#PETSc
+AddTest(
+    NAME ParallelFEM_ThermoRichardsFlow_comp_TRMuni_unsaturated-TRuni_unsaturated
+    PATH ThermoRichardsFlow/SimplifiedMechanics
+    RUNTIME 5
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS TRuni_unsaturated.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 1
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    expected_TRMuni_unsat_ts_10_t_1.000000.vtu TRuni_unsat_ts_10_t_1_000000_0.vtu temperature temperature 5e-5 1e-10
+    expected_TRMuni_unsat_ts_10_t_1.000000.vtu TRuni_unsat_ts_10_t_1_000000_0.vtu pressure pressure 5e-5 1e-6
+    expected_TRMuni_unsat_ts_10_t_1.000000.vtu TRuni_unsat_ts_10_t_1_000000_0.vtu saturation saturation 5e-5 1e-10
+)
