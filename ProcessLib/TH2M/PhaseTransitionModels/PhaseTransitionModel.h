@@ -25,51 +25,54 @@ struct PhaseTransitionModelVariables
     double rhoWGR = 0.;
 
     double drho_GR_dp_GR = 0.;
+    double drho_GR_dp_cap = 0.;
     double drho_GR_dT = 0.;
-    double drho_C_GR_dp_GR = 0.;
-    double drho_C_GR_dT = 0.;
-    double drho_LR_dp_GR = 0.;
-    double drho_LR_dp_LR = 0.;
-    double drho_C_LR_dp_GR = 0.;
-    double drho_C_LR_dp_LR = 0.;
-    double drho_C_LR_dT = 0.;
 
-    double drho_W_LR_dp_LR = 0.;
-    double drho_W_LR_dp_GR = 0.;
-    double drho_W_GR_dT = 0.;
-    double drho_W_LR_dT = 0.;
+    double drho_C_GR_dp_GR = 0.;
+    double drho_C_GR_dp_cap = 0.;
+    double drho_C_GR_dT = 0.;
+
     double drho_W_GR_dp_GR = 0.;
     double drho_W_GR_dp_cap = 0.;
+    double drho_W_GR_dT = 0.;
 
     // liquid phase density
     double rhoLR = 0.;
     double rhoWLR = 0.;
     double rhoCLR = 0.;
 
+    double drho_LR_dp_GR = 0.;
+    double drho_LR_dp_cap = 0.;
+    double drho_LR_dT = 0.;
+    double drho_LR_dp_LR = 0.;
+
+    double drho_C_LR_dp_GR = 0.;
+    double drho_C_LR_dp_cap = 0.;
+    double drho_C_LR_dT = 0.;
+    double drho_C_LR_dp_LR = 0.;
+
+    double drho_W_LR_dp_GR = 0.;
+    double drho_W_LR_dp_cap = 0.;
+    double drho_W_LR_dT = 0.;
+    double drho_W_LR_dp_LR = 0.;
+
     // water partial pressure in gas phase
     double pWGR = 0;
 
     // constituent mass and molar fractions
-    double xnCG = 0.;
     double xnWG = 0.;
-    double xmCG = 0.;
     double xmWG = 0.;
-    double xmCL = 0.;
+    double xnWL = 0.;
     double xmWL = 0.;
 
-    // molar fraction derivatives
-    double dxnCG_dpGR = 0.;
-    double dxnCG_dpCap = 0.;
-    double dxnCG_dT = 0.;
-
     // mass fraction derivatives
-    double dxmCG_dpGR = 0.;
     double dxmWG_dpGR = 0.;
-    double dxmCL_dpLR = 0.;
-    double dxmWL_dpLR = 0.;
-    double dxmCG_dT = 0.;
+    double dxmWG_dpCap = 0.;
     double dxmWG_dT = 0.;
-    double dxmCL_dT = 0.;
+
+    double dxmWL_dpGR = 0.;
+    double dxmWL_dpCap = 0.;
+    double dxmWL_dpLR = 0.;
     double dxmWL_dT = 0.;
 
     // viscosities

@@ -157,6 +157,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const pLR = pGR - pCap;
         GlobalDimVectorType const gradpGR = gradNp * gas_pressure;
         GlobalDimVectorType const gradpCap = gradNp * capillary_pressure;
+        GlobalDimVectorType const gradT = gradNp * temperature;
 
         MPL::VariableArray vars;
         vars[static_cast<int>(MPL::Variable::temperature)] = T;
@@ -353,26 +354,53 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_data.rhoWGR = c.rhoWGR;
         ip_data.rhoWLR = c.rhoWLR;
 
-        ip_data.dxmCG_dpGR = c.dxmCG_dpGR;
-        ip_data.dxmCG_dT = c.dxmCG_dT;
-        ip_data.dxmCL_dpLR = c.dxmCL_dpLR;
-        ip_data.dxmCL_dT = c.dxmCL_dT;
         ip_data.dxmWG_dpGR = c.dxmWG_dpGR;
+        ip_data.dxmWG_dpCap = c.dxmWG_dpCap;
         ip_data.dxmWG_dT = c.dxmWG_dT;
-        ip_data.dxmWL_dpLR = c.dxmWL_dpLR;
+
+        ip_data.dxmWL_dpGR = c.dxmWL_dpGR;
+        ip_data.dxmWL_dpCap = c.dxmWL_dpCap;
         ip_data.dxmWL_dT = c.dxmWL_dT;
 
+        ip_data.dxmWL_dpLR = c.dxmWL_dpLR;
+
         // for variable output
-        ip_data.xnCG = c.xnCG;
-        ip_data.xmCG = c.xmCG;
+        ip_data.xnCG = 1. - c.xnWG;
+        ip_data.xmCG = 1. - c.xmWG;
+        ip_data.xmWG = c.xmWG;
         ip_data.xmWL = c.xmWL;
 
         ip_data.diffusion_coefficient_vapour = c.diffusion_coefficient_vapour;
         ip_data.diffusion_coefficient_solvate = c.diffusion_coefficient_solvate;
 
         ip_data.h_G = c.hG;
+        ip_data.h_CG = c.hCG;
+        ip_data.h_WG = c.hWG;
         ip_data.h_L = c.hL;
         ip_data.pWGR = c.pWGR;
+
+        const GlobalDimVectorType gradxmWG = ip_data.dxmWG_dpGR * gradpGR +
+                                             ip_data.dxmWG_dpCap * gradpCap +
+                                             ip_data.dxmWG_dT * gradT;
+        const GlobalDimVectorType gradxmCG = -gradxmWG;
+
+        // Todo: factor -phiAlpha / xmZetaAlpha * DZetaAlpha can be evaluated in
+        // the respective phase transition model, here only the multiplication
+        // with the gradient of the mass fractions should take place.
+
+        ip_data.d_CG = ip_data.xmCG == 0.
+                           ? 0. * gradxmCG  // Keep d_CG's dimension and prevent
+                                            // division by zero
+                           : -phi_G / ip_data.xmCG *
+                                 ip_data.diffusion_coefficient_vapour *
+                                 gradxmCG;
+
+        ip_data.d_WG = ip_data.xmWG == 0.
+                           ? 0. * gradxmWG  // Keep d_WG's dimension and prevent
+                                            // division by zero
+                           : -phi_G / ip_data.xmWG *
+                                 ip_data.diffusion_coefficient_vapour *
+                                 gradxmWG;
 
         // ---------------------------------------------------------------------
         // Derivatives for Jacobian
@@ -1058,25 +1086,41 @@ void TH2MLocalAssembler<
         MCT.noalias() -= NpT * rho_C_FR * (alpha_B - phi) * beta_T_SR * Np * w;
         MCu.noalias() += NpT * rho_C_FR * alpha_B * mT * Bu * w;
 
-        auto const advection_C_G = (ip.rhoCGR * k_over_mu_G).eval();
-        auto const advection_C_L = (ip.rhoCLR * k_over_mu_L).eval();
-        auto const diffusion_C_G_p =
-            (phi_G * ip.rhoGR * D_C_G * ip.dxmCG_dpGR).eval();
-        auto const diffusion_C_L_p =
-            (phi_L * ip.rhoLR * D_C_L * ip.dxmCL_dpLR).eval();
-        auto const diffusion_C_G_T =
-            (phi_G * ip.rhoGR * D_C_G * ip.dxmCG_dT).eval();
-        auto const diffusion_C_L_T =
-            (phi_L * ip.rhoLR * D_C_L * ip.dxmCL_dT).eval();
+        using DisplacementDimMatrix =
+            Eigen::Matrix<double, DisplacementDim, DisplacementDim>;
 
-        auto const advection_C = (advection_C_G + advection_C_L).eval();
-        auto const diffusion_C_p = (diffusion_C_G_p + diffusion_C_L_p).eval();
-        auto const diffusion_C_T = (diffusion_C_G_T + diffusion_C_L_T).eval();
+        DisplacementDimMatrix const advection_C_G = ip.rhoCGR * k_over_mu_G;
+        DisplacementDimMatrix const advection_C_L = ip.rhoCLR * k_over_mu_L;
 
-        LCpG.noalias() += gradNpT * (advection_C + diffusion_C_p) * gradNp * w;
+        DisplacementDimMatrix const diffusion_CGpGR =
+            -phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dpGR;
+        DisplacementDimMatrix const diffusion_CLpGR =
+            -phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dpGR;
 
-        LCpC.noalias() -=
-            gradNpT * (advection_C_L + diffusion_C_L_p) * gradNp * w;
+        DisplacementDimMatrix const diffusion_CGpCap =
+            -phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dpCap;
+        DisplacementDimMatrix const diffusion_CLpCap =
+            -phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dpCap;
+
+        DisplacementDimMatrix const diffusion_CGT =
+            -phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dT;
+        DisplacementDimMatrix const diffusion_CLT =
+            -phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dT;
+
+        DisplacementDimMatrix const advection_C = advection_C_G + advection_C_L;
+        DisplacementDimMatrix const diffusion_C_pGR =
+            diffusion_CGpGR + diffusion_CLpGR;
+        DisplacementDimMatrix const diffusion_C_pCap =
+            diffusion_CGpCap + diffusion_CLpCap;
+
+        DisplacementDimMatrix const diffusion_C_T =
+            diffusion_CGT + diffusion_CLT;
+
+        LCpG.noalias() +=
+            gradNpT * (advection_C + diffusion_C_pGR) * gradNp * w;
+
+        LCpC.noalias() +=
+            gradNpT * (diffusion_C_pCap - advection_C_L) * gradNp * w;
 
         LCT.noalias() += gradNpT * (diffusion_C_T)*gradNp * w;
 
@@ -1119,25 +1163,38 @@ void TH2MLocalAssembler<
 
         MWu.noalias() += NpT * rho_W_FR * alpha_B * mT * Bu * w;
 
-        auto const advection_W_G = (ip.rhoWGR * k_over_mu_G).eval();
-        auto const advection_W_L = (ip.rhoWLR * k_over_mu_L).eval();
-        auto const diffusion_W_G_p =
-            (phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dpGR).eval();
-        auto const diffusion_W_L_p =
-            (phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dpLR).eval();
-        auto const diffusion_W_G_T =
-            (phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dT).eval();
-        auto const diffusion_W_L_T =
-            (phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dT).eval();
+        DisplacementDimMatrix const advection_W_G = ip.rhoWGR * k_over_mu_G;
+        DisplacementDimMatrix const advection_W_L = ip.rhoWLR * k_over_mu_L;
 
-        auto const advection_W = (advection_W_G + advection_W_L).eval();
-        auto const diffusion_W_p = (diffusion_W_G_p + diffusion_W_L_p).eval();
-        auto const diffusion_W_T = (diffusion_W_G_T + diffusion_W_L_T).eval();
+        DisplacementDimMatrix const diffusion_WGpGR =
+            phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dpGR;
+        DisplacementDimMatrix const diffusion_WLpGR =
+            phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dpGR;
 
-        LWpG.noalias() += gradNpT * (advection_W + diffusion_W_p) * gradNp * w;
+        DisplacementDimMatrix const diffusion_WGpCap =
+            phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dpCap;
+        DisplacementDimMatrix const diffusion_WLpCap =
+            phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dpCap;
 
-        LWpC.noalias() -=
-            gradNpT * (advection_W_L + diffusion_W_L_p) * gradNp * w;
+        DisplacementDimMatrix const diffusion_WGT =
+            phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dT;
+        DisplacementDimMatrix const diffusion_WLT =
+            phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dT;
+
+        DisplacementDimMatrix const advection_W = advection_W_G + advection_W_L;
+        DisplacementDimMatrix const diffusion_W_pGR =
+            diffusion_WGpGR + diffusion_WLpGR;
+        DisplacementDimMatrix const diffusion_W_pCap =
+            diffusion_WGpCap + diffusion_WLpCap;
+
+        DisplacementDimMatrix const diffusion_W_T =
+            diffusion_WGT + diffusion_WLT;
+
+        LWpG.noalias() +=
+            gradNpT * (advection_W + diffusion_W_pGR) * gradNp * w;
+
+        LWpC.noalias() +=
+            gradNpT * (diffusion_W_pCap - advection_W_L) * gradNp * w;
 
         LWT.noalias() += gradNpT * (diffusion_W_T)*gradNp * w;
 
@@ -1168,6 +1225,10 @@ void TH2MLocalAssembler<
 
         fT.noalias() +=
             gradNTT * (ip.rhoGR * h_G * ip.w_GS + ip.rhoLR * h_L * ip.w_LS) * w;
+
+        fT.noalias() +=
+            gradNTT *
+            (ip.rhoCGR * ip.h_CG * ip.d_CG + ip.rhoWGR * ip.h_WG * ip.d_WG) * w;
 
         fT.noalias() +=
             NTT *
@@ -1470,13 +1531,13 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const advection_C_G = (ip.rhoCGR * k_over_mu_G).eval();
         auto const advection_C_L = (ip.rhoCLR * k_over_mu_L).eval();
         auto const diffusion_C_G_p =
-            (phi_G * ip.rhoGR * D_C_G * ip.dxmCG_dpGR).eval();
+            -(phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dpGR).eval();
         auto const diffusion_C_L_p =
-            (phi_L * ip.rhoLR * D_C_L * ip.dxmCL_dpLR).eval();
+            -(phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dpLR).eval();
         auto const diffusion_C_G_T =
-            (phi_G * ip.rhoGR * D_C_G * ip.dxmCG_dT).eval();
+            -(phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dT).eval();
         auto const diffusion_C_L_T =
-            (phi_L * ip.rhoLR * D_C_L * ip.dxmCL_dT).eval();
+            -(phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dT).eval();
 
         auto const advection_C = (advection_C_G + advection_C_L).eval();
         auto const diffusion_C_p = (diffusion_C_G_p + diffusion_C_L_p).eval();
@@ -1840,6 +1901,10 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             NTT *
             (ip.rhoGR * ip.w_GS.transpose() + ip.rhoLR * ip.w_LS.transpose()) *
             b * w;
+
+        fT.noalias() +=
+            gradNTT *
+            (ip.rhoCGR * ip.h_CG * ip.d_CG + ip.rhoWGR * ip.h_WG * ip.d_WG) * w;
 
         // ---------------------------------------------------------------------
         //  - displacement equation

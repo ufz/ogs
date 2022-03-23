@@ -121,12 +121,12 @@ TEST(ProcessLib, TH2MPhaseTransitionNone)
     ASSERT_NEAR(rhoWGR, cv.rhoWGR, 1.0e-10);
     ASSERT_NEAR(rhoCLR, cv.rhoCLR, 1.0e-10);
     ASSERT_NEAR(rhoWLR, cv.rhoWLR, 1.0e-10);
-    ASSERT_NEAR(xmCG, cv.xmCG, 1.e-10);
+    ASSERT_NEAR(xmCG, 1. - cv.xmWG, 1.e-10);
     ASSERT_NEAR(xmWG, cv.xmWG, 1.e-10);
     ASSERT_NEAR(dxmWG_dpGR, cv.dxmWG_dpGR, 1.0e-10);
-    ASSERT_NEAR(dxmCG_dpGR, cv.dxmCG_dpGR, 1.0e-10);
+    ASSERT_NEAR(dxmCG_dpGR, -cv.dxmWG_dpGR, 1.0e-10);
     ASSERT_NEAR(dxmWG_dT, cv.dxmWG_dT, 1.0e-10);
-    ASSERT_NEAR(dxmCG_dT, cv.dxmCG_dT, 1.0e-10);
+    ASSERT_NEAR(dxmCG_dT, -cv.dxmWG_dT, 1.0e-10);
     ASSERT_NEAR(hCG, cv.hCG, 1.0e-9);
     ASSERT_NEAR(hWG, cv.hWG, 1.0e-9);
     ASSERT_NEAR(hG, cv.hG, 1.0e-10);
