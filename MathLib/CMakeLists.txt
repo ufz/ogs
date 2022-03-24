@@ -44,6 +44,7 @@ if(OGS_USE_MKL)
     target_link_libraries(MathLib PUBLIC ${MKL_LIBRARIES})
     target_link_options(MathLib PUBLIC ${MKL_LINK_FLAGS})
     target_compile_definitions(MathLib PUBLIC ${MKL_DEFINITIONS})
+    target_link_directories(MathLib PUBLIC ${MKL_LIBRARY_DIR})
 endif()
 
 target_compile_definitions(

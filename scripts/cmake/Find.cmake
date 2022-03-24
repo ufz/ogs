@@ -123,9 +123,16 @@ function(printMKLUsage)
                 "NOTE: Please run `source ${MKL_SETVARS}` to set LD_LIBRARY_PATH for MKL!\n"
         )
     else()
-        message(
-            STATUS
-                "NOTE: Please set LD_LIBRARY_PATH with `export LD_LIBRARY_PATH=${MKL_LIBRARY_DIR}`!\n"
-        )
+        if(WIN32)
+            message(
+                STATUS
+                    "NOTE: Please add the MKL redist directory to your PATH environment variable!\nE.g. with: set PATH=%PATH%;${MKL_ROOT_DIR}/redist/intel64"
+            )
+        else()
+            message(
+                STATUS
+                    "NOTE: Please set LD_LIBRARY_PATH with `export LD_LIBRARY_PATH=${MKL_LIBRARY_DIR}`!\n"
+            )
+        endif()
     endif()
 endfunction()

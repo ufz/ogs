@@ -15,6 +15,7 @@ build win:
       -DOGS_$USE_PYTHON
       -DOGS_BUILD_PROCESS_TH2M=OFF
       -DOGS_USE_PIP=ON
+      -DOGS_USE_MKL=ON
   parallel:
     matrix:
       - USE_PYTHON: ["USE_PYTHON=ON", "USE_PYTHON=OFF"]
