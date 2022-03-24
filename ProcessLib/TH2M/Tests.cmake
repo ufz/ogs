@@ -365,3 +365,49 @@ AddTest(
     result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu porosity porosity 1e-8 1e-8
     result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu saturation saturation 1e-8 1e-8
 )
+
+AddTest(
+    NAME Parallel_TH2M_TH2_heat_pipe
+    PATH TH2M/TH2/heatpipe/PETSc
+    RUNTIME 20
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS heat_pipe_strict.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 3
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    # partition 0
+    results_heatpipe_strict_ts_23_t_40000_000000_0.vtu results_heatpipe_strict_ts_23_t_40000_000000_0.vtu gas_pressure_interpolated gas_pressure_interpolated 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_0.vtu results_heatpipe_strict_ts_23_t_40000_000000_0.vtu capillary_pressure_interpolated capillary_pressure_interpolated 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_0.vtu results_heatpipe_strict_ts_23_t_40000_000000_0.vtu temperature_interpolated temperature_interpolated 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_0.vtu results_heatpipe_strict_ts_23_t_40000_000000_0.vtu liquid_pressure_interpolated liquid_pressure_interpolated 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_0.vtu results_heatpipe_strict_ts_23_t_40000_000000_0.vtu velocity_gas velocity_gas 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_0.vtu results_heatpipe_strict_ts_23_t_40000_000000_0.vtu velocity_liquid velocity_liquid 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_0.vtu results_heatpipe_strict_ts_23_t_40000_000000_0.vtu liquid_density liquid_density 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_0.vtu results_heatpipe_strict_ts_23_t_40000_000000_0.vtu gas_density gas_density 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_0.vtu results_heatpipe_strict_ts_23_t_40000_000000_0.vtu porosity porosity 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_0.vtu results_heatpipe_strict_ts_23_t_40000_000000_0.vtu saturation saturation 1e-9 1e-8
+    # partition 1
+    results_heatpipe_strict_ts_23_t_40000_000000_1.vtu results_heatpipe_strict_ts_23_t_40000_000000_1.vtu gas_pressure_interpolated gas_pressure_interpolated 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_1.vtu results_heatpipe_strict_ts_23_t_40000_000000_1.vtu capillary_pressure_interpolated capillary_pressure_interpolated 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_1.vtu results_heatpipe_strict_ts_23_t_40000_000000_1.vtu temperature_interpolated temperature_interpolated 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_1.vtu results_heatpipe_strict_ts_23_t_40000_000000_1.vtu liquid_pressure_interpolated liquid_pressure_interpolated 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_1.vtu results_heatpipe_strict_ts_23_t_40000_000000_1.vtu velocity_gas velocity_gas 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_1.vtu results_heatpipe_strict_ts_23_t_40000_000000_1.vtu velocity_liquid velocity_liquid 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_1.vtu results_heatpipe_strict_ts_23_t_40000_000000_1.vtu liquid_density liquid_density 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_1.vtu results_heatpipe_strict_ts_23_t_40000_000000_1.vtu gas_density gas_density 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_1.vtu results_heatpipe_strict_ts_23_t_40000_000000_1.vtu porosity porosity 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_1.vtu results_heatpipe_strict_ts_23_t_40000_000000_1.vtu saturation saturation 1e-9 1e-8
+    # partition 2
+    results_heatpipe_strict_ts_23_t_40000_000000_2.vtu results_heatpipe_strict_ts_23_t_40000_000000_2.vtu gas_pressure_interpolated gas_pressure_interpolated 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_2.vtu results_heatpipe_strict_ts_23_t_40000_000000_2.vtu capillary_pressure_interpolated capillary_pressure_interpolated 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_2.vtu results_heatpipe_strict_ts_23_t_40000_000000_2.vtu temperature_interpolated temperature_interpolated 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_2.vtu results_heatpipe_strict_ts_23_t_40000_000000_2.vtu liquid_pressure_interpolated liquid_pressure_interpolated 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_2.vtu results_heatpipe_strict_ts_23_t_40000_000000_2.vtu velocity_gas velocity_gas 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_2.vtu results_heatpipe_strict_ts_23_t_40000_000000_2.vtu velocity_liquid velocity_liquid 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_2.vtu results_heatpipe_strict_ts_23_t_40000_000000_2.vtu liquid_density liquid_density 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_2.vtu results_heatpipe_strict_ts_23_t_40000_000000_2.vtu gas_density gas_density 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_2.vtu results_heatpipe_strict_ts_23_t_40000_000000_2.vtu porosity porosity 1e-9 1e-8
+    results_heatpipe_strict_ts_23_t_40000_000000_2.vtu results_heatpipe_strict_ts_23_t_40000_000000_2.vtu saturation saturation 1e-9 1e-8
+)
