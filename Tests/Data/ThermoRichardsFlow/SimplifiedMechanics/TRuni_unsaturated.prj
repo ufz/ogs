@@ -318,7 +318,7 @@
             <petsc>
                 <parameters>-ksp_type bcgs
                     -pc_type jacobi
-                    -ksp_rtol 1.e-24 -ksp_atol 1.e-24
+                    -ksp_rtol 1.e-14 -ksp_atol 1.e-14
                     -ksp_max_it 4000
                 </parameters>
             </petsc>
