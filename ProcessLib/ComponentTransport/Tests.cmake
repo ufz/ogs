@@ -777,6 +777,7 @@ AddTest(
 if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ConTracer/ConTracer_1d.prj RUNTIME 10)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/DiffusionSorptionDecay/1D_DiffusionSorptionDecay.prj RUNTIME 5)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/AdvectionDiffusionSorptionDecay/1D_AdvectionDiffusionSorptionDecay.prj RUNTIME 15)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/MultiLayerDiffusion/1D_MultiLayerDiffusion.prj RUNTIME 30)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/DiffusionAndStorageAndAdvection.prj RUNTIME 23)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/DiffusionAndStorageAndAdvectionAndDecay.prj RUNTIME 23)
