@@ -6,7 +6,7 @@ fi
 
 source $DIR/mpi.sh
 
-module load petsc/3.16.4_maint_foss_2020b
+module load petsc-bilke/3.16.5_foss2020b
 module load HDF5/1.10.7
 
 echo -e "Note: If you want to run a simulation on the cluster be aware of the "\
