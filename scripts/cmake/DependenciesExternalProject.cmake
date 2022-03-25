@@ -80,8 +80,12 @@ if(OGS_USE_PETSC)
             PETSc ${_petsc_source}
             LOG_OUTPUT_ON_FAILURE ON
             CONFIGURE_COMMAND
-                ./configure --download-f2cblaslapack=1 --prefix=<INSTALL_DIR>
-                --with-debugging=$<CONFIG:Debug> ${_configure_opts}
+                ./configure
+                --download-f2cblaslapack=1
+                --prefix=<INSTALL_DIR>
+                --download-hypre
+                --with-debugging=$<CONFIG:Debug>
+                ${_configure_opts}
                 ${OGS_PETSC_CONFIG_OPTIONS}
             BUILD_IN_SOURCE ON
             BUILD_COMMAND make -j all
