@@ -29,10 +29,6 @@ if(DEFINED ENV{CI})
     set(COVERAGE_ADDITIONAL_ARGS SKIP_HTML)
 endif()
 
-# ~~~
-# TODO: segfault in MeshLibMappedPropertyVector.Double|Int
-# TODO: segfault in TestVtkMeshConverter.Conversion
-# ~~~
 setup_target_for_coverage_fastcov(
     NAME
     testrunner_coverage
@@ -42,7 +38,7 @@ setup_target_for_coverage_fastcov(
     $<TARGET_FILE:testrunner>
     -l
     warn
-    --gtest_filter=-MeshLibMappedPropertyVector.*:GeoLib.SearchNearestPointsInDenseGrid:TestVtkMeshConverter.Conversion
+    --gtest_filter=-GeoLib.SearchNearestPointsInDenseGrid
     DEPENDENCIES
     testrunner
     FASTCOV_ARGS
@@ -56,7 +52,6 @@ setup_target_for_coverage_fastcov(
     Tests/
 )
 
-# TODO: segfault in Vtu2Grid
 setup_target_for_coverage_fastcov(
     NAME
     ctest_coverage
@@ -64,8 +59,6 @@ setup_target_for_coverage_fastcov(
     ${PROJECT_BINARY_DIR}
     EXECUTABLE
     ctest
-    -E
-    "Vtu2Grid"
     DEPENDENCIES
     all
     FASTCOV_ARGS
