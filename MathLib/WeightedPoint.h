@@ -10,6 +10,7 @@
 #pragma once
 
 #include <array>
+#include <iosfwd>
 #include <limits>
 
 namespace MathLib
@@ -92,5 +93,7 @@ private:
     std::array<double, 3> coords_;
     std::size_t dim_;
 };
+
+std::ostream& operator<<(std::ostream& os, MathLib::WeightedPoint const& wp);
 
 }  // namespace MathLib
