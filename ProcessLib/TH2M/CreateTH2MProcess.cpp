@@ -233,6 +233,13 @@ std::unique_ptr<Process> createTH2MProcess(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     auto phase_transition_model = createPhaseTransitionModel(media);
+
+    const bool use_TaylorHood_elements =
+        variable_pCap->getShapeFunctionOrder() !=
+                variable_u->getShapeFunctionOrder()
+            ? true
+            : false;
+
     TH2MProcessData<DisplacementDim> process_data{
         materialIDs(mesh),
         std::move(media_map),
@@ -241,7 +248,8 @@ std::unique_ptr<Process> createTH2MProcess(
         reference_temperature,
         initial_stress,
         specific_body_force,
-        mass_lumping};
+        mass_lumping,
+        use_TaylorHood_elements};
 
     SecondaryVariableCollection secondary_variables;
 

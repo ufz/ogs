@@ -2,6 +2,7 @@
 <OpenGeoSysProject>
     <meshes>
         <mesh axially_symmetric="true">domain.vtu</mesh>
+        <mesh axially_symmetric="true">domain_bc.vtu</mesh>
         <mesh axially_symmetric="true">geometry_left.vtu</mesh>
         <mesh axially_symmetric="true">geometry_center.vtu</mesh>
         <mesh axially_symmetric="true">geometry_out.vtu</mesh>
@@ -356,7 +357,7 @@
             <boundary_conditions>
 
                 <boundary_condition>
-                    <mesh>domain</mesh>
+                    <mesh>domain_bc</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
@@ -410,8 +411,15 @@
                 <scaling>true</scaling>
             </eigen>
             <petsc>
-                <prefix>sd</prefix>
-                <parameters>-sd_ksp_type cg -sd_pc_type bjacobi -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10000</parameters>
+                <parameters>
+                    -ksp_diagonal_scale -ksp_diagonal_scale_fix
+                    -ksp_type gmres
+                    -ksp_gmres_restart 1000
+                    -ksp_gmres_modifiedgramschmidt
+                    -pc_type none
+                    -ksp_rtol 1.e-8 -ksp_atol 1.e-8
+                    -ksp_max_it 4000
+                </parameters>
             </petsc>
         </linear_solver>
     </linear_solvers>
