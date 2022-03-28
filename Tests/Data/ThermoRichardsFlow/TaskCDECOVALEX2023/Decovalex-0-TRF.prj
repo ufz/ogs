@@ -827,6 +827,15 @@
                 <solver_type>SparseLU</solver_type>
                 <scaling>true</scaling>
             </eigen>
+            <petsc>
+                <parameters>
+                   -ksp_diagonal_scale -ksp_diagonal_scale_fix
+                   -ksp_type gmres
+                   -ksp_gmres_restart 1000 -pc_type none
+                   -ksp_rtol 1.e-15 -ksp_atol 1.e-16
+                   -ksp_max_it 4000
+                </parameters>
+            </petsc>
         </linear_solver>
     </linear_solvers>
 </OpenGeoSysProject>
