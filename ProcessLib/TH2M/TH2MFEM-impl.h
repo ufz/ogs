@@ -545,10 +545,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                   phi_L * c.rhoLR * c.du_L_dp_cap;
 
         auto const& b = _process_data.specific_body_force;
-        auto const k_over_mu_G =
-            (ip_data.k_S * ip_data.k_rel_G / ip_data.muGR).eval();
-        auto const k_over_mu_L =
-            (ip_data.k_S * ip_data.k_rel_L / ip_data.muLR).eval();
+        GlobalDimMatrixType const k_over_mu_G =
+            ip_data.k_S * ip_data.k_rel_G / ip_data.muGR;
+        GlobalDimMatrixType const k_over_mu_L =
+            ip_data.k_S * ip_data.k_rel_L / ip_data.muLR;
 
         // dk_over_mu_G_dp_GR =
         //    ip_data.k_S * dk_rel_G_ds_L * (ds_L_dp_GR = 0) / ip_data.muGR =
@@ -1014,10 +1014,10 @@ void TH2MLocalAssembler<
         const double sD_G = ip.diffusion_coefficient_vapour;
         const double sD_L = ip.diffusion_coefficient_solvate;
 
-        auto const D_C_G = (sD_G * I).eval();
-        auto const D_W_G = (sD_G * I).eval();
-        auto const D_C_L = (sD_L * I).eval();
-        auto const D_W_L = (sD_L * I).eval();
+        GlobalDimMatrixType const D_C_G = sD_G * I;
+        GlobalDimMatrixType const D_W_G = sD_G * I;
+        GlobalDimMatrixType const D_C_L = sD_L * I;
+        GlobalDimMatrixType const D_W_L = sD_L * I;
 
         auto& k_S = ip.k_S;
 
@@ -1060,8 +1060,8 @@ void TH2MLocalAssembler<
 
         auto const rho_u_eff_dot = (ip.rho_u_eff - ip.rho_u_eff_prev) / dt;
 
-        auto const k_over_mu_G = (k_S * ip.k_rel_G / ip.muGR).eval();
-        auto const k_over_mu_L = (k_S * ip.k_rel_L / ip.muLR).eval();
+        GlobalDimMatrixType const k_over_mu_G = k_S * ip.k_rel_G / ip.muGR;
+        GlobalDimMatrixType const k_over_mu_L = k_S * ip.k_rel_L / ip.muLR;
 
         // ---------------------------------------------------------------------
         // C-component equation
@@ -1445,10 +1445,10 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         const double sD_G = ip.diffusion_coefficient_vapour;
         const double sD_L = ip.diffusion_coefficient_solvate;
 
-        auto const D_C_G = (sD_G * I).eval();
-        auto const D_W_G = (sD_G * I).eval();
-        auto const D_C_L = (sD_L * I).eval();
-        auto const D_W_L = (sD_L * I).eval();
+        GlobalDimMatrixType const D_C_G = sD_G * I;
+        GlobalDimMatrixType const D_W_G = sD_G * I;
+        GlobalDimMatrixType const D_C_L = sD_L * I;
+        GlobalDimMatrixType const D_W_L = sD_L * I;
 
         auto& k_S = ip.k_S;
 
@@ -1491,8 +1491,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto const rho_u_eff_dot = (ip.rho_u_eff - ip.rho_u_eff_prev) / dt;
 
-        auto const k_over_mu_G = (k_S * ip.k_rel_G / ip.muGR).eval();
-        auto const k_over_mu_L = (k_S * ip.k_rel_L / ip.muLR).eval();
+        GlobalDimMatrixType const k_over_mu_G = k_S * ip.k_rel_G / ip.muGR;
+        GlobalDimMatrixType const k_over_mu_L = k_S * ip.k_rel_L / ip.muLR;
 
         // ---------------------------------------------------------------------
         // C-component equation
@@ -1528,20 +1528,22 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                                       temperature_index)
             .noalias() += NpT * ip_cv.dfC_4_MCu_dT * div_u_dot * NT * w;
 
-        auto const advection_C_G = (ip.rhoCGR * k_over_mu_G).eval();
-        auto const advection_C_L = (ip.rhoCLR * k_over_mu_L).eval();
-        auto const diffusion_C_G_p =
-            -(phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dpGR).eval();
-        auto const diffusion_C_L_p =
-            -(phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dpLR).eval();
-        auto const diffusion_C_G_T =
-            -(phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dT).eval();
-        auto const diffusion_C_L_T =
-            -(phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dT).eval();
+        GlobalDimMatrixType const advection_C_G = ip.rhoCGR * k_over_mu_G;
+        GlobalDimMatrixType const advection_C_L = ip.rhoCLR * k_over_mu_L;
+        GlobalDimMatrixType const diffusion_C_G_p =
+            -phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dpGR;
+        GlobalDimMatrixType const diffusion_C_L_p =
+            -phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dpLR;
+        GlobalDimMatrixType const diffusion_C_G_T =
+            -phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dT;
+        GlobalDimMatrixType const diffusion_C_L_T =
+            -phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dT;
 
-        auto const advection_C = (advection_C_G + advection_C_L).eval();
-        auto const diffusion_C_p = (diffusion_C_G_p + diffusion_C_L_p).eval();
-        auto const diffusion_C_T = (diffusion_C_G_T + diffusion_C_L_T).eval();
+        GlobalDimMatrixType const advection_C = advection_C_G + advection_C_L;
+        GlobalDimMatrixType const diffusion_C_p =
+            diffusion_C_G_p + diffusion_C_L_p;
+        GlobalDimMatrixType const diffusion_C_T =
+            diffusion_C_G_T + diffusion_C_L_T;
 
         LCpG.noalias() += gradNpT * (advection_C + diffusion_C_p) * gradNp * w;
 
@@ -1683,16 +1685,22 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         MWu.noalias() += NpT * rho_W_FR * alpha_B * mT * Bu * w;
 
-        auto const advection_W_G = (ip.rhoWGR * k_over_mu_G).eval();
-        auto const advection_W_L = (ip.rhoWLR * k_over_mu_L).eval();
-        auto const diffusion_W_G_p = phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dpGR;
-        auto const diffusion_W_L_p = phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dpLR;
-        auto const diffusion_W_G_T = phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dT;
-        auto const diffusion_W_L_T = phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dT;
+        GlobalDimMatrixType const advection_W_G = ip.rhoWGR * k_over_mu_G;
+        GlobalDimMatrixType const advection_W_L = ip.rhoWLR * k_over_mu_L;
+        GlobalDimMatrixType const diffusion_W_G_p =
+            phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dpGR;
+        GlobalDimMatrixType const diffusion_W_L_p =
+            phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dpLR;
+        GlobalDimMatrixType const diffusion_W_G_T =
+            phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dT;
+        GlobalDimMatrixType const diffusion_W_L_T =
+            phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dT;
 
-        auto const advection_W = advection_W_G + advection_W_L;
-        auto const diffusion_W_p = diffusion_W_G_p + diffusion_W_L_p;
-        auto const diffusion_W_T = diffusion_W_G_T + diffusion_W_L_T;
+        GlobalDimMatrixType const advection_W = advection_W_G + advection_W_L;
+        GlobalDimMatrixType const diffusion_W_p =
+            diffusion_W_G_p + diffusion_W_L_p;
+        GlobalDimMatrixType const diffusion_W_T =
+            diffusion_W_G_T + diffusion_W_L_T;
 
         LWpG.noalias() += gradNpT * (advection_W + diffusion_W_p) * gradNp * w;
 
