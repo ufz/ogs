@@ -66,7 +66,7 @@ The temporal evolution of the concentration profiles of the chosen mineral combi
 
 On the other hand, the enormous difference between sorbing and non-sorbing reactive transport is evident from the resulting concentration profiles. Therefore, we highlight the importance of considering the impact of sorption in the transport of radionuclides, as this is paramount for the safety assessment in the design of nuclear waste repositories. Finally, the CPU time of the simulation taking into account surface complexation is roughly double of the simulation with only aqueous speciation. This posses the necessity of choosing a good compromise between accuracy (large number of reactions and chemical parameters) and performance.
 
-{{< img src="../Fig2.gif" title="Time evolution of mineral combination 2 (albite/hematite) in comparison to the results obtained with the ESTRAL database. The green dotted line shows the temporal evolution of U(IV) as a non-sorbing radionuclide.">}}
+{{< img src="Fig2.gif" title="Time evolution of mineral combination 2 (albite/hematite) in comparison to the results obtained with the ESTRAL database. The green dotted line shows the temporal evolution of U(IV) as a non-sorbing radionuclide.">}}
 
 {{< data-link >}}
 

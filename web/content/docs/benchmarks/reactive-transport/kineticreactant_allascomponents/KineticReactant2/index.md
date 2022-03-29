@@ -83,4 +83,4 @@ Over time, opposed concentration fronts for educts and Product d evolve.
 Both, OGS-6 and OGS-5 simulations yield the same results in the 1d as well as 2d scenario.
 For instance, the difference between the OGS-6 and the OGS-5 computation for the concentration of Product d expressed as root mean squared error is 1.76e-7 mol kg$^{-1}$ water (over all time steps and mesh nodes, 1d scenario); the corresponding median absolute error is 1.0e-7 mol kg$^{-1}$ water.
 This verifies the implementation of OGS-6--IPhreeqc.
-{{< img src="../KineticReactant2.gif" title="Simulated component concentrations over domain length for different time steps (1d scenario) .">}}
+{{< img src="KineticReactant2.gif" title="Simulated component concentrations over domain length for different time steps (1d scenario) .">}}

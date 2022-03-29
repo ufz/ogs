@@ -98,7 +98,7 @@ For instance, the difference between the OGS-6 and the OGS-5 computation for the
 The relatively high error may be associated with the missing transport or charge in the OGS-6 simulation, which affects computations by Phreeqc.
 Please note that due to the long computation time of the simulation (~13 h), the corresponding test (Wetland_1d.prj) is reduced to the first four time steps (28800 s).
 
-{{< img src="../Wetland_1d.gif" title="Fig. 3: Simulated concentrations of solutes (left) and bacteria (right). Solid lines represent solutions by OGS-5; dashed lines represent solution by OGS-6.">}}
+{{< img src="Wetland_1d.gif" title="Fig. 3: Simulated concentrations of solutes (left) and bacteria (right). Solid lines represent solutions by OGS-5; dashed lines represent solution by OGS-6.">}}
 
 -----------------------------------------
 

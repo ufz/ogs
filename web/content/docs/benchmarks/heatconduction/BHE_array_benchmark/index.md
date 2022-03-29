@@ -40,7 +40,7 @@ where ${\mathop q\nolimits_k }$ is a sequence of heat extraction pulses at t =1,
          = \sum\limits_{l = 1}^m {\sum\limits_{k = l}^n {\frac{{\mathop q\nolimits_{k,l} }}{{4\pi L\lambda }}} } \left( {E_1\left[ {\frac{{{{\left( {i - \mathop x\nolimits_k } \right)}^2} + {{\left( {j - \mathop y\nolimits_k } \right)}^2}}}{{4\alpha \left( {\mathop t\nolimits_m  - \mathop t\nolimits_{l - 1} } \right)}}} \right] - E_1\left[ {\frac{{{{\left( {i - \mathop x\nolimits_k } \right)}^2} + {{\left( {j - \mathop y\nolimits_k } \right)}^2}}}{{4\alpha \left( {\mathop t\nolimits_m  - \mathop t\nolimits_l } \right)}}} \right]} \right).
     \end{split}\end{equation}
 
-where ${\mathop q\nolimits_{k,l} }$ is the heat extraction of the k-*th* BHE at time step *l*. The equation (3) will be used to calculate the analytical solution of the overall temperature change in this model for validating the numerical results. It is written in python code and can be found [here](../bhe_array_analytical_solver.py).
+where ${\mathop q\nolimits_{k,l} }$ is the heat extraction of the k-*th* BHE at time step *l*. The equation (3) will be used to calculate the analytical solution of the overall temperature change in this model for validating the numerical results. It is written in python code and can be found [here](bhe_array_analytical_solver.py).
 
 ## Numerical model setup
 

@@ -38,5 +38,3 @@ shown in the following figure.
 Comparison with 2D setup yields identical results (up to numerical differences
 in order of 1e-15):
 TODO: Image missing!
-
-<!-- {{< img src="single_fracture_3D_vs_2D.png" >}} -->
