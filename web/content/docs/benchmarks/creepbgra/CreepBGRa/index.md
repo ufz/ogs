@@ -5,6 +5,8 @@ weight = 171
 project = "ThermoMechanics/CreepBGRa/SimpleAxisymmetricCreep/SimpleAxisymmetricCreepWithAnalyticSolution.prj"
 author = "Wenqing Wang"
 
+aliases = ["/docs/benchmarks/creepbgra/creepbrga"]
+
 [menu]
   [menu.benchmarks]
     parent = "Thermo-Mechanics"
@@ -135,7 +137,7 @@ $$\begin{aligned}
 
 *Note*: The above rate form of stress integration is implemented in ogs6.
  Alternatively, one can use a absolute stress integration form, which can be found in the attached
- [PDF](../doku_BGRa.pdf).
+ [PDF](doku_BGRa.pdf).
 
 ## Example
 
@@ -179,7 +181,7 @@ $$\begin{gathered}
  The comparison of the result of $\epsilon_z$
 obtained by the present multidimensional scheme with the analytical
 solution is shown in the following figure:
-{{< img src="../bgra0.png" >}}
+{{< img src="bgra0.png" >}}
 
 ### Python code
 
