@@ -190,6 +190,7 @@ A short python snippet, to compute the values.
 <summary>
 Insert this into Paraview's ProgrammableFilter:
 </summary>
+
 ```python
 A = self.GetInputDataObject(0, 0)
 numPoints = A.GetNumberOfPoints()
@@ -226,4 +227,5 @@ output.GetPointData().AddArray(outSyy)
 output.GetPointData().AddArray(outSzz)
 output.GetPointData().AddArray(outSxy)
 ```
+
 </details>

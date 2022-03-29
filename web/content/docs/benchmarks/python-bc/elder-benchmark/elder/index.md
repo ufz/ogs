@@ -23,5 +23,5 @@ The aim of this test is:
 
 ## Details
 
-This test is a copy of [this test case]({{< ref "../../Hydro-Component/elder" >}}).
+This test is a copy of [this test case]({{< ref "docs/benchmarks/hydro-component/elder" >}}).
 Please check the original test case for any details.
