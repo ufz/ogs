@@ -78,9 +78,9 @@ Especially in CXA and CXC type, the direction of the borehole itself could be de
 
 The cross-sections of these 4 types of BHEs are illustrated in the following figures.
 
-{{< img src="../u_type.png" width="50">}}
+{{< img src="u_type.png" width="50">}}
 
-{{< img src="../coaxial.png" width="50">}}
+{{< img src="coaxial.png" width="50">}}
 
 ### < pipes >
 
