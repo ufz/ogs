@@ -118,12 +118,12 @@ A last major part of the output was produced by the linear equation solver (LIS 
 
 Compared to the analytical solution presented above the results are very good but in a single point:
 
-{{< img src="../square_1e2_neumann_abs_err.png" >}}
+{{< img src="square_1e2_neumann_abs_err.png" >}}
 
 Both Dirichlet boundary conditions are satisfied.
 The values of gradients in x direction along the right side and y directions along the top sides of the domain a shown below:
 
-{{< img src="../square_1e2_neumann_gradients.png" >}}
+{{< img src="square_1e2_neumann_gradients.png" >}}
 
 The homogeneous Neumann boundary condition on the top side is satisfied (ScalarGradient_Y is close to zero).
 The inhomogeneous Neumann boundary condition on the bottom is satisfied only for $y > 0.3$ (where the ScalarGradient_X is close to one) because of incompatible boundary conditions imposed on the bottom right corner of the domain.

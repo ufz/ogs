@@ -71,8 +71,8 @@ It will produce some output and write the computed result into a data array of t
 
 ### Comparison of the analytical solution and the computed solution
 
-{{< img src="../circle_1e6_gwf_with_nodal_source_term_analytical_solution_head.png" >}}
+{{< img src="circle_1e6_gwf_with_nodal_source_term_analytical_solution_head.png" >}}
 
-{{< img src="../circle_1e6_gwf_with_nodal_source_term_diff_analytical_solution_head.png" >}}
+{{< img src="circle_1e6_gwf_with_nodal_source_term_diff_analytical_solution_head.png" >}}
 
-{{< img src="../circle_1e6_gwf_with_nodal_source_term_diff_analytical_solution_head_log_scale.png" >}}
+{{< img src="circle_1e6_gwf_with_nodal_source_term_diff_analytical_solution_head_log_scale.png" >}}

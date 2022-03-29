@@ -185,15 +185,15 @@ info: OGS terminated on 2018-10-10 09:22:17+020
 
 ### Comparison of the numerical and analytical solutions
 
-{{< img src="../square_1e3_poisson_sin_x_sin_y_sourceterm_Pressure_PythonSourceTerm.png" >}}
+{{< img src="square_1e3_poisson_sin_x_sin_y_sourceterm_Pressure_PythonSourceTerm.png" >}}
 The above picture shows the numerical result. The solution conforms in the edges
 to the prescribed boundary conditions.
-{{< img src="../square_1e3_poisson_sin_x_sin_y_sourceterm_Diff_Pressure_AnalyticalSolution_PythonSourceTerm.png" >}}
+{{< img src="square_1e3_poisson_sin_x_sin_y_sourceterm_Diff_Pressure_AnalyticalSolution_PythonSourceTerm.png" >}}
 Since a coarse mesh ($32 \times 32$ elements) is used for the simulation the
 difference between the numerical and the analytical solution is relatively large.
 
 #### Comparison for higher resolution mesh ($316 \times 316$ elements)
 
-{{< img src="../square_1e5_poisson_sin_x_sin_y_sourceterm_Diff_Pressure_AnalyticalSolution_PythonSourceTerm.png" >}}
+{{< img src="square_1e5_poisson_sin_x_sin_y_sourceterm_Diff_Pressure_AnalyticalSolution_PythonSourceTerm.png" >}}
 The difference between the numerical and the analytical solution is much smaller
 than in the coarse mesh case.

@@ -104,11 +104,11 @@ info: OGS terminated on 2018-10-12 06:30:13+020
 
 The numerical solution shown in the following picture is almost a linear
 gradient:
-{{< img src="../square_1e2_volumetricsourceterm_pcs_0_ts_1_t_1.000000_Pressure_VolumetricSourceTerm.png" >}}
+{{< img src="square_1e2_volumetricsourceterm_pcs_0_ts_1_t_1.000000_Pressure_VolumetricSourceTerm.png" >}}
 The line plot along the $x$ axis shows that the solution is a quadratic
 function and is in very good agreement to the analytical solution:
-{{< img src="../square_1e2_volumetricsourceterm_pcs_0_ts_1_t_1.000000_Pressure_AnalyticalSolution_VolumetricSourceTerm.png" >}}
+{{< img src="square_1e2_volumetricsourceterm_pcs_0_ts_1_t_1.000000_Pressure_AnalyticalSolution_VolumetricSourceTerm.png" >}}
 
 The difference between the computed solution and the analytical solution is in
 the range of machine precision and therefore almost negligible:
-{{< img src="../square_1e2_volumetricsourceterm_pcs_0_ts_1_t_1.000000_diff_Pressure_AnalyticalSolution_VolumetricSourceTerm.png" >}}
+{{< img src="square_1e2_volumetricsourceterm_pcs_0_ts_1_t_1.000000_diff_Pressure_AnalyticalSolution_VolumetricSourceTerm.png" >}}
