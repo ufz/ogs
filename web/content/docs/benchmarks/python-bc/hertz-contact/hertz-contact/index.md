@@ -29,7 +29,7 @@ The sphere centers are displaced towards each other by $w_0$, with increasing
 values in every load step.
 Due to symmetry reasons a flat circular contact area of radius $a$ forms.
 
-{{< img src="../hertz-contact.png" >}}
+{{< img src="hertz-contact.png" >}}
 
 The contact between the two spheres is modelled as a Dirichlet BC
 on a varying boundary. The exact boundary and Dirichlet values for the
@@ -78,15 +78,15 @@ $$
 
 Contact radii:
 
-{{<img src="../contact_radii.png">}}
+{{<img src="contact_radii.png">}}
 
 Average pressure $\bar{p}$:
 
-{{<img src="../stress_at_contact.png">}}
+{{<img src="stress_at_contact.png">}}
 
 Total force $F$:
 
-{{<img src="../total_force.png">}}
+{{<img src="total_force.png">}}
 
 The simulation results for contact radii and total force reproduce the
 analytical square root and cubic laws, respectively.

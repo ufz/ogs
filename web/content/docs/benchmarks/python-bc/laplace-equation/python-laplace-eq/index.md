@@ -87,9 +87,9 @@ There $n = (1, 0)$, which implies that $a \mathop{\mathrm{grad}} u \cdot n
 
 The numerical result obtained from OpenGeoSys is:
 
-{{< img src="../python_laplace_eq_solution.png" >}}
+{{< img src="python_laplace_eq_solution.png" >}}
 
 The absolute difference between the analytical and numerical solutions is
 smaller than $4 \cdot 10^{-4}$:
 
-{{< img src="../python_laplace_eq_diff.png" >}}
+{{< img src="python_laplace_eq_diff.png" >}}
