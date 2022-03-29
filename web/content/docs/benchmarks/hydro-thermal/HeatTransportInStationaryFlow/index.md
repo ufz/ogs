@@ -63,9 +63,9 @@ This example is also set as one of the benchmarks of
 
 The temperature distribution  at <em>t=</em>  5.e+4 s together with the mesh is
  illustrated in the following figure:
-{{< img src="../heat_transport_in_stationary_flow_domain.png" >}}
+{{< img src="heat_transport_in_stationary_flow_domain.png" >}}
 
 The temperature  profile at <em>t=</em>  5.e+4 s along a horizontal line in the
   2D domain is given in the following figure:
-{{< img src="../heat_transport_in_stationary_flow_profile.png" >}}
+{{< img src="heat_transport_in_stationary_flow_profile.png" >}}
 

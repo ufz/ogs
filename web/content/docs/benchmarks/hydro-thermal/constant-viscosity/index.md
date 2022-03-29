@@ -15,7 +15,7 @@ weight = 161
 
 ## Equations
 
-See [this PDF](../HT-Process.pdf).
+See [this PDF](HT-Process.pdf).
 
 ## Problem description
 
@@ -33,4 +33,4 @@ TODO 3 images
 
 ## Comparison with FEFlow solution
 
-{{< img src="../compare.png" >}}
+{{< img src="compare.png" >}}
