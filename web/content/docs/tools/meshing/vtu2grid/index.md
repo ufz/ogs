@@ -57,7 +57,7 @@ Vtu2Grid -i input.vtu -o output.vtu -x 200
 Vtu2Grid -i input.vtu -o output.vtu -x 100
 ```
 
-![Rasterised grid](./vtu2grid-100.png#two-third "Rasterised grid consisting of 74,048 equilateral hexahedral elements with an edge length of 100m. The result is still undersampled but layers become already visible.")
+![Rasterised grid](vtu2grid-100.png#two-third "Rasterised grid consisting of 74,048 equilateral hexahedral elements with an edge length of 100m. The result is still undersampled but layers become already visible.")
 
 **Command:**
 
@@ -65,7 +65,7 @@ Vtu2Grid -i input.vtu -o output.vtu -x 100
 Vtu2Grid -i input.vtu -o output.vtu -x 50
 ```
 
-![Rasterised grid](./vtu2grid-50.png#two-third "Rasterised grid consisting of 591,757 equilateral hexahedral elements with an edge length of 50m. There's still undersampling in regions containing thin layers but the overall structure is reasonably well represented.")
+![Rasterised grid](vtu2grid-50.png#two-third "Rasterised grid consisting of 591,757 equilateral hexahedral elements with an edge length of 50m. There's still undersampling in regions containing thin layers but the overall structure is reasonably well represented.")
 
 **Command:**
 
@@ -73,7 +73,7 @@ Vtu2Grid -i input.vtu -o output.vtu -x 50
 Vtu2Grid -i input.vtu -o output.vtu -x 50 -y 50 -z 10
 ```
 
-![Rasterised grid](./vtu2grid-50x50x10.png#two-third "Rasterised grid consisting of 2,959,656 cuboid hexahedral elements with an edge length of 50m x 50m x 10m. The structure of the original mesh is very well represented while the number of elements has increased by an order of magnitude.")
+![Rasterised grid](vtu2grid-50x50x10.png#two-third "Rasterised grid consisting of 2,959,656 cuboid hexahedral elements with an edge length of 50m x 50m x 10m. The structure of the original mesh is very well represented while the number of elements has increased by an order of magnitude.")
 
 ## Application
 
