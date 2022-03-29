@@ -14,4 +14,4 @@ author = "Wenqing Wang"
 {{< data-link >}}
 
 For the description of the benchmark and its related permeability model,
-  please read [the PDF](../PermeabilityMohrCoulombFailureIndexModel.pdf).
+  please read [the PDF](PermeabilityMohrCoulombFailureIndexModel.pdf).

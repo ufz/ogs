@@ -21,7 +21,7 @@ This benchmark simulates a soil column with fluid injection at the bottom and a 
 It is taken from from Kim [[1]](#1), in detail it coincides with one of his examples (case 2, coupling strength $\tau=1.21$).
 A brief description of the used staggered scheme follows at the end.
 
-{{< img src="../InjectionProduction_model.png" >}}
+{{< img src="InjectionProduction_model.png" >}}
 _Simulation model with fluid source, sink, observation point and boundary conditions_
 
 The fluid enters and leaves only via the source and sink in the domain, there is no flow across the boundaries.
@@ -178,7 +178,7 @@ The gravity related terms are neglected in both: the Darcy velocity and the mome
 Note that 100 time steps were used for the following results, whereas the provided input file is set to 1 time step (1 day = 86400 s).
 Kim plots his results over nondimensional time, referring to the time at which the produced fluid volume equals the pore volume of the domain (450 days).
 
-{{< img src="../InjectionProduction_results.png" >}}
+{{< img src="InjectionProduction_results.png" >}}
 _Pressure at observation point (marked by circle) versus time (t=0...100 days) and spatial pressure distribution at t=100 days_
 
 ## Staggered Scheme: Fixed-stress splitting ##

@@ -21,13 +21,13 @@ This is a classical example to demonstrate the effect of hydromechanical couplin
 For more details we refer to a textbook [[1]](#1), in which also the analytical solution is derived.
 As domain we consider a sphere, by symmetry we need to simulate only an octant.
 
-{{< img src="../MandelCryer_mesh.png" >}}
+{{< img src="MandelCryer_mesh.png" >}}
 _Mesh_
 
 The boundary conditions of hydraulics are atmospheric pressure on the sphere surface and impermeable elsewhere.
 The boundary conditions of mechanics are an overburden (Neumann) applied as step load on the sphere surface at initial time $t=0$. The remaining sides are fixed in normal direction (Dirichlet).
 
-{{< img src="../MandelCryer_model.png" >}}
+{{< img src="MandelCryer_model.png" >}}
 _Boundary conditions_
 
 The material is isotropic, linear elastic. Solid and fluid are assumed to be incompressible.
@@ -134,7 +134,7 @@ All parameters are concluded in the following tables.
 
 As predicted, the pressure in the center exceeds the applied load and then levels out.
 
-{{< img src="../MandelCryer_results.png" >}}
+{{< img src="MandelCryer_results.png" >}}
 _Pressure at center of sphere_
 
 For more details about the staggered scheme we refer to the [user guide - conventions]({{< ref "conventions.md#staggered-scheme" >}}).

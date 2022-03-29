@@ -79,4 +79,4 @@ The time period of 86400 is discretised into 100 steps.
 
 The distributions of pressure and displacement at the end time are shown in the
  following figure:
-{{< img src="../nodal_source_test.png" >}}
+{{< img src="nodal_source_test.png" >}}
