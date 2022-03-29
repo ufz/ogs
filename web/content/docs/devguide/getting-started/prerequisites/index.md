@@ -119,7 +119,7 @@ Git is a powerful and distributed version control system. OGS source code is hos
 
 **Download** and install git from the [git homepage](http://git-scm.com/download/win). Use the default installer options but also enable `Enable symbolic links` under the *Configuring extra options* page.
 
-![Enable symbolic links option](../git-installer-win.png)
+![Enable symbolic links option](git-installer-win.png)
 
 This install a new command line called *Git Bash* which should be used for all git operations.
 

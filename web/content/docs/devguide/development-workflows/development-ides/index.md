@@ -42,7 +42,7 @@ __________
 
 <https://www.sourceware.org/gdb/download>
 
-![GDB screenshot](../gdb.png)
+![GDB screenshot](gdb.png)
 
 ### Create project files
 
@@ -71,7 +71,7 @@ __________
 
 Choose "Eclipse IDE for C/C++ Developers"
 
-![Eclipse screenshot](../eclipse.png)
+![Eclipse screenshot](eclipse.png)
 
 ### Import Code
 
@@ -105,7 +105,7 @@ or
 
 The latter includes already plugins for Fortran, in case you want to cross-compile.
 
-![Code::Blocks screenshot](../codeblocks.png)
+![Code::Blocks screenshot](codeblocks.png)
 
 ### Import Code
 
@@ -136,7 +136,7 @@ __________
 
 <https://netbeans.apache.org/download/index.html>
 
-![NetBeans screenshot](../netbeans.png)
+![NetBeans screenshot](netbeans.png)
 
 ### Import project files
 
@@ -163,7 +163,7 @@ __________
 
 Download: <https://www.jetbrains.com/clion/>
 
-![Clion screenshot](../clion.png)
+![Clion screenshot](clion.png)
 
 ### Import project
 

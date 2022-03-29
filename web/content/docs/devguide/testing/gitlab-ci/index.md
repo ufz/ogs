@@ -20,7 +20,7 @@ The tasks of the CI system are configured in [scripts inside the OGS source code
 A CI run consists of a [pipeline](https://docs.gitlab.com/ee/ci/pipelines/) which contains [stages](https://docs.gitlab.com/ee/ci/yaml/#stages) which in turn contain jobs. A job runs a set of instructions (e.g. checking out the source code, building the code, testing the code) on a [runner](https://docs.gitlab.com/runner/).
 
 Each pipeline run is visualized as follows:
-![GitLab pipeline visualization](../GitLab-Pipeline.png)
+![GitLab pipeline visualization](GitLab-Pipeline.png)
 
 Jobs are belong to a stage and each job will get a status (success, warnings, failure). Some jobs are optional (see the gear icon) and can be manually triggered by pressing the play button.
 

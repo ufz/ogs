@@ -19,7 +19,7 @@ weight = 1003
 
 To get the latest source code simply download it from [repository website](https://gitlab.opengeosys.org/ogs/ogs) and extract the archive:
 
-![](../zip-download.png)
+![](zip-download.png)
 
 You can also download and extract with the command line:
 
@@ -32,7 +32,7 @@ tar xf ogs-master.tar.gz
 
 First you need to get the clone url:
 
-![](../git-url.png)
+![](git-url.png)
 
 Then clone the repository with `git`:
 

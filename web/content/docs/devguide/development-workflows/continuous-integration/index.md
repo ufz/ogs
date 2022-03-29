@@ -24,7 +24,7 @@ After the system is done with all these tasks the developer can view build repor
 ## CI on OGS
 
 All of this automatically kicks in when you open a [Merge Request](../code-reviews) on GitLab. You will notice a pipeline block at the merge request page:
-![GitLab CI screenshot](../GL_CI_screenshot.png)
+![GitLab CI screenshot](GL_CI_screenshot.png)
 
 Click on the pipeline link or the individual pipeline stage icons (circles) to find out the reason for a failed check. If you add more commits to this merge request all checks are run again.
 
