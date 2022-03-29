@@ -77,9 +77,9 @@ quarter as a source, and in the last quarter as a sink again.
 ## Results
 
 <video width="838" height="762" controls>
-<source src="../TimeDependentHeterogeneousBoundaryConditionsAndSourceTerm.mp4" type="video/mp4" />
+<source src="TimeDependentHeterogeneousBoundaryConditionsAndSourceTerm.mp4" type="video/mp4" />
 </video>
 <p>
 <strong>Download Video:</strong>
-<a href="../TimeDependentHeterogeneousBoundaryConditionsAndSourceTerm.mp4">"MP4"</a>
+<a href="TimeDependentHeterogeneousBoundaryConditionsAndSourceTerm.mp4">"MP4"</a>
 </p>

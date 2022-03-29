@@ -64,4 +64,4 @@ At the beginning of the simulation the PVCDBC is inactive. Because of the
 after the first time step and the PVCDBC is activated in the second time step.
 The effect is depicted in the figure:
 
-{{< img src="../PVCDBC_1_ts_2.png" >}}
+{{< img src="PVCDBC_1_ts_2.png" >}}

@@ -81,26 +81,26 @@ The basic scenario for the two-dimensional unconfined aquifer:
 - In the north there is a fixed head boundary condition with 15 m.
 - The southern boundary has a fixed head boundary condition with 25 m.
 - the Specific Yield is set to $S_y = 0.0$
-{{< img src="../Dupuit_Scenario_A.jpg" >}}
+{{< img src="Dupuit_Scenario_A.jpg" >}}
 
 ### Scenario B
 
 - Like scenario A and additionally
 - with an average groundwater recharge rate = 3.54745E-09 m/s
-{{< img src="../Dupuit_Scenario_B.jpg" >}}
+{{< img src="Dupuit_Scenario_B.jpg" >}}
 
 ### Scenario C
 
 - like scenario A but
 - with an inflow rate of 4.62963E-05 m3/s per meter at the southern boundary
-{{< img src="../Dupuit_Scenario_C.jpg" >}}
+{{< img src="Dupuit_Scenario_C.jpg" >}}
 
 ### Scenario D
 
 - like scenario A but transient and
 - with a Specific Yield $S_y_ = 0.25$.
 - Simulation time = 100 days.
-{{< img src="../Dupuit_Scenario_D.jpg" >}}
+{{< img src="Dupuit_Scenario_D.jpg" >}}
 
 ### References
 

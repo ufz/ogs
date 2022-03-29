@@ -59,7 +59,7 @@ where $\gamma\approx$ 0.5772 is the Euler-Mascheroni constant. For practical pur
 The following figure compares the analytical solution, the result by ogs5, and
  the result by ogs6 (labeled as `pressure`) within the range that satisfies
  $u <$ 0.05.
-{{< img src="../theis_comparison.png" >}}
+{{< img src="theis_comparison.png" >}}
 The figure shows that there is a good match between the analytical solution and
  the numerical solution obtained by using ogs5 or ogs6.
 

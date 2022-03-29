@@ -50,7 +50,7 @@ increases in the opposite direction of the *X*-axis. Therefore, the
 linear section appears at the left side of the diagram.
 
 \centering
-{{< img src="../horner.png" >}}
+{{< img src="horner.png" >}}
 
 Figure 1: Horner plot ($p$ vs $(t_p+\Delta t)/\Delta t$) for buildup test showing the inferred Horner straight line
 
@@ -105,11 +105,11 @@ fits with the analytical solution very well. The absolute and relative
 error between the analytical and numerical solution is depicted in
 Figure 3.
 
-{{< img src="../comparison.png" >}}
+{{< img src="comparison.png" >}}
 
 Figure 2: OGS 6 result compared with analytical solution
 
-{{< img src="../error.png" >}}
+{{< img src="error.png" >}}
 
 Figure 3: Absolute and relative error
 
