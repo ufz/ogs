@@ -589,13 +589,13 @@
             <regex>results_heatpipe_rough_ts_.*.vtu</regex>
             <field>gas_pressure</field>
             <absolute_tolerance>1e-6</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
+            <relative_tolerance>1.e-6</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>results_heatpipe_rough_ts_.*.vtu</regex>
             <field>capillary_pressure</field>
             <absolute_tolerance>1e-6</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
+            <relative_tolerance>1.e-6</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>results_heatpipe_rough_ts_.*.vtu</regex>
