@@ -18,4 +18,4 @@ We present the drainage of an excavation benchmark in this [this PDF](../web/con
 
 Here's an impression of the problem and its results:
 
-{{< img src="../drainage_excavation.png" >}}
+{{< img src="drainage_excavation.png" >}}
