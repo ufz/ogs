@@ -19,7 +19,7 @@ this example represents the creep in the near field of
 drift in the deep rock salt after excavation. The domain and the
 geometry are shown in the following figure:
 
-![Mesh and Geometry.](../mesh.png#thwo-third "Mesh and Geometry.")
+![Mesh and Geometry.](mesh.png "Mesh and Geometry.")
 
 The domain has two material groups, which are highlighted by different
 colors. The material group that is in the
@@ -79,17 +79,17 @@ the left sub-figure show the time variations of horizontal and vertical stresses
 green vertical line in it marks the time of the displayed stress field.
 
 <figure>
-    <img src="../stress_xx_yy_20.png" alt="Stress distribution at the time of 109 days." id="fig_2">
+    <img src="stress_xx_yy_20.png" alt="Stress distribution at the time of 109 days." id="fig_2">
     <figcaption>Stress distribution at the time of 109 days.</figcaption>
 </figure>
 
 <figure>
-    <img src="../stress_xx_yy_50.png" alt="Stress distribution at the time of 409 days." id="fig_3">
+    <img src="stress_xx_yy_50.png" alt="Stress distribution at the time of 409 days." id="fig_3">
     <figcaption>Stress distribution at the time of 409 days.</figcaption>
 </figure>
 
 <figure>
-    <img src="../stress_xx_yy_110.png" alt="Stress distribution at the time of 1000 days." id="fig_4">
+    <img src="stress_xx_yy_110.png" alt="Stress distribution at the time of 1000 days." id="fig_4">
     <figcaption>Stress distribution at the time of 1000 days.</figcaption>
 </figure>
 
@@ -101,13 +101,13 @@ horizontal stress.
 The following figure shows the strain distribution at the
 end of the simulation time at 1000 days.
 <figure>
-    <img src="../strain.png" alt="Strain distribution at the time of 1000 days." id="fig_5">
+    <img src="strain.png" alt="Strain distribution at the time of 1000 days." id="fig_5">
     <figcaption>Strain distribution at the time of 1000 days.</figcaption>
 </figure>
 
 The steady-state temperature distribution is displayed in the following figure
 <figure>
-    <img src="../T.png" alt="Temperature distribution at the time of 1000 days." id="fig_6">
+    <img src="T.png" alt="Temperature distribution at the time of 1000 days." id="fig_6">
     <figcaption>Temperature distribution at the time of 1000 days.</figcaption>
 </figure>
 
