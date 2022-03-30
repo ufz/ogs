@@ -237,3 +237,18 @@ AddTest(
     Decovalex-THuni-0_ts_10_t_864000_000000_2.vtu Decovalex-THuni-0_ts_10_t_864000_000000_2.vtu saturation saturation 1e-10 1.0e-6
     Decovalex-THuni-0_ts_10_t_864000_000000_2.vtu Decovalex-THuni-0_ts_10_t_864000_000000_2.vtu temperature temperature 1e-10 1.0e-9
 )
+
+AddTest(
+    NAME OneThreadPETSc_ThermoRichardsFlow_TaskCDECOVALEX2023
+    PATH ThermoRichardsFlow/TaskCDECOVALEX2023
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS Decovalex-0-TRF.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 1
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000_000000_0.vtu pressure pressure 3e5 15
+    expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000_000000_0.vtu saturation saturation 2e-3 2e-3
+    expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000_000000_0.vtu temperature temperature 1e-2 5e-5
+)
