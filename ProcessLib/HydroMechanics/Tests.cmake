@@ -31,7 +31,7 @@ AddTest(
 if (OGS_USE_PYTHON)
     # same, but using Python BCs
     AddTest(
-        NAME GroundEquilibriumPython
+        NAME HydroMechanics_GroundEquilibriumPython
         PATH HydroMechanics/GroundEquilibrium
         EXECUTABLE ogs
         EXECUTABLE_ARGS simHM_ground_python.prj
@@ -46,7 +46,7 @@ if (OGS_USE_PYTHON)
     )
 endif()
 AddTest(
-    NAME GroundEquilibriumQuadBCu
+    NAME HydroMechanics_GroundEquilibriumQuadBCu
     PATH HydroMechanics/GroundEquilibrium
     EXECUTABLE ogs
     EXECUTABLE_ARGS simHM_ground_quadBCu.prj
@@ -62,7 +62,7 @@ AddTest(
 if (OGS_USE_PYTHON)
     # same, but using Python BCs
     AddTest(
-        NAME GroundEquilibriumQuadBCuPython
+        NAME HydroMechanics_GroundEquilibriumQuadBCuPython
         PATH HydroMechanics/GroundEquilibrium
         EXECUTABLE ogs
         EXECUTABLE_ARGS simHM_ground_quadBCu_python.prj
