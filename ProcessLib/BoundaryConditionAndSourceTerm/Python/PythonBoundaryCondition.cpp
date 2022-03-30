@@ -24,7 +24,7 @@
 namespace
 {
 void initBCValues(NumLib::IndexValueVector<GlobalIndexType>& bc_values,
-                  std::size_t nnodes)
+                  std::size_t const nnodes)
 {
     bc_values.ids.clear();
     bc_values.values.clear();
