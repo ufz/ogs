@@ -330,7 +330,7 @@ AddTest(
     result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu liquid_pressure_interpolated liquid_pressure_interpolated 7e-7 2e-3
     result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu velocity_gas velocity_gas 1e-8 1e-8
     result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu velocity_liquid velocity_liquid 1e-8 1e-8
-    result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu sigma sigma 3e-4 1e-8
+    result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu sigma sigma 6e-4 1e-8
     result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu epsilon epsilon 1e-8 1e-8
     result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu liquid_density liquid_density 1e-8 1e-8
     result_point_heatsource_ts_5_t_100000_000000_0.vtu result_point_heatsource_ts_5_t_100000_000000_0.vtu gas_density gas_density 1e-8 1e-8
@@ -344,7 +344,7 @@ AddTest(
     result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu liquid_pressure_interpolated liquid_pressure_interpolated 7e-7 2e-3
     result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu velocity_gas velocity_gas 1e-8 1e-8
     result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu velocity_liquid velocity_liquid 1e-8 1e-8
-    result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu sigma sigma 2e-4 4e-4
+    result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu sigma sigma 2e-4 6e-4
     result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu epsilon epsilon 1e-8 1e-8
     result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu liquid_density liquid_density 1e-8 1e-8
     result_point_heatsource_ts_5_t_100000_000000_1.vtu result_point_heatsource_ts_5_t_100000_000000_1.vtu gas_density gas_density 1e-8 1e-8
@@ -358,7 +358,7 @@ AddTest(
     result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu liquid_pressure_interpolated liquid_pressure_interpolated 7e-7 1e-3
     result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu velocity_gas velocity_gas 1e-8 1e-8
     result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu velocity_liquid velocity_liquid 1e-8 1e-8
-    result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu sigma sigma 2e-4 7e-3
+    result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu sigma sigma 2e-4 8.5e-3
     result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu epsilon epsilon 1e-8 1e-8
     result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu liquid_density liquid_density 1e-8 1e-8
     result_point_heatsource_ts_5_t_100000_000000_2.vtu result_point_heatsource_ts_5_t_100000_000000_2.vtu gas_density gas_density 1e-8 1e-8
