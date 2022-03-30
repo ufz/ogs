@@ -277,12 +277,14 @@ bool TestDefinition::runTests() const
               back_inserter(return_values),
               [](std::string const& command_line)
               {
+                  INFO("---------- vtkdiff begin ----------");
                   int const return_value = std::system(command_line.c_str());
                   if (return_value != 0)
                   {
                       WARN("Return value {:d} was returned by '{:s}'.",
                            return_value, command_line);
                   }
+                  INFO("---------- vtkdiff end ----------\n");
                   return return_value;
               });
     return !return_values.empty() &&
