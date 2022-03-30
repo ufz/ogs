@@ -53,7 +53,7 @@
                 src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" alt="">
               {{ end }}
               <a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent $subsection . }} class="text-brand-500" {{end}}>
-                {{ .Name }}
+                {{ .Name | markdownify }}
               </a>
             </li>
             {{ end }}

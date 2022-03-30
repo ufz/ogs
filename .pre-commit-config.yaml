@@ -26,8 +26,8 @@ repos:
         language: system
         files: '.*\.cpp'
         stages: [commit, manual]
-  - repo: https://github.com/ambv/black
-    rev: 20.8b1
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
     hooks:
       - id: black
         exclude: "ThirdParty|LinearMFront/generate_ref.py"

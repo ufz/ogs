@@ -45,8 +45,8 @@ TecPlotTools -i Lake.plt -o Lake.vtu -c
 
 **Input:**
 
-![TecPlot-Header](./PoyangLake-TecPlot.png "TecPlot-Header of file containing raster data")
+![TecPlot-Header](PoyangLake-TecPlot.png "TecPlot-Header of file containing raster data")
 
 **Output:**
 
-![Converted file](./PoyangLake-ParaView.png "Converted file visualised in ParaView with all scalar data available.")
+![Converted file](PoyangLake-ParaView.png "Converted file visualised in ParaView with all scalar data available.")

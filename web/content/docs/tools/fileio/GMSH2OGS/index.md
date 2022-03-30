@@ -62,6 +62,6 @@ GMSH2OGS -i A2-gmsh.msh -o A2.vtu
  - Finally specifying both flags (`-e` and `-b`) produces a single VTU file
    without the line elements and additional eight boundary (subdomain) files.
 
-![GMSG2OGS-e-b](./extract_boundary.png#two-third "GMSH2OGS meshes for -e and -b
+![GMSG2OGS-e-b](extract_boundary.png#two-third "GMSH2OGS meshes for -e and -b
 command line flags.")
 
