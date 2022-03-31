@@ -209,7 +209,6 @@ void calculateNonEquilibriumInitialResiduum(
         process_solutions,
     std::vector<GlobalVector*> const& process_solutions_prev)
 {
-    INFO("Calculate non-equilibrium initial residuum.");
     for (auto& process_data : per_process_data)
     {
         auto& time_disc = *process_data->time_disc;
