@@ -28,11 +28,6 @@
 #endif  // __APPLE__
 #endif  // _WIN32
 
-#ifdef USE_PETSC
-#include <vtkMPIController.h>
-#include <vtkSmartPointer.h>
-#endif
-
 #include "Applications/ApplicationsLib/Simulation.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
 #include "BaseLib/DateTools.h"
