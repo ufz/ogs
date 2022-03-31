@@ -19,9 +19,11 @@
 #endif
 
 #ifdef USE_EIGEN_UNSUPPORTED
-#include <unsupported/Eigen/src/IterativeSolvers/Scaling.h>
-
+// TODO(naumov); Don't include header files directly from Eigen's source dir
+// clang-format off
 #include <unsupported/Eigen/IterativeSolvers>
+#include <unsupported/Eigen/src/IterativeSolvers/Scaling.h>
+// clang-format on
 #endif
 
 #include "EigenMatrix.h"
