@@ -19,8 +19,9 @@
 #endif
 
 #ifdef USE_EIGEN_UNSUPPORTED
-#include <unsupported/Eigen/IterativeSolvers>
 #include <unsupported/Eigen/src/IterativeSolvers/Scaling.h>
+
+#include <unsupported/Eigen/IterativeSolvers>
 #endif
 
 #include "EigenMatrix.h"
@@ -190,16 +191,14 @@ public:
         solver_.setMaxIterations(opt.max_iterations);
         MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setRestart(
             opt.restart);
-        MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setL(
-            opt.l);
-        MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setS(
-            opt.s);
+        MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setL(opt.l);
+        MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setS(opt.s);
         MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setSmoothing(
             opt.smoothing);
         MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setAngle(
             opt.angle);
-        MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setResidualUpdate(
-            opt.residualupdate);
+        MathLib::details::EigenIterativeLinearSolver<
+            T_SOLVER>::setResidualUpdate(opt.residualupdate);
 
         if (!A.isCompressed())
         {
@@ -292,9 +291,7 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
 #if EIGEN_VERSION_AT_LEAST(3, 4, 90)
             return createIterativeSolver<Eigen::BiCGSTABL>(precon_type);
 #else
-            OGS_FATAL(
-                "BiCGSTABL requires at least Eigen version 3.4.90"
-            );
+            OGS_FATAL("BiCGSTABL requires at least Eigen version 3.4.90");
 #endif
 #else
             OGS_FATAL(
@@ -322,9 +319,7 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
 #if EIGEN_VERSION_AT_LEAST(3, 4, 90)
             return createIterativeSolver<Eigen::IDRS>(precon_type);
 #else
-            OGS_FATAL(
-                "IDRS requires at least Eigen version 3.4.90"
-            );
+            OGS_FATAL("IDRS requires at least Eigen version 3.4.90");
 #endif
 #else
             OGS_FATAL(
@@ -338,9 +333,7 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
 #if EIGEN_VERSION_AT_LEAST(3, 4, 90)
             return createIterativeSolver<Eigen::IDRSTABL>(precon_type);
 #else
-            OGS_FATAL(
-                "IDRSTABL requires at least Eigen version 3.4.90"
-            );
+            OGS_FATAL("IDRSTABL requires at least Eigen version 3.4.90");
 #endif
 #else
             OGS_FATAL(
