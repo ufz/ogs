@@ -29,7 +29,7 @@ void setLocalAccessibleVector(PETScVector const& x)
     x.setLocalAccessibleVector();
 }
 
-void set(PETScVector& x, double const a)
+void set(PETScVector& x, PetscScalar const a)
 {
     VecSet(x.getRawVector(), a);
 }
@@ -41,27 +41,28 @@ void copy(PETScVector const& x, PETScVector& y)
     VecCopy(x.getRawVector(), y.getRawVector());
 }
 
-void scale(PETScVector& x, double const a)
+void scale(PETScVector& x, PetscScalar const a)
 {
     VecScale(x.getRawVector(), a);
 }
 
 // y = a*y + X
-void aypx(PETScVector& y, double const a, PETScVector const& x)
+void aypx(PETScVector& y, PetscScalar const a, PETScVector const& x)
 {
     // TODO check sizes
     VecAYPX(y.getRawVector(), a, x.getRawVector());
 }
 
 // y = a*x + y
-void axpy(PETScVector& y, double const a, PETScVector const& x)
+void axpy(PETScVector& y, PetscScalar const a, PETScVector const& x)
 {
     // TODO check sizes
     VecAXPY(y.getRawVector(), a, x.getRawVector());
 }
 
 // y = a*x + b*y
-void axpby(PETScVector& y, double const a, double const b, PETScVector const& x)
+void axpby(PETScVector& y, PetscScalar const a, PetscScalar const b,
+           PETScVector const& x)
 {
     // TODO check sizes
     VecAXPBY(y.getRawVector(), a, b, x.getRawVector());
@@ -114,13 +115,13 @@ void copy(PETScMatrix const& A, PETScMatrix& B)
 }
 
 // A = a*A
-void scale(PETScMatrix& A, double const a)
+void scale(PETScMatrix& A, PetscScalar const a)
 {
     MatScale(A.getRawMatrix(), a);
 }
 
 // Y = a*Y + X
-void aypx(PETScMatrix& Y, double const a, PETScMatrix const& X)
+void aypx(PETScMatrix& Y, PetscScalar const a, PETScMatrix const& X)
 {
     // TODO check sizes
     // TODO sparsity pattern, currently they are assumed to be different (slow)
@@ -128,7 +129,7 @@ void aypx(PETScMatrix& Y, double const a, PETScMatrix const& X)
 }
 
 // Y = a*X + Y
-void axpy(PETScMatrix& Y, double const a, PETScMatrix const& X)
+void axpy(PETScMatrix& Y, PetscScalar const a, PETScMatrix const& X)
 {
     // TODO check sizes
     // TODO sparsity pattern, currently they are assumed to be different (slow)

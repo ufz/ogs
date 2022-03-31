@@ -14,6 +14,10 @@
 #include "BaseLib/Error.h"
 #include "LinAlgEnums.h"
 
+#ifdef USE_PETSC
+#include <petscsystypes.h>
+#endif
+
 namespace MathLib
 {
 
@@ -40,29 +44,30 @@ void copy(MatrixOrVector const& x, MatrixOrVector& y)
 }
 
 //! Scales \c x by \c a
-template<typename MatrixOrVector>
+template <typename MatrixOrVector>
 void scale(MatrixOrVector& x, double const a)
 {
     x *= a;
 }
 
 //! Computes \f$ y = a \cdot y + x \f$.
-template<typename MatrixOrVector>
+template <typename MatrixOrVector>
 void aypx(MatrixOrVector& y, double const a, MatrixOrVector const& x)
 {
     y = a*y + x;
 }
 
 //! Computes \f$ y = a \cdot x + y \f$.
-template<typename MatrixOrVector>
+template <typename MatrixOrVector>
 void axpy(MatrixOrVector& y, double const a, MatrixOrVector const& x)
 {
     y += a*x;
 }
 
 //! Computes \f$ y = a \cdot x + b \cdot y \f$.
-template<typename MatrixOrVector>
-void axpby(MatrixOrVector& y, double const a, double const b, MatrixOrVector const& x)
+template <typename MatrixOrVector>
+void axpby(MatrixOrVector& y, double const a, double const b,
+           MatrixOrVector const& x)
 {
     y = a*x + b*y;
 }
@@ -150,35 +155,34 @@ namespace LinAlg
 /// Call this before call operator[] or get(...) of x.
 void setLocalAccessibleVector(PETScVector const& x);
 
-void set(PETScVector& x, double const a);
+void set(PETScVector& x, PetscScalar const a);
 
 void copy(PETScVector const& x, PETScVector& y);
 
-void scale(PETScVector& x, double const a);
+void scale(PETScVector& x, PetscScalar const a);
 
 // y = a*y + X
-void aypx(PETScVector& y, double const a, PETScVector const& x);
+void aypx(PETScVector& y, PetscScalar const a, PETScVector const& x);
 
 // y = a*x + y
-void axpy(PETScVector& y, double const a, PETScVector const& x);
+void axpy(PETScVector& y, PetscScalar const a, PETScVector const& x);
 
 // y = a*x + y
-void axpby(PETScVector& y, double const a, double const b, PETScVector const& x);
-
+void axpby(PETScVector& y, PetscScalar const a, PetscScalar const b,
+           PETScVector const& x);
 
 // Matrix
 
 void copy(PETScMatrix const& A, PETScMatrix& B);
 
 // A = a*A
-void scale(PETScMatrix& A, double const a);
+void scale(PETScMatrix& A, PetscScalar const a);
 
 // Y = a*Y + X
-void aypx(PETScMatrix& Y, double const a, PETScMatrix const& X);
+void aypx(PETScMatrix& Y, PetscScalar const a, PETScMatrix const& X);
 
 // Y = a*X + Y
-void axpy(PETScMatrix& Y, double const a, PETScMatrix const& X);
-
+void axpy(PETScMatrix& Y, PetscScalar const a, PETScMatrix const& X);
 
 // Matrix and Vector
 

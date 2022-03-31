@@ -314,7 +314,7 @@ void PETScVector::shallowCopy(const PETScVector& v)
     has_ghost_id_ = v.has_ghost_id_;
     global_ids2local_ids_ghost_ = v.global_ids2local_ids_ghost_;
 
-    VecSetOption(v_, VEC_IGNORE_NEGATIVE_INDICES, PETSC_TRUE);
+    config();
 }
 
 void finalizeVectorAssembly(PETScVector& vec)
