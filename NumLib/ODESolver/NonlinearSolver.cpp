@@ -55,6 +55,9 @@ void NonlinearSolver<NonlinearSolverTag::Picard>::
     _r_neq->set(selected_global_indices, zero_entries);
 
     MathLib::LinAlg::finalizeAssembly(*_r_neq);
+
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(A);
+    NumLib::GlobalVectorProvider::provider.releaseVector(rhs);
 }
 
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
