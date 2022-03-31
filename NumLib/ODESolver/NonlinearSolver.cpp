@@ -34,6 +34,8 @@ void NonlinearSolver<NonlinearSolverTag::Picard>::
         return;
     }
 
+    INFO("Calculate non-equilibrium initial residuum.");
+
     auto& A = NumLib::GlobalMatrixProvider::provider.getMatrix(_A_id);
     auto& rhs = NumLib::GlobalVectorProvider::provider.getVector(_rhs_id);
     _equation_system->assemble(x, x_prev, process_id);
@@ -234,6 +236,8 @@ void NonlinearSolver<NonlinearSolverTag::Newton>::
     {
         return;
     }
+
+    INFO("Calculate non-equilibrium initial residuum.");
 
     _equation_system->assemble(x, x_prev, process_id);
     _r_neq = &NumLib::GlobalVectorProvider::provider.getVector(_r_neq_id);
