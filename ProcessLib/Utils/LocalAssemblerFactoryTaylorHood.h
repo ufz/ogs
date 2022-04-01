@@ -61,7 +61,7 @@ public:
  * Local assembler factory for Taylor-Hood elements.
  *
  * Elements/shape functions must be of order greater than or equal to \c
- * MinShapeFctOrder.
+ * MinShapeFctOrder and of dimension greater than or equal to \c MinElementDim.
  *
  * If \c MinShapeFctOrder is 1, local assemblers are instantiated also for
  * linear mesh elements. In this case we don't have Taylor-Hood elements for
@@ -69,6 +69,7 @@ public:
  * will have the same order (namely 1).
  */
 template <int MinShapeFctOrder,
+          int MinElementDim,
           typename LocalAssemblerInterface,
           template <typename /* shp fct */,
                     typename /* lower order shp fct */,
@@ -77,7 +78,7 @@ template <int MinShapeFctOrder,
           class LocalAssemblerImplementation,
           int GlobalDim,
           typename... ConstructorArgs>
-class LocalAssemblerFactoryTaylorHoodForOrderGreaterEqualN final
+class LocalAssemblerFactoryTaylorHood final
     : public ProcessLib::GenericLocalAssemblerFactory<LocalAssemblerInterface,
                                                       ConstructorArgs...>
 {
@@ -104,9 +105,8 @@ class LocalAssemblerFactoryTaylorHoodForOrderGreaterEqualN final
                 return false;
             }
 
-            if constexpr (ElementTraits::Element::dimension < 2)
+            if constexpr (ElementTraits::Element::dimension < MinElementDim)
             {
-                // in OGS Taylor-Hood elements are available in 2D and 3D only
                 return false;
             }
 
@@ -115,7 +115,7 @@ class LocalAssemblerFactoryTaylorHoodForOrderGreaterEqualN final
     };
 
 public:
-    explicit LocalAssemblerFactoryTaylorHoodForOrderGreaterEqualN(
+    explicit LocalAssemblerFactoryTaylorHood(
         NumLib::LocalToGlobalIndexMap const& dof_table)
         : Base(dof_table)
     {
@@ -132,13 +132,8 @@ public:
                     typename ET::LowerOrderShapeFunction;
 
                 Base::_builders[std::type_index(typeid(MeshElement))] =
-                    LocalAssemblerBuilderFactoryTaylorHood<
-                        ShapeFunction,
-                        LowerOrderShapeFunction,
-                        LocalAssemblerInterface,
-                        LocalAssemblerImplementation,
-                        GlobalDim,
-                        ConstructorArgs...>::create();
+                    LocAsmBuilderFactory<ShapeFunction,
+                                         LowerOrderShapeFunction>::create();
             });
     }
 };
@@ -150,12 +145,12 @@ template <typename LocalAssemblerInterface,
           int GlobalDim,
           typename... ConstructorArgs>
 using LocalAssemblerFactoryHM =
-    LocalAssemblerFactoryTaylorHoodForOrderGreaterEqualN<
-        1,
-        LocalAssemblerInterface,
-        LocalAssemblerImplementation,
-        GlobalDim,
-        ConstructorArgs...>;
+    LocalAssemblerFactoryTaylorHood<1 /* also on linear elements */,
+                                    2 /* only in 2D and 3D */,
+                                    LocalAssemblerInterface,
+                                    LocalAssemblerImplementation,
+                                    GlobalDim,
+                                    ConstructorArgs...>;
 
 /// Stokes flow in OGS is defined for higher order elements only.
 template <typename LocalAssemblerInterface,
@@ -164,11 +159,11 @@ template <typename LocalAssemblerInterface,
           int GlobalDim,
           typename... ConstructorArgs>
 using LocalAssemblerFactoryStokes =
-    LocalAssemblerFactoryTaylorHoodForOrderGreaterEqualN<
-        2,
-        LocalAssemblerInterface,
-        LocalAssemblerImplementation,
-        GlobalDim,
-        ConstructorArgs...>;
+    LocalAssemblerFactoryTaylorHood<2 /* only for higher-order elements */,
+                                    2 /* only in 2D and 3D */,
+                                    LocalAssemblerInterface,
+                                    LocalAssemblerImplementation,
+                                    GlobalDim,
+                                    ConstructorArgs...>;
 
 }  // namespace ProcessLib

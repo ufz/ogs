@@ -25,7 +25,9 @@ std::unique_ptr<SourceTerm> createSourceTerm(
     const NumLib::LocalToGlobalIndexMap& dof_table_bulk,
     const MeshLib::Mesh& source_term_mesh, const int variable_id,
     const unsigned integration_order, const unsigned shapefunction_order,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    [[maybe_unused]] std::vector<std::reference_wrapper<ProcessVariable>> const&
+        all_process_variables_for_this_process)
 {
     //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__type}
     auto const type = config.config.peekConfigParameter<std::string>("type");
@@ -101,7 +103,8 @@ std::unique_ptr<SourceTerm> createSourceTerm(
         return ProcessLib::createPythonSourceTerm(
             config.config, config.mesh, std::move(dof_table_source_term),
             variable_id, *config.component_id, integration_order,
-            shapefunction_order, source_term_mesh.getDimension());
+            shapefunction_order, source_term_mesh.getDimension(),
+            all_process_variables_for_this_process);
 #else
         OGS_FATAL("OpenGeoSys has not been built with Python support.");
 #endif

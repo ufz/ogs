@@ -1,27 +1,14 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <!--
-We solve a hydro-mechanical linear biphasic model (small deformation, linear
-elastic, Darcy flow, incompressible constituents) in square domain where on
-the top boundary a constant displacement boundary is applied. On the right
-boundary a constant pressure boundary equals zero and zeros traction boundary
-are applied. All other boundaries are constrained in their normal direction
-and all boundaries except for outer radius are sealed. The fluid is allowed to
-escape through the right boundary. The drainage process can be concluded into
-two stages. During drainage, the total stress is the sum of effective stresses
-in the solid and the pore pressure. Once the material is fully drained, the
-pore pressure is zero, so that stress- and displacement fields are determined
-exclusively by the properties of the solid skeleton. An axisymmetric domain is
-used in this model. The mesh is refined based on the distance to the outer
-radius.
-In this problem, it is assumed that the biot coefficient $$\alpha = 1$$ and the
-storage $$S$$ term is neglected.
-
-A detailed problem description is provided online:
-https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compression/
+In this Benchmark, OGS simulation results are compared to an analytical 
+solution of a problem assuming the fluid is an ideal gas and using 
+Darcy’s law with neglected body force.
+More details are provided in the attached pdf-file.
 -->
 <OpenGeoSysProject>
-    <mesh axially_symmetric="true">square_1x1_quad8_1e4.vtu</mesh>
-    <geometry>square_1x1.gml</geometry>
+    <mesh>quad_1x10.vtu</mesh>
+    <geometry>quad_1x10.gml</geometry>
+    <python_script>python_boundary.py</python_script>
     <processes>
         <process>
             <name>HM</name>
@@ -37,7 +24,11 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
                 <displacement>displacement</displacement>
                 <pressure>pressure</pressure>
             </process_variables>
-            <secondary_variables/>
+            <secondary_variables>
+                <secondary_variable internal_name="sigma" output_name="sigma"/>
+                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable internal_name="velocity" output_name="velocity"/>
+            </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
         </process>
     </processes>
@@ -50,12 +41,16 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
                         <property>
                             <name>viscosity</name>
                             <type>Constant</type>
-                            <value>1e-3</value>
+                            <value>1e-5</value>
                         </property>
                         <property>
                             <name>density</name>
+                            <type>IdealGasLaw</type>
+                        </property>
+                        <property>
+                            <name>molar_mass</name>
                             <type>Constant</type>
-                            <value>1.0e-6</value>
+                            <value>0.028964397787206768</value>
                         </property>
                     </properties>
                 </phase>
@@ -65,7 +60,7 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
                         <property>
                             <name>density</name>
                             <type>Constant</type>
-                            <value>1.2e-6</value>
+                            <value>2.2e3</value>
                         </property>
                     </properties>
                 </phase>
@@ -74,12 +69,12 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
                 <property>
                     <name>porosity</name>
                     <type>Constant</type>
-                    <value>0</value>
+                    <value>0.1</value>
                 </property>
                 <property>
                     <name>biot_coefficient</name>
                     <type>Constant</type>
-                    <value>1</value>
+                    <value>1.0</value>
                 </property>
                 <property>
                     <name>reference_temperature</name>
@@ -89,7 +84,7 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
                 <property>
                     <name>permeability</name>
                     <type>Constant</type>
-                    <value>1e-10</value>
+                    <value>1e-12</value>
                 </property>
             </properties>
         </medium>
@@ -99,9 +94,9 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
             <process ref="HM">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
                 <convergence_criterion>
-                    <type>DeltaX</type>
+                    <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1e-9</abstol>
+                    <reltols>1e-10 1e10 1e10</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -109,11 +104,11 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>1</t_end>
+                    <t_end>4000</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>10</repeat>
-                            <delta_t>0.1</delta_t>
+                            <repeat>100</repeat>
+                            <delta_t>40</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -121,16 +116,19 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>square_1e4_UC_early</prefix>
+            <prefix>flow_pressure_boundary_python</prefix>
             <timesteps>
                 <pair>
-                    <repeat>10000</repeat>
-                    <each_steps>1</each_steps>
+                    <repeat>1</repeat>
+                    <each_steps>10000</each_steps>
                 </pair>
             </timesteps>
             <variables>
                 <variable>displacement</variable>
                 <variable>pressure</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+                <variable>velocity</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
@@ -140,12 +138,12 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
         <parameter>
             <name>E</name>
             <type>Constant</type>
-            <value>30000.0</value>
+            <value>1e9</value>
         </parameter>
         <parameter>
             <name>nu</name>
             <type>Constant</type>
-            <value>0.2</value>
+            <value>.3</value>
         </parameter>
         <!-- Model parameters -->
         <parameter>
@@ -154,19 +152,19 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
             <values>0 0</values>
         </parameter>
         <parameter>
-            <name>pressure_ic</name>
+            <name>pressure0</name>
             <type>Constant</type>
-            <values>0</values>
+            <values>1e5</values>
         </parameter>
         <parameter>
-            <name>dirichlet0</name>
+            <name>zero</name>
             <type>Constant</type>
             <value>0</value>
         </parameter>
         <parameter>
-            <name>displacementTop</name>
+            <name>flux_in</name>
             <type>Constant</type>
-            <value>-0.05</value>
+            <value>1e-2</value>
         </parameter>
     </parameters>
     <process_variables>
@@ -181,21 +179,28 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
                     <geometry>left</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
-                    <parameter>dirichlet0</parameter>
+                    <parameter>zero</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>bottom</geometry>
                     <type>Dirichlet</type>
                     <component>1</component>
-                    <parameter>dirichlet0</parameter>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>right</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>top</geometry>
                     <type>Dirichlet</type>
                     <component>1</component>
-                    <parameter>displacementTop</parameter>
+                    <parameter>zero</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
@@ -203,15 +208,38 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
             <name>pressure</name>
             <components>1</components>
             <order>1</order>
-            <initial_condition>pressure_ic</initial_condition>
+            <initial_condition>pressure0</initial_condition>
             <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>left</geometry>
+                    <type>Python</type>
+                    <component>0</component>
+                    <bc_object>bc_p_N</bc_object>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>right</geometry>
+                    <type>Python</type>
+                    <component>0</component>
+                    <bc_object>bc_p_D</bc_object>
+                </boundary_condition>
+                            
+
+                <!--boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>left</geometry>
+                    <type>Neumann</type>
+                    <component>0</component>
+                    <parameter>flux_in</parameter>
+                </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>right</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
-                    <parameter>dirichlet0</parameter>
-                </boundary_condition>
+                    <parameter>pressure0</parameter>
+                </boundary_condition-->
             </boundary_conditions>
         </process_variable>
     </process_variables>
@@ -233,10 +261,6 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
                 <max_iteration_step>10000</max_iteration_step>
                 <error_tolerance>1e-16</error_tolerance>
             </eigen>
-            <petsc>
-                <prefix>sd</prefix>
-                <parameters>-sd_ksp_type cg -sd_pc_type bjacobi -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10000</parameters>
-            </petsc>
         </linear_solver>
     </linear_solvers>
 </OpenGeoSysProject>

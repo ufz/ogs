@@ -20,8 +20,9 @@ A detailed problem description is provided online:
 https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compression/
 -->
 <OpenGeoSysProject>
-    <mesh axially_symmetric="true">square_1x1_quad8_1e4.vtu</mesh>
+    <mesh axially_symmetric="true">square_1x1_quad8_1e2.vtu</mesh>
     <geometry>square_1x1.gml</geometry>
+    <python_script>python_boundary.py</python_script>
     <processes>
         <process>
             <name>HM</name>
@@ -101,7 +102,7 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1e-9</abstol>
+                    <abstol>1e-8</abstol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -121,11 +122,11 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>square_1e4_UC_early</prefix>
+            <prefix>square_1e2_UC_early_python</prefix>
             <timesteps>
                 <pair>
-                    <repeat>10000</repeat>
-                    <each_steps>1</each_steps>
+                    <repeat>1</repeat>
+                    <each_steps>10</each_steps>
                 </pair>
             </timesteps>
             <variables>
@@ -179,23 +180,23 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>left</geometry>
-                    <type>Dirichlet</type>
+                    <type>Python</type>
                     <component>0</component>
-                    <parameter>dirichlet0</parameter>
+                    <bc_object>bc_u_D_0</bc_object>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>bottom</geometry>
-                    <type>Dirichlet</type>
+                    <type>Python</type>
                     <component>1</component>
-                    <parameter>dirichlet0</parameter>
+                    <bc_object>bc_u_D_0</bc_object>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>top</geometry>
-                    <type>Dirichlet</type>
+                    <type>Python</type>
                     <component>1</component>
-                    <parameter>displacementTop</parameter>
+                    <bc_object>bc_u_D_top</bc_object>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
@@ -208,9 +209,9 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>right</geometry>
-                    <type>Dirichlet</type>
+                    <type>Python</type>
                     <component>0</component>
-                    <parameter>dirichlet0</parameter>
+                    <bc_object>bc_p_D_0</bc_object>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
@@ -239,4 +240,12 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>expected_square_1e2_UC_early_ts_10_t_1.000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-6</absolute_tolerance>
+            <relative_tolerance>1e-6</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

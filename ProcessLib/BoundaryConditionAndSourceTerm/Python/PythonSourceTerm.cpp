@@ -17,7 +17,7 @@
 #include "FlushStdoutGuard.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "ProcessLib/BoundaryConditionAndSourceTerm/Utils/CreateLocalAssemblers.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/Python/Utils/CreateLocalAssemblers.h"
 #include "PythonSourceTermLocalAssembler.h"
 
 namespace ProcessLib
@@ -28,19 +28,18 @@ namespace Python
 {
 PythonSourceTerm::PythonSourceTerm(
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> source_term_dof_table,
-    PythonSourceTermData&& source_term_data, unsigned const integration_order,
-    unsigned const shapefunction_order, unsigned const global_dim,
-    bool const flush_stdout)
+    PythonStData&& source_term_data, unsigned const integration_order,
+    unsigned const global_dim, bool const flush_stdout)
     : SourceTerm(std::move(source_term_dof_table)),
       _source_term_data(std::move(source_term_data)),
       _flush_stdout(flush_stdout)
 {
-    BoundaryConditionAndSourceTerm::createLocalAssemblers<
+    BoundaryConditionAndSourceTerm::createLocalAssemblersPython<
         PythonSourceTermLocalAssembler>(
-        global_dim, _source_term_data.source_term_mesh.getElements(),
-        *_source_term_dof_table, shapefunction_order, _local_assemblers,
-        _source_term_data.source_term_mesh.isAxiallySymmetric(),
-        integration_order, _source_term_data);
+        global_dim, _source_term_data.bc_or_st_mesh.getElements(),
+        *_source_term_dof_table, _local_assemblers,
+        _source_term_data.bc_or_st_mesh.isAxiallySymmetric(), integration_order,
+        _source_term_data);
 }
 
 void PythonSourceTerm::integrate(const double t, const GlobalVector& x,

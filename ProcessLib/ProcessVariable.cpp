@@ -224,7 +224,9 @@ ProcessVariable::createBoundaryConditions(
     const int variable_id,
     unsigned const integration_order,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    Process const& process)
+    Process const& process,
+    std::vector<std::reference_wrapper<ProcessVariable>> const&
+        all_process_variables_for_this_process)
 {
     std::vector<std::unique_ptr<BoundaryCondition>> bcs;
     bcs.reserve(_bc_configs.size());
@@ -233,7 +235,8 @@ ProcessVariable::createBoundaryConditions(
     {
         auto bc = createBoundaryCondition(
             config, dof_table, _mesh, variable_id, integration_order,
-            _shapefunction_order, parameters, process);
+            _shapefunction_order, parameters, process,
+            all_process_variables_for_this_process);
 #ifdef USE_PETSC
         if (bc == nullptr)
         {
@@ -351,7 +354,9 @@ std::vector<std::unique_ptr<SourceTerm>> ProcessVariable::createSourceTerms(
     const NumLib::LocalToGlobalIndexMap& dof_table,
     const int variable_id,
     unsigned const integration_order,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    std::vector<std::reference_wrapper<ProcessVariable>> const&
+        all_process_variables_for_this_process)
 {
     std::vector<std::unique_ptr<SourceTerm>> source_terms;
 
@@ -359,9 +364,10 @@ std::vector<std::unique_ptr<SourceTerm>> ProcessVariable::createSourceTerms(
               back_inserter(source_terms),
               [&](auto const& config)
               {
-                  return createSourceTerm(config, dof_table, config.mesh,
-                                          variable_id, integration_order,
-                                          _shapefunction_order, parameters);
+                  return createSourceTerm(
+                      config, dof_table, config.mesh, variable_id,
+                      integration_order, _shapefunction_order, parameters,
+                      all_process_variables_for_this_process);
               });
 
     return source_terms;

@@ -13,33 +13,31 @@
 #include "ProcessLib/BoundaryConditionAndSourceTerm/SourceTerm.h"
 #include "PythonSourceTermLocalAssemblerInterface.h"
 #include "PythonSourceTermPythonSideInterface.h"
+#include "Utils/BcOrStData.h"
 
 namespace ProcessLib
 {
-class LocalToGlobalIndexMap;
-}
+class ProcessVariable;
 
-namespace ProcessLib
+namespace SourceTerms::Python
 {
-namespace SourceTerms
+struct PythonStData final
+    : ProcessLib::BoundaryConditionAndSourceTerm::Python::BcOrStData<
+          PythonSourceTermPythonSideInterface>
 {
-namespace Python
-{
-//! Groups data used by source terms, in particular by the local assemblers.
-struct PythonSourceTermData final
-{
-    //! Python object computing source term values.
-    PythonSourceTermPythonSideInterface* source_term_object;
+    //! The interfaces of Python BCs and STs differ slightly.
+    //!
+    //! This method provides an interface for accessing Python BC and
+    //! ST objects in a uniform way.
+    ProcessLib::BoundaryConditionAndSourceTerm::Python::FlagAndFluxAndDFlux
+    getFlagAndFluxAndDFlux(double const t, std::array<double, 3> const coords,
+                           std::vector<double> const& prim_vars_data) const
+    {
+        auto [flux, dFlux] =
+            bc_or_st_object->getFlux(t, coords, prim_vars_data);
 
-    //! Global component ID of the (variable, component) to which this source
-    //! term is applied.
-    int const global_component_id;
-
-    //! The source term mesh, i.e., the (sub-) domain of this source term.
-    const MeshLib::Mesh& source_term_mesh;
-
-    //! Mesh ID of the entire domain.
-    std::size_t const source_term_mesh_id;
+        return {true, flux, std::move(dFlux)};
+    }
 };
 
 //! A source term whose values are computed by a Python script.
@@ -48,16 +46,15 @@ class PythonSourceTerm final : public ProcessLib::SourceTerm
 public:
     explicit PythonSourceTerm(
         std::unique_ptr<NumLib::LocalToGlobalIndexMap> source_term_dof_table,
-        PythonSourceTermData&& source_term_data,
-        unsigned const integration_order, unsigned const shapefunction_order,
+        PythonStData&& source_term_data, unsigned const integration_order,
         unsigned const global_dim, bool const flush_stdout);
 
     void integrate(const double t, GlobalVector const& x, GlobalVector& b,
                    GlobalMatrix* jac) const override;
 
 private:
-    //! Auxiliary data.
-    PythonSourceTermData _source_term_data;
+    //! Auxiliary data used by the local assemblers.
+    PythonStData _source_term_data;
 
     //! Local assemblers for all elements of the source term mesh.
     std::vector<std::unique_ptr<PythonSourceTermLocalAssemblerInterface>>
@@ -69,6 +66,5 @@ private:
     bool const _flush_stdout;
 };
 
-}  // namespace Python
-}  // namespace SourceTerms
+}  // namespace SourceTerms::Python
 }  // namespace ProcessLib

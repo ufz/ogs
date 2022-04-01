@@ -17,33 +17,77 @@
 #include "BaseLib/ConfigTree.h"
 #include "FlushStdoutGuard.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
-#include "ProcessLib/BoundaryConditionAndSourceTerm/Utils/CreateLocalAssemblers.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/Python/Utils/CreateLocalAssemblers.h"
+#include "ProcessLib/ProcessVariable.h"
 #include "PythonBoundaryConditionLocalAssembler.h"
+
+namespace
+{
+void initBCValues(NumLib::IndexValueVector<GlobalIndexType>& bc_values,
+                  std::size_t const nnodes)
+{
+    bc_values.ids.clear();
+    bc_values.values.clear();
+
+    bc_values.ids.reserve(nnodes);
+    bc_values.values.reserve(nnodes);
+}
+
+void checkConsistency(
+    NumLib::LocalToGlobalIndexMap const& dof_table,
+    std::vector<std::reference_wrapper<ProcessLib::ProcessVariable>> const& pvs)
+{
+    auto const num_vars_dt = dof_table.getNumberOfVariables();
+    auto const num_vars_pv = pvs.size();
+
+    if (static_cast<std::size_t>(num_vars_dt) != num_vars_pv)
+    {
+        OGS_FATAL(
+            "The number of variables in the d.o.f. table does not match the "
+            "number of process variables: {} != {}.",
+            num_vars_dt, num_vars_pv);
+    }
+
+    for (std::size_t var = 0; var < num_vars_pv; ++var)
+    {
+        auto const num_comp_dt = dof_table.getNumberOfVariableComponents(var);
+        auto const num_comp_pv = pvs[var].get().getNumberOfGlobalComponents();
+
+        if (num_comp_dt != num_comp_pv)
+        {
+            OGS_FATAL(
+                "The number of components of variable #{} in the d.o.f. table "
+                "does not match the number of components of process variable "
+                "#{} ({}): {} != {}.",
+                var, var, pvs[var].get().getName(), num_vars_dt, num_vars_pv);
+        }
+    }
+}
+}  // anonymous namespace
 
 namespace ProcessLib
 {
 PythonBoundaryCondition::PythonBoundaryCondition(
-    PythonBoundaryConditionData&& bc_data,
-    unsigned const integration_order,
-    unsigned const shapefunction_order,
-    unsigned const global_dim,
-    bool const flush_stdout)
+    PythonBcData&& bc_data, unsigned const integration_order,
+    bool const flush_stdout, unsigned const bulk_mesh_dimension,
+    NumLib::LocalToGlobalIndexMap const& dof_table_bulk)
     : _bc_data(std::move(bc_data)), _flush_stdout(flush_stdout)
 {
+    checkConsistency(dof_table_bulk,
+                     _bc_data.all_process_variables_for_this_process);
+
     std::vector<MeshLib::Node*> const& bc_nodes =
-        _bc_data.boundary_mesh.getNodes();
-    MeshLib::MeshSubset bc_mesh_subset(_bc_data.boundary_mesh, bc_nodes);
+        _bc_data.bc_or_st_mesh.getNodes();
+    MeshLib::MeshSubset bc_mesh_subset(_bc_data.bc_or_st_mesh, bc_nodes);
 
-    // Create local DOF table from the bc mesh subset for the given variable and
-    // component id.
-    _dof_table_boundary = _bc_data.dof_table_bulk.deriveBoundaryConstrainedMap(
-        std::move(bc_mesh_subset));
+    _dof_table_boundary =
+        dof_table_bulk.deriveBoundaryConstrainedMap(std::move(bc_mesh_subset));
 
-    BoundaryConditionAndSourceTerm::createLocalAssemblers<
+    BoundaryConditionAndSourceTerm::createLocalAssemblersPython<
         PythonBoundaryConditionLocalAssembler>(
-        global_dim, _bc_data.boundary_mesh.getElements(), *_dof_table_boundary,
-        shapefunction_order, _local_assemblers,
-        _bc_data.boundary_mesh.isAxiallySymmetric(), integration_order,
+        bulk_mesh_dimension, _bc_data.bc_or_st_mesh.getElements(),
+        *_dof_table_boundary, _local_assemblers,
+        _bc_data.bc_or_st_mesh.isAxiallySymmetric(), integration_order,
         _bc_data);
 }
 
@@ -54,60 +98,43 @@ void PythonBoundaryCondition::getEssentialBCValues(
     FlushStdoutGuard guard(_flush_stdout);
     (void)guard;
 
-    auto const nodes = _bc_data.boundary_mesh.getNodes();
+    auto const& boundary_mesh = _bc_data.bc_or_st_mesh;
+    auto const& boundary_nodes = boundary_mesh.getNodes();
+    auto const* bc_object = _bc_data.bc_or_st_object;
 
-    auto const& bulk_node_ids_map =
-        *_bc_data.boundary_mesh.getProperties().getPropertyVector<std::size_t>(
-            "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
-
-    bc_values.ids.clear();
-    bc_values.values.clear();
-
-    bc_values.ids.reserve(_bc_data.boundary_mesh.getNumberOfNodes());
-    bc_values.values.reserve(_bc_data.boundary_mesh.getNumberOfNodes());
+    initBCValues(bc_values, boundary_nodes.size());
 
     std::vector<double> primary_variables;
 
-    for (auto const* node : _bc_data.boundary_mesh.getNodes())
+    for (auto const* boundary_node : boundary_nodes)
     {
-        auto const boundary_node_id = node->getID();
-        auto const bulk_node_id = bulk_node_ids_map[boundary_node_id];
+        auto const boundary_node_id = boundary_node->getID();
+        auto const dof_idx = getDofIdx(boundary_node_id);
 
-        // gather primary variable values
-        primary_variables.clear();
-        auto const num_var = _dof_table_boundary->getNumberOfVariables();
-        for (int var = 0; var < num_var; ++var)
+        if (dof_idx == NumLib::MeshComponentMap::nop)
         {
-            auto const num_comp =
-                _dof_table_boundary->getNumberOfVariableComponents(var);
-            for (int comp = 0; comp < num_comp; ++comp)
-            {
-                MeshLib::Location loc{_bc_data.bulk_mesh_id,
-                                      MeshLib::MeshItemType::Node,
-                                      bulk_node_id};
-                auto const dof_idx =
-                    _bc_data.dof_table_bulk.getGlobalIndex(loc, var, comp);
-
-                if (dof_idx == NumLib::MeshComponentMap::nop)
-                {
-                    // TODO extend Python BC to mixed FEM ansatz functions
-                    OGS_FATAL(
-                        "No d.o.f. found for (node={:d}, var={:d}, comp={:d}). "
-                        " That might be due to the use of mixed FEM ansatz "
-                        "functions, which is currently not supported by the "
-                        "implementation of Python BCs. That excludes, e.g., "
-                        "the HM process.",
-                        bulk_node_id, var, comp);
-                }
-
-                primary_variables.push_back(x[dof_idx]);
-            }
+            // This d.o.f. has not been found. This can be the case, e.g., for
+            // Taylor-Hood elements, where the lower order field has no d.o.f.
+            // on higher order nodes.
+            continue;
         }
 
-        auto* xs = nodes[boundary_node_id]->getCoords();  // TODO DDC problems?
-        auto pair_flag_value = _bc_data.bc_object->getDirichletBCValue(
-            t, {xs[0], xs[1], xs[2]}, boundary_node_id, primary_variables);
-        if (!_bc_data.bc_object->isOverriddenEssential())
+        if (dof_idx < 0)
+        {
+            // For the DDC approach (e.g. with PETSc option) a negative
+            // index means that this entry is a ghost entry and should be
+            // dropped.
+            continue;
+        }
+
+        collectPrimaryVariables(primary_variables, *boundary_node, x);
+
+        auto* coords = boundary_node->getCoords();
+        auto const [apply_bc, bc_value] =
+            bc_object->getDirichletBCValue(t, {coords[0], coords[1], coords[2]},
+                                           boundary_node_id, primary_variables);
+
+        if (!bc_object->isOverriddenEssential())
         {
             DBUG(
                 "Method `getDirichletBCValue' not overridden in Python "
@@ -115,35 +142,97 @@ void PythonBoundaryCondition::getEssentialBCValues(
             return;
         }
 
-        if (!pair_flag_value.first)
+        if (!apply_bc)
         {
             continue;
         }
 
-        MeshLib::Location l(_bc_data.bulk_mesh_id, MeshLib::MeshItemType::Node,
-                            bulk_node_id);
-        const auto dof_idx = _bc_data.dof_table_bulk.getGlobalIndex(
-            l, _bc_data.global_component_id);
-        if (dof_idx == NumLib::MeshComponentMap::nop)
-        {
-            OGS_FATAL(
-                "Logic error. This error should already have occurred while "
-                "gathering primary variables. Something nasty is going on!");
-        }
+        bc_values.ids.emplace_back(dof_idx);
+        bc_values.values.emplace_back(bc_value);
+    }
+}
 
-        // For the DDC approach (e.g. with PETSc option), the negative
-        // index of g_idx means that the entry by that index is a ghost
-        // one, which should be dropped. Especially for PETSc routines
-        // MatZeroRows and MatZeroRowsColumns, which are called to apply
-        // the Dirichlet BC, the negative index is not accepted like
-        // other matrix or vector PETSc routines. Therefore, the
-        // following if-condition is applied.
-        if (dof_idx >= 0)
+GlobalIndexType PythonBoundaryCondition::getDofIdx(
+    std::size_t const boundary_node_id) const
+{
+    MeshLib::Location const loc{_bc_data.bc_or_st_mesh.getID(),
+                                MeshLib::MeshItemType::Node, boundary_node_id};
+    return _dof_table_boundary->getGlobalIndex(loc,
+                                               _bc_data.global_component_id);
+}
+
+GlobalIndexType PythonBoundaryCondition::getDofIdx(
+    std::size_t const boundary_node_id, int const var, int const comp) const
+{
+    MeshLib::Location const loc{_bc_data.bc_or_st_mesh.getID(),
+                                MeshLib::MeshItemType::Node, boundary_node_id};
+    return _dof_table_boundary->getGlobalIndex(loc, var, comp);
+}
+
+void PythonBoundaryCondition::collectPrimaryVariables(
+    std::vector<double>& primary_variables, MeshLib::Node const& boundary_node,
+    GlobalVector const& x) const
+{
+    primary_variables.clear();
+    auto const num_var = _dof_table_boundary->getNumberOfVariables();
+    auto const boundary_node_id = boundary_node.getID();
+
+    for (int var = 0; var < num_var; ++var)
+    {
+        auto const num_comp =
+            _dof_table_boundary->getNumberOfVariableComponents(var);
+        for (int comp = 0; comp < num_comp; ++comp)
         {
-            bc_values.ids.emplace_back(dof_idx);
-            bc_values.values.emplace_back(pair_flag_value.second);
+            auto const dof_idx = getDofIdx(boundary_node_id, var, comp);
+
+            double const pv_value =
+                dof_idx != NumLib::MeshComponentMap::nop
+                    ? x[dof_idx]
+                    : interpolateToHigherOrderNode(x, var, comp, boundary_node);
+
+            primary_variables.push_back(pv_value);
         }
     }
+}
+
+double PythonBoundaryCondition::interpolateToHigherOrderNode(
+    GlobalVector const& x, int const var, int const comp,
+    MeshLib::Node const& boundary_node) const
+{
+    auto const& boundary_elements =
+        _bc_data.bc_or_st_mesh.getElementsConnectedToNode(
+            boundary_node.getID());
+
+    if (boundary_elements.size() != 1)
+    {
+        DBUG(
+            "Boundary node {} is associated with {} elements in the boundary "
+            "mesh.",
+            boundary_node.getID(),
+            boundary_elements.size());
+    }
+
+    // Interpolations on all associated elements should return the same. Just
+    // pick any of them.
+    auto const& boundary_element = *boundary_elements.front();
+
+    assert(boundary_element.getNumberOfBaseNodes() <
+               boundary_element.getNumberOfNodes() &&
+           "We expect that the boundary element is a higher order element. "
+           "Otherwise no interpolation should take place.");
+
+    // Search local node id
+    auto const local_node_id_within_boundary_element =
+        getNodeIDinElement(boundary_element, &boundary_node);
+
+    auto const boundary_element_id = boundary_element.getID();
+
+    // Assumption: all boundary elements have a local assembler (in the same
+    // order)
+    auto const& loc_asm = *_local_assemblers[boundary_element_id];
+
+    return loc_asm.interpolate(local_node_id_within_boundary_element,
+                               *_dof_table_boundary, x, var, comp);
 }
 
 void PythonBoundaryCondition::applyNaturalBC(
@@ -167,10 +256,12 @@ void PythonBoundaryCondition::applyNaturalBC(
 
 std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& boundary_mesh,
-    NumLib::LocalToGlobalIndexMap const& dof_table, std::size_t bulk_mesh_id,
-    int const variable_id, int const component_id,
-    unsigned const integration_order, unsigned const shapefunction_order,
-    unsigned const global_dim)
+    NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
+    MeshLib::Mesh const& bulk_mesh, int const variable_id,
+    int const component_id, unsigned const integration_order,
+    unsigned const shapefunction_order,
+    std::vector<std::reference_wrapper<ProcessVariable>> const&
+        all_process_variables_for_this_process)
 {
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter("type", "Python");
@@ -195,14 +286,16 @@ std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
     auto* bc = scope[bc_object.c_str()]
                    .cast<PythonBoundaryConditionPythonSideInterface*>();
 
-    if (variable_id >= static_cast<int>(dof_table.getNumberOfVariables()) ||
-        component_id >= dof_table.getNumberOfVariableComponents(variable_id))
+    if (variable_id >=
+            static_cast<int>(dof_table_bulk.getNumberOfVariables()) ||
+        component_id >=
+            dof_table_bulk.getNumberOfVariableComponents(variable_id))
     {
         OGS_FATAL(
             "Variable id or component id too high. Actual values: ({:d}, "
             "{:d}), maximum values: ({:d}, {:d}).",
-            variable_id, component_id, dof_table.getNumberOfVariables(),
-            dof_table.getNumberOfVariableComponents(variable_id));
+            variable_id, component_id, dof_table_bulk.getNumberOfVariables(),
+            dof_table_bulk.getNumberOfVariableComponents(variable_id));
     }
 
     // In case of partitioned mesh the boundary could be empty, i.e. there is no
@@ -221,11 +314,12 @@ std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
 #endif  // USE_PETSC
 
     return std::make_unique<PythonBoundaryCondition>(
-        PythonBoundaryConditionData{
-            bc, dof_table, bulk_mesh_id,
-            dof_table.getGlobalComponent(variable_id, component_id),
-            boundary_mesh},
-        integration_order, shapefunction_order, global_dim, flush_stdout);
+        PythonBcData{
+            {bc, dof_table_bulk.getGlobalComponent(variable_id, component_id),
+             boundary_mesh, all_process_variables_for_this_process,
+             shapefunction_order}},
+        integration_order, flush_stdout, bulk_mesh.getDimension(),
+        dof_table_bulk);
 }
 
 }  // namespace ProcessLib
