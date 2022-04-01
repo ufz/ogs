@@ -4,3 +4,4 @@
 /v6.4.0/* https://ogs-doxygen-v6-4-0.netlify.app/:splat 200!
 /v6.4.1 https://doxygen.opengeosys.org/v6.4.1/index.html 301
 /v6.4.1/* https://ogs-doxygen-v6-4-1.netlify.app/:splat 200!
+/v6.4.2/* https://ogs-doxygen-v6-4-2.netlify.app/:splat 200!
