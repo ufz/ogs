@@ -23,8 +23,8 @@ void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::
     double const dt = _time_disc.getCurrentTimeIncrement();
 
     // A = M * 1/dt + K
-    LinAlg::copy(M, A);
-    LinAlg::aypx(A, 1. / dt, K);
+    LinAlg::copy(K, A);
+    LinAlg::axpy(A, 1. / dt, M);
 }
 
 void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::
