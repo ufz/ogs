@@ -21,9 +21,9 @@ build docs:
     - echo '<meta http-equiv="REFRESH" content="0;URL=build/docs/index.html">' >> Doxygen.html
     - mkdir -p build
     # cpp-dependencies
-    - NUM_CYCLES=`/opt/cppcheck/bin/cpp-dependencies --stats|grep cycles|cut -d " " -f 2`
+    - NUM_CYCLES=`cpp-dependencies --stats|grep cycles|cut -d " " -f 2`
     - echo "num_cycles $NUM_CYCLES" > metrics.txt
-    - /opt/cppcheck/bin/cpp-dependencies --graph cpp-dependencies.dot && dot -Tsvg cpp-dependencies.dot -o build/cpp-dependencies.svg
+    - cpp-dependencies --graph cpp-dependencies.dot && dot -Tsvg cpp-dependencies.dot -o build/cpp-dependencies.svg
     # lizard, default code complexity number (15), function line length 100, max arguments 10
     - python /opt/lizard/lizard.py -l cpp -w -t 8 --length 100 --arguments 10 > lizard.txt || true
     - cat lizard.txt
