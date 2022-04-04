@@ -40,10 +40,10 @@ if (OGS_USE_PYTHON)
         REQUIREMENTS NOT OGS_USE_MPI
         PYTHON_PACKAGES numpy
         DIFF_DATA
-		simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_python_ts_1_t_1000000.000000.vtu pressure_interpolated pressure_interpolated 1e-10 0
-		simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_python_ts_1_t_1000000.000000.vtu displacement displacement 1e-14 0
-		simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_python_ts_1_t_1000000.000000.vtu sigma sigma 1e-7 0
-		simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_python_ts_1_t_1000000.000000.vtu DarcyVelocity DarcyVelocity 1e-7 0
+        simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_python_ts_1_t_1000000.000000.vtu pressure_interpolated pressure_interpolated 1e-10 0
+        simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_python_ts_1_t_1000000.000000.vtu displacement displacement 1e-14 0
+        simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_python_ts_1_t_1000000.000000.vtu sigma sigma 1e-7 0
+        simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_python_ts_1_t_1000000.000000.vtu DarcyVelocity DarcyVelocity 1e-7 0
     )
 endif()
 AddTest(
@@ -72,14 +72,12 @@ if (OGS_USE_PYTHON)
         REQUIREMENTS NOT OGS_USE_MPI
         PYTHON_PACKAGES numpy
         DIFF_DATA
-		simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu pressure_interpolated pressure_interpolated 1e-10 0
-		simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu displacement displacement 1e-14 0
-		simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu sigma sigma 1e-7 0
-		simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu DarcyVelocity DarcyVelocity 1e-7 0
+        simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu pressure_interpolated pressure_interpolated 1e-10 0
+        simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu displacement displacement 1e-14 0
+        simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu sigma sigma 1e-7 0
+        simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu DarcyVelocity DarcyVelocity 1e-7 0
     )
 endif()
-
-
 
 AddTest(
     NAME HydroMechanics_HML_square_1e2_quad9_confined_compression
