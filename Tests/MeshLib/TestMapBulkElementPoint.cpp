@@ -88,7 +88,7 @@ static Eigen::MatrixXd appendNode(Eigen::MatrixXd const& mat,
 
 // Computes the dimension of a flat, i.e., not curved, face from n points on
 // that face given as a d_S x n matrix, where d_S is the space dimension.
-static unsigned computeFaceDimensionFromPointsOnFace(Eigen::MatrixXd points)
+static unsigned computeFaceDimensionFromPointsOnFace(Eigen::MatrixXd const& points)
 {
     auto const dim = points.rows();
     auto const num_pts = points.cols();
@@ -289,10 +289,10 @@ TYPED_TEST(MeshLibMapBulkElementPointTest,
         ADD_FAILURE()
             << "Some face node has not been mapped to a bulk element node.";
 
-        std::cout << "Bulk element's nodes' natural coordinates are:\n";
+        std::cerr << "Bulk element's nodes' natural coordinates are:\n";
         for (std::size_t i = 0; i < bulk_element_num_nodes; ++i)
         {
-            std::cout << "  #" << i << ":\t"
+            std::cerr << "  #" << i << ":\t"
                       << MathLib::Point3d(bulk_element_node_natural_coords[i])
                       << '\n';
         }
@@ -568,7 +568,7 @@ TYPED_TEST(MeshLibMapBulkElementPointTest,
 
 TEST(MeshLib, MapBulkElementPoint3D)
 {
-    MathLib::WeightedPoint wp{std::array{0.1, 0.2, 0.3}, 0.4};
+    MathLib::WeightedPoint const wp{std::array{0.1, 0.2, 0.3}, 0.4};
     auto const mapped_point =
         MeshLib::getBulkElementPoint(MeshLib::CellType::HEX8, 0, wp);
 

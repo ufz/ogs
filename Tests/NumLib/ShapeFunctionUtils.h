@@ -95,7 +95,7 @@ MathLib::Point3d interpolateNodeCoordinates(
     using ShpFct = typename ET::ShapeFunction;
     using ShpMatPol = ShapeMatrixPolicyType<ShpFct, GlobalDim>;
 
-    NumLib::TemplateIsoparametric<ShpFct, ShpMatPol> fe(e);
+    NumLib::TemplateIsoparametric<ShpFct, ShpMatPol> const fe(e);
     return MathLib::Point3d(fe.interpolateCoordinates(N));
 }
 
