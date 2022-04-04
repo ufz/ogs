@@ -31,6 +31,40 @@
 
 namespace ProcessLib
 {
+void addBulkMeshNodePropertyToSubMesh(MeshLib::Mesh const& bulk_mesh,
+                                      MeshLib::Mesh& sub_mesh,
+                                      std::string const& property_name)
+{
+    if (bulk_mesh == sub_mesh)
+    {
+        return;
+    }
+    if (!bulk_mesh.getProperties().existsPropertyVector<double>(
+            property_name, MeshLib::MeshItemType::Node, 1))
+    {
+        return;
+    }
+    if (!sub_mesh.getProperties().existsPropertyVector<std::size_t>(
+            "bulk_node_ids", MeshLib::MeshItemType::Node, 1))
+    {
+        return;
+    }
+
+    auto const& bulk_mesh_volumetric_flow_rate =
+        *bulk_mesh.getProperties().getPropertyVector<double>(property_name);
+    auto const& bulk_node_ids =
+        *sub_mesh.getProperties().getPropertyVector<std::size_t>(
+            "bulk_node_ids");
+
+    auto& volumetric_flow_rate = *MeshLib::getOrCreateMeshProperty<double>(
+        sub_mesh, property_name, MeshLib::MeshItemType::Node, 1);
+
+    std::transform(std::begin(bulk_node_ids), std::end(bulk_node_ids),
+                   std::begin(volumetric_flow_rate),
+                   [&bulk_mesh_volumetric_flow_rate](auto const id)
+                   { return bulk_mesh_volumetric_flow_rate[id]; });
+}
+
 struct OutputFile
 {
     OutputFile(std::string const& directory, OutputType const type,
@@ -385,6 +419,9 @@ MeshLib::Mesh const& Output::prepareSubmesh(
     addProcessDataToMesh(t, xs, process_id, process_output_data,
                          output_secondary_variables,
                          _output_data_specification);
+
+    addBulkMeshNodePropertyToSubMesh(process.getMesh(), submesh,
+                                     "VolumetricFlowRate");
 
     return submesh;
 }
