@@ -119,6 +119,11 @@ std::vector<std::string> createGeometries(
     return geo_name_list;
 }
 
+GeoLib::Point* getMinPoint(GeoLib::Point* a, GeoLib::Point* b)
+{
+    return ((*a)[2] < (*b)[2]) ? a : b;
+}
+
 /// Merges all layer geometries into one. Each layer is specified by one
 /// polygon. This will ensure that GMSH deals with the subsequent assignment of
 /// material groups automatically.
@@ -129,35 +134,38 @@ void mergeGeometries(GeoLib::GEOObjects& geo,
     std::vector<GeoLib::Point*> points;
     std::vector<GeoLib::Polyline*> lines;
 
-    auto layer_pnts = *geo.getPointVec(geo_names[0]);
-    std::size_t const pnts_per_line = layer_pnts.size();
+    auto DEM_pnts = *geo.getPointVec(geo_names[0]);
+    std::size_t const pnts_per_line = DEM_pnts.size();
     std::size_t const n_layers = geo_names.size();
     std::vector<std::size_t> last_line_idx(pnts_per_line, 0);
 
+    auto layer_pnts = *geo.getPointVec(geo_names.back());
     for (std::size_t i = 0; i < pnts_per_line; ++i)
     {
-        std::size_t const idx = pnts_per_line - i - 1;
-        points.push_back(new GeoLib::Point(*layer_pnts[i], idx));
-        last_line_idx[i] = idx;
+        points.push_back(
+            new GeoLib::Point(*getMinPoint(layer_pnts[i], DEM_pnts[i]), i));
+        last_line_idx[i] = i;
     }
-    for (std::size_t j = 1; j < n_layers; ++j)
+    for (int j = n_layers-2; j >= 0; --j)
     {
         GeoLib::Polyline* line = new GeoLib::Polyline(points);
         for (std::size_t i = 0; i < pnts_per_line; ++i)
         {
-            line->addPoint(last_line_idx[i]);
+            line->addPoint(last_line_idx[pnts_per_line - i - 1]);
         }
         layer_pnts = *geo.getPointVec(geo_names[j]);
         for (std::size_t i = 0; i < pnts_per_line; ++i)
         {
-            // check if for current point the lower layer boundary is actually
-            // located below the upper boundary
-            std::size_t idx = last_line_idx[pnts_per_line - i - 1];
-            if ((*points[idx])[2] > (*layer_pnts[i])[2])
+            // check if for current point the upper layer boundary is actually
+            // located above the upper boundary
+            std::size_t idx = last_line_idx[i];
+            if ((*points[idx])[2] < (*layer_pnts[i])[2])
             {
                 idx = points.size();
-                points.push_back(new GeoLib::Point(*layer_pnts[i], idx));
-                last_line_idx[pnts_per_line - i - 1] = idx;
+                // check current point against DEM
+                points.push_back(new GeoLib::Point(
+                    *getMinPoint(layer_pnts[i], DEM_pnts[i]), idx));
+                last_line_idx[i] = idx;
             }
             line->addPoint(idx);
         }
