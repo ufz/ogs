@@ -66,13 +66,11 @@ void ComponentTransportProcess::initializeConcreteProcess(
         const_cast<MeshLib::Mesh&>(mesh), "porosity_avg",
         MeshLib::MeshItemType::Cell, 1);
 
-    const int process_id = 0;
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     std::vector<std::reference_wrapper<ProcessLib::ProcessVariable>>
         transport_process_variables;
     if (_use_monolithic_scheme)
     {
+        const int process_id = 0;
         for (auto pv_iter = std::next(_process_variables[process_id].begin());
              pv_iter != _process_variables[process_id].end();
              ++pv_iter)
@@ -99,7 +97,7 @@ void ComponentTransportProcess::initializeConcreteProcess(
     {
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &ComponentTransportLocalAssemblerInterface::setChemicalSystemID,
-            _local_assemblers, pv.getActiveElementIDs());
+            _local_assemblers, _chemical_solver_interface->getElementIDs());
 
         _chemical_solver_interface->initialize();
     }
@@ -135,8 +133,6 @@ void ComponentTransportProcess::setInitialConditionsConcreteProcess(
         [](auto const process_solution)
         { MathLib::LinAlg::setLocalAccessibleVector(*process_solution); });
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
     dof_tables.reserve(x.size());
     std::generate_n(std::back_inserter(dof_tables), x.size(),
@@ -144,7 +140,8 @@ void ComponentTransportProcess::setInitialConditionsConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::initializeChemicalSystem,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t);
+        _local_assemblers, _chemical_solver_interface->getElementIDs(),
+        dof_tables, x, t);
 }
 
 void ComponentTransportProcess::assembleConcreteProcess(
@@ -261,8 +258,6 @@ void ComponentTransportProcess::solveReactionEquation(
     // Sequential non-iterative approach applied here to split the reactive
     // transport process into the transport stage followed by the reaction
     // stage.
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
     dof_tables.reserve(x.size());
     std::generate_n(std::back_inserter(dof_tables), x.size(),
@@ -272,7 +267,8 @@ void ComponentTransportProcess::solveReactionEquation(
     {
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &ComponentTransportLocalAssemblerInterface::setChemicalSystem,
-            _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt);
+            _local_assemblers, _chemical_solver_interface->getElementIDs(),
+            dof_tables, x, t, dt);
 
         BaseLib::RunTime time_phreeqc;
         time_phreeqc.start();
@@ -286,7 +282,8 @@ void ComponentTransportProcess::solveReactionEquation(
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &ComponentTransportLocalAssemblerInterface::
                 postSpeciationCalculation,
-            _local_assemblers, pv.getActiveElementIDs(), t, dt);
+            _local_assemblers, _chemical_solver_interface->getElementIDs(), t,
+            dt);
 
         return;
     }
@@ -306,6 +303,7 @@ void ComponentTransportProcess::solveReactionEquation(
     K.setZero();
     b.setZero();
 
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::assembleReactionEquation,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt, M, K,
@@ -374,6 +372,16 @@ void ComponentTransportProcess::computeSecondaryVariableConcrete(
         &ComponentTransportLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
         x_dot, process_id);
+
+    if (!_chemical_solver_interface)
+    {
+        return;
+    }
+
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
+        &ComponentTransportLocalAssemblerInterface::
+            computeReactionRelatedSecondaryVariable,
+        _local_assemblers, _chemical_solver_interface->getElementIDs());
 }
 
 void ComponentTransportProcess::postTimestepConcreteProcess(

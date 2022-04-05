@@ -52,7 +52,9 @@ struct IntegrationPointData final
     GlobalDimNodalMatrixType const dNdx;
     double const integration_weight;
 
-    GlobalIndexType chemical_system_id = 0;
+    // -1 indicates that no chemical reaction takes place in the element to
+    // which the integration point belongs.
+    GlobalIndexType chemical_system_id = -1;
 
     double porosity = std::numeric_limits<double>::quiet_NaN();
     double porosity_prev = std::numeric_limits<double>::quiet_NaN();
@@ -179,6 +181,9 @@ public:
 
     virtual void postSpeciationCalculation(std::size_t const ele_id,
                                            double const t, double const dt) = 0;
+
+    virtual void computeReactionRelatedSecondaryVariable(
+        std::size_t const ele_id) = 0;
 
     virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
@@ -1360,6 +1365,11 @@ public:
 
             local_K.noalias() += w * N.transpose() * porosity_dot * N;
 
+            if (chemical_system_id == -1)
+            {
+                continue;
+            }
+
             auto const C_post_int_pt =
                 _process_data.chemical_solver_interface->getConcentration(
                     component_id, chemical_system_id);
@@ -1591,43 +1601,43 @@ public:
             &(*_process_data.mesh_prop_velocity)[ele_id * GlobalDim],
             GlobalDim) =
             ele_velocity_mat.rowwise().sum() / n_integration_points;
+    }
 
-        if (_process_data.chemical_solver_interface)
+    void computeReactionRelatedSecondaryVariable(
+        std::size_t const ele_id) override
+    {
+        auto const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        if (_process_data.chemically_induced_porosity_change)
         {
-            if (_process_data.chemically_induced_porosity_change)
+            auto const& medium = *_process_data.media_map->getMedium(ele_id);
+
+            for (auto& ip_data : _ip_data)
             {
-                auto const& medium =
-                    *_process_data.media_map->getMedium(ele_id);
+                ip_data.porosity = ip_data.porosity_prev;
 
-                ParameterLib::SpatialPosition pos;
-                pos.setElementID(ele_id);
-
-                for (auto& ip_data : _ip_data)
-                {
-                    ip_data.porosity = ip_data.porosity_prev;
-
-                    _process_data.chemical_solver_interface
-                        ->updatePorosityPostReaction(ip_data.chemical_system_id,
-                                                     medium, ip_data.porosity);
-                }
-
-                (*_process_data.mesh_prop_porosity)[ele_id] =
-                    std::accumulate(_ip_data.begin(), _ip_data.end(), 0.,
-                                    [](double const s, auto const& ip)
-                                    { return s + ip.porosity; }) /
-                    n_integration_points;
+                _process_data.chemical_solver_interface
+                    ->updatePorosityPostReaction(ip_data.chemical_system_id,
+                                                 medium, ip_data.porosity);
             }
 
-            std::vector<GlobalIndexType> chemical_system_indices;
-            chemical_system_indices.reserve(n_integration_points);
-            std::transform(_ip_data.begin(), _ip_data.end(),
-                           std::back_inserter(chemical_system_indices),
-                           [](auto const& ip_data)
-                           { return ip_data.chemical_system_id; });
-
-            _process_data.chemical_solver_interface->computeSecondaryVariable(
-                ele_id, chemical_system_indices);
+            (*_process_data.mesh_prop_porosity)[ele_id] =
+                std::accumulate(_ip_data.begin(), _ip_data.end(), 0.,
+                                [](double const s, auto const& ip)
+                                { return s + ip.porosity; }) /
+                n_integration_points;
         }
+
+        std::vector<GlobalIndexType> chemical_system_indices;
+        chemical_system_indices.reserve(n_integration_points);
+        std::transform(_ip_data.begin(), _ip_data.end(),
+                       std::back_inserter(chemical_system_indices),
+                       [](auto const& ip_data)
+                       { return ip_data.chemical_system_id; });
+
+        _process_data.chemical_solver_interface->computeSecondaryVariable(
+            ele_id, chemical_system_indices);
     }
 
     std::vector<double> const& getIntPtMolarFlux(
