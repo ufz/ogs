@@ -11,7 +11,6 @@ set(CPACK_INSTALL_CMAKE_PROJECTS
 )
 
 option(OGS_INSTALL_DEPENDENCIES "Package dependencies.")
-include(packaging/PackagingMacros)
 
 # Packaging setup
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OGS-6 THM/C Simulator")
