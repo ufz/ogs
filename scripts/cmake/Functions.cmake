@@ -114,11 +114,9 @@ function(ogs_add_library targetName)
         )
     endif()
 
-    if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.16)
-        set_target_properties(
-            ${targetName} PROPERTIES UNITY_BUILD ${OGS_USE_UNITY_BUILDS}
-        )
-    endif()
+    set_target_properties(
+        ${targetName} PROPERTIES UNITY_BUILD ${OGS_USE_UNITY_BUILDS}
+    )
     GroupSourcesByFolder(${targetName})
 endfunction()
 

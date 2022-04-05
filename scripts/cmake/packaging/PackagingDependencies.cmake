@@ -1,5 +1,5 @@
-# Install dependencies via GET_RUNTIME_DEPENDENCIES. Available since CMake 3.16.
-if(${CMAKE_VERSION} VERSION_LESS 3.16 OR NOT OGS_INSTALL_DEPENDENCIES)
+# Install dependencies via GET_RUNTIME_DEPENDENCIES.
+if(NOT OGS_INSTALL_DEPENDENCIES)
     return()
 endif()
 install(
