@@ -440,7 +440,7 @@ void Output::doOutputAlways(Process const& process,
     auto const process_output_data =
         createProcessOutputData(process, xs.size(), process.getMesh());
 
-    // Need to add variables of process to vtu even if no output takes place.
+    // Need to add variables of process to mesh even if no output takes place.
     addProcessDataToMesh(t, xs, process_id, process_output_data,
                          output_secondary_variables,
                          _output_data_specification);
