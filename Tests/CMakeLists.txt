@@ -143,9 +143,4 @@ else()
 endif()
 # cmake-format: on
 
-# Creates one ctest entry for every googletest
-# ~~~
-# ADD_GOOGLE_TESTS (${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/testrunner ${TEST_SOURCES})
-# ~~~
-
 unset(CMAKE_FOLDER)
