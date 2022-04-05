@@ -50,6 +50,9 @@ void Simulation::initializeDataStructures(
     bool const nonfatal, std::string const& outdir, std::string const& mesh_dir,
     bool const write_prj)
 {
+    INFO("Reading project file {}.",
+         std::filesystem::absolute(project).string());
+
     std::stringstream prj_stream;
     BaseLib::prepareProjectFile(prj_stream, project, xml_patch_file_names,
                                 write_prj, outdir);
