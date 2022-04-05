@@ -263,6 +263,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_data.beta_T_SR = Invariants::trace(ip_data.alpha_T_SR);
 
         double const T_dot = NT.dot(temperature_dot);
+        double const T_prev = T - T_dot * dt;
+
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
             dthermal_strain = ip_data.alpha_T_SR * T_dot * dt;
 
@@ -312,7 +314,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const rhoSR = rho_ref_SR;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
 
-        auto const T_prev = T - T_dot * dt;
         ip_cv.C = ip_data.updateConstitutiveRelation(vars, t, pos, dt, T_prev);
 
         // constitutive model object as specified in process creation
