@@ -26,9 +26,11 @@ public:
     Simulation(int argc, char* argv[]);
 
     void initializeDataStructures(
-        std::string&& project, std::vector<std::string>&& xml_patch_file_names,
-        bool reference_path_is_set, std::string&& reference_path, bool nonfatal,
-        std::string&& outdir, std::string&& mesh_dir, bool write_prj);
+        std::string const& project,
+        std::vector<std::string> const& xml_patch_file_names,
+        bool reference_path_is_set, std::string const& reference_path,
+        bool nonfatal, std::string const& outdir, std::string const& mesh_dir,
+        bool write_prj);
 
     bool executeSimulation();
 

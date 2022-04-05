@@ -44,11 +44,15 @@ Simulation::Simulation(int argc, char* argv[])
 }
 
 void Simulation::initializeDataStructures(
-    std::string&& project, std::vector<std::string>&& xml_patch_file_names,
-    bool const reference_path_is_set, std::string&& reference_path,
-    bool const nonfatal, std::string&& outdir, std::string&& mesh_dir,
+    std::string const& project,
+    std::vector<std::string> const& xml_patch_file_names,
+    bool const reference_path_is_set, std::string const& reference_path,
+    bool const nonfatal, std::string const& outdir, std::string const& mesh_dir,
     bool const write_prj)
 {
+    INFO("Reading project file {}.",
+         std::filesystem::absolute(project).string());
+
     std::stringstream prj_stream;
     BaseLib::prepareProjectFile(prj_stream, project, xml_patch_file_names,
                                 write_prj, outdir);
