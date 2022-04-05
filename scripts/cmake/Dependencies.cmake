@@ -1,3 +1,5 @@
+message(STATUS "┌─ Dependencies.cmake")
+list(APPEND CMAKE_MESSAGE_INDENT "│    ")
 set(CMAKE_FOLDER ThirdParty)
 
 # ccache, on Windows requires https://github.com/cristianadam/ccache/releases
@@ -500,3 +502,5 @@ CPMAddPackage(
 )
 
 unset(CMAKE_FOLDER)
+list(POP_BACK CMAKE_MESSAGE_INDENT)
+message(STATUS "└─ End Dependencies.cmake")
