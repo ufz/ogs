@@ -439,21 +439,8 @@ Use six arguments version of AddTest with absolute and relative tolerances"
         list(APPEND labels large)
     endif()
 
-    set_tests_properties(
-        ${TEST_NAME} PROPERTIES COST ${AddTest_RUNTIME} DISABLED
-                                ${AddTest_DISABLED} LABELS "${labels}"
-    )
-    # Disabled for the moment, does not work with CI under load
-    # ~~~
-    # if(NOT OGS_COVERAGE)
-    #     set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT ${timeout})
-    # endif()
-    # ~~~
-
-    add_dependencies(ctest ${AddTest_EXECUTABLE})
-    add_dependencies(ctest-large ${AddTest_EXECUTABLE})
-
     if(AddTest_PYTHON_PACKAGES)
+        list(APPEND labels python_modules)
         if(OGS_USE_PIP)
             # Info has to be passed by global property because it is not
             # possible to set cache variables from inside a function.
@@ -471,6 +458,20 @@ Use six arguments version of AddTest with absolute and relative tolerances"
             )
         endif()
     endif()
+
+    set_tests_properties(
+        ${TEST_NAME} PROPERTIES COST ${AddTest_RUNTIME} DISABLED
+                                ${AddTest_DISABLED} LABELS "${labels}"
+    )
+    # Disabled for the moment, does not work with CI under load
+    # ~~~
+    # if(NOT OGS_COVERAGE)
+    #     set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT ${timeout})
+    # endif()
+    # ~~~
+
+    add_dependencies(ctest ${AddTest_EXECUTABLE})
+    add_dependencies(ctest-large ${AddTest_EXECUTABLE})
 
     if(NOT AddTest_TESTER OR OGS_COVERAGE)
         return()

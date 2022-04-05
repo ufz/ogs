@@ -39,7 +39,7 @@
 
           if [[ "$OSTYPE" == "darwin"* ]]; then alias date=gdate ; fi
 
-          ctest --preset=${CMAKE_PRESET}${preset_postfix} --output-junit Tests/ctest.xml --no-compress-output --stop-time `date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'`
+          ctest --preset=${CMAKE_PRESET}${preset_postfix} --output-junit Tests/ctest.xml --no-compress-output --stop-time `date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'` ${CTEST_ARGS}
         fi
 
       else
