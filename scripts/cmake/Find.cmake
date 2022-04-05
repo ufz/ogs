@@ -9,9 +9,8 @@ if(TARGET Doxygen::dot)
     # cmake . --graphviz=cmake-dependencies.dot && \
     #   dot -Tpng cmake-dependencies.dot -o cmake-dependencies.png
     # ~~~
-    configure_file(
-        ${PROJECT_SOURCE_DIR}/scripts/cmake/CMakeGraphVizOptions.in.cmake
-        ${PROJECT_BINARY_DIR}/CMakeGraphVizOptions.cmake
+    file(WRITE ${PROJECT_BINARY_DIR}/CMakeGraphVizOptions.cmake
+         "set(GRAPHVIZ_IGNORE_TARGETS testrunner \"vtk.*\")\n"
     )
 endif()
 
