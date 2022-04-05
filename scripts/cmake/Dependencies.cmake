@@ -1,3 +1,5 @@
+message(STATUS "┌─ Dependencies.cmake")
+list(APPEND CMAKE_MESSAGE_INDENT "│    ")
 set(CMAKE_FOLDER ThirdParty)
 
 # ccache, on Windows requires https://github.com/cristianadam/ccache/releases
@@ -456,10 +458,8 @@ if(WIN32 AND VTK_ADDED)
 endif()
 foreach(target ${DISABLE_WARNINGS_TARGETS})
     target_compile_options(
-        ${target}
-        PRIVATE
-            $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:-w>
-            $<$<CXX_COMPILER_ID:MSVC>:/W0>
+        ${target} PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-w>
+                          $<$<CXX_COMPILER_ID:MSVC>:/W0>
     )
 endforeach()
 
@@ -502,3 +502,5 @@ CPMAddPackage(
 )
 
 unset(CMAKE_FOLDER)
+list(POP_BACK CMAKE_MESSAGE_INDENT)
+message(STATUS "└─ End Dependencies.cmake")

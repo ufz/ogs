@@ -2,9 +2,6 @@ if(NOT DOXYGEN_FOUND)
     return()
 endif()
 
-# Fix for https://github.com/doxygen/doxygen/issues/6725
-set(DOXYGEN_LATEX_MAKEINDEX_CMD "makeindex")
-
 set(DOXYGEN_EXCLUDE
     ${PROJECT_SOURCE_DIR}/ThirdParty ${PROJECT_SOURCE_DIR}/scripts
     ${PROJECT_SOURCE_DIR}/Tests ${PROJECT_SOURCE_DIR}/Documentation/ProjectFile

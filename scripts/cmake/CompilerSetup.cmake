@@ -3,18 +3,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-if(${CMAKE_CXX_COMPILER} MATCHES "clcache" AND CMAKE_BUILD_TYPE STREQUAL
-                                               "Debug"
-)
-    message(WARNING "clcache does not cache in Debug config!")
-endif()
-
 # Set compiler helper variables
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "AppleClang")
-    set(COMPILER_IS_APPLE_CLANG TRUE CACHE BOOL "")
-    set(COMPILER_IS_CLANG TRUE CACHE BOOL "")
-elseif((${CMAKE_CXX_COMPILER_ID} MATCHES "Clang") OR (${CMAKE_CXX_COMPILER_ID}
-                                                      MATCHES "IntelLLVM")
+if((${CMAKE_CXX_COMPILER_ID} MATCHES "Clang") OR (${CMAKE_CXX_COMPILER_ID}
+                                                  MATCHES "IntelLLVM")
 )
     set(COMPILER_IS_CLANG TRUE CACHE BOOL "")
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
@@ -69,24 +60,17 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
     endif()
 
     if(COMPILER_IS_GCC)
-        if(NOT "${HOSTNAME}" MATCHES "frontend.*") # TODO: remove later
-            if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS
-               ${ogs.minimum_version.gcc}
-            )
-                message(
-                    FATAL_ERROR "Aborting: GCC ${ogs.minimum_version.gcc} is \
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${ogs.minimum_version.gcc})
+            message(FATAL_ERROR "Aborting: GCC ${ogs.minimum_version.gcc} is \
                     required! Found version ${CMAKE_CXX_COMPILER_VERSION}."
-                )
-            endif()
+            )
         endif()
         add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fext-numeric-literals>)
         include(GCCSanitizer)
     endif()
 
     if(COMPILER_IS_CLANG)
-        # see
-        # https://en.wikipedia.org/wiki/Xcode#Xcode_7.0_-_12.x_(since_Free_On-Device_Development)
-        if(COMPILER_IS_APPLE_CLANG)
+        if(${CMAKE_CXX_COMPILER_ID} MATCHES "AppleClang")
             if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS
                ${ogs.minimum_version.apple_clang}
             )

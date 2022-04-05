@@ -1,11 +1,5 @@
 # ---- OGS-6 Project ----
-cmake_minimum_required(VERSION 3.14)
-
-# Set CMake policies
-if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.15)
-    cmake_policy(SET CMP0092 NEW)
-    cmake_policy(SET CMP0094 NEW)
-endif()
+cmake_minimum_required(VERSION 3.16)
 
 project(OGS-6)
 
@@ -33,11 +27,7 @@ set(OGS_CONAN_BUILD "missing" CACHE STRING "Possible values: all, missing, \
     never or list of libs to build"
 )
 option(OGS_DISABLE_COMPILER_CACHE "Disables compiler cache." OFF)
-if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.16)
-    option(OGS_USE_UNITY_BUILDS "Enables Unity builds for faster compilation."
-           ON
-    )
-endif()
+option(OGS_USE_UNITY_BUILDS "Enables Unity builds for faster compilation." ON)
 option(OGS_USE_PYTHON "Interface with Python" ON)
 option(OGS_USE_PIP "Enables automatic Python virtual environment handling." OFF)
 cmake_dependent_option(

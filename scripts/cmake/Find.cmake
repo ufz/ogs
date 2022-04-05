@@ -9,9 +9,8 @@ if(TARGET Doxygen::dot)
     # cmake . --graphviz=cmake-dependencies.dot && \
     #   dot -Tpng cmake-dependencies.dot -o cmake-dependencies.png
     # ~~~
-    configure_file(
-        ${PROJECT_SOURCE_DIR}/scripts/cmake/CMakeGraphVizOptions.in.cmake
-        ${PROJECT_BINARY_DIR}/CMakeGraphVizOptions.cmake
+    file(WRITE ${PROJECT_BINARY_DIR}/CMakeGraphVizOptions.cmake
+         "set(GRAPHVIZ_IGNORE_TARGETS testrunner \"vtk.*\")\n"
     )
 endif()
 
@@ -25,10 +24,6 @@ find_program(
     BASH_TOOL_PATH bash HINTS ${GITHUB_BIN_DIR} DOC "The bash executable"
 )
 
-find_program(CURL_TOOL_PATH curl DOC "The curl-tool")
-
-find_program(S3CMD_TOOL_PATH s3cmd DOC "S3cmd tool for uploading to Amazon S3")
-
 find_program(CCACHE_TOOL_PATH ccache)
 
 # Tools for web
@@ -36,11 +31,6 @@ find_program(
     VTKJS_CONVERTER vtkDataConverter
     PATHS ${PROJECT_SOURCE_DIR}/web/node_modules/.bin
 )
-find_program(HUGO hugo)
-find_program(NPM npm)
-find_program(YARN yarn)
-find_program(PIP pip)
-find_program(PANDOC_CITEPROC pandoc-citeproc)
 
 find_program(MODULE_CMD lmod PATHS /software/lmod/lmod/libexec)
 

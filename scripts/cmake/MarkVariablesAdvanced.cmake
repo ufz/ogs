@@ -17,24 +17,20 @@ mark_as_advanced(
     COTIRE_UNITY_SOURCE_EXCLUDE_EXTENSIONS
     COTIRE_VERBOSE
     CPPCHECK_ROOT_DIR
-    CURL_TOOL_PATH
     DIFF_TOOL_PATH
     EIGEN_NO_DEBUG
     EIGEN3_FOUND
     GPROF_PATH
     GREP_TOOL_PATH
     HOSTNAME
-    HUGO
     libgeotiff_INCLUDE_DIR
     libgeotiff_LIBRARY
     METIS_INCLUDE_DIR
     METIS_LIBRARY
     MODULE_CMD
     MPIRUN_TOOL_PATH
-    NPM
     NUM_PROCESSORS
     ParaView_DIR
-    PIP
     ProcessorCount_cmd_sysctl
     Qt5Core_DIR
     Qt5Gui_DIR
@@ -43,7 +39,6 @@ mark_as_advanced(
     Qt5Xml_DIR
     Qt5XmlPatterns_DIR
     REALPATH_TOOL_PATH
-    S3CMD_TOOL_PATH
     TIME_TOOL_PATH
     VALGRIND_TOOL_PATH
     VTK_DIR
@@ -51,6 +46,5 @@ mark_as_advanced(
     VTKIO_LIB_FOUND
     VTKJS_CONVERTER
     xtiff_INCLUDE_DIR
-    YARN
     ZIP_TOOL_PATH
 )

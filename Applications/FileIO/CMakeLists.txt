@@ -35,18 +35,10 @@ target_link_libraries(
     PRIVATE MeshLib GitInfoLib
 )
 
-configure_file(
-    XmlIO/OpenGeoSysCND.xsd ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/OpenGeoSysCND.xsd
-    COPYONLY
-)
-configure_file(
-    XmlIO/OpenGeoSysNum.xsd ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/OpenGeoSysNum.xsd
-    COPYONLY
-)
-configure_file(
-    XmlIO/OpenGeoSysProject.xsd
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/OpenGeoSysProject.xsd COPYONLY
-)
-install(FILES XmlIO/OpenGeoSysCND.xsd XmlIO/OpenGeoSysNum.xsd
-              XmlIO/OpenGeoSysProject.xsd DESTINATION bin
-)
+foreach(xsd OpenGeoSysCND.xsd OpenGeoSysNum.xsd OpenGeoSysProject.xsd)
+    # cmake-lint: disable=E1126
+    file(COPY_FILE XmlIO/${xsd} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${xsd}
+         ONLY_IF_DIFFERENT
+    )
+    install(FILES XmlIO/${xsd} DESTINATION bin)
+endforeach()
