@@ -31,10 +31,8 @@ target_link_libraries(
 
 # Disable warnings for generated OgsMFrontBehaviour
 target_compile_options(
-    OgsMFrontBehaviour
-    PRIVATE
-        $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:-w>
-        $<$<CXX_COMPILER_ID:MSVC>:/W0>
+    OgsMFrontBehaviour PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-w>
+                               $<$<CXX_COMPILER_ID:MSVC>:/W0>
 )
 
 target_include_directories(

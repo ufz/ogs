@@ -96,19 +96,8 @@ function(ogs_add_library targetName)
     add_library(${targetName} ${type} ${files})
     target_compile_options(
         ${targetName}
-        PRIVATE # OR does not work with cotire
-                # $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,
-                # $<CXX_COMPILER_ID:GNU>>:-Wall -Wextra>
-                $<$<CXX_COMPILER_ID:Clang>:-Wall
-                -Wextra
-                -Wunreachable-code>
-                $<$<CXX_COMPILER_ID:AppleClang>:-Wall
-                -Wextra
-                -Wunreachable-code>
-                $<$<CXX_COMPILER_ID:GNU>:-Wall
-                -Wextra
-                -Wunreachable-code>
-                $<$<CXX_COMPILER_ID:MSVC>:/W3>
+        PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-Wall -Wextra
+                -Wunreachable-code> $<$<CXX_COMPILER_ID:MSVC>:/W3>
     )
 
     if(BUILD_SHARED_LIBS)
@@ -120,7 +109,9 @@ function(ogs_add_library targetName)
     if(ogs_add_library_GENERATE_EXPORT_HEADER)
         include(GenerateExportHeader)
         generate_export_header(${targetName})
-        target_include_directories(${targetName} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+        target_include_directories(
+            ${targetName} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
+        )
     endif()
 
     if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.16)
@@ -144,19 +135,8 @@ function(ogs_add_executable targetName)
 
     target_compile_options(
         ${targetName}
-        PRIVATE # OR does not work with cotire
-                # $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,
-                # $<CXX_COMPILER_ID:GNU>>:-Wall -Wextra>
-                $<$<CXX_COMPILER_ID:Clang>:-Wall
-                -Wextra
-                -Wunreachable-code>
-                $<$<CXX_COMPILER_ID:AppleClang>:-Wall
-                -Wextra
-                -Wunreachable-code>
-                $<$<CXX_COMPILER_ID:GNU>:-Wall
-                -Wextra
-                -Wunreachable-code>
-                $<$<CXX_COMPILER_ID:MSVC>:/W3>
+        PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-Wall -Wextra
+                -Wunreachable-code> $<$<CXX_COMPILER_ID:MSVC>:/W3>
     )
 endfunction()
 
