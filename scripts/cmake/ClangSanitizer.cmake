@@ -1,7 +1,3 @@
-if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.6")
-    return()
-endif()
-
 option(OGS_ADDRESS_SANITIZER OFF "Use Clangs AddressSanitizer")
 option(OGS_UNDEFINED_BEHAVIOR_SANITIZER OFF
        "Use Clangs UndefinedBehaviorSanitizer"
