@@ -18,22 +18,34 @@
 #include "ProcessLib/ForwardDifferencesJacobianAssembler.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 
+static std::size_t randomInteger(std::size_t const min, std::size_t const max)
+{
+    static std::random_device rd;
+    static std::mt19937 random_number_generator{rd()};
+    std::uniform_int_distribution<std::size_t> rnd(min, max);
+    return rnd(random_number_generator);
+}
+
+static double randomReal(double const min = 0., double const max = 1.)
+{
+    static std::random_device rd;
+    static std::mt19937 random_number_generator{rd()};
+    std::uniform_real_distribution<double> rnd{min, max};
+    return rnd(random_number_generator);
+}
+
 //! Fills a vector with values whose absolute value is between \c abs_min and
 //! \c abs_max.
 void fillRandomlyConstrainedAbsoluteValues(std::vector<double>& xs,
                                            double const abs_min,
                                            double const abs_max)
 {
-    std::random_device rd;
-    std::mt19937 random_number_generator(rd());
     double const abs_range = abs_max - abs_min;
-    std::uniform_real_distribution<double> rnd(abs_min,
-                                               abs_min + 2.0 * abs_range);
 
     for (auto& x : xs)
     {
         // v in [ abs_min, abs_min + 2 abs_range ]
-        auto v = rnd(random_number_generator);
+        auto v = randomReal(abs_min, abs_min + 2.0 * abs_range);
         if (v > abs_max)
         {
             // produce negative values
@@ -497,28 +509,14 @@ struct ProcessLibForwardDifferencesJacobianAssembler : public ::testing::Test
 {
     static void test()
     {
-        // these four local variables will be filled randomly
-        std::vector<double> x;
-        std::vector<double> xdot;
-        double dt;
+        std::size_t const size = randomInteger(3, 64);
+        std::vector<double> x(size);
+        std::vector<double> xdot(size);
+        // all components will be of order of magnitude one
+        fillRandomlyConstrainedAbsoluteValues(x, 0.5, 1.5);
+        fillRandomlyConstrainedAbsoluteValues(xdot, 0.5, 1.5);
 
-        std::random_device rd;
-        std::mt19937 random_number_generator(rd());
-        {
-            std::uniform_int_distribution<std::size_t> rnd(3, 64);
-
-            auto const size = rnd(random_number_generator);
-            x.resize(size);
-            xdot.resize(size);
-
-            // all components will be of order of magnitude one
-            fillRandomlyConstrainedAbsoluteValues(x, 0.5, 1.5);
-            fillRandomlyConstrainedAbsoluteValues(xdot, 0.5, 1.5);
-        }
-        {
-            std::uniform_real_distribution<double> rnd;
-            dt = rnd(random_number_generator);
-        }
+        double dt = randomReal();
 
         testInner(x, xdot, dt);
     }
@@ -595,28 +593,14 @@ struct ProcessLibCentralDifferencesJacobianAssembler : public ::testing::Test
 {
     static void test()
     {
-        // these four local variables will be filled randomly
-        std::vector<double> x;
-        std::vector<double> xdot;
-        double dt;
+        std::size_t const size = randomInteger(3, 64);
+        std::vector<double> x(size);
+        std::vector<double> xdot(size);
+        // all components will be of order of magnitude one
+        fillRandomlyConstrainedAbsoluteValues(x, 0.5, 1.5);
+        fillRandomlyConstrainedAbsoluteValues(xdot, 0.5, 1.5);
 
-        std::random_device rd;
-        std::mt19937 random_number_generator(rd());
-        {
-            std::uniform_int_distribution<std::size_t> rnd(3, 64);
-
-            auto const size = rnd(random_number_generator);
-            x.resize(size);
-            xdot.resize(size);
-
-            // all components will be of order of magnitude one
-            fillRandomlyConstrainedAbsoluteValues(x, 0.5, 1.5);
-            fillRandomlyConstrainedAbsoluteValues(xdot, 0.5, 1.5);
-        }
-        {
-            std::uniform_real_distribution<double> rnd;
-            dt = rnd(random_number_generator);
-        }
+        double dt = randomReal();
 
         testInner(x, xdot, dt);
     }
