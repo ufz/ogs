@@ -584,7 +584,8 @@ private:
         ASSERT_EQ(x.size() * x.size(), Jac_data_ana.size());
         for (std::size_t i = 0; i < x.size() * x.size(); ++i)
         {
-            EXPECT_NEAR(Jac_data_ana[i], Jac_data_cd[i], LocAsm::getTol());
+            EXPECT_NEAR(Jac_data_ana[i], Jac_data_cd[i],
+                        std::sqrt(LocAsm::getTol()));
         }
     }
 };
