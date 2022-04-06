@@ -88,7 +88,8 @@ static Eigen::MatrixXd appendNode(Eigen::MatrixXd const& mat,
 
 // Computes the dimension of a flat, i.e., not curved, face from n points on
 // that face given as a d_S x n matrix, where d_S is the space dimension.
-static unsigned computeFaceDimensionFromPointsOnFace(Eigen::MatrixXd const& points)
+static unsigned computeFaceDimensionFromPointsOnFace(
+    Eigen::MatrixXd const& points)
 {
     auto const dim = points.rows();
     auto const num_pts = points.cols();
@@ -120,13 +121,9 @@ protected:
 };
 
 // The mesh element types for which we test the coordinate mapping.
-using MeshElementTypes = ::testing::Types<MeshLib::Line,
-                                          MeshLib::Quad,
-                                          MeshLib::Hex,
-                                          MeshLib::Tri,
-                                          MeshLib::Tet,
-                                          MeshLib::Prism,
-                                          MeshLib::Pyramid>;
+using MeshElementTypes =
+    ::testing::Types<MeshLib::Line, MeshLib::Quad, MeshLib::Hex, MeshLib::Tri,
+                     MeshLib::Tet, MeshLib::Prism, MeshLib::Pyramid>;
 
 TYPED_TEST_SUITE(MeshLibMapBulkElementPointTest, MeshElementTypes);
 

@@ -168,4 +168,4 @@ struct IsNear
                        std::numeric_limits<double>::epsilon());
     }
 };
-}
+}  // namespace PointUtils
