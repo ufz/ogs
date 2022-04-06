@@ -31,6 +31,40 @@
 
 namespace ProcessLib
 {
+void addBulkMeshNodePropertyToSubMesh(MeshLib::Mesh const& bulk_mesh,
+                                      MeshLib::Mesh& sub_mesh,
+                                      std::string const& property_name)
+{
+    if (bulk_mesh == sub_mesh)
+    {
+        return;
+    }
+    if (!bulk_mesh.getProperties().existsPropertyVector<double>(
+            property_name, MeshLib::MeshItemType::Node, 1))
+    {
+        return;
+    }
+    if (!sub_mesh.getProperties().existsPropertyVector<std::size_t>(
+            "bulk_node_ids", MeshLib::MeshItemType::Node, 1))
+    {
+        return;
+    }
+
+    auto const& bulk_mesh_property =
+        *bulk_mesh.getProperties().getPropertyVector<double>(property_name);
+    auto const& bulk_node_ids =
+        *sub_mesh.getProperties().getPropertyVector<std::size_t>(
+            "bulk_node_ids");
+
+    auto& sub_mesh_property = *MeshLib::getOrCreateMeshProperty<double>(
+        sub_mesh, property_name, MeshLib::MeshItemType::Node, 1);
+
+    std::transform(std::begin(bulk_node_ids), std::end(bulk_node_ids),
+                   std::begin(sub_mesh_property),
+                   [&bulk_mesh_property](auto const id)
+                   { return bulk_mesh_property[id]; });
+}
+
 struct OutputFile
 {
     OutputFile(std::string const& directory, OutputType const type,
@@ -386,6 +420,14 @@ MeshLib::Mesh const& Output::prepareSubmesh(
                          output_secondary_variables,
                          _output_data_specification);
 
+    auto const& bulk_mesh = process.getMesh();
+    auto const& node_property_names =
+        bulk_mesh.getProperties().getPropertyVectorNames(
+            MeshLib::MeshItemType::Node);
+    for (auto const& name : node_property_names)
+    {
+        addBulkMeshNodePropertyToSubMesh(bulk_mesh, submesh, name);
+    }
     return submesh;
 }
 
@@ -403,7 +445,7 @@ void Output::doOutputAlways(Process const& process,
     auto const process_output_data =
         createProcessOutputData(process, xs.size(), process.getMesh());
 
-    // Need to add variables of process to vtu even if no output takes place.
+    // Need to add variables of process to mesh even if no output takes place.
     addProcessDataToMesh(t, xs, process_id, process_output_data,
                          output_secondary_variables,
                          _output_data_specification);
