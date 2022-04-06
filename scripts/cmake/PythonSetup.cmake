@@ -37,6 +37,15 @@ if(OGS_USE_PIP)
                  "${ogs.python.notebook_requirements_${var}}"
             )
         endforeach()
+        if("${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}" VERSION_EQUAL
+           "3.10"
+        )
+            # Default python on arch is 3.10; there are no vtk wheels for it
+            # (VTUInterface). Use wheels for vtk from pyvista.
+            list(APPEND OGS_PYTHON_PACKAGES
+                 "--find-links https://wheels.pyvista.org vtk"
+            )
+        endif()
         list(APPEND OGS_PYTHON_PACKAGES
              "snakemake==${ogs.minimum_version.snakemake}"
         )
