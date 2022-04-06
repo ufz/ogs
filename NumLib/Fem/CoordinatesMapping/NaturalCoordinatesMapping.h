@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include "MeshLib/Elements/Element.h"
 #include "ShapeMatrices.h"
 
 namespace NumLib
@@ -19,11 +20,10 @@ namespace NumLib
 namespace detail
 {
 //! Used to explicitly instantiate the NaturalCoordinatesMapping class template.
-template <class T_MESH_ELEMENT,
-          class T_SHAPE_FUNC,
+template <class T_SHAPE_FUNC,
           class T_SHAPE_MATRICES,
           ShapeMatrixType T_SHAPE_MATRIX_TYPE>
-void naturalCoordinatesMappingComputeShapeMatrices(const T_MESH_ELEMENT& ele,
+void naturalCoordinatesMappingComputeShapeMatrices(const MeshLib::Element& ele,
                                                    const double* natural_pt,
                                                    T_SHAPE_MATRICES& shapemat,
                                                    const unsigned global_dim);
@@ -79,7 +79,6 @@ struct NaturalCoordinatesMapping
                                      const unsigned global_dim)
     {
         detail::naturalCoordinatesMappingComputeShapeMatrices<
-            T_MESH_ELEMENT,
             T_SHAPE_FUNC,
             T_SHAPE_MATRICES,
             T_SHAPE_MATRIX_TYPE>(ele, natural_pt, shapemat, global_dim);

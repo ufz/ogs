@@ -62,9 +62,9 @@ struct FieldType
 {
 };
 
-template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
+template <class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline void computeMappingMatrices(
-    const T_MESH_ELEMENT& /*ele*/,
+    const MeshLib::Element& /*ele*/,
     const double* natural_pt,
     const MeshLib::ElementCoordinatesMappingLocal& /*ele_local_coord*/,
     T_SHAPE_MATRICES& shapemat,
@@ -73,9 +73,9 @@ inline void computeMappingMatrices(
     T_SHAPE_FUNC::computeShapeFunction(natural_pt, shapemat.N);
 }
 
-template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
+template <class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline void computeMappingMatrices(
-    const T_MESH_ELEMENT& /*ele*/,
+    const MeshLib::Element& /*ele*/,
     [[maybe_unused]] const double* natural_pt,
     const MeshLib::ElementCoordinatesMappingLocal& /*ele_local_coord*/,
     [[maybe_unused]] T_SHAPE_MATRICES& shapemat,
@@ -126,9 +126,9 @@ static void checkJacobianDeterminant(const double detJ,
     }
 }
 
-template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
+template <class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline void computeMappingMatrices(
-    const T_MESH_ELEMENT& ele,
+    const MeshLib::Element& ele,
     [[maybe_unused]] const double* natural_pt,
     const MeshLib::ElementCoordinatesMappingLocal& ele_local_coord,
     T_SHAPE_MATRICES& shapemat,
@@ -136,15 +136,15 @@ inline void computeMappingMatrices(
 {
     if constexpr (T_SHAPE_FUNC::DIM != 0)
     {
-        computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(
+        computeMappingMatrices<T_SHAPE_FUNC, T_SHAPE_MATRICES>(
             ele,
             natural_pt,
             ele_local_coord,
             shapemat,
             FieldType<ShapeMatrixType::DNDR>());
 
-        auto const dim = T_MESH_ELEMENT::dimension;
-        auto const nnodes = T_MESH_ELEMENT::n_all_nodes;
+        auto const dim = ele.getDimension();
+        auto const nnodes = ele.getNumberOfNodes();  // TODO Taylor-Hood
 
         // jacobian: J=[dx/dr dy/dr // dx/ds dy/ds]
         for (auto k = decltype(nnodes){0}; k < nnodes; k++)
@@ -171,21 +171,21 @@ inline void computeMappingMatrices(
     }
 }
 
-template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
+template <class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline void computeMappingMatrices(
-    const T_MESH_ELEMENT& ele,
+    const MeshLib::Element& ele,
     const double* natural_pt,
     const MeshLib::ElementCoordinatesMappingLocal& ele_local_coord,
     T_SHAPE_MATRICES& shapemat,
     FieldType<ShapeMatrixType::N_J> /*unused*/)
 {
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(
+    computeMappingMatrices<T_SHAPE_FUNC, T_SHAPE_MATRICES>(
         ele,
         natural_pt,
         ele_local_coord,
         shapemat,
         FieldType<ShapeMatrixType::N>());
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(
+    computeMappingMatrices<T_SHAPE_FUNC, T_SHAPE_MATRICES>(
         ele,
         natural_pt,
         ele_local_coord,
@@ -193,15 +193,15 @@ inline void computeMappingMatrices(
         FieldType<ShapeMatrixType::DNDR_J>());
 }
 
-template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
+template <class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline void computeMappingMatrices(
-    const T_MESH_ELEMENT& ele,
+    const MeshLib::Element& ele,
     const double* natural_pt,
     const MeshLib::ElementCoordinatesMappingLocal& ele_local_coord,
     T_SHAPE_MATRICES& shapemat,
     FieldType<ShapeMatrixType::DNDX> /*unused*/)
 {
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(
+    computeMappingMatrices<T_SHAPE_FUNC, T_SHAPE_MATRICES>(
         ele,
         natural_pt,
         ele_local_coord,
@@ -238,21 +238,21 @@ inline void computeMappingMatrices(
     }
 }
 
-template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
+template <class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline void computeMappingMatrices(
-    const T_MESH_ELEMENT& ele,
+    const MeshLib::Element& ele,
     const double* natural_pt,
     const MeshLib::ElementCoordinatesMappingLocal& ele_local_coord,
     T_SHAPE_MATRICES& shapemat,
     FieldType<ShapeMatrixType::ALL> /*unused*/)
 {
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(
+    computeMappingMatrices<T_SHAPE_FUNC, T_SHAPE_MATRICES>(
         ele,
         natural_pt,
         ele_local_coord,
         shapemat,
         FieldType<ShapeMatrixType::N>());
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(
+    computeMappingMatrices<T_SHAPE_FUNC, T_SHAPE_MATRICES>(
         ele,
         natural_pt,
         ele_local_coord,
@@ -260,11 +260,10 @@ inline void computeMappingMatrices(
         FieldType<ShapeMatrixType::DNDX>());
 }
 
-template <class T_MESH_ELEMENT,
-          class T_SHAPE_FUNC,
+template <class T_SHAPE_FUNC,
           class T_SHAPE_MATRICES,
           ShapeMatrixType T_SHAPE_MATRIX_TYPE>
-void naturalCoordinatesMappingComputeShapeMatrices(const T_MESH_ELEMENT& ele,
+void naturalCoordinatesMappingComputeShapeMatrices(const MeshLib::Element& ele,
                                                    const double* natural_pt,
                                                    T_SHAPE_MATRICES& shapemat,
                                                    const unsigned global_dim)
@@ -272,23 +271,21 @@ void naturalCoordinatesMappingComputeShapeMatrices(const T_MESH_ELEMENT& ele,
     const MeshLib::ElementCoordinatesMappingLocal ele_local_coord(ele,
                                                                   global_dim);
 
-    detail::
-        computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(
-            ele,
-            natural_pt,
-            ele_local_coord,
-            shapemat,
-            detail::FieldType<T_SHAPE_MATRIX_TYPE>());
+    detail::computeMappingMatrices<T_SHAPE_FUNC, T_SHAPE_MATRICES>(
+        ele,
+        natural_pt,
+        ele_local_coord,
+        shapemat,
+        detail::FieldType<T_SHAPE_MATRIX_TYPE>());
 }
 
 #define OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(        \
     RULE, SHAPE, DIM, WHICHPART, SHAPEMATRIXPOLICY)              \
     template void naturalCoordinatesMappingComputeShapeMatrices< \
-        MeshLib::TemplateElement<MeshLib::RULE>,                 \
         NumLib::SHAPE,                                           \
         SHAPEMATRIXPOLICY<NumLib::SHAPE, DIM>::ShapeMatrices,    \
         ShapeMatrixType::WHICHPART>(                             \
-        MeshLib::TemplateElement<MeshLib::RULE> const&,          \
+        MeshLib::Element const&,                                 \
         double const*,                                           \
         SHAPEMATRIXPOLICY<NumLib::SHAPE, DIM>::ShapeMatrices&,   \
         const unsigned global_dim)
