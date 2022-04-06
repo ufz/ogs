@@ -143,8 +143,8 @@ inline void computeMappingMatrices(
             shapemat,
             FieldType<ShapeMatrixType::DNDR>());
 
-        auto const dim = ele.getDimension();
-        auto const nnodes = ele.getNumberOfNodes();  // TODO Taylor-Hood
+        auto const dim = T_SHAPE_FUNC::DIM;
+        auto const nnodes = T_SHAPE_FUNC::NPOINTS;
 
         // jacobian: J=[dx/dr dy/dr // dx/ds dy/ds]
         for (auto k = decltype(nnodes){0}; k < nnodes; k++)
