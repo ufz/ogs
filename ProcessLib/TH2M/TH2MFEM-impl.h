@@ -160,6 +160,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         GlobalDimVectorType const gradT = gradNp * temperature;
 
         MPL::VariableArray vars;
+        MPL::VariableArray vars_prev;
         vars[static_cast<int>(MPL::Variable::temperature)] = T;
         vars[static_cast<int>(MPL::Variable::phase_pressure)] = pGR;
         vars[static_cast<int>(MPL::Variable::capillary_pressure)] = pCap;
@@ -177,6 +178,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                     vars, pos, t, std::numeric_limits<double>::quiet_NaN());
 
         vars[static_cast<int>(MPL::Variable::liquid_saturation)] = ip_data.s_L;
+        vars_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
+            ip_data.s_L_prev;
 
         auto const chi = [&medium, pos, t, dt](double const s_L)
         {
@@ -215,6 +218,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                     MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                         sigma_total));
         }
+        // Set volumetric strain rate for the general case without swelling.
         vars[static_cast<int>(MPL::Variable::volumetric_strain)] =
             Invariants::trace(eps);
         vars[static_cast<int>(MPL::Variable::equivalent_plastic_strain)] =
@@ -251,6 +255,24 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // solid phase compressibility
         ip_data.beta_p_SR = (1. - ip_data.alpha_B) / K_S;
 
+        // If there is swelling stress rate, compute swelling stress.
+        if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
+        {
+            auto& sigma_sw = ip_data.sigma_sw;
+            auto const& sigma_sw_prev = ip_data.sigma_sw_prev;
+
+            sigma_sw = sigma_sw_prev;
+
+            using DimMatrix = Eigen::Matrix<double, 3, 3>;
+            auto const sigma_sw_dot =
+                MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
+                    solid_phase
+                        .property(MPL::PropertyType::swelling_stress_rate)
+                        .template value<DimMatrix>(vars, vars_prev, pos, t,
+                                                   dt));
+            sigma_sw += sigma_sw_dot * dt;
+        }
+
         // solid phase linear thermal expansion coefficient
         ip_data.alpha_T_SR = MathLib::KelvinVector::tensorToKelvin<
             DisplacementDim>(MaterialPropertyLib::formEigenTensor<3>(
@@ -273,6 +295,15 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto& eps_m_prev = ip_data.eps_m_prev;
 
         eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
+
+        if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
+        {
+            auto const C_el =
+                ip_data.computeElasticTangentStiffness(t, pos, dt, T_prev, T);
+            eps_m.noalias() +=
+                C_el.inverse() * (ip_data.sigma_sw - ip_data.sigma_sw_prev);
+        }
+
         vars[static_cast<int>(MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
