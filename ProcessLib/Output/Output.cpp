@@ -50,19 +50,19 @@ void addBulkMeshNodePropertyToSubMesh(MeshLib::Mesh const& bulk_mesh,
         return;
     }
 
-    auto const& bulk_mesh_volumetric_flow_rate =
+    auto const& bulk_mesh_property =
         *bulk_mesh.getProperties().getPropertyVector<double>(property_name);
     auto const& bulk_node_ids =
         *sub_mesh.getProperties().getPropertyVector<std::size_t>(
             "bulk_node_ids");
 
-    auto& volumetric_flow_rate = *MeshLib::getOrCreateMeshProperty<double>(
+    auto& sub_mesh_property = *MeshLib::getOrCreateMeshProperty<double>(
         sub_mesh, property_name, MeshLib::MeshItemType::Node, 1);
 
     std::transform(std::begin(bulk_node_ids), std::end(bulk_node_ids),
-                   std::begin(volumetric_flow_rate),
-                   [&bulk_mesh_volumetric_flow_rate](auto const id)
-                   { return bulk_mesh_volumetric_flow_rate[id]; });
+                   std::begin(sub_mesh_property),
+                   [&bulk_mesh_property](auto const id)
+                   { return bulk_mesh_property[id]; });
 }
 
 struct OutputFile
@@ -420,9 +420,14 @@ MeshLib::Mesh const& Output::prepareSubmesh(
                          output_secondary_variables,
                          _output_data_specification);
 
-    addBulkMeshNodePropertyToSubMesh(process.getMesh(), submesh,
-                                     "VolumetricFlowRate");
-
+    auto const& bulk_mesh = process.getMesh();
+    auto const& node_property_names =
+        bulk_mesh.getProperties().getPropertyVectorNames(
+            MeshLib::MeshItemType::Node);
+    for (auto const& name : node_property_names)
+    {
+        addBulkMeshNodePropertyToSubMesh(bulk_mesh, submesh, name);
+    }
     return submesh;
 }
 
