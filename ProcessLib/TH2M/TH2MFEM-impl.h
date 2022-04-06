@@ -827,7 +827,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                         IntegrationMethod, DisplacementDim>::
-    setInitialConditionsConcrete(std::vector<double> const& local_x,
+    setInitialConditionsConcrete(std::vector<double> const& local_x_data,
                                  double const t,
                                  bool const /*use_monolithic_scheme*/,
                                  int const /*process_id*/)
@@ -836,14 +836,39 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         gas_pressure_size + capillary_pressure_size + temperature_size +
         displacement_size;
 
-    assert(local_x.size() == matrix_size);
+    assert(local_x_data.size() == matrix_size);
 
-    updateConstitutiveVariables(
-        Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
-        Eigen::VectorXd::Zero(matrix_size), t, 0);
+    auto const local_x = Eigen::Map<Eigen::VectorXd const>(local_x_data.data(),
+                                                           local_x_data.size());
+    auto const capillary_pressure =
+        local_x.template segment<capillary_pressure_size>(
+            capillary_pressure_index);
+
+    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
+
+    ParameterLib::SpatialPosition pos;
+    pos.setElementID(_element.getID());
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        pos.setIntegrationPoint(ip);
+        MPL::VariableArray vars;
+
+        auto& ip_data = _ip_data[ip];
+        auto const& Np = ip_data.N_p;
+
+        double const pCap = Np.dot(capillary_pressure);
+        vars[static_cast<int>(MPL::Variable::capillary_pressure)] = pCap;
+        ip_data.s_L_prev =
+            medium.property(MPL::PropertyType::saturation)
+                .template value<double>(
+                    vars, pos, t, std::numeric_limits<double>::quiet_NaN());
+    }
+    updateConstitutiveVariables(local_x, Eigen::VectorXd::Zero(matrix_size), t,
+                                0);
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto& ip_data = _ip_data[ip];
