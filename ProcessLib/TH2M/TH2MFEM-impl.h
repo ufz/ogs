@@ -815,6 +815,11 @@ std::size_t TH2MLocalAssembler<
         return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
                                                          &IpData::s_L);
     }
+    if (name == "swelling_stress_ip")
+    {
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+            values, _ip_data, &IpData::sigma_sw);
+    }
     if (name == "epsilon_ip")
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(

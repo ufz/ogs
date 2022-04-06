@@ -215,6 +215,29 @@ private:
             _ip_data, &IpData::sigma_eff, cache);
     }
 
+    std::vector<double> getSwellingStress() const override
+    {
+        {
+            constexpr int kelvin_vector_size =
+                MathLib::KelvinVector::kelvin_vector_dimensions(
+                    DisplacementDim);
+
+            return transposeInPlace<kelvin_vector_size>(
+                [this](std::vector<double>& values)
+                { return getIntPtSwellingStress(0, {}, {}, values); });
+        }
+    }
+
+    std::vector<double> const& getIntPtSwellingStress(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+            _ip_data, &IpData::sigma_sw, cache);
+    }
+
     std::vector<double> getEpsilon() const override
     {
         constexpr int kelvin_vector_size =
