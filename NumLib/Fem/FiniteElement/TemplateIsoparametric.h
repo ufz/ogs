@@ -37,9 +37,6 @@ public:
     /// Coordinate mapping matrices type.
     using ShapeMatrices = typename ShapeMatrixTypes_::ShapeMatrices;
 
-    /// Type of the underlying geometrical element.
-    // using MeshElementType = typename ShapeFunctionType_::MeshElement;
-
     /// Natural coordinates mapping tools specialization for specific
     /// MeshElement and ShapeFunction types.
     using NaturalCoordsMappingType =
