@@ -11,7 +11,7 @@ web url checker:
     - >
       urlchecker check --retry-count 5 --file-types .pandoc,.md
       --white-listed-files releases/*
-      --white-listed-urls https://jenkins.opengeosys.org/job/ufz/job/ogs-container-maker/job/master/build,http://yourproxy.example.com,https://apt.kitware.com/ubuntu/,https://github.com/YOUR-USERNAME/ogs,https://jenkins.opengeosys.org/github-webhook/,http://localhost:1313,https://github.com/ufz/ogs/pull/\$1,http://www.opengeosys.org/images/xsd/OpenGeoSysXXX.xsd,https://\`-protocol,https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/new,https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/_out/images?job=container,https://jquery.org/license/,https://ogsstorage.blob.core.windows.net/binaries/ogs6,https://gitlab.opengeosys.org/ogs/ogs/-/tags/new
+      --white-listed-urls "https://jenkins.opengeosys.org/job/ufz/job/ogs-container-maker/job/master/build,http://yourproxy.example.com,https://apt.kitware.com/ubuntu/,https://github.com/YOUR-USERNAME/ogs,https://jenkins.opengeosys.org/github-webhook/,http://localhost:1313,https://github.com/ufz/ogs/pull/\$1,http://www.opengeosys.org/images/xsd/OpenGeoSysXXX.xsd,https://\`-protocol,https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/new,https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/_out/images?job=container,https://jquery.org/license/,https://ogsstorage.blob.core.windows.net/binaries/ogs6,https://gitlab.opengeosys.org/ogs/ogs/-/tags/new,https://www.sciencedirect.com/*"
       content
 
 preview web site:
