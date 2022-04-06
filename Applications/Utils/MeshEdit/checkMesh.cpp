@@ -86,7 +86,10 @@ int main(int argc, char* argv[])
 
     MeshLib::MeshInformation::writeAllNumbersOfElementTypes(*mesh);
 
-    MeshLib::MeshInformation::writePropertyVectorInformation(*mesh);
+    if (print_properties_arg.isSet())
+    {
+        MeshLib::MeshInformation::writePropertyVectorInformation(*mesh);
+    }
 
     if (valid_arg.isSet())
     {
