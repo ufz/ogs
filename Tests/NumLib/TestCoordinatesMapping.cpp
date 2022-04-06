@@ -56,8 +56,7 @@ public:
                                             DimMatrix, GlobalDimNodalMatrix>;
     // Natural coordinates mapping type
     using NaturalCoordsMappingType =
-        NaturalCoordinatesMapping<ElementType, ShapeFunctionType,
-                                  ShapeMatricesType>;
+        NaturalCoordinatesMapping<ShapeFunctionType, ShapeMatricesType>;
 
 public:
     NumLibFemNaturalCoordinatesMappingTest()
@@ -308,7 +307,7 @@ TEST(NumLib, FemNaturalCoordinatesMappingLineY)
     using ShapeMatricesType = ShapeMatrices<NodalVector, DimNodalMatrix,
                                             DimMatrix, GlobalDimNodalMatrix>;
     using MappingType =
-        NaturalCoordinatesMapping<MeshLib::Line, ShapeLine2, ShapeMatricesType>;
+        NaturalCoordinatesMapping<ShapeLine2, ShapeMatricesType>;
     double r[] = {0.5};
     auto line = TestLine2::createY();
     static const unsigned dim = 1;
