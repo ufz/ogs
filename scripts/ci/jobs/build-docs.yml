@@ -1,6 +1,6 @@
 build docs:
   stage: build
-  tags: [envinf2-shell]
+  tags: [envinf, shell]
   needs: [meta]
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_TAG
@@ -36,16 +36,18 @@ build docs:
     - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
     - cmake . --graphviz=cmake-dependencies.dot && dot -Tsvg cmake-dependencies.dot -o cmake-dependencies.svg
     - cmake . -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
-    - cmake --build . --target doc > >(tee make-docs.output)
-    - grep 'warning:' make-docs.output >> DoxygenWarnings.log || true
-    - cat DoxygenWarnings.log|grep -v 'too many nodes'
-    - NUM_DOX_WARNINGS=`cat DoxygenWarnings.log|grep warning:|grep -v 'too many nodes'|wc -l|xargs`
+    - cmake --build . --target doc &> >(tee make-docs.output)
+    - cat make-docs.output DoxygenWarnings.log | grep 'warning:' | grep -v 'too many nodes\|perl:' >> DoxygenWarnings-filtered.log
+    - NUM_DOX_WARNINGS=`cat DoxygenWarnings-filtered.log | wc -l | xargs`
     - echo "doxygen_warnings $NUM_DOX_WARNINGS" >> metrics.txt
     - |
       if [[ ( "$NUM_DOX_WARNINGS" -gt "$DOX_WARNINGS_THRESHOLD" ) ]]; then
         echo "Error: Number of Doxygen warnings exceeded threshold –> $NUM_DOX_WARNINGS > $DOX_WARNINGS_THRESHOLD"
+        echo "----------------------------------------------------"
+        cat DoxygenWarnings.log
         exit 1
       fi
+    - echo "Number of Doxygen warnings is $NUM_DOX_WARNINGS (threshold is $DOX_WARNINGS_THRESHOLD)."
     - |
       if [ "$DEPLOY" == "true" ]; then
         if [ "$ON_MASTER" == "true" ]; then
@@ -68,6 +70,8 @@ build docs:
       - Lizard.html
       - lizard.txt
       - codecloud.html
+      - build/DoxygenWarnings.log
+      - build/DoxygenWarnings-filtered.log
     expire_in: 1 week
     reports:
       metrics: build/metrics.txt
