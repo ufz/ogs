@@ -15,13 +15,10 @@
 #include <boost/math/constants/constants.hpp>
 #include <cassert>
 
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Node.h"
 #include "NumLib/Fem/CoordinatesMapping/NaturalCoordinatesMapping.h"
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
-
-namespace MeshLib
-{
-class Element;
-}
 
 namespace NumLib
 {
@@ -40,14 +37,10 @@ public:
     /// Coordinate mapping matrices type.
     using ShapeMatrices = typename ShapeMatrixTypes_::ShapeMatrices;
 
-    /// Type of the underlying geometrical element.
-    using MeshElementType = typename ShapeFunctionType_::MeshElement;
-
     /// Natural coordinates mapping tools specialization for specific
     /// MeshElement and ShapeFunction types.
     using NaturalCoordsMappingType =
-        NaturalCoordinatesMapping<MeshElementType, ShapeFunctionType,
-                                  ShapeMatrices>;
+        NaturalCoordinatesMapping<ShapeFunctionType, ShapeMatrices>;
 
     /**
      * Constructor without specifying a mesh element. setMeshElement() must be
@@ -60,13 +53,13 @@ public:
      *
      * @param e                      Mesh element object
      */
-    explicit TemplateIsoparametric(const MeshElementType& e) : _ele(&e) {}
+    explicit TemplateIsoparametric(const MeshLib::Element& e) : _ele(&e) {}
 
     /// return current mesh element
-    const MeshElementType* getMeshElement() const { return _ele; }
+    const MeshLib::Element* getMeshElement() const { return _ele; }
 
     /// Sets the mesh element
-    void setMeshElement(const MeshElementType& e) { this->_ele = &e; }
+    void setMeshElement(const MeshLib::Element& e) { this->_ele = &e; }
     /**
      * compute shape functions
      *
@@ -158,7 +151,7 @@ private:
         shape.integralMeasure = boost::math::constants::two_pi<double>() * r;
     }
 
-    const MeshElementType* _ele;
+    const MeshLib::Element* _ele;
 };
 
 /// Creates a TemplateIsoparametric element for the given shape functions and
@@ -170,7 +163,6 @@ createIsoparametricFiniteElement(MeshLib::Element const& e)
     using FemType =
         NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
 
-    return FemType{
-        *static_cast<const typename ShapeFunction::MeshElement*>(&e)};
+    return FemType{e};
 }
 }  // namespace NumLib

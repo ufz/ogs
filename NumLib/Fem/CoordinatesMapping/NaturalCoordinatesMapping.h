@@ -14,16 +14,20 @@
 
 #include "ShapeMatrices.h"
 
+namespace MeshLib
+{
+class Element;
+}
+
 namespace NumLib
 {
 namespace detail
 {
 //! Used to explicitly instantiate the NaturalCoordinatesMapping class template.
-template <class T_MESH_ELEMENT,
-          class T_SHAPE_FUNC,
+template <class T_SHAPE_FUNC,
           class T_SHAPE_MATRICES,
           ShapeMatrixType T_SHAPE_MATRIX_TYPE>
-void naturalCoordinatesMappingComputeShapeMatrices(const T_MESH_ELEMENT& ele,
+void naturalCoordinatesMappingComputeShapeMatrices(const MeshLib::Element& ele,
                                                    const double* natural_pt,
                                                    T_SHAPE_MATRICES& shapemat,
                                                    const unsigned global_dim);
@@ -36,11 +40,10 @@ void naturalCoordinatesMappingComputeShapeMatrices(const T_MESH_ELEMENT& ele,
  * e.g. line elements in 2D space. Details of the mapping method can be found in
  * \cite Kolditz2001 .
  *
- * @tparam T_MESH_ELEMENT       Mesh element type
  * @tparam T_SHAPE_FUNC         Shape function class
  * @tparam T_SHAPE_MATRICES     Shape matrices class
  */
-template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
+template <class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 struct NaturalCoordinatesMapping
 {
     /**
@@ -52,7 +55,7 @@ struct NaturalCoordinatesMapping
      * functions are stored
      * @param global_dim        Global dimension
      */
-    static void computeShapeMatrices(const T_MESH_ELEMENT& ele,
+    static void computeShapeMatrices(const MeshLib::Element& ele,
                                      const double* natural_pt,
                                      T_SHAPE_MATRICES& shapemat,
                                      const unsigned global_dim)
@@ -73,13 +76,12 @@ struct NaturalCoordinatesMapping
      * @param global_dim            Global dimension
      */
     template <ShapeMatrixType T_SHAPE_MATRIX_TYPE>
-    static void computeShapeMatrices(const T_MESH_ELEMENT& ele,
+    static void computeShapeMatrices(const MeshLib::Element& ele,
                                      const double* natural_pt,
                                      T_SHAPE_MATRICES& shapemat,
                                      const unsigned global_dim)
     {
         detail::naturalCoordinatesMappingComputeShapeMatrices<
-            T_MESH_ELEMENT,
             T_SHAPE_FUNC,
             T_SHAPE_MATRICES,
             T_SHAPE_MATRIX_TYPE>(ele, natural_pt, shapemat, global_dim);
