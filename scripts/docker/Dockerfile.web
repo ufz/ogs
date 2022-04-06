@@ -1,5 +1,5 @@
 FROM python:3-slim
-RUN pip install urlchecker==0.0.20
+RUN pip install urlchecker==0.0.28
 CMD [ "/bin/bash" ]
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
   --no-install-recommends curl git gnupg2 && \
@@ -13,7 +13,7 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
   && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y yarn \
   && rm -rf /var/lib/apt/lists/*
 RUN yarn global add netlify-cli
-ENV HUGO_VERSION=0.79.0
+ENV HUGO_VERSION=0.96.0
 RUN curl -fSL -O "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_Linux-64bit.deb" \
   && DEBIAN_FRONTEND=noninteractive apt-get install -y /hugo_extended_${HUGO_VERSION}_Linux-64bit.deb \
   && rm /hugo_extended_${HUGO_VERSION}_Linux-64bit.deb

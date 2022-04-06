@@ -41,7 +41,7 @@ lower sphere) is simulated.
 ## Analytical solution
 
 The derivation of the formulae below can be found, e.g.,
-in [this book (in German)](http://www.uni-magdeburg.de/ifme/l-festigkeit/pdf/Bertram-Gluege_Festkoerpermechanik2012.pdf).
+in [this book (in German)](https://web.archive.org/web/20190928191550/http://www.uni-magdeburg.de/ifme/l-festigkeit/pdf/Bertram-Gluege_Festkoerpermechanik2012.pdf).
 
 The radius of the contact area is given by
 $$
