@@ -44,6 +44,61 @@ tag_path_expansion_table = {
     "prj": "",
 }
 
+def write_parameter_type_info(fh, tagpath, tagpath_expanded, dict_tag_info):
+    if tagpath:
+        fh.write("\n\n# Additional info\n")
+        if tagpath in dict_tag_info:
+            for info in dict_tag_info[tagpath]:
+                path = info[1]
+                line = info[2]
+                fh.write(("\n## From {0} line {1}\n\n").format(path, line))
+
+                method = info[6]
+                if method.endswith("Optional"):
+                    fh.write("- This is an optional parameter.\n")
+                elif method.endswith("List"):
+                    fh.write(
+                        "- This parameter can be given arbitrarily many times.\n"
+                    )
+                elif method:  # method not empty
+                    fh.write("- This is a required parameter.\n")
+
+                datatype = info[5]
+                if datatype:
+                    fh.write("- Data type: <tt>{0}</tt>\n".format(datatype))
+
+                fh.write("- Expanded tag path: {0}\n".format(tagpath_expanded))
+
+                fh.write(
+                    "- Go to source code: [&rarr; ogs/ogs/master]({2}/{0}#L{1})\n".format(
+                        path, line, github_src_url
+                    )
+                )
+        else:
+            fh.write("\nNo additional info.\n")
+
+def write_ctest_info(fh, tagpath, istag, tested_tags_attrs):
+    fh.write("\n\n# Used in the following test data files\n\n")
+
+    try:
+        datafiles = tested_tags_attrs["tags" if istag else "attributes"][
+            tagpath
+        ]
+    except KeyError:
+        fh.write("Used in no end-to-end test cases.\n")
+        return
+
+    for df in sorted(datafiles):
+        pagename = "ogs_ctest_prj__" + df.replace("/", "__").replace(
+            ".", "__"
+        )
+        fh.write(
+            (
+                "- \\[[&rarr; ogs/ogs/master]({1}/{0}) | "
+                + '\\ref {2} "&rarr; doc"\\]&emsp;{0}\n'
+            ).format(df, github_data_url, pagename)
+        )
+
 # maps tags to additional parameter info obtained prior to this script
 dict_tag_info = dict()
 
@@ -96,59 +151,9 @@ for (dirpath, _, filenames) in os.walk(docdir):
                 tagpathparts[0] = "NONEXISTENT"
             tagpath_expanded = ".".join(tagpathparts).lstrip(".")
 
-            if tagpath:
-                fh.write("\n\n# Additional info\n")
-                if tagpath in dict_tag_info:
-                    for info in dict_tag_info[tagpath]:
-                        path = info[1]
-                        line = info[2]
-                        fh.write(("\n## From {0} line {1}\n\n").format(path, line))
-
-                        method = info[6]
-                        if method.endswith("Optional"):
-                            fh.write("- This is an optional parameter.\n")
-                        elif method.endswith("List"):
-                            fh.write(
-                                "- This parameter can be given arbitrarily many times.\n"
-                            )
-                        elif method:  # method not empty
-                            fh.write("- This is a required parameter.\n")
-
-                        datatype = info[5]
-                        if datatype:
-                            fh.write("- Data type: <tt>{0}</tt>\n".format(datatype))
-
-                        fh.write("- Expanded tag path: {0}\n".format(tagpath_expanded))
-
-                        fh.write(
-                            "- Go to source code: [&rarr; ogs/ogs/master]({2}/{0}#L{1})\n".format(
-                                path, line, github_src_url
-                            )
-                        )
-                else:
-                    fh.write("\nNo additional info.\n")
+            write_parameter_type_info(fh, tagpath, tagpath_expanded, dict_tag_info)
 
             if tagpath_expanded:
-                fh.write("\n\n# Used in the following test data files\n\n")
-                try:
-                    datafiles = tested_tags_attrs["tags" if istag else "attributes"][
-                        tagpath
-                    ]
-
-                    for df in sorted(datafiles):
-                        pagename = "ogs_ctest_prj__" + df.replace("/", "__").replace(
-                            ".", "__"
-                        )
-                        fh.write(
-                            (
-                                "- \\[[&rarr; ogs/ogs/master]({1}/{0}) | "
-                                + '\\ref {2} "&rarr; doc"\\]&emsp;{0}\n'
-                            ).format(df, github_data_url, pagename)
-                        )
-                except KeyError:
-                    fh.write("Used in no end-to-end test cases.\n")
-            else:
-                # no additional output for the main doc page
-                pass
+                write_ctest_info(fh, tagpath, istag, tested_tags_attrs)
 
             fh.write("\n*/\n")
