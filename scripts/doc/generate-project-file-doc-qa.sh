@@ -51,6 +51,8 @@ cat <<EOF >>"$qafile"
 */
 EOF
 
+"$toolsdir/extract-media-properties-from-ctests.py" "$datadir" "$docauxdir"
+
 # Finish parameter documentation dox files by appending auxiliary information,
 # e.g., associated ctests, data type, etc.
 "$toolsdir/append-xml-tags.py" prj "$datadir" "$docauxdir"
