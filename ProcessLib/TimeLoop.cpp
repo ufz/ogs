@@ -515,6 +515,9 @@ void TimeLoop::initialize()
         outputSolutions(output_initial_condition, 0, _start_time, *_output,
                         &Output::doOutput);
     }
+
+    _dt = computeTimeStepping(0.0, _current_time, _accepted_steps,
+                                    _rejected_steps);
 }
 
 /*
@@ -528,9 +531,6 @@ void TimeLoop::initialize()
 bool TimeLoop::loop()
 {
     bool non_equilibrium_initial_residuum_computed = false;
-
-    double dt = computeTimeStepping(0.0, t, accepted_steps, rejected_steps);
-
     while (_current_time < _end_time)
     {
         BaseLib::RunTime time_timestep;
