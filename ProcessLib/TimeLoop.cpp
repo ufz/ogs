@@ -530,12 +530,13 @@ void TimeLoop::initialize()
  */
 bool TimeLoop::loop()
 {
-    bool non_equilibrium_initial_residuum_computed = false;
     while (_current_time < _end_time)
     {
         BaseLib::RunTime time_timestep;
         time_timestep.start();
 
+        bool const non_equilibrium_initial_residuum_computed =
+            _start_time != _current_time;
         _current_time += _dt;
         const double prev_dt = _dt;
 
@@ -551,7 +552,6 @@ bool TimeLoop::loop()
         {
             calculateNonEquilibriumInitialResiduum(
                 _per_process_data, _process_solutions, _process_solutions_prev);
-            non_equilibrium_initial_residuum_computed = true;
         }
 
         _nonlinear_solver_status =
