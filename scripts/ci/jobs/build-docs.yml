@@ -25,7 +25,7 @@ build docs:
     - echo "num_cycles $NUM_CYCLES" > metrics.txt
     - cpp-dependencies --graph cpp-dependencies.dot && dot -Tsvg cpp-dependencies.dot -o build/cpp-dependencies.svg
     # lizard, default code complexity number (15), function line length 100, max arguments 10
-    - python /opt/lizard/lizard.py -l cpp -w -t 8 --length 100 --arguments 10 > lizard.txt || true
+    - python /opt/lizard/lizard.py -l cpp -w -t 1 --length 100 --arguments 10 > lizard.txt || true
     - cat lizard.txt
     - NUM_LIZARD_ISSUES=`cat lizard.txt | wc -l`
     - echo "lizard_issues $NUM_LIZARD_ISSUES" >> metrics.txt
