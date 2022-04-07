@@ -528,28 +528,24 @@ void TimeLoop::initialize()
 bool TimeLoop::loop()
 {
     bool non_equilibrium_initial_residuum_computed = false;
-    double t = _start_time;
-    std::size_t accepted_steps = 0;
-    std::size_t rejected_steps = 0;
-    NumLib::NonlinearSolverStatus nonlinear_solver_status;
 
     double dt = computeTimeStepping(0.0, t, accepted_steps, rejected_steps);
 
-    while (t < _end_time)
+    while (_current_time < _end_time)
     {
         BaseLib::RunTime time_timestep;
         time_timestep.start();
 
-        t += dt;
-        const double prev_dt = dt;
+        _current_time += _dt;
+        const double prev_dt = _dt;
 
-        const std::size_t timesteps = accepted_steps + 1;
+        const std::size_t timesteps = _accepted_steps + 1;
         // TODO(wenqing): , input option for time unit.
         INFO(
             "=== Time stepping at step #{:d} and time {:g} with step size {:g}",
-            timesteps, t, dt);
+            timesteps, _current_time, _dt);
 
-        updateDeactivatedSubdomains(_per_process_data, t);
+        updateDeactivatedSubdomains(_per_process_data, _current_time);
 
         if (!non_equilibrium_initial_residuum_computed)
         {
@@ -558,13 +554,15 @@ bool TimeLoop::loop()
             non_equilibrium_initial_residuum_computed = true;
         }
 
-        nonlinear_solver_status = doNonlinearIteration(t, dt, timesteps);
+        _nonlinear_solver_status =
+            doNonlinearIteration(_current_time, _dt, timesteps);
         INFO("[time] Time step #{:d} took {:g} s.", timesteps,
              time_timestep.elapsed());
 
-        double const current_time = t;
+        double const current_time = _current_time;
         // _last_step_rejected is also checked in computeTimeStepping.
-        dt = computeTimeStepping(prev_dt, t, accepted_steps, rejected_steps);
+        _dt = computeTimeStepping(prev_dt, _current_time, _accepted_steps,
+                                 _rejected_steps);
 
         if (!_last_step_rejected)
         {
@@ -573,18 +571,19 @@ bool TimeLoop::loop()
                             *_output, &Output::doOutput);
         }
 
-        if (std::abs(t - _end_time) < std::numeric_limits<double>::epsilon() ||
-            t + dt > _end_time)
+        if (std::abs(_current_time - _end_time) <
+                std::numeric_limits<double>::epsilon() ||
+            _current_time + _dt > _end_time)
         {
             break;
         }
 
-        if (dt < std::numeric_limits<double>::epsilon())
+        if (_dt < std::numeric_limits<double>::epsilon())
         {
             WARN(
                 "Time step size of {:g} is too small.\n"
                 "Time stepping stops at step {:d} and at time of {:g}.",
-                dt, timesteps, t);
+                _dt, timesteps, _current_time);
             break;
         }
     }
@@ -592,18 +591,18 @@ bool TimeLoop::loop()
     INFO(
         "The whole computation of the time stepping took {:d} steps, in which\n"
         "\t the accepted steps are {:d}, and the rejected steps are {:d}.\n",
-        accepted_steps + rejected_steps, accepted_steps, rejected_steps);
+        _accepted_steps + _rejected_steps, _accepted_steps, _rejected_steps);
 
     // output last time step
-    if (nonlinear_solver_status.error_norms_met)
+    if (_nonlinear_solver_status.error_norms_met)
     {
         const bool output_initial_condition = false;
         outputSolutions(output_initial_condition,
-                        accepted_steps + rejected_steps, t, *_output,
-                        &Output::doOutputLastTimestep);
+                        _accepted_steps + _rejected_steps, _current_time,
+                        *_output, &Output::doOutputLastTimestep);
     }
 
-    return nonlinear_solver_status.error_norms_met;
+    return _nonlinear_solver_status.error_norms_met;
 }
 
 NumLib::NonlinearSolverStatus TimeLoop::doNonlinearIteration(

@@ -112,10 +112,16 @@ private:
     std::unique_ptr<Output> _output;
     std::vector<std::unique_ptr<ProcessData>> _per_process_data;
 
-    bool _last_step_rejected = false;
-    int _repeating_times_of_rejected_step = 0;
+    NumLib::NonlinearSolverStatus _nonlinear_solver_status;
+
     const double _start_time;
     const double _end_time;
+    double _current_time = _start_time;
+    std::size_t _accepted_steps = 0;
+    std::size_t _rejected_steps = 0;
+    double _dt = 0;
+    int _repeating_times_of_rejected_step = 0;
+    bool _last_step_rejected = false;
 
     /// Maximum iterations of the global coupling.
     const int _global_coupling_max_iterations;
