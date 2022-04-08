@@ -108,7 +108,15 @@ bool Simulation::executeSimulation()
 {
     INFO("Solve processes.");
     auto& time_loop = project_data->getTimeLoop();
-    return time_loop.loop();
+    while (time_loop.getCurrentTime() < time_loop.getEndTime())
+    {
+        if (!time_loop.doTimestep())
+        {
+            break;
+        }
+    }
+
+    return time_loop.getNonlinearSolverStatus().error_norms_met;
 }
 
 std::optional<ApplicationsLib::TestDefinition> Simulation::getTestDefinition()
