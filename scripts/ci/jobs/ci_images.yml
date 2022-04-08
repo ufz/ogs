@@ -25,7 +25,7 @@ ci_images:
         CONTAINER_TAG: ${CI_COMMIT_REF_SLUG}
         CONTAINER_REGISTRY: ${CI_REGISTRY}/${CI_PROJECT_PATH}
     - when: always
-  tags: [envinf1-shell]
+  tags: [envinf, shell]
   artifacts:
     reports:
       dotenv: build.env
@@ -46,14 +46,17 @@ ci_images:
       --pm system --cvode --cppcheck --docs --gcovr --mfront --ccache
       --version_file ../../web/data/versions.json
       --tag $CONTAINER_GCC_IMAGE --upload
+      --cpu-target $CPU_TARGET
     - poetry run ogscm compiler.py ogs.py --build --ogs off
       --cvode --cppcheck --docs --gcovr --gui --ccache
       --version_file ../../web/data/versions.json
       --tag $CONTAINER_GCC_GUI_IMAGE --upload
+      --cpu-target $CPU_TARGET
     - poetry run ogscm compiler.py ogs.py --build --ogs off
       --compiler clang --compiler_version 9 --ccache
       --version_file ../../web/data/versions.json
       --tag $CONTAINER_CLANG_IMAGE --upload
+      --cpu-target $CPU_TARGET
     - cd ${CI_PROJECT_DIR}
     - docker build --cache-from $XUNIT_TO_JUNIT_IMAGE -t $XUNIT_TO_JUNIT_IMAGE -f scripts/docker/saxon/Dockerfile scripts/docker/saxon
     - docker push $XUNIT_TO_JUNIT_IMAGE

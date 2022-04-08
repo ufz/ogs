@@ -66,6 +66,8 @@ docker run --rm -it -v /host/directory:/container/directory image_name
 
 ## Prebuilt OGS-6 Docker images
 
-There are docker images provided on the [GitLab Container Registry](https://gitlab.opengeosys.org/ogs/ogs/container_registry) which include everything necessary to build OGS-6. They are used by the CI but you can also use them for development.
+There are docker images provided on the [GitLab Container Registry](https://gitlab.opengeosys.org/ogs/ogs/container_registry) which include everything necessary to build OGS-6 (e.g. `registry.opengeosys.org/ogs/ogs/gcc`). They are used by the CI but you can also use them for development. For running the images require CPU capabilities equivalent or better than the Intel Ivybridge[^1] architecture.
 
 Even better for development is the usage of [Singularity container]({{< relref "singularity.md" >}}) because they offer a transparent mapping of the user to container space.
+
+[^1]: From [GCC docs](https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html): *Intel Ivy Bridge CPU with 64-bit extensions, MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2, POPCNT, CX16, SAHF, FXSR, AVX, XSAVE, PCLMUL, FSGSBASE, RDRND and F16C instruction set support.*

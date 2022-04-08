@@ -22,7 +22,9 @@ A CI run consists of a [pipeline](https://docs.gitlab.com/ee/ci/pipelines/) whic
 Each pipeline run is visualized as follows:
 ![GitLab pipeline visualization](GitLab-Pipeline.png)
 
-Jobs are belong to a stage and each job will get a status (success, warnings, failure). Some jobs are optional (see the gear icon) and can be manually triggered by pressing the play button.
+Jobs belong to a stage and each job will get a status (success, warnings, failure). Some jobs are optional (see the gear icon) and can be manually triggered by pressing the play button.
+
+Some jobs run on native servers (e.g. on the `envinf[1,2,3]` Linux servers) and some run in [Docker containers]({{< relref "docker.md#prebuilt-ogs-6-docker-images" >}}).
 
 ## Automatic testing
 
