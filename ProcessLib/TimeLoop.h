@@ -48,6 +48,7 @@ public:
 
     ~TimeLoop();
 
+    bool executeTimeStep();
 private:
     NumLib::NonlinearSolverStatus doNonlinearIteration(
         double const t, double const dt, std::size_t const timesteps);
