@@ -142,9 +142,7 @@ git fetch upstream
 Create a branch `feature-name` off of upstream `master`-branch to work on a new feature, and check out the branch:
 
 ```bash
-git checkout upstream/master # Switch to newest master
-git checkout -b feature-name # Create and checkout a new branch
-
+git checkout -b feature-name upstream/master
 ```
 
 ----
@@ -155,7 +153,7 @@ To keep up to date with the developments in the official repository it is recomm
 git fetch --all -p
 ```
 
-Then rebase your `feature`-branch on to the newest master branch in the official repository with
+Then rebase your `feature-name`-branch on to the newest master branch in the official repository with
 
 ```bash
 git rebase upstream/master feature-name
