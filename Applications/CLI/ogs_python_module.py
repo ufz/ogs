@@ -5,9 +5,10 @@
 ## export PYTHONPATH=$PYTHONPATH:your-build_directory-here/lib
 
 import sys
+import tempfile
 import OpenGeoSys
 
-arguments = ["", sys.argv[1], "-o /tmp/"]
+arguments = ["", sys.argv[1], "-o " + tempfile.mkdtemp()]
 
 print("Python OpenGeoSys.init ...")
 OpenGeoSys.initialize(arguments)

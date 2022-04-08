@@ -48,16 +48,13 @@ if(OGS_USE_PYTHON)
 
     # Create OpenGeoSys python module
     # https://pybind11.readthedocs.io/en/stable/compiling.html#building-with-cmake
-    pybind11_add_module(OpenGeoSys SHARED ogs_python_module.cpp
-                                          CommandLineArgumentParser.cpp)
+    pybind11_add_module(
+        OpenGeoSys SHARED ogs_python_module.cpp CommandLineArgumentParser.cpp
+    )
 
     target_link_libraries(
-        OpenGeoSys
-        PRIVATE ApplicationsLib
-                BaseLib
-                GitInfoLib
-                tclap
-                pybind11::pybind11
+        OpenGeoSys PRIVATE ApplicationsLib BaseLib GitInfoLib tclap
+                           pybind11::pybind11
     )
 endif()
 
@@ -84,6 +81,22 @@ target_compile_definitions(ogs PRIVATE $<$<BOOL:${USE_INSITU}>:USE_INSITU>)
 add_test(NAME ogs_no_args COMMAND ogs)
 set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE LABELS "default")
 
+if(OGS_USE_PYTHON)
+    add_test(
+        NAME ogs_python_module
+        COMMAND
+            ${Python3_EXECUTABLE}
+            ${CMAKE_CURRENT_SOURCE_DIR}/ogs_python_module.py
+            ${CMAKE_SOURCE_DIR}/Tests/Data/Parabolic/LiquidFlow/Flux/cube_1e3_calculatesurfaceflux.prj
+    )
+    # TODO LB: ENVIRONMENT_MODIFICATION requires CMake 3.22
+    set_tests_properties(
+        ogs_python_module
+        PROPERTIES LABELS "default" ENVIRONMENT_MODIFICATION
+                   PYTHONPATH=path_list_append:$<TARGET_FILE_DIR:OpenGeoSys>
+                   DISABLED $<NOT:$<TARGET_EXISTS:LiquidFlow>>
+    )
+endif()
 # ---- Installation ----
 install(TARGETS ogs RUNTIME DESTINATION bin)
 
