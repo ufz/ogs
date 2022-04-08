@@ -158,7 +158,7 @@ git fetch --all -p
 Then rebase your `feature`-branch on to the newest master branch in the official repository with
 
 ```bash
-git rebase ufz/master feature-name
+git rebase upstream/master feature-name
 ```
 
 This can potentially lead to conflicts, which have to be resolved.
