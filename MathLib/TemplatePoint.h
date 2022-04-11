@@ -159,12 +159,4 @@ std::ostream& operator<<(std::ostream& os, const TemplatePoint<T>& p)
     os << p[0] << " " << p[1] << " " << p[2];
     return os;
 }
-
-/** overload the input operator for class Point */
-template <typename T>
-std::istream& operator>>(std::istream& is, TemplatePoint<T>& p)
-{
-    p.read (is);
-    return is;
-}
 } // end namespace MathLib
