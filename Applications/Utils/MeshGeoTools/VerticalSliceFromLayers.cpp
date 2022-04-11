@@ -119,7 +119,7 @@ std::vector<std::string> createGeometries(
     return geo_name_list;
 }
 
-GeoLib::Point* getMinPoint(GeoLib::Point* a, GeoLib::Point* b)
+static GeoLib::Point* getMinElevationPoint(GeoLib::Point* a, GeoLib::Point* b)
 {
     return ((*a)[2] < (*b)[2]) ? a : b;
 }
@@ -142,11 +142,11 @@ void mergeGeometries(GeoLib::GEOObjects& geo,
     auto layer_pnts = *geo.getPointVec(geo_names.back());
     for (std::size_t i = 0; i < pnts_per_line; ++i)
     {
-        points.push_back(
-            new GeoLib::Point(*getMinPoint(layer_pnts[i], DEM_pnts[i]), i));
+        points.push_back(new GeoLib::Point(
+            *getMinElevationPoint(layer_pnts[i], DEM_pnts[i]), i));
         last_line_idx[i] = i;
     }
-    for (int j = n_layers-2; j >= 0; --j)
+    for (int j = n_layers - 2; j >= 0; --j)
     {
         GeoLib::Polyline* line = new GeoLib::Polyline(points);
         for (std::size_t i = 0; i < pnts_per_line; ++i)
@@ -164,7 +164,7 @@ void mergeGeometries(GeoLib::GEOObjects& geo,
                 idx = points.size();
                 // check current point against DEM
                 points.push_back(new GeoLib::Point(
-                    *getMinPoint(layer_pnts[i], DEM_pnts[i]), idx));
+                    *getMinElevationPoint(layer_pnts[i], DEM_pnts[i]), idx));
                 last_line_idx[i] = idx;
             }
             line->addPoint(idx);
