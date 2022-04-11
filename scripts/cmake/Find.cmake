@@ -100,6 +100,20 @@ endif()
 # Check MPI package
 if(OGS_USE_MPI)
     find_package(MPI REQUIRED)
+    if(NOT "${MPI_C_COMPILER}" STREQUAL "${CMAKE_C_COMPILER}"
+       OR NOT "${MPI_CXX_COMPILER}" STREQUAL "${CMAKE_CXX_COMPILER}"
+    )
+        message(
+            FATAL_ERROR
+                "The selected compilers\n"
+                "  - ${CMAKE_C_COMPILER} and \n"
+                "  - ${CMAKE_CXX_COMPILER}\n"
+                "are not MPI-enabled compiler!\n"
+                "Set compiler on a clean build directory with e.g.:\n"
+                "export CC=`which mpicc` CXX=`which mpic++`\n"
+                "cmake ../ogs -DOGS_USE_PETSC=ON"
+        )
+    endif()
 endif()
 
 # Prints instructions for setting MKL runtime environment.
