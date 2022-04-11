@@ -165,7 +165,7 @@ bool lessEq(TemplatePoint<T, DIM> const& a, TemplatePoint<T, DIM> const& b,
 template <typename T, std::size_t DIM>
 std::ostream& operator<< (std::ostream &os, const TemplatePoint<T,DIM> &p)
 {
-    p.write (os);
+    os << p[0] << " " << p[1] << " " << p[2];
     return os;
 }
 
