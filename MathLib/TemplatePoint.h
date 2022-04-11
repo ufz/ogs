@@ -113,7 +113,7 @@ bool operator<(TemplatePoint<T> const& a, TemplatePoint<T> const& b)
         // continue with next dimension, because a[0] == b[0]
     }
 
-    // The values in all dimenisions are equal.
+    // The values in all dimensions are equal.
     return false;
 }
 
