@@ -857,3 +857,7 @@ AddTest(
     calcitePorosityChange_ts_210_t_21000_000000_0.vtu calcitePorosityChange_ts_210_t_21000_000000_0.vtu Calcite_avg Calcite_avg 1e-10 1e-16
     calcitePorosityChange_ts_210_t_21000_000000_0.vtu calcitePorosityChange_ts_210_t_21000_000000_0.vtu porosity_avg porosity_avg 1e-10 1e-16
 )
+
+if (OGS_USE_MPI)
+    OgsTest(WRAPPER mpirun -np 2 PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/ParallelTest/RadionuclideSorption.prj RUNTIME 60)
+endif()
