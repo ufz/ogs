@@ -89,7 +89,6 @@ if(OGS_USE_PYTHON)
             ${CMAKE_CURRENT_SOURCE_DIR}/ogs_python_module.py
             ${CMAKE_SOURCE_DIR}/Tests/Data/Parabolic/LiquidFlow/Flux/cube_1e3_calculatesurfaceflux.prj
     )
-    # TODO LB: ENVIRONMENT_MODIFICATION requires CMake 3.22
     set_tests_properties(
         ogs_python_module
         PROPERTIES LABELS "default" ENVIRONMENT_MODIFICATION
