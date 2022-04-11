@@ -32,7 +32,7 @@ public:
         std::optional<std::size_t> const& node_id,
         std::optional<std::size_t> const& element_id,
         std::optional<unsigned> const& integration_point,
-        std::optional<MathLib::TemplatePoint<double, 3>> const& coordinates)
+        std::optional<MathLib::TemplatePoint<double>> const& coordinates)
         : _node_id(node_id),
           _element_id(element_id),
           _integration_point(integration_point),
@@ -46,8 +46,7 @@ public:
     {
         return _integration_point;
     }
-    std::optional<MathLib::TemplatePoint<double, 3>> const& getCoordinates()
-        const
+    std::optional<MathLib::TemplatePoint<double>> const& getCoordinates() const
     {
         return _coordinates;
     }
@@ -70,7 +69,7 @@ public:
         _integration_point = integration_point;
     }
 
-    void setCoordinates(MathLib::TemplatePoint<double, 3> const& coordinates)
+    void setCoordinates(MathLib::TemplatePoint<double> const& coordinates)
     {
         _coordinates = coordinates;
     }
@@ -79,7 +78,7 @@ public:
         std::optional<std::size_t> const& node_id,
         std::optional<std::size_t> const& element_id,
         std::optional<unsigned> const& integration_point,
-        std::optional<MathLib::TemplatePoint<double, 3>> const& coordinates)
+        std::optional<MathLib::TemplatePoint<double>> const& coordinates)
     {
         _node_id = node_id;
         _element_id = element_id;
@@ -99,7 +98,7 @@ private:
     std::optional<std::size_t> _node_id;
     std::optional<std::size_t> _element_id;
     std::optional<unsigned> _integration_point;
-    std::optional<MathLib::TemplatePoint<double, 3>> _coordinates;
+    std::optional<MathLib::TemplatePoint<double>> _coordinates;
 };
 
 }  // namespace ParameterLib

@@ -21,7 +21,7 @@
 
 namespace MathLib
 {
-using Point3d = MathLib::TemplatePoint<double, 3>;
+using Point3d = MathLib::TemplatePoint<double>;
 
 extern MATHLIB_EXPORT const Point3d ORIGIN;
 /**
