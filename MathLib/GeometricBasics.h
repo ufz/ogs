@@ -14,14 +14,14 @@
 
 namespace MathLib
 {
-
 template <typename T>
 class TemplatePoint;
 using Point3d = MathLib::TemplatePoint<double>;
 
 enum TriangleTest
 {
-    GAUSS, BARYCENTRIC
+    GAUSS,
+    BARYCENTRIC
 };
 
 /**
