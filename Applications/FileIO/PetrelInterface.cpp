@@ -104,7 +104,7 @@ void PetrelInterface::readPetrelSurfacePoints(std::istream& in)
         while (in)
         {
             auto point = std::make_unique<GeoLib::Point>();
-            in >> *point;
+            in >> (*point)[0] >> (*point)[1] >> (*point)[2];
             if (in)
             {
                 pnt_vec.push_back(point.release());

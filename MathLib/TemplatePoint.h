@@ -84,13 +84,6 @@ public:
         std::copy(x_.cbegin(), x_.cend(), std::ostream_iterator<T>(os, " "));
     }
 
-    /** read point coordinates into stream (used from operator>>) */
-    virtual void read (std::istream &is)
-    {
-        std::copy(std::istream_iterator<T>(is), std::istream_iterator<T>(),
-                  x_.begin());
-    }
-
 private:
     std::array<T, DIM> x_;
 };
