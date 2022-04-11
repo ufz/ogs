@@ -81,20 +81,22 @@ private:
 
 template <typename T>
 TemplatePoint<T>::TemplatePoint() : x_({{0}})
-{}
+{
+}
 
 template <typename T>
 TemplatePoint<T>::TemplatePoint(std::array<T, 3> x) : x_(std::move(x))
-{}
+{
+}
 
 /** Equality of TemplatePoint's up to an epsilon.
  */
 template <typename T>
 bool operator==(TemplatePoint<T> const& a, TemplatePoint<T> const& b)
 {
-    T const sqr_dist(sqrDist(a,b));
+    T const sqr_dist(sqrDist(a, b));
     auto const eps = std::numeric_limits<T>::epsilon();
-    return (sqr_dist < eps*eps);
+    return (sqr_dist < eps * eps);
 }
 
 template <typename T>
@@ -102,13 +104,14 @@ bool operator<(TemplatePoint<T> const& a, TemplatePoint<T> const& b)
 {
     for (std::size_t i = 0; i < 3; ++i)
     {
-        if (a[i] > b[i]) {
+        if (a[i] > b[i])
+        {
             return false;
         }
         if (a[i] < b[i])
         {
             return true;
-            }
+        }
 
         // continue with next dimension, because a[0] == b[0]
     }
@@ -159,4 +162,4 @@ std::ostream& operator<<(std::ostream& os, const TemplatePoint<T>& p)
     os << p[0] << " " << p[1] << " " << p[2];
     return os;
 }
-} // end namespace MathLib
+}  // end namespace MathLib
