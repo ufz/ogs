@@ -15,7 +15,24 @@
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "ProcessLib/AnalyticalJacobianAssembler.h"
 #include "ProcessLib/CentralDifferencesJacobianAssembler.h"
+#include "ProcessLib/ForwardDifferencesJacobianAssembler.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
+
+static std::size_t randomInteger(std::size_t const min, std::size_t const max)
+{
+    static std::random_device rd;
+    static std::mt19937 random_number_generator{rd()};
+    std::uniform_int_distribution<std::size_t> rnd(min, max);
+    return rnd(random_number_generator);
+}
+
+static double randomReal(double const min = 0., double const max = 1.)
+{
+    static std::random_device rd;
+    static std::mt19937 random_number_generator{rd()};
+    std::uniform_real_distribution<double> rnd{min, max};
+    return rnd(random_number_generator);
+}
 
 //! Fills a vector with values whose absolute value is between \c abs_min and
 //! \c abs_max.
@@ -23,16 +40,12 @@ void fillRandomlyConstrainedAbsoluteValues(std::vector<double>& xs,
                                            double const abs_min,
                                            double const abs_max)
 {
-    std::random_device rd;
-    std::mt19937 random_number_generator(rd());
     double const abs_range = abs_max - abs_min;
-    std::uniform_real_distribution<double> rnd(abs_min,
-                                               abs_min + 2.0 * abs_range);
 
     for (auto& x : xs)
     {
         // v in [ abs_min, abs_min + 2 abs_range ]
-        auto v = rnd(random_number_generator);
+        auto v = randomReal(abs_min, abs_min + 2.0 * abs_range);
         if (v > abs_max)
         {
             // produce negative values
@@ -492,32 +505,102 @@ public:
 };
 
 template <class LocAsm>
+struct ProcessLibForwardDifferencesJacobianAssembler : public ::testing::Test
+{
+    static void test()
+    {
+        std::size_t const size = randomInteger(3, 64);
+        std::vector<double> x(size);
+        std::vector<double> xdot(size);
+        // all components will be of order of magnitude one
+        fillRandomlyConstrainedAbsoluteValues(x, 0.5, 1.5);
+        fillRandomlyConstrainedAbsoluteValues(xdot, 0.5, 1.5);
+
+        double dt = randomReal();
+
+        testInner(x, xdot, dt);
+    }
+
+private:
+    static void testInner(std::vector<double> const& x,
+                          std::vector<double> const& xdot,
+                          double const dt)
+    {
+        ProcessLib::AnalyticalJacobianAssembler jac_asm_ana;
+        ProcessLib::ForwardDifferencesJacobianAssembler jac_asm_cd({1e-8});
+        LocAsm loc_asm;
+
+        double const eps = std::numeric_limits<double>::epsilon();
+
+        std::vector<double> M_data_cd;
+        std::vector<double> K_data_cd;
+        std::vector<double> b_data_cd;
+        std::vector<double> Jac_data_cd;
+        std::vector<double> M_data_ana;
+        std::vector<double> K_data_ana;
+        std::vector<double> b_data_ana;
+        std::vector<double> Jac_data_ana;
+        double const t = 0.0;
+
+        jac_asm_cd.assembleWithJacobian(loc_asm, t, dt, x, xdot, M_data_cd,
+                                        K_data_cd, b_data_cd, Jac_data_cd);
+
+        jac_asm_ana.assembleWithJacobian(loc_asm, t, dt, x, xdot, M_data_ana,
+                                         K_data_ana, b_data_ana, Jac_data_ana);
+
+        if (LocAsm::asmM)
+        {
+            ASSERT_EQ(x.size() * x.size(), M_data_cd.size());
+            ASSERT_EQ(x.size() * x.size(), M_data_ana.size());
+            for (std::size_t i = 0; i < x.size() * x.size(); ++i)
+            {
+                EXPECT_NEAR(M_data_ana[i], M_data_cd[i], eps);
+            }
+        }
+
+        if (LocAsm::asmK)
+        {
+            ASSERT_EQ(x.size() * x.size(), K_data_cd.size());
+            ASSERT_EQ(x.size() * x.size(), K_data_ana.size());
+            for (std::size_t i = 0; i < x.size() * x.size(); ++i)
+            {
+                EXPECT_NEAR(K_data_ana[i], K_data_cd[i], eps);
+            }
+        }
+
+        if (LocAsm::asmb)
+        {
+            ASSERT_EQ(x.size(), b_data_cd.size());
+            ASSERT_EQ(x.size(), b_data_ana.size());
+            for (std::size_t i = 0; i < x.size(); ++i)
+            {
+                EXPECT_NEAR(b_data_ana[i], b_data_cd[i], eps);
+            }
+        }
+
+        ASSERT_EQ(x.size() * x.size(), Jac_data_cd.size());
+        ASSERT_EQ(x.size() * x.size(), Jac_data_ana.size());
+        for (std::size_t i = 0; i < x.size() * x.size(); ++i)
+        {
+            EXPECT_NEAR(Jac_data_ana[i], Jac_data_cd[i],
+                        std::sqrt(LocAsm::getTol()));
+        }
+    }
+};
+
+template <class LocAsm>
 struct ProcessLibCentralDifferencesJacobianAssembler : public ::testing::Test
 {
     static void test()
     {
-        // these four local variables will be filled randomly
-        std::vector<double> x;
-        std::vector<double> xdot;
-        double dt;
+        std::size_t const size = randomInteger(3, 64);
+        std::vector<double> x(size);
+        std::vector<double> xdot(size);
+        // all components will be of order of magnitude one
+        fillRandomlyConstrainedAbsoluteValues(x, 0.5, 1.5);
+        fillRandomlyConstrainedAbsoluteValues(xdot, 0.5, 1.5);
 
-        std::random_device rd;
-        std::mt19937 random_number_generator(rd());
-        {
-            std::uniform_int_distribution<std::size_t> rnd(3, 64);
-
-            auto const size = rnd(random_number_generator);
-            x.resize(size);
-            xdot.resize(size);
-
-            // all components will be of order of magnitude one
-            fillRandomlyConstrainedAbsoluteValues(x, 0.5, 1.5);
-            fillRandomlyConstrainedAbsoluteValues(xdot, 0.5, 1.5);
-        }
-        {
-            std::uniform_real_distribution<double> rnd;
-            dt = rnd(random_number_generator);
-        }
+        double dt = randomReal();
 
         testInner(x, xdot, dt);
     }
@@ -612,6 +695,13 @@ using TestCases = ::testing::Types<
 TYPED_TEST_SUITE(ProcessLibCentralDifferencesJacobianAssembler, TestCases);
 
 TYPED_TEST(ProcessLibCentralDifferencesJacobianAssembler, Test)
+{
+    TestFixture::test();
+}
+
+TYPED_TEST_SUITE(ProcessLibForwardDifferencesJacobianAssembler, TestCases);
+
+TYPED_TEST(ProcessLibForwardDifferencesJacobianAssembler, Test)
 {
     TestFixture::test();
 }

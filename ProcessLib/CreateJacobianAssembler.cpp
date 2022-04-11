@@ -14,6 +14,7 @@
 #include "BaseLib/Error.h"
 #include "CentralDifferencesJacobianAssembler.h"
 #include "CompareJacobiansJacobianAssembler.h"
+#include "CreateForwardDifferencesJacobianAssembler.h"
 
 namespace ProcessLib
 {
@@ -40,6 +41,10 @@ std::unique_ptr<AbstractJacobianAssembler> createJacobianAssembler(
     if (type == "CompareJacobians")
     {
         return createCompareJacobiansJacobianAssembler(*config);
+    }
+    if (type == "ForwardDifferences")
+    {
+        return createForwardDifferencesJacobianAssembler(*config);
     }
 
     OGS_FATAL("Unknown Jacobian assembler type: `{:s}'.", type);
