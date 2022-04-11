@@ -76,14 +76,6 @@ public:
 
     T* getCoords() { return x_.data(); }
 
-    /** write point coordinates into stream (used from operator<<)
-     * \param os a standard output stream
-     */
-    virtual void write (std::ostream &os) const
-    {
-        std::copy(x_.cbegin(), x_.cend(), std::ostream_iterator<T>(os, " "));
-    }
-
 private:
     std::array<T, DIM> x_;
 };
