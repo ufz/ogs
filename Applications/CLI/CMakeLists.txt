@@ -49,7 +49,7 @@ if(OGS_USE_PYTHON)
     # Create OpenGeoSys python module
     # https://pybind11.readthedocs.io/en/stable/compiling.html#building-with-cmake
     pybind11_add_module(
-        OpenGeoSys SHARED ogs_python_module.cpp CommandLineArgumentParser.cpp
+        OpenGeoSys MODULE ogs_python_module.cpp CommandLineArgumentParser.cpp
     )
 
     # lld linker strips out PyInit_OpenGeoSys symbol. Use standard linker.
