@@ -12,7 +12,7 @@
 
 #include <optional>
 
-#include "MathLib/TemplatePoint.h"
+#include "MathLib/Point3d.h"
 
 namespace ParameterLib
 {
@@ -28,11 +28,10 @@ class SpatialPosition
 public:
     SpatialPosition() = default;
 
-    SpatialPosition(
-        std::optional<std::size_t> const& node_id,
-        std::optional<std::size_t> const& element_id,
-        std::optional<unsigned> const& integration_point,
-        std::optional<MathLib::TemplatePoint<double>> const& coordinates)
+    SpatialPosition(std::optional<std::size_t> const& node_id,
+                    std::optional<std::size_t> const& element_id,
+                    std::optional<unsigned> const& integration_point,
+                    std::optional<MathLib::Point3d> const& coordinates)
         : _node_id(node_id),
           _element_id(element_id),
           _integration_point(integration_point),
@@ -46,7 +45,7 @@ public:
     {
         return _integration_point;
     }
-    std::optional<MathLib::TemplatePoint<double>> const& getCoordinates() const
+    std::optional<MathLib::Point3d> const& getCoordinates() const
     {
         return _coordinates;
     }
@@ -69,16 +68,15 @@ public:
         _integration_point = integration_point;
     }
 
-    void setCoordinates(MathLib::TemplatePoint<double> const& coordinates)
+    void setCoordinates(MathLib::Point3d const& coordinates)
     {
         _coordinates = coordinates;
     }
 
-    void setAll(
-        std::optional<std::size_t> const& node_id,
-        std::optional<std::size_t> const& element_id,
-        std::optional<unsigned> const& integration_point,
-        std::optional<MathLib::TemplatePoint<double>> const& coordinates)
+    void setAll(std::optional<std::size_t> const& node_id,
+                std::optional<std::size_t> const& element_id,
+                std::optional<unsigned> const& integration_point,
+                std::optional<MathLib::Point3d> const& coordinates)
     {
         _node_id = node_id;
         _element_id = element_id;
@@ -98,7 +96,7 @@ private:
     std::optional<std::size_t> _node_id;
     std::optional<std::size_t> _element_id;
     std::optional<unsigned> _integration_point;
-    std::optional<MathLib::TemplatePoint<double>> _coordinates;
+    std::optional<MathLib::Point3d> _coordinates;
 };
 
 }  // namespace ParameterLib
