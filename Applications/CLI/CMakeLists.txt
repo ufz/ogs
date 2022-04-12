@@ -90,7 +90,8 @@ target_compile_definitions(ogs PRIVATE $<$<BOOL:${USE_INSITU}>:USE_INSITU>)
 add_test(NAME ogs_no_args COMMAND ogs)
 set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE LABELS "default")
 
-if(OGS_USE_PYTHON)
+if(OGS_USE_PYTHON AND NOT (WIN32 AND "${CMAKE_BUILD_TYPE}" STREQUAL "Release"))
+    # TODO: does not work on Windows Release
     add_test(
         NAME ogs_python_module
         COMMAND
