@@ -52,6 +52,15 @@ if(OGS_USE_PYTHON)
         OpenGeoSys SHARED ogs_python_module.cpp CommandLineArgumentParser.cpp
     )
 
+    # lld linker strips out PyInit_OpenGeoSys symbol. Use standard linker.
+    get_target_property(_link_options OpenGeoSys LINK_OPTIONS)
+    if(_link_options)
+        list(REMOVE_ITEM _link_options -fuse-ld=lld)
+        set_target_properties(
+            OpenGeoSys PROPERTIES LINK_OPTIONS "${_link_options}"
+        )
+    endif()
+
     target_link_libraries(
         OpenGeoSys PRIVATE ApplicationsLib BaseLib GitInfoLib tclap
                            pybind11::pybind11
