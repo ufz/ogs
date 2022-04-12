@@ -11,7 +11,7 @@
     },
     "conan": "1.45.0",
     "git": "2.14",
-    "cmake": "3.16",
+    "cmake": "3.22",
     "hugo": "0.64.1",
     "boost": "1.69.0",
     "eigen": "9441d94dccccd5db8d64179516fdc5b53994a047",
@@ -29,7 +29,7 @@
   "tested_version": {
     "ubuntu": "20.04",
     "qt": "5.15.2",
-    "cmake": "3.21.0"
+    "cmake": "3.22.3"
   },
   "ctest": {
     "large_runtime": 60

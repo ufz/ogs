@@ -22,7 +22,7 @@ namespace BaseLib
 {
 extern BASELIB_EXPORT std::shared_ptr<spdlog::logger> console;
 void setConsoleLogLevel(std::string const& level_string);
-
+void initOGSLogger(std::string const& log_level);
 }  // namespace BaseLib
 
 template <typename... Args>

@@ -10,6 +10,7 @@ code coverage:
     # default python on arch is 3.10; there are no vtk wheels for it (VTUInterface)
     CMAKE_ARGS: >-
       -DOGS_USE_PIP=ON
+      -DBUILD_SHARED_LIBS=ON
   before_script:
     - !reference [.template-build-linux, before_script]
     # Shortcut to the generated pages:

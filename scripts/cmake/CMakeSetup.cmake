@@ -68,7 +68,7 @@ endif()
 # Get the hostname
 site_name(HOSTNAME)
 
-if(BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS OR OGS_USE_PYTHON)
     # When static libraries are used in some shared libraries it is required
     # that also the static libraries have position independent code.
     set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)

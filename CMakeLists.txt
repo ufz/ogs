@@ -1,7 +1,9 @@
 # ---- OGS-6 Project ----
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.22)
 
 project(OGS-6)
+
+option(OGS_USE_PYTHON "Interface with Python" ON)
 
 include(scripts/cmake/CPM.cmake)
 include(scripts/cmake/CMakeSetup.cmake)
@@ -28,7 +30,6 @@ set(OGS_CONAN_BUILD "missing" CACHE STRING "Possible values: all, missing, \
 )
 option(OGS_DISABLE_COMPILER_CACHE "Disables compiler cache." OFF)
 option(OGS_USE_UNITY_BUILDS "Enables Unity builds for faster compilation." ON)
-option(OGS_USE_PYTHON "Interface with Python" ON)
 option(OGS_USE_PIP "Enables automatic Python virtual environment handling." OFF)
 cmake_dependent_option(
     OGS_BUILD_SWMM "Should the SWMM interface be built?" ON "WIN32" OFF
