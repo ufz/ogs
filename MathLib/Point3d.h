@@ -65,7 +65,7 @@ public:
     double* getCoords() { return x_.data(); }
 
 private:
-    std::array<double, 3> x_;
+    Eigen::Vector3d x_;
 };
 
 inline bool operator<(Point3d const& a, Point3d const& b)
