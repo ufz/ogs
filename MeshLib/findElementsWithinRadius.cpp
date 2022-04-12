@@ -46,14 +46,10 @@ std::vector<std::size_t> findElementsWithinRadius(Element const& start_element,
     auto node_inside_radius =
         [&start_element_nodes, radius_squared](Node const* test_node)
     {
-        for (auto const& n : start_element_nodes)
-        {
-            if (MathLib::sqrDist(*test_node, n) <= radius_squared)
-            {
-                return true;
-            }
-        }
-        return false;
+        return std::any_of(
+            start_element_nodes.begin(), start_element_nodes.end(),
+            [test_node, &radius_squared](auto const node)
+            { return MathLib::sqrDist(*test_node, node) <= radius_squared; });
     };
 
     // Returns true if any of the test element's nodes is inside the start
