@@ -21,10 +21,10 @@ double orientation3d(MathLib::Point3d const& p,
                      MathLib::Point3d const& b,
                      MathLib::Point3d const& c)
 {
-    auto const pp = Eigen::Map<Eigen::Vector3d const>(p.getCoords());
-    auto const pa = Eigen::Map<Eigen::Vector3d const>(a.getCoords());
-    auto const pb = Eigen::Map<Eigen::Vector3d const>(b.getCoords());
-    auto const pc = Eigen::Map<Eigen::Vector3d const>(c.getCoords());
+    auto const pp = Eigen::Map<Eigen::Vector3d const>(p.data());
+    auto const pa = Eigen::Map<Eigen::Vector3d const>(a.data());
+    auto const pb = Eigen::Map<Eigen::Vector3d const>(b.data());
+    auto const pc = Eigen::Map<Eigen::Vector3d const>(c.data());
 
     Eigen::Vector3d const u = pp - pa;
     Eigen::Vector3d const v = pp - pb;
@@ -37,10 +37,10 @@ double calcTetrahedronVolume(MathLib::Point3d const& a,
                              MathLib::Point3d const& c,
                              MathLib::Point3d const& d)
 {
-    auto const va = Eigen::Map<Eigen::Vector3d const>(a.getCoords());
-    auto const vb = Eigen::Map<Eigen::Vector3d const>(b.getCoords());
-    auto const vc = Eigen::Map<Eigen::Vector3d const>(c.getCoords());
-    auto const vd = Eigen::Map<Eigen::Vector3d const>(d.getCoords());
+    auto const va = Eigen::Map<Eigen::Vector3d const>(a.data());
+    auto const vb = Eigen::Map<Eigen::Vector3d const>(b.data());
+    auto const vc = Eigen::Map<Eigen::Vector3d const>(c.data());
+    auto const vd = Eigen::Map<Eigen::Vector3d const>(d.data());
     Eigen::Vector3d const w = vb - va;
     Eigen::Vector3d const u = vc - va;
     Eigen::Vector3d const v = vd - va;
@@ -50,9 +50,9 @@ double calcTetrahedronVolume(MathLib::Point3d const& a,
 double calcTriangleArea(MathLib::Point3d const& a, MathLib::Point3d const& b,
                         MathLib::Point3d const& c)
 {
-    auto const va = Eigen::Map<Eigen::Vector3d const>(a.getCoords());
-    auto const vb = Eigen::Map<Eigen::Vector3d const>(b.getCoords());
-    auto const vc = Eigen::Map<Eigen::Vector3d const>(c.getCoords());
+    auto const va = Eigen::Map<Eigen::Vector3d const>(a.data());
+    auto const vb = Eigen::Map<Eigen::Vector3d const>(b.data());
+    auto const vc = Eigen::Map<Eigen::Vector3d const>(c.data());
     Eigen::Vector3d const u = vc - va;
     Eigen::Vector3d const v = vb - va;
     Eigen::Vector3d const w = u.cross(v);
@@ -124,9 +124,9 @@ bool gaussPointInTriangle(MathLib::Point3d const& q,
                           double eps_pnt_out_of_plane,
                           double eps_pnt_out_of_tri)
 {
-    auto const pa = Eigen::Map<Eigen::Vector3d const>(a.getCoords());
-    auto const pb = Eigen::Map<Eigen::Vector3d const>(b.getCoords());
-    auto const pc = Eigen::Map<Eigen::Vector3d const>(c.getCoords());
+    auto const pa = Eigen::Map<Eigen::Vector3d const>(a.data());
+    auto const pb = Eigen::Map<Eigen::Vector3d const>(b.data());
+    auto const pc = Eigen::Map<Eigen::Vector3d const>(c.data());
     Eigen::Vector3d const v = pb - pa;
     Eigen::Vector3d const w = pc - pa;
 
@@ -171,10 +171,10 @@ bool barycentricPointInTriangle(MathLib::Point3d const& p,
         return false;
     }
 
-    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.getCoords());
-    auto const va = Eigen::Map<Eigen::Vector3d const>(a.getCoords());
-    auto const vb = Eigen::Map<Eigen::Vector3d const>(b.getCoords());
-    auto const vc = Eigen::Map<Eigen::Vector3d const>(c.getCoords());
+    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.data());
+    auto const va = Eigen::Map<Eigen::Vector3d const>(a.data());
+    auto const vb = Eigen::Map<Eigen::Vector3d const>(b.data());
+    auto const vc = Eigen::Map<Eigen::Vector3d const>(c.data());
     Eigen::Vector3d const pa = va - vp;
     Eigen::Vector3d const pb = vb - vp;
     Eigen::Vector3d const pc = vc - vp;
@@ -236,10 +236,10 @@ bool dividedByPlane(const MathLib::Point3d& a, const MathLib::Point3d& b,
 bool isCoplanar(const MathLib::Point3d& a, const MathLib::Point3d& b,
                 const MathLib::Point3d& c, const MathLib::Point3d& d)
 {
-    auto const pa = Eigen::Map<Eigen::Vector3d const>(a.getCoords());
-    auto const pb = Eigen::Map<Eigen::Vector3d const>(b.getCoords());
-    auto const pc = Eigen::Map<Eigen::Vector3d const>(c.getCoords());
-    auto const pd = Eigen::Map<Eigen::Vector3d const>(d.getCoords());
+    auto const pa = Eigen::Map<Eigen::Vector3d const>(a.data());
+    auto const pb = Eigen::Map<Eigen::Vector3d const>(b.data());
+    auto const pc = Eigen::Map<Eigen::Vector3d const>(c.data());
+    auto const pd = Eigen::Map<Eigen::Vector3d const>(d.data());
 
     Eigen::Vector3d const ab = pb - pa;
     Eigen::Vector3d const ac = pc - pa;

@@ -19,9 +19,9 @@ namespace MathLib
 double calcProjPntToLineAndDists(Point3d const& pp, Point3d const& pa,
                                  Point3d const& pb, double& lambda, double& d0)
 {
-    auto const a = Eigen::Map<Eigen::Vector3d const>(pa.getCoords());
-    auto const b = Eigen::Map<Eigen::Vector3d const>(pb.getCoords());
-    auto const p = Eigen::Map<Eigen::Vector3d const>(pp.getCoords());
+    auto const a = Eigen::Map<Eigen::Vector3d const>(pa.data());
+    auto const b = Eigen::Map<Eigen::Vector3d const>(pb.data());
+    auto const p = Eigen::Map<Eigen::Vector3d const>(pp.data());
 
     // g(lambda) = a + lambda v, v = b-a
     Eigen::Vector3d const v = b - a;
@@ -41,9 +41,9 @@ double calcProjPntToLineAndDists(Point3d const& pp, Point3d const& pa,
 
 double getAngle(Point3d const& p0, Point3d const& p1, Point3d const& p2)
 {
-    auto const a = Eigen::Map<Eigen::Vector3d const>(p0.getCoords());
-    auto const b = Eigen::Map<Eigen::Vector3d const>(p1.getCoords());
-    auto const c = Eigen::Map<Eigen::Vector3d const>(p2.getCoords());
+    auto const a = Eigen::Map<Eigen::Vector3d const>(p0.data());
+    auto const b = Eigen::Map<Eigen::Vector3d const>(p1.data());
+    auto const c = Eigen::Map<Eigen::Vector3d const>(p2.data());
     Eigen::Vector3d const v0 = a - b;
     Eigen::Vector3d const v1 = c - b;
 
