@@ -46,7 +46,6 @@ include(GNUInstallDirs)
 include(ProcessorCount)
 ProcessorCount(NUM_PROCESSORS)
 set(NUM_PROCESSORS ${NUM_PROCESSORS} CACHE STRING "Processor count")
-include(CMakeDependentOption)
 
 # Check if this project is included in another
 if(NOT PROJECT_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
@@ -68,7 +67,7 @@ endif()
 # Get the hostname
 site_name(HOSTNAME)
 
-if(BUILD_SHARED_LIBS OR OGS_USE_PYTHON)
+if(BUILD_SHARED_LIBS OR OGS_BUILD_PYTHON_MODULE)
     # When static libraries are used in some shared libraries it is required
     # that also the static libraries have position independent code.
     set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
