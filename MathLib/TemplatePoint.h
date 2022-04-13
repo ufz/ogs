@@ -33,7 +33,8 @@ namespace MathLib
  * \brief class-template for points can be instantiated by a numeric type.
  * \tparam T the coordinate type
  */
-template <typename T, std::size_t DIM = 3> class TemplatePoint
+template <typename T>
+class TemplatePoint
 {
 public:
     /** default constructor with zero coordinates */
@@ -43,7 +44,7 @@ public:
      *
      * @param x std::array containing the coordinates of the point
      */
-    explicit TemplatePoint(std::array<T, DIM> x);
+    explicit TemplatePoint(std::array<T, 3> x);
 
     /** virtual destructor */
     virtual ~TemplatePoint() = default;
@@ -52,23 +53,21 @@ public:
     TemplatePoint& operator=(TemplatePoint const&) = default;
 
     /** \brief const access operator
-     *  The access to the point coordinates is like the access to a field. Code example:
-     * \code
-     * Point<double> point (1.0, 2.0, 3.0);
-     * double sqrNrm2 = point[0] * point[0] + point[1] * point[1] + point[2] + point[2];
-     * \endcode
+     *  The access to the point coordinates is like the access to a field. Code
+     * example: \code Point<double> point (1.0, 2.0, 3.0); double sqrNrm2 =
+     * point[0] * point[0] + point[1] * point[1] + point[2] + point[2]; \endcode
      */
-    const T& operator[] (std::size_t idx) const
+    const T& operator[](std::size_t idx) const
     {
-        assert (idx < DIM);
+        assert(idx < 3);
         return x_[idx];
     }
-    /** \brief access operator (see book Effektiv C++ programmieren - subsection 1.3.2 ).
-     * \sa const T& operator[] (std::size_t idx) const
+    /** \brief access operator (see book Effektiv C++ programmieren -
+     * subsection 1.3.2 ). \sa const T& operator[] (std::size_t idx) const
      */
-    T& operator[] (std::size_t idx)
+    T& operator[](std::size_t idx)
     {
-        return const_cast<T&> (static_cast<const TemplatePoint&> (*this)[idx]);
+        return const_cast<T&>(static_cast<const TemplatePoint&>(*this)[idx]);
     }
 
     /** returns an array containing the coordinates of the point */
@@ -76,60 +75,48 @@ public:
 
     T* getCoords() { return x_.data(); }
 
-    /** write point coordinates into stream (used from operator<<)
-     * \param os a standard output stream
-     */
-    virtual void write (std::ostream &os) const
-    {
-        std::copy(x_.cbegin(), x_.cend(), std::ostream_iterator<T>(os, " "));
-    }
-
-    /** read point coordinates into stream (used from operator>>) */
-    virtual void read (std::istream &is)
-    {
-        std::copy(std::istream_iterator<T>(is), std::istream_iterator<T>(),
-                  x_.begin());
-    }
-
 private:
-    std::array<T, DIM> x_;
+    std::array<T, 3> x_;
 };
 
-template <typename T, std::size_t DIM>
-TemplatePoint<T, DIM>::TemplatePoint() : x_({{0}})
-{}
+template <typename T>
+TemplatePoint<T>::TemplatePoint() : x_({{0}})
+{
+}
 
-template <typename T, std::size_t DIM>
-TemplatePoint<T, DIM>::TemplatePoint(std::array<T, DIM> x) : x_(std::move(x))
-{}
+template <typename T>
+TemplatePoint<T>::TemplatePoint(std::array<T, 3> x) : x_(std::move(x))
+{
+}
 
 /** Equality of TemplatePoint's up to an epsilon.
  */
-template <typename T, std::size_t DIM>
-bool operator==(TemplatePoint<T,DIM> const& a, TemplatePoint<T,DIM> const& b)
+template <typename T>
+bool operator==(TemplatePoint<T> const& a, TemplatePoint<T> const& b)
 {
-    T const sqr_dist(sqrDist(a,b));
+    T const sqr_dist(sqrDist(a, b));
     auto const eps = std::numeric_limits<T>::epsilon();
-    return (sqr_dist < eps*eps);
+    return (sqr_dist < eps * eps);
 }
 
-template <typename T, std::size_t DIM>
-bool operator< (TemplatePoint<T,DIM> const& a, TemplatePoint<T,DIM> const& b)
+template <typename T>
+bool operator<(TemplatePoint<T> const& a, TemplatePoint<T> const& b)
 {
-    for (std::size_t i = 0; i < DIM; ++i)
+    for (std::size_t i = 0; i < 3; ++i)
     {
-        if (a[i] > b[i]) {
+        if (a[i] > b[i])
+        {
             return false;
         }
         if (a[i] < b[i])
         {
             return true;
-            }
+        }
 
         // continue with next dimension, because a[0] == b[0]
     }
 
-    // The values in all dimenisions are equal.
+    // The values in all dimensions are equal.
     return false;
 }
 
@@ -142,11 +129,11 @@ bool operator< (TemplatePoint<T,DIM> const& a, TemplatePoint<T,DIM> const& b)
  *
  * @return true, if a is smaller then or equal to b according to the following
  * test \f$ |a_i - b_i| > \epsilon \cdot \min (|a_i|, |b_i|) \f$ \b and
- * \f$  |a_i - b_i| > \epsilon \f$ for all coordinates \f$ 0 \le i < \textrm{DIM} \f$.
+ * \f$  |a_i - b_i| > \epsilon \f$ for all coordinates \f$ 0 \le i < 3 \f$.
  */
-template <typename T, std::size_t DIM>
-bool lessEq(TemplatePoint<T, DIM> const& a, TemplatePoint<T, DIM> const& b,
-        double eps = std::numeric_limits<double>::epsilon())
+template <typename T>
+bool lessEq(TemplatePoint<T> const& a, TemplatePoint<T> const& b,
+            double eps = std::numeric_limits<double>::epsilon())
 {
     auto coordinateIsLargerEps = [&eps](T const u, T const v) -> bool
     {
@@ -154,7 +141,7 @@ bool lessEq(TemplatePoint<T, DIM> const& a, TemplatePoint<T, DIM> const& b,
                std::abs(u - v) > eps;
     };
 
-    for (std::size_t i = 0; i < DIM; ++i)
+    for (std::size_t i = 0; i < 3; ++i)
     {
         // test a relative and an absolute criterion
         if (coordinateIsLargerEps(a[i], b[i]))
@@ -169,18 +156,10 @@ bool lessEq(TemplatePoint<T, DIM> const& a, TemplatePoint<T, DIM> const& b,
 }
 
 /** overload the output operator for class Point */
-template <typename T, std::size_t DIM>
-std::ostream& operator<< (std::ostream &os, const TemplatePoint<T,DIM> &p)
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const TemplatePoint<T>& p)
 {
-    p.write (os);
+    os << p[0] << " " << p[1] << " " << p[2];
     return os;
 }
-
-/** overload the input operator for class Point */
-template <typename T, std::size_t DIM>
-std::istream& operator>> (std::istream &is, TemplatePoint<T,DIM> &p)
-{
-    p.read (is);
-    return is;
-}
-} // end namespace MathLib
+}  // end namespace MathLib
