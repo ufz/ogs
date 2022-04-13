@@ -61,8 +61,10 @@ public:
 
     /** returns an array containing the coordinates of the point */
     const double* getCoords() const { return x_.data(); }
+    const double* data() const { return x_.data(); }
 
     double* getCoords() { return x_.data(); }
+    double* data() { return x_.data(); }
 
 private:
     Eigen::Vector3d x_;
