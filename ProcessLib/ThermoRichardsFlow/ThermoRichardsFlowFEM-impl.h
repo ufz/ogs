@@ -200,12 +200,17 @@ void ThermoRichardsFlowLocalAssembler<
     typename ShapeMatricesType::NodalMatrixType K_Tp =
         ShapeMatricesType::NodalMatrixType::Zero(temperature_size,
                                                  pressure_size);
+    typename ShapeMatricesType::NodalMatrixType dK_TT_dp =
+        ShapeMatricesType::NodalMatrixType::Zero(temperature_size,
+                                                 pressure_size);
     typename ShapeMatricesType::NodalMatrixType M_pT =
         ShapeMatricesType::NodalMatrixType::Zero(pressure_size,
                                                  temperature_size);
     typename ShapeMatricesType::NodalMatrixType laplace_p =
         ShapeMatricesType::NodalMatrixType::Zero(pressure_size, pressure_size);
-
+    typename ShapeMatricesType::NodalMatrixType laplace_T =
+        ShapeMatricesType::NodalMatrixType::Zero(pressure_size,
+                                                 temperature_size);
     typename ShapeMatricesType::NodalMatrixType storage_p_a_p =
         ShapeMatricesType::NodalMatrixType::Zero(pressure_size, pressure_size);
 
@@ -360,6 +365,15 @@ void ThermoRichardsFlowLocalAssembler<
         GlobalDimMatrixType const Ki_over_mu = K_intrinsic / mu;
         GlobalDimMatrixType const rho_Ki_over_mu = rho_LR * Ki_over_mu;
 
+        auto const K_pT_thermal_osmosis =
+            (solid_phase.hasProperty(
+                 MaterialPropertyLib::PropertyType::thermal_osmosis_coefficient)
+                 ? MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                       solid_phase
+                           [MPL::PropertyType::thermal_osmosis_coefficient]
+                               .value(variables, x_position, t, dt))
+                 : Eigen::MatrixXd::Zero(GlobalDim, GlobalDim));
+
         // Consider anisotropic thermal expansion.
         // Read in 3x3 tensor. 2D case also requires expansion coeff. for z-
         // component.
@@ -379,7 +393,8 @@ void ThermoRichardsFlowLocalAssembler<
         //
         laplace_p.noalias() +=
             dNdx.transpose() * k_rel * rho_Ki_over_mu * dNdx * w;
-
+        laplace_T.noalias() +=
+            dNdx.transpose() * rho_LR * K_pT_thermal_osmosis * dNdx * w;
         const double alphaB_minus_phi = alpha - phi;
         double const a0 = alphaB_minus_phi * beta_SR;
         double const specific_storage_a_p =
@@ -480,7 +495,8 @@ void ThermoRichardsFlowLocalAssembler<
                         .value(variables, x_position, t, dt));
 
             GlobalDimVectorType const velocity_L = GlobalDimVectorType(
-                -Ki_over_mu * k_rel * (dNdx * p_L - rho_LR * b));
+                -Ki_over_mu * k_rel * (dNdx * p_L - rho_LR * b) -
+                K_pT_thermal_osmosis * dNdx * T);
 
             K_TT.noalias() += (dNdx.transpose() * thermal_conductivity * dNdx +
                                N.transpose() * velocity_L.transpose() * dNdx *
@@ -490,13 +506,15 @@ void ThermoRichardsFlowLocalAssembler<
             //
             // temperature equation, pressure part
             //
-            K_Tp.noalias() -= rho_LR * specific_heat_capacity_fluid *
-                              N.transpose() * (dNdx * T).transpose() * k_rel *
-                              Ki_over_mu * dNdx * w;
+            K_Tp.noalias() +=
+                dNdx.transpose() * T_ip * K_pT_thermal_osmosis * dNdx * w;
+            dK_TT_dp.noalias() -= rho_LR * specific_heat_capacity_fluid *
+                                  N.transpose() * (dNdx * T).transpose() *
+                                  k_rel * Ki_over_mu * dNdx * w;
 
-            K_Tp.noalias() -= rho_LR * specific_heat_capacity_fluid *
-                              N.transpose() * velocity_L.dot(dNdx * T) / k_rel *
-                              dk_rel_dS_L * dS_L_dp_cap * N * w;
+            dK_TT_dp.noalias() -= rho_LR * specific_heat_capacity_fluid *
+                                  N.transpose() * velocity_L.dot(dNdx * T) /
+                                  k_rel * dk_rel_dS_L * dS_L_dp_cap * N * w;
         }
         if (liquid_phase.hasProperty(MPL::PropertyType::vapour_diffusion) &&
             S_L < 1.0)
@@ -605,7 +623,7 @@ void ThermoRichardsFlowLocalAssembler<
                 K_TT.noalias() +=
                     L0 * f_Tv_D_Tv * dNdx.transpose() * dNdx * w / rho_LR;
                 // temperature equation, pressure part
-                K_Tp.noalias() +=
+                dK_TT_dp.noalias() +=
                     L0 * D_pv * dNdx.transpose() * dNdx * w / rho_LR;
             }
         }
@@ -631,7 +649,7 @@ void ThermoRichardsFlowLocalAssembler<
     local_Jac
         .template block<temperature_size, pressure_size>(temperature_index,
                                                          pressure_index)
-        .noalias() += K_Tp;
+        .noalias() += K_Tp + dK_TT_dp;
 
     // pressure equation, pressure part.
     local_Jac
@@ -643,7 +661,7 @@ void ThermoRichardsFlowLocalAssembler<
     local_Jac
         .template block<pressure_size, temperature_size>(pressure_index,
                                                          temperature_index)
-        .noalias() += M_pT / dt;
+        .noalias() += M_pT / dt + laplace_T;
 
     //
     // -- Residual
@@ -651,11 +669,13 @@ void ThermoRichardsFlowLocalAssembler<
     // temperature equation
     local_rhs.template segment<temperature_size>(temperature_index).noalias() -=
         M_TT * T_dot + K_TT * T;
+    local_rhs.template segment<temperature_size>(temperature_index).noalias() -=
+        K_Tp * p_L;
 
     // pressure equation
     local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
-        laplace_p * p_L + (storage_p_a_p + storage_p_a_S) * p_L_dot +
-        M_pT * T_dot;
+        laplace_p * p_L + laplace_T * T +
+        (storage_p_a_p + storage_p_a_S) * p_L_dot + M_pT * T_dot;
     if (liquid_phase.hasProperty(MPL::PropertyType::vapour_diffusion) &&
         liquid_phase.hasProperty(MPL::PropertyType::latent_heat))
     {
@@ -837,6 +857,15 @@ void ThermoRichardsFlowLocalAssembler<
                 alpha, phi, _element.getID(), ip);
         }
 
+        auto const K_pT_thermal_osmosis =
+            (solid_phase.hasProperty(
+                 MaterialPropertyLib::PropertyType::thermal_osmosis_coefficient)
+                 ? MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                       solid_phase
+                           [MPL::PropertyType::thermal_osmosis_coefficient]
+                               .value(variables, x_position, t, dt))
+                 : Eigen::MatrixXd::Zero(GlobalDim, GlobalDim));
+
         double const k_rel =
             medium[MPL::PropertyType::relative_permeability]
                 .template value<double>(variables, x_position, t, dt);
@@ -907,6 +936,12 @@ void ThermoRichardsFlowLocalAssembler<
                                solid_linear_thermal_expansion_coefficient,
                                solid_phase, variables, x_position, t, dt));
 
+        local_K
+            .template block<pressure_size, temperature_size>(pressure_index,
+                                                             temperature_index)
+            .noalias() +=
+            dNdx.transpose() * rho_LR * K_pT_thermal_osmosis * dNdx * w;
+
         local_M
             .template block<pressure_size, temperature_size>(pressure_index,
                                                              temperature_index)
@@ -942,7 +977,8 @@ void ThermoRichardsFlowLocalAssembler<
                         .value(variables, x_position, t, dt));
 
             GlobalDimVectorType const velocity_L = GlobalDimVectorType(
-                -Ki_over_mu * k_rel * (dNdx * p_L - rho_LR * b));
+                -Ki_over_mu * k_rel * (dNdx * p_L - rho_LR * b) -
+                K_pT_thermal_osmosis * dNdx * T);
 
             local_K
                 .template block<temperature_size, temperature_size>(
@@ -951,6 +987,11 @@ void ThermoRichardsFlowLocalAssembler<
                                N.transpose() * velocity_L.transpose() * dNdx *
                                    rho_LR * specific_heat_capacity_fluid) *
                               w;
+            local_K
+                .template block<temperature_size, pressure_size>(
+                    temperature_index, pressure_index)
+                .noalias() +=
+                dNdx.transpose() * T_ip * K_pT_thermal_osmosis * dNdx * w;
         }
         if (liquid_phase.hasProperty(MPL::PropertyType::vapour_diffusion) &&
             S_L < 1.0)
@@ -1305,10 +1346,20 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod,
 
         auto const& b = _process_data.specific_body_force;
 
+        auto const K_pT_thermal_osmosis =
+            (solid_phase.hasProperty(
+                 MaterialPropertyLib::PropertyType::thermal_osmosis_coefficient)
+                 ? MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                       solid_phase
+                           [MPL::PropertyType::thermal_osmosis_coefficient]
+                               .value(variables, x_position, t, dt))
+                 : Eigen::MatrixXd::Zero(GlobalDim, GlobalDim));
+
         // Compute the velocity
         auto const& dNdx = _ip_data[ip].dNdx;
-        _ip_data[ip].v_darcy.noalias() =
-            -K_over_mu * dNdx * p_L + rho_LR * K_over_mu * b;
+        _ip_data[ip].v_darcy.noalias() = -K_over_mu * dNdx * p_L -
+                                         K_pT_thermal_osmosis * dNdx * T +
+                                         rho_LR * K_over_mu * b;
 
         saturation_avg += S_L;
         porosity_avg += phi;
