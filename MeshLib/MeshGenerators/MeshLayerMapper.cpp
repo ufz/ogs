@@ -311,8 +311,7 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh const& mesh,
         if (!ignore_nodata && !raster.isPntOnRaster(*nodes[i]))
         {
             // use either default value or elevation from layer above
-            nodes[i]->updateCoordinates((*nodes[i])[0], (*nodes[i])[1],
-                                        nodata_replacement);
+            (*nodes[i])[2] = nodata_replacement;
             continue;
         }
 
@@ -330,7 +329,7 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh const& mesh,
         {
             elevation = raster.interpolateValueAtPoint(*nodes[i]);
         }
-        nodes[i]->updateCoordinates((*nodes[i])[0], (*nodes[i])[1], elevation);
+        (*nodes[i])[2] = elevation;
     }
 
     return true;
@@ -348,7 +347,7 @@ bool MeshLayerMapper::mapToStaticValue(MeshLib::Mesh const& mesh,
     std::vector<MeshLib::Node*> const& nodes(mesh.getNodes());
     for (MeshLib::Node* node : nodes)
     {
-        node->updateCoordinates((*node)[0], (*node)[1], value);
+        (*node)[2] = value;
     }
     return true;
 }
