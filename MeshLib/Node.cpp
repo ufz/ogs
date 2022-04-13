@@ -35,11 +35,4 @@ Node::Node(double x, double y, double z, std::size_t id)
 }
 
 Node::Node(const Node& node) : MathLib::Point3dWithID(node, node.getID()) {}
-
-void Node::updateCoordinates(double x, double y, double z)
-{
-    (*this)[0] = x;
-    (*this)[1] = y;
-    (*this)[2] = z;
-}
 }  // namespace MeshLib
