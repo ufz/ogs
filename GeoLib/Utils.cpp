@@ -26,8 +26,8 @@ std::vector<GeoLib::Point*> generateEquidistantPoints(
             "be non-negative.");
     }
 
-    auto const start = Eigen::Map<Eigen::Vector3d const>(begin.getCoords());
-    auto const stop = Eigen::Map<Eigen::Vector3d const>(end.getCoords());
+    auto const start = Eigen::Map<Eigen::Vector3d const>(begin.data());
+    auto const stop = Eigen::Map<Eigen::Vector3d const>(end.data());
     auto const delta = (stop - start) / (number_of_subdivisions + 1);
 
     std::vector<GeoLib::Point*> points;

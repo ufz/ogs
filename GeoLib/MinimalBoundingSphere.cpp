@@ -34,8 +34,8 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
                                              MathLib::Point3d const& q)
     : _radius(std::numeric_limits<double>::epsilon()), _center(p)
 {
-    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.getCoords());
-    auto const vq = Eigen::Map<Eigen::Vector3d const>(q.getCoords());
+    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.data());
+    auto const vq = Eigen::Map<Eigen::Vector3d const>(q.data());
     Eigen::Vector3d const a = vq - vp;
 
     Eigen::Vector3d o = a / 2;
@@ -48,9 +48,9 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
                                              MathLib::Point3d const& q,
                                              MathLib::Point3d const& r)
 {
-    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.getCoords());
-    auto const vq = Eigen::Map<Eigen::Vector3d const>(q.getCoords());
-    auto const vr = Eigen::Map<Eigen::Vector3d const>(r.getCoords());
+    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.data());
+    auto const vq = Eigen::Map<Eigen::Vector3d const>(q.data());
+    auto const vr = Eigen::Map<Eigen::Vector3d const>(r.data());
     Eigen::Vector3d const a = vr - vp;
     Eigen::Vector3d const b = vq - vp;
     Eigen::Vector3d const axb = a.cross(b);
@@ -85,10 +85,10 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
                                              MathLib::Point3d const& r,
                                              MathLib::Point3d const& s)
 {
-    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.getCoords());
-    auto const vq = Eigen::Map<Eigen::Vector3d const>(q.getCoords());
-    auto const vr = Eigen::Map<Eigen::Vector3d const>(r.getCoords());
-    auto const vs = Eigen::Map<Eigen::Vector3d const>(s.getCoords());
+    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.data());
+    auto const vq = Eigen::Map<Eigen::Vector3d const>(q.data());
+    auto const vr = Eigen::Map<Eigen::Vector3d const>(r.data());
+    auto const vs = Eigen::Map<Eigen::Vector3d const>(s.data());
 
     Eigen::Vector3d const va = vq - vp;
     Eigen::Vector3d const vb = vr - vp;

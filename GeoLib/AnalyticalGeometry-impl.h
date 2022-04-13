@@ -26,7 +26,7 @@ std::pair<Eigen::Vector3d, double> getNewellPlane(InputIterator pnts_begin,
         plane_normal[2] += (pt_i[0] - pt_j[0])
                            * (pt_i[1] + pt_j[1]); // projection on xy
 
-        centroid += Eigen::Map<Eigen::Vector3d const>(pt_j.getCoords());
+        centroid += Eigen::Map<Eigen::Vector3d const>(pt_j.data());
     }
 
     plane_normal.normalize();
@@ -62,7 +62,7 @@ std::pair<Eigen::Vector3d, double> getNewellPlane(
         plane_normal[2] += (pnts[i][0] - pnts[j][0])
                            * (pnts[i][1] + pnts[j][1]); // projection on xy
 
-        centroid += Eigen::Map<Eigen::Vector3d const>(pnts[j].getCoords());
+        centroid += Eigen::Map<Eigen::Vector3d const>(pnts[j].data());
     }
 
     plane_normal.normalize();
@@ -77,8 +77,8 @@ void rotatePoints(Eigen::Matrix3d const& rot_mat, InputIterator pnts_begin,
 {
     for (auto it = pnts_begin; it != pnts_end; ++it)
     {
-        Eigen::Map<Eigen::Vector3d>((*it)->getCoords()) =
-            rot_mat * Eigen::Map<Eigen::Vector3d const>((*it)->getCoords());
+        Eigen::Map<Eigen::Vector3d>((*it)->data()) =
+            rot_mat * Eigen::Map<Eigen::Vector3d const>((*it)->data());
     }
 }
 

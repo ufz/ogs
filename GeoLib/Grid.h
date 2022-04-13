@@ -533,7 +533,7 @@ POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
     }      // end else
 
     auto to_eigen = [](auto const& point)
-    { return Eigen::Map<Eigen::Vector3d const>(point.getCoords()); };
+    { return Eigen::Map<Eigen::Vector3d const>(point.data()); };
 
     double len((to_eigen(pnt) - to_eigen(*nearest_pnt)).norm());
     // search all other grid cells within the cube with the edge nodes
@@ -653,7 +653,7 @@ bool Grid<POINT>::calcNearestPointInGridCell(
         return false;
 
     auto to_eigen = [](auto const& point)
-    { return Eigen::Map<Eigen::Vector3d const>(point.getCoords()); };
+    { return Eigen::Map<Eigen::Vector3d const>(point.data()); };
 
     const std::size_t n_pnts(pnts.size());
     sqr_min_dist = (to_eigen(*pnts[0]) - to_eigen(pnt)).squaredNorm();
@@ -682,7 +682,7 @@ std::vector<std::size_t> Grid<POINT>::getPointsInEpsilonEnvironment(
     double const sqr_eps(eps * eps);
 
     auto to_eigen = [](auto const& point)
-    { return Eigen::Map<Eigen::Vector3d const>(point.getCoords()); };
+    { return Eigen::Map<Eigen::Vector3d const>(point.data()); };
 
     std::vector<std::size_t> pnts;
     for (auto vec : vec_pnts)
