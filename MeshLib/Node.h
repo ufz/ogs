@@ -54,10 +54,5 @@ public:
     /// Copy constructor
     Node(const Node &node);
 
-protected:
-    /// Update coordinates of a node.
-    /// This method automatically also updates the areas/volumes of all connected elements.
-    void updateCoordinates(double x, double y, double z);
-
 }; /* class */
 }  // namespace MeshLib
