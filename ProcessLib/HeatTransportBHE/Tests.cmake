@@ -82,7 +82,7 @@ AddTest(
     BHE_GW_advection_ts_10_t_500.000000.vtu BHE_GW_advection_ts_10_t_500.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
 )
 
-if("${Python3_VERSION}" VERSION_LESS 3.9)
+if("${Python_VERSION}" VERSION_LESS 3.9)
     AddTest(
         NAME HeatTransportBHE_3D_3BHEs_array
         PATH Parabolic/T/3D_3BHEs_array

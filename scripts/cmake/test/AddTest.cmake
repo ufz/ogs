@@ -221,7 +221,7 @@ function(AddTest)
     if(AddTest_TESTER STREQUAL "xdmfdiff" AND NOT TARGET xdmfdiff)
         return()
     endif()
-    if(AddTest_TESTER STREQUAL "gmldiff" AND NOT ${Python3_Interpreter_FOUND})
+    if(AddTest_TESTER STREQUAL "gmldiff" AND NOT ${Python_Interpreter_FOUND})
         return()
     endif()
     if(AddTest_TESTER STREQUAL "memcheck" AND NOT GREP_TOOL_PATH)
@@ -369,13 +369,13 @@ Use six arguments version of AddTest with absolute and relative tolerances"
 
             get_filename_component(FILE_EXPECTED ${GML_FILE} NAME)
             if(WIN32)
-                file(TO_NATIVE_PATH "${Python3_EXECUTABLE}" PY_EXE)
+                file(TO_NATIVE_PATH "${Python_EXECUTABLE}" PY_EXE)
                 # Dirty hack for Windows Python paths with spaces:
                 string(REPLACE "Program Files" "\"Program Files\"" PY_EXE
                                ${PY_EXE}
                 )
             else()
-                set(PY_EXE ${Python3_EXECUTABLE})
+                set(PY_EXE ${Python_EXECUTABLE})
             endif()
             list(
                 APPEND

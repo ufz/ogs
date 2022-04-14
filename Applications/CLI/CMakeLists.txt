@@ -100,7 +100,7 @@ if(OGS_BUILD_PYTHON_MODULE AND NOT (WIN32 AND "${CMAKE_BUILD_TYPE}" STREQUAL
     add_test(
         NAME ogs_python_module
         COMMAND
-            ${Python3_EXECUTABLE}
+            ${Python_EXECUTABLE}
             ${CMAKE_CURRENT_SOURCE_DIR}/ogs_python_module.py
             ${CMAKE_SOURCE_DIR}/Tests/Data/Parabolic/LiquidFlow/Flux/cube_1e3_calculatesurfaceflux.prj
     )

@@ -88,15 +88,8 @@ endif()
 
 if(OGS_USE_PYTHON)
     CPMAddPackage(
-        NAME pybind11
-        GITHUB_REPOSITORY pybind/pybind11
+        NAME pybind11 GITHUB_REPOSITORY pybind/pybind11
         GIT_TAG f1abf5d9159b805674197f6bc443592e631c9130
-        # pybind11 uses old CMake find functionality, pass variables to use the
-        # same Python installation.
-        OPTIONS "PYTHON_INCLUDE_DIR ${Python3_INCLUDE_DIRS}"
-                "PYTHON_LIBRARIES ${Python3_LIBRARIES}"
-                "PYTHON_EXECUTABLE ${Python3_EXECUTABLE}"
-                "PYBIND11_PYTHON_VERSION ${Python3_VERSION}"
     )
 endif()
 

@@ -26,6 +26,6 @@ echo "$( \
   printf ']\n')" \
   > $OUTPUT_FILE
 
-if [ -f ${Python3_EXECUTABLE} ]; then
-    ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/test/cppcheck_gen_hashes.py $OUTPUT_FILE
+if [ -f ${Python_EXECUTABLE} ]; then
+    ${Python_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/test/cppcheck_gen_hashes.py $OUTPUT_FILE
 fi

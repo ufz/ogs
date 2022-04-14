@@ -61,7 +61,7 @@ function(NotebookTest)
     add_test(
         NAME ${TEST_NAME}
         COMMAND
-            ${CMAKE_COMMAND} -DEXECUTABLE=${Python3_EXECUTABLE}
+            ${CMAKE_COMMAND} -DEXECUTABLE=${Python_EXECUTABLE}
             "-DEXECUTABLE_ARGS=${_exe_args}"
             -DWORKING_DIRECTORY=${Data_SOURCE_DIR} -DCAT_LOG=TRUE -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/OgsTestWrapper.cmake

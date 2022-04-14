@@ -23,7 +23,7 @@ set(CPACK_RESOURCE_FILE_README "${PROJECT_SOURCE_DIR}/README.md")
 
 # Package file name
 if(OGS_USE_PYTHON)
-    list(APPEND SUFFIX_LIST "python-${Python3_VERSION}")
+    list(APPEND SUFFIX_LIST "python-${Python_VERSION}")
 endif()
 if(OGS_BUILD_GUI)
     list(APPEND SUFFIX_LIST "de")
@@ -69,7 +69,7 @@ endif()
 
 if(OGS_USE_PYTHON)
     if(WIN32)
-        file(GLOB PYTHON_RUNTIME_LIBS "${Python3_RUNTIME_LIBRARY_DIRS}/*.dll")
+        file(GLOB PYTHON_RUNTIME_LIBS "${Python_RUNTIME_LIBRARY_DIRS}/*.dll")
         message(STATUS "Install Python: ${PYTHON_RUNTIME_LIBS}")
         install(FILES ${PYTHON_RUNTIME_LIBS} DESTINATION bin)
     else()
