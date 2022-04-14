@@ -108,7 +108,10 @@ endif()
 
 CPMFindPackage(
     NAME Eigen3
-    GITLAB_REPOSITORY libeigen/eigen
+    # Error as in
+    # https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/8475
+    # GITLAB_REPOSITORY libeigen/eigen
+    URL https://gitlab.com/libeigen/eigen/-/archive/${ogs.minimum_version.eigen}/eigen-${ogs.minimum_version.eigen}.tar.gz
     GIT_TAG ${ogs.minimum_version.eigen}
     DOWNLOAD_ONLY YES
 )
