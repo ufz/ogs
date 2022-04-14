@@ -75,23 +75,9 @@ function(NotebookTest)
         list(APPEND labels large)
     endif()
 
-    if(MSVC AND ${CMAKE_VERSION} VERSION_LESS 3.22)
-        # ENVIRONMENT_MODIFICATION parameter of set_tests_properties() is
-        # required to correctly set the PATH environment variable on Windows.
-        message(
-            WARNING "Notebook tests are disabled on Windows when CMake < 3.22!"
-        )
-        return()
-    endif()
-
-    if(${CMAKE_VERSION} VERSION_LESS 3.22)
-        # This branch applies to *nix only.
-        set(_prop_env ENVIRONMENT PATH=$<TARGET_FILE_DIR:ogs>:$ENV{PATH})
-    else()
-        set(_prop_env ENVIRONMENT_MODIFICATION
-                      PATH=path_list_prepend:$<TARGET_FILE_DIR:ogs>
-        )
-    endif()
+    set(_prop_env ENVIRONMENT_MODIFICATION
+                  PATH=path_list_prepend:$<TARGET_FILE_DIR:ogs>
+    )
 
     set_tests_properties(
         ${TEST_NAME}

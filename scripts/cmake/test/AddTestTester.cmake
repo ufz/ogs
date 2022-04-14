@@ -1,8 +1,3 @@
-set(_exec_process_args "")
-if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.18)
-    set(_exec_process_args ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE)
-endif()
-
 message(STATUS "running tester (glob mode: ${GLOB_MODE}): ${TESTER_COMMAND}")
 
 if(WIN32)
@@ -49,7 +44,7 @@ foreach(cmd ${TESTER_COMMAND})
                 WORKING_DIRECTORY ${SOURCE_PATH}
                 RESULT_VARIABLE EXIT_CODE
                 OUTPUT_VARIABLE OUTPUT
-                ERROR_VARIABLE OUTPUT ${_exec_process_args}
+                ERROR_VARIABLE OUTPUT ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
             )
             if(NOT EXIT_CODE STREQUAL "0")
                 file(WRITE ${LOG_FILE} ${OUTPUT})
@@ -67,7 +62,7 @@ foreach(cmd ${TESTER_COMMAND})
             WORKING_DIRECTORY ${SOURCE_PATH}
             RESULT_VARIABLE EXIT_CODE
             OUTPUT_VARIABLE OUTPUT
-            ERROR_VARIABLE OUTPUT ${_exec_process_args}
+            ERROR_VARIABLE OUTPUT ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
         )
         if(NOT EXIT_CODE STREQUAL "0")
             file(WRITE ${LOG_FILE} ${OUTPUT})
