@@ -109,6 +109,4 @@ A major part of the output was produced by the linear equation solver (LIS in th
 
 ## Results and evaluation
 
-<!-- {{< vis path="Elliptic/square_1x1_SteadyStateDiffusion/square_1e2_pcs_0_ts_1_t_1.000000.vtu" >}} -->
-
 ![The result can be visualized with Paraview.](square_1e2_pcs_0_ts_1_t_1.000000.png)

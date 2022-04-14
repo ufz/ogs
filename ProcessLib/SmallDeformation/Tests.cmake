@@ -112,7 +112,6 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     disc_with_hole_expected_ts_4_t_1.000000.vtu disc_with_hole_ts_4_t_1.000000.vtu displacement displacement 1e-16 1e-16
-    VIS disc_with_hole_ts_4_t_1.000000.vtu
 )
 
 # Tests that internal state variables work correctly.

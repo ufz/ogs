@@ -24,12 +24,6 @@ find_program(BASH_TOOL_PATH bash DOC "The bash executable")
 
 find_program(CCACHE_TOOL_PATH ccache)
 
-# Tools for web
-find_program(
-    VTKJS_CONVERTER vtkDataConverter
-    PATHS ${PROJECT_SOURCE_DIR}/web/node_modules/.bin
-)
-
 find_program(MODULE_CMD lmod PATHS /software/lmod/lmod/libexec)
 
 find_program(SNAKEMAKE snakemake)

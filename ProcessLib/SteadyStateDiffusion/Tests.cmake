@@ -96,7 +96,6 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
         square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-13 1e-13
-        VIS square_${mesh_size}_ts_1_t_1.000000.vtu
     )
 
     AddTest(
@@ -108,7 +107,6 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
         square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure 1e-1 1e-1
-        VIS square_${mesh_size}_neumann_ts_1_t_1.000000.vtu
     )
 endforeach()
 
@@ -719,7 +717,6 @@ AddTest(
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
     line_1_lines_1e1_expected.vtu circle_1e1_axi_ts_1_t_1.000000.vtu analytical_solution pressure 0.7 1e-16
-    VIS circle_1e1_axi_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -732,7 +729,6 @@ AddTest(
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
     line_1_lines_1e2_expected.vtu circle_1e2_axi_ts_1_t_1.000000.vtu analytical_solution pressure 1.1 1e-16
-    VIS circle_1e2_axi_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -745,7 +741,6 @@ AddTest(
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
     line_1_lines_1e3_expected.vtu circle_1e3_axi_ts_1_t_1.000000.vtu analytical_solution pressure 1.6 1e-16
-    VIS circle_1e3_axi_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -758,7 +753,6 @@ AddTest(
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
     line_1_lines_1e4_expected.vtu circle_1e4_axi_ts_1_t_1.000000.vtu analytical_solution pressure 1.8 1e-16
-    VIS circle_1e4_axi_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -771,7 +765,6 @@ AddTest(
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
     line_1_lines_1e5_expected.vtu circle_1e5_axi_ts_1_t_1.000000.vtu analytical_solution pressure 2.15 1e-16
-    VIS circle_1e5_axi_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -785,7 +778,6 @@ AddTest(
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
     line_1_lines_1e6_expected.vtu circle_1e6_axi_ts_1_t_1.000000.vtu analytical_solution pressure 2.52 1e-16
-    VIS circle_1e6_axi_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -799,7 +791,6 @@ AddTest(
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
     square_1x1_quad_1e6_nodal_sources_expected.vtu square_1e6_with_nodal_sources_ts_1_t_1.000000.vtu analytical_solution pressure 1.41 1e-16
-    VIS square_1e6__nodal_sources_expected_ts_1_t_1.000000.vtu
 )
 
 AddTest(

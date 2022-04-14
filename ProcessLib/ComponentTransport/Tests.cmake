@@ -10,7 +10,6 @@ AddTest(
     DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu linear_1_to_0 Si 1e-7 1e-10
     DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu zero pressure 1e-7 1e-10
     DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu zero_vector_2d darcy_velocity 1e-7 1e-10
-    VIS DiffusionOnly_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -25,7 +24,6 @@ AddTest(
     DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu Si Si 1e-7 1e-10
     DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu pressure pressure 1e-7 1e-10
     DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    VIS DiffusionOnly_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -42,7 +40,6 @@ AddTest(
     DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_3Components_ts_1_t_1.000000.vtu linear_1_to_0 Cl 1e-7 1e-10
     DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_3Components_ts_1_t_1.000000.vtu zero pressure 1e-7 1e-10
     DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_3Components_ts_1_t_1.000000.vtu zero_vector_2d darcy_velocity 1e-7 1e-10
-    VIS DiffusionOnly_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -60,7 +57,6 @@ AddTest(
     DiffusionAndStorage_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_ts_134_t_1.500000.vtu concentration Si 1e-7 1e-10
     DiffusionAndStorage_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_ts_134_t_1.500000.vtu zero pressure 1e-7 1e-10
     DiffusionAndStorage_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_ts_134_t_1.500000.vtu zero_vector_2d darcy_velocity 1e-7 1e-10
-    VIS DiffusionAndStorage_ts_134_t_1.500000.vtu
 )
 
 AddTest(
@@ -79,7 +75,6 @@ AddTest(
     DiffusionAndStorage_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_ts_134_t_1.500000.vtu Si Si 1e-7 1e-10
     DiffusionAndStorage_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_ts_134_t_1.500000.vtu pressure pressure 1e-7 1e-10
     DiffusionAndStorage_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_ts_134_t_1.500000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    VIS DiffusionAndStorage_ts_134_t_1.500000.vtu
 )
 
 AddTest(
@@ -113,7 +108,6 @@ AddTest(
     DiffusionAndStorageAndAdvection_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_500_t_495.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     DiffusionAndStorageAndAdvection_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_600_t_720.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     DiffusionAndStorageAndAdvection_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvection_ts_672_t_900.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    VIS DiffusionAndStorageAndAdvection_ts_672_t_900.000000.vtu
 )
 
 AddTest(
@@ -153,7 +147,6 @@ AddTest(
     mass_conservation_ogsOutput_ts_1800_t_503413.251350_expected.vtu mass_conservation_ogsOutput_ts_1800_t_503413.251350.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     mass_conservation_ogsOutput_ts_2100_t_714330.672786_expected.vtu mass_conservation_ogsOutput_ts_2100_t_714330.672786.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     mass_conservation_ogsOutput_ts_2323_t_1000000.000000_expected.vtu mass_conservation_ogsOutput_ts_2323_t_1000000.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    VIS mass_conservation_ogsOutput_ts_2323_t_1000000.000000.vtu
 )
 
 AddTest(
@@ -172,7 +165,6 @@ AddTest(
     box_ogsOutput_ts_20_t_100000.000000_expected.vtu box_ogsOutput_ts_20_t_100000.000000.vtu pressure pressure 5e-7 5e-10
     box_ogsOutput_ts_0_t_0.000000_expected.vtu box_ogsOutput_ts_0_t_0.000000.vtu darcy_velocity darcy_velocity 5e-7 5e-10
     box_ogsOutput_ts_20_t_100000.000000_expected.vtu box_ogsOutput_ts_20_t_100000.000000.vtu darcy_velocity darcy_velocity 5e-7 5e-10
-    VIS box_ogsOutput_ts_20_t_100000.000000.vtu
 )
 
 AddTest(
@@ -203,7 +195,6 @@ AddTest(
     DiffusionAndStorageAndGravityAndDispersionHalf_ts_1300_t_10000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1300_t_10000.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
     DiffusionAndStorageAndGravityAndDispersionHalf_ts_1400_t_12500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1400_t_12500.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
     DiffusionAndStorageAndGravityAndDispersionHalf_ts_1500_t_15000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1500_t_15000.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
-    VIS DiffusionAndStorageAndGravityAndDispersionHalf_ts_1500_t_15000.000000.vtu
 )
 
 AddTest(
@@ -237,7 +228,6 @@ AddTest(
     DiffusionAndStorageAndAdvectionAndDispersion_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_500_t_495.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     DiffusionAndStorageAndAdvectionAndDispersion_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_600_t_720.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     DiffusionAndStorageAndAdvectionAndDispersion_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_672_t_900.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    VIS DiffusionAndStorageAndAdvectionAndDispersion_ts_672_t_900.000000.vtu
 )
 
 AddTest(
@@ -268,7 +258,6 @@ AddTest(
     DiffusionAndAdvection_surfaceflux_ts_3_t_0.060000_expected.vtu OpenBoundaryBC_ts_3_t_0.060000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     DiffusionAndAdvection_surfaceflux_ts_4_t_0.080000_expected.vtu OpenBoundaryBC_ts_4_t_0.080000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     DiffusionAndAdvection_surfaceflux_ts_5_t_0.100000_expected.vtu OpenBoundaryBC_ts_5_t_0.100000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    VIS OpenBoundaryBC_ts_5_t_0.100000.vtu
 )
 
 AddTest(
@@ -299,7 +288,6 @@ AddTest(
     DiffusionAndAdvection_surfaceflux_ts_3_t_0.060000_expected.vtu AdvectiveNonAdvectiveComparison_ts_3_t_0.060000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     DiffusionAndAdvection_surfaceflux_ts_4_t_0.080000_expected.vtu AdvectiveNonAdvectiveComparison_ts_4_t_0.080000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     DiffusionAndAdvection_surfaceflux_ts_5_t_0.100000_expected.vtu AdvectiveNonAdvectiveComparison_ts_5_t_0.100000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    VIS AdvectiveNonAdvectiveComparison_ts_5_t_0.100000.vtu
 )
 
 AddTest(
@@ -333,7 +321,6 @@ AddTest(
     DiffusionAndStorageAndAdvectionAndDecay_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_500_t_495.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     DiffusionAndStorageAndAdvectionAndDecay_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_600_t_720.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     DiffusionAndStorageAndAdvectionAndDecay_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_672_t_900.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    VIS DiffusionAndStorageAndAdvectionAndDecay_ts_672_t_900.000000.vtu
 )
 
 AddTest(
@@ -367,7 +354,6 @@ AddTest(
     DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_500_t_495.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_600_t_720.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_672_t_900.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    VIS DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_672_t_900.000000.vtu
 )
 
 AddTest(
@@ -638,7 +624,6 @@ AddTest(
     DIFF_DATA
     square_100x100_quad_1e4_ComponentTransport_ts_1_t_1.000000.vtu square_100x100_quad_1e4_ComponentTransport_ts_1_t_1.000000.vtu pressure_expected pressure 2e-2 1e-10
     square_100x100_quad_1e4_ComponentTransport_ts_1_t_1.000000.vtu square_100x100_quad_1e4_ComponentTransport_ts_1_t_1.000000.vtu darcy_velocity_expected darcy_velocity 1e-7 1e-10
-    VIS square_100x100_quad_1e4_ComponentTransport_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -652,7 +637,6 @@ AddTest(
     DIFF_DATA
     2D1P-GWFlow_1_reference.vtu out_ogs5_H_ts_1_t_10000000.000000.vtu pressure_OGS5 pressure 1e-1 1e-3
     2D1P-GWFlow_1_reference.vtu out_ogs5_H_ts_1_t_10000000.000000.vtu NODAL_VELOCITY1 darcy_velocity 2e-11 0
-    VIS out_ogs5_H_ts_10_t_100000000.000000.vtu
 )
 
 AddTest(
@@ -667,7 +651,6 @@ AddTest(
     DIFF_DATA
     3D1P-GWFlow_1_reference.vtu out_ogs5_H_ts_10_t_10000000.000000.vtu pressure_ogs5 pressure 2.4e1 1.4e-2
     3D1P-GWFlow_1_reference.vtu out_ogs5_H_ts_10_t_10000000.000000.vtu NODAL_VELOCITY1 darcy_velocity 1e-10 1.4e-2
-    VIS out_ogs5_H_ts_1_t_10000000.000000.vtu
 )
 
 AddTest(

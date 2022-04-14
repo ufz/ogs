@@ -230,10 +230,7 @@ function(MeshTest)
             -DBINARY_PATH=${${MeshTest_BINARY_PATH}}
             -DSELECTED_DIFF_TOOL_PATH=${SELECTED_DIFF_TOOL_PATH}
             "-DTESTER_COMMAND=${TESTER_COMMAND}"
-            -DVTKJS_CONVERTER=${VTKJS_CONVERTER}
             -DBINARY_PATH=${MeshTest_BINARY_PATH}
-            -DVTKJS_OUTPUT_PATH=${PROJECT_SOURCE_DIR}/web/static/vis/${MeshTest_PATH}
-            "-DVIS_FILES=${MeshTest_VIS}"
             -DLOG_FILE_BASE=${PROJECT_BINARY_DIR}/logs/${TESTER_NAME}
             -DGLOB_MODE=${GLOB_MODE} -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
