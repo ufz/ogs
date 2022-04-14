@@ -420,7 +420,7 @@ else()
     )
     include(${VTK_BINARY_DIR}/VTKConfig.cmake)
 endif()
-if(VTK_ADDED AND OPENMP_FOUND AND TARGET vtkFiltersStatistics)
+if(VTK_ADDED AND OpenMP_FOUND AND TARGET vtkFiltersStatistics)
     target_link_libraries(vtkFiltersStatistics PRIVATE OpenMP::OpenMP_C)
 endif()
 # end VTK ###
