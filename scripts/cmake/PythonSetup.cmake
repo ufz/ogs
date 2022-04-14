@@ -32,6 +32,10 @@ find_package(
 )
 
 if(OGS_USE_PIP)
+    set(Python_SITEARCH_NATIVE ${Python_SITEARCH})
+    if(WIN32)
+        string(REPLACE "\\" "\\\\" Python_SITEARCH_NATIVE ${Python_SITEARCH_NATIVE})
+    endif()
     set(OGS_PYTHON_PACKAGES ""
         CACHE INTERNAL "List of Python packages to be installed via pip."
     )
