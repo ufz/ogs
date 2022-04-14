@@ -20,7 +20,6 @@
 
 namespace PointUtils
 {
-
 // Trims an array to a definite size.
 template <std::size_t target_size, std::size_t source_size>
 std::array<double, target_size> trimArray(

@@ -17,7 +17,6 @@
 
 namespace ElementUtils
 {
-
 // Returns the number of faces of a mesh element.
 //
 // Here, faces of a d dimensional element are always considered d-1 dimensional.

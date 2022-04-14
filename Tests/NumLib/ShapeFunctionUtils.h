@@ -17,7 +17,6 @@
 
 namespace ShapeFunctionUtils
 {
-
 template <unsigned GlobalDim, typename ElementType, typename PointsContainer>
 auto computeShapeMatricesImpl(MeshLib::Element const& element,
                               PointsContainer const& points,

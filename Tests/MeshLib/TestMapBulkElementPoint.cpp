@@ -25,7 +25,6 @@
 
 namespace
 {
-
 // Finds a node in a list of nodes.
 template <typename ListOfNodes>
 static std::size_t findNode(ListOfNodes const& list_of_nodes,
