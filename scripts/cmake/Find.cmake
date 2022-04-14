@@ -66,7 +66,6 @@ if(OGS_USE_NETCDF)
     set(NETCDF_ROOT ${CONAN_NETCDF-C_ROOT})
     set(NETCDF_CXX_ROOT ${CONAN_NETCDF-CXX_ROOT})
     find_package(NetCDF REQUIRED)
-    add_compile_options(-DOGS_USE_NETCDF)
 endif()
 
 # lapack
