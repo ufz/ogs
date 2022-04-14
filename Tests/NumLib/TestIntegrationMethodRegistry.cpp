@@ -14,24 +14,10 @@
 #include "MeshLib/Elements/Elements.h"
 #include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
 #include "NumLib/Fem/Integration/IntegrationMethodRegistry.h"
+#include "Tests/Utils.h"
 
 namespace
 {
-// helper type for converting lists of types
-template <typename InputList, template <typename...> typename NewListType>
-struct ConvertListType;
-template <template <typename...> typename OldListType,
-          typename... Ts,
-          template <typename...>
-          typename NewListType>
-struct ConvertListType<OldListType<Ts...>, NewListType>
-{
-    using type = NewListType<Ts...>;
-};
-template <typename InputList, template <typename...> typename NewListType>
-using ConvertListType_t =
-    typename ConvertListType<InputList, NewListType>::type;
-
 template <typename IntegrationMethod>
 static unsigned getMaximumIntegrationOrderOfTemplatedIntegrationMethod(
     unsigned const order_cutoff)
@@ -108,27 +94,6 @@ static unsigned getMaximumIntegrationOrderFromIntegrationMethodRegistry(
     return order;
 }
 }  // namespace
-
-namespace MathLib
-{
-// Used to output helpful information if the unit tests fail.
-static std::ostream& operator<<(std::ostream& os,
-                                MathLib::WeightedPoint const& wp)
-{
-    auto const dim = wp.getDimension();
-    os << "WP[" << dim << "D]{{";
-    for (decltype(+dim) comp = 0; comp < 3; ++comp)
-    {
-        if (comp != 0)
-        {
-            os << ", ";
-        }
-        os << wp[comp];
-    }
-    os << "}, weight=" << wp.getWeight() << '}';
-    return os;
-}
-}  // namespace MathLib
 
 static std::unordered_map<std::type_index, unsigned> initMapTypeToMaxOrder()
 {

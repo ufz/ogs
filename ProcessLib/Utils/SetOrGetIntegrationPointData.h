@@ -154,10 +154,9 @@ std::vector<double> getIntegrationPointDataMaterialStateVariables(
     for (auto& ip_data : ip_data_vector)
     {
         auto const values_span = get_values_span(*(ip_data.*member));
-        assert(values_span.size == static_cast<std::size_t>(n_components));
+        assert(values_span.size() == static_cast<std::size_t>(n_components));
 
-        result.insert(end(result), values_span.data,
-                      values_span.data + values_span.size);
+        result.insert(end(result), values_span.begin(), values_span.end());
     }
 
     return result;
@@ -179,8 +178,8 @@ std::size_t setIntegrationPointDataMaterialStateVariables(
     for (auto& ip_data : ip_data_vector)
     {
         auto const values_span = get_values_span(*(ip_data.*member));
-        std::copy_n(values + position, values_span.size, values_span.data);
-        position += values_span.size;
+        std::copy_n(values + position, values_span.size(), values_span.begin());
+        position += values_span.size();
     }
     return n_integration_points;
 }
