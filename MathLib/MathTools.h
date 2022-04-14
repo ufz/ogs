@@ -13,9 +13,7 @@
 
 namespace MathLib
 {
-template <typename T>
-class TemplatePoint;
-using Point3d = MathLib::TemplatePoint<double>;
+class Point3d;
 
 /**
  * calcProjPntToLineAndDists computes the orthogonal projection

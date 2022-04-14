@@ -12,5 +12,9 @@
 
 namespace MathLib
 {
+Point3d::Point3d() : x_({{0}}) {}
+
+Point3d::Point3d(std::array<double, 3> x) : x_(std::move(x)) {}
+
 extern const Point3d ORIGIN{{{0.0, 0.0, 0.0}}};
-}
+}  // namespace MathLib
