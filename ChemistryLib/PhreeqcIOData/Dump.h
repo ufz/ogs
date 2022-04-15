@@ -21,10 +21,13 @@ namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
+extern std::string specifyFileName(std::string const& project_file_name,
+                                   std::string const& file_extension);
+
 struct Dump
 {
     explicit Dump(std::string const& project_file_name)
-        : dump_file(project_file_name + ".dmp")
+        : dump_file(specifyFileName(project_file_name, ".dmp"))
     {
         try
         {

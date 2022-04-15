@@ -262,6 +262,9 @@ static double averageReactantMolality(
 }
 }  // namespace
 
+extern std::string specifyFileName(std::string const& project_file_name,
+                                   std::string const& file_extension);
+
 PhreeqcIO::PhreeqcIO(MeshLib::Mesh const& mesh,
                      GlobalLinearSolver& linear_solver,
                      std::string const& project_file_name,
@@ -273,7 +276,7 @@ PhreeqcIO::PhreeqcIO(MeshLib::Mesh const& mesh,
                      std::unique_ptr<Dump>&& dump,
                      Knobs&& knobs)
     : ChemicalSolverInterface(mesh, linear_solver),
-      _phreeqc_input_file(project_file_name + "_phreeqc.inp"),
+      _phreeqc_input_file(specifyFileName(project_file_name, ".inp")),
       _database(std::move(database)),
       _chemical_system(std::move(chemical_system)),
       _reaction_rates(std::move(reaction_rates)),
