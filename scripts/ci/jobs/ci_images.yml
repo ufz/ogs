@@ -5,6 +5,7 @@
     - scripts/docker/saxon/**/*
     - scripts/docker/Dockerfile.pre-commit
     - scripts/docker/Dockerfile.web
+    - web/data/versions.json
 
 ci_images:
   stage: .pre
