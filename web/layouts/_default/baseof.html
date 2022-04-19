@@ -22,7 +22,7 @@
     <div class="{{ if $subsection }}flex overflow-hidden{{ end }}">
 
       {{ if $subsection }}
-      <div class="hidden md:flex md:flex-shrink-0">
+      <div class="hidden md:flex md:shrink-0">
         <nav class="flex flex-col w-64 lg:w-72 pl-2 pr-4 mt-1 text-sm lg:text-base">
           {{ $currentMenu := index .Site.Menus $section }}
           {{ range $currentMenu }}
