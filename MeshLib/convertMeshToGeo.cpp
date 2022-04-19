@@ -161,7 +161,7 @@ MeshLib::Mesh* convertSurfaceToMesh(const GeoLib::Surface& sfc,
         for (unsigned j = 0; j < 3; j++)
         {
             tri_nodes[j] =
-                new MeshLib::Node(tri->getPoint(j)->getCoords(), nodeId++);
+                new MeshLib::Node(tri->getPoint(j)->data(), nodeId++);
         }
         elements.push_back(new MeshLib::Tri(tri_nodes, i));
         for (unsigned j = 0; j < 3; j++)
