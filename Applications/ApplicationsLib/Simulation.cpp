@@ -104,11 +104,23 @@ void Simulation::initializeDataStructures(
     time_loop.initialize();
 }
 
+double Simulation::currentTime() const
+{
+    auto const& time_loop = project_data->getTimeLoop();
+    return time_loop.currentTime();
+}
+
+double Simulation::endTime() const
+{
+    auto const& time_loop = project_data->getTimeLoop();
+    return time_loop.endTime();
+}
+
 bool Simulation::executeSimulation()
 {
     INFO("Solve processes.");
     auto& time_loop = project_data->getTimeLoop();
-    while (time_loop.getCurrentTime() < time_loop.getEndTime())
+    while (time_loop.currentTime() < time_loop.endTime())
     {
         if (!time_loop.doTimestep())
         {
