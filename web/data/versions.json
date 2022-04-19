@@ -1,6 +1,6 @@
 {
   "minimum_version": {
-    "gcc": "9.1",
+    "gcc": "10.2.0",
     "clang": "9.0",
     "apple_clang": "12.0.0",
     "msvc": {
