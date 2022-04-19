@@ -1,6 +1,9 @@
 if(MSVC)
     add_definitions(-DVTKGUISUPPORTQT_STATIC_DEFINE)
 endif()
+if(OGS_USE_NETCDF)
+    add_compile_options(-DOGS_USE_NETCDF)
+endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 

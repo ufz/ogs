@@ -20,17 +20,9 @@ find_program(GPROF_PATH gprof DOC "GNU profiler gprof" QUIET)
 find_program(CPPCHECK_TOOL_PATH cppcheck)
 
 # Find bash itself ...
-find_program(
-    BASH_TOOL_PATH bash HINTS ${GITHUB_BIN_DIR} DOC "The bash executable"
-)
+find_program(BASH_TOOL_PATH bash DOC "The bash executable")
 
 find_program(CCACHE_TOOL_PATH ccache)
-
-# Tools for web
-find_program(
-    VTKJS_CONVERTER vtkDataConverter
-    PATHS ${PROJECT_SOURCE_DIR}/web/node_modules/.bin
-)
 
 find_program(MODULE_CMD lmod PATHS /software/lmod/lmod/libexec)
 
@@ -46,24 +38,12 @@ find_program(GMSH gmsh)
 # Find libraries
 # ##############################################################################
 if(OGS_USE_MFRONT)
-    # pthread, is a requirement of mfront ##
-    set(CMAKE_THREAD_PREFER_PTHREAD ON)
+    set(CMAKE_REQUIRE_FIND_PACKAGE_Threads TRUE)
     set(THREADS_PREFER_PTHREAD_FLAG ON)
-    find_package(Threads REQUIRED)
-    if(CMAKE_USE_PTHREADS_INIT)
-        set(HAVE_PTHREADS TRUE)
-        add_definitions(-DHAVE_PTHREADS)
-    endif()
 endif()
+find_package(Threads)
 
-find_package(OpenMP)
-if(OPENMP_FOUND)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS
-        "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}"
-    )
-endif()
+find_package(OpenMP COMPONENTS C CXX)
 
 # Qt5 library ##
 if(OGS_BUILD_GUI)
@@ -80,7 +60,6 @@ if(OGS_USE_NETCDF)
     set(NETCDF_ROOT ${CONAN_NETCDF-C_ROOT})
     set(NETCDF_CXX_ROOT ${CONAN_NETCDF-CXX_ROOT})
     find_package(NetCDF REQUIRED)
-    add_compile_options(-DOGS_USE_NETCDF)
 endif()
 
 # lapack

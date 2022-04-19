@@ -45,7 +45,6 @@ parse:
         WRAPPER_ARGS: +
         REQUIREMENTS: +
         PYTHON_PACKAGES: +
-        VIS: +
 
     ogstest:
       pargs:

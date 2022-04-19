@@ -34,7 +34,7 @@ target_link_libraries(
     QtDataView
     QtDiagramView
     VtkVis
-    Threads::Threads
+    $<$<TARGET_EXISTS:Threads::Threads>:Threads::Threads>
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
@@ -86,9 +86,18 @@ if(MSVC)
     # Install qt libraries
     get_target_property(mocExe Qt5::moc IMPORTED_LOCATION)
     get_filename_component(qtBinDir "${mocExe}" DIRECTORY)
-    find_program(DEPLOYQT_EXECUTABLE windeployqt PATHS "${qtBinDir}" NO_DEFAULT_PATH)
-    set(DEPLOY_OPTIONS [[bin/DataExplorer.exe --dir . --libdir bin --plugindir plugins]])
-    configure_file(${PROJECT_SOURCE_DIR}/scripts/cmake/packaging/deployapp.cmake.in deployapp.cmake @ONLY)
+    find_program(
+        DEPLOYQT_EXECUTABLE windeployqt PATHS "${qtBinDir}" NO_DEFAULT_PATH
+    )
+    set(DEPLOY_OPTIONS
+        [[bin/DataExplorer.exe --dir . --libdir bin --plugindir plugins]]
+    )
+    configure_file(
+        ${PROJECT_SOURCE_DIR}/scripts/cmake/packaging/deployapp.cmake.in
+        deployapp.cmake @ONLY
+    )
     install(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/deployapp.cmake)
-    install(FILES ${PROJECT_SOURCE_DIR}/scripts/cmake/packaging/qt.conf TYPE BIN)
+    install(FILES ${PROJECT_SOURCE_DIR}/scripts/cmake/packaging/qt.conf
+            TYPE BIN
+    )
 endif()

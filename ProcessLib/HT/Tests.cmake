@@ -12,7 +12,6 @@ AddTest(
     ThermalConvection_const_viscosity_expected.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu T T 1e-7 1e-9
     ThermalConvection_const_viscosity_expected.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu p p 1e-9 1e-3
     ThermalConvection_const_viscosity_expected.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    VIS ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu
 )
 
 AddTest(
@@ -27,7 +26,6 @@ AddTest(
     IsothermalFluidFlow_expected.vtu IsothermalFluidFlow_ts_1_t_1.000000.vtu T T 1e-10 1e-16
     IsothermalFluidFlow_expected.vtu IsothermalFluidFlow_ts_1_t_1.000000.vtu p p 1e-10 1e-16
     IsothermalFluidFlow_expected.vtu IsothermalFluidFlow_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    VIS IsothermalFluidFlow_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -42,7 +40,6 @@ AddTest(
     PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusion_ts_1_t_1.000000.vtu linear_top2_to_bottom1 T 1e-10 1e-16
     PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusion_ts_1_t_1.000000.vtu Linear_1_to_minus1 p 1e-10 1e-16
     PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusion_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    VIS PressureDiffusionTemperatureDiffusion_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -57,7 +54,6 @@ AddTest(
     IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravity_ts_1_t_1.000000.vtu T T 1e-10 1e-16
     IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravity_ts_1_t_1.000000.vtu p p 1e-10 1e-16
     IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravity_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    VIS IsothermalFluidFlow_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -189,7 +185,6 @@ AddTest(
     DIFF_DATA
     th_decovalex.vtu th_decovalex_ts_40_t_18.000000.vtu T_ref T 6e-12 1.e-14
     th_decovalex.vtu th_decovalex_ts_40_t_18.000000.vtu p_ref p 1e-7 1.e-14
-    VIS th_decovalex_ts_78_t_1000.000000.vtu
 )
 
 AddTest(
@@ -204,7 +199,6 @@ AddTest(
     IsothermalFluidFlow_expected.vtu IsothermalFluidFlowStaggered_ts_1_t_1.000000.vtu T T 1e-10 1e-10
     IsothermalFluidFlow_expected.vtu IsothermalFluidFlowStaggered_ts_1_t_1.000000.vtu p p 1e-10 1e-10
     IsothermalFluidFlow_expected.vtu IsothermalFluidFlowStaggered_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-10
-    VIS IsothermalFluidFlowStaggered_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -219,7 +213,6 @@ AddTest(
     PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusionStaggered_ts_1_t_1.000000.vtu linear_top2_to_bottom1 T 1e-10 1e-10
     PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusionStaggered_ts_1_t_1.000000.vtu Linear_1_to_minus1 p 1e-10 1e-10
     PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusionStaggered_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-10
-    VIS PressureDiffusionTemperatureDiffusionStaggered_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -234,7 +227,6 @@ AddTest(
     IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravityStaggered_ts_1_t_1.000000.vtu T T 1e-10 1e-10
     IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravityStaggered_ts_1_t_1.000000.vtu p p 0.04 1e-10
     IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravityStaggered_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-10
-    VIS IsothermalFluidFlowWithGravityStaggered_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -333,7 +325,6 @@ AddTest(
 #     DIFF_DATA
 #     th_decovalex.vtu th_decovalex_pcs_1_ts_40_t_18_000000_0.vtu T_ref T 1e-10  1.e-10
 #     th_decovalex.vtu th_decovalex_pcs_1_ts_40_t_18_000000_0.vtu p_ref p 1e-10  1.e-10
-#     VIS th_decovalex_pcs_1_ts_78_t_1000_000000_0.vtu
 # )
 
 AddTest(
@@ -349,12 +340,11 @@ AddTest(
     ThermalConvection_ts_1_t_0.000000_expected.vtu ThermalConvection_ts_1_t_0.000000.vtu T T 1e-10 1e-16
     ThermalConvection_ts_1_t_0.000000_expected.vtu ThermalConvection_ts_1_t_0.000000.vtu p p 7e-7 1e-12
     ThermalConvection_ts_1_t_0.000000_expected.vtu ThermalConvection_ts_1_t_0.000000.vtu darcy_velocity darcy_velocity 1e-8 1e-13
-    VIS ThermalConvection_ts_1_t_0.000000.vtu
 )
 
-if(NOT OGS_USE_MPI AND OGS_BUILD_TESTING AND Python3_FOUND)
+if(NOT OGS_USE_MPI AND OGS_BUILD_TESTING AND Python_FOUND)
     add_custom_target(generate_invalid_project_files_ht
-        ${Python3_EXECUTABLE}
+        ${Python_EXECUTABLE}
         ${PROJECT_SOURCE_DIR}/ThirdParty/ogs6py/generateInvalidMediaForHT.py
                                                 generateInvalidMediaForHT.py
         WORKING_DIRECTORY ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/)

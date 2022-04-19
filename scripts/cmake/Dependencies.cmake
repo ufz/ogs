@@ -88,15 +88,8 @@ endif()
 
 if(OGS_USE_PYTHON)
     CPMAddPackage(
-        NAME pybind11
-        GITHUB_REPOSITORY pybind/pybind11
+        NAME pybind11 GITHUB_REPOSITORY pybind/pybind11
         GIT_TAG f1abf5d9159b805674197f6bc443592e631c9130
-        # pybind11 uses old CMake find functionality, pass variables to use the
-        # same Python installation.
-        OPTIONS "PYTHON_INCLUDE_DIR ${Python3_INCLUDE_DIRS}"
-                "PYTHON_LIBRARIES ${Python3_LIBRARIES}"
-                "PYTHON_EXECUTABLE ${Python3_EXECUTABLE}"
-                "PYBIND11_PYTHON_VERSION ${Python3_VERSION}"
     )
 endif()
 
@@ -115,7 +108,10 @@ endif()
 
 CPMFindPackage(
     NAME Eigen3
-    GITLAB_REPOSITORY libeigen/eigen
+    # Error as in
+    # https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/8475
+    # GITLAB_REPOSITORY libeigen/eigen
+    URL https://gitlab.com/libeigen/eigen/-/archive/${ogs.minimum_version.eigen}/eigen-${ogs.minimum_version.eigen}.tar.gz
     GIT_TAG ${ogs.minimum_version.eigen}
     DOWNLOAD_ONLY YES
 )
@@ -427,7 +423,7 @@ else()
     )
     include(${VTK_BINARY_DIR}/VTKConfig.cmake)
 endif()
-if(VTK_ADDED AND OPENMP_FOUND AND TARGET vtkFiltersStatistics)
+if(VTK_ADDED AND OpenMP_FOUND AND TARGET vtkFiltersStatistics)
     target_link_libraries(vtkFiltersStatistics PRIVATE OpenMP::OpenMP_C)
 endif()
 # end VTK ###

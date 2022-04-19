@@ -14,6 +14,11 @@ add_feature_info(
     Python-interface OGS_USE_PYTHON
     "Python boundary conditions and source terms (OGS_USE_PYTHON)"
 )
+add_feature_info(
+    Python-environment
+    OGS_USE_PIP
+    "Automatic Python dependency handling with a virtual environment (OGS_USE_PIP)"
+)
 add_feature_info(PETSc OGS_USE_PETSC "Parallel processing (OGS_USE_PETSC)")
 add_feature_info(
     Tests OGS_BUILD_TESTING "Unit and benchmarks tests (OGS_BUILD_TESTING)"

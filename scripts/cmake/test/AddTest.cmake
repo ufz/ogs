@@ -18,7 +18,6 @@
 #                  enable the test, e.g.
 #                  OGS_USE_PETSC AND (FOO OR BAR)
 #   PYTHON_PACKAGES package_x=1.2.3 package_y=0.1.x # optional
-#   VIS <vtu output file(s)> # optional for documentation
 #   RUNTIME <in seconds> # optional for optimizing ctest duration
 #                          values should be taken from envinf job
 #   WORKING_DIRECTORY # optional, specify the working directory of the test
@@ -76,7 +75,6 @@ function(AddTest)
         TESTER_ARGS
         REQUIREMENTS
         PYTHON_PACKAGES
-        VIS
     )
     cmake_parse_arguments(
         AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
@@ -221,7 +219,7 @@ function(AddTest)
     if(AddTest_TESTER STREQUAL "xdmfdiff" AND NOT TARGET xdmfdiff)
         return()
     endif()
-    if(AddTest_TESTER STREQUAL "gmldiff" AND NOT ${Python3_Interpreter_FOUND})
+    if(AddTest_TESTER STREQUAL "gmldiff" AND NOT ${Python_Interpreter_FOUND})
         return()
     endif()
     if(AddTest_TESTER STREQUAL "memcheck" AND NOT GREP_TOOL_PATH)
@@ -369,13 +367,13 @@ Use six arguments version of AddTest with absolute and relative tolerances"
 
             get_filename_component(FILE_EXPECTED ${GML_FILE} NAME)
             if(WIN32)
-                file(TO_NATIVE_PATH "${Python3_EXECUTABLE}" PY_EXE)
+                file(TO_NATIVE_PATH "${Python_EXECUTABLE}" PY_EXE)
                 # Dirty hack for Windows Python paths with spaces:
                 string(REPLACE "Program Files" "\"Program Files\"" PY_EXE
                                ${PY_EXE}
                 )
             else()
-                set(PY_EXE ${Python3_EXECUTABLE})
+                set(PY_EXE ${Python_EXECUTABLE})
             endif()
             list(
                 APPEND
@@ -486,10 +484,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
             -DBINARY_PATH=${${AddTest_BINARY_PATH}}
             -DSELECTED_DIFF_TOOL_PATH=${SELECTED_DIFF_TOOL_PATH}
             "-DTESTER_COMMAND=${TESTER_COMMAND}"
-            -DVTKJS_CONVERTER=${VTKJS_CONVERTER}
-            -DBINARY_PATH=${AddTest_BINARY_PATH}
-            -DVTKJS_OUTPUT_PATH=${PROJECT_SOURCE_DIR}/web/static/vis/${AddTest_PATH}
-            "-DVIS_FILES=${AddTest_VIS}" -DGLOB_MODE=${GLOB_MODE}
+            -DBINARY_PATH=${AddTest_BINARY_PATH} -DGLOB_MODE=${GLOB_MODE}
             -DLOG_FILE_BASE=${PROJECT_BINARY_DIR}/logs/${TESTER_NAME} -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
             --debug-output

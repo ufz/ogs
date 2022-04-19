@@ -28,7 +28,7 @@ include_directories(BEFORE ${METIS_PATH}/libmetis)
 file(GLOB metis_sources ${METIS_PATH}/libmetis/*.c)
 # Build libmetis.
 add_library(ogs_metis ${GKlib_sources} ${metis_sources})
-if(OPENMP_FOUND)
+if(OpenMP_FOUND)
     target_link_libraries(ogs_metis OpenMP::OpenMP_C)
 endif()
 if(BUILD_SHARED_LIBS)

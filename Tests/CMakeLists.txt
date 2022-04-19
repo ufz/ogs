@@ -77,7 +77,7 @@ target_link_libraries(
             ProcessLib
             Processes
             TestInfoLib
-            Threads::Threads
+            $<$<TARGET_EXISTS:Threads::Threads>:Threads::Threads>
             ${VTK_LIBRARIES}
             $<$<TARGET_EXISTS:LIE>:LIE>
             $<$<TARGET_EXISTS:TH2M>:TH2M>
