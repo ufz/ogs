@@ -57,24 +57,3 @@ ERROR: Error in system requirements
 ```
 
 Please run `sudo -v` before your `cmake`-command. This will ask you for your password to let Conan install some system packages during the `cmake`-run.
-
-## Something went wrong during building
-
-On Ubuntu always use the system default gcc version! Otherwise if you use a newer compiler
-than the default you may end up using incompatible Conan packages. E.g. when you use gcc 6
-on Ubuntu 16.04 (where gcc 5 is the default) Conan uses packages which are built on Ubuntu
-17.10 (where gcc 6 is the default). Ubuntu 17.10 uses a newer glibc library (2.25) which
-is incompatible to the glibc library on Ubuntu 16.04 (2.23).
-
-In this case you would get linker errors with the Conan VTK library:
-
-```bash
-error: undefined reference to `getrandom'
-.../expat/vtkexpat/lib/xmlparse.c 694
-```
-
-If you still want to use your OS / compiler combination you can build the VTK Conan package on your machine. Run this one time:
-
-```bash
-cmake . -DOGS_CONAN_BUILD=vtk
-```
