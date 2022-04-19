@@ -9,6 +9,10 @@ if [ $# -ne 3 ]; then
     exit 1
 fi
 
+if [ -d ".venv" ]; then
+    source .venv/bin/activate
+fi
+
 set -e
 
 srcdir="$1"

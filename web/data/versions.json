@@ -48,7 +48,8 @@
       "nbconvert==6.4.0",
       "ipython_genutils==0.2.0",
       "pillow==9.0.0",
-      "matplotlib==3.5.1"
+      "matplotlib==3.5.1",
+      "pandas==1.4.2"
     ],
     "jupyter_image": {
       "conda_packages": [
