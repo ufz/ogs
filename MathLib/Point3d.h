@@ -64,6 +64,8 @@ public:
 
     double* data() { return x_.data(); }
 
+    Eigen::Vector3d const& asEigenVector3d() const { return x_; }
+
 private:
     Eigen::Vector3d x_;
 };
