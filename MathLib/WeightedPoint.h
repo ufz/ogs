@@ -75,7 +75,7 @@ public:
         return !(*this == other);
     }
 
-    const double* getCoords() const { return coords_.data(); }
+    const double* data() const { return coords_.data(); }
 
     double getWeight() const { return weight_; }
 
