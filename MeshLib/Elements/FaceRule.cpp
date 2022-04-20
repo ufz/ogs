@@ -23,17 +23,15 @@ bool FaceRule::testElementNodeOrder(Element const& e)
 
 Eigen::Vector3d FaceRule::getFirstSurfaceVector(Element const& e)
 {
-    auto const a = Eigen::Map<Eigen::Vector3d const>(e.getNode(0)->data());
-    auto const b = Eigen::Map<Eigen::Vector3d const>(e.getNode(1)->data());
-    Eigen::Vector3d const v = a - b;
+    Eigen::Vector3d const v =
+        e.getNode(0)->asEigenVector3d() - e.getNode(1)->asEigenVector3d();
     return v;
 }
 
 Eigen::Vector3d FaceRule::getSecondSurfaceVector(Element const& e)
 {
-    auto const a = Eigen::Map<Eigen::Vector3d const>(e.getNode(1)->data());
-    auto const b = Eigen::Map<Eigen::Vector3d const>(e.getNode(2)->data());
-    Eigen::Vector3d const v = b - a;
+    Eigen::Vector3d const v =
+        e.getNode(2)->asEigenVector3d() - e.getNode(1)->asEigenVector3d();
     return v;
 }
 
