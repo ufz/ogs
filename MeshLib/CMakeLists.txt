@@ -40,6 +40,7 @@ target_link_libraries(
            MathLib
            VTK::IOXML
            VTK::IOLegacy
+           $<$<TARGET_EXISTS:VTK::IOParallelXML>:VTK::IOParallelXML>
            $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
            $<$<TARGET_EXISTS:petsc>:petsc>
 )

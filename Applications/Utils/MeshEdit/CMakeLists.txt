@@ -33,7 +33,9 @@ if(OGS_BUILD_GUI)
     target_include_directories(
         RemoveGhostData PRIVATE ${PROJECT_SOURCE_DIR}/ThirdParty/paraview
     )
-    target_link_libraries(RemoveGhostData GitInfoLib MeshLib tclap)
+    target_link_libraries(
+        RemoveGhostData GitInfoLib MeshLib tclap VTK::FiltersParallel
+    )
     install(TARGETS RemoveGhostData RUNTIME DESTINATION bin)
 endif()
 
