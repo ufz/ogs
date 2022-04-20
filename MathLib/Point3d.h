@@ -140,12 +140,7 @@ inline MathLib::Point3d operator*(MATRIX const& mat, MathLib::Point3d const& p)
 
 /** Computes the squared dist between the two points p0 and p1.
  */
-inline double sqrDist(MathLib::Point3d const& p0, MathLib::Point3d const& p1)
-{
-    return (p0[0] - p1[0]) * (p0[0] - p1[0]) +
-           (p0[1] - p1[1]) * (p0[1] - p1[1]) +
-           (p0[2] - p1[2]) * (p0[2] - p1[2]);
-}
+double sqrDist(MathLib::Point3d const& p0, MathLib::Point3d const& p1);
 
 /** Equality of Point3d's up to an epsilon.
  */
