@@ -77,6 +77,8 @@ target_link_libraries(
             ProcessLib
             Processes
             TestInfoLib
+            VTK::FiltersGeneral
+            VTK::FiltersSources
             $<$<TARGET_EXISTS:Threads::Threads>:Threads::Threads>
             ${VTK_LIBRARIES}
             $<$<TARGET_EXISTS:LIE>:LIE>

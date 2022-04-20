@@ -15,7 +15,7 @@
     "hugo": "0.64.1",
     "boost": "1.69.0",
     "eigen": "9441d94dccccd5db8d64179516fdc5b53994a047",
-    "vtk": "8.2.0",
+    "vtk": "9.1.0",
     "petsc": "3.16.3",
     "qt": "5.14.2",
     "python": "3.6",
@@ -62,15 +62,16 @@
             "ogscm": "True"
           },
           "cmake": [
-            "VTK_Group_Rendering=OFF",
-            "VTK_Group_StandAlone=OFF",
+            "VTK_GROUP_ENABLE_Rendering=DONT_WANT",
+            "VTK_GROUP_ENABLE_StandAlone=DONT_WANT",
             "BUILD_TESTING=OFF",
             "VTK_BUILD_EXAMPLES=OFF",
             "VTK_BUILD_TESTING=OFF",
             "VTK_ENABLE_WRAPPING=OFF",
             "VTK_USE_64BIT_IDS=ON",
-            "Module_vtkIOXML=ON",
-            "Module_vtkIOLegacy=ON"
+            "VTK_MODULE_ENABLE_VTK_IOXML=YES",
+            "VTK_MODULE_ENABLE_VTK_IOLegacy=YES",
+            "VTK_MODULE_USE_EXTERNAL_VTK_zlib=ON"
           ]
         },
         {
@@ -79,8 +80,9 @@
             "ogscm": "toolchain.CC == \"mpicc\""
           },
           "cmake": [
-            "Module_vtkIOParallelXML=ON",
-            "Module_vtkParallelMPI=ON"
+            "VTK_MODULE_ENABLE_VTK_IOParallelXML=YES",
+            "VTK_MODULE_ENABLE_VTK_ParallelMPI=YES",
+            "VTK_USE_MPI=ON"
           ]
         },
         {
@@ -89,29 +91,29 @@
             "ogscm": "local_args.gui"
           },
           "cmake": [
-            "Module_vtkIOExport=ON",
-            "Module_vtkImagingCore=ON",
-            "Module_vtkInteractionStyle=ON",
-            "Module_vtkInteractionWidgets=ON",
-            "Module_vtkGUISupportQt=ON",
-            "Module_vtkRenderingOpenGL2=ON",
-            "Module_vtkRenderingContextOpenGL2=ON",
-            "Module_vtkFiltersTexture=ON",
-            "Module_vtkRenderingAnnotation=ON",
-            "Module_vtkRenderingCore=ON",
-            "Module_vtkFiltersParallel=ON"
+            "VTK_MODULE_ENABLE_VTK_IOExport=YES",
+            "VTK_MODULE_ENABLE_VTK_ImagingCore=YES",
+            "VTK_MODULE_ENABLE_VTK_InteractionStyle=YES",
+            "VTK_MODULE_ENABLE_VTK_InteractionWidgets=YES",
+            "VTK_MODULE_ENABLE_VTK_GUISupportQt=YES",
+            "VTK_MODULE_ENABLE_VTK_RenderingOpenGL2=YES",
+            "VTK_MODULE_ENABLE_VTK_RenderingContextOpenGL2=YES",
+            "VTK_MODULE_ENABLE_VTK_FiltersTexture=YES",
+            "VTK_MODULE_ENABLE_VTK_RenderingAnnotation=YES",
+            "VTK_MODULE_ENABLE_VTK_RenderingCore=YES",
+            "VTK_MODULE_ENABLE_VTK_FiltersParallel=YES"
           ]
         },
         {
-           "condition": {
-             "cmake": "OGS_BUILD_TESTING",
-             "ogscm": "local_args.ogs == \"off\" or \"OGS_BUILD_TESTING=OFF\" not in local_args.cmake_args.capitalize()"
-           },
-           "cmake": [
-             "Module_vtkFiltersGeneral=ON",
-             "Module_vtkFiltersSources=ON"
-           ]
-         }
+          "condition": {
+            "cmake": "OGS_BUILD_TESTING",
+            "ogscm": "local_args.ogs == \"off\" or \"OGS_BUILD_TESTING=OFF\" not in local_args.cmake_args.capitalize()"
+          },
+          "cmake": [
+            "VTK_MODULE_ENABLE_VTK_FiltersGeneral=YES",
+            "VTK_MODULE_ENABLE_VTK_FiltersSources=YES"
+          ]
+        }
       ]
     }
   }

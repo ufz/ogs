@@ -50,17 +50,6 @@ if(OGS_BUILD_TESTING)
     endif()
 endif()
 
-CPMAddPackage(
-    NAME exprtk
-    GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/exprtk.git
-    GIT_TAG 2a5c62b93c9661470e69be572f22d821308b6f61
-    DOWNLOAD_ONLY YES
-)
-if(exprtk_ADDED)
-    add_library(exprtk INTERFACE IMPORTED)
-    target_include_directories(exprtk SYSTEM INTERFACE ${exprtk_SOURCE_DIR})
-endif()
-
 CPMFindPackage(NAME spdlog GITHUB_REPOSITORY gabime/spdlog VERSION 1.8.2)
 
 CPMFindPackage(
@@ -399,20 +388,17 @@ endforeach()
 # TODO: if(OGS_INSITU) find_package(ParaView REQUIRED) end()
 unset(VTK_COMPONENTS)
 foreach(opt ${VTK_OPTIONS})
-    if("${opt}" MATCHES "^Module_(.*) ON")
+    if("${opt}" MATCHES "^VTK_MODULE_ENABLE_VTK_(.*) YES")
         list(APPEND VTK_COMPONENTS ${CMAKE_MATCH_1})
     endif()
 endforeach()
-find_package(VTK ${ogs.minimum_version.vtk} QUIET COMPONENTS ${VTK_COMPONENTS})
+find_package(VTK ${ogs.minimum_version.vtk} COMPONENTS ${VTK_COMPONENTS})
 
-if(VTK_FOUND)
-    include(${VTK_USE_FILE})
-else()
+if(NOT VTK_FOUND)
     list(APPEND VTK_OPTIONS "BUILD_SHARED_LIBS OFF")
-
     # Workaround for configuration error in [vtk]/CMake/vtkGroups.cmake:43
-    set(VTK_Group_Rendering OFF CACHE BOOL "")
-    set(VTK_Group_StandAlone OFF CACHE BOOL "")
+    set(VTK_GROUP_ENABLE_Rendering DONT_WANT CACHE STRING "")
+    set(VTK_GROUP_ENABLE_StandAlone DONT_WANT CACHE STRING "")
 
     CPMAddPackage(
         NAME VTK
@@ -421,17 +407,34 @@ else()
         OPTIONS ${VTK_OPTIONS}
         EXCLUDE_FROM_ALL YES GIT_SUBMODULES "" # Disable submodules
     )
-    include(${VTK_BINARY_DIR}/VTKConfig.cmake)
 endif()
 if(VTK_ADDED AND OpenMP_FOUND AND TARGET vtkFiltersStatistics)
     target_link_libraries(vtkFiltersStatistics PRIVATE OpenMP::OpenMP_C)
 endif()
 # end VTK ###
 
+if(VTK_ADDED)
+    # VTK already comes with exprtk, reusing it.
+    target_include_directories(
+        exprtk SYSTEM INTERFACE ${VTK_SOURCE_DIR}/ThirdParty/exprtk/vtkexprtk
+    )
+else()
+    CPMAddPackage(
+        NAME exprtk
+        GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/exprtk.git
+        GIT_TAG 2a5c62b93c9661470e69be572f22d821308b6f61
+        DOWNLOAD_ONLY YES
+    )
+    if(exprtk_ADDED)
+        add_library(exprtk INTERFACE IMPORTED)
+        target_include_directories(exprtk SYSTEM INTERFACE ${exprtk_SOURCE_DIR})
+    endif()
+endif()
+
 if(OGS_BUILD_TESTING OR OGS_BUILD_UTILS)
     CPMAddPackage(
         NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
-        GIT_TAG aa76480b883572e42dbc3c088729006a888e79eb
+        GIT_TAG 788100291f73e472febf7e5550eea36ec4be518b
     )
     if(vtkdiff_ADDED)
         install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)
