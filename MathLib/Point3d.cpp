@@ -12,7 +12,7 @@
 
 namespace MathLib
 {
-Point3d::Point3d() : x_({{0}}) {}
+Point3d::Point3d() : x_({0, 0, 0}) {}
 
 Point3d::Point3d(std::array<double, 3> x) : x_(x[0], x[1], x[2]) {}
 
