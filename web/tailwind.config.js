@@ -1,7 +1,8 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
+const colors = require('tailwindcss/colors')
 
 module.exports = {
-  purge: [
+  content: [
     './layouts/**/*.html',
   ],
   theme: {
@@ -31,6 +32,9 @@ module.exports = {
           800: '#072350',
           900: '#051735',
         },
+        green: colors.emerald,
+        yellow: colors.amber,
+        purple: colors.violet
       }
     },
   },

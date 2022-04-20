@@ -34,7 +34,7 @@
           class="text-l lg:text-xl font-bold leading-7 text-blue-800 underline mt-3 line-clamp-1 lg:line-clamp-2">
         </h3>
         <div class="mt-2 flex items-center">
-          <div class="flex-shrink-0">
+          <div class="shrink-0">
             <img class="h-10 w-10 rounded-full" x-bind:src="getUserAvatar(topic)" alt="author avatar">
           </div>
           <div class="ml-3">
@@ -68,7 +68,7 @@
         </div>
       </a>
   </template>
-  <button class="hidden py-2 px-4 rounded bg-blue-500 text-white flex-grow-0" type="button" x-on:click="reload()">
+  <button class="hidden py-2 px-4 rounded bg-blue-500 text-white grow-0" type="button" x-on:click="reload()">
     Reload
   </button>
 </div>
