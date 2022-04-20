@@ -126,7 +126,7 @@ AddTest(
 AddTest(
     NAME ParallelFEM_ThermoRichardsMechanics_3D_ThermoElastic_Stress_Analysis
     PATH ThermoRichardsMechanics/Simple3DThermoMechanicsFromTM
-    RUNTIME 45
+    RUNTIME 280
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_1e3.prj
     WRAPPER mpirun
@@ -169,7 +169,7 @@ AddTest(
 AddTest(
     NAME ParallelFEM_ThermoRichardsMechanics_point_heat_injection
     PATH ThermoRichardsMechanics/PointHeatSource
-    RUNTIME 45
+    RUNTIME 635
     EXECUTABLE ogs
     EXECUTABLE_ARGS point_heat_source_2D.prj
     WRAPPER mpirun
@@ -199,7 +199,7 @@ AddTest(
 AddTest(
     NAME ParallelFEM_ThermoRichardsMechanics_point_heat_injection_gml
     PATH ThermoRichardsMechanics/PointHeatSource
-    RUNTIME 45
+    RUNTIME 635
     EXECUTABLE ogs
     EXECUTABLE_ARGS point_heat_source_2D_gml.prj
     WRAPPER mpirun
@@ -229,7 +229,7 @@ AddTest(
 AddTest(
     NAME ParallelFEM_ThermoRichardsMechanics_TaskCDECOVALEX2023
     PATH ThermoRichardsMechanics/TaskCDECOVALEX2023
-    RUNTIME 30
+    RUNTIME 500
     EXECUTABLE ogs
     EXECUTABLE_ARGS Decovalex-0.prj
     WRAPPER mpirun

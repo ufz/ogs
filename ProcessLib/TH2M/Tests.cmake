@@ -314,7 +314,7 @@ AddTest(
 AddTest(
     NAME Parallel_TH2M_THM_point_heatsource
     PATH TH2M/THM/sphere
-    RUNTIME 40
+    RUNTIME 625
     EXECUTABLE ogs
     EXECUTABLE_ARGS point_heatsource.prj
     WRAPPER mpirun
@@ -369,7 +369,7 @@ AddTest(
 AddTest(
     NAME Parallel_TH2M_TH2_heat_pipe
     PATH TH2M/TH2/heatpipe/PETSc
-    RUNTIME 20
+    RUNTIME 370
     EXECUTABLE ogs
     EXECUTABLE_ARGS heat_pipe_strict.prj
     WRAPPER mpirun
