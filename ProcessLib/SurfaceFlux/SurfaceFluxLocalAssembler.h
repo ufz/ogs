@@ -159,9 +159,9 @@ private:
             auto const bulk_normal =
                 MeshLib::FaceRule::getSurfaceNormal(bulk_element);
             auto const l0 = Eigen::Map<Eigen::Vector3d const>(
-                surface_element.getNode(0)->getCoords());
+                surface_element.getNode(0)->data());
             auto const l1 = Eigen::Map<Eigen::Vector3d const>(
-                surface_element.getNode(1)->getCoords());
+                surface_element.getNode(1)->data());
             Eigen::Vector3d const line = l1 - l0;
             surface_element_normal = line.cross(bulk_normal);
         }

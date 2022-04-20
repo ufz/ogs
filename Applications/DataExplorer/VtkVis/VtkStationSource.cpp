@@ -164,7 +164,7 @@ int VtkStationSource::RequestData(vtkInformation* request,
 
             for (std::size_t i = 1; i < nLayers; i++)
             {
-                auto* pCoords = const_cast<double*>(profile[i]->getCoords());
+                auto* pCoords = const_cast<double*>(profile[i]->data());
                 double loc[3] = {pCoords[0], pCoords[1], pCoords[2]};
                 newStations->InsertNextPoint(loc);
                 station_ids->InsertNextValue(site_count);

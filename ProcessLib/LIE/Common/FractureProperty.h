@@ -81,7 +81,7 @@ inline void setFractureProperty(int const dim, MeshLib::Element const& e,
     // a fracture is not curving
     for (int j = 0; j < 3; j++)
     {
-        frac_prop.point_on_fracture[j] = getCenterOfGravity(e).getCoords()[j];
+        frac_prop.point_on_fracture[j] = getCenterOfGravity(e).data()[j];
     }
 
     const MeshLib::ElementCoordinatesMappingLocal ele_local_coord(e, dim);

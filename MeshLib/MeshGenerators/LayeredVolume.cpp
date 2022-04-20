@@ -156,13 +156,13 @@ void LayeredVolume::addLayerBoundaries(const MeshLib::Mesh& layer,
                         _nodes[offset + nNodes + getNodeIndex(*elem, i)];
 
                     auto const v0 =
-                        Eigen::Map<Eigen::Vector3d const>(n0->getCoords());
+                        Eigen::Map<Eigen::Vector3d const>(n0->data());
                     auto const v1 =
-                        Eigen::Map<Eigen::Vector3d const>(n1->getCoords());
+                        Eigen::Map<Eigen::Vector3d const>(n1->data());
                     auto const v2 =
-                        Eigen::Map<Eigen::Vector3d const>(n2->getCoords());
+                        Eigen::Map<Eigen::Vector3d const>(n2->data());
                     auto const v3 =
-                        Eigen::Map<Eigen::Vector3d const>(n3->getCoords());
+                        Eigen::Map<Eigen::Vector3d const>(n3->data());
                     double const eps = std::numeric_limits<double>::epsilon();
 
                     if ((v2 - v1).norm() > eps)

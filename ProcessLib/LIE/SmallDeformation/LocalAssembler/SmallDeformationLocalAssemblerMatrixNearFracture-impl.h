@@ -211,7 +211,7 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
 
         // levelset functions
         Eigen::Vector3d const ip_physical_coords(
-            computePhysicalCoordinates(_element, N).getCoords());
+            computePhysicalCoordinates(_element, N).data());
         std::vector<double> const levelsets(
             uGlobalEnrichments(_fracture_props, _junction_props,
                                _fracID_to_local, ip_physical_coords));

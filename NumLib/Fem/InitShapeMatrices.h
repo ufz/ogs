@@ -39,8 +39,7 @@ computeShapeMatrices(MeshLib::Element const& e, bool const is_axially_symmetric,
         shape_matrices.emplace_back(ShapeFunction::DIM, GlobalDim,
                                     ShapeFunction::NPOINTS);
         fe.template computeShapeFunctions<SelectedShapeMatrixType>(
-            p.getCoords(), shape_matrices.back(), GlobalDim,
-            is_axially_symmetric);
+            p.data(), shape_matrices.back(), GlobalDim, is_axially_symmetric);
     }
 
     return shape_matrices;

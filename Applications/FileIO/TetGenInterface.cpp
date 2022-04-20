@@ -826,7 +826,7 @@ void TetGenInterface::write3dElements(
         if (materialIds)
         {
             attribute_points.emplace_back(
-                MeshLib::getCenterOfGravity(*elements[i]).getCoords(),
+                MeshLib::getCenterOfGravity(*elements[i]).data(),
                 (*materialIds)[i]);
         }
     }

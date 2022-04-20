@@ -98,8 +98,7 @@ int VtkSurfacesSource::RequestData(vtkInformation* request,
 
     for (std::size_t i = 0; i < nPoints; ++i)
     {
-        const double* coords =
-            const_cast<double*>((*surfacePoints)[i]->getCoords());
+        const double* coords = const_cast<double*>((*surfacePoints)[i]->data());
         newPoints->SetPoint(i, coords);
     }
 

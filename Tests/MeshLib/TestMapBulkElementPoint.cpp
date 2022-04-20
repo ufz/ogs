@@ -79,7 +79,7 @@ static Eigen::MatrixXd getSelectedNodes(Coords const& natural_coordss,
 static Eigen::MatrixXd appendNode(Eigen::MatrixXd const& mat,
                                   MathLib::Point3d const& pt)
 {
-    Eigen::Map<const Eigen::Vector3d> col(pt.getCoords());
+    Eigen::Map<const Eigen::Vector3d> col(pt.data());
     Eigen::MatrixXd nodes(mat.rows(), mat.cols() + 1);
     nodes << mat, col;
     return nodes;

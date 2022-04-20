@@ -639,8 +639,7 @@ void GocadSGridReader::applySplitInformation(
     for (auto split_node : _split_nodes)
     {
         std::size_t const new_node_pos(nodes.size());
-        nodes.push_back(
-            new MeshLib::Node(split_node->getCoords(), new_node_pos));
+        nodes.push_back(new MeshLib::Node(split_node->data(), new_node_pos));
 
         // get grid coordinates
         std::array<std::size_t, 3> const& gc(split_node->getGridCoords());

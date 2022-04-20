@@ -101,8 +101,8 @@ TEST(MeshLib, GetElementRotationMatrices3DMesh)
         element_rotation_matrices[3].transpose() * b;
     EXPECT_EQ(elements[3]->getDimension(), b_local_1D.size());
 
-    double const* const x_6 = nodes[6]->getCoords();
-    double const* const x_8 = nodes[8]->getCoords();
+    double const* const x_6 = nodes[6]->data();
+    double const* const x_8 = nodes[8]->data();
     // b_local_1D = |b| (x_8-x_6) * b/(|(x_8-x_6)| |b|)
     double dx[3];
     for (int i = 0; i < 3; i++)
@@ -181,8 +181,8 @@ TEST(MeshLib, GetElementRotationMatrices2DMesh)
         element_rotation_matrices[2].transpose() * b;
     EXPECT_EQ(elements[2]->getDimension(), b_local_1D.size());
 
-    double const* const x_0 = nodes[0]->getCoords();
-    double const* const x_2 = nodes[2]->getCoords();
+    double const* const x_0 = nodes[0]->data();
+    double const* const x_2 = nodes[2]->data();
     // b_local_1D = |b| (x_2-x_0) * b/(|(x_2-x_0)| |b|)
     double dx[2];
     for (int i = 0; i < 2; i++)

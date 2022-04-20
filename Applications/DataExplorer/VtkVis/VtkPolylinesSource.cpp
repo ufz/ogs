@@ -118,7 +118,7 @@ int VtkPolylinesSource::RequestData(vtkInformation* request,
         for (int i = 0; i < numVerts; i++)
         {
             const GeoLib::Point* point = (*_polylines)[j]->getPoint(i);
-            const double* coords = point->getCoords();
+            const double* coords = point->data();
             newPoints->InsertNextPoint(coords);
         }
 

@@ -24,10 +24,10 @@ int getSpaceDimension(std::vector<Node*> const& nodes)
 {
     std::array x_magnitude = {0.0, 0.0, 0.0};
 
-    double const* const x_ref = nodes[0]->getCoords();
+    double const* const x_ref = nodes[0]->data();
     for (auto const& node : nodes)
     {
-        auto const x = node->getCoords();
+        auto const x = node->data();
         for (int i = 0; i < 3; i++)
         {
             x_magnitude[i] += std::fabs(x[i] - x_ref[i]);

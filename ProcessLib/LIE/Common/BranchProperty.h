@@ -23,7 +23,7 @@ struct BranchProperty final
     BranchProperty(MeshLib::Node const& branchNode,
                    int const master_fracture_id_,
                    int const slave_fracture_id_)
-        : coords{branchNode.getCoords()},
+        : coords{branchNode.data()},
           node_id{branchNode.getID()},
           master_fracture_id{master_fracture_id_},
           slave_fracture_id{slave_fracture_id_}

@@ -51,9 +51,9 @@ inline Eigen::Vector3d calculateNormalizedSurfaceNormal(
         auto const bulk_element_normal =
             MeshLib::FaceRule::getSurfaceNormal(bulk_element);
         auto const v0 = Eigen::Map<Eigen::Vector3d const>(
-            surface_element.getNode(0)->getCoords());
+            surface_element.getNode(0)->data());
         auto const v1 = Eigen::Map<Eigen::Vector3d const>(
-            surface_element.getNode(1)->getCoords());
+            surface_element.getNode(1)->data());
         Eigen::Vector3d const edge_vector = v1 - v0;
         surface_element_normal = bulk_element_normal.cross(edge_vector);
     }

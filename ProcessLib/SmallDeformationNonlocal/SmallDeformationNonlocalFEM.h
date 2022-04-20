@@ -284,8 +284,8 @@ public:
         auto* nodes = _element.getNodes();
         for (int i = 0; i < N.size(); ++i)
         {
-            Eigen::Map<Eigen::Vector3d const> node_coordinates{
-                nodes[i]->getCoords(), 3};
+            Eigen::Map<Eigen::Vector3d const> node_coordinates{nodes[i]->data(),
+                                                               3};
             xyz += node_coordinates * N[i];
         }
         return xyz;

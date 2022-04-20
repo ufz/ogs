@@ -49,9 +49,9 @@ bool is2DMeshOnRotatedVerticalPlane(Mesh const& mesh)
         [](auto const& element)
         {
             // 3 nodes are enough to make up a plane.
-            auto const x1 = element->getNode(0)->getCoords();
-            auto const x2 = element->getNode(1)->getCoords();
-            auto const x3 = element->getNode(2)->getCoords();
+            auto const x1 = element->getNode(0)->data();
+            auto const x2 = element->getNode(1)->data();
+            auto const x3 = element->getNode(2)->data();
 
             double const a0 = x2[0] - x1[0];
             double const a2 = x2[2] - x1[2];
@@ -68,9 +68,9 @@ bool is2DMeshOnRotatedVerticalPlane(Mesh const& mesh)
         [](auto const& element)
         {
             // 3 nodes are enough to make up a plane.
-            auto const x1 = element->getNode(0)->getCoords();
-            auto const x2 = element->getNode(1)->getCoords();
-            auto const x3 = element->getNode(2)->getCoords();
+            auto const x1 = element->getNode(0)->data();
+            auto const x2 = element->getNode(1)->data();
+            auto const x3 = element->getNode(2)->data();
 
             double const a0 = x2[0] - x1[0];
             double const a1 = x2[1] - x1[1];

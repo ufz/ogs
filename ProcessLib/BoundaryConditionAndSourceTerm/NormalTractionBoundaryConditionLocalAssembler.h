@@ -86,8 +86,8 @@ public:
         if (e.getGeomType() == MeshLib::MeshElemType::LINE)
         {
             Eigen::Vector3d const v1 =
-                Eigen::Map<Eigen::Vector3d const>(e.getNode(1)->getCoords()) -
-                Eigen::Map<Eigen::Vector3d const>(e.getNode(0)->getCoords());
+                Eigen::Map<Eigen::Vector3d const>(e.getNode(1)->data()) -
+                Eigen::Map<Eigen::Vector3d const>(e.getNode(0)->data());
             element_normal[0] = -v1[1];
             element_normal[1] = v1[0];
             element_normal.normalize();
