@@ -42,13 +42,13 @@ ci_images:
     - !reference [.container-maker-setup, before_script]
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - poetry run ogscm compiler.py ogs.py --build --ogs off
-      --compiler_version 10
+      --compiler_version 11
       --pm system --cvode --cppcheck --docs --gcovr --mfront --ccache
       --version_file ../../web/data/versions.json
       --tag $CONTAINER_GCC_IMAGE --upload
       --cpu-target $CPU_TARGET
     - poetry run ogscm compiler.py ogs.py --build --ogs off
-      --compiler_version 10
+      --compiler_version 11
       --cvode --cppcheck --docs --gcovr --gui --ccache
       --version_file ../../web/data/versions.json
       --tag $CONTAINER_GCC_GUI_IMAGE --upload
