@@ -58,8 +58,7 @@ Element const* getProjectedElement(std::vector<const Element*> const& elements,
 double getElevation(Element const& element, Node const& node)
 {
     Eigen::Vector3d const v =
-        Eigen::Map<Eigen::Vector3d const>(node.data()) -
-        Eigen::Map<Eigen::Vector3d const>(element.getNode(0)->data());
+        node.asEigenVector3d() - element.getNode(0)->asEigenVector3d();
     auto const n = FaceRule::getSurfaceNormal(element).normalized();
     return node[2] - n.dot(v) * n[2];
 }
