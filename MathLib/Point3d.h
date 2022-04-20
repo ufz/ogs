@@ -72,22 +72,8 @@ private:
 
 inline bool operator<(Point3d const& a, Point3d const& b)
 {
-    for (std::size_t i = 0; i < 3; ++i)
-    {
-        if (a[i] > b[i])
-        {
-            return false;
-        }
-        if (a[i] < b[i])
-        {
-            return true;
-        }
-
-        // continue with next dimension, because a[0] == b[0]
-    }
-
-    // The values in all dimensions are equal.
-    return false;
+    return std::lexicographical_compare(a.data(), a.data() + 3, b.data(),
+                                        b.data() + 3);
 }
 
 /**
