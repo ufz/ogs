@@ -47,12 +47,14 @@ ci_images:
       --version_file ../../web/data/versions.json
       --tag $CONTAINER_GCC_IMAGE --upload
       --cpu-target $CPU_TARGET
+      --packages build-essential
     - poetry run ogscm compiler.py ogs.py --build --ogs off
       --compiler_version 11
       --cvode --cppcheck --docs --gcovr --gui --ccache
       --version_file ../../web/data/versions.json
       --tag $CONTAINER_GCC_GUI_IMAGE --upload
       --cpu-target $CPU_TARGET
+      --packages build-essential
     - poetry run ogscm compiler.py ogs.py --build --ogs off
       --compiler clang --compiler_version 11 --ccache
       --version_file ../../web/data/versions.json
