@@ -8,6 +8,7 @@ ogs_add_library(ApplicationsLib ${LIB_SOURCES})
 target_link_libraries(
     ApplicationsLib
     PUBLIC BaseLib GeoLib NumLib
+           $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
     PRIVATE CMakeInfoLib MathLib MeshLib MeshGeoToolsLib
             $<$<BOOL:${OGS_USE_PYTHON}>:pybind11::pybind11>
             $<$<BOOL:${OGS_USE_PETSC}>:petsc>
