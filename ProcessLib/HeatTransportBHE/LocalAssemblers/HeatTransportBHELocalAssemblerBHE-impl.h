@@ -58,8 +58,8 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
     }
 
     // calculate the element direction vector
-    auto const p0 = Eigen::Map<Eigen::Vector3d const>(e.getNode(0)->data(), 3);
-    auto const p1 = Eigen::Map<Eigen::Vector3d const>(e.getNode(1)->data(), 3);
+    auto const& p0 = e.getNode(0)->asEigenVector3d();
+    auto const& p1 = e.getNode(1)->asEigenVector3d();
 
     _element_direction = (p1 - p0).normalized();
 
