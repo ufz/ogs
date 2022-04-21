@@ -19,9 +19,9 @@ namespace MathLib
 double calcProjPntToLineAndDists(Point3d const& pp, Point3d const& pa,
                                  Point3d const& pb, double& lambda, double& d0)
 {
-    auto const a = Eigen::Map<Eigen::Vector3d const>(pa.data());
-    auto const b = Eigen::Map<Eigen::Vector3d const>(pb.data());
-    auto const p = Eigen::Map<Eigen::Vector3d const>(pp.data());
+    auto const& a = pa.asEigenVector3d();
+    auto const& b = pb.asEigenVector3d();
+    auto const& p = pp.asEigenVector3d();
 
     // g(lambda) = a + lambda v, v = b-a
     Eigen::Vector3d const v = b - a;
@@ -41,11 +41,9 @@ double calcProjPntToLineAndDists(Point3d const& pp, Point3d const& pa,
 
 double getAngle(Point3d const& p0, Point3d const& p1, Point3d const& p2)
 {
-    auto const a = Eigen::Map<Eigen::Vector3d const>(p0.data());
-    auto const b = Eigen::Map<Eigen::Vector3d const>(p1.data());
-    auto const c = Eigen::Map<Eigen::Vector3d const>(p2.data());
-    Eigen::Vector3d const v0 = a - b;
-    Eigen::Vector3d const v1 = c - b;
+    auto const& b = p1.asEigenVector3d();
+    Eigen::Vector3d const v0 = p0.asEigenVector3d() - b;
+    Eigen::Vector3d const v1 = p2.asEigenVector3d() - b;
 
     // apply Cauchy Schwarz inequality
     return std::acos(v0.dot(v1) / (v0.norm() * v1.norm()));
