@@ -423,7 +423,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             continue;
         }
 
-        Eigen::Vector3d const pt(getCenterOfGravity(*e).data());
+        Eigen::Vector3d const pt(getCenterOfGravity(*e).asEigenVector3d());
         std::vector<FractureProperty*> e_fracture_props;
         std::unordered_map<int, int> e_fracID_to_local;
         unsigned tmpi = 0;
