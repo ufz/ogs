@@ -161,8 +161,11 @@ class BC(OpenGeoSys.BHENetwork):
             # return to OGS
             return (True, if_success, cur_Tin_val, cur_flowrate)
 
-    def serverCommunication(self, t, dt, Tin_val, Tout_val, flowrate):
-        # write results in file for proof of concept
+    def serverCommunicationPreTimestep(self, t, dt, Tin_val, Tout_val, flowrate):
+        # TODO: Code for SimualtionX simulation
+        # with t; only take the last results for each time point
+        # TODO: say SimulationX the next time point from OGS
+
         tin_file = open("T_in.txt", "a")
         tin_file.write(str(t) + str(Tin_val) + "\n")
         tin_file.close()
@@ -176,6 +179,23 @@ class BC(OpenGeoSys.BHENetwork):
         flowrate_file.close()
 
         return (Tin_val, flowrate)
+        
+    def serverCommunicationPostTimestep(self, t, dt, Tin_val, Tout_val, flowrate):
+        Tin_val = [305,305,305]
+
+        tin = open("T_in.txt", "a")
+        tin.write("post: " + str(t) + str(Tin_val) + "\n")
+        tin.close()
+        
+        tout = open("T_out.txt", "a")
+        tout.write("post: " + str(t) + str(Tout_val) + "\n")
+        tout.close()
+        
+        flowrate_file = open("flowrate.txt", "a")
+        flowrate_file.write("post: " + str(t) + str(flowrate) + "\n")
+        flowrate_file.close()
+
+        return
 
 
 # main

@@ -74,14 +74,23 @@ public:
      * serverCommunication)
      */
     virtual std::tuple<std::vector<double>, std::vector<double>>
-    serverCommunication(double /*t*/,
+    serverCommunicationPreTimestep(double /*t*/,
                         double /*dt*/,
                         std::vector<double> const& /*Tin_val*/,
                         std::vector<double> const& /*Tout_val*/,
                         std::vector<double> const& /*BHE_flowrate*/) const
     {
-        _overridden_server_communication = false;
+        _overridden_server_communication_pre = false;
         return {};
+    }
+
+    virtual void serverCommunicationPostTimestep(double /*t*/,
+                             double /*dt*/,
+                             std::vector<double> const& /*Tin_val*/,
+                             std::vector<double> const& /*Tout_val*/,
+                             std::vector<double> const& /*BHE_flowrate*/) const
+    {
+        _overridden_server_communication_post = false;
     }
 
     //! Tells if initializeDataContainer() has been overridden in the derived
@@ -101,9 +110,14 @@ public:
     //! in Python.
     //!
     //! \pre serverCommunication() must already have been called once.
-    bool isOverriddenServerCommunication() const
+    bool isOverriddenServerCommunicationPreTimestep() const
     {
-        return _overridden_server_communication;
+        return _overridden_server_communication_pre;
+    }
+
+    bool isOverriddenServerCommunicationPostTimestep() const
+    {
+        return _overridden_server_communication_post;
     }
 
     // BHE network dataframe container
@@ -125,6 +139,8 @@ private:
     mutable bool _overridden_tespy = true;
     //! Tells if serverCommunication() has been overridden in the derived class
     //! in Python.
-    mutable bool _overridden_server_communication = true;
+    mutable bool _overridden_server_communication_pre = true;
+
+    mutable bool _overridden_server_communication_post = true;
 };
 }  // namespace ProcessLib

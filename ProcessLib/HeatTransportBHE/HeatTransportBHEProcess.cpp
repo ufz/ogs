@@ -286,9 +286,10 @@ void HeatTransportBHEProcess::preTimestepConcreteProcess(
 
     // Transfer T_out to server_Communication and get back T_in and flowrate
     auto const server_communication_result =
-        _process_data.py_bc_object->serverCommunication(t, dt, Tin_value,
+        _process_data.py_bc_object->serverCommunicationPreTimestep(t, dt, Tin_value,
                                                         Tout_value, flowrate);
-    if (!_process_data.py_bc_object->isOverriddenServerCommunication())
+    if (!_process_data.py_bc_object
+             ->isOverriddenServerCommunicationPreTimestep())
     {
         DBUG("Method `serverCommunication' not overridden in Python script.");
     }
@@ -302,6 +303,44 @@ void HeatTransportBHEProcess::preTimestepConcreteProcess(
     std::copy(begin(server_communication_flowrate),
               end(server_communication_flowrate),
               begin(flowrate));
+}
+
+void HeatTransportBHEProcess::postTimestepConcreteProcess(
+    std::vector<GlobalVector*> const& x, const double t, const double dt,
+    int const process_id)
+{
+    if (_process_data.py_bc_object == nullptr ||
+        !_process_data._use_server_communication)
+    {
+        return;
+    }
+
+    auto& [time, Tin_value, Tout_value, Tout_nodes_ids, flowrate] =
+        _process_data.py_bc_object->dataframe_network;
+
+    // We found the problem that time != t, but it always equals the last
+    // step. The following line is to correct this, although we do not use
+    // it for server communication.
+    time = t;
+
+    auto const& solution = *x[process_id];
+
+    // Iterate through each BHE
+    const std::size_t n_bc_nodes = Tout_nodes_ids.size();
+    for (std::size_t i = 0; i < n_bc_nodes; i++)
+    {
+        // read the T_out and store them in dataframe
+        Tout_value[i] = solution[Tout_nodes_ids[i]];
+    }
+
+    // Transfer T_out to server_Communication
+    _process_data.py_bc_object->serverCommunicationPostTimestep(t, dt, Tin_value,
+                                                         Tout_value, flowrate);
+    if (!_process_data.py_bc_object
+             ->isOverriddenServerCommunicationPostTimestep())
+    {
+        DBUG("Method `serverCommunication' not overridden in Python script.");
+    }
 }
 #endif  // OGS_USE_PYTHON
 

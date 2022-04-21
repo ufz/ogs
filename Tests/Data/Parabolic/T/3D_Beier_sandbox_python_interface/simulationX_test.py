@@ -40,7 +40,7 @@ class BC(OpenGeoSys.BHENetwork):
         data_col_4 = df_server["flowrate"].tolist()  # 'BHE flow rate'
         return (t, data_col_1, data_col_2, data_col_3, data_col_4)
 
-    def serverCommunication(self, t, dt, Tin_val, Tout_val, flowrate):
+    def serverCommunicationPreTimestep(self, t, dt, Tin_val, Tout_val, flowrate):
         # TODO: Code for SimualtionX simulation
         # with t; only take the last results for each time point
         # TODO: say SimulationX the next time point from OGS
@@ -59,6 +59,23 @@ class BC(OpenGeoSys.BHENetwork):
         flowrate_file.close()
 
         return (Tin_val, flowrate)
+        
+    def serverCommunicationPostTimestep(self, t, dt, Tin_val, Tout_val, flowrate):
+        Tin_val = [305]
+
+        tin = open("T_in.txt", "a")
+        tin.write("post: " + str(t) + str(Tin_val) + "\n")
+        tin.close()
+        
+        tout = open("T_out.txt", "a")
+        tout.write("post: " + str(t) + str(Tout_val) + "\n")
+        tout.close()
+        
+        flowrate_file = open("flowrate.txt", "a")
+        flowrate_file.write("post: " + str(t) + str(flowrate) + "\n")
+        flowrate_file.close()
+
+        return
 
 
 # main

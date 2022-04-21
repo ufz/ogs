@@ -101,8 +101,8 @@ if("${Python_VERSION}" VERSION_LESS 3.9)
     )
 
     AddTest(
-        NAME HeatTransportBHE_1U_3D_beier_sandbox_server_communication
-        PATH Parabolic/T/3D_Beier_sandbox_SimX
+        NAME HeatTransportBHE_1U_3D_beier_sandbox_python_interface
+        PATH Parabolic/T/3D_Beier_sandbox_python_interface
         EXECUTABLE ogs
         EXECUTABLE_ARGS beier_sandbox.prj
         WRAPPER time
@@ -116,8 +116,8 @@ if("${Python_VERSION}" VERSION_LESS 3.9)
     )
 
     AddTest(
-        NAME HeatTransportBHE_3D_3BHEs_array_server_communication
-        PATH Parabolic/T/3D_3BHEs_array_SimX
+        NAME HeatTransportBHE_3D_3BHEs_array_python_interface
+        PATH Parabolic/T/3D_3BHEs_array_python_interface
         RUNTIME 50
         EXECUTABLE ogs
         EXECUTABLE_ARGS 3bhes_1U.prj

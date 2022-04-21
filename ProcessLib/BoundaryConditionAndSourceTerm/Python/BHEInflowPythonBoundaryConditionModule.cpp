@@ -49,7 +49,7 @@ public:
                           tespySolver, t, Tin_val, Tout_val);
     }
 
-    std::tuple<std::vector<double>, std::vector<double>> serverCommunication(
+    std::tuple<std::vector<double>, std::vector<double>> serverCommunicationPreTimestep(
         double const t, double const dt, std::vector<double> const& Tin_val,
         std::vector<double> const& Tout_val,
         std::vector<double> const& flowrate) const override
@@ -57,7 +57,17 @@ public:
         using Ret = std::tuple<std::vector<double>, std::vector<double>>;
         PYBIND11_OVERLOAD(
             Ret, BHEInflowPythonBoundaryConditionPythonSideInterface,
-            serverCommunication, t, dt, Tin_val, Tout_val, flowrate);
+            serverCommunicationPreTimestep, t, dt, Tin_val, Tout_val, flowrate);
+    }
+
+    void serverCommunicationPostTimestep(double const t, double const dt,
+                             std::vector<double> const& Tin_val,
+                             std::vector<double> const& Tout_val,
+                             std::vector<double> const& flowrate) const override
+    {
+        PYBIND11_OVERLOAD(
+            void, BHEInflowPythonBoundaryConditionPythonSideInterface,
+            serverCommunicationPostTimestep, t, dt, Tin_val, Tout_val, flowrate);
     }
 };
 
@@ -77,9 +87,13 @@ void bheInflowpythonBindBoundaryCondition(pybind11::module& m)
     pybc.def("tespySolver",
              &BHEInflowPythonBoundaryConditionPythonSideInterface::tespySolver);
 
-    pybc.def("serverCommunication",
+    pybc.def("serverCommunicationPreTimestep",
              &BHEInflowPythonBoundaryConditionPythonSideInterface::
-                 serverCommunication);
+                 serverCommunicationPreTimestep);
+
+    pybc.def("serverCommunicationPostTimestep",
+             &BHEInflowPythonBoundaryConditionPythonSideInterface::
+                 serverCommunicationPostTimestep);
 }
 
 }  // namespace ProcessLib
