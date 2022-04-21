@@ -116,13 +116,23 @@ double Simulation::endTime() const
     return time_loop.endTime();
 }
 
+bool Simulation::executeTimeStep()
+{
+    auto& time_loop = project_data->getTimeLoop();
+    if (time_loop.currentTime() < time_loop.endTime())
+    {
+        return time_loop.executeTimeStep();
+    }
+    return false;
+}
+
 bool Simulation::executeSimulation()
 {
     INFO("Solve processes.");
     auto& time_loop = project_data->getTimeLoop();
     while (time_loop.currentTime() < time_loop.endTime())
     {
-        if (!time_loop.doTimestep())
+        if (!time_loop.executeTimeStep())
         {
             break;
         }
