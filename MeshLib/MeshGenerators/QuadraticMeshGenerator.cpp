@@ -15,6 +15,7 @@
 #include "MeshLib/Elements/Hex.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Prism.h"
+#include "MeshLib/Elements/Pyramid.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
@@ -171,6 +172,10 @@ std::unique_ptr<MeshLib::Element> createQuadraticElement(
     if (e.getCellType() == MeshLib::CellType::PRISM6)
     {
         return convertLinearToQuadratic<MeshLib::Prism15>(e);
+    }
+    if (e.getCellType() == MeshLib::CellType::PYRAMID5)
+    {
+        return convertLinearToQuadratic<MeshLib::Pyramid13>(e);
     }
 
     OGS_FATAL("Mesh element type {:s} is not supported",
