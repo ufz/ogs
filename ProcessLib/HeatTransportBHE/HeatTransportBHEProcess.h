@@ -72,6 +72,11 @@ private:
     void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                     const double t, const double dt,
                                     int const process_id) override;
+
+    void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                     const double t, const double dt,
+                                     int const process_id) override;
+
     NumLib::IterationResult postIterationConcreteProcess(
         GlobalVector const& x) override;
 #endif
