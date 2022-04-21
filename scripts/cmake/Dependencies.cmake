@@ -408,8 +408,14 @@ if(NOT VTK_FOUND)
         EXCLUDE_FROM_ALL YES GIT_SUBMODULES "" # Disable submodules
     )
 endif()
-if(VTK_ADDED AND OpenMP_FOUND AND TARGET vtkFiltersStatistics)
-    target_link_libraries(vtkFiltersStatistics PRIVATE OpenMP::OpenMP_C)
+if(VTK_ADDED)
+    if(OpenMP_FOUND AND TARGET vtkFiltersStatistics)
+        target_link_libraries(vtkFiltersStatistics PRIVATE OpenMP::OpenMP_C)
+    endif()
+    if(TARGET loguru)
+        # Fixes https://stackoverflow.com/questions/9894961 on vismac05:
+        set_target_properties(loguru PROPERTIES CXX_VISIBILITY_PRESET default)
+    endif()
 endif()
 # end VTK ###
 
