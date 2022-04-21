@@ -65,8 +65,7 @@ int VtkSurfacesSource::RequestData(vtkInformation* request,
     (void)request;
     (void)inputVector;
 
-    const int nSurfaces = _surfaces->size();
-    if (nSurfaces == 0)
+    if (_surfaces->empty())
     {
         return 0;
     }
