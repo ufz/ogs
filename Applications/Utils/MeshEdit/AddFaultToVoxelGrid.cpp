@@ -48,8 +48,8 @@ bool testTriangleIntersectingAABB(MeshLib::Node const& n0,
 {
     // Translate triangle as conceptually moving AABB to origin
     Eigen::Matrix3d v;
-    v << Eigen::Vector3d(n0.data()) - c, Eigen::Vector3d(n1.data()) - c,
-        Eigen::Vector3d(n2.data()) - c;
+    v << n0.asEigenVector3d() - c, n1.asEigenVector3d() - c,
+        n2.asEigenVector3d() - c;
 
     // Test the three axes corresponding to the face normals of AABB b
     if (((v.rowwise().minCoeff() - e).array() > 0).any() ||
@@ -126,7 +126,7 @@ void markFaults(MeshLib::Mesh& mesh, MeshLib::Mesh const& fault,
         }
 
         // test if voxel is intersecting triangle
-        Eigen::Vector3d const c(centre_pnt.data());
+        auto const& c(centre_pnt.asEigenVector3d());
         for (auto const* const fault_elem : felems)
         {
             if (fault_elem->getDimension() != 2)
