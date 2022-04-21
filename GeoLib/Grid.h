@@ -532,10 +532,8 @@ POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
         }  // end while
     }      // end else
 
-    auto to_eigen = [](auto const& point)
-    { return Eigen::Map<Eigen::Vector3d const>(point.data()); };
-
-    double len((to_eigen(pnt) - to_eigen(*nearest_pnt)).norm());
+    double const len(
+        (pnt.asEigenVector3d() - nearest_pnt->asEigenVector3d()).norm());
     // search all other grid cells within the cube with the edge nodes
     std::vector<std::vector<POINT*> const*> vecs_of_pnts(
         getPntVecsOfGridCellsIntersectingCube(pnt, len));
@@ -548,7 +546,8 @@ POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
         for (std::size_t k(0); k < n_pnts; k++)
         {
             const double sqr_dist(
-                (to_eigen(pnt) - to_eigen(*pnts[k])).squaredNorm());
+                (pnt.asEigenVector3d() - pnts[k]->asEigenVector3d())
+                    .squaredNorm());
             if (sqr_dist < sqr_min_dist)
             {
                 sqr_min_dist = sqr_dist;
@@ -652,8 +651,7 @@ bool Grid<POINT>::calcNearestPointInGridCell(
     if (pnts.empty())
         return false;
 
-    auto to_eigen = [](auto const& point)
-    { return Eigen::Map<Eigen::Vector3d const>(point.data()); };
+    auto const to_eigen = [](auto const& p) { return (p.asEigenVector3d()); };
 
     const std::size_t n_pnts(pnts.size());
     sqr_min_dist = (to_eigen(*pnts[0]) - to_eigen(pnt)).squaredNorm();

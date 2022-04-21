@@ -152,10 +152,10 @@ bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
         return false;
     }
 
-    auto const a = Eigen::Map<Eigen::Vector3d const>(s0.getBeginPoint().data());
-    auto const b = Eigen::Map<Eigen::Vector3d const>(s0.getEndPoint().data());
-    auto const c = Eigen::Map<Eigen::Vector3d const>(s1.getBeginPoint().data());
-    auto const d = Eigen::Map<Eigen::Vector3d const>(s1.getEndPoint().data());
+    auto const a = s0.getBeginPoint().asEigenVector3d();
+    auto const b = s0.getEndPoint().asEigenVector3d();
+    auto const c = s1.getBeginPoint().asEigenVector3d();
+    auto const d = s1.getEndPoint().asEigenVector3d();
 
     Eigen::Vector3d const v = b - a;
     Eigen::Vector3d const w = d - c;
@@ -369,11 +369,11 @@ std::unique_ptr<GeoLib::Point> triangleLineIntersection(
     MathLib::Point3d const& c, MathLib::Point3d const& p,
     MathLib::Point3d const& q)
 {
-    auto const va = Eigen::Map<Eigen::Vector3d const>(a.data());
-    auto const vb = Eigen::Map<Eigen::Vector3d const>(b.data());
-    auto const vc = Eigen::Map<Eigen::Vector3d const>(c.data());
-    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.data());
-    auto const vq = Eigen::Map<Eigen::Vector3d const>(q.data());
+    auto const va = a.asEigenVector3d();
+    auto const vb = b.asEigenVector3d();
+    auto const vc = c.asEigenVector3d();
+    auto const vp = p.asEigenVector3d();
+    auto const vq = q.asEigenVector3d();
 
     Eigen::Vector3d const pq = vq - vp;
     Eigen::Vector3d const pa = va - vp;

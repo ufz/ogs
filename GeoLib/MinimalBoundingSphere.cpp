@@ -34,8 +34,8 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
                                              MathLib::Point3d const& q)
     : _radius(std::numeric_limits<double>::epsilon()), _center(p)
 {
-    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.data());
-    auto const vq = Eigen::Map<Eigen::Vector3d const>(q.data());
+    auto const& vp = p.asEigenVector3d();
+    auto const& vq = q.asEigenVector3d();
     Eigen::Vector3d const a = vq - vp;
 
     Eigen::Vector3d o = a / 2;
@@ -48,9 +48,9 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
                                              MathLib::Point3d const& q,
                                              MathLib::Point3d const& r)
 {
-    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.data());
-    auto const vq = Eigen::Map<Eigen::Vector3d const>(q.data());
-    auto const vr = Eigen::Map<Eigen::Vector3d const>(r.data());
+    auto const& vp = p.asEigenVector3d();
+    auto const& vq = q.asEigenVector3d();
+    auto const& vr = r.asEigenVector3d();
     Eigen::Vector3d const a = vr - vp;
     Eigen::Vector3d const b = vq - vp;
     Eigen::Vector3d const axb = a.cross(b);
@@ -85,14 +85,11 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
                                              MathLib::Point3d const& r,
                                              MathLib::Point3d const& s)
 {
-    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.data());
-    auto const vq = Eigen::Map<Eigen::Vector3d const>(q.data());
-    auto const vr = Eigen::Map<Eigen::Vector3d const>(r.data());
-    auto const vs = Eigen::Map<Eigen::Vector3d const>(s.data());
+    auto const& vp = p.asEigenVector3d();
 
-    Eigen::Vector3d const va = vq - vp;
-    Eigen::Vector3d const vb = vr - vp;
-    Eigen::Vector3d const vc = vs - vp;
+    Eigen::Vector3d const va = q.asEigenVector3d() - vp;
+    Eigen::Vector3d const vb = r.asEigenVector3d() - vp;
+    Eigen::Vector3d const vc = s.asEigenVector3d() - vp;
 
     if (!MathLib::isCoplanar(p, q, r, s))
     {
