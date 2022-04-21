@@ -70,8 +70,7 @@
             "VTK_ENABLE_WRAPPING=OFF",
             "VTK_USE_64BIT_IDS=ON",
             "VTK_MODULE_ENABLE_VTK_IOXML=YES",
-            "VTK_MODULE_ENABLE_VTK_IOLegacy=YES",
-            "VTK_MODULE_USE_EXTERNAL_VTK_zlib=ON"
+            "VTK_MODULE_ENABLE_VTK_IOLegacy=YES"
           ]
         },
         {

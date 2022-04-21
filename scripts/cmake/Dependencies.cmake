@@ -167,121 +167,6 @@ CPMAddPackage(
     OPTIONS "BUILD_SHARED_LIBS OFF"
 )
 
-if(OGS_USE_MPI)
-    set(_hdf5_options "HDF5_ENABLE_PARALLEL ON")
-endif()
-
-string(REPLACE "." "_" HDF5_TAG ${ogs.minimum_version.hdf5})
-if(OGS_USE_NETCDF)
-    list(APPEND CMAKE_MODULE_PATH ${PROJECT_BINARY_DIR})
-    find_package(HDF5 REQUIRED)
-else()
-    # ZLIB is a HDF5 dependency
-    CPMFindPackage(
-        NAME ZLIB
-        GITHUB_REPOSITORY madler/zlib
-        VERSION 1.2.11
-        EXCLUDE_FROM_ALL YES
-    )
-
-    CPMFindPackage(
-        NAME HDF5
-        GITHUB_REPOSITORY HDFGroup/hdf5
-        GIT_TAG hdf5-${HDF5_TAG}
-        VERSION ${ogs.minimum_version.hdf5}
-        OPTIONS "HDF5_EXTERNALLY_CONFIGURED 1"
-                "HDF5_GENERATE_HEADERS OFF"
-                "HDF5_BUILD_TOOLS OFF"
-                "HDF5_BUILD_EXAMPLES OFF"
-                "HDF5_BUILD_HL_LIB OFF"
-                "HDF5_BUILD_FORTRAN OFF"
-                "HDF5_BUILD_CPP_LIB OFF"
-                "HDF5_BUILD_JAVA OFF"
-                ${_hdf5_options}
-        EXCLUDE_FROM_ALL YES
-    )
-    if(HDF5_ADDED)
-        list(APPEND DISABLE_WARNINGS_TARGETS hdf5-static)
-        set(HDF5_LIBRARIES hdf5-static)
-        if(ZLIB_ADDED)
-            list(APPEND HDF5_LIBRARIES zlibstatic)
-        endif()
-        set(HDF5_INCLUDE_DIRS ${HDF5_SOURCE_DIR}/src ${HDF5_BINARY_DIR})
-        set(HDF5_C_INCLUDE_DIRS ${HDF5_INCLUDE_DIRS})
-        set(HDF5_C_INCLUDE_DIR ${HDF5_INCLUDE_DIRS})
-        target_include_directories(hdf5-static INTERFACE ${HDF5_INCLUDE_DIRS})
-        if(OGS_USE_MKL AND WIN32)
-            # In this case the hdf5 build fails with, e.g.:
-            # ~~~
-            # H5system.c(710): error C2065: 'timezone': undeclared identifier
-            # ~~~
-            # Reason is that the H5_HAVE_VISUAL_STUDIO-symbol is not defined
-            # anymore!?
-            target_compile_definitions(
-                hdf5-static PRIVATE -DH5_HAVE_VISUAL_STUDIO
-            )
-        endif()
-    else()
-        find_package(HDF5 REQUIRED)
-    endif()
-endif()
-
-if(OGS_USE_PETSC AND NOT HDF5_ADDED)
-    include(CheckCXXSymbolExists)
-    set(CMAKE_REQUIRED_INCLUDES "${HDF5_INCLUDE_DIR}" "${HDF5_BINARY_DIR}")
-    set(CMAKE_REQUIRED_LIBRARIES "${HDF5_LIBRARIES}")
-    check_cxx_symbol_exists(H5Pset_fapl_mpio hdf5.h HAVE_H5Pset_fapl_mpio)
-    unset(CMAKE_REQUIRED_INCLUDES)
-    if(NOT HAVE_H5Pset_fapl_mpio)
-        message(FATAL_ERROR "HDF5 was not build with MPI support! "
-                            "(Enable with HDF5_ENABLE_PARALLEL)"
-        )
-    endif()
-endif()
-
-# Does not compile in Debug-mode, see #3175.
-if(CMAKE_BUILD_TYPE STREQUAL "Release" AND OGS_BUILD_TESTING)
-    set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
-    CPMAddPackage(
-        NAME xdmf
-        VERSION 3.0.0
-        GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/xdmflib.git
-        GIT_TAG 92a851f1acb87ad5367eb62f9b97785bedb700bb
-        OPTIONS "XDMF_LIBNAME OgsXdmf"
-        EXCLUDE_FROM_ALL YES
-    )
-    if(xdmf_ADDED)
-        target_include_directories(
-            OgsXdmf PUBLIC ${xdmf_SOURCE_DIR} ${xdmf_BINARY_DIR}
-        )
-
-        target_link_libraries(OgsXdmf Boost::boost)
-        target_include_directories(
-            OgsXdmfCore PUBLIC ${xdmf_SOURCE_DIR}/core ${xdmf_BINARY_DIR}/core
-            PRIVATE ${xdmf_SOURCE_DIR}/CMake/VersionSuite
-        )
-        target_link_libraries(
-            OgsXdmfCore PUBLIC Boost::boost LibXml2::LibXml2 ${HDF5_LIBRARIES}
-        )
-
-        set_target_properties(
-            OgsXdmf OgsXdmfCore
-            PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-                       ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
-                       LIBRARY_OUTPUT_DIRECTORY
-                       ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
-                       ARCHIVE_OUTPUT_DIRECTORY
-                       ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
-        )
-        if(BUILD_SHARED_LIBS)
-            install(TARGETS OgsXdmf OgsXdmfCore
-                    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            )
-        endif()
-        list(APPEND DISABLE_WARNINGS_TARGETS OgsXdmf OgsXdmfCore)
-    endif()
-endif()
-
 if(OGS_BUILD_SWMM)
     CPMAddPackage(
         NAME SWMMInterface GITHUB_REPOSITORY ufz/SwmmInterface
@@ -392,7 +277,7 @@ foreach(opt ${VTK_OPTIONS})
         list(APPEND VTK_COMPONENTS ${CMAKE_MATCH_1})
     endif()
 endforeach()
-find_package(VTK ${ogs.minimum_version.vtk} COMPONENTS ${VTK_COMPONENTS})
+find_package(VTK ${ogs.minimum_version.vtk} QUIET COMPONENTS ${VTK_COMPONENTS})
 
 if(NOT VTK_FOUND)
     list(APPEND VTK_OPTIONS "BUILD_SHARED_LIBS OFF")
@@ -444,6 +329,123 @@ if(OGS_BUILD_TESTING OR OGS_BUILD_UTILS)
     )
     if(vtkdiff_ADDED)
         install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)
+    endif()
+endif()
+
+if(OGS_USE_MPI)
+    set(_hdf5_options "HDF5_ENABLE_PARALLEL ON")
+endif()
+
+string(REPLACE "." "_" HDF5_TAG ${ogs.minimum_version.hdf5})
+if(OGS_USE_NETCDF)
+    list(APPEND CMAKE_MODULE_PATH ${PROJECT_BINARY_DIR})
+    find_package(HDF5 REQUIRED)
+else()
+    # ZLIB is a HDF5 dependency
+    if(NOT VTK_ADDED)
+        CPMFindPackage(
+            NAME ZLIB
+            GITHUB_REPOSITORY madler/zlib
+            VERSION 1.2.11
+            EXCLUDE_FROM_ALL YES
+        )
+    endif()
+
+    CPMFindPackage(
+        NAME HDF5
+        GITHUB_REPOSITORY HDFGroup/hdf5
+        GIT_TAG hdf5-${HDF5_TAG}
+        VERSION ${ogs.minimum_version.hdf5}
+        OPTIONS "HDF5_EXTERNALLY_CONFIGURED 1"
+                "HDF5_GENERATE_HEADERS OFF"
+                "HDF5_BUILD_TOOLS OFF"
+                "HDF5_BUILD_EXAMPLES OFF"
+                "HDF5_BUILD_HL_LIB OFF"
+                "HDF5_BUILD_FORTRAN OFF"
+                "HDF5_BUILD_CPP_LIB OFF"
+                "HDF5_BUILD_JAVA OFF"
+                ${_hdf5_options}
+        EXCLUDE_FROM_ALL YES
+    )
+    if(HDF5_ADDED)
+        list(APPEND DISABLE_WARNINGS_TARGETS hdf5-static)
+        set(HDF5_LIBRARIES hdf5-static)
+        if(ZLIB_ADDED)
+            list(APPEND HDF5_LIBRARIES zlibstatic)
+        endif()
+        set(HDF5_INCLUDE_DIRS ${HDF5_SOURCE_DIR}/src ${HDF5_BINARY_DIR})
+        set(HDF5_C_INCLUDE_DIRS ${HDF5_INCLUDE_DIRS})
+        set(HDF5_C_INCLUDE_DIR ${HDF5_INCLUDE_DIRS})
+        target_include_directories(hdf5-static INTERFACE ${HDF5_INCLUDE_DIRS})
+        if(OGS_USE_MKL AND WIN32)
+            # In this case the hdf5 build fails with, e.g.:
+            # ~~~
+            # H5system.c(710): error C2065: 'timezone': undeclared identifier
+            # ~~~
+            # Reason is that the H5_HAVE_VISUAL_STUDIO-symbol is not defined
+            # anymore!?
+            target_compile_definitions(
+                hdf5-static PRIVATE -DH5_HAVE_VISUAL_STUDIO
+            )
+        endif()
+    else()
+        find_package(HDF5 REQUIRED)
+    endif()
+endif()
+
+if(OGS_USE_PETSC AND NOT HDF5_ADDED)
+    include(CheckCXXSymbolExists)
+    set(CMAKE_REQUIRED_INCLUDES "${HDF5_INCLUDE_DIR}" "${HDF5_BINARY_DIR}")
+    set(CMAKE_REQUIRED_LIBRARIES "${HDF5_LIBRARIES}")
+    check_cxx_symbol_exists(H5Pset_fapl_mpio hdf5.h HAVE_H5Pset_fapl_mpio)
+    unset(CMAKE_REQUIRED_INCLUDES)
+    if(NOT HAVE_H5Pset_fapl_mpio)
+        message(FATAL_ERROR "HDF5 was not build with MPI support! "
+                            "(Enable with HDF5_ENABLE_PARALLEL)"
+        )
+    endif()
+endif()
+
+# Does not compile in Debug-mode, see #3175.
+if(CMAKE_BUILD_TYPE STREQUAL "Release" AND OGS_BUILD_TESTING)
+    set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
+    CPMAddPackage(
+        NAME xdmf
+        VERSION 3.0.0
+        GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/xdmflib.git
+        GIT_TAG 92a851f1acb87ad5367eb62f9b97785bedb700bb
+        OPTIONS "XDMF_LIBNAME OgsXdmf"
+        EXCLUDE_FROM_ALL YES
+    )
+    if(xdmf_ADDED)
+        target_include_directories(
+            OgsXdmf PUBLIC ${xdmf_SOURCE_DIR} ${xdmf_BINARY_DIR}
+        )
+
+        target_link_libraries(OgsXdmf Boost::boost)
+        target_include_directories(
+            OgsXdmfCore PUBLIC ${xdmf_SOURCE_DIR}/core ${xdmf_BINARY_DIR}/core
+            PRIVATE ${xdmf_SOURCE_DIR}/CMake/VersionSuite
+        )
+        target_link_libraries(
+            OgsXdmfCore PUBLIC Boost::boost LibXml2::LibXml2 ${HDF5_LIBRARIES}
+        )
+
+        set_target_properties(
+            OgsXdmf OgsXdmfCore
+            PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+                       ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
+                       LIBRARY_OUTPUT_DIRECTORY
+                       ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
+                       ARCHIVE_OUTPUT_DIRECTORY
+                       ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
+        )
+        if(BUILD_SHARED_LIBS)
+            install(TARGETS OgsXdmf OgsXdmfCore
+                    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            )
+        endif()
+        list(APPEND DISABLE_WARNINGS_TARGETS OgsXdmf OgsXdmfCore)
     endif()
 endif()
 
