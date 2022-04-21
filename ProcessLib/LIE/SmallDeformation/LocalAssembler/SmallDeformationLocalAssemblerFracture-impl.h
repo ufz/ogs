@@ -191,8 +191,7 @@ void SmallDeformationLocalAssemblerFracture<
         auto& state = *ip_data.material_state_variables;
         auto& N = _secondary_data.N[ip];
 
-        Eigen::Vector3d const ip_physical_coords(
-            computePhysicalCoordinates(_element, N).data());
+        auto const ip_physical_coords(computePhysicalCoordinates(_element, N));
         std::vector<double> const levelsets(duGlobalEnrichments(
             _fracture_property->fracture_id, _fracture_props, _junction_props,
             _fracID_to_local, ip_physical_coords));
@@ -291,8 +290,7 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
         auto& b_m = ip_data.aperture;
         auto& N = _secondary_data.N[ip];
 
-        Eigen::Vector3d const ip_physical_coords(
-            computePhysicalCoordinates(_element, N).data());
+        auto const ip_physical_coords(computePhysicalCoordinates(_element, N));
         std::vector<double> const levelsets(duGlobalEnrichments(
             _fracture_property->fracture_id, _fracture_props, _junction_props,
             _fracID_to_local, ip_physical_coords));
