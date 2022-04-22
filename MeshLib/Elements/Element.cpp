@@ -85,7 +85,6 @@ bool Element::isBoundaryElement() const
                        { return e == nullptr; });
 }
 
-#ifndef NDEBUG
 std::ostream& operator<<(std::ostream& os, Element const& e)
 {
     os << "Element #" << e._id << " @ " << &e << " with "
@@ -95,15 +94,14 @@ std::ostream& operator<<(std::ostream& os, Element const& e)
     MeshLib::Node* const* const nodes = e.getNodes();
     os << "MeshElemType: "
        << static_cast<std::underlying_type<MeshElemType>::type>(e.getGeomType())
-       << " with " << nnodes << " nodes: { ";
+       << " with " << nnodes << " nodes: {\n";
     for (unsigned n = 0; n < nnodes; ++n)
     {
-        os << nodes[n]->getID() << " @ " << nodes[n] << "  ";
+        os << "  #" << nodes[n]->getID() << " @ " << nodes[n] << " coords ["
+           << *nodes[n] << "]\n";
     }
-    os << "}\n";
-    return os;
+    return os << '}';
 }
-#endif  // NDEBUG
 
 bool areNeighbors(Element const* const element, Element const* const other)
 {
