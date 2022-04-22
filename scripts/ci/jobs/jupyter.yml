@@ -22,7 +22,7 @@ build jupyter:
       rm -rf docker-stacks
       git clone https://github.com/jupyter/docker-stacks.git
       cd docker-stacks/base-notebook
-      docker build --build-arg ROOT_CONTAINER=ubuntu:jammy -t jupyter/base-notebook:22.04 .
+      docker build --build-arg ROOT_CONTAINER=ubuntu:22.04 -t jupyter/base-notebook:22.04 .
       cd ../..
     - >
       poetry run ogscm compiler.py ogs.py ogs_jupyter.py -B -R --ogs ../..

@@ -27,7 +27,7 @@
     "gtest": "1.11.0"
   },
   "tested_version": {
-    "ubuntu": "20.04",
+    "ubuntu": "22.04",
     "qt": "5.15.2",
     "cmake": "3.22.3"
   },
