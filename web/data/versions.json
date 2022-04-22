@@ -101,7 +101,17 @@
             "Module_vtkRenderingCore=ON",
             "Module_vtkFiltersParallel=ON"
           ]
-        }
+        },
+        {
+           "condition": {
+             "cmake": "OGS_BUILD_TESTING",
+             "ogscm": "local_args.ogs == \"off\" or \"OGS_BUILD_TESTING=OFF\" not in local_args.cmake_args.capitalize()"
+           },
+           "cmake": [
+             "Module_vtkFiltersGeneral=ON",
+             "Module_vtkFiltersSources=ON"
+           ]
+         }
       ]
     }
   }

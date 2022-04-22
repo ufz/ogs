@@ -11,6 +11,8 @@
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 
+#pragma once
+
 template <typename Vector>
 void fillVectorRandomly(Vector& x)
 {

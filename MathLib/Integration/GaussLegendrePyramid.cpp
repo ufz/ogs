@@ -14,9 +14,9 @@ namespace MathLib
 {
 template <>
 const std::array<std::array<double, 3>, GaussLegendrePyramid<1>::NPoints>
-    GaussLegendrePyramid<1>::X = {{{{1. / 3., 1. / 3., 1. / 3.}}}};
+    GaussLegendrePyramid<1>::X = {{{{0, 0, -0.5}}}};  // center of mass
 template <>
-double const GaussLegendrePyramid<1>::W[1] = {1.0};
+double const GaussLegendrePyramid<1>::W[1] = {128. / 27.};
 
 const std::array<std::array<double, 3>, GaussLegendrePyramid<2>::NPoints>
     GaussLegendrePyramid<2>::X = {
