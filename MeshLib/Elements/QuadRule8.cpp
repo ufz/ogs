@@ -16,7 +16,7 @@ const unsigned QuadRule8::edge_nodes[4][3] = {
     {0, 1, 4},  // Edge 0
     {1, 2, 5},  // Edge 1
     {2, 3, 6},  // Edge 2
-    {0, 3, 7}   // Edge 3
+    {3, 0, 7}   // Edge 3
 };
 
 }  // end namespace MeshLib
