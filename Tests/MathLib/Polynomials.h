@@ -40,8 +40,10 @@ public:
 
     virtual double getAnalyticalIntegralOverUnitCube() const = 0;
 
-    operator Function() const
+    Function toFunction() const
     {
+        // Note: this is captured, hence the caller is responsible that 'this'
+        // is alive as long as the returned function is used.
         return [this](std::array<double, 3> const& coords)
         { return (*this)(coords); };
     }
