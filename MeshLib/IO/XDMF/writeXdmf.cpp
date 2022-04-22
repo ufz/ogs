@@ -128,7 +128,7 @@ std::function<std::string(std::vector<double>)> write_xdmf(
                 "Dimensions=\"{local_dimensions}\" "
                 "Format=\"HDF\" "
                 "Precision=\"{precision}\">"
-                "{filename}:meshes/{meshname}/{datasetname}|"
+                "{filename}:/meshes/{meshname}/{datasetname}|"
                 "{time_step} {starts}:1 {strides}:1 "
                 "{local_dimensions}:{max_step} "
                 "{global_dimensions}</"
@@ -218,10 +218,14 @@ std::function<std::string(std::vector<double>)> write_xdmf(
            auto const& constant_attributes, auto const& variable_attributes)
     {
         return fmt::format(
-            "\n<Grid Name=\"Grid\">\n\t<Time "
-            "Value=\"{time_value}\"/"
-            ">{geometry}{topology}{fix_attributes}{variable_attributes}\n</"
-            "Grid>",
+            R"(
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="{time_value}"/>
+    {geometry}
+    {topology}
+    {fix_attributes}
+    {variable_attributes}
+</Grid>)",
             "time_value"_a = time_value, "geometry"_a = geometry,
             "topology"_a = topology, "fix_attributes"_a = constant_attributes,
             "variable_attributes"_a = variable_attributes);
