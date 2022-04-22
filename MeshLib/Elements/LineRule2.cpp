@@ -27,11 +27,34 @@ double LineRule2::computeVolume(Node const* const* _nodes)
 bool LineRule2::isPntInElement(Node const* const* nodes,
                                MathLib::Point3d const& pnt, double eps)
 {
-    double tmp;
-    double tmp_dst(0);
-    double const dist = MathLib::calcProjPntToLineAndDists(
-        pnt, *nodes[0], *nodes[1], tmp, tmp_dst);
-    return (dist < eps);
+    auto const& a = *nodes[0];
+    auto const& b = *nodes[1];
+
+    if (MathLib::sqrDist(a, pnt) < eps * eps)
+    {
+        return true;
+    }
+    if (MathLib::sqrDist(b, pnt) < eps * eps)
+    {
+        return true;
+    }
+
+    double lambda;
+    double distance_of_proj_pnt_to_a;
+    auto const distance_from_line = MathLib::calcProjPntToLineAndDists(
+        pnt, a, b, lambda, distance_of_proj_pnt_to_a);
+
+    if (lambda >= 0 && lambda <= 1)
+    {
+        // pnt has been projected to the interior of the line
+        return distance_from_line < eps;
+    }
+    else
+    {
+        // pnt has been projected outside the line segment
+        // corner cases have already been treated in the beginning
+        return false;
+    }
 }
 
 unsigned LineRule2::identifyFace(Node const* const* _nodes,
