@@ -300,6 +300,8 @@ if(VTK_ADDED)
     if(TARGET loguru)
         # Fixes https://stackoverflow.com/questions/9894961 on vismac05:
         set_target_properties(loguru PROPERTIES CXX_VISIBILITY_PRESET default)
+        # Also suppress warnings
+        list(APPEND DISABLE_WARNINGS_TARGETS loguru)
     endif()
 endif()
 # end VTK ###
