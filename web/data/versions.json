@@ -75,6 +75,15 @@
         },
         {
           "condition": {
+            "cmake": "OGS_BUILD_UTILS",
+            "ogscm": "True"
+          },
+          "cmake": [
+            "VTK_MODULE_ENABLE_VTK_FiltersParallel=YES"
+          ]
+        },
+        {
+          "condition": {
             "cmake": "OGS_USE_MPI",
             "ogscm": "toolchain.CC == \"mpicc\""
           },

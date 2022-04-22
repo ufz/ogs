@@ -535,29 +535,27 @@ if(OGS_USE_NETCDF)
     )
 endif()
 
-if(OGS_BUILD_GUI)
-    AddTest(
-        NAME RemoveGhostData_Test
-        PATH MeshLib
-        WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
-        EXECUTABLE RemoveGhostData
-        EXECUTABLE_ARGS -i Mesh3D.pvtu -o ${Data_BINARY_DIR}/MeshLib/RemoveGhostDataOutput.vtu
-        TESTER vtkdiff
-        DIFF_DATA
-        RemoveGhostDataOutput.vtu RemoveGhostDataOutput.vtu slice slice 0 0
-    )
+AddTest(
+    NAME RemoveGhostData_Test
+    PATH MeshLib
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    EXECUTABLE RemoveGhostData
+    EXECUTABLE_ARGS -i Mesh3D.pvtu -o ${Data_BINARY_DIR}/MeshLib/RemoveGhostDataOutput.vtu
+    TESTER vtkdiff
+    DIFF_DATA
+    RemoveGhostDataOutput.vtu RemoveGhostDataOutput.vtu slice slice 0 0
+)
 
-    AddTest(
-        NAME RemoveGhostData_EllipticSquareTest
-        PATH EllipticPETSc
-        WORKING_DIRECTORY ${Data_SOURCE_DIR}/EllipticPETSc
-        EXECUTABLE RemoveGhostData
-        EXECUTABLE_ARGS -i square_1e1_neumann_ts_1_t_1_000000.pvtu -o ${Data_BINARY_DIR}/EllipticPETSc/square_1e1_neumann_ts_1_t_1_000000.vtu
-        TESTER diff
-        DIFF_DATA
-        square_1e1_neumann_ts_1_t_1_000000.vtu
-    )
-endif()
+AddTest(
+    NAME RemoveGhostData_EllipticSquareTest
+    PATH EllipticPETSc
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/EllipticPETSc
+    EXECUTABLE RemoveGhostData
+    EXECUTABLE_ARGS -i square_1e1_neumann_ts_1_t_1_000000.pvtu -o ${Data_BINARY_DIR}/EllipticPETSc/square_1e1_neumann_ts_1_t_1_000000.vtu
+    TESTER diff
+    DIFF_DATA
+    square_1e1_neumann_ts_1_t_1_000000.vtu
+)
 
 AddTest(
     NAME Raster2Mesh_Elevation_Test

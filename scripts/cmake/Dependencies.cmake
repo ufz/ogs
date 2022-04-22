@@ -266,9 +266,9 @@ foreach(option_index ${ogs.libraries.vtk.options})
             )
             list(APPEND VTK_OPTIONS ${cmake_option})
         endforeach()
-
     endif()
 endforeach()
+list(REMOVE_DUPLICATES VTK_OPTIONS)
 
 # TODO: if(OGS_INSITU) find_package(ParaView REQUIRED) end()
 unset(VTK_COMPONENTS)
