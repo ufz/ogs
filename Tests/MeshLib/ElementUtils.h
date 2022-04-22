@@ -21,20 +21,16 @@ namespace ElementUtils
 //
 // Here, faces of a d dimensional element are always considered d-1 dimensional.
 // This differs from other places in OGS.
-template <typename MeshElementType>
-std::size_t getNumberOfFaces(MeshElementType const& e)
+inline std::size_t getNumberOfFaces(MeshLib::Element const& e)
 {
-    if constexpr (MeshElementType::dimension == 3)
+    switch (e.getDimension())
     {
-        return e.getNumberOfFaces();
-    }
-    if constexpr (MeshElementType::dimension == 2)
-    {
-        return e.getNumberOfEdges();
-    }
-    if constexpr (MeshElementType::dimension == 1)
-    {
-        return 2;
+        case 3:
+            return e.getNumberOfFaces();
+        case 2:
+            return e.getNumberOfEdges();
+        case 1:
+            return 2;
     }
 
     return 0;
@@ -44,26 +40,25 @@ std::size_t getNumberOfFaces(MeshElementType const& e)
 //
 // Here, faces of a d dimensional element are always considered d-1 dimensional.
 // This differs from other places in OGS.
-template <typename MeshElementType>
-std::unique_ptr<MeshLib::Element const> getFace(
-    MeshElementType const& bulk_element, unsigned face_id)
+inline std::unique_ptr<MeshLib::Element const> getFace(
+    MeshLib::Element const& bulk_element, unsigned face_id)
 {
-    auto constexpr dim = MeshElementType::dimension;
+    auto const dim = bulk_element.getDimension();
 
-    if constexpr (dim == 3)
+    switch (dim)
     {
-        return std::unique_ptr<MeshLib::Element const>{
-            bulk_element.getFace(face_id)};
-    }
-    if constexpr (dim == 2)
-    {
-        return std::unique_ptr<MeshLib::Element const>{
-            bulk_element.getEdge(face_id)};
-    }
-    if constexpr (dim == 1)
-    {
-        auto* node = const_cast<MeshLib::Node*>(bulk_element.getNode(face_id));
-        return std::make_unique<MeshLib::Point>(std::array{node});
+        case 3:
+            return std::unique_ptr<MeshLib::Element const>{
+                bulk_element.getFace(face_id)};
+        case 2:
+            return std::unique_ptr<MeshLib::Element const>{
+                bulk_element.getEdge(face_id)};
+        case 1:
+        {
+            auto* node =
+                const_cast<MeshLib::Node*>(bulk_element.getNode(face_id));
+            return std::make_unique<MeshLib::Point>(std::array{node});
+        }
     }
 
     OGS_FATAL("Unsupported element dimension: " + std::to_string(dim));
