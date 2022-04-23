@@ -419,9 +419,18 @@ double PhreeqcIO::getConcentration(
     auto& components = aqueous_solution.components;
     auto const& pH = *aqueous_solution.pH;
 
-    return component_id < static_cast<int>(components.size())
-               ? components[component_id].amount->get(chemical_system_id)
-               : pH.get(chemical_system_id);
+    if (component_id < static_cast<int>(components.size()))
+    {
+        MathLib::LinAlg::setLocalAccessibleVector(
+            *components[component_id].amount);
+
+        return components[component_id].amount->get(chemical_system_id);
+    }
+
+    // pH
+    MathLib::LinAlg::setLocalAccessibleVector(*aqueous_solution.pH);
+
+    return pH.get(chemical_system_id);
 }
 
 void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
