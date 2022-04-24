@@ -65,8 +65,6 @@ public:
 
     virtual void executeSpeciationCalculation(double const dt) = 0;
 
-    virtual std::vector<GlobalVector*> getIntPtProcessSolutions() const = 0;
-
     virtual double getConcentration(
         int const /*component_id*/,
         GlobalIndexType const /*chemical_system_id*/) const

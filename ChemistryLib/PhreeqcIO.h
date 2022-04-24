@@ -67,8 +67,6 @@ public:
 
     void executeSpeciationCalculation(double const dt) override;
 
-    std::vector<GlobalVector*> getIntPtProcessSolutions() const override;
-
     double getConcentration(
         int const component_id,
         GlobalIndexType const chemical_system_id) const override;
