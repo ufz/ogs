@@ -87,27 +87,8 @@ inline bool operator<(Point3d const& a, Point3d const& b)
  * test \f$ |a_i - b_i| > \epsilon \cdot \min (|a_i|, |b_i|) \f$ \b and
  * \f$  |a_i - b_i| > \epsilon \f$ for all coordinates \f$ 0 \le i < 3 \f$.
  */
-bool inline lessEq(Point3d const& a, Point3d const& b,
-                   double eps = std::numeric_limits<double>::epsilon())
-{
-    auto absAndRelDiffLargerThanEps = [eps](double const u,
-                                            double const v) -> bool
-    {
-        return std::abs(u - v) > eps * std::min(std::abs(v), std::abs(u)) &&
-               std::abs(u - v) > eps;
-    };
-
-    return std::lexicographical_compare(
-        a.data(), a.data() + 3, b.data(), b.data() + 3,
-        [&absAndRelDiffLargerThanEps](auto const u, auto const v)
-        {
-            if (absAndRelDiffLargerThanEps(u, v))
-            {
-                return u <= v;
-            }
-            return true;
-        });
-}
+bool lessEq(Point3d const& a, Point3d const& b,
+            double eps = std::numeric_limits<double>::epsilon());
 
 /** overload the output operator for class Point */
 inline std::ostream& operator<<(std::ostream& os, const Point3d& p)
