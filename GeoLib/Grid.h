@@ -651,15 +651,14 @@ bool Grid<POINT>::calcNearestPointInGridCell(
     if (pnts.empty())
         return false;
 
-    auto const to_eigen = [](auto const& p) { return (p.asEigenVector3d()); };
-
     const std::size_t n_pnts(pnts.size());
-    sqr_min_dist = (to_eigen(*pnts[0]) - to_eigen(pnt)).squaredNorm();
+    sqr_min_dist =
+        (pnts[0]->asEigenVector3d() - pnt.asEigenVector3d()).squaredNorm();
     nearest_pnt = pnts[0];
     for (std::size_t i(1); i < n_pnts; i++)
     {
         const double sqr_dist(
-            (to_eigen(*pnts[i]) - to_eigen(pnt)).squaredNorm());
+            (pnts[i]->asEigenVector3d() - pnt.asEigenVector3d()).squaredNorm());
         if (sqr_dist < sqr_min_dist)
         {
             sqr_min_dist = sqr_dist;
@@ -679,15 +678,13 @@ std::vector<std::size_t> Grid<POINT>::getPointsInEpsilonEnvironment(
 
     double const sqr_eps(eps * eps);
 
-    auto to_eigen = [](auto const& point)
-    { return Eigen::Map<Eigen::Vector3d const>(point.data()); };
-
     std::vector<std::size_t> pnts;
     for (auto vec : vec_pnts)
     {
         for (auto const p : *vec)
         {
-            if ((to_eigen(*p) - to_eigen(pnt)).squaredNorm() <= sqr_eps)
+            if ((p->asEigenVector3d() - pnt.asEigenVector3d()).squaredNorm() <=
+                sqr_eps)
             {
                 pnts.push_back(p->getID());
             }
