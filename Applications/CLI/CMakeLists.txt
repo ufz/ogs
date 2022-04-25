@@ -67,6 +67,8 @@ if(OGS_USE_PYTHON)
             OpenGeoSys PRIVATE ApplicationsLib BaseLib GitInfoLib tclap
                                pybind11::pybind11
         )
+
+        install(TARGETS OpenGeoSys LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
     endif()
 endif()
 
@@ -107,9 +109,13 @@ if(OGS_BUILD_PYTHON_MODULE AND NOT (WIN32 AND "${CMAKE_BUILD_TYPE}" STREQUAL
     )
     set_tests_properties(
         ogs_python_module
-        PROPERTIES LABELS "default" ENVIRONMENT_MODIFICATION
-                   PYTHONPATH=path_list_append:$<TARGET_FILE_DIR:OpenGeoSys>
-                   DISABLED $<NOT:$<TARGET_EXISTS:LiquidFlow>>
+        PROPERTIES
+            LABELS
+            "default"
+            ENVIRONMENT_MODIFICATION
+            PYTHONPATH=path_list_append:$<TARGET_FILE_DIR:OpenGeoSys>:${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}
+            DISABLED
+            $<NOT:$<TARGET_EXISTS:LiquidFlow>>
     )
 endif()
 # ---- Installation ----
