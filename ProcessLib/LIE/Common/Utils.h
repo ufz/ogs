@@ -24,7 +24,7 @@ template <typename Derived>
 Eigen::Vector3d computePhysicalCoordinates(
     MeshLib::Element const& e, Eigen::MatrixBase<Derived> const& shape)
 {
-    Eigen::Vector3d pt{0.0, 0.0, 0.0};
+    Eigen::Vector3d pt = Eigen::Vector3d::Zero();
     for (unsigned i = 0; i < e.getNumberOfNodes(); i++)
     {
         MeshLib::Node const& node = *e.getNode(i);
