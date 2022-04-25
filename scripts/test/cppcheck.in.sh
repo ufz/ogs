@@ -7,6 +7,7 @@ ${CPPCHECK_TOOL_PATH} \
         --enable=all \
         --inconclusive \
         -j ${CPPCHECK_PARALLEL} \
+        ${_cpp_check_ingore} \
         --suppress=*:*/usr/local\* \
         --suppress=*:*cpm\* \
         --suppress=*:*Tests\* \
