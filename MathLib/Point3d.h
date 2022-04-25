@@ -90,8 +90,8 @@ inline bool operator<(Point3d const& a, Point3d const& b)
 bool inline lessEq(Point3d const& a, Point3d const& b,
                    double eps = std::numeric_limits<double>::epsilon())
 {
-    auto coordinateDiffersMoreThanEps = [&eps](double const u,
-                                               double const v) -> bool
+    auto absAndRelDiffLargerThanEps = [eps](double const u,
+                                            double const v) -> bool
     {
         return std::abs(u - v) > eps * std::min(std::abs(v), std::abs(u)) &&
                std::abs(u - v) > eps;
@@ -99,9 +99,9 @@ bool inline lessEq(Point3d const& a, Point3d const& b,
 
     return std::lexicographical_compare(
         a.data(), a.data() + 3, b.data(), b.data() + 3,
-        [&coordinateDiffersMoreThanEps](auto const u, auto const v)
+        [&absAndRelDiffLargerThanEps](auto const u, auto const v)
         {
-            if (coordinateDiffersMoreThanEps(u, v))
+            if (absAndRelDiffLargerThanEps(u, v))
             {
                 return u <= v;
             }
