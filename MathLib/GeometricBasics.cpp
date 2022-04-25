@@ -21,11 +21,9 @@ double orientation3d(MathLib::Point3d const& p,
                      MathLib::Point3d const& b,
                      MathLib::Point3d const& c)
 {
-    auto const& pp = p.asEigenVector3d();
-
-    Eigen::Vector3d const u = pp - a.asEigenVector3d();
-    Eigen::Vector3d const v = pp - b.asEigenVector3d();
-    Eigen::Vector3d const w = pp - c.asEigenVector3d();
+    Eigen::Vector3d const u = p.asEigenVector3d() - a.asEigenVector3d();
+    Eigen::Vector3d const v = p.asEigenVector3d() - b.asEigenVector3d();
+    Eigen::Vector3d const w = p.asEigenVector3d() - c.asEigenVector3d();
     return u.cross(v).dot(w);
 }
 
@@ -34,19 +32,17 @@ double calcTetrahedronVolume(MathLib::Point3d const& a,
                              MathLib::Point3d const& c,
                              MathLib::Point3d const& d)
 {
-    auto const va = a.asEigenVector3d();
-    Eigen::Vector3d const w = b.asEigenVector3d() - va;
-    Eigen::Vector3d const u = c.asEigenVector3d() - va;
-    Eigen::Vector3d const v = d.asEigenVector3d() - va;
+    Eigen::Vector3d const w = b.asEigenVector3d() - a.asEigenVector3d();
+    Eigen::Vector3d const u = c.asEigenVector3d() - a.asEigenVector3d();
+    Eigen::Vector3d const v = d.asEigenVector3d() - a.asEigenVector3d();
     return std::abs(u.cross(v).dot(w)) / 6.0;
 }
 
 double calcTriangleArea(MathLib::Point3d const& a, MathLib::Point3d const& b,
                         MathLib::Point3d const& c)
 {
-    auto const& va = a.asEigenVector3d();
-    Eigen::Vector3d const u = c.asEigenVector3d() - va;
-    Eigen::Vector3d const v = b.asEigenVector3d() - va;
+    Eigen::Vector3d const u = c.asEigenVector3d() - a.asEigenVector3d();
+    Eigen::Vector3d const v = b.asEigenVector3d() - a.asEigenVector3d();
     Eigen::Vector3d const w = u.cross(v);
     return 0.5 * w.norm();
 }
