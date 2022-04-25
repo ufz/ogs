@@ -94,7 +94,7 @@ build linux debug with sanitizers:
     UBSAN_OPTIONS: "print_stacktrace=1"
     LSAN_OPTIONS: "suppressions=$CI_PROJECT_DIR/scripts/test/leak_sanitizer.suppressions"
 
-build linux ubuntu:
+.build linux ubuntu: # Temporary disabled until node is updated
   extends:
     - .template-build-linux
     - .test-artifacts

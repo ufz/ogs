@@ -4,7 +4,7 @@ if(OGS_USE_MPI)
     )
     target_link_libraries(
         binaryToPVTU GitInfoLib MeshLib tclap
-        $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
+        $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX> VTK::ParallelMPI
     )
     install(TARGETS binaryToPVTU RUNTIME DESTINATION bin)
 endif()

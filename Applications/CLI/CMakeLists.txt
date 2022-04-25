@@ -84,6 +84,7 @@ target_link_libraries(
             $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
             $<$<TARGET_EXISTS:InSituLib>:InSituLib>
             $<$<TARGET_EXISTS:petsc>:petsc>
+            $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
             tclap
 )
 

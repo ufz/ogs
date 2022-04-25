@@ -50,42 +50,40 @@ As we use lots of features of the C++17-standard we support **Visual Studio {{< 
 </div>
 
 <div class='linux'>
-On Debian-based (e.g. Ubuntu) you need to install the `build-essential`-package (which contains the `gcc`-compiler and the `make`-tool):
+
+On Debian-based (we recommend using Ubuntu {{< dataFile "versions.tested_version.ubuntu" >}}) you need to install the `build-essential`-package (which contains the `gcc`-compiler and the `make`-tool):
 
 ```bash
 sudo apt install build-essential
 ```
 
-You need to have at least **gcc {{< dataFile "versions.minimum_version.gcc" >}}**:
-
-```bash
-$ gcc --version
-gcc (GCC) {{< dataFile "versions.minimum_version.gcc" >}}.0
-```
+You need to have at least **gcc {{< dataFile "versions.minimum_version.gcc" >}}** which you can check with `gcc --version` (Ubuntu {{< dataFile "versions.tested_version.ubuntu" >}} has already version 11).
 
 <div class='note'>
 
-### Install a newer compiler on Ubuntu
+### Install the required compiler on older Ubuntu versions
 
-We recommend using Ubuntu {{< dataFile "versions.tested_version.ubuntu" >}} as its standard `gcc` package is already at version 9. If you are on an older Ubuntu version you can install a newer compiler from the `ubuntu-toolchain-r/test`-repository:
+If you are on an older Ubuntu version you can install a newer compiler from the `ubuntu-toolchain-r/test`-repository (with the following steps e.g. you can install gcc 10.3.0 on Ubuntu 20.04):
 
 ```bash
+sudo apt-get install software-properties-common
 sudo add-apt-repository ppa:ubuntu-toolchain-r/test
 sudo apt-get update
-sudo apt-get install gcc-9 g++-9
+sudo apt-get install gcc-10
+sudo apt-get install g++-10
 ```
 
 To make the newly installed compiler the default one:
 
 ```bash
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 \
-  --slave /usr/bin/g++ g++ /usr/bin/g++-9
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 60 \
+  --slave /usr/bin/g++ g++ /usr/bin/g++-10
 ```
 
 If you do not do this you have to specify the compiler during the first CMake run:
 
 ```bash
-CC=gcc-9 CXX=c++-9 cmake ../ogs [more CMake options]
+CC=gcc-10 CXX=c++-10 cmake ../ogs [more CMake options]
 ```
 
 </div>

@@ -16,25 +16,30 @@ build jupyter:
         export DOCKER_TAG_JUPYTER="ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-serial-jupyter:latest"
         export DOCKER_TAG_JUPYTER_PETSC="ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-petsc-jupyter:latest"
       fi
-    # Jupyter container
-    # TODO: use Tests/Date/Notebooks/requirements.txt in ogs_jupyter.py
-    # TODO: or better: migrate requirements.txt to versions.json
+    ### Jupyter container ###
+    # Build base image for 22.04
+    - |
+      rm -rf docker-stacks
+      git clone https://github.com/jupyter/docker-stacks.git
+      cd docker-stacks/base-notebook
+      docker build --build-arg ROOT_CONTAINER=ubuntu:22.04 -t jupyter/base-notebook:22.04 .
+      cd ../..
     - >
       poetry run ogscm compiler.py ogs.py ogs_jupyter.py -B -R --ogs ../..
       --build_args ' --progress=plain'
-      --cvode --ccache --mfront
+      --cvode --ccache --cpmcache --mfront
       --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
-      --runtime_base_image 'jupyter/base-notebook'
+      --runtime_base_image 'jupyter/base-notebook:22.04'
       --tag $DOCKER_TAG_JUPYTER
       $ON_MASTER_ARGS
     - >
       poetry run ogscm compiler.py mpi.py ogs.py ogs_jupyter.py -B -R --ogs ../..
       --build_args ' --progress=plain'
-      --cvode --ccache --mfront
+      --cvode --ccache --cpmcache --mfront
       --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
-      --runtime_base_image 'jupyter/base-notebook'
+      --runtime_base_image 'jupyter/base-notebook:22.04'
       --mpi_no_entrypoint
       --tag $DOCKER_TAG_JUPYTER_PETSC
       $ON_MASTER_ARGS

@@ -35,7 +35,6 @@ mark_as_advanced(
     TIME_TOOL_PATH
     VALGRIND_TOOL_PATH
     VTK_DIR
-    VTK_LIBRARIES
     VTKIO_LIB_FOUND
     xtiff_INCLUDE_DIR
     ZIP_TOOL_PATH

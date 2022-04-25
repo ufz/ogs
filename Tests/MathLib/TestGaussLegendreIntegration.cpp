@@ -413,7 +413,7 @@ static void mathLibIntegrationGaussLegendreTestImpl(
 
             auto const analytical_integral =
                 f->getAnalyticalIntegralOverUnitCube();
-            auto const numerical_integral = pcs.integrate(*f);
+            auto const numerical_integral = pcs.integrate(f->toFunction());
             EXPECT_NEAR(analytical_integral, numerical_integral, eps)
                 << "integration order: " << integration_order
                 << "\npolynomial order:  " << polynomial_order  //

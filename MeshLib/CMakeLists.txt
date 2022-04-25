@@ -38,14 +38,14 @@ target_link_libraries(
            GitInfoLib
            ${HDF5_LIBRARIES}
            MathLib
-           ${VTK_LIBRARIES}
+           VTK::IOXML
+           VTK::IOLegacy
+           $<$<TARGET_EXISTS:VTK::IOParallelXML>:VTK::IOParallelXML>
            $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
            $<$<TARGET_EXISTS:petsc>:petsc>
 )
 
-target_include_directories(
-    MeshLib PUBLIC ${VTK_INCLUDE_DIRS} ${HDF5_INCLUDE_DIRS}
-)
+target_include_directories(MeshLib PUBLIC ${HDF5_INCLUDE_DIRS})
 
 target_compile_definitions(
     MeshLib

@@ -5,7 +5,7 @@
       <PointData>
       </PointData>
       <CellData>
-        <DataArray type="UInt8" Name="vtkGhostTypeT" format="ascii" RangeMin="0" RangeMax="1">
+        <DataArray type="UInt8" Name="vtkGhostType" format="ascii" RangeMin="0" RangeMax="1">
           1 0 0 1 0 0
           1 0 0 1 0 0
           1 0 0 1 0 0

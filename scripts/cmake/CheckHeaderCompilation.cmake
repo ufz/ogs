@@ -116,6 +116,19 @@ function(_check_header_compilation target)
         if("${file}" MATCHES "ui_.*\\.h") # Ignore Qt-generated ui files
             continue()
         endif()
+        if("${file}" MATCHES "MeshItem|ModelTreeItem")
+            # These files have transitive vtk includes, see below.
+            message(STATUS "Ignoring ${file} due to (transitive) vtk include.")
+            continue()
+        endif()
+
+        file(READ "${file}" file_contents LIMIT 8000)
+        # Ignore files including vtk. There is no easy way to get all required
+        # VTK include directories with the vtk 9 module system.
+        if("${file_contents}" MATCHES "#include <vtk")
+            message(STATUS "Ignoring ${file} due to vtk include.")
+            continue()
+        endif()
 
         string(REPLACE "${PROJECT_SOURCE_DIR}/" "" TEST_NAME ${file})
         string(REPLACE "." "_" TEST_NAME ${TEST_NAME})

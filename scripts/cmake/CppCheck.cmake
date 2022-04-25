@@ -8,6 +8,12 @@ if(DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL})
 elseif(DEFINED CMAKE_BUILD_PARALLEL_LEVEL)
     set(CPPCHECK_PARALLEL ${CMAKE_BUILD_PARALLEL_LEVEL})
 endif()
+if(DEFINED CPM_SOURCE_CACHE)
+    set(_cpp_check_ingore "-i${CPM_SOURCE_CACHE}")
+else()
+    set(_cpp_check_ingore "-i${PROJECT_BINARY_DIR}/_deps")
+endif()
+
 configure_file(
     ${PROJECT_SOURCE_DIR}/scripts/test/cppcheck.in.sh
     ${PROJECT_BINARY_DIR}/cppcheck.sh

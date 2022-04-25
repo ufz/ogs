@@ -41,7 +41,7 @@ target_link_libraries(
     Qt5::Xml
     Qt5::Network
     spdlog::spdlog
-    ${VTK_LIBRARIES}
+    VTK::IOExport
 )
 
 if(UNIX AND NOT APPLE)

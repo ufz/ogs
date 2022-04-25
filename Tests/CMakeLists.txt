@@ -77,8 +77,9 @@ target_link_libraries(
             ProcessLib
             Processes
             TestInfoLib
+            VTK::FiltersGeneral
+            VTK::FiltersSources
             $<$<TARGET_EXISTS:Threads::Threads>:Threads::Threads>
-            ${VTK_LIBRARIES}
             $<$<TARGET_EXISTS:LIE>:LIE>
             $<$<TARGET_EXISTS:TH2M>:TH2M>
             $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
@@ -98,6 +99,7 @@ if(OGS_BUILD_GUI)
                 Qt5::Network
                 VtkVisFilter
                 QtDataView
+                VTK::IOImage
     )
     if(GEOTIFF_FOUND)
         target_link_libraries(testrunner PRIVATE ${GEOTIFF_LIBRARIES})

@@ -36,10 +36,19 @@ if(OGS_USE_NETCDF)
 endif()
 
 ogs_add_library(VtkVisFilter ${FILTER_SOURCES})
-target_include_directories(
-    VtkVisFilter PUBLIC ${VTK_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}
+target_include_directories(VtkVisFilter PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(
+    VtkVisFilter
+    PRIVATE GeoLib
+            Qt5::Core
+            Qt5::Widgets
+            VTK::CommonExecutionModel
+            VTK::RenderingCore
+            VTK::IOImage
+            VTK::FiltersSources
+            VTK::FiltersGeometry
+            VTK::FiltersTexture
 )
-target_link_libraries(VtkVisFilter PRIVATE GeoLib Qt5::Core Qt5::Widgets ${VTK_LIBRARIES})
 
 if(OGS_USE_NETCDF)
     target_link_libraries(
@@ -163,8 +172,27 @@ if(GEOTIFF_FOUND)
 endif() # GEOTIFF_FOUND
 
 target_link_libraries(
-    VtkVis PUBLIC BaseLib GeoLib MeshLib DataHolderLib QtBase VtkVisFilter
-    PRIVATE MathLib ApplicationsFileIO Qt5::Gui
+    VtkVis
+    PUBLIC BaseLib
+           GeoLib
+           MeshLib
+           DataHolderLib
+           QtBase
+           VtkVisFilter
+           VTK::GUISupportQt
+           VTK::FiltersTexture
+    PRIVATE MathLib
+            ApplicationsFileIO
+            Qt5::Gui
+            VTK::InteractionStyle
+            VTK::RenderingCore
+            VTK::RenderingAnnotation
+            VTK::FiltersGeneral
+            VTK::ImagingCore
+            VTK::IOImage
+            VTK::FiltersModeling
+            VTK::FiltersExtraction
+            VTK::FiltersGeometry
 )
 
 set_property(TARGET VtkVis PROPERTY FOLDER "DataExplorer")
