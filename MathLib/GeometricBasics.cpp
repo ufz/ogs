@@ -223,14 +223,9 @@ bool dividedByPlane(const MathLib::Point3d& a, const MathLib::Point3d& b,
 bool isCoplanar(const MathLib::Point3d& a, const MathLib::Point3d& b,
                 const MathLib::Point3d& c, const MathLib::Point3d& d)
 {
-    auto const pa = Eigen::Map<Eigen::Vector3d const>(a.data());
-    auto const pb = Eigen::Map<Eigen::Vector3d const>(b.data());
-    auto const pc = Eigen::Map<Eigen::Vector3d const>(c.data());
-    auto const pd = Eigen::Map<Eigen::Vector3d const>(d.data());
-
-    Eigen::Vector3d const ab = pb - pa;
-    Eigen::Vector3d const ac = pc - pa;
-    Eigen::Vector3d const ad = pd - pa;
+    Eigen::Vector3d const ab = b.asEigenVector3d() - a.asEigenVector3d();
+    Eigen::Vector3d const ac = c.asEigenVector3d() - a.asEigenVector3d();
+    Eigen::Vector3d const ad = d.asEigenVector3d() - a.asEigenVector3d();
 
     auto const eps_squared =
         std::pow(std::numeric_limits<double>::epsilon(), 2);
