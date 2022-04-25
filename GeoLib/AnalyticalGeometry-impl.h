@@ -77,8 +77,7 @@ void rotatePoints(Eigen::Matrix3d const& rot_mat, InputIterator pnts_begin,
 {
     for (auto it = pnts_begin; it != pnts_end; ++it)
     {
-        Eigen::Map<Eigen::Vector3d>((*it)->data()) =
-            rot_mat * (*it)->asEigenVector3d();
+        (*it)->asEigenVector3d() = rot_mat * (*it)->asEigenVector3d();
     }
 }
 
