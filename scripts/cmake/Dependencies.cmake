@@ -309,7 +309,9 @@ endif()
 if(VTK_ADDED)
     # VTK already comes with exprtk, reusing it.
     target_include_directories(
-        exprtk SYSTEM INTERFACE ${VTK_SOURCE_DIR}/ThirdParty/exprtk/vtkexprtk
+        exprtk SYSTEM
+        INTERFACE
+            $<BUILD_INTERFACE:${VTK_SOURCE_DIR}/ThirdParty/exprtk/vtkexprtk>
     )
 else()
     CPMAddPackage(
