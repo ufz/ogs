@@ -880,7 +880,12 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         local_x.template segment<capillary_pressure_size>(
             capillary_pressure_index);
 
+    auto const temperature =
+        local_x.template segment<temperature_size>(temperature_index);
+
+    constexpr double dt = std::numeric_limits<double>::quiet_NaN();
     auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& solid_phase = medium.phase("Solid");
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -894,13 +899,29 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto& ip_data = _ip_data[ip];
         auto const& Np = ip_data.N_p;
+        auto const& NT = Np;
 
         double const pCap = Np.dot(capillary_pressure);
         vars[static_cast<int>(MPL::Variable::capillary_pressure)] = pCap;
+
+        double const T = NT.dot(temperature);
+        vars[static_cast<int>(MPL::Variable::temperature)] = T;
+
         ip_data.s_L_prev =
             medium.property(MPL::PropertyType::saturation)
                 .template value<double>(
                     vars, pos, t, std::numeric_limits<double>::quiet_NaN());
+
+        // Set eps_m_prev from potentially non-zero eps and sigma_sw from
+        // restart.
+        auto const C_el =
+            ip_data.computeElasticTangentStiffness(t, pos, dt, T, T);
+        auto& eps = ip_data.eps;
+        auto& sigma_sw = ip_data.sigma_sw;
+        ip_data.eps_m_prev.noalias() =
+            solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
+                ? eps + C_el.inverse() * sigma_sw
+                : eps;
     }
     updateConstitutiveVariables(local_x, Eigen::VectorXd::Zero(matrix_size), t,
                                 0);
