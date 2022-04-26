@@ -160,6 +160,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         GlobalDimVectorType const gradT = gradNp * temperature;
 
         MPL::VariableArray vars;
+        MPL::VariableArray vars_prev;
         vars[static_cast<int>(MPL::Variable::temperature)] = T;
         vars[static_cast<int>(MPL::Variable::phase_pressure)] = pGR;
         vars[static_cast<int>(MPL::Variable::capillary_pressure)] = pCap;
@@ -177,6 +178,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                     vars, pos, t, std::numeric_limits<double>::quiet_NaN());
 
         vars[static_cast<int>(MPL::Variable::liquid_saturation)] = ip_data.s_L;
+        vars_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
+            ip_data.s_L_prev;
 
         auto const chi = [&medium, pos, t, dt](double const s_L)
         {
@@ -215,6 +218,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                     MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                         sigma_total));
         }
+        // Set volumetric strain rate for the general case without swelling.
         vars[static_cast<int>(MPL::Variable::volumetric_strain)] =
             Invariants::trace(eps);
         vars[static_cast<int>(MPL::Variable::equivalent_plastic_strain)] =
@@ -251,6 +255,24 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // solid phase compressibility
         ip_data.beta_p_SR = (1. - ip_data.alpha_B) / K_S;
 
+        // If there is swelling stress rate, compute swelling stress.
+        if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
+        {
+            auto& sigma_sw = ip_data.sigma_sw;
+            auto const& sigma_sw_prev = ip_data.sigma_sw_prev;
+
+            sigma_sw = sigma_sw_prev;
+
+            using DimMatrix = Eigen::Matrix<double, 3, 3>;
+            auto const sigma_sw_dot =
+                MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
+                    solid_phase
+                        .property(MPL::PropertyType::swelling_stress_rate)
+                        .template value<DimMatrix>(vars, vars_prev, pos, t,
+                                                   dt));
+            sigma_sw += sigma_sw_dot * dt;
+        }
+
         // solid phase linear thermal expansion coefficient
         ip_data.alpha_T_SR = MathLib::KelvinVector::tensorToKelvin<
             DisplacementDim>(MaterialPropertyLib::formEigenTensor<3>(
@@ -263,6 +285,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_data.beta_T_SR = Invariants::trace(ip_data.alpha_T_SR);
 
         double const T_dot = NT.dot(temperature_dot);
+        double const T_prev = T - T_dot * dt;
+
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
             dthermal_strain = ip_data.alpha_T_SR * T_dot * dt;
 
@@ -271,6 +295,15 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto& eps_m_prev = ip_data.eps_m_prev;
 
         eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
+
+        if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
+        {
+            auto const C_el =
+                ip_data.computeElasticTangentStiffness(t, pos, dt, T_prev, T);
+            eps_m.noalias() +=
+                C_el.inverse() * (ip_data.sigma_sw - ip_data.sigma_sw_prev);
+        }
+
         vars[static_cast<int>(MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
@@ -312,7 +345,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const rhoSR = rho_ref_SR;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
 
-        auto const T_prev = T - T_dot * dt;
         ip_cv.C = ip_data.updateConstitutiveRelation(vars, t, pos, dt, T_prev);
 
         // constitutive model object as specified in process creation
@@ -814,6 +846,11 @@ std::size_t TH2MLocalAssembler<
         return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
                                                          &IpData::s_L);
     }
+    if (name == "swelling_stress_ip")
+    {
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+            values, _ip_data, &IpData::sigma_sw);
+    }
     if (name == "epsilon_ip")
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
@@ -826,7 +863,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                         IntegrationMethod, DisplacementDim>::
-    setInitialConditionsConcrete(std::vector<double> const& local_x,
+    setInitialConditionsConcrete(std::vector<double> const& local_x_data,
                                  double const t,
                                  bool const /*use_monolithic_scheme*/,
                                  int const /*process_id*/)
@@ -835,14 +872,60 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         gas_pressure_size + capillary_pressure_size + temperature_size +
         displacement_size;
 
-    assert(local_x.size() == matrix_size);
+    assert(local_x_data.size() == matrix_size);
 
-    updateConstitutiveVariables(
-        Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
-        Eigen::VectorXd::Zero(matrix_size), t, 0);
+    auto const local_x = Eigen::Map<Eigen::VectorXd const>(local_x_data.data(),
+                                                           local_x_data.size());
+    auto const capillary_pressure =
+        local_x.template segment<capillary_pressure_size>(
+            capillary_pressure_index);
+
+    auto const temperature =
+        local_x.template segment<temperature_size>(temperature_index);
+
+    constexpr double dt = std::numeric_limits<double>::quiet_NaN();
+    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& solid_phase = medium.phase("Solid");
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
+
+    ParameterLib::SpatialPosition pos;
+    pos.setElementID(_element.getID());
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        pos.setIntegrationPoint(ip);
+        MPL::VariableArray vars;
+
+        auto& ip_data = _ip_data[ip];
+        auto const& Np = ip_data.N_p;
+        auto const& NT = Np;
+
+        double const pCap = Np.dot(capillary_pressure);
+        vars[static_cast<int>(MPL::Variable::capillary_pressure)] = pCap;
+
+        double const T = NT.dot(temperature);
+        vars[static_cast<int>(MPL::Variable::temperature)] = T;
+
+        ip_data.s_L_prev =
+            medium.property(MPL::PropertyType::saturation)
+                .template value<double>(
+                    vars, pos, t, std::numeric_limits<double>::quiet_NaN());
+
+        // Set eps_m_prev from potentially non-zero eps and sigma_sw from
+        // restart.
+        auto const C_el =
+            ip_data.computeElasticTangentStiffness(t, pos, dt, T, T);
+        auto& eps = ip_data.eps;
+        auto& sigma_sw = ip_data.sigma_sw;
+        ip_data.eps_m_prev.noalias() =
+            solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
+                ? eps + C_el.inverse() * sigma_sw
+                : eps;
+    }
+    updateConstitutiveVariables(local_x, Eigen::VectorXd::Zero(matrix_size), t,
+                                0);
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto& ip_data = _ip_data[ip];

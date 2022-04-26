@@ -40,6 +40,7 @@ struct IntegrationPointData final
         static const int kelvin_vector_size =
             MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
         sigma_eff.setZero(kelvin_vector_size);
+        sigma_sw.setZero(kelvin_vector_size);
         eps.setZero(kelvin_vector_size);
         eps_m.setZero(kelvin_vector_size);
         eps_m_prev.resize(kelvin_vector_size);
@@ -53,6 +54,7 @@ struct IntegrationPointData final
         DisplacementDim, NPoints * DisplacementDim>
         N_u_op;
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
+    typename BMatricesType::KelvinVectorType sigma_sw, sigma_sw_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
 
@@ -183,6 +185,7 @@ struct IntegrationPointData final
         eps_prev = eps;
         eps_m_prev = eps_m;
         sigma_eff_prev = sigma_eff;
+        sigma_sw_prev = sigma_sw;
         s_L_prev = s_L;
 
         rho_G_h_G_prev = rho_G_h_G;
@@ -197,6 +200,50 @@ struct IntegrationPointData final
         rho_u_eff_prev = rho_u_eff;
 
         material_state_variables->pushBackState();
+    }
+
+    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
+    computeElasticTangentStiffness(
+        double const t, ParameterLib::SpatialPosition const& x_position,
+        double const dt, double const temperature_prev,
+        double const temperature)
+    {
+        namespace MPL = MaterialPropertyLib;
+
+        MPL::VariableArray variable_array;
+        MPL::VariableArray variable_array_prev;
+
+        auto const null_state = solid_material.createMaterialStateVariables();
+
+        using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+
+        variable_array[static_cast<int>(MPL::Variable::stress)].emplace<KV>(
+            KV::Zero());
+        variable_array[static_cast<int>(MPL::Variable::mechanical_strain)]
+            .emplace<KV>(KV::Zero());
+        variable_array[static_cast<int>(MPL::Variable::temperature)]
+            .emplace<double>(temperature);
+
+        variable_array_prev[static_cast<int>(MPL::Variable::stress)]
+            .emplace<KV>(KV::Zero());
+        variable_array_prev[static_cast<int>(MPL::Variable::mechanical_strain)]
+            .emplace<KV>(KV::Zero());
+        variable_array_prev[static_cast<int>(MPL::Variable::temperature)]
+            .emplace<double>(temperature_prev);
+
+        auto&& solution =
+            solid_material.integrateStress(variable_array_prev, variable_array,
+                                           t, x_position, dt, *null_state);
+
+        if (!solution)
+        {
+            OGS_FATAL("Computation of elastic tangent stiffness failed.");
+        }
+
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C =
+            std::move(std::get<2>(*solution));
+
+        return C;
     }
 
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(

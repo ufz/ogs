@@ -83,6 +83,11 @@ PropertyDataType SaturationDependentSwelling::value(
 
     double const delta_S_eff = S_eff - S_eff_prev;
 
+    if (delta_S_eff == 0.)
+    {
+        return delta_sigma_sw;  // still being zero.
+    }
+
     // \Delta\sigma_{sw} = - \sum_i k_i (\lambda p S_{eff}^{(\lambda_i - 1)}
     // e_i \otimes e_i \Delta S_L / (S_{max} - S_{min}), where
     // e_i \otimes e_i is a square matrix with e_i,0^2 e_i,0*e_i,1 etc.
