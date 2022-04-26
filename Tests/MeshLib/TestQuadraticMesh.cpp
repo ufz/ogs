@@ -9,12 +9,14 @@
 
 #include <gtest/gtest.h>
 
+#include <limits>
 #include <memory>
 
 #include "GeoLib/Polyline.h"
 #include "GeoLib/PolylineVec.h"
 #include "MeshGeoToolsLib/AppendLinesAlongPolyline.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Elements/Pyramid.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
@@ -329,4 +331,57 @@ TEST(MeshLib, QuadraticOrderMesh_LineQuad)
                                   2) &&
                                  (connections[n->getID()].size() == 13);
                       }));
+}
+
+TEST(MeshLib, QuadraticOrderMesh_Pyramid)
+{
+    // Note the memory allocated for nodes and elements are released in the
+    // destructor of Mesh.
+    std::vector<MeshLib::Node*> nodes{
+        // nodes on base
+        new MeshLib::Node(0.0, 0.0, 0.5), new MeshLib::Node(0.0, 0.0, 0.0),
+        new MeshLib::Node(0.0, 0.5, 0.0), new MeshLib::Node(0.0, 0.5, 0.5),
+        // node at the top
+        new MeshLib::Node(0.25, 0.25, 0.25)};
+
+    // Element(Node* nodes, ...) deletes nodes. Copy nodes entries to
+    // std::array<MeshLib::Node*> to call Element(std::array<MeshLib::Node*>,
+    // ...).
+    std::array<MeshLib::Node*, 5> pyramid_element_nodes;
+    std::copy_n(nodes.begin(), 5, pyramid_element_nodes.begin());
+
+    std::vector<MeshLib::Element*> elements{
+        new MeshLib::Pyramid(pyramid_element_nodes)};
+    MeshLib::Mesh mesh("test_mesh", nodes, elements);
+
+    auto const quadratic_mesh =
+        MeshLib::createQuadraticOrderMesh(mesh, false /* add centre node*/);
+
+    auto const quadratic_element = quadratic_mesh->getElement(0);
+
+    double const tol = std::numeric_limits<double>::epsilon();
+    // Compare vertex nodes
+    for (std::size_t i = 0; i < nodes.size(); i++)
+    {
+        auto const x = nodes[i]->data();
+        auto const x_q = quadratic_element->getNode(i)->data();
+        for (int j = 0; j < 3; j++)
+        {
+            ASSERT_NEAR(x[j], x_q[j], tol);
+        }
+    }
+
+    // Compare edge nodes:
+    auto const nodes_q = quadratic_element->getNodes();
+    for (int i = 0; i < 8; i++)
+    {
+        auto const edge_node_ids = MeshLib::PyramidRule13::edge_nodes[i];
+        auto const x_vertex_a = nodes[edge_node_ids[0]]->data();
+        auto const x_vertex_b = nodes[edge_node_ids[1]]->data();
+        auto const x_edge = nodes_q[edge_node_ids[2]]->data();
+        for (int j = 0; j < 3; j++)
+        {
+            ASSERT_NEAR(0.5 * (x_vertex_a[j] + x_vertex_b[j]), x_edge[j], tol);
+        }
+    }
 }
