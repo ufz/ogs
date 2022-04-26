@@ -313,7 +313,7 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             std::unordered_map<int, int> fracID_to_local({{0, 0}});
             std::vector<double> levelsets = uGlobalEnrichments(
                 fracture_props, junction_props, fracID_to_local,
-                Eigen::Vector3d(MeshLib::getCenterOfGravity(*e).getCoords()));
+                Eigen::Vector3d(MeshLib::getCenterOfGravity(*e).data()));
             (*mesh_prop_levelset)[e->getID()] = levelsets[0];
         }
 

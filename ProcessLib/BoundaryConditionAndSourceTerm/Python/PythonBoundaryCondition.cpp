@@ -129,10 +129,9 @@ void PythonBoundaryCondition::getEssentialBCValues(
 
         collectPrimaryVariables(primary_variables, *boundary_node, x);
 
-        auto* coords = boundary_node->getCoords();
-        auto const [apply_bc, bc_value] =
-            bc_object->getDirichletBCValue(t, {coords[0], coords[1], coords[2]},
-                                           boundary_node_id, primary_variables);
+        auto const [apply_bc, bc_value] = bc_object->getDirichletBCValue(
+            t, {(*boundary_node)[0], (*boundary_node)[1], (*boundary_node)[2]},
+            boundary_node_id, primary_variables);
 
         if (!bc_object->isOverriddenEssential())
         {

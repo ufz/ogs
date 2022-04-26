@@ -42,8 +42,7 @@ MeshLib::RotationMatrix getRotationMatrixToGlobal(
     if (element_dimension == 1)
     {
         Eigen::Vector3d const xx =
-            (Eigen::Map<Eigen::Vector3d const>(points[1].getCoords()) -
-             Eigen::Map<Eigen::Vector3d const>(points[0].getCoords()))
+            (points[1].asEigenVector3d() - points[0].asEigenVector3d())
                 .normalized();
         if (global_dim == 2)
         {

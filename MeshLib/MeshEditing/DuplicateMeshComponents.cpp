@@ -26,7 +26,7 @@ std::vector<Node*> copyNodeVector(const std::vector<Node*>& nodes)
     new_nodes.reserve(nNodes);
     for (std::size_t k = 0; k < nNodes; ++k)
     {
-        new_nodes.push_back(new Node(nodes[k]->getCoords(), new_nodes.size()));
+        new_nodes.push_back(new Node(nodes[k]->data(), new_nodes.size()));
     }
     return new_nodes;
 }

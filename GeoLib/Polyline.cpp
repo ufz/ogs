@@ -370,10 +370,8 @@ double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
     // loop over all line segments of the polyline
     for (std::size_t k = 0; k < getNumberOfSegments(); k++)
     {
-        auto const a =
-            Eigen::Map<Eigen::Vector3d const>(getPoint(k)->getCoords());
-        auto const b =
-            Eigen::Map<Eigen::Vector3d const>(getPoint(k + 1)->getCoords());
+        auto const& a = getPoint(k)->asEigenVector3d();
+        auto const& b = getPoint(k + 1)->asEigenVector3d();
         double const seg_length((b - a).norm());
         act_length_of_ply += seg_length;
         // is the orthogonal projection of the j-th node to the

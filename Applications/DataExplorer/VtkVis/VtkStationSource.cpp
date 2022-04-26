@@ -141,8 +141,7 @@ int VtkStationSource::RequestData(vtkInformation* request,
     // Generate graphic objects
     for (auto station : *_stations)
     {
-        double coords[3] = {(*station)[0], (*station)[1], (*station)[2]};
-        vtkIdType sid = newStations->InsertNextPoint(coords);
+        vtkIdType sid = newStations->InsertNextPoint(station->data());
         station_ids->InsertNextValue(site_count);
         if (useStationValues)
         {
@@ -164,9 +163,7 @@ int VtkStationSource::RequestData(vtkInformation* request,
 
             for (std::size_t i = 1; i < nLayers; i++)
             {
-                auto* pCoords = const_cast<double*>(profile[i]->getCoords());
-                double loc[3] = {pCoords[0], pCoords[1], pCoords[2]};
-                newStations->InsertNextPoint(loc);
+                newStations->InsertNextPoint(profile[i]->data());
                 station_ids->InsertNextValue(site_count);
                 newLines->InsertNextCell(2);
                 newLines->InsertCellPoint(

@@ -60,32 +60,21 @@ public:
     }
 
     /** returns an array containing the coordinates of the point */
-    const double* getCoords() const { return x_.data(); }
+    const double* data() const { return x_.data(); }
 
-    double* getCoords() { return x_.data(); }
+    double* data() { return x_.data(); }
+
+    Eigen::Vector3d const& asEigenVector3d() const { return x_; }
+    Eigen::Vector3d& asEigenVector3d() { return x_; }
 
 private:
-    std::array<double, 3> x_;
+    Eigen::Vector3d x_;
 };
 
 inline bool operator<(Point3d const& a, Point3d const& b)
 {
-    for (std::size_t i = 0; i < 3; ++i)
-    {
-        if (a[i] > b[i])
-        {
-            return false;
-        }
-        if (a[i] < b[i])
-        {
-            return true;
-        }
-
-        // continue with next dimension, because a[0] == b[0]
-    }
-
-    // The values in all dimensions are equal.
-    return false;
+    return std::lexicographical_compare(a.data(), a.data() + 3, b.data(),
+                                        b.data() + 3);
 }
 
 /**
@@ -99,28 +88,8 @@ inline bool operator<(Point3d const& a, Point3d const& b)
  * test \f$ |a_i - b_i| > \epsilon \cdot \min (|a_i|, |b_i|) \f$ \b and
  * \f$  |a_i - b_i| > \epsilon \f$ for all coordinates \f$ 0 \le i < 3 \f$.
  */
-bool inline lessEq(Point3d const& a, Point3d const& b,
-                   double eps = std::numeric_limits<double>::epsilon())
-{
-    auto coordinateIsLargerEps = [&eps](double const u, double const v) -> bool
-    {
-        return std::abs(u - v) > eps * std::min(std::abs(v), std::abs(u)) &&
-               std::abs(u - v) > eps;
-    };
-
-    for (std::size_t i = 0; i < 3; ++i)
-    {
-        // test a relative and an absolute criterion
-        if (coordinateIsLargerEps(a[i], b[i]))
-        {
-            return static_cast<bool>(a[i] <= b[i]);
-        }
-        // a[i] ~= b[i] up to an epsilon. Compare next dimension.
-    }
-
-    // all coordinates are equal up to an epsilon.
-    return true;
-}
+bool lessEq(Point3d const& a, Point3d const& b,
+            double eps = std::numeric_limits<double>::epsilon());
 
 /** overload the output operator for class Point */
 inline std::ostream& operator<<(std::ostream& os, const Point3d& p)
@@ -152,12 +121,7 @@ inline MathLib::Point3d operator*(MATRIX const& mat, MathLib::Point3d const& p)
 
 /** Computes the squared dist between the two points p0 and p1.
  */
-inline double sqrDist(MathLib::Point3d const& p0, MathLib::Point3d const& p1)
-{
-    return (p0[0] - p1[0]) * (p0[0] - p1[0]) +
-           (p0[1] - p1[1]) * (p0[1] - p1[1]) +
-           (p0[2] - p1[2]) * (p0[2] - p1[2]);
-}
+double sqrDist(MathLib::Point3d const& p0, MathLib::Point3d const& p1);
 
 /** Equality of Point3d's up to an epsilon.
  */

@@ -32,18 +32,18 @@ namespace ExactPredicates
 double getOrientation2d(MathLib::Point3d const& a, MathLib::Point3d const& b,
                         MathLib::Point3d const& c)
 {
-    return orient2d(const_cast<double*>(a.getCoords()),
-                    const_cast<double*>(b.getCoords()),
-                    const_cast<double*>(c.getCoords()));
+    return orient2d(const_cast<double*>(a.data()),
+                    const_cast<double*>(b.data()),
+                    const_cast<double*>(c.data()));
 }
 
 double getOrientation2dFast(MathLib::Point3d const& a,
                             MathLib::Point3d const& b,
                             MathLib::Point3d const& c)
 {
-    return orient2dfast(const_cast<double*>(a.getCoords()),
-                        const_cast<double*>(b.getCoords()),
-                        const_cast<double*>(c.getCoords()));
+    return orient2dfast(const_cast<double*>(a.data()),
+                        const_cast<double*>(b.data()),
+                        const_cast<double*>(c.data()));
 }
 }  // namespace ExactPredicates
 
@@ -152,14 +152,10 @@ bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
         return false;
     }
 
-    auto const a =
-        Eigen::Map<Eigen::Vector3d const>(s0.getBeginPoint().getCoords());
-    auto const b =
-        Eigen::Map<Eigen::Vector3d const>(s0.getEndPoint().getCoords());
-    auto const c =
-        Eigen::Map<Eigen::Vector3d const>(s1.getBeginPoint().getCoords());
-    auto const d =
-        Eigen::Map<Eigen::Vector3d const>(s1.getEndPoint().getCoords());
+    auto const& a = s0.getBeginPoint().asEigenVector3d();
+    auto const& b = s0.getEndPoint().asEigenVector3d();
+    auto const& c = s1.getBeginPoint().asEigenVector3d();
+    auto const& d = s1.getEndPoint().asEigenVector3d();
 
     Eigen::Vector3d const v = b - a;
     Eigen::Vector3d const w = d - c;
@@ -373,16 +369,10 @@ std::unique_ptr<GeoLib::Point> triangleLineIntersection(
     MathLib::Point3d const& c, MathLib::Point3d const& p,
     MathLib::Point3d const& q)
 {
-    auto const va = Eigen::Map<Eigen::Vector3d const>(a.getCoords());
-    auto const vb = Eigen::Map<Eigen::Vector3d const>(b.getCoords());
-    auto const vc = Eigen::Map<Eigen::Vector3d const>(c.getCoords());
-    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.getCoords());
-    auto const vq = Eigen::Map<Eigen::Vector3d const>(q.getCoords());
-
-    Eigen::Vector3d const pq = vq - vp;
-    Eigen::Vector3d const pa = va - vp;
-    Eigen::Vector3d const pb = vb - vp;
-    Eigen::Vector3d const pc = vc - vp;
+    Eigen::Vector3d const pq = q.asEigenVector3d() - p.asEigenVector3d();
+    Eigen::Vector3d const pa = a.asEigenVector3d() - p.asEigenVector3d();
+    Eigen::Vector3d const pb = b.asEigenVector3d() - p.asEigenVector3d();
+    Eigen::Vector3d const pc = c.asEigenVector3d() - p.asEigenVector3d();
 
     double u = pq.cross(pc).dot(pb);
     if (u < 0)

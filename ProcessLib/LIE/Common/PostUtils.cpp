@@ -72,7 +72,7 @@ PostProcessTool::PostProcessTool(
         for (auto const* org_node : vec_fracture_nodes)
         {
             auto duplicated_node =
-                new MeshLib::Node(org_node->getCoords(), new_nodes.size());
+                new MeshLib::Node(org_node->data(), new_nodes.size());
             new_nodes.push_back(duplicated_node);
             _map_dup_newNodeIDs[org_node->getID()].push_back(
                 duplicated_node->getID());
@@ -83,7 +83,7 @@ PostProcessTool::PostProcessTool(
     {
         auto* org_node = org_mesh.getNode(entry.first);
         auto duplicated_node =
-            new MeshLib::Node(org_node->getCoords(), new_nodes.size());
+            new MeshLib::Node(org_node->data(), new_nodes.size());
         new_nodes.push_back(duplicated_node);
         _map_dup_newNodeIDs[org_node->getID()].push_back(
             duplicated_node->getID());

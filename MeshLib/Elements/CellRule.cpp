@@ -18,8 +18,7 @@ namespace MeshLib
 {
 bool CellRule::testElementNodeOrder(Element const& e)
 {
-    Eigen::Vector3d const cc =
-        Eigen::Map<Eigen::Vector3d const>(getCenterOfGravity(e).getCoords());
+    auto const cc = getCenterOfGravity(e).asEigenVector3d();
     const unsigned nFaces(e.getNumberOfFaces());
     for (unsigned j = 0; j < nFaces; ++j)
     {
@@ -28,8 +27,7 @@ bool CellRule::testElementNodeOrder(Element const& e)
         // test at some point, while for node 0 at least one node in every
         // element type would be used for checking twice and one wouldn't be
         // checked at all. (based on the definition of the _face_nodes variable)
-        auto const x =
-            Eigen::Map<Eigen::Vector3d const>(face->getNode(1)->getCoords());
+        auto const& x = face->getNode(1)->asEigenVector3d();
         Eigen::Vector3d const cx = x - cc;
         const double s = FaceRule::getSurfaceNormal(*face).dot(cx);
         delete face;

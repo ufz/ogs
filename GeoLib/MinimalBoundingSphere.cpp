@@ -34,13 +34,11 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
                                              MathLib::Point3d const& q)
     : _radius(std::numeric_limits<double>::epsilon()), _center(p)
 {
-    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.getCoords());
-    auto const vq = Eigen::Map<Eigen::Vector3d const>(q.getCoords());
-    Eigen::Vector3d const a = vq - vp;
+    Eigen::Vector3d const a = q.asEigenVector3d() - p.asEigenVector3d();
 
     Eigen::Vector3d o = a / 2;
     _radius = o.norm() + std::numeric_limits<double>::epsilon();
-    o += vp;
+    o += p.asEigenVector3d();
     _center = MathLib::Point3d{{o[0], o[1], o[2]}};
 }
 
@@ -48,11 +46,9 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
                                              MathLib::Point3d const& q,
                                              MathLib::Point3d const& r)
 {
-    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.getCoords());
-    auto const vq = Eigen::Map<Eigen::Vector3d const>(q.getCoords());
-    auto const vr = Eigen::Map<Eigen::Vector3d const>(r.getCoords());
-    Eigen::Vector3d const a = vr - vp;
-    Eigen::Vector3d const b = vq - vp;
+    auto const& vp = p.asEigenVector3d();
+    Eigen::Vector3d const a = r.asEigenVector3d() - vp;
+    Eigen::Vector3d const b = q.asEigenVector3d() - vp;
     Eigen::Vector3d const axb = a.cross(b);
 
     if (axb.squaredNorm() > 0)
@@ -85,14 +81,9 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
                                              MathLib::Point3d const& r,
                                              MathLib::Point3d const& s)
 {
-    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.getCoords());
-    auto const vq = Eigen::Map<Eigen::Vector3d const>(q.getCoords());
-    auto const vr = Eigen::Map<Eigen::Vector3d const>(r.getCoords());
-    auto const vs = Eigen::Map<Eigen::Vector3d const>(s.getCoords());
-
-    Eigen::Vector3d const va = vq - vp;
-    Eigen::Vector3d const vb = vr - vp;
-    Eigen::Vector3d const vc = vs - vp;
+    Eigen::Vector3d const va = q.asEigenVector3d() - p.asEigenVector3d();
+    Eigen::Vector3d const vb = r.asEigenVector3d() - p.asEigenVector3d();
+    Eigen::Vector3d const vc = s.asEigenVector3d() - p.asEigenVector3d();
 
     if (!MathLib::isCoplanar(p, q, r, s))
     {
@@ -103,7 +94,7 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
             denom;
 
         _radius = o.norm() + std::numeric_limits<double>::epsilon();
-        o += vp;
+        o += p.asEigenVector3d();
         _center = MathLib::Point3d({o[0], o[1], o[2]});
     }
     else

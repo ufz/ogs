@@ -66,9 +66,8 @@ bool DeactivatedSubdomain::isDeactivated(MathLib::Point3d const& point,
 
     // Position r on the line at given time.
     Eigen::Vector3d const r = a + t * time_interval.getValue(time);
-    Eigen::Map<Eigen::Vector3d const> const p{point.getCoords(), 3};
 
     // Return true if p is "behind" the plane through r.
-    return (p - r).dot(t) <= 0;
+    return (point.asEigenVector3d() - r).dot(t) <= 0;
 }
 }  // namespace ProcessLib

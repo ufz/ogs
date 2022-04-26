@@ -24,7 +24,7 @@ struct JunctionProperty final
     JunctionProperty(int const junction_id_,
                      MeshLib::Node const& junctionNode,
                      std::array<int, 2> const fracture_ids_)
-        : coords{junctionNode.getCoords()},
+        : coords{junctionNode.data()},
           node_id{junctionNode.getID()},
           fracture_ids{fracture_ids_},
           junction_id{junction_id_}

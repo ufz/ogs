@@ -165,7 +165,7 @@ std::vector<Node*> permuteNodes(std::vector<std::size_t> const& permutation,
     for (std::size_t i = 0; i < permutation.size(); ++i)
     {
         auto const node_p_i = nodes[permutation[i]];
-        permuted_nodes.push_back(new Node{node_p_i->getCoords(), i});
+        permuted_nodes.push_back(new Node{node_p_i->data(), i});
     }
     return permuted_nodes;
 }

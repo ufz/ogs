@@ -344,8 +344,7 @@ bool parseNodes(std::ifstream& in,
             std::size_t ref_id;
             std::string keyword;
             sstr >> keyword >> new_id >> ref_id;
-            nodes.push_back(
-                new MeshLib::Node(nodes[ref_id]->getCoords(), new_id));
+            nodes.push_back(new MeshLib::Node(nodes[ref_id]->data(), new_id));
         }
         node_id_map[nodes.back()->getID()] = nodes.size() - 1;
         pos = in.tellg();

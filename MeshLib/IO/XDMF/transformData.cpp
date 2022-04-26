@@ -238,7 +238,7 @@ std::vector<double> transformToXDMFGeometry(MeshLib::Mesh const& mesh)
     values.reserve(nodes.size() * point_size);
     for (auto const& n : nodes)
     {
-        const double* x = n->getCoords();
+        const double* x = n->data();
         values.insert(values.cend(), x, x + point_size);
     }
 

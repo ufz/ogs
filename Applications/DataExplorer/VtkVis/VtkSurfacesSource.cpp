@@ -65,15 +65,14 @@ int VtkSurfacesSource::RequestData(vtkInformation* request,
     (void)request;
     (void)inputVector;
 
-    const int nSurfaces = _surfaces->size();
-    if (nSurfaces == 0)
+    if (_surfaces->empty())
     {
         return 0;
     }
 
     const std::vector<GeoLib::Point*>* surfacePoints =
         (*_surfaces)[0]->getPointVec();
-    std::size_t nPoints = surfacePoints->size();
+    std::size_t const nPoints = surfacePoints->size();
 
     vtkSmartPointer<vtkInformation> outInfo =
         outputVector->GetInformationObject(0);
@@ -98,9 +97,7 @@ int VtkSurfacesSource::RequestData(vtkInformation* request,
 
     for (std::size_t i = 0; i < nPoints; ++i)
     {
-        const double* coords =
-            const_cast<double*>((*surfacePoints)[i]->getCoords());
-        newPoints->SetPoint(i, coords);
+        newPoints->SetPoint(i, (*surfacePoints)[i]->data());
     }
 
     int count(0);

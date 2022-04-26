@@ -21,10 +21,10 @@ namespace LIE
 /// compute physical coordinates from the given shape vector, i.e. from the
 /// natural coordinates
 template <typename Derived>
-MathLib::Point3d computePhysicalCoordinates(
+Eigen::Vector3d computePhysicalCoordinates(
     MeshLib::Element const& e, Eigen::MatrixBase<Derived> const& shape)
 {
-    MathLib::Point3d pt;
+    Eigen::Vector3d pt = Eigen::Vector3d::Zero();
     for (unsigned i = 0; i < e.getNumberOfNodes(); i++)
     {
         MeshLib::Node const& node = *e.getNode(i);

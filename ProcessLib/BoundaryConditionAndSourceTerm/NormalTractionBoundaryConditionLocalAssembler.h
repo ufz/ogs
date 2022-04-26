@@ -85,9 +85,8 @@ public:
         // TODO Extend to rotated 2d meshes and line elements.
         if (e.getGeomType() == MeshLib::MeshElemType::LINE)
         {
-            Eigen::Vector3d const v1 =
-                Eigen::Map<Eigen::Vector3d const>(e.getNode(1)->getCoords()) -
-                Eigen::Map<Eigen::Vector3d const>(e.getNode(0)->getCoords());
+            Eigen::Vector3d const v1 = e.getNode(1)->asEigenVector3d() -
+                                       e.getNode(0)->asEigenVector3d();
             element_normal[0] = -v1[1];
             element_normal[1] = v1[0];
             element_normal.normalize();

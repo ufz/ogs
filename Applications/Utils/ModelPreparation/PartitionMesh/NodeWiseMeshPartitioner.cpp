@@ -65,7 +65,7 @@ std::ostream& Partition::writeNodes(
 
     for (const auto* node : nodes)
     {
-        double const* coords = node->getCoords();
+        double const* coords = node->data();
         nodes_buffer.emplace_back(global_node_ids[node->getID()], coords[0],
                                   coords[1], coords[2]);
     }
