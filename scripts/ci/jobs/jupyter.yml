@@ -1,7 +1,7 @@
 # Built for Sandy Bridge (envinf1) and newer
 build jupyter:
   stage: build
-  tags: [envinf2-shell]
+  tags: [envinf3-shell]
   needs: [meta]
   extends:
     - .container-maker-setup
