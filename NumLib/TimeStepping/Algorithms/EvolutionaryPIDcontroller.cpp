@@ -23,14 +23,14 @@ namespace NumLib
 std::tuple<bool, double> EvolutionaryPIDcontroller::next(
     double const solution_error, int const /*number_iterations*/)
 {
-    const bool is_previous_step_accepted = _is_accepted;
+    const bool is_previous_step_accepted = _ts_current.isAccepted();
 
     const double e_n = solution_error;
     const double zero_threshold = std::numeric_limits<double>::epsilon();
     // step rejected.
     if (e_n > _tol)
     {
-        _is_accepted = false;
+        _ts_current.setAccepted(false);
 
         double h_new = (e_n > zero_threshold) ? _ts_current.dt() * _tol / e_n
                                               : 0.5 * _ts_current.dt();
@@ -47,17 +47,17 @@ std::tuple<bool, double> EvolutionaryPIDcontroller::next(
             "\t or the simulation will be halted.",
             _tol, h_new);
 
-        return std::make_tuple(_is_accepted, h_new);
+        return std::make_tuple(_ts_current.isAccepted(), h_new);
     }
 
     // step accepted.
-    _is_accepted = true;
+    _ts_current.setAccepted(true);
 
     if (_ts_current.timeStepNumber() == 0)
     {
         _e_n_minus1 = e_n;
 
-        return std::make_tuple(_is_accepted, _h0);
+        return std::make_tuple(_ts_current.isAccepted(), _h0);
     }
     else
     {
@@ -94,7 +94,7 @@ std::tuple<bool, double> EvolutionaryPIDcontroller::next(
         _e_n_minus2 = _e_n_minus1;
         _e_n_minus1 = e_n;
 
-        return std::make_tuple(_is_accepted, h_new);
+        return std::make_tuple(_ts_current.isAccepted(), h_new);
     }
 
     return {};

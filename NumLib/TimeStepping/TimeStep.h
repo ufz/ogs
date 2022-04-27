@@ -93,6 +93,9 @@ public:
     /// the time step number
     std::size_t timeStepNumber() const { return _time_step_number; }
 
+    void setAccepted(bool const accepted) { _is_accepted = accepted; }
+    bool isAccepted() const { return _is_accepted; }
+
 private:
     /// previous time step
     double _previous;
@@ -102,6 +105,8 @@ private:
     double _dt;
     /// the number of time steps
     std::size_t _time_step_number;
+    /// is the timestep accepted
+    bool _is_accepted = true;
 };
 
 }  // namespace NumLib

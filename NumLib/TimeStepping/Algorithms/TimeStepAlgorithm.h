@@ -99,12 +99,12 @@ public:
                                           int number_iterations) = 0;
 
     /// return if current time step is accepted or not
-    virtual bool accepted() const { return _is_accepted; }
+    virtual bool accepted() const { return _ts_current.isAccepted(); }
 
     /// Set the status of the step.
     /// \param accepted A boolean parameter is needed to indicated whether the
     /// step is accepted or not.
-    void setAccepted(const bool accepted) { _is_accepted = accepted; }
+    void setAccepted(const bool accepted) { _ts_current.setAccepted(accepted); }
 
     /// Get a flag to indicate whether this algorithm needs to compute
     /// solution error. The default return value is false.
@@ -126,7 +126,6 @@ protected:
 
     /// a vector of time step sizes
     std::vector<double> _dt_vector;
-    bool _is_accepted = true;
 };
 
 /// If any of the fixed times will be reached with given time increment, it will
