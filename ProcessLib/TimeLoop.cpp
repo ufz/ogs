@@ -303,13 +303,14 @@ void TimeLoop::setCoupledSolutions()
     }
 }
 
-double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
-                                     std::size_t& accepted_steps,
-                                     std::size_t& rejected_steps)
+std::pair<double, bool> TimeLoop::computeTimeStepping(
+    const double prev_dt, double& t, std::size_t& accepted_steps,
+    std::size_t& rejected_steps)
 {
     bool all_process_steps_accepted = true;
     // Get minimum time step size among step sizes of all processes.
     double dt = std::numeric_limits<double>::max();
+    bool last_step_rejected = false;
     constexpr double eps = std::numeric_limits<double>::epsilon();
 
     bool const is_initial_step = std::any_of(
@@ -399,7 +400,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
         if (all_process_steps_accepted)
         {
             accepted_steps++;
-            _last_step_rejected = false;
+            last_step_rejected = false;
         }
         else
         {
@@ -407,7 +408,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
             {
                 t -= prev_dt;
                 rejected_steps++;
-                _last_step_rejected = true;
+                last_step_rejected = true;
             }
         }
     }
@@ -423,7 +424,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
     // Check whether the time stepping is stabilized
     if (std::abs(dt - prev_dt) < eps)
     {
-        if (_last_step_rejected)
+        if (last_step_rejected)
         {
             OGS_FATAL(
                 "The new step size of {:g} is the same as that of the previous "
@@ -474,7 +475,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
         }
     }
 
-    return dt;
+    return {dt, last_step_rejected};
 }
 
 /// initialize output, convergence criterion, etc.
@@ -516,8 +517,9 @@ void TimeLoop::initialize()
                         &Output::doOutput);
     }
 
-    _dt = computeTimeStepping(0.0, _current_time, _accepted_steps,
-                                    _rejected_steps);
+    std::tie(_dt, _last_step_rejected) = computeTimeStepping(
+        0.0, _current_time, _accepted_steps, _rejected_steps);
+
     updateDeactivatedSubdomains(_per_process_data, _start_time);
 
     calculateNonEquilibriumInitialResiduum(
@@ -546,8 +548,8 @@ bool TimeLoop::executeTimeStep()
 
     double const current_time = _current_time;
     // _last_step_rejected is also checked in computeTimeStepping.
-    _dt = computeTimeStepping(prev_dt, _current_time, _accepted_steps,
-                              _rejected_steps);
+    std::tie(_dt, _last_step_rejected) = computeTimeStepping(
+        prev_dt, _current_time, _accepted_steps, _rejected_steps);
 
     if (!_last_step_rejected)
     {

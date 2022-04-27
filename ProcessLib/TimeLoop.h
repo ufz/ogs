@@ -104,10 +104,12 @@ private:
      *                        function.
      *  @param rejected_steps Rejected time steps that are counted in this
      *                        function.
+     *  @return the time step size and the information if the last time step was
+     *  rejected
      */
-    double computeTimeStepping(const double prev_dt, double& t,
-                               std::size_t& accepted_steps,
-                               std::size_t& rejected_steps);
+    std::pair<double, bool> computeTimeStepping(const double prev_dt, double& t,
+                                                std::size_t& accepted_steps,
+                                                std::size_t& rejected_steps);
 
     template <typename OutputClass, typename OutputClassMember>
     void outputSolutions(bool const output_initial_condition, unsigned timestep,
