@@ -518,6 +518,10 @@ void TimeLoop::initialize()
 
     _dt = computeTimeStepping(0.0, _current_time, _accepted_steps,
                                     _rejected_steps);
+    updateDeactivatedSubdomains(_per_process_data, _start_time);
+
+    calculateNonEquilibriumInitialResiduum(
+        _per_process_data, _process_solutions, _process_solutions_prev);
 }
 
 bool TimeLoop::executeTimeStep()
@@ -525,8 +529,6 @@ bool TimeLoop::executeTimeStep()
     BaseLib::RunTime time_timestep;
     time_timestep.start();
 
-    bool const non_equilibrium_initial_residuum_computed =
-        _start_time != _current_time;
     _current_time += _dt;
     const double prev_dt = _dt;
 
@@ -536,12 +538,6 @@ bool TimeLoop::executeTimeStep()
          timesteps, _current_time, _dt);
 
     updateDeactivatedSubdomains(_per_process_data, _current_time);
-
-    if (!non_equilibrium_initial_residuum_computed)
-    {
-        calculateNonEquilibriumInitialResiduum(
-            _per_process_data, _process_solutions, _process_solutions_prev);
-    }
 
     _nonlinear_solver_status =
         doNonlinearIteration(_current_time, _dt, timesteps);
