@@ -11,10 +11,12 @@ build jupyter:
       if [[ "$CI_COMMIT_BRANCH" == "master" ]] ; then
         export DOCKER_TAG_JUPYTER="$CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial-jupyter:latest"
         export DOCKER_TAG_JUPYTER_PETSC="$CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-petsc-jupyter:latest"
+        export DOCKER_TAG_JUPYTER_PETSC_PYVISTA="$CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-petsc-jupyter-pyvista_gpu:latest"
         export ON_MASTER_ARGS="--upload -C"
       else
         export DOCKER_TAG_JUPYTER="ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-serial-jupyter:latest"
         export DOCKER_TAG_JUPYTER_PETSC="ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-petsc-jupyter:latest"
+        export DOCKER_TAG_JUPYTER_PETSC_PYVISTA="ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-petsc-jupyter-pyvista_gpu:latest"
       fi
     ### Jupyter container ###
     # Build base image for 22.04
@@ -24,6 +26,7 @@ build jupyter:
       cd docker-stacks/base-notebook
       docker build --build-arg ROOT_CONTAINER=ubuntu:22.04 -t jupyter/base-notebook:22.04 .
       cd ../..
+    # Serial image
     - >
       poetry run ogscm compiler.py ogs.py ogs_jupyter.py -B -R --ogs ../..
       --build_args ' --progress=plain'
@@ -33,6 +36,7 @@ build jupyter:
       --runtime_base_image 'jupyter/base-notebook:22.04'
       --tag $DOCKER_TAG_JUPYTER
       $ON_MASTER_ARGS
+    # PETSc image
     - >
       poetry run ogscm compiler.py mpi.py ogs.py ogs_jupyter.py -B -R --ogs ../..
       --build_args ' --progress=plain'
@@ -41,13 +45,30 @@ build jupyter:
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
       --runtime_base_image 'jupyter/base-notebook:22.04'
       --mpi_no_entrypoint
+      --pyvista
       --tag $DOCKER_TAG_JUPYTER_PETSC
       $ON_MASTER_ARGS
+    # PETSc image for CI testing with PyVista hardware rendering for static image
+    # outputs for the web site. Does not get uploaded to the registry (machine
+    # specific).
+    - >
+      poetry run ogscm compiler.py mpi.py ogs.py ogs_jupyter.py -B -R --ogs ../..
+      --build_args ' --progress=plain'
+      --cvode --ccache --cpmcache --mfront
+      --cpu-target $CPU_TARGET
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
+      --runtime_base_image 'jupyter/base-notebook:22.04'
+      --mpi_no_entrypoint
+      --pyvista-gpu
+      --tag $DOCKER_TAG_JUPYTER_PETSC_PYVISTA
     - cd $CI_PROJECT_DIR
-    # execute notebooks in (PETSc) container
+    # execute notebooks in (PETSc, PyVista gpu) container
     - >
       docker run --rm -v $PWD:/home/jovyan/work --user `id -u $USER` --group-add users
-      --workdir /home/jovyan/work $DOCKER_TAG_JUPYTER_PETSC
+      --gpus all
+      --env PYVISTA_JUPYTER_BACKEND=static
+      --workdir /home/jovyan/work
+      $DOCKER_TAG_JUPYTER_PETSC_PYVISTA
       bash -c "cd Tests/Data &&  find . -type f -iname '*.ipynb' | grep -vP '\.ipynb_checkpoints|\.ci-skip.ipynb$' | xargs python Notebooks/testrunner.py --out _out --hugo"
   artifacts:
     name: container
