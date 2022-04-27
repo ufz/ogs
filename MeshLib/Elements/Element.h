@@ -177,9 +177,7 @@ public:
     /// Return a specific edge node.
     virtual Node* getEdgeNode(unsigned edge_id, unsigned node_id) const = 0;
 
-#ifndef NDEBUG
     friend std::ostream& operator<<(std::ostream& os, Element const& e);
-#endif  // NDEBUG
 
     /// Dimension of the space, where the element exists.
     unsigned space_dimension_ = 3u;

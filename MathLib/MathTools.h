@@ -26,7 +26,7 @@ class Point3d;
  * \param pa first point of line
  * \param pb second point of line
  * \param lambda the projected point described by the line equation above
- * \param d0 distance to the line point a
+ * \param d0 distance of the projected point to line point a
  * \returns the distance between pp and the orthogonal projection of pp
  */
 double calcProjPntToLineAndDists(MathLib::Point3d const& pp,

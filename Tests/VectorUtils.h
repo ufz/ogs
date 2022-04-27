@@ -42,3 +42,16 @@ inline void fillVectorRandomly(std::vector<double>& x)
         value = rnd(random_number_generator);
     }
 }
+
+template <std::size_t N>
+void fillVectorRandomly(std::array<double, N>& x)
+{
+    std::random_device rd;
+    std::mt19937 random_number_generator(rd());
+    std::uniform_real_distribution<double> rnd;
+
+    for (auto& value : x)
+    {
+        value = rnd(random_number_generator);
+    }
+}

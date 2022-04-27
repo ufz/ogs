@@ -14,17 +14,11 @@
 #include <gtest/gtest.h>
 
 #include "GeoLib/Point.h"
-#include "MeshLib/Elements/Element.h"
-#include "MeshLib/Elements/Hex.h"
-#include "MeshLib/Elements/Line.h"
-#include "MeshLib/Elements/Prism.h"
-#include "MeshLib/Elements/Pyramid.h"
-#include "MeshLib/Elements/Quad.h"
-#include "MeshLib/Elements/Tet.h"
-#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Elements/Elements.h"
+#include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/MeshRevision.h"
-#include "MeshLib/Node.h"
+#include "Tests/NumLib/ReferenceElementUtils.h"
+#include "Tests/VectorUtils.h"
 
 std::vector<MeshLib::Node*> createNodes()
 {
@@ -159,4 +153,97 @@ TEST(IsPntInElement, Hex)
     ASSERT_FALSE(hex.isPntInElement(pnt));
     ASSERT_TRUE(hex.isPntInElement(pnt, 0.02));
     deleteNodes(nodes);
+}
+
+template <typename MeshElementType>
+class MeshLibIsPntInElementTest : public ::testing::Test
+{
+    ReferenceElementUtils::ReferenceElement<MeshElementType> reference_element;
+
+protected:
+    MeshElementType const& bulk_element = reference_element.element;
+};
+
+using MeshElementTypes =
+    ConvertListType_t<MeshLib::AllElementTypes, ::testing::Types>;
+
+TYPED_TEST_SUITE(MeshLibIsPntInElementTest, MeshElementTypes);
+
+TYPED_TEST(MeshLibIsPntInElementTest, BarycenterIsInElement)
+{
+    auto const& e = this->bulk_element;
+    auto const barycenter = getCenterOfGravity(e);
+
+    ASSERT_TRUE(e.isPntInElement(barycenter));
+}
+
+TYPED_TEST(MeshLibIsPntInElementTest,
+           LargeCoordsAreDefinitelyOutsideTheElement_Random)
+{
+    /* This test uses reference elements. All of their node coordinates have
+     * absolute values <= 1. Since all element types are convex polytopes,
+     * points that have any coordinate with absolute value > 1 must be outside
+     * the reference element.
+     */
+    auto const& e = this->bulk_element;
+
+    std::array<double, 3> coords;
+    // comp is the coordinate that is close to, but outside the element range.
+    // I.e., this coordinate will be +/- (1 + eps).
+    for (unsigned comp = 0; comp < 3; ++comp)
+    {
+        for (int pm : {-1, 1})
+        {
+            double const eps = 1e-6;
+            unsigned const n_repetitions = 100;
+
+            for (unsigned i = 0; i < n_repetitions; ++i)
+            {
+                fillVectorRandomly(coords);
+
+                coords[comp] = pm * (1 + eps);
+
+                MathLib::Point3d pt(coords);
+
+                EXPECT_FALSE(e.isPntInElement(pt))
+                    << "Point " << pt << " is inside the element " << e;
+            }
+        }
+    }
+}
+
+TYPED_TEST(MeshLibIsPntInElementTest,
+           LargeCoordsAreDefinitelyOutsideTheElement_Zeroes)
+{
+    /* This test uses reference elements. All of their node coordinates have
+     * absolute values <= 1. Since all element types are convex polytopes,
+     * points that have any coordinate with absolute value > 1 must be outside
+     * the reference element.
+     */
+    auto const& e = this->bulk_element;
+
+    double const eps = 1e-6;
+
+    // comp is the coordinate that is close to, but outside the element range.
+    // I.e., this coordinate will be +/- (1 + eps).
+    for (unsigned comp = 0; comp < 3; ++comp)
+    {
+        for (int pm : {-1, 1})
+        {
+            std::array<double, 3> coords{};
+
+            coords[comp] = pm * (1 + eps);
+
+            for (unsigned c = 0; c < 3; ++c)
+            {
+                // all coordinates except comp will be zero.
+                ASSERT_TRUE(c == comp || coords[c] == 0);
+            }
+
+            MathLib::Point3d pt(coords);
+
+            EXPECT_FALSE(e.isPntInElement(pt))
+                << "Point " << pt << " is inside the element " << e;
+        }
+    }
 }
