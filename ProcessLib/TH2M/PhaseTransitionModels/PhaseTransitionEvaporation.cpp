@@ -19,10 +19,20 @@ PhaseTransitionEvaporation::PhaseTransitionEvaporation(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
     : PhaseTransitionModel(media),
       n_components_gas_{numberOfComponents(media, "Gas")},
+      // Identifies and initialises the indices of the various components via
+      // their properties
       gas_phase_vapour_component_index_{findComponentIndex(
           media, "Gas", MaterialPropertyLib::PropertyType::vapour_pressure)},
-      // dry air component is complement of vapour component index
-      gas_phase_dry_air_component_index_{gas_phase_vapour_component_index_ ^ 1}
+      // Dry air component is complement of vapour component index
+      gas_phase_dry_air_component_index_{gas_phase_vapour_component_index_ ^ 1},
+      // The solute is the component of the liquid phase which has been assigned
+      // the property `henry_coefficient'.
+      liquid_phase_solute_component_index_{findComponentIndex(
+          media, "AqueousLiquid",
+          MaterialPropertyLib::PropertyType::henry_coefficient)},
+      // The solvent is again the bitwise complement of the solute component
+      liquid_phase_solvent_component_index_{
+          liquid_phase_solute_component_index_ ^ 1}
 {
     DBUG("Create PhaseTransitionEvaporation constitutive model.");
 
@@ -30,7 +40,8 @@ PhaseTransitionEvaporation::PhaseTransitionEvaporation(
     {
         OGS_FATAL(
             "The current implementation of PhaseTransitionModelEvaporation "
-            "requires the specification of exactly two components in the gas "
+            "requires the specification of exactly two components in the "
+            "gas "
             "phase.");
     }
 
@@ -41,15 +52,36 @@ PhaseTransitionEvaporation::PhaseTransitionEvaporation(
 
     // check for minimum requirement definitions in media object
     std::array const required_vapour_component_properties = {
-        MaterialPropertyLib::specific_latent_heat,
+        // Todo: complete this list!
         MaterialPropertyLib::vapour_pressure, MaterialPropertyLib::molar_mass,
         MaterialPropertyLib::specific_heat_capacity,
         MaterialPropertyLib::diffusion};
+
     std::array const required_dry_air_component_properties = {
+        // Todo: complete this list!
         MaterialPropertyLib::molar_mass,
         MaterialPropertyLib::specific_heat_capacity};
-    std::array const required_liquid_properties = {
+
+    std::array const required_solute_component_properties = {
+        // Todo: complete this list!
+        MaterialPropertyLib::molar_mass,
+        MaterialPropertyLib::specific_heat_capacity,
+        MaterialPropertyLib::henry_coefficient};
+
+    std::array const required_solvent_component_properties = {
+        // Todo: complete this list!
+        MaterialPropertyLib::molar_mass,
         MaterialPropertyLib::specific_heat_capacity};
+
+    std::array const required_gas_properties = {
+        // Todo: complete this list!
+        MaterialPropertyLib::density, MaterialPropertyLib::thermal_conductivity,
+        MaterialPropertyLib::viscosity};
+
+    std::array const required_liquid_properties = {
+        // Todo: complete this list!
+        MaterialPropertyLib::density, MaterialPropertyLib::thermal_conductivity,
+        MaterialPropertyLib::viscosity};
 
     checkRequiredProperties(
         gas_phase.component(gas_phase_vapour_component_index_),
@@ -57,6 +89,13 @@ PhaseTransitionEvaporation::PhaseTransitionEvaporation(
     checkRequiredProperties(
         gas_phase.component(gas_phase_dry_air_component_index_),
         required_dry_air_component_properties);
+    checkRequiredProperties(
+        liquid_phase.component(liquid_phase_solute_component_index_),
+        required_solute_component_properties);
+    checkRequiredProperties(
+        liquid_phase.component(liquid_phase_solvent_component_index_),
+        required_solvent_component_properties);
+    checkRequiredProperties(gas_phase, required_gas_properties);
     checkRequiredProperties(liquid_phase, required_liquid_properties);
 }
 
@@ -95,8 +134,8 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
         vapour_component.property(MaterialPropertyLib::PropertyType::molar_mass)
             .template value<double>(variables, pos, t, dt);
 
-    // provide evaporation enthalpy and molar mass of the evaporating component
-    // in the variable array
+    // provide evaporation enthalpy and molar mass of the evaporating
+    // component in the variable array
     variables.enthalpy_of_evaporation = dh_evap;
     variables.molar_mass = M_W;
 
@@ -122,33 +161,39 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
     // copy previous state before modification.
     PhaseTransitionModelVariables cv = phase_transition_model_variables;
 
+    // Water pressure is passed to the VariableArray in order to calculate
+    // the water density.
     variables.liquid_phase_pressure = pLR;
 
-    cv.rhoLR = liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                   .template value<double>(variables, pos, t, dt);
-    cv.rhoWLR = cv.rhoLR;
+    // Concentration is initially zero to calculate the density of the pure
+    // water phase, which is needed for the Kelvin-Laplace equation.
+    variables.concentration = 0.;
+    auto rhoLR =
+        liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+            .template value<double>(variables, pos, t, dt);
 
     // Kelvin-Laplace correction for menisci
-    const double K = std::exp(-pCap * M_W / cv.rhoLR / R / T);
-    const double dK_dT = pCap * M_W / cv.rhoLR / R / T / T * K;
+    const double K = pCap > 0. ? std::exp(-pCap * M_W / rhoLR / R / T) : 1.;
+    const double dK_dT = pCap > 0. ? pCap * M_W / rhoLR / R / T / T * K : 0;
     const double dK_dpCap =
-        -M_W / cv.rhoLR / R / T *
-        K;  // rhoLR is treated as a constant here, as well as the molar mass of
-            // the liquid phase. However, the resulting errors are very small
-            // and can be ignored.
+        pCap > 0. ? -M_W / rhoLR / R / T * K
+                  : 0.;  // rhoLR is treated as a constant here. However, the
+                         // resulting errors are very small and can be ignored.
 
-    // vapour pressure inside porespace (== water partial pressure in gas phase)
+    // vapour pressure inside porespace (== water partial pressure in gas
+    // phase)
     cv.pWGR = p_vap_flat * K;
     auto const dpWGR_dT = dp_vap_flat_dT * K + p_vap_flat * dK_dT;
     auto const dpWGR_dpCap = p_vap_flat * dK_dpCap;
 
     // gas phase molar fractions
     auto const xnWG_min =
-        1.e-12;  // Magic number; prevents the mass fraction of a component from
-                 // ever becoming zero (which would cause the partial density to
-                 // disappear and thus one of the Laplace terms of the mass
-                 // balance on the diagonal of the local element matrix to be
-                 // zero). The value is simply made up, seems reasonable.
+        1.e-12;  // Magic number; prevents the mass fraction of a component
+                 // from ever becoming zero (which would cause the partial
+                 // density to disappear and thus one of the Laplace terms
+                 // of the mass balance on the diagonal of the local element
+                 // matrix to be zero). The value is simply made up, seems
+                 // reasonable.
     cv.xnWG = std::clamp(cv.pWGR / pGR, xnWG_min, 1. - xnWG_min);
     const double xnCG = 1. - cv.xnWG;
 
@@ -181,11 +226,11 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
 
     variables.molar_mass_derivative = dMG_dpGR;
 
-    // Derivatives of the density of the (composite gas phase) and the partial
-    // densities of its components. The density of the mixture can be obtained
-    // via the property 'IdealGasLawBinaryMixture', for this purpose the
-    // derivatives of the mean molar mass are passed in each case via the
-    // variable_array.
+    // Derivatives of the density of the (composite gas phase) and the
+    // partial densities of its components. The density of the mixture can
+    // be obtained via the property 'IdealGasLawBinaryMixture', for this
+    // purpose the derivatives of the mean molar mass are passed in each
+    // case via the variable_array.
     cv.drho_GR_dp_GR =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(
@@ -208,12 +253,12 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
                                      MaterialPropertyLib::Variable::temperature,
                                      pos, t, dt);
 
-    // The derivatives of the partial densities of the gas phase are hard-coded
-    // (they should remain so, as they are a fundamental part of this
-    // evaporation model). By outsourcing the derivatives of the phase density
-    // to the MPL, a constant phase density can also be assumed, the derivatives
-    // of the partial densities are then unaffected and the model is still
-    // consistent.
+    // The derivatives of the partial densities of the gas phase are
+    // hard-coded (they should remain so, as they are a fundamental part of
+    // this evaporation model). By outsourcing the derivatives of the phase
+    // density to the MPL, a constant phase density can also be assumed, the
+    // derivatives of the partial densities are then unaffected and the
+    // model is still consistent.
     cv.rhoCGR = xmCG * cv.rhoGR;
     cv.rhoWGR = cv.xmWG * cv.rhoGR;
 
@@ -245,29 +290,16 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
     // specific enthalpy of gas phase
     cv.hG = xmCG * cv.hCG + cv.xmWG * cv.hWG;
 
-    // liquid phase composition
-    cv.xmWL = 1.;
-    cv.xnWL = 1.;
-
-    // specific heat capacities of liquid phase
-    auto const cpL =
-        liquid_phase
-            .property(MaterialPropertyLib::PropertyType::specific_heat_capacity)
-            .template value<double>(variables, pos, t, dt);
-
-    // specific enthalpy of liquid phase
-    cv.hL = cpL * T;
-
-    // specific inner energies of gas and liquid phases
+    // specific inner energies of gas phase
     cv.uG = cv.hG - pGR / cv.rhoGR;
-    cv.uL = cv.hL;
 
     // diffusion
     auto const tortuosity =
-        1.0;  // Tortuosity formally belongs in the conversion from molecular
-              // diffusion coefficient to effective diffusion coefficient. For
-              // the moment, however, it is only determined by the coefficient
-              // (i.e. by parameter 'diffusion' in the PRJ-file) itself.
+        1.0;  // Tortuosity formally belongs in the conversion from
+              // molecular diffusion coefficient to effective diffusion
+              // coefficient. For the moment, however, it is only determined
+              // by the coefficient (i.e. by parameter 'diffusion' in the
+              // PRJ-file) itself.
 
     auto const D_W_G_m =
         vapour_component.property(MaterialPropertyLib::PropertyType::diffusion)
@@ -280,6 +312,161 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
     // gas phase viscosity
     cv.muGR = gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
                   .template value<double>(variables, pos, t, dt);
+
+    // Dissolution part -- Liquid phase properties
+    // -------------------------------------------
+
+    // Reference to the gas component dissolved in the liquid phase
+    auto const& solute_component =
+        liquid_phase.component(liquid_phase_solute_component_index_);
+
+    // The amount of dissolved gas is described by Henry's law. If no
+    // dissolution is intended, the user must define the Henry coefficient
+    // as 'constant 0'.
+    //
+    // Henry-Coefficient and derivatives
+    auto const H =
+        solute_component
+            .property(MaterialPropertyLib::PropertyType::henry_coefficient)
+            .template value<double>(variables, pos, t, dt);
+
+    auto const dH_dT =
+        solute_component
+            .property(MaterialPropertyLib::PropertyType::henry_coefficient)
+            .template dValue<double>(variables,
+                                     MaterialPropertyLib::Variable::temperature,
+                                     pos, t, dt);
+    auto const dH_dpGR =
+        solute_component
+            .property(MaterialPropertyLib::PropertyType::henry_coefficient)
+            .template dValue<double>(
+                variables, MaterialPropertyLib::Variable::phase_pressure, pos,
+                t, dt);
+
+    // Concentration of the dissolved gas as amount of substance of the
+    // mixture component C related to the total volume of the liquid phase.
+    auto const cCL = H * xnCG * pGR;
+    // Fortunately for the developer, the signs of the derivatives of the
+    // composition of binary mixtures are often opposed.
+    auto const dxnCG_dpGR = -dxnWG_dpGR;
+    auto const dxnCG_dT = -dxnWG_dT;
+
+    auto const dcCL_dpGR = (dH_dpGR * xnCG + H * dxnCG_dpGR) * pGR + H * xnCG;
+    auto const dcCL_dT = pGR * (dH_dT * xnCG + H * dxnCG_dT);
+
+    // Density of pure liquid phase
+    cv.rhoWLR = rhoLR;
+
+    variables.concentration = cCL;
+    // Liquid density including dissolved gas components. Attention! This
+    // only works if the concentration of the C-component is taken into
+    // account in the selected equation of state, e.g. via a (multi)-linear
+    // equation of state. Should a constant density be assumed, no
+    // dissolution will take place, since the composition of the water phase
+    // is determined via the mass fractions (as the ratio of the densities
+    // of solvent and solution). NB! This problem did not occur with the gas
+    // phase because the composition there was determined via the molar
+    // fractions (ratio of the partial pressures).
+    cv.rhoLR = liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+                   .template value<double>(variables, pos, t, dt);
+
+    // Gas component partial density in liquid phase
+    cv.rhoCLR = cv.rhoLR - cv.rhoWLR;
+
+    // liquid phase composition (mass fraction)
+    cv.xmWL = std::clamp(cv.rhoWLR / cv.rhoLR, 0., 1.);
+    auto const xmCL = 1. - cv.xmWL;
+
+    // Attention! Usually a multi-linear equation of state is used to
+    // determine the density of the solution. This requires independent
+    // variables, but in this case the concentration is not independent, but
+    // is determined via the equilibrium state. The exact derivation of the
+    // density according to e.g. the pressure pLR is thus:
+    //
+    //  drho_d_pLR = rho_ref * (beta_pLR + betaC * dC_dpLR)
+    //
+    // instead of
+    //
+    //  d_rho_d_pLR =
+    //     liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+    //         .template dValue<double>(
+    //             variables,
+    //             MaterialPropertyLib::Variable::liquid_phase_pressure,
+    //             pos, t, dt);
+
+    auto const rho_ref_betaP =
+        liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+            .template dValue<double>(
+                variables, MaterialPropertyLib::Variable::liquid_phase_pressure,
+                pos, t, dt);
+
+    auto const rho_ref_betaT =
+        liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+            .template dValue<double>(variables,
+                                     MaterialPropertyLib::Variable::temperature,
+                                     pos, t, dt);
+
+    auto const rho_ref_betaC =
+        liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+            .template dValue<double>(
+                variables, MaterialPropertyLib::Variable::concentration, pos, t,
+                dt);
+
+    // liquid phase density derivatives
+    auto const drhoLR_dpGR = rho_ref_betaP + rho_ref_betaC * dcCL_dpGR;
+    auto const drhoLR_dpCap = -rho_ref_betaP;
+    auto const drhoLR_dT = rho_ref_betaT + rho_ref_betaC * dcCL_dT;
+
+    // solvent partial density derivatives
+    auto const drhoWLR_dpGR = rho_ref_betaP;
+    auto const drhoWLR_dpCap = -rho_ref_betaP;
+    auto const drhoWLR_dT = rho_ref_betaT;
+
+    // liquid phase mass fraction derivatives
+    cv.dxmWL_dpGR = 1. / cv.rhoLR * (drhoWLR_dpGR - cv.xmWL * drhoLR_dpGR);
+    cv.dxmWL_dpCap = 1. / cv.rhoLR * (drhoWLR_dpCap - cv.xmWL * drhoLR_dpCap);
+    cv.dxmWL_dT = 1. / cv.rhoLR * (drhoWLR_dT - cv.xmWL * drhoLR_dT);
+
+    // temp:
+    cv.dxmWL_dpCap = 0.;
+
+    // liquid phase molar fractions and derivatives
+    cv.xnWL = cv.xmWL * M_C / (cv.xmWL * M_C + xmCL * M_W);
+
+    // Reference to the pure liquid component
+    auto const& solvent_component =
+        liquid_phase.component(liquid_phase_solvent_component_index_);
+
+    // specific heat capacities of liquid phase components
+    auto const cpCL =
+        solute_component
+            .property(MaterialPropertyLib::PropertyType::specific_heat_capacity)
+            .template value<double>(variables, pos, t, dt);
+    auto const cpWL =
+        solvent_component
+            .property(MaterialPropertyLib::PropertyType::specific_heat_capacity)
+            .template value<double>(variables, pos, t, dt);
+
+    // specific heat of solution
+    const auto dh_sol =
+        solute_component
+            .property(MaterialPropertyLib::PropertyType::specific_latent_heat)
+            .template value<double>(variables, pos, t, dt);
+
+    // specific enthalpy of liquid phase and its components
+    cv.hCL = cpCL * T + dh_sol;
+    cv.hWL = cpWL * T;
+    cv.hL = xmCL * cv.hCL + cv.xmWL * cv.hWL;
+
+    // specific inner energies of liquid phase
+    cv.uL = cv.hL;
+
+    // diffusion
+    auto const D_C_L_m =
+        solute_component.property(MaterialPropertyLib::PropertyType::diffusion)
+            .template value<double>(variables, pos, t, dt);
+    cv.diffusion_coefficient_solute =
+        tortuosity * D_C_L_m;  // Note here that D_C_L = D_W_L.
 
     // liquid phase viscosity
     cv.muLR =

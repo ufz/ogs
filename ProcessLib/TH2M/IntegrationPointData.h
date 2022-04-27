@@ -124,7 +124,7 @@ struct IntegrationPointData final
     // diffusion coefficients
     double diffusion_coefficient_vapour =
         std::numeric_limits<double>::quiet_NaN();
-    double diffusion_coefficient_solvate =
+    double diffusion_coefficient_solute =
         std::numeric_limits<double>::quiet_NaN();
 
     // phase enthalpies

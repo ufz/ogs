@@ -398,7 +398,7 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         ip_data.xmWL = c.xmWL;
 
         ip_data.diffusion_coefficient_vapour = c.diffusion_coefficient_vapour;
-        ip_data.diffusion_coefficient_solvate = c.diffusion_coefficient_solvate;
+        ip_data.diffusion_coefficient_solute = c.diffusion_coefficient_solute;
 
         ip_data.h_G = c.hG;
         ip_data.h_CG = c.hCG;
@@ -1090,7 +1090,7 @@ void TH2MLocalAssembler<
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
 
         const double sD_G = ip.diffusion_coefficient_vapour;
-        const double sD_L = ip.diffusion_coefficient_solvate;
+        const double sD_L = ip.diffusion_coefficient_solute;
 
         GlobalDimMatrixType const D_C_G = sD_G * I;
         GlobalDimMatrixType const D_W_G = sD_G * I;
@@ -1521,7 +1521,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
 
         const double sD_G = ip.diffusion_coefficient_vapour;
-        const double sD_L = ip.diffusion_coefficient_solvate;
+        const double sD_L = ip.diffusion_coefficient_solute;
 
         GlobalDimMatrixType const D_C_G = sD_G * I;
         GlobalDimMatrixType const D_W_G = sD_G * I;

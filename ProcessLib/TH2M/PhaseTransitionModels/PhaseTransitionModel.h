@@ -80,13 +80,15 @@ struct PhaseTransitionModelVariables
     double muLR = 0.;
 
     double diffusion_coefficient_vapour = 0.;
-    double diffusion_coefficient_solvate = 0.;
+    double diffusion_coefficient_solute = 0.;
 
     // specific enthalpies
     double hG = 0;
     double hCG = 0;
     double hWG = 0;
     double hL = 0;
+    double hCL = 0;
+    double hWL = 0;
 
     double dh_G_dT = 0;
     double dh_L_dT = 0;

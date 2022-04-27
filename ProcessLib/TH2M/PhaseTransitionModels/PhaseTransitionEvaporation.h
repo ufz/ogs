@@ -35,6 +35,8 @@ private:
     int const n_components_gas_;
     int const gas_phase_vapour_component_index_;
     int const gas_phase_dry_air_component_index_;
+    int const liquid_phase_solute_component_index_;
+    int const liquid_phase_solvent_component_index_;
 };
 
 }  // namespace TH2M

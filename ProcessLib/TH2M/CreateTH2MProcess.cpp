@@ -43,9 +43,16 @@ std::unique_ptr<PhaseTransitionModel> createPhaseTransitionModel(
     const bool dissolution =
         media.begin()->second->phase("AqueousLiquid").numberOfComponents() > 1;
 
+    // After some thought, it was decided that only two versions of
+    // `PhaseTransitionModel` should be implemented: `PhaseTransitionFull` and
+    // `PhaseTransitionNone`. Dissolution and evaporation are to be controlled
+    // only by the fluid properties (i.e. set Henry coefficient or vapour
+    // pressure to `constant 0`). Todo: Rename and delete the old derivations of
+    // the class `PhaseTransitionModel`.
+
     if (evaporation && dissolution)
     {
-        return std::make_unique<PhaseTransitionFull>(media);
+        return std::make_unique<PhaseTransitionEvaporation>(media);
     }
 
     if (evaporation && !dissolution)
