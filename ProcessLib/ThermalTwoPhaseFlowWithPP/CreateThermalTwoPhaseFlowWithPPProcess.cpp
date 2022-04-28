@@ -103,6 +103,8 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
          "gas_pressure",
          //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__process_variables__capillary_pressure}
          "capillary_pressure",
+         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__process_variables__total_molar_fraction_contaminant}
+         "total_molar_fraction_contaminant",
          //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__process_variables__temperature}
          "temperature"});
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>

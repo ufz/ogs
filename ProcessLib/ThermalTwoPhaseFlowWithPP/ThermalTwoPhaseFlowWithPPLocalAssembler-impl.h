@@ -86,6 +86,9 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             nonwet_pressure_matrix_index, nonwet_pressure_matrix_index);
     auto Mgpc = local_M.template block<nonwet_pressure_size, cap_pressure_size>(
         nonwet_pressure_matrix_index, cap_pressure_matrix_index);
+    auto Mgx =
+        local_M.template block<nonwet_pressure_size, tot_mol_frac_contam_size>(
+            nonwet_pressure_matrix_index, tot_mol_frac_contam_matrix_index);
     auto Mgt = local_M.template block<nonwet_pressure_size, temperature_size>(
         nonwet_pressure_matrix_index, temperature_matrix_index);
 
@@ -93,13 +96,32 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         cap_pressure_matrix_index, nonwet_pressure_matrix_index);
     auto Mlpc = local_M.template block<cap_pressure_size, cap_pressure_size>(
         cap_pressure_matrix_index, cap_pressure_matrix_index);
+    auto Mlx =
+        local_M.template block<cap_pressure_size, tot_mol_frac_contam_size>(
+            cap_pressure_matrix_index, tot_mol_frac_contam_matrix_index);
     auto Mlt = local_M.template block<cap_pressure_size, temperature_size>(
         cap_pressure_matrix_index, temperature_matrix_index);
+
+    auto Mcp =
+        local_M.template block<tot_mol_frac_contam_size, nonwet_pressure_size>(
+            tot_mol_frac_contam_matrix_index, nonwet_pressure_matrix_index);
+    auto Mcpc =
+        local_M.template block<tot_mol_frac_contam_size, cap_pressure_size>(
+            tot_mol_frac_contam_matrix_index, cap_pressure_matrix_index);
+    auto Mcx = local_M.template block<tot_mol_frac_contam_size,
+                                      tot_mol_frac_contam_size>(
+        tot_mol_frac_contam_matrix_index, tot_mol_frac_contam_matrix_index);
+    auto Mct =
+        local_M.template block<tot_mol_frac_contam_size, temperature_size>(
+            tot_mol_frac_contam_matrix_index, temperature_matrix_index);
 
     auto Mep = local_M.template block<temperature_size, nonwet_pressure_size>(
         temperature_matrix_index, nonwet_pressure_matrix_index);
     auto Mepc = local_M.template block<temperature_size, cap_pressure_size>(
         temperature_matrix_index, cap_pressure_matrix_index);
+    auto Mex =
+        local_M.template block<temperature_size, tot_mol_frac_contam_size>(
+            temperature_matrix_index, tot_mol_frac_contam_matrix_index);
     auto Met = local_M.template block<temperature_size, temperature_size>(
         temperature_matrix_index, temperature_matrix_index);
 
@@ -111,6 +133,9 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             nonwet_pressure_matrix_index, nonwet_pressure_matrix_index);
     auto Kgpc = local_K.template block<nonwet_pressure_size, cap_pressure_size>(
         nonwet_pressure_matrix_index, cap_pressure_matrix_index);
+    auto Kgx =
+        local_K.template block<nonwet_pressure_size, tot_mol_frac_contam_size>(
+            nonwet_pressure_matrix_index, tot_mol_frac_contam_matrix_index);
     auto Kgt = local_K.template block<nonwet_pressure_size, temperature_size>(
         nonwet_pressure_matrix_index, temperature_matrix_index);
 
@@ -118,8 +143,24 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         cap_pressure_matrix_index, nonwet_pressure_matrix_index);
     auto Klpc = local_K.template block<cap_pressure_size, cap_pressure_size>(
         cap_pressure_matrix_index, cap_pressure_matrix_index);
+    auto Klx =
+        local_K.template block<cap_pressure_size, tot_mol_frac_contam_size>(
+            cap_pressure_matrix_index, tot_mol_frac_contam_matrix_index);
     auto Klt = local_K.template block<cap_pressure_size, temperature_size>(
         cap_pressure_matrix_index, temperature_matrix_index);
+
+    auto Kcp =
+        local_K.template block<tot_mol_frac_contam_size, nonwet_pressure_size>(
+            tot_mol_frac_contam_matrix_index, nonwet_pressure_matrix_index);
+    auto Kcpc =
+        local_K.template block<tot_mol_frac_contam_size, cap_pressure_size>(
+            tot_mol_frac_contam_matrix_index, cap_pressure_matrix_index);
+    auto Kcx = local_K.template block<tot_mol_frac_contam_size,
+                                      tot_mol_frac_contam_size>(
+        tot_mol_frac_contam_matrix_index, tot_mol_frac_contam_matrix_index);
+    auto Kct =
+        local_K.template block<tot_mol_frac_contam_size, temperature_size>(
+            tot_mol_frac_contam_matrix_index, temperature_matrix_index);
 
     auto Kep = local_K.template block<temperature_size, nonwet_pressure_size>(
         temperature_matrix_index, nonwet_pressure_matrix_index);
@@ -132,6 +173,8 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         nonwet_pressure_matrix_index);
     auto Bl =
         local_b.template segment<cap_pressure_size>(cap_pressure_matrix_index);
+    auto Bc = local_b.template segment<tot_mol_frac_contam_size>(
+        tot_mol_frac_contam_matrix_index);
     auto Be =
         local_b.template segment<temperature_size>(temperature_matrix_index);
 
@@ -158,9 +201,10 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         auto const& diffusion_operator = ip_data.diffusion_operator;
         double pg_int_pt = 0.;
         double pc_int_pt = 0.;
-        double T_int_pt = 0.0;
+        double Xc_int_pt = 0.;
+        double T_int_pt = 0.;
         NumLib::shapeFunctionInterpolate(local_x, N, pg_int_pt, pc_int_pt,
-                                         T_int_pt);
+                                         Xc_int_pt, T_int_pt);
         double const ideal_gas_constant_times_T_int_pt =
             IdealGasConstant * T_int_pt;
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
@@ -557,16 +601,30 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                     Mgpc(row, column) = 0.0;
                     Mgt(row, row) += Mgt(row, column);
                     Mgt(row, column) = 0.0;
+                    Mgx(row, row) += Mgx(row, column);
+                    Mgx(row, column) = 0.0;
                     Mlp(row, row) += Mlp(row, column);
                     Mlp(row, column) = 0.0;
                     Mlpc(row, row) += Mlpc(row, column);
                     Mlpc(row, column) = 0.0;
+                    Mlx(row, row) += Mlx(row, column);
+                    Mlx(row, column) = 0.0;
                     Mlt(row, row) += Mlt(row, column);
                     Mlt(row, column) = 0.0;
+                    Mcp(row, row) += Mcp(row, column);
+                    Mcp(row, column) = 0.0;
+                    Mcpc(row, row) += Mcpc(row, column);
+                    Mcpc(row, column) = 0.0;
+                    Mcx(row, row) += Mcx(row, column);
+                    Mcx(row, column) = 0.0;
+                    Mct(row, row) += Mct(row, column);
+                    Mct(row, column) = 0.0;
                     Mep(row, row) += Mep(row, column);
                     Mep(row, column) = 0.0;
                     Mepc(row, row) += Mepc(row, column);
                     Mepc(row, column) = 0.0;
+                    Mex(row, row) += Mex(row, column);
+                    Mex(row, column) = 0.0;
                     Met(row, row) += Met(row, column);
                     Met(row, column) = 0.0;
                 }
