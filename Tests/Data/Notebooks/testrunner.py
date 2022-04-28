@@ -60,7 +60,7 @@ for notebook_file_path in args.notebooks:
     # 1. Run the notebook
     start = timer()
     try:
-        ep.preprocess(nb, {"metadata": {"path": "."}})
+        ep.preprocess(nb, {"metadata": {"path": os.path.dirname(notebook_file_path)}})
     except CellExecutionError:
         notebook_success = False
         success = False

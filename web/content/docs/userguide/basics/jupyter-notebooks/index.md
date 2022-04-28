@@ -125,22 +125,6 @@ Please note that this is a temporary installation. If you stop the container the
 
 ### Rendering with PyVista
 
-When using [PyVista][pyvista] the container uses the (interactive) [pythreejs](https://docs.pyvista.org/user-guide/jupyter/pythreejs.html) rendering backend per default. If you want to output static images there are a couple of ways to configure the 'static' rendering backend:
-
-- Globally as an environment variable: `PYVISTA_JUPYTER_BACKEND=static`. This can be defined when starting the container:
-  ```bash
-  docker run ... -e PYVISTA_JUPYTER_BACKEND=static ...
-  ```
-- Globally as a pyvista setting:
-  ```python
-  import pyvista as pv
-  pv.set_jupyter_backend('static')
-  ```
-- Locally on each plot:
-  ```python
-  import pyvista as pv
-  ...
-  pv.show(jupyter_backend='static')
-  ```
+When using [PyVista][pyvista] the container uses the (interactive local rendering) [pythreejs](https://docs.pyvista.org/user-guide/jupyter/pythreejs.html) rendering backend per default. Other backends are currently not supported.
 
 [pyvista]: https://docs.pyvista.org
