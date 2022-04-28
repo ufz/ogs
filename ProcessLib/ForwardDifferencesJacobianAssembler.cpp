@@ -116,6 +116,9 @@ void ForwardDifferencesJacobianAssembler::assembleWithJacobian(
         }
     }
 
+    local_M_data.clear();
+    local_K_data.clear();
+    local_b_data.clear();
     // Assemble with unperturbed local x to keep the internal assembler state
     // for next iteration or time step.
     local_assembler.assemble(t, dt, local_x_data, local_xdot_data, local_M_data,
