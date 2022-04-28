@@ -58,17 +58,21 @@ public:
     FixedTimeStepping(double t0, double tn,
                       const std::vector<double>& vec_all_dt);
 
-    std::tuple<bool, double> next(double solution_error,
-                                  int number_iterations) override;
+    std::tuple<bool, double> next(double solution_error, int number_iterations,
+                                  NumLib::TimeStep& ts_previous,
+                                  NumLib::TimeStep& ts_current) override;
 
     /// reset the current step size from the previous time
-    void resetCurrentTimeStep(const double dt) override
+    void resetCurrentTimeStep(const double dt, TimeStep& /*ts_previous*/,
+                              TimeStep& /*ts_current*/) override
     {
-        TimeStepAlgorithm::resetCurrentTimeStep(dt);
         _dt_vector.push_back(dt);
     }
 
-    bool accepted() const override { return true; }
+    bool accepted(TimeStep const& /*ts_current*/) const override
+    {
+        return true;
+    }
 
 private:
     /// a vector of time step sizes

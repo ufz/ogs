@@ -70,20 +70,21 @@ FixedTimeStepping::FixedTimeStepping(double t0, double t_end, double dt)
 }
 
 std::tuple<bool, double> FixedTimeStepping::next(
-    double const /*solution_error*/, int const /*number_iterations*/)
+    double const /*solution_error*/, int const /*number_iterations*/,
+    NumLib::TimeStep& /*ts_previous*/, NumLib::TimeStep& ts_current)
 {
     // check if last time step
-    if (_ts_current.timeStepNumber() == _dt_vector.size() ||
-        std::abs(_ts_current.current() - _t_end) <
+    if (ts_current.timeStepNumber() == _dt_vector.size() ||
+        std::abs(ts_current.current() - _t_end) <
             std::numeric_limits<double>::epsilon())
     {
         return std::make_tuple(false, 0.0);
     }
 
-    double dt = _dt_vector[_ts_current.timeStepNumber()];
-    if (_ts_current.current() + dt > _t_end)
+    double dt = _dt_vector[ts_current.timeStepNumber()];
+    if (ts_current.current() + dt > _t_end)
     {  // upper bound by t_end
-        dt = _t_end - _ts_current.current();
+        dt = _t_end - ts_current.current();
     }
 
     return std::make_tuple(true, dt);
