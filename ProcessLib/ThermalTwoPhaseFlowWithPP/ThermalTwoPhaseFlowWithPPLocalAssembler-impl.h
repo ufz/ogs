@@ -220,11 +220,13 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         auto const& solid_phase = medium.phase("Solid");
         auto const& gas_phase = medium.phase("Gas");
 
-        auto const& vapour_component = gas_phase.component("w");
+        auto const& water_vapour_component = gas_phase.component("w");
         auto const& dry_air_component = gas_phase.component("a");
+        auto const& contam_vapour_component = gas_phase.component("c");
+        auto const& dissolved_contam_component = liquid_phase.component("c");
 
         auto const water_mol_mass =
-            vapour_component
+            water_vapour_component
                 .property(MaterialPropertyLib::PropertyType::molar_mass)
                 .template value<double>(vars, pos, t, dt);
         auto const air_mol_mass =
@@ -253,7 +255,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
 
         // specific latent heat of evaporation
         double const latent_heat_evaporation =
-            vapour_component
+            water_vapour_component
                 .property(
                     MaterialPropertyLib::PropertyType::specific_latent_heat)
                 .template value<double>(vars, pos, t, dt);
@@ -264,11 +266,11 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
 
         // saturated vapour pressure
         double const p_sat =
-            vapour_component
+            water_vapour_component
                 .property(MaterialPropertyLib::PropertyType::vapour_pressure)
                 .template value<double>(vars, pos, t, dt);
         double const dp_sat_dT =
-            vapour_component
+            water_vapour_component
                 .property(MaterialPropertyLib::PropertyType::vapour_pressure)
                 .template dValue<double>(
                     vars, MaterialPropertyLib::Variable::temperature, pos, t,
@@ -334,7 +336,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
                 .template value<double>(vars, pos, t, dt);
         const double heat_capacity_water_vapour =
-            vapour_component
+            water_vapour_component
                 .property(
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
                 .template value<double>(vars, pos, t, dt);
@@ -440,7 +442,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                 .template value<double>(vars, pos, t, dt);
         double const lambda_nonwet = k_rel_nonwet / mu_nonwet;
         double const diffusion_coeff_component_gas =
-            vapour_component
+            water_vapour_component
                 .property(MaterialPropertyLib::PropertyType::diffusion)
                 .template value<double>(vars, pos, t, dt);
 
