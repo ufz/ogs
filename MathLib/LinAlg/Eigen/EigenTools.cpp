@@ -17,7 +17,7 @@ namespace MathLib
 void applyKnownSolution(
     EigenMatrix& A, EigenVector& b, EigenVector& /*x*/,
     const std::vector<EigenMatrix::IndexType>& vec_knownX_id,
-    const std::vector<double>& vec_knownX_x, double /*penalty_scaling*/)
+    const std::vector<double>& vec_knownX_x)
 {
     using SpMat = EigenMatrix::RawMatrixType;
     static_assert(SpMat::IsRowMajor, "matrix is assumed to be row major!");

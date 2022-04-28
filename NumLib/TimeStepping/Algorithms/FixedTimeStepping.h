@@ -61,8 +61,6 @@ public:
     std::tuple<bool, double> next(double solution_error,
                                   int number_iterations) override;
 
-    bool accepted() const override { return true; }
-
 private:
     /// determine true end time
     static double computeEnd(double t_initial, double t_end,
