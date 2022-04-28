@@ -338,3 +338,75 @@ entries:
             last: Kolditz
         -   first: Haibing
             last: Shao
+    xu2011simulation:
+        type: inproceedings
+        title: Simulation of dilatancy-controlled gas migration process in saturated
+            argillaceous rock
+        booktitle: Computational geomechanics, COMGEO II. Proceedings of the 2nd international
+            symposium on computational geomechanics
+        pages: 693--703
+        year: '2011'
+        author:
+        -   first: WJ
+            last: Xu
+        -   first: H
+            last: Shao
+        -   first: J
+            last: Hesser
+        -   first: WQ
+            last: Wang
+        -   first: O
+            last: Kolditz
+        -   first: T
+            last: Popp
+    xu2013coupled:
+        type: article
+        title: Coupled multiphase flow and elasto-plastic modelling of in-situ gas
+            injection experiments in saturated claystone (Mont Terri Rock Laboratory)
+        journal: Engineering Geology
+        volume: '157'
+        pages: 55--68
+        year: '2013'
+        publisher: Elsevier
+        author:
+        -   first: WJ
+            last: Xu
+        -   first: H
+            last: Shao
+        -   first: J
+            last: Hesser
+        -   first: W
+            last: Wang
+        -   first: K
+            last: Schuster
+        -   first: O
+            last: Kolditz
+    lu2022:
+        type: article
+        title: A new operator-splitting finite element scheme for reactive transport
+            modeling in saturated porous media
+        journal: Computers & Geosciences
+        volume: '163'
+        pages: '105106'
+        year: '2022'
+        issn: 0098-3004
+        doi: 10.1016/j.cageo.2022.105106
+        keywords: Reactive transport modeling, Operator splitting approach, Integration-point
+            collocation scheme
+        author:
+        -   first: Renchao
+            last: Lu
+        -   first: Thomas
+            last: Nagel
+        -   first: Jenna
+            last: Poonoosamy
+        -   first: Dmitri
+            last: Naumov
+        -   first: Thomas
+            last: Fischer
+        -   first: Vanessa
+            last: Montoya
+        -   first: Olaf
+            last: Kolditz
+        -   first: Haibing
+            last: Shao
