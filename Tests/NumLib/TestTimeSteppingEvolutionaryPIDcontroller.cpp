@@ -106,7 +106,8 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     ASSERT_NEAR(t_previous + h_new, current_timestep.current(), tol);
     ASSERT_TRUE(PIDStepper->accepted(current_timestep));
 
-    // error > TOL=1.3-3, step rejected and new step size estimated.
+    // If error > solution_error, step is rejected and new step size is
+    // estimated.
     solution_error = 0.01;
     auto [step_accepted3, timestepper_dt3] = PIDStepper->next(
         solution_error, number_iterations, previous_timestep, current_timestep);
