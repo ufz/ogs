@@ -176,22 +176,7 @@ void PETScVector::getGlobalVector(std::vector<PetscScalar>& u) const
 
 void PETScVector::setLocalAccessibleVector() const
 {
-    if (entry_array_.empty())
-    {
-        const PetscInt array_size = global_ids2local_ids_ghost_.empty()
-                                        ? size_
-                                        : size_loc_ + size_ghosts_;
-        entry_array_.resize(array_size);
-    }
-
-    if (!global_ids2local_ids_ghost_.empty())
-    {
-        PetscScalar* loc_x = getLocalVector();
-        std::copy_n(loc_x, size_loc_ + size_ghosts_, entry_array_.begin());
-        restoreArray(loc_x);
-    }
-    else
-        getGlobalVector(entry_array_);
+    copyValues(entry_array_);
 }
 
 void PETScVector::copyValues(std::vector<PetscScalar>& u) const
