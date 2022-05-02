@@ -109,4 +109,11 @@ private:
     bool _is_accepted = true;
 };
 
+inline void updateTimesteps(double const dt, TimeStep& current_timestep,
+                            TimeStep& previous_timestep)
+{
+    previous_timestep = current_timestep;
+    current_timestep += dt;
+}
+
 }  // namespace NumLib

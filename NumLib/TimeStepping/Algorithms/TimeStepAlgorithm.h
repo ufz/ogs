@@ -85,8 +85,7 @@ public:
     /// reset the current step size from the previous time
     void resetCurrentTimeStep(const double dt)
     {
-        _ts_prev = _ts_current;
-        _ts_current += dt;
+        updateTimesteps(dt, _ts_current, _ts_prev);
         _dt_vector.push_back(dt);
     }
 
