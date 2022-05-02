@@ -66,7 +66,9 @@ PETScVector::PETScVector(const PetscInt vec_size,
     config();
 
     for (PetscInt i = 0; i < nghosts; i++)
+    {
         global_ids2local_ids_ghost_.emplace(ghost_ids[i], size_loc_ + i);
+    }
 }
 
 PETScVector::PETScVector(const PETScVector& existing_vec, const bool deep_copy)
@@ -240,14 +242,19 @@ PetscScalar* PETScVector::getLocalVector() const
         VecGetArray(v_loc_, &loc_array);
     }
     else
+    {
         VecGetArray(v_, &loc_array);
+    }
+
     return loc_array;
 }
 
 PetscInt PETScVector::getLocalIndex(const PetscInt global_index) const
 {
     if (global_index >= 0)  // non-ghost entry.
+    {
         return global_index - start_rank_;
+    }
 
     // A special case for a ghost location with global index equal to
     // the size of the local vector:
@@ -264,7 +271,9 @@ void PETScVector::restoreArray(PetscScalar* array) const
         VecGhostRestoreLocalForm(v_, &v_loc_);
     }
     else
+    {
         VecRestoreArray(v_, &array);
+    }
 }
 
 void PETScVector::viewer(const std::string& file_name,

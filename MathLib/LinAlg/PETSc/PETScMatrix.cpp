@@ -73,7 +73,7 @@ PETScMatrix& PETScMatrix::operator=(PETScMatrix const& A)
     start_rank_ = A.start_rank_;
     end_rank_ = A.end_rank_;
 
-    if (A_)
+    if (A_ != nullptr)
     {
         // TODO this is the slowest option for copying
         MatCopy(A.A_, A_, DIFFERENT_NONZERO_PATTERN);
@@ -104,9 +104,13 @@ void PETScMatrix::setRowsColumnsZero(std::vector<PetscInt> const& row_pos)
     MatSetOption(A_, MAT_KEEP_NONZERO_PATTERN, PETSC_TRUE);
 
     if (nrows > 0)
+    {
         MatZeroRows(A_, nrows, &row_pos[0], one, PETSC_NULL, PETSC_NULL);
+    }
     else
+    {
         MatZeroRows(A_, 0, PETSC_NULL, one, PETSC_NULL, PETSC_NULL);
+    }
 }
 
 void PETScMatrix::viewer(const std::string& file_name,
