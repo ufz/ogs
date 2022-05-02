@@ -29,21 +29,21 @@ build jupyter:
     # Serial image
     - >
       poetry run ogscm compiler.py ogs.py ogs_jupyter.py -B -R --ogs ../..
-      --build_args ' --progress=plain'
-      --cvode --ccache --cpmcache --mfront
-      --cpu-target $CPU_TARGET
+      --build_args ' --progress=plain' --cvode --ccache --cpmcache --mfront --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
       --runtime_base_image 'jupyter/base-notebook:22.04'
+      --packages gmsh
+      --pip https://github.com/dominik-kern/msh2vtu/archive/15f4838affe7056f12c0ea12034e9b48ecb19846.zip
       --tag $DOCKER_TAG_JUPYTER
       $ON_MASTER_ARGS
     # PETSc image
     - >
       poetry run ogscm compiler.py mpi.py ogs.py ogs_jupyter.py -B -R --ogs ../..
-      --build_args ' --progress=plain'
-      --cvode --ccache --cpmcache --mfront
-      --cpu-target $CPU_TARGET
+      --build_args ' --progress=plain' --cvode --ccache --cpmcache --mfront --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
       --runtime_base_image 'jupyter/base-notebook:22.04'
+      --packages gmsh
+      --pip https://github.com/dominik-kern/msh2vtu/archive/15f4838affe7056f12c0ea12034e9b48ecb19846.zip
       --mpi_no_entrypoint
       --pyvista
       --tag $DOCKER_TAG_JUPYTER_PETSC
@@ -53,11 +53,11 @@ build jupyter:
     # specific).
     - >
       poetry run ogscm compiler.py mpi.py ogs.py ogs_jupyter.py -B -R --ogs ../..
-      --build_args ' --progress=plain'
-      --cvode --ccache --cpmcache --mfront
-      --cpu-target $CPU_TARGET
+      --build_args ' --progress=plain' --cvode --ccache --cpmcache --mfront --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
       --runtime_base_image 'jupyter/base-notebook:22.04'
+      --packages gmsh
+      --pip https://github.com/dominik-kern/msh2vtu/archive/15f4838affe7056f12c0ea12034e9b48ecb19846.zip
       --mpi_no_entrypoint
       --pyvista-gpu
       --tag $DOCKER_TAG_JUPYTER_PETSC_PYVISTA

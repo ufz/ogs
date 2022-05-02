@@ -33,10 +33,13 @@ Image `registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter` contains:
   - [vtk](https://pypi.org/project/vtk/) — Visualization
   - [PyVista][pyvista] — Visualization
   - [Snakemake](https://snakemake.github.io) — Workflow management
+  - [msh2vtu](https://github.com/dominik-kern/msh2vtu) — gmsh to VTU conversion, (script in `/opt/conda/lib/python3.9/site-packages/msh2vtu/msh2vtu.py`)
+  - [meshio](https://github.com/nschloe/meshio) — Mesh conversions between many formats. Pulled in via msh2vtu.
 - Jupyter-related tools:
   - [nbconvert](https://nbconvert.readthedocs.io) — Format conversion
   - [nbdime](https://nbdime.readthedocs.io) — Diffs for notebooks
   - [nb2hugo](https://github.com/bilke/nb2hugo/tree/ogs) — Notebook to www.opengeosys.org markdown
+- [gmsh](https://gmsh.info) — Mesh generator
 
 Image `registry.opengeosys.org/ogs/ogs/ogs-petsc-jupyter` additionally contains:
 
