@@ -46,50 +46,56 @@ success = True
 
 for notebook_file_path in args.notebooks:
     notebook_success = True
-    notebook_basename = os.path.splitext(notebook_file_path)[0]
-    notebook_output_path = os.path.join(
-        args.out, os.path.relpath(notebook_basename, start=os.environ["OGS_DATA_DIR"])
-    )
-    os.makedirs(notebook_output_path, exist_ok=True)
-    os.environ["OGS_TESTRUNNER_OUT_DIR"] = notebook_output_path
+    convert_notebook_file = notebook_file_path
 
-    with open(notebook_file_path) as f:
-        nb = nbformat.read(f, as_version=4)
-    ep = ExecutePreprocessor(timeout=args.timeout, kernel_name="python3")
+    if "run-skip" not in notebook_file_path:
+        notebook_basename = os.path.splitext(notebook_file_path)[0]
+        notebook_output_path = os.path.join(
+            args.out,
+            os.path.relpath(notebook_basename, start=os.environ["OGS_DATA_DIR"]),
+        )
+        os.makedirs(notebook_output_path, exist_ok=True)
+        os.environ["OGS_TESTRUNNER_OUT_DIR"] = notebook_output_path
 
-    # 1. Run the notebook
-    start = timer()
-    try:
-        ep.preprocess(nb, {"metadata": {"path": os.path.dirname(notebook_file_path)}})
-    except CellExecutionError:
-        notebook_success = False
-        success = False
-        pass
-    end = timer()
+        with open(notebook_file_path) as f:
+            nb = nbformat.read(f, as_version=4)
+        ep = ExecutePreprocessor(timeout=args.timeout, kernel_name="python3")
 
-    # 2. Instantiate the exporter. We use the `classic` template for now; we'll get into more details
-    # later about how to customize the exporter further.
-    html_exporter = HTMLExporter()
-    html_exporter.template_name = "classic"
+        # 1. Run the notebook
+        start = timer()
+        try:
+            ep.preprocess(
+                nb, {"metadata": {"path": os.path.dirname(notebook_file_path)}}
+            )
+        except CellExecutionError:
+            notebook_success = False
+            success = False
+            pass
+        end = timer()
 
-    # 3. Process the notebook we loaded earlier
-    (body, resources) = html_exporter.from_notebook_node(nb)
+        # 2. Instantiate the exporter. We use the `classic` template for now; we'll get into more details
+        # later about how to customize the exporter further.
+        html_exporter = HTMLExporter()
+        html_exporter.template_name = "classic"
 
-    # write new notebook
-    notebook_filename = os.path.basename(notebook_file_path)
-    exec_notebook_file = os.path.join(notebook_output_path, notebook_filename)
-    with open(exec_notebook_file, "w", encoding="utf-8") as f:
-        nbformat.write(nb, f)
+        # 3. Process the notebook we loaded earlier
+        (body, resources) = html_exporter.from_notebook_node(nb)
+
+        # 4. Write new notebook
+        notebook_filename = os.path.basename(notebook_file_path)
+        convert_notebook_file = os.path.join(notebook_output_path, notebook_filename)
+        with open(convert_notebook_file, "w", encoding="utf-8") as f:
+            nbformat.write(nb, f)
 
     status_string = ""
     if notebook_success:
         status_string += "[Passed] "
         if args.hugo:
-            save_to_website(exec_notebook_file, os.path.join(ogs_source_path, "web"))
+            save_to_website(convert_notebook_file, os.path.join(ogs_source_path, "web"))
     else:
         status_string += "[Failed] "
         # Save to html
-        html_file = exec_notebook_file + ".html"
+        html_file = convert_notebook_file + ".html"
         with open(html_file, "w", encoding="utf-8") as fh:
             fh.write(body)
 
