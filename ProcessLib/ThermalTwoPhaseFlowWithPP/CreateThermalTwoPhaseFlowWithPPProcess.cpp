@@ -33,7 +33,9 @@ void checkMPLProperties(
         MaterialPropertyLib::PropertyType::saturation,
         MaterialPropertyLib::PropertyType::relative_permeability,
         MaterialPropertyLib::PropertyType::
-            relative_permeability_nonwetting_phase};
+            relative_permeability_nonwetting_phase,
+        MaterialPropertyLib::PropertyType::longitudinal_dispersivity,
+        MaterialPropertyLib::PropertyType::transversal_dispersivity};
 
     std::array const required_property_solid_phase = {
         MaterialPropertyLib::PropertyType::specific_heat_capacity,

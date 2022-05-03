@@ -191,6 +191,10 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         Eigen::Map<const NodalVectorType>(&local_x[num_nodes], num_nodes);
 
     MaterialPropertyLib::VariableArray vars;
+
+    GlobalDimMatrixType const& I(
+        GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& ip_data = _ip_data[ip];
@@ -657,6 +661,34 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                          w * N.transpose() * heat_capacity_water * density_wet *
                              velocity_wet.transpose() * dNdx;
 
+        auto const solute_dispersivity_transverse =
+            medium.template value<double>(
+                MaterialPropertyLib::PropertyType::transversal_dispersivity);
+        auto const solute_dispersivity_longitudinal =
+            medium.template value<double>(
+                MaterialPropertyLib::PropertyType::longitudinal_dispersivity);
+
+        double const velocity_wet_magnitude = velocity_wet.norm();
+        GlobalDimMatrixType const hydrodynamic_dispersion =
+            velocity_wet_magnitude != 0.0
+                ? GlobalDimMatrixType(
+                      (porosity * Sw * diffusion_coeff_contam_wet +
+                       solute_dispersivity_transverse *
+                           velocity_wet_magnitude) *
+                          I +
+                      (solute_dispersivity_longitudinal -
+                       solute_dispersivity_transverse) /
+                          velocity_wet_magnitude * velocity_wet *
+                          velocity_wet.transpose())
+                : GlobalDimMatrixType(
+                      (porosity * Sw * diffusion_coeff_contam_wet +
+                       solute_dispersivity_transverse *
+                           velocity_wet_magnitude) *
+                      I);
+
+        auto const dispersion_operator =
+            dNdx.transpose() * hydrodynamic_dispersion * dNdx * w;
+
         // The sum of all diffusive fluxes in either phase must equal to zero
         Kap.noalias() +=
             (mol_density_nonwet * x_air_nonwet * lambda_nonwet) *
@@ -718,34 +750,26 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             (mol_density_wet * x_contam_wet * lambda_wet +
              mol_density_nonwet * x_contam_nonwet * lambda_nonwet) *
                 laplace_operator +
-            porosity *
-                (Sw * mol_density_wet * diffusion_coeff_contam_wet *
-                     d_x_contam_wet_dpg +
-                 (1 - Sw) * mol_density_nonwet * diffusion_coeff_contam_nonwet *
-                     d_x_contam_nonwet_dpg) *
+            mol_density_wet * dispersion_operator * d_x_contam_wet_dpg +
+            porosity * (1 - Sw) * mol_density_nonwet *
+                diffusion_coeff_contam_nonwet * d_x_contam_nonwet_dpg *
                 diffusion_operator;
         Kcpc.noalias() +=
             -mol_density_wet * x_contam_wet * lambda_wet * laplace_operator +
-            porosity *
-                (Sw * mol_density_wet * diffusion_coeff_contam_wet *
-                     d_x_contam_wet_dpc +
-                 (1 - Sw) * mol_density_nonwet * diffusion_coeff_contam_nonwet *
-                     d_x_contam_nonwet_dpc) *
+            mol_density_wet * dispersion_operator * d_x_contam_wet_dpc +
+            porosity * (1 - Sw) * mol_density_nonwet *
+                diffusion_coeff_contam_nonwet * d_x_contam_nonwet_dpc *
                 diffusion_operator;
         Kcx.noalias() +=
-            porosity *
-            (Sw * mol_density_wet * diffusion_coeff_contam_wet *
-                 d_x_contam_wet_dXc +
-             (1 - Sw) * mol_density_nonwet * diffusion_coeff_contam_nonwet *
-                 d_x_contam_nonwet_dXc) *
-            diffusion_operator;
+            mol_density_wet * dispersion_operator * d_x_contam_wet_dXc +
+            porosity * (1 - Sw) * mol_density_nonwet *
+                diffusion_coeff_contam_nonwet * d_x_contam_nonwet_dXc *
+                diffusion_operator;
         Kct.noalias() +=
-            porosity *
-            (Sw * mol_density_wet * diffusion_coeff_contam_wet *
-                 d_x_contam_wet_dT +
-             (1 - Sw) * mol_density_nonwet * diffusion_coeff_contam_nonwet *
-                 d_x_contam_nonwet_dT) *
-            diffusion_operator;
+            mol_density_wet * dispersion_operator * d_x_contam_wet_dT +
+            porosity * (1 - Sw) * mol_density_nonwet *
+                diffusion_coeff_contam_nonwet * d_x_contam_nonwet_dT *
+                diffusion_operator;
 
         Kep.noalias() += (lambda_nonwet * density_nonwet * enthalpy_nonwet +
                           lambda_wet * density_wet * enthalpy_wet) *
