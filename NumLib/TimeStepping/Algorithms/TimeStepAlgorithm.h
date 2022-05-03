@@ -32,48 +32,6 @@ public:
     {
     }
 
-    TimeStepAlgorithm(const double t0, const double t_end, const double dt)
-        : _t_initial(t0), _t_end(t_end), _ts_prev(t0), _ts_current(t0)
-    {
-        auto const new_size =
-            static_cast<std::size_t>(std::ceil((t_end - t0) / dt));
-        try
-        {
-            _dt_vector = std::vector<double>(new_size, dt);
-        }
-        catch (std::length_error const& e)
-        {
-            OGS_FATAL(
-                "Resize of the time steps vector failed for the requested new "
-                "size {:d}. Probably there is not enough memory ({:g} GiB "
-                "requested).\n"
-                "Thrown exception: {:s}",
-                new_size, new_size * sizeof(double) / 1024. / 1024. / 1024.,
-                e.what());
-        }
-        catch (std::bad_alloc const& e)
-        {
-            OGS_FATAL(
-                "Allocation of the time steps vector failed for the requested "
-                "size {:d}. Probably there is not enough memory ({:d} GiB "
-                "requested).\n"
-                "Thrown exception: {:s}",
-                new_size,
-                new_size * sizeof(double) / 1024. / 1024. / 1024.,
-                e.what());
-        }
-    }
-
-    TimeStepAlgorithm(const double t0, const double t_end,
-                      const std::vector<double>& all_step_sizes)
-        : _t_initial(t0),
-          _t_end(t_end),
-          _ts_prev(t0),
-          _ts_current(t0),
-          _dt_vector(all_step_sizes)
-    {
-    }
-
     virtual ~TimeStepAlgorithm() = default;
 
     /// return the beginning of time steps
@@ -83,10 +41,9 @@ public:
     /// return current time step
     const TimeStep getTimeStep() const { return _ts_current; }
     /// reset the current step size from the previous time
-    void resetCurrentTimeStep(const double dt)
+    virtual void resetCurrentTimeStep(const double dt)
     {
         updateTimesteps(dt, _ts_current, _ts_prev);
-        _dt_vector.push_back(dt);
     }
 
     /// Move to the next time step
@@ -122,9 +79,6 @@ protected:
     TimeStep _ts_prev;
     /// current time step information
     TimeStep _ts_current;
-
-    /// a vector of time step sizes
-    std::vector<double> _dt_vector;
 };
 
 /// If any of the fixed times will be reached with given time increment, it will

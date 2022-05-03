@@ -37,10 +37,10 @@ public:
      * \f].
      *
      * @param t0 start time
-     * @param tn finish time
+     * @param t_end end time
      * @param dt uniform time step size
      */
-    FixedTimeStepping(double t0, double tn, double dt);
+    FixedTimeStepping(double t0, double t_end, double dt);
 
     /**
      * Constructor with user-specified time step sizes
@@ -61,7 +61,18 @@ public:
     std::tuple<bool, double> next(double solution_error,
                                   int number_iterations) override;
 
+    /// reset the current step size from the previous time
+    void resetCurrentTimeStep(const double dt) override
+    {
+        TimeStepAlgorithm::resetCurrentTimeStep(dt);
+        _dt_vector.push_back(dt);
+    }
+
+    bool accepted() const override { return true; }
+
 private:
+    /// a vector of time step sizes
+    std::vector<double> _dt_vector;
     /// determine true end time
     static double computeEnd(double t_initial, double t_end,
                              const std::vector<double>& dt_vector);

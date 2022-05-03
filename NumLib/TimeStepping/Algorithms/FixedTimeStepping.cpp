@@ -22,13 +22,41 @@ namespace NumLib
 FixedTimeStepping::FixedTimeStepping(double t0,
                                      double tn,
                                      const std::vector<double>& vec_all_dt)
-    : TimeStepAlgorithm(t0, computeEnd(t0, tn, vec_all_dt), vec_all_dt)
+    : TimeStepAlgorithm(t0, computeEnd(t0, tn, vec_all_dt)),
+      _dt_vector(vec_all_dt)
 {
 }
 
-FixedTimeStepping::FixedTimeStepping(double t0, double tn, double dt)
-    : TimeStepAlgorithm(t0, tn, dt)
+FixedTimeStepping::FixedTimeStepping(double t0, double t_end, double dt)
+    : TimeStepAlgorithm(t0, t_end)
 {
+    auto const new_size =
+        static_cast<std::size_t>(std::ceil((t_end - t0) / dt));
+    try
+    {
+        _dt_vector = std::vector<double>(new_size, dt);
+    }
+    catch (std::length_error const& e)
+    {
+        OGS_FATAL(
+            "Resize of the time steps vector failed for the requested new "
+            "size {:d}. Probably there is not enough memory ({:g} GiB "
+            "requested).\n"
+            "Thrown exception: {:s}",
+            new_size, new_size * sizeof(double) / 1024. / 1024. / 1024.,
+            e.what());
+    }
+    catch (std::bad_alloc const& e)
+    {
+        OGS_FATAL(
+            "Allocation of the time steps vector failed for the requested "
+            "size {:d}. Probably there is not enough memory ({:d} GiB "
+            "requested).\n"
+            "Thrown exception: {:s}",
+            new_size,
+            new_size * sizeof(double) / 1024. / 1024. / 1024.,
+            e.what());
+    }
 }
 
 std::tuple<bool, double> FixedTimeStepping::next(
