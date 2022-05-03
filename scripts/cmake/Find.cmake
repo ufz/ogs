@@ -69,6 +69,14 @@ if(NOT OGS_USE_MKL)
 endif()
 
 # blas / lapack
+if(OGS_USE_MKL)
+    if("${MKL_USE_interface}" STREQUAL "lp64")
+        set(BLA_VENDOR Intel10_64lp)
+    elseif("${MKL_USE_interface}" STREQUAL "ilp64")
+        set(BLA_VENDOR Intel10_64ilp)
+    endif()
+endif()
+find_package(BLAS)
 find_package(LAPACK)
 
 if(OGS_USE_MKL)
