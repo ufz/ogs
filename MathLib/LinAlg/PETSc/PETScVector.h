@@ -221,8 +221,10 @@ public:
 private:
     void destroy()
     {
-        if (v_)
+        if (v_ != nullptr)
+        {
             VecDestroy(&v_);
+        }
         v_ = nullptr;
     }
 

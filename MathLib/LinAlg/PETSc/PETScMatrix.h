@@ -156,9 +156,13 @@ public:
         {
             // Ghost entries, and its original index is 0.
             if (col == -ncols_)
+            {
                 cols.push_back(0);
+            }
             else
+            {
                 cols.push_back(std::abs(col));
+            }
         }
 
         add(indices.rows, cols, sub_matrix);
@@ -211,8 +215,10 @@ public:
 private:
     void destroy()
     {
-        if (A_)
+        if (A_ != nullptr)
+        {
             MatDestroy(&A_);
+        }
         A_ = nullptr;
     }
 
