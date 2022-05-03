@@ -73,9 +73,6 @@ public:
 private:
     /// a vector of time step sizes
     std::vector<double> _dt_vector;
-    /// determine true end time
-    static double computeEnd(double t_initial, double t_end,
-                             const std::vector<double>& dt_vector);
 };
 
 }  // namespace NumLib

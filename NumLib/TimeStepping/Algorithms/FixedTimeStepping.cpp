@@ -19,6 +19,16 @@
 
 namespace NumLib
 {
+/// determine true end time
+double computeEnd(double t_initial,
+                  double t_end,
+                  const std::vector<double>& dt_vector)
+{
+    double t_sum =
+        t_initial + std::accumulate(dt_vector.begin(), dt_vector.end(), 0.);
+    return std::min(t_end, t_sum);
+}
+
 FixedTimeStepping::FixedTimeStepping(double t0,
                                      double tn,
                                      const std::vector<double>& vec_all_dt)
@@ -77,15 +87,6 @@ std::tuple<bool, double> FixedTimeStepping::next(
     }
 
     return std::make_tuple(true, dt);
-}
-
-double FixedTimeStepping::computeEnd(double t_initial,
-                                     double t_end,
-                                     const std::vector<double>& dt_vector)
-{
-    double t_sum =
-        t_initial + std::accumulate(dt_vector.begin(), dt_vector.end(), 0.);
-    return std::min(t_end, t_sum);
 }
 
 }  // namespace NumLib
