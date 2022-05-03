@@ -106,12 +106,6 @@ public:
     /// step is accepted or not.
     void setAccepted(const bool accepted) { _is_accepted = accepted; }
 
-    /// return a history of time step sizes
-    const std::vector<double>& getTimeStepSizeHistory() const
-    {
-        return _dt_vector;
-    }
-
     /// Get a flag to indicate whether this algorithm needs to compute
     /// solution error. The default return value is false.
     virtual bool isSolutionErrorComputationNeeded() const { return false; }
