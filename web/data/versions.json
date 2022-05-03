@@ -29,7 +29,8 @@
   "tested_version": {
     "ubuntu": "22.04",
     "qt": "5.15.2",
-    "cmake": "3.22.3"
+    "cmake": "3.22.3",
+    "hdf5": "1.12.2"
   },
   "ctest": {
     "large_runtime": 60

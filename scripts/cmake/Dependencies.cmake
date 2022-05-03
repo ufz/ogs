@@ -340,7 +340,8 @@ if(OGS_USE_MPI)
     set(_hdf5_options "HDF5_ENABLE_PARALLEL ON")
 endif()
 
-string(REPLACE "." "_" HDF5_TAG ${ogs.minimum_version.hdf5})
+# Building from source requires newer hdf version
+string(REPLACE "." "_" HDF5_TAG ${ogs.tested_version.hdf5})
 if(OGS_USE_NETCDF)
     list(APPEND CMAKE_MODULE_PATH ${PROJECT_BINARY_DIR})
     find_package(HDF5 REQUIRED)
