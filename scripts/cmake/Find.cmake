@@ -43,8 +43,6 @@ if(OGS_USE_MFRONT)
 endif()
 find_package(Threads)
 
-find_package(OpenMP COMPONENTS C CXX)
-
 # Qt5 library ##
 if(OGS_BUILD_GUI)
     set(QT_MODULES Gui Widgets Xml XmlPatterns)
@@ -62,11 +60,24 @@ if(OGS_USE_NETCDF)
     find_package(NetCDF REQUIRED)
 endif()
 
-# lapack
-find_package(LAPACK QUIET)
-
 # geotiff ##
 find_package(GEOTIFF)
+
+if(NOT OGS_USE_MKL)
+    # this pulls in libgomp dependency, when MKL is enabled libiomp5 is used.
+    find_package(OpenMP COMPONENTS C CXX)
+endif()
+
+# blas / lapack
+if(OGS_USE_MKL)
+    if("${MKL_USE_interface}" STREQUAL "lp64")
+        set(BLA_VENDOR Intel10_64lp)
+    elseif("${MKL_USE_interface}" STREQUAL "ilp64")
+        set(BLA_VENDOR Intel10_64ilp)
+    endif()
+endif()
+find_package(BLAS)
+find_package(LAPACK)
 
 if(OGS_USE_MKL)
     find_package(MKL REQUIRED)
