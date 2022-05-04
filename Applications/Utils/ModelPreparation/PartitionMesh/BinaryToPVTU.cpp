@@ -13,8 +13,6 @@
 #include <mpi.h>
 #include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
-#include <vtkMPIController.h>
-#include <vtkSmartPointer.h>
 
 #include "BaseLib/CPUTime.h"
 #include "BaseLib/FileTools.h"
@@ -85,12 +83,6 @@ int main(int argc, char* argv[])
     int mpi_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
     spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
-
-    // init vtkMPI
-    vtkSmartPointer<vtkMPIController> controller =
-        vtkSmartPointer<vtkMPIController>::New();
-    controller->Initialize(&argc, &argv, 1);
-    vtkMPIController::SetGlobalController(controller);
 
     MeshLib::NodePartitionedMesh* mesh =
         dynamic_cast<MeshLib::NodePartitionedMesh*>(

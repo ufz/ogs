@@ -25,16 +25,9 @@
 #include "ProcessLib/TimeLoop.h"
 
 Simulation::Simulation(int argc, char* argv[])
-    : linear_solver_library_setup(argc, argv),
-#if defined(USE_PETSC)
-      controller(vtkSmartPointer<vtkMPIController>::New()),
-#endif
-      test_definition{std::nullopt}
+    : linear_solver_library_setup(argc, argv), test_definition{std::nullopt}
 {
 #if defined(USE_PETSC)
-    controller->Initialize(&argc, &argv, 1);
-    vtkMPIController::SetGlobalController(controller);
-
     {  // Can be called only after MPI_INIT.
         int mpi_rank;
         MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
@@ -130,8 +123,5 @@ Simulation::~Simulation()
     {
         InSituLib::Finalize();
     }
-#endif
-#if defined(USE_PETSC)
-    controller->Finalize(1);
 #endif
 }

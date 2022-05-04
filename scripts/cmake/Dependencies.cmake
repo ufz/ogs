@@ -419,7 +419,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" AND OGS_BUILD_TESTING)
         VERSION 3.0.0
         GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/xdmflib.git
         GIT_TAG 92a851f1acb87ad5367eb62f9b97785bedb700bb
-        OPTIONS "XDMF_LIBNAME OgsXdmf"
+        OPTIONS "XDMF_LIBNAME OgsXdmf" "CMAKE_MACOSX_RPATH ON"
         EXCLUDE_FROM_ALL YES
     )
     if(xdmf_ADDED)
