@@ -20,7 +20,7 @@
     "qt": "5.14.2",
     "python": "3.6",
     "snakemake": "7.3.0",
-    "hdf5": "1.10.5",
+    "hdf5": "1.12.1",
     "libxml2": "2.9.12",
     "tfel-rliv": "3.4",
     "lis": "1.7.37",
@@ -29,7 +29,8 @@
   "tested_version": {
     "ubuntu": "22.04",
     "qt": "5.15.2",
-    "cmake": "3.22.3"
+    "cmake": "3.22.3",
+    "hdf5": "1.12.2"
   },
   "ctest": {
     "large_runtime": 60
