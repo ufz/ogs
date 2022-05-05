@@ -8,40 +8,6 @@
  *
  */
 
-/**
- * Common convenitions for naming:
- * x_air_nonwet           mass fraction of gas component(e.g air) in nonwetting
- * phase (gas component doesn't include water vapour, same for the following)
- * x_air_nonwet           molar fraction of gas component in nonwetting phase
- * x_water_nonwet         molar fraction of vapour in nonwetting phase
- * p_vapour_nonwet         water vapour pressure
- * p_gas_nonwet           partial pressure of gas component
- * mol_density_nonwet         molar density of nonwetting phase
- * mol_density_water          molar density of water
- * density_water              mass density of water
- * density_air_nonwet         mass density of gas component in the nonwetting
- * phase density_nonwet_vapour       mass density of vapour in the nonwetting
- * phase density_nonwet             mass density of the nonwetting phase
- * density_wet                mass density of wetting pahse
- * density_solid              mass density of the solid phase
- * velocity_nonwet              velocity of nonwetting phase
- * velocity_wet                 velocity of wetting phase
- * heat_capacity_dry_gas        heat capacity of dry gas
- * heat_capacity_water_vapour    heat capacity of water vapour
- * heat_capacity_water          heat capacity of liquid water
- * heat_capacity_solid          heat capacity of soil grain
- * latent_heat_evaporation      latent heat for evaporation(water to vapour)
- * enthalpy_nonwet_gas          enthalpy of gas component in the nonwetting
- * phase enthalpy_nonwet_vapour        enthalpy of water vapour in the
- * nonwetting phase enthalpy_wet                 enthalpy of wetting phase
- * enthalpy_nonwet                 enthalpy of the nonwetting phase
- * internal_energy_nonwet        specific internal energy for the nonwetting
- * phase internal_energy_wet           specific internal energy for the wetting
- * phase heat_conductivity_dry_solid   heat conductivity of the dry porous
- * medium heat_conductivity_wet_solid   heat conductivity of the fully saturated
- * porous medium heat_conductivity_unsaturated   heat conductivity of the
- * unsaturated porous medium
- */
 #pragma once
 
 #include "MaterialLib/MPL/Medium.h"
@@ -265,6 +231,8 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         auto const density_water =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t, dt);
+
+        // molar densities and derivatives
         double const mol_density_water = density_water / water_mol_mass;
         double const mol_density_wet = mol_density_water;
 
@@ -272,6 +240,15 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             pg_int_pt / ideal_gas_constant_times_T_int_pt;
         double const mol_density_tot =
             Sw * mol_density_wet + (1 - Sw) * mol_density_nonwet;
+
+        double const d_mol_density_nonwet_dpg =
+            1 / ideal_gas_constant_times_T_int_pt;
+        double const d_mol_density_nonwet_dT = -mol_density_nonwet / T_int_pt;
+        double const d_mol_density_tot_dpc =
+            (mol_density_wet - mol_density_nonwet) * dSw_dpc;
+        double const d_mol_density_tot_dpg =
+            (1 - Sw) * d_mol_density_nonwet_dpg;
+        double const d_mol_density_tot_dT = (1 - Sw) * d_mol_density_nonwet_dT;
 
         // specific latent heat of evaporation
         double const latent_heat_evaporation =
@@ -340,18 +317,10 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         _liquid_molar_fraction_contaminant[ip] = x_contam_wet;
         _gas_molar_fraction_contaminant[ip] = x_contam_nonwet;
 
-        double const d_mol_density_nonwet_dpg =
-            1 / ideal_gas_constant_times_T_int_pt;
-        double const d_mol_density_nonwet_dT = -mol_density_nonwet / T_int_pt;
-        double const d_mol_density_tot_dpc =
-            (mol_density_wet - mol_density_nonwet) * dSw_dpc;
-        double const d_mol_density_tot_dpg =
-            (1 - Sw) * d_mol_density_nonwet_dpg;
-        double const d_mol_density_tot_dT = (1 - Sw) * d_mol_density_nonwet_dT;
-
         double const d_kc_dpg = henry_contam / mol_density_wet;
         double const d_kc_dT = pg_int_pt * d_henry_contam_dT / mol_density_wet;
 
+        // derivatives of component molar fractions w.r.t. PVs
         double const d_x_contam_nonwet_dpc =
             Xc_int_pt * (d_mol_density_tot_dpc / Ntot_c -
                          (mol_density_wet * k_c - mol_density_nonwet) *
@@ -420,7 +389,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             solid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t, dt);
 
-        // Derivative of nonwet phase density in terms of PVs
+        // derivatives of nonwet phase densities w.r.t. PVs
         double const d_density_nonwet_dpg =
             d_mol_density_nonwet_dpg *
                 (air_mol_mass * x_air_nonwet + water_mol_mass * x_water_nonwet +
@@ -447,13 +416,14 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         double const mol_mass_nonwet = x_water_nonwet * water_mol_mass +
                                        x_air_nonwet * air_mol_mass +
                                        x_contam_nonwet * contam_mol_mass;
+        // phase-wise component mass fractions
         double const X_water_nonwet =
             x_water_nonwet * water_mol_mass / mol_mass_nonwet;
         double const X_air_nonwet =
             x_air_nonwet * air_mol_mass / mol_mass_nonwet;
         double const X_contam_nonwet = 1 - X_water_nonwet - X_air_nonwet;
 
-        // heat capacity nonwetting phase
+        // spec. heat capacities
         double const heat_capacity_dry_air =
             dry_air_component
                 .property(
@@ -481,6 +451,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
                 .template value<double>(vars, pos, t, dt);
 
+        // enthalpies of gaseous components
         double const enthalpy_air_nonwet =
             heat_capacity_dry_air * (T_int_pt - CelsiusZeroInKelvin) +
             IdealGasConstant * (T_int_pt - CelsiusZeroInKelvin) / air_mol_mass;
@@ -491,17 +462,19 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             heat_capacity_contam_vapour * (T_int_pt - CelsiusZeroInKelvin) +
             IdealGasConstant * T_int_pt / contam_mol_mass;
 
+        // gas and liquid phase enthalpies
         double const enthalpy_nonwet = enthalpy_air_nonwet * X_air_nonwet +
                                        enthalpy_water_nonwet * X_water_nonwet +
                                        enthalpy_contam_nonwet * X_contam_nonwet;
         double const enthalpy_wet =
             heat_capacity_water * (T_int_pt - CelsiusZeroInKelvin);
 
+        // gas and liquid phase internal energies
         double const internal_energy_nonwet =
             enthalpy_nonwet - pg_int_pt / density_nonwet;
         double const internal_energy_wet = enthalpy_wet;
 
-        /// Derivatives
+        // derivatives of enthalpies w.r.t. temperature
         double const d_enthalpy_air_nonwet_dT =
             heat_capacity_dry_air + IdealGasConstant / air_mol_mass;
         double const d_enthalpy_contaminant_nonwet_dT =
@@ -594,6 +567,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                          Sw * density_wet * heat_capacity_water)) *
             mass_operator;
 
+        // diffusion coefficients
         double const diffusion_coeff_water_nonwet =
             water_vapour_component
                 .property(MaterialPropertyLib::PropertyType::diffusion)
@@ -607,7 +581,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                 .property(MaterialPropertyLib::PropertyType::diffusion)
                 .template value<double>(vars, pos, t, dt);
 
-        // nonwet
+        // gas phase relative permeability, viscosity and mobility
         double const k_rel_nonwet =
             medium
                 .property(MaterialPropertyLib::PropertyType::
@@ -618,7 +592,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                 .template value<double>(vars, pos, t, dt);
         double const lambda_nonwet = k_rel_nonwet / mu_nonwet;
 
-        // wet
+        // liquid phase relative permeability, viscosity and mobility
         double const k_rel_wet =
             medium
                 .property(
@@ -629,13 +603,16 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                 .template value<double>(vars, pos, t, dt);
         double const lambda_wet = k_rel_wet / mu_wet;
 
+        // intrinsic permeability
         auto const permeability =
             MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium.property(MaterialPropertyLib::PropertyType::permeability)
                     .value(vars, pos, t, dt));
 
+        // gravity
         auto const& b = _process_data.specific_body_force;
 
+        // gas and liquid phase velocities
         GlobalDimVectorType const velocity_nonwet =
             _process_data.has_gravity
                 ? GlobalDimVectorType(
@@ -661,6 +638,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                          w * N.transpose() * heat_capacity_water * density_wet *
                              velocity_wet.transpose() * dNdx;
 
+        // mechanical dispersivities
         auto const solute_dispersivity_transverse =
             medium.template value<double>(
                 MaterialPropertyLib::PropertyType::transversal_dispersivity);
@@ -689,6 +667,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         auto const dispersion_operator =
             dNdx.transpose() * hydrodynamic_dispersion * dNdx * w;
 
+        // Assemble K matrix
         // The sum of all diffusive fluxes in either phase must equal to zero
         Kap.noalias() +=
             (mol_density_nonwet * x_air_nonwet * lambda_nonwet) *
