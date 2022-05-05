@@ -541,8 +541,7 @@ bool TimeLoop::executeTimeStep()
 
     updateDeactivatedSubdomains(_per_process_data, _current_time);
 
-    _nonlinear_solver_status =
-        doNonlinearIteration(_current_time, _dt, timesteps);
+    successful_time_step = doNonlinearIteration(_current_time, _dt, timesteps);
     INFO("[time] Time step #{:d} took {:g} s.", timesteps,
          time_timestep.elapsed());
 
@@ -595,11 +594,11 @@ bool TimeLoop::loop()
         }
     }
 
-    return _nonlinear_solver_status.error_norms_met;
+    return successful_time_step;
 }
 
-NumLib::NonlinearSolverStatus TimeLoop::doNonlinearIteration(
-    double const t, double const dt, std::size_t const timesteps)
+bool TimeLoop::doNonlinearIteration(double const t, double const dt,
+                                    std::size_t const timesteps)
 {
     preTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
 
@@ -628,7 +627,7 @@ NumLib::NonlinearSolverStatus TimeLoop::doNonlinearIteration(
                                     _process_solutions, _process_solutions_prev,
                                     _xdot_vector_ids);
     }
-    return nonlinear_solver_status;
+    return nonlinear_solver_status.error_norms_met;
 }
 
 static NumLib::NonlinearSolverStatus solveMonolithicProcess(
@@ -899,7 +898,7 @@ TimeLoop::~TimeLoop()
         _accepted_steps + _rejected_steps, _accepted_steps, _rejected_steps);
 
     // output last time step
-    if (_nonlinear_solver_status.error_norms_met)
+    if (successful_time_step)
     {
         const bool output_initial_condition = false;
         outputSolutions(output_initial_condition,

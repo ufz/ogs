@@ -138,7 +138,7 @@ bool Simulation::executeSimulation()
         }
     }
 
-    return time_loop.getNonlinearSolverStatus().error_norms_met;
+    return time_loop.successful_time_step;
 }
 
 std::optional<ApplicationsLib::TestDefinition> Simulation::getTestDefinition()

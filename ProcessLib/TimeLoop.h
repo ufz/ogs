@@ -49,16 +49,13 @@ public:
     ~TimeLoop();
 
     bool executeTimeStep();
-    NumLib::NonlinearSolverStatus const& getNonlinearSolverStatus() const
-    {
-        return _nonlinear_solver_status;
-    }
     double endTime() const { return _end_time; }
     double currentTime() const { return _current_time; }
+    bool successful_time_step = false;
 
 private:
-    NumLib::NonlinearSolverStatus doNonlinearIteration(
-        double const t, double const dt, std::size_t const timesteps);
+    bool doNonlinearIteration(double const t, double const dt,
+                              std::size_t const timesteps);
     /**
      * This function fills the vector of solutions of coupled processes of
      * processes, _solutions_of_coupled_processes, and initializes the vector
@@ -121,8 +118,6 @@ private:
     std::vector<GlobalVector*> _process_solutions_prev;
     std::unique_ptr<Output> _output;
     std::vector<std::unique_ptr<ProcessData>> _per_process_data;
-
-    NumLib::NonlinearSolverStatus _nonlinear_solver_status;
 
     const double _start_time;
     const double _end_time;
