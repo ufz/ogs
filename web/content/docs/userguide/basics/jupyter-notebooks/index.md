@@ -128,6 +128,16 @@ Please note that this is a temporary installation. If you stop the container the
 
 ### Rendering with PyVista
 
-When using [PyVista][pyvista] the container uses the (interactive local rendering) [pythreejs](https://docs.pyvista.org/user-guide/jupyter/pythreejs.html) rendering backend per default. Other backends are currently not supported.
+When using [PyVista][pyvista] the container uses the (interactive) rendering backend [ipyvtklink](https://github.com/Kitware/ipyvtklink) per default. Other backends are currently not supported.
+
+The backend can be set via:
+
+```py
+import pyvista as pv
+
+pv.set_jupyter_backend('ipyvtklink') # default
+pv.set_jupyter_backend('pythreejs')  # see https://docs.pyvista.org/user-guide/jupyter/pythreejs.html
+pv.set_jupyter_backend('static')     # static images
+```
 
 [pyvista]: https://docs.pyvista.org
