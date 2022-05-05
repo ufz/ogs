@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>HeatPipe_2D.vtu</mesh>
-    <geometry>HeatPipe_2D.gml</geometry>
+    <meshes>
+        <mesh>HeatPipe_2D.vtu</mesh>
+        <mesh>left.vtu</mesh>
+        <mesh>right.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>TP23</name>
@@ -11,15 +14,19 @@
                 <gas_pressure> gas_pressure </gas_pressure>
                 <capillary_pressure> capillary_pressure</capillary_pressure>
                 <temperature>temperature</temperature>
+                <total_molar_fraction_contaminant>Xc</total_molar_fraction_contaminant>
             </process_variables>
             <jacobian_assembler>
                 <type>CentralDifferences</type>
-                <component_magnitudes>1e6 1e6 300</component_magnitudes>
-                <relative_epsilons>1e-8 1e-8 1e-8</relative_epsilons>
+                <component_magnitudes>1e6 1e6 1e-10 300</component_magnitudes>
+                <relative_epsilons>1e-8 1e-8 1e-8 1e-8</relative_epsilons>
             </jacobian_assembler>
             <secondary_variables>
                 <secondary_variable internal_name="saturation" output_name="saturation"/>
                 <secondary_variable internal_name="pressure_wetting" output_name="pressure_wetting"/>
+                <secondary_variable internal_name="gas_molar_fraction_water" output_name="xwG"/>
+                <secondary_variable internal_name="liquid_molar_fraction_contaminant" output_name="xcL"/>
+                <secondary_variable internal_name="gas_molar_fraction_contaminant" output_name="xcG"/>
             </secondary_variables>
             <specific_body_force>0</specific_body_force>
             <mass_lumping> true </mass_lumping>
@@ -81,6 +88,31 @@
                                 </property>
                             </properties>
                         </component>
+                        <component>
+                            <name>c</name>
+                            <properties>
+                                <property>
+                                    <name>molar_mass</name>
+                                    <type>Constant</type>
+                                    <value>1.</value>
+                                </property>
+                                <property>
+                                    <name>diffusion</name>
+                                    <type>Constant</type>
+                                    <value>1.</value>
+                                </property>
+                                <property>
+                                    <name>specific_heat_capacity</name>
+                                    <type>Constant</type>
+                                    <value>1.</value>
+                                </property>
+                                <property>
+                                    <name>henry_constant</name>
+                                    <type>Constant</type>
+                                    <value>1.</value>
+                                </property>
+                            </properties>
+                        </component>
                     </components>
                     <properties>
                         <property>
@@ -96,6 +128,18 @@
                 </phase>
                 <phase>
                     <type>AqueousLiquid</type>
+                    <components>
+                        <component>
+                            <name>c</name>
+                            <properties>
+                                <property>
+                                    <name>diffusion</name>
+                                    <type>Constant</type>
+                                    <value>1.</value>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
                     <properties>
                         <property>
                             <name>viscosity</name>
@@ -167,6 +211,16 @@
                     <dry_thermal_conductivity>k_T_dry</dry_thermal_conductivity>
                     <wet_thermal_conductivity>k_T_wet</wet_thermal_conductivity>
                 </property>
+                <property>
+                    <name>longitudinal_dispersivity</name>
+                    <type>Constant</type>
+                    <value> 0 </value>
+                </property>
+                <property>
+                    <name>transversal_dispersivity</name>
+                    <type>Constant</type>
+                    <value> 0 </value>
+                </property>
             </properties>
         </medium>
     </media>
@@ -185,6 +239,11 @@
             <name>pg_Dirichlet_left</name>
             <type>Constant</type>
             <value>101934</value>
+        </parameter>
+        <parameter>
+            <name>Xc_0</name>
+            <type>Constant</type>
+            <values>0</values>
         </parameter>
         <parameter>
             <name>T_0</name>
@@ -257,9 +316,13 @@
             <variables>
                 <variable> capillary_pressure </variable>
                 <variable> gas_pressure </variable>
+                <variable> Xc </variable>
                 <variable> saturation </variable>
                 <variable> pressure_wetting </variable>
                 <variable> temperature </variable>
+                <variable> xwG </variable>
+                <variable> xcG </variable>
+                <variable> xcL </variable>
             </variables>
         </output>
     </time_loop>
@@ -271,8 +334,7 @@
             <initial_condition>pg_0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>HeatPipe_2D</geometrical_set>
-                    <geometry>PLY_LEFT</geometry>
+                    <mesh>left</mesh>
                     <type>Dirichlet</type>
                     <parameter>pg_Dirichlet_left</parameter>
                 </boundary_condition>
@@ -285,12 +347,25 @@
             <initial_condition>pc_0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>HeatPipe_2D</geometrical_set>
-                    <geometry>PLY_LEFT</geometry>
+                    <mesh>left</mesh>
                     <type>Dirichlet</type>
                     <parameter>pc_Dirichlet_left</parameter>
                 </boundary_condition>
             </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Xc</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>Xc_0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>HeatPipe_2D</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>Xc_0</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+            <source_terms/>
         </process_variable>
         <process_variable>
             <name>temperature</name>
@@ -299,14 +374,12 @@
             <initial_condition>T_0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>HeatPipe_2D</geometrical_set>
-                    <geometry>PLY_LEFT</geometry>
+                    <mesh>left</mesh>
                     <type>Dirichlet</type>
                     <parameter>T_Dirichlet_left</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>HeatPipe_2D</geometrical_set>
-                    <geometry>PLY_RIGHT</geometry>
+                    <mesh>right</mesh>
                     <type>Neumann</type>
                     <parameter>T_neumann</parameter>
                 </boundary_condition>
