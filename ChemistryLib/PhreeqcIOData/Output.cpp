@@ -12,10 +12,35 @@
 
 #include <ostream>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
+std::string specifyFileName(std::string const& project_file_name,
+                            std::string const& file_extension)
+{
+#ifdef USE_PETSC
+    int mpi_rank;
+
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    return project_file_name + "_phreeqc_pid_" + std::to_string(mpi_rank) +
+           file_extension;
+#endif
+
+    return project_file_name + "_phreeqc" + file_extension;
+}
+
+BasicOutputSetups::BasicOutputSetups(std::string const& project_file_name,
+                                     bool const use_high_precision_)
+    : output_file(specifyFileName(project_file_name, ".out")),
+      use_high_precision(use_high_precision_)
+{
+}
+
 std::ostream& operator<<(std::ostream& os,
                          BasicOutputSetups const& basic_output_setups)
 {

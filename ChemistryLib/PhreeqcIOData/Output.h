@@ -24,11 +24,7 @@ class BasicOutputSetups
 {
 public:
     explicit BasicOutputSetups(std::string const& project_file_name,
-                               bool const use_high_precision_)
-        : output_file(project_file_name + "_phreeqc.out"),
-          use_high_precision(use_high_precision_)
-    {
-    }
+                               bool const use_high_precision_);
 
     static int getNumberOfItemsInDisplay()
     {

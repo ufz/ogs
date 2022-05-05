@@ -63,6 +63,9 @@ void setAqueousSolution(std::vector<double> const& concentrations,
                         GlobalIndexType const& chemical_system_id,
                         AqueousSolution& aqueous_solution)
 {
+    GlobalIndexType const offset = aqueous_solution.pH->getRangeBegin();
+    GlobalIndexType const global_index = offset + chemical_system_id;
+
     // components
     auto& components = aqueous_solution.components;
     for (unsigned component_id = 0; component_id < components.size();
@@ -70,13 +73,13 @@ void setAqueousSolution(std::vector<double> const& concentrations,
     {
         MathLib::LinAlg::setLocalAccessibleVector(
             *components[component_id].amount);
-        components[component_id].amount->set(chemical_system_id,
+        components[component_id].amount->set(global_index,
                                              concentrations[component_id]);
     }
 
     // pH
     MathLib::LinAlg::setLocalAccessibleVector(*aqueous_solution.pH);
-    aqueous_solution.pH->set(chemical_system_id, concentrations.back());
+    aqueous_solution.pH->set(global_index, concentrations.back());
 }
 
 template <typename Reactant>
@@ -259,6 +262,9 @@ static double averageReactantMolality(
 }
 }  // namespace
 
+extern std::string specifyFileName(std::string const& project_file_name,
+                                   std::string const& file_extension);
+
 PhreeqcIO::PhreeqcIO(MeshLib::Mesh const& mesh,
                      GlobalLinearSolver& linear_solver,
                      std::string const& project_file_name,
@@ -270,7 +276,7 @@ PhreeqcIO::PhreeqcIO(MeshLib::Mesh const& mesh,
                      std::unique_ptr<Dump>&& dump,
                      Knobs&& knobs)
     : ChemicalSolverInterface(mesh, linear_solver),
-      _phreeqc_input_file(project_file_name + "_phreeqc.inp"),
+      _phreeqc_input_file(specifyFileName(project_file_name, ".inp")),
       _database(std::move(database)),
       _chemical_system(std::move(chemical_system)),
       _reaction_rates(std::move(reaction_rates)),
@@ -413,9 +419,18 @@ double PhreeqcIO::getConcentration(
     auto& components = aqueous_solution.components;
     auto const& pH = *aqueous_solution.pH;
 
-    return component_id < static_cast<int>(components.size())
-               ? components[component_id].amount->get(chemical_system_id)
-               : pH.get(chemical_system_id);
+    if (component_id < static_cast<int>(components.size()))
+    {
+        MathLib::LinAlg::setLocalAccessibleVector(
+            *components[component_id].amount);
+
+        return components[component_id].amount->get(chemical_system_id);
+    }
+
+    // pH
+    MathLib::LinAlg::setLocalAccessibleVector(*aqueous_solution.pH);
+
+    return pH.get(chemical_system_id);
 }
 
 void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
@@ -741,6 +756,10 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
         auto& aqueous_solution = phreeqc_io._chemical_system->aqueous_solution;
         auto& components = aqueous_solution->components;
         auto& user_punch = phreeqc_io._user_punch;
+
+        GlobalIndexType const offset = aqueous_solution->pH->getRangeBegin();
+        GlobalIndexType const global_index = offset + chemical_system_id;
+
         for (int item_id = 0; item_id < static_cast<int>(accepted_items.size());
              ++item_id)
         {
@@ -758,8 +777,7 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                     MathLib::LinAlg::setLocalAccessibleVector(
                         *aqueous_solution->pH);
                     aqueous_solution->pH->set(
-                        chemical_system_id,
-                        std::pow(10, -accepted_items[item_id]));
+                        global_index, std::pow(10, -accepted_items[item_id]));
                     break;
                 }
                 case ItemType::pe:
@@ -777,7 +795,7 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                         "Could not find component '" + item_name + "'.");
                     MathLib::LinAlg::setLocalAccessibleVector(
                         *component.amount);
-                    component.amount->set(chemical_system_id,
+                    component.amount->set(global_index,
                                           accepted_items[item_id]);
                     break;
                 }

@@ -778,7 +778,6 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/RadionuclideSorption_SitesMoles.prj RUNTIME 33)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/LookupTable/RadionuclideSorption.prj RUNTIME 10)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calciteDissolvePrecipitateOnly.prj RUNTIME 25)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calcitePorosityChange.prj RUNTIME 25)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/CationExchange/exchange.prj RUNTIME 60)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/CationExchange/exchangeAndSurface.prj RUNTIME 33)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ThermalDiffusion/TemperatureField_transport.prj RUNTIME 27)
@@ -838,22 +837,7 @@ AddTest(
     RUNTIME 40
 )
 
-# single mesh with PETSc enabled.
-AddTest(
-    NAME ParallelFEM_CalciteDissolution_SingleMesh
-    PATH Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS calcitePorosityChange.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 1
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    calcitePorosityChange_ts_210_t_21000_000000_0.vtu calcitePorosityChange_ts_210_t_21000_000000_0.vtu pressure pressure 1e-6 1e-10
-    calcitePorosityChange_ts_210_t_21000_000000_0.vtu calcitePorosityChange_ts_210_t_21000_000000_0.vtu Ca Ca 1e-10 1e-16
-    calcitePorosityChange_ts_210_t_21000_000000_0.vtu calcitePorosityChange_ts_210_t_21000_000000_0.vtu Cl Cl 1e-10 1e-16
-    calcitePorosityChange_ts_210_t_21000_000000_0.vtu calcitePorosityChange_ts_210_t_21000_000000_0.vtu H H 1e-10 1e-16
-    calcitePorosityChange_ts_210_t_21000_000000_0.vtu calcitePorosityChange_ts_210_t_21000_000000_0.vtu Mg Mg 1e-10 1e-16
-    calcitePorosityChange_ts_210_t_21000_000000_0.vtu calcitePorosityChange_ts_210_t_21000_000000_0.vtu Calcite_avg Calcite_avg 1e-10 1e-16
-    calcitePorosityChange_ts_210_t_21000_000000_0.vtu calcitePorosityChange_ts_210_t_21000_000000_0.vtu porosity_avg porosity_avg 1e-10 1e-16
-)
+if (OGS_USE_MPI)
+    OgsTest(WRAPPER mpirun -np 1 PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calcitePorosityChange.prj RUNTIME 25)
+    OgsTest(WRAPPER mpirun -np 2 PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/ParallelTest/RadionuclideSorption.prj RUNTIME 60)
+endif()

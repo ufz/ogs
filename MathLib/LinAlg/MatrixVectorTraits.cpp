@@ -80,7 +80,7 @@ std::unique_ptr<PETScVector> MatrixVectorTraits<PETScVector>::newInstance(
 std::unique_ptr<PETScVector> MatrixVectorTraits<PETScVector>::newInstance(
     PETScVector::IndexType const length)
 {
-    auto const is_global_size = true;
+    auto const is_global_size = false;
 
     return std::make_unique<PETScVector>(length, is_global_size);
 }
