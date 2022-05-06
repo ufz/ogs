@@ -86,7 +86,7 @@ public:
         return false;
     }
 
-protected:
+private:
     /// initial time
     const double _t_initial;
     /// end time

@@ -75,16 +75,16 @@ std::tuple<bool, double> FixedTimeStepping::next(
 {
     // check if last time step
     if (ts_current.timeStepNumber() == _dt_vector.size() ||
-        std::abs(ts_current.current() - _t_end) <
+        std::abs(ts_current.current() - end()) <
             std::numeric_limits<double>::epsilon())
     {
         return std::make_tuple(false, 0.0);
     }
 
     double dt = _dt_vector[ts_current.timeStepNumber()];
-    if (ts_current.current() + dt > _t_end)
+    if (ts_current.current() + dt > end())
     {  // upper bound by t_end
-        dt = _t_end - ts_current.current();
+        dt = end() - ts_current.current();
     }
 
     return std::make_tuple(true, dt);
