@@ -3,7 +3,7 @@ create cpm cache:
   needs: [meta]
   tags: [shell, envinf]
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       changes:
         - scripts/cmake/CMakeSetup.cmake
         - scripts/cmake/Dependencies.cmake
@@ -11,11 +11,15 @@ create cpm cache:
         - scripts/cmake/ExternalDependencies.cmake
         - web/data/versions.json
   variables:
-    BUILD_DIR: "../build/cpm"
+    BUILD_DIR: "$CI_PROJECT_DIR/../build/cpm"
+  allow_failure:
+    exit_codes:
+      - 255
   script:
-    - TFEL_RLIV_VERSION=$(jq -r '.minimum_version."tfel-rliv"' web/data/versions.json)
-    - PETSC_VERSION=$(jq -r '.minimum_version.petsc' web/data/versions.json)
-    - LIS_VERSION=$(jq -r '.minimum_version.lis' web/data/versions.json)
+    - _versions_file=$CI_PROJECT_DIR/web/data/versions.json
+    - TFEL_RLIV_VERSION=$(jq -r '.minimum_version."tfel-rliv"' ${_versions_file})
+    - PETSC_VERSION=$(jq -r '.minimum_version.petsc' ${_versions_file})
+    - LIS_VERSION=$(jq -r '.minimum_version.lis' ${_versions_file})
     - rm -rf $BUILD_DIR
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
@@ -27,8 +31,24 @@ create cpm cache:
     - tar -czf cpm.tar.gz cpm
     - >
       curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cpm.tar.gz \
-        ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cpm/${VERSION}/cpm.tar.gz
+        ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cpm/${VERSION}/cpm.tar.gz?select=package_file -o cpm_upload.json
+    - cat cpm_upload.json
+    - _cpm_package_file_id=$(cat cpm_upload.json | jq .id)
+    - |
+      if [ "$_cpm_package_file_id" != "null" ]; then
+        _cpm_package_file_hash=$(cat cpm_upload.json | jq .file_sha256)
+        # sponge usage from: https://stackoverflow.com/a/36577521/80480
+        jq -r ".cpm.package_file_id = ${_cpm_package_file_id}" ${_versions_file} | sponge ${_versions_file}
+        jq -r ".cpm.package_file_sha256 = ${_cpm_package_file_hash}" ${_versions_file} | sponge ${_versions_file}
+        cd $CI_PROJECT_DIR
+        git diff
+        git add ${_versions_file}
+        git commit -m "[versions] Updated cpm cache info."
+        git push git@${CI_SERVER_HOST}:${CI_MERGE_REQUEST_SOURCE_PROJECT_PATH}.git HEAD:${CI_COMMIT_REF_NAME}
+        exit 255 # marks with warning
+      fi
     # external dependencies:
+    - cd $BUILD_DIR
     - mkdir ext
     - cd ext
     - wget --no-verbose --output-document tfel-rliv-${TFEL_RLIV_VERSION}.zip https://github.com/thelfer/tfel/archive/refs/heads/rliv-${TFEL_RLIV_VERSION}.zip
@@ -46,23 +66,20 @@ offline configure:
   stage: package
   needs:
     - job: meta
-    - job: create cpm cache
-      optional: true
   tags: [shell, envinf]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
   variables:
     BUILD_DIR: "../build/offline"
   script:
-    - VERSION=$(jq -r '.cpm.cache_hash' web/data/versions.json)
+    - CPM_PACKAGE_FILE_ID=$(jq -r '.cpm.package_file_id' web/data/versions.json)
     - EXT_VERSION=$(jq -r '.ext.cache_hash' web/data/versions.json)
     - rm -rf $BUILD_DIR
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
-    - >
-      wget --no-verbose --header "JOB-TOKEN: $CI_JOB_TOKEN" \
-        ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cpm/${VERSION}/cpm.tar.gz
+    - curl ${CI_PROJECT_URL}/-/package_files/${CPM_PACKAGE_FILE_ID}/download --output cpm.tar.gz
     - tar xf cpm.tar.gz
+    - mv cpm .cpm-${CPM_PACKAGE_FILE_ID}
     - >
       wget --no-verbose --header "JOB-TOKEN: $CI_JOB_TOKEN" \
         ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/external-dependencies/${EXT_VERSION}/ext.tar.gz
@@ -71,8 +88,8 @@ offline configure:
     - |
       firejail --noprofile --net=none --blacklist=/usr/bin/mfront --read-write=${CI_BUILDS_DIR} \
         cmake ../../ogs -B . -G Ninja --preset release \
-          -DOGS_USE_PYTHON=OFF -DCPM_SOURCE_CACHE=./cpm
+          -DOGS_USE_PYTHON=OFF -DOGS_DOWNLOAD_CPM_CACHE=ON
       rm CMakeCache.txt
       cmake ../../ogs -B . -G Ninja --preset release-petsc \
-        -DOGS_USE_PYTHON=OFF -DCPM_SOURCE_CACHE=./cpm \
+        -DOGS_USE_PYTHON=OFF -DOGS_DOWNLOAD_CPM_CACHE=ON \
         -DOGS_USE_MFRONT=ON -DOGS_USE_LIS=ON -DOGS_EXTERNAL_DEPENDENCIES_CACHE=./ext
