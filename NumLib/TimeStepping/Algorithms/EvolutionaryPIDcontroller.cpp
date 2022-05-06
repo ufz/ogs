@@ -145,9 +145,7 @@ bool EvolutionaryPIDcontroller::canReduceTimestepSize(
     NumLib::TimeStep const& timestep_previous,
     NumLib::TimeStep const& timestep_current) const
 {
-    // If current and previous dt are both at minimum dt, then cannot reduce
-    // further.
-    return !(timestep_current.dt() == _h_min &&
-             timestep_previous.dt() == _h_min);
+    return NumLib::canReduceTimestepSize(timestep_previous, timestep_current,
+                                         _h_min);
 }
 }  // namespace NumLib

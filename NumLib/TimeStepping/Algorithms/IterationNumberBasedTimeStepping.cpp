@@ -142,10 +142,8 @@ bool IterationNumberBasedTimeStepping::canReduceTimestepSize(
     NumLib::TimeStep const& timestep_previous,
     NumLib::TimeStep const& timestep_current) const
 {
-    // If current and previous dt are both at minimum dt, then cannot reduce
-    // further.
-    return !(timestep_current.dt() == _min_dt &&
-             timestep_previous.dt() == _min_dt);
+    return NumLib::canReduceTimestepSize(timestep_previous, timestep_current,
+                                         _min_dt);
 }
 
 }  // namespace NumLib

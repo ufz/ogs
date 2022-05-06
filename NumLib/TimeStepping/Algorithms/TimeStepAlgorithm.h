@@ -103,4 +103,7 @@ double possiblyClampDtToNextFixedTime(
     double const t, double const dt,
     std::vector<double> const& fixed_output_times);
 
+bool canReduceTimestepSize(TimeStep const& timestep_previous,
+                           TimeStep const& timestep_current,
+                           double const min_dt);
 }  // namespace NumLib
