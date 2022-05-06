@@ -10,6 +10,7 @@ cmake_dependent_option(
     "OGS_USE_PYTHON" OFF
 )
 
+include(scripts/cmake/DownloadCpmCache.cmake)
 include(scripts/cmake/CPM.cmake)
 include(scripts/cmake/CMakeSetup.cmake)
 include(ParseCMakeArgs)
