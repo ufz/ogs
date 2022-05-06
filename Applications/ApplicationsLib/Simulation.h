@@ -27,6 +27,9 @@ public:
         bool nonfatal, std::string const& outdir, std::string const& mesh_dir,
         bool write_prj);
 
+    double currentTime() const;
+    double endTime() const;
+    bool executeTimeStep();
     bool executeSimulation();
 
     std::optional<ApplicationsLib::TestDefinition> getTestDefinition();

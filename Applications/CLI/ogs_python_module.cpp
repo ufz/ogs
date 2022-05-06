@@ -106,6 +106,16 @@ void executeSimulation()
     }
 }
 
+double currentTime()
+{
+    return simulation->currentTime();
+}
+
+double endTime()
+{
+    return simulation->endTime();
+}
+
 void finalize()
 {
     simulation.reset(nullptr);
@@ -116,6 +126,8 @@ PYBIND11_MODULE(OpenGeoSys, m)
 {
     m.doc() = "pybind11 ogs example plugin";
     m.def("initialize", &initOGS, "init OGS");
+    m.def("currentTime", &currentTime, "get current OGS time");
+    m.def("endTime", &endTime, "get end OGS time");
     m.def("executeSimulation", &executeSimulation, "execute OGS simulation");
     m.def("finalize", &finalize, "finalize OGS simulation");
 }

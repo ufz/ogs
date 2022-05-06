@@ -48,9 +48,14 @@ public:
 
     ~TimeLoop();
 
+    bool executeTimeStep();
+    double endTime() const { return _end_time; }
+    double currentTime() const { return _current_time; }
+    bool successful_time_step = false;
+
 private:
-    NumLib::NonlinearSolverStatus doNonlinearIteration(
-        double const t, double const dt, std::size_t const timesteps);
+    bool doNonlinearIteration(double const t, double const dt,
+                              std::size_t const timesteps);
     /**
      * This function fills the vector of solutions of coupled processes of
      * processes, _solutions_of_coupled_processes, and initializes the vector
@@ -96,10 +101,12 @@ private:
      *                        function.
      *  @param rejected_steps Rejected time steps that are counted in this
      *                        function.
+     *  @return the time step size and the information if the last time step was
+     *  rejected
      */
-    double computeTimeStepping(const double prev_dt, double& t,
-                               std::size_t& accepted_steps,
-                               std::size_t& rejected_steps);
+    std::pair<double, bool> computeTimeStepping(const double prev_dt, double& t,
+                                                std::size_t& accepted_steps,
+                                                std::size_t& rejected_steps);
 
     template <typename OutputClass, typename OutputClassMember>
     void outputSolutions(bool const output_initial_condition, unsigned timestep,
@@ -112,10 +119,14 @@ private:
     std::unique_ptr<Output> _output;
     std::vector<std::unique_ptr<ProcessData>> _per_process_data;
 
-    bool _last_step_rejected = false;
-    int _repeating_times_of_rejected_step = 0;
     const double _start_time;
     const double _end_time;
+    double _current_time = _start_time;
+    std::size_t _accepted_steps = 0;
+    std::size_t _rejected_steps = 0;
+    double _dt = 0;
+    int _repeating_times_of_rejected_step = 0;
+    bool _last_step_rejected = false;
 
     /// Maximum iterations of the global coupling.
     const int _global_coupling_max_iterations;
