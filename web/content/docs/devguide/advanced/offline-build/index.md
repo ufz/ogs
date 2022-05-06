@@ -17,14 +17,18 @@ OGS can be built on systems without internet connection when the following files
 
 ## CPM
 
-The cpm source cache may change over time. To get the required version check the `cache_hash` field in `web/data/versions.json`, e.g. with:
+The cpm source cache may change over time. To get the required file id check the `package_file_id` field in `web/data/versions.json`, e.g. with:
 
 ```bash
-$ jq -r '.cpm.cache_hash' web/data/versions.json
-{{< dataFile "versions.cpm.cache_hash" >}} # <-- current version on master
+$ jq -r '.cpm.package_file_id' web/data/versions.json
+{{< dataFile "versions.cpm.package_file_id" >}} # <-- current version on master
 ```
 
-On the [cpm package page](https://gitlab.opengeosys.org/ogs/ogs/-/packages/1) download the file `cpm.tar.gz` with the specified version.
+Now simply download the file with:
+
+```
+curl https://gitlab.opengeosys.org/ogs/ogs/-/package_files/[insert ID here]/download --output cpm.tar.gz
+```
 
 Unarchive the cpm cache into a directory. Configure OGS as usual but point to the extracted cpm cache:
 
