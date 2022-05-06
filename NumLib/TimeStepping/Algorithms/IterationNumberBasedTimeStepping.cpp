@@ -106,7 +106,7 @@ double IterationNumberBasedTimeStepping::findMultiplier(
         }
     }
 
-    if (!_is_accepted && (multiplier >= 1.0))
+    if (!_ts_current.isAccepted() && (multiplier >= 1.0))
     {
         return *std::min_element(_multiplier_vector.begin(),
                                  _multiplier_vector.end());
