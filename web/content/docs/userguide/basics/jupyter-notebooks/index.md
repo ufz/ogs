@@ -39,7 +39,7 @@ Image `registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter` contains:
   - [nbconvert](https://nbconvert.readthedocs.io) — Format conversion
   - [nbdime](https://nbdime.readthedocs.io) — Diffs for notebooks
   - [nb2hugo](https://github.com/bilke/nb2hugo/tree/ogs) — Notebook to www.opengeosys.org markdown
-- [gmsh](https://gmsh.info) — Mesh generator
+- [gmsh](https://gmsh.info) — Mesh generator (incl. Python bindings)
 
 Image `registry.opengeosys.org/ogs/ogs/ogs-petsc-jupyter` additionally contains:
 

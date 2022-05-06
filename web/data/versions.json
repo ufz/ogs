@@ -48,7 +48,22 @@
       "ipython_genutils==0.2.0",
       "pillow==9.0.0",
       "matplotlib==3.5.1"
-    ]
+    ],
+    "jupyter_image": {
+      "conda_packages": [
+        "snakemake-minimal",
+        "pyvista==0.34.0",
+        "ipyvtklink",
+        "pythreejs",
+        "gmsh==4.10.0",
+        "python-gmsh==4.10.0"
+      ],
+      "pip_packages": [
+        "nbdime==3.1.1",
+        "h5py==3.6.0",
+        "jupyterlab-gitlab==3.0.0"
+      ]
+    }
   },
   "cpm": {
     "cache_hash": "f770d2402dc2ffbf305eac78d2f25c1c0a33be30"

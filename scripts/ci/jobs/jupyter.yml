@@ -30,7 +30,6 @@ build jupyter:
       --build_args ' --progress=plain' --cvode --ccache --cpmcache --mfront --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
       --runtime_base_image 'jupyter/base-notebook:22.04_3.10'
-      --packages gmsh
       --tag $DOCKER_TAG_JUPYTER
       $ON_MASTER_ARGS
     # PETSc image
@@ -39,7 +38,6 @@ build jupyter:
       --build_args ' --progress=plain' --cvode --ccache --cpmcache --mfront --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
       --runtime_base_image 'jupyter/base-notebook:22.04_3.10'
-      --packages gmsh
       --mpi_no_entrypoint
       --tag $DOCKER_TAG_JUPYTER_PETSC
       $ON_MASTER_ARGS
