@@ -69,13 +69,13 @@ struct ComponentTransportProcessData
     ChemistryLib::ChemicalSolverInterface* const chemical_solver_interface;
     std::unique_ptr<LookupTable> lookup_table;
 
-    const int hydraulic_process_id;
+    static const int hydraulic_process_id = 0;
     // TODO (renchao-lu): This variable is used in the calculation of the
     // fluid's density and flux, indicating the transport process id. For now it
     // is assumed that these quantities depend on the first occurring transport
     // process only. The density and flux calculations have to be extended to
     // all processes.
-    const int first_transport_process_id;
+    static const int first_transport_process_id = 1;
 
     MeshLib::PropertyVector<double>* mesh_prop_velocity = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_porosity = nullptr;
