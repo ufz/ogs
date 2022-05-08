@@ -224,18 +224,6 @@ Eigen::Vector3d ComponentTransportProcess::getFlux(
     return _local_assemblers[element_id]->getFlux(p, t, local_xs);
 }
 
-void ComponentTransportProcess::
-    setCoupledTermForTheStaggeredSchemeToLocalAssemblers(int const process_id)
-{
-    DBUG("Set the coupled term for the staggered scheme to local assemblers.");
-
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-    GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &ComponentTransportLocalAssemblerInterface::
-            setStaggeredCoupledSolutions,
-        _local_assemblers, pv.getActiveElementIDs(), _coupled_solutions);
-}
-
 void ComponentTransportProcess::solveReactionEquation(
     std::vector<GlobalVector*>& x, std::vector<GlobalVector*> const& x_prev,
     double const t, double const dt, NumLib::EquationSystem& ode_sys,
@@ -288,8 +276,7 @@ void ComponentTransportProcess::solveReactionEquation(
         return;
     }
 
-    auto const matrix_specification =
-        ode_sys.getMatrixSpecifications(process_id);
+    auto const matrix_specification = getMatrixSpecifications(process_id);
 
     std::size_t matrix_id = 0u;
     auto& M = NumLib::GlobalMatrixProvider::provider.getMatrix(
