@@ -68,13 +68,6 @@ class ComponentTransportLocalAssemblerInterface
 public:
     ComponentTransportLocalAssemblerInterface() = default;
 
-    void setStaggeredCoupledSolutions(
-        std::size_t const /*mesh_item_id*/,
-        CoupledSolutionsForStaggeredScheme* const coupling_term)
-    {
-        _coupled_solutions = coupling_term;
-    }
-
     virtual void setChemicalSystemID(std::size_t const /*mesh_item_id*/) = 0;
 
     void initializeChemicalSystem(
@@ -209,9 +202,6 @@ private:
         double const t, double const dt, Eigen::VectorXd const& local_x,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, int const transport_process_id) = 0;
-
-protected:
-    CoupledSolutionsForStaggeredScheme* _coupled_solutions{nullptr};
 };
 
 template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>

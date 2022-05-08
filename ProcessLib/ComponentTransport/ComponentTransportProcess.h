@@ -121,9 +121,6 @@ public:
                             MathLib::Point3d const& p, double const t,
                             std::vector<GlobalVector*> const& x) const override;
 
-    void setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
-        int const process_id) override;
-
     void solveReactionEquation(std::vector<GlobalVector*>& x,
                                std::vector<GlobalVector*> const& x_prev,
                                double const t, double const dt,
