@@ -276,8 +276,7 @@ void ComponentTransportProcess::solveReactionEquation(
         return;
     }
 
-    auto const matrix_specification =
-        ode_sys.getMatrixSpecifications(process_id);
+    auto const matrix_specification = getMatrixSpecifications(process_id);
 
     std::size_t matrix_id = 0u;
     auto& M = NumLib::GlobalMatrixProvider::provider.getMatrix(
