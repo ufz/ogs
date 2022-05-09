@@ -44,7 +44,7 @@ public:
              const double start_time, const double end_time);
 
     void initialize();
-    bool loop();
+    void outputLastTimeStep() const;
 
     ~TimeLoop();
 

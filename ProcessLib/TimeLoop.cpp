@@ -576,25 +576,21 @@ bool TimeLoop::executeTimeStep()
     return true;
 }
 
-/*
- * TODO:
- * Now we have a structure inside the time loop which is very similar to the
- * nonlinear solver. And admittedly, the control flow inside the nonlinear
- * solver is rather complicated. Maybe in the future one can introduce an
- * abstraction that can do both the convergence checks of the coupling loop and
- * of the nonlinear solver.
- */
-bool TimeLoop::loop()
+void TimeLoop::outputLastTimeStep() const
 {
-    while (_current_time < _end_time)
-    {
-        if (!executeTimeStep())
-        {
-            break;
-        }
-    }
+    INFO(
+        "The whole computation of the time stepping took {:d} steps, in which\n"
+        "\t the accepted steps are {:d}, and the rejected steps are {:d}.\n",
+        _accepted_steps + _rejected_steps, _accepted_steps, _rejected_steps);
 
-    return successful_time_step;
+    // output last time step
+    if (successful_time_step)
+    {
+        const bool output_initial_condition = false;
+        outputSolutions(output_initial_condition,
+                        _accepted_steps + _rejected_steps, _current_time,
+                        *_output, &Output::doOutputLastTimestep);
+    }
 }
 
 bool TimeLoop::doNonlinearIteration(double const t, double const dt,
@@ -892,20 +888,6 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
 
 TimeLoop::~TimeLoop()
 {
-    INFO(
-        "The whole computation of the time stepping took {:d} steps, in which\n"
-        "\t the accepted steps are {:d}, and the rejected steps are {:d}.\n",
-        _accepted_steps + _rejected_steps, _accepted_steps, _rejected_steps);
-
-    // output last time step
-    if (successful_time_step)
-    {
-        const bool output_initial_condition = false;
-        outputSolutions(output_initial_condition,
-                        _accepted_steps + _rejected_steps, _current_time,
-                        *_output, &Output::doOutputLastTimestep);
-    }
-
     for (auto* x : _process_solutions)
     {
         NumLib::GlobalVectorProvider::provider.releaseVector(*x);
