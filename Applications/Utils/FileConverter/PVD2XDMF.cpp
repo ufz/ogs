@@ -73,6 +73,35 @@ bool copyPropertyVector(MeshLib::Properties const& properties,
     return true;
 }
 
+void testIfMeshesAreEqual(MeshLib::Mesh const& mesh,
+                          MeshLib::Mesh const& main_mesh,
+                          std::string error_message)
+{
+    if (mesh.getDimension() != main_mesh.getDimension())
+    {
+        OGS_FATAL(
+            "{:s}The mesh has dimension {} which is different from the "
+            "dimension {} of in the main mesh.",
+            error_message, mesh.getDimension(), main_mesh.getDimension());
+    }
+    if (mesh.getNumberOfElements() != main_mesh.getNumberOfElements())
+    {
+        OGS_FATAL(
+            "{:s}The mesh has {} elements which is different from the number "
+            "of elements ({}) in the main mesh.",
+            error_message, mesh.getNumberOfElements(),
+            main_mesh.getNumberOfElements());
+    }
+    if (mesh.getNumberOfNodes() != main_mesh.getNumberOfNodes())
+    {
+        OGS_FATAL(
+            "{:s}The mesh has {} nodes which is different from the number of "
+            "nodes ({}) in the main mesh.",
+            error_message, mesh.getNumberOfNodes(),
+            main_mesh.getNumberOfNodes());
+    }
+}
+
 int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
@@ -157,6 +186,13 @@ int main(int argc, char* argv[])
             OGS_FATAL("Could not read mesh from '{:s}'.",
                       BaseLib::joinPaths(pvd_file_dir, filename));
         }
+
+        testIfMeshesAreEqual(
+            *mesh, *main_mesh,
+            fmt::format("Error in comparison of mesh from file '{:s}' to the "
+                        "main mesh:\n",
+                        BaseLib::joinPaths(pvd_file_dir, filename)));
+
         // We have to copy the values because the xdmf writer remembers the data
         // pointers. Therefore replacing the properties will not work.
         for (auto& [name, pv] : main_mesh->getProperties())
