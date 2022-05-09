@@ -94,6 +94,7 @@ int main(int argc, char* argv[])
             cli_arg.nonfatal, std::move(cli_arg.outdir),
             std::move(cli_arg.mesh_dir), cli_arg.write_prj);
         bool solver_succeeded = simulation.executeSimulation();
+        simulation.outputLastTimeStep();
         test_definition = simulation.getTestDefinition();
 
         INFO("[time] Execution took {:g} s.", run_time.elapsed());
