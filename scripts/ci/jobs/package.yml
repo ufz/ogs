@@ -1,8 +1,10 @@
 create cpm cache:
   stage: package
-  needs: [meta]
+  dependencies: [meta]
   tags: [shell, envinf]
   rules:
+    - if: $CI_COMMIT_TITLE == "[versions] Updated cpm cache info."
+      when: never
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       changes:
         - scripts/cmake/CMakeSetup.cmake
@@ -24,7 +26,7 @@ create cpm cache:
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
     # cpm:
-    - cmake ../../ogs -B . -G Ninja --preset release -DCPM_SOURCE_CACHE=./cpm
+    - cmake ../../ogs -B . -G Ninja --preset release -DCPM_SOURCE_CACHE=./cpm -DCPM_DOWNLOAD_ALL=ON
     - find cpm -type f | grep -i "\.git" | xargs rm -rf
     - VERSION=$(find cpm -type f -print0 | sort -z | xargs -r0  sha1sum | awk '{print $1}' | sha1sum | awk '{print $1}')
     - echo "VERSION=${VERSION}"
@@ -68,6 +70,7 @@ offline configure:
     - job: meta
   tags: [shell, envinf]
   rules:
+    - if: $CI_COMMIT_TITLE == "[versions] Updated cpm cache info."
     - if: '$CI_COMMIT_BRANCH == "master"'
   variables:
     BUILD_DIR: "../build/offline"

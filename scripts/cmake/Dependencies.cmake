@@ -127,11 +127,10 @@ if(OGS_USE_MFRONT)
     endif()
 endif()
 
-string(REPLACE "." "_" BOOST_VERSION_UNDESCORE ${ogs.minimum_version.boost})
 CPMFindPackage(
     NAME Boost
     VERSION ${ogs.minimum_version.boost}
-    URL https://boostorg.jfrog.io/artifactory/main/release/${ogs.minimum_version.boost}/source/boost_${BOOST_VERSION_UNDESCORE}.tar.gz
+    URL https://gitlab.opengeosys.org/ogs/libs/boost-subset/-/jobs/187805/artifacts/raw/ogs-boost-${ogs.minimum_version.boost}.tar.gz
 )
 if(Boost_ADDED)
     add_library(Boost::boost INTERFACE IMPORTED)
