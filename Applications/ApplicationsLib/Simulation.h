@@ -31,6 +31,7 @@ public:
     double endTime() const;
     bool executeTimeStep();
     bool executeSimulation();
+    void outputLastTimeStep() const;
 
     std::optional<ApplicationsLib::TestDefinition> getTestDefinition();
 
