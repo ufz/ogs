@@ -33,7 +33,7 @@ public:
     bool executeSimulation();
     void outputLastTimeStep() const;
 
-    std::optional<ApplicationsLib::TestDefinition> getTestDefinition();
+    std::optional<ApplicationsLib::TestDefinition> getTestDefinition() const;
 
     ~Simulation();
 

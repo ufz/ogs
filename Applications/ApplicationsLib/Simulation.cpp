@@ -148,6 +148,7 @@ void Simulation::outputLastTimeStep() const
 }
 
 std::optional<ApplicationsLib::TestDefinition> Simulation::getTestDefinition()
+    const
 {
     return test_definition;
 }
