@@ -11,9 +11,12 @@ build docs:
       variables:
         DEPLOY: "true"
     - when: always
+  timeout: 15 minutes
   retry:
     max: 2
-    when: runner_system_failure
+    when:
+      - runner_system_failure
+      - job_execution_timeout
   variables:
     DOX_WARNINGS_THRESHOLD: 8
   script:
