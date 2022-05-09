@@ -3,6 +3,8 @@ create cpm cache:
   dependencies: [meta]
   tags: [shell, envinf]
   rules:
+    - if: $CI_COMMIT_TITLE == "[versions] Updated cpm cache info."
+      when: never
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       changes:
         - scripts/cmake/CMakeSetup.cmake
@@ -68,6 +70,7 @@ offline configure:
     - job: meta
   tags: [shell, envinf]
   rules:
+    - if: $CI_COMMIT_TITLE == "[versions] Updated cpm cache info."
     - if: '$CI_COMMIT_BRANCH == "master"'
   variables:
     BUILD_DIR: "../build/offline"
