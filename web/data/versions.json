@@ -66,8 +66,8 @@
     }
   },
   "cpm": {
-    "package_file_id": 34,
-    "package_file_sha256": "ed2ebadaf618b4eccc468bfe1983ccb25db849490096bd1da32fe44f6b674a09"
+    "package_file_id": 64,
+    "package_file_sha256": "28548d4935467925d871675866a1e97f8d1e2180924388847d86562508543c9d"
   },
   "ext": {
     "cache_hash": "2887a47993a6288fbfa2594a6c19cffb442b8130"
