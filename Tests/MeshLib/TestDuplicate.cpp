@@ -21,7 +21,6 @@
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshQuality/MeshValidation.h"
 #include "MeshLib/Node.h"
 
 TEST(MeshLib, Duplicate)

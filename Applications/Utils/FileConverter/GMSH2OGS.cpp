@@ -36,7 +36,6 @@
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshInformation.h"
-#include "MeshLib/MeshQuality/MeshValidation.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 
 static std::unique_ptr<MeshLib::Mesh> createMeshFromElements(
