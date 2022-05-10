@@ -43,6 +43,8 @@ create cpm cache:
         jq -r ".cpm.package_file_id = ${_cpm_package_file_id}" ${_versions_file} | sponge ${_versions_file}
         jq -r ".cpm.package_file_sha256 = ${_cpm_package_file_hash}" ${_versions_file} | sponge ${_versions_file}
         cd $CI_PROJECT_DIR
+        # Remove merge commit:
+        if [ $(git show --no-patch --format="%P" HEAD | wc -w) -eq 2 ]; then git checkout HEAD^2; fi
         git diff
         git add ${_versions_file}
         git commit -m "[versions] Updated cpm cache info."
