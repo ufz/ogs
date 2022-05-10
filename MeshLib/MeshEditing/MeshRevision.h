@@ -49,7 +49,7 @@ public:
     virtual ~MeshRevision() = default;
 
     /// Returns the number of potentially collapsible nodes
-    unsigned getNumberOfCollapsableNodes(
+    unsigned getNumberOfCollapsibleNodes(
         double eps = std::numeric_limits<double>::epsilon()) const;
 
     /// Designates nodes to be collapsed by setting their ID to the index of the
