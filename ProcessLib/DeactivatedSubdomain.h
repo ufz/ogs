@@ -46,9 +46,17 @@ struct DeactivatedSubdomainMesh
         std::vector<MeshLib::Node*>&& inner_nodes_,
         std::vector<MeshLib::Node*>&& outer_nodes_);
 
+    /// A mesh created from material ids (independent of time) for the
+    /// deactivated subdomain.
     std::unique_ptr<MeshLib::Mesh> const mesh;
     std::vector<std::size_t> const bulk_element_ids;
+
+    /// Inner nodes owned only by elements of the deactivated subdomain.
+    /// \see ProcessLib::createDeactivatedSubdomainMesh()
     std::vector<MeshLib::Node*> const inner_nodes;
+    /// Outer nodes owned by elements of the deactivated subdomain as well as
+    /// other elements not being part of this deactivated subdomain mesh.
+    /// \see ProcessLib::createDeactivatedSubdomainMesh()
     std::vector<MeshLib::Node*> const outer_nodes;
 };
 
