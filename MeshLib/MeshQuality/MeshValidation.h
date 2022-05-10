@@ -29,9 +29,25 @@ namespace MeshLib {
  */
 struct MeshValidation final
 {
-    /// Constructor
-    /// \warning This might change the mesh when removing unused mesh nodes.
-    explicit MeshValidation(MeshLib::Mesh& mesh);
+    /**
+     * Tests if all nodes of the mesh are used in an element.
+     * @param mesh The mesh that is tested
+     * @return true, if all nodes are used, else false
+     */
+    static bool allNodesUsed(MeshLib::Mesh const& mesh);
+
+    /**
+     * Tests if nodes of the mesh can be collapsed.
+     * @param mesh The mesh that is tested
+     * @return true, if nodes can be collapsed, else false
+     */
+    static bool existCollapsibleNodes(MeshLib::Mesh& mesh);
+
+    /**
+     * Prints evaluation data computed by testElementGeometry.
+     * @param mesh The mesh that is tested
+     */
+    static void evaluateElementGeometry(MeshLib::Mesh const& mesh);
 
     /**
      * Tests if elements are geometrically correct.

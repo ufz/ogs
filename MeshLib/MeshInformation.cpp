@@ -131,7 +131,10 @@ void MeshInformation::writePropertyVectorInformation(const MeshLib::Mesh& mesh)
 
 void MeshInformation::writeMeshValidationResults(MeshLib::Mesh& mesh)
 {
-    MeshLib::MeshValidation validation(mesh);
+    INFO("Mesh Quality Control:");
+    MeshLib::MeshValidation::allNodesUsed(mesh);
+    MeshLib::MeshValidation::existCollapsibleNodes(mesh);
+    MeshLib::MeshValidation::evaluateElementGeometry(mesh);
 
     unsigned const n_holes(MeshLib::MeshValidation::detectHoles(mesh));
     if (n_holes > 0)

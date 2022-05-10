@@ -61,20 +61,29 @@ static void trackSurface(MeshLib::Element const* const element,
     }
 }
 
-MeshValidation::MeshValidation(MeshLib::Mesh& mesh)
+bool MeshValidation::allNodesUsed(MeshLib::Mesh const& mesh)
 {
-    INFO("Mesh Quality Control:");
     INFO("Looking for unused nodes...");
     NodeSearch ns(mesh);
     ns.searchUnused();
     if (!ns.getSearchedNodeIDs().empty())
     {
         INFO("{:d} unused mesh nodes found.", ns.getSearchedNodeIDs().size());
+        return false;
     }
-    MeshRevision rev(mesh);
-    INFO("Found {:d} potentially collapsible nodes.",
-         rev.getNumberOfCollapsableNodes());
+    return true;
+}
 
+bool MeshValidation::existCollapsibleNodes(MeshLib::Mesh& mesh)
+{
+    MeshRevision const rev(mesh);
+    INFO("Found {:d} potentially collapsible nodes.",
+         rev.getNumberOfCollapsibleNodes());
+    return (rev.getNumberOfCollapsibleNodes() > 0);
+}
+
+void MeshValidation::evaluateElementGeometry(MeshLib::Mesh const& mesh)
+{
     const std::vector<ElementErrorCode> codes(
         MeshLib::MeshValidation::testElementGeometry(mesh));
     std::array<std::string,
