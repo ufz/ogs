@@ -313,14 +313,8 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
     auto is_active_in_subdomain = [&](std::size_t const element_id,
                                       DeactivatedSubdomain const& ds) -> bool
     {
-        if (!ds.isInTimeSupportInterval(time))
-        {
-            return true;
-        }
-
-        auto const& e = *_mesh.getElement(element_id);
-        auto ret = !ds.isDeactivated(e, time);
-        return ret;
+        return (!ds.isInTimeSupportInterval(time)) ||
+               !ds.isDeactivated(*_mesh.getElement(element_id), time);
     };
 
     auto const number_of_elements = _mesh.getNumberOfElements();
