@@ -53,6 +53,7 @@ extractInnerAndOuterNodes(MeshLib::Mesh const& mesh,
             auto const bulk_node = mesh.getNode((*bulk_node_ids)[n->getID()]);
             const auto& connected_elements =
                 mesh.getElementsConnectedToNode(*bulk_node);
+            // Check whether this node is connected only to an active
             // elements. Then it is an inner node, and outer otherwise.
             return std::all_of(begin(connected_elements),
                                end(connected_elements), is_active);
