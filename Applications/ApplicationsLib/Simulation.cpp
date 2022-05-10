@@ -141,7 +141,14 @@ bool Simulation::executeSimulation()
     return time_loop.successful_time_step;
 }
 
+void Simulation::outputLastTimeStep() const
+{
+    auto const& time_loop = project_data->getTimeLoop();
+    time_loop.outputLastTimeStep();
+}
+
 std::optional<ApplicationsLib::TestDefinition> Simulation::getTestDefinition()
+    const
 {
     return test_definition;
 }
