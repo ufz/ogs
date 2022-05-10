@@ -332,8 +332,7 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
                         [&](auto const& ds)
                         { return is_active_in_subdomain(element_id, *ds); }))
         {
-            _ids_of_active_elements.push_back(
-                _mesh.getElement(element_id)->getID());
+            _ids_of_active_elements.push_back(element_id);
         }
     }
 }
