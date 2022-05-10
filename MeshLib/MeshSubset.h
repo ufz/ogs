@@ -75,18 +75,6 @@ public:
     /// return this mesh ID
     std::size_t getMeshID() const { return _msh.getID(); }
 
-    /// return the number of registered nodes
-    std::size_t getNumberOfNodes() const { return _nodes.size(); }
-
-    /// Returns the global node id Node::getID() of i-th node in the mesh
-    /// subset.
-    /// \pre The _nodes vector must be of size > i.
-    std::size_t getNodeID(std::size_t const i) const
-    {
-        assert(i < _nodes.size());
-        return _nodes[i]->getID();
-    }
-
     bool useTaylorHoodElements() const { return _use_taylor_hood_elements; }
 
     std::vector<Element*>::const_iterator elementsBegin() const
