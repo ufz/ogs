@@ -472,7 +472,7 @@ POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
     double sqr_min_dist = (max_point - min_point).squaredNorm();
     POINT* nearest_pnt(nullptr);
 
-    std::array<double, 6> dists(getPointCellBorderDistances(pnt, coords));
+    std::array<double, 6> const dists(getPointCellBorderDistances(pnt, coords));
 
     if (calcNearestPointInGridCell(pnt, coords, sqr_min_dist, nearest_pnt))
     {

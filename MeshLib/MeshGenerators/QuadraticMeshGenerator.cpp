@@ -184,7 +184,7 @@ std::unique_ptr<MeshLib::Element> createQuadraticElement(
 
 struct nodeByCoordinatesComparator
 {
-    bool operator()(MeshLib::Node* a, MeshLib::Node* b) const
+    bool operator()(MeshLib::Node const* a, MeshLib::Node const* b) const
     {
         return *a < *b;
     }
