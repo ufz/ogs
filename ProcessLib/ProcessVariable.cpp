@@ -310,7 +310,7 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
         return;
     }
 
-    auto is_active_in_subdomain = [&](std::size_t const i,
+    auto is_active_in_subdomain = [&](std::size_t const element_id,
                                       DeactivatedSubdomain const& ds) -> bool
     {
         if (!ds.isInTimeSupportInterval(time))
@@ -318,19 +318,22 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
             return true;
         }
 
-        auto const& e = *_mesh.getElement(i);
+        auto const& e = *_mesh.getElement(element_id);
         auto ret = !ds.isDeactivated(e, time);
         return ret;
     };
 
     auto const number_of_elements = _mesh.getNumberOfElements();
-    for (std::size_t i = 0; i < number_of_elements; i++)
+    for (std::size_t element_id = 0; element_id < number_of_elements;
+         element_id++)
     {
-        if (std::all_of(
-                begin(_deactivated_subdomains), end(_deactivated_subdomains),
-                [&](auto const& ds) { return is_active_in_subdomain(i, *ds); }))
+        if (std::all_of(begin(_deactivated_subdomains),
+                        end(_deactivated_subdomains),
+                        [&](auto const& ds)
+                        { return is_active_in_subdomain(element_id, *ds); }))
         {
-            _ids_of_active_elements.push_back(_mesh.getElement(i)->getID());
+            _ids_of_active_elements.push_back(
+                _mesh.getElement(element_id)->getID());
         }
     }
 }
