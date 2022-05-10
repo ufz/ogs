@@ -35,7 +35,7 @@ namespace GMSH
 static std::ostream& operator<<(std::ostream& os,
                                 std::vector<GMSHPoint*> const& points)
 {
-    for (auto& point : points)
+    for (auto const& point : points)
     {
         if (point)
         {
