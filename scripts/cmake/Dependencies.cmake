@@ -453,11 +453,17 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" AND OGS_BUILD_TESTING)
     endif()
 endif()
 
+CPMAddPackage(
+    NAME GroupSourcesByFolder.cmake
+    GITHUB_REPOSITORY TheLartians/GroupSourcesByFolder.cmake VERSION 1.0
+)
+
 if(OGS_BUILD_UTILS)
     CPMAddPackage(
         NAME metis
-        GITHUB_REPOSITORY scibuilder/metis
-        GIT_TAG 982842a5ace9b3da2b2800817eb9e5fd3b42966b
+        GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/metis.git
+        GIT_TAG 6596bee9cb316455df9ae4192df13d3ee7a73805
+        VERSION 5.1.0
         DOWNLOAD_ONLY YES
     )
     include(${PROJECT_SOURCE_DIR}/scripts/cmake/MetisSetup.cmake)
@@ -505,11 +511,6 @@ CPMAddPackage(
 cpm_licenses_create_disclaimer_target(
     write-licenses "${PROJECT_BINARY_DIR}/third_party_licenses.txt"
     "${CPM_PACKAGES}"
-)
-
-CPMAddPackage(
-    NAME GroupSourcesByFolder.cmake
-    GITHUB_REPOSITORY TheLartians/GroupSourcesByFolder.cmake VERSION 1.0
 )
 
 unset(CMAKE_FOLDER)
