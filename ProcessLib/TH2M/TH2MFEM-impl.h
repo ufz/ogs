@@ -263,13 +263,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
             sigma_sw = sigma_sw_prev;
 
-            using DimMatrix = Eigen::Matrix<double, 3, 3>;
             auto const sigma_sw_dot =
                 MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
-                    solid_phase
-                        .property(MPL::PropertyType::swelling_stress_rate)
-                        .template value<DimMatrix>(vars, vars_prev, pos, t,
-                                                   dt));
+                    MPL::formEigenTensor<3>(
+                        solid_phase[MPL::PropertyType::swelling_stress_rate]
+                            .value(vars, vars_prev, pos, t, dt)));
             sigma_sw += sigma_sw_dot * dt;
         }
 
