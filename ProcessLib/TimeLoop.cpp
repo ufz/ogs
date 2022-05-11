@@ -353,8 +353,8 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
 
         const double solution_error = computeSolutionError(i);
 
-        timestep_algorithm->setAccepted(
-            ppd.nonlinear_solver_status.error_norms_met, ppd.timestep_current);
+        ppd.timestep_current.setAccepted(
+            ppd.nonlinear_solver_status.error_norms_met);
 
         auto [previous_step_accepted, timestepper_dt] =
             timestep_algorithm->next(

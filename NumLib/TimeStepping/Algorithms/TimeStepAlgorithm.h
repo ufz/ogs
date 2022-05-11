@@ -65,15 +65,6 @@ public:
         return ts_current.isAccepted();
     }
 
-    /// Set the status of the step.
-    /// \param accepted A boolean parameter is needed to indicated whether the
-    /// step is accepted or not.
-    /// \param ts_current the current time step the accepted flag will be set to
-    void setAccepted(bool accepted, TimeStep& ts_current)
-    {
-        ts_current.setAccepted(accepted);
-    }
-
     /// Get a flag to indicate whether this algorithm needs to compute
     /// solution error. The default return value is false.
     virtual bool isSolutionErrorComputationNeeded() const { return false; }
