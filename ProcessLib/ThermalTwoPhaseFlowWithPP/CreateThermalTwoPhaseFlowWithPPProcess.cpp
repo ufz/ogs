@@ -51,7 +51,7 @@ void checkMPLProperties(
 
     std::array const required_property_vapour_component = {
         MaterialPropertyLib::specific_heat_capacity,
-        MaterialPropertyLib::diffusion, MaterialPropertyLib::molar_mass,
+        MaterialPropertyLib::pore_diffusion, MaterialPropertyLib::molar_mass,
         MaterialPropertyLib::specific_latent_heat,
         MaterialPropertyLib::vapour_pressure};
 
@@ -59,13 +59,13 @@ void checkMPLProperties(
         MaterialPropertyLib::specific_heat_capacity,
         MaterialPropertyLib::molar_mass};
 
-    std::array const required_property_contam_vapour_component = {
-        MaterialPropertyLib::diffusion,
+    std::array const required_property_contaminant_vapour_component = {
+        MaterialPropertyLib::pore_diffusion,
         MaterialPropertyLib::specific_heat_capacity,
         MaterialPropertyLib::henry_constant, MaterialPropertyLib::molar_mass};
 
-    std::array const required_property_dissolved_contam_component = {
-        MaterialPropertyLib::diffusion};
+    std::array const required_property_dissolved_contaminant_component = {
+        MaterialPropertyLib::pore_diffusion};
 
     for (auto const& m : media)
     {
@@ -83,9 +83,10 @@ void checkMPLProperties(
         checkRequiredProperties(gas_phase.component("a"),
                                 required_property_dry_air_component);
         checkRequiredProperties(gas_phase.component("c"),
-                                required_property_contam_vapour_component);
-        checkRequiredProperties(liquid_phase.component("c"),
-                                required_property_dissolved_contam_component);
+                                required_property_contaminant_vapour_component);
+        checkRequiredProperties(
+            liquid_phase.component("c"),
+            required_property_dissolved_contaminant_component);
     }
 }
 

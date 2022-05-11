@@ -239,13 +239,12 @@ private:
 
     static const int nonwet_pressure_matrix_index = 0;
     static const int cap_pressure_matrix_index = ShapeFunction::NPOINTS;
-    static const int tot_mol_frac_contam_matrix_index =
-        2 * ShapeFunction::NPOINTS;
+    static const int contaminant_matrix_index = 2 * ShapeFunction::NPOINTS;
     static const int temperature_matrix_index = 3 * ShapeFunction::NPOINTS;
 
     static const int nonwet_pressure_size = ShapeFunction::NPOINTS;
     static const int cap_pressure_size = ShapeFunction::NPOINTS;
-    static const int tot_mol_frac_contam_size = ShapeFunction::NPOINTS;
+    static const int contaminant_size = ShapeFunction::NPOINTS;
     static const int temperature_size = ShapeFunction::NPOINTS;
 };
 
