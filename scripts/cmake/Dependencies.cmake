@@ -354,6 +354,9 @@ else()
             EXCLUDE_FROM_ALL YES
         )
     endif()
+    if(UNIX)
+        list(APPEND _hdf5_options "HDF5_ENABLE_Z_LIB_SUPPORT ON")
+    endif()
 
     CPMFindPackage(
         NAME HDF5
