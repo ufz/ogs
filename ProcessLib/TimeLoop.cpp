@@ -313,11 +313,10 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
     bool last_step_rejected = false;
     constexpr double eps = std::numeric_limits<double>::epsilon();
 
-    bool const is_initial_step = std::any_of(
-        _per_process_data.begin(), _per_process_data.end(),
-        [](auto const& ppd) -> bool {
-            return ppd->timestep_algorithm->getTimeStep().timeStepNumber() == 0;
-        });
+    bool const is_initial_step =
+        std::any_of(_per_process_data.begin(), _per_process_data.end(),
+                    [](auto const& ppd) -> bool
+                    { return ppd->timestep_current.timeStepNumber() == 0; });
 
     auto computeSolutionError = [this, t](auto const i) -> double
     {
@@ -354,12 +353,13 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
 
         const double solution_error = computeSolutionError(i);
 
-        timestep_algorithm->setAccepted(
+        ppd.timestep_current.setAccepted(
             ppd.nonlinear_solver_status.error_norms_met);
 
         auto [previous_step_accepted, timestepper_dt] =
             timestep_algorithm->next(
-                solution_error, ppd.nonlinear_solver_status.number_iterations);
+                solution_error, ppd.nonlinear_solver_status.number_iterations,
+                ppd.timestep_previous, ppd.timestep_current);
 
         if (!previous_step_accepted &&
             // In case of FixedTimeStepping, which makes
@@ -444,11 +444,14 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
     // Update the solution of the previous time step.
     for (std::size_t i = 0; i < _per_process_data.size(); i++)
     {
-        const auto& ppd = *_per_process_data[i];
+        auto& ppd = *_per_process_data[i];
         auto& timestep_algorithm = ppd.timestep_algorithm;
         if (all_process_steps_accepted)
         {
-            timestep_algorithm->resetCurrentTimeStep(dt);
+            NumLib::updateTimeSteps(dt, ppd.timestep_previous,
+                                    ppd.timestep_current);
+            timestep_algorithm->resetCurrentTimeStep(dt, ppd.timestep_previous,
+                                                     ppd.timestep_current);
         }
 
         if (t == timestep_algorithm->begin())
@@ -670,7 +673,9 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
                 "for process #{:d}.",
                 timestep_id, t, process_id);
 
-            if (!process_data->timestep_algorithm->canReduceTimestepSize())
+            if (!process_data->timestep_algorithm->canReduceTimestepSize(
+                    process_data->timestep_current,
+                    process_data->timestep_previous))
             {
                 // save unsuccessful solution
                 _output->doOutputAlways(

@@ -29,6 +29,9 @@ static std::unique_ptr<ProcessData> makeProcessData(
 {
     using Tag = NumLib::NonlinearSolverTag;
 
+    NumLib::TimeStep previous_timestep(timestepper->begin());
+    NumLib::TimeStep current_timestep(previous_timestep);
+
     if (auto* nonlinear_solver_picard =
             dynamic_cast<NumLib::NonlinearSolver<Tag::Picard>*>(
                 &nonlinear_solver))
@@ -36,8 +39,9 @@ static std::unique_ptr<ProcessData> makeProcessData(
         nonlinear_solver_picard->compensateNonEquilibriumInitialResiduum(
             compensate_non_equilibrium_initial_residuum);
         return std::make_unique<ProcessData>(
-            std::move(timestepper), Tag::Picard, *nonlinear_solver_picard,
-            std::move(conv_crit), std::move(time_disc), process_id, process);
+            previous_timestep, current_timestep, std::move(timestepper),
+            Tag::Picard, *nonlinear_solver_picard, std::move(conv_crit),
+            std::move(time_disc), process_id, process);
     }
     if (auto* nonlinear_solver_newton =
             dynamic_cast<NumLib::NonlinearSolver<Tag::Newton>*>(
@@ -46,6 +50,7 @@ static std::unique_ptr<ProcessData> makeProcessData(
         nonlinear_solver_newton->compensateNonEquilibriumInitialResiduum(
             compensate_non_equilibrium_initial_residuum);
         return std::make_unique<ProcessData>(
+            std::move(previous_timestep), std::move(current_timestep),
             std::move(timestepper), Tag::Newton, *nonlinear_solver_newton,
             std::move(conv_crit), std::move(time_disc), process_id, process);
     }
@@ -54,8 +59,9 @@ static std::unique_ptr<ProcessData> makeProcessData(
             dynamic_cast<NumLib::PETScNonlinearSolver*>(&nonlinear_solver))
     {
         return std::make_unique<ProcessData>(
-            std::move(timestepper), Tag::Newton, *nonlinear_solver_petsc,
-            std::move(conv_crit), std::move(time_disc), process_id, process);
+            previous_timestep, current_timestep, std::move(timestepper),
+            Tag::Newton, *nonlinear_solver_petsc, std::move(conv_crit),
+            std::move(time_disc), process_id, process);
     }
 #endif  // USE_PETSC
 

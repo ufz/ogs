@@ -37,11 +37,14 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
     vec_t.push_back(algorithm.begin());
 
     const double end_time = algorithm.end();
+    NumLib::TimeStep current_timestep(algorithm.begin());
+    NumLib::TimeStep previous_timestep(algorithm.begin());
 
     double const solution_error = 0;
     for (auto const& i : number_iterations)
     {
-        auto[step_accepted, timestepper_dt] = algorithm.next(solution_error, i);
+        auto [step_accepted, timestepper_dt] = algorithm.next(
+            solution_error, i, previous_timestep, current_timestep);
         if (!step_accepted)
         {
             break;
@@ -50,25 +53,29 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
         if (!fixed_output_times.empty())
         {
             timestepper_dt = NumLib::possiblyClampDtToNextFixedTime(
-                algorithm.getTimeStep().current(), timestepper_dt,
-                fixed_output_times);
+                current_timestep.current(), timestepper_dt, fixed_output_times);
         }
 
         timestepper_dt =
-            (algorithm.getTimeStep().current() + timestepper_dt > end_time)
-                ? end_time - algorithm.getTimeStep().current()
+            (current_timestep.current() + timestepper_dt > end_time)
+                ? end_time - current_timestep.current()
                 : timestepper_dt;
 
-        algorithm.resetCurrentTimeStep(timestepper_dt);
-        NumLib::TimeStep t = algorithm.getTimeStep();
+        NumLib::updateTimeSteps(timestepper_dt, previous_timestep,
+                                current_timestep);
+        algorithm.resetCurrentTimeStep(timestepper_dt, previous_timestep,
+                                       current_timestep);
         // INFO("t: n={:d},t={:g},dt={:g}", t.steps(), t.current(), t.dt());
         if (obj)
         {
             (*obj)(algorithm);  // do something
         }
-        if (algorithm.accepted()) {
-            vec_t.push_back(t.current());
-        } else {
+        if (algorithm.accepted(current_timestep))
+        {
+            vec_t.push_back(current_timestep.current());
+        }
+        else
+        {
             //INFO("*** rejected.");
         }
     }

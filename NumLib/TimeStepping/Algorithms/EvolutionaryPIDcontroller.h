@@ -63,11 +63,15 @@ public:
     }
 
     std::tuple<bool, double> next(double solution_error,
-                                  int number_iterations) override;
+                                  int number_iterations,
+                                  NumLib::TimeStep& timestep_previous,
+                                  NumLib::TimeStep& timestep_current) override;
 
     bool isSolutionErrorComputationNeeded() const override { return true; }
 
-    virtual bool canReduceTimestepSize() const override;
+    virtual bool canReduceTimestepSize(
+        NumLib::TimeStep const& timestep_previous,
+        NumLib::TimeStep const& timestep_current) const override;
 
 private:
     const double _kP = 0.075;  ///< Parameter. \see EvolutionaryPIDcontroller
@@ -96,11 +100,13 @@ private:
      * @param h_new                   The computed time step size.
      * @param previous_step_accepted  An indicator for whether the previous time
      *                                step is rejected.
+     * @param timestep_current the current time step
      * @return                        The new time step after apply
      *                                the constrains.
      */
     double limitStepSize(const double h_new,
-                         const bool previous_step_accepted) const;
+                         const bool previous_step_accepted,
+                         NumLib::TimeStep const& timestep_current) const;
 };
 
 }  // end of namespace NumLib

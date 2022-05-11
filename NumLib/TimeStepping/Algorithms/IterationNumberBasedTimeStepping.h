@@ -92,19 +92,24 @@ public:
 
     ~IterationNumberBasedTimeStepping() override = default;
 
-    std::tuple<bool, double> next(double solution_error,
-                                  int number_iterations) override;
+    std::tuple<bool, double> next(double solution_error, int number_iterations,
+                                  NumLib::TimeStep& ts_previous,
+                                  NumLib::TimeStep& ts_current) override;
 
     bool isSolutionErrorComputationNeeded() const override { return true; }
 
-    bool canReduceTimestepSize() const override;
+    bool canReduceTimestepSize(
+        NumLib::TimeStep const& timestep_previous,
+        NumLib::TimeStep const& timestep_current) const override;
 
 private:
     /// Calculate the next time step size.
-    double getNextTimeStepSize() const;
+    double getNextTimeStepSize(NumLib::TimeStep const& ts_previous,
+                               NumLib::TimeStep const& ts_current) const;
 
     /// Find a multiplier for the given number of iterations.
-    double findMultiplier(int number_iterations) const;
+    double findMultiplier(int const number_iterations,
+                          NumLib::TimeStep const& ts_current) const;
 
     /// This vector stores the number of iterations to which the respective
     /// multiplier coefficient will be applied.

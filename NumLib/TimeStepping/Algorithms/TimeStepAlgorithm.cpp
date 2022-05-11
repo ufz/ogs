@@ -35,4 +35,12 @@ double possiblyClampDtToNextFixedTime(
 
     return dt;
 }
+
+bool canReduceTimestepSize(TimeStep const& timestep_previous,
+                           TimeStep const& timestep_current,
+                           double const min_dt)
+{
+    return !(timestep_current.dt() == min_dt &&
+             timestep_previous.dt() == min_dt);
+}
 }  // namespace NumLib

@@ -53,41 +53,42 @@ IterationNumberBasedTimeStepping::IterationNumberBasedTimeStepping(
 }
 
 std::tuple<bool, double> IterationNumberBasedTimeStepping::next(
-    double const /*solution_error*/, int const number_iterations)
+    double const /*solution_error*/, int const number_iterations,
+    NumLib::TimeStep& ts_previous, NumLib::TimeStep& ts_current)
 {
     _iter_times = number_iterations;
 
     if (_previous_time_step_accepted)
     {
-        _ts_prev = _ts_current;
+        ts_previous = ts_current;
     }
 
     // confirm current time and move to the next if accepted
-    if (accepted())
+    if (accepted(ts_current))
     {
         _previous_time_step_accepted = true;
         return std::make_tuple(_previous_time_step_accepted,
-                               getNextTimeStepSize());
+                               getNextTimeStepSize(ts_previous, ts_current));
     }
     else
     {
-        double dt = getNextTimeStepSize();
+        double dt = getNextTimeStepSize(ts_previous, ts_current);
         // In case it is the first time be rejected, re-computed dt again with
         // current dt
-        if (std::abs(dt - _ts_current.dt()) <
+        if (std::abs(dt - ts_current.dt()) <
             std::numeric_limits<double>::epsilon())
         {
             // time step was rejected, keep dt for the next dt computation.
-            _ts_prev =  // essentially equal to _ts_prev.dt = _ts_current.dt.
-                TimeStep{_ts_prev.previous(), _ts_prev.previous() + dt,
-                         _ts_prev.timeStepNumber()};
-            dt = getNextTimeStepSize();
+            ts_previous =  // essentially equal to _ts_prev.dt = _ts_current.dt.
+                TimeStep{ts_previous.previous(), ts_previous.previous() + dt,
+                         ts_previous.timeStepNumber()};
+            dt = getNextTimeStepSize(ts_previous, ts_current);
         }
 
         // time step was rejected, keep dt for the next dt computation.
-        _ts_prev =  // essentially equal to _ts_prev.dt = _ts_current.dt.
-            TimeStep{_ts_prev.previous(), _ts_prev.previous() + dt,
-                     _ts_prev.timeStepNumber()};
+        ts_previous =  // essentially equal to ts_previous.dt = _ts_current.dt.
+            TimeStep{ts_previous.previous(), ts_previous.previous() + dt,
+                     ts_previous.timeStepNumber()};
 
         _previous_time_step_accepted = false;
         return std::make_tuple(_previous_time_step_accepted, dt);
@@ -95,7 +96,7 @@ std::tuple<bool, double> IterationNumberBasedTimeStepping::next(
 }
 
 double IterationNumberBasedTimeStepping::findMultiplier(
-    int const number_iterations) const
+    int const number_iterations, NumLib::TimeStep const& ts_current) const
 {
     double multiplier = _multiplier_vector.front();
     for (std::size_t i = 0; i < _iter_times_vector.size(); i++)
@@ -106,7 +107,7 @@ double IterationNumberBasedTimeStepping::findMultiplier(
         }
     }
 
-    if (!_ts_current.isAccepted() && (multiplier >= 1.0))
+    if (!ts_current.isAccepted() && (multiplier >= 1.0))
     {
         return *std::min_element(_multiplier_vector.begin(),
                                  _multiplier_vector.end());
@@ -115,12 +116,14 @@ double IterationNumberBasedTimeStepping::findMultiplier(
     return multiplier;
 }
 
-double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
+double IterationNumberBasedTimeStepping::getNextTimeStepSize(
+    NumLib::TimeStep const& ts_previous,
+    NumLib::TimeStep const& ts_current) const
 {
     double dt = 0.0;
 
     // In first time step and first non-linear iteration take the initial dt.
-    if (_ts_prev.timeStepNumber() == 0 && _iter_times == 0)
+    if (ts_previous.timeStepNumber() == 0 && _iter_times == 0)
     {
         dt = _initial_dt;
     }
@@ -129,17 +132,18 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
         // Attention: for the first time step and second iteration the
         // ts_prev.dt is 0 and 0*multiplier is the next dt, which will be
         // clamped to the minimum dt.
-        dt = _ts_prev.dt() * findMultiplier(_iter_times);
+        dt = ts_previous.dt() * findMultiplier(_iter_times, ts_current);
     }
 
     return std::clamp(dt, _min_dt, _max_dt);
 }
 
-bool IterationNumberBasedTimeStepping::canReduceTimestepSize() const
+bool IterationNumberBasedTimeStepping::canReduceTimestepSize(
+    NumLib::TimeStep const& timestep_previous,
+    NumLib::TimeStep const& timestep_current) const
 {
-    // If current and previous dt are both at minimum dt, then cannot reduce
-    // further.
-    return !(_ts_current.dt() == _min_dt && _ts_prev.dt() == _min_dt);
+    return NumLib::canReduceTimestepSize(timestep_previous, timestep_current,
+                                         _min_dt);
 }
 
 }  // namespace NumLib
