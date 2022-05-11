@@ -31,7 +31,7 @@ const std::array<unsigned, 8> MeshRevision::_hex_diametral_nodes = {
 
 MeshRevision::MeshRevision(MeshLib::Mesh& mesh) : _mesh(mesh) {}
 
-unsigned MeshRevision::getNumberOfCollapsableNodes(double eps) const
+unsigned MeshRevision::getNumberOfCollapsibleNodes(double eps) const
 {
     std::vector<std::size_t> id_map(this->collapseNodeIndices(eps));
     std::size_t nNodes(id_map.size());

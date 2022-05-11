@@ -114,13 +114,13 @@ PointVec::PointVec(std::string const& name, std::vector<Point*>&& points,
     // create the inverse mapping
     _id_to_name_map.resize(_data_vec.size());
     // fetch the names from the name id map
-    for (auto& [name, id] : _name_id_map)
+    for (auto& [point_name, id] : _name_id_map)
     {
         if (id >= _id_to_name_map.size())
         {
             continue;
         }
-        _id_to_name_map[id] = name;
+        _id_to_name_map[id] = point_name;
     }
 }
 

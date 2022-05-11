@@ -305,12 +305,14 @@ void MeshComponentMap::createSerialMeshComponentMap(
     for (auto const& c : components)
     {
         std::size_t const mesh_id = c.getMeshID();
+        auto const& mesh_subset_nodes = c.getNodes();
         // mesh items are ordered first by node, cell, ....
-        for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
+        for (std::size_t j = 0; j < mesh_subset_nodes.size(); j++)
         {
-            _dict.insert(Line(
-                Location(mesh_id, MeshLib::MeshItemType::Node, c.getNodeID(j)),
-                comp_id, global_index++));
+            auto const node_id = mesh_subset_nodes[j]->getID();
+            _dict.insert(
+                Line(Location(mesh_id, MeshLib::MeshItemType::Node, node_id),
+                     comp_id, global_index++));
         }
         comp_id++;
     }
@@ -409,7 +411,7 @@ void MeshComponentMap::createParallelMeshComponentMap(
     int components_at_high_order_nodes = 0;
     for (auto const& c : components)
     {
-        if (partitioned_mesh.getNumberOfNodes() == c.getNumberOfNodes())
+        if (partitioned_mesh.getNumberOfNodes() == c.getNodes().size())
         {
             components_at_high_order_nodes++;
             num_unknowns += partitioned_mesh.getNumberOfGlobalNodes();
@@ -438,9 +440,9 @@ void MeshComponentMap::createParallelMeshComponentMap(
         const auto& sub_mesh_nodes = c.getNodes();
 
         // mesh items are ordered first by node, cell, ....
-        for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
+        for (std::size_t j = 0; j < sub_mesh_nodes.size(); j++)
         {
-            const auto node_id = c.getNodeID(j);
+            const auto node_id = sub_mesh_nodes[j]->getID();
             const bool is_base_node =
                 MeshLib::isBaseNode(*sub_mesh_nodes[j],
                                     partitioned_mesh.getElementsConnectedToNode(
@@ -479,7 +481,7 @@ void MeshComponentMap::createParallelMeshComponentMap(
         }
 
         bool const use_whole_nodes =
-            (partitioned_mesh.getNumberOfNodes() == c.getNumberOfNodes());
+            (partitioned_mesh.getNumberOfNodes() == c.getNodes().size());
         if (use_whole_nodes)
         {
             _num_global_dof += partitioned_mesh.getNumberOfGlobalNodes();
