@@ -70,13 +70,6 @@ std::vector<KineticReactant> createKineticReactants(
             mesh, name + "_avg", MeshLib::MeshItemType::Cell, 1);
         mesh_prop_molality->resize(mesh.getNumberOfElements());
 
-        if (chemical_formula.empty() && fix_amount)
-        {
-            OGS_FATAL(
-                "fix_amount can only be used if a chemical_formula has been "
-                "defined");
-        }
-
         kinetic_reactants.emplace_back(std::move(name),
                                        std::move(chemical_formula),
                                        molality,
