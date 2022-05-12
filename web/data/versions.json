@@ -107,7 +107,9 @@
             "ogscm": "toolchain.CC == \"mpicc\""
           },
           "cmake": [
-            "VTK_MODULE_ENABLE_VTK_IOParallelXML=YES"
+            "VTK_MODULE_ENABLE_VTK_IOParallelXML=YES",
+            "VTK_MODULE_ENABLE_VTK_ParallelMPI=YES",
+            "VTK_USE_MPI=ON"
           ]
         },
         {
