@@ -10,6 +10,11 @@
  *
  */
 
+#ifdef USE_PETSC
+#include <vtkMPIController.h>
+#include <vtkSmartPointer.h>
+#endif
+
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
 
@@ -39,6 +44,9 @@ public:
 
 private:
     ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup;
+#if defined(USE_PETSC)
+    vtkSmartPointer<vtkMPIController> controller;
+#endif
     std::unique_ptr<ProjectData> project_data;
     std::optional<ApplicationsLib::TestDefinition> test_definition;
 };
