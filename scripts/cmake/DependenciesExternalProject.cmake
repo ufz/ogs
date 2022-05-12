@@ -146,3 +146,58 @@ if(OGS_USE_LIS)
         find_package(LIS REQUIRED)
     endif()
 endif()
+
+# HDF5
+set(_hdf5_options
+    "-DHDF5_GENERATE_HEADERS=OFF"
+    "-DHDF5_BUILD_TOOLS=OFF"
+    "-DHDF5_BUILD_EXAMPLES=OFF"
+    "-DHDF5_BUILD_HL_LIB=OFF"
+    "-DHDF5_BUILD_FORTRAN=OFF"
+    "-DHDF5_BUILD_CPP_LIB=OFF"
+    "-DHDF5_BUILD_JAVA=OFF"
+    "-DBUILD_TESTING=OFF"
+    "-DHDF5_ENABLE_Z_LIB_SUPPORT=ON"
+)
+if(OGS_USE_MPI)
+    set(HDF5_PREFER_PARALLEL ON)
+    list(APPEND _hdf5_options "-DHDF5_ENABLE_PARALLEL=ON")
+endif()
+if(MSVC)
+    set(HDF5_USE_STATIC_LIBRARIES ON)
+    list(APPEND _hdf5_options "-DBUILD_SHARED_LIBS=OFF")
+endif()
+# Building from source requires newer hdf version
+string(REPLACE "." "_" HDF5_TAG ${ogs.tested_version.hdf5})
+
+set(_hdf5_source GIT_REPOSITORY https://github.com/HDFGroup/hdf5.git GIT_TAG
+                 hdf5-${HDF5_TAG}
+)
+set(_hdf5_source_file ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/hdf5-${HDF5_TAG}.zip)
+if(EXISTS ${_hdf5_source_file})
+    set(_hdf5_source URL ${_hdf5_source_file})
+else()
+    find_package(HDF5 ${ogs.minimum_version.hdf5})
+endif()
+if(NOT HDF5_FOUND)
+    BuildExternalProject(
+        HDF5 ${_hdf5_source} CMAKE_ARGS ${_hdf5_options} ${_install_dir}
+    )
+    message(
+        STATUS
+            "ExternalProject_Add(): added package HDF5@${ogs.tested_version.hdf5}"
+    )
+    set(HDF5_ROOT ${PROJECT_BINARY_DIR}/_ext/HDF5)
+
+    if(OGS_INSTALL_EXTERNAL_DEPENDENCIES)
+        set(HDF5_ROOT ${CMAKE_INSTALL_PREFIX} CACHE PATH "" FORCE)
+    else()
+        set(HDF5_ROOT ${PROJECT_BINARY_DIR}/_ext/HDF5 CACHE PATH "" FORCE)
+    endif()
+    find_package(HDF5 ${ogs.tested_version.hdf5} REQUIRED)
+endif()
+
+if(EXISTS ${HDF5_ROOT}/lib)
+    message(STATUS "RPATH: Appending ${HDF5_ROOT}/lib")
+    list(APPEND CMAKE_INSTALL_RPATH ${HDF5_ROOT}/lib)
+endif()

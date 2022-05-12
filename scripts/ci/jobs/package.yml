@@ -22,6 +22,7 @@ create cpm cache:
     - TFEL_RLIV_VERSION=$(jq -r '.minimum_version."tfel-rliv"' ${_versions_file})
     - PETSC_VERSION=$(jq -r '.minimum_version.petsc' ${_versions_file})
     - LIS_VERSION=$(jq -r '.minimum_version.lis' ${_versions_file})
+    - HDF5_VERSION=$(jq -r '.tested_version.hdf5' ${_versions_file})
     - rm -rf $BUILD_DIR
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
@@ -58,6 +59,7 @@ create cpm cache:
     - wget --no-verbose --output-document tfel-rliv-${TFEL_RLIV_VERSION}.zip https://github.com/thelfer/tfel/archive/refs/heads/rliv-${TFEL_RLIV_VERSION}.zip
     - wget --no-verbose --output-document petsc-v${PETSC_VERSION}.zip https://gitlab.com/petsc/petsc/-/archive/v${PETSC_VERSION}/petsc-v${PETSC_VERSION}.zip
     - wget --no-verbose --output-document lis-${LIS_VERSION}.zip https://github.com/anishida/lis/archive/refs/tags/${LIS_VERSION}.zip
+    - wget --no-verbose --output-document hdf5-${HDF5_VERSION}.zip https://github.com/HDFGroup/hdf5/archive/refs/tags/hdf5-${HDF5_VERSION//./_}.zip
     - cd ..
     - EXT_VERSION=$(find ext -type f -print0 | sort -z | xargs -r0  sha1sum | awk '{print $1}' | sha1sum | awk '{print $1}')
     - echo "EXT_VERSION=${EXT_VERSION}"
