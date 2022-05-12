@@ -54,12 +54,9 @@ ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
     auto const& medium = *_process_data.media_map->getMedium(_element.getID());
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& sm = shape_matrices[ip];
-        x_position.setIntegrationPoint(ip);
         _ip_data.emplace_back();
         auto& ip_data = _ip_data[ip];
         _ip_data[ip].integration_weight =
@@ -69,6 +66,11 @@ ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         ip_data.N = sm.N;
         ip_data.dNdx = sm.dNdx;
 
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(), ip,
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, sm.N))};
         // Initial porosity. Could be read from integration point data or mesh.
         ip_data.porosity = medium[MPL::porosity].template initialValue<double>(
             x_position,
@@ -121,16 +123,17 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
     auto const& medium = *_process_data.media_map->getMedium(_element.getID());
     MPL::VariableArray variables;
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         auto const& N = _ip_data[ip].N;
+
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(), ip,
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
@@ -225,18 +228,20 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
 
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
+
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(), ip,
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
 
         double T_ip;
         NumLib::shapeFunctionInterpolate(T, N, T_ip);
@@ -733,18 +738,20 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
 
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
+
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(), ip,
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
 
         double T_ip;
         NumLib::shapeFunctionInterpolate(T, N, T_ip);
@@ -1231,9 +1238,6 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
@@ -1242,8 +1246,13 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
         auto const& N = _ip_data[ip].N;
+
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(), ip,
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
 
         double T_ip;
         NumLib::shapeFunctionInterpolate(T, N, T_ip);
