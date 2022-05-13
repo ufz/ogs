@@ -40,3 +40,4 @@ target_compile_options(
     mpmetis PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-w>
                     $<$<CXX_COMPILER_ID:MSVC>:/W0>
 )
+install(TARGETS mpmetis RUNTIME DESTINATION bin)
