@@ -25,8 +25,9 @@ if(OGS_USE_MFRONT)
     if(NOT MFRONT)
         BuildExternalProject(
             TFEL ${_tfel_source} ${_install_dir}
-            CMAKE_ARGS -DCMAKE_INSTALL_RPATH=<INSTALL_DIR>/lib
-                       -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
+            CMAKE_ARGS "-DCMAKE_INSTALL_RPATH=<INSTALL_DIR>/lib"
+                       "-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE"
+                       "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
         )
         message(
             STATUS
@@ -161,7 +162,8 @@ else()
 endif()
 if(NOT ZLIB_FOUND)
     BuildExternalProject(
-        ZLIB ${_zlib_source} CMAKE_ARGS ${_zlib_options} ${_install_dir}
+        ZLIB ${_zlib_source} CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+                                        ${_install_dir}
     )
     message(
         STATUS
@@ -178,7 +180,7 @@ if(NOT ZLIB_FOUND)
 endif()
 
 if(EXISTS ${ZLIB_ROOT}/lib)
-    if(MSVC)
+    if(WIN32)
         file(INSTALL ${PROJECT_BINARY_DIR}/_ext/ZLIB/bin/
              DESTINATION ${CMAKE_INSTALL_BINDIR}
         )
@@ -190,6 +192,7 @@ endif()
 
 # HDF5
 set(_hdf5_options
+    "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
     "-DHDF5_GENERATE_HEADERS=OFF"
     "-DHDF5_BUILD_TOOLS=OFF"
     "-DHDF5_BUILD_EXAMPLES=OFF"
@@ -205,7 +208,7 @@ if(OGS_USE_MPI)
     set(HDF5_PREFER_PARALLEL ON)
     list(APPEND _hdf5_options "-DHDF5_ENABLE_PARALLEL=ON")
 endif()
-if(MSVC)
+if(WIN32)
     set(HDF5_USE_STATIC_LIBRARIES ON)
     list(APPEND _hdf5_options "-DBUILD_SHARED_LIBS=OFF")
 endif()
