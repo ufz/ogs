@@ -72,10 +72,7 @@ std::unique_ptr<Output> createOutput(
             //! \ogs_file_param{prj__time_loop__output__hdf__number_of_files}
             return hdf->getConfigParameter<unsigned int>("number_of_files");
         }
-        else
-        {
-            return 1;
-        }
+        return 1;
     }();
 
     auto const data_mode =
