@@ -236,13 +236,9 @@ bool Output::isOutputStep(int timestep, double const t) const
         }
     }
 
-    if (timestep % each_steps == 0)
-    {
-        return true;
-    }
-
-    return false;
+    return timestep % each_steps == 0;
 }
+
 bool Output::isOutputProcess(const int process_id, const Process& process) const
 {
     auto const n_processes = static_cast<int>(_process_to_pvd_file.size() /
