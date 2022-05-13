@@ -457,14 +457,14 @@ void Output::doOutputAlways(Process const& process,
         if (process.getMesh().getName() == mesh_output_name)
         {
             // process related output
-            output_meshes.push_back(process.getMesh());
+            output_meshes.emplace_back(process.getMesh());
         }
         else
         {
             // mesh related output
             auto const& submesh =
                 prepareSubmesh(mesh_output_name, process, process_id, t, xs);
-            output_meshes.push_back(submesh);
+            output_meshes.emplace_back(submesh);
         }
     }
 
