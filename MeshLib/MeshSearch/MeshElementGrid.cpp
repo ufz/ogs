@@ -45,9 +45,9 @@ MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& mesh)
     auto const& max_pnt(_aabb.getMaxPoint());
     auto const dim = getDimensions(min_pnt, max_pnt);
 
-    std::array<double, 3> delta{{max_pnt[0] - min_pnt[0],
-                                 max_pnt[1] - min_pnt[1],
-                                 max_pnt[2] - min_pnt[2]}};
+    std::array<double, 3> const delta{{max_pnt[0] - min_pnt[0],
+                                       max_pnt[1] - min_pnt[1],
+                                       max_pnt[2] - min_pnt[2]}};
 
     const std::size_t n_eles(mesh.getNumberOfElements());
     const std::size_t n_eles_per_cell(100);
