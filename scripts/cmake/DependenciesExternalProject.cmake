@@ -147,6 +147,47 @@ if(OGS_USE_LIS)
     endif()
 endif()
 
+# ZLIB
+set(_zlib_source GIT_REPOSITORY https://github.com/madler/zlib.git GIT_TAG
+                 v${ogs.tested_version.zlib}
+)
+set(_zlib_source_file
+    ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/zlib-${ogs.tested_version.zlib}.zip
+)
+if(EXISTS ${_zlib_source_file})
+    set(_zlib_source URL ${_zlib_source_file})
+else()
+    find_package(ZLIB)
+endif()
+if(NOT ZLIB_FOUND)
+    BuildExternalProject(
+        ZLIB ${_zlib_source} CMAKE_ARGS ${_zlib_options} ${_install_dir}
+    )
+    message(
+        STATUS
+            "ExternalProject_Add(): added package ZLIB@${ogs.tested_version.zlib}"
+    )
+    set(ZLIB_ROOT ${PROJECT_BINARY_DIR}/_ext/ZLIB)
+
+    if(OGS_INSTALL_EXTERNAL_DEPENDENCIES)
+        set(ZLIB_ROOT ${CMAKE_INSTALL_PREFIX} CACHE PATH "" FORCE)
+    else()
+        set(ZLIB_ROOT ${PROJECT_BINARY_DIR}/_ext/ZLIB CACHE PATH "" FORCE)
+    endif()
+    find_package(ZLIB ${ogs.tested_version.zlib} REQUIRED)
+endif()
+
+if(EXISTS ${ZLIB_ROOT}/lib)
+    if(MSVC)
+        file(INSTALL ${PROJECT_BINARY_DIR}/_ext/ZLIB/bin/
+             DESTINATION ${CMAKE_INSTALL_BINDIR}
+        )
+    else()
+        message(STATUS "RPATH: Appending ${ZLIB_ROOT}/lib")
+        list(APPEND CMAKE_INSTALL_RPATH ${ZLIB_ROOT}/lib)
+    endif()
+endif()
+
 # HDF5
 set(_hdf5_options
     "-DHDF5_GENERATE_HEADERS=OFF"
@@ -158,6 +199,7 @@ set(_hdf5_options
     "-DHDF5_BUILD_JAVA=OFF"
     "-DBUILD_TESTING=OFF"
     "-DHDF5_ENABLE_Z_LIB_SUPPORT=ON"
+    "-DZLIB_ROOT=${ZLIB_ROOT}"
 )
 if(OGS_USE_MPI)
     set(HDF5_PREFER_PARALLEL ON)
