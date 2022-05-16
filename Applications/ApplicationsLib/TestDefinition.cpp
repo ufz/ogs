@@ -214,8 +214,8 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
             OGS_FATAL(
                 "No files from test definitions were added for tests but {} "
                 "{:s} specified.",
-                size(vtkdiff_configs),
-                (size(vtkdiff_configs) == 1 ? "test was" : "tests were"));
+                std::size(vtkdiff_configs),
+                (std::size(vtkdiff_configs) == 1 ? "test was" : "tests were"));
         }
 
         auto const absolute_tolerance =

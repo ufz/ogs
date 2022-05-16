@@ -75,7 +75,10 @@ void VtkCompositeElementSelectionFilter::init()
                                       vtkDataObject::FIELD_ASSOCIATION_CELLS,
                                       _selection_name.c_str());
     threshold->SetSelectedComponent(0);
-    threshold->ThresholdBetween(thresholdLower, thresholdUpper);
+    threshold->SetThresholdFunction(
+        vtkThreshold::ThresholdType::THRESHOLD_BETWEEN);
+    threshold->SetLowerThreshold(thresholdLower);
+    threshold->SetUpperThreshold(thresholdUpper);
     threshold->Update();
 
     QList<QVariant> thresholdRangeList;
@@ -101,7 +104,12 @@ void VtkCompositeElementSelectionFilter::SetUserVectorProperty(
     if (name.compare("Threshold Between") == 0)
     {
         static_cast<vtkThreshold*>(_outputAlgorithm)
-            ->ThresholdBetween(values[0].toDouble(), values[1].toDouble());
+            ->SetThresholdFunction(
+                vtkThreshold::ThresholdType::THRESHOLD_BETWEEN);
+        static_cast<vtkThreshold*>(_outputAlgorithm)
+            ->SetLowerThreshold(values[0].toDouble());
+        static_cast<vtkThreshold*>(_outputAlgorithm)
+            ->SetUpperThreshold(values[1].toDouble());
     }
 }
 

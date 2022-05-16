@@ -108,9 +108,14 @@ public:
      * object when a setting has been parsed.
      */
     class SubtreeIterator
-        : public std::iterator<std::input_iterator_tag, ConfigTree>
     {
     public:
+        using iterator_category = std::input_iterator_tag;
+        using value_type = ConfigTree;
+        using difference_type = std::ptrdiff_t;
+        using pointer = ConfigTree*;
+        using reference = ConfigTree&;
+
         using Iterator = boost::property_tree::ptree::const_assoc_iterator;
 
         explicit SubtreeIterator(Iterator const& it, std::string const& root,
@@ -189,9 +194,14 @@ public:
      */
     template <typename ValueType>
     class ValueIterator
-        : public std::iterator<std::input_iterator_tag, ValueType>
     {
     public:
+        using iterator_category = std::input_iterator_tag;
+        using value_type = ConfigTree;
+        using difference_type = std::ptrdiff_t;
+        using pointer = ConfigTree*;
+        using reference = ConfigTree&;
+
         using Iterator = boost::property_tree::ptree::const_assoc_iterator;
 
         explicit ValueIterator(Iterator const& it, std::string const& root,

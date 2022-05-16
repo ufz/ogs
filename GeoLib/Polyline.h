@@ -53,9 +53,14 @@ class Polyline : public GeoObject
 {
 public:
     class SegmentIterator final
-        : public std::iterator<std::forward_iterator_tag, LineSegment>
     {
     public:
+        using iterator_category = std::forward_iterator_tag;
+        using value_type = LineSegment;
+        using difference_type = std::ptrdiff_t;
+        using pointer = LineSegment*;
+        using reference = LineSegment&;
+
         explicit SegmentIterator(Polyline const& polyline,
                                  std::size_t segment_number);
 

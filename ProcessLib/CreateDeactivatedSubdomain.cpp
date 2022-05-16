@@ -287,9 +287,9 @@ createDeactivatedSubdomains(
         auto const deactivated_subdomain_configs =
             //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain}
             subdomains_config->getConfigSubtreeList("deactivated_subdomain");
-        std::transform(begin(deactivated_subdomain_configs),
-                       end(deactivated_subdomain_configs),
-                       back_inserter(deactivated_subdomains),
+        std::transform(std::begin(deactivated_subdomain_configs),
+                       std::end(deactivated_subdomain_configs),
+                       std::back_inserter(deactivated_subdomains),
                        [&](auto const& config) {
                            return createDeactivatedSubdomain(
                                config, mesh, parameters, curves);

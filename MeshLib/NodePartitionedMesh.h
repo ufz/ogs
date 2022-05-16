@@ -70,7 +70,7 @@ public:
         const std::vector<Node*>& nodes,
         const std::vector<std::size_t>& glb_node_ids,
         const std::vector<Element*>& elements,
-        Properties properties,
+        Properties const& properties,
         const std::size_t n_global_base_nodes,
         const std::size_t n_global_nodes,
         const std::size_t n_active_nodes,

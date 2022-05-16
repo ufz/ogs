@@ -14,6 +14,7 @@
 
 #include "Polygon.h"
 
+#include <algorithm>
 #include <boost/math/constants/constants.hpp>
 
 #include "AnalyticalGeometry.h"
@@ -241,8 +242,8 @@ bool Polygon::isPartOfPolylineInPolygon(const Polyline& ply) const
                            });
     };
 
-    return any_of(std::cbegin(*this), std::cend(*this),
-                  polygon_segment_intersects_line);
+    return std::any_of(std::cbegin(*this), std::cend(*this),
+                       polygon_segment_intersects_line);
 }
 
 bool Polygon::getNextIntersectionPointPolygonLine(
