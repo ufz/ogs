@@ -28,7 +28,7 @@ struct IntegrationPointData final : public IntegrationPointDataNonlocalInterface
           material_state_variables(
               solid_material.createMaterialStateVariables())
     {
-        auto const msv =
+        auto const& msv =
             static_cast<typename MaterialLib::Solids::Ehlers::StateVariables<
                 DisplacementDim>&>(*material_state_variables);
 
