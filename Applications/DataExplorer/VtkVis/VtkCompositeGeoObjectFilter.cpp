@@ -72,7 +72,10 @@ void VtkCompositeGeoObjectFilter::init()
 
     _threshold->SetInputConnection(_inputAlgorithm->GetOutputPort());
     _threshold->SetSelectedComponent(0);
-    _threshold->ThresholdBetween(0, 0);
+    _threshold->SetThresholdFunction(
+        vtkThreshold::ThresholdType::THRESHOLD_BETWEEN);
+    _threshold->SetLowerThreshold(0);
+    _threshold->SetUpperThreshold(0);
 
     vtkDataSetSurfaceFilter* surface = vtkDataSetSurfaceFilter::New();
     surface->SetInputConnection(_threshold->GetOutputPort());
@@ -99,5 +102,8 @@ void VtkCompositeGeoObjectFilter::init()
 void VtkCompositeGeoObjectFilter::SetIndex(std::size_t idx)
 {
     double const d_idx = static_cast<double>(idx);
-    _threshold->ThresholdBetween(d_idx, d_idx);
+    _threshold->SetThresholdFunction(
+        vtkThreshold::ThresholdType::THRESHOLD_BETWEEN);
+    _threshold->SetLowerThreshold(d_idx);
+    _threshold->SetUpperThreshold(d_idx);
 }
