@@ -38,7 +38,7 @@ public:
     //! \name ODESystem interface
     //! @{
 
-    bool isLinear() const override { return true; }
+    bool isLinear() const override { return false; }
 
     void computeSecondaryVariableConcrete(double const t, double const dt,
                                           std::vector<GlobalVector*> const& x,
