@@ -28,12 +28,12 @@ set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(
     MathLib
     PUBLIC BaseLib
-           ${OpenMP_CXX_LIBRARIES}
            $<$<TARGET_EXISTS:LAPACK::LAPACK>:LAPACK::LAPACK>
            $<$<BOOL:${OGS_USE_LIS}>:${LIS_LIBRARIES}>
            $<$<BOOL:${OGS_USE_CVODE}>:CVODE::CVODE>
            $<$<BOOL:${OGS_USE_PETSC}>:petsc>
            Eigen3::Eigen
+           $<$<TARGET_EXISTS:OpenMP::OpenMP_CXX>:OpenMP::OpenMP_CXX>
 )
 
 if(OGS_USE_LIS)
