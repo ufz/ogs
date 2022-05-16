@@ -63,7 +63,11 @@ endif()
 # geotiff ##
 find_package(GEOTIFF)
 
-if(NOT OGS_USE_MKL)
+cmake_dependent_option(
+    OGS_USE_MKL_EIGEN_OPENMP "When MKL is used shall OpenMP be used for Eigen."
+    OFF OGS_USE_MKL OFF
+)
+if(NOT OGS_USE_MKL OR OGS_USE_MKL_EIGEN_OPENMP)
     # this pulls in libgomp dependency, when MKL is enabled libiomp5 is used.
     find_package(OpenMP COMPONENTS C CXX)
 endif()
