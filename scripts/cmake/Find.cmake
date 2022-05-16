@@ -64,10 +64,13 @@ endif()
 find_package(GEOTIFF)
 
 cmake_dependent_option(
-    OGS_USE_MKL_EIGEN_OPENMP "When MKL is used shall OpenMP be used for Eigen."
-    OFF OGS_USE_MKL OFF
+    OGS_USE_PETSC_MKL_EIGEN_OPENMP
+    "When PETSc and MKL is used, shall OpenMP be used for Eigen (or Intels iomp if false (default))?"
+    OFF
+    "OGS_USE_PETSC;OGS_USE_MKL"
+    OFF
 )
-if(NOT OGS_USE_MKL OR OGS_USE_MKL_EIGEN_OPENMP)
+if(NOT (OGS_USE_PETSC AND OGS_USE_MKL) OR OGS_USE_PETSC_MKL_EIGEN_OPENMP)
     # this pulls in libgomp dependency, when MKL is enabled libiomp5 is used.
     find_package(OpenMP COMPONENTS C CXX)
 endif()
