@@ -10,12 +10,12 @@
 
 #pragma once
 
+#include <Eigen/Eigen>
 #include <memory>
 #include <utility>
 
-#include <Eigen/Eigen>
-
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "NumLib/NumericalStability/NumericalStabilization.h"
 #include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
@@ -33,6 +33,8 @@ struct HTProcessData final
     bool const has_gravity;
     int const heat_transport_process_id;
     int const hydraulic_process_id;
+
+    std::unique_ptr<NumLib::NumericalStabilization> stabilizer;
 };
 
 }  // namespace HT
