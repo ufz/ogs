@@ -30,7 +30,8 @@
     "ubuntu": "22.04",
     "qt": "5.15.2",
     "cmake": "3.22.3",
-    "hdf5": "1.12.2"
+    "hdf5": "1.12.2",
+    "zlib": "1.2.11"
   },
   "ctest": {
     "large_runtime": 60
@@ -70,7 +71,7 @@
     "package_file_sha256": "b0e1534003286687cac35492bc4bb1aaf103dbd66c67852c627f90979c251ad2"
   },
   "ext": {
-    "cache_hash": "2887a47993a6288fbfa2594a6c19cffb442b8130"
+    "cache_hash": "e6f3f1f4c29c6c5f096f89785e6e245bdf39ac1a"
   },
   "libraries": {
     "vtk": {
@@ -107,7 +108,9 @@
             "ogscm": "toolchain.CC == \"mpicc\""
           },
           "cmake": [
-            "VTK_MODULE_ENABLE_VTK_IOParallelXML=YES"
+            "VTK_MODULE_ENABLE_VTK_IOParallelXML=YES",
+            "VTK_MODULE_ENABLE_VTK_ParallelMPI=YES",
+            "VTK_USE_MPI=ON"
           ]
         },
         {

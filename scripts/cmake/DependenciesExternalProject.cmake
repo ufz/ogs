@@ -25,8 +25,9 @@ if(OGS_USE_MFRONT)
     if(NOT MFRONT)
         BuildExternalProject(
             TFEL ${_tfel_source} ${_install_dir}
-            CMAKE_ARGS -DCMAKE_INSTALL_RPATH=<INSTALL_DIR>/lib
-                       -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
+            CMAKE_ARGS "-DCMAKE_INSTALL_RPATH=<INSTALL_DIR>/lib"
+                       "-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE"
+                       "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
         )
         message(
             STATUS
@@ -145,4 +146,103 @@ if(OGS_USE_LIS)
         set(ENV{LIS_ROOT_DIR} ${PROJECT_BINARY_DIR}/_ext/LIS)
         find_package(LIS REQUIRED)
     endif()
+endif()
+
+# ZLIB
+set(_zlib_source GIT_REPOSITORY https://github.com/madler/zlib.git GIT_TAG
+                 v${ogs.tested_version.zlib}
+)
+set(_zlib_source_file
+    ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/zlib-${ogs.tested_version.zlib}.zip
+)
+if(EXISTS ${_zlib_source_file})
+    set(_zlib_source URL ${_zlib_source_file})
+else()
+    find_package(ZLIB)
+endif()
+if(NOT ZLIB_FOUND)
+    BuildExternalProject(
+        ZLIB ${_zlib_source} CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+                                        ${_install_dir}
+    )
+    message(
+        STATUS
+            "ExternalProject_Add(): added package ZLIB@${ogs.tested_version.zlib}"
+    )
+    set(ZLIB_ROOT ${PROJECT_BINARY_DIR}/_ext/ZLIB)
+
+    if(OGS_INSTALL_EXTERNAL_DEPENDENCIES)
+        set(ZLIB_ROOT ${CMAKE_INSTALL_PREFIX} CACHE PATH "" FORCE)
+    else()
+        set(ZLIB_ROOT ${PROJECT_BINARY_DIR}/_ext/ZLIB CACHE PATH "" FORCE)
+    endif()
+    find_package(ZLIB ${ogs.tested_version.zlib} REQUIRED)
+endif()
+
+if(EXISTS ${ZLIB_ROOT}/lib)
+    if(WIN32)
+        file(INSTALL ${PROJECT_BINARY_DIR}/_ext/ZLIB/bin/
+             DESTINATION ${CMAKE_INSTALL_BINDIR}
+        )
+    else()
+        message(STATUS "RPATH: Appending ${ZLIB_ROOT}/lib")
+        list(APPEND CMAKE_INSTALL_RPATH ${ZLIB_ROOT}/lib)
+    endif()
+endif()
+
+# HDF5
+set(_hdf5_options
+    "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+    "-DHDF5_GENERATE_HEADERS=OFF"
+    "-DHDF5_BUILD_TOOLS=OFF"
+    "-DHDF5_BUILD_EXAMPLES=OFF"
+    "-DHDF5_BUILD_HL_LIB=OFF"
+    "-DHDF5_BUILD_FORTRAN=OFF"
+    "-DHDF5_BUILD_CPP_LIB=OFF"
+    "-DHDF5_BUILD_JAVA=OFF"
+    "-DBUILD_TESTING=OFF"
+    "-DHDF5_ENABLE_Z_LIB_SUPPORT=ON"
+    "-DZLIB_ROOT=${ZLIB_ROOT}"
+)
+if(OGS_USE_MPI)
+    set(HDF5_PREFER_PARALLEL ON)
+    list(APPEND _hdf5_options "-DHDF5_ENABLE_PARALLEL=ON")
+endif()
+if(WIN32)
+    set(HDF5_USE_STATIC_LIBRARIES ON)
+    list(APPEND _hdf5_options "-DBUILD_SHARED_LIBS=OFF")
+endif()
+# Building from source requires newer hdf version
+string(REPLACE "." "_" HDF5_TAG ${ogs.tested_version.hdf5})
+
+set(_hdf5_source GIT_REPOSITORY https://github.com/HDFGroup/hdf5.git GIT_TAG
+                 hdf5-${HDF5_TAG}
+)
+set(_hdf5_source_file ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/hdf5-${HDF5_TAG}.zip)
+if(EXISTS ${_hdf5_source_file})
+    set(_hdf5_source URL ${_hdf5_source_file})
+else()
+    find_package(HDF5 ${ogs.minimum_version.hdf5})
+endif()
+if(NOT HDF5_FOUND)
+    BuildExternalProject(
+        HDF5 ${_hdf5_source} CMAKE_ARGS ${_hdf5_options} ${_install_dir}
+    )
+    message(
+        STATUS
+            "ExternalProject_Add(): added package HDF5@${ogs.tested_version.hdf5}"
+    )
+    set(HDF5_ROOT ${PROJECT_BINARY_DIR}/_ext/HDF5)
+
+    if(OGS_INSTALL_EXTERNAL_DEPENDENCIES)
+        set(HDF5_ROOT ${CMAKE_INSTALL_PREFIX} CACHE PATH "" FORCE)
+    else()
+        set(HDF5_ROOT ${PROJECT_BINARY_DIR}/_ext/HDF5 CACHE PATH "" FORCE)
+    endif()
+    find_package(HDF5 ${ogs.tested_version.hdf5} REQUIRED)
+endif()
+
+if(EXISTS ${HDF5_ROOT}/lib)
+    message(STATUS "RPATH: Appending ${HDF5_ROOT}/lib")
+    list(APPEND CMAKE_INSTALL_RPATH ${HDF5_ROOT}/lib)
 endif()
