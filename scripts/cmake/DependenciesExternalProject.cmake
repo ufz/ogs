@@ -96,23 +96,18 @@ if(OGS_USE_PETSC)
             STATUS
                 "ExternalProject_Add(): added package PETSc@${ogs.minimum_version.petsc}"
         )
-        if(OGS_INSTALL_EXTERNAL_DEPENDENCIES)
-            set(PETSC_DIR ${CMAKE_INSTALL_PREFIX} CACHE PATH "" FORCE)
-        else()
-            set(PETSC_DIR ${PROJECT_BINARY_DIR}/_ext/PETSc CACHE PATH "" FORCE)
+        if(NOT OGS_INSTALL_EXTERNAL_DEPENDENCIES)
+            list(APPEND CMAKE_INSTALL_RPATH
+                 ${PROJECT_BINARY_DIR}/_ext/PETSc/lib
+            )
         endif()
-        find_package(PETSc ${ogs.minimum_version.petsc} REQUIRED)
+        BuildExternalProject_find_package(PETSc)
     endif()
 
     add_library(petsc SHARED IMPORTED)
     target_include_directories(petsc INTERFACE ${PETSC_INCLUDES})
     set_target_properties(petsc PROPERTIES IMPORTED_LOCATION ${PETSC_LIBRARIES})
     target_compile_definitions(petsc INTERFACE USE_PETSC)
-
-    if(EXISTS ${PETSC_DIR}/lib)
-        message(STATUS "RPATH: Appending ${PETSC_DIR}/lib")
-        list(APPEND CMAKE_INSTALL_RPATH ${PETSC_DIR}/lib)
-    endif()
 endif()
 
 if(OGS_USE_LIS)
@@ -169,25 +164,15 @@ if(NOT ZLIB_FOUND)
         STATUS
             "ExternalProject_Add(): added package ZLIB@${ogs.tested_version.zlib}"
     )
-    set(ZLIB_ROOT ${PROJECT_BINARY_DIR}/_ext/ZLIB)
-
-    if(OGS_INSTALL_EXTERNAL_DEPENDENCIES)
-        set(ZLIB_ROOT ${CMAKE_INSTALL_PREFIX} CACHE PATH "" FORCE)
-    else()
-        set(ZLIB_ROOT ${PROJECT_BINARY_DIR}/_ext/ZLIB CACHE PATH "" FORCE)
-    endif()
-    find_package(ZLIB ${ogs.tested_version.zlib} REQUIRED)
-endif()
-
-if(EXISTS ${ZLIB_ROOT}/lib)
     if(WIN32)
         file(INSTALL ${PROJECT_BINARY_DIR}/_ext/ZLIB/bin/
              DESTINATION ${CMAKE_INSTALL_BINDIR}
         )
-    else()
-        message(STATUS "RPATH: Appending ${ZLIB_ROOT}/lib")
-        list(APPEND CMAKE_INSTALL_RPATH ${ZLIB_ROOT}/lib)
     endif()
+    if(NOT OGS_INSTALL_EXTERNAL_DEPENDENCIES)
+        list(APPEND CMAKE_INSTALL_RPATH ${PROJECT_BINARY_DIR}/_ext/ZLIB/lib)
+    endif()
+    BuildExternalProject_find_package(ZLIB)
 endif()
 
 # HDF5
@@ -202,8 +187,10 @@ set(_hdf5_options
     "-DHDF5_BUILD_JAVA=OFF"
     "-DBUILD_TESTING=OFF"
     "-DHDF5_ENABLE_Z_LIB_SUPPORT=ON"
-    "-DZLIB_ROOT=${ZLIB_ROOT}"
 )
+if("${ZLIB_INCLUDE_DIRS}" MATCHES "${PROJECT_BINARY_DIR}/_ext/ZLIB")
+    list(APPEND _hdf5_options "-DZLIB_ROOT=${PROJECT_BINARY_DIR}/_ext/ZLIB")
+endif()
 if(OGS_USE_MPI)
     set(HDF5_PREFER_PARALLEL ON)
     list(APPEND _hdf5_options "-DHDF5_ENABLE_PARALLEL=ON")
@@ -232,17 +219,8 @@ if(NOT HDF5_FOUND)
         STATUS
             "ExternalProject_Add(): added package HDF5@${ogs.tested_version.hdf5}"
     )
-    set(HDF5_ROOT ${PROJECT_BINARY_DIR}/_ext/HDF5)
-
-    if(OGS_INSTALL_EXTERNAL_DEPENDENCIES)
-        set(HDF5_ROOT ${CMAKE_INSTALL_PREFIX} CACHE PATH "" FORCE)
-    else()
-        set(HDF5_ROOT ${PROJECT_BINARY_DIR}/_ext/HDF5 CACHE PATH "" FORCE)
+    if(NOT OGS_INSTALL_EXTERNAL_DEPENDENCIES)
+        list(APPEND CMAKE_INSTALL_RPATH ${PROJECT_BINARY_DIR}/_ext/HDF5/lib)
     endif()
-    find_package(HDF5 ${ogs.tested_version.hdf5} REQUIRED)
-endif()
-
-if(EXISTS ${HDF5_ROOT}/lib)
-    message(STATUS "RPATH: Appending ${HDF5_ROOT}/lib")
-    list(APPEND CMAKE_INSTALL_RPATH ${HDF5_ROOT}/lib)
+    BuildExternalProject_find_package(HDF5)
 endif()
