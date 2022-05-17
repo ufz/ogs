@@ -92,6 +92,10 @@ include(Find)
 include(packaging/PackagingDependencies)
 include(DependenciesExternalProject)
 include(Dependencies)
+# Hack for Conan (msvc) gui build. Also linking to ${CONAN_LIBS} globally
+link_libraries(
+    $<$<AND:$<BOOL:${WIN32}>,$<BOOL:${OGS_USE_NETCDF}>>:zlib.lib> ${CONAN_LIBS}
+)
 include(DocumentationSetup)
 include(test/Test)
 if(OGS_COVERAGE AND NOT _IS_SUBPROJECT)
