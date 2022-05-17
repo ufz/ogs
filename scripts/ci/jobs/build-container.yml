@@ -1,0 +1,14 @@
+build container:
+  stage: build
+  tags: [envinf, shell]
+  needs: [meta]
+  extends:
+    - .container-maker-setup
+  script:
+    # Test local dependency builds (--pm off)
+    - >
+      poetry run ogscm compiler.py mpi.py ogs.py -B --ogs ../..
+      --build_args ' --progress=plain'
+      --cvode --ccache --cpmcache --mfront
+      --pm off
+      --cmake_args ' -DOGS_BUILD_PROCESSES=SteadyStateDiffusion'
