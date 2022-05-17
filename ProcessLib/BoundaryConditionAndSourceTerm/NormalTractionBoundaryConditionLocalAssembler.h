@@ -87,6 +87,7 @@ public:
         {
             Eigen::Vector3d const v1 = e.getNode(1)->asEigenVector3d() -
                                        e.getNode(0)->asEigenVector3d();
+            element_normal[GlobalDim - 1] = 0;
             element_normal[0] = -v1[1];
             element_normal[1] = v1[0];
             element_normal.normalize();
