@@ -53,7 +53,7 @@ public:
 #ifndef NDEBUG
     virtual ~Property()
     {
-        if(property_used)
+        if (property_used)
         {
             DBUG("Property is used: '{:s}'", description());
         }
@@ -109,6 +109,11 @@ public:
                                      Variable const variable2,
                                      ParameterLib::SpatialPosition const& pos,
                                      double const t, double const dt) const;
+
+    /// This virtual method will collect the properties of the phases
+    /// in order to access them from the medium property level.
+    virtual void setProperties(
+        std::vector<std::unique_ptr<Phase>> const& phases);
 
     void setScale(std::variant<Medium*, Phase*, Component*> scale)
     {
@@ -326,6 +331,19 @@ inline void overwriteExistingProperties(
         {
             properties[i] = std::move(new_properties[i]);
             properties[i]->setScale(scale_pointer);
+        }
+    }
+}
+
+inline void updatePropertiesForAllPhases(
+    PropertyArray& properties,
+    std::vector<std::unique_ptr<Phase>> const& phases)
+{
+    for (auto& p : properties)
+    {
+        if (p != nullptr)
+        {
+            p->setProperties(phases);
         }
     }
 }

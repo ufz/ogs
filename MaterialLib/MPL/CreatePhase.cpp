@@ -43,8 +43,8 @@ std::unique_ptr<MaterialPropertyLib::Phase> createPhase(
         OGS_FATAL("Phase type is a mandatory field and cannot be empty.");
     }
 
-    std::array<std::string, 4> const allowed_phase_types = {
-        {"Solid", "AqueousLiquid", "NonAqueousLiquid", "Gas"}};
+    std::array<std::string, 5> const allowed_phase_types = {
+        {"Solid", "FrozenLiquid", "AqueousLiquid", "NonAqueousLiquid", "Gas"}};
 
     if (std::none_of(allowed_phase_types.begin(),
                      allowed_phase_types.end(),

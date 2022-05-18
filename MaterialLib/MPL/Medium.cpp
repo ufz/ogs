@@ -26,6 +26,7 @@ Medium::Medium(int const material_id,
     {
         overwriteExistingProperties(properties_, *properties, this);
     }
+    updatePropertiesForAllPhases(properties_, phases_);
 }
 
 Phase const& Medium::phase(std::size_t const index) const

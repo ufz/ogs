@@ -234,6 +234,16 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
                                                  local_coordinate_system);
     }
 
+    if (boost::iequals(property_type, "TemperatureDependentFraction"))
+    {
+        return createTemperatureDependentFraction(config);
+    }
+
+    if (boost::iequals(property_type, "SpecificHeatCapacityWithLatentHeat"))
+    {
+        return createSpecificHeatCapacityWithLatentHeat(config);
+    }
+
     if (boost::iequals(property_type, "BishopsPowerLaw"))
     {
         return createBishopsPowerLaw(config);
@@ -284,6 +294,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     if (boost::iequals(property_type, "TemperatureDependentDiffusion"))
     {
         return createTemperatureDependentDiffusion(config, parameters);
+    }
+
+    if (boost::iequals(property_type, "VolumeFractionAverage"))
+    {
+        return createVolumeFractionAverage(config);
     }
 
     // If none of the above property types are found, OGS throws an error.
