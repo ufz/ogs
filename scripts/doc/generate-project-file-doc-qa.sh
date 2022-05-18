@@ -9,6 +9,10 @@ if [ $# -ne 3 ]; then
     exit 1
 fi
 
+if [ -d ".venv" ]; then
+    source .venv/bin/activate
+fi
+
 set -e
 
 srcdir="$1"
@@ -50,6 +54,8 @@ cat <<EOF >>"$qafile"
 
 */
 EOF
+
+"$toolsdir/extract-media-properties-from-ctests.py" "$datadir" "$docauxdir"
 
 # Finish parameter documentation dox files by appending auxiliary information,
 # e.g., associated ctests, data type, etc.

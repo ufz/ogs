@@ -17,6 +17,8 @@ import xml.etree.cElementTree as ET
 import json
 from print23 import print_
 
+import pandas as pd
+
 github_src_url = "https://gitlab.opengeosys.org/ogs/ogs/-/tree/master"
 github_data_url = "https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data"
 
@@ -44,8 +46,129 @@ tag_path_expansion_table = {
     "prj": "",
 }
 
-# maps tags to additional parameter info obtained prior to this script
-dict_tag_info = dict()
+
+def write_parameter_type_info(fh, tagpath, tagpath_expanded, dict_tag_info):
+    if tagpath:
+        fh.write("\n\n# Additional info\n")
+        if tagpath in dict_tag_info:
+            for info in dict_tag_info[tagpath]:
+                path = info[1]
+                line = info[2]
+                fh.write(("\n## From {0} line {1}\n\n").format(path, line))
+
+                method = info[6]
+                if method.endswith("Optional"):
+                    fh.write("- This is an optional parameter.\n")
+                elif method.endswith("List"):
+                    fh.write("- This parameter can be given arbitrarily many times.\n")
+                elif method:  # method not empty
+                    fh.write("- This is a required parameter.\n")
+
+                datatype = info[5]
+                if datatype:
+                    fh.write("- Data type: <tt>{0}</tt>\n".format(datatype))
+
+                fh.write("- Expanded tag path: {0}\n".format(tagpath_expanded))
+
+                fh.write(
+                    "- Go to source code: [&rarr; ogs/ogs/master]({2}/{0}#L{1})\n".format(
+                        path, line, github_src_url
+                    )
+                )
+        else:
+            fh.write("\nNo additional info.\n")
+
+
+def write_ctest_info(fh, tagpath, istag, tested_tags_attrs):
+    fh.write("\n\n# Used in the following test data files\n\n")
+
+    try:
+        datafiles = tested_tags_attrs["tags" if istag else "attributes"][tagpath]
+    except KeyError:
+        fh.write("Used in no end-to-end test cases.\n")
+        return
+
+    for df in sorted(datafiles):
+        pagename = "ogs_ctest_prj__" + df.replace("/", "__").replace(".", "__")
+        fh.write(
+            (
+                "- \\[[&rarr; ogs/ogs/master]({1}/{0}) | "
+                + '\\ref {2} "&rarr; doc"\\]&emsp;{0}\n'
+            ).format(df, github_data_url, pagename)
+        )
+
+
+def write_ctest_media_info(fh, pcs_type, df_n_t_p_pcst):
+    fh.write(
+        """
+
+# This process is commonly used together with the following media properties
+
+Note: This list has been automatically extracted from OGS's benchmark tests (ctests).
+Therefore it might not be exhaustive, but it should give users a good overview about
+which properties they can/have to use with this process.
+Probably most of the properties occurring in this list are mandatory.
+
+The list might contain different property <tt>&lt;type&gt;</tt>s for some property
+<tt>&lt;name&gt;</tt> to illustrate different possibilities the users have.
+
+"""
+    )
+
+    df = df_n_t_p_pcst.set_index("pcs_type")
+
+    try:
+        df_this_pcs = df.xs(pcs_type)
+    except KeyError:
+        fh.write(
+            f"""\
+No media property information could be found in the ctests for the {pcs_type} process.
+Either this process does not use <tt>&lt;media&gt;</tt> in the ctests or the extraction
+scripts could not process the ctest prj files properly.
+
+"""
+        )
+        return
+
+    df_this_pcs_s = df_this_pcs.sort_values(["path", "name", "type"])
+
+    old_path = None
+    old_name = None
+
+    for rec in df_this_pcs_s.itertuples(index=False):
+        path = rec.path
+        name = rec.name
+        parts = path.split("/")
+
+        if path != old_path:
+            fh.write(
+                f" - \\ref ogs_file_param__prj__{'__'.join(parts[1:])} \"{path}\"\n"
+            )
+            old_path = path
+            old_name = None
+
+        name_formatted = name
+        if name != old_name:
+            # highlight the first occurrence of each name in the list
+            name_formatted = f"<b>{name}</b>"
+            old_name = name
+
+        type_ref = (
+            ""
+            if pd.isna(rec.type)
+            else f"\\ref ogs_file_param__prj__{'__'.join(parts[1:])}__{rec.type}"
+        )
+
+        if pd.isna(rec.type):
+            fh.write(f"   - <tt>&lt;name&gt;</tt> {name_formatted}\n")
+        elif pd.isna(name):
+            fh.write(f"   - <tt>&lt;type&gt;</tt> {type_ref}\n")
+        else:
+            fh.write(
+                f'   - <div style="display: inline-block; min-width: 15em;"><tt>&lt;name&gt;</tt> {name_formatted}</div> <tt>&lt;type&gt;</tt> {type_ref}\n'
+            )
+
+    fh.write("\n\n")
 
 
 def dict_of_list_append(dict_, key, value):
@@ -54,6 +177,9 @@ def dict_of_list_append(dict_, key, value):
     else:
         dict_[key] = [value]
 
+
+# maps tags to additional parameter info obtained prior to this script
+dict_tag_info = dict()
 
 with open(os.path.join(docauxdir, "tested-parameters-cache.json")) as fh:
     tested_tags_attrs = json.load(fh)
@@ -65,6 +191,9 @@ with open(os.path.join(docauxdir, "documented-parameters-cache.txt")) as fh:
         if line[0] == "OK":
             tagpath = line[3]
             dict_of_list_append(dict_tag_info, tagpath, line)
+
+with open(os.path.join(docauxdir, "ctest-media-info.json")) as fh:
+    df_n_t_p_pcst = pd.read_json(fh, orient="records")
 
 # traverse dox file hierarchy
 for (dirpath, _, filenames) in os.walk(docdir):
@@ -96,59 +225,23 @@ for (dirpath, _, filenames) in os.walk(docdir):
                 tagpathparts[0] = "NONEXISTENT"
             tagpath_expanded = ".".join(tagpathparts).lstrip(".")
 
-            if tagpath:
-                fh.write("\n\n# Additional info\n")
-                if tagpath in dict_tag_info:
-                    for info in dict_tag_info[tagpath]:
-                        path = info[1]
-                        line = info[2]
-                        fh.write(("\n## From {0} line {1}\n\n").format(path, line))
+            # augment process documentation
+            if (
+                len(tagpathparts) > 0
+                and tagpathparts[:-1]
+                == [
+                    "",  # "pcs" was replaced with empty string via the expansion table
+                    "processes",
+                    "process",
+                ]
+                and f.startswith("c_")
+            ):
+                pcs_type = tagpathparts[-1]
+                write_ctest_media_info(fh, pcs_type, df_n_t_p_pcst)
 
-                        method = info[6]
-                        if method.endswith("Optional"):
-                            fh.write("- This is an optional parameter.\n")
-                        elif method.endswith("List"):
-                            fh.write(
-                                "- This parameter can be given arbitrarily many times.\n"
-                            )
-                        elif method:  # method not empty
-                            fh.write("- This is a required parameter.\n")
-
-                        datatype = info[5]
-                        if datatype:
-                            fh.write("- Data type: <tt>{0}</tt>\n".format(datatype))
-
-                        fh.write("- Expanded tag path: {0}\n".format(tagpath_expanded))
-
-                        fh.write(
-                            "- Go to source code: [&rarr; ogs/ogs/master]({2}/{0}#L{1})\n".format(
-                                path, line, github_src_url
-                            )
-                        )
-                else:
-                    fh.write("\nNo additional info.\n")
+            write_parameter_type_info(fh, tagpath, tagpath_expanded, dict_tag_info)
 
             if tagpath_expanded:
-                fh.write("\n\n# Used in the following test data files\n\n")
-                try:
-                    datafiles = tested_tags_attrs["tags" if istag else "attributes"][
-                        tagpath
-                    ]
-
-                    for df in sorted(datafiles):
-                        pagename = "ogs_ctest_prj__" + df.replace("/", "__").replace(
-                            ".", "__"
-                        )
-                        fh.write(
-                            (
-                                "- \\[[&rarr; ogs/ogs/master]({1}/{0}) | "
-                                + '\\ref {2} "&rarr; doc"\\]&emsp;{0}\n'
-                            ).format(df, github_data_url, pagename)
-                        )
-                except KeyError:
-                    fh.write("Used in no end-to-end test cases.\n")
-            else:
-                # no additional output for the main doc page
-                pass
+                write_ctest_info(fh, tagpath, istag, tested_tags_attrs)
 
             fh.write("\n*/\n")

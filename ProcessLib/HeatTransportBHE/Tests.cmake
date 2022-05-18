@@ -109,7 +109,7 @@ if("${Python_VERSION}" VERSION_LESS 3.9)
         TESTER vtkdiff
         REQUIREMENTS OGS_USE_PYTHON AND NOT OGS_USE_MPI
         RUNTIME 50
-        PYTHON_PACKAGES "pandas"
+        PYTHON_PACKAGES "pandas==1.4.2"
         DIFF_DATA
         beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
         beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
