@@ -60,7 +60,7 @@ struct DeactivatedSubdomainMesh
     std::vector<MeshLib::Node*> const outer_nodes;
 };
 
-/// Time depend subdomain deactivation.
+/// Time dependent subdomain deactivation.
 ///
 /// Subdomain deactivation is space and time dependent.
 /// The spatial extent of deactivated elements is defined through a set of
