@@ -38,8 +38,8 @@ if(OGS_USE_MFRONT)
         else()
             set(TFELHOME ${PROJECT_BINARY_DIR}/_ext/TFEL CACHE PATH "" FORCE)
         endif()
+        set(_EXT_LIBS ${_EXT_LIBS} TFEL CACHE INTERNAL "")
     endif()
-    list(APPEND CMAKE_INSTALL_RPATH ${TFELHOME}/lib)
 endif()
 
 if(OGS_USE_PETSC)
@@ -96,11 +96,7 @@ if(OGS_USE_PETSC)
             STATUS
                 "ExternalProject_Add(): added package PETSc@${ogs.minimum_version.petsc}"
         )
-        if(NOT OGS_INSTALL_EXTERNAL_DEPENDENCIES)
-            list(APPEND CMAKE_INSTALL_RPATH
-                 ${PROJECT_BINARY_DIR}/_ext/PETSc/lib
-            )
-        endif()
+        set(_EXT_LIBS ${_EXT_LIBS} PETSc CACHE INTERNAL "")
         BuildExternalProject_find_package(PETSc)
     endif()
 
@@ -169,9 +165,7 @@ if(NOT ZLIB_FOUND)
              DESTINATION ${CMAKE_INSTALL_BINDIR}
         )
     endif()
-    if(NOT OGS_INSTALL_EXTERNAL_DEPENDENCIES)
-        list(APPEND CMAKE_INSTALL_RPATH ${PROJECT_BINARY_DIR}/_ext/ZLIB/lib)
-    endif()
+    set(_EXT_LIBS ${_EXT_LIBS} ZLIB CACHE INTERNAL "")
     BuildExternalProject_find_package(ZLIB)
 endif()
 
@@ -219,8 +213,13 @@ if(NOT HDF5_FOUND)
         STATUS
             "ExternalProject_Add(): added package HDF5@${ogs.tested_version.hdf5}"
     )
-    if(NOT OGS_INSTALL_EXTERNAL_DEPENDENCIES)
-        list(APPEND CMAKE_INSTALL_RPATH ${PROJECT_BINARY_DIR}/_ext/HDF5/lib)
-    endif()
+    set(_EXT_LIBS ${_EXT_LIBS} HDF5 CACHE INTERNAL "")
     BuildExternalProject_find_package(HDF5)
+endif()
+
+# append RPATHs
+if(NOT OGS_INSTALL_EXTERNAL_DEPENDENCIES)
+    foreach(lib ${_EXT_LIBS})
+        list(APPEND CMAKE_INSTALL_RPATH ${PROJECT_BINARY_DIR}/_ext/${lib}/lib)
+    endforeach()
 endif()

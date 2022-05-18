@@ -391,6 +391,15 @@ AddTest(
     quad_20x10_GroundWaterFlow_result_ts_1_t_1_000000_1.vtu quad_20x10_GroundWaterFlow_result_ts_1_t_1_000000_1.vtu pressure pressure 2e-15 1e-16
     quad_20x10_GroundWaterFlow_result_ts_1_t_1_000000_2.vtu quad_20x10_GroundWaterFlow_result_ts_1_t_1_000000_2.vtu pressure pressure 2e-15 1e-16
 )
+if(TEST ogs-ParallelFEM_GroundWaterFlow2D-mpirun AND XMLSTARLET_TOOL_PATH AND BASH_TOOL_PATH)
+    # Just checks if there are 3 <Piece>-elements in the pvtu
+    add_test(NAME ParallelFEM_GroundWaterFlow2D_pvtu
+             COMMAND ${BASH_TOOL_PATH} -c "if [[ $(xmlstarlet sel -t -v 'count(/VTKFile/PUnstructuredGrid/Piece)' Tests/Data/EllipticPETSc/quad_20x10_GroundWaterFlow_result_ts_0_t_0_000000.pvtu) == '3' ]] ; then exit 0; else cat Tests/Data/EllipticPETSc/quad_20x10_GroundWaterFlow_result_ts_0_t_0_000000.pvtu; exit 1; fi"
+             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    )
+    set_tests_properties(ParallelFEM_GroundWaterFlow2D_pvtu
+            PROPERTIES LABELS "default" DEPENDS ogs-ParallelFEM_GroundWaterFlow2D-mpirun)
+endif()
 
 AddTest(
     NAME ParallelFEM_GroundWaterFlow3D_DirichletBC
