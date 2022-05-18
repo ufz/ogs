@@ -20,7 +20,6 @@
 
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MathLib/Point3d.h"
-
 #include "processlib_export.h"
 
 namespace MeshLib
