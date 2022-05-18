@@ -55,9 +55,6 @@ if(OGS_USE_NETCDF)
         VtkVisFilter PUBLIC ${NETCDF_LIBRARIES_CXX} ${NETCDF_LIBRARIES_C}
                             ${HDF5_HL_LIBRARIES} ${HDF5_LIBRARIES}
     )
-    if(OGS_USE_CONAN AND MSVC)
-        target_link_libraries(VtkVisFilter PUBLIC ${CONAN_LIBS})
-    endif()
     # Workaround for system installed VTK (tested on arch)
     if(NOT OGS_USE_CONAN)
         target_include_directories(
