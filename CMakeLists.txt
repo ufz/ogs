@@ -40,7 +40,13 @@ option(OGS_USE_PIP "Enables automatic Python virtual environment handling." OFF)
 cmake_dependent_option(
     OGS_BUILD_SWMM "Should the SWMM interface be built?" ON "WIN32" OFF
 )
-
+option(OGS_USE_PETSC "Use PETSc routines" OFF)
+if(OGS_USE_PETSC AND MSVC)
+    message(
+        FATAL_ERROR
+            "OGS_USE_PETSC=ON is not supported on Windows Visual Studio! Use Linux or macOS."
+    )
+endif()
 if(OGS_USE_PETSC)
     set(OGS_USE_MPI ON CACHE BOOL "Use MPI" FORCE)
 endif()
@@ -105,13 +111,6 @@ endif() # GCC AND GPROF_PATH
 option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
 option(OGS_INSITU "Builds OGS with insitu visualization capabilities." OFF)
 option(OGS_USE_LIS "Use Lis" OFF)
-option(OGS_USE_PETSC "Use PETSc routines" OFF)
-if(OGS_USE_PETSC AND MSVC)
-    message(
-        FATAL_ERROR
-            "OGS_USE_PETSC=ON is not supported on Windows Visual Studio! Use Linux or macOS."
-    )
-endif()
 option(OGS_USE_NETCDF "Add NetCDF support." OFF)
 
 # Eigen
