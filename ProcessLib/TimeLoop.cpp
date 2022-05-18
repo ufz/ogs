@@ -548,7 +548,6 @@ bool TimeLoop::executeTimeStep()
     time_timestep.start();
 
     _current_time += _dt;
-    const double prev_dt = _dt;
 
     const std::size_t timesteps = _accepted_steps + 1;
     // TODO(wenqing): , input option for time unit.
@@ -560,7 +559,12 @@ bool TimeLoop::executeTimeStep()
     successful_time_step = doNonlinearIteration(_current_time, _dt, timesteps);
     INFO("[time] Time step #{:d} took {:g} s.", timesteps,
          time_timestep.elapsed());
+    return successful_time_step;
+}
 
+bool TimeLoop::calculateNextTimeStep()
+{
+    const double prev_dt = _dt;
     double const current_time = _current_time;
 
     const std::size_t timesteps = _accepted_steps + 1;
@@ -569,7 +573,7 @@ bool TimeLoop::executeTimeStep()
     std::vector<std::function<double(double, double)>> time_step_constraints{
         [&fixed_times](double t, double dt)
         { return NumLib::possiblyClampDtToNextFixedTime(t, dt, fixed_times); },
-        [&end_time](double t, double dt)
+        [this](double t, double dt)
         {
             if (t < _end_time && t + dt > _end_time)
             {

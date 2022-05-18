@@ -49,6 +49,7 @@ public:
     ~TimeLoop();
 
     bool executeTimeStep();
+    bool calculateNextTimeStep();
     double endTime() const { return _end_time; }
     double currentTime() const { return _current_time; }
     bool successful_time_step = false;
