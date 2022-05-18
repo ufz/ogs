@@ -24,7 +24,9 @@ set(CONAN_SYSTEM_INCLUDES ON)
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
 if(OGS_USE_NETCDF)
-    set(CONAN_REQUIRES ${CONAN_REQUIRES} netcdf-cxx/4.3.1-3@bilke/testing)
+    list(APPEND CONAN_REQUIRES netcdf-cxx/4.3.1-3@bilke/testing
+         hdf5/${ogs.minimum_version.hdf5}
+    )
     set(CONAN_OPTIONS netcdf:dap=False)
 endif()
 
