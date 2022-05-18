@@ -415,12 +415,6 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
         }
     }
 
-    // Adjust step size if t < _end_time, while t+dt exceeds the end time
-    if (t < _end_time && t + dt > _end_time)
-    {
-        dt = _end_time - t;
-    }
-
     // adjust step size considering external communciation_point_calculators
     for (auto const& time_step_constain : time_step_constraints)
     {
@@ -574,8 +568,15 @@ bool TimeLoop::executeTimeStep()
     auto const& fixed_times = _output->getFixedOutputTimes();
     std::vector<std::function<double(double, double)>> time_step_constraints{
         [&fixed_times](double t, double dt)
-        { return NumLib::possiblyClampDtToNextFixedTime(t, dt, fixed_times); }
-        };
+        { return NumLib::possiblyClampDtToNextFixedTime(t, dt, fixed_times); },
+        [&end_time](double t, double dt)
+        {
+            if (t < _end_time && t + dt > _end_time)
+            {
+                return _end_time - t;
+            }
+            return dt;
+        }};
 
     // _last_step_rejected is also checked in computeTimeStepping.
     std::tie(_dt, _last_step_rejected) =
