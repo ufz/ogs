@@ -43,7 +43,6 @@ build linux (no unity):
   image: $CONTAINER_GCC_IMAGE
   extends:
     - .template-build-linux
-    - .test-artifacts
   tags: [docker]
   needs: [meta, ci_images]
   timeout: 1h
