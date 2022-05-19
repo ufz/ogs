@@ -279,16 +279,22 @@ endforeach()
 find_package(VTK ${ogs.minimum_version.vtk} QUIET COMPONENTS ${VTK_COMPONENTS})
 
 if(NOT VTK_FOUND)
-    list(APPEND VTK_OPTIONS "BUILD_SHARED_LIBS OFF")
+    # Setting shared libs on PETSc, otherwise pvtu files only contain one
+    # <Piece>-element (one subdomain).
+    list(APPEND VTK_OPTIONS "BUILD_SHARED_LIBS ${OGS_USE_PETSC}")
+    if(OGS_USE_PETSC)
+        list(APPEND CMAKE_INSTALL_RPATH
+             ${PROJECT_BINARY_DIR}/_deps/vtk-build/lib
+        )
+        # to properly install vtk libs
+        set(OGS_INSTALL_DEPENDENCIES ON CACHE BOOL "" FORCE)
+    endif()
     if(OGS_USE_PETSC AND EXISTS ${PROJECT_BINARY_DIR}/_ext/HDF5)
         # Use local hdf5 build
-        list(APPEND VTK_OPTIONS
-            "VTK_MODULE_USE_EXTERNAL_VTK_hdf5 ON"
-            "HDF5_ROOT ${PROJECT_BINARY_DIR}/_ext/HDF5")
+        list(APPEND VTK_OPTIONS "VTK_MODULE_USE_EXTERNAL_VTK_hdf5 ON"
+             "HDF5_ROOT ${PROJECT_BINARY_DIR}/_ext/HDF5"
+        )
     endif()
-    # Workaround for configuration error in [vtk]/CMake/vtkGroups.cmake:43
-    set(VTK_GROUP_ENABLE_Rendering DONT_WANT CACHE STRING "")
-    set(VTK_GROUP_ENABLE_StandAlone DONT_WANT CACHE STRING "")
 
     CPMAddPackage(
         NAME VTK
