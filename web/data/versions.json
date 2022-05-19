@@ -31,7 +31,8 @@
     "qt": "5.15.2",
     "cmake": "3.22.3",
     "hdf5": "1.12.2",
-    "zlib": "1.2.11"
+    "zlib": "1.2.11",
+    "gtest": "8d51dc50eb7e7698427fed81b85edad0e032112e"
   },
   "ctest": {
     "large_runtime": 60
