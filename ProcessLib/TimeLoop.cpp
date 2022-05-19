@@ -312,7 +312,6 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
     bool all_process_steps_accepted = true;
     // Get minimum time step size among step sizes of all processes.
     double dt = std::numeric_limits<double>::max();
-    bool last_step_rejected = false;
     constexpr double eps = std::numeric_limits<double>::epsilon();
 
     bool const is_initial_step =
@@ -397,6 +396,7 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
         _repeating_times_of_rejected_step++;
     }
 
+    bool last_step_rejected = false;
     if (!is_initial_step)
     {
         if (all_process_steps_accepted)
