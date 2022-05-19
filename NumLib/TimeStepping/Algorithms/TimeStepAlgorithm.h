@@ -59,12 +59,6 @@ public:
                                           NumLib::TimeStep& ts_previous,
                                           NumLib::TimeStep& ts_current) = 0;
 
-    /// return if current time step is accepted or not
-    virtual bool accepted(TimeStep const& ts_current) const
-    {
-        return ts_current.isAccepted();
-    }
-
     /// Get a flag to indicate whether this algorithm needs to compute
     /// solution error. The default return value is false.
     virtual bool isSolutionErrorComputationNeeded() const { return false; }
