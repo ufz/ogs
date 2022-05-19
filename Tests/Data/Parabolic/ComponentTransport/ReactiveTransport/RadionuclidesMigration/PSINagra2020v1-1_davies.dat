@@ -1,0 +1,6781 @@
+# PSI Chemical Thermodynamic Database 2020, Version 1-1                        LAST MOD. 05-NOV-2021
+#
+# Database of reactions generated using ThermoMatch reactions generator tool. 
+# Reactions exported to phreeqc format using ThermoMatch export functionality.
+# https://thermohub.org/thermomatch. For questions G. Dan Miron dan.miron@psi.ch
+#
+# Details on the PHREEQC database generation procedure: 
+# Miron G.D. (2021) PSI Chemical Thermodynamic Database 2020 in PHREEQC format, Nagra TM-44-21-17.
+#
+# Due to the automatic reactions generation procedure from the selected master species some of the 
+# reactions are written in a different way here than in NTB 21-03 but are completely equivalent.
+# For example:
+#	R1 this database: Np+4 + HCO3- + 4H2O = Np(OH)4CO3-2 + 5H+
+#		-log_K	-15.829
+#	R2 this database: HCO3- = CO3-2 + H+
+#		-log_K	-10.329 
+#	R3 NTB 21-03: Np+4 + CO3-2 + 4H2O = Np(OH)4CO3-2 + 4H+
+#		-log_K -5.5
+#	R3 = R1 - R2
+#
+# The documentation for this database is available on http://www.psi.ch/les/database.
+#
+# Change history -----------------------------------------------------------------------------------
+# 
+# 12 March 2021 v. 1-1 added data for B and Cr from THERMOCHIMIE10a:2018 
+#	https://www.thermochimie-tdb.com/ These data are not part of the official PSI data review 
+#	Nagra NTB 21-03 and they were taken as are. 
+#
+#---------------------------------------------------------------------------------------------------
+#
+# TEMPERATURE:
+#
+# This version of the database contains logK-data for 25 C, and can be used for calculations at
+# 25 C and 1 bar.
+# 
+# The list of elements for which the data can also be used at elevated T is: 
+#
+#  Li, Na, K, Mg, Ca, Sr, Ba, Ra, Mn, Al
+#
+# where a complete set of enthalpy values (and sometimes also heat capacities) is available for 
+# compounds and complexes involving 
+#
+#  OH-, F-, HCO3-, CO3-2, SO4-2
+#
+# for these data coefficients for the logK temperature dependence analytical_expression are available
+#  log_K(T[K]) = A1 + A2*T + A3/T + A4log10(T)
+#
+# DOCUMENTATION:
+#
+# NAGRA NTB 91-17:  Pearson F.J., Berner U. (1992): Nagra Thermochemical Data Base I. Core Data,
+#                   Nagra NTB 91-17.
+#                     available for download at http://www.nagra.ch/de/downloadcenter.htm
+# NAGRA NTB 91-18:  Pearson F.J., Berner U., Hummel W. (1992): Nagra Thermochemical Data Base
+#                   II. Supplemental Data, Nagra NTB 91-18.
+#                     available for download at http://www.nagra.ch/de/downloadcenter.htm  
+# NAGRA NTB 02-16:  Hummel W., Berner U., Curti E., Pearson F.J., Thoenen T. (2002): Nagra/PSI
+#                   Chemical Thermodynamic Database 01/01, Nagra NTB 02-16.
+#                     available for download at http://www.nagra.ch/de/downloadcenter.htm  
+# PSI Report 14-04: Thoenen T., Hummel W., Berner U., Curti E. (2014): The PSI/Nagra Chemical 
+#                   Thermodynamic Database 12/07, PSI Report 14-04.
+#                     available for download at http://www.psi.ch/les/database
+# NAGRA NTB 21-03:  Hummel W. Thoenen T. (2021): The PSI Chemical Thermodynamic Database 2020,
+#                     Nagra NTB 21-03    
+#
+#---------------------------------------------------------------------------------------------------
+#
+SOLUTION_MASTER_SPECIES
+#                                                                                                      
+#        ATOMIC WEIGHTS                                                                                
+#        Naturally occurring elements: IUPAC 1993 Table 1 rounded to 0.001                              
+#        Radioelements: Mass number of longest-lived isotope                                           
+#                                                                                                      
+#                                                                                                      
+#
+#  elemen     species        alk   gfw_formula element_gfw atomic  Source of data 
+#                                                          number     
+#
+E               e-           0.0        0.0        0.0    #        NAGRA NTB 91-17
+Ac             Ac+3          0.0        Ac       227.028  #        NAGRA NTB 21-03
+Ag             Ag+           0.0        Ag       107.868  #        NAGRA NTB 21-03
+Ag(1)          Ag+           0.0        Ag                #        NAGRA NTB 21-03
+Ag(0)          Ag            0.0        Ag                #        NAGRA NTB 21-03
+Al             Al+3          0.0        Al       26.982   #  13    NAGRA NTB 21-03
+Alkalinity     HCO3-         1.0      HCO3       61.016   #        NAGRA NTB 91-17
+Am             Am+3          0.0        Am         243    #  95    PSI Report 14-04, NAGRA NTB 21-03
+Am(3)          Am+3          0.0        Am                #        PSI Report 14-04, NAGRA NTB 21-03
+Am(5)          AmO2+         0.0        Am                #        PSI Report 14-04, NAGRA NTB 21-03
+As            HAsO4-2        1.0        As       74.922   #  33    NAGRA NTB 91-17
+As(3)         As(OH)3        0.0        As                #        NAGRA NTB 91-17
+As(5)         HAsO4-2        1.0        As                #        NAGRA NTB 91-17
+Ba             Ba+2          0.0        Ba       137.328  #  56    NAGRA NTB 21-03
+B             B(OH)3         0.0        B        10.812   #   5    NAGRA NTB 91-18, THERMOCHIMIE10a:2018:data 
+Br              Br-          0.0        Br       79.904   #  35    NAGRA NTB 91-17
+C              HCO3-         1.0        C        12.011   #   6    NAGRA NTB 91-17
+C(-4)           CH4          0.0       CH4                #        NAGRA NTB 91-17
+C(0)            HCN          0.0       HCN                #        NAGRA NTB 91-17
+C(+4)          HCO3-         1.0      HCO3                #        NAGRA NTB 91-17
+Ca             Ca+2          0.0        Ca       40.078   #  20    NAGRA NTB 21-03
+Cd             Cd+2          0.0        Cd       112.41   #        NAGRA NTB 21-03
+Cf             Cf+3          0.0        Cf       251.08   #        NAGRA NTB 21-03
+Cit            Cit-3         0.0        Cit      189.101  #        NAGRA NTB 21-03
+Cl              Cl-          0.0        Cl       35.453   #  17    NAGRA NTB 91-17
+Cm             Cm+3          0.0        Cm         247    #        PSI Report 14-04, NAGRA NTB 21-03
+Co            Co+2           0          Co       58.9332  #        ThermoChimie
+Cs              Cs+          0.0        Cs       132.905  #  55    NAGRA NTB 91-17  Master Species only
+Cr            CrO4-2         0.0        CrO4     51.9961  #        THERMOCHIMIE10a:2018:data
+Cr(+2)        Cr+2           0.0        Cr                #        THERMOCHIMIE10a:2018:data
+Cr(+3)        Cr+3          -1.0        Cr           	  #        THERMOCHIMIE10a:2018:data
+Cr(+6)        CrO4-2         1.0       CrO4               #        THERMOCHIMIE10a:2018:data
+Cu             Cu+2          0.0        Cu       63.55    #        NAGRA NTB 21-03
+Cu(1)          Cu+           0.0        Cu                #        NAGRA NTB 21-03
+Cu(2)          Cu+2          0.0        Cu                #        NAGRA NTB 21-03
+Edta           Edta-4        0.0        Edta     288.213  #        NAGRA NTB 21-03
+Eu             Eu+3          0.0        Eu       151.966  #  63    NAGRA NTB 21-03
+Eu(+3)         Eu+3          0.0        Eu                #        NAGRA NTB 21-03
+Fe             Fe+2          0.0        Fe       55.845   #  26    NAGRA NTB 21-03
+Fe(+2)         Fe+2          0.0        Fe                #        NAGRA NTB 21-03
+Fe(+3)         Fe+3          0.0        Fe                #        NAGRA NTB 21-03
+F               F-           0.0        F        18.998   #   9    NAGRA NTB 91-17
+H               H+          -1.0        H         1.008   #   1    NAGRA NTB 91-17
+H(0)            H2           0.0        H                 #        NAGRA NTB 91-17
+H(1)            H+          -1.0        H                 #        NAGRA NTB 91-17
+Hg              Hg+2         0.0        Hg       200.59   #        NAGRA NTB 21-03
+Hg(0)           Hg           0.0        Hg                #        NAGRA NTB 21-03
+Hg(+2)          Hg+2         0.0        Hg                #        NAGRA NTB 21-03
+Ho              Ho+3         0.0        Ho       164.93   #        NAGRA NTB 21-03
+I               I-           0.0        I        126.904  #  53    NAGRA NTB 91-18
+I(-1)           I-           0.0        I                 #        NAGRA NTB 91-18
+I(0)            I2           0.0        I                 #        NAGRA NTB 91-18, PSI Report 14-04
+I(+5)          IO3-          0.0        I                 #        PSI Report 14-04
+Isa            H3Isa-        0.0        Isa      179.144  #        NAGRA NTB 21-03
+K               K+           0.0        K        39.098   #  19    NAGRA NTB 21-03
+Li              Li+          0.0        Li        6.941   #   6    NAGRA NTB 21-03
+Mg             Mg+2          0.0        Mg       24.305   #  12    NAGRA NTB 21-03
+Mn             Mn+2          0.0        Mn       54.938   #  25    NAGRA NTB 21-03
+Mn(2)          Mn+2          0.0        Mn       54.938   #  25    NAGRA NTB 21-03
+Mn(3)          Mn+3          0.0        Mn                #        NAGRA NTB 21-03
+Mo            MoO4-2         0.0        Mo       95.941   #  42    NAGRA NTB 21-03
+N              NO3-          0.0        N        14.007   #   7    NAGRA NTB 91-17
+N(-1)          HCN           0.0       HCN                #        PSI Report 14-04
+N(-3)          NH4+          0.0       NH4                #        NAGRA NTB 91-17
+N(0)            N2           0.0        N2                #        NAGRA NTB 91-17
+N(5)           NO3-          0.0       NO3                #        NAGRA NTB 91-17
+Na              Na+          0.0        Na        22.99   #  11    NAGRA NTB 21-03
+Nb             Nb(OH)4+      0.0        Nb       92.906   #  41    NAGRA NTB 21-03
+Ni             Ni+2          0.0        Ni       58.693   #  28    PSI Report 14-04
+Np            NpO2+2         0.0        Np         237    #  93    PSI Report 14-04, NAGRA NTB 21-03
+Np(3)          Np+3          0.0        Np                #        PSI Report 14-04, NAGRA NTB 21-03
+Np(4)          Np+4          0.0        Np                #        PSI Report 14-04, NAGRA NTB 21-03
+Np(5)          NpO2+         0.0        Np                #        PSI Report 14-04, NAGRA NTB 21-03
+Np(6)         NpO2+2         0.0        Np                #        PSI Report 14-04, NAGRA NTB 21-03
+O               H2O          0.0        O        15.999   #   8    NAGRA NTB 91-17
+O(-2)           H2O          0.0        O                 #        NAGRA NTB 91-17
+O(0)            O2           0.0        O                 #        NAGRA NTB 91-17
+Oxa            Oxa-2         0.0        Oxa      88.020   #        NAGRA NTB 21-03
+P             HPO4-2         1.0        P        30.974   #  15    NAGRA NTB 91-17
+Pa            Pa+4           0.0        Pa       231.036  #        NAGRA NTB 21-03
+Pa(+4)        Pa+4           0.0        Pa                #        NAGRA NTB 21-03
+Pa(+5)        PaO(OH)+2      0.0        Pa                #        NAGRA NTB 21-03
+Pb             Pb+2          0.0        Pb       207      #  82    NAGRA NTB 21-03
+Pb(2)          Pb+2          0.0        Pb                #        NAGRA NTB 21-03
+Pb(0)          Pb            0.0        Pb                #        NAGRA NTB 21-03
+Pd             Pd+2          0.0        Pd       106.42   #        NAGRA NTB 21-03
+Pd(0)          Pd            0.0        Pd                #        NAGRA NTB 21-03
+Pd(2)          Pd+2          0.0        Pd                #        NAGRA NTB 21-03
+Po             Po+2          0.0        Po       208.982  #        NAGRA NTB 21-03
+Po(-2)         Po-2          0.0        Po                #        NAGRA NTB 21-03
+Po(0)          Po            0.0        Po                #        NAGRA NTB 21-03
+Po(2)          Po+2          0.0        Po                #        NAGRA NTB 21-03
+Po(4)          Po+4          0.0        Po                #        NAGRA NTB 21-03
+Pu            PuO2+2         0.0        Pu       242      #  94    PSI Report 14-04, NAGRA NTB 21-03
+Pu(3)          Pu+3          0.0        Pu                #        PSI Report 14-04, NAGRA NTB 21-03
+Pu(4)          Pu+4          0.0        Pu                #        PSI Report 14-04, NAGRA NTB 21-03
+Pu(5)          PuO2+         0.0        Pu                #        PSI Report 14-04, NAGRA NTB 21-03
+Pu(6)         PuO2+2         0.0        Pu                #        PSI Report 14-04, NAGRA NTB 21-03
+Ra             Ra+2          0.0        Ra         226    #  88    NAGRA NTB 21-03
+S              SO4-2         0.0        S        32.067   #  16    NAGRA NTB 91-17
+S(-2)           HS-          1.0        HS                #        NAGRA NTB 02-16
+S(0)            S            0.0        S                 #        NAGRA NTB 21-03
+S(2)          S2O3-2         0.0       S2O3               #        NAGRA NTB 91-18
+S(4)          SO3-2          0.0       SO3                #        NAGRA NTB 91-18
+S(6)           SO4-2         0.0       SO4                #        NAGRA NTB 91-18
+Se            SeO3-2         0.0        Se       78.963   #  34    PSI Report 14-04
+Se(-2)         H2Se          0.0        Se                #        PSI Report 14-04
+Se(0)          Se            0.0        Se                #        NAGRA NTB 21-03
+Se(4)         SeO3-2         0.0        Se                #        PSI Report 14-04
+Se(6)         HSeO4-         0.0        Se                #        PSI Report 14-04
+Si            Si(OH)4        0.0        Si       28.086   #  14    NAGRA NTB 21-03
+Sm             Sm+3          0.0        Sm       150.4    #        NAGRA NTB 21-03
+Sn             Sn+4          0.0        Sn       118.711  #        NAGRA NTB 21-03
+Sn(2)          Sn+2          0.0        Sn                #        NAGRA NTB 21-03 
+Sn(4)          Sn+4          0.0        Sn                #        NAGRA NTB 21-03
+Sr             Sr+2          0.0        Sr       87.621   #  38    NAGRA NTB 21-03
+Tc             TcO(OH)2      0.0        Tc         98     #  43    PSI Report 14-04, NAGRA NTB 21-03
+Tc(3)          Tc+3          0.0        Tc                #        NAGRA NTB 21-03
+Tc(4)        TcO(OH)2       -1.0     TcO(OH)2             #        PSI Report 14-04, NAGRA NTB 21-03
+Tc(7)          TcO4-         0.0       TcO4               #        PSI Report 14-04, NAGRA NTB 21-03
+Th             Th+4          0.0        Th       232.038  #  90    PSI Report 14-04
+Ti             TiO+2         0.0        TiO      47.867   #        NAGRA NTB 21-03
+Ti(4)          TiO+2         0.0        TiO               #        NAGRA NTB 21-03
+Ti(3)          Ti+3          0.0        Ti                #        NAGRA NTB 21-03  
+U              UO2+2         0.0        U        238.029  #  92    PSI Report 14-04, NAGRA NTB 21-03 
+U(4)            U+4          0.0        U                 #        PSI Report 14-04, NAGRA NTB 21-03
+U(5)           UO2+          0.0        U                 #        PSI Report 14-04, NAGRA NTB 21-03
+U(6)           UO2+2         0.0       UO2                #        PSI Report 14-04, NAGRA NTB 21-03
+Zn             Zn+2          0.0        Zn       65.4     #        PSI Report 14-04
+Zr             Zr+4          0.0        Zr       91.224   #  40    PSI Report 14-04
+
+SOLUTION_SPECIES
+
+# -------- for redox stability
+
+H2O + 0.01e- = H2O-0.01
+     log_k   -9.0
+
+# -------- for redox stability
+
+# THERMOMATCH MASTER SPECIES
+
+Ac+3	=	Ac+3
+	-log_k 	0.0
+
+Ag+	=	Ag+
+	-log_k 	0.0
+
+Al+3	=	Al+3
+	-log_k 	0.0
+
+Am+3	=	Am+3
+	-log_k 	0.0
+
+B(OH)3	=	B(OH)3
+	-log_k 	0.0
+
+Ba+2	=	Ba+2
+	-log_k 	0.0
+
+Br-	=	Br-
+	-log_k 	0.0
+
+Ca+2	=	Ca+2
+	-log_k 	0.0
+
+Cd+2	=	Cd+2
+	-log_k 	0.0
+
+Cf+3	=	Cf+3
+	-log_k 	0.0
+
+Cit-3	=	Cit-3
+	-log_k 	0.0
+
+Cl-	=	Cl-
+	-log_k 	0.0
+
+Cm+3	=	Cm+3
+	-log_k 	0.0
+	
+# ----------from ThermoChimie 9b
+
+1.000Co+2     = Co+2
+     log_k     0.000     
+	 
+# ----------from ThermoChimie 9b
+
+# ----- from THERMOCHIMIE10a:2018:data
+
+CrO4-2	=	CrO4-2
+	-log_k 	0.0 
+
+# ----- from THERMOCHIMIE10a:2018:data    
+
+Cs+	=	Cs+
+	-log_k 	0.0
+
+Cu+2	=	Cu+2
+	-log_k 	0.0
+
+e-	=	e-
+	-log_k 	0.0
+
+Edta-4	=	Edta-4
+	-log_k 	0.0
+
+Eu+3	=	Eu+3
+	-log_k 	0.0
+
+F-	=	F-
+	-log_k 	0.0
+
+Fe+2	=	Fe+2
+	-log_k 	0.0
+
+H+	=	H+
+	-log_k 	0.0
+
+H2O	=	H2O
+	-log_k 	0.0
+
+H3Isa-	=	H3Isa-
+	-log_k 	0.0
+
+HAsO4-2	=	HAsO4-2
+	-log_k 	0.0
+
+HCO3-	=	HCO3-
+	-log_k 	0.0
+
+Hg+2	=	Hg+2
+	-log_k 	0.0
+
+Ho+3	=	Ho+3
+	-log_k 	0.0
+
+HPO4-2	=	HPO4-2
+	-log_k 	0.0
+
+I-	=	I-
+	-log_k 	0.0
+
+K+	=	K+
+	-log_k 	0.0
+
+Li+	=	Li+
+	-log_k 	0.0
+
+Mg+2	=	Mg+2
+	-log_k 	0.0
+
+Mn+2	=	Mn+2
+	-log_k 	0.0
+
+MoO4-2	=	MoO4-2
+	-log_k 	0.0
+
+Na+	=	Na+
+	-log_k 	0.0
+
+Nb(OH)4+	=	Nb(OH)4+
+	-log_k 	0.0
+
+Ni+2	=	Ni+2
+	-log_k 	0.0
+
+NO3-	=	NO3-
+	-log_k 	0.0
+
+NpO2+2	=	NpO2+2
+	-log_k 	0.0
+
+Oxa-2	=	Oxa-2
+	-log_k 	0.0
+
+Pa+4	=	Pa+4
+	-log_k 	0.0
+
+Pb+2	=	Pb+2
+	-log_k 	0.0
+
+Pd+2	=	Pd+2
+	-log_k 	0.0
+
+Po+2	=	Po+2
+	-log_k 	0.0
+
+PuO2+2	=	PuO2+2
+	-log_k 	0.0
+
+Ra+2	=	Ra+2
+	-log_k 	0.0
+
+SeO3-2	=	SeO3-2
+	-log_k 	0.0
+
+Si(OH)4	=	Si(OH)4
+	-log_k 	0.0
+
+Sm+3	=	Sm+3
+	-log_k 	0.0
+
+Sn+4	=	Sn+4
+	-log_k 	0.0
+
+SO3-2	=	SO3-2
+	-log_k 	0.0
+
+SO4-2	=	SO4-2
+	-log_k 	0.0
+
+Sr+2	=	Sr+2
+	-log_k 	0.0
+
+TcO(OH)2	=	TcO(OH)2
+	-log_k 	0.0  
+
+Th+4	=	Th+4
+	-log_k 	0.0
+
+TiO+2	=	TiO+2
+	-log_k 	0.0
+
+UO2+2	=	UO2+2
+	-log_k 	0.0
+
+Zn+2	=	Zn+2
+	-log_k 	0.0
+
+Zr+4	=	Zr+4
+	-log_k 	0.0  
+
+
+# THERMOMATCH SECONDARY MASTER SPECIES 
+
+
+e- + Ag+ = Ag
+	-analytical_expression	-5.5229840565736 0 3765.5002159267 0 0 0 0 
+	-log_K	7.106558 
+
+2H2O + Am+3 = AmO2+ + 4H+ + 2e-
+	-analytical_expression	7.6197970800303 0 -20060.729822844 0 0 0 0 
+	-log_K	-59.666694 
+
+HAsO4-2 + 4H+ + 2e- = As(OH)3 + H2O
+	-analytical_expression	7.1214302797363 0 6356.4297097623 0 0 0 0 
+	-log_K	28.441 
+
+H2O + B(OH)3 = B(OH)4- + H+
+	-analytical_expression	62.005762224225 0 -3795.789604023 -23.6456507959562 0 0 0 
+	-log_K	-9.235 
+
+#1.000H+  +  1.000B(OH)4-     -1.000H2O     = B(OH)3 # THERMOCHIMIE10a:2018:data
+#	-analytical_expression	6.87245 0 705.884 0 0 
+#	-log_K	9.24 
+
+HCO3- + 9H+ + 8e- = CH4 + 3H2O
+	-analytical_expression	-16.979331416003 0 13365.567016947 0 0 0 0 
+	-log_K	27.849 
+
+4H2O + Cl- = ClO4- + 8H+ + 8e-
+	-analytical_expression	19.23878626066 0 -61691.366854282 0 0 0 0 
+	-log_K	-187.672346 
+
+# ----- from THERMOCHIMIE10a:2018:data
+
+#4.000H+  +  1.000CrO4-2     -2.000H2O     -1.000O2     = Cr+2
+#	-analytical_expression	5.33522 0 -7186.97 0 0 
+#	-log_K	-18.77 
+
+#5.000H+  +  1.000CrO4-2     -2.500H2O     -0.750O2     = Cr+3
+#	-analytical_expression	-5.79459 0 4449.02 0 0 
+#	-log_K	9.128 
+
+8.000H+     + 4.000e-     + 1.000CrO4-2     -4.000H2O     = Cr+2
+    -analytical_expression	-6.69938 0 22039.1 0 0
+    -log_K	67.22       
+
+8.000H+     + 3.000e-     + 1.000CrO4-2     -4.000H2O     = Cr+3
+    -analytical_expression	-14.8205 0 26368.5 0 0
+    -log_K	73.62     
+
+# ----- from THERMOCHIMIE10a:2018:data
+
+e- + Cu+2 = Cu+
+	-analytical_expression	2.817078 0 0 0 0 0 0 
+	-log_K	2.817078 
+
+Fe+2 = Fe+3 + e-
+	-analytical_expression	18.69116016635 0 -3200.5458172679 -8.48901498703084 0 0 0 
+	-log_K	-13.050009 
+
+2H+ + 2e- = H2
+	-analytical_expression	-54.254650788486 0 2456.4471817166 17.3416112314047 0 0 0 
+	-log_K	-3.105 
+
+SeO3-2 + 8H+ + 6e- = H2Se + 3H2O
+	-analytical_expression	-2.0209072458622 0 17710.234804343 0 0 0 0 
+	-log_K	57.380446 
+
+NO3- + HCO3- + 12H+ + 10e- = HCN + 6H2O
+	-analytical_expression	-18.108581843631 0 37303.210732519 0 0 0 0 
+	-log_K	107.007 
+
+Hg+2 + 2e- = Hg
+	-analytical_expression	-3.4716147549211 0 7689.2673988981 0 0 0 0 
+	-log_K	22.318246 
+
+SO4-2 + 9H+ + 8e- = HS- + 4H2O
+	-analytical_expression	-10.156909066972 0 13072.955944543 0 0 0 0 
+	-log_K	33.69 
+
+SeO3-2 + H2O = HSeO4- + H+ + 2e-
+	-analytical_expression	10.01991824693 0 -10825.873920376 0 0 0 0 
+	-log_K	-26.283969 
+
+2I- = I2 + 2e-
+	-analytical_expression	-20.95 0 0 0 0 0 0 
+	-log_K	-20.95 
+
+I- + 3H2O = IO3- + 6H+ + 6e-
+	-analytical_expression	-111.565 0 0 0 0 0 0 
+	-log_K	-111.565 
+
+Mn+2 = Mn+3 + e-
+	-analytical_expression	-6.565232050651 0 -5630.7521608669 0 0 0 0 
+	-log_K	-25.450058 
+
+2NO3- + 12H+ + 10e- = N2 + 6H2O
+	-analytical_expression	-22.538566443028 0 68515.337033357 0 0 0 0 
+	-log_K	207.263 
+
+NO3- + 10H+ + 8e- = NH4+ + 3H2O
+	-analytical_expression	-18.198555674196 0 40945.701474059 0 0 0 0 
+	-log_K	119.134 
+
+NpO2+2 + 4H+ + 3e- = Np+3 + 2H2O
+	-analytical_expression	-8.2173462889386 0 12439.888076364 0 0 0 0 
+	-log_K	33.510615 
+
+NpO2+2 + 4H+ + 2e- = Np+4 + 2H2O
+	-analytical_expression	-16.964338467591 0 13944.207763126 0 0 0 0 
+	-log_K	29.814076 
+
+NpO2+2 + e- = NpO2+
+	-analytical_expression	-0.98407579509028 0 6137.4153887 0 0 0 0 
+	-log_K	19.60392 
+
+2H2O = O2 + 4H+ + 4e-
+	-analytical_expression	-35.570814769961 0 -27109.786143763 16.3728229323974 0 0 0 
+	-log_K	-85.984 
+
+Pa+4 + 2H2O = PaO(OH)+2 + 3H+ + e-
+	-analytical_expression	15.745212721444 0 -4077.3331509951 0 0 0 0 
+	-log_K	2.070763 
+
+Pb+2 + 2e- = Pb
+	-analytical_expression	-11.54629 0 0 0 0 0 0 
+	-log_K	-11.54629 
+
+Pd+2 + 2e- = Pd
+	-analytical_expression	21.228575 0 0 0 0 0 0 
+	-log_K	21.228575 
+
+Po+2 + 4e- = Po-2
+	-analytical_expression	-26.261194 0 0 0 0 0 0 
+	-log_K	-26.261194 
+
+Po+2 + 2e- = Po
+	-analytical_expression	14.741255 0 0 0 0 0 0 
+	-log_K	14.741255 
+
+Po+2 = Po+4 + 2e-
+	-analytical_expression	-26.699173 0 0 0 0 0 0 
+	-log_K	-26.699173 
+
+PuO2+2 + 4H+ + 3e- = Pu+3 + 2H2O
+	-analytical_expression	-8.8493694906686 0 17835.590286175 0 0 0 0 
+	-log_K	50.959681 
+
+PuO2+2 + 4H+ + 2e- = Pu+4 + 2H2O
+	-analytical_expression	-17.450108366442 0 15124.680850655 0 0 0 0 
+	-log_K	33.265347 
+
+PuO2+2 + e- = PuO2+
+	-analytical_expression	0.35832059205517 0 4608.2350954144 0 0 0 0 
+	-log_K	15.802266 
+
+SO4-2 + 8H+ + 6e- = S + 4H2O
+	-analytical_expression	-3.3604711243974 0 9703.9066460654 0 0 0 0 
+	-log_K	29.186456 
+
+2SO4-2 + 10H+ + 8e- = S2O3-2 + 5H2O
+	-analytical_expression	-7.355322531434 0 13526.863516695 0 0 0 0 
+	-log_K	38.014 
+
+SeO3-2 + 6H+ + 4e- = Se + 3H2O
+	-analytical_expression	55.147062 0 0 0 0 0 0 
+	-log_K	55.147062 
+
+Sn+4 + 2e- = Sn+2
+	-analytical_expression	16.851514491084 0 -1153.311759851 0 0 0 0 
+	-log_K	12.979932 
+
+SO4-2 + 2H+ + 2e- = SO3-2 + H2O
+	-analytical_expression	-5.4975451749373 0 626.27753625969 0 0 0 0 
+	-log_K	-3.397 
+
+TcO(OH)2 + H2O = TcO4- + 4H+ + 3e-
+	-analytical_expression	-30.169715 0 0 0 0 0 0 
+	-log_K	-30.169715 
+
+TcO(OH)2 + 4H+ + e- = Tc+3 + 3H2O
+	-analytical_expression	11.869219 0 0 0 0 0 0 
+	-log_K	11.869219 
+
+TiO+2 + 2H+ + e- = Ti+3 + H2O
+	-analytical_expression	1.706364 0 0 0 0 0 0 
+	-log_K	1.706364 
+
+UO2+2 + 4H+ + 2e- = U+4 + 2H2O
+	-analytical_expression	32.998926763648 0 5325.6984790302 -16.9022588221838 0 0 0 
+	-log_K	9.045133 
+
+UO2+2 + e- = UO2+
+	-analytical_expression	0.41055391451219 0 318.62326698783 0 0 0 0 
+	-log_K	1.480368 
+
+# THERMOMATCH PRODUCT SPECIES
+
+2NpO2+2 + 2H2O = (NpO2)2(OH)2+2 + 2H+
+	-analytical_expression	-6.27 0 0 0 0 0 0 
+	-log_K	-6.27 
+
+2NpO2+2 + HCO3- + 3H2O = (NpO2)2CO3(OH)3- + 4H+
+	-analytical_expression	-12.139 0 0 0 0 0 0 
+	-log_K	-12.139 
+
+3NpO2+2 + 6HCO3- = (NpO2)3(CO3)6-6 + 6H+
+	-analytical_expression	-10.544 0 0 0 0 0 0 
+	-log_K	-10.544 
+
+3NpO2+2 + 5H2O = (NpO2)3(OH)5+ + 5H+
+	-analytical_expression	-17.12 0 0 0 0 0 0 
+	-log_K	-17.12 
+
+2PuO2+2 + 2H2O = (PuO2)2(OH)2+2 + 2H+
+	-analytical_expression	3.9575189978768 0 -3416.0592886892 0 0 0 0 
+	-log_K	-7.5 
+
+3PuO2+2 + 6HCO3- = (PuO2)3(CO3)6-6 + 6H+
+	-analytical_expression	-13.374 0 0 0 0 0 0 
+	-log_K	-13.374 
+
+2U+4 + 2H2O + 2Edta-4 = (UEdtaOH)2-2 + 2H+
+	-analytical_expression	51.9 0 0 0 0 0 0 
+	-log_K	51.9 
+
+2UO2+2 + 2H2O = (UO2)2(OH)2+2 + 2H+
+	-analytical_expression	2.7541499557823 0 -2496.7528134456 0 0 0 0 
+	-log_K	-5.62 
+
+2UO2+2 + HCO3- + 3H2O = (UO2)2CO3(OH)3- + 4H+
+	-analytical_expression	-11.189 0 0 0 0 0 0 
+	-log_K	-11.189 
+
+2UO2+2 + Edta-4 = (UO2)2Edta
+	-analytical_expression	20.6 0 0 0 0 0 0 
+	-log_K	20.6 
+
+2UO2+2 + NpO2+2 + 6HCO3- = (UO2)2NpO2(CO3)6-6 + 6H+
+	-analytical_expression	-8.384 0 0 0 0 0 0 
+	-log_K	-8.384 
+
+2UO2+2 + H2O = (UO2)2OH+3 + H+
+	-analytical_expression	-2.7 0 0 0 0 0 0 
+	-log_K	-2.7 
+
+2UO2+2 + PuO2+2 + 6HCO3- = (UO2)2PuO2(CO3)6-6 + 6H+
+	-analytical_expression	-8.474 0 0 0 0 0 0 
+	-log_K	-8.474 
+
+3UO2+2 + 6HCO3- = (UO2)3(CO3)6-6 + 6H+
+	-analytical_expression	-3.2953378427598 0 -1394.9431095372 0 0 0 0 
+	-log_K	-7.974 
+
+3UO2+2 + 4H2O = (UO2)3(OH)4+2 + 4H+
+	-analytical_expression	5.4789890782012 0 -5181.5455877365 0 0 0 0 
+	-log_K	-11.9 
+
+3UO2+2 + 5H2O = (UO2)3(OH)5+ + 5H+
+	-analytical_expression	5.5956046193522 0 -6304.5620205625 0 0 0 0 
+	-log_K	-15.55 
+
+3UO2+2 + 7H2O = (UO2)3(OH)7- + 7H+
+	-analytical_expression	-32.2 0 0 0 0 0 0 
+	-log_K	-32.2 
+
+3UO2+2 + HCO3- + 3H2O = (UO2)3O(OH)2HCO3+ + 4H+
+	-analytical_expression	-9.669 0 0 0 0 0 0 
+	-log_K	-9.669 
+
+4UO2+2 + 7H2O = (UO2)4(OH)7+ + 7H+
+	-analytical_expression	-21.9 0 0 0 0 0 0 
+	-log_K	-21.9 
+
+2UO2+2 + 2Cit-3 = (UO2Cit)2-2
+	-analytical_expression	21.3 0 0 0 0 0 0 
+	-log_K	21.3 
+
+Cit-3 + Ac+3 = Ac(Cit)
+	-analytical_expression	8.9 0 0 0 0 0 0 
+	-log_K	8.9 
+
+Edta-4 + Ac+3 = Ac(Edta)-
+	-analytical_expression	16.8 0 0 0 0 0 0 
+	-log_K	16.8 
+
+3H2O + Ac+3 = Ac(OH)3 + 3H+
+	-analytical_expression	-31.2 0 0 0 0 0 0 
+	-log_K	-31.2 
+
+Oxa-2 + Ac+3 = Ac(Oxa)+
+	-analytical_expression	5.9 0 0 0 0 0 0 
+	-log_K	5.9 
+
+2Oxa-2 + Ac+3 = Ac(Oxa)2-
+	-analytical_expression	9.6 0 0 0 0 0 0 
+	-log_K	9.6 
+
+Cl- + Ac+3 = AcCl+2
+	-analytical_expression	0.6 0 0 0 0 0 0 
+	-log_K	0.6 
+
+F- + Ac+3 = AcF+2
+	-analytical_expression	3.61 0 0 0 0 0 0 
+	-log_K	3.61 
+
+2F- + Ac+3 = AcF2+
+	-analytical_expression	6.73 0 0 0 0 0 0 
+	-log_K	6.73 
+
+3F- + Ac+3 = AcF3
+	-analytical_expression	9.75 0 0 0 0 0 0 
+	-log_K	9.75 
+
+HPO4-2 + H+ + Ac+3 = AcH2PO4+2
+	-analytical_expression	9.912 0 0 0 0 0 0 
+	-log_K	9.912 
+
+H+ + Edta-4 + Ac+3 = AcHEdta
+	-analytical_expression	19.4 0 0 0 0 0 0 
+	-log_K	19.4 
+
+H2O + Ac+3 = AcOH+2 + H+
+	-analytical_expression	-8.6 0 0 0 0 0 0 
+	-log_K	-8.6 
+
+S + HCN + Ac+3 = AcSCN+2 + H+
+	-analytical_expression	11.444543 0 0 0 0 0 0 
+	-log_K	11.444543 
+
+SO4-2 + Ac+3 = AcSO4+
+	-analytical_expression	3.5 0 0 0 0 0 0 
+	-log_K	3.5 
+
+2HCN + Ag+ = Ag(CN)2- + 2H+
+	-analytical_expression	2.46 0 0 0 0 0 0 
+	-log_K	2.46 
+
+3HCN + Ag+ = Ag(CN)3-2 + 3H+
+	-analytical_expression	-5.83 0 0 0 0 0 0 
+	-log_K	-5.83 
+
+2HS- + Ag+ = Ag(HS)2-
+	-analytical_expression	6.6958041266292 0 3191.456002124 0 0 0 0 
+	-log_K	17.4 
+
+2H2O + Ag+ = Ag(OH)2- + 2H+
+	-analytical_expression	-12.234272751645 0 -3609.3225817802 0 0 0 0 
+	-log_K	-24.34 
+
+HCN + H2O + Ag+ = Ag(OH)CN- + 2H+
+	-analytical_expression	-9.91 0 0 0 0 0 0 
+	-log_K	-9.91 
+
+3Se + 3HCN + Ag+ = Ag(SeCN)3-2 + 3H+
+	-analytical_expression	20.460153 0 0 0 0 0 0 
+	-log_K	20.460153 
+
+3HS- + 2Ag+ = Ag2S(HS)2-2 + H+
+	-analytical_expression	31.1 0 0 0 0 0 0 
+	-log_K	31.1 
+
+H2Se + 2Ag+ = Ag2Se + 2H+
+	-analytical_expression	31.336209 0 0 0 0 0 0 
+	-log_K	31.336209 
+
+Br- + Ag+ = AgBr
+	-analytical_expression	-1.2237978079074 0 1718.476308836 0 0 0 0 
+	-log_K	4.54 
+
+2Br- + Ag+ = AgBr2-
+	-analytical_expression	-0.92918823635261 0 2507.199477937 0 0 0 0 
+	-log_K	7.48 
+
+3Br- + Ag+ = AgBr3-2
+	-analytical_expression	-0.93258794661137 0 2752.696093485 0 0 0 0 
+	-log_K	8.3 
+
+4Br- + Ag+ = AgBr4-3
+	-analytical_expression	7.2 0 0 0 0 0 0 
+	-log_K	7.2 
+
+Cl- + Ag+ = AgCl
+	-analytical_expression	-1.6052832516724 0 1441.6396998138 0 0 0 0 
+	-log_K	3.23 
+
+2Cl- + Ag+ = AgCl2-
+	-analytical_expression	1.4184227192482 0 1112.5697683346 0 0 0 0 
+	-log_K	5.15 
+
+3Cl- + Ag+ = AgCl3-2
+	-analytical_expression	-2.2830014174875 0 2183.3528787035 0 0 0 0 
+	-log_K	5.04 
+
+4Cl- + Ag+ = AgCl4-3
+	-analytical_expression	-8.6058804106359 0 3651.1092397458 0 0 0 0 
+	-log_K	3.64 
+
+HCO3- + Ag+ = AgCO3- + H+
+	-analytical_expression	-7.929 0 0 0 0 0 0 
+	-log_K	-7.929 
+
+F- + Ag+ = AgF
+	-analytical_expression	-1.9397396400633 0 611.12987274715 0 0 0 0 
+	-log_K	0.11 
+
+HPO4-2 + Ag+ = AgHPO4-
+	-analytical_expression	4.5 0 0 0 0 0 0 
+	-log_K	4.5 
+
+HS- + Ag+ = AgHS
+	-analytical_expression	13.5 0 0 0 0 0 0 
+	-log_K	13.5 
+
+I- + Ag+ = AgI
+	-analytical_expression	-5.6755740972005 0 3567.5359238146 0 0 0 0 
+	-log_K	6.29 
+
+2I- + Ag+ = AgI2-
+	-analytical_expression	-2.5953137499894 0 4178.6657965617 0 0 0 0 
+	-log_K	11.42 
+
+3I- + Ag+ = AgI3-2
+	-analytical_expression	-4.5244101715689 0 5296.458897142 0 0 0 0 
+	-log_K	13.24 
+
+4I- + Ag+ = AgI4-3
+	-analytical_expression	13.1 0 0 0 0 0 0 
+	-log_K	13.1 
+
+H2O + Ag+ = AgOH + H+
+	-analytical_expression	2.055084031079 0 -4115.9858096133 0 0 0 0 
+	-log_K	-11.75 
+
+SeO3-2 + Ag+ = AgSeO3-
+	-analytical_expression	3.1 0 0 0 0 0 0 
+	-log_K	3.1 
+
+HSeO4- + Ag+ = AgSeO4- + H+
+	-analytical_expression	-0.75 0 0 0 0 0 0 
+	-log_K	-0.75 
+
+SO4-2 + Ag+ = AgSO4-
+	-analytical_expression	2.2837059405408 0 -329.06993147923 0 0 0 0 
+	-log_K	1.18 
+
+2H2O + Al+3 = Al(OH)2+ + 2H+
+	-analytical_expression	8.7812095491612 0 -5787.452128238 0 0 0 0 
+	-log_K	-10.63 
+
+2H2O + F- + Al+3 = Al(OH)2F + 2H+
+	-analytical_expression	28.683259220283 0 -7383.6273719002 -3.33104416254585 0 0 0 
+	-log_K	-4.324 
+
+2H2O + 2F- + Al+3 = Al(OH)2F2- + 2H+
+	-analytical_expression	16.412616001421 0 -7660.7170618164 2.87401181788687 0 0 0 
+	-log_K	-2.17 
+
+3H2O + Al+3 = Al(OH)3 + 3H+
+	-analytical_expression	7.6958802419878 0 -7061.9451961893 0 0 0 0 
+	-log_K	-15.99 
+
+4H2O + Al+3 = Al(OH)4- + 4H+
+	-analytical_expression	74.116913396199 0 -12779.577042299 -21.8894438757701 0 0 0 
+	-log_K	-22.91 
+
+2SO4-2 + Al+3 = Al(SO4)2-
+	-analytical_expression	-796.29702036631 0 36734.755484219 274.219406795365 0 0 0 
+	-log_K	5.45 
+
+32H2O + 13Al+3 = Al13(OH)32+7 + 32H+
+	-analytical_expression	119.97538772156 0 -65594.606341527 0 0 0 0 
+	-log_K	-100.03 
+
+2H2O + 2Al+3 = Al2(OH)2+4 + 2H+
+	-analytical_expression	7.0260028724401 0 -4366.705757407 0 0 0 0 
+	-log_K	-7.62 
+
+4H2O + 3Al+3 = Al3(OH)4+5 + 4H+
+	-analytical_expression	11.730505025809 0 -7641.7350754622 0 0 0 0 
+	-log_K	-13.9 
+
+F- + Al+3 = AlF+2
+	-analytical_expression	7.9226707466976 0 -251.24228101827 0 0 0 0 
+	-log_K	7.08 
+
+2F- + Al+3 = AlF2+
+	-analytical_expression	14.143794787867 0 -421.52291222816 0 0 0 0 
+	-log_K	12.73 
+
+3F- + Al+3 = AlF3
+	-analytical_expression	18.332195987769 0 -462.78723696921 0 0 0 0 
+	-log_K	16.78 
+
+4F- + Al+3 = AlF4-
+	-analytical_expression	21.047169959275 0 -523.90022424392 0 0 0 0 
+	-log_K	19.29 
+
+5F- + Al+3 = AlF5-2
+	-analytical_expression	21.497068885094 0 -359.88759172888 0 0 0 0 
+	-log_K	20.29 
+
+6F- + Al+3 = AlF6-3
+	-analytical_expression	20.358324633244 0 -20.370995758238 0 0 0 0 
+	-log_K	20.29 
+
+H2O + Al+3 = AlOH+2 + H+
+	-analytical_expression	4.8307196417208 0 -2925.0660575932 0 0 0 0 
+	-log_K	-4.98 
+
+H2O + 2F- + Al+3 = AlOHF2 + H+
+	-analytical_expression	-17.135477306832 0 -6019.4971484869 15.1133380078531 0 0 0 
+	-log_K	0.072 
+
+Si(OH)4 + Al+3 = AlSiO(OH)3+2 + H+
+	-analytical_expression	9.3477487224933 0 -3478.7392756376 0 0 0 0 
+	-log_K	-2.32 
+
+SO4-2 + Al+3 = AlSO4+
+	-analytical_expression	-411.12306834835 0 18935.467357152 141.920570183564 0 0 0 
+	-log_K	3.56 
+
+Cit-3 + Am+3 = Am(Cit)
+	-analytical_expression	8.55 0 0 0 0 0 0 
+	-log_K	8.55 
+
+2Cit-3 + Am+3 = Am(Cit)2-3
+	-analytical_expression	13.9 0 0 0 0 0 0 
+	-log_K	13.9 
+
+2HCO3- + Am+3 = Am(CO3)2- + 2H+
+	-analytical_expression	-7.758 0 0 0 0 0 0 
+	-log_K	-7.758 
+
+3HCO3- + Am+3 = Am(CO3)3-3 + 3H+
+	-analytical_expression	-15.987 0 0 0 0 0 0 
+	-log_K	-15.987 
+
+Edta-4 + Am+3 = Am(Edta)-
+	-analytical_expression	17.812970907051 0 553.67321804443 0 0 0 0 
+	-log_K	19.67 
+
+H2O + Edta-4 + Am+3 = Am(Edta)OH-2 + H+
+	-analytical_expression	8.33 0 0 0 0 0 0 
+	-log_K	8.33 
+
+H+ + Cit-3 + Am+3 = Am(HCit)+
+	-analytical_expression	12.86 0 0 0 0 0 0 
+	-log_K	12.86 
+
+2H+ + 2Cit-3 + Am+3 = Am(HCit)2-
+	-analytical_expression	23.52 0 0 0 0 0 0 
+	-log_K	23.52 
+
+H+ + Edta-4 + Am+3 = Am(HEdta)
+	-analytical_expression	21.84 0 0 0 0 0 0 
+	-log_K	21.84 
+
+H3Isa- + Am+3 = Am(Isa)- + 3H+
+	-analytical_expression	22.2 0 0 0 0 0 0 
+	-log_K	22.2 
+
+2NO3- + Am+3 = Am(NO3)2+
+	-analytical_expression	2.7720673434514 0 -564.11988253583 0 0 0 0 
+	-log_K	0.88 
+
+2H2O + Am+3 = Am(OH)2+ + 2H+
+	-analytical_expression	-15.1 0 0 0 0 0 0 
+	-log_K	-15.1 
+
+3H2O + Am+3 = Am(OH)3 + 3H+
+	-analytical_expression	-26.2 0 0 0 0 0 0 
+	-log_K	-26.2 
+
+Oxa-2 + Am+3 = Am(Oxa)+
+	-analytical_expression	6.51 0 0 0 0 0 0 
+	-log_K	6.51 
+
+2Oxa-2 + Am+3 = Am(Oxa)2-
+	-analytical_expression	10.71 0 0 0 0 0 0 
+	-log_K	10.71 
+
+3Oxa-2 + Am+3 = Am(Oxa)3-3
+	-analytical_expression	13 0 0 0 0 0 0 
+	-log_K	13 
+
+2SO4-2 + Am+3 = Am(SO4)2-
+	-analytical_expression	17.263399519586 0 -3656.3325719915 0 0 0 0 
+	-log_K	5 
+
+Cl- + Am+3 = AmCl+2
+	-analytical_expression	0.24 0 0 0 0 0 0 
+	-log_K	0.24 
+
+2Cl- + Am+3 = AmCl2+
+	-analytical_expression	8.8080090566142 0 -2867.6094028905 0 0 0 0 
+	-log_K	-0.81 
+
+HCO3- + Am+3 = AmCO3+ + H+
+	-analytical_expression	-2.329 0 0 0 0 0 0 
+	-log_K	-2.329 
+
+F- + Am+3 = AmF+2
+	-analytical_expression	5.5198162100333 0 -632.02320172996 0 0 0 0 
+	-log_K	3.4 
+
+2F- + Am+3 = AmF2+
+	-analytical_expression	13.701133154507 0 -2355.7228428117 0 0 0 0 
+	-log_K	5.8 
+
+HPO4-2 + H+ + Am+3 = AmH2PO4+2
+	-analytical_expression	9.672 0 0 0 0 0 0 
+	-log_K	9.672 
+
+HCO3- + Am+3 = AmHCO3+2
+	-analytical_expression	3.1 0 0 0 0 0 0 
+	-log_K	3.1 
+
+HPO4-2 + Am+3 = AmHPO4+
+	-analytical_expression	6.2 0 0 0 0 0 0 
+	-log_K	6.2 
+
+NO3- + Am+3 = AmNO3+2
+	-analytical_expression	1.5953445562419 0 -94.019980422638 0 0 0 0 
+	-log_K	1.28 
+
+2HCO3- + AmO2+ = AmO2(CO3)2-3 + 2H+
+	-analytical_expression	-13.958 0 0 0 0 0 0 
+	-log_K	-13.958 
+
+3HCO3- + AmO2+ = AmO2(CO3)3-5 + 3H+
+	-analytical_expression	-25.887 0 0 0 0 0 0 
+	-log_K	-25.887 
+
+2H2O + AmO2+ = AmO2(OH)2- + 2H+
+	-analytical_expression	-23.6 0 0 0 0 0 0 
+	-log_K	-23.6 
+
+HCO3- + AmO2+ = AmO2CO3- + H+
+	-analytical_expression	-5.229 0 0 0 0 0 0 
+	-log_K	-5.229 
+
+H2O + AmO2+ = AmO2OH + H+
+	-analytical_expression	-11.3 0 0 0 0 0 0 
+	-log_K	-11.3 
+
+H2O + Am+3 = AmOH+2 + H+
+	-analytical_expression	-7.2 0 0 0 0 0 0 
+	-log_K	-7.2 
+
+S + HCN + Am+3 = AmSCN+2 + H+
+	-analytical_expression	11.744543 0 0 0 0 0 0 
+	-log_K	11.744543 
+
+Si(OH)4 + Am+3 = AmSiO(OH)3+2 + H+
+	-analytical_expression	5.1027717306393 0 -2120.6728917551 0 0 0 0 
+	-log_K	-2.01 
+
+SO4-2 + Am+3 = AmSO4+
+	-analytical_expression	10.507656871937 0 -2089.3328982809 0 0 0 0 
+	-log_K	3.5 
+
+H2O + As(OH)3 = As(OH)4- + H+
+	-analytical_expression	-4.4417409622161 0 -1428.2157359423 0 0 0 0 
+	-log_K	-9.232 
+
+HAsO4-2 = AsO4-3 + H+
+	-analytical_expression	-8.4145161122161 0 -950.64646871779 0 0 0 0 
+	-log_K	-11.603 
+
+UO2+2 + 3HCO3- + 2Ba+2 = Ba2UO2(CO3)3 + 3H+
+	-analytical_expression	-1.237 0 0 0 0 0 0 
+	-log_K	-1.237 
+
+HCO3- + Ba+2 = BaCO3 + H+
+	-analytical_expression	-1.2522430318334 0 -1506.7511975443 -0.542786045117316 0 0 0 
+	-log_K	-7.649 
+
+F- + Ba+2 = BaF+
+	-analytical_expression	2.7197396353807 0 -611.12987274715 0 0 0 0 
+	-log_K	0.67 
+
+HPO4-2 + H+ + Ba+2 = BaH2PO4+
+	-analytical_expression	7.812 0 0 0 0 0 0 
+	-log_K	7.812 
+
+HCO3- + Ba+2 = BaHCO3+
+	-analytical_expression	-88.212624595777 0 2993.3820200347 31.9922641261263 0 0 0 
+	-log_K	0.99 
+
+HPO4-2 + Ba+2 = BaHPO4
+	-analytical_expression	2.25 0 0 0 0 0 0 
+	-log_K	2.25 
+
+H2O + Ba+2 = BaOH+ + H+
+	-analytical_expression	-2.6508424205269 0 -3181.0093376326 0 0 0 0 
+	-log_K	-13.32 
+
+HPO4-2 + Ba+2 = BaPO4- + H+
+	-analytical_expression	-7.65 0 0 0 0 0 0 
+	-log_K	-7.65 
+
+SO4-2 + Ba+2 = BaSO4
+	-analytical_expression	2.8306125405942 0 -167.14663186247 0 0 0 0 
+	-log_K	2.27 
+
+UO2+2 + 3HCO3- + Ba+2 = BaUO2(CO3)3-2 + 3H+
+	-analytical_expression	-5.387 0 0 0 0 0 0 
+	-log_K	-5.387 
+
+Cit-3 + Ca+2 = Ca(Cit)-
+	-analytical_expression	4.8000000234174 0 0 0 0 0 0 
+	-log_K	4.8 
+
+Edta-4 + Ca+2 = Ca(Edta)-2
+	-analytical_expression	8.8007504529589 0 1159.5797585459 0 0 0 0 
+	-log_K	12.69 
+
+2H+ + Cit-3 + Ca+2 = Ca(H2Cit)+
+	-analytical_expression	12.67 0 0 0 0 0 0 
+	-log_K	12.67 
+
+H3Isa- + Ca+2 = Ca(H2Isa) + H+
+	-analytical_expression	-10.4 0 0 0 0 0 0 
+	-log_K	-10.4 
+
+H3Isa- + Ca+2 = Ca(H3Isa)+
+	-analytical_expression	1.7 0 0 0 0 0 0 
+	-log_K	1.7 
+
+H+ + Cit-3 + Ca+2 = Ca(HCit)
+	-analytical_expression	9.28 0 0 0 0 0 0 
+	-log_K	9.28 
+
+H+ + Edta-4 + Ca+2 = Ca(HEdta)-
+	-analytical_expression	16.23 0 0 0 0 0 0 
+	-log_K	16.23 
+
+Oxa-2 + Ca+2 = Ca(Oxa)
+	-analytical_expression	3.19 0 0 0 0 0 0 
+	-log_K	3.19 
+
+2Oxa-2 + Ca+2 = Ca(Oxa)2-2
+	-analytical_expression	4.02 0 0 0 0 0 0 
+	-log_K	4.02 
+
+4H2O + 2Ca+2 + Am+3 = Ca2Am(OH)4+3 + 4H+
+	-analytical_expression	-37.2 0 0 0 0 0 0 
+	-log_K	-37.2 
+
+4H2O + Cm+3 + 2Ca+2 = Ca2Cm(OH)4+3 + 4H+
+	-analytical_expression	-37.2 0 0 0 0 0 0 
+	-log_K	-37.2 
+
+UO2+2 + 3HCO3- + 2Ca+2 = Ca2UO2(CO3)3 + 3H+
+	-analytical_expression	-0.5894147046688 0 119.97994168378 0 0 0 0 
+	-log_K	-0.187 
+
+Zr+4 + 6H2O + 2Ca+2 = Ca2Zr(OH)6+2 + 6H+
+	-analytical_expression	-22.6 0 0 0 0 0 0 
+	-log_K	-22.6 
+
+6H2O + 3Ca+2 + Am+3 = Ca3Am(OH)6+3 + 6H+
+	-analytical_expression	-60.7 0 0 0 0 0 0 
+	-log_K	-60.7 
+
+6H2O + Cm+3 + 3Ca+2 = Ca3Cm(OH)6+3 + 6H+
+	-analytical_expression	-60.7 0 0 0 0 0 0 
+	-log_K	-60.7 
+
+NpO2+ + 5H2O + 3Ca+2 = Ca3NpO2(OH)5+2 + 5H+
+	-analytical_expression	-54.8 0 0 0 0 0 0 
+	-log_K	-54.8 
+
+Zr+4 + 6H2O + 3Ca+2 = Ca3Zr(OH)6+4 + 6H+
+	-analytical_expression	-23.2 0 0 0 0 0 0 
+	-log_K	-23.2 
+
+Np+4 + 8H2O + 4Ca+2 = Ca4Np(OH)8+4 + 8H+
+	-analytical_expression	-56.1 0 0 0 0 0 0 
+	-log_K	-56.1 
+
+Pu+4 + 8H2O + 4Ca+2 = Ca4Pu(OH)8+4 + 8H+
+	-analytical_expression	-56.2 0 0 0 0 0 0 
+	-log_K	-56.2 
+
+Th+4 + 8H2O + 4Ca+2 = Ca4Th(OH)8+4 + 8H+
+	-analytical_expression	-62.4 0 0 0 0 0 0 
+	-log_K	-62.4 
+
+3H2O + Ca+2 + Am+3 = CaAm(OH)3+2 + 3H+
+	-analytical_expression	-26.3 0 0 0 0 0 0 
+	-log_K	-26.3 
+
+3H2O + Cm+3 + Ca+2 = CaCm(OH)3+2 + 3H+
+	-analytical_expression	-26.3 0 0 0 0 0 0 
+	-log_K	-26.3 
+
+HCO3- + Ca+2 = CaCO3 + H+
+	-analytical_expression	-56.798368546204 0 932.65726284193 18.8209527680639 0 0 0 
+	-log_K	-7.099 
+
+F- + Ca+2 = CaF+
+	-analytical_expression	3.5724501914913 0 -668.58652744987 0 0 0 0 
+	-log_K	1.33 
+
+HPO4-2 + H+ + Ca+2 = CaH2PO4+
+	-analytical_expression	8.096885121655 0 31.339993474213 0 0 0 0 
+	-log_K	8.202 
+
+HCO3- + Ca+2 = CaHCO3+
+	-analytical_expression	2.5941653481618 0 -454.42990537609 0 0 0 0 
+	-log_K	1.07 
+
+HPO4-2 + Ca+2 = CaHPO4
+	-analytical_expression	4.8750076490322 0 -684.25652418698 0 0 0 0 
+	-log_K	2.58 
+
+MoO4-2 + Ca+2 = CaMoO4
+	-analytical_expression	3.7263399538808 0 -365.63325719915 0 0 0 0 
+	-log_K	2.5 
+
+NpO2+ + 2H2O + Ca+2 = CaNpO2(OH)2+ + 2H+
+	-analytical_expression	-20.6 0 0 0 0 0 0 
+	-log_K	-20.6 
+
+H2O + Ca+2 = CaOH+ + H+
+	-analytical_expression	153.18031491005 0 -9773.5556028961 -53.7373819983188 0 0 0 
+	-log_K	-12.57 
+
+HPO4-2 + Ca+2 = CaPO4- + H+
+	-analytical_expression	-3.5073966701371 0 -710.37318541549 0 0 0 0 
+	-log_K	-5.89 
+
+HSeO4- + Ca+2 = CaSeO4 + H+
+	-analytical_expression	0.25 0 0 0 0 0 0 
+	-log_K	0.25 
+
+Si(OH)4 + Ca+2 = CaSiO(OH)3+ + H+
+	-analytical_expression	-8.64 0 0 0 0 0 0 
+	-log_K	-8.64 
+
+Si(OH)4 + Ca+2 = CaSiO2(OH)2 + 2H+
+	-analytical_expression	-18.64 0 0 0 0 0 0 
+	-log_K	-18.64 
+
+SO4-2 + Ca+2 = CaSO4
+	-analytical_expression	3.5188208290249 0 -360.40992495345 0 0 0 0 
+	-log_K	2.31 
+
+UO2+2 + 3HCO3- + Ca+2 = CaUO2(CO3)3-2 + 3H+
+	-analytical_expression	-4.3894146644451 0 119.97994168378 0 0 0 0 
+	-log_K	-3.987 
+
+Zr+4 + 6H2O + Ca+2 = CaZr(OH)6 + 6H+
+	-analytical_expression	-24.6 0 0 0 0 0 0 
+	-log_K	-24.6 
+
+2HCO3- + Cd+2 = Cd(CO3)2-2 + 2H+
+	-analytical_expression	-14.458 0 0 0 0 0 0 
+	-log_K	-14.458 
+
+2HS- + Cd+2 = Cd(HS)2
+	-analytical_expression	14.43 0 0 0 0 0 0 
+	-log_K	14.43 
+
+3HS- + Cd+2 = Cd(HS)3-
+	-analytical_expression	16.3 0 0 0 0 0 0 
+	-log_K	16.3 
+
+4HS- + Cd+2 = Cd(HS)4-2
+	-analytical_expression	18.43 0 0 0 0 0 0 
+	-log_K	18.43 
+
+2H2O + Cd+2 = Cd(OH)2 + 2H+
+	-analytical_expression	-20.19 0 0 0 0 0 0 
+	-log_K	-20.19 
+
+3H2O + Cd+2 = Cd(OH)3- + 3H+
+	-analytical_expression	-33.5 0 0 0 0 0 0 
+	-log_K	-33.5 
+
+4H2O + Cd+2 = Cd(OH)4-2 + 4H+
+	-analytical_expression	-47.28 0 0 0 0 0 0 
+	-log_K	-47.28 
+
+2SO4-2 + Cd+2 = Cd(SO4)2-2
+	-analytical_expression	4.318591084659 0 -297.72993800502 0 0 0 0 
+	-log_K	3.32 
+
+H2O + 2Cd+2 = Cd2OH+3 + H+
+	-analytical_expression	-0.75127114563282 0 -2381.8395040402 0 0 0 0 
+	-log_K	-8.74 
+
+Cl- + Cd+2 = CdCl+
+	-analytical_expression	2.5581316683316 0 -172.36996410817 0 0 0 0 
+	-log_K	1.98 
+
+2Cl- + Cd+2 = CdCl2
+	-analytical_expression	4.0240122262979 0 -412.64324741047 0 0 0 0 
+	-log_K	2.64 
+
+3Cl- + Cd+2 = CdCl3-
+	-analytical_expression	2.3 0 0 0 0 0 0 
+	-log_K	2.3 
+
+4Cl- + Cd+2 = CdCl4-2
+	-analytical_expression	1.7 0 0 0 0 0 0 
+	-log_K	1.7 
+
+HCO3- + Cd+2 = CdCO3 + H+
+	-analytical_expression	-5.929 0 0 0 0 0 0 
+	-log_K	-5.929 
+
+HPO4-2 + H+ + Cd+2 = CdH2PO4+
+	-analytical_expression	9.112 0 0 0 0 0 0 
+	-log_K	9.112 
+
+HCO3- + Cd+2 = CdHCO3+
+	-analytical_expression	1.7 0 0 0 0 0 0 
+	-log_K	1.7 
+
+HPO4-2 + Cd+2 = CdHPO4
+	-analytical_expression	3.72 0 0 0 0 0 0 
+	-log_K	3.72 
+
+HS- + Cd+2 = CdHS+
+	-analytical_expression	7.4 0 0 0 0 0 0 
+	-log_K	7.4 
+
+H2O + Cd+2 = CdOH+ + H+
+	-analytical_expression	-0.1995100850569 0 -2862.3860706448 0 0 0 0 
+	-log_K	-9.8 
+
+2HS- + Cd+2 = CdS(HS)- + H+
+	-analytical_expression	6.8 0 0 0 0 0 0 
+	-log_K	6.8 
+
+SO4-2 + Cd+2 = CdSO4
+	-analytical_expression	3.8140888016093 0 -433.53657639328 0 0 0 0 
+	-log_K	2.36 
+
+F- + Cf+3 = CfF+2
+	-analytical_expression	6.0672587762084 0 -616.35320499285 0 0 0 0 
+	-log_K	4 
+
+S + HCN + Cf+3 = CfSCN+2 + H+
+	-analytical_expression	11.944543 0 0 0 0 0 0 
+	-log_K	11.944543 
+
+SO4-2 + Cf+3 = CfSO4+
+	-analytical_expression	6.7709647436455 0 -945.42313647209 0 0 0 0 
+	-log_K	3.6 
+
+2HCO3- + Cm+3 = Cm(CO3)2- + 2H+
+	-analytical_expression	-7.758 0 0 0 0 0 0 
+	-log_K	-7.758 
+
+3HCO3- + Cm+3 = Cm(CO3)3-3 + 3H+
+	-analytical_expression	-15.987 0 0 0 0 0 0 
+	-log_K	-15.987 
+
+2NO3- + Cm+3 = Cm(NO3)2+
+	-analytical_expression	2.7720673434514 0 -564.11988253583 0 0 0 0 
+	-log_K	0.88 
+
+2H2O + Cm+3 = Cm(OH)2+ + 2H+
+	-analytical_expression	-15.1 0 0 0 0 0 0 
+	-log_K	-15.1 
+
+3H2O + Cm+3 = Cm(OH)3 + 3H+
+	-analytical_expression	-26.2 0 0 0 0 0 0 
+	-log_K	-26.2 
+
+2SO4-2 + Cm+3 = Cm(SO4)2-
+	-analytical_expression	17.263399519586 0 -3656.3325719915 0 0 0 0 
+	-log_K	5 
+
+Cm+3 + Cl- = CmCl+2
+	-analytical_expression	0.24 0 0 0 0 0 0 
+	-log_K	0.24 
+
+Cm+3 + 2Cl- = CmCl2+
+	-analytical_expression	8.8080090566142 0 -2867.6094028905 0 0 0 0 
+	-log_K	-0.81 
+
+HCO3- + Cm+3 = CmCO3+ + H+
+	-analytical_expression	-2.329 0 0 0 0 0 0 
+	-log_K	-2.329 
+
+F- + Cm+3 = CmF+2
+	-analytical_expression	5.5198162100333 0 -632.02320172996 0 0 0 0 
+	-log_K	3.4 
+
+2F- + Cm+3 = CmF2+
+	-analytical_expression	13.701133154507 0 -2355.7228428117 0 0 0 0 
+	-log_K	5.8 
+
+HPO4-2 + H+ + Cm+3 = CmH2PO4+2
+	-analytical_expression	9.672 0 0 0 0 0 0 
+	-log_K	9.672 
+
+HCO3- + Cm+3 = CmHCO3+2
+	-analytical_expression	3.1 0 0 0 0 0 0 
+	-log_K	3.1 
+
+HPO4-2 + Cm+3 = CmHPO4+
+	-analytical_expression	6.2 0 0 0 0 0 0 
+	-log_K	6.2 
+
+NO3- + Cm+3 = CmNO3+2
+	-analytical_expression	1.5953445562419 0 -94.019980422638 0 0 0 0 
+	-log_K	1.28 
+
+H2O + Cm+3 = CmOH+2 + H+
+	-analytical_expression	-7.2 0 0 0 0 0 0 
+	-log_K	-7.2 
+
+S + HCN + Cm+3 = CmSCN+2 + H+
+	-analytical_expression	11.744543 0 0 0 0 0 0 
+	-log_K	11.744543 
+
+Si(OH)4 + Cm+3 = CmSiO(OH)3+2 + H+
+	-analytical_expression	5.2429249127224 0 -2162.4595497207 0 0 0 0 
+	-log_K	-2.01 
+
+SO4-2 + Cm+3 = CmSO4+
+	-analytical_expression	10.507656871937 0 -2089.3328982809 0 0 0 0 
+	-log_K	3.5 
+
+HCN = CN- + H+
+	-analytical_expression	-1.5716540283748 0 -2277.3728591261 0 0 0 0 
+	-log_K	-9.21 
+
+HCO3- + H+ = CO2 + H2O
+	-analytical_expression	-123.51462068202 0 6185.8922316359 44.0985698494632 0 0 0 
+	-log_K	6.352 
+
+HCO3- = CO3-2 + H+
+	-analytical_expression	93.913935528567 0 -5302.5937504862 -34.9404835641854 0 0 0 
+	-log_K	-10.329 
+
+2HCO3- + Cu+2 = Cu(CO3)2-2 + 2H+
+	-analytical_expression	-10.3 0 0 0 0 0 0 
+	-log_K	-10.3 
+
+HCO3- + H2O + Cu+2 = Cu(CO3)OH- + 2H+
+	-analytical_expression	-13.119 0 0 0 0 0 0 
+	-log_K	-13.119 
+
+2HPO4-2 + H+ + Cu+2 = Cu(H2PO4)(HPO4)-
+	-analytical_expression	12.612 0 0 0 0 0 0 
+	-log_K	12.612 
+
+2HPO4-2 + H+ + Cu+ = Cu(H2PO4)(HPO4)-2
+	-analytical_expression	11.424 0 0 0 0 0 0 
+	-log_K	11.424 
+
+2HPO4-2 + 2H+ + Cu+ = Cu(H2PO4)2-
+	-analytical_expression	16.224 0 0 0 0 0 0 
+	-log_K	16.224 
+
+2HPO4-2 + 2H+ + Cu+2 = Cu(H2PO4)2
+	-analytical_expression	16.324 0 0 0 0 0 0 
+	-log_K	16.324 
+
+2HPO4-2 + Cu+2 = Cu(HPO4)2-2
+	-analytical_expression	7.4 0 0 0 0 0 0 
+	-log_K	7.4 
+
+2HS- + Cu+ = Cu(HS)2-
+	-analytical_expression	-0.68952503825661 0 5327.7988906162 0 0 0 0 
+	-log_K	17.18 
+
+2H2O + Cu+ = Cu(OH)2- + 2H+
+	-analytical_expression	88.951727668819 0 -7500.0547999637 -33.3152524922437 0 0 0 
+	-log_K	-18.64 
+
+2H2O + Cu+2 = Cu(OH)2 + 2H+
+	-analytical_expression	-411.15978491131 0 13587.354927432 141.198940165682 0 0 0 
+	-log_K	-16.2 
+
+3H2O + Cu+2 = Cu(OH)3- + 3H+
+	-analytical_expression	-26.6 0 0 0 0 0 0 
+	-log_K	-26.6 
+
+4H2O + Cu+2 = Cu(OH)4-2 + 4H+
+	-analytical_expression	-312.74283031347 0 4732.4225879221 103.914722575086 0 0 0 
+	-log_K	-39.74 
+
+2H2O + 2Cu+2 = Cu2(OH)2+2 + 2H+
+	-analytical_expression	2.0786675328683 0 -3729.4592234313 0 0 0 0 
+	-log_K	-10.43 
+
+2Cu+ + 4Cl- = Cu2Cl4-2
+	-analytical_expression	10.32 0 0 0 0 0 0 
+	-log_K	10.32 
+
+H2O + 2Cu+2 = Cu2OH+3 + H+
+	-analytical_expression	-6.4 0 0 0 0 0 0 
+	-log_K	-6.4 
+
+3HS- + 2Cu+ = Cu2S(HS)2-2 + H+
+	-analytical_expression	29.87 0 0 0 0 0 0 
+	-log_K	29.87 
+
+4H2O + 3Cu+2 = Cu3(OH)4+2 + 4H+
+	-analytical_expression	-21.1 0 0 0 0 0 0 
+	-log_K	-21.1 
+
+Cu+ + Cl- = CuCl
+	-analytical_expression	3.3 0 0 0 0 0 0 
+	-log_K	3.3 
+
+Cu+2 + Cl- = CuCl+
+	-analytical_expression	0.83 0 0 0 0 0 0 
+	-log_K	0.83 
+
+Cu+ + 2Cl- = CuCl2-
+	-analytical_expression	5.48 0 0 0 0 0 0 
+	-log_K	5.48 
+
+Cu+2 + 2Cl- = CuCl2
+	-analytical_expression	0.6 0 0 0 0 0 0 
+	-log_K	0.6 
+
+Cu+ + 3Cl- = CuCl3-2
+	-analytical_expression	4.81 0 0 0 0 0 0 
+	-log_K	4.81 
+
+HCO3- + Cu+2 = CuCO3 + H+
+	-analytical_expression	-3.56 0 0 0 0 0 0 
+	-log_K	-3.56 
+
+HPO4-2 + H+ + Cu+ = CuH2PO4
+	-analytical_expression	8.082 0 0 0 0 0 0 
+	-log_K	8.082 
+
+HPO4-2 + H+ + Cu+2 = CuH2PO4+
+	-analytical_expression	8.352 0 0 0 0 0 0 
+	-log_K	8.352 
+
+HCO3- + Cu+2 = CuHCO3+
+	-analytical_expression	1.84 0 0 0 0 0 0 
+	-log_K	1.84 
+
+HPO4-2 + Cu+2 = CuHPO4
+	-analytical_expression	4.11 0 0 0 0 0 0 
+	-log_K	4.11 
+
+HS- + Cu+ = CuHS
+	-analytical_expression	13 0 0 0 0 0 0 
+	-log_K	13 
+
+H2O + Cu+ = CuOH + H+
+	-analytical_expression	296.04779988598 0 -15363.449814271 -101.990375860731 0 0 0 
+	-log_K	-7.85 
+
+H2O + Cu+2 = CuOH+ + H+
+	-analytical_expression	-349.02379690184 0 12250.552729122 121.233843004266 0 0 0 
+	-log_K	-7.95 
+
+SO4-2 + Cu+2 = CuSO4
+	-analytical_expression	3.6288973850042 0 -381.30325393626 0 0 0 0 
+	-log_K	2.35 
+
+2HCO3- + Eu+3 = Eu(CO3)2- + 2H+
+	-analytical_expression	-8.558 0 0 0 0 0 0 
+	-log_K	-8.558 
+
+2H2O + Eu+3 = Eu(OH)2+ + 2H+
+	-analytical_expression	-15.1 0 0 0 0 0 0 
+	-log_K	-15.1 
+
+3H2O + Eu+3 = Eu(OH)3 + 3H+
+	-analytical_expression	-23.7 0 0 0 0 0 0 
+	-log_K	-23.7 
+
+4H2O + Eu+3 = Eu(OH)4- + 4H+
+	-analytical_expression	-36.2 0 0 0 0 0 0 
+	-log_K	-36.2 
+
+2SO4-2 + Eu+3 = Eu(SO4)2-
+	-analytical_expression	5.7 0 0 0 0 0 0 
+	-log_K	5.7 
+
+HCO3- + Eu+3 = EuCO3+ + H+
+	-analytical_expression	-2.229 0 0 0 0 0 0 
+	-log_K	-2.229 
+
+F- + Eu+3 = EuF+2
+	-analytical_expression	5.6990505206788 0 -423.08991190187 0 0 0 0 
+	-log_K	4.28 
+
+2F- + Eu+3 = EuF2+
+	-analytical_expression	10.051041315416 0 -966.3164654549 0 0 0 0 
+	-log_K	6.81 
+
+HPO4-2 + H+ + Eu+3 = EuH2PO4+2
+	-analytical_expression	13.672248022722 0 -1022.7284537085 0 0 0 0 
+	-log_K	10.242 
+
+H2O + Eu+3 = EuOH+2 + H+
+	-analytical_expression	-7.64 0 0 0 0 0 0 
+	-log_K	-7.64 
+
+Si(OH)4 + Eu+3 = EuSiO(OH)3+2 + H+
+	-analytical_expression	5.0151760310122 0 -2094.5562305266 0 0 0 0 
+	-log_K	-2.01 
+
+SO4-2 + Eu+3 = EuSO4+
+	-analytical_expression	3.95 0 0 0 0 0 0 
+	-log_K	3.95 
+
+6HCN + Fe+3 = Fe(CN)6-3 + 6H+
+	-analytical_expression	88.22249479549 0 -28649.977367676 0 0 0 0 
+	-log_K	-7.87 
+
+6HCN + Fe+2 = Fe(CN)6-4 + 6H+
+	-analytical_expression	-31.896125523679 0 5082.3022750682 0 0 0 0 
+	-log_K	-14.85 
+
+2HCO3- + Fe+2 = Fe(CO3)2-2 + 2H+
+	-analytical_expression	-13.33 0 0 0 0 0 0 
+	-log_K	-13.33 
+
+3HCO3- + Fe+3 = Fe(CO3)3-3 + 3H+
+	-analytical_expression	-6.987 0 0 0 0 0 0 
+	-log_K	-6.987 
+
+3HPO4-2 + 3H+ + Fe+3 = Fe(H2PO4)3
+	-analytical_expression	31.556 0 0 0 0 0 0 
+	-log_K	31.556 
+
+2HSeO4- + Fe+2 = Fe(HSeO4)2
+	-analytical_expression	5.7 0 0 0 0 0 0 
+	-log_K	5.7 
+
+2H2O + Fe+2 = Fe(OH)2 + 2H+
+	-analytical_expression	-0.30290991659309 0 -6027.7254115403 0 0 0 0 
+	-log_K	-20.52 
+
+2H2O + Fe+3 = Fe(OH)2+ + 2H+
+	-analytical_expression	-5.71 0 0 0 0 0 0 
+	-log_K	-5.71 
+
+3H2O + Fe+2 = Fe(OH)3- + 3H+
+	-analytical_expression	-8.1006435181391 0 -7328.3351407201 0 0 0 0 
+	-log_K	-32.68 
+
+3H2O + Fe+3 = Fe(OH)3 + 3H+
+	-analytical_expression	65.846164390497 0 -9977.7398390464 -18.0407504470633 0 0 0 
+	-log_K	-12.26 
+
+4H2O + Fe+3 = Fe(OH)4- + 4H+
+	-analytical_expression	4.1181007368396 0 -7667.8517366907 0 0 0 0 
+	-log_K	-21.6 
+
+HCO3- + H2O + Fe+3 = Fe(OH)CO3 + 2H+
+	-analytical_expression	0.371 0 0 0 0 0 0 
+	-log_K	0.371 
+
+2S + 2HCN + Fe+3 = Fe(SCN)2+ + 2H+
+	-analytical_expression	26.179087 0 0 0 0 0 0 
+	-log_K	26.179087 
+
+2SO4-2 + Fe+3 = Fe(SO4)2-
+	-analytical_expression	6.22 0 0 0 0 0 0 
+	-log_K	6.22 
+
+2SO4-2 + Fe+2 = Fe(SO4)2-2
+	-analytical_expression	2 0 0 0 0 0 0 
+	-log_K	2 
+
+2H2O + 2Fe+3 = Fe2(OH)2+4 + 2H+
+	-analytical_expression	2.3632617827085 0 -1572.2230059563 0 0 0 0 
+	-log_K	-2.91 
+
+4H2O + 3Fe+3 = Fe3(OH)4+5 + 4H+
+	-analytical_expression	4.1764470294904 0 -3123.5526829299 0 0 0 0 
+	-log_K	-6.3 
+
+Fe+2 + Cl- = FeCl+
+	-analytical_expression	2.7753751230627 0 -1125.6280989488 0 0 0 0 
+	-log_K	-1 
+
+Fe+3 + Cl- = FeCl+2
+	-analytical_expression	5.4583031677419 0 -1174.2050888338 0 0 0 0 
+	-log_K	1.52 
+
+Fe+3 + 2Cl- = FeCl2+
+	-analytical_expression	2.2 0 0 0 0 0 0 
+	-log_K	2.2 
+
+Fe+3 + 3Cl- = FeCl3
+	-analytical_expression	1 0 0 0 0 0 0 
+	-log_K	1 
+
+Fe+3 + 4Cl- = FeCl4-
+	-analytical_expression	-1 0 0 0 0 0 0 
+	-log_K	-1 
+
+HCO3- + Fe+2 = FeCO3 + H+
+	-analytical_expression	-4.77 0 0 0 0 0 0 
+	-log_K	-4.77 
+
+Fe+2 + F- = FeF+
+	-analytical_expression	1.7 0 0 0 0 0 0 
+	-log_K	1.7 
+
+Fe+3 + F- = FeF+2
+	-analytical_expression	8.3324501977377 0 -668.58652744987 0 0 0 0 
+	-log_K	6.09 
+
+Fe+3 + 2F- = FeF2+
+	-analytical_expression	14.26421129566 0 -1149.1330940545 0 0 0 0 
+	-log_K	10.41 
+
+HPO4-2 + H+ + Fe+2 = FeH2PO4+
+	-analytical_expression	9.912 0 0 0 0 0 0 
+	-log_K	9.912 
+
+HPO4-2 + Fe+2 = FeHPO4
+	-analytical_expression	3.6 0 0 0 0 0 0 
+	-log_K	3.6 
+
+2SeO3-2 + 3H+ + Fe+2 = FeHSeO3(H2SeO3)+
+	-analytical_expression	26.36 0 0 0 0 0 0 
+	-log_K	26.36 
+
+SeO3-2 + H+ + Fe+2 = FeHSeO3+
+	-analytical_expression	12.06 0 0 0 0 0 0 
+	-log_K	12.06 
+
+SO4-2 + H+ + Fe+2 = FeHSO4+
+	-analytical_expression	3.068 0 0 0 0 0 0 
+	-log_K	3.068 
+
+SO4-2 + H+ + Fe+3 = FeHSO4+2
+	-analytical_expression	3.718 0 0 0 0 0 0 
+	-log_K	3.718 
+
+H2O + Fe+2 = FeOH+ + H+
+	-analytical_expression	0.13545166072884 0 -2851.9394061534 0 0 0 0 
+	-log_K	-9.43 
+
+H2O + Fe+3 = FeOH+2 + H+
+	-analytical_expression	5.3857885863746 0 -2261.702862389 0 0 0 0 
+	-log_K	-2.2 
+
+HPO4-2 + Fe+3 = FePO4 + H+
+	-analytical_expression	10.052 0 0 0 0 0 0 
+	-log_K	10.052 
+
+HS- + Fe+2 = FeS + H+
+	-analytical_expression	-1.81 0 0 0 0 0 0 
+	-log_K	-1.81 
+
+S + HCN + Fe+3 = FeSCN+2 + H+
+	-analytical_expression	13.504543 0 0 0 0 0 0 
+	-log_K	13.504543 
+
+SeO3-2 + Fe+3 = FeSeO3+
+	-analytical_expression	11.9 0 0 0 0 0 0 
+	-log_K	11.9 
+
+Si(OH)4 + Fe+3 = FeSiO(OH)3+2 + H+
+	-analytical_expression	-0.12 0 0 0 0 0 0 
+	-log_K	-0.12 
+
+SO4-2 + Fe+2 = FeSO4
+	-analytical_expression	3.9116079445366 0 -438.75990863898 0 0 0 0 
+	-log_K	2.44 
+
+SO4-2 + Fe+3 = FeSO4+
+	-analytical_expression	4.25 0 0 0 0 0 0 
+	-log_K	4.25 
+
+HAsO4-2 + H+ = H2AsO4-
+	-analytical_expression	6.1998836217592 0 168.19129831161 0 0 0 0 
+	-log_K	6.764 
+
+2H+ + Cit-3 = H2Cit-
+	-analytical_expression	-124.78920426088 0 6011.0290300169 46.7856794927167 0 0 0 
+	-log_K	11.14 
+
+2H+ + Edta-4 = H2Edta-2
+	-analytical_expression	11.908300203954 0 1828.1662859958 0 0 0 0 
+	-log_K	18.04 
+
+6HCN + Fe+2 = H2Fe(CN)6-2 + 4H+
+	-analytical_expression	-8.17 0 0 0 0 0 0 
+	-log_K	-8.17 
+
+MoO4-2 + 2H+ = H2MoO4
+	-analytical_expression	1.9647963827125 0 1829.2109524449 0 0 0 0 
+	-log_K	8.1 
+
+6Nb(OH)4+ = H2Nb6O19-6 + 5H2O + 12H+
+	-analytical_expression	-43.54 0 0 0 0 0 0 
+	-log_K	-43.54 
+
+Oxa-2 + 2H+ = H2Oxa
+	-analytical_expression	7.5070290976448 0 -553.67321804443 0 0 0 0 
+	-log_K	5.65 
+
+Po-2 + 2H+ = H2Po
+	-analytical_expression	11.825421 0 0 0 0 0 0 
+	-log_K	11.825421 
+
+HPO4-2 + H+ = H2PO4-
+	-analytical_expression	6.581310877603 0 188.03996084528 0 0 0 0 
+	-log_K	7.212 
+
+HS- + H+ = H2S
+	-analytical_expression	3.0832312741258 0 1164.8030907916 0 0 0 0 
+	-log_K	6.99 
+
+SeO3-2 + 2H+ = H2SeO3
+	-analytical_expression	11 0 0 0 0 0 0 
+	-log_K	11 
+
+HAsO4-2 + 2H+ = H3AsO4
+	-analytical_expression	9.6997350840007 0 -200.57595823496 0 0 0 0 
+	-log_K	9.027 
+
+3H+ + Cit-3 = H3Cit
+	-analytical_expression	-163.02874221941 0 8052.5893315785 60.7371931717802 0 0 0 
+	-log_K	14.27 
+
+3H+ + Edta-4 = H3Edta-
+	-analytical_expression	16.302159297341 0 1457.3096965509 0 0 0 0 
+	-log_K	21.19 
+
+6Nb(OH)4+ = H3Nb6O19-5 + 5H2O + 11H+
+	-analytical_expression	-31.94 0 0 0 0 0 0 
+	-log_K	-31.94 
+
+HPO4-2 + 2H+ = H3PO4
+	-analytical_expression	10.206934121256 0 -254.89861359026 0 0 0 0 
+	-log_K	9.352 
+
+4H+ + Edta-4 = H4Edta
+	-analytical_expression	18.865022991287 0 1358.0663838826 0 0 0 0 
+	-log_K	23.42 
+
+H3Isa- + H+ = H4Isa
+	-analytical_expression	4 0 0 0 0 0 0 
+	-log_K	4 
+
+5H+ + Edta-4 = H5Edta+
+	-analytical_expression	24.72 0 0 0 0 0 0 
+	-log_K	24.72 
+
+6H+ + Edta-4 = H6Edta+2
+	-analytical_expression	24.22 0 0 0 0 0 0 
+	-log_K	24.22 
+
+H+ + Cit-3 = HCit-2
+	-analytical_expression	-70.725844128502 0 3284.9170859964 26.7003106616542 0 0 0 
+	-log_K	6.36 
+
+H+ + Edta-4 = HEdta-3
+	-analytical_expression	7.7712098338023 0 1034.219784649 0 0 0 0 
+	-log_K	11.24 
+
+H+ + F- = HF
+	-analytical_expression	-44.993902924444 0 1553.0398690774 17.3619371435752 0 0 0 
+	-log_K	3.176 
+
+H+ + 2F- = HF2-
+	-analytical_expression	-89.432692998696 0 3466.9261874307 32.9063288154433 0 0 0 
+	-log_K	3.62 
+
+6HCN + Fe+2 = HFe(CN)6-3 + 5H+
+	-analytical_expression	-27.248223555224 0 4972.6122979084 0 0 0 0 
+	-log_K	-10.57 
+
+2HS- + Hg+2 = Hg(HS)2
+	-analytical_expression	37.8 0 0 0 0 0 0 
+	-log_K	37.8 
+
+Hg+2 + 2H2O = Hg(OH)2 + 2H+
+	-analytical_expression	2.9547625295763 0 -2663.8994453081 0 0 0 0 
+	-log_K	-5.98 
+
+Hg+2 + 3H2O = Hg(OH)3- + 3H+
+	-analytical_expression	-21.1 0 0 0 0 0 0 
+	-log_K	-21.1 
+
+2SO4-2 + Hg+2 = Hg(SO4)2-2
+	-analytical_expression	3.8 0 0 0 0 0 0 
+	-log_K	3.8 
+
+Hg+2 + Hg = Hg2+2
+	-analytical_expression	3.8602306740014 0 1375.8257135179 0 0 0 0 
+	-log_K	8.474625 
+
+Hg+2 + Hg + H2O = Hg2OH+ + H+
+	-analytical_expression	3.874625 0 0 0 0 0 0 
+	-log_K	3.874625 
+
+Hg+2 + Cl- = HgCl+
+	-analytical_expression	3.578422706281 0 1112.5697683346 0 0 0 0 
+	-log_K	7.31 
+
+Hg+2 + 2Cl- = HgCl2
+	-analytical_expression	5.3981011818441 0 2564.6561326398 0 0 0 0 
+	-log_K	14 
+
+Hg+2 + 3Cl- = HgCl3-
+	-analytical_expression	6.4106968933292 0 2538.5394714112 0 0 0 0 
+	-log_K	14.925 
+
+Hg+2 + 4Cl- = HgCl4-2
+	-analytical_expression	5.1811869537445 0 3086.98935721 0 0 0 0 
+	-log_K	15.535 
+
+Hg+2 + HCO3- = HgCO3 + H+
+	-analytical_expression	1.14 0 0 0 0 0 0 
+	-log_K	1.14 
+
+Hg+2 + HCO3- = HgHCO3+
+	-analytical_expression	5.47 0 0 0 0 0 0 
+	-log_K	5.47 
+
+HPO4-2 + Hg+2 = HgHPO4
+	-analytical_expression	10.9 0 0 0 0 0 0 
+	-log_K	10.9 
+
+Hg+2 + H2O = HgOH+ + H+
+	-analytical_expression	-3.4 0 0 0 0 0 0 
+	-log_K	-3.4 
+
+Hg+2 + H2O + Cl- = HgOHCl + H+
+	-analytical_expression	4.27 0 0 0 0 0 0 
+	-log_K	4.27 
+
+Hg+2 + HCO3- + H2O = HgOHCO3- + 2H+
+	-analytical_expression	-5 0 0 0 0 0 0 
+	-log_K	-5 
+
+HPO4-2 + Hg+2 = HgPO4- + H+
+	-analytical_expression	5.3 0 0 0 0 0 0 
+	-log_K	5.3 
+
+2HS- + Hg+2 = HgS(HS)- + H+
+	-analytical_expression	31.5 0 0 0 0 0 0 
+	-log_K	31.5 
+
+2HS- + Hg+2 = HgS2-2 + 2H+
+	-analytical_expression	22.3 0 0 0 0 0 0 
+	-log_K	22.3 
+
+SO4-2 + Hg+2 = HgSO4
+	-analytical_expression	2.8 0 0 0 0 0 0 
+	-log_K	2.8 
+
+IO3- + H+ = HIO3
+	-analytical_expression	0.788 0 0 0 0 0 0 
+	-log_K	0.788 
+
+MoO4-2 + H+ = HMoO4-
+	-analytical_expression	6.8452495645442 0 -818.49616290153 0 0 0 0 
+	-log_K	4.1 
+
+6Nb(OH)4+ = HNb6O19-7 + 5H2O + 13H+
+	-analytical_expression	-56.54 0 0 0 0 0 0 
+	-log_K	-56.54 
+
+Ho+3 + 2HCO3- = Ho(CO3)2- + 2H+
+	-analytical_expression	-8.558 0 0 0 0 0 0 
+	-log_K	-8.558 
+
+Ho+3 + 2H2O = Ho(OH)2+ + 2H+
+	-analytical_expression	-14.87 0 0 0 0 0 0 
+	-log_K	-14.87 
+
+Ho+3 + 3H2O = Ho(OH)3 + 3H+
+	-analytical_expression	-23.47 0 0 0 0 0 0 
+	-log_K	-23.47 
+
+Ho+3 + 4H2O = Ho(OH)4- + 4H+
+	-analytical_expression	-35.97 0 0 0 0 0 0 
+	-log_K	-35.97 
+
+2SO4-2 + Ho+3 = Ho(SO4)2-
+	-analytical_expression	5.7 0 0 0 0 0 0 
+	-log_K	5.7 
+
+Ho+3 + HCO3- = HoCO3+ + H+
+	-analytical_expression	-2.229 0 0 0 0 0 0 
+	-log_K	-2.229 
+
+Ho+3 + F- = HoF+2
+	-analytical_expression	6.0121316754539 0 -513.45355975252 0 0 0 0 
+	-log_K	4.29 
+
+Ho+3 + 2F- = HoF2+
+	-analytical_expression	10.409019883676 0 -1096.8997715974 0 0 0 0 
+	-log_K	6.73 
+
+HPO4-2 + Ho+3 + H+ = HoH2PO4+2
+	-analytical_expression	13.672248022722 0 -1022.7284537085 0 0 0 0 
+	-log_K	10.242 
+
+Ho+3 + H2O = HoOH+2 + H+
+	-analytical_expression	1.1743796525975 0 -2559.432800394 0 0 0 0 
+	-log_K	-7.41 
+
+SO4-2 + Ho+3 = HoSO4+
+	-analytical_expression	3.95 0 0 0 0 0 0 
+	-log_K	3.95 
+
+Oxa-2 + H+ = HOxa-
+	-analytical_expression	5.528897391009 0 -381.30325393626 0 0 0 0 
+	-log_K	4.25 
+
+2HPO4-2 + H+ = HP2O7-3 + H2O
+	-analytical_expression	6.01 0 0 0 0 0 0 
+	-log_K	6.01 
+
+Po-2 + H+ = HPo-
+	-analytical_expression	11.334885 0 0 0 0 0 0 
+	-log_K	11.334885 
+
+H2Se = HSe- + H+
+	-analytical_expression	-3.85 0 0 0 0 0 0 
+	-log_K	-3.85 
+
+3Se + H2Se = HSe4- + H+
+	-analytical_expression	14.606616 0 0 0 0 0 0 
+	-log_K	14.606616 
+
+SeO3-2 + H+ = HSeO3-
+	-analytical_expression	8.36 0 0 0 0 0 0 
+	-log_K	8.36 
+
+SO3-2 + H+ = HSO3-
+	-analytical_expression	28.40940248917 0 -6317.6203511767 0 0 0 0 
+	-log_K	7.22 
+
+SO4-2 + H+ = HSO4-
+	-analytical_expression	-78.880641514521 0 2883.3061195837 28.7734334313596 0 0 0 
+	-log_K	1.988 
+
+I2 + I- = I3-
+	-analytical_expression	2.87 0 0 0 0 0 0 
+	-log_K	2.87 
+
+K+ + HCO3- = KCO3- + H+
+	-analytical_expression	-3.559912157002 0 -1749.8685356327 0 0 0 0 
+	-log_K	-9.429 
+
+K+ + Edta-4 = KEdta-3
+	-analytical_expression	1.8 0 0 0 0 0 0 
+	-log_K	1.8 
+
+K+ + 6HCN + Fe+3 = KFe(CN)6-2 + 6H+
+	-analytical_expression	90.050396780874 0 -28759.667344836 0 0 0 0 
+	-log_K	-6.41 
+
+K+ + 6HCN + Fe+2 = KFe(CN)6-3 + 6H+
+	-analytical_expression	-28.915436409934 0 4894.2623142229 0 0 0 0 
+	-log_K	-12.5 
+
+K+ + HPO4-2 + H+ = KH2PO4
+	-analytical_expression	7.7472680114209 0 -73.12665143983 0 0 0 0 
+	-log_K	7.502 
+
+K+ + HCO3- = KHCO3
+	-analytical_expression	1.8498927887051 0 -652.91653071277 0 0 0 0 
+	-log_K	-0.34 
+
+K+ + HPO4-2 = KHPO4-
+	-analytical_expression	4.0334456165669 0 -940.19980422639 0 0 0 0 
+	-log_K	0.88 
+
+K+ + H2O = KOH + H+
+	-analytical_expression	-4.1637061207767 0 -3081.7660249643 0 0 0 0 
+	-log_K	-14.5 
+
+K+ + HPO4-2 = KPO4-2 + H+
+	-analytical_expression	-7.2810567234647 0 -1076.0064426146 0 0 0 0 
+	-log_K	-10.89 
+
+SO4-2 + K+ = KSO4-
+	-analytical_expression	3.0999693378405 0 -673.80985969558 0 0 0 0 
+	-log_K	0.84 
+
+Li+ + F- = LiF
+	-analytical_expression	1.2811485334321 0 -313.39993474213 0 0 0 0 
+	-log_K	0.23 
+
+Li+ + HPO4-2 + H+ = LiH2PO4
+	-analytical_expression	7.812 0 0 0 0 0 0 
+	-log_K	7.812 
+
+Li+ + HPO4-2 = LiHPO4-
+	-analytical_expression	4.7838284300847 0 -1044.6664491404 0 0 0 0 
+	-log_K	1.28 
+
+Li+ + H2O = LiOH + H+
+	-analytical_expression	18.272684080738 0 -3886.7554341782 -7.70941402437844 0 0 0 
+	-log_K	-13.84 
+
+Li+ + HPO4-2 = LiPO4-2 + H+
+	-analytical_expression	-10.55 0 0 0 0 0 0 
+	-log_K	-10.55 
+
+SO4-2 + Li+ = LiSO4-
+	-analytical_expression	0.89999999459701 0 0 0 0 0 0 
+	-log_K	0.9 
+
+Mg+2 + Cit-3 = Mg(Cit)-
+	-analytical_expression	4.81 0 0 0 0 0 0 
+	-log_K	4.81 
+
+Mg+2 + Edta-4 = Mg(Edta)-2
+	-analytical_expression	14.368790137751 0 -1034.219784649 0 0 0 0 
+	-log_K	10.9 
+
+Mg+2 + 2H+ + Cit-3 = Mg(H2Cit)+
+	-analytical_expression	12.45 0 0 0 0 0 0 
+	-log_K	12.45 
+
+Mg+2 + H+ + Cit-3 = Mg(HCit)
+	-analytical_expression	8.96 0 0 0 0 0 0 
+	-log_K	8.96 
+
+Mg+2 + H+ + Edta-4 = Mg(HEdta)-
+	-analytical_expression	15.4 0 0 0 0 0 0 
+	-log_K	15.4 
+
+Oxa-2 + Mg+2 = Mg(Oxa)
+	-analytical_expression	3.56 0 0 0 0 0 0 
+	-log_K	3.56 
+
+2Oxa-2 + Mg+2 = Mg(Oxa)2-2
+	-analytical_expression	5.17 0 0 0 0 0 0 
+	-log_K	5.17 
+
+UO2+2 + 2Mg+2 + 3HCO3- = Mg2UO2(CO3)3 + 3H+
+	-analytical_expression	-3.887 0 0 0 0 0 0 
+	-log_K	-3.887 
+
+Mg+2 + HCO3- = MgCO3 + H+
+	-analytical_expression	67.335645577222 0 -4475.557439363 -24.1160332959473 0 0 0 
+	-log_K	-7.349 
+
+Mg+2 + F- = MgF+
+	-analytical_expression	14.389560657044 0 -1023.4375210608 -3.66828592423608 0 0 0 
+	-log_K	1.88 
+
+Mg+2 + HPO4-2 + H+ = MgH2PO4+
+	-analytical_expression	8.322 0 0 0 0 0 0 
+	-log_K	8.322 
+
+Mg+2 + HCO3- = MgHCO3+
+	-analytical_expression	-59.827116845041 0 2566.4819484262 21.1317323569936 0 0 0 
+	-log_K	1.07 
+
+Mg+2 + HPO4-2 = MgHPO4
+	-analytical_expression	5.0600459175358 0 -694.70318867838 0 0 0 0 
+	-log_K	2.73 
+
+Mg+2 + H2O = MgOH+ + H+
+	-analytical_expression	0.7035526626357 0 -3698.1192299571 0 0 0 0 
+	-log_K	-11.7 
+
+Mg+2 + HPO4-2 = MgPO4- + H+
+	-analytical_expression	-7.45 0 0 0 0 0 0 
+	-log_K	-7.45 
+
+Mg+2 + HSeO4- = MgSeO4 + H+
+	-analytical_expression	0.45 0 0 0 0 0 0 
+	-log_K	0.45 
+
+Si(OH)4 + Mg+2 = MgSiO(OH)3+ + H+
+	-analytical_expression	-8.45 0 0 0 0 0 0 
+	-log_K	-8.45 
+
+Si(OH)4 + Mg+2 = MgSiO2(OH)2 + 2H+
+	-analytical_expression	-17.62 0 0 0 0 0 0 
+	-log_K	-17.62 
+
+SO4-2 + Mg+2 = MgSO4
+	-analytical_expression	5.8063858718955 0 -1060.3364458775 0 0 0 0 
+	-log_K	2.25 
+
+UO2+2 + Mg+2 + 3HCO3- = MgUO2(CO3)3-2 + 3H+
+	-analytical_expression	-4.787 0 0 0 0 0 0 
+	-log_K	-4.787 
+
+Mn+2 + 2H2O = Mn(OH)2 + 2H+
+	-analytical_expression	-1.6125270732973 0 -6132.1920564543 0 0 0 0 
+	-log_K	-22.18 
+
+Mn+3 + 2H2O = Mn(OH)2+ + 2H+
+	-analytical_expression	1.5 0 0 0 0 0 0 
+	-log_K	1.5 
+
+Mn+2 + 3H2O = Mn(OH)3- + 3H+
+	-analytical_expression	-4.2245945569982 0 -8978.908130362 0 0 0 0 
+	-log_K	-34.34 
+
+Mn+2 + 4H2O = Mn(OH)4-2 + 4H+
+	-analytical_expression	-3.3609193907707 0 -13392.62387798 0 0 0 0 
+	-log_K	-48.28 
+
+Mn+2 + Cl- = MnCl+
+	-analytical_expression	-110.88288507545 0 4429.5137159954 38.8477492960098 0 0 0 
+	-log_K	0.1 
+
+Mn+3 + Cl- = MnCl+2
+	-analytical_expression	4.7418069833347 0 -1175.249755283 0 0 0 0 
+	-log_K	0.8 
+
+Mn+2 + HCO3- = MnCO3 + H+
+	-analytical_expression	-0.31540987299027 0 -1614.0618972444 0 0 0 0 
+	-log_K	-5.729 
+
+Mn+2 + F- = MnF+
+	-analytical_expression	3.9953904549243 0 -788.72316910102 0 0 0 0 
+	-log_K	1.35 
+
+Mn+3 + F- = MnF+2
+	-analytical_expression	7.440918843944 0 -250.7199477937 0 0 0 0 
+	-log_K	6.6 
+
+Mn+3 + 2F- = MnF2+
+	-analytical_expression	13.319050527167 0 -423.08991190187 0 0 0 0 
+	-log_K	11.9 
+
+Mn+3 + 3F- = MnF3
+	-analytical_expression	16.859203654017 0 -464.87656986749 0 0 0 0 
+	-log_K	15.3 
+
+Mn+2 + HCO3- = MnHCO3+
+	-analytical_expression	-78.806711402482 0 3378.0673816001 27.7827556884776 0 0 0 
+	-log_K	1.27 
+
+Mn+2 + H2O = MnOH+ + H+
+	-analytical_expression	-0.54153153000597 0 -2992.9693767873 0 0 0 0 
+	-log_K	-10.58 
+
+Mn+3 + H2O = MnOH+2 + H+
+	-analytical_expression	5.2118835371527 0 -1196.1430842658 0 0 0 0 
+	-log_K	1.2 
+
+Mn+3 + H2O + F- = MnOHF+ + H+
+	-analytical_expression	7.3 0 0 0 0 0 0 
+	-log_K	7.3 
+
+Mn+2 + HSeO4- = MnSeO4 + H+
+	-analytical_expression	0.68 0 0 0 0 0 0 
+	-log_K	0.68 
+
+SO4-2 + Mn+2 = MnSO4
+	-analytical_expression	-58.515860130151 0 2139.8425210968 21.6489005364761 0 0 0 
+	-log_K	2.23 
+
+Na+ + Edta-4 = Na(Edta)-3
+	-analytical_expression	2.0992342991191 0 208.93328982809 0 0 0 0 
+	-log_K	2.8 
+
+Na+ + HCO3- = NaCO3- + H+
+	-analytical_expression	98.077381109531 0 -6242.7935547126 -34.9404835641854 0 0 0 
+	-log_K	-9.319 
+
+Na+ + F- = NaF
+	-analytical_expression	2.1026033484176 0 -710.37318541549 0 0 0 0 
+	-log_K	-0.28 
+
+Na+ + HPO4-2 + H+ = NaH2PO4
+	-analytical_expression	9.8595650287534 0 -699.92652092409 0 0 0 0 
+	-log_K	7.512 
+
+Na+ + HCO3- = NaHCO3
+	-analytical_expression	1.852220514487 0 -605.90654050145 0 0 0 0 
+	-log_K	-0.18 
+
+Na+ + HPO4-2 = NaHPO4-
+	-analytical_expression	5.0594027164031 0 -1201.3664165115 0 0 0 0 
+	-log_K	1.03 
+
+Na+ + H2O = NaOH + H+
+	-analytical_expression	-5.3075652162627 0 -2710.9094355194 0 0 0 0 
+	-log_K	-14.4 
+
+Na+ + HPO4-2 = NaPO4-2 + H+
+	-analytical_expression	-7.0058653073999 0 -1128.2397650717 0 0 0 0 
+	-log_K	-10.79 
+
+SO4-2 + Na+ = NaSO4-
+	-analytical_expression	1.5333997010737 0 -245.496615548 0 0 0 0 
+	-log_K	0.71 
+
+Nb(OH)4+ + H2O = Nb(OH)5 + H+
+	-analytical_expression	-0.31327718643435 0 -470.09990211319 0 0 0 0 
+	-log_K	-1.89 
+
+Nb(OH)4+ + 2H2O = Nb(OH)6- + 2H+
+	-analytical_expression	-2.135023004667 0 -1358.0663838826 0 0 0 0 
+	-log_K	-6.69 
+
+Nb(OH)4+ + 3H2O = Nb(OH)7-2 + 3H+
+	-analytical_expression	-5.0529404097487 0 -3290.6993147923 0 0 0 0 
+	-log_K	-16.09 
+
+6Nb(OH)4+ = Nb6O19-8 + 5H2O + 14H+
+	-analytical_expression	-70.54 0 0 0 0 0 0 
+	-log_K	-70.54 
+
+NH4+ = NH3 + H+
+	-analytical_expression	-0.11127881036224 0 -2720.8337667862 0 0 0 0 
+	-log_K	-9.237 
+
+Ni+2 + Cit-3 = Ni(Cit)-
+	-analytical_expression	6.76 0 0 0 0 0 0 
+	-log_K	6.76 
+
+Ni+2 + 2Cit-3 = Ni(Cit)2-4
+	-analytical_expression	8.5 0 0 0 0 0 0 
+	-log_K	8.5 
+
+Ni+2 + 4HCN = Ni(CN)4-2 + 4H+
+	-analytical_expression	-7.7437060644626 0 329.06993147923 0 0 0 0 
+	-log_K	-6.64 
+
+Ni+2 + 5HCN = Ni(CN)5-3 + 5H+
+	-analytical_expression	-12.837350857736 0 -1405.0763740939 0 0 0 0 
+	-log_K	-17.55 
+
+Ni+2 + 2HCO3- = Ni(CO3)2-2 + 2H+
+	-analytical_expression	-14.658 0 0 0 0 0 0 
+	-log_K	-14.658 
+
+Ni+2 + Edta-4 = Ni(Edta)-2
+	-analytical_expression	15.967503899991 0 1363.2897161283 0 0 0 0 
+	-log_K	20.54 
+
+Ni+2 + 2H+ + Cit-3 = Ni(H2Cit)+
+	-analytical_expression	13.19 0 0 0 0 0 0 
+	-log_K	13.19 
+
+Ni+2 + H3Isa- = Ni(H3Isa)+
+	-analytical_expression	2.4 0 0 0 0 0 0 
+	-log_K	2.4 
+
+Ni+2 + H+ + Cit-3 = Ni(HCit)
+	-analytical_expression	10.52 0 0 0 0 0 0 
+	-log_K	10.52 
+
+Ni+2 + H+ + Edta-4 = Ni(HEdta)-
+	-analytical_expression	18.313568226914 0 1755.0396345559 0 0 0 0 
+	-log_K	24.2 
+
+Ni+2 + 2HS- = Ni(HS)2
+	-analytical_expression	11.1 0 0 0 0 0 0 
+	-log_K	11.1 
+
+Ni+2 + 2NH4+ = Ni(NH3)2+2 + 2H+
+	-analytical_expression	-13.574 0 0 0 0 0 0 
+	-log_K	-13.574 
+
+Ni+2 + 3NH4+ = Ni(NH3)3+2 + 3H+
+	-analytical_expression	-21.211 0 0 0 0 0 0 
+	-log_K	-21.211 
+
+Ni+2 + 4NH4+ = Ni(NH3)4+2 + 4H+
+	-analytical_expression	-29.348 0 0 0 0 0 0 
+	-log_K	-29.348 
+
+Ni+2 + 5NH4+ = Ni(NH3)5+2 + 5H+
+	-analytical_expression	-37.885 0 0 0 0 0 0 
+	-log_K	-37.885 
+
+Ni+2 + 6NH4+ = Ni(NH3)6+2 + 6H+
+	-analytical_expression	-47.222 0 0 0 0 0 0 
+	-log_K	-47.222 
+
+Ni+2 + 2H2O = Ni(OH)2 + 2H+
+	-analytical_expression	-2.2327720264465 0 -4700.9990211319 0 0 0 0 
+	-log_K	-18 
+
+Ni+2 + 3H2O = Ni(OH)3- + 3H+
+	-analytical_expression	-7.9667996513088 0 -6330.678681791 0 0 0 0 
+	-log_K	-29.2 
+
+Oxa-2 + Ni+2 = Ni(Oxa)
+	-analytical_expression	5.1900000210761 0 0 0 0 0 0 
+	-log_K	5.19 
+
+2Oxa-2 + Ni+2 = Ni(Oxa)2-2
+	-analytical_expression	6.273506907629 0 407.41991516477 0 0 0 0 
+	-log_K	7.64 
+
+2S + Ni+2 + 2HCN = Ni(SCN)2 + 2H+
+	-analytical_expression	-6.5716261405862 0 8989.3547948534 0 0 0 0 
+	-log_K	23.579087 
+
+3S + Ni+2 + 3HCN = Ni(SCN)3- + 3H+
+	-analytical_expression	-10.434460697945 0 13353.448886137 0 0 0 0 
+	-log_K	34.35363 
+
+2Se + Ni+2 + 2HCN = Ni(SeCN)2 + 2H+
+	-analytical_expression	6.545876 0 0 0 0 0 0 
+	-log_K	6.545876 
+
+2Ni+2 + H2O = Ni2OH+3 + H+
+	-analytical_expression	-2.5587137564771 0 -2397.5095007773 0 0 0 0 
+	-log_K	-10.6 
+
+4Ni+2 + 4H2O = Ni4(OH)4+4 + 4H+
+	-analytical_expression	5.7663701847278 0 -9924.3312668341 0 0 0 0 
+	-log_K	-27.52 
+
+Ni+2 + Cl- = NiCl+
+	-analytical_expression	0.08 0 0 0 0 0 0 
+	-log_K	0.08 
+
+Ni+2 + HCO3- = NiCO3 + H+
+	-analytical_expression	-6.129 0 0 0 0 0 0 
+	-log_K	-6.129 
+
+Ni+2 + F- = NiF+
+	-analytical_expression	3.0943185280838 0 -496.2165633417 0 0 0 0 
+	-log_K	1.43 
+
+Ni+2 + HAsO4-2 = NiHAsO4
+	-analytical_expression	2.9 0 0 0 0 0 0 
+	-log_K	2.9 
+
+Ni+2 + HCO3- = NiHCO3+
+	-analytical_expression	1 0 0 0 0 0 0 
+	-log_K	1 
+
+Ni+2 + 2HPO4-2 + H+ = NiHP2O7- + H2O
+	-analytical_expression	11.15 0 0 0 0 0 0 
+	-log_K	11.15 
+
+Ni+2 + HPO4-2 = NiHPO4
+	-analytical_expression	3.05 0 0 0 0 0 0 
+	-log_K	3.05 
+
+Ni+2 + HS- = NiHS+
+	-analytical_expression	5.5 0 0 0 0 0 0 
+	-log_K	5.5 
+
+Ni+2 + NH4+ = NiNH3+2 + H+
+	-analytical_expression	-6.537 0 0 0 0 0 0 
+	-log_K	-6.537 
+
+NO3- + Ni+2 = NiNO3+
+	-analytical_expression	0.5 0 0 0 0 0 0 
+	-log_K	0.5 
+
+Ni+2 + H2O = NiOH+ + H+
+	-analytical_expression	-0.11470150328288 0 -2810.1527481878 0 0 0 0 
+	-log_K	-9.54 
+
+Ni+2 + 2HPO4-2 = NiP2O7-2 + H2O
+	-analytical_expression	5.34 0 0 0 0 0 0 
+	-log_K	5.34 
+
+S + Ni+2 + HCN = NiSCN+ + H+
+	-analytical_expression	-3.0485619286782 0 4562.5807166208 0 0 0 0 
+	-log_K	12.254543 
+
+Se + Ni+2 + HCN = NiSeCN+ + H+
+	-analytical_expression	3.922938 0 0 0 0 0 0 
+	-log_K	3.922938 
+
+Ni+2 + HSeO4- = NiSeO4 + H+
+	-analytical_expression	0.92 0 0 0 0 0 0 
+	-log_K	0.92 
+
+Si(OH)4 + Ni+2 = NiSiO(OH)3+ + H+
+	-analytical_expression	-3.51 0 0 0 0 0 0 
+	-log_K	-3.51 
+
+SO4-2 + Ni+2 = NiSO4
+	-analytical_expression	3.3415834505303 0 -295.64060510674 0 0 0 0 
+	-log_K	2.35 
+
+Np+3 + 2HCO3- = Np(CO3)2- + 2H+
+	-analytical_expression	-7.758 0 0 0 0 0 0 
+	-log_K	-7.758 
+
+Np+3 + 3HCO3- = Np(CO3)3-3 + 3H+
+	-analytical_expression	-15.987 0 0 0 0 0 0 
+	-log_K	-15.987 
+
+Np+4 + 4HCO3- = Np(CO3)4-4 + 4H+
+	-analytical_expression	-2.416 0 0 0 0 0 0 
+	-log_K	-2.416 
+
+Np+4 + 5HCO3- = Np(CO3)5-6 + 5H+
+	-analytical_expression	-13.845 0 0 0 0 0 0 
+	-log_K	-13.845 
+
+Np+4 + Edta-4 = Np(Edta)
+	-analytical_expression	31.2 0 0 0 0 0 0 
+	-log_K	31.2 
+
+Np+4 + 2HCO3- + 2H2O = Np(OH)2(CO3)2-2 + 4H+
+	-analytical_expression	-2.2 0 0 0 0 0 0 
+	-log_K	-2.2 
+
+Np+3 + 2H2O = Np(OH)2+ + 2H+
+	-analytical_expression	-14.7 0 0 0 0 0 0 
+	-log_K	-14.7 
+
+Np+4 + 2H2O = Np(OH)2+2 + 2H+
+	-analytical_expression	0.35 0 0 0 0 0 0 
+	-log_K	0.35 
+
+Np+3 + 3H2O = Np(OH)3 + 3H+
+	-analytical_expression	-25.8 0 0 0 0 0 0 
+	-log_K	-25.8 
+
+Np+4 + H3Isa- + 3H2O = Np(OH)3(H3Isa) + 3H+
+	-analytical_expression	1.5 0 0 0 0 0 0 
+	-log_K	1.5 
+
+Np+4 + 2H3Isa- + 3H2O = Np(OH)3(H3Isa)2- + 3H+
+	-analytical_expression	3.6 0 0 0 0 0 0 
+	-log_K	3.6 
+
+Np+4 + 3H2O = Np(OH)3+ + 3H+
+	-analytical_expression	-2.8 0 0 0 0 0 0 
+	-log_K	-2.8 
+
+Np+4 + 4H2O = Np(OH)4 + 4H+
+	-analytical_expression	-8.3 0 0 0 0 0 0 
+	-log_K	-8.3 
+
+Np+4 + H3Isa- + 4H2O = Np(OH)4(H3Isa)- + 4H+
+	-analytical_expression	-5.9 0 0 0 0 0 0 
+	-log_K	-5.9 
+
+Np+4 + 2H3Isa- + 4H2O = Np(OH)4(H3Isa)2-2 + 4H+
+	-analytical_expression	-4 0 0 0 0 0 0 
+	-log_K	-4 
+
+Np+4 + HCO3- + 4H2O = Np(OH)4CO3-2 + 5H+
+	-analytical_expression	-15.829 0 0 0 0 0 0 
+	-log_K	-15.829 
+
+Oxa-2 + Np+4 = Np(Oxa)+2
+	-analytical_expression	12.15 0 0 0 0 0 0 
+	-log_K	12.15 
+
+2Oxa-2 + Np+4 = Np(Oxa)2
+	-analytical_expression	18.8 0 0 0 0 0 0 
+	-log_K	18.8 
+
+3Oxa-2 + Np+4 = Np(Oxa)3-2
+	-analytical_expression	24.95 0 0 0 0 0 0 
+	-log_K	24.95 
+
+2S + Np+4 + 2HCN = Np(SCN)2+2 + 2H+
+	-analytical_expression	-3.0593290968362 0 8362.5549253691 0 0 0 0 
+	-log_K	24.989087 
+
+3S + Np+4 + 3HCN = Np(SCN)3+ + 3H+
+	-analytical_expression	-5.8513979375228 0 12517.715726825 0 0 0 0 
+	-log_K	36.13363 
+
+2SO4-2 + Np+3 = Np(SO4)2-
+	-analytical_expression	3.7 0 0 0 0 0 0 
+	-log_K	3.7 
+
+2SO4-2 + Np+4 = Np(SO4)2
+	-analytical_expression	20.755604754686 0 -2893.726064119 0 0 0 0 
+	-log_K	11.05 
+
+Np+3 + Cl- = NpCl+2
+	-analytical_expression	0.24 0 0 0 0 0 0 
+	-log_K	0.24 
+
+Np+4 + Cl- = NpCl+3
+	-analytical_expression	1.5 0 0 0 0 0 0 
+	-log_K	1.5 
+
+Np+3 + 2Cl- = NpCl2+
+	-analytical_expression	-0.74 0 0 0 0 0 0 
+	-log_K	-0.74 
+
+Np+3 + HCO3- = NpCO3+ + H+
+	-analytical_expression	-2.329 0 0 0 0 0 0 
+	-log_K	-2.329 
+
+Np+3 + F- = NpF+2
+	-analytical_expression	3.4 0 0 0 0 0 0 
+	-log_K	3.4 
+
+Np+4 + F- = NpF+3
+	-analytical_expression	9.2227871321468 0 -78.349983685532 0 0 0 0 
+	-log_K	8.96 
+
+Np+3 + 2F- = NpF2+
+	-analytical_expression	5.8 0 0 0 0 0 0 
+	-log_K	5.8 
+
+Np+4 + 2F- = NpF2+2
+	-analytical_expression	15.7 0 0 0 0 0 0 
+	-log_K	15.7 
+
+Np+4 + I- = NpI+3
+	-analytical_expression	1.5 0 0 0 0 0 0 
+	-log_K	1.5 
+
+Np+4 + NO3- = NpNO3+3
+	-analytical_expression	1.9 0 0 0 0 0 0 
+	-log_K	1.9 
+
+NpO2+2 + 2HCO3- = NpO2(CO3)2-2 + 2H+
+	-analytical_expression	-5.658 0 0 0 0 0 0 
+	-log_K	-5.658 
+
+NpO2+ + 2HCO3- = NpO2(CO3)2-3 + 2H+
+	-analytical_expression	-14.128 0 0 0 0 0 0 
+	-log_K	-14.128 
+
+NpO2+ + 2HCO3- + H2O = NpO2(CO3)2OH-4 + 3H+
+	-analytical_expression	-25.958 0 0 0 0 0 0 
+	-log_K	-25.958 
+
+NpO2+2 + 3HCO3- = NpO2(CO3)3-4 + 3H+
+	-analytical_expression	-10.595938447322 0 -146.41000284703 0 0 0 0 
+	-log_K	-11.087 
+
+NpO2+ + 3HCO3- = NpO2(CO3)3-5 + 3H+
+	-analytical_expression	-19.985463746749 0 -1640.2830251178 0 0 0 0 
+	-log_K	-25.487 
+
+NpO2+ + 2H+ + Edta-4 = NpO2(H2Edta)-
+	-analytical_expression	22.51 0 0 0 0 0 0 
+	-log_K	22.51 
+
+NpO2+ + H+ + Edta-4 = NpO2(HEdta)-2
+	-analytical_expression	17.06 0 0 0 0 0 0 
+	-log_K	17.06 
+
+NpO2+2 + 2HPO4-2 = NpO2(HPO4)2-2
+	-analytical_expression	9.5 0 0 0 0 0 0 
+	-log_K	9.5 
+
+NpO2+ + H2O = NpO2(OH) + H+
+	-analytical_expression	0.049601076405122 0 -3383.8835620557 0 0 0 0 
+	-log_K	-11.3 
+
+NpO2+ + 2H2O = NpO2(OH)2- + 2H+
+	-analytical_expression	-2.8205454556571 0 -6195.3943766273 0 0 0 0 
+	-log_K	-23.6 
+
+NpO2+2 + 2H2O = NpO2(OH)2 + 2H+
+	-analytical_expression	-12.2 0 0 0 0 0 0 
+	-log_K	-12.2 
+
+NpO2+2 + 3H2O = NpO2(OH)3- + 3H+
+	-analytical_expression	-21.2 0 0 0 0 0 0 
+	-log_K	-21.2 
+
+NpO2+2 + 4H2O = NpO2(OH)4-2 + 4H+
+	-analytical_expression	-33 0 0 0 0 0 0 
+	-log_K	-33 
+
+2Oxa-2 + NpO2+ = NpO2(Oxa)2-3
+	-analytical_expression	5.8 0 0 0 0 0 0 
+	-log_K	5.8 
+
+2SO4-2 + NpO2+2 = NpO2(SO4)2-2
+	-analytical_expression	9.2549769617774 0 -1358.0663838826 0 0 0 0 
+	-log_K	4.7 
+
+NpO2+ + Cit-3 = NpO2Cit-2
+	-analytical_expression	3.68 0 0 0 0 0 0 
+	-log_K	3.68 
+
+NpO2+2 + Cl- = NpO2Cl+
+	-analytical_expression	0.4 0 0 0 0 0 0 
+	-log_K	0.4 
+
+NpO2+ + HCO3- = NpO2CO3- + H+
+	-analytical_expression	-5.369 0 0 0 0 0 0 
+	-log_K	-5.369 
+
+NpO2+2 + HCO3- = NpO2CO3 + H+
+	-analytical_expression	-0.469 0 0 0 0 0 0 
+	-log_K	-0.469 
+
+NpO2+ + HCO3- + 2H2O = NpO2CO3(OH)2-3 + 3H+
+	-analytical_expression	-30.669 0 0 0 0 0 0 
+	-log_K	-30.669 
+
+NpO2+ + HCO3- + H2O = NpO2CO3OH-2 + 2H+
+	-analytical_expression	-17.329 0 0 0 0 0 0 
+	-log_K	-17.329 
+
+NpO2+ + Edta-4 = NpO2Edta-3
+	-analytical_expression	9.23 0 0 0 0 0 0 
+	-log_K	9.23 
+
+NpO2+ + H2O + Edta-4 = NpO2EdtaOH-4 + H+
+	-analytical_expression	-3.17 0 0 0 0 0 0 
+	-log_K	-3.17 
+
+NpO2+ + F- = NpO2F
+	-analytical_expression	1.4 0 0 0 0 0 0 
+	-log_K	1.4 
+
+NpO2+2 + F- = NpO2F+
+	-analytical_expression	4.57 0 0 0 0 0 0 
+	-log_K	4.57 
+
+NpO2+ + 2F- = NpO2F2-
+	-analytical_expression	1.9 0 0 0 0 0 0 
+	-log_K	1.9 
+
+NpO2+2 + 2F- = NpO2F2
+	-analytical_expression	7.6 0 0 0 0 0 0 
+	-log_K	7.6 
+
+NpO2+ + HPO4-2 + H+ = NpO2H2PO4
+	-analytical_expression	8.612 0 0 0 0 0 0 
+	-log_K	8.612 
+
+NpO2+2 + HPO4-2 + H+ = NpO2H2PO4+
+	-analytical_expression	10.532 0 0 0 0 0 0 
+	-log_K	10.532 
+
+NpO2+ + HPO4-2 = NpO2HPO4-
+	-analytical_expression	1.0228943467406 0 574.56654702723 0 0 0 0 
+	-log_K	2.95 
+
+NpO2+2 + HPO4-2 = NpO2HPO4
+	-analytical_expression	6.2 0 0 0 0 0 0 
+	-log_K	6.2 
+
+NpO2+ + IO3- = NpO2IO3
+	-analytical_expression	0.5 0 0 0 0 0 0 
+	-log_K	0.5 
+
+NpO2+2 + IO3- = NpO2IO3+
+	-analytical_expression	1.2 0 0 0 0 0 0 
+	-log_K	1.2 
+
+NpO2+2 + H2O = NpO2OH+ + H+
+	-analytical_expression	-5.1 0 0 0 0 0 0 
+	-log_K	-5.1 
+
+Oxa-2 + NpO2+ = NpO2Oxa-
+	-analytical_expression	3.9 0 0 0 0 0 0 
+	-log_K	3.9 
+
+S + NpO2+ + HCN = NpO2SCN + H+
+	-analytical_expression	10.524543 0 0 0 0 0 0 
+	-log_K	10.524543 
+
+Si(OH)4 + NpO2+ = NpO2SiO(OH)3 + H+
+	-analytical_expression	-7.31 0 0 0 0 0 0 
+	-log_K	-7.31 
+
+Si(OH)4 + NpO2+2 = NpO2SiO(OH)3+ + H+
+	-analytical_expression	-2.61 0 0 0 0 0 0 
+	-log_K	-2.61 
+
+SO4-2 + NpO2+ = NpO2SO4-
+	-analytical_expression	5.1542112632949 0 -1149.1330940545 0 0 0 0 
+	-log_K	1.3 
+
+SO4-2 + NpO2+2 = NpO2SO4
+	-analytical_expression	6.2056967726821 0 -872.29648503226 0 0 0 0 
+	-log_K	3.28 
+
+Np+3 + H2O = NpOH+2 + H+
+	-analytical_expression	-6.8 0 0 0 0 0 0 
+	-log_K	-6.8 
+
+Np+4 + H2O = NpOH+3 + H+
+	-analytical_expression	0.55 0 0 0 0 0 0 
+	-log_K	0.55 
+
+S + Np+4 + HCN = NpSCN+3 + H+
+	-analytical_expression	-1.0176431219007 0 4311.8607688271 0 0 0 0 
+	-log_K	13.444543 
+
+Si(OH)4 + Np+3 = NpSiO(OH)3+2 + H+
+	-analytical_expression	5.1027717306393 0 -2120.6728917551 0 0 0 0 
+	-log_K	-2.01 
+
+Si(OH)4 + Np+4 = NpSiO(OH)3+3 + H+
+	-analytical_expression	1.34 0 0 0 0 0 0 
+	-log_K	1.34 
+
+SO4-2 + Np+3 = NpSO4+
+	-analytical_expression	3.3 0 0 0 0 0 0 
+	-log_K	3.3 
+
+SO4-2 + Np+4 = NpSO4+2
+	-analytical_expression	12.070704363538 0 -1556.5530092192 0 0 0 0 
+	-log_K	6.85 
+
+H2O = OH- + H+
+	-analytical_expression	69.591820886234 0 -6205.3263444059 -25.3710681687146 0 0 0 
+	-log_K	-14 
+
+2HPO4-2 = P2O7-4 + H2O
+	-analytical_expression	-3.39 0 0 0 0 0 0 
+	-log_K	-3.39 
+
+Pa+4 + 2H2O = Pa(OH)2+2 + 2H+
+	-analytical_expression	1.9 0 0 0 0 0 0 
+	-log_K	1.9 
+
+Pa+4 + 3H2O = Pa(OH)3+ + 3H+
+	-analytical_expression	0.9 0 0 0 0 0 0 
+	-log_K	0.9 
+
+PaO(OH)+2 + H2O = PaO(OH)2+ + H+
+	-analytical_expression	-0.43660032192199 0 -245.496615548 0 0 0 0 
+	-log_K	-1.26 
+
+PaO(OH)+2 + 2H2O = PaO(OH)3 + 2H+
+	-analytical_expression	4.509310719413 0 -3222.7959955982 0 0 0 0 
+	-log_K	-6.3 
+
+PaO(OH)+2 + 3H2O = PaO(OH)4- + 3H+
+	-analytical_expression	-15.7 0 0 0 0 0 0 
+	-log_K	-15.7 
+
+2SO4-2 + PaO(OH)+2 + H+ = PaO(SO4)2- + H2O
+	-analytical_expression	7 0 0 0 0 0 0 
+	-log_K	7 
+
+3SO4-2 + PaO(OH)+2 + H+ = PaO(SO4)3-3 + H2O
+	-analytical_expression	8.59 0 0 0 0 0 0 
+	-log_K	8.59 
+
+PaO(OH)+2 + H+ = PaO+3 + H2O
+	-analytical_expression	0.04 0 0 0 0 0 0 
+	-log_K	0.04 
+
+PaO(OH)+2 + H+ + F- = PaOF+2 + H2O
+	-analytical_expression	6.976 0 0 0 0 0 0 
+	-log_K	6.976 
+
+PaO(OH)+2 + H+ + 2F- = PaOF2+ + H2O
+	-analytical_expression	14.252 0 0 0 0 0 0 
+	-log_K	14.252 
+
+PaO(OH)+2 + H+ + 3F- = PaOF3 + H2O
+	-analytical_expression	20.428 0 0 0 0 0 0 
+	-log_K	20.428 
+
+Pa+4 + H2O = PaOH+3 + H+
+	-analytical_expression	1.3 0 0 0 0 0 0 
+	-log_K	1.3 
+
+SO4-2 + PaO(OH)+2 + H+ = PaOSO4+ + H2O
+	-analytical_expression	3.89 0 0 0 0 0 0 
+	-log_K	3.89 
+
+Pb+2 + 2HCO3- = Pb(CO3)2-2 + 2H+
+	-analytical_expression	-10.528 0 0 0 0 0 0 
+	-log_K	-10.528 
+
+Pb+2 + HCO3- + Cl- = Pb(CO3)Cl- + H+
+	-analytical_expression	-3.859 0 0 0 0 0 0 
+	-log_K	-3.859 
+
+Pb+2 + HCO3- + H2O = Pb(CO3)OH- + 2H+
+	-analytical_expression	-13.429 0 0 0 0 0 0 
+	-log_K	-13.429 
+
+Pb+2 + 2HPO4-2 = Pb(HPO4)2-2
+	-analytical_expression	6.5 0 0 0 0 0 0 
+	-log_K	6.5 
+
+Pb+2 + 2HS- = Pb(HS)2
+	-analytical_expression	12.5 0 0 0 0 0 0 
+	-log_K	12.5 
+
+Pb+2 + 2H2O = Pb(OH)2 + 2H+
+	-analytical_expression	-1.1727720153989 0 -4700.9990211319 0 0 0 0 
+	-log_K	-16.94 
+
+Pb+2 + 3H2O = Pb(OH)3- + 3H+
+	-analytical_expression	-92.048274856714 0 -3184.3705519327 30.1881890814184 0 0 0 
+	-log_K	-28.03 
+
+2SO4-2 + Pb+2 = Pb(SO4)2-2
+	-analytical_expression	6.3735221765699 0 -961.09313320919 0 0 0 0 
+	-log_K	3.15 
+
+2Pb+2 + H2O = Pb2OH+3 + H+
+	-analytical_expression	-6.73 0 0 0 0 0 0 
+	-log_K	-6.73 
+
+3Pb+2 + 4H2O = Pb3(OH)4+2 + 4H+
+	-analytical_expression	-3.4936756031275 0 -5818.7921217122 0 0 0 0 
+	-log_K	-23.01 
+
+4Pb+2 + 4H2O = Pb4(OH)4+4 + 4H+
+	-analytical_expression	-5.6787291465769 0 -4439.8324088468 0 0 0 0 
+	-log_K	-20.57 
+
+6Pb+2 + 8H2O = Pb6(OH)8+4 + 8H+
+	-analytical_expression	-5.9421290990303 0 -11016.007706186 0 0 0 0 
+	-log_K	-42.89 
+
+Pb+2 + Cl- = PbCl+
+	-analytical_expression	3.3044716226913 0 -538.00322130732 0 0 0 0 
+	-log_K	1.5 
+
+Pb+2 + 2Cl- = PbCl2
+	-analytical_expression	5.0782541925778 0 -887.96648176936 0 0 0 0 
+	-log_K	2.1 
+
+Pb+2 + 3Cl- = PbCl3-
+	-analytical_expression	4.5753138948028 0 -767.82984011821 0 0 0 0 
+	-log_K	2 
+
+Pb+2 + 4Cl- = PbCl4-2
+	-analytical_expression	3.9126799290134 0 -731.2665143983 0 0 0 0 
+	-log_K	1.46 
+
+Pb+2 + HCO3- = PbCO3 + H+
+	-analytical_expression	-3.879 0 0 0 0 0 0 
+	-log_K	-3.879 
+
+Pb+2 + HPO4-2 + H+ = PbH2PO4+
+	-analytical_expression	10.012 0 0 0 0 0 0 
+	-log_K	10.012 
+
+Pb+2 + HCO3- = PbHCO3+
+	-analytical_expression	3 0 0 0 0 0 0 
+	-log_K	3 
+
+Pb+2 + HPO4-2 = PbHPO4
+	-analytical_expression	4.2 0 0 0 0 0 0 
+	-log_K	4.2 
+
+Pb+2 + H2O = PbOH+ + H+
+	-analytical_expression	2.3507196217868 0 -2925.0660575932 0 0 0 0 
+	-log_K	-7.46 
+
+Pb+2 + 2HS- = PbS(HS)- + H+
+	-analytical_expression	6.1 0 0 0 0 0 0 
+	-log_K	6.1 
+
+SO4-2 + Pb+2 = PbSO4
+	-analytical_expression	4.3317610901167 0 -480.5465666046 0 0 0 0 
+	-log_K	2.72 
+
+Pd+2 + 2NH4+ = Pd(NH3)2+2 + 2H+
+	-analytical_expression	0.026 0 0 0 0 0 0 
+	-log_K	0.026 
+
+Pd+2 + 3NH4+ = Pd(NH3)3+2 + 3H+
+	-analytical_expression	-1.711 0 0 0 0 0 0 
+	-log_K	-1.711 
+
+Pd+2 + 4NH4+ = Pd(NH3)4+2 + 4H+
+	-analytical_expression	-4.148 0 0 0 0 0 0 
+	-log_K	-4.148 
+
+Pd+2 + 2H2O = Pd(OH)2 + 2H+
+	-analytical_expression	-4.6 0 0 0 0 0 0 
+	-log_K	-4.6 
+
+Pd+2 + 3H2O = Pd(OH)3- + 3H+
+	-analytical_expression	-16.6 0 0 0 0 0 0 
+	-log_K	-16.6 
+
+Pd+2 + Cl- = PdCl+
+	-analytical_expression	-40.568925626077 0 2855.9169736585 14.5528720272977 0 0 0 
+	-log_K	5.02 
+
+Pd+2 + 2Cl- = PdCl2
+	-analytical_expression	-82.408390526425 0 5356.3574596696 29.4665590635361 0 0 0 
+	-log_K	8.47 
+
+Pd+2 + 3Cl- = PdCl3-
+	-analytical_expression	-91.416692356597 0 6006.375040986 33.0747091529496 0 0 0 
+	-log_K	10.57 
+
+Pd+2 + 4Cl- = PdCl4-2
+	-analytical_expression	-132.45095907787 0 8476.5384816348 46.6654078230697 0 0 0 
+	-log_K	11.45 
+
+Pd+2 + NH4+ = PdNH3+2 + H+
+	-analytical_expression	0.363 0 0 0 0 0 0 
+	-log_K	0.363 
+
+Pd+2 + H2O = PdOH+ + H+
+	-analytical_expression	-2 0 0 0 0 0 0 
+	-log_K	-2 
+
+Po+4 + 2NO3- = Po(NO3)2+2
+	-analytical_expression	3.7 0 0 0 0 0 0 
+	-log_K	3.7 
+
+Po+4 + 3NO3- = Po(NO3)3+
+	-analytical_expression	4.4 0 0 0 0 0 0 
+	-log_K	4.4 
+
+Po+4 + 2H2O = Po(OH)2+2 + 2H+
+	-analytical_expression	-1.495087 0 0 0 0 0 0 
+	-log_K	-1.495087 
+
+Po+4 + 3H2O = Po(OH)3+ + 3H+
+	-analytical_expression	-3.995087 0 0 0 0 0 0 
+	-log_K	-3.995087 
+
+Po+4 + 4H2O = Po(OH)4 + 4H+
+	-analytical_expression	-8.495087 0 0 0 0 0 0 
+	-log_K	-8.495087 
+
+Po+4 + 6H2O = Po(OH)6-2 + 6H+
+	-analytical_expression	-33.425087 0 0 0 0 0 0 
+	-log_K	-33.425087 
+
+Po+4 + H2O + 4Cl- = Po(OH)Cl4- + H+
+	-analytical_expression	5.635668 0 0 0 0 0 0 
+	-log_K	5.635668 
+
+2SO4-2 + Po+4 = Po(SO4)2
+	-analytical_expression	9.1 0 0 0 0 0 0 
+	-log_K	9.1 
+
+3SO4-2 + Po+4 = Po(SO4)3-2
+	-analytical_expression	11.3 0 0 0 0 0 0 
+	-log_K	11.3 
+
+HPO4-2 = PO4-3 + H+
+	-analytical_expression	-9.7922052495127 0 -762.60650787251 0 0 0 0 
+	-log_K	-12.35 
+
+Po+2 + Cl- = PoCl+
+	-analytical_expression	3.75 0 0 0 0 0 0 
+	-log_K	3.75 
+
+Po+2 + 2Cl- = PoCl2
+	-analytical_expression	6.13 0 0 0 0 0 0 
+	-log_K	6.13 
+
+Po+2 + 3Cl- = PoCl3-
+	-analytical_expression	7.02 0 0 0 0 0 0 
+	-log_K	7.02 
+
+Po+2 + 4Cl- = PoCl4-2
+	-analytical_expression	7.556356 0 0 0 0 0 0 
+	-log_K	7.556356 
+
+Po+4 + 6Cl- = PoCl6-2
+	-analytical_expression	7.795668 0 0 0 0 0 0 
+	-log_K	7.795668 
+
+Po+4 + NO3- = PoNO3+3
+	-analytical_expression	2 0 0 0 0 0 0 
+	-log_K	2 
+
+Po+4 + H2O = PoOH+3 + H+
+	-analytical_expression	-0.495087 0 0 0 0 0 0 
+	-log_K	-0.495087 
+
+SO4-2 + Po+2 = PoSO4
+	-analytical_expression	1.120524 0 0 0 0 0 0 
+	-log_K	1.120524 
+
+SO4-2 + Po+4 = PoSO4+2
+	-analytical_expression	5.2 0 0 0 0 0 0 
+	-log_K	5.2 
+
+Pu+3 + Cit-3 = Pu(Cit)
+	-analytical_expression	8.7 0 0 0 0 0 0 
+	-log_K	8.7 
+
+Pu+3 + 2HCO3- = Pu(CO3)2- + 2H+
+	-analytical_expression	-7.758 0 0 0 0 0 0 
+	-log_K	-7.758 
+
+Pu+3 + 3HCO3- = Pu(CO3)3-3 + 3H+
+	-analytical_expression	-15.987 0 0 0 0 0 0 
+	-log_K	-15.987 
+
+Pu+4 + 4HCO3- = Pu(CO3)4-4 + 4H+
+	-analytical_expression	-4.316 0 0 0 0 0 0 
+	-log_K	-4.316 
+
+Pu+4 + 5HCO3- = Pu(CO3)5-6 + 5H+
+	-analytical_expression	-15.995 0 0 0 0 0 0 
+	-log_K	-15.995 
+
+Pu+3 + Edta-4 = Pu(Edta)-
+	-analytical_expression	18.655834646145 0 454.42990537609 0 0 0 0 
+	-log_K	20.18 
+
+Pu+4 + Edta-4 = Pu(Edta)
+	-analytical_expression	31.6 0 0 0 0 0 0 
+	-log_K	31.6 
+
+Pu+4 + 2H2O + Edta-4 = Pu(Edta)(OH)2-2 + 2H+
+	-analytical_expression	19.8 0 0 0 0 0 0 
+	-log_K	19.8 
+
+Pu+4 + H2O + Edta-4 = Pu(Edta)OH- + H+
+	-analytical_expression	26.9 0 0 0 0 0 0 
+	-log_K	26.9 
+
+Pu+3 + H+ + Cit-3 = Pu(HCit)+
+	-analytical_expression	12.46 0 0 0 0 0 0 
+	-log_K	12.46 
+
+Pu+3 + H+ + Edta-4 = Pu(HEdta)
+	-analytical_expression	22.02 0 0 0 0 0 0 
+	-log_K	22.02 
+
+Pu+3 + 2H2O = Pu(OH)2+ + 2H+
+	-analytical_expression	-14.8 0 0 0 0 0 0 
+	-log_K	-14.8 
+
+Pu+4 + 2H2O = Pu(OH)2+2 + 2H+
+	-analytical_expression	-1.2 0 0 0 0 0 0 
+	-log_K	-1.2 
+
+Pu+3 + 3H2O = Pu(OH)3 + 3H+
+	-analytical_expression	-25.9 0 0 0 0 0 0 
+	-log_K	-25.9 
+
+Pu+4 + 3H2O = Pu(OH)3+ + 3H+
+	-analytical_expression	-3.1 0 0 0 0 0 0 
+	-log_K	-3.1 
+
+Pu+4 + 4H2O = Pu(OH)4 + 4H+
+	-analytical_expression	-9.3 0 0 0 0 0 0 
+	-log_K	-9.3 
+
+Pu+3 + Oxa-2 = Pu(Oxa)+
+	-analytical_expression	8.5 0 0 0 0 0 0 
+	-log_K	8.5 
+
+Pu+4 + Oxa-2 = Pu(Oxa)+2
+	-analytical_expression	12.95 0 0 0 0 0 0 
+	-log_K	12.95 
+
+Pu+3 + 2Oxa-2 = Pu(Oxa)2-
+	-analytical_expression	12.7 0 0 0 0 0 0 
+	-log_K	12.7 
+
+Pu+4 + 2Oxa-2 = Pu(Oxa)2
+	-analytical_expression	21.9 0 0 0 0 0 0 
+	-log_K	21.9 
+
+Pu+4 + 3Oxa-2 = Pu(Oxa)3-2
+	-analytical_expression	27.85 0 0 0 0 0 0 
+	-log_K	27.85 
+
+Pu+3 + 3Oxa-2 = Pu(Oxa)3-3
+	-analytical_expression	12.1 0 0 0 0 0 0 
+	-log_K	12.1 
+
+2SO4-2 + Pu+3 = Pu(SO4)2-
+	-analytical_expression	7.8022970702291 0 -626.79986948426 0 0 0 0 
+	-log_K	5.7 
+
+2SO4-2 + Pu+4 = Pu(SO4)2
+	-analytical_expression	11.14 0 0 0 0 0 0 
+	-log_K	11.14 
+
+Pu+3 + Cl- = PuCl+2
+	-analytical_expression	1.2 0 0 0 0 0 0 
+	-log_K	1.2 
+
+Pu+4 + Cl- = PuCl+3
+	-analytical_expression	1.8 0 0 0 0 0 0 
+	-log_K	1.8 
+
+Pu+4 + HCO3- + 3H2O = PuCO3(OH)3- + 4H+
+	-analytical_expression	-4.329 0 0 0 0 0 0 
+	-log_K	-4.329 
+
+Pu+3 + HCO3- = PuCO3+ + H+
+	-analytical_expression	-2.329 0 0 0 0 0 0 
+	-log_K	-2.329 
+
+Pu+3 + F- = PuF+2
+	-analytical_expression	3.4 0 0 0 0 0 0 
+	-log_K	3.4 
+
+Pu+4 + F- = PuF+3
+	-analytical_expression	10.434241944791 0 -475.32323435889 0 0 0 0 
+	-log_K	8.84 
+
+Pu+3 + 2F- = PuF2+
+	-analytical_expression	5.8 0 0 0 0 0 0 
+	-log_K	5.8 
+
+Pu+4 + 2F- = PuF2+2
+	-analytical_expression	17.627105628353 0 -574.56654702723 0 0 0 0 
+	-log_K	15.7 
+
+Pu+3 + HPO4-2 + H+ = PuH2PO4+2
+	-analytical_expression	9.412 0 0 0 0 0 0 
+	-log_K	9.412 
+
+Pu+4 + HPO4-2 + 2H+ = PuH3PO4+4
+	-analytical_expression	11.752 0 0 0 0 0 0 
+	-log_K	11.752 
+
+Pu+4 + NO3- = PuNO3+3
+	-analytical_expression	1.95 0 0 0 0 0 0 
+	-log_K	1.95 
+
+PuO2+2 + 2HCO3- = PuO2(CO3)2-2 + 2H+
+	-analytical_expression	-5.4671136234073 0 -146.35776952457 0 0 0 0 
+	-log_K	-5.958 
+
+PuO2+ + 2HCO3- = PuO2(CO3)2-3 + 2H+
+	-analytical_expression	-14.318 0 0 0 0 0 0 
+	-log_K	-14.318 
+
+PuO2+2 + 3HCO3- = PuO2(CO3)3-4 + 3H+
+	-analytical_expression	-11.917806720875 0 -318.7799669552 0 0 0 0 
+	-log_K	-12.987 
+
+PuO2+ + 3HCO3- = PuO2(CO3)3-5 + 3H+
+	-analytical_expression	-20.893325901042 0 -1336.8074216426 0 0 0 0 
+	-log_K	-25.377 
+
+PuO2+2 + 2HPO4-2 + 2H+ = PuO2(H2PO4)2
+	-analytical_expression	19.344 0 0 0 0 0 0 
+	-log_K	19.344 
+
+PuO2+2 + 2H2O = PuO2(OH)2 + 2H+
+	-analytical_expression	-13.2 0 0 0 0 0 0 
+	-log_K	-13.2 
+
+PuO2+2 + 3H2O = PuO2(OH)3- + 3H+
+	-analytical_expression	-24 0 0 0 0 0 0 
+	-log_K	-24 
+
+2SO4-2 + PuO2+2 = PuO2(SO4)2-2
+	-analytical_expression	11.933231168763 0 -2246.0328656519 0 0 0 0 
+	-log_K	4.4 
+
+PuO2+2 + Cl- = PuO2Cl+
+	-analytical_expression	0.23 0 0 0 0 0 0 
+	-log_K	0.23 
+
+PuO2+2 + 2Cl- = PuO2Cl2
+	-analytical_expression	-1.15 0 0 0 0 0 0 
+	-log_K	-1.15 
+
+PuO2+ + HCO3- = PuO2CO3- + H+
+	-analytical_expression	-5.299 0 0 0 0 0 0 
+	-log_K	-5.299 
+
+PuO2+2 + HCO3- = PuO2CO3 + H+
+	-analytical_expression	-0.829 0 0 0 0 0 0 
+	-log_K	-0.829 
+
+PuO2+2 + F- = PuO2F+
+	-analytical_expression	4.56 0 0 0 0 0 0 
+	-log_K	4.56 
+
+PuO2+2 + 2F- = PuO2F2
+	-analytical_expression	7.25 0 0 0 0 0 0 
+	-log_K	7.25 
+
+PuO2+2 + HPO4-2 + H+ = PuO2H2PO4+
+	-analytical_expression	10.472 0 0 0 0 0 0 
+	-log_K	10.472 
+
+PuO2+2 + HPO4-2 = PuO2HPO4
+	-analytical_expression	7.24 0 0 0 0 0 0 
+	-log_K	7.24 
+
+PuO2+ + H2O = PuO2OH + H+
+	-analytical_expression	-9.73 0 0 0 0 0 0 
+	-log_K	-9.73 
+
+PuO2+2 + H2O = PuO2OH+ + H+
+	-analytical_expression	-0.59464017848073 0 -1462.5330287966 0 0 0 0 
+	-log_K	-5.5 
+
+PuO2+2 + HPO4-2 = PuO2PO4- + H+
+	-analytical_expression	-0.59 0 0 0 0 0 0 
+	-log_K	-0.59 
+
+Si(OH)4 + PuO2+ = PuO2SiO(OH)3 + H+
+	-analytical_expression	-7.31 0 0 0 0 0 0 
+	-log_K	-7.31 
+
+Si(OH)4 + PuO2+2 = PuO2SiO(OH)3+ + H+
+	-analytical_expression	-3.41 0 0 0 0 0 0 
+	-log_K	-3.41 
+
+SO4-2 + PuO2+ = PuO2SO4-
+	-analytical_expression	1.26 0 0 0 0 0 0 
+	-log_K	1.26 
+
+SO4-2 + PuO2+2 = PuO2SO4
+	-analytical_expression	6.2005818768138 0 -840.95649155804 0 0 0 0 
+	-log_K	3.38 
+
+Pu+3 + H2O = PuOH+2 + H+
+	-analytical_expression	-6.9 0 0 0 0 0 0 
+	-log_K	-6.9 
+
+Pu+4 + H2O = PuOH+3 + H+
+	-analytical_expression	0 0 0 0 0 0 0 
+	-log_K	0 
+
+S + Pu+3 + HCN = PuSCN+2 + H+
+	-analytical_expression	11.744543 0 0 0 0 0 0 
+	-log_K	11.744543 
+
+Si(OH)4 + Pu+3 = PuSiO(OH)3+2 + H+
+	-analytical_expression	5.1027717306393 0 -2120.6728917551 0 0 0 0 
+	-log_K	-2.01 
+
+Si(OH)4 + Pu+4 = PuSiO(OH)3+3 + H+
+	-analytical_expression	2.07 0 0 0 0 0 0 
+	-log_K	2.07 
+
+SO4-2 + Pu+3 = PuSO4+
+	-analytical_expression	6.9132924511759 0 -898.41314626077 0 0 0 0 
+	-log_K	3.9 
+
+SO4-2 + Pu+4 = PuSO4+2
+	-analytical_expression	6.89 0 0 0 0 0 0 
+	-log_K	6.89 
+
+Ra+2 + HCO3- = RaCO3 + H+
+	-analytical_expression	-2.7709841288103 0 -1457.3619298733 0 0 0 0 
+	-log_K	-7.659 
+
+Ra+2 + F- = RaF+
+	-analytical_expression	2.5122205105249 0 -605.90654050145 0 0 0 0 
+	-log_K	0.48 
+
+Ra+2 + HCO3- = RaHCO3+
+	-analytical_expression	5.8101684001745 0 -1410.2997063396 0 0 0 0 
+	-log_K	1.08 
+
+Ra+2 + H2O = RaOH+ + H+
+	-analytical_expression	-2.8381318407618 0 -3238.4659923353 0 0 0 0 
+	-log_K	-13.7 
+
+SO4-2 + Ra+2 = RaSO4
+	-analytical_expression	2.525267976608 0 -73.12665143983 0 0 0 0 
+	-log_K	2.28 
+
+HS- = S-2 + H+
+	-analytical_expression	-19 0 0 0 0 0 0 
+	-log_K	-19 
+
+S + HCN = SCN- + H+
+	-analytical_expression	-2.7913031524127 0 3946.227511628 0 0 0 0 
+	-log_K	10.444543 
+
+H2Se = Se-2 + 2H+
+	-analytical_expression	-18.76 0 0 0 0 0 0 
+	-log_K	-18.76 
+
+Se + H2Se = Se2-2 + 2H+
+	-analytical_expression	-9.966616 0 0 0 0 0 0 
+	-log_K	-9.966616 
+
+2Se + H2Se = Se3-2 + 2H+
+	-analytical_expression	-1.843231 0 0 0 0 0 0 
+	-log_K	-1.843231 
+
+3Se + H2Se = Se4-2 + 2H+
+	-analytical_expression	5.056616 0 0 0 0 0 0 
+	-log_K	5.056616 
+
+Se + HCN = SeCN- + H+
+	-analytical_expression	2.152938 0 0 0 0 0 0 
+	-log_K	2.152938 
+
+HSeO4- = SeO4-2 + H+
+	-analytical_expression	-5.3939815919353 0 1086.453107106 0 0 0 0 
+	-log_K	-1.75 
+
+4Si(OH)4 = Si4O8(OH)4-4 + 4H2O + 4H+
+	-analytical_expression	-36.28 0 0 0 0 0 0 
+	-log_K	-36.28 
+
+Si(OH)4 + 3H2O + Al+3 = SiAlO3(OH)4-3 + 6H+
+	-analytical_expression	-46.45 0 0 0 0 0 0 
+	-log_K	-46.45 
+
+Si(OH)4 = SiO(OH)3- + H+
+	-analytical_expression	-5.3250995769782 0 -1337.1730548998 0 0 0 0 
+	-log_K	-9.81 
+
+Si(OH)4 = SiO2(OH)2-2 + 2H+
+	-analytical_expression	-10.000643367444 0 -3917.4991842766 0 0 0 0 
+	-log_K	-23.14 
+
+Sm+3 + 2HCO3- = Sm(CO3)2- + 2H+
+	-analytical_expression	-8.558 0 0 0 0 0 0 
+	-log_K	-8.558 
+
+Sm+3 + 2H2O = Sm(OH)2+ + 2H+
+	-analytical_expression	-15.22 0 0 0 0 0 0 
+	-log_K	-15.22 
+
+Sm+3 + 3H2O = Sm(OH)3 + 3H+
+	-analytical_expression	-23.82 0 0 0 0 0 0 
+	-log_K	-23.82 
+
+Sm+3 + 4H2O = Sm(OH)4- + 4H+
+	-analytical_expression	-36.32 0 0 0 0 0 0 
+	-log_K	-36.32 
+
+2SO4-2 + Sm+3 = Sm(SO4)2-
+	-analytical_expression	5.7 0 0 0 0 0 0 
+	-log_K	5.7 
+
+2Sm+3 + 2H2O = Sm2(OH)2+4 + 2H+
+	-analytical_expression	-14.5 0 0 0 0 0 0 
+	-log_K	-14.5 
+
+3Sm+3 + 5H2O = Sm3(OH)5+4 + 5H+
+	-analytical_expression	-33.9 0 0 0 0 0 0 
+	-log_K	-33.9 
+
+Sm+3 + HCO3- = SmCO3+ + H+
+	-analytical_expression	-2.229 0 0 0 0 0 0 
+	-log_K	-2.229 
+
+Sm+3 + F- = SmF+2
+	-analytical_expression	5.5837947696113 0 -421.52291222816 0 0 0 0 
+	-log_K	4.17 
+
+Sm+3 + 2F- = SmF2+
+	-analytical_expression	9.9760796028921 0 -976.7631299463 0 0 0 0 
+	-log_K	6.7 
+
+Sm+3 + HPO4-2 + H+ = SmH2PO4+2
+	-analytical_expression	13.672248022722 0 -1022.7284537085 0 0 0 0 
+	-log_K	10.242 
+
+Sm+3 + H2O = SmOH+2 + H+
+	-analytical_expression	-0.27932625810381 0 -2230.3628689148 0 0 0 0 
+	-log_K	-7.76 
+
+SO4-2 + Sm+3 = SmSO4+
+	-analytical_expression	3.95 0 0 0 0 0 0 
+	-log_K	3.95 
+
+Sn+2 + 2HPO4-2 + 2H+ = Sn(H2PO4)2
+	-analytical_expression	20.524 0 0 0 0 0 0 
+	-log_K	20.524 
+
+Sn+2 + 2HPO4-2 = Sn(HPO4)2-2
+	-analytical_expression	13.6 0 0 0 0 0 0 
+	-log_K	13.6 
+
+Sn+2 + 3HPO4-2 = Sn(HPO4)3-4
+	-analytical_expression	13.5 0 0 0 0 0 0 
+	-log_K	13.5 
+
+Sn+2 + 2NO3- = Sn(NO3)2
+	-analytical_expression	1.39 0 0 0 0 0 0 
+	-log_K	1.39 
+
+Sn+2 + 2H2O = Sn(OH)2 + 2H+
+	-analytical_expression	-7.68 0 0 0 0 0 0 
+	-log_K	-7.68 
+
+Sn+2 + 3H2O = Sn(OH)3- + 3H+
+	-analytical_expression	-17 0 0 0 0 0 0 
+	-log_K	-17 
+
+Sn+4 + 4H2O = Sn(OH)4 + 4H+
+	-analytical_expression	7.54 0 0 0 0 0 0 
+	-log_K	7.54 
+
+Sn+4 + 5H2O = Sn(OH)5- + 5H+
+	-analytical_expression	-1.06 0 0 0 0 0 0 
+	-log_K	-1.06 
+
+Sn+4 + 6H2O = Sn(OH)6-2 + 6H+
+	-analytical_expression	-11.13 0 0 0 0 0 0 
+	-log_K	-11.13 
+
+Sn+2 + H2O + Cl- = Sn(OH)Cl + H+
+	-analytical_expression	-2.5 0 0 0 0 0 0 
+	-log_K	-2.5 
+
+3Sn+2 + 4H2O = Sn3(OH)4+2 + 4H+
+	-analytical_expression	-5.6 0 0 0 0 0 0 
+	-log_K	-5.6 
+
+Sn+2 + Br- = SnBr+
+	-analytical_expression	2.2234762709821 0 -266.38994453081 0 0 0 0 
+	-log_K	1.33 
+
+Sn+2 + 2Br- = SnBr2
+	-analytical_expression	4.229969365879 0 -673.80985969558 0 0 0 0 
+	-log_K	1.97 
+
+Sn+2 + 3Br- = SnBr3-
+	-analytical_expression	3.1913782267069 0 -376.07992169055 0 0 0 0 
+	-log_K	1.93 
+
+Sn+2 + Cl- = SnCl+
+	-analytical_expression	1.8041806920902 0 -117.5249755283 0 0 0 0 
+	-log_K	1.41 
+
+Sn+4 + Cl- = SnCl+3
+	-analytical_expression	3.19 0 0 0 0 0 0 
+	-log_K	3.19 
+
+Sn+2 + 2Cl- = SnCl2
+	-analytical_expression	-64.042326060469 0 3163.4615529532 22.4908022240056 0 0 0 
+	-log_K	2.22 
+
+Sn+4 + 2Cl- = SnCl2+2
+	-analytical_expression	5.95 0 0 0 0 0 0 
+	-log_K	5.95 
+
+Sn+2 + 3Cl- = SnCl3-
+	-analytical_expression	-143.34204757119 0 7241.8994387182 49.0708412160128 0 0 0 
+	-log_K	2.37 
+
+Sn+2 + 4Cl- = SnCl4-2
+	-analytical_expression	2.0300000226355 0 0 0 0 0 0 
+	-log_K	2.03 
+
+Sn+4 + 4Cl- = SnCl4
+	-analytical_expression	9.57 0 0 0 0 0 0 
+	-log_K	9.57 
+
+Sn+4 + 5Cl- = SnCl5-
+	-analytical_expression	10.93 0 0 0 0 0 0 
+	-log_K	10.93 
+
+Sn+4 + 6Cl- = SnCl6-2
+	-analytical_expression	9.83 0 0 0 0 0 0 
+	-log_K	9.83 
+
+Sn+2 + F- = SnF+
+	-analytical_expression	5.25 0 0 0 0 0 0 
+	-log_K	5.25 
+
+Sn+2 + 2F- = SnF2
+	-analytical_expression	8.89 0 0 0 0 0 0 
+	-log_K	8.89 
+
+Sn+2 + 3F- = SnF3-
+	-analytical_expression	11.5 0 0 0 0 0 0 
+	-log_K	11.5 
+
+Sn+4 + 6F- = SnF6-2
+	-analytical_expression	25 0 0 0 0 0 0 
+	-log_K	25 
+
+Sn+2 + HPO4-2 + H+ = SnH2PO4+
+	-analytical_expression	10.612 0 0 0 0 0 0 
+	-log_K	10.612 
+
+Sn+2 + 2HPO4-2 + H+ = SnH2PO4HPO4-
+	-analytical_expression	17.712 0 0 0 0 0 0 
+	-log_K	17.712 
+
+Sn+2 + HPO4-2 = SnHPO4
+	-analytical_expression	9.6 0 0 0 0 0 0 
+	-log_K	9.6 
+
+Sn+2 + NO3- = SnNO3+
+	-analytical_expression	1.27 0 0 0 0 0 0 
+	-log_K	1.27 
+
+Sn+2 + H2O = SnOH+ + H+
+	-analytical_expression	-3.53 0 0 0 0 0 0 
+	-log_K	-3.53 
+
+Sn+2 + HPO4-2 = SnPO4- + H+
+	-analytical_expression	5.75 0 0 0 0 0 0 
+	-log_K	5.75 
+
+Sn+2 + S + HCN = SnSCN+ + H+
+	-analytical_expression	11.944543 0 0 0 0 0 0 
+	-log_K	11.944543 
+
+SO4-2 + Sn+2 = SnSO4
+	-analytical_expression	3.43 0 0 0 0 0 0 
+	-log_K	3.43 
+
+UO2+2 + 2Sr+2 + 3HCO3- = Sr2UO2(CO3)3 + 3H+
+	-analytical_expression	-1.287 0 0 0 0 0 0 
+	-log_K	-1.287 
+
+Sr+2 + HCO3- = SrCO3 + H+
+	-analytical_expression	16.001986154974 0 -2625.4192062757 -5.9550111792363 0 0 0 
+	-log_K	-7.539 
+
+Sr+2 + F- = SrF+
+	-analytical_expression	2.8295865214411 0 -569.34321478153 0 0 0 0 
+	-log_K	0.92 
+
+Sr+2 + HPO4-2 + H+ = SrH2PO4+
+	-analytical_expression	7.902 0 0 0 0 0 0 
+	-log_K	7.902 
+
+Sr+2 + HCO3- = SrHCO3+
+	-analytical_expression	-73.503541172254 0 2213.7474490412 27.1813973402424 0 0 0 
+	-log_K	1.18 
+
+Sr+2 + HPO4-2 = SrHPO4
+	-analytical_expression	3.9267228055227 0 -470.09990211319 0 0 0 0 
+	-log_K	2.35 
+
+Sr+2 + H2O = SrOH+ + H+
+	-analytical_expression	-2.3582084176941 0 -3217.5726633525 0 0 0 0 
+	-log_K	-13.15 
+
+Sr+2 + HPO4-2 = SrPO4- + H+
+	-analytical_expression	-6.73 0 0 0 0 0 0 
+	-log_K	-6.73 
+
+Sr+2 + SO4-2 = SrSO4
+	-analytical_expression	3.81416537566 0 -454.42990537609 0 0 0 0 
+	-log_K	2.29 
+
+UO2+2 + Sr+2 + 3HCO3- = SrUO2(CO3)3-2 + 3H+
+	-analytical_expression	-5.087 0 0 0 0 0 0 
+	-log_K	-5.087 
+
+2TcO(OH)2 + 2H+ = Tc2O2(OH)2+2 + 2H2O
+	-analytical_expression	12.99 0 0 0 0 0 0 
+	-log_K	12.99 
+
+2TcO(OH)2 + 6H+ + 10Cl- = Tc2OCl10-4 + 5H2O
+	-analytical_expression	12.59 0 0 0 0 0 0 
+	-log_K	12.59 
+
+TcO(OH)2 + 4H+ + 5Cl- = TcCl5- + 3H2O
+	-analytical_expression	4.53 0 0 0 0 0 0 
+	-log_K	4.53 
+
+TcO(OH)2 + 4H+ + 6Cl- = TcCl6-2 + 3H2O
+	-analytical_expression	2.45 0 0 0 0 0 0 
+	-log_K	2.45 
+
+TcO(OH)2 + HCO3- + H+ = TcCO3(OH)2 + H2O
+	-analytical_expression	8.971 0 0 0 0 0 0 
+	-log_K	8.971 
+
+TcO(OH)2 + HCO3- = TcCO3(OH)3-
+	-analytical_expression	0.671 0 0 0 0 0 0 
+	-log_K	0.671 
+
+TcO(OH)2 + H2O = TcO(OH)3- + H+
+	-analytical_expression	-10.92 0 0 0 0 0 0 
+	-log_K	-10.92 
+
+Th+4 + 5HCO3- = Th(CO3)5-6 + 5H+
+	-analytical_expression	-20.645 0 0 0 0 0 0 
+	-log_K	-20.645 
+
+Th+4 + 2HPO4-2 + 2H+ = Th(H2PO4)2+2
+	-analytical_expression	24.904 0 0 0 0 0 0 
+	-log_K	24.904 
+
+Th+4 + 2HPO4-2 + 3H+ = Th(H3PO4)(H2PO4)+3
+	-analytical_expression	24.124 0 0 0 0 0 0 
+	-log_K	24.124 
+
+Th+4 + 2IO3- = Th(IO3)2+2
+	-analytical_expression	6.97 0 0 0 0 0 0 
+	-log_K	6.97 
+
+Th+4 + 3IO3- = Th(IO3)3+
+	-analytical_expression	9.87 0 0 0 0 0 0 
+	-log_K	9.87 
+
+Th+4 + 2NO3- = Th(NO3)2+2
+	-analytical_expression	2.3 0 0 0 0 0 0 
+	-log_K	2.3 
+
+Th+4 + 2HCO3- + 2H2O = Th(OH)2(CO3)2-2 + 4H+
+	-analytical_expression	-11.858 0 0 0 0 0 0 
+	-log_K	-11.858 
+
+Th+4 + 2H2O = Th(OH)2+2 + 2H+
+	-analytical_expression	8.8139048406532 0 -4476.3957345667 0 0 0 0 
+	-log_K	-6.2 
+
+Th+4 + HCO3- + 2H2O = Th(OH)2CO3 + 3H+
+	-analytical_expression	-7.829 0 0 0 0 0 0 
+	-log_K	-7.829 
+
+Th+4 + 3Si(OH)4 + 3H2O = Th(OH)3(SiO(OH)3)3-2 + 6H+
+	-analytical_expression	-27.8 0 0 0 0 0 0 
+	-log_K	-27.8 
+
+Th+4 + HCO3- + 3H2O = Th(OH)3CO3- + 4H+
+	-analytical_expression	-14.029 0 0 0 0 0 0 
+	-log_K	-14.029 
+
+Th+4 + 4H2O = Th(OH)4 + 4H+
+	-analytical_expression	-17.4 0 0 0 0 0 0 
+	-log_K	-17.4 
+
+Th+4 + HCO3- + 4H2O = Th(OH)4CO3-2 + 5H+
+	-analytical_expression	-25.929 0 0 0 0 0 0 
+	-log_K	-25.929 
+
+Th+4 + 2S + 2HCN = Th(SCN)2+2 + 2H+
+	-analytical_expression	24.289087 0 0 0 0 0 0 
+	-log_K	24.289087 
+
+Th+4 + 2SO4-2 = Th(SO4)2
+	-analytical_expression	16.764229631959 0 -2109.1815608145 0 0 0 0 
+	-log_K	9.69 
+
+Th+4 + 3SO4-2 = Th(SO4)3-2
+	-analytical_expression	10.748 0 0 0 0 0 0 
+	-log_K	10.748 
+
+2Th+4 + 2H2O = Th2(OH)2+6 + 2H+
+	-analytical_expression	4.3136598933858 0 -3045.2026992443 0 0 0 0 
+	-log_K	-5.9 
+
+2Th+4 + 3H2O = Th2(OH)3+5 + 3H+
+	-analytical_expression	-6.8 0 0 0 0 0 0 
+	-log_K	-6.8 
+
+4Th+4 + 12H2O = Th4(OH)12+4 + 12H+
+	-analytical_expression	-26.6 0 0 0 0 0 0 
+	-log_K	-26.6 
+
+4Th+4 + 8H2O = Th4(OH)8+8 + 8H+
+	-analytical_expression	22.171515521224 0 -12692.697357056 0 0 0 0 
+	-log_K	-20.4 
+
+6Th+4 + 14H2O = Th6(OH)14+10 + 14H+
+	-analytical_expression	-36.8 0 0 0 0 0 0 
+	-log_K	-36.8 
+
+6Th+4 + 15H2O = Th6(OH)15+9 + 15H+
+	-analytical_expression	46.030504314973 0 -24695.91485768 0 0 0 0 
+	-log_K	-36.8 
+
+Th+4 + Cl- = ThCl+3
+	-analytical_expression	1.7 0 0 0 0 0 0 
+	-log_K	1.7 
+
+Th+4 + F- = ThF+3
+	-analytical_expression	8.7999234427645 0 20.893328982809 0 0 0 0 
+	-log_K	8.87 
+
+Th+4 + 2F- = ThF2+2
+	-analytical_expression	15.051868330417 0 172.36996410817 0 0 0 0 
+	-log_K	15.63 
+
+Th+4 + 3F- = ThF3+
+	-analytical_expression	20.67 0 0 0 0 0 0 
+	-log_K	20.67 
+
+Th+4 + 4F- = ThF4
+	-analytical_expression	25.58 0 0 0 0 0 0 
+	-log_K	25.58 
+
+Th+4 + 6F- = ThF6-2
+	-analytical_expression	29.23 0 0 0 0 0 0 
+	-log_K	29.23 
+
+Th+4 + HPO4-2 + H+ = ThH2PO4+3
+	-analytical_expression	12.802 0 0 0 0 0 0 
+	-log_K	12.802 
+
+Th+4 + HPO4-2 + 2H+ = ThH3PO4+4
+	-analytical_expression	11.242 0 0 0 0 0 0 
+	-log_K	11.242 
+
+Th+4 + IO3- = ThIO3+3
+	-analytical_expression	4.14 0 0 0 0 0 0 
+	-log_K	4.14 
+
+Th+4 + NO3- = ThNO3+3
+	-analytical_expression	1.3 0 0 0 0 0 0 
+	-log_K	1.3 
+
+Th+4 + 4HCO3- + H2O = ThOH(CO3)4-5 + 5H+
+	-analytical_expression	-19.716 0 0 0 0 0 0 
+	-log_K	-19.716 
+
+Th+4 + H2O = ThOH+3 + H+
+	-analytical_expression	5.2434608266108 0 -2308.7128526003 0 0 0 0 
+	-log_K	-2.5 
+
+Th+4 + S + HCN = ThSCN+3 + H+
+	-analytical_expression	12.444543 0 0 0 0 0 0 
+	-log_K	12.444543 
+
+Th+4 + SO4-2 = ThSO4+2
+	-analytical_expression	9.8350045549008 0 -1092.7211058009 0 0 0 0 
+	-log_K	6.17 
+
+2Ti+3 + 2H2O = Ti2(OH)2+4 + 2H+
+	-analytical_expression	-2.64 0 0 0 0 0 0 
+	-log_K	-2.64 
+
+TiO+2 + 2H2O = TiO(OH)2 + 2H+
+	-analytical_expression	-5.49 0 0 0 0 0 0 
+	-log_K	-5.49 
+
+TiO+2 + 3H2O = TiO(OH)3- + 3H+
+	-analytical_expression	-17.4 0 0 0 0 0 0 
+	-log_K	-17.4 
+
+Ti+3 + H2O = TiOH+2 + H+
+	-analytical_expression	-1.65 0 0 0 0 0 0 
+	-log_K	-1.65 
+
+TiO+2 + H2O = TiOOH+ + H+
+	-analytical_expression	-2.48 0 0 0 0 0 0 
+	-log_K	-2.48 
+
+U+4 + 4HCO3- = U(CO3)4-4 + 4H+
+	-analytical_expression	-6.096 0 0 0 0 0 0 
+	-log_K	-6.096 
+
+U+4 + 5HCO3- = U(CO3)5-6 + 5H+
+	-analytical_expression	-8.1961915321769 0 -2846.97724052 0 0 0 0 
+	-log_K	-17.745 
+
+U+4 + 2NO3- = U(NO3)2+2
+	-analytical_expression	2.3 0 0 0 0 0 0 
+	-log_K	2.3 
+
+U+4 + 2H2O = U(OH)2+2 + 2H+
+	-analytical_expression	-1.9 0 0 0 0 0 0 
+	-log_K	-1.9 
+
+U+4 + 3H2O = U(OH)3+ + 3H+
+	-analytical_expression	-5.2 0 0 0 0 0 0 
+	-log_K	-5.2 
+
+U+4 + 4H2O = U(OH)4 + 4H+
+	-analytical_expression	-10 0 0 0 0 0 0 
+	-log_K	-10 
+
+U+4 + 2Oxa-2 = U(Oxa)2
+	-analytical_expression	19 0 0 0 0 0 0 
+	-log_K	19 
+
+U+4 + 3Oxa-2 = U(Oxa)3-2
+	-analytical_expression	24 0 0 0 0 0 0 
+	-log_K	24 
+
+U+4 + 4Oxa-2 = U(Oxa)4-4
+	-analytical_expression	27 0 0 0 0 0 0 
+	-log_K	27 
+
+U+4 + 2S + 2HCN = U(SCN)2+2 + 2H+
+	-analytical_expression	-4.476051882605 0 8832.6548274823 0 0 0 0 
+	-log_K	25.149087 
+
+U+4 + 2SO4-2 = U(SO4)2
+	-analytical_expression	16.238759482975 0 -1708.0296443446 0 0 0 0 
+	-log_K	10.51 
+
+U+4 + Cl- = UCl+3
+	-analytical_expression	-1.6086369966073 0 992.43312668341 0 0 0 0 
+	-log_K	1.72 
+
+U+4 + HCO3- + 3H2O = UCO3(OH)3- + 4H+
+	-analytical_expression	-6.329 0 0 0 0 0 0 
+	-log_K	-6.329 
+
+U+4 + Edta-4 = UEdta
+	-analytical_expression	29.5 0 0 0 0 0 0 
+	-log_K	29.5 
+
+U+4 + 2H2O + Edta-4 = UEdta(OH)2-2 + 2H+
+	-analytical_expression	16.5 0 0 0 0 0 0 
+	-log_K	16.5 
+
+U+4 + H2O + Edta-4 = UEdtaOH- + H+
+	-analytical_expression	24.6 0 0 0 0 0 0 
+	-log_K	24.6 
+
+U+4 + F- = UF+3
+	-analytical_expression	8.4389280344996 0 292.50660575932 0 0 0 0 
+	-log_K	9.42 
+
+U+4 + 2F- = UF2+2
+	-analytical_expression	15.946830003196 0 182.81662859958 0 0 0 0 
+	-log_K	16.56 
+
+U+4 + 3F- = UF3+
+	-analytical_expression	21.977595707503 0 -26.116661228511 0 0 0 0 
+	-log_K	21.89 
+
+U+4 + 4F- = UF4
+	-analytical_expression	24.86313628766 0 440.32690831269 0 0 0 0 
+	-log_K	26.34 
+
+U+4 + 5F- = UF5-
+	-analytical_expression	27.73 0 0 0 0 0 0 
+	-log_K	27.73 
+
+U+4 + 6F- = UF6-2
+	-analytical_expression	29.8 0 0 0 0 0 0 
+	-log_K	29.8 
+
+U+4 + HPO4-2 + H+ = UH2PO4+3
+	-analytical_expression	14.012 0 0 0 0 0 0 
+	-log_K	14.012 
+
+U+4 + I- = UI+3
+	-analytical_expression	1.25 0 0 0 0 0 0 
+	-log_K	1.25 
+
+U+4 + NO3- = UNO3+3
+	-analytical_expression	1.47 0 0 0 0 0 0 
+	-log_K	1.47 
+
+UO2+2 + 2HCO3- = UO2(CO3)2-2 + 2H+
+	-analytical_expression	4.4140960584391 0 -2522.9739413191 0 0 0 0 
+	-log_K	-4.048 
+
+UO2+2 + 3HCO3- = UO2(CO3)3-4 + 3H+
+	-analytical_expression	-8.1829216043734 0 -287.43997348099 0 0 0 0 
+	-log_K	-9.147 
+
+UO2+ + 3HCO3- = UO2(CO3)3-5 + 3H+
+	-analytical_expression	-23.797 0 0 0 0 0 0 
+	-log_K	-23.797 
+
+UO2+2 + 2HAsO4-2 + 2H+ = UO2(H2AsO4)2
+	-analytical_expression	18.344 0 0 0 0 0 0 
+	-log_K	18.344 
+
+UO2+2 + 2HPO4-2 + 3H+ = UO2(H2PO4)(H3PO4)+
+	-analytical_expression	20.354 0 0 0 0 0 0 
+	-log_K	20.354 
+
+UO2+2 + 2HPO4-2 + 2H+ = UO2(H2PO4)2
+	-analytical_expression	19.344 0 0 0 0 0 0 
+	-log_K	19.344 
+
+UO2+2 + H3Isa- = UO2(H3Isa)+
+	-analytical_expression	3.3248085623233 0 52.233322457021 0 0 0 0 
+	-log_K	3.5 
+
+UO2+2 + 2H3Isa- = UO2(H3Isa)2
+	-analytical_expression	6.4452679878972 0 -73.12665143983 0 0 0 0 
+	-log_K	6.2 
+
+UO2+2 + 3H3Isa- = UO2(H3Isa)3-
+	-analytical_expression	6.9138131651675 0 323.84659923353 0 0 0 0 
+	-log_K	8 
+
+UO2+2 + H+ + Cit-3 = UO2(HCit)
+	-analytical_expression	11.36 0 0 0 0 0 0 
+	-log_K	11.36 
+
+UO2+2 + H+ + Edta-4 = UO2(HEdta)-
+	-analytical_expression	19.61 0 0 0 0 0 0 
+	-log_K	19.61 
+
+UO2+2 + 2SeO3-2 + 2H+ = UO2(HSeO3)2
+	-analytical_expression	22.23 0 0 0 0 0 0 
+	-log_K	22.23 
+
+UO2+2 + 2IO3- = UO2(IO3)2
+	-analytical_expression	3.59 0 0 0 0 0 0 
+	-log_K	3.59 
+
+UO2+2 + 2H2O = UO2(OH)2 + 2H+
+	-analytical_expression	-12.15 0 0 0 0 0 0 
+	-log_K	-12.15 
+
+UO2+2 + 3H2O = UO2(OH)3- + 3H+
+	-analytical_expression	-20.25 0 0 0 0 0 0 
+	-log_K	-20.25 
+
+UO2+2 + 4H2O = UO2(OH)4-2 + 4H+
+	-analytical_expression	-32.4 0 0 0 0 0 0 
+	-log_K	-32.4 
+
+UO2+2 + 2Oxa-2 = UO2(Oxa)2-2
+	-analytical_expression	11.65 0 0 0 0 0 0 
+	-log_K	11.65 
+
+UO2+2 + 3Oxa-2 = UO2(Oxa)3-4
+	-analytical_expression	13.8 0 0 0 0 0 0 
+	-log_K	13.8 
+
+UO2+2 + 2S + 2HCN = UO2(SCN)2 + 2H+
+	-analytical_expression	-2.7834026534578 0 7427.5784533884 0 0 0 0 
+	-log_K	22.129087 
+
+UO2+2 + 3S + 3HCN = UO2(SCN)3- + 3H+
+	-analytical_expression	-5.2227609176211 0 11525.282600142 0 0 0 0 
+	-log_K	33.43363 
+
+UO2+2 + 2HSeO4- = UO2(SeO4)2-2 + 2H+
+	-analytical_expression	-1.327029082512 0 553.67321804443 0 0 0 0 
+	-log_K	0.53 
+
+UO2+2 + 2SO4-2 = UO2(SO4)2-2
+	-analytical_expression	10.289218893355 0 -1833.3896182415 0 0 0 0 
+	-log_K	4.14 
+
+UO2+2 + 3SO4-2 = UO2(SO4)3-4
+	-analytical_expression	3.02 0 0 0 0 0 0 
+	-log_K	3.02 
+
+UO2+2 + Cit-3 = UO2Cit-
+	-analytical_expression	8.96 0 0 0 0 0 0 
+	-log_K	8.96 
+
+UO2+2 + Cl- = UO2Cl+
+	-analytical_expression	1.5715313845337 0 -417.86657965617 0 0 0 0 
+	-log_K	0.17 
+
+UO2+2 + 2Cl- = UO2Cl2
+	-analytical_expression	1.5278713262248 0 -783.49983685532 0 0 0 0 
+	-log_K	-1.1 
+
+UO2+2 + HCO3- = UO2CO3 + H+
+	-analytical_expression	3.0974844942246 0 -1039.4953502172 0 0 0 0 
+	-log_K	-0.389 
+
+UO2+2 + HCO3- + F- = UO2CO3F- + H+
+	-analytical_expression	3.421 0 0 0 0 0 0 
+	-log_K	3.421 
+
+UO2+2 + HCO3- + 2F- = UO2CO3F2-2 + H+
+	-analytical_expression	5.241 0 0 0 0 0 0 
+	-log_K	5.241 
+
+UO2+2 + HCO3- + 3F- = UO2CO3F3-3 + H+
+	-analytical_expression	6.051 0 0 0 0 0 0 
+	-log_K	6.051 
+
+UO2+2 + Edta-4 = UO2Edta-2
+	-analytical_expression	13.7 0 0 0 0 0 0 
+	-log_K	13.7 
+
+UO2+2 + F- = UO2F+
+	-analytical_expression	5.065396646855 0 28.205994126791 0 0 0 0 
+	-log_K	5.16 
+
+UO2+2 + 2F- = UO2F2
+	-analytical_expression	8.5952435123841 0 69.992652092409 0 0 0 0 
+	-log_K	8.83 
+
+UO2+2 + 3F- = UO2F3-
+	-analytical_expression	10.69327414682 0 61.635320499285 0 0 0 0 
+	-log_K	10.9 
+
+UO2+2 + 4F- = UO2F4-2
+	-analytical_expression	11.468594193146 0 110.73464360888 0 0 0 0 
+	-log_K	11.84 
+
+UO2+2 + HAsO4-2 + H+ = UO2H2AsO4+
+	-analytical_expression	10.367 0 0 0 0 0 0 
+	-log_K	10.367 
+
+UO2+2 + HPO4-2 + H+ = UO2H2PO4+
+	-analytical_expression	10.472 0 0 0 0 0 0 
+	-log_K	10.472 
+
+UO2+2 + HPO4-2 + 2H+ = UO2H3PO4+2
+	-analytical_expression	10.112 0 0 0 0 0 0 
+	-log_K	10.112 
+
+UO2+2 + HAsO4-2 = UO2HAsO4
+	-analytical_expression	7.16 0 0 0 0 0 0 
+	-log_K	7.16 
+
+UO2+2 + HPO4-2 = UO2HPO4
+	-analytical_expression	7.24 0 0 0 0 0 0 
+	-log_K	7.24 
+
+UO2+2 + SeO3-2 + H+ = UO2HSeO3+
+	-analytical_expression	11.63 0 0 0 0 0 0 
+	-log_K	11.63 
+
+UO2+2 + IO3- = UO2IO3+
+	-analytical_expression	2 0 0 0 0 0 0 
+	-log_K	2 
+
+UO2+2 + NO3- = UO2NO3+
+	-analytical_expression	3.4715007295782 0 -1091.6764393518 0 0 0 0 
+	-log_K	-0.19 
+
+UO2+2 + H2O = UO2OH+ + H+
+	-analytical_expression	2.3357885698625 0 -2261.702862389 0 0 0 0 
+	-log_K	-5.25 
+
+UO2+2 + Oxa-2 = UO2Oxa
+	-analytical_expression	11.579862138977 0 -1326.7263904083 0 0 0 0 
+	-log_K	7.13 
+
+UO2+2 + HPO4-2 = UO2PO4- + H+
+	-analytical_expression	-1.34 0 0 0 0 0 0 
+	-log_K	-1.34 
+
+UO2+2 + S + HCN = UO2SCN+ + H+
+	-analytical_expression	-0.82718679532525 0 3778.0362133164 0 0 0 0 
+	-log_K	11.844543 
+
+UO2+2 + HSeO4- = UO2SeO4 + H+
+	-analytical_expression	1.039846828244 0 41.786657965617 0 0 0 0 
+	-log_K	1.18 
+
+UO2+2 + Si(OH)4 = UO2SiO(OH)3+ + H+
+	-analytical_expression	4.3392954857145 0 -1854.2829472243 0 0 0 0 
+	-log_K	-1.88 
+
+UO2+2 + SO4-2 = UO2SO4
+	-analytical_expression	6.5662327366426 0 -1018.5497879119 0 0 0 0 
+	-log_K	3.15 
+
+U+4 + H2O = UOH+3 + H+
+	-analytical_expression	7.6782296098965 0 -2450.2651564589 0 0 0 0 
+	-log_K	-0.54 
+
+U+4 + Oxa-2 = UOxa+2
+	-analytical_expression	11 0 0 0 0 0 0 
+	-log_K	11 
+
+U+4 + S + HCN = USCN+3 + H+
+	-analytical_expression	-4.6914715586491 0 5356.5272179675 0 0 0 0 
+	-log_K	13.274543 
+
+U+4 + SO4-2 = USO4+2
+	-analytical_expression	7.9815313808746 0 -417.86657965617 0 0 0 0 
+	-log_K	6.58 
+
+Zn+2 + 2HCO3- = Zn(CO3)2-2 + 2H+
+	-analytical_expression	-13.908 0 0 0 0 0 0 
+	-log_K	-13.908 
+
+Zn+2 + 2HPO4-2 + H+ = Zn(H2PO4)(HPO4)-
+	-analytical_expression	11.212 0 0 0 0 0 0 
+	-log_K	11.212 
+
+Zn+2 + 2HPO4-2 + 2H+ = Zn(H2PO4)2
+	-analytical_expression	16.424 0 0 0 0 0 0 
+	-log_K	16.424 
+
+Zn+2 + 2HPO4-2 = Zn(HPO4)(PO4)-3 + H+
+	-analytical_expression	0.15 0 0 0 0 0 0 
+	-log_K	0.15 
+
+Zn+2 + 2HPO4-2 = Zn(HPO4)2-2
+	-analytical_expression	7.1 0 0 0 0 0 0 
+	-log_K	7.1 
+
+Zn+2 + 3HPO4-2 = Zn(HPO4)3-4
+	-analytical_expression	7.4 0 0 0 0 0 0 
+	-log_K	7.4 
+
+Zn+2 + 2HS- = Zn(HS)2
+	-analytical_expression	6.8998775236693 0 715.59651766119 0 0 0 0 
+	-log_K	9.3 
+
+Zn+2 + 3HS- = Zn(HS)3-
+	-analytical_expression	4.4177949089356 0 2648.229448571 0 0 0 0 
+	-log_K	13.3 
+
+Zn+2 + 2H2O = Zn(OH)2 + 2H+
+	-analytical_expression	23.612453649794 0 -6606.4575660335 -7.81765852706078 0 0 0 
+	-log_K	-17.89 
+
+Zn+2 + HPO4-2 + 2H2O = Zn(OH)2HPO4-2 + 2H+
+	-analytical_expression	-17 0 0 0 0 0 0 
+	-log_K	-17 
+
+Zn+2 + 3H2O = Zn(OH)3- + 3H+
+	-analytical_expression	65.728163930657 0 -10547.861330333 -23.5732472508289 0 0 0 
+	-log_K	-27.98 
+
+Zn+2 + 4H2O = Zn(OH)4-2 + 4H+
+	-analytical_expression	112.63016022083 0 -14732.732445602 -41.8545410371858 0 0 0 
+	-log_K	-40.35 
+
+Zn+2 + 2SO4-2 = Zn(SO4)2-2
+	-analytical_expression	4.951914217085 0 -522.33322457021 0 0 0 0 
+	-log_K	3.2 
+
+2Zn+2 + HCO3- = Zn2CO3+2 + H+
+	-analytical_expression	-5.029 0 0 0 0 0 0 
+	-log_K	-5.029 
+
+2Zn+2 + H2O = Zn2OH+3 + H+
+	-analytical_expression	-7.9 0 0 0 0 0 0 
+	-log_K	-7.9 
+
+Zn+2 + Cl- = ZnCl+
+	-analytical_expression	0.4 0 0 0 0 0 0 
+	-log_K	0.4 
+
+Zn+2 + 2Cl- = ZnCl2
+	-analytical_expression	0.69 0 0 0 0 0 0 
+	-log_K	0.69 
+
+Zn+2 + 3Cl- = ZnCl3-
+	-analytical_expression	0.48 0 0 0 0 0 0 
+	-log_K	0.48 
+
+Zn+2 + 4Cl- = ZnCl4-2
+	-analytical_expression	-2 0 0 0 0 0 0 
+	-log_K	-2 
+
+Zn+2 + HCO3- = ZnCO3 + H+
+	-analytical_expression	-5.579 0 0 0 0 0 0 
+	-log_K	-5.579 
+
+Zn+2 + HPO4-2 + H+ = ZnH2PO4+
+	-analytical_expression	8.112 0 0 0 0 0 0 
+	-log_K	8.112 
+
+Zn+2 + HCO3- = ZnHCO3+
+	-analytical_expression	1.62 0 0 0 0 0 0 
+	-log_K	1.62 
+
+Zn+2 + HPO4-2 = ZnHPO4
+	-analytical_expression	3.3 0 0 0 0 0 0 
+	-log_K	3.3 
+
+Zn+2 + H2O = ZnOH+ + H+
+	-analytical_expression	0.99335363452507 0 -2961.6293833131 0 0 0 0 
+	-log_K	-8.94 
+
+Zn+2 + 2HS- = ZnS(HS)- + H+
+	-analytical_expression	7.8974578264142 0 -1352.8430516369 0 0 0 0 
+	-log_K	3.36 
+
+Zn+2 + SO4-2 = ZnSO4
+	-analytical_expression	3.3581561957794 0 -315.48926764041 0 0 0 0 
+	-log_K	2.3 
+
+Zr+4 + 4HCO3- = Zr(CO3)4-4 + 4H+
+	-analytical_expression	1.584 0 0 0 0 0 0 
+	-log_K	1.584 
+
+Zr+4 + 2NO3- = Zr(NO3)2+2
+	-analytical_expression	2.64 0 0 0 0 0 0 
+	-log_K	2.64 
+
+Zr+4 + 2H2O = Zr(OH)2+2 + 2H+
+	-analytical_expression	0.98 0 0 0 0 0 0 
+	-log_K	0.98 
+
+Zr+4 + 4H2O = Zr(OH)4 + 4H+
+	-analytical_expression	-2.19 0 0 0 0 0 0 
+	-log_K	-2.19 
+
+Zr+4 + 6H2O = Zr(OH)6-2 + 6H+
+	-analytical_expression	-29 0 0 0 0 0 0 
+	-log_K	-29 
+
+Zr+4 + 2SO4-2 = Zr(SO4)2
+	-analytical_expression	23.3443980101 0 -3519.4812671541 0 0 0 0 
+	-log_K	11.54 
+
+Zr+4 + 3SO4-2 = Zr(SO4)3-2
+	-analytical_expression	14.3 0 0 0 0 0 0 
+	-log_K	14.3 
+
+3Zr+4 + 4H2O = Zr3(OH)4+8 + 4H+
+	-analytical_expression	0.053120975538856 0 103.4219784649 0 0 0 0 
+	-log_K	0.4 
+
+3Zr+4 + 9H2O = Zr3(OH)9+3 + 9H+
+	-analytical_expression	12.19 0 0 0 0 0 0 
+	-log_K	12.19 
+
+4Zr+4 + 15H2O = Zr4(OH)15+ + 15H+
+	-analytical_expression	12.58 0 0 0 0 0 0 
+	-log_K	12.58 
+
+4Zr+4 + 16H2O = Zr4(OH)16 + 16H+
+	-analytical_expression	61.143640974565 0 -15728.498058258 0 0 0 0 
+	-log_K	8.39 
+
+4Zr+4 + 8H2O = Zr4(OH)8+8 + 8H+
+	-analytical_expression	6.52 0 0 0 0 0 0 
+	-log_K	6.52 
+
+Zr+4 + Cl- = ZrCl+3
+	-analytical_expression	1.59 0 0 0 0 0 0 
+	-log_K	1.59 
+
+Zr+4 + 2Cl- = ZrCl2+2
+	-analytical_expression	2.17 0 0 0 0 0 0 
+	-log_K	2.17 
+
+Zr+4 + F- = ZrF+3
+	-analytical_expression	9.1914854779313 0 276.83660902221 0 0 0 0 
+	-log_K	10.12 
+
+Zr+4 + 2F- = ZrF2+2
+	-analytical_expression	16.815604917628 0 517.10989232451 0 0 0 0 
+	-log_K	18.55 
+
+Zr+4 + 3F- = ZrF3+
+	-analytical_expression	23.160796366897 0 464.87656986749 0 0 0 0 
+	-log_K	24.72 
+
+Zr+4 + 4F- = ZrF4
+	-analytical_expression	26.833920385059 0 976.7631299463 0 0 0 0 
+	-log_K	30.11 
+
+Zr+4 + 5F- = ZrF5-
+	-analytical_expression	34.6 0 0 0 0 0 0 
+	-log_K	34.6 
+
+Zr+4 + 6F- = ZrF6-2
+	-analytical_expression	38.11 0 0 0 0 0 0 
+	-log_K	38.11 
+
+Zr+4 + NO3- = ZrNO3+3
+	-analytical_expression	1.59 0 0 0 0 0 0 
+	-log_K	1.59 
+
+Zr+4 + H2O = ZrOH+3 + H+
+	-analytical_expression	0.32 0 0 0 0 0 0 
+	-log_K	0.32 
+
+Zr+4 + SO4-2 = ZrSO4+2
+	-analytical_expression	13.511571114646 0 -1929.4989315624 0 0 0 0 
+	-log_K	7.04 
+
+# ----- from THERMOCHIMIE10a:2018:data
+
+ 2.000H+  +  3.000B(OH)4-     -7.000H2O     = B3O5-
+	-analytical_expression	20.9 0 0 0 0 
+	-log_K	20.9 
+
+ 2.000H+  +  4.000B(OH)4-     -9.000H2O     = B4O7-2
+	-analytical_expression	21.9 0 0 0 0 
+	-log_K	21.9 
+
+ 1.000Ba+2  +  1.000B(OH)4-     = BaB(OH)4+
+	-analytical_expression	1.49 0 0 0 0 
+	-log_K	1.49 
+
+ 1.000H+  +  1.000F-  +  1.000B(OH)4-     -1.000H2O     = BF(OH)3-
+	-analytical_expression	2.09384 0 2041.18 0 0 
+	-log_K	8.94 
+
+ 2.000H+  +  2.000F-  +  1.000B(OH)4-     -2.000H2O     = BF2(OH)2-
+	-analytical_expression	10.1897 0 2021.54 0 0 
+	-log_K	16.97 
+
+ 3.000H+  +  3.000F-  +  1.000B(OH)4-     -3.000H2O     = BF3(OH)-
+	-analytical_expression	16.2956 0 2001.9 0 0 
+	-log_K	23.01 
+
+ 4.000H+  +  4.000F-  +  1.000B(OH)4-     -4.000H2O     = BF4-
+	-analytical_expression	42.5282 0 -3848.57 0 0 
+	-log_K	29.62 
+
+ 1.000Ca+2  +  1.000B(OH)4-     = CaB(OH)4+
+	-analytical_expression	1.8 0 0 0 0 
+	-log_K	1.8 
+
+ 1.000Cu+2  +  1.000B(OH)4-     = Cu(B(OH)4)+
+	-analytical_expression	7.13 0 0 0 0 
+	-log_K	7.13 
+
+ 1.000Cu+2  +  2.000B(OH)4-     = Cu(B(OH)4)2
+	-analytical_expression	12.45 0 0 0 0 
+	-log_K	12.45 
+
+ 1.000Cu+2  +  3.000B(OH)4-     = Cu(B(OH)4)3-
+	-analytical_expression	15.17 0 0 0 0 
+	-log_K	15.17 
+
+ 1.000Fe+3  +  1.000B(OH)4-     = Fe(B(OH)4)+2
+	-analytical_expression	8.58 0 0 0 0 
+	-log_K	8.58 
+
+ 1.000Fe+3  +  2.000B(OH)4-     = Fe(B(OH)4)2+
+	-analytical_expression	15.54 0 0 0 0 
+	-log_K	15.54 
+
+ 1.000H+  +  2.000B(OH)4-     -4.000H2O     = HB2O4-
+	-analytical_expression	9.17 0 0 0 0 
+	-log_K	9.17 
+
+ 1.000Mg+2  +  1.000B(OH)4-     = MgB(OH)4+
+	-analytical_expression	1.6 0 0 0 0 
+	-log_K	1.6 
+
+ 1.000Na+  +  1.000B(OH)4-     = NaB(OH)4
+	-analytical_expression	0.114786 0 -64.0383 0 0 
+	-log_K	-0.1 
+
+ 1.000Pb+2  +  1.000B(OH)4-     = Pb(B(OH)4)+
+	-analytical_expression	5.2 0 0 0 0 
+	-log_K	5.2 
+
+ 1.000Pb+2  +  3.000B(OH)4-     = Pb(B(OH)4)3-
+	-analytical_expression	11.18 0 0 0 0 
+	-log_K	11.18 
+
+ 1.000Sr+2  +  1.000B(OH)4-     = SrB(OH)4+
+	-analytical_expression	1.55 0 0 0 0 
+	-log_K	1.55 
+
+ 1.000Ca+2  +  1.000CrO4-2     = CaCrO4
+	-analytical_expression	2.77 0 0 0 0 
+	-log_K	2.77 
+
+ 1.000H2PO4-  +  1.000Cr+3     = Cr(H2PO4)+2
+	-analytical_expression	2.56 0 0 0 0 
+	-log_K	2.56 
+
+  -1.000H+  +  1.000H2PO4-  +  1.000Cr+3     = Cr(HPO4)+
+	-analytical_expression	2.25 0 0 0 0 
+	-log_K	2.25 
+
+  -1.000H+  +  2.000CO3-2  +  1.000Cr+3  +  1.000H2O     = Cr(OH)(CO3)2-2
+	-analytical_expression	9.73 0 0 0 0 
+	-log_K	9.73 
+
+  -1.000H+  +  1.000Cr+2  +  1.000H2O     = Cr(OH)+
+	-analytical_expression	0.0130545 0 -1584.09 0 0 
+	-log_K	-5.3 
+
+  -1.000H+  +  1.000Cr+3  +  1.000H2O     = Cr(OH)+2
+	-analytical_expression	3.101 0 -1944.24 0 0 
+	-log_K	-3.42 
+
+  -2.000H+  +  1.000Cr+3  +  2.000H2O     = Cr(OH)2+
+	-analytical_expression	7.42756 0 -4868.06 0 0 
+	-log_K	-8.9 
+
+  -3.000H+  +  1.000Cr+3  +  3.000H2O     = Cr(OH)3
+	-analytical_expression	10.8358 0 -7506.17 0 0 
+	-log_K	-14.34 
+
+  -3.000H+  +  1.000H2PO4-  +  1.000Cr+3  +  3.000H2O     = Cr(OH)3(H2PO4)-
+	-analytical_expression	-11.56 0 0 0 0 
+	-log_K	-11.56 
+
+  -3.000H+  +  2.000H2PO4-  +  1.000Cr+3  +  3.000H2O     = Cr(OH)3(H2PO4)2-2
+	-analytical_expression	-10.86 0 0 0 0 
+	-log_K	-10.86 
+
+  -4.000H+  +  1.000H2PO4-  +  1.000Cr+3  +  3.000H2O     = Cr(OH)3(HPO4)-2
+	-analytical_expression	-19.58 0 0 0 0 
+	-log_K	-19.58 
+
+  -5.000H+  +  1.000H2PO4-  +  1.000Cr+3  +  3.000H2O     = Cr(OH)3(PO4)-3
+	-analytical_expression	-30.24 0 0 0 0 
+	-log_K	-30.24 
+
+  -4.000H+  +  1.000Cr+3  +  4.000H2O     = Cr(OH)4-
+	-analytical_expression	8.05967 0 -10113.1 0 0 
+	-log_K	-25.86 
+
+  -4.000H+  +  1.000CO3-2  +  1.000Cr+3  +  4.000H2O     = Cr(OH)4(CO3)-3
+	-analytical_expression	-25.69 0 0 0 0 
+	-log_K	-25.69 
+
+  -5.000H+  +  2.000H2PO4-  +  1.000Cr+3  +  4.000H2O     = Cr(OH)4(HPO4)(H2PO4)-4
+	-analytical_expression	-26.3073 0 -731.27 0 0 
+	-log_K	-28.76 
+
+  -1.000H+  +  2.000Cl-  +  1.000Cr+3  +  1.000H2O     = Cr(OH)Cl2
+	-analytical_expression	0.00228952 0 -1709.08 0 0 
+	-log_K	-5.73 
+
+  -1.000H+  +  1.000CO3-2  +  1.000Cr+3  +  1.000H2O     = Cr(OH)CO3
+	-analytical_expression	4 0 0 0 0 
+	-log_K	4 
+
+  -2.000H+  +  2.000Cr+3  +  2.000H2O     = Cr2(OH)2+4
+	-analytical_expression	-4 0 0 0 0 
+	-log_K	-4 
+
+ 2.000H+  +  2.000CrO4-2     -1.000H2O     = Cr2O7-2
+	-analytical_expression	14.0927 0 195.98 0 0 
+	-log_K	14.75 
+
+  -4.000H+  +  3.000Cr+3  +  4.000H2O     = Cr3(OH)4+5
+	-analytical_expression	-7.6 0 0 0 0 
+	-log_K	-7.6 
+
+ 1.000Br-  +  1.000Cr+3     = CrBr+2
+	-analytical_expression	3.33724 0 -1179.85 0 0 
+	-log_K	-0.62 
+
+ 1.000Cl-  +  1.000Cr+2     = CrCl+
+	-analytical_expression	2.06112 0 1055.12 0 0 
+	-log_K	5.6 
+
+ 1.000Cl-  +  1.000Cr+3     = CrCl+2
+	-analytical_expression	4.28502 0 -1092.73 0 0 
+	-log_K	0.62 
+
+ 2.000Cl-  +  1.000Cr+3     = CrCl2+
+	-analytical_expression	2.95502 0 -1092.73 0 0 
+	-log_K	-0.71 
+
+ 1.000F-  +  1.000Cr+3     = CrF+2
+	-analytical_expression	4.77027 0 131.106 0 0 
+	-log_K	5.21 
+
+ 2.000F-  +  1.000Cr+3     = CrF2+
+	-analytical_expression	9.23677 0 21.8336 0 0 
+	-log_K	9.31 
+
+ 3.000F-  +  1.000Cr+3     = CrF3
+	-analytical_expression	11.91 0 0 0 0 
+	-log_K	11.91 
+
+ 2.000H+  +  1.000Cl-  +  1.000CrO4-2     -1.000H2O     = CrO3Cl-
+	-analytical_expression	9.0348 0 -284.673 0 0 
+	-log_K	8.08 
+
+ 1.000SO4-2  +  1.000Cr+3     = CrSO4+
+	-analytical_expression	4.61 0 0 0 0 
+	-log_K	4.61 
+
+ 1.000Fe+3  +  1.000CrO4-2     = FeCrO4+
+	-analytical_expression	11.1462 0 -997.661 0 0 
+	-log_K	7.8 
+
+ 2.000H+  +  1.000CrO4-2     = H2CrO4
+	-analytical_expression	13.2569 0 -2068.24 0 0 
+	-log_K	6.32 
+
+ 2.000H+  +  1.000H2PO4-  +  1.000CrO4-2     -1.000H2O     = H2CrPO7-
+	-analytical_expression	-0.000647544 0 2689.51 0 0 
+	-log_K	9.02 
+
+ 1.000H+  +  1.000CrO4-2     = HCrO4-
+	-analytical_expression	7.57396 0 -314.237 0 0 
+	-log_K	6.52 
+
+ 1.000H+  +  1.000H2PO4-  +  1.000CrO4-2     -1.000H2O     = HCrPO7-2
+	-analytical_expression	-0.00524498 0 1900.78 0 0 
+	-log_K	6.37 
+	
+	
+# ------ added from Montoya, et al. 2018 Geochmic. Cosm. Act. 
+
+1.000Co+2     - 1.000H+     + 1.000H2O     = Co(OH)+
+     log_k    -9.230        
+	 
+1.000Co+2     - 2.000H+     + 2.000H2O     = Co(OH)2
+     log_k   -18.600     
+	 
+	 
+1.000Co+2     - 3.000H+     + 3.000H2O     = Co(OH)3-
+     log_k   -31.700       
+
+1.000Co+2     - 4.000H+     + 4.000H2O     = Co(OH)4-2
+     log_k   -46.420
+	 
+# ------ added from Montoya, et al. 2018 Geochmic. Cosm. Act. 
+
+# ----- from THERMOCHIMIE10a:2018:data
+
+PHASES
+
+# THERMOMATCH MINERALS
+
+CH4(g)
+	CH4 = CH4
+	-analytical_expression	-77.853949655669 0 3951.6692052782 24.9527633016809 0 0 0 
+	-log_K	-2.856 
+
+CO2(g)
+	CO2 + H2O = HCO3- + H+
+	-analytical_expression	56.063177560537 0 -2360.5962170202 -22.6175685638136 0 0 0 
+	-log_K	-7.82 
+
+H2(g)
+	H2 = H2
+	-analytical_expression	-54.256875499195 0 2456.5461351344 17.3419720464137 0 0 0 
+	-log_K	-3.106 
+
+H2S(g)
+	H2S = HS- + H+
+	-analytical_expression	-7.2566768724412 0 -224.60328656519 0 0 0 0 
+	-log_K	-8.01 
+
+H2Se(g)
+	H2Se = H2Se
+	-analytical_expression	3.9805512291809 0 -1514.7663512536 0 0 0 0 
+	-log_K	-1.1 
+
+Hg(g)
+	Hg = Hg
+	-analytical_expression	-7.6754047795847 0 2004.7149159005 0 0 0 0 
+	-log_K	-0.951555 
+
+N2(g)
+	N2 = N2
+	-analytical_expression	-82.354324304642 0 3988.061960472 26.5888188238906 0 0 0 
+	-log_K	-3.186 
+
+O2(g)
+	O2 = O2
+	-analytical_expression	-74.900188753903 0 3741.3053335447 24.0288363354516 0 0 0 
+	-log_K	-2.894
+
+Hg(l)
+    Hg = Hg # liquid 
+	-analytical_expression	2.5005972904451 0 1201.3664165115 0 0 0 0 
+	-log_K	6.53 
+
+(HgOH)3PO4(s)
+	(HgOH)3PO4 + 4H+ = HPO4-2 + 3Hg+2 + 3H2O
+	-analytical_expression	-14 0 0 0 0 0 0 
+	-log_K	-14 
+
+(NH4)4NpO2(CO3)3(s)
+	(NH4)4NpO2(CO3)3 + 3H+ = NpO2+2 + 4NH4+ + 3HCO3-
+	-analytical_expression	3.647 0 0 0 0 0 0 
+	-log_K	3.647 
+
+(PuO2)3(PO4)2w4(am)
+	(PuO2)3(PO4)2(H2O)4 + 2H+ = 3PuO2+2 + 2HPO4-2 + 4H2O
+	-analytical_expression	-24.27 0 0 0 0 0 0 
+	-log_K	-24.27 
+
+Soddyite
+	(UO2)2SiO4(H2O)2 + 4H+ = 2UO2+2 + Si(OH)4 + 2H2O
+	-analytical_expression	5.75 0 0 0 0 0 0 
+	-log_K	5.75 
+
+Trögerite
+	(UO2)3(AsO4)2(H2O)12 + 2H+ = 3UO2+2 + 2HAsO4-2 + 12H2O
+	-analytical_expression	-22.124 0 0 0 0 0 0 
+	-log_K	-22.124 
+
+(UO2)3(PO4)2w4(cr)
+	(UO2)3(PO4)2(H2O)4 + 2H+ = 3UO2+2 + 2HPO4-2 + 4H2O
+	-analytical_expression	-24.664 0 0 0 0 0 0 
+	-log_K	-24.664 
+
+Ac(OH)3(aged)
+	Ac(OH)3 + 3H+ = 3H2O + Ac+3
+	-analytical_expression	21.1 0 0 0 0 0 0 
+	-log_K	21.1 
+
+Ac(OH)3(fresh)
+	Ac(OH)3 + 3H+ = 3H2O + Ac+3
+	-analytical_expression	23.3 0 0 0 0 0 0 
+	-log_K	23.3 
+
+Ac2(Oxa)3(s)
+	Ac2(Oxa)3 = 3Oxa-2 + 2Ac+3
+	-analytical_expression	-25.7 0 0 0 0 0 0 
+	-log_K	-25.7 
+
+Ag(cr)
+	Ag = Ag
+	-analytical_expression	-0.49604910330991 0 -1760.2629668016 0 0 0 0 
+	-log_K	-6.4 
+
+Ag2CO3(cr)
+	Ag2CO3 + H+ = HCO3- + 2Ag+
+	-analytical_expression	-0.741 0 0 0 0 0 0 
+	-log_K	-0.741 
+
+Ag2O(am)
+	Ag2O + 2H+ = H2O + 2Ag+
+	-analytical_expression	7.0138745038988 0 1671.4663186247 0 0 0 0 
+	-log_K	12.62 
+
+Ag2O(cr)
+	Ag2O + 2H+ = H2O + 2Ag+
+	-analytical_expression	5.0225728440387 0 2026.6529113324 0 0 0 0 
+	-log_K	11.82 
+
+Ag2S(cr)
+	Ag2S + H+ = HS- + 2Ag+
+	-analytical_expression	4.3413930714777 0 -11977.100839395 0 0 0 0 
+	-log_K	-35.83 
+
+Ag2Se(alpha)
+	Ag2Se + 2H+ = H2Se + 2Ag+
+	-analytical_expression	7.6051717497423 0 -13894.53387347 0 0 0 0 
+	-log_K	-38.996209 
+
+Ag2SeO3(cr)
+	Ag2SeO3 = SeO3-2 + 2Ag+
+	-analytical_expression	-3.9185177862978 0 -3542.4639290352 0 0 0 0 
+	-log_K	-15.8 
+
+Ag2SeO4(cr)
+	Ag2SeO4 + H+ = HSeO4- + 2Ag+
+	-analytical_expression	2.893087198352 0 -2684.2704410663 0 0 0 0 
+	-log_K	-6.11 
+
+Ag2SO4(s)
+	Ag2SO4 = SO4-2 + 2Ag+
+	-analytical_expression	-1.9091884219915 0 -903.63647850647 0 0 0 0 
+	-log_K	-4.94 
+
+Ag3PO4(s)
+	Ag3PO4 + H+ = HPO4-2 + 3Ag+
+	-analytical_expression	-9.05 0 0 0 0 0 0 
+	-log_K	-9.05 
+
+AgBr(cr)
+	AgBr = Br- + Ag+
+	-analytical_expression	2.6788665904582 0 -4465.9490700753 0 0 0 0 
+	-log_K	-12.3 
+
+AgCl(cr)
+	AgCl = Cl- + Ag+
+	-analytical_expression	1.7655802667944 0 -3432.7739518755 0 0 0 0 
+	-log_K	-9.748 
+
+AgCN(s)
+	AgCN + H+ = HCN + Ag+
+	-analytical_expression	-6.63 0 0 0 0 0 0 
+	-log_K	-6.63 
+
+AgI(cr)
+	AgI = I- + Ag+
+	-analytical_expression	3.2611330082488 0 -5766.5587992552 0 0 0 0 
+	-log_K	-16.08 
+
+AgSeCN(cr)
+	AgSeCN + H+ = Se + HCN + Ag+
+	-analytical_expression	-16.203384 0 0 0 0 0 0 
+	-log_K	-16.203384 
+
+Gibbsite
+	Al(OH)3 + 3H+ = 3H2O + Al+3
+	-analytical_expression	-10.522465332254 0 5447.9355322673 0 0 0 0 
+	-log_K	7.75 
+
+Kaolinite
+	Al2Si2O5(OH)4 + 6H+ = 2Si(OH)4 + H2O + 2Al+3
+	-analytical_expression	-22.83307771147 0 9025.9181205733 0 0 0 0 
+	-log_K	7.44 
+
+Boehmite
+	AlOOH + 3H+ = 2H2O + Al+3
+	-analytical_expression	-16.615926171173 0 7756.6483848677 0 0 0 0 
+	-log_K	9.4 
+
+Am(OH)3(am)
+	Am(OH)3 + 3H+ = 3H2O + Am+3
+	-analytical_expression	16.9 0 0 0 0 0 0 
+	-log_K	16.9 
+
+Am(OH)3(cr)
+	Am(OH)3 + 3H+ = 3H2O + Am+3
+	-analytical_expression	15.6 0 0 0 0 0 0 
+	-log_K	15.6 
+
+Am2(CO3)3(am_hyd)
+	Am2(CO3)3 + 3H+ = 3HCO3- + 2Am+3
+	-analytical_expression	-2.413 0 0 0 0 0 0 
+	-log_K	-2.413 
+
+AmO2OH(am)
+	AmO2OH + H+ = H2O + AmO2+
+	-analytical_expression	5.3 0 0 0 0 0 0 
+	-log_K	5.3 
+
+AmOHCO3(am_hyd)
+	AmOHCO3 + 2H+ = HCO3- + H2O + Am+3
+	-analytical_expression	4.129 0 0 0 0 0 0 
+	-log_K	4.129 
+
+AmOHCO3w0.5(cr)
+	AmOHCO3(H2O)0.5 + 2H+ = HCO3- + 1.5H2O + Am+3
+	-analytical_expression	1.929 0 0 0 0 0 0 
+	-log_K	1.929 
+
+Analcime
+	Na2Al2Si4O12(H2O)2 + 2H2O + 8H+ = 4Si(OH)4 + 2Na+ + 2Al+3
+	-analytical_expression	-24.142032706345 0 13521.744651094 0 0 0 0 
+	-log_K	21.208323 
+
+Ba[(UO2)(AsO4)]2w7(cr)
+	Ba(UO2)2(AsO4)2(H2O)7 + 2H+ = 2UO2+2 + 2HAsO4-2 + 7H2O + Ba+2
+	-analytical_expression	-22.969637345435 0 439.96127505549 0 0 0 0 
+	-log_K	-21.494 
+
+Meta-uranocircite_II
+	Ba(UO2)2(PO4)2(H2O)6 + 2H+ = 2UO2+2 + 2HPO4-2 + 6H2O + Ba+2
+	-analytical_expression	-24.878785913401 0 -781.51497060195 0 0 0 0 
+	-log_K	-27.5 
+
+Ba3(PO4)2(s)
+	Ba3(PO4)2 + 2H+ = 2HPO4-2 + 3Ba+2
+	-analytical_expression	-4.3 0 0 0 0 0 0 
+	-log_K	-4.3 
+
+Witherite
+	BaCO3 + H+ = HCO3- + Ba+2
+	-analytical_expression	75.811762465433 0 -2781.0456796269 -26.1575246165359 0 0 0 
+	-log_K	1.759 
+
+BaHPO4(cr)
+	BaHPO4 = HPO4-2 + Ba+2
+	-analytical_expression	-7.2 0 0 0 0 0 0 
+	-log_K	-7.2 
+
+BaSeO3(cr)
+	BaSeO3 = SeO3-2 + Ba+2
+	-analytical_expression	-7.4285145267602 0 276.83660902221 0 0 0 0 
+	-log_K	-6.5 
+
+BaSeO4(cr)
+	BaSeO4 + H+ = HSeO4- + Ba+2
+	-analytical_expression	-0.85742727736174 0 -1384.1830451111 0 0 0 0 
+	-log_K	-5.5 
+
+Barite
+	BaSO4 = SO4-2 + Ba+2
+	-analytical_expression	142.41893659707 0 -7943.0364668903 -50.8147804258937 0 0 0 
+	-log_K	-9.96 
+
+Beidellite_SBld-1
+	(Ca0.185K0.104)(Si3.574Al0.426)(Al1.812Mg0.090Fe0.112)O10(OH)2 + 2.296H2O + 7.704H+ = 3.574Si(OH)4 + 0.09Mg+2 + 0.104K+ + 0.112Fe+3 + 0.185Ca+2 + 2.238Al+3
+	-analytical_expression	-32.694880206824 0 11947.526436686 0 0 0 0 
+	-log_K	7.377637 
+
+Beidellite(Ca)
+	Ca0.17Al2.34Si3.66O10(OH)2 + 2.64H2O + 7.36H+ = 3.66Si(OH)4 + 0.17Ca+2 + 2.34Al+3
+	-analytical_expression	-31.561950620662 0 11068.814550523 0 0 0 0 
+	-log_K	5.563239 
+
+Beidellite(K)
+	K0.34Al2.34Si3.66O10(OH)2 + 2.64H2O + 7.36H+ = 3.66Si(OH)4 + 0.34K+ + 2.34Al+3
+	-analytical_expression	-29.484004586677 0 10100.805725421 0 0 0 0 
+	-log_K	4.394078 
+
+Beidellite(Mg)
+	Mg0.17Al2.34Si3.66O10(OH)2 + 2.64H2O + 7.36H+ = 3.66Si(OH)4 + 0.17Mg+2 + 2.34Al+3
+	-analytical_expression	-32.313901530754 0 11130.449871023 0 0 0 0 
+	-log_K	5.01782 
+
+Beidellite(Na)
+	Na0.34Al2.34Si3.66O10(OH)2 + 2.64H2O + 7.36H+ = 3.66Si(OH)4 + 0.34Na+ + 2.34Al+3
+	-analytical_expression	-30.496025209282 0 10028.619273785 0 0 0 0 
+	-log_K	3.139816 
+
+Berthierine_ISGS
+	(Si1.332Al0.668)(Al0.976Fe0.182Fe1.44Mg0.157)O5(OH)4 + 8.672H+ = 1.332Si(OH)4 + 0.157Mg+2 + 3.672H2O + 0.182Fe+3 + 1.44Fe+2 + 1.644Al+3
+	-analytical_expression	-28.493688372086 0 16784.86038403 0 0 0 0 
+	-log_K	27.804836 
+
+Berthierine(FeII)
+	(Fe2Al)(SiAl)O5(OH)4 + 10H+ = Si(OH)4 + 5H2O + 2Fe+2 + 2Al+3
+	-analytical_expression	-64.496343059768 0 21280.333177433 11.1401634010616 0 0 0 
+	-log_K	34.444911 
+
+Berthierine(FeIII)
+	(Fe2.34Fe0.33Al0.33)(Si1.34Al0.66)O5(OH)4 + 8.64H+ = 1.34Si(OH)4 + 3.64H2O + 0.33Fe+3 + 2.34Fe+2 + 0.99Al+3
+	-analytical_expression	-62.943194891194 0 17541.680256494 13.2832169303681 0 0 0 
+	-log_K	28.761792 
+
+Ca(H3Isa)2(cr)
+	Ca(H3Isa)2 = 2H3Isa- + Ca+2
+	-analytical_expression	-6.4 0 0 0 0 0 0 
+	-log_K	-6.4 
+
+Portlandite
+	Ca(OH)2 + 2H+ = 2H2O + Ca+2
+	-analytical_expression	-35.321549295235 0 8041.6686496858 12.5683894781207 0 0 0 
+	-log_K	22.75 
+
+Whewellite
+	Ca(Oxa)(H2O) = Oxa-2 + H2O + Ca+2
+	-analytical_expression	-4.9633844457632 0 -1123.016432826 0 0 0 0 
+	-log_K	-8.73 
+
+Weddelite
+	Ca(Oxa)(H2O)2 = Oxa-2 + 2H2O + Ca+2
+	-analytical_expression	-3.8851761596738 0 -1316.2797259169 0 0 0 0 
+	-log_K	-8.3 
+
+Ca(Oxa)w3(cr)
+	Ca(Oxa)(H2O)3 = Oxa-2 + 3H2O + Ca+2
+	-analytical_expression	-2.9868147766355 0 -1551.3296769735 0 0 0 0 
+	-log_K	-8.19 
+
+Uranophane
+	Ca(UO2)2(SiO3OH)2(H2O)5 + 6H+ = 2UO2+2 + 2Si(OH)4 + 5H2O + Ca+2
+	-analytical_expression	-3.5464622854026 0 4492.0657313038 0 0 0 0 
+	-log_K	11.52 
+
+Ca[(UO2)(AsO4)]2w10(cr)
+	Ca(UO2)2(AsO4)2(H2O)10 + 2H+ = 2UO2+2 + 2HAsO4-2 + 10H2O + Ca+2
+	-analytical_expression	-22.48649739437 0 176.65309654965 0 0 0 0 
+	-log_K	-21.894 
+
+Meta-autunite
+	Ca(UO2)2(PO4)2(H2O)6 + 2H+ = 2UO2+2 + 2HPO4-2 + 6H2O + Ca+2
+	-analytical_expression	-27.260567177287 0 584.54311161653 0 0 0 0 
+	-log_K	-25.3 
+
+Ca0.5NpO2(OH)2w1.3(cr)
+	Ca0.5NpO2(OH)2(H2O)1.3 + 2H+ = NpO2+ + 3.3H2O + 0.5Ca+2
+	-analytical_expression	12.3 0 0 0 0 0 0 
+	-log_K	12.3 
+
+Ca3(Cit)2w4(cr)
+	Ca3(Cit)2(H2O)4 = 4H2O + 2Cit-3 + 3Ca+2
+	-analytical_expression	-17.9 0 0 0 0 0 0 
+	-log_K	-17.9 
+
+Tuite
+	Ca3(PO4)2 + 2H+ = 2HPO4-2 + 3Ca+2
+	-analytical_expression	-23.541132938735 0 5766.5587992552 0 0 0 0 
+	-log_K	-4.2 
+
+Ca4H(PO4)3w2.5(s)
+	Ca4H(PO4)3(H2O)2.5 + 2H+ = 3HPO4-2 + 2.5H2O + 4Ca+2
+	-analytical_expression	-22.782404128255 0 3384.719295215 0 0 0 0 
+	-log_K	-11.43 
+
+Cl-apatite
+	Ca5(PO4)3Cl + 3H+ = 3HPO4-2 + Cl- + 5Ca+2
+	-analytical_expression	-37.646354880501 0 8555.8182184601 0 0 0 0 
+	-log_K	-8.95 
+
+F-apatite
+	Ca5(PO4)3F + 3H+ = 3HPO4-2 + F- + 5Ca+2
+	-analytical_expression	-40.9400610065 0 5474.0521934958 0 0 0 0 
+	-log_K	-22.58 
+
+OH-apatite
+	Ca5(PO4)3OH + 4H+ = 3HPO4-2 + H2O + 5Ca+2
+	-analytical_expression	-36.620652574811 0 8759.8415759772 0 0 0 0 
+	-log_K	-7.24 
+
+Aragonite
+	CaCO3 + H+ = HCO3- + Ca+2
+	-analytical_expression	23.89708674849 0 172.08534212244 -9.07894752664984 0 0 0 
+	-log_K	2.009 
+
+Calcite
+	CaCO3 + H+ = HCO3- + Ca+2
+	-analytical_expression	37.183554452517 0 -456.26585703879 -13.6492709732392 0 0 0 
+	-log_K	1.879 
+
+Vaterite
+	CaCO3 + H+ = HCO3- + Ca+2
+	-analytical_expression	7.7760275778278 0 1107.9367222543 -3.66672239253076 0 0 0 
+	-log_K	2.419 
+
+Fluorite
+	CaF2 = 2F- + Ca+2
+	-analytical_expression	50.37890702764 0 -3054.8919805601 -20.446183840005 0 0 0 
+	-log_K	-10.46 
+
+CaHK3(PO4)2(cr)
+	CaHK3(PO4)2 + H+ = 3K+ + 2HPO4-2 + Ca+2
+	-analytical_expression	2.3 0 0 0 0 0 0 
+	-log_K	2.3 
+
+Monetite
+	CaHPO4 = HPO4-2 + Ca+2
+	-analytical_expression	110.54041775341 0 -4390.8244940515 -41.4937260282447 0 0 0 
+	-log_K	-6.86 
+
+Brushite
+	CaHPO4(H2O)2 = HPO4-2 + 2H2O + Ca+2
+	-analytical_expression	91.118205871619 0 -4109.6290142703 -33.9166108404789 0 0 0 
+	-log_K	-6.59 
+
+CaMg(CO3)2(cr)
+	CaMg(CO3)2 + 2H+ = Mg+2 + 2HCO3- + Ca+2
+	-analytical_expression	-7.9175270180353 0 3444.5436655314 0 0 0 0 
+	-log_K	3.54605 
+
+Powellite
+	CaMoO4 = MoO4-2 + Ca+2
+	-analytical_expression	-7.6208330757479 0 -250.19761456913 0 0 0 0 
+	-log_K	-8.46 
+
+Cancrinite-NO3
+	Na8Al6Si6O24(NO3)2(H2O)4 + 24H+ = 6Si(OH)4 + 2NO3- + 8Na+ + 4H2O + 6Al+3
+	-analytical_expression	-57.033251390887 0 40161.05250411 0 0 0 0 
+	-log_K	77.657101 
+
+CaNpO2(OH)2.6Cl0.4w2(cr)
+	CaNpO2(OH)2.6Cl0.4(H2O)2 + 2.6H+ = NpO2+ + 4.6H2O + 0.4Cl- + Ca+2
+	-analytical_expression	19.9 0 0 0 0 0 0 
+	-log_K	19.9 
+
+CaSeO3w1(cr)
+	CaSeO3(H2O) = SeO3-2 + H2O + Ca+2
+	-analytical_expression	-6.4 0 0 0 0 0 0 
+	-log_K	-6.4 
+
+CaSn(OH)6(pr)
+	CaSn(OH)6 + 6H+ = Sn+4 + 6H2O + Ca+2
+	-analytical_expression	1.43 0 0 0 0 0 0 
+	-log_K	1.43 
+
+Anhydrite
+	CaSO4 = SO4-2 + Ca+2
+	-analytical_expression	131.53970644652 0 -5256.5387969543 -47.7358256829299 0 0 0 
+	-log_K	-4.21 
+
+Gypsum
+	CaSO4(H2O)2 = SO4-2 + 2H2O + Ca+2
+	-analytical_expression	68.245594677126 0 -3221.4619565427 -25.0646159544527 0 0 0 
+	-log_K	-4.58 
+
+Becquerelite
+	CaU6O19(H2O)11 + 14H+ = 6UO2+2 + 18H2O + Ca+2
+	-analytical_expression	40.5 0 0 0 0 0 0 
+	-log_K	40.5 
+
+Cd(OH)2(s)
+	Cd(OH)2 + 2H+ = 2H2O + Cd+2
+	-analytical_expression	49.844471204008 0 -10770.511090638 0 0 0 0 
+	-log_K	13.72 
+
+Cd[(UO2)(AsO4)]2w8(cr)
+	Cd(UO2)2(AsO4)2(H2O)8 + 2H+ = 2UO2+2 + 2HAsO4-2 + 8H2O + Cd+2
+	-analytical_expression	-22.094666462059 0 -29.616293833131 0 0 0 0 
+	-log_K	-22.194 
+
+Cd[(UO2)(PO4)]2w10(cr)
+	Cd(UO2)2(PO4)2(H2O)10 + 2H+ = 2UO2+2 + 2HPO4-2 + 10H2O + Cd+2
+	-analytical_expression	-25.64 0 0 0 0 0 0 
+	-log_K	-25.64 
+
+Cd3(PO4)2(s)
+	Cd3(PO4)2 + 2H+ = 2HPO4-2 + 3Cd+2
+	-analytical_expression	-12.2 0 0 0 0 0 0 
+	-log_K	-12.2 
+
+Cd5H2(PO4)4w4(s)
+	Cd5H2(PO4)4(H2O)4 + 2H+ = 4HPO4-2 + 4H2O + 5Cd+2
+	-analytical_expression	-31.8 0 0 0 0 0 0 
+	-log_K	-31.8 
+
+Otavite
+	CdCO3 + H+ = HCO3- + Cd+2
+	-analytical_expression	-104.57240415767 0 4884.72717083 34.9404835641854 0 0 0 
+	-log_K	-1.731 
+
+CdS(s)
+	CdS + H+ = HS- + Cd+2
+	-analytical_expression	-14.1 0 0 0 0 0 0 
+	-log_K	-14.1 
+
+Chabazite-Ca
+	CaAl2Si4O12(H2O)6 + 8H+ = 4Si(OH)4 + 2H2O + Ca+2 + 2Al+3
+	-analytical_expression	-24.418869315368 0 12202.33092583 0 0 0 0 
+	-log_K	16.504433 
+
+Chabazite-Na
+	Na2Al2Si4O12(H2O)6 + 8H+ = 4Si(OH)4 + 2Na+ + 2H2O + 2Al+3
+	-analytical_expression	-13.653581556976 0 8865.1439540506 0 0 0 0 
+	-log_K	16.076966 
+
+Clinoptilolite
+	Ca0.52Al1.04Si4.96O12(H2O)3.1 + 4.74H2O + 4.16H+ = 4.96Si(OH)4 + 0.52Ca+2 + 1.04Al+3
+	-analytical_expression	-14.844607864974 0 5038.8378827852 0 0 0 0 
+	-log_K	2.051702 
+
+Cronstedtite
+	(Fe2Fe)(SiFe)O5(OH)4 + 10H+ = Si(OH)4 + 5H2O + 2Fe+3 + 2Fe+2
+	-analytical_expression	-62.192855621152 0 14906.270124809 11.4384371417863 0 0 0 
+	-log_K	16.107625 
+
+Cs(UO2)(AsO4)w2.5(cr)
+	Cs(UO2)(AsO4)(H2O)2.5 + H+ = UO2+2 + HAsO4-2 + 2.5H2O + Cs+
+	-analytical_expression	-7.0476438692005 0 -1952.6905267333 0 0 0 0 
+	-log_K	-13.597 
+
+Cs(UO2)(BO3)w1(cr)
+	Cs(UO2)(BO3)(H2O) + 3H+ = UO2+2 + H2O + Cs+ + B(OH)3
+	-analytical_expression	-0.039221322799785 0 2018.2433464169 0 0 0 0 
+	-log_K	6.73 
+
+Cs(UO2)(PO4)w2.5(cr)
+	Cs(UO2)(PO4)(H2O)2.5 + H+ = UO2+2 + HPO4-2 + 2.5H2O + Cs+
+	-analytical_expression	-8.4995816819367 0 -1505.782219791 0 0 0 0 
+	-log_K	-13.55 
+
+Cu(OH)2(s)
+	Cu(OH)2 + 2H+ = 2H2O + Cu+2
+	-analytical_expression	8.67 0 0 0 0 0 0 
+	-log_K	8.67 
+
+Metazeunerite
+	Cu(UO2)2(AsO4)2(H2O)8 + 2H+ = 2UO2+2 + 2HAsO4-2 + 8H2O + Cu+2
+	-analytical_expression	-22.627495868311 0 39.80179171225 0 0 0 0 
+	-log_K	-22.494 
+
+Cu[(UO2)(PO4)]2w8(cr)
+	Cu(UO2)2(PO4)2(H2O)8 + 2H+ = 2UO2+2 + 2HPO4-2 + 8H2O + Cu+2
+	-analytical_expression	-25.479486672053 0 -781.30603731213 0 0 0 0 
+	-log_K	-28.1 
+
+malachite
+	Cu2CO3(OH)2 + 3H+ = HCO3- + 2H2O + 2Cu+2
+	-analytical_expression	5.169 0 0 0 0 0 0 
+	-log_K	5.169 
+
+cuprite
+	Cu2O + 2H+ = H2O + 2Cu+
+	-analytical_expression	2.5132924427683 0 -898.41314626077 0 0 0 0 
+	-log_K	-0.5 
+
+chalcotite
+	Cu2S + H+ = HS- + 2Cu+
+	-analytical_expression	-34.62 0 0 0 0 0 0 
+	-log_K	-34.62 
+
+azurite
+	Cu3(CO3)2(OH)2 + 4H+ = 2HCO3- + 2H2O + 3Cu+2
+	-analytical_expression	3.758 0 0 0 0 0 0 
+	-log_K	3.758 
+
+CuCl(s)
+	CuCl = Cu+ + Cl-
+	-analytical_expression	-6.7 0 0 0 0 0 0 
+	-log_K	-6.7 
+
+tenorite
+	CuO + 2H+ = H2O + Cu+2
+	-analytical_expression	407.89002074954 0 -15075.907985811 -141.319211835329 0 0 0 
+	-log_K	7.64 
+
+covellite
+	CuS + H+ = HS- + Cu+2
+	-analytical_expression	-22.05 0 0 0 0 0 0 
+	-log_K	-22.05 
+
+Eu(OH)3(am)
+	Eu(OH)3 + 3H+ = 3H2O + Eu+3
+	-analytical_expression	17.6 0 0 0 0 0 0 
+	-log_K	17.6 
+
+Eu(OH)3(cr)
+	Eu(OH)3 + 3H+ = 3H2O + Eu+3
+	-analytical_expression	36.692060958876 0 -6497.3029804289 0 0 0 0 
+	-log_K	14.9 
+
+Eu2(CO3)3(cr)
+	Eu2(CO3)3 + 3H+ = 3HCO3- + 2Eu+3
+	-analytical_expression	-4.013 0 0 0 0 0 0 
+	-log_K	-4.013 
+
+EuF3(cr)
+	EuF3 = 3F- + Eu+3
+	-analytical_expression	-18.7 0 0 0 0 0 0 
+	-log_K	-18.7 
+
+EuOHCO3(cr)
+	EuOHCO3 + 2H+ = HCO3- + H2O + Eu+3
+	-analytical_expression	2.629 0 0 0 0 0 0 
+	-log_K	2.629 
+
+Eu-rhabdophane
+	EuPO4(H2O)0.667 + H+ = HPO4-2 + 0.667H2O + Eu+3
+	-analytical_expression	-18.086048910656 0 1650.5729896419 0 0 0 0 
+	-log_K	-12.55 
+
+Faujasite-X
+	Na2Al2Si2.5O9(H2O)6.2 + 8H+ = 2.5Si(OH)4 + 2Na+ + 5.2H2O + 2Al+3
+	-analytical_expression	-16.914847394563 0 12701.237505278 0 0 0 0 
+	-log_K	25.683325 
+
+Faujasite-Y
+	Na2Al2Si4O12(H2O)8 + 8H+ = 4Si(OH)4 + 2Na+ + 4H2O + 2Al+3
+	-analytical_expression	-16.061537722244 0 10293.72532325 0 0 0 0 
+	-log_K	18.461322 
+
+Fe(OH)2(s) # white rust
+	Fe(OH)2 + 2H+ = 2H2O + Fe+2
+	-analytical_expression	12.26 0 0 0 0 0 0 
+	-log_K	12.26 
+
+Fe(OH)3(mic) # 2-line ferrihydrite
+	Fe(OH)3 + 3H+ = 3H2O + Fe+3
+	-analytical_expression	3.5 0 0 0 0 0 0 
+	-log_K	3.5 
+
+Metakahlerite
+	Fe(UO2)2(AsO4)2(H2O)8 + 2H+ = 2UO2+2 + 2HAsO4-2 + 8H2O + Fe+2
+	-analytical_expression	-22.740882711101 0 -45.651923827437 0 0 0 0 
+	-log_K	-22.894 
+
+Fe0.875S(cr) # 4C pyrrhotite
+	Fe0.625Fe0.25S + H+ = HS- + 0.25Fe+3 + 0.625Fe+2
+	-analytical_expression	-6.6990321459571 0 -536.95855485818 0 0 0 0 
+	-log_K	-8.5 
+
+Fe0.875Se(cr)
+	Fe0.625Fe0.25Se + 2H+ = H2Se + 0.25Fe+3 + 0.625Fe+2
+	-analytical_expression	-3.2639938795531 0 -547.40521934958 0 0 0 0 
+	-log_K	-5.1 
+
+Fe0.9S(cr) # 5C pyrrhotite
+	Fe0.7Fe0.2S + H+ = HS- + 0.2Fe+3 + 0.7Fe+2
+	-analytical_expression	-6.4840306498925 0 -332.72626405123 0 0 0 0 
+	-log_K	-7.6 
+
+Fe1.042Se(cr)
+	FeFe0.042Se + 2H+ = H2Se + 1.042Fe+2 + 0.084e-
+	-analytical_expression	-1.2799724479437 0 265.34527808167 0 0 0 0 
+	-log_K	-0.39 
+
+Fe2(SeO3)3w3(cr)
+	Fe2(SeO3)3(H2O)3 = 3SeO3-2 + 3H2O + 2Fe+3
+	-analytical_expression	-44.3 0 0 0 0 0 0 
+	-log_K	-44.3 
+
+Fe-hibbingite
+	Fe2Cl(OH)3 + 3H+ = 3H2O + 2Fe+2 + Cl-
+	-analytical_expression	17.2 0 0 0 0 0 0 
+	-log_K	17.2 
+
+hematite
+	Fe2O3 + 6H+ = 3H2O + 2Fe+3
+	-analytical_expression	-23.211148245079 0 7135.0718476291 0 0 0 0 
+	-log_K	0.72 
+
+maghemite
+	Fe2O3 + 6H+ = 3H2O + 2Fe+3
+	-analytical_expression	3.22 0 0 0 0 0 0 
+	-log_K	3.22 
+
+vivianite
+	Fe3(PO4)2(H2O)8 + 2H+ = 2HPO4-2 + 8H2O + 3Fe+2
+	-analytical_expression	-11.3 0 0 0 0 0 0 
+	-log_K	-11.3 
+
+magnetite
+	FeFe2O4 + 8H+ = 4H2O + 2Fe+3 + Fe+2
+	-analytical_expression	25.708205659587 0 7607.7864950195 -16.9783907890705 0 0 0 
+	-log_K	9.210982 
+
+greigite
+	FeFe2S4 + 4H+ = 4HS- + 2Fe+3 + Fe+2
+	-analytical_expression	-41.14 0 0 0 0 0 0 
+	-log_K	-41.14 
+
+Fe3Se4(gamma)
+	FeFe2Se4 + 8H+ = 4H2Se + 2Fe+3 + Fe+2
+	-analytical_expression	-18.398024756095 0 -5996.3854180661 0 0 0 0 
+	-log_K	-38.51 
+
+Fe4(OH)8Clwn(s) # chloride green rust one
+	Fe3Fe(OH)8Cl + 8H+ = 8H2O + Fe+3 + 3Fe+2 + Cl-
+	-analytical_expression	26.650491 0 0 0 0 0 0 
+	-log_K	26.650491 
+
+Fe6(OH)12CO3wn(s) # carbonate green rust one
+	Fe2Fe4(OH)12CO3 + 13H+ = HCO3- + 12H2O + 2Fe+3 + 4Fe+2
+	-analytical_expression	36.629982 0 0 0 0 0 0 
+	-log_K	36.629982 
+
+Fe6(OH)12SO4wn(s) # sulfate green rust two
+	Fe4Fe2(OH)12SO4 + 12H+ = SO4-2 + 12H2O + 2Fe+3 + 4Fe+2
+	-analytical_expression	29.100982 0 0 0 0 0 0 
+	-log_K	29.100982 
+
+siderite
+	FeCO3 + H+ = HCO3- + Fe+2
+	-analytical_expression	34.427009437363 0 -200.27390860119 -13.8723749204346 0 0 0 
+	-log_K	-0.571 
+
+goethite
+	FeOOH + 3H+ = 2H2O + Fe+3
+	-analytical_expression	-11.145038115652 0 3421.2826209349 0 0 0 0 
+	-log_K	0.33 
+
+lepidocrocite
+	FeOOH + 3H+ = 2H2O + Fe+3
+	-analytical_expression	-10.841378076315 0 3786.9158781341 0 0 0 0 
+	-log_K	1.86 
+
+rodolicoite
+	FePO4 + H+ = HPO4-2 + Fe+3
+	-analytical_expression	-22.880100864479 0 4257.0157802472 0 0 0 0 
+	-log_K	-8.602 
+
+FePO4w2(s)
+	FePO4(H2O)2 + H+ = HPO4-2 + 2H2O + Fe+3
+	-analytical_expression	-15.312 0 0 0 0 0 0 
+	-log_K	-15.312 
+
+mackinawite
+	FeS + H+ = HS- + Fe+2
+	-analytical_expression	-3.19 0 0 0 0 0 0 
+	-log_K	-3.19 
+
+troilite
+	FeS + H+ = HS- + Fe+2
+	-analytical_expression	-4.9850872345442 0 296.68527155588 0 0 0 0 
+	-log_K	-3.99 
+
+marcasite
+	FeSS + H+ = S + HS- + Fe+2
+	-analytical_expression	-1.190153228013 0 -5799.9881256277 0 0 0 0 
+	-log_K	-20.643543 
+
+pyrite
+	FeSS + H+ = S + HS- + Fe+2
+	-analytical_expression	-1.1343492878662 0 -6019.3680799471 0 0 0 0 
+	-log_K	-21.323543 
+
+ferroselite
+	FeSe2 + 2H+ = Se + H2Se + Fe+2
+	-analytical_expression	0.26789123468487 0 -4087.6885213542 0 0 0 0 
+	-log_K	-13.443384 
+
+Glauconite
+	K0.75(Mg0.25Fe0.25Fe1.25Al0.25)(Al0.25Si3.75)O10(OH)2 + 3H2O + 7H+ = 3.75Si(OH)4 + 0.25Mg+2 + 0.75K+ + 1.25Fe+3 + 0.25Fe+2 + 0.5Al+3
+	-analytical_expression	-21.626227788534 0 6975.4337558698 0 0 0 0 
+	-log_K	1.769433 
+
+H4Edta(cr)
+	H4Edta = 4H+ + Edta-4
+	-analytical_expression	-17.584471745897 0 -2872.8327351362 0 0 0 0 
+	-log_K	-27.22 
+
+Sabugalite
+	HAl(UO2)4(PO4)4(H2O)16 + 3H+ = 4UO2+2 + 4HPO4-2 + 16H2O + Al+3
+	-analytical_expression	-41.948 0 0 0 0 0 0 
+	-log_K	-41.948 
+
+Heulandite_1
+	Ca1.07Al2.14Si6.86O18(H2O)4.4 + 5.04H2O + 8.56H+ = 6.86Si(OH)4 + 1.07Ca+2 + 2.14Al+3
+	-analytical_expression	-24.04593070569 0 10632.749881323 0 0 0 0 
+	-log_K	11.608219 
+
+Heulandite_2
+	Ca1.07Al2.14Si6.86O18(H2O)4.5 + 4.94H2O + 8.56H+ = 6.86Si(OH)4 + 1.07Ca+2 + 2.14Al+3
+	-analytical_expression	-25.769891513384 0 11467.595074154 0 0 0 0 
+	-log_K	12.679339 
+
+Hg2Cl2(cr)
+	Hg2Cl2 = Hg+2 + Hg + 2Cl-
+	-analytical_expression	-4.5215045363073 0 -6498.8699801026 0 0 0 0 
+	-log_K	-26.319273 
+
+Hg3(PO4)2(s)
+	Hg3(PO4)2 + 2H+ = 2HPO4-2 + 3Hg+2
+	-analytical_expression	-30 0 0 0 0 0 0 
+	-log_K	-30 
+
+HgCO3(HgO)2(s)
+	HgCO3(HgO)2 + 5H+ = 3Hg+2 + HCO3- + 2H2O
+	-analytical_expression	-1.15 0 0 0 0 0 0 
+	-log_K	-1.15 
+
+HgHPO4(s)
+	HgHPO4 = HPO4-2 + Hg+2
+	-analytical_expression	-15.2 0 0 0 0 0 0 
+	-log_K	-15.2 
+
+HgO(cr)
+	HgO + 2H+ = Hg+2 + H2O
+	-analytical_expression	-1.9059939364567 0 1296.9533966078 0 0 0 0 
+	-log_K	2.44392 
+
+HgS(s)
+	HgS + H+ = HS- + Hg+2
+	-analytical_expression	-36.77 0 0 0 0 0 0 
+	-log_K	-36.77 
+
+Ho(OH)3(cr)
+	Ho(OH)3 + 3H+ = Ho+3 + 3H2O
+	-analytical_expression	14.7 0 0 0 0 0 0 
+	-log_K	14.7 
+
+Ho2(CO3)3(cr)
+	Ho2(CO3)3 + 3H+ = 2Ho+3 + 3HCO3-
+	-analytical_expression	-4.013 0 0 0 0 0 0 
+	-log_K	-4.013 
+
+HoF3(cr)
+	HoF3 = Ho+3 + 3F-
+	-analytical_expression	-17.6 0 0 0 0 0 0 
+	-log_K	-17.6 
+
+HoOHCO3(cr)
+	HoOHCO3 + 2H+ = Ho+3 + HCO3- + H2O
+	-analytical_expression	2.629 0 0 0 0 0 0 
+	-log_K	2.629 
+
+HoPO4(s)
+	HoPO4 + H+ = HPO4-2 + Ho+3
+	-analytical_expression	-12.95 0 0 0 0 0 0 
+	-log_K	-12.95 
+
+Hydrosodalite
+	Na8Al6Si6O24(OH)2(H2O)2 + 26H+ = 6Si(OH)4 + 8Na+ + 4H2O + 6Al+3
+	-analytical_expression	-61.598443773631 0 49761.53717171 0 0 0 0 
+	-log_K	105.30441 
+
+Illite_IMt-2
+	(K0.762Na0.044)(Si3.387Al0.613)(Al1.427Fe0.292Mg0.241Fe0.084)O10(OH)2 + 1.548H2O + 8.452H+ = 3.387Si(OH)4 + 0.044Na+ + 0.241Mg+2 + 0.762K+ + 0.292Fe+3 + 0.084Fe+2 + 2.04Al+3
+	-analytical_expression	-29.831502591019 0 13283.376525995 0 0 0 0 
+	-log_K	14.721627 
+
+Illite(Al)
+	K0.85Al2.85Si3.15O10(OH)2 + 0.6H2O + 9.4H+ = 3.15Si(OH)4 + 0.85K+ + 2.85Al+3
+	-analytical_expression	-34.680802826904 0 14149.403758733 0 0 0 0 
+	-log_K	12.777753 
+
+Illite(FeII)
+	K0.85Fe0.25Al2.35Si3.4O10(OH)2 + 1.6H2O + 8.4H+ = 3.4Si(OH)4 + 0.85K+ + 0.25Fe+2 + 2.35Al+3
+	-analytical_expression	-29.415670864906 0 11529.027729362 0 0 0 0 
+	-log_K	9.253909 
+
+Illite(FeIII)
+	K0.85Fe0.25Al2.6Si3.15O10(OH)2 + 0.6H2O + 9.4H+ = 3.15Si(OH)4 + 0.85K+ + 0.25Fe+3 + 2.6Al+3
+	-analytical_expression	-34.60715384224 0 13936.55296972 0 0 0 0 
+	-log_K	12.136114 
+
+Illite(Mg)
+	K0.85Mg0.25Al2.35Si3.4O10(OH)2 + 1.6H2O + 8.4H+ = 3.4Si(OH)4 + 0.25Mg+2 + 0.85K+ + 2.35Al+3
+	-analytical_expression	-29.455237606667 0 12003.175713966 0 0 0 0 
+	-log_K	10.803258 
+
+K(UO2)(AsO4)w3(cr)
+	K(UO2)(AsO4)(H2O)3 + H+ = UO2+2 + K+ + HAsO4-2 + 3H2O
+	-analytical_expression	-7.0437406297133 0 -1387.3692777809 0 0 0 0 
+	-log_K	-11.697 
+
+K(UO2)(BO3)w1(cr)
+	K(UO2)(BO3)(H2O) + 3H+ = UO2+2 + K+ + H2O + B(OH)3
+	-analytical_expression	3.2045948242882 0 1045.1365490425 0 0 0 0 
+	-log_K	6.71 
+
+K(UO2)(PO4)w3(cr)
+	K(UO2)(PO4)(H2O)3 + H+ = UO2+2 + K+ + HPO4-2 + 3H2O
+	-analytical_expression	-8.5478965127763 0 -1372.1171476235 0 0 0 0 
+	-log_K	-13.15 
+
+Boltwoodite
+	K(UO2)(SiO3OH)(H2O) + 3H+ = UO2+2 + Si(OH)4 + K+ + H2O
+	-analytical_expression	-0.37280238517302 0 1446.8630320595 0 0 0 0 
+	-log_K	4.48 
+
+Compreignacite
+	K2U6O19(H2O)11 + 14H+ = 6UO2+2 + 2K+ + 18H2O
+	-analytical_expression	37.1 0 0 0 0 0 0 
+	-log_K	37.1 
+
+K3NpO2(CO3)2(s)
+	K3NpO2(CO3)2 + 2H+ = NpO2+ + 3K+ + 2HCO3-
+	-analytical_expression	5.198 0 0 0 0 0 0 
+	-log_K	5.198 
+
+K4NpO2(CO3)3(s)
+	K4NpO2(CO3)3 + 3H+ = NpO2+2 + 4K+ + 3HCO3-
+	-analytical_expression	4.057 0 0 0 0 0 0 
+	-log_K	4.057 
+
+KNpO2CO3(s)
+	KNpO2CO3 + H+ = NpO2+ + K+ + HCO3-
+	-analytical_expression	-2.821 0 0 0 0 0 0 
+	-log_K	-2.821 
+
+Li(UO2)(AsO4)w4(cr)
+	Li(UO2)(AsO4)(H2O)4 + H+ = UO2+2 + Li+ + HAsO4-2 + 4H2O
+	-analytical_expression	-9.1335427399298 0 100.34021243994 0 0 0 0 
+	-log_K	-8.797 
+
+Li(UO2)(BO3)w1.5(cr)
+	Li(UO2)(BO3)(H2O)1.5 + 3H+ = UO2+2 + Li+ + 1.5H2O + B(OH)3
+	-analytical_expression	-0.66004585689493 0 2400.1211669001 0 0 0 0 
+	-log_K	7.39 
+
+Li(UO2)(PO4)w4(cr)
+	Li(UO2)(PO4)(H2O)4 + H+ = UO2+2 + Li+ + HPO4-2 + 4H2O
+	-analytical_expression	-9.1752570025105 0 -1185.0696199049 0 0 0 0 
+	-log_K	-13.15 
+
+Linda_type_A
+	Na1.98Al1.98Si2.02O8(H2O)5.31 + 7.92H+ = 2.02Si(OH)4 + 1.98Na+ + 5.23H2O + 1.98Al+3
+	-analytical_expression	-21.932536005086 0 15125.02350125 0 0 0 0 
+	-log_K	28.795303 
+
+Low-silica_P-Ca
+	CaAl2Si2O8(H2O)4.5 + 8H+ = 2Si(OH)4 + 4.5H2O + Ca+2 + 2Al+3
+	-analytical_expression	-29.267531939086 0 15865.401596418 0 0 0 0 
+	-log_K	23.943762 
+
+Low-silica_P-Na
+	Na2Al2Si2O8(H2O)3.8 + 8H+ = 2Si(OH)4 + 2Na+ + 3.8H2O + 2Al+3
+	-analytical_expression	-16.672249728412 0 13280.844567922 0 0 0 0 
+	-log_K	27.870152 
+
+Brucite
+	Mg(OH)2 + 2H+ = Mg+2 + 2H2O
+	-analytical_expression	-2.4238435570939 0 5824.0154539579 0 0 0 0 
+	-log_K	17.11 
+
+Glushinskite
+	Mg(Oxa)(H2O)2 = Oxa-2 + Mg+2 + 2H2O
+	-analytical_expression	-6.4 0 0 0 0 0 0 
+	-log_K	-6.4 
+
+Mg[(UO2)(AsO4)]2w10(cr)
+	Mg(UO2)2(AsO4)2(H2O)10 + 2H+ = 2UO2+2 + Mg+2 + 2HAsO4-2 + 10H2O
+	-analytical_expression	-25.92339903232 0 1350.4403188038 0 0 0 0 
+	-log_K	-21.394 
+
+Meta-saleite
+	Mg(UO2)2(PO4)2(H2O)8 + 2H+ = 2UO2+2 + Mg+2 + 2HPO4-2 + 8H2O
+	-analytical_expression	-28.456698247889 0 1179.6895876918 0 0 0 0 
+	-log_K	-24.5 
+
+Mg2KH(PO4)2w15(cr)
+	Mg2KH(PO4)2(H2O)15 + H+ = 2Mg+2 + K+ + 2HPO4-2 + 15H2O
+	-analytical_expression	1.2331852328527 0 -1551.3296769735 0 0 0 0 
+	-log_K	-3.97 
+
+Farringtonite
+	Mg3(PO4)2 + 2H+ = 3Mg+2 + 2HPO4-2
+	-analytical_expression	-35.113368542533 0 11151.814344574 0 0 0 0 
+	-log_K	2.29 
+
+Cattite
+	Mg3(PO4)2(H2O)22 + 2H+ = 3Mg+2 + 2HPO4-2 + 22H2O
+	-analytical_expression	0.47869834272278 0 355.18659270774 0 0 0 0 
+	-log_K	1.67 
+
+Mg3(PO4)2w4(cr)
+	Mg3(PO4)2(H2O)4 + 2H+ = 3Mg+2 + 2HPO4-2 + 4H2O
+	-analytical_expression	-44.55999938427 0 13643.343825774 0 0 0 0 
+	-log_K	1.2 
+
+Bobierrite
+	Mg3(PO4)2(H2O)8 + 2H+ = 3Mg+2 + 2HPO4-2 + 8H2O
+	-analytical_expression	-37.933292003786 0 11130.921015591 0 0 0 0 
+	-log_K	-0.6 
+
+Magnesite
+	MgCO3 + H+ = Mg+2 + HCO3-
+	-analytical_expression	27.768779906423 0 1139.9763810828 -11.6888427579915 0 0 0 
+	-log_K	2.669 
+
+Newberyite
+	MgHPO4(H2O)3 = Mg+2 + HPO4-2 + 3H2O
+	-analytical_expression	-8.2779479119865 0 804.39316583813 0 0 0 0 
+	-log_K	-5.58 
+
+Phosphorröslerite
+	MgHPO4(H2O)7 = Mg+2 + HPO4-2 + 7H2O
+	-analytical_expression	-12.105635397931 0 2219.9162044234 0 0 0 0 
+	-log_K	-4.66 
+
+MgKPO4w1(cr)
+	MgKPO4(H2O) + H+ = Mg+2 + K+ + HPO4-2 + H2O
+	-analytical_expression	-7.447166785043 0 2637.7827840796 0 0 0 0 
+	-log_K	1.4 
+
+K-struvite
+	MgKPO4(H2O)6 + H+ = Mg+2 + K+ + HPO4-2 + 6H2O
+	-analytical_expression	-0.081607932707144 0 438.75990863898 0 0 0 0 
+	-log_K	1.39 
+
+MgSeO3w6(cr)
+	MgSeO3(H2O)6 = SeO3-2 + Mg+2 + 6H2O
+	-analytical_expression	-2.6612986437163 0 -941.7668039001 0 0 0 0 
+	-log_K	-5.82 
+
+Pyrochroite
+	Mn(OH)2 + 2H+ = Mn+2 + 2H2O
+	-analytical_expression	-6.3585448981552 0 6424.6986622136 0 0 0 0 
+	-log_K	15.19 
+
+Mn[(UO2)(AsO4)]2w8(cr)
+	Mn(UO2)2(AsO4)2(H2O)8 + 2H+ = 2UO2+2 + Mn+2 + 2HAsO4-2 + 8H2O
+	-analytical_expression	-21.248484548923 0 16.244563284134 0 0 0 0 
+	-log_K	-21.194 
+
+Mn[(UO2)(PO4)]2w10(cr)
+	Mn(UO2)2(PO4)2(H2O)10 + 2H+ = 2UO2+2 + Mn+2 + 2HPO4-2 + 10H2O
+	-analytical_expression	-25.52 0 0 0 0 0 0 
+	-log_K	-25.52 
+
+Mn2O3(cr)
+	Mn2O3 + 6H+ = 2Mn+3 + 3H2O
+	-analytical_expression	-22.622825791416 0 6502.5263126746 0 0 0 0 
+	-log_K	-0.819896 
+
+Mn3O4(cr)
+	MnMn2O4 + 8H+ = 2Mn+3 + Mn+2 + 4H2O
+	-analytical_expression	-25.446036870218 0 10740.215763613 0 0 0 0 
+	-log_K	10.569298 
+
+MnCO3(cr)
+	MnCO3 + H+ = Mn+2 + HCO3-
+	-analytical_expression	-3.8250462035277 0 997.91762554139 0 0 0 0 
+	-log_K	-0.522946 
+
+MnO(cr)
+	MnO + 2H+ = Mn+2 + H2O
+	-analytical_expression	-3.3095033108769 0 6341.647679507 0 0 0 0 
+	-log_K	17.958873 
+
+Manganite
+	MnOOH + 3H+ = Mn+3 + 2H2O
+	-analytical_expression	-11.292250996898 0 3342.9326372494 0 0 0 0 
+	-log_K	-0.08 
+
+MnSeO3w2(cr)
+	MnSeO3(H2O)2 = SeO3-2 + Mn+2 + 2H2O
+	-analytical_expression	-7.6 0 0 0 0 0 0 
+	-log_K	-7.6 
+
+Molecular_sieve_4Å
+	Na2Al2Si2O8(H2O)4.5 + 8H+ = 2Si(OH)4 + 2Na+ + 4.5H2O + 2Al+3
+	-analytical_expression	-22.576443332341 0 14771.635824168 0 0 0 0 
+	-log_K	26.965814 
+
+Montmorillonite(HcCa)
+	Ca0.3Mg0.6Al1.4Si4O10(OH)2 + 4H2O + 6H+ = 4Si(OH)4 + 0.6Mg+2 + 0.3Ca+2 + 1.4Al+3
+	-analytical_expression	-22.582345697779 0 8744.4849791749 0 0 0 0 
+	-log_K	6.748163 
+
+Montmorillonite(HcK)
+	K0.6Mg0.6Al1.4Si4O10(OH)2 + 4H2O + 6H+ = 4Si(OH)4 + 0.6Mg+2 + 0.6K+ + 1.4Al+3
+	-analytical_expression	-18.915566461296 0 6919.6616258164 0 0 0 0 
+	-log_K	4.294467 
+
+Montmorillonite(HcMg)
+	Mg0.3Mg0.6Al1.4Si4O10(OH)2 + 4H2O + 6H+ = 4Si(OH)4 + 0.9Mg+2 + 1.4Al+3
+	-analytical_expression	-23.909594421412 0 8869.8449530717 0 0 0 0 
+	-log_K	5.840794 
+
+Montmorillonite(HcNa)
+	Na0.6Mg0.6Al1.4Si4O10(OH)2 + 4H2O + 6H+ = 4Si(OH)4 + 0.6Na+ + 0.6Mg+2 + 1.4Al+3
+	-analytical_expression	-20.702468422551 0 7756.9617848024 0 0 0 0 
+	-log_K	5.315098 
+
+Montmorillonite(MgCa)
+	Ca0.17Mg0.34Al1.66Si4O10(OH)2 + 4H2O + 6H+ = 4Si(OH)4 + 0.34Mg+2 + 0.17Ca+2 + 1.66Al+3
+	-analytical_expression	-23.945217547327 0 8345.6313288931 0 0 0 0 
+	-log_K	4.046663 
+
+Montmorillonite(MgK)
+	K0.34Mg0.34Al1.66Si4O10(OH)2 + 4H2O + 6H+ = 4Si(OH)4 + 0.34Mg+2 + 0.34K+ + 1.66Al+3
+	-analytical_expression	-21.867793846567 0 7311.2861842701 0 0 0 0 
+	-log_K	2.655008 
+
+Montmorillonite(MgMg)
+	Mg0.17Mg0.34Al1.66Si4O10(OH)2 + 4H2O + 6H+ = 4Si(OH)4 + 0.51Mg+2 + 1.66Al+3
+	-analytical_expression	-24.697690790643 0 8416.6686474346 0 0 0 0 
+	-log_K	3.532779 
+
+Montmorillonite(MgNa)
+	Na0.34Mg0.34Al1.66Si4O10(OH)2 + 4H2O + 6H+ = 4Si(OH)4 + 0.34Na+ + 0.34Mg+2 + 1.66Al+3
+	-analytical_expression	-22.879814469171 0 7785.9826187595 0 0 0 0 
+	-log_K	3.235001 
+
+MoO3(cr)
+	MoO3 + H2O = MoO4-2 + 2H+
+	-analytical_expression	-6.0371274095825 0 -1756.2410009724 0 0 0 0 
+	-log_K	-11.928434 
+
+Mordenite-Ca
+	Ca0.34Al0.68Si5.32O12(H2O)2.9 + 6.38H2O + 2.72H+ = 5.32Si(OH)4 + 0.34Ca+2 + 0.68Al+3
+	-analytical_expression	-6.9473285720554 0 787.31078006178 0 0 0 0 
+	-log_K	-4.306135 
+
+Mordenite-Na
+	Na0.72Al0.72Si5.28O12(H2O)2.71 + 6.41H2O + 2.88H+ = 5.28Si(OH)4 + 0.72Na+ + 0.72Al+3
+	-analytical_expression	-5.0550479720766 0 247.58281444693 0 0 0 0 
+	-log_K	-4.229296 
+
+Na(UO2)(AsO4)w3(cr)
+	Na(UO2)(AsO4)(H2O)3 + H+ = UO2+2 + Na+ + HAsO4-2 + 3H2O
+	-analytical_expression	-8.9109271402173 0 -681.59262474167 0 0 0 0 
+	-log_K	-11.197 
+
+Na(UO2)(BO3)w1(cr)
+	Na(UO2)(BO3)(H2O) + 3H+ = UO2+2 + Na+ + H2O + B(OH)3
+	-analytical_expression	0.45962273336147 0 2033.4954765743 0 0 0 0 
+	-log_K	7.28 
+
+Na(UO2)(PO4)w3(cr)
+	Na(UO2)(PO4)(H2O)3 + H+ = UO2+2 + Na+ + HPO4-2 + 3H2O
+	-analytical_expression	-9.7362811727242 0 -660.02026256692 0 0 0 0 
+	-log_K	-11.95 
+
+Na-boltwoodite
+	Na(UO2)(SiO3OH)(H2O) + 3H+ = UO2+2 + Si(OH)4 + Na+ + H2O
+	-analytical_expression	-2.0385756895165 0 2340.0528460746 0 0 0 0 
+	-log_K	5.81 
+
+Na2Np2O7w0.1(cr)
+	Na2Np2O7(H2O)0.1 + 6H+ = 2NpO2+2 + 2Na+ + 3.1H2O
+	-analytical_expression	25.2 0 0 0 0 0 0 
+	-log_K	25.2 
+
+Na2U2O7w1(cr)
+	Na2U2O7(H2O)1 + 6H+ = 2UO2+2 + 2Na+ + 4H2O
+	-analytical_expression	24.4 0 0 0 0 0 0 
+	-log_K	24.4 
+
+Na3NpO2(CO3)2(cr)
+	Na3NpO2(CO3)2 + 2H+ = NpO2+ + 3Na+ + 2HCO3-
+	-analytical_expression	6.438 0 0 0 0 0 0 
+	-log_K	6.438 
+
+Na6Th(CO3)5w12(cr)
+	Na6Th(CO3)5(H2O)12 + 5H+ = Th+4 + 6Na+ + 5HCO3- + 12H2O
+	-analytical_expression	9.445 0 0 0 0 0 0 
+	-log_K	9.445 
+
+Na7HNb6O19w15(cr)
+	Na7HNb6O19(H2O)15 + 13H+ = 6Nb(OH)4+ + 7Na+ + 10H2O
+	-analytical_expression	44.94 0 0 0 0 0 0 
+	-log_K	44.94 
+
+Dawsonite
+	NaAlCO3(OH)2 + 3H+ = Na+ + HCO3- + 2H2O + Al+3
+	-analytical_expression	-10.118446772463 0 4824.0855396688 -0.420950843764822 0 0 0 
+	-log_K	5.02 
+
+NaAm(CO3)2w5(cr)
+	NaAm(CO3)2(H2O)5 + 2H+ = Na+ + 2HCO3- + 5H2O + Am+3
+	-analytical_expression	-0.342 0 0 0 0 0 0 
+	-log_K	-0.342 
+
+NaAmO2CO3(s)
+	NaAmO2CO3 + H+ = Na+ + HCO3- + AmO2+
+	-analytical_expression	-0.571 0 0 0 0 0 0 
+	-log_K	-0.571 
+
+NaNpO2CO3w3.5(cr)
+	NaNpO2CO3(H2O)3.5 + H+ = NpO2+ + Na+ + HCO3- + 3.5H2O
+	-analytical_expression	-0.671 0 0 0 0 0 0 
+	-log_K	-0.671 
+
+Natrolite
+	Na2Al2Si3O10(H2O)2 + 8H+ = 3Si(OH)4 + 2Na+ + 2Al+3
+	-analytical_expression	-20.483140701554 0 12412.152182139 0 0 0 0 
+	-log_K	21.146481 
+
+Nb2O5(pr)
+	Nb2O5 + 3H2O + 2H+ = 2Nb(OH)4+
+	-analytical_expression	-12.22 0 0 0 0 0 0 
+	-log_K	-12.22 
+
+NH4(UO2)(AsO4)w3(cr)
+	NH4(UO2)(AsO4)(H2O)3 + H+ = UO2+2 + NH4+ + HAsO4-2 + 3H2O
+	-analytical_expression	-7.5679587459577 0 -1648.4836567436 0 0 0 0 
+	-log_K	-13.097 
+
+NH4(UO2)(PO4)w3(cr)
+	NH4(UO2)(PO4)(H2O)3 + H+ = UO2+2 + NH4+ + HPO4-2 + 3H2O
+	-analytical_expression	-8.3933470957574 0 -1597.0860674459 0 0 0 0 
+	-log_K	-13.75 
+
+Ni(OH)2(cr)
+	Ni(OH)2 + 2H+ = Ni+2 + 2H2O
+	-analytical_expression	-11.662676868553 0 4757.347613802 2.7183802773635 0 0 0 
+	-log_K	11.02 
+
+Ni(Oxa)w2(cr)
+	Ni(Oxa)(H2O)2 = Oxa-2 + Ni+2 + 2H2O
+	-analytical_expression	9.96 0 0 0 0 0 0 
+	-log_K	9.96 
+
+Rauchite
+	Ni(UO2)2(AsO4)2(H2O)10 + 2H+ = 2UO2+2 + Ni+2 + 2HAsO4-2 + 10H2O
+	-analytical_expression	-21.682094356434 0 -301.69967051176 0 0 0 0 
+	-log_K	-22.694 
+
+Ni[(UO2)(PO4)]2w8(cr)
+	Ni(UO2)2(PO4)2(H2O)8 + 2H+ = 2UO2+2 + Ni+2 + 2HPO4-2 + 8H2O
+	-analytical_expression	-27.244834239396 0 609.66733971835 0 0 0 0 
+	-log_K	-25.2 
+
+Ni3(AsO3)2(s)
+	Ni3(AsO3)2 + 6H+ = 3Ni+2 + 2As(OH)3
+	-analytical_expression	28.7 0 0 0 0 0 0 
+	-log_K	28.7 
+
+Ni3(AsO4)2w8(s)
+	Ni3(AsO4)2(H2O)8 + 2H+ = 3Ni+2 + 2HAsO4-2 + 8H2O
+	-analytical_expression	-19.848690165096 0 4458.7408715763 0 0 0 0 
+	-log_K	-4.894 
+
+NiCO3(cr)
+	NiCO3 + H+ = Ni+2 + HCO3-
+	-analytical_expression	-6.2052970310653 0 1650.0506564173 0 0 0 0 
+	-log_K	-0.671 
+
+NiCO3w5.5(s)
+	NiCO3(H2O)5.5 + H+ = Ni+2 + HCO3- + 5.5H2O
+	-analytical_expression	2.1010373934103 0 208.09755666877 0 0 0 0 
+	-log_K	2.799 
+
+NiO(cr)
+	NiO + 2H+ = Ni+2 + H2O
+	-analytical_expression	-9.1799131823939 0 3711.5975504356 3.72252844724711 0 0 0 
+	-log_K	12.48 
+
+NiSeO3w2(cr)
+	NiSeO3(H2O)2 = SeO3-2 + Ni+2 + 2H2O
+	-analytical_expression	-5.8 0 0 0 0 0 0 
+	-log_K	-5.8 
+
+Nontronite_Nau-1
+	(Ca0.247K0.020)(Si3.458Al0.542)(Fe1.688Al0.276Mg0.068)O10(OH)2 + 1.832H2O + 8.168H+ = 3.458Si(OH)4 + 0.068Mg+2 + 0.02K+ + 1.688Fe+3 + 0.247Ca+2 + 0.818Al+3
+	-analytical_expression	-32.421570182801 0 10026.59648614 0 0 0 0 
+	-log_K	1.208638 
+
+Nontronite(Ca)
+	Ca0.17Fe1.67Al0.67Si3.66O10(OH)2 + 2.64H2O + 7.36H+ = 3.66Si(OH)4 + 1.67Fe+3 + 0.17Ca+2 + 0.67Al+3
+	-analytical_expression	-29.270579231118 0 7850.8344672557 0 0 0 0 
+	-log_K	-2.938784 
+
+Nontronite(K)
+	K0.34Fe1.67Al0.67Si3.66O10(OH)2 + 2.64H2O + 7.36H+ = 3.66Si(OH)4 + 0.34K+ + 1.67Fe+3 + 0.67Al+3
+	-analytical_expression	-27.193155530357 0 6882.8256421532 0 0 0 0 
+	-log_K	-4.107945 
+
+Nontronite(Mg)
+	Mg0.17Fe1.67Al0.67Si3.66O10(OH)2 + 2.64H2O + 7.36H+ = 3.66Si(OH)4 + 0.17Mg+2 + 1.67Fe+3 + 0.67Al+3
+	-analytical_expression	-30.023052474434 0 7912.469787755 0 0 0 0 
+	-log_K	-3.484202 
+
+Nontronite(Na)
+	Na0.34Fe1.67Al0.67Si3.66O10(OH)2 + 2.64H2O + 7.36H+ = 3.66Si(OH)4 + 0.34Na+ + 1.67Fe+3 + 0.67Al+3
+	-analytical_expression	-28.204653819737 0 7332.9724150878 0 0 0 0 
+	-log_K	-3.610292 
+
+Np(Oxa)2w6(cr)
+	Np(Oxa)2(H2O)6 = 2Oxa-2 + Np+4 + 6H2O
+	-analytical_expression	-24 0 0 0 0 0 0 
+	-log_K	-24 
+
+NpO2(am_hyd)
+	NpO2 + 4H+ = Np+4 + 2H2O
+	-analytical_expression	-0.7 0 0 0 0 0 0 
+	-log_K	-0.7 
+
+NpO2(OH)2w1(cr_hex)
+	NpO2(OH)2(H2O) + 2H+ = NpO2+2 + 3H2O
+	-analytical_expression	5.47 0 0 0 0 0 0 
+	-log_K	5.47 
+
+NpO2CO3(cr)
+	NpO2CO3 + H+ = NpO2+2 + HCO3-
+	-analytical_expression	-4.501 0 0 0 0 0 0 
+	-log_K	-4.501 
+
+NpO2OH(am)
+	NpO2OH + H+ = NpO2+ + H2O
+	-analytical_expression	-1.9003674674283 0 2146.7895529836 0 0 0 0 
+	-log_K	5.3 
+
+Pa2O5(act)
+	Pa2O5 + 4H+ = 2PaO(OH)+2 + H2O
+	-analytical_expression	-1.48 0 0 0 0 0 0 
+	-log_K	-1.48 
+
+Pb(cr)
+	Pb = Pb
+	-analytical_expression	-7.3 0 0 0 0 0 0 
+	-log_K	-7.3 
+
+Pb[(UO2)(AsO4)]2w10(cr)
+	Pb(UO2)2(AsO4)2(H2O)10 + 2H+ = 2UO2+2 + Pb+2 + 2HAsO4-2 + 10H2O
+	-analytical_expression	-14.928327852074 0 -2434.5951597218 0 0 0 0 
+	-log_K	-23.094 
+
+Pb[(UO2)(PO4)]2w8(cr)
+	Pb(UO2)2(PO4)2(H2O)8 + 2H+ = 2UO2+2 + Pb+2 + 2HPO4-2 + 8H2O
+	-analytical_expression	-25.15 0 0 0 0 0 0 
+	-log_K	-25.15 
+
+Pb2(CO3)Cl2(s)
+	Pb2(CO3)Cl2 + H+ = 2Pb+2 + HCO3- + 2Cl-
+	-analytical_expression	-9.531 0 0 0 0 0 0 
+	-log_K	-9.531 
+
+Parsonite
+	Pb2(UO2)(PO4)2(H2O)2 + 2H+ = UO2+2 + 2Pb+2 + 2HPO4-2 + 2H2O
+	-analytical_expression	-27.5 0 0 0 0 0 0 
+	-log_K	-27.5 
+
+Pb3(PO4)2(s)
+	Pb3(PO4)2 + 2H+ = 3Pb+2 + 2HPO4-2
+	-analytical_expression	-19.7 0 0 0 0 0 0 
+	-log_K	-19.7 
+
+Pb5(PO4)3Cl(s)
+	Pb5(PO4)3Cl + 3H+ = 5Pb+2 + 3HPO4-2 + Cl-
+	-analytical_expression	-47.35 0 0 0 0 0 0 
+	-log_K	-47.35 
+
+PbClOH(s)
+	PbClOH + H+ = Pb+2 + H2O + Cl-
+	-analytical_expression	0.73 0 0 0 0 0 0 
+	-log_K	0.73 
+
+PbCO3(s)
+	PbCO3 + H+ = Pb+2 + HCO3-
+	-analytical_expression	-2.851 0 0 0 0 0 0 
+	-log_K	-2.851 
+
+PbHPO4(s)
+	PbHPO4 = Pb+2 + HPO4-2
+	-analytical_expression	-11.4 0 0 0 0 0 0 
+	-log_K	-11.4 
+
+PbO(s_red)
+	PbO + 2H+ = Pb+2 + H2O
+	-analytical_expression	1.039846984944 0 3452.6226144091 0 0 0 0 
+	-log_K	12.62 
+
+PbO(s_yellow)
+	PbO + 2H+ = Pb+2 + H2O
+	-analytical_expression	12.9 0 0 0 0 0 0 
+	-log_K	12.9 
+
+PbS(s)
+	PbS + H+ = Pb+2 + HS-
+	-analytical_expression	-12.28 0 0 0 0 0 0 
+	-log_K	-12.28 
+
+PbSO4(cr)
+	PbSO4 = SO4-2 + Pb+2
+	-analytical_expression	-5.8240154539579 0 -603.2948743786 0 0 0 0 
+	-log_K	-7.847525 
+
+Pd(cr)
+	Pd = Pd
+	-analytical_expression	-9.5 0 0 0 0 0 0 
+	-log_K	-9.5 
+
+PdO(cr)
+	PdO + 2H+ = Pd+2 + H2O
+	-analytical_expression	-3.0258763699353 0 -191.1739601927 0 0 0 0 
+	-log_K	-3.668508 
+
+Phillipsite-Na
+	Na2.5Al2.5Si5.5O16(H2O)5 + H2O + 10H+ = 5.5Si(OH)4 + 2.5Na+ + 2.5Al+3
+	-analytical_expression	-25.549642396578 0 13804.039642313 0 0 0 0 
+	-log_K	20.745993 
+
+Phillipsite-NaK
+	Na1.5KAl2.5Si5.5O16(H2O)5 + H2O + 10H+ = 5.5Si(OH)4 + 1.5Na+ + K+ + 2.5Al+3
+	-analytical_expression	-24.100167698396 0 13221.638096917 0 0 0 0 
+	-log_K	20.242668 
+
+Po(cr)
+	Po = Po
+	-analytical_expression	-7 0 0 0 0 0 0 
+	-log_K	-7 
+
+Po(SO4)2w1(s)
+	Po(SO4)2(H2O) = 2SO4-2 + Po+4 + H2O
+	-analytical_expression	-15.642 0 0 0 0 0 0 
+	-log_K	-15.642 
+
+PoO2(s)
+	PoO2 + 4H+ = Po+4 + 2H2O
+	-analytical_expression	0.995087 0 0 0 0 0 0 
+	-log_K	0.995087 
+
+PoSO4(s)
+	PoSO4 = SO4-2 + Po+2
+	-analytical_expression	-8.91 0 0 0 0 0 0 
+	-log_K	-8.91 
+
+Pu(HPO4)2(am_hyd)
+	Pu(HPO4)2 = Pu+4 + 2HPO4-2
+	-analytical_expression	-30.45 0 0 0 0 0 0 
+	-log_K	-30.45 
+
+Pu(OH)3(am)
+	Pu(OH)3 + 3H+ = Pu+3 + 3H2O
+	-analytical_expression	14.58 0 0 0 0 0 0 
+	-log_K	14.58 
+
+Pu(Oxa)2w6(cr)
+	Pu(Oxa)2(H2O)6 = Pu+4 + 2Oxa-2 + 6H2O
+	-analytical_expression	-26.5 0 0 0 0 0 0 
+	-log_K	-26.5 
+
+Pu2(Oxa)3w10(cr)
+	Pu2(Oxa)3(H2O)10 = 2Pu+3 + 3Oxa-2 + 10H2O
+	-analytical_expression	-24.45 0 0 0 0 0 0 
+	-log_K	-24.45 
+
+PuO2(am_hyd)
+	PuO2 + 4H+ = Pu+4 + 2H2O
+	-analytical_expression	-2.33 0 0 0 0 0 0 
+	-log_K	-2.33 
+
+PuO2(OH)2(am_hyd)
+	PuO2(OH)2 + 2H+ = PuO2+2 + 2H2O
+	-analytical_expression	5.17 0 0 0 0 0 0 
+	-log_K	5.17 
+
+PuO2CO3(cr)
+	PuO2CO3 + H+ = PuO2+2 + HCO3-
+	-analytical_expression	-4.491 0 0 0 0 0 0 
+	-log_K	-4.491 
+
+PuO2OH(am)
+	PuO2OH + H+ = PuO2+ + H2O
+	-analytical_expression	5 0 0 0 0 0 0 
+	-log_K	5 
+
+PuPO4(am_hyd)
+	PuPO4 + H+ = Pu+3 + HPO4-2
+	-analytical_expression	-12.09 0 0 0 0 0 0 
+	-log_K	-12.09 
+
+RaCO3(cr)
+	RaCO3 + H+ = Ra+2 + HCO3-
+	-analytical_expression	49.821808911922 0 -1584.0052268813 -16.8725517197812 0 0 0 
+	-log_K	2.759 
+
+RaSO4(cr)
+	RaSO4 = SO4-2 + Ra+2
+	-analytical_expression	146.37292644792 0 -8696.7251796197 -51.5123561098474 0 0 0 
+	-log_K	-10.26 
+
+Ripidolite_Cca-2
+	(Si2.633Al1.367)(Al1.116Fe0.215Mg2.952Fe1.712Mn0.012)(Ca0.011)O10(OH)8 + 17.468H+ = 2.633Si(OH)4 + 0.012Mn+2 + 2.952Mg+2 + 7.468H2O + 0.215Fe+3 + 1.712Fe+2 + 0.011Ca+2 + 2.483Al+3
+	-analytical_expression	-50.605082190029 0 33169.793566302 0 0 0 0 
+	-log_K	60.64902 
+
+S(orth)
+	S = S
+	-analytical_expression	1.7942265355962 0 -2517.6461424284 0 0 0 0 
+	-log_K	-6.65 
+
+Saponite_SapCa-2
+	(Na0.394K0.021Ca0.038)(Si3.569Al0.397)(Mg2.949Fe0.034Fe0.021)O10(OH)2 + 2.276H2O + 7.724H+ = 3.569Si(OH)4 + 0.394Na+ + 2.949Mg+2 + 0.021K+ + 0.034Fe+3 + 0.021Fe+2 + 0.038Ca+2 + 0.397Al+3
+	-analytical_expression	-19.027024588654 0 15034.11542548 0 0 0 0 
+	-log_K	31.397548 
+
+Saponite(Ca)
+	Ca0.17Mg3Al0.34Si3.66O10(OH)2 + 2.64H2O + 7.36H+ = 3.66Si(OH)4 + 3Mg+2 + 0.17Ca+2 + 0.34Al+3
+	-analytical_expression	-18.645172310266 0 14290.043546448 0 0 0 0 
+	-log_K	29.285033 
+
+Saponite(FeCa)
+	Ca0.17Mg2FeAl0.34Si3.66O10(OH)2 + 2.64H2O + 7.36H+ = 3.66Si(OH)4 + 2Mg+2 + Fe+2 + 0.17Ca+2 + 0.34Al+3
+	-analytical_expression	-19.336741499596 0 13671.601008557 0 0 0 0 
+	-log_K	26.519636 
+
+Saponite(FeK)
+	K0.34Mg2FeAl0.34Si3.66O10(OH)2 + 2.64H2O + 7.36H+ = 3.66Si(OH)4 + 2Mg+2 + 0.34K+ + Fe+2 + 0.34Al+3
+	-analytical_expression	-17.259317798836 0 12703.06985023 0 0 0 0 
+	-log_K	25.348724 
+
+Saponite(FeMg)
+	Mg0.17Mg2FeAl0.34Si3.66O10(OH)2 + 2.64H2O + 7.36H+ = 3.66Si(OH)4 + 2.17Mg+2 + Fe+2 + 0.34Al+3
+	-analytical_expression	-20.089214742912 0 13732.713995832 0 0 0 0 
+	-log_K	25.972466 
+
+Saponite(FeNa)
+	Na0.34Mg2FeAl0.34Si3.66O10(OH)2 + 2.64H2O + 7.36H+ = 3.66Si(OH)4 + 0.34Na+ + 2Mg+2 + Fe+2 + 0.34Al+3
+	-analytical_expression	-18.270816088216 0 13101.505633932 0 0 0 0 
+	-log_K	25.672936 
+
+Saponite(K)
+	K0.34Mg3Al0.34Si3.66O10(OH)2 + 2.64H2O + 7.36H+ = 3.66Si(OH)4 + 3Mg+2 + 0.34K+ + 0.34Al+3
+	-analytical_expression	-16.56722627628 0 13322.034721345 0 0 0 0 
+	-log_K	28.115872 
+
+Saponite(Mg)
+	Mg0.17Mg3Al0.34Si3.66O10(OH)2 + 2.64H2O + 7.36H+ = 3.66Si(OH)4 + 3.17Mg+2 + 0.34Al+3
+	-analytical_expression	-19.397123220357 0 14351.678866947 0 0 0 0 
+	-log_K	28.739615 
+
+Saponite(Na)
+	Na0.34Mg3Al0.34Si3.66O10(OH)2 + 2.64H2O + 7.36H+ = 3.66Si(OH)4 + 0.34Na+ + 3Mg+2 + 0.34Al+3
+	-analytical_expression	-17.579246898885 0 13772.18149428 0 0 0 0 
+	-log_K	28.613524 
+
+Scolecite
+	CaAl2Si3O10(H2O)3 + 8H+ = 3Si(OH)4 + H2O + Ca+2 + 2Al+3
+	-analytical_expression	-26.236641170194 0 14685.346375469 0 0 0 0 
+	-log_K	23.015773 
+
+Se(cr)
+	Se = Se
+	-analytical_expression	-6 0 0 0 0 0 0 
+	-log_K	-6 
+
+Silica(am)
+	SiO2 + 2H2O = Si(OH)4
+	-analytical_expression	-0.97937507194401 0 -725.69569997495 0.282638423670658 0 0 0 
+	-log_K	-2.714 
+
+SiO2(cr)
+	SiO2 + 2H2O = Si(OH)4
+	-analytical_expression	-14.847327311273 0 -422.82989964601 5.05934805537452 0 0 0 
+	-log_K	-3.746819 
+
+Sm(OH)3(cr)
+	Sm(OH)3 + 3H+ = Sm+3 + 3H2O
+	-analytical_expression	15 0 0 0 0 0 0 
+	-log_K	15 
+
+Sm2(CO3)3(cr)
+	Sm2(CO3)3 + 3H+ = 2Sm+3 + 3HCO3-
+	-analytical_expression	-4.013 0 0 0 0 0 0 
+	-log_K	-4.013 
+
+Smectite_MX80
+	(Na0.409K0.024Ca0.009)(Si3.738Al0.262)(Al1.598 Mg0.214Fe0.173Fe0.035)O10(OH)2 + 2.952H2O + 7.048H+ = 3.738Si(OH)4 + 0.409Na+ + 0.214Mg+2 + 0.024K+ + 0.173Fe+3 + 0.035Fe+2 + 0.009Ca+2 + 1.86Al+3
+	-analytical_expression	-27.861017163758 0 9823.0176341968 0 0 0 0 
+	-log_K	5.085507 
+
+SmF3(cr)
+	SmF3 = Sm+3 + 3F-
+	-analytical_expression	31.988973806212 0 -3813.0325393626 0 0 0 0 
+	-log_K	19.2 
+
+SmOHCO3(cr)
+	SmOHCO3 + 2H+ = Sm+3 + HCO3- + H2O
+	-analytical_expression	2.629 0 0 0 0 0 0 
+	-log_K	2.629 
+
+Sm-rhabdophane
+	SmPO4(H2O)0.667 + H+ = Sm+3 + HPO4-2 + 0.667H2O
+	-analytical_expression	-19.262006009592 0 1911.739601927 0 0 0 0 
+	-log_K	-12.85 
+
+SnO(s)
+	SnO + 2H+ = Sn+2 + H2O
+	-analytical_expression	1.6 0 0 0 0 0 0 
+	-log_K	1.6 
+
+SnO2(am)
+	SnO2 + 4H+ = Sn+4 + 2H2O
+	-analytical_expression	-14.76 0 0 0 0 0 0 
+	-log_K	-14.76 
+
+cassiterite
+	SnO2 + 4H+ = Sn+4 + 2H2O
+	-analytical_expression	-15.6 0 0 0 0 0 0 
+	-log_K	-15.6 
+
+Sodalite
+	Na8Al6Si6O24Cl2 + 24H+ = 6Si(OH)4 + 8Na+ + 2Cl- + 6Al+3
+	-analytical_expression	-65.338349661553 0 41275.711605342 0 0 0 0 
+	-log_K	73.099672 
+
+Sr[(UO2)(AsO4)]2w8(cr)
+	Sr(UO2)2(AsO4)2(H2O)8 + 2H+ = 2UO2+2 + Sr+2 + 2HAsO4-2 + 8H2O
+	-analytical_expression	-22.444626640755 0 164.16933248242 0 0 0 0 
+	-log_K	-21.894 
+
+Sr[(UO2)(PO4)]2w6(cr)
+	Sr(UO2)2(PO4)2(H2O)6 + 2H+ = 2UO2+2 + Sr+2 + 2HPO4-2 + 6H2O
+	-analytical_expression	-26.544989881488 0 -16.401263251505 0 0 0 0 
+	-log_K	-26.6 
+
+Sr3(PO4)2(s)
+	Sr3(PO4)2 + 2H+ = 3Sr+2 + 2HPO4-2
+	-analytical_expression	-4.1 0 0 0 0 0 0 
+	-log_K	-4.1 
+
+Strontianite
+	SrCO3 + H+ = Sr+2 + HCO3-
+	-analytical_expression	61.309328541844 0 -1948.8878912368 -21.707472839594 0 0 0 
+	-log_K	1.059 
+
+SrHPO4(beta)
+	SrHPO4 = Sr+2 + HPO4-2
+	-analytical_expression	110.37282201944 0 -4364.707832823 -41.4937260282447 0 0 0 
+	-log_K	-6.94 
+
+SrSeO3(cr)
+	SrSeO3 = Sr+2 + SeO3-2
+	-analytical_expression	-7.3861868360406 0 323.84659923353 0 0 0 0 
+	-log_K	-6.3 
+
+Celestite
+	SrSO4 = Sr+2 + SO4-2
+	-analytical_expression	137.85015205352 0 -6371.6831457528 -49.7323353990703 0 0 0 
+	-log_K	-6.58 
+
+Stilbite
+	Ca1.11Al2.22Si6.78O18(H2O)6.8 + 2.32H2O + 8.88H+ = 6.78Si(OH)4 + 1.11Ca+2 + 2.22Al+3
+	-analytical_expression	-27.217333290656 0 12115.745836526 0 0 0 0 
+	-log_K	13.409957 
+
+TcO2(am_hyd_ag)
+	TcO2 + H2O = TcO(OH)2
+	-analytical_expression	-8.72 0 0 0 0 0 0 
+	-log_K	-8.72 
+
+TcO2(am_hyd_fr)
+	TcO2 + H2O = TcO(OH)2
+	-analytical_expression	-7.66 0 0 0 0 0 0 
+	-log_K	-7.66 
+
+Th3(PO4)4(s)
+	Th3(PO4)4 + 4H+ = 3Th+4 + 4HPO4-2
+	-analytical_expression	-62.6 0 0 0 0 0 0 
+	-log_K	-62.6 
+
+ThF4(cr_hyd)
+	ThF4 = Th+4 + 4F-
+	-analytical_expression	-31.8 0 0 0 0 0 0 
+	-log_K	-31.8 
+
+ThO2(am_hyd_ag)
+	ThO2 + 4H+ = Th+4 + 2H2O
+	-analytical_expression	8.5 0 0 0 0 0 0 
+	-log_K	8.5 
+
+ThO2(am_hyd_fr)
+	ThO2 + 4H+ = Th+4 + 2H2O
+	-analytical_expression	9.3 0 0 0 0 0 0 
+	-log_K	9.3 
+
+TiO2(am_hyd)
+	TiO2 + 2H+ = TiO+2 + H2O
+	-analytical_expression	0.19 0 0 0 0 0 0 
+	-log_K	0.19 
+
+U(OH)2SO4(cr)
+	U(OH)2SO4 + 2H+ = U+4 + SO4-2 + 2H2O
+	-analytical_expression	-3.17 0 0 0 0 0 0 
+	-log_K	-3.17 
+
+U(Oxa)2w6(cr)
+	U(Oxa)2(H2O)6 = U+4 + 2Oxa-2 + 6H2O
+	-analytical_expression	-23.82 0 0 0 0 0 0 
+	-log_K	-23.82 
+
+UF4w2.5(cr)
+	UF4(H2O)2.5 = U+4 + 2.5H2O + 4F-
+	-analytical_expression	-29.288541487211 0 -247.89934838102 0 0 0 0 
+	-log_K	-30.12 
+
+UO2(am_hyd)
+	UO2 + 4H+ = U+4 + 2H2O
+	-analytical_expression	1.5 0 0 0 0 0 0 
+	-log_K	1.5 
+
+Rutherfordine
+	UO2CO3 + H+ = UO2+2 + HCO3-
+	-analytical_expression	-7.5215518939208 0 921.44804146431 0 0 0 0 
+	-log_K	-4.431 
+
+Hydrogen_uranospinite
+	UO2HAsO4(H2O)4 = UO2+2 + HAsO4-2 + 4H2O
+	-analytical_expression	-8.8327231486681 0 -764.53914080342 0 0 0 0 
+	-log_K	-11.397 
+
+Chernikovite
+	UO2HPO4(H2O)4 = UO2+2 + HPO4-2 + 4H2O
+	-analytical_expression	-9.3966921813687 0 -732.05001423516 0 0 0 0 
+	-log_K	-11.852 
+
+UO2Oxaw3(cr)
+	UO2Oxa(H2O)3 = UO2+2 + Oxa-2 + 3H2O
+	-analytical_expression	-9.8409954035867 0 271.61327677651 0 0 0 0 
+	-log_K	-8.93 
+
+Metaschoepite
+	UO3(H2O)2 + 2H+ = UO2+2 + 3H2O
+	-analytical_expression	-37.734668800675 0 4293.5577660433 11.5921443355954 0 0 0 
+	-log_K	5.35 
+
+Coffinite
+	USiO4 + 4H+ = U+4 + Si(OH)4
+	-analytical_expression	-18.340122342218 0 4126.4324741047 0 0 0 0 
+	-log_K	-4.5 
+
+Vermiculite_SO
+	Ca0.445(Si2.778Al1.222)(Al0.192Mg2.468Fe0.226Fe0.028Ti0.018Mn0.007)O10(OH)2 + 10.852H+ = 0.018TiO+2 + 2.778Si(OH)4 + 0.007Mn+2 + 2.468Mg+2 + 0.87H2O + 0.226Fe+3 + 0.028Fe+2 + 0.445Ca+2 + 1.414Al+3
+	-analytical_expression	43.620277 0 0 0 0 0 0 
+	-log_K	43.620277 
+
+Vermiculite(Ca)
+	Ca0.43Mg3Al0.86Si3.14O10(OH)2 + 0.56H2O + 9.44H+ = 3.14Si(OH)4 + 3Mg+2 + 0.43Ca+2 + 0.86Al+3
+	-analytical_expression	-27.12653297223 0 19851.766237688 0 0 0 0 
+	-log_K	39.456577 
+
+Vermiculite(K)
+	K0.86Mg3Al0.86Si3.14O10(OH)2 + 0.56H2O + 9.44H+ = 3.14Si(OH)4 + 3Mg+2 + 0.86K+ + 0.86Al+3
+	-analytical_expression	-21.870920533249 0 17657.987587823 0 0 0 0 
+	-log_K	37.354634 
+
+Vermiculite(Mg)
+	Mg0.43Mg3Al0.86Si3.14O10(OH)2 + 0.56H2O + 9.44H+ = 3.14Si(OH)4 + 3.43Mg+2 + 0.86Al+3
+	-analytical_expression	-29.029079509404 0 19970.335879666 0 0 0 0 
+	-log_K	37.952501 
+
+Vermiculite(Na)
+	Na0.86Mg3Al0.86Si3.14O10(OH)2 + 0.56H2O + 9.44H+ = 3.14Si(OH)4 + 0.86Na+ + 3Mg+2 + 0.86Al+3
+	-analytical_expression	-24.430614500255 0 18702.758503608 0 0 0 0 
+	-log_K	38.299087 
+
+Wülfingite
+	Zn(OH)2 + 2H+ = Zn+2 + 2H2O
+	-analytical_expression	-6.1391421701071 0 5223.3322457021 0 0 0 0 
+	-log_K	11.38 
+
+Zn[(UO2)(AsO4)]2w8(cr)
+	Zn(UO2)2(AsO4)2(H2O)8 + 2H+ = Zn+2 + 2UO2+2 + 2HAsO4-2 + 8H2O
+	-analytical_expression	-23.243849909037 0 402.45774953135 0 0 0 0 
+	-log_K	-21.894 
+
+Zn[(UO2)(PO4)]2w8(cr)
+	Zn(UO2)2(PO4)2(H2O)8 + 2H+ = Zn+2 + 2UO2+2 + 2HPO4-2 + 8H2O
+	-analytical_expression	-26.095788009357 0 296.89420484571 0 0 0 0 
+	-log_K	-25.1 
+
+Zn3(PO4)2w4(s)
+	Zn3(PO4)2(H2O)4 + 2H+ = 3Zn+2 + 2HPO4-2 + 4H2O
+	-analytical_expression	-10.6 0 0 0 0 0 0 
+	-log_K	-10.6 
+
+Hydrozincite
+	Zn5(OH)6(CO3)2 + 8H+ = 5Zn+2 + 2HCO3- + 6H2O
+	-analytical_expression	-222.2253436806 0 23559.051470314 69.8809671283686 0 0 0 
+	-log_K	29.708 
+
+Smithsonite
+	ZnCO3 + H+ = Zn+2 + HCO3-
+	-analytical_expression	-105.57222036001 0 5516.75037256 34.9404835641854 0 0 0 
+	-log_K	-0.611 
+
+Zincite
+	ZnO + 2H+ = Zn+2 + H2O
+	-analytical_expression	-4.3599905892386 0 4636.2297012852 0 0 0 0 
+	-log_K	11.19 
+
+Sphalerite
+	ZnS + H+ = Zn+2 + HS-
+	-analytical_expression	-3.6448239518212 0 -2094.5562305266 0 0 0 0 
+	-log_K	-10.67 
+
+Zr(HPO4)2w(cr)
+	Zr(HPO4)2(H2O) = Zr+4 + 2HPO4-2 + H2O
+	-analytical_expression	-46.099270946521 0 1370.0800480477 0 0 0 0 
+	-log_K	-41.504 
+
+Zr(OH)4(am_fr)
+	Zr(OH)4 + 4H+ = Zr+4 + 4H2O
+	-analytical_expression	-3.24 0 0 0 0 0 0 
+	-log_K	-3.24 
+
+Baddeleyite
+	ZrO2 + 4H+ = Zr+4 + 2H2O
+	-analytical_expression	-20.938229530292 0 4155.6831346806 0 0 0 0 
+	-log_K	-7 
+
+As(cr)
+	As + 4H2O = HAsO4-2 + 7H+ + 5e-
+	-analytical_expression	0.52786316641874 0 -12378.252755865 0 0 0 0 
+	-log_K	-40.989 
+
+Graphite # C(cr)
+	C + 3H2O = HCO3- + 5H+ + 4e-
+	-analytical_expression	7.4861451184267 0 -8737.3290139982 0 0 0 0 
+	-log_K	-21.819 
+
+Cu(cr)
+	Cu = 2e- + Cu+2
+	-analytical_expression	-0.020076713219515 0 -3389.9426274607 0 0 0 0 
+	-log_K	-11.39 
+
+Fe(alpha)
+	Fe = Fe+2 + 2e-
+	-analytical_expression	6.808109090973 0 4416.3905533813 -2.31498909736705 0 0 0 
+	-log_K	15.893366 
+
+MnO2(cr)
+	MnO2 + 4H+ + 2e- = Mn+2 + 2H2O
+	-analytical_expression	-6.1207007255138 0 14231.49103664 0 0 0 0 
+	-log_K	41.616722 
+
+MoO2(cr)
+	MoO2 + 2H2O = MoO4-2 + 4H+ + 2e-
+	-analytical_expression	-1.4212687040556 0 -8498.5182637248 0 0 0 0 
+	-log_K	-29.921118 
+
+Sn(beta)
+	Sn = Sn+4 + 4e-
+	-analytical_expression	-13.701845146926 0 1645.3496573962 0 0 0 0 
+	-log_K	-8.181439 
+
+Titanium # Ti(alpha)
+	Ti + H2O = TiO+2 + 2H+ + 4e-
+	-analytical_expression	59.6 0 0 0 0 0 0 
+	-log_K	59.6 
+
+# ----- from THERMOCHIMIE10a:2018:data
+
+B(cr)
+	B     = 1.000H+  +  1.000B(OH)4-     -2.500H2O     -0.750O2
+	-analytical_expression	-8.44904 0 32460.1 0 0 
+	-log_K	100.423 
+
+B(OH)3(cr)
+	B(OH)3     = 1.000H+  +  1.000B(OH)4-     -1.000H2O
+	-analytical_expression	-3.08822 0 -1855.02 0 0 
+	-log_K	-9.31 
+
+B2O3(am)
+	B2O3     = 2.000H+  +  2.000B(OH)4-     -5.000H2O
+	-analytical_expression	-11.8059 0 350.592 0 0 
+	-log_K	-10.63 
+
+B2O3(cr)
+	B2O3     = 2.000H+  +  2.000B(OH)4-     -5.000H2O
+	-analytical_expression	-10.5645 0 -648.636 0 0 
+	-log_K	-12.74 
+
+Ca3B2O6(s)
+	Ca3B2O6     = 3.000Ca+2     -4.000H+  +  2.000B(OH)4-     -2.000H2O
+	-analytical_expression	-15.1847 0 16626.3 0 0 
+	-log_K	40.58 
+
+CaB2O4(s)
+	CaB2O4     = 1.000Ca+2  +  2.000B(OH)4-     -4.000H2O
+	-analytical_expression	-12.4978 0 3076.24 0 0 
+	-log_K	-2.18 
+
+CaB4O7(s)
+	CaB4O7     = 1.000Ca+2  +  2.000H+  +  4.000B(OH)4-     -9.000H2O
+	-analytical_expression	-21.7983 0 -489.481 0 0 
+	-log_K	-23.44 
+
+CdB2O4(s)
+	CdB2O4     = 1.000Cd+2  +  2.000B(OH)4-     -4.000H2O
+	-analytical_expression	-8.64 0 0 0 0 
+	-log_K	-8.64 
+
+Na2B4O7:10H2O(s)
+	Na2B4O7:10H2O     = 2.000Na+  +  2.000H+  +  4.000B(OH)4-  +  1.000H2O
+	-analytical_expression	0.204619 0 -7389.53 0 0 
+	-log_K	-24.58 
+
+Na2B4O7(cr)
+	Na2B4O7     = 2.000Na+  +  2.000H+  +  4.000B(OH)4-     -9.000H2O
+	-analytical_expression	-15.6185 0 -131.629 0 0 
+	-log_K	-16.06 
+
+NaBO2(s)
+	NaBO2     = 1.000Na+  +  1.000B(OH)4-     -2.000H2O
+	-analytical_expression	-2.82585 0 1921.83 0 0 
+	-log_K	3.62 
+
+Ni(BO2)2(s)
+	Ni(BO2)2     = 1.000Ni+2  +  2.000B(OH)4-     -4.000H2O
+	-analytical_expression	-8.7 0 0 0 0 
+	-log_K	-8.7 
+
+PbB2O4(s)
+	PbB2O4     = 1.000Pb+2  +  2.000B(OH)4-     -4.000H2O
+	-analytical_expression	-10.3863 0 -144.217 0 0 
+	-log_K	-10.87 
+
+ZnB2O4(s)
+	ZnB2O4     = 1.000Zn+2  +  2.000B(OH)4-     -4.000H2O
+	-analytical_expression	-10.19 0 0 0 0 
+	-log_K	-10.19 
+
+Ca4Al2O6(CrO4):15H2O(s)
+	Ca4Al2O6(CrO4):15H2O     = 4.000Ca+2  +  2.000Al+3     -12.000H+  +  1.000CrO4-2  +  21.000H2O
+	-analytical_expression	-24.2914 0 28518.5 0 0 
+	-log_K	71.36 
+
+Ca6(Al(OH)6)2(CrO4)3:26H2O(s)
+	Ca6(Al(OH)6)2(CrO4)3:26H2O     = 6.000Ca+2  +  2.000Al+3     -12.000H+  +  3.000CrO4-2  +  38.000H2O
+	-analytical_expression	-28.9962 0 26617.7 0 0 
+	-log_K	60.28 
+
+CaCrO4(s)
+	CaCrO4     = 1.000Ca+2  +  1.000CrO4-2
+	-analytical_expression	-7.14561 0 1191.29 0 0 
+	-log_K	-3.15 
+
+Chromite
+	FeCr2O4     = 1.000Fe+2     -8.000H+  +  2.000Cr+3  +  4.000H2O
+	-analytical_expression	-31.9752 0 14041.4 0 0 
+	-log_K	15.12 
+
+Cr(cr)
+	Cr     = 2.000H+  +  1.000CrO4-2     -1.000H2O     -1.500O2
+	-analytical_expression	-11.0551 0 30032.7 0 0 
+	-log_K	89.675 
+
+Cr(OH)2(cr)
+	Cr(OH)2     =  -2.000H+  +  1.000Cr+2  +  2.000H2O
+	-analytical_expression	-2.21983 0 3941.49 0 0 
+	-log_K	11 
+
+Cr(OH)2(H2PO4)(s)
+	Cr(OH)2(H2PO4)     =  -2.000H+  +  1.000H2PO4-  +  1.000Cr+3  +  2.000H2O
+	-analytical_expression	0.89 0 0 0 0 
+	-log_K	0.89 
+
+Cr(OH)3(cr)
+	Cr(OH)3     =  -3.000H+  +  1.000Cr+3  +  3.000H2O
+	-analytical_expression	-10.8516 0 5471.52 0 0 
+	-log_K	7.5 
+
+Cr2(SO4)3(s)
+	Cr2(SO4)3     = 3.000SO4-2  +  2.000Cr+3
+	-analytical_expression	-44.2744 0 14506.3 0 0 
+	-log_K	4.38 
+
+Cr2O3(cr)
+	Cr2O3     =  -6.000H+  +  2.000Cr+3  +  3.000H2O
+	-analytical_expression	-26.9363 0 10341.7 0 0 
+	-log_K	7.75 
+
+Cr2S3(s)
+	Cr2S3     =  -3.000H+  +  3.000HS-  +  2.000Cr+3
+	-analytical_expression	-30.9375 0 10196 0 0 
+	-log_K	3.26 
+
+CrCl2(cr)
+	CrCl2     = 2.000Cl-  +  1.000Cr+2
+	-analytical_expression	-5.39784 0 5404.82 0 0 
+	-log_K	12.73 
+
+CrCl3(cr)
+	CrCl3     = 3.000Cl-  +  1.000Cr+3
+	-analytical_expression	-14.3824 0 10307.8 0 0 
+	-log_K	20.19 
+
+CrO2(cr)
+	CrO2     = 2.000H+  +  1.000CrO4-2     -1.000H2O     -0.500O2
+	-analytical_expression	-6.79345 0 -563.966 0 0 
+	-log_K	-8.685 
+
+CrO3(cr)
+	CrO3     = 2.000H+  +  1.000CrO4-2     -1.000H2O
+	-analytical_expression	-4.78419 0 525.992 0 0 
+	-log_K	-3.02 
+
+Crocoite
+	PbCrO4     = 1.000Pb+2  +  1.000CrO4-2
+	-analytical_expression	-3.97609 0 -2556.31 0 0 
+	-log_K	-12.55 
+
+CrPO4(green)
+	CrPO4     =  -2.000H+  +  1.000H2PO4-  +  1.000Cr+3
+	-analytical_expression	-3.06 0 0 0 0 
+	-log_K	-3.06 
+
+CrPO4(purple)
+	CrPO4     =  -2.000H+  +  1.000H2PO4-  +  1.000Cr+3
+	-analytical_expression	2.56 0 0 0 0 
+	-log_K	2.56 
+
+CrS(s)
+	CrS     =  -1.000H+  +  1.000HS-  +  1.000Cr+2
+	-analytical_expression	-5.13238 0 2025.15 0 0 
+	-log_K	1.66 
+
+KFe(CrO4)2:2H2O(s)
+	KFe(CrO4)2:2H2O     = 1.000K+  +  1.000Fe+3  +  2.000CrO4-2  +  2.000H2O
+	-analytical_expression	-14.5652 0 -1438.51 0 0 
+	-log_K	-19.39 
+
+KFe3(CrO4)2(OH)6(cr)
+	KFe3(CrO4)2(OH)6     = 1.000K+  +  3.000Fe+3     -6.000H+  +  2.000CrO4-2  +  6.000H2O
+	-analytical_expression	-18.4 0 0 0 0 
+	-log_K	-18.4 
+
+MgCr2O4(s)
+	MgCr2O4     = 1.000Mg+2     -8.000H+  +  2.000Cr+3  +  4.000H2O
+	-analytical_expression	-31.7402 0 16073.3 0 0 
+	-log_K	22.17 
+
+SrCrO4(s)
+	SrCrO4     = 1.000Sr+2  +  1.000CrO4-2
+	-analytical_expression	-6.42382 0 528.865 0 0 
+	-log_K	-4.65 
+
+# ----- from THERMOCHIMIE10a:2018:data
+
+
+
+SURFACE_MASTER_SPECIES
+
+		# --------- Cs from Aguila et al., Comp. Geosc. 2020 -----
+		Su_fes Su_fes-   # Frayed Edge Sites 
+		Su_ii Su_ii-     # Type II sites of intermediate strength 
+		Su_ Su_-         # Double layer, planar sites 
+		# --------- Cs from Aguila et al., Comp. Geosc. 2020 -----
+
+		# ----------U(VI) SCM taken from Henning et al., Appl. Geochem., 2020
+
+		Ill_w			Ill_wOH			# Illite	
+        Ill_s           Ill_sOH         
+ 
+        Kln_a           Kln_aOH         # Kaolinite
+        Kln_si          Kln_siOH         
+
+        Mll_w           Mll_wOH         # Montmorillonite
+        Mll_s           Mll_sOH         
+
+        Chl             ChlOH           # Chlorite
+		
+		# ----------U(VI) SCM taken from Henning et al., Appl. Geochem., 2020
+
+
+		# ---------- Co SCM from Montoya et al., 2018, Geoch. Cosm. Act.
+
+		Illdu_w			Illdu_wOH			
+        Illdu_s			Illdu_sOH         
+
+		# ---------- Co SCM from Montoya et al., 2018, Geoch. Cosm. Act. 
+
+SURFACE_SPECIES		
+
+	# --------- Cs from Aguila et al., Comp. Geosc. 2020 -----
+	Su_fes- = Su_fes-; log_k 0 # Third site
+	Na+ + Su_fes- = NaSu_fes; log_k 10 # I have changed the constants x10
+	K+ + Su_fes- = KSu_fes; log_k 12.4 
+	Cs+ + Su_fes- = CsSu_fes; log_k 17.0 
+
+	Su_ii- = Su_ii-; log_k 0 # second site
+	Na+ + Su_ii- = NaSu_ii; log_k 10 
+	K+ + Su_ii- = KSu_ii; log_k 12.1 
+	Cs+ + Su_ii- = CsSu_ii; log_k 13.2 # I included the constant that Jesus indicated me.
+
+	Su_- = Su_-; log_k 0 
+	Na+ + Su_- = NaSu_; log_k 10 
+	K+ + Su_- = KSu_; log_k 10.7 
+	Cs+ + Su_- = CsSu_; log_k 11.6 
+	Ca+2 + 2Su_- = Ca(Su_)2; log_k 20.67 
+	Mg+2 + 2Su_- = Mg(Su_)2; log_k 20.59 
+	# --------- Cs from Aguila et al., Comp. Geosc. 2020 -----
+
+	Kln_aOH = Kln_aOH
+		log_K	0.0
+    	Kln_aOH + H+ = Kln_aOH2+
+		log_K	8.33		   				
+	Kln_aOH = Kln_aO- + H+        				
+        log_K	-9.73                                       
+	Kln_aOH + UO2+2 = Kln_aOHUO2+2		
+        log_k   9.5                                             
+	Kln_aOH + UO2+2 = Kln_aOUO2+ + H+			
+        log_k   2.48                                            
+ 	Kln_aOH + UO2+2 + H2O = Kln_aOUO2(OH) + 2H+
+        log_k   -4.44                                          
+	
+    Kln_siOH = Kln_siOH
+		log_K	0.0
+	Kln_siOH = Kln_siO- + H+
+		log_K	-6.9                                       
+    Kln_siOH + UO2+2 = Kln_siOHUO2+2
+		log_k	6.03						
+	Kln_siOH + UO2+2 = Kln_siOUO2+ + H+
+		log_k   1.26						
+ 	Kln_siOH + UO2+2 + H2O = Kln_siOUO2(OH) + 2H+
+		log_k   -5.54						
+
+	Ill_wOH = Ill_wOH
+		log_K	0.0
+    Ill_wOH + H+ = Ill_wOH2+
+        log_K = 4.59                                            
+	Ill_wOH = Ill_wO- + H+
+        log_K = -7.11                                        
+	Ill_wOH + UO2+2 = Ill_wOUO2+ + H+
+        log_k = -0.81                                           
+    Ill_wOH + UO2+2 + H2O = Ill_wOUO2(OH) + 2H+
+        log_k = -6.21                                           
+        
+	Ill_sOH = Ill_sOH
+		log_K	0.0
+    Ill_sOH + H+ = Ill_sOH2+
+        log_K = 4.9                                             
+	Ill_sOH = Ill_sO- + H+
+        log_K = -6.8                                           
+	Ill_sOH + UO2+2 = Ill_sOUO2+ + H+
+        log_k = 2.                                              
+    Ill_sOH + UO2+2 + H2O = Ill_sOUO2(OH) + 2H+
+        log_k = -4.2                                            
+    Ill_sOH + UO2+2 + 2H2O = Ill_sOUO2(OH)2-1 + 3H+          
+        log_k = -10.9                                         
+    Ill_sOH + UO2+2 + 3H2O = Ill_sOUO2(OH)3-2 + 4H+ 
+        log_k = -18.1                                          
+       
+	Mll_wOH = Mll_wOH
+		log_K	0.0
+    Mll_wOH + H+ = Mll_wOH2+
+        log_K = 3.98                                           
+	Mll_wOH = Mll_wO- + H+
+        log_K = -8.42                                        
+	Mll_wOH + UO2+2 = Mll_wOUO2+ + H+
+        log_k = 0.18                                         
+    Mll_wOH + UO2+2 + H2O = Mll_wOUO2(OH) + 2H+
+        log_k = -6.22                                           
+
+	Mll_sOH = Mll_sOH
+		log_K	0.0
+    Mll_sOH + H+ = Mll_sOH2+
+        log_K = 4.34                                            
+	Mll_sOH = Mll_sO- + H+
+        log_K = -8.06                                          
+	Mll_sOH + UO2+2 = Mll_sOUO2+ + H+
+        log_k = 2.94                                           
+    Mll_sOH + UO2+2 + H2O = Mll_sOUO2(OH) + 2H+
+        log_k = -3.56                                           
+    Mll_sOH + UO2+2 + 2H2O = Mll_sOUO2(OH)2-1 + 3H+          
+        log_k = -11.16                                         
+    Mll_sOH + UO2+2 + 3H2O = Mll_sOUO2(OH)3-2 + 4H+ 
+        log_k = -20.66                                          
+
+	ChlOH = ChlOH
+		log_K	0.0
+    ChlOH + H+ = ChlOH2+
+        log_K = 10.2                                       
+	ChlOH + UO2+2 = ChlOUO2+ + H+
+        log_K = 4.51    
+		
+# ---------- Co SCM from Montoya et al., 2018, Geoch. Cosm. Act. 
+
+     # Illdu illite strong site
+
+     Illdu_sOH = Illdu_sOH
+          log_K	0.0
+     Illdu_sOH + H+ = Illdu_sOH2+
+          log_K = 4.0                                             
+     Illdu_sOH = Illdu_sO- + H+
+          log_K = -6.2 
+     Illdu_sOH + Co+2 = Illdu_sOCo+ + H+
+          log_k	0.9
+     Illdu_sOH + Co+2 + H2O = Illdu_sOCoOH + 2H+
+          log_k	-7.0
+     Illdu_sOH + Co+2 + 2H2O = Illdu_sOCo(OH)2-1 + 3H+
+          log_k	-16.5
+
+     # Illdu illite weak 1 site
+
+     Illdu_wOH = Illdu_wOH
+          log_K	0.0
+     Illdu_wOH + H+ = Illdu_wOH2+
+          log_K = 4.0                                            
+     Illdu_wOH = Illdu_wO- + H+
+          log_K = -6.2    
+     Illdu_wOH + Co+2 = Illdu_wOCo+ + H+
+          log_k	-1.8
+
+
+END
