@@ -11,6 +11,7 @@ if(OGS_INSTALL_EXTERNAL_DEPENDENCIES)
 endif()
 
 if(OGS_USE_MFRONT)
+    option(OGS_BUILD_TFEL "Build TFEL locally. Needs to be set with a clean cache!" OFF)
     set(_tfel_source GIT_REPOSITORY https://github.com/thelfer/tfel.git GIT_TAG
                      rliv-${ogs.minimum_version.tfel-rliv}
     )
@@ -19,7 +20,7 @@ if(OGS_USE_MFRONT)
     )
     if(EXISTS ${_tfel_source_file})
         set(_tfel_source URL ${_tfel_source_file})
-    else()
+    elseif(NOT OGS_BUILD_TFEL)
         find_program(MFRONT mfront)
     endif()
     if(NOT MFRONT)
@@ -43,6 +44,7 @@ if(OGS_USE_MFRONT)
 endif()
 
 if(OGS_USE_PETSC)
+    option(OGS_BUILD_PETSC "Build PETSc locally. Needs to be set with a clean cache!" OFF)
     # Force CMake to accept a given PETSc configuration in case the failure of
     # MPI tests. This may cause the compilation broken.
     option(FORCE_PETSC_EXECUTABLE_RUNS
@@ -60,7 +62,7 @@ if(OGS_USE_PETSC)
     )
     if(EXISTS ${_petsc_source_file})
         set(_petsc_source URL ${_petsc_source_file})
-    elseif(NOT OGS_PETSC_CONFIG_OPTIONS)
+    elseif(NOT (OGS_PETSC_CONFIG_OPTIONS OR OGS_BUILD_PETSC))
         find_package(PETSc ${ogs.minimum_version.petsc})
     endif()
 
@@ -107,6 +109,7 @@ if(OGS_USE_PETSC)
 endif()
 
 if(OGS_USE_LIS)
+    option(OGS_BUILD_LIS "Build LIS locally. Needs to be set with a clean cache!" OFF)
     set(_lis_source GIT_REPOSITORY https://github.com/anishida/lis.git GIT_TAG
                     ${ogs.minimum_version.lis}
     )
@@ -115,7 +118,7 @@ if(OGS_USE_LIS)
     )
     if(EXISTS ${_lis_source_file})
         set(_lis_source URL ${_lis_source_file})
-    else()
+    elseif(NOT OGS_BUILD_LIS)
         find_package(LIS)
     endif()
     if(NOT LIS_FOUND)
@@ -140,6 +143,7 @@ if(OGS_USE_LIS)
 endif()
 
 # ZLIB
+option(OGS_BUILD_ZLIB "Build ZLIB locally. Needs to be set with a clean cache!" OFF)
 set(_zlib_source GIT_REPOSITORY https://github.com/madler/zlib.git GIT_TAG
                  v${ogs.tested_version.zlib}
 )
@@ -148,7 +152,7 @@ set(_zlib_source_file
 )
 if(EXISTS ${_zlib_source_file})
     set(_zlib_source URL ${_zlib_source_file})
-else()
+elseif(NOT OGS_BUILD_ZLIB)
     find_package(ZLIB)
 endif()
 if(NOT ZLIB_FOUND)
@@ -170,6 +174,7 @@ if(NOT ZLIB_FOUND)
 endif()
 
 # HDF5
+option(OGS_BUILD_HDF5 "Build HDF5 locally. Needs to be set with a clean cache!" OFF)
 set(_hdf5_options
     "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
     "-DHDF5_GENERATE_HEADERS=OFF"
@@ -202,7 +207,7 @@ set(_hdf5_source GIT_REPOSITORY https://github.com/HDFGroup/hdf5.git GIT_TAG
 set(_hdf5_source_file ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/hdf5-${HDF5_TAG}.zip)
 if(EXISTS ${_hdf5_source_file})
     set(_hdf5_source URL ${_hdf5_source_file})
-else()
+elseif(NOT OGS_BUILD_HDF5)
     find_package(HDF5 ${ogs.minimum_version.hdf5})
 endif()
 if(NOT HDF5_FOUND)
