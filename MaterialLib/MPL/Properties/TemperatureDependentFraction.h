@@ -1,10 +1,12 @@
 /**
  * \file
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
+ *
+ * Created on May 20, 2022
  */
 #pragma once
 
@@ -27,11 +29,11 @@ namespace MaterialPropertyLib
  * over a temperature interval following a sigmoid line:
  *
  * \f[
- *      \phi \left[1 + \exp(k(T - T_\text{c})) \right]^{-1}
+ *      \phi \left[1 + \exp(k(T - T_\mathrm{c})) \right]^{-1}
  * \f]
  *
  * Parameter $k$ controlling the temperature spreading of the phase change
- * and $T_\text{c}$ as the characteristic temperature of the phase change
+ * and \f$T_\mathrm{c}\f$ as the characteristic temperature of the phase change
  * (melting temperature) are forwarded to a sigmoid function.
  *
  **/

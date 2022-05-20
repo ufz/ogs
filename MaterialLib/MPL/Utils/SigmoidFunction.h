@@ -2,12 +2,12 @@
  * \file
  *
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * Created on August 16, 2019, 3:40 PM
+ * Created on May 20, 2022
  */
 
 #pragma once
@@ -21,14 +21,16 @@ namespace MaterialPropertyLib
  * Sigmoid function with scalar argument and two constant parameters
  *
  * \details The sigmoid function is a smooth step function
- * with the range [0,1] defined by the following formula
- * 
+ * with the range \f$[0,1]\f$ defined by the following formula
+ *
  * \f[
- *      \left[1 + \exp(k(T - T_\text{c})) \right]^{-1}
+ *      \left[1 + \exp(k(T - T_\mathrm{c})) \right]^{-1}
  * \f]
- * 
- * where \f$T_\text{c})\f$ is the critical value 
- * (e.g. a phase change temperature).
+ *
+ * where \f$T_\mathrm{c}\f$ is the critical value (e.g. a phase change
+ * temperature). Letting the slope parameter \f$k\f$ go to infinity,
+ * the heaviside step function is obtained.
+ *
  */
 class SigmoidFunction final
 {
@@ -43,7 +45,7 @@ public:
 
 private:
     double const k_;    //< factor controlling the spreading
-    double const T_c_;  //< characteristic value 
+    double const T_c_;  //< characteristic value
                         // (location of the step)
 };
 }  // namespace MaterialPropertyLib

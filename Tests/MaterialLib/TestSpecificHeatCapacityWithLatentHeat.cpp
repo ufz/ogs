@@ -1,12 +1,12 @@
 /**
  * \file
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * Created on November 10, 2020, 10:34 AM
+ * Created on May 20, 2022
  */
 
 #include <gtest/gtest.h>
@@ -186,9 +186,11 @@ TEST(MaterialPropertyLib, SpecificHeatCapacityWithLatentHeat_atTc)
     auto const rho_mix = phi * 0.5 * (water_ice_rock.rho_I + water_ice_rock.rho_W)
                        + (1 - phi) * water_ice_rock.rho_R;
 
-    auto const Cvol_mix = phi * 0.5 * (water_ice_rock.rho_I * water_ice_rock.cp_I 
-                                    +  water_ice_rock.rho_W * water_ice_rock.cp_W)
-                        + (1 - phi) *  water_ice_rock.rho_R * water_ice_rock.cp_R;
+    auto const Cvol_mix =
+        phi * 0.5 *
+            (water_ice_rock.rho_I * water_ice_rock.cp_I +
+             water_ice_rock.rho_W * water_ice_rock.cp_W) +
+        (1 - phi) * water_ice_rock.rho_R * water_ice_rock.cp_R;
 
     vars[static_cast<int>(MPL::Variable::temperature)] = water_ice_rock.T_c;
     vars[static_cast<int>(MPL::Variable::density)] = rho_mix;

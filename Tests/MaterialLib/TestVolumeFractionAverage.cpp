@@ -1,12 +1,12 @@
 /**
  * \file
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * Created on November 10, 2020, 10:34 AM
+ * Created on May 20, 2022
  */
 
 #include <gtest/gtest.h>
@@ -108,8 +108,9 @@ TEST(MaterialPropertyLib, VolumeFractionAverage_Density)
     auto rho_m = medium->property(MaterialPropertyLib::PropertyType::density)
                      .template value<double>(vars, pos, time, dt);
 
-    auto const rho_expected = (1 - phi) * water_ice_rock.rho_R 
-                            + phi * 0.5 * (water_ice_rock.rho_W + water_ice_rock.rho_I);
+    auto const rho_expected =
+        (1 - phi) * water_ice_rock.rho_R +
+        phi * 0.5 * (water_ice_rock.rho_W + water_ice_rock.rho_I);
     auto const relativeError = std::fabs((rho_expected - rho_m) / rho_expected);
 
     ASSERT_LE(relativeError, 1e-10)
@@ -222,8 +223,9 @@ TEST(MaterialPropertyLib, VolumeFractionAverage_ThermalConductivity)
     auto kap_m = medium->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
                      .template value<double>(vars, pos, time, dt);
 
-    auto const kap_expected = (1 - phi) * water_ice_rock.kap_R 
-                            + phi * 0.5 * (water_ice_rock.kap_W + water_ice_rock.kap_I);
+    auto const kap_expected =
+        (1 - phi) * water_ice_rock.kap_R +
+        phi * 0.5 * (water_ice_rock.kap_W + water_ice_rock.kap_I);
 
     auto const relativeError = std::fabs((kap_expected - kap_m) / kap_expected);
 

@@ -2,12 +2,12 @@
  * \file
  *
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * Created on August 16, 2019, 3:40 PM
+ * Created on May 20, 2022
  */
 
 #include "SigmoidFunction.h"

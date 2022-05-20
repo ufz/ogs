@@ -1,10 +1,12 @@
 /**
  * \file
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
+ *
+ * Created on May 20, 2022
  */
 #pragma once
 
@@ -22,15 +24,16 @@ namespace MaterialPropertyLib
  * property based on the phase properties as a volume fraction weighted average
  * in the following form
  *
- * \f$
+ * \f[
  *      X_{\mathrm{eff}} = (1-\phi) X_\mathrm{pR} +
- *\phi_\mathrm{f}\,X_\mathrm{fR}
+ *                          \phi_\mathrm{f}\,X_\mathrm{fR}
  *                       + (\phi - \phi_\mathrm{f}) X_\mathrm{lR}
- * \f$
+ * \f]
  *
- * where $\phi$ is the porosity (pore space volume fraction), $\phi_\text{f}$
- * is the frozen volume fraction and $\phi_\text{l}=\phi - \phi_\mathrm{f}$ is
- * the liquid one. $\mathrm{R}$ stands for real/pure phase property.
+ * where \f$\phi\f$ is the porosity (pore space volume fraction),
+ * \f$\phi_\mathrm{f}\f$ is the frozen volume fraction and
+ * \f$\phi_\mathrm{l}=\phi - \phi_\mathrm{f}\f$ is the liquid one.
+ * \f$\mathrm{R}\f$ stands for the real/pure phase property.
  *
  **/
 class VolumeFractionAverage : public Property

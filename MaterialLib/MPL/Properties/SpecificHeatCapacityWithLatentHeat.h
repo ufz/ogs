@@ -1,10 +1,12 @@
 /**
  * \file
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
+ *
+ * Created on May 20, 2022
  */
 #pragma once
 
@@ -13,20 +15,22 @@
 namespace MaterialPropertyLib
 {
 /**
- * Model for the apparent specific heat capacity including latent heat $\ell$
+ * Model for the apparent specific heat capacity including latent heat
+ *\f$\ell\f$
  *
  * \details This model is for media with a phase change. This property must be
  * a medium property, it computes the apparent specific heat capacity based on
- * a phase transition spread over a temperature interval.
+ * a phase transition spread over a temperature interval:
  *
- * \f$
+ * \f[
  *      C_{\mathrm{app}} = \left[C - \varrho \ell \frac{\partial
- *                         \phi_\text{f}}{\partial T} \right]
- * \f$
+ *                         \phi_\mathrm{f}}{\partial T} \right]
+ * \f]
  *
- * with $\ell$ as specific enthalpy of melting, $C$ as effective volumetric heat
- * capacity and $\varrho$ as the effective density of the mixture, as well as
- * $\phi_\text{f}$ as the temperature-dependant frozen liquid volume fraction.
+ * with \f$\ell\f$ as specific enthalpy of melting, \f$C\f$ as effective
+ * volumetric heat capacity and \f$\varrho\f$ as the effective density of the
+ * mixture, as well as \f$\phi_\mathrm{f}\f$ as the temperature-dependent frozen
+ * liquid volume fraction.
  **/
 class SpecificHeatCapacityWithLatentHeat final : public Property
 {

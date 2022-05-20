@@ -1,12 +1,12 @@
 /**
  * \file
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * Created on November 10, 2020, 10:34 AM
+ * Created on May 20, 2022
  */
 
 #include <gtest/gtest.h>
@@ -69,10 +69,12 @@ TEST(MaterialPropertyLib, TemperatureDependentFraction_values_out)
     double dT = (T_e - T_s) / n_T;
 
     auto const medium = createMyMedium();
-    auto const& fraction = medium->property(MaterialPropertyLib::PropertyType::volume_fraction);
+    auto const& fraction =
+        medium->property(MaterialPropertyLib::PropertyType::volume_fraction);
 
     std::vector<double> temperatures(n_T+1);
-    std::generate(temperatures.begin(),temperatures.end(),[T=T_s-dT,dT]()mutable{return T+=dT;});
+    std::generate(temperatures.begin(), temperatures.end(),
+                  [T = T_s - dT, dT]() mutable { return T += dT; });
 
     std::ofstream fout("/home/cbs/data_frozen_fraction.txt");
     fout << "T" << '\t' << "f" << '\t' << "f,T" << '\t' << "f,TT" << '\n';
@@ -81,12 +83,15 @@ TEST(MaterialPropertyLib, TemperatureDependentFraction_values_out)
         vars[static_cast<int>(MPL::Variable::temperature)] = T;
 
         auto const f = std::get<double>(fraction.value(vars, pos, time, dt));
-        auto const fT = std::get<double>(fraction.dValue(vars, MPL::Variable::temperature, pos, time, dt)); 
-        auto const fTT = std::get<double>(fraction.d2Value(vars, MPL::Variable::temperature, MPL::Variable::temperature, pos, time, dt));
-
+        auto const fT = std::get<double>(
+            fraction.dValue(vars, MPL::Variable::temperature, pos, time, dt));
+        auto const fTT = std::get<double>(
+            fraction.d2Value(vars, MPL::Variable::temperature,
+                             MPL::Variable::temperature, pos, time, dt));
         if (!fout)
         {
-            std::cout << T-T_c << '\t' << f << '\t' << fT << '\t' << fTT << '\n';
+            std::cout << T - T_c << '\t' << f << '\t' << fT << '\t' << fTT
+                      << '\n';
         }
         else
         {
@@ -145,9 +150,10 @@ TEST(MaterialPropertyLib, TemperatureDependentFraction_dValue_atTc)
 
     // calculate temperature-derivative of temperature dependent (e.g. frozen) volume fraction
     auto const dpfr_dT_expected = - phi * water_ice.k * 0.25;
-    auto const dpfr_dT = 
-        medium->property(MaterialPropertyLib::PropertyType::volume_fraction).template
-            dValue<double>(vars, MPL::Variable::temperature, pos, time, dt);
+    auto const dpfr_dT =
+        medium->property(MaterialPropertyLib::PropertyType::volume_fraction)
+            .template dValue<double>(vars, MPL::Variable::temperature, pos,
+                                     time, dt);
 
     auto const relativeError = std::fabs((dpfr_dT_expected - dpfr_dT) / dpfr_dT_expected);
 
