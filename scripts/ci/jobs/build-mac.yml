@@ -17,6 +17,7 @@ build mac:
     CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
       -DOGS_INSTALL_DEPENDENCIES=ON
+      -DOGS_BUILD_HDF5=ON
   parallel:
     matrix:
       - ARCHITECTURE: ["amd64", "arm64"]
