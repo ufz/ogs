@@ -284,7 +284,7 @@ if(NOT VTK_FOUND)
     list(APPEND VTK_OPTIONS "BUILD_SHARED_LIBS ${OGS_USE_PETSC}")
     if(OGS_USE_PETSC)
         list(APPEND CMAKE_INSTALL_RPATH
-             ${PROJECT_BINARY_DIR}/_deps/vtk-build/lib
+             ${PROJECT_BINARY_DIR}/_deps/vtk-build/${CMAKE_INSTALL_LIBDIR}
         )
         # to properly install vtk libs
         set(OGS_INSTALL_DEPENDENCIES ON CACHE BOOL "" FORCE)
