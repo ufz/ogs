@@ -211,13 +211,13 @@
         <vtkdiff>
             <file>Stefan_problem_ts_46_t_46000000.000000.vtu</file>
             <field>temperature</field>
-            <absolute_tolerance>1e-11</absolute_tolerance>
+            <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>Stefan_problem_ts_427_t_427000000.000000.vtu</file>
             <field>temperature</field>
-            <absolute_tolerance>1e-11</absolute_tolerance>
+            <absolute_tolerance>6e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <!--secondary field-->
