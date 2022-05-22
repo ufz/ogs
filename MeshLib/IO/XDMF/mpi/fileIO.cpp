@@ -19,14 +19,13 @@
 #include "BaseLib/Logging.h"
 #include "getCommunicator.h"
 
-using namespace std::string_literals;
 namespace MeshLib::IO
 {
 std::filesystem::path partitionFilename(
     std::filesystem::path const& basic_filepath, int const file_group)
 {
     std::string const filename = (file_group > 0)
-                                     ? basic_filepath.stem().string() + "_"s +
+                                     ? basic_filepath.stem().string() + '_' +
                                            std::to_string(file_group) +
                                            basic_filepath.extension().string()
                                      : basic_filepath.filename().string();
