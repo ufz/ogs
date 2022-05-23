@@ -17,7 +17,6 @@ build gui mac:
     CMAKE_PRESET: release-gui
     CMAKE_ARGS: >-
       -DOGS_USE_CONAN=auto
-      -DOGS_INSTALL_DEPENDENCIES=ON
   parallel:
     matrix:
       - ARCHITECTURE: ["amd64"] # "arm64" not supported yet
