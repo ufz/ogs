@@ -41,4 +41,15 @@ file(RELATIVE_PATH relDir ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
      ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
 )
 list(APPEND CMAKE_INSTALL_RPATH ${BASEPOINT} ${BASEPOINT}/${relDir})
+
+# Some external dependencies always use lib instead of lib64, Fix for
+# lib64-based systems, e.g. OpenSUSE:
+if("${CMAKE_INSTALL_LIBDIR}" STREQUAL "lib64")
+    file(RELATIVE_PATH relDirLib
+         ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
+         ${CMAKE_CURRENT_BINARY_DIR}/lib
+    )
+    list(APPEND CMAKE_INSTALL_RPATH ${BASEPOINT}/${relDirLib})
+endif()
+
 set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
