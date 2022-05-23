@@ -299,7 +299,7 @@ if(NOT VTK_FOUND)
 endif()
 if(VTK_ADDED)
     if(OGS_USE_PETSC)
-        list(APPEND CMAKE_INSTALL_RPATH
+        list(APPEND CMAKE_BUILD_RPATH
              ${PROJECT_BINARY_DIR}/_deps/vtk-build/${CMAKE_INSTALL_LIBDIR}
         )
         # to properly install vtk libs

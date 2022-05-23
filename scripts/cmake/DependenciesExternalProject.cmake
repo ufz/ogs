@@ -11,7 +11,9 @@ if(OGS_INSTALL_EXTERNAL_DEPENDENCIES)
 endif()
 
 if(OGS_USE_MFRONT)
-    option(OGS_BUILD_TFEL "Build TFEL locally. Needs to be set with a clean cache!" OFF)
+    option(OGS_BUILD_TFEL
+           "Build TFEL locally. Needs to be set with a clean cache!" OFF
+    )
     set(_tfel_source GIT_REPOSITORY https://github.com/thelfer/tfel.git GIT_TAG
                      rliv-${ogs.minimum_version.tfel-rliv}
     )
@@ -44,7 +46,9 @@ if(OGS_USE_MFRONT)
 endif()
 
 if(OGS_USE_PETSC)
-    option(OGS_BUILD_PETSC "Build PETSc locally. Needs to be set with a clean cache!" OFF)
+    option(OGS_BUILD_PETSC
+           "Build PETSc locally. Needs to be set with a clean cache!" OFF
+    )
     # Force CMake to accept a given PETSc configuration in case the failure of
     # MPI tests. This may cause the compilation broken.
     option(FORCE_PETSC_EXECUTABLE_RUNS
@@ -109,7 +113,9 @@ if(OGS_USE_PETSC)
 endif()
 
 if(OGS_USE_LIS)
-    option(OGS_BUILD_LIS "Build LIS locally. Needs to be set with a clean cache!" OFF)
+    option(OGS_BUILD_LIS
+           "Build LIS locally. Needs to be set with a clean cache!" OFF
+    )
     set(_lis_source GIT_REPOSITORY https://github.com/anishida/lis.git GIT_TAG
                     ${ogs.minimum_version.lis}
     )
@@ -143,7 +149,9 @@ if(OGS_USE_LIS)
 endif()
 
 # ZLIB
-option(OGS_BUILD_ZLIB "Build ZLIB locally. Needs to be set with a clean cache!" OFF)
+option(OGS_BUILD_ZLIB "Build ZLIB locally. Needs to be set with a clean cache!"
+       OFF
+)
 set(_zlib_source GIT_REPOSITORY https://github.com/madler/zlib.git GIT_TAG
                  v${ogs.tested_version.zlib}
 )
@@ -174,7 +182,9 @@ if(NOT ZLIB_FOUND)
 endif()
 
 # HDF5
-option(OGS_BUILD_HDF5 "Build HDF5 locally. Needs to be set with a clean cache!" OFF)
+option(OGS_BUILD_HDF5 "Build HDF5 locally. Needs to be set with a clean cache!"
+       OFF
+)
 set(_hdf5_options
     "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
     "-DHDF5_GENERATE_HEADERS=OFF"
@@ -223,8 +233,10 @@ if(NOT HDF5_FOUND)
 endif()
 
 # append RPATHs
-if(NOT OGS_INSTALL_EXTERNAL_DEPENDENCIES)
+if(OGS_INSTALL_EXTERNAL_DEPENDENCIES)
+    list(APPEND CMAKE_BUILD_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
+else()
     foreach(lib ${_EXT_LIBS})
-        list(APPEND CMAKE_INSTALL_RPATH ${PROJECT_BINARY_DIR}/_ext/${lib}/lib)
+        list(APPEND CMAKE_BUILD_RPATH ${PROJECT_BINARY_DIR}/_ext/${lib}/lib)
     endforeach()
 endif()
