@@ -35,4 +35,6 @@ code coverage:
       - build/coverage/logs/*.txt
     expire_in: 1 week
     reports:
-      cobertura: build/coverage/coverage.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: build/coverage/coverage.xml
