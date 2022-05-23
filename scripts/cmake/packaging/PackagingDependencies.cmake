@@ -11,7 +11,10 @@ install(
     set(INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
   endif()
   file(GET_RUNTIME_DEPENDENCIES
-    EXECUTABLES $<$<TARGET_EXISTS:ogs>:$<TARGET_FILE:ogs>> $<$<TARGET_EXISTS:DataExplorer>:$<TARGET_FILE:DataExplorer>>
+    EXECUTABLES
+        $<$<TARGET_EXISTS:ogs>:$<TARGET_FILE:ogs>>
+        $<$<TARGET_EXISTS:DataExplorer>:$<TARGET_FILE:DataExplorer>>
+        $<$<TARGET_EXISTS:testrunner>:$<TARGET_FILE:testrunner>>
     RESOLVED_DEPENDENCIES_VAR _r_deps
     UNRESOLVED_DEPENDENCIES_VAR _u_deps
     POST_EXCLUDE_REGEXES "/opt/local/lib/lib.*" # Disable macports zlib
