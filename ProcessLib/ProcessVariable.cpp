@@ -193,6 +193,12 @@ ProcessVariable::ProcessVariable(
         INFO("No source terms for process variable '{:s}' found.", _name);
     }
 
+    if (!_deactivated_subdomains.empty())
+    {
+        _is_active = getOrCreateMeshProperty<unsigned char>(
+            _mesh, _name + "_active", MeshLib::MeshItemType::Cell, 1);
+        std::fill(std::begin(*_is_active), std::end(*_is_active), 1u);
+    }
 }
 
 std::string const& ProcessVariable::getName() const
@@ -294,6 +300,10 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
             begin(_deactivated_subdomains), end(_deactivated_subdomains),
             [&](auto const& ds) { return ds.isInTimeSupportInterval(time); }))
     {
+        // Also mark all of the elements as active.
+        assert(_is_active != nullptr);  // guaranteed by constructor
+        std::fill(std::begin(*_is_active), std::end(*_is_active), 1u);
+
         return;
     }
 
@@ -304,17 +314,30 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
                !ds.isDeactivated(*_mesh.getElement(element_id), time);
     };
 
+    auto is_active_in_all_subdomains = [&](std::size_t const element_id) -> bool
+    {
+        return std::all_of(begin(_deactivated_subdomains),
+                           end(_deactivated_subdomains),
+                           [&](auto const& ds)
+                           { return is_active_in_subdomain(element_id, ds); });
+    };
+
     auto const number_of_elements = _mesh.getNumberOfElements();
     for (std::size_t element_id = 0; element_id < number_of_elements;
          element_id++)
     {
-        if (std::all_of(begin(_deactivated_subdomains),
-                        end(_deactivated_subdomains),
-                        [&](auto const& ds)
-                        { return is_active_in_subdomain(element_id, ds); }))
+        if (is_active_in_all_subdomains(element_id))
         {
             _ids_of_active_elements.push_back(element_id);
         }
+    }
+
+    // all elements are deactivated
+    std::fill(std::begin(*_is_active), std::end(*_is_active), 0u);
+
+    for (auto const id : _ids_of_active_elements)
+    {
+        (*_is_active)[id] = 1u;
     }
 }
 
