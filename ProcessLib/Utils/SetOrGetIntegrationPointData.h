@@ -21,12 +21,11 @@
 
 namespace ProcessLib
 {
-template <int DisplacementDim, typename IntegrationPointData,
-          typename MemberType>
+template <int DisplacementDim, typename IntegrationPointDataVector,
+          typename IpData, typename MemberType>
 std::vector<double> const& getIntegrationPointKelvinVectorData(
-    std::vector<IntegrationPointData,
-                Eigen::aligned_allocator<IntegrationPointData>> const& ip_data,
-    MemberType member, std::vector<double>& cache)
+    IntegrationPointDataVector const& ip_data, MemberType IpData::*const member,
+    std::vector<double>& cache)
 {
     constexpr int kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
@@ -40,6 +39,31 @@ std::vector<double> const& getIntegrationPointKelvinVectorData(
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
         auto const& kelvin_vector = ip_data[ip].*member;
+        cache_mat.col(ip) =
+            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(kelvin_vector);
+    }
+
+    return cache;
+}
+
+template <int DisplacementDim, typename IntegrationPointDataVector,
+          typename Accessor>
+std::vector<double> const& getIntegrationPointKelvinVectorData(
+    IntegrationPointDataVector const& ip_data, Accessor&& accessor,
+    std::vector<double>& cache)
+{
+    constexpr int kelvin_vector_size =
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+    auto const n_integration_points = ip_data.size();
+
+    cache.clear();
+    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+        double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, kelvin_vector_size, n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ++ip)
+    {
+        auto const& kelvin_vector = accessor(ip_data[ip]);
         cache_mat.col(ip) =
             MathLib::KelvinVector::kelvinVectorToSymmetricTensor(kelvin_vector);
     }
@@ -73,13 +97,12 @@ std::vector<double> getIntegrationPointKelvinVectorData(
     return ip_kelvin_vector_values;
 }
 
-template <int DisplacementDim, typename IntegrationPointData,
-          typename MemberType>
+template <int DisplacementDim, typename IntegrationPointDataVector,
+          typename IpData, typename MemberType>
 std::size_t setIntegrationPointKelvinVectorData(
     double const* values,
-    std::vector<IntegrationPointData,
-                Eigen::aligned_allocator<IntegrationPointData>>& ip_data,
-    MemberType member)
+    IntegrationPointDataVector& ip_data,
+    MemberType IpData::*const member)
 {
     constexpr int kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
@@ -100,11 +123,36 @@ std::size_t setIntegrationPointKelvinVectorData(
     return n_integration_points;
 }
 
-template <typename IntegrationPointData, typename MemberType>
+template <int DisplacementDim, typename IntegrationPointDataVector,
+          typename Accessor>
+std::size_t setIntegrationPointKelvinVectorData(
+    double const* values,
+    IntegrationPointDataVector& ip_data,
+    Accessor&& accessor)
+{
+    constexpr int kelvin_vector_size =
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+    auto const n_integration_points = ip_data.size();
+
+    auto kelvin_vector_values =
+        Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
+                                 Eigen::ColMajor> const>(
+            values, kelvin_vector_size, n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ++ip)
+    {
+        accessor(ip_data[ip]) =
+            MathLib::KelvinVector::symmetricTensorToKelvinVector(
+                kelvin_vector_values.col(ip));
+    }
+
+    return n_integration_points;
+}
+
+template <typename IntegrationPointDataVector, typename MemberType>
 std::vector<double> const& getIntegrationPointScalarData(
-    std::vector<IntegrationPointData,
-                Eigen::aligned_allocator<IntegrationPointData>> const& ip_data,
-    MemberType member, std::vector<double>& cache)
+    IntegrationPointDataVector const& ip_data, MemberType member,
+    std::vector<double>& cache)
 {
     auto const n_integration_points = ip_data.size();
 
@@ -121,12 +169,10 @@ std::vector<double> const& getIntegrationPointScalarData(
     return cache;
 }
 
-template <typename IntegrationPointData, typename MemberType>
-std::size_t setIntegrationPointScalarData(
-    double const* values,
-    std::vector<IntegrationPointData,
-                Eigen::aligned_allocator<IntegrationPointData>>& ip_data,
-    MemberType member)
+template <typename IntegrationPointDataVector, typename MemberType>
+std::size_t setIntegrationPointScalarData(double const* values,
+                                          IntegrationPointDataVector& ip_data,
+                                          MemberType member)
 {
     auto const n_integration_points = ip_data.size();
 
@@ -137,12 +183,10 @@ std::size_t setIntegrationPointScalarData(
     return n_integration_points;
 }
 
-template <typename IntegrationPointData, typename MemberType,
+template <typename IntegrationPointDataVector, typename MemberType,
           typename MaterialStateVariables>
 std::vector<double> getIntegrationPointDataMaterialStateVariables(
-    std::vector<IntegrationPointData,
-                Eigen::aligned_allocator<IntegrationPointData>> const&
-        ip_data_vector,
+    IntegrationPointDataVector const& ip_data_vector,
     MemberType member,
     std::function<BaseLib::DynamicSpan<double>(MaterialStateVariables&)>
         get_values_span,
@@ -162,12 +206,11 @@ std::vector<double> getIntegrationPointDataMaterialStateVariables(
     return result;
 }
 
-template <typename IntegrationPointData, typename MemberType,
+template <typename IntegrationPointDataVector, typename MemberType,
           typename MaterialStateVariables>
 std::size_t setIntegrationPointDataMaterialStateVariables(
     double const* values,
-    std::vector<IntegrationPointData,
-                Eigen::aligned_allocator<IntegrationPointData>>& ip_data_vector,
+    IntegrationPointDataVector& ip_data_vector,
     MemberType member,
     std::function<BaseLib::DynamicSpan<double>(MaterialStateVariables&)>
         get_values_span)
