@@ -30,21 +30,24 @@ std::vector<std::string> CsvInterface::getColumnNames(std::string const& fname,
 
     if (!in.is_open())
     {
-        ERR("CsvInterface::readPoints(): Could not open file {:s}.", fname);
+        ERR("CsvInterface::getColumnNames(): Could not open file {:s}.", fname);
         return std::vector<std::string>();
     }
     std::string line;
     if (!std::getline(in, line))
     {
+        ERR("CsvInterface::getColumnNames(): Could not read line from file "
+            "{:s}. Is it empty?",
+            fname);
         return {};
     }
 
-    std::list<std::string> fields;
-    if (delim != '\n')
+    if (delim == '\n')
     {
-        fields = BaseLib::splitString(line, delim);
+        return {};
     }
 
+    std::list<std::string> fields = BaseLib::splitString(line, delim);
     if (fields.size() < 2)
     {
         for (char const d : {'\t', ';', ','})

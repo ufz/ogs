@@ -53,28 +53,29 @@ TEST(CsvWriter, WriteReadTest)
     ASSERT_EQ(1, result);
 
     std::vector<std::string> str_result;
-    result = FileIO::CsvInterface::readColumn<std::string>(
-        test_file, '\t', str_result, vec_names[0]);
+    std::tie(result, str_result) =
+        FileIO::CsvInterface::readColumn<std::string>(test_file, '\t',
+                                                      vec_names[0]);
     ASSERT_EQ(0, result);
     ASSERT_EQ(str_vec.size(), str_result.size());
 
     std::vector<int> idx_result;
-    result = FileIO::CsvInterface::readColumn<int>(test_file, '\t', idx_result,
-                                                   "Index");
+    std::tie(result, idx_result) =
+        FileIO::CsvInterface::readColumn<int>(test_file, '\t', "Index");
     ASSERT_EQ(0, result);
     ASSERT_EQ(dbl_vec.size(), idx_result.size());
 
     std::vector<int> int_result;
-    result = FileIO::CsvInterface::readColumn<int>(test_file, '\t', int_result,
-                                                   vec_names[1]);
+    std::tie(result, int_result) =
+        FileIO::CsvInterface::readColumn<int>(test_file, '\t', vec_names[1]);
     ASSERT_EQ(0, result);
     // testing for vector length -1 because it had increased previously when
     // testing size requirements
     ASSERT_EQ(int_vec.size() - 1, int_result.size());
 
     std::vector<double> dbl_result;
-    result = FileIO::CsvInterface::readColumn<double>(test_file, '\t',
-                                                      dbl_result, vec_names[2]);
+    std::tie(result, dbl_result) =
+        FileIO::CsvInterface::readColumn<double>(test_file, '\t', vec_names[2]);
     ASSERT_EQ(0, result);
     ASSERT_EQ(dbl_vec.size(), dbl_result.size());
 

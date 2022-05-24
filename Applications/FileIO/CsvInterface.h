@@ -146,21 +146,20 @@ public:
      * Reads a column of the given name from a CSV file.
      * \param fname        Name of the file to be read
      * \param delim        Deliminator, default is ','
-     * \param data_array   A vector containing the data read from the file
      * \param column_name  The column's name to read
      * \return An error code (0 = ok, 0<i<max = number of skipped lines, -1
-     * error reading file)
+     * error reading file) and an possibly empty vector containing the read
+     * values
      */
     template <typename T>
-    static int readColumn(std::string const& fname, char delim,
-                          std::vector<T>& data_array,
-                          std::string const& column_name)
+    static std::pair<int, std::vector<T>> readColumn(
+        std::string const& fname, char delim, std::string const& column_name)
     {
         std::ifstream in(fname.c_str());
         if (!in.is_open())
         {
             ERR("CsvInterface::readColumn(): Could not open file {:s}.", fname);
-            return -1;
+            return {-1, {}};
         }
 
         std::string line;
@@ -170,22 +169,23 @@ public:
         if (column_idx == std::numeric_limits<std::size_t>::max())
         {
             ERR("Column '{:s}' not found in file header.", column_name);
-            return -1;
+            return {-1, {}};
         }
-        return readColumn<T>(in, delim, data_array, column_idx);
+        return readColumn<T>(in, delim, column_idx);
     }
 
     template <typename T>
-    static int readColumn(std::string const& fname, char delim,
-                          std::vector<T>& data_array, std::size_t column_idx)
+    static std::pair<int, std::vector<T>> readColumn(std::string const& fname,
+                                                     char delim,
+                                                     std::size_t column_idx)
     {
         std::ifstream in(fname.c_str());
         if (!in.is_open())
         {
             ERR("CsvInterface::readColumn(): Could not open file {:s}.", fname);
-            return -1;
+            return {-1, {}};
         }
-        return readColumn<T>(in, delim, data_array, column_idx);
+        return readColumn<T>(in, delim, column_idx);
     }
 
 private:
@@ -196,9 +196,11 @@ private:
 
     /// Actual column reader for public methods
     template <typename T>
-    static int readColumn(std::ifstream& in, char delim,
-                          std::vector<T>& data_array, std::size_t column_idx)
+    static std::pair<int, std::vector<T>> readColumn(std::ifstream& in,
+                                                     char delim,
+                                                     std::size_t column_idx)
     {
+        std::vector<T> data_array;
         std::string line;
         std::size_t line_count(0);
         std::size_t error_count(0);
@@ -230,7 +232,7 @@ private:
 
             data_array.push_back(value);
         }
-        return error_count;
+        return {error_count, data_array};
     }
 
     /// Returns the number of the column with column_name (or
