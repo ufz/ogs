@@ -359,9 +359,10 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     // -- Jacobian
     //
     block_TT(local_Jac).noalias() += loc_mat.M_TT / dt + loc_mat.K_TT;
-    block_Tp(local_Jac).noalias() += loc_mat.K_Tp + loc_mat.M_Tp / dt;
+    block_Tp(local_Jac).noalias() +=
+        loc_mat.K_Tp + loc_mat.dK_TT_dp + loc_mat.M_Tp / dt;
 
-    block_pT(local_Jac).noalias() += loc_mat.M_pT / dt;
+    block_pT(local_Jac).noalias() += loc_mat.M_pT / dt + loc_mat.K_pT;
     block_pp(local_Jac).noalias() +=
         loc_mat.K_pp + loc_mat.storage_p_a_p / dt + loc_mat.storage_p_a_S_Jpp;
     block_pu(local_Jac).noalias() = loc_mat.M_pu / dt;
@@ -372,10 +373,10 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const [T, p_L, u] = localDOF(local_x);
     auto const [T_dot, p_L_dot, u_dot] = localDOF(local_xdot);
 
-    block_T(local_rhs).noalias() -=
-        loc_mat.M_TT * T_dot + loc_mat.K_TT * T + loc_mat.M_Tp * p_L_dot;
+    block_T(local_rhs).noalias() -= loc_mat.M_TT * T_dot + loc_mat.K_TT * T +
+                                    loc_mat.K_Tp * p_L + loc_mat.M_Tp * p_L_dot;
     block_p(local_rhs).noalias() -=
-        loc_mat.K_pp * p_L +
+        loc_mat.K_pp * p_L + loc_mat.K_pT * T +
         (loc_mat.storage_p_a_p + loc_mat.storage_p_a_S) * p_L_dot +
         loc_mat.M_pu * u_dot + loc_mat.M_pT * T_dot;
 }
@@ -499,12 +500,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         N.transpose() * (CS.eqT.K_TT_NT_V_dN.transpose() * dNdx) +
         CS.eqT.K_TT_X_dNTdN * dNTdN;
 
-    out.K_Tp.noalias() =
+    out.dK_TT_dp.noalias() =
         N.transpose() * (CS.eqT.K_Tp_NT_V_dN.transpose() * dNdx) +
         CS.eqT.K_Tp_X_NTN * NTN + CS.eqT.K_Tp_X_dNTdN * dNTdN;
+    out.K_Tp.noalias() = dNdx.transpose() * CS.eqT.K_Tp_Laplace * dNdx;
 
     out.K_pp.noalias() = dNdx.transpose() * CS.eqP.K_pp_Laplace * dNdx +
                          CS.eqP.K_pp_X_dNTdN * dNTdN;
+    out.K_pT.noalias() = dNdx.transpose() * CS.eqP.K_pT_Laplace * dNdx;
 
     // direct Jacobian contributions, order T, p, u
     block_pT(out.Jac).noalias() = CS.eqP.J_pT_X_dNTdN * dNTdN;
