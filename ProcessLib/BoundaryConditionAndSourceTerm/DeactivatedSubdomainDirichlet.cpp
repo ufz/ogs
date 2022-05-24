@@ -19,6 +19,7 @@ namespace ProcessLib
 {
 DeactivatedSubdomainDirichlet::DeactivatedSubdomainDirichlet(
     std::vector<std::size_t> const* const active_element_ids,
+    MeshLib::PropertyVector<unsigned char> const& is_active,
     MathLib::PiecewiseLinearInterpolation time_interval,
     ParameterLib::Parameter<double> const& parameter,
     bool const set_outer_nodes_dirichlet_values,
@@ -31,6 +32,7 @@ DeactivatedSubdomainDirichlet::DeactivatedSubdomainDirichlet(
       _component_id(component_id),
       _time_interval(std::move(time_interval)),
       _active_element_ids(active_element_ids),
+      _is_active(is_active),
       _set_outer_nodes_dirichlet_values(set_outer_nodes_dirichlet_values)
 {
     config(dof_table_bulk);

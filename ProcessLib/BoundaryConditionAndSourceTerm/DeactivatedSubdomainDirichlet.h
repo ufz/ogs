@@ -22,6 +22,8 @@ class ConfigTree;
 namespace MeshLib
 {
 class Node;
+template <typename T>
+class PropertyVector;
 }
 
 namespace ParameterLib
@@ -39,6 +41,7 @@ class DeactivatedSubdomainDirichlet final : public BoundaryCondition
 public:
     DeactivatedSubdomainDirichlet(
         std::vector<std::size_t> const* active_element_ids,
+        MeshLib::PropertyVector<unsigned char> const& is_active,
         MathLib::PiecewiseLinearInterpolation time_interval,
         ParameterLib::Parameter<double> const& parameter,
         bool const set_outer_nodes_dirichlet_values,
@@ -64,6 +67,7 @@ private:
 
     MathLib::PiecewiseLinearInterpolation const _time_interval;
     std::vector<std::size_t> const* _active_element_ids = nullptr;
+    MeshLib::PropertyVector<unsigned char> const& _is_active;
 
     bool const _set_outer_nodes_dirichlet_values;
 };
