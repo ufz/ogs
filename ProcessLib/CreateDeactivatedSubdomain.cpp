@@ -100,8 +100,23 @@ static DeactivatedSubdomainMesh createDeactivatedSubdomainMesh(
     auto [inner_nodes, outer_nodes] =
         extractInnerAndOuterNodes(mesh, *sub_mesh, is_active);
 
+    std::vector<std::vector<std::size_t>> outer_nodes_elements;
+    outer_nodes_elements.reserve(outer_nodes.size());
+    for (auto const n : outer_nodes)
+    {
+        auto const& bulk_node_ids =
+            *sub_mesh->getProperties().template getPropertyVector<std::size_t>(
+                "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
+        auto const& connected_elements =
+            mesh.getElementsConnectedToNode(bulk_node_ids[n]);
+
+        outer_nodes_elements.emplace_back(
+            connected_elements | MeshLib::views::ids | ranges::to<std::vector>);
+    }
+
     return {std::move(*sub_mesh), std::move(bulk_element_ids),
-            std::move(inner_nodes), std::move(outer_nodes)};
+            std::move(inner_nodes), std::move(outer_nodes),
+            std::move(outer_nodes_elements)};
 }
 
 static MathLib::PiecewiseLinearInterpolation parseTimeIntervalOrCurve(
