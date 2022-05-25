@@ -18,7 +18,7 @@ build docs:
       - runner_system_failure
       - job_execution_timeout
   variables:
-    DOX_WARNINGS_THRESHOLD: 163
+    DOX_WARNINGS_THRESHOLD: 8
   script:
     # HACK to easier linking to the generated pages
     - echo '<meta http-equiv="REFRESH" content="0;URL=build/docs/index.html">' >> Doxygen.html

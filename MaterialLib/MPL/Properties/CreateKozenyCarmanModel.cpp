@@ -24,12 +24,12 @@ std::unique_ptr<Property> createKozenyCarmanModel(
     DBUG("Create Kozeny-Carman model.");
 
     auto const& k0 = ParameterLib::findParameter<double>(
-        //! \ogs_file_param{properties__property__KozenyCarmanModel__initial_permeability}
+        //! \ogs_file_param{properties__property__KozenyCarman__initial_permeability}
         config.getConfigParameter<std::string>("initial_permeability"),
         parameters, 0, nullptr);
 
     auto const& phi0 = ParameterLib::findParameter<double>(
-        //! \ogs_file_param{properties__property__KozenyCarmanModel__initial_porosity}
+        //! \ogs_file_param{properties__property__KozenyCarman__initial_porosity}
         config.getConfigParameter<std::string>("initial_porosity"), parameters,
         1, nullptr);
 
