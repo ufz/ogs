@@ -25,9 +25,11 @@ const std::string DeactivatedSubdomain::zero_parameter_name =
 
 DeactivatedSubdomainMesh::DeactivatedSubdomainMesh(
     std::unique_ptr<MeshLib::Mesh> deactivated_subdomain_mesh_,
+    std::vector<std::size_t>&& bulk_element_ids_,
     std::vector<MeshLib::Node*>&& inner_nodes_,
     std::vector<MeshLib::Node*>&& outer_nodes_)
     : mesh(std::move(deactivated_subdomain_mesh_)),
+      bulk_element_ids(std::move(bulk_element_ids_)),
       inner_nodes(std::move(inner_nodes_)),
       outer_nodes(std::move(outer_nodes_))
 {
@@ -35,16 +37,13 @@ DeactivatedSubdomainMesh::DeactivatedSubdomainMesh(
 
 DeactivatedSubdomain::DeactivatedSubdomain(
     MathLib::PiecewiseLinearInterpolation time_interval_,
-    std::pair<Eigen::Vector3d, Eigen::Vector3d>
+    std::optional<std::pair<Eigen::Vector3d, Eigen::Vector3d>>
         line_segment,
-    std::vector<int>&& materialIDs_,
-    std::vector<std::unique_ptr<DeactivatedSubdomainMesh>>&&
-        deactivated_subdomain_meshes_,
+    std::unique_ptr<DeactivatedSubdomainMesh>&& deactivated_subdomain_mesh_,
     ParameterLib::Parameter<double> const* const boundary_value_parameter)
     : time_interval(std::move(time_interval_)),
       line_segment(line_segment),
-      materialIDs(std::move(materialIDs_)),
-      deactivated_subdomain_meshes(std::move(deactivated_subdomain_meshes_)),
+      deactivated_subdomain_mesh(std::move(deactivated_subdomain_mesh_)),
       boundary_value_parameter(boundary_value_parameter)
 {
 }
@@ -55,19 +54,32 @@ bool DeactivatedSubdomain::isInTimeSupportInterval(double const t) const
            t <= time_interval.getSupportMax();
 }
 
-bool DeactivatedSubdomain::isDeactivated(MathLib::Point3d const& point,
+bool DeactivatedSubdomain::isDeactivated(MeshLib::Element const& element,
                                          double const time) const
 {
+    auto const& bulk_element_ids = deactivated_subdomain_mesh->bulk_element_ids;
+    if (!BaseLib::contains(bulk_element_ids, element.getID()))
+    {
+        return false;
+    }
+
+    if (!line_segment)
+    {
+        return true;
+    }
+
+    auto const& element_center = getCenterOfGravity(element);
     // Line from a to b.
-    auto const& a = line_segment.first;
-    auto const& b = line_segment.second;
+    auto const& a = line_segment->first;
+    auto const& b = line_segment->second;
     // Tangent vector t = (b - a)/|b - a|.
     Eigen::Vector3d const t = (b - a).normalized();
 
     // Position r on the line at given time.
-    Eigen::Vector3d const r = a + t * time_interval.getValue(time);
+    auto const curve_position = time_interval.getValue(time);
+    Eigen::Vector3d const r = a + t * curve_position;
 
     // Return true if p is "behind" the plane through r.
-    return (point.asEigenVector3d() - r).dot(t) <= 0;
+    return (element_center.asEigenVector3d() - r).dot(t) <= 0;
 }
 }  // namespace ProcessLib
