@@ -305,12 +305,13 @@ void TimeLoop::setCoupledSolutions()
 
 std::pair<double, bool> TimeLoop::computeTimeStepping(
     const double prev_dt, double& t, std::size_t& accepted_steps,
-    std::size_t& rejected_steps)
+    std::size_t& rejected_steps,
+    std::vector<std::function<double(double, double)>> const&
+        time_step_constraints)
 {
     bool all_process_steps_accepted = true;
     // Get minimum time step size among step sizes of all processes.
     double dt = std::numeric_limits<double>::max();
-    bool last_step_rejected = false;
     constexpr double eps = std::numeric_limits<double>::epsilon();
 
     bool const is_initial_step =
@@ -395,6 +396,7 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
         _repeating_times_of_rejected_step++;
     }
 
+    bool last_step_rejected = false;
     if (!is_initial_step)
     {
         if (all_process_steps_accepted)
@@ -413,14 +415,12 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
         }
     }
 
-    // Adjust step size if t < _end_time, while t+dt exceeds the end time
-    if (t < _end_time && t + dt > _end_time)
+    // adjust step size considering external communciation_point_calculators
+    for (auto const& time_step_constain : time_step_constraints)
     {
-        dt = _end_time - t;
+        dt = std::min(dt, time_step_constain(t, dt));
     }
 
-    dt = NumLib::possiblyClampDtToNextFixedTime(t, dt,
-                                                _output->getFixedOutputTimes());
     // Check whether the time stepping is stabilized
     if (std::abs(dt - prev_dt) < eps)
     {
@@ -520,8 +520,21 @@ void TimeLoop::initialize()
                         &Output::doOutput);
     }
 
-    std::tie(_dt, _last_step_rejected) = computeTimeStepping(
-        0.0, _current_time, _accepted_steps, _rejected_steps);
+    auto const& fixed_times = _output->getFixedOutputTimes();
+    std::vector<std::function<double(double, double)>> time_step_constraints{
+        [&fixed_times](double t, double dt)
+        { return NumLib::possiblyClampDtToNextFixedTime(t, dt, fixed_times); },
+        [this](double t, double dt)
+        {
+            if (t < _end_time && t + dt > _end_time)
+            {
+                return _end_time - t;
+            }
+            return dt;
+        }};
+    std::tie(_dt, _last_step_rejected) =
+        computeTimeStepping(0.0, _current_time, _accepted_steps,
+                            _rejected_steps, time_step_constraints);
 
     updateDeactivatedSubdomains(_per_process_data, _start_time);
 
@@ -535,7 +548,6 @@ bool TimeLoop::executeTimeStep()
     time_timestep.start();
 
     _current_time += _dt;
-    const double prev_dt = _dt;
 
     const std::size_t timesteps = _accepted_steps + 1;
     // TODO(wenqing): , input option for time unit.
@@ -547,11 +559,33 @@ bool TimeLoop::executeTimeStep()
     successful_time_step = doNonlinearIteration(_current_time, _dt, timesteps);
     INFO("[time] Time step #{:d} took {:g} s.", timesteps,
          time_timestep.elapsed());
+    return successful_time_step;
+}
 
+bool TimeLoop::calculateNextTimeStep()
+{
+    const double prev_dt = _dt;
     double const current_time = _current_time;
+
+    const std::size_t timesteps = _accepted_steps + 1;
+
+    auto const& fixed_times = _output->getFixedOutputTimes();
+    std::vector<std::function<double(double, double)>> time_step_constraints{
+        [&fixed_times](double t, double dt)
+        { return NumLib::possiblyClampDtToNextFixedTime(t, dt, fixed_times); },
+        [this](double t, double dt)
+        {
+            if (t < _end_time && t + dt > _end_time)
+            {
+                return _end_time - t;
+            }
+            return dt;
+        }};
+
     // _last_step_rejected is also checked in computeTimeStepping.
-    std::tie(_dt, _last_step_rejected) = computeTimeStepping(
-        prev_dt, _current_time, _accepted_steps, _rejected_steps);
+    std::tie(_dt, _last_step_rejected) =
+        computeTimeStepping(prev_dt, _current_time, _accepted_steps,
+                            _rejected_steps, time_step_constraints);
 
     if (!_last_step_rejected)
     {

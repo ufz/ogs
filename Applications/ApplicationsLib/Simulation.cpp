@@ -139,7 +139,8 @@ bool Simulation::executeSimulation()
     auto& time_loop = project_data->getTimeLoop();
     while (time_loop.currentTime() < time_loop.endTime())
     {
-        if (!time_loop.executeTimeStep())
+        time_loop.executeTimeStep();
+        if (!time_loop.calculateNextTimeStep())
         {
             break;
         }

@@ -70,7 +70,7 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
         {
             (*obj)(algorithm);  // do something
         }
-        if (algorithm.accepted(current_timestep))
+        if (current_timestep.isAccepted())
         {
             vec_t.push_back(current_timestep.current());
         }

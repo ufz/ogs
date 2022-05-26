@@ -49,6 +49,7 @@ public:
     ~TimeLoop();
 
     bool executeTimeStep();
+    bool calculateNextTimeStep();
     double endTime() const { return _end_time; }
     double currentTime() const { return _current_time; }
     bool successful_time_step = false;
@@ -101,12 +102,16 @@ private:
      *                        function.
      *  @param rejected_steps Rejected time steps that are counted in this
      *                        function.
+     *  @param time_step_constraints Functions that are evaluate to
+     *  influence the time step size (for instance a fixed output time)
      *  @return the time step size and the information if the last time step was
      *  rejected
      */
-    std::pair<double, bool> computeTimeStepping(const double prev_dt, double& t,
-                                                std::size_t& accepted_steps,
-                                                std::size_t& rejected_steps);
+    std::pair<double, bool> computeTimeStepping(
+        const double prev_dt, double& t, std::size_t& accepted_steps,
+        std::size_t& rejected_steps,
+        std::vector<std::function<double(double, double)>> const&
+            time_step_constraints);
 
     template <typename OutputClass, typename OutputClassMember>
     void outputSolutions(bool const output_initial_condition, unsigned timestep,

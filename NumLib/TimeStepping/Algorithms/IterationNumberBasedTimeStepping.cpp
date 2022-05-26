@@ -64,7 +64,7 @@ std::tuple<bool, double> IterationNumberBasedTimeStepping::next(
     }
 
     // confirm current time and move to the next if accepted
-    if (accepted(ts_current))
+    if (ts_current.isAccepted())
     {
         _previous_time_step_accepted = true;
         return std::make_tuple(_previous_time_step_accepted,

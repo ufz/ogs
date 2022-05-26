@@ -46,7 +46,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_EQ(1., current_timestep.previous());
     ASSERT_EQ(2., current_timestep.current());
     ASSERT_EQ(1., current_timestep.dt());
-    ASSERT_TRUE(alg.accepted(current_timestep));
+    ASSERT_TRUE(current_timestep.isAccepted());
 
     auto [step_accepted1, timestepper_dt1] =
         alg.next(solution_error, 1, previous_timestep, current_timestep);
@@ -73,7 +73,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_EQ(4., current_timestep.previous());
     ASSERT_EQ(6., current_timestep.current());
     ASSERT_EQ(2., current_timestep.dt());
-    ASSERT_TRUE(alg.accepted(current_timestep));
+    ASSERT_TRUE(current_timestep.isAccepted());
 
     auto [step_accepted3, timestepper_dt3] =
         alg.next(solution_error, 5, previous_timestep, current_timestep);
@@ -89,7 +89,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_EQ(6., current_timestep.previous());
     ASSERT_EQ(7., current_timestep.current());
     ASSERT_EQ(1., current_timestep.dt());
-    ASSERT_TRUE(alg.accepted(current_timestep));
+    ASSERT_TRUE(current_timestep.isAccepted());
 
     auto [step_accepted4, timestepper_dt4] =
         alg.next(solution_error, 7, previous_timestep, current_timestep);
@@ -105,7 +105,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_EQ(7., current_timestep.previous());
     ASSERT_EQ(8., current_timestep.current());
     ASSERT_EQ(1., current_timestep.dt());
-    ASSERT_TRUE(alg.accepted(current_timestep));
+    ASSERT_TRUE(current_timestep.isAccepted());
 
     auto [step_accepted5, timestepper_dt5] =
         alg.next(solution_error, 8, previous_timestep, current_timestep);
@@ -121,7 +121,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_EQ(8., current_timestep.previous());
     ASSERT_EQ(9, current_timestep.current());
     ASSERT_EQ(1., current_timestep.dt());
-    ASSERT_TRUE(alg.accepted(current_timestep));
+    ASSERT_TRUE(current_timestep.isAccepted());
 
     auto [step_accepted6, timestepper_dt6] =
         alg.next(solution_error, 4, previous_timestep, current_timestep);
@@ -137,7 +137,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_EQ(9., current_timestep.previous());
     ASSERT_EQ(10, current_timestep.current());
     ASSERT_EQ(1., current_timestep.dt());
-    ASSERT_TRUE(alg.accepted(current_timestep));
+    ASSERT_TRUE(current_timestep.isAccepted());
 }
 
 TEST(NumLib, TimeSteppingIterationNumberBased2)

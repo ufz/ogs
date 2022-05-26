@@ -69,11 +69,6 @@ public:
         _dt_vector.push_back(dt);
     }
 
-    bool accepted(TimeStep const& /*ts_current*/) const override
-    {
-        return true;
-    }
-
 private:
     /// a vector of time step sizes
     std::vector<double> _dt_vector;

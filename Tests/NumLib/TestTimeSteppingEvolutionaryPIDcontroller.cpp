@@ -69,7 +69,7 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     ASSERT_EQ(t_previous, current_timestep.previous());
     ASSERT_EQ(t_previous + h_new, current_timestep.current());
     ASSERT_EQ(h_new, current_timestep.dt());
-    ASSERT_TRUE(PIDStepper->accepted(current_timestep));
+    ASSERT_TRUE(current_timestep.isAccepted());
     t_previous += h_new;
 
     // e_n_minus1 is filled.
@@ -87,7 +87,7 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     const double tol = 1.e-16;
     ASSERT_NEAR(t_previous, current_timestep.previous(), tol);
     ASSERT_NEAR(t_previous + h_new, current_timestep.current(), tol);
-    ASSERT_TRUE(PIDStepper->accepted(current_timestep));
+    ASSERT_TRUE(current_timestep.isAccepted());
     t_previous += h_new;
 
     // e_n_minus2 is filled.
@@ -104,7 +104,7 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     ASSERT_EQ(3u, current_timestep.timeStepNumber());
     ASSERT_NEAR(t_previous, current_timestep.previous(), tol);
     ASSERT_NEAR(t_previous + h_new, current_timestep.current(), tol);
-    ASSERT_TRUE(PIDStepper->accepted(current_timestep));
+    ASSERT_TRUE(current_timestep.isAccepted());
 
     // If error > solution_error, step is rejected and new step size is
     // estimated.
@@ -120,7 +120,7 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     // the previous step.
     ASSERT_NEAR(t_previous, current_timestep.previous(), tol);
     ASSERT_NEAR(t_previous + h_new, current_timestep.current(), tol);
-    ASSERT_FALSE(PIDStepper->accepted(current_timestep));
+    ASSERT_FALSE(current_timestep.isAccepted());
     t_previous += h_new;
 
     // With e_n, e_n_minus1, e_n_minus2
@@ -137,5 +137,5 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     ASSERT_EQ(4u, current_timestep.timeStepNumber());
     ASSERT_NEAR(t_previous, current_timestep.previous(), tol);
     ASSERT_NEAR(t_previous + h_new, current_timestep.current(), tol);
-    ASSERT_TRUE(PIDStepper->accepted(current_timestep));
+    ASSERT_TRUE(current_timestep.isAccepted());
 }
