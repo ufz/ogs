@@ -215,10 +215,13 @@ int main(int argc, char* argv[])
             partitioned_properties.getPropertyVector<std::size_t>(
                 "bulk_node_ids", MeshLib::MeshItemType::Node, 1),
             partitions);
-        mesh_partitioner.renumberBulkElementIdsProperty(
-            partitioned_properties.getPropertyVector<std::size_t>(
-                "bulk_element_ids", MeshLib::MeshItemType::Cell, 1),
-            partitions);
+        if (partitioned_properties.hasPropertyVector("bulk_element_ids"))
+        {
+            mesh_partitioner.renumberBulkElementIdsProperty(
+                partitioned_properties.getPropertyVector<std::size_t>(
+                    "bulk_element_ids", MeshLib::MeshItemType::Cell, 1),
+                partitions);
+        }
         mesh_partitioner.writeOtherMesh(
             other_mesh_output_file_name_wo_extension, partitions,
             partitioned_properties);
