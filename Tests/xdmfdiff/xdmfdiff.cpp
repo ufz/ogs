@@ -232,7 +232,7 @@ bool compareValues(std::vector<double> const& points_a,
     for (std::size_t i = 0; i < points_a.size(); ++i)
     {
         if (double const distance = std::abs(points_a[i] - points_b[i]);
-            distance >= eps)
+            distance > eps)
         {
             std::cerr << "Point on position " << i << "\n"
                       << "in first mesh has value: " << points_a[i] << "\n"

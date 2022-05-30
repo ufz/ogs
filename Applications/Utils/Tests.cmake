@@ -915,3 +915,19 @@ MeshTest(
     REQUIREMENTS NOT (OGS_USE_MPI)
     DIFF_DATA ReorderTestMeshM1.vtu ReorderTestMeshM1.vtu 1.e-16
 )
+
+AddTest(
+    NAME 1D_HeatConduction_dirichlet-line_60_heat
+    DEPENDS ogs-1D_HeatConduction_dirichlet
+    PATH Parabolic/T/1D_dirichlet
+    WORKING_DIRECTORY ${Data_BINARY_DIR}/Parabolic/T/1D_dirichlet
+    EXECUTABLE PVD2XDMF
+    EXECUTABLE_ARGS line_60_heat.pvd
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER xdmfdiff
+    DIFF_DATA
+    line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf MaterialIDs MaterialIDs 0 0
+    line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf HeatFlowRate HeatFlowRate 0 0
+    line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf temperature temperature 1e-13 0
+    line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf heat_flux heat_flux 1e-13 0
+)
