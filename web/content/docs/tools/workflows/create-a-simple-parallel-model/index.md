@@ -10,8 +10,8 @@ author = "Thomas Fischer"
 
 ## Unsupported Processes
 
-So far, LIE related processes are not supported to use 
- the parallel FEM scheme with PETSc.
+So far, LIE related processes are not supported to use
+the parallel FEM scheme with PETSc.
 
 ## Software Modules and Compilation on EVE
 

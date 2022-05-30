@@ -21,6 +21,7 @@ argument can be obtained with the `--help` option.
 ```bash
 geometryToGmshGeo --input <input file name> --output <output file>
 ```
+
 The `--input` argument is accepted multiple times.
 
 ## Simple examples
@@ -28,11 +29,13 @@ The `--input` argument is accepted multiple times.
 ### First Example: Simple Geometry
 
 First, the Gmsh geometry file is create from the gml file [square_1x1.gml](square_1x1.gml):
+
 ```bash
 geometryToGmshGeo -i square_1x1.gml -o /tmp/square_1x1.geo --mesh_density_scaling_at_points 0.05
 ```
 
 Then, the Gmsh geometry can be meshed:
+
 ```bash
 gmsh /tmp/square_1x1.geo -2 -algo meshadapt -format msh22 -o /tmp/square_1x1.msh
 ```
@@ -45,9 +48,10 @@ gmsh /tmp/square_1x1.geo -2 -algo meshadapt -format msh22 -o /tmp/square_1x1.msh
 ### Second Example: Simple Geometry with Additional Geometrical Information
 
 First, the Gmsh geometry file is create from the gml files
- - [square_1x1.gml](square_1x1.gml)
- - [square_0.15_0.25x0.15_0.25.gml](square_0.15_0.25x0.15_0.25.gml)
- - [square_0.45_0.55x0.45_0.55.gml](square_0.45_0.55x0.45_0.55.gml)
+
+- [square_1x1.gml](square_1x1.gml)
+- [square_0.15_0.25x0.15_0.25.gml](square_0.15_0.25x0.15_0.25.gml)
+- [square_0.45_0.55x0.45_0.55.gml](square_0.45_0.55x0.45_0.55.gml)
 
  ```bash
 geometryToGmshGeo -i square_1x1.gml
@@ -57,6 +61,7 @@ geometryToGmshGeo -i square_1x1.gml
 ```
 
 Then, the Gmsh geometry can be meshed:
+
 ```bash
 gmsh /tmp/square_1x1.geo -2 -algo meshadapt -format msh22 -o /tmp/square_1x1.msh
 ```

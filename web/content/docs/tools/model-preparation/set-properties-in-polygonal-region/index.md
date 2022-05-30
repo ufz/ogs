@@ -35,6 +35,7 @@ ResetPropertiesInPolygonalRegion
     --any_of
     -o [modified_mesh.vtu]
 ```
+
 By default all nodes of an element have to be inside the polygon to set the
 property on the element. By specifying the boolean switch `any_of` at the
 command line the criterion for element selection changes to 'at least one
@@ -80,7 +81,7 @@ ResetPropertiesInPolygonalRegion
     -o hex_5x5x5_Region1-Layer1.vtu
 ```
 
-Here the elements with material ids 11 are displayed non-transparent.
+Here the elements with the material ID of 11 are displayed non-transparent.
 
 The final mesh containing 12 material groups is represented in the right figure
 and was created by the command
@@ -116,4 +117,5 @@ This workflow was successful used in the INFLUINS project cutting out the Unstru
 - [TestPolylines.gml](TestPolylines.gml)
 - [hex_5x5x5.vtu](hex_5x5x5.vtu)
 - [Regions.gml](Regions.gml)
+
 </div>

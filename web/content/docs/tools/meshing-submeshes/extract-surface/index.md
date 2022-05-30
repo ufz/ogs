@@ -39,7 +39,4 @@ Extracted top, bottom and side surfaces:
 - bottom `ExtractSurface -i Input.vtu -o BottomSurface.vtu -x 0 -y 0 -z 1`
 - side `ExtractSurface -i Input.vtu -o SideSurface.vtu -x 1 -y 1 -z 0 -a 45`
 
-![](CubeFrontRightBackLeft.png "Shows the extracted front, right, back, and left surfaces from the
-cube that are colored by the corresponding subsurface material id. The material
-ids transformed to the surfaces can be used for further boundary condition
-preparations for instance employing paraviews threshold filter.")
+![The extracted front, right, back, and left surfaces from the cube that are colored by the corresponding subsurface material id](CubeFrontRightBackLeft.png "Shows the extracted front, right, back, and left surfaces from the cube that are colored by the corresponding subsurface material id. The material ids transformed to the surfaces can be used for further boundary condition preparations for instance employing paraviews threshold filter.")
