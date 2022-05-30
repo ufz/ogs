@@ -24,6 +24,7 @@ This introduction to geothermal modeling deals with flow and heat transport proc
 ### <i class="far fa-download"></i> Downloads
 
 - [<i class="far fa-file-archive"></i> Files for exercise <i>Computational Geothermics</i>](https://ogsstorage.blob.core.windows.net/web/Books/Geoenergy-Model-I/ComputationalGeothermicsExercises.zip)  
+
 </div>
 
 <div class='note'>
