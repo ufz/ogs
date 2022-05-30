@@ -18,7 +18,7 @@ This page describes errors you get at runtime of OGS, e.g. when executing the `o
 
 Typical error message:
 
-```
+```bash
 error while loading shared libraries: libXX.so: cannot open shared object file: No such file or directory
 ```
 
@@ -28,10 +28,11 @@ A shared library which was linked to OGS could not be found during runtime. The 
 export LD_LIBRARY_PATH=/path/to/missing/lib:$LD_LIBRARY_PATH
 ./ogs
 ```
+
 More information can be found here:
 
-- https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html
-- https://amir.rachum.com/blog/2016/09/17/shared-libraries/#runtime-search-path
+- <https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html>
+- <https://amir.rachum.com/blog/2016/09/17/shared-libraries/#runtime-search-path>
 
 If you use Conan you want to activate its [runtime environment]({{< relref "conan-package-manager.md#conan-environment" >}}).
 
@@ -41,7 +42,7 @@ One can see with the `ldd` (macOS: `otool -L`) tool which dynamic libraries will
 
 Typical error message:
 
-```
+```bash
 XX.dll could not be found.
 ```
 

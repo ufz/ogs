@@ -45,7 +45,7 @@ The current style is defined in [.cmake-format.yaml](https://gitlab.opengeosys.o
 
 On installation make sure to install with the yaml option:
 
-```
+```bash
 pip install cmakelang[YAML]
 ```
 

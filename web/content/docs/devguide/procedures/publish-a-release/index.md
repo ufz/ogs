@@ -31,10 +31,10 @@ weight = 1080
     - `# ogs-doxygen-v[TAG (- separated instead of .)]`
   - Create branch from `master` with name `v[TAG]` and push
 - Create a discourse announcement post
-    - DOI badge
-    - Software heritage badge
-    - Link to release page on opengeosys.org
-    - Link to GitLab release
-    - Link to Zenodo release
-    - Link to archive on Software Heritage
+  - DOI badge
+  - Software heritage badge
+  - Link to release page on opengeosys.org
+  - Link to GitLab release
+  - Link to Zenodo release
+  - Link to archive on Software Heritage
 - Set milestone on expired issues and merge requests

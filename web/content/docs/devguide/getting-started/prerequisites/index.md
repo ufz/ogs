@@ -199,6 +199,7 @@ git config --global http.proxy http://yourproxy.example.com
 
 - Download the installer, at the [CMake download page](http://www.cmake.org/cmake/resources/software.html) choose the **Windows (Win32 Installer)**.
 - Execute the installer, please check the **Add CMake to the system path for all users**-option
+
 </div>
 
 <div class='linux'>
@@ -217,7 +218,6 @@ brew install cmake
 ```
 
 </div>
-
 
 ## Optional: Install Ninja
 

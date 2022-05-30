@@ -86,7 +86,7 @@ You can create a `CMakeUserPresets.json` file in the root source directory with 
 
 <div class='note'>
 
-### Windows notes:
+### Windows notes
 
 #### <i class="far fa-check"></i> Ninja requirement: Use the Visual Studio command line
 

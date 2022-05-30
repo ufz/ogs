@@ -43,7 +43,7 @@ brew install ccache
 
 <div class='win'>
 
-Windows support in ccache is not yet in the main ccache development line. Please install ccache from https://github.com/cristianadam/ccache/releases.
+Windows support in ccache is not yet in the main ccache development line. Please install [ccache](https://github.com/cristianadam/ccache/releases).
 
 Just extract the archive and put the `ccache.exe` into the `PATH`.
 

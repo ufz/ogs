@@ -27,6 +27,7 @@ If a binary runs on a different machine depends on a lot of factors. The followi
 ### Optimization CMake options
 
 - `OGS_CPU_ARCHITECTURE`: possible values `AMD64` or `INTEL64` (sets `/favor:{AMD64 | INTEL64}` flag)
+
 </div>
 
 <div class='linux'>
@@ -44,6 +45,7 @@ If a binary runs on a different machine depends on a lot of factors. The followi
 #### For optimization
 
 - `OGS_CPU_ARCHITECTURE`: tot to `native` for best optimization for your current cpu, possible values are [listed here](https://stackoverflow.com/a/25095818/80480), more info on [gcc docs](https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html#index-mtune-15)
+
 </div>
 
 <div class='mac'>

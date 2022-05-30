@@ -26,7 +26,7 @@ $ jq -r '.cpm.package_file_id' web/data/versions.json
 
 Now simply download the file with:
 
-```
+```bash
 curl https://gitlab.opengeosys.org/ogs/ogs/-/package_files/[insert ID here]/download --output cpm.tar.gz
 ```
 

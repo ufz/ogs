@@ -128,7 +128,6 @@ brew install clang-format
 
 </div>
 
-
 ## Optional: Working on a new feature
 
 You only have to follow the above steps once. From then on, whenever you want to work on a new feature, you can more easily interact with the remote repositories.
