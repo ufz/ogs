@@ -54,3 +54,18 @@ repos:
         language: system
         pass_filenames: false
         files: \.(h|cpp)$
+      - id: vale
+        name: Check spelling with vale
+        entry: bash -c 'if command -v vale &> /dev/null; then vale --minAlertLevel warning; else exit 0; fi'
+        language: system
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.31.1
+    hooks:
+      - id: markdownlint
+        args:
+          [
+            --config,
+            web/content/.markdownlint.yaml,
+            -p,
+            web/content/.markdownlintignore,
+          ]

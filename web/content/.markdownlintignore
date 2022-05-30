@@ -1,4 +1,2 @@
-releases/
-docs/tools/workflows/Example-of-a-DGM-to-model-workflow/index.md
-docs/userguide/process-dependent-configuration/Heat_Transport_BHE.md
-docs/benchmarks/python-bc/laplace-equation/python-laplace-eq.md
+web/content/releases/
+web/content/docs/devguide/packages/mfront/index.md
