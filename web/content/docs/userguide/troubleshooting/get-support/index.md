@@ -24,7 +24,6 @@ If you encounter issues using or developing OGS let us know. To help you in the 
 
 Feel free to skip things from the list if you think they are not related to the issue but in general: the more information the better.
 
-
 ### Submit the report
 
 Submit the report to one of the following channels (beforehand you may want to check these channels if somebody else already described your issue):

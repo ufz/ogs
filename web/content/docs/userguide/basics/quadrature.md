@@ -37,7 +37,6 @@ The columns contain the following data:
   *z*<sup>k</sup> with *i ≤ Q*, *j ≤ Q* and *k ≤ Q*. I.e., maximum monomial
   degrees are higher in the Q column than in the P column.
 
-
 | Integration order → | 1       | 1     | 1     | 2       | 2     | 2     | 3       | 3     | 3     | 4       | 4     | 4     |
 | ------------------- | ------: | ----: | ----: | ------: | ----: | ----: | ------: | ----: | ----: | ------: | ----: | ----: |
 | **Mesh element ↓**  | **#IP** | **Q** | **P** | **#IP** | **Q** | **P** | **#IP** | **Q** | **P** | **#IP** | **Q** | **P** |
@@ -91,4 +90,3 @@ implemented in OpenGeoSys.
 | Tetrahedron         | 1       |   –   |   –   | 5       |   ✓   |   –   | 14      |   ✓   |   ✓   | 20      |   ✓   |   ✓   |
 | 3–sided prism       | 1       |   –   |   –   | 6       |   ✓   |   –   | 21      |   ✓   |   ✓   | 28      |   ✓   |   ✓   |
 | Pyramid             | 1       |   –   |   –   | 5       |   ✓   |   –   | 13      |   ✓   |   ✓   | 13      |   ✓   |   ✓   |
-

@@ -56,7 +56,6 @@ docker run --rm -p 8888:8888 -v $PWD:/home/jovyan/work --user `id -u $USER` \
 
 This mounts your current directory into `~/work` inside the container. Use image `registry.opengeosys.org/ogs/ogs/ogs-petsc-jupyter` for PETSc-support!
 
-
 <div class="note">
 
 #### <i class="fab fa-windows"></i> Windows notes
@@ -67,8 +66,9 @@ The above command only works when you run Docker from within a WSL2 Linux shell!
 - Install a Linux distribution from the Microsoft App Store. We recommend [Ubuntu 20.04](https://www.microsoft.com/en-us/p/ubuntu-2004-lts/9n6svws3rx71).
 - In the Docker Desktop application under *Settings / Resources / WSL integration* add your Linux distribution.
 - Open a command prompt in your Linux distribution (At the start menu type the name of the distribution) and run the container.
-    - If your current working contains spaces write out `$PWD`, e.g.:
-    ```
+  - If your current working contains spaces write out `$PWD`, e.g.:
+
+    ```bash
     ... -v /c/Users/My\ Name/working/directory:/home/jovyan/work ...
     ```
 
@@ -96,7 +96,7 @@ You may have to modify the IP address if this is running on a remote machine.
 
 You can append a version number to the image name (applies both to Docker and Singularity) to get an image for a specific OGS release (starting with 6.4.1):
 
-```
+```bash
 singularity run docker://registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter:6.4.1
 ```
 

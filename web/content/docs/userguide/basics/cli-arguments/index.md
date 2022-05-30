@@ -11,7 +11,7 @@ weight = 3
 
 The following arguments are available:
 
-```
+```bash
 $ ogs --help
 
    --enable-fpe
