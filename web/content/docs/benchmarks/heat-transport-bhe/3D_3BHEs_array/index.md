@@ -67,7 +67,7 @@ The TESPy version 0.3.2 is used in this benchmark.
 
 Two different pipe network setup were constructed for this benchmark.
 
-*   A one-way pipe network (see Figure 1a)
+* A one-way pipe network (see Figure 1a)
 
 In this setup, the refrigerant mass flow rate is given in $kg/s$, as this is the default setting in the TESPy model (see ./pre/3bhes.py).
 After being lifted by the pump, the refrigerant inflow will be divided into 3 branches by the splitter and then flow into each BHEs.
@@ -84,7 +84,7 @@ For the fast execution of this benchmark, the total simulation time is shorten t
 
 Figure 1a: One-way pipeline network model
 
-*   A closed-loop pipe network (see Figure 1b)
+* A closed-loop pipe network (see Figure 1b)
 
 The setup for a closed-loop network model is illustrated in Figure 1b.
 Compared to the configuration in the one-way network, the refrigerant in the closed loop network is circulating through the entire system.
@@ -93,7 +93,6 @@ In this case, the flow rate will be automatically adjusted by the water pump in 
 {{< img src="BHE_network_closedloop.png" width="200">}}
 
 Figure 1b: Closed-loop pipeline network model
-
 
 ## Results
 
@@ -113,7 +112,6 @@ Figure 6 depicts the thermal load shifting phenomenon with the closed-loop model
 Except for the thermal shifiting behavior among the BHEs, the averaged heat extraction rate of all BHEs (black line) increases slightly over the time.
 This is due to the fact that additional energy is required to compensate the hydraulic loss of the pipe.
 
-
 {{< img src="Soil_temperature.png" width="200">}}
 
 Figure 2: Evolution of the soil temperature located at the 1 m distance away from each BHE
@@ -126,7 +124,6 @@ Figure 3: Evolution of the inflow and outflow refrigerant temperature of each BH
 
 Figure 4: Evolution of the heat extraction rate of each BHE
 
-
 {{< img src="Inflow_temperature_and_flow_rate.png" width="200">}}
 
 Figure 5: Evolution of the inflow refrigerant temperature and flow rate entering the BHE array
@@ -134,6 +131,7 @@ Figure 5: Evolution of the inflow refrigerant temperature and flow rate entering
 {{< img src="Heat_extraction_rate_closedloop.png" width="200">}}
 
 Figure 6: Evolution of the heat extraction rate of each BHE with close loop network model
+
 ## References
 
 [1] Diersch, H. J., Bauer, D., Heidemann, W., Rühaak, W., & Schätzl, P. (2011). Finite element modeling of borehole heat exchanger systems: Part 1. Fundamentals. Computers & Geosciences, 37(8), 1122-1135.

@@ -172,7 +172,6 @@ All parameters are concluded in the following tables.
 </tbody>
 </table>
 
-
 The gravity related terms are neglected in both: the Darcy velocity and the momentum balance equation.
 
 Note that 100 time steps were used for the following results, whereas the provided input file is set to 1 time step (1 day = 86400 s).
@@ -181,7 +180,8 @@ Kim plots his results over nondimensional time, referring to the time at which t
 {{< img src="InjectionProduction_results.png" >}}
 _Pressure at observation point (marked by circle) versus time (t=0...100 days) and spatial pressure distribution at t=100 days_
 
-## Staggered Scheme: Fixed-stress splitting ##
+## Staggered Scheme: Fixed-stress splitting
+
 For each time step run alternating simulations of the hydraulic (H) problem and the mechanical (M) problem until a convergence criterium is met.
 The fixed-stress split starts with the mass balance (H) followed by the momentum balance (M).
 These coupling iterations (H,M,H,M,...) add another iteration level compared to the monolithic formulation (HM).
@@ -225,8 +225,8 @@ $$
 $$
 These two steps (H,M) are repeated until convergence is reached and thus the solution of the $n^\mathrm{th}$ time step is found.
 
-
 ## References
+
 <a id="1">[1]</a>
 {{< bib "kimtchjua2009" >}}
 

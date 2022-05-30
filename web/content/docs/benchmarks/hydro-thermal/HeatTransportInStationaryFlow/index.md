@@ -11,12 +11,14 @@ weight = 153
 +++
 
 ## Problem description
+
 We consider one dimensional heat transport in stationary flow in a porous medium.
  This benchmark was first introduced as an exercise of
  [Geoenergy Modeling I – Geothermal Processes in Fractured Porous Media](https://www.opengeosys.org/books/geoenergy-modeling-i/)
  for [OGS 5](https://github.com/ufz/ogs5).
 
 ## Numerical setting
+
  The size of the domain is 1 m in the horizontal direction.
   The material properties of fluid are:
 
@@ -68,4 +70,3 @@ The temperature distribution  at <em>t=</em>  5.e+4 s together with the mesh is
 The temperature  profile at <em>t=</em>  5.e+4 s along a horizontal line in the
   2D domain is given in the following figure:
 {{< img src="heat_transport_in_stationary_flow_profile.png" >}}
-

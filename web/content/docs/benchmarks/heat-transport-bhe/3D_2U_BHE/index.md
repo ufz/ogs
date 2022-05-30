@@ -34,7 +34,7 @@ The numerical model was established based on dual continuum method developed by 
 
 For this benchmark, Two different scenarios were carried out by applying two different boundary conditions imposed on the BHE.
 
-*   Fixed inflow boundary condition
+* Fixed inflow boundary condition
 
 The detailed input parameters can be seen from the 3D_2U_BHE.prj file. The inflow temperature of the BHE, which was imposed as boundary condition of the BHE is shown in Figure 1. All the initial temperatures are set as 22 $^{\circ}$C. The flow rate within each U-pipe is set to $2.0\times10^{-4}$ $\mathrm{m^{3} s^{-1}}$ during the whole simulation time.
 
@@ -42,19 +42,19 @@ The detailed input parameters can be seen from the 3D_2U_BHE.prj file. The inflo
 
 Figure 1: Inflow temperature curve and outflow temperature comparison
 
-*   Fixed power boundary condition
+* Fixed power boundary condition
 
 The detailed input parameters can be seen from the 3D_2U_BHE_powerBC.prj file.
 A -315.72 $W$ thermal load is imposed on the BHE to extract the heat from the subsurface during the entire simulation.
 All the other parameters adopted in the model is same as the ones used in the scenario with fixed inflow boundary condition.
 
 ## FEFLOW Input Files
+
 For the benchmark a FEFLOW model is presented.
 The mesh used in the OGS model is directly converted from the FEFLOW model mesh, to ensure that there is no influence to the comparison results from the mesh side.
 Both the FEFLOW and ogs model mesh can be found in the ogs GitLab (<https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/3426>).
 
 ## FEFLOW Input Files
-
 
 ## Results
 

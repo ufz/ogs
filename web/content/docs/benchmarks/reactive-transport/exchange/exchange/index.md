@@ -22,7 +22,7 @@ The following setup is used for the simulation:
 
 Full details of the model setup and parameters are given in the PHREEQC3 example (consulted MAY-2021):
 
-https://water.usgs.gov/water-resources/software/PHREEQC/documentation/phreeqc3-html/phreeqc3-73.htm#50593807_46434
+<https://water.usgs.gov/water-resources/software/PHREEQC/documentation/phreeqc3-html/phreeqc3-73.htm#50593807_46434>
 
 The benchmark uses the `ComponentTransport` process in OGS-6 coupled with the IPhreeqc software (Parkhurst and Appelo,2013). The results show good agreement between codes. More details about the implementation of the `ComponentTransport` process in OGS-6 can be found in  [HC-Process.pdf](/docs/benchmarks/hydro-component/HC-Process.pdf).
 

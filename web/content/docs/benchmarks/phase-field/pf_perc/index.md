@@ -14,6 +14,7 @@ weight = 158
 {{< data-link >}}
 
 ## Problem description
+
 **Note**, this project file runs only with a modified version of OGS
 which you can find [here](https://github.com/KeitaYoshioka/ogs/tree/H2M_phasefield).
 

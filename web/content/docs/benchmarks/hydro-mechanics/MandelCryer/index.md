@@ -140,13 +140,6 @@ _Pressure at center of sphere_
 For more details about the staggered scheme we refer to the [user guide - conventions]({{< ref "conventions.md#staggered-scheme" >}}).
 
 ## References
+
 <a id="1">[1]</a>
 {{< bib "verruijt2009" >}}
-
-
-
-
-
-
-
-
