@@ -109,5 +109,4 @@ spell check docs:
     paths:
       - vale-report.json
     reports:
-      codequality:
-        - vale-report.json
+      codequality: vale-report.json

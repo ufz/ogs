@@ -13,13 +13,13 @@
 {{- range $idx, $a := .Alerts -}}
 {{- $error := "" -}}
 {{- if eq .Severity "error" -}}
-    {{- $error = .Severity -}}
+    {{- $error = "blocker" -}}
     {{- $e = add1 $e  -}}
 {{- else if eq .Severity "warning" -}}
-    {{- $error = .Severity -}}
+    {{- $error = "major" -}}
     {{- $w = add1 $w -}}
-{{- else -}}
-    {{- $error = .Severity -}}
+{{- else if eq .Severity "suggestion" -}}
+    {{- $error =  "info" -}}
     {{- $s = add1 $s -}}
 {{- end}}
 {{- /* Variables setup */ -}}
