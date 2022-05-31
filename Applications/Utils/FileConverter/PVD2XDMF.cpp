@@ -155,14 +155,12 @@ int main(int argc, char* argv[])
     std::filesystem::path const output_file{
         BaseLib::extractBaseNameWithoutExtension(pvd_file_arg.getValue()) +
         ".xdmf"};
-    INFO("output_file {:s}", output_file.string());
     std::filesystem::path output_file_path{outdir_arg.getValue()};
     if (outdir_arg.getValue() != "")
     {
         output_file_path =
-            BaseLib::joinPaths(outdir_arg.getValue(), output_file);
+            BaseLib::joinPaths(outdir_arg.getValue(), output_file.string());
     }
-    INFO("output_file_path {:s}", output_file_path.string());
     std::set<std::string> variable_output_names;
     std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;
     // read first file in the time series; it is determining variables.
