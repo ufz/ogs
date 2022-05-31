@@ -62,10 +62,3 @@ repos:
     rev: v0.31.1
     hooks:
       - id: markdownlint
-        args:
-          [
-            --config,
-            web/content/.markdownlint.yaml,
-            -p,
-            web/content/.markdownlintignore,
-          ]

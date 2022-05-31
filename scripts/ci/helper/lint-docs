@@ -22,7 +22,8 @@ else
 fi
 echo "Lint Markdown"
 if command -v markdownlint >/dev/null 2>&1; then
-    markdownlint --config "${GIT_ROOT}/web/content/.markdownlint.yaml" -p "${GIT_ROOT}/web/content/.markdownlintignore" 'web/content/**/*.md' || ((ERROR_RESULTS++))
+    # TODO: 'Documentation/**/*.md'
+    markdownlint 'web/content/**/*.md' || ((ERROR_RESULTS++))
 else
     echo "markdownlint is missing, please install it from https://github.com/igorshubovych/markdownlint-cli#installation"
 fi
