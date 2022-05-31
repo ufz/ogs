@@ -97,11 +97,17 @@ check docs links:
       --exclude-files project_file_doc_qa.html,ogs_file_
       docs
 
-lint docs:
+spell check docs:
   image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.15-vale-2.16.1-markdownlint-0.31.1
   stage: check
   needs: []
   variables:
-    VALE_MIN_ALERT_LEVEL: error
+    VALE_OUTPUT: json
   script:
-    - scripts/ci/helper/lint-docs
+    - scripts/ci/helper/lint-docs > vale-report.json
+  artifacts:
+    paths:
+      - vale-report.json
+    reports:
+      codequality:
+        - vale-report.json

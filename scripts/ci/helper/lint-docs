@@ -4,21 +4,31 @@
 
 set -o pipefail
 GIT_ROOT=$(cd "${BASH_SOURCE%/*}" && git rev-parse --show-toplevel)
+cd ${GIT_ROOT}
 VALE_MIN_ALERT_LEVEL=${VALE_MIN_ALERT_LEVEL:-}
+VALE_OUTPUT=${VALE_OUTPUT:-}
 ERROR_RESULTS=0
-echo "Lint prose"
 if command -v vale >/dev/null 2>&1; then
     args=()
     if [ -n "${VALE_MIN_ALERT_LEVEL}" ]; then
         args+=("--minAlertLevel" "${VALE_MIN_ALERT_LEVEL}")
     fi
-    if [ -n "${VALE_LINE_OUTPUT}" ]; then
+    if [ "${VALE_OUTPUT}" == "line" ]; then
         args+=("--output" "line" "--sort" "--normalize")
     fi
-    # TODO: "${GIT_ROOT}/Documentation"
-    vale --config "${GIT_ROOT}/.vale.ini" "${args[@]}" "${GIT_ROOT}/web/content" || ((ERROR_RESULTS++))
+    if [ "${VALE_OUTPUT}" == "json" ]; then
+        args+=("--output" "./Documentation/.vale/vale-json.tmpl")
+    else
+        echo "Lint prose"
+    fi
+
+    # TODO: "Documentation"
+    vale "${args[@]}" web/content || ((ERROR_RESULTS++))
 else
     echo "vale is missing, please install it from https://errata-ai.gitbook.io/vale/#installation"
+fi
+if [ "${VALE_OUTPUT}" == "json" ]; then
+    exit 0
 fi
 echo "Lint Markdown"
 if command -v markdownlint >/dev/null 2>&1; then
