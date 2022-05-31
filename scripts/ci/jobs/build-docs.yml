@@ -96,3 +96,12 @@ check docs links:
       --exclude-urls http://www.opengeosys.org/project/license,http://www.opengeosys.org,http://www.opengeosys.org\&quot,http://www.trolltech.com/products/qt/licensing.html,http://www.trolltech.com/products/qt/opensource.html
       --exclude-files project_file_doc_qa.html,ogs_file_
       docs
+
+lint docs:
+  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.15-vale-2.16.1-markdownlint-0.31.1
+  stage: check
+  needs: []
+  variables:
+    VALE_MIN_ALERT_LEVEL: error
+  script:
+    - scripts/ci/helper/lint-docs
