@@ -10,14 +10,13 @@ author = "Thomas Fischer"
 
 ## Introduction
 
-The tool `GocadSGridReader` reads a Gocad stratigraphic grid (file ending sg)
-and writes the data in the open vtk unstructured grid file format (file ending
-vtu). The tool doesn't change the geometry, i.e., it doesn't change the element
+The tool `GocadSGridReader` reads a GOCAD stratigraphic grid (`.sg`)
+and writes the data in the open VTK unstructured grid file format (`.vtu`). The tool doesn't change the geometry, i.e., it doesn't change the element
 quality. Thus, the mesh may not be usable for finite mesh element simulations
 immediately.
 
 The tool is part of the official [OpenGeoSys git repository](https://github.com/ufz/ogs)
-and is build when the `OGS_BUILD_UTILS` cmake switch is set `ON`. The build
+and is build when the `OGS_BUILD_UTILS` CMake switch is set `ON`. The build
 executable `GocadSGridReader` is placed in the `bin` directory. The tool is a command line tool.
 
 ## Usage
@@ -46,11 +45,11 @@ Where:
 GocadSGridReader -s flow_simulation_grid_klein_Rinne.sg -o flow_simulation_grid_klein_Rinne.vtu
 ```
 
-![Gocad SGrid](flow_simulation_klein_Grid_Rinne.png)
+![GOCAD SGrid](flow_simulation_klein_Grid_Rinne.png)
 
 ## Applications
 
-### Thuringia Syncline (INFLUINS project)
+### Thuringia syncline (INFLUINS project)
 
 ![GO2OGS Workflow](WorkflowGO2OGS.png "The tool was used to convert Gocad stratigraphic grids ('GoCad Model' in
 figure below) of the Thuringia syncline to a vtk unstructured grid ('VTU'
@@ -63,6 +62,8 @@ al. 2015).")
 {{< bib "fischer:2015" >}}
 
 ### Other
+
+<!-- vale off -->
 
 - Rotenburger Rinne (Geologischer Dienst für Niedersachsen, Referat Hydrogeologie Landesamt für Bergbau, Energie und Geologie, Jörg Elbracht)
 - Heat storage model HH (Christian-Albrechts-Universität zu Kiel, Institut für Geowissenschaften, Janine Struß)

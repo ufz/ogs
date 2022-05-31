@@ -17,7 +17,7 @@ mesh.
 
 ## Example
 
-Given a "bulk" mesh (Tests/Data/Mechanics/Linear/disc_with_hole.vtu) and a
+Given a "bulk" mesh (`Tests/Data/Mechanics/Linear/disc_with_hole.vtu`) and a
 [quarter circle mesh](quater_circle.vtu) extracted manually we want to use the
 quarter circle mesh for heterogeneous boundary condition. OGS requires two
 mappings into the "bulk" mesh, one for the nodes and one for the elements.

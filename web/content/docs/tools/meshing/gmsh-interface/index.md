@@ -12,7 +12,7 @@ aliases = [ "/docs/tools/meshing/gmsh-interface" ]
 ## Introduction
 
 The tool `geometryToGmshGeo` takes OGS geometries (gml files) and creates a Gmsh
-geo file. The user can specify several command line arguments to influence the
+`.geo` file. The user can specify several command line arguments to influence the
 creation procedure. A list of the arguments as well as a description of each
 argument can be obtained with the `--help` option.
 

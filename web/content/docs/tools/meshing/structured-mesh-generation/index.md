@@ -12,7 +12,7 @@ author = "Thomas Fischer"
 
 Generation of simple meshes in all dimensions can be accomplished with following command line tool.
 
-The mesh generation tools are build when the `OGS_BUILD_UTILS` cmake switch is set `ON`. The build executable `generateStructuredMesh` is placed in the `bin` directory. The tool is a command line tool.
+The mesh generation tools are build when the `OGS_BUILD_UTILS` CMake switch is set `ON`. The build executable `generateStructuredMesh` is placed in the `bin` directory. The tool is a command line tool.
 
 Running `generateStructuredMesh` tool will print the required arguments and a short usage message; for detailed usage add the `--help` argument.
 
@@ -44,7 +44,7 @@ info: Mesh created: 210 nodes, 120 elements.
 
 ### Output mesh format `-o filename.ext`
 
-Depending on the file ending `.msh` or `.vtu` either a legacy OGS5 mesh file or VTK unstructured grid file is generated. Unsupported file endings will result in an error.
+Depending on the file ending `.msh` or `.vtu` either a legacy OGS-5 mesh file or VTK unstructured grid file is generated. Unsupported file endings will result in an error.
 
 ### Mesh element type `-e <line|tri|quad|hex|tet>`
 

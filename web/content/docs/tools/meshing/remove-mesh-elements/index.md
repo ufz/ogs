@@ -10,7 +10,7 @@ author = "Thomas Fischer"
 
 ## General
 
-The tool `removeMeshElements` removes those elements from a given input mesh that fulfills a user specified criterion. The resulting mesh will be written to the specified output file. The user can choose between 4 different removal criterions:
+The tool `removeMeshElements` removes those elements from a given input mesh that fulfills a user specified criterion. The resulting mesh will be written to the specified output file. The user can choose between 4 different removal criteria:
 
  1. Remove elements by assigned properties, for instance material ids.
  2. Remove elements by element type, for instance remove line elements.
@@ -32,7 +32,7 @@ removeMeshElements -i <input-mesh> -o <output-mesh>
 ```
 
 Each particular line with optional arguments refers to one of the different removal criteria mentioned in the general section.
-The corresponding element types differ from vtk cell types and can be found in MeshLib/MeshEnums.cpp.
+The corresponding element types differ from VTK cell types and can be found in `MeshLib/MeshEnums.cpp`.
 
 ## Examples
 

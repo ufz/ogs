@@ -31,6 +31,8 @@ As a common programming language we use [Python](https://www.python.org).
 
 ## Supplementary material
 
+<!-- vale off -->
+
 * [mesh_basin.msh](mesh_basin.msh)
 * [mesh_basin.py](mesh_basin.py)
 * [OGSinput_basin.prj](OGSinput_basin.prj)

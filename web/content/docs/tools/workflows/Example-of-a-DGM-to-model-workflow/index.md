@@ -8,9 +8,11 @@ author = "Marc Walther"
     parent = "workflows"
 +++
 
+<!-- vale off -->
+
 ## Workflow description
 
-This documentation describes an exemplified workflow to create a groundwater flow model based on available data of a digital elevation model (here [SRTM data](https://earthexplorer.usgs.gov/)) and bathymetry data (here [GPDN](https://www.gpdn.de/?pgId=219)). As tools, it uses a GIS (here [QGIS](https://www.qgis.org)), the OGS DataExplorer and several [OGS tools](https://www.opengeosys.org/docs/tools/), as well as the meshing tool [GMSH](http://gmsh.info) and visualization tool [ParaView](http://www.paraview.org). The first part of this documentation deals with the GIS work, the second with the OGS model setup.
+This documentation describes an exemplified workflow to create a groundwater flow model based on available data of a digital elevation model (here [SRTM data](https://earthexplorer.usgs.gov/)) and bathymetry data (here [GPDN](https://www.gpdn.de/?pgId=219)). As tools, it uses a GIS (here [QGIS](https://www.qgis.org)), the OGS DataExplorer and several [OGS tools](https://www.opengeosys.org/docs/tools/), as well as the meshing tool [Gmsh](http://gmsh.info) and visualization tool [ParaView](http://www.paraview.org). The first part of this documentation deals with the GIS work, the second with the OGS model setup.
 
 ## GIS data preparation and extraction
 
@@ -19,9 +21,9 @@ This part will prepare the DGM and bathymetry data as input for the model setup.
 ### Prepare elevation data
 
 * It is likely that you will need to download more than one remote sensing image when the study area is large or overlapping the borders of one section. Download the required DGM data (here `.tif` files) of the study area and load them into QGIS.
- ![Load DGM tifs](01_load-tifs.png)
+ ![Load DGM TIFF files](01_load-tifs.png)
 * Merge the images with `Raster` -> `Miscellaneous` -> `Merge...`; select the `Input Layer`s.
- ![Merge multiple DGM tifs](02_merge-DEMs.png)
+ ![Merge multiple DGM TIFF files](02_merge-DEMs.png)
 * Extract a subregion of the (merged) DGMs and define the study area through a shape file. One may also use a predefined shape file and continue with step 5. Choose `New Shapefile Layer...` from the toolbar and enter a `File name` and a projection.
  ![Create clipping shape](03_create-shp-for-clipping.png)
 * Edit the shape (`Toggle Editing` in toolbar), add points, and save the layer edits.
@@ -37,7 +39,7 @@ This part will prepare the DGM and bathymetry data as input for the model setup.
 * As bathymetry was given as "depth", this parameter needs to be converted to an "elevation"; use `Raster` -> `Raster Calculator` and define the `Output layer`, the `Output format` and the `Raster Calculator Expression` (shown formula only inverts the sign).
  ![Depth to elevation with the raster calculator](09_bathymetry-depth-to-elev.png)
 * Merge the DGM and bathymetry rasters (as done in step 2), and save the merged file as a `.asc` file with `Raster` -> `Conversion` -> `Translate (Convert Format)`; define the `Input Layer` and the `Converted` output file.
- ![Convert to .asc format](10_save-asc.png)
+ ![Convert to `.asc` format](10_save-asc.png)
 
 ### Prepare study area features
 
@@ -47,7 +49,7 @@ This part will prepare the DGM and bathymetry data as input for the model setup.
  ![Select features](12_select-non-coast.png)
 * Finish the selection (close attribute table) and remove the selected features by editing the shape (`Toggle Editing`) and clicking `Delete Selected`; save the changes.
  ![Remove selected features](13_remove-non-coast.png)
-* The remaining features may be too highly resoluted (see red line in below figure); choose `Vector` -> `Geometry Tools` -> `Simplify...`, and select an `Input Layer` as well as the `Simplification method` with an appropriate `Tolerance`.
+* The remaining features may have a high resolution (see red line in below figure); choose `Vector` -> `Geometry Tools` -> `Simplify...`, and select an `Input Layer` as well as the `Simplification method` with an appropriate `Tolerance`.
  ![Simplify extracted coastline](14_simplify-coast.png)
 * Further, it might be useful to manually remove even more vertices from the polygon; `Toggle Editing` of the simplified shape and select and remove vertices.
   ![Further thinning of simplified coastline](15_delete-unnecessary-vertices.png)

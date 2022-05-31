@@ -35,12 +35,12 @@ All files are stored in
 [Tests/Data/MeshLib/](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/MeshLib):
 
 - the Gmsh generated mesh
-[A2-gmsh.msh](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/MeshLib/A2-gmsh.msh),
+[`A2-gmsh.msh`](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/MeshLib/A2-gmsh.msh),
 - and the corresponding result files
-[A2.vtu](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/MeshLib/A2.vtu),
+[`A2.vtu`](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/MeshLib/A2.vtu),
 and the boundary meshes
-[A2_0.vtu](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/MeshLib/A2_0.vtu) to
-[A2_7.vtu](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/MeshLib/A2_7.vtu).
+[`A2_0.vtu`](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/MeshLib/A2_0.vtu) to
+[`A2_7.vtu`](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/MeshLib/A2_7.vtu).
 
 ### Running GMSH2OGS
 
