@@ -45,23 +45,25 @@ $$
 
 where $h_0$ is the constant initial hydraulic head $[L]$, $Q$ is the constant discharge rate [$L^{3}T^{-1}$], $T$ is the aquifer transmissivity [$L^{2}T^{-1}$], $t$ is time $[T]$, $x,y$ is the coordinate at any point $[L]$ and $S$ is the aquifer storage $[-]$. $W(u)$ is the well function defined by an infinite series for a confined aquifer as
 
+<!-- vale off -->
 $$
 \begin{eqnarray}
 W(u) = -\gamma -lnu + \sum^{\infty}_{k=1}{\frac{(-1)^{k+1}u^k}{k\cdot k!}}
 \label{theis_wu}
 \end{eqnarray}
 $$
+<!-- vale on -->
 
 where $\gamma\approx$ 0.5772 is the Euler-Mascheroni constant. For practical purposes, the simplest approximation of $W(u)$ was proposed as $W(u)=-0.5772-lnu$  for $u <$ 0.05. Other more exact approximations of the well function were summarized by R. Srivastava and A. Guzman-Guzman
 
 ## Results and evaluation
 
-The following figure compares the analytical solution, the result by ogs5, and
- the result by ogs6 (labeled as `pressure`) within the range that satisfies
+The following figure compares the analytical solution, the result by OGS-5, and
+ the result by OGS-6 (labeled as `pressure`) within the range that satisfies
  $u <$ 0.05.
 {{< img src="theis_comparison.png" >}}
 The figure shows that there is a good match between the analytical solution and
- the numerical solution obtained by using ogs5 or ogs6.
+ the numerical solution obtained by using OGS-5 or OGS-6.
 
 <p>Some of the data of the above curves are given in the following table.</p>
 <table>
@@ -71,8 +73,8 @@ The figure shows that there is a good match between the analytical solution and
 <tr class="odd">
 <td style="text-align: left;">Distance</td>
 <td style="text-align: left;">Analytic</td>
-<td style="text-align: left;">OGS5</td>
-<td style="text-align: left;">OGS6</td>
+<td style="text-align: left;">OGS-5</td>
+<td style="text-align: left;">OGS-6</td>
 <td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error</td>
 </tr>

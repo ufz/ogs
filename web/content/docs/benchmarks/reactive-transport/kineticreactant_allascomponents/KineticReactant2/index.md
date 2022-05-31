@@ -15,7 +15,9 @@ title = "Solute transport including kinetic reaction"
 
 ## Overview
 
-This scenario describes the transport of two solutes (Snythetica and Syntheticb) through a saturated media.
+<!-- vale off -->
+
+This scenario describes the transport of two solutes (Synthetica and Syntheticb) through a saturated media.
 Both solutes react to Productd according to $\text{Product d}=\text{Synthetic a}+0.5~\text{Synthetic b}$.
 The speed of the reaction is described with a first--order relationship $\frac{dc}{dt}=U(\frac{c_{\text{Synthetic a}}}{K_m+c_{\text{Synthetic b}}})$.
 The coupling of OGS-6 and IPhreeqc used for simulation requires to simulate the transport of $H^+$--ions, additionally.
@@ -25,7 +27,7 @@ The solution by OGS-6--IPhreeqc will be compared to the solution by a coupling o
 ## Problem Description
 
 **1d scenario:**
-The 1d--model domain is 0.5 m long and discretized into 200 line elements.
+The 1d--model domain is 0.5 m long and discretised into 200 line elements.
 The domain is saturated at start--up ($p(t=0)=$ 1.0e-5 Pa).
 A constant pressure is defined at the left side boundary ($g_{D,\text{upstream}}^p$) and a Neumann BC for the water mass out-flux at the right side ($g_{N,\text{downstream}}^p$).
 Both solutes, Synthetic a and Synthetic b are present at simulation start--up at concentrations of $c_{\text{Synthetic a}}(t=0)=c_{\text{Synthetic b}}(t=0)= 0.5~\textrm{mol kg}^{-1}~\textrm{water}$, the influent concentration is $0.5~\textrm{mol kg}^{-1}~\textrm{water}$ as well.
@@ -35,7 +37,7 @@ Respective material properties, initial and boundary conditions are listed in th
 
 **2d scenario:**
 The 2d--scenario only differs in the domain geometry and assignment of the boundary conditions.
-The horizontal domain is 0.5 m in x and 0.5 m in y direction, and,  discretized into 10374 quadratic elemtents with an edge size of 0.0025 m.
+The horizontal domain is 0.5 m in x and 0.5 m in y direction, and,  discretised into 10374 quadratic elemtents with an edge size of 0.0025 m.
 
 ![Domains for the 1d/2d simulation models](KineticReactant2_domain.png)
 

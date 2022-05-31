@@ -51,6 +51,8 @@ v \left(y\right) = \frac{1}{2\mu} \frac{P_{\mathrm{in}} - P_{\mathrm{out}}}{l} y
 
 ## References
 
+<!-- vale off -->
+
 Sarkar, S., Toksoz, M. N., & Burns, D. R. (2004). Fluid flow modeling in fractures. Massachusetts Institute of Technology. Earth Resources Laboratory.
 
 Yuan, T., Ning, Y., & Qin, G. (2016). Numerical modeling and simulation of coupled processes of mineral dissolution and fluid flow in fractured carbonate formations. Transport in Porous Media, 114(3), 747-775.

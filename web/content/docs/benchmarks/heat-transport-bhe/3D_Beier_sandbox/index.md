@@ -62,8 +62,12 @@ Figure 4: Comparison of modelled and measured wall and soil temperatures
 
 ## References
 
+<!-- vale off -->
+
 [1] Richard A Beier, Marvin D Smith, and Jeffrey D Spitler. Reference data setsfor vertical borehole ground heat exchanger models and thermal responsetest analysis. Geothermics, 40(1):79–85, 2011
 
 [2] Diersch, H. J., Bauer, D., Heidemann, W., Rühaak, W., & Schätzl, P. (2011). Finite element modeling of borehole heat exchanger systems: Part 1. Fundamentals. Computers & Geosciences, 37(8), 1122-1135.
 
 [3] Haibing Shao, Philipp Hein, Agnes Sachse, and Olaf Kolditz. GeoenergyModeling II: Shallow Geothermal Systems. Springer, 2016
+
+<!-- vale on -->

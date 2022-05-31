@@ -66,7 +66,7 @@ Note: in such a case, the result is also an output of hydraulic head in [m] and 
 
 ## Examples
 
-The following simple examples, which have been compared with Modflow simulations, shall verify the result and demonstrate the basic parameterization.
+The following simple examples, which have been compared with MODFLOW simulations, shall verify the result and demonstrate the basic parameterization.
 
 The basic scenario for the two-dimensional unconfined aquifer:
 
@@ -106,6 +106,8 @@ The basic scenario for the two-dimensional unconfined aquifer:
 
 For more information see e.g.
 
+<!-- vale off -->
+
 - _Boussinesq J. Recherches th´eoriques sur l’´ecoulement des nappes d’eau infiltr´ees dans le sol 445 et sur le d´ebit des sources. J. Math´ematiques Pures Appliqu´ees, 10(5–78):363–394, 1904._
 - _Diersch HJG. FEFLOW Finite Element Modeling of Flow, Mass and Heat Transport on Porous Media. Berlin, Heidelberg: Springer-Verlag; 2014. Finite Element Modeling of Flow, Mass and Heat Transport in Porous and Fractured Media 2014._
 - _Dupuit J. Mouvement de l’eau a travers le terrains permeables. C. R. Hebd. Seances Acad. Sci., 45:92–96, 1857._
@@ -113,3 +115,5 @@ For more information see e.g.
 - _Forchheimer P. Grundwasserspiegel bei Brunnenanlagen. Z. Osterreichhissheingenieur Architecten Ver, 44:629–635, 1898._
 - _Kolditz, O., Görke, U.-J., Shao, H., Wang, W.: Thermo-Hydro-Mechanical-Chemical Processes in Porous Media - Benchmarks and Examples, Lecture Notes in Computational Science and Engineering, 2012._
 - _Mishra P.K., Kuhlman K.L. (2013) Unconfined Aquifer Flow Theory: From Dupuit to Present. In: Mishra P., Kuhlman K. (eds) Advances in Hydrogeology. Springer, New York, NY 2013._
+
+<!-- vale on -->

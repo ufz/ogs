@@ -135,8 +135,8 @@ $$\begin{aligned}
   -2G\dfrac{Q}{R} {{\int}_{\Omega} \dfrac{b}{T^2} {\left\Vert{\mathbf s}^{n+1}\right\Vert}^{m-1}  \mathbf{B}^T  {\mathbf s}^{n+1} \mathrm{d} \Omega}
 \end{aligned}
 
-*Note*: The above rate form of stress integration is implemented in ogs6.
- Alternatively, one can use a absolute stress integration form, which can be found in the attached
+*Note*: The above rate form of stress integration is implemented in OGS.
+ Alternatively, one can use an absolute stress integration form, which can be found in the attached
  [PDF](doku_BGRa.pdf).
 
 ## Example
@@ -151,7 +151,7 @@ $$\begin{gathered}
 { \epsilon}=-\dfrac{{ \sigma}_0}{E}-Ae^{-Q/RT}{ \sigma}_0^m t
 \end{gathered}$$
 
-The problem is solved as axisymmterical one. Therefore
+The problem is solved as an axisymmetric one. Therefore
 $$\begin{gathered}
 { \epsilon_z}=-\dfrac{{ \sigma}_0}{E}-Ae^{-Q/RT}{ \sigma}_0^m t
 \end{gathered}$$
@@ -188,7 +188,7 @@ solution is shown in the following figure:
 A short python snippet, to compute the values.
 <details>
 <summary>
-Insert this into Paraview's ProgrammableFilter:
+Insert this into ParaView's ProgrammableFilter:
 </summary>
 
 ```python

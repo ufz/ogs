@@ -15,7 +15,7 @@ project = "Parabolic/T/3D_deep_BHE/3D_deep_BHE_CXA.prj"
 
 ## Problem description
 
-In recent years, Borehole Heat Exchangers (BHE) are very widely utilized to extract geothermal energy for building heating. For coaxial type of BHEs, an inner pipe is installed inside of an outer pipe, allowing the downward and upward flow to be separated. In some projects, very long coaxial BHEs are installed down to a 2-km depth, in order to extract more energy from the deep subsurface (Kong et al., 2017). Based on the flow directions, there are two types of coaxial BHEs. When downward flow is located in the inner pipe, it is called Coaxial-Centred (CXC) type. On the countary, if the inflow is introduced in the annular space, it is called a CXA type. Detailed schematization of the CXA-type BHE system is shown in Figure 1. In this benchmark, the numerical model in OGS-6 has been tested for the 2 coaxial types of BHEs. The simulation results are compared with previous OGS-5 results and also the analytical solution proposed by [Beier et al. (2014)](Analytical_coaxial_BHE.zip).
+In recent years, Borehole Heat Exchangers (BHE) are very widely utilized to extract geothermal energy for building heating. For coaxial type of BHEs, an inner pipe is installed inside of an outer pipe, allowing the downward and upward flow to be separated. In some projects, very long coaxial BHEs are installed down to a 2-km depth, in order to extract more energy from the deep subsurface (Kong et al., 2017). Based on the flow directions, there are two types of coaxial BHEs. When downward flow is located in the inner pipe, it is called Coaxial-Centred (CXC) type. On the contrary, if the inflow is introduced in the annular space, it is called a CXA type. Detailed schematization of the CXA-type BHE system is shown in Figure 1. In this benchmark, the numerical model in OGS-6 has been tested for the 2 coaxial types of BHEs. The simulation results are compared with previous OGS-5 results and also the analytical solution proposed by [Beier et al. (2014)](Analytical_coaxial_BHE.zip).
 
 {{< img src="coaxial_deep_BHE.png" width="200">}}
 
@@ -23,7 +23,7 @@ Figure 1: Coaxial BHE of CXA (Kong et al. (2017))
 
 ## Model Setup
 
-The implemented numerical model was established based on the dual continuum approach (Diersch et al. (2011)). The BHE is represented by the line elements co-located in the 3D mesh composed mainly by prisms. There are altoghether 3 primary variables on the line elements, namely 1) the inflow temperature 2) the outflow temperature and 3) the grout temperature. The geometry of the model is visualized in Figure 2. The length of the whole domain is 70 m with a square cross section of 20 m by 20 m. The mesh was intentionally extended in the horizontal direction, so that the impact of boundary conditions on the soil temperature distribution can be avoided even for the long-term simulation. The top of the DBHE is situated 10 m below the ground surface, with a total length of 50 m. Detailed parameters for the model configuration can be found in the following table.
+The implemented numerical model was established based on the dual continuum approach (Diersch et al. (2011)). The BHE is represented by the line elements co-located in the 3D mesh composed mainly by prisms. There are 3 primary variables on the line elements, namely 1) the inflow temperature 2) the outflow temperature and 3) the grout temperature. The geometry of the model is visualized in Figure 2. The length of the whole domain is 70 m with a square cross section of 20 m by 20 m. The mesh was intentionally extended in the horizontal direction, so that the impact of boundary conditions on the soil temperature distribution can be avoided even for the long-term simulation. The top of the DBHE is situated 10 m below the ground surface, with a total length of 50 m. Detailed parameters for the model configuration can be found in the following table.
 
 | Parameter                                          | Symbol            |  Value              | Unit                        |
 | -------------------------------------------------- |:------------------| -------------------:| --------------------------: |
@@ -44,7 +44,7 @@ The implemented numerical model was established based on the dual continuum appr
 
 Figure 2: Geometry and mesh of the coaxial BHE model
 
-The boundary condition of a BHE is always imposed from the aspect of inflow temperature (Hein, et al., 2016). At every time step, the initial inflow temperature was calculated according to the heat load on the BHE, previous outflow temperature and parameters of circulating fluid, which can be described by:
+The boundary condition of a BHE is always imposed from the aspect of inflow temperature (Hein et al., 2016). At every time step, the initial inflow temperature was calculated according to the heat load on the BHE, previous outflow temperature and parameters of circulating fluid, which can be described by:
 $$
 \begin{equation}
 P = \rho^r c^r Q^r(T_i - T_o),
@@ -70,6 +70,8 @@ In the figures of results' comparison, the numerical results cannot perfectly ma
 
 ## References
 
+<!-- vale off -->
+
 [1] Yan-Long, K., Chao-Fan, C., Hai-Bing, S., Zhong-He, P., Liang-Pings, X., & Ji-Yang, W. (2017). Principle and capacity quantification of deep-borehole heat exchangers. CHINESE JOURNAL OF GEOPHYSICS-CHINESE EDITION, 60(12), 4741-4752.
 
 [2] Beier, R. A., Acuña, J., Mogensen, P., & Palm, B. (2014). Transient heat transfer in a coaxial borehole heat exchanger. Geothermics, 51, 470-482.
@@ -79,3 +81,5 @@ In the figures of results' comparison, the numerical results cannot perfectly ma
 [4] Hein, P., Kolditz, O., Görke, U. J., Bucher, A., & Shao, H. (2016). A numerical study on the sustainability and efficiency of borehole heat exchanger coupled ground source heat pump systems. Applied Thermal Engineering, 100, 421-433.
 
 [5] Li, M., & Lai, A. C. (2015). Review of analytical models for heat transfer by vertical ground heat exchangers (GHEs): A perspective of time and space scales. Applied Energy, 151, 178-191.
+
+<!-- vale on -->

@@ -69,7 +69,7 @@ Two different pipe network setup were constructed for this benchmark.
 
 * A one-way pipe network (see Figure 1a)
 
-In this setup, the refrigerant mass flow rate is given in $kg/s$, as this is the default setting in the TESPy model (see ./pre/3bhes.py).
+In this setup, the refrigerant mass flow rate is given in $kg/s$, as this is the default setting in the TESPy model (see `./pre/3bhes.py`).
 After being lifted by the pump, the refrigerant inflow will be divided into 3 branches by the splitter and then flow into each BHEs.
 Because of this configuration, the inflow temperature on each BHE will be the same.
 The refrigerant flowing out of the BHEs array will be firstly mixed at the merging point and then extracted for the heat extraction through the heat pump.
@@ -107,9 +107,9 @@ In this figure, the difference between the total heat extraction rate of all BHE
 
 In comparison to the one-way setup, the closed-loop network shows a slightly different behaviour.
 The evolution of inflow refrigerant temperature and flow rate entering the BHE array is shown in Figure 5.
-With the decreasing of the working fluid temperature over the time, the system flow rate dereases gradually.
+With the decreasing of the working fluid temperature over the time, the system flow rate decreases gradually.
 Figure 6 depicts the thermal load shifting phenomenon with the closed-loop model.
-Except for the thermal shifiting behavior among the BHEs, the averaged heat extraction rate of all BHEs (black line) increases slightly over the time.
+Except for the thermal shifting behavior among the BHEs, the averaged heat extraction rate of all BHEs (black line) increases slightly over the time.
 This is due to the fact that additional energy is required to compensate the hydraulic loss of the pipe.
 
 {{< img src="Soil_temperature.png" width="200">}}
@@ -134,8 +134,12 @@ Figure 6: Evolution of the heat extraction rate of each BHE with close loop netw
 
 ## References
 
+<!-- vale off -->
+
 [1] Diersch, H. J., Bauer, D., Heidemann, W., Rühaak, W., & Schätzl, P. (2011). Finite element modeling of borehole heat exchanger systems: Part 1. Fundamentals. Computers & Geosciences, 37(8), 1122-1135.
 
 [2] Francesco Witte, Ilja Tuschy, TESPy: Thermal Engineering Systems in Python, 2019. URL: <https://doi.org/10.21105/joss.02178>. doi:10.21105/joss.02178.
 
 [3] Webpage of the High-Level Interface in CoolProp. URL: <http://www.coolprop.org/coolprop/HighLevelAPI.html>.
+
+<!-- vale on -->

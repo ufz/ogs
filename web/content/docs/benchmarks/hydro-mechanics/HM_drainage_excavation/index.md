@@ -14,4 +14,4 @@ project = "HydroMechanics/Linear/DrainageEexcavation/HMdrainage.prj"
 
 ## Problem description
 
-We present the hydro-mechanical drainage of an excavation benchmark in this [this PDF](HM_drainage_excavation.pdf).
+We present the hydro-mechanical drainage of an excavation benchmark in [this PDF](HM_drainage_excavation.pdf).

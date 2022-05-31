@@ -19,7 +19,7 @@ We solve a hydro-mechanical linear biphasic model (small deformation, linear ela
 
 ## Results and evaluation
 
-The analytical solution of the problem can be found in Mov _et.al._ (1980)"Biphasic Creep and Stress Relaxation of Articular Cartilage in Compression: Theory and Experiments."
+The analytical solution of the problem can be found in Mov et al. (1980) "Biphasic Creep and Stress Relaxation of Articular Cartilage in Compression: Theory and Experiments."
 
 The result showing initial pore pressure increase in the bottom of the domain due to applied displacement on the top and subsequent pressure drop after the displacement ramp finishes at time 100s:
 

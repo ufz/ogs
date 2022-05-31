@@ -22,9 +22,9 @@ This benchmark verifies the groundwater level drawdown for an aquifer that is su
 ## Problem description
 
 For pumping from a well, Theis (1935) proposed an analytical solution to calculate the water level drawdown over time and distance from the well. A short summary of the solution can be seen in
-web/content/docs/benchmarks/liquid-flow/liquid-flow-theis-problem.md
+`web/content/docs/benchmarks/liquid-flow/liquid-flow-theis-problem.md`
 
-Here, we verify pumping abstraction with Theis for the `ComponentTransport` process using a 3D setup. The setup is adapted from Walther (2014), section 3.2.
+Here, we verify pumping abstraction with Theis for the `ComponentTransport` process using a 3D setup. The setup is adapted from Walther et al. (2014), section 3.2.
 
 ### Model setup
 
@@ -42,7 +42,7 @@ Initial conditions are $c = 0$ and hydrostatic pressure conditions.
 
 ### Results
 
-The figure below compares the analytical Theis solution vs. the simulated values from OGS6.
+The figure below compares the analytical Theis solution vs. the simulated values from OGS.
 
 {{< img src="comparison.png" title="Comparison between numerical (crosses) and analytical (lines) values.">}}
 
@@ -51,6 +51,8 @@ The top figure shows drawdown (i.e. the difference in water level compared to an
 The lower figure shows drawdown over radius at time $t = 5000 s$; the top figure also signifies this with a green vertical: over the whole domain, the analytical and numerical solutions are coinciding very well. *NB: With higher values of $S_s$, one has to take care to convert the simulated water level to equivalent freshwater head; in this case, fluid density variation is very low such that a conversion is not required.*
 
 ## References
+
+<!-- vale off -->
 
 Theis, C.V., 1935. The relation between the lowering of the piezometric surface and the rate and duration of discharge of a well using groundwater storage. Trans. Amer. Geophys. Union 16, 513–514.
 

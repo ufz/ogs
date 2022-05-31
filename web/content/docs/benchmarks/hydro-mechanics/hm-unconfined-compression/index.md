@@ -34,7 +34,7 @@ p = \bar{p} &\quad \text{on }\Gamma^p_D,\cr
 }
 $$
 
-where $p$ could be pressure, $\mathbf{u}$ could be displacement, $\tilde{\mathbf{w}}$ coulde be the water flow ($\tilde{\mathbf{w}} = -\frac{\mathbf{k}}{\mu}(\nabla p - \varrho_\mathrm{LR} \mathbf{g})$)the subscripts $D$ and $N$ denote the Dirichlet- and Neumann-type boundary conditions, $n$ is the normal vector pointing outside of $\Omega$, and $\Gamma = \Gamma_D \cup \Gamma_N$ and $\Gamma_D \cap \Gamma_N = \emptyset$.
+where $p$ could be pressure, $\mathbf{u}$ could be displacement, $\tilde{\mathbf{w}}$ could be the water flow ($\tilde{\mathbf{w}} = -\frac{\mathbf{k}}{\mu}(\nabla p - \varrho_\mathrm{LR} \mathbf{g})$)the subscripts $D$ and $N$ denote the Dirichlet- and Neumann-type boundary conditions, $n$ is the normal vector pointing outside of $\Omega$, and $\Gamma = \Gamma_D \cup \Gamma_N$ and $\Gamma_D \cap \Gamma_N = \emptyset$.
 
 ## Problem description
 
@@ -44,7 +44,7 @@ We solve a hydro-mechanical linear biphasic model (small deformation, linear ela
 
 ## Assumptions
 
-In this problem, it is assumed that the biot coefficient $\alpha = 1$ and the Storage term $S_\mathrm{s}$ is neglected.
+In this problem, it is assumed that the Biot coefficient $\alpha = 1$ and the Storage term $S_\mathrm{s}$ is neglected.
 
 ## Results and evaluation
 

@@ -59,7 +59,7 @@ This example is also set as one of the benchmarks of
  and ThermoRichardsMechanics (TRM), respectively.
  In order to provide a reference result for the same benchmark of
  THM and TRM, a 2D domain of 1 m $\times$ 0.1 m is used, which
- is discretized into 3$\times$39 quadrilateral elements.
+ is discretised into 3$\times$39 quadrilateral elements.
 
 ## Result
 

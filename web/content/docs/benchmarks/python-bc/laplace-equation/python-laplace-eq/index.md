@@ -53,7 +53,7 @@ $$
 
 where in the second equality Gauss's theorem has been applied.
 As usual, the domain boundary $\partial\Omega = \Gamma\_{\mathrm{D}} \cup \Gamma\_{\mathrm{N}}$ is subdivided
-into the dirichlet and the Neumann boundary and $v$ vanishes on
+into the Dirichlet and the Neumann boundary and $v$ vanishes on
 $\Gamma\_{\mathrm{D}}$.
 The r.h.s. of the above equation is the total flux associated with $u$ flowing
 **into** the domain $\Omega$ through $\Gamma\_{\mathrm{N}}$:

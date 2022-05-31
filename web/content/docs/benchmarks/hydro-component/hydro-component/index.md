@@ -21,7 +21,7 @@ The development of the equation system is given in [this PDF](HC-Process.pdf). I
 
 ## Problem description
 
-We use quadratic mesh with $0 < x < 1$ and $0 < y < 1$ and a resolution of 32 x 32 quad elements with edge length $0.03125 m$. The domain material is homogeneous and anisotropic. Porosity is $0.2$, storativity is $10^{-5}$, intrinic permeability is $1.239 \cdot 10^{-7} m^2$, dynamic viscosity is $10^{-3} Pa \cdot s$, fluid density is $1 kg\cdot m^{-3}$, molecular diffusion is $10^{-5} m^2\cdot s^{-1}$. If not stated otherwise, retardation coefficient is set to $R=1$, relation between concentration and density is $\beta_c = 0$, decay rate is $\theta = 0$, and dispersivity is $\alpha = 0$.
+We use quadratic mesh with $0 < x < 1$ and $0 < y < 1$ and a resolution of 32 x 32 quad elements with edge length $0.03125 m$. The domain material is homogeneous and anisotropic. Porosity is $0.2$, storativity is $10^{-5}$, intrinsic permeability is $1.239 \cdot 10^{-7} m^2$, dynamic viscosity is $10^{-3} Pa \cdot s$, fluid density is $1 kg\cdot m^{-3}$, molecular diffusion is $10^{-5} m^2\cdot s^{-1}$. If not stated otherwise, retardation coefficient is set to $R=1$, relation between concentration and density is $\beta_c = 0$, decay rate is $\theta = 0$, and dispersivity is $\alpha = 0$.
 
 Boundary conditions vary on the left side individually for each setup; right side is set as constant Dirichlet concentration $c=0$; top and bottom are no-flow for flow and component transport. Initial conditions are steady state for flow (for the equivalent boundary conditions respectively) and $c=0$.
 

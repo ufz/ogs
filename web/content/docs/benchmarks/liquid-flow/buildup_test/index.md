@@ -27,6 +27,7 @@ against the analytical solution.
 
 ## Model Setup
 
+<!-- vale off -->
 This benchmark represents a scenario in which the well had been
 producing geothermal brine for $118\ \mathrm{h}$ at a rate of
 $78\ t/\mathrm{h}$ and was then shut in for a buildup test. At the given
@@ -40,6 +41,7 @@ coefficient of $S=\rho gnc_t=6.21\times 10^{-4}\ \mathrm{m^{-1}}$. The
 observed pressure readings during the buildup test are cited from
 Chapter 6 of the book *Geothermal Power Generation*
 [1], and the data is archived in the Appendix.
+<!-- vale on -->
 
 The permeability of the reservoir can be estimated by means of a Horner
 plot, in which the pressure $p$ is plotted against
@@ -79,7 +81,7 @@ maintained at a constant rate. Afterwards, the well is shut-in and pressure
 starts to build up. The geometries used to specify the model domain, boundary
 conditions, and source term can be found in `line_1000_axi.gml` file.
 The mesh is specified in `line_1000_axi.vtu`, which is stored in the
-VTK format and can be directly visualized in Paraview.
+VTK format and can be directly visualized in ParaView.
 
 ## Analytical solution
 

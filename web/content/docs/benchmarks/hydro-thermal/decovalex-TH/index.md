@@ -20,15 +20,15 @@ The TASK D_THM1 of the DECOVALEX-THMC project studies the coupled thermal hydrau
  and mechanical (THM) processes in the FEBEX type nuclear waster repository.
  In the FEBEX type repository, nuclear waster canisters are stored in the
  drifts excavated in the deep rock mass of granite, which is fully water
- saturated, and they are sealed with bentonite. Initiallly, the betonite,
+ saturated, and they are sealed with bentonite. Initially, the bentonite,
  the sealing material, is partially saturated. TASK D_THM1 defines a 2D model
  about the FEBEX type repository \cite BirEtAl:2008. In this example,
  TASK D_THM1 is simplified in order to test the staggered scheme for TH process
- in ogs6. The simplifications are
+ in OGS. The simplifications are
 <ol>
 <li><p>resizing the domain to an area that can represent the near field of an
  installed nuclear water canister,</p></li>
-<li><p>assuming the the betonite is fully saturated from the beginning,</p></li>
+<li><p>assuming the bentonite is fully saturated from the beginning,</p></li>
 <li><p>ignoring the mechanical process.</p></li>
 </ol>
 <p>With such simplifications, the geometry of the present example is illustrated

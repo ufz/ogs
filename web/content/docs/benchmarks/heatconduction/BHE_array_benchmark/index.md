@@ -83,7 +83,7 @@ where $r_b$ is the BHE radius. n denotes the number of surrounding nodes. n = 8
 
 ## Numerical modelling results
 
-Figure 2 and 3 show the comparison of the temperature distribution along the observation profile (position see Figure 1) using analytical solution with the numerical results from OGS5 and OGS6 for every 4 months in the whole simulated time. It shows the numerical solution has a very good agreement with the analytical solution.
+Figure 2 and 3 show the comparison of the temperature distribution along the observation profile (position see Figure 1) using analytical solution with the numerical results from OGS-5 and OGS-6 for every 4 months in the whole simulated time. It shows the numerical solution has a very good agreement with the analytical solution.
 
 {{< img src="figure_2.png" width="200">}}
 
@@ -109,9 +109,13 @@ In this benchmark, a 2D numerical model has been constructed to simulate the gro
 
 ## References
 
+<!-- vale off -->
+
 [1] Bayer, P., de Paly, M., Beck, M., 2014. Strategic optimization of borehole heat exchanger field for seasonal geothermal heating and cooling. Applied Energy 136, 445-453.
 URL <http://dx.doi.org/10.1016/j.apenergy.2014.09.029>
 
-[2] Diersch, H.-J., Bauer, D., Heidemann, W., Ruehaak, W., Sch¨atzl, P., 2011. Finite element modeling of borehole heat exchanger systems: Part 2. Numerical simulation. Computers & Geosciences 37, 1136-1147.
+[2] Diersch, H.-J., Bauer, D., Heidemann, W., Ruehaak, W., Schätzl, P., 2011. Finite element modeling of borehole heat exchanger systems: Part 2. Numerical simulation. Computers & Geosciences 37, 1136-1147.
 
 [3] Stauffer, F., Bayer, P., Blum, P., Giraldo, N., Kinzelbach, W., 2013. Thermal Use of Shallow Groundwater. CRC Press, 290.
+
+<!-- vale on -->

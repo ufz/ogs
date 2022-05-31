@@ -36,7 +36,7 @@ For the hydro-steady state one, it gives zero velocity. For the transient
 This benchmark tests the case of the mesh contains both 3D elements
  and inclined 2D element.
 The analysed  domain has two intersected fractures. The brick shape domain is
- discretised into tetraheda, while the two planes are discretised
+ discretised into tetrahedra, while the two planes are discretised
  into triangles. The permeability of the continuous domain is
 $$k_{xx}=1.0\cdot 10^{-18}, k_{yy}=3.0\cdot 10^{-18}, k_{xx}=3.0\cdot 10^{-18}\,
  \text{m}^2,$$
@@ -54,7 +54,7 @@ the permeability of
 
 The input files are given in the sub-directory of 1Din3D.
 This an artificial example is used to test the simulation with a mesh only with
- inclined line elements. A sphere surface is used to discretised into triangle
+ inclined line elements. A sphere surface is used to discretise into triangle
  elements, and then all the edges of the elements are used as line elements of
  the mesh for this benchmark. That means all lines elements are on a sphere.
 A fixed pressure difference is applied at the two poles of the sphere. As shown

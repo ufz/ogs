@@ -23,13 +23,13 @@ The scenario presented here is a modification of a case already described in Boo
 The experimental system consists of a basin of 4.7 m in length, 1.2 m in width and 0.9 m in depth (Figure 1) filled with gravel and saturated with water.
 The domestic wastewater enters the system at a constant flow rate on the left side and leaves it via an overflow at the right side.
 
-The coupling of OGS-6 and IPhreeqc used in the simulation requires to include the transport of H$^+$--ions to adjust the compulsory charge balance computated by Phreeqc.
+The coupling of OGS-6 and IPhreeqc used in the simulation requires to include the transport of H$^+$--ions to adjust the compulsory charge balance computed by PHREEQC.
 The results obtained by OGS-6--IPhreeqc will be compared to the ones of OGS-5--IPhreeqc.
 
 ## Problem Description
 
 The scenario includes the transport of multiple solutes (i.e. organic molecules, ammonia, etc.) through a saturated media (during 20 days) involving a complex biokinetic reaction network.
-The 1D model domain is 4.7 m long, discretized into 94 line elements, including an influent (12 elements, 0.6 m) and an effluent zone (12 elements, 0.6m) (Figure 1).
+The 1D model domain is 4.7 m long, discretised into 94 line elements, including an influent (12 elements, 0.6 m) and an effluent zone (12 elements, 0.6m) (Figure 1).
 The domain is saturated at start--up with an initial hydrostatic pressure of ($p(t=0)=$ 8829 Pa).
 For the water mass influx a constant Neumann boundary condition (BC) is set at the left side ($g_{N,\text{in}}^p$).
 For the water efflux, a constant pressure is defined as boundary ($g_{D,\text{out}}^p$).
@@ -42,7 +42,7 @@ A "clean" system is assumed at start-up in the basin, therefore, initial concent
 For the wastewater components ("pollutants" and oxygen) entering the system, time-dependent Dirichlet BC are defined at the influx point.
 Respective material properties, initial and boundary conditions are listed in Table 1--2.
 
-![Network of microbiological reactions described by CWM1. $S_I$ = inert soluble organic matter (COD), $X_I$ = inert particulated COD, $X_S$ = Slowly biodegradable particulate COD, $S_F$ = Fermentable, readily biodegradable soluble COD, $S_A$ = Fermentation products as acetate, $S_{NH}$ = Ammonium and ammonia nitrogen, $S_{NO}$ = Nitrate and nitrite nitrogen, $S_O$ = Dissolved oxygen, $S_{SO}$ = Sulphate sulfur, $S_{H2S}$ = Sulphide sulfur; different type of bacterias are identified as $X_H$, $X_A$, $X_{FB}$, $X_{AMB}$, $X_{ASRB}$ and $X_{SOB}$](Wetland_cwm1.png){width=60%}
+![Network of microbiological reactions described by CWM1. $S_I$ = inert soluble organic matter (COD), $X_I$ = inert particulated COD, $X_S$ = Slowly biodegradable particulate COD, $S_F$ = Fermentable, readily biodegradable soluble COD, $S_A$ = Fermentation products as acetate, $S_{NH}$ = Ammonium and ammonia nitrogen, $S_{NO}$ = Nitrate and nitrite nitrogen, $S_O$ = Dissolved oxygen, $S_{SO}$ = Sulphate sulfur, $S_{H2S}$ = Sulphide sulfur; different type of bacteria are identified as $X_H$, $X_A$, $X_{FB}$, $X_{AMB}$, $X_{ASRB}$ and $X_{SOB}$](Wetland_cwm1.png){width=60%}
 
 -----------------------------------------
 
@@ -95,7 +95,7 @@ The biochemical reactions are now governing the system behaviour.
 
 Both, OGS-6 and OGS-5 simulations yield the same results.
 For instance, the difference between the OGS-6 and the OGS-5 computation for the concentration of $S_A$  expressed as root mean squared error is 1.11e-4 g L$^{-1}$ (over all time steps and mesh nodes); the corresponding relative mean squared error is 0.37%.
-The relatively high error may be associated with the missing transport or charge in the OGS-6 simulation, which affects computations by Phreeqc.
+The relatively high error may be associated with the missing transport or charge in the OGS-6 simulation, which affects computations by PHREEQC.
 Please note that due to the long computation time of the simulation (~13 h), the corresponding test (Wetland_1d.prj) is reduced to the first four time steps (28800 s).
 
 {{< img src="Wetland_1d.gif" title="Fig. 3: Simulated concentrations of solutes (left) and bacteria (right). Solid lines represent solutions by OGS-5; dashed lines represent solution by OGS-6.">}}
@@ -103,6 +103,8 @@ Please note that due to the long computation time of the simulation (~13 h), the
 -----------------------------------------
 
 ## References
+
+<!-- vale off -->
 
 Boog, J., Kalbacher, T., Nivala, J., Forquet, N., van Afferden, M., Müller, R.A., 2019. Modeling the relationship of aeration, oxygen transfer and treatment performance in aerated horizontal flow treatment wetlands. Water Research. 157 , 321 - 334. <https://doi.org/10.1016/j.watres.2019.03.062>.
 
