@@ -25,14 +25,18 @@ namespace MaterialPropertyLib
  * in the following form
  *
  * \f[
- *      X_{\mathrm{eff}} = (1-\phi) X_\mathrm{pR} +
- *                          \phi_\mathrm{f}\,X_\mathrm{fR}
+ *      X_{\mathrm{eff}} =  \phi_\mathrm{p}\,X_\mathrm{pR}
+ *                       +  \phi_\mathrm{f}\,X_\mathrm{fR}
+ *                       +  \phi_\mathrm{l}\,X_\mathrm{lR}
+ *                       = (1-\phi) X_\mathrm{pR}
+ *                       +  \phi_\mathrm{f}\,X_\mathrm{fR}
  *                       + (\phi - \phi_\mathrm{f}) X_\mathrm{lR}
  * \f]
  *
  * where \f$\phi\f$ is the porosity (pore space volume fraction),
- * \f$\phi_\mathrm{f}\f$ is the frozen volume fraction and
- * \f$\phi_\mathrm{l}=\phi - \phi_\mathrm{f}\f$ is the liquid one.
+ * \f$\phi_\mathrm{p}\f$ is the porous solid skeleton volume fraction,
+ * \f$\phi_\mathrm{f}\f$ is the frozen volume fraction,
+ * \f$\phi_\mathrm{l}\f$ is the liquid one.
  * \f$\mathrm{R}\f$ stands for the real/pure phase property.
  *
  **/

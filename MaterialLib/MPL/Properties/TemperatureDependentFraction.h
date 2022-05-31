@@ -29,10 +29,10 @@ namespace MaterialPropertyLib
  * over a temperature interval following a sigmoid line:
  *
  * \f[
- *      \phi \left[1 + \exp(k(T - T_\mathrm{c})) \right]^{-1}
+ *      \frac{\phi}{1 + \exp(k(T - T_\mathrm{c}))}
  * \f]
  *
- * Parameter $k$ controlling the temperature spreading of the phase change
+ * Parameter \f$k\f$ controlling the temperature spreading of the phase change
  * and \f$T_\mathrm{c}\f$ as the characteristic temperature of the phase change
  * (melting temperature) are forwarded to a sigmoid function.
  *

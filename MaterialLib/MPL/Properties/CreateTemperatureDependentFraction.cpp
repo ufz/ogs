@@ -30,7 +30,7 @@ createTemperatureDependentFraction(BaseLib::ConfigTree const& config)
         config.getConfigParameter<double>("phase_change_spread");
 
     auto const T_c =
-        //! \ogs_file_param{properties__property__SpecificHeatCapacityWithLatentHeat__characteristic_temperature}
+        //! \ogs_file_param{properties__property__TemperatureDependentFraction__characteristic_temperature}
         config.getConfigParameter<double>("characteristic_temperature");
 
     return std::make_unique<
