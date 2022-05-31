@@ -40,6 +40,8 @@ This website uses a number of external projects:
 
 In case of questions about the website or any of its contents, please contact us at info@opengeosys.org.
 
+<!-- vale off -->
+
 ## Impressum
 
 Verantwortlich für <https://opengeosys.org> im Sinne des Presserechts:
