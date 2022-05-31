@@ -49,14 +49,14 @@ The columns contain the following data:
 | 3-sided prism       | 1       | 0     | **1** | 6       | 1     | **3** | 21      | 2     | *3*   | 28      | 2     | *5*   |
 | Pyramid             | 1       | 1     | **1** | 5       | 1     | **3** | 13      | 3     | *3*   | 13      | 3     | *3*   |
 
-Note, that on pyramids det(*J*) varies over the mesh element, even for linear
+Note, that on pyramids det($J$) varies over the mesh element, even for linear
 elements. Therefore, for pyramids we are actually integrating a polynomial of
 higher degree than the degrees P and Q given in the table above.
 
 ## Extrapolation of integration point data to mesh nodes
 
 OpenGeoSys can extrapolate integration point data to mesh nodes for easy
-postprocessing. **Note, however, that the extrapolation procedures is not exact
+post-processing. **Note, however, that the extrapolation procedures is not exact
 and can lead to more or less subtle errors that are hard to find!**
 
 Since OpenGeoSys extrapolates integration point data element-wise, the number of

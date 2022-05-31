@@ -26,20 +26,20 @@ Image `registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter` contains:
   - [VTUInterface](https://github.com/joergbuchwald/VTUinterface) — VTU / PVD IO
   - [h5py](https://docs.h5py.org/en/latest/index.html) — HDF5 IO
   - [MFront python bindings](http://tfel.sourceforge.net/mfront-python.html) – Material model manipulation
-  - [matplotlib](https://matplotlib.org) — Plotting
-  - [numpy](https://numpy.org) — Scientific computing
+  - [Matplotlib](https://matplotlib.org) — Plotting
+  - [NumPy](https://numpy.org) — Scientific computing
   - [pandas](https://pandas.pydata.org) — Data analysis
-  - [scipy](https://docs.scipy.org/doc/scipy/reference/) — Scientific computing
-  - [vtk](https://pypi.org/project/vtk/) — Visualization
+  - [SciPy](https://docs.scipy.org/doc/scipy/reference/) — Scientific computing
+  - [VTK](https://pypi.org/project/vtk/) — Visualization
   - [PyVista][pyvista] — Visualization
   - [Snakemake](https://snakemake.github.io) — Workflow management
-  - [msh2vtu](https://github.com/dominik-kern/msh2vtu) — gmsh to VTU conversion, (script in `/opt/conda/lib/python3.9/site-packages/msh2vtu/msh2vtu.py`)
+  - [msh2vtu](https://github.com/dominik-kern/msh2vtu) — Gmsh to VTU conversion, (script in `/opt/conda/lib/python3.9/site-packages/msh2vtu/msh2vtu.py`)
   - [meshio](https://github.com/nschloe/meshio) — Mesh conversions between many formats. Pulled in via msh2vtu.
 - Jupyter-related tools:
   - [nbconvert](https://nbconvert.readthedocs.io) — Format conversion
   - [nbdime](https://nbdime.readthedocs.io) — Diffs for notebooks
-  - [nb2hugo](https://github.com/bilke/nb2hugo/tree/ogs) — Notebook to www.opengeosys.org markdown
-- [gmsh](https://gmsh.info) — Mesh generator (incl. Python bindings)
+  - [nb2hugo](https://github.com/bilke/nb2hugo/tree/ogs) — Notebook to website markdown conversion
+- [Gmsh](https://gmsh.info) — Mesh generator (incl. Python bindings)
 
 Image `registry.opengeosys.org/ogs/ogs/ogs-petsc-jupyter` additionally contains:
 
@@ -106,7 +106,7 @@ Available images are [listed on GitLab](https://gitlab.opengeosys.org/ogs/ogs/co
 
 ### Browsing notebooks on GitLab
 
-In the file browser on the left-hand side of the Jupyter Lab interface there is a GitLab-tab which allows for browsing and opening notebooks from the [ogs/ogs](https://gitlab.opengeosys.org/ogs/ogs)-repository. You can directly modify and execute a notebook, but the notebook is not saved back to GitLab. You can change the browsed repository by typing into the top text field.
+In the file browser on the left-hand side of the Jupyter Lab interface there is a GitLab-tab which allows for browsing and opening notebooks from the [`ogs/ogs`](https://gitlab.opengeosys.org/ogs/ogs)-repository. You can directly modify and execute a notebook, but the notebook is not saved back to GitLab. You can change the browsed repository by typing into the top text field.
 
 If you would like to us this with private repositories you have to supply an [access token](https://gitlab.opengeosys.org/-/profile/personal_access_tokens) at container start-up:
 

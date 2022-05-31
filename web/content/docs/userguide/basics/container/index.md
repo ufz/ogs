@@ -42,7 +42,7 @@ Simply download an image from the [latest master-branch build](https://gitlab.op
 singularity exec ogs-6.x.x-serial.sif ogs some/path/project.prj
 ```
 
-This starts the container, mounts your home directory inside the container, passes the current working directory and runs the ogs executable (in your home directory which is mounted inside the container) with the passed project file. Everything works as expected and is transparent to the user. When ogs finishes the container stops and returns to the host system.
+This starts the container, mounts your home directory inside the container, passes the current working directory and runs the `ogs` executable (in your home directory which is mounted inside the container) with the passed project file. Everything works as expected and is transparent to the user. When OGS finishes the container stops and returns to the host system.
 
 You can also specify the full executable path in the container:
 
@@ -124,7 +124,7 @@ Although Singularity is the preferred container runtime you can use [Docker](htt
 
 * Get the container: `docker pull registry.opengeosys.org/ogs/ogs/ogs-serial`
 * Start interactive container session: `docker run --rm -it registry.opengeosys.org/ogs/ogs/ogs-serial`
-* Run ogs: `/usr/local/ogs/bin/ogs --version`
+* Run `ogs`: `/usr/local/ogs/bin/ogs --version`
 * Exit the container: `exit`
 
 You will notice that the interactive session in your container is isolated from your host, i.e. you do not have access to files on your host. You need to explicitly [mount](https://docs.docker.com/storage/bind-mounts/) them on `docker run`:

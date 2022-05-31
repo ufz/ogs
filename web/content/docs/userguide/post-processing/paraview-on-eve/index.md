@@ -35,7 +35,7 @@ The port tunneling with ssh is required as these ports are blocked from the fire
 
 ## `envinf1`
 
-`envinf1` has a NVidia K20m. Simila instructions as for eve but port tunneling is not necessary:
+`envinf1` has a NVidia K20m. Similar instructions as for eve but port tunneling is not necessary:
 
 ```bash
 ssh 141.65.34.100

@@ -178,7 +178,8 @@ sudo apt-get install libxml2-utils
 </div>
 
 <div class='mac'>
-`xmllint` is part of the Homebrew xmlstarlet package:
+
+`xmllint` is part of the Homebrew `xmlstarlet` package:
 
 ```bash
 brew install xmlstarlet

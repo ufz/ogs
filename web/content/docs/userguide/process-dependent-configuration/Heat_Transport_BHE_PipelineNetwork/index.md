@@ -31,7 +31,7 @@ pip3 install tespy
 
 ## Creating a pipeline network model with the software TESPy
 
-Thermal Engineering Systems in Python (software paper: <https://doi.org/10.21105/joss.02178>, software archive: <https://doi.org/10.5281/zenodo.2555866>) is a software package developed by Francesco Witte. It is capable of simulating coupled thermal-hydraulic status of working fluids in thermal engineering applications. Such system typically involves a cirulation network that is composed of pre-defined components including pipes, heat exchangers and different types of turbo machinery. Interested readers may refer to the online documentation (<https://tespy.readthedocs.io/en/master/index.html>) of TESPy for more detailed introduction of the software. The workflow in this part is built based on the benchmark example "A 3-BHE Array Coupled With Pipe Network" from the OpenGeoSys Documentation (<https://www.opengeosys.org/docs/benchmarks/heat-transport-bhe/3d_3bhes_array/>). One can refer to this benchmark and download its latest benchmark files from GitHub (<https://www.opengeosys.org/docs/userguide/basics/introduction/>) for creating the pipeline network TESPy model. The OpenGeoSys and TESPy version used for this tutorial is (OpenGeoSys 6.2.2) and 0.3.3 accordingly.
+Thermal Engineering Systems in Python (software paper: <https://doi.org/10.21105/joss.02178>, software archive: <https://doi.org/10.5281/zenodo.2555866>) is a software package developed by Francesco Witte. It is capable of simulating coupled thermal-hydraulic status of working fluids in thermal engineering applications. Such system typically involves a circulation network that is composed of pre-defined components including pipes, heat exchangers and different types of turbo machinery. Interested readers may refer to the online documentation (<https://tespy.readthedocs.io/en/master/index.html>) of TESPy for more detailed introduction of the software. The workflow in this part is built based on the benchmark example "A 3-BHE Array Coupled With Pipe Network" from the OpenGeoSys Documentation (<https://www.opengeosys.org/docs/benchmarks/heat-transport-bhe/3d_3bhes_array/>). One can refer to this benchmark and download its latest benchmark files from GitHub (<https://www.opengeosys.org/docs/userguide/basics/introduction/>) for creating the pipeline network TESPy model. The OpenGeoSys and TESPy version used for this tutorial is (OpenGeoSys 6.2.2) and 0.3.3 accordingly.
 
 The coupled model that is going to be built is demonstrated in Figure 1. It consists of a pipeline network connected with 3 BHEs, a water pump, a virtual heat pump as the consumer, a splitter to split up the feeding fluid flow and a merge to returned flow. These devices are all defined as `components` in TESPy. A full list of available components can be found in the TESPy components module. In the pipeline network, these components are connected with each other through `connections` parts, which are illustrated by the black lines in the figure. With these two main parts, a completely TESPy pipeline network model can be set up.
 
@@ -181,7 +181,7 @@ Figure 2: Work flow of the model with BHEs coupled with a pipe network
 
 ### < BHE data container >
 
-In order to use the PipeNetwork feature, the pre-built and saved TESPy network model in the above section is required. A csv file `bhe_network.csv` which containing all the OGS-TESPy transferred BHE's information needs to be created. The PipeNetwork feature will access this csv file to initialize the exchange data container between OGS and TESPy during the simulation. All BHEs have to be included in this csv file. Please take notice that all BHE names located in the data_index column have to be identical with the BHE names defined in the corresponding TESPy network model.
+In order to use the PipeNetwork feature, the pre-built and saved TESPy network model in the above section is required. A CSV file `bhe_network.csv` which containing all the OGS-TESPy transferred BHE's information needs to be created. The PipeNetwork feature will access this CSV file to initialize the exchange data container between OGS and TESPy during the simulation. All BHEs have to be included in this CSV file. Please take notice that all BHE names located in the data_index column have to be identical with the BHE names defined in the corresponding TESPy network model.
 
 ```bash
 data_index;BHE_id;Tin_val;Tout_val;Tout_node_id;flowrate
@@ -280,6 +280,8 @@ To use the PipeNetwork feature, several input parameters need to be adjusted in 
 After the configuration of the OGS project file, all the required files for using the PipeNetwork feature are prepared. The process explicitly couple the BHE and the pipe network can be simulated in the `Heat_Transport_BHE` process by OGS.
 
 ## References
+
+<!-- vale off -->
 
 [1] Francesco Witte, Ilja Tuschy, TESPy: Thermal Engineering Systems in Python, 2019. URL: <https://doi.org/10.21105/joss.02178>. doi:10.21105/joss.02178.
 

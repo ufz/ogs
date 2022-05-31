@@ -11,12 +11,12 @@ weight = 41
 
 ## Description of process Heat_Transport_BHE
 
-Borehole heat exchangers (BHE) are widely applied in Ground Source Heat Pump (GSHP) systems to explore geothermal energy for building heating and cooling purposes. There are more and more engineerings starting to use simulation tools for the performance evaluation and design of GSHP projects.\
+Borehole heat exchangers (BHE) are widely applied in Ground Source Heat Pump (GSHP) systems to explore geothermal energy for building heating and cooling purposes. There are more and more engineering companies starting to use simulation tools for the performance evaluation and design of GSHP projects.\
 For OGS-6, it allows the users to simulate the subsurface and soil temperature evolution induced by BHE and operation performance of BHE coupled heat pump.
 
 ## Mathematical framework
 
-This part aims to give an explanation of the mathematical framework in configuring the Heat_Transport_BHE process provided in OpenGeoSys. The numerical method implemented in OGS-6 is the so-called double-continuum finite element method (`DC-FEM`). This approach was originally proposed by Al-Khoury et al. (2010) and extendend by Diersch et al. (2011a; 2011b). It was then implemented in OpenGeoSys by Shao et al. (2016). This modelling appraoch has the following assumptions.
+This part aims to give an explanation of the mathematical framework in configuring the Heat_Transport_BHE process provided in OpenGeoSys. The numerical method implemented in OGS-6 is the so-called double-continuum finite element method (`DC-FEM`). This approach was originally proposed by Al-Khoury et al. (2010) and extended by Diersch et al. (2011a; 2011b). It was then implemented in OpenGeoSys by Shao et al. (2016). This modelling approach has the following assumptions.
 
 * The subsurface is considered to be a 3D continuum, while the BHE is represented by 1D line elements as the second continuum.
 * The heat transfer between different BHE components is simulated by the Capacity-Resistance-Model (CaRM) in analogy to the electrical circuits.
@@ -27,7 +27,7 @@ $$\begin{equation}\frac{\partial}{\partial t}  \left[ \epsilon \rho_f c_f + ( 1-
 
 Here, $\Lambda_s$ denotes the tensor of thermal hydrodynamic dispersion and $H_s$ represents the heat source and sink term.
 
-* In the borehole continuum, each pipe is assigned with one governing equation, with the thermal convection in the pipeline simulated. Also, for each grout zone surrounding the pipeline, the thermal conduction equation was simulated. For details of the coupling between different borehole components and continuums, interested readers may refer to Diersch et al. (2011a; 2011b).
+* In the borehole continuum, each pipe is assigned with one governing equation, with the thermal convection in the pipeline simulated. Also, for each grout zone surrounding the pipeline, the thermal conduction equation was simulated. For details of the coupling between different borehole components and continua, interested readers may refer to Diersch et al. (2011a; 2011b).
 
 ## Input parameters
 
@@ -171,7 +171,7 @@ The thermal properties of the circulating fluid is defined here. The parameters 
 * /viscosity/: dynamic viscosity of circulating media which has the unit of $\mathrm{kg·m^{-1} s^{-1}}$;
 * /specific_heat_capacity/: specific heat capacity of circulating fluid, which has the unit of $\mathrm{J·kg^{-1} K^{-1}}$;
 * /thermal_conductivity/: thermal conductivity of the circulating fluid, which has the unit of $\mathrm{W·m^{-1} K^{-1}}$;
-* /reference_temperature/: When the < flow_and_temperature_control > was not set to TemperatureCurveConstantFlow, OGS needs to have an initial outlet temperature value in the first time step to start the simulation. A reference temperature has to be defined for the calculation of initial inflow temperature. The unit of refenrence temperature is in $^{\circ}$C.
+* /reference_temperature/: When the < flow_and_temperature_control > was not set to TemperatureCurveConstantFlow, OGS needs to have an initial outlet temperature value in the first time step to start the simulation. A reference temperature has to be defined for the calculation of initial inflow temperature. The unit of reference temperature is in $^{\circ}$C.
 
 Here is an example in which the circulating fluid is water at about 15 $^{\circ}$C.
 
@@ -186,6 +186,8 @@ Here is an example in which the circulating fluid is water at about 15 $^{\circ}
 ```
 
 ## References
+
+<!-- vale off -->
 
 [1] Al-Khoury, R., Kölbel, T., Schramedei, R.: Efficient numerical modeling of borehole heat exchangers. Comput. Geosci. 36(10), 1301–1315 (2010).
 
