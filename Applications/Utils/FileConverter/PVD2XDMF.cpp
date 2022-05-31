@@ -131,6 +131,11 @@ int main(int argc, char* argv[])
                                                        true, "", "file");
     cmd.add(pvd_file_arg);
 
+    TCLAP::ValueArg<std::string> outdir_arg("o", "output-directory",
+                                            "the output directory to write to",
+                                            false, ".", "PATH");
+    cmd.add(outdir_arg);
+
     cmd.parse(argc, argv);
     BaseLib::setConsoleLogLevel(log_level_arg.getValue());
 
@@ -147,8 +152,17 @@ int main(int argc, char* argv[])
     // subsequent time step.
     std::unique_ptr<MeshLib::Mesh> main_mesh;
 
-    std::filesystem::path const output_file_path{
-        BaseLib::dropFileExtension(pvd_file_arg.getValue()) + ".xdmf"};
+    std::filesystem::path const output_file{
+        BaseLib::extractBaseNameWithoutExtension(pvd_file_arg.getValue()) +
+        ".xdmf"};
+    INFO("output_file {:s}", output_file.string());
+    std::filesystem::path output_file_path{outdir_arg.getValue()};
+    if (outdir_arg.getValue() != "")
+    {
+        output_file_path =
+            BaseLib::joinPaths(outdir_arg.getValue(), output_file);
+    }
+    INFO("output_file_path {:s}", output_file_path.string());
     std::set<std::string> variable_output_names;
     std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;
     // read first file in the time series; it is determining variables.

@@ -918,11 +918,9 @@ MeshTest(
 
 AddTest(
     NAME 1D_HeatConduction_dirichlet-line_60_heat
-    DEPENDS ogs-1D_HeatConduction_dirichlet
     PATH Parabolic/T/1D_dirichlet
-    WORKING_DIRECTORY ${Data_BINARY_DIR}/Parabolic/T/1D_dirichlet
     EXECUTABLE PVD2XDMF
-    EXECUTABLE_ARGS line_60_heat.pvd
+    EXECUTABLE_ARGS ${Data_SOURCE_DIR}/Parabolic/T/1D_dirichlet/line_60_heat.pvd
     REQUIREMENTS NOT OGS_USE_MPI
     TESTER xdmfdiff
     DIFF_DATA
