@@ -13,7 +13,7 @@ aliases = ["/docs/devguide/advanced/using-ccache"]
 
 ## Introduction
 
-A compiler cache speeds up compilation times by caching object files and reusing them on subsequent builds. This even works for complete rebuilds (i.e. deleting the full build-directory). The compiler cache [ccache](https://ccache.samba.org) is automatically used when it is found by CMake.
+A compiler cache speeds up compilation times by caching object files and reusing them on subsequent builds. This even works for complete rebuilds (i.e. deleting the full build-directory). The compiler cache [Ccache](https://ccache.samba.org) is automatically used when it is found by CMake.
 
 <div class='linux'>
 

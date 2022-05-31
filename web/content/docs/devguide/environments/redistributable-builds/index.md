@@ -34,17 +34,17 @@ If a binary runs on a different machine depends on a lot of factors. The followi
 
 ### Default compiler flags
 
-- `-march=native`: Optimizes for current cpu
+- `-march=native`: Optimizes for current CPU
 
 ### CMake options
 
 #### For redistribution
 
-- `OGS_CPU_ARCHITECTURE`: set to `generic` for good balance between optimization and portability; set to `core2` for maximum portability, more info on [gcc docs](https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html#index-mtune-15)
+- `OGS_CPU_ARCHITECTURE`: set to `generic` for good balance between optimization and portability; set to `core2` for maximum portability, more info on [GCC docs](https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html#index-mtune-15)
 
 #### For optimization
 
-- `OGS_CPU_ARCHITECTURE`: tot to `native` for best optimization for your current cpu, possible values are [listed here](https://stackoverflow.com/a/25095818/80480), more info on [gcc docs](https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html#index-mtune-15)
+- `OGS_CPU_ARCHITECTURE`: tot to `native` for best optimization for your current CPU, possible values are [listed here](https://stackoverflow.com/a/25095818/80480), more info on [GCC docs](https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html#index-mtune-15)
 
 </div>
 
@@ -56,7 +56,7 @@ See Linux-tab!
 
 Try to use static libraries as much as possible. For OGS itself use `BUILD_SHARED_LIBS=OFF`, which already defaults to `OFF`.
 
-Third-party libraries installed via the systems package package manager are often provided as shared libraries. You may want to use [Conan]({{< ref "conan-package-manager.md" >}}) which provides lots of libraries (e.g. VTK) as static libs.
+ package manager are often provided as shared libraries. You may want to use [Conan]({{< ref "conan-package-manager.md" >}}) which provides lots of libraries (e.g. VTK) as static libraries.
 
 ## Package the build
 

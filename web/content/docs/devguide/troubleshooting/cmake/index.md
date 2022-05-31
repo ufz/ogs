@@ -18,13 +18,13 @@ Please read the CMake output carefully. Often it will tell you what went wrong.
 Also consider using the command line for CMake configuration as lots of CMake options (which modify requirements on third-party libraries) have to be set via the command line **before** CMake ran for the first time. E.g. when building with PETSc the following fails:
 
 - Creating build directory
-- Starting CMake Gui
+- Starting CMake GUI
 - Click Configure
 - Enable option `OGS_USE_PETSC`
 
-When clicking *Configure*, CMake runs without `OGS_USE_PETSC` enabled and picks a VTK library which is not compiled for MPI usage. The picked VTK library is cached and never modified. So when enabling PETSc it still uses the old (and now wrong) VTK library.
+When clicking *Configure*, CMake runs without `OGS_USE_PETSC` enabled and picks a VTK library which is not compiled for MPI usage. The picked VTK library is cached and never modified. When enabling PETSc it still uses the old (and now wrong) VTK library.
 
-So you have to use the CMake command line:
+Instead you should use the CMake command line:
 
 ```bash
 mkdir build

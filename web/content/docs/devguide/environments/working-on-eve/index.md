@@ -33,7 +33,7 @@ ml git/2.20.1
 
 ## Run OGS within a container
 
-Eve has [Singularity](https://www.sylabs.io/singularity) container runtime installed so you can simply download a prebuilt container and run OGS inside it. See the [user guide]({{< ref "container" >}}) for more infos.
+Eve has [Singularity](https://www.sylabs.io/singularity) container runtime installed so you can simply download a prebuilt container and run OGS inside it. See the [user guide]({{< ref "container" >}}) for more information.
 
 ## Build OGS-6
 

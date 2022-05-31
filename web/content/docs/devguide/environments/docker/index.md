@@ -13,15 +13,17 @@ aliases = ["/docs/devguide/advanced/docker"]
 
 ## Introduction
 
+<!-- vale off -->
 > Docker containers wrap up a piece of software in a complete filesystem that contains everything it needs to run: code, runtime, system tools, system libraries – anything you can install on a server. This guarantees that it will always run the same, regardless of the environment it is running in.
 >
 > <cite>[www.docker.com/whatisdocker](https://www.docker.com/whatisdocker)</cite>
+<!-- vale on -->
 
 See the [docs](https://docs.docker.com) for installation instructions (if you are on Windows we highly recommend the [Docker Desktop WSL 2 backend](https://docs.docker.com/docker-for-windows/wsl/)).
 
 ## Images
 
-Docker images can be created by [Dockerfiles](https://docs.docker.com/reference/builder/) which can be stacked and thus form a directed graph. OGS-6 image definitions are created with [ufz/ogs-container-maker](https://github.com/ufz/ogs-container-maker). Built images can be found at the [GitLab Container Registry](https://gitlab.opengeosys.org/ogs/ogs/container_registry). You can also [create images from your local source code](https://github.com/ufz/ogs-container-maker#build-ogs-from-local-git-repo).
+Docker images can be created by [Dockerfiles](https://docs.docker.com/reference/builder/) which can be stacked and thus form a directed graph. OGS-6 image definitions are created with [`ufz/ogs-container-maker`](https://github.com/ufz/ogs-container-maker). Built images can be found at the [GitLab Container Registry](https://gitlab.opengeosys.org/ogs/ogs/container_registry). You can also [create images from your local source code](https://github.com/ufz/ogs-container-maker#build-ogs-from-local-git-repo).
 
 To build an image by yourself create a Dockerfile:
 

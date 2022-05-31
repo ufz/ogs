@@ -75,13 +75,13 @@ is the default compiler. For such platforms, C/C++ compiler is better to
 when `OGS_USE_PETSC` is switched on, the compilation will fail with missed
 library error.
 
-For simplicity, you can first run cmake with MPI C/C++ compiler specified. For example:
+For simplicity, you can first run CMake with MPI C/C++ compiler specified. For example:
 
 ```bash
 cmake [path to source code] [-GNinja] -DOGS_USE_PETSC=ON -DCMAKE_C_COMPILER=/usr/bin/mpicc -DCMAKE_CXX_COMPILER=/usr/bin/mpic++
 ```
 
-and then use *ccmake* or *cmake-gui* to configure further more CMake options.
+and then use `ccmake` or *cmake-gui* to configure further more CMake options.
 
 The other basic build configurations are the same as that described in [Build configuration]({{<ref
 "build-configuration">}}).

@@ -41,9 +41,9 @@ Use [cmake-format](https://cmake-format.readthedocs.io/en/latest/cmake-format.ht
 
 - [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=cheshirekow.cmake-format)
 
-The current style is defined in [.cmake-format.yaml](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/.cmake-format.yaml).
+The current style is defined in [`.cmake-format.yaml`](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/.cmake-format.yaml).
 
-On installation make sure to install with the yaml option:
+On installation make sure to install with the YAML option:
 
 ```bash
 pip install cmakelang[YAML]

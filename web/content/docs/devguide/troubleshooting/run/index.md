@@ -22,7 +22,7 @@ Typical error message:
 error while loading shared libraries: libXX.so: cannot open shared object file: No such file or directory
 ```
 
-A shared library which was linked to OGS could not be found during runtime. The runtime search paths are determined by the system configuration but you add paths with the environment variable `LD_LIBRARY_PATH` (macOS: `DYLD_LIBRARY_PATH`). So you know where the missing library is located you can adapt the environment variable:
+A shared library which was linked to OGS could not be found during runtime. The runtime search paths are determined by the system configuration but you add paths with the environment variable `LD_LIBRARY_PATH` (macOS: `DYLD_LIBRARY_PATH`). If you know where the missing library is located you can adapt the environment variable:
 
 ```bash
 export LD_LIBRARY_PATH=/path/to/missing/lib:$LD_LIBRARY_PATH

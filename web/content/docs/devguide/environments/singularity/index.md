@@ -66,13 +66,13 @@ ninja
 
 ### Run OGS inside a Container (called from outside)
 
-Once ogs executable is built it can be called from **outside** the container:
+Once OGS executable is built it can be called from **outside** the container:
 
 ```bash
 singularity exec gcc_latest.sif build/bin/ogs some/path/project.prj
 ```
 
-This starts the container, mounts your home directory inside the container, passes the current working directory and runs the ogs executable (which is in your home directory which is mounted inside the container) with the passed project file. Everything works as expected and is transparent to the user. When ogs finishes the container stops and you returns to the host system.
+This starts the container, mounts your home directory inside the container, passes the current working directory and runs the OGS executable (which is in your home directory which is mounted inside the container) with the passed project file. Everything works as expected and is transparent to the user. When OGS finishes the container stops and you returns to the host system.
 
 ## Container generator
 
