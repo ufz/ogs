@@ -422,6 +422,9 @@ Use six arguments version of AddTest with absolute and relative tolerances"
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
     if(DEFINED AddTest_DEPENDS)
+        if(NOT TEST ${AddTest_DEPENDS})
+            message(FATAL_ERROR "AddTest ${AddTest_Name}: dependency ${AddTest_DEPENDS} does not exist!")
+        endif()
         set_tests_properties(${TEST_NAME} PROPERTIES DEPENDS ${AddTest_DEPENDS})
     endif()
     if(DEFINED MPI_PROCESSORS)
