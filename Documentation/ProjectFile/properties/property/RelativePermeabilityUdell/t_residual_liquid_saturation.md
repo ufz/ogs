@@ -1,1 +1,1 @@
-The smallest degree of satutation of the liquid phase.
+The smallest degree of saturation of the liquid phase.
