@@ -1,0 +1,8 @@
+# Uses the built-in dictionary and filters.
+extends: spelling
+message: "Did you really mean '%s'?"
+level: error
+dicpath: Documentation/.vale/dictionaries
+dictionaries:
+  - en_US
+  - en_GB
