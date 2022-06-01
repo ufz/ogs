@@ -292,6 +292,11 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
 
 void ProcessVariable::updateDeactivatedSubdomains(double const time)
 {
+    if (_deactivated_subdomains.empty())
+    {
+        return;
+    }
+
     _ids_of_active_elements.clear();
 
     // If none of the deactivated subdomains is active at current time, then the
