@@ -73,7 +73,10 @@ void VtkCompositeThresholdFilter::init()
     // is first processed. This is needed for correct lookup table generation.
     const double dMin = std::numeric_limits<double>::lowest();
     const double dMax = std::numeric_limits<double>::max();
-    threshold->ThresholdBetween(dMin, dMax);
+    threshold->SetThresholdFunction(
+        vtkThreshold::ThresholdType::THRESHOLD_BETWEEN);
+    threshold->SetLowerThreshold(dMin);
+    threshold->SetUpperThreshold(dMax);
 
     // Create a list for the ThresholdBetween (vector) property.
     QList<QVariant> thresholdRangeList;
@@ -122,6 +125,11 @@ void VtkCompositeThresholdFilter::SetUserVectorProperty(QString name,
     {
         // Set the vector property on the algorithm
         static_cast<vtkThreshold*>(_outputAlgorithm)
-            ->ThresholdBetween(values[0].toDouble(), values[1].toDouble());
+            ->SetThresholdFunction(
+                vtkThreshold::ThresholdType::THRESHOLD_BETWEEN);
+        static_cast<vtkThreshold*>(_outputAlgorithm)
+            ->SetLowerThreshold(values[0].toDouble());
+        static_cast<vtkThreshold*>(_outputAlgorithm)
+            ->SetUpperThreshold(values[1].toDouble());
     }
 }

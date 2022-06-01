@@ -34,10 +34,7 @@ class Node : public MathLib::Point3dWithID
 {
     /* friend classes: */
     friend class Mesh;
-    friend class NodePartitionedMesh;
     friend class MeshRevision;
-    friend class MeshLayerMapper;
-    friend class ApplicationUtils::NodeWiseMeshPartitioner;
 
 public:
     /// Constructor using a coordinate array
