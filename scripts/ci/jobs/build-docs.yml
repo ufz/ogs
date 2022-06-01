@@ -104,7 +104,7 @@ spell check docs:
   variables:
     VALE_OUTPUT: json
   script:
-    - scripts/ci/helper/lint-docs > vale-report.json
+    - scripts/ci/helper/run-vale > vale-report.json
   artifacts:
     paths:
       - vale-report.json
