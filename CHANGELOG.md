@@ -1,54 +1,56 @@
-# Unreleased
+# OpenGeoSys changelog
+
+## Unreleased
 
 [Please see the wiki-page](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.4.3)
 
 ----
 
-# 6.4.2
+## 6.4.2
 
 [Changelog for OpenGeoSys 6.4.2](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.4.2)
 
-# 6.4.1
+## 6.4.1
 
 [Changelog for OpenGeoSys 6.4.1](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.4.1)
 
-# 6.4.0
+## 6.4.0
 
 [Changelog for OpenGeoSys 6.4.0](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.4.0)
 
-# 6.3.3
+## 6.3.3
 
 [Changelog for OpenGeoSys 6.3.3](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.3.3)
 
-# 6.3.2
+## 6.3.2
 
 [Changelog for OpenGeoSys 6.3.2](https://gitlab.opengeosys.org/ogs/ogs/-/releases/6.3.2)
 
-# 6.3.1
+## 6.3.1
 
 [Changelog for OpenGeoSys 6.3.1](https://github.com/ufz/ogs/blob/master/web/content/releases/6.3.1.md)
 
-# 6.3.0
+## 6.3.0
 
 [Changelog for OpenGeoSys 6.3.0](https://github.com/ufz/ogs/blob/master/web/content/releases/6.3.0.md)
 
-# 6.2.2
+## 6.2.2
 
 [Changelog for OpenGeoSys 6.2.2](https://github.com/ufz/ogs/blob/master/web/content/releases/6.2.2.md)
 
-# 6.2.1
+## 6.2.1
 
 [Changelog for OpenGeoSys 6.2.1](https://github.com/ufz/ogs/blob/master/web/content/releases/6.2.1.md)
 
-# 6.2.0
+## 6.2.0
 
 [Changelog for OpenGeoSys 6.2.0](https://github.com/ufz/ogs/blob/master/web/content/releases/6.2.0.md)
 
-# 6.1.0
+## 6.1.0
 
 [Changelog for OpenGeoSys 6.1.0](https://github.com/ufz/ogs/blob/master/web/content/releases/6.1.0.md)
 
-# 6.0.8
+## 6.0.8
 
 The highlight of the release is the implementation of the Lower-Interface
 Elements for both the small deformation process (M) and hydro-mechanics process
@@ -114,7 +116,7 @@ New features:
 - Fix all of the Doxygen warnings in the code. [#1569](https://github.com/ufz/ogs/pull/1569) [#1573](https://github.com/ufz/ogs/pull/1573)
 - Fix all of the input file/keyword documentation and its generation.
 
-# 6.0.7
+## 6.0.7
 
 ### Features
 
@@ -203,7 +205,7 @@ New feature:
 - Fix AddTest, s.t. ctest now really checks results. [#1325](https://github.com/ufz/ogs/pull/1325)
 - Made Eigen preconditioner configurable. [#1367](https://github.com/ufz/ogs/pull/1367)
 
-# 6.0.6
+## 6.0.6
 
 ### Features
 
@@ -272,7 +274,7 @@ New feature:
 - Fix linking of Sundials CVODE library [#1197](https://github.com/ufz/ogs/pull/1197)
 - Fixed issue where geometry names would be missing after merging geometries [#1295](https://github.com/ufz/ogs/pull/1295)
 
-# 6.0.5
+## 6.0.5
 
 ### Features
 
@@ -346,7 +348,7 @@ New feature:
   - Fix memory leaks.
   - Added/modified tests for GML-, GMS- and TetGen-files.
 
-# 6.0.4
+## 6.0.4
 
 ### Features
 
@@ -384,7 +386,7 @@ New feature:
 - Fix all ogs-internal warnings on all OS.
 - Move eigen solver compute call to solve(); different fix for 0237275
 
-# 6.0.3
+## 6.0.3
 
 ### Features
 
@@ -448,7 +450,7 @@ for more details on autocheck
 - Implementation of a linear parabolic pde solver
 - Extending the linear elliptic solver to non-linear problems
 
-# 6.0.2
+## 6.0.2
 
 | Released on 2015/06/15, [GitHub Release Link](https://github.com/ufz/ogs/releases/tag/6.0.2)
 
@@ -483,8 +485,7 @@ The second release of ogs6 introduces Neumann boundary conditions and VTK result
 
 ## Test examples
 
-- [Groundwater flow (Neumann)](http://docs.opengeosys.org/docs/benchmarks/elliptic/groundwater-flow-neumann):
-![](http://docs.opengeosys.org/assets/files/Documentation/Selected-Benchmarks/groundwaterflow-neumann/square_1e2_neumann_result.png)
+- [Groundwater flow (Neumann)](http://docs.opengeosys.org/docs/benchmarks/elliptic/groundwater-flow-neumann)
 
 ## Next steps
 
@@ -499,15 +500,13 @@ The second release of ogs6 introduces Neumann boundary conditions and VTK result
 - Parallelization scheme using PETSc library
 - Extending the linear elliptic solver to non-linear problems
 
---------------------------------------------------------------------------------
-
-# 6.0.1
+## 6.0.1
 
 | Released 2015/03/02, [GitHub Release Link](https://github.com/ufz/ogs/releases/tag/6.0.1)
 
 The 6th version of OpenGeoSys (OGS) is under way. After single and coupled FORTRAN modules in ROCKFLOW 1+2, the C version 3 with dynamic data structures, the object-oriented C++ parallelized version 4, completed with data integration and visualization tools by version 5; ogs6 - as an open source project - is aimed at performing on supercomputing platforms and providing complete workflows for solving of coupled multi-field problems in real world applications. The major paradigms of ogs6 are being developer-friendly, performing, and user-friendly.
 
-## Important links
+### Important links
 
 - Getting started tutorial: <http://docs.opengeosys.org/docs/quickstart>
 - Descriptions of selected benchmarks: <http://docs.opengeosys.org/docs/benchmarks>
@@ -515,11 +514,11 @@ The 6th version of OpenGeoSys (OGS) is under way. After single and coupled FORTR
 - Source code access: <https://github.com/ufz/ogs>
 - Developer guide: <http://docs.opengeosys.org/docs/devguide>
 
-## Release notes
+### Release notes
 
 The first version ogs6 is dedicated for elliptic problems.
 
-### Features
+#### Features
 
 - Basic structures of processes
 - Mathematical operations are based on Eigen3 library
@@ -530,20 +529,20 @@ The first version ogs6 is dedicated for elliptic problems.
 - Dirichlet boundary conditions
 - Linear elliptic solver (e.g. Groundwater flow) for scalar quantities in homogeneous media
 
-### Fixes
+#### Fixes
 
 - DenseMatrix Gauss algorithm pivoting
 - Fixing mem-leaks on DataExplorer start up
 - Fixing resizing and layout issues in various DataExplorer dialogs
 
-## Test examples
+### Test examples
 
-![](https://cloud.githubusercontent.com/assets/329493/6170573/ce9fd96c-b2d5-11e4-9936-a470e7be281f.png)
+![First OGS process result](https://cloud.githubusercontent.com/assets/329493/6170573/ce9fd96c-b2d5-11e4-9936-a470e7be281f.png)
 
 - Example 1: Unit square (access)
 - Example 2: Unit cube (access): has 1000 hexahedra  elements with Dirichlet boundary conditions (u=1|x=0) and (u=-1|x=1)
 
-## Next steps
+### Next steps
 
 ### In development
 
