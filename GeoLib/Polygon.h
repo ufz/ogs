@@ -64,7 +64,7 @@ public:
      * @param pnt the Point
      * @return if point is inside the polygon true, else false
      */
-    bool isPntInPolygon(const MathLib::Point3d& pnt) const;
+    bool isPntInPolygon(MathLib::Point3d const& pnt) const;
 
     /**
      * Checks if the straight line segment is contained within the polygon.
@@ -114,15 +114,6 @@ private:
     std::vector<GeoLib::Point> getAllIntersectionPoints(
         GeoLib::LineSegment const& segment) const;
 
-    /**
-     * from book: Computational Geometry and Computer Graphics in C++, page 119
-     * get the type of edge with respect to the given point (2d method!)
-     * @param k number of line segment
-     * @param pnt point that is edge type computed for
-     * @return a value of enum EdgeType
-     */
-    EdgeType getEdgeType(std::size_t k, MathLib::Point3d const& pnt) const;
-
     void ensureCCWOrientation ();
 
     void splitPolygonAtIntersection(
@@ -132,6 +123,18 @@ private:
     std::list<Polygon*> _simple_polygon_list;
     AABB _aabb;
 };
+
+/**
+ * from book: Computational Geometry and Computer Graphics in C++, page 119
+ * get the type of edge with respect to the given point (2d method!)
+ * @param a first point of line segment
+ * @param b last point of line segment
+ * @param pnt point that is edge type computed for
+ * @return a value of enum EdgeType
+ */
+EdgeType getEdgeType(MathLib::Point3d const& a,
+                     MathLib::Point3d const& b,
+                     MathLib::Point3d const& pnt);
 
 /**
  * comparison operator for polygons
