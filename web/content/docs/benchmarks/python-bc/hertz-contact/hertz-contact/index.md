@@ -91,8 +91,8 @@ Total force $F$:
 The simulation results for contact radii and total force reproduce the
 analytical square root and cubic laws, respectively.
 For the average pressure $\bar p$ the analytical form of
-Eq.&nbsp;$(\ref{eq:bar-p})$ is reproduced, too.
+$(\ref{eq:bar-p})$ is reproduced, too.
 But for $\bar p$ there are rather strong deviations between the numerical
 and analytical results, which might be due to deviations in the
-contact radii&nbsp;$a$, due to insufficient mesh resolution or due to
+contact radii $a$, due to insufficient mesh resolution or due to
 the chosen linear order of FEM ansatz functions.
