@@ -282,7 +282,7 @@ bool Polygon::getNextIntersectionPointPolygonLine(
 
 EdgeType Polygon::getEdgeType(std::size_t k, MathLib::Point3d const& pnt) const
 {
-    switch (getLocationOfPoint(k, pnt))
+    switch (getLocationOfPoint(*getPoint(k), *getPoint(k + 1), pnt))
     {
         case Location::LEFT:
         {

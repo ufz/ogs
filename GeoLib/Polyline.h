@@ -41,6 +41,19 @@ enum class Location
 };
 
 /**
+ * 2D method - ignores z coordinate. It calculates the location
+ * of the point relative to the line segment specified by the points source and
+ * destination. (literature reference:
+ * Computational Geometry and Computer Graphics in C++; Michael J. Laszlo)
+ * @param source the first point of the line segment
+ * @param destination the end point of the line segment
+ * @param pnt the test point
+ * @return a value of enum Location
+ */
+Location getLocationOfPoint(MathLib::Point3d const& source,
+                            MathLib::Point3d const& destination,
+                            MathLib::Point3d const& pnt);
+/**
  * \ingroup GeoLib
  *
  * \brief Class Polyline consists mainly of a reference to a point vector and
@@ -216,18 +229,6 @@ public:
         const double epsilon_radius) const;
 
 protected:
-    /**
-     * 2D method - ignores z coordinate. It calculates the location
-     * of the point relative to the k-th line segment of the polyline.
-     * (literature reference:
-     * Computational Geometry and Computer Graphics in C++; Michael J. Laszlo)
-     * @param k the number of line segment
-     * @param pnt the point
-     * @return a value of enum LOCATION
-     */
-    Location getLocationOfPoint(std::size_t k,
-                                MathLib::Point3d const& pnt) const;
-
     /** a reference to the vector of pointers to the geometric points */
     const std::vector<Point*> &_ply_pnts;
     /** position of pointers to the geometric points */
@@ -254,4 +255,5 @@ bool pointsAreIdentical(const std::vector<Point*> &pnt_vec, std::size_t i, std::
 /// Create a polyline from given point ids.
 std::unique_ptr<Polyline> createPolyline(GeoLib::PointVec const& points_vec,
                                          std::vector<std::size_t>&& point_ids);
+
 }  // namespace GeoLib

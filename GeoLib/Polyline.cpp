@@ -25,6 +25,45 @@
 
 namespace GeoLib
 {
+Location getLocationOfPoint(MathLib::Point3d const& source,
+                            MathLib::Point3d const& destination,
+                            MathLib::Point3d const& pnt)
+{
+    long double const a[2] = {destination[0] - source[0],
+                              destination[1] - source[1]};  // vector
+    long double const b[2] = {pnt[0] - source[0],
+                              pnt[1] - source[1]};  // vector
+
+    long double const det_2x2(a[0] * b[1] - a[1] * b[0]);
+    constexpr double eps = std::numeric_limits<double>::epsilon();
+
+    if (det_2x2 > eps)
+    {
+        return Location::LEFT;
+    }
+    if (eps < std::abs(det_2x2))
+    {
+        return Location::RIGHT;
+    }
+    if (a[0] * b[0] < 0.0 || a[1] * b[1] < 0.0)
+    {
+        return Location::BEHIND;
+    }
+    if (a[0] * a[0] + a[1] * a[1] < b[0] * b[0] + b[1] * b[1])
+    {
+        return Location::BEYOND;
+    }
+    if (MathLib::sqrDist(pnt, source) < pow(eps, 2))
+    {
+        return Location::SOURCE;
+    }
+    if (MathLib::sqrDist(pnt, destination) < std::sqrt(eps))
+    {
+        return Location::DESTINATION;
+    }
+    return Location::BETWEEN;
+}
+
 Polyline::Polyline(const std::vector<Point*>& pnt_vec) : _ply_pnts(pnt_vec) {}
 
 Polyline::Polyline(const Polyline& ply)
@@ -317,49 +356,6 @@ void Polyline::closePolyline()
     {
         addPoint(getPointID(0));
     }
-}
-
-Location Polyline::getLocationOfPoint(std::size_t k,
-                                      MathLib::Point3d const& pnt) const
-{
-    assert(k < _ply_pnt_ids.size() - 1);
-
-    GeoLib::Point const& source(*(_ply_pnts[_ply_pnt_ids[k]]));
-    GeoLib::Point const& dest(*(_ply_pnts[_ply_pnt_ids[k + 1]]));
-    long double const a[2] = {dest[0] - source[0],
-                              dest[1] - source[1]};  // vector
-    long double const b[2] = {pnt[0] - source[0],
-                              pnt[1] - source[1]};  // vector
-
-    long double const det_2x2(a[0] * b[1] - a[1] * b[0]);
-
-    if (det_2x2 > std::numeric_limits<double>::epsilon())
-    {
-        return Location::LEFT;
-    }
-    if (std::numeric_limits<double>::epsilon() < std::abs(det_2x2))
-    {
-        return Location::RIGHT;
-    }
-    if (a[0] * b[0] < 0.0 || a[1] * b[1] < 0.0)
-    {
-        return Location::BEHIND;
-    }
-    if (a[0] * a[0] + a[1] * a[1] < b[0] * b[0] + b[1] * b[1])
-    {
-        return Location::BEYOND;
-    }
-    if (MathLib::sqrDist(pnt, *_ply_pnts[_ply_pnt_ids[k]]) <
-        pow(std::numeric_limits<double>::epsilon(), 2))
-    {
-        return Location::SOURCE;
-    }
-    if (MathLib::sqrDist(pnt, *_ply_pnts[_ply_pnt_ids[k + 1]]) <
-        std::sqrt(std::numeric_limits<double>::epsilon()))
-    {
-        return Location::DESTINATION;
-    }
-    return Location::BETWEEN;
 }
 
 double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
