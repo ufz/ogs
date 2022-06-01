@@ -1,35 +1,29 @@
 {{- /* Modify Vale's output https://docs.errata.ai/vale/cli#--output */ -}}
-{{- /* Keep track of our various counts */ -}}
-{{- $e := 0 -}}
-{{- $w := 0 -}}
-{{- $s := 0 -}}
-{{- $f := 0 -}}
 {{- /* Range over the linted files */ -}}
+{{- $entry_index := 0 -}}
+[
 {{- range .Files}}
-{{- $f = add1 $f -}}
 {{- $path := .Path -}}
 {{- /* Range over the file's alerts */ -}}
-[
-{{- range $idx, $a := .Alerts -}}
+{{- range .Alerts -}}
 {{- $error := "" -}}
 {{- if eq .Severity "error" -}}
     {{- $error = "blocker" -}}
-    {{- $e = add1 $e  -}}
 {{- else if eq .Severity "warning" -}}
     {{- $error = "major" -}}
-    {{- $w = add1 $w -}}
 {{- else if eq .Severity "suggestion" -}}
     {{- $error =  "info" -}}
-    {{- $s = add1 $s -}}
 {{- end}}
 {{- /* Variables setup */ -}}
 {{- $path = $path -}}
 {{- $loc := printf "%d" .Line -}}
+{{- /* $check may be added to description */ -}}
 {{- $check := printf "%s" .Check -}}
 {{- $message := printf "%s" .Message -}}
-{{- $link := printf "%s" .Link -}}
-{{- if $idx -}},{{- end -}}
 {{- /* Output */ -}}
+{{- if $entry_index -}},{{- end -}}
+{{- printf "\n  " -}}
+{{- $entry_index = add1 $entry_index -}}
   {
     "description": "{{ $message }}",
     "fingerprint": "{{ $path }}-{{ $loc }}",
@@ -40,7 +34,7 @@
         "begin": {{ $loc }}
       }
     }
-  }
+  }{{end -}}
 {{end -}}
-{{end -}}
+{{- printf "\n" -}}
 ]
