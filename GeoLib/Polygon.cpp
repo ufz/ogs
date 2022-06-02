@@ -23,7 +23,7 @@
 namespace GeoLib
 {
 Polygon::Polygon(const Polyline& ply, bool init)
-    : Polyline(ply), _aabb(ply.getPointsVec(), ply._ply_pnt_ids)
+    : Polyline(ply), _aabb(ply.getPointsVec(), ply.getPolylinePointIDs())
 {
     if (init)
     {
@@ -356,9 +356,12 @@ void Polygon::ensureCCWOrientation()
         std::size_t tmp_n_pnts(n_pnts);
         tmp_n_pnts++;  // include last point of polygon (which is identical to
                        // the first)
+        auto& polyline_point_ids =
+            const_cast<std::vector<std::size_t>&>(getPolylinePointIDs());
         for (std::size_t k(0); k < tmp_n_pnts / 2; k++)
         {
-            std::swap(_ply_pnt_ids[k], _ply_pnt_ids[tmp_n_pnts - 1 - k]);
+            std::swap(polyline_point_ids[k],
+                      polyline_point_ids[tmp_n_pnts - 1 - k]);
         }
     }
 

@@ -192,7 +192,7 @@ public:
      * returns the index of the i-th polyline point
      * in the point vector
      */
-    std::size_t getPointID(std::size_t i) const;
+    std::size_t getPointID(std::size_t const i) const;
 
     /**
      * Changes a point index for one point in a line
@@ -231,10 +231,16 @@ public:
 protected:
     /** a reference to the vector of pointers to the geometric points */
     const std::vector<Point*> &_ply_pnts;
+
+    std::vector<std::size_t> const& getPolylinePointIDs() const
+    {
+        return _ply_pnt_ids;
+    }
+
+private:
     /** position of pointers to the geometric points */
     std::vector<std::size_t> _ply_pnt_ids;
 
-private:
     LineSegment getSegment(std::size_t i) const;
     LineSegment getSegment(std::size_t i);
 };
