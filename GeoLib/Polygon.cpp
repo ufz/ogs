@@ -69,12 +69,19 @@ bool Polygon::initialise()
     return false;
 }
 
-std::vector<GeoLib::Point> Polygon::getAllIntersectionPoints(
-    GeoLib::LineSegment const& segment) const
+/**
+ * Computes all intersections of the straight line segment and the polyline
+ * boundary
+ * @param polygon the polygon the segment line segment that will be processed
+ * @param segment the line segment that will be processed
+ * @return a possible empty vector containing the intersection points
+ */
+std::vector<GeoLib::Point> getAllIntersectionPoints(
+    Polygon const& polygon, GeoLib::LineSegment const& segment)
 {
     std::vector<GeoLib::Point> intersections;
     GeoLib::Point s;
-    for (auto&& seg_it : *this)
+    for (auto&& seg_it : polygon)
     {
         if (GeoLib::lineSegmentIntersect(seg_it, segment, s))
         {
@@ -144,7 +151,7 @@ bool Polygon::isPntInPolygon(MathLib::Point3d const& pnt) const
 
 bool Polygon::containsSegment(GeoLib::LineSegment const& segment) const
 {
-    std::vector<GeoLib::Point> s(getAllIntersectionPoints(segment));
+    std::vector<GeoLib::Point> s(getAllIntersectionPoints(*this, segment));
 
     GeoLib::Point const& a{segment.getBeginPoint()};
     GeoLib::Point const& b{segment.getEndPoint()};

@@ -106,14 +106,6 @@ public:
 
     friend bool operator==(Polygon const& lhs, Polygon const& rhs);
 private:
-    /**
-     * Computes all intersections of the straight line segment and the polyline boundary
-     * @param segment the line segment that will be processed
-     * @return a possible empty vector containing the intersection points
-     */
-    std::vector<GeoLib::Point> getAllIntersectionPoints(
-        GeoLib::LineSegment const& segment) const;
-
     void ensureCCWOrientation ();
 
     void splitPolygonAtIntersection(
