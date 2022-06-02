@@ -239,13 +239,9 @@ ProcessVariable::createBoundaryConditions(
         bcs.push_back(std::move(bc));
     }
 
-    if (_deactivated_subdomains.empty())
-    {
-        return bcs;
-    }
-
     createBoundaryConditionsForDeactivatedSubDomains(dof_table, variable_id,
                                                      parameters, bcs);
+
     return bcs;
 }
 
