@@ -19,6 +19,16 @@ install(
     UNRESOLVED_DEPENDENCIES_VAR _u_deps
     POST_EXCLUDE_REGEXES "/opt/local/lib/lib.*" # Disable macports zlib
   )
+  find_program(PATCHELF_TOOL patchelf)
+  if(PATCHELF_TOOL)
+    foreach(_lib ${_r_deps})
+      string(REGEX MATCH "libpetsc.*" _petsc_lib ${_lib})
+      if(_petsc_lib AND EXISTS _ext/PETSc/lib/${_petsc_lib})
+        message(STATUS "Patching RPATH of ${_petsc_lib}")
+        execute_process(COMMAND patchelf --set-rpath '$ORIGIN:$ORIGIN/../lib:/usr/local/openmpi/lib:/usr/lib/openmpi' _ext/PETSc/lib/${_petsc_lib})
+      endif()
+    endforeach()
+  endif()
   file(INSTALL ${_r_deps}
     DESTINATION ${INSTALL_DIR}
     FOLLOW_SYMLINK_CHAIN
