@@ -201,12 +201,22 @@ protected:
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
 
-        auto const thermal_conductivity =
+        auto thermal_conductivity =
             MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium
                     .property(
                         MaterialPropertyLib::PropertyType::thermal_conductivity)
                     .value(vars, pos, t, dt));
+
+        if (_process_data.stabilizer)
+        {
+            thermal_conductivity.noalias() +=
+                _process_data.stabilizer->getExtraDiffusionCoefficient(
+                    _element.getID(),
+                    fluid_density * specific_heat_capacity_fluid,
+                    velocity.norm()) *
+                I;
+        }
 
         auto const thermal_dispersivity_longitudinal =
             medium
