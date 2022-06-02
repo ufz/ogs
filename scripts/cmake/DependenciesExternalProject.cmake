@@ -6,10 +6,6 @@ set(OGS_EXTERNAL_DEPENDENCIES_CACHE ""
     CACHE PATH "Directory containing source archives of external dependencies."
 )
 
-if(OGS_INSTALL_EXTERNAL_DEPENDENCIES)
-    set(_install_dir INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
-endif()
-
 if(OGS_USE_MFRONT)
     option(OGS_BUILD_TFEL
            "Build TFEL locally. Needs to be set with a clean cache!" OFF
@@ -27,7 +23,7 @@ if(OGS_USE_MFRONT)
     endif()
     if(NOT MFRONT)
         BuildExternalProject(
-            TFEL ${_tfel_source} ${_install_dir}
+            TFEL ${_tfel_source}
             CMAKE_ARGS "-DCMAKE_INSTALL_RPATH=<INSTALL_DIR>/lib"
                        "-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE"
                        "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
@@ -36,11 +32,7 @@ if(OGS_USE_MFRONT)
             STATUS
                 "ExternalProject_Add(): added package TFEL@rliv-${ogs.minimum_version.tfel-rliv}"
         )
-        if(OGS_INSTALL_EXTERNAL_DEPENDENCIES)
-            set(TFELHOME ${CMAKE_INSTALL_PREFIX} CACHE PATH "" FORCE)
-        else()
-            set(TFELHOME ${PROJECT_BINARY_DIR}/_ext/TFEL CACHE PATH "" FORCE)
-        endif()
+        set(TFELHOME ${PROJECT_BINARY_DIR}/_ext/TFEL CACHE PATH "" FORCE)
         set(_EXT_LIBS ${_EXT_LIBS} TFEL CACHE INTERNAL "")
     endif()
 endif()
@@ -96,7 +88,7 @@ if(OGS_USE_PETSC)
                 ${OGS_PETSC_CONFIG_OPTIONS}
             BUILD_IN_SOURCE ON
             BUILD_COMMAND make -j all
-            INSTALL_COMMAND make -j install ${_install_dir}
+            INSTALL_COMMAND make -j install
         )
         message(
             STATUS
@@ -137,7 +129,7 @@ if(OGS_USE_LIS)
                               ${_lis_config_args}
             BUILD_IN_SOURCE ON
             BUILD_COMMAND make -j
-            INSTALL_COMMAND make -j install ${_install_dir}
+            INSTALL_COMMAND make -j install
         )
         message(
             STATUS
@@ -165,8 +157,8 @@ elseif(NOT OGS_BUILD_ZLIB)
 endif()
 if(NOT ZLIB_FOUND)
     BuildExternalProject(
-        ZLIB ${_zlib_source} CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
-                                        ${_install_dir}
+        ZLIB ${_zlib_source}
+        CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
     )
     message(
         STATUS
@@ -221,9 +213,7 @@ elseif(NOT OGS_BUILD_HDF5)
     find_package(HDF5 ${ogs.minimum_version.hdf5})
 endif()
 if(NOT HDF5_FOUND)
-    BuildExternalProject(
-        HDF5 ${_hdf5_source} CMAKE_ARGS ${_hdf5_options} ${_install_dir}
-    )
+    BuildExternalProject(HDF5 ${_hdf5_source} CMAKE_ARGS ${_hdf5_options})
     message(
         STATUS
             "ExternalProject_Add(): added package HDF5@${ogs.tested_version.hdf5}"
@@ -233,10 +223,6 @@ if(NOT HDF5_FOUND)
 endif()
 
 # append RPATHs
-if(OGS_INSTALL_EXTERNAL_DEPENDENCIES)
-    list(APPEND CMAKE_BUILD_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
-else()
-    foreach(lib ${_EXT_LIBS})
-        list(APPEND CMAKE_BUILD_RPATH ${PROJECT_BINARY_DIR}/_ext/${lib}/lib)
-    endforeach()
-endif()
+foreach(lib ${_EXT_LIBS})
+    list(APPEND CMAKE_BUILD_RPATH ${PROJECT_BINARY_DIR}/_ext/${lib}/lib)
+endforeach()
