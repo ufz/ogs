@@ -9,7 +9,7 @@ absolute and the relative tolerance are exceeded.
 
 Code snippet:
 
-\code{xml}
+```xml
 <OpenGeoSysProject>
     <processes>
         <process>
@@ -28,4 +28,4 @@ Code snippet:
                 <fail_on_error>true</fail_on_error>
                 <log_file>/tmp/test.log</log_file>
             </jacobian_assembler>
-\endcode
+```

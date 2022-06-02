@@ -20,9 +20,9 @@ At the moment, this utility can read:
 
 Expected file extensions for these data types include *.vs,*.pl, *.ts, and*.mx (the last one for **m**i**x**ed data).
 
-Another data type, SGRID (Structured Grid, usually saved to *.sg files) can be converted via the [GoCadSGridReader](../../meshing/gocadsgridreader).
+Another data type, SGRID (Structured Grid, usually saved to `.sg` files) can be converted via the [GoCadSGridReader](../../meshing/gocadsgridreader).
 
-Parsers for additional GoCAD-datasets may be added in the future.
+Parsers for additional GOCAD-datasets may be added in the future.
 
 ## Usage
 

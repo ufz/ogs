@@ -22,6 +22,7 @@ This book is intended primarily for graduate students and applied scientists who
 
 - [<i class="far fa-file-archive"></i> Linux Input Files](https://ogsstorage.blob.core.windows.net/web/Books/Computational-Hydrology-I/input_files_linux.zip)  
 - [<i class="far fa-file-archive"></i> Windows Input Files](https://ogsstorage.blob.core.windows.net/web/Books/Computational-Hydrology-I/input_files_win.zip)
+
 </div>
 
 <div class='note'>
@@ -29,6 +30,7 @@ This book is intended primarily for graduate students and applied scientists who
 ### <i class="far fa-book"></i> Bibliography
 
 {{< bib "sachse:2015" >}}
+
 </div>
 
 <div class='note'>

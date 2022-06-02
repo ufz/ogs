@@ -17,16 +17,14 @@ mesh.
 
 ## Example
 
-Given a "bulk" mesh (Tests/Data/Mechanics/Linear/disc_with_hole.vtu) and a
+Given a "bulk" mesh (`Tests/Data/Mechanics/Linear/disc_with_hole.vtu`) and a
 [quarter circle mesh](quater_circle.vtu) extracted manually we want to use the
 quarter circle mesh for heterogeneous boundary condition. OGS requires two
 mappings into the "bulk" mesh, one for the nodes and one for the elements.
 
-![](disc_with_hole_and_bondary.png#one-half "The figure shows a part of the
-'bulk' mesh with boundary element numbers, and the quarter circle mesh shown as
-white line with green points.")
+![a part of the 'bulk' mesh with boundary element numbers](disc_with_hole_and_bondary.png#one-half "The figure shows a part of the 'bulk' mesh with boundary element numbers, and the quarter circle mesh shown as white line with green points.")
 
-To create this mappings we run
+To create these mappings we run
 
 ```bash
 identifySubdomains -m Tests/Data/Mechanics/Linear/disc_with_hole.vtu -s 1e-6 -o

@@ -16,7 +16,6 @@ In general OpenGeoSys is not using any intrinsic units, i.e. OGS assumes that a 
 However, there are some exceptions to the rule as for instance some empirical laws like some expressions for the vapor diffusion and latent heat that assume the temperature to be given in Kelvin.
 Therefore, we recommend using SI base units.
 
-
 ### Dimensional analysis of source and boundary terms based on their primary variables
 
 Most processes in OpenGeoSys are derived and implemented with a 3D setting in mind.
@@ -43,7 +42,7 @@ In contrast, for _real_ two-dimensional and one-dimensional problems the current
 **Attention**: The units given below apply to 3D and said cross-sectional models!
 That applies to all of OpenGeoSys's processes; there are currently no processes in OpenGeoSys that are manifest 1D or 2D.
 
-__Units:__
+**Units:**
 
 | Quantity name | Dimension symbol  | SI base units |
 | ------------- | ----------------- | ------------- |
@@ -52,29 +51,33 @@ __Units:__
 | mass          | $\mathrm{M}$      | $\mathrm{kg}$ |
 | temperature   | $\mathrm{\Theta}$ | $\mathrm{K}$  |
 
-__Temperature:__
+**Temperature:**
+
 * [Dirichlet BC](https://doxygen.opengeosys.org/d5/d71/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__dirichlet): Boundaries held at a fixed temperature (Units: $\mathrm{\Theta}$, SI: $\mathrm{K}$).
 * [Neumann BC](https://doxygen.opengeosys.org/d1/d2e/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__neumann): Used to impose a heat flux through a boundary domain (Units: $\mathrm{M \cdot T^{-3}}$, SI: $\mathrm{W}\cdot \mathrm{m}^{-2}$).
 * [Volumetric ST](https://doxygen.opengeosys.org/d0/d89/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__volumetric): Representing a volumetric heat source in the model domain (Units: $\mathrm{M \cdot L^{-1} \cdot T^{-3}}$, SI: $\mathrm{W} \cdot \mathrm{m}^{-3}$).
 * [Nodal ST](https://doxygen.opengeosys.org/d0/d2c/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__nodal): Representing a heat source in the model domain (Units: $\mathrm{M \cdot L^{d-1} \cdot T^{-3}}$, SI: $\mathrm{W} \cdot \mathrm{m}^{d-3}$).
 * [Line ST](https://doxygen.opengeosys.org/d9/d4a/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__line): Representing a heat source on a line shaped subdomain (Units: $\mathrm{M} \cdot \mathrm{L}^{d-2} \cdot \mathrm{T}^{-3}$, SI: $\mathrm{W} \cdot \mathrm{m}^{d-4}$).
 
-__Displacement__
+**Displacement:**
+
 * [Dirichlet BC](https://doxygen.opengeosys.org/d5/d71/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__dirichlet): Boundaries held at a fixed displacement (Units: $\mathrm{L}$, SI: $\mathrm{m}$).
 * [Neumann BC](https://doxygen.opengeosys.org/d1/d2e/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__neumann): Used to apply an external traction at a boundary (Units: $\mathrm{M \cdot L^{-1} \cdot T^{-2}}$, SI: $\mathrm{N} \cdot \mathrm{m}^{-2}$).
-* [Volumetric ST](https://doxygen.opengeosys.org/d0/d89/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__volumetric): A body force density acting in the model domain. One example is gravity, but gravitiy can be modeled by other means in OpenGeoSys (Units: $\mathrm{M \cdot L^{-2} \cdot T^{-2}}$, SI: $\mathrm{N} \cdot \mathrm{m}^{-3}$).
+* [Volumetric ST](https://doxygen.opengeosys.org/d0/d89/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__volumetric): A body force density acting in the model domain. One example is gravity, but gravity can be modeled by other means in OpenGeoSys (Units: $\mathrm{M \cdot L^{-2} \cdot T^{-2}}$, SI: $\mathrm{N} \cdot \mathrm{m}^{-3}$).
 
-__Pressure__
+**Pressure:**
+
 * [Dirichlet BC](https://doxygen.opengeosys.org/d5/d71/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__dirichlet): Boundaries held at a fixed pressure (Units: $\mathrm{M \cdot L^{-1} \cdot T^{-2}}$, SI: $\mathrm{Pa}$).
 * [Neumann BC](https://doxygen.opengeosys.org/d1/d2e/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__neumann): Used to impose a mass flux through a domain boundary (Units: $\mathrm{M \cdot L^{-2} \cdot T^{-1}}$, SI: $\mathrm{kg} \cdot \mathrm{m}^{-2} \cdot \mathrm{s}^{-1}$).
 * [Volumetric ST](https://doxygen.opengeosys.org/d0/d89/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__volumetric): Representing a volumetric mass source in the model domain (Units: $\mathrm{ M \cdot L^{-3} \cdot T^{-1}}$, SI: $\mathrm{kg} \cdot \mathrm{m}^{-3} \cdot \mathrm{s}^{-1}$).
 * [Nodal ST](https://doxygen.opengeosys.org/d0/d2c/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__nodal): Representing a mass production rate in the model domain (Units: $\mathrm{M} \cdot \mathrm{L}^{d-3} \cdot \mathrm{T}^{-1}$, SI: $\mathrm{kg} \cdot \mathrm{m}^{d-3} \cdot \mathrm{s}^{-1}$).
 * [Line ST](https://doxygen.opengeosys.org/d9/d4a/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__line): Representing a mass source on a line shaped subdomain (Units: $\mathrm{M} \cdot \mathrm{L}^{d-4} \cdot \mathrm{T}^{-1}$, SI:  $\mathrm{kg} \cdot \mathrm{m}^{d-4} \cdot \mathrm{s}^{-1}$).
 
-__Pressure (Liquid Flow Process)__
+**Pressure (Liquid Flow Process):**
 
 The liquid flow process uses a volume-based PDE, not a mass-based one.
 Therefore, the list above does not apply to the liquid flow process, but you have to divide all units of natural boundary conditions and source terms by density, leading to the following list:
+
 * [Dirichlet BC](https://doxygen.opengeosys.org/d5/d71/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__dirichlet): Boundaries held at a fixed pressure (Units: $\mathrm{M \cdot L^{-1} \cdot T^{-2}}$, SI: $\mathrm{Pa}$).
 * [Neumann BC](https://doxygen.opengeosys.org/d1/d2e/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__neumann): Used to impose a volume flux through a domain boundary (Units: $\mathrm{L} \cdot \mathrm{T}^{-1}$, SI: $\mathrm{m} \cdot \mathrm{s}^{-1} = \mathrm{m}^3 \cdot \mathrm{m}^{-2} \cdot \mathrm{s}^{-1}$).
 * [Volumetric ST](https://doxygen.opengeosys.org/d0/d89/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__volumetric): Representing a volumetric volume source in the model domain (Units: $\mathrm{T}^{-1}$, SI: $\mathrm{s}^{-1} = \mathrm{m}^{3} \cdot \mathrm{m}^{-3} \cdot \mathrm{s}^{-1}$).
@@ -169,6 +172,7 @@ For isotropic, linear elasticity we provide the interval [[2]](#2) and the recom
 | $p_\mathrm{FS}^\mathrm{max}$          | $\frac{2(1+\nu)}{3}$      | $1$ |
 
 ## References
+
 <a id="1">[1]</a>
 {{< bib "kimtchjua2009" >}}
 

@@ -33,6 +33,8 @@ A comparison of the numerical data is shown in the figure below. The numerical r
 
 ## Literature
 
+<!-- vale off -->
+
 Diersch, H.-J.G., Kolditz, O., 1998. Coupled groundwater flow and transport: 2. Thermohaline and 3D convection systems. Adv. Water Resour. 21, 401–425. doi:10.1016/S0309-1708(97)00003-1.
 
 Elder, J.W., 1965. Numerical experiments with free convection in a vertical slot. J. Fluid Mech. 24, 823. doi:10.1017/S0022112066001022.

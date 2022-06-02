@@ -10,7 +10,7 @@ author = "Karsten Rink"
 
 ## Introduction
 
-This utility rasterises an existing 3D mesh at a given resolution. The result is a (quasi-)structured grid (consisting of hexahedral elements) with the same extent as the input mesh. Cell properties are mapped onto the grid (sampled at centre-points of each cube), while node properties are ignored. For large raster sizes,  an undersampling of the original mesh is possible.
+This utility rasterizes an existing 3D mesh at a given resolution. The result is a (quasi-)structured grid (consisting of hexahedral elements) with the same extent as the input mesh. Cell properties are mapped onto the grid (sampled at centre-points of each cube), while node properties are ignored. For large raster sizes,  an undersampling of the original mesh is possible.
 
 ## Usage
 
@@ -49,7 +49,7 @@ The ```x```/```y```/```z```-parameters determine the raster size. If only ```x``
 Vtu2Grid -i input.vtu -o output.vtu -x 200
 ```
 
-![Rasterised grid](vtu2grid-200.png#two-third "Rasterised grid consisting of 9,240 cubes (equilateral hexahedral elements with an edge length of 200m). The result is severely undersampled and a continuous layer structure is no longer visible.")
+![Rasterized grid](vtu2grid-200.png#two-third "Rasterised grid consisting of 9,240 cubes (equilateral hexahedral elements with an edge length of 200m). The result is severely undersampled and a continuous layer structure is no longer visible.")
 
 **Command:**
 
@@ -57,7 +57,7 @@ Vtu2Grid -i input.vtu -o output.vtu -x 200
 Vtu2Grid -i input.vtu -o output.vtu -x 100
 ```
 
-![Rasterised grid](vtu2grid-100.png#two-third "Rasterised grid consisting of 74,048 equilateral hexahedral elements with an edge length of 100m. The result is still undersampled but layers become already visible.")
+![Rasterized grid](vtu2grid-100.png#two-third "Rasterised grid consisting of 74,048 equilateral hexahedral elements with an edge length of 100m. The result is still undersampled but layers become already visible.")
 
 **Command:**
 
@@ -65,7 +65,7 @@ Vtu2Grid -i input.vtu -o output.vtu -x 100
 Vtu2Grid -i input.vtu -o output.vtu -x 50
 ```
 
-![Rasterised grid](vtu2grid-50.png#two-third "Rasterised grid consisting of 591,757 equilateral hexahedral elements with an edge length of 50m. There's still undersampling in regions containing thin layers but the overall structure is reasonably well represented.")
+![Rasterized grid](vtu2grid-50.png#two-third "Rasterised grid consisting of 591,757 equilateral hexahedral elements with an edge length of 50m. There's still undersampling in regions containing thin layers but the overall structure is reasonably well represented.")
 
 **Command:**
 
@@ -73,8 +73,8 @@ Vtu2Grid -i input.vtu -o output.vtu -x 50
 Vtu2Grid -i input.vtu -o output.vtu -x 50 -y 50 -z 10
 ```
 
-![Rasterised grid](vtu2grid-50x50x10.png#two-third "Rasterised grid consisting of 2,959,656 cuboid hexahedral elements with an edge length of 50m x 50m x 10m. The structure of the original mesh is very well represented while the number of elements has increased by an order of magnitude.")
+![Rasterized grid](vtu2grid-50x50x10.png#two-third "Rasterised grid consisting of 2,959,656 cuboid hexahedral elements with an edge length of 50m x 50m x 10m. The structure of the original mesh is very well represented while the number of elements has increased by an order of magnitude.")
 
 ## Application
 
-This utility can be used to convert complex unstructured 3D meshes with a numerically challenging geometry into simple, rasterised meshes. This will (significantly) increase the number of elements but prevents numerical issues during a subsequent simulation, thus exchanging a challenging model setup with a longer runtime. As such, the output mesh allows to quickly set-up a working model of region of interest to get first results that allow for informed decisions for a more realistic model using the unstructured input mesh.
+This utility can be used to convert complex unstructured 3D meshes with a numerically challenging geometry into simple, rasterized meshes. This will (significantly) increase the number of elements but prevents numerical issues during a subsequent simulation, thus exchanging a challenging model setup with a longer runtime. As such, the output mesh allows to quickly set-up a working model of region of interest to get first results that allow for informed decisions for a more realistic model using the unstructured input mesh.

@@ -30,6 +30,7 @@ The `<include file="other_file.xml" />`-tag allows to include the content of ano
 ```
 
 `Tests/Data/Elliptic/cube_1x1x1_SteadyStateDiffusion/SteadyStateDiffusion.xml`:
+
 ```xml
 <process>
     <name>SteadyStateDiffusion</name>
@@ -57,6 +58,7 @@ Please do not use `UTF-8 with BOM`-encoding! The BOM-marker from the included fi
 Patch files contain `<replace>`, `<add>` and `<remove>`-elements with [XPath](https://en.wikipedia.org/wiki/XPath)-selectors to modify a specific part of the project file (in-memory during run-time):
 
 `Tests/Data/Elliptic/square_1x1_SteadyStateDiffusion/square_neumann.xml`:
+
 ```xml
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProjectDiff>
@@ -91,6 +93,7 @@ Supplied patch files are applied in the given order.
 If the patch file specifies a `base_file`:
 
 `Tests/Data/Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_1e1.xml`:
+
 ```xml
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProjectDiff base_file="cube_1e0.prj">
@@ -175,7 +178,8 @@ sudo apt-get install libxml2-utils
 </div>
 
 <div class='mac'>
-`xmllint` is part of the Homebrew xmlstarlet package:
+
+`xmllint` is part of the Homebrew `xmlstarlet` package:
 
 ```bash
 brew install xmlstarlet

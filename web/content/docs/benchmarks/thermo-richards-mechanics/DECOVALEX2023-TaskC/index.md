@@ -47,8 +47,13 @@ As shown the water saturation variation curve, the de-saturation -
  re-saturation process is well captured by the numerical simulation.
 
 ## References
+
+<!-- vale off -->
+
 <a id="1">[1]</a>
 Müller, H.R., Garitte, B., Vogt, T. et al. Implementation of the full-scale
  emplacement (FE) experiment at the Mont Terri rock laboratory.
  Swiss J Geosci 110, 287–306 (2017). DOI:
 [10.1007/s00015-016-0251-2](https://sjg.springeropen.com/articles/10.1007/s00015-016-0251-2)
+
+<!-- vale on -->

@@ -29,7 +29,7 @@ git commit -m "Converted LFS files to plain git."
 Now you have to squash this conversion commit into your original commit which added the files as Git LFS files. In result your branch history should and **must not** have any Git LFS files! Otherwise GitLab will reject the push!
 </div>
 
-When you are done migrating your branches you need to disable Git LFS in your local repo:
+When you are done migrating your branches you need to disable Git LFS in your local repository:
 
 ```bash
 git lfs uninstall --local
@@ -41,9 +41,9 @@ git lfs uninstall --local
 
 This creates a new fork under your account with the URL `https://gitlab.opengeosys.org/YOUR-USERNAME/ogs`.
 
-## Migrate your local repos to point to GitLab
+## Migrate your local repositories to point to GitLab
 
-You have to modify your git remotes to point to the new GitLab repos. Assuming the former official git repo remote is called `upstream`:
+You have to modify your git remotes to point to the new GitLab repositories. Assuming the former official git repository remote is called `upstream`:
 
 ```bash
 git remote set-url upstream https://gitlab.opengeosys.org/ogs/ogs.git
@@ -57,4 +57,4 @@ git remote set-url origin git@gitlab.opengeosys.org:YOUR-USERNAME/ogs.git
 
 ----
 
-Or you can clone a fresh repo by following the steps in [Get the source code]({{< ref "get-the-source-code.md" >}}).
+Or you can clone a fresh repository by following the steps in [Get the source code]({{< ref "get-the-source-code.md" >}}).

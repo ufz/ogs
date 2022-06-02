@@ -22,7 +22,7 @@ INFO("An information message...");
 DBUG("A debug message.");
 ```
 
-As arguments you can use the same functionality as in [fmt](https://fmt.dev)---a
+As arguments you can use the same functionality as in [{fmt}](https://fmt.dev)---a
 modern formatting library:
 
 ```cpp

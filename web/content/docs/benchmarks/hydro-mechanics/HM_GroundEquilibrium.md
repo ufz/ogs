@@ -14,10 +14,11 @@ title = "Ground equilibrium"
 ## Test cases
 
 Four versions of the test are presented:
- - {{< data-link "Gravity load" "HydroMechanics/GroundEquilibrium/simHM_ground.prj" >}},
- - {{< data-link "Gravity load with Python BCs" "HydroMechanics/GroundEquilibrium/simHM_ground_python.prj" >}},
- - {{< data-link "Gravity load and indentation" "HydroMechanics/GroundEquilibrium/simHM_ground_quadBCu.prj" >}}, and
- - {{< data-link "Gravity load and indentation with Python BCs" "HydroMechanics/GroundEquilibrium/simHM_ground_quadBCu_python.prj" >}}.
+
+- {{< data-link "Gravity load" "HydroMechanics/GroundEquilibrium/simHM_ground.prj" >}},
+- {{< data-link "Gravity load with Python BCs" "HydroMechanics/GroundEquilibrium/simHM_ground_python.prj" >}},
+- {{< data-link "Gravity load and indentation" "HydroMechanics/GroundEquilibrium/simHM_ground_quadBCu.prj" >}}, and
+- {{< data-link "Gravity load and indentation with Python BCs" "HydroMechanics/GroundEquilibrium/simHM_ground_quadBCu_python.prj" >}}.
 
 ## Problem description
 

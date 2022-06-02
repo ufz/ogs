@@ -90,8 +90,7 @@ and analytical solution match very well as the maximum relative error of
 ground temperature is less than 0.2 \%. The largest difference is found near
 the BHE node towards which the analytical solution approaches infinity.
 
-{{< img src="temperature_soil_2years.png"
-width="150">}}
+{{< img src="temperature_soil_2years.png" width="150">}}
 
 Figure 2: Ground temperature distribution after two years at $z=-7$ m.
 
@@ -101,6 +100,8 @@ Figure 3: Comparison of OGS-6 results and analytical solution. Note the
 singularity of the analytical solution at the BHE node.
 
 ## References
+
+<!-- vale off -->
 
 [1] Diao, N., Li, Q., & Fang, Z. (2004). Heat transfer in ground heat
 exchangers with groundwater advection. International Journal of Thermal
@@ -113,3 +114,5 @@ groundwater advection. International Journal of Thermal Sciences, 50(12),
 
 [3] P. Eskilson, Thermal analysis of heat extraction boreholes, Ph.D. Thesis,
 University of Lund, Lund, Sweden, 1987.
+
+<!-- vale on -->

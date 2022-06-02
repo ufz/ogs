@@ -10,7 +10,7 @@ weight = 1073
     identifier = "build-troubleshooting"
 +++
 
-## Visual Studio out-of-heap or stackoverflow errors
+## Visual Studio out-of-heap or stack overflow errors
 
 <div class='note'>
 

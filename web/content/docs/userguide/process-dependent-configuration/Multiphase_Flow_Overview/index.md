@@ -11,7 +11,7 @@ weight = 43
 +++
 
 
-This documentation gives an overview of the multiphase flow processes (except `TH2M`) in OGS6. Currently all processes assume two-phase flow (The `Richards Flow` process is not considered as a "two-phase flow" process since the gas phase is assumed static). A comparison of the process-specific features is listed in the following table.
+This documentation gives an overview of the multiphase flow processes (except `TH2M`) in OGS. Currently all processes assume two-phase flow (The `Richards Flow` process is not considered as a "two-phase flow" process since the gas phase is assumed static). A comparison of the process-specific features is listed in the following table.
 
 | Feature | `TwoPhaseFlowWithPP` | `TwoPhaseFlowWithPrho` | `ThermalTwoPhaseFlowWithPP` |
 |---|---|---|---|

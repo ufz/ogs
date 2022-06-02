@@ -5,12 +5,12 @@ pre commit:
     - if: $CI_MERGE_REQUEST_EVENT_TYPE == "merged_result"
   needs: [ci_images]
   variables:
-    SKIP: clang-format
+    SKIP: clang-format,git-diff-check
   script:
     - pre-commit install
     - echo "Target target sha is ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA}."
     - pre-commit run --from-ref ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA} --to-ref HEAD
-    - git diff --check ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA} HEAD -- . ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
+    - git diff --check ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA} HEAD -- . ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts' ':!Documentation/.vale/'
 
 clang-format:
   stage: check

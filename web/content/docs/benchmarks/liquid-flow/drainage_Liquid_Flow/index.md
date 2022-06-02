@@ -14,7 +14,7 @@ project = "/Parabolic/LiquidFlow/DrainageExcavation/drainage_LiquidFlow.prj"
 
 ## Problem description
 
-We present the drainage of an excavation benchmark in this [this PDF](drainage_LiquidFlow.pdf).
+We present the drainage of an excavation benchmark in [this PDF](drainage_LiquidFlow.pdf).
 
 Here's an impression of the problem and its results:
 

@@ -16,7 +16,7 @@ title = "Ehlers; Single-surface yield function"
 
 ## Problem description
 
-We use a seven-parametric yield function for geomaterials to describe the plastic response. The traixial compression test is setup.
+We use a seven-parametric yield function for geomaterials to describe the plastic response. The triaxial compression test is setup.
 
 See [this PDF](Plasticity.pdf) for detailed problem description.
 

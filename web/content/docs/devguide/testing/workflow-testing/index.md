@@ -9,23 +9,23 @@ weight = 1024
     parent = "testing"
 +++
 
-## Introdution
+## Introduction
 
 We use the workflow manager [Snakemake](https://snakemake.readthedocs.io) to test workflows which consist of the execution of several steps which are based on each other.
 
 ## Requirements
 
 - [Snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html) >= {{< dataFile "versions.minimum_version.snakemake" >}}
-    - If you use `OGS_USE_PIP=ON` then `snakemake` is installed in your virtual environment in your build-directory automatically. You can then call it via `.venv/bin/snakemake ...` (inside your build directory).
+  - If you use `OGS_USE_PIP=ON` then `snakemake` is installed in your virtual environment in your build-directory automatically. You can then call it via `.venv/bin/snakemake ...` (inside your build directory).
 - On Windows only:
-    - The `tee`-utility in the `PATH` (can be installed from https://sourceforge.net/projects/unxutils)
+  - The `tee`-utility in the `PATH` (can be installed from <https://sourceforge.net/projects/unxutils>)
 
 ## Examples
 
 - [ExtractBoundary.smk](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Applications/Utils/ExtractBoundary.smk)
 - [VoxelGridFromLayers.smk](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Applications/Utils/VoxelGridFromLayers.smk)
 
-These example workflows [are added to ctest](https://gitlab.opengeosys.org/ogs/ogs/-/blob/540d0b454c9e3805a81f7c4a1b6ee7565be6845c/Applications/Utils/Tests.cmake#L302-315) as well:
+These example workflows [are added to CTest](https://gitlab.opengeosys.org/ogs/ogs/-/blob/540d0b454c9e3805a81f7c4a1b6ee7565be6845c/Applications/Utils/Tests.cmake#L302-315) as well:
 
 ```cmake
 if(SNAKEMAKE AND NOT OGS_USE_MPI)

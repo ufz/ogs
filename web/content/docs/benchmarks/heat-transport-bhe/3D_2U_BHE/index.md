@@ -34,7 +34,7 @@ The numerical model was established based on dual continuum method developed by 
 
 For this benchmark, Two different scenarios were carried out by applying two different boundary conditions imposed on the BHE.
 
-*   Fixed inflow boundary condition
+* Fixed inflow boundary condition
 
 The detailed input parameters can be seen from the 3D_2U_BHE.prj file. The inflow temperature of the BHE, which was imposed as boundary condition of the BHE is shown in Figure 1. All the initial temperatures are set as 22 $^{\circ}$C. The flow rate within each U-pipe is set to $2.0\times10^{-4}$ $\mathrm{m^{3} s^{-1}}$ during the whole simulation time.
 
@@ -42,23 +42,23 @@ The detailed input parameters can be seen from the 3D_2U_BHE.prj file. The inflo
 
 Figure 1: Inflow temperature curve and outflow temperature comparison
 
-*   Fixed power boundary condition
+* Fixed power boundary condition
 
 The detailed input parameters can be seen from the 3D_2U_BHE_powerBC.prj file.
 A -315.72 $W$ thermal load is imposed on the BHE to extract the heat from the subsurface during the entire simulation.
 All the other parameters adopted in the model is same as the ones used in the scenario with fixed inflow boundary condition.
 
 ## FEFLOW Input Files
+
 For the benchmark a FEFLOW model is presented.
 The mesh used in the OGS model is directly converted from the FEFLOW model mesh, to ensure that there is no influence to the comparison results from the mesh side.
-Both the FEFLOW and ogs model mesh can be found in the ogs GitLab (<https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/3426>).
+Both the FEFLOW and OGS model mesh can be found in the OGS GitLab (<https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/3426>).
 
 ## FEFLOW Input Files
 
-
 ## Results
 
-The computed resutls from scenario by adopting the fixed inflow boundary condition are illustracted in Figure 1 and Figure 2.
+The computed results from scenario by adopting the fixed inflow boundary condition are illustrated in Figure 1 and Figure 2.
 The OGS numerical outflow temperature over time was compared against results of the FEFLOW software as shown in the Figure 1. And the vertical distributed temperature of circulating water was presented in Figure 2 after operation for 3300 s.
 The comparison figures demonstrate that the OGS numerical results and FEFLOW results can match very well and the biggest absolute error of outflow temperature is 0.20 $^{\circ}$C after 360 s' operation, while such error decreases to 0.037 $^{\circ}$C after 3600 s' operation. The maximum relative error of vertical temperature is 0.019 \% after operation for 3300 s.
 
@@ -67,7 +67,7 @@ The comparison figures demonstrate that the OGS numerical results and FEFLOW res
 Figure 2: Comparison of vertical temperature distribution from scenario by adopting the fixed inflow boundary condition
 
 Figure 3 shows the vertical distributed temperature of circulating fluid after operation for 3300 s by adopting different power boundary conditions in OGS and FEFLOW models.
-Compared to the resutls computed from the OGS model with using a fixed power boundary condition (illustrated as the blue and green line), A 0.18 $^{\circ}$C difference is found for the averaged vertical temperature from the FEFLOW model (illustrated as the dotted line).
+Compared to the results computed from the OGS model with using a fixed power boundary condition (illustrated as the blue and green line), A 0.18 $^{\circ}$C difference is found for the averaged vertical temperature from the FEFLOW model (illustrated as the dotted line).
 The reason to the results difference is due to the different power boundary condition type adopted in the two software.
 In FEFLOW the power boundary condition is based on the outlet temperature calculated from the last time step (non-iterative).
 Compared to it, the default power boundary condition adopted in the OGS `Heat_Transport_BHE` process is based on the outlet temperature calculated from the current time step (with-iterative).

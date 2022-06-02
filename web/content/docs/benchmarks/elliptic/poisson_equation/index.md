@@ -144,7 +144,7 @@ ogs square_1e3_poisson_sin_x_sin_y.prj
 
 It will produce some output and write the computed result into the
 `square_1e3_volumetricsourceterm_pcs_0_ts_1_t_1.000000.vtu`, which can be
-directly visualized and analysed in paraview for example.
+directly visualized and analysed in ParaView for example.
 
 The output on the console will be similar to the following on:
 

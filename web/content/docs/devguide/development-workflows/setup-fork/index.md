@@ -22,14 +22,18 @@ Git is very flexible in organizing a distributed development team. We use a so c
 
 The following explanation is taken from an [in-depth article](https://www.atlassian.com/git/tutorials/comparing-workflows#!workflow-forking) on that model:
 
+<!-- vale off -->
+
 > Instead of using a single server-side repository to act as the *central* codebase, it gives every developer a server-side repository. This means that each contributor has not one, but two Git repositories: a private local one and a public server-side one.
 >
 > The main advantage of the Forking Workflow is that contributions can be integrated without the need for everybody to push to a single central repository. Developers push to their own server-side repositories, and only the project maintainer can push to the official repository. This allows the maintainer to accept commits from any developer without giving them write access to the official codebase.
 >
-> The result is a distributed workflow that provides a flexible way for large, organic teams (including untrusted third-parties) to collaborate securely. This also makes it an ideal workflow for open source projects.
+> The result is a distributed workflow that provides a flexible way for large, organic teams (including not trusted third-parties) to collaborate securely. This also makes it an ideal workflow for open source projects.
 >
 > <cite><a href="https://www.atlassian.com/git/tutorials/comparing-workflows#!workflow-forking">www.atlassian.com/git/tutorials/comparing-workflows#!workflow-forking</a> </cite>
 >
+
+<!-- vale on -->
 
 The workflow is summarized in the following image from the [GitHub blog](https://github.com/blog/2042-git-2-5-including-multiple-worktrees-and-triangular-workflows):
 ![Git workflow](https://cloud.githubusercontent.com/assets/1319791/8943755/5dcdcae4-354a-11e5-9f82-915914fad4f7.png)
@@ -71,7 +75,7 @@ This creates a new folder `ogs` in your current working directory with the OGS s
 
 <div class='note'>
 
-The `--filter=blob:limit=100k`-parameter instructs git to only fetch files which are smaller than 100 Kbyte. Larger files (e.g. benchmark files, images, PDFs) are fetched on-demand only. This happens automatically and [is a replacement for the previous Git LFS tracked files](https://github.com/ufz/ogs/issues/2961). Requires at least **git 2.22**!
+The `--filter=blob:limit=100k`-parameter instructs git to only fetch files which are smaller than 100 Kilobyte. Larger files (e.g. benchmark files, images, PDFs) are fetched on-demand only. This happens automatically and [is a replacement for the previous Git LFS tracked files](https://github.com/ufz/ogs/issues/2961). Requires at least **git 2.22**!
 
 </div>
 
@@ -127,7 +131,6 @@ brew install clang-format
 ```
 
 </div>
-
 
 ## Optional: Working on a new feature
 
@@ -189,6 +192,10 @@ If your work is done submit a [merge request](https://gitlab.opengeosys.org/ogs/
 Again this triangular workflow is summarized with this picture:
 ![Workflow visualization](https://cloud.githubusercontent.com/assets/1319791/8943755/5dcdcae4-354a-11e5-9f82-915914fad4f7.png)
 
+<!-- vale off -->
+
 > […] the Forking Workflow requires two remotes—one for the official repository, and one for the developer’s personal server-side repository. While you can call these remotes anything you want, a common convention is to use origin as the remote for your forked repository […] and upstream for the official repository.
 >
 > <cite><a href="https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow">www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow</a> </cite>
+
+<!-- vale on -->

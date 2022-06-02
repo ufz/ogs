@@ -24,7 +24,7 @@ Here is a **link list** without specific order:
 
 The steps to get things started with an IDE basically include **generating** the project files, **importing** them in the IDE and know where to **provide arguments** to the debugging binary.
 
-I will assume, that you have the sources (eg. checked out from github) and that they lie in the **source directory**
+I will assume, that you have the sources (e.g. checked out from GitHub) and that they lie in the **source directory**
 
 ```bash
 /home/user/ogs6/sources
@@ -53,7 +53,7 @@ __________
     cmake ../sources/
     ```
 
-3. Start gdb in graphical mode, without license info (quiet) and with arguments:
+3. Start GDB in graphical mode, without license info (quiet) and with arguments:
 
     ```bash
     gdb -tui -q --args ./bin/ogs ./path/to/BenchmarkName.prj
@@ -74,7 +74,7 @@ Choose "Eclipse IDE for C/C++ Developers"
 ![Eclipse screenshot](eclipse.png)
 
 ### Import Code
-
+<!-- vale off -->
 1. CD to the build directory
 2. Generate project files with CMake:
 
@@ -92,7 +92,7 @@ Choose "Eclipse IDE for C/C++ Developers"
     ```
 
 7. Start debugging...
-
+<!-- vale on -->
 Documentation: <https://wiki.eclipse.org/Main_Page>
 
 __________
@@ -116,7 +116,7 @@ The latter includes already plugins for Fortran, in case you want to cross-compi
     cmake -G "CodeBlocks - Unix Makefiles" ../sources/
     ```
 
-3. *Open an existing project* and choose before created .cbp file
+3. *Open an existing project* and choose before created `.cbp` file
 4. Choose your compilation target
 5. Give arguments: *Project - Set Programs' Arguments*, select correct target and add *Program arguments* in the bottom
 
@@ -163,7 +163,7 @@ __________
 
 Download: <https://www.jetbrains.com/clion/>
 
-![Clion screenshot](clion.png)
+![CLion screenshot](clion.png)
 
 ### Import project
 

@@ -11,13 +11,13 @@ weight = 1068
 
 OGS can be built on systems without internet connection when the following files can be made available on the system:
 
-- The ogs source code. Just archive the full ogs source code directory (also containing the git repository in `.git`) and unarchive on the target system.
+- The OGS source code. Just archive the full OGS source code directory (also containing the git repository in `.git`) and un-archive on the target system.
 - The [CPM]({{< ref "cpm.md" >}}) source cache. It can be obtained via the [OGS package registry](https://gitlab.opengeosys.org/ogs/ogs/-/packages/) (see below).
 - Optional: The external dependencies (for MFront, PETSc or LIS) source cache. It can be obtained via the [OGS package registry](https://gitlab.opengeosys.org/ogs/ogs/-/packages/)
 
 ## CPM
 
-The cpm source cache may change over time. To get the required file id check the `package_file_id` field in `web/data/versions.json`, e.g. with:
+The CPM source cache may change over time. To get the required file id check the `package_file_id` field in `web/data/versions.json`, e.g. with:
 
 ```bash
 $ jq -r '.cpm.package_file_id' web/data/versions.json
@@ -26,11 +26,11 @@ $ jq -r '.cpm.package_file_id' web/data/versions.json
 
 Now simply download the file with:
 
-```
+```bash
 curl https://gitlab.opengeosys.org/ogs/ogs/-/package_files/[insert ID here]/download --output cpm.tar.gz
 ```
 
-Unarchive the cpm cache into a directory. Configure OGS as usual but point to the extracted cpm cache:
+Un-archive the CPM cache into a directory. Configure OGS as usual but point to the extracted CPM cache:
 
 ```bash
 cmake --preset release -DCPM_SOURCE_DIR=./path/to/cpm
@@ -49,7 +49,7 @@ $ jq -r '.ext.cache_hash' web/data/versions.json
 
 On the [external dependencies package page](https://gitlab.opengeosys.org/ogs/ogs/-/packages/14) download the file `ext.tar.gz` with the specified version.
 
-Unarchive the external dependencies cache into a directory. Configure OGS as usual but point to the extracted external dependencies cache:
+Extract the external dependencies cache into a directory. Configure OGS as usual but point to the extracted external dependencies cache:
 
 ```bash
 cmake --preset release -DOGS_EXTERNAL_DEPENDENCIES_CACHE=./path/to/ext

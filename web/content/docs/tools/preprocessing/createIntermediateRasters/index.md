@@ -55,7 +55,9 @@ createIntermediateRasters --file1 raster1.asc --file2 raster2.asc -o output.asc 
 createIntermediateRasters --file1 raster1.asc --file2 raster2.asc -o output.asc -n 2
 ```
 
-![](createIntermediateRasters-output2.png "For ```n>1``` multiple rasters are created at equidistant distances between the two input rasters. For ```n=2```, two new rasters are generated, represented here in red and blue.")
+<!-- vale off -->
+![For `n=2`, two new raster are generated, represented here in red and blue.](createIntermediateRasters-output2.png "For ```n>1``` multiple rasters are created at equidistant distances between the two input rasters. For ```n=2```, two new rasters are generated, represented here in red and blue.")
+<!-- vale on -->
 
 ## Application
 

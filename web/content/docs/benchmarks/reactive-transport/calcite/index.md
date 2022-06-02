@@ -17,7 +17,7 @@ title = "Precipitation/dissolution equilibrium reactions in a saturated column"
 
 This benchmark was firstly described in Kolditz *et al.* (2012) as a reactive transport benchmark including precipitation and dissolution reactions along a saturated column of calcite which is fluxed with a diluted solution of MgCl$_2$. Three different codes (OGS-5#ChemApp, OGS-5#IPhreeqc and OGS-5#GEMS) were used in that exercise.
 
-Kolditz *et al.* (2012) considered that all reactions occurred at thermodynamic equilibrium. Later on, in He *et al.* (2015) and Jang *et al.* (2018), the incorporation of kinetic rates for reaction precipitations in OGS-5#IPhreeqc was investigated and compared with the modelling results obtained with OGS-5#ChemApp and Phreeqc.
+Kolditz *et al.* (2012) considered that all reactions occurred at thermodynamic equilibrium. Later on, in He et al. (2015) and Jang et al. (2018), the incorporation of kinetic rates for reaction precipitations in OGS-5#IPhreeqc was investigated and compared with the modelling results obtained with OGS-5#ChemApp and PHREEQC.
 
 Very briefly, the studied system consists on a column of 0.5 m, initially containing crushed calcite (CaCO$_3$(s)), which is continuously fluxed with a 1 millimolar (mmol/L) magnesium chloride (MgCl$_2$) solution at pH = 7 and 25°C during 350 min (~ 5.8h) at a constant flow rate of 0.18 L (or a Darcy velocity (q) of $3\times10^{-6}$ m/s, considering a cross-sectional area of 1 m$^2$).
 
@@ -25,9 +25,9 @@ Previously, the column had been packed giving a mean bulk density and porosity o
 
 ## Numerical approach
 
-Reactive component$^{(*)}$ transport processes in saturated porous media illustrated in this benchmark have been possible by integrating IPhreeqc v.3.5.0 module (Parkhurst and Appelo,2013) in OGS-6. The operator-splitting (OS) model formulation (Strang, 1968) with a sequential non-iterative approach (SNIA) has been used for the implementation.
+Reactive component$^{(*)}$ transport processes in saturated porous media illustrated in this benchmark have been possible by integrating IPhreeqc v.3.5.0 module (Parkhurst et al. 2013) in OGS-6. The operator-splitting (OS) model formulation (Strang et al. 1968) with a sequential non-iterative approach (SNIA) has been used for the implementation.
 
-In a first step, the mass balance equation describing the component transport within the fluid is solved by a parabolic operator (see [HC-Process.pdf](/docs/benchmarks/hydro-component/HC-Process.pdf)). Then, in a second step, the nonlinear algebraic equations describing the equilibrium chemical reactions between the aqueous components and the solid (i.e. mass action law) are solved with a modified Newton-Raphson method implemented in IPhreeqc.
+In a first step, the mass balance equation describing the component transport within the fluid is solved by a parabolic operator (see [`HC-Process.pdf`](/docs/benchmarks/hydro-component/HC-Process.pdf)). Then, in a second step, the nonlinear algebraic equations describing the equilibrium chemical reactions between the aqueous components and the solid (i.e. mass action law) are solved with a modified Newton-Raphson method implemented in IPhreeqc.
 
 ($^*$*Note: component denotes a chemical species that belongs to the minimum number of independent chemical species necessary to completely describe their mass*).
 
@@ -54,11 +54,11 @@ where $\alpha_L$ (m) and $\alpha_T$ (m) are the longitudinal and transversal dis
 
 ## Model setup
 
-A one-dimensional (1D) model domain of 0.5 m discretized into 100 uniform elements has been selected for the spatial discretization of the system. Dirichlet (constant concentration) and Neumannn (no flux) boundary condition are defined for the upstream inflow and the downstream, respectively. A longitudinal dispersivity of 0.0067 m and a time step size of 100 s have been taken into account in the simulation. See Figure below:
+A one-dimensional (1D) model domain of 0.5 m discretised into 100 uniform elements has been selected for the spatial discretization of the system. Dirichlet (constant concentration) and Neumannn (no flux) boundary condition are defined for the upstream inflow and the downstream, respectively. A longitudinal dispersivity of 0.0067 m and a time step size of 100 s have been taken into account in the simulation. See Figure below:
 
 {{< img src="Scheme.png" title="Schematic representation of the model setup and parameters.">}}
 
-Thermodynamic data for hydrolysis, aqueous speciation, and dissolution/precipitation reactions between Mg, Ca, Cl, and carbonate were selected from version 12/07 of the PSI/NAGRA chemical thermodynamic database (Thoenen *et al.* 2014). Although several other minerals containing Mg and Ca were available in the PSI/NAGRA database (*i.e.* magnesite), only two solids were allowed to precipitate or dissolve in the studied system (calcite and dolomite (CaMg(CO$_3$)$_2$)).
+Thermodynamic data for hydrolysis, aqueous speciation, and dissolution/precipitation reactions between Mg, Ca, Cl, and carbonate were selected from version 12/07 of the PSI/NAGRA chemical thermodynamic database (Thoenen et al. 2014). Although several other minerals containing Mg and Ca were available in the PSI/NAGRA database (*i.e.* magnesite), only two solids were allowed to precipitate or dissolve in the studied system (calcite and dolomite (CaMg(CO$_3$)$_2$)).
 
 ## Model results
 
@@ -73,6 +73,8 @@ At the simulated time, it can be clearly seen that the MgCl$_2$ solution front h
 {{< data-link >}}
 
 ## Literature
+
+<!-- vale off -->
 
 He, W., Beyer, C., Fleckenstein, J.H., Jang, E., Kolditz, O., Naumov, D., Kalbacher, T., 2015. A parallelization scheme to simulate reactive transport in the subsurface environment with OGS#IPhreeqc 5.5.7-3.1.2. Geosci. Model Dev. 8 (10), 3333 - 3348
 

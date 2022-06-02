@@ -74,6 +74,8 @@ For the simple equation, as expected, the difference between the Picard and
 Newton non-linear solvers is reasonable for the given non-linear solver
 tolerances.
 
+<!-- vale off -->
+
 |          |                    |
 |----------|--------------------|
 | {{< img title="Time step 1, time 78125s."      src="picard_vs_newton_ts_1_t_78125.png"      >}} | {{< img title="Time step 3, time 234375s."     src="picard_vs_newton_ts_3_t_234375.png"     >}} |
@@ -88,3 +90,5 @@ on cost of accuracy as the error is significantly larger.
 |----------|--------------------|
 | {{< img title="Time step 1, time 78125s."      src="temperature_error_ts_1_t_78125.png"      >}} | {{< img title="Time step 3, time 234375s."     src="temperature_error_ts_3_t_234375.png"     >}} |
 | {{< img title="Time step 65, time 5078125s."   src="temperature_error_ts_65_t_5078125.png"   >}} | {{< img title="Time step 405, time 31640625s." src="temperature_error_ts_405_t_31640625.png" >}} |
+
+<!-- vale on -->

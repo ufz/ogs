@@ -39,7 +39,7 @@ The parameters of the BGRa creep model are $A=0.18\, \mbox{d}^{-1}$,
 $m=5$, $Q=54 \mbox{ kJ/mol}$ for the rock salt. For the cap rock, $A$ is set to zero.
 
 The width
-and the height of of the domain are 300 m and 340 m, respectively. The
+and the height of the domain are 300 m and 340 m, respectively. The
 height of the cap rock portion is 40 m. The drift to be excavated has a
 radius of 50 m.
 

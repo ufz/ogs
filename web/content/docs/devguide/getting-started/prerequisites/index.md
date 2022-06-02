@@ -57,13 +57,13 @@ On Debian-based (we recommend using Ubuntu {{< dataFile "versions.tested_version
 sudo apt install build-essential
 ```
 
-You need to have at least **gcc {{< dataFile "versions.minimum_version.gcc" >}}** which you can check with `gcc --version` (Ubuntu {{< dataFile "versions.tested_version.ubuntu" >}} has already version 11).
+You need to have at least **GCC {{< dataFile "versions.minimum_version.gcc" >}}** which you can check with `gcc --version` (Ubuntu {{< dataFile "versions.tested_version.ubuntu" >}} has already version 11).
 
 <div class='note'>
 
 ### Install the required compiler on older Ubuntu versions
 
-If you are on an older Ubuntu version you can install a newer compiler from the `ubuntu-toolchain-r/test`-repository (with the following steps e.g. you can install gcc 10.3.0 on Ubuntu 20.04):
+If you are on an older Ubuntu version you can install a newer compiler from the `ubuntu-toolchain-r/test`-repository (with the following steps e.g. you can install GCC 10.3.0 on Ubuntu 20.04):
 
 ```bash
 sudo apt-get install software-properties-common
@@ -106,7 +106,7 @@ Now also install the [Homebrew](http://brew.sh) package manager:
 brew doctor
 ```
 
-The Homebrew package manager is needed for installing other libraries and packages. It is just like a linux package manager.
+The Homebrew package manager is needed for installing other libraries and packages. It is just like a Linux package manager.
 </div>
 
 ## Step: Install Git
@@ -199,13 +199,14 @@ git config --global http.proxy http://yourproxy.example.com
 
 - Download the installer, at the [CMake download page](http://www.cmake.org/cmake/resources/software.html) choose the **Windows (Win32 Installer)**.
 - Execute the installer, please check the **Add CMake to the system path for all users**-option
+
 </div>
 
 <div class='linux'>
 
 Install CMake via Kitware's APT Repository by [following their instructions](https://apt.kitware.com/).
 
-For other linux distributions you want to use your distributions package manager, [pip](https://pypi.org/project/cmake/) or [snap](https://snapcraft.io/cmake).
+For other Linux distributions you want to use your distributions package manager, [pip](https://pypi.org/project/cmake/) or [snap](https://snapcraft.io/cmake).
 </div>
 
 <div class='mac'>
@@ -217,7 +218,6 @@ brew install cmake
 ```
 
 </div>
-
 
 ## Optional: Install Ninja
 
@@ -282,7 +282,7 @@ brew install python
 
 ## Optional: Install Qt for the Data Explorer
 
-Use [Another Qt installer(aqt)](https://github.com/miurahr/aqtinstall) for installing the Qt binaries to some path on your machine:
+Use [Another Qt installer (`aqt`)](https://github.com/miurahr/aqtinstall) for installing the Qt binaries to some path on your machine:
 
 <div class='win'>
 
@@ -348,6 +348,6 @@ Conan version {{< dataFile "versions.minimum_version.conan" >}}
 
 <div class='note'>
 
-**Advanced usage:** You can also have Conan auto-installed when using the CMake-option `OGS_USE_CONAN=auto`. See the page on [Python environment]({{< ref "python-env.md" >}}) for details.
+**Advanced usage:** You can also have Conan auto-installed when using the CMake-option `OGS_USE_CONAN=auto`. See the page on [Python environment]({{% ref "python-env.md" %}}) for details.
 
 </div>

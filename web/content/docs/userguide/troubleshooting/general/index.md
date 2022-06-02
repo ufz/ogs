@@ -37,7 +37,9 @@ where `XXX` can be `CND`, `GLI`, `PRJ` or `STN` depending on the file type.
 
 Now the save the modified file and try to load it again.
 
+<!-- vale off -->
+
 <details>
     <summary>Background info:</summary>
-    The XSD files may be downloaded from a web location. We changed the protocol of our web site to `https://` but due to some weird behaviour of the Qt XML validation code it tries to download the file (even if it is available locally) and does not respect the URL redirection to `https://` of the web server. Simply removing the part solves the problem. The XML is still validated! Newer OGS versions do not write that parameter into files anymore, see https://github.com/ufz/ogs/pull/2198.
+    The XSD files may be downloaded from a web location. We changed the protocol of our web site to `https://` but due to some weird behaviour of the Qt XML validation code it tries to download the file (even if it is available locally) and does not respect the URL redirection to `https://` of the web server. Simply removing the part solves the problem. The XML is still validated! Newer OGS versions do not write that parameter into files anymore, see <https://github.com/ufz/ogs/pull/2198>.
 </details>

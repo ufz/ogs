@@ -29,8 +29,9 @@ As a common programming language we use [Python](https://www.python.org).
 
 {{< youtube bkmubABAA_s >}}
 
+## Supplementary material
 
-## Supplementary material:
+<!-- vale off -->
 
 * [mesh_basin.msh](mesh_basin.msh)
 * [mesh_basin.py](mesh_basin.py)

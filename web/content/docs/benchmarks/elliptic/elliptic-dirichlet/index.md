@@ -62,7 +62,7 @@ As of now a small portion of possible inputs is implemented; one can change:
 
 The geometries used to specify the boundary conditions are given in the `square_1x1.gml` file.
 
-The input mesh `square_1x1_quad_1e2.vtu` is stored in the VTK file format and can be directly visualized in Paraview for example.
+The input mesh `square_1x1_quad_1e2.vtu` is stored in the VTK file format and can be directly visualized in ParaView for example.
 
 ## Running simulation
 
@@ -109,4 +109,4 @@ A major part of the output was produced by the linear equation solver (LIS in th
 
 ## Results and evaluation
 
-![The result can be visualized with Paraview.](square_1e2_pcs_0_ts_1_t_1.000000.png)
+![The result can be visualized with ParaView.](square_1e2_pcs_0_ts_1_t_1.000000.png)

@@ -58,7 +58,7 @@ As of now a small portion of possible inputs is implemented; one can change:
 
 The geometries used to specify the boundary conditions are given in the [square_1x1.gml](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Elliptic/square_1x1_SteadyStateDiffusion/square_1x1.gml) file.
 
-The input mesh `square_1x1_quad_1e2.vtu` is stored in the VTK file format and can be directly visualized in Paraview for example.
+The input mesh `square_1x1_quad_1e2.vtu` is stored in the VTK file format and can be directly visualized in ParaView for example.
 
 ## Running simulation
 
@@ -68,7 +68,7 @@ To start the simulation (after successful compilation) run:
 ogs square_1e2_neumann.prj
 ```
 
-It will produce some output and write the computed result into the `square_1e2_neumann.vtu` for visualization with Paraview.
+It will produce some output and write the computed result into the `square_1e2_neumann.vtu` for visualization with ParaView.
 
 The output on the console will be similar to the following one (ignore the spurious error messages "Could not find POINT..."):
 

@@ -5,7 +5,7 @@ aliases = [ "/download5/",           # Redirect for Hydrology II tutorial
             "/resources/downloads" ] # Redirect for Hydrology I tutorial
 +++
 
-As OGS-6 is a reimplementation of OGS-5 with new concepts and methodologies there will probably never be complete feature parity. We provide binaries of OpenGeoSys-5 ready for you to use. Support is limited but you may ask questions or report bugs via our [discussion forum](https://discourse.opengeosys.org/tags/ogs5) mailing list.
+As OGS-6 is a re-implementation of OGS-5 with new concepts and methodologies there will probably never be complete feature parity. We provide binaries of OpenGeoSys-5 ready for you to use. Support is limited but you may ask questions or report bugs via our [discussion forum](https://discourse.opengeosys.org/tags/ogs5) mailing list.
 
 ## Downloads
 

@@ -13,7 +13,6 @@ title = "Tracer diffusion in a thermal gradient"
 
 {{< data-link >}}
 
-
 ## Overview
 
 This benchmark simulates the diffusion of a non-reactive tracer in clay during a thermal gradient. Here are the relevant parts of the benchmark:

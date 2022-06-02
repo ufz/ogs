@@ -15,7 +15,7 @@ project = "Parabolic/T/BHE_1P/BHE_1P.prj"
 
 ## Problem description
 
-Ramey (Ramey et al. (1962)) proposed the analytical solution concerning the wellbore heat transmission, which can be used to quantify the fluid temperature change in the wellbore. In order to verify the single pipe flow model in the OGS, the numerical results was compared with the [Ramey's analytical solution](Analytical_wellbore_heat_transport.zip). The detailed calculation of the Ramey's analytical solution is given below.
+Ramey et al. (1962) proposed the analytical solution concerning the wellbore heat transmission, which can be used to quantify the fluid temperature change in the wellbore. In order to verify the single pipe flow model in the OGS, the numerical results was compared with the [Ramey's analytical solution](Analytical_wellbore_heat_transport.zip). The detailed calculation of the Ramey's analytical solution is given below.
 
 ## Model Setup
 
@@ -82,7 +82,7 @@ The Prandtl and Reynolds number can be calculated as follows,
 
 The outlet temperature change over time was compared against analytical solution and presented in Figure 2. After 30 days, the fluid temperature distribution in the wellbore is shown in Figure 3. The maximum relative error between the numerical model and Ramey's analytical solution is less than 0.15 \%.
 
-In numerical model, the outlet temperature at beginning stage is affected by the initial temperature in the pipe inside the wellbore. The initial fluid temperature set in the benchmark means there is water with 20 $^{\circ}$C filled in the wellbore already before injecting water into the wellbore. But in the analytical solution, no initial temperature is set and the temperature keeps equilibrium state at every moment. The impact of initial temperature condition in numerical model is decreasing with increasement of the operational time as shown in Figure 2.
+In numerical model, the outlet temperature at beginning stage is affected by the initial temperature in the pipe inside the wellbore. The initial fluid temperature set in the benchmark means there is water with 20 $^{\circ}$C filled in the wellbore already before injecting water into the wellbore. But in the analytical solution, no initial temperature is set and the temperature keeps equilibrium state at every moment. The impact of initial temperature condition in numerical model is decreasing with the increasing of the operational time as shown in Figure 2.
 
 {{< img src="T_out_comparison.png" width="120">}}
 
@@ -94,8 +94,12 @@ Figure 3: Distributed temperature of fluid and absolute error.
 
 ## References
 
+<!-- vale off -->
+
 [1] Ramey Jr, H. J. (1962). Wellbore heat transmission. Journal of petroleum Technology, 14(04), 427-435.
 
 [2] Gnielinski, V. (1975). New equations for heat and mass transfer in the turbulent flow in pipes and channels. NASA STI/recon technical report A, 75, 8-16.
 
 [3] Churchill, S. W. (1977). Comprehensive correlating equations for heat, mass and momentum transfer in fully developed flow in smooth tubes. Industrial & Engineering Chemistry Fundamentals, 16(1), 109-116.
+
+<!-- vale on -->

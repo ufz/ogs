@@ -63,7 +63,7 @@ $$
 \left.\frac{\partial h}{\partial n}\right\rvert_{x=0} = -h'(x)|_{x=0}.
 \end{equation*}
 $$
-From the evaluation of the the Robin-type boundary condition it follows
+From the evaluation of the Robin-type boundary condition it follows
 $$
 \begin{equation*}
 \left.\frac{\partial h}{\partial n}\right\rvert_{x=0} = -A = \alpha (h_0 - h(0)) = \alpha (h_0 - B).

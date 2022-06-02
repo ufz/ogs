@@ -1,1 +1,1 @@
-This tag is used for scaling odinary differential equations.
+This tag is used for scaling ordinary differential equations.

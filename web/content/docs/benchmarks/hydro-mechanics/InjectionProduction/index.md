@@ -18,7 +18,7 @@ author = "Dominik Kern and Wenqing Wang"
 ## Injection and Production in 1D Linear Poroelastic Medium
 
 This benchmark simulates a soil column with fluid injection at the bottom and a production well at the top.
-It is taken from from Kim [[1]](#1), in detail it coincides with one of his examples (case 2, coupling strength $\tau=1.21$).
+It is taken from Kim [[1]](#1), in detail it coincides with one of his examples (case 2, coupling strength $\tau=1.21$).
 A brief description of the used staggered scheme follows at the end.
 
 {{< img src="InjectionProduction_model.png" >}}
@@ -172,17 +172,17 @@ All parameters are concluded in the following tables.
 </tbody>
 </table>
 
-
 The gravity related terms are neglected in both: the Darcy velocity and the momentum balance equation.
 
 Note that 100 time steps were used for the following results, whereas the provided input file is set to 1 time step (1 day = 86400 s).
-Kim plots his results over nondimensional time, referring to the time at which the produced fluid volume equals the pore volume of the domain (450 days).
+Kim plots his results over non dimensional time, referring to the time at which the produced fluid volume equals the pore volume of the domain (450 days).
 
 {{< img src="InjectionProduction_results.png" >}}
 _Pressure at observation point (marked by circle) versus time (t=0...100 days) and spatial pressure distribution at t=100 days_
 
-## Staggered Scheme: Fixed-stress splitting ##
-For each time step run alternating simulations of the hydraulic (H) problem and the mechanical (M) problem until a convergence criterium is met.
+## Staggered Scheme: Fixed-stress splitting
+
+For each time step run alternating simulations of the hydraulic (H) problem and the mechanical (M) problem until a convergence criteria is met.
 The fixed-stress split starts with the mass balance (H) followed by the momentum balance (M).
 These coupling iterations (H,M,H,M,...) add another iteration level compared to the monolithic formulation (HM).
 However, due to splitting into smaller problems this may result in a speedup.
@@ -225,8 +225,8 @@ $$
 $$
 These two steps (H,M) are repeated until convergence is reached and thus the solution of the $n^\mathrm{th}$ time step is found.
 
-
 ## References
+
 <a id="1">[1]</a>
 {{< bib "kimtchjua2009" >}}
 

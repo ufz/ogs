@@ -9,14 +9,18 @@ weight = 2
     parent = "basics"
 +++
 
+<!-- vale off -->
 The executable OGS for MPI parallel computing is compiled with special
  build configuration. If you need to compile the source code, please read
- [Build configuration for MPI and PETSc]({{<ref "configure_for_mpi_and_petsc.md">}}).
+ [Build configuration for MPI and PETSc]({{<ref "configure_for_mpi_and_petsc.md">}}
+<!-- vale on -->
 
 To conduct DDC enabled parallel computing with OGS, following steps are required:
 
 ### 1. Prepare input data
+
 #### 1.1 Partition mesh
+
 For the domain decomposition approach, an application of OGS using METIS as a node wise
  mesh topology partitioner, [`partmesh`]({{<ref
 "mesh-partition">}}), is provided to partition meshes by node. An example of how
@@ -25,14 +29,15 @@ For the domain decomposition approach, an application of OGS using METIS as a no
 command line options.
 
 The partitioned meshes are written in binary files for a fast parallel reading
- in ogs.
+ in OGS.
 
 #### 1.2 Configure PETSc solver in project file
 
-Setting  PETSc solver is the only change in project file for running parallel ogs with PETSc.
+Setting  PETSc solver is the only change in project file for running parallel OGS with PETSc.
 For linear solver, it is done by adding a tag of `petsc` inside `linear_solver` tag,
  e.g:
-```
+
+```xml
     <linear_solvers>
         <linear_solver>
             <name>linear_solver</name>
@@ -50,6 +55,7 @@ For linear solver, it is done by adding a tag of `petsc` inside `linear_solver` 
         </linear_solver>
     </linear_solvers>
 ```
+
 If tag of `petsc` is not given in project file, the default setting of PETSc
  linear solver will be taken, which uses the solver type of `cg` and
  the preconditioner type of `jacobi`.
@@ -57,7 +63,8 @@ If tag of `petsc` is not given in project file, the default setting of PETSc
 For the simulation of coupled processes with the staggered scheme, a prefix
 can be used by tag `prefix` to set PETSc solver for each process, individually.
  For example:
-```
+
+```xml
     <linear_solvers>
         <linear_solver>
             <name>linear_solver_T</name>
@@ -83,43 +90,52 @@ can be used by tag `prefix` to set PETSc solver for each process, individually.
         </linear_solver>
     </linear_solvers>
 ```
+
 The above example shows that once a prefix is given for PETSc linear solver
  settings, the original prefix of PETSc
  keyword, `-`, can be replaced with a new prefix, `-[given prefix string]_`. In the
 above example, `-`, is replaced with `-T_` and `-H_`, respectively.
 
-A introduction and a list of of PETSc ksp solvers and preconditioners can be found by
+A introduction and a list of PETSc KSP solvers and preconditioners can be found by
 [this link](https://petsc.org/main/docs/manual/ksp/).
 
 ### 2. Launch MPI OGS
-For MPI launcher, either *mpiexec* or *mpirun* can be used to run OGS.
- Preferably, *mpiexec* is recommended because it is defined in the MPI standard.
-The number of processes to run of *mpiexec* must be identical to the number of
+
+For MPI launcher, either `mpiexec` or `mpirun` can be used to run OGS.
+ Preferably, `mpiexec` is recommended because it is defined in the MPI standard.
+The number of processes to run of `mpiexec` must be identical to the number of
  mesh partitions.
-For example, if the meshes of a project, foo.prj, are partitioned into 5 partitions,
+For example, if the meshes of a project, `foo.prj`, are partitioned into 5 partitions,
  OGS can be launched in MPI as
-```
+
+```bash
 mpiexec -n 5 ogs foo.prj -o [path to the output directory]
 ```
 
 Running PETSc enabled OGS with one compute thread does not need mesh partitioning.
- However, the MPI launcher mpiexc or mpirun is required, e.g.:
-```
+ However, the MPI launcher `mpiexc` or `mpirun` is required, e.g.:
+
+```bash
 mpiexec -n 1 ogs ...
 ```
 
-Additional PETSc command line options can be given as unlabelled arguments at the end of the ogs run command preceded by two minus-signs
+Additional PETSc command line options can be given as unlabelled arguments at the end of the OGS run command preceded by two minus-signs
 (`... ogs ... -- [PETSc options]`).
 
 With  PETSc command line options, you can
-* monitor ksp solver convergence status, e.g.
+
+* monitor KSP solver convergence status, e.g.
+
+```bash
+mpiexec -n 5 ogs foo.prj -o output -- -ksp_converged_reason -ksp_monitor_true_residual
 ```
-        mpiexec -n 5 ogs foo.prj -o output -- -ksp_converged_reason -ksp_monitor_true_residual
+
+* change KSP solver setting, e.g.:
+
+```bash
+mpiexec -n 5 ogs foo.prj -o output -- -ksp_type gmres -ksp_rtol 1e-16 -ksp_max_it 2000
 ```
-* change ksp solver setting, e.g.:
-```
-        mpiexec -n 5 ogs foo.prj -o output -- -ksp_type gmres -ksp_rtol 1e-16 -ksp_max_it 2000
-```
+
 * or use other PETSc command line options.
 
 For Linux clusters or supercomputer, computation job has to be submitted to
@@ -130,7 +146,8 @@ For Linux clusters or supercomputer, computation job has to be submitted to
 The cluster system EVE of UFZ uses SLURM
  (Simple Linux Utility for Resource Management) to manage computing jobs.
 Here is an example of job script for the SLURM system on EVE:
-```
+
+```bash
 #!/bin/bash
 #SBATCH --job-name=ARESH_HM_3D_20
 #SBATCH --chdir=/home/wwang/data_D/project/AREHS/HM_3D
@@ -157,34 +174,39 @@ APP="/home/wwang/code/ogs6/exe_petsc/bin/ogs"
 
 srun -n "$SLURM_NTASKS"  $APP /home/wwang/data_D/project/AREHS/HM_3D/simHM_glaciation.prj -o /home/wwang/data_D/project/AREHS/HM_3D/output
 ```
+
 In the job script for EVE, `module load  foss/2020b` must be presented, and
- srun is a sort of MPI job launcher.
+ `srun` is a sort of MPI job launcher.
  If a job fails with an error message about shared library not found, you can check
  the EVE modules specified in the files in source code directory:
  *scripts/env/eve*, and add the corresponding modules to the load list
 in the job script.
 
-Once the the job script is ready, you can
-  - submit the job by command, `sbatch [job script name]`,
-  - check the job status by command `squeue`,
-  - or cancel the job by command `scancel [job ID]`.
+Once the job script is ready, you can
 
+* submit the job by command, `sbatch [job script name]`,
+* check the job status by command `squeue`,
+* or cancel the job by command `scancel [job ID]`.
 
-For the detailed syntax of job script of SLURM for EVE, please visit https://wiki.ufz.de/eve/
+For the detailed syntax of job script of SLURM for EVE, please visit <https://wiki.ufz.de/eve/>
 (user login required).
 
 ### 3. Check results
+
 There are two output types available, VTK and XMDF.
 In the project file, output type can be specified in `type` tag of `output` tag,
 for example:
-```
+
+```xml
     <output>
        <type>VTK</type>
        ...
     </output>
 ```
+
 or
-```
+
+```xml
     <output>
        <type>XDMF</type>
        ...
@@ -192,18 +214,21 @@ or
 ```
 
 #### 3.1 VTK output
-The results are output in the partitioned vtu files, which are governed by
- a pvtu file. The data in the ghost cells of vtu files are overlapped.
-An OGS utility, *RemoveGhostData*, is available to merge the partition vtu files into one vtu file,
+
+The results are output in the partitioned VTU files, which are governed by
+ a PVTU file. The data in the ghost cells of VTU files are overlapped.
+An OGS utility, *RemoveGhostData*, is available to merge the partition VTU files into one VTU file,
 meanwhile to eliminate the data overlapping. Here is an example to use that utility:
-```
+
+```bash
 RemoveGhostData -i foo.pvtu -o foo.vtu
 ```
-where the input file name is the name of pvtu file.
+
+Where the input file name is the name of PVTU file.
 
 #### 3.2 XMDF output
-With XMDF, ogs gives two files, one XMDF file and one HDF5 file with file name
+
+With XMDF, OGS outputs two files, one XMDF file and one HDF5 file with file name
  extension of `h5`. You can use ParaView to open the XDMF file by selecting
  `Xdmf3ReaderS` or `Xdmf3ReaderT`. The XMDF output is highly recommended for
   running OGS with a large mesh, especially on supercomputers.
-

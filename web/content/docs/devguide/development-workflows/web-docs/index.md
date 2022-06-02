@@ -24,7 +24,7 @@ aliases = ["/docs/devguide/documentation/introduction/"]
 ## Getting started
 
 - Inside the source-directory `ogs/web`:
-  - Run `yarn` **and** `yarn build` once (this will install required css and js packages)
+  - Run `yarn` **and** `yarn build` once (this will install required CSS and JavaScript packages)
   - Run `hugo server`
   - Open [http://localhost:1313](http://localhost:1313)
 
@@ -57,7 +57,7 @@ content/
 │   │   └── index.md
 ```
 
-This page will be available at the url `/docs/my-post/` and the content of the page is in `index.md`.
+This page will be available at the URL `/docs/my-post/` and the content of the page is in `index.md`.
 
 </div>
 

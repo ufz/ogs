@@ -48,4 +48,8 @@ Here is the [ParaView state file]({{< data-url "Parabolic/RichardsComponentTrans
 
 ## References
 
+<!-- vale off -->
+
 Padilla, I. Y., T.-C. J. Yeh, and M. H. Conklin (1999), The effect of water content on solute transport in unsaturated porous media, Water Resour. Res., 35(11), 3303–3313, doi:10.1029/1999WR900171.
+
+<!-- vale on -->

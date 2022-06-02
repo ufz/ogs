@@ -13,7 +13,7 @@ The [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsyste
 
 ## Setup
 
-- Install WSL2 by following [this guide](https://docs.microsoft.com/en-us/windows/wsl/install-win10). **Important:** Choose **Ubuntu 20.04 LTS** as the Linux distribution. Other distros may not have a sufficient compiler.
+- Install WSL2 by following [this guide](https://docs.microsoft.com/en-us/windows/wsl/install-win10). **Important:** Choose **Ubuntu 20.04 LTS** as the Linux distribution. Other distributions may not have a sufficient compiler.
 - Optional but recommended: Install the new [Windows Terminal](https://docs.microsoft.com/en-us/windows/terminal/get-started)
 - Follow the [developer guide for Linux]({{< ref "prerequisites.md" >}}) from now on.
 

@@ -11,16 +11,16 @@ weight = 44
 
 ## Description of the ComponentTransport process
 
-ComponentTransport process is widely used to predict the distribution of chemical components in the subsurface, which is controlled by the groundwater flow (advection), the hydrodynamic dispersion and diffusion, the sorption on the solid phase, as well as the decay of component. 
+ComponentTransport process is widely used to predict the distribution of chemical components in the subsurface, which is controlled by the groundwater flow (advection), the hydrodynamic dispersion and diffusion, the sorption on the solid phase, as well as the decay of component.
 
 ## Mathematical framework
 
-The governing equation implemented in OGS-6 is the so-called advective and diffusion equation (`ADE`), with the consideration of sorption and decay process. ADE is widely used to describe the concentration of chemical components in groundwater aquifer and porous media. The equations can be solved analytically in (simplified) 1D cases. For more complex geometry, especially with heterogeneous material properties, numerical solution is often preferred. The ComponentTransport process has the following assumptions. 
+The governing equation implemented in OGS-6 is the so-called advective and diffusion equation (`ADE`), with the consideration of sorption and decay process. ADE is widely used to describe the concentration of chemical components in groundwater aquifer and porous media. The equations can be solved analytically in (simplified) 1D cases. For more complex geometry, especially with heterogeneous material properties, numerical solution is often preferred. The ComponentTransport process has the following assumptions.
 
 * The model domain is a porous media and it is fully saturated with water.
 * The fluid velocity in the porous media is assumed to be slow, and the flow process is regulated by Darcy's law.
 * The sorption process redistributes the chemical component between the aqueous and solid phase.
-* When a decay coefficient is given, the decay of the chemical component follows first-order reaction kinetics equation. 
+* When a decay coefficient is given, the decay of the chemical component follows first-order reaction kinetics equation.
 
 For the flow process, the continuity equation for flowing fluid in a saturated porous medium is as follows
 $$
@@ -42,11 +42,11 @@ with the concentration $c_{\alpha}$ of the chemical component as the primary var
 $$
 R = 1 + \rho k_{d} / \phi
 $$
-with the dry density of the porous media $\rho$ [kg/m$^3$] and the distribution coefficient $k_d$ [m$^3$/kg], and $\alpha$ [1/s] is the first-order decay constant, i.e. 
+with the dry density of the porous media $\rho$ [kg/m$^3$] and the distribution coefficient $k_d$ [m$^3$/kg], and $\alpha$ [1/s] is the first-order decay constant, i.e.
 $$
 \alpha = ln 2 / t_{1/2}
 $$
-where $t_{1/2}$ [s] is the half life of the decaying component. 
+where $t_{1/2}$ [s] is the half life of the decaying component.
 
 ## Input parameters
 
@@ -78,6 +78,7 @@ In the configuration of `ComponentTransport` process, it is generally configured
     </process>
 </processes>
 ```
+
 ### Component definition
 
 Under the keyword `<component>`, the properties of the transported chemical component must be given. Usually the parameters to be given are the pore diffusion coefficient, the retardation factor, and the decay rate. Below is an example of the Si component with its corresponding transport parameters.

@@ -21,8 +21,8 @@ This benchmark simulates the Liakopoulos experiment
 * Vertical displacement profile:
 {{< img src="liak_uy.png" >}}
 
-
 ## References
+
 <a id="1">[1]</a>
 Liakopoulos, Aristides C (1965).
 Variation of the permeability tensor ellipsoid in homogeneous anisotropic soils.

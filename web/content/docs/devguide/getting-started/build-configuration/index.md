@@ -28,6 +28,8 @@ We provide CMake configuration presets defined in [CMakePresets.json](https://gi
 
 ### Available CMake presets
 
+<!-- vale off -->
+
 |               | Ninja[^1]     | Visual Studio    |
 | ------------- | ------------- | ---------------- |
 | CLI Release   | release       | msvc-release     |
@@ -36,6 +38,8 @@ We provide CMake configuration presets defined in [CMakePresets.json](https://gi
 | GUI Debug     | debug-gui     | msvc-debug-gui   |
 | PETSc Release | release-petsc | -                |
 | PETSc Debug   | debug-petsc   | -                |
+
+<!-- vale on -->
 
 [^1]: Requires the `ninja`-tool. See [install instructions]({{< ref "prerequisites.md#optional-install-ninja" >}}).
 
@@ -86,7 +90,7 @@ You can create a `CMakeUserPresets.json` file in the root source directory with 
 
 <div class='note'>
 
-### Windows notes:
+### Windows notes
 
 #### <i class="far fa-check"></i> Ninja requirement: Use the Visual Studio command line
 
@@ -98,7 +102,7 @@ cmake --preset=release
 
 #### <i class="far fa-exclamation-triangle"></i> Multi-configuration with Conan and Visual Studio
 
-With Conan one build directory corresponds to one configuration. If you want to have e.g. a release and a debug build you need to create two build directories. This is nothing new to Linux / GCC user but differs to Visual Studios default behavior having just one build-folder / project with different configurations. A typical Visual Studio setup with both Release and Debug configs would be initialized as follows:
+With Conan one build directory corresponds to one configuration. If you want to have e.g. a release and a debug build you need to create two build directories. This is nothing new to Linux / GCC user but differs to Visual Studios default behavior having just one build-folder / project with different configurations. A typical Visual Studio setup with both Release and Debug configurations would be initialized as follows:
 
 ```bash
 cmake --preset=msvc-release
@@ -148,7 +152,7 @@ CMake comes with a graphical tool called **cmake-gui**. You can find it in the *
 
 <div class='linux'>
 
-A more convenient way of running cmake on the command line is to use the `ccmake` tool. This is a shell tool but with some graphical user interface. To use it just run `ccmake` instead of `cmake`:
+A more convenient way of running CMake on the command line is to use the `ccmake` tool. This is a shell tool but with some graphical user interface. To use it just run `ccmake` instead of `cmake`:
 
 ```bash
 ccmake --preset=release

@@ -61,9 +61,9 @@ To start the simulation (after successful compilation) run:
 ogs square_1e2_volumetricsourceterm.prj
 ```
 
-OGS writes the computed results (pressure, darcy velocity) into the output file
+OGS writes the computed results (pressure, Darcy velocity) into the output file
 `square_1e2_volumetricsourceterm_pcs_0_ts_1_t_1.000000.vtu`, which can be
-directly visualized and analysed in paraview for example.
+directly visualized and analysed in ParaView for example.
 
 The output on the console will be similar to:
 

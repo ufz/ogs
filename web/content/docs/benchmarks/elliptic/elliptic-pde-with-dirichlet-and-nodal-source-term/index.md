@@ -55,7 +55,7 @@ The main project file is `square_1e6_with_nodal_sources.prj`. It describes the p
 
 The geometries used to specify the boundary conditions and the source term are given in the `square_1x1.gml` file.
 
-The input mesh `square_1x1_quad_1e6.vtu` is stored in the VTK file format and can be directly visualized in Paraview for example.
+The input mesh `square_1x1_quad_1e6.vtu` is stored in the VTK file format and can be directly visualized in ParaView for example.
 
 ## Running simulation
 
@@ -65,7 +65,7 @@ To start the simulation (after successful compilation) run:
 ogs circle_1e6_axi.prj
 ```
 
-It will produce some output and write the computed result into a data array of the written vtu file.
+It will produce some output and write the computed result into a data array of the written VTU file.
 
 ## Results and evaluation
 

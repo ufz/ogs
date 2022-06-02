@@ -1,4 +1,4 @@
-The OGS6 input file parameters are documented in the page hierarchy rooted here.
+The OGS input file parameters are documented in the page hierarchy rooted here.
 A project file has the ending `.prj` and is a valid
 [XML](https://en.wikipedia.org/wiki/XML) document. To check proper formatting
 you can use [`xmllint`](http://xmlsoft.org/xmllint.html), see
@@ -8,12 +8,12 @@ in the documentation.
 Depending on the type of the parameters the corresponding page titles have
 different prefixes, namely:
 
- - <b>[tag] </b> if the parameter is an XML tag in the input file<br>
+- <b>[tag] </b> if the parameter is an XML tag in the input file<br>
    Example: \ref ogs_file_param__prj__linear_solvers
- - <b>[attr]</b> if the parameter is an attribute of an XML tag in the input
+- <b>[attr]</b> if the parameter is an attribute of an XML tag in the input
    file<br>
    Example: \ref ogs_file_attr__gml__points__point__x
- - <b>[case]</b> either on the top level of the documentation tree, or to
+- <b>[case]</b> either on the top level of the documentation tree, or to
    distinguish between different cases (i.e., sets of configuration options,
    which usually also means different underlying C++ types) in the input
    file.<br>
@@ -43,6 +43,7 @@ have been omitted in the entire documentation for the sake of brevity.
 
 There are two exceptions to this rule, both related to the <em>[case]</em>
 prefix:
+
  1. Cases at the top level do not translate to XML tags. The cases
     \ref ogs_file_param__prj and \ref ogs_file_param__gml mark the root of the
     prj and gml input file, respectively.
@@ -59,10 +60,10 @@ prefix:
     ogs_file_param__prj__parameters__parameter__MeshNode__field_name "field_name" tag.  I.e., if you
     configure the MeshNode parameter, you can (or must) specify the XML tag with the
     path <tt>parameters.parameter.field_name</tt> in the project file.<br> A
-    MeshNode parameter can be defined by setting the \ref
-    ogs_file_param__prj__parameters__parameter__type "parameters.parameter.type" tag to
+    MeshNode parameter can be defined by setting the
+    \ref ogs_file_param__prj__parameters__parameter__type "parameters.parameter.type" tag to
     <tt>MeshNode</tt>.
 
 # Further Information
 
- - \subpage ogs_file_param
+- \subpage ogs_file_param

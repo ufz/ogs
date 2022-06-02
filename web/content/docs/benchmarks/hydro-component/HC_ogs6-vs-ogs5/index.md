@@ -15,7 +15,7 @@ title = "Heterogeneous Saturated Mass Transport"
 
 ## Overview
 
-This example involves the usage of a cell-based heterogeneous parameterization for the parameter "intrinsic permeability". We show a 2D and a 3D setup and compared the results to those from OGS5; the original examples are described in chapter "5.2 Groundwater flow in a heterogeneous medium" in Kolditz et al. (2012).
+This example involves the usage of a cell-based heterogeneous parameterization for the parameter "intrinsic permeability". We show a 2D and a 3D setup and compared the results to those from OGS-5; the original examples are described in chapter "5.2 Groundwater flow in a heterogeneous medium" in Kolditz et al. (2012).
 
 We extended the setup to show mass transport in the heterogeneous medium for testing.
 
@@ -30,10 +30,10 @@ Porosity is $0.01$, specific storage is $0$, fluid density is $1000$ kg$\cdot$m$
 
 ### Model results
 
-The comparison of velocity and hydraulic head are shown below. The numerical results of OGS6 fit very well to the OGS5 results with relative differences for velocity in the order of ca $10^{-2}$ and for hydraulic head in $10^{-4}$.
+The comparison of velocity and hydraulic head are shown below. The numerical results of OGS-6 fit very well to the OGS-5 results with relative differences for velocity in the order of ca $10^{-2}$ and for hydraulic head in $10^{-4}$.
 
-{{< img src="comparison_2d.png" title="Relative differences of 2D simulation results between OGS5 and OGS6. On the top left figure, white lines represent hydraulic head values of OGS5, blue lines of OGS6.">}}
-{{< img src="comparison_3d.png" title="Relative differences of 3D simulation results between OGS5 and OGS6. On the top left figure, grey dots represent hydraulic head values of OGS6.">}}
+{{< img src="comparison_2d.png" title="Relative differences of 2D simulation results between OGS-5 and OGS-6. On the top left figure, white lines represent hydraulic head values of OGS-5, blue lines of OGS-6.">}}
+{{< img src="comparison_3d.png" title="Relative differences of 3D simulation results between OGS-5 and OGS-6. On the top left figure, grey dots represent hydraulic head values of OGS-6.">}}
 
 The mass transport simulation results (figures below) show an expected heterogeneous mass front moving through the domain.
 

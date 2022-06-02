@@ -10,7 +10,7 @@ author = "Karsten Rink"
 
 ## Introduction
 
-Converts a 2D surface mesh into a shapfile such that each element is represented by a polygon. Cell attributes are transferred onto shape polygons while point attributes are ignored.
+Converts a 2D surface mesh into a Shapefile such that each element is represented by a polygon. Cell attributes are transferred onto shape polygons while point attributes are ignored.
 
 ## Usage
 

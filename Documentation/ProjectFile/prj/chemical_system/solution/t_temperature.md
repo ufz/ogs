@@ -1,1 +1,1 @@
-define temperature in unit of celsius degree.
+define temperature in unit of Celsius degree.

@@ -62,12 +62,12 @@ As of now a small portion of possible inputs is implemented; one can change:
 
 The geometries used to specify the boundary conditions are given in the `line_60_heat.gml` file.
 
-The input mesh `line_60_heat.vtu` is stored in the VTK file format and can be directly visualized in Paraview for example.
+The input mesh `line_60_heat.vtu` is stored in the VTK file format and can be directly visualized in ParaView for example.
 
 ## Results and evaluation
 
-The result, written in the `.vtu` file, can be visualized with Paraview, for example.
+The result, written in the `.vtu` file, can be visualized with ParaView, for example.
 
-Loading the `line_60_heat_pcs_0_ts_65_t_5078125.000000.vtu` file in Paraview and Plotting over line. Compared to the analytical solution 'temperature_analytical.vtu', the results are very good:
+Loading the `line_60_heat_pcs_0_ts_65_t_5078125.000000.vtu` file in ParaView and Plotting over line. Compared to the analytical solution `temperature_analytical.vtu`, the results are very good:
 
 {{< img src="validation-1.png" >}}

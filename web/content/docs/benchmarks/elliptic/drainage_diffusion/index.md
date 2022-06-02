@@ -14,7 +14,7 @@ project = "/Elliptic/cube_1x1x1_SteadyStateDiffusion/drainage_excavation.prj"
 
 ## Problem description
 
-We present the drainage of an excavation benchmark in this [this PDF](../web/content/docs/benchmarks/liquid-flow/drainage_LiquidFlow.pdf).
+We present the drainage of an excavation benchmark in [this PDF](../web/content/docs/benchmarks/liquid-flow/drainage_LiquidFlow.pdf).
 
 Here's an impression of the problem and its results:
 

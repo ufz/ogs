@@ -14,7 +14,7 @@ title = "Creep analysis with a heterogeneous reference temperature"
 
 This plane strain creep problem is based on the conceptional model of salt dome presented
   in Bruns [[1]](#1) and one of the benchmarks of the AREHS project
- (https://www.overleaf.com/project/5e908e022978e30001bc6b44).
+ (<https://www.overleaf.com/project/5e908e022978e30001bc6b44>).
  It is used here to test the use of the element wise distributed
  reference temperature.
 

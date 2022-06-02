@@ -12,7 +12,7 @@ author = "Thomas Fischer"
 
 The tool extracts either lines in case of a 2D bulk mesh as input or
 quads/triangles in case of a 3D bulk mesh as input. The input mesh can be given
-either in the vtu or msh format. Since the algorithm uses the element surface
+either in the VTU or MSH format. Since the algorithm uses the element surface
 normals a correct node ordering of the element nodes is required.
 
 ## Usage
@@ -38,14 +38,10 @@ and are required for flux calculations during a simulation run of OpenGeoSys.
 
 `ExtractBoundary -i square_1x1_quad.vtu -o square_1x1_quad_border.vtu`
 
-![](ExtractBoundary_square_1x1_quad_border.png "The square mesh consists of 16 cells/elements. The numbers
-in the cells are the cell IDs. The generated boundary grid consists of the
-somewhat thicker and colored line elements.")
+![The square mesh consists of 16 cells/elements.](ExtractBoundary_square_1x1_quad_border.png "The square mesh consists of 16 cells/elements. The numbers in the cells are the cell IDs. The generated boundary grid consists of the somewhat thicker and colored line elements.")
 
-### Extract the boundary from a tri mesh
+### Extract the boundary from a triangular mesh
 
 `ExtractBoundary -i square_1x1_tri.vtu -o square_1x1_tri_border.vtu`
 
-![](ExtractBoundary_square_1x1_tri_border.png "The square mesh consists of 32 triangle shaped cells. The
-numbers in the tri are the cell IDs. The generated boundary grid consists of the
-somewhat thicker and colored line elements.")
+![The square mesh consists of 32 triangle shaped cells.](ExtractBoundary_square_1x1_tri_border.png "The square mesh consists of 32 triangle shaped cells. The numbers in the triangle are the cell IDs. The generated boundary grid consists of the somewhat thicker and colored line elements.")

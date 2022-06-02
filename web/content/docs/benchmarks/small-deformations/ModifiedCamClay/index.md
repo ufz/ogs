@@ -14,9 +14,10 @@ title = "Modified Cam clay model"
 ## Test cases
 
 Three tests are presented:
- - {{< data-link "shear" "Mechanics/ModifiedCamClay/square_1e0_shear.prj" >}},
- - {{< data-link "biaxial" "Mechanics/ModifiedCamClay/square_1e0_biax.prj" >}}, and
- - {{< data-link "triaxial" "Mechanics/ModifiedCamClay/model_triaxtest.prj" >}}.
+
+- {{< data-link "shear" "Mechanics/ModifiedCamClay/square_1e0_shear.prj" >}},
+- {{< data-link "biaxial" "Mechanics/ModifiedCamClay/square_1e0_biax.prj" >}}, and
+- {{< data-link "triaxial" "Mechanics/ModifiedCamClay/model_triaxtest.prj" >}}.
 
 ## Problem description
 

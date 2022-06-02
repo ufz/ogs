@@ -31,7 +31,7 @@ The boundary conditions of mechanics are an overburden (Neumann) applied as step
 _Boundary conditions_
 
 The material is isotropic, linear elastic. Solid and fluid are assumed to be incompressible.
-In its initial state the sphere is undeformed and there is ambient pressure everywhere.
+In its initial state the sphere is not deformed and there is ambient pressure everywhere.
 A sudden load increase on the surface is instantly transferred on the pore pressure, whereas the solid needs time to deform, until it carries the load.
 Since the pore fluid is squeezed out of the outer layers first, they act like a tightening belt and consequently the pressure in the center rises, it may even exceed the value of the applied load.
 Finally the pore pressure approaches to ambient pressure.
@@ -140,13 +140,6 @@ _Pressure at center of sphere_
 For more details about the staggered scheme we refer to the [user guide - conventions]({{< ref "conventions.md#staggered-scheme" >}}).
 
 ## References
+
 <a id="1">[1]</a>
 {{< bib "verruijt2009" >}}
-
-
-
-
-
-
-
-

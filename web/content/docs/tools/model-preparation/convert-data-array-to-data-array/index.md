@@ -12,15 +12,15 @@ author = "Thomas Fischer"
 
 Often, meshes contain geometrical data in common with data used for process
 simulation. Usually, such data used by the process simulation is associated to
-the mesh nodes or to the mesh cells. In the vtk unstructured grid file format
+the mesh nodes or to the mesh cells. In the VTK unstructured grid file format
 the geometrical and the process data information is stored in one file - in so
 called data arrays.
 
-Some tools, for instance paraview, export data arrays always using a floating
+Some tools, for instance ParaView, export data arrays always using a floating
 point data type. OpenGeoSys expects the 'MaterialIDs' cell data array to have
 int data-type.
 
-Other tools, for instance Gocad, export data associated with cells or nodes
+Other tools, for instance GOCAD, export data associated with cells or nodes
 sometimes as float. The tool can convert the cell data arrays to double
 data-type.
 

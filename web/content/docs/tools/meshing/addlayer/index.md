@@ -15,7 +15,7 @@ The tool `AddLayer` adds one layer of elements with a specified thickness
 `thickness` on either on top or bottom of an existing mesh `input-mesh` and
 returns the newly generated mesh `output-mesh` that has an new layer.
 
-One might want to take care that the material groups are reduced, eg. material
+One might want to take care that the material groups are reduced, e.g. material
 groups should not be [0,2,5], but [0,1,2]. The new layer will have the material
 group number of the highest material group +1. With the switch
 `--copy-material-ids` the MaterialIDs of the extruded layer will be kept.

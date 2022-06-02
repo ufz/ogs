@@ -26,7 +26,7 @@ The aim of this test is:
 A chamber filled with ideal gas is sealed tightly with a movable, elastic
 piston. The position of the piston is varied between different load steps.
 Friction between the piston and the chamber wall is neglected.
-For simplicitly, also initially the elastic piston is in an unstressed state.
+For simplicity, also initially the elastic piston is in an unstressed state.
 
 {{<img src="sketch-piston.png" >}}
 

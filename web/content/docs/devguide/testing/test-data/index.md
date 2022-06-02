@@ -26,7 +26,7 @@ AddTest(
 )
 ```
 
-Tests are then run with `ninja ctest` or for more verbose output with `ctest -VV` (you may also use other [ctest options](https://cmake.org/cmake/help/v3.4/manual/ctest.1.html)). If the checker has some errors they are displayed. `RUNTIME` specifies the typical runtime in seconds on an Intel Xeon E5-2680 v2 @ 2.80 GHz with 500 GiB RAM (`envinf1`). Tests with a `RUNTIME > {{< dataFile "versions.ctest.large_runtime" >}}` are considered `LARGE`-tests.
+Tests are then run with `ninja ctest` or for more verbose output with `ctest -VV` (you may also use other [`ctest` options](https://cmake.org/cmake/help/v3.4/manual/ctest.1.html)). If the checker has some errors they are displayed. `RUNTIME` specifies the typical runtime in seconds on an Intel Xeon E5-2680 v2 @ 2.80 GHz with 500 GiB RAM (`envinf1`). Tests with a `RUNTIME > {{< dataFile "versions.ctest.large_runtime" >}}` are considered `LARGE`-tests.
 
 The functionality is very flexible and more wrappers and checker can be added later on. e.g. for running some statistics on output files and comparing them with statistics from reference files.
 
@@ -41,7 +41,7 @@ ctest --preset release                          # equivalent to running `ninja c
 ctest --preset release -j 6 --label-regex Utils # run 6 tests in parallel which have a Utils label
 ```
 
-**To sum up:** from a clean source directory you can fully configure, build and test ogs with these 3 commands:
+**To sum up:** from a clean source directory you can fully configure, build and test OGS with these 3 commands:
 
 ```bash
 cmake --preset release
@@ -88,9 +88,9 @@ raise SystemExit()
 
 Add Python dependencies to `web/data/versions.json` (under `python/notebook_requirements`).
 
-### Run with ctest
+### Run with CTest
 
-Add to ctest with:
+Add to CTest with:
 
 ```cmake
 NotebookTest(NOTEBOOKFILE Notebooks/SimpleMechanics.ipynb RUNTIME 10)

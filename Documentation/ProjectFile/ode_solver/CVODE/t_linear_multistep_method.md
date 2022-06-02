@@ -1,4 +1,4 @@
-Sets the linear multistep method used for solving the ODE.
+Sets the linear multi-step method used for solving the ODE.
 
 Possible values are <tt>Adams</tt> for the Adams-Moulton method and <tt>BDF</tt>
 for backward differentiation formulas.

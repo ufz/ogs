@@ -13,7 +13,7 @@ weight = 1016
 
 > [Continuous Integration](https://en.wikipedia.org/wiki/Continuous_integration) (short **CI**) is the practice of merging all developer working copies to a shared mainline several times a day.
 
-So for every proposed change to the source code the following is done automatically:
+For every proposed change to the source code the following is done automatically:
 
 - Compilation of the changed code merged with the official source code is tested on a variety of platforms (Windows, Linux, Mac OS, different compilers)
 - A comprehensive [test suite]({{< ref "unit-testing.md" >}}) checks validity of the proposed changes

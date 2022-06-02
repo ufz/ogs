@@ -13,11 +13,13 @@ title = "Sorption of U(VI) in porous media"
 
 {{< data-link >}}
 
+<!-- vale off -->
+
 ## Overview and model setup
 
-This benchmark is focused on the simulation of the migration of $U(VI)$ in a porous media. An important chemical process happening is the surface sorption, which favors the retardation of radionuclide migration. Therefore, it is necessary to quantify its overall impact on the transport. We use a Surface Complexation approach as a mechanistic model to describe the chemical reactions happening at the solid surface. The surface reactions considered in this benchmark were added to the PSI/NAGRA chemical thermodynamic database version 12/07 (Thoenen *et al.*, 2014) for the speciation calculations. A schematic representation of the 1D model with relevant parameters is shown in Fig. 1. A permeability = $1.019368 \times 10^{-11}~m^2$, porosity = $0.2$, molecular diffusion coefficient = $1.0 \times 10^{-9}~m^2/s$, longitudinal/ horizontal/ vertical dispersivities = $0.2~m$, tortuosity = $1$, density = $1000~kg/m^3$ and viscosity = $1\times 10^{-3}~kg~m^{-1} s^{-1}$ are the input parameters of the porous medium.
+This benchmark is focused on the simulation of the migration of $U(VI)$ in a porous media. An important chemical process happening is the surface sorption, which favors the retardation of radionuclide migration. Therefore, it is necessary to quantify its overall impact on the transport. We use a Surface Complexation approach as a mechanistic model to describe the chemical reactions happening at the solid surface. The surface reactions considered in this benchmark were added to the PSI/NAGRA chemical thermodynamic database version 12/07 (Thoenen et al., 2014) for the speciation calculations. A schematic representation of the 1D model with relevant parameters is shown in Fig. 1. A permeability = $1.019368 \times 10^{-11}~m^2$, porosity = $0.2$, molecular diffusion coefficient = $1.0 \times 10^{-9}~m^2/s$, longitudinal/ horizontal/ vertical dispersivities = $0.2~m$, tortuosity = $1$, density = $1000~kg/m^3$ and viscosity = $1\times 10^{-3}~kg~m^{-1} s^{-1}$ are the input parameters of the porous medium.
 
-The benchmark uses the `ComponentTransport` process in OGS-6 (see [HC-Process.pdf](/docs/benchmarks/hydro-component/HC-Process.pdf)) coupled with the IPhreeqc interface (Parkhurst and Appelo,2013) for the chemical speciation calculations. The porewater initial composition and injected for the first 10 000 s is shown in Table 1. The porewater solution is equilibrated with Calcite.
+The benchmark uses the `ComponentTransport` process in OGS-6 (see [`HC-Process.pdf`](/docs/benchmarks/hydro-component/HC-Process.pdf)) coupled with the IPhreeqc interface (Parkhurst et al, 2013) for the chemical speciation calculations. The porewater initial composition and injected for the first 10 000 s is shown in Table 1. The porewater solution is equilibrated with Calcite.
 
 {{< img src="domain.png" title="Spatial and temporal discretization of the 1D model. Solution concentrations with/without U(VI) are applied at the inflow boundary. Initial concentration of U(VI) in the domain is 0.">}}
 
@@ -38,13 +40,13 @@ Table 1: **Porewater solution compositions.**
 
 ## Results
 
-Sorption of U(VI) in porous media has been previously modeled in a German research project on safety of nuclear waste repositories (Noseck *et al.*, 2018). In there, simulations are done by using a chemical thermodynamic database available in: https://www.smartkd-concept.de/?q=node/5.2 (consulted 08-DEC-2020). Since this database (we refer to it as ESTRAL database) is available via personal contact only, in this benchmark, we compare the results obtained with the ESTRAL database and open-access data.
+Sorption of U(VI) in porous media has been previously modeled in a German research project on safety of nuclear waste repositories (Noseck et al., 2018). In there, simulations are done by using [a chemical thermodynamic database](https://www.smartkd-concept.de/?q=node/5.2) (consulted 08-DEC-2020). Since this database (we refer to it as ESTRAL database) is available via personal contact only, in this benchmark, we compare the results obtained with the ESTRAL database and open-access data.
 
-To approximate the results obtained with the ESTRAL database, we use data from the **RES³T - Rossendorf Expert System for Surface and Sorption Thermodynamics** (https://www.hzdr.de/db/RES3T.queryData) for the available mineral phases (see Table 2) to update the PSI/NAGRA chemical thermodynamic database (version 12/07) for the surface complexation model. In addition, we use the surface characterization provided in Noseck *et al.*, 2018. Note that the mineral groups of the ESTRAL database contains a larger number of individual phases. Because the composition of each mineral group is not provided for the surface characterization of Table 2, we choose only one representative phase at a time for each mineral group in our simulations. Further, to keep the chemical system simple, the chosen chemical reactions and *log K* values for the surface complexation model are only those of mineral-OH sites, with the exception of gibbsite, where only Aluminol sites are available for $U(VI)$. In total, 19 chemical reactions are considered in the surface complexation model. All *log K* values are reported for 298.15 K and normalized to 2.31 sites/nm$^2$.  
+To approximate the results obtained with the ESTRAL database, we use data from the **RES³T - Rossendorf Expert System for Surface and Sorption Thermodynamics** (<https://www.hzdr.de/db/RES3T.queryData>) for the available mineral phases (see Table 2) to update the PSI/NAGRA chemical thermodynamic database (version 12/07) for the surface complexation model. In addition, we use the surface characterization provided in Noseck et al., 2018. Note that the mineral groups of the ESTRAL database contains a larger number of individual phases. Because the composition of each mineral group is not provided for the surface characterization of Table 2, we choose only one representative phase at a time for each mineral group in our simulations. Further, to keep the chemical system simple, the chosen chemical reactions and *log K* values for the surface complexation model are only those of mineral-OH sites, with the exception of gibbsite, where only Aluminol sites are available for $U(VI)$. In total, 19 chemical reactions are considered in the surface complexation model. All *log K* values are reported for 298.15 K and normalized to 2.31 sites/nm$^2$.  
 
 -----------------------------------------
 
-|Mineral group/phase | Representative phases | Reference binding sites (sites/nm$^2$) | Specific surface area (m$^2$/g) |  Solid mass (g/kgw) |
+|Mineral group/phase | Representative phases | Reference binding sites (sites/nm$^2$) | Specific surface area (m$^2$/g) |  Solid mass ($g/kgw$) |
 |:-------- | :------ | :---- | :--- | :--- |
 | Quartz   |  -  | 2.31  | 0.007 | 9010 |
 | Feldspars | albite, orthoclase | 2.31 | 0.21 | 1060 |
@@ -71,6 +73,8 @@ On the other hand, the enormous difference between sorbing and non-sorbing react
 {{< data-link >}}
 
 ## References
+
+<!-- vale off -->
 
 Parkhurst, D.L., Appelo, C.A.J., 2013. Description of Input and Examples for PHREEQC Version 3 - a Computer Program for Speciation, Batch-reaction, One-dimensional Transport, and Inverse Geochemical Calculations.
 

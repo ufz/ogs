@@ -15,7 +15,7 @@ weight = 101
 
 ## Problem description
 
-One benchmark -- Liakopoulos experiment is presented here. The benchmark is applied to simulate the two-phase flow transport in porous media with gravity effects. The pessure and capillary pressure are selected as the primary variables in this formulation. For the detailed benchmark settings and results description, please refer to the attached document.
+One benchmark -- Liakopoulos experiment is presented here. The benchmark is applied to simulate the two-phase flow transport in porous media with gravity effects. The pressure and capillary pressure are selected as the primary variables in this formulation. For the detailed benchmark settings and results description, please refer to the attached document.
 
 ## Results and evaluation
 
