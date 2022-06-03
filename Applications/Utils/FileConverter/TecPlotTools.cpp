@@ -9,6 +9,10 @@
 
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include <iostream>
 #include <memory>
 #include <string>
@@ -476,15 +480,25 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     if (!input_arg.isSet())
     {
         ERR("No input file given. Please specify TecPlot (*.plt) file");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return -1;
     }
 
     if (convert_arg.getValue() && !output_arg.isSet())
     {
         ERR("No output file given. Please specify OGS mesh (*.vtu) file");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return -1;
     }
 
@@ -492,12 +506,18 @@ int main(int argc, char* argv[])
     if (!in.is_open())
     {
         ERR("Could not open file {:s}.", input_arg.getValue());
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return -2;
     }
 
     if (!convert_arg.isSet() && !split_arg.isSet())
     {
         INFO("Nothing to do. Use -s to split or -c to convert.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return 0;
     }
 
@@ -514,5 +534,8 @@ int main(int argc, char* argv[])
     }
 
     in.close();
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return return_val;
 }

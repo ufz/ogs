@@ -8,6 +8,10 @@
 
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include "Applications/FileIO/SWMM/SWMMInterface.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
@@ -194,11 +198,18 @@ int main(int argc, char* argv[])
     cmd.add(add_system_arg);
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     if (!(geo_output_arg.isSet() || mesh_output_arg.isSet() ||
           csv_output_arg.isSet()))
     {
         ERR("No output format given. Please specify OGS geometry or mesh "
             "output file.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return -1;
     }
 
@@ -207,6 +218,9 @@ int main(int argc, char* argv[])
     {
         ERR("Please specify csv output file for exporting subcatchment or "
             "system parameters.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return -1;
     }
 
@@ -225,5 +239,8 @@ int main(int argc, char* argv[])
                        add_subcatchments_arg.getValue(),
                        add_system_arg.getValue());
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return 0;
 }
