@@ -25,6 +25,10 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 std::string const cell_id_name = "CellIds";
 
 std::array<std::size_t, 3> getDimensions(MathLib::Point3d const& min,
@@ -173,11 +177,18 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     if ((y_arg.isSet() && !z_arg.isSet()) ||
         ((!y_arg.isSet() && z_arg.isSet())))
     {
         ERR("For equilateral cubes, only x needs to be set. For unequal "
             "cuboids, all three edge lengths (x/y/z) need to be specified.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return -1;
     }
 
@@ -210,12 +221,25 @@ int main(int argc, char* argv[])
     std::copy(tmp_ids.cbegin(), tmp_ids.cend(), std::back_inserter(cell_ids));
 
     if (!removeUnusedGridCells(mesh, grid))
+    {
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
+    }
 
     mapMeshArraysOntoGrid(mesh, grid);
 
     if (MeshLib::IO::writeMeshToFile(*grid, output_arg.getValue()) != 0)
+    {
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
+    }
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

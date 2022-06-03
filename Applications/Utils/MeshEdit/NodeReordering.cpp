@@ -11,6 +11,10 @@
 
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include <algorithm>
 #include <array>
 #include <memory>
@@ -189,11 +193,18 @@ int main(int argc, char* argv[])
     cmd.add(input_mesh_arg);
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::IO::readMeshFromFile(input_mesh_arg.getValue()));
 
     if (!mesh)
     {
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -219,5 +230,8 @@ int main(int argc, char* argv[])
 
     INFO("VTU file written.");
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

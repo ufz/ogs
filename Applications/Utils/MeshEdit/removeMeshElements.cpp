@@ -13,6 +13,10 @@
 
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include <memory>
 
 #include "InfoLib/GitInfo.h"
@@ -163,10 +167,17 @@ int main(int argc, char* argv[])
     cmd.add(mesh_in);
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     std::unique_ptr<MeshLib::Mesh const> mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
     if (mesh == nullptr)
     {
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -203,6 +214,9 @@ int main(int argc, char* argv[])
             !property_name_arg.isSet())
         {
             ERR("Specify a property name for the value/range selected.");
+#ifdef USE_PETSC
+            MPI_Finalize();
+#endif
             return EXIT_FAILURE;
         }
 
@@ -212,6 +226,9 @@ int main(int argc, char* argv[])
         {
             ERR("Specify a value or range ('-min-value' and '-max_value') for "
                 "the property selected.");
+#ifdef USE_PETSC
+            MPI_Finalize();
+#endif
             return EXIT_FAILURE;
         }
 
@@ -232,6 +249,9 @@ int main(int argc, char* argv[])
             {
                 ERR("Specify if the inside or the outside of the selected "
                     "range should be removed.");
+#ifdef USE_PETSC
+                MPI_Finalize();
+#endif
                 return EXIT_FAILURE;
             }
 
@@ -263,6 +283,9 @@ int main(int argc, char* argv[])
         }
         if (aabb_error)
         {
+#ifdef USE_PETSC
+            MPI_Finalize();
+#endif
             return EXIT_FAILURE;
         }
 
@@ -284,11 +307,17 @@ int main(int argc, char* argv[])
 
     if (new_mesh == nullptr)
     {
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
     // write into a file
     MeshLib::IO::writeMeshToFile(*new_mesh, mesh_out.getValue());
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

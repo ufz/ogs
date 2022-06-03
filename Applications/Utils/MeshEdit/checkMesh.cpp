@@ -9,6 +9,10 @@
 
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include <array>
 #include <string>
 
@@ -46,6 +50,10 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     // read the mesh file
     BaseLib::MemWatch mem_watch;
     const unsigned long mem_without_mesh(mem_watch.getVirtMemUsage());
@@ -55,6 +63,9 @@ int main(int argc, char* argv[])
         MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
     if (!mesh)
     {
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -97,4 +108,8 @@ int main(int argc, char* argv[])
         // Remark: MeshValidation can modify the original mesh
         MeshLib::MeshInformation::writeMeshValidationResults(*mesh);
     }
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
+    return EXIT_SUCCESS;
 }

@@ -12,6 +12,10 @@
 #include <memory>
 #include <string>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include "BaseLib/FileTools.h"
 #include "GeoLib/AABB.h"
 #include "InfoLib/GitInfo.h"
@@ -44,6 +48,9 @@ double getClosestPointElevation(MeshLib::Node const& p,
 
 int main(int argc, char* argv[])
 {
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
     std::vector<std::string> keywords;
     keywords.emplace_back("-ALL");
     keywords.emplace_back("-MESH");
@@ -66,6 +73,9 @@ int main(int argc, char* argv[])
         INFO(
             "\t-LOWPASS : applies a lowpass filter over node elevation using "
             "directly connected nodes.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -76,6 +86,9 @@ int main(int argc, char* argv[])
     {
         ERR("Error: Parameter 1 must be a mesh-file (*.msh / *.vtu).");
         INFO("Usage: {:s} <msh-file.gml> <keyword> <value>", argv[0]);
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -88,6 +101,9 @@ int main(int argc, char* argv[])
         ERR("Keyword not recognised. Available keywords:");
         for (auto const& keyword : keywords)
             INFO("\t{:s}", keyword);
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -96,6 +112,9 @@ int main(int argc, char* argv[])
     if (mesh == nullptr)
     {
         ERR("Error reading mesh file.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return 1;
     }
 
@@ -107,6 +126,9 @@ int main(int argc, char* argv[])
         if (argc < 5)
         {
             ERR("Missing parameter...");
+#ifdef USE_PETSC
+            MPI_Finalize();
+#endif
             return EXIT_FAILURE;
         }
         const std::string dir(argv[3]);
@@ -130,6 +152,9 @@ int main(int argc, char* argv[])
         if (argc < 4)
         {
             ERR("Missing parameter...");
+#ifdef USE_PETSC
+            MPI_Finalize();
+#endif
             return EXIT_FAILURE;
         }
         const std::string value(argv[3]);
@@ -139,6 +164,9 @@ int main(int argc, char* argv[])
         if (ground_truth == nullptr)
         {
             ERR("Error reading mesh file.");
+#ifdef USE_PETSC
+            MPI_Finalize();
+#endif
             return EXIT_FAILURE;
         }
 
@@ -205,9 +233,15 @@ int main(int argc, char* argv[])
                                     "_new.vtu");
     if (MeshLib::IO::writeMeshToFile(*mesh, new_mesh_name) != 0)
     {
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
     INFO("Result successfully written.");
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

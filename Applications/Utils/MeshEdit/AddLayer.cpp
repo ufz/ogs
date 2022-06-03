@@ -11,6 +11,10 @@
 
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include <memory>
 
 #include "BaseLib/FileTools.h"
@@ -65,12 +69,19 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     INFO("Reading mesh '{:s}' ... ", mesh_arg.getValue());
     auto subsfc_mesh = std::unique_ptr<MeshLib::Mesh>(
         MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
     if (!subsfc_mesh)
     {
         ERR("Error reading mesh '{:s}'.", mesh_arg.getValue());
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
     INFO("done.");
@@ -81,6 +92,9 @@ int main(int argc, char* argv[])
     if (!result)
     {
         ERR("Failure while adding layer.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -88,5 +102,8 @@ int main(int argc, char* argv[])
     MeshLib::IO::writeMeshToFile(*result, mesh_out_arg.getValue());
     INFO("done.");
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

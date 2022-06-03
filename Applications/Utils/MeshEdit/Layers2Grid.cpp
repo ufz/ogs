@@ -15,6 +15,10 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include "BaseLib/IO/readStringListFromFile.h"
 #include "GeoLib/AABB.h"
 #include "InfoLib/GitInfo.h"
@@ -265,11 +269,18 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     if ((y_arg.isSet() && !z_arg.isSet()) ||
         ((!y_arg.isSet() && z_arg.isSet())))
     {
         ERR("For equilateral cubes, only x needs to be set. For unequal "
             "cuboids, all three edge lengths (x/y/z) need to be specified.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -284,6 +295,9 @@ int main(int argc, char* argv[])
     if (layer_names.size() < 2)
     {
         ERR("At least two layers are required to create a 3D Mesh");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -301,6 +315,9 @@ int main(int argc, char* argv[])
         if (mesh == nullptr)
         {
             ERR("Input layer '{:s}' not found. Aborting...", layer);
+#ifdef USE_PETSC
+            MPI_Finalize();
+#endif
             return EXIT_FAILURE;
         }
         adjustExtent(extent, *mesh);
@@ -311,6 +328,9 @@ int main(int argc, char* argv[])
     if (mesh == nullptr)
     {
         ERR("Error creating mesh...");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
     setMaterialIDs(*mesh, layers, dilate_arg.getValue());
@@ -319,10 +339,16 @@ int main(int argc, char* argv[])
     if (new_mesh == nullptr)
     {
         ERR("Error generating mesh...");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
     MeshLib::IO::VtuInterface vtu(new_mesh.get());
     vtu.writeToFile(output_name);
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

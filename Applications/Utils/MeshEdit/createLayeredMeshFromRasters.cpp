@@ -17,6 +17,10 @@
 #include <string>
 #include <vector>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/IO/readStringListFromFile.h"
@@ -73,12 +77,19 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     if (min_thickness_arg.isSet())
     {
         min_thickness = min_thickness_arg.getValue();
         if (min_thickness < 0)
         {
             ERR("Minimum layer thickness must be non-negative value.");
+#ifdef USE_PETSC
+            MPI_Finalize();
+#endif
             return EXIT_FAILURE;
         }
     }
@@ -89,11 +100,17 @@ int main(int argc, char* argv[])
     if (!sfc_mesh)
     {
         ERR("Error reading mesh '{:s}'.", mesh_arg.getValue());
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
     if (sfc_mesh->getDimension() != 2)
     {
         ERR("Input mesh must be a 2D mesh.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
     INFO("done.");
@@ -103,6 +120,9 @@ int main(int argc, char* argv[])
     if (raster_paths.size() < 2)
     {
         ERR("At least two raster files needed to create 3D mesh.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
     std::reverse(raster_paths.begin(), raster_paths.end());
@@ -112,12 +132,18 @@ int main(int argc, char* argv[])
     {
         if (!mapper.createLayers(*sfc_mesh, *rasters, min_thickness))
         {
+#ifdef USE_PETSC
+            MPI_Finalize();
+#endif
             return EXIT_FAILURE;
         }
     }
     else
     {
         ERR("Reading raster files.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -132,6 +158,9 @@ int main(int argc, char* argv[])
     if (result_mesh == nullptr)
     {
         ERR("Mapper returned empty result for 'SubsurfaceMesh'.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -141,5 +170,8 @@ int main(int argc, char* argv[])
     MeshLib::IO::writeVtu(*result_mesh, output_name, data_mode);
     INFO("done.");
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

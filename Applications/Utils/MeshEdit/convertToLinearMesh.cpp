@@ -11,6 +11,10 @@
 
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include <memory>
 #include <string>
 
@@ -38,15 +42,25 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::IO::readMeshFromFile(input_arg.getValue()));
     if (!mesh)
     {
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
     if (!mesh->hasNonlinearElement())
     {
         ERR("The input mesh is linear. Exit.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -57,5 +71,8 @@ int main(int argc, char* argv[])
     INFO("Save the new mesh into a file");
     MeshLib::IO::writeMeshToFile(*new_mesh, output_arg.getValue());
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }
