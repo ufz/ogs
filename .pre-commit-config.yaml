@@ -17,6 +17,8 @@ repos:
       - id: check-json
       - id: fix-byte-order-marker
         exclude: "^Documentation/.vale/.*"
+      - id: mixed-line-ending
+        exclude: ".*\\.vtu"
   - repo: https://github.com/psf/black
     rev: 22.3.0
     hooks:
