@@ -352,17 +352,7 @@ void Polygon::ensureCCWOrientation()
 
     if (orient != GeoLib::CCW)
     {
-        // switch orientation
-        std::size_t tmp_n_pnts(n_pnts);
-        tmp_n_pnts++;  // include last point of polygon (which is identical to
-                       // the first)
-        auto& polyline_point_ids =
-            const_cast<std::vector<std::size_t>&>(getPolylinePointIDs());
-        for (std::size_t k(0); k < tmp_n_pnts / 2; k++)
-        {
-            std::swap(polyline_point_ids[k],
-                      polyline_point_ids[tmp_n_pnts - 1 - k]);
-        }
+        reverseOrientation();
     }
 
     for (std::size_t k(0); k < n_pnts; k++)

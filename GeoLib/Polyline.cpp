@@ -399,6 +399,11 @@ double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
     return dist;
 }
 
+void Polyline::reverseOrientation()
+{
+    std::reverse(_ply_pnt_ids.begin(), _ply_pnt_ids.end());
+}
+
 Polyline::SegmentIterator::SegmentIterator(Polyline const& polyline,
                                            std::size_t segment_number)
     : _polyline(&polyline),

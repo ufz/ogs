@@ -232,6 +232,8 @@ protected:
     /** a reference to the vector of pointers to the geometric points */
     const std::vector<Point*> &_ply_pnts;
 
+    void reverseOrientation();
+
     std::vector<std::size_t> const& getPolylinePointIDs() const
     {
         return _ply_pnt_ids;
