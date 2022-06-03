@@ -23,6 +23,7 @@
     "hdf5": "1.12.1",
     "libxml2": "2.9.12",
     "tfel-rliv": "3.4",
+    "tfel-repo": "bilke",
     "lis": "1.7.37",
     "gtest": "1.11.0"
   },

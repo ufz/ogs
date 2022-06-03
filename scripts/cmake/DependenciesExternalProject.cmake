@@ -10,8 +10,10 @@ if(OGS_USE_MFRONT)
     option(OGS_BUILD_TFEL
            "Build TFEL locally. Needs to be set with a clean cache!" OFF
     )
-    set(_tfel_source GIT_REPOSITORY https://github.com/thelfer/tfel.git GIT_TAG
-                     rliv-${ogs.minimum_version.tfel-rliv}
+    set(_tfel_source
+        GIT_REPOSITORY
+        https://github.com/${ogs.minimum_version.tfel-repo}/tfel.git GIT_TAG
+        rliv-${ogs.minimum_version.tfel-rliv}
     )
     set(_tfel_source_file
         ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/tfel-rliv-${ogs.minimum_version.tfel-rliv}.zip
@@ -24,9 +26,9 @@ if(OGS_USE_MFRONT)
     if(NOT MFRONT)
         BuildExternalProject(
             TFEL ${_tfel_source}
-            CMAKE_ARGS "-DCMAKE_INSTALL_RPATH=<INSTALL_DIR>/lib"
-                       "-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE"
-                       "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+            CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+                       "-DBUILD_SHARED_LIBS=OFF"
+                       "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
         )
         message(
             STATUS
