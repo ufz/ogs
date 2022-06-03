@@ -76,7 +76,6 @@ if(OGS_BUILD_TESTING)
         EXCLUDE
         Applications/CLI/
         ProcessLib/
-        Tests/
     )
 endif()
 
@@ -97,7 +96,6 @@ if(OGS_BUILD_CLI)
         ${COVERAGE_ADDITIONAL_ARGS}
         EXCLUDE
         Applications/CLI/
-        Tests/
         POST_CMD
         perl
         -i
