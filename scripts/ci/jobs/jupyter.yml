@@ -17,19 +17,12 @@ build jupyter:
         export DOCKER_TAG_JUPYTER_PETSC="ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-petsc-jupyter:latest"
       fi
     ### Jupyter container ###
-    # Build base image for 22.04
-    - |
-      rm -rf docker-stacks
-      git clone https://github.com/jupyter/docker-stacks.git
-      cd docker-stacks/base-notebook
-      docker build --build-arg ROOT_CONTAINER=ubuntu:22.04 --build-arg PYTHON_VERSION=3.10  -t jupyter/base-notebook:22.04_3.10 .
-      cd ../..
     # Serial image
     - >
       poetry run ogscm compiler.py ogs.py ogs_jupyter.py -B -R --ogs ../..
       --build_args ' --progress=plain' --cvode --ccache --cpmcache --mfront --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
-      --runtime_base_image 'jupyter/base-notebook:22.04_3.10'
+      --runtime_base_image 'registry.opengeosys.org/ogs/ogs/jupyter/base-notebook:22.04_3.10'
       --tag $DOCKER_TAG_JUPYTER
       $ON_MASTER_ARGS
     # PETSc image
@@ -37,7 +30,7 @@ build jupyter:
       poetry run ogscm compiler.py mpi.py ogs.py ogs_jupyter.py -B -R --ogs ../..
       --build_args ' --progress=plain' --cvode --ccache --cpmcache --mfront --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
-      --runtime_base_image 'jupyter/base-notebook:22.04_3.10'
+      --runtime_base_image 'registry.opengeosys.org/ogs/ogs/jupyter/base-notebook:22.04_3.10'
       --mpi_no_entrypoint
       --tag $DOCKER_TAG_JUPYTER_PETSC
       $ON_MASTER_ARGS

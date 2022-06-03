@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.4.0
+    rev: v4.2.0
     hooks:
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md, --markdown-linebreak-ext=pandoc]
@@ -12,6 +12,30 @@ repos:
       - id: check-yaml
         exclude: "^scripts/ci/.*|.cmake-format.yaml"
       - id: check-toml
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+      - id: black
+        exclude: "ThirdParty|LinearMFront/generate_ref.py"
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.1.0
+    hooks:
+      - id: codespell
+        exclude: 'ThirdParty/.*|Tests/Data/.*|.*\.ya?ml|.*\.bib|^web/content/imprint.md|^GeoLib/IO/XmlIO/OpenGeoSysSTN.xsd|^Applications/FileIO/Legacy/OGSIOVer4.cpp|^scripts/cmake/CPM.cmake|Documentation/.vale/.*'
+  - repo: https://github.com/cheshirekow/cmake-format-precommit
+    rev: v0.6.13
+    hooks:
+      - id: cmake-format
+        additional_dependencies: ["cmakelang[YAML]"]
+        args: [--config=.cmake-format.yaml]
+        exclude: "scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake|Tests.cmake"
+      - id: cmake-lint
+        additional_dependencies: ["cmakelang[YAML]"]
+        exclude: "scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake|BuildExternalProject.cmake"
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.31.1
+    hooks:
+      - id: markdownlint
   - repo: local
     hooks:
       - id: git-diff-check
@@ -26,28 +50,6 @@ repos:
         language: system
         files: '.*\.cpp'
         stages: [commit, manual]
-  - repo: https://github.com/psf/black
-    rev: 22.3.0
-    hooks:
-      - id: black
-        exclude: "ThirdParty|LinearMFront/generate_ref.py"
-  - repo: https://github.com/codespell-project/codespell
-    rev: v2.0.0
-    hooks:
-      - id: codespell
-        exclude: 'ThirdParty/.*|Tests/Data/.*|.*\.ya?ml|.*\.bib|^web/content/imprint.md|^GeoLib/IO/XmlIO/OpenGeoSysSTN.xsd|^Applications/FileIO/Legacy/OGSIOVer4.cpp|^scripts/cmake/CPM.cmake|Documentation/.vale/.*'
-  - repo: https://github.com/cheshirekow/cmake-format-precommit
-    rev: v0.6.13
-    hooks:
-      - id: cmake-format
-        additional_dependencies: ["cmakelang[YAML]"]
-        args: [--config=.cmake-format.yaml]
-        exclude: "scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake|Tests.cmake"
-      - id: cmake-lint
-        additional_dependencies: ["cmakelang[YAML]"]
-        exclude: "scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake|BuildExternalProject.cmake"
-  - repo: local
-    hooks:
       - id: git-clang-format
         name: git-clang-format
         entry: bash -c 'if command -v git-clang-format &> /dev/null; then git clang-format; else exit 0; fi'
@@ -59,7 +61,3 @@ repos:
         entry: bash -c 'if command -v vale &> /dev/null; then VALE_MIN_ALERT_LEVEL=error scripts/ci/helper/run-vale; else exit 0; fi'
         pass_filenames: false
         language: system
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.31.1
-    hooks:
-      - id: markdownlint
