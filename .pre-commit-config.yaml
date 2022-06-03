@@ -12,6 +12,13 @@ repos:
       - id: check-yaml
         exclude: "^scripts/ci/.*|.cmake-format.yaml"
       - id: check-toml
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: check-json
+      - id: fix-byte-order-marker
+        exclude: "^Documentation/.vale/.*"
+      - id: mixed-line-ending
+        exclude: ".*\\.vtu"
   - repo: https://github.com/psf/black
     rev: 22.3.0
     hooks:

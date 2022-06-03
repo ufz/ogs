@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 echo "Lint Markdown"
 if command -v markdownlint >/dev/null 2>&1; then
     # TODO: 'Documentation/**/*.md'
