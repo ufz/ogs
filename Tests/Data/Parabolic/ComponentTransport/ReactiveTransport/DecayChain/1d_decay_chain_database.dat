@@ -6,18 +6,12 @@ SOLUTION_MASTER_SPECIES
     O             H2O              0     O               16
     O(0)          O2               0     O
     O(-2)         H2O              0     1
-[Cm-247] [Cm-247]+ 0 1 1
-[Cm-247Pha] [Cm-247Pha]- 0 1 1
-[Am-243] [Am-243]+ 0 1 1
-[Am-243Pha] [Am-243Pha]- 0 1 1
-[Pu-239] [Pu-239]+ 0 1 1
-[Pu-239Pha] [Pu-239Pha]- 0 1 1
-[U-235] [U-235]+ 0 1 1
-[U-235Pha] [U-235Pha]- 0 1 1
-[Pa-231] [Pa-231]+ 0 1 1
-[Pa-231Pha] [Pa-231Pha]- 0 1 1
-[Ac-227] [Ac-227]+ 0 1 1
-[Ac-227Pha] [Ac-227Pha]- 0 1 1
+[Cm-247] [Cm-247] 0 1 1
+[Am-243] [Am-243] 0 1 1
+[Pu-239] [Pu-239] 0 1 1
+[U-235] [U-235] 0 1 1
+[Pa-231] [Pa-231] 0 1 1
+[Ac-227] [Ac-227] 0 1 1
 
 SOLUTION_SPECIES
 H+ = H+
@@ -41,65 +35,47 @@ H2O = OH- + H+
     delta_h   -1.759 kcal
     -dw       5.13e-009
 
-[Cm-247]+ = [Cm-247]+
+[Cm-247] = [Cm-247]
 log_k 0
 
-[Cm-247Pha]- = [Cm-247Pha]-
+[Am-243] = [Am-243]
 log_k 0
 
-[Am-243]+ = [Am-243]+
+[Pu-239] = [Pu-239]
 log_k 0
 
-[Am-243Pha]- = [Am-243Pha]-
+[U-235] = [U-235]
 log_k 0
 
-[Pu-239]+ = [Pu-239]+
+[Pa-231] = [Pa-231]
 log_k 0
 
-[Pu-239Pha]- = [Pu-239Pha]-
-log_k 0
-
-[U-235]+ = [U-235]+
-log_k 0
-
-[U-235Pha]- = [U-235Pha]-
-log_k 0
-
-[Pa-231]+ = [Pa-231]+
-log_k 0
-
-[Pa-231Pha]- = [Pa-231Pha]-
-log_k 0
-
-[Ac-227]+ = [Ac-227]+
-log_k 0
-
-[Ac-227Pha]- = [Ac-227Pha]-
+[Ac-227] = [Ac-227]
 log_k 0
 
 PHASES
 P1
-[Cm-247][Cm-247Pha] = [Cm-247]+ + [Cm-247Pha]-
+[Cm-247] = [Cm-247]
 log_k 10
 
 P2
-[Am-243][Am-243Pha] = [Am-243]+ + [Am-243Pha]-
+[Am-243] = [Am-243]
 log_k 10
 
 P3
-[Pu-239][Pu-239Pha] = [Pu-239]+ + [Pu-239Pha]-
+[Pu-239] = [Pu-239]
 log_k 10
 
 P4
-[U-235][U-235Pha] = [U-235]+ + [U-235Pha]-
+[U-235] = [U-235]
 log_k 10
 
 P5
-[Pa-231][Pa-231Pha] = [Pa-231]+ + [Pa-231Pha]-
+[Pa-231] = [Pa-231]
 log_k 10
 
 P6
-[Ac-227][Ac-227Pha] = [Ac-227]+ + [Ac-227Pha]-
+[Ac-227] = [Ac-227]
 log_k 10
 
 END

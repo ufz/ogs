@@ -15,17 +15,11 @@
             <process_variables>
                 <concentration>H</concentration>
                 <concentration>[Cm-247]</concentration>
-                <concentration>[Cm-247Pha]</concentration>
                 <concentration>[Am-243]</concentration>
-                <concentration>[Am-243Pha]</concentration>
                 <concentration>[Pu-239]</concentration>
-                <concentration>[Pu-239Pha]</concentration>
                 <concentration>[U-235]</concentration>
-                <concentration>[U-235Pha]</concentration>
                 <concentration>[Pa-231]</concentration>
-                <concentration>[Pa-231Pha]</concentration>
                 <concentration>[Ac-227]</concentration>
-                <concentration>[Ac-227Pha]</concentration>
                 <pressure>pressure</pressure>
             </process_variables>
             <specific_body_force>0</specific_body_force>
@@ -81,47 +75,7 @@
                             </properties>
                         </component>
                         <component>
-                            <name>[Cm-247Pha]</name>
-                            <properties>
-                                <property>
-                                    <name>pore_diffusion</name>
-                                    <type>Constant</type>
-                                    <value>1e-11</value>
-                                </property>
-                                <property>
-                                    <name>retardation_factor</name>
-                                    <type>Constant</type>
-                                    <value>1</value>
-                                </property>
-                                <property>
-                                    <name>decay_rate</name>
-                                    <type>Parameter</type>
-                                    <parameter_name>decay</parameter_name>
-                                </property>
-                            </properties>
-                        </component>
-                        <component>
                             <name>[Am-243]</name>
-                            <properties>
-                                <property>
-                                    <name>pore_diffusion</name>
-                                    <type>Constant</type>
-                                    <value>1e-11</value>
-                                </property>
-                                <property>
-                                    <name>retardation_factor</name>
-                                    <type>Constant</type>
-                                    <value>1</value>
-                                </property>
-                                <property>
-                                    <name>decay_rate</name>
-                                    <type>Parameter</type>
-                                    <parameter_name>decay</parameter_name>
-                                </property>
-                            </properties>
-                        </component>
-                        <component>
-                            <name>[Am-243Pha]</name>
                             <properties>
                                 <property>
                                     <name>pore_diffusion</name>
@@ -161,47 +115,7 @@
                             </properties>
                         </component>
                         <component>
-                            <name>[Pu-239Pha]</name>
-                            <properties>
-                                <property>
-                                    <name>pore_diffusion</name>
-                                    <type>Constant</type>
-                                    <value>1e-11</value>
-                                </property>
-                                <property>
-                                    <name>retardation_factor</name>
-                                    <type>Constant</type>
-                                    <value>1</value>
-                                </property>
-                                <property>
-                                    <name>decay_rate</name>
-                                    <type>Parameter</type>
-                                    <parameter_name>decay</parameter_name>
-                                </property>
-                            </properties>
-                        </component>
-                        <component>
                             <name>[U-235]</name>
-                            <properties>
-                                <property>
-                                    <name>pore_diffusion</name>
-                                    <type>Constant</type>
-                                    <value>1e-11</value>
-                                </property>
-                                <property>
-                                    <name>retardation_factor</name>
-                                    <type>Constant</type>
-                                    <value>1</value>
-                                </property>
-                                <property>
-                                    <name>decay_rate</name>
-                                    <type>Parameter</type>
-                                    <parameter_name>decay</parameter_name>
-                                </property>
-                            </properties>
-                        </component>
-                        <component>
-                            <name>[U-235Pha]</name>
                             <properties>
                                 <property>
                                     <name>pore_diffusion</name>
@@ -241,47 +155,7 @@
                             </properties>
                         </component>
                         <component>
-                            <name>[Pa-231Pha]</name>
-                            <properties>
-                                <property>
-                                    <name>pore_diffusion</name>
-                                    <type>Constant</type>
-                                    <value>1e-11</value>
-                                </property>
-                                <property>
-                                    <name>retardation_factor</name>
-                                    <type>Constant</type>
-                                    <value>1</value>
-                                </property>
-                                <property>
-                                    <name>decay_rate</name>
-                                    <type>Parameter</type>
-                                    <parameter_name>decay</parameter_name>
-                                </property>
-                            </properties>
-                        </component>
-                        <component>
                             <name>[Ac-227]</name>
-                            <properties>
-                                <property>
-                                    <name>pore_diffusion</name>
-                                    <type>Constant</type>
-                                    <value>1e-11</value>
-                                </property>
-                                <property>
-                                    <name>retardation_factor</name>
-                                    <type>Constant</type>
-                                    <value>1</value>
-                                </property>
-                                <property>
-                                    <name>decay_rate</name>
-                                    <type>Parameter</type>
-                                    <parameter_name>decay</parameter_name>
-                                </property>
-                            </properties>
-                        </component>
-                        <component>
-                            <name>[Ac-227Pha]</name>
                             <properties>
                                 <property>
                                     <name>pore_diffusion</name>
@@ -426,19 +300,7 @@
                     <norm_type>NORM2</norm_type>
                     <reltol>1e-14</reltol>
                 </convergence_criterion>
-                <!-- convergence criterion for the second process ([Cm-247Pha]) -->
-                <convergence_criterion>
-                    <type>DeltaX</type>
-                    <norm_type>NORM2</norm_type>
-                    <reltol>1e-14</reltol>
-                </convergence_criterion>
                 <!-- convergence criterion for the second process ([Am-243]) -->
-                <convergence_criterion>
-                    <type>DeltaX</type>
-                    <norm_type>NORM2</norm_type>
-                    <reltol>1e-14</reltol>
-                </convergence_criterion>
-                <!-- convergence criterion for the second process ([Am-243Pha]) -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
@@ -450,19 +312,7 @@
                     <norm_type>NORM2</norm_type>
                     <reltol>1e-14</reltol>
                 </convergence_criterion>
-                <!-- convergence criterion for the second process ([Pu-239Pha]) -->
-                <convergence_criterion>
-                    <type>DeltaX</type>
-                    <norm_type>NORM2</norm_type>
-                    <reltol>1e-14</reltol>
-                </convergence_criterion>
                 <!-- convergence criterion for the second process ([U-235]) -->
-                <convergence_criterion>
-                    <type>DeltaX</type>
-                    <norm_type>NORM2</norm_type>
-                    <reltol>1e-14</reltol>
-                </convergence_criterion>
-                <!-- convergence criterion for the second process ([U-235Pha]) -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
@@ -474,19 +324,7 @@
                     <norm_type>NORM2</norm_type>
                     <reltol>1e-14</reltol>
                 </convergence_criterion>
-                <!-- convergence criterion for the second process ([Pa-231Pha]) -->
-                <convergence_criterion>
-                    <type>DeltaX</type>
-                    <norm_type>NORM2</norm_type>
-                    <reltol>1e-14</reltol>
-                </convergence_criterion>
                 <!-- convergence criterion for the second process ([Ac-227]) -->
-                <convergence_criterion>
-                    <type>DeltaX</type>
-                    <norm_type>NORM2</norm_type>
-                    <reltol>1e-14</reltol>
-                </convergence_criterion>
-                <!-- convergence criterion for the second process ([Ac-227Pha]) -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
@@ -564,53 +402,7 @@
                     </timesteps>
                 </time_stepping>
             </process>
-            <!-- convergence criterion for component transport equation ([Cm-247Pha]) -->
-            <process ref="hc">
-                <nonlinear_solver>basic_picard</nonlinear_solver>
-                <convergence_criterion>
-                    <type>DeltaX</type>
-                    <norm_type>NORM2</norm_type>
-                    <reltol>1e-14</reltol>
-                </convergence_criterion>
-                <time_discretization>
-                    <type>BackwardEuler</type>
-                </time_discretization>
-                <time_stepping>
-                    <type>FixedTimeStepping</type>
-                    <t_initial>0.0</t_initial>
-                    <t_end>3.1536e11</t_end>
-                    <timesteps>
-                        <pair>
-                            <repeat>100</repeat>
-                            <delta_t>3.1536e9</delta_t>
-                        </pair>
-                    </timesteps>
-                </time_stepping>
-            </process>
             <!-- convergence criterion for component transport equation ([Am-243]) -->
-            <process ref="hc">
-                <nonlinear_solver>basic_picard</nonlinear_solver>
-                <convergence_criterion>
-                    <type>DeltaX</type>
-                    <norm_type>NORM2</norm_type>
-                    <reltol>1e-14</reltol>
-                </convergence_criterion>
-                <time_discretization>
-                    <type>BackwardEuler</type>
-                </time_discretization>
-                <time_stepping>
-                    <type>FixedTimeStepping</type>
-                    <t_initial>0.0</t_initial>
-                    <t_end>3.1536e11</t_end>
-                    <timesteps>
-                        <pair>
-                            <repeat>100</repeat>
-                            <delta_t>3.1536e9</delta_t>
-                        </pair>
-                    </timesteps>
-                </time_stepping>
-            </process>
-            <!-- convergence criterion for component transport equation ([Am-243Pha]) -->
             <process ref="hc">
                 <nonlinear_solver>basic_picard</nonlinear_solver>
                 <convergence_criterion>
@@ -656,53 +448,7 @@
                     </timesteps>
                 </time_stepping>
             </process>
-            <!-- convergence criterion for component transport equation ([Pu-239Pha]) -->
-            <process ref="hc">
-                <nonlinear_solver>basic_picard</nonlinear_solver>
-                <convergence_criterion>
-                    <type>DeltaX</type>
-                    <norm_type>NORM2</norm_type>
-                    <reltol>1e-14</reltol>
-                </convergence_criterion>
-                <time_discretization>
-                    <type>BackwardEuler</type>
-                </time_discretization>
-                <time_stepping>
-                    <type>FixedTimeStepping</type>
-                    <t_initial>0.0</t_initial>
-                    <t_end>3.1536e11</t_end>
-                    <timesteps>
-                        <pair>
-                            <repeat>100</repeat>
-                            <delta_t>3.1536e9</delta_t>
-                        </pair>
-                    </timesteps>
-                </time_stepping>
-            </process>
             <!-- convergence criterion for component transport equation ([U-235]) -->
-            <process ref="hc">
-                <nonlinear_solver>basic_picard</nonlinear_solver>
-                <convergence_criterion>
-                    <type>DeltaX</type>
-                    <norm_type>NORM2</norm_type>
-                    <reltol>1e-14</reltol>
-                </convergence_criterion>
-                <time_discretization>
-                    <type>BackwardEuler</type>
-                </time_discretization>
-                <time_stepping>
-                    <type>FixedTimeStepping</type>
-                    <t_initial>0.0</t_initial>
-                    <t_end>3.1536e11</t_end>
-                    <timesteps>
-                        <pair>
-                            <repeat>100</repeat>
-                            <delta_t>3.1536e9</delta_t>
-                        </pair>
-                    </timesteps>
-                </time_stepping>
-            </process>
-            <!-- convergence criterion for component transport equation ([U-235Pha]) -->
             <process ref="hc">
                 <nonlinear_solver>basic_picard</nonlinear_solver>
                 <convergence_criterion>
@@ -748,53 +494,7 @@
                     </timesteps>
                 </time_stepping>
             </process>
-            <!-- convergence criterion for component transport equation ([Pa-231Pha]) -->
-            <process ref="hc">
-                <nonlinear_solver>basic_picard</nonlinear_solver>
-                <convergence_criterion>
-                    <type>DeltaX</type>
-                    <norm_type>NORM2</norm_type>
-                    <reltol>1e-14</reltol>
-                </convergence_criterion>
-                <time_discretization>
-                    <type>BackwardEuler</type>
-                </time_discretization>
-                <time_stepping>
-                    <type>FixedTimeStepping</type>
-                    <t_initial>0.0</t_initial>
-                    <t_end>3.1536e11</t_end>
-                    <timesteps>
-                        <pair>
-                            <repeat>100</repeat>
-                            <delta_t>3.1536e9</delta_t>
-                        </pair>
-                    </timesteps>
-                </time_stepping>
-            </process>
             <!-- convergence criterion for component transport equation ([Ac-227]) -->
-            <process ref="hc">
-                <nonlinear_solver>basic_picard</nonlinear_solver>
-                <convergence_criterion>
-                    <type>DeltaX</type>
-                    <norm_type>NORM2</norm_type>
-                    <reltol>1e-14</reltol>
-                </convergence_criterion>
-                <time_discretization>
-                    <type>BackwardEuler</type>
-                </time_discretization>
-                <time_stepping>
-                    <type>FixedTimeStepping</type>
-                    <t_initial>0.0</t_initial>
-                    <t_end>3.1536e11</t_end>
-                    <timesteps>
-                        <pair>
-                            <repeat>100</repeat>
-                            <delta_t>3.1536e9</delta_t>
-                        </pair>
-                    </timesteps>
-                </time_stepping>
-            </process>
-            <!-- convergence criterion for component transport equation ([Ac-227Pha]) -->
             <process ref="hc">
                 <nonlinear_solver>basic_picard</nonlinear_solver>
                 <convergence_criterion>
@@ -835,17 +535,11 @@
             <variables>
                 <variable>H</variable>
                 <variable>[Cm-247]</variable>
-                <variable>[Cm-247Pha]</variable>
                 <variable>[Am-243]</variable>
-                <variable>[Am-243Pha]</variable>
                 <variable>[Pu-239]</variable>
-                <variable>[Pu-239Pha]</variable>
                 <variable>[U-235]</variable>
-                <variable>[U-235Pha]</variable>
                 <variable>[Pa-231]</variable>
-                <variable>[Pa-231Pha]</variable>
                 <variable>[Ac-227]</variable>
-                <variable>[Ac-227Pha]</variable>
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
             </variables>
@@ -861,17 +555,11 @@
             <pe>4</pe>
             <components>
                 <component>[Cm-247]</component>
-                <component>[Cm-247Pha]</component>
                 <component>[Am-243]</component>
-                <component>[Am-243Pha]</component>
                 <component>[Pu-239]</component>
-                <component>[Pu-239Pha]</component>
                 <component>[U-235]</component>
-                <component>[U-235Pha]</component>
                 <component>[Pa-231]</component>
-                <component>[Pa-231Pha]</component>
                 <component>[Ac-227]</component>
-                <component>[Ac-227Pha]</component>
             </components>
         </solution>
         <kinetic_reactants>
@@ -1080,33 +768,7 @@
             </boundary_conditions>
         </process_variable>
         <process_variable>
-            <name>[Cm-247Pha]</name>
-            <components>1</components>
-            <order>1</order>
-            <initial_condition>c0_default</initial_condition>
-            <boundary_conditions>
-                <boundary_condition>
-                    <mesh>1d_decay_chain_upstream</mesh>
-                    <type>Dirichlet</type>
-                    <parameter>c_default</parameter>
-                </boundary_condition>
-            </boundary_conditions>
-        </process_variable>
-        <process_variable>
             <name>[Am-243]</name>
-            <components>1</components>
-            <order>1</order>
-            <initial_condition>c0_default</initial_condition>
-            <boundary_conditions>
-                <boundary_condition>
-                    <mesh>1d_decay_chain_upstream</mesh>
-                    <type>Dirichlet</type>
-                    <parameter>c_default</parameter>
-                </boundary_condition>
-            </boundary_conditions>
-        </process_variable>
-        <process_variable>
-            <name>[Am-243Pha]</name>
             <components>1</components>
             <order>1</order>
             <initial_condition>c0_default</initial_condition>
@@ -1132,33 +794,7 @@
             </boundary_conditions>
         </process_variable>
         <process_variable>
-            <name>[Pu-239Pha]</name>
-            <components>1</components>
-            <order>1</order>
-            <initial_condition>c0_default</initial_condition>
-            <boundary_conditions>
-                <boundary_condition>
-                    <mesh>1d_decay_chain_upstream</mesh>
-                    <type>Dirichlet</type>
-                    <parameter>c_default</parameter>
-                </boundary_condition>
-            </boundary_conditions>
-        </process_variable>
-        <process_variable>
             <name>[U-235]</name>
-            <components>1</components>
-            <order>1</order>
-            <initial_condition>c0_default</initial_condition>
-            <boundary_conditions>
-                <boundary_condition>
-                    <mesh>1d_decay_chain_upstream</mesh>
-                    <type>Dirichlet</type>
-                    <parameter>c_default</parameter>
-                </boundary_condition>
-            </boundary_conditions>
-        </process_variable>
-        <process_variable>
-            <name>[U-235Pha]</name>
             <components>1</components>
             <order>1</order>
             <initial_condition>c0_default</initial_condition>
@@ -1184,33 +820,7 @@
             </boundary_conditions>
         </process_variable>
         <process_variable>
-            <name>[Pa-231Pha]</name>
-            <components>1</components>
-            <order>1</order>
-            <initial_condition>c0_default</initial_condition>
-            <boundary_conditions>
-                <boundary_condition>
-                    <mesh>1d_decay_chain_upstream</mesh>
-                    <type>Dirichlet</type>
-                    <parameter>c_default</parameter>
-                </boundary_condition>
-            </boundary_conditions>
-        </process_variable>
-        <process_variable>
             <name>[Ac-227]</name>
-            <components>1</components>
-            <order>1</order>
-            <initial_condition>c0_default</initial_condition>
-            <boundary_conditions>
-                <boundary_condition>
-                    <mesh>1d_decay_chain_upstream</mesh>
-                    <type>Dirichlet</type>
-                    <parameter>c_default</parameter>
-                </boundary_condition>
-            </boundary_conditions>
-        </process_variable>
-        <process_variable>
-            <name>[Ac-227Pha]</name>
             <components>1</components>
             <order>1</order>
             <initial_condition>c0_default</initial_condition>
