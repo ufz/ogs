@@ -259,3 +259,20 @@ AddTest(
     Decovalex-0_ts_10_t_864000_000000_2.vtu Decovalex-0_ts_10_t_864000_000000_2.vtu epsilon epsilon 1e-10 1.0e-9
     Decovalex-0_ts_10_t_864000_000000_2.vtu Decovalex-0_ts_10_t_864000_000000_2.vtu sigma sigma 1e-10 1.0e-6
 )
+# ThermoRichardsMechanics; thermo_osmosis and thermo_filtration effects, linear poroelastic, column consolidation
+AddTest(
+    NAME ThermoRichardsMechanics_thermo_osmosis_filtration_effects_Column
+    PATH ThermoRichardsMechanics/ThermoOsmosis
+    RUNTIME 15
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS Column.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    expected_Column_ts_68_t_7200000.000000.vtu Column_ts_68_t_7200000.000000.vtu displacement displacement 1e-5 1e-5
+    expected_Column_ts_68_t_7200000.000000.vtu Column_ts_68_t_7200000.000000.vtu pressure pressure 1e-5 1e-5
+    expected_Column_ts_68_t_7200000.000000.vtu Column_ts_68_t_7200000.000000.vtu temperature temperature 1e-5 1e-5
+    expected_Column_ts_68_t_7200000.000000.vtu Column_ts_68_t_7200000.000000.vtu epsilon epsilon 1e-5 1e-5
+    expected_Column_ts_68_t_7200000.000000.vtu Column_ts_68_t_7200000.000000.vtu sigma sigma 1e-5 1e-5
+)

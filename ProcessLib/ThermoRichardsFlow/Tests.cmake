@@ -252,3 +252,17 @@ AddTest(
     expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000_000000_0.vtu saturation saturation 2e-3 2e-3
     expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000_000000_0.vtu temperature temperature 1e-2 5e-5
 )
+# ThermoRichardsFlow; thermo_osmosis and thermo_filtration effects, linear poroelastic, column consolidation
+AddTest(
+    NAME ThermoRichardsFlow_thermo_osmosis_filtration_effects_Column
+    PATH ThermoRichardsFlow/ThermoOsmosis
+    RUNTIME 15
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS Column.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    expected_Column_ts_68_t_7200000.000000.vtu Column_ts_68_t_7200000.000000.vtu pressure pressure 1e-5 1e-5
+    expected_Column_ts_68_t_7200000.000000.vtu Column_ts_68_t_7200000.000000.vtu temperature temperature 1e-5 1e-5
+)

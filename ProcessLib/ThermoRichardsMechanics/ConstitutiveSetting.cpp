@@ -283,10 +283,19 @@ void ConstitutiveSetting<DisplacementDim>::eval(
         medium.property(MPL::PropertyType::permeability)
             .value(variables, x_position, t, dt));
 
+    auto const K_pT_thermal_osmosis =
+        (solid_phase.hasProperty(
+             MaterialPropertyLib::PropertyType::thermal_osmosis_coefficient)
+             ? MaterialPropertyLib::formEigenTensor<DisplacementDim>(
+                   solid_phase[MPL::PropertyType::thermal_osmosis_coefficient]
+                       .value(variables, x_position, t, dt))
+             : Eigen::MatrixXd::Zero(DisplacementDim, DisplacementDim));
+
     GlobalDimMatrixType const Ki_over_mu = K_intrinsic / viscosity;
     GlobalDimMatrixType const rho_Ki_over_mu = rho_LR * Ki_over_mu;
 
     eqP.K_pp_Laplace = k_rel * rho_Ki_over_mu;
+    eqP.K_pT_Laplace = rho_LR * K_pT_thermal_osmosis;
 
     const double alphaB_minus_phi = alpha - phi;
     double const drho_LR_dp =
@@ -381,9 +390,11 @@ void ConstitutiveSetting<DisplacementDim>::eval(
                     .property(
                         MaterialPropertyLib::PropertyType::thermal_conductivity)
                     .value(variables, x_position, t, dt));
+        eqT.K_Tp_Laplace = T * K_pT_thermal_osmosis;
 
         // TODO changed formula, double check
-        v_darcy = Ki_over_mu * (k_rel * (grad_p_cap + rho_LR * b));
+        v_darcy = Ki_over_mu * (k_rel * (grad_p_cap + rho_LR * b)) -
+                  K_pT_thermal_osmosis * grad_T;
 
         // Unit is J / m^2 / s / K. It's not a heat flux, but related.
         advective_heat_flux_contribution_to_K_liquid =

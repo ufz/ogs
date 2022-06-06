@@ -267,6 +267,7 @@ struct ConstitutiveSettingEqP
     double J_pT_X_dNTdN = nan;
 
     GlobalDimMatrixType K_pp_Laplace = DMnan();
+    GlobalDimMatrixType K_pT_Laplace = DMnan();
     double K_pp_X_dNTdN = nan;
 
     double M_pT_X_NTN = nan;
@@ -317,6 +318,7 @@ struct ConstitutiveSettingEqT
     double K_Tp_X_dNTdN = nan;
     double K_Tp_X_NTN = nan;
     GlobalDimMatrixType K_TT_Laplace = DMnan();
+    GlobalDimMatrixType K_Tp_Laplace = DMnan();
     GlobalDimVectorType K_TT_NT_V_dN = DVnan();
     double K_TT_X_dNTdN = nan;
 

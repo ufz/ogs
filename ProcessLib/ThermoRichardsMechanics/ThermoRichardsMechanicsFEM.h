@@ -124,6 +124,7 @@ public:
             M_Tp = NodalMatrix::Zero(temperature_size, pressure_size);
             K_TT = NodalMatrix::Zero(temperature_size, temperature_size);
             K_Tp = NodalMatrix::Zero(temperature_size, pressure_size);
+            dK_TT_dp = NodalMatrix::Zero(temperature_size, pressure_size);
 
             M_pu = Mat<pressure_size, displacement_size>::Zero(
                 pressure_size, displacement_size);
@@ -131,6 +132,7 @@ public:
             M_pT = NodalMatrix::Zero(pressure_size, temperature_size);
 
             K_pp = NodalMatrix::Zero(pressure_size, pressure_size);
+            K_pT = NodalMatrix::Zero(pressure_size, temperature_size);
 
             storage_p_a_p = NodalMatrix::Zero(pressure_size, pressure_size);
             storage_p_a_S_Jpp = NodalMatrix::Zero(pressure_size, pressure_size);
@@ -147,12 +149,14 @@ public:
             M_Tp += other.M_Tp;
             K_TT += other.K_TT;
             K_Tp += other.K_Tp;
+            dK_TT_dp += other.dK_TT_dp;
 
             M_pu += other.M_pu;
 
             M_pT += other.M_pT;
 
             K_pp += other.K_pp;
+            K_pT += other.K_pT;
 
             storage_p_a_p += other.storage_p_a_p;
             storage_p_a_S_Jpp += other.storage_p_a_S_Jpp;
@@ -170,12 +174,14 @@ public:
             M_Tp *= a;
             K_TT *= a;
             K_Tp *= a;
+            dK_TT_dp *= a;
 
             M_pu *= a;
 
             M_pT *= a;
 
             K_pp *= a;
+            K_pT *= a;
 
             storage_p_a_p *= a;
             storage_p_a_S_Jpp *= a;
@@ -191,12 +197,14 @@ public:
         NodalMatrix M_Tp;
         NodalMatrix K_TT;
         NodalMatrix K_Tp;
+        NodalMatrix dK_TT_dp;
 
         Mat<pressure_size, displacement_size> M_pu;
 
         NodalMatrix M_pT;
 
         NodalMatrix K_pp;
+        NodalMatrix K_pT;
 
         NodalMatrix storage_p_a_p;
         NodalMatrix storage_p_a_S_Jpp;
