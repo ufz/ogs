@@ -24,6 +24,7 @@ code coverage:
     - wget https://raw.github.com/eriwen/lcov-to-cobertura-xml/master/lcov_cobertura/lcov_cobertura.py
     - python lcov_cobertura.py coverage.info --base-dir $CI_PROJECT_DIR
     - ./generate_coverage_vis_data.py
+  coverage: '/lines......: \d+\.\d+/'
   artifacts:
     when: always
     paths:
