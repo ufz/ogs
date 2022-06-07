@@ -29,6 +29,7 @@ if(OGS_USE_MFRONT)
             CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
                        "-DBUILD_SHARED_LIBS=OFF"
                        "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
+                       "-Denable-testing=OFF"
         )
         message(
             STATUS
