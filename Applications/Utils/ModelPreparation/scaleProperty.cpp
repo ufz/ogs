@@ -10,6 +10,10 @@
 
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include <algorithm>
 #include <cmath>
 #include <memory>
@@ -66,6 +70,10 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
 
@@ -87,5 +95,8 @@ int main(int argc, char* argv[])
 
     MeshLib::IO::writeMeshToFile(*mesh, out_mesh_arg.getValue());
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }
