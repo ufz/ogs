@@ -282,13 +282,6 @@ if(NOT VTK_FOUND)
     # Setting shared libs on PETSc, otherwise pvtu files only contain one
     # <Piece>-element (one subdomain).
     list(APPEND VTK_OPTIONS "BUILD_SHARED_LIBS ${OGS_USE_PETSC}")
-    if(OGS_USE_PETSC)
-        list(APPEND CMAKE_INSTALL_RPATH
-             ${PROJECT_BINARY_DIR}/_deps/vtk-build/${CMAKE_INSTALL_LIBDIR}
-        )
-        # to properly install vtk libs
-        set(OGS_INSTALL_DEPENDENCIES ON CACHE BOOL "" FORCE)
-    endif()
     if(OGS_USE_PETSC AND EXISTS ${PROJECT_BINARY_DIR}/_ext/HDF5)
         # Use local hdf5 build
         list(APPEND VTK_OPTIONS "VTK_MODULE_USE_EXTERNAL_VTK_hdf5 ON"
@@ -305,6 +298,13 @@ if(NOT VTK_FOUND)
     )
 endif()
 if(VTK_ADDED)
+    if(OGS_USE_PETSC)
+        list(APPEND CMAKE_BUILD_RPATH
+             ${PROJECT_BINARY_DIR}/_deps/vtk-build/${CMAKE_INSTALL_LIBDIR}
+        )
+        # to properly install vtk libs
+        set(OGS_INSTALL_DEPENDENCIES ON CACHE BOOL "" FORCE)
+    endif()
     if(OpenMP_FOUND AND TARGET vtkFiltersStatistics)
         target_link_libraries(vtkFiltersStatistics PRIVATE OpenMP::OpenMP_C)
     endif()
