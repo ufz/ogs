@@ -56,17 +56,17 @@ if(TEST nb-Notebooks/FailingNotebook)
     set_tests_properties(nb-Notebooks/FailingNotebook PROPERTIES WILL_FAIL TRUE)
 endif()
 
+set(_ctest_parameter -T Test --force-new-ctest-process --output-on-failure)
 if(CMAKE_CONFIGURATION_TYPES)
-    set(CONFIG_PARAMETER --build-config "$<CONFIGURATION>")
+    list(APPEND _ctest_parameter --build-config "$<CONFIGURATION>")
 endif()
+
 add_custom_target(ctest-cleanup ${CMAKE_COMMAND} -E remove -f Tests/ctest.log)
 
 add_custom_target(
     ctest
-    COMMAND
-        ${CMAKE_CTEST_COMMAND} -T Test --force-new-ctest-process
-        --output-on-failure --output-log Tests/ctest.log -LE large
-        ${CONFIG_PARAMETER}
+    COMMAND ${CMAKE_CTEST_COMMAND} ${_ctest_parameter} --output-log
+            Tests/ctest.log -LE large
     DEPENDS ${test_dependencies} ctest-cleanup
     USES_TERMINAL
 )
@@ -77,10 +77,8 @@ add_custom_target(
 
 add_custom_target(
     ctest-large
-    COMMAND
-        ${CMAKE_CTEST_COMMAND} -T Test --force-new-ctest-process
-        --output-on-failure --output-log Tests/ctest-large.log -L large
-        ${CONFIG_PARAMETER}
+    COMMAND ${CMAKE_CTEST_COMMAND} ${_ctest_parameter} --output-log
+            Tests/ctest-large.log -L large
     DEPENDS ${test_dependencies} ctest-large-cleanup
     USES_TERMINAL
 )
