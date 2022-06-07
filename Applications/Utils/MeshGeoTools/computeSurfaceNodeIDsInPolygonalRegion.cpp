@@ -12,6 +12,10 @@
 
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include <algorithm>
 #include <memory>
 #include <string>
@@ -95,6 +99,10 @@ int main(int argc, char* argv[])
                                                false, "", "path as string");
     cmd.add(gmsh_path_arg);
     cmd.parse(argc, argv);
+
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
 
     std::unique_ptr<MeshLib::Mesh const> mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
@@ -183,5 +191,8 @@ int main(int argc, char* argv[])
     std::for_each(all_sfc_nodes.begin(), all_sfc_nodes.end(),
                   std::default_delete<MeshLib::Node>());
 
-    return 0;
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
+    return EXIT_SUCCESS;
 }

@@ -13,6 +13,10 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include "Applications/FileIO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/GitInfo.h"
@@ -70,6 +74,10 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     bool const create_cell_array(set_cells_arg.isSet());
     bool const create_node_array =
         (create_cell_array) ? set_nodes_arg.isSet() : true;
@@ -83,6 +91,9 @@ int main(int argc, char* argv[])
     if (mesh->getDimension() > 2)
     {
         ERR("Method can not be applied to 3D meshes.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -97,6 +108,9 @@ int main(int argc, char* argv[])
         if (!assigned)
         {
             ERR("Error assigning raster data to scalar node array");
+#ifdef USE_PETSC
+            MPI_Finalize();
+#endif
             return EXIT_FAILURE;
         }
         INFO("Created node array {:s}", array_name_arg.getValue());
@@ -110,6 +124,9 @@ int main(int argc, char* argv[])
         if (!assigned)
         {
             ERR("Error assigning raster data to scalar cell array");
+#ifdef USE_PETSC
+            MPI_Finalize();
+#endif
             return EXIT_FAILURE;
         }
         INFO("Created cell array {:s}", array_name_arg.getValue());
@@ -117,5 +134,8 @@ int main(int argc, char* argv[])
 
     MeshLib::IO::VtuInterface vtu(mesh.get());
     vtu.writeToFile(output_name);
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }
