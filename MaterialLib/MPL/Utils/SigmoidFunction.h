@@ -28,8 +28,9 @@ namespace MaterialPropertyLib
  * \f]
  *
  * where \f$T_\mathrm{c}\f$ is the critical value (e.g. a phase change
- * temperature). Letting the slope parameter \f$k\f$ go to infinity,
- * the heaviside step function is obtained.
+ * temperature). The parameter \f$k\f$ is proportional to the slope at
+ * the characteristic value and controls thus the steepness. Letting
+ * \f$k\f$ go to infinity, the heaviside step function is obtained.
  *
  */
 class SigmoidFunction final
@@ -44,7 +45,7 @@ public:
     double d2Value(double const& T) const;
 
 private:
-    double const k_;    //< factor controlling the spreading
+    double const k_;    //< steepness (slope parameter)
     double const T_c_;  //< characteristic value
                         // (location of the step)
 };

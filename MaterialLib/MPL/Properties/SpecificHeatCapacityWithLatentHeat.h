@@ -25,6 +25,7 @@ namespace MaterialPropertyLib
  * \f[
  *      C_{\mathrm{app}} = \left[C - \varrho \ell \frac{\partial
  *                         \phi_\mathrm{f}}{\partial T} \right]
+ * \quad\rightarrow\quad c_{\mathrm{app}} = \frac{C_{\mathrm{app}}}{\varrho}
  * \f]
  *
  * with \f$\ell\f$ as specific enthalpy of melting, \f$C\f$ as effective
@@ -42,7 +43,7 @@ class SpecificHeatCapacityWithLatentHeat final : public Property
     };
 
 public:
-    SpecificHeatCapacityWithLatentHeat(std::string name, double const L);
+    SpecificHeatCapacityWithLatentHeat(std::string name, double const l);
 
     void checkScale() const override;
 
@@ -50,7 +51,7 @@ public:
     void setProperties(
         std::vector<std::unique_ptr<Phase>> const& phases) override;
 
-    double mixtureVolumetricHeatCapacity(
+    double effectiveVolumetricHeatCapacity(
         VariableArray const& variable_array,
         ParameterLib::SpatialPosition const& pos,
         double const t,
@@ -68,8 +69,7 @@ public:
                             double const dt) const override;
 
 private:
-    double const L_;  //< Latent heat of melting (enthalpy of the first order
-                      // phase change).
+    double const l_;  //< specific latent heat of melting
 
     /// Pointers to the properties in each phase.
     PhaseProperties densities_;

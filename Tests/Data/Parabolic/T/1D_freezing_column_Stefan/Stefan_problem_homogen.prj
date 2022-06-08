@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!--units: kg, m, s, K and derived units: N, Pa=N/m², Da=m² -->
+<!--units: kg, m, s, K and derived units: N, Pa=N/mï¿½, Da=mï¿½ -->
 <OpenGeoSysProject>
     <meshes>
         <mesh>mesh1FE.vtu</mesh>
@@ -41,7 +41,7 @@
                         <property>
                             <name>density</name>
                             <type>Constant</type>
-                            <value>1000</value> <!--kg/m³-->
+                            <value>1000</value> <!--kg/mï¿½-->
                         </property>
                     </properties>
                 </phase>
@@ -62,7 +62,7 @@
                         <property>
                             <name>density</name>
                             <type>Constant</type>
-                            <value>900</value> <!--kg/m³-->
+                            <value>900</value> <!--kg/mï¿½-->
                         </property>
                     </properties>
                 </phase>
@@ -83,7 +83,7 @@
                         <property>
                             <name>density</name>
                             <type>Constant</type>
-                            <value>0</value> <!--kg/m³-->
+                            <value>0</value> <!--kg/mï¿½-->
                         </property>
                     </properties>
                 </phase>
@@ -97,13 +97,13 @@
                 <property>
                     <name>volume_fraction</name>
                     <type>TemperatureDependentFraction</type>
-                    <phase_change_spread>7</phase_change_spread> <!-- 1/K -->
+                    <steepness>7</steepness> <!-- 1/K -->
                     <characteristic_temperature>273.15</characteristic_temperature> <!-- K -->
                 </property>
                 <property>
                     <name>density</name>
                     <type>Constant</type>
-                    <value>1000</value> <!--kg/m³-->
+                    <value>1000</value> <!--kg/mï¿½-->
                     <!--<type>VolumeFractionAverage</type>-->
                 </property>
                 <property>
@@ -113,7 +113,7 @@
                 <property>
                     <name>specific_heat_capacity</name>
                     <type>SpecificHeatCapacityWithLatentHeat</type>
-                    <latent_melting_heat>700000</latent_melting_heat> <!-- J/kg-->
+                    <specific_latent_heat>700000</specific_latent_heat> <!-- J/kg-->
                 </property>
             </properties>
         </medium>
@@ -127,7 +127,7 @@
         <parameter>
             <name>HeatSource</name>
             <type>Constant</type>
-            <value>1</value> <!-- W/m²-->
+            <value>1</value> <!-- W/mï¿½-->
         </parameter>
     </parameters>
     <process_variables>
@@ -166,8 +166,8 @@
                     <t_initial>0.0</t_initial>
                     <t_end>700e6</t_end> <!--s-->
                     <!--  for sufficient heat input: -->
-                    <!--  dE  = 1 W/m² * 10  m² * 700e6 s =  7e9 J -->
-                    <!--  dQ =700 000 J/kg * 10  m³ * 1000 kg / m³ = 7e9 J -->
+                    <!--  dE  = 1 W/mï¿½ * 10  mï¿½ * 700e6 s =  7e9 J -->
+                    <!--  dQ =700 000 J/kg * 10  mï¿½ * 1000 kg / mï¿½ = 7e9 J -->
                     <timesteps>
                         <pair>
                             <repeat>350</repeat>

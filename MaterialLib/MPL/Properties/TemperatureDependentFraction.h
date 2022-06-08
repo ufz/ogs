@@ -32,9 +32,10 @@ namespace MaterialPropertyLib
  *      \frac{\phi}{1 + \exp(k(T - T_\mathrm{c}))}
  * \f]
  *
- * Parameter \f$k\f$ controlling the temperature spreading of the phase change
- * and \f$T_\mathrm{c}\f$ as the characteristic temperature of the phase change
- * (melting temperature) are forwarded to a sigmoid function.
+ * Parameter \f$k\f$ controlling the steepness of the phase change
+ * and \f$T_\mathrm{c}\f$ as the characteristic temperature where
+ * the phase change is centered around (melting temperature)
+ * are forwarded to a sigmoid function.
  *
  **/
 class TemperatureDependentFraction final : public Property

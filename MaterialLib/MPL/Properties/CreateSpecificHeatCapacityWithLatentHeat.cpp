@@ -1,7 +1,7 @@
 /**
  * \file
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -28,12 +28,12 @@ createSpecificHeatCapacityWithLatentHeat(BaseLib::ConfigTree const& config)
     DBUG("Create temperature dependent specific heat capacity {:s}.",
          property_name);
 
-    auto const L =
-        //! \ogs_file_param{properties__property__SpecificHeatCapacityWithLatentHeat__latent_melting_heat}
-        config.getConfigParameter<double>("latent_melting_heat");
+    auto const l =
+        //! \ogs_file_param{properties__property__SpecificHeatCapacityWithLatentHeat__specific_latent_heat}
+        config.getConfigParameter<double>("specific_latent_heat");
 
     return std::make_unique<
         MaterialPropertyLib::SpecificHeatCapacityWithLatentHeat>(
-        std::move(property_name), L);
+        std::move(property_name), l);
 }
 }  // namespace MaterialPropertyLib

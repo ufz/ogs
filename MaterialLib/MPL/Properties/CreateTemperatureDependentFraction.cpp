@@ -1,7 +1,7 @@
 /**
  * \file
  * \copyright
- * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -26,8 +26,8 @@ createTemperatureDependentFraction(BaseLib::ConfigTree const& config)
          property_name);
 
     auto const k =
-        //! \ogs_file_param{properties__property__TemperatureDependentFraction__phase_change_spread}
-        config.getConfigParameter<double>("phase_change_spread");
+        //! \ogs_file_param{properties__property__TemperatureDependentFraction__steepness}
+        config.getConfigParameter<double>("steepness");
 
     auto const T_c =
         //! \ogs_file_param{properties__property__TemperatureDependentFraction__characteristic_temperature}

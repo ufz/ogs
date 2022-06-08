@@ -11,8 +11,11 @@
 
 #include <gtest/gtest.h>
 
+#include <sstream>
+/* Keep for debugging
 #include <iostream>
 #include <fstream>
+*/
 
 #include "MaterialLib/MPL/Properties/TemperatureDependentFraction.h"
 
@@ -40,8 +43,7 @@ std::unique_ptr<MaterialPropertyLib::Medium> createMyMedium()
     prj << "         <property>\n";
     prj << "              <name>volume_fraction</name>\n";
     prj << "              <type>TemperatureDependentFraction</type>\n";
-    prj << "              <phase_change_spread>" << water_ice.k
-        << "</phase_change_spread>\n";
+    prj << "              <steepness>" << water_ice.k << "</steepness>\n";
     prj << "              <characteristic_temperature>" << water_ice.T_c
         << "</characteristic_temperature>\n";
     prj << "          </property>\n";

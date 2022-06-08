@@ -10,9 +10,6 @@
  */
 
 #include <gtest/gtest.h>
-
-#include <fstream>
-#include <iostream>
 #include <sstream>
 
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
@@ -80,8 +77,7 @@ TEST(MaterialPropertyLib, VolumeFractionAverage_Density)
     prj << "       <property>\n";
     prj << "         <name>volume_fraction</name>\n";
     prj << "         <type>TemperatureDependentFraction</type>\n";
-    prj << "         <phase_change_spread>" << water_ice_rock.k
-        << "</phase_change_spread>\n";
+    prj << "         <steepness>" << water_ice_rock.k << "</steepness>\n";
     prj << "         <characteristic_temperature>" << water_ice_rock.T_c
         << "</characteristic_temperature>\n";
     prj << "       </property>\n";
@@ -195,8 +191,7 @@ TEST(MaterialPropertyLib, VolumeFractionAverage_ThermalConductivity)
     prj << "      <property>\n";
     prj << "        <name>volume_fraction</name>\n";
     prj << "        <type>TemperatureDependentFraction</type>\n";
-    prj << "        <phase_change_spread>" << water_ice_rock.k
-        << "</phase_change_spread>\n";
+    prj << "        <steepness>" << water_ice_rock.k << "</steepness>\n";
     prj << "        <characteristic_temperature>" << water_ice_rock.T_c
         << "</characteristic_temperature>\n";
     prj << "      </property>\n";

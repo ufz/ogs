@@ -11,8 +11,7 @@
 
 #include <gtest/gtest.h>
 
-#include <fstream>
-#include <iostream>
+#include <sstream>
 
 #include "TestMPL.h"
 #include "Tests/TestTools.h"
@@ -110,8 +109,7 @@ std::unique_ptr<MaterialPropertyLib::Medium> createMyMedium(double L_IW, double 
     prj << "      <property>\n";
     prj << "        <name>volume_fraction</name>\n";
     prj << "        <type>TemperatureDependentFraction</type>\n";
-    prj << "        <phase_change_spread>" << water_ice_rock.k
-        << "</phase_change_spread>\n";
+    prj << "        <steepness>" << water_ice_rock.k << "</steepness>\n";
     prj << "        <characteristic_temperature>" << water_ice_rock.T_c
         << "</characteristic_temperature>\n";
     prj << "      </property>\n";
@@ -126,7 +124,8 @@ std::unique_ptr<MaterialPropertyLib::Medium> createMyMedium(double L_IW, double 
     prj << "      <property>\n";
     prj << "        <name>specific_heat_capacity</name>\n";
     prj << "        <type>SpecificHeatCapacityWithLatentHeat</type>\n";
-    prj << "        <latent_melting_heat>" << L_IW << "</latent_melting_heat>\n";
+    prj << "        <specific_latent_heat>" << L_IW
+        << "</specific_latent_heat>\n";
     prj << "      </property>\n";
     prj << "    </properties>\n";
     prj << "</medium>\n";

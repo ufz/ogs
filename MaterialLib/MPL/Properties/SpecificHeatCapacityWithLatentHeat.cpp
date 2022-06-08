@@ -16,8 +16,8 @@
 namespace MaterialPropertyLib
 {
 SpecificHeatCapacityWithLatentHeat::SpecificHeatCapacityWithLatentHeat(
-    std::string name, double const L)
-    : L_(L)
+    std::string name, double const l)
+    : l_(l)
 {
     name_ = std::move(name);
 }
@@ -69,7 +69,7 @@ void SpecificHeatCapacityWithLatentHeat::setProperties(
     }
 }
 
-double SpecificHeatCapacityWithLatentHeat::mixtureVolumetricHeatCapacity(
+double SpecificHeatCapacityWithLatentHeat::effectiveVolumetricHeatCapacity(
     VariableArray const& variable_array,
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
@@ -120,8 +120,10 @@ PropertyDataType SpecificHeatCapacityWithLatentHeat::value(
     auto const dpfr_dT = frozen_fraction_property.template dValue<double>(
         variable_array, Variable::temperature, pos, t, dt);
 
-    auto const Cvol = mixtureVolumetricHeatCapacity(variable_array, pos, t, dt);
-    auto const Cvol_app = Cvol - L_ * rho_ef * dpfr_dT;
+    auto const Cvol =
+        effectiveVolumetricHeatCapacity(variable_array, pos, t, dt);
+    auto const Lvol = l_ * rho_ef;
+    auto const Cvol_app = Cvol - Lvol * dpfr_dT;
     // divide volumetric quantity by density in order to obtain specific value
     return Cvol_app / rho_ef;
 }
@@ -158,11 +160,12 @@ PropertyDataType SpecificHeatCapacityWithLatentHeat::dValue(
     auto const d2pfr_dT2 = frozen_fraction_property.template d2Value<double>(
         variable_array, Variable::temperature, Variable::temperature, pos, t,
         dt);
-    auto const Cvol = mixtureVolumetricHeatCapacity(variable_array, pos, t, dt);
+    auto const Cvol =
+        effectiveVolumetricHeatCapacity(variable_array, pos, t, dt);
     // TODO: avoid duplicate code, call value()?
-    auto const C_app = (Cvol - L_ * rho_ef * dpfr_dT) / rho_ef;
+    auto const C_app = (Cvol - l_ * rho_ef * dpfr_dT) / rho_ef;
     auto const dCvol_dpfr = rho_fr * c_fr - rho_li * c_li;
-    auto const dCvol_app_dT = dCvol_dpfr * dpfr_dT - L_ * rho_ef * d2pfr_dT2;
+    auto const dCvol_app_dT = dCvol_dpfr * dpfr_dT - l_ * rho_ef * d2pfr_dT2;
 
     return (dCvol_app_dT - drho_dT / rho_ef * C_app) / rho_ef;
 }
