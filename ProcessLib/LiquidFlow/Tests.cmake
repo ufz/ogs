@@ -191,7 +191,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    sat1D.vtu sat_1D_ts_1_t_1_000000_0.vtu AnalyticPressure pressure 1e-8 1e-8
+    sat1D.vtu sat_1D_ts_1_t_1.000000.vtu AnalyticPressure pressure 1e-8 1e-8
 #    sat1D.vtu sat_1D_ts_1_t_1_000000_0.vtu AnalyticVec v 1e-8 1e-8
 )
 AddTest(
@@ -204,7 +204,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    mesh2D.vtu gravity_driven_ts_1_t_1_000000_0.vtu AnalyticPressure pressure 1e-8 1e-8
+    mesh2D.vtu gravity_driven_ts_1_t_1.000000.vtu AnalyticPressure pressure 1e-8 1e-8
 #    mesh2D.vtu gravity_driven_ts_1_t_1_000000_0.vtu v_ref v 1e-8 1e-8
 )
 AddTest(
@@ -217,7 +217,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    mesh2D.vtu sat_2D_lflow_ts_1_t_1_000000_0.vtu OGS5_Results pressure 1e-8 1e-8
+    mesh2D.vtu sat_2D_lflow_ts_1_t_1.000000.vtu OGS5_Results pressure 1e-8 1e-8
 )
 AddTest(
     NAME LiquidFlow_AxisymTheis
@@ -229,7 +229,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    axisym_theis.vtu liquid_pcs_ts_30_t_1728_000000_0.vtu OGS5_pressure pressure 1e-8 1e-8
+    axisym_theis.vtu liquid_pcs_ts_30_t_1728.000000.vtu OGS5_pressure pressure 1e-8 1e-8
 )
 AddTest(
     NAME LiquidFlow_Anisotropic_GravityDriven3D
@@ -269,8 +269,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    mesh2D.vtu dirichlet_bc_wihin_interval_ts_2_t_10_000000_0.vtu analytical_solution_t_lt_10 pressure 1e-6 1e-12
-    mesh2D.vtu dirichlet_bc_wihin_interval_ts_4_t_20_000000_0.vtu analytical_solution_t_gt_10 pressure 1e-6 1e-12
+    mesh2D.vtu dirichlet_bc_wihin_interval_ts_2_t_10.000000.vtu analytical_solution_t_lt_10 pressure 1e-6 1e-12
+    mesh2D.vtu dirichlet_bc_wihin_interval_ts_4_t_20.000000.vtu analytical_solution_t_gt_10 pressure 1e-6 1e-12
 )
 
 # Dupuit
