@@ -191,20 +191,21 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
         }
         else
         {
-#ifdef USE_PETSC
-            int rank;
-            MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
-            int mpi_size;
-            MPI_Comm_size(PETSC_COMM_WORLD, &mpi_size);
-            std::string const& filename =
-                MeshLib::IO::getVtuFileNameForPetscOutputWithoutExtension(
-                    //! \ogs_file_param{prj__test_definition__vtkdiff__file}
-                    vtkdiff_config.getConfigParameter<std::string>("file")) +
-                "_" + std::to_string(rank) + ".vtu";
-#else
-            std::string const& filename =
+            std::string filename =
                 //! \ogs_file_param{prj__test_definition__vtkdiff__file}
                 vtkdiff_config.getConfigParameter<std::string>("file");
+#ifdef USE_PETSC
+            int mpi_size;
+            MPI_Comm_size(PETSC_COMM_WORLD, &mpi_size);
+            if (mpi_size > 1)
+            {
+                int rank;
+                MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
+                filename =
+                    MeshLib::IO::getVtuFileNameForPetscOutputWithoutExtension(
+                        filename) +
+                    "_" + std::to_string(rank) + ".vtu";
+            }
 #endif  // OGS_USE_PETSC
             filenames.push_back(filename);
         }
