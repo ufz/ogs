@@ -9,8 +9,8 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     RUNTIME 18
     DIFF_DATA
-        expected_AT1_iso_tension_ts_10_t_1_000000_0.vtu AT1_iso_tension_ts_10_t_1_000000_0.vtu displacement displacement 1e-5 0
-        expected_AT1_iso_tension_ts_10_t_1_000000_0.vtu AT1_iso_tension_ts_10_t_1_000000_0.vtu phasefield phasefield 1e-6 0
+        expected_AT1_iso_tension_ts_10_t_1_000000_0.vtu AT1_iso_tension_ts_10_t_1.000000.vtu displacement displacement 1e-5 0
+        expected_AT1_iso_tension_ts_10_t_1_000000_0.vtu AT1_iso_tension_ts_10_t_1.000000.vtu phasefield phasefield 1e-6 0
 )
 
 AddTest(
@@ -39,8 +39,8 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     RUNTIME 18
     DIFF_DATA
-        expected_AT1_vd_tension_ts_10_t_1_000000_0.vtu AT1_vd_tension_ts_10_t_1_000000_0.vtu displacement displacement 1e-5 0
-        expected_AT1_vd_tension_ts_10_t_1_000000_0.vtu AT1_vd_tension_ts_10_t_1_000000_0.vtu phasefield phasefield 1e-6 0
+        expected_AT1_vd_tension_ts_10_t_1_000000_0.vtu AT1_vd_tension_ts_10_t_1.000000.vtu displacement displacement 1e-5 0
+        expected_AT1_vd_tension_ts_10_t_1_000000_0.vtu AT1_vd_tension_ts_10_t_1.000000.vtu phasefield phasefield 1e-6 0
 )
 
 AddTest(
