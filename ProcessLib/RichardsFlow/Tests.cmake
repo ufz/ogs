@@ -103,6 +103,6 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    RichardsFlow_2d_richardsflow_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_ts_99_t_1900_000000_0.vtu pressure pressure 5e-8 1e-10
-    RichardsFlow_2d_richardsflow_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_ts_99_t_1900_000000_0.vtu saturation saturation 1e-10 1e-11
+    RichardsFlow_2d_richardsflow_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_ts_99_t_1900.000000.vtu pressure pressure 5e-8 1e-10
+    RichardsFlow_2d_richardsflow_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_ts_99_t_1900.000000.vtu saturation saturation 1e-10 1e-11
 )
