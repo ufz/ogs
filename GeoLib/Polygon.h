@@ -28,16 +28,6 @@ namespace GeoLib
  */
 
 /**
- * edge classification
- */
-enum class EdgeType
-{
-    TOUCHING, //!< TOUCHING
-    CROSSING, //!< CROSSING
-    INESSENTIAL //!< INESSENTIAL
-};
-
-/**
  * A polygon is a (closed) polyline. Thus class Polygon is derived from class Polyline.
  */
 class Polygon : public Polyline
@@ -115,18 +105,6 @@ private:
     std::list<Polygon*> _simple_polygon_list;
     AABB _aabb;
 };
-
-/**
- * from book: Computational Geometry and Computer Graphics in C++, page 119
- * get the type of edge with respect to the given point (2d method!)
- * @param a first point of line segment
- * @param b last point of line segment
- * @param pnt point that is edge type computed for
- * @return a value of enum EdgeType
- */
-EdgeType getEdgeType(MathLib::Point3d const& a,
-                     MathLib::Point3d const& b,
-                     MathLib::Point3d const& pnt);
 
 /**
  * comparison operator for polygons

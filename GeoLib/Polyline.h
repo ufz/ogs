@@ -29,30 +29,6 @@ namespace GeoLib
 {
 class PointVec;
 
-enum class Location
-{
-    LEFT,
-    RIGHT,
-    BEYOND,
-    BEHIND,
-    BETWEEN,
-    SOURCE,
-    DESTINATION
-};
-
-/**
- * 2D method - ignores z coordinate. It calculates the location
- * of the point relative to the line segment specified by the points source and
- * destination. (literature reference:
- * Computational Geometry and Computer Graphics in C++; Michael J. Laszlo)
- * @param source the first point of the line segment
- * @param destination the end point of the line segment
- * @param pnt the test point
- * @return a value of enum Location
- */
-Location getLocationOfPoint(MathLib::Point3d const& source,
-                            MathLib::Point3d const& destination,
-                            MathLib::Point3d const& pnt);
 /**
  * \ingroup GeoLib
  *

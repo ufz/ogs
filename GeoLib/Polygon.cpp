@@ -22,6 +22,117 @@
 
 namespace GeoLib
 {
+enum class Location
+{
+    LEFT,
+    RIGHT,
+    BEYOND,
+    BEHIND,
+    BETWEEN,
+    SOURCE,
+    DESTINATION
+};
+
+/**
+ * edge classification
+ */
+enum class EdgeType
+{
+    TOUCHING,    //!< TOUCHING
+    CROSSING,    //!< CROSSING
+    INESSENTIAL  //!< INESSENTIAL
+};
+
+/**
+ * 2D method - ignores z coordinate. It calculates the location
+ * of the point relative to the line segment specified by the points source and
+ * destination. (literature reference:
+ * Computational Geometry and Computer Graphics in C++; Michael J. Laszlo)
+ * @param source the first point of the line segment
+ * @param destination the end point of the line segment
+ * @param pnt the test point
+ * @return a value of enum Location
+ */
+Location getLocationOfPoint(MathLib::Point3d const& source,
+                            MathLib::Point3d const& destination,
+                            MathLib::Point3d const& pnt)
+{
+    long double const a[2] = {destination[0] - source[0],
+                              destination[1] - source[1]};  // vector
+    long double const b[2] = {pnt[0] - source[0],
+                              pnt[1] - source[1]};  // vector
+
+    long double const det_2x2(a[0] * b[1] - a[1] * b[0]);
+    constexpr double eps = std::numeric_limits<double>::epsilon();
+
+    if (det_2x2 > eps)
+    {
+        return Location::LEFT;
+    }
+    if (eps < std::abs(det_2x2))
+    {
+        return Location::RIGHT;
+    }
+    if (a[0] * b[0] < 0.0 || a[1] * b[1] < 0.0)
+    {
+        return Location::BEHIND;
+    }
+    if (a[0] * a[0] + a[1] * a[1] < b[0] * b[0] + b[1] * b[1])
+    {
+        return Location::BEYOND;
+    }
+    if (MathLib::sqrDist(pnt, source) < pow(eps, 2))
+    {
+        return Location::SOURCE;
+    }
+    if (MathLib::sqrDist(pnt, destination) < std::sqrt(eps))
+    {
+        return Location::DESTINATION;
+    }
+    return Location::BETWEEN;
+}
+
+/**
+ * from book: Computational Geometry and Computer Graphics in C++, page 119
+ * get the type of edge with respect to the given point (2d method!)
+ * @param a first point of line segment
+ * @param b last point of line segment
+ * @param pnt point that is edge type computed for
+ * @return a value of enum EdgeType
+ */
+EdgeType getEdgeType(MathLib::Point3d const& a,
+                     MathLib::Point3d const& b,
+                     MathLib::Point3d const& pnt)
+{
+    switch (getLocationOfPoint(a, b, pnt))
+    {
+        case Location::LEFT:
+        {
+            if (a[1] < pnt[1] && pnt[1] <= b[1])
+            {
+                return EdgeType::CROSSING;
+            }
+
+            return EdgeType::INESSENTIAL;
+        }
+        case Location::RIGHT:
+        {
+            if (b[1] < pnt[1] && pnt[1] <= a[1])
+            {
+                return EdgeType::CROSSING;
+            }
+
+            return EdgeType::INESSENTIAL;
+        }
+        case Location::BETWEEN:
+        case Location::SOURCE:
+        case Location::DESTINATION:
+            return EdgeType::TOUCHING;
+        default:
+            return EdgeType::INESSENTIAL;
+    }
+}
+
 Polygon::Polygon(const Polyline& ply, bool init)
     : Polyline(ply), _aabb(ply.getPointsVec(), ply.getPolylinePointIDs())
 {
@@ -591,39 +702,6 @@ std::list<Polygon*> const& Polygon::computeListOfSimplePolygons()
         polygon->initialise();
     }
     return _simple_polygon_list;
-}
-
-EdgeType getEdgeType(MathLib::Point3d const& a,
-                     MathLib::Point3d const& b,
-                     MathLib::Point3d const& pnt)
-{
-    switch (getLocationOfPoint(a, b, pnt))
-    {
-        case Location::LEFT:
-        {
-            if (a[1] < pnt[1] && pnt[1] <= b[1])
-            {
-                return EdgeType::CROSSING;
-            }
-
-            return EdgeType::INESSENTIAL;
-        }
-        case Location::RIGHT:
-        {
-            if (b[1] < pnt[1] && pnt[1] <= a[1])
-            {
-                return EdgeType::CROSSING;
-            }
-
-            return EdgeType::INESSENTIAL;
-        }
-        case Location::BETWEEN:
-        case Location::SOURCE:
-        case Location::DESTINATION:
-            return EdgeType::TOUCHING;
-        default:
-            return EdgeType::INESSENTIAL;
-    }
 }
 
 }  // end namespace GeoLib
