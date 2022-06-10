@@ -148,7 +148,7 @@ void setMaterialIDs(MeshLib::Mesh& mesh,
             std::size_t upper_layer_cnt(0);
             std::size_t lower_layer_cnt(0);
 
-            MeshLib::Node const node = MeshLib::getCenterOfGravity(*elems[j]);
+            auto const& node = MeshLib::getCenterOfGravity(*elems[j]);
             voteMatId(node, grid, max_edge, nullptr_cnt, upper_layer_cnt,
                       lower_layer_cnt);
             if (nullptr_cnt)

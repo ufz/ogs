@@ -724,8 +724,7 @@ void FEFLOWMeshInterface::setMaterialIDs(
     {
         for (std::size_t i = 0; i < vec_elements.size(); ++i)
         {
-            MeshLib::Node const gpt =
-                MeshLib::getCenterOfGravity(*vec_elements[i]);
+            auto const gpt = MeshLib::getCenterOfGravity(*vec_elements[i]);
             std::size_t matId = 0;
             for (std::size_t j = 0; j < lines.size(); j++)
             {
