@@ -86,7 +86,7 @@ std::unique_ptr<MeshLib::Mesh> generateInitialMesh(
 // returns the element the given node is projected on (or nullptr otherwise)
 MeshLib::Element const* getProjectedElement(
     MeshLib::MeshElementGrid const& grid,
-    MeshLib::Node const& node,
+    MathLib::Point3d const& node,
     double const max_edge)
 {
     constexpr double max_val = std::numeric_limits<double>::max();
@@ -102,9 +102,10 @@ MeshLib::Element const* getProjectedElement(
 
 // casts vote if the given nodes belongs to lower layer, upper layer or no layer
 // at all
-void voteMatId(MeshLib::Node const& node, MeshLib::MeshElementGrid const& grid,
-               double const max_edge, std::size_t& nullptr_cnt,
-               std::size_t& upper_layer_cnt, std::size_t& lower_layer_cnt)
+void voteMatId(MathLib::Point3d const& node,
+               MeshLib::MeshElementGrid const& grid, double const max_edge,
+               std::size_t& nullptr_cnt, std::size_t& upper_layer_cnt,
+               std::size_t& lower_layer_cnt)
 {
     auto const& proj_elem = getProjectedElement(grid, node, max_edge);
     if (proj_elem == nullptr)
