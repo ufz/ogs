@@ -19,7 +19,7 @@ namespace MeshLib
 namespace ProjectPointOnMesh
 {
 Element const* getProjectedElement(std::vector<const Element*> const& elements,
-                                   Node const& node)
+                                   MathLib::Point3d const& node)
 {
     auto is_right_of = [&node](Node const& a, Node const& b) {
         return GeoLib::getOrientationFast(node, a, b) ==
@@ -55,7 +55,7 @@ Element const* getProjectedElement(std::vector<const Element*> const& elements,
     return nullptr;
 }
 
-double getElevation(Element const& element, Node const& node)
+double getElevation(Element const& element, MathLib::Point3d const& node)
 {
     Eigen::Vector3d const v =
         node.asEigenVector3d() - element.getNode(0)->asEigenVector3d();
