@@ -28,16 +28,6 @@ namespace GeoLib
  */
 
 /**
- * edge classification
- */
-enum class EdgeType
-{
-    TOUCHING, //!< TOUCHING
-    CROSSING, //!< CROSSING
-    INESSENTIAL //!< INESSENTIAL
-};
-
-/**
  * A polygon is a (closed) polyline. Thus class Polygon is derived from class Polyline.
  */
 class Polygon : public Polyline
@@ -64,7 +54,7 @@ public:
      * @param pnt the Point
      * @return if point is inside the polygon true, else false
      */
-    bool isPntInPolygon(const MathLib::Point3d& pnt) const;
+    bool isPntInPolygon(MathLib::Point3d const& pnt) const;
 
     /**
      * Checks if the straight line segment is contained within the polygon.
@@ -106,23 +96,6 @@ public:
 
     friend bool operator==(Polygon const& lhs, Polygon const& rhs);
 private:
-    /**
-     * Computes all intersections of the straight line segment and the polyline boundary
-     * @param segment the line segment that will be processed
-     * @return a possible empty vector containing the intersection points
-     */
-    std::vector<GeoLib::Point> getAllIntersectionPoints(
-        GeoLib::LineSegment const& segment) const;
-
-    /**
-     * from book: Computational Geometry and Computer Graphics in C++, page 119
-     * get the type of edge with respect to the given point (2d method!)
-     * @param k number of line segment
-     * @param pnt point that is edge type computed for
-     * @return a value of enum EdgeType
-     */
-    EdgeType getEdgeType(std::size_t k, MathLib::Point3d const& pnt) const;
-
     void ensureCCWOrientation ();
 
     void splitPolygonAtIntersection(

@@ -319,49 +319,6 @@ void Polyline::closePolyline()
     }
 }
 
-Location Polyline::getLocationOfPoint(std::size_t k,
-                                      MathLib::Point3d const& pnt) const
-{
-    assert(k < _ply_pnt_ids.size() - 1);
-
-    GeoLib::Point const& source(*(_ply_pnts[_ply_pnt_ids[k]]));
-    GeoLib::Point const& dest(*(_ply_pnts[_ply_pnt_ids[k + 1]]));
-    long double const a[2] = {dest[0] - source[0],
-                              dest[1] - source[1]};  // vector
-    long double const b[2] = {pnt[0] - source[0],
-                              pnt[1] - source[1]};  // vector
-
-    long double const det_2x2(a[0] * b[1] - a[1] * b[0]);
-
-    if (det_2x2 > std::numeric_limits<double>::epsilon())
-    {
-        return Location::LEFT;
-    }
-    if (std::numeric_limits<double>::epsilon() < std::abs(det_2x2))
-    {
-        return Location::RIGHT;
-    }
-    if (a[0] * b[0] < 0.0 || a[1] * b[1] < 0.0)
-    {
-        return Location::BEHIND;
-    }
-    if (a[0] * a[0] + a[1] * a[1] < b[0] * b[0] + b[1] * b[1])
-    {
-        return Location::BEYOND;
-    }
-    if (MathLib::sqrDist(pnt, *_ply_pnts[_ply_pnt_ids[k]]) <
-        pow(std::numeric_limits<double>::epsilon(), 2))
-    {
-        return Location::SOURCE;
-    }
-    if (MathLib::sqrDist(pnt, *_ply_pnts[_ply_pnt_ids[k + 1]]) <
-        std::sqrt(std::numeric_limits<double>::epsilon()))
-    {
-        return Location::DESTINATION;
-    }
-    return Location::BETWEEN;
-}
-
 double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
                                           const double epsilon_radius) const
 {
@@ -401,6 +358,11 @@ double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
         dist = -1.0;
     }
     return dist;
+}
+
+void Polyline::reverseOrientation()
+{
+    std::reverse(_ply_pnt_ids.begin(), _ply_pnt_ids.end());
 }
 
 Polyline::SegmentIterator::SegmentIterator(Polyline const& polyline,

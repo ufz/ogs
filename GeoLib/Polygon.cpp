@@ -22,8 +22,119 @@
 
 namespace GeoLib
 {
+enum class Location
+{
+    LEFT,
+    RIGHT,
+    BEYOND,
+    BEHIND,
+    BETWEEN,
+    SOURCE,
+    DESTINATION
+};
+
+/**
+ * edge classification
+ */
+enum class EdgeType
+{
+    TOUCHING,    //!< TOUCHING
+    CROSSING,    //!< CROSSING
+    INESSENTIAL  //!< INESSENTIAL
+};
+
+/**
+ * 2D method - ignores z coordinate. It calculates the location
+ * of the point relative to the line segment specified by the points source and
+ * destination. (literature reference:
+ * Computational Geometry and Computer Graphics in C++; Michael J. Laszlo)
+ * @param source the first point of the line segment
+ * @param destination the end point of the line segment
+ * @param pnt the test point
+ * @return a value of enum Location
+ */
+Location getLocationOfPoint(MathLib::Point3d const& source,
+                            MathLib::Point3d const& destination,
+                            MathLib::Point3d const& pnt)
+{
+    long double const a[2] = {destination[0] - source[0],
+                              destination[1] - source[1]};  // vector
+    long double const b[2] = {pnt[0] - source[0],
+                              pnt[1] - source[1]};  // vector
+
+    long double const det_2x2(a[0] * b[1] - a[1] * b[0]);
+    constexpr double eps = std::numeric_limits<double>::epsilon();
+
+    if (det_2x2 > eps)
+    {
+        return Location::LEFT;
+    }
+    if (eps < std::abs(det_2x2))
+    {
+        return Location::RIGHT;
+    }
+    if (a[0] * b[0] < 0.0 || a[1] * b[1] < 0.0)
+    {
+        return Location::BEHIND;
+    }
+    if (a[0] * a[0] + a[1] * a[1] < b[0] * b[0] + b[1] * b[1])
+    {
+        return Location::BEYOND;
+    }
+    if (MathLib::sqrDist(pnt, source) < pow(eps, 2))
+    {
+        return Location::SOURCE;
+    }
+    if (MathLib::sqrDist(pnt, destination) < std::sqrt(eps))
+    {
+        return Location::DESTINATION;
+    }
+    return Location::BETWEEN;
+}
+
+/**
+ * from book: Computational Geometry and Computer Graphics in C++, page 119
+ * get the type of edge with respect to the given point (2d method!)
+ * @param a first point of line segment
+ * @param b last point of line segment
+ * @param pnt point that is edge type computed for
+ * @return a value of enum EdgeType
+ */
+EdgeType getEdgeType(MathLib::Point3d const& a,
+                     MathLib::Point3d const& b,
+                     MathLib::Point3d const& pnt)
+{
+    switch (getLocationOfPoint(a, b, pnt))
+    {
+        case Location::LEFT:
+        {
+            if (a[1] < pnt[1] && pnt[1] <= b[1])
+            {
+                return EdgeType::CROSSING;
+            }
+
+            return EdgeType::INESSENTIAL;
+        }
+        case Location::RIGHT:
+        {
+            if (b[1] < pnt[1] && pnt[1] <= a[1])
+            {
+                return EdgeType::CROSSING;
+            }
+
+            return EdgeType::INESSENTIAL;
+        }
+        case Location::BETWEEN:
+        case Location::SOURCE:
+        case Location::DESTINATION:
+            return EdgeType::TOUCHING;
+        default:
+            return EdgeType::INESSENTIAL;
+    }
+}
+
 Polygon::Polygon(const Polyline& ply, bool init)
-    : Polyline(ply), _aabb(ply.getPointsVec(), ply._ply_pnt_ids)
+    : Polyline(ply), _aabb(ply.getPointsVec(), ply.getPolylinePointIDs())
 {
     if (init)
     {
@@ -69,6 +180,29 @@ bool Polygon::initialise()
     return false;
 }
 
+/**
+ * Computes all intersections of the straight line segment and the polyline
+ * boundary
+ * @param polygon the polygon the segment line segment that will be processed
+ * @param segment the line segment that will be processed
+ * @return a possible empty vector containing the intersection points
+ */
+std::vector<GeoLib::Point> getAllIntersectionPoints(
+    Polygon const& polygon, GeoLib::LineSegment const& segment)
+{
+    std::vector<GeoLib::Point> intersections;
+    GeoLib::Point s;
+    for (auto&& seg_it : polygon)
+    {
+        if (GeoLib::lineSegmentIntersect(seg_it, segment, s))
+        {
+            intersections.push_back(s);
+        }
+    }
+
+    return intersections;
+}
+
 bool Polygon::isPntInPolygon(MathLib::Point3d const& pnt) const
 {
     auto const& min_aabb_pnt(_aabb.getMinPoint());
@@ -91,7 +225,7 @@ bool Polygon::isPntInPolygon(MathLib::Point3d const& pnt) const
                 ((*(getPoint(k + 1)))[1] <= pnt[1] &&
                  pnt[1] <= (*(getPoint(k)))[1]))
             {
-                switch (getEdgeType(k, pnt))
+                switch (getEdgeType(*getPoint(k), *getPoint(k + 1), pnt))
                 {
                     case EdgeType::TOUCHING:
                         return true;
@@ -126,25 +260,9 @@ bool Polygon::isPntInPolygon(MathLib::Point3d const& pnt) const
     return false;
 }
 
-std::vector<GeoLib::Point> Polygon::getAllIntersectionPoints(
-    GeoLib::LineSegment const& segment) const
-{
-    std::vector<GeoLib::Point> intersections;
-    GeoLib::Point s;
-    for (auto&& seg_it : *this)
-    {
-        if (GeoLib::lineSegmentIntersect(seg_it, segment, s))
-        {
-            intersections.push_back(s);
-        }
-    }
-
-    return intersections;
-}
-
 bool Polygon::containsSegment(GeoLib::LineSegment const& segment) const
 {
-    std::vector<GeoLib::Point> s(getAllIntersectionPoints(segment));
+    std::vector<GeoLib::Point> s(getAllIntersectionPoints(*this, segment));
 
     GeoLib::Point const& a{segment.getBeginPoint()};
     GeoLib::Point const& b{segment.getEndPoint()};
@@ -280,41 +398,6 @@ bool Polygon::getNextIntersectionPointPolygonLine(
     return false;
 }
 
-EdgeType Polygon::getEdgeType(std::size_t k, MathLib::Point3d const& pnt) const
-{
-    switch (getLocationOfPoint(k, pnt))
-    {
-        case Location::LEFT:
-        {
-            const GeoLib::Point& v(*(getPoint(k)));
-            const GeoLib::Point& w(*(getPoint(k + 1)));
-            if (v[1] < pnt[1] && pnt[1] <= w[1])
-            {
-                return EdgeType::CROSSING;
-            }
-
-            return EdgeType::INESSENTIAL;
-        }
-        case Location::RIGHT:
-        {
-            const GeoLib::Point& v(*(getPoint(k)));
-            const GeoLib::Point& w(*(getPoint(k + 1)));
-            if (w[1] < pnt[1] && pnt[1] <= v[1])
-            {
-                return EdgeType::CROSSING;
-            }
-
-            return EdgeType::INESSENTIAL;
-        }
-        case Location::BETWEEN:
-        case Location::SOURCE:
-        case Location::DESTINATION:
-            return EdgeType::TOUCHING;
-        default:
-            return EdgeType::INESSENTIAL;
-    }
-}
-
 void Polygon::ensureCCWOrientation()
 {
     // *** pre processing: rotate points to xy-plan
@@ -380,14 +463,7 @@ void Polygon::ensureCCWOrientation()
 
     if (orient != GeoLib::CCW)
     {
-        // switch orientation
-        std::size_t tmp_n_pnts(n_pnts);
-        tmp_n_pnts++;  // include last point of polygon (which is identical to
-                       // the first)
-        for (std::size_t k(0); k < tmp_n_pnts / 2; k++)
-        {
-            std::swap(_ply_pnt_ids[k], _ply_pnt_ids[tmp_n_pnts - 1 - k]);
-        }
+        reverseOrientation();
     }
 
     for (std::size_t k(0); k < n_pnts; k++)
