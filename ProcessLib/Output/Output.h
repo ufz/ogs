@@ -23,11 +23,6 @@ namespace ProcessLib
 {
 class Process;
 
-/// Private struct that contains certain properties of output files.
-///
-/// Defined entirely in the cpp file. Not meant for reuse elsewhere.
-struct OutputFile;
-
 /// Writes output to the given \c file_name using the specified file format.
 ///
 /// See Output::_output_file_data_mode documentation for the data_mode
@@ -52,6 +47,42 @@ public:
 
         const int repeat;      //!< Apply \c each_steps \c repeat times.
         const int each_steps;  //!< Do output every \c each_steps timestep.
+    };
+
+    struct OutputFile
+    {
+        OutputFile(std::string const& directory, OutputType const type,
+                   std::string const& prefix, std::string const& suffix,
+                   std::string const& mesh_name, int const timestep,
+                   double const t, int const iteration, int const data_mode_,
+                   bool const compression_,
+                   std::set<std::string> const& outputnames,
+                   unsigned int const n_files);
+
+        std::string const name;
+        std::string const path;
+        std::string const directory_;
+        std::string const output_file_prefix_;
+        std::string const output_file_suffix_;
+        OutputType const type;
+
+        //! Chooses vtk's data mode for output following the enumeration given
+        /// in the vtkXMLWriter: {Ascii, Binary, Appended}.  See vtkXMLWriter
+        /// documentation
+        /// http://www.vtk.org/doc/nightly/html/classvtkXMLWriter.html
+        int const data_mode;
+
+        //! Enables or disables zlib-compression of the output files.
+        bool const compression;
+        std::set<std::string> outputnames;
+        unsigned int n_files;
+
+        static std::string constructFilename(OutputType const type,
+                                             std::string prefix,
+                                             std::string suffix,
+                                             std::string mesh_name,
+                                             int const timestep, double const t,
+                                             int const iteration);
     };
 
 public:
