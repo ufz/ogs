@@ -201,11 +201,11 @@ int CsvInterface::readPoints(std::ifstream& in, char delim,
             continue;
         }
 
-        std::array<double, 3> point{};
         it = fields.begin();
         try
         {
             std::advance(it, column_advance[0]);
+            std::array<double, 3> point{};
             point[order[0]] = std::stod(*it);
             std::advance(it, column_advance[1]);
             point[order[1]] = std::stod(*it);

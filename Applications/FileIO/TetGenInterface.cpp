@@ -161,11 +161,11 @@ bool TetGenInterface::parseSmeshFacets(
                 "meshes.");
             return false;
         }
-        std::vector<std::size_t> point_ids;
         const std::size_t point_field_size =
             (_boundary_markers) ? nPoints + 1 : nPoints;
         if (point_fields.size() > point_field_size)
         {
+            std::vector<std::size_t> point_ids;
             for (std::size_t j(0); j < nPoints; ++j)
             {
                 point_ids.push_back(
