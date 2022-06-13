@@ -142,12 +142,16 @@ bool VtuInterface::writeToFile(std::filesystem::path const& file_path)
     MPI_Initialized(&mpi_init);
     if (mpi_init == 1)
     {
+        int mpi_size;
+        MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
+        if (mpi_size == 1)
+        {
+            return writeVTU<vtkXMLUnstructuredGridWriter>(file_path.string());
+        }
         auto const vtu_file_name =
             getVtuFileNameForPetscOutputWithoutExtension(file_path.string());
         int rank;
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-        int mpi_size;
-        MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
         return writeVTU<vtkXMLPUnstructuredGridWriter>(vtu_file_name + ".pvtu",
                                                        mpi_size, rank);
     }

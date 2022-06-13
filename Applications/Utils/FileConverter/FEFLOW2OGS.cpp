@@ -13,6 +13,10 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 // BaseLib
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
@@ -57,6 +61,10 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     // *** read mesh
     INFO("Reading {:s}.", feflow_mesh_arg.getValue());
 #ifndef WIN32
@@ -72,6 +80,9 @@ int main(int argc, char* argv[])
     if (mesh == nullptr)
     {
         INFO("Could not read mesh from {:s}.", feflow_mesh_arg.getValue());
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 #ifndef WIN32
@@ -87,5 +98,8 @@ int main(int argc, char* argv[])
     INFO("Writing {:s}.", ogs_mesh_fname);
     MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_fname);
     INFO("\tDone.");
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

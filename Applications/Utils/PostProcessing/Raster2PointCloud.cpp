@@ -13,6 +13,9 @@
 
 // ThirdParty
 #include <tclap/CmdLine.h>
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
 #include <vtkPolyDataAlgorithm.h>
 #include <vtkSmartPointer.h>
 #include <vtkXMLPolyDataWriter.h>
@@ -76,6 +79,10 @@ int main(int argc, char* argv[])
         true, "", "input file name");
     cmd.add(input_arg);
     cmd.parse(argc, argv);
+
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
 
     std::string const input_name = input_arg.getValue().c_str();
     std::string const output_name = output_arg.getValue().c_str();
@@ -154,5 +161,8 @@ int main(int argc, char* argv[])
         }
     }
     std::cout << "done." << std::endl;
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

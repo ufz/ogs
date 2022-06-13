@@ -63,9 +63,9 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_ts_19_t_0_100000_0.vtu pressure pressure 1e-7 5e-9
-    tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_ts_19_t_0_100000_0.vtu temperature temperature 1e-7 5e-9
-    tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_ts_19_t_0_100000_0.vtu v_mass_frac v_mass_frac 1e-7 5e-9
+    tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_ts_19_t_0.100000.vtu pressure pressure 1e-7 5e-9
+    tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_ts_19_t_0.100000.vtu temperature temperature 1e-7 5e-9
+    tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_ts_19_t_0.100000.vtu v_mass_frac v_mass_frac 1e-7 5e-9
 #        tes_zeolite_discharge_small_ts_19_t_0.100000.vtu solid_density solid_density 1e-7 5e-9
 )
 
@@ -80,9 +80,9 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    tes_zeolite_discharge_large_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_ts_28_t_1_000000_0.vtu pressure pressure 1e-8 1e-8
-    tes_zeolite_discharge_large_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_ts_28_t_1_000000_0.vtu temperature temperature 1e-8 1e-8
-    tes_zeolite_discharge_large_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_ts_28_t_1_000000_0.vtu v_mass_frac v_mass_frac 1e-8 1e-8
+    tes_zeolite_discharge_large_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_ts_28_t_1.000000.vtu pressure pressure 1e-8 1e-8
+    tes_zeolite_discharge_large_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_ts_28_t_1.000000.vtu temperature temperature 1e-8 1e-8
+    tes_zeolite_discharge_large_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_ts_28_t_1.000000.vtu v_mass_frac v_mass_frac 1e-8 1e-8
 #        tes_zeolite_discharge_large_ts_28_t_1_0.vtu solid_density solid_density 1e-8 1e-8
 )
 

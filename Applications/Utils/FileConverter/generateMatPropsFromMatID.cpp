@@ -14,6 +14,10 @@
 
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include <memory>
 
 #include "BaseLib/FileTools.h"
@@ -45,6 +49,10 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     // read mesh
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
@@ -52,6 +60,9 @@ int main(int argc, char* argv[])
     if (!mesh)
     {
         INFO("Could not read mesh from file '{:s}'.", mesh_arg.getValue());
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -80,6 +91,9 @@ int main(int argc, char* argv[])
     else
     {
         ERR("Could not create property '{:s}' file.", new_matname);
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -91,5 +105,8 @@ int main(int argc, char* argv[])
 
     INFO("New files '{:s}' and '{:s}' written.", new_mshname, new_matname);
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

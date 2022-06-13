@@ -12,9 +12,13 @@
  *
  */
 
-// STL
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
+// STL
 #include <fstream>
 #include <vector>
 
@@ -181,6 +185,10 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     std::string fname(shapefile_arg.getValue());
 
     int shape_type;
@@ -199,6 +207,9 @@ int main(int argc, char* argv[])
             ERR("Shape file contains {:d} polylines.", number_of_elements);
             ERR("This programme only handles only files containing points.");
             SHPClose(hSHP);
+#ifdef USE_PETSC
+            MPI_Finalize();
+#endif
             return EXIT_SUCCESS;
         }
         SHPClose(hSHP);
@@ -293,5 +304,8 @@ int main(int argc, char* argv[])
         ERR("Could not open the database file.");
     }
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

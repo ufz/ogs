@@ -13,6 +13,10 @@
 
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include <memory>
 #include <string>
 
@@ -48,10 +52,17 @@ int main(int argc, char* argv[])
     cmd.add(use_ascii_arg);
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     std::unique_ptr<MeshLib::Mesh const> mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
     if (!mesh)
     {
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
     INFO("Mesh read: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
@@ -62,5 +73,8 @@ int main(int argc, char* argv[])
 
     MeshLib::IO::writeVtu(*mesh, mesh_out.getValue(), data_mode);
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

@@ -9,6 +9,10 @@
 
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include <array>
 #include <memory>
 #include <string>
@@ -110,10 +114,17 @@ int main(int argc, char* argv[])
     cmd.add(new_order_arg);
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     const std::string str_order = new_order_arg.getValue();
     std::array<int, 3> new_order = {{}};
     if (!parseNewOrder(str_order, new_order))
     {
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -121,6 +132,9 @@ int main(int argc, char* argv[])
         MeshLib::IO::readMeshFromFile(input_arg.getValue()));
     if (!mesh)
     {
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -138,5 +152,8 @@ int main(int argc, char* argv[])
     INFO("Save the new mesh into a file");
     MeshLib::IO::writeMeshToFile(*mesh, output_arg.getValue());
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

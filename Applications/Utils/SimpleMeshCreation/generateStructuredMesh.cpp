@@ -9,6 +9,10 @@
 
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include <algorithm>
 #include <memory>
 #include <string>
@@ -157,6 +161,9 @@ int main(int argc, char* argv[])
 
     // parse arguments
     cmd.parse(argc, argv);
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
     const std::string eleTypeName(eleTypeArg.getValue());
     const MeshLib::MeshElemType eleType =
         MeshLib::String2MeshElemType(eleTypeName);
@@ -187,6 +194,9 @@ int main(int argc, char* argv[])
     if (!isLengthSet)
     {
         ERR("Missing input: Length information is not provided at all.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
     for (unsigned i = 0; i < 3; i++)
@@ -196,6 +206,9 @@ int main(int argc, char* argv[])
             ERR("Missing input: Length for dimension [{:d}] is required but "
                 "missing.",
                 i);
+#ifdef USE_PETSC
+            MPI_Finalize();
+#endif
             return EXIT_FAILURE;
         }
     }
@@ -291,5 +304,8 @@ int main(int argc, char* argv[])
             *(mesh.get()), std::filesystem::path(mesh_out.getValue()));
     }
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

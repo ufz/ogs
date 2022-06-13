@@ -14,6 +14,10 @@
 // STL
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include <string>
 
 #include "InfoLib/GitInfo.h"
@@ -43,6 +47,10 @@ int main(int argc, char* argv[])
     cmd.add(mesh_out);
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     MeshLib::Mesh* mesh(
         MeshLib::IO::VtuInterface::readVTUFile(mesh_in.getValue()));
     INFO("Mesh read: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
@@ -52,5 +60,8 @@ int main(int argc, char* argv[])
     meshIO.setMesh(mesh);
     BaseLib::IO::writeStringToFile(meshIO.writeToString(), mesh_out.getValue());
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

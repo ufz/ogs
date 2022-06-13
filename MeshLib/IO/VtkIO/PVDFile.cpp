@@ -14,6 +14,10 @@
 #include <iomanip>
 #include <limits>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include "BaseLib/Error.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 
@@ -24,10 +28,19 @@ namespace IO
 void PVDFile::addVTUFile(const std::string& vtu_fname, double timestep)
 {
 #ifdef USE_PETSC
-    auto const vtu_file_name =
-        getVtuFileNameForPetscOutputWithoutExtension(vtu_fname);
+    int mpi_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
+    if (mpi_size == 1)
+    {
+        _datasets.emplace_back(timestep, vtu_fname);
+    }
+    else
+    {
+        auto const vtu_file_name =
+            getVtuFileNameForPetscOutputWithoutExtension(vtu_fname);
 
-    _datasets.emplace_back(timestep, vtu_file_name + ".pvtu");
+        _datasets.emplace_back(timestep, vtu_file_name + ".pvtu");
+    }
 #else
     _datasets.emplace_back(timestep, vtu_fname);
 #endif

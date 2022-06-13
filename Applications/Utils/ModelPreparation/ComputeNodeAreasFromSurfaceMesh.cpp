@@ -11,6 +11,10 @@
 
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include <fstream>
 #include <memory>
 #include <numeric>
@@ -85,6 +89,10 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
     INFO("Mesh read: {:d} nodes, {:d} elements.",
@@ -103,6 +111,9 @@ int main(int argc, char* argv[])
         if (!orig_node_ids)
         {
             ERR("Fatal error: could not create property.");
+#ifdef USE_PETSC
+            MPI_Finalize();
+#endif
             return EXIT_FAILURE;
         }
         orig_node_ids->resize(surface_mesh->getNumberOfNodes());
@@ -136,5 +147,8 @@ int main(int argc, char* argv[])
     writeToFile(id_and_area_fname, csv_fname, ids_and_areas,
                 surface_mesh->getNodes());
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

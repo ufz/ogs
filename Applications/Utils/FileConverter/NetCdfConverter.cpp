@@ -7,9 +7,13 @@
  *              http://www.opengeosys.org/project/license
  */
 
-// STL
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
+// STL
 #include <cctype>
 #include <iostream>
 #include <limits>
@@ -735,11 +739,18 @@ int main(int argc, char* argv[])
     cmd.add(arg_input);
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     NcFile dataset(arg_input.getValue().c_str(), NcFile::read);
 
     if (dataset.isNull())
     {
         ERR("Error opening file.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return -1;
     }
 
@@ -749,6 +760,9 @@ int main(int argc, char* argv[])
     {
         ERR("Only one output format can be specified (single-file, multi-file, "
             "or images)");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -768,6 +782,9 @@ int main(int argc, char* argv[])
     if (var.isNull())
     {
         ERR("Variable \"{:s}\" not found in file.", arg_varname.getValue());
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -778,7 +795,12 @@ int main(int argc, char* argv[])
         is_time_dep = arg_dim_time.isSet();
         if (!assignDimParams(var, dim_idx_map, arg_dim_time, arg_dim1, arg_dim2,
                              arg_dim3))
+        {
+#ifdef USE_PETSC
+            MPI_Finalize();
+#endif
             return EXIT_FAILURE;
+        }
     }
     else
     {
@@ -832,8 +854,16 @@ int main(int argc, char* argv[])
 
     if (!convert(dataset, var, output_name, dim_idx_map, is_time_dep,
                  time_bounds, output, elem_type))
+    {
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
+    }
 
     std::cout << "Conversion finished successfully.\n";
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

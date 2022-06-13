@@ -15,6 +15,10 @@
 #include <cstdlib>
 #include <vector>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include "Applications/FileIO/readGeometryFromFile.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polygon.h"
@@ -94,6 +98,10 @@ int main(int argc, char* argv[])
     cmd.add(gmsh_path_arg);
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     // *** read geometry
     GeoLib::GEOObjects geometries;
     FileIO::readGeometryFromFile(geometry_fname.getValue(), geometries,
@@ -108,6 +116,9 @@ int main(int argc, char* argv[])
     {
         ERR("Could not get vector of polylines out of geometry '{:s}'.",
             geo_name);
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -117,6 +128,9 @@ int main(int argc, char* argv[])
     if (!ply)
     {
         ERR("Polyline '{:s}' not found.", polygon_name_arg.getValue());
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -125,6 +139,9 @@ int main(int argc, char* argv[])
     {
         ERR("Polyline '{:s}' is not closed, i.e. does not describe a region.",
             polygon_name_arg.getValue());
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -136,6 +153,9 @@ int main(int argc, char* argv[])
     if (!mesh)
     {
         // error message written already by readMeshFromFile
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
     std::string const& property_name(property_name_arg.getValue());
@@ -165,5 +185,8 @@ int main(int argc, char* argv[])
 
     MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

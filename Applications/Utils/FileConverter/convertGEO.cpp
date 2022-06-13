@@ -9,6 +9,10 @@
 
 #include <tclap/CmdLine.h>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include <string>
 #include <vector>
 
@@ -46,6 +50,10 @@ int main(int argc, char* argv[])
     cmd.add(gmsh_path_arg);
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     GeoLib::GEOObjects geoObjects;
     FileIO::readGeometryFromFile(argInputFileName.getValue(), geoObjects,
                                  gmsh_path_arg.getValue());
@@ -55,5 +63,8 @@ int main(int argc, char* argv[])
     FileIO::writeGeometryToFile(geo_names[0], geoObjects,
                                 argOutputFileName.getValue());
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }
