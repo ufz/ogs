@@ -82,7 +82,19 @@ std::unique_ptr<NumericalStabilization> createNumericalStabilization(
             tuning_parameter,
             MeshLib::getMaxiumElementEdgeLengths(mesh.getElements()));
     }
+    else if (type.compare("FullUpwind") == 0)
+    {
+        INFO("Numerical stabilization of {:s} is used", type);
+
+        auto const stabilization_cutoff_velocity_ptr =
+            //! \ogs_file_param{prj__processes__process__numerical_stabilization__FullUpwind__cutoff_velocity}
+            stabilization_config->getConfigParameterOptional<double>(
+                "cutoff_velocity");
+
+        return std::make_unique<FullUpwind>(*stabilization_cutoff_velocity_ptr);
+    }
 
     OGS_FATAL("The stabilization type {:s} is not available.", type);
 }
+
 }  // namespace NumLib

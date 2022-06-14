@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <Eigen/Eigen>
 #include <memory>
 #include <vector>
 
@@ -96,6 +97,12 @@ private:
     /// Element sizes, which are represented by the maximum element edge
     /// lengths.
     std::vector<double> const element_sizes_;
+};
+
+class FullUpwind final : public NumericalStabilization
+{
+public:
+    using NumericalStabilization::NumericalStabilization;
 };
 
 std::unique_ptr<NumericalStabilization> createNumericalStabilization(
