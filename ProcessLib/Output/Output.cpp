@@ -70,7 +70,7 @@ void addBulkMeshNodePropertyToSubMesh(MeshLib::Mesh const& bulk_mesh,
 namespace
 {
 //! Converts a vtkXMLWriter's data mode string to an int. See
-/// Output::_output_file_data_mode.
+/// Output::OutputFile::data_mode.
 int convertVtkDataMode(std::string const& data_mode)
 {
     if (data_mode == "Ascii")
@@ -131,17 +131,18 @@ void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
 }
 
 void outputMeshVtk(ProcessLib::Output::OutputFile const& output_file,
-                   MeshLib::IO::PVDFile& pvd_file,
-                   MeshLib::Mesh const& mesh,
-                   double const t)
+                   MeshLib::IO::PVDFile& pvd_file, MeshLib::Mesh const& mesh,
+                   double const t, int const timestep, int const iteration)
 {
+    auto const name =
+        output_file.constructFilename(mesh.getName(), timestep, t, iteration);
     if (output_file.type == ProcessLib::OutputType::vtk)
     {
-        pvd_file.addVTUFile(output_file.name, t);
+        pvd_file.addVTUFile(name, t);
     }
 
-    outputMeshVtk(output_file.path, mesh, output_file.compression,
-                  output_file.data_mode);
+    auto const path = BaseLib::joinPaths(output_file.directory, name);
+    outputMeshVtk(path, mesh, output_file.compression, output_file.data_mode);
 }
 }  // namespace
 
@@ -193,18 +194,13 @@ bool Output::isOutputProcess(const int process_id, const Process& process) const
 
 Output::OutputFile::OutputFile(std::string const& directory,
                                OutputType const type, std::string const& prefix,
-                               std::string const& suffix,
-                               std::string const& mesh_name, int const timestep,
-                               double const t, int const iteration,
-                               int const data_mode_, bool const compression_,
+                               std::string const& suffix, int const data_mode_,
+                               bool const compression_,
                                std::set<std::string> const& outputnames,
                                unsigned int const n_files)
-    : name(constructFilename(type, prefix, suffix, mesh_name, timestep, t,
-                             iteration)),
-      path(BaseLib::joinPaths(directory, name)),
-      directory_(directory),
-      output_file_prefix_(prefix),
-      output_file_suffix_(suffix),
+    : directory(directory),
+      prefix(prefix),
+      suffix(suffix),
       type(type),
       data_mode(data_mode_),
       compression(compression_),
@@ -213,10 +209,10 @@ Output::OutputFile::OutputFile(std::string const& directory,
 {
 }
 
-std::string Output::OutputFile::constructFilename(
-    OutputType const type, std::string prefix, std::string suffix,
-    std::string mesh_name, int const timestep, double const t,
-    int const iteration)
+std::string Output::OutputFile::constructFilename(std::string mesh_name,
+                                                  int const timestep,
+                                                  double const t,
+                                                  int const iteration) const
 {
     std::map<OutputType, std::string> filetype_to_extension = {
         {OutputType::vtk, "vtu"}, {OutputType::xdmf, "xdmf"}};
@@ -249,17 +245,9 @@ Output::Output(std::string directory, OutputType file_type,
                OutputDataSpecification&& output_data_specification,
                std::vector<std::string>&& mesh_names_for_output,
                std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
-    : output_file_(directory, file_type, file_prefix, file_suffix,
-                   mesh_names_for_output[0], 0, 0.0, 0,
-                   convertVtkDataMode(data_mode), compress_output,
-                   output_data_specification.output_variables, 1),
-      _output_directory(std::move(directory)),
-      _output_file_type(file_type),
-      _output_file_prefix(std::move(file_prefix)),
-      _output_file_suffix(std::move(file_suffix)),
-      _output_file_compression(compress_output),
-      _n_files(n_files),
-      _output_file_data_mode(convertVtkDataMode(data_mode)),
+    : output_file(directory, file_type, file_prefix, file_suffix,
+                  convertVtkDataMode(data_mode), compress_output,
+                  output_data_specification.output_variables, n_files),
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
       _repeats_each_steps(std::move(repeats_each_steps)),
       _fixed_output_times(std::move(fixed_output_times)),
@@ -285,7 +273,7 @@ void Output::addProcess(ProcessLib::Process const& process)
     for (auto const& mesh_output_name : _mesh_names_for_output)
     {
         auto const filename = constructPVDName(
-            _output_directory, _output_file_prefix, mesh_output_name);
+            output_file.directory, output_file.prefix, mesh_output_name);
         _process_to_pvd_file.emplace(std::piecewise_construct,
                                      std::forward_as_tuple(&process),
                                      std::forward_as_tuple(filename));
@@ -298,7 +286,7 @@ MeshLib::IO::PVDFile& Output::findPVDFile(
     std::string const& mesh_name_for_output)
 {
     auto const filename = constructPVDName(
-        _output_directory, _output_file_prefix, mesh_name_for_output);
+        output_file.directory, output_file.prefix, mesh_name_for_output);
     auto range = _process_to_pvd_file.equal_range(&process);
     int counter = 0;
     MeshLib::IO::PVDFile* pvd_file = nullptr;
@@ -326,16 +314,17 @@ MeshLib::IO::PVDFile& Output::findPVDFile(
 
 void Output::outputMeshXdmf(
     OutputFile const& output_file,
-    std::vector<std::reference_wrapper<const MeshLib::Mesh>>
-        meshes,
-    int const timestep,
-    double const t)
+    std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+    int const timestep, double const t, int const iteration)
 {
     // \TODO (tm) Refactor to a dedicated VTKOutput and XdmfOutput
     // The XdmfOutput will create on construction the XdmfHdfWriter
     if (!_mesh_xdmf_hdf_writer)
     {
-        std::filesystem::path path(output_file.path);
+        auto name = output_file.constructFilename(meshes[0].get().getName(),
+                                                  timestep, t, iteration);
+        std::filesystem::path path(
+            BaseLib::joinPaths(output_file.directory, name));
         _mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
             std::move(meshes), path, timestep, t,
             _output_data_specification.output_variables,
@@ -352,31 +341,31 @@ void Output::outputMeshes(
     const double t, const int iteration,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes)
 {
-    if (_output_file_type == ProcessLib::OutputType::vtk)
+    if (output_file.type == ProcessLib::OutputType::vtk)
     {
         for (auto const& mesh : meshes)
         {
             OutputFile const file(
-                _output_directory, _output_file_type, _output_file_prefix,
-                _output_file_suffix, mesh.get().getName(), timestep, t,
-                iteration, _output_file_data_mode, _output_file_compression,
+                output_file.directory, output_file.type, output_file.prefix,
+                output_file.suffix, output_file.data_mode,
+                output_file.compression,
                 _output_data_specification.output_variables, 1);
 
             auto& pvd_file =
                 findPVDFile(process, process_id, mesh.get().getName());
-            ::outputMeshVtk(file, pvd_file, mesh, t);
+            ::outputMeshVtk(file, pvd_file, mesh, t, timestep, iteration);
         }
     }
-    else if (_output_file_type == ProcessLib::OutputType::xdmf)
+    else if (output_file.type == ProcessLib::OutputType::xdmf)
     {
         std::string name = meshes[0].get().getName();
         OutputFile const file(
-            _output_directory, _output_file_type, _output_file_prefix, "", name,
-            timestep, t, iteration, _output_file_data_mode,
-            _output_file_compression,
-            _output_data_specification.output_variables, _n_files);
+            output_file.directory, output_file.type, output_file.prefix, "",
+            output_file.data_mode, output_file.compression,
+            _output_data_specification.output_variables, output_file.n_files);
 
-        outputMeshXdmf(std::move(file), std::move(meshes), timestep, t);
+        outputMeshXdmf(std::move(file), std::move(meshes), timestep, t,
+                       iteration);
     }
 }
 
@@ -480,7 +469,7 @@ void Output::doOutput(Process const& process,
     // Note: last time step may be output twice: here and in
     // doOutputLastTimestep() which throws a warning.
     InSituLib::CoProcess(process.getMesh(), t, timestep, false,
-                         _output_directory);
+                         output_file.directory);
 #endif
 }
 
@@ -497,7 +486,7 @@ void Output::doOutputLastTimestep(Process const& process,
     }
 #ifdef USE_INSITU
     InSituLib::CoProcess(process.getMesh(), t, timestep, true,
-                         _output_directory);
+                         output_file.directory);
 #endif
 }
 
@@ -530,16 +519,15 @@ void Output::doOutputNonlinearIteration(Process const& process,
     // Only check whether a process data is available for output.
     findPVDFile(process, process_id, process.getMesh().getName());
 
-    std::string const output_file_name = OutputFile::constructFilename(
-        _output_file_type, _output_file_prefix, _output_file_suffix,
+    std::string const output_file_name = output_file.constructFilename(
         process.getMesh().getName(), timestep, t, iteration);
 
     std::string const output_file_path =
-        BaseLib::joinPaths(_output_directory, output_file_name);
+        BaseLib::joinPaths(output_file.directory, output_file_name);
 
     DBUG("output iteration results to {:s}", output_file_path);
-    outputMeshVtk(output_file_path, process.getMesh(), _output_file_compression,
-                  _output_file_data_mode);
+    outputMeshVtk(output_file_path, process.getMesh(), output_file.compression,
+                  output_file.data_mode);
     INFO("[time] Output took {:g} s.", time_output.elapsed());
 }
 }  // namespace ProcessLib

@@ -53,17 +53,13 @@ public:
     {
         OutputFile(std::string const& directory, OutputType const type,
                    std::string const& prefix, std::string const& suffix,
-                   std::string const& mesh_name, int const timestep,
-                   double const t, int const iteration, int const data_mode_,
-                   bool const compression_,
+                   int const data_mode_, bool const compression_,
                    std::set<std::string> const& outputnames,
                    unsigned int const n_files);
 
-        std::string const name;
-        std::string const path;
-        std::string const directory_;
-        std::string const output_file_prefix_;
-        std::string const output_file_suffix_;
+        std::string const directory;
+        std::string const prefix;
+        std::string const suffix;
         OutputType const type;
 
         //! Chooses vtk's data mode for output following the enumeration given
@@ -74,15 +70,14 @@ public:
 
         //! Enables or disables zlib-compression of the output files.
         bool const compression;
-        std::set<std::string> outputnames;
-        unsigned int n_files;
 
-        static std::string constructFilename(OutputType const type,
-                                             std::string prefix,
-                                             std::string suffix,
-                                             std::string mesh_name,
-                                             int const timestep, double const t,
-                                             int const iteration);
+        std::set<std::string> outputnames;
+        //! Specifies the number of hdf5 output files.
+        unsigned int const n_files;
+
+        std::string constructFilename(std::string mesh_name, int const timestep,
+                                      double const t,
+                                      int const iteration) const;
     };
 
 public:
@@ -134,11 +129,10 @@ public:
     }
 
 private:
-    void outputMeshXdmf(OutputFile const& output_file,
-                        std::vector<std::reference_wrapper<const MeshLib::Mesh>>
-                            meshes,
-                        int const timestep,
-                        double const t);
+    void outputMeshXdmf(
+        OutputFile const& output_file,
+        std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+        int const timestep, double const t, int const iteration);
 
     /**
      * Get the address of a PVDFile corresponding to the given process.
@@ -171,21 +165,8 @@ private:
 
     std::unique_ptr<MeshLib::IO::XdmfHdfWriter> _mesh_xdmf_hdf_writer;
 
-    OutputFile output_file_;
-    std::string const _output_directory;
-    OutputType const _output_file_type;
-    std::string const _output_file_prefix;
-    std::string const _output_file_suffix;
+    OutputFile output_file;
 
-    //! Enables or disables zlib-compression of the output files.
-    bool const _output_file_compression;
-    //! Specifies the number of hdf5 output files.
-    unsigned int const _n_files;
-
-    //! Chooses vtk's data mode for output following the enumeration given in
-    /// the vtkXMLWriter: {Ascii, Binary, Appended}.  See vtkXMLWriter
-    /// documentation http://www.vtk.org/doc/nightly/html/classvtkXMLWriter.html
-    int const _output_file_data_mode;
     bool const _output_nonlinear_iteration_results;
 
     //! Describes after which timesteps to write output.
