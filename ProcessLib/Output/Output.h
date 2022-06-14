@@ -171,6 +171,7 @@ private:
 
     std::unique_ptr<MeshLib::IO::XdmfHdfWriter> _mesh_xdmf_hdf_writer;
 
+    OutputFile output_file_;
     std::string const _output_directory;
     OutputType const _output_file_type;
     std::string const _output_file_prefix;
