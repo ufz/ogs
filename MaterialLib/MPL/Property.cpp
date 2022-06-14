@@ -141,6 +141,13 @@ PropertyDataType Property::d2Value(VariableArray const& /*variable_array*/,
     return 0.0;
 }
 
+/// Default implementation:
+void Property::setProperties(
+    std::vector<std::unique_ptr<Phase>> const& /*phases*/)
+{
+    // empty
+}
+
 std::string Property::description() const
 {
     return "property '" + name_ + "' defined for " +

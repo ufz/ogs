@@ -1,3 +1,9 @@
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE Parabolic/T/1D_freezing_column_Stefan/Stefan_problem.prj RUNTIME 2)
+    OgsTest(PROJECTFILE Parabolic/T/1D_freezing_column_Stefan/Stefan_problem_homogen.prj RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/T/2D_freezing_disk/circle_disk.prj RUNTIME 2)
+endif()
+
 AddTest(
         NAME 1D_HeatConduction_dirichlet
         PATH Parabolic/T/1D_dirichlet

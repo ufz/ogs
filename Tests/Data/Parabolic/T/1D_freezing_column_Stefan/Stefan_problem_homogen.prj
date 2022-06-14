@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--units: kg, m, s, K and derived units: N, Pa=N/m�, Da=m� -->
+<OpenGeoSysProject>
+    <meshes>
+        <mesh>mesh1FE.vtu</mesh>
+        <mesh>mesh1FE_sub.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>HeatConduction</name>
+            <type>HEAT_CONDUCTION</type>
+            <integration_order>2</integration_order>
+            <process_variables>
+                <process_variable>temperature</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="heat_flux" output_name="heat_flux"/>
+            </secondary_variables>
+            <jacobian_assembler>
+                <type>CentralDifferences</type>
+            </jacobian_assembler>
+        </process>
+    </processes>
+    <media>
+        <medium>
+           <phases>
+                <phase>
+		                <!-- Pore water phase -->
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>0</value> <!-- W/m/K-->
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>4186</value> <!-- J/kg/K-->
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1000</value> <!--kg/m�-->
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+		                <!-- Pore ice phase -->
+                    <type>FrozenLiquid</type>
+                    <properties>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>0</value> <!-- W/m/K-->
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>2052</value> <!-- J/kg/K-->
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>900</value> <!--kg/m�-->
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+		                <!-- Porous solid phase -->
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>0</value> <!-- W/m/K-->
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>0</value> <!-- J/kg/K-->
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>0</value> <!--kg/m�-->
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>1.0</value> <!--no porous solid present-->
+                </property>
+                <property>
+                    <name>volume_fraction</name>
+                    <type>TemperatureDependentFraction</type>
+                    <steepness>7</steepness> <!-- 1/K -->
+                    <characteristic_temperature>273.15</characteristic_temperature> <!-- K -->
+                </property>
+                <property>
+                    <name>density</name>
+                    <type>Constant</type>
+                    <value>1000</value> <!--kg/m�-->
+                    <!--<type>VolumeFractionAverage</type>-->
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>VolumeFractionAverage</type>
+                </property>
+                <property>
+                    <name>specific_heat_capacity</name>
+                    <type>SpecificHeatCapacityWithLatentHeat</type>
+                    <specific_latent_heat>700000</specific_latent_heat> <!-- J/kg-->
+                </property>
+            </properties>
+        </medium>
+    </media>
+    <parameters>
+        <parameter>
+            <name>T0</name>
+            <type>Constant</type>
+            <value>272.15</value>
+        </parameter>
+        <parameter>
+            <name>HeatSource</name>
+            <type>Constant</type>
+            <value>1</value> <!-- W/m�-->
+        </parameter>
+    </parameters>
+    <process_variables>
+        <process_variable>
+            <name>temperature</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>T0</initial_condition>
+            <boundary_conditions>
+                <!--natural boundary condition at all boundaries, i.e. no flow, i.e. zero heat flux-->
+            </boundary_conditions>
+            <source_terms>
+                <source_term>
+                    <mesh>mesh1FE_sub</mesh>
+                    <type>Volumetric</type>
+                    <parameter>HeatSource</parameter>
+                </source_term>
+            </source_terms>
+        </process_variable>
+    </process_variables>
+    <time_loop>
+        <processes>
+            <process ref="HeatConduction">
+                <!--<nonlinear_solver>basic_newton</nonlinear_solver>-->
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1.e-6</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>700e6</t_end> <!--s-->
+                    <!--  for sufficient heat input: -->
+                    <!--  dE  = 1 W/m� * 10  m� * 700e6 s =  7e9 J -->
+                    <!--  dQ =700 000 J/kg * 10  m� * 1000 kg / m� = 7e9 J -->
+                    <timesteps>
+                        <pair>
+                            <repeat>350</repeat>
+                            <delta_t>2e6</delta_t> <!--s-->
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>Stefan_problem_hom</prefix>
+            <timesteps>
+                <pair>
+                    <repeat>10000</repeat>
+                    <each_steps>1</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+                <variable> temperature </variable>
+                <variable> heat_flux </variable>
+            </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+        </output>
+    </time_loop>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_picard</name>
+            <type>Picard</type>
+            <max_iter>100</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>50</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <precon_type>DIAGONAL</precon_type>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+    <test_definition>
+        <!--primary field-->
+        <vtkdiff>
+            <file>Stefan_problem_hom_ts_20_t_40000000.000000.vtu</file>
+            <field>temperature</field>
+            <absolute_tolerance>2e-11</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>Stefan_problem_hom_ts_330_t_660000000.000000.vtu</file>
+            <field>temperature</field>
+            <absolute_tolerance>2e-11</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <!--secondary field-->
+        <vtkdiff>
+            <file>Stefan_problem_hom_ts_20_t_40000000.000000.vtu</file>
+            <field>heat_flux</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>Stefan_problem_hom_ts_330_t_660000000.000000.vtu</file>
+            <field>heat_flux</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>
