@@ -205,7 +205,7 @@ bool areNeighbors(Element const* const element, Element const* const other);
 bool hasZeroVolume(MeshLib::Element const& element);
 
 /// Calculates the center of gravity for the mesh element
-MeshLib::Node getCenterOfGravity(MeshLib::Element const& element);
+MathLib::Point3d getCenterOfGravity(MeshLib::Element const& element);
 
 /// Compute the minimum and maximum node distances for this element.
 std::pair<double, double> computeSqrNodeDistanceRange(

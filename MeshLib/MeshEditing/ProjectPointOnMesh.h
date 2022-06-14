@@ -22,11 +22,11 @@ namespace ProjectPointOnMesh
 /// Returns the element in which the given node is located when projected onto a
 /// mesh, or nullptr if no such element was found.
 Element const* getProjectedElement(std::vector<const Element*> const& elements,
-                                   Node const& node);
+                                   MathLib::Point3d const& node);
 
 /// Returns the z-coordinate of a point projected onto the plane defined by a
 /// mesh element.
-double getElevation(Element const& element, Node const& node);
+double getElevation(Element const& element, MathLib::Point3d const& node);
 
 }  // namespace ProjectPointOnMesh
 

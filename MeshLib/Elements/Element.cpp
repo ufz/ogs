@@ -121,19 +121,15 @@ bool hasZeroVolume(MeshLib::Element const& element)
     return element.getContent() < std::numeric_limits<double>::epsilon();
 }
 
-MeshLib::Node getCenterOfGravity(Element const& element)
+MathLib::Point3d getCenterOfGravity(Element const& element)
 {
     const unsigned nNodes(element.getNumberOfBaseNodes());
-    MeshLib::Node center(0, 0, 0);
+    MathLib::Point3d center{{0, 0, 0}};
     for (unsigned i = 0; i < nNodes; ++i)
     {
-        center[0] += (*element.getNode(i))[0];
-        center[1] += (*element.getNode(i))[1];
-        center[2] += (*element.getNode(i))[2];
+        center.asEigenVector3d() += element.getNode(i)->asEigenVector3d();
     }
-    center[0] /= nNodes;
-    center[1] /= nNodes;
-    center[2] /= nNodes;
+    center.asEigenVector3d() /= nNodes;
     return center;
 }
 
