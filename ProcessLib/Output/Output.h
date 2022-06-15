@@ -87,7 +87,6 @@ public:
            std::string const& data_mode,
            bool const output_nonlinear_iteration_results,
            std::vector<PairRepeatEachSteps> repeats_each_steps,
-           std::vector<double>&& fixed_output_times,
            OutputDataSpecification&& output_data_specification,
            std::vector<std::string>&& mesh_names_for_output,
            std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
@@ -125,7 +124,7 @@ public:
 
     std::vector<double> const& getFixedOutputTimes() const
     {
-        return _fixed_output_times;
+        return _output_data_specification.fixed_output_times;
     }
 
 private:
@@ -171,9 +170,6 @@ private:
 
     //! Describes after which timesteps to write output.
     std::vector<PairRepeatEachSteps> _repeats_each_steps;
-
-    //! Given times that steps have to reach.
-    std::vector<double> const _fixed_output_times;
 
     //! Holds the PVD files associated with each process.
     //!

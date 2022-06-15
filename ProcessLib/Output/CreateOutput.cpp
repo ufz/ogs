@@ -132,9 +132,6 @@ std::unique_ptr<Output> createOutput(
     bool const output_residuals = config.getConfigParameter<bool>(
         "output_extrapolation_residuals", false);
 
-    OutputDataSpecification output_data_specification{output_variables,
-                                                      output_residuals};
-
     std::vector<std::string> mesh_names_for_output;
     //! \ogs_file_param{prj__time_loop__output__meshes}
     if (auto const meshes_config = config.getConfigSubtreeOptional("meshes"))
@@ -163,6 +160,10 @@ std::unique_ptr<Output> createOutput(
         //! \ogs_file_param{prj__time_loop__output__fixed_output_times}
         config.getConfigParameter<std::vector<double>>("fixed_output_times",
                                                        {});
+    OutputDataSpecification output_data_specification{
+        std::move(output_variables), std::move(fixed_output_times),
+        output_residuals};
+
     // Remove possible duplicated elements and sort.
     BaseLib::makeVectorUnique(fixed_output_times);
 
@@ -173,9 +174,8 @@ std::unique_ptr<Output> createOutput(
     return std::make_unique<Output>(
         output_directory, output_type, prefix, suffix, compress_output,
         number_of_files, data_mode, output_iteration_results,
-        std::move(repeats_each_steps), std::move(fixed_output_times),
-        std::move(output_data_specification), std::move(mesh_names_for_output),
-        meshes);
+        std::move(repeats_each_steps), std::move(output_data_specification),
+        std::move(mesh_names_for_output), meshes);
 }
 
 }  // namespace ProcessLib

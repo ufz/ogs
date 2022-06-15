@@ -151,8 +151,10 @@ namespace ProcessLib
 bool Output::isOutputStep(int timestep, double const t) const
 {
     auto const fixed_output_time = std::lower_bound(
-        cbegin(_fixed_output_times), cend(_fixed_output_times), t);
-    if ((fixed_output_time != cend(_fixed_output_times)) &&
+        cbegin(_output_data_specification.fixed_output_times),
+        cend(_output_data_specification.fixed_output_times), t);
+    if ((fixed_output_time !=
+         cend(_output_data_specification.fixed_output_times)) &&
         (std::abs(*fixed_output_time - t) <
          std::numeric_limits<double>::epsilon()))
     {
@@ -241,7 +243,6 @@ Output::Output(std::string directory, OutputType file_type,
                std::string const& data_mode,
                bool const output_nonlinear_iteration_results,
                std::vector<PairRepeatEachSteps> repeats_each_steps,
-               std::vector<double>&& fixed_output_times,
                OutputDataSpecification&& output_data_specification,
                std::vector<std::string>&& mesh_names_for_output,
                std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
@@ -250,17 +251,10 @@ Output::Output(std::string directory, OutputType file_type,
                   output_data_specification.output_variables, n_files),
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
       _repeats_each_steps(std::move(repeats_each_steps)),
-      _fixed_output_times(std::move(fixed_output_times)),
       _output_data_specification(std::move(output_data_specification)),
       _mesh_names_for_output(mesh_names_for_output),
       _meshes(meshes)
 {
-    if (!std::is_sorted(cbegin(_fixed_output_times), cend(_fixed_output_times)))
-    {
-        OGS_FATAL(
-            "Vector of fixed output time steps passed to the Output "
-            "constructor must be sorted");
-    }
 }
 
 void Output::addProcess(ProcessLib::Process const& process)
