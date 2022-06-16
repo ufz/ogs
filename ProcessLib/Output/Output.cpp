@@ -163,7 +163,7 @@ bool Output::isOutputStep(int timestep, double const t) const
 
     int each_steps = 1;
 
-    for (auto const& pair : _repeats_each_steps)
+    for (auto const& pair : _output_data_specification.repeats_each_steps)
     {
         each_steps = pair.each_steps;
 
@@ -242,7 +242,6 @@ Output::Output(std::string directory, OutputType file_type,
                bool const compress_output, unsigned int const n_files,
                std::string const& data_mode,
                bool const output_nonlinear_iteration_results,
-               std::vector<PairRepeatEachSteps> repeats_each_steps,
                OutputDataSpecification&& output_data_specification,
                std::vector<std::string>&& mesh_names_for_output,
                std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
@@ -250,7 +249,6 @@ Output::Output(std::string directory, OutputType file_type,
                   convertVtkDataMode(data_mode), compress_output,
                   output_data_specification.output_variables, n_files),
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
-      _repeats_each_steps(std::move(repeats_each_steps)),
       _output_data_specification(std::move(output_data_specification)),
       _mesh_names_for_output(mesh_names_for_output),
       _meshes(meshes)

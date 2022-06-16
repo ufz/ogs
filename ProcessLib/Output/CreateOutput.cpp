@@ -80,7 +80,7 @@ std::unique_ptr<Output> createOutput(
         config.getConfigParameter<std::string>("data_mode", "Appended");
 
     // Construction of output times
-    std::vector<Output::PairRepeatEachSteps> repeats_each_steps;
+    std::vector<PairRepeatEachSteps> repeats_each_steps;
 
     //! \ogs_file_param{prj__time_loop__output__timesteps}
     if (auto const timesteps = config.getConfigSubtreeOptional("timesteps"))
@@ -162,7 +162,7 @@ std::unique_ptr<Output> createOutput(
                                                        {});
     OutputDataSpecification output_data_specification{
         std::move(output_variables), std::move(fixed_output_times),
-        output_residuals};
+        std::move(repeats_each_steps), output_residuals};
 
     // Remove possible duplicated elements and sort.
     BaseLib::makeVectorUnique(fixed_output_times);
@@ -171,11 +171,11 @@ std::unique_ptr<Output> createOutput(
         //! \ogs_file_param{prj__time_loop__output__output_iteration_results}
         config.getConfigParameter<bool>("output_iteration_results", false);
 
-    return std::make_unique<Output>(
-        output_directory, output_type, prefix, suffix, compress_output,
-        number_of_files, data_mode, output_iteration_results,
-        std::move(repeats_each_steps), std::move(output_data_specification),
-        std::move(mesh_names_for_output), meshes);
+    return std::make_unique<Output>(output_directory, output_type, prefix,
+                                    suffix, compress_output, number_of_files,
+                                    data_mode, output_iteration_results,
+                                    std::move(output_data_specification),
+                                    std::move(mesh_names_for_output), meshes);
 }
 
 }  // namespace ProcessLib

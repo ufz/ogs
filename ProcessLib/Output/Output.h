@@ -41,14 +41,6 @@ enum class OutputType : uint8_t
 class Output
 {
 public:
-    struct PairRepeatEachSteps
-    {
-        explicit PairRepeatEachSteps(int c, int e) : repeat(c), each_steps(e) {}
-
-        const int repeat;      //!< Apply \c each_steps \c repeat times.
-        const int each_steps;  //!< Do output every \c each_steps timestep.
-    };
-
     struct OutputFile
     {
         OutputFile(std::string const& directory, OutputType const type,
@@ -86,7 +78,6 @@ public:
            bool const compress_output, unsigned int n_files,
            std::string const& data_mode,
            bool const output_nonlinear_iteration_results,
-           std::vector<PairRepeatEachSteps> repeats_each_steps,
            OutputDataSpecification&& output_data_specification,
            std::vector<std::string>&& mesh_names_for_output,
            std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
@@ -167,9 +158,6 @@ private:
     OutputFile output_file;
 
     bool const _output_nonlinear_iteration_results;
-
-    //! Describes after which timesteps to write output.
-    std::vector<PairRepeatEachSteps> _repeats_each_steps;
 
     //! Holds the PVD files associated with each process.
     //!
