@@ -16,11 +16,11 @@
 
 #include <cstdlib>
 #include <memory>
+#include <range/v3/view/transform.hpp>
 #include <string>
 #include <vector>
 
 #include "BaseLib/Error.h"
-
 #include "MeshEnums.h"
 #include "Properties.h"
 
@@ -300,4 +300,13 @@ std::unique_ptr<Mesh> createMeshFromElementSelection(
 /// is not connected to any element i.e. an unconnected node.
 bool isBaseNode(Node const& node,
                 std::vector<Element const*> const& elements_connected_to_node);
+
+/// MeshLib specific, lazy, non-owning, non-mutating, composable range views.
+namespace views
+{
+/// For an element of a range view return its id.
+inline constexpr ranges::views::view_closure ids =
+    ranges::views::transform([](auto const& a) { return a->getID(); });
+
+}  // namespace views
 }  // namespace MeshLib
