@@ -42,8 +42,8 @@ struct DeactivatedSubdomainMesh
     DeactivatedSubdomainMesh(
         std::unique_ptr<MeshLib::Mesh> deactivated_subdomain_mesh_,
         std::vector<std::size_t>&& bulk_element_ids_,
-        std::vector<MeshLib::Node*>&& inner_nodes_,
-        std::vector<MeshLib::Node*>&& outer_nodes_);
+        std::vector<std::size_t>&& inner_nodes_,
+        std::vector<std::size_t>&& outer_nodes_);
 
     /// A mesh created from material ids (independent of time) for the
     /// deactivated subdomain.
@@ -52,11 +52,11 @@ struct DeactivatedSubdomainMesh
 
     /// Inner nodes owned only by elements of the deactivated subdomain.
     /// \see ProcessLib::createDeactivatedSubdomainMesh()
-    std::vector<MeshLib::Node*> const inner_nodes;
+    std::vector<std::size_t> inner_nodes;
     /// Outer nodes owned by elements of the deactivated subdomain as well as
     /// other elements not being part of this deactivated subdomain mesh.
     /// \see ProcessLib::createDeactivatedSubdomainMesh()
-    std::vector<MeshLib::Node*> const outer_nodes;
+    std::vector<std::size_t> outer_nodes;
 };
 
 /// Time dependent subdomain deactivation.

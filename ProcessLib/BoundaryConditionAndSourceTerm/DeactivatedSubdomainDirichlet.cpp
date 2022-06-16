@@ -67,13 +67,13 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
                        { return id == bulk_element_ids[e->getID()]; });
     };
 
-    std::vector<MeshLib::Node*> inactive_nodes_in_bc_mesh;
+    std::vector<std::size_t> inactive_nodes_in_bc_mesh;
     std::copy_if(begin(_subdomain.inner_nodes), end(_subdomain.inner_nodes),
                  back_inserter(inactive_nodes_in_bc_mesh),
-                 [&](MeshLib::Node* const n)
+                 [&](std::size_t const n)
                  {
                      const auto& connected_elements =
-                         _subdomain.mesh->getElementsConnectedToNode(*n);
+                         _subdomain.mesh->getElementsConnectedToNode(n);
 
                      return std::all_of(begin(connected_elements),
                                         end(connected_elements), is_inactive);
@@ -83,10 +83,10 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
     {
         std::copy_if(begin(_subdomain.outer_nodes), end(_subdomain.outer_nodes),
                      back_inserter(inactive_nodes_in_bc_mesh),
-                     [&](MeshLib::Node* const n)
+                     [&](std::size_t const n)
                      {
                          const auto& connected_elements =
-                             _subdomain.mesh->getElementsConnectedToNode(*n);
+                             _subdomain.mesh->getElementsConnectedToNode(n);
 
                          return std::all_of(begin(connected_elements),
                                             end(connected_elements),

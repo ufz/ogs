@@ -49,9 +49,8 @@ void DirichletBoundaryCondition::getEssentialBCValues(
     const double t, GlobalVector const& x,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
-    getEssentialBCValuesLocal(_parameter, _bc_mesh, _bc_mesh.getNodes(),
-                              *_dof_table_boundary, _variable_id, _component_id,
-                              t, x, bc_values);
+    getEssentialBCValuesLocal(_parameter, _bc_mesh, *_dof_table_boundary,
+                              _variable_id, _component_id, t, x, bc_values);
 }
 
 std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(

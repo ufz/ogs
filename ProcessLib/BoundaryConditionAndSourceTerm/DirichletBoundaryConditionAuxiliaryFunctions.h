@@ -51,7 +51,15 @@ void checkParametersOfDirichletBoundaryCondition(
 void getEssentialBCValuesLocal(
     ParameterLib::Parameter<double> const& parameter,
     MeshLib::Mesh const& bc_mesh,
-    std::vector<MeshLib::Node*> const& nodes_in_bc_mesh,
+    NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
+    int const variable_id, int const component_id, const double t,
+    GlobalVector const& x,
+    NumLib::IndexValueVector<GlobalIndexType>& bc_values);
+
+void getEssentialBCValuesLocal(
+    ParameterLib::Parameter<double> const& parameter,
+    MeshLib::Mesh const& bc_mesh,
+    std::vector<std::size_t> const& nodes_in_bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
     int const variable_id, int const component_id, const double t,
     GlobalVector const& x,
