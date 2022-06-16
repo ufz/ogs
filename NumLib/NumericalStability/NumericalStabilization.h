@@ -27,7 +27,7 @@ class ConfigTree;
 namespace NumLib
 {
 /** It defines stabilization method for solving the advection diffusion
- * transport equation by using the Galerkin finite element method.
+ * transport equation using the Galerkin finite element method.
  *
  * The convection diffusion transport equation takes the form
  *  \f[
@@ -88,9 +88,9 @@ public:
         double const velocity_norm) const override;
 
 private:
-    /// The tuning parameter in the range of [0,1].
+    /// The tuning parameter in the range [0,1].
     double const tuning_parameter_ = 0.5;
-    /// Sizes of the elements.
+
     std::vector<double> const element_sizes_;
 };
 

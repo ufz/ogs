@@ -21,7 +21,7 @@ This example tests the simplest stabilization scheme, i.e. that with the isotrop
 
 ### Theory
 
-Stabilization is the numerical approach to eliminate the spacial oscillations produced by
+Stabilization is the numerical approach to eliminate the spatial oscillations produced by
 the Galerkin finite element method for the advection diffusion transport equation.
 
 The advection diffusion transport equation takes the form
@@ -47,11 +47,11 @@ an artificial isotropic balancing dissipation to the diffusion
 
 The example defines the mass transport in liquid flow with a constant liquid velocity in 1D domain.
 
-The  domain size 0.8 m. The initial value of the primary variable is 0.
+The domain size is 0.8 m. The initial value of the primary variable is 0.
 The Dirichlet boundary
- conditions are applied on the left and right boundaries with values of 1.0 and 0.0,
- respectively. The constant velocity is 1.e-4 m/s. The diffusion coefficient is
- $10^{-9}$ m/s. The time period is 7200 s.
+ conditions are applied on the left and right boundaries with respective values 1.0 and 0.0.
+ The constant velocity is 1.e-4 m/s. The diffusion coefficient is
+ $10^{-9}$ m/s. The analysis duration is 7200 s.
 
 Derived by Ogata, A. and Banks [[1]](#1), the analytical solution of the example is
 $$
@@ -67,12 +67,12 @@ c(x, t) \approx \frac{1}{2} \mathrm{erfc}\left(\frac{x-v t}{2\sqrt{K t}}\right)
 $$
 
 The example is for mass transport process. To tailor it for running with HT process in OGS,
- the input material data are specialized such as
+ the input material data are defined such as
 
 * for liquid phase, the density, the viscosity and
-the specific heat capacity is set to 1, respectively, and the thermal conductivity
-  is set to $10^{-9}$.
-* for solid phase liquid, all input data are set to zero,
+the specific heat capacity are set to 1 and the thermal conductivity
+  is $10^{-9}$.
+* for solid phase all input data are zero,
 * The porosity is set to 1.
 
 The tuning parameter for `IsotropicDiffusion` takes small value 0.15, while the

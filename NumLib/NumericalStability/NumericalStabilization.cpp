@@ -65,7 +65,7 @@ std::unique_ptr<NumericalStabilization> createNumericalStabilization(
         stabilization_config->getConfigParameter<std::string>("type");
     if (type.compare("IsotropicDiffusion") == 0)
     {
-        INFO("Numerical stabilization of {:s} is used", type);
+        INFO("Using numerical stabilization {:s}.", type);
 
         auto const stabilization_cutoff_velocity_opt =
             //! \ogs_file_param{prj__processes__process__numerical_stabilization__IsotropicDiffusion__cutoff_velocity}
@@ -83,6 +83,6 @@ std::unique_ptr<NumericalStabilization> createNumericalStabilization(
             MeshLib::getElementSizes(mesh));
     }
 
-    OGS_FATAL("The stabilization type of {:s} is not available so far", type);
+    OGS_FATAL("The stabilization type {:s} is not available.", type);
 }
 }  // namespace NumLib
