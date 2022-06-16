@@ -304,27 +304,25 @@ MeshLib::IO::PVDFile& Output::findPVDFile(
     return *pvd_file;
 }
 
-void Output::outputMeshXdmf(
-    OutputFile const& output_file,
+void Output::OutputFile::outputMeshXdmf(
+    OutputDataSpecification const& output_data_specification,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
     int const timestep, double const t, int const iteration)
 {
     // \TODO (tm) Refactor to a dedicated VTKOutput and XdmfOutput
     // The XdmfOutput will create on construction the XdmfHdfWriter
-    if (!_mesh_xdmf_hdf_writer)
+    if (!mesh_xdmf_hdf_writer)
     {
-        auto name = output_file.constructFilename(meshes[0].get().getName(),
-                                                  timestep, t, iteration);
-        std::filesystem::path path(
-            BaseLib::joinPaths(output_file.directory, name));
-        _mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
+        auto name = constructFilename(meshes[0].get().getName(), timestep, t,
+                                      iteration);
+        std::filesystem::path path(BaseLib::joinPaths(directory, name));
+        mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
             std::move(meshes), path, timestep, t,
-            _output_data_specification.output_variables,
-            output_file.compression, output_file.n_files);
+            output_data_specification.output_variables, compression, n_files);
     }
     else
     {
-        _mesh_xdmf_hdf_writer->writeStep(t);
+        mesh_xdmf_hdf_writer->writeStep(t);
     };
 }
 
@@ -345,19 +343,16 @@ void Output::outputMeshes(
 
             auto& pvd_file =
                 findPVDFile(process, process_id, mesh.get().getName());
-            ::outputMeshVtk(file, pvd_file, mesh, t, timestep, iteration);
+            ::outputMeshVtk(output_file, pvd_file, mesh, t, timestep,
+                            iteration);
         }
     }
     else if (output_file.type == ProcessLib::OutputType::xdmf)
     {
         std::string name = meshes[0].get().getName();
-        OutputFile const file(
-            output_file.directory, output_file.type, output_file.prefix, "",
-            output_file.data_mode, output_file.compression,
-            _output_data_specification.output_variables, output_file.n_files);
 
-        outputMeshXdmf(std::move(file), std::move(meshes), timestep, t,
-                       iteration);
+        output_file.outputMeshXdmf(_output_data_specification,
+                                   std::move(meshes), timestep, t, iteration);
     }
 }
 

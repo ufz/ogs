@@ -64,12 +64,18 @@ public:
         bool const compression;
 
         std::set<std::string> outputnames;
+
+        std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;
         //! Specifies the number of hdf5 output files.
         unsigned int const n_files;
 
         std::string constructFilename(std::string mesh_name, int const timestep,
                                       double const t,
                                       int const iteration) const;
+        void outputMeshXdmf(
+            OutputDataSpecification const& output_data_specification,
+            std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+            int const timestep, double const t, int const iteration);
     };
 
 public:
@@ -119,11 +125,6 @@ public:
     }
 
 private:
-    void outputMeshXdmf(
-        OutputFile const& output_file,
-        std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
-        int const timestep, double const t, int const iteration);
-
     /**
      * Get the address of a PVDFile corresponding to the given process.
      * @param process    Process.
@@ -152,8 +153,6 @@ private:
         std::string const& submesh_output_name, Process const& process,
         const int process_id, double const t,
         std::vector<GlobalVector*> const& xs) const;
-
-    std::unique_ptr<MeshLib::IO::XdmfHdfWriter> _mesh_xdmf_hdf_writer;
 
     OutputFile output_file;
 
