@@ -33,6 +33,42 @@ enum class OutputType : uint8_t
     xdmf
 };
 
+struct OutputFile
+{
+    OutputFile(std::string const& directory, OutputType const type,
+               std::string const& prefix, std::string const& suffix,
+               int const data_mode_, bool const compression_,
+               std::set<std::string> const& outputnames,
+               unsigned int const n_files);
+
+    std::string const directory;
+    std::string const prefix;
+    std::string const suffix;
+    OutputType const type;
+
+    //! Chooses vtk's data mode for output following the enumeration given
+    /// in the vtkXMLWriter: {Ascii, Binary, Appended}.  See vtkXMLWriter
+    /// documentation
+    /// http://www.vtk.org/doc/nightly/html/classvtkXMLWriter.html
+    int const data_mode;
+
+    //! Enables or disables zlib-compression of the output files.
+    bool const compression;
+
+    std::set<std::string> outputnames;
+
+    std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;
+    //! Specifies the number of hdf5 output files.
+    unsigned int const n_files;
+
+    std::string constructFilename(std::string mesh_name, int const timestep,
+                                  double const t, int const iteration) const;
+    void outputMeshXdmf(
+        OutputDataSpecification const& output_data_specification,
+        std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+        int const timestep, double const t, int const iteration);
+};
+
 /*! Manages writing the solution of processes to disk.
  *
  * This class decides at which timesteps output is written
@@ -40,44 +76,6 @@ enum class OutputType : uint8_t
  */
 class Output
 {
-public:
-    struct OutputFile
-    {
-        OutputFile(std::string const& directory, OutputType const type,
-                   std::string const& prefix, std::string const& suffix,
-                   int const data_mode_, bool const compression_,
-                   std::set<std::string> const& outputnames,
-                   unsigned int const n_files);
-
-        std::string const directory;
-        std::string const prefix;
-        std::string const suffix;
-        OutputType const type;
-
-        //! Chooses vtk's data mode for output following the enumeration given
-        /// in the vtkXMLWriter: {Ascii, Binary, Appended}.  See vtkXMLWriter
-        /// documentation
-        /// http://www.vtk.org/doc/nightly/html/classvtkXMLWriter.html
-        int const data_mode;
-
-        //! Enables or disables zlib-compression of the output files.
-        bool const compression;
-
-        std::set<std::string> outputnames;
-
-        std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;
-        //! Specifies the number of hdf5 output files.
-        unsigned int const n_files;
-
-        std::string constructFilename(std::string mesh_name, int const timestep,
-                                      double const t,
-                                      int const iteration) const;
-        void outputMeshXdmf(
-            OutputDataSpecification const& output_data_specification,
-            std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
-            int const timestep, double const t, int const iteration);
-    };
-
 public:
     Output(std::string directory, OutputType const file_type,
            std::string file_prefix, std::string file_suffix,

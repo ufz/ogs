@@ -70,7 +70,7 @@ void addBulkMeshNodePropertyToSubMesh(MeshLib::Mesh const& bulk_mesh,
 namespace
 {
 //! Converts a vtkXMLWriter's data mode string to an int. See
-/// Output::OutputFile::data_mode.
+/// OutputFile::data_mode.
 int convertVtkDataMode(std::string const& data_mode)
 {
     if (data_mode == "Ascii")
@@ -130,7 +130,7 @@ void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
 #endif  //__APPLE__
 }
 
-void outputMeshVtk(ProcessLib::Output::OutputFile const& output_file,
+void outputMeshVtk(ProcessLib::OutputFile const& output_file,
                    MeshLib::IO::PVDFile& pvd_file, MeshLib::Mesh const& mesh,
                    double const t, int const timestep, int const iteration)
 {
@@ -194,12 +194,11 @@ bool Output::isOutputProcess(const int process_id, const Process& process) const
            || is_last_process;
 }
 
-Output::OutputFile::OutputFile(std::string const& directory,
-                               OutputType const type, std::string const& prefix,
-                               std::string const& suffix, int const data_mode_,
-                               bool const compression_,
-                               std::set<std::string> const& outputnames,
-                               unsigned int const n_files)
+OutputFile::OutputFile(std::string const& directory, OutputType const type,
+                       std::string const& prefix, std::string const& suffix,
+                       int const data_mode_, bool const compression_,
+                       std::set<std::string> const& outputnames,
+                       unsigned int const n_files)
     : directory(directory),
       prefix(prefix),
       suffix(suffix),
@@ -211,10 +210,10 @@ Output::OutputFile::OutputFile(std::string const& directory,
 {
 }
 
-std::string Output::OutputFile::constructFilename(std::string mesh_name,
-                                                  int const timestep,
-                                                  double const t,
-                                                  int const iteration) const
+std::string OutputFile::constructFilename(std::string mesh_name,
+                                          int const timestep,
+                                          double const t,
+                                          int const iteration) const
 {
     std::map<OutputType, std::string> filetype_to_extension = {
         {OutputType::vtk, "vtu"}, {OutputType::xdmf, "xdmf"}};
@@ -304,7 +303,7 @@ MeshLib::IO::PVDFile& Output::findPVDFile(
     return *pvd_file;
 }
 
-void Output::OutputFile::outputMeshXdmf(
+void OutputFile::outputMeshXdmf(
     OutputDataSpecification const& output_data_specification,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
     int const timestep, double const t, int const iteration)
