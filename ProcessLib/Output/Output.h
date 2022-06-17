@@ -67,6 +67,22 @@ struct OutputFile
         OutputDataSpecification const& output_data_specification,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
         int const timestep, double const t, int const iteration);
+
+    /**
+     * Get the address of a PVDFile corresponding to the given process.
+     * @param process    Process.
+     * @param process_id Process ID.
+     * @param mesh_name_for_output mesh name for the output.
+     * @param process_to_pvd_file a multimap that holds the PVD files associated
+     * with each process.
+     * @return Address of a PVDFile.
+     */
+    MeshLib::IO::PVDFile& findPVDFile(
+        Process const& process,
+        const int process_id,
+        std::string const& mesh_name_for_output,
+        std::multimap<Process const*, MeshLib::IO::PVDFile>&
+            process_to_pvd_file) const;
 };
 
 /*! Manages writing the solution of processes to disk.
@@ -123,17 +139,6 @@ public:
     }
 
 private:
-    /**
-     * Get the address of a PVDFile corresponding to the given process.
-     * @param process    Process.
-     * @param process_id Process ID.
-     * @param mesh_name_for_output mesh name for the output.
-     * @return Address of a PVDFile.
-     */
-    MeshLib::IO::PVDFile& findPVDFile(Process const& process,
-                                      const int process_id,
-                                      std::string const& mesh_name_for_output);
-
     //! Determines if there should be output at the given \c timestep or \c t.
     bool isOutputStep(int timestep, double const t) const;
 

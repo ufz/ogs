@@ -271,14 +271,15 @@ void Output::addProcess(ProcessLib::Process const& process)
     }
 }
 
-MeshLib::IO::PVDFile& Output::findPVDFile(
-    Process const& process,
-    const int process_id,
-    std::string const& mesh_name_for_output)
+MeshLib::IO::PVDFile& OutputFile::findPVDFile(
+    Process const& process, const int process_id,
+    std::string const& mesh_name_for_output,
+    std::multimap<Process const*, MeshLib::IO::PVDFile>& process_to_pvd_file)
+    const
 {
-    auto const filename = constructPVDName(
-        output_file.directory, output_file.prefix, mesh_name_for_output);
-    auto range = _process_to_pvd_file.equal_range(&process);
+    auto const filename =
+        constructPVDName(directory, prefix, mesh_name_for_output);
+    auto range = process_to_pvd_file.equal_range(&process);
     int counter = 0;
     MeshLib::IO::PVDFile* pvd_file = nullptr;
     for (auto spd_it = range.first; spd_it != range.second; ++spd_it)
@@ -334,8 +335,9 @@ void Output::outputMeshes(
     {
         for (auto const& mesh : meshes)
         {
-            auto& pvd_file =
-                findPVDFile(process, process_id, mesh.get().getName());
+            auto& pvd_file = output_file.findPVDFile(process, process_id,
+                                                     mesh.get().getName(),
+                                                     _process_to_pvd_file);
             ::outputMeshVtk(output_file, pvd_file, mesh, t, timestep,
                             iteration);
         }
