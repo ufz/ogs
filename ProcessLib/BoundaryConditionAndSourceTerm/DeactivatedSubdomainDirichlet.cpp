@@ -39,11 +39,11 @@ DeactivatedSubdomainDirichlet::DeactivatedSubdomainDirichlet(
 void DeactivatedSubdomainDirichlet::config(
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk)
 {
-    checkParametersOfDirichletBoundaryCondition(
-        *_subdomain.mesh, dof_table_bulk, _variable_id, _component_id);
+    checkParametersOfDirichletBoundaryCondition(_subdomain.mesh, dof_table_bulk,
+                                                _variable_id, _component_id);
 
-    std::vector<MeshLib::Node*> const& bc_nodes = _subdomain.mesh->getNodes();
-    MeshLib::MeshSubset subdomain_mesh_subset(*_subdomain.mesh, bc_nodes);
+    std::vector<MeshLib::Node*> const& bc_nodes = _subdomain.mesh.getNodes();
+    MeshLib::MeshSubset subdomain_mesh_subset(_subdomain.mesh, bc_nodes);
 
     // Create local DOF table from the BC mesh subset for the given variable
     // and component id.
@@ -56,7 +56,7 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
     auto const& bulk_element_ids =
-        *_subdomain.mesh->getProperties()
+        *_subdomain.mesh.getProperties()
              .template getPropertyVector<std::size_t>(
                  "bulk_element_ids", MeshLib::MeshItemType::Cell, 1);
 
@@ -73,7 +73,7 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
                  [&](std::size_t const n)
                  {
                      const auto& connected_elements =
-                         _subdomain.mesh->getElementsConnectedToNode(n);
+                         _subdomain.mesh.getElementsConnectedToNode(n);
 
                      return std::all_of(begin(connected_elements),
                                         end(connected_elements), is_inactive);
@@ -86,7 +86,7 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
                      [&](std::size_t const n)
                      {
                          const auto& connected_elements =
-                             _subdomain.mesh->getElementsConnectedToNode(n);
+                             _subdomain.mesh.getElementsConnectedToNode(n);
 
                          return std::all_of(begin(connected_elements),
                                             end(connected_elements),
@@ -102,7 +102,7 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
     if (time_interval_contains(t))
     {
         getEssentialBCValuesLocal(
-            _parameter, *_subdomain.mesh, inactive_nodes_in_bc_mesh,
+            _parameter, _subdomain.mesh, inactive_nodes_in_bc_mesh,
             *_dof_table_boundary, _variable_id, _component_id, t, x, bc_values);
         return;
     }

@@ -67,7 +67,7 @@ extractInnerAndOuterNodes(MeshLib::Mesh const& mesh,
     return {std::move(inner_nodes), std::move(outer_nodes)};
 }
 
-static std::unique_ptr<DeactivatedSubdomainMesh> createDeactivatedSubdomainMesh(
+static DeactivatedSubdomainMesh createDeactivatedSubdomainMesh(
     MeshLib::Mesh const& mesh,
     std::vector<int> const& deactivated_subdomain_material_ids)
 {
@@ -99,9 +99,9 @@ static std::unique_ptr<DeactivatedSubdomainMesh> createDeactivatedSubdomainMesh(
 
     auto [inner_nodes, outer_nodes] =
         extractInnerAndOuterNodes(mesh, *sub_mesh, is_active);
-    return std::make_unique<DeactivatedSubdomainMesh>(
-        std::move(sub_mesh), std::move(bulk_element_ids),
-        std::move(inner_nodes), std::move(outer_nodes));
+
+    return {std::move(*sub_mesh), std::move(bulk_element_ids),
+            std::move(inner_nodes), std::move(outer_nodes)};
 }
 
 static MathLib::PiecewiseLinearInterpolation parseTimeIntervalOrCurve(
@@ -187,7 +187,7 @@ static std::pair<Eigen::Vector3d, Eigen::Vector3d> parseLineSegment(
             Eigen::Vector3d{end[0], end[1], end[2]}};
 }
 
-std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
+DeactivatedSubdomain createDeactivatedSubdomain(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::map<std::string,
@@ -266,15 +266,11 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     auto deactivated_subdomain_mesh = createDeactivatedSubdomainMesh(
         mesh, deactivated_subdomain_material_ids);
 
-    return std::make_unique<DeactivatedSubdomain const>(
-        std::move(time_interval),
-        line_segment,
-        std::move(deactivated_subdomain_mesh),
-        boundary_value_parameter);
+    return {std::move(time_interval), line_segment,
+            std::move(deactivated_subdomain_mesh), boundary_value_parameter};
 }
 
-std::vector<std::unique_ptr<DeactivatedSubdomain const>>
-createDeactivatedSubdomains(
+std::vector<DeactivatedSubdomain> createDeactivatedSubdomains(
     BaseLib::ConfigTree const& config,
     MeshLib::Mesh const& mesh,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
@@ -282,8 +278,7 @@ createDeactivatedSubdomains(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-    std::vector<std::unique_ptr<DeactivatedSubdomain const>>
-        deactivated_subdomains;
+    std::vector<DeactivatedSubdomain> deactivated_subdomains;
     // Deactivated subdomains
     if (auto subdomains_config =
             //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains}
