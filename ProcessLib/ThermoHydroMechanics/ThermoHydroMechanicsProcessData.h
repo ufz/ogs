@@ -15,6 +15,7 @@
 #include <utility>
 
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "NumLib/NumericalStability/NumericalStabilization.h"
 #include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
@@ -51,6 +52,8 @@ struct ThermoHydroMechanicsProcessData
     /// It is usually used to apply gravitational forces.
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
+
+    std::unique_ptr<NumLib::NumericalStabilization> stabilizer;
 
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
     MeshLib::PropertyVector<double>* temperature_interpolated = nullptr;
