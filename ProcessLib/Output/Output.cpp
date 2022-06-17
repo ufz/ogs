@@ -261,18 +261,25 @@ void Output::addProcess(ProcessLib::Process const& process)
 
     for (auto const& mesh_output_name : _mesh_names_for_output)
     {
-        auto const filename = constructPVDName(
-            output_file.directory, output_file.prefix, mesh_output_name);
+        auto const filename = output_file.constructPVDName(mesh_output_name);
         _process_to_pvd_file.emplace(std::piecewise_construct,
                                      std::forward_as_tuple(&process),
                                      std::forward_as_tuple(filename));
     }
 }
 
-MeshLib::IO::PVDFile& OutputFile::findPVDFile(
+/**
+ * Get the address of a PVDFile corresponding to the given process.
+ * @param process    Process.
+ * @param process_id Process ID.
+ * @param mesh_name_for_output mesh name for the output.
+ * @param process_to_pvd_file a multimap that holds the PVD files associated
+ * with each process.
+ * @return Address of a PVDFile.
+ */
+MeshLib::IO::PVDFile& findPVDFile(
     Process const& process, const int process_id, std::string const& filename,
     std::multimap<Process const*, MeshLib::IO::PVDFile>& process_to_pvd_file)
-    const
 {
     auto range = process_to_pvd_file.equal_range(&process);
     int counter = 0;
@@ -332,8 +339,8 @@ void Output::outputMeshes(
         {
             auto const filename =
                 output_file.constructPVDName(mesh.get().getName());
-            auto& pvd_file = output_file.findPVDFile(
-                process, process_id, filename, _process_to_pvd_file);
+            auto& pvd_file = findPVDFile(process, process_id, filename,
+                                         _process_to_pvd_file);
             ::outputMeshVtk(output_file, pvd_file, mesh, t, timestep,
                             iteration);
         }
@@ -493,9 +500,6 @@ void Output::doOutputNonlinearIteration(Process const& process,
     {
         return;
     }
-
-    // Only check whether a process data is available for output.
-    findPVDFile(process, process_id, process.getMesh().getName());
 
     std::string const output_file_name = output_file.constructFilename(
         process.getMesh().getName(), timestep, t, iteration);
