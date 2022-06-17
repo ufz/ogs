@@ -335,12 +335,6 @@ void Output::outputMeshes(
     {
         for (auto const& mesh : meshes)
         {
-            OutputFile const file(
-                output_file.directory, output_file.type, output_file.prefix,
-                output_file.suffix, output_file.data_mode,
-                output_file.compression,
-                _output_data_specification.output_variables, 1);
-
             auto& pvd_file =
                 findPVDFile(process, process_id, mesh.get().getName());
             ::outputMeshVtk(output_file, pvd_file, mesh, t, timestep,
