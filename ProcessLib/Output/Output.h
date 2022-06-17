@@ -68,6 +68,8 @@ struct OutputFile
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
         int const timestep, double const t, int const iteration);
 
+    std::string constructPVDName(std::string const& mesh_name) const;
+
     /**
      * Get the address of a PVDFile corresponding to the given process.
      * @param process    Process.
@@ -78,9 +80,8 @@ struct OutputFile
      * @return Address of a PVDFile.
      */
     MeshLib::IO::PVDFile& findPVDFile(
-        Process const& process,
-        const int process_id,
-        std::string const& mesh_name_for_output,
+        Process const& process, const int process_id,
+        std::string const& filename,
         std::multimap<Process const*, MeshLib::IO::PVDFile>&
             process_to_pvd_file) const;
 };

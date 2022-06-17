@@ -91,16 +91,6 @@ int convertVtkDataMode(std::string const& data_mode)
         data_mode);
 }
 
-std::string constructPVDName(std::string const& output_directory,
-                             std::string const& output_file_prefix,
-                             std::string const& mesh_name)
-{
-    return BaseLib::joinPaths(output_directory,
-                              BaseLib::constructFormattedFileName(
-                                  output_file_prefix, mesh_name, 0, 0, 0) +
-                                  ".pvd");
-}
-
 void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
                    bool const compress_output, int const data_mode)
 {
@@ -148,6 +138,14 @@ void outputMeshVtk(ProcessLib::OutputFile const& output_file,
 
 namespace ProcessLib
 {
+std::string OutputFile::constructPVDName(std::string const& mesh_name) const
+{
+    return BaseLib::joinPaths(
+        directory,
+        BaseLib::constructFormattedFileName(prefix, mesh_name, 0, 0, 0) +
+            ".pvd");
+}
+
 bool Output::isOutputStep(int timestep, double const t) const
 {
     auto const fixed_output_time = std::lower_bound(
@@ -272,13 +270,10 @@ void Output::addProcess(ProcessLib::Process const& process)
 }
 
 MeshLib::IO::PVDFile& OutputFile::findPVDFile(
-    Process const& process, const int process_id,
-    std::string const& mesh_name_for_output,
+    Process const& process, const int process_id, std::string const& filename,
     std::multimap<Process const*, MeshLib::IO::PVDFile>& process_to_pvd_file)
     const
 {
-    auto const filename =
-        constructPVDName(directory, prefix, mesh_name_for_output);
     auto range = process_to_pvd_file.equal_range(&process);
     int counter = 0;
     MeshLib::IO::PVDFile* pvd_file = nullptr;
@@ -335,9 +330,10 @@ void Output::outputMeshes(
     {
         for (auto const& mesh : meshes)
         {
-            auto& pvd_file = output_file.findPVDFile(process, process_id,
-                                                     mesh.get().getName(),
-                                                     _process_to_pvd_file);
+            auto const filename =
+                output_file.constructPVDName(mesh.get().getName());
+            auto& pvd_file = output_file.findPVDFile(
+                process, process_id, filename, _process_to_pvd_file);
             ::outputMeshVtk(output_file, pvd_file, mesh, t, timestep,
                             iteration);
         }
