@@ -25,8 +25,8 @@ specific heat capacity of solid phase has already taken account of
 The following figures compare the results of this test against the results
  presented in [[2]](#2):
 
-<img src="CTF1_results_T.jpg" alt="drawing" width="400"/>
-<img src="CTF1_results_S.jpg" alt="drawing" width="400"/>
+<img src="CTF1_results_T.jpg" alt="drawing" width="640"/>
+<img src="CTF1_results_S.jpg" alt="drawing" width="640"/>
 
 ## References
 
