@@ -34,6 +34,7 @@ Francesco
 frontmatter
 Genuchten
 Geoenergy
+Galerkin
 Giraldo
 gml
 GML
@@ -72,12 +73,17 @@ Netbeans
 NetBeans
 Neumann
 Nusselt
+ogs
+OGS
 Opalinus
+opengeosys
+OpenGeoSys
 pacman
 parameteri[zs]ation
 ParaView
 Parisio
 partmesh
+Péclet
 PHREEQC
 Pinheiro
 Prandtl

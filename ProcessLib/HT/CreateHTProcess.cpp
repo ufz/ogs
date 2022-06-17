@@ -179,11 +179,13 @@ std::unique_ptr<Process> createHTProcess(
     checkMPLProperties(mesh, *media_map);
     DBUG("Media properties verified.");
 
+    auto stabilizer = NumLib::createNumericalStabilization(mesh, config);
     HTProcessData process_data{
         std::move(media_map),      has_fluid_thermal_expansion,
         *solid_thermal_expansion,  *biot_constant,
         specific_body_force,       has_gravity,
-        heat_transport_process_id, hydraulic_process_id};
+        heat_transport_process_id, hydraulic_process_id,
+        std::move(stabilizer)};
 
     SecondaryVariableCollection secondary_variables;
 
