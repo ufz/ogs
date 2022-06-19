@@ -120,6 +120,14 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
+    auto const is_linear =
+        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__linear}
+        config.getConfigParameter<bool>("linear", false);
+    if (is_linear)
+    {
+        INFO("LiquidFlow process is set to be linear.");
+    }
+
     DBUG("Check the media properties of LiquidFlow process ...");
     checkMPLProperties(mesh, *media_map);
     DBUG("Media properties verified.");
@@ -150,7 +158,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
-        std::move(surfaceflux));
+        std::move(surfaceflux), is_linear);
 }
 
 }  // namespace LiquidFlow

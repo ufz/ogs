@@ -56,8 +56,7 @@ class LiquidFlowProcess final : public Process
 {
 public:
     LiquidFlowProcess(
-        std::string name,
-        MeshLib::Mesh& mesh,
+        std::string name, MeshLib::Mesh& mesh,
         std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
             parameters,
@@ -66,14 +65,15 @@ public:
             process_variables,
         LiquidFlowData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
+        std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
+        bool const is_linear);
 
     void computeSecondaryVariableConcrete(double const t, double const dt,
                                           std::vector<GlobalVector*> const& x,
                                           GlobalVector const& x_dot,
                                           int const process_id) override;
 
-    bool isLinear() const override { return true; }
+    bool isLinear() const override { return _is_linear; }
 
     Eigen::Vector3d getFlux(std::size_t const element_id,
                             MathLib::Point3d const& p,
@@ -109,6 +109,7 @@ private:
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
     MeshLib::PropertyVector<double>* _hydraulic_flow = nullptr;
+    bool _is_linear = false;
 };
 
 }  // namespace LiquidFlow

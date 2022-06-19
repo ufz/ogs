@@ -26,8 +26,7 @@ namespace ProcessLib
 namespace LiquidFlow
 {
 LiquidFlowProcess::LiquidFlowProcess(
-    std::string name,
-    MeshLib::Mesh& mesh,
+    std::string name, MeshLib::Mesh& mesh,
     std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
@@ -35,12 +34,14 @@ LiquidFlowProcess::LiquidFlowProcess(
         process_variables,
     LiquidFlowData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
-    std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux)
+    std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
+    bool const is_linear)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),
       _process_data(std::move(process_data)),
-      _surfaceflux(std::move(surfaceflux))
+      _surfaceflux(std::move(surfaceflux)),
+      _is_linear(is_linear)
 {
     DBUG("Create Liquid flow process.");
 
