@@ -13,7 +13,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Utils/GetElementSizes.h"
+#include "MeshLib/Utils/getMaxiumElementEdgeLengths.h"
 
 namespace NumLib
 {
@@ -80,7 +80,7 @@ std::unique_ptr<NumericalStabilization> createNumericalStabilization(
         return std::make_unique<IsotropicDiffusionStabilization>(
             *stabilization_cutoff_velocity_opt,
             tuning_parameter,
-            MeshLib::getElementSizes(mesh));
+            MeshLib::getMaxiumElementEdgeLengths(mesh.getElements()));
     }
 
     OGS_FATAL("The stabilization type {:s} is not available.", type);

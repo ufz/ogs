@@ -19,9 +19,9 @@
 #include "InfoLib/TestInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Utils/GetElementSizes.h"
+#include "MeshLib/Utils/getMaxiumElementEdgeLengths.h"
 
-TEST(MeshLib, getElementSizes)
+TEST(MeshLib, getMaxiumElementEdgeLengths)
 {
     // Use mesh quadratic_mesh.vtu that contains 8 elements with different
     // types:
@@ -35,7 +35,8 @@ TEST(MeshLib, getElementSizes)
                   file_name);
     }
 
-    auto const element_sizes = MeshLib::getElementSizes(*mesh);
+    auto const element_sizes =
+        MeshLib::getMaxiumElementEdgeLengths(mesh->getElements());
     std::vector<double> const expected_element_sizes = {
         1, std::sqrt(2), 1, 1, std::sqrt(2), 1, std::sqrt(2), std::sqrt(1.5)};
 
