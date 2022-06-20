@@ -26,3 +26,7 @@ web/.netlify
 CMakeUserPresets.json
 
 .snakemake
+
+# clangd and other language servers' caches
+.cache
+.ccls-cache
