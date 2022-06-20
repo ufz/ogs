@@ -251,3 +251,21 @@ AddTest(
     expected_Column_ts_68_t_7200000.000000.vtu Column_ts_68_t_7200000.000000.vtu epsilon epsilon 1e-5 1e-5
     expected_Column_ts_68_t_7200000.000000.vtu Column_ts_68_t_7200000.000000.vtu sigma sigma 1e-5 1e-5
 )
+
+AddTest(
+    NAME THM_HT_ClassicalTransportExample
+    PATH ThermoHydroMechanics/Linear/TH_ClassicalTransportExample
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS classical_transport_example.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 1
+    DIFF_DATA
+    classical_transport_example_t_4800.00.vtu classical_transport_example_t_4800.00.vtu C C 1.e-9 1.0e-12
+    classical_transport_example_t_4800.00.vtu classical_transport_example_t_4800.00.vtu pressure pressure 1.e-9 1.0e-12
+    classical_transport_example_t_4800.00.vtu classical_transport_example_t_4800.00.vtu velocity velocity 1.e-12 1.0e-12
+    classical_transport_example_t_7200.00.vtu classical_transport_example_t_7200.00.vtu C C 1.e-9 1.0e-12
+    classical_transport_example_t_7200.00.vtu classical_transport_example_t_7200.00.vtu pressure pressure 1.e-9 1.0e-12
+    classical_transport_example_t_7200.00.vtu classical_transport_example_t_7200.00.vtu velocity velocity 1.e-12 1.0e-12
+)

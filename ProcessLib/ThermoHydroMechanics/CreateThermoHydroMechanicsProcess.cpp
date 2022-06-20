@@ -174,10 +174,15 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim),
         &mesh);
 
+    auto stabilizer = NumLib::createNumericalStabilization(mesh, config);
+
     ThermoHydroMechanicsProcessData<DisplacementDim> process_data{
-        materialIDs(mesh), std::move(media_map),
-        std::move(solid_constitutive_relations), initial_stress,
-        specific_body_force};
+        materialIDs(mesh),
+        std::move(media_map),
+        std::move(solid_constitutive_relations),
+        initial_stress,
+        specific_body_force,
+        std::move(stabilizer)};
 
     SecondaryVariableCollection secondary_variables;
 

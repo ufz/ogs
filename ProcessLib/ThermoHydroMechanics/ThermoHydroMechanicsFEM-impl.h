@@ -236,6 +236,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     MaterialPropertyLib::VariableArray vars;
 
     auto const& identity2 = Invariants::identity2;
+    GlobalDimMatrixType const& I(
+        GlobalDimMatrixType::Identity(DisplacementDim, DisplacementDim));
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -450,12 +452,20 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .property(
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
                 .template value<double>(vars, x_position, t, dt);
-        auto const effective_thermal_conductivity =
+        auto effective_thermal_conductivity =
             MaterialPropertyLib::formEigenTensor<DisplacementDim>(
                 medium
                     ->property(
                         MaterialPropertyLib::PropertyType::thermal_conductivity)
                     .value(vars, x_position, t, dt));
+
+        if (_process_data.stabilizer)
+        {
+            effective_thermal_conductivity.noalias() +=
+                _process_data.stabilizer->getExtraDiffusionCoefficient(
+                    _element.getID(), fluid_density * c_f, velocity.norm()) *
+                I;
+        }
 
         KTT.noalias() +=
             (dNdx_T.transpose() * effective_thermal_conductivity * dNdx_T +

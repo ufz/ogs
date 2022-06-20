@@ -78,6 +78,10 @@ the specific heat capacity are set to 1 and the thermal conductivity
 The tuning parameter for `IsotropicDiffusion` takes small value 0.15, while the
  cutoff velocity is 0.
 
+ <span style="color:blue">**Note**</span>: With the same material data, the example is
+ also tested with `ThermoHydroMechanics` process by fixing displacement to zero
+ at all mesh nodes.
+
 ### Result
 
 With the Galerkin finite element method, fine spatial and temporal discretizations
