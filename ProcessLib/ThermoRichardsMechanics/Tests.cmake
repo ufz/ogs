@@ -4,7 +4,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/RichardsFlow2D/RichardsFlow_2d_small.prj RUNTIME 10)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/A2/A2.prj RUNTIME 18)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/OrthotropicSwelling/orthotropic_swelling_xy.xml)
-    OgsTest(PROJECTFILE ThermoRichardsMechanics/OrthotropicSwelling/orthotropic_swelling_xyz.prj)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/OrthotropicSwelling/orthotropic_swelling_xyz.xml)
 endif()
 
 AddTest(
