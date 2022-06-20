@@ -40,4 +40,9 @@ TEST(MeshLib, UniqueMeshId)
     // Copy mesh keeps also increments the counter.
     Mesh m4 = m0;
     ASSERT_EQ(counter_value + std::size_t(4), m4.getID());
+
+    // Moving a mesh keeps the counter (and all other properties)
+    Mesh m5 = std::move(m0);
+    ASSERT_EQ(counter_value, m5.getID());
+    ASSERT_EQ("first", m5.getName());
 }

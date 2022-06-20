@@ -117,6 +117,8 @@ Mesh::Mesh(const Mesh& mesh)
     this->setElementNeighbors();
 }
 
+Mesh::Mesh(Mesh&& mesh) = default;
+
 Mesh::~Mesh()
 {
     const std::size_t nElements(_elements.size());

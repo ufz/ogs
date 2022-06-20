@@ -61,6 +61,11 @@ public:
     /// Copy constructor
     Mesh(const Mesh &mesh);
 
+    Mesh(Mesh&& mesh);
+
+    Mesh& operator=(const Mesh& mesh) = delete;
+    Mesh& operator=(Mesh&& mesh) = delete;
+
     /// Destructor
     virtual ~Mesh();
 
