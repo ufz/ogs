@@ -64,6 +64,24 @@ void ThermalTwoPhaseFlowWithPPProcess::initializeConcreteProcess(
         makeExtrapolator(1, getExtrapolator(), _local_assemblers,
                          &ThermalTwoPhaseFlowWithPPLocalAssemblerInterface::
                              getIntPtWettingPressure));
+
+    _secondary_variables.addSecondaryVariable(
+        "liquid_molar_fraction_contaminant",
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &ThermalTwoPhaseFlowWithPPLocalAssemblerInterface::
+                             getIntPtLiquidMolFracContaminant));
+
+    _secondary_variables.addSecondaryVariable(
+        "gas_molar_fraction_water",
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &ThermalTwoPhaseFlowWithPPLocalAssemblerInterface::
+                             getIntPtGasMolFracWater));
+
+    _secondary_variables.addSecondaryVariable(
+        "gas_molar_fraction_contaminant",
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &ThermalTwoPhaseFlowWithPPLocalAssemblerInterface::
+                             getIntPtGasMolFracContaminant));
 }
 
 void ThermalTwoPhaseFlowWithPPProcess::assembleConcreteProcess(

@@ -13,7 +13,6 @@
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
-
 #include "ThermalTwoPhaseFlowWithPPLocalAssembler.h"
 
 namespace MeshLib
@@ -22,20 +21,25 @@ class Element;
 class Mesh;
 template <typename PROP_VAL_TYPE>
 class PropertyVector;
-}
+}  // namespace MeshLib
 
 namespace ProcessLib
 {
 namespace ThermalTwoPhaseFlowWithPP
 {
 /**
- * \brief A class to simulate the nonisothermal two-phase flow process with
- * phase change in porous media. Here the phase change is caused by
- * evaporation/condensation of the heavy component in the liquid phase.
- * Currently only the liquid phase is allowed to disappear due to the assumption
- * of a pure liquid phase. For the formulation of non-isothermal material
- * properties, see \cite Class_2002.
+ * A class to simulate the nonisothermal two-phase flow process in porous media
+ * with max. 3 components. The water and air components are usually required on
+ * a minimum. The air component is assumed to only exist in the gas phase. The
+ * third component (organic contaminant) is optional, and can partition between
+ * the liquid and gas phases. Technically, an algorithm for phase
+ * appearance/disappearance is not implemented here. However, the liquid phase
+ * is allowed to appear/disappear in some exceptional cases, e.g. the heat pipe
+ * benchmark (since a pure liquid phase is assumed). For the formulation of
+ * global conservation equations and constitutive relationships,
+ * see \cite meng2021remediation.
  */
+
 class ThermalTwoPhaseFlowWithPPProcess final : public Process
 {
 public:
@@ -55,6 +59,7 @@ public:
             curves);
 
     bool isLinear() const override { return false; }
+
 private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,

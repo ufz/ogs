@@ -33,7 +33,9 @@ void checkMPLProperties(
         MaterialPropertyLib::PropertyType::saturation,
         MaterialPropertyLib::PropertyType::relative_permeability,
         MaterialPropertyLib::PropertyType::
-            relative_permeability_nonwetting_phase};
+            relative_permeability_nonwetting_phase,
+        MaterialPropertyLib::PropertyType::longitudinal_dispersivity,
+        MaterialPropertyLib::PropertyType::transversal_dispersivity};
 
     std::array const required_property_solid_phase = {
         MaterialPropertyLib::PropertyType::specific_heat_capacity,
@@ -49,7 +51,7 @@ void checkMPLProperties(
 
     std::array const required_property_vapour_component = {
         MaterialPropertyLib::specific_heat_capacity,
-        MaterialPropertyLib::diffusion, MaterialPropertyLib::molar_mass,
+        MaterialPropertyLib::pore_diffusion, MaterialPropertyLib::molar_mass,
         MaterialPropertyLib::specific_latent_heat,
         MaterialPropertyLib::vapour_pressure};
 
@@ -57,13 +59,21 @@ void checkMPLProperties(
         MaterialPropertyLib::specific_heat_capacity,
         MaterialPropertyLib::molar_mass};
 
+    std::array const required_property_contaminant_vapour_component = {
+        MaterialPropertyLib::pore_diffusion,
+        MaterialPropertyLib::specific_heat_capacity,
+        MaterialPropertyLib::henry_constant, MaterialPropertyLib::molar_mass};
+
+    std::array const required_property_dissolved_contaminant_component = {
+        MaterialPropertyLib::pore_diffusion};
+
     for (auto const& m : media)
     {
         auto const& gas_phase = m.second->phase("Gas");
+        auto const& liquid_phase = m.second->phase("AqueousLiquid");
         checkRequiredProperties(*m.second, required_property_medium);
         checkRequiredProperties(gas_phase, required_property_gas_phase);
-        checkRequiredProperties(m.second->phase("AqueousLiquid"),
-                                required_property_liquid_phase);
+        checkRequiredProperties(liquid_phase, required_property_liquid_phase);
         checkRequiredProperties(m.second->phase("Solid"),
                                 required_property_solid_phase);
 
@@ -72,6 +82,11 @@ void checkMPLProperties(
                                 required_property_vapour_component);
         checkRequiredProperties(gas_phase.component("a"),
                                 required_property_dry_air_component);
+        checkRequiredProperties(gas_phase.component("c"),
+                                required_property_contaminant_vapour_component);
+        checkRequiredProperties(
+            liquid_phase.component("c"),
+            required_property_dissolved_contaminant_component);
     }
 }
 
@@ -103,6 +118,8 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
          "gas_pressure",
          //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__process_variables__capillary_pressure}
          "capillary_pressure",
+         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__process_variables__total_molar_fraction_contaminant}
+         "total_molar_fraction_contaminant",
          //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__process_variables__temperature}
          "temperature"});
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>

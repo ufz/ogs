@@ -51,7 +51,7 @@ struct IntegrationPointData final
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
-const unsigned NUM_NODAL_DOF = 3;
+const unsigned NUM_NODAL_DOF = 4;
 
 class ThermalTwoPhaseFlowWithPPLocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
@@ -65,6 +65,24 @@ public:
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtWettingPressure(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtLiquidMolFracContaminant(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtGasMolFracWater(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtGasMolFracContaminant(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
@@ -104,6 +122,12 @@ public:
           _saturation(
               std::vector<double>(_integration_method.getNumberOfPoints())),
           _pressure_wetting(
+              std::vector<double>(_integration_method.getNumberOfPoints())),
+          _liquid_molar_fraction_contaminant(
+              std::vector<double>(_integration_method.getNumberOfPoints())),
+          _gas_molar_fraction_water(
+              std::vector<double>(_integration_method.getNumberOfPoints())),
+          _gas_molar_fraction_contaminant(
               std::vector<double>(_integration_method.getNumberOfPoints()))
     {
         unsigned const n_integration_points =
@@ -164,6 +188,36 @@ public:
         return _pressure_wetting;
     }
 
+    std::vector<double> const& getIntPtLiquidMolFracContaminant(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& /*cache*/) const override
+    {
+        assert(!_liquid_molar_fraction_contaminant.empty());
+        return _liquid_molar_fraction_contaminant;
+    }
+
+    std::vector<double> const& getIntPtGasMolFracWater(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& /*cache*/) const override
+    {
+        assert(!_gas_molar_fraction_water.empty());
+        return _gas_molar_fraction_water;
+    }
+
+    std::vector<double> const& getIntPtGasMolFracContaminant(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& /*cache*/) const override
+    {
+        assert(!_gas_molar_fraction_contaminant.empty());
+        return _gas_molar_fraction_contaminant;
+    }
+
 private:
     MeshLib::Element const& _element;
 
@@ -179,13 +233,18 @@ private:
 
     std::vector<double> _saturation;
     std::vector<double> _pressure_wetting;
+    std::vector<double> _liquid_molar_fraction_contaminant;
+    std::vector<double> _gas_molar_fraction_water;
+    std::vector<double> _gas_molar_fraction_contaminant;
 
     static const int nonwet_pressure_matrix_index = 0;
     static const int cap_pressure_matrix_index = ShapeFunction::NPOINTS;
-    static const int temperature_matrix_index = 2 * ShapeFunction::NPOINTS;
+    static const int contaminant_matrix_index = 2 * ShapeFunction::NPOINTS;
+    static const int temperature_matrix_index = 3 * ShapeFunction::NPOINTS;
 
     static const int nonwet_pressure_size = ShapeFunction::NPOINTS;
     static const int cap_pressure_size = ShapeFunction::NPOINTS;
+    static const int contaminant_size = ShapeFunction::NPOINTS;
     static const int temperature_size = ShapeFunction::NPOINTS;
 };
 
