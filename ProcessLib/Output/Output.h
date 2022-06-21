@@ -79,10 +79,7 @@ struct OutputFile
 class Output
 {
 public:
-    Output(std::string directory, OutputType const file_type,
-           std::string file_prefix, std::string file_suffix,
-           bool const compress_output, unsigned int n_files,
-           std::string const& data_mode,
+    Output(OutputFile&& output_file,
            bool const output_nonlinear_iteration_results,
            OutputDataSpecification&& output_data_specification,
            std::vector<std::string>&& mesh_names_for_output,

@@ -69,28 +69,6 @@ void addBulkMeshNodePropertyToSubMesh(MeshLib::Mesh const& bulk_mesh,
 
 namespace
 {
-//! Converts a vtkXMLWriter's data mode string to an int. See
-/// OutputFile::data_mode.
-int convertVtkDataMode(std::string const& data_mode)
-{
-    if (data_mode == "Ascii")
-    {
-        return 0;
-    }
-    if (data_mode == "Binary")
-    {
-        return 1;
-    }
-    if (data_mode == "Appended")
-    {
-        return 2;
-    }
-    OGS_FATAL(
-        "Unsupported vtk output file data mode '{:s}'. Expected Ascii, Binary, "
-        "or Appended.",
-        data_mode);
-}
-
 void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
                    bool const compress_output, int const data_mode)
 {
@@ -234,17 +212,12 @@ std::string OutputFile::constructFilename(std::string mesh_name,
     }
 }
 
-Output::Output(std::string directory, OutputType file_type,
-               std::string file_prefix, std::string file_suffix,
-               bool const compress_output, unsigned int const n_files,
-               std::string const& data_mode,
+Output::Output(OutputFile&& output_file,
                bool const output_nonlinear_iteration_results,
                OutputDataSpecification&& output_data_specification,
                std::vector<std::string>&& mesh_names_for_output,
                std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
-    : output_file(directory, file_type, file_prefix, file_suffix,
-                  convertVtkDataMode(data_mode), compress_output,
-                  output_data_specification.output_variables, n_files),
+    : output_file(std::move(output_file)),
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
       _output_data_specification(std::move(output_data_specification)),
       _mesh_names_for_output(mesh_names_for_output),

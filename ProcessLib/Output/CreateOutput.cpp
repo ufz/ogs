@@ -20,6 +20,31 @@
 #include "MeshLib/Mesh.h"
 #include "Output.h"
 
+namespace
+{
+//! Converts a vtkXMLWriter's data mode string to an int. See
+/// OutputFile::data_mode.
+int convertVtkDataMode(std::string const& data_mode)
+{
+    if (data_mode == "Ascii")
+    {
+        return 0;
+    }
+    if (data_mode == "Binary")
+    {
+        return 1;
+    }
+    if (data_mode == "Appended")
+    {
+        return 2;
+    }
+    OGS_FATAL(
+        "Unsupported vtk output file data mode '{:s}'. Expected Ascii, Binary, "
+        "or Appended.",
+        data_mode);
+}
+}  // namespace
+
 namespace ProcessLib
 {
 std::unique_ptr<Output> createOutput(
@@ -171,9 +196,13 @@ std::unique_ptr<Output> createOutput(
         //! \ogs_file_param{prj__time_loop__output__output_iteration_results}
         config.getConfigParameter<bool>("output_iteration_results", false);
 
-    return std::make_unique<Output>(output_directory, output_type, prefix,
-                                    suffix, compress_output, number_of_files,
-                                    data_mode, output_iteration_results,
+    OutputFile output_file(output_directory, output_type, prefix, suffix,
+                           convertVtkDataMode(data_mode), compress_output,
+                           output_data_specification.output_variables,
+                           number_of_files);
+
+    return std::make_unique<Output>(std::move(output_file),
+                                    output_iteration_results,
                                     std::move(output_data_specification),
                                     std::move(mesh_names_for_output), meshes);
 }
