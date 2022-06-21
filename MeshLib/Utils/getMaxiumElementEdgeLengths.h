@@ -15,7 +15,8 @@
 
 namespace MeshLib
 {
-class Mesh;
+class Element;
 /// Returns the maximum lengths of the edges for each element.
-std::vector<double> getElementSizes(Mesh const& mesh);
+std::vector<double> getMaxiumElementEdgeLengths(
+    std::vector<Element*> const& elements);
 }  // namespace MeshLib

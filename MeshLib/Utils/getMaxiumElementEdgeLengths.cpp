@@ -9,18 +9,17 @@
  * Created on June 2, 2022, 3:05 PM
  */
 
-#include "GetElementSizes.h"
+#include "getMaxiumElementEdgeLengths.h"
 
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 
 namespace MeshLib
 {
-std::vector<double> getElementSizes(Mesh const& mesh)
+std::vector<double> getMaxiumElementEdgeLengths(
+    std::vector<Element*> const& elements)
 {
-    const auto& elements = mesh.getElements();
-    std::vector<double> element_sizes(elements.size());
+    std::vector<double> element_edge_lengths(elements.size());
     for (auto const element : elements)
     {
         assert(element->getGeomType() != MeshElemType::POINT);
@@ -29,9 +28,9 @@ std::vector<double> getElementSizes(Mesh const& mesh)
             MeshLib::computeSqrEdgeLengthRange(*element);
         (void)min_edge_length;
 
-        element_sizes[element->getID()] = std::sqrt(max_edge_length);
+        element_edge_lengths[element->getID()] = std::sqrt(max_edge_length);
     }
 
-    return element_sizes;
+    return element_edge_lengths;
 }
 }  // namespace MeshLib

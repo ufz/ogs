@@ -91,6 +91,8 @@ private:
     /// The tuning parameter in the range [0,1].
     double const tuning_parameter_ = 0.5;
 
+    /// Element sizes, which are represented by the maximum element edge
+    /// lengths.
     std::vector<double> const element_sizes_;
 };
 
