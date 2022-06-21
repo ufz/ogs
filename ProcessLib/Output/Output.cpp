@@ -65,6 +65,44 @@ void addBulkMeshNodePropertyToSubMesh(MeshLib::Mesh const& bulk_mesh,
                    { return bulk_mesh_property[id]; });
 }
 
+/**
+ * Get the address of a PVDFile corresponding to the given process.
+ * @param process    Process.
+ * @param process_id Process ID.
+ * @param mesh_name_for_output mesh name for the output.
+ * @param process_to_pvd_file a multimap that holds the PVD files associated
+ * with each process.
+ * @return Address of a PVDFile.
+ */
+MeshLib::IO::PVDFile& findPVDFile(
+    Process const& process, const int process_id, std::string const& filename,
+    std::multimap<Process const*, MeshLib::IO::PVDFile>& process_to_pvd_file)
+{
+    auto range = process_to_pvd_file.equal_range(&process);
+    int counter = 0;
+    MeshLib::IO::PVDFile* pvd_file = nullptr;
+    for (auto spd_it = range.first; spd_it != range.second; ++spd_it)
+    {
+        if (spd_it->second.pvd_filename == filename)
+        {
+            if (counter == process_id)
+            {
+                pvd_file = &spd_it->second;
+                break;
+            }
+            counter++;
+        }
+    }
+    if (pvd_file == nullptr)
+    {
+        OGS_FATAL(
+            "The given process is not contained in the output configuration. "
+            "Aborting.");
+    }
+
+    return *pvd_file;
+}
+
 }  // namespace ProcessLib
 
 namespace
@@ -116,14 +154,6 @@ void outputMeshVtk(ProcessLib::OutputFile const& output_file,
 
 namespace ProcessLib
 {
-std::string OutputFile::constructPVDName(std::string const& mesh_name) const
-{
-    return BaseLib::joinPaths(
-        directory,
-        BaseLib::constructFormattedFileName(prefix, mesh_name, 0, 0, 0) +
-            ".pvd");
-}
-
 bool Output::isOutputStep(int timestep, double const t) const
 {
     auto const fixed_output_time = std::lower_bound(
@@ -170,48 +200,6 @@ bool Output::isOutputProcess(const int process_id, const Process& process) const
            || is_last_process;
 }
 
-OutputFile::OutputFile(std::string const& directory, OutputType const type,
-                       std::string const& prefix, std::string const& suffix,
-                       int const data_mode_, bool const compression_,
-                       std::set<std::string> const& outputnames,
-                       unsigned int const n_files)
-    : directory(directory),
-      prefix(prefix),
-      suffix(suffix),
-      type(type),
-      data_mode(data_mode_),
-      compression(compression_),
-      outputnames(outputnames),
-      n_files(n_files)
-{
-}
-
-std::string OutputFile::constructFilename(std::string mesh_name,
-                                          int const timestep,
-                                          double const t,
-                                          int const iteration) const
-{
-    std::map<OutputType, std::string> filetype_to_extension = {
-        {OutputType::vtk, "vtu"}, {OutputType::xdmf, "xdmf"}};
-
-    try
-    {
-        std::string extension = filetype_to_extension.at(type);
-        return BaseLib::constructFormattedFileName(prefix, mesh_name, timestep,
-                                                   t, iteration) +
-               BaseLib::constructFormattedFileName(suffix, mesh_name, timestep,
-                                                   t, iteration) +
-               "." + extension;
-    }
-    catch (std::out_of_range&)
-    {
-        OGS_FATAL(
-            "No supported file type provided. Read `{:s}' from <output><type> \
-                in prj file. Supported: VTK, XDMF.",
-            type);
-    }
-}
-
 Output::Output(OutputFile&& output_file,
                bool const output_nonlinear_iteration_results,
                OutputDataSpecification&& output_data_specification,
@@ -239,66 +227,6 @@ void Output::addProcess(ProcessLib::Process const& process)
                                      std::forward_as_tuple(&process),
                                      std::forward_as_tuple(filename));
     }
-}
-
-/**
- * Get the address of a PVDFile corresponding to the given process.
- * @param process    Process.
- * @param process_id Process ID.
- * @param mesh_name_for_output mesh name for the output.
- * @param process_to_pvd_file a multimap that holds the PVD files associated
- * with each process.
- * @return Address of a PVDFile.
- */
-MeshLib::IO::PVDFile& findPVDFile(
-    Process const& process, const int process_id, std::string const& filename,
-    std::multimap<Process const*, MeshLib::IO::PVDFile>& process_to_pvd_file)
-{
-    auto range = process_to_pvd_file.equal_range(&process);
-    int counter = 0;
-    MeshLib::IO::PVDFile* pvd_file = nullptr;
-    for (auto spd_it = range.first; spd_it != range.second; ++spd_it)
-    {
-        if (spd_it->second.pvd_filename == filename)
-        {
-            if (counter == process_id)
-            {
-                pvd_file = &spd_it->second;
-                break;
-            }
-            counter++;
-        }
-    }
-    if (pvd_file == nullptr)
-    {
-        OGS_FATAL(
-            "The given process is not contained in the output configuration. "
-            "Aborting.");
-    }
-
-    return *pvd_file;
-}
-
-void OutputFile::outputMeshXdmf(
-    OutputDataSpecification const& output_data_specification,
-    std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
-    int const timestep, double const t, int const iteration)
-{
-    // \TODO (tm) Refactor to a dedicated VTKOutput and XdmfOutput
-    // The XdmfOutput will create on construction the XdmfHdfWriter
-    if (!mesh_xdmf_hdf_writer)
-    {
-        auto name = constructFilename(meshes[0].get().getName(), timestep, t,
-                                      iteration);
-        std::filesystem::path path(BaseLib::joinPaths(directory, name));
-        mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
-            std::move(meshes), path, timestep, t,
-            output_data_specification.output_variables, compression, n_files);
-    }
-    else
-    {
-        mesh_xdmf_hdf_writer->writeStep(t);
-    };
 }
 
 void Output::outputMeshes(

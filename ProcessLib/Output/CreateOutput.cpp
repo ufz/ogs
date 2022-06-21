@@ -47,6 +47,18 @@ int convertVtkDataMode(std::string const& data_mode)
 
 namespace ProcessLib
 {
+std::unique_ptr<OutputFile> createOutputFile(
+    std::string&& output_directory, OutputType const output_type,
+    std::string&& prefix, std::string&& suffix,
+    std::set<std::string> const& output_variables, bool const compress_output,
+    unsigned int const number_of_files, std::string const& data_mode)
+{
+    return std::make_unique<OutputFile>(
+        std::move(output_directory), output_type, std::move(prefix),
+        std::move(suffix), convertVtkDataMode(data_mode), compress_output,
+        output_variables, number_of_files);
+}
+
 std::unique_ptr<Output> createOutput(
     const BaseLib::ConfigTree& config,
     std::string const& output_directory,
