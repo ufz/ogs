@@ -28,7 +28,6 @@ struct OutputFile
     OutputFile(std::string const& directory, OutputType const type,
                std::string const& prefix, std::string const& suffix,
                int const data_mode_, bool const compression_,
-               std::set<std::string> const& outputnames,
                unsigned int const n_files);
 
     std::string directory;
@@ -45,8 +44,6 @@ struct OutputFile
     //! Enables or disables zlib-compression of the output files.
     bool const compression;
 
-    std::set<std::string> outputnames;
-
     std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;
     //! Specifies the number of hdf5 output files.
     unsigned int const n_files;
@@ -55,7 +52,7 @@ struct OutputFile
                                   double const t, int const iteration) const;
 
     void outputMeshXdmf(
-        OutputDataSpecification const& output_data_specification,
+        std::set<std::string> const& output_variables,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
         int const timestep, double const t, int const iteration);
 

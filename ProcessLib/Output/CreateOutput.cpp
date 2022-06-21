@@ -49,14 +49,13 @@ namespace ProcessLib
 {
 std::unique_ptr<OutputFile> createOutputFile(
     std::string&& output_directory, OutputType const output_type,
-    std::string&& prefix, std::string&& suffix,
-    std::set<std::string> const& output_variables, bool const compress_output,
+    std::string&& prefix, std::string&& suffix, bool const compress_output,
     unsigned int const number_of_files, std::string const& data_mode)
 {
     return std::make_unique<OutputFile>(
         std::move(output_directory), output_type, std::move(prefix),
         std::move(suffix), convertVtkDataMode(data_mode), compress_output,
-        output_variables, number_of_files);
+        number_of_files);
 }
 
 std::unique_ptr<Output> createOutput(
@@ -210,7 +209,6 @@ std::unique_ptr<Output> createOutput(
 
     OutputFile output_file(output_directory, output_type, prefix, suffix,
                            convertVtkDataMode(data_mode), compress_output,
-                           output_data_specification.output_variables,
                            number_of_files);
 
     return std::make_unique<Output>(std::move(output_file),

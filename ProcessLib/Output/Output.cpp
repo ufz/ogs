@@ -196,7 +196,7 @@ void Output::outputMeshes(
     }
     else if (output_file.type == ProcessLib::OutputType::xdmf)
     {
-        output_file.outputMeshXdmf(_output_data_specification,
+        output_file.outputMeshXdmf(_output_data_specification.output_variables,
                                    std::move(meshes), timestep, t, iteration);
     }
 }

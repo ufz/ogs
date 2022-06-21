@@ -72,7 +72,6 @@ std::string OutputFile::constructPVDName(std::string const& mesh_name) const
 OutputFile::OutputFile(std::string const& directory, OutputType const type,
                        std::string const& prefix, std::string const& suffix,
                        int const data_mode_, bool const compression_,
-                       std::set<std::string> const& outputnames,
                        unsigned int const n_files)
     : directory(directory),
       prefix(prefix),
@@ -80,7 +79,6 @@ OutputFile::OutputFile(std::string const& directory, OutputType const type,
       type(type),
       data_mode(data_mode_),
       compression(compression_),
-      outputnames(outputnames),
       n_files(n_files)
 {
 }
@@ -112,7 +110,7 @@ std::string OutputFile::constructFilename(std::string mesh_name,
 }
 
 void OutputFile::outputMeshXdmf(
-    OutputDataSpecification const& output_data_specification,
+    std::set<std::string> const& output_variables,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
     int const timestep, double const t, int const iteration)
 {
@@ -124,8 +122,8 @@ void OutputFile::outputMeshXdmf(
                                       iteration);
         std::filesystem::path path(BaseLib::joinPaths(directory, name));
         mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
-            std::move(meshes), path, timestep, t,
-            output_data_specification.output_variables, compression, n_files);
+            std::move(meshes), path, timestep, t, output_variables, compression,
+            n_files);
     }
     else
     {
