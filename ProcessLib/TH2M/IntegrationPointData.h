@@ -158,6 +158,8 @@ struct IntegrationPointData final
     GlobalDimMatrixType lambda;
     GlobalDimVectorType d_CG;
     GlobalDimVectorType d_WG;
+    GlobalDimVectorType d_CL;
+    GlobalDimVectorType d_WL;
 
     GlobalDimVectorType w_GS;
     GlobalDimVectorType w_LS;

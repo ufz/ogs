@@ -396,6 +396,7 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         ip_data.xmCG = 1. - c.xmWG;
         ip_data.xmWG = c.xmWG;
         ip_data.xmWL = c.xmWL;
+        auto const xmCL = 1. - c.xmWL;
 
         ip_data.diffusion_coefficient_vapour = c.diffusion_coefficient_vapour;
         ip_data.diffusion_coefficient_solute = c.diffusion_coefficient_solute;
@@ -410,6 +411,11 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
                                              ip_data.dxmWG_dpCap * gradpCap +
                                              ip_data.dxmWG_dT * gradT;
         const GlobalDimVectorType gradxmCG = -gradxmWG;
+
+        const GlobalDimVectorType gradxmWL = ip_data.dxmWL_dpGR * gradpGR +
+                                             ip_data.dxmWL_dpCap * gradpCap +
+                                             ip_data.dxmWL_dT * gradT;
+        const GlobalDimVectorType gradxmCL = -gradxmWL;
 
         // Todo: factor -phiAlpha / xmZetaAlpha * DZetaAlpha can be evaluated in
         // the respective phase transition model, here only the multiplication
@@ -428,6 +434,19 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
                            : -phi_G / ip_data.xmWG *
                                  ip_data.diffusion_coefficient_vapour *
                                  gradxmWG;
+
+        ip_data.d_CL = xmCL == 0. ? 0. * gradxmCL  // Keep d_CL's dimension and
+                                                   // prevent division by zero
+                                  : -phi_L / xmCL *
+                                        ip_data.diffusion_coefficient_solute *
+                                        gradxmCL;
+
+        ip_data.d_WL = ip_data.xmWL == 0.
+                           ? 0. * gradxmWL  // Keep d_WG's dimension and prevent
+                                            // division by zero
+                           : -phi_L / ip_data.xmWL *
+                                 ip_data.diffusion_coefficient_solute *
+                                 gradxmWL;
 
         // ---------------------------------------------------------------------
         // Derivatives for Jacobian
@@ -2149,6 +2168,110 @@ std::vector<double> const& TH2MLocalAssembler<
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         cache_matrix.col(ip).noalias() = _ip_data[ip].w_LS;
+    }
+
+    return cache;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+std::vector<double> const& TH2MLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    getIntPtDiffusionVelocityVapourGas(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+
+    cache.clear();
+    auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
+        double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, DisplacementDim, n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        cache_matrix.col(ip).noalias() = _ip_data[ip].d_WG;
+    }
+
+    return cache;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+std::vector<double> const& TH2MLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    getIntPtDiffusionVelocityGasGas(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+
+    cache.clear();
+    auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
+        double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, DisplacementDim, n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        cache_matrix.col(ip).noalias() = _ip_data[ip].d_CG;
+    }
+
+    return cache;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+std::vector<double> const& TH2MLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    getIntPtDiffusionVelocitySoluteLiquid(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+
+    cache.clear();
+    auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
+        double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, DisplacementDim, n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        cache_matrix.col(ip).noalias() = _ip_data[ip].d_CL;
+    }
+
+    return cache;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+std::vector<double> const& TH2MLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    getIntPtDiffusionVelocityLiquidLiquid(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+
+    cache.clear();
+    auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
+        double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, DisplacementDim, n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        cache_matrix.col(ip).noalias() = _ip_data[ip].d_WL;
     }
 
     return cache;

@@ -203,6 +203,19 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
     add_secondary_variable(
         "velocity_liquid", mesh.getDimension(),
         &LocalAssemblerInterface::getIntPtDarcyVelocityLiquid);
+    add_secondary_variable(
+        "diffusion_velocity_vapour_gas", mesh.getDimension(),
+        &LocalAssemblerInterface::getIntPtDiffusionVelocityVapourGas);
+    add_secondary_variable(
+        "diffusion_velocity_gas_gas", mesh.getDimension(),
+        &LocalAssemblerInterface::getIntPtDiffusionVelocityGasGas);
+    add_secondary_variable(
+        "diffusion_velocity_solute_liquid", mesh.getDimension(),
+        &LocalAssemblerInterface::getIntPtDiffusionVelocitySoluteLiquid);
+    add_secondary_variable(
+        "diffusion_velocity_liquid_liquid", mesh.getDimension(),
+        &LocalAssemblerInterface::getIntPtDiffusionVelocityLiquidLiquid);
+
     add_secondary_variable("saturation", 1,
                            &LocalAssemblerInterface::getIntPtSaturation);
     add_secondary_variable("vapour_pressure", 1,
