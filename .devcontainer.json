@@ -1,0 +1,28 @@
+{
+	"name": "ogs-gcc-dev",
+	"image": "registry.opengeosys.org/ogs/ogs/vscode:latest",
+	"containerEnv": {
+		"CPM_SOURCE_CACHE": "/opt/cpm"
+	},
+	"postStartCommand": "nohup bash -c 'cd web; yarn; yarn build; hugo server &'",
+	"forwardPorts": [
+		1313
+	],
+	"mounts": [
+		"source=devcontainer-cpm-cache,target=/opt/cpm,type=volume",
+		"source=devcontainer-ccache-cache,target=/opt/ccache,type=volume",
+		"source=${localWorkspaceFolder}/../build,target=${containerWorkspaceFolder}/../build,type=bind"
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cmake-tools",
+				"ms-vscode.cpptools"
+			]
+		}
+	},
+	"remoteUser": "vscode",
+	"features": {
+		"common": {}
+	}
+}

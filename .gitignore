@@ -30,3 +30,7 @@ CMakeUserPresets.json
 # clangd and other language servers' caches
 .cache
 .ccls-cache
+
+# VS Code devcontainer
+/.cpm
+nohup.out
