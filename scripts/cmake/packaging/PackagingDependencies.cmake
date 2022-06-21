@@ -3,15 +3,16 @@ if(NOT OGS_INSTALL_DEPENDENCIES)
     return()
 endif()
 if(WIN32)
-    set(INSTALL_DIR ${CMAKE_INSTALL_FULL_BINDIR})
+    set(INSTALL_DIR ${CMAKE_INSTALL_BINDIR})
 else()
-    set(INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
+    set(INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
 endif()
 list(JOIN CMAKE_INSTALL_RPATH ":" _rpath)
 
 install(CODE "set(INSTALL_DIR \"${INSTALL_DIR}\")")
 install(CODE "set(CMAKE_INSTALL_LIBDIR \"${CMAKE_INSTALL_LIBDIR}\")")
 install(CODE "set(_rpath \"${_rpath}\")")
+install(CODE "set(MKL_ROOT_DIR \"${MKL_ROOT_DIR}\")")
 install(
     CODE [[
   file(GET_RUNTIME_DEPENDENCIES
@@ -20,8 +21,11 @@ install(
         $<$<TARGET_EXISTS:DataExplorer>:$<TARGET_FILE:DataExplorer>>
         $<$<TARGET_EXISTS:testrunner>:$<TARGET_FILE:testrunner>>
         $<$<TARGET_EXISTS:RemoveGhostData>:$<TARGET_FILE:RemoveGhostData>>
+    DIRECTORIES ${MKL_ROOT_DIR}/redist/intel64 ${MKL_ROOT_DIR}/../../tbb/latest/redist/intel64/vc_mt
     RESOLVED_DEPENDENCIES_VAR _r_deps
     UNRESOLVED_DEPENDENCIES_VAR _u_deps
+    PRE_EXCLUDE_REGEXES "api-ms-" "ext-ms-"
+    POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
   )
   find_program(PATCHELF_TOOL patchelf)
   foreach(_lib ${_r_deps})
@@ -36,10 +40,13 @@ install(
       endif()
     endif()
   endforeach()
-  file(INSTALL ${_r_deps}
-    DESTINATION ${INSTALL_DIR}
-    FOLLOW_SYMLINK_CHAIN
-  )
+  foreach(_file ${_r_deps})
+    file(INSTALL
+      DESTINATION "${CMAKE_INSTALL_PREFIX}/${INSTALL_DIR}"
+      TYPE SHARED_LIBRARY
+      FILES "${_file}"
+    )
+  endforeach()
   list(LENGTH _u_deps _u_length)
   if("${_u_length}" GREATER 0)
     message(WARNING "Unresolved dependencies detected!\n${_u_deps}")

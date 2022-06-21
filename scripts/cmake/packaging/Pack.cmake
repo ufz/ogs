@@ -58,6 +58,8 @@ if(UNIX)
     endif()
 endif()
 
+include(packaging/PackagingDependencies)
+
 include(CPack)
 
 if(OGS_USE_CONAN)
