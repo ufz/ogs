@@ -149,7 +149,7 @@ bool Output::isOutputProcess(const int process_id, const Process& process) const
            || is_last_process;
 }
 
-Output::Output(OutputFile&& output_file,
+Output::Output(std::unique_ptr<OutputFile> output_file,
                bool const output_nonlinear_iteration_results,
                OutputDataSpecification&& output_data_specification,
                std::vector<std::string>&& mesh_names_for_output,
@@ -171,7 +171,7 @@ void Output::addProcess(ProcessLib::Process const& process)
 
     for (auto const& mesh_output_name : _mesh_names_for_output)
     {
-        auto const filename = output_file.constructPVDName(mesh_output_name);
+        auto const filename = output_file->constructPVDName(mesh_output_name);
         _process_to_pvd_file.emplace(std::piecewise_construct,
                                      std::forward_as_tuple(&process),
                                      std::forward_as_tuple(filename));
@@ -183,21 +183,22 @@ void Output::outputMeshes(
     const double t, const int iteration,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes)
 {
-    if (output_file.type == ProcessLib::OutputType::vtk)
+    if (output_file->type == ProcessLib::OutputType::vtk)
     {
         for (auto const& mesh : meshes)
         {
             auto const filename =
-                output_file.constructPVDName(mesh.get().getName());
+                output_file->constructPVDName(mesh.get().getName());
             auto& pvd_file = findPVDFile(process, process_id, filename,
                                          _process_to_pvd_file);
-            outputMeshVtk(output_file, pvd_file, mesh, t, timestep, iteration);
+            outputMeshVtk(*output_file.get(), pvd_file, mesh, t, timestep,
+                          iteration);
         }
     }
-    else if (output_file.type == ProcessLib::OutputType::xdmf)
+    else if (output_file->type == ProcessLib::OutputType::xdmf)
     {
-        output_file.outputMeshXdmf(_output_data_specification.output_variables,
-                                   std::move(meshes), timestep, t, iteration);
+        output_file->outputMeshXdmf(_output_data_specification.output_variables,
+                                    std::move(meshes), timestep, t, iteration);
     }
 }
 
@@ -301,7 +302,7 @@ void Output::doOutput(Process const& process,
     // Note: last time step may be output twice: here and in
     // doOutputLastTimestep() which throws a warning.
     InSituLib::CoProcess(process.getMesh(), t, timestep, false,
-                         output_file.directory);
+                         output_file->directory);
 #endif
 }
 
@@ -318,7 +319,7 @@ void Output::doOutputLastTimestep(Process const& process,
     }
 #ifdef USE_INSITU
     InSituLib::CoProcess(process.getMesh(), t, timestep, true,
-                         output_file.directory);
+                         output_file->directory);
 #endif
 }
 
@@ -348,15 +349,15 @@ void Output::doOutputNonlinearIteration(Process const& process,
         return;
     }
 
-    std::string const output_file_name = output_file.constructFilename(
+    std::string const output_file_name = output_file->constructFilename(
         process.getMesh().getName(), timestep, t, iteration);
 
     std::string const output_file_path =
-        BaseLib::joinPaths(output_file.directory, output_file_name);
+        BaseLib::joinPaths(output_file->directory, output_file_name);
 
     DBUG("output iteration results to {:s}", output_file_path);
-    outputMeshVtk(output_file_path, process.getMesh(), output_file.compression,
-                  output_file.data_mode);
+    outputMeshVtk(output_file_path, process.getMesh(), output_file->compression,
+                  output_file->data_mode);
     INFO("[time] Output took {:g} s.", time_output.elapsed());
 }
 }  // namespace ProcessLib

@@ -83,30 +83,26 @@ OutputFile::OutputFile(std::string const& directory, OutputType const type,
 {
 }
 
-std::string OutputFile::constructFilename(std::string mesh_name,
-                                          int const timestep,
-                                          double const t,
-                                          int const iteration) const
+std::string OutputVtkFormat::constructFilename(std::string mesh_name,
+                                               int const timestep,
+                                               double const t,
+                                               int const iteration) const
 {
-    std::map<OutputType, std::string> filetype_to_extension = {
-        {OutputType::vtk, "vtu"}, {OutputType::xdmf, "xdmf"}};
+    return BaseLib::constructFormattedFileName(prefix, mesh_name, timestep, t,
+                                               iteration) +
+           BaseLib::constructFormattedFileName(suffix, mesh_name, timestep, t,
+                                               iteration) +
+           ".vtu";
+}
 
-    try
-    {
-        std::string extension = filetype_to_extension.at(type);
-        return BaseLib::constructFormattedFileName(prefix, mesh_name, timestep,
-                                                   t, iteration) +
-               BaseLib::constructFormattedFileName(suffix, mesh_name, timestep,
-                                                   t, iteration) +
-               "." + extension;
-    }
-    catch (std::out_of_range&)
-    {
-        OGS_FATAL(
-            "No supported file type provided. Read `{:s}' from <output><type> \
-                in prj file. Supported: VTK, XDMF.",
-            type);
-    }
+std::string OutputXDMFHDF5Format::constructFilename(std::string mesh_name,
+                                                    int const timestep,
+                                                    double const t,
+                                                    int const iteration) const
+{
+    return BaseLib::constructFormattedFileName(prefix, mesh_name, timestep, t,
+                                               iteration) +
+           ".xdmf";
 }
 
 void OutputFile::outputMeshXdmf(

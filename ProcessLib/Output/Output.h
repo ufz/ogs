@@ -32,7 +32,7 @@ class Process;
 class Output
 {
 public:
-    Output(OutputFile&& output_file,
+    Output(std::unique_ptr<OutputFile> output_file,
            bool const output_nonlinear_iteration_results,
            OutputDataSpecification&& output_data_specification,
            std::vector<std::string>&& mesh_names_for_output,
@@ -93,7 +93,7 @@ private:
         const int process_id, double const t,
         std::vector<GlobalVector*> const& xs) const;
 
-    OutputFile output_file;
+    std::unique_ptr<OutputFile> output_file;
 
     bool const _output_nonlinear_iteration_results;
 

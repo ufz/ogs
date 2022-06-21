@@ -48,14 +48,29 @@ int convertVtkDataMode(std::string const& data_mode)
 namespace ProcessLib
 {
 std::unique_ptr<OutputFile> createOutputFile(
-    std::string&& output_directory, OutputType const output_type,
-    std::string&& prefix, std::string&& suffix, bool const compress_output,
-    unsigned int const number_of_files, std::string const& data_mode)
+    std::string const& output_directory, OutputType const output_type,
+    std::string&& prefix, std::string&& suffix, std::string const& data_mode,
+    bool const compress_output, unsigned int const number_of_files)
 {
-    return std::make_unique<OutputFile>(
-        std::move(output_directory), output_type, std::move(prefix),
-        std::move(suffix), convertVtkDataMode(data_mode), compress_output,
-        number_of_files);
+    if (output_type == OutputType::vtk)
+    {
+        return std::make_unique<OutputVtkFormat>(
+            output_directory, std::move(prefix), std::move(suffix),
+            convertVtkDataMode(data_mode), compress_output, number_of_files);
+    }
+    if (output_type == OutputType::xdmf)
+    {
+        return std::make_unique<OutputXDMFHDF5Format>(
+            output_directory, std::move(prefix), std::move(suffix),
+            convertVtkDataMode(data_mode), compress_output, number_of_files);
+    }
+    else
+    {
+        OGS_FATAL(
+            "No supported file type provided. Read `{:s}' from <output><type> \
+                in prj File. Supported: VTK, XDMF.",
+            output_type);
+    }
 }
 
 std::unique_ptr<Output> createOutput(
@@ -207,9 +222,9 @@ std::unique_ptr<Output> createOutput(
         //! \ogs_file_param{prj__time_loop__output__output_iteration_results}
         config.getConfigParameter<bool>("output_iteration_results", false);
 
-    OutputFile output_file(output_directory, output_type, prefix, suffix,
-                           convertVtkDataMode(data_mode), compress_output,
-                           number_of_files);
+    auto output_file = createOutputFile(
+        output_directory, output_type, std::move(prefix), std::move(suffix),
+        data_mode, compress_output, number_of_files);
 
     return std::make_unique<Output>(std::move(output_file),
                                     output_iteration_results,
