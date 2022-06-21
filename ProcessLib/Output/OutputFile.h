@@ -53,6 +53,7 @@ struct OutputFile
 
     std::string constructFilename(std::string mesh_name, int const timestep,
                                   double const t, int const iteration) const;
+
     void outputMeshXdmf(
         OutputDataSpecification const& output_data_specification,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
@@ -60,4 +61,7 @@ struct OutputFile
 
     std::string constructPVDName(std::string const& mesh_name) const;
 };
+
+void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
+                   bool const compress_output, int const data_mode);
 }  // namespace ProcessLib

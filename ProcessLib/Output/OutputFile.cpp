@@ -17,6 +17,50 @@
 
 namespace ProcessLib
 {
+void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
+                   bool const compress_output, int const data_mode)
+{
+    DBUG("Writing output to '{:s}'.", file_name);
+
+    // Store floating-point exception handling. Output of NaN's triggers
+    // floating point exceptions. Because we are not debugging VTK (or other
+    // libraries) at this point, the possibly set exceptions are temporary
+    // disabled and restored before end of the function.
+#ifndef _WIN32
+#ifndef __APPLE__
+    fenv_t fe_env;
+    fegetenv(&fe_env);
+    fesetenv(FE_DFL_ENV);  // Set default environment effectively disabling
+                           // exceptions.
+#endif                     //_WIN32
+#endif                     //__APPLE__
+
+    MeshLib::IO::VtuInterface vtu_interface(&mesh, data_mode, compress_output);
+    vtu_interface.writeToFile(file_name);
+
+    // Restore floating-point exception handling.
+#ifndef _WIN32
+#ifndef __APPLE__
+    fesetenv(&fe_env);
+#endif  //_WIN32
+#endif  //__APPLE__
+}
+
+void outputMeshVtk(ProcessLib::OutputFile const& output_file,
+                   MeshLib::IO::PVDFile& pvd_file, MeshLib::Mesh const& mesh,
+                   double const t, int const timestep, int const iteration)
+{
+    auto const name =
+        output_file.constructFilename(mesh.getName(), timestep, t, iteration);
+    if (output_file.type == ProcessLib::OutputType::vtk)
+    {
+        pvd_file.addVTUFile(name, t);
+    }
+
+    auto const path = BaseLib::joinPaths(output_file.directory, name);
+    outputMeshVtk(path, mesh, output_file.compression, output_file.data_mode);
+}
+
 std::string OutputFile::constructPVDName(std::string const& mesh_name) const
 {
     return BaseLib::joinPaths(
