@@ -17,6 +17,44 @@
 
 namespace ProcessLib
 {
+/**
+ * Get the address of a PVDFile corresponding to the given process.
+ * @param process    Process.
+ * @param process_id Process ID.
+ * @param mesh_name_for_output mesh name for the output.
+ * @param process_to_pvd_file a multimap that holds the PVD files associated
+ * with each process.
+ * @return Address of a PVDFile.
+ */
+MeshLib::IO::PVDFile& findPVDFile(
+    Process const& process, const int process_id, std::string const& filename,
+    std::multimap<Process const*, MeshLib::IO::PVDFile>& process_to_pvd_file)
+{
+    auto range = process_to_pvd_file.equal_range(&process);
+    int counter = 0;
+    MeshLib::IO::PVDFile* pvd_file = nullptr;
+    for (auto spd_it = range.first; spd_it != range.second; ++spd_it)
+    {
+        if (spd_it->second.pvd_filename == filename)
+        {
+            if (counter == process_id)
+            {
+                pvd_file = &spd_it->second;
+                break;
+            }
+            counter++;
+        }
+    }
+    if (pvd_file == nullptr)
+    {
+        OGS_FATAL(
+            "The given process is not contained in the output configuration. "
+            "Aborting.");
+    }
+
+    return *pvd_file;
+}
+
 void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
                    bool const compress_output, int const data_mode)
 {
@@ -61,7 +99,8 @@ void outputMeshVtk(ProcessLib::OutputFile const& output_file,
     outputMeshVtk(path, mesh, output_file.compression, output_file.data_mode);
 }
 
-std::string OutputFile::constructPVDName(std::string const& mesh_name) const
+std::string OutputVtkFormat::constructPVDName(
+    std::string const& mesh_name) const
 {
     return BaseLib::joinPaths(
         directory,
@@ -127,4 +166,31 @@ void OutputFile::outputMeshXdmf(
     };
 }
 
+void OutputVtkFormat::outputMeshes(
+    const Process& process, const int process_id, const int timestep,
+    const double t, const int iteration,
+    std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+    [[maybe_unused]] std::set<std::string> const& output_variables)
+{
+    for (auto const& mesh : meshes)
+    {
+        auto const filename = constructPVDName(mesh.get().getName());
+        auto& pvd_file =
+            findPVDFile(process, process_id, filename, process_to_pvd_file);
+        outputMeshVtk(*this, pvd_file, mesh, t, timestep, iteration);
+    }
+}
+
+void OutputVtkFormat::addProcess(
+    ProcessLib::Process const& process,
+    std::vector<std::string> const& mesh_names_for_output)
+{
+    for (auto const& mesh_output_name : mesh_names_for_output)
+    {
+        auto const filename = constructPVDName(mesh_output_name);
+        process_to_pvd_file.emplace(std::piecewise_construct,
+                                    std::forward_as_tuple(&process),
+                                    std::forward_as_tuple(filename));
+    }
+}
 }  // namespace ProcessLib

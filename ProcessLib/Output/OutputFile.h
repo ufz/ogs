@@ -36,6 +36,18 @@ struct OutputFile
     std::string suffix;
     OutputType const type;
 
+    virtual void outputMeshes(
+        const Process& process, const int process_id, const int timestep,
+        const double t, const int iteration,
+        std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+        std::set<std::string> const& output_variables) = 0;
+
+    virtual void addProcess(
+        [[maybe_unused]] ProcessLib::Process const& process,
+        [[maybe_unused]] std::vector<std::string> const& mesh_names_for_output)
+    {
+    }
+
     //! Chooses vtk's data mode for output following the enumeration given
     /// in the vtkXMLWriter: {Ascii, Binary, Appended}.  See vtkXMLWriter
     /// documentation
@@ -58,7 +70,7 @@ struct OutputFile
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
         int const timestep, double const t, int const iteration);
 
-    std::string constructPVDName(std::string const& mesh_name) const;
+    // std::string constructPVDName(std::string const& mesh_name) const;
 };
 
 struct OutputVtkFormat final : public OutputFile
@@ -71,6 +83,16 @@ struct OutputVtkFormat final : public OutputFile
     {
     }
 
+    void outputMeshes(
+        const Process& process, const int process_id, const int timestep,
+        const double t, const int iteration,
+        std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+        std::set<std::string> const& output_variables) override;
+
+    void addProcess(
+        ProcessLib::Process const& process,
+        std::vector<std::string> const& mesh_names_for_output) override;
+
     //! Chooses vtk's data mode for output following the enumeration given
     /// in the vtkXMLWriter: {Ascii, Binary, Appended}.  See vtkXMLWriter
     /// documentation
@@ -80,11 +102,19 @@ struct OutputVtkFormat final : public OutputFile
     //! Enables or disables zlib-compression of the output files.
     // bool const compression;
 
+    //! Holds the PVD files associated with each process.
+    //!
+    //! Each \c process_id of each Process (in the current simulation) has a PVD
+    //! file in this map for each element of #_mesh_names_for_output. I.e., the
+    //! number of elements in this map is (roughly):
+    //! <no. of processes> x <no. of process IDs per process> x <no. of meshes>.
+    std::multimap<Process const*, MeshLib::IO::PVDFile> process_to_pvd_file;
+
     std::string constructFilename(std::string mesh_name, int const timestep,
                                   double const t,
                                   int const iteration) const override;
 
-    // std::string constructPVDName(std::string const& mesh_name) const;
+    std::string constructPVDName(std::string const& mesh_name) const;
 };
 
 struct OutputXDMFHDF5Format final : public OutputFile
@@ -96,6 +126,17 @@ struct OutputXDMFHDF5Format final : public OutputFile
         : OutputFile(directory, OutputType::xdmf, prefix, suffix, data_mode,
                      compression, n_files)
     {
+    }
+
+    void outputMeshes(
+        [[maybe_unused]] const Process& process,
+        [[maybe_unused]] const int process_id, const int timestep,
+        const double t, const int iteration,
+        std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+        std::set<std::string> const& output_variables) override
+    {
+        outputMeshXdmf(output_variables, std::move(meshes), timestep, t,
+                       iteration);
     }
 
     std::string constructFilename(std::string mesh_name, int const timestep,

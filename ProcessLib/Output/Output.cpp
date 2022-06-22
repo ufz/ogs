@@ -65,43 +65,6 @@ void addBulkMeshNodePropertyToSubMesh(MeshLib::Mesh const& bulk_mesh,
                    { return bulk_mesh_property[id]; });
 }
 
-/**
- * Get the address of a PVDFile corresponding to the given process.
- * @param process    Process.
- * @param process_id Process ID.
- * @param mesh_name_for_output mesh name for the output.
- * @param process_to_pvd_file a multimap that holds the PVD files associated
- * with each process.
- * @return Address of a PVDFile.
- */
-MeshLib::IO::PVDFile& findPVDFile(
-    Process const& process, const int process_id, std::string const& filename,
-    std::multimap<Process const*, MeshLib::IO::PVDFile>& process_to_pvd_file)
-{
-    auto range = process_to_pvd_file.equal_range(&process);
-    int counter = 0;
-    MeshLib::IO::PVDFile* pvd_file = nullptr;
-    for (auto spd_it = range.first; spd_it != range.second; ++spd_it)
-    {
-        if (spd_it->second.pvd_filename == filename)
-        {
-            if (counter == process_id)
-            {
-                pvd_file = &spd_it->second;
-                break;
-            }
-            counter++;
-        }
-    }
-    if (pvd_file == nullptr)
-    {
-        OGS_FATAL(
-            "The given process is not contained in the output configuration. "
-            "Aborting.");
-    }
-
-    return *pvd_file;
-}
 
 bool Output::isOutputStep(int timestep, double const t) const
 {
@@ -137,15 +100,23 @@ bool Output::isOutputStep(int timestep, double const t) const
 
 bool Output::isOutputProcess(const int process_id, const Process& process) const
 {
-    auto const n_processes = static_cast<int>(_process_to_pvd_file.size() /
-                                              _mesh_names_for_output.size());
+    if (!dynamic_cast<OutputVtkFormat*>(output_file.get()))
+    {
+        return process.isMonolithicSchemeUsed();
+    }
+
+    auto const number_of_pvd_files =
+        dynamic_cast<OutputVtkFormat*>(output_file.get())
+            ->process_to_pvd_file.size();
+    auto const n_processes =
+        static_cast<int>(number_of_pvd_files / _mesh_names_for_output.size());
 
     auto const is_last_process = process_id == n_processes - 1;
 
     return process.isMonolithicSchemeUsed()
-           // For the staggered scheme for the coupling, only the last process,
-           // which gives the latest solution within a coupling loop, is allowed
-           // to make output.
+           // For the staggered scheme for the coupling, only the last
+           // process, which gives the latest solution within a coupling
+           // loop, is allowed to make output.
            || is_last_process;
 }
 
@@ -168,14 +139,7 @@ void Output::addProcess(ProcessLib::Process const& process)
     {
         _mesh_names_for_output.push_back(process.getMesh().getName());
     }
-
-    for (auto const& mesh_output_name : _mesh_names_for_output)
-    {
-        auto const filename = output_file->constructPVDName(mesh_output_name);
-        _process_to_pvd_file.emplace(std::piecewise_construct,
-                                     std::forward_as_tuple(&process),
-                                     std::forward_as_tuple(filename));
-    }
+    output_file->addProcess(process, _mesh_names_for_output);
 }
 
 void Output::outputMeshes(
@@ -183,23 +147,9 @@ void Output::outputMeshes(
     const double t, const int iteration,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes)
 {
-    if (output_file->type == ProcessLib::OutputType::vtk)
-    {
-        for (auto const& mesh : meshes)
-        {
-            auto const filename =
-                output_file->constructPVDName(mesh.get().getName());
-            auto& pvd_file = findPVDFile(process, process_id, filename,
-                                         _process_to_pvd_file);
-            outputMeshVtk(*output_file.get(), pvd_file, mesh, t, timestep,
-                          iteration);
-        }
-    }
-    else if (output_file->type == ProcessLib::OutputType::xdmf)
-    {
-        output_file->outputMeshXdmf(_output_data_specification.output_variables,
-                                    std::move(meshes), timestep, t, iteration);
-    }
+    output_file->outputMeshes(process, process_id, timestep, t, iteration,
+                              meshes,
+                              _output_data_specification.output_variables);
 }
 
 MeshLib::Mesh const& Output::prepareSubmesh(
