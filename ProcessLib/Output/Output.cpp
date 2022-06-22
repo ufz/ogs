@@ -310,8 +310,7 @@ void Output::doOutputNonlinearIteration(Process const& process,
     if (dynamic_cast<OutputVtkFormat*>(output_file.get()))
     {
         outputMeshVtk(
-            output_file_path, process.getMesh(),
-            dynamic_cast<OutputVtkFormat*>(output_file.get())->compression,
+            output_file_path, process.getMesh(), output_file->compression,
             dynamic_cast<OutputVtkFormat*>(output_file.get())->data_mode);
     }
     else
