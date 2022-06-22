@@ -56,7 +56,7 @@ std::unique_ptr<OutputFile> createOutputFile(
     {
         return std::make_unique<OutputVtkFormat>(
             output_directory, std::move(prefix), std::move(suffix),
-            convertVtkDataMode(data_mode), compress_output, number_of_files);
+            convertVtkDataMode(data_mode), compress_output);
     }
     if (output_type == OutputType::xdmf)
     {

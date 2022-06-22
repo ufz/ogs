@@ -25,16 +25,14 @@ enum class OutputType : uint8_t
 
 struct OutputFile
 {
-    OutputFile(std::string const& directory, OutputType const type,
-               std::string const& prefix, std::string const& suffix,
-               int const data_mode_, bool const compression_,
-               unsigned int const n_files);
+    OutputFile(std::string const& directory, std::string const& prefix,
+               std::string const& suffix, int const data_mode_,
+               bool const compression_);
     virtual ~OutputFile() = default;
 
     std::string directory;
     std::string prefix;
     std::string suffix;
-    OutputType const type;
 
     virtual void outputMeshes(
         const Process& process, const int process_id, const int timestep,
@@ -57,29 +55,17 @@ struct OutputFile
     //! Enables or disables zlib-compression of the output files.
     bool const compression;
 
-    std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;
-    //! Specifies the number of hdf5 output files.
-    unsigned int const n_files;
-
     virtual std::string constructFilename(std::string mesh_name,
                                           int const timestep, double const t,
                                           int const iteration) const = 0;
-
-    void outputMeshXdmf(
-        std::set<std::string> const& output_variables,
-        std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
-        int const timestep, double const t, int const iteration);
-
-    // std::string constructPVDName(std::string const& mesh_name) const;
 };
 
 struct OutputVtkFormat final : public OutputFile
 {
     OutputVtkFormat(std::string const& directory, std::string const& prefix,
                     std::string const& suffix, int const data_mode,
-                    bool const compression, const int number_of_files)
-        : OutputFile(directory, OutputType::vtk, prefix, suffix, data_mode,
-                     compression, number_of_files)
+                    bool const compression)
+        : OutputFile(directory, prefix, suffix, data_mode, compression)
     {
     }
 
@@ -123,8 +109,8 @@ struct OutputXDMFHDF5Format final : public OutputFile
                          std::string const& prefix, std::string const& suffix,
                          int const data_mode, bool const compression,
                          unsigned int const n_files)
-        : OutputFile(directory, OutputType::xdmf, prefix, suffix, data_mode,
-                     compression, n_files)
+        : OutputFile(directory, prefix, suffix, data_mode, compression),
+          n_files(n_files)
     {
     }
 
@@ -142,6 +128,15 @@ struct OutputXDMFHDF5Format final : public OutputFile
     std::string constructFilename(std::string mesh_name, int const timestep,
                                   double const t,
                                   int const iteration) const override;
+
+    std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;
+    //! Specifies the number of hdf5 output files.
+    unsigned int n_files;
+
+    void outputMeshXdmf(
+        std::set<std::string> const& output_variables,
+        std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+        int const timestep, double const t, int const iteration);
 };
 
 void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,

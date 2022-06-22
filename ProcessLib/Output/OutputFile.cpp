@@ -90,10 +90,7 @@ void outputMeshVtk(ProcessLib::OutputFile const& output_file,
 {
     auto const name =
         output_file.constructFilename(mesh.getName(), timestep, t, iteration);
-    if (output_file.type == ProcessLib::OutputType::vtk)
-    {
-        pvd_file.addVTUFile(name, t);
-    }
+    pvd_file.addVTUFile(name, t);
 
     auto const path = BaseLib::joinPaths(output_file.directory, name);
     outputMeshVtk(path, mesh, output_file.compression, output_file.data_mode);
@@ -108,17 +105,14 @@ std::string OutputVtkFormat::constructPVDName(
             ".pvd");
 }
 
-OutputFile::OutputFile(std::string const& directory, OutputType const type,
-                       std::string const& prefix, std::string const& suffix,
-                       int const data_mode_, bool const compression_,
-                       unsigned int const n_files)
+OutputFile::OutputFile(std::string const& directory, std::string const& prefix,
+                       std::string const& suffix, int const data_mode_,
+                       bool const compression_)
     : directory(directory),
       prefix(prefix),
       suffix(suffix),
-      type(type),
       data_mode(data_mode_),
-      compression(compression_),
-      n_files(n_files)
+      compression(compression_)
 {
 }
 
@@ -144,7 +138,7 @@ std::string OutputXDMFHDF5Format::constructFilename(std::string mesh_name,
            ".xdmf";
 }
 
-void OutputFile::outputMeshXdmf(
+void OutputXDMFHDF5Format::outputMeshXdmf(
     std::set<std::string> const& output_variables,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
     int const timestep, double const t, int const iteration)
