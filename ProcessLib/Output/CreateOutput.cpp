@@ -47,6 +47,12 @@ int convertVtkDataMode(std::string const& data_mode)
 
 namespace ProcessLib
 {
+enum class OutputType : uint8_t
+{
+    vtk,
+    xdmf
+};
+
 std::unique_ptr<OutputFile> createOutputFile(
     std::string const& output_directory, OutputType const output_type,
     std::string&& prefix, std::string&& suffix, std::string const& data_mode,

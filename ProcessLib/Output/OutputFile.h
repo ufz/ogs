@@ -17,11 +17,7 @@
 
 namespace ProcessLib
 {
-enum class OutputType : uint8_t
-{
-    vtk,
-    xdmf
-};
+class Process;
 
 struct OutputFile
 {
@@ -69,7 +65,7 @@ struct OutputVtkFormat final : public OutputFile
         std::set<std::string> const& output_variables) override;
 
     void addProcess(
-        ProcessLib::Process const& process,
+        Process const& process,
         std::vector<std::string> const& mesh_names_for_output) override;
 
     //! Chooses vtk's data mode for output following the enumeration given

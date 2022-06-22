@@ -15,6 +15,18 @@
 #include <fstream>
 #include <vector>
 
+#ifndef _WIN32
+#ifndef __APPLE__
+#include <cfenv>
+#endif  // __APPLE__
+#endif  // _WIN32
+
+#include "BaseLib/FileTools.h"
+#include "MeshLib/IO/VtkIO/PVDFile.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/XDMF/XdmfHdfWriter.h"
+#include "ProcessLib/Process.h"
+
 namespace ProcessLib
 {
 /**
@@ -175,7 +187,7 @@ void OutputVtkFormat::outputMeshes(
 }
 
 void OutputVtkFormat::addProcess(
-    ProcessLib::Process const& process,
+    Process const& process,
     std::vector<std::string> const& mesh_names_for_output)
 {
     for (auto const& mesh_output_name : mesh_names_for_output)

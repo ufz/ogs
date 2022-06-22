@@ -15,8 +15,6 @@
 #include <vector>
 
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
-#include "MeshLib/IO/VtkIO/PVDFile.h"
-#include "MeshLib/IO/XDMF/XdmfHdfWriter.h"
 #include "OutputDataSpecification.h"
 #include "OutputFile.h"
 

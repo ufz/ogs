@@ -12,10 +12,12 @@
 
 #include <set>
 #include <string>
+#include <vector>
+
+#include "BaseLib/Error.h"
 
 namespace ProcessLib
 {
-
 struct PairRepeatEachSteps
 {
     explicit PairRepeatEachSteps(int c, int e) : repeat(c), each_steps(e) {}
@@ -58,5 +60,4 @@ struct OutputDataSpecification final
     //! Tells if also to output extrapolation residuals.
     bool const output_residuals;
 };
-
 }  // namespace ProcessLib
