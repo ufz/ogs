@@ -62,7 +62,7 @@ std::unique_ptr<OutputFile> createOutputFile(
     {
         return std::make_unique<OutputXDMFHDF5Format>(
             output_directory, std::move(prefix), std::move(suffix),
-            convertVtkDataMode(data_mode), compress_output, number_of_files);
+            compress_output, number_of_files);
     }
     else
     {

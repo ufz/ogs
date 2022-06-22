@@ -306,8 +306,18 @@ void Output::doOutputNonlinearIteration(Process const& process,
         BaseLib::joinPaths(output_file->directory, output_file_name);
 
     DBUG("output iteration results to {:s}", output_file_path);
-    outputMeshVtk(output_file_path, process.getMesh(), output_file->compression,
-                  output_file->data_mode);
+
+    if (dynamic_cast<OutputVtkFormat*>(output_file.get()))
+    {
+        outputMeshVtk(
+            output_file_path, process.getMesh(),
+            dynamic_cast<OutputVtkFormat*>(output_file.get())->compression,
+            dynamic_cast<OutputVtkFormat*>(output_file.get())->data_mode);
+    }
+    else
+    {
+        DBUG("non-linear iterations can only written in Vtk/VTU format.");
+    }
     INFO("[time] Output took {:g} s.", time_output.elapsed());
 }
 }  // namespace ProcessLib

@@ -26,13 +26,14 @@ enum class OutputType : uint8_t
 struct OutputFile
 {
     OutputFile(std::string const& directory, std::string const& prefix,
-               std::string const& suffix, int const data_mode_,
-               bool const compression_);
+               std::string const& suffix, bool const compression);
     virtual ~OutputFile() = default;
 
     std::string directory;
     std::string prefix;
     std::string suffix;
+    //! Enables or disables zlib-compression of the output files.
+    bool compression;
 
     virtual void outputMeshes(
         const Process& process, const int process_id, const int timestep,
@@ -46,15 +47,6 @@ struct OutputFile
     {
     }
 
-    //! Chooses vtk's data mode for output following the enumeration given
-    /// in the vtkXMLWriter: {Ascii, Binary, Appended}.  See vtkXMLWriter
-    /// documentation
-    /// http://www.vtk.org/doc/nightly/html/classvtkXMLWriter.html
-    int const data_mode;
-
-    //! Enables or disables zlib-compression of the output files.
-    bool const compression;
-
     virtual std::string constructFilename(std::string mesh_name,
                                           int const timestep, double const t,
                                           int const iteration) const = 0;
@@ -65,7 +57,8 @@ struct OutputVtkFormat final : public OutputFile
     OutputVtkFormat(std::string const& directory, std::string const& prefix,
                     std::string const& suffix, int const data_mode,
                     bool const compression)
-        : OutputFile(directory, prefix, suffix, data_mode, compression)
+        : OutputFile(directory, prefix, suffix, compression),
+          data_mode(data_mode)
     {
     }
 
@@ -83,10 +76,7 @@ struct OutputVtkFormat final : public OutputFile
     /// in the vtkXMLWriter: {Ascii, Binary, Appended}.  See vtkXMLWriter
     /// documentation
     /// http://www.vtk.org/doc/nightly/html/classvtkXMLWriter.html
-    // int const data_mode;
-
-    //! Enables or disables zlib-compression of the output files.
-    // bool const compression;
+    int data_mode;
 
     //! Holds the PVD files associated with each process.
     //!
@@ -107,10 +97,8 @@ struct OutputXDMFHDF5Format final : public OutputFile
 {
     OutputXDMFHDF5Format(std::string const& directory,
                          std::string const& prefix, std::string const& suffix,
-                         int const data_mode, bool const compression,
-                         unsigned int const n_files)
-        : OutputFile(directory, prefix, suffix, data_mode, compression),
-          n_files(n_files)
+                         bool const compression, unsigned int const n_files)
+        : OutputFile(directory, prefix, suffix, compression), n_files(n_files)
     {
     }
 

@@ -93,7 +93,9 @@ void outputMeshVtk(ProcessLib::OutputFile const& output_file,
     pvd_file.addVTUFile(name, t);
 
     auto const path = BaseLib::joinPaths(output_file.directory, name);
-    outputMeshVtk(path, mesh, output_file.compression, output_file.data_mode);
+    outputMeshVtk(path, mesh,
+                  dynamic_cast<OutputVtkFormat const&>(output_file).compression,
+                  dynamic_cast<OutputVtkFormat const&>(output_file).data_mode);
 }
 
 std::string OutputVtkFormat::constructPVDName(
@@ -106,13 +108,11 @@ std::string OutputVtkFormat::constructPVDName(
 }
 
 OutputFile::OutputFile(std::string const& directory, std::string const& prefix,
-                       std::string const& suffix, int const data_mode_,
-                       bool const compression_)
+                       std::string const& suffix, bool const compression)
     : directory(directory),
       prefix(prefix),
       suffix(suffix),
-      data_mode(data_mode_),
-      compression(compression_)
+      compression(compression)
 {
 }
 
