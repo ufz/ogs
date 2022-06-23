@@ -24,40 +24,60 @@ The governing equation implemented in OGS-6 is the so-called advective and diffu
 
 For the flow process, the continuity equation for flowing fluid in a saturated porous medium is as follows
 $$
-S_{\textrm{s}} \frac{\partial p}{\partial t} + \nabla \cdot \textbf{q} + Q_{p} = 0,
+\frac{\partial \left(\phi \rho\right)}{\partial t} + \nabla \cdot \left(\textbf{q} \rho\right) + Q_{p} = 0,
 $$
-with the hydraulic pressure $p$ [Pa] of the fluid as the primary variable. In the above flow equation, $S_{\textrm{s}}$ [1/Pa] is the specific storage, $t$ [s] is the time, $\textbf{q}$ [m/s] is the Darcy flux with laminar flow assumptions, and $Q_{p}$ [1/s] is the source-sink term. According to Darcy's Law, the flux $\textbf{q}$ is related to the pressure drop and body forces through
+where $\phi$ [-] is the porosity, $\rho$ [kg/m$^3$] is the fluid density, $t$ [s] is the time, $\textbf{q}$ [m/s] is the Darcy flux with laminar flow assumptions, and $Q_{p}$ [kg/m$^3$/s] is the source-sink term. According to Darcy's Law, the flux $\textbf{q}$ is related to the pressure drop and gravitational body force through
 $$
-\textbf{q} = -\frac{\textbf{k}}{\mu} \left(\nabla p - \rho^{\textrm{l}} \textbf{g}\right),
+\textbf{q} = - \frac{\textbf{k}}{\mu} \left(\nabla p - \rho \textbf{g}\right),
 $$
 where $\textbf{k}$ [m$^2$] is the intrinsic permeability, $\mu$ [Pa$\cdot$s] is the fluid dynamic viscosity, and $\textbf{g}$ [m/s$^2$] is the gravity vector.
 
 For each chemical component $\alpha = 1, .., N_p$, its corresponding advective and diffusion equation (`ADE`) reads,
 $$
 \begin{equation}
-\frac{\partial \left(\phi R c_{\alpha}\right)}{\partial t} + \nabla \cdot \left( \textbf{q} c_{\alpha} - \phi \textbf{D} \nabla c_{\alpha} \right) + \phi \alpha R c_{\alpha} = 0,
+\frac{\partial \left(\phi R c_{\alpha}\right)}{\partial t} + \nabla \cdot \left( \textbf{q} c_{\alpha} - \textbf{D} \nabla c_{\alpha} \right) + Q_{c_{\alpha}} + \phi \lambda R c_{\alpha} = 0,
 \end{equation}
 $$
-with the concentration $c_{\alpha}$ of the chemical component as the primary variable. $D$ [m$^2$/s] is the diffusion/dispersion coefficient for the component, $R$ [-] is the retardation factor defined as
+with the concentration $c_{\alpha}$ of the chemical component as the primary variable. $D$ [m$^2$/s] denotes the hydrodynamic dispersion tensor with the following relation
+\begin{equation}
+D = (\phi D_{p} + \beta_T  \lVert \textbf{q} \rVert) \textbf{I} + （ \beta_L - \beta_T ） \frac{\textbf{q} \textbf{q}^{T}}{\lVert \textbf{q} \rVert}
+\end{equation}
+implemented, where $D_p$ [m$^2$/s] is the pore diffusion coefficient, $\beta_L$ and $\beta_T$ [m] are the longitudinal and transversal dispersion coefficients. $R$ [-] is the retardation factor defined as
 $$
-R = 1 + \rho k_{d} / \phi
+R = 1 + \rho_{b} K_{D} / \phi
 $$
-with the dry density of the porous media $\rho$ [kg/m$^3$] and the distribution coefficient $k_d$ [m$^3$/kg], and $\alpha$ [1/s] is the first-order decay constant, i.e.
+with the bulk density of the porous media $\rho_{b}$ [kg/m$^3$] and the distribution coefficient $K_{D}$ [m$^3$/kg], and $\lambda$ [1/s] is the first-order decay constant, 
 $$
-\alpha = ln 2 / t_{1/2}
+\lambda = ln 2 / t_{1/2}
 $$
 where $t_{1/2}$ [s] is the half life of the decaying component.
 
 ## Input parameters
 
+The following table shows an overview of all input parameters available in the ComponentTransport process. 
+
+
+| Parameter                  | Symbol      | Unit       | Doxygen and Example              |
+| -------------------------- | ----------- | ---------- | ---------------------- |
+| Porosity                   | $\phi$      |[-]       |[Link](https://doxygen.opengeosys.org/dc/d15/ogs_file_param__material__porous_medium__porosity.html),[Example](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/ComponentTransport/ConTracer/ConTracer_1d.prj) |
+| Fluid density              | $\rho$      |[kg/m$^{3}$] |[Link](https://doxygen.opengeosys.org/d1/d47/ogs_file_param__material__fluid__density.html) |
+| Intrinsic permeability     |$\textbf{k}$|[m$^{2}$]   | [Link](https://doxygen.opengeosys.org/d5/d06/ogs_file_param__material__porous_medium__permeability.html),[Example](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/ComponentTransport/ConTracer/ConTracer_1d.prj)  |
+| Dynamic viscosity          | $\mu$  |[Pa$\cdot$s]|[Link](https://doxygen.opengeosys.org/da/d5d/ogs_file_param__material__fluid__viscosity.html)|
+| Gravity vector (specific body force) | $\textbf{g}$|[m/s$^{2}$]  |                        | [Link](https://doxygen.opengeosys.org/db/d19/ogs_file_param__prj__processes__process__componenttransport__specific_body_force)
+| Retardation factor         | $R$         |[-]         | [Example](https://doxygen.opengeosys.org/d0/d40/ogs_ctest_prj__parabolic__componenttransport__advectiondiffusionsorptiondecay__1d_advectiondiffusionsorptiondecay__prj) |
+| First-order decay constant | $\lambda$   |[1/s]       | [Example](https://doxygen.opengeosys.org/d0/d40/ogs_ctest_prj__parabolic__componenttransport__advectiondiffusionsorptiondecay__1d_advectiondiffusionsorptiondecay__prj) |
+
+
+## Input file definition
+
 ### Process definition
 
-In the configuration of `ComponentTransport` process, it is generally configured as follows.
+In the `ComponentTransport` process, the configuration is as follows.
 
-* `<name>`: name of the chemical component is given here.
+* `<name>`: name of the chemical component.
 * `<type>`: must be ComponentTransport.
-* `<integration_order>`: It is the order of the integration method for element-wise integration, normally set to 2.
-* `<process_variables>`: The primary variables of the ComponentTransport process are either `<concentration>` or  `<pressure>`. For the variable concentration, the name of the chemical component is given. Like in the following example, there are 3 chemical components, i.e. Si, Al and Cl. The `<pressure>` process' variable is usually also named 'pressure', see `<process_variables>` section outside of process' definition.
+* `<integration_order>`: This is the order of the integration method for element-wise integration. In common cases set to 2.
+* `<process_variables>`: The primary variables of the ComponentTransport process are either `<concentration>` or  `<pressure>`. For the variable concentration, the name of the chemical component is given. Like in the following example, there are 3 chemical components, i.e. Si, Al and Cl. The `<pressure>` process' variable is also named 'pressure', see `<process_variables>` section outside of process' definition.
 
 ```bash
 <processes>
@@ -81,7 +101,7 @@ In the configuration of `ComponentTransport` process, it is generally configured
 
 ### Component definition
 
-Under the keyword `<component>`, the properties of the transported chemical component must be given. Usually the parameters to be given are the pore diffusion coefficient, the retardation factor, and the decay rate. Below is an example of the Si component with its corresponding transport parameters.
+Under the keyword `<component>`, the properties of the transported chemical component are defined. The parameters here are the pore diffusion coefficient, the retardation factor, and the decay rate. Below is an example of the Si component with the corresponding transport parameters.
 
 ```bash
                         <component>
