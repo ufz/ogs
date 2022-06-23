@@ -337,6 +337,14 @@ else()
     endif()
 endif()
 
+CPMAddPackage(
+    NAME range-v3
+    GITHUB_REPOSITORY ericniebler/range-v3
+    VERSION 0.12.0
+    GIT_TAG 0.12.0
+    EXCLUDE_FROM_ALL YES
+)
+
 if(OGS_BUILD_TESTING OR OGS_BUILD_UTILS)
     CPMAddPackage(
         NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff

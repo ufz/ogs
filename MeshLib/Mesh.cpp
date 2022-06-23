@@ -15,6 +15,10 @@
 #include "Mesh.h"
 
 #include <memory>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/enumerate.hpp>
+#include <range/v3/view/indirect.hpp>
+#include <range/v3/view/map.hpp>
 #include <unordered_map>
 #include <utility>
 
@@ -32,6 +36,8 @@ static std::size_t global_mesh_counter = 0;
 
 namespace MeshLib
 {
+using namespace ranges;
+
 std::vector<std::vector<Element const*>> findElementsConnectedToNodes(
     Mesh const& mesh)
 {
