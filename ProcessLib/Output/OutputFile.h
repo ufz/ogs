@@ -77,9 +77,9 @@ struct OutputVtkFormat final : public OutputFile
     //! Holds the PVD files associated with each process.
     //!
     //! Each \c process_id of each Process (in the current simulation) has a PVD
-    //! file in this map for each element of #_mesh_names_for_output. I.e., the
-    //! number of elements in this map is (roughly):
-    //! <no. of processes> x <no. of process IDs per process> x <no. of meshes>.
+    //! file in this map for each element of Output::_mesh_names_for_output.
+    //! I.e., the number of elements in this map is (roughly): <no. of
+    //! processes> x <no. of process IDs per process> x <no. of meshes>.
     std::multimap<Process const*, MeshLib::IO::PVDFile> process_to_pvd_file;
 
     std::string constructFilename(std::string mesh_name, int const timestep,

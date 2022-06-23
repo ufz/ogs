@@ -30,13 +30,13 @@
 namespace ProcessLib
 {
 /**
- * Get the address of a PVDFile corresponding to the given process.
- * @param process    Process.
- * @param process_id Process ID.
- * @param mesh_name_for_output mesh name for the output.
+ * Get the address of a PVDFile corresponding to the given process
+ * @param process    Process
+ * @param process_id Process ID
+ * @param filename PVD file name
  * @param process_to_pvd_file a multimap that holds the PVD files associated
- * with each process.
- * @return Address of a PVDFile.
+ * with each process
+ * @return Address of a PVDFile
  */
 MeshLib::IO::PVDFile& findPVDFile(
     Process const& process, const int process_id, std::string const& filename,
