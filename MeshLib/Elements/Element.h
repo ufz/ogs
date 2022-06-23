@@ -16,6 +16,7 @@
 
 #include <limits>
 #include <optional>
+#include <span>
 
 #include "MathLib/Point3d.h"
 #include "MeshLib/Elements/ElementErrorCode.h"
@@ -66,6 +67,12 @@ public:
 
     /// Get array of element nodes.
     virtual Node* const* getNodes() const = 0;
+
+    /// Span of element's nodes, their pointers actually.
+    constexpr std::span<Node* const> nodes() const
+    {
+        return {getNodes(), getNumberOfNodes()};
+    }
 
     /// Get dimension of the mesh element.
     virtual constexpr unsigned getDimension() const = 0;
