@@ -345,11 +345,10 @@ std::vector<std::vector<Node*>> calculateNodesConnectedByElements(
     for (std::size_t i = 0; i < nodes.size(); ++i)
     {
         auto& adjacent_nodes = nodes_connected_by_elements[i];
-        auto const* node = nodes[i];
+        auto const node_id = nodes[i]->getID();
 
         // Get all elements, to which this node is connected.
-        auto const& connected_elements =
-            elements_connected_to_nodes[node->getID()];
+        auto const& connected_elements = elements_connected_to_nodes[node_id];
 
         // And collect all elements' nodes.
         for (Element const* const element : connected_elements)
