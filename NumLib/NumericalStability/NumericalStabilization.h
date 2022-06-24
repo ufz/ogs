@@ -107,4 +107,10 @@ public:
 
 std::unique_ptr<NumericalStabilization> createNumericalStabilization(
     MeshLib::Mesh const& mesh, BaseLib::ConfigTree const& config);
+
+template <typename Derived>
+void applyFullUpwind(Eigen::VectorXd const& quasi_nodal_flux,
+                     Eigen::EigenBase<Derived>& diffusion_matrix);
 }  // namespace NumLib
+
+#include "NumericalStabilization_impl.h"
