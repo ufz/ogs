@@ -11,6 +11,7 @@
 #include "CreateOutput.h"
 
 #include <memory>
+#include <range/v3/algorithm/find.hpp>
 #include <tuple>
 
 #include "BaseLib/Algorithm.h"
@@ -23,25 +24,22 @@
 namespace
 {
 //! Converts a vtkXMLWriter's data mode string to an int. See
-/// OutputFile::data_mode.
-int convertVtkDataMode(std::string const& data_mode)
+/// OutputVTKFormat::data_mode.
+int convertVtkDataMode(std::string_view const& data_mode)
 {
-    if (data_mode == "Ascii")
+    using namespace std::string_view_literals;
+    constexpr std::array data_mode_lookup_table{"Ascii"sv, "Binary"sv,
+                                                "Appended"sv};
+    auto res = ranges::find(begin(data_mode_lookup_table),
+                            end(data_mode_lookup_table), data_mode);
+    if (res == data_mode_lookup_table.end())
     {
-        return 0;
+        OGS_FATAL(
+            "Unsupported vtk output file data mode '{:s}'. Expected Ascii, "
+            "Binary, or Appended.",
+            data_mode);
     }
-    if (data_mode == "Binary")
-    {
-        return 1;
-    }
-    if (data_mode == "Appended")
-    {
-        return 2;
-    }
-    OGS_FATAL(
-        "Unsupported vtk output file data mode '{:s}'. Expected Ascii, Binary, "
-        "or Appended.",
-        data_mode);
+    return static_cast<int>(std::distance(begin(data_mode_lookup_table), res));
 }
 }  // namespace
 
