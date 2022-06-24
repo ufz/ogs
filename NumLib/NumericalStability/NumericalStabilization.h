@@ -47,6 +47,8 @@ public:
 
     virtual ~NumericalStabilization() = 0;
 
+    double getCutoffVelocity() const { return cutoff_velocity_; }
+
     virtual double getExtraDiffusionCoefficient(
         std::size_t const /*elemend_id*/,
         double const /*advection_coefficient*/,
