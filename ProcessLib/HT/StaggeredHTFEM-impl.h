@@ -11,11 +11,12 @@
 
 #pragma once
 
-#include "StaggeredHTFEM.h"
+#include <typeinfo>
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
+#include "StaggeredHTFEM.h"
 
 namespace ProcessLib
 {
@@ -70,8 +71,8 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     pos.setElementID(this->_element.getID());
 
     auto const& process_data = this->_process_data;
-    auto const& medium = *this->_process_data.media_map->getMedium(
-        this->_element.getID());
+    auto const& medium =
+        *this->_process_data.media_map->getMedium(this->_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
 
@@ -101,7 +102,8 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
             p_int_pt;
 
-        vars[static_cast<int>(MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
+        vars[static_cast<int>(
+            MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
 
         auto const porosity =
             medium.property(MaterialPropertyLib::PropertyType::porosity)
@@ -165,8 +167,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                         t, dt);
             double Tdot_int_pt = 0.;
             NumLib::shapeFunctionInterpolate(local_Tdot, N, Tdot_int_pt);
-            auto const biot_constant =
-                process_data.biot_constant(t, pos)[0];
+            auto const biot_constant = process_data.biot_constant(t, pos)[0];
             const double eff_thermal_expansion =
                 3.0 * (biot_constant - porosity) * solid_thermal_expansion -
                 porosity * dfluid_density_dT / fluid_density;
@@ -193,10 +194,21 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     auto local_K = MathLib::createZeroedMatrix<LocalMatrixType>(
         local_K_data, temperature_size, temperature_size);
 
+    typename ShapeMatricesType::NodalMatrixType K_TT_advection =
+        ShapeMatricesType::NodalMatrixType::Zero(temperature_size,
+                                                 temperature_size);
+
     ParameterLib::SpatialPosition pos;
     pos.setElementID(this->_element.getID());
 
     auto const& process_data = this->_process_data;
+    NodalVectorType node_flux_q;
+    node_flux_q.setZero(temperature_size);
+    bool const apply_full_upwind =
+        process_data.stabilizer &&
+        (typeid(*process_data.stabilizer) == typeid(NumLib::FullUpwind));
+    double max_velocity_magnitude = 0.;
+
     auto const& medium =
         *process_data.media_map->getMedium(this->_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
@@ -230,7 +242,8 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
             p_at_xi;
 
-        vars[static_cast<int>(MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
+        vars[static_cast<int>(
+            MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
 
         auto const porosity =
             medium.property(MaterialPropertyLib::PropertyType::porosity)
@@ -260,8 +273,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         auto const intrinsic_permeability =
             MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                medium
-                    .property(MaterialPropertyLib::PropertyType::permeability)
+                medium.property(MaterialPropertyLib::PropertyType::permeability)
                     .value(vars, pos, t, dt));
 
         GlobalDimMatrixType const K_over_mu =
@@ -274,13 +286,33 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         GlobalDimMatrixType const thermal_conductivity_dispersivity =
             this->getThermalConductivityDispersivity(
-                vars, fluid_density, specific_heat_capacity_fluid,
-                velocity, I, pos, t, dt);
+                vars, fluid_density, specific_heat_capacity_fluid, velocity, I,
+                pos, t, dt);
 
         local_K.noalias() +=
-            w * (dNdx.transpose() * thermal_conductivity_dispersivity * dNdx +
-                 N.transpose() * velocity.transpose() * dNdx * fluid_density *
-                     specific_heat_capacity_fluid);
+            w * dNdx.transpose() * thermal_conductivity_dispersivity * dNdx;
+
+        K_TT_advection.noalias() += w * N.transpose() * velocity.transpose() *
+                                    dNdx * fluid_density *
+                                    specific_heat_capacity_fluid;
+
+        if (apply_full_upwind)
+        {
+            node_flux_q.noalias() -= fluid_density *
+                                     specific_heat_capacity_fluid *
+                                     velocity.transpose() * dNdx * w;
+            max_velocity_magnitude =
+                std::max(max_velocity_magnitude, velocity.norm());
+        }
+    }
+    if (apply_full_upwind &&
+        max_velocity_magnitude > process_data.stabilizer->getCutoffVelocity())
+    {
+        NumLib::applyFullUpwind(node_flux_q, local_K);
+    }
+    else
+    {
+        local_K.noalias() += K_TT_advection;
     }
 }
 
