@@ -96,7 +96,7 @@ void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
 #endif  //__APPLE__
 }
 
-void outputMeshVtk(OutputFile const& output_file,
+void outputMeshVtk(OutputVTKFormat const& output_file,
                    MeshLib::IO::PVDFile& pvd_file, MeshLib::Mesh const& mesh,
                    double const t, int const timestep, int const iteration)
 {
@@ -105,8 +105,7 @@ void outputMeshVtk(OutputFile const& output_file,
     pvd_file.addVTUFile(name, t);
 
     auto const path = BaseLib::joinPaths(output_file.directory, name);
-    outputMeshVtk(path, mesh, output_file.compression,
-                  dynamic_cast<OutputVTKFormat const&>(output_file).data_mode);
+    outputMeshVtk(path, mesh, output_file.compression, output_file.data_mode);
 }
 
 std::string OutputVTKFormat::constructPVDName(
