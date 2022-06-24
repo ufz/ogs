@@ -60,7 +60,7 @@ std::unique_ptr<OutputFile> createOutputFile(
 {
     if (output_type == OutputType::vtk)
     {
-        return std::make_unique<OutputVtkFormat>(
+        return std::make_unique<OutputVTKFormat>(
             output_directory, std::move(prefix), std::move(suffix),
             convertVtkDataMode(data_mode), compress_output);
     }

@@ -93,13 +93,13 @@ bool Output::isOutputStep(int timestep, double const t) const
 
 bool Output::isOutputProcess(const int process_id, const Process& process) const
 {
-    if (!dynamic_cast<OutputVtkFormat*>(output_file.get()))
+    if (!dynamic_cast<OutputVTKFormat*>(output_file.get()))
     {
         return process.isMonolithicSchemeUsed();
     }
 
     auto const number_of_pvd_files =
-        dynamic_cast<OutputVtkFormat*>(output_file.get())
+        dynamic_cast<OutputVTKFormat*>(output_file.get())
             ->process_to_pvd_file.size();
     auto const n_processes =
         static_cast<int>(number_of_pvd_files / _mesh_names_for_output.size());
@@ -300,11 +300,11 @@ void Output::doOutputNonlinearIteration(Process const& process,
 
     DBUG("output iteration results to {:s}", output_file_path);
 
-    if (dynamic_cast<OutputVtkFormat*>(output_file.get()))
+    if (dynamic_cast<OutputVTKFormat*>(output_file.get()))
     {
         outputMeshVtk(
             output_file_path, process.getMesh(), output_file->compression,
-            dynamic_cast<OutputVtkFormat*>(output_file.get())->data_mode);
+            dynamic_cast<OutputVTKFormat*>(output_file.get())->data_mode);
     }
     else
     {

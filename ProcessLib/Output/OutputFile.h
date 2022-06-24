@@ -48,9 +48,9 @@ struct OutputFile
                                           int const iteration) const = 0;
 };
 
-struct OutputVtkFormat final : public OutputFile
+struct OutputVTKFormat final : public OutputFile
 {
-    OutputVtkFormat(std::string const& directory, std::string const& prefix,
+    OutputVTKFormat(std::string const& directory, std::string const& prefix,
                     std::string const& suffix, int const data_mode,
                     bool const compression)
         : OutputFile(directory, prefix, suffix, compression),

@@ -96,7 +96,7 @@ void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
 #endif  //__APPLE__
 }
 
-void outputMeshVtk(ProcessLib::OutputFile const& output_file,
+void outputMeshVtk(OutputFile const& output_file,
                    MeshLib::IO::PVDFile& pvd_file, MeshLib::Mesh const& mesh,
                    double const t, int const timestep, int const iteration)
 {
@@ -106,10 +106,10 @@ void outputMeshVtk(ProcessLib::OutputFile const& output_file,
 
     auto const path = BaseLib::joinPaths(output_file.directory, name);
     outputMeshVtk(path, mesh, output_file.compression,
-                  dynamic_cast<OutputVtkFormat const&>(output_file).data_mode);
+                  dynamic_cast<OutputVTKFormat const&>(output_file).data_mode);
 }
 
-std::string OutputVtkFormat::constructPVDName(
+std::string OutputVTKFormat::constructPVDName(
     std::string const& mesh_name) const
 {
     return BaseLib::joinPaths(
@@ -127,7 +127,7 @@ OutputFile::OutputFile(std::string const& directory, std::string const& prefix,
 {
 }
 
-std::string OutputVtkFormat::constructFilename(std::string mesh_name,
+std::string OutputVTKFormat::constructFilename(std::string mesh_name,
                                                int const timestep,
                                                double const t,
                                                int const iteration) const
@@ -171,7 +171,7 @@ void OutputXDMFHDF5Format::outputMeshXdmf(
     };
 }
 
-void OutputVtkFormat::outputMeshes(
+void OutputVTKFormat::outputMeshes(
     const Process& process, const int process_id, const int timestep,
     const double t, const int iteration,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
@@ -186,7 +186,7 @@ void OutputVtkFormat::outputMeshes(
     }
 }
 
-void OutputVtkFormat::addProcess(
+void OutputVTKFormat::addProcess(
     Process const& process,
     std::vector<std::string> const& mesh_names_for_output)
 {
