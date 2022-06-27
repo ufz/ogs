@@ -53,7 +53,7 @@ enum class OutputType : uint8_t
 
 std::unique_ptr<OutputFile> createOutputFile(
     std::string const& output_directory, OutputType const output_type,
-    std::string&& prefix, std::string&& suffix, std::string const& data_mode,
+    std::string prefix, std::string suffix, std::string const& data_mode,
     bool const compress_output, unsigned int const number_of_files)
 {
     if (output_type == OutputType::vtk)
@@ -65,8 +65,7 @@ std::unique_ptr<OutputFile> createOutputFile(
     if (output_type == OutputType::xdmf)
     {
         return std::make_unique<OutputXDMFHDF5Format>(
-            output_directory, std::move(prefix), std::move(suffix),
-            compress_output, number_of_files);
+            output_directory, prefix, suffix, compress_output, number_of_files);
     }
     else
     {
