@@ -51,8 +51,8 @@ struct OutputFile
 struct OutputVTKFormat final : public OutputFile
 {
     OutputVTKFormat(std::string const& directory, std::string const& prefix,
-                    std::string const& suffix, int const data_mode,
-                    bool const compression)
+                    std::string const& suffix, bool const compression,
+                    int const data_mode)
         : OutputFile(directory, prefix, suffix, compression),
           data_mode(data_mode)
     {
