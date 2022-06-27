@@ -50,10 +50,11 @@ struct OutputFile
 
 struct OutputVTKFormat final : public OutputFile
 {
-    OutputVTKFormat(std::string const& directory, std::string const& prefix,
-                    std::string const& suffix, bool const compression,
+    OutputVTKFormat(std::string const& directory, std::string prefix,
+                    std::string suffix, bool const compression,
                     int const data_mode)
-        : OutputFile(directory, prefix, suffix, compression),
+        : OutputFile(directory, std::move(prefix), std::move(suffix),
+                     compression),
           data_mode(data_mode)
     {
     }
@@ -91,10 +92,12 @@ struct OutputVTKFormat final : public OutputFile
 
 struct OutputXDMFHDF5Format final : public OutputFile
 {
-    OutputXDMFHDF5Format(std::string const& directory,
-                         std::string const& prefix, std::string const& suffix,
-                         bool const compression, unsigned int const n_files)
-        : OutputFile(directory, prefix, suffix, compression), n_files(n_files)
+    OutputXDMFHDF5Format(std::string const& directory, std::string prefix,
+                         std::string suffix, bool const compression,
+                         unsigned int const n_files)
+        : OutputFile(directory, std::move(prefix), std::move(suffix),
+                     compression),
+          n_files(n_files)
     {
     }
 
