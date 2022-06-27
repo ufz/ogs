@@ -56,23 +56,21 @@ std::unique_ptr<OutputFile> createOutputFile(
     std::string prefix, std::string suffix, std::string const& data_mode,
     bool const compress_output, unsigned int const number_of_files)
 {
-    if (output_type == OutputType::vtk)
+    switch (output_type)
     {
-        return std::make_unique<OutputVTKFormat>(output_directory, prefix,
-                                                 suffix, compress_output,
-                                                 convertVtkDataMode(data_mode));
-    }
-    if (output_type == OutputType::xdmf)
-    {
-        return std::make_unique<OutputXDMFHDF5Format>(
-            output_directory, prefix, suffix, compress_output, number_of_files);
-    }
-    else
-    {
-        OGS_FATAL(
-            "No supported file type provided. Read `{:s}' from <output><type> \
-                in prj File. Supported: VTK, XDMF.",
-            output_type);
+        case OutputType::vtk:
+            return std::make_unique<OutputVTKFormat>(
+                output_directory, std::move(prefix), std::move(suffix),
+                compress_output, convertVtkDataMode(data_mode));
+        case OutputType::xdmf:
+            return std::make_unique<OutputXDMFHDF5Format>(
+                output_directory, std::move(prefix), std::move(suffix),
+                compress_output, number_of_files);
+        default:
+            OGS_FATAL(
+                "No supported file type provided. Read '{:s}' from "
+                "<output><type> in prj file. Supported: VTK, XDMF.",
+                output_type);
     }
 }
 
