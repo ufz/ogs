@@ -56,3 +56,31 @@ container:
     name: container
     paths:
       - ThirdParty/container-maker/_out/images/*.sif
+
+devcontainer:
+  stage: package
+  tags: [envinf, shell]
+  needs: []
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      variables:
+        MASTER_UPLOAD: "--upload --tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/vscode:latest"
+    - if: $CI_COMMIT_TAG
+    - changes:
+        - scripts/ci/jobs/container.yml
+        - .devcontainer.json
+        - ThirdParty/container-maker
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+    - when: manual
+      allow_failure: true
+  extends:
+    - .container-maker-setup
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    # VS Code dev container
+    - >
+      poetry run ogscm compiler.py ogs.py ogs_web.py ogs_vscode.py -B --ogs off
+      --build_args ' --progress=plain'
+      --cpu-target $CPU_TARGET
+      --ccache --cpmcache
+       $MASTER_UPLOAD
