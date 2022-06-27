@@ -2,7 +2,7 @@
 project = "Parabolic/HT/ClassicalTransportExample/classical_transport_example.prj"
 author = "Wenqing Wang"
 date = "2022-06-07T14:55:48+02:00"
-title = "A classical 1D transport example"
+title = "Classical transport example: using the isotropic diffusion stabilization"
 weight = 161
 
 [menu]
