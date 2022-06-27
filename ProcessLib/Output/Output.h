@@ -84,7 +84,7 @@ private:
     void outputMeshes(
         Process const& process, const int process_id, int const timestep,
         const double t, int const iteration,
-        std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes);
+        std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes);
 
     MeshLib::Mesh const& prepareSubmesh(
         std::string const& submesh_output_name, Process const& process,

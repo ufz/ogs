@@ -138,7 +138,7 @@ void Output::addProcess(ProcessLib::Process const& process)
 void Output::outputMeshes(
     const Process& process, const int process_id, const int timestep,
     const double t, const int iteration,
-    std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes)
+    std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes)
 {
     output_file->outputMeshes(process, process_id, timestep, t, iteration,
                               meshes,
