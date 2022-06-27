@@ -153,8 +153,7 @@ void OutputXDMFHDF5Format::outputMeshXdmf(
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
     int const timestep, double const t, int const iteration)
 {
-    // \TODO (tm) Refactor to a dedicated VTKOutput and XdmfOutput
-    // The XdmfOutput will create on construction the XdmfHdfWriter
+    // \TODO The XdmfOutput will create on construction the XdmfHdfWriter
     if (!mesh_xdmf_hdf_writer)
     {
         auto name = constructFilename(meshes[0].get().getName(), timestep, t,
