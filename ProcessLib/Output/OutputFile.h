@@ -21,8 +21,8 @@ class Process;
 
 struct OutputFile
 {
-    OutputFile(std::string const& directory, std::string const& prefix,
-               std::string const& suffix, bool const compression);
+    OutputFile(std::string const& directory, std::string prefix,
+               std::string suffix, bool const compression);
     virtual ~OutputFile() = default;
 
     std::string directory;

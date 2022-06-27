@@ -117,11 +117,11 @@ std::string OutputVTKFormat::constructPVDName(
             ".pvd");
 }
 
-OutputFile::OutputFile(std::string const& directory, std::string const& prefix,
-                       std::string const& suffix, bool const compression)
+OutputFile::OutputFile(std::string const& directory, std::string prefix,
+                       std::string suffix, bool const compression)
     : directory(directory),
-      prefix(prefix),
-      suffix(suffix),
+      prefix(std::move(prefix)),
+      suffix(std::move(suffix)),
       compression(compression)
 {
 }
