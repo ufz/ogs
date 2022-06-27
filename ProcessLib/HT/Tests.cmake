@@ -461,6 +461,24 @@ AddTest(
     classical_transport_example_full_upwind_t_7200.00.vtu classical_transport_example_full_upwind_t_7200.00.vtu velocity velocity 1.e-12 1.0e-12
 )
 
+AddTest(
+    NAME HT_ClassicalTransportexample_full_upwind_staggered
+    PATH Parabolic/HT/ClassicalTransportExample
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS classical_transport_example_full_upwind_staggered.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 1
+    DIFF_DATA
+    classical_transport_example_full_upwind_t_4800.00.vtu classical_transport_example_full_upwind_staggered_t_4800.00.vtu C C 1.e-9 1.0e-12
+    classical_transport_example_full_upwind_t_4800.00.vtu classical_transport_example_full_upwind_staggered_t_4800.00.vtu pressure pressure 1.e-9 1.0e-12
+    classical_transport_example_full_upwind_t_4800.00.vtu classical_transport_example_full_upwind_staggered_t_4800.00.vtu velocity velocity 1.e-12 1.0e-12
+    classical_transport_example_full_upwind_t_7200.00.vtu classical_transport_example_full_upwind_staggered_t_7200.00.vtu C C 1.e-9 1.0e-12
+    classical_transport_example_full_upwind_t_7200.00.vtu classical_transport_example_full_upwind_staggered_t_7200.00.vtu pressure pressure 1.e-9 1.0e-12
+    classical_transport_example_full_upwind_t_7200.00.vtu classical_transport_example_full_upwind_staggered_t_7200.00.vtu velocity velocity 1.e-12 1.0e-12
+)
+
 #MPI/PETSc
 AddTest(
     NAME HT_ParallelComputing_HeatTransportInStationaryFlow_Staggered_Scheme
