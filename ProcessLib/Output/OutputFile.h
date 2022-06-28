@@ -25,6 +25,11 @@ struct OutputFile
                std::string suffix, bool const compression);
     virtual ~OutputFile() = default;
 
+    OutputFile(OutputFile const& other) = default;
+    OutputFile(OutputFile&& other) = default;
+    OutputFile& operator=(OutputFile& other) = default;
+    OutputFile& operator=(OutputFile&& other) = default;
+
     std::string directory;
     std::string prefix;
     std::string suffix;
