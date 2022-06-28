@@ -15,6 +15,10 @@
 #include "Mesh.h"
 
 #include <memory>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/enumerate.hpp>
+#include <range/v3/view/indirect.hpp>
+#include <range/v3/view/map.hpp>
 #include <unordered_map>
 #include <utility>
 
@@ -32,6 +36,8 @@ static std::size_t global_mesh_counter = 0;
 
 namespace MeshLib
 {
+using namespace ranges;
+
 std::vector<std::vector<Element const*>> findElementsConnectedToNodes(
     Mesh const& mesh)
 {
@@ -41,10 +47,8 @@ std::vector<std::vector<Element const*>> findElementsConnectedToNodes(
 
     for (auto const* element : mesh.getElements())
     {
-        unsigned const number_nodes(element->getNumberOfNodes());
-        for (unsigned j = 0; j < number_nodes; ++j)
+        for (auto const node_id : element->nodes() | views::ids)
         {
-            auto const node_id = element->getNode(j)->getID();
             elements_connected_to_nodes[node_id].push_back(element);
         }
     }
@@ -97,11 +101,11 @@ Mesh::Mesh(const Mesh& mesh)
     const std::size_t nElements(elements.size());
     for (unsigned i = 0; i < nElements; ++i)
     {
-        const std::size_t nElemNodes = elements[i]->getNumberOfNodes();
         _elements[i] = elements[i]->clone();
-        for (unsigned j = 0; j < nElemNodes; ++j)
+        for (auto const& [j, node_id] :
+             elements[i]->nodes() | views::ids | ranges::views::enumerate)
         {
-            _elements[i]->setNode(j, _nodes[elements[i]->getNode(j)->getID()]);
+            _elements[i]->setNode(static_cast<unsigned>(j), _nodes[node_id]);
         }
     }
 
@@ -112,6 +116,8 @@ Mesh::Mesh(const Mesh& mesh)
     _elements_connected_to_nodes = findElementsConnectedToNodes(*this);
     this->setElementNeighbors();
 }
+
+Mesh::Mesh(Mesh&& mesh) = default;
 
 Mesh::~Mesh()
 {
@@ -268,14 +274,12 @@ PropertyVector<int> const* materialIDs(Mesh const& mesh)
 std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
     std::string mesh_name, std::vector<MeshLib::Element*> const& elements)
 {
+    auto ids_vector = views::ids | to<std::vector>();
+
     DBUG("Found {:d} elements in the mesh", elements.size());
 
     // Store bulk element ids for each of the new elements.
-    std::vector<std::size_t> bulk_element_ids;
-    bulk_element_ids.reserve(elements.size());
-    std::transform(begin(elements), end(elements),
-                   std::back_inserter(bulk_element_ids),
-                   [&](auto const& e) { return e->getID(); });
+    auto bulk_element_ids = elements | ids_vector;
 
     // original node pointers to newly created nodes.
     std::unordered_map<const MeshLib::Node*, MeshLib::Node*> nodes_map;
@@ -303,18 +307,10 @@ std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
     }
 
     // Copy the unique nodes pointers.
-    std::vector<MeshLib::Node*> element_nodes;
-    element_nodes.reserve(nodes_map.size());
-    std::transform(begin(nodes_map), end(nodes_map),
-                   std::back_inserter(element_nodes),
-                   [](auto const& pair) { return pair.second; });
+    auto element_nodes = nodes_map | ranges::views::values | to<std::vector>;
 
     // Store bulk node ids for each of the new nodes.
-    std::vector<std::size_t> bulk_node_ids;
-    bulk_node_ids.reserve(nodes_map.size());
-    std::transform(begin(nodes_map), end(nodes_map),
-                   std::back_inserter(bulk_node_ids),
-                   [](auto const& pair) { return pair.first->getID(); });
+    auto bulk_node_ids = nodes_map | ranges::views::keys | ids_vector;
 
     auto mesh = std::make_unique<MeshLib::Mesh>(
         std::move(mesh_name), std::move(element_nodes), std::move(elements));
@@ -339,11 +335,10 @@ std::vector<std::vector<Node*>> calculateNodesConnectedByElements(
     for (std::size_t i = 0; i < nodes.size(); ++i)
     {
         auto& adjacent_nodes = nodes_connected_by_elements[i];
-        auto const* node = nodes[i];
+        auto const node_id = nodes[i]->getID();
 
         // Get all elements, to which this node is connected.
-        auto const& connected_elements =
-            elements_connected_to_nodes[node->getID()];
+        auto const& connected_elements = elements_connected_to_nodes[node_id];
 
         // And collect all elements' nodes.
         for (Element const* const element : connected_elements)

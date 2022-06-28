@@ -54,15 +54,14 @@ public:
                  std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
             curves);
 
-    ProcessVariable(ProcessVariable&& other);
+    ProcessVariable(ProcessVariable&& other) = default;
 
     std::string const& getName() const;
 
     /// Returns a mesh on which the process variable is defined.
     MeshLib::Mesh const& getMesh() const;
 
-    std::vector<std::unique_ptr<DeactivatedSubdomain const>> const&
-    getDeactivatedSubdomains() const
+    std::vector<DeactivatedSubdomain> const& getDeactivatedSubdomains() const
     {
         return _deactivated_subdomains;
     }
@@ -125,8 +124,7 @@ private:
     /// \sa MeshLib::CellRule MeshLib::FaceRule MeshLib::EdgeRule.
     unsigned _shapefunction_order;
 
-    std::vector<std::unique_ptr<DeactivatedSubdomain const>>
-        _deactivated_subdomains;
+    std::vector<DeactivatedSubdomain> _deactivated_subdomains;
 
     /// IDs of the active elements. It is initialized only if there are
     /// deactivated subdomains.

@@ -9,6 +9,10 @@
 #include "CreateDeactivatedSubdomain.h"
 
 #include <Eigen/Dense>
+#include <range/v3/algorithm/all_of.hpp>
+#include <range/v3/algorithm/copy_if.hpp>
+#include <range/v3/algorithm/partition_copy.hpp>
+#include <range/v3/range/conversion.hpp>
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
@@ -23,7 +27,7 @@
 namespace ProcessLib
 {
 template <typename IsActive>
-static std::pair<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>
+static std::pair<std::vector<std::size_t>, std::vector<std::size_t>>
 extractInnerAndOuterNodes(MeshLib::Mesh const& mesh,
                           MeshLib::Mesh const& sub_mesh,
                           IsActive is_active)
@@ -38,41 +42,41 @@ extractInnerAndOuterNodes(MeshLib::Mesh const& mesh,
             "mesh.");
     }
 
-    std::vector<MeshLib::Node*> inner_nodes;
+    std::vector<std::size_t> inner_nodes;
     // Reserve for more than needed, but not much, because almost all nodes will
     // be the inner nodes.
     inner_nodes.reserve(sub_mesh.getNumberOfNodes());
 
-    std::vector<MeshLib::Node*> outer_nodes;
+    std::vector<std::size_t> outer_nodes;
 
-    std::partition_copy(
-        begin(sub_mesh.getNodes()), end(sub_mesh.getNodes()),
-        back_inserter(inner_nodes), back_inserter(outer_nodes),
-        [&](MeshLib::Node* const n)
+    ranges::partition_copy(
+        sub_mesh.getNodes() | MeshLib::views::ids,
+        back_inserter(inner_nodes),
+        back_inserter(outer_nodes),
+        [&](std::size_t const n)
         {
-            auto const bulk_node = mesh.getNode((*bulk_node_ids)[n->getID()]);
+            auto const bulk_node = mesh.getNode((*bulk_node_ids)[n]);
             const auto& connected_elements =
                 mesh.getElementsConnectedToNode(*bulk_node);
             // Check whether this node is connected only to an active
             // elements. Then it is an inner node, and outer otherwise.
-            return std::all_of(begin(connected_elements),
-                               end(connected_elements), is_active);
+            return ranges::all_of(connected_elements | MeshLib::views::ids,
+                                  is_active);
         });
 
     return {std::move(inner_nodes), std::move(outer_nodes)};
 }
 
-static std::unique_ptr<DeactivatedSubdomainMesh> createDeactivatedSubdomainMesh(
+static DeactivatedSubdomainMesh createDeactivatedSubdomainMesh(
     MeshLib::Mesh const& mesh,
     std::vector<int> const& deactivated_subdomain_material_ids)
 {
     // An element is active if its material id matches one of the deactivated
     // subdomain material ids.
-    auto is_active =
-        [deactivated_subdomain_material_ids,
-         material_ids = *materialIDs(mesh)](MeshLib::Element const* const e)
+    auto is_active = [deactivated_subdomain_material_ids,
+                      material_ids = *materialIDs(mesh)](std::size_t element_id)
     {
-        int const element_material_id = material_ids[e->getID()];
+        int const element_material_id = material_ids[element_id];
         return std::any_of(begin(deactivated_subdomain_material_ids),
                            end(deactivated_subdomain_material_ids),
                            [&](int const material_id)
@@ -81,14 +85,11 @@ static std::unique_ptr<DeactivatedSubdomainMesh> createDeactivatedSubdomainMesh(
 
     auto const& elements = mesh.getElements();
     std::vector<MeshLib::Element*> deactivated_elements;
-    std::copy_if(begin(elements), end(elements),
-                 back_inserter(deactivated_elements), is_active);
+    ranges::copy_if(elements, back_inserter(deactivated_elements), is_active,
+                    [](auto const e) { return e->getID(); });
 
-    std::vector<std::size_t> bulk_element_ids;
-    bulk_element_ids.reserve(deactivated_elements.size());
-    transform(begin(deactivated_elements), end(deactivated_elements),
-              back_inserter(bulk_element_ids),
-              [](auto const* e) { return e->getID(); });
+    auto bulk_element_ids =
+        deactivated_elements | MeshLib::views::ids | ranges::to<std::vector>;
 
     static int mesh_number = 0;
     // Subdomain mesh consisting of deactivated elements.
@@ -98,9 +99,9 @@ static std::unique_ptr<DeactivatedSubdomainMesh> createDeactivatedSubdomainMesh(
 
     auto [inner_nodes, outer_nodes] =
         extractInnerAndOuterNodes(mesh, *sub_mesh, is_active);
-    return std::make_unique<DeactivatedSubdomainMesh>(
-        std::move(sub_mesh), std::move(bulk_element_ids),
-        std::move(inner_nodes), std::move(outer_nodes));
+
+    return {std::move(*sub_mesh), std::move(bulk_element_ids),
+            std::move(inner_nodes), std::move(outer_nodes)};
 }
 
 static MathLib::PiecewiseLinearInterpolation parseTimeIntervalOrCurve(
@@ -186,7 +187,7 @@ static std::pair<Eigen::Vector3d, Eigen::Vector3d> parseLineSegment(
             Eigen::Vector3d{end[0], end[1], end[2]}};
 }
 
-std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
+DeactivatedSubdomain createDeactivatedSubdomain(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::map<std::string,
@@ -265,15 +266,11 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     auto deactivated_subdomain_mesh = createDeactivatedSubdomainMesh(
         mesh, deactivated_subdomain_material_ids);
 
-    return std::make_unique<DeactivatedSubdomain const>(
-        std::move(time_interval),
-        line_segment,
-        std::move(deactivated_subdomain_mesh),
-        boundary_value_parameter);
+    return {std::move(time_interval), line_segment,
+            std::move(deactivated_subdomain_mesh), boundary_value_parameter};
 }
 
-std::vector<std::unique_ptr<DeactivatedSubdomain const>>
-createDeactivatedSubdomains(
+std::vector<DeactivatedSubdomain> createDeactivatedSubdomains(
     BaseLib::ConfigTree const& config,
     MeshLib::Mesh const& mesh,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
@@ -281,8 +278,7 @@ createDeactivatedSubdomains(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-    std::vector<std::unique_ptr<DeactivatedSubdomain const>>
-        deactivated_subdomains;
+    std::vector<DeactivatedSubdomain> deactivated_subdomains;
     // Deactivated subdomains
     if (auto subdomains_config =
             //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains}

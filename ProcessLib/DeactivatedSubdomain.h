@@ -20,13 +20,12 @@
 
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MathLib/Point3d.h"
+#include "MeshLib/Mesh.h"
 #include "processlib_export.h"
 
 namespace MeshLib
 {
 class Element;
-class Mesh;
-class Node;
 }  // namespace MeshLib
 
 namespace ParameterLib
@@ -39,24 +38,18 @@ namespace ProcessLib
 {
 struct DeactivatedSubdomainMesh
 {
-    DeactivatedSubdomainMesh(
-        std::unique_ptr<MeshLib::Mesh> deactivated_subdomain_mesh_,
-        std::vector<std::size_t>&& bulk_element_ids_,
-        std::vector<MeshLib::Node*>&& inner_nodes_,
-        std::vector<MeshLib::Node*>&& outer_nodes_);
-
     /// A mesh created from material ids (independent of time) for the
     /// deactivated subdomain.
-    std::unique_ptr<MeshLib::Mesh> const mesh;
-    std::vector<std::size_t> const bulk_element_ids;
+    MeshLib::Mesh mesh;
+    std::vector<std::size_t> bulk_element_ids;
 
     /// Inner nodes owned only by elements of the deactivated subdomain.
     /// \see ProcessLib::createDeactivatedSubdomainMesh()
-    std::vector<MeshLib::Node*> const inner_nodes;
+    std::vector<std::size_t> inner_nodes;
     /// Outer nodes owned by elements of the deactivated subdomain as well as
     /// other elements not being part of this deactivated subdomain mesh.
     /// \see ProcessLib::createDeactivatedSubdomainMesh()
-    std::vector<MeshLib::Node*> const outer_nodes;
+    std::vector<std::size_t> outer_nodes;
 };
 
 /// Time dependent subdomain deactivation.
@@ -80,13 +73,6 @@ struct DeactivatedSubdomainMesh
 /// between the active and inactive elements are not affected.
 struct DeactivatedSubdomain
 {
-    DeactivatedSubdomain(
-        MathLib::PiecewiseLinearInterpolation time_interval_,
-        std::optional<std::pair<Eigen::Vector3d, Eigen::Vector3d>>
-            line_segment,
-        std::unique_ptr<DeactivatedSubdomainMesh>&& deactivated_subdomain_mesh_,
-        ParameterLib::Parameter<double> const* boundary_value_parameter);
-
     /// \returns true if the given time is included in the subdomains time
     /// support interval.
     bool isInTimeSupportInterval(double const t) const;
@@ -101,17 +87,17 @@ struct DeactivatedSubdomain
     bool isDeactivated(MeshLib::Element const& element,
                        double const time) const;
 
-    MathLib::PiecewiseLinearInterpolation const time_interval;
+    MathLib::PiecewiseLinearInterpolation time_interval;
 
     /// Line segment along which excavation progresses. Represented by start and
     /// end points.
     std::optional<std::pair<Eigen::Vector3d, Eigen::Vector3d>> line_segment;
 
-    std::unique_ptr<DeactivatedSubdomainMesh> const deactivated_subdomain_mesh;
+    DeactivatedSubdomainMesh deactivated_subdomain_mesh;
 
     /// A pararameter for the optional Dirichlet boundary condition applied on
     /// the surface of the deactivated subdomain/excavation.
-    ParameterLib::Parameter<double> const* const boundary_value_parameter;
+    ParameterLib::Parameter<double> const* boundary_value_parameter;
 
     PROCESSLIB_EXPORT static const std::string zero_parameter_name;
 };

@@ -57,9 +57,8 @@ void DirichletBoundaryConditionWithinTimeInterval::getEssentialBCValues(
 {
     if (_time_interval.contains(t))
     {
-        getEssentialBCValuesLocal(_parameter, _bc_mesh, _bc_mesh.getNodes(),
-                                  *_dof_table_boundary, _variable_id,
-                                  _component_id, t, x, bc_values);
+        getEssentialBCValuesLocal(_parameter, _bc_mesh, *_dof_table_boundary,
+                                  _variable_id, _component_id, t, x, bc_values);
         return;
     }
 

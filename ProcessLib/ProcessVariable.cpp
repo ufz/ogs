@@ -192,20 +192,7 @@ ProcessVariable::ProcessVariable(
     {
         INFO("No source terms for process variable '{:s}' found.", _name);
     }
-}
 
-ProcessVariable::ProcessVariable(ProcessVariable&& other)
-    : _name(std::move(other._name)),
-      _mesh(other._mesh),
-      _n_components(other._n_components),
-      _shapefunction_order(other._shapefunction_order),
-      _deactivated_subdomains(std::move(other._deactivated_subdomains)),
-      _initial_condition(std::move(other._initial_condition)),
-      _bc_configs(std::move(other._bc_configs)),
-      _source_term_configs(std::move(other._source_term_configs)),
-      _compensate_non_equilibrium_initial_residuum(
-          other._compensate_non_equilibrium_initial_residuum)
-{
 }
 
 std::string const& ProcessVariable::getName() const
@@ -264,14 +251,14 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
     for (auto const& deactivated_subdomain : _deactivated_subdomains)
     {
         auto const& deactivated_subdomain_mesh =
-            deactivated_subdomain->deactivated_subdomain_mesh;
+            deactivated_subdomain.deactivated_subdomain_mesh;
         auto const* parameter = &ParameterLib::findParameter<double>(
             DeactivatedSubdomain::zero_parameter_name, parameters, 1);
         bool const set_outer_nodes_dirichlet_values =
-            deactivated_subdomain->boundary_value_parameter != nullptr;
+            deactivated_subdomain.boundary_value_parameter != nullptr;
         if (set_outer_nodes_dirichlet_values)
         {
-            parameter = deactivated_subdomain->boundary_value_parameter;
+            parameter = deactivated_subdomain.boundary_value_parameter;
         }
 
         for (int component_id = 0;
@@ -280,9 +267,9 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
              component_id++)
         {
             auto bc = std::make_unique<DeactivatedSubdomainDirichlet>(
-                &_ids_of_active_elements, deactivated_subdomain->time_interval,
+                &_ids_of_active_elements, deactivated_subdomain.time_interval,
                 *parameter, set_outer_nodes_dirichlet_values,
-                *deactivated_subdomain_mesh, dof_table, variable_id,
+                deactivated_subdomain_mesh, dof_table, variable_id,
                 component_id);
 
 #ifdef USE_PETSC
@@ -305,7 +292,7 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
     // _ids_of_active_elements remain empty.
     if (std::none_of(
             begin(_deactivated_subdomains), end(_deactivated_subdomains),
-            [&](auto const& ds) { return ds->isInTimeSupportInterval(time); }))
+            [&](auto const& ds) { return ds.isInTimeSupportInterval(time); }))
     {
         return;
     }
@@ -324,7 +311,7 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
         if (std::all_of(begin(_deactivated_subdomains),
                         end(_deactivated_subdomains),
                         [&](auto const& ds)
-                        { return is_active_in_subdomain(element_id, *ds); }))
+                        { return is_active_in_subdomain(element_id, ds); }))
         {
             _ids_of_active_elements.push_back(element_id);
         }
