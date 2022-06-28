@@ -1,0 +1,51 @@
++++
+date = "2022-06-28T15:28:13+01:00"
+title = "Jupyter notebooks as documentation"
+author = "Lars Bilke"
+weight = 1025
+
+[menu.devguide]
+parent = "development-workflows"
++++
+
+## The big picture
+
+Jupyter notebooks in `Tests/Data` are automatically executed and converted to web pages in the benchmark documentation section.
+
+## Add web meta information
+
+Similar to regular web documentation pages the notebook requires to have a frontmatter with some meta information as the first cell in the notebook:
+
+- Add a new cell and move it to the first position in the notebook
+- Change the cell type to `raw`!
+- Add meta information, conclude with a end-of-file marker (`<!--eofm-->`) e.g.:
+
+  ```toml
+  title = "SimplePETSc"
+  date = "2021-11-09"
+  author = "Lars Bilke"
+  notebook = "Notebooks/SimplePETSc.ipynb"
+  [menu]
+    [menu.benchmarks]
+      parent = "elliptic"
+  <!--eofm-->
+  ```
+
+## General advice
+
+### Python cells
+
+- See [Notebook testing]({{< relref "test-data#notebook-testing" >}}) for details on how to setup ogs execution (especially input data path handling) inside the notebook. See also the [SimplePETSc.ipynb](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Notebooks/SimplePETSc.ipynb)-notebook as an example.
+- Do not use machine-specific or absolute paths!
+- Assume that ogs and other tools are in the `PATH`.
+
+### Markdown cells
+
+- Do not use HTML inside Markdown blocks.
+- For image captions add a title in quotation marks after the image path, e.g.
+
+  ```md
+  ![Alt text](./my_image.png "This will be the image caption.")
+  ```
+
+- Please note that in merge request web previews images are not shown at all.

@@ -128,3 +128,5 @@ find . -type f -iname '*.ipynb' \
   | grep -vP '\.ipynb_checkpoints|\.ci-skip.ipynb$' \
   | xargs python Notebooks/testrunner.py --out _out
 ```
+
+Notebooks [are automatically added]({{< relref "jupyter-docs" >}}) to the benchmark documentation page.
