@@ -32,8 +32,8 @@ class Output
 public:
     Output(std::unique_ptr<OutputFile> output_file,
            bool const output_nonlinear_iteration_results,
-           OutputDataSpecification&& output_data_specification,
-           std::vector<std::string>&& mesh_names_for_output,
+           OutputDataSpecification const& output_data_specification,
+           std::vector<std::string> const& mesh_names_for_output,
            std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
 
     //! TODO doc. Opens a PVD file for each process.
