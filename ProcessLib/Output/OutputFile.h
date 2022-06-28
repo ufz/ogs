@@ -34,7 +34,7 @@ struct OutputFile
     virtual void outputMeshes(
         const Process& process, const int process_id, const int timestep,
         const double t, const int iteration,
-        std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+        std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
         std::set<std::string> const& output_variables) = 0;
 
     virtual void addProcess(
@@ -43,7 +43,7 @@ struct OutputFile
     {
     }
 
-    virtual std::string constructFilename(std::string mesh_name,
+    virtual std::string constructFilename(std::string const& mesh_name,
                                           int const timestep, double const t,
                                           int const iteration) const = 0;
 };
@@ -62,7 +62,7 @@ struct OutputVTKFormat final : public OutputFile
     void outputMeshes(
         const Process& process, const int process_id, const int timestep,
         const double t, const int iteration,
-        std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+        std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
         std::set<std::string> const& output_variables) override;
 
     void addProcess(
@@ -83,8 +83,8 @@ struct OutputVTKFormat final : public OutputFile
     //! processes> x <no. of process IDs per process> x <no. of meshes>.
     std::multimap<Process const*, MeshLib::IO::PVDFile> process_to_pvd_file;
 
-    std::string constructFilename(std::string mesh_name, int const timestep,
-                                  double const t,
+    std::string constructFilename(std::string const& mesh_name,
+                                  int const timestep, double const t,
                                   int const iteration) const override;
 
     std::string constructPVDName(std::string const& mesh_name) const;
@@ -105,15 +105,15 @@ struct OutputXDMFHDF5Format final : public OutputFile
         [[maybe_unused]] const Process& process,
         [[maybe_unused]] const int process_id, const int timestep,
         const double t, const int iteration,
-        std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+        std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
         std::set<std::string> const& output_variables) override
     {
         outputMeshXdmf(output_variables, std::move(meshes), timestep, t,
                        iteration);
     }
 
-    std::string constructFilename(std::string mesh_name, int const timestep,
-                                  double const t,
+    std::string constructFilename(std::string const& mesh_name,
+                                  int const timestep, double const t,
                                   int const iteration) const override;
 
     std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;

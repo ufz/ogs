@@ -126,7 +126,7 @@ OutputFile::OutputFile(std::string const& directory, std::string prefix,
 {
 }
 
-std::string OutputVTKFormat::constructFilename(std::string mesh_name,
+std::string OutputVTKFormat::constructFilename(std::string const& mesh_name,
                                                int const timestep,
                                                double const t,
                                                int const iteration) const
@@ -138,10 +138,11 @@ std::string OutputVTKFormat::constructFilename(std::string mesh_name,
            ".vtu";
 }
 
-std::string OutputXDMFHDF5Format::constructFilename(std::string mesh_name,
-                                                    int const timestep,
-                                                    double const t,
-                                                    int const iteration) const
+std::string OutputXDMFHDF5Format::constructFilename(
+    std::string const& mesh_name,
+    int const timestep,
+    double const t,
+    int const iteration) const
 {
     return BaseLib::constructFormattedFileName(prefix, mesh_name, timestep, t,
                                                iteration) +
@@ -172,7 +173,7 @@ void OutputXDMFHDF5Format::outputMeshXdmf(
 void OutputVTKFormat::outputMeshes(
     const Process& process, const int process_id, const int timestep,
     const double t, const int iteration,
-    std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+    std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
     [[maybe_unused]] std::set<std::string> const& output_variables)
 {
     for (auto const& mesh : meshes)
