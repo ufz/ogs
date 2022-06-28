@@ -18,7 +18,6 @@
 namespace ProcessLib
 {
 DeactivatedSubdomainDirichlet::DeactivatedSubdomainDirichlet(
-    std::vector<std::size_t> const* const active_element_ids,
     MeshLib::PropertyVector<unsigned char> const& is_active,
     MathLib::PiecewiseLinearInterpolation time_interval,
     ParameterLib::Parameter<double> const& parameter,
@@ -31,7 +30,6 @@ DeactivatedSubdomainDirichlet::DeactivatedSubdomainDirichlet(
       _variable_id(variable_id),
       _component_id(component_id),
       _time_interval(std::move(time_interval)),
-      _active_element_ids(active_element_ids),
       _is_active(is_active),
       _set_outer_nodes_dirichlet_values(set_outer_nodes_dirichlet_values)
 {
@@ -57,17 +55,20 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
     const double t, GlobalVector const& x,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
-    auto const& bulk_element_ids =
+    [[maybe_unused]] auto const& bulk_node_ids =
+        *_subdomain.mesh.getProperties()
+             .template getPropertyVector<std::size_t>(
+                 "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
+    [[maybe_unused]] auto const& bulk_element_ids =
         *_subdomain.mesh.getProperties()
              .template getPropertyVector<std::size_t>(
                  "bulk_element_ids", MeshLib::MeshItemType::Cell, 1);
 
-    auto is_inactive = [&](MeshLib::Element const* const e)
-    {
-        return none_of(begin(*_active_element_ids), end(*_active_element_ids),
-                       [&](auto const id)
-                       { return id == bulk_element_ids[e->getID()]; });
-    };
+    auto is_inactive_id = [&](std::size_t const bulk_element_id)
+    { return _is_active[bulk_element_id] == 0; };
+
+    auto is_inactive_element = [&](MeshLib::Element const* const e)
+    { return is_inactive_id(bulk_element_ids[e->getID()]); };
 
     std::vector<std::size_t> inactive_nodes_in_bc_mesh;
     std::copy_if(begin(_subdomain.inner_nodes), end(_subdomain.inner_nodes),
@@ -78,7 +79,8 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
                          _subdomain.mesh.getElementsConnectedToNode(n);
 
                      return std::all_of(begin(connected_elements),
-                                        end(connected_elements), is_inactive);
+                                        end(connected_elements),
+                                        is_inactive_element);
                  });
 
     if (_set_outer_nodes_dirichlet_values)
@@ -92,8 +94,20 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
 
                          return std::all_of(begin(connected_elements),
                                             end(connected_elements),
-                                            is_inactive);
+                                            is_inactive_element);
                      });
+    }
+    else
+    {
+        for (std::size_t i = 0; i < _subdomain.outer_nodes.size(); ++i)
+        {
+            auto const& connected_elements = _subdomain.outer_nodes_elements[i];
+            if (std::all_of(begin(connected_elements), end(connected_elements),
+                            is_inactive_id))
+            {
+                inactive_nodes_in_bc_mesh.push_back(_subdomain.outer_nodes[i]);
+            }
+        }
     }
 
     auto time_interval_contains = [&](double const t)
