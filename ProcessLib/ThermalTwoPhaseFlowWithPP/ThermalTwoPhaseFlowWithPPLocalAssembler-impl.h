@@ -740,19 +740,9 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
 
         Kep.noalias() += (lambda_nonwet * density_nonwet * enthalpy_nonwet +
                           lambda_wet * density_wet * enthalpy_wet) *
-                             laplace_operator +
-                         (1 - Sw) * porosity * diffusion_coeff_water_nonwet *
-                             mol_density_nonwet *
-                             (air_mol_mass * enthalpy_air_nonwet -
-                              water_mol_mass * enthalpy_water_nonwet) *
-                             d_x_air_nonwet_dpg * diffusion_operator;
+                         laplace_operator;
         Kepc.noalias() +=
-            -lambda_wet * enthalpy_wet * density_wet * laplace_operator +
-            (1 - Sw) * porosity * diffusion_coeff_water_nonwet *
-                mol_density_nonwet *
-                (air_mol_mass * enthalpy_air_nonwet -
-                 water_mol_mass * enthalpy_water_nonwet) *
-                d_x_air_nonwet_dpc * diffusion_operator;
+            -lambda_wet * enthalpy_wet * density_wet * laplace_operator;
 
         if (medium.hasProperty(
                 MaterialPropertyLib::PropertyType::thermal_conductivity))
@@ -767,12 +757,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(lambda);
 
             Ket.noalias() +=
-                dNdx.transpose() * heat_conductivity_unsaturated * dNdx * w +
-                (1 - Sw) * porosity * diffusion_coeff_water_nonwet *
-                    mol_density_nonwet *
-                    (air_mol_mass * enthalpy_air_nonwet -
-                     water_mol_mass * enthalpy_water_nonwet) *
-                    d_x_air_nonwet_dT * diffusion_operator;
+                dNdx.transpose() * heat_conductivity_unsaturated * dNdx * w;
         }
         else
         {
@@ -795,12 +780,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                                thermal_conductivity_fluid, porosity);
 
             Ket.noalias() +=
-                dNdx.transpose() * heat_conductivity_unsaturated * dNdx * w +
-                (1 - Sw) * porosity * diffusion_coeff_water_nonwet *
-                    mol_density_nonwet *
-                    (air_mol_mass * enthalpy_air_nonwet -
-                     water_mol_mass * enthalpy_water_nonwet) *
-                    d_x_air_nonwet_dT * diffusion_operator;
+                dNdx.transpose() * heat_conductivity_unsaturated * dNdx * w;
         }
 
         if (_process_data.has_gravity)
