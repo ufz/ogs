@@ -447,9 +447,11 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                 .template value<double>(vars, pos, t, dt);
 
         // enthalpies of gaseous components
+        // Note: h^a_G = C^a_P * (T - T0) = C^a_V * (T - T0) + RT/M^a, thus
+        // "C^a_V" should be used in the following. Same for contaminant.
         double const enthalpy_air_nonwet =
             heat_capacity_dry_air * (T_int_pt - CelsiusZeroInKelvin) +
-            IdealGasConstant * (T_int_pt - CelsiusZeroInKelvin) / air_mol_mass;
+            IdealGasConstant * T_int_pt / air_mol_mass;
         double const enthalpy_water_nonwet =
             heat_capacity_water_vapour * (T_int_pt - CelsiusZeroInKelvin) +
             latent_heat_evaporation;
