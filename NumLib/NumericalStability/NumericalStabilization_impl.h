@@ -11,7 +11,10 @@
 
 #pragma once
 
+#include <algorithm>
 #include <limits>
+#include <numeric>
+#include <range/v3/view/filter.hpp>
 
 #include "NumericalStabilization.h"
 
@@ -21,21 +24,18 @@ template <typename Derived>
 void applyFullUpwind(Eigen::VectorXd const& quasi_nodal_flux,
                      Eigen::MatrixBase<Derived>& diffusion_matrix)
 {
+    std::vector<int> node_ids(quasi_nodal_flux.size());
+    std::iota(std::begin(node_ids), std::end(node_ids), 0);
+    auto down_wind = [&quasi_nodal_flux](const int id)
+    { return quasi_nodal_flux[id] < 0; };
+    auto up_wind = [&quasi_nodal_flux](const int id)
+    { return quasi_nodal_flux[id] >= 0; };
+
     double q_in = 0.0;
-    std::vector<int> downwind_node_ids;
-    std::vector<int> upwind_node_ids;
-    for (int i = 0; i < quasi_nodal_flux.size(); i++)
+    for (auto const downwind_node_id :
+         node_ids | ranges::views::filter(down_wind))
     {
-        double const q_i = quasi_nodal_flux[i];
-        if (q_i < 0.0)
-        {
-            q_in -= q_i;
-            downwind_node_ids.push_back(i);
-        }
-        else
-        {
-            upwind_node_ids.push_back(i);
-        }
+        q_in -= quasi_nodal_flux[downwind_node_id];
     }
 
     if (q_in < std::numeric_limits<double>::epsilon())
@@ -43,16 +43,18 @@ void applyFullUpwind(Eigen::VectorXd const& quasi_nodal_flux,
         return;
     }
 
-    for (int const upwind_node_id : upwind_node_ids)
+    for (auto const upwind_node_id : node_ids | ranges::views::filter(up_wind))
     {
         diffusion_matrix.diagonal()[upwind_node_id] +=
             quasi_nodal_flux[upwind_node_id];
     }
 
-    for (int const downwind_node_id : downwind_node_ids)
+    for (auto const downwind_node_id :
+         node_ids | ranges::views::filter(down_wind))
     {
         double const row_factor = quasi_nodal_flux[downwind_node_id] / q_in;
-        for (int const upwind_node_id : upwind_node_ids)
+        for (auto const upwind_node_id :
+             node_ids | ranges::views::filter(up_wind))
         {
             diffusion_matrix.row(downwind_node_id)[upwind_node_id] +=
                 row_factor * quasi_nodal_flux[upwind_node_id];
