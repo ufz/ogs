@@ -611,13 +611,6 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         auto const& b = _process_data.specific_body_force;
 
         // gas and liquid phase velocities
-        GlobalDimVectorType const velocity_nonwet =
-            _process_data.has_gravity
-                ? GlobalDimVectorType(
-                      -lambda_nonwet * permeability *
-                      (dNdx * pg_nodal_values - density_nonwet * b))
-                : GlobalDimVectorType(-lambda_nonwet * permeability * dNdx *
-                                      pg_nodal_values);
         GlobalDimVectorType const velocity_wet =
             _process_data.has_gravity
                 ? GlobalDimVectorType(
@@ -628,13 +621,6 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                                       (pg_nodal_values - pc_nodal_values));
 
         laplace_operator.noalias() = dNdx.transpose() * permeability * dNdx * w;
-
-        Ket.noalias() += w * N.transpose() *
-                             (d_density_nonwet_dT * enthalpy_nonwet +
-                              density_nonwet * d_enthalpy_nonwet_dT) *
-                             velocity_nonwet.transpose() * dNdx +
-                         w * N.transpose() * heat_capacity_water * density_wet *
-                             velocity_wet.transpose() * dNdx;
 
         // mechanical dispersivities
         auto const solute_dispersivity_transverse =
