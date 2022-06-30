@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="../../RichardsMechanics/orthotropic_swelling_xy.prj">
+    <replace sel="/*/processes/process/type/text()">THERMO_RICHARDS_MECHANICS</replace>
+    <remove sel="/*/processes/process/dimension" />
+    <add sel="/*/processes/process/process_variables">
+        <temperature>temperature</temperature>
+    </add>
+    <add sel="/*/media/medium/phases/phase/type[text()=&quot;AqueousLiquid&quot;]/../properties">
+        <property>
+            <name>specific_heat_capacity</name>
+            <type>Constant</type>
+            <value>0.0</value>
+        </property>
+        <property>
+            <name>thermal_conductivity</name>
+            <type>Constant</type>
+            <value>1.0</value>
+        </property>
+    </add>
+    <add sel="/*/media/medium/phases/phase/type[text()=&quot;Solid&quot;]/../properties">
+        <property>
+            <name>thermal_expansivity</name>
+            <type>Constant</type>
+            <value>0.0</value>
+        </property>
+        <property>
+            <name>specific_heat_capacity</name>
+            <type>Constant</type>
+            <value>0.0</value>
+        </property>
+        <property>
+            <name>thermal_conductivity</name>
+            <type>Constant</type>
+            <value>1.0</value>
+        </property>
+    </add>
+    <add sel="/*/media/medium/properties">
+        <property>
+            <name>thermal_conductivity</name>
+            <type>EffectiveThermalConductivityPorosityMixing</type>
+        </property>
+    </add>
+    <add sel="/*/time_loop/processes/process/convergence_criterion/abstols/text()" pos="after"> 1e-13</add>
+    <add sel="/*/parameters">
+        <parameter>
+            <name>T0</name>
+            <type>Constant</type>
+            <value>273.15</value>
+        </parameter>
+    </add>
+    <add sel="/*/process_variables">
+        <process_variable>
+            <name>temperature</name>
+            <components>1</components>
+            <compensate_non_equilibrium_initial_residuum>
+                false</compensate_non_equilibrium_initial_residuum>
+            <order>1</order>
+            <initial_condition>T0</initial_condition>
+            <boundary_conditions>
+                <!-- We fix the temperature in the entire domain.
+                    Since the mesh is a single quad8, it's sufficient to fix T at all edges.
+                -->
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>right</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>T0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>bottom</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>T0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>left</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>T0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>top</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>T0</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </add>
+</OpenGeoSysProjectDiff>
