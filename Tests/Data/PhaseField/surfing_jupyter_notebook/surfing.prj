@@ -1,16 +1,6 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
-    <!-- <meshes> -->
-        <mesh>surfing_quad_1x2_NR_pf_ic.vtu</mesh>
-        <!-- <mesh>surfing_bottom.vtu</mesh>
-        <mesh>surfing_top.vtu</mesh>
-        <mesh>surfing_left.vtu</mesh>
-        <mesh>surfing_right.vtu</mesh>
-        <mesh>surfing_p_0.vtu</mesh>
-        <mesh>surfing_p_1.vtu</mesh>
-        <mesh>surfing_p_2.vtu</mesh>
-        <mesh>surfing_p_3.vtu</mesh> -->
-    <!-- </meshes> -->
+    <mesh>surfing_quad_1x2_NR_pf_ic.vtu</mesh>
     <geometry>surfing.gml</geometry>
 
     <python_script>Surfing_python.py</python_script>
@@ -222,7 +212,6 @@
             <initial_condition>phasefield_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <!-- <mesh>surfing_right</mesh> -->
                     <geometrical_set>surfing</geometrical_set>
                     <geometry>right</geometry>
                     <type>Dirichlet</type>
@@ -230,7 +219,6 @@
                     <parameter>phasefield_bc</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <!-- <mesh>surfing_right</mesh> -->
                     <geometrical_set>surfing</geometrical_set>
                     <geometry>right</geometry>
                     <type>PhaseFieldIrreversibleDamageOracleBoundaryCondition</type>
@@ -245,7 +233,6 @@
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <!-- <mesh>surfing_right</mesh> -->
                     <geometrical_set>surfing</geometrical_set>
                     <geometry>right</geometry>
                     <type>Python</type>
@@ -254,7 +241,6 @@
                     <flush_stdout>false</flush_stdout>
                 </boundary_condition>
                 <boundary_condition>
-                    <!-- <mesh>surfing_left</mesh> -->
                     <geometrical_set>surfing</geometrical_set>
                     <geometry>left</geometry>
                     <type>Python</type>
@@ -263,7 +249,6 @@
                     <flush_stdout>false</flush_stdout>
                 </boundary_condition>
                 <boundary_condition>
-                    <!-- <mesh>surfing_bottom</mesh> -->
                     <geometrical_set>surfing</geometrical_set>
                     <geometry>bottom</geometry>
                     <type>Python</type>
@@ -272,7 +257,6 @@
                     <flush_stdout>false</flush_stdout>
                 </boundary_condition>
                 <boundary_condition>
-                    <!-- <mesh>surfing_top</mesh> -->
                     <geometrical_set>surfing</geometrical_set>
                     <geometry>top</geometry>
                     <type>Python</type>
@@ -281,7 +265,6 @@
                     <flush_stdout>false</flush_stdout>
                 </boundary_condition>
                 <boundary_condition>
-                    <!-- <mesh>surfing_right</mesh> -->
                     <geometrical_set>surfing</geometrical_set>
                     <geometry>right</geometry>
                     <type>Python</type>
@@ -290,7 +273,6 @@
                     <flush_stdout>false</flush_stdout>
                 </boundary_condition>
                 <boundary_condition>
-                    <!-- <mesh>surfing_left</mesh> -->
                     <geometrical_set>surfing</geometrical_set>
                     <geometry>left</geometry>
                     <type>Python</type>
@@ -299,7 +281,6 @@
                     <flush_stdout>false</flush_stdout>
                 </boundary_condition>
                 <boundary_condition>
-                    <!-- <mesh>surfing_bottom</mesh> -->
                     <geometrical_set>surfing</geometrical_set>
                     <geometry>bottom</geometry>
                     <type>Python</type>
@@ -308,7 +289,6 @@
                     <flush_stdout>false</flush_stdout>
                 </boundary_condition>
                 <boundary_condition>
-                    <!-- <mesh>surfing_top</mesh> -->
                     <geometrical_set>surfing</geometrical_set>
                     <geometry>top</geometry>
                     <type>Python</type>
