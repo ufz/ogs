@@ -41,6 +41,7 @@ class StaggeredHTFEM : public HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>
         typename ShapeMatricesType::template VectorType<ShapeFunction::NPOINTS>;
 
     using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
+    using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
     using NodalRowVectorType = typename ShapeMatricesType::NodalRowVectorType;
 
     using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;

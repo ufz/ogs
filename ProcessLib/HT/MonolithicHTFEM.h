@@ -12,6 +12,7 @@
 #pragma once
 
 #include <Eigen/Dense>
+#include <typeinfo>
 #include <vector>
 
 #include "HTFEM.h"
@@ -46,6 +47,7 @@ class MonolithicHTFEM
                                                         ShapeFunction::NPOINTS>;
 
     using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
+    using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
     using NodalRowVectorType = typename ShapeMatricesType::NodalRowVectorType;
 
     using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
@@ -92,13 +94,26 @@ public:
             pressure_index, pressure_index);
         auto Bp = local_b.template block<pressure_size, 1>(pressure_index, 0);
 
+        typename ShapeMatricesType::NodalMatrixType K_TT_advection =
+            ShapeMatricesType::NodalMatrixType::Zero(temperature_size,
+                                                     temperature_size);
+
+        auto const& process_data = this->_process_data;
+        NodalVectorType node_flux_q;
+        node_flux_q.setZero(temperature_size);
+
+        bool const apply_full_upwind =
+            process_data.stabilizer &&
+            (typeid(*process_data.stabilizer) == typeid(NumLib::FullUpwind));
+
+        double max_velocity_magnitude = 0.;
+
         ParameterLib::SpatialPosition pos;
         pos.setElementID(this->_element.getID());
 
         auto p_nodal_values = Eigen::Map<const NodalVectorType>(
             &local_x[pressure_index], pressure_size);
 
-        auto const& process_data = this->_process_data;
         auto const& medium =
             *process_data.media_map->getMedium(this->_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
@@ -183,11 +198,23 @@ public:
                 this->getThermalConductivityDispersivity(
                     vars, fluid_density, specific_heat_capacity_fluid, velocity,
                     I, pos, t, dt);
+
             KTT.noalias() +=
-                (dNdx.transpose() * thermal_conductivity_dispersivity * dNdx +
-                 N.transpose() * velocity.transpose() * dNdx * fluid_density *
-                     specific_heat_capacity_fluid) *
-                w;
+                dNdx.transpose() * thermal_conductivity_dispersivity * dNdx * w;
+
+            K_TT_advection.noalias() += N.transpose() * velocity.transpose() *
+                                        dNdx * fluid_density *
+                                        specific_heat_capacity_fluid * w;
+
+            if (apply_full_upwind)
+            {
+                node_flux_q.noalias() -= fluid_density *
+                                         specific_heat_capacity_fluid *
+                                         velocity.transpose() * dNdx * w;
+                max_velocity_magnitude =
+                    std::max(max_velocity_magnitude, velocity.norm());
+            }
+
             Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
             MTT.noalias() += w *
                              this->getHeatEnergyCoefficient(
@@ -201,6 +228,17 @@ public:
             }
             /* with Oberbeck-Boussing assumption density difference only exists
              * in buoyancy effects */
+        }
+
+        if (apply_full_upwind &&
+            max_velocity_magnitude >
+                process_data.stabilizer->getCutoffVelocity())
+        {
+            NumLib::applyFullUpwind(node_flux_q, KTT);
+        }
+        else
+        {
+            KTT.noalias() += K_TT_advection;
         }
     }
 
