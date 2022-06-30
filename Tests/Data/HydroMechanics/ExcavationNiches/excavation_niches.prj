@@ -290,7 +290,7 @@
         <vtkdiff>
             <regex>excavation_niches_ts_.*.vtu</regex>
             <field>sigma</field>
-            <absolute_tolerance>3e-8</absolute_tolerance>
+            <absolute_tolerance>4e-8</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -316,6 +316,18 @@
             <field>NodalForces</field>
             <absolute_tolerance>2e-5</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>excavation_niches_ts_.*.vtu</regex>
+            <field>displacement_active</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>excavation_niches_ts_.*.vtu</regex>
+            <field>pressure_active</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>

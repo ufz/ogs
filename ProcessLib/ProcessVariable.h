@@ -129,6 +129,7 @@ private:
     /// IDs of the active elements. It is initialized only if there are
     /// deactivated subdomains.
     mutable std::vector<std::size_t> _ids_of_active_elements;
+    MeshLib::PropertyVector<unsigned char>* _is_active = nullptr;
 
     void createBoundaryConditionsForDeactivatedSubDomains(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
