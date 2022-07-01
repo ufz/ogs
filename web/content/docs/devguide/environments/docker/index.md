@@ -19,7 +19,7 @@ aliases = ["/docs/devguide/advanced/docker"]
 > <cite>[www.docker.com/whatisdocker](https://www.docker.com/whatisdocker)</cite>
 <!-- vale on -->
 
-See the [docs](https://docs.docker.com) for installation instructions (if you are on Windows we highly recommend the [Docker Desktop WSL 2 backend](https://docs.docker.com/docker-for-windows/wsl/)).
+See the [docs](https://docs.docker.com/get-docker/) for installation instructions (if you are on Windows we highly recommend the [Docker Desktop WSL 2 backend](https://docs.docker.com/docker-for-windows/wsl/)).
 
 ## Images
 
