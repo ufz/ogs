@@ -20,6 +20,7 @@
             <aperture_size>
                 <parameter>fracture_thickness</parameter>
             </aperture_size>
+            <linear>true</linear>
         </process>
     </processes>
     <media>
