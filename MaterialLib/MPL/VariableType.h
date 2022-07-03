@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <BaseLib/Error.h>
+
 #include <Eigen/Dense>
 #include <array>
 #include <string>
@@ -38,9 +40,9 @@ using Tensor2d = std::array<double, 4>;
 /// tensor components.
 using Tensor = std::array<double, 9>;
 
-/// Enum Variable is simply a list of all commonly used variables that are used
-/// to determine the size of the VariableArray. If the variable of your choice
-/// is missing, simply add it somewhere at the list, but above the last entry.
+/// Enum Variable is simply a list of all commonly used variables.
+/// If the variable of your choice is missing, simply add it somewhere at the
+/// list, but above the last entry.
 enum class Variable : int
 {
     capillary_pressure,
@@ -103,11 +105,115 @@ using VariableType =
     std::variant<std::monostate, double, Vector, Eigen::Matrix<double, 4, 1>,
                  Eigen::Matrix<double, 6, 1>>;
 
-/// The VariableArray is a std::array of fixed size. Its size is determined by
-/// the Variable enumerator list. Data type of that array is defined by the
-/// VariableType definition.
-using VariableArray =
-    std::array<VariableType, static_cast<int>(Variable::number_of_variables)>;
+class VariableArray
+{
+public:
+    /// Read-only access.
+    /// \note The returned value is a temporary.
+    VariableType operator[](Variable const variable) const
+    {
+        auto identity = [](auto&& arg) -> VariableType { return arg; };
+        switch (variable)
+        {
+            case Variable::capillary_pressure:
+                return capillary_pressure;
+            case Variable::concentration:
+                return concentration;
+            case Variable::density:
+                return density;
+            case Variable::displacement:
+                return std::visit(identity, displacement);
+            case Variable::effective_pore_pressure:
+                return effective_pore_pressure;
+            case Variable::enthalpy_of_evaporation:
+                return enthalpy_of_evaporation;
+            case Variable::equivalent_plastic_strain:
+                return equivalent_plastic_strain;
+            case Variable::grain_compressibility:
+                return grain_compressibility;
+            case Variable::liquid_phase_pressure:
+                return liquid_phase_pressure;
+            case Variable::liquid_saturation:
+                return liquid_saturation;
+            case Variable::mechanical_strain:
+                return std::visit(identity, mechanical_strain);
+            case Variable::molar_mass:
+                return molar_mass;
+            case Variable::molar_mass_derivative:
+                return molar_mass_derivative;
+            case Variable::molar_fraction:
+                return molar_fraction;
+            case Variable::phase_pressure:
+                return phase_pressure;
+            case Variable::porosity:
+                return porosity;
+            case Variable::solid_grain_pressure:
+                return solid_grain_pressure;
+            case Variable::stress:
+                return std::visit(identity, stress);
+            case Variable::temperature:
+                return temperature;
+            case Variable::total_strain:
+                return std::visit(identity, total_strain);
+            case Variable::total_stress:
+                return std::visit(identity, total_stress);
+            case Variable::transport_porosity:
+                return transport_porosity;
+            case Variable::vapour_pressure:
+                return vapour_pressure;
+            case Variable::volumetric_strain:
+                return volumetric_strain;
+            default:
+                OGS_FATAL(
+                    "No conversion to VariableType is provided for variable {}",
+                    variable_enum_to_string[static_cast<int>(variable)]);
+        };
+    }
+    VariableType operator[](int const index) const
+    {
+        return this->operator[](static_cast<Variable>(index));
+    }
+
+    double capillary_pressure = nan_;
+    double concentration = nan_;
+    double density = nan_;
+    std::variant<std::monostate, Vector> displacement;
+    double effective_pore_pressure = nan_;
+    double enthalpy_of_evaporation = nan_;
+    double equivalent_plastic_strain = nan_;
+    double grain_compressibility = nan_;
+    double liquid_phase_pressure = nan_;
+    double liquid_saturation = nan_;
+    std::variant<std::monostate,
+                 Eigen::Matrix<double, 4, 1>,
+                 Eigen::Matrix<double, 6, 1>>
+        mechanical_strain;
+    double molar_mass = nan_;
+    double molar_mass_derivative = nan_;
+    double molar_fraction = nan_;
+    double phase_pressure = nan_;
+    double porosity = nan_;
+    double solid_grain_pressure = nan_;
+    std::variant<std::monostate,
+                 Eigen::Matrix<double, 4, 1>,
+                 Eigen::Matrix<double, 6, 1>>
+        stress;
+    double temperature = nan_;
+    std::variant<std::monostate,
+                 Eigen::Matrix<double, 4, 1>,
+                 Eigen::Matrix<double, 6, 1>>
+        total_strain;
+    std::variant<std::monostate,
+                 Eigen::Matrix<double, 4, 1>,
+                 Eigen::Matrix<double, 6, 1>>
+        total_stress;
+    double transport_porosity = nan_;
+    double vapour_pressure = nan_;
+    double volumetric_strain = nan_;
+
+private:
+    static constexpr auto nan_ = std::numeric_limits<double>::signaling_NaN();
+};
 
 /// This function converts a string (e.g. a string from the configuration-tree)
 /// into one of the entries of the VariableType enumerator.
