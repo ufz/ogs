@@ -17,8 +17,10 @@ parent = "getting-started"
 
 +++
 
-In this help section you will find everything related to development. Please walk through the Getting Started-section **step by step**. At the end you will have the latest OGS source code and the OGS finite element simulator compiled and ready to run! This first section of the developer guide will give you just a brief introduction, make sure to read the more advanced topics after you have familiarized yourself with the basics.
+In this help section you will find everything related to setting up a native development environment. Please walk through the Getting Started-section **step by step**[^1]. At the end you will have the latest OGS source code and the OGS finite element simulator compiled and ready to run! This first section of the developer guide will give you just a brief introduction, make sure to read the more advanced topics after you have familiarized yourself with the basics.
 
 If you **want to contribute** to the OGS project please also walk through the [Development Workflows]({{< ref "/docs/devguide/development-workflows/introduction.md" >}})-section **step-by-step**.
 
 Instructions may differ depending on your operating system (OS). Be sure to pick the right one in the **OS selector** at the top of the **next page**.
+
+[^1]: If you want to take a shortcut and have a machine with the Docker container runtime available you may want to look at [VS Code Remote – Containers]({{< relref "vscode-devcontainer" >}})!
