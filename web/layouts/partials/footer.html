@@ -8,3 +8,10 @@
 {{ $scripts := resources.Match "js/*.js" | resources.Concat "bundle.js" | fingerprint }}
 <script type="text/javascript" src="{{ $scripts.Permalink }}" integrity="{{ $scripts.Data.Integrity }}"
   media="screen"></script>
+
+{{ if .Page.Store.Get "hasMermaid" }}
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: true, gitGraph: { mainBranchName: 'master' } });
+</script>
+{{ end }}
