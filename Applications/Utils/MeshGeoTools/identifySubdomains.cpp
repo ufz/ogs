@@ -13,6 +13,7 @@
 #include <mpi.h>
 #endif
 
+#include "BaseLib/RunTime.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshGeoToolsLib/IdentifySubdomainMesh.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
@@ -45,6 +46,9 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
 
 int main(int argc, char* argv[])
 {
+    BaseLib::RunTime run_time;
+    run_time.start();
+
     TCLAP::CmdLine cmd(
         "Checks if the subdomain meshes are part of the bulk mesh and writes "
         "the 'bulk_node_ids' and the 'bulk_element_ids' in each of them. The "
@@ -100,6 +104,8 @@ int main(int argc, char* argv[])
     //
     // The bulk mesh.
     //
+    BaseLib::RunTime mesh_reading_time;
+    mesh_reading_time.start();
     std::unique_ptr<MeshLib::Mesh> bulk_mesh{
         MeshLib::IO::readMeshFromFile(bulk_mesh_arg.getValue())};
     if (bulk_mesh == nullptr)
@@ -113,19 +119,26 @@ int main(int argc, char* argv[])
     //
     auto const subdomain_meshes =
         readMeshes(subdomain_meshes_filenames_arg.getValue());
+    INFO("Mesh reading time: {:g} s", mesh_reading_time.elapsed());
 
     //
     // Bulk mesh node searcher.
     //
+    BaseLib::RunTime mesh_node_searcher_construction_time;
+    mesh_node_searcher_construction_time.start();
     auto const& mesh_node_searcher =
         MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
             *bulk_mesh,
             std::make_unique<MeshGeoToolsLib::SearchLength>(
                 search_length_arg.getValue()));
+    INFO("MeshNodeSearcher construction time: {:g} s",
+         mesh_node_searcher_construction_time.elapsed());
 
     //
     // Identify the subdomains in the bulk mesh.
     //
+    BaseLib::RunTime identify_subdomain_time;
+    identify_subdomain_time.start();
     for (auto& mesh_ptr : subdomain_meshes)
     {
         // If force overwrite is set or the output is to different mesh than
@@ -136,19 +149,24 @@ int main(int argc, char* argv[])
         identifySubdomainMesh(*mesh_ptr, *bulk_mesh, mesh_node_searcher,
                               overwrite_property_vectors);
     }
+    INFO("identifySubdomains time: {:g} s", identify_subdomain_time.elapsed());
 
     //
     // Output after the successful subdomain mesh identification.
     //
+    BaseLib::RunTime writing_time;
+    writing_time.start();
     for (auto const& mesh_ptr : subdomain_meshes)
     {
         MeshLib::IO::writeMeshToFile(
             *mesh_ptr,
             output_prefix_arg.getValue() + mesh_ptr->getName() + ".vtu");
     }
+    INFO("writing time: {:g} s", writing_time.elapsed());
 
 #ifdef USE_PETSC
     MPI_Finalize();
 #endif
+    INFO("Entire run time: {:g} s", run_time.elapsed());
     return EXIT_SUCCESS;
 }
