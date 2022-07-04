@@ -83,4 +83,4 @@ devcontainer:
       --build_args ' --progress=plain'
       --cpu-target $CPU_TARGET
       --ccache --cpmcache
-       $MASTER_UPLOAD
+      ${MASTER_UPLOAD}
