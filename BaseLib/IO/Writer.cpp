@@ -42,7 +42,7 @@ std::string Writer::writeToString()
     return std::string("");
 }
 
-int writeStringToFile(std::string content,
+int writeStringToFile(std::string_view content,
                       std::filesystem::path const& file_path)
 {
     if (content.empty())

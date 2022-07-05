@@ -17,6 +17,7 @@
 #include <filesystem>
 #include <sstream>
 #include <string>
+#include <string_view>
 
 namespace BaseLib
 {
@@ -47,7 +48,7 @@ protected:
 };
 
 /// \returns 0 if string is empty, or if there is an error, and 1 otherwise.
-int writeStringToFile(std::string content,
+int writeStringToFile(std::string_view content,
                       std::filesystem::path const& file_path);
 }  // namespace IO
 }  // namespace BaseLib
