@@ -157,7 +157,8 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     createLocalAssemblersHM<DisplacementDim,
                             ThermoRichardsMechanicsLocalAssembler>(
         mesh.getElements(), dof_table, local_assemblers_,
-        mesh.isAxiallySymmetric(), integration_order, process_data_);
+        NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
+        process_data_);
 
     auto add_secondary_variable = [&](std::string const& name,
                                       int const num_components,
