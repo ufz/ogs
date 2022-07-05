@@ -235,7 +235,11 @@ private:
         std::vector<double> const& local_x,
         std::vector<double> const& local_xdot, IpData const& ip_data,
         ConstitutiveSetting<DisplacementDim>& CS,
-        MaterialPropertyLib::Medium& medium, LocalMatrices& out) const;
+        MaterialPropertyLib::Medium& medium, LocalMatrices& out,
+        StatefulData<DisplacementDim>& current_state,
+        StatefulData<DisplacementDim> const& prev_state,
+        MaterialStateData<DisplacementDim>& mat_state,
+        OutputData<DisplacementDim>& output_data) const;
 
     void addToLocalMatrixData(double const dt,
                               std::vector<double> const& local_x,
@@ -274,9 +278,7 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            auto& cs = constitutive_settings_[ip];
-
-            /// Set initial stress from parameter.
+            // Set initial stress from parameter.
             if (process_data_.initial_stress != nullptr)
             {
                 ParameterLib::SpatialPosition const x_position{
@@ -286,7 +288,7 @@ public:
                                      ShapeMatricesTypeDisplacement>(
                         element_, ip_data_[ip].N_u))};
 
-                cs.eqU.sigma_eff =
+                current_states_[ip].s_mech_data.sigma_eff =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
                         DisplacementDim>((*process_data_.initial_stress)(
                         std::numeric_limits<
@@ -294,8 +296,10 @@ public:
                         x_position));
             }
 
-            cs.pushBackState();
+            material_states_[ip].pushBackState();
         }
+
+        prev_states_ = current_states_;
     }
 
     void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
@@ -307,8 +311,11 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            constitutive_settings_[ip].pushBackState();
+            // TODO re-evaluate part of the assembly in order to be consistent?
+            material_states_[ip].pushBackState();
         }
+
+        prev_states_ = current_states_;
     }
 
     void computeSecondaryVariableConcrete(
@@ -401,7 +408,15 @@ private:
 private:
     ThermoRichardsMechanicsProcessData<DisplacementDim>& process_data_;
 
-    std::vector<ConstitutiveSetting<DisplacementDim>> constitutive_settings_;
+    std::vector<StatefulData<DisplacementDim>>
+        current_states_;  // TODO maybe do not store but rather re-evaluate for
+                          // state update
+    std::vector<StatefulData<DisplacementDim>> prev_states_;
+
+    // Material state is special, because it contains both the current and the
+    // old state.
+    std::vector<MaterialStateData<DisplacementDim>> material_states_;
+
     std::vector<IpData> ip_data_;
 
     NumLib::GenericIntegrationMethod const& integration_method_;
@@ -410,6 +425,10 @@ private:
     SecondaryData<
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
         secondary_data_;
+
+    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material_;
+
+    std::vector<OutputData<DisplacementDim>> output_data_;
 
     static auto block_uu(auto& mat)
     {
