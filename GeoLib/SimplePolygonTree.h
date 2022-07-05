@@ -76,9 +76,6 @@ private:
     SimplePolygonTree* _parent;
 
 public:
-    decltype(_children)::iterator begin() { return _children.begin(); }
-    decltype(_children)::iterator end() { return _children.end(); }
-
     decltype(_children)::const_iterator begin() const
     {
         return _children.begin();
