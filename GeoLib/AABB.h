@@ -30,6 +30,12 @@
 
 namespace GeoLib
 {
+struct MinMaxPoints final
+{
+    Eigen::Vector3d min;
+    Eigen::Vector3d max;
+};
+
 /**
  * \brief Class AABB is an axis aligned bounding box around a given
  * set of geometric points of (template) type PNT_TYPE.
@@ -164,6 +170,7 @@ public:
         return true;
     }
 
+    MinMaxPoints getMinMaxPoints() const { return {_min_pnt, _max_pnt}; }
     /**
      * returns a point that coordinates are minimal for each dimension
      * for the given point set
