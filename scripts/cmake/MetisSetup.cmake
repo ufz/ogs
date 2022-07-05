@@ -26,6 +26,7 @@ target_compile_options(
     ogs_metis PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-w>
                       $<$<CXX_COMPILER_ID:MSVC>:/W0>
 )
+set_property(TARGET ogs_metis PROPERTY C_STANDARD 90)
 
 # mpmetis binary
 set(_mpmetis_sources
@@ -40,4 +41,6 @@ target_compile_options(
     mpmetis PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-w>
                     $<$<CXX_COMPILER_ID:MSVC>:/W0>
 )
+set_property(TARGET mpmetis PROPERTY C_STANDARD 90)
+
 install(TARGETS mpmetis RUNTIME DESTINATION bin)
