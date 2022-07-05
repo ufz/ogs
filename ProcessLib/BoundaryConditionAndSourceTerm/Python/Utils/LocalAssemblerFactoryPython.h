@@ -19,7 +19,7 @@ namespace BoundaryConditionAndSourceTerm
 {
 template <typename LocalAssemblerInterface,
           template <typename /* shp */, typename /* lower order shp */,
-                    typename /* int meth */, int /* global dim */>
+                    int /* global dim */>
           class LocalAssemblerImplementation,
           int GlobalDim, typename... ConstructorArgs>
 using LocalAssemblerFactoryPython = LocalAssemblerFactoryTaylorHood<

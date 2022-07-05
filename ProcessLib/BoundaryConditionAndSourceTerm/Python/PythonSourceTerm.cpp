@@ -38,7 +38,8 @@ PythonSourceTerm::PythonSourceTerm(
         PythonSourceTermLocalAssembler>(
         global_dim, _source_term_data.bc_or_st_mesh.getElements(),
         *_source_term_dof_table, _local_assemblers,
-        _source_term_data.bc_or_st_mesh.isAxiallySymmetric(), integration_order,
+        NumLib::IntegrationOrder{integration_order},
+        _source_term_data.bc_or_st_mesh.isAxiallySymmetric(),
         _source_term_data);
 }
 
