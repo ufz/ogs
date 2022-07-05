@@ -50,3 +50,4 @@ include:
   - local: "/scripts/ci/jobs/container.yml"
   - local: "/scripts/ci/jobs/release.yml"
   - local: "/scripts/ci/jobs/package.yml"
+  - local: "/scripts/ci/jobs/trigger.yml"
