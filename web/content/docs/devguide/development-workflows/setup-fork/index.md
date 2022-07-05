@@ -148,6 +148,14 @@ Create a branch `feature-name` off of upstream `master`-branch to work on a new 
 git checkout -b feature-name upstream/master
 ```
 
+```mermaid
+gitGraph
+  commit
+  commit
+  branch feature-name
+  commit
+```
+
 ----
 
 To keep up to date with the developments in the official repository it is recommended to rebase your feature-branch regularly (at least weekly). To see what has been updated, load a new set of changes with
