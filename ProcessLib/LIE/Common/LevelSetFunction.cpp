@@ -72,7 +72,7 @@ std::vector<double> uGlobalEnrichments(
         auto const* junction = junction_props[i];
         auto fid1 = fracID_to_local.at(junction->fracture_ids[0]);
         auto fid2 = fracID_to_local.at(junction->fracture_ids[1]);
-        bool const enrich = levelsets[fid1] & levelsets[fid2];
+        bool const enrich = levelsets[fid1] && levelsets[fid2];
         enrichments[i + frac_props.size()] = Heaviside(enrich);
     }
 
