@@ -115,10 +115,8 @@ public:
         NumLib::shapeFunctionInterpolate(local_x, shape_matrices.N, T_int_pt,
                                          p_int_pt);
 
-        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-            T_int_pt;
-        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            p_int_pt;
+        vars.temperature = T_int_pt;
+        vars.phase_pressure = p_int_pt;
 
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
@@ -291,10 +289,8 @@ protected:
             NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);
             NumLib::shapeFunctionInterpolate(local_T, N, T_int_pt);
 
-            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-                T_int_pt;
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+            vars.temperature = T_int_pt;
+            vars.phase_pressure = p_int_pt;
 
             // TODO (naumov) Temporary value not used by current material
             // models. Need extension of secondary variables interface.

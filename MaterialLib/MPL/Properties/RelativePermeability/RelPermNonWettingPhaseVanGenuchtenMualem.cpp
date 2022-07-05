@@ -50,10 +50,8 @@ PropertyDataType RelPermNonWettingPhaseVanGenuchtenMualem::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    const double S_L = std::clamp(
-        std::get<double>(
-            variable_array[static_cast<int>(Variable::liquid_saturation)]),
-        S_L_r_, S_L_max_);
+    const double S_L =
+        std::clamp(variable_array.liquid_saturation, S_L_r_, S_L_max_);
 
     const double krel =
         computeVanGenuchtenMualemValue(S_L, S_L_r_, S_L_max_, m_);
@@ -72,8 +70,7 @@ PropertyDataType RelPermNonWettingPhaseVanGenuchtenMualem::dValue(
             "for the derivative with respect to liquid saturation only.");
     }
 
-    const double S_L = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    const double S_L = variable_array.liquid_saturation;
     if (S_L < S_L_r_ || S_L > S_L_for_krel_min_)
     {
         return 0.0;

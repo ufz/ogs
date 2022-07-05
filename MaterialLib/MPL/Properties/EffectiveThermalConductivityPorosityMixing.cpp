@@ -78,10 +78,8 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<1>::value(
             .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .template value<double>(variable_array, pos, t, dt);
 
-    auto const porosity =
-        std::get<double>(variable_array[static_cast<int>(Variable::porosity)]);
-    auto const S_L = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    auto const porosity = variable_array.porosity;
+    auto const S_L = variable_array.liquid_saturation;
     auto const S_G = 1. - S_L;
 
     auto const phi_G = porosity * S_G;
@@ -164,11 +162,9 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::value(
             .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .value(variable_array, pos, t, dt));
 
-    auto const porosity =
-        std::get<double>(variable_array[static_cast<int>(Variable::porosity)]);
+    auto const porosity = variable_array.porosity;
 
-    auto const S_L = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    auto const S_L = variable_array.liquid_saturation;
     auto const S_G = 1. - S_L;
 
     auto const phi_G = porosity * S_G;

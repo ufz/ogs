@@ -41,8 +41,7 @@ PropertyDataType SaturationBrooksCorey::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    const double p_cap = std::get<double>(
-        variable_array[static_cast<int>(Variable::capillary_pressure)]);
+    const double p_cap = variable_array.capillary_pressure;
 
     const double s_L_res = residual_liquid_saturation_;
     const double s_L_max = 1.0 - residual_gas_saturation_;
@@ -69,8 +68,7 @@ PropertyDataType SaturationBrooksCorey::dValue(
     }
 
     const double p_b = entry_pressure_;
-    const double p_cap = std::get<double>(
-        variable_array[static_cast<int>(Variable::capillary_pressure)]);
+    const double p_cap = variable_array.capillary_pressure;
 
     if (p_cap <= p_b)
     {
@@ -101,10 +99,7 @@ PropertyDataType SaturationBrooksCorey::d2Value(
     }
 
     const double p_b = entry_pressure_;
-    const double p_cap = std::max(
-        p_b,
-        std::get<double>(
-            variable_array[static_cast<int>(Variable::capillary_pressure)]));
+    const double p_cap = std::max(p_b, variable_array.capillary_pressure);
 
     if (p_cap <= p_b)
     {

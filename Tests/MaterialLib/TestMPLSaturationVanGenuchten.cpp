@@ -38,8 +38,7 @@ TEST(MaterialPropertyLib, SaturationVanGenuchten)
     for (int i = 0; i <= n_steps; ++i)
     {
         double const p_L = p_0 + i * (p_max - p_0) / n_steps;
-        variable_array[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            -p_L;
+        variable_array.capillary_pressure = -p_L;
 
         double const S = pressure_saturation.template value<double>(
             variable_array, pos, t, dt);
@@ -50,12 +49,10 @@ TEST(MaterialPropertyLib, SaturationVanGenuchten)
             MPL::Variable::capillary_pressure, pos, t, dt);
 
         double const eps = 1e-1;
-        variable_array[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            -p_L - eps;
+        variable_array.capillary_pressure = -p_L - eps;
         double const S_minus = pressure_saturation.template value<double>(
             variable_array, pos, t, dt);
-        variable_array[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            -p_L + eps;
+        variable_array.capillary_pressure = -p_L + eps;
         double const S_plus = pressure_saturation.template value<double>(
             variable_array, pos, t, dt);
 

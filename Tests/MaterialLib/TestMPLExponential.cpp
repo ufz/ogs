@@ -58,14 +58,14 @@ TEST_F(MaterialPropertyLibExponentialProperty, TestNumericalDerivatives)
     auto y = [&](double const T)
     {
         MPL::VariableArray variable_array;
-        variable_array[static_cast<int>(MPL::Variable::temperature)] = T;
+        variable_array.temperature = T;
         return p->template value<double>(variable_array, pos, time, dt);
     };
 
     auto f = [&](double const T)
     {
         MPL::VariableArray variable_array;
-        variable_array[static_cast<int>(MPL::Variable::temperature)] = T;
+        variable_array.temperature = T;
         double const v =
             p->template value<double>(variable_array, pos, time, dt);
         double const dv = p->template dValue<double>(
@@ -103,7 +103,7 @@ TEST(MaterialPropertyLib, Exponential)
 
     double const T = 20.;
     MPL::VariableArray variable_array;
-    variable_array[static_cast<int>(MPL::Variable::temperature)] = T;
+    variable_array.temperature = T;
     ParameterLib::SpatialPosition const pos;
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();

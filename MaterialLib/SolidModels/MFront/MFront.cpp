@@ -302,32 +302,31 @@ MFront<DisplacementDim>::integrateStress(
     if (!behaviour_data.s0.external_state_variables.empty())
     {
         // assuming that there is only temperature
-        if (!std::holds_alternative<double>(
-                variable_array_prev[static_cast<int>(
-                    MPL::Variable::temperature)]))
+        if (variable_array_prev.temperature ==
+            std::numeric_limits<double>::quiet_NaN())
         {
             OGS_FATAL(
                 "MPL::Variable::temperature is not set for variable_array_prev "
                 "before calling MFront::integrateStress.");
         }
 
-        behaviour_data.s0.external_state_variables[0] = std::get<double>(
-            variable_array_prev[static_cast<int>(MPL::Variable::temperature)]);
+        behaviour_data.s0.external_state_variables[0] =
+            variable_array_prev.temperature;
     }
 
     if (!behaviour_data.s1.external_state_variables.empty())
     {
         // assuming that there is only temperature
-        if (!std::holds_alternative<double>(
-                variable_array[static_cast<int>(MPL::Variable::temperature)]))
+        if (variable_array.temperature ==
+            std::numeric_limits<double>::quiet_NaN())
         {
             OGS_FATAL(
                 "MPL::Variable::temperature is not set for variable_array "
                 "before calling MFront::integrateStress");
         }
 
-        behaviour_data.s1.external_state_variables[0] = std::get<double>(
-            variable_array[static_cast<int>(MPL::Variable::temperature)]);
+        behaviour_data.s1.external_state_variables[0] =
+            variable_array.temperature;
     }
 
     // rotation tensor
@@ -342,8 +341,7 @@ MFront<DisplacementDim>::integrateStress(
     }();
 
     auto const& eps_m_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array_prev[static_cast<int>(
-            MPL::Variable::mechanical_strain)]);
+        variable_array_prev.mechanical_strain);
     auto const eps_prev_MFront = OGSToMFront(
         Q.transpose()
             .template topLeftCorner<kelvin_vector_dimensions(DisplacementDim),
@@ -354,7 +352,7 @@ MFront<DisplacementDim>::integrateStress(
                 behaviour_data.s0.gradients.data());
 
     auto const& eps = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array[static_cast<int>(MPL::Variable::mechanical_strain)]);
+        variable_array.mechanical_strain);
     auto const eps_MFront = OGSToMFront(
         Q.transpose()
             .template topLeftCorner<kelvin_vector_dimensions(DisplacementDim),
@@ -365,7 +363,7 @@ MFront<DisplacementDim>::integrateStress(
                 behaviour_data.s1.gradients.data());
 
     auto const& sigma_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array_prev[static_cast<int>(MPL::Variable::stress)]);
+        variable_array_prev.stress);
     auto const sigma_prev_MFront = OGSToMFront(
         Q.transpose()
             .template topLeftCorner<kelvin_vector_dimensions(DisplacementDim),

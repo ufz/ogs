@@ -45,9 +45,8 @@ TEST(MaterialPropertyLib, StrainDependentPermeability)
         double const e_vol = 1.e-4;
         double const e_vol_pls = 1.e-5;
 
-        vars[static_cast<int>(MPL::Variable::volumetric_strain)] = e_vol;
-        vars[static_cast<int>(MPL::Variable::equivalent_plastic_strain)] =
-            e_vol_pls;
+        vars.volumetric_strain = e_vol;
+        vars.equivalent_plastic_strain = e_vol_pls;
         auto const k = MPL::formEigenTensor<3>(k_model.value(vars, pos, t, dt));
 
         double const k_expected = 1.0528627949453586e-20;
@@ -61,9 +60,8 @@ TEST(MaterialPropertyLib, StrainDependentPermeability)
         double const e_vol = -1.e-4;
         double const e_vol_pls = 1.e-5;
 
-        vars[static_cast<int>(MPL::Variable::volumetric_strain)] = e_vol;
-        vars[static_cast<int>(MPL::Variable::equivalent_plastic_strain)] =
-            e_vol_pls;
+        vars.volumetric_strain = e_vol;
+        vars.equivalent_plastic_strain = e_vol_pls;
         auto const k = MPL::formEigenTensor<3>(k_model.value(vars, pos, t, dt));
 
         double const k_expected = 9.7134113133089206e-21;

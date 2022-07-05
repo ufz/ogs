@@ -165,12 +165,9 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::
         _pressure_wetting[ip] = pg_int_pt - pc_int_pt;
         double const ideal_gas_constant_times_T_int_pt =
             IdealGasConstant * T_int_pt;
-        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-            T_int_pt;
-        vars[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] = pc_int_pt;
-        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            pg_int_pt;
+        vars.temperature = T_int_pt;
+        vars.capillary_pressure = pc_int_pt;
+        vars.phase_pressure = pg_int_pt;
 
         auto const& medium =
             *_process_data.media_map->getMedium(this->_element.getID());
@@ -206,8 +203,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::
                 .template value<double>(vars, pos, t, dt);
 
         _saturation[ip] = Sw;
-        vars[static_cast<int>(
-            MaterialPropertyLib::Variable::liquid_saturation)] = Sw;
+        vars.liquid_saturation = Sw;
 
         double const dSw_dpc =
             medium.property(MaterialPropertyLib::PropertyType::saturation)
@@ -244,9 +240,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::
                     MaterialPropertyLib::PropertyType::specific_latent_heat)
                 .template value<double>(vars, pos, t, dt);
 
-        vars[static_cast<int>(
-            MaterialPropertyLib::Variable::enthalpy_of_evaporation)] =
-            latent_heat_evaporation;
+        vars.enthalpy_of_evaporation = latent_heat_evaporation;
 
         // saturated vapour pressure
         double const p_sat =

@@ -132,13 +132,12 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
 
-        variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            p_cap_ip;
-        variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
+        variables.capillary_pressure = p_cap_ip;
+        variables.phase_pressure = -p_cap_ip;
 
         double T_ip;
         NumLib::shapeFunctionInterpolate(T, N, T_ip);
-        variables[static_cast<int>(MPL::Variable::temperature)] = T_ip;
+        variables.temperature = T_ip;
 
         this->prev_states_[ip].S_L_data.S_L =
             medium->property(MPL::PropertyType::saturation)

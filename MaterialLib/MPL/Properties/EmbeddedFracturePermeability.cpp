@@ -63,8 +63,8 @@ PropertyDataType EmbeddedFracturePermeability<DisplacementDim>::value(
         {
             return _n;
         }
-        auto const sigma = formEigenTensor<3>(std::get<SymmetricTensor>(
-            variable_array[static_cast<int>(Variable::total_stress)]));
+        auto const sigma = formEigenTensor<3>(
+            std::get<SymmetricTensor>(variable_array.total_stress));
         Eigen::SelfAdjointEigenSolver<Eigen::Matrix<double, 3, 3>> e_s(sigma);
         return (Eigen::Matrix<double, 3, 1>)e_s.eigenvectors().col(2);
     }();
@@ -78,7 +78,7 @@ PropertyDataType EmbeddedFracturePermeability<DisplacementDim>::value(
 
     auto const eps = MathLib::KelvinVector::kelvinVectorToTensor(
         std::get<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-            variable_array[static_cast<int>(Variable::mechanical_strain)]));
+            variable_array.mechanical_strain));
     double const e_n = (eps * n_r).dot(n_r.transpose());
     double const H_de = (e_n > _e0) ? 1.0 : 0.0;
     double const b_f = _b0 + H_de * _a * (e_n - _e0);
@@ -109,8 +109,8 @@ PropertyDataType EmbeddedFracturePermeability<DisplacementDim>::dValue(
         {
             return _n;
         }
-        auto const sigma = formEigenTensor<3>(std::get<SymmetricTensor>(
-            variable_array[static_cast<int>(Variable::total_stress)]));
+        auto const sigma = formEigenTensor<3>(
+            std::get<SymmetricTensor>(variable_array.total_stress));
         Eigen::SelfAdjointEigenSolver<Eigen::Matrix<double, 3, 3>> e_s(sigma);
         return (Eigen::Matrix<double, 3, 1>)e_s.eigenvectors().col(2);
     }();
@@ -124,7 +124,7 @@ PropertyDataType EmbeddedFracturePermeability<DisplacementDim>::dValue(
 
     auto const eps = MathLib::KelvinVector::kelvinVectorToTensor(
         std::get<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-            variable_array[static_cast<int>(Variable::mechanical_strain)]));
+            variable_array.mechanical_strain));
     double const e_n = (eps * n_r).dot(n_r.transpose());
     double const H_de = (e_n > _e0) ? 1.0 : 0.0;
     double const b_f = _b0 + H_de * _a * (e_n - _e0);

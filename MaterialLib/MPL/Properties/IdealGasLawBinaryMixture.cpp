@@ -30,12 +30,9 @@ PropertyDataType IdealGasLawBinaryMixture::value(
     double const /*dt*/) const
 {
     const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
-    const double pGR = std::get<double>(
-        variable_array[static_cast<int>(Variable::phase_pressure)]);
-    const double T = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
-    const double MG = std::get<double>(
-        variable_array[static_cast<int>(Variable::molar_mass)]);
+    const double pGR = variable_array.phase_pressure;
+    const double T = variable_array.temperature;
+    const double MG = variable_array.molar_mass;
 
     return pGR * MG / R / T;
 }
@@ -46,14 +43,10 @@ PropertyDataType IdealGasLawBinaryMixture::dValue(
     double const /*dt*/) const
 {
     const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
-    const double pGR = std::get<double>(
-        variable_array[static_cast<int>(Variable::phase_pressure)]);
-    const double T = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
-    const double MG = std::get<double>(
-        variable_array[static_cast<int>(Variable::molar_mass)]);
-    const double dMG_dx = std::get<double>(
-        variable_array[static_cast<int>(Variable::molar_mass_derivative)]);
+    const double pGR = variable_array.phase_pressure;
+    const double T = variable_array.temperature;
+    const double MG = variable_array.molar_mass;
+    const double dMG_dx = variable_array.molar_mass_derivative;
 
     switch (variable)
     {

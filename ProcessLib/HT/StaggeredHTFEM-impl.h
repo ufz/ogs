@@ -91,13 +91,10 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
         NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);
         NumLib::shapeFunctionInterpolate(local_T, N, T_int_pt);
 
-        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-            T_int_pt;
-        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            p_int_pt;
+        vars.temperature = T_int_pt;
+        vars.phase_pressure = p_int_pt;
 
-        vars[static_cast<int>(
-            MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
+        vars.liquid_saturation = 1.0;
 
         auto const porosity =
             medium.property(MaterialPropertyLib::PropertyType::porosity)
@@ -231,19 +228,15 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHeatTransportEquation(
         double T_at_xi = 0.;
         NumLib::shapeFunctionInterpolate(local_T, N, T_at_xi);
 
-        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-            T_at_xi;
-        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            p_at_xi;
+        vars.temperature = T_at_xi;
+        vars.phase_pressure = p_at_xi;
 
-        vars[static_cast<int>(
-            MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
+        vars.liquid_saturation = 1.0;
 
         auto const porosity =
             medium.property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, pos, t, dt);
-        vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-            porosity;
+        vars.porosity = porosity;
 
         // Use the fluid density model to compute the density
         auto const fluid_density =

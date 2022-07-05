@@ -31,12 +31,9 @@ PropertyDataType IdealGasLaw::value(
     double const /*dt*/) const
 {
     const double gas_constant = MaterialLib::PhysicalConstant::IdealGasConstant;
-    const double pressure = std::get<double>(
-        variable_array[static_cast<int>(Variable::phase_pressure)]);
-    const double temperature = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
-    const double molar_mass = std::get<double>(
-        variable_array[static_cast<int>(Variable::molar_mass)]);
+    const double pressure = variable_array.phase_pressure;
+    const double temperature = variable_array.temperature;
+    const double molar_mass = variable_array.molar_mass;
 
     const double density = pressure * molar_mass / gas_constant / temperature;
 
@@ -49,12 +46,9 @@ PropertyDataType IdealGasLaw::dValue(
     double const /*dt*/) const
 {
     const double gas_constant = MaterialLib::PhysicalConstant::IdealGasConstant;
-    const double pressure = std::get<double>(
-        variable_array[static_cast<int>(Variable::phase_pressure)]);
-    const double temperature = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
-    const double molar_mass = std::get<double>(
-        variable_array[static_cast<int>(Variable::molar_mass)]);
+    const double pressure = variable_array.phase_pressure;
+    const double temperature = variable_array.temperature;
+    const double molar_mass = variable_array.molar_mass;
     // todo: add molar mass derivatives
 
     if (primary_variable == Variable::temperature)
@@ -84,12 +78,9 @@ PropertyDataType IdealGasLaw::d2Value(
     double const /*dt*/) const
 {
     const double gas_constant = MaterialLib::PhysicalConstant::IdealGasConstant;
-    const double pressure = std::get<double>(
-        variable_array[static_cast<int>(Variable::phase_pressure)]);
-    const double temperature = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
-    const double molar_mass = std::get<double>(
-        variable_array[static_cast<int>(Variable::molar_mass)]);
+    const double pressure = variable_array.phase_pressure;
+    const double temperature = variable_array.temperature;
+    const double molar_mass = variable_array.molar_mass;
     // todo: add molar mass derivatives
 
     if ((primary_variable1 == Variable::phase_pressure) &&

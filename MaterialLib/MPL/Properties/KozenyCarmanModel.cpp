@@ -20,8 +20,7 @@ PropertyDataType KozenyCarmanModel::value(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const /*dt*/) const
 {
-    double const phi = std::get<double>(variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::porosity)]);
+    double const phi = variable_array.porosity;
     auto const& k0 = _k0(t, pos);
 
     std::vector<double> k;

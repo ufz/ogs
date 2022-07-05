@@ -44,10 +44,8 @@ PropertyDataType RelPermVanGenuchten::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    double const S_L = std::clamp(
-        std::get<double>(
-            variable_array[static_cast<int>(Variable::liquid_saturation)]),
-        S_L_res_, S_L_max_);
+    double const S_L =
+        std::clamp(variable_array.liquid_saturation, S_L_res_, S_L_max_);
 
     double const S_eff = (S_L - S_L_res_) / (S_L_max_ - S_L_res_);
     double const v = 1. - std::pow(1. - std::pow(S_eff, 1. / m_), m_);
@@ -67,10 +65,8 @@ PropertyDataType RelPermVanGenuchten::dValue(
             "derivatives with respect to liquid saturation only.");
     }
 
-    double const S_L = std::clamp(
-        std::get<double>(
-            variable_array[static_cast<int>(Variable::liquid_saturation)]),
-        S_L_res_, S_L_max_);
+    double const S_L =
+        std::clamp(variable_array.liquid_saturation, S_L_res_, S_L_max_);
 
     double const S_eff = (S_L - S_L_res_) / (S_L_max_ - S_L_res_);
     if (S_eff <= 0)  // prevent division by zero

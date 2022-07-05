@@ -70,8 +70,7 @@ TEST(MaterialPropertyLib, WaterVapourLatentHeatWithCriticalTemperature)
     for (std::size_t i = 0; i < n; ++i)
     {
         double const T = T_0 + i * dT;
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = T;
+        variable_array.temperature = T;
 
         double const L_wv =
             property.template value<double>(variable_array, pos, t, dt);
@@ -84,13 +83,11 @@ TEST(MaterialPropertyLib, WaterVapourLatentHeatWithCriticalTemperature)
 
         double const dT_i = 1.0e-6;
 
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = T - dT_i;
+        variable_array.temperature = T - dT_i;
         double const L_wv0 =
             property.template value<double>(variable_array, pos, t, dt);
 
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = T + dT_i;
+        variable_array.temperature = T + dT_i;
         double const L_wv1 =
             property.template value<double>(variable_array, pos, t, dt);
 

@@ -82,7 +82,7 @@ TEST(MaterialPropertyLib, TemperatureDependentFraction_values_out)
     fout << "T" << '\t' << "f" << '\t' << "f,T" << '\t' << "f,TT" << '\n';
     for (double T : temperatures)
     {
-        vars[static_cast<int>(MPL::Variable::temperature)] = T;
+        vars.temperature = T;
 
         auto const f = std::get<double>(fraction.value(vars, pos, time, dt));
         auto const fT = std::get<double>(
@@ -116,7 +116,7 @@ TEST(MaterialPropertyLib, TemperatureDependentFraction_value_atTc)
     // create medium with properties
     auto const medium = createMyMedium();
 
-    vars[static_cast<int>(MPL::Variable::temperature)] = water_ice.T_c;
+    vars.temperature = water_ice.T_c;
 
     auto const phi = medium->property(MaterialPropertyLib::PropertyType::porosity).template
                                 value<double>(vars, pos, time, dt);
@@ -145,7 +145,7 @@ TEST(MaterialPropertyLib, TemperatureDependentFraction_dValue_atTc)
     // create medium with properties
     auto const medium = createMyMedium();
 
-    vars[static_cast<int>(MPL::Variable::temperature)] = water_ice.T_c;
+    vars.temperature = water_ice.T_c;
 
     auto const phi = medium->property(MaterialPropertyLib::PropertyType::porosity).template
                                 value<double>(vars, pos, time, dt);

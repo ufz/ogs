@@ -161,7 +161,7 @@ public:
             *_process_data.media_map->getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
         MaterialPropertyLib::VariableArray vars;
-        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+        vars.temperature =
             medium
                 .property(
                     MaterialPropertyLib::PropertyType::reference_temperature)
@@ -173,10 +173,8 @@ public:
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
 
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::capillary_pressure)] = -p_int_pt;
+            vars.phase_pressure = p_int_pt;
+            vars.capillary_pressure = -p_int_pt;
 
             auto const permeability =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
@@ -192,8 +190,7 @@ public:
                     .property(MaterialPropertyLib::PropertyType::saturation)
                     .template value<double>(vars, pos, t, dt);
             _saturation[ip] = Sw;
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::liquid_saturation)] = Sw;
+            vars.liquid_saturation = Sw;
 
             double const dSw_dpc =
                 medium
@@ -297,7 +294,7 @@ public:
         auto const& liquid_phase = medium.phase("AqueousLiquid");
 
         MaterialPropertyLib::VariableArray vars;
-        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+        vars.temperature =
             medium
                 .property(
                     MaterialPropertyLib::PropertyType::reference_temperature)
@@ -318,17 +315,14 @@ public:
         {
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::capillary_pressure)] = -p_int_pt;
+            vars.phase_pressure = p_int_pt;
+            vars.capillary_pressure = -p_int_pt;
 
             double const Sw =
                 medium
                     .property(MaterialPropertyLib::PropertyType::saturation)
                     .template value<double>(vars, pos, t, dt);
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::liquid_saturation)] = Sw;
+            vars.liquid_saturation = Sw;
 
             auto const permeability =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(

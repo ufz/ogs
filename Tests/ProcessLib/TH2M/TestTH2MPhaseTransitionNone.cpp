@@ -84,12 +84,9 @@ TEST(ProcessLib, TH2MPhaseTransitionNone)
     double const pCap = 1000000.;
     double const T = 333.;
 
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::phase_pressure)] = pGR;
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::capillary_pressure)] = pCap;
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::temperature)] = T;
+    variable_array.phase_pressure = pGR;
+    variable_array.capillary_pressure = pCap;
+    variable_array.temperature = T;
 
     ptm->computeConstitutiveVariables(medium.get(), variable_array, pos, time,
                                       dt);

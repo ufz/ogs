@@ -78,12 +78,11 @@ Lubby2<DisplacementDim>::integrateStress(
         material_state_variables) const
 {
     auto const& eps_m = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array[static_cast<int>(MPL::Variable::mechanical_strain)]);
+        variable_array.mechanical_strain);
     auto const& eps_m_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array_prev[static_cast<int>(
-            MPL::Variable::mechanical_strain)]);
+        variable_array_prev.mechanical_strain);
     auto const& sigma_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array_prev[static_cast<int>(MPL::Variable::stress)]);
+        variable_array_prev.stress);
 
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 

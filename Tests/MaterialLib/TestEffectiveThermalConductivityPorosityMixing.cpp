@@ -79,10 +79,8 @@ TEST(MaterialPropertyLib,
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
-    variable_array[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-        0.12;
+    variable_array.liquid_saturation = 1.0;
+    variable_array.porosity = 0.12;
     auto const eff_th_cond = MaterialPropertyLib::formEigenTensor<1>(
         medium
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
@@ -100,10 +98,8 @@ TEST(MaterialPropertyLib,
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
-    variable_array[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-        0.12;
+    variable_array.liquid_saturation = 1.0;
+    variable_array.porosity = 0.12;
     auto const eff_th_cond = MaterialPropertyLib::formEigenTensor<2>(
         medium
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
@@ -121,10 +117,8 @@ TEST(MaterialPropertyLib,
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
-    variable_array[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-        0.12;
+    variable_array.liquid_saturation = 1.0;
+    variable_array.porosity = 0.12;
     auto const eff_th_cond = MaterialPropertyLib::formEigenTensor<3>(
         medium
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
@@ -141,10 +135,8 @@ TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingGasSolid1D)
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::liquid_saturation)] = 0.0;
-    variable_array[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-        0.12;
+    variable_array.liquid_saturation = 0.0;
+    variable_array.porosity = 0.12;
     auto const eff_th_cond = MaterialPropertyLib::formEigenTensor<1>(
         medium
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
@@ -161,10 +153,8 @@ TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingGasSolid2D)
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::liquid_saturation)] = 0.0;
-    variable_array[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-        0.12;
+    variable_array.liquid_saturation = 0.0;
+    variable_array.porosity = 0.12;
     auto const eff_th_cond = MaterialPropertyLib::formEigenTensor<2>(
         medium
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
@@ -181,10 +171,8 @@ TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingGasSolid3D)
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::liquid_saturation)] = 0.0;
-    variable_array[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-        0.12;
+    variable_array.liquid_saturation = 0.0;
+    variable_array.porosity = 0.12;
     auto const eff_th_cond = MaterialPropertyLib::formEigenTensor<3>(
         medium
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
@@ -203,10 +191,8 @@ TEST(MaterialPropertyLib,
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::liquid_saturation)] = 0.3;
-    variable_array[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-        0.12;
+    variable_array.liquid_saturation = 0.3;
+    variable_array.porosity = 0.12;
     auto const eff_th_cond = MaterialPropertyLib::formEigenTensor<1>(
         medium
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
@@ -225,10 +211,8 @@ TEST(MaterialPropertyLib,
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::liquid_saturation)] = 0.3;
-    variable_array[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-        0.12;
+    variable_array.liquid_saturation = 0.3;
+    variable_array.porosity = 0.12;
     auto const eff_th_cond = MaterialPropertyLib::formEigenTensor<2>(
         medium
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
@@ -247,10 +231,8 @@ TEST(MaterialPropertyLib,
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::liquid_saturation)] = 0.3;
-    variable_array[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-        0.12;
+    variable_array.liquid_saturation = 0.3;
+    variable_array.porosity = 0.12;
     auto const eff_th_cond = MaterialPropertyLib::formEigenTensor<3>(
         medium
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
@@ -306,10 +288,8 @@ TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingRot90deg)
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
-    variable_array[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-        0.12;
+    variable_array.liquid_saturation = 1.0;
+    variable_array.porosity = 0.12;
     auto const eff_th_cond = MaterialPropertyLib::formEigenTensor<3>(
         medium
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)

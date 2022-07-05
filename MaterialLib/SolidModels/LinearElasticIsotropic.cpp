@@ -30,14 +30,12 @@ LinearElasticIsotropic<DisplacementDim>::integrateStress(
         MaterialStateVariables const& /*material_state_variables*/) const
 {
     auto const& eps_m = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array[static_cast<int>(MPL::Variable::mechanical_strain)]);
+        variable_array.mechanical_strain);
     auto const& eps_m_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array_prev[static_cast<int>(
-            MPL::Variable::mechanical_strain)]);
+        variable_array_prev.mechanical_strain);
     auto const& sigma_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array_prev[static_cast<int>(MPL::Variable::stress)]);
-    auto const T = std::get<double>(
-        variable_array_prev[static_cast<int>(MPL::Variable::temperature)]);
+        variable_array_prev.stress);
+    auto const T = variable_array_prev.temperature;
 
     KelvinMatrix C = getElasticTensor(t, x, T);
 

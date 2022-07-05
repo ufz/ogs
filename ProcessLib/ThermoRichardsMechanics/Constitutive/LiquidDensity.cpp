@@ -21,9 +21,8 @@ void LiquidDensityModel<DisplacementDim>::eval(
 {
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
-    variables[static_cast<int>(MPL::Variable::phase_pressure)] =
-        -p_cap_data.p_cap;
-    variables[static_cast<int>(MPL::Variable::temperature)] = T_data.T;
+    variables.phase_pressure = -p_cap_data.p_cap;
+    variables.temperature = T_data.T;
 
     auto const& liquid_phase = media_data.liquid;
 

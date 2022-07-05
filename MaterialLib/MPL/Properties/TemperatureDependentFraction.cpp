@@ -38,8 +38,7 @@ PropertyDataType TemperatureDependentFraction::value(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
 {
-    auto const T = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
+    auto const T = variable_array.temperature;
 
     auto const& medium = *std::get<Medium*>(scale_);
     auto const& porosity = medium[PropertyType::porosity];
@@ -60,8 +59,7 @@ PropertyDataType TemperatureDependentFraction::dValue(
            "TemperatureDependantFraction::dvalue is implemented for "
            "derivatives with respect to temperature only.");
 
-    auto const T = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
+    auto const T = variable_array.temperature;
 
     auto const& medium = *std::get<Medium*>(scale_);
     auto const& porosity = medium[PropertyType::porosity];
@@ -87,8 +85,7 @@ PropertyDataType TemperatureDependentFraction::d2Value(
            "TemperatureDependantFraction::d2value is implemented for "
            "derivatives with respect to temperature only.");
 
-    auto const T = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
+    auto const T = variable_array.temperature;
 
     auto const& medium = *std::get<Medium*>(scale_);
     auto const& porosity = medium[PropertyType::porosity];

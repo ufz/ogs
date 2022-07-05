@@ -36,8 +36,7 @@ PropertyDataType RelPermUdell::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    const double S_L = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    const double S_L = variable_array.liquid_saturation;
 
     if (std::isnan(S_L))
     {
@@ -74,8 +73,7 @@ PropertyDataType RelPermUdell::dValue(
             "to liquid saturation only.");
     }
 
-    const double S_L = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    const double S_L = variable_array.liquid_saturation;
 
     auto const S_L_res = residual_liquid_saturation_;
     auto const S_L_max = 1. - residual_gas_saturation_;

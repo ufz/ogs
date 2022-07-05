@@ -40,19 +40,13 @@ computeElasticTangentStiffness(
 
     using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
-    variable_array[static_cast<int>(MPL::Variable::stress)].emplace<KV>(
-        KV::Zero());
-    variable_array[static_cast<int>(MPL::Variable::mechanical_strain)]
-        .emplace<KV>(KV::Zero());
-    variable_array[static_cast<int>(MPL::Variable::temperature)]
-        .emplace<double>(temperature);
+    variable_array.stress.emplace<KV>(KV::Zero());
+    variable_array.mechanical_strain.emplace<KV>(KV::Zero());
+    variable_array.temperature = temperature;
 
-    variable_array_prev[static_cast<int>(MPL::Variable::stress)].emplace<KV>(
-        KV::Zero());
-    variable_array_prev[static_cast<int>(MPL::Variable::mechanical_strain)]
-        .emplace<KV>(KV::Zero());
-    variable_array_prev[static_cast<int>(MPL::Variable::temperature)]
-        .emplace<double>(temperature);
+    variable_array_prev.stress.emplace<KV>(KV::Zero());
+    variable_array_prev.mechanical_strain.emplace<KV>(KV::Zero());
+    variable_array_prev.temperature = temperature;
 
     auto&& solution = solid_material.integrateStress(
         variable_array_prev, variable_array, t, x_position, dt, *null_state);
@@ -131,7 +125,7 @@ TEST(RichardsMechanics, computeMicroPorosity)
     auto saturation = [&](double const p_L)
     {
         MPL::VariableArray v;
-        v[static_cast<int>(MPL::Variable::capillary_pressure)] = -p_L;
+        v.capillary_pressure = -p_L;
         return saturation_micro.template value<double>(v, pos, t0, dt);
     };
 

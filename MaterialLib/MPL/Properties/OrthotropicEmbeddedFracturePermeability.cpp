@@ -57,7 +57,7 @@ OrthotropicEmbeddedFracturePermeability<DisplacementDim>::value(
 {
     auto const eps = MathLib::KelvinVector::kelvinVectorToTensor(
         std::get<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-            variable_array[static_cast<int>(Variable::mechanical_strain)]));
+            variable_array.mechanical_strain));
     double const k = std::get<double>(fromVector(_k(t, pos)));
     double const _b0 = std::sqrt(12.0 * k);
 
@@ -100,7 +100,7 @@ OrthotropicEmbeddedFracturePermeability<DisplacementDim>::dValue(
 
     auto const eps = MathLib::KelvinVector::kelvinVectorToTensor(
         std::get<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-            variable_array[static_cast<int>(Variable::mechanical_strain)]));
+            variable_array.mechanical_strain));
     double const k = std::get<double>(fromVector(_k(t, pos)));
     double const _b0 = std::sqrt(12.0 * k);
 

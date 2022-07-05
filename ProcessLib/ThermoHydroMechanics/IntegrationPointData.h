@@ -88,19 +88,13 @@ struct IntegrationPointData final
 
         using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
-        variable_array[static_cast<int>(MPL::Variable::stress)].emplace<KV>(
-            KV::Zero());
-        variable_array[static_cast<int>(MPL::Variable::mechanical_strain)]
-            .emplace<KV>(KV::Zero());
-        variable_array[static_cast<int>(MPL::Variable::temperature)]
-            .emplace<double>(temperature);
+        variable_array.stress.emplace<KV>(KV::Zero());
+        variable_array.mechanical_strain.emplace<KV>(KV::Zero());
+        variable_array.temperature = temperature;
 
-        variable_array_prev[static_cast<int>(MPL::Variable::stress)]
-            .emplace<KV>(KV::Zero());
-        variable_array_prev[static_cast<int>(MPL::Variable::mechanical_strain)]
-            .emplace<KV>(KV::Zero());
-        variable_array_prev[static_cast<int>(MPL::Variable::temperature)]
-            .emplace<double>(temperature);
+        variable_array_prev.stress.emplace<KV>(KV::Zero());
+        variable_array_prev.mechanical_strain.emplace<KV>(KV::Zero());
+        variable_array_prev.temperature = temperature;
 
         auto&& solution =
             solid_material.integrateStress(variable_array_prev, variable_array,
@@ -125,17 +119,13 @@ struct IntegrationPointData final
         double const temperature_prev)
     {
         MaterialPropertyLib::VariableArray variable_array_prev;
-        variable_array_prev[static_cast<int>(
-                                MaterialPropertyLib::Variable::stress)]
+        variable_array_prev.stress
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 sigma_eff_prev);
-        variable_array_prev[static_cast<int>(MaterialPropertyLib::Variable::
-                                                 mechanical_strain)]
+        variable_array_prev.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m_prev);
-        variable_array_prev[static_cast<int>(
-                                MaterialPropertyLib::Variable::temperature)]
-            .emplace<double>(temperature_prev);
+        variable_array_prev.temperature = temperature_prev;
 
         auto&& solution = solid_material.integrateStress(
             variable_array_prev, variable_array, t, x_position, dt,

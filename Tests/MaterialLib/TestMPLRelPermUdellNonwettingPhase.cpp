@@ -64,8 +64,7 @@ TEST(MaterialPropertyLib, RelPermUdellNonwettingPhaseDerivative)
         double const time = std::numeric_limits<double>::quiet_NaN();
         double const dt = std::numeric_limits<double>::quiet_NaN();
 
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::liquid_saturation)] = s_L;
+        variable_array.liquid_saturation = s_L;
 
         auto k_rel = medium
                          ->property(MaterialPropertyLib::PropertyType::
@@ -83,8 +82,7 @@ TEST(MaterialPropertyLib, RelPermUdellNonwettingPhaseDerivative)
 
         const double eps = 1.e-8;
 
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::liquid_saturation)] = s_L + eps;
+        variable_array.liquid_saturation = s_L + eps;
 
         auto k_rel_plus =
             medium
@@ -92,8 +90,7 @@ TEST(MaterialPropertyLib, RelPermUdellNonwettingPhaseDerivative)
                                relative_permeability_nonwetting_phase)
                 .template value<double>(variable_array, pos, time, dt);
 
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::liquid_saturation)] = s_L - eps;
+        variable_array.liquid_saturation = s_L - eps;
         auto k_rel_minus =
             medium
                 ->property(MaterialPropertyLib::PropertyType::
@@ -156,9 +153,7 @@ TEST(MaterialPropertyLib, RelPermUdellNonwettingPhaseRefValues)
         double const time = std::numeric_limits<double>::quiet_NaN();
         double const dt = std::numeric_limits<double>::quiet_NaN();
 
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::liquid_saturation)] =
-            ref_saturation[idx];
+        variable_array.liquid_saturation = ref_saturation[idx];
 
         auto k_rel = medium
                          ->property(MaterialPropertyLib::PropertyType::

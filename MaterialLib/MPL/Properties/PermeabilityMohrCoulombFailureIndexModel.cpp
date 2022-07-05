@@ -75,8 +75,8 @@ PermeabilityMohrCoulombFailureIndexModel<DisplacementDim>::value(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const /*dt*/) const
 {
-    auto const& stress_vector = std::get<SymmetricTensor<DisplacementDim>>(
-        variable_array[static_cast<int>(Variable::total_stress)]);
+    auto const& stress_vector =
+        std::get<SymmetricTensor<DisplacementDim>>(variable_array.total_stress);
 
     auto const& stress_tensor =
         formEigenTensor<3>(static_cast<PropertyDataType>(stress_vector));

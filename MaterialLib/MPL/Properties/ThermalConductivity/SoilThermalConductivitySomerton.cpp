@@ -65,8 +65,7 @@ PropertyDataType SoilThermalConductivitySomerton<1>::value(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const /*dt*/) const
 {
-    double const S_L = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    double const S_L = variable_array.liquid_saturation;
 
     if (S_L <= 0.0)
     {
@@ -97,8 +96,7 @@ PropertyDataType SoilThermalConductivitySomerton<1>::dValue(
             "derivatives with respect to liquid saturation only.");
     }
 
-    double const S_L = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    double const S_L = variable_array.liquid_saturation;
 
     if (S_L <= 0.0 || S_L > 1.0)
     {
@@ -161,8 +159,7 @@ PropertyDataType SoilThermalConductivitySomerton<GlobalDimension>::value(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const /*dt*/) const
 {
-    double const S_L = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    double const S_L = variable_array.liquid_saturation;
 
     // (S_L <= 0.0)
     std::vector<double> lambda_data = dry_thermal_conductivity_(t, pos);
@@ -218,8 +215,7 @@ PropertyDataType SoilThermalConductivitySomerton<GlobalDimension>::dValue(
             "derivatives with respect to liquid saturation only.");
     }
 
-    double const S_L = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    double const S_L = variable_array.liquid_saturation;
 
     if (S_L <= 0.0 || S_L > 1.0)
     {

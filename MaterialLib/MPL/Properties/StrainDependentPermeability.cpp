@@ -56,10 +56,8 @@ PropertyDataType StrainDependentPermeability<DisplacementDim>::value(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const /*dt*/) const
 {
-    double const e_vol = std::get<double>(
-        variable_array[static_cast<int>(Variable::volumetric_strain)]);
-    double const e_vol_pls = std::get<double>(
-        variable_array[static_cast<int>(Variable::equivalent_plastic_strain)]);
+    double const e_vol = variable_array.volumetric_strain;
+    double const e_vol_pls = variable_array.equivalent_plastic_strain;
 
     auto k_data = k0_(t, pos);
 

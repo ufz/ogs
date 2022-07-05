@@ -32,8 +32,7 @@ PropertyDataType BishopsPowerLaw::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    auto const S_L = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    auto const S_L = variable_array.liquid_saturation;
 
     return std::pow(S_L, m_);
 }
@@ -50,8 +49,7 @@ PropertyDataType BishopsPowerLaw::dValue(
             "respect to liquid saturation only.");
     }
 
-    auto const S_L = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    auto const S_L = variable_array.liquid_saturation;
 
     return m_ * std::pow(S_L, m_ - 1.);
 }

@@ -17,8 +17,7 @@ void BishopsModel::eval(SpaceTimeData const& x_t, MediaData const& media_data,
 {
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
-    variables[static_cast<int>(MPL::Variable::liquid_saturation)] =
-        S_L_data.S_L;
+    variables.liquid_saturation = S_L_data.S_L;
 
     auto const& medium = media_data.medium;
 

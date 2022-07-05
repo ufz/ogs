@@ -68,12 +68,9 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
     ParameterLib::SpatialPosition pos, double const t, const double dt) const
 {
     // primary variables
-    auto const pGR = std::get<double>(variables[static_cast<int>(
-        MaterialPropertyLib::Variable::phase_pressure)]);
-    auto const pCap = std::get<double>(variables[static_cast<int>(
-        MaterialPropertyLib::Variable::capillary_pressure)]);
-    auto const T = std::get<double>(variables[static_cast<int>(
-        MaterialPropertyLib::Variable::temperature)]);
+    auto const pGR = variables.phase_pressure;
+    auto const pCap = variables.capillary_pressure;
+    auto const T = variables.temperature;
     auto const pLR = pGR - pCap;
 
     auto const& liquid_phase = medium->phase("AqueousLiquid");
@@ -100,10 +97,8 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
 
     // provide evaporation enthalpy and molar mass of the evaporating component
     // in the variable array
-    variables[static_cast<int>(
-        MaterialPropertyLib::Variable::enthalpy_of_evaporation)] = dh_evap;
-    variables[static_cast<int>(MaterialPropertyLib::Variable::molar_mass)] =
-        M_W;
+    variables.enthalpy_of_evaporation = dh_evap;
+    variables.molar_mass = M_W;
 
     // vapour pressure over flat interface
     const auto p_vap_flat =
@@ -127,8 +122,7 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
     // copy previous state before modification.
     PhaseTransitionModelVariables cv = phase_transition_model_variables;
 
-    variables[static_cast<int>(
-        MaterialPropertyLib::Variable::liquid_phase_pressure)] = pLR;
+    variables.liquid_phase_pressure = pLR;
 
     cv.rhoLR = liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                    .template value<double>(variables, pos, t, dt);
@@ -165,7 +159,7 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
 
     // molar mass of the gas phase as a mixture of 'air' and vapour
     auto const MG = xnCG * M_C + cv.xnWG * M_W;
-    variables[static_cast<int>(MaterialPropertyLib::Variable::molar_mass)] = MG;
+    variables.molar_mass = MG;
 
     // gas phase mass fractions
     cv.xmWG = cv.xnWG * M_W / MG;
@@ -185,8 +179,7 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
     auto const dMG = M_W - M_C;
     auto const dMG_dpGR = dxnWG_dpGR * dMG;
 
-    variables[static_cast<int>(
-        MaterialPropertyLib::Variable::molar_mass_derivative)] = dMG_dpGR;
+    variables.molar_mass_derivative = dMG_dpGR;
 
     // Derivatives of the density of the (composite gas phase) and the partial
     // densities of its components. The density of the mixture can be obtained
@@ -200,8 +193,7 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
                 t, dt);
 
     auto const dMG_dpCap = dxnWG_dpCap * dMG;
-    variables[static_cast<int>(
-        MaterialPropertyLib::Variable::molar_mass_derivative)] = dMG_dpCap;
+    variables.molar_mass_derivative = dMG_dpCap;
     cv.drho_GR_dp_cap =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(
@@ -209,8 +201,7 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
                 pos, t, dt);
 
     auto const dMG_dT = dxnWG_dT * dMG;
-    variables[static_cast<int>(
-        MaterialPropertyLib::Variable::molar_mass_derivative)] = dMG_dT;
+    variables.molar_mass_derivative = dMG_dT;
     cv.drho_GR_dT =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(variables,
@@ -284,8 +275,7 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
     cv.diffusion_coefficient_vapour =
         tortuosity * D_W_G_m;  // Note here that D_W_G = D_C_G.
 
-    variables[static_cast<int>(MaterialPropertyLib::Variable::molar_fraction)] =
-        xnCG;
+    variables.molar_fraction = xnCG;
 
     // gas phase viscosity
     cv.muGR = gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)

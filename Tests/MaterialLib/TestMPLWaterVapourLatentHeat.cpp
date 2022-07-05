@@ -42,8 +42,7 @@ TEST(MaterialPropertyLib, LinearWaterVapourLatentHeat)
 
     for (std::size_t i = 0; i < temperatures.size(); ++i)
     {
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = temperatures[i];
+        variable_array.temperature = temperatures[i];
 
         double const L_wv =
             property.template value<double>(variable_array, pos, t, dt);
@@ -53,13 +52,11 @@ TEST(MaterialPropertyLib, LinearWaterVapourLatentHeat)
             << " and for computed water vapour latent heat " << L_wv;
 
         double const dT = 1.0e-4;
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = temperatures[i] - dT;
+        variable_array.temperature = temperatures[i] - dT;
         double const L_wv0 =
             property.template value<double>(variable_array, pos, t, dt);
 
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = temperatures[i] + dT;
+        variable_array.temperature = temperatures[i] + dT;
         double const L_wv1 =
             property.template value<double>(variable_array, pos, t, dt);
 

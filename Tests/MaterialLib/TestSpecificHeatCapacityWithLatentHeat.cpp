@@ -152,8 +152,8 @@ TEST(MaterialPropertyLib, SpecificHeatCapacityWithLatentHeat_trivial)
     auto const Cvol_mix = 0.5 * (water_ice_rock.rho_I * water_ice_rock.cp_I +
                                  water_ice_rock.rho_W * water_ice_rock.cp_W);
 
-    vars[static_cast<int>(MPL::Variable::temperature)] = water_ice_rock.T_c;
-    vars[static_cast<int>(MPL::Variable::density)] = rho_mix;
+    vars.temperature = water_ice_rock.T_c;
+    vars.density = rho_mix;
 
     auto const Capp =
         medium
@@ -191,8 +191,8 @@ TEST(MaterialPropertyLib, SpecificHeatCapacityWithLatentHeat_atTc)
              water_ice_rock.rho_W * water_ice_rock.cp_W) +
         (1 - phi) * water_ice_rock.rho_R * water_ice_rock.cp_R;
 
-    vars[static_cast<int>(MPL::Variable::temperature)] = water_ice_rock.T_c;
-    vars[static_cast<int>(MPL::Variable::density)] = rho_mix;
+    vars.temperature = water_ice_rock.T_c;
+    vars.density = rho_mix;
 
     auto const Capp =
         medium->property(MPL::PropertyType::specific_heat_capacity)
@@ -218,8 +218,8 @@ TEST(MaterialPropertyLib, SpecificHeatCapacityWithLatentHeat_belowTc)
     auto const full_porosity = 1.0;
     auto const& medium = createMyMedium(water_ice_rock.L_IW, full_porosity);
 
-    vars[static_cast<int>(MPL::Variable::temperature)] = 0.5 * water_ice_rock.T_c;
-    vars[static_cast<int>(MPL::Variable::density)] = water_ice_rock.rho_I;
+    vars.temperature = 0.5 * water_ice_rock.T_c;
+    vars.density = water_ice_rock.rho_I;
 
     auto const Capp =
         medium->property(MPL::PropertyType::specific_heat_capacity)
@@ -244,8 +244,8 @@ TEST(MaterialPropertyLib, SpecificHeatCapacityWithLatentHeat_aboveTc)
     auto const full_porosity = 1.0;
     auto const& medium = createMyMedium(water_ice_rock.L_IW, full_porosity);
 
-    vars[static_cast<int>(MPL::Variable::temperature)] = 1.25 * water_ice_rock.T_c;
-    vars[static_cast<int>(MPL::Variable::density)] = water_ice_rock.rho_W;
+    vars.temperature = 1.25 * water_ice_rock.T_c;
+    vars.density = water_ice_rock.rho_W;
 
     auto const Capp =
         medium->property(MPL::PropertyType::specific_heat_capacity)

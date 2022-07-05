@@ -138,9 +138,8 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
 
-        variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            p_cap_ip;
-        variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
+        variables.capillary_pressure = p_cap_ip;
+        variables.phase_pressure = -p_cap_ip;
 
         // Note: temperature dependent saturation model is not considered so
         // far.
@@ -254,10 +253,9 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         double p_cap_dot_ip;
         NumLib::shapeFunctionInterpolate(-p_L_dot, N, p_cap_dot_ip);
 
-        variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            p_cap_ip;
-        variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
-        variables[static_cast<int>(MPL::Variable::temperature)] = T_ip;
+        variables.capillary_pressure = p_cap_ip;
+        variables.phase_pressure = -p_cap_ip;
+        variables.temperature = T_ip;
 
         auto& S_L = _ip_data[ip].saturation;
         auto const S_L_prev = _ip_data[ip].saturation_prev;
@@ -272,8 +270,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
             solid_elasticity.bulkCompressibilityFromYoungsModulus(
                 solid_phase, variables, x_position, t, dt);
         auto const beta_SR = (1 - alpha) * beta_S;
-        variables[static_cast<int>(MPL::Variable::grain_compressibility)] =
-            beta_SR;
+        variables.grain_compressibility = beta_SR;
 
         auto const rho_LR =
             liquid_phase[MPL::PropertyType::density].template value<double>(
@@ -287,9 +284,8 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
         S_L = medium[MPL::PropertyType::saturation].template value<double>(
             variables, x_position, t, dt);
-        variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
-        variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L_prev;
+        variables.liquid_saturation = S_L;
+        variables_prev.liquid_saturation = S_L_prev;
 
         // tangent derivative for Jacobian
         double const dS_L_dp_cap =
@@ -310,8 +306,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
             auto const chi = [&medium, x_position, t, dt](double const S_L)
             {
                 MPL::VariableArray variables;
-                variables[static_cast<int>(MPL::Variable::liquid_saturation)] =
-                    S_L;
+                variables.liquid_saturation = S_L;
                 return medium[MPL::PropertyType::bishops_effective_stress]
                     .template value<double>(variables, x_position, t, dt);
             };
@@ -326,23 +321,19 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         // TODO (buchwaldj)
         // should solid_grain_pressure or effective_pore_pressure remain?
         // double const p_FR = -chi_S_L * p_cap_ip;
-        // variables[static_cast<int>(MPL::Variable::solid_grain_pressure)] =
-        // p_FR;
+        // variables.solid_grain_pressure = p_FR;
 
-        variables[static_cast<int>(MPL::Variable::effective_pore_pressure)] =
-            -chi_S_L * p_cap_ip;
-        variables_prev[static_cast<int>(
-            MPL::Variable::effective_pore_pressure)] =
+        variables.effective_pore_pressure = -chi_S_L * p_cap_ip;
+        variables_prev.effective_pore_pressure =
             -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update
 
-            variables_prev[static_cast<int>(MPL::Variable::porosity)] =
-                _ip_data[ip].porosity_prev;
+            variables_prev.porosity = _ip_data[ip].porosity_prev;
             phi = medium[MPL::PropertyType::porosity].template value<double>(
                 variables, variables_prev, x_position, t, dt);
-            variables[static_cast<int>(MPL::Variable::porosity)] = phi;
+            variables.porosity = phi;
         }
 
         if (alpha < phi)
@@ -521,7 +512,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         if (liquid_phase.hasProperty(MPL::PropertyType::vapour_diffusion) &&
             S_L < 1.0)
         {
-            variables[static_cast<int>(MPL::Variable::density)] = rho_LR;
+            variables.density = rho_LR;
 
             double const rho_wv =
                 liquid_phase[MaterialPropertyLib::vapour_density]
@@ -542,7 +533,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
                     [MPL::PropertyType::thermal_diffusion_enhancement_factor]
                         .template value<double>(variables, x_position, t, dt);
 
-            variables[static_cast<int>(MPL::Variable::porosity)] = phi;
+            variables.porosity = phi;
             double const D_v =
                 liquid_phase[MPL::PropertyType::vapour_diffusion]
                     .template value<double>(variables, x_position, t, dt);
@@ -764,10 +755,9 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         double p_cap_dot_ip;
         NumLib::shapeFunctionInterpolate(-p_L_dot, N, p_cap_dot_ip);
 
-        variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            p_cap_ip;
-        variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
-        variables[static_cast<int>(MPL::Variable::temperature)] = T_ip;
+        variables.capillary_pressure = p_cap_ip;
+        variables.phase_pressure = -p_cap_ip;
+        variables.temperature = T_ip;
 
         auto& S_L = _ip_data[ip].saturation;
         auto const S_L_prev = _ip_data[ip].saturation_prev;
@@ -782,8 +772,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
             solid_elasticity.bulkCompressibilityFromYoungsModulus(
                 solid_phase, variables, x_position, t, dt);
         auto const beta_SR = (1 - alpha) * beta_S;
-        variables[static_cast<int>(MPL::Variable::grain_compressibility)] =
-            beta_SR;
+        variables.grain_compressibility = beta_SR;
 
         auto const rho_LR =
             liquid_phase[MPL::PropertyType::density].template value<double>(
@@ -797,9 +786,8 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
 
         S_L = medium[MPL::PropertyType::saturation].template value<double>(
             variables, x_position, t, dt);
-        variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
-        variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L_prev;
+        variables.liquid_saturation = S_L;
+        variables_prev.liquid_saturation = S_L_prev;
 
         // tangent derivative for Jacobian
         double const dS_L_dp_cap =
@@ -819,8 +807,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
             auto const chi = [&medium, x_position, t, dt](double const S_L)
             {
                 MPL::VariableArray variables;
-                variables[static_cast<int>(MPL::Variable::liquid_saturation)] =
-                    S_L;
+                variables.liquid_saturation = S_L;
                 return medium[MPL::PropertyType::bishops_effective_stress]
                     .template value<double>(variables, x_position, t, dt);
             };
@@ -830,23 +817,19 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         // TODO (buchwaldj)
         // should solid_grain_pressure or effective_pore_pressure remain?
         // double const p_FR = -chi_S_L * p_cap_ip;
-        // variables[static_cast<int>(MPL::Variable::solid_grain_pressure)] =
-        // p_FR;
+        // variables.solid_grain_pressure = p_FR;
 
-        variables[static_cast<int>(MPL::Variable::effective_pore_pressure)] =
-            -chi_S_L * p_cap_ip;
-        variables_prev[static_cast<int>(
-            MPL::Variable::effective_pore_pressure)] =
+        variables.effective_pore_pressure = -chi_S_L * p_cap_ip;
+        variables_prev.effective_pore_pressure =
             -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update
 
-            variables_prev[static_cast<int>(MPL::Variable::porosity)] =
-                _ip_data[ip].porosity_prev;
+            variables_prev.porosity = _ip_data[ip].porosity_prev;
             phi = medium[MPL::PropertyType::porosity].template value<double>(
                 variables, variables_prev, x_position, t, dt);
-            variables[static_cast<int>(MPL::Variable::porosity)] = phi;
+            variables.porosity = phi;
         }
 
         if (alpha < phi)
@@ -996,7 +979,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         if (liquid_phase.hasProperty(MPL::PropertyType::vapour_diffusion) &&
             S_L < 1.0)
         {
-            variables[static_cast<int>(MPL::Variable::density)] = rho_LR;
+            variables.density = rho_LR;
 
             double const rho_wv =
                 liquid_phase[MaterialPropertyLib::vapour_density]
@@ -1017,7 +1000,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
                     [MPL::PropertyType::thermal_diffusion_enhancement_factor]
                         .template value<double>(variables, x_position, t, dt);
 
-            variables[static_cast<int>(MPL::Variable::porosity)] = phi;
+            variables.porosity = phi;
             double const D_v =
                 liquid_phase[MPL::PropertyType::vapour_diffusion]
                     .template value<double>(variables, x_position, t, dt);
@@ -1265,19 +1248,17 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         double p_cap_dot_ip;
         NumLib::shapeFunctionInterpolate(-p_L_dot, N, p_cap_dot_ip);
 
-        variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            p_cap_ip;
-        variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
+        variables.capillary_pressure = p_cap_ip;
+        variables.phase_pressure = -p_cap_ip;
 
-        variables[static_cast<int>(MPL::Variable::temperature)] = T_ip;
+        variables.temperature = T_ip;
 
         auto& S_L = _ip_data[ip].saturation;
         auto const S_L_prev = _ip_data[ip].saturation_prev;
         S_L = medium[MPL::PropertyType::saturation].template value<double>(
             variables, x_position, t, dt);
-        variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
-        variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L_prev;
+        variables.liquid_saturation = S_L;
+        variables_prev.liquid_saturation = S_L_prev;
 
         auto chi_S_L = S_L;
         auto chi_S_L_prev = S_L_prev;
@@ -1286,18 +1267,15 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
             auto const chi = [&medium, x_position, t, dt](double const S_L)
             {
                 MPL::VariableArray variables;
-                variables[static_cast<int>(MPL::Variable::liquid_saturation)] =
-                    S_L;
+                variables.liquid_saturation = S_L;
                 return medium[MPL::PropertyType::bishops_effective_stress]
                     .template value<double>(variables, x_position, t, dt);
             };
             chi_S_L = chi(S_L);
             chi_S_L_prev = chi(S_L_prev);
         }
-        variables[static_cast<int>(MPL::Variable::effective_pore_pressure)] =
-            -chi_S_L * p_cap_ip;
-        variables_prev[static_cast<int>(
-            MPL::Variable::effective_pore_pressure)] =
+        variables.effective_pore_pressure = -chi_S_L * p_cap_ip;
+        variables_prev.effective_pore_pressure =
             -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
 
         auto const alpha =
@@ -1309,16 +1287,14 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
             solid_elasticity.bulkCompressibilityFromYoungsModulus(
                 solid_phase, variables, x_position, t, dt);
         auto const beta_SR = (1 - alpha) * beta_S;
-        variables[static_cast<int>(MPL::Variable::grain_compressibility)] =
-            beta_SR;
+        variables.grain_compressibility = beta_SR;
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update
-            variables_prev[static_cast<int>(MPL::Variable::porosity)] =
-                _ip_data[ip].porosity_prev;
+            variables_prev.porosity = _ip_data[ip].porosity_prev;
             phi = medium[MPL::PropertyType::porosity].template value<double>(
                 variables, variables_prev, x_position, t, dt);
-            variables[static_cast<int>(MPL::Variable::porosity)] = phi;
+            variables.porosity = phi;
         }
 
         auto const mu =

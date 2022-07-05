@@ -78,8 +78,7 @@ TEST(MaterialPropertyLib, ClausiusClapeyron)
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    vars[static_cast<int>(MPL::Variable::enthalpy_of_evaporation)] =
-        vapourisation_enthalpy;
+    vars.enthalpy_of_evaporation = vapourisation_enthalpy;
 
     const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
     const double T_min = triple_temperature - 20;
@@ -87,7 +86,7 @@ TEST(MaterialPropertyLib, ClausiusClapeyron)
 
     for (double T = T_min; T <= T_max; T += 0.12345)
     {
-        vars[static_cast<int>(MPL::Variable::temperature)] = T;
+        vars.temperature = T;
 
         auto const pVap =
             vapour_component.property(MPL::PropertyType::vapour_pressure)
@@ -108,13 +107,13 @@ TEST(MaterialPropertyLib, ClausiusClapeyron)
         ASSERT_NEAR(pVap, pVap_, 1.e-10);
         // perturb temperature to check derivatives
         auto const eps = 5.e-4;
-        vars[static_cast<int>(MPL::Variable::temperature)] = T + eps;
+        vars.temperature = T + eps;
 
         auto const pVap_plus =
             vapour_component.property(MPL::PropertyType::vapour_pressure)
                 .template value<double>(vars, pos, time, dt);
 
-        vars[static_cast<int>(MPL::Variable::temperature)] = T - eps;
+        vars.temperature = T - eps;
 
         auto const pVap_minus =
             vapour_component.property(MPL::PropertyType::vapour_pressure)

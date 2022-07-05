@@ -36,8 +36,7 @@ PropertyDataType WaterVapourLatentHeatWithCriticalTemperature::value(
     const ParameterLib::SpatialPosition& /*pos*/, const double /*t*/,
     const double /*dt*/) const
 {
-    const double T = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
+    const double T = variable_array.temperature;
 
     if (T >= T_c)
     {
@@ -84,8 +83,7 @@ PropertyDataType WaterVapourLatentHeatWithCriticalTemperature::dValue(
             "for "
             "the derivative with respect to temperature only.");
     }
-    const double T = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
+    const double T = variable_array.temperature;
 
     if (T >= T_c)
     {

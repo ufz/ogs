@@ -44,10 +44,8 @@ PhaseTransitionModelVariables PhaseTransitionNone::updateConstitutiveVariables(
     ParameterLib::SpatialPosition pos, double const t, double const dt) const
 {
     // primary variables
-    auto const pGR = std::get<double>(variables[static_cast<int>(
-        MaterialPropertyLib::Variable::phase_pressure)]);
-    auto const T = std::get<double>(variables[static_cast<int>(
-        MaterialPropertyLib::Variable::temperature)]);
+    auto const pGR = variables.phase_pressure;
+    auto const T = variables.temperature;
 
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& gas_phase = medium->phase("Gas");
@@ -63,7 +61,7 @@ PhaseTransitionModelVariables PhaseTransitionNone::updateConstitutiveVariables(
         gas_phase.property(MaterialPropertyLib::PropertyType::molar_mass)
             .template value<double>(variables, pos, t, dt);
 
-    variables[static_cast<int>(MaterialPropertyLib::Variable::molar_mass)] = M;
+    variables.molar_mass = M;
 
     cv.rhoGR = gas_phase.property(MaterialPropertyLib::PropertyType::density)
                    .template value<double>(variables, pos, t, dt);

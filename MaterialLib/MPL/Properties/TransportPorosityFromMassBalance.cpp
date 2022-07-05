@@ -32,31 +32,23 @@ PropertyDataType TransportPorosityFromMassBalance::value(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
 {
-    double const beta_SR = std::get<double>(
-        variable_array[static_cast<int>(Variable::grain_compressibility)]);
+    double const beta_SR = variable_array.grain_compressibility;
     auto const alpha_b =
         std::get<Medium*>(scale_)
             ->property(PropertyType::biot_coefficient)
             .template value<double>(variable_array, pos, t, dt);
 
-    double const e = std::get<double>(
-        variable_array[static_cast<int>(Variable::volumetric_strain)]);
-    double const e_prev = std::get<double>(
-        variable_array_prev[static_cast<int>(Variable::volumetric_strain)]);
+    double const e = variable_array.volumetric_strain;
+    double const e_prev = variable_array_prev.volumetric_strain;
     double const delta_e = e - e_prev;
 
-    double const p_eff = std::get<double>(
-        variable_array[static_cast<int>(Variable::effective_pore_pressure)]);
-    double const p_eff_prev =
-        std::get<double>(variable_array_prev[static_cast<int>(
-            Variable::effective_pore_pressure)]);
+    double const p_eff = variable_array.effective_pore_pressure;
+    double const p_eff_prev = variable_array_prev.effective_pore_pressure;
     double const delta_p_eff = p_eff - p_eff_prev;
 
-    double const phi =
-        std::get<double>(variable_array[static_cast<int>(Variable::porosity)]);
+    double const phi = variable_array.porosity;
 
-    double const phi_tr_prev = std::get<double>(
-        variable_array_prev[static_cast<int>(Variable::transport_porosity)]);
+    double const phi_tr_prev = variable_array_prev.transport_porosity;
 
     double const w = delta_e + delta_p_eff * beta_SR;
     return std::clamp(phi_tr_prev + (alpha_b - phi) * w, phi_min_, phi_max_);

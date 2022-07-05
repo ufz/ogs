@@ -50,8 +50,7 @@ PropertyDataType CapillaryPressureRegularizedVanGenuchten::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    const double Sl = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    const double Sl = variable_array.liquid_saturation;
 
     checkSaturationRange(Sl);
 
@@ -80,8 +79,7 @@ PropertyDataType CapillaryPressureRegularizedVanGenuchten::dValue(
             "for derivatives with respect to liquid saturation only.");
     }
 
-    const double Sl = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    const double Sl = variable_array.liquid_saturation;
 
     checkSaturationRange(Sl);
 

@@ -69,8 +69,7 @@ TEST(MaterialPropertyLib, RelPermNonWettingPhaseVanGenuchtenMualem)
         ParameterLib::SpatialPosition const pos;
         double const t = std::numeric_limits<double>::quiet_NaN();
         double const dt = std::numeric_limits<double>::quiet_NaN();
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L[i];
+        variable_array.liquid_saturation = S_L[i];
 
         const double k_rel_i =
             perm_model.template value<double>(variable_array, pos, t, dt);
@@ -128,12 +127,10 @@ TEST(MaterialPropertyLib, RelPermNonWettingPhaseVanGenuchtenMualem)
             factor = 0.5;
         }
 
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L_a;
+        variable_array.liquid_saturation = S_L_a;
         const double k_rel_i_0 =
             perm_model.template value<double>(variable_array, pos, t, dt);
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L_b;
+        variable_array.liquid_saturation = S_L_b;
         const double k_rel_i_1 =
             perm_model.template value<double>(variable_array, pos, t, dt);
 

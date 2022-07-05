@@ -42,12 +42,10 @@ void SwellingModel<DisplacementDim>::eval(
     }
 
     MPL::VariableArray variables;
-    variables[static_cast<int>(MPL::Variable::liquid_saturation)] =
-        S_L_data.S_L;
+    variables.liquid_saturation = S_L_data.S_L;
 
     MPL::VariableArray variables_prev;
-    variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
-        S_L_prev_data.S_L;
+    variables_prev.liquid_saturation = S_L_prev_data.S_L;
 
     auto const& identity2 = MathLib::KelvinVector::Invariants<
         MathLib::KelvinVector::kelvin_vector_dimensions(
@@ -70,10 +68,10 @@ void SwellingModel<DisplacementDim>::eval(
 
     // !!! Misusing volumetric strain for mechanical volumetric
     // strain just to update the transport porosity !!!
-    variables[static_cast<int>(MPL::Variable::volumetric_strain)] =
+    variables.volumetric_strain =
         Invariants::trace(eps_data.eps) +
         identity2.transpose() * C_el_inv * state.sigma_sw;
-    variables_prev[static_cast<int>(MPL::Variable::volumetric_strain)] =
+    variables_prev.volumetric_strain =
         Invariants::trace(eps_prev_data.eps) +
         identity2.transpose() * C_el_inv * prev_state.sigma_sw;
 

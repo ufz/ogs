@@ -39,7 +39,7 @@ TEST(MaterialPropertyLib, SaturationDependentThermalConductivity)
     {
         double const sat = 0.345;
 
-        vars[static_cast<int>(MPL::Variable::liquid_saturation)] = sat;
+        vars.liquid_saturation = sat;
 
         auto const k = std::get<double>(k_model_eff.value(vars, pos, t, dt));
 

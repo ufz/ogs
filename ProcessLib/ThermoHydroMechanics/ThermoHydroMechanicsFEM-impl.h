@@ -289,14 +289,11 @@ void ThermoHydroMechanicsLocalAssembler<
         eps.noalias() = B * u;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
 
-        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-            T_int_pt;
+        vars.temperature = T_int_pt;
         double const p_int_pt = N_p.dot(p);
-        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            p_int_pt;
+        vars.phase_pressure = p_int_pt;
 
-        vars[static_cast<int>(
-            MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
+        vars.liquid_saturation = 1.0;
 
         auto const solid_density =
             solid_phase.property(MaterialPropertyLib::PropertyType::density)
@@ -305,8 +302,7 @@ void ThermoHydroMechanicsLocalAssembler<
         auto const porosity =
             medium->property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, x_position, t, dt);
-        vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-            porosity;
+        vars.porosity = porosity;
 
         auto const alpha =
             medium
@@ -325,17 +321,13 @@ void ThermoHydroMechanicsLocalAssembler<
         {
             auto const sigma_total =
                 (_ip_data[ip].sigma_eff - alpha * p_int_pt * identity2).eval();
-            vars[static_cast<int>(MaterialPropertyLib::Variable::total_stress)]
-                .emplace<SymmetricTensor>(
-                    MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                        sigma_total));
+            vars.total_stress.emplace<SymmetricTensor>(
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                    sigma_total));
         }
         // For strain dependent permeability
-        vars[static_cast<int>(
-            MaterialPropertyLib::Variable::volumetric_strain)] =
-            Invariants::trace(_ip_data[ip].eps);
-        vars[static_cast<int>(
-            MaterialPropertyLib::Variable::equivalent_plastic_strain)] =
+        vars.volumetric_strain = Invariants::trace(_ip_data[ip].eps);
+        vars.equivalent_plastic_strain =
             _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
 
         auto const intrinsic_permeability =
@@ -403,7 +395,7 @@ void ThermoHydroMechanicsLocalAssembler<
         auto& eps_m = _ip_data[ip].eps_m;
         auto& eps_m_prev = _ip_data[ip].eps_m_prev;
         eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
-        vars[static_cast<int>(MaterialPropertyLib::Variable::mechanical_strain)]
+        vars.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
@@ -667,11 +659,9 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
                     _element, _ip_data[ip].N_u))};
-        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-            N_p.dot(T);  // N_p = N_T
+        vars.temperature = N_p.dot(T);  // N_p = N_T
         double const p_int_pt = N_p.dot(p);
-        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            p_int_pt;
+        vars.phase_pressure = p_int_pt;
 
         // TODO (naumov) Temporary value not used by current material models.
         // Need extension of secondary variables interface.
@@ -690,17 +680,13 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
         {
             auto const sigma_total =
                 (_ip_data[ip].sigma_eff - alpha * p_int_pt * identity2).eval();
-            vars[static_cast<int>(MaterialPropertyLib::Variable::total_stress)]
-                .emplace<SymmetricTensor>(
-                    MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                        sigma_total));
+            vars.total_stress.emplace<SymmetricTensor>(
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                    sigma_total));
         }
         // For strain dependent permeability
-        vars[static_cast<int>(
-            MaterialPropertyLib::Variable::volumetric_strain)] =
-            Invariants::trace(_ip_data[ip].eps);
-        vars[static_cast<int>(
-            MaterialPropertyLib::Variable::equivalent_plastic_strain)] =
+        vars.volumetric_strain = Invariants::trace(_ip_data[ip].eps);
+        vars.equivalent_plastic_strain =
             _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
 
         GlobalDimMatrixType K_over_mu =
@@ -792,10 +778,8 @@ void ThermoHydroMechanicsLocalAssembler<
                 dNdx_u, N_u, x_coord, _is_axially_symmetric);
 
         double const T_int_pt = N_T.dot(T);
-        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-            T_int_pt;
-        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            N_T.dot(p);  // N_T = N_p
+        vars.temperature = T_int_pt;
+        vars.phase_pressure = N_T.dot(p);  // N_T = N_p
 
         // Consider also anisotropic thermal expansion.
         MathLib::KelvinVector::KelvinVectorType<
@@ -818,7 +802,7 @@ void ThermoHydroMechanicsLocalAssembler<
         auto& eps_m = _ip_data[ip].eps_m;
         auto& eps_m_prev = _ip_data[ip].eps_m_prev;
         eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
-        vars[static_cast<int>(MaterialPropertyLib::Variable::mechanical_strain)]
+        vars.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 

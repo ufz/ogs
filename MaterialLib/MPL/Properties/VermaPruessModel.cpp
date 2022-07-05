@@ -21,8 +21,7 @@ PropertyDataType VermaPruessModel::value(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const /*dt*/) const
 {
-    double const phi = std::get<double>(variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::porosity)]);
+    double const phi = variable_array.porosity;
 
     // ratio of permeability to initial permeability
     auto const var_k = std::pow(std::max(0., phi - _phi_c(t, pos)[0]) /

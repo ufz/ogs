@@ -227,20 +227,16 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
         eps.noalias() = B * u;
 
-        variables[static_cast<int>(
-                      MaterialPropertyLib::Variable::mechanical_strain)]
+        variables.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(eps);
 
-        variables_prev[static_cast<int>(MaterialPropertyLib::Variable::stress)]
+        variables_prev.stress
             .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(
                 sigma_eff_prev);
-        variables_prev[static_cast<int>(
-                           MaterialPropertyLib::Variable::mechanical_strain)]
+        variables_prev.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(
                 eps_prev);
-        variables_prev[static_cast<int>(
-                           MaterialPropertyLib::Variable::temperature)]
-            .emplace<double>(_process_data.reference_temperature);
+        variables_prev.temperature = _process_data.reference_temperature;
 
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
             variables_prev, variables, t, x_position, dt, *state);
@@ -362,20 +358,16 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
         eps.noalias() = B * u;
 
-        variables[static_cast<int>(
-                      MaterialPropertyLib::Variable::mechanical_strain)]
+        variables.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(eps);
 
-        variables_prev[static_cast<int>(MaterialPropertyLib::Variable::stress)]
+        variables_prev.stress
             .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(
                 sigma_eff_prev);
-        variables_prev[static_cast<int>(
-                           MaterialPropertyLib::Variable::mechanical_strain)]
+        variables_prev.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(
                 eps_prev);
-        variables_prev[static_cast<int>(
-                           MaterialPropertyLib::Variable::temperature)]
-            .emplace<double>(_process_data.reference_temperature);
+        variables_prev.temperature = _process_data.reference_temperature;
 
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
             variables_prev, variables, t, x_position, dt, *state);

@@ -39,12 +39,9 @@ TEST(MaterialPropertyLib, VapourDiffusionPMQ)
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::temperature)] = T;
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::liquid_saturation)] = S;
-    variable_array[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-        phi;
+    variable_array.temperature = T;
+    variable_array.liquid_saturation = S;
+    variable_array.porosity = phi;
 
     // The derivative of the water vapour with respect of temperature
     {
@@ -55,8 +52,7 @@ TEST(MaterialPropertyLib, VapourDiffusionPMQ)
 
         for (std::size_t i = 0; i < Ts.size(); ++i)
         {
-            variable_array[static_cast<int>(
-                MaterialPropertyLib::Variable::temperature)] = Ts[i];
+            variable_array.temperature = Ts[i];
 
             const double D_v =
                 property.template value<double>(variable_array, pos, t, dt);
@@ -66,13 +62,11 @@ TEST(MaterialPropertyLib, VapourDiffusionPMQ)
                 << " and for computed water vapour diffusion " << D_v;
 
             const double dT = 1.0e-4;
-            variable_array[static_cast<int>(
-                MaterialPropertyLib::Variable::temperature)] = Ts[i] - dT;
+            variable_array.temperature = Ts[i] - dT;
             const double D_v0 =
                 property.template value<double>(variable_array, pos, t, dt);
 
-            variable_array[static_cast<int>(
-                MaterialPropertyLib::Variable::temperature)] = Ts[i] + dT;
+            variable_array.temperature = Ts[i] + dT;
             const double D_v1 =
                 property.template value<double>(variable_array, pos, t, dt);
 
@@ -101,12 +95,10 @@ TEST(MaterialPropertyLib, VapourDiffusionPMQ)
             0.000000e+00, 0.000000e+00};
         for (std::size_t i = 0; i < S.size(); ++i)
         {
-            variable_array[static_cast<int>(
-                MaterialPropertyLib::Variable::temperature)] = T;
+            variable_array.temperature = T;
 
             double const S_L_i = S[i];
-            variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-                S_L_i;
+            variable_array.liquid_saturation = S_L_i;
             const double D_v =
                 property.template value<double>(variable_array, pos, t, dt);
 
@@ -134,12 +126,10 @@ TEST(MaterialPropertyLib, VapourDiffusionPMQ)
                 factor = 1.0;
             }
 
-            variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-                S_L_a;
+            variable_array.liquid_saturation = S_L_a;
             double const D_v_a =
                 property.template value<double>(variable_array, pos, t, dt);
-            variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-                S_L_b;
+            variable_array.liquid_saturation = S_L_b;
             double const D_v_b =
                 property.template value<double>(variable_array, pos, t, dt);
 

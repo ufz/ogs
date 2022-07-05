@@ -40,8 +40,7 @@ TEST(MaterialPropertyLib, SaturationExponential)
     for (int i = 0; i <= n_steps; ++i)
     {
         double const p_cap = p_0 + i * (p_max - p_0) / n_steps;
-        variable_array[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            p_cap;
+        variable_array.capillary_pressure = p_cap;
 
         double const s_res = residual_liquid_saturation;
         double const s_max = 1. - residual_gas_saturation;
@@ -57,14 +56,12 @@ TEST(MaterialPropertyLib, SaturationExponential)
             variable_array, MPL::Variable::capillary_pressure, pos, t, dt);
 
         double const eps = 1e-2;
-        variable_array[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            p_cap - eps;
+        variable_array.capillary_pressure = p_cap - eps;
 
         double const S_minus =
             saturation.template value<double>(variable_array, pos, t, dt);
 
-        variable_array[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            p_cap + eps;
+        variable_array.capillary_pressure = p_cap + eps;
 
         double const S_plus =
             saturation.template value<double>(variable_array, pos, t, dt);

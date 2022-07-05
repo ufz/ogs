@@ -102,7 +102,7 @@ public:
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
         MaterialPropertyLib::VariableArray vars;
-        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+        vars.temperature =
             medium
                 .property(
                     MaterialPropertyLib::PropertyType::reference_temperature)
@@ -116,8 +116,7 @@ public:
 
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, sm.N, p_int_pt);
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+            vars.phase_pressure = p_int_pt;
             auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium.property(MaterialPropertyLib::PropertyType::diffusion)
                     .value(vars, pos, t, dt));
@@ -153,15 +152,14 @@ public:
             *_process_data.media_map->getMedium(_element.getID());
 
         MaterialPropertyLib::VariableArray vars;
-        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+        vars.temperature =
             medium
                 .property(
                     MaterialPropertyLib::PropertyType::reference_temperature)
                 .template value<double>(vars, pos, t, dt);
         double pressure = 0.0;
         NumLib::shapeFunctionInterpolate(local_x, shape_matrices.N, pressure);
-        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            pressure;
+        vars.phase_pressure = pressure;
 
         auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
             medium.property(MaterialPropertyLib::PropertyType::diffusion)
@@ -218,7 +216,7 @@ public:
             *_process_data.media_map->getMedium(_element.getID());
 
         MaterialPropertyLib::VariableArray vars;
-        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+        vars.temperature =
             medium
                 .property(
                     MaterialPropertyLib::PropertyType::reference_temperature)
@@ -229,8 +227,7 @@ public:
             pos.setIntegrationPoint(i);
             NumLib::shapeFunctionInterpolate(local_x, _shape_matrices[i].N,
                                              pressure);
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = pressure;
+            vars.phase_pressure = pressure;
 
             auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium.property(MaterialPropertyLib::PropertyType::diffusion)
