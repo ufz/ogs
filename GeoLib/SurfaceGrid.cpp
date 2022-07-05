@@ -259,10 +259,9 @@ bool SurfaceGrid::isPointInSurface(MathLib::Point3d const& pnt,
 
     std::vector<Triangle const*> const& triangles(
         _triangles_in_grid_box[grid_cell_index]);
-    auto const it = std::find_if(triangles.begin(), triangles.end(),
-                                 [eps, pnt](auto const* triangle)
-                                 { return triangle->containsPoint(pnt, eps); });
-    return it != triangles.end();
+    return std::any_of(triangles.begin(), triangles.end(),
+                       [eps, pnt](auto const* triangle)
+                       { return triangle->containsPoint(pnt, eps); });
 }
 
 }  // end namespace GeoLib
