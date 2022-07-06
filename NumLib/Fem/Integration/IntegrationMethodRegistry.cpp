@@ -163,9 +163,9 @@ initIntegrationMethods()
 namespace NumLib::IntegrationMethodRegistry
 {
 GenericIntegrationMethod const& getIntegrationMethod(
-    std::type_index const mesh_element_type, unsigned const order)
+    std::type_index const mesh_element_type, IntegrationOrder const order)
 {
-    if (order == 0)
+    if (order.order == 0)
     {
         // For 0D elements (points) the order does not matter, still we don't
         // want order zero there. For all other element types integration order
@@ -195,16 +195,16 @@ GenericIntegrationMethod const& getIntegrationMethod(
     {
         auto& integration_methods = it->second;
 
-        if (order >= integration_methods.size())
+        if (order.order >= integration_methods.size())
         {
             OGS_FATAL(
                 "Integration order {} is not supported for mesh elements of "
                 "type {}",
-                order,
+                order.order,
                 mesh_element_type.name());
         }
 
-        return integration_methods[order];
+        return integration_methods[order.order];
     }
 
     OGS_FATAL(

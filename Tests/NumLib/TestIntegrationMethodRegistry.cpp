@@ -76,7 +76,7 @@ static unsigned getMaximumIntegrationOrderFromIntegrationMethodRegistry(
         try
         {
             NumLib::IntegrationMethodRegistry::getIntegrationMethod<
-                MeshElementType>(order);
+                MeshElementType>(NumLib::IntegrationOrder{order});
         }
         catch (...)
         {
@@ -153,10 +153,10 @@ protected:
     unsigned const max_order = map_type_to_max_order.at(type_index);
 
     NumLib::GenericIntegrationMethod const& getGenericIntegrationMethod(
-        unsigned order) const
+        unsigned const order) const
     {
         return NumLib::IntegrationMethodRegistry::getIntegrationMethod<
-            MeshElementType>(order);
+            MeshElementType>(NumLib::IntegrationOrder{order});
     }
 };
 
