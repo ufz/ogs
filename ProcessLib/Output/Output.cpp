@@ -93,14 +93,8 @@ bool Output::isOutputStep(int timestep, double const t) const
 
 bool Output::isOutputProcess(const int process_id, const Process& process) const
 {
-    if (!dynamic_cast<OutputVTKFormat*>(output_file.get()))
-    {
-        return process.isMonolithicSchemeUsed();
-    }
-
-    auto const n_processes = _output_processes.size();
-
-    auto const is_last_process = process_id == n_processes - 1;
+    auto const is_last_process =
+        process_id == static_cast<int>(_output_processes.size()) - 1;
 
     return process.isMonolithicSchemeUsed()
            // For the staggered scheme for the coupling, only the last
