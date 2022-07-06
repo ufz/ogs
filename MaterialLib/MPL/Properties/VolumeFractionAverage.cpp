@@ -52,9 +52,9 @@ void VolumeFractionAverage::setProperties(
 
         if (!phase->hasProperty(prop_type_))
         {
-            OGS_FATAL("The phase '" + phase_name +
-                      "' does not have the required property!");
-            std::cout << "PropertyType '" << prop_type_ << "'" << std::endl;
+            OGS_FATAL(
+                "The phase '{}' does not have the required property '{}'!",
+                phase_name, property_enum_to_string[prop_type_]);
         }
         auto const& property = phase->property(prop_type_);
         if (phase_name == "AqueousLiquid")

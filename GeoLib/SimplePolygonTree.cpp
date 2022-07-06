@@ -14,6 +14,8 @@
 
 #include "SimplePolygonTree.h"
 
+#include <range/v3/algorithm/find_if.hpp>
+
 namespace GeoLib
 {
 SimplePolygonTree::SimplePolygonTree(Polygon* polygon,
@@ -49,18 +51,15 @@ const SimplePolygonTree* SimplePolygonTree::parent() const
 void SimplePolygonTree::insertSimplePolygonTree(
     SimplePolygonTree* polygon_hierarchy)
 {
-    Polygon const& polygon = polygon_hierarchy->polygon();
-    bool nfound(true);
-    for (auto* child : _children)
+    auto const child = ranges::find_if(
+        _children, [&p = polygon_hierarchy->polygon()](auto const* c)
+        { return c->polygon().isPolylineInPolygon(p); });
+
+    if (child != std::end(_children))
     {
-        if (child->polygon().isPolylineInPolygon(polygon))
-        {
-            child->insertSimplePolygonTree(polygon_hierarchy);
-            nfound = false;
-            break;
-        }
+        (*child)->insertSimplePolygonTree(polygon_hierarchy);
     }
-    if (nfound)
+    else
     {
         _children.push_back(polygon_hierarchy);
         polygon_hierarchy->_parent = this;

@@ -238,30 +238,30 @@ std::optional<std::array<std::size_t, 3>> SurfaceGrid::getGridCellCoordinates(
             "({:d},{:d},{:d})",
             coords[0], coords[1], coords[2], _n_steps[0], _n_steps[1],
             _n_steps[2]);
-        return std::optional<std::array<std::size_t, 3>>();
+        return {};
     }
-    return std::optional<std::array<std::size_t, 3>>(coords);
+    return coords;
 }
 
 bool SurfaceGrid::isPointInSurface(MathLib::Point3d const& pnt,
                                    double eps) const
 {
-    std::optional<std::array<std::size_t, 3>> optional_c(
-        getGridCellCoordinates(pnt));
-    if (!optional_c)
+    auto const grid_cell_coordinates = getGridCellCoordinates(pnt);
+    if (!grid_cell_coordinates)
     {
         return false;
     }
-    std::array<std::size_t, 3> const c(optional_c.value());
 
-    std::size_t const grid_cell_idx(c[0] + c[1] * _n_steps[0] +
-                                    c[2] * _n_steps[0] * _n_steps[1]);
+    std::size_t const grid_cell_index =
+        (*grid_cell_coordinates)[0] +
+        (*grid_cell_coordinates)[1] * _n_steps[0] +
+        (*grid_cell_coordinates)[2] * _n_steps[0] * _n_steps[1];
+
     std::vector<Triangle const*> const& triangles(
-        _triangles_in_grid_box[grid_cell_idx]);
-    auto const it = std::find_if(triangles.begin(), triangles.end(),
-                                 [eps, pnt](auto const* triangle)
-                                 { return triangle->containsPoint(pnt, eps); });
-    return it != triangles.end();
+        _triangles_in_grid_box[grid_cell_index]);
+    return std::any_of(triangles.begin(), triangles.end(),
+                       [eps, pnt](auto const* triangle)
+                       { return triangle->containsPoint(pnt, eps); });
 }
 
 }  // end namespace GeoLib

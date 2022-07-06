@@ -11,6 +11,10 @@
 #pragma once
 
 #include <Eigen/Eigen>
+#include <map>
+#include <memory>
+#include <string>
+
 #include "BHECommon.h"
 #include "FlowAndTemperatureControl.h"
 #include "PipeConfigurationUType.h"

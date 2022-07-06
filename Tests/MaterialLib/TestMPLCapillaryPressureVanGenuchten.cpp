@@ -38,8 +38,6 @@ TEST(MaterialPropertyLib, CapillaryPressureVanGenuchten)
                                     residual_gas_saturation, exponent, p_b};
 
     MPL::VariableArray variable_array;
-    fill(begin(variable_array), end(variable_array),
-         std::numeric_limits<double>::quiet_NaN());
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();

@@ -22,8 +22,8 @@ createVolumeFractionAverage(BaseLib::ConfigTree const& config)
     //! \ogs_file_param{properties__property__name}
     auto property_name = config.peekConfigParameter<std::string>("name");
 
-    DBUG("Create volume fraction average {:s}.",
-         property_name);
+    //! \ogs_file_param_special{properties__property__VolumeFractionAverage}
+    DBUG("Create volume fraction average {:s}.", property_name);
 
     // no input parameters required here (taken from phase properties)
 

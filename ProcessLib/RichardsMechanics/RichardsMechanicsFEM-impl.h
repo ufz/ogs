@@ -1643,7 +1643,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const chi = [medium, x_position, t, dt](double const S_L)
         {
             MPL::VariableArray vs;
-            vs.fill(std::numeric_limits<double>::quiet_NaN());
             vs[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
             return medium->property(MPL::PropertyType::bishops_effective_stress)
                 .template value<double>(vs, x_position, t, dt);
