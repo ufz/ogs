@@ -416,8 +416,8 @@ template <typename POINT>
 template <typename T>
 std::array<std::size_t, 3> Grid<POINT>::getGridCoords(T const& pnt) const
 {
-    auto const& min_point{getMinPoint()};
-    auto const& max_point{getMinPoint()};
+    auto const [min_point, max_point] = getMinMaxPoints();
+
     std::array<std::size_t, 3> coords{0, 0, 0};
     for (std::size_t k(0); k < 3; k++)
     {
