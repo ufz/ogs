@@ -28,17 +28,17 @@ namespace HydroMechanics
 namespace MPL = MaterialPropertyLib;
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
-                             IntegrationMethod, DisplacementDim>::
+                             DisplacementDim>::
     HydroMechanicsLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         HydroMechanicsProcessData<DisplacementDim>& process_data)
     : _process_data(process_data),
-      _integration_method(integration_order),
+      _integration_method(integration_method),
       _element(e),
       _is_axially_symmetric(is_axially_symmetric)
 {
@@ -105,10 +105,9 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                  ShapeFunctionPressure, IntegrationMethod,
-                                  DisplacementDim>::
+                                  ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
                          std::vector<double> const& local_xdot,
@@ -390,10 +389,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const&
-HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
-                             IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+std::vector<double> const& HydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtDarcyVelocity(
         const double t,
         std::vector<GlobalVector*> const& x,
@@ -495,10 +493,9 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                  ShapeFunctionPressure, IntegrationMethod,
-                                  DisplacementDim>::
+                                  ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobianForPressureEquations(
         const double t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
@@ -673,10 +670,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                  ShapeFunctionPressure, IntegrationMethod,
-                                  DisplacementDim>::
+                                  ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobianForDeformationEquations(
         const double t, double const dt, Eigen::VectorXd const& local_x,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
@@ -787,10 +783,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                  ShapeFunctionPressure, IntegrationMethod,
-                                  DisplacementDim>::
+                                  ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         const double t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_xdot, int const process_id,
@@ -812,10 +807,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                  ShapeFunctionPressure, IntegrationMethod,
-                                  DisplacementDim>::
+                                  ShapeFunctionPressure, DisplacementDim>::
     setInitialConditionsConcrete(std::vector<double> const& local_x,
                                  double const /*t*/,
                                  bool const use_monolithic_scheme,
@@ -876,10 +870,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                  ShapeFunctionPressure, IntegrationMethod,
-                                  DisplacementDim>::
+                                  ShapeFunctionPressure, DisplacementDim>::
     postNonLinearSolverConcrete(std::vector<double> const& local_x,
                                 std::vector<double> const& /*local_xdot*/,
                                 double const t, double const dt,
@@ -953,9 +946,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::size_t HydroMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::setIPDataInitialConditions(std::string const& name,
                                                  double const* values,
                                                  int const integration_order)
@@ -995,20 +988,20 @@ std::size_t HydroMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> HydroMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::getSigma() const
+          int DisplacementDim>
+std::vector<double>
+HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
+                             DisplacementDim>::getSigma() const
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
         _ip_data, &IpData::sigma_eff);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> HydroMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::getEpsilon() const
+          int DisplacementDim>
+std::vector<double>
+HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
+                             DisplacementDim>::getEpsilon() const
 {
     auto const kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
@@ -1031,10 +1024,9 @@ std::vector<double> HydroMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                  ShapeFunctionPressure, IntegrationMethod,
-                                  DisplacementDim>::
+                                  ShapeFunctionPressure, DisplacementDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
                                      Eigen::VectorXd const& /*local_x_dot*/)
@@ -1122,20 +1114,20 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 unsigned HydroMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::getNumberOfIntegrationPoints() const
 {
     return _integration_method.getNumberOfPoints();
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 typename MaterialLib::Solids::MechanicsBase<
     DisplacementDim>::MaterialStateVariables const&
 HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
-                             IntegrationMethod, DisplacementDim>::
+                             DisplacementDim>::
     getMaterialStateVariablesAt(unsigned integration_point) const
 {
     return *_ip_data[integration_point].material_state_variables;
