@@ -29,18 +29,17 @@ namespace ProcessLib
 namespace ThermoHydroMechanics
 {
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                   ShapeFunctionPressure, IntegrationMethod,
-                                   DisplacementDim>::
+                                   ShapeFunctionPressure, DisplacementDim>::
     ThermoHydroMechanicsLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         ThermoHydroMechanicsProcessData<DisplacementDim>& process_data)
     : _process_data(process_data),
-      _integration_method(integration_order),
+      _integration_method(integration_method),
       _element(e),
       _is_axially_symmetric(is_axially_symmetric)
 {
@@ -95,9 +94,9 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::size_t ThermoHydroMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::setIPDataInitialConditions(std::string const& name,
                                                  double const* values,
                                                  int const integration_order)
@@ -138,10 +137,9 @@ std::size_t ThermoHydroMechanicsLocalAssembler<
 // Assembles the local Jacobian matrix. So far, the linearisation of HT part is
 // not considered as that in HT process.
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                        ShapeFunctionPressure,
-                                        IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+void ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
                          std::vector<double> const& local_xdot,
@@ -621,10 +619,9 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtDarcyVelocity(
         const double t,
         std::vector<GlobalVector*> const& x,
@@ -736,10 +733,9 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                        ShapeFunctionPressure,
-                                        IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+void ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     postNonLinearSolverConcrete(std::vector<double> const& local_x,
                                 std::vector<double> const& local_xdot,
                                 double const t, double const dt,
@@ -826,10 +822,9 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                        ShapeFunctionPressure,
-                                        IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+void ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     computeSecondaryVariableConcrete(double const /*t*/, double const /*dt*/,
                                      Eigen::VectorXd const& local_x,
                                      Eigen::VectorXd const& /*local_x_dot*/)
