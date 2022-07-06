@@ -28,8 +28,8 @@ include:
   - local: "scripts/ci/extends/*.yml"
   - local: "/scripts/ci/jobs/meta.yml"
   - local: "/scripts/ci/jobs/ci_images.yml"
-  - local: "/scripts/ci/jobs/pre-commit.yml"
   # jobs, can be indiviually disabled for testing
+  - local: "/scripts/ci/jobs/pre-commit.yml"
   - local: "/scripts/ci/jobs/build-linux.yml"
   - local: "/scripts/ci/jobs/build-linux-petsc.yml"
   - local: "/scripts/ci/jobs/build-linux-frontend.yml"
@@ -38,7 +38,6 @@ include:
   - local: "/scripts/ci/jobs/build-mac.yml"
   - local: "/scripts/ci/jobs/build-container.yml"
   - local: "/scripts/ci/jobs/jupyter.yml"
-  # - template: 'Code-Quality.gitlab-ci.yml' # see !3053
   - local: "/scripts/ci/jobs/code-quality.yml"
   - local: "/scripts/ci/jobs/code-coverage.yml"
   - local: "/scripts/ci/jobs/build-gui-linux.yml"
@@ -51,3 +50,4 @@ include:
   - local: "/scripts/ci/jobs/container.yml"
   - local: "/scripts/ci/jobs/release.yml"
   - local: "/scripts/ci/jobs/package.yml"
+  - local: "/scripts/ci/jobs/trigger.yml"
