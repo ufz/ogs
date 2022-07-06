@@ -459,7 +459,7 @@
         <vtkdiff>
             <regex>A2_ts_.*.vtu</regex>
             <field>pressure</field>
-            <absolute_tolerance>3e-8</absolute_tolerance>
+            <absolute_tolerance>5e-8</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <typeinfo>
+
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
@@ -195,6 +197,9 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     typename ShapeMatricesTypePressure::NodalMatrixType KTT;
     KTT.setZero(temperature_size, temperature_size);
 
+    typename ShapeMatricesTypePressure::NodalMatrixType K_TT_advection;
+    K_TT_advection.setZero(temperature_size, temperature_size);
+
     typename ShapeMatricesTypePressure::NodalMatrixType KTp;
     KTp.setZero(temperature_size, pressure_size);
 
@@ -234,6 +239,15 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
     MaterialPropertyLib::VariableArray vars;
+
+    typename ShapeMatricesTypePressure::NodalVectorType node_flux_q;
+    node_flux_q.setZero(temperature_size);
+
+    bool const apply_full_upwind =
+        _process_data.stabilizer &&
+        (typeid(*_process_data.stabilizer) == typeid(NumLib::FullUpwind));
+
+    double max_velocity_magnitude = 0.;
 
     auto const& identity2 = Invariants::identity2;
     GlobalDimMatrixType const& I(
@@ -468,10 +482,17 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         }
 
         KTT.noalias() +=
-            (dNdx_T.transpose() * effective_thermal_conductivity * dNdx_T +
-             N_T.transpose() * velocity.transpose() * dNdx_T * fluid_density *
-                 c_f) *
-            w;
+            dNdx_T.transpose() * effective_thermal_conductivity * dNdx_T * w;
+        K_TT_advection.noalias() += N_T.transpose() * velocity.transpose() *
+                                    dNdx_T * fluid_density * c_f * w;
+
+        if (apply_full_upwind)
+        {
+            node_flux_q.noalias() -=
+                fluid_density * c_f * velocity.transpose() * dNdx_T * w;
+            max_velocity_magnitude =
+                std::max(max_velocity_magnitude, velocity.norm());
+        }
 
         auto const effective_volumetric_heat_capacity =
             porosity * fluid_density * c_f +
@@ -529,6 +550,17 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         }
          */
     }
+
+    if (apply_full_upwind &&
+        max_velocity_magnitude > _process_data.stabilizer->getCutoffVelocity())
+    {
+        NumLib::applyFullUpwind(node_flux_q, KTT);
+    }
+    else
+    {
+        KTT.noalias() += K_TT_advection;
+    }
+
     // temperature equation, temperature part
     local_Jac
         .template block<temperature_size, temperature_size>(temperature_index,
