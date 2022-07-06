@@ -116,18 +116,17 @@ void updateSwellingStressAndVolumetricStrain(
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                ShapeFunctionPressure, IntegrationMethod,
-                                DisplacementDim>::
+                                ShapeFunctionPressure, DisplacementDim>::
     RichardsMechanicsLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         RichardsMechanicsProcessData<DisplacementDim>& process_data)
     : _process_data(process_data),
-      _integration_method(integration_order),
+      _integration_method(integration_method),
       _element(e),
       _is_axially_symmetric(is_axially_symmetric)
 {
@@ -208,9 +207,9 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::size_t RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::setIPDataInitialConditions(std::string const& name,
                                                  double const* values,
                                                  int const integration_order)
@@ -292,10 +291,9 @@ std::size_t RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                     ShapeFunctionPressure, IntegrationMethod,
-                                     DisplacementDim>::
+                                     ShapeFunctionPressure, DisplacementDim>::
     setInitialConditionsConcrete(std::vector<double> const& local_x,
                                  double const t,
                                  bool const /*use_monolithic_scheme*/,
@@ -369,9 +367,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::assemble(double const t, double const dt,
                                std::vector<double> const& local_x,
                                std::vector<double> const& local_xdot,
@@ -718,10 +716,9 @@ void RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                     ShapeFunctionPressure, IntegrationMethod,
-                                     DisplacementDim>::
+                                     ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
                          std::vector<double> const& local_xdot,
@@ -1210,9 +1207,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::getSigma() const
 {
     constexpr int kelvin_vector_size =
@@ -1224,10 +1221,9 @@ std::vector<double> RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> const& RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtSigma(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -1239,9 +1235,9 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::getSwellingStress() const
 {
     constexpr int kelvin_vector_size =
@@ -1253,10 +1249,9 @@ std::vector<double> RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> const& RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtSwellingStress(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -1283,9 +1278,9 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::getEpsilon() const
 {
     constexpr int kelvin_vector_size =
@@ -1297,10 +1292,9 @@ std::vector<double> RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> const& RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtEpsilon(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -1312,10 +1306,9 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getMaterialStateVariableInternalState(
         std::function<BaseLib::DynamicSpan<double>(
             typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
@@ -1328,10 +1321,9 @@ std::vector<double> RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> const& RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtDarcyVelocity(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -1355,9 +1347,9 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::getSaturation() const
 {
     std::vector<double> result;
@@ -1366,10 +1358,9 @@ std::vector<double> RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> const& RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtSaturation(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -1381,9 +1372,9 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::getMicroSaturation() const
 {
     std::vector<double> result;
@@ -1392,10 +1383,9 @@ std::vector<double> RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> const& RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtMicroSaturation(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -1407,9 +1397,9 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::getMicroPressure() const
 {
     std::vector<double> result;
@@ -1418,10 +1408,9 @@ std::vector<double> RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> const& RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtMicroPressure(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -1433,9 +1422,9 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::getPorosity() const
 {
     std::vector<double> result;
@@ -1444,10 +1433,9 @@ std::vector<double> RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> const& RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtPorosity(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -1459,9 +1447,9 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::getTransportPorosity() const
 {
     std::vector<double> result;
@@ -1470,10 +1458,9 @@ std::vector<double> RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> const& RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtTransportPorosity(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -1485,10 +1472,9 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> const& RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtDryDensitySolid(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -1500,10 +1486,9 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                     ShapeFunctionPressure, IntegrationMethod,
-                                     DisplacementDim>::
+                                     ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobianForPressureEquations(
         const double /*t*/, double const /*dt*/,
         Eigen::VectorXd const& /*local_x*/,
@@ -1517,10 +1502,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                     ShapeFunctionPressure, IntegrationMethod,
-                                     DisplacementDim>::
+                                     ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobianForDeformationEquations(
         const double /*t*/, double const /*dt*/,
         Eigen::VectorXd const& /*local_x*/,
@@ -1534,10 +1518,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                     ShapeFunctionPressure, IntegrationMethod,
-                                     DisplacementDim>::
+                                     ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_xdot, int const process_id,
@@ -1560,10 +1543,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                     ShapeFunctionPressure, IntegrationMethod,
-                                     DisplacementDim>::
+                                     ShapeFunctionPressure, DisplacementDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
                                      Eigen::VectorXd const& local_x_dot)
@@ -1799,22 +1781,21 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 unsigned RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::getNumberOfIntegrationPoints() const
 {
     return _integration_method.getNumberOfPoints();
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 typename MaterialLib::Solids::MechanicsBase<
     DisplacementDim>::MaterialStateVariables const&
-RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::getMaterialStateVariablesAt(unsigned integration_point)
-    const
+RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
+                                ShapeFunctionPressure, DisplacementDim>::
+    getMaterialStateVariablesAt(unsigned integration_point) const
 {
     return *_ip_data[integration_point].material_state_variables;
 }
