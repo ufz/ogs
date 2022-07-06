@@ -1,0 +1,155 @@
+# YAML 1.2
+# Metadata for citation of this software according to the CFF format (https://citation-file-format.github.io/)
+cff-version: 1.2.0
+message: "If you use this software, please cite it using these metadata."
+title: OpenGeoSys
+url: https://www.opengeosys.org
+repository-code: https://github.com/ufz/ogs
+license: BSD-3-Clause
+# DOI representing all versions, do not change:
+doi: 10.5281/zenodo.591265
+# The following needs to be adapted on releases:
+version: "6.4.2"
+date-released: "2022-04-01"
+identifiers:
+    - type: doi
+      description: "Zenodo DOI for 6.4.2"
+      value: 10.5281/zenodo.6405711
+    - type: doi
+      description: "Zenodo DOI for 6.4.1"
+      value: 10.5281/zenodo.5562297
+    - type: doi
+      description: "Zenodo DOI for 6.4.0"
+      value: 10.5281/zenodo.4657103
+    - type: doi
+      description: "Zenodo DOI for 6.3.3"
+      value: 10.5281/zenodo.4360614
+    - type: doi
+      description: "Zenodo DOI for 6.3.2"
+      value: 10.5281/zenodo.3948324
+    - type: doi
+      description: "Zenodo DOI for 6.3.1"
+      value: 10.5281/zenodo.3901385
+    - type: doi
+      description: "Zenodo DOI for 6.3.0"
+      value: 10.5281/zenodo.3706901
+    - type: doi
+      description: "Zenodo DOI for 6.2.2"
+      value: 10.5281/zenodo.3597561
+    - type: doi
+      description: "Zenodo DOI for 6.2.1"
+      value: 10.5281/zenodo.3367100
+    - type: doi
+      description: "Zenodo DOI for 6.2.0"
+      value: 10.5281/zenodo.2600045
+    - type: doi
+      description: "Zenodo DOI for 6.1.0"
+      value: 10.5281/zenodo.1145843
+    - type: doi
+      description: "Zenodo DOI for 6.0.8"
+      value: 10.5281/zenodo.444838
+    - type: doi
+      description: "Zenodo DOI for 6.0.6"
+      value: 10.5281/zenodo.57062
+    - type: doi
+      description: "Zenodo DOI for 6.0.5"
+      value: 10.5281/zenodo.49710
+    - type: doi
+      description: "Zenodo DOI for 6.0.4"
+      value: 10.5281/zenodo.44344
+    - type: doi
+      description: "Zenodo DOI for 6.0.3"
+      value: 10.5281/zenodo.31273
+    - type: doi
+      description: "Zenodo DOI for 6.0.2"
+      value: 10.5281/zenodo.27429
+authors:
+    - given-names: Dmitry
+      family-names: Naumov
+      name-particle: Yu.
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Lars
+      family-names: Bilke
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Thomas
+      family-names: Fischer
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Karsten
+      family-names: Rink
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Wenqing
+      family-names: Wang
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Norihiro
+      family-names: Watanabe
+      affiliation: AIST
+    - given-names: Renchao
+      family-names: Lu
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Norbert
+      family-names: Grunwald
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Florian
+      family-names: Zill
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Jörg
+      family-names: Buchwald
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Yonghui
+      family-names: Huang
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Jasper
+      family-names: Bathmann
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Chaofan
+      family-names: Chen
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Shuang
+      family-names: Chen
+      affiliation: Bundesanstalt für Geowissenschaften und Rohstoffe -- BGR
+    - given-names: Boyan
+      family-names: Meng
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Haibing
+      family-names: Shao
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Dominik
+      family-names: Kern
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Keita
+      family-names: Yoshioka
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Jaime
+      family-names: Rodriguez
+      name-particle: Garibay
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Xingyuan
+      family-names: Miao
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Francesco
+      family-names: Parisio
+      affiliation: CSIC
+    - given-names: Christian
+      family-names: Silbermann
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Jan
+      family-names: Thiedau
+      affiliation: Bundesanstalt für Geowissenschaften und Rohstoffe -- BGR
+    - given-names: Marc
+      family-names: Walther
+      affiliation: TU Dresden
+    - given-names: Sonja
+      family-names: Kaiser
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Johannes
+      family-names: Boog
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Tianyuan
+      family-names: Zheng
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Tobias
+      family-names: Meisel
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Zhang
+      family-names: Ning
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ

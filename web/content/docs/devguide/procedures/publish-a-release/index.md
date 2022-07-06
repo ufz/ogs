@@ -17,6 +17,7 @@ weight = 1080
 - Add a link to the (upcoming) Doxygen documentation for this tag in `Documentation/mainpage.dox.in` (with `v`-prefix)
 - Update `[docs-release]`-link in `README.md` to the new tag (with `v`-prefix)
 - Add a redirect in `scripts/doc/_redirects`
+- Update `CITATION.cff` (Zenodo DOI will be added later)
 - Create a tag and push
 - A new release is automatically created on GitLab
   - Fill in the release notes from the Wiki
@@ -24,6 +25,7 @@ weight = 1080
 - Create a release on GitHub mirror (`ufz/ogs`)
 - Check if a [Zenodo release](https://zenodo.org/account/settings/github/repository/ufz/ogs#) is automatically issued
 - Issue a scan on [Software Heritage Archive](https://archive.softwareheritage.org/browse/origin/directory/?origin_url=https://gitlab.opengeosys.org/ogs/ogs.git)
+- Update `CITATION.cff` and `web/content/publications/_index.md` with new Zenodo DOI
 - Create bugfix branch
   - Create new netlify site (in an empty directory)
     <!-- vale off -->

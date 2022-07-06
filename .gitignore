@@ -34,3 +34,5 @@ CMakeUserPresets.json
 # VS Code devcontainer
 /.cpm
 nohup.out
+
+/Documentation/.vale

@@ -4,6 +4,7 @@
 <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearchLite.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/clipboard@2.0.10/dist/clipboard.min.js"></script>
 
 {{ $scripts := resources.Match "js/*.js" | resources.Concat "bundle.js" | fingerprint }}
 <script type="text/javascript" src="{{ $scripts.Permalink }}" integrity="{{ $scripts.Data.Integrity }}"
