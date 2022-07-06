@@ -15,21 +15,21 @@
 
 #include "IntegrationPointData.h"
 #include "LocalAssemblerInterface.h"
-#include "StokesFlowProcessData.h"
-
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
+#include "StokesFlowProcessData.h"
 
 namespace ProcessLib::StokesFlow
 {
 template <typename ShapeFunctionLiquidVelocity, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int GlobalDim>
+          int GlobalDim>
 class LocalAssemblerData : public StokesFlowLocalAssemblerInterface
 {
     static const int liquid_velocity_index = 0;
@@ -48,14 +48,15 @@ class LocalAssemblerData : public StokesFlowLocalAssemblerInterface
     using NodalVectorType = typename ShapeMatrixTypePressure::NodalVectorType;
 
 public:
-    LocalAssemblerData(MeshLib::Element const& element,
-                       std::size_t const /*local_matrix_size*/,
-                       bool const is_axially_symmetric,
-                       unsigned const integration_order,
-                       StokesFlowProcessData const& process_data)
+    LocalAssemblerData(
+        MeshLib::Element const& element,
+        std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
+        bool const is_axially_symmetric,
+        StokesFlowProcessData const& process_data)
         : _element(element),
           _is_axially_symmetric(is_axially_symmetric),
-          _integration_method(integration_order),
+          _integration_method(integration_method),
           _process_data(process_data)
     {
         unsigned const n_integration_points =
@@ -254,7 +255,7 @@ public:
 private:
     MeshLib::Element const& _element;
     bool const _is_axially_symmetric;
-    IntegrationMethod const _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     StokesFlowProcessData const& _process_data;
 
     std::vector<IntegrationPointData<ShapeMatrixTypeLiquidVelocity,
