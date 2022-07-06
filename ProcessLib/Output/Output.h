@@ -96,6 +96,7 @@ private:
     bool const _output_nonlinear_iteration_results;
 
     OutputDataSpecification const _output_data_specification;
+    std::vector<std::reference_wrapper<Process const>> _output_processes;
     std::vector<std::string> _mesh_names_for_output;
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& _meshes;
 };

@@ -98,11 +98,7 @@ bool Output::isOutputProcess(const int process_id, const Process& process) const
         return process.isMonolithicSchemeUsed();
     }
 
-    auto const number_of_pvd_files =
-        dynamic_cast<OutputVTKFormat*>(output_file.get())
-            ->process_to_pvd_file.size();
-    auto const n_processes =
-        static_cast<int>(number_of_pvd_files / _mesh_names_for_output.size());
+    auto const n_processes = _output_processes.size();
 
     auto const is_last_process = process_id == n_processes - 1;
 
@@ -128,6 +124,7 @@ Output::Output(std::unique_ptr<OutputFile> output_file,
 
 void Output::addProcess(ProcessLib::Process const& process)
 {
+    _output_processes.push_back(process);
     if (_mesh_names_for_output.empty())
     {
         _mesh_names_for_output.push_back(process.getMesh().getName());
