@@ -26,6 +26,7 @@ weight = 1080
 - Check if a [Zenodo release](https://zenodo.org/account/settings/github/repository/ufz/ogs#) is automatically issued
 - Issue a scan on [Software Heritage Archive](https://archive.softwareheritage.org/browse/origin/directory/?origin_url=https://gitlab.opengeosys.org/ogs/ogs.git)
 - Update `CITATION.cff` and `web/content/publications/_index.md` with new Zenodo DOI
+- Update `CITATION.cff` author list (`git shortlog -sne`) and corresponding bibtex-entry in publications web page
 - Create bugfix branch
   - Create new netlify site (in an empty directory)
     <!-- vale off -->
