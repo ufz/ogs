@@ -369,7 +369,7 @@ if(OGS_USE_PETSC)
 endif()
 
 # Does not compile in Debug-mode, see #3175.
-if(CMAKE_BUILD_TYPE STREQUAL "Release" AND OGS_BUILD_TESTING)
+if(CMAKE_BUILD_TYPE MATCHES "Rel" AND OGS_BUILD_TESTING)
     set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
     CPMAddPackage(
         NAME xdmf
