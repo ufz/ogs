@@ -220,7 +220,7 @@ std::function<std::string(std::vector<double>)> write_xdmf(
         return fmt::format(
             R"(
 <Grid Name="Grid" GridType="Uniform">
-    <Time Value="{time_value}"/>
+    <Time Value="{time_value:g}"/>
     {geometry}
     {topology}
     {fix_attributes}
