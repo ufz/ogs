@@ -13,6 +13,8 @@
 #include <Eigen/Dense>
 #include <memory>
 
+#include "ParameterLib/Parameter.h"
+
 namespace MaterialPropertyLib
 {
 class MaterialSpatialDistributionMap;
@@ -34,6 +36,10 @@ struct LiquidFlowData final
 
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
+
+    /// It stores aperture size, which is the thickness of 2D element or the
+    /// cross section area of 1D element. For 3D element, the value is set to 1.
+    ParameterLib::Parameter<double> const& aperture_size;
 };
 
 }  // namespace LiquidFlow
