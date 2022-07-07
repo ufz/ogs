@@ -124,11 +124,27 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     checkMPLProperties(mesh, *media_map);
     DBUG("Media properties verified.");
 
+    auto const* aperture_size_parameter = &ParameterLib::findParameter<double>(
+        ProcessLib::Process::constant_one_parameter_name, parameters, 1);
+
+    auto const aperture_config =
+        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__aperture_size}
+        config.getConfigSubtreeOptional("aperture_size");
+    if (aperture_config)
+    {
+        aperture_size_parameter = &ParameterLib::findParameter<double>(
+            //! \ogs_file_param_special{prj__processes__process__LIQUID_FLOW__aperture_size__parameter}
+            *aperture_config, "parameter", parameters, 1);
+    }
+
     LiquidFlowData process_data{
         std::move(media_map),
         MeshLib::getElementRotationMatrices(
             mesh_space_dimension, mesh.getDimension(), mesh.getElements()),
-        mesh_space_dimension, std::move(specific_body_force), has_gravity};
+        mesh_space_dimension,
+        std::move(specific_body_force),
+        has_gravity,
+        *aperture_size_parameter};
 
     return std::make_unique<LiquidFlowProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
