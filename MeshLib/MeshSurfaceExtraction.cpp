@@ -346,15 +346,30 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
                         continue;
                     }
                 }
-                if (face->getGeomType() == MeshElemType::TRIANGLE)
+                switch (face->getCellType())
                 {
-                    sfc_elements.push_back(new MeshLib::Tri(
-                        *static_cast<const MeshLib::Tri*>(face.get())));
-                }
-                else
-                {
-                    sfc_elements.push_back(new MeshLib::Quad(
-                        *static_cast<const MeshLib::Quad*>(face.get())));
+                    case MeshLib::CellType::TRI3:
+                        sfc_elements.push_back(new MeshLib::Tri(
+                            *static_cast<const MeshLib::Tri*>(face.get())));
+                        break;
+                    case MeshLib::CellType::TRI6:
+                        sfc_elements.push_back(new MeshLib::Tri6(
+                            *static_cast<const MeshLib::Tri6*>(face.get())));
+                        break;
+                    case MeshLib::CellType::QUAD4:
+                        sfc_elements.push_back(new MeshLib::Quad(
+                            *static_cast<const MeshLib::Quad*>(face.get())));
+                        break;
+                    case MeshLib::CellType::QUAD8:
+                        sfc_elements.push_back(new MeshLib::Quad8(
+                            *static_cast<const MeshLib::Quad8*>(face.get())));
+                        break;
+                    case MeshLib::CellType::QUAD9:
+                        sfc_elements.push_back(new MeshLib::Quad9(
+                            *static_cast<const MeshLib::Quad9*>(face.get())));
+                        break;
+                    default:
+                        DBUG("unknown cell type");
                 }
                 element_to_bulk_element_id_map.push_back(elem->getID());
                 element_to_bulk_face_id_map.push_back(j);
