@@ -15,6 +15,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/FileTools.h"
 #include "Common/CreateReactionRate.h"
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "MeshLib/Mesh.h"
 #include "PhreeqcIO.h"
 #include "PhreeqcIOData/ChemicalSystem.h"
@@ -35,6 +36,8 @@
 #include "PhreeqcKernelData/CreateEquilibriumReactants.h"
 #include "PhreeqcKernelData/CreateKineticReactant.h"
 #include "PhreeqcKernelData/ReactionRate.h"
+#include "SelfContainedSolverData/CreateChemicalReactionData.h"
+#include "SelfContainedSolverData/SelfContainedSolver.h"
 
 namespace
 {
@@ -189,5 +192,67 @@ createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
         process_id_to_component_name_map, std::move(path_to_database),
         std::move(aqueous_solution), std::move(equilibrium_reactants),
         std::move(kinetic_reactants), std::move(reaction_rates));
+}
+
+template <>
+std::unique_ptr<ChemicalSolverInterface>
+createChemicalSolverInterface<ChemicalSolver::SelfContained>(
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+    std::map<std::string, std::unique_ptr<GlobalLinearSolver>> const&
+        linear_solvers,
+    BaseLib::ConfigTree const& config, std::string const& /*output_directory*/)
+{
+    auto mesh_name =
+        //! \ogs_file_param{prj__chemical_system__mesh}
+        config.getConfigParameter<std::string>("mesh");
+
+    // Find and extract mesh from the list of meshes.
+    auto const& mesh = *BaseLib::findElementOrError(
+        std::begin(meshes), std::end(meshes),
+        [&mesh_name](auto const& mesh)
+        {
+            assert(mesh != nullptr);
+            return mesh->getName() == mesh_name;
+        },
+        "Required mesh with name '" + mesh_name + "' not found.");
+
+    assert(mesh.getID() != 0);
+    DBUG("Found mesh '{:s}' with id {:d}.", mesh.getName(), mesh.getID());
+
+    auto const ls_name =
+        //! \ogs_file_param{prj__chemical_system__linear_solver}
+        config.getConfigParameter<std::string>("linear_solver");
+    auto& linear_solver = BaseLib::getOrError(
+        linear_solvers, ls_name,
+        "A linear solver with the given name does not exist.");
+
+    auto chemical_reaction_data =
+        SelfContainedSolverData::createChemicalReactionData(
+            //! \ogs_file_param{prj__chemical_system__chemical_reactions}
+            config.getConfigSubtree("chemical_reactions"));
+
+    // create sparse stoichiometric matrix
+    std::vector<double> stoichiometric_matrix_vec;
+    for (auto const& per_chemical_reaction_data : chemical_reaction_data)
+    {
+        stoichiometric_matrix_vec.insert(
+            stoichiometric_matrix_vec.end(),
+            per_chemical_reaction_data->stoichiometric_vector.begin(),
+            per_chemical_reaction_data->stoichiometric_vector.end());
+    }
+
+    auto const num_components =
+        //! \ogs_file_param{prj__chemical_system__number_of_components}
+        config.getConfigParameter<int>("number_of_components");
+
+    Eigen::MatrixXd const stoichiometric_matrix = MathLib::toMatrix(
+        stoichiometric_matrix_vec, num_components, num_components);
+
+    Eigen::SparseMatrix<double> sparse_stoichiometric_matrix;
+    sparse_stoichiometric_matrix = stoichiometric_matrix.sparseView();
+
+    return std::make_unique<SelfContainedSolverData::SelfContainedSolver>(
+        mesh, *linear_solver, sparse_stoichiometric_matrix,
+        std::move(chemical_reaction_data));
 }
 }  // namespace ChemistryLib

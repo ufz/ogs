@@ -15,6 +15,7 @@ namespace ChemistryLib
 enum class ChemicalSolver
 {
     Phreeqc,
-    PhreeqcKernel
+    PhreeqcKernel,
+    SelfContained
 };
 }  // namespace ChemistryLib

@@ -552,6 +552,16 @@ ProjectData::parseChemicalSolverInterface(
             "the time being. Please set 'Phreeqc'' as the chemical solver for "
             "reactive transport modeling.");
     }
+    else if (boost::iequals(chemical_solver, "SelfContained"))
+    {
+        INFO(
+            "Use self-contained chemical solver for water chemistry "
+            "calculation.");
+
+        chemical_solver_interface = ChemistryLib::createChemicalSolverInterface<
+            ChemistryLib::ChemicalSolver::SelfContained>(
+            _mesh_vec, _linear_solvers, *config, output_directory);
+    }
     else
     {
         OGS_FATAL(
