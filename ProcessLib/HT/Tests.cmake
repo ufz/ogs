@@ -138,6 +138,21 @@ AddTest(
     CoupledPressureParabolicTemperatureParabolic_ts_10_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_10_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
 )
 
+# Staggered + XDMF
+AddTest(
+    NAME HT_SimpleSynthetics_CoupledPressureParabolicTemperatureParabolic_Staggered_XDMF
+    PATH Parabolic/HT/SimpleSynthetics/XDMF
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS CoupledPressureParabolicTemperatureParabolicStaggered.prj
+    WRAPPER time
+    TESTER xdmfdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf T T 1e-10 1e-10
+    CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf p p 1e-10 1e-10
+    CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf darcy_velocity darcy_velocity 1e-10 1e-10
+)
+
 AddTest(
     NAME HT_calculatesurfaceflux
     PATH Parabolic/HT/SimpleSynthetics

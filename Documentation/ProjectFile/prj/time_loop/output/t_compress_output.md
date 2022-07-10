@@ -1,1 +1,1 @@
-\copydoc ProcessLib::Output::_output_file_compression
+\copydoc ProcessLib::OutputFile::compression

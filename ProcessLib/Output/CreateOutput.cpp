@@ -11,6 +11,7 @@
 #include "CreateOutput.h"
 
 #include <memory>
+#include <range/v3/algorithm/find.hpp>
 #include <tuple>
 
 #include "BaseLib/Algorithm.h"
@@ -20,8 +21,59 @@
 #include "MeshLib/Mesh.h"
 #include "Output.h"
 
+namespace
+{
+//! Converts a vtkXMLWriter's data mode string to an int. See
+/// OutputVTKFormat::data_mode.
+int convertVtkDataMode(std::string_view const& data_mode)
+{
+    using namespace std::string_view_literals;
+    constexpr std::array data_mode_lookup_table{"Ascii"sv, "Binary"sv,
+                                                "Appended"sv};
+    auto res = ranges::find(begin(data_mode_lookup_table),
+                            end(data_mode_lookup_table), data_mode);
+    if (res == data_mode_lookup_table.end())
+    {
+        OGS_FATAL(
+            "Unsupported vtk output file data mode '{:s}'. Expected Ascii, "
+            "Binary, or Appended.",
+            data_mode);
+    }
+    return static_cast<int>(std::distance(begin(data_mode_lookup_table), res));
+}
+}  // namespace
+
 namespace ProcessLib
 {
+enum class OutputType : uint8_t
+{
+    vtk,
+    xdmf
+};
+
+std::unique_ptr<OutputFile> createOutputFile(
+    std::string const& output_directory, OutputType const output_type,
+    std::string prefix, std::string suffix, std::string const& data_mode,
+    bool const compress_output, unsigned int const number_of_files)
+{
+    switch (output_type)
+    {
+        case OutputType::vtk:
+            return std::make_unique<OutputVTKFormat>(
+                output_directory, std::move(prefix), std::move(suffix),
+                compress_output, convertVtkDataMode(data_mode));
+        case OutputType::xdmf:
+            return std::make_unique<OutputXDMFHDF5Format>(
+                output_directory, std::move(prefix), std::move(suffix),
+                compress_output, number_of_files);
+        default:
+            OGS_FATAL(
+                "No supported file type provided. Read '{:s}' from "
+                "<output><type> in prj file. Supported: VTK, XDMF.",
+                output_type);
+    }
+}
+
 std::unique_ptr<Output> createOutput(
     const BaseLib::ConfigTree& config,
     std::string const& output_directory,
@@ -80,7 +132,7 @@ std::unique_ptr<Output> createOutput(
         config.getConfigParameter<std::string>("data_mode", "Appended");
 
     // Construction of output times
-    std::vector<Output::PairRepeatEachSteps> repeats_each_steps;
+    std::vector<PairRepeatEachSteps> repeats_each_steps;
 
     //! \ogs_file_param{prj__time_loop__output__timesteps}
     if (auto const timesteps = config.getConfigSubtreeOptional("timesteps"))
@@ -132,9 +184,6 @@ std::unique_ptr<Output> createOutput(
     bool const output_residuals = config.getConfigParameter<bool>(
         "output_extrapolation_residuals", false);
 
-    OutputDataSpecification output_data_specification{output_variables,
-                                                      output_residuals};
-
     std::vector<std::string> mesh_names_for_output;
     //! \ogs_file_param{prj__time_loop__output__meshes}
     if (auto const meshes_config = config.getConfigSubtreeOptional("meshes"))
@@ -163,6 +212,10 @@ std::unique_ptr<Output> createOutput(
         //! \ogs_file_param{prj__time_loop__output__fixed_output_times}
         config.getConfigParameter<std::vector<double>>("fixed_output_times",
                                                        {});
+    OutputDataSpecification output_data_specification{
+        std::move(output_variables), std::move(fixed_output_times),
+        std::move(repeats_each_steps), output_residuals};
+
     // Remove possible duplicated elements and sort.
     BaseLib::makeVectorUnique(fixed_output_times);
 
@@ -170,12 +223,14 @@ std::unique_ptr<Output> createOutput(
         //! \ogs_file_param{prj__time_loop__output__output_iteration_results}
         config.getConfigParameter<bool>("output_iteration_results", false);
 
-    return std::make_unique<Output>(
-        output_directory, output_type, prefix, suffix, compress_output,
-        number_of_files, data_mode, output_iteration_results,
-        std::move(repeats_each_steps), std::move(fixed_output_times),
-        std::move(output_data_specification), std::move(mesh_names_for_output),
-        meshes);
+    auto output_file = createOutputFile(
+        output_directory, output_type, std::move(prefix), std::move(suffix),
+        data_mode, compress_output, number_of_files);
+
+    return std::make_unique<Output>(std::move(output_file),
+                                    output_iteration_results,
+                                    std::move(output_data_specification),
+                                    std::move(mesh_names_for_output), meshes);
 }
 
 }  // namespace ProcessLib

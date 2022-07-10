@@ -1,4 +1,4 @@
-\copydoc ProcessLib::Output::_output_file_data_mode
+\copydoc ProcessLib::OutputVTKFormat::data_mode
 
 The default value is Binary.
 

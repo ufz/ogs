@@ -1,1 +1,1 @@
-\copydoc ProcessLib::Output::_n_files
+\copydoc ProcessLib::OutputXDMFHDF5Format::n_files
