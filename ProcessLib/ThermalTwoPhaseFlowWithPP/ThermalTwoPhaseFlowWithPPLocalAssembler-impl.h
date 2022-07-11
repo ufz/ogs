@@ -447,9 +447,11 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                 .template value<double>(vars, pos, t, dt);
 
         // enthalpies of gaseous components
+        // Note: h^a_G = C^a_P * (T - T0) = C^a_V * (T - T0) + RT/M^a, thus
+        // "C^a_V" should be used in the following. Same for contaminant.
         double const enthalpy_air_nonwet =
             heat_capacity_dry_air * (T_int_pt - CelsiusZeroInKelvin) +
-            IdealGasConstant * (T_int_pt - CelsiusZeroInKelvin) / air_mol_mass;
+            IdealGasConstant * T_int_pt / air_mol_mass;
         double const enthalpy_water_nonwet =
             heat_capacity_water_vapour * (T_int_pt - CelsiusZeroInKelvin) +
             latent_heat_evaporation;
@@ -611,13 +613,6 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         auto const& b = _process_data.specific_body_force;
 
         // gas and liquid phase velocities
-        GlobalDimVectorType const velocity_nonwet =
-            _process_data.has_gravity
-                ? GlobalDimVectorType(
-                      -lambda_nonwet * permeability *
-                      (dNdx * pg_nodal_values - density_nonwet * b))
-                : GlobalDimVectorType(-lambda_nonwet * permeability * dNdx *
-                                      pg_nodal_values);
         GlobalDimVectorType const velocity_wet =
             _process_data.has_gravity
                 ? GlobalDimVectorType(
@@ -628,13 +623,6 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                                       (pg_nodal_values - pc_nodal_values));
 
         laplace_operator.noalias() = dNdx.transpose() * permeability * dNdx * w;
-
-        Ket.noalias() += w * N.transpose() *
-                             (d_density_nonwet_dT * enthalpy_nonwet +
-                              density_nonwet * d_enthalpy_nonwet_dT) *
-                             velocity_nonwet.transpose() * dNdx +
-                         w * N.transpose() * heat_capacity_water * density_wet *
-                             velocity_wet.transpose() * dNdx;
 
         // mechanical dispersivities
         auto const solute_dispersivity_transverse =
@@ -752,19 +740,9 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
 
         Kep.noalias() += (lambda_nonwet * density_nonwet * enthalpy_nonwet +
                           lambda_wet * density_wet * enthalpy_wet) *
-                             laplace_operator +
-                         (1 - Sw) * porosity * diffusion_coeff_water_nonwet *
-                             mol_density_nonwet *
-                             (air_mol_mass * enthalpy_air_nonwet -
-                              water_mol_mass * enthalpy_water_nonwet) *
-                             d_x_air_nonwet_dpg * diffusion_operator;
+                         laplace_operator;
         Kepc.noalias() +=
-            -lambda_wet * enthalpy_wet * density_wet * laplace_operator +
-            (1 - Sw) * porosity * diffusion_coeff_water_nonwet *
-                mol_density_nonwet *
-                (air_mol_mass * enthalpy_air_nonwet -
-                 water_mol_mass * enthalpy_water_nonwet) *
-                d_x_air_nonwet_dpc * diffusion_operator;
+            -lambda_wet * enthalpy_wet * density_wet * laplace_operator;
 
         if (medium.hasProperty(
                 MaterialPropertyLib::PropertyType::thermal_conductivity))
@@ -779,12 +757,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(lambda);
 
             Ket.noalias() +=
-                dNdx.transpose() * heat_conductivity_unsaturated * dNdx * w +
-                (1 - Sw) * porosity * diffusion_coeff_water_nonwet *
-                    mol_density_nonwet *
-                    (air_mol_mass * enthalpy_air_nonwet -
-                     water_mol_mass * enthalpy_water_nonwet) *
-                    d_x_air_nonwet_dT * diffusion_operator;
+                dNdx.transpose() * heat_conductivity_unsaturated * dNdx * w;
         }
         else
         {
@@ -807,12 +780,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                                thermal_conductivity_fluid, porosity);
 
             Ket.noalias() +=
-                dNdx.transpose() * heat_conductivity_unsaturated * dNdx * w +
-                (1 - Sw) * porosity * diffusion_coeff_water_nonwet *
-                    mol_density_nonwet *
-                    (air_mol_mass * enthalpy_air_nonwet -
-                     water_mol_mass * enthalpy_water_nonwet) *
-                    d_x_air_nonwet_dT * diffusion_operator;
+                dNdx.transpose() * heat_conductivity_unsaturated * dNdx * w;
         }
 
         if (_process_data.has_gravity)
