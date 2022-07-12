@@ -94,6 +94,25 @@ struct PowerCurveConstantFlow
     double density;
 };
 
+struct PowerCurveFlowCurve
+{
+    FlowAndTemperature operator()(double const T_out, double const time) const
+    {
+        double const power = power_curve.getValue(time);
+        double const flow_rate = flow_curve.getValue(time);
+        if (power == 0)
+        {
+            return {0.0, T_out};
+        }
+        return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
+    }
+    MathLib::PiecewiseLinearInterpolation const& power_curve;
+    MathLib::PiecewiseLinearInterpolation const& flow_curve;
+
+    double heat_capacity;
+    double density;
+};
+
 struct BuildingPowerCurveConstantFlow
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
@@ -122,6 +141,7 @@ using FlowAndTemperatureControl = std::variant<TemperatureCurveConstantFlow,
                                                FixedPowerConstantFlow,
                                                FixedPowerFlowCurve,
                                                PowerCurveConstantFlow,
+                                               PowerCurveFlowCurve,
                                                BuildingPowerCurveConstantFlow>;
 }  // namespace BHE
 }  // namespace HeatTransportBHE

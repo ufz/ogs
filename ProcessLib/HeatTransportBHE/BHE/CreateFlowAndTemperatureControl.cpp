@@ -104,6 +104,25 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
                                       refrigerant.density};
     }
 
+    if (type == "PowerCurveFlowCurve")
+    {
+        auto const& power_curve = *BaseLib::getOrError(
+            curves,
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__PowerCurveFlowCurve__power_curve}
+            config.getConfigParameter<std::string>("power_curve"),
+            "Required power curve not found.");
+
+        auto const& flow_rate_curve = *BaseLib::getOrError(
+            curves,
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__PowerCurveFlowCurve__flow_rate_curve}
+            config.getConfigParameter<std::string>("flow_rate_curve"),
+            "Required flow rate curve not found.");
+
+        return PowerCurveFlowCurve{power_curve, flow_rate_curve,
+                                      refrigerant.specific_heat_capacity,
+                                      refrigerant.density};
+    }
+
     if (type == "BuildingPowerCurveConstantFlow")
     {
         auto const& power_curve = *BaseLib::getOrError(
