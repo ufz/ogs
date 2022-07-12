@@ -15,6 +15,7 @@
 #include "MeshLib/Elements/Utils.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/Process.h"
+#include "ProcessLib/Utils/ComputeResiduum.h"
 #include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
 #include "TH2MFEM.h"
@@ -41,11 +42,14 @@ TH2MProcess<DisplacementDim>::TH2MProcess(
               std::move(secondary_variables), use_monolithic_scheme),
       _process_data(std::move(process_data))
 {
+    _heat_flow_rate = MeshLib::getOrCreateMeshProperty<double>(
+        mesh, "HeatFlowRate", MeshLib::MeshItemType::Node, 1);
+    _gas_mass_flow_rate = MeshLib::getOrCreateMeshProperty<double>(
+        mesh, "GasMassFlowRate", MeshLib::MeshItemType::Node, 1);
+    _liquid_mass_flow_rate = MeshLib::getOrCreateMeshProperty<double>(
+        mesh, "LiquidMassFlowRate", MeshLib::MeshItemType::Node, 1);
     _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
-
-    _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "MassFlowRate", MeshLib::MeshItemType::Node, 1);
 
     // TODO (naumov) remove ip suffix. Probably needs modification of the mesh
     // properties, s.t. there is no "overlapping" with cell/point data.
@@ -316,6 +320,18 @@ void TH2MProcess<DisplacementDim>::assembleConcreteProcess(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
         pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
         b);
+
+    auto const residuum = computeResiduum(*x[0], *xdot[0], M, K, b);
+    auto copyRhs = [&](int const variable_id, auto& output_vector)
+    {
+        transformVariableFromGlobalVector(residuum, variable_id, dof_table[0],
+                                          output_vector, std::negate<double>());
+    };
+
+    copyRhs(0, *_gas_mass_flow_rate);
+    copyRhs(1, *_liquid_mass_flow_rate);
+    copyRhs(2, *_heat_flow_rate);
+    copyRhs(3, *_nodal_forces);
 }
 
 template <int DisplacementDim>
@@ -347,27 +363,14 @@ void TH2MProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
 
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {
-        if (_use_monolithic_scheme)
-        {
-            transformVariableFromGlobalVector(b, variable_id, dof_tables[0],
-                                              output_vector,
-                                              std::negate<double>());
-        }
-        else
-        {
-            transformVariableFromGlobalVector(b, 0, dof_tables[process_id],
-                                              output_vector,
-                                              std::negate<double>());
-        }
+        transformVariableFromGlobalVector(b, variable_id, dof_tables[0],
+                                          output_vector, std::negate<double>());
     };
-    if (_use_monolithic_scheme || process_id == 1)
-    {
-        copyRhs(0, *_hydraulic_flow);
-    }
-    if (_use_monolithic_scheme || process_id == 2)
-    {
-        copyRhs(1, *_nodal_forces);
-    }
+
+    copyRhs(0, *_gas_mass_flow_rate);
+    copyRhs(1, *_liquid_mass_flow_rate);
+    copyRhs(2, *_heat_flow_rate);
+    copyRhs(3, *_nodal_forces);
 }
 
 template <int DisplacementDim>
