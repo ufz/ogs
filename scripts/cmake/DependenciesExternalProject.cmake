@@ -168,9 +168,9 @@ if(NOT ZLIB_FOUND)
             "ExternalProject_Add(): added package ZLIB@${ogs.tested_version.zlib}"
     )
     if(WIN32)
-        file(INSTALL ${PROJECT_BINARY_DIR}/_ext/ZLIB/bin/
-             DESTINATION ${CMAKE_INSTALL_BINDIR}
-        )
+        # requires CMake 3.24 to be effective:
+        set(ZLIB_USE_STATIC_LIBS "ON")
+        set(ZLIB_ROOT ${PROJECT_BINARY_DIR}/_ext/ZLIB)
     endif()
     set(_EXT_LIBS ${_EXT_LIBS} ZLIB CACHE INTERNAL "")
     BuildExternalProject_find_package(ZLIB)
@@ -194,6 +194,9 @@ set(_hdf5_options
 )
 if("${ZLIB_INCLUDE_DIRS}" MATCHES "${PROJECT_BINARY_DIR}/_ext/ZLIB")
     list(APPEND _hdf5_options "-DZLIB_ROOT=${PROJECT_BINARY_DIR}/_ext/ZLIB")
+    if(WIN32)
+        list(APPEND _hdf5_options "-DZLIB_USE_STATIC_LIBS=ON")
+    endif()
 endif()
 if(OGS_USE_MPI)
     set(HDF5_PREFER_PARALLEL ON)
