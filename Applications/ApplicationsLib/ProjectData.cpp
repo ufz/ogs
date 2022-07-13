@@ -444,6 +444,9 @@ std::vector<std::string> ProjectData::parseParameters(
     _parameters.push_back(
         std::make_unique<ParameterLib::ConstantParameter<double>>(
             ProcessLib::DeactivatedSubdomain::zero_parameter_name, 0.0));
+    _parameters.push_back(
+        std::make_unique<ParameterLib::ConstantParameter<double>>(
+            ProcessLib::Process::constant_one_parameter_name, 1.0));
 
     return parameter_names_for_transformation;
 }

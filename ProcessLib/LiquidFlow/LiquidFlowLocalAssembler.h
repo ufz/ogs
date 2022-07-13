@@ -99,13 +99,21 @@ public:
                                       GlobalDim>(element, is_axially_symmetric,
                                                  _integration_method);
 
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        double const aperture_size =
+            (_element.getDimension() == 3u)
+                ? 1.0
+                : _process_data.aperture_size(0.0, pos)[0];
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data.emplace_back(
                 shape_matrices[ip].N, shape_matrices[ip].dNdx,
                 _integration_method.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
-                    shape_matrices[ip].detJ);
+                    shape_matrices[ip].detJ * aperture_size);
         }
     }
 

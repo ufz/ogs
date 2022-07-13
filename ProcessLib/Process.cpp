@@ -19,6 +19,8 @@
 
 namespace ProcessLib
 {
+const std::string Process::constant_one_parameter_name = "constant_one";
+
 Process::Process(
     std::string name_,
     MeshLib::Mesh& mesh,

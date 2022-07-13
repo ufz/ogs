@@ -17,6 +17,9 @@
             <secondary_variables>
                 <secondary_variable internal_name="darcy_velocity" output_name="v"/>
             </secondary_variables>
+            <aperture_size>
+                <parameter>1D_element_cross_section_area</parameter>
+            </aperture_size>
         </process>
     </processes>
     <media>
@@ -112,6 +115,11 @@
         </output>
     </time_loop>
     <parameters>
+        <parameter>
+            <name>1D_element_cross_section_area</name>
+            <type>Constant</type>
+            <value>1.e-4</value>
+        </parameter>
         <parameter>
             <name>p0</name>
             <type>Constant</type>

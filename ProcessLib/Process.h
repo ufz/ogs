@@ -42,6 +42,8 @@ class Process
           NumLib::NonlinearSolverTag::Newton>
 {
 public:
+    PROCESSLIB_EXPORT static const std::string constant_one_parameter_name;
+
     using NonlinearSolver = NumLib::NonlinearSolverBase;
     using TimeDiscretization = NumLib::TimeDiscretization;
 

@@ -14,6 +14,9 @@
             <secondary_variables>
                 <secondary_variable internal_name="darcy_velocity" output_name="v"/>
             </secondary_variables>
+            <aperture_size>
+                <parameter>fracture_thickness</parameter>
+            </aperture_size>
         </process>
     </processes>
     <media>
@@ -109,6 +112,11 @@
         </output>
     </time_loop>
     <parameters>
+        <parameter>
+            <name>fracture_thickness</name>
+            <type>MeshElement</type>
+            <field_name>aperture_size</field_name>
+        </parameter>
         <parameter>
             <name>k</name>
             <type>Constant</type>
