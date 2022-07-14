@@ -84,11 +84,16 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
 
     if (!BaseLib::IsFileExisting(fname_new))  // binary file does not exist.
     {
-        OGS_FATAL(
-            "Required binary file {:s} does not exist.\n"
-            "Reading of ASCII mesh file is not supported since OGS version "
-            "6.3.3.",
-            fname_new);
+        std::string const fname_ascii = file_name_base +
+                                        "_partitioned_msh_cfg" +
+                                        std::to_string(_mpi_comm_size) + ".msh";
+        if (BaseLib::IsFileExisting(fname_ascii))
+        {
+            ERR("Reading of ASCII mesh file {:s} is not supported since OGS "
+                "version 6.3.3.",
+                fname_ascii);
+        }
+        OGS_FATAL("Required binary file {:s} does not exist.\n", fname_new);
     }
 
     INFO("Reading corresponding part of mesh data from binary file {:s} ...",
