@@ -278,11 +278,11 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         // Henry constant of organic contaminant
         double const henry_contam =
             contaminant_vapour_component
-                .property(MaterialPropertyLib::PropertyType::henry_constant)
+                .property(MaterialPropertyLib::PropertyType::henry_coefficient)
                 .template value<double>(vars, pos, t, dt);
         double d_henry_contaminant_dT =
             contaminant_vapour_component
-                .property(MaterialPropertyLib::PropertyType::henry_constant)
+                .property(MaterialPropertyLib::PropertyType::henry_coefficient)
                 .template dValue<double>(
                     vars, MaterialPropertyLib::Variable::temperature, pos, t,
                     dt);
