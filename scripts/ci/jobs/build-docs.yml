@@ -1,6 +1,6 @@
 build docs:
   stage: build
-  tags: [envinf, shell]
+  tags: [envinf2-shell]
   needs: [meta]
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_TAG
