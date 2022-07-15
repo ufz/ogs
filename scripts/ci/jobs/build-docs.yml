@@ -28,12 +28,12 @@ build docs:
     - echo "num_cycles $NUM_CYCLES" > metrics.txt
     - cpp-dependencies --graph cpp-dependencies.dot && dot -Tsvg cpp-dependencies.dot -o build/cpp-dependencies.svg
     # lizard, default code complexity number (15), function line length 100, max arguments 10
-    - python /opt/lizard/lizard.py -l cpp -w -t 1 --length 100 --arguments 10 > lizard.txt || true
+    - lizard -l cpp -w -t 1 --length 100 --arguments 10 > lizard.txt || true
     - cat lizard.txt
     - NUM_LIZARD_ISSUES=`cat lizard.txt | wc -l`
     - echo "lizard_issues $NUM_LIZARD_ISSUES" >> metrics.txt
-    - python /opt/lizard/lizard.py -l cpp -t 8 --html -o Lizard.html
-    - python /opt/lizard/lizard.py -EWordCount -x "./ThirdParty/*" -x "./Tests/*" || true # word-cloud
+    - lizard -l cpp -t 8 --html -o Lizard.html
+    - lizard -EWordCount -x "./ThirdParty/*" -x "./Tests/*" || true # word-cloud
     # build
     - cd build
     - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
