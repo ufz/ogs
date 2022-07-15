@@ -1,24 +1,10 @@
 build docs:
   stage: build
-  tags: [envinf2-shell]
-  needs: [meta]
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_TAG
-      variables:
-        ON_MASTER: "true"
-        DEPLOY: "true"
-    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
-      variables:
-        DEPLOY: "true"
-    - when: always
+  image: $CONTAINER_GCC_IMAGE
+  needs: [meta, ci_images]
   timeout: 15 minutes
-  retry:
-    max: 2
-    when:
-      - runner_system_failure
-      - job_execution_timeout
   variables:
-    DOX_WARNINGS_THRESHOLD: 8
+    DOX_WARNINGS_THRESHOLD: 16
   script:
     # HACK to easier linking to the generated pages
     - echo '<meta http-equiv="REFRESH" content="0;URL=build/docs/index.html">' >> Doxygen.html
@@ -51,15 +37,9 @@ build docs:
         exit 1
       fi
     - echo "Number of Doxygen warnings is $NUM_DOX_WARNINGS (threshold is $DOX_WARNINGS_THRESHOLD)."
+    - BRANCH_REGEX="^v[0-9]\.[0-9]\.[0-9]"
     - |
-      if [ "$DEPLOY" == "true" ]; then
-        if [ "$ON_MASTER" == "true" ]; then
-            cp ../scripts/doc/_redirects docs
-            netlify deploy --prod --dir=docs --site=$DOXYGEN_NETLIFY_SITE_ID
-        else
-            netlify link --name ogs-doxygen-${CI_COMMIT_BRANCH//./-}
-            netlify deploy --prod --dir=docs
-        fi
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" || "$CI_COMMIT_TAG" || "$CI_COMMIT_BRANCH" =~ $BRANCH_REGEX ]]; then
         sshpass -p $DOXYSEARCH_PW rsync -az searchdata.xml webdev@doxysearch.opengeosys.org:/var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/
         sshpass -p $DOXYSEARCH_PW ssh webdev@doxysearch.opengeosys.org doxyindexer -o /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/searchdata.xml
       fi
@@ -79,6 +59,26 @@ build docs:
     reports:
       metrics: build/metrics.txt
     when: always
+
+deploy docs:
+  stage: package
+  image: node:slim
+  needs: ["build docs"]
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+    - if: $CI_COMMIT_TAG
+  before_script:
+    - npm install -g netlify-cli --unsafe-perm=true
+  script:
+    - |
+      if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" || "$CI_COMMIT_TAG" ]; then
+        cp scripts/doc/_redirects build/docs
+        netlify deploy --prod --dir=build/docs --site $NETLIFY_SITE_ID
+      else
+        netlify link --name ogs-doxygen-${CI_COMMIT_BRANCH//./-}
+        netlify deploy --prod --dir=build/docs
+      fi
 
 check docs links:
   stage: check
