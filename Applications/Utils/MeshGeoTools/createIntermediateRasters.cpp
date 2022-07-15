@@ -71,12 +71,12 @@ int main(int argc, char* argv[])
     GeoLib::RasterHeader const& h2 = dem2->getHeader();
 
     bool errors_found(false);
-    if (h1.origin[0] != h2.origin[0])
+    if (std::abs(h1.origin[0] - h2.origin[0]) > (h1.cell_size / 100.0))
     {
         ERR("Origin x-coordinate is not the same in both raster files.\n");
         errors_found = true;
     }
-    if (h1.origin[1] != h2.origin[1])
+    if (std::abs(h1.origin[1] - h2.origin[1]) > (h1.cell_size / 100.0))
     {
         ERR("Origin y-coordinate is not the same in both raster files.\n");
         errors_found = true;
