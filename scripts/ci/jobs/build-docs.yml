@@ -4,7 +4,7 @@ build docs:
   needs: [meta, ci_images]
   timeout: 15 minutes
   variables:
-    DOX_WARNINGS_THRESHOLD: 16
+    DOX_WARNINGS_THRESHOLD: 9
   script:
     # HACK to easier linking to the generated pages
     - echo '<meta http-equiv="REFRESH" content="0;URL=build/docs/index.html">' >> Doxygen.html
