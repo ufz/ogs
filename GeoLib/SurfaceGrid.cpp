@@ -25,8 +25,7 @@ namespace GeoLib
 SurfaceGrid::SurfaceGrid(Surface const* const sfc)
     : AABB(sfc->getAABB()), _n_steps({{1, 1, 1}})
 {
-    auto min_point{getMinPoint()};
-    auto max_point{getMaxPoint()};
+    auto [min_point, max_point] = getMinMaxPoints();
     // enlarge the bounding, such that the points with maximal coordinates
     // fits into the grid
     for (std::size_t k(0); k < 3; ++k)
@@ -152,8 +151,7 @@ void SurfaceGrid::sortTrianglesInGridCells(Surface const* const sfc)
             Point const& p0(*((*sfc)[l]->getPoint(0)));
             Point const& p1(*((*sfc)[l]->getPoint(1)));
             Point const& p2(*((*sfc)[l]->getPoint(2)));
-            auto const& min{getMinPoint()};
-            auto const& max{getMaxPoint()};
+            auto const [min, max] = getMinMaxPoints();
             OGS_FATAL(
                 "Sorting triangle {:d} [({:f},{:f},{:f}), ({:f},{:f},{:f}), "
                 "({:f},{:f},{:f}) into grid. Bounding box is [{:f}, {:f}] x "
