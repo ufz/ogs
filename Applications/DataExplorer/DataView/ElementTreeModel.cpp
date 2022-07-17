@@ -183,8 +183,7 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
     _rootItem->appendChild(aabb_item);
 
     const GeoLib::AABB aabb(MeshLib::MeshInformation::getBoundingBox(mesh));
-    auto const& min = aabb.getMinPoint();
-    auto const& max = aabb.getMaxPoint();
+    auto const [min, max] = aabb.getMinMaxPoints();
 
     QList<QVariant> min_aabb;
     min_aabb << "Min:" << QString::number(min[0], 'f')
