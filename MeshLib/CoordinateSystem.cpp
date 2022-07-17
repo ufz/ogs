@@ -45,8 +45,7 @@ unsigned char CoordinateSystem::getCoordinateSystem(
 {
     unsigned char coords = 0;
 
-    auto const& bbox_min = bbox.getMinPoint();
-    auto const& bbox_max = bbox.getMaxPoint();
+    auto const [bbox_min, bbox_max] = bbox.getMinMaxPoints();
     Eigen::Vector3d const pt_diff = bbox_max - bbox_min;
 
     // The axis aligned bounding box is a from the right half-open interval.
