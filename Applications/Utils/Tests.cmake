@@ -1,4 +1,3 @@
-
 AddTest(
     NAME MapGeometryToMeshSurface_Ammer
     PATH MeshGeoToolsLib/Ammer
@@ -420,6 +419,24 @@ MeshTest(
     EXECUTABLE ExtractSurface
     EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Back.vtu -x 0 -y -1 -z 0 -a 25
     DIFF_DATA Back.vtu Back.vtu 1e-16
+)
+
+MeshTest(
+    NAME ExtractSurface_QuadraticElement_Top
+    PATH Utils/ExtractSurface
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/ExtractSurface
+    EXECUTABLE ExtractSurface
+    EXECUTABLE_ARGS -i ${Data_SOURCE_DIR}/Utils/GMSH2OGS/quadratic_mesh.vtu -o ${Data_BINARY_DIR}/Utils/ExtractSurface/quadratic_mesh_top_surface.vtu -x 0 -y 0 -z 1
+    DIFF_DATA quadratic_mesh_top_surface.vtu quadratic_mesh_top_surface.vtu 1e-16
+)
+
+MeshTest(
+    NAME ExtractSurface_QuadraticElement_Bottom
+    PATH Utils/ExtractSurface
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/ExtractSurface
+    EXECUTABLE ExtractSurface
+    EXECUTABLE_ARGS -i ${Data_SOURCE_DIR}/Utils/GMSH2OGS/quadratic_mesh.vtu -o ${Data_BINARY_DIR}/Utils/ExtractSurface/quadratic_mesh_bottom_surface.vtu -x 0 -y 0 -z -1
+    DIFF_DATA quadratic_mesh_bottom_surface.vtu quadratic_mesh_bottom_surface.vtu 1e-16
 )
 
 MeshTest(
