@@ -83,8 +83,7 @@ int main(int argc, char* argv[])
 
     std::vector<MeshLib::Node*> const& nodes_vec(mesh->getNodes());
     GeoLib::AABB const bounding_box(nodes_vec.begin(), nodes_vec.end());
-    auto const& min(bounding_box.getMinPoint());
-    auto const& max(bounding_box.getMaxPoint());
+    auto const& [min, max] = bounding_box.getMinMaxPoints();
     auto const n_cols =
         static_cast<std::size_t>(std::ceil((max[0] - min[0]) / cellsize));
     auto const n_rows =

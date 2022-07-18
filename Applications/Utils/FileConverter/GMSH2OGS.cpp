@@ -250,8 +250,7 @@ int main(int argc, char* argv[])
 
     // Geometric information
     const GeoLib::AABB aabb = MeshLib::MeshInformation::getBoundingBox(*mesh);
-    auto const minPt(aabb.getMinPoint());
-    auto const maxPt(aabb.getMaxPoint());
+    auto const [minPt, maxPt] = aabb.getMinMaxPoints();
     INFO("Node coordinates:");
     INFO("\tx [{:g}, {:g}] (extent {:g})", minPt[0], maxPt[0],
          maxPt[0] - minPt[0]);
