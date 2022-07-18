@@ -107,7 +107,7 @@
                                     <value>1.</value>
                                 </property>
                                 <property>
-                                    <name>henry_constant</name>
+                                    <name>henry_coefficient</name>
                                     <type>Constant</type>
                                     <value>1.</value>
                                 </property>

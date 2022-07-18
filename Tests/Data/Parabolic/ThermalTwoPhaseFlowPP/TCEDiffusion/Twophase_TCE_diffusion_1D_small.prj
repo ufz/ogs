@@ -129,7 +129,7 @@
                                     <value>0.1314</value>
                                 </property>
                                 <property>
-                                    <name>henry_constant</name>
+                                    <name>henry_coefficient</name>
                                     <type>Constant</type>
                                     <value>1.062e-3</value>
                                 </property>

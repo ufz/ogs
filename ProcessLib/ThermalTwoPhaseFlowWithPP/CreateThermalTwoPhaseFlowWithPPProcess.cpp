@@ -62,7 +62,8 @@ void checkMPLProperties(
     std::array const required_property_contaminant_vapour_component = {
         MaterialPropertyLib::pore_diffusion,
         MaterialPropertyLib::specific_heat_capacity,
-        MaterialPropertyLib::henry_constant, MaterialPropertyLib::molar_mass};
+        MaterialPropertyLib::henry_coefficient,
+        MaterialPropertyLib::molar_mass};
 
     std::array const required_property_dissolved_contaminant_component = {
         MaterialPropertyLib::pore_diffusion};
