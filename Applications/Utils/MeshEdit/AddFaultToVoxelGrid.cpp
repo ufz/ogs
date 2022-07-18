@@ -104,8 +104,7 @@ void markFaults(MeshLib::Mesh& mesh, MeshLib::Mesh const& fault,
     auto const& fnodes = fault.getNodes();
     auto const& felems = fault.getElements();
     GeoLib::AABB const fault_aabb(fnodes.cbegin(), fnodes.cend());
-    auto min_pnt = fault_aabb.getMinPoint();
-    auto max_pnt = fault_aabb.getMaxPoint();
+    auto [min_pnt, max_pnt] = fault_aabb.getMinMaxPoints();
 
     // get bounding box of fault + voxel extent
     for (std::size_t i = 0; i < 3; ++i)
