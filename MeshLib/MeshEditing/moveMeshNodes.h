@@ -13,7 +13,9 @@
  */
 #pragma once
 
-#include "MeshLib/Node.h"
+#include <Eigen/Eigen>
+
+#include "MathLib/Point3d.h"
 
 namespace MeshLib
 {
@@ -29,18 +31,13 @@ namespace MeshLib
     * @param displacement the displacement to use
 */
 template <typename Iterator>
-void moveMeshNodes(
-    Iterator begin,
-    Iterator end,
-    MeshLib::Node const& displacement)
+void moveMeshNodes(Iterator begin,
+                   Iterator end,
+                   Eigen::Vector3d const& displacement)
 {
-    std::for_each(begin, end, [&displacement](MeshLib::Node* node)
-        {
-            (*node)[0] += displacement[0];
-            (*node)[1] += displacement[1];
-            (*node)[2] += displacement[2];
-        }
-    );
+    std::for_each(begin, end,
+                  [&displacement](MathLib::Point3d* node)
+                  { node->asEigenVector3d() += displacement; });
 };
 
 } // end namespace MeshLib

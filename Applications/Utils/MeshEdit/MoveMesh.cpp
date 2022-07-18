@@ -81,24 +81,15 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    MeshLib::Node displacement(0.0, 0.0, 0.0);
+    Eigen::Vector3d displacement{x_arg.getValue(), y_arg.getValue(),
+                                 z_arg.getValue()};
     if (fabs(x_arg.getValue()) < std::numeric_limits<double>::epsilon() &&
         fabs(y_arg.getValue()) < std::numeric_limits<double>::epsilon() &&
         fabs(z_arg.getValue()) < std::numeric_limits<double>::epsilon())
     {
         GeoLib::AABB aabb(mesh->getNodes().begin(), mesh->getNodes().end());
-        displacement[0] =
-            -(aabb.getMaxPoint()[0] + aabb.getMinPoint()[0]) / 2.0;
-        displacement[1] =
-            -(aabb.getMaxPoint()[1] + aabb.getMinPoint()[1]) / 2.0;
-        displacement[2] =
-            -(aabb.getMaxPoint()[2] + aabb.getMinPoint()[2]) / 2.0;
-    }
-    else
-    {
-        displacement[0] = x_arg.getValue();
-        displacement[1] = y_arg.getValue();
-        displacement[2] = z_arg.getValue();
+        auto const [min, max] = aabb.getMinMaxPoints();
+        displacement = -(max + min) / 2.0;
     }
 
     INFO("translate model ({:f}, {:f}, {:f}).",

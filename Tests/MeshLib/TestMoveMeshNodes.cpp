@@ -8,6 +8,7 @@
 
 #include <gtest/gtest.h>
 
+#include <Eigen/Eigen>
 #include <cstdlib>
 #include <ctime>
 #include <numeric>
@@ -36,15 +37,15 @@ TEST(MeshLib, moveMeshNodes)
     }
 
     /* create random displacement */
-    MeshLib::Node displacement(rand(), rand(), rand());
+    Eigen::Vector3d displacement{static_cast<double>(rand()),
+                                 static_cast<double>(rand()),
+                                 static_cast<double>(rand())};
 
     /* move the mesh node */
     MeshLib::moveMeshNodes(nodes.begin(), nodes.end(), displacement);
 
     /* reverse the direction of displacement */
-    displacement[0] *= -1.0;
-    displacement[1] *= -1.0;
-    displacement[2] *= -1.0;
+    displacement *= -1.0;
 
     /* move the mesh node back */
     MeshLib::moveMeshNodes(nodes.begin(), nodes.end(), displacement);
