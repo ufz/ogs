@@ -96,7 +96,7 @@ bool testTriangleIntersectingAABB(MeshLib::Node const& n0,
 }
 
 void markFaults(MeshLib::Mesh& mesh, MeshLib::Mesh const& fault,
-                int const fault_id, std::array<double, 3> half_cell_size)
+                int const fault_id, Eigen::Vector3d const& half_cell_size)
 {
     auto const& elems = mesh.getElements();
     std::size_t const n_elems = mesh.getNumberOfElements();
@@ -107,18 +107,15 @@ void markFaults(MeshLib::Mesh& mesh, MeshLib::Mesh const& fault,
     auto [min_pnt, max_pnt] = fault_aabb.getMinMaxPoints();
 
     // get bounding box of fault + voxel extent
-    for (std::size_t i = 0; i < 3; ++i)
-    {
-        min_pnt[i] -= half_cell_size[i];
-        max_pnt[i] += half_cell_size[i];
-    }
+    min_pnt -= half_cell_size;
+    max_pnt += half_cell_size;
+
     std::array<Eigen::Vector3d, 2> const fault_extent{{min_pnt, max_pnt}};
     GeoLib::AABB const fault_aabb_ext(fault_extent.cbegin(),
                                       fault_extent.cend());
 
     // test each voxel grid element vs each fault triangle
-    Eigen::Vector3d const extent(
-        {half_cell_size[0], half_cell_size[1], half_cell_size[2]});
+    Eigen::Vector3d const extent{half_cell_size};
     for (std::size_t j = 0; j < n_elems; ++j)
     {
         // test if bounding box of fault is intersecting voxel
@@ -290,14 +287,14 @@ int main(int argc, char* argv[])
         fault_id = *it + 1;
     }
 
-    std::array<double, 3> half_cell_size;
+    Eigen::Vector3d half_cell_size;
     {
         auto const n = *mesh->getElement(0)->getNode(0);
         auto const c = MeshLib::getCenterOfGravity(*mesh->getElement(0));
         half_cell_size[0] = std::abs(c[0] - n[0]);
         half_cell_size[1] = std::abs(c[1] - n[1]);
         half_cell_size[2] = std::abs(c[2] - n[2]);
-    };
+    }
 
     markFaults(*mesh, *fault, fault_id, half_cell_size);
 
