@@ -77,7 +77,7 @@ deploy docs:
     - |
       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" || "$CI_COMMIT_TAG" ]]; then
         cp scripts/doc/_redirects build/docs
-        netlify deploy --prod --dir=build/docs --site $NETLIFY_SITE_ID
+        netlify deploy --prod --dir=build/docs --site $DOXYGEN_NETLIFY_SITE_ID
       else
         netlify link --name ogs-doxygen-${CI_COMMIT_BRANCH//./-}
         netlify deploy --prod --dir=build/docs
