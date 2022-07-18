@@ -21,6 +21,7 @@
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
@@ -43,7 +44,7 @@ struct SecondaryData
 };
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 class ThermoRichardsMechanicsLocalAssembler
     : public LocalAssemblerInterface<DisplacementDim>
 {
@@ -88,8 +89,8 @@ public:
     ThermoRichardsMechanicsLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         ThermoRichardsMechanicsProcessData<DisplacementDim>& process_data);
 
     /// \return the number of read integration points.
@@ -403,7 +404,7 @@ private:
     std::vector<ConstitutiveSetting<DisplacementDim>> constitutive_settings_;
     std::vector<IpData> ip_data_;
 
-    IntegrationMethod integration_method_;
+    NumLib::GenericIntegrationMethod const& integration_method_;
     MeshLib::Element const& element_;
     bool const is_axially_symmetric_;
     SecondaryData<

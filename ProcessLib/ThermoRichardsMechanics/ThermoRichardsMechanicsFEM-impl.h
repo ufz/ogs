@@ -33,17 +33,17 @@ namespace ProcessLib
 namespace ThermoRichardsMechanics
 {
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
-                                      IntegrationMethod, DisplacementDim>::
+                                      DisplacementDim>::
     ThermoRichardsMechanicsLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         ThermoRichardsMechanicsProcessData<DisplacementDim>& process_data)
     : process_data_(process_data),
-      integration_method_(integration_order),
+      integration_method_(integration_method),
       element_(e),
       is_axially_symmetric_(is_axially_symmetric)
 {
@@ -132,9 +132,9 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::size_t ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunction,
     DisplacementDim>::setIPDataInitialConditions(std::string const& name,
                                                  double const* values,
                                                  int const integration_order)
@@ -195,10 +195,9 @@ std::size_t ThermoRichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunction, IntegrationMethod,
-                                           DisplacementDim>::
+                                           ShapeFunction, DisplacementDim>::
     setInitialConditionsConcrete(std::vector<double> const& local_x,
                                  double const t,
                                  bool const /*use_monolithic_scheme*/,
@@ -263,10 +262,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunction, IntegrationMethod,
-                                           DisplacementDim>::
+                                           ShapeFunction, DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
                          std::vector<double> const& local_xdot,
@@ -304,12 +302,11 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunction, IntegrationMethod,
-                                           DisplacementDim>::
+                                           ShapeFunction, DisplacementDim>::
     massLumping(typename ThermoRichardsMechanicsLocalAssembler<
-                ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
+                ShapeFunctionDisplacement, ShapeFunction,
                 DisplacementDim>::LocalMatrices& loc_mat) const
 {
     if (process_data_.apply_mass_lumping)
@@ -324,19 +321,17 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunction, IntegrationMethod,
-                                           DisplacementDim>::
-    addToLocalMatrixData(
-        double const dt,
-        std::vector<double> const& local_x,
-        std::vector<double> const& local_xdot,
-        typename ThermoRichardsMechanicsLocalAssembler<
-            ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
-            DisplacementDim>::LocalMatrices const& loc_mat,
-        std::vector<double>& local_rhs_data,
-        std::vector<double>& local_Jac_data) const
+                                           ShapeFunction, DisplacementDim>::
+    addToLocalMatrixData(double const dt,
+                         std::vector<double> const& local_x,
+                         std::vector<double> const& local_xdot,
+                         typename ThermoRichardsMechanicsLocalAssembler<
+                             ShapeFunctionDisplacement, ShapeFunction,
+                             DisplacementDim>::LocalMatrices const& loc_mat,
+                         std::vector<double>& local_rhs_data,
+                         std::vector<double>& local_Jac_data) const
 {
     constexpr auto local_matrix_dim =
         displacement_size + pressure_size + temperature_size;
@@ -382,22 +377,21 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunction, IntegrationMethod,
-                                           DisplacementDim>::
+                                           ShapeFunction, DisplacementDim>::
     assembleWithJacobianSingleIP(
         double const t, double const dt,
         ParameterLib::SpatialPosition const& x_position,
         std::vector<double> const& local_x,
         std::vector<double> const& local_xdot,
         typename ThermoRichardsMechanicsLocalAssembler<
-            ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
+            ShapeFunctionDisplacement, ShapeFunction,
             DisplacementDim>::IpData const& ip_data,
         ConstitutiveSetting<DisplacementDim>& CS,
         MaterialPropertyLib::Medium& medium,
         typename ThermoRichardsMechanicsLocalAssembler<
-            ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
+            ShapeFunctionDisplacement, ShapeFunction,
             DisplacementDim>::LocalMatrices& out) const
 {
     auto const& N_u = ip_data.N_u;
@@ -527,10 +521,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
-    DisplacementDim>::getSigma() const
+    ShapeFunctionDisplacement, ShapeFunction, DisplacementDim>::getSigma() const
 {
     constexpr int kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
@@ -541,10 +534,9 @@ std::vector<double> ThermoRichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const&
-ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
-                                      IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunction, DisplacementDim>::
     getIntPtSigma(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -557,9 +549,9 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunction,
     DisplacementDim>::getSwellingStress() const
 {
     constexpr int kelvin_vector_size =
@@ -571,10 +563,9 @@ std::vector<double> ThermoRichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const&
-ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
-                                      IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunction, DisplacementDim>::
     getIntPtSwellingStress(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -601,10 +592,10 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
-    DisplacementDim>::getEpsilon() const
+          int DisplacementDim>
+std::vector<double>
+ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
+                                      DisplacementDim>::getEpsilon() const
 {
     constexpr int kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
@@ -615,10 +606,9 @@ std::vector<double> ThermoRichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const&
-ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
-                                      IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunction, DisplacementDim>::
     getIntPtEpsilon(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -631,10 +621,9 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const&
-ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
-                                      IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunction, DisplacementDim>::
     getIntPtDarcyVelocity(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -658,10 +647,10 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
-    DisplacementDim>::getSaturation() const
+          int DisplacementDim>
+std::vector<double>
+ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
+                                      DisplacementDim>::getSaturation() const
 {
     std::vector<double> result;
     getIntPtSaturation(0, {}, {}, result);
@@ -669,10 +658,9 @@ std::vector<double> ThermoRichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const&
-ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
-                                      IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunction, DisplacementDim>::
     getIntPtSaturation(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -685,10 +673,10 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
-    DisplacementDim>::getPorosity() const
+          int DisplacementDim>
+std::vector<double>
+ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
+                                      DisplacementDim>::getPorosity() const
 {
     std::vector<double> result;
     getIntPtPorosity(0, {}, {}, result);
@@ -696,10 +684,9 @@ std::vector<double> ThermoRichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const&
-ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
-                                      IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunction, DisplacementDim>::
     getIntPtPorosity(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -712,9 +699,9 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::vector<double> ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunction,
     DisplacementDim>::getTransportPorosity() const
 {
     std::vector<double> result;
@@ -723,10 +710,9 @@ std::vector<double> ThermoRichardsMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const&
-ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
-                                      IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunction, DisplacementDim>::
     getIntPtTransportPorosity(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -739,10 +725,9 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const&
-ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
-                                      IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunction, DisplacementDim>::
     getIntPtDryDensitySolid(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -755,10 +740,9 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const&
-ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
-                                      IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunction, DisplacementDim>::
     getIntPtLiquidDensity(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -771,10 +755,9 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const&
-ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
-                                      IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunction, DisplacementDim>::
     getIntPtViscosity(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -787,10 +770,9 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunction, IntegrationMethod,
-                                           DisplacementDim>::
+                                           ShapeFunction, DisplacementDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
                                      Eigen::VectorXd const& local_x_dot)
@@ -894,20 +876,20 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 unsigned ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunction,
     DisplacementDim>::getNumberOfIntegrationPoints() const
 {
     return integration_method_.getNumberOfPoints();
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 typename MaterialLib::Solids::MechanicsBase<
     DisplacementDim>::MaterialStateVariables const&
 ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
-                                      IntegrationMethod, DisplacementDim>::
+                                      DisplacementDim>::
     getMaterialStateVariablesAt(unsigned integration_point) const
 {
     return constitutive_settings_[integration_point]

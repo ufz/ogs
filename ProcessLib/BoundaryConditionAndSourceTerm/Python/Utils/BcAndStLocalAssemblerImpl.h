@@ -14,6 +14,7 @@
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NsAndWeight.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/Python/PythonBoundaryConditionPythonSideInterface.h"
 #include "ProcessLib/ProcessVariable.h"
 
@@ -29,8 +30,7 @@ namespace ProcessLib::BoundaryConditionAndSourceTerm::Python
  * contains all common parts of the local assemblers.
  */
 template <typename BcOrStData, typename ShapeFunction,
-          typename LowerOrderShapeFunction, typename IntegrationMethod,
-          int GlobalDim>
+          typename LowerOrderShapeFunction, int GlobalDim>
 struct BcAndStLocalAssemblerImpl
 {
 public:
@@ -41,13 +41,14 @@ private:
     using ShapeMatrixPolicy = typename Traits::ShapeMatrixPolicy;
 
 public:
-    BcAndStLocalAssemblerImpl(MeshLib::Element const& e,
-                              bool is_axially_symmetric,
-                              unsigned const integration_order,
-                              BcOrStData const& data)
+    BcAndStLocalAssemblerImpl(
+        MeshLib::Element const& e,
+        NumLib::GenericIntegrationMethod const& integration_method_,
+        bool is_axially_symmetric,
+        BcOrStData const& data)
         : bc_or_st_data(data),
           element(e),
-          integration_method(integration_order),
+          integration_method(integration_method_),
           nss_and_weights(
               computeNsAndWeights<ShapeFunction, LowerOrderShapeFunction,
                                   GlobalDim>(e, is_axially_symmetric,
@@ -243,7 +244,7 @@ public:
     BcOrStData const& bc_or_st_data;
     MeshLib::Element const& element;
 
-    IntegrationMethod const integration_method;
+    NumLib::GenericIntegrationMethod const& integration_method;
     std::vector<typename Traits::NsAndWeight> const nss_and_weights;
 };
 

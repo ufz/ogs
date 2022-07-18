@@ -90,7 +90,8 @@ void StokesFlowProcess<GlobalDim>::initializeConcreteProcess(
 {
     ProcessLib::createLocalAssemblersStokes<GlobalDim, LocalAssemblerData>(
         mesh.getElements(), dof_table, _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _process_data);
+        NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
+        _process_data);
 
     _process_data.pressure_interpolated =
         MeshLib::getOrCreateMeshProperty<double>(

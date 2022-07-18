@@ -12,6 +12,7 @@
 
 #include "EnabledElements.h"
 #include "GenericLocalAssemblerFactory.h"
+#include "NumLib/Fem/Integration/IntegrationMethodRegistry.h"
 
 namespace ProcessLib
 {
@@ -20,7 +21,6 @@ template <typename ShapeFunction,
           typename LocalAssemblerInterface,
           template <typename /* shp fct */,
                     typename /* lower order shp fct */,
-                    typename /* int meth */,
                     int /* global dim */>
           class LocalAssemblerImplementation,
           int GlobalDim,
@@ -32,12 +32,8 @@ class LocalAssemblerBuilderFactoryTaylorHood
     using LocAsmIntfPtr = typename GLAF::LocAsmIntfPtr;
     using LocAsmBuilder = typename GLAF::LocAsmBuilder;
 
-    using IntegrationMethod = typename NumLib::GaussLegendreIntegrationPolicy<
-        typename ShapeFunction::MeshElement>::IntegrationMethod;
-
     using LocAsmImpl = LocalAssemblerImplementation<ShapeFunction,
                                                     LowerOrderShapeFunction,
-                                                    IntegrationMethod,
                                                     GlobalDim>;
 
     LocalAssemblerBuilderFactoryTaylorHood() = delete;
@@ -45,14 +41,22 @@ class LocalAssemblerBuilderFactoryTaylorHood
 public:
     /// Generates a function that creates a new local assembler of type
     /// \c LocAsmImpl.
-    static LocAsmBuilder create()
+    static LocAsmBuilder create(
+        NumLib::IntegrationOrder const integration_order)
     {
-        return [](MeshLib::Element const& e,
-                  std::size_t const local_matrix_size,
-                  ConstructorArgs&&... args)
+        return [integration_order](MeshLib::Element const& e,
+                                   std::size_t const local_matrix_size,
+                                   ConstructorArgs&&... args)
         {
+            auto const& integration_method = NumLib::IntegrationMethodRegistry::
+                template getIntegrationMethod<
+                    typename ShapeFunction::MeshElement>(integration_order);
+
             return std::make_unique<LocAsmImpl>(
-                e, local_matrix_size, std::forward<ConstructorArgs>(args)...);
+                e,
+                local_matrix_size,
+                integration_method,
+                std::forward<ConstructorArgs>(args)...);
         };
     }
 };
@@ -73,7 +77,6 @@ template <int MinShapeFctOrder,
           typename LocalAssemblerInterface,
           template <typename /* shp fct */,
                     typename /* lower order shp fct */,
-                    typename /* int meth */,
                     int /* global dim */>
           class LocalAssemblerImplementation,
           int GlobalDim,
@@ -116,7 +119,8 @@ class LocalAssemblerFactoryTaylorHood final
 
 public:
     explicit LocalAssemblerFactoryTaylorHood(
-        NumLib::LocalToGlobalIndexMap const& dof_table)
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        NumLib::IntegrationOrder const integration_order)
         : Base(dof_table)
     {
         using EnabledElementTraits =
@@ -124,7 +128,7 @@ public:
                 std::declval<IsElementEnabled>()));
 
         BaseLib::TMP::foreach<EnabledElementTraits>(
-            [this]<typename ET>(ET*)
+            [this, integration_order]<typename ET>(ET*)
             {
                 using MeshElement = typename ET::Element;
                 using ShapeFunction = typename ET::ShapeFunction;
@@ -132,15 +136,16 @@ public:
                     typename ET::LowerOrderShapeFunction;
 
                 Base::_builders[std::type_index(typeid(MeshElement))] =
-                    LocAsmBuilderFactory<ShapeFunction,
-                                         LowerOrderShapeFunction>::create();
+                    LocAsmBuilderFactory<
+                        ShapeFunction,
+                        LowerOrderShapeFunction>::create(integration_order);
             });
     }
 };
 
 /// HM processes in OGS are defined for linear and higher order elements.
 template <typename LocalAssemblerInterface,
-          template <typename, typename, typename, int>
+          template <typename, typename, int>
           class LocalAssemblerImplementation,
           int GlobalDim,
           typename... ConstructorArgs>
@@ -154,7 +159,7 @@ using LocalAssemblerFactoryHM =
 
 /// Stokes flow in OGS is defined for higher order elements only.
 template <typename LocalAssemblerInterface,
-          template <typename, typename, typename, int>
+          template <typename, typename, int>
           class LocalAssemblerImplementation,
           int GlobalDim,
           typename... ConstructorArgs>

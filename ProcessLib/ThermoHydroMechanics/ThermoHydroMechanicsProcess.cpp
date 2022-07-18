@@ -179,7 +179,8 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     ProcessLib::createLocalAssemblersHM<DisplacementDim,
                                         ThermoHydroMechanicsLocalAssembler>(
         mesh.getElements(), dof_table, _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _process_data);
+        NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
+        _process_data);
 
     _secondary_variables.addSecondaryVariable(
         "sigma",

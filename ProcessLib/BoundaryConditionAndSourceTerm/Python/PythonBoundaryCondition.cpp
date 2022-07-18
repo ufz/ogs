@@ -87,8 +87,8 @@ PythonBoundaryCondition::PythonBoundaryCondition(
         PythonBoundaryConditionLocalAssembler>(
         bulk_mesh_dimension, _bc_data.bc_or_st_mesh.getElements(),
         *_dof_table_boundary, _local_assemblers,
-        _bc_data.bc_or_st_mesh.isAxiallySymmetric(), integration_order,
-        _bc_data);
+        NumLib::IntegrationOrder{integration_order},
+        _bc_data.bc_or_st_mesh.isAxiallySymmetric(), _bc_data);
 }
 
 void PythonBoundaryCondition::getEssentialBCValues(

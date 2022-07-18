@@ -167,7 +167,8 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
 {
     ProcessLib::createLocalAssemblersHM<DisplacementDim, TH2MLocalAssembler>(
         mesh.getElements(), dof_table, _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _process_data);
+        NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
+        _process_data);
 
     auto add_secondary_variable = [&](std::string const& name,
                                       int const num_components,

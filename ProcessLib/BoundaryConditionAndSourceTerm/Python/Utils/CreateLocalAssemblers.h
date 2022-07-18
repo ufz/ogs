@@ -23,13 +23,14 @@ namespace detail
 {
 template <int GlobalDim,
           template <typename /* shp */, typename /* lower order shp */,
-                    typename /* int meth */, int /* global dim */>
+                    int /* global dim */>
           class LocalAssemblerImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblersPython(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<MeshLib::Element*> const& mesh_elements,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
+    NumLib::IntegrationOrder const integration_order,
     ExtraCtorArgs&&... extra_ctor_args)
 {
     static_assert(
@@ -43,7 +44,7 @@ void createLocalAssemblersPython(
 
     DBUG("Create local assemblers.");
 
-    LocAsmFactory factory(dof_table);
+    LocAsmFactory factory(dof_table, integration_order);
     local_assemblers.resize(mesh_elements.size());
 
     DBUG("Calling local assembler builder for all mesh elements.");
@@ -64,7 +65,7 @@ void createLocalAssemblersPython(
  * Therefore they always have to be provided manually.
  */
 template <template <typename /* shp */, typename /* lower order shp */,
-                    typename /* int meth */, int /* global dim */>
+                    int /* global dim */>
           class LocalAssemblerImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblersPython(
@@ -72,6 +73,7 @@ void createLocalAssemblersPython(
     std::vector<MeshLib::Element*> const& mesh_elements,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
+    NumLib::IntegrationOrder const integration_order,
     ExtraCtorArgs&&... extra_ctor_args)
 {
     DBUG("Create local assemblers.");
@@ -81,19 +83,19 @@ void createLocalAssemblersPython(
         case 1:
             detail::createLocalAssemblersPython<1,
                                                 LocalAssemblerImplementation>(
-                dof_table, mesh_elements, local_assemblers,
+                dof_table, mesh_elements, local_assemblers, integration_order,
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);
             break;
         case 2:
             detail::createLocalAssemblersPython<2,
                                                 LocalAssemblerImplementation>(
-                dof_table, mesh_elements, local_assemblers,
+                dof_table, mesh_elements, local_assemblers, integration_order,
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);
             break;
         case 3:
             detail::createLocalAssemblersPython<3,
                                                 LocalAssemblerImplementation>(
-                dof_table, mesh_elements, local_assemblers,
+                dof_table, mesh_elements, local_assemblers, integration_order,
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);
             break;
         default:

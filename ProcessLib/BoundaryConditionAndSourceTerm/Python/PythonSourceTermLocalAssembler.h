@@ -20,23 +20,23 @@ namespace SourceTerms
 namespace Python
 {
 template <typename ShapeFunction, typename LowerOrderShapeFunction,
-          typename IntegrationMethod, int GlobalDim>
+          int GlobalDim>
 class PythonSourceTermLocalAssembler final
     : public PythonSourceTermLocalAssemblerInterface
 {
     using LocAsmImpl = ProcessLib::BoundaryConditionAndSourceTerm::Python::
         BcAndStLocalAssemblerImpl<PythonStData, ShapeFunction,
-                                  LowerOrderShapeFunction, IntegrationMethod,
-                                  GlobalDim>;
+                                  LowerOrderShapeFunction, GlobalDim>;
     using Traits = typename LocAsmImpl::Traits;
 
 public:
-    PythonSourceTermLocalAssembler(MeshLib::Element const& e,
-                                   std::size_t const /*local_matrix_size*/,
-                                   bool const is_axially_symmetric,
-                                   unsigned const integration_order,
-                                   PythonStData const& data)
-        : impl_{e, is_axially_symmetric, integration_order, data}
+    PythonSourceTermLocalAssembler(
+        MeshLib::Element const& e,
+        std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
+        bool const is_axially_symmetric,
+        PythonStData const& data)
+        : impl_{e, integration_method, is_axially_symmetric, data}
     {
     }
 

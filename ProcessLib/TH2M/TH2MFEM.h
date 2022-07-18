@@ -22,6 +22,7 @@
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
@@ -44,7 +45,7 @@ struct SecondaryData
 };
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 class TH2MLocalAssembler : public LocalAssemblerInterface
 {
 public:
@@ -77,11 +78,12 @@ public:
     TH2MLocalAssembler(TH2MLocalAssembler const&) = delete;
     TH2MLocalAssembler(TH2MLocalAssembler&&) = delete;
 
-    TH2MLocalAssembler(MeshLib::Element const& e,
-                       std::size_t const /*local_matrix_size*/,
-                       bool const is_axially_symmetric,
-                       unsigned const integration_order,
-                       TH2MProcessData<DisplacementDim>& process_data);
+    TH2MLocalAssembler(
+        MeshLib::Element const& e,
+        std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
+        bool const is_axially_symmetric,
+        TH2MProcessData<DisplacementDim>& process_data);
 
 private:
     /// \return the number of read integration points.
@@ -415,7 +417,7 @@ private:
                              ShapeFunctionDisplacement::NPOINTS>;
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
 
-    IntegrationMethod _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     MeshLib::Element const& _element;
     bool const _is_axially_symmetric;
     SecondaryData<

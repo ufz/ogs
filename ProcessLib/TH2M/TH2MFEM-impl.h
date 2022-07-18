@@ -27,16 +27,17 @@ namespace TH2M
 namespace MPL = MaterialPropertyLib;
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
-                   IntegrationMethod, DisplacementDim>::
-    TH2MLocalAssembler(MeshLib::Element const& e,
-                       std::size_t const /*local_matrix_size*/,
-                       bool const is_axially_symmetric,
-                       unsigned const integration_order,
-                       TH2MProcessData<DisplacementDim>& process_data)
+                   DisplacementDim>::
+    TH2MLocalAssembler(
+        MeshLib::Element const& e,
+        std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
+        bool const is_axially_symmetric,
+        TH2MProcessData<DisplacementDim>& process_data)
     : _process_data(process_data),
-      _integration_method(integration_order),
+      _integration_method(integration_method),
       _element(e),
       _is_axially_symmetric(is_axially_symmetric)
 {
@@ -93,10 +94,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<ConstitutiveVariables<DisplacementDim>>
-TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
-                   IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     updateConstitutiveVariables(Eigen::VectorXd const& local_x,
                                 Eigen::VectorXd const& local_x_dot,
                                 double const t, double const dt)
@@ -808,9 +808,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 std::size_t TH2MLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::setIPDataInitialConditions(std::string const& name,
                                                  double const* values,
                                                  int const integration_order)
@@ -858,9 +858,9 @@ std::size_t TH2MLocalAssembler<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
-                        IntegrationMethod, DisplacementDim>::
+                        DisplacementDim>::
     setInitialConditionsConcrete(std::vector<double> const& local_x_data,
                                  double const t,
                                  bool const /*use_monolithic_scheme*/,
@@ -932,9 +932,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void TH2MLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::assemble(double const t, double const dt,
                                std::vector<double> const& local_x,
                                std::vector<double> const& local_x_dot,
@@ -1339,9 +1339,9 @@ void TH2MLocalAssembler<
 // Assembles the local Jacobian matrix. So far, the linearisation of HT part is
 // not considered as that in HT process.
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
-                        IntegrationMethod, DisplacementDim>::
+                        DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
                          std::vector<double> const& local_xdot,
@@ -2106,10 +2106,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const&
-TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
-                   IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+std::vector<double> const& TH2MLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtDarcyVelocityGas(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -2133,10 +2132,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const&
-TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
-                   IntegrationMethod, DisplacementDim>::
+          int DisplacementDim>
+std::vector<double> const& TH2MLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtDarcyVelocityLiquid(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -2160,9 +2158,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
+          int DisplacementDim>
 void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
-                        IntegrationMethod, DisplacementDim>::
+                        DisplacementDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
                                      Eigen::VectorXd const& local_x_dot)

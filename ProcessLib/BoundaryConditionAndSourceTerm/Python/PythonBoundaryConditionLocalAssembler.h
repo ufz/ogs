@@ -17,24 +17,23 @@
 namespace ProcessLib
 {
 template <typename ShapeFunction, typename LowerOrderShapeFunction,
-          typename IntegrationMethod, int GlobalDim>
+          int GlobalDim>
 class PythonBoundaryConditionLocalAssembler final
     : public PythonBoundaryConditionLocalAssemblerInterface
 {
     using LocAsmImpl = ProcessLib::BoundaryConditionAndSourceTerm::Python::
         BcAndStLocalAssemblerImpl<PythonBcData, ShapeFunction,
-                                  LowerOrderShapeFunction, IntegrationMethod,
-                                  GlobalDim>;
+                                  LowerOrderShapeFunction, GlobalDim>;
     using Traits = typename LocAsmImpl::Traits;
 
 public:
     PythonBoundaryConditionLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool is_axially_symmetric,
-        unsigned const integration_order,
         PythonBcData const& data)
-        : impl_{e, is_axially_symmetric, integration_order, data}
+        : impl_{e, integration_method, is_axially_symmetric, data}
     {
     }
 
