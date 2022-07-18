@@ -38,11 +38,6 @@ build docs:
       fi
     - echo "Number of Doxygen warnings is $NUM_DOX_WARNINGS (threshold is $DOX_WARNINGS_THRESHOLD)."
     - BRANCH_REGEX="^v[0-9]\.[0-9]\.[0-9]"
-    - |
-      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" || "$CI_COMMIT_TAG" || "$CI_COMMIT_BRANCH" =~ $BRANCH_REGEX ]]; then
-        sshpass -p $DOXYSEARCH_PW rsync -az searchdata.xml webdev@doxysearch.opengeosys.org:/var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/
-        sshpass -p $DOXYSEARCH_PW ssh webdev@doxysearch.opengeosys.org doxyindexer -o /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/searchdata.xml
-      fi
   artifacts:
     expose_as: "Doxygen"
     paths:
@@ -55,6 +50,7 @@ build docs:
       - codecloud.html
       - build/DoxygenWarnings.log
       - build/DoxygenWarnings-filtered.log
+      - build/searchdata.xml
     expire_in: 1 week
     reports:
       metrics: build/metrics.txt
@@ -69,10 +65,17 @@ deploy docs:
     - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
     - if: $CI_COMMIT_TAG
   before_script:
+    - apt-get update
+    - apt-get install -y sshpass rsync
+    - mkdir ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
     - npm install -g netlify-cli --unsafe-perm=true
   script:
+    - sshpass -p $DOXYSEARCH_PW rsync -az build/searchdata.xml webdev@doxysearch.opengeosys.org:/var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/
+    - sshpass -p $DOXYSEARCH_PW ssh webdev@doxysearch.opengeosys.org doxyindexer -o /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/searchdata.xml
     - |
-      if [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" || "$CI_COMMIT_TAG" ]; then
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" || "$CI_COMMIT_TAG" ]]; then
         cp scripts/doc/_redirects build/docs
         netlify deploy --prod --dir=build/docs --site $NETLIFY_SITE_ID
       else
