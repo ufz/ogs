@@ -21,7 +21,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    ref_t_1400000.000000.vtu thermaltwophaseflow_large_ts_1400_t_1400000.000000.vtu capillary_pressure capillary_pressure 9e-5 2e-10
+    ref_t_1400000.000000.vtu thermaltwophaseflow_large_ts_1400_t_1400000.000000.vtu capillary_pressure capillary_pressure 9e-5 5e-10
     ref_t_1400000.000000.vtu thermaltwophaseflow_large_ts_1400_t_1400000.000000.vtu gas_pressure gas_pressure 5e-7 1e-10
     ref_t_1400000.000000.vtu thermaltwophaseflow_large_ts_1400_t_1400000.000000.vtu saturation saturation 1e-8 1e-10
     ref_t_1400000.000000.vtu thermaltwophaseflow_large_ts_1400_t_1400000.000000.vtu temperature temperature 1e-8 1e-10

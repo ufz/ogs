@@ -1,6 +1,7 @@
 Algolia
 Aluminol
 Alves
+Atteia
 Autolinks
 Beier
 Bincrafters
@@ -13,6 +14,7 @@ Bruns
 CLion
 Dalen
 Degener
+devguide
 Diao
 Diersch
 Dirichlet
@@ -47,6 +49,7 @@ Homebrew
 Horner
 HTTPS
 IPhreeqc
+ipynb
 ipyvtklink
 Jacobian
 Johannsen
@@ -103,6 +106,7 @@ Rodrigues
 Rossendorf
 Ruehaak
 Scheidegger
+semianalytical
 Shao
 shortcode
 Snakemake

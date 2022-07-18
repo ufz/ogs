@@ -57,8 +57,12 @@ Figure 2 compares the normalized gas phase TCE concentration profiles given by t
 
 ## References
 
+<!-- vale off -->
+
 <a id="1">[1]</a>
 O. Atteia and P. Höhener. Semianalytical Model Predicting Transfer of Volatile Pollutants from Groundwater to the Soil Surface. Environmental Science & Technology 44 (16) (2010), pp. 6228–6232
 
 <a id="2">[2]</a>
 Millington, R. Gas Diffusion in Porous Media. Science 1959, 130, 100–102
+
+<!-- vale on -->
