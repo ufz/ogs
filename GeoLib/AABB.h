@@ -14,6 +14,9 @@
 
 #pragma once
 
+#include <spdlog/fmt/bundled/ostream.h>
+
+#include <Eigen/Eigen>
 #include <bitset>
 #include <cassert>
 #include <cmath>
@@ -23,8 +26,6 @@
 #include <limits>
 #include <tuple>
 #include <vector>
-
-#include <Eigen/Eigen>
 
 #include "BaseLib/Error.h"
 
@@ -196,6 +197,18 @@ public:
     {
         return containsPoint(other_aabb.getMinPoint(), 0) &&
                containsPoint(other_aabb.getMaxPoint(), 0);
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, AABB const& aabb)
+    {
+        auto const [min, max] = aabb.getMinMaxPoints();
+        os << "\tx [" << min[0] << ", " << max[0] << ") (extent "
+           << max[0] - min[0] << ")\n";
+        os << "\ty [" << min[1] << ", " << max[1] << ") (extent "
+           << max[1] - min[1] << ")\n";
+        os << "\tz [" << min[2] << ", " << max[2] << ") (extent "
+           << max[2] - min[2] << ")";
+        return os;
     }
 
 private:
