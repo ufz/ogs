@@ -137,11 +137,21 @@ static void putIntegrationMethodsForDim3(
     putIntegrationMethodsFor<MeshLib::Prism15>(
         integration_methods_by_mesh_element_type, 4);
 
+    /* Note: Currently (July 22) OGS has pyramid integration schemes only up to
+     * order 3 (see MathLib/Integration/GaussLegendrePyramid.h), and for order 4
+     * the third order is re-used (see
+     * NumLib/Fem/Integration/IntegrationGaussLegendrePyramid.h).
+     * I.e., a user can request 4th order integration on pyramids and OGS will
+     * just run fine, albeit with a lower integration order.
+     * To keep that behavior, in particular not crash if a user requests 4th
+     * order pyramid integration, we set the limit to 4, here.
+     */
+
     putIntegrationMethodsFor<MeshLib::Pyramid>(
-        integration_methods_by_mesh_element_type, 3);
+        integration_methods_by_mesh_element_type, 4 /* see note above */);
 
     putIntegrationMethodsFor<MeshLib::Pyramid13>(
-        integration_methods_by_mesh_element_type, 3);
+        integration_methods_by_mesh_element_type, 4 /* see note above */);
 }
 
 static std::unordered_map<std::type_index,

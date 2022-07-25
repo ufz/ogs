@@ -127,8 +127,8 @@ static std::unordered_map<std::type_index, unsigned> initMapTypeToMaxOrder()
     add(typeid(Tet10), 4);
     add(typeid(Prism), 4);
     add(typeid(Prism15), 4);
-    add(typeid(Pyramid), 3);
-    add(typeid(Pyramid13), 3);
+    add(typeid(Pyramid), 4);
+    add(typeid(Pyramid13), 4);
 
     if (std::tuple_size_v<AllElementTypes> != map_type_to_max_order.size())
     {
@@ -220,13 +220,6 @@ TYPED_TEST(NumLibIntegrationMethodRegistryTest, CheckWeTestUpToMaxOrder)
 {
     using MeshElementType = TypeParam;
 
-    if constexpr (std::is_same_v<MeshElementType, MeshLib::Point>)
-    {
-        // Points are special. For them all integration schemes for all
-        // integration orders are the same.
-        return;
-    }
-
     using IntegrationPolicy =
         NumLib::GaussLegendreIntegrationPolicy<MeshElementType>;
     using NonGenericIntegrationMethod =
@@ -237,12 +230,12 @@ TYPED_TEST(NumLibIntegrationMethodRegistryTest, CheckWeTestUpToMaxOrder)
         getMaximumIntegrationOrderOfTemplatedIntegrationMethod<
             NonGenericIntegrationMethod>(cutoff);
 
-    ASSERT_EQ(this->max_order, order)
-        << "The maximum integration order used in this unit test suite differs "
-           "from the (apparent) maximum integration order of the current "
-           "integration method. Either we forgot to set the proper integration "
-           "order in this unit test suite or the determination of the maximum "
-           "integration order in the current unit test is wrong.";
+    ASSERT_GE(this->max_order, order)
+        << "The maximum integration order used in this unit test suite is "
+           "smaller than the (apparent) maximum integration order of the "
+           "current integration method. Either we forgot to set the proper "
+           "integration order in this unit test suite or the determination of "
+           "the maximum integration order in the current unit test is wrong.";
 }
 
 // Assert that the integration method registry contains all integration orders
