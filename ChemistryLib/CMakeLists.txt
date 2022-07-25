@@ -2,6 +2,7 @@
 get_source_files(SOURCES)
 append_source_files(SOURCES PhreeqcIOData)
 append_source_files(SOURCES PhreeqcKernelData)
+append_source_files(SOURCES SelfContainedSolverData)
 append_source_files(SOURCES Common)
 
 # Create the library

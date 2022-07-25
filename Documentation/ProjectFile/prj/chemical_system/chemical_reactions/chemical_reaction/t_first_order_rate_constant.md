@@ -1,0 +1,1 @@
+\copydoc ChemistryLib::SelfContainedSolverData::FirstOrderReaction::first_order_rate_constant

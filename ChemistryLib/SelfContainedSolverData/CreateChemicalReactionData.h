@@ -10,12 +10,21 @@
 
 #pragma once
 
+#include <memory>
+#include <vector>
+
+namespace BaseLib
+{
+class ConfigTree;
+}
+
 namespace ChemistryLib
 {
-enum class ChemicalSolver
+namespace SelfContainedSolverData
 {
-    Phreeqc,
-    PhreeqcKernel,
-    SelfContained
-};
+struct ChemicalReaction;
+
+std::vector<std::unique_ptr<ChemicalReaction>> createChemicalReactionData(
+    BaseLib::ConfigTree const& config);
+}  // namespace SelfContainedSolverData
 }  // namespace ChemistryLib

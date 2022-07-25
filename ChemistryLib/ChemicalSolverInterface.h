@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <Eigen/Sparse>
+
 #include "MaterialLib/MPL/VariableType.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MeshLib/Mesh.h"
@@ -63,7 +65,9 @@ public:
 
     virtual void setAqueousSolutionsPrevFromDumpFile() {}
 
-    virtual void executeSpeciationCalculation(double const dt) = 0;
+    virtual void executeSpeciationCalculation([[maybe_unused]] double const dt)
+    {
+    }
 
     virtual double getConcentration(
         int const /*component_id*/,
@@ -75,6 +79,17 @@ public:
     virtual std::vector<std::string> const getComponentList() const
     {
         return {};
+    }
+
+    virtual Eigen::SparseMatrix<double> const* getStoichiometricMatrix() const
+    {
+        return nullptr;
+    }
+
+    virtual double getKineticPrefactor(
+        [[maybe_unused]] unsigned int reaction_id) const
+    {
+        return std::numeric_limits<double>::quiet_NaN();
     }
 
     virtual void updateVolumeFractionPostReaction(

@@ -93,7 +93,7 @@ void ComponentTransportProcess::initializeConcreteProcess(
         mesh.isAxiallySymmetric(), integration_order, _process_data,
         transport_process_variables);
 
-    if (_chemical_solver_interface)
+    if (_chemical_solver_interface && !_use_monolithic_scheme)
     {
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &ComponentTransportLocalAssemblerInterface::setChemicalSystemID,

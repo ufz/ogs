@@ -11,6 +11,7 @@
 #pragma once
 
 #include <Eigen/Dense>
+#include <Eigen/Sparse>
 #include <numeric>
 #include <vector>
 
@@ -500,6 +501,41 @@ public:
 
             assembleBlockMatrices(component_id, t, dt, local_C, local_p, KCC,
                                   MCC, MCp, MpC, Kpp, Mpp, Bp);
+
+            if (_process_data.chemical_solver_interface)
+            {
+                auto const stoichiometric_matrix =
+                    _process_data.chemical_solver_interface
+                        ->getStoichiometricMatrix();
+
+                assert(stoichiometric_matrix);
+
+                for (Eigen::SparseMatrix<double>::InnerIterator it(
+                         *stoichiometric_matrix, component_id);
+                     it;
+                     ++it)
+                {
+                    auto const stoichiometric_coefficient = it.value();
+                    auto const coupled_component_id = it.row();
+                    auto const kinetic_prefactor =
+                        _process_data.chemical_solver_interface
+                            ->getKineticPrefactor(coupled_component_id);
+
+                    auto const concentration_index =
+                        pressure_size + component_id * concentration_size;
+                    auto const coupled_concentration_index =
+                        pressure_size +
+                        coupled_component_id * concentration_size;
+                    auto KCmCn = local_K.template block<concentration_size,
+                                                        concentration_size>(
+                        concentration_index, coupled_concentration_index);
+
+                    // account for the coupling between components
+                    assembleKCmCn(component_id, t, dt, KCmCn,
+                                  stoichiometric_coefficient,
+                                  kinetic_prefactor);
+                }
+            }
         }
     }
 
@@ -672,6 +708,49 @@ public:
                                     (density * density * w);
                 }
             }
+        }
+    }
+
+    void assembleKCmCn(int const component_id, double const t, double const dt,
+                       Eigen::Ref<LocalBlockMatrixType> KCmCn,
+                       double const stoichiometric_coefficient,
+                       double const kinetic_prefactor)
+    {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        MaterialPropertyLib::VariableArray vars;
+
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
+        auto const& phase = medium.phase("AqueousLiquid");
+        auto const& component = phase.component(
+            _transport_process_variables[component_id].get().getName());
+
+        for (unsigned ip(0); ip < n_integration_points; ++ip)
+        {
+            auto& ip_data = _ip_data[ip];
+            auto const& N = ip_data.N;
+            auto const& w = ip_data.integration_weight;
+            auto& porosity = ip_data.porosity;
+
+            auto const retardation_factor =
+                component[MaterialPropertyLib::PropertyType::retardation_factor]
+                    .template value<double>(vars, pos, t, dt);
+
+            porosity = medium[MaterialPropertyLib::PropertyType::porosity]
+                           .template value<double>(vars, pos, t, dt);
+
+            auto const density =
+                phase[MaterialPropertyLib::PropertyType::density]
+                    .template value<double>(vars, pos, t, dt);
+
+            KCmCn.noalias() -= w * N.transpose() * stoichiometric_coefficient *
+                               kinetic_prefactor * retardation_factor *
+                               porosity * density * N;
         }
     }
 
