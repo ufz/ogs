@@ -149,9 +149,10 @@ std::size_t setIntegrationPointKelvinVectorData(
     return n_integration_points;
 }
 
-template <typename IntegrationPointDataVector, typename MemberType>
+template <typename IntegrationPointDataVector, typename IpData,
+          typename MemberType>
 std::vector<double> const& getIntegrationPointScalarData(
-    IntegrationPointDataVector const& ip_data, MemberType member,
+    IntegrationPointDataVector const& ip_data, MemberType IpData::*const member,
     std::vector<double>& cache)
 {
     auto const n_integration_points = ip_data.size();
@@ -169,16 +170,51 @@ std::vector<double> const& getIntegrationPointScalarData(
     return cache;
 }
 
-template <typename IntegrationPointDataVector, typename MemberType>
+template <typename IntegrationPointDataVector, typename Accessor>
+std::vector<double> const& getIntegrationPointScalarData(
+    IntegrationPointDataVector const& ip_data, Accessor&& accessor,
+    std::vector<double>& cache)
+{
+    auto const n_integration_points = ip_data.size();
+
+    cache.clear();
+    auto cache_mat = MathLib::createZeroedMatrix<
+        Eigen::Matrix<double, 1, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, 1, n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ++ip)
+    {
+        cache_mat[ip] = accessor(ip_data[ip]);
+    }
+
+    return cache;
+}
+
+template <typename IntegrationPointDataVector, typename IpData,
+          typename MemberType>
 std::size_t setIntegrationPointScalarData(double const* values,
                                           IntegrationPointDataVector& ip_data,
-                                          MemberType member)
+                                          MemberType IpData::*const member)
 {
     auto const n_integration_points = ip_data.size();
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
         ip_data[ip].*member = values[ip];
+    }
+    return n_integration_points;
+}
+
+template <typename IntegrationPointDataVector, typename Accessor>
+std::size_t setIntegrationPointScalarData(double const* values,
+                                          IntegrationPointDataVector& ip_data,
+                                          Accessor&& accessor)
+{
+    auto const n_integration_points = ip_data.size();
+
+    for (unsigned ip = 0; ip < n_integration_points; ++ip)
+    {
+        accessor(ip_data[ip]) = values[ip];
     }
     return n_integration_points;
 }
