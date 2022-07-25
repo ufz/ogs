@@ -29,6 +29,7 @@ endif()
 target_compile_definitions(
     ApplicationsLib PUBLIC $<$<BOOL:${USE_LIS}>:USE_LIS>
                            $<$<BOOL:${OGS_USE_PYTHON}>:OGS_USE_PYTHON>
+    PRIVATE $<$<BOOL:${OGS_USE_INSITU}>:OGS_USE_INSITU>
 )
 
 # Set cpp definitions if the cmake option is enabled for the given process.

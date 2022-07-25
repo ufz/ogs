@@ -3,9 +3,12 @@ if(NOT DOXYGEN_FOUND)
 endif()
 
 set(DOXYGEN_EXCLUDE
-    ${PROJECT_SOURCE_DIR}/ThirdParty ${PROJECT_SOURCE_DIR}/scripts
-    ${PROJECT_SOURCE_DIR}/Tests ${PROJECT_SOURCE_DIR}/Documentation/ProjectFile
-    ${PROJECT_SOURCE_DIR}/web ${PROJECT_BINARY_DIR}/_deps
+    ${PROJECT_SOURCE_DIR}/ThirdParty
+    ${PROJECT_SOURCE_DIR}/scripts
+    ${PROJECT_SOURCE_DIR}/Tests
+    ${PROJECT_SOURCE_DIR}/Documentation/ProjectFile
+    ${PROJECT_SOURCE_DIR}/web
+    ${PROJECT_BINARY_DIR}/_deps
     ${PROJECT_BINARY_DIR}/_ext
 )
 set(DOXYGEN_FILE_PATTERNS *.h *.cpp *.tpp *.dox)
@@ -62,7 +65,7 @@ set(DOXYGEN_PREDEFINED
     OGS_USE_MFRONT
     OGS_USE_NETCDF
     OGS_USE_PYTHON
-    USE_INSITU
+    OGS_USE_INSITU
     USE_LIS
     USE_MKL
     USE_PETSC

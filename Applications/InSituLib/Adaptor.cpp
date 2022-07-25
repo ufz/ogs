@@ -16,6 +16,8 @@
 #include <vtkNew.h>
 #include <vtkUnstructuredGrid.h>
 
+#include <filesystem>
+
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 

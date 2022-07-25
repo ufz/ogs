@@ -269,16 +269,20 @@ foreach(option_index ${ogs.libraries.vtk.options})
 endforeach()
 list(REMOVE_DUPLICATES VTK_OPTIONS)
 
-# TODO: if(OGS_INSITU) find_package(ParaView REQUIRED) end()
-unset(VTK_COMPONENTS)
-foreach(opt ${VTK_OPTIONS})
-    if("${opt}" MATCHES "^VTK_MODULE_ENABLE_VTK_(.*) YES")
-        list(APPEND VTK_COMPONENTS ${CMAKE_MATCH_1})
-    endif()
-endforeach()
-find_package(VTK ${ogs.minimum_version.vtk} QUIET COMPONENTS ${VTK_COMPONENTS})
+if(OGS_USE_INSITU)
+    find_package(ParaView REQUIRED)
+else()
+    unset(VTK_COMPONENTS)
+    foreach(opt ${VTK_OPTIONS})
+        if("${opt}" MATCHES "^VTK_MODULE_ENABLE_VTK_(.*) YES")
+            list(APPEND VTK_COMPONENTS ${CMAKE_MATCH_1})
+        endif()
+    endforeach()
+    message(STATUS "FINDING VTK: ${VTK_COMPONENTS}")
+    find_package(VTK ${ogs.minimum_version.vtk} COMPONENTS ${VTK_COMPONENTS})
+endif()
 
-if(NOT VTK_FOUND)
+if(NOT VTK_FOUND AND NOT OGS_USE_INSITU)
     # Setting shared libs on PETSc, otherwise pvtu files only contain one
     # <Piece>-element (one subdomain).
     list(APPEND VTK_OPTIONS "BUILD_SHARED_LIBS ${OGS_USE_PETSC}")
@@ -314,10 +318,6 @@ if(VTK_ADDED)
         # Also suppress warnings
         list(APPEND DISABLE_WARNINGS_TARGETS loguru)
     endif()
-endif()
-# end VTK ###
-
-if(VTK_ADDED)
     # VTK already comes with exprtk, reusing it.
     target_include_directories(
         exprtk SYSTEM
