@@ -84,3 +84,30 @@ devcontainer:
       --cpu-target $CPU_TARGET
       --ccache --cpmcache
       ${MASTER_UPLOAD}
+
+advanced container:
+  stage: package
+  tags: [envinf, shell]
+  needs: []
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: manual
+  extends:
+    - .container-maker-setup
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    # insitu container
+    - >
+      poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
+      --build_args ' --progress=plain'
+      --cvode --ccache --cpmcache --mfront --insitu
+      --cpu-target $CPU_TARGET
+      --cmake_args ' -DOGS_BUILD_TESTING=OFF -DOGS_BUILD_PROCESSES=SteadyStateDiffusion'
+      --tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-ssd-insitu:latest
+      --sif_file ogs-ssd-insitu.sif
+    - mkdir -p _out
+    - singularity exec ThirdParty/container-maker/_out/images/ogs-ssd-insitu.sif ogs -o _out Tests/Data/EllipticPETSc/square_1e1_neumann.prj
+  artifacts:
+    name: container
+    paths:
+      - ThirdParty/container-maker/_out/images/*.sif
