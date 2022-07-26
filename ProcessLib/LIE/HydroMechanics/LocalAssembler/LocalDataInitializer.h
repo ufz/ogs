@@ -21,6 +21,7 @@
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/Fem/FiniteElement/LowerDimShapeTable.h"
 #include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
+#include "NumLib/Fem/Integration/IntegrationMethodRegistry.h"
 #include "ProcessLib/Utils/EnabledElements.h"
 
 namespace ProcessLib
@@ -38,14 +39,15 @@ namespace HydroMechanics
 /// \attention This is modified version of the ProcessLib::LocalDataInitializer
 /// class which does not include line elements, allows only shapefunction of
 /// order 2, and provides additional template argument GlobalDim.
-template <typename LocalAssemblerInterface,
-          template <typename, typename, typename, int>
-          class LocalAssemblerDataMatrix,
-          template <typename, typename, typename, int>
-          class LocalAssemblerDataMatrixNearFracture,
-          template <typename, typename, typename, int>
-          class LocalAssemblerDataFracture,
-          int GlobalDim, typename... ConstructorArgs>
+template <
+    typename LocalAssemblerInterface,
+    template <typename /* shp u */, typename /* shp p */, int /* global dim */>
+    class LocalAssemblerDataMatrix,
+    template <typename /* shp u */, typename /* shp p */, int /* global dim */>
+    class LocalAssemblerDataMatrixNearFracture,
+    template <typename /* shp u */, typename /* shp p */, int /* global dim */>
+    class LocalAssemblerDataFracture,
+    int GlobalDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
     struct IsElementEnabled
@@ -68,7 +70,8 @@ public:
     using LADataIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
 
     explicit LocalDataInitializer(
-        NumLib::LocalToGlobalIndexMap const& dof_table)
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        NumLib::IntegrationOrder const integration_order)
         : _dof_table(dof_table)
     {
         using EnabledElementTraits =
@@ -76,7 +79,7 @@ public:
                 std::declval<IsElementEnabled>()));
 
         BaseLib::TMP::foreach<EnabledElementTraits>(
-            [this]<typename ET>(ET*)
+            [this, integration_order]<typename ET>(ET*)
             {
                 using MeshElement = typename ET::Element;
                 using ShapeFunction = typename ET::ShapeFunction;
@@ -85,7 +88,8 @@ public:
 
                 _builder[std::type_index(typeid(MeshElement))] =
                     makeLocalAssemblerBuilder<ShapeFunction,
-                                              LowerOrderShapeFunction>();
+                                              LowerOrderShapeFunction>(
+                        integration_order);
             });
     }
 
@@ -180,28 +184,6 @@ private:
         std::vector<unsigned> const& dofIndex_to_localIndex,
         ConstructorArgs&&...)>;
 
-    template <typename ShapeFunctionDisplacement>
-    using IntegrationMethod = typename NumLib::GaussLegendreIntegrationPolicy<
-        typename ShapeFunctionDisplacement::MeshElement>::IntegrationMethod;
-
-    template <typename ShapeFunctionDisplacement,
-              typename ShapeFunctionPressure>
-    using LADataMatrix = LocalAssemblerDataMatrix<
-        ShapeFunctionDisplacement, ShapeFunctionPressure,
-        IntegrationMethod<ShapeFunctionDisplacement>, GlobalDim>;
-
-    template <typename ShapeFunctionDisplacement,
-              typename ShapeFunctionPressure>
-    using LADataMatrixNearFracture = LocalAssemblerDataMatrixNearFracture<
-        ShapeFunctionDisplacement, ShapeFunctionPressure,
-        IntegrationMethod<ShapeFunctionDisplacement>, GlobalDim>;
-
-    template <typename ShapeFunctionDisplacement,
-              typename ShapeFunctionPressure>
-    using LAFractureData = LocalAssemblerDataFracture<
-        ShapeFunctionDisplacement, ShapeFunctionPressure,
-        IntegrationMethod<ShapeFunctionDisplacement>, GlobalDim>;
-
     /// Generates a function that creates a new LocalAssembler of type
     /// LAData<ShapeFunctionDisplacement>. Only functions with shape function's
     /// dimension less or equal to the global dimension are instantiated, e.g.
@@ -210,34 +192,41 @@ private:
     /// (Line2, 2), (Line2, 3), (Hex20, 3) but not (Hex20, 2) or (Hex20, 1).
     template <typename ShapeFunctionDisplacement,
               typename ShapeFunctionPressure>
-    static LADataBuilder makeLocalAssemblerBuilder()
+    static LADataBuilder makeLocalAssemblerBuilder(
+        NumLib::IntegrationOrder const integration_order)
     {
-        return [](MeshLib::Element const& e,
-                  std::size_t const n_variables,
-                  std::size_t const local_matrix_size,
-                  std::vector<unsigned> const& dofIndex_to_localIndex,
-                  ConstructorArgs&&... args)
+        return [integration_order](
+                   MeshLib::Element const& e,
+                   std::size_t const n_variables,
+                   std::size_t const local_matrix_size,
+                   std::vector<unsigned> const& dofIndex_to_localIndex,
+                   ConstructorArgs&&... args)
         {
+            auto const& integration_method = NumLib::IntegrationMethodRegistry::
+                template getIntegrationMethod<
+                    typename ShapeFunctionDisplacement::MeshElement>(
+                    integration_order);
+
             if (e.getDimension() == GlobalDim)
             {
                 if (n_variables == 2)
                 {
-                    return LADataIntfPtr{
-                        new LADataMatrix<ShapeFunctionDisplacement,
-                                         ShapeFunctionPressure>{
-                            e, n_variables, local_matrix_size,
-                            dofIndex_to_localIndex,
-                            std::forward<ConstructorArgs>(args)...}};
+                    return LADataIntfPtr{new LocalAssemblerDataMatrix<
+                        ShapeFunctionDisplacement, ShapeFunctionPressure,
+                        GlobalDim>{e, n_variables, local_matrix_size,
+                                   dofIndex_to_localIndex, integration_method,
+                                   std::forward<ConstructorArgs>(args)...}};
                 }
-                return LADataIntfPtr{new LADataMatrixNearFracture<
-                    ShapeFunctionDisplacement, ShapeFunctionPressure>{
-                    e, n_variables, local_matrix_size, dofIndex_to_localIndex,
-                    std::forward<ConstructorArgs>(args)...}};
+                return LADataIntfPtr{new LocalAssemblerDataMatrixNearFracture<
+                    ShapeFunctionDisplacement, ShapeFunctionPressure,
+                    GlobalDim>{e, n_variables, local_matrix_size,
+                               dofIndex_to_localIndex, integration_method,
+                               std::forward<ConstructorArgs>(args)...}};
             }
-            return LADataIntfPtr{new LAFractureData<ShapeFunctionDisplacement,
-                                                    ShapeFunctionPressure>{
+            return LADataIntfPtr{new LocalAssemblerDataFracture<
+                ShapeFunctionDisplacement, ShapeFunctionPressure, GlobalDim>{
                 e, local_matrix_size, dofIndex_to_localIndex,
-                std::forward<ConstructorArgs>(args)...}};
+                integration_method, std::forward<ConstructorArgs>(args)...}};
         };
     }
 
