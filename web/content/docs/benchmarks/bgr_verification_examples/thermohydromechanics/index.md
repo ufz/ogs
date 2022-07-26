@@ -2,7 +2,7 @@
 date = "2020-12-22T15:15:45+01:00"
 title = "Thermohydromechanics: Verification examples by Vogel, Maßmann"
 weight = 40
-project = "ThermoHydroMechanics/Linear/verification/thm2_1Dfixed/thm2_1Dfixed.prj"
+project = ["ThermoHydroMechanics/Linear/verification/thm2_1Dfixd/thm2_1Dfixd.prj"]
 author = "Jan Thiedau"
 
 [menu]
@@ -10,8 +10,6 @@ author = "Jan Thiedau"
     parent = "thermo-hydro-mechanics"
 
 +++
-
-{{< data-link >}}
 
 This is one of the benchmark examples with analytical solutions presented
  by Vogel/Massmann to test the implementation of thermohydromechanics.

@@ -2,7 +2,6 @@
 date = "2017-02-17T14:33:45+01:00"
 title = "Unconfined Aquifer"
 weight = 171
-project = "Parabolic/LiquidFlow/Unconfined_Aquifer"
 author = "Thomas Kalbacher"
 
 [menu]
@@ -10,8 +9,6 @@ author = "Thomas Kalbacher"
     parent = "liquid-flow"
 
 +++
-
-{{< data-link >}}
 
 ## Problem description
 

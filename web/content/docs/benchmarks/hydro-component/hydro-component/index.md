@@ -1,7 +1,6 @@
 +++
 author = "Marc Walther"
 weight = 142
-project = "Parabolic/ComponentTransport/SimpleSynthetics/"
 date = "2017-09-07T14:41:09+01:00"
 title = "Saturated Mass Transport"
 
@@ -10,8 +9,6 @@ title = "Saturated Mass Transport"
     parent = "Hydro-Component"
 
 +++
-
-{{< data-link >}}
 
 ## Overview
 

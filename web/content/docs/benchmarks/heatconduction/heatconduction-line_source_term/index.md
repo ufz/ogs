@@ -3,7 +3,7 @@ author = "Thomas Fischer"
 date = "2019-10-01T11:54:02+01:00"
 title = "Heatconduction (Line Source Term)"
 weight = 121
-project = "Parabolic/T/1D_line_source_term_tests/line_source_term.prj"
+project = ["Parabolic/T/1D_line_source_term_tests/line_source_term.prj"]
 
 [menu]
   [menu.benchmarks]

@@ -1,7 +1,7 @@
 +++
 author = "Wenqing Wang"
 weight = 113
-project = "Mechanics/CreepWithHeterogeneousReferenceTemperature/arehs-salt-M_gravity_only_element_refT.prj"
+project = ["Mechanics/CreepWithHeterogeneousReferenceTemperature/arehs-salt-M_gravity_only_element_refT.prj"]
 date = "2021-06-21T11:28:56+02:00"
 title = "Creep analysis with a heterogeneous reference temperature"
 [menu]

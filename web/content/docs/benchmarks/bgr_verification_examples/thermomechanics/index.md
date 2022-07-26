@@ -2,7 +2,6 @@
 date = "2019-04-24T15:15:45+01:00"
 title = "Thermomechanics: Verification examples by Vogel,Maßmann"
 weight = 50
-project = "ThermoMechanics/"
 author = "Johannes Herfurth, Jan Thiedau"
 
 [menu]
@@ -10,8 +9,6 @@ author = "Johannes Herfurth, Jan Thiedau"
     parent = "Thermo-Mechanics"
 
 +++
-
-{{< data-link >}}
 
 These benchmark examples test the implementation of
 thermomechanics process with analytical solutions

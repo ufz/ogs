@@ -1,5 +1,5 @@
 +++
-project = "RichardsMechanics/LiakopoulosHM/liakopoulos.prj"
+project = ["RichardsMechanics/LiakopoulosHM/liakopoulos.prj"]
 author = "Wenqing Wang"
 title = "A test based on the Liakopoulos experiment"
 date = 2020-10-21T15:07:13+02:00

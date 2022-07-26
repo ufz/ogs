@@ -1,5 +1,4 @@
 +++
-project = "PhaseField/me2_pf_case1.prj"
 author = "Keita Yoshioka"
 date = "2020-07-27"
 title = "Fluid driven percolation"

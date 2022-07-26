@@ -1,6 +1,6 @@
 +++
 weight = 114
-project = "LIE/Mechanics/single_joint.prj"
+project = ["LIE/Mechanics/single_joint.prj"]
 author = "Norihiro Watanabe"
 date = "2017-02-15T14:43:32+01:00"
 title = "Linear; Single fracture"

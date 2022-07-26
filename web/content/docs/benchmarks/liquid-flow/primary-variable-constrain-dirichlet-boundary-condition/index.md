@@ -2,7 +2,7 @@
 date = "2020-06-18T11:33:45+01:00"
 title = "Primary variable constraint Dirichlet-type boundary condition"
 weight = 171
-project = "Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC/cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_1.prj"
+project = ["Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC/cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_1.prj"]
 author = "Thomas Fischer"
 
 [menu]

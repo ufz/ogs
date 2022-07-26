@@ -2,15 +2,12 @@
 title = "Simulate saturated single phase flow in fractured porous media: tests for inclined elements"
 date = "2021-08-02T11:13:53+02:00"
 weight = 50
-project = "Parabolic/LiquidFlow/InclinedMeshElements"
 author = "Wenqing Wang"
 
 [menu]
   [menu.benchmarks]
     parent = "liquid-flow"
 +++
-
-{{< data-link >}}
 
 There are four tests for the finite element analyses with inclined elements,
  which are the benchmarks to simulate the saturated single phase flow in fractured

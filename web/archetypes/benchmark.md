@@ -1,17 +1,15 @@
 +++
-author = "[TODO]"
-project = "[TODO].prl"
+author = "TODO"
+project = ["TODO.prj"]
 weight = 101
 
 [menu]
   [menu.benchmarks]
-    parent = "[TODO]"
+    parent = "TODO"
 +++
 
 {{< data-link >}}
 
 ## Problem description
-
-
 
 ## Results and evaluation

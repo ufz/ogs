@@ -3,7 +3,7 @@ author = "Boyan Meng and Haibing Shao"
 date = "2018-02-27T16:44:00+01:00"
 title = "Buildup Test"
 weight = 172
-project = "/Parabolic/LiquidFlow/BuildupTest/buildup_test.prj"
+project = ["/Parabolic/LiquidFlow/BuildupTest/buildup_test.prj"]
 
 [menu]
   [menu.benchmarks]

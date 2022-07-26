@@ -2,7 +2,6 @@
 date = "2018-12-11T15:15:45+01:00"
 title = "BGRa creep model: Verification examples by Vogel,Maßmann"
 weight = 50
-project = "ThermoMechanics/CreepBGRa/Verification/"
 author = "Jan Thiedau"
 
 [menu]
@@ -10,8 +9,6 @@ author = "Jan Thiedau"
     parent = "Thermo-Mechanics"
 
 +++
-
-{{< data-link >}}
 
 These benchmark examples test the implementation of the
 BGRa creep law with analytical solutions presented by Vogel/Massmann.

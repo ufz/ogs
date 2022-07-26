@@ -1,7 +1,7 @@
 +++
 author = "Jasper Bathmann, Dimitri Yu. Naumov, Marc Walther"
 weight = 142
-project = "Parabolic/ComponentTransport/VariableNeumannBoundary/"
+project = ["Parabolic/ComponentTransport/VariableNeumannBoundary/vdbc_input.prj"]
 date = "2018-11-01T10:41:09+01:00"
 title = "Variable Dependent Boundary Condition"
 

@@ -1,5 +1,5 @@
 +++
-project = "Parabolic/TwoPhaseFlowPrho/MoMaS/Twophase_MoMaS_quad.prj"
+project = ["Parabolic/TwoPhaseFlowPrho/MoMaS/Twophase_MoMaS_quad.prj"]
 author = "Yonghui Huang"
 date = "2017-02-17T14:37:58+01:00"
 title = "MoMaS"

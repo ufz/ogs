@@ -2,7 +2,7 @@
 date = "2017-02-15T14:54:12+01:00"
 title = "Heatconduction (Neumann)"
 weight = 122
-project = "Parabolic/T/1D_neumann/picard.prj"
+project = ["Parabolic/T/1D_neumann/picard.prj"]
 author = "Dmitri Naumov, Tianyuan Zheng"
 
 [menu]

@@ -1,5 +1,5 @@
 +++
-project = "Mechanics/Burgers/cube_1e3.prj"
+project = ["Mechanics/Burgers/cube_1e3.prj"]
 author = "Dmitri Naumov"
 date = "2017-02-15T12:58:36+01:00"
 title = "Lubby2; Creep example"

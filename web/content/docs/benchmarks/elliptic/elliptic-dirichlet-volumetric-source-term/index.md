@@ -1,7 +1,7 @@
 +++
 date = "2018-09-25T08:17:39+01:00"
 title = "Volumetric Source Term"
-project = "Elliptic/square_1x1_SteadyStateDiffusion/square_1e2_volumetricsourceterm.prj"
+project = ["Elliptic/square_1x1_SteadyStateDiffusion/square_1e2_volumetricsourceterm.prj"]
 author = "Tom Fischer"
 weight = 102
 

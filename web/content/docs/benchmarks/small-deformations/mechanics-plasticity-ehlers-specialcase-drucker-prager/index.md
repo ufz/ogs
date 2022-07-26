@@ -2,7 +2,7 @@
 date = "2017-02-15T14:46:38+01:00"
 title = "Ehlers; special case - Drucker-Prager"
 weight = 115
-project = "Mechanics/Ehlers/cube_1e0_dp.prj"
+project = ["Mechanics/Ehlers/cube_1e0_dp.prj"]
 author = "Xing-Yuan Miao"
 
 [menu]

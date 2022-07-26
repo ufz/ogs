@@ -1,5 +1,5 @@
 +++
-project = "ThermoRichardsMechanics/TaskCDECOVALEX2023/Decovalex-0.prj"
+project = ["ThermoRichardsMechanics/TaskCDECOVALEX2023/Decovalex-0.prj"]
 
 title = "A test based on DECOVALEX2023 Task C for water vapour diffusion model for non-isothermal Richards flow"
 date = "2022-02-07T13:19:49+01:00"

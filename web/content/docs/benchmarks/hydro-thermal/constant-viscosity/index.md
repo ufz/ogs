@@ -1,5 +1,5 @@
 +++
-project = "Parabolic/HT/ConstViscosity/square_5500x5500.prj"
+project = ["Parabolic/HT/ConstViscosity/square_5500x5500.prj"]
 author = "Thomas Fischer"
 date = "2017-02-16T15:17:53+01:00"
 title = "Constant viscosity"

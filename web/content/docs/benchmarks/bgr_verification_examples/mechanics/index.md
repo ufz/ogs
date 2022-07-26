@@ -31,10 +31,10 @@ chapters in the benchmark books.
 |3.7  |  m1_3Dsquare|
 |3.9  |  m1_3Dbottom|
 |3.10 |  m1_3Dtopload|
-|3.15  |           {{< data-link "m3_3Dshearz" "Mechanics/Linear/Orthotropy/m3_3Dshearz.prj" >}}|
-|3.15 (rotated) |  {{< data-link "m3_3Dshearz_rot" "Mechanics/Linear/Orthotropy/m3_3Dshearz_rot.prj" >}}|
-|3.16  |           {{< data-link "m3_3Dtopload" "Mechanics/Linear/Orthotropy/m3_3Dtopload.prj" >}}|
-|3.16 (rotated) |  {{< data-link "m3_3Dtoploadlc" "Mechanics/Linear/Orthotropy/m3_3Dtoploadlc.prj" >}}|
+|3.15  |           {{< data-link "Mechanics/Linear/Orthotropy/m3_3Dshearz.prj" >}}|
+|3.15 (rotated) |  {{< data-link "Mechanics/Linear/Orthotropy/m3_3Dshearz_rot.prj" >}}|
+|3.16  |           {{< data-link "Mechanics/Linear/Orthotropy/m3_3Dtopload.prj" >}}|
+|3.16 (rotated) |  {{< data-link "Mechanics/Linear/Orthotropy/m3_3Dtoploadlc.prj" >}}|
 
 Note that OGS uses plane strain assumptions in two dimensions (2D) as it is common in geomechanics.
 

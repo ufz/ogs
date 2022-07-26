@@ -1,5 +1,5 @@
 +++
-project = "Elliptic/square_1x1_SteadyStateDiffusion_Python/square_1e3_laplace_eq.prj"
+project = ["Elliptic/square_1x1_SteadyStateDiffusion_Python/square_1e3_laplace_eq.prj"]
 author = "Christoph Lehmann"
 date = "2018-06-01T14:16:55+02:00"
 title = "Manufactured Solution for Laplace's Equation with Python"

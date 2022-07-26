@@ -2,7 +2,7 @@
 date = "2019-04-24T15:15:45+01:00"
 title = "Hydromechanics: Verification examples by Vogel, Maßmann"
 weight = 40
-project = "HydroMechanics/Verification"
+project = ["HydroMechanics/Verification"]
 author = "Johannes Herfurth, Jan Thiedau"
 
 [menu]
@@ -10,8 +10,6 @@ author = "Johannes Herfurth, Jan Thiedau"
     parent = "hydro-mechanics"
 
 +++
-
-{{< data-link >}}
 
 These benchmark examples test the implementation of
 hydromechanics process with analytical solutions

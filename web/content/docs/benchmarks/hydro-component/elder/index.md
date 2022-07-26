@@ -1,7 +1,7 @@
 +++
 author = "Marc Walther"
 weight = 142
-project = "Parabolic/ComponentTransport/elder/"
+project = ["Parabolic/ComponentTransport/elder/elder.prj"]
 date = "2017-09-07T14:41:09+01:00"
 title = "Saturated Variable-Density Flow and Mass Transport (Elder)"
 
