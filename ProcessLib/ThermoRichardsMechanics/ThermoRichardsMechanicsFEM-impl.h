@@ -49,7 +49,6 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
         this->integration_method_.getNumberOfPoints();
 
     ip_data_.resize(n_integration_points);
-    secondary_data_.N_u.resize(n_integration_points);
 
     auto const shape_matrices_u =
         NumLib::initShapeMatrices<ShapeFunctionDisplacement,
@@ -90,8 +89,6 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
         // ip_data.N_p and ip_data.dNdx_p are used for both p and T variables
         ip_data.N_p = shape_matrices[ip].N;
         ip_data.dNdx_p = shape_matrices[ip].dNdx;
-
-        secondary_data_.N_u[ip] = shape_matrices_u[ip].N;
     }
 }
 

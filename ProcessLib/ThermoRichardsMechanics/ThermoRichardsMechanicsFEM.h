@@ -29,14 +29,6 @@ namespace ThermoRichardsMechanics
 {
 namespace MPL = MaterialPropertyLib;
 
-/// Used for the extrapolation of the integration point values. It is ordered
-/// (and stored) by integration points.
-template <typename ShapeMatrixType>
-struct SecondaryData
-{
-    std::vector<ShapeMatrixType, Eigen::aligned_allocator<ShapeMatrixType>> N_u;
-};
-
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           int DisplacementDim>
 class ThermoRichardsMechanicsLocalAssembler
@@ -313,7 +305,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N_u = secondary_data_.N_u[integration_point];
+        auto const& N_u = ip_data_[integration_point].N_u;
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
@@ -395,9 +387,6 @@ private:
 
 private:
     std::vector<IpData> ip_data_;
-    SecondaryData<
-        typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
-        secondary_data_;
 
     static auto block_uu(auto& mat)
     {
