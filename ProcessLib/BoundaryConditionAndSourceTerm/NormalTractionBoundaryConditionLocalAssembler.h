@@ -47,8 +47,7 @@ public:
     virtual ~NormalTractionBoundaryConditionLocalAssemblerInterface() = default;
 };
 
-template <typename ShapeFunctionDisplacement, typename IntegrationMethod,
-          int GlobalDim>
+template <typename ShapeFunctionDisplacement, int GlobalDim>
 class NormalTractionBoundaryConditionLocalAssembler final
     : public NormalTractionBoundaryConditionLocalAssemblerInterface
 {
@@ -61,10 +60,10 @@ public:
     NormalTractionBoundaryConditionLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const local_matrix_size,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         ParameterLib::Parameter<double> const& pressure)
-        : _integration_method(integration_order),
+        : _integration_method(integration_method),
           _pressure(pressure),
           _element(e)
     {
@@ -153,7 +152,7 @@ public:
     }
 
 private:
-    IntegrationMethod const _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     ParameterLib::Parameter<double> const& _pressure;
 
     static const int displacement_size =

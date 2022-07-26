@@ -15,6 +15,7 @@
 #include "MeshLib/Elements/Utils.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Process.h"
@@ -52,7 +53,7 @@ public:
             std::vector<GlobalVector*> const&)> const& getFlux) = 0;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 class ConstraintDirichletBoundaryConditionLocalAssembler final
     : public ConstraintDirichletBoundaryConditionLocalAssemblerInterface
 {
@@ -66,16 +67,17 @@ public:
     /// @param surface_element The surface element used for precomputing the
     /// @param is_axially_symmetric Corrects integration measure for cylinder
     /// coordinates.
-    /// @param integration_order The order of the integration.
+    /// @param integration_method The integration method used.
     /// @param bulk_mesh The bulk mesh the process is defined on.
     /// @param bulk_ids Pairs of bulk element ids and bulk element face ids.
     ConstraintDirichletBoundaryConditionLocalAssembler(
         MeshLib::Element const& surface_element,
-        std::size_t /* local_matrix_size */, bool const is_axially_symmetric,
-        unsigned const integration_order, MeshLib::Mesh const& bulk_mesh,
+        std::size_t /* local_matrix_size */,
+        NumLib::GenericIntegrationMethod const& integration_method,
+        bool const is_axially_symmetric, MeshLib::Mesh const& bulk_mesh,
         std::vector<std::pair<std::size_t, unsigned>> bulk_ids)
         : _surface_element(surface_element),
-          _integration_method(integration_order),
+          _integration_method(integration_method),
           _bulk_element_id(bulk_ids[_surface_element.getID()].first),
           _surface_element_normal(MeshLib::calculateNormalizedSurfaceNormal(
               _surface_element, *(bulk_mesh.getElements()[_bulk_element_id])))
@@ -144,7 +146,7 @@ private:
 
     std::vector<IntegrationPointData> _ip_data;
 
-    IntegrationMethod const _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     std::size_t const _bulk_element_id;
     Eigen::Vector3d const _surface_element_normal;
 };

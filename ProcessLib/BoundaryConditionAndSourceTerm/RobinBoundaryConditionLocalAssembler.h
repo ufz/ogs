@@ -23,22 +23,23 @@ struct RobinBoundaryConditionData final
     ParameterLib::Parameter<double> const* const integral_measure;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 class RobinBoundaryConditionLocalAssembler final
-    : public GenericNaturalBoundaryConditionLocalAssembler<
-          ShapeFunction, IntegrationMethod, GlobalDim>
+    : public GenericNaturalBoundaryConditionLocalAssembler<ShapeFunction,
+                                                           GlobalDim>
 {
-    using Base = GenericNaturalBoundaryConditionLocalAssembler<
-        ShapeFunction, IntegrationMethod, GlobalDim>;
+    using Base =
+        GenericNaturalBoundaryConditionLocalAssembler<ShapeFunction, GlobalDim>;
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
 
 public:
-    RobinBoundaryConditionLocalAssembler(MeshLib::Element const& e,
-                                         std::size_t const local_matrix_size,
-                                         bool is_axially_symmetric,
-                                         unsigned const integration_order,
-                                         RobinBoundaryConditionData const& data)
-        : Base(e, is_axially_symmetric, integration_order),
+    RobinBoundaryConditionLocalAssembler(
+        MeshLib::Element const& e,
+        std::size_t const local_matrix_size,
+        NumLib::GenericIntegrationMethod const& integration_method,
+        bool is_axially_symmetric,
+        RobinBoundaryConditionData const& data)
+        : Base(e, is_axially_symmetric, integration_method),
           _data(data),
           _local_K(local_matrix_size, local_matrix_size),
           _local_rhs(local_matrix_size)

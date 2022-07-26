@@ -18,7 +18,8 @@ namespace ProcessLib
 class GenericNaturalBoundaryConditionLocalAssemblerInterface;
 
 template <typename BoundaryConditionData,
-          template <typename, typename, int> class LocalAssemblerImplementation>
+          template <typename /* shp fct */, int /* global dim */>
+          class LocalAssemblerImplementation>
 class GenericNaturalBoundaryCondition final : public BoundaryCondition
 {
 public:

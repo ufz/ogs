@@ -13,6 +13,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 namespace ProcessLib
@@ -29,7 +30,7 @@ public:
         GlobalMatrix& K, GlobalVector& b, GlobalMatrix* Jac) = 0;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 class GenericNaturalBoundaryConditionLocalAssembler
     : public GenericNaturalBoundaryConditionLocalAssemblerInterface
 {
@@ -52,9 +53,8 @@ protected:
 private:
     static std::vector<NAndWeight, Eigen::aligned_allocator<NAndWeight>>
     initNsAndWeights(MeshLib::Element const& e, bool is_axially_symmetric,
-                     unsigned const integration_order)
+                     NumLib::GenericIntegrationMethod const& integration_method)
     {
-        IntegrationMethod const integration_method(integration_order);
         std::vector<NAndWeight, Eigen::aligned_allocator<NAndWeight>>
             ns_and_weights;
         ns_and_weights.reserve(integration_method.getNumberOfPoints());
@@ -78,16 +78,16 @@ private:
 public:
     GenericNaturalBoundaryConditionLocalAssembler(
         MeshLib::Element const& e, bool is_axially_symmetric,
-        unsigned const integration_order)
-        : _integration_method(integration_order),
+        NumLib::GenericIntegrationMethod const& integration_method)
+        : _integration_method(integration_method),
           _ns_and_weights(
-              initNsAndWeights(e, is_axially_symmetric, integration_order)),
+              initNsAndWeights(e, is_axially_symmetric, integration_method)),
           _element(e)
     {
     }
 
 protected:
-    IntegrationMethod const _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     std::vector<NAndWeight, Eigen::aligned_allocator<NAndWeight>> const
         _ns_and_weights;
     MeshLib::Element const& _element;
