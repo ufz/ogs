@@ -18,9 +18,9 @@ namespace ProcessLib
 {
 namespace TH2M
 {
-struct PhaseTransitionNone : PhaseTransitionModel
+struct NoPhaseTransition : PhaseTransitionModel
 {
-    explicit PhaseTransitionNone(
+    explicit NoPhaseTransition(
         std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
             media);
 

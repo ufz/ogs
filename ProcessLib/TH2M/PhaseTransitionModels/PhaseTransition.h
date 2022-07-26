@@ -18,13 +18,9 @@ namespace ProcessLib
 {
 namespace TH2M
 {
-/// Full phase transition: Gas can dissolve into the liquid phase according to
-/// an equilibrium and water evaporates into the gas phase according to Dalton's
-/// law. This is realized by defining two components in each gas and liquid
-/// phase.
-struct PhaseTransitionFull : PhaseTransitionModel
+struct PhaseTransition : PhaseTransitionModel
 {
-    explicit PhaseTransitionFull(
+    explicit PhaseTransition(
         std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
             media);
 
@@ -34,6 +30,13 @@ struct PhaseTransitionFull : PhaseTransitionModel
         MaterialPropertyLib::VariableArray variables,
         ParameterLib::SpatialPosition pos, double const t,
         double const dt) const override;
+
+private:
+    int const n_components_gas_;
+    int const gas_phase_vapour_component_index_;
+    int const gas_phase_dry_air_component_index_;
+    int const liquid_phase_solute_component_index_;
+    int const liquid_phase_solvent_component_index_;
 };
 
 }  // namespace TH2M

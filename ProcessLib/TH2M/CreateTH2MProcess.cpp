@@ -37,35 +37,17 @@ std::unique_ptr<PhaseTransitionModel> createPhaseTransitionModel(
 
     // Fluid phases are always defined in the first medium of the media vector,
     // thus media.begin() points to the right medium.
-    const bool evaporation =
-        media.begin()->second->phase("Gas").numberOfComponents() > 1;
-
-    const bool dissolution =
-        media.begin()->second->phase("AqueousLiquid").numberOfComponents() > 1;
-
-    // After some thought, it was decided that only two versions of
-    // `PhaseTransitionModel` should be implemented: `PhaseTransitionFull` and
-    // `PhaseTransitionNone`. Dissolution and evaporation are to be controlled
-    // only by the fluid properties (i.e. set Henry coefficient or vapour
-    // pressure to `constant 0`). Todo: Rename and delete the old derivations of
-    // the class `PhaseTransitionModel`.
-
-    if (evaporation && dissolution)
+    const bool phase_transition =
+        (media.begin()->second->phase("Gas").numberOfComponents() > 1) &&
+        (media.begin()->second->phase("AqueousLiquid").numberOfComponents() >
+         1);
+    // Only if both fluids consist of more than one component, the model
+    // phase_transition is returned.
+    if (phase_transition)
     {
-        return std::make_unique<PhaseTransitionEvaporation>(media);
+        return std::make_unique<PhaseTransition>(media);
     }
-
-    if (evaporation && !dissolution)
-    {
-        return std::make_unique<PhaseTransitionEvaporation>(media);
-    }
-
-    if (!evaporation && dissolution)
-    {
-        return std::make_unique<PhaseTransitionDissolution>(media);
-    }
-
-    return std::make_unique<PhaseTransitionNone>(media);
+    return std::make_unique<NoPhaseTransition>(media);
 }
 
 template <int DisplacementDim>

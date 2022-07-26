@@ -7,7 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "PhaseTransitionEvaporation.h"
+#include "PhaseTransition.h"
 
 #include "MaterialLib/PhysicalConstant.h"
 
@@ -15,7 +15,7 @@ namespace ProcessLib
 {
 namespace TH2M
 {
-PhaseTransitionEvaporation::PhaseTransitionEvaporation(
+PhaseTransition::PhaseTransition(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
     : PhaseTransitionModel(media),
       n_components_gas_{numberOfComponents(media, "Gas")},
@@ -34,7 +34,7 @@ PhaseTransitionEvaporation::PhaseTransitionEvaporation(
       liquid_phase_solvent_component_index_{
           liquid_phase_solute_component_index_ ^ 1}
 {
-    DBUG("Create PhaseTransitionEvaporation constitutive model.");
+    DBUG("Create PhaseTransition constitutive model.");
 
     if (n_components_gas_ != 2)
     {
@@ -52,34 +52,28 @@ PhaseTransitionEvaporation::PhaseTransitionEvaporation(
 
     // check for minimum requirement definitions in media object
     std::array const required_vapour_component_properties = {
-        // Todo: complete this list!
         MaterialPropertyLib::vapour_pressure, MaterialPropertyLib::molar_mass,
         MaterialPropertyLib::specific_heat_capacity,
         MaterialPropertyLib::diffusion};
 
     std::array const required_dry_air_component_properties = {
-        // Todo: complete this list!
         MaterialPropertyLib::molar_mass,
         MaterialPropertyLib::specific_heat_capacity};
 
     std::array const required_solute_component_properties = {
-        // Todo: complete this list!
         MaterialPropertyLib::molar_mass,
         MaterialPropertyLib::specific_heat_capacity,
         MaterialPropertyLib::henry_coefficient};
 
     std::array const required_solvent_component_properties = {
-        // Todo: complete this list!
         MaterialPropertyLib::molar_mass,
         MaterialPropertyLib::specific_heat_capacity};
 
     std::array const required_gas_properties = {
-        // Todo: complete this list!
         MaterialPropertyLib::density, MaterialPropertyLib::thermal_conductivity,
         MaterialPropertyLib::viscosity};
 
     std::array const required_liquid_properties = {
-        // Todo: complete this list!
         MaterialPropertyLib::density, MaterialPropertyLib::thermal_conductivity,
         MaterialPropertyLib::viscosity};
 
@@ -99,8 +93,7 @@ PhaseTransitionEvaporation::PhaseTransitionEvaporation(
     checkRequiredProperties(liquid_phase, required_liquid_properties);
 }
 
-PhaseTransitionModelVariables
-PhaseTransitionEvaporation::updateConstitutiveVariables(
+PhaseTransitionModelVariables PhaseTransition::updateConstitutiveVariables(
     PhaseTransitionModelVariables const& phase_transition_model_variables,
     const MaterialPropertyLib::Medium* medium,
     MaterialPropertyLib::VariableArray variables,
@@ -414,21 +407,25 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
 
     // liquid phase density derivatives
     auto const drhoLR_dpGR = rho_ref_betaP + rho_ref_betaC * dcCL_dpGR;
-    auto const drhoLR_dpCap = -rho_ref_betaP;
+    // auto const drhoLR_dpCap = -rho_ref_betaP; // kept for possible future
+    // use.
     auto const drhoLR_dT = rho_ref_betaT + rho_ref_betaC * dcCL_dT;
 
     // solvent partial density derivatives
     auto const drhoWLR_dpGR = rho_ref_betaP;
-    auto const drhoWLR_dpCap = -rho_ref_betaP;
+    // auto const drhoWLR_dpCap = -rho_ref_betaP; // kept for possible future
+    // use.
     auto const drhoWLR_dT = rho_ref_betaT;
 
     // liquid phase mass fraction derivatives
     cv.dxmWL_dpGR = 1. / cv.rhoLR * (drhoWLR_dpGR - cv.xmWL * drhoLR_dpGR);
-    cv.dxmWL_dpCap = 1. / cv.rhoLR * (drhoWLR_dpCap - cv.xmWL * drhoLR_dpCap);
+    cv.dxmWL_dpCap =
+        0.;  // The dependence of the water composition on the capillary
+             // pressure can be ignored with a clear conscience. Should this
+             // change in the future, the following line can be uncommented.
+    // cv.dxmWL_dpCap = 1. / cv.rhoLR * (drhoWLR_dpCap - cv.xmWL *
+    // drhoLR_dpCap);
     cv.dxmWL_dT = 1. / cv.rhoLR * (drhoWLR_dT - cv.xmWL * drhoLR_dT);
-
-    // temp:
-    cv.dxmWL_dpCap = 0.;
 
     // liquid phase molar fractions and derivatives
     cv.xnWL = cv.xmWL * M_C / (cv.xmWL * M_C + xmCL * M_W);
