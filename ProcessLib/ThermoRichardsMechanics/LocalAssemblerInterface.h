@@ -18,6 +18,7 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveSetting.h"
 #include "ProcessLib/ThermoRichardsMechanics/ThermoRichardsMechanicsProcessData.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
+#include "ProcessLib/Utils/TransposeInPlace.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -95,145 +96,283 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                                            int const integration_order)
     {
         if (integration_order !=
-            static_cast<int>(this->integration_method_.getIntegrationOrder()))
+            static_cast<int>(integration_method_.getIntegrationOrder()))
         {
             OGS_FATAL(
                 "Setting integration point initial conditions; The integration "
                 "order of the local assembler for element {:d} is different "
                 "from the integration order in the initial condition.",
-                this->element_.getID());
+                element_.getID());
         }
 
         if (name == "sigma_ip")
         {
-            if (this->process_data_.initial_stress != nullptr)
+            if (process_data_.initial_stress != nullptr)
             {
                 OGS_FATAL(
                     "Setting initial conditions for stress from integration "
                     "point data and from a parameter '{:s}' is not possible "
                     "simultaneously.",
-                    this->process_data_.initial_stress->name);
+                    process_data_.initial_stress->name);
             }
             return ProcessLib::setIntegrationPointKelvinVectorData<
-                DisplacementDim>(values, this->current_states_,
-                                 [](auto const& cs)
-                                 { return cs.s_mech_data.sigma_eff; });
+                DisplacementDim>(
+                values, current_states_,
+                [](auto& cs) -> auto& { return cs.s_mech_data.sigma_eff; });
         }
 
         if (name == "saturation_ip")
         {
             return ProcessLib::setIntegrationPointScalarData(
-                values, this->current_states_,
+                values, current_states_,
                 [](auto& state) -> auto& { return state.S_L_data.S_L; });
         }
         if (name == "porosity_ip")
         {
             return ProcessLib::setIntegrationPointScalarData(
-                values, this->current_states_,
+                values, current_states_,
                 [](auto& state) -> auto& { return state.poro_data.phi; });
         }
         if (name == "transport_porosity_ip")
         {
             return ProcessLib::setIntegrationPointScalarData(
-                values, this->current_states_, [](auto& state) -> auto& {
+                values, current_states_, [](auto& state) -> auto& {
                     return state.transport_poro_data.phi;
                 });
         }
         if (name == "swelling_stress_ip")
         {
             return ProcessLib::setIntegrationPointKelvinVectorData<
-                DisplacementDim>(values, this->current_states_,
-                                 [](auto const& cs)
-                                 { return cs.swelling_data.sigma_sw; });
+                DisplacementDim>(
+                values, current_states_,
+                [](auto& cs) -> auto& { return cs.swelling_data.sigma_sw; });
         }
         if (name == "epsilon_ip")
         {
             return ProcessLib::setIntegrationPointKelvinVectorData<
-                DisplacementDim>(values, this->current_states_,
-                                 [](auto const& cs)
-                                 { return cs.eps_data.eps; });
+                DisplacementDim>(
+                values, current_states_,
+                [](auto& cs) -> auto& { return cs.eps_data.eps; });
         }
         return 0;
     }
 
-    virtual std::vector<double> getSigma() const = 0;
+    std::vector<double> getSigma() const
+    {
+        constexpr int kelvin_vector_size =
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
 
-    virtual std::vector<double> const& getIntPtSigma(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
+        return transposeInPlace<kelvin_vector_size>(
+            [this](std::vector<double>& values)
+            { return getIntPtSigma(0, {}, {}, values); });
+    }
 
-    virtual std::vector<double> getSwellingStress() const = 0;
+    std::vector<double> const& getIntPtSigma(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+    {
+        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+            current_states_, [](auto const& cs) -> auto const& {
+                return cs.s_mech_data.sigma_eff;
+            },
+            cache);
+    }
 
-    virtual std::vector<double> const& getIntPtSwellingStress(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
+    std::vector<double> getSwellingStress() const
+    {
+        constexpr int kelvin_vector_size =
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
 
-    virtual std::vector<double> getEpsilon() const = 0;
+        return transposeInPlace<kelvin_vector_size>(
+            [this](std::vector<double>& values)
+            { return getIntPtSwellingStress(0, {}, {}, values); });
+    }
 
-    virtual std::vector<double> const& getIntPtEpsilon(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
+    std::vector<double> const& getIntPtSwellingStress(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+    {
+        constexpr int kelvin_vector_size =
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+        auto const n_integration_points = current_states_.size();
 
-    virtual std::vector<double> const& getIntPtDarcyVelocity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
+        cache.clear();
+        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+            double, kelvin_vector_size, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, kelvin_vector_size, n_integration_points);
 
-    virtual std::vector<double> getSaturation() const = 0;
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            auto const& sigma_sw = current_states_[ip].swelling_data.sigma_sw;
+            cache_mat.col(ip) =
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_sw);
+        }
 
-    virtual std::vector<double> const& getIntPtSaturation(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
+        return cache;
+    }
 
-    virtual std::vector<double> getPorosity() const = 0;
+    std::vector<double> getEpsilon() const
+    {
+        constexpr int kelvin_vector_size =
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
 
-    virtual std::vector<double> const& getIntPtPorosity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
+        return transposeInPlace<kelvin_vector_size>(
+            [this](std::vector<double>& values)
+            { return getIntPtEpsilon(0, {}, {}, values); });
+    }
 
-    virtual std::vector<double> getTransportPorosity() const = 0;
+    std::vector<double> const& getIntPtEpsilon(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+    {
+        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+            current_states_,
+            [](auto const& cs) -> auto const& { return cs.eps_data.eps; },
+            cache);
+    }
 
-    virtual std::vector<double> const& getIntPtTransportPorosity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
+    std::vector<double> const& getIntPtDarcyVelocity(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+    {
+        unsigned const n_integration_points =
+            integration_method_.getNumberOfPoints();
 
-    virtual std::vector<double> const& getIntPtDryDensitySolid(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
+        cache.clear();
+        auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
+            double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, DisplacementDim, n_integration_points);
 
-    virtual std::vector<double> const& getIntPtLiquidDensity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            cache_matrix.col(ip).noalias() =
+                output_data_[ip].darcy_data.v_darcy;
+        }
 
-    virtual std::vector<double> const& getIntPtViscosity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
+        return cache;
+    }
+
+    std::vector<double> getSaturation() const
+    {
+        std::vector<double> result;
+        getIntPtSaturation(0, {}, {}, result);
+        return result;
+    }
+
+    std::vector<double> const& getIntPtSaturation(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+    {
+        return ProcessLib::getIntegrationPointScalarData(
+            current_states_,
+            [](auto const& state) -> auto const& { return state.S_L_data.S_L; },
+            cache);
+    }
+
+    std::vector<double> getPorosity() const
+    {
+        std::vector<double> result;
+        getIntPtPorosity(0, {}, {}, result);
+        return result;
+    }
+
+    std::vector<double> const& getIntPtPorosity(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+    {
+        return ProcessLib::getIntegrationPointScalarData(
+            current_states_, [](auto const& state) -> auto const& {
+                return state.poro_data.phi;
+            },
+            cache);
+    }
+
+    std::vector<double> getTransportPorosity() const
+    {
+        std::vector<double> result;
+        getIntPtTransportPorosity(0, {}, {}, result);
+        return result;
+    }
+
+    std::vector<double> const& getIntPtTransportPorosity(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+    {
+        return ProcessLib::getIntegrationPointScalarData(
+            current_states_,
+            [](auto const& state) -> auto const& {
+                return state.transport_poro_data.phi;
+            },
+            cache);
+    }
+
+    std::vector<double> const& getIntPtDryDensitySolid(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+    {
+        return ProcessLib::getIntegrationPointScalarData(
+            output_data_,
+            [](auto const& out) -> auto const& {
+                return out.rho_S_data.dry_density_solid;
+            },
+            cache);
+    }
+
+    std::vector<double> const& getIntPtLiquidDensity(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+    {
+        return ProcessLib::getIntegrationPointScalarData(
+            output_data_,
+            [](auto const& out) -> auto const& {
+                return out.rho_L_data.rho_LR;
+            },
+            cache);
+    }
+
+    std::vector<double> const& getIntPtViscosity(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+    {
+        return ProcessLib::getIntegrationPointScalarData(
+            output_data_, [](auto const& out) -> auto const& {
+                return out.mu_L_data.viscosity;
+            },
+            cache);
+    }
 
     // TODO move to NumLib::ExtrapolatableElement
-    virtual unsigned getNumberOfIntegrationPoints() const = 0;
+    unsigned getNumberOfIntegrationPoints() const
+    {
+        return integration_method_.getNumberOfPoints();
+    }
 
-    virtual typename MaterialLib::Solids::MechanicsBase<
+    typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables const&
-    getMaterialStateVariablesAt(unsigned /*integration_point*/) const = 0;
+    getMaterialStateVariablesAt(unsigned integration_point) const
+    {
+        return *material_states_[integration_point].material_state_variables;
+    }
 
 protected:
     ThermoRichardsMechanicsProcessData<DisplacementDim>& process_data_;
