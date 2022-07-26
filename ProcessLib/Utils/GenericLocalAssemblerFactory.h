@@ -17,6 +17,7 @@
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
+#include "NumLib/Fem/Integration/IntegrationMethodRegistry.h"
 
 namespace ProcessLib
 {
@@ -75,8 +76,7 @@ protected:
 };
 
 template <typename ShapeFunction, typename LocalAssemblerInterface,
-          template <typename /* shp fct */, typename /* int meth */,
-                    int /* global dim */>
+          template <typename /* shp fct */, int /* global dim */>
           class LocalAssemblerImplementation,
           int GlobalDim, typename... ConstructorArgs>
 class LocalAssemblerBuilderFactory
@@ -89,23 +89,27 @@ class LocalAssemblerBuilderFactory
     using IntegrationMethod = typename NumLib::GaussLegendreIntegrationPolicy<
         typename ShapeFunction::MeshElement>::IntegrationMethod;
 
-    using LocAsmImpl =
-        LocalAssemblerImplementation<ShapeFunction, IntegrationMethod,
-                                     GlobalDim>;
+    using LocAsmImpl = LocalAssemblerImplementation<ShapeFunction, GlobalDim>;
 
     LocalAssemblerBuilderFactory() = delete;
 
 public:
     /// Generates a function that creates a new local assembler of type
     /// \c LocAsmImpl.
-    static LocAsmBuilder create()
+    static LocAsmBuilder create(
+        NumLib::IntegrationOrder const integration_order)
     {
-        return [](MeshLib::Element const& e,
-                  std::size_t const local_matrix_size,
-                  ConstructorArgs&&... args)
+        return [integration_order](MeshLib::Element const& e,
+                                   std::size_t const local_matrix_size,
+                                   ConstructorArgs&&... args)
         {
+            auto const& integration_method = NumLib::IntegrationMethodRegistry::
+                template getIntegrationMethod<
+                    typename ShapeFunction::MeshElement>(integration_order);
+
             return std::make_unique<LocAsmImpl>(
-                e, local_matrix_size, std::forward<ConstructorArgs>(args)...);
+                e, local_matrix_size, integration_method,
+                std::forward<ConstructorArgs>(args)...);
         };
     }
 };
