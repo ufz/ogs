@@ -374,6 +374,22 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         return *material_states_[integration_point].material_state_variables;
     }
 
+    void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
+                              double const /*t*/,
+                              double const /*dt*/) override
+    {
+        unsigned const n_integration_points =
+            integration_method_.getNumberOfPoints();
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            // TODO re-evaluate part of the assembly in order to be consistent?
+            material_states_[ip].pushBackState();
+        }
+
+        prev_states_ = current_states_;
+    }
+
 protected:
     ThermoRichardsMechanicsProcessData<DisplacementDim>& process_data_;
 

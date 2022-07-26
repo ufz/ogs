@@ -282,22 +282,6 @@ public:
         this->prev_states_ = this->current_states_;
     }
 
-    void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              double const /*t*/,
-                              double const /*dt*/) override
-    {
-        unsigned const n_integration_points =
-            this->integration_method_.getNumberOfPoints();
-
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            // TODO re-evaluate part of the assembly in order to be consistent?
-            this->material_states_[ip].pushBackState();
-        }
-
-        this->prev_states_ = this->current_states_;
-    }
-
     void computeSecondaryVariableConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_x_dot) override;
