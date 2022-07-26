@@ -70,20 +70,22 @@ using IntegrationPointValuesMethod = std::vector<double> const& (
                                     ,
                                     std::vector<double>& /*cache*/) const;
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 class LocalAssemblerData : public LocalAssemblerDataInterface
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
 public:
-    LocalAssemblerData(MeshLib::Element const& e,
-                       std::size_t const /*local_matrix_size*/,
-                       bool is_axially_symmetric,
-                       unsigned const integration_order)
-        : _shape_matrices(NumLib::initShapeMatrices<
-                          ShapeFunction, ShapeMatricesType, GlobalDim>(
-              e, is_axially_symmetric, IntegrationMethod{integration_order})),
+    LocalAssemblerData(
+        MeshLib::Element const& e,
+        std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
+        bool is_axially_symmetric)
+        : _shape_matrices(
+              NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                        GlobalDim>(e, is_axially_symmetric,
+                                                   integration_method)),
           _int_pt_values(_shape_matrices.size())
     {
     }
@@ -161,7 +163,8 @@ public:
         // createAssemblers(mesh);
         ProcessLib::createLocalAssemblers<LocalAssemblerData>(
             mesh.getDimension(), mesh.getElements(), *_dof_table,
-            _local_assemblers, mesh.isAxiallySymmetric(), _integration_order);
+            _local_assemblers, NumLib::IntegrationOrder{_integration_order},
+            mesh.isAxiallySymmetric());
     }
 
     void interpolateNodalValuesToIntegrationPoints(

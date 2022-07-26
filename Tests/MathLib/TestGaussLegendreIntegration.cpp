@@ -66,17 +66,18 @@ public:
     virtual ~LocalAssemblerInterface() = default;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 class LocalAssembler : public LocalAssemblerInterface
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
 public:
-    LocalAssembler(MeshLib::Element const& e,
-                   std::size_t const /*local_matrix_size*/,
-                   bool is_axially_symmetric,
-                   unsigned const /*integration_order*/)
+    LocalAssembler(
+        MeshLib::Element const& e,
+        std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& /*integration_method*/,
+        bool is_axially_symmetric)
         : _e(e)
     {
         if (is_axially_symmetric)
@@ -88,14 +89,17 @@ public:
     double integrate(const Function& f,
                      unsigned const integration_order) const override
     {
-        double integral = 0;
+        auto const& integration_method =
+            NumLib::IntegrationMethodRegistry::template getIntegrationMethod<
+                typename ShapeFunction::MeshElement>(
+                NumLib::IntegrationOrder{integration_order});
 
         auto const sms =
             NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                       GlobalDim>(
-                _e, false /*is_axially_symmetric*/,
-                IntegrationMethod{integration_order});
-        IntegrationMethod integration_method{integration_order};
+                _e, false /*is_axially_symmetric*/, integration_method);
+
+        double integral = 0;
 
         for (unsigned ip = 0; ip < sms.size(); ++ip)
         {
@@ -130,7 +134,8 @@ public:
 
         ProcessLib::createLocalAssemblers<LocalAssembler>(
             mesh.getDimension(), mesh.getElements(), *_dof_table,
-            _local_assemblers, mesh.isAxiallySymmetric(), _integration_order);
+            _local_assemblers, NumLib::IntegrationOrder{_integration_order},
+            mesh.isAxiallySymmetric());
     }
 
     double integrate(LocalAssemblerInterface::Function const& f) const
