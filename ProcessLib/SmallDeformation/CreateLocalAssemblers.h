@@ -22,12 +22,14 @@ namespace SmallDeformation
 namespace detail
 {
 template <int GlobalDim,
-          template <typename, typename, int> class LocalAssemblerImplementation,
+          template <typename /* shp fct */, int /* global dim */>
+          class LocalAssemblerImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<MeshLib::Element*> const& mesh_elements,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
+    NumLib::IntegrationOrder const integration_order,
     ExtraCtorArgs&&... extra_ctor_args)
 {
     using LocAsmFactory =
@@ -37,7 +39,7 @@ void createLocalAssemblers(
 
     DBUG("Create local assemblers.");
 
-    LocAsmFactory factory(dof_table);
+    LocAsmFactory factory(dof_table, integration_order);
     local_assemblers.resize(mesh_elements.size());
 
     DBUG("Calling local assembler builder for all mesh elements.");
@@ -60,18 +62,20 @@ void createLocalAssemblers(
  * Therefore they always have to be provided manually.
  */
 template <int GlobalDim,
-          template <typename, typename, int> class LocalAssemblerImplementation,
+          template <typename /* shp fct */, int /* global dim */>
+          class LocalAssemblerImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
     std::vector<MeshLib::Element*> const& mesh_elements,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
+    NumLib::IntegrationOrder const integration_order,
     ExtraCtorArgs&&... extra_ctor_args)
 {
     DBUG("Create local assemblers.");
 
     detail::createLocalAssemblers<GlobalDim, LocalAssemblerImplementation>(
-        dof_table, mesh_elements, local_assemblers,
+        dof_table, mesh_elements, local_assemblers, integration_order,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
 }  // namespace SmallDeformation
