@@ -18,15 +18,16 @@ namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
-template <typename ShapeFunction, typename IntegrationMethod, typename BHEType>
-HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
-    HeatTransportBHELocalAssemblerBHE(MeshLib::Element const& e,
-                                      BHEType const& bhe,
-                                      bool const is_axially_symmetric,
-                                      unsigned const integration_order,
-                                      HeatTransportBHEProcessData& process_data)
+template <typename ShapeFunction, typename BHEType>
+HeatTransportBHELocalAssemblerBHE<ShapeFunction, BHEType>::
+    HeatTransportBHELocalAssemblerBHE(
+        MeshLib::Element const& e,
+        NumLib::GenericIntegrationMethod const& integration_method,
+        BHEType const& bhe,
+        bool const is_axially_symmetric,
+        HeatTransportBHEProcessData& process_data)
     : _process_data(process_data),
-      _integration_method(integration_order),
+      _integration_method(integration_method),
       _bhe(bhe),
       _element_id(e.getID())
 {
@@ -117,15 +118,13 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
     // std::cout << _R_pi_s_matrix.format(CleanFmt) << sep;
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, typename BHEType>
-void HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod,
-                                       BHEType>::
-    assemble(
-        double const /*t*/, double const /*dt*/,
-        std::vector<double> const& /*local_x*/,
-        std::vector<double> const& /*local_xdot*/,
-        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
-        std::vector<double>& /*local_b_data*/)  // local b vector is not touched
+template <typename ShapeFunction, typename BHEType>
+void HeatTransportBHELocalAssemblerBHE<ShapeFunction, BHEType>::assemble(
+    double const /*t*/, double const /*dt*/,
+    std::vector<double> const& /*local_x*/,
+    std::vector<double> const& /*local_xdot*/,
+    std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+    std::vector<double>& /*local_b_data*/)  // local b vector is not touched
 {
     auto local_M = MathLib::createZeroedMatrix<BheLocalMatrixType>(
         local_M_data, local_matrix_size, local_matrix_size);
