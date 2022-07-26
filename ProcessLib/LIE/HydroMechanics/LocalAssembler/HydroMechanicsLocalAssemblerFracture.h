@@ -26,9 +26,8 @@ namespace LIE
 {
 namespace HydroMechanics
 {
-template <typename ShapeFunctionDisplacement,
-          typename ShapeFunctionPressure,
-          typename IntegrationMethod,
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+
           int GlobalDim>
 class HydroMechanicsLocalAssemblerFracture
     : public HydroMechanicsLocalAssemblerInterface
@@ -43,8 +42,8 @@ public:
         MeshLib::Element const& e,
         std::size_t const local_matrix_size,
         std::vector<unsigned> const& dofIndex_to_localIndex,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         HydroMechanicsProcessData<GlobalDim>& process_data);
 
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,

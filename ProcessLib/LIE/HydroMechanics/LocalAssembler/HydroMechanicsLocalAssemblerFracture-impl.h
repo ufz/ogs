@@ -32,16 +32,15 @@ Eigen::Matrix<double, GlobalDim, GlobalDim> createRotatedTensor(
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int GlobalDim>
+          int GlobalDim>
 HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
-                                     ShapeFunctionPressure, IntegrationMethod,
-                                     GlobalDim>::
+                                     ShapeFunctionPressure, GlobalDim>::
     HydroMechanicsLocalAssemblerFracture(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
         std::vector<unsigned> const& dofIndex_to_localIndex,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         HydroMechanicsProcessData<GlobalDim>& process_data)
     : HydroMechanicsLocalAssemblerInterface(
           e, is_axially_symmetric,
@@ -52,7 +51,6 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 {
     assert(e.getDimension() == GlobalDim - 1);
 
-    IntegrationMethod integration_method(integration_order);
     unsigned const n_integration_points =
         integration_method.getNumberOfPoints();
 
@@ -126,9 +124,9 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int GlobalDim>
+          int GlobalDim>
 void HydroMechanicsLocalAssemblerFracture<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     GlobalDim>::assembleWithJacobianConcrete(double const t, double const dt,
                                              Eigen::VectorXd const& local_x,
                                              Eigen::VectorXd const& local_xdot,
@@ -157,10 +155,9 @@ void HydroMechanicsLocalAssemblerFracture<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int GlobalDim>
+          int GlobalDim>
 void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
-                                          ShapeFunctionPressure,
-                                          IntegrationMethod, GlobalDim>::
+                                          ShapeFunctionPressure, GlobalDim>::
     assembleBlockMatricesWithJacobian(
         double const t, double const dt,
         Eigen::Ref<const Eigen::VectorXd> const& p,
@@ -321,9 +318,9 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int GlobalDim>
+          int GlobalDim>
 void HydroMechanicsLocalAssemblerFracture<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     GlobalDim>::postTimestepConcreteWithVector(const double t,
                                                double const /*dt*/,
                                                Eigen::VectorXd const& local_x)

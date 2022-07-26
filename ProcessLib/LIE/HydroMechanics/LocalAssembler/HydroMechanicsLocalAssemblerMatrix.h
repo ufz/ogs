@@ -12,13 +12,12 @@
 
 #include <vector>
 
-#include "NumLib/Fem/ShapeMatrixPolicy.h"
-#include "ProcessLib/Deformation/BMatrixPolicy.h"
-
-#include "ProcessLib/LIE/HydroMechanics/HydroMechanicsProcessData.h"
-
 #include "HydroMechanicsLocalAssemblerInterface.h"
 #include "IntegrationPointDataMatrix.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "ProcessLib/Deformation/BMatrixPolicy.h"
+#include "ProcessLib/LIE/HydroMechanics/HydroMechanicsProcessData.h"
 
 namespace ProcessLib
 {
@@ -28,9 +27,7 @@ namespace HydroMechanics
 {
 namespace MPL = MaterialPropertyLib;
 
-template <typename ShapeFunctionDisplacement,
-          typename ShapeFunctionPressure,
-          typename IntegrationMethod,
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int GlobalDim>
 class HydroMechanicsLocalAssemblerMatrix
     : public HydroMechanicsLocalAssemblerInterface
@@ -46,8 +43,8 @@ public:
         std::size_t const n_variables,
         std::size_t const local_matrix_size,
         std::vector<unsigned> const& dofIndex_to_localIndex,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         HydroMechanicsProcessData<GlobalDim>& process_data);
 
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
