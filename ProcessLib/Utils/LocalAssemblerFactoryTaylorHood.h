@@ -12,7 +12,6 @@
 
 #include "EnabledElements.h"
 #include "GenericLocalAssemblerFactory.h"
-#include "NumLib/Fem/Integration/IntegrationMethodRegistry.h"
 
 namespace ProcessLib
 {
