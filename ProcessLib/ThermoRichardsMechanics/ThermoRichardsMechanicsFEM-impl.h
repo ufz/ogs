@@ -62,8 +62,6 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
                                   DisplacementDim>(e, is_axially_symmetric,
                                                    integration_method);
 
-    auto const& medium = this->process_data_.media_map->getMedium(e.getID());
-
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(e.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -92,30 +90,6 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
         // ip_data.N_p and ip_data.dNdx_p are used for both p and T variables
         ip_data.N_p = shape_matrices[ip].N;
         ip_data.dNdx_p = shape_matrices[ip].dNdx;
-
-        auto& current_state = this->current_states_[ip];
-
-        // Initial porosity. Could be read from integration point data or mesh.
-        current_state.poro_data.phi =
-            medium->property(MPL::porosity)
-                .template initialValue<double>(
-                    x_position,
-                    std::numeric_limits<
-                        double>::quiet_NaN() /* t independent */);
-
-        if (medium->hasProperty(MPL::PropertyType::transport_porosity))
-        {
-            current_state.transport_poro_data.phi =
-                medium->property(MPL::transport_porosity)
-                    .template initialValue<double>(
-                        x_position,
-                        std::numeric_limits<
-                            double>::quiet_NaN() /* t independent */);
-        }
-        else
-        {
-            current_state.transport_poro_data.phi = current_state.poro_data.phi;
-        }
 
         secondary_data_.N_u[ip] = shape_matrices_u[ip].N;
     }
