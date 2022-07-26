@@ -57,29 +57,15 @@ std::vector<double> const& getIntegrationPointKelvinVectorData(
     return cache;
 }
 
-template <int DisplacementDim, typename IntegrationPointData,
+template <int DisplacementDim, typename IntegrationPointDataVector,
           typename MemberType>
 std::vector<double> getIntegrationPointKelvinVectorData(
-    std::vector<IntegrationPointData,
-                Eigen::aligned_allocator<IntegrationPointData>> const&
-        ip_data_vector,
-    MemberType member)
+    IntegrationPointDataVector const& ip_data_vector, MemberType member)
 {
-    constexpr int kelvin_vector_size =
-        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
-    auto const n_integration_points = ip_data_vector.size();
-
     std::vector<double> ip_kelvin_vector_values;
-    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-        double, Eigen::Dynamic, kelvin_vector_size, Eigen::RowMajor>>(
-        ip_kelvin_vector_values, n_integration_points, kelvin_vector_size);
 
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        auto const& ip_member = ip_data_vector[ip].*member;
-        cache_mat.row(ip) =
-            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(ip_member);
-    }
+    getIntegrationPointKelvinVectorData<DisplacementDim>(
+        ip_data_vector, member, ip_kelvin_vector_values);
 
     return ip_kelvin_vector_values;
 }
