@@ -20,6 +20,7 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ParameterLib/Parameter.h"
@@ -45,7 +46,7 @@ public:
         std::vector<double>& cache) const = 0;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 class LocalAssemblerData : public SteadyStateDiffusionLocalAssemblerInterface
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
@@ -61,14 +62,15 @@ class LocalAssemblerData : public SteadyStateDiffusionLocalAssemblerInterface
 public:
     /// The hydraulic_conductivity factor is directly integrated into the local
     /// element matrix.
-    LocalAssemblerData(MeshLib::Element const& element,
-                       std::size_t const /*local_matrix_size*/,
-                       bool is_axially_symmetric,
-                       unsigned const integration_order,
-                       SteadyStateDiffusionData const& process_data)
+    LocalAssemblerData(
+        MeshLib::Element const& element,
+        std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
+        bool const is_axially_symmetric,
+        SteadyStateDiffusionData const& process_data)
         : _element(element),
           _process_data(process_data),
-          _integration_method(integration_order),
+          _integration_method(integration_method),
           _shape_matrices(
               NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                         GlobalDim>(
@@ -245,7 +247,7 @@ private:
     MeshLib::Element const& _element;
     SteadyStateDiffusionData const& _process_data;
 
-    IntegrationMethod const _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
         _shape_matrices;
 };

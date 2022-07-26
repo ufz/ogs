@@ -17,10 +17,8 @@ namespace ProcessLib
 {
 namespace PhaseField
 {
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                              DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& /*local_xdot*/, int const process_id,
@@ -41,10 +39,8 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                                                 local_Jac_data);
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                              DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForDeformationEquations(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
@@ -129,10 +125,8 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                              DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianPhaseFieldEquations(double const t, double const dt,
                                             Eigen::VectorXd const& local_x,
                                             std::vector<double>& local_b_data,
@@ -262,10 +256,8 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                              DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     computeCrackIntegral(std::size_t mesh_item_id,
                          std::vector<std::reference_wrapper<
                              NumLib::LocalToGlobalIndexMap>> const& dof_tables,
@@ -319,17 +311,14 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                              DisplacementDim>::
-    computeEnergy(std::size_t mesh_item_id,
-                  std::vector<std::reference_wrapper<
-                      NumLib::LocalToGlobalIndexMap>> const& dof_tables,
-                  GlobalVector const& /*x*/, double const t,
-                  double& elastic_energy, double& surface_energy,
-                  double& pressure_work,
-                  CoupledSolutionsForStaggeredScheme const* const cpl_xs)
+template <typename ShapeFunction, int DisplacementDim>
+void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::computeEnergy(
+    std::size_t mesh_item_id,
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
+        dof_tables,
+    GlobalVector const& /*x*/, double const t, double& elastic_energy,
+    double& surface_energy, double& pressure_work,
+    CoupledSolutionsForStaggeredScheme const* const cpl_xs)
 {
     assert(cpl_xs != nullptr);
 

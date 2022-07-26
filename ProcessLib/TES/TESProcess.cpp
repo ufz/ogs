@@ -143,7 +143,8 @@ void TESProcess::initializeConcreteProcess(
 {
     ProcessLib::createLocalAssemblers<TESLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _assembly_params);
+        NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
+        _assembly_params);
 
     initializeSecondaryVariables();
 }

@@ -22,6 +22,7 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ParameterLib/Parameter.h"
@@ -75,7 +76,7 @@ public:
         std::vector<double>& cache) const = 0;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 class LocalAssemblerData : public RichardsFlowLocalAssemblerInterface
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
@@ -93,14 +94,15 @@ class LocalAssemblerData : public RichardsFlowLocalAssemblerInterface
     using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
 
 public:
-    LocalAssemblerData(MeshLib::Element const& element,
-                       std::size_t const local_matrix_size,
-                       bool is_axially_symmetric,
-                       unsigned const integration_order,
-                       RichardsFlowProcessData const& process_data)
+    LocalAssemblerData(
+        MeshLib::Element const& element,
+        std::size_t const local_matrix_size,
+        NumLib::GenericIntegrationMethod const& integration_method,
+        bool is_axially_symmetric,
+        RichardsFlowProcessData const& process_data)
         : _element(element),
           _process_data(process_data),
-          _integration_method(integration_order),
+          _integration_method(integration_method),
           _saturation(
               std::vector<double>(_integration_method.getNumberOfPoints()))
     {
@@ -365,7 +367,7 @@ private:
     MeshLib::Element const& _element;
     RichardsFlowProcessData const& _process_data;
 
-    IntegrationMethod const _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     std::vector<
         IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType,
                              NodalMatrixType>,

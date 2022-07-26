@@ -28,8 +28,8 @@ struct LocalCoupledSolutions;
 
 namespace HT
 {
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-class StaggeredHTFEM : public HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
+class StaggeredHTFEM : public HTFEM<ShapeFunction, GlobalDim>
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
@@ -49,20 +49,20 @@ class StaggeredHTFEM : public HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>
         typename ShapeMatricesType::GlobalDimNodalMatrixType;
     using GlobalDimMatrixType = typename ShapeMatricesType::GlobalDimMatrixType;
 
-    using HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::pressure_index;
-    using HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::pressure_size;
-    using HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::temperature_index;
-    using HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::temperature_size;
+    using HTFEM<ShapeFunction, GlobalDim>::pressure_index;
+    using HTFEM<ShapeFunction, GlobalDim>::pressure_size;
+    using HTFEM<ShapeFunction, GlobalDim>::temperature_index;
+    using HTFEM<ShapeFunction, GlobalDim>::temperature_size;
 
 public:
     StaggeredHTFEM(MeshLib::Element const& element,
                    std::size_t const local_matrix_size,
+                   NumLib::GenericIntegrationMethod const& integration_method,
                    bool is_axially_symmetric,
-                   unsigned const integration_order,
                    HTProcessData const& process_data)
-        : HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>(
-              element, local_matrix_size, is_axially_symmetric,
-              integration_order, process_data, 1)
+        : HTFEM<ShapeFunction, GlobalDim>(element, local_matrix_size,
+                                          integration_method,
+                                          is_axially_symmetric, process_data, 1)
     {
     }
 

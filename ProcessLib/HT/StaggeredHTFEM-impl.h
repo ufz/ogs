@@ -22,15 +22,12 @@ namespace ProcessLib
 {
 namespace HT
 {
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
-    assembleForStaggeredScheme(double const t, double const dt,
-                               Eigen::VectorXd const& local_x,
-                               Eigen::VectorXd const& local_xdot,
-                               int const process_id,
-                               std::vector<double>& local_M_data,
-                               std::vector<double>& local_K_data,
-                               std::vector<double>& local_b_data)
+template <typename ShapeFunction, int GlobalDim>
+void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleForStaggeredScheme(
+    double const t, double const dt, Eigen::VectorXd const& local_x,
+    Eigen::VectorXd const& local_xdot, int const process_id,
+    std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+    std::vector<double>& local_b_data)
 {
     if (process_id == this->_process_data.heat_transport_process_id)
     {
@@ -43,14 +40,11 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                               local_K_data, local_b_data);
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
-    assembleHydraulicEquation(double const t, double const dt,
-                              Eigen::VectorXd const& local_x,
-                              Eigen::VectorXd const& local_xdot,
-                              std::vector<double>& local_M_data,
-                              std::vector<double>& local_K_data,
-                              std::vector<double>& local_b_data)
+template <typename ShapeFunction, int GlobalDim>
+void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
+    double const t, double const dt, Eigen::VectorXd const& local_x,
+    Eigen::VectorXd const& local_xdot, std::vector<double>& local_M_data,
+    std::vector<double>& local_K_data, std::vector<double>& local_b_data)
 {
     auto const local_p =
         local_x.template segment<pressure_size>(pressure_index);
@@ -176,13 +170,13 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
-    assembleHeatTransportEquation(double const t,
-                                  double const dt,
-                                  Eigen::VectorXd const& local_x,
-                                  std::vector<double>& local_M_data,
-                                  std::vector<double>& local_K_data)
+template <typename ShapeFunction, int GlobalDim>
+void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHeatTransportEquation(
+    double const t,
+    double const dt,
+    Eigen::VectorXd const& local_x,
+    std::vector<double>& local_M_data,
+    std::vector<double>& local_K_data)
 {
     auto const local_p =
         local_x.template segment<pressure_size>(pressure_index);
@@ -316,14 +310,13 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 std::vector<double> const&
-StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
-    getIntPtDarcyVelocity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const
+StaggeredHTFEM<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
+    const double t,
+    std::vector<GlobalVector*> const& x,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+    std::vector<double>& cache) const
 {
     assert(x.size() == dof_table.size());
     auto const n_processes = dof_table.size();

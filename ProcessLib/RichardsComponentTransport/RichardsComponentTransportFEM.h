@@ -18,12 +18,13 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
-#include "RichardsComponentTransportProcessData.h"
 #include "ProcessLib/ProcessVariable.h"
+#include "RichardsComponentTransportProcessData.h"
 
 namespace ProcessLib
 {
@@ -72,7 +73,7 @@ public:
         std::vector<double>& cache) const = 0;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 class LocalAssemblerData
     : public RichardsComponentTransportLocalAssemblerInterface
 {
@@ -99,8 +100,8 @@ public:
     LocalAssemblerData(
         MeshLib::Element const& element,
         std::size_t const local_matrix_size,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool is_axially_symmetric,
-        unsigned const integration_order,
         RichardsComponentTransportProcessData const& process_data,
         ProcessVariable const& transport_process_variable);
 
@@ -130,7 +131,7 @@ private:
     unsigned const _element_id;
     RichardsComponentTransportProcessData const& _process_data;
 
-    IntegrationMethod const _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     ProcessVariable const& _transport_process_variable;
 
     std::vector<

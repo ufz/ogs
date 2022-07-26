@@ -46,7 +46,8 @@ void TwoPhaseFlowWithPrhoProcess::initializeConcreteProcess(
 {
     ProcessLib::createLocalAssemblers<TwoPhaseFlowWithPrhoLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _process_data);
+        NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
+        _process_data);
 
     _secondary_variables.addSecondaryVariable(
         "saturation",

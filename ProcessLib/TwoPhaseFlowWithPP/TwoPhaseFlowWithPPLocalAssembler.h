@@ -16,6 +16,7 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
@@ -68,7 +69,7 @@ public:
         std::vector<double>& cache) const = 0;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 class TwoPhaseFlowWithPPLocalAssembler
     : public TwoPhaseFlowWithPPLocalAssemblerInterface
 {
@@ -92,11 +93,11 @@ public:
     TwoPhaseFlowWithPPLocalAssembler(
         MeshLib::Element const& element,
         std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         TwoPhaseFlowWithPPProcessData const& process_data)
         : _element(element),
-          _integration_method(integration_order),
+          _integration_method(integration_method),
           _process_data(process_data),
           _saturation(
               std::vector<double>(_integration_method.getNumberOfPoints())),
@@ -161,7 +162,7 @@ public:
 private:
     MeshLib::Element const& _element;
 
-    IntegrationMethod const _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
 
     TwoPhaseFlowWithPPProcessData const& _process_data;
     std::vector<

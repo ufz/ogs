@@ -26,6 +26,7 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ParameterLib/Parameter.h"
@@ -205,7 +206,7 @@ private:
         std::vector<double>& local_b_data, int const transport_process_id) = 0;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 class LocalAssemblerData : public ComponentTransportLocalAssemblerInterface
 {
     // When monolithic scheme is adopted, nodal pressure and nodal concentration
@@ -242,14 +243,14 @@ public:
     LocalAssemblerData(
         MeshLib::Element const& element,
         std::size_t const local_matrix_size,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool is_axially_symmetric,
-        unsigned const integration_order,
         ComponentTransportProcessData const& process_data,
         std::vector<std::reference_wrapper<ProcessVariable>> const&
             transport_process_variables)
         : _element(element),
           _process_data(process_data),
-          _integration_method(integration_order),
+          _integration_method(integration_method),
           _transport_process_variables(transport_process_variables)
     {
         (void)local_matrix_size;
@@ -1819,7 +1820,7 @@ private:
     MeshLib::Element const& _element;
     ComponentTransportProcessData const& _process_data;
 
-    IntegrationMethod const _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     std::vector<std::reference_wrapper<ProcessVariable>> const
         _transport_process_variables;
 

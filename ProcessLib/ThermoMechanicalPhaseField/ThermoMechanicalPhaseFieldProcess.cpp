@@ -134,8 +134,8 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
     ProcessLib::SmallDeformation::createLocalAssemblers<
         DisplacementDim, ThermoMechanicalPhaseFieldLocalAssembler>(
         mesh.getElements(), dof_table, _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _process_data,
-        _mechanics_related_process_id, _phase_field_process_id,
+        NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
+        _process_data, _mechanics_related_process_id, _phase_field_process_id,
         _heat_conduction_process_id);
 
     _secondary_variables.addSecondaryVariable(

@@ -18,6 +18,7 @@
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
@@ -31,7 +32,7 @@ namespace ThermoRichardsFlow
 {
 namespace MPL = MaterialPropertyLib;
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 class ThermoRichardsFlowLocalAssembler : public LocalAssemblerInterface
 {
 public:
@@ -52,8 +53,8 @@ public:
     ThermoRichardsFlowLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         ThermoRichardsFlowProcessData& process_data);
 
     /// \return the number of read integration points.
@@ -154,7 +155,7 @@ private:
 
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
 
-    IntegrationMethod _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     MeshLib::Element const& _element;
     bool const _is_axially_symmetric;
 
