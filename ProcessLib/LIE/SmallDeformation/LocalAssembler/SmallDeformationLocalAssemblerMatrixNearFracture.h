@@ -15,6 +15,7 @@
 
 #include "IntegrationPointDataMatrix.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
@@ -32,8 +33,7 @@ namespace SmallDeformation
 {
 namespace MPL = MaterialPropertyLib;
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
+template <typename ShapeFunction, int DisplacementDim>
 class SmallDeformationLocalAssemblerMatrixNearFracture
     : public SmallDeformationLocalAssemblerInterface
 {
@@ -61,8 +61,8 @@ public:
         std::size_t const n_variables,
         std::size_t const local_matrix_size,
         std::vector<unsigned> const& dofIndex_to_localIndex,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data);
 
     void assemble(double const /*t*/, double const /*dt*/,
@@ -273,7 +273,7 @@ private:
                     ShapeMatricesType, BMatricesType, DisplacementDim>>>
         _ip_data;
 
-    IntegrationMethod _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
 
     MeshLib::Element const& _element;
     bool const _is_axially_symmetric;

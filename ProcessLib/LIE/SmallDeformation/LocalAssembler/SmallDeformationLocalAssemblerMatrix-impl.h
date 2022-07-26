@@ -33,18 +33,16 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
-                                     DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+SmallDeformationLocalAssemblerMatrix<ShapeFunction, DisplacementDim>::
     SmallDeformationLocalAssemblerMatrix(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data)
     : _process_data(process_data),
-      _integration_method(integration_order),
+      _integration_method(integration_method),
       _element(e),
       _is_axially_symmetric(is_axially_symmetric)
 {
@@ -89,10 +87,8 @@ SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
-                                          DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+void SmallDeformationLocalAssemblerMatrix<ShapeFunction, DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
                          std::vector<double> const& /*local_xdot*/,
@@ -178,10 +174,8 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
-                                          DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+void SmallDeformationLocalAssemblerMatrix<ShapeFunction, DisplacementDim>::
     computeSecondaryVariableConcreteWithVector(
         double const /*t*/, Eigen::VectorXd const& /*local_x*/)
 {
