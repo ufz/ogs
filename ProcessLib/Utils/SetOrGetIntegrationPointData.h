@@ -23,12 +23,12 @@ namespace ProcessLib
 template <int DisplacementDim, typename IntegrationPointDataVector,
           typename IpData, typename MemberType>
 std::vector<double> const& getIntegrationPointKelvinVectorData(
-    IntegrationPointDataVector const& ip_data, MemberType IpData::*const member,
-    std::vector<double>& cache)
+    IntegrationPointDataVector const& ip_data_vector,
+    MemberType IpData::*const member, std::vector<double>& cache)
 {
     constexpr int kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
-    auto const n_integration_points = ip_data.size();
+    auto const n_integration_points = ip_data_vector.size();
 
     cache.clear();
     auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -37,7 +37,7 @@ std::vector<double> const& getIntegrationPointKelvinVectorData(
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        auto const& kelvin_vector = ip_data[ip].*member;
+        auto const& kelvin_vector = ip_data_vector[ip].*member;
         cache_mat.col(ip) =
             MathLib::KelvinVector::kelvinVectorToSymmetricTensor(kelvin_vector);
     }
@@ -48,12 +48,12 @@ std::vector<double> const& getIntegrationPointKelvinVectorData(
 template <int DisplacementDim, typename IntegrationPointDataVector,
           typename Accessor>
 std::vector<double> const& getIntegrationPointKelvinVectorData(
-    IntegrationPointDataVector const& ip_data, Accessor&& accessor,
+    IntegrationPointDataVector const& ip_data_vector, Accessor&& accessor,
     std::vector<double>& cache)
 {
     constexpr int kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
-    auto const n_integration_points = ip_data.size();
+    auto const n_integration_points = ip_data_vector.size();
 
     cache.clear();
     auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -62,7 +62,7 @@ std::vector<double> const& getIntegrationPointKelvinVectorData(
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        auto const& kelvin_vector = accessor(ip_data[ip]);
+        auto const& kelvin_vector = accessor(ip_data_vector[ip]);
         cache_mat.col(ip) =
             MathLib::KelvinVector::kelvinVectorToSymmetricTensor(kelvin_vector);
     }
@@ -74,12 +74,13 @@ template <int DisplacementDim, typename IntegrationPointData,
           typename MemberType>
 std::vector<double> getIntegrationPointKelvinVectorData(
     std::vector<IntegrationPointData,
-                Eigen::aligned_allocator<IntegrationPointData>> const& ip_data,
+                Eigen::aligned_allocator<IntegrationPointData>> const&
+        ip_data_vector,
     MemberType member)
 {
     constexpr int kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
-    auto const n_integration_points = ip_data.size();
+    auto const n_integration_points = ip_data_vector.size();
 
     std::vector<double> ip_kelvin_vector_values;
     auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -88,7 +89,7 @@ std::vector<double> getIntegrationPointKelvinVectorData(
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        auto const& ip_member = ip_data[ip].*member;
+        auto const& ip_member = ip_data_vector[ip].*member;
         cache_mat.row(ip) =
             MathLib::KelvinVector::kelvinVectorToSymmetricTensor(ip_member);
     }
@@ -100,12 +101,12 @@ template <int DisplacementDim, typename IntegrationPointDataVector,
           typename IpData, typename MemberType>
 std::size_t setIntegrationPointKelvinVectorData(
     double const* values,
-    IntegrationPointDataVector& ip_data,
+    IntegrationPointDataVector& ip_data_vector,
     MemberType IpData::*const member)
 {
     constexpr int kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
-    auto const n_integration_points = ip_data.size();
+    auto const n_integration_points = ip_data_vector.size();
 
     auto kelvin_vector_values =
         Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
@@ -114,7 +115,7 @@ std::size_t setIntegrationPointKelvinVectorData(
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        ip_data[ip].*member =
+        ip_data_vector[ip].*member =
             MathLib::KelvinVector::symmetricTensorToKelvinVector(
                 kelvin_vector_values.col(ip));
     }
@@ -126,12 +127,12 @@ template <int DisplacementDim, typename IntegrationPointDataVector,
           typename Accessor>
 std::size_t setIntegrationPointKelvinVectorData(
     double const* values,
-    IntegrationPointDataVector& ip_data,
+    IntegrationPointDataVector& ip_data_vector,
     Accessor&& accessor)
 {
     constexpr int kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
-    auto const n_integration_points = ip_data.size();
+    auto const n_integration_points = ip_data_vector.size();
 
     auto kelvin_vector_values =
         Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
@@ -140,7 +141,7 @@ std::size_t setIntegrationPointKelvinVectorData(
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        accessor(ip_data[ip]) =
+        accessor(ip_data_vector[ip]) =
             MathLib::KelvinVector::symmetricTensorToKelvinVector(
                 kelvin_vector_values.col(ip));
     }
@@ -151,10 +152,10 @@ std::size_t setIntegrationPointKelvinVectorData(
 template <typename IntegrationPointDataVector, typename IpData,
           typename MemberType>
 std::vector<double> const& getIntegrationPointScalarData(
-    IntegrationPointDataVector const& ip_data, MemberType IpData::*const member,
-    std::vector<double>& cache)
+    IntegrationPointDataVector const& ip_data_vector,
+    MemberType IpData::*const member, std::vector<double>& cache)
 {
-    auto const n_integration_points = ip_data.size();
+    auto const n_integration_points = ip_data_vector.size();
 
     cache.clear();
     auto cache_mat = MathLib::createZeroedMatrix<
@@ -163,7 +164,7 @@ std::vector<double> const& getIntegrationPointScalarData(
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        cache_mat[ip] = ip_data[ip].*member;
+        cache_mat[ip] = ip_data_vector[ip].*member;
     }
 
     return cache;
@@ -171,10 +172,10 @@ std::vector<double> const& getIntegrationPointScalarData(
 
 template <typename IntegrationPointDataVector, typename Accessor>
 std::vector<double> const& getIntegrationPointScalarData(
-    IntegrationPointDataVector const& ip_data, Accessor&& accessor,
+    IntegrationPointDataVector const& ip_data_vector, Accessor&& accessor,
     std::vector<double>& cache)
 {
-    auto const n_integration_points = ip_data.size();
+    auto const n_integration_points = ip_data_vector.size();
 
     cache.clear();
     auto cache_mat = MathLib::createZeroedMatrix<
@@ -183,7 +184,7 @@ std::vector<double> const& getIntegrationPointScalarData(
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        cache_mat[ip] = accessor(ip_data[ip]);
+        cache_mat[ip] = accessor(ip_data_vector[ip]);
     }
 
     return cache;
@@ -191,29 +192,31 @@ std::vector<double> const& getIntegrationPointScalarData(
 
 template <typename IntegrationPointDataVector, typename IpData,
           typename MemberType>
-std::size_t setIntegrationPointScalarData(double const* values,
-                                          IntegrationPointDataVector& ip_data,
-                                          MemberType IpData::*const member)
+std::size_t setIntegrationPointScalarData(
+    double const* values,
+    IntegrationPointDataVector& ip_data_vector,
+    MemberType IpData::*const member)
 {
-    auto const n_integration_points = ip_data.size();
+    auto const n_integration_points = ip_data_vector.size();
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        ip_data[ip].*member = values[ip];
+        ip_data_vector[ip].*member = values[ip];
     }
     return n_integration_points;
 }
 
 template <typename IntegrationPointDataVector, typename Accessor>
-std::size_t setIntegrationPointScalarData(double const* values,
-                                          IntegrationPointDataVector& ip_data,
-                                          Accessor&& accessor)
+std::size_t setIntegrationPointScalarData(
+    double const* values,
+    IntegrationPointDataVector& ip_data_vector,
+    Accessor&& accessor)
 {
-    auto const n_integration_points = ip_data.size();
+    auto const n_integration_points = ip_data_vector.size();
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        accessor(ip_data[ip]) = values[ip];
+        accessor(ip_data_vector[ip]) = values[ip];
     }
     return n_integration_points;
 }
@@ -230,9 +233,9 @@ std::vector<double> getIntegrationPointDataMaterialStateVariables(
     std::vector<double> result;
     result.reserve(ip_data_vector.size() * n_components);
 
-    for (auto& ip_data : ip_data_vector)
+    for (auto& ip_data_vector : ip_data_vector)
     {
-        auto const values_span = get_values_span(*(ip_data.*member));
+        auto const values_span = get_values_span(*(ip_data_vector.*member));
         assert(values_span.size() == static_cast<std::size_t>(n_components));
 
         result.insert(end(result), values_span.begin(), values_span.end());
