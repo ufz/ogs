@@ -87,12 +87,6 @@ public:
         bool const is_axially_symmetric,
         ThermoRichardsMechanicsProcessData<DisplacementDim>& process_data);
 
-    /// \return the number of read integration points.
-    std::size_t setIPDataInitialConditions(
-        std::string const& name,
-        double const* values,
-        int const integration_order) override;
-
     void setInitialConditionsConcrete(std::vector<double> const& local_x,
                                       double const t,
                                       bool const use_monolithic_scheme,

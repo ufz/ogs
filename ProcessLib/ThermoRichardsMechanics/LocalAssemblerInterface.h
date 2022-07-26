@@ -17,6 +17,7 @@
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveSetting.h"
 #include "ProcessLib/ThermoRichardsMechanics/ThermoRichardsMechanicsProcessData.h"
+#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -51,9 +52,71 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         }
     }
 
-    virtual std::size_t setIPDataInitialConditions(
-        std::string const& name, double const* values,
-        int const integration_order) = 0;
+    std::size_t setIPDataInitialConditions(std::string const& name,
+                                           double const* values,
+                                           int const integration_order)
+    {
+        if (integration_order !=
+            static_cast<int>(this->integration_method_.getIntegrationOrder()))
+        {
+            OGS_FATAL(
+                "Setting integration point initial conditions; The integration "
+                "order of the local assembler for element {:d} is different "
+                "from the integration order in the initial condition.",
+                this->element_.getID());
+        }
+
+        if (name == "sigma_ip")
+        {
+            if (this->process_data_.initial_stress != nullptr)
+            {
+                OGS_FATAL(
+                    "Setting initial conditions for stress from integration "
+                    "point data and from a parameter '{:s}' is not possible "
+                    "simultaneously.",
+                    this->process_data_.initial_stress->name);
+            }
+            return ProcessLib::setIntegrationPointKelvinVectorData<
+                DisplacementDim>(values, this->current_states_,
+                                 [](auto const& cs)
+                                 { return cs.s_mech_data.sigma_eff; });
+        }
+
+        if (name == "saturation_ip")
+        {
+            return ProcessLib::setIntegrationPointScalarData(
+                values, this->current_states_,
+                [](auto& state) -> auto& { return state.S_L_data.S_L; });
+        }
+        if (name == "porosity_ip")
+        {
+            return ProcessLib::setIntegrationPointScalarData(
+                values, this->current_states_,
+                [](auto& state) -> auto& { return state.poro_data.phi; });
+        }
+        if (name == "transport_porosity_ip")
+        {
+            return ProcessLib::setIntegrationPointScalarData(
+                values, this->current_states_, [](auto& state) -> auto& {
+                    return state.transport_poro_data.phi;
+                });
+        }
+        if (name == "swelling_stress_ip")
+        {
+            return ProcessLib::setIntegrationPointKelvinVectorData<
+                DisplacementDim>(values, this->current_states_,
+                                 [](auto const& cs)
+                                 { return cs.swelling_data.sigma_sw; });
+        }
+        if (name == "epsilon_ip")
+        {
+            return ProcessLib::setIntegrationPointKelvinVectorData<
+                DisplacementDim>(values, this->current_states_,
+                                 [](auto const& cs)
+                                 { return cs.eps_data.eps; });
+        }
+        return 0;
+    }
 
     virtual std::vector<double> getSigma() const = 0;
 
