@@ -20,6 +20,7 @@
 #include "MeshLib/Elements/Elements.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
+#include "NumLib/Fem/Integration/IntegrationMethodRegistry.h"
 #include "ProcessLib/Utils/EnabledElements.h"
 
 namespace ProcessLib
@@ -34,10 +35,9 @@ namespace SmallDeformation
 /// For example for MeshLib::Quad a local assembler data with template argument
 /// NumLib::ShapeQuad4 is created.
 template <typename LocalAssemblerInterface,
-          template <typename, typename, int> class LocalAssemblerDataMatrix,
-          template <typename, typename, int>
-          class LocalAssemblerDataMatrixNearFracture,
-          template <typename, typename, int> class LocalAssemblerDataFracture,
+          template <typename, int> class LocalAssemblerDataMatrix,
+          template <typename, int> class LocalAssemblerDataMatrixNearFracture,
+          template <typename, int> class LocalAssemblerDataFracture,
           int GlobalDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
@@ -60,7 +60,8 @@ public:
     using LADataIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
 
     explicit LocalDataInitializer(
-        NumLib::LocalToGlobalIndexMap const& dof_table)
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        NumLib::IntegrationOrder const integration_order)
         : _dof_table(dof_table)
     {
         // REMARKS: At the moment, only a 2D mesh with 1D elements are
@@ -71,13 +72,13 @@ public:
                 std::declval<IsElementEnabled>()));
 
         BaseLib::TMP::foreach<EnabledElementTraits>(
-            [this]<typename ET>(ET*)
+            [this, integration_order]<typename ET>(ET*)
             {
                 using MeshElement = typename ET::Element;
                 using ShapeFunction = typename ET::ShapeFunction;
 
                 _builder[std::type_index(typeid(MeshElement))] =
-                    makeLocalAssemblerBuilder<ShapeFunction>();
+                    makeLocalAssemblerBuilder<ShapeFunction>(integration_order);
             });
     }
 
@@ -152,47 +153,48 @@ private:
         std::vector<unsigned> const& dofIndex_to_localIndex,
         ConstructorArgs&&...)>;
 
-    template <typename ShapeFunction>
-    using IntegrationMethod = typename NumLib::GaussLegendreIntegrationPolicy<
-        typename ShapeFunction::MeshElement>::IntegrationMethod;
-
-    template <typename ShapeFunction>
-    using LADataMatrix =
-        LocalAssemblerDataMatrix<ShapeFunction,
-                                 IntegrationMethod<ShapeFunction>, GlobalDim>;
-
     /// Generates a function that creates a new LocalAssembler of type
     /// LAData<ShapeFunction>. Only functions with shape function's dimension
     /// less or equal to the global dimension are instantiated, e.g.  following
     /// combinations of shape functions and global dimensions: (Line2, 1),
     /// (Line2, 2), (Line2, 3), (Hex20, 3) but not (Hex20, 2) or (Hex20, 1).
     template <typename ShapeFunction>
-    static LADataBuilder makeLocalAssemblerBuilder()
+    static LADataBuilder makeLocalAssemblerBuilder(
+        NumLib::IntegrationOrder const integration_order)
     {
-        return [](MeshLib::Element const& e,
-                  std::size_t const n_variables,
-                  std::size_t const local_matrix_size,
-                  std::vector<unsigned> const& dofIndex_to_localIndex,
-                  ConstructorArgs&&... args)
+        return [integration_order](
+                   MeshLib::Element const& e,
+                   std::size_t const n_variables,
+                   std::size_t const local_matrix_size,
+                   std::vector<unsigned> const& dofIndex_to_localIndex,
+                   ConstructorArgs&&... args)
         {
+            auto const& integration_method = NumLib::IntegrationMethodRegistry::
+                template getIntegrationMethod<
+                    typename ShapeFunction::MeshElement>(integration_order);
+
             if (e.getDimension() == GlobalDim)
             {
                 if (dofIndex_to_localIndex.empty())
                 {
-                    return LADataIntfPtr{new LADataMatrix<ShapeFunction>{
-                        e, local_matrix_size,
-                        std::forward<ConstructorArgs>(args)...}};
+                    return LADataIntfPtr{
+                        new LocalAssemblerDataMatrix<ShapeFunction, GlobalDim>{
+                            e, local_matrix_size, integration_method,
+                            std::forward<ConstructorArgs>(args)...}};
                 }
 
                 return LADataIntfPtr{
-                    new LADataMatrixNearFracture<ShapeFunction>{
+                    new LocalAssemblerDataMatrixNearFracture<ShapeFunction,
+                                                             GlobalDim>{
                         e, n_variables, local_matrix_size,
-                        dofIndex_to_localIndex,
+                        dofIndex_to_localIndex, integration_method,
                         std::forward<ConstructorArgs>(args)...}};
             }
-            return LADataIntfPtr{new LAFractureData<ShapeFunction>{
-                e, n_variables, local_matrix_size, dofIndex_to_localIndex,
-                std::forward<ConstructorArgs>(args)...}};
+            return LADataIntfPtr{
+                new LocalAssemblerDataFracture<ShapeFunction, GlobalDim>{
+                    e, n_variables, local_matrix_size, dofIndex_to_localIndex,
+                    integration_method,
+                    std::forward<ConstructorArgs>(args)...}};
         };
     }
 
@@ -200,15 +202,6 @@ private:
     std::unordered_map<std::type_index, LADataBuilder> _builder;
 
     NumLib::LocalToGlobalIndexMap const& _dof_table;
-
-    template <typename ShapeFunction>
-    using LADataMatrixNearFracture = LocalAssemblerDataMatrixNearFracture<
-        ShapeFunction, IntegrationMethod<ShapeFunction>, GlobalDim>;
-
-    template <typename ShapeFunction>
-    using LAFractureData =
-        LocalAssemblerDataFracture<ShapeFunction,
-                                   IntegrationMethod<ShapeFunction>, GlobalDim>;
 };
 
 }  // namespace SmallDeformation
