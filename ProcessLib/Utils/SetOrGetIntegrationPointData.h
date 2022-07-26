@@ -28,7 +28,9 @@ std::vector<double> const& getIntegrationPointKelvinVectorData(
 {
     return getIntegrationPointKelvinVectorData<DisplacementDim>(
         ip_data_vector,
-        [member](IpData const& ip_data) { return ip_data.*member; },
+        [member](IpData const& ip_data) -> auto const& {
+            return ip_data.*member;
+        },
         cache);
 }
 
@@ -38,6 +40,12 @@ std::vector<double> const& getIntegrationPointKelvinVectorData(
     IntegrationPointDataVector const& ip_data_vector, Accessor&& accessor,
     std::vector<double>& cache)
 {
+    using AccessorResult = decltype(std::declval<Accessor>()(
+        std::declval<IntegrationPointDataVector>()[0]));
+    static_assert(std::is_lvalue_reference_v<AccessorResult>,
+                  "The ip data accessor should return a reference. This check "
+                  "prevents accidental copies.");
+
     constexpr int kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
     auto const n_integration_points = ip_data_vector.size();
@@ -90,6 +98,11 @@ std::size_t setIntegrationPointKelvinVectorData(
     IntegrationPointDataVector& ip_data_vector,
     Accessor&& accessor)
 {
+    using AccessorResult = decltype(std::declval<Accessor>()(
+        std::declval<IntegrationPointDataVector>()[0]));
+    static_assert(std::is_lvalue_reference_v<AccessorResult>,
+                  "The ip data accessor must return a reference.");
+
     constexpr int kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
     auto const n_integration_points = ip_data_vector.size();
@@ -117,7 +130,9 @@ std::vector<double> const& getIntegrationPointScalarData(
 {
     return getIntegrationPointScalarData(
         ip_data_vector,
-        [member](IpData const& ip_data) { return ip_data.*member; },
+        [member](IpData const& ip_data) -> auto const& {
+            return ip_data.*member;
+        },
         cache);
 }
 
@@ -126,6 +141,12 @@ std::vector<double> const& getIntegrationPointScalarData(
     IntegrationPointDataVector const& ip_data_vector, Accessor&& accessor,
     std::vector<double>& cache)
 {
+    using AccessorResult = decltype(std::declval<Accessor>()(
+        std::declval<IntegrationPointDataVector>()[0]));
+    static_assert(std::is_lvalue_reference_v<AccessorResult>,
+                  "The ip data accessor should return a reference. This check "
+                  "prevents accidental copies.");
+
     auto const n_integration_points = ip_data_vector.size();
 
     cache.clear();
@@ -148,10 +169,10 @@ std::size_t setIntegrationPointScalarData(
     IntegrationPointDataVector& ip_data_vector,
     MemberType IpData::*const member)
 {
-    return setIntegrationPointScalarData(values,
-                                         ip_data_vector,
-                                         [member](IpData const& ip_data)
-                                         { return ip_data.*member; });
+    return setIntegrationPointScalarData(
+        values, ip_data_vector, [member](IpData & ip_data) -> auto& {
+            return ip_data.*member;
+        });
 }
 
 template <typename IntegrationPointDataVector, typename Accessor>
@@ -160,6 +181,11 @@ std::size_t setIntegrationPointScalarData(
     IntegrationPointDataVector& ip_data_vector,
     Accessor&& accessor)
 {
+    using AccessorResult = decltype(std::declval<Accessor>()(
+        std::declval<IntegrationPointDataVector>()[0]));
+    static_assert(std::is_lvalue_reference_v<AccessorResult>,
+                  "The ip data accessor must return a reference.");
+
     auto const n_integration_points = ip_data_vector.size();
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
