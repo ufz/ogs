@@ -1,12 +1,23 @@
-{{ if .Get 1 }}
-<a href="https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/{{ .Get 1 }}">
-{{ else }}
-<a href="https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/{{ .Page.Params.project }}">
-{{ end }}
-<i class="far fa-arrow-right"></i>
-{{ if .Get 0 }}
-{{ .Get 0 | markdownify }}
-{{ else }}
-Project file on GitLab
-{{ end }}
-</a>
+{{ $prj_file := "" }}
+
+<ul>
+    {{ with .Page.Params.project }}
+    {{ range . }}
+
+    {{ if os.FileExists "Tests" }}
+    {{ $filePath := print "Tests/Data/" .}}
+    {{ if os.FileExists $filePath }}
+    {{ else }}
+    {{ errorf "%q: Project file does not exist: %q" $.Page.File.Path . }}
+    {{ end }}
+    {{ end }}
+
+    <li>
+        <a href="https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/{{ . }}">
+            <i class="far fa-arrow-right"></i>
+            {{ . }}
+        </a>
+    </li>
+    {{ end }}
+    {{ end }}
+</ul>
