@@ -51,43 +51,14 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
     heat_flux_ = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "HeatFlowRate", MeshLib::MeshItemType::Node, 1);
 
-    // TODO (naumov) remove ip suffix. Probably needs modification of the mesh
-    // properties, s.t. there is no "overlapping" with cell/point data.
-    // See getOrCreateMeshProperty.
-    _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
-            "sigma_ip",
-            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, local_assemblers_, &LocalAssemblerIF::getSigma));
-
-    _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
-            "saturation_ip", 1 /*n components*/, integration_order,
-            local_assemblers_, &LocalAssemblerIF::getSaturation));
-
-    _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
-            "porosity_ip", 1 /*n components*/, integration_order,
-            local_assemblers_, &LocalAssemblerIF::getPorosity));
-
-    _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
-            "transport_porosity_ip", 1 /*n components*/, integration_order,
-            local_assemblers_, &LocalAssemblerIF::getTransportPorosity));
-
-    _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
-            "swelling_stress_ip",
-            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, local_assemblers_,
-            &LocalAssemblerIF::getSwellingStress));
-
-    _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
-            "epsilon_ip",
-            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, local_assemblers_,
-            &LocalAssemblerIF::getEpsilon));
+    for (auto& [name, num_comp, ip_data_accessor] :
+         LocalAssemblerIF::getIPDataAccessorsForIPWriter())
+    {
+        _integration_point_writer.emplace_back(
+            std::make_unique<IntegrationPointWriter>(
+                name, num_comp, integration_order, local_assemblers_,
+                ip_data_accessor));
+    }
 }
 
 template <int DisplacementDim>
@@ -172,40 +143,11 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                              std::move(get_ip_values_function)));
     };
 
-    add_secondary_variable("sigma",
-                           MathLib::KelvinVector::KelvinVectorType<
-                               DisplacementDim>::RowsAtCompileTime,
-                           &LocalAssemblerIF::getIntPtSigma);
-
-    add_secondary_variable("swelling_stress",
-                           MathLib::KelvinVector::KelvinVectorType<
-                               DisplacementDim>::RowsAtCompileTime,
-                           &LocalAssemblerIF::getIntPtSwellingStress);
-
-    add_secondary_variable("epsilon",
-                           MathLib::KelvinVector::KelvinVectorType<
-                               DisplacementDim>::RowsAtCompileTime,
-                           &LocalAssemblerIF::getIntPtEpsilon);
-
-    add_secondary_variable("velocity", DisplacementDim,
-                           &LocalAssemblerIF::getIntPtDarcyVelocity);
-
-    add_secondary_variable("saturation", 1,
-                           &LocalAssemblerIF::getIntPtSaturation);
-
-    add_secondary_variable("porosity", 1, &LocalAssemblerIF::getIntPtPorosity);
-
-    add_secondary_variable("transport_porosity", 1,
-                           &LocalAssemblerIF::getIntPtTransportPorosity);
-
-    add_secondary_variable("dry_density_solid", 1,
-                           &LocalAssemblerIF::getIntPtDryDensitySolid);
-
-    add_secondary_variable("liquid_density", 1,
-                           &LocalAssemblerIF::getIntPtLiquidDensity);
-
-    add_secondary_variable("viscosity", 1,
-                           &LocalAssemblerIF::getIntPtViscosity);
+    for (auto& [name, num_comp, fct] : LocalAssemblerInterface<
+             DisplacementDim>::getIPDataAccessorsForExtrapolation())
+    {
+        add_secondary_variable(name, num_comp, fct);
+    };
 
     //
     // enable output of internal variables defined by material models

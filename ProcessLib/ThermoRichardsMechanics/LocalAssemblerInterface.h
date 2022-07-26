@@ -157,6 +157,7 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         return 0;
     }
 
+private:
     std::vector<double> getSigma() const
     {
         constexpr int kelvin_vector_size =
@@ -361,6 +362,7 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
             cache);
     }
 
+public:
     // TODO move to NumLib::ExtrapolatableElement
     unsigned getNumberOfIntegrationPoints() const
     {
@@ -388,6 +390,67 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         }
 
         prev_states_ = current_states_;
+    }
+
+    struct IPDataAccessorForExtrapolation
+    {
+        std::string name;
+        unsigned num_comp;
+        std::function<std::vector<double> const&(
+            LocalAssemblerInterface<DisplacementDim> const&,
+            const double /*t*/,
+            std::vector<GlobalVector*> const& /*x*/,
+            std::vector<
+                NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+            std::vector<double>& /*cache*/)>
+            ip_data_accessor;
+    };
+
+    static std::vector<IPDataAccessorForExtrapolation>
+    getIPDataAccessorsForExtrapolation()
+    {
+        using Self = LocalAssemblerInterface<DisplacementDim>;
+        constexpr auto kv_size =
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+
+        return {{"sigma", kv_size, &Self::getIntPtSigma},
+                {"swelling_stress", kv_size, &Self::getIntPtSwellingStress},
+                {"epsilon", kv_size, &Self::getIntPtEpsilon},
+                {"velocity", DisplacementDim, &Self::getIntPtDarcyVelocity},
+                {"saturation", 1, &Self::getIntPtSaturation},
+                {"porosity", 1, &Self::getIntPtPorosity},
+                {"transport_porosity", 1, &Self::getIntPtTransportPorosity},
+                {"dry_density_solid", 1, &Self::getIntPtDryDensitySolid},
+                {"liquid_density", 1, &Self::getIntPtLiquidDensity},
+                {"viscosity", 1, &Self::getIntPtViscosity}};
+    }
+
+    struct IPDataAccessorForIPWriter
+    {
+        std::string name;
+        unsigned num_comp;
+        std::vector<double> (LocalAssemblerInterface<DisplacementDim>::*
+                                 ip_data_accessor)() const;
+    };
+
+    static std::vector<IPDataAccessorForIPWriter>
+    getIPDataAccessorsForIPWriter()
+    {
+        using Self = LocalAssemblerInterface<DisplacementDim>;
+        constexpr auto kv_size =
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+
+        // TODO (naumov) remove ip suffix. Probably needs modification of the
+        // mesh properties, s.t. there is no "overlapping" with cell/point data.
+        // See getOrCreateMeshProperty.
+        return {
+            {"sigma_ip", kv_size, &Self::getSigma},
+            {"saturation_ip", 1, &Self::getSaturation},
+            {"porosity_ip", 1, &Self::getPorosity},
+            {"transport_porosity_ip", 1, &Self::getTransportPorosity},
+            {"swelling_stress_ip", kv_size, &Self::getSwellingStress},
+            {"epsilon_ip", kv_size, &Self::getEpsilon},
+        };
     }
 
 protected:
