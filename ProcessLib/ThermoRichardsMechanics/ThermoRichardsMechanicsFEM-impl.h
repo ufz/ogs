@@ -164,7 +164,7 @@ std::size_t ThermoRichardsMechanicsLocalAssembler<
         }
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, current_states_,
-            [](auto const& cs) { return cs.s_mech_data.sigma_eff; });
+            [](auto& cs) -> auto& { return cs.s_mech_data.sigma_eff; });
     }
 
     if (name == "saturation_ip")
@@ -189,13 +189,13 @@ std::size_t ThermoRichardsMechanicsLocalAssembler<
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, current_states_,
-            [](auto const& cs) { return cs.swelling_data.sigma_sw; });
+            [](auto& cs) -> auto& { return cs.swelling_data.sigma_sw; });
     }
     if (name == "epsilon_ip")
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, current_states_,
-            [](auto const& cs) { return cs.eps_data.eps; });
+            [](auto& cs) -> auto& { return cs.eps_data.eps; });
     }
     return 0;
 }
@@ -571,7 +571,8 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
         current_states_,
-        [](auto const& cs) { return cs.s_mech_data.sigma_eff; }, cache);
+        [](auto const& cs) -> auto const& { return cs.s_mech_data.sigma_eff; },
+        cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
@@ -642,7 +643,8 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-        current_states_, [](auto const& cs) { return cs.eps_data.eps; }, cache);
+        current_states_,
+        [](auto const& cs) -> auto const& { return cs.eps_data.eps; }, cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
@@ -693,7 +695,8 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointScalarData(
-        current_states_, [](auto const& state) { return state.S_L_data.S_L; },
+        current_states_,
+        [](auto const& state) -> auto const& { return state.S_L_data.S_L; },
         cache);
 }
 
@@ -719,7 +722,8 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointScalarData(
-        current_states_, [](auto const& state) { return state.poro_data.phi; },
+        current_states_,
+        [](auto const& state) -> auto const& { return state.poro_data.phi; },
         cache);
 }
 
@@ -745,8 +749,10 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointScalarData(
-        current_states_,
-        [](auto const& state) { return state.transport_poro_data.phi; }, cache);
+        current_states_, [](auto const& state) -> auto const& {
+            return state.transport_poro_data.phi;
+        },
+        cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
@@ -761,7 +767,9 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
 {
     return ProcessLib::getIntegrationPointScalarData(
         output_data_,
-        [](auto const& out) { return out.rho_S_data.dry_density_solid; },
+        [](auto const& out) -> auto const& {
+            return out.rho_S_data.dry_density_solid;
+        },
         cache);
 }
 
@@ -777,7 +785,7 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
 {
     return ProcessLib::getIntegrationPointScalarData(
         output_data_,
-        [](auto const& out) { return out.rho_L_data.rho_LR; },
+        [](auto const& out) -> auto const& { return out.rho_L_data.rho_LR; },
         cache);
 }
 
@@ -792,7 +800,8 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointScalarData(
-        output_data_, [](auto const& out) { return out.mu_L_data.viscosity; },
+        output_data_,
+        [](auto const& out) -> auto const& { return out.mu_L_data.viscosity; },
         cache);
 }
 
