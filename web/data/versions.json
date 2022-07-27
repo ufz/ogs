@@ -43,7 +43,7 @@
       "git+https://github.com/joergbuchwald/ogs6py@0f9e738e2ee469c8bde4204b2151238973417694#egg=ogs6py",
       "git+https://github.com/joergbuchwald/VTUinterface@master#egg=VTUinterface",
       "git+https://github.com/joergbuchwald/heatsource_thm@main#egg=heatsource-py",
-      "git+https://github.com/bilke/nb2hugo@5c75d20a2321756fb376db25dd56f9e7a173282b#egg=nb2hugo",
+      "git+https://github.com/bilke/nb2hugo@0930c6591a4dae07c794b797a264fbcac1ad91aa#egg=nb2hugo",
       "git+https://github.com/dominik-kern/msh2vtu@15f4838affe7056f12c0ea12034e9b48ecb19846#egg=msh2vtu",
       "ipykernel==6.9.1",
       "jinja2==3.0.3",
