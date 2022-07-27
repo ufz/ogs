@@ -62,6 +62,8 @@ for notebook_file_path in args.notebooks:
         ep = ExecutePreprocessor(timeout=args.timeout, kernel_name="python3")
 
         # 1. Run the notebook
+        notebook_filename = os.path.basename(notebook_file_path)
+        print(f"[Start]  {notebook_filename}")
         start = timer()
         try:
             ep.preprocess(
@@ -82,10 +84,23 @@ for notebook_file_path in args.notebooks:
         (body, resources) = html_exporter.from_notebook_node(nb)
 
         # 4. Write new notebook
-        notebook_filename = os.path.basename(notebook_file_path)
         convert_notebook_file = os.path.join(notebook_output_path, notebook_filename)
         with open(convert_notebook_file, "w", encoding="utf-8") as f:
             nbformat.write(nb, f)
+
+        # 5. Symlink images or figures subfolder
+        for subfolder in ["figures", "images"]:
+            figures_path = os.path.abspath(
+                os.path.join(os.path.dirname(notebook_file_path), subfolder)
+            )
+            symlink_figures_path = os.path.join(notebook_output_path, subfolder)
+            if os.path.exists(figures_path) and not os.path.exists(
+                symlink_figures_path
+            ):
+                print(
+                    f"{subfolder} folder detected, symlink {figures_path} to {symlink_figures_path}"
+                )
+                os.symlink(figures_path, symlink_figures_path)
 
     status_string = ""
     if notebook_success:
