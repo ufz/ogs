@@ -50,5 +50,5 @@ convertVtkDataArrayToVtkDataArray
 
 ### Example Files
 
-[doubleValuedMaterialIDs.vtu](doubleValuedMaterialIDs.vtu)
+[doubleValuedMaterialIDs.vtu](../../doubleValuedMaterialIDs.vtu)
 </div>

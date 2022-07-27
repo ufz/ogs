@@ -1,5 +1,5 @@
 +++
-project = "Mechanics/Linear/PythonPiston/piston.prj"
+project = ["Mechanics/Linear/PythonPiston/piston.prj"]
 author = "Christoph Lehmann"
 date = "2018-08-16T12:18:00+02:00"
 title = "Ideal Gas Compressed by an Elastic Piston"

@@ -1,7 +1,7 @@
 +++
 date = "2020-02-11T10:44:18+01:00"
 title = "Linear; Element deactivation"
-project = "Mechanics/Linear/square_with_deactivated_hole.prj"
+project = ["Mechanics/Linear/square_with_deactivated_hole.prj"]
 author = "Wenqing Wang"
 weight = 111
 

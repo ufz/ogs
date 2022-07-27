@@ -2,7 +2,7 @@
 date = "2020-06-11"
 title = "Permeability in EDZ"
 weight = 151
-project = "HydroMechanics/FailureIndexDependentPermeability/quad_with_half_hole.prj"
+project = ["HydroMechanics/FailureIndexDependentPermeability/quad_with_half_hole.prj"]
 author = "Wenqing Wang"
 
 [menu]

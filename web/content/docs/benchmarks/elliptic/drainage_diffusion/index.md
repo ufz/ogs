@@ -2,7 +2,7 @@
 author = "Reza Taherdangkoo, Thomas Nagel, Christoph Butscher"
 date = "2020.11.01T14:39:39+01:00"
 title = "Drainage Excavation"
-project = "/Elliptic/cube_1x1x1_SteadyStateDiffusion/drainage_excavation.prj"
+project = ["Elliptic/cube_1x1x1_SteadyStateDiffusion/drainage_excavation.prj"]
 
 [menu]
   [menu.benchmarks]
@@ -14,7 +14,7 @@ project = "/Elliptic/cube_1x1x1_SteadyStateDiffusion/drainage_excavation.prj"
 
 ## Problem description
 
-We present the drainage of an excavation benchmark in [this PDF](../web/content/docs/benchmarks/liquid-flow/drainage_LiquidFlow.pdf).
+We present the drainage of an excavation benchmark in [this PDF](/docs/benchmarks/liquid-flow/drainage_Liquid_Flow/drainage_LiquidFlow.pdf).
 
 Here's an impression of the problem and its results:
 

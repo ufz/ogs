@@ -3,7 +3,7 @@ author = "Chaofan Chen, Haibing Shao"
 date = "2019-01-25T13:44:00+01:00"
 title = "3D coaxial BHE"
 weight = 123
-project = "Parabolic/T/3D_deep_BHE/3D_deep_BHE_CXA.prj"
+project = ["Parabolic/T/3D_deep_BHE/3D_deep_BHE_CXA.prj"]
 
 [menu]
   [menu.benchmarks]

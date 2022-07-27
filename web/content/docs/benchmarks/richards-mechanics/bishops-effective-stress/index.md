@@ -1,5 +1,5 @@
 +++
-project = "RichardsMechanics/bishops_effective_stress_power_law.prj"
+project = ["RichardsMechanics/bishops_effective_stress_power_law.prj"]
 author = "Dmitri Naumov"
 date = "2020-02-27"
 title = "Bishop's effective stress models comparison"

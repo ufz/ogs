@@ -2,7 +2,7 @@
 date = "2018-07-19T15:15:45+01:00"
 title = "BGRa creep model"
 weight = 171
-project = "ThermoMechanics/CreepBGRa/SimpleAxisymmetricCreep/SimpleAxisymmetricCreepWithAnalyticSolution.prj"
+project = ["ThermoMechanics/CreepBGRa/SimpleAxisymmetricCreep/SimpleAxisymmetricCreepWithAnalyticSolution.prj"]
 author = "Wenqing Wang"
 
 aliases = ["/docs/benchmarks/creepbgra/creepbrga"]

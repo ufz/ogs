@@ -26,6 +26,8 @@ preview web site:
     # HACK to easier linking to the generated pages
     - echo '<meta http-equiv="REFRESH" content="0;URL=web/public/index.html">' >> WebPreview.html
     - cd web
+    # Symlink for prj link checks (data-link shortcode)
+    - ln -s ../Tests .
     - yarn
     - yarn build
   rules:

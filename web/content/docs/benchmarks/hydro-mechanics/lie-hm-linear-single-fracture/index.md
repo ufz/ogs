@@ -2,7 +2,7 @@
 date = "2017-02-16T15:03:28+01:00"
 title = "Linear, single fracture"
 weight = 152
-project = "LIE/HydroMechanics/single_fracture.prj"
+project = ["LIE/HydroMechanics/single_fracture.prj"]
 author = "Norihiro Watanabe"
 
 [menu]

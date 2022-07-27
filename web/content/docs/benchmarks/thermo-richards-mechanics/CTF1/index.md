@@ -1,5 +1,5 @@
 +++
-project = "ThermoRichardsMechanics/CTF1/CTF1.prj"
+project = ["ThermoRichardsMechanics/CTF1/CTF1.prj"]
 title = "A test based on CTF1 experiment for water vapour diffusion model for non-isothermal Richards flow"
 date = "2022-02-07T16:01:49+01:00"
 author = "Wenqing Wang and Chaudhry Aqeel Afzal"

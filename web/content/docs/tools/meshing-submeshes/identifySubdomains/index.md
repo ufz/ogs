@@ -35,7 +35,7 @@ The tool will first try to find all unique nodes in the "bulk" mesh using search
 radius 1e-6, and create the `bulk_node_ids` mapping upon success. Then the
 `bulk_element_ids` mapping is created by finding a unique element containing all
 the nodes of the subdomain element. The output file
-[`new_quater_circle.vtu`](new_quater_cirle.vtu) will now contain both
+[`new_quater_circle.vtu`](new_quater_circle.vtu) will now contain both
 mappings and is prepared for usage as a boundary condition mesh.
 
 ## Notes

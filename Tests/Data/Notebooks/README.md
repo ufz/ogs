@@ -1,5 +1,13 @@
 # OGS Juypter notebook tips
 
+Images used in Markdown cells need to be in a subdirectory `images` or `figures`! E.g.:
+
+```markdown
+![Schematic view of surfing boundary condition benchmark](figures/surfing_schematic.png)
+```
+
+Otherwise the images will not appear on the website.
+
 ## Git diff / merge tool
 
 Install [nbdime](https://nbdime.readthedocs.io) and enable [git integration](https://nbdime.readthedocs.io/en/latest/vcs.html):

@@ -1,5 +1,5 @@
 +++
-project = "Parabolic/HT/ClassicalTransportExample/classical_transport_example.prj"
+project = ["Parabolic/HT/ClassicalTransportExample/classical_transport_example.prj"]
 author = "Wenqing Wang"
 date = "2022-06-07T14:55:48+02:00"
 title = "Classical transport example: using the isotropic diffusion stabilization"

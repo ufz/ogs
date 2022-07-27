@@ -1,7 +1,7 @@
 +++
 author = "Jasper Bathmann, Marc Walther"
 weight = 142
-project = "Parabolic/ComponentTransport/goswami/"
+project = ["Parabolic/ComponentTransport/goswami/goswami_input.prj"]
 date = "2017-09-07T14:41:09+01:00"
 title = "Saturated Variable-Density Flow and Mass Transport (Goswami)"
 

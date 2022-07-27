@@ -1,6 +1,6 @@
 +++
 author = "Christian Silbermann, Thomas Nagel"
-project = "HydroMechanics/GroundEquilibrium"
+project = ["HydroMechanics/GroundEquilibrium/simHM_ground.prj"]
 date = "2021-12-14T14:39:39+01:00"
 title = "Ground equilibrium"
 

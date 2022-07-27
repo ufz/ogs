@@ -1,7 +1,7 @@
 +++
 author = "Vanessa Montoya, Renchao Lu"
 weight = 142
-project = "Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calcite.prj"
+project = ["Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calcite.prj"]
 date = "2019-07-08T14:41:09+01:00"
 title = "Precipitation/dissolution equilibrium reactions in a saturated column"
 

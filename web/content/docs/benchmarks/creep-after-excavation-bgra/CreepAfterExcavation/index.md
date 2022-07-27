@@ -2,7 +2,7 @@
 date = "2018-08-10T11:46:45+01:00"
 title = "Creep in a rectangle domain with hole under pressure on its top surface"
 weight = 171
-project = "ThermoMechanics/CreepBGRa/CreepAfterExcavation/CreepAfterExcavation.prj"
+project = ["ThermoMechanics/CreepBGRa/CreepAfterExcavation/CreepAfterExcavation.prj"]
 author = "Wenqing Wang"
 
 [menu]

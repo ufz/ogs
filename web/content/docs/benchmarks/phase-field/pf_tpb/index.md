@@ -1,5 +1,4 @@
 +++
-project = "PhaseField/tpb_rgranite.prj"
 author = "Keita Yoshioka"
 date = "2020-07-27"
 title = "Three point bending test"

@@ -1,7 +1,7 @@
 +++
 date = "2017-02-15T11:17:39+01:00"
 title = "Dirichlet-type boundary conditions"
-project = "Elliptic/square_1x1_SteadyStateDiffusion/square_1e2.prj"
+project = ["Elliptic/square_1x1_SteadyStateDiffusion/square_1e2.xml"]
 author = "Dmitri Naumov"
 weight = 102
 

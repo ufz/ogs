@@ -2,7 +2,7 @@
 date = "2021-03-17"
 title = "Staggered Scheme"
 weight = 151
-project = "HydroMechanics/StaggeredScheme/InjectionProduction1D/InjectionProduction1D.prj"
+project = ["HydroMechanics/StaggeredScheme/InjectionProduction1D/InjectionProduction1D.prj"]
 author = "Dominik Kern and Wenqing Wang"
 
 [menu]

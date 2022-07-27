@@ -2,7 +2,7 @@
 date = "2017-02-17T14:33:45+01:00"
 title = "Theis' problem"
 weight = 171
-project = "Parabolic/LiquidFlow/AxiSymTheis/axisym_theis.prj"
+project = ["Parabolic/LiquidFlow/AxiSymTheis/axisym_theis.prj"]
 author = "Wenqing Wang"
 
 [menu]

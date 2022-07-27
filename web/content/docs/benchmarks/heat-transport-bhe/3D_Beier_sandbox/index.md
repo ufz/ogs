@@ -3,7 +3,7 @@ author = "Chaofan Chen, Philipp Hein, Haibing Shao"
 date = "2018-09-25T13:44:00+01:00"
 title = "Benchmark of 3D Beier sandbox"
 weight = 123
-project = "Parabolic/T/3D_Beier_sandbox/beier_sandbox.prj"
+project = ["Parabolic/T/3D_Beier_sandbox/beier_sandbox.prj"]
 
 [menu]
   [menu.benchmarks]

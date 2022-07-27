@@ -1,7 +1,7 @@
 +++
 author = "Tengfei Deng, Thomas Nagel"
 weight = 113
-project = "Mechanics/MohrCoulombAbboSloan/slope.prj"
+project = ["Mechanics/MohrCoulombAbboSloan/slope.prj"]
 date = "2020-02-14T14:39:39+01:00"
 title = "Strength reduction for slope stability"
 

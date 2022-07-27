@@ -1,7 +1,7 @@
 +++
 author = "Jaime Garibay-Rodriguez, Renchao Lu, Vanessa Montoya"
 weight = 142
-project = "Parabolic/ComponentTransport/ReactiveTransport/CationExchange/exchange.prj"
+project = ["Parabolic/ComponentTransport/ReactiveTransport/CationExchange/exchange.prj"]
 date = "2019-07-08T14:41:09+01:00"
 title = "Transport and Cation Exchange"
 

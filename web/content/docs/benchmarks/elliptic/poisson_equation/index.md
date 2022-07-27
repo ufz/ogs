@@ -1,7 +1,7 @@
 +++
 date = "2018-10-10T09:17:39+01:00"
 title = "Poisson equation using Python for source term specification"
-project = "Elliptic/square_1x1_SteadyStateDiffusion_Python/square_1e3_poisson_sin_x_sin_y.prj"
+project = ["Elliptic/square_1x1_SteadyStateDiffusion_Python/square_1e3_poisson_sin_x_sin_y.prj"]
 author = "Tom Fischer"
 weight = 102
 

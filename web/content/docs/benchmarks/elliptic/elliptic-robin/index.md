@@ -1,7 +1,7 @@
 +++
 date = "2017-02-15T11:46:49+01:00"
 title = "Robin boundary condition"
-project = "Elliptic/line_1_SteadyStateDiffusion/line_1e1_robin_left_picard.prj"
+project = ["Elliptic/line_1_SteadyStateDiffusion/line_1e1_robin_left_picard.prj"]
 author = "Thomas Fischer, Dmitri Naumov"
 weight = 104
 

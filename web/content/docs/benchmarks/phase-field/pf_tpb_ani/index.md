@@ -1,5 +1,4 @@
 +++
-project = "PhaseField/ME01_ext_2D_orth.prj"
 author = "Keita Yoshioka"
 date = "2020-07-27"
 title = "Three point bending test on anisotropic rock"

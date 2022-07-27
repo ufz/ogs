@@ -1,7 +1,7 @@
 +++
 author = "Marc Walther"
 weight = 142
-project = "Parabolic/ComponentTransport/Theis/theis.prj"
+project = ["Parabolic/ComponentTransport/Theis/theis.prj"]
 date = "2019-05-02T14:41:09+01:00"
 title = "Theis solution for well pumping"
 
