@@ -115,6 +115,29 @@ std::string MediumDefinition(const bool density_is_constant)
     m << "<phase>\n";
     m << "<type>AqueousLiquid</type>\n";
 
+    // liquid phase components
+    m << "<components>\n";
+    m << "<component>\n";
+    m << "<name>A</name>\n";
+    m << "<properties>\n";
+    m << Tests::makeConstantPropertyElement("molar_mass", 0.);
+    m << Tests::makeConstantPropertyElement("specific_heat_capacity", 0.);
+    m << Tests::makeConstantPropertyElement("henry_coefficient", 0.);
+    m << Tests::makeConstantPropertyElement("diffusion", 0.);
+    m << Tests::makeConstantPropertyElement("specific_latent_heat", 0.);
+    m << "</properties>\n";
+    m << "</component>\n";
+
+    m << "<component>\n";
+    m << "<name>W</name>\n";
+    m << "<properties>\n";
+    m << Tests::makeConstantPropertyElement("molar_mass", 0.);
+    m << Tests::makeConstantPropertyElement("specific_heat_capacity",
+                                            specific_heat_capacity_water);
+    m << "</properties>\n";
+    m << "</component>\n";
+    m << "</components>\n";
+
     // liquid phase properties
     m << "<properties>\n";
     m << Tests::makeConstantPropertyElement("viscosity", viscosity_water);
