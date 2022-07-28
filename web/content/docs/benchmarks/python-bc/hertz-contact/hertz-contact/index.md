@@ -4,6 +4,7 @@ author = "Christoph Lehmann"
 date = "2018-08-06T11:41:00+02:00"
 title = "Hertz Contact using Python Boundary Conditions"
 weight = 4
+image = "stress_at_contact.png"
 
 [menu]
   [menu.benchmarks]

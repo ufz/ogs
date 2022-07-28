@@ -4,14 +4,7 @@ title = "Dirichlet-type boundary conditions"
 project = ["Elliptic/square_1x1_SteadyStateDiffusion/square_1e2.xml"]
 author = "Dmitri Naumov"
 weight = 102
-
-aliases = ["/docs/benchmarks/"]
-
-[menu.docs]
-name = "Benchmarks"
-identifier = "benchmarks"
-weight = 3
-post = "Basic benchmarks are explained and input files are provided to get you started in using OGS."
+image = "square_1e2_pcs_0_ts_1_t_1.000000.png"
 
 [menu.benchmarks]
 parent = "elliptic"
