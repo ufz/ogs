@@ -37,9 +37,19 @@ module.exports = {
         purple: colors.violet
       }
     },
+    aspectRatio: {
+      1: '1',
+      2: '2',
+      3: '3',
+      4: '4',
+    }
+  },
+  corePlugins: {
+    aspectRatio: false,
   },
   plugins: [
     require('@tailwindcss/typography'),
     require('@tailwindcss/line-clamp'),
+    require('@tailwindcss/aspect-ratio'),
   ],
 }

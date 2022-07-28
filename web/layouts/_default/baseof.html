@@ -3,7 +3,7 @@
 {{ .Scratch.Set "section" $section }}
 {{ $currentPage := . }}
 {{ $subsection := "" }}
-{{if gt (len $segments) 4}}
+{{if gt (len $segments) 3}}
 {{ $subsection = index $segments 2 }}
 {{ .Scratch.Set "subsection" $subsection }}
 {{ end }}
@@ -20,16 +20,16 @@
 
   <div class="xl:container xl:mx-auto px-2">
     <div class="{{ if $subsection }}flex overflow-hidden{{ end }}">
-
       {{ if $subsection }}
       <div class="hidden md:flex md:shrink-0">
         <nav class="flex flex-col w-64 lg:w-72 pl-2 pr-4 mt-1 text-sm lg:text-base">
           {{ $currentMenu := index .Site.Menus $section }}
           {{ range $currentMenu }}
-          {{ $url_first_char := substr .URL 0 1 }}
-          {{ if eq $url_first_char "/" }}
+          {{ $url_first_char := substr .URL 0 2 }}
+          {{ if in $url_first_char "/" }}
           <div
-            class=" text-gray-700 hover:text-gray-900 mb-2 {{if eq $subsection .Identifier }} text-brand-500{{ end }}">
+            class=" text-gray-700 hover:text-gray-900 mb-2 {{if eq $subsection .Identifier }} font-bold text-brand-500{{ end }}">
+
             <a href="{{ .URL }}">
               {{ .Name }}
             </a>

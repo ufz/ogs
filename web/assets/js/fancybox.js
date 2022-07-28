@@ -20,6 +20,9 @@ $(document).ready(function(){
     if(img.src.includes("#")) {
       continue;
     }
+    if(img.classList.contains("no-fancybox")) {
+      continue;
+    }
     var wrapper = document.createElement("a");
     wrapper.setAttribute("data-fancybox", "");
     if(img.hasAttribute("alt")) {

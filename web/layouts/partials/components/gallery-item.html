@@ -1,0 +1,26 @@
+<li>
+  <a href="{{ .Permalink }}">
+    <div class="space-y-4">
+      <div class="aspect-w-3 aspect-h-2">
+
+        {{ if isset .Params "image" }}
+        {{ $.Scratch.Set "image" (.Resources.GetMatch .Params.image) }}
+        {{ else }}
+        {{ range first 1 (.Resources.ByType "image") }}
+        {{ $.Scratch.Set "image" . }}
+        {{ end }}
+        {{ end }}
+        {{ $image := $.Scratch.Get "image" }}
+        {{ $image := $image.Fit "600x400" }}
+        <img class="object-cover shadow-lg rounded-lg no-fancybox border" src="{{ $image.RelPermalink }}" alt="">
+
+      </div>
+      <div class="space-y-2">
+        <div class="space-y-1">
+          <h3 class="text-center">{{ .Title }}</h3>
+          {{/* <p class="text-indigo-600 text-sm">{{ .Params.menu }}</p> */}}
+        </div>
+      </div>
+    </div>
+  </a>
+</li>
