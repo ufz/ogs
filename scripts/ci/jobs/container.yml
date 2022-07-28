@@ -105,8 +105,12 @@ advanced container:
       --cmake_args ' -DOGS_BUILD_TESTING=OFF -DOGS_BUILD_PROCESSES=SteadyStateDiffusion'
       --tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-ssd-insitu:latest
       --sif_file ogs-ssd-insitu.sif
+    - cd $CI_PROJECT_DIR
     - mkdir -p _out
-    - singularity exec ThirdParty/container-maker/_out/images/ogs-ssd-insitu.sif ogs -o _out Tests/Data/EllipticPETSc/square_1e1_neumann.prj
+    - >
+      singularity exec
+      ThirdParty/container-maker/_out/images/ogs-ssd-insitu.sif
+      ogs -o _out Tests/Data/EllipticPETSc/square_1e1_neumann.prj
   artifacts:
     name: container
     paths:
