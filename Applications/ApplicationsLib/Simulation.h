@@ -49,4 +49,7 @@ private:
 #endif
     std::unique_ptr<ProjectData> project_data;
     std::optional<ApplicationsLib::TestDefinition> test_definition;
+#if defined(OGS_USE_INSITU)
+    bool isInsituConfigured = false;
+#endif
 };

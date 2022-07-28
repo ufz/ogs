@@ -2,10 +2,6 @@
 
 ## Getting started
 
-Requirements:
-
-- ParaView insitu-build, at least commit [056de649](https://gitlab.kitware.com/paraview/paraview/commit/056de649320f52c8a14668ffa383d7361313a133), and therefore Conan is not supported
-
 ### Build ParaView
 
 ```bash
@@ -21,21 +17,21 @@ ninja install
 ### Build OGS
 
 ```bash
-cmake -DCMAKE_BUILD_TYPE=Release -DOGS_INSITU=ON -DOGS_USE_CONAN=OFF \
-  -DParaView_DIR=~/path/to/paraview_install/lib/cmake/paraview-5.8 \
-  -DOGS_BUILD_PROCESSES=GroundwaterFlow ../ogs
+cmake -DCMAKE_BUILD_TYPE=Release -DOGS_USE_INSITU=ON \
+  -DParaView_DIR=~/path/to/paraview_install/lib/cmake/paraview-5.10 \
+  -DOGS_BUILD_PROCESSES=SteadyStateDiffusion ../ogs
 ```
 
 **OR:** Build with [ogs-container-maker](https://github.com/ufz/ogs-container-maker):
 
 ```bash
-python ogscm/cli.py --compiler_version 9 --ogs bilke/ogs@insitu-refactor --cmake_args ' -DOGS_BUILD_PROCESSES=GroundwaterFlow' --pm system --insitu -B -C -R
+ogscm compiler.py ogs.py --cmake_args ' -DOGS_BUILD_PROCESSES=SteadyStateDiffusion' --insitu -B -C -R
 ```
 
 ### Run benchmark
 
-```
-bin/ogs -o _out ../ogs/Tests/Data/Elliptic/cube_1x1x1_GroundWaterFlow/cube_1e1.prj
+```bash
+bin/ogs -o _out ../ogs/Tests/Data/EllipticPETSc/square_1e1_neumann.prj
 ```
 
 Open generated `cube_1e1_*.pvtp` in ParaView.
@@ -55,11 +51,3 @@ These python scripts can be generated with ParaView:
   - Choose the data format, e.g. *XMLPPolyDataWriter*
   - Click the check-box next to the data format drop-down
 - In the menu click *Catalyst / Export Catalyst Script*
-
-----
-
-TODO:
-
-- Test parallel benchmark
-- Live connection not working: https://gitlab.kitware.com/paraview/paraview/issues/19613
-- Check https://gitlab.kitware.com/paraview/paraview/tree/master/Examples/Catalyst/CxxMappedDataArrayExample for more syntax changes

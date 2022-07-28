@@ -79,15 +79,14 @@ void Simulation::initializeDataStructures(
         INFO("Cleanup possible output files before running ogs.");
         BaseLib::removeFiles(test_definition->getOutputFiles());
     }
-#ifdef USE_INSITU
-    auto isInsituConfigured = false;
+#ifdef OGS_USE_INSITU
     //! \ogs_file_param{prj__insitu}
     if (auto t = project_config.getConfigSubtreeOptional("insitu"))
     {
         InSituLib::Initialize(
             //! \ogs_file_param{prj__insitu__scripts}
             t->getConfigSubtree("scripts"),
-            BaseLib::extractPath(project_arg.getValue()));
+            BaseLib::extractPath(project));
         isInsituConfigured = true;
     }
 #else
@@ -163,7 +162,7 @@ std::optional<ApplicationsLib::TestDefinition> Simulation::getTestDefinition()
 
 Simulation::~Simulation()
 {
-#ifdef USE_INSITU
+#ifdef OGS_USE_INSITU
     if (isInsituConfigured)
     {
         InSituLib::Finalize();

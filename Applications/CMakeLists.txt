@@ -16,6 +16,6 @@ if(OGS_BUILD_CLI)
     add_subdirectory(CLI)
 endif() # OGS_BUILD_CLI
 
-if(OGS_INSITU)
+if(OGS_USE_INSITU)
     add_subdirectory(InSituLib)
 endif()
