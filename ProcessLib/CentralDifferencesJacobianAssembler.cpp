@@ -142,6 +142,34 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
         auto local_K = MathLib::toMatrix(local_K_data, num_r_c, num_r_c);
         local_Jac.noalias() += local_K;
     }
+
+    // Move the M and K contributions to the residuum for evaluation of nodal
+    // forces, flow rates, and the like. Cleaning up the M's and K's storage so
+    // it is not accounted for twice.
+    auto b = [&]()
+    {
+        if (!local_b_data.empty())
+        {
+            return MathLib::toVector<Eigen::VectorXd>(local_b_data, num_r_c);
+        }
+        return MathLib::createZeroedVector<Eigen::VectorXd>(local_b_data,
+                                                            num_r_c);
+    }();
+
+    if (!local_M_data.empty())
+    {
+        auto M = MathLib::toMatrix(local_M_data, num_r_c, num_r_c);
+        auto x_dot = MathLib::toVector(local_xdot_data);
+        b -= M * x_dot;
+        local_M_data.clear();
+    }
+    if (!local_K_data.empty())
+    {
+        auto K = MathLib::toMatrix(local_K_data, num_r_c, num_r_c);
+        auto x = MathLib::toVector(local_x_data);
+        b -= K * x;
+        local_K_data.clear();
+    }
 }
 
 std::unique_ptr<CentralDifferencesJacobianAssembler>
