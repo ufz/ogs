@@ -3,6 +3,7 @@
 *.sw[op]
 tags
 .ExternalData_*
+.DS_Store
 
 # CLion IDE project files
 *.iml
