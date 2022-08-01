@@ -311,7 +311,7 @@ MFront<DisplacementDim>::integrateStress(
                 "before calling MFront::integrateStress.");
         }
 
-        behaviour_data.s1.external_state_variables[0] = std::get<double>(
+        behaviour_data.s0.external_state_variables[0] = std::get<double>(
             variable_array_prev[static_cast<int>(MPL::Variable::temperature)]);
     }
 
