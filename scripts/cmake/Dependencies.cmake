@@ -50,7 +50,7 @@ if(OGS_BUILD_TESTING)
     endif()
 endif()
 
-CPMFindPackage(NAME spdlog GITHUB_REPOSITORY gabime/spdlog VERSION 1.8.2)
+CPMFindPackage(NAME spdlog GITHUB_REPOSITORY gabime/spdlog VERSION 1.10.0)
 
 CPMFindPackage(
     NAME tclap
