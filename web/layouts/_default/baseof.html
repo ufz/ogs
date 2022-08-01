@@ -19,10 +19,10 @@
   {{ partialCached "nav-bar.html" . $section $subsection }}
 
   <div class="xl:container xl:mx-auto px-2">
-    <div class="{{ if $subsection }}flex overflow-hidden{{ end }}">
+    <div class="{{ if $subsection }}flex{{ end }}">
       {{ if $subsection }}
-      <div class="hidden md:flex md:shrink-0">
-        <nav class="flex flex-col w-64 lg:w-72 pl-2 pr-4 mt-1 text-sm lg:text-base">
+      <div class="md:flex md:shrink-0">
+        <nav class="w-48 md:w-64 lg:w-72 pl-2 pr-4 mt-1 text-sm lg:text-base overflow-y-scroll h-screen sticky top-0">
           {{ $currentMenu := index .Site.Menus $section }}
           {{ range $currentMenu }}
           {{ $url_first_char := substr .URL 0 2 }}
