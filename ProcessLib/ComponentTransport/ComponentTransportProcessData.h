@@ -17,6 +17,7 @@
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/NumericalStability/NumericalStabilization.h"
+#include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Parameter.h"
 
 namespace MaterialPropertyLib
@@ -71,6 +72,16 @@ struct ComponentTransportProcessData
     std::unique_ptr<LookupTable> lookup_table;
 
     std::unique_ptr<NumLib::NumericalStabilization> stabilizer;
+
+    /// A vector of the rotation matrices for all elements.
+    std::vector<Eigen::MatrixXd> const element_rotation_matrices;
+
+    int const mesh_space_dimension;
+
+    /// The aperture size is the thickness of 2D element or the
+    /// cross section area of 1D element. For 3D element, the value is set to 1.
+    ParameterLib::Parameter<double> const& aperture_size =
+        ParameterLib::ConstantParameter<double>("constant_one", 1.0);
 
     static const int hydraulic_process_id = 0;
     // TODO (renchao-lu): This variable is used in the calculation of the
