@@ -1,3 +1,7 @@
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/InclinedElements/Inclined2DMesh/inclined_2D_mesh_HC.prj RUNTIME 10)
+endif()
+
 AddTest(
     NAME 2D_ComponentTransport_ConcentrationDiffusionOnly
     PATH Parabolic/ComponentTransport/SimpleSynthetics
