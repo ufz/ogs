@@ -16,6 +16,7 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "SourceTermIntegrationPointData.h"
@@ -32,7 +33,7 @@ public:
     virtual ~VolumetricSourceTermLocalAssemblerInterface() = default;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 class VolumetricSourceTermLocalAssembler final
     : public VolumetricSourceTermLocalAssemblerInterface
 {
@@ -50,11 +51,11 @@ public:
     VolumetricSourceTermLocalAssembler(
         MeshLib::Element const& element,
         std::size_t const local_matrix_size,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         ParameterLib::Parameter<double> const& volumetric_source_term)
         : _volumetric_source_term(volumetric_source_term),
-          _integration_method(integration_order),
+          _integration_method(integration_method),
           _element(element),
           _local_rhs(local_matrix_size)
     {
@@ -107,7 +108,7 @@ public:
 private:
     ParameterLib::Parameter<double> const& _volumetric_source_term;
 
-    IntegrationMethod const _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     std::vector<SourceTermIntegrationPointData<NodalRowVectorType>,
                 Eigen::aligned_allocator<
                     SourceTermIntegrationPointData<NodalRowVectorType>>>

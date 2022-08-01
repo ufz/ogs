@@ -20,6 +20,7 @@
 #include "MeshLib/Elements/Elements.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
+#include "NumLib/Fem/Integration/IntegrationMethodRegistry.h"
 #include "ProcessLib/HeatTransportBHE/BHE/BHETypes.h"
 #include "ProcessLib/Utils/EnabledElements.h"
 
@@ -33,9 +34,9 @@ namespace HeatTransportBHE
 /// For example for MeshLib::Quad a local assembler data with template argument
 /// NumLib::ShapeQuad4 is created.
 template <typename LocalAssemblerInterface,
-          template <typename, typename>
+          template <typename /* shp fct */>
           class LocalAssemblerDataSoil,
-          template <typename, typename, typename>
+          template <typename /* shp fct */, typename /* bhe type */>
           class LocalAssemblerDataBHE,
           typename... ConstructorArgs>
 class LocalDataInitializer final
@@ -54,7 +55,8 @@ public:
     using LADataIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
 
     explicit LocalDataInitializer(
-        NumLib::LocalToGlobalIndexMap const& dof_table)
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        NumLib::IntegrationOrder const integration_order)
         : _dof_table(dof_table)
     {
         // 3D soil elements
@@ -63,13 +65,13 @@ public:
                 std::declval<IsNDElement<3>>()));
 
         BaseLib::TMP::foreach<Enabled3DElementTraits>(
-            [this]<typename ET>(ET*)
+            [this, integration_order]<typename ET>(ET*)
             {
                 using MeshElement = typename ET::Element;
                 using ShapeFunction = typename ET::ShapeFunction;
 
                 _builder[std::type_index(typeid(MeshElement))] =
-                    makeLocalAssemblerBuilder<ShapeFunction>();
+                    makeLocalAssemblerBuilder<ShapeFunction>(integration_order);
             });
 
         // 1D BHE elements
@@ -78,13 +80,14 @@ public:
                 std::declval<IsNDElement<1>>()));
 
         BaseLib::TMP::foreach<Enabled1DElementTraits>(
-            [this]<typename ET>(ET*)
+            [this, integration_order]<typename ET>(ET*)
             {
                 using MeshElement = typename ET::Element;
                 using ShapeFunction = typename ET::ShapeFunction;
 
                 _builder[std::type_index(typeid(MeshElement))] =
-                    makeLocalAssemblerBuilderBHE<ShapeFunction>();
+                    makeLocalAssemblerBuilderBHE<ShapeFunction>(
+                        integration_order);
             });
     }
 
@@ -127,77 +130,84 @@ private:
         ConstructorArgs&&...)>;
 
     template <typename ShapeFunction>
-    using IntegrationMethod = typename NumLib::GaussLegendreIntegrationPolicy<
-        typename ShapeFunction::MeshElement>::IntegrationMethod;
-
-    // local assembler builder implementations.
-    template <typename ShapeFunction>
-    using LADataSoil =
-        LocalAssemblerDataSoil<ShapeFunction, IntegrationMethod<ShapeFunction>>;
-
-    template <typename ShapeFunction>
-    static LADataBuilder makeLocalAssemblerBuilder()
+    static LADataBuilder makeLocalAssemblerBuilder(
+        NumLib::IntegrationOrder const integration_order)
     {
-        return [](MeshLib::Element const& e,
-                  std::unordered_map<std::size_t, BHE::BHETypes*> const&
-                  /* unused */,
-                  ConstructorArgs&&... args) -> LADataIntfPtr {
+        return [integration_order](
+                   MeshLib::Element const& e,
+                   std::unordered_map<std::size_t, BHE::BHETypes*> const&
+                   /* unused */,
+                   ConstructorArgs&&... args) -> LADataIntfPtr
+        {
+            auto const& integration_method = NumLib::IntegrationMethodRegistry::
+                template getIntegrationMethod<
+                    typename ShapeFunction::MeshElement>(integration_order);
+
             if (e.getDimension() == 3)  // soil elements
             {
-                return LADataIntfPtr{new LADataSoil<ShapeFunction>{
-                    e, std::forward<ConstructorArgs>(args)...}};
+                return LADataIntfPtr{new LocalAssemblerDataSoil<ShapeFunction>{
+                    e, integration_method,
+                    std::forward<ConstructorArgs>(args)...}};
             }
 
             return nullptr;
         };
     }
 
-    template <typename ShapeFunction, typename BHEType>
-    using LADataBHE = LocalAssemblerDataBHE<ShapeFunction,
-                                            IntegrationMethod<ShapeFunction>,
-                                            BHEType>;
     template <typename ShapeFunction>
-    static LADataBuilder makeLocalAssemblerBuilderBHE()
+    static LADataBuilder makeLocalAssemblerBuilderBHE(
+        NumLib::IntegrationOrder const integration_order)
     {
-        return [](MeshLib::Element const& e,
-                  std::unordered_map<std::size_t, BHE::BHETypes*> const&
-                      element_to_bhe_map,
-                  ConstructorArgs&&... args) -> LADataIntfPtr {
+        return [integration_order](
+                   MeshLib::Element const& e,
+                   std::unordered_map<std::size_t, BHE::BHETypes*> const&
+                       element_to_bhe_map,
+                   ConstructorArgs&&... args) -> LADataIntfPtr
+        {
+            auto const& integration_method = NumLib::IntegrationMethodRegistry::
+                template getIntegrationMethod<
+                    typename ShapeFunction::MeshElement>(integration_order);
+
             auto& bhe = *element_to_bhe_map.at(e.getID());
 
             if (std::holds_alternative<BHE::BHE_1U>(bhe))
             {
-                return LADataIntfPtr{new LADataBHE<ShapeFunction, BHE::BHE_1U>{
-                    e, std::get<BHE::BHE_1U>(bhe),
-                    std::forward<ConstructorArgs>(args)...}};
+                return LADataIntfPtr{
+                    new LocalAssemblerDataBHE<ShapeFunction, BHE::BHE_1U>{
+                        e, integration_method, std::get<BHE::BHE_1U>(bhe),
+                        std::forward<ConstructorArgs>(args)...}};
             }
 
             if (std::holds_alternative<BHE::BHE_CXA>(bhe))
             {
-                return LADataIntfPtr{new LADataBHE<ShapeFunction, BHE::BHE_CXA>{
-                    e, std::get<BHE::BHE_CXA>(bhe),
-                    std::forward<ConstructorArgs>(args)...}};
+                return LADataIntfPtr{
+                    new LocalAssemblerDataBHE<ShapeFunction, BHE::BHE_CXA>{
+                        e, integration_method, std::get<BHE::BHE_CXA>(bhe),
+                        std::forward<ConstructorArgs>(args)...}};
             }
 
             if (std::holds_alternative<BHE::BHE_CXC>(bhe))
             {
-                return LADataIntfPtr{new LADataBHE<ShapeFunction, BHE::BHE_CXC>{
-                    e, std::get<BHE::BHE_CXC>(bhe),
-                    std::forward<ConstructorArgs>(args)...}};
+                return LADataIntfPtr{
+                    new LocalAssemblerDataBHE<ShapeFunction, BHE::BHE_CXC>{
+                        e, integration_method, std::get<BHE::BHE_CXC>(bhe),
+                        std::forward<ConstructorArgs>(args)...}};
             }
 
             if (std::holds_alternative<BHE::BHE_2U>(bhe))
             {
-                return LADataIntfPtr{new LADataBHE<ShapeFunction, BHE::BHE_2U>{
-                    e, std::get<BHE::BHE_2U>(bhe),
-                    std::forward<ConstructorArgs>(args)...}};
+                return LADataIntfPtr{
+                    new LocalAssemblerDataBHE<ShapeFunction, BHE::BHE_2U>{
+                        e, integration_method, std::get<BHE::BHE_2U>(bhe),
+                        std::forward<ConstructorArgs>(args)...}};
             }
 
             if (std::holds_alternative<BHE::BHE_1P>(bhe))
             {
-                return LADataIntfPtr{new LADataBHE<ShapeFunction, BHE::BHE_1P>{
-                    e, std::get<BHE::BHE_1P>(bhe),
-                    std::forward<ConstructorArgs>(args)...}};
+                return LADataIntfPtr{
+                    new LocalAssemblerDataBHE<ShapeFunction, BHE::BHE_1P>{
+                        e, integration_method, std::get<BHE::BHE_1P>(bhe),
+                        std::forward<ConstructorArgs>(args)...}};
             }
             OGS_FATAL(
                 "Trying to create local assembler for an unknown BHE type.");

@@ -30,16 +30,16 @@ namespace ProcessLib
 {
 namespace ThermoRichardsFlow
 {
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
+template <typename ShapeFunction, int GlobalDim>
+ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
     ThermoRichardsFlowLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         ThermoRichardsFlowProcessData& process_data)
     : _process_data(process_data),
-      _integration_method(integration_order),
+      _integration_method(integration_method),
       _element(e),
       _is_axially_symmetric(is_axially_symmetric)
 {
@@ -76,12 +76,11 @@ ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-std::size_t ThermoRichardsFlowLocalAssembler<
-    ShapeFunction, IntegrationMethod,
-    GlobalDim>::setIPDataInitialConditions(std::string const& name,
-                                           double const* values,
-                                           int const integration_order)
+template <typename ShapeFunction, int GlobalDim>
+std::size_t ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
+    setIPDataInitialConditions(std::string const& name,
+                               double const* values,
+                               int const integration_order)
 {
     if (integration_order !=
         static_cast<int>(_integration_method.getIntegrationOrder()))
@@ -106,9 +105,8 @@ std::size_t ThermoRichardsFlowLocalAssembler<
     return 0;
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-void ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod,
-                                      GlobalDim>::
+template <typename ShapeFunction, int GlobalDim>
+void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
     setInitialConditionsConcrete(std::vector<double> const& local_x,
                                  double const t,
                                  bool const /*use_monolithic_scheme*/,
@@ -150,16 +148,15 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod,
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-void ThermoRichardsFlowLocalAssembler<
-    ShapeFunction, IntegrationMethod,
-    GlobalDim>::assembleWithJacobian(double const t, double const dt,
-                                     std::vector<double> const& local_x,
-                                     std::vector<double> const& local_xdot,
-                                     std::vector<double>& /*local_M_data*/,
-                                     std::vector<double>& /*local_K_data*/,
-                                     std::vector<double>& local_rhs_data,
-                                     std::vector<double>& local_Jac_data)
+template <typename ShapeFunction, int GlobalDim>
+void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
+    assembleWithJacobian(double const t, double const dt,
+                         std::vector<double> const& local_x,
+                         std::vector<double> const& local_xdot,
+                         std::vector<double>& /*local_M_data*/,
+                         std::vector<double>& /*local_K_data*/,
+                         std::vector<double>& local_rhs_data,
+                         std::vector<double>& local_Jac_data)
 {
     auto const local_matrix_dim = pressure_size + temperature_size;
     assert(local_x.size() == local_matrix_dim);
@@ -690,15 +687,11 @@ void ThermoRichardsFlowLocalAssembler<
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-void ThermoRichardsFlowLocalAssembler<
-    ShapeFunction, IntegrationMethod,
-    GlobalDim>::assemble(double const t, double const dt,
-                         std::vector<double> const& local_x,
-                         std::vector<double> const& local_xdot,
-                         std::vector<double>& local_M_data,
-                         std::vector<double>& local_K_data,
-                         std::vector<double>& local_rhs_data)
+template <typename ShapeFunction, int GlobalDim>
+void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
+    double const t, double const dt, std::vector<double> const& local_x,
+    std::vector<double> const& local_xdot, std::vector<double>& local_M_data,
+    std::vector<double>& local_K_data, std::vector<double>& local_rhs_data)
 {
     auto const local_matrix_dim = pressure_size + temperature_size;
     assert(local_x.size() == local_matrix_dim);
@@ -1136,9 +1129,9 @@ void ThermoRichardsFlowLocalAssembler<
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 std::vector<double> const&
-ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
+ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
     getIntPtDarcyVelocity(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -1161,53 +1154,51 @@ ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     return cache;
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 std::vector<double> ThermoRichardsFlowLocalAssembler<
-    ShapeFunction, IntegrationMethod, GlobalDim>::getSaturation() const
+    ShapeFunction, GlobalDim>::getSaturation() const
 {
     std::vector<double> result;
     getIntPtSaturation(0, {}, {}, result);
     return result;
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 std::vector<double> const&
-ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    getIntPtSaturation(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const
+ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::getIntPtSaturation(
+    const double /*t*/,
+    std::vector<GlobalVector*> const& /*x*/,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+    std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointScalarData(
         _ip_data, &IpData::saturation, cache);
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-std::vector<double> ThermoRichardsFlowLocalAssembler<
-    ShapeFunction, IntegrationMethod, GlobalDim>::getPorosity() const
+template <typename ShapeFunction, int GlobalDim>
+std::vector<double>
+ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::getPorosity() const
 {
     std::vector<double> result;
     getIntPtPorosity(0, {}, {}, result);
     return result;
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 std::vector<double> const&
-ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    getIntPtPorosity(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const
+ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::getIntPtPorosity(
+    const double /*t*/,
+    std::vector<GlobalVector*> const& /*x*/,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+    std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointScalarData(_ip_data,
                                                      &IpData::porosity, cache);
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 std::vector<double> const&
-ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
+ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
     getIntPtDryDensitySolid(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -1218,9 +1209,8 @@ ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         _ip_data, &IpData::dry_density_solid, cache);
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-void ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod,
-                                      GlobalDim>::
+template <typename ShapeFunction, int GlobalDim>
+void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
                                      Eigen::VectorXd const& local_x_dot)
@@ -1371,10 +1361,9 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod,
     (*_process_data.element_porosity)[_element.getID()] = porosity_avg;
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 unsigned ThermoRichardsFlowLocalAssembler<
-    ShapeFunction, IntegrationMethod, GlobalDim>::getNumberOfIntegrationPoints()
-    const
+    ShapeFunction, GlobalDim>::getNumberOfIntegrationPoints() const
 {
     return _integration_method.getNumberOfPoints();
 }

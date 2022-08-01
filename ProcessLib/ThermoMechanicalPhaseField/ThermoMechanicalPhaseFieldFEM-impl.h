@@ -19,10 +19,8 @@ namespace ProcessLib
 {
 namespace ThermoMechanicalPhaseField
 {
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                                              DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_xdot, int const process_id,
@@ -49,10 +47,8 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                                                 local_Jac_data);
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                                              DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForDeformationEquations(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
@@ -142,10 +138,8 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                                              DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForHeatConductionEquations(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
@@ -233,10 +227,8 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
-                                              DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForPhaseFieldEquations(
         double const t, Eigen::VectorXd const& local_x,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)

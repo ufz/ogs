@@ -17,6 +17,7 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
@@ -76,7 +77,7 @@ public:
         std::vector<double>& cache) const = 0;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 class TwoPhaseFlowWithPrhoLocalAssembler
     : public TwoPhaseFlowWithPrhoLocalAssemblerInterface
 {
@@ -97,11 +98,11 @@ public:
     TwoPhaseFlowWithPrhoLocalAssembler(
         MeshLib::Element const& element,
         std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         TwoPhaseFlowWithPrhoProcessData const& process_data)
         : _element(element),
-          _integration_method(integration_order),
+          _integration_method(integration_method),
           _shape_matrices(
               NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                         GlobalDim>(
@@ -172,7 +173,7 @@ public:
 private:
     MeshLib::Element const& _element;
 
-    IntegrationMethod const _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
         _shape_matrices;
 

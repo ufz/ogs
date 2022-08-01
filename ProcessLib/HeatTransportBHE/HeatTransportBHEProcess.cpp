@@ -150,8 +150,9 @@ void HeatTransportBHEProcess::initializeConcreteProcess(
     assert(mesh.getDimension() == 3);
     ProcessLib::HeatTransportBHE::createLocalAssemblers<
         HeatTransportBHELocalAssemblerSoil, HeatTransportBHELocalAssemblerBHE>(
-        mesh.getElements(), dof_table, _local_assemblers, element_to_bhe_map,
-        mesh.isAxiallySymmetric(), integration_order, _process_data);
+        mesh.getElements(), dof_table, _local_assemblers,
+        NumLib::IntegrationOrder{integration_order}, element_to_bhe_map,
+        mesh.isAxiallySymmetric(), _process_data);
 
     // Create BHE boundary conditions for each of the BHEs
     createBHEBoundaryConditionTopBottom(_bheMeshData.BHE_nodes);

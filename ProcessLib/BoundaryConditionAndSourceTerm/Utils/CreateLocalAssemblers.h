@@ -22,13 +22,15 @@ namespace BoundaryConditionAndSourceTerm
 namespace detail
 {
 template <int GlobalDim,
-          template <typename, typename, int> class LocalAssemblerImplementation,
+          template <typename /* shp fct */, int /* global dim */>
+          class LocalAssemblerImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     const unsigned shapefunction_order,
     std::vector<MeshLib::Element*> const& mesh_elements,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
+    NumLib::IntegrationOrder const integration_order,
     ExtraCtorArgs&&... extra_ctor_args)
 {
     static_assert(
@@ -42,7 +44,8 @@ void createLocalAssemblers(
 
     DBUG("Create local assemblers.");
 
-    LocalAssemblerFactory factory(dof_table, shapefunction_order);
+    LocalAssemblerFactory factory(dof_table, shapefunction_order,
+                                  integration_order);
     local_assemblers.resize(mesh_elements.size());
 
     DBUG("Calling local assembler builder for all mesh elements.");
@@ -62,7 +65,8 @@ void createLocalAssemblers(
  * The first two template parameters cannot be deduced from the arguments.
  * Therefore they always have to be provided manually.
  */
-template <template <typename, typename, int> class LocalAssemblerImplementation,
+template <template <typename /* shp fct */, int /* global dim */>
+          class LocalAssemblerImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
     const unsigned dimension,
@@ -70,6 +74,7 @@ void createLocalAssemblers(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     const unsigned shapefunction_order,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
+    NumLib::IntegrationOrder const integration_order,
     ExtraCtorArgs&&... extra_ctor_args)
 {
     DBUG("Create local assemblers.");
@@ -79,16 +84,19 @@ void createLocalAssemblers(
         case 1:
             detail::createLocalAssemblers<1, LocalAssemblerImplementation>(
                 dof_table, shapefunction_order, mesh_elements, local_assemblers,
+                integration_order,
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);
             break;
         case 2:
             detail::createLocalAssemblers<2, LocalAssemblerImplementation>(
                 dof_table, shapefunction_order, mesh_elements, local_assemblers,
+                integration_order,
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);
             break;
         case 3:
             detail::createLocalAssemblers<3, LocalAssemblerImplementation>(
                 dof_table, shapefunction_order, mesh_elements, local_assemblers,
+                integration_order,
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);
             break;
         default:

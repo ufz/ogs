@@ -15,6 +15,7 @@
 #include "MeshLib/Elements/MapBulkElementPoint.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 namespace ProcessLib
@@ -35,7 +36,7 @@ public:
                                       std::vector<GlobalVector*> const&)>) = 0;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 class SurfaceFluxLocalAssembler final
     : public SurfaceFluxLocalAssemblerInterface
 {
@@ -54,16 +55,16 @@ public:
     /// mesh.
     /// @param bulk_face_ids The id of the corresponding face in the bulk
     /// element.
-    /// @param integration_order the order of the integration
+    /// @param integration_method The integration method used.
     SurfaceFluxLocalAssembler(
         MeshLib::Element const& surface_element,
         std::size_t /*const local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         MeshLib::PropertyVector<std::size_t> const& bulk_element_ids,
         MeshLib::PropertyVector<std::size_t> const& bulk_face_ids)
         : _surface_element(surface_element),
-          _integration_method(integration_order),
+          _integration_method(integration_method),
           _bulk_element_id(bulk_element_ids[surface_element.getID()]),
           _bulk_face_id(bulk_face_ids[surface_element.getID()])
     {
@@ -180,7 +181,7 @@ private:
 
     std::vector<double> _detJ_times_integralMeasure;
 
-    IntegrationMethod const _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     std::size_t const _bulk_element_id;
     std::size_t const _bulk_face_id;
 };

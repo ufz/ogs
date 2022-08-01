@@ -20,6 +20,7 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
@@ -122,8 +123,7 @@ struct SecondaryData
  *   temperature dependent solid property.
  */
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
+template <typename ShapeFunction, int DisplacementDim>
 class ThermoMechanicsLocalAssembler
     : public ThermoMechanicsLocalAssemblerInterface<DisplacementDim>
 {
@@ -157,8 +157,8 @@ public:
     ThermoMechanicsLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         ThermoMechanicsProcessData<DisplacementDim>& process_data);
 
     /// Returns number of read integration points.
@@ -343,7 +343,7 @@ private:
 
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
 
-    IntegrationMethod _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     MeshLib::Element const& _element;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
     bool const _is_axially_symmetric;

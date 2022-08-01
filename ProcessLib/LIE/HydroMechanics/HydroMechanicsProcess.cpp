@@ -208,7 +208,8 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         HydroMechanicsLocalAssemblerMatrixNearFracture,
         HydroMechanicsLocalAssemblerFracture>(
         mesh.getElements(), dof_table, _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _process_data);
+        NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
+        _process_data);
 
     auto mesh_prop_sigma_xx = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "stress_xx",

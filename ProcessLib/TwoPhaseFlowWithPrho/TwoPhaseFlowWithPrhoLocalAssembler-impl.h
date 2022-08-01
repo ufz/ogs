@@ -20,15 +20,12 @@ namespace ProcessLib
 {
 namespace TwoPhaseFlowWithPrho
 {
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-void TwoPhaseFlowWithPrhoLocalAssembler<
-    ShapeFunction, IntegrationMethod,
-    GlobalDim>::assemble(double const t, double const /*dt*/,
-                         std::vector<double> const& local_x,
-                         std::vector<double> const& /*local_xdot*/,
-                         std::vector<double>& local_M_data,
-                         std::vector<double>& local_K_data,
-                         std::vector<double>& local_b_data)
+template <typename ShapeFunction, int GlobalDim>
+void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
+    double const t, double const /*dt*/, std::vector<double> const& local_x,
+    std::vector<double> const& /*local_xdot*/,
+    std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+    std::vector<double>& local_b_data)
 {
     auto const local_matrix_size = local_x.size();
 

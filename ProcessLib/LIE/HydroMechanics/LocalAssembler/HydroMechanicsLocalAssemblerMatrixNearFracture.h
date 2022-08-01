@@ -24,19 +24,18 @@ namespace LIE
 {
 namespace HydroMechanics
 {
-template <typename ShapeFunctionDisplacement,
-          typename ShapeFunctionPressure,
-          typename IntegrationMethod,
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+
           int GlobalDim>
 class HydroMechanicsLocalAssemblerMatrixNearFracture
     : public HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
                                                 ShapeFunctionPressure,
-                                                IntegrationMethod,
+
                                                 GlobalDim>
 {
     using Base = HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
                                                     ShapeFunctionPressure,
-                                                    IntegrationMethod,
+
                                                     GlobalDim>;
 
 public:
@@ -50,8 +49,8 @@ public:
         std::size_t const n_variables,
         std::size_t const local_matrix_size,
         std::vector<unsigned> const& dofIndex_to_localIndex,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         HydroMechanicsProcessData<GlobalDim>& process_data);
 
 private:

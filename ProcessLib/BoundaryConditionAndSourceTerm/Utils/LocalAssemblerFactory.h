@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "NumLib/Fem/Integration/IntegrationMethodRegistry.h"
 #include "ProcessLib/Utils/EnabledElements.h"
 #include "ProcessLib/Utils/GenericLocalAssemblerFactory.h"
 
@@ -18,7 +19,7 @@ namespace ProcessLib
 namespace BoundaryConditionAndSourceTerm
 {
 template <typename LocalAssemblerInterface,
-          template <typename, typename, int>
+          template <typename /* shp fct */, int /* global dim */>
           class LocalAssemblerImplementation,
           int GlobalDim,
           typename... ConstructorArgs>
@@ -65,7 +66,8 @@ class LocalAssemblerFactory final
 
 public:
     LocalAssemblerFactory(NumLib::LocalToGlobalIndexMap const& dof_table,
-                          const unsigned shapefunction_order)
+                          const unsigned shapefunction_order,
+                          NumLib::IntegrationOrder const integration_order)
         : Base(dof_table)
     {
         if (shapefunction_order < 1 || 2 < shapefunction_order)
@@ -82,7 +84,7 @@ public:
                     std::declval<HasSuitableDimension>()));
 
             BaseLib::TMP::foreach<EnabledElementTraits>(
-                [this]<typename ET>(ET*)
+                [this, integration_order]<typename ET>(ET*)
                 {
                     using MeshElement = typename ET::Element;
                     // this will use linear shape functions on higher order
@@ -90,7 +92,8 @@ public:
                     using LowerOrderShapeFunction =
                         typename ET::LowerOrderShapeFunction;
                     Base::_builders[std::type_index(typeid(MeshElement))] =
-                        LocAsmBuilderFactory<LowerOrderShapeFunction>::create();
+                        LocAsmBuilderFactory<LowerOrderShapeFunction>::create(
+                            integration_order);
                 });
         }
         else if (shapefunction_order == 2)
@@ -101,12 +104,13 @@ public:
                     std::declval<Is2ndOrderElementOfSuitableDimension>()));
 
             BaseLib::TMP::foreach<EnabledElementTraits>(
-                [this]<typename ET>(ET*)
+                [this, integration_order]<typename ET>(ET*)
                 {
                     using MeshElement = typename ET::Element;
                     using ShapeFunction2ndOrder = typename ET::ShapeFunction;
                     Base::_builders[std::type_index(typeid(MeshElement))] =
-                        LocAsmBuilderFactory<ShapeFunction2ndOrder>::create();
+                        LocAsmBuilderFactory<ShapeFunction2ndOrder>::create(
+                            integration_order);
                 });
         }
     }

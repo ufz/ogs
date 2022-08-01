@@ -27,15 +27,15 @@ namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
-template <typename ShapeFunction, typename IntegrationMethod>
-HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
+template <typename ShapeFunction>
+HeatTransportBHELocalAssemblerSoil<ShapeFunction>::
     HeatTransportBHELocalAssemblerSoil(
         MeshLib::Element const& e,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         HeatTransportBHEProcessData& process_data)
     : _process_data(process_data),
-      _integration_method(integration_order),
+      _integration_method(integration_method),
       _element_id(e.getID())
 {
     unsigned const n_integration_points =
@@ -67,14 +67,12 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod>
-void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
-    assemble(double const t, double const dt,
-             std::vector<double> const& local_x,
-             std::vector<double> const& /*local_xdot*/,
-             std::vector<double>& local_M_data,
-             std::vector<double>& local_K_data,
-             std::vector<double>& /*local_b_data*/)
+template <typename ShapeFunction>
+void HeatTransportBHELocalAssemblerSoil<ShapeFunction>::assemble(
+    double const t, double const dt, std::vector<double> const& local_x,
+    std::vector<double> const& /*local_xdot*/,
+    std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+    std::vector<double>& /*local_b_data*/)
 {
     assert(local_x.size() == ShapeFunction::NPOINTS);
     (void)local_x;  // Avoid unused arg warning.

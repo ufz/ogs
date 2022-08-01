@@ -12,19 +12,18 @@
 
 #include <vector>
 
-#include "NumLib/Fem/ShapeMatrixPolicy.h"
-
-#include "ProcessLib/HeatTransportBHE/HeatTransportBHEProcessData.h"
-
 #include "HeatTransportBHEProcessAssemblerInterface.h"
 #include "IntegrationPointDataBHE.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "ProcessLib/HeatTransportBHE/HeatTransportBHEProcessData.h"
 #include "SecondaryData.h"
 
 namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
-template <typename ShapeFunction, typename IntegrationMethod, typename BHEType>
+template <typename ShapeFunction, typename BHEType>
 class HeatTransportBHELocalAssemblerBHE
     : public HeatTransportBHELocalAssemblerInterface
 {
@@ -54,9 +53,9 @@ public:
 
     HeatTransportBHELocalAssemblerBHE(
         MeshLib::Element const& e,
+        NumLib::GenericIntegrationMethod const& integration_method,
         BHEType const& bhe,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         HeatTransportBHEProcessData& process_data);
 
     void assemble(double const /*t*/, double const /*dt*/,
@@ -83,7 +82,7 @@ private:
         Eigen::aligned_allocator<IntegrationPointDataBHE<ShapeMatricesType>>>
         _ip_data;
 
-    IntegrationMethod _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
 
     BHEType const& _bhe;
 

@@ -15,6 +15,7 @@
 #include "HeatTransportBHEProcessAssemblerInterface.h"
 #include "IntegrationPointDataSoil.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
@@ -25,7 +26,7 @@ namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
-template <typename ShapeFunction, typename IntegrationMethod>
+template <typename ShapeFunction>
 class HeatTransportBHELocalAssemblerSoil
     : public HeatTransportBHELocalAssemblerInterface
 {
@@ -47,8 +48,8 @@ public:
 
     HeatTransportBHELocalAssemblerSoil(
         MeshLib::Element const& e,
-        bool is_axially_symmetric,
-        unsigned const integration_order,
+        NumLib::GenericIntegrationMethod const& integration_method,
+        bool const is_axially_symmetric,
         HeatTransportBHEProcessData& process_data);
 
     void assemble(double const /*t*/, double const /*dt*/,
@@ -76,7 +77,7 @@ private:
             NodalRowVectorType, GlobalDimNodalMatrixType>>>
         _ip_data;
 
-    IntegrationMethod const _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
 
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
         _shape_matrices;

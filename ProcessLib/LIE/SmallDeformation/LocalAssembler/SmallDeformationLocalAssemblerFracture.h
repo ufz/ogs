@@ -12,14 +12,13 @@
 
 #include <vector>
 
+#include "IntegrationPointDataFracture.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-
 #include "ProcessLib/LIE/Common/FractureProperty.h"
 #include "ProcessLib/LIE/Common/HMatrixUtils.h"
 #include "ProcessLib/LIE/Common/JunctionProperty.h"
 #include "ProcessLib/LIE/SmallDeformation/SmallDeformationProcessData.h"
-
-#include "IntegrationPointDataFracture.h"
 #include "SecondaryData.h"
 #include "SmallDeformationLocalAssemblerInterface.h"
 
@@ -29,8 +28,7 @@ namespace LIE
 {
 namespace SmallDeformation
 {
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
+template <typename ShapeFunction, int DisplacementDim>
 class SmallDeformationLocalAssemblerFracture
     : public SmallDeformationLocalAssemblerInterface
 {
@@ -60,8 +58,8 @@ public:
         std::size_t const n_variables,
         std::size_t const local_matrix_size,
         std::vector<unsigned> const& dofIndex_to_localIndex,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data);
 
     void assemble(double const /*t*/, double const /*dt*/,
@@ -245,7 +243,7 @@ private:
                     HMatricesType, DisplacementDim>>>
         _ip_data;
 
-    IntegrationMethod _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     std::vector<ShapeMatrices, Eigen::aligned_allocator<
                                    typename ShapeMatricesType::ShapeMatrices>>
         _shape_matrices;

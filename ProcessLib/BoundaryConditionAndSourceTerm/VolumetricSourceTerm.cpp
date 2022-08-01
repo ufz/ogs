@@ -26,8 +26,8 @@ VolumetricSourceTerm::VolumetricSourceTerm(
         VolumetricSourceTermLocalAssembler>(
         bulk_mesh_dimension, source_term_mesh.getElements(),
         *_source_term_dof_table, shapefunction_order, _local_assemblers,
-        source_term_mesh.isAxiallySymmetric(), integration_order,
-        _source_term_parameter);
+        NumLib::IntegrationOrder{integration_order},
+        source_term_mesh.isAxiallySymmetric(), _source_term_parameter);
 }
 
 void VolumetricSourceTerm::integrate(const double t, GlobalVector const& /*x*/,

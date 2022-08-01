@@ -26,17 +26,16 @@ namespace SmallDeformation
 namespace detail
 {
 template <int GlobalDim,
-          template <typename, typename, int>
-          class LocalAssemblerMatrixImplementation,
-          template <typename, typename, int>
+          template <typename, int> class LocalAssemblerMatrixImplementation,
+          template <typename, int>
           class LocalAssemblerMatrixNearFractureImplementation,
-          template <typename, typename, int>
-          class LocalAssemblerFractureImplementation,
+          template <typename, int> class LocalAssemblerFractureImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<MeshLib::Element*> const& mesh_elements,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
+    NumLib::IntegrationOrder const integration_order,
     ExtraCtorArgs&&... extra_ctor_args)
 {
     // Shape matrices initializer
@@ -49,7 +48,7 @@ void createLocalAssemblers(
     // Populate the vector of local assemblers.
     local_assemblers.resize(mesh_elements.size());
 
-    LocalDataInitializer initializer(dof_table);
+    LocalDataInitializer initializer(dof_table, integration_order);
 
     DBUG("Calling local assembler builder for all mesh elements.");
     GlobalExecutor::transformDereferenced(
@@ -71,17 +70,16 @@ void createLocalAssemblers(
  * Therefore they always have to be provided manually.
  */
 template <int GlobalDim,
-          template <typename, typename, int>
-          class LocalAssemblerMatrixImplementation,
-          template <typename, typename, int>
+          template <typename, int> class LocalAssemblerMatrixImplementation,
+          template <typename, int>
           class LocalAssemblerMatrixNearFractureImplementation,
-          template <typename, typename, int>
-          class LocalAssemblerFractureImplementation,
+          template <typename, int> class LocalAssemblerFractureImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
     std::vector<MeshLib::Element*> const& mesh_elements,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
+    NumLib::IntegrationOrder const integration_order,
     ExtraCtorArgs&&... extra_ctor_args)
 {
     DBUG("Create local assemblers.");
@@ -90,7 +88,7 @@ void createLocalAssemblers(
         GlobalDim, LocalAssemblerMatrixImplementation,
         LocalAssemblerMatrixNearFractureImplementation,
         LocalAssemblerFractureImplementation>(
-        dof_table, mesh_elements, local_assemblers,
+        dof_table, mesh_elements, local_assemblers, integration_order,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
 

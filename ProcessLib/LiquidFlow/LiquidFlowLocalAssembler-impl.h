@@ -22,14 +22,12 @@ namespace ProcessLib
 {
 namespace LiquidFlow
 {
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    assemble(double const t, double const dt,
-             std::vector<double> const& local_x,
-             std::vector<double> const& /*local_xdot*/,
-             std::vector<double>& local_M_data,
-             std::vector<double>& local_K_data,
-             std::vector<double>& local_b_data)
+template <typename ShapeFunction, int GlobalDim>
+void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
+    double const t, double const dt, std::vector<double> const& local_x,
+    std::vector<double> const& /*local_xdot*/,
+    std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+    std::vector<double>& local_b_data)
 {
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
@@ -62,9 +60,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-Eigen::Vector3d
-LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::getFlux(
+template <typename ShapeFunction, int GlobalDim>
+Eigen::Vector3d LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::getFlux(
     MathLib::Point3d const& p_local_coords, double const t,
     std::vector<double> const& local_x) const
 {
@@ -110,9 +107,9 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::getFlux(
     return flux;
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 template <typename LaplacianGravityVelocityCalculator>
-void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
+void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
     assembleMatrixAndVector(double const t, double const dt,
                             std::vector<double> const& local_x,
                             std::vector<double>& local_M_data,
@@ -197,13 +194,13 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 template <typename VelocityCacheType>
-void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    computeDarcyVelocity(bool const is_scalar_permeability, const double t,
-                         const double dt, std::vector<double> const& local_x,
-                         ParameterLib::SpatialPosition const& pos,
-                         VelocityCacheType& darcy_velocity_at_ips) const
+void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::computeDarcyVelocity(
+    bool const is_scalar_permeability, const double t, const double dt,
+    std::vector<double> const& local_x,
+    ParameterLib::SpatialPosition const& pos,
+    VelocityCacheType& darcy_velocity_at_ips) const
 {
     if (is_scalar_permeability)
     {  // isotropic or 1D problem.
@@ -217,14 +214,13 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 std::vector<double> const&
-LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    getIntPtDarcyVelocity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& velocity_cache) const
+LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
+    const double t,
+    std::vector<GlobalVector*> const& x,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+    std::vector<double>& velocity_cache) const
 {
     // TODO (tf) Temporary value not used by current material models. Need
     // extension of secondary variable interface.
@@ -267,10 +263,10 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     return velocity_cache;
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 template <typename LaplacianGravityVelocityCalculator,
           typename VelocityCacheType>
-void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
+void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
     computeProjectedDarcyVelocity(
         const double t, const double dt, std::vector<double> const& local_x,
         ParameterLib::SpatialPosition const& pos,
@@ -327,9 +323,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    IsotropicCalculator::calculateLaplacianAndGravityTerm(
+template <typename ShapeFunction, int GlobalDim>
+void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::IsotropicCalculator::
+    calculateLaplacianAndGravityTerm(
         Eigen::Map<NodalMatrixType>& local_K,
         Eigen::Map<NodalVectorType>& local_b,
         IntegrationPointData<NodalRowVectorType,
@@ -349,10 +345,10 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 Eigen::Matrix<double, GlobalDim, 1>
-LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    IsotropicCalculator::calculateVelocity(
+LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::IsotropicCalculator::
+    calculateVelocity(
         Eigen::Map<const NodalVectorType> const& local_p,
         IntegrationPointData<NodalRowVectorType,
                              GlobalDimNodalMatrixType> const& ip_data,
@@ -371,9 +367,9 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     return velocity;
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    AnisotropicCalculator::calculateLaplacianAndGravityTerm(
+template <typename ShapeFunction, int GlobalDim>
+void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::AnisotropicCalculator::
+    calculateLaplacianAndGravityTerm(
         Eigen::Map<NodalMatrixType>& local_K,
         Eigen::Map<NodalVectorType>& local_b,
         IntegrationPointData<NodalRowVectorType,
@@ -393,10 +389,10 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 Eigen::Matrix<double, GlobalDim, 1>
-LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    AnisotropicCalculator::calculateVelocity(
+LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::AnisotropicCalculator::
+    calculateVelocity(
         Eigen::Map<const NodalVectorType> const& local_p,
         IntegrationPointData<NodalRowVectorType,
                              GlobalDimNodalMatrixType> const& ip_data,

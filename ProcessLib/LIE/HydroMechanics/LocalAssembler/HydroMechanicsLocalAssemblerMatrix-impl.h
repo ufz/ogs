@@ -26,17 +26,16 @@ namespace LIE
 namespace HydroMechanics
 {
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int GlobalDim>
+          int GlobalDim>
 HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
-                                   ShapeFunctionPressure, IntegrationMethod,
-                                   GlobalDim>::
+                                   ShapeFunctionPressure, GlobalDim>::
     HydroMechanicsLocalAssemblerMatrix(
         MeshLib::Element const& e,
         std::size_t const n_variables,
         std::size_t const /*local_matrix_size*/,
         std::vector<unsigned> const& dofIndex_to_localIndex,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         HydroMechanicsProcessData<GlobalDim>& process_data)
     : HydroMechanicsLocalAssemblerInterface(
           e, is_axially_symmetric,
@@ -45,7 +44,6 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
           dofIndex_to_localIndex),
       _process_data(process_data)
 {
-    IntegrationMethod integration_method(integration_order);
     unsigned const n_integration_points =
         integration_method.getNumberOfPoints();
 
@@ -111,9 +109,9 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int GlobalDim>
+          int GlobalDim>
 void HydroMechanicsLocalAssemblerMatrix<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     GlobalDim>::assembleWithJacobianConcrete(double const t, double const dt,
                                              Eigen::VectorXd const& local_x,
                                              Eigen::VectorXd const& local_x_dot,
@@ -152,10 +150,9 @@ void HydroMechanicsLocalAssemblerMatrix<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int GlobalDim>
+          int GlobalDim>
 void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
-                                        ShapeFunctionPressure,
-                                        IntegrationMethod, GlobalDim>::
+                                        ShapeFunctionPressure, GlobalDim>::
     assembleBlockMatricesWithJacobian(
         double const t, double const dt,
         Eigen::Ref<const Eigen::VectorXd> const& p,
@@ -305,9 +302,9 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int GlobalDim>
+          int GlobalDim>
 void HydroMechanicsLocalAssemblerMatrix<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     GlobalDim>::postTimestepConcreteWithVector(double const t, double const dt,
                                                Eigen::VectorXd const& local_x)
 {
@@ -323,10 +320,9 @@ void HydroMechanicsLocalAssemblerMatrix<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int GlobalDim>
+          int GlobalDim>
 void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
-                                        ShapeFunctionPressure,
-                                        IntegrationMethod, GlobalDim>::
+                                        ShapeFunctionPressure, GlobalDim>::
     postTimestepConcreteWithBlockVectors(
         double const t, double const dt,
         Eigen::Ref<const Eigen::VectorXd> const& p,
@@ -457,12 +453,10 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int GlobalDim>
-void HydroMechanicsLocalAssemblerMatrix<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    GlobalDim>::setPressureOfInactiveNodes(double const t,
-                                           Eigen::Ref<Eigen::VectorXd>
-                                               p)
+          int GlobalDim>
+void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
+                                        ShapeFunctionPressure, GlobalDim>::
+    setPressureOfInactiveNodes(double const t, Eigen::Ref<Eigen::VectorXd> p)
 {
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -480,9 +474,9 @@ void HydroMechanicsLocalAssemblerMatrix<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int GlobalDim>
+          int GlobalDim>
 void HydroMechanicsLocalAssemblerMatrix<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
     GlobalDim>::setPressureDotOfInactiveNodes(Eigen::Ref<Eigen::VectorXd> p_dot)
 {
     for (unsigned i = 0; i < pressure_size; i++)

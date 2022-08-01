@@ -23,14 +23,16 @@ namespace HeatTransportBHE
 {
 namespace detail
 {
-template <template <typename, typename> class LocalAssemblerSoilImplementation,
-          template <typename, typename, typename>
+template <template <typename /* shp fct */>
+          class LocalAssemblerSoilImplementation,
+          template <typename /* shp fct */, typename /* bhe type */>
           class LocalAssemblerBHEImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<MeshLib::Element*> const& mesh_elements,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
+    NumLib::IntegrationOrder const integration_order,
     std::unordered_map<std::size_t, BHE::BHETypes*> const& element_to_bhe_map,
     ExtraCtorArgs&&... extra_ctor_args)
 {
@@ -44,7 +46,7 @@ void createLocalAssemblers(
     // Populate the vector of local assemblers.
     local_assemblers.resize(mesh_elements.size());
 
-    LocalDataInitializer initializer(dof_table);
+    LocalDataInitializer initializer(dof_table, integration_order);
 
     DBUG("Calling local assembler builder for all mesh elements.");
     GlobalExecutor::transformDereferenced(
@@ -64,21 +66,23 @@ void createLocalAssemblers(
  * The first two template parameters cannot be deduced from the arguments.
  * Therefore they always have to be provided manually.
  */
-template <template <typename, typename> class LocalAssemblerSoilImplementation,
-          template <typename, typename, typename>
+template <template <typename /* shp fct */>
+          class LocalAssemblerSoilImplementation,
+          template <typename /* shp fct */, typename /* bhe type */>
           class LocalAssemblerBHEImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
     std::vector<MeshLib::Element*> const& mesh_elements,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
+    NumLib::IntegrationOrder const integration_order,
     ExtraCtorArgs&&... extra_ctor_args)
 {
     DBUG("Create local assemblers for the HeatTransportBHE process.");
 
     detail::createLocalAssemblers<LocalAssemblerSoilImplementation,
                                   LocalAssemblerBHEImplementation>(
-        dof_table, mesh_elements, local_assemblers,
+        dof_table, mesh_elements, local_assemblers, integration_order,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
 }  // namespace HeatTransportBHE

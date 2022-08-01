@@ -13,9 +13,10 @@
 #include <memory>
 #include <vector>
 
-#include "ProcessLib/LocalAssemblerInterface.h"
-#include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "MeshLib/Elements/Element.h"
+#include "NumLib/Extrapolation/ExtrapolatableElement.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
+#include "ProcessLib/LocalAssemblerInterface.h"
 #include "TESAssemblyParams.h"
 #include "TESLocalAssemblerInner-fwd.h"
 
@@ -64,7 +65,7 @@ public:
         std::vector<double>& cache) const = 0;
 };
 
-template <typename ShapeFunction_, typename IntegrationMethod_, int GlobalDim>
+template <typename ShapeFunction_, int GlobalDim>
 class TESLocalAssembler final : public TESLocalAssemblerInterface
 {
 public:
@@ -72,11 +73,12 @@ public:
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
-    TESLocalAssembler(MeshLib::Element const& e,
-                      std::size_t const local_matrix_size,
-                      bool is_axially_symmetric,
-                      unsigned const integration_order,
-                      AssemblyParams const& asm_params);
+    TESLocalAssembler(
+        MeshLib::Element const& e,
+        std::size_t const local_matrix_size,
+        NumLib::GenericIntegrationMethod const& integration_method,
+        bool const is_axially_symmetric,
+        AssemblyParams const& asm_params);
 
     void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
@@ -130,7 +132,7 @@ public:
 private:
     MeshLib::Element const& _element;
 
-    IntegrationMethod_ const _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
 
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
         _shape_matrices;

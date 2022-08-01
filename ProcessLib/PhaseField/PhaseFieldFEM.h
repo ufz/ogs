@@ -20,6 +20,7 @@
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/SpatialPosition.h"
 #include "PhaseFieldProcessData.h"
@@ -129,8 +130,7 @@ struct SecondaryData
     std::vector<ShapeMatrixType, Eigen::aligned_allocator<ShapeMatrixType>> N;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
+template <typename ShapeFunction, int DisplacementDim>
 class PhaseFieldLocalAssembler : public PhaseFieldLocalAssemblerInterface
 {
 private:
@@ -169,11 +169,11 @@ public:
     PhaseFieldLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         PhaseFieldProcessData<DisplacementDim>& process_data)
         : _process_data(process_data),
-          _integration_method(integration_order),
+          _integration_method(integration_method),
           _element(e),
           _is_axially_symmetric(is_axially_symmetric)
     {
@@ -335,7 +335,7 @@ private:
 
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
 
-    IntegrationMethod _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     MeshLib::Element const& _element;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
     bool const _is_axially_symmetric;

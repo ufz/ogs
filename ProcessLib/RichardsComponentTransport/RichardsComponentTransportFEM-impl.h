@@ -19,18 +19,17 @@ namespace ProcessLib
 {
 namespace RichardsComponentTransport
 {
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
-    LocalAssemblerData(
-        MeshLib::Element const& element,
-        std::size_t const local_matrix_size,
-        bool is_axially_symmetric,
-        unsigned const integration_order,
-        RichardsComponentTransportProcessData const& process_data,
-        ProcessVariable const& transport_process_variable)
+template <typename ShapeFunction, int GlobalDim>
+LocalAssemblerData<ShapeFunction, GlobalDim>::LocalAssemblerData(
+    MeshLib::Element const& element,
+    std::size_t const local_matrix_size,
+    NumLib::GenericIntegrationMethod const& integration_method,
+    bool is_axially_symmetric,
+    RichardsComponentTransportProcessData const& process_data,
+    ProcessVariable const& transport_process_variable)
     : _element_id(element.getID()),
       _process_data(process_data),
-      _integration_method(integration_order),
+      _integration_method(integration_method),
       _transport_process_variable(transport_process_variable)
 {
     // This assertion is valid only if all nodal d.o.f. use the same shape
@@ -59,8 +58,8 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::assemble(
+template <typename ShapeFunction, int GlobalDim>
+void LocalAssemblerData<ShapeFunction, GlobalDim>::assemble(
     double const t, double const dt, std::vector<double> const& local_x,
     std::vector<double> const& /*local_xdot*/,
     std::vector<double>& local_M_data, std::vector<double>& local_K_data,
@@ -229,14 +228,13 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::assemble(
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 std::vector<double> const&
-LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
-    getIntPtDarcyVelocity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const
+LocalAssemblerData<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
+    const double t,
+    std::vector<GlobalVector*> const& x,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+    std::vector<double>& cache) const
 {
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -313,9 +311,9 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
     return cache;
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 Eigen::Map<const Eigen::RowVectorXd>
-LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::getShapeMatrix(
+LocalAssemblerData<ShapeFunction, GlobalDim>::getShapeMatrix(
     const unsigned integration_point) const
 {
     auto const& N = _ip_data[integration_point].N;
@@ -324,14 +322,13 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::getShapeMatrix(
     return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
 }
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 std::vector<double> const&
-LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
-    getIntPtSaturation(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const
+LocalAssemblerData<ShapeFunction, GlobalDim>::getIntPtSaturation(
+    const double t,
+    std::vector<GlobalVector*> const& x,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+    std::vector<double>& cache) const
 {
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element_id);

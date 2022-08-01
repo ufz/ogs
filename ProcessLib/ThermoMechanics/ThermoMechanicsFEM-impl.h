@@ -23,18 +23,16 @@ namespace ProcessLib
 {
 namespace ThermoMechanics
 {
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
-                              DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     ThermoMechanicsLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         ThermoMechanicsProcessData<DisplacementDim>& process_data)
     : _process_data(process_data),
-      _integration_method(integration_order),
+      _integration_method(integration_method),
       _element(e),
       _is_axially_symmetric(is_axially_symmetric)
 {
@@ -81,13 +79,11 @@ ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-std::size_t ThermoMechanicsLocalAssembler<
-    ShapeFunction, IntegrationMethod,
-    DisplacementDim>::setIPDataInitialConditions(std::string const& name,
-                                                 double const* values,
-                                                 int const integration_order)
+template <typename ShapeFunction, int DisplacementDim>
+std::size_t ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
+    setIPDataInitialConditions(std::string const& name,
+                               double const* values,
+                               int const integration_order)
 {
     if (integration_order !=
         static_cast<int>(_integration_method.getIntegrationOrder()))
@@ -115,10 +111,8 @@ std::size_t ThermoMechanicsLocalAssembler<
     return 0;
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
-                                   DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
                          std::vector<double> const& local_xdot,
@@ -335,10 +329,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         .noalias() -= KTT * T + DTT * T_dot;
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
-                                   DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         const double t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_xdot, int const process_id,
@@ -359,10 +351,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
                                                 local_b_data, local_Jac_data);
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
-                                   DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForDeformationEquations(
         const double t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
@@ -502,10 +492,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
-                                   DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForHeatConductionEquations(
         const double t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
@@ -577,20 +565,18 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
     local_rhs.noalias() -= laplace * local_T + mass * local_dT / dt;
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
+template <typename ShapeFunction, int DisplacementDim>
 std::size_t
-ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
-                              DisplacementDim>::setSigma(double const* values)
+ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::setSigma(
+    double const* values)
 {
     return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
         values, _ip_data, &IpData::sigma);
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-std::vector<double> ThermoMechanicsLocalAssembler<
-    ShapeFunction, IntegrationMethod, DisplacementDim>::getSigma() const
+template <typename ShapeFunction, int DisplacementDim>
+std::vector<double>
+ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::getSigma() const
 {
     constexpr int kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
@@ -600,34 +586,30 @@ std::vector<double> ThermoMechanicsLocalAssembler<
         { return getIntPtSigma(0, {}, {}, values); });
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-std::vector<double> const& ThermoMechanicsLocalAssembler<
-    ShapeFunction, IntegrationMethod, DisplacementDim>::
-    getIntPtSigma(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const
+template <typename ShapeFunction, int DisplacementDim>
+std::vector<double> const&
+ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::getIntPtSigma(
+    const double /*t*/,
+    std::vector<GlobalVector*> const& /*x*/,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+    std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
         _ip_data, &IpData::sigma, cache);
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
+template <typename ShapeFunction, int DisplacementDim>
 std::size_t
-ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
-                              DisplacementDim>::setEpsilon(double const* values)
+ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::setEpsilon(
+    double const* values)
 {
     return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
         values, _ip_data, &IpData::eps);
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
+template <typename ShapeFunction, int DisplacementDim>
 std::vector<double> ThermoMechanicsLocalAssembler<
-    ShapeFunction, IntegrationMethod, DisplacementDim>::getEpsilon() const
+    ShapeFunction, DisplacementDim>::getEpsilon() const
 {
     constexpr int kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
@@ -637,24 +619,21 @@ std::vector<double> ThermoMechanicsLocalAssembler<
         { return getIntPtEpsilon(0, {}, {}, values); });
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-std::vector<double> const& ThermoMechanicsLocalAssembler<
-    ShapeFunction, IntegrationMethod, DisplacementDim>::
-    getIntPtEpsilon(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const
+template <typename ShapeFunction, int DisplacementDim>
+std::vector<double> const&
+ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::getIntPtEpsilon(
+    const double /*t*/,
+    std::vector<GlobalVector*> const& /*x*/,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+    std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
         _ip_data, &IpData::eps, cache);
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-std::vector<double> const& ThermoMechanicsLocalAssembler<
-    ShapeFunction, IntegrationMethod, DisplacementDim>::
+template <typename ShapeFunction, int DisplacementDim>
+std::vector<double> const&
+ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     getIntPtEpsilonMechanical(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -665,20 +644,16 @@ std::vector<double> const& ThermoMechanicsLocalAssembler<
         _ip_data, &IpData::eps_m, cache);
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
+template <typename ShapeFunction, int DisplacementDim>
 std::size_t ThermoMechanicsLocalAssembler<
-    ShapeFunction, IntegrationMethod,
-    DisplacementDim>::setEpsilonMechanical(double const* values)
+    ShapeFunction, DisplacementDim>::setEpsilonMechanical(double const* values)
 {
     return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
         values, _ip_data, &IpData::eps_m);
 }
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
-std::vector<double>
-ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
-                              DisplacementDim>::getEpsilonMechanical() const
+template <typename ShapeFunction, int DisplacementDim>
+std::vector<double> ThermoMechanicsLocalAssembler<
+    ShapeFunction, DisplacementDim>::getEpsilonMechanical() const
 {
     constexpr int kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
@@ -688,21 +663,17 @@ ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         { return getIntPtEpsilonMechanical(0, {}, {}, values); });
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
+template <typename ShapeFunction, int DisplacementDim>
 unsigned ThermoMechanicsLocalAssembler<
-    ShapeFunction, IntegrationMethod,
-    DisplacementDim>::getNumberOfIntegrationPoints() const
+    ShapeFunction, DisplacementDim>::getNumberOfIntegrationPoints() const
 {
     return _integration_method.getNumberOfPoints();
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
+template <typename ShapeFunction, int DisplacementDim>
 typename MaterialLib::Solids::MechanicsBase<
     DisplacementDim>::MaterialStateVariables const&
-ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
-                              DisplacementDim>::
+ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     getMaterialStateVariablesAt(unsigned integration_point) const
 {
     return *_ip_data[integration_point].material_state_variables;

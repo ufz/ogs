@@ -21,6 +21,7 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 
@@ -28,7 +29,7 @@ namespace ProcessLib
 {
 namespace HT
 {
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 class HTFEM : public HTLocalAssemblerInterface
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
@@ -45,14 +46,14 @@ class HTFEM : public HTLocalAssemblerInterface
 public:
     HTFEM(MeshLib::Element const& element,
           std::size_t const local_matrix_size,
+          NumLib::GenericIntegrationMethod const& integration_method,
           bool const is_axially_symmetric,
-          unsigned const integration_order,
           HTProcessData const& process_data,
           const unsigned dof_per_node)
         : HTLocalAssemblerInterface(),
           _element(element),
           _process_data(process_data),
-          _integration_method(integration_order)
+          _integration_method(integration_method)
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
         // matrices.
@@ -160,7 +161,7 @@ protected:
     MeshLib::Element const& _element;
     HTProcessData const& _process_data;
 
-    IntegrationMethod const _integration_method;
+    NumLib::GenericIntegrationMethod const& _integration_method;
     std::vector<
         IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>,
         Eigen::aligned_allocator<

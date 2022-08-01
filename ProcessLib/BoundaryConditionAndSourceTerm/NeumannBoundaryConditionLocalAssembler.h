@@ -24,13 +24,13 @@ struct NeumannBoundaryConditionData final
     ParameterLib::Parameter<double> const* const integral_measure;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 class NeumannBoundaryConditionLocalAssembler final
-    : public GenericNaturalBoundaryConditionLocalAssembler<
-          ShapeFunction, IntegrationMethod, GlobalDim>
+    : public GenericNaturalBoundaryConditionLocalAssembler<ShapeFunction,
+                                                           GlobalDim>
 {
-    using Base = GenericNaturalBoundaryConditionLocalAssembler<
-        ShapeFunction, IntegrationMethod, GlobalDim>;
+    using Base =
+        GenericNaturalBoundaryConditionLocalAssembler<ShapeFunction, GlobalDim>;
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using NodalVectorType = typename Base::NodalVectorType;
 
@@ -40,10 +40,10 @@ public:
     NeumannBoundaryConditionLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const local_matrix_size,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         NeumannBoundaryConditionData const& data)
-        : Base(e, is_axially_symmetric, integration_order),
+        : Base(e, is_axially_symmetric, integration_method),
           _data(data),
           _local_rhs(local_matrix_size)
     {

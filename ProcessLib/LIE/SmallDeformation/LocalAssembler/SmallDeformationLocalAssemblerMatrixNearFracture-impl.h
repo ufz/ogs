@@ -38,24 +38,24 @@ namespace LIE
 namespace SmallDeformation
 {
 template <typename ShapeFunction,
-          typename IntegrationMethod,
+
           int DisplacementDim>
 SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
-                                                 IntegrationMethod,
+
                                                  DisplacementDim>::
     SmallDeformationLocalAssemblerMatrixNearFracture(
         MeshLib::Element const& e,
         std::size_t const n_variables,
         std::size_t const /*local_matrix_size*/,
         std::vector<unsigned> const& dofIndex_to_localIndex,
+        NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        unsigned const integration_order,
         SmallDeformationProcessData<DisplacementDim>& process_data)
     : SmallDeformationLocalAssemblerInterface(
           n_variables * ShapeFunction::NPOINTS * DisplacementDim,
           dofIndex_to_localIndex),
       _process_data(process_data),
-      _integration_method(integration_order),
+      _integration_method(integration_method),
       _element(e),
       _is_axially_symmetric(is_axially_symmetric)
 {
@@ -113,10 +113,9 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          int DisplacementDim>
+template <typename ShapeFunction, int DisplacementDim>
 void SmallDeformationLocalAssemblerMatrixNearFracture<
-    ShapeFunction, IntegrationMethod,
+    ShapeFunction,
     DisplacementDim>::assembleWithJacobian(double const t, double const dt,
                                            Eigen::VectorXd const& local_u,
                                            Eigen::VectorXd& local_b,
@@ -303,10 +302,10 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
 }
 
 template <typename ShapeFunction,
-          typename IntegrationMethod,
+
           int DisplacementDim>
 void SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
-                                                      IntegrationMethod,
+
                                                       DisplacementDim>::
     computeSecondaryVariableConcreteWithVector(
         double const /*t*/, Eigen::VectorXd const& /*local_x*/)

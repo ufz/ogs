@@ -24,7 +24,7 @@ namespace ProcessLib
  */
 template <int MinElementDim,
           typename LocalAssemblerInterface,
-          template <typename, typename, int>
+          template <typename /* shp fct */, int /* global dim */>
           class LocalAssemblerImplementation,
           int GlobalDim,
           typename... ConstructorArgs>
@@ -51,7 +51,8 @@ class LocalAssemblerFactoryForDimGreaterEqualN final
 
 public:
     explicit LocalAssemblerFactoryForDimGreaterEqualN(
-        NumLib::LocalToGlobalIndexMap const& dof_table)
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        NumLib::IntegrationOrder const integration_order)
         : Base{dof_table}
     {
         using EnabledElementTraits =
@@ -59,23 +60,24 @@ public:
                 std::declval<IsElementEnabled>()));
 
         BaseLib::TMP::foreach<EnabledElementTraits>(
-            [this]<typename ET>(ET*)
+            [this, integration_order]<typename ET>(ET*)
             {
                 using MeshElement = typename ET::Element;
                 using ShapeFunction = typename ET::ShapeFunction;
                 Base::_builders[std::type_index(typeid(MeshElement))] =
-                    LocalAssemblerBuilderFactory<ShapeFunction,
-                                                 LocalAssemblerInterface,
-                                                 LocalAssemblerImplementation,
-                                                 GlobalDim,
-                                                 ConstructorArgs...>::create();
+                    LocalAssemblerBuilderFactory<
+                        ShapeFunction,
+                        LocalAssemblerInterface,
+                        LocalAssemblerImplementation,
+                        GlobalDim,
+                        ConstructorArgs...>::create(integration_order);
             });
     }
 };
 
 /// By default processes in OGS are defined in 1D, 2D and 3D.
 template <typename LocalAssemblerInterface,
-          template <typename, typename, int>
+          template <typename /* shp fct */, int /* global dim */>
           class LocalAssemblerImplementation,
           int GlobalDim,
           typename... ConstructorArgs>
@@ -88,7 +90,7 @@ using LocalAssemblerFactory =
 
 /// Mechanics processes in OGS are defined in 2D and 3D only.
 template <typename LocalAssemblerInterface,
-          template <typename, typename, int>
+          template <typename /* shp fct */, int /* global dim */>
           class LocalAssemblerImplementation,
           int GlobalDim,
           typename... ConstructorArgs>

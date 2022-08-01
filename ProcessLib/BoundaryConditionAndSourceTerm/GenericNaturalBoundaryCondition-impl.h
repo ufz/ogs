@@ -14,7 +14,8 @@
 namespace ProcessLib
 {
 template <typename BoundaryConditionData,
-          template <typename, typename, int> class LocalAssemblerImplementation>
+          template <typename /* shp fct */, int /* global dim */>
+          class LocalAssemblerImplementation>
 template <typename Data>
 GenericNaturalBoundaryCondition<BoundaryConditionData,
                                 LocalAssemblerImplementation>::
@@ -68,12 +69,14 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
     BoundaryConditionAndSourceTerm::createLocalAssemblers<
         LocalAssemblerImplementation>(
         global_dim, _bc_mesh.getElements(), *_dof_table_boundary,
-        shapefunction_order, _local_assemblers, _bc_mesh.isAxiallySymmetric(),
-        integration_order, _data);
+        shapefunction_order, _local_assemblers,
+        NumLib::IntegrationOrder{integration_order},
+        _bc_mesh.isAxiallySymmetric(), _data);
 }
 
 template <typename BoundaryConditionData,
-          template <typename, typename, int> class LocalAssemblerImplementation>
+          template <typename /* shp fct */, int /* global dim */>
+          class LocalAssemblerImplementation>
 void GenericNaturalBoundaryCondition<BoundaryConditionData,
                                      LocalAssemblerImplementation>::
     applyNaturalBC(const double t,
