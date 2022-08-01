@@ -49,7 +49,6 @@ struct IntegrationPointData final
     }
 
     void pushBackState() { porosity_prev = porosity; }
-
     NodalRowVectorType const N;
     GlobalDimNodalMatrixType const dNdx;
     double const integration_weight;
@@ -251,7 +250,8 @@ public:
         : _element(element),
           _process_data(process_data),
           _integration_method(integration_method),
-          _transport_process_variables(transport_process_variables)
+          _transport_process_variables(transport_process_variables),
+          _b(getProjectedBodyForce())
     {
         (void)local_matrix_size;
 
@@ -261,6 +261,8 @@ public:
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
+
+        double const aperture_size = _process_data.aperture_size(0.0, pos)[0];
 
         auto const shape_matrices =
             NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
@@ -274,7 +276,7 @@ public:
                 shape_matrices[ip].N, shape_matrices[ip].dNdx,
                 _integration_method.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
-                    shape_matrices[ip].detJ);
+                    shape_matrices[ip].detJ * aperture_size);
 
             pos.setIntegrationPoint(ip);
 
@@ -498,8 +500,8 @@ public:
             auto local_C = Eigen::Map<const NodalVectorType>(
                 &local_x[concentration_index], concentration_size);
 
-            assembleBlockMatrices(component_id, t, dt, local_C, local_p, KCC,
-                                  MCC, MCp, MpC, Kpp, Mpp, Bp);
+            assembleBlockMatrices(_b, component_id, t, dt, local_C, local_p,
+                                  KCC, MCC, MCp, MpC, Kpp, Mpp, Bp);
 
             if (_process_data.chemical_solver_interface)
             {
@@ -571,7 +573,8 @@ public:
     }
 
     void assembleBlockMatrices(
-        int const component_id, double const t, double const dt,
+        GlobalDimVectorType const& b, int const component_id, double const t,
+        double const dt,
         Eigen::Ref<const NodalVectorType> const& C_nodal_values,
         Eigen::Ref<const NodalVectorType> const& p_nodal_values,
         Eigen::Ref<LocalBlockMatrixType> KCC,
@@ -587,8 +590,6 @@ public:
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
-
-        auto const& b = _process_data.specific_body_force;
 
         MaterialPropertyLib::VariableArray vars;
 
@@ -824,8 +825,6 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
-        auto const& b = _process_data.specific_body_force;
-
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
@@ -903,7 +902,7 @@ public:
             if (_process_data.has_gravity)
             {
                 local_b.noalias() +=
-                    w * density * density * dNdx.transpose() * K_over_mu * b;
+                    w * density * density * dNdx.transpose() * K_over_mu * _b;
             }
 
             // coupling term
@@ -948,8 +947,6 @@ public:
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
-
-        auto const& b = _process_data.specific_body_force;
 
         MaterialPropertyLib::VariableArray vars;
         MaterialPropertyLib::VariableArray vars_prev;
@@ -1041,7 +1038,7 @@ public:
             GlobalDimVectorType const velocity =
                 _process_data.has_gravity
                     ? GlobalDimVectorType(-K_over_mu *
-                                          (dNdx * local_p - density * b))
+                                          (dNdx * local_p - density * _b))
                     : GlobalDimVectorType(-K_over_mu * dNdx * local_p);
 
             GlobalDimMatrixType const hydrodynamic_dispersion =
@@ -1140,8 +1137,6 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
-        auto const& b = _process_data.specific_body_force;
-
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
@@ -1214,7 +1209,7 @@ public:
             if (_process_data.has_gravity)
             {
                 local_rhs.noalias() +=
-                    w * rho * dNdx.transpose() * k / mu * rho * b;
+                    w * rho * dNdx.transpose() * k / mu * rho * _b;
             }
         }
     }
@@ -1249,8 +1244,6 @@ public:
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
-
-        auto const& b = _process_data.specific_body_force;
 
         MaterialPropertyLib::VariableArray vars;
         MaterialPropertyLib::VariableArray vars_prev;
@@ -1327,7 +1320,7 @@ public:
             // Darcy flux
             GlobalDimVectorType const q =
                 _process_data.has_gravity
-                    ? GlobalDimVectorType(-k / mu * (dNdx * p - rho * b))
+                    ? GlobalDimVectorType(-k / mu * (dNdx * p - rho * _b))
                     : GlobalDimVectorType(-k / mu * dNdx * p);
 
             GlobalDimMatrixType const D =
@@ -1530,9 +1523,8 @@ public:
                 auto const rho_w =
                     phase[MaterialPropertyLib::PropertyType::density]
                         .template value<double>(vars, pos, t, dt);
-                auto const b = _process_data.specific_body_force;
                 // here it is assumed that the vector b is directed 'downwards'
-                cache_mat.col(ip).noalias() += K_over_mu * rho_w * b;
+                cache_mat.col(ip).noalias() += K_over_mu * rho_w * _b;
             }
         }
 
@@ -1600,8 +1592,7 @@ public:
                                .template value<double>(vars, pos, t, dt);
         if (_process_data.has_gravity)
         {
-            auto const b = _process_data.specific_body_force;
-            q += K_over_mu * rho_w * b;
+            q += K_over_mu * rho_w * _b;
         }
         Eigen::Vector3d flux(0.0, 0.0, 0.0);
         flux.head<GlobalDim>() = rho_w * q;
@@ -1707,8 +1698,6 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
-        auto const& b = _process_data.specific_body_force;
-
         MaterialPropertyLib::VariableArray vars;
 
         GlobalDimMatrixType const& I(
@@ -1751,7 +1740,7 @@ public:
             // Darcy flux
             GlobalDimVectorType const q =
                 _process_data.has_gravity
-                    ? GlobalDimVectorType(-k / mu * (dNdx * p - rho * b))
+                    ? GlobalDimVectorType(-k / mu * (dNdx * p - rho * _b))
                     : GlobalDimVectorType(-k / mu * dNdx * p);
 
             auto const alpha_T = medium.template value<double>(
@@ -1802,6 +1791,14 @@ private:
         Eigen::aligned_allocator<
             IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
         _ip_data;
+    GlobalDimVectorType const _b;
+    GlobalDimVectorType getProjectedBodyForce()
+    {
+        return _process_data.element_rotation_matrices[_element.getID()] *
+               _process_data.element_rotation_matrices[_element.getID()]
+                   .transpose() *
+               _process_data.specific_body_force;
+    }
 };
 
 }  // namespace ComponentTransport
