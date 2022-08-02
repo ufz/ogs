@@ -3,12 +3,6 @@ project = ["Parabolic/TwoPhaseFlowPP/McWhorter/TwoPhase_mcwt_line.prj"]
 author = "Yonghui Huang"
 date = "2018-06-20T14:37:58+01:00"
 title = "McWhorter problem"
-weight = 101
-
-[menu]
-  [menu.benchmarks]
-    parent = "Two-Phase-Flow-pp"
-
 +++
 
 {{< data-link >}}
