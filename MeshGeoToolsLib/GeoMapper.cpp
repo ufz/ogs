@@ -183,24 +183,23 @@ void GeoMapper::mapPointDataToMeshSurface(
 {
     GeoLib::AABB const aabb(_surface_mesh->getNodes().cbegin(),
                             _surface_mesh->getNodes().cend());
-    double const min_val(aabb.getMinPoint()[2]);
-    double const max_val(aabb.getMaxPoint()[2]);
+    auto const [min, max] = aabb.getMinMaxPoints();
 
     for (auto* pnt : pnts)
     {
         // check if pnt is inside of the bounding box of the _surface_mesh
         // projected onto the y-x plane
         GeoLib::Point& p(*pnt);
-        if (p[0] < aabb.getMinPoint()[0] || aabb.getMaxPoint()[0] < p[0])
+        if (p[0] < min[0] || max[0] < p[0])
         {
             continue;
         }
-        if (p[1] < aabb.getMinPoint()[1] || aabb.getMaxPoint()[1] < p[1])
+        if (p[1] < min[1] || max[1] < p[1])
         {
             continue;
         }
 
-        p[2] = getMeshElevation(p[0], p[1], min_val, max_val);
+        p[2] = getMeshElevation(p[0], p[1], min[2], max[2]);
     }
 }
 

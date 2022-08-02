@@ -126,8 +126,7 @@ void MeshElementRemovalDialog::accept()
                 .getMesh(this->meshNameComboBox->currentText().toStdString())
                 ->getNodes());
         GeoLib::AABB const aabb(nodes.begin(), nodes.end());
-        auto minAABB = aabb.getMinPoint();
-        auto maxAABB = aabb.getMaxPoint();
+        auto [minAABB, maxAABB] = aabb.getMinMaxPoints();
 
         // only extract bounding box parameters that have been edited (otherwise
         // there will be rounding errors!)

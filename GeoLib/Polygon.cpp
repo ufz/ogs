@@ -205,8 +205,7 @@ std::vector<GeoLib::Point> getAllIntersectionPoints(
 
 bool Polygon::isPntInPolygon(MathLib::Point3d const& pnt) const
 {
-    auto const& min_aabb_pnt(_aabb.getMinPoint());
-    auto const& max_aabb_pnt(_aabb.getMaxPoint());
+    auto const [min_aabb_pnt, max_aabb_pnt] = _aabb.getMinMaxPoints();
 
     if (pnt[0] < min_aabb_pnt[0] || max_aabb_pnt[0] < pnt[0] ||
         pnt[1] < min_aabb_pnt[1] || max_aabb_pnt[1] < pnt[1])

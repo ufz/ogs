@@ -258,8 +258,7 @@ void PointVec::setNameForElement(std::size_t id, std::string const& name)
 
 void PointVec::resetInternalDataStructures()
 {
-    auto const& min(_aabb.getMinPoint());
-    auto const& max(_aabb.getMaxPoint());
+    auto const [min, max] = _aabb.getMinMaxPoints();
     double const rel_eps(_rel_eps / (max - min).norm());
 
     _aabb = GeoLib::AABB(_data_vec.begin(), _data_vec.end());
