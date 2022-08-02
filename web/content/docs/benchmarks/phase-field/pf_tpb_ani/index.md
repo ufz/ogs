@@ -2,12 +2,6 @@
 author = "Keita Yoshioka"
 date = "2020-07-27"
 title = "Three point bending test on anisotropic rock"
-weight = 158
-
-[menu]
-  [menu.benchmarks]
-    parent = "Phase-Field"
-
 +++
 
 {{< data-link >}}
