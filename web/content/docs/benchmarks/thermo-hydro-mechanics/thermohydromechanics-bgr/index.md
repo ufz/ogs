@@ -4,11 +4,7 @@ title = "Thermohydromechanics: Verification examples by Vogel, Maßmann"
 weight = 40
 project = ["ThermoHydroMechanics/Linear/verification/thm2_1Dfixd/thm2_1Dfixd.prj"]
 author = "Jan Thiedau"
-
-[menu]
-  [menu.benchmarks]
-    parent = "thermo-hydro-mechanics"
-
+aliases = [ "/docs/benchmarks/bgr_verification_examples/thermohydromechanics/" ]
 +++
 
 This is one of the benchmark examples with analytical solutions presented
