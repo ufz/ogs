@@ -4,11 +4,6 @@ date = "2017-02-15T14:54:02+01:00"
 title = "Heatconduction (Dirichlet)"
 weight = 121
 project = ["Parabolic/T/1D_dirichlet/line_60_heat.prj"]
-
-[menu]
-  [menu.benchmarks]
-    parent = "heatconduction"
-
 +++
 
 {{< data-link >}}
