@@ -3,12 +3,6 @@ project = ["ThermoMechanicalPhaseField/cube_1e0.prj"]
 author = "Xing-Yuan Miao"
 date = "2018-03-11T09:10:33+01:00"
 title = "Non-isothermal test"
-weight = 158
-
-[menu]
-  [menu.benchmarks]
-    parent = "Thermo-Mechanical Phase-Field"
-
 +++
 
 {{< data-link >}}
