@@ -6,17 +6,38 @@ import os
 import sys
 from timeit import default_timer as timer
 from datetime import timedelta
+import toml
 
 
 def save_to_website(exec_notebook_file, web_path):
     from nb2hugo.writer import HugoWriter
 
-    # TODO do not write if it has no frontmatter OR return frontmatter with draft: true
+    output_path = "docs/benchmarks"
+    notebook = nbformat.read(exec_notebook_file, as_version=4)
+    first_cell = notebook.cells[0]
+    if first_cell.cell_type == "raw":
+        lines = first_cell.source.splitlines()
+        last_line = lines[-1]
+        if "<!--eofm-->" not in last_line:
+            print(
+                f"Warning: {exec_notebook_file} does not contain '<!--eofm-->' as the last line in the RAW cell!"
+            )
+        parsed_frontmatter = toml.loads("\n".join(lines[:-1]))
+        if not "web_subsection" in parsed_frontmatter:
+            print(
+                f"Error: {exec_notebook_file} frontmatter does not contain 'web_subsection'!"
+            )
+        output_path = os.path.join(output_path, parsed_frontmatter["web_subsection"])
+    else:
+        print(
+            f"Warning: {exec_notebook_file} does not contain a RAW cell as its first cell!"
+        )
+        output_path = os.path.join(output_path, "notebooks")
     writer = HugoWriter()
     writer.convert(
         exec_notebook_file,
         web_path,
-        "docs/benchmarks/notebooks",
+        output_path,
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             "nbconvert_templates/collapsed.md.j2",
