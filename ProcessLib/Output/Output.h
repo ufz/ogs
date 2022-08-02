@@ -51,14 +51,14 @@ public:
     void doOutputLastTimestep(Process const& process, const int process_id,
                               int const timestep, const double t,
                               int const iteration,
-                              std::vector<GlobalVector*> const& xs);
+                              std::vector<GlobalVector*> const& xs) const;
 
     //! Writes output for the given \c process.
     //! This method will always write.
     //! It is intended to write output in error handling routines.
     void doOutputAlways(Process const& process, const int process_id,
                         int const timestep, const double t, int const iteration,
-                        std::vector<GlobalVector*> const& xs);
+                        std::vector<GlobalVector*> const& xs) const;
 
     //! Writes output for the given \c process.
     //! To be used for debug output after an iteration of the nonlinear solver.
@@ -84,7 +84,8 @@ private:
     void outputMeshes(
         Process const& process, const int process_id, int const timestep,
         const double t, int const iteration,
-        std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes);
+        std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes)
+        const;
 
     MeshLib::Mesh const& prepareSubmesh(
         std::string const& submesh_output_name, Process const& process,

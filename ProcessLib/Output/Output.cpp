@@ -129,6 +129,7 @@ void Output::outputMeshes(
     const Process& process, const int process_id, const int timestep,
     const double t, const int iteration,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes)
+    const
 {
     _output_file->outputMeshes(process, process_id, timestep, t, iteration,
                                meshes,
@@ -177,7 +178,7 @@ void Output::doOutputAlways(Process const& process,
                             int const timestep,
                             const double t,
                             int const iteration,
-                            std::vector<GlobalVector*> const& xs)
+                            std::vector<GlobalVector*> const& xs) const
 {
     BaseLib::RunTime time_output;
     time_output.start();
@@ -244,7 +245,7 @@ void Output::doOutputLastTimestep(Process const& process,
                                   int const timestep,
                                   const double t,
                                   int const iteration,
-                                  std::vector<GlobalVector*> const& xs)
+                                  std::vector<GlobalVector*> const& xs) const
 {
     if (!isOutputStep(timestep, t))
     {
