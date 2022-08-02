@@ -53,7 +53,7 @@ getNodeCoordsOfReferenceElement(MeshLib::CellType const cell_type)
         case CellType::PYRAMID13:
             return getNodeCoordsOfReferenceElement<Pyramid13>();
         default:
-            OGS_FATAL("Unsupported cell type " + CellType2String(cell_type));
+            OGS_FATAL("Unsupported cell type {}", CellType2String(cell_type));
     }
 }
 
@@ -104,7 +104,7 @@ std::shared_ptr<MeshLib::Element const> getReferenceElement(
         case CellType::PYRAMID13:
             return create(Type<Pyramid13>{});
         default:
-            OGS_FATAL("Unsupported cell type " + CellType2String(cell_type));
+            OGS_FATAL("Unsupported cell type {}", CellType2String(cell_type));
     }
 }
 
@@ -224,6 +224,6 @@ std::vector<std::array<double, 3>> getCoordsInReferenceElementForTest(
         return coords;
     }
 
-    OGS_FATAL("Unsupported element dimension " + std::to_string(dim));
+    OGS_FATAL("Unsupported element dimension {}", dim);
 }
 }  // namespace ReferenceElementUtils
