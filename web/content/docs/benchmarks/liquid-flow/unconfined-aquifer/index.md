@@ -3,11 +3,6 @@ date = "2017-02-17T14:33:45+01:00"
 title = "Unconfined Aquifer"
 weight = 171
 author = "Thomas Kalbacher"
-
-[menu]
-  [menu.benchmarks]
-    parent = "liquid-flow"
-
 +++
 
 ## Problem description

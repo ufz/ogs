@@ -3,11 +3,7 @@ date = "2019-04-24T15:15:45+01:00"
 title = "Liquid Flow: Verification examples by Vogel, Maßmann"
 weight = 50
 author = "Johannes Herfurth, Jan Thiedau"
-
-[menu]
-  [menu.benchmarks]
-    parent = "liquid-flow"
-
+aliases = [ "/docs/benchmarks/bgr_verification_examples/liquid_flow/" ]
 +++
 
 These benchmark examples test the implementation of

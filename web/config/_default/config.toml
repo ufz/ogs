@@ -67,10 +67,6 @@ name = "Heat Transport BHE"
 identifier = "heat-transport-bhe"
 weight = 12
 [[menu.benchmarks]]
-name = "Liquid Flow"
-identifier = "liquid-flow"
-weight = 9
-[[menu.benchmarks]]
 name = "Two-phase Flow"
 identifier = "two-phase-flow"
 weight = 10
