@@ -16,17 +16,11 @@
 #include "ConstitutiveSetting.h"
 #include "IntegrationPointData.h"
 #include "LocalAssemblerInterface.h"
-#include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MathLib/KelvinVector.h"
-#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
-#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-#include "ParameterLib/Parameter.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
-#include "ProcessLib/Deformation/LinearBMatrix.h"
-#include "ProcessLib/LocalAssemblerTraits.h"
 #include "ThermoRichardsMechanicsProcessData.h"
 
 namespace ProcessLib
@@ -274,32 +268,32 @@ public:
     void initializeConcrete() override
     {
         unsigned const n_integration_points =
-            integration_method_.getNumberOfPoints();
+            this->integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             // Set initial stress from parameter.
-            if (process_data_.initial_stress != nullptr)
+            if (this->process_data_.initial_stress != nullptr)
             {
                 ParameterLib::SpatialPosition const x_position{
-                    std::nullopt, element_.getID(), ip,
+                    std::nullopt, this->element_.getID(), ip,
                     MathLib::Point3d(NumLib::interpolateCoordinates<
                                      ShapeFunctionDisplacement,
                                      ShapeMatricesTypeDisplacement>(
-                        element_, ip_data_[ip].N_u))};
+                        this->element_, ip_data_[ip].N_u))};
 
-                current_states_[ip].s_mech_data.sigma_eff =
+                this->current_states_[ip].s_mech_data.sigma_eff =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
-                        DisplacementDim>((*process_data_.initial_stress)(
+                        DisplacementDim>((*this->process_data_.initial_stress)(
                         std::numeric_limits<
                             double>::quiet_NaN() /* time independent */,
                         x_position));
             }
 
-            material_states_[ip].pushBackState();
+            this->material_states_[ip].pushBackState();
         }
 
-        prev_states_ = current_states_;
+        this->prev_states_ = this->current_states_;
     }
 
     void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
@@ -307,15 +301,15 @@ public:
                               double const /*dt*/) override
     {
         unsigned const n_integration_points =
-            integration_method_.getNumberOfPoints();
+            this->integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             // TODO re-evaluate part of the assembly in order to be consistent?
-            material_states_[ip].pushBackState();
+            this->material_states_[ip].pushBackState();
         }
 
-        prev_states_ = current_states_;
+        this->prev_states_ = this->current_states_;
     }
 
     void computeSecondaryVariableConcrete(
@@ -406,29 +400,10 @@ private:
     getMaterialStateVariablesAt(unsigned integration_point) const override;
 
 private:
-    ThermoRichardsMechanicsProcessData<DisplacementDim>& process_data_;
-
-    std::vector<StatefulData<DisplacementDim>>
-        current_states_;  // TODO maybe do not store but rather re-evaluate for
-                          // state update
-    std::vector<StatefulData<DisplacementDim>> prev_states_;
-
-    // Material state is special, because it contains both the current and the
-    // old state.
-    std::vector<MaterialStateData<DisplacementDim>> material_states_;
-
     std::vector<IpData> ip_data_;
-
-    NumLib::GenericIntegrationMethod const& integration_method_;
-    MeshLib::Element const& element_;
-    bool const is_axially_symmetric_;
     SecondaryData<
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
         secondary_data_;
-
-    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material_;
-
-    std::vector<OutputData<DisplacementDim>> output_data_;
 
     static auto block_uu(auto& mat)
     {
