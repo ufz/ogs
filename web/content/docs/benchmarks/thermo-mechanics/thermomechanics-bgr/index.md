@@ -3,10 +3,7 @@ date = "2019-04-24T15:15:45+01:00"
 title = "Thermomechanics: Verification examples by Vogel,Maßmann"
 weight = 50
 author = "Johannes Herfurth, Jan Thiedau"
-
-[menu]
-  [menu.benchmarks]
-    parent = "Thermo-Mechanics"
+aliases = [ "/docs/benchmarks/bgr_verification_examples/thermomechanics/" ]
 
 +++
 

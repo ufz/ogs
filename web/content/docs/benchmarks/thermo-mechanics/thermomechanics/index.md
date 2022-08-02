@@ -3,12 +3,6 @@ project = ["ThermoMechanics/cube_1e3.prj"]
 author = "Xing-Yuan Miao"
 date = "2017-05-08T15:10:33+01:00"
 title = "Thermoelastic Stress"
-weight = 156
-
-[menu]
-  [menu.benchmarks]
-    parent = "Thermo-Mechanics"
-
 +++
 
 {{< data-link >}}

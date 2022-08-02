@@ -3,11 +3,7 @@ date = "2018-12-11T15:15:45+01:00"
 title = "BGRa creep model: Verification examples by Vogel,Maßmann"
 weight = 50
 author = "Jan Thiedau"
-
-[menu]
-  [menu.benchmarks]
-    parent = "Thermo-Mechanics"
-
+aliases = [ "/docs/benchmarks/creepbgra/bgraverificationexamples/" ]
 +++
 
 These benchmark examples test the implementation of the

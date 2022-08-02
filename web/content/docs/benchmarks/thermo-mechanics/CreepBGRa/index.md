@@ -6,11 +6,6 @@ project = ["ThermoMechanics/CreepBGRa/SimpleAxisymmetricCreep/SimpleAxisymmetric
 author = "Wenqing Wang"
 
 aliases = ["/docs/benchmarks/creepbgra/creepbrga"]
-
-[menu]
-  [menu.benchmarks]
-    parent = "Thermo-Mechanics"
-
 +++
 
 {{< data-link >}}
