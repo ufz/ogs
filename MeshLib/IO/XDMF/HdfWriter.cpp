@@ -19,7 +19,7 @@
 #include "BaseLib/Logging.h"
 #include "fileIO.h"
 template <typename... Args>
-void checkHdfStatus(const hid_t status, std::string const& formatting,
+void checkHdfStatus(const hid_t status, fmt::format_string<Args...> formatting,
                     Args&&... args)
 {
     if (status < 0)
