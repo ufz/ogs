@@ -36,7 +36,7 @@ struct ProcessData;
 class TimeLoop
 {
 public:
-    TimeLoop(std::unique_ptr<Output>&& output,
+    TimeLoop(Output&& output,
              std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
              const int global_coupling_max_iterations,
              std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
@@ -121,7 +121,7 @@ private:
 private:
     std::vector<GlobalVector*> _process_solutions;
     std::vector<GlobalVector*> _process_solutions_prev;
-    std::unique_ptr<Output> _output;
+    Output _output;
     std::vector<std::unique_ptr<ProcessData>> _per_process_data;
 
     const double _start_time;

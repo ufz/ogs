@@ -75,10 +75,9 @@ std::unique_ptr<OutputFile> createOutputFile(
     }
 }
 
-std::unique_ptr<Output> createOutput(
-    const BaseLib::ConfigTree& config,
-    std::string const& output_directory,
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
+Output createOutput(const BaseLib::ConfigTree& config,
+                    std::string const& output_directory,
+                    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
 {
     DBUG("Parse output configuration:");
     OutputType const output_type = [](auto output_type)
@@ -228,10 +227,9 @@ std::unique_ptr<Output> createOutput(
         output_directory, output_type, std::move(prefix), std::move(suffix),
         data_mode, compress_output, number_of_files);
 
-    return std::make_unique<Output>(std::move(output_file),
-                                    output_iteration_results,
-                                    std::move(output_data_specification),
-                                    std::move(mesh_names_for_output), meshes);
+    return Output(std::move(output_file), output_iteration_results,
+                  std::move(output_data_specification),
+                  std::move(mesh_names_for_output), meshes);
 }
 
 }  // namespace ProcessLib
