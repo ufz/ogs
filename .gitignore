@@ -22,6 +22,7 @@ CMakeLists.txt.user*
 
 Tests/**/*.md5
 Tests/Data/Parabolic/HT/InvalidProjectFiles/*.prj
+Tests/Data/_out
 web/.netlify
 
 CMakeUserPresets.json
