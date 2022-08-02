@@ -1,6 +1,5 @@
 +++
 author = "Johannes Boog"
-weight = 143
 project = ["Parabolic/ComponentTransport/ReactiveTransport/Wetland/Wetland_1d.prj"]
 date = "2019-08-25T14:41:09+01:00"
 title = "Complex kinetic reaction network"

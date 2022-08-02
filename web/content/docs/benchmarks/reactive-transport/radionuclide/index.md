@@ -1,14 +1,8 @@
 +++
 author = "Jaime Garibay-Rodriguez, Renchao Lu, Vanessa Montoya"
-weight = 142
 project = ["Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/RadionuclideSorption.prj"]
 date = "2019-07-08T14:41:09+01:00"
 title = "Sorption of U(VI) in porous media"
-
-[menu]
-  [menu.benchmarks]
-    parent = "Reactive Transport"
-
 +++
 
 {{< data-link >}}

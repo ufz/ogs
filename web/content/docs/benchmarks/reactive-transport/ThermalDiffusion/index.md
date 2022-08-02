@@ -1,14 +1,8 @@
 +++
 author = "Jaime Garibay-Rodriguez, Renchao Lu, Vanessa Montoya"
-weight = 142
 project = ["Parabolic/ComponentTransport/ThermalDiffusion/TemperatureField_transport.prj"]
 date = "2019-07-08T14:41:09+01:00"
 title = "Tracer diffusion in a thermal gradient"
-
-[menu]
-  [menu.benchmarks]
-    parent = "Reactive Transport"
-
 +++
 
 {{< data-link >}}
