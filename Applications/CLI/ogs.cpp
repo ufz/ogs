@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
     }
     catch (std::exception& e)
     {
-        ERR(e.what());
+        ERR("{}", e.what());
         ogs_status = EXIT_FAILURE;
     }
 

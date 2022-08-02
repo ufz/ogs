@@ -67,7 +67,7 @@ void initOGS(std::vector<std::string>& argv_str)
     }
     catch (std::exception& e)
     {
-        ERR(e.what());
+        ERR("{}", e.what());
         ogs_status = EXIT_FAILURE;
     }
 
@@ -95,7 +95,7 @@ void executeSimulation()
     }
     catch (std::exception& e)
     {
-        ERR(e.what());
+        ERR("{}", e.what());
         ogs_status = EXIT_FAILURE;
     }
 

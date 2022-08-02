@@ -342,7 +342,7 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<GMSHPoint*>& gmsh_pnts) const
         auto const error_message = error_messages.str();
         if (!error_message.empty())
         {
-            OGS_FATAL(error_message);
+            OGS_FATAL("{}", error_message);
         }
     }
 
