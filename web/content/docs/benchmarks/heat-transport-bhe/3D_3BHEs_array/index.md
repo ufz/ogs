@@ -5,11 +5,6 @@ title = "A 3-BHE Array Coupled With Pipe Network"
 weight = 123
 project = ["Parabolic/T/3D_3BHEs_array/3bhes_1U.prj"]
 image = "BHE_network.png"
-
-[menu]
-  [menu.benchmarks]
-    parent = "heat-transport-bhe"
-
 +++
 
 {{< data-link >}}

@@ -63,10 +63,6 @@ weight = 8
 
 # Benchmarks sidebar top-level categories
 [[menu.benchmarks]]
-name = "Heat Transport BHE"
-identifier = "heat-transport-bhe"
-weight = 12
-[[menu.benchmarks]]
 name = "Python Boundary Conditions"
 identifier = "python-bc"
 weight = 11
