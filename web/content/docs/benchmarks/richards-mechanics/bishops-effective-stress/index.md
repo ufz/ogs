@@ -4,11 +4,6 @@ author = "Dmitri Naumov"
 date = "2020-02-27"
 title = "Bishop's effective stress models comparison"
 weight = 153
-
-[menu]
-  [menu.benchmarks]
-    parent = "richards-mechanics"
-
 +++
 
 {{< data-link >}}
