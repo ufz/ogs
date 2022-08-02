@@ -40,7 +40,7 @@ struct OutputFile
         const Process& process, const int process_id, const int timestep,
         const double t, const int iteration,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
-        std::set<std::string> const& output_variables) = 0;
+        std::set<std::string> const& output_variables) const = 0;
 
     virtual void addProcess(
         [[maybe_unused]] ProcessLib::Process const& process,
@@ -68,7 +68,7 @@ struct OutputVTKFormat final : public OutputFile
         const Process& process, const int process_id, const int timestep,
         const double t, const int iteration,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
-        std::set<std::string> const& output_variables) override;
+        std::set<std::string> const& output_variables) const override;
 
     void addProcess(
         Process const& process,
@@ -111,7 +111,7 @@ struct OutputXDMFHDF5Format final : public OutputFile
         [[maybe_unused]] const int process_id, const int timestep,
         const double t, const int iteration,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
-        std::set<std::string> const& output_variables) override
+        std::set<std::string> const& output_variables) const override
     {
         outputMeshXdmf(output_variables, std::move(meshes), timestep, t,
                        iteration);
@@ -121,14 +121,14 @@ struct OutputXDMFHDF5Format final : public OutputFile
                                   int const timestep, double const t,
                                   int const iteration) const override;
 
-    std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;
+    mutable std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;
     //! Specifies the number of hdf5 output files.
     unsigned int n_files;
 
     void outputMeshXdmf(
         std::set<std::string> const& output_variables,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
-        int const timestep, double const t, int const iteration);
+        int const timestep, double const t, int const iteration) const;
 };
 
 void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
