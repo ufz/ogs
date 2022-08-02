@@ -108,7 +108,8 @@ bool substituteKeyword(std::string& result, std::string& parenthesized_string,
     std::string const generated_fmt_string =
         "{" + precision_specification +
         type_specification[std::type_index(typeid(data))] + "}";
-    result = result.substr(0, begin) + fmt::format(generated_fmt_string, data) +
+    result = result.substr(0, begin) +
+             fmt::vformat(generated_fmt_string, fmt::make_format_args(data)) +
              result.substr(end + 1, result.length() - (end + 1));
     return true;
 }
