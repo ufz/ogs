@@ -4,11 +4,6 @@ title = "Permeability in EDZ"
 weight = 151
 project = ["HydroMechanics/FailureIndexDependentPermeability/quad_with_half_hole.prj"]
 author = "Wenqing Wang"
-
-[menu]
-  [menu.benchmarks]
-    parent = "hydro-mechanics"
-
 +++
 
 {{< data-link >}}

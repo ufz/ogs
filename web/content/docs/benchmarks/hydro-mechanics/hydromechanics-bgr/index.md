@@ -4,11 +4,7 @@ title = "Hydromechanics: Verification examples by Vogel, Maßmann"
 weight = 40
 project = ["HydroMechanics/Verification"]
 author = "Johannes Herfurth, Jan Thiedau"
-
-[menu]
-  [menu.benchmarks]
-    parent = "hydro-mechanics"
-
+aliases = [ "/docs/benchmarks/bgr_verification_examples/hydromechanics/" ]
 +++
 
 These benchmark examples test the implementation of

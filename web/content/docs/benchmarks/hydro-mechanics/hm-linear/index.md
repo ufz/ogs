@@ -4,11 +4,6 @@ title = "Linear"
 weight = 151
 project = ["HydroMechanics/Linear/Confined_Compression/square_1e2.prj"]
 author = "Dmitri Naumov"
-
-[menu]
-  [menu.benchmarks]
-    parent = "hydro-mechanics"
-
 +++
 
 {{< data-link >}}
