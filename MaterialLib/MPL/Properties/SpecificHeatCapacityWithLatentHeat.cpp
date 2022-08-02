@@ -115,17 +115,19 @@ PropertyDataType SpecificHeatCapacityWithLatentHeat::value(
     auto const& frozen_fraction_property =
         medium[PropertyType::volume_fraction];
 
-    auto const rho_ef = effective_density_property.template value<double>(
+    auto const rho_eff = effective_density_property.template value<double>(
         variable_array, pos, t, dt);
+    auto const rho_fr =
+        std::get<double>(densities_.frozen->value(variable_array, pos, t, dt));
     auto const dpfr_dT = frozen_fraction_property.template dValue<double>(
         variable_array, Variable::temperature, pos, t, dt);
 
     auto const Cvol =
         effectiveVolumetricHeatCapacity(variable_array, pos, t, dt);
-    auto const Lvol = l_ * rho_ef;
+    auto const Lvol = l_ * rho_fr;
     auto const Cvol_app = Cvol - Lvol * dpfr_dT;
     // divide volumetric quantity by density in order to obtain specific value
-    return Cvol_app / rho_ef;
+    return Cvol_app / rho_eff;
 }
 
 PropertyDataType SpecificHeatCapacityWithLatentHeat::dValue(
@@ -143,7 +145,7 @@ PropertyDataType SpecificHeatCapacityWithLatentHeat::dValue(
     auto const& frozen_fraction_property =
         medium[PropertyType::volume_fraction];
 
-    auto const rho_ef = effective_density_property.template value<double>(
+    auto const rho_eff = effective_density_property.template value<double>(
         variable_array, pos, t, dt);
     auto const rho_li =
         std::get<double>(densities_.liquid->value(variable_array, pos, t, dt));
@@ -163,10 +165,10 @@ PropertyDataType SpecificHeatCapacityWithLatentHeat::dValue(
     auto const Cvol =
         effectiveVolumetricHeatCapacity(variable_array, pos, t, dt);
     // TODO: avoid duplicate code, call value()?
-    auto const C_app = (Cvol - l_ * rho_ef * dpfr_dT) / rho_ef;
+    auto const C_app = (Cvol - l_ * rho_eff * dpfr_dT) / rho_eff;
     auto const dCvol_dpfr = rho_fr * c_fr - rho_li * c_li;
-    auto const dCvol_app_dT = dCvol_dpfr * dpfr_dT - l_ * rho_ef * d2pfr_dT2;
+    auto const dCvol_app_dT = dCvol_dpfr * dpfr_dT - l_ * rho_eff * d2pfr_dT2;
 
-    return (dCvol_app_dT - drho_dT / rho_ef * C_app) / rho_ef;
+    return (dCvol_app_dT - drho_dT / rho_eff * C_app) / rho_eff;
 }
 }  // namespace MaterialPropertyLib
