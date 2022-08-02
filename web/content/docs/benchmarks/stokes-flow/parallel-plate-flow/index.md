@@ -1,14 +1,8 @@
 +++
 author = "Renchao Lu, Dmitri Naumov"
-weight = 142
 project = ["StokesFlow/ParallelPlate.prj"]
 date = "2021-06-09T14:41:09+01:00"
 title = "Fluid flow through an open parallel-plate channel"
-
-[menu]
-  [menu.benchmarks]
-    parent = "Stokes Flow"
-
 +++
 
 {{< data-link >}}
