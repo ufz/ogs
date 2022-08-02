@@ -4,11 +4,6 @@ author = "Wenqing Wang"
 date = "2018-02-13T12:42:53+01:00"
 title = "An example of the coupled thermal hydraulic processes in the FEBEX type repository"
 weight = 161
-
-[menu]
-  [menu.benchmarks]
-    parent = "hydro-thermal"
-
 +++
 
 {{< data-link >}}

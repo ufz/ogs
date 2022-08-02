@@ -4,10 +4,6 @@ author = "Wenqing Wang"
 title = "One dimensional heat transport in stationary flow"
 date = 2020-12-14T08:00:32+01:00
 weight = 153
-
-[menu]
-  [menu.benchmarks]
-     parent = "hydro-thermal"
 +++
 
 ## Problem description

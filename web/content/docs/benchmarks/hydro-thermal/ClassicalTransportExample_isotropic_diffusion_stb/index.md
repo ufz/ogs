@@ -4,11 +4,6 @@ author = "Wenqing Wang"
 date = "2022-06-07T14:55:48+02:00"
 title = "Classical transport example: using the isotropic diffusion stabilization"
 weight = 161
-
-[menu]
-  [menu.benchmarks]
-    parent = "hydro-thermal"
-
 +++
 
 {{< data-link >}}
