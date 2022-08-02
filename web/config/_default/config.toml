@@ -61,12 +61,6 @@ name = "Procedures"
 identifier = "procedures"
 weight = 8
 
-# Benchmarks sidebar top-level categories
-[[menu.benchmarks]]
-name = "Python Boundary Conditions"
-identifier = "python-bc"
-weight = 11
-
 # Quickstart sidebar top-level categories
 [[menu.userguide]]
 name = "Basics"

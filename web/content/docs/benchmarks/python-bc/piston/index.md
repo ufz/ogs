@@ -4,11 +4,6 @@ author = "Christoph Lehmann"
 date = "2018-08-16T12:18:00+02:00"
 title = "Ideal Gas Compressed by an Elastic Piston"
 weight = 2
-
-[menu]
-  [menu.benchmarks]
-    parent = "python-bc"
-
 +++
 
 {{< data-link >}}
