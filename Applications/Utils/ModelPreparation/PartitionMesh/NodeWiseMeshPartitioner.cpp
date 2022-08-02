@@ -397,7 +397,7 @@ bool copyPropertyVector(
         OGS_FATAL(
             "Copying of property vector values for mesh item type {:s} is not "
             "implemented.",
-            item_type);
+            toString(item_type));
     };
 
     std::size_t position_offset(0);
