@@ -4,11 +4,6 @@ title = "Ehlers; special case - Drucker-Prager"
 weight = 115
 project = ["Mechanics/Ehlers/cube_1e0_dp.prj"]
 author = "Xing-Yuan Miao"
-
-[menu]
-  [menu.benchmarks]
-    parent = "small-deformations"
-
 +++
 
 {{< data-link >}}

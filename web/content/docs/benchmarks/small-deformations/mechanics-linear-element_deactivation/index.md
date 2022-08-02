@@ -5,11 +5,6 @@ project = ["Mechanics/Linear/square_with_deactivated_hole.prj"]
 author = "Wenqing Wang"
 weight = 111
 image = "element_deactivation_3D.png"
-
-[menu]
-  [menu.benchmarks]
-    parent = "small-deformations"
-
 +++
 
 {{< data-link >}}

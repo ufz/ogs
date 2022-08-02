@@ -4,11 +4,6 @@ author = "Dmitri Naumov"
 date = "2017-02-15T12:58:36+01:00"
 title = "Lubby2; Creep example"
 weight = 112
-
-[menu]
-  [menu.benchmarks]
-    parent = "small-deformations"
-
 +++
 
 {{< data-link >}}

@@ -63,10 +63,6 @@ weight = 8
 
 # Benchmarks sidebar top-level categories
 [[menu.benchmarks]]
-name = "Small Deformations"
-identifier = "small-deformations"
-weight = 2
-[[menu.benchmarks]]
 name = "Heatconduction"
 identifier = "heatconduction"
 weight = 3
