@@ -13,6 +13,7 @@
 #include <vtkCellType.h>
 
 #include "BaseLib/Error.h"
+#include "BaseLib/cpp23.h"
 
 int OGSToVtkCellType(MeshLib::CellType ogs)
 {
@@ -59,7 +60,7 @@ int OGSToVtkCellType(MeshLib::CellType ogs)
         default:
             OGS_FATAL(
                 "Unknown cell type in conversion from OGS to VTK. Given cell "
-                "type value is {:d}.",
-                ogs);
+                "type value is {}.",
+                BaseLib::to_underlying(ogs));
     }
 }
