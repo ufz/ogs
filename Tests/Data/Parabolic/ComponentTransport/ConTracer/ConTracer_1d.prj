@@ -15,7 +15,7 @@
                 <concentration>Cs</concentration>
                 <pressure>pressure</pressure>
             </process_variables>
-            <specific_body_force>0 0</specific_body_force>
+            <specific_body_force>0</specific_body_force>
             <secondary_variables>
                 <secondary_variable internal_name="darcy_velocity" output_name="darcy_velocity"/>
                 <secondary_variable internal_name="molar_flux" output_name="molar_flux"/>
