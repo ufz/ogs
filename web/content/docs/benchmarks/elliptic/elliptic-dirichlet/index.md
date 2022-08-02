@@ -5,10 +5,6 @@ project = ["Elliptic/square_1x1_SteadyStateDiffusion/square_1e2.xml"]
 author = "Dmitri Naumov"
 weight = 102
 image = "square_1e2_pcs_0_ts_1_t_1.000000.png"
-
-[menu.benchmarks]
-parent = "elliptic"
-
 +++
 
 {{< data-link >}}

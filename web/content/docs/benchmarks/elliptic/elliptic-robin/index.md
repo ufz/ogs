@@ -5,11 +5,6 @@ project = ["Elliptic/line_1_SteadyStateDiffusion/line_1e1_robin_left_picard.prj"
 author = "Thomas Fischer, Dmitri Naumov"
 weight = 104
 image = "line_1e1_robin_left.png"
-
-[menu]
-  [menu.benchmarks]
-    parent = "elliptic"
-
 +++
 
 {{< data-link >}}

@@ -5,11 +5,6 @@ project = ["Elliptic/square_1x1_SteadyStateDiffusion_Python/square_1e3_poisson_s
 author = "Tom Fischer"
 weight = 102
 image = "square_1e5_poisson_sin_x_sin_y_sourceterm_Diff_Pressure_AnalyticalSolution_PythonSourceTerm.png"
-
-[menu]
-  [menu.benchmarks]
-    parent = "elliptic"
-
 +++
 
 {{< data-link >}}

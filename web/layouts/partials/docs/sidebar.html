@@ -1,44 +1,66 @@
 {{ $elements := index (split .CurrentSection "/") }}
 {{ $current_section_name := index $elements (sub (len $elements) 2) }}
-<div class="md:flex md:shrink-0">
-  <nav class="w-48 md:w-64 lg:w-72 pl-2 pr-4 mt-1 text-sm lg:text-base overflow-y-scroll h-screen sticky top-0">
-    {{ $currentMenu := index .Site.Menus .Section }}
-    {{ range $currentMenu }}
-    {{ $url_first_char := substr .URL 0 2 }}
-    {{ if in $url_first_char "/" }}
-    <div
-      class=" text-gray-700 hover:text-gray-900 mb-2 {{if eq $current_section_name .Identifier }} font-bold text-brand-500{{ end }}">
+{{ $parent_section_name := index $elements (sub (len $elements) 3) }}
+{{ $top_section_name := index $elements (sub (len $elements) 4) }}
+{{ $baseSubsection := . }}
+{{ if eq $top_section_name .Section }}
+  {{ $baseSubsection = .Parent }}
+  {{ $.Scratch.Set "MySectionRelPermalink" .RelPermalink }}
+{{ else }}
+  {{ .Parent.Scratch.Delete "MyRelPermalink" }}
+{{ end }}
+{{ if .IsSection }}
+  {{ .Parent.Scratch.Delete "MyRelPermalink" }}
+{{ else }}
+  {{ $baseSubsection = .Parent.Parent }}
+  {{ .Parent.Scratch.Set "MyRelPermalink" .RelPermalink }}
+{{ end }}
 
-      <a href="{{ .URL }}">
-        {{ .Name }}
-      </a>
-    </div>
-    {{ end }}
-    {{ end }}
 
-    {{ $currentSubMenu := index .Site.Menus $current_section_name }}
-    {{ if $currentSubMenu }}
-    <hr class="mt-3">
-    {{ end }}
-    <ul>
-      {{ range $currentSubMenu }}
-      {{ if .HasChildren }}
-      <li class="tracking-wide font-bold mt-6">{{ .Name | upper }}</li>
-      {{ range .Children }}
-      <li
-        class="p-1 mr-1 {{if $.IsMenuCurrent $.Type . }}bg-gray-100 rounded-lg{{ else }}text-gray-700 hover:text-gray-900{{ end }}">
+{{ define "subpages" }}
+  {{ if .Pages }}
+    {{ range .Pages}}
+      {{ if eq .Kind "page" }}
+        <li
+        class="p-1 mr-1 {{if false }}bg-gray-100 rounded-lg{{ else }}text-gray-700 hover:text-gray-900{{ end }}">
 
         {{ if .Page.Params.notebook }}
         <img style="margin-top: 0; margin-bottom: 0; height: 1em;" class="inline-block mr-1"
           src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" alt="">
         {{ end }}
-        <a href="{{ .URL }}" {{if $.IsMenuCurrent $.Type . }} class="text-brand-500" {{end}}>
-          {{ .Name | markdownify }}
+
+        <a href="{{ .Permalink }}" {{ if eq .RelPermalink ($.Scratch.Get "MyRelPermalink") }} class="text-brand-500" {{end}}>
+          {{ .Title | markdownify }}
         </a>
       </li>
       {{ end }}
+      {{ template "subpages" . }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+<div class="md:flex md:shrink-0">
+  <nav class="w-48 md:w-64 lg:w-72 pl-2 pr-4 mt-1 text-sm lg:text-base overflow-y-scroll h-screen sticky top-0">
+    {{ $currentMenu := index .Site.Menus "docs" }}
+    {{ range $currentMenu }}
+      {{ $url_first_char := substr .URL 0 2 }}
+      {{ if in $url_first_char "/" }}
+        <div
+          class=" text-gray-700 hover:text-gray-900 mb-2 {{if or (eq $parent_section_name .Identifier) (eq $current_section_name .Identifier) }} font-bold text-brand-500{{ end }}">
+
+          <a href="{{ .URL }}">
+            {{ .Name }}
+          </a>
+        </div>
       {{ end }}
+    {{ end }}
+    <hr class="mt-3">
+    <ul>
+      {{ range $baseSubsection.Sections }}
+        <li class="tracking-wide font-bold mt-6"><a href="{{ .Permalink }}" {{if eq .RelPermalink ($.Scratch.Get "MySectionRelPermalink") }} class="text-brand-500" {{end}}>{{ .Title | upper }}</a></li>
+        {{ template "subpages" .  }}
       {{ end }}
     </ul>
+    <hr class="mt-3">
   </nav>
 </div>

@@ -1,6 +1,6 @@
 +++
 title = "Benchmarks"
-layout = "gallery"
+layout = "subsections"
 
 [menu.docs]
 name = "Benchmarks"
