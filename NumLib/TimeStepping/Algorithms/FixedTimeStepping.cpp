@@ -50,9 +50,9 @@ FixedTimeStepping::FixedTimeStepping(double t0, double t_end, double dt)
     {
         OGS_FATAL(
             "Resize of the time steps vector failed for the requested new "
-            "size {:d}. Probably there is not enough memory ({:g} GiB "
+            "size {}. Probably there is not enough memory ({:g} GiB "
             "requested).\n"
-            "Thrown exception: {:s}",
+            "Thrown exception: {}",
             new_size, new_size * sizeof(double) / 1024. / 1024. / 1024.,
             e.what());
     }
@@ -60,9 +60,9 @@ FixedTimeStepping::FixedTimeStepping(double t0, double t_end, double dt)
     {
         OGS_FATAL(
             "Allocation of the time steps vector failed for the requested "
-            "size {:d}. Probably there is not enough memory ({:d} GiB "
+            "size {}. Probably there is not enough memory ({:g} GiB "
             "requested).\n"
-            "Thrown exception: {:s}",
+            "Thrown exception: {}",
             new_size,
             new_size * sizeof(double) / 1024. / 1024. / 1024.,
             e.what());

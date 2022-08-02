@@ -197,7 +197,7 @@ void writeTecPlotSection(std::ofstream& out,
 
         val_count = 0;
         val_total = 0;
-        INFO("Writing section #{:i}", write_count);
+        INFO("Writing section #{}", write_count);
         out.close();
         out.open(base_name + std::to_string(write_count++) + extension);
     }
@@ -255,7 +255,7 @@ int writeDataToMesh(std::string const& file_name,
     std::string const base_name(file_name.substr(0, delim_pos + 1));
     std::string const extension(file_name.substr(delim_pos, std::string::npos));
 
-    INFO("Writing section #{:i}", write_count);
+    INFO("Writing section #{}", write_count);
     MeshLib::IO::VtuInterface vtu(mesh.get());
     vtu.writeToFile(base_name + std::to_string(write_count++) + extension);
     return 0;
@@ -331,7 +331,7 @@ int splitFile(std::ifstream& in, std::string const& file_name)
     {
         return -3;
     }
-    INFO("Writing time step #{:i}", write_count);
+    INFO("Writing time step #{}", write_count);
     out.close();
     INFO("Finished split.");
     return 0;

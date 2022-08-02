@@ -114,7 +114,7 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
         }
         else
         {
-            ERR("Could not create and initialize property '{%s}'.", prop_name);
+            ERR("Could not create and initialize property '{}'.", prop_name);
             return nullptr;
         }
     }

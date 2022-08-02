@@ -291,7 +291,7 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
 {
     if (mesh_dimension < 2 || mesh_dimension > 3)
     {
-        ERR("Cannot handle meshes of dimension {:i}", mesh_dimension);
+        ERR("Cannot handle meshes of dimension {}", mesh_dimension);
     }
 
     bool const complete_surface = (dir.dot(dir) == 0);
@@ -465,7 +465,7 @@ std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
     auto const mesh_dimension = bulk_mesh.getDimension();
     if (mesh_dimension < 2 || mesh_dimension > 3)
     {
-        ERR("Cannot handle meshes of dimension {:i}", mesh_dimension);
+        ERR("Cannot handle meshes of dimension {}", mesh_dimension);
     }
 
     // create boundary elements based on the subsurface nodes

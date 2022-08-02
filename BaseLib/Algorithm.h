@@ -109,7 +109,7 @@ void insertIfKeyUniqueElseError(Map& map, Key const& key, Value&& value,
     auto const inserted = map.emplace(key, std::forward<Value>(value));
     if (!inserted.second)
     {  // insertion failed, i.e., key already exists
-        OGS_FATAL("{:s} Key `{:s}' already exists.", error_message, key);
+        OGS_FATAL("{} Key `{}' already exists.", error_message, key);
     }
 }
 

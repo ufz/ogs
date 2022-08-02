@@ -179,8 +179,8 @@ int main(int argc, char* argv[])
         id_and_area_fname += std::to_string(j) + ".txt";
         csv_fname += std::to_string(j) + ".csv";
         INFO(
-            "Polygonal part of surface '{:s}' contains %{ul} nodes. Writing to "
-            "files '{:s}' and '{:s}'.",
+            "Polygonal part of surface '{}' contains {} nodes. Writing to "
+            "files '{}' and '{}'.",
             polygon_name,
             ids_and_areas.size(),
             id_and_area_fname,

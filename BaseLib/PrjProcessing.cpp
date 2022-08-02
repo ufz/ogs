@@ -69,7 +69,7 @@ void traverseIncludes(xmlDoc* doc, xmlNode* node,
             const std::ifstream input_stream(filename, std::ios_base::binary);
             if (input_stream.fail())
             {
-                OGS_FATAL("Failed to open file {s}!", filename);
+                OGS_FATAL("Failed to open file {}!", filename);
             }
             std::stringstream buffer;
             buffer << input_stream.rdbuf();
