@@ -67,10 +67,6 @@ name = "Heat Transport BHE"
 identifier = "heat-transport-bhe"
 weight = 12
 [[menu.benchmarks]]
-name = "Richards Flow"
-identifier = "richards-flow"
-weight = 4
-[[menu.benchmarks]]
 name = "Richards-Mechanics"
 identifier = "richards-mechanics"
 weight = 5
