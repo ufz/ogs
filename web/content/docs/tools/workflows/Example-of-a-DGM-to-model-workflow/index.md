@@ -2,10 +2,6 @@
 date = "2019-03-21T16:56:27+01:00"
 title = "Example of a DGM-to-model-workflow"
 author = "Marc Walther"
-
-[menu]
-  [menu.tools]
-    parent = "workflows"
 +++
 
 <!-- vale off -->

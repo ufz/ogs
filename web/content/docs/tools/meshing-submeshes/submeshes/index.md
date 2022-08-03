@@ -3,10 +3,6 @@ date = "2019-03-19T09:56:57+01:00"
 title = "Submeshes for Boundary Conditions, Source Terms, and Flux Calculations"
 author = "Thomas Fischer"
 weight = 1
-
-[menu]
-  [menu.tools]
-    parent = "meshing-submeshes"
 +++
 
 ## Motivation

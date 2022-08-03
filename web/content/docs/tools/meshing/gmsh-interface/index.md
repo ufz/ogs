@@ -3,10 +3,6 @@ date = "2021-05-31T11:00:13+01:00"
 title = "geometryToGmshGeo"
 author = "Thomas Fischer"
 aliases = [ "/docs/tools/meshing/gmsh-interface" ]
-
-[menu]
-  [menu.tools]
-    parent = "meshing"
 +++
 
 ## Introduction

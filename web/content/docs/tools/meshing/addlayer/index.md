@@ -3,10 +3,6 @@ date = "2020-06-22T11:00:13+01:00"
 title = "AddLayer"
 author = "Thomas Fischer"
 aliases = [ "/docs/tools/meshing/addtoplayer" ]
-
-[menu]
-  [menu.tools]
-    parent = "meshing"
 +++
 
 ## Introduction

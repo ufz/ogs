@@ -2,10 +2,6 @@
 date = "2018-03-07T15:56:57+01:00"
 title = "Create Boundary Condition in Polygonal Region"
 author = "Thomas Fischer"
-
-[menu]
-  [menu.tools]
-    parent = "workflows"
 +++
 
 ## General

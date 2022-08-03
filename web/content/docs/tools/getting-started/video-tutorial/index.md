@@ -2,10 +2,7 @@
 date = "2018-02-27T11:00:13+01:00"
 title = "Video Tutorial"
 author = "Dominik Kern"
-weight = 105
-
-[menu.tools]
-parent = "getting-started"
+weight = 3
 +++
 
 In this [three-part tutorial](https://www.youtube.com/watch?v=BULunRJQRJ0&list=PLU_clTnZqNAeOXENl79kQwn0pgHGittX1) we look at the mechanical deformation of a sedimentary basin under an advancing glacier. In detail we show you a possibility how to

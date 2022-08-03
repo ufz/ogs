@@ -2,10 +2,6 @@
 date = "2018-10-02T15:56:57+01:00"
 title = "Identify subdomains in bulk mesh."
 author = "Dmitri Naumov"
-
-[menu]
-  [menu.tools]
-    parent = "meshing-submeshes"
 +++
 
 ## General

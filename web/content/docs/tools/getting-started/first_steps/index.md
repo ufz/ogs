@@ -2,11 +2,7 @@
 date = "2019-03-14T11:00:13+01:00"
 title = "First Steps"
 author = "Joerg Buchwald"
-weight = 101
-
-[menu]
-  [menu.tools]
-    parent = "getting-started"
+weight = 2
 +++
 
 ## First Steps

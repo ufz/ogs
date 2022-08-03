@@ -2,10 +2,6 @@
 date = "2021-03-06T00:00:00+01:00"
 title = "GMSH2OGS"
 author = "Dmitri Naumov"
-
-[menu]
-  [menu.tools]
-    parent = "Data Import/Export"
 +++
 
 ## Introduction

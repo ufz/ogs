@@ -2,10 +2,6 @@
 date = "2019-11-27T00:00:00+01:00"
 title = "Vtu2Grid"
 author = "Karsten Rink"
-
-[menu]
-  [menu.tools]
-    parent = "meshing"
 +++
 
 ## Introduction

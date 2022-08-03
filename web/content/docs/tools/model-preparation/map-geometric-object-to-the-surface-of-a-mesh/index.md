@@ -2,9 +2,6 @@
 date = "2018-03-07T15:56:57+01:00"
 title = "Map geometric object to the surface of a mesh"
 author = "Thomas Fischer"
-
-[menu.tools]
-parent = "model-preparation"
 +++
 
 ## General

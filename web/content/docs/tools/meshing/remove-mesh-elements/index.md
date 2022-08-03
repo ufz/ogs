@@ -2,10 +2,6 @@
 date = "2018-03-07T15:59:57+01:00"
 title = "Remove Mesh Elements"
 author = "Thomas Fischer"
-
-[menu]
-  [menu.tools]
-    parent = "meshing"
 +++
 
 ## General

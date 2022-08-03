@@ -1,6 +1,6 @@
 +++
 title = "Tools"
 
-[_build]
-render = false
+[cascade]
+breadcumbs = false
 +++

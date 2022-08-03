@@ -2,10 +2,6 @@
 date = "2018-12-17T10:56:57+01:00"
 title = "Convert vtk data array to another vtk data array"
 author = "Thomas Fischer"
-
-[menu]
-  [menu.tools]
-    parent = "model-preparation"
 +++
 
 ## General
