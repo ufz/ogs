@@ -3,6 +3,7 @@ title = "Simulate saturated single phase flow in fractured porous media: tests f
 date = "2021-08-02T11:13:53+02:00"
 weight = 50
 author = "Wenqing Wang"
+image = "inclined_1D_in_3D_sphere.png"
 +++
 
 There are four tests for the finite element analyses with inclined elements,
