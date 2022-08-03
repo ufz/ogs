@@ -3,38 +3,35 @@
 {{ $parent_section_name := index $elements (sub (len $elements) 3) }}
 {{ $top_section_name := index $elements (sub (len $elements) 4) }}
 {{ $baseSubsection := . }}
+{{ $subSubsection := . }}
 {{ if eq $top_section_name .Section }}
   {{ $baseSubsection = .Parent }}
-  {{ $.Scratch.Set "MySectionRelPermalink" .RelPermalink }}
-{{ else }}
-  {{ .Parent.Scratch.Delete "MyRelPermalink" }}
 {{ end }}
-{{ if .IsSection }}
-  {{ .Parent.Scratch.Delete "MyRelPermalink" }}
-{{ else }}
+{{ if not .IsSection }}
   {{ $baseSubsection = .Parent.Parent }}
-  {{ .Parent.Scratch.Set "MyRelPermalink" .RelPermalink }}
+  {{ $subSubsection = .Parent }}
 {{ end }}
-
+{{ $indexRelPermalink := .RelPermalink }}
 
 {{ define "subpages" }}
-  {{ if .Pages }}
-    {{ range .Pages}}
+{{ $indexRelPermalink := .indexRelPermalink }}
+  {{ if .context.Pages }}
+    {{ range .context.Pages}}
       {{ if eq .Kind "page" }}
         <li
-        class="p-1 mr-1 {{if false }}bg-gray-100 rounded-lg{{ else }}text-gray-700 hover:text-gray-900{{ end }}">
+        class="p-1 mr-1 {{ if eq .RelPermalink $indexRelPermalink }}bg-gray-100 rounded-lg{{ else }}text-gray-700 hover:text-gray-900{{ end }}">
 
         {{ if .Page.Params.notebook }}
         <img style="margin-top: 0; margin-bottom: 0; height: 1em;" class="inline-block mr-1"
           src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" alt="">
         {{ end }}
 
-        <a href="{{ .Permalink }}" {{ if eq .RelPermalink ($.Scratch.Get "MyRelPermalink") }} class="text-brand-500" {{end}}>
+        <a href="{{ .Permalink }}" {{ if eq .RelPermalink $indexRelPermalink }} class="text-brand-500" {{end}}>
           {{ .Title | markdownify }}
         </a>
       </li>
       {{ end }}
-      {{ template "subpages" . }}
+      {{ template "subpages" (dict "indexRelPermalink" $indexRelPermalink "context" .) }}
     {{ end }}
   {{ end }}
 {{ end }}
@@ -57,8 +54,8 @@
     <hr class="mt-3">
     <ul>
       {{ range $baseSubsection.Sections }}
-        <li class="tracking-wide font-bold mt-6"><a href="{{ .Permalink }}" {{if eq .RelPermalink ($.Scratch.Get "MySectionRelPermalink") }} class="text-brand-500" {{end}}>{{ .Title | upper }}</a></li>
-        {{ template "subpages" .  }}
+        <li class="tracking-wide font-bold mt-6"><a href="{{ .Permalink }}" {{if eq .RelPermalink $subSubsection.RelPermalink }} class="text-brand-500" {{end}}>{{ .Title | upper }}</a></li>
+        {{ template "subpages" (dict "indexRelPermalink" $indexRelPermalink "context" .)  }}
       {{ end }}
     </ul>
     <hr class="mt-3">
