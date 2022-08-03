@@ -4,6 +4,7 @@ title = "Small deformations: Verification examples by Vogel,Maßmann"
 weight = 50
 author = "Johannes Herfurth, Jan Thiedau"
 aliases = [ "/docs/benchmarks/bgr_verification_examples/mechanics/" ]
+image = ""
 +++
 
 These benchmark examples test the implementation of

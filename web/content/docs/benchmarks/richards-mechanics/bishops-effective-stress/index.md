@@ -4,6 +4,7 @@ author = "Dmitri Naumov"
 date = "2020-02-27"
 title = "Bishop's effective stress models comparison"
 weight = 153
+image = "BishopsEffectiveStress.png"
 +++
 
 {{< data-link >}}

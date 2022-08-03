@@ -4,6 +4,7 @@ date = "2020-02-24T13:44:00+01:00"
 title = "Wellbore Heat Transport - EUBHE"
 weight = 123
 project = ["Parabolic/T/BHE_1P/BHE_1P.prj"]
+image = "pipe_flow_3d_model.png"
 +++
 
 {{< data-link >}}

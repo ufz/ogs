@@ -3,11 +3,7 @@ author = "Johannes Boog"
 project = ["Parabolic/ComponentTransport/ReactiveTransport/Wetland/Wetland_1d.prj"]
 date = "2019-08-25T14:41:09+01:00"
 title = "Complex kinetic reaction network"
-
-[menu]
-  [menu.benchmarks]
-    parent = "Reactive Transport"
-
+image = "Wetland_1d.gif"
 +++
 
 {{< data-link >}}

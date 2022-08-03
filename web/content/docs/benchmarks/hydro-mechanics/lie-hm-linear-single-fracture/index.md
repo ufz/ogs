@@ -4,6 +4,7 @@ title = "Linear, single fracture"
 weight = 152
 project = ["LIE/HydroMechanics/single_fracture.prj"]
 author = "Norihiro Watanabe"
+image = "single_fracture_3D.png"
 +++
 
 {{< data-link >}}

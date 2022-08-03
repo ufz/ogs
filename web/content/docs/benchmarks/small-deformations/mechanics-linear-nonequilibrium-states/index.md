@@ -4,6 +4,7 @@ title = "Linear; Non-equilibrium initial states"
 project = ["Mechanics/InitialStates/non_equilibrium_initial_state.prj"]
 author = "Dmitri Naumov, Thomas Nagel"
 weight = 111
+image = "non-equilibrium_initial_states.png"
 +++
 
 {{< data-link >}}

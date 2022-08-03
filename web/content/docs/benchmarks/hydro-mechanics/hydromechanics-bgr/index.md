@@ -5,6 +5,7 @@ weight = 40
 project = ["HydroMechanics/Verification"]
 author = "Johannes Herfurth, Jan Thiedau"
 aliases = [ "/docs/benchmarks/bgr_verification_examples/hydromechanics/" ]
+image = ""
 +++
 
 These benchmark examples test the implementation of

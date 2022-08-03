@@ -2,6 +2,7 @@
 author = "Keita Yoshioka"
 date = "2020-07-27"
 title = "Three point bending test on anisotropic rock"
+image = "ME1_ext_2D_orth_result.png"
 +++
 
 {{< data-link >}}

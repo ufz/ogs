@@ -4,6 +4,7 @@ date = "2019-11-11T11:52:00+01:00"
 title = "BHE with groundwater advection"
 weight = 123
 project = ["Parabolic/T/3D_BHE_GW_advection/BHE_GW_advection.prj"]
+image = "mesh.png"
 +++
 
 {{< data-link >}}

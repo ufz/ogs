@@ -4,7 +4,7 @@ title = "Thermomechanics: Verification examples by Vogel,Maßmann"
 weight = 50
 author = "Johannes Herfurth, Jan Thiedau"
 aliases = [ "/docs/benchmarks/bgr_verification_examples/thermomechanics/" ]
-
+image = ""
 +++
 
 These benchmark examples test the implementation of

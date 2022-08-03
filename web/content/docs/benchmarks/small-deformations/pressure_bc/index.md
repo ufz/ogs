@@ -3,6 +3,7 @@ author = "Francesco Parisio"
 title = "Pressure boundary conditions"
 project = ["Mechanics/Linear/PressureBC/hollow_sphere.prj"]
 weight = 117
+image = "pipe_axisymmetric.png"
 +++
 
 ## Problem description

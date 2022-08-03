@@ -4,7 +4,7 @@ title = "BGRa creep model"
 weight = 171
 project = ["ThermoMechanics/CreepBGRa/SimpleAxisymmetricCreep/SimpleAxisymmetricCreepWithAnalyticSolution.prj"]
 author = "Wenqing Wang"
-
+image = "bgra0.png"
 aliases = ["/docs/benchmarks/creepbgra/creepbrga"]
 +++
 

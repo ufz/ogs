@@ -3,6 +3,7 @@ project = ["ThermoMechanicalPhaseField/cube_1e0.prj"]
 author = "Xing-Yuan Miao"
 date = "2018-03-11T09:10:33+01:00"
 title = "Non-isothermal test"
+image = "t_pf.png"
 +++
 
 {{< data-link >}}

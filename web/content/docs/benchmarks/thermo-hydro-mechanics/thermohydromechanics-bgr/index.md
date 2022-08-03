@@ -5,6 +5,7 @@ weight = 40
 project = ["ThermoHydroMechanics/Linear/verification/thm2_1Dfixd/thm2_1Dfixd.prj"]
 author = "Jan Thiedau"
 aliases = [ "/docs/benchmarks/bgr_verification_examples/thermohydromechanics/" ]
+image = ""
 +++
 
 This is one of the benchmark examples with analytical solutions presented

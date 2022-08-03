@@ -3,6 +3,7 @@ author = "Vanessa Montoya, Renchao Lu"
 project = ["Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calcite.prj"]
 date = "2019-07-08T14:41:09+01:00"
 title = "Precipitation/dissolution equilibrium reactions in a saturated column"
+image = "ResultComparison.png"
 +++
 
 {{< data-link >}}

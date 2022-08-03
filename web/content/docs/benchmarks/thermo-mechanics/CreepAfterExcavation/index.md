@@ -4,6 +4,7 @@ title = "Creep in a rectangle domain with hole under pressure on its top surface
 project = ["ThermoMechanics/CreepBGRa/CreepAfterExcavation/CreepAfterExcavation.prj"]
 author = "Wenqing Wang"
 aliases = [ "/docs/benchmarks/creepbgra/creepbgra/" ]
+image = "stress_xx_yy_50.png"
 +++
 
 {{< data-link >}}

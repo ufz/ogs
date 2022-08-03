@@ -4,6 +4,7 @@ title = "Liquid Flow: Verification examples by Vogel, Maßmann"
 weight = 50
 author = "Johannes Herfurth, Jan Thiedau"
 aliases = [ "/docs/benchmarks/bgr_verification_examples/liquid_flow/" ]
+image = ""
 +++
 
 These benchmark examples test the implementation of

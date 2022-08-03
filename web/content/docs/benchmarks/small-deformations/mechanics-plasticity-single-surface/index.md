@@ -4,6 +4,7 @@ weight = 113
 project = ["Mechanics/Ehlers/cube_1e3.prj"]
 date = "2017-02-15T14:39:39+01:00"
 title = "Ehlers; Single-surface yield function"
+image = "plasticity_ss.png"
 +++
 
 {{< data-link >}}

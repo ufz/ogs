@@ -3,6 +3,7 @@ author = "Johannes Boog"
 project = ["Parabolic/ComponentTransport/ReactiveTransport/KineticReactant_AllAsComponents/KineticReactant2.prj"]
 date = "2010-06-25T14:41:09+01:00"
 title = "Solute transport including kinetic reaction"
+image = "KineticReactant2.gif"
 +++
 
 {{< data-link >}}

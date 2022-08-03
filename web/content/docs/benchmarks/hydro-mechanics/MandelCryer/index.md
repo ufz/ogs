@@ -4,6 +4,7 @@ title = "Mandel-Cryer Effect"
 weight = 151
 project = ["HydroMechanics/StaggeredScheme/MandelCryer/MandelCryerStaggered.prj"]
 author = "Dominik Kern"
+image = "MandelCryer_mesh.png"
 +++
 
 {{< data-link >}}

@@ -4,6 +4,7 @@ date = "2018-02-21T13:44:00+01:00"
 title = "BHE Array 2D"
 weight = 123
 project = ["Parabolic/T/2D_BHE_array/bhe2d.prj"]
+image = "figure_4.png"
 +++
 
 {{< data-link >}}

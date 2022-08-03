@@ -4,6 +4,7 @@ date = "2018-09-25T13:44:00+01:00"
 title = "3D 2U BHE"
 weight = 123
 project = ["Parabolic/T/3D_2U_BHE/3D_2U_BHE.prj"]
+image = "In_out_temperature_comparison.png"
 +++
 
 {{< data-link >}}

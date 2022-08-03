@@ -4,6 +4,7 @@ title = "Heatconduction (Neumann)"
 weight = 122
 project = ["Parabolic/T/1D_neumann/picard.prj"]
 author = "Dmitri Naumov, Tianyuan Zheng"
+image = "temperature_error_ts_65_t_5078125.png"
 +++
 
 {{< data-link >}}

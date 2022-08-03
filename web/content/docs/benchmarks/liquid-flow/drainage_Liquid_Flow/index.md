@@ -3,6 +3,7 @@ author = "Reza Taherdangkoo, Thomas Nagel, Christoph Butscher"
 date = "2020.11.01T14:39:39+01:00"
 title = "Drainage Liquid Flow"
 project = ["/Parabolic/LiquidFlow/DrainageExcavation/drainage_LiquidFlow.prj"]
+image = "drainage_excavation.png"
 +++
 
 {{< data-link >}}

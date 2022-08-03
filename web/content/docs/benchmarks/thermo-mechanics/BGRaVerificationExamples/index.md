@@ -4,6 +4,7 @@ title = "BGRa creep model: Verification examples by Vogel,Maßmann"
 weight = 50
 author = "Jan Thiedau"
 aliases = [ "/docs/benchmarks/creepbgra/bgraverificationexamples/" ]
+image = ""
 +++
 
 These benchmark examples test the implementation of the

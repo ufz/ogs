@@ -4,6 +4,7 @@ author = "Christoph Lehmann"
 date = "2018-08-16T09:18:00+02:00"
 title = "Saturated Variable-Density Flow and Mass Transport (Elder) with Python BC"
 weight = 3
+image = ""
 +++
 
 {{< data-link >}}

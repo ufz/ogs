@@ -4,6 +4,7 @@ weight = 143
 project = ["Parabolic/ComponentTransport/ConTracer/ConTracer_1d.prj"]
 date = "2019-07-18T10:30:09+01:00"
 title = "Conservative tracer transport with time varying source (1D/2D)"
+image = "ConTracer_domain.png"
 +++
 
 {{< data-link >}}
