@@ -2,7 +2,7 @@
 date = "2018-02-23T15:28:13+01:00"
 title = "Build configuration"
 author = "Lars Bilke"
-weight = 1004
+weight = 4
 
 [menu]
   [menu.devguide]
