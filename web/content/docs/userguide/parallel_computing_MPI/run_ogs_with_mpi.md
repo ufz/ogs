@@ -226,9 +226,9 @@ RemoveGhostData -i foo.pvtu -o foo.vtu
 
 Where the input file name is the name of PVTU file.
 
-#### 3.2 XMDF output
+#### 3.2 XDMF output
 
-With XMDF, OGS outputs two files, one XMDF file and one HDF5 file with file name
+With XDMF, OGS outputs two files, one XDMF file and one HDF5 file with file name
  extension of `h5`. You can use ParaView to open the XDMF file by selecting
- `Xdmf3ReaderS` or `Xdmf3ReaderT`. The XMDF output is highly recommended for
+ `Xdmf3ReaderS` or `Xdmf3ReaderT`. The XDMF output is highly recommended for
   running OGS with a large mesh, especially on supercomputers.
