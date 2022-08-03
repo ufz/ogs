@@ -59,16 +59,16 @@ struct OutputDataSpecification final
     }
 
     //! All variables that shall be output.
-    std::set<std::string> const output_variables;
+    std::set<std::string> output_variables;
 
     //! Given times that steps have to reach.
-    std::vector<double> const fixed_output_times;
+    std::vector<double> fixed_output_times;
 
     //! Describes after which timesteps to write output.
     std::vector<PairRepeatEachSteps> repeats_each_steps;
 
     //! Tells if also to output extrapolation residuals.
-    bool const output_residuals;
+    bool output_residuals;
 };
 
 inline std::ostream& operator<<(std::ostream& os,
