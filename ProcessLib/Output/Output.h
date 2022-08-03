@@ -65,7 +65,7 @@ public:
     void doOutputNonlinearIteration(Process const& process,
                                     const int process_id, int const timestep,
                                     const double t, const int iteration,
-                                    std::vector<GlobalVector*> const& xs);
+                                    std::vector<GlobalVector*> const& xs) const;
 
     std::vector<double> const& getFixedOutputTimes() const
     {

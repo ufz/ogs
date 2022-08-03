@@ -257,11 +257,10 @@ void Output::doOutputLastTimestep(Process const& process,
 #endif
 }
 
-void Output::doOutputNonlinearIteration(Process const& process,
-                                        const int process_id,
-                                        int const timestep, const double t,
-                                        int const iteration,
-                                        std::vector<GlobalVector*> const& xs)
+void Output::doOutputNonlinearIteration(
+    Process const& process, const int process_id, int const timestep,
+    const double t, int const iteration,
+    std::vector<GlobalVector*> const& xs) const
 {
     if (!_output_nonlinear_iteration_results)
     {
