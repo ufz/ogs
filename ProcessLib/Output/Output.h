@@ -36,6 +36,11 @@ public:
            std::vector<std::string> const& mesh_names_for_output,
            std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
 
+    Output(Output const& other) = delete;
+    Output(Output && other) = default;
+    Output operator=(Output const& src) = delete;
+    Output& operator=(Output&& src) = default;
+
     //! TODO doc. Opens a PVD file for each process.
     void addProcess(ProcessLib::Process const& process);
 
@@ -94,9 +99,9 @@ private:
 
     std::unique_ptr<OutputFile> _output_file;
 
-    bool const _output_nonlinear_iteration_results;
+    bool _output_nonlinear_iteration_results;
 
-    OutputDataSpecification const _output_data_specification;
+    OutputDataSpecification _output_data_specification;
     std::vector<std::reference_wrapper<Process const>> _output_processes;
     std::vector<std::string> _mesh_names_for_output;
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& _meshes;

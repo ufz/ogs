@@ -106,7 +106,7 @@ Output::Output(std::unique_ptr<OutputFile> output_file,
                bool const output_nonlinear_iteration_results,
                OutputDataSpecification const& output_data_specification,
                std::vector<std::string> const& mesh_names_for_output,
-               std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
+               std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes)
     : _output_file(std::move(output_file)),
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
       _output_data_specification(std::move(output_data_specification)),
