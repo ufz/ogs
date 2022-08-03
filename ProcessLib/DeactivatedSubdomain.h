@@ -50,6 +50,10 @@ struct DeactivatedSubdomainMesh
     /// other elements not being part of this deactivated subdomain mesh.
     /// \see ProcessLib::createDeactivatedSubdomainMesh()
     std::vector<std::size_t> outer_nodes;
+
+    /// IDs of all elements that are adjacent to the outer nodes of this
+    /// deactivated subdomain.
+    std::vector<std::vector<std::size_t>> outer_nodes_elements;
 };
 
 /// Time dependent subdomain deactivation.

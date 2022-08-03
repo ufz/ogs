@@ -67,6 +67,28 @@ extractInnerAndOuterNodes(MeshLib::Mesh const& mesh,
     return {std::move(inner_nodes), std::move(outer_nodes)};
 }
 
+static std::vector<std::vector<std::size_t>> extractElementsAlongOuterNodes(
+    MeshLib::Mesh const& mesh, MeshLib::Mesh const& sub_mesh,
+    std::vector<std::size_t> const& outer_nodes)
+{
+    auto const& bulk_node_ids =
+        *sub_mesh.getProperties().template getPropertyVector<std::size_t>(
+            "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
+
+    auto to_bulk_node_id =
+        ranges::views::transform([&bulk_node_ids](std::size_t const node_id)
+                                 { return bulk_node_ids[node_id]; });
+    auto connected_elements = ranges::views::transform(
+        [&mesh](std::size_t const node_id)
+        {
+            return mesh.getElementsConnectedToNode(node_id) |
+                   MeshLib::views::ids | ranges::to<std::vector>;
+        });
+
+    return outer_nodes | to_bulk_node_id | connected_elements |
+           ranges::to<std::vector>;
+}
+
 static DeactivatedSubdomainMesh createDeactivatedSubdomainMesh(
     MeshLib::Mesh const& mesh,
     std::vector<int> const& deactivated_subdomain_material_ids)
@@ -100,8 +122,12 @@ static DeactivatedSubdomainMesh createDeactivatedSubdomainMesh(
     auto [inner_nodes, outer_nodes] =
         extractInnerAndOuterNodes(mesh, *sub_mesh, is_active);
 
+    auto outer_nodes_elements =
+        extractElementsAlongOuterNodes(mesh, *sub_mesh, outer_nodes);
+
     return {std::move(*sub_mesh), std::move(bulk_element_ids),
-            std::move(inner_nodes), std::move(outer_nodes)};
+            std::move(inner_nodes), std::move(outer_nodes),
+            std::move(outer_nodes_elements)};
 }
 
 static MathLib::PiecewiseLinearInterpolation parseTimeIntervalOrCurve(

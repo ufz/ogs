@@ -269,10 +269,9 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
              component_id++)
         {
             auto bc = std::make_unique<DeactivatedSubdomainDirichlet>(
-                &_ids_of_active_elements, deactivated_subdomain.time_interval,
-                *parameter, set_outer_nodes_dirichlet_values,
-                deactivated_subdomain_mesh, dof_table, variable_id,
-                component_id);
+                *_is_active, deactivated_subdomain.time_interval, *parameter,
+                set_outer_nodes_dirichlet_values, deactivated_subdomain_mesh,
+                dof_table, variable_id, component_id);
 
 #ifdef USE_PETSC
             // TODO: make it work under PETSc too.

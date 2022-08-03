@@ -1,48 +1,33 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <meshes>
-        <mesh>A2_cube.vtu</mesh>
-        <mesh>A2_front.vtu</mesh>
-        <mesh>A2_back.vtu</mesh>
-        <mesh>A2_right.vtu</mesh>
-        <mesh>A2_left.vtu</mesh>
-        <mesh>A2_top.vtu</mesh>
-        <mesh>A2_bottom.vtu</mesh>
-    </meshes>
+    <mesh axially_symmetric="false">excavation_niches2.vtu</mesh>
+    <geometry>excavation_niches2.gml</geometry>
     <processes>
         <process>
-            <name>TRM</name>
-            <type>THERMO_RICHARDS_MECHANICS</type>
+            <name>process</name>
+            <type>HYDRO_MECHANICS</type>
+            <dimension>2</dimension>
             <integration_order>3</integration_order>
-            <constitutive_relation id="0">
+            <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-            <constitutive_relation id="1">
-                <type>LinearElasticIsotropic</type>
-                <youngs_modulus>E</youngs_modulus>
-                <poissons_ratio>nu</poissons_ratio>
-            </constitutive_relation>
-            <specific_body_force>0 0 0</specific_body_force>
+            <specific_body_force>0 0</specific_body_force>
             <process_variables>
                 <displacement>displacement</displacement>
                 <pressure>pressure</pressure>
-                <temperature>temperature</temperature>
             </process_variables>
             <secondary_variables>
                 <secondary_variable internal_name="sigma" output_name="sigma"/>
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
-                <secondary_variable internal_name="saturation" output_name="saturation"/>
                 <secondary_variable internal_name="velocity" output_name="velocity"/>
-                <secondary_variable internal_name="liquid_density" output_name="liquid_density"/>
-                <secondary_variable internal_name="viscosity" output_name="viscosity"/>
             </secondary_variables>
             <initial_stress>sigma0</initial_stress>
         </process>
     </processes>
     <media>
-        <medium id="0,1">
+        <medium id="0,1,2,3">
             <phases>
                 <phase>
                     <type>AqueousLiquid</type>
@@ -54,18 +39,8 @@
                         </property>
                         <property>
                             <name>density</name>
-                            <type>Linear</type>
-                            <reference_value>1200</reference_value>
-                            <independent_variable>
-                                <variable_name>temperature</variable_name>
-                                <reference_condition>298.15</reference_condition>
-                                <slope>-6.0e-4</slope>
-                            </independent_variable>
-                            <independent_variable>
-                                <variable_name>phase_pressure</variable_name>
-                                <reference_condition>4e6</reference_condition>
-                                <slope>0.5e-9</slope>
-                            </independent_variable>
+                            <type>Constant</type>
+                            <value>1000</value>
                         </property>
                         <property>
                             <name>specific_heat_capacity</name>
@@ -144,6 +119,11 @@
                     <exponent>1</exponent>
                 </property>
                 <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>298.15</value>
+                </property>
+                <property>
                     <name>thermal_conductivity</name>
                     <type>EffectiveThermalConductivityPorosityMixing</type>
                 </property>
@@ -152,13 +132,13 @@
     </media>
     <time_loop>
         <processes>
-            <process ref="TRM">
+            <process ref="process">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstols>1e-16 1e-16 1e-16 1e-16 1e-16</abstols>
-                    <reltols>1e-14 1e-14 1e-8 1e-8 1e-8</reltols>
+                    <abstols>1e-8 1e-8 1e-8</abstols>
+                    <reltols>1e-8 1e-8 1e-8</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -166,60 +146,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>2764800</t_end> <!-- 32 days -->
+                    <t_end>2000</t_end>
                     <timesteps>
-                        <!-- small step to get initial stress field w/o excavation -->
                         <pair>
-                            <repeat>1</repeat>
-                            <delta_t>0.01</delta_t>
-                        </pair>
-                        <!-- few steps until first element excavation -->
-                        <pair>
-                            <repeat>1</repeat>
-                            <delta_t>2159.99</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>1</repeat>
-                            <delta_t>2160</delta_t>
-                        </pair>
-                        <!-- small steps again after first element excavation until second element excavation -->
-                        <pair>
-                            <repeat>1</repeat>
-                            <delta_t>14</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>10</repeat>
-                            <delta_t>85</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>9</repeat>
-                            <delta_t>864</delta_t>
-                        </pair>
-                        <!-- small steps again after second element excavation -->
-                        <pair>
-                            <repeat>1</repeat>
-                            <delta_t>14</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>10</repeat>
-                            <delta_t>85</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>9</repeat>
-                            <delta_t>864</delta_t>
-                        </pair>
-                        <!-- progressively larger steps until end -->
-                        <pair>
-                            <repeat>10</repeat>
-                            <delta_t>2000</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>10</repeat>
-                            <delta_t>20000</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>11</repeat>
-                            <delta_t>200000</delta_t>
+                            <repeat>1000</repeat>
+                            <delta_t>50</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -227,8 +158,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>A2</prefix>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <prefix>excavation_niches2</prefix>
+            <suffix>_ts_{:0>2timestep}_t_{:.0ftime}</suffix>
             <timesteps>
                 <pair>
                     <repeat>1000</repeat>
@@ -238,13 +169,9 @@
             <variables>
                 <variable>displacement</variable>
                 <variable>pressure</variable>
-                <variable>temperature</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
-                <variable>saturation</variable>
                 <variable>velocity</variable>
-                <variable>liquid_density</variable>
-                <variable>viscosity</variable>
             </variables>
         </output>
     </time_loop>
@@ -254,8 +181,6 @@
             <type>Function</type>
             <expression>-10e6 + 0.6 * 4e6</expression>
             <expression>-10e6 + 0.6 * 4e6</expression>
-            <expression>-12e6 + 0.6 * 4e6</expression>
-            <expression>0</expression>
             <expression>0</expression>
             <expression>0</expression>
         </parameter>
@@ -272,22 +197,12 @@
         <parameter>
             <name>displacement0</name>
             <type>Constant</type>
-            <values>0 0 0</values>
+            <values>0 0</values>
         </parameter>
         <parameter>
             <name>pressure0</name>
             <type>Constant</type>
             <values>4e6</values>
-        </parameter>
-        <parameter>
-            <name>temperature0</name>
-            <type>Constant</type>
-            <values>298.15</values>
-        </parameter>
-        <parameter>
-            <name>temperature_outside</name>
-            <type>Constant</type>
-            <values>298.15</values>
         </parameter>
         <parameter>
             <name>pressure_tunnel</name>
@@ -312,68 +227,76 @@
     </parameters>
     <curves>
         <curve>
-            <name>excavation_curve</name>
-            <!--
-                Small step for initial state,
-                exacavation for 0.2 days,
-                keeping excavated region until end
-            -->
-            <coords>0 0.01 17280 2764800</coords>
-            <values>0    0 0.4   0.4</values>
+            <name>excavation_first_tunnel</name>
+            <coords>0 1000 2000</coords>
+            <values>0 5    0</values>
+        </curve>
+        <curve>
+            <name>excavation_parallel_first_tunnel</name>
+            <coords>0 2000</coords>
+            <values>0 5</values>
+            <!--this excavation starts 100 s later -->
+        </curve>
+        <curve>
+            <name>excavation_second_tunnel</name>
+            <coords>0 1000 2000</coords>
+            <values>0 5    5</values>
         </curve>
     </curves>
     <process_variables>
         <process_variable>
             <name>displacement</name>
-            <components>3</components>
+            <components>2</components>
             <order>1</order>
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>A2_left</mesh>
+                    <geometrical_set>excavation_niches2</geometrical_set>
+                    <geometry>left</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>A2_back</mesh>
+                    <geometrical_set>excavation_niches2</geometrical_set>
+                    <geometry>back</geometry>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>A2_bottom</mesh>
-                    <type>Dirichlet</type>
-                    <component>2</component>
-                    <parameter>dirichlet0</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <mesh>A2_right</mesh>
+                    <geometrical_set>excavation_niches2</geometrical_set>
+                    <geometry>right</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <mesh>A2_front</mesh>
-                    <type>Dirichlet</type>
-                    <component>1</component>
-                    <parameter>dirichlet0</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <mesh>A2_top</mesh>
-                    <type>Neumann</type>
-                    <component>2</component>
-                    <parameter>load_top</parameter>
                 </boundary_condition>
             </boundary_conditions>
             <deactivated_subdomains>
                 <deactivated_subdomain>
-                    <time_curve>excavation_curve</time_curve>
+                    <time_curve>excavation_second_tunnel</time_curve>
+                    <line_segment>
+                        <!-- reverse direction -->
+                        <start>0 5 0</start>
+                        <end>0 0 0</end>
+                    </line_segment>
+                    <material_ids>2</material_ids>
+                </deactivated_subdomain>
+                <deactivated_subdomain>
+                    <time_curve>excavation_first_tunnel</time_curve>
                     <line_segment>
                         <start>0 0 0</start>
-                        <end>0 0.4 0</end>
+                        <end>0 5 0</end>
                     </line_segment>
                     <material_ids>1</material_ids>
+                </deactivated_subdomain>
+                <deactivated_subdomain>
+                    <time_curve>excavation_parallel_first_tunnel</time_curve>
+                    <line_segment>
+                        <start>0 0 0</start>
+                        <end>0 5 0</end>
+                    </line_segment>
+                    <material_ids>3</material_ids>
                 </deactivated_subdomain>
             </deactivated_subdomains>
         </process_variable>
@@ -384,64 +307,34 @@
             <initial_condition>pressure0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>A2_back</mesh>
+                    <geometrical_set>excavation_niches2</geometrical_set>
+                    <geometry>back</geometry>
                     <type>Dirichlet</type>
                     <parameter>pressure_outside</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>A2_right</mesh>
-                    <type>Dirichlet</type>
-                    <parameter>pressure_outside</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <mesh>A2_top</mesh>
+                    <geometrical_set>excavation_niches2</geometrical_set>
+                    <geometry>right</geometry>
                     <type>Dirichlet</type>
                     <parameter>pressure_outside</parameter>
                 </boundary_condition>
             </boundary_conditions>
             <deactivated_subdomains>
                 <deactivated_subdomain>
-                    <time_curve>excavation_curve</time_curve>
+                    <time_curve>excavation_first_tunnel</time_curve>
                     <line_segment>
                         <start>0 0 0</start>
-                        <end>0 0.4 0</end>
+                        <end>0 5 0</end>
                     </line_segment>
                     <material_ids>1</material_ids>
-                    <boundary_parameter>pressure_tunnel</boundary_parameter>
                 </deactivated_subdomain>
-            </deactivated_subdomains>
-        </process_variable>
-        <process_variable>
-            <name>temperature</name>
-            <components>1</components>
-            <order>1</order>
-            <initial_condition>temperature0</initial_condition>
-            <boundary_conditions>
-                <boundary_condition>
-                    <mesh>A2_back</mesh>
-                    <type>Dirichlet</type>
-                    <parameter>temperature_outside</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <mesh>A2_right</mesh>
-                    <type>Dirichlet</type>
-                    <parameter>temperature_outside</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <mesh>A2_top</mesh>
-                    <type>Dirichlet</type>
-                    <parameter>temperature_outside</parameter>
-                </boundary_condition>
-            </boundary_conditions>
-            <deactivated_subdomains>
                 <deactivated_subdomain>
-                    <time_curve>excavation_curve</time_curve>
+                    <time_curve>excavation_parallel_first_tunnel</time_curve>
                     <line_segment>
                         <start>0 0 0</start>
-                        <end>0 0.4 0</end>
+                        <end>0 5 0</end>
                     </line_segment>
-                    <material_ids>1</material_ids>
-                    <boundary_parameter>temperature_outside</boundary_parameter>
+                    <material_ids>3</material_ids>
                 </deactivated_subdomain>
             </deactivated_subdomains>
         </process_variable>
@@ -465,88 +358,58 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <regex>A2_ts_.*.vtu</regex>
+            <regex>excavation_niches2_ts_.*.vtu</regex>
             <field>displacement</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>A2_ts_.*.vtu</regex>
+            <regex>excavation_niches2_ts_.*.vtu</regex>
             <field>epsilon</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>A2_ts_.*.vtu</regex>
+            <regex>excavation_niches2_ts_.*.vtu</regex>
             <field>sigma</field>
-            <absolute_tolerance>5e-8</absolute_tolerance>
+            <absolute_tolerance>2e-7</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>A2_ts_.*.vtu</regex>
+            <regex>excavation_niches2_ts_.*.vtu</regex>
             <field>pressure</field>
-            <absolute_tolerance>3e-8</absolute_tolerance>
+            <absolute_tolerance>4e-7</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>A2_ts_.*.vtu</regex>
-            <field>saturation</field>
-            <absolute_tolerance>1e-14</absolute_tolerance>
-            <relative_tolerance>1e-15</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <regex>A2_ts_.*.vtu</regex>
+            <regex>excavation_niches2_ts_.*.vtu</regex>
             <field>velocity</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>A2_ts_.*.vtu</regex>
-            <field>temperature</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
-            <relative_tolerance>1e-15</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <regex>A2_ts_.*.vtu</regex>
-            <field>liquid_density</field>
-            <absolute_tolerance>4e-12</absolute_tolerance>
-            <relative_tolerance>1e-15</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <regex>A2_ts_.*.vtu</regex>
-            <field>liquid_density_avg</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
-            <relative_tolerance>1e-15</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <regex>A2_ts_.*.vtu</regex>
-            <field>viscosity</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
-            <relative_tolerance>1e-15</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <regex>A2_ts_.*.vtu</regex>
-            <field>viscosity_avg</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
-            <relative_tolerance>1e-15</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <regex>A2_ts_.*.vtu</regex>
+            <regex>excavation_niches2_ts_.*.vtu</regex>
             <field>MassFlowRate</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>A2_ts_.*.vtu</regex>
-            <field>HeatFlowRate</field>
-            <absolute_tolerance>5e-13</absolute_tolerance>
+            <regex>excavation_niches2_ts_.*.vtu</regex>
+            <field>NodalForces</field>
+            <absolute_tolerance>6e-8</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>A2_ts_.*.vtu</regex>
-            <field>NodalForces</field>
-            <absolute_tolerance>5e-10</absolute_tolerance>
-            <relative_tolerance>1e-15</relative_tolerance>
+            <regex>excavation_niches2_ts_.*.vtu</regex>
+            <field>displacement_active</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>excavation_niches2_ts_.*.vtu</regex>
+            <field>pressure_active</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>

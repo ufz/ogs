@@ -11,6 +11,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE HydroMechanics/Linear/DrainageEexcavation/HMdrainage.prj RUNTIME 330)
     OgsTest(PROJECTFILE HydroMechanics/A2/A2.prj RUNTIME 10)
     OgsTest(PROJECTFILE HydroMechanics/ExcavationNiches/excavation_niches.prj RUNTIME 60)
+    OgsTest(PROJECTFILE HydroMechanics/ExcavationNiches/excavation_niches2.prj RUNTIME 4)
 endif()
 
 # Ground equilibrium
