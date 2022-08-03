@@ -54,7 +54,11 @@
     <hr class="mt-3">
     <ul>
       {{ range $baseSubsection.Sections }}
-        <li class="tracking-wide font-bold mt-6"><a href="{{ .Permalink }}" {{if eq .RelPermalink $subSubsection.RelPermalink }} class="text-brand-500" {{end}}>{{ .Title | upper }}</a></li>
+        <li class="tracking-wide font-bold mt-6">
+          {{ if .Params.breadcrumbs }}<a href="{{ .Permalink }}">{{ end }}
+            <span {{if eq .RelPermalink $subSubsection.RelPermalink }} class="text-brand-500" {{end}}>{{ .Title | upper }}</span>
+          {{ if .Params.breadcrumbs }}</a>{{ end }}
+        </li>
         {{ template "subpages" (dict "indexRelPermalink" $indexRelPermalink "context" .)  }}
       {{ end }}
     </ul>
