@@ -19,18 +19,9 @@ normals a correct node ordering of the element nodes is required.
 
 ```bash
 ExtractBoundary -i [<file name of input mesh>] [-o <file name of output mesh>]
-    [--face-property-name <string>]
-    [--element-property-name <string>]
-    [--node-property-name <string>]
 ```
 
-The data arrays added to the boundary mesh by using the options
-`--face-property-name` (default value 'bulk_face_ids'),
-`--element-property-name` (default value 'bulk_element_ids'),
-and `--node-property-name` (default value 'bulk_node_ids')
-are used in other tools (for instance in
-[ComputeNodeAreasFromSurfaceMesh]({{< ref "compute-node-areas-from-surface-mesh" >}}))
-and are required for flux calculations during a simulation run of OpenGeoSys.
+New data arrays containing the original IDs for nodes, elements, and faces from the source mesh are added to the extracted surface mesh. These data arrays are required for specifying source terms or setting boundary conditions during a simulation run of OpenGeoSys.
 
 ## Examples
 
