@@ -43,7 +43,7 @@ public:
     //! given \c timestep.
     void doOutput(Process const& process, const int process_id,
                   int const timestep, const double t, int const iteration,
-                  std::vector<GlobalVector*> const& xs);
+                  std::vector<GlobalVector*> const& xs) const;
 
     //! Writes output for the given \c process if it has not been written yet.
     //! This method is intended for doing output after the last timestep in

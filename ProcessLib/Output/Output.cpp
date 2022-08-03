@@ -226,7 +226,7 @@ void Output::doOutput(Process const& process,
                       int const timestep,
                       const double t,
                       int const iteration,
-                      std::vector<GlobalVector*> const& xs)
+                      std::vector<GlobalVector*> const& xs) const
 {
     if (isOutputStep(timestep, t))
     {
