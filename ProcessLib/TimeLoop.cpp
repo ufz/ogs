@@ -18,7 +18,7 @@
 #include "NumLib/ODESolver/PETScNonlinearSolver.h"
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
 #include "ProcessData.h"
-#include "ProcessLib/Output/CreateOutput.h"
+
 namespace
 {
 bool isMonolithicProcess(ProcessLib::ProcessData const& process_data)
