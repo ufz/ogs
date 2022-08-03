@@ -106,7 +106,7 @@ Output::Output(std::unique_ptr<OutputFile> output_file,
                bool const output_nonlinear_iteration_results,
                OutputDataSpecification const& output_data_specification,
                std::vector<std::string> const& mesh_names_for_output,
-               std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes)
+               std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
     : _output_file(std::move(output_file)),
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
       _output_data_specification(std::move(output_data_specification)),
@@ -142,7 +142,7 @@ MeshLib::Mesh const& Output::prepareSubmesh(
     std::vector<GlobalVector*> const& xs) const
 {
     auto& submesh = *BaseLib::findElementOrError(
-        begin(_meshes), end(_meshes),
+        _meshes.get().begin(), _meshes.get().end(),
         [&submesh_output_name](auto const& m)
         { return m->getName() == submesh_output_name; },
         "Need mesh '" + submesh_output_name + "' for the output.");

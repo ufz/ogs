@@ -104,7 +104,15 @@ private:
     OutputDataSpecification _output_data_specification;
     std::vector<std::reference_wrapper<Process const>> _output_processes;
     std::vector<std::string> _mesh_names_for_output;
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& _meshes;
+    // The reference wrapper enables the compiler to generate a move constructor
+    // and move assignment operator
+    // - another possibility would be to transform the
+    // std::vector<std::unique_ptr<MeshLib::Mesh>> to
+    // std::vector<MeshLib::Mesh*>
+    // - this issue could also be solved by (globally) storing the meshes into a
+    // std::vector<std::shared_ptr<MeshLib::Mesh>>
+    std::reference_wrapper<std::vector<std::unique_ptr<MeshLib::Mesh>> const>
+        _meshes;
 };
 
 }  // namespace ProcessLib
