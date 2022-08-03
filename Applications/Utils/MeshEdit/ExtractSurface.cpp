@@ -49,24 +49,6 @@ int main(int argc, char* argv[])
                                    "binary format for data in the vtu output.",
                                    false);
     cmd.add(use_ascii_arg);
-    TCLAP::ValueArg<std::string> face_prop_name(
-        "f", "face-property-name",
-        "the name of the data array the surface face id of the subsurface/bulk "
-        "element will be stored to",
-        false, "bulk_face_ids", "string");
-    cmd.add(face_prop_name);
-    TCLAP::ValueArg<std::string> element_prop_name(
-        "e", "element-property-name",
-        "the name of the data array the subsurface/bulk element id will be "
-        "stored to",
-        false, "bulk_element_ids", "string");
-    cmd.add(element_prop_name);
-    TCLAP::ValueArg<std::string> node_prop_name(
-        "n", "node-property-name",
-        "the name of the data array the subsurface/bulk node id will be stored "
-        "to",
-        false, "bulk_node_ids", "string");
-    cmd.add(node_prop_name);
     TCLAP::ValueArg<double> angle_arg(
         "a", "angle",
         "tolerated angle (in degrees) between given normal and element normal",
@@ -126,8 +108,8 @@ int main(int argc, char* argv[])
     double const angle(angle_arg.getValue());
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
         MeshLib::MeshSurfaceExtraction::getMeshSurface(
-            *mesh, dir, angle, node_prop_name.getValue(),
-            element_prop_name.getValue(), face_prop_name.getValue()));
+            *mesh, dir, angle, "bulk_node_ids", "bulk_element_ids",
+            "bulk_face_ids"));
 
     std::string out_fname(mesh_out.getValue());
     if (out_fname.empty())
