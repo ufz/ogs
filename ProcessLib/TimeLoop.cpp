@@ -847,10 +847,10 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     return nonlinear_solver_status;
 }
 
-template <typename OutputClass, typename OutputClassMember>
+template <typename OutputClassMember>
 void TimeLoop::outputSolutions(bool const output_initial_condition,
                                unsigned timestep, const double t,
-                               OutputClass& output_object,
+                               Output const& output_object,
                                OutputClassMember output_class_member) const
 {
     // All _per_process_data share the first process.

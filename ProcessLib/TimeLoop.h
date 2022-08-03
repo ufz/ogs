@@ -113,9 +113,9 @@ private:
         std::vector<std::function<double(double, double)>> const&
             time_step_constraints);
 
-    template <typename OutputClass, typename OutputClassMember>
+    template <typename OutputClassMember>
     void outputSolutions(bool const output_initial_condition, unsigned timestep,
-                         const double t, OutputClass& output_object,
+                         const double t, Output const& output_object,
                          OutputClassMember output_class_member) const;
 
 private:
