@@ -16,24 +16,28 @@
         </div>
 
         {{ $notebook_collection := where .Pages "Params.notebook" "!=" nil }}
-        <h2 class="text-2xl font-extrabold sm:text-3xl"><img style="margin-top: 0; margin-bottom: 0; height: 1.5em;"
-            class="inline-block mr-1" src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" alt="">
-          Notebooks</h2>
-        <ul role="list"
-          class="space-y-12 grid grid-cols-2 sm:grid-cols-3  sm:gap-x-6 gap-y-12 space-y-0 lg:grid-cols-4 lg:gap-x-8">
-          {{ range where $notebook_collection "Params.gallery" "!=" "false" }}
-          {{ partial "components/gallery-item.html" . }}
-          {{ end }}
-        </ul>
+        {{ if gt (len $notebook_collection) 0 }}
+          <h2 class="text-2xl font-extrabold sm:text-3xl"><img style="margin-top: 0; margin-bottom: 0; height: 1.5em;"
+              class="inline-block mr-1" src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" alt="">
+            Notebooks</h2>
+          <ul role="list"
+            class="space-y-12 grid grid-cols-2 sm:grid-cols-3  sm:gap-x-6 gap-y-12 space-y-0 lg:grid-cols-4 lg:gap-x-8">
+            {{ range where $notebook_collection "Params.gallery" "!=" "false" }}
+            {{ partial "components/gallery-item.html" . }}
+            {{ end }}
+          </ul>
+        {{ end }}
 
         {{ $image_collection := where .Pages "Params.image" "!=" nil }}
-        <h2 class="text-2xl font-extrabold  sm:text-3xl">Classic benchmarks</h2>
-        <ul role="list"
-          class="space-y-12 grid grid-cols-2 sm:grid-cols-3  sm:gap-x-6 gap-y-12 space-y-0 lg:grid-cols-4 lg:gap-x-8">
-          {{ range where $image_collection "Params.gallery" "!=" "false" }}
-          {{ partial "components/gallery-item.html" . }}
-          {{ end }}
-        </ul>
+        {{ if gt (len $image_collection) 0 }}
+          <h2 class="text-2xl font-extrabold  sm:text-3xl">Classic benchmarks</h2>
+          <ul role="list"
+            class="space-y-12 grid grid-cols-2 sm:grid-cols-3  sm:gap-x-6 gap-y-12 space-y-0 lg:grid-cols-4 lg:gap-x-8">
+            {{ range where $image_collection "Params.gallery" "!=" "false" }}
+            {{ partial "components/gallery-item.html" . }}
+            {{ end }}
+          </ul>
+        {{ end }}
 
       </div>
     </div>
