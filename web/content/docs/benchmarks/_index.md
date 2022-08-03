@@ -2,6 +2,9 @@
 title = "Benchmarks"
 layout = "subsections"
 
+[cascade]
+breadcrumbs = true
+
 [menu.docs]
 name = "Benchmarks"
 identifier = "benchmarks"
