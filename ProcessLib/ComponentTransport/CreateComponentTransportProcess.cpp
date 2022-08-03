@@ -193,12 +193,12 @@ std::unique_ptr<Process> createComponentTransportProcess(
     }
 
     /// \section parameterscomponenttransport Process Parameters
-    // Specific body force parameter.
-    Eigen::VectorXd specific_body_force;
     std::vector<double> const b =
         //! \ogs_file_param{prj__processes__process__ComponentTransport__specific_body_force}
         config.getConfigParameter<std::vector<double>>("specific_body_force");
     assert(!b.empty() && b.size() < 4);
+    // Specific body force parameter.
+    Eigen::VectorXd specific_body_force(b.size());
     int const mesh_space_dimension =
         MeshLib::getSpaceDimension(mesh.getNodes());
     if (static_cast<int>(b.size()) != mesh_space_dimension)
