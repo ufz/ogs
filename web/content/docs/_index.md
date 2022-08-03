@@ -6,5 +6,3 @@ name = "Docs"
 identifier = "docs"
 weight = 2
 +++
-
-# OpenGeoSys documentation overview
