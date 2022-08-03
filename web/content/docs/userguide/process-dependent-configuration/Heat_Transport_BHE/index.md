@@ -2,11 +2,7 @@
 date = "2019-11-21T12:00:13+01:00"
 title = "Heat_Transport_BHE"
 author = "Wanlong Cai, Haibing Shao"
-weight = 41
-
-[menu]
-  [menu.userguide]
-    parent = "process-dependent-configuration"
+weight = 1
 +++
 
 ## Description of process Heat_Transport_BHE

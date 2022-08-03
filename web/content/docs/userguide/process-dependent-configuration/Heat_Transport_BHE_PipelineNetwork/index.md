@@ -2,13 +2,10 @@
 date = "2020-02-03T12:00:13+01:00"
 title = "Heat_Transport_BHE PipeNetwork Feature"
 author = "Shuang Chen, Haibing Shao, Francesco Witte"
-weight = 42
+weight = 2
 project = ["Parabolic/T/3D_3BHEs_array/3bhes_1U.prj"]
-
-[menu]
-  [menu.userguide]
-    parent = "process-dependent-configuration"
 +++
+
 {{< data-link >}}
 
 ## Introduction of the Pipe Network feature for the process Heat_Transport_BHE

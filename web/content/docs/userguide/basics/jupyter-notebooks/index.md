@@ -3,10 +3,6 @@ date = "2021-09-09T15:00:13+01:00"
 title = "Jupyter Notebooks"
 author = "Lars Bilke"
 weight = 5
-
-[menu]
-  [menu.userguide]
-    parent = "basics"
 +++
 
 [Jupyter Notebooks](https://jupyter.org) are documents which can contain live (Python) code, equations, visualizations and narrative text and can be used as an intuitive interface for OGS projects. The following video gives an introduction to using OpenGeoSys with Jupyter Notebooks:

@@ -2,12 +2,6 @@
 date = "2018-11-14T14:00:13+01`:00"
 title = "ParaView on Eve frontends / envinf1"
 author = "Lars Bilke"
-weight = 31
-
-[menu]
-  [menu.userguide]
-    parent = "post-processing"
-
 aliases = ['paraview-on-envinf1']
 +++
 

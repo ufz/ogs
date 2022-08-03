@@ -13,10 +13,6 @@ name = "User Guide"
 identifier = "userguide"
 weight = 1
 post = "Download, install and run an OGS benchmark in 5 minutes! No development setup required."
-
-[menu]
-  [menu.userguide]
-    parent = "basics"
 +++
 
 ## Download
