@@ -32,8 +32,9 @@ class Output;
 
 namespace ProcessLib
 {
-Output createOutput(const BaseLib::ConfigTree& config,
-                    const std::string& output_directory,
-                    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
+std::vector<Output> createOutput(
+    const BaseLib::ConfigTree& config,
+    const std::string& output_directory,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
 
 }  // namespace ProcessLib

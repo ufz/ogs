@@ -57,7 +57,7 @@ std::unique_ptr<TimeLoop> createTimeLoop(
         }
     }
 
-    auto output =
+    auto outputs =
         //! \ogs_file_param{prj__time_loop__output}
         createOutput(config.getConfigSubtree("output"), output_directory,
                      meshes);
@@ -110,7 +110,8 @@ std::unique_ptr<TimeLoop> createTimeLoop(
             ->timestep_algorithm->end();
 
     return std::make_unique<TimeLoop>(
-        std::move(output), std::move(per_process_data), max_coupling_iterations,
-        std::move(global_coupling_conv_criteria), start_time, end_time);
+        std::move(outputs), std::move(per_process_data),
+        max_coupling_iterations, std::move(global_coupling_conv_criteria),
+        start_time, end_time);
 }
 }  // namespace ProcessLib
