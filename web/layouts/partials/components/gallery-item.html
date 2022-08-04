@@ -3,14 +3,16 @@
     <div class="space-y-4">
       <div class="aspect-w-3 aspect-h-2">
 
-        {{ if isset .Params "image" }}
-        {{ $.Scratch.Set "image" (.Resources.GetMatch .Params.image) }}
-        {{ else }}
-        {{ range first 1 (.Resources.ByType "image") }}
-        {{ $.Scratch.Set "image" . }}
+        {{ $white_image := resources.Get "images/white.png" }}
+        {{ $image := .Resources.GetMatch .Params.image }}
+        {{ if not $image }}
+          {{ range first 1 (.Resources.ByType "image") }}
+            {{ $image = . }}
+          {{ end }}
+          {{ if not $image }}
+            {{ $image = $white_image }}
+          {{ end }}
         {{ end }}
-        {{ end }}
-        {{ $image := $.Scratch.Get "image" }}
         {{ $image := $image.Fit "600x400" }}
         <img class="object-cover shadow-lg rounded-lg no-fancybox border" src="{{ $image.RelPermalink }}" alt="">
 
