@@ -4,7 +4,10 @@
       <div class="aspect-w-3 aspect-h-2">
 
         {{ $white_image := resources.Get "images/white.png" }}
-        {{ $image := .Resources.GetMatch .Params.image }}
+        {{ $image := "" }}
+        {{ if isset .Params "image" }}
+          {{ $image = .Resources.GetMatch .Params.image }}
+        {{ end }}
         {{ if not $image }}
           {{ range first 1 (.Resources.ByType "image") }}
             {{ $image = . }}
@@ -19,7 +22,13 @@
       </div>
       <div class="space-y-2">
         <div class="space-y-1">
-          <h3 class="text-center">{{ .Title }}</h3>
+          <h3 class="text-center">
+            {{ if isset .Params "notebook" }}
+              <img style="margin-top: 0; margin-bottom: 0; height: 1.5em;"
+              class="inline-block mr-1" src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" alt="">
+            {{ end }}
+            {{ .Title }}
+          </h3>
         </div>
       </div>
     </div>
