@@ -1,5 +1,5 @@
 +++
-title = "OpenGeoSys documentation overview"
+title = "Docs"
 
 [menu.main]
 name = "Docs"

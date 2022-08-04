@@ -1,6 +1,6 @@
 {{ define "breadcrumbnav" }}
   {{ $separator := true}}
-  {{ if .p1.Parent.Parent.Parent }}
+  {{ if .p1.Parent.Parent }}
     {{ template "breadcrumbnav" (dict "p1" .p1.Parent "p2" .p2 )  }}
   {{ else }}
     {{ $separator = false }}
