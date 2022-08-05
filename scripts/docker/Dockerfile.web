@@ -1,5 +1,5 @@
 FROM python:3-slim
-RUN pip install urlchecker==0.0.28
+RUN pip install urlchecker==0.0.32
 CMD [ "/bin/bash" ]
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     --no-install-recommends curl git gnupg2 && \
