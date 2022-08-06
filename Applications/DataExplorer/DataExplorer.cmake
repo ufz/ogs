@@ -40,7 +40,7 @@ target_link_libraries(
     Qt5::Widgets
     Qt5::Xml
     Qt5::Network
-    spdlog::spdlog
+    spdlog
     VTK::IOExport
 )
 

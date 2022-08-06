@@ -54,7 +54,7 @@ CapillaryPressureVanGenuchten::CapillaryPressureVanGenuchten(
         OGS_FATAL(
             "Van Genuchten capillary pressure model: The maximum liquid "
             "saturation S_L_max = {:g} must not be less or equal to the "
-            "residual liquid saturion S_L_res = { : g}.",
+            "residual liquid saturion S_L_res = {:g}.",
             S_L_max_, S_L_res_);
     }
     if (!(m_ > 0 && m_ < 1))

@@ -9,10 +9,6 @@
 
 #include "writeXdmf.h"
 
-// ToDo (tm) Remove spdlogfmt includes with c++20
-#include <spdlog/fmt/bundled/core.h>
-#include <spdlog/fmt/bundled/format.h>
-
 #include <algorithm>
 #include <array>
 #include <fstream>
@@ -124,15 +120,15 @@ std::function<std::string(std::vector<double>)> write_xdmf(
             [time_step, max_step, h5filename, mesh_name](auto const& xdmfdata)
         {
             return fmt::format(
-                "\n\t\t<DataItem DataType=\"{datatype}\" "
-                "Dimensions=\"{local_dimensions}\" "
-                "Format=\"HDF\" "
-                "Precision=\"{precision}\">"
-                "{filename}:/meshes/{meshname}/{datasetname}|"
-                "{time_step} {starts}:1 {strides}:1 "
-                "{local_dimensions}:{max_step} "
-                "{global_dimensions}</"
-                "DataItem>",
+                fmt::runtime("\n\t\t<DataItem DataType=\"{datatype}\" "
+                             "Dimensions=\"{local_dimensions}\" "
+                             "Format=\"HDF\" "
+                             "Precision=\"{precision}\">"
+                             "{filename}:/meshes/{meshname}/{datasetname}|"
+                             "{time_step} {starts}:1 {strides}:1 "
+                             "{local_dimensions}:{max_step} "
+                             "{global_dimensions}</"
+                             "DataItem>"),
                 "datatype"_a = getPropertyDataTypeString(xdmfdata.data_type),
                 "local_dimensions"_a =
                     fmt::join(xdmfdata.global_block_dims, " "),
@@ -172,7 +168,7 @@ std::function<std::string(std::vector<double>)> write_xdmf(
     auto const pointer_transfrom = [](auto const& elements)
     {
         return fmt::format(
-            "\n\t<xi:include xpointer=\"element(/{elements})\"/>",
+            fmt::runtime("\n\t<xi:include xpointer=\"element(/{elements})\"/>"),
             "elements"_a = fmt::join(elements, "/"));
     };
 
@@ -196,7 +192,8 @@ std::function<std::string(std::vector<double>)> write_xdmf(
         [](XdmfData const& geometry, auto const& dataitem_transform)
     {
         return fmt::format(
-            "\n\t<Geometry Origin=\"\" Type=\"XYZ\">{dataitem}\n\t</Geometry>",
+            fmt::runtime("\n\t<Geometry Origin=\"\" "
+                         "Type=\"XYZ\">{dataitem}\n\t</Geometry>"),
             "dataitem"_a = dataitem_transform(geometry));
     };
 
@@ -205,8 +202,8 @@ std::function<std::string(std::vector<double>)> write_xdmf(
         [](XdmfData const& topology, auto const& dataitem_transform)
     {
         return fmt::format(
-            "\n\t<Topology Dimensions=\"{dimensions}\" "
-            "Type=\"Mixed\">{dataitem}\n\t</Topology>",
+            fmt::runtime("\n\t<Topology Dimensions=\"{dimensions}\" "
+                         "Type=\"Mixed\">{dataitem}\n\t</Topology>"),
             "dataitem"_a = dataitem_transform(topology),
             "dimensions"_a = fmt::join(topology.global_block_dims, " "));
     };
@@ -322,8 +319,9 @@ std::function<std::string(std::vector<double>)> write_xdmf(
                 constant_attributes, variable_attributes));
         }
         return fmt::format(
-            "\n<Grid CollectionType=\"Temporal\" GridType=\"Collection\" "
-            "Name=\"Collection\">{grids}\n</Grid>\n",
+            fmt::runtime(
+                "\n<Grid CollectionType=\"Temporal\" GridType=\"Collection\" "
+                "Name=\"Collection\">{grids}\n</Grid>\n"),
             "grids"_a = fmt::join(grids, ""));
     };
 

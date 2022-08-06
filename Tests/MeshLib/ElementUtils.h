@@ -61,7 +61,7 @@ inline std::unique_ptr<MeshLib::Element const> getFace(
         }
     }
 
-    OGS_FATAL("Unsupported element dimension: " + std::to_string(dim));
+    OGS_FATAL("Unsupported element dimension: {}", dim);
 }
 
 template <typename BulkElementRule>

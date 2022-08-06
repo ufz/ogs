@@ -78,12 +78,12 @@ int main(int argc, char* argv[])
     }
     catch (char* e)
     {
-        ERR(e);
+        ERR("{}", e);
         return 1;
     }
-    catch (std::exception& e)
+    catch (std::exception const& e)
     {
-        ERR(e.what());
+        ERR("{}", e.what());
         return 1;
     }
     catch (...)

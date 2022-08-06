@@ -11,6 +11,7 @@
 
 #include <boost/math/special_functions/pow.hpp>
 
+#include "BaseLib/cpp23.h"
 #include "LinearElasticIsotropic.h"
 #include "MaterialLib/MPL/Utils/GetSymmetricTensor.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
@@ -691,8 +692,8 @@ SolidEhlers<DisplacementDim>::integrateStress(
         {
             OGS_FATAL(
                 "Unimplemented tangent type behaviour for the tangent type "
-                "'{:d}'.",
-                _tangent_type);
+                "'{}'.",
+                BaseLib::to_underlying(_tangent_type));
         }
     }
 

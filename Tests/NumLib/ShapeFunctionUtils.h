@@ -76,7 +76,8 @@ auto computeShapeMatricesOnFace(MeshLib::Element const& face,
         case CellType::PYRAMID5:
             return compute(Type<Pyramid>{});
         default:
-            OGS_FATAL("Unsupported cell type " + CellType2String(cell_type));
+            OGS_FATAL("Unsupported cell type {}",
+                      MeshLib::CellType2String(cell_type));
     }
 }
 
@@ -132,7 +133,8 @@ auto interpolateNodeCoordinatesFace(MeshLib::Element const& face,
         case CellType::PYRAMID5:
             return interpolate(Type<Pyramid>{});
         default:
-            OGS_FATAL("Unsupported cell type " + CellType2String(cell_type));
+            OGS_FATAL("Unsupported cell type {}",
+                      MeshLib::CellType2String(cell_type));
     }
 }
 }  // namespace ShapeFunctionUtils

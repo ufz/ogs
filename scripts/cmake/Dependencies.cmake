@@ -50,7 +50,19 @@ if(OGS_BUILD_TESTING)
     endif()
 endif()
 
-CPMFindPackage(NAME spdlog GITHUB_REPOSITORY gabime/spdlog VERSION 1.8.2)
+CPMFindPackage(
+    NAME spdlog
+    GITHUB_REPOSITORY gabime/spdlog
+    VERSION 1.10.0
+    OPTIONS "BUILD_SHARED_LIBS OFF" "SPDLOG_BUILD_SHARED OFF"
+)
+if(spdlog_ADDED)
+    set_target_properties(
+        spdlog
+        PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES
+                   $<TARGET_PROPERTY:spdlog,INTERFACE_INCLUDE_DIRECTORIES>
+    )
+endif()
 
 CPMFindPackage(
     NAME tclap

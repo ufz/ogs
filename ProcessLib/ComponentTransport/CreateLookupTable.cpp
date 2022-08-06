@@ -40,7 +40,7 @@ std::vector<std::size_t> getIndexVector(std::vector<double> const& data,
 
     if (idx_vec.empty())
     {
-        OGS_FATAL("No matching element {:d} is found in the vector.", value);
+        OGS_FATAL("No matching element {} is found in the vector.", value);
     }
 
     return idx_vec;

@@ -11,7 +11,7 @@ ogs_add_library(BaseLib GENERATE_EXPORT_HEADER ${SOURCES})
 target_link_libraries(
     BaseLib
     PUBLIC Boost::boost
-           spdlog::spdlog
+           spdlog
            tclap
            $<$<BOOL:${MSVC}>:WinMM> # needed for timeGetTime
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::Xml>

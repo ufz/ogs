@@ -94,8 +94,8 @@ struct FormEigenTensor
             return result;
         }
 
-        OGS_FATAL("Cannot convert a symmetric 3d tensor to {:d}x{:d} matrix",
-                  GlobalDim);
+        OGS_FATAL("Cannot convert a symmetric 3d tensor to a {}x{} matrix",
+                  GlobalDim, GlobalDim);
     }
 
     Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
@@ -106,9 +106,8 @@ struct FormEigenTensor
             return values;
         }
 
-        OGS_FATAL(
-            "Cannot convert a dynamic {:d}x{:d} matrix to a {:d}x{:d} matrix",
-            values.rows(), values.cols(), GlobalDim, GlobalDim);
+        OGS_FATAL("Cannot convert a dynamic {}x{} matrix to a {}x{} matrix",
+                  values.rows(), values.cols(), GlobalDim, GlobalDim);
     }
 };
 

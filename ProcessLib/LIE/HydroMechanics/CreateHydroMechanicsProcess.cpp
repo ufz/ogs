@@ -67,8 +67,9 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
             pv_name.find("displacement_jump") != 0)
         {
             OGS_FATAL(
-                "Found a process variable name '{:s}'. It should be "
-                "'displacement' or 'displacement_jumpN' or 'pressure'");
+                "Found a process variable name '{}'. It should be "
+                "'displacement' or 'displacement_jumpN' or 'pressure'",
+                pv_name);
         }
         auto variable = std::find_if(variables.cbegin(), variables.cend(),
                                      [&pv_name](ProcessVariable const& v)

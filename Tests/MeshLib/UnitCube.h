@@ -44,7 +44,7 @@ inline VTKCellType toVtk(MeshLib::CellType const cell_type)
         case CellType::PYRAMID5:
             return VTK_PYRAMID;
         default:
-            OGS_FATAL("Unsupported cell type " + CellType2String(cell_type));
+            OGS_FATAL("Unsupported cell type {}", CellType2String(cell_type));
     }
 }
 
@@ -66,10 +66,10 @@ inline void checkBounds(vtkUnstructuredGrid& grid, std::size_t const dim)
 
         if (min != -0.5 || max != 0.5)
         {
-            OGS_FATAL("Unexpected bounds for a unit cube. " +
-                      std::to_string(min) + " != -0.5 or " +
-                      std::to_string(max) + " != 0.5 for component " +
-                      std::to_string(c) + '.');
+            OGS_FATAL(
+                "Unexpected bounds for a unit cube. {} != -0.5 or {} != 0.5 "
+                "for component {}.",
+                min, max, c);
         }
     }
 }
@@ -82,9 +82,9 @@ inline void checkCellTypes(MeshLib::Mesh const& mesh,
         auto const& e = *mesh.getElement(i);
         if (e.getCellType() != cell_type)
         {
-            OGS_FATAL("Unexpected element type: " +
-                      MeshLib::CellType2String(e.getCellType()) +
-                      " != " + MeshLib::CellType2String(cell_type));
+            OGS_FATAL("Unexpected element type: {} != {}",
+                      MeshLib::CellType2String(e.getCellType()),
+                      MeshLib::CellType2String(cell_type));
         }
     }
 }
@@ -103,9 +103,9 @@ inline void checkVolume(MeshLib::Mesh const& mesh)
     if (diff > tol)
     {
         OGS_FATAL(
-            "The volume of a unit cube must be 1. Instead, the volume is " +
-            std::to_string(volume) + ". The difference is " +
-            std::to_string(diff) + " > " + std::to_string(tol) + '.');
+            "The volume of a unit cube must be 1. Instead, the volume is {}. "
+            "The difference is {:g} > {:g}",
+            volume, diff, tol);
     }
 }
 

@@ -26,27 +26,27 @@ void initOGSLogger(std::string const& log_level);
 }  // namespace BaseLib
 
 template <typename... Args>
-void DBUG(char const* fmt, Args const&... args)
+void DBUG(fmt::format_string<Args...> fmt, Args&&... args)
 {
-    BaseLib::console->debug(fmt, args...);
+    BaseLib::console->debug(fmt, std::forward<Args>(args)...);
 }
 template <typename... Args>
-void INFO(char const* fmt, Args const&... args)
+void INFO(fmt::format_string<Args...> fmt, Args&&... args)
 {
-    BaseLib::console->info(fmt, args...);
+    BaseLib::console->info(fmt, std::forward<Args>(args)...);
 }
 template <typename... Args>
-void WARN(char const* fmt, Args const&... args)
+void WARN(fmt::format_string<Args...> fmt, Args&&... args)
 {
-    BaseLib::console->warn(fmt, args...);
+    BaseLib::console->warn(fmt, std::forward<Args>(args)...);
 }
 template <typename... Args>
-void ERR(char const* fmt, Args const&... args)
+void ERR(fmt::format_string<Args...> fmt, Args&&... args)
 {
-    BaseLib::console->error(fmt, args...);
+    BaseLib::console->error(fmt, std::forward<Args>(args)...);
 }
 template <typename... Args>
-void CRITICAL(char const* fmt, Args const&... args)
+void CRITICAL(fmt::format_string<Args...> fmt, Args&&... args)
 {
-    BaseLib::console->critical(fmt, args...);
+    BaseLib::console->critical(fmt, std::forward<Args>(args)...);
 }

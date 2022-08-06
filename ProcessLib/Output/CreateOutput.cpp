@@ -18,6 +18,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
+#include "BaseLib/cpp23.h"
 #include "MeshLib/Mesh.h"
 #include "Output.h"
 
@@ -68,9 +69,9 @@ std::unique_ptr<OutputFile> createOutputFile(
                 compress_output, number_of_files);
         default:
             OGS_FATAL(
-                "No supported file type provided. Read '{:s}' from "
+                "No supported file type provided. Read '{}' from "
                 "<output><type> in prj file. Supported: VTK, XDMF.",
-                output_type);
+                BaseLib::to_underlying(output_type));
     }
 }
 

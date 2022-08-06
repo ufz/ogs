@@ -67,8 +67,9 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
             pv_name.find("temperature_BHE") == std::string::npos)
         {
             OGS_FATAL(
-                "Found a process variable name '{:s}'. It should be "
-                "'temperature_soil' or 'temperature_BHE_X'");
+                "Found a process variable name '{}'. It should be "
+                "'temperature_soil' or 'temperature_BHE_X'",
+                pv_name);
         }
         auto variable = std::find_if(variables.cbegin(), variables.cend(),
                                      [&pv_name](ProcessVariable const& v)
