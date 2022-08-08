@@ -144,8 +144,9 @@ void ConstitutiveSetting<DisplacementDim>::eval(
                                       dS_L_data, poro_data, p_cap_data, T_data,
                                       vap_data);
 
-    models.f_therm_exp_model.eval(x_t, media_data, s_therm_exp_data, poro_data,
-                                  rho_L_data, biot_data, f_therm_exp_data);
+    models.f_therm_exp_model.eval(x_t, media_data, p_cap_data, T_data,
+                                  s_therm_exp_data, poro_data, rho_L_data,
+                                  biot_data, f_therm_exp_data);
 
     models.storage_model.eval(x_t, biot_data, poro_data, rho_L_data, S_L_data,
                               dS_L_data, prev_state.S_L_data, p_cap_data,
