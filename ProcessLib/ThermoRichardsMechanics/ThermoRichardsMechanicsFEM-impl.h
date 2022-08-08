@@ -460,7 +460,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const u_dot = block_u(local_x_dot);
 
     auto const e_id = this->element_.getID();
-    auto& medium = *this->process_data_.media_map->getMedium(e_id);
+    auto const& process_data = this->process_data_;
+    auto& medium = *process_data.media_map->getMedium(e_id);
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(e_id);
@@ -477,15 +478,18 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     KV sigma_avg = KV::Zero();
 
     ConstitutiveSetting<DisplacementDim> constitutive_setting(
-        this->solid_material_, this->process_data_);
+        this->solid_material_, process_data);
 
-    ConstitutiveModels<DisplacementDim> models(this->process_data_,
+    ConstitutiveModels<DisplacementDim> models(process_data,
                                                this->solid_material_);
     ConstitutiveTempData<DisplacementDim> tmp;
     ConstitutiveData<DisplacementDim> CD;
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
+        auto& current_state = this->current_states_[ip];
+        auto& output_data = this->output_data_[ip];
+
         x_position.setIntegrationPoint(ip);
 
         auto const& ip_data = ip_data_[ip];
@@ -525,15 +529,15 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             medium,                                   //
             {T_ip, T_dot_ip, grad_T_ip},              //
             {p_cap_ip, p_cap_dot_ip, grad_p_cap_ip},  //
-            eps, eps_prev, this->current_states_[ip], this->prev_states_[ip],
-            this->material_states_[ip], tmp, this->output_data_[ip], CD);
+            eps, eps_prev, current_state, this->prev_states_[ip],
+            this->material_states_[ip], tmp, output_data, CD);
 
-        saturation_avg += this->current_states_[ip].S_L_data.S_L;
-        porosity_avg += this->current_states_[ip].poro_data.phi;
+        saturation_avg += current_state.S_L_data.S_L;
+        porosity_avg += current_state.poro_data.phi;
 
-        liquid_density_avg += this->output_data_[ip].rho_L_data.rho_LR;
-        viscosity_avg += this->output_data_[ip].mu_L_data.viscosity;
-        sigma_avg += this->current_states_[ip].s_mech_data.sigma_eff;
+        liquid_density_avg += output_data.rho_L_data.rho_LR;
+        viscosity_avg += output_data.mu_L_data.viscosity;
+        sigma_avg += current_state.s_mech_data.sigma_eff;
     }
     saturation_avg /= n_integration_points;
     porosity_avg /= n_integration_points;
@@ -541,23 +545,23 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     liquid_density_avg /= n_integration_points;
     sigma_avg /= n_integration_points;
 
-    (*this->process_data_.element_saturation)[e_id] = saturation_avg;
-    (*this->process_data_.element_porosity)[e_id] = porosity_avg;
-    (*this->process_data_.element_liquid_density)[e_id] = liquid_density_avg;
-    (*this->process_data_.element_viscosity)[e_id] = viscosity_avg;
+    (*process_data.element_saturation)[e_id] = saturation_avg;
+    (*process_data.element_porosity)[e_id] = porosity_avg;
+    (*process_data.element_liquid_density)[e_id] = liquid_density_avg;
+    (*process_data.element_viscosity)[e_id] = viscosity_avg;
 
-    Eigen::Map<KV>(&(
-        *this->process_data_.element_stresses)[e_id * KV::RowsAtCompileTime]) =
+    Eigen::Map<KV>(
+        &(*process_data.element_stresses)[e_id * KV::RowsAtCompileTime]) =
         MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_avg);
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunction, typename ShapeFunctionDisplacement::MeshElement,
         DisplacementDim>(this->element_, this->is_axially_symmetric_, p_L,
-                         *this->process_data_.pressure_interpolated);
+                         *process_data.pressure_interpolated);
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunction, typename ShapeFunctionDisplacement::MeshElement,
         DisplacementDim>(this->element_, this->is_axially_symmetric_, T,
-                         *this->process_data_.temperature_interpolated);
+                         *process_data.temperature_interpolated);
 }
 }  // namespace ThermoRichardsMechanics
 }  // namespace ProcessLib
