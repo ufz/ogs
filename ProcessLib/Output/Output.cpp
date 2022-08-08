@@ -302,4 +302,13 @@ void Output::doOutputNonlinearIteration(
     }
     INFO("[time] Output took {:g} s.", time_output.elapsed());
 }
+
+std::ostream& operator<<(std::ostream& os, Output const& output)
+{
+    os << "Output::_output_data_specification:\t"
+       << output._output_data_specification;
+    os << "Output::_output_file:\t" << *(output._output_file);
+    return os;
+}
+
 }  // namespace ProcessLib

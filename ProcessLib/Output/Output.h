@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <iosfwd>
 #include <map>
 #include <utility>
 #include <vector>
@@ -77,6 +78,8 @@ public:
     {
         return _output_data_specification.fixed_output_times;
     }
+
+    friend std::ostream& operator<<(std::ostream& os, Output const& output);
 
 private:
     //! Determines if there should be output at the given \c timestep or \c t.
