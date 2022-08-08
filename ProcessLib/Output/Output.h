@@ -37,9 +37,10 @@ public:
            std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
 
     Output(Output const& other) = delete;
-    Output(Output && other) = default;
-    Output operator=(Output const& src) = delete;
+    Output(Output&& other) = default;
+    Output& operator=(Output const& src) = delete;
     Output& operator=(Output&& src) = default;
+    ~Output() = default;
 
     //! TODO doc. Opens a PVD file for each process.
     void addProcess(ProcessLib::Process const& process);
