@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <iosfwd>
 #include <vector>
 
 #include "MeshLib/IO/VtkIO/PVDFile.h"
@@ -52,6 +53,15 @@ struct OutputFile
                                           int const timestep, double const t,
                                           int const iteration) const = 0;
 };
+
+inline std::ostream& operator<<(std::ostream& os, OutputFile const& of)
+{
+    os << "OutputFile::directory:" << of.directory << std::endl;
+    os << "OutputFile::prefix:" << of.prefix << std::endl;
+    os << "OutputFile::suffix:" << of.suffix << std::endl;
+    os << "OutputFile::compression:" << of.compression << std::endl;
+    return os;
+}
 
 struct OutputVTKFormat final : public OutputFile
 {
