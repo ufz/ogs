@@ -11,7 +11,6 @@
 #pragma once
 
 #include "LiquidDensity.h"
-#include "MathLib/KelvinVector.h"
 #include "Porosity.h"
 #include "SolidThermalExpansion.h"
 

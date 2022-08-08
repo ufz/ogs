@@ -10,7 +10,6 @@
 
 #include "FluidThermalExpansion.h"
 
-#include "MaterialLib/MPL/Utils/FormKelvinVectorFromThermalExpansivity.h"
 #include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
