@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <spdlog/fmt/bundled/ostream.h>
+
 #include <set>
 #include <string>
 #include <vector>
@@ -25,6 +27,14 @@ struct PairRepeatEachSteps
     const int repeat;      //!< Apply \c each_steps \c repeat times.
     const int each_steps;  //!< Do output every \c each_steps timestep.
 };
+
+inline std::ostream& operator<<(std::ostream& os,
+                                PairRepeatEachSteps const& pair)
+{
+    os << "Output " << pair.repeat << " times every " << pair.each_steps
+       << " timestep.\n";
+    return os;
+}
 
 //! Holds information about which variables to write to output files.
 struct OutputDataSpecification final
@@ -60,4 +70,25 @@ struct OutputDataSpecification final
     //! Tells if also to output extrapolation residuals.
     bool const output_residuals;
 };
+
+inline std::ostream& operator<<(std::ostream& os,
+                                OutputDataSpecification const& o)
+{
+    os << "OuputDataSpecification" << std::endl;
+    os << "\toutput_variables: ";
+    std::copy(o.output_variables.begin(), o.output_variables.end(),
+              std::ostream_iterator<std::string>(os, " "));
+    os << "\n";
+    os << "\tfixed_output_times: ";
+    std::copy(o.fixed_output_times.begin(), o.fixed_output_times.end(),
+              std::ostream_iterator<double>(os, " "));
+    os << "\n";
+    os << "\trepeats_each_steps: ";
+    std::copy(o.repeats_each_steps.begin(), o.repeats_each_steps.end(),
+              std::ostream_iterator<PairRepeatEachSteps>(os, " "));
+    os << "\n";
+    os << "\toutput_residual: " << o.output_residuals << "\n";
+    return os;
+}
+
 }  // namespace ProcessLib
