@@ -10,7 +10,6 @@
 
 #include "FluidThermalExpansion.h"
 
-#include "MaterialLib/MPL/Utils/FormKelvinVectorFromThermalExpansivity.h"
 #include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
@@ -18,6 +17,8 @@ namespace ProcessLib::ThermoRichardsMechanics
 template <int DisplacementDim>
 void FluidThermalExpansionModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, MediaData const& media_data,
+    CapillaryPressureData<DisplacementDim> const& p_cap_data,
+    TemperatureData<DisplacementDim> const& T_data,
     SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
     PorosityData const& poro_data, LiquidDensityData const& rho_L_data,
     BiotData const& biot_data, FluidThermalExpansionData& out) const
@@ -28,6 +29,9 @@ void FluidThermalExpansionModel<DisplacementDim>::eval(
 
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
+    variables[static_cast<int>(MPL::Variable::phase_pressure)] =
+        -p_cap_data.p_cap;
+    variables[static_cast<int>(MPL::Variable::temperature)] = -T_data.T;
 
     double const phi = poro_data.phi;
     double const alpha = biot_data.alpha;

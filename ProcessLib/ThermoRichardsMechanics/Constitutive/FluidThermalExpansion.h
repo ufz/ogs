@@ -11,7 +11,6 @@
 #pragma once
 
 #include "LiquidDensity.h"
-#include "MathLib/KelvinVector.h"
 #include "Porosity.h"
 #include "SolidThermalExpansion.h"
 
@@ -27,6 +26,8 @@ struct FluidThermalExpansionModel
 {
     void eval(
         SpaceTimeData const& x_t, MediaData const& media_data,
+        CapillaryPressureData<DisplacementDim> const& p_cap_data,
+        TemperatureData<DisplacementDim> const& T_data,
         SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
         PorosityData const& poro_data, LiquidDensityData const& rho_L_data,
         BiotData const& biot_data, FluidThermalExpansionData& out) const;
