@@ -39,6 +39,24 @@ AddTest(
     expected_square_1e2_ts_10_t_100.000000.vtu square_1e2_ts_10_t_100.000000.vtu sigma sigma 1e-8 1e-8
 )
 
+# Same as above, but with function instead of group based parameter for Young's modulus
+AddTest(
+NAME ThermoHydroMechanics_square_1e2_sealed_bimaterial_function
+PATH ThermoHydroMechanics/Linear/Beam_sealed_bimaterial
+RUNTIME 5
+EXECUTABLE ogs
+EXECUTABLE_ARGS square_1e2_function.xml
+WRAPPER time
+TESTER vtkdiff
+REQUIREMENTS NOT OGS_USE_MPI
+DIFF_DATA
+expected_square_1e2_ts_10_t_100.000000.vtu square_1e2_function_ts_10_t_100.000000.vtu displacement displacement 1e-8 1e-8
+expected_square_1e2_ts_10_t_100.000000.vtu square_1e2_function_ts_10_t_100.000000.vtu pressure pressure 1e-8 1e-8
+expected_square_1e2_ts_10_t_100.000000.vtu square_1e2_function_ts_10_t_100.000000.vtu temperature temperature 1e-8 1e-8
+expected_square_1e2_ts_10_t_100.000000.vtu square_1e2_function_ts_10_t_100.000000.vtu epsilon epsilon 1e-8 1e-8
+expected_square_1e2_ts_10_t_100.000000.vtu square_1e2_function_ts_10_t_100.000000.vtu sigma sigma 1e-8 1e-8
+)
+
 # ThermoHydroMechanics; Small deformation, linear poroelastic, unsealed, bimaterial
 AddTest(
     NAME ThermoHydroMechanics_square_1e2_unsealed_bimaterial
