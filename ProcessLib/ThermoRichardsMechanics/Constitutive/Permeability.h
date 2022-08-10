@@ -36,8 +36,8 @@ struct PermeabilityModel
               PorosityData const& poro_data,
               LiquidViscosityData const& mu_L_data,
               // TODO evaluate transport porosity evolution separately
-              PorosityData& transport_poro_data,
-              PorosityData const& transport_poro_data_prev,
+              TransportPorosityData& transport_poro_data,
+              TransportPorosityData const& transport_poro_data_prev,
               SolidMechanicsDataStateless<DisplacementDim> const& s_mech_data,
               StrainData<DisplacementDim> const& eps_data,
               StrainData<DisplacementDim> const& eps_prev_data,

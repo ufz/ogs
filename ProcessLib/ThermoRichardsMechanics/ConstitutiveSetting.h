@@ -36,7 +36,7 @@ struct StatefulData
 {
     SaturationData S_L_data;
     PorosityData poro_data;
-    PorosityData transport_poro_data;
+    TransportPorosityData transport_poro_data;
     StrainData<DisplacementDim> eps_data;
     SwellingDataStateful<DisplacementDim> swelling_data;
     SolidMechanicsDataStateful<DisplacementDim> s_mech_data;

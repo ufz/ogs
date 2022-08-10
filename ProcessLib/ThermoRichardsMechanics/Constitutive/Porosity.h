@@ -22,6 +22,17 @@ struct PorosityData
     double phi;
 };
 
+struct TransportPorosityData
+{
+    double phi;
+
+    static auto reflect()
+    {
+        return std::make_tuple(
+            ReflectionData{"transport_porosity", &TransportPorosityData::phi});
+    }
+};
+
 template <int DisplacementDim>
 struct PorosityModel
 {
