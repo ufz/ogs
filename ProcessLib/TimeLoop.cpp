@@ -488,7 +488,10 @@ void TimeLoop::initialize()
     {
         auto& pcs = process_data->process;
         int const process_id = process_data->process_id;
-        _outputs[0].addProcess(pcs);
+        for (auto& output : _outputs)
+        {
+            output.addProcess(pcs);
+        }
 
         setTimeDiscretizedODESystem(*process_data);
 
