@@ -22,6 +22,10 @@ class Properties;
 
 struct IntegrationPointWriter final
 {
+    /// Constructor taking a member function of the \c LocalAssemblerInterface
+    /// as a callback.
+    ///
+    /// The callback \c getIpData must return a \c std::vector<double>.
     template <typename LocalAssemblerInterface, typename... Args>
     IntegrationPointWriter(
         std::string const& name,
@@ -53,6 +57,40 @@ struct IntegrationPointWriter final
             return result;
         };
     }
+
+    /// Constructor taking an \c accessor function as a callback.
+    ///
+    /// The accessor function must take a const reference to a
+    /// \c LocalAssemblerInterface object as its only argument.
+    /// The callback \c accessor must return a \c std::vector<double>.
+    template <typename LocalAssemblerInterface, typename Accessor>
+    IntegrationPointWriter(
+        std::string const& name,
+        int const n_components,
+        int const integration_order,
+        std::vector<std::unique_ptr<LocalAssemblerInterface>> const&
+            local_assemblers,
+        Accessor accessor)
+        : _name(name),
+          _n_components(n_components),
+          _integration_order(integration_order)
+    {
+        _callback = [&local_assemblers, accessor]
+        {
+            // Result containing integration point data for each local
+            // assembler.
+            std::vector<std::vector<double>> result;
+            result.reserve(local_assemblers.size());
+
+            std::transform(begin(local_assemblers), end(local_assemblers),
+                           std::back_inserter(result),
+                           [&accessor](auto const& la)
+                           { return accessor(*la); });
+
+            return result;
+        };
+    }
+
     int numberOfComponents() const { return _n_components; }
     int integrationOrder() const { return _integration_order; }
     std::string name() const { return _name; }
