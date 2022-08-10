@@ -487,7 +487,6 @@ void TimeLoop::initialize()
     for (auto& process_data : _per_process_data)
     {
         auto& pcs = process_data->process;
-        int const process_id = process_data->process_id;
         for (auto& output : _outputs)
         {
             output.addProcess(pcs);
@@ -499,6 +498,7 @@ void TimeLoop::initialize()
                 dynamic_cast<NumLib::ConvergenceCriterionPerComponent*>(
                     process_data->conv_crit.get()))
         {
+            int const process_id = process_data->process_id;
             conv_crit->setDOFTable(pcs.getDOFTable(process_id), pcs.getMesh());
         }
     }
