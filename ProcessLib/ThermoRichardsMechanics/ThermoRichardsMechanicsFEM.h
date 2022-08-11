@@ -255,27 +255,51 @@ public:
     {
         unsigned const n_integration_points =
             this->integration_method_.getNumberOfPoints();
+        auto const time_independent = std::numeric_limits<double>::quiet_NaN();
+        auto const& medium =
+            *this->process_data_.media_map->getMedium(this->element_.getID());
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
+            ParameterLib::SpatialPosition const x_position{
+                std::nullopt, this->element_.getID(), ip,
+                MathLib::Point3d(NumLib::interpolateCoordinates<
+                                 ShapeFunctionDisplacement,
+                                 ShapeMatricesTypeDisplacement>(
+                    this->element_, this->ip_data_[ip].N_u))};
+            auto& current_state = this->current_states_[ip];
+
             // Set initial stress from parameter.
             if (this->process_data_.initial_stress != nullptr)
             {
-                ParameterLib::SpatialPosition const x_position{
-                    std::nullopt, this->element_.getID(), ip,
-                    MathLib::Point3d(NumLib::interpolateCoordinates<
-                                     ShapeFunctionDisplacement,
-                                     ShapeMatricesTypeDisplacement>(
-                        this->element_, ip_data_[ip].N_u))};
-
-                this->current_states_[ip].s_mech_data.sigma_eff =
+                current_state.s_mech_data.sigma_eff =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
                         DisplacementDim>((*this->process_data_.initial_stress)(
-                        std::numeric_limits<
-                            double>::quiet_NaN() /* time independent */,
-                        x_position));
+                        time_independent, x_position));
             }
 
+            // Initial porosity. Could be read from integration point data
+            // or mesh.
+            current_state.poro_data.phi = medium.property(MPL::porosity)
+                                              .template initialValue<double>(
+                                                  x_position, time_independent);
+
+            if (medium.hasProperty(MPL::PropertyType::transport_porosity))
+            {
+                current_state.transport_poro_data.phi =
+                    medium.property(MPL::transport_porosity)
+                        .template initialValue<double>(x_position,
+                                                       time_independent);
+            }
+            else
+            {
+                current_state.transport_poro_data.phi =
+                    current_state.poro_data.phi;
+            }
+        }
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
             this->material_states_[ip].pushBackState();
         }
 
