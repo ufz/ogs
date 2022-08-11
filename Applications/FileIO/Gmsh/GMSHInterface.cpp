@@ -268,6 +268,27 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
         polygon_tree->createGMSHPoints(_gmsh_pnts);
     }
 
+    std::stringstream error_messages;
+    error_messages.precision(std::numeric_limits<double>::digits10);
+    for (std::size_t k = 0; k < _gmsh_pnts.size(); ++k)
+    {
+        if (_gmsh_pnts[k] == nullptr)
+        {
+            error_messages
+                << "The point at (" << *(*merged_pnts)[k]
+                << ") is not part of a polyline, and won't be used in the "
+                   "meshing as a constraint. If you want to include it in the "
+                   "mesh please create a observation/measurement station for "
+                   "the point and include it additional in the meshing "
+                   "process.\n";
+        }
+    }
+    auto const error_message = error_messages.str();
+    if (!error_message.empty())
+    {
+        OGS_FATAL("{}", error_message);
+    }
+
     // *** finally write data :-)
     GeoLib::rotatePoints(_inverse_rot_mat, _gmsh_pnts);
     out << _gmsh_pnts;
