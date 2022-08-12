@@ -314,90 +314,6 @@ struct MatVecXSquaredShifted
 const double MatVecXSquaredShifted::tolerance = 7e-7;
 
 template <typename MatVec>
-class LocalAssemblerM final : public ProcessLib::LocalAssemblerInterface
-{
-public:
-    void assemble(double const /*t*/, double const /*dt*/,
-                  std::vector<double> const& local_x,
-                  std::vector<double> const& /*local_xdot*/,
-                  std::vector<double>& local_M_data,
-                  std::vector<double>& /*local_K_data*/,
-                  std::vector<double>& /*local_b_data*/) override
-    {
-        MatVec::Mat::getMat(local_x, local_M_data);
-    }
-
-    void assembleWithJacobian(double const t, double const dt,
-                              std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
-                              std::vector<double>& local_M_data,
-                              std::vector<double>& local_K_data,
-                              std::vector<double>& local_b_data,
-                              std::vector<double>& local_Jac_data) override
-    {
-        assemble(t, dt, local_x, local_xdot, local_M_data, local_K_data,
-                 local_b_data);
-
-        // dM/dx * xdot
-        MatVec::Mat::getDMatDxTimesY(local_x, local_xdot, local_Jac_data);
-
-        auto local_Jac =
-            MathLib::toMatrix(local_Jac_data, local_x.size(), local_x.size());
-        auto local_M =
-            MathLib::toMatrix(local_M_data, local_x.size(), local_x.size());
-        local_Jac.noalias() += local_M / dt;
-    }
-
-    static double getTol() { return MatVec::tolerance; }
-
-    static const bool asmM = true;
-    static const bool asmK = false;
-    static const bool asmb = false;
-};
-
-template <typename MatVec>
-class LocalAssemblerK final : public ProcessLib::LocalAssemblerInterface
-{
-public:
-    void assemble(double const /*t*/, double const /*dt*/,
-                  std::vector<double> const& local_x,
-                  std::vector<double> const& /*local_xdot*/,
-                  std::vector<double>& /*local_M_data*/,
-                  std::vector<double>& local_K_data,
-                  std::vector<double>& /*local_b_data*/) override
-    {
-        MatVec::Mat::getMat(local_x, local_K_data);
-    }
-
-    void assembleWithJacobian(double const t, double const dt,
-                              std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
-                              std::vector<double>& local_M_data,
-                              std::vector<double>& local_K_data,
-                              std::vector<double>& local_b_data,
-                              std::vector<double>& local_Jac_data) override
-    {
-        assemble(t, dt, local_x, local_xdot, local_M_data, local_K_data,
-                 local_b_data);
-
-        // dK/dx * x
-        MatVec::Mat::getDMatDxTimesY(local_x, local_x, local_Jac_data);
-
-        auto local_Jac =
-            MathLib::toMatrix(local_Jac_data, local_x.size(), local_x.size());
-        auto local_K =
-            MathLib::toMatrix(local_K_data, local_x.size(), local_x.size());
-        local_Jac.noalias() += local_K;
-    }
-
-    static double getTol() { return MatVec::tolerance; }
-
-    static const bool asmM = false;
-    static const bool asmK = true;
-    static const bool asmb = false;
-};
-
-template <typename MatVec>
 class LocalAssemblerB final : public ProcessLib::LocalAssemblerInterface
 {
 public:
@@ -435,72 +351,6 @@ public:
 
     static const bool asmM = false;
     static const bool asmK = false;
-    static const bool asmb = true;
-};
-
-template <typename MatVecM, typename MatVecK, typename MatVecB>
-class LocalAssemblerMKb final : public ProcessLib::LocalAssemblerInterface
-{
-public:
-    void assemble(double const /*t*/, double const /*dt*/,
-                  std::vector<double> const& local_x,
-                  std::vector<double> const& /*local_xdot*/,
-                  std::vector<double>& local_M_data,
-                  std::vector<double>& local_K_data,
-                  std::vector<double>& local_b_data) override
-    {
-        MatVecM::Mat::getMat(local_x, local_M_data);
-        MatVecK::Mat::getMat(local_x, local_K_data);
-        MatVecB::Vec::getVec(local_x, local_b_data);
-    }
-
-    void assembleWithJacobian(double const t, double const dt,
-                              std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
-                              std::vector<double>& local_M_data,
-                              std::vector<double>& local_K_data,
-                              std::vector<double>& local_b_data,
-                              std::vector<double>& local_Jac_data) override
-    {
-        assemble(t, dt, local_x, local_xdot, local_M_data, local_K_data,
-                 local_b_data);
-
-        std::vector<double> local_JacM_data;
-        // dM/dx * xdot
-        MatVecM::Mat::getDMatDxTimesY(local_x, local_xdot, local_JacM_data);
-
-        std::vector<double> local_JacK_data;
-        // dK/dx * x
-        MatVecK::Mat::getDMatDxTimesY(local_x, local_x, local_JacK_data);
-
-        std::vector<double> local_JacB_data;
-        // db/dx
-        MatVecB::Vec::getDVecDx(local_x, local_JacB_data);
-
-        local_Jac_data = local_JacM_data;
-        auto const N = local_Jac_data.size();
-        for (std::size_t i = 0; i < N; ++i)
-        {
-            local_Jac_data[i] += local_JacK_data[i] - local_JacB_data[i];
-        }
-
-        auto local_Jac =
-            MathLib::toMatrix(local_Jac_data, local_x.size(), local_x.size());
-        auto local_M =
-            MathLib::toMatrix(local_M_data, local_x.size(), local_x.size());
-        auto local_K =
-            MathLib::toMatrix(local_K_data, local_x.size(), local_x.size());
-        local_Jac.noalias() += local_M / dt + local_K;
-    }
-
-    static double getTol()
-    {
-        return std::max(
-            {MatVecM::tolerance, MatVecK::tolerance, MatVecB::tolerance});
-    }
-
-    static const bool asmM = true;
-    static const bool asmK = true;
     static const bool asmb = true;
 };
 
@@ -674,23 +524,13 @@ private:
 
 using TestCases = ::testing::Types<
     // DiagX
-    LocalAssemblerM<MatVecDiagX>, LocalAssemblerK<MatVecDiagX>,
     LocalAssemblerB<MatVecDiagX>,
-    LocalAssemblerMKb<MatVecDiagX, MatVecDiagX, MatVecDiagX>,
     // DiagXSquared
-    LocalAssemblerM<MatVecDiagXSquared>, LocalAssemblerK<MatVecDiagXSquared>,
     LocalAssemblerB<MatVecDiagXSquared>,
-    LocalAssemblerMKb<MatVecDiagXSquared, MatVecDiagXSquared,
-                      MatVecDiagXSquared>,
     // XY
-    LocalAssemblerM<MatVecXY>, LocalAssemblerK<MatVecXY>,
-    LocalAssemblerB<MatVecXY>, LocalAssemblerMKb<MatVecXY, MatVecXY, MatVecXY>,
+    LocalAssemblerB<MatVecXY>,
     // XSquaredShifted
-    LocalAssemblerM<MatVecXSquaredShifted>,
-    LocalAssemblerK<MatVecXSquaredShifted>,
-    LocalAssemblerB<MatVecXSquaredShifted>,
-    LocalAssemblerMKb<MatVecXSquaredShifted, MatVecXSquaredShifted,
-                      MatVecXSquaredShifted>>;
+    LocalAssemblerB<MatVecXSquaredShifted>>;
 
 TYPED_TEST_SUITE(ProcessLibCentralDifferencesJacobianAssembler, TestCases);
 
