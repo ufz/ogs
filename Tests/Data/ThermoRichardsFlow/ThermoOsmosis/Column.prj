@@ -228,8 +228,8 @@
     <parameters>
         <parameter>
             <name>E</name>
-            <type>Constant</type>
-            <value>2.88e6</value>
+            <type>Function</type>
+            <expression>2.88e6</expression>
         </parameter>
         <parameter>
             <name>nu</name>

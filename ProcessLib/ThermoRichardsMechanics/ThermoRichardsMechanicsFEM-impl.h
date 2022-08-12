@@ -61,11 +61,8 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
                                   DisplacementDim>(e, is_axially_symmetric,
                                                    integration_method);
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(e.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
         auto& ip_data = ip_data_[ip];
         auto const& sm_u = shape_matrices_u[ip];
         ip_data_[ip].integration_weight =
@@ -117,20 +114,21 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         this->process_data_.media_map->getMedium(this->element_.getID());
     MPL::VariableArray variables;
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(this->element_.getID());
-
     auto const& solid_phase = medium->phase("Solid");
 
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         // N is used for both T and p variables.
         auto const& N = ip_data_[ip].N_p;
 
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, this->element_.getID(), ip,
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    this->element_, ip_data_[ip].N_u))};
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
 
@@ -177,9 +175,6 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto& medium =
         *this->process_data_.media_map->getMedium(this->element_.getID());
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(this->element_.getID());
-
     LocalMatrices loc_mat;
     loc_mat.setZero();
     LocalMatrices loc_mat_current_ip;
@@ -191,7 +186,12 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     for (unsigned ip = 0; ip < this->integration_method_.getNumberOfPoints();
          ++ip)
     {
-        x_position.setIntegrationPoint(ip);
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, this->element_.getID(), ip,
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    this->element_, ip_data_[ip].N_u))};
 
         assembleWithJacobianSingleIP(
             t, dt, x_position,    //
@@ -463,9 +463,6 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& process_data = this->process_data_;
     auto& medium = *process_data.media_map->getMedium(e_id);
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(e_id);
-
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
 
@@ -490,8 +487,6 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& current_state = this->current_states_[ip];
         auto& output_data = this->output_data_[ip];
 
-        x_position.setIntegrationPoint(ip);
-
         auto const& ip_data = ip_data_[ip];
 
         // N is used for both p and T variables
@@ -500,6 +495,12 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& dNdx_u = ip_data.dNdx_u;
         auto const& dNdx = ip_data.dNdx_p;
 
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, this->element_.getID(), ip,
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    this->element_, N_u))};
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(

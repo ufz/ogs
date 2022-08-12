@@ -230,9 +230,6 @@ void ThermoHydroMechanicsLocalAssembler<
             _process_data.solid_materials, _process_data.material_ids,
             _element.getID());
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
@@ -255,7 +252,6 @@ void ThermoHydroMechanicsLocalAssembler<
         _integration_method.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
 
         auto const& N_u_op = _ip_data[ip].N_u_op;
@@ -273,6 +269,12 @@ void ThermoHydroMechanicsLocalAssembler<
         auto const T_int_pt = N_T.dot(T);
         double const dT_int_pt = N_T.dot(T_dot) * dt;
 
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(), ip,
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, N_u))};
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
@@ -648,9 +650,6 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
         temperature_size> const>(local_x.data() + temperature_index,
                                  temperature_size);
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
@@ -660,10 +659,14 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         auto const& N_p = _ip_data[ip].N_p;
 
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(), ip,
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, _ip_data[ip].N_u))};
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             N_p.dot(T);  // N_p = N_T
         double const p_int_pt = N_p.dot(p);
@@ -761,8 +764,6 @@ void ThermoHydroMechanicsLocalAssembler<
             temperature_size> const>(local_xdot.data() + temperature_index,
                                      temperature_size);
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& solid_phase = medium->phase("Solid");
     MaterialPropertyLib::VariableArray vars;
@@ -770,11 +771,16 @@ void ThermoHydroMechanicsLocalAssembler<
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
         auto const& N_u = _ip_data[ip].N_u;
         auto const& N_T = _ip_data[ip].N_p;
         auto const& dNdx_u = _ip_data[ip].dNdx_u;
 
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(), ip,
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, N_u))};
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(

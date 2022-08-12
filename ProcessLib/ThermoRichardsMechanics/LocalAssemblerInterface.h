@@ -51,44 +51,6 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         {
             material_states_.emplace_back(solid_material_);
         }
-
-        ParameterLib::SpatialPosition x_position;
-        x_position.setElementID(e.getID());
-
-        auto const& medium = process_data_.media_map->getMedium(e.getID());
-
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            namespace MPL = MaterialPropertyLib;
-
-            x_position.setIntegrationPoint(ip);
-
-            auto& current_state = current_states_[ip];
-
-            // Initial porosity. Could be read from integration point data or
-            // mesh.
-            current_state.poro_data.phi =
-                medium->property(MPL::porosity)
-                    .template initialValue<double>(
-                        x_position,
-                        std::numeric_limits<
-                            double>::quiet_NaN() /* t independent */);
-
-            if (medium->hasProperty(MPL::PropertyType::transport_porosity))
-            {
-                current_state.transport_poro_data.phi =
-                    medium->property(MPL::transport_porosity)
-                        .template initialValue<double>(
-                            x_position,
-                            std::numeric_limits<
-                                double>::quiet_NaN() /* t independent */);
-            }
-            else
-            {
-                current_state.transport_poro_data.phi =
-                    current_state.poro_data.phi;
-            }
-        }
     }
 
     std::size_t setIPDataInitialConditions(std::string const& name,

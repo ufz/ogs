@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="square_1e2.prj">
+    <remove sel="/*/parameters/parameter/name[text()=&quot;E&quot;]/.." />
+    <add sel="/*/parameters">
+        <parameter>
+            <name>E</name>
+            <type>Function</type>
+            <expression>if (x &lt; 2) 19; else if (x &lt; 2.1) 0.95; else 9.5;</expression>
+        </parameter>
+    </add>
+    <replace sel="/*/time_loop/output/prefix/text()">square_1e2_function</replace>
+</OpenGeoSysProjectDiff>
