@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="cuboid_1x1x1_hex_27_Dirichlet_Dirichlet.prj">
+    <add sel="/*/time_loop/output" pos="after">
+        <outputs>
+            <output>
+                <type>XDMF</type>
+                <prefix>top_boundary_to_bottom_boundary_{:meshname}</prefix>
+                <suffix>_ts_{:timestep}_t_{:time}</suffix>
+                <timesteps>
+                    <pair>
+                        <repeat> 1 </repeat>
+                        <each_steps> 1 </each_steps>
+                    </pair>
+                </timesteps>
+                <variables>
+                    <variable> pressure </variable>
+                    <variable> v </variable>
+                </variables>
+                <meshes>
+                    <mesh>cuboid_1x1x1_hex_27</mesh>
+                    <mesh>cuboid_1x1x1_hex_27_top_boundary</mesh>
+                    <mesh>cuboid_1x1x1_hex_27_bottom_boundary</mesh>
+                </meshes>
+            </output>
+            <output>
+                <type>VTK</type>
+                <prefix>top_boundary_to_bottom_boundary_{:meshname}</prefix>
+                <suffix>_ts_{:timestep}_t_{:time}</suffix>
+                <timesteps>
+                    <pair>
+                        <repeat> 1 </repeat>
+                        <each_steps> 1 </each_steps>
+                    </pair>
+                </timesteps>
+                <variables>
+                    <variable> pressure </variable>
+                    <variable> v </variable>
+                </variables>
+                <meshes>
+                    <mesh>cuboid_1x1x1_hex_27</mesh>
+                    <mesh>cuboid_1x1x1_hex_27_top_boundary</mesh>
+                    <mesh>cuboid_1x1x1_hex_27_bottom_boundary</mesh>
+                </meshes>
+            </output>
+        </outputs>
+    </add>
+    <remove sel="/*/time_loop/output"/>
+</OpenGeoSysProjectDiff>
