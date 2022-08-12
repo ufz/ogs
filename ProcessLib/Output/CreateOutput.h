@@ -37,4 +37,8 @@ std::vector<Output> createOutput(
     const std::string& output_directory,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
 
+std::vector<Output> createOutputs(
+    const BaseLib::ConfigTree& config,
+    std::string const& output_directory,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
 }  // namespace ProcessLib

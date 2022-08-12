@@ -75,10 +75,10 @@ std::unique_ptr<OutputFile> createOutputFile(
     }
 }
 
-std::vector<Output> createOutput(
-    const BaseLib::ConfigTree& config,
-    std::string const& output_directory,
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
+void parseOutput(const BaseLib::ConfigTree& config,
+                 std::string const& output_directory,
+                 std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+                 std::vector<Output>& outputs)
 {
     DBUG("Parse output configuration:");
     OutputType const output_type = [](auto output_type)
@@ -228,11 +228,34 @@ std::vector<Output> createOutput(
         output_directory, output_type, std::move(prefix), std::move(suffix),
         data_mode, compress_output, number_of_files);
 
-    std::vector<Output> result;
-    result.emplace_back(std::move(output_file), output_iteration_results,
-                        std::move(output_data_specification),
-                        std::move(mesh_names_for_output), meshes);
-    return result;
+    outputs.emplace_back(std::move(output_file), output_iteration_results,
+                         std::move(output_data_specification),
+                         std::move(mesh_names_for_output), meshes);
 }
 
+std::vector<Output> createOutput(
+    const BaseLib::ConfigTree& config,
+    std::string const& output_directory,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
+{
+    std::vector<Output> outputs;
+    parseOutput(config, output_directory, meshes, outputs);
+    return outputs;
+}
+
+std::vector<Output> createOutputs(
+    const BaseLib::ConfigTree& output_configs,
+    std::string const& output_directory,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
+{
+    DBUG("Parse outputs configuration:");
+    std::vector<Output> outputs;
+    for (auto const& output_config :
+         //! \ogs_file_param{prj__time_loop__outputs__output}
+         output_configs.getConfigSubtreeList("output"))
+    {
+        parseOutput(output_config, output_directory, meshes, outputs);
+    }
+    return outputs;
+}
 }  // namespace ProcessLib
