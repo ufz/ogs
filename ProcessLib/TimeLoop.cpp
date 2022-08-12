@@ -519,8 +519,11 @@ void TimeLoop::initialize()
     // Output initial conditions
     {
         const bool output_initial_condition = true;
-        outputSolutions(output_initial_condition, 0, _start_time, _outputs[0],
-                        &Output::doOutput);
+        for (auto const& output : _outputs)
+        {
+            outputSolutions(output_initial_condition, 0, _start_time, output,
+                            &Output::doOutput);
+        }
     }
 
     auto const& fixed_times = _outputs[0].getFixedOutputTimes();
@@ -593,8 +596,11 @@ bool TimeLoop::calculateNextTimeStep()
     if (!_last_step_rejected)
     {
         const bool output_initial_condition = false;
-        outputSolutions(output_initial_condition, timesteps, current_time,
-                        _outputs[0], &Output::doOutput);
+        for (auto const& output : _outputs)
+        {
+            outputSolutions(output_initial_condition, timesteps, current_time,
+                            output, &Output::doOutput);
+        }
     }
 
     if (std::abs(_current_time - _end_time) <
@@ -627,9 +633,12 @@ void TimeLoop::outputLastTimeStep() const
     if (successful_time_step)
     {
         const bool output_initial_condition = false;
-        outputSolutions(output_initial_condition,
-                        _accepted_steps + _rejected_steps, _current_time,
-                        _outputs[0], &Output::doOutputLastTimestep);
+        for (auto const& output : _outputs)
+        {
+            outputSolutions(output_initial_condition,
+                            _accepted_steps + _rejected_steps, _current_time,
+                            output, &Output::doOutputLastTimestep);
+        }
     }
 }
 
@@ -715,10 +724,13 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
                     process_data->timestep_previous))
             {
                 // save unsuccessful solution
-                _outputs[0].doOutputAlways(
-                    process_data->process, process_id, timestep_id, t,
-                    process_data->nonlinear_solver_status.number_iterations,
-                    _process_solutions);
+                for (auto const& output : _outputs)
+                {
+                    output.doOutputAlways(
+                        process_data->process, process_id, timestep_id, t,
+                        process_data->nonlinear_solver_status.number_iterations,
+                        _process_solutions);
+                }
                 OGS_FATAL(timestepper_cannot_reduce_dt.data());
             }
 
