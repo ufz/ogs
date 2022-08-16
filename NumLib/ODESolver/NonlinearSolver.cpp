@@ -94,6 +94,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         time_iteration.start();
 
         timer_dirichlet.start();
+        LinAlg::setLocalAccessibleVector(*x_new[process_id]);
         sys.computeKnownSolutions(*x_new[process_id], process_id);
         sys.applyKnownSolutions(*x_new[process_id]);
         time_dirichlet += timer_dirichlet.elapsed();
