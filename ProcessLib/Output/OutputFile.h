@@ -49,9 +49,13 @@ struct OutputFile
     {
     }
 
-    virtual std::string constructFilename(std::string const& mesh_name,
-                                          int const timestep, double const t,
-                                          int const iteration) const = 0;
+    virtual std::string constructFilename(
+        [[maybe_unused]] std::string const& mesh_name,
+        [[maybe_unused]] int const timestep, [[maybe_unused]] double const t,
+        [[maybe_unused]] int const iteration) const
+    {
+        return "";
+    }
 };
 
 inline std::ostream& operator<<(std::ostream& os, OutputFile const& of)
