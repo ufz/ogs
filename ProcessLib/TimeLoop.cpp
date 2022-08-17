@@ -874,6 +874,13 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     return nonlinear_solver_status;
 }
 
+void TimeLoop::outputSolutions(bool const output_initial_condition) const
+{
+    const std::size_t timesteps = _accepted_steps + 1;
+    outputSolutions(output_initial_condition, timesteps, _current_time,
+                    &Output::doOutput);
+}
+
 template <typename OutputClassMember>
 void TimeLoop::outputSolutions(bool const output_initial_condition,
                                unsigned timestep, const double t,

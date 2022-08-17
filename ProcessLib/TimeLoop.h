@@ -53,6 +53,7 @@ public:
     double endTime() const { return _end_time; }
     double currentTime() const { return _current_time; }
     bool successful_time_step = false;
+    void outputSolutions(bool const output_initial_condition) const;
 
 private:
     bool doNonlinearIteration(double const t, double const dt,
