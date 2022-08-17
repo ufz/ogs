@@ -94,12 +94,13 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         time_iteration.start();
 
         timer_dirichlet.start();
-        LinAlg::setLocalAccessibleVector(*x_new[process_id]);
-        sys.computeKnownSolutions(*x_new[process_id], process_id);
-        sys.applyKnownSolutions(*x_new[process_id]);
+        auto& x_new_process = *x_new[process_id];
+        LinAlg::setLocalAccessibleVector(x_new_process);
+        sys.computeKnownSolutions(x_new_process, process_id);
+        sys.applyKnownSolutions(x_new_process);
         time_dirichlet += timer_dirichlet.elapsed();
 
-        sys.preIteration(iteration, *x_new[process_id]);
+        sys.preIteration(iteration, x_new_process);
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
@@ -115,14 +116,14 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         }
 
         timer_dirichlet.start();
-        sys.applyKnownSolutionsPicard(A, rhs, *x_new[process_id]);
+        sys.applyKnownSolutionsPicard(A, rhs, x_new_process);
         time_dirichlet += timer_dirichlet.elapsed();
         INFO("[time] Applying Dirichlet BCs took {:g} s.", time_dirichlet);
 
         if (!sys.isLinear() && _convergence_criterion->hasResidualCheck())
         {
             GlobalVector res;
-            LinAlg::matMult(A, *x_new[process_id], res);  // res = A * x_new
+            LinAlg::matMult(A, x_new_process, res);       // res = A * x_new
             LinAlg::axpy(res, -1.0, rhs);                 // res -= rhs
             _convergence_criterion->checkResidual(res);
         }
@@ -144,7 +145,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
                 postIterationCallback(iteration, x_new);
             }
 
-            switch (sys.postIteration(*x_new[process_id]))
+            switch (sys.postIteration(x_new_process))
             {
                 case IterationResult::SUCCESS:
                     // Don't copy here. The old x might still be used further
@@ -157,7 +158,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
                     // Copy new solution to x.
                     // Thereby the failed solution can be used by the caller for
                     // debugging purposes.
-                    LinAlg::copy(*x_new[process_id], *x[process_id]);
+                    LinAlg::copy(x_new_process, *x[process_id]);
                     break;
                 case IterationResult::REPEAT_ITERATION:
                     INFO(
@@ -165,7 +166,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
                         "iteration has to be repeated.");
                     LinAlg::copy(
                         *x[process_id],
-                        *x_new[process_id]);  // throw the iteration result away
+                        x_new_process);  // throw the iteration result away
                     continue;
             }
         }
@@ -187,16 +188,16 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
             {
                 GlobalVector minus_delta_x(*x[process_id]);
                 LinAlg::axpy(minus_delta_x, -1.0,
-                             *x_new[process_id]);  // minus_delta_x = x - x_new
+                             x_new_process);  // minus_delta_x = x - x_new
                 _convergence_criterion->checkDeltaX(minus_delta_x,
-                                                    *x_new[process_id]);
+                                                    x_new_process);
             }
 
             error_norms_met = _convergence_criterion->isSatisfied();
         }
 
         // Update x s.t. in the next iteration we will compute the right delta x
-        LinAlg::copy(*x_new[process_id], *x[process_id]);
+        LinAlg::copy(x_new_process, *x[process_id]);
 
         INFO("[time] Iteration #{:d} took {:g} s.", iteration,
              time_iteration.elapsed());
