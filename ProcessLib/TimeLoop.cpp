@@ -529,7 +529,17 @@ void TimeLoop::initialize()
         }
     }
 
-    auto const& fixed_times = _outputs[0].getFixedOutputTimes();
+    std::vector<double> fixed_times;
+    for (auto const& output : _outputs)
+    {
+        auto const& output_fixed_times = output.getFixedOutputTimes();
+        fixed_times.insert(fixed_times.end(), output_fixed_times.begin(),
+                           output_fixed_times.end());
+    }
+    std::sort(fixed_times.begin(), fixed_times.end());
+    auto const it = std::unique(fixed_times.begin(), fixed_times.end());
+    fixed_times.erase(it, fixed_times.end());
+
     std::vector<std::function<double(double, double)>> time_step_constraints{
         [&fixed_times](double t, double dt)
         { return NumLib::possiblyClampDtToNextFixedTime(t, dt, fixed_times); },
@@ -578,7 +588,17 @@ bool TimeLoop::calculateNextTimeStep()
 
     const std::size_t timesteps = _accepted_steps + 1;
 
-    auto const& fixed_times = _outputs[0].getFixedOutputTimes();
+    std::vector<double> fixed_times;
+    for (auto const& output : _outputs)
+    {
+        auto const& output_fixed_times = output.getFixedOutputTimes();
+        fixed_times.insert(fixed_times.end(), output_fixed_times.begin(),
+                           output_fixed_times.end());
+    }
+    std::sort(fixed_times.begin(), fixed_times.end());
+    auto const it = std::unique(fixed_times.begin(), fixed_times.end());
+    fixed_times.erase(it, fixed_times.end());
+
     std::vector<std::function<double(double, double)>> time_step_constraints{
         [&fixed_times](double t, double dt)
         { return NumLib::possiblyClampDtToNextFixedTime(t, dt, fixed_times); },
