@@ -91,7 +91,10 @@ struct OutputVTKFormat final : public OutputFile
     int data_mode;
 
     //! Holds the PVD files associated with the meshes.
-    std::map<std::string, MeshLib::IO::PVDFile> mesh_name_to_pvd_file;
+    mutable std::map<std::string, MeshLib::IO::PVDFile> mesh_name_to_pvd_file;
+
+    MeshLib::IO::PVDFile& findOrCreatePVDFile(
+        std::string const& mesh_name) const;
 
     std::string constructFilename(std::string const& mesh_name,
                                   int const timestep, double const t,

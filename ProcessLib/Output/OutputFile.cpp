@@ -27,22 +27,22 @@ namespace ProcessLib
 /**
  * Get a reference to the PVDFile corresponding to the given filename
  * @param mesh_name the name of the mesh the PVD file is searched for
- * @param mesh_name_to_pvd_file the name to PVD objects mapping
  * @return Reference to a PVDFile object
  */
-MeshLib::IO::PVDFile& findPVDFile(
-    std::string const& mesh_name,
-    std::map<std::string, MeshLib::IO::PVDFile> const& mesh_name_to_pvd_file)
+MeshLib::IO::PVDFile& OutputVTKFormat::findOrCreatePVDFile(
+    std::string const& mesh_name) const
 {
     auto const it = mesh_name_to_pvd_file.find(mesh_name);
     if (it == mesh_name_to_pvd_file.end())
     {
-        OGS_FATAL(
-            "The given mesh is not contained in the output configuration. "
-            "Aborting.");
+        auto const filename = constructPVDName(mesh_name);
+        auto p = mesh_name_to_pvd_file.emplace(std::piecewise_construct,
+                                               std::forward_as_tuple(mesh_name),
+                                               std::forward_as_tuple(filename));
+        return p.first->second;
     }
 
-    return const_cast<MeshLib::IO::PVDFile&>(it->second);
+    return it->second;
 }
 
 void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
@@ -140,8 +140,7 @@ void OutputVTKFormat::outputMeshes(
 {
     for (auto const& mesh : meshes)
     {
-        auto& pvd_file =
-            findPVDFile(mesh.get().getName(), mesh_name_to_pvd_file);
+        auto& pvd_file = findOrCreatePVDFile(mesh.get().getName());
         outputMeshVtk(*this, pvd_file, mesh, t, timestep, iteration);
     }
 }
