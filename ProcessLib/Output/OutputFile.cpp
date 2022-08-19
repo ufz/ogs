@@ -144,16 +144,4 @@ void OutputVTKFormat::outputMeshes(
         outputMeshVtk(*this, pvd_file, mesh, t, timestep, iteration);
     }
 }
-
-void OutputVTKFormat::addProcess(
-    std::vector<std::string> const& mesh_names_for_output)
-{
-    for (auto const& mesh_output_name : mesh_names_for_output)
-    {
-        auto const filename = constructPVDName(mesh_output_name);
-        mesh_name_to_pvd_file.emplace(std::piecewise_construct,
-                                      std::forward_as_tuple(mesh_output_name),
-                                      std::forward_as_tuple(filename));
-    }
-}
 }  // namespace ProcessLib

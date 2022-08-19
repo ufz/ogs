@@ -42,11 +42,6 @@ struct OutputFile
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
         std::set<std::string> const& output_variables) const = 0;
 
-    virtual void addProcess(
-        [[maybe_unused]] std::vector<std::string> const& mesh_names_for_output)
-    {
-    }
-
     virtual std::string constructFilename(
         [[maybe_unused]] std::string const& mesh_name,
         [[maybe_unused]] int const timestep, [[maybe_unused]] double const t,
@@ -80,9 +75,6 @@ struct OutputVTKFormat final : public OutputFile
         const int timestep, const double t, const int iteration,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
         std::set<std::string> const& output_variables) const override;
-
-    void addProcess(
-        std::vector<std::string> const& mesh_names_for_output) override;
 
     //! Chooses vtk's data mode for output following the enumeration given
     /// in the vtkXMLWriter: {Ascii, Binary, Appended}.  See vtkXMLWriter

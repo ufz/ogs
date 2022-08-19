@@ -122,7 +122,6 @@ void Output::addProcess(ProcessLib::Process const& process)
     {
         _mesh_names_for_output.push_back(process.getMesh().getName());
     }
-    _output_file->addProcess(_mesh_names_for_output);
 }
 
 void Output::outputMeshes(
