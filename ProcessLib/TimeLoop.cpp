@@ -250,8 +250,11 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     auto const post_iteration_callback =
         [&](int iteration, std::vector<GlobalVector*> const& x)
     {
-        outputs[0].doOutputNonlinearIteration(process, process_id, timestep, t,
+        for (auto const& output : outputs)
+        {
+            output.doOutputNonlinearIteration(process, process_id, timestep, t,
                                               iteration, x);
+        }
     };
 
     auto const nonlinear_solver_status =
