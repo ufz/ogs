@@ -2,10 +2,6 @@
 date = "2018-03-07T15:56:57+01:00"
 title = "Create boundary conditions along a polyline"
 author = "Thomas Fischer"
-
-[menu]
-  [menu.tools]
-    parent = "model-preparation"
 +++
 
 ## General

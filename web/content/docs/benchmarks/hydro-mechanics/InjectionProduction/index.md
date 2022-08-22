@@ -4,11 +4,7 @@ title = "Staggered Scheme"
 weight = 151
 project = ["HydroMechanics/StaggeredScheme/InjectionProduction1D/InjectionProduction1D.prj"]
 author = "Dominik Kern and Wenqing Wang"
-
-[menu]
-  [menu.benchmarks]
-    parent = "hydro-mechanics"
-
+image = "InjectionProduction_results.png"
 +++
 
 {{< data-link >}}

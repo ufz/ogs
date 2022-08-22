@@ -4,11 +4,7 @@ project = ["LIE/Mechanics/single_joint.prj"]
 author = "Norihiro Watanabe"
 date = "2017-02-15T14:43:32+01:00"
 title = "Linear; Single fracture"
-
-[menu]
-  [menu.benchmarks]
-    parent = "small-deformations"
-
+image = "LIE_SD_m_result_uy.png"
 +++
 
 {{< data-link >}}

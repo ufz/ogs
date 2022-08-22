@@ -4,12 +4,7 @@ title = "Eve"
 author = "Lars Bilke"
 weight = 2
 draft = true
-
 aliases = [ "/docs/quickstart/basics/envinf1" ]
-
-[menu]
-  [menu.userguide]
-    parent = "basics"
 +++
 
 ## Introduction

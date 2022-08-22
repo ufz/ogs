@@ -25,11 +25,12 @@ Similar to regular web documentation pages the notebook requires to have a front
   date = "2021-11-09"
   author = "Lars Bilke"
   notebook = "Notebooks/SimplePETSc.ipynb"
-  [menu]
-    [menu.benchmarks]
-      parent = "elliptic"
+  image = "optional_gallery_image.png"
+  web_subsection = "elliptic"
   <!--eofm-->
   ```
+
+Static images e.g. for the gallery image or to be used in Markdown cells have to located in either `images`- or `figures`-subdirectories beneath the Notebook file! Otherwise they will not show up in the web site.
 
 ## General advice
 
@@ -45,7 +46,8 @@ Similar to regular web documentation pages the notebook requires to have a front
 - For image captions add a title in quotation marks after the image path, e.g.
 
   ```md
-  ![Alt text](./my_image.png "This will be the image caption.")
+  ![Alt text](figures/my_image.png "This will be the image caption.")
   ```
 
+- Please use `images`- or `figures`-subdirectories!
 - Please note that in merge request web previews images are not shown at all.

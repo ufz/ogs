@@ -4,10 +4,7 @@ author = "Dmitri Naumov"
 title = "Neumann-type boundary conditions"
 project = ["Elliptic/square_1x1_SteadyStateDiffusion/square_1e2_neumann.prj"]
 weight = 103
-
-[menu]
-  [menu.benchmarks]
-    parent = "elliptic"
+image = "square_1e2_neumann_abs_err.png"
 +++
 
 ## Equations

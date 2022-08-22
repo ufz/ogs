@@ -1,11 +1,7 @@
 +++
 author = "TODO"
 project = ["TODO.prj"]
-weight = 101
-
-[menu]
-  [menu.benchmarks]
-    parent = "TODO"
+image = "TODO"
 +++
 
 {{< data-link >}}

@@ -3,11 +3,7 @@ author = "Christian Silbermann, Thomas Nagel"
 date = "2022-05-19"
 title = "Heat conduction with phase change"
 project = ["Parabolic/T/1D_freezing_column_Stefan/Stefan_problem.prj"]
-
-[menu]
-  [menu.benchmarks]
-    parent = "heatconduction"
-
+image = ""
 +++
 
 ## Test cases

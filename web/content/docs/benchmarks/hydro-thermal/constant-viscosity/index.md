@@ -4,11 +4,7 @@ author = "Thomas Fischer"
 date = "2017-02-16T15:17:53+01:00"
 title = "Constant viscosity"
 weight = 161
-
-[menu]
-  [menu.benchmarks]
-    parent = "hydro-thermal"
-
+image = "compare.png"
 +++
 
 {{< data-link >}}

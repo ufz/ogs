@@ -1,11 +1,7 @@
 +++
 title = "Structured Mesh Generation"
-date = 2018-03-07T15:46:57+01:00
+date = "2018-03-07T15:46:57+01:00"
 author = "Thomas Fischer"
-
-[menu]
-  [menu.tools]
-    parent = "meshing"
 +++
 
 ## Building and using the tools

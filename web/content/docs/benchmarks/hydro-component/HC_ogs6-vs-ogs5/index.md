@@ -4,11 +4,7 @@ weight = 142
 project = ["Parabolic/ComponentTransport/heterogeneous/ogs5_H_2D/ogs5_H_2d.prj", "Parabolic/ComponentTransport/heterogeneous/ogs5_H_3D/ogs5_H_3d.prj"]
 date = "2017-12-05T16:41:09+01:00"
 title = "Heterogeneous Saturated Mass Transport"
-
-[menu]
-  [menu.benchmarks]
-    parent = "Hydro-Component"
-
+image = "comparison_3d.png"
 +++
 
 {{< data-link >}}

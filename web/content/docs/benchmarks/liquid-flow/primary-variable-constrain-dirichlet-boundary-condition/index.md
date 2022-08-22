@@ -4,11 +4,7 @@ title = "Primary variable constraint Dirichlet-type boundary condition"
 weight = 171
 project = ["Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC/cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_1.prj"]
 author = "Thomas Fischer"
-
-[menu]
-  [menu.benchmarks]
-    parent = "liquid-flow"
-
+image = "PVCDBC_1_ts_2.png"
 +++
 
 {{< data-link >}}

@@ -1,16 +1,9 @@
 +++
 project = ["ThermoRichardsMechanics/TaskCDECOVALEX2023/Decovalex-0.prj"]
-
 title = "A test based on DECOVALEX2023 Task C for water vapour diffusion model for non-isothermal Richards flow"
 date = "2022-02-07T13:19:49+01:00"
 author = "Wenqing Wang and Sonja Kaiser"
-
-weight = 70
-
-[menu]
-  [menu.benchmarks]
-    parent = "thermo-richards-mechanics"
-
+image = "decovalex_2023_c.png"
 +++
 
 {{< data-link >}}

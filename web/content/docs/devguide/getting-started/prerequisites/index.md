@@ -2,7 +2,7 @@
 date = "2017-01-14T22:56:13+01:00"
 title = "Set Up Prerequisites"
 author = "Lars Bilke"
-weight = 1002
+weight = 2
 
 [menu]
   [menu.devguide]

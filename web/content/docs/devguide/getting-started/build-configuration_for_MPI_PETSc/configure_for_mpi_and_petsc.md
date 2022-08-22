@@ -2,7 +2,7 @@
 title = "Build configuration for MPI and PETSc"
 date = "2022-05-11T09:48:39+02:00"
 author = "Wenqing Wang"
-weight = 1004
+weight = 5
 
 [menu]
   [menu.devguide]

@@ -4,11 +4,7 @@ weight = 142
 project = ["Parabolic/RichardsComponentTransport/Padilla/Padilla_NaCl6/Padilla_NaCl6.prj"]
 date = "2017-08-25T14:41:09+01:00"
 title = "Unsaturated Mass Transport"
-
-[menu]
-  [menu.benchmarks]
-    parent = "richards-flow"
-
+image = "RichardsComponentTransport_Padilla.png"
 +++
 
 {{< data-link >}}

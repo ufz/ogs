@@ -4,11 +4,7 @@ author = "Wenqing Wang"
 date = "2022-06-27T11:28:24+02:00"
 title = "Classical transport example: using the full upwind stabilization"
 weight = 161
-
-[menu]
-  [menu.benchmarks]
-    parent = "hydro-thermal"
-
+image = "classical_transport_example_full_upwind.png"
 +++
 
 {{< data-link >}}

@@ -63,27 +63,12 @@ This page will be available at the URL `/docs/my-post/` and the content of the p
 
 </div>
 
-### Setup navigation for a page
+### Page meta data
 
-The are submenus (shown in the left sidebar) for specific sections such as for benchmarks. The submenus consist of groups (e.g. *Elliptic*) and page entries. Groups are defined in `config.toml`:
+Page meta data is given in frontmatter.
 
-```toml
-[[menu.benchmarks]]
-name = "Elliptic"
-identifier = "elliptic"
-weight = 1
-```
-
-To add your page to a group as an entry add the following frontmatter:
-
-```toml
-weight = 101
-
-[menu.benchmarks]
-parent = "elliptic"
-```
-
-`weight` specifies the order of groups and pages in ascending order (top `->` down).
+- `weight`: Navigation is handled automatically by the folder structure. Use the `weight`-paramter in the frontmatter to specify the order of pages in ascending order (top `->` down).
+- `image`: Specify an image in the page bundle used for the gallery view.
 
 ### Write a page
 

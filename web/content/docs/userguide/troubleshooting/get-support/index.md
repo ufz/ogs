@@ -2,11 +2,7 @@
 date = "2020-11-24T09:45:13+01`:00"
 title = "Get support / fill a bug report"
 author = "Lars Bilke"
-weight = 21
-
-[menu]
-  [menu.userguide]
-    parent = "troubleshooting"
+weight = 1
 +++
 
 If you encounter issues using or developing OGS let us know. To help you in the best possible way we need detailed information about the problem from you. In the best case we can reproduce the issue by ourselves and possibly fix it for you. Please provide the following information:

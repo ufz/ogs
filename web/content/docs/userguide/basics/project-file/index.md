@@ -3,10 +3,6 @@ date = "2018-11-14T11:00:13+01`:00"
 title = "Project file syntax"
 author = "Lars Bilke"
 weight = 4
-
-[menu]
-  [menu.userguide]
-    parent = "basics"
 +++
 
 Project files `.prj` have to be valid XML documents. For information of specific tags see our [Doxygen-documentation](https://doxygen.opengeosys.org/d1/d91/ogs_file_param__projectfile).

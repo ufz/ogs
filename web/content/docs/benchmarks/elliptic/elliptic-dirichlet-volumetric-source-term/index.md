@@ -4,11 +4,7 @@ title = "Volumetric Source Term"
 project = ["Elliptic/square_1x1_SteadyStateDiffusion/square_1e2_volumetricsourceterm.prj"]
 author = "Tom Fischer"
 weight = 102
-
-[menu]
-  [menu.benchmarks]
-    parent = "elliptic"
-
+image = "square_1e2_volumetricsourceterm_pcs_0_ts_1_t_1.000000_Pressure_AnalyticalSolution_VolumetricSourceTerm.png"
 +++
 
 {{< data-link >}}

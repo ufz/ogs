@@ -2,12 +2,8 @@
 date = "2018-11-14T11:00:13+01`:00"
 title = "General"
 author = "Lars Bilke"
-weight = 22
+weight = 2
 toc = true
-
-[menu]
-  [menu.userguide]
-    parent = "troubleshooting"
 +++
 
 ## Data Explorer

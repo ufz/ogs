@@ -2,10 +2,6 @@
 date = "2018-06-19T15:56:57+01:00"
 title = "Construct meshes from bulk mesh and geometries"
 author = "Dmitri Naumov"
-
-[menu]
-  [menu.tools]
-    parent = "meshing-submeshes"
 +++
 
 ## General

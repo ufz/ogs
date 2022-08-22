@@ -4,11 +4,7 @@ title = "Theis' problem"
 weight = 171
 project = ["Parabolic/LiquidFlow/AxiSymTheis/axisym_theis.prj"]
 author = "Wenqing Wang"
-
-[menu]
-  [menu.benchmarks]
-    parent = "liquid-flow"
-
+image = "theis_comparison.png"
 +++
 
 {{< data-link >}}

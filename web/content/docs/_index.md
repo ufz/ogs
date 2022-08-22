@@ -1,6 +1,5 @@
 +++
-title = "OpenGeoSys documentation overview"
-layout = "section/docs.html"
+title = "Docs"
 
 [menu.main]
 name = "Docs"

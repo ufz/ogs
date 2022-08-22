@@ -2,10 +2,6 @@
 date = "2019-01-11T11:00:13+01:00"
 title = "GocadSGridReader"
 author = "Thomas Fischer"
-
-[menu]
-  [menu.tools]
-    parent = "meshing"
 +++
 
 ## Introduction

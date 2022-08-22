@@ -2,12 +2,7 @@
 author = "Xing-Yuan Miao"
 date = "2017-05-19T09:10:33+01:00"
 title = "Crack beam under tension"
-weight = 158
-
-[menu]
-  [menu.benchmarks]
-    parent = "Phase-Field"
-
+image = "beam_u.png"
 +++
 
 {{< data-link >}}

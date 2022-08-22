@@ -1,0 +1,67 @@
+{{ $elements := index (split .CurrentSection "/") }}
+{{ $current_section_name := index $elements (sub (len $elements) 2) }}
+{{ $parent_section_name := index $elements (sub (len $elements) 3) }}
+{{ $top_section_name := index $elements (sub (len $elements) 4) }}
+{{ $baseSubsection := . }}
+{{ $subSubsection := . }}
+{{ if eq $top_section_name .Section }}
+  {{ $baseSubsection = .Parent }}
+{{ end }}
+{{ if not .IsSection }}
+  {{ $baseSubsection = .Parent.Parent }}
+  {{ $subSubsection = .Parent }}
+{{ end }}
+{{ $indexRelPermalink := .RelPermalink }}
+
+{{ define "subpages" }}
+{{ $indexRelPermalink := .indexRelPermalink }}
+  {{ if .context.Pages }}
+    {{ range .context.Pages}}
+      {{ if eq .Kind "page" }}
+        <li
+        class="p-1 mr-1 {{ if eq .RelPermalink $indexRelPermalink }}bg-gray-100 rounded-lg{{ else }}text-gray-700 hover:text-gray-900{{ end }}">
+
+        {{ if .Page.Params.notebook }}
+        <img style="margin-top: 0; margin-bottom: 0; height: 1em;" class="inline-block mr-1"
+          src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" alt="">
+        {{ end }}
+
+        <a href="{{ .Permalink }}" {{ if eq .RelPermalink $indexRelPermalink }} class="text-brand-500" {{end}}>
+          {{ .Title | markdownify }}
+        </a>
+      </li>
+      {{ end }}
+      {{ template "subpages" (dict "indexRelPermalink" $indexRelPermalink "context" .) }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+<div class="md:flex md:shrink-0">
+  <nav class="w-48 md:w-64 lg:w-72 pl-2 pr-4 mt-1 text-sm lg:text-base overflow-y-scroll h-screen sticky top-0">
+    {{ $currentMenu := index .Site.Menus "docs" }}
+    {{ range $currentMenu }}
+      {{ $url_first_char := substr .URL 0 2 }}
+      {{ if in $url_first_char "/" }}
+        <div
+          class=" text-gray-700 hover:text-gray-900 mb-2 {{if or (eq $parent_section_name .Identifier) (eq $current_section_name .Identifier) }} font-bold text-brand-500{{ end }}">
+
+          <a href="{{ .URL }}">
+            {{ .Name }}
+          </a>
+        </div>
+      {{ end }}
+    {{ end }}
+    <hr class="mt-3">
+    <ul>
+      {{ range $baseSubsection.Sections }}
+        <li class="tracking-wide font-bold mt-6">
+          {{ if .Params.breadcrumbs }}<a href="{{ .Permalink }}">{{ end }}
+            <span {{if eq .RelPermalink $subSubsection.RelPermalink }} class="text-brand-500" {{end}}>{{ .Title | upper }}</span>
+          {{ if .Params.breadcrumbs }}</a>{{ end }}
+        </li>
+        {{ template "subpages" (dict "indexRelPermalink" $indexRelPermalink "context" .)  }}
+      {{ end }}
+    </ul>
+    <hr class="mt-3">
+  </nav>
+</div>

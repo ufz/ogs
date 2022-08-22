@@ -1,10 +1,6 @@
 +++
 title = "Add element quality to mesh"
 author = "Thomas Fischer"
-
-[menu]
-  [menu.tools]
-    parent = "model-preparation"
 +++
 
 The command line tool `AddElementQuality` adds a data array to the given mesh

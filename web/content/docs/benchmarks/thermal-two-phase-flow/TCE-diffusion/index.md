@@ -1,14 +1,9 @@
 +++
 author = "Boyan Meng"
-weight = 142
 title = "TCE Diffusion"
 date = "2022-05-12T16:47:18+02:00"
 project = ["Parabolic/ThermalTwoPhaseFlowPP/HeatPipe/Twophase_HeatPipe_quad_curve_small.prj"]
-
-[menu]
-  [menu.benchmarks]
-    parent = "Thermal-Two-Phase Flow"
-
+image = "err.png"
 +++
 
 {{< data-link >}}

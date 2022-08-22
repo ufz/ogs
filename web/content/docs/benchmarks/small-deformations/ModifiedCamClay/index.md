@@ -3,12 +3,7 @@ author = "Christian Silbermann, Thomas Nagel"
 project = ["Mechanics/ModifiedCamClay/square_1e0_shear.prj", "Mechanics/ModifiedCamClay/square_1e0_biax.prj", "Mechanics/ModifiedCamClay/model_triaxtest.prj"]
 date = "2020-12-14T14:39:39+01:00"
 title = "Modified Cam clay model"
-
-[menu]
-
-  [menu.benchmarks]
-    parent = "small-deformations"
-
+image = ""
 +++
 
 ## Test cases

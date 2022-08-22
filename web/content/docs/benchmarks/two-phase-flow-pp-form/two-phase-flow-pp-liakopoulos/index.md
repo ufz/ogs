@@ -3,12 +3,7 @@ project = ["Parabolic/TwoPhaseFlowPP/Liakopoulos/TwoPhase_Lia_quad_short.prj"]
 author = "Yonghui Huang"
 date = "2018-06-20T14:37:58+01:00"
 title = "Liakopoulos experiment"
-weight = 101
-
-[menu]
-  [menu.benchmarks]
-    parent = "Two-Phase-Flow-pp"
-
+image = ""
 +++
 
 {{< data-link >}}

@@ -2,12 +2,7 @@
 author = "Keita Yoshioka"
 date = "2020-07-27"
 title = "Three point bending test"
-weight = 158
-
-[menu]
-  [menu.benchmarks]
-    parent = "Phase-Field"
-
+image = "VPF_ME1_NF_CMOD_comp.png"
 +++
 
 {{< data-link >}}

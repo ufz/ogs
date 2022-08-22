@@ -2,14 +2,11 @@
 project = ["RichardsMechanics/LiakopoulosHM/liakopoulos.prj"]
 author = "Wenqing Wang"
 title = "A test based on the Liakopoulos experiment"
-date = 2020-10-21T15:07:13+02:00
+date = "2020-10-21T15:07:13+02:00"
 weight = 153
-
-[menu]
-  [menu.benchmarks]
-    parent = "richards-mechanics"
-
+image = "liak_uy.png"
 +++
+
 This benchmark simulates the Liakopoulos experiment
   [[1]](#1)
  with an assumption of  the Richards' flow  coupled with deformation.

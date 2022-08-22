@@ -3,11 +3,6 @@ date = "2021-06-17T11:00:13+01:00"
 title = "OGS Conventions"
 author = "Joerg Buchwald"
 weight = 6
-
-
-[menu]
-  [menu.userguide]
-    parent = "basics"
 +++
 
 ## Units

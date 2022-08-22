@@ -4,11 +4,7 @@ author = "Tianyuan Zheng"
 date = "2017-02-16T15:10:33+01:00"
 title = "Unconfined compression"
 weight = 153
-
-[menu]
-  [menu.benchmarks]
-    parent = "hydro-mechanics"
-
+image = "num_ana_1s_refined.png"
 +++
 
 {{< data-link >}}

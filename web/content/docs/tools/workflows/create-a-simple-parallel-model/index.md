@@ -2,10 +2,6 @@
 date = "2018-03-07T15:56:57+01:00"
 title = "Create a simple parallel model"
 author = "Thomas Fischer"
-
-[menu]
-  [menu.tools]
-    parent = "workflows"
 +++
 
 ## Unsupported Processes

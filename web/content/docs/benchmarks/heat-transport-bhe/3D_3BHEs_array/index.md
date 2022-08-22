@@ -4,11 +4,7 @@ date = "2019-10-21T13:44:00+01:00"
 title = "A 3-BHE Array Coupled With Pipe Network"
 weight = 123
 project = ["Parabolic/T/3D_3BHEs_array/3bhes_1U.prj"]
-
-[menu]
-  [menu.benchmarks]
-    parent = "heat-transport-bhe"
-
+image = "BHE_network.png"
 +++
 
 {{< data-link >}}

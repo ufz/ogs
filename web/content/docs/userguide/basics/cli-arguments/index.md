@@ -3,10 +3,6 @@ date = "2021-05-06T13:00:13+01`:00"
 title = "Command-line arguments"
 author = "Lars Bilke"
 weight = 3
-
-[menu]
-  [menu.userguide]
-    parent = "basics"
 +++
 
 The following arguments are available:

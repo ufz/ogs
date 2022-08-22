@@ -2,12 +2,7 @@
 author = "Keita Yoshioka"
 date = "2020-07-27"
 title = "Fluid driven percolation"
-weight = 158
-
-[menu]
-  [menu.benchmarks]
-    parent = "Phase-Field"
-
+image = "VPF_ME2_case1.png"
 +++
 
 {{< data-link >}}

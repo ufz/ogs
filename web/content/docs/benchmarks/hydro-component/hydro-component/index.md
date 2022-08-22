@@ -3,11 +3,7 @@ author = "Marc Walther"
 weight = 142
 date = "2017-09-07T14:41:09+01:00"
 title = "Saturated Mass Transport"
-
-[menu]
-  [menu.benchmarks]
-    parent = "Hydro-Component"
-
+image = "DiffusionAndStorageAndGravityAndDispersionHalf.gif"
 +++
 
 ## Overview

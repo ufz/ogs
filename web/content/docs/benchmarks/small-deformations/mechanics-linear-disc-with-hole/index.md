@@ -4,11 +4,7 @@ title = "Linear; Disc with hole"
 project = ["Mechanics/Linear/disc_with_hole.prj"]
 author = "Dmitri Naumov"
 weight = 111
-
-[menu]
-  [menu.benchmarks]
-    parent = "small-deformations"
-
+image = "disc_with_hole_pcs_0_ts_4_t_1.000000.png"
 +++
 
 {{< data-link >}}

@@ -2,9 +2,6 @@
 date = "2019-12-03T00:00:00+01:00"
 title = "Mesh2Raster"
 author = "Karsten Rink"
-
-[menu.tools]
-parent = "Data Import/Export"
 +++
 
 ## Introduction

@@ -2,10 +2,6 @@
 date = "2020-01-17T5:56:57+01:00"
 title = "Extract Boundary"
 author = "Thomas Fischer"
-
-[menu]
-  [menu.tools]
-    parent = "meshing-submeshes"
 +++
 
 ## General

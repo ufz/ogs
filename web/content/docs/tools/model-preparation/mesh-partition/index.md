@@ -1,10 +1,6 @@
 +++
 title = "Partition a mesh with `partmesh`"
 author = "Zhang Ning"
-
-[menu]
-  [menu.tools]
-    parent = "model-preparation"
 +++
 
 `partmesh` is an OpenGeoSys parallel simulation model preparation command line

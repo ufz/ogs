@@ -4,11 +4,7 @@ title = "Dirichlet BC and Nodal Source Term"
 project = ["Elliptic/circle_radius_1/circle_1e6_axi.prj"]
 author = "Thomas Fischer"
 weight = 104
-
-[menu]
-  [menu.benchmarks]
-    parent = "elliptic"
-
+image = "circle_1e6_gwf_with_nodal_source_term_analytical_solution_head.png"
 +++
 
 {{< data-link >}}
