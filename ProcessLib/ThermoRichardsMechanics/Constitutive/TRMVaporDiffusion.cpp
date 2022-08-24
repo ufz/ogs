@@ -51,8 +51,6 @@ void TRMVaporDiffusionModel<DisplacementDim>::eval(
     if (liquid_phase.hasProperty(MPL::PropertyType::vapour_diffusion) &&
         S_L_data.S_L < 1.0)
     {
-        variables.density = rho_L_data.rho_LR;
-
         double const rho_wv =
             liquid_phase.property(MaterialPropertyLib::vapour_density)
                 .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
