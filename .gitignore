@@ -38,3 +38,4 @@ CMakeUserPresets.json
 nohup.out
 
 /Documentation/.vale
+.ipynb_checkpoints
