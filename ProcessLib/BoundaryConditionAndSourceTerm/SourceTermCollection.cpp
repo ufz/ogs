@@ -10,6 +10,8 @@
 
 #include "SourceTermCollection.h"
 
+#include <range/v3/view/filter.hpp>
+
 namespace ProcessLib
 {
 void SourceTermCollection::addSourceTermsForProcessVariables(
@@ -34,7 +36,12 @@ void SourceTermCollection::addSourceTermsForProcessVariables(
 void SourceTermCollection::integrate(const double t, GlobalVector const& x,
                                      GlobalVector& b, GlobalMatrix* jac) const
 {
-    for (auto const& st : _source_terms)
+    // For parallel computing with DDC, a partition may not have source term
+    // but a nullptr is assigned to its element in _source_terms.
+    auto non_nullptr = [](std::unique_ptr<SourceTerm> const& st)
+    { return st != nullptr; };
+
+    for (auto const& st : _source_terms | ranges::views::filter(non_nullptr))
     {
         st->integrate(t, x, b, jac);
     }
