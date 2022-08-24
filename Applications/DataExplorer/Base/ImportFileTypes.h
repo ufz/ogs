@@ -84,7 +84,7 @@ public:
         if (t == ImportFileType::FEFLOW)
             return "FEFLOW files (*.fem)";
         if (t == ImportFileType::GMS)
-            return "GMS files (*.txt *.3dm)";
+            return "GMS files (*.txt *.2dm *.3dm)";
         if (t == ImportFileType::GMSH)
             return "GMSH mesh files (*.msh)";
         if (t == ImportFileType::GOCAD_TSURF)

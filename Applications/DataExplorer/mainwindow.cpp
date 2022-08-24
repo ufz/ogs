@@ -720,7 +720,8 @@ void MainWindow::loadFile(ImportFileType::type t, const QString& fileName)
                 OGSError::box("Error reading GMS file.");
             }
         }
-        else if (fi.suffix().toLower() == "3dm")  // GMS mesh files
+        else if (fi.suffix().toLower() == "2dm" ||
+                 fi.suffix().toLower() == "3dm")  // GMS mesh files
         {
             std::string name = fileName.toStdString();
             std::unique_ptr<MeshLib::Mesh> mesh(
