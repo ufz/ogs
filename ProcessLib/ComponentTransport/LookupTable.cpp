@@ -134,8 +134,6 @@ void LookupTable::lookup(std::vector<GlobalVector*> const& x,
 std::size_t LookupTable::getTableEntryID(
     std::vector<double> const& entry_input) const
 {
-    std::vector<std::size_t> temp_vec;
-
     std::vector<std::size_t> intersected_vec =
         /// point_id_groups stores indices where the elements equal to the given
         /// value.
@@ -151,10 +149,9 @@ std::size_t LookupTable::getTableEntryID(
             input_fields[i].point_id_groups[BaseLib::findIndex(
                 input_fields[i].seed_points, entry_input[i])];
 
-        temp_vec = intersection(intersected_vec, vec);
+        auto temp_vec = intersection(intersected_vec, vec);
 
         std::swap(intersected_vec, temp_vec);
-        temp_vec.clear();
     }
 
     return intersected_vec[0];

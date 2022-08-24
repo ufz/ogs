@@ -67,7 +67,7 @@ static auto meshPropertyDatatypeString()
     return ogs_to_xdmf_type;
 }
 
-// Transform MeshPropertyDatatype into string )
+// Transform MeshPropertyDatatype into string.
 static std::string getPropertyDataTypeString(
     MeshPropertyDataType const& ogs_data_type)
 {

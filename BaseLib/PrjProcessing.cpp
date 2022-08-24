@@ -235,7 +235,8 @@ void readAndPatchPrj(std::stringstream& prj_stream, std::string& prj_file,
         }
         auto patch = xmlParseFile(prj_file.c_str());
         auto node = xmlDocGetRootElement(patch);
-        auto base_file = xmlGetProp(node, (const xmlChar*)"base_file");
+        xmlChar const base_file_string[] = "base_file";
+        auto base_file = xmlGetProp(node, base_file_string);
         if (base_file == nullptr)
         {
             OGS_FATAL(

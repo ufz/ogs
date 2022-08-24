@@ -32,8 +32,6 @@ static unsigned short int const default_compression_factor = 1;
 
 using namespace MeshLib::IO;
 
-using namespace std::string_literals;
-
 static bool checkCompression()
 {
     // Check if gzip compression is available and can be used for both

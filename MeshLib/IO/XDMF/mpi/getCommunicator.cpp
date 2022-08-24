@@ -22,8 +22,6 @@
 #include "BaseLib/Logging.h"
 #include "MeshLib/IO/XDMF/fileIO.h"
 
-using namespace std::string_literals;
-
 namespace MeshLib::IO
 {
 int getGroupIndex(int const input_index, int const input_size,

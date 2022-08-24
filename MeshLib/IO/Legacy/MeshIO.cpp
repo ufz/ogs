@@ -54,12 +54,12 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
     std::string line_string;
     getline(in, line_string);
 
-    std::vector<MeshLib::Node*> nodes;
-    std::vector<MeshLib::Element*> elements;
-    std::vector<std::size_t> materials;
-
     if (line_string.find("#FEM_MSH") != std::string::npos)  // OGS mesh file
     {
+        std::vector<MeshLib::Node*> nodes;
+        std::vector<MeshLib::Element*> elements;
+        std::vector<std::size_t> materials;
+
         while (!in.eof())
         {
             getline(in, line_string);
