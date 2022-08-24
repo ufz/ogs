@@ -120,3 +120,6 @@ post = "The OGS source code documentation is automatically generated right from 
 name = "Styleguide"
 url = "https://ufz.github.io/styleguide/cppguide.xml"
 post = "OpenGeoSys C++ Style Guide"
+
+[security.funcs]
+getenv = ['^HUGO_', '^CI_']
