@@ -66,18 +66,37 @@ You can use the git command line tool to clone the remote repository on GitLab t
 
 ```bash
 git clone --filter=blob:limit=100k git@gitlab.opengeosys.org:YOUR-USERNAME/ogs.git
-cd ogs
-git config remote.pushdefault origin
-git config push.default current
 ```
 
-This creates a new folder `ogs` in your current working directory with the OGS source code. After this step, the remote called `origin` refers to your fork on GitLab. It also sets the default remote for pushes to be `origin` and the default push behavior to `current`. Together this means that if you just type `git push`, the current branch is pushed to the `origin` remote.
+This creates a new folder `ogs` in your current working directory with the OGS source code. After this step, the remote called `origin` refers to your fork on GitLab.
 
 <div class='note'>
 
 The `--filter=blob:limit=100k`-parameter instructs git to only fetch files which are smaller than 100 Kilobyte. Larger files (e.g. benchmark files, images, PDFs) are fetched on-demand only. This happens automatically and [is a replacement for the previous Git LFS tracked files](https://github.com/ufz/ogs/issues/2961). Requires at least **git 2.22**!
 
 </div>
+
+### Local clone git settings
+
+After that initially set some useful git settings for your local repo:
+
+```bash
+cd ogs
+```
+
+The following sets the default remote for pushes to be `origin` and the default push behavior to `current`. Together this means that if you just type `git push`, the current branch is pushed to the `origin` remote.
+
+```bash
+git config remote.pushdefault origin
+git config push.default current
+```
+
+To streamline the updating workflow the `pull`-command is configured to rebase by default (instead of merge) and to handle local modifications automatically (`autostash`). See [this blog post](https://cscheng.info/2017/01/26/git-tip-autostash-with-git-pull-rebase.html) on more information about the `git pull --rebase --autostash`-functionality.
+
+```bash
+git config pull.rebase true
+git config rebase.autoStash true
+```
 
 Create a second remote called `upstream` that points at the official OGS repository and fetch from it:
 
@@ -132,17 +151,17 @@ brew install clang-format
 
 </div>
 
-## Optional: Working on a new feature
+## Step: Working on a new feature
 
 You only have to follow the above steps once. From then on, whenever you want to work on a new feature, you can more easily interact with the remote repositories.
 
-Make sure that your local repository is up-to-date with the upstream repository:
+Make sure that your local repository is up-to-date with the `upstream` repository:
 
 ```bash
 git fetch upstream
 ```
 
-Create a branch `feature-name` off of upstream `master`-branch to work on a new feature, and check out the branch:
+Create a branch `feature-name` off of `upstream/master`-branch to work on a new feature, and check out the branch:
 
 ```bash
 git checkout -b feature-name upstream/master
@@ -158,32 +177,15 @@ gitGraph
 
 ----
 
-To keep up to date with the developments in the official repository it is recommended to rebase your feature-branch regularly (at least weekly). To see what has been updated, load a new set of changes with
+To keep up to date with the developments in the official repository it is recommended to rebase your feature-branch regularly (at least weekly) with:
 
 ```bash
-git fetch --all -p
+git pull upstream master
 ```
 
-Then rebase your `feature-name`-branch on to the newest master branch in the official repository with
-
-```bash
-git rebase upstream/master feature-name
-```
+We used `git pull` here which was configured to `rebase` by default (`git config pull.rebase true`)
 
 This can potentially lead to conflicts, which have to be resolved.
-
-<div class='note'>
-
-You may want to streamline the updating workflow a bit using the [`git pull --rebase --autostash`](https://cscheng.info/2017/01/26/git-tip-autostash-with-git-pull-rebase.html)-functionality. Enable it with:
-
-```bash
-git config pull.rebase true
-git config rebase.autoStash true
-```
-
-Then simply use `git pull upstream master`.
-
-</div>
 
 ----
 
