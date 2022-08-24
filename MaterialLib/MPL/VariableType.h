@@ -48,7 +48,6 @@ enum class Variable : int
     capillary_pressure,
     concentration,
     density,
-    displacement,
     effective_pore_pressure,
     enthalpy_of_evaporation,
     equivalent_plastic_strain,
@@ -77,7 +76,6 @@ static const std::array<std::string,
     variable_enum_to_string{{"capillary_pressure",
                              "concentration",
                              "density",
-                             "displacement",
                              "effective_pore_pressure",
                              "enthalpy_of_evaporation",
                              "equivalent_plastic_strain",
@@ -121,8 +119,6 @@ public:
                 return concentration;
             case Variable::density:
                 return density;
-            case Variable::displacement:
-                return std::visit(identity, displacement);
             case Variable::effective_pore_pressure:
                 return effective_pore_pressure;
             case Variable::enthalpy_of_evaporation:
@@ -177,7 +173,6 @@ public:
     double capillary_pressure = nan_;
     double concentration = nan_;
     double density = nan_;
-    std::variant<std::monostate, Vector> displacement;
     double effective_pore_pressure = nan_;
     double enthalpy_of_evaporation = nan_;
     double equivalent_plastic_strain = nan_;
