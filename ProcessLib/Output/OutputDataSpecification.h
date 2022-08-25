@@ -40,14 +40,14 @@ inline std::ostream& operator<<(std::ostream& os,
 struct OutputDataSpecification final
 {
     OutputDataSpecification(
-        std::set<std::string>&& output_variables,
-        std::vector<double>&& fixed_output_times,
-        std::vector<PairRepeatEachSteps>&& repeats_each_steps,
-        bool const output_residuals)
-        : output_variables(std::move(output_variables)),
-          fixed_output_times(std::move(fixed_output_times)),
-          repeats_each_steps(std::move(repeats_each_steps)),
-          output_residuals(output_residuals)
+        std::set<std::string>&& output_variables_,
+        std::vector<double>&& fixed_output_times_,
+        std::vector<PairRepeatEachSteps>&& repeats_each_steps_,
+        bool const output_residuals_)
+        : output_variables(std::move(output_variables_)),
+          fixed_output_times(std::move(fixed_output_times_)),
+          repeats_each_steps(std::move(repeats_each_steps_)),
+          output_residuals(output_residuals_)
     {
         if (!std::is_sorted(cbegin(fixed_output_times),
                             cend(fixed_output_times)))
@@ -55,6 +55,10 @@ struct OutputDataSpecification final
             OGS_FATAL(
                 "Vector of fixed output time steps passed to the "
                 "OutputDataSpecification constructor must be sorted");
+        }
+        if (repeats_each_steps.empty())
+        {
+            repeats_each_steps.emplace_back(1, std::numeric_limits<int>::max());
         }
     }
 
