@@ -54,8 +54,8 @@ VisualizationWidget::VisualizationWidget(QWidget* parent /*= 0*/)
     _vtkRender = ren;
 
     vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
-    vtkWidget->SetRenderWindow(renderWindow);
-    vtkWidget->GetRenderWindow()->AddRenderer(ren);
+    vtkWidget->setRenderWindow(renderWindow);
+    vtkWidget->renderWindow()->AddRenderer(ren);
 
     _interactorStyle = VtkCustomInteractorStyle::New();
     renderWindow->GetInteractor()->SetInteractorStyle(_interactorStyle);
@@ -109,9 +109,9 @@ VtkPickCallback* VisualizationWidget::vtkPickCallback() const
 
 void VisualizationWidget::updateView()
 {
-    if (vtkWidget->GetRenderWindow()->IsDrawable())
+    if (vtkWidget->renderWindow()->IsDrawable())
     {
-        vtkWidget->GetRenderWindow()->Render();
+        vtkWidget->renderWindow()->Render();
     }
 }
 
@@ -154,7 +154,7 @@ void VisualizationWidget::on_zoomToolButton_toggled(bool checked)
     {
         vtkSmartPointer<vtkInteractorStyleRubberBandZoom> interactorStyle =
             vtkSmartPointer<vtkInteractorStyleRubberBandZoom>::New();
-        vtkWidget->GetRenderWindow()->GetInteractor()->SetInteractorStyle(
+        vtkWidget->renderWindow()->GetInteractor()->SetInteractorStyle(
             interactorStyle);
         QCursor cursor;
         cursor.setShape(Qt::CrossCursor);
@@ -162,7 +162,7 @@ void VisualizationWidget::on_zoomToolButton_toggled(bool checked)
     }
     else
     {
-        vtkWidget->GetRenderWindow()->GetInteractor()->SetInteractorStyle(
+        vtkWidget->renderWindow()->GetInteractor()->SetInteractorStyle(
             _interactorStyle);
         QCursor cursor;
         cursor.setShape(Qt::ArrowCursor);
@@ -208,7 +208,7 @@ void VisualizationWidget::screenshot(QString filename, int magnification)
 {
     vtkSmartPointer<vtkWindowToImageFilter> windowToImageFilter =
         vtkSmartPointer<vtkWindowToImageFilter>::New();
-    windowToImageFilter->SetInput(vtkWidget->GetRenderWindow());
+    windowToImageFilter->SetInput(vtkWidget->renderWindow());
     // Set the resolution of the output image
     // magnification times the current resolution of vtk render window
     windowToImageFilter->SetScale(magnification);

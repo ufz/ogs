@@ -1501,7 +1501,7 @@ void MainWindow::on_actionExportVRML2_triggered(bool checked /*= false*/)
         vtkVRMLExporter* exporter = vtkVRMLExporter::New();
         exporter->SetFileName(fileName.toStdString().c_str());
         exporter->SetRenderWindow(
-            visualizationWidget->vtkWidget->GetRenderWindow());
+            visualizationWidget->vtkWidget->renderWindow());
         exporter->Write();
         exporter->Delete();
     }
@@ -1522,7 +1522,7 @@ void MainWindow::on_actionExportObj_triggered(bool checked /*= false*/)
         vtkOBJExporter* exporter = vtkOBJExporter::New();
         exporter->SetFilePrefix(fileName.toStdString().c_str());
         exporter->SetRenderWindow(
-            visualizationWidget->vtkWidget->GetRenderWindow());
+            visualizationWidget->vtkWidget->renderWindow());
         exporter->Write();
         exporter->Delete();
     }
