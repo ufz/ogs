@@ -21,24 +21,6 @@
 
 namespace MaterialPropertyLib
 {
-/// Very simple vector data type for holding
-/// a pair of values.
-using Pair = std::array<double, 2>;
-
-/// Very simple vector data type for holding
-/// vector components.
-using Vector = std::array<double, 3>;
-
-/// Simple symmetric tensor data type for holding
-/// xx, yy, zz, xy, xz, yz tensor components.
-using SymmTensor = std::array<double, 6>;
-
-/// Very simple 2d tensor data type for holding tensor components.
-using Tensor2d = std::array<double, 4>;
-
-/// Very simple tensor data type for holding
-/// tensor components.
-using Tensor = std::array<double, 9>;
 
 /// Enum Variable is simply a list of all commonly used variables.
 /// If the variable of your choice is missing, simply add it somewhere at the
@@ -99,9 +81,10 @@ static const std::array<std::string,
 
 /// Data type for primary variables, designed to contain both scalar and vector
 /// data.
-using VariableType =
-    std::variant<std::monostate, double, Vector, Eigen::Matrix<double, 4, 1>,
-                 Eigen::Matrix<double, 6, 1>>;
+using VariableType = std::variant<std::monostate,
+                                  double,
+                                  Eigen::Matrix<double, 4, 1>,
+                                  Eigen::Matrix<double, 6, 1>>;
 
 class VariableArray
 {
