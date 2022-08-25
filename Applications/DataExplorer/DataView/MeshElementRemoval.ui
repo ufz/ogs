@@ -65,6 +65,11 @@
         </property>
         <item>
          <property name="text">
+          <string>Point</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>Line</string>
          </property>
         </item>

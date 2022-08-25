@@ -115,13 +115,13 @@ int main(int argc, char* argv[])
                             false);
     cmd.add(zveArg);
 
-    std::vector<std::string> allowed_ele_types{"line",  "tri", "quad",   "hex",
-                                               "prism", "tet", "pyramid"};
+    std::vector<std::string> allowed_ele_types{
+        "point", "line", "tri", "quad", "hex", "prism", "tet", "pyramid"};
     TCLAP::ValuesConstraint<std::string> allowedVals{allowed_ele_types};
     TCLAP::MultiArg<std::string> eleTypeArg(
         "t", "element-type",
-        "element type to be removed: line | tri | quad | hex | prism | tet | "
-        "pyramid",
+        "element type to be removed: point | line | tri | quad | hex | prism | "
+        "tet | pyramid",
         false, &allowedVals);
     cmd.add(eleTypeArg);
 
