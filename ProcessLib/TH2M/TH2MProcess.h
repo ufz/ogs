@@ -138,8 +138,10 @@ private:
         return _use_monolithic_scheme || process_id == deformation_process_id;
     }
 
+    MeshLib::PropertyVector<double>* _heat_flow_rate = nullptr;
+    MeshLib::PropertyVector<double>* _gas_mass_flow_rate = nullptr;
+    MeshLib::PropertyVector<double>* _liquid_mass_flow_rate = nullptr;
     MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
-    MeshLib::PropertyVector<double>* _hydraulic_flow = nullptr;
 
     static constexpr int monolithic_process_id = 0;
     static constexpr int deformation_process_id = 3;
