@@ -10,6 +10,12 @@
 
 #include "PrjProcessing.h"
 
+#ifndef _WIN32
+#ifndef __APPLE__
+#include <cfenv>
+#endif  // __APPLE__
+#endif  // _WIN32
+
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <xml_patch.h>
@@ -109,6 +115,19 @@ void traverseIncludes(xmlDoc* doc, xmlNode* node,
 void replaceIncludes(std::stringstream& prj_stream,
                      std::filesystem::path const& prj_dir)
 {
+    // Store floating-point exception handling. Parsing the XML triggers
+    // floating point exceptions. Because we are not debugging libxml2 (or other
+    // libraries) at this point, the possibly set exceptions are temporary
+    // disabled and restored before end of the function.
+#ifndef _WIN32
+#ifndef __APPLE__
+    fenv_t fe_env;
+    fegetenv(&fe_env);
+    fesetenv(FE_DFL_ENV);  // Set default environment effectively disabling
+                           // exceptions.
+#endif                     //_WIN32
+#endif                     //__APPLE__
+
     auto doc =
         xmlParseMemory(prj_stream.str().c_str(), prj_stream.str().size());
     if (doc == nullptr)
@@ -127,6 +146,13 @@ void replaceIncludes(std::stringstream& prj_stream,
 
     xmlFree(xmlbuff);
     xmlFreeDoc(doc);
+
+    // Restore floating-point exception handling.
+#ifndef _WIN32
+#ifndef __APPLE__
+    fesetenv(&fe_env);
+#endif  //_WIN32
+#endif  //__APPLE__
 }
 
 // Applies a patch file to the prj content in prj_stream.
