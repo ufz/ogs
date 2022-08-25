@@ -109,10 +109,7 @@ VtkPickCallback* VisualizationWidget::vtkPickCallback() const
 
 void VisualizationWidget::updateView()
 {
-    if (vtkWidget->renderWindow()->IsDrawable())
-    {
-        vtkWidget->renderWindow()->Render();
-    }
+    vtkWidget->renderWindow()->Render();
 }
 
 void VisualizationWidget::showAll(int x, int y, int z)
