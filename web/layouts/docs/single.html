@@ -1,5 +1,15 @@
 {{ define "main" }}
 
+{{ $elements := index (split .CurrentSection "/") }}
+{{ $top_section_name := index $elements (sub (len $elements) 4) }}
+{{ $baseSubsection := . }}
+{{ if eq $top_section_name .Section }}
+  {{ $baseSubsection = .Parent }}
+{{ end }}
+{{ if not .IsSection }}
+  {{ $baseSubsection = .Parent.Parent }}
+{{ end }}
+
 <div class="flex">
 
   {{ partial "docs/sidebar.html" . }}
@@ -12,8 +22,7 @@
 
     <div class="mx-auto py-2 px-4 max-w-7xl sm:px-6 lg:px-8 lg:py-4">
       <h2 class="text-3xl font-extrabold sm:text-4xl mb-8">{{ .Title }}</h2>
-
-      {{ if .CurrentSection.Params.os_selector }}
+      {{ if $baseSubsection.Params.os_selector }}
       <div class="flex justify-center">
       <div class="invisible mb-8 bg-gray-200 shadow rounded-lg px-2 py-1 w-auto" id="os-selector">
         <span class="text-gray-600">Select OS:</span>

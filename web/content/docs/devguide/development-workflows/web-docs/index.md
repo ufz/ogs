@@ -39,7 +39,7 @@ As you make modifications to the site it will be rebuild and the page in the bro
 By using `hugo new` you can create a new page with the correct frontmatter for that kind of page:
 
 ```bash
-hugo new docs/benchmarks/elliptic/groundwater-flow-dirichlet/index.md
+hugo new --kind benchmark docs/benchmarks/elliptic/groundwater-flow-dirichlet/index.md
 ```
 
 - path is relative to `content/` and determines the URL of the page
