@@ -204,7 +204,7 @@ git push -u origin feature-name  # -u is required only first time to set up the 
 In case you already have pushed your branch before and also rebased on `master` afterwards you may [need to do a force `push`](https://www.git-tower.com/learn/git/faq/git-force-push)!
 
 ```bash
-git push --force -u origin feature-name
+git push --force origin feature-name
 ```
 
 </div>
