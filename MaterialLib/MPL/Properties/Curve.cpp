@@ -24,8 +24,7 @@ PropertyDataType Curve::value(VariableArray const& variable_array,
                               ParameterLib::SpatialPosition const& /*pos*/,
                               double const /*t*/, double const /*dt*/) const
 {
-    auto const x = std::get<double>(
-        variable_array[static_cast<int>(independent_variable_)]);
+    auto const x = std::get<double>(variable_array[independent_variable_]);
     return curve_.getValue(x);
 }
 
@@ -39,8 +38,7 @@ PropertyDataType Curve::dValue(VariableArray const& variable_array,
         return 0.0;
     }
 
-    auto const x = std::get<double>(
-        variable_array[static_cast<int>(independent_variable_)]);
+    auto const x = std::get<double>(variable_array[independent_variable_]);
     return curve_.getDerivative(x);
 }
 }  // namespace MaterialPropertyLib

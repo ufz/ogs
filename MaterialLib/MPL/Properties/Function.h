@@ -47,7 +47,7 @@ private:
     using Expression = exprtk::expression<double>;
 
     /// Mapping from variable array index to symbol table values.
-    std::vector<std::pair<int, double*>> symbol_values_;
+    std::vector<std::pair<Variable, double*>> symbol_values_;
     /// Value expressions.
     /// Multiple expressions are representing vector-valued functions.
     std::vector<Expression> value_expressions_;

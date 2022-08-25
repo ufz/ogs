@@ -32,8 +32,7 @@ PropertyDataType Linear::value(VariableArray const& variable_array,
     {
         return initial_linearized_ratio +
                std::get<double>(iv.slope) *
-                   (std::get<double>(
-                        variable_array[static_cast<int>(iv.type)]) -
+                   (std::get<double>(variable_array[iv.type]) -
                     std::get<double>(iv.reference_condition));
     };
 

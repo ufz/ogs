@@ -148,10 +148,6 @@ public:
                     variable_enum_to_string[static_cast<int>(variable)]);
         };
     }
-    VariableType operator[](int const index) const
-    {
-        return this->operator[](static_cast<Variable>(index));
-    }
 
     double capillary_pressure = nan_;
     double concentration = nan_;
