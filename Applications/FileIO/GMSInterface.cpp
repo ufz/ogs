@@ -181,15 +181,14 @@ void GMSInterface::writeBoreholesToGMS(
     out.close();
 }
 
-MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
+MeshLib::Mesh* GMSInterface::readMesh(const std::string& filename)
 {
     std::string line;
 
     std::ifstream in(filename.c_str());
     if (!in.is_open())
     {
-        ERR("GMSInterface::readGMS3DMMesh(): Could not open file {:s}.",
-            filename);
+        ERR("GMSInterface::readMesh(): Could not open file {:s}.", filename);
         return nullptr;
     }
 
@@ -197,14 +196,14 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
     std::getline(in, line);  // "MESH3D"
     if (line != "MESH3D" && line != "MESH2D")
     {
-        ERR("GMSInterface::readGMS3DMMesh(): Could not read expected file "
+        ERR("GMSInterface::readMesh(): Could not read expected file "
             "header.");
         return nullptr;
     }
     bool const is_3d = (line == "MESH3D");
 
     std::string mesh_name = BaseLib::extractBaseNameWithoutExtension(filename);
-    INFO("GMSInterface::readGMS3DMMesh(): Reading GMS mesh...");
+    INFO("Reading SMS/GMS mesh...");
     std::vector<MeshLib::Node*> nodes;
     std::vector<MeshLib::Element*> elements;
     std::vector<int> mat_ids;
@@ -258,7 +257,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
             elements.push_back(new MeshLib::Tri(tri_nodes));
             mat_ids.push_back(mat_id);
         }
-        else if(!is_3d && element_id == "E6T")  // Triangle
+        else if (!is_3d && element_id == "E6T")  // Triangle
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[3] >> node_idx[1] >>
                 node_idx[4] >> node_idx[2] >> node_idx[5] >> mat_id;
@@ -270,7 +269,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
             elements.push_back(new MeshLib::Tri(tri_nodes));
             mat_ids.push_back(mat_id);
         }
-        else if(is_3d && element_id == "E6W")  // Prism
+        else if (is_3d && element_id == "E6W")  // Prism
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
                 node_idx[3] >> node_idx[4] >> node_idx[5] >> mat_id;
@@ -314,7 +313,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
         else  // default
         {
             WARN(
-                "GMSInterface::readGMS3DMMesh() - Element type '{:s}' not "
+                "GMSInterface::readMesh() - Element type '{:s}' not "
                 "recognised.",
                 element_id);
             return nullptr;
@@ -322,7 +321,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
     }
 
     in.close();
-    INFO("GMSInterface::readGMS3DMMesh(): finished.");
+    INFO("finished.");
 
     MeshLib::Properties properties;
     if (mat_ids.size() == elements.size())
