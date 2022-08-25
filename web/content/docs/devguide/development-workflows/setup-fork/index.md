@@ -185,7 +185,11 @@ git pull upstream master
 
 We used `git pull` here which was configured to `rebase` by default (`git config pull.rebase true`)
 
-This can potentially lead to conflicts, which have to be resolved.
+<div class="note">
+
+This can potentially lead to conflicts, which [have to be resolved](https://www.git-tower.com/learn/git/faq/solve-merge-conflicts).
+
+</div>
 
 ----
 
@@ -194,6 +198,16 @@ Now after you implemented the feature and committed your work you can push the n
 ```bash
 git push -u origin feature-name  # -u is required only first time to set up the remote-tracking.
 ```
+
+<div class="note">
+
+In case you already have pushed your branch before and also rebased on `master` afterwards you may [need to do a force `push`](https://www.git-tower.com/learn/git/faq/git-force-push)!
+
+```bash
+git push --force -u origin feature-name
+```
+
+</div>
 
 If your work is done submit a [merge request](https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/new).
 
