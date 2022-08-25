@@ -201,7 +201,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
             "header.");
         return nullptr;
     }
-    bool const is_3d = (line == "MESH3D") ? true : false;
+    bool const is_3d = (line == "MESH3D");
 
     std::string mesh_name = BaseLib::extractBaseNameWithoutExtension(filename);
     INFO("GMSInterface::readGMS3DMMesh(): Reading GMS mesh...");
@@ -250,7 +250,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
                 mat_id;
-            auto** tri_nodes = new MeshLib::Node*[3];
+            std::array<MeshLib::Node*, 3> tri_nodes;
             for (unsigned k(0); k < 3; k++)
             {
                 tri_nodes[k] = nodes[id_map.find(node_idx[k])->second];
@@ -262,7 +262,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[3] >> node_idx[1] >>
                 node_idx[4] >> node_idx[2] >> node_idx[5] >> mat_id;
-            auto** tri_nodes = new MeshLib::Node*[3];
+            std::array<MeshLib::Node*, 3> tri_nodes;
             for (unsigned k(0); k < 3; k++)
             {
                 tri_nodes[k] = nodes[id_map.find(node_idx[k])->second];
@@ -274,7 +274,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
                 node_idx[3] >> node_idx[4] >> node_idx[5] >> mat_id;
-            auto** prism_nodes = new MeshLib::Node*[6];
+            std::array<MeshLib::Node*, 6> prism_nodes;
             for (unsigned k(0); k < 6; k++)
             {
                 prism_nodes[k] = nodes[id_map.find(node_idx[k])->second];
@@ -286,7 +286,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
                 node_idx[3] >> mat_id;
-            auto** tet_nodes = new MeshLib::Node*[4];
+            std::array<MeshLib::Node*, 4> tet_nodes;
             for (unsigned k(0); k < 4; k++)
             {
                 tet_nodes[k] = nodes[id_map.find(node_idx[k])->second];
@@ -295,11 +295,11 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
             mat_ids.push_back(mat_id);
         }
         // Pyramid (two versions exist for some reason)
-        else if (is_3d && (element_id == "E4P") || (element_id == "E5P"))
+        else if (is_3d && (element_id == "E4P" || element_id == "E5P"))
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
                 node_idx[3] >> node_idx[4] >> mat_id;
-            auto** pyramid_nodes = new MeshLib::Node*[5];
+            std::array<MeshLib::Node*, 5> pyramid_nodes;
             for (unsigned k(0); k < 5; k++)
             {
                 pyramid_nodes[k] = nodes[id_map.find(node_idx[k])->second];
