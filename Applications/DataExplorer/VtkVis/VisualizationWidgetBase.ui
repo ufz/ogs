@@ -535,7 +535,7 @@
         </layout>
       </item>
       <item>
-        <widget class="QVTKOpenGLStereoWidget" name="vtkWidget" native="true">
+        <widget class="QVTKOpenGLNativeWidget" name="vtkWidget" native="true">
           <property name="sizePolicy">
             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
               <horstretch>0</horstretch>
@@ -548,9 +548,9 @@
   </widget>
   <customwidgets>
     <customwidget>
-      <class>QVTKOpenGLStereoWidget</class>
+      <class>QVTKOpenGLNativeWidget</class>
       <extends>QWidget</extends>
-      <header>QVTKOpenGLStereoWidget.h</header>
+      <header>QVTKOpenGLNativeWidget.h</header>
     </customwidget>
   </customwidgets>
   <resources>
