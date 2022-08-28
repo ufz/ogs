@@ -15,12 +15,7 @@
 #include <fstream>
 #include <vector>
 
-#ifndef _WIN32
-#ifndef __APPLE__
-#include <cfenv>
-#endif  // __APPLE__
-#endif  // _WIN32
-
+#include "BaseLib/DisableFPE.h"
 #include "BaseLib/FileTools.h"
 #include "MeshLib/IO/VtkIO/PVDFile.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
@@ -72,28 +67,8 @@ void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
 {
     DBUG("Writing output to '{:s}'.", file_name);
 
-    // Store floating-point exception handling. Output of NaN's triggers
-    // floating point exceptions. Because we are not debugging VTK (or other
-    // libraries) at this point, the possibly set exceptions are temporary
-    // disabled and restored before end of the function.
-#ifndef _WIN32
-#ifndef __APPLE__
-    fenv_t fe_env;
-    fegetenv(&fe_env);
-    fesetenv(FE_DFL_ENV);  // Set default environment effectively disabling
-                           // exceptions.
-#endif                     //_WIN32
-#endif                     //__APPLE__
-
     MeshLib::IO::VtuInterface vtu_interface(&mesh, data_mode, compress_output);
     vtu_interface.writeToFile(file_name);
-
-    // Restore floating-point exception handling.
-#ifndef _WIN32
-#ifndef __APPLE__
-    fesetenv(&fe_env);
-#endif  //_WIN32
-#endif  //__APPLE__
 }
 
 void outputMeshVtk(OutputVTKFormat const& output_file,
@@ -105,6 +80,11 @@ void outputMeshVtk(OutputVTKFormat const& output_file,
     pvd_file.addVTUFile(name, t);
 
     auto const path = BaseLib::joinPaths(output_file.directory, name);
+    // Output of NaN's triggers floating point exceptions. Because we are not
+    // debugging VTK (or other libraries) at this point, the possibly set
+    // exceptions are temporarily disabled and are restored at the end of the
+    // function.
+    [[maybe_unused]] DisableFPE disable_fpe;
     outputMeshVtk(path, mesh, output_file.compression, output_file.data_mode);
 }
 
