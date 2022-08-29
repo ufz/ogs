@@ -73,6 +73,44 @@ struct OutputDataSpecification final
 
     //! Tells if also to output extrapolation residuals.
     bool output_residuals;
+
+    //! Determines if there should be output at the given \c timestep or \c
+    //! time.
+    bool isOutputStep(int timestep, double const time) const
+    {
+        auto isFixedOutputStep = [this](double const time) -> bool
+        {
+            auto const fixed_output_time = std::lower_bound(
+                cbegin(fixed_output_times), cend(fixed_output_times), time);
+            return ((fixed_output_time != cend(fixed_output_times)) &&
+                    (std::abs(*fixed_output_time - time) <
+                     std::numeric_limits<double>::epsilon()));
+        };
+
+        auto isPairRepeatsEachTimeStepOutput = [this](int timestep) -> bool
+        {
+            int each_steps = 1;
+
+            for (auto const& pair : repeats_each_steps)
+            {
+                each_steps = pair.each_steps;
+
+                if (timestep > pair.repeat * each_steps)
+                {
+                    timestep -= pair.repeat * each_steps;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return timestep % each_steps == 0;
+        };
+
+        return isFixedOutputStep(time) ||
+               isPairRepeatsEachTimeStepOutput(timestep);
+    }
 };
 
 inline std::ostream& operator<<(std::ostream& os,
