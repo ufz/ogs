@@ -92,8 +92,7 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton1D)
         double const S_less_than_zero[] = {-1, 0.0};
         for (int i = 0; i < 2; i++)
         {
-            variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-                S_less_than_zero[i];
+            variable_array.liquid_saturation = S_less_than_zero[i];
 
             double const computed_k_T =
                 k_T_property.template value<double>(variable_array, pos, t, dt);
@@ -118,8 +117,7 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton1D)
     }
     // For S > 1.0
     {
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            2.0;
+        variable_array.liquid_saturation = 2.0;
 
         double const computed_k_T =
             k_T_property.template value<double>(variable_array, pos, t, dt);
@@ -149,8 +147,7 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton1D)
     double const perturbation = 1.e-6;
     for (std::size_t i = 0; i < S_L.size(); i++)
     {
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L[i];
+        variable_array.liquid_saturation = S_L[i];
 
         double const k_T_i =
             k_T_property.template value<double>(variable_array, pos, t, dt);
@@ -158,13 +155,11 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton1D)
             << "for expected thermal conductivity " << expected_k_T[i]
             << " and for computed thermal conductivity." << k_T_i;
 
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L[i] - perturbation;
+        variable_array.liquid_saturation = S_L[i] - perturbation;
         double const k_T_i_0 =
             k_T_property.template value<double>(variable_array, pos, t, dt);
 
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L[i] + perturbation;
+        variable_array.liquid_saturation = S_L[i] + perturbation;
 
         double const k_T_i_1 =
             k_T_property.template value<double>(variable_array, pos, t, dt);
@@ -223,8 +218,7 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton3D)
         double const S_less_than_zero[] = {-1, 0.0};
         for (int i = 0; i < 2; i++)
         {
-            variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-                S_less_than_zero[i];
+            variable_array.liquid_saturation = S_less_than_zero[i];
 
             auto const computed_k_T = MPL::formEigenTensor<3>(
                 k_T_property.value(variable_array, pos, t, dt));
@@ -257,8 +251,7 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton3D)
     }
     // For S > 1.0
     {
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            2.0;
+        variable_array.liquid_saturation = 2.0;
 
         auto const computed_k_T = MPL::formEigenTensor<3>(
             k_T_property.value(variable_array, pos, t, dt));
@@ -297,8 +290,7 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton3D)
     double const perturbation = 1.e-6;
     for (std::size_t i = 0; i < S_L.size(); i++)
     {
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L[i];
+        variable_array.liquid_saturation = S_L[i];
 
         auto const k_T_i = MPL::formEigenTensor<3>(
             k_T_property.value(variable_array, pos, t, dt));
@@ -310,13 +302,11 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton3D)
                 << " and for computed thermal conductivity." << k_T_i(k, k);
         }
 
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L[i] - perturbation;
+        variable_array.liquid_saturation = S_L[i] - perturbation;
         auto const k_T_i_0 = MPL::formEigenTensor<3>(
             k_T_property.value(variable_array, pos, t, dt));
 
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L[i] + perturbation;
+        variable_array.liquid_saturation = S_L[i] + perturbation;
 
         auto const k_T_i_1 = MPL::formEigenTensor<3>(
             k_T_property.value(variable_array, pos, t, dt));

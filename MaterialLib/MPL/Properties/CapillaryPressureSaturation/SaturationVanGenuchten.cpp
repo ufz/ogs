@@ -44,8 +44,7 @@ PropertyDataType SaturationVanGenuchten::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    const double p_cap = std::get<double>(
-        variable_array[static_cast<int>(Variable::capillary_pressure)]);
+    const double p_cap = variable_array.capillary_pressure;
 
     if (p_cap <= 0)
     {
@@ -73,8 +72,7 @@ PropertyDataType SaturationVanGenuchten::dValue(
             "with respect to capillary pressure only.");
     }
 
-    const double p_cap = std::get<double>(
-        variable_array[static_cast<int>(Variable::capillary_pressure)]);
+    const double p_cap = variable_array.capillary_pressure;
 
     if (p_cap <= 0)
     {
@@ -112,8 +110,7 @@ PropertyDataType SaturationVanGenuchten::d2Value(
            "SaturationVanGenuchten::d2Value is implemented for  derivatives "
            "with respect to capillary pressure only.");
 
-    const double p_cap = std::get<double>(
-        variable_array[static_cast<int>(Variable::capillary_pressure)]);
+    const double p_cap = variable_array.capillary_pressure;
 
     if (p_cap <= 0)
     {

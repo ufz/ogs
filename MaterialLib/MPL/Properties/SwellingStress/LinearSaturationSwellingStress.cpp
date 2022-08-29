@@ -42,16 +42,14 @@ PropertyDataType LinearSaturationSwellingStress::value(
 {
     // Sl <= S_max is guaranteed by the saturation property or
     // the saturation calculation.
-    const double Sl = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    const double Sl = variable_array.liquid_saturation;
 
     if (Sl < reference_saturation_)
     {
         return 0.0;
     }
 
-    const double Sl_prev = std::get<double>(
-        variable_array_prev[static_cast<int>(Variable::liquid_saturation)]);
+    const double Sl_prev = variable_array_prev.liquid_saturation;
 
     return coefficient_ * (Sl - Sl_prev);
 }
@@ -70,8 +68,7 @@ PropertyDataType LinearSaturationSwellingStress::dValue(
 
     // Sl <= S_max is guaranteed by the saturation property or
     // the saturation calculation.
-    const double Sl = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    const double Sl = variable_array.liquid_saturation;
 
     return Sl < reference_saturation_ ? 0.0 : coefficient_;
 }

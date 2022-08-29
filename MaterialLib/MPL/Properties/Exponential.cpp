@@ -33,8 +33,7 @@ PropertyDataType Exponential::value(
     double const /*dt*/) const
 {
     auto const f = std::get<double>(exponent_data_.factor);
-    auto const v =
-        std::get<double>(variable_array[static_cast<int>(exponent_data_.type)]);
+    auto const v = std::get<double>(variable_array[exponent_data_.type]);
 
     return offset_ + std::get<double>(value_) * std::exp(f * v);
 }
@@ -50,8 +49,7 @@ PropertyDataType Exponential::dValue(
     }
 
     auto const f = std::get<double>(exponent_data_.factor);
-    auto const v =
-        std::get<double>(variable_array[static_cast<int>(exponent_data_.type)]);
+    auto const v = std::get<double>(variable_array[exponent_data_.type]);
 
     return std::get<double>(value_) * f * std::exp(f * v);
 }
@@ -67,8 +65,7 @@ PropertyDataType Exponential::d2Value(
     }
 
     auto const f = std::get<double>(exponent_data_.factor);
-    auto const v =
-        std::get<double>(variable_array[static_cast<int>(exponent_data_.type)]);
+    auto const v = std::get<double>(variable_array[exponent_data_.type]);
 
     return std::get<double>(value_) * f * f * std::exp(f * v);
 }

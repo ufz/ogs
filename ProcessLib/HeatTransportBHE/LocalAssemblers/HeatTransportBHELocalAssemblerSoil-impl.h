@@ -105,8 +105,7 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction>::assemble(
         double T_int_pt = 0.0;
         NumLib::shapeFunctionInterpolate(local_x, N, T_int_pt);
 
-        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-            T_int_pt;
+        vars.temperature = T_int_pt;
 
         // for now only using the solid and liquid phase parameters
         auto const density_s =

@@ -118,8 +118,7 @@ public:
             // access in MPL
             double T_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, sm.N, T_int_pt);
-            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-                T_int_pt;
+            vars.temperature = T_int_pt;
 
             auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium
@@ -198,8 +197,7 @@ public:
             // access in MPL
             double T_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, sm.N, T_int_pt);
-            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-                T_int_pt;
+            vars.temperature = T_int_pt;
 
             auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium
@@ -274,8 +272,7 @@ public:
             auto const& sm = _shape_matrices[ip];
             // get the local temperature and put it in the variable array for
             // access in MPL
-            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-                sm.N.dot(T_nodal_values);
+            vars.temperature = sm.N.dot(T_nodal_values);
 
             auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium

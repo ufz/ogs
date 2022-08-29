@@ -39,12 +39,10 @@ void TRMVaporDiffusionModel<DisplacementDim>::eval(
 {
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
-    variables[static_cast<int>(MPL::Variable::temperature)] = T_data.T;
-    variables[static_cast<int>(MPL::Variable::phase_pressure)] =
-        -p_cap_data.p_cap;
-    variables[static_cast<int>(MPL::Variable::density)] = rho_L_data.rho_LR;
-    variables[static_cast<int>(MPL::Variable::liquid_saturation)] =
-        S_L_data.S_L;
+    variables.temperature = T_data.T;
+    variables.phase_pressure = -p_cap_data.p_cap;
+    variables.density = rho_L_data.rho_LR;
+    variables.liquid_saturation = S_L_data.S_L;
 
     auto const& liquid_phase = media_data.liquid;
 
@@ -53,8 +51,6 @@ void TRMVaporDiffusionModel<DisplacementDim>::eval(
     if (liquid_phase.hasProperty(MPL::PropertyType::vapour_diffusion) &&
         S_L_data.S_L < 1.0)
     {
-        variables[static_cast<int>(MPL::Variable::density)] = rho_L_data.rho_LR;
-
         double const rho_wv =
             liquid_phase.property(MaterialPropertyLib::vapour_density)
                 .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
@@ -75,7 +71,7 @@ void TRMVaporDiffusionModel<DisplacementDim>::eval(
                 .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
         double const phi = poro_data.phi;
-        variables[static_cast<int>(MPL::Variable::porosity)] = phi;
+        variables.porosity = phi;
         double const D_v =
             liquid_phase.property(MPL::PropertyType::vapour_diffusion)
                 .template value<double>(variables, x_t.x, x_t.t, x_t.dt);

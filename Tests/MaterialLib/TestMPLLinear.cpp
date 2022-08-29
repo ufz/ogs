@@ -24,16 +24,13 @@ TEST(MaterialPropertyLib, Linear)
     MaterialPropertyLib::Linear linear_property{"linear", y_ref, ivs};
 
     MaterialPropertyLib::VariableArray variable_array;
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::temperature)] = 303.15;
+    variable_array.temperature = 303.15;
     ParameterLib::SpatialPosition const pos;
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
     ASSERT_NEAR(
         std::get<double>(linear_property.value(variable_array, pos, time, dt)),
-        y_ref * (1 + m * (std::get<double>(variable_array[static_cast<int>(
-                              MaterialPropertyLib::Variable::temperature)]) -
-                          x_ref)),
+        y_ref * (1 + m * (variable_array.temperature - x_ref)),
         1.e-10);
     ASSERT_EQ(std::get<double>(linear_property.dValue(
                   variable_array, MaterialPropertyLib::Variable::phase_pressure,

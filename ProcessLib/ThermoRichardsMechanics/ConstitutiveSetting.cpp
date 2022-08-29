@@ -110,7 +110,7 @@ void ConstitutiveSetting<DisplacementDim>::eval(
         double const p_FR = -bishops_data.chi_S_L * p_cap_data.p_cap;
         // p_SR
         // TODO used by no MPL model
-        variables[static_cast<int>(MPL::Variable::solid_grain_pressure)] =
+        variables.solid_grain_pressure =
             p_FR -
             Invariants::trace(state.s_mech_data.sigma_eff) / (3 * (1 - phi));
     } */

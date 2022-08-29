@@ -32,20 +32,17 @@ void PorosityModel<DisplacementDim>::eval(
     MPL::VariableArray variables_prev;
     // TODO Used in MaterialLib/MPL/Properties/PorosityFromMassBalance.cpp
     // and MaterialLib/MPL/Properties/TransportPorosityFromMassBalance.cpp
-    variables[static_cast<int>(MPL::Variable::grain_compressibility)] =
-        solid_compressibility_data.beta_SR;
+    variables.grain_compressibility = solid_compressibility_data.beta_SR;
 
-    variables[static_cast<int>(MPL::Variable::liquid_saturation)] =
-        S_L_data.S_L;
-    variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
-        S_L_prev_data.S_L;
+    variables.liquid_saturation = S_L_data.S_L;
+    variables_prev.liquid_saturation = S_L_prev_data.S_L;
 
-    variables[static_cast<int>(MPL::Variable::effective_pore_pressure)] =
+    variables.effective_pore_pressure =
         -bishops_data.chi_S_L * p_cap_data.p_cap;
 
     // Used in MaterialLib/MPL/Properties/PorosityFromMassBalance.cpp
     // and MaterialLib/MPL/Properties/TransportPorosityFromMassBalance.cpp
-    variables_prev[static_cast<int>(MPL::Variable::effective_pore_pressure)] =
+    variables_prev.effective_pore_pressure =
         -bishops_data_prev.chi_S_L *
         (p_cap_data.p_cap - p_cap_data.p_cap_dot * x_t.dt);
 
@@ -53,14 +50,11 @@ void PorosityModel<DisplacementDim>::eval(
     // and MaterialLib/MPL/Properties/TransportPorosityFromMassBalance.cpp
     // and MaterialLib/MPL/Properties/StrainDependentPermeability.cpp
     // Set volumetric strain rate for the general case without swelling.
-    variables[static_cast<int>(MPL::Variable::volumetric_strain)]
-        .emplace<double>(Invariants::trace(eps_data.eps));
-    variables_prev[static_cast<int>(MPL::Variable::volumetric_strain)]
-        .emplace<double>(Invariants::trace(eps_prev_data.eps));
+    variables.volumetric_strain = Invariants::trace(eps_data.eps);
+    variables_prev.volumetric_strain = Invariants::trace(eps_prev_data.eps);
 
     // Porosity update
-    variables_prev[static_cast<int>(MPL::Variable::porosity)] =
-        poro_prev_data.phi;
+    variables_prev.porosity = poro_prev_data.phi;
     out.phi = media_data.medium.property(MPL::PropertyType::porosity)
                   .template value<double>(variables, variables_prev, x_t.x,
                                           x_t.t, x_t.dt);

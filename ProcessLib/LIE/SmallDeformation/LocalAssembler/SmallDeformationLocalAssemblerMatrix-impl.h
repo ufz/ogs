@@ -142,21 +142,16 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, DisplacementDim>::
             B * Eigen::Map<typename BMatricesType::NodalForceVectorType const>(
                     local_x.data(), ShapeFunction::NPOINTS * DisplacementDim);
 
-        variables[static_cast<int>(
-                      MaterialPropertyLib::Variable::mechanical_strain)]
+        variables.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps);
-
-        variables_prev[static_cast<int>(MaterialPropertyLib::Variable::stress)]
+        variables_prev.stress
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 sigma_prev);
-        variables_prev[static_cast<int>(
-                           MaterialPropertyLib::Variable::mechanical_strain)]
+        variables_prev.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_prev);
-        variables_prev[static_cast<int>(
-                           MaterialPropertyLib::Variable::temperature)]
-            .emplace<double>(_process_data._reference_temperature);
+        variables_prev.temperature = _process_data._reference_temperature;
 
         auto&& solution = _ip_data[ip]._solid_material.integrateStress(
             variables_prev, variables, t, x_position, dt, *state);

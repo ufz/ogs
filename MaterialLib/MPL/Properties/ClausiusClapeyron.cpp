@@ -68,8 +68,7 @@ PropertyDataType ClausiusClapeyron::value(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
 {
-    const double T = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
+    const double T = variable_array.temperature;
 
     const double M = molarMass(scale_, variable_array, pos, t, dt);
 
@@ -82,8 +81,7 @@ PropertyDataType ClausiusClapeyron::value(
         return p_triple_;
     }
 
-    const double dh = std::get<double>(
-        variable_array[static_cast<int>(Variable::enthalpy_of_evaporation)]);
+    const double dh = variable_array.enthalpy_of_evaporation;
     const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
 
     return p_ref_ * std::exp((1. / T_ref_ - 1. / T) * M * dh / R);
@@ -94,8 +92,7 @@ PropertyDataType ClausiusClapeyron::dValue(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
 {
-    const double T = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
+    const double T = variable_array.temperature;
     const double M = molarMass(scale_, variable_array, pos, t, dt);
 
     if (T > T_critical_)
@@ -112,8 +109,7 @@ PropertyDataType ClausiusClapeyron::dValue(
     }
 
     const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
-    const double dh = std::get<double>(
-        variable_array[static_cast<int>(Variable::enthalpy_of_evaporation)]);
+    const double dh = variable_array.enthalpy_of_evaporation;
     const double p_vap = std::get<double>(value(variable_array, pos, t, dt));
 
     if (primary_variable == Variable::temperature)

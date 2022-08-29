@@ -27,10 +27,9 @@ void TRMHeatStorageAndFluxModel<DisplacementDim>::eval(
 {
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
-    variables[static_cast<int>(MPL::Variable::temperature)] = T_data.T;
-    variables[static_cast<int>(MPL::Variable::porosity)] = poro_data.phi;
-    variables[static_cast<int>(MPL::Variable::liquid_saturation)] =
-        S_L_data.S_L;
+    variables.temperature = T_data.T;
+    variables.porosity = poro_data.phi;
+    variables.liquid_saturation = S_L_data.S_L;
 
     auto const& liquid_phase = media_data.liquid;
     auto const& solid_phase = media_data.solid;

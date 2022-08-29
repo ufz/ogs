@@ -50,10 +50,8 @@ TEST(MaterialPropertyLib, LinearSaturationSwellingStress)
 
     MaterialPropertyLib::VariableArray variable_array;
     MaterialPropertyLib::VariableArray variable_array_prev;
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::liquid_saturation)] = S1;
-    variable_array_prev[static_cast<int>(
-        MaterialPropertyLib::Variable::liquid_saturation)] = S0;
+    variable_array.liquid_saturation = S1;
+    variable_array_prev.liquid_saturation = S0;
     ParameterLib::SpatialPosition const pos;
     double const time = std::numeric_limits<double>::quiet_NaN();
     double d_sw_expected = coefficient * dS;
@@ -73,10 +71,8 @@ TEST(MaterialPropertyLib, LinearSaturationSwellingStress)
 
     // Saturation is smaller than the reference saturation saturation.
     double const S2 = 0.3;
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::liquid_saturation)] = S2;
-    variable_array_prev[static_cast<int>(
-        MaterialPropertyLib::Variable::liquid_saturation)] = S1;
+    variable_array.liquid_saturation = S2;
+    variable_array_prev.liquid_saturation = S1;
 
     d_sw = std::get<double>(swelling_stress_increment->value(
         variable_array, variable_array_prev, pos, time, dt));

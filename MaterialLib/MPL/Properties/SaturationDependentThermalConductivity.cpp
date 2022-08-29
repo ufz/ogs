@@ -35,8 +35,7 @@ PropertyDataType SaturationDependentThermalConductivity::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    auto const S_L = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation)]);
+    auto const S_L = variable_array.liquid_saturation;
 
     return K_dry_ * (1 - S_L) + K_wet_ * S_L;
 }

@@ -47,8 +47,7 @@ PropertyDataType SaturationExponential::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    const double p_cap = std::get<double>(
-        variable_array[static_cast<int>(Variable::capillary_pressure)]);
+    const double p_cap = variable_array.capillary_pressure;
 
     const double S_res = residual_liquid_saturation_;
     const double S_max = 1. - residual_gas_saturation_;
@@ -70,8 +69,7 @@ PropertyDataType SaturationExponential::dValue(
             "respect to capillary pressure only.");
     }
 
-    const double p_cap = std::get<double>(
-        variable_array[static_cast<int>(Variable::capillary_pressure)]);
+    const double p_cap = variable_array.capillary_pressure;
 
     const double S_res = residual_liquid_saturation_;
     const double S_max = 1. - residual_gas_saturation_;

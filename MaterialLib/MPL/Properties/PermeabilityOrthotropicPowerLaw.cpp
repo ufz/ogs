@@ -50,8 +50,7 @@ PropertyDataType PermeabilityOrthotropicPowerLaw<DisplacementDim>::value(
     ParameterLib::SpatialPosition const& pos, double const /*t*/,
     double const /*dt*/) const
 {
-    auto const phi = std::get<double>(
-        variable_array[static_cast<int>(Variable::transport_porosity)]);
+    auto const phi = variable_array.transport_porosity;
     // TODO (naumov) The phi0 must be evaluated once upon
     // creation/initialization and be stored in a local state.
     // For now assume porosity's initial value does not change with time.

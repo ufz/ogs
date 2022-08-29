@@ -43,8 +43,7 @@ TEST(MaterialPropertyLib, PermeabilityVermaPruessModel)
 
     for (std::size_t i = 0; i < porosity.size(); ++i)
     {
-        vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-            porosity[i];
+        vars.porosity = porosity[i];
 
         auto const k = MPL::formEigenTensor<1>(k_model.value(vars, pos, t, dt));
 

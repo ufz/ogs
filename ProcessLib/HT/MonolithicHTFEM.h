@@ -142,13 +142,10 @@ public:
             // Order matters: First T, then P!
             NumLib::shapeFunctionInterpolate(local_x, N, T_int_pt, p_int_pt);
 
-            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-                T_int_pt;
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+            vars.temperature = T_int_pt;
+            vars.phase_pressure = p_int_pt;
 
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
+            vars.liquid_saturation = 1.0;
             // \todo the argument to getValue() has to be changed for non
             // constant storage model
             auto const specific_storage =
@@ -158,8 +155,7 @@ public:
             auto const porosity =
                 medium.property(MaterialPropertyLib::PropertyType::porosity)
                     .template value<double>(vars, pos, t, dt);
-            vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-                porosity;
+            vars.porosity = porosity;
 
             auto const intrinsic_permeability =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(

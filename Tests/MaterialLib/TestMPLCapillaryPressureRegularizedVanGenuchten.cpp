@@ -92,8 +92,7 @@ TEST(MaterialPropertyLib, CapillaryPressureRegularizedVanGenuchten)
     const int n = 30;
     for (int i = 0; i <= n; ++i)
     {
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S[i];
+        variable_array.liquid_saturation = S[i];
 
         const double calculated_pc =
             capillary_pressure_property.template value<double>(variable_array,
@@ -129,13 +128,11 @@ TEST(MaterialPropertyLib, CapillaryPressureRegularizedVanGenuchten)
                 MaterialPropertyLib::Variable::liquid_saturation, pos, t, dt);
 
         const double offset = (S[i] < Sl_r) ? 1.0e-2 : 1.0e-7;
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S[i] - offset;
+        variable_array.liquid_saturation = S[i] - offset;
 
         const double pc0 = capillary_pressure_property.template value<double>(
             variable_array, pos, t, dt);
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S[i] + offset;
+        variable_array.liquid_saturation = S[i] + offset;
         const double pc1 = capillary_pressure_property.template value<double>(
             variable_array, pos, t, dt);
 

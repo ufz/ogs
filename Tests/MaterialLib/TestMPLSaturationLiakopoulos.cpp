@@ -68,8 +68,7 @@ TEST(MaterialPropertyLib, SaturationLiakopoulos)
 
     for (std::size_t idx = 0; idx < p_cap.size(); idx++)
     {
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] = p_cap[idx];
+        variable_array.capillary_pressure = p_cap[idx];
 
         auto s_L =
             medium->property(MaterialPropertyLib::PropertyType::saturation)

@@ -189,16 +189,13 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
         auto pCap = pCap_min + i * dpCap;
         auto T = T_min + i * dT;
 
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] = pCap;
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = T;
+        variable_array.capillary_pressure = pCap;
+        variable_array.temperature = T;
 
         auto const& cv = ptm->cv;
 
         // Perturb gas pressure
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::phase_pressure)] = pGR + eps_pGR;
+        variable_array.phase_pressure = pGR + eps_pGR;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -208,8 +205,7 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
         auto rhoCGR_plus = ptm->cv.rhoCGR;
         auto rhoWGR_plus = ptm->cv.rhoWGR;
 
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::phase_pressure)] = pGR - eps_pGR;
+        variable_array.phase_pressure = pGR - eps_pGR;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -220,12 +216,9 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
         auto rhoWGR_minus = ptm->cv.rhoWGR;
 
         // Unperturbed primary variables
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::phase_pressure)] = pGR;
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] = pCap;
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = T;
+        variable_array.phase_pressure = pGR;
+        variable_array.capillary_pressure = pCap;
+        variable_array.temperature = T;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -247,9 +240,7 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
             ASSERT_NEAR(drhoWGR_dpGR, cv.drho_W_GR_dp_GR, tolerance_dpGR);
         }
         // Perturb capillary pressure
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] =
-            pCap + eps_pCap;
+        variable_array.capillary_pressure = pCap + eps_pCap;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -259,9 +250,7 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
         rhoCGR_plus = ptm->cv.rhoCGR;
         rhoWGR_plus = ptm->cv.rhoWGR;
 
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] =
-            pCap - eps_pCap;
+        variable_array.capillary_pressure = pCap - eps_pCap;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -272,12 +261,9 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
         rhoWGR_minus = ptm->cv.rhoWGR;
 
         // Unperturbed primary variables
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::phase_pressure)] = pGR;
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] = pCap;
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = T;
+        variable_array.phase_pressure = pGR;
+        variable_array.capillary_pressure = pCap;
+        variable_array.temperature = T;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -301,8 +287,7 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
             ASSERT_NEAR(drhoWGR_dpCap, cv.drho_W_GR_dp_cap, tolerance_dpCap);
         }
         // Perturb temperature
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = T + eps_T;
+        variable_array.temperature = T + eps_T;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -312,8 +297,7 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
         rhoCGR_plus = ptm->cv.rhoCGR;
         rhoWGR_plus = ptm->cv.rhoWGR;
 
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = T - eps_T;
+        variable_array.temperature = T - eps_T;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -324,12 +308,9 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
         rhoWGR_minus = ptm->cv.rhoWGR;
 
         // Unperturbed primary variables
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::phase_pressure)] = pGR;
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] = pCap;
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = T;
+        variable_array.phase_pressure = pGR;
+        variable_array.capillary_pressure = pCap;
+        variable_array.temperature = T;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -446,16 +427,13 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporationConstRho)
         auto pCap = pCap_min + i * dpCap;
         auto T = T_min + i * dT;
 
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] = pCap;
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = T;
+        variable_array.capillary_pressure = pCap;
+        variable_array.temperature = T;
 
         auto const& cv = ptm->cv;
 
         // Perturb gas pressure
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::phase_pressure)] = pGR + eps_pGR;
+        variable_array.phase_pressure = pGR + eps_pGR;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -464,8 +442,7 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporationConstRho)
         auto rhoCGR_plus = ptm->cv.rhoCGR;
         auto rhoWGR_plus = ptm->cv.rhoWGR;
 
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::phase_pressure)] = pGR - eps_pGR;
+        variable_array.phase_pressure = pGR - eps_pGR;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -475,12 +452,9 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporationConstRho)
         auto rhoWGR_minus = ptm->cv.rhoWGR;
 
         // Unperturbed primary variables
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::phase_pressure)] = pGR;
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] = pCap;
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = T;
+        variable_array.phase_pressure = pGR;
+        variable_array.capillary_pressure = pCap;
+        variable_array.temperature = T;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -501,9 +475,7 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporationConstRho)
             ASSERT_NEAR(drhoWGR_dpGR, cv.drho_W_GR_dp_GR, tolerance_dpGR);
         }
         // Perturb capillary pressure
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] =
-            pCap + eps_pCap;
+        variable_array.capillary_pressure = pCap + eps_pCap;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -512,9 +484,7 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporationConstRho)
         rhoCGR_plus = ptm->cv.rhoCGR;
         rhoWGR_plus = ptm->cv.rhoWGR;
 
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] =
-            pCap - eps_pCap;
+        variable_array.capillary_pressure = pCap - eps_pCap;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -524,12 +494,9 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporationConstRho)
         rhoWGR_minus = ptm->cv.rhoWGR;
 
         // Unperturbed primary variables
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::phase_pressure)] = pGR;
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] = pCap;
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = T;
+        variable_array.phase_pressure = pGR;
+        variable_array.capillary_pressure = pCap;
+        variable_array.temperature = T;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -552,8 +519,7 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporationConstRho)
             ASSERT_NEAR(drhoWGR_dpCap, cv.drho_W_GR_dp_cap, tolerance_dpCap);
         }
         // Perturb temperature
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = T + eps_T;
+        variable_array.temperature = T + eps_T;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -562,8 +528,7 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporationConstRho)
         rhoCGR_plus = ptm->cv.rhoCGR;
         rhoWGR_plus = ptm->cv.rhoWGR;
 
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = T - eps_T;
+        variable_array.temperature = T - eps_T;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -573,12 +538,9 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporationConstRho)
         rhoWGR_minus = ptm->cv.rhoWGR;
 
         // Unperturbed primary variables
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::phase_pressure)] = pGR;
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] = pCap;
-        variable_array[static_cast<int>(
-            MaterialPropertyLib::Variable::temperature)] = T;
+        variable_array.phase_pressure = pGR;
+        variable_array.capillary_pressure = pCap;
+        variable_array.temperature = T;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);

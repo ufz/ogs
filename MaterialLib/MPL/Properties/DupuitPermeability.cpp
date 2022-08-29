@@ -24,8 +24,7 @@ PropertyDataType DupuitPermeability::value(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const /*dt*/) const
 {
-    double const pressure = std::get<double>(variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::phase_pressure)]);
+    double const pressure = variable_array.phase_pressure;
     auto const& permeability_values = parameter_(t, pos);
 
     auto const& permeability_variant = fromVector(permeability_values);

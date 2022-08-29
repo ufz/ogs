@@ -123,8 +123,7 @@ void LocalAssemblerData<ShapeFunction, GlobalDim>::assemble(
         // Order matters: First C, then p!
         NumLib::shapeFunctionInterpolate(local_x, N, C_int_pt, p_int_pt);
 
-        vars[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] = -p_int_pt;
+        vars.capillary_pressure = -p_int_pt;
         auto const Sw = medium[MaterialPropertyLib::PropertyType::saturation]
                             .template value<double>(vars, pos, t, dt);
 
@@ -134,10 +133,8 @@ void LocalAssemblerData<ShapeFunction, GlobalDim>::assemble(
                     vars, MaterialPropertyLib::Variable::capillary_pressure,
                     pos, t, dt);
 
-        vars[static_cast<int>(MaterialPropertyLib::Variable::concentration)] =
-            C_int_pt;
-        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            p_int_pt;
+        vars.concentration = C_int_pt;
+        vars.phase_pressure = p_int_pt;
 
         // \todo the argument to getValue() has to be changed for non
         // constant storage model
@@ -175,8 +172,7 @@ void LocalAssemblerData<ShapeFunction, GlobalDim>::assemble(
         auto const K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
             medium[MaterialPropertyLib::PropertyType::permeability].value(
                 vars, pos, t, dt));
-        vars[static_cast<int>(
-            MaterialPropertyLib::Variable::liquid_saturation)] = Sw;
+        vars.liquid_saturation = Sw;
         auto const k_rel =
             medium[MaterialPropertyLib::PropertyType::relative_permeability]
                 .template value<double>(vars, pos, t, dt);
@@ -282,13 +278,11 @@ LocalAssemblerData<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
         NumLib::shapeFunctionInterpolate(local_x, N, C_int_pt, p_int_pt);
 
         // saturation
-        vars[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] = -p_int_pt;
+        vars.capillary_pressure = -p_int_pt;
         auto const Sw = medium[MaterialPropertyLib::PropertyType::saturation]
                             .template value<double>(vars, pos, t, dt);
 
-        vars[static_cast<int>(
-            MaterialPropertyLib::Variable::liquid_saturation)] = Sw;
+        vars.liquid_saturation = Sw;
         auto const k_rel =
             medium[MaterialPropertyLib::PropertyType::relative_permeability]
                 .template value<double>(vars, pos, t, dt);
@@ -296,10 +290,8 @@ LocalAssemblerData<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
         cache_mat.col(ip).noalias() = -dNdx * p_nodal_values;
         if (_process_data.has_gravity)
         {
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::concentration)] = C_int_pt;
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+            vars.concentration = C_int_pt;
+            vars.phase_pressure = p_int_pt;
             auto const rho_w = phase[MaterialPropertyLib::PropertyType::density]
                                    .template value<double>(vars, pos, t, dt);
             auto const b = _process_data.specific_body_force;
@@ -361,8 +353,7 @@ LocalAssemblerData<ShapeFunction, GlobalDim>::getIntPtSaturation(
         NumLib::shapeFunctionInterpolate(local_x, N, C_int_pt, p_int_pt);
 
         // saturation
-        vars[static_cast<int>(
-            MaterialPropertyLib::Variable::capillary_pressure)] = -p_int_pt;
+        vars.capillary_pressure = -p_int_pt;
         auto const dt = std::numeric_limits<double>::quiet_NaN();
         auto const Sw = medium[MaterialPropertyLib::PropertyType::saturation]
                             .template value<double>(vars, pos, t, dt);

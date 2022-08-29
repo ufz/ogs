@@ -161,10 +161,10 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
 
         MPL::VariableArray vars;
         MPL::VariableArray vars_prev;
-        vars[static_cast<int>(MPL::Variable::temperature)] = T;
-        vars[static_cast<int>(MPL::Variable::phase_pressure)] = pGR;
-        vars[static_cast<int>(MPL::Variable::capillary_pressure)] = pCap;
-        vars[static_cast<int>(MPL::Variable::liquid_phase_pressure)] = pLR;
+        vars.temperature = T;
+        vars.phase_pressure = pGR;
+        vars.capillary_pressure = pCap;
+        vars.liquid_phase_pressure = pLR;
 
         // medium properties
         auto const K_S = ip_data.solid_material.getBulkModulus(t, pos);
@@ -177,14 +177,13 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
                 .template value<double>(
                     vars, pos, t, std::numeric_limits<double>::quiet_NaN());
 
-        vars[static_cast<int>(MPL::Variable::liquid_saturation)] = ip_data.s_L;
-        vars_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            ip_data.s_L_prev;
+        vars.liquid_saturation = ip_data.s_L;
+        vars_prev.liquid_saturation = ip_data.s_L_prev;
 
         auto const chi = [&medium, pos, t, dt](double const s_L)
         {
             MPL::VariableArray vs;
-            vs[static_cast<int>(MPL::Variable::liquid_saturation)] = s_L;
+            vs.liquid_saturation = s_L;
             return medium.property(MPL::PropertyType::bishops_effective_stress)
                 .template value<double>(vs, pos, t, dt);
         };
@@ -213,17 +212,15 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
                                               Invariants::identity2)
                     .eval();
 
-            vars[static_cast<int>(MPL::Variable::total_stress)]
-                .emplace<SymmetricTensor>(
-                    MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                        sigma_total));
+            vars.total_stress.emplace<SymmetricTensor>(
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                    sigma_total));
         }
         // Set volumetric strain rate for the general case without swelling.
-        vars[static_cast<int>(MPL::Variable::volumetric_strain)] =
-            Invariants::trace(eps);
-        vars[static_cast<int>(MPL::Variable::equivalent_plastic_strain)] =
+        vars.volumetric_strain = Invariants::trace(eps);
+        vars.equivalent_plastic_strain =
             _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
-        vars[static_cast<int>(MPL::Variable::mechanical_strain)]
+        vars.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps);
 
@@ -302,7 +299,7 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
                 C_el.inverse() * (ip_data.sigma_sw - ip_data.sigma_sw_prev);
         }
 
-        vars[static_cast<int>(MaterialPropertyLib::Variable::mechanical_strain)]
+        vars.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
@@ -333,7 +330,7 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
 
         // porosity
         ip_data.phi = 1. - phi_S;
-        vars[static_cast<int>(MPL::Variable::porosity)] = ip_data.phi;
+        vars.porosity = ip_data.phi;
 
         // solid phase density
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
@@ -900,10 +897,10 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const& NT = Np;
 
         double const pCap = Np.dot(capillary_pressure);
-        vars[static_cast<int>(MPL::Variable::capillary_pressure)] = pCap;
+        vars.capillary_pressure = pCap;
 
         double const T = NT.dot(temperature);
-        vars[static_cast<int>(MPL::Variable::temperature)] = T;
+        vars.temperature = T;
 
         ip_data.s_L_prev =
             medium.property(MPL::PropertyType::saturation)

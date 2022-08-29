@@ -49,8 +49,7 @@ TEST(MaterialPropertyLib, PermeabilityMohrCoulombFailureIndexModel)
     stress[5] = -1.39944e+7;
 
     MPL::VariableArray vars;
-    vars[static_cast<int>(MPL::Variable::total_stress)]
-        .emplace<SymmetricTensor>(stress);
+    vars.total_stress.emplace<SymmetricTensor>(stress);
 
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();
@@ -71,7 +70,7 @@ TEST(MaterialPropertyLib, PermeabilityMohrCoulombFailureIndexModel)
     stress[3] = -1e+5;
     stress[4] = -2200.2;
     stress[5] = -8e+5;
-    vars[static_cast<int>(MPL::Variable::total_stress)] = stress;
+    vars.total_stress = stress;
     auto const k_non_f =
         MPL::formEigenTensor<3>(k_model.value(vars, pos, t, dt));
 
@@ -91,7 +90,7 @@ TEST(MaterialPropertyLib, PermeabilityMohrCoulombFailureIndexModel)
     stress[3] = 0.0;
     stress[4] = 0.0;
     stress[5] = 0.0;
-    vars[static_cast<int>(MPL::Variable::total_stress)] = stress;
+    vars.total_stress = stress;
     auto const k_apex_f =
         MPL::formEigenTensor<3>(k_model.value(vars, pos, t, dt));
 

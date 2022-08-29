@@ -32,8 +32,7 @@ PropertyDataType TemperatureDependentDiffusion::value(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const /*dt*/) const
 {
-    auto const T = std::get<double>(variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::temperature)]);
+    auto const T = variable_array.temperature;
     double const gas_constant = MaterialLib::PhysicalConstant::IdealGasConstant;
     double const Arrhenius_exponent =
         std::exp(Ea_ / gas_constant * (1 / T0_ - 1 / T));

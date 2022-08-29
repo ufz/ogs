@@ -96,7 +96,7 @@ TEST(MaterialPropertyLib, VolumeFractionAverage_Density)
     double const dt = std::numeric_limits<double>::quiet_NaN();
     // relevant argument:
     MaterialPropertyLib::VariableArray vars;
-    vars[static_cast<int>(MPL::Variable::temperature)] = water_ice_rock.T_c;
+    vars.temperature = water_ice_rock.T_c;
 
     auto const& phi = medium->property(MaterialPropertyLib::PropertyType::porosity)
                      .template value<double>(vars, pos, time, dt);
@@ -210,7 +210,7 @@ TEST(MaterialPropertyLib, VolumeFractionAverage_ThermalConductivity)
     double const dt = std::numeric_limits<double>::quiet_NaN();
     // relevant argument:
     MaterialPropertyLib::VariableArray vars;
-    vars[static_cast<int>(MPL::Variable::temperature)] = water_ice_rock.T_c;
+    vars.temperature = water_ice_rock.T_c;
 
     auto const& phi = medium->property(MaterialPropertyLib::PropertyType::porosity)
                      .template value<double>(vars, pos, time, dt);

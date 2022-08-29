@@ -39,16 +39,15 @@ void SolidMechanicsModel<DisplacementDim>::eval(
         s_therm_exp_data.solid_linear_thermal_expansivity_vector * dT +
         swelling_data.eps_m;
 
-    variables[static_cast<int>(MPL::Variable::mechanical_strain)]
-        .emplace<KelvinVector<DisplacementDim>>(current_state.eps_m);
+    variables.mechanical_strain.emplace<KelvinVector<DisplacementDim>>(
+        current_state.eps_m);
 
     MPL::VariableArray variables_prev;
-    variables_prev[static_cast<int>(MPL::Variable::stress)]
-        .emplace<KelvinVector<DisplacementDim>>(prev_state.sigma_eff);
-    variables_prev[static_cast<int>(MPL::Variable::mechanical_strain)]
-        .emplace<KelvinVector<DisplacementDim>>(prev_state.eps_m);
-    variables_prev[static_cast<int>(MPL::Variable::temperature)]
-        .emplace<double>(T_prev);
+    variables_prev.stress.emplace<KelvinVector<DisplacementDim>>(
+        prev_state.sigma_eff);
+    variables_prev.mechanical_strain.emplace<KelvinVector<DisplacementDim>>(
+        prev_state.eps_m);
+    variables_prev.temperature = T_prev;
 
     auto solution = solid_material_.integrateStress(
         variables_prev, variables, x_t.t, x_t.x, x_t.dt,

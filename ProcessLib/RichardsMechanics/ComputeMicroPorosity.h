@@ -117,17 +117,15 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
         double const phi_m = phi_m_prev + delta_phi_m;
         double const p_L_m = p_L_m_prev + delta_p_L_m;
         MPL::VariableArray variables_prev;
-        variables_prev[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            -p_L_m_prev;
-        variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L_m_prev;
+        variables_prev.capillary_pressure = -p_L_m_prev;
+        variables_prev.liquid_saturation = S_L_m_prev;
 
         MPL::VariableArray variables;
-        variables[static_cast<int>(MPL::Variable::capillary_pressure)] = -p_L_m;
+        variables.capillary_pressure = -p_L_m;
 
         double const S_L_m =
             saturation_micro.template value<double>(variables, pos, t, dt);
-        variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L_m;
+        variables.liquid_saturation = S_L_m;
         double const delta_S_L_m = S_L_m - S_L_m_prev;
 
         auto const sigma_sw_dot =
@@ -159,16 +157,14 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
         double const phi_m = phi_m_prev + delta_phi_m;
         double const p_L_m = p_L_m_prev + delta_p_L_m;
         MPL::VariableArray variables_prev;
-        variables_prev[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            -p_L_m_prev;
+        variables_prev.capillary_pressure = -p_L_m_prev;
         MPL::VariableArray variables;
-        variables[static_cast<int>(MPL::Variable::capillary_pressure)] = -p_L_m;
+        variables.capillary_pressure = -p_L_m;
 
         double const S_L_m =
             saturation_micro.template value<double>(variables, pos, t, dt);
-        variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L_m_prev;
-        variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L_m;
+        variables_prev.liquid_saturation = S_L_m_prev;
+        variables.liquid_saturation = S_L_m;
         double const delta_S_L_m = S_L_m - S_L_m_prev;
 
         double const dS_L_m_dp_cap_m = saturation_micro.template dValue<double>(

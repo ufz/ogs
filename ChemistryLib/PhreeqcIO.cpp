@@ -164,15 +164,12 @@ void setReactantMolality(Reactant& reactant,
         liquid_phase[MaterialPropertyLib::PropertyType::density]
             .template value<double>(vars, pos, t, dt);
 
-    auto const porosity = std::get<double>(
-        vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)]);
-
     auto const molar_volume =
         solid_constituent[MaterialPropertyLib::PropertyType::molar_volume]
             .template value<double>(vars, pos, t, dt);
 
     (*reactant.molality)[chemical_system_id] =
-        volume_fraction / fluid_density / porosity / molar_volume;
+        volume_fraction / fluid_density / vars.porosity / molar_volume;
 
     (*reactant.molality_prev)[chemical_system_id] =
         (*reactant.molality)[chemical_system_id];

@@ -44,12 +44,9 @@ PropertyDataType WaterVapourDensity::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    double const p = std::get<double>(
-        variable_array[static_cast<int>(Variable::phase_pressure)]);
-    double const T = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
-    double const water_density =
-        std::get<double>(variable_array[static_cast<int>(Variable::density)]);
+    double const p = variable_array.phase_pressure;
+    double const T = variable_array.temperature;
+    double const water_density = variable_array.density;
 
     return humidity(T, p, water_density) * saturatedVaporDensity(T);
 }
@@ -59,12 +56,9 @@ PropertyDataType WaterVapourDensity::dValue(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    double const p = std::get<double>(
-        variable_array[static_cast<int>(Variable::phase_pressure)]);
-    double const T = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
-    double const water_density =
-        std::get<double>(variable_array[static_cast<int>(Variable::density)]);
+    double const p = variable_array.phase_pressure;
+    double const T = variable_array.temperature;
+    double const water_density = variable_array.density;
 
     if (primary_variable == Variable::temperature)
     {

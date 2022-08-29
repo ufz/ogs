@@ -20,8 +20,7 @@ void SaturationModel<DisplacementDim>::eval(
 {
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
-    variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
-        p_cap_data.p_cap;
+    variables.capillary_pressure = p_cap_data.p_cap;
 
     auto const& medium = media_data.medium;
 

@@ -34,11 +34,10 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
 
     auto const& medium = *_process_data.media_map->getMedium(_element.getID());
     MaterialPropertyLib::VariableArray vars;
-    vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+    vars.temperature =
         medium[MaterialPropertyLib::PropertyType::reference_temperature]
             .template value<double>(vars, pos, t, dt);
-    vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-        std::numeric_limits<double>::quiet_NaN();
+    vars.phase_pressure = std::numeric_limits<double>::quiet_NaN();
     GlobalDimMatrixType const permeability =
         MaterialPropertyLib::formEigenTensor<GlobalDim>(
             medium[MaterialPropertyLib::PropertyType::permeability].value(
@@ -88,8 +87,7 @@ Eigen::Vector3d LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::getFlux(
 
     double pressure = 0.0;
     NumLib::shapeFunctionInterpolate(local_x, shape_matrices.N, pressure);
-    vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-        pressure;
+    vars.phase_pressure = pressure;
 
     GlobalDimMatrixType const intrinsic_permeability =
         MaterialPropertyLib::formEigenTensor<GlobalDim>(
@@ -136,7 +134,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
     auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     MaterialPropertyLib::VariableArray vars;
-    vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+    vars.temperature =
         medium[MaterialPropertyLib::PropertyType::reference_temperature]
             .template value<double>(vars, pos, t, dt);
 
@@ -151,8 +149,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
         double p = 0.;
         NumLib::shapeFunctionInterpolate(local_x, ip_data.N, p);
-        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            p;
+        vars.phase_pressure = p;
 
         // Compute density:
         auto const fluid_density =
@@ -238,11 +235,10 @@ LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
 
     auto const& medium = *_process_data.media_map->getMedium(_element.getID());
     MaterialPropertyLib::VariableArray vars;
-    vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+    vars.temperature =
         medium[MaterialPropertyLib::PropertyType::reference_temperature]
             .template value<double>(vars, pos, t, dt);
-    vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-        std::numeric_limits<double>::quiet_NaN();
+    vars.phase_pressure = std::numeric_limits<double>::quiet_NaN();
 
     GlobalDimMatrixType const permeability =
         MaterialPropertyLib::formEigenTensor<GlobalDim>(
@@ -285,7 +281,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
     auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     MaterialPropertyLib::VariableArray vars;
-    vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+    vars.temperature =
         medium[MaterialPropertyLib::PropertyType::reference_temperature]
             .template value<double>(vars, pos, t, dt);
 
@@ -299,8 +295,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         auto const& ip_data = _ip_data[ip];
         double p = 0.;
         NumLib::shapeFunctionInterpolate(local_x, ip_data.N, p);
-        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            p;
+        vars.phase_pressure = p;
 
         // Compute density:
         auto const fluid_density =

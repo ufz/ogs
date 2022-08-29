@@ -28,21 +28,15 @@ void ElasticTangentStiffnessModel<DisplacementDim>::eval(
 
     using KV = KelvinVector<DisplacementDim>;
 
-    variable_array[static_cast<int>(MPL::Variable::stress)].emplace<KV>(
-        KV::Zero());
-    variable_array[static_cast<int>(MPL::Variable::mechanical_strain)]
-        .emplace<KV>(KV::Zero());
-    variable_array[static_cast<int>(MPL::Variable::temperature)]
-        .emplace<double>(T_data.T);
+    variable_array.stress.emplace<KV>(KV::Zero());
+    variable_array.mechanical_strain.emplace<KV>(KV::Zero());
+    variable_array.temperature = T_data.T;
 
-    variable_array_prev[static_cast<int>(MPL::Variable::stress)].emplace<KV>(
-        KV::Zero());
-    variable_array_prev[static_cast<int>(MPL::Variable::mechanical_strain)]
-        .emplace<KV>(KV::Zero());
+    variable_array_prev.stress.emplace<KV>(KV::Zero());
+    variable_array_prev.mechanical_strain.emplace<KV>(KV::Zero());
     // Compute previous temperature by linearly following T_dot over the past
     // timestep.
-    variable_array_prev[static_cast<int>(MPL::Variable::temperature)]
-        .emplace<double>(T_data.T - T_data.T_dot * x_t.dt);
+    variable_array_prev.temperature = T_data.T - T_data.T_dot * x_t.dt;
 
     auto&& solution = solid_material_.integrateStress(
         variable_array_prev, variable_array, x_t.t, x_t.x, x_t.dt, *null_state);

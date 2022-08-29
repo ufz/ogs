@@ -389,8 +389,7 @@ public:
             }
 
             {
-                vars_prev[static_cast<int>(
-                    MaterialPropertyLib::Variable::porosity)] = porosity_prev;
+                vars_prev.porosity = porosity_prev;
 
                 porosity =
                     _process_data.chemically_induced_porosity_change
@@ -401,8 +400,7 @@ public:
                               .template value<double>(vars, vars_prev, pos, t,
                                                       dt);
 
-                vars[static_cast<int>(
-                    MaterialPropertyLib::Variable::porosity)] = porosity;
+                vars.porosity = porosity;
             }
 
             _process_data.chemical_solver_interface->setChemicalSystemConcrete(
@@ -593,16 +591,13 @@ public:
             NumLib::shapeFunctionInterpolate(C_nodal_values, N, C_int_pt);
             NumLib::shapeFunctionInterpolate(p_nodal_values, N, p_int_pt);
 
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::concentration)] = C_int_pt;
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+            vars.concentration = C_int_pt;
+            vars.phase_pressure = p_int_pt;
 
             // update according to a particular porosity model
             porosity = medium[MaterialPropertyLib::PropertyType::porosity]
                            .template value<double>(vars, pos, t, dt);
-            vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-                porosity;
+            vars.porosity = porosity;
 
             auto const& retardation_factor =
                 component[MaterialPropertyLib::PropertyType::retardation_factor]
@@ -831,15 +826,12 @@ public:
             NumLib::shapeFunctionInterpolate(local_C, N, C_int_pt);
             NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);
 
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::concentration)] = C_int_pt;
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+            vars.concentration = C_int_pt;
+            vars.phase_pressure = p_int_pt;
 
             //  porosity
             {
-                vars_prev[static_cast<int>(
-                    MaterialPropertyLib::Variable::porosity)] = porosity_prev;
+                vars_prev.porosity = porosity_prev;
 
                 porosity =
                     _process_data.chemically_induced_porosity_change
@@ -848,8 +840,7 @@ public:
                               .template value<double>(vars, vars_prev, pos, t,
                                                       dt);
 
-                vars[static_cast<int>(
-                    MaterialPropertyLib::Variable::porosity)] = porosity;
+                vars.porosity = porosity;
             }
 
             // Use the fluid density model to compute the density
@@ -968,22 +959,17 @@ public:
             NumLib::shapeFunctionInterpolate(local_C, N, C_int_pt);
             NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);
 
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::concentration)] = C_int_pt;
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+            vars.concentration = C_int_pt;
+            vars.phase_pressure = p_int_pt;
 
             if (_process_data.temperature)
             {
-                vars[static_cast<int>(
-                    MaterialPropertyLib::Variable::temperature)] =
-                    N.dot(local_T);
+                vars.temperature = N.dot(local_T);
             }
 
             // porosity
             {
-                vars_prev[static_cast<int>(
-                    MaterialPropertyLib::Variable::porosity)] = porosity_prev;
+                vars_prev.porosity = porosity_prev;
 
                 porosity =
                     _process_data.chemically_induced_porosity_change
@@ -992,8 +978,7 @@ public:
                               .template value<double>(vars, vars_prev, pos, t,
                                                       dt);
 
-                vars[static_cast<int>(
-                    MaterialPropertyLib::Variable::porosity)] = porosity;
+                vars.porosity = porosity;
             }
 
             auto const& retardation_factor =
@@ -1167,15 +1152,12 @@ public:
 
             double const cdot_ip = N.dot(cdot);
 
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_ip;
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::concentration)] = c_ip;
+            vars.phase_pressure = p_ip;
+            vars.concentration = c_ip;
 
             //  porosity
             {
-                vars_prev[static_cast<int>(
-                    MaterialPropertyLib::Variable::porosity)] = phi_prev;
+                vars_prev.porosity = phi_prev;
 
                 phi = _process_data.chemically_induced_porosity_change
                           ? phi_prev
@@ -1183,8 +1165,7 @@ public:
                                 .template value<double>(vars, vars_prev, pos, t,
                                                         dt);
 
-                vars[static_cast<int>(
-                    MaterialPropertyLib::Variable::porosity)] = phi;
+                vars.porosity = phi;
             }
 
             auto const rho = phase[MaterialPropertyLib::PropertyType::density]
@@ -1284,21 +1265,17 @@ public:
             double const p_ip = N.dot(p);
             double const c_ip = N.dot(c);
 
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_ip;
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::concentration)] = c_ip;
+            vars.phase_pressure = p_ip;
+            vars.concentration = c_ip;
 
             if (_process_data.temperature)
             {
-                vars[static_cast<int>(
-                    MaterialPropertyLib::Variable::temperature)] = N.dot(T);
+                vars.temperature = N.dot(T);
             }
 
             // porosity
             {
-                vars_prev[static_cast<int>(
-                    MaterialPropertyLib::Variable::porosity)] = phi_prev;
+                vars_prev.porosity = phi_prev;
 
                 phi = _process_data.chemically_induced_porosity_change
                           ? phi_prev
@@ -1306,8 +1283,7 @@ public:
                                 .template value<double>(vars, vars_prev, pos, t,
                                                         dt);
 
-                vars[static_cast<int>(
-                    MaterialPropertyLib::Variable::porosity)] = phi;
+                vars.porosity = phi;
             }
 
             auto const R =
@@ -1413,15 +1389,13 @@ public:
             double C_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_C, N, C_int_pt);
 
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::concentration)] = C_int_pt;
+            vars.concentration = C_int_pt;
 
             auto const porosity_dot = (porosity - porosity_prev) / dt;
 
             // porosity
             {
-                vars_prev[static_cast<int>(
-                    MaterialPropertyLib::Variable::porosity)] = porosity_prev;
+                vars_prev.porosity = porosity_prev;
 
                 porosity =
                     _process_data.chemically_induced_porosity_change
@@ -1529,12 +1503,9 @@ public:
             NumLib::shapeFunctionInterpolate(C_nodal_values, N, C_int_pt);
             NumLib::shapeFunctionInterpolate(p_nodal_values, N, p_int_pt);
 
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::concentration)] = C_int_pt;
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
-            vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-                porosity;
+            vars.concentration = C_int_pt;
+            vars.phase_pressure = p_int_pt;
+            vars.porosity = porosity;
 
             // TODO (naumov) Temporary value not used by current material
             // models. Need extension of secondary variables interface.
@@ -1600,13 +1571,11 @@ public:
         // local_x contains the local concentration and pressure values
         double c_int_pt;
         NumLib::shapeFunctionInterpolate(local_C, shape_matrices.N, c_int_pt);
-        vars[static_cast<int>(MaterialPropertyLib::Variable::concentration)]
-            .emplace<double>(c_int_pt);
+        vars.concentration = c_int_pt;
 
         double p_int_pt;
         NumLib::shapeFunctionInterpolate(local_p, shape_matrices.N, p_int_pt);
-        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)]
-            .emplace<double>(p_int_pt);
+        vars.phase_pressure = p_int_pt;
 
         // TODO (naumov) Temporary value not used by current material models.
         // Need extension of secondary variables interface.
@@ -1758,12 +1727,9 @@ public:
             double const p_ip = N.dot(p);
             double const c_ip = N.dot(c);
 
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::concentration)] = c_ip;
-            vars[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_ip;
-            vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-                phi;
+            vars.concentration = c_ip;
+            vars.phase_pressure = p_ip;
+            vars.porosity = phi;
 
             double const dt = std::numeric_limits<double>::quiet_NaN();
 

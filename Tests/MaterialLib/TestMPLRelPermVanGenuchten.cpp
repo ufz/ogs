@@ -38,8 +38,7 @@ TEST(MaterialPropertyLib, RelPermVanGenuchten)
     for (int i = 0; i <= n_steps; ++i)
     {
         double const S_L = S_0 + i * (S_max - S_0) / n_steps;
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L;
+        variable_array.liquid_saturation = S_L;
 
         double const k_rel =
             permeability.template value<double>(variable_array, pos, t, dt);
@@ -47,12 +46,10 @@ TEST(MaterialPropertyLib, RelPermVanGenuchten)
             variable_array, MPL::Variable::liquid_saturation, pos, t, dt);
 
         double const eps = 1e-8;
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L - eps;
+        variable_array.liquid_saturation = S_L - eps;
         double const k_rel_minus =
             permeability.template value<double>(variable_array, pos, t, dt);
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L + eps;
+        variable_array.liquid_saturation = S_L + eps;
         double const k_rel_plus =
             permeability.template value<double>(variable_array, pos, t, dt);
 

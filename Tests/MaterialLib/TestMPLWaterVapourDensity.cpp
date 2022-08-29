@@ -38,12 +38,9 @@ TEST(MaterialPropertyLib, WaterVapourDensity)
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::temperature)] = T;
-    variable_array[static_cast<int>(
-        MaterialPropertyLib::Variable::phase_pressure)] = p;
-    variable_array[static_cast<int>(MaterialPropertyLib::Variable::density)] =
-        rho_w;
+    variable_array.temperature = T;
+    variable_array.phase_pressure = p;
+    variable_array.density = rho_w;
 
     // The derivative of the water vapour with respect of temperature
     {
@@ -54,8 +51,7 @@ TEST(MaterialPropertyLib, WaterVapourDensity)
         for (std::size_t i = 0; i < temperatures.size(); ++i)
         {
             double const T_i = temperatures[i];
-            variable_array[static_cast<int>(
-                MaterialPropertyLib::Variable::temperature)] = T_i;
+            variable_array.temperature = T_i;
 
             double const rho_vw =
                 property.template value<double>(variable_array, pos, t, dt);
@@ -65,13 +61,11 @@ TEST(MaterialPropertyLib, WaterVapourDensity)
                 << " and for computed water vapour density " << rho_vw;
 
             double const dT = 1.0e-4;
-            variable_array[static_cast<int>(
-                MaterialPropertyLib::Variable::temperature)] = T_i - dT;
+            variable_array.temperature = T_i - dT;
             double const rho_vw0 =
                 property.template value<double>(variable_array, pos, t, dt);
 
-            variable_array[static_cast<int>(
-                MaterialPropertyLib::Variable::temperature)] = T_i + dT;
+            variable_array.temperature = T_i + dT;
             double const rho_vw1 =
                 property.template value<double>(variable_array, pos, t, dt);
 
@@ -105,10 +99,8 @@ TEST(MaterialPropertyLib, WaterVapourDensity)
         {
             double const p_i = pressures[i];
 
-            variable_array[static_cast<int>(
-                MaterialPropertyLib::Variable::temperature)] = T;
-            variable_array[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_i;
+            variable_array.temperature = T;
+            variable_array.phase_pressure = p_i;
 
             double const rho_vw =
                 property.template value<double>(variable_array, pos, t, dt);
@@ -118,14 +110,12 @@ TEST(MaterialPropertyLib, WaterVapourDensity)
                 << " and for computed water vapour density " << rho_vw;
 
             double const dp = 1.0e-3;
-            variable_array[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_i - dp;
+            variable_array.phase_pressure = p_i - dp;
 
             double const rho_vw0 =
                 property.template value<double>(variable_array, pos, t, dt);
 
-            variable_array[static_cast<int>(
-                MaterialPropertyLib::Variable::phase_pressure)] = p_i + dp;
+            variable_array.phase_pressure = p_i + dp;
             double const rho_vw1 =
                 property.template value<double>(variable_array, pos, t, dt);
 

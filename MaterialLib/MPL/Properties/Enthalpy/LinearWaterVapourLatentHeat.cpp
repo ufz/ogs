@@ -24,8 +24,7 @@ PropertyDataType LinearWaterVapourLatentHeat::value(
     const ParameterLib::SpatialPosition& /*pos*/, const double /*t*/,
     const double /*dt*/) const
 {
-    const double T = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
+    const double T = variable_array.temperature;
 
     return 2.501e+6 -
            2369.2 * (T - MaterialLib::PhysicalConstant::CelsiusZeroInKelvin);

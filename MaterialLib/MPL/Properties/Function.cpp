@@ -40,16 +40,13 @@ static std::vector<exprtk::expression<T>> compileExpressions(
 }
 
 static void updateVariableValues(
-    std::vector<std::pair<int, double*>> const& symbol_values,
+    std::vector<std::pair<Variable, double*>> const& symbol_values,
     VariableArray const& variable_array)
 {
-    for (auto& index_value_ptr_pair : symbol_values)
+    for (auto const& [variable, value_ptr] : symbol_values)
     {
-        auto const index = index_value_ptr_pair.first;
-
-        double* value_ptr = index_value_ptr_pair.second;
         std::visit(
-            [&value_ptr, &index](auto&& v)
+            [&variable = variable, &value_ptr = value_ptr](auto&& v)
             {
                 using T = std::decay_t<decltype(v)>;
                 if constexpr (std::is_same_v<T, std::monostate>)
@@ -58,7 +55,7 @@ static void updateVariableValues(
                         "Function property: variable {:s} value needed for "
                         "evaluation of the expression was not set by the "
                         "caller.",
-                        variable_enum_to_string[index]);
+                        variable_enum_to_string[static_cast<int>(variable)]);
                 }
                 else if constexpr (std::is_same_v<T, double>)
                 {
@@ -69,15 +66,16 @@ static void updateVariableValues(
                     OGS_FATAL(
                         "Function property: not implemented handling for a "
                         "type {:s} of variable {:s}.",
-                        typeid(T).name(), variable_enum_to_string[index]);
+                        typeid(T).name(),
+                        variable_enum_to_string[static_cast<int>(variable)]);
                 }
             },
-            variable_array[index]);
+            variable_array[variable]);
     }
 }
 
 static PropertyDataType evaluateExpressions(
-    std::vector<std::pair<int, double*>> const& symbol_values,
+    std::vector<std::pair<Variable, double*>> const& symbol_values,
     VariableArray const& variable_array,
     std::vector<exprtk::expression<double>> const& expressions)
 {
@@ -163,11 +161,10 @@ Function::Function(
          collectVariables(value_string_expressions, dvalue_string_expressions))
     {
         symbol_table.create_variable(v);
-        // Store variables index in the variable array and the pointer to the
-        // value in the symbol table for fast access later.
-        int const variable_array_index =
-            static_cast<int>(convertStringToVariable(v));
-        symbol_values_.emplace_back(variable_array_index,
+        // Store variable in the variable array and the pointer to the value in
+        // the symbol table for fast access later.
+        Variable const variable = convertStringToVariable(v);
+        symbol_values_.emplace_back(variable,
                                     &symbol_table.get_variable(v)->ref());
     }
 

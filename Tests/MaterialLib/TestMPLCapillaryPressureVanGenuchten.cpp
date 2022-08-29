@@ -48,16 +48,14 @@ TEST(MaterialPropertyLib, CapillaryPressureVanGenuchten)
     for (int i = 0; i <= n_steps; ++i)
     {
         double const S_L = S_0 + i * (S_max - S_0) / n_steps;
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L;
+        variable_array.liquid_saturation = S_L;
 
         double const p_cap =
             pressure.template value<double>(variable_array, pos, t, dt);
         ASSERT_LE(p_cap, maximum_capillary_pressure);
         ASSERT_GE(p_cap, 0);
 
-        variable_array[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            p_cap;
+        variable_array.capillary_pressure = p_cap;
 
         double const S_L_roundtrip =
             saturation.template value<double>(variable_array, pos, t, dt);
@@ -89,12 +87,10 @@ TEST(MaterialPropertyLib, CapillaryPressureVanGenuchten)
             variable_array, MPL::Variable::liquid_saturation, pos, t, dt);
 
         double const eps = 1e-6;
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L - eps;
+        variable_array.liquid_saturation = S_L - eps;
         double const p_cap_minus =
             pressure.template value<double>(variable_array, pos, t, dt);
-        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
-            S_L + eps;
+        variable_array.liquid_saturation = S_L + eps;
         double const p_cap_plus =
             pressure.template value<double>(variable_array, pos, t, dt);
 

@@ -25,15 +25,10 @@ PropertyDataType VapourDiffusionFEBEX::value(
     const ParameterLib::SpatialPosition& /*pos*/, const double /*t*/,
     const double /*dt*/) const
 {
-    const double S_L = std::clamp(
-        std::get<double>(
-            variable_array[static_cast<int>(Variable::liquid_saturation)]),
-        0.0, 1.0);
+    const double S_L = std::clamp(variable_array.liquid_saturation, 0.0, 1.0);
 
-    const double T = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
-    const double phi =
-        std::get<double>(variable_array[static_cast<int>(Variable::porosity)]);
+    const double T = variable_array.temperature;
+    const double phi = variable_array.porosity;
 
     const double D_vr = tortuosity_ * phi * (1 - S_L);
 
@@ -48,15 +43,10 @@ PropertyDataType VapourDiffusionFEBEX::dValue(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    const double S_L = std::clamp(
-        std::get<double>(
-            variable_array[static_cast<int>(Variable::liquid_saturation)]),
-        0.0, 1.0);
+    const double S_L = std::clamp(variable_array.liquid_saturation, 0.0, 1.0);
 
-    const double T = std::get<double>(
-        variable_array[static_cast<int>(Variable::temperature)]);
-    const double phi =
-        std::get<double>(variable_array[static_cast<int>(Variable::porosity)]);
+    const double T = variable_array.temperature;
+    const double phi = variable_array.porosity;
 
     if (variable == Variable::temperature)
     {

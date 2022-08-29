@@ -30,29 +30,25 @@ void PermeabilityModel<DisplacementDim>::eval(
     auto const& medium = media_data.medium;
 
     MPL::VariableArray variables;
-    variables[static_cast<int>(MPL::Variable::liquid_saturation)] =
-        S_L_data.S_L;
-    variables[static_cast<int>(MPL::Variable::temperature)] = T_data.T;
+    variables.liquid_saturation = S_L_data.S_L;
+    variables.temperature = T_data.T;
     MPL::VariableArray variables_prev;
 
     if (medium.hasProperty(MPL::PropertyType::transport_porosity))
     {
         // Used in
         // MaterialLib/MPL/Properties/PermeabilityOrthotropicPowerLaw.cpp
-        variables_prev[static_cast<int>(MPL::Variable::transport_porosity)] =
-            transport_poro_data_prev.phi;
+        variables_prev.transport_porosity = transport_poro_data_prev.phi;
 
         transport_poro_data.phi =
             medium.property(MPL::PropertyType::transport_porosity)
                 .template value<double>(variables, variables_prev, x_t.x, x_t.t,
                                         x_t.dt);
-        variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-            transport_poro_data.phi;
+        variables.transport_porosity = transport_poro_data.phi;
     }
     else
     {
-        variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-            poro_data.phi;
+        variables.transport_porosity = poro_data.phi;
     }
 
     out.k_rel = medium.property(MPL::PropertyType::relative_permeability)
@@ -69,14 +65,11 @@ void PermeabilityModel<DisplacementDim>::eval(
     using SymmetricTensor =
         KelvinVector<DisplacementDim>;  // same data type, but different
                                         // semantics
-    variables[static_cast<int>(MPL::Variable::total_stress)]
-        .emplace<SymmetricTensor>(
-            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                s_mech_data.sigma_total));
+    variables.total_stress.emplace<SymmetricTensor>(
+        MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+            s_mech_data.sigma_total));
 
-    variables[static_cast<int>(
-        MaterialPropertyLib::Variable::equivalent_plastic_strain)] =
-        s_mech_data.equivalent_plastic_strain;
+    variables.equivalent_plastic_strain = s_mech_data.equivalent_plastic_strain;
 
     auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
         medium.property(MPL::PropertyType::permeability)

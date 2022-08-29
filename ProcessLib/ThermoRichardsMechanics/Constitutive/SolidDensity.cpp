@@ -22,7 +22,7 @@ void SolidDensityModel<DisplacementDim>::eval(
 {
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
-    variables[static_cast<int>(MPL::Variable::temperature)] = T_data.T;
+    variables.temperature = T_data.T;
 
     out.rho_SR = media_data.solid.property(MPL::PropertyType::density)
                      .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
