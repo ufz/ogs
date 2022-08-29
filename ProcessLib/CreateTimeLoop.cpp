@@ -10,6 +10,8 @@
 
 #include "CreateTimeLoop.h"
 
+#include <range/v3/algorithm/any_of.hpp>
+
 #include "BaseLib/ConfigTree.h"
 #include "ProcessLib/CreateProcessData.h"
 #include "ProcessLib/Output/CreateOutput.h"
@@ -64,6 +66,21 @@ std::unique_ptr<TimeLoop> createTimeLoop(
         //! \ogs_file_param{prj__time_loop__processes}
         config.getConfigSubtree("processes"), processes, nonlinear_solvers,
         compensate_non_equilibrium_initial_residuum);
+
+    const bool use_staggered_scheme =
+        ranges::any_of(processes.begin(), processes.end(),
+                       [](auto const& process)
+                       { return !(process->isMonolithicSchemeUsed()); });
+
+    if (!use_staggered_scheme && per_process_data.size() > 1)
+    {
+        OGS_FATAL(
+            "The monolithic scheme is used. However more than one process data "
+            "tags (by name \"process\") inside tag \"time_loop\" are defined "
+            "for the staggered scheme. If you want to use staggered scheme, "
+            "please set the element of tag \"<coupling_scheme>\" to "
+            "\"staggered\".");
+    }
 
     if (coupling_config)
     {
