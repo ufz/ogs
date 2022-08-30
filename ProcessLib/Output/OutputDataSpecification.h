@@ -56,6 +56,16 @@ struct OutputDataSpecification final
                 "Vector of fixed output time steps passed to the "
                 "OutputDataSpecification constructor must be sorted");
         }
+        // check the repeats_each_steps pairs
+        for (auto const& pair : repeats_each_steps)
+        {
+            if (pair.each_steps == 0)
+            {
+                OGS_FATAL(
+                    "Step in pair of <repeats><steps> is zero but has to be "
+                    "greater than zero.");
+            }
+        }
         if (repeats_each_steps.empty())
         {
             repeats_each_steps.emplace_back(1, std::numeric_limits<int>::max());
