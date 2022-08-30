@@ -18,6 +18,7 @@
 #include <fstream>
 #include <regex>
 
+#include "DisableFPE.h"
 #include "Error.h"
 #include "FileTools.h"
 #include "Logging.h"
@@ -109,6 +110,12 @@ void traverseIncludes(xmlDoc* doc, xmlNode* node,
 void replaceIncludes(std::stringstream& prj_stream,
                      std::filesystem::path const& prj_dir)
 {
+    // Parsing the XML triggers floating point exceptions. Because we are not
+    // debugging libxml2 (or other libraries) at this point, the floating point
+    // exceptions are temporarily disabled and are restored at the end of the
+    // function.
+    [[maybe_unused]] DisableFPE disable_fpe;
+
     auto doc =
         xmlParseMemory(prj_stream.str().c_str(), prj_stream.str().size());
     if (doc == nullptr)
