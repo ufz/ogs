@@ -10,10 +10,11 @@
 
 #pragma once
 
-#include "BaseLib/ConfigTree.h"
-#include "BaseLib/Logging.h"
+namespace BaseLib
+{
+class ConfigTree;
+}
 #include "MathLib/LinAlg/EigenLis/EigenLisLinearSolver.h"
-#include "MathLib/LinAlg/LinearSolverOptions.h"
 #include "MathLib/LinAlg/LinearSolverOptionsParser.h"
 
 namespace MathLib
@@ -31,25 +32,7 @@ struct LinearSolverOptionsParser<EigenLisLinearSolver> final
     /// passed to LIS via lis_solver_set_options()
     std::tuple<std::string, std::string> parseNameAndOptions(
         std::string const& prefix,
-        BaseLib::ConfigTree const* const config) const
-    {
-        std::string lis_options = "-initx_zeros 0";
-
-        if (config)
-        {
-            ignoreOtherLinearSolvers(*config, "lis");
-            //! \ogs_file_param{prj__linear_solvers__linear_solver__lis}
-            if (auto s = config->getConfigParameterOptional<std::string>("lis"))
-            {
-                if (!s->empty())
-                {
-                    lis_options += " " + *s;
-                    INFO("Lis options: '{:s}'", lis_options);
-                }
-            }
-        }
-        return {prefix, lis_options};
-    }
+        BaseLib::ConfigTree const* const config) const;
 };
 
 }  // namespace MathLib
