@@ -22,7 +22,7 @@ Previously, the column had been packed giving a mean bulk density and porosity o
 
 Reactive component$^{(*)}$ transport processes in saturated porous media illustrated in this benchmark have been possible by integrating IPhreeqc v.3.5.0 module (Parkhurst et al. 2013) in OGS-6. The operator-splitting (OS) model formulation (Strang et al. 1968) with a sequential non-iterative approach (SNIA) has been used for the implementation.
 
-In a first step, the mass balance equation describing the component transport within the fluid is solved by a parabolic operator (see [`HC-Process.pdf`](/docs/benchmarks/hydro-component/HC-Process.pdf)). Then, in a second step, the nonlinear algebraic equations describing the equilibrium chemical reactions between the aqueous components and the solid (i.e. mass action law) are solved with a modified Newton-Raphson method implemented in IPhreeqc.
+In a first step, the mass balance equation describing the component transport within the fluid is solved by a parabolic operator (see [`HC-Process.pdf`](/docs/benchmarks/hydro-component/hydro-component/HC-Process.pdf)). Then, in a second step, the nonlinear algebraic equations describing the equilibrium chemical reactions between the aqueous components and the solid (i.e. mass action law) are solved with a modified Newton-Raphson method implemented in IPhreeqc.
 
 ($^*$*Note: component denotes a chemical species that belongs to the minimum number of independent chemical species necessary to completely describe their mass*).
 
