@@ -1,18 +1,14 @@
 +++
-title = "Running OGS With MPI for parallel computing"
+title = "Running OGS with MPI"
 date = "2022-05-06T11:20:34+02:00"
 author = "Wenqing Wang"
-weight = 2
-
-[menu]
-  [menu.userguide]
-    parent = "basics"
+weight = 1
 +++
 
 <!-- vale off -->
 The executable OGS for MPI parallel computing is compiled with special
- build configuration. If you need to compile the source code, please read
- [Build configuration for MPI and PETSc]({{<ref "configure_for_mpi_and_petsc.md">}}
+build configuration. If you need to compile the source code, please read
+[Build configuration for MPI and PETSc]({{<relref "configure_for_mpi_and_petsc.md">}}).
 <!-- vale on -->
 
 To conduct DDC enabled parallel computing with OGS, following steps are required:
