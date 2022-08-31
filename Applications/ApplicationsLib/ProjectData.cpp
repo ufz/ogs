@@ -31,6 +31,13 @@
 #include "InfoLib/CMakeInfo.h"
 #include "MaterialLib/MPL/CreateMedium.h"
 #include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
+#if defined(USE_LIS)
+#include "MathLib/LinAlg/EigenLis/LinearSolverOptionsParser.h"
+#elif defined(USE_PETSC)
+#include "MathLib/LinAlg/PETSc/LinearSolverOptionsParser.h"
+#else
+#include "MathLib/LinAlg/Eigen/LinearSolverOptionsParser.h"
+#endif
 #include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
 #include "MeshGeoToolsLib/CreateSearchLength.h"
 #include "MeshGeoToolsLib/SearchLength.h"

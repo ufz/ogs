@@ -20,7 +20,6 @@
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/EigenLis/EigenLisLinearSolver.h"
-#include "MathLib/LinAlg/EigenLis/LinearSolverOptionsParser.h"
 
 using GlobalVector = MathLib::EigenVector;
 using GlobalMatrix = MathLib::EigenMatrix;
@@ -28,7 +27,6 @@ using GlobalMatrix = MathLib::EigenMatrix;
 using GlobalLinearSolver = MathLib::EigenLisLinearSolver;
 
 #elif defined(USE_PETSC)
-#include "MathLib/LinAlg/PETSc/LinearSolverOptionsParser.h"
 #include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
@@ -42,7 +40,6 @@ using GlobalLinearSolver = MathLib::PETScLinearSolver;
 #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
-#include "MathLib/LinAlg/Eigen/LinearSolverOptionsParser.h"
 
 using GlobalVector = MathLib::EigenVector;
 using GlobalMatrix = MathLib::EigenMatrix;
