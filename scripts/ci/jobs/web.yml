@@ -8,12 +8,20 @@ web url checker:
   image: $WEB_IMAGE
   script:
     - cd web
+    - hugo
     - >
-      urlchecker check --retry-count 5 --file-types .pandoc,.md
-      --exclude-files "content/releases/*"
-      --exclude-urls "http://yourproxy.example.com,https://apt.kitware.com/ubuntu/,https://github.com/YOUR-USERNAME/ogs,https://github.com/ufz/ogs/pull/\$1,http://www.opengeosys.org/images/xsd/OpenGeoSysXXX.xsd,https://\`-protocol,https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/new,https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/_out/images?job=container,https://jquery.org/license/,https://ogsstorage.blob.core.windows.net/binaries/ogs6,https://gitlab.opengeosys.org/ogs/ogs/-/tags/new,https://github.com/thelfer/tfel/tree/rliv-,https://doi.org/10.1029/2007JF000969,https://doi.org/10.1002/nag.2998"
-      --exclude-patterns "jenkins.opengeosys.org,overleaf.com,127.0.0.1,localhost,sciencedirect.com"
-      content
+      find public -name '*.html'
+      ! -path '*/releases/*'
+      ! -path '*/benchmarks/notebooks/*'
+      -exec linkchecker --no-warnings --check-extern
+      --ignore-url='sciencedirect.com'
+      --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/commit/'
+      --ignore-url='wiley.com'
+      --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/new'
+      --ignore-url='overleaf.com'
+      --ignore-url='https://ogsstorage.blob.core.windows.net/binaries/ogs6'
+      --ignore-url='http://localhost:1313'
+      {} +
 
 preview web site:
   stage: build
