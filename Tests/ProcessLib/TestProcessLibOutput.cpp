@@ -109,6 +109,40 @@ TEST_F(ProcessLibOutputDataSpecification,
         gtest_reporter, double_classifier);
 }
 
+TEST_F(ProcessLibOutputDataSpecification, UnsortedFixedTimeStepList)
+{
+    auto test = [](std::vector<double>& unsorted_fixed_output_times) -> bool
+    {
+        bool const output_residuals = false;
+
+        try
+        {
+            ProcessLib::OutputDataSpecification output_data_specification{
+                {} /* output_variables */,
+                std::vector<double>{unsorted_fixed_output_times},
+                {} /* repeats_each_steps */,
+                output_residuals};
+        }
+        catch (...)
+        {
+            // we expect that the construction throws
+            return true;
+        }
+        return false;
+    };
+
+    ac::check<std::vector<double>>(
+        test, 100,
+        ac::make_arbitrary(ac::list_of<double>())
+            .discard_if(
+                [](std::vector<double> fixed_output_times)
+                {
+                    return std::is_sorted(cbegin(fixed_output_times),
+                                          cend(fixed_output_times));
+                }),
+        gtest_reporter, double_classifier);
+}
+
 struct PairRepeatEachStepsGenerator
 {
     using Gen = ac::generator<unsigned>;
