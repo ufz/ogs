@@ -123,11 +123,6 @@ bool testNodalValuesOfElement(
             // scalar values, 2 nodes.
             Eigen::Matrix<double, 2, 1> const nodal_values =
                 parameter.getNodalValuesOnElement(*e, t);
-            if (nodal_values.cols() != 1)
-            {
-                ERR("Expected scalar nodal values.");
-                return false;
-            }
             if (nodal_values.rows() != static_cast<int>(e->getNumberOfNodes()))
             {
                 ERR("Expected equal number of element nodes and the nodal "
