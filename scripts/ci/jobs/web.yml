@@ -3,25 +3,27 @@ web url checker:
   allow_failure: true
   tags: [docker]
   extends:
-    - .rules-manual
-  needs: [ci_images]
+    - .rules-master-manual
+  needs: [ci_images, "build jupyter"]
   image: $WEB_IMAGE
   script:
     - cd web
-    - hugo
+    - hugo server &
+    - sleep 20
     - >
-      find public -name '*.html'
-      ! -path '*/releases/*'
-      ! -path '*/benchmarks/notebooks/*'
-      -exec linkchecker --no-warnings --check-extern
+      linkchecker --no-warnings
+      --check-extern
       --ignore-url='sciencedirect.com'
-      --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/commit/'
       --ignore-url='wiley.com'
-      --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/new'
+      --ignore-url='doi.org/10.1002'
+      --ignore-url='linkinghub.elsevier.com'
       --ignore-url='overleaf.com'
+      --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/commit/'
+      --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/new'
       --ignore-url='https://ogsstorage.blob.core.windows.net/binaries/ogs6'
-      --ignore-url='http://localhost:1313'
-      {} +
+      --ignore-url='/css/all.css'
+      http://localhost:1313
+    - kill $!
 
 preview web site:
   stage: build

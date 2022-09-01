@@ -94,17 +94,9 @@ check docs links:
   script:
     - cd build
     - >
-      find docs -name '*.html'
-      ! -path '*project_file_doc_qa*'
-      ! -path '*ogs_file_*'
-      -exec linkchecker --no-warnings --check-extern
+      linkchecker --no-warnings --check-extern
       --ignore-url='sciencedirect.com'
-      --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/commit/'
-      --ignore-url='.*wiley.com'
-      --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/new'
-      --ignore-url='overleaf.com'
-      --ignore-url='https://ogsstorage.blob.core.windows.net/binaries/ogs6'
-      {} +
+      docs
 
 spell check docs:
   image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.15-vale-2.16.1-markdownlint-0.31.1
