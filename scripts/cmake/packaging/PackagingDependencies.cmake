@@ -45,6 +45,7 @@ install(
       DESTINATION "${CMAKE_INSTALL_PREFIX}/${INSTALL_DIR}"
       TYPE SHARED_LIBRARY
       FILES "${_file}"
+      FOLLOW_SYMLINK_CHAIN
     )
   endforeach()
   list(LENGTH _u_deps _u_length)
