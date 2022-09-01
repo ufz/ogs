@@ -24,7 +24,7 @@ PhaseTransition::PhaseTransition(
       gas_phase_vapour_component_index_{findComponentIndex(
           media, "Gas", MaterialPropertyLib::PropertyType::vapour_pressure)},
       // Dry air component is complement of vapour component index
-      gas_phase_dry_air_component_index_{gas_phase_vapour_component_index_ ^ 1},
+      gas_phase_dry_air_component_index_{1 - gas_phase_vapour_component_index_},
       // The solute is the component of the liquid phase which has been assigned
       // the property `henry_coefficient'.
       liquid_phase_solute_component_index_{findComponentIndex(
@@ -32,7 +32,7 @@ PhaseTransition::PhaseTransition(
           MaterialPropertyLib::PropertyType::henry_coefficient)},
       // The solvent is again the bitwise complement of the solute component
       liquid_phase_solvent_component_index_{
-          liquid_phase_solute_component_index_ ^ 1}
+          1 - liquid_phase_solute_component_index_}
 {
     DBUG("Create PhaseTransition constitutive model.");
 
