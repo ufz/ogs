@@ -1,294 +1,298 @@
 entries:
-    brookscorey1964:
-        type: article
-        title: Hydraulic Properties of Porous Media
-        journal: Hydrol. Pap.
-        volume: '3'
-        year: '1964'
-        publisher: colorado State University
-        author:
-        -   first: R.H.
-            last: Brooks
-        -   first: A.T.
-            last: Corey
-    ehlers1995:
-        type: article
-        title: A single-surface yield function for geomaterials
-        journal: Archive of Applied Mechanics
-        volume: '65'
-        number: '4'
-        pages: 246--259
-        year: '1995'
-        publisher: Springer
-        author:
-        -   first: W
-            last: Ehlers
-    ericson:2004:rcd:1121584:
-        type: book
-        title: Real-Time Collision Detection (The Morgan Kaufmann Series in Interactive
-            3-D Technology)
-        publisher: Morgan Kaufmann Publishers Inc.
-        year: '2004'
-        address: San Francisco, CA, USA
-        isbn: '1558607323'
-        author:
-        -   first: Christer
-            last: Ericson
-    genuchten1980:
-        type: article
-        title: A closed for equation for predicting the hydraulic conductivity of
-            unsaturated soils
-        journal: Soil Sci. Soc.
-        volume: '44'
-        pages: 892--898
-        year: '1980'
-        author:
-        -   first: M.
-            middle: Th.
-            prelast: van
-            last: Genuchten
-    kolditz2001:
-        type: article
-        title: '{Non-linear flow in fractured rock}'
-        journal: International Journal of Numerical Methods for Heat \& Fluid Flow
-        year: '2001'
-        number: '6'
-        pages: 547--575
-        volume: '11'
-        doi: 10.1108/EUM0000000005668
-        issn: 0961-5539
-        keywords: abstract this paper deals,at the geothermal research,darcian flow
-            behavior was,finite elements,fractured rock,non-,non-linear dynamics,observed
-            in pumping tests,of fluid flow in,pumps,site at soultz-,with theory and
-            computation
-        owner: localadmin
-        timestamp: 2015.06.10
-        url: http://www.emeraldinsight.com/journals.htm?articleid=877229\&show=abstract
-        author:
-        -   first: Olaf
-            last: Kolditz
-    campbell:2008:
-        type: article
-        title: '{D}ifferential-algebraic equations'
-        year: '2008'
-        journal: Scholarpedia
-        volume: '3'
-        number: '8'
-        pages: '2849'
-        note: '{revision #91199}'
-        url: http://www.scholarpedia.org/article/Differential-algebraic_equations
-        author:
-        -   first: S.
-            middle: L.
-            last: Campbell
-        -   first: V.
-            middle: Hoang
-            last: Linh
-        -   first: L.
-            middle: R.
-            last: Petzold
-    heusermann1983:
-        type: book
-        title: '{Entwicklung mathematisch-mechanischer Modelle zur Beschreibung des
-            Stoffverhaltens von Salzgestein in Abh{\"a}ngigkeit von der Zeit und der
-            Temperatur auf der Grundlage von Laborversuchen mit begleitenden kontinuumsmechanischen
-            Berechnungen nach der Methode der finiten Elemente}'
-        publisher: Fachinformationszentrum Energie, Physik, Mathematik Karlsruhe
-        year: '1983'
-        author:
-        -   first: Stefan
-            last: Heusermann
-        -   first: Karl-Heinz
-            last: Lux
-        -   first: Reinhard
-            last: Rokahr
-    heusermann2003:
-        type: article
-        title: Nonlinear finite-element analysis of solution mined storage caverns
-            in rock salt using the {LUBBY2} constitutive model
-        journal: Computers \& Structures
-        year: '2003'
-        note: K.J Bathe 60th Anniversary Issue
-        number: 8–11
-        pages: 629 - 638
-        volume: '81'
-        doi: http://dx.doi.org/10.1016/S0045-7949(02)00415-7
-        issn: 0045-7949
-        keywords: Rock salt
-        owner: nagelt
-        timestamp: 2015.06.01
-        url: https://www.sciencedirect.com/science/article/pii/S0045794902004157
-        author:
-        -   first: Stefan
-            last: Heusermann
-        -   first: Olaf
-            last: Rolfs
-        -   first: Uwe
-            last: Schmidt
-    ahmed2015adaptive:
-        type: article
-        title: Adaptive time step control for higher order variational time discretizations
-            applied to convection--diffusion--reaction equations
-        journal: Computer Methods in Applied Mechanics and Engineering
-        volume: '285'
-        pages: 83--101
-        year: '2015'
-        publisher: Elsevier
-        author:
-        -   first: Naveed
-            last: Ahmed
-        -   first: Volker
-            last: John
-    kimtchjua2011:
-        type: article
-        title: 'Stability and convergence of sequential methods for coupled flow and
-            geomechanics: Drained and undrained splits'
-        journal: Computer Methods in Applied Mechanics and Engineering
-        volume: '200'
-        number: 23-24
-        pages: 2094--2116
-        year: '2011'
-        note: ''
-        doi: https://doi.org/10.1016/j.cma.2011.02.011
-        url: https://www.sciencedirect.com/science/article/pii/S0045782511000466
-        author:
-        -   first: J.
-            last: Kim
-        -   first: H.A.
-            last: Tchelepi
-        -   first: R
-            last: Juanes
-    kimtchjua2009:
-        type: article
-        title: 'Stability, Accuracy and Efficiency of Sequential Methods
-            for Coupled Flow and Geomechanics'
-        journal: SPE International
-        volume: '16'
-        number: 02
-        pages: 249--262
-        year: '2009'
-        note: ''
-        doi: https://doi.org/10.2118/119084-PA
-        url: https://onepetro.org/SJ/article-abstract/16/02/249/204235
-        author:
-        -   first: J.
-            last: Kim
-        -   first: H.A.
-            last: Tchelepi
-        -   first: R.
-            last: Juanes
-    stonor2019:
-        type: article
-        title: 'On the optimization of the fixed-stress splitting for Biots equations'
-        journal: International Journal for Numerical Methods in Engineering
-        volume: '120'
-        number: 02
-        pages: 179--194
-        year: '2019'
-        note: ''
-        doi: https://doi.org/10.1002/nme.6130
-        url: https://onlinelibrary.wiley.com/doi/full/10.1002/nme.6130
-        author:
-        -   first: E.
-            last: Storvik
-        -   first: J.W.
-            last: Both
-        -   first: K.
-            last: Kumar
-        -   first: J.M.
-            last: Nordbotten
-        -   first: F.A.
-            last: Radu
-    mikwhe2013:
-        type: article
-        title: 'Convergence of iterative coupling for coupled flow
-            and geomechanics'
-        journal: Computational Geosciences
-        volume: '17'
-        number: 03
-        pages: 455--461
-        year: '2013'
-        note: ''
-        doi: https://doi.org/10.1007/s10596-012-9318-y
-        url: https://link.springer.com/content/pdf/10.1007/s10596-012-9318-y.pdf
-        author:
-        -   first: A.
-            last: Mikelic
-        -   first: M.F.
-            last: Wheeler
-    verruijt2009:
-        type: book
-        title: 'An introduction to soil dynamics'
-        publisher: Springer Science and Business Media
-        year: '2009'
-        note: ''
-        doi: https://doi.org/10.1007/978-90-481-3441-0
-        url: https://link.springer.com/book/10.1007/978-90-481-3441-0
-        author:
-        -   first: A.
-            last: Verruijt
-    biretal:2008:
-        type: techreport
-        title: '{DECOVALEX-THMC} {P}roject, {T}ask {D}: {L}ong-term permeability/porosity
-            changes in the {EDZ} and near field due to {THM} and {THC} processes in
-            volcanic and crystalline-bentonite systems'
-        institution: SKI
-        address: Stockholm
-        number: '2008:45'
-        year: '2008'
-        author:
-        -   first: J.
-            last: Birkholzer
-        -   first: J.
-            last: Rutqvist
-        -   first: E.
-            last: Sonnenthal
-        -   first: D.
-            last: Barr
-    marchand2013fully:
-        type: article
-        title: '{F}ully coupled generalized hybrid-mixed finite element approximation
-            of two-phase two-component flow in porous media. {Part I}: formulation
-            and properties of the mathematical model'
-        journal: Computational Geosciences
-        volume: '17'
-        number: '2'
-        pages: 431--442
-        year: '2013'
-        doi: 10.1007/s10596-013-9341-7
-        publisher: Springer
-        author:
-        -   first: E
-            last: Marchand
-        -   first: T
-            last: M{\"u}ller
-        -   first: P
-            last: Knabner
+  brookscorey1964:
+    type: article
+    title: Hydraulic Properties of Porous Media
+    journal: Hydrol. Pap.
+    volume: "3"
+    year: "1964"
+    publisher: colorado State University
+    author:
+      - first: R.H.
+        last: Brooks
+      - first: A.T.
+        last: Corey
+  ehlers1995:
+    type: article
+    title: A single-surface yield function for geomaterials
+    journal: Archive of Applied Mechanics
+    volume: "65"
+    number: "4"
+    pages: 246--259
+    year: "1995"
+    publisher: Springer
+    author:
+      - first: W
+        last: Ehlers
+  ericson:2004:rcd:1121584:
+    type: book
+    title:
+      Real-Time Collision Detection (The Morgan Kaufmann Series in Interactive
+      3-D Technology)
+    publisher: Morgan Kaufmann Publishers Inc.
+    year: "2004"
+    address: San Francisco, CA, USA
+    isbn: "1558607323"
+    author:
+      - first: Christer
+        last: Ericson
+  genuchten1980:
+    type: article
+    title: A closed for equation for predicting the hydraulic conductivity of
+      unsaturated soils
+    journal: Soil Sci. Soc.
+    volume: "44"
+    pages: 892--898
+    year: "1980"
+    author:
+      - first: M.
+        middle: Th.
+        prelast: van
+        last: Genuchten
+  kolditz2001:
+    type: article
+    title: "{Non-linear flow in fractured rock}"
+    journal: International Journal of Numerical Methods for Heat \& Fluid Flow
+    year: "2001"
+    number: "6"
+    pages: 547--575
+    volume: "11"
+    doi: 10.1108/EUM0000000005668
+    issn: 0961-5539
+    keywords: abstract this paper deals,at the geothermal research,darcian flow
+      behavior was,finite elements,fractured rock,non-,non-linear dynamics,observed
+      in pumping tests,of fluid flow in,pumps,site at soultz-,with theory and
+      computation
+    owner: localadmin
+    timestamp: 2015.06.10
+    url: http://www.emeraldinsight.com/journals.htm?articleid=877229\&show=abstract
+    author:
+      - first: Olaf
+        last: Kolditz
+  campbell:2008:
+    type: article
+    title: "{D}ifferential-algebraic equations"
+    year: "2008"
+    journal: Scholarpedia
+    volume: "3"
+    number: "8"
+    pages: "2849"
+    note: "{revision #91199}"
+    url: http://www.scholarpedia.org/article/Differential-algebraic_equations
+    author:
+      - first: S.
+        middle: L.
+        last: Campbell
+      - first: V.
+        middle: Hoang
+        last: Linh
+      - first: L.
+        middle: R.
+        last: Petzold
+  heusermann1983:
+    type: book
+    title: '{Entwicklung mathematisch-mechanischer Modelle zur Beschreibung des
+      Stoffverhaltens von Salzgestein in Abh{\"a}ngigkeit von der Zeit und der
+      Temperatur auf der Grundlage von Laborversuchen mit begleitenden kontinuumsmechanischen
+      Berechnungen nach der Methode der finiten Elemente}'
+    publisher: Fachinformationszentrum Energie, Physik, Mathematik Karlsruhe
+    year: "1983"
+    author:
+      - first: Stefan
+        last: Heusermann
+      - first: Karl-Heinz
+        last: Lux
+      - first: Reinhard
+        last: Rokahr
+  heusermann2003:
+    type: article
+    title: Nonlinear finite-element analysis of solution mined storage caverns
+      in rock salt using the {LUBBY2} constitutive model
+    journal: Computers \& Structures
+    year: "2003"
+    note: K.J Bathe 60th Anniversary Issue
+    number: 8–11
+    pages: 629 - 638
+    volume: "81"
+    doi: http://dx.doi.org/10.1016/S0045-7949(02)00415-7
+    issn: 0045-7949
+    keywords: Rock salt
+    owner: nagelt
+    timestamp: 2015.06.01
+    url: https://www.sciencedirect.com/science/article/pii/S0045794902004157
+    author:
+      - first: Stefan
+        last: Heusermann
+      - first: Olaf
+        last: Rolfs
+      - first: Uwe
+        last: Schmidt
+  ahmed2015adaptive:
+    type: article
+    title:
+      Adaptive time step control for higher order variational time discretizations
+      applied to convection--diffusion--reaction equations
+    journal: Computer Methods in Applied Mechanics and Engineering
+    volume: "285"
+    pages: 83--101
+    year: "2015"
+    publisher: Elsevier
+    author:
+      - first: Naveed
+        last: Ahmed
+      - first: Volker
+        last: John
+  kimtchjua2011:
+    type: article
+    title: "Stability and convergence of sequential methods for coupled flow and
+      geomechanics: Drained and undrained splits"
+    journal: Computer Methods in Applied Mechanics and Engineering
+    volume: "200"
+    number: 23-24
+    pages: 2094--2116
+    year: "2011"
+    note: ""
+    doi: https://doi.org/10.1016/j.cma.2011.02.011
+    url: https://www.sciencedirect.com/science/article/pii/S0045782511000466
+    author:
+      - first: J.
+        last: Kim
+      - first: H.A.
+        last: Tchelepi
+      - first: R
+        last: Juanes
+  kimtchjua2009:
+    type: article
+    title: "Stability, Accuracy and Efficiency of Sequential Methods
+      for Coupled Flow and Geomechanics"
+    journal: SPE International
+    volume: "16"
+    number: 02
+    pages: 249--262
+    year: "2009"
+    note: ""
+    doi: https://doi.org/10.2118/119084-PA
+    url: https://onepetro.org/SJ/article-abstract/16/02/249/204235
+    author:
+      - first: J.
+        last: Kim
+      - first: H.A.
+        last: Tchelepi
+      - first: R.
+        last: Juanes
+  stonor2019:
+    type: article
+    title: "On the optimization of the fixed-stress splitting for Biots equations"
+    journal: International Journal for Numerical Methods in Engineering
+    volume: "120"
+    number: 02
+    pages: 179--194
+    year: "2019"
+    note: ""
+    doi: 10.1002/nme.6130
+    url: https://onlinelibrary.wiley.com/doi/full/10.1002/nme.6130
+    author:
+      - first: E.
+        last: Storvik
+      - first: J.W.
+        last: Both
+      - first: K.
+        last: Kumar
+      - first: J.M.
+        last: Nordbotten
+      - first: F.A.
+        last: Radu
+  mikwhe2013:
+    type: article
+    title: "Convergence of iterative coupling for coupled flow
+      and geomechanics"
+    journal: Computational Geosciences
+    volume: "17"
+    number: 03
+    pages: 455--461
+    year: "2013"
+    note: ""
+    doi: https://doi.org/10.1007/s10596-012-9318-y
+    url: https://link.springer.com/content/pdf/10.1007/s10596-012-9318-y.pdf
+    author:
+      - first: A.
+        last: Mikelic
+      - first: M.F.
+        last: Wheeler
+  verruijt2009:
+    type: book
+    title: "An introduction to soil dynamics"
+    publisher: Springer Science and Business Media
+    year: "2009"
+    note: ""
+    doi: https://doi.org/10.1007/978-90-481-3441-0
+    url: https://link.springer.com/book/10.1007/978-90-481-3441-0
+    author:
+      - first: A.
+        last: Verruijt
+  biretal:2008:
+    type: techreport
+    title:
+      "{DECOVALEX-THMC} {P}roject, {T}ask {D}: {L}ong-term permeability/porosity
+      changes in the {EDZ} and near field due to {THM} and {THC} processes in
+      volcanic and crystalline-bentonite systems"
+    institution: SKI
+    address: Stockholm
+    number: "2008:45"
+    year: "2008"
+    author:
+      - first: J.
+        last: Birkholzer
+      - first: J.
+        last: Rutqvist
+      - first: E.
+        last: Sonnenthal
+      - first: D.
+        last: Barr
+  marchand2013fully:
+    type: article
+    title:
+      "{F}ully coupled generalized hybrid-mixed finite element approximation
+      of two-phase two-component flow in porous media. {Part I}: formulation
+      and properties of the mathematical model"
+    journal: Computational Geosciences
+    volume: "17"
+    number: "2"
+    pages: 431--442
+    year: "2013"
+    doi: 10.1007/s10596-013-9341-7
+    publisher: Springer
+    author:
+      - first: E
+        last: Marchand
+      - first: T
+        last: M{\"u}ller
+      - first: P
+        last: Knabner
 
-    Bruns2011:
-        type: techreport
-        title: 'Glazigene Beeinflussung von Wirtsgesteinstypen Ton und Salz und
-                deren Einflüsse auf die Eignung zur Aufnahme eines HAW-Endlagers'
-        journal: Abschlussbericht
-        volume: '292'
-        number:
-        year: '2012'
-        author:
-        -   first: J.
-            last: Bruns
-        -   first: L.
-            last: Boetticher
-        -   first: H.
-            last: Doose
-        -   first: M.
-            last: Cottrell
-        -   first: P.
-            last: Wolff
-        -   first: R.M.
-            last: G{\"u}nther
-        -   first: D.
-            last: Naumann
-        -   first: T.
-            last: Popp
-        -   first: K.
-            last: Salzer
+  Bruns2011:
+    type: techreport
+    title: "Glazigene Beeinflussung von Wirtsgesteinstypen Ton und Salz und
+      deren Einflüsse auf die Eignung zur Aufnahme eines HAW-Endlagers"
+    journal: Abschlussbericht
+    volume: "292"
+    number:
+    year: "2012"
+    author:
+      - first: J.
+        last: Bruns
+      - first: L.
+        last: Boetticher
+      - first: H.
+        last: Doose
+      - first: M.
+        last: Cottrell
+      - first: P.
+        last: Wolff
+      - first: R.M.
+        last: G{\"u}nther
+      - first: D.
+        last: Naumann
+      - first: T.
+        last: Popp
+      - first: K.
+        last: Salzer

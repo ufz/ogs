@@ -46,7 +46,7 @@ implemented, where $D_p$ [m$^2$/s] is the pore diffusion coefficient, $\beta_L$ 
 $$
 R = 1 + \rho_{b} K_{D} / \phi
 $$
-with the bulk density of the porous media $\rho_{b}$ [kg/m$^3$] and the distribution coefficient $K_{D}$ [m$^3$/kg], and $\lambda$ [1/s] is the first-order decay constant, 
+with the bulk density of the porous media $\rho_{b}$ [kg/m$^3$] and the distribution coefficient $K_{D}$ [m$^3$/kg], and $\lambda$ [1/s] is the first-order decay constant,
 $$
 \lambda = ln 2 / t_{1/2}
 $$
@@ -54,8 +54,7 @@ where $t_{1/2}$ [s] is the half life of the decaying component.
 
 ## Input parameters
 
-The following table shows an overview of all input parameters available in the ComponentTransport process. 
-
+The following table shows an overview of all input parameters available in the ComponentTransport process.
 
 | Parameter                  | Symbol      | Unit       | Doxygen and Example              |
 | -------------------------- | ----------- | ---------- | ---------------------- |
@@ -66,7 +65,6 @@ The following table shows an overview of all input parameters available in the C
 | Gravity vector (specific body force) | $\textbf{g}$|[m/s$^{2}$]  |                        | [Link](https://doxygen.opengeosys.org/db/d19/ogs_file_param__prj__processes__process__componenttransport__specific_body_force)
 | Retardation factor         | $R$         |[-]         | [Example](https://doxygen.opengeosys.org/d0/d40/ogs_ctest_prj__parabolic__componenttransport__advectiondiffusionsorptiondecay__1d_advectiondiffusionsorptiondecay__prj) |
 | First-order decay constant | $\lambda$   |[1/s]       | [Example](https://doxygen.opengeosys.org/d0/d40/ogs_ctest_prj__parabolic__componenttransport__advectiondiffusionsorptiondecay__1d_advectiondiffusionsorptiondecay__prj) |
-
 
 ## Input file definition
 
@@ -128,12 +126,12 @@ Under the keyword `<component>`, the properties of the transported chemical comp
 
 ## Available benchmarks
 
-* [Heterogeneous Saturated Mass Transport](https://www.opengeosys.org/docs/benchmarks/hydro-component/hc_ogs6-vs-ogs5/)
-* [Saturated Mass Transport](https://www.opengeosys.org/docs/benchmarks/hydro-component/hydro-component/)
-* [Saturated Variable-Density Flow and Mass Transport (Elder)](https://www.opengeosys.org/docs/benchmarks/hydro-component/elder/)
-* [Saturated Variable-Density Flow and Mass Transport (Goswami)](https://www.opengeosys.org/docs/benchmarks/hydro-component/goswami/)
-* [Theis solution for well pumping](https://www.opengeosys.org/docs/benchmarks/hydro-component/theis/hc_theis/)
-* [Variable Dependent Boundary Condition](https://www.opengeosys.org/docs/benchmarks/hydro-component/vdbc/)
-* [Conservative tracer transport with time varying source (1D/2D)](https://www.opengeosys.org/docs/benchmarks/hydro-component/contracer/contracer/)
-* [(Advection-)diffusion-sorption-decay problem](https://www.opengeosys.org/docs/benchmarks/notebooks/diffusionsorptiondecay/)
-* [Two-layer diffusion problem](https://www.opengeosys.org/docs/benchmarks/notebooks/multilayerdiffusion/)
+* [Heterogeneous Saturated Mass Transport]({{< relref "hc_ogs6-vs-ogs5" >}})
+* [Saturated Mass Transport]({{< relref "saturated-mass-transport" >}})
+* [Saturated Variable-Density Flow and Mass Transport (Elder)]({{< relref "docs/benchmarks/hydro-component/elder" >}})
+* [Saturated Variable-Density Flow and Mass Transport (Goswami)]({{< relref "goswami" >}})
+* [Theis solution for well pumping]({{< relref "hc_theis" >}})
+* [Variable Dependent Boundary Condition]({{< relref "vdbc" >}})
+* [Conservative tracer transport with time varying source (1D/2D)]({{< relref "contracer" >}})
+* [(Advection-)diffusion-sorption-decay problem](https://www.opengeosys.org/docs/benchmarks/hydro-component/diffusionsorptiondecay/)
+* [Two-layer diffusion problem](https://www.opengeosys.org/docs/benchmarks/hydro-component/multilayerdiffusion/)

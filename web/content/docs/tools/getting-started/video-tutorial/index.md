@@ -37,4 +37,4 @@ As a common programming language we use [Python](https://www.python.org).
 * [glacierclass.py](glacierclass.py)
 * [history.sh](history.sh)
 * [msh2vtu-project on GitHub](https://github.com/dominik-kern/msh2vtu)
-* *Transient hydrodynamics within intercratonic sedimentary basins during glacial cycles*, V. F. Bense  M. A. Person, DOI: [10.1029/2007JF000969](https://doi.org/10.1029/2007JF000969)
+* *Transient hydrodynamics within intercratonic sedimentary basins during glacial cycles*, V. F. Bense  M. A. Person, DOI: [10.1029/2007JF000969](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2007JF000969)

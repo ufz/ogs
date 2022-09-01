@@ -135,7 +135,7 @@ Example:
 
 ## Check project file syntax with `xmllint`
 
- You can check the formatting with the [`xmllint`-tool](http://xmlsoft.org/xmllint.html):
+ You can check the formatting with the [`xmllint`-tool](https://linux.die.net/man/1/xmllint):
 
 ```bash
 xmllint --noout myproj.prj
