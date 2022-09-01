@@ -357,6 +357,13 @@ CPMAddPackage(
     EXCLUDE_FROM_ALL YES
 )
 
+CPMFindPackage(
+    NAME boost_mp11
+    VERSION 1.79.0
+    GITHUB_REPOSITORY boostorg/mp11
+    GIT_TAG boost-1.79.0
+)
+
 if(OGS_BUILD_TESTING OR OGS_BUILD_UTILS)
     CPMAddPackage(
         NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff

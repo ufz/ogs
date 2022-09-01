@@ -26,6 +26,7 @@ mfront_behaviours_check_library(
 target_link_libraries(
     MaterialLib_SolidModels_MFront PUBLIC BaseLib NumLib MFrontGenericInterface
                                           OgsMFrontBehaviour
+                                          Boost::mp11
     PRIVATE MathLib MeshLib ParameterLib
 )
 
