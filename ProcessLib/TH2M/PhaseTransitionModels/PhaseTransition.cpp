@@ -54,28 +54,26 @@ PhaseTransition::PhaseTransition(
     std::array const required_vapour_component_properties = {
         MaterialPropertyLib::vapour_pressure, MaterialPropertyLib::molar_mass,
         MaterialPropertyLib::specific_heat_capacity,
-        MaterialPropertyLib::diffusion};
+        MaterialPropertyLib::diffusion,
+        MaterialPropertyLib::specific_latent_heat};
 
     std::array const required_dry_air_component_properties = {
         MaterialPropertyLib::molar_mass,
         MaterialPropertyLib::specific_heat_capacity};
 
     std::array const required_solute_component_properties = {
-        MaterialPropertyLib::molar_mass,
         MaterialPropertyLib::specific_heat_capacity,
-        MaterialPropertyLib::henry_coefficient};
+        MaterialPropertyLib::henry_coefficient, MaterialPropertyLib::diffusion,
+        MaterialPropertyLib::specific_latent_heat};
 
     std::array const required_solvent_component_properties = {
-        MaterialPropertyLib::molar_mass,
         MaterialPropertyLib::specific_heat_capacity};
 
-    std::array const required_gas_properties = {
-        MaterialPropertyLib::density, MaterialPropertyLib::thermal_conductivity,
-        MaterialPropertyLib::viscosity};
+    std::array const required_gas_properties = {MaterialPropertyLib::density,
+                                                MaterialPropertyLib::viscosity};
 
     std::array const required_liquid_properties = {
-        MaterialPropertyLib::density, MaterialPropertyLib::thermal_conductivity,
-        MaterialPropertyLib::viscosity};
+        MaterialPropertyLib::density, MaterialPropertyLib::viscosity};
 
     checkRequiredProperties(
         gas_phase.component(gas_phase_vapour_component_index_),
