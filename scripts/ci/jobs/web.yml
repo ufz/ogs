@@ -1,4 +1,4 @@
-web url checker:
+check web links:
   stage: check
   allow_failure: true
   tags: [docker]
