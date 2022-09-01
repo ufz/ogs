@@ -159,16 +159,16 @@ PhaseTransitionModelVariables PhaseTransition::updateConstitutiveVariables(
     // Concentration is initially zero to calculate the density of the pure
     // water phase, which is needed for the Kelvin-Laplace equation.
     variables.concentration = 0.;
-    auto rhoLR =
+    const auto rhoLR_0 =
         liquid_phase.property(MaterialPropertyLib::PropertyType::density)
             .template value<double>(variables, pos, t, dt);
 
     // Kelvin-Laplace correction for menisci
-    const double K = pCap > 0. ? std::exp(-pCap * M_W / rhoLR / R / T) : 1.;
-    const double dK_dT = pCap > 0. ? pCap * M_W / rhoLR / R / T / T * K : 0;
+    const double K = pCap > 0. ? std::exp(-pCap * M_W / rhoLR_0 / R / T) : 1.;
+    const double dK_dT = pCap > 0. ? pCap * M_W / rhoLR_0 / R / T / T * K : 0;
     const double dK_dpCap =
-        pCap > 0. ? -M_W / rhoLR / R / T * K
-                  : 0.;  // rhoLR is treated as a constant here. However, the
+        pCap > 0. ? -M_W / rhoLR_0 / R / T * K
+                  : 0.;  // rhoLR_0 is treated as a constant here. However, the
                          // resulting errors are very small and can be ignored.
 
     // vapour pressure inside porespace (== water partial pressure in gas
@@ -346,7 +346,7 @@ PhaseTransitionModelVariables PhaseTransition::updateConstitutiveVariables(
     auto const dcCL_dT = pGR * (dH_dT * xnCG + H * dxnCG_dT);
 
     // Density of pure liquid phase
-    cv.rhoWLR = rhoLR;
+    cv.rhoWLR = rhoLR_0;
 
     variables.concentration = cCL;
     // Liquid density including dissolved gas components. Attention! This
