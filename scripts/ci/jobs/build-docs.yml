@@ -94,10 +94,8 @@ check docs links:
   script:
     - cd build
     - >
-      urlchecker check --retry-count 5 --file-types .html
-      --exclude-patterns \&lt\;,\&quot,www.w3.org,www.doxygen.org,cdnjs.cloudflare.com,docs.opengeosys.org/docs/tools,sciencedirect.com
-      --exclude-urls http://www.opengeosys.org/project/license,http://www.opengeosys.org,http://www.opengeosys.org\&quot,http://www.trolltech.com/products/qt/licensing.html,http://www.trolltech.com/products/qt/opensource.html
-      --exclude-files project_file_doc_qa.html,ogs_file_
+      linkchecker --no-warnings --check-extern
+      --ignore-url='sciencedirect.com'
       docs
 
 spell check docs:

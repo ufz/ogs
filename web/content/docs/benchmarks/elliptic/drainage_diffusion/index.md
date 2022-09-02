@@ -10,7 +10,7 @@ image = "drainage_excavation.png"
 
 ## Problem description
 
-We present the drainage of an excavation benchmark in [this PDF](/docs/benchmarks/liquid-flow/drainage_Liquid_Flow/drainage_LiquidFlow.pdf).
+We present the drainage of an excavation benchmark in [this PDF](/docs/benchmarks/liquid-flow/drainage_liquid_flow/drainage_LiquidFlow.pdf).
 
 Here's an impression of the problem and its results:
 

@@ -19,7 +19,7 @@ MFront / TFEL support is enabled by the CMake-option `-DOGS_USE_MFRONT=ON` and c
 
 <!-- vale off -->
 
-If you install it system-wide it will get picked up by CMake (when the `mfront`-executable is in the `PATH`). Make sure to install a compatible version! Currently OGS requires the TFEL branch [rliv-{{< dataFile "versions.minimum_version.tfel-rliv" >}}](<https://github.com/thelfer/tfel/tree/rliv>-{{< dataFile "versions.minimum_version.tfel-rliv" >}}). Check the CMake output for version information of MFront / TFEL.
+If you install it system-wide it will get picked up by CMake (when the `mfront`-executable is in the `PATH`). Make sure to install a compatible version! Currently OGS requires the TFEL branch [rliv-{{< dataFile "versions.minimum_version.tfel-rliv" >}}](https://github.com/thelfer/tfel/tree/rliv-{{< dataFile "versions.minimum_version.tfel-rliv" >}}). Check the CMake output for version information of MFront / TFEL.
 
 <!-- vale on -->
 

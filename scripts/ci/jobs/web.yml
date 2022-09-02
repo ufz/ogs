@@ -1,19 +1,29 @@
-web url checker:
+check web links:
   stage: check
   allow_failure: true
   tags: [docker]
   extends:
-    - .rules-manual
-  needs: [ci_images]
+    - .rules-master-manual
+  needs: [ci_images, "build jupyter"]
   image: $WEB_IMAGE
   script:
     - cd web
+    - hugo server &
+    - sleep 20
     - >
-      urlchecker check --retry-count 5 --file-types .pandoc,.md
-      --exclude-files "content/releases/*"
-      --exclude-urls "http://yourproxy.example.com,https://apt.kitware.com/ubuntu/,https://github.com/YOUR-USERNAME/ogs,https://github.com/ufz/ogs/pull/\$1,http://www.opengeosys.org/images/xsd/OpenGeoSysXXX.xsd,https://\`-protocol,https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/new,https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/_out/images?job=container,https://jquery.org/license/,https://ogsstorage.blob.core.windows.net/binaries/ogs6,https://gitlab.opengeosys.org/ogs/ogs/-/tags/new,https://github.com/thelfer/tfel/tree/rliv-,https://doi.org/10.1029/2007JF000969,https://doi.org/10.1002/nag.2998"
-      --exclude-patterns "jenkins.opengeosys.org,overleaf.com,127.0.0.1,localhost,sciencedirect.com"
-      content
+      linkchecker --no-warnings
+      --check-extern
+      --ignore-url='sciencedirect.com'
+      --ignore-url='wiley.com'
+      --ignore-url='doi.org/10.1002'
+      --ignore-url='linkinghub.elsevier.com'
+      --ignore-url='overleaf.com'
+      --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/commit/'
+      --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/new'
+      --ignore-url='https://ogsstorage.blob.core.windows.net/binaries/ogs6'
+      --ignore-url='/css/all.css'
+      http://localhost:1313
+    - kill $!
 
 preview web site:
   stage: build

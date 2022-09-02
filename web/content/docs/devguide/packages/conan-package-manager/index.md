@@ -18,7 +18,7 @@ aliases = ["/docs/devguide/advanced/conan-package-manager"]
 A recent version ({{< dataFile "versions.minimum_version.conan" >}}) of Conan is required! Please update Conan by running `pip install --upgrade conan` or by downloading the Windows installer.
 </div>
 
-The [Conan package manager](https://www.conan.io) helps to install all required libraries in a convenient way on every platform. See [Setup pre-requisites](../../getting-started/prerequisites) for installation instructions. If the Conan executable is found Conan is used for third-party library handling. Set the CMake option `OGS_USE_CONAN=OFF` to disable Conan.
+The [Conan package manager](https://www.conan.io) helps to install all required libraries in a convenient way on every platform. See [Setup pre-requisites](../../getting-started/prerequisites/) for installation instructions. If the Conan executable is found Conan is used for third-party library handling. Set the CMake option `OGS_USE_CONAN=OFF` to disable Conan.
 
 ## Advanced usage
 
