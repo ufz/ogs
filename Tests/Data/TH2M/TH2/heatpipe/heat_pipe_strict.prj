@@ -152,11 +152,6 @@
                             <name>A</name>
                             <properties>
                                 <property>
-                                    <name>molar_mass</name>
-                                    <type>Constant</type>
-                                    <value>0.0</value>
-                                </property>
-                                <property>
                                     <name>specific_heat_capacity</name>
                                     <type>Constant</type>
                                     <value>0</value>
@@ -182,11 +177,6 @@
                             <name>W</name>
                             <properties>
                                 <property>
-                                    <name>molar_mass</name>
-                                    <type>Constant</type>
-                                    <value>0</value>
-                                </property>
-                                <property>
                                     <name>specific_heat_capacity</name>
                                     <type>Constant</type>
                                     <value>4187</value>
@@ -195,11 +185,6 @@
                         </component>
                     </components>
                     <properties>
-                        <property>
-                            <name>specific_heat_capacity</name>
-                            <type>Constant</type>
-                            <value>4187</value>
-                        </property>
                         <property>
                             <name>thermal_conductivity</name>
                             <type>Constant</type>
