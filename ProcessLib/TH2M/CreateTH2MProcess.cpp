@@ -65,10 +65,6 @@ std::unique_ptr<Process> createTH2MProcess(
     config.checkConfigParameter("type", "TH2M");
     DBUG("Create TH2M Process.");
     DBUG(" ");
-    WARN("Attention! TH2M process has not yet been fully tested!");
-    WARN("Check its results critically and report any bugs to");
-    WARN("  https://gitlab.opengeosys.org/ogs/ogs/-/issues ");
-    WARN(" ");
 
     auto const coupling_scheme =
         //! \ogs_file_param{prj__processes__process__TH2M__coupling_scheme}
