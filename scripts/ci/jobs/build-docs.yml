@@ -96,6 +96,7 @@ check docs links:
     - >
       linkchecker --no-warnings --check-extern
       --ignore-url='sciencedirect.com'
+      --ignore-url='search_opensearch.php'
       docs
 
 spell check docs:
