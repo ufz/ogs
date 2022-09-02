@@ -374,11 +374,11 @@ PhaseTransitionModelVariables PhaseTransition::updateConstitutiveVariables(
     // is determined via the equilibrium state. The exact derivation of the
     // density according to e.g. the pressure pLR is thus:
     //
-    //  drho_d_pLR = rho_ref * (beta_pLR + betaC * dC_dpLR)
+    //  drho_d_pGR = rho_ref * (beta_pLR + betaC * dC_dpLR)
     //
     // instead of
     //
-    //  d_rho_d_pLR =
+    //  d_rho_d_pGR =
     //     liquid_phase.property(MaterialPropertyLib::PropertyType::density)
     //         .template dValue<double>(
     //             variables,
@@ -405,24 +405,17 @@ PhaseTransitionModelVariables PhaseTransition::updateConstitutiveVariables(
 
     // liquid phase density derivatives
     auto const drhoLR_dpGR = rho_ref_betaP + rho_ref_betaC * dcCL_dpGR;
-    // auto const drhoLR_dpCap = -rho_ref_betaP; // kept for possible future
-    // use.
+    auto const drhoLR_dpCap = -rho_ref_betaP;
     auto const drhoLR_dT = rho_ref_betaT + rho_ref_betaC * dcCL_dT;
 
     // solvent partial density derivatives
     auto const drhoWLR_dpGR = rho_ref_betaP;
-    // auto const drhoWLR_dpCap = -rho_ref_betaP; // kept for possible future
-    // use.
+    auto const drhoWLR_dpCap = -rho_ref_betaP;
     auto const drhoWLR_dT = rho_ref_betaT;
 
     // liquid phase mass fraction derivatives
     cv.dxmWL_dpGR = 1. / cv.rhoLR * (drhoWLR_dpGR - cv.xmWL * drhoLR_dpGR);
-    cv.dxmWL_dpCap =
-        0.;  // The dependence of the water composition on the capillary
-             // pressure can be ignored with a clear conscience. Should this
-             // change in the future, the following line can be uncommented.
-    // cv.dxmWL_dpCap = 1. / cv.rhoLR * (drhoWLR_dpCap - cv.xmWL *
-    // drhoLR_dpCap);
+    cv.dxmWL_dpCap = 1. / cv.rhoLR * (drhoWLR_dpCap - cv.xmWL * drhoLR_dpCap);
     cv.dxmWL_dT = 1. / cv.rhoLR * (drhoWLR_dT - cv.xmWL * drhoLR_dT);
 
     // liquid phase molar fractions and derivatives
