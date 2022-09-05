@@ -15,7 +15,7 @@
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/PhysicalConstant.h"
-#include "ProcessLib/TH2M/PhaseTransitionModels/PhaseTransitionEvaporation.h"
+#include "ProcessLib/TH2M/PhaseTransitionModels/PhaseTransition.h"
 #include "Tests/MaterialLib/TestMPL.h"
 #include "Tests/TestTools.h"
 
@@ -115,6 +115,29 @@ std::string MediumDefinition(const bool density_is_constant)
     m << "<phase>\n";
     m << "<type>AqueousLiquid</type>\n";
 
+    // liquid phase components
+    m << "<components>\n";
+    m << "<component>\n";
+    m << "<name>A</name>\n";
+    m << "<properties>\n";
+    m << Tests::makeConstantPropertyElement("molar_mass", 0.);
+    m << Tests::makeConstantPropertyElement("specific_heat_capacity", 0.);
+    m << Tests::makeConstantPropertyElement("henry_coefficient", 0.);
+    m << Tests::makeConstantPropertyElement("diffusion", 0.);
+    m << Tests::makeConstantPropertyElement("specific_latent_heat", 0.);
+    m << "</properties>\n";
+    m << "</component>\n";
+
+    m << "<component>\n";
+    m << "<name>W</name>\n";
+    m << "<properties>\n";
+    m << Tests::makeConstantPropertyElement("molar_mass", 0.);
+    m << Tests::makeConstantPropertyElement("specific_heat_capacity",
+                                            specific_heat_capacity_water);
+    m << "</properties>\n";
+    m << "</component>\n";
+    m << "</components>\n";
+
     // liquid phase properties
     m << "<properties>\n";
     m << Tests::makeConstantPropertyElement("viscosity", viscosity_water);
@@ -150,7 +173,7 @@ std::string MediumDefinition(const bool density_is_constant)
     return m.str();
 }
 
-TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
+TEST(ProcessLib, TH2MPhaseTransition)
 {
     bool const density_is_constant = false;
     std::shared_ptr<MaterialPropertyLib::Medium> const& medium =
@@ -164,8 +187,7 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    auto ptm =
-        std::make_unique<ProcessLib::TH2M::PhaseTransitionEvaporation>(media);
+    auto ptm = std::make_unique<ProcessLib::TH2M::PhaseTransition>(media);
 
     auto const count = 200000;
     auto const pGR_min = 100000.;
@@ -388,7 +410,7 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
 }
 
 // Same test as above, but with constant gas density
-TEST(ProcessLib, TH2MPhaseTransitionEvaporationConstRho)
+TEST(ProcessLib, TH2MPhaseTransitionConstRho)
 {
     bool const density_is_constant = true;
     std::shared_ptr<MaterialPropertyLib::Medium> const& medium =
@@ -402,8 +424,7 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporationConstRho)
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    auto ptm =
-        std::make_unique<ProcessLib::TH2M::PhaseTransitionEvaporation>(media);
+    auto ptm = std::make_unique<ProcessLib::TH2M::PhaseTransition>(media);
 
     auto const count = 200000;
     auto const pGR_min = 100000.;

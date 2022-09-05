@@ -14,11 +14,11 @@
 #include <sstream>
 
 #include "MaterialLib/MPL/Medium.h"
-#include "ProcessLib/TH2M/PhaseTransitionModels/PhaseTransitionNone.h"
+#include "ProcessLib/TH2M/PhaseTransitionModels/NoPhaseTransition.h"
 #include "Tests/MaterialLib/TestMPL.h"
 #include "Tests/TestTools.h"
 
-TEST(ProcessLib, TH2MPhaseTransitionNone)
+TEST(ProcessLib, TH2MNoPhaseTransition)
 {
     std::stringstream m;
 
@@ -78,7 +78,7 @@ TEST(ProcessLib, TH2MPhaseTransitionNone)
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    auto ptm = std::make_unique<ProcessLib::TH2M::PhaseTransitionNone>(media);
+    auto ptm = std::make_unique<ProcessLib::TH2M::NoPhaseTransition>(media);
 
     double const pGR = 1000000.;
     double const pCap = 1000000.;

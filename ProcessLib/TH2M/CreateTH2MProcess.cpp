@@ -37,28 +37,17 @@ std::unique_ptr<PhaseTransitionModel> createPhaseTransitionModel(
 
     // Fluid phases are always defined in the first medium of the media vector,
     // thus media.begin() points to the right medium.
-    const bool evaporation =
-        media.begin()->second->phase("Gas").numberOfComponents() > 1;
-
-    const bool dissolution =
-        media.begin()->second->phase("AqueousLiquid").numberOfComponents() > 1;
-
-    if (evaporation && dissolution)
+    const bool phase_transition =
+        (media.begin()->second->phase("Gas").numberOfComponents() > 1) &&
+        (media.begin()->second->phase("AqueousLiquid").numberOfComponents() >
+         1);
+    // Only if both fluids consist of more than one component, the model
+    // phase_transition is returned.
+    if (phase_transition)
     {
-        return std::make_unique<PhaseTransitionFull>(media);
+        return std::make_unique<PhaseTransition>(media);
     }
-
-    if (evaporation && !dissolution)
-    {
-        return std::make_unique<PhaseTransitionEvaporation>(media);
-    }
-
-    if (!evaporation && dissolution)
-    {
-        return std::make_unique<PhaseTransitionDissolution>(media);
-    }
-
-    return std::make_unique<PhaseTransitionNone>(media);
+    return std::make_unique<NoPhaseTransition>(media);
 }
 
 template <int DisplacementDim>
@@ -76,10 +65,6 @@ std::unique_ptr<Process> createTH2MProcess(
     config.checkConfigParameter("type", "TH2M");
     DBUG("Create TH2M Process.");
     DBUG(" ");
-    WARN("Attention! TH2M process has not yet been fully tested!");
-    WARN("Check its results critically and report any bugs to");
-    WARN("  https://gitlab.opengeosys.org/ogs/ogs/-/issues ");
-    WARN(" ");
 
     auto const coupling_scheme =
         //! \ogs_file_param{prj__processes__process__TH2M__coupling_scheme}

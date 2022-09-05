@@ -16,6 +16,8 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE TH2M/TH2/unicube/unicube.prj RUNTIME 25)
     OgsTest(PROJECTFILE TH2M/TH2/heatpipe/heat_pipe_rough.prj RUNTIME 220)
     OgsTest(PROJECTFILE TH2M/TH2/heatpipe/heat_pipe_strict.prj RUNTIME 80)
+    OgsTest(PROJECTFILE TH2M/H2/dissolution_diffusion/continuous_injection.prj RUNTIME 60)
+    OgsTest(PROJECTFILE TH2M/H2/dissolution_diffusion/bourgeat.prj RUNTIME 60)
 endif()
 
 # TH2M 1d heat diffusion w/ Dirichlet-BC

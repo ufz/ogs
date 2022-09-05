@@ -147,12 +147,44 @@
                 </phase>
                 <phase>
                     <type>AqueousLiquid</type>
+                    <components>
+                        <component>
+                            <name>A</name>
+                            <properties>
+                                <property>
+                                    <name>specific_heat_capacity</name>
+                                    <type>Constant</type>
+                                    <value>0</value>
+                                </property>
+                                <property>
+                                    <name>henry_coefficient</name>
+                                    <type>Constant</type>
+                                    <value>0</value>
+                                </property>
+                                <property>
+                                    <name>diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0</value>
+                                </property>
+                                <property>
+                                    <name>specific_latent_heat</name>
+                                    <type>Constant</type>
+                                    <value>0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>W</name>
+                            <properties>
+                                <property>
+                                    <name>specific_heat_capacity</name>
+                                    <type>Constant</type>
+                                    <value>4187</value>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
                     <properties>
-                        <property>
-                            <name>specific_heat_capacity</name>
-                            <type>Constant</type>
-                            <value>4187</value>
-                        </property>
                         <property>
                             <name>thermal_conductivity</name>
                             <type>Constant</type>

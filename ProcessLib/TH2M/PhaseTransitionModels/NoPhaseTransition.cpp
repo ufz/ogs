@@ -7,7 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "PhaseTransitionNone.h"
+#include "NoPhaseTransition.h"
 
 #include "MaterialLib/PhysicalConstant.h"
 
@@ -15,11 +15,11 @@ namespace ProcessLib
 {
 namespace TH2M
 {
-PhaseTransitionNone::PhaseTransitionNone(
+NoPhaseTransition::NoPhaseTransition(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
     : PhaseTransitionModel(media)
 {
-    DBUG("Create PhaseTransitionNone constitutive model.");
+    DBUG("Create NoPhaseTransition constitutive model.");
 
     // check for minimum requirement definitions in media object
     std::array const required_gas_properties = {
@@ -37,7 +37,7 @@ PhaseTransitionNone::PhaseTransitionNone(
     }
 }
 
-PhaseTransitionModelVariables PhaseTransitionNone::updateConstitutiveVariables(
+PhaseTransitionModelVariables NoPhaseTransition::updateConstitutiveVariables(
     PhaseTransitionModelVariables const& phase_transition_model_variables,
     const MaterialPropertyLib::Medium* medium,
     MaterialPropertyLib::VariableArray variables,

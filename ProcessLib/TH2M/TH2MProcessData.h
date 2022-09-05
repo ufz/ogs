@@ -16,11 +16,9 @@
 
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "ParameterLib/Parameter.h"
-#include "PhaseTransitionModels/PhaseTransitionDissolution.h"
-#include "PhaseTransitionModels/PhaseTransitionEvaporation.h"
-#include "PhaseTransitionModels/PhaseTransitionFull.h"
+#include "PhaseTransitionModels/NoPhaseTransition.h"
+#include "PhaseTransitionModels/PhaseTransition.h"
 #include "PhaseTransitionModels/PhaseTransitionModel.h"
-#include "PhaseTransitionModels/PhaseTransitionNone.h"
 
 namespace MaterialLib
 {

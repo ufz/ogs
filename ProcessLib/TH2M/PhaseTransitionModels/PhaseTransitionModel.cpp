@@ -43,7 +43,7 @@ int findComponentIndex(
     // components with the right properties are used. For example, the names
     // of the components can be compared to check that the name of the
     // evaporable component does not also correspond to the name of the
-    // solvate.
+    // solute.
 
     OGS_FATAL(
         "PhaseTransitionModel: findComponentIndex() could not find the "
