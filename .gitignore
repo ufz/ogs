@@ -38,4 +38,8 @@ CMakeUserPresets.json
 nohup.out
 
 /Documentation/.vale
+
+# Python build
+/_skbuild
+*.egg-info/
 .ipynb_checkpoints
