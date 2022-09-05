@@ -17,12 +17,32 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshInformation.h"
 
-TEST(FileIO, TestGmsInterface)
+TEST(FileIO, TestGms2DInterface)
+{
+    std::string const file_name(TestInfoLib::TestInfo::data_path +
+                                "/FileIO/2DMeshData.2dm");
+    std::unique_ptr<MeshLib::Mesh> mesh(
+        FileIO::GMSInterface::readMesh(file_name));
+    ASSERT_TRUE(mesh != nullptr);
+    ASSERT_EQ(12363, mesh->getNumberOfNodes());
+    ASSERT_EQ(6025, mesh->getNumberOfElements());
+
+    auto const& types =
+        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
+    ASSERT_EQ(6025, types.at(MeshLib::MeshElemType::TRIANGLE));
+    auto const& bounds =
+        MeshLib::MeshInformation::getValueBounds(*materialIDs(*mesh));
+    ASSERT_TRUE(bounds.has_value());
+    ASSERT_EQ(1, bounds->first);
+    ASSERT_EQ(1, bounds->second);
+}
+
+TEST(FileIO, TestGms3DInterface)
 {
     std::string const file_name(TestInfoLib::TestInfo::data_path +
                                 "/FileIO/3DMeshData.3dm");
     std::unique_ptr<MeshLib::Mesh> mesh(
-        FileIO::GMSInterface::readGMS3DMMesh(file_name));
+        FileIO::GMSInterface::readMesh(file_name));
     ASSERT_TRUE(mesh != nullptr);
     ASSERT_EQ(11795, mesh->getNumberOfNodes());
     ASSERT_EQ(19885, mesh->getNumberOfElements());
