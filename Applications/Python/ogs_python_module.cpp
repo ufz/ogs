@@ -122,7 +122,7 @@ void finalize()
 }
 
 /// python module name is OpenGeoSys
-PYBIND11_MODULE(OpenGeoSys, m)
+PYBIND11_MODULE(_cli, m)
 {
     m.doc() = "pybind11 ogs example plugin";
     m.def("initialize", &initOGS, "init OGS");
