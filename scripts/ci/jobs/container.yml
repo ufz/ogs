@@ -92,6 +92,7 @@ advanced container:
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
       when: manual
+      allow_failure: true
   extends:
     - .container-maker-setup
   script:
