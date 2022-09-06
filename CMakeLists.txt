@@ -4,12 +4,9 @@ cmake_minimum_required(VERSION 3.22)
 project(OGS-6)
 
 option(OGS_USE_PYTHON "Interface with Python" ON)
-include(CMakeDependentOption)
-cmake_dependent_option(
-    OGS_BUILD_PYTHON_MODULE "Should the OGS Python module be built?" ON
-    "OGS_USE_PYTHON" OFF
-)
+option(OGS_BUILD_PYTHON_MODULE "Should the OGS Python module be built?" ON)
 
+include(CMakeDependentOption)
 include(scripts/cmake/DownloadCpmCache.cmake)
 include(scripts/cmake/CPM.cmake)
 include(scripts/cmake/CMakeSetup.cmake)
