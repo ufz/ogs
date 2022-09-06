@@ -17,12 +17,17 @@ namespace ProcessLib::ThermoRichardsMechanics
 template <int DisplacementDim>
 void PermeabilityModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, MediaData const& media_data,
-    SaturationData const& S_L_data,
+    SolidCompressibilityData const& solid_compressibility_data,
+    SaturationData const& S_L_data, BishopsData const& bishops_data,
+    BishopsData const& bishops_data_prev,
+    CapillaryPressureData<DisplacementDim> const& p_cap_data,
     TemperatureData<DisplacementDim> const& T_data,
     PorosityData const& poro_data, LiquidViscosityData const& mu_L_data,
     PorosityData& transport_poro_data,
     PorosityData const& transport_poro_data_prev,
     SolidMechanicsDataStateless<DisplacementDim> const& s_mech_data,
+    StrainData<DisplacementDim> const& eps_data,
+    StrainData<DisplacementDim> const& eps_prev_data,
     PermeabilityData<DisplacementDim>& out) const
 {
     namespace MPL = MaterialPropertyLib;
@@ -32,13 +37,34 @@ void PermeabilityModel<DisplacementDim>::eval(
     MPL::VariableArray variables;
     variables.liquid_saturation = S_L_data.S_L;
     variables.temperature = T_data.T;
+    variables.capillary_pressure = p_cap_data.p_cap;
     MPL::VariableArray variables_prev;
 
     if (medium.hasProperty(MPL::PropertyType::transport_porosity))
     {
+        static constexpr int kelvin_vector_size =
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+        using Invariants =
+            MathLib::KelvinVector::Invariants<kelvin_vector_size>;
         // Used in
         // MaterialLib/MPL/Properties/PermeabilityOrthotropicPowerLaw.cpp
         variables_prev.transport_porosity = transport_poro_data_prev.phi;
+
+        // Used in
+        // MaterialLib/MPL/Properties/TransportPorosityFromMassBalance.cpp
+        variables.grain_compressibility = solid_compressibility_data.beta_SR;
+        // Set volumetric strain rate for the general case without swelling.
+        variables.volumetric_strain = Invariants::trace(eps_data.eps);
+        variables_prev.volumetric_strain = Invariants::trace(eps_prev_data.eps);
+        variables.effective_pore_pressure =
+            -bishops_data.chi_S_L * p_cap_data.p_cap;
+        variables.porosity = poro_data.phi;
+
+        // Used in MaterialLib/MPL/Properties/PorosityFromMassBalance.cpp
+        // and MaterialLib/MPL/Properties/TransportPorosityFromMassBalance.cpp
+        variables_prev.effective_pore_pressure =
+            -bishops_data_prev.chi_S_L *
+            (p_cap_data.p_cap - p_cap_data.p_cap_dot * x_t.dt);
 
         transport_poro_data.phi =
             medium.property(MPL::PropertyType::transport_porosity)

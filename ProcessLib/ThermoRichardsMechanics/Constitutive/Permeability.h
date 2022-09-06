@@ -28,7 +28,10 @@ template <int DisplacementDim>
 struct PermeabilityModel
 {
     void eval(SpaceTimeData const& x_t, MediaData const& media_data,
-              SaturationData const& S_L_data,
+              SolidCompressibilityData const& solid_compressibility_data,
+              SaturationData const& S_L_data, BishopsData const& bishops_data,
+              BishopsData const& bishops_data_prev,
+              CapillaryPressureData<DisplacementDim> const& p_cap_data,
               TemperatureData<DisplacementDim> const& T_data,
               PorosityData const& poro_data,
               LiquidViscosityData const& mu_L_data,
@@ -36,6 +39,8 @@ struct PermeabilityModel
               PorosityData& transport_poro_data,
               PorosityData const& transport_poro_data_prev,
               SolidMechanicsDataStateless<DisplacementDim> const& s_mech_data,
+              StrainData<DisplacementDim> const& eps_data,
+              StrainData<DisplacementDim> const& eps_prev_data,
               PermeabilityData<DisplacementDim>& out) const;
 };
 
