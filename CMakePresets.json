@@ -187,6 +187,20 @@
         "OGS_USE_PYTHON": "OFF",
         "OGS_USE_UNITY_BUILDS": "OFF"
       }
+    },
+    {
+      "name": "wheel",
+      "inherits": "release",
+      "cacheVariables": {
+        "OGS_BUILD_PROCESSES": "LiquidFlow",
+        "OGS_BUILD_UTILS": "OFF",
+        "HDF5_USE_STATIC_LIBRARIES": "ON",
+        "OGS_BUILD_HDF5": "ON",
+        "OGS_USE_PYTHON": "OFF",
+        "OGS_BUILD_PYTHON_MODULE": "ON",
+        "OGS_BUILD_TESTING": "OFF",
+        "OGS_INSTALL_DEPENDENCIES": "OFF"
+      }
     }
   ],
   "buildPresets": [
