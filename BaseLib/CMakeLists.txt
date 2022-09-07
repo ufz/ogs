@@ -23,3 +23,5 @@ target_link_libraries(
 target_compile_definitions(
     BaseLib PUBLIC $<$<BOOL:${OGS_FATAL_ABORT}>:OGS_FATAL_ABORT>
 )
+
+target_precompile_headers(BaseLib PRIVATE Error.h ConfigTree.h Logging.h)

@@ -49,3 +49,7 @@ target_compile_definitions(
     PRIVATE $<$<BOOL:${OGS_USE_INSITU}>:OGS_USE_INSITU>
             $<$<BOOL:${OGS_USE_PYTHON}>:OGS_USE_PYTHON>
 )
+
+target_precompile_headers(ProcessLib PRIVATE [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]]
+    [["ParameterLib/Parameter.h"]] <Eigen/Core>)

@@ -22,3 +22,6 @@ target_link_libraries(
     NumLib PUBLIC BaseLib GeoLib MathLib MeshLib $<$<TARGET_EXISTS:petsc>:petsc>
     PRIVATE MeshGeoToolsLib
 )
+
+target_precompile_headers(NumLib PRIVATE [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] <Eigen/Core>)

@@ -54,3 +54,6 @@ target_compile_definitions(
     PUBLIC
         $<$<AND:$<BOOL:$ENV{VTK_USE_64BIT_IDS}>,$<NOT:$<BOOL:VTK_ADDED>>>:VTK_USE_64BIT_IDS>
 )
+
+target_precompile_headers(MeshLib PRIVATE [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] Elements/Element.h <Eigen/Core>)

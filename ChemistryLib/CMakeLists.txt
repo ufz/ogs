@@ -17,3 +17,6 @@ set_source_files_properties(
     PhreeqcIO.cpp CreateChemicalSolverInterface.cpp PhreeqcKernel.cpp
     PROPERTIES SKIP_UNITY_BUILD_INCLUSION TRUE
 )
+
+target_precompile_headers(ChemistryLib PRIVATE [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]])
