@@ -91,7 +91,7 @@ private:
         const int process_id, double const t,
         std::vector<GlobalVector*> const& xs) const;
 
-    std::unique_ptr<OutputFile> output_file;
+    std::unique_ptr<OutputFile> _output_file;
 
     bool const _output_nonlinear_iteration_results;
 
