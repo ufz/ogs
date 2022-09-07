@@ -351,6 +351,70 @@ AddTest(
                 basicQuadLine_partitioned_msh_ele_g2.bin
                 basicQuadLine_partitioned_msh_nod2.bin
 )
+
+# Mesh with integration point data
+AddTest(
+    NAME partmesh_mesh_with_sigm_ip_pointheatsource_quad_ogs2metis
+    PATH NodePartitionedMesh/WithIntegrationPointStress
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000.vtu --ogs2metis
+                    -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+)
+
+AddTest(
+    NAME partmesh_mesh_with_sigm_ip_pointheatsource_quad
+    PATH NodePartitionedMesh/WithIntegrationPointStress
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 4 -i expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+    REQUIREMENTS NOT APPLE
+    DEPENDS partmesh-partmesh_mesh_with_sigm_ip_pointheatsource_quad_ogs2metis
+    TESTER diff
+    DIFF_DATA
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_cell_properties_cfg4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_cell_properties_val4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_integration_point_properties_cfg4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_integration_point_properties_val4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_msh_cfg4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_msh_ele4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_msh_ele_g4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_msh_nod4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_node_properties_cfg4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_node_properties_val4.bin
+)
+
+AddTest(
+    NAME partmesh_mesh_withsigma_ip_for_m1_3Dload_hex_ogs2metis
+    PATH NodePartitionedMesh/WithIntegrationPointStress
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i m1_3Dload_ts_1_t_1_000000.vtu --ogs2metis
+                    -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+)
+
+AddTest(
+    NAME partmesh_mesh_withsigma_ip_for_m1_3Dload_hex
+    PATH NodePartitionedMesh/WithIntegrationPointStress
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 3 -i m1_3Dload_ts_1_t_1_000000.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+    REQUIREMENTS NOT APPLE
+    DEPENDS partmesh-partmesh_mesh_withsigma_ip_for_m1_3Dload_hex_ogs2metis
+    TESTER diff
+    DIFF_DATA
+        m1_3Dload_ts_1_t_1_000000_partitioned_cell_properties_cfg3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_cell_properties_val3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_integration_point_properties_cfg3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_integration_point_properties_val3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_msh_cfg3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_msh_ele3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_msh_ele_g3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_msh_nod3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_node_properties_cfg3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_node_properties_val3.bin
+)
+
 ################################################
 
 if(SNAKEMAKE AND TEE_TOOL_PATH AND BASH_TOOL_PATH)
