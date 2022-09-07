@@ -10,10 +10,13 @@
 
 #pragma once
 
-#include "BaseLib/ConfigTree.h"
-#include "MathLib/LinAlg/LinearSolverOptions.h"
 #include "MathLib/LinAlg/LinearSolverOptionsParser.h"
 #include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
+
+namespace BaseLib
+{
+class ConfigTree;
+}
 
 namespace MathLib
 {
@@ -30,39 +33,7 @@ struct LinearSolverOptionsParser<PETScLinearSolver> final
     /// options database
     std::tuple<std::string, std::string> parseNameAndOptions(
         std::string solver_prefix,
-        BaseLib::ConfigTree const* const config) const
-    {
-        // Insert options into petsc database. Default options are given in the
-        // string below.
-        std::string petsc_options =
-            "-ksp_type cg -pc_type bjacobi -ksp_rtol 1e-16 -ksp_max_it 10000";
-
-        if (config)
-        {
-            ignoreOtherLinearSolvers(*config, "petsc");
-
-            //! \ogs_file_param{prj__linear_solvers__linear_solver__petsc}
-            if (auto const subtree = config->getConfigSubtreeOptional("petsc"))
-            {
-                if (auto const parameters =
-                        //! \ogs_file_param{prj__linear_solvers__linear_solver__petsc__parameters}
-                    subtree->getConfigParameterOptional<std::string>(
-                        "parameters"))
-                {
-                    petsc_options = *parameters;
-                }
-
-                if (auto const pre =
-                        //! \ogs_file_param{prj__linear_solvers__linear_solver__petsc__prefix}
-                    subtree->getConfigParameterOptional<std::string>("prefix"))
-                {
-                    if (!pre->empty())
-                        solver_prefix = *pre + "_";
-                }
-            }
-        }
-        return {solver_prefix, petsc_options};
-    }
+        BaseLib::ConfigTree const* const config) const;
 };
 
 }  // namespace MathLib

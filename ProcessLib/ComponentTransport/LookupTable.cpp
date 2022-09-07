@@ -18,20 +18,19 @@ namespace ProcessLib
 {
 namespace ComponentTransport
 {
-static std::vector<std::size_t> intersection(
-    std::vector<std::size_t> const& vec1, std::vector<std::size_t> const& vec2)
+static void intersection(std::vector<std::size_t>& vec1,
+                         std::vector<std::size_t> const& vec2)
 {
     std::unordered_set<std::size_t> set(vec1.begin(), vec1.end());
-    std::vector<std::size_t> vec;
+    vec1.clear();
     for (auto const a : vec2)
     {
         if (set.contains(a))
         {
-            vec.push_back(a);
+            vec1.push_back(a);
             set.erase(a);
         }
     }
-    return vec;
 }
 
 std::pair<double, double> Field::getBoundingSeedPoints(double const value) const
@@ -149,9 +148,7 @@ std::size_t LookupTable::getTableEntryID(
             input_fields[i].point_id_groups[BaseLib::findIndex(
                 input_fields[i].seed_points, entry_input[i])];
 
-        auto temp_vec = intersection(intersected_vec, vec);
-
-        std::swap(intersected_vec, temp_vec);
+        intersection(intersected_vec, vec);
     }
 
     return intersected_vec[0];

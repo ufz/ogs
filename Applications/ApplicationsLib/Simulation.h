@@ -10,6 +10,7 @@
  *
  */
 
+#include <optional>
 #ifdef USE_PETSC
 #include <vtkMPIController.h>
 #include <vtkSmartPointer.h>

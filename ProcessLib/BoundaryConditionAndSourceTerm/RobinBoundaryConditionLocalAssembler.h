@@ -11,6 +11,7 @@
 #pragma once
 
 #include "GenericNaturalBoundaryConditionLocalAssembler.h"
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ParameterLib/Parameter.h"
 

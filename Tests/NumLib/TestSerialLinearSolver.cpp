@@ -23,6 +23,13 @@
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MathLib/LinAlg/MatrixSpecifications.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
+#if defined(USE_LIS)
+#include "MathLib/LinAlg/EigenLis/LinearSolverOptionsParser.h"
+#elif defined(USE_PETSC)
+#include "MathLib/LinAlg/PETSc/LinearSolverOptionsParser.h"
+#else
+#include "MathLib/LinAlg/Eigen/LinearSolverOptionsParser.h"
+#endif
 #include "MathLib/MathTools.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Quad.h"

@@ -17,6 +17,13 @@
 #include "BaseLib/Logging.h"
 #include "InfoLib/TestInfo.h"
 #include "MathLib/LinAlg/LinAlg.h"
+#if defined(USE_LIS)
+#include "MathLib/LinAlg/EigenLis/LinearSolverOptionsParser.h"
+#elif defined(USE_PETSC)
+#include "MathLib/LinAlg/PETSc/LinearSolverOptionsParser.h"
+#else
+#include "MathLib/LinAlg/Eigen/LinearSolverOptionsParser.h"
+#endif
 #include "NumLib/NumericsConfig.h"
 #include "NumLib/ODESolver/ConvergenceCriterionDeltaX.h"
 #include "ODEs.h"

@@ -15,14 +15,16 @@ We start with simple linear homogeneous elliptic problem:
 $$
 \begin{equation*}
 k\\;\Delta h = 0 \quad \text{in }\Omega
-\end{equation*}$$
+\end{equation*}
+$$
 w.r.t boundary conditions
 $$
 \eqalign{
 h = g_D &\quad \text{on }\Gamma_D,\cr
 k{\partial h \over \partial n} = g_N &\quad \text{on }\Gamma_N,\cr
 {\partial h \over \partial n} = \alpha (h_0 - h(x))  &\quad \text{on }\Gamma_R,
-}$$
+}
+$$
 where $h$ could be hydraulic head, pressure, or temperature and $k$ is
 the diffusion tensor (hydraulic conductivity, permeability divided by dynamic
 viscosity, or heat conductivity). The subscripts $D,$ $N,$ and $R$ denote the
@@ -38,7 +40,8 @@ $$
 \eqalign{
 {\partial h \over \partial n} = \alpha (h_0 - h(x)) &\quad \text{for } x=0,\cr
 h(x) = g_D &\quad \text{for } x=1,
-}$$
+}
+$$
 see
 [`line_1e1_robin_left_picard.prj`](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data/Elliptic/line_1_SteadyStateDiffusion/line_1e1_robin_left_picard.prj).
 
@@ -56,7 +59,7 @@ condition in this example is set on the left side of the line domain.
 Consequently, in this case the directional derivative is the negative derivative
 $$
 \begin{equation*}
-\left.\frac{\partial h}{\partial n}\right\rvert_{x=0} = -h'(x)|_{x=0}.
+\left.\frac{\partial h}{\partial n}\right\rvert_{x=0} = -h'(x)\rvert_{x=0}.
 \end{equation*}
 $$
 From the evaluation of the Robin-type boundary condition it follows
@@ -68,7 +71,7 @@ $$
 Using the expression for $A$ in the Dirichlet-type boundary condition
 $$
 \begin{equation*}
-h(x)|_{x=1} = A + B = -\alpha (h_0 - B) + B = -\alpha h_0 + (1+\alpha) B = g_D
+h(x)\rvert_{x=1} = A + B = -\alpha (h_0 - B) + B = -\alpha h_0 + (1+\alpha) B = g_D
 \end{equation*}
 $$
 yields for $\alpha \not= -1$:
@@ -130,7 +133,7 @@ $$
 From the Robin-type boundary condition we get
 $$
 \begin{equation*}
-h'(x)|_{x=1} = A = \alpha \left(h_0 - h(x)|_{x=1} \right)
+h'(x)\rvert_{x=1} = A = \alpha \left(h_0 - h(x)\rvert_{x=1} \right)
     = \alpha \left.\left(h_0 - (Ax+g_D)\right)\right\rvert_{x=1}
     = \alpha (h_0 - g_D) - \alpha A.
 \end{equation*}
