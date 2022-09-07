@@ -11,5 +11,6 @@ def _program(name, args):
     return subprocess.call([os.path.join(OGS_BIN_DIR, name)] + args)
 
 
+# Binary entrypoints
 def ogs():
     raise SystemExit(_program("ogs", sys.argv[1:]))
