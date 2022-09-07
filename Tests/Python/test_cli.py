@@ -1,9 +1,12 @@
-import OpenGeoSys
 import tempfile
 import os
 
+import pytest
 
-def test_init():
+import OpenGeoSys
+
+
+def test_module():
     arguments = [
         "",
         f"{os.path.abspath(os.path.dirname(__file__))}/../Data/Parabolic/LiquidFlow/Flux/cube_1e3_calculatesurfaceflux.prj",
@@ -16,3 +19,18 @@ def test_init():
     OpenGeoSys.executeSimulation()
     print("Python OpenGeoSys.finalize() ...")
     OpenGeoSys.finalize()
+
+
+from . import push_argv
+
+
+def _run(program, args):
+    func = getattr(OpenGeoSys, program)
+    args = ["%s.py" % program] + args
+    with push_argv(args), pytest.raises(SystemExit) as excinfo:
+        func()
+    assert 0 == excinfo.value.code
+
+
+def test_binaries():
+    _run("ogs", ["--version"])

@@ -11,6 +11,11 @@ setup(
     package_dir={"": "Applications/Python"},
     cmake_install_dir="Applications/Python/OpenGeoSys",
     extras_require={"test": ["pytest"]},
-    cmake_args=["--preset wheel"],
+    cmake_args=["--preset wheel", "-B ."],
     python_requires=">=3.6",
+    entry_points={
+        "console_scripts": [
+            "ogs=OpenGeoSys:ogs",
+        ]
+    },
 )

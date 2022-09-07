@@ -284,6 +284,10 @@
     {
       "name": "ci-no-unity",
       "configurePreset": "ci-no-unity"
+    },
+    {
+      "name": "wheel",
+      "configurePreset": "wheel"
     }
   ],
   "testPresets": [
