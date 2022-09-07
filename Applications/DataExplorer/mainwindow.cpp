@@ -720,11 +720,11 @@ void MainWindow::loadFile(ImportFileType::type t, const QString& fileName)
                 OGSError::box("Error reading GMS file.");
             }
         }
-        else if (fi.suffix().toLower() == "3dm")  // GMS mesh files
+        else if (fi.suffix().toLower() == "2dm" ||
+                 fi.suffix().toLower() == "3dm")  // GMS mesh files
         {
             std::string name = fileName.toStdString();
-            std::unique_ptr<MeshLib::Mesh> mesh(
-                GMSInterface::readGMS3DMMesh(name));
+            std::unique_ptr<MeshLib::Mesh> mesh(GMSInterface::readMesh(name));
             if (mesh)
             {
                 _meshModel->addMesh(std::move(mesh));
@@ -923,7 +923,7 @@ QMenu* MainWindow::createImportFilesMenu()
     QMenu* importFiles = new QMenu("&Import Files", this);
     importFiles->addAction("&FEFLOW Files...",
                            [this] { open(ImportFileType::FEFLOW); });
-    importFiles->addAction("G&MS Files...",
+    importFiles->addAction("SMS/G&MS Files...",
                            [this] { open(ImportFileType::GMS); });
     importFiles->addAction("&GMSH Files...",
                            [this] { open(ImportFileType::GMSH); });

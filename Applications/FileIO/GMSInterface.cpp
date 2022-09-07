@@ -27,6 +27,7 @@
 #include "MeshLib/Elements/Prism.h"
 #include "MeshLib/Elements/Pyramid.h"
 #include "MeshLib/Elements/Tet.h"
+#include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Node.h"
@@ -180,28 +181,29 @@ void GMSInterface::writeBoreholesToGMS(
     out.close();
 }
 
-MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
+MeshLib::Mesh* GMSInterface::readMesh(const std::string& filename)
 {
     std::string line;
 
     std::ifstream in(filename.c_str());
     if (!in.is_open())
     {
-        ERR("GMSInterface::readGMS3DMMesh(): Could not open file {:s}.",
-            filename);
+        ERR("GMSInterface::readMesh(): Could not open file {:s}.", filename);
         return nullptr;
     }
 
     // Read data from file
     std::getline(in, line);  // "MESH3D"
-    if (line != "MESH3D")
+    if (line != "MESH3D" && line != "MESH2D")
     {
-        ERR("GMSInterface::readGMS3DMMesh(): Could not read expected file "
+        ERR("GMSInterface::readMesh(): Could not read expected file "
             "header.");
         return nullptr;
     }
+    bool const is_3d = (line == "MESH3D");
 
-    INFO("GMSInterface::readGMS3DMMesh(): Read GMS-3DM mesh.");
+    std::string mesh_name = BaseLib::extractBaseNameWithoutExtension(filename);
+    INFO("Reading SMS/GMS mesh...");
     std::vector<MeshLib::Node*> nodes;
     std::vector<MeshLib::Element*> elements;
     std::vector<int> mat_ids;
@@ -227,10 +229,10 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
     }
     in.close();
 
-    // NOTE: Element types E8H (Hex), E4Q (Quad), E3T (Tri) are not implemented
-    // yet read elements
+    // NOTE: Element types E8H (Hex), E4Q (Quad) are not implemented yet
+    // read elements
     in.open(filename.c_str());
-    std::getline(in, line);  // "MESH3D"
+    std::getline(in, line);  // "MESH2D" / "MESH3D"
     unsigned node_idx[6];
     int mat_id(0);
     while (std::getline(in, line))
@@ -238,11 +240,40 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
         std::string element_id(line.substr(0, 3));
         std::stringstream str(line);
 
-        if (element_id == "E6W")  // Prism
+        if (element_id == "MES")  // "MESHNAME"
+        {
+            str >> dummy >> mesh_name;
+            mesh_name = mesh_name.substr(1, mesh_name.length() - 2);
+        }
+        else if (!is_3d && element_id == "E3T")  // Triangle
+        {
+            str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
+                mat_id;
+            std::array<MeshLib::Node*, 3> tri_nodes;
+            for (unsigned k(0); k < 3; k++)
+            {
+                tri_nodes[k] = nodes[id_map.find(node_idx[k])->second];
+            }
+            elements.push_back(new MeshLib::Tri(tri_nodes));
+            mat_ids.push_back(mat_id);
+        }
+        else if (!is_3d && element_id == "E6T")  // Triangle
+        {
+            str >> dummy >> id >> node_idx[0] >> node_idx[3] >> node_idx[1] >>
+                node_idx[4] >> node_idx[2] >> node_idx[5] >> mat_id;
+            std::array<MeshLib::Node*, 3> tri_nodes;
+            for (unsigned k(0); k < 3; k++)
+            {
+                tri_nodes[k] = nodes[id_map.find(node_idx[k])->second];
+            }
+            elements.push_back(new MeshLib::Tri(tri_nodes));
+            mat_ids.push_back(mat_id);
+        }
+        else if (is_3d && element_id == "E6W")  // Prism
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
                 node_idx[3] >> node_idx[4] >> node_idx[5] >> mat_id;
-            auto** prism_nodes = new MeshLib::Node*[6];
+            std::array<MeshLib::Node*, 6> prism_nodes;
             for (unsigned k(0); k < 6; k++)
             {
                 prism_nodes[k] = nodes[id_map.find(node_idx[k])->second];
@@ -250,11 +281,11 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
             elements.push_back(new MeshLib::Prism(prism_nodes));
             mat_ids.push_back(mat_id);
         }
-        else if (element_id == "E4T")  // Tet
+        else if (is_3d && element_id == "E4T")  // Tet
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
                 node_idx[3] >> mat_id;
-            auto** tet_nodes = new MeshLib::Node*[4];
+            std::array<MeshLib::Node*, 4> tet_nodes;
             for (unsigned k(0); k < 4; k++)
             {
                 tet_nodes[k] = nodes[id_map.find(node_idx[k])->second];
@@ -262,13 +293,12 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
             elements.push_back(new MeshLib::Tet(tet_nodes));
             mat_ids.push_back(mat_id);
         }
-        else if ((element_id == "E4P") ||
-                 (element_id ==
-                  "E5P"))  // Pyramid (both do exist for some reason)
+        // Pyramid (two versions exist for some reason)
+        else if (is_3d && (element_id == "E4P" || element_id == "E5P"))
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
                 node_idx[3] >> node_idx[4] >> mat_id;
-            auto** pyramid_nodes = new MeshLib::Node*[5];
+            std::array<MeshLib::Node*, 5> pyramid_nodes;
             for (unsigned k(0); k < 5; k++)
             {
                 pyramid_nodes[k] = nodes[id_map.find(node_idx[k])->second];
@@ -283,7 +313,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
         else  // default
         {
             WARN(
-                "GMSInterface::readGMS3DMMesh() - Element type '{:s}' not "
+                "GMSInterface::readMesh() - Element type '{:s}' not "
                 "recognised.",
                 element_id);
             return nullptr;
@@ -291,10 +321,8 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
     }
 
     in.close();
-    INFO("GMSInterface::readGMS3DMMesh(): finished.");
+    INFO("finished.");
 
-    const std::string mesh_name =
-        BaseLib::extractBaseNameWithoutExtension(filename);
     MeshLib::Properties properties;
     if (mat_ids.size() == elements.size())
     {
