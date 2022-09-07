@@ -1,0 +1,9 @@
+build wheels linux:
+  stage: build
+  needs: [meta]
+  tags: [envinf3-shell]
+  script:
+    - pipx run cibuildwheel
+  artifacts:
+    paths:
+      - wheelhouse/
