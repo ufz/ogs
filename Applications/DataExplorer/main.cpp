@@ -26,6 +26,7 @@ int main(int argc, char* argv[])
     auto myOutputWindow = vtkSmartPointer<VtkConsoleOutputWindow>::New();
     vtkOutputWindow::SetInstance(myOutputWindow);
 
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication a(argc, argv);
     QApplication::setApplicationName("OpenGeoSys - Data Explorer");
     QApplication::setApplicationVersion(
