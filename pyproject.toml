@@ -23,3 +23,6 @@ build-verbosity = "1"
 manylinux-x86_64-image = "manylinux2014"
 manylinux-aarch64-image = "manylinux2014"
 environment-pass = ["OGS_VERSION"]
+
+[tool.cibuildwheel.macos]
+skip = ["cp36-*", "cp37-*", "cp38-*x86_64"]
