@@ -13,7 +13,7 @@ norecursedirs = ["Tests/Data"]
 
 [tool.cibuildwheel]
 archs = "auto64"
-build = "cp310-*"
+build = "cp3*"
 skip = "*musllinux*"
 test-extras = "test"
 test-command = "pytest {project}/Tests/Python"
