@@ -4,6 +4,7 @@ from setuptools import find_packages
 import os
 import re
 import subprocess
+import sys
 
 
 def get_version():
@@ -31,6 +32,13 @@ def get_version():
         return git_version
 
 
+sys.path.append("Applications/Python")
+from OpenGeoSys import binaries_list
+
+console_scripts = []
+for b in binaries_list:
+    console_scripts.append(f"{b}=OpenGeoSys:{b}")
+
 setup(
     name="OpenGeoSys",
     version=get_version(),
@@ -43,9 +51,5 @@ setup(
     extras_require={"test": ["pytest"]},
     cmake_args=["--preset wheel", "-B ."],
     python_requires=">=3.6",
-    entry_points={
-        "console_scripts": [
-            "ogs=OpenGeoSys:ogs",
-        ]
-    },
+    entry_points={"console_scripts": console_scripts},
 )

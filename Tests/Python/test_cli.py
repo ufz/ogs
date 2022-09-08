@@ -33,4 +33,7 @@ def _run(program, args):
 
 
 def test_binaries():
-    _run("ogs", ["--version"])
+    ignore_list = ["moveMeshNodes", "mpmetis", "tetgen"]  # have no --version cli flag
+    for f in OpenGeoSys.binaries_list:
+        if f not in ignore_list:
+            _run(f, ["--version"])

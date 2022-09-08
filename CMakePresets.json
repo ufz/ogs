@@ -193,7 +193,6 @@
       "inherits": "release",
       "cacheVariables": {
         "OGS_BUILD_PROCESSES": "LiquidFlow",
-        "OGS_BUILD_UTILS": "OFF",
         "HDF5_USE_STATIC_LIBRARIES": "ON",
         "OGS_BUILD_HDF5": "ON",
         "OGS_USE_PYTHON": "OFF",
