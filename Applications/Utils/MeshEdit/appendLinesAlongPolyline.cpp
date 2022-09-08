@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
         "the name of the geometry file");
     cmd.add(geoFileArg);
 
-    TCLAP::ValueArg<std::string> gmsh_path_arg("g", "gmsh-path",
+    TCLAP::ValueArg<std::string> gmsh_path_arg("", "gmsh-path",
                                                "the path to the gmsh binary",
                                                false, "", "path as string");
     cmd.add(gmsh_path_arg);
