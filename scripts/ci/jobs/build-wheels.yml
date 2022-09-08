@@ -13,3 +13,24 @@ build wheels linux:
   artifacts:
     paths:
       - wheelhouse/
+
+build wheels mac:
+  stage: build
+  needs: [meta]
+  tags:
+    - mac
+    - ${ARCHITECTURE}
+  script:
+    - CMAKE_OSX_DEPLOYMENT_TARGET=10.15 pipx run cibuildwheel
+    - >
+      pipx run twine upload
+      --repository-url https://gitlab.opengeosys.org/api/v4/projects/${CI_PROJECT_ID}/packages/pypi
+      --username gitlab-ci-token
+      --password ${CI_JOB_TOKEN}
+      wheelhouse/*
+  artifacts:
+    paths:
+      - wheelhouse/
+  parallel:
+    matrix:
+      - ARCHITECTURE: ["amd64", "arm64"]
