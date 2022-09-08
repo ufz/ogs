@@ -832,6 +832,37 @@ AddTest(
 )
 
 AddTest(
+    NAME BinaryToPVTU_m1_load
+    PATH NodePartitionedMesh/WithIntegrationPointStress
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+    EXECUTABLE binaryToPVTU
+    EXECUTABLE_ARGS -i m1_3Dload_ts_1_t_1_000000 -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress/mi_load_binary_to_pvtu
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 3
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    mi_load_binary_to_pvtu_0.vtu mi_load_binary_to_pvtu_0.vtu 1e-16
+    mi_load_binary_to_pvtu_1.vtu mi_load_binary_to_pvtu_1.vtu 1e-16
+    mi_load_binary_to_pvtu_2.vtu mi_load_binary_to_pvtu_2.vtu 1e-16
+)
+
+AddTest(
+    NAME BinaryToPVTU_pointheatsource
+    PATH NodePartitionedMesh/WithIntegrationPointStress
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+    EXECUTABLE binaryToPVTU
+    EXECUTABLE_ARGS -i expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000 -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress/pointheatsource_to_pvtu
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 4
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    pointheatsource_to_pvtu_0.vtu pointheatsource_to_pvtu_0.vtu 1e-16
+    pointheatsource_to_pvtu_1.vtu pointheatsource_to_pvtu_1.vtu 1e-16
+    pointheatsource_to_pvtu_2.vtu pointheatsource_to_pvtu_2.vtu 1e-16
+    pointheatsource_to_pvtu_3.vtu pointheatsource_to_pvtu_3.vtu 1e-16
+)
+
+AddTest(
     NAME geometryToGmshAdaptiveGeo
     PATH MeshGeoToolsLib/geometryToGmshGeo/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/geometryToGmshGeo
