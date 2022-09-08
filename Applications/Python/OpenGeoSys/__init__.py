@@ -2,7 +2,13 @@ import os
 import subprocess
 import sys
 
-from ._cli import *
+try:
+    from .lib64._cli import *
+except ImportError:
+    try:
+        from .lib._cli import *
+    except ImportError:
+        print("ERROR: could not import OpenGeoSys Python module!")
 
 OGS_BIN_DIR = os.path.join(os.path.join(os.path.dirname(__file__), "bin"))
 

@@ -199,7 +199,10 @@
         "OGS_USE_PYTHON": "OFF",
         "OGS_BUILD_PYTHON_MODULE": "ON",
         "OGS_BUILD_TESTING": "OFF",
-        "OGS_INSTALL_DEPENDENCIES": "OFF"
+        "OGS_INSTALL_DEPENDENCIES": "OFF",
+        "OGS_USE_PIP": "OFF",
+        "OGS_USE_MFRONT": "ON",
+        "BUILD_SHARED_LIBS": "ON"
       }
     }
   ],
