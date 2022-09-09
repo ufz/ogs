@@ -181,6 +181,7 @@ if(OGS_BUILD_SWMM)
     CPMAddPackage(
         NAME SWMMInterface GITHUB_REPOSITORY ufz/SwmmInterface
         GIT_TAG 141e05ae1f419918799d7bf9178ebcd97feb1ed3
+        OPTIONS "BUILD_SHARED_LIBS OFF"
     )
     if(SWMMInterface_ADDED)
         target_include_directories(
