@@ -783,6 +783,48 @@ void markDuplicateGhostCells(MeshLib::Mesh const& mesh,
     }
 }
 
+void checkFieldPropertyVectorSize(
+    std::vector<MeshLib::Element*> const& global_mesh_elements,
+    MeshLib::Properties const& properties)
+{
+    for (auto const& [name, property] : properties)
+    {
+        auto const item_type = property->getMeshItemType();
+
+        if (item_type != MeshLib::MeshItemType::IntegrationPoint)
+        {
+            continue;
+        }
+
+        if (property->getPropertyName() == "OGS_VERSION" ||
+            property->getPropertyName() == "IntegrationPointMetaData")
+        {
+            continue;
+        }
+
+        std::size_t number_of_total_integration_points = 0;
+        for (auto const element : global_mesh_elements)
+        {
+            int const number_of_integration_points =
+                getNumberOfElementIntegrationPoints(property->getPropertyName(),
+                                                    properties, *element);
+            number_of_total_integration_points += number_of_integration_points;
+        }
+
+        const auto pv =
+            dynamic_cast<MeshLib::PropertyVector<double> const*>(property);
+        std::size_t const component_number = pv->getNumberOfGlobalComponents();
+        if (pv->size() != number_of_total_integration_points * component_number)
+        {
+            OGS_FATAL(
+                "The property vector's size {:d} for integration point data "
+                "{:s} does not match its actual size {:d}. The field data in "
+                "the vtu file are wrong.",
+                pv->size(), name,
+                number_of_total_integration_points * component_number);
+        }
+    }
+}
 void NodeWiseMeshPartitioner::partitionByMETIS()
 {
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
@@ -794,6 +836,10 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
     markDuplicateGhostCells(*_mesh, _partitions);
 
     renumberNodeIndices();
+
+    // In case the field data in the vtu file are manually added, e.g. by using
+    // some tools, the size of the field property vector has to be checked.
+    checkFieldPropertyVectorSize(_mesh->getElements(), _mesh->getProperties());
 
     _partitioned_properties = partitionProperties(_mesh, _partitions);
 }
