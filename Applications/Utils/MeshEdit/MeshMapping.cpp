@@ -65,9 +65,6 @@ int main(int argc, char* argv[])
              argv[0]);
         INFO("Available keywords:");
         INFO(
-            "\t-ALL <value1> <value2> : changes the elevation of all mesh "
-            "nodes by <value2> in direction <value1> [x,y,z].");
-        INFO(
             "\t-MESH <value1> <value2> : changes the elevation of mesh nodes "
             "based on a second mesh <value1> with a search range of <value2>.");
         INFO(
@@ -119,32 +116,6 @@ int main(int argc, char* argv[])
     }
 
     // Start keyword-specific selection of nodes
-
-    // moves the elevation of all nodes by value
-    if (current_key == "-ALL")
-    {
-        if (argc < 5)
-        {
-            ERR("Missing parameter...");
-#ifdef USE_PETSC
-            MPI_Finalize();
-#endif
-            return EXIT_FAILURE;
-        }
-        const std::string dir(argv[3]);
-        unsigned idx = (dir == "x") ? 0 : (dir == "y") ? 1 : 2;
-        const double value(strtod(argv[4], 0));
-        INFO("Moving all mesh nodes by {:g} in direction {:d} ({:s})...", value,
-             idx, dir);
-        // double value(-10);
-        const std::size_t nNodes(mesh->getNumberOfNodes());
-        std::vector<MeshLib::Node*> nodes(mesh->getNodes());
-        for (std::size_t i = 0; i < nNodes; i++)
-        {
-            (*nodes[i])[idx] += value;
-        }
-    }
-
     // maps the elevation of mesh nodes according to a ground truth mesh
     // whenever nodes exist within max_dist
     if (current_key == "-MESH")
