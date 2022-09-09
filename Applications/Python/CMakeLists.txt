@@ -11,7 +11,7 @@ if(_link_options)
     set_target_properties(_cli PROPERTIES LINK_OPTIONS "${_link_options}")
 endif()
 
-target_link_libraries(_cli PRIVATE ApplicationsLib BaseLib GitInfoLib tclap)
+target_link_libraries(_cli PRIVATE ApplicationsLib BaseLib CMakeInfoLib GitInfoLib tclap)
 target_include_directories(_cli PRIVATE ../CLI)
 
 install(TARGETS _cli LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
