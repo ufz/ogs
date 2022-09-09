@@ -144,8 +144,9 @@ public:
                 return volumetric_strain;
             default:
                 OGS_FATAL(
-                    "No conversion to VariableType is provided for variable {}",
-                    variable_enum_to_string[static_cast<int>(variable)]);
+                    "No conversion to VariableType is provided for variable "
+                    "{:d}",
+                    static_cast<int>(variable));
         };
     }
 
