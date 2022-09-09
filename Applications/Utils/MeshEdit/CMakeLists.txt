@@ -15,7 +15,7 @@ set(TOOLS
     Layers2Grid
     MapGeometryToMeshSurface
     MoveMesh
-    moveMeshNodes
+    MeshMapping
     NodeReordering
     queryMesh
     removeMeshElements
