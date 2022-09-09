@@ -21,7 +21,7 @@ CPMAddPackage(
 CPMAddPackage(
     NAME findmkl_cmake
     GITHUB_REPOSITORY bilke/findmkl_cmake
-    GIT_TAG 7702795e84190a2a63adaa07520292dbfefbc6f6
+    GIT_TAG ee49c4f973f66bb7bfd644658d14e43459f557fa
     DOWNLOAD_ONLY YES
 )
 set(CMAKE_MODULE_PATH
