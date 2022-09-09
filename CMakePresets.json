@@ -213,7 +213,8 @@
       "name": "wheel-win",
       "inherits": "wheel",
       "cacheVariables": {
-        "OGS_USE_MFRONT": "OFF"
+        "OGS_USE_MFRONT": "OFF",
+        "OGS_BUILD_PROCESS_TH2M": "OFF"
       },
       "condition": {
         "type": "equals",

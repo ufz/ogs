@@ -34,3 +34,22 @@ build wheels mac:
   parallel:
     matrix:
       - ARCHITECTURE: ["amd64", "arm64"]
+
+build wheels win:
+    stage: build
+    needs: [meta]
+    tags:
+      - windows
+    extends:
+      - .vs2019-environment
+    script:
+      - pipx run cibuildwheel
+      - >
+        pipx run twine upload
+        --repository-url https://gitlab.opengeosys.org/api/v4/projects/${CI_PROJECT_ID}/packages/pypi
+        --username gitlab-ci-token
+        --password ${CI_JOB_TOKEN}
+        wheelhouse/*
+    artifacts:
+      paths:
+        - wheelhouse/
