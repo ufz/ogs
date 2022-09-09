@@ -13,7 +13,7 @@ def get_version():
         git_version = os.environ["OGS_VERSION"]
     else:
         git_version = subprocess.run(
-            ["git describe --tags"],
+            ["git", "describe", "--tags"],
             capture_output=True,
             text=True,
             shell=True,
@@ -32,12 +32,17 @@ def get_version():
         return git_version
 
 
-sys.path.append("Applications/Python")
+sys.path.append(os.path.join("Applications", "Python"))
 from OpenGeoSys import binaries_list
 
 console_scripts = []
 for b in binaries_list:
     console_scripts.append(f"{b}=OpenGeoSys:{b}")
+
+import platform
+cmake_preset = "wheel"
+if platform.system() == "Windows":
+    cmake_preset += "-win"
 
 setup(
     name="OpenGeoSys",
@@ -49,7 +54,7 @@ setup(
     package_dir={"": "Applications/Python"},
     cmake_install_dir="Applications/Python/OpenGeoSys",
     extras_require={"test": ["pytest"]},
-    cmake_args=["--preset wheel", "-B ."],
+    cmake_args=[f"--preset {cmake_preset}", "-B ."],
     python_requires=">=3.6",
     entry_points={"console_scripts": console_scripts},
 )

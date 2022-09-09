@@ -202,6 +202,23 @@
         "OGS_USE_PIP": "OFF",
         "OGS_USE_MFRONT": "ON",
         "BUILD_SHARED_LIBS": "ON"
+      },
+      "condition": {
+        "type": "notEquals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "wheel-win",
+      "inherits": "wheel",
+      "cacheVariables": {
+        "OGS_USE_MFRONT": "OFF"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
       }
     }
   ],
@@ -290,6 +307,10 @@
     {
       "name": "wheel",
       "configurePreset": "wheel"
+    },
+    {
+      "name": "wheel-win",
+      "configurePreset": "wheel-win"
     }
   ],
   "testPresets": [

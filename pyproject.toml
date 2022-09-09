@@ -1,9 +1,10 @@
 [build-system]
 requires = [
   "setuptools>=42",
-  "scikit-build>=0.15.0",
+  "scikit-build @ git+https://github.com/bilke/scikit-build/@disable-cmake-install-check#egg=scikit-build ; platform_system == 'Windows'",
+  "scikit-build>=0.15.0 ; platform_system != 'Windows'",
   "cmake>=3.22",
-  "ninja; platform_system!='Windows'",
+  "ninja ; platform_system != 'Windows'",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -17,6 +18,7 @@ build = "cp3*"
 skip = "*musllinux*"
 test-extras = "test"
 test-command = "pytest {project}/Tests/Python"
+# test-command = ""
 build-verbosity = "1"
 
 [tool.cibuildwheel.linux]
@@ -26,3 +28,6 @@ environment-pass = ["OGS_VERSION"]
 
 [tool.cibuildwheel.macos]
 skip = ["cp36-*", "cp37-*", "cp38-*x86_64"]
+
+[tool.cibuildwheel.windows]
+skip = ["cp36-*", "cp37-*"]

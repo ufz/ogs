@@ -1,16 +1,7 @@
 import os
+import platform
 import subprocess
 import sys
-
-try:
-    from .lib64._cli import *
-except ImportError:
-    try:
-        from .lib._cli import *
-    except ImportError:
-        print("ERROR: could not import OpenGeoSys Python module!")
-
-OGS_BIN_DIR = os.path.join(os.path.join(os.path.dirname(__file__), "bin"))
 
 binaries_list = [
     "addDataToRaster",
@@ -75,11 +66,26 @@ binaries_list = [
     "Vtu2Grid",
 ]
 
+if "PEP517_BUILD_BACKEND" not in os.environ:
+    if platform.system() == "Windows":
+        os.add_dll_directory(os.path.join(os.path.dirname(__file__), "bin"))
+        from .lib._cli import *
+    else:
+        try:
+            from .lib64._cli import *
+        except ImportError:
+            try:
+                from .lib._cli import *
+            except ImportError:
+                print("ERROR: could not import OpenGeoSys Python module!")
 
-def _program(name, args):
-    return subprocess.call([os.path.join(OGS_BIN_DIR, name)] + args)
+    OGS_BIN_DIR = os.path.join(os.path.join(os.path.dirname(__file__), "bin"))
 
 
-FUNC_TEMPLATE = """def {0}(): raise SystemExit(_program("{0}", sys.argv[1:]))"""
-for f in binaries_list:
-    exec(FUNC_TEMPLATE.format(f))
+    def _program(name, args):
+        return subprocess.call([os.path.join(OGS_BIN_DIR, name)] + args)
+
+
+    FUNC_TEMPLATE = """def {0}(): raise SystemExit(_program("{0}", sys.argv[1:]))"""
+    for f in binaries_list:
+        exec(FUNC_TEMPLATE.format(f))
