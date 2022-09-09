@@ -3,11 +3,13 @@
 if(OGS_USE_PIP)
     set(Python_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
     set(CMAKE_REQUIRE_FIND_PACKAGE_Python TRUE)
+    set(_python_version_max "...<3.11") # because VTK wheels for VTUInterface
     if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
         execute_process(
             COMMAND
                 ${CMAKE_COMMAND} -DPROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}
-                -Dpython_version=${ogs.minimum_version.python} -P
+                -Dpython_version=${ogs.minimum_version.python}${_python_version_max}
+                -P
                 ${PROJECT_SOURCE_DIR}/scripts/cmake/PythonCreateVirtualEnv.cmake
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR} COMMAND_ECHO STDOUT
                               ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
@@ -28,13 +30,16 @@ if(OGS_USE_PYTHON)
     list(APPEND _python_componets Development)
 endif()
 find_package(
-    Python ${ogs.minimum_version.python} COMPONENTS ${_python_componets}
+    Python ${ogs.minimum_version.python}${_python_version_max}
+    COMPONENTS ${_python_componets}
 )
 
 if(OGS_USE_PIP)
     set(Python_SITEARCH_NATIVE ${Python_SITEARCH})
     if(WIN32)
-        string(REPLACE "\\" "\\\\" Python_SITEARCH_NATIVE ${Python_SITEARCH_NATIVE})
+        string(REPLACE "\\" "\\\\" Python_SITEARCH_NATIVE
+                       ${Python_SITEARCH_NATIVE}
+        )
     endif()
     set(OGS_PYTHON_PACKAGES ""
         CACHE INTERNAL "List of Python packages to be installed via pip."
