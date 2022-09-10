@@ -18,7 +18,6 @@
 #include <mpi.h>
 #endif
 
-
 #include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/FileTools.h"
 #include "GeoLib/AABB.h"
@@ -71,6 +70,13 @@ int main(int argc, char* argv[])
         "", "lowpass",
         "Applies a lowpass filter to elevation over connected nodes.", false);
     cmd.add(lowpass_arg);
+    TCLAP::ValueArg<double> map_static_arg(
+        "s", "static",
+        "Static elevation to map the input file to. This can be combined with "
+        "mapping based on rasters or other meshes to deal with locations where "
+        "no corresponding data exists.",
+        false, 0, "number");
+    cmd.add(map_static_arg);
     TCLAP::ValueArg<double> max_dist_arg(
         "d", "distance",
         "Maximum distance to search for mesh nodes if there is no "
@@ -79,19 +85,12 @@ int main(int argc, char* argv[])
         false, 1, "number");
     cmd.add(max_dist_arg);
     TCLAP::ValueArg<std::string> map_mesh_arg(
-        "m", "mesh", "2D mesh file (*.vtu) to map the input file on.", false, "",
-        "string");
+        "m", "mesh", "2D mesh file (*.vtu) to map the input file on.", false,
+        "", "string");
     cmd.add(map_mesh_arg);
-    TCLAP::ValueArg<double> nodata_arg(
-        "n", "nodata",
-        "Replacement value to use if there is no corresponding data for input "
-        "mesh nodes on the raster it should be "
-        "mapped on. (Default value: 0)",
-        false, 0, "number");
-    cmd.add(nodata_arg);
     TCLAP::ValueArg<std::string> map_raster_arg(
-        "r", "raster", "Raster file (*.asc) to map the input file on.", false, "",
-        "string");
+        "r", "raster", "Raster file (*.asc) to map the input file on.", false,
+        "", "string");
     cmd.add(map_raster_arg);
     TCLAP::ValueArg<std::string> output_arg(
         "o", "output", "Output mesh file (*.vtu)", true, "", "string");
@@ -112,6 +111,17 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
+    if (!(map_static_arg.isSet() || map_raster_arg.isSet() ||
+          map_mesh_arg.isSet()))
+    {
+        ERR("Nothing to do. Please choose mapping based on a raster or mesh "
+            "file, or to a static value.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
+        return EXIT_FAILURE;
+    }
+
     if (map_raster_arg.isSet() && map_mesh_arg.isSet())
     {
         ERR("Please select mapping based on *either* a mesh or a raster file.");
@@ -119,6 +129,13 @@ int main(int argc, char* argv[])
         MPI_Finalize();
 #endif
         return EXIT_FAILURE;
+    }
+
+    // Maps the elevation of mesh nodes to static value
+    if (map_static_arg.isSet())
+    {
+        MeshLib::MeshLayerMapper::mapToStaticValue(*mesh,
+                                                   map_static_arg.getValue());
     }
 
     // Maps the elevation of mesh nodes according to raster
@@ -136,10 +153,9 @@ int main(int argc, char* argv[])
         }
         file_stream.close();
 
-        GeoLib::Raster const* const raster =
-            FileIO::AsciiRasterInterface::readRaster(raster_path);
-        MeshLib::MeshLayerMapper::layerMapping(*mesh, *raster,
-                                               nodata_arg.getValue());
+        std::unique_ptr<GeoLib::Raster> const raster(
+            FileIO::AsciiRasterInterface::readRaster(raster_path));
+        MeshLib::MeshLayerMapper::layerMapping(*mesh, *raster, 0, true);
     }
 
     // Maps the elevation of mesh nodes according to a ground truth mesh
