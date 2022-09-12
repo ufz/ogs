@@ -12,7 +12,6 @@ code coverage:
       -DOGS_USE_PIP=ON
       -DBUILD_SHARED_LIBS=ON
   before_script:
-    - !reference [.template-build-linux, before_script]
     # Shortcut to the generated pages:
     - echo '<meta http-equiv="REFRESH" content="0;URL=build/coverage/coverage_report/index.html">' >> Coverage.html
   after_script:

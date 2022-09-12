@@ -25,7 +25,7 @@ install(
     RESOLVED_DEPENDENCIES_VAR _r_deps
     UNRESOLVED_DEPENDENCIES_VAR _u_deps
     PRE_EXCLUDE_REGEXES "api-ms-" "ext-ms-"
-    POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
+    POST_EXCLUDE_REGEXES ".*system32/.*\\.dll" "/usr/lib/libtbb.so.12"
   )
   find_program(PATCHELF_TOOL patchelf)
   foreach(_lib ${_r_deps})
