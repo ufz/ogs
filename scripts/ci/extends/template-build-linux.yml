@@ -4,7 +4,7 @@
     max: 2
     when: runner_system_failure
 
-  before_script:
+  script:
     - 'echo "For debugging run: docker run --rm -it -v $CI_BUILDS_DIR:/builds -w=$CI_PROJECT_DIR $CI_JOB_IMAGE"'
     - build_dir_full=../build/${CMAKE_PRESET}
     - log_file=$build_dir_full/make.txt
@@ -14,7 +14,6 @@
     - ln -s `$readlink_cmd -f $build_dir_full` build/${CMAKE_PRESET}
     - ([ "${CONAN_USER_HOME}" == "${CI_PROJECT_DIR}/.conan" ]) && conan remove --system-reqs '*'
     - ([[ $BUILD_CTEST_LARGE_ON_MASTER && "${CI_COMMIT_BRANCH}" == "master" && "${CMAKE_ARGS}" == *"USE_PYTHON=ON"* ]]) && export BUILD_CTEST_LARGE=true
-  script:
     - cmake --preset=$CMAKE_PRESET -Wno-dev $CMAKE_ARGS
     - |
       if [[ -z "$TARGETS" ]]; then

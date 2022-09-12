@@ -14,7 +14,6 @@ build linux frontend:
     CTEST_ARGS: "--label-exclude python_modules" # pip installed modules segfault
     CMAKE_ARGS: "-DOGS_CPU_ARCHITECTURE=generic"
   before_script:
-    - !reference [.template-build-linux, before_script]
     - source scripts/env/eve/cli.sh
 
 build linux frontend petsc:
@@ -32,5 +31,4 @@ build linux frontend petsc:
     CMAKE_PRESET: release-petsc
     CMAKE_ARGS: "-DOGS_CPU_ARCHITECTURE=generic"
   before_script:
-    - !reference [.template-build-linux, before_script]
     - source scripts/env/eve/petsc.sh
