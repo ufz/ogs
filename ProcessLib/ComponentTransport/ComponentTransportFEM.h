@@ -538,6 +538,38 @@ public:
         }
     }
 
+    GlobalDimMatrixType getHydrodynamicDispersion(
+        GlobalDimMatrixType const& I,
+        GlobalDimMatrixType const& pore_diffusion_coefficient,
+        GlobalDimVectorType const& velocity,
+        double const porosity,
+        double const solute_dispersivity_transverse,
+        double const solute_dispersivity_longitudinal)
+    {
+        double const velocity_magnitude = velocity.norm();
+
+        if (velocity_magnitude == 0.0)
+        {
+            return porosity * pore_diffusion_coefficient;
+        }
+
+        GlobalDimMatrixType const D_c = GlobalDimMatrixType(
+            porosity * pore_diffusion_coefficient +
+            solute_dispersivity_transverse * velocity_magnitude * I +
+            (solute_dispersivity_longitudinal -
+             solute_dispersivity_transverse) /
+                velocity_magnitude * velocity * velocity.transpose());
+
+        if (!_process_data.stabilizer)
+        {
+            return D_c;
+        }
+
+        return D_c + _process_data.stabilizer->getExtraDiffusionCoefficient(
+                         _element.getID(), 1.0, velocity_magnitude) *
+                         I;
+    }
+
     void assembleBlockMatrices(
         int const component_id, double const t, double const dt,
         Eigen::Ref<const NodalVectorType> const& C_nodal_values,
@@ -655,24 +687,16 @@ public:
                         vars, MaterialPropertyLib::Variable::concentration, pos,
                         t, dt);
 
-            double const velocity_magnitude = velocity.norm();
             GlobalDimMatrixType const hydrodynamic_dispersion =
-                velocity_magnitude != 0.0
-                    ? GlobalDimMatrixType(porosity *
-                                              pore_diffusion_coefficient +
-                                          solute_dispersivity_transverse *
-                                              velocity_magnitude * I +
-                                          (solute_dispersivity_longitudinal -
-                                           solute_dispersivity_transverse) /
-                                              velocity_magnitude * velocity *
-                                              velocity.transpose())
-                    : GlobalDimMatrixType(porosity *
-                                              pore_diffusion_coefficient +
-                                          solute_dispersivity_transverse *
-                                              velocity_magnitude * I);
+                getHydrodynamicDispersion(I, pore_diffusion_coefficient,
+                                          velocity, porosity,
+                                          solute_dispersivity_transverse,
+                                          solute_dispersivity_longitudinal);
+
             const double R_times_phi(retardation_factor * porosity);
             GlobalDimVectorType const mass_density_flow = velocity * density;
             auto const N_t_N = (N.transpose() * N).eval();
+
             if (_process_data.non_advective_form)
             {
                 MCp.noalias() += N_t_N * (C_int_pt * R_times_phi * drho_dp * w);
@@ -1020,21 +1044,11 @@ public:
                                           (dNdx * local_p - density * b))
                     : GlobalDimVectorType(-K_over_mu * dNdx * local_p);
 
-            double const velocity_magnitude = velocity.norm();
             GlobalDimMatrixType const hydrodynamic_dispersion =
-                velocity_magnitude != 0.0
-                    ? GlobalDimMatrixType(porosity *
-                                              pore_diffusion_coefficient +
-                                          solute_dispersivity_transverse *
-                                              velocity_magnitude * I +
-                                          (solute_dispersivity_longitudinal -
-                                           solute_dispersivity_transverse) /
-                                              velocity_magnitude * velocity *
-                                              velocity.transpose())
-                    : GlobalDimMatrixType(porosity *
-                                              pore_diffusion_coefficient +
-                                          solute_dispersivity_transverse *
-                                              velocity_magnitude * I);
+                getHydrodynamicDispersion(I, pore_diffusion_coefficient,
+                                          velocity, porosity,
+                                          solute_dispersivity_transverse,
+                                          solute_dispersivity_longitudinal);
 
             double const R_times_phi = retardation_factor * porosity;
             auto const N_t_N = (N.transpose() * N).eval();
@@ -1053,7 +1067,6 @@ public:
             local_M.noalias() += N_t_N * (R_times_phi * density * w);
 
             // coupling term
-
             if (_process_data.non_advective_form)
             {
                 double dot_p_int_pt = 0.0;
@@ -1317,14 +1330,8 @@ public:
                     ? GlobalDimVectorType(-k / mu * (dNdx * p - rho * b))
                     : GlobalDimVectorType(-k / mu * dNdx * p);
 
-            double const q_magnitude = q.norm();
-            // hydrodymanic dispersion
             GlobalDimMatrixType const D =
-                q_magnitude != 0.0
-                    ? GlobalDimMatrixType(phi * Dp + alpha_T * q_magnitude * I +
-                                          (alpha_L - alpha_T) / q_magnitude *
-                                              q * q.transpose())
-                    : GlobalDimMatrixType(phi * Dp);
+                getHydrodynamicDispersion(I, Dp, q, phi, alpha_T, alpha_L);
 
             // matrix assembly
             local_Jac.noalias() +=
