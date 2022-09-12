@@ -189,11 +189,16 @@ int main(int argc, char* argv[])
                 grid.getElementsInVolume(min_vol, max_vol);
             auto const* element =
                 MeshLib::ProjectPointOnMesh::getProjectedElement(elems, *node);
-            (*node)[2] =
-                (element != nullptr)
-                    ? MeshLib::ProjectPointOnMesh::getElevation(*element, *node)
-                    : getClosestPointElevation(*node, ground_truth->getNodes(),
-                                               max_dist);
+            if (element != nullptr)
+            {
+                (*node)[2] =
+                    MeshLib::ProjectPointOnMesh::getElevation(*element, *node);
+            }
+            else
+            {
+                (*node)[2] = getClosestPointElevation(
+                    *node, ground_truth->getNodes(), max_dist);
+            }
         }
     }
 
@@ -202,6 +207,7 @@ int main(int argc, char* argv[])
     // node weighted by 1
     if (lowpass_arg.isSet())
     {
+        INFO("lowpass");
         const std::size_t nNodes(mesh->getNumberOfNodes());
         std::vector<MeshLib::Node*> nodes(mesh->getNodes());
 
