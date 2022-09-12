@@ -252,6 +252,7 @@ if(OGS_USE_PIP)
         file(WRITE ${PROJECT_BINARY_DIR}/requirements.txt
              ${REQUIREMENTS_CONTENT}
         )
+        message(STATUS "Installing Python packages into local virtual environment...")
         execute_process(
             COMMAND ${LOCAL_VIRTUALENV_BIN_DIR}/pip install -r requirements.txt
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
@@ -263,6 +264,7 @@ if(OGS_USE_PIP)
             set(_OGS_PYTHON_PACKAGES_SHA1 "${_ogs_python_packages_sha1}"
                 CACHE INTERNAL ""
             )
+            message(STATUS "${_out}")
         else()
             message(
                 FATAL_ERROR

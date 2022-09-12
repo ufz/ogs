@@ -10,8 +10,12 @@ set(Python_FIND_STRATEGY VERSION)
 
 find_package(Python ${python_version} COMPONENTS Interpreter REQUIRED)
 
+if(${Python_VERSION} VERSION_GREATER_EQUAL 3.9)
+    set(_upgrade_deps --upgrade-deps)
+endif()
+
 execute_process(
-    COMMAND ${Python_EXECUTABLE} -m venv .venv
+    COMMAND ${Python_EXECUTABLE} -m venv ${_upgrade_deps} .venv
     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 )
 

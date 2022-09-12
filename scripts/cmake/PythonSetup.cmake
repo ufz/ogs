@@ -16,6 +16,18 @@ if(OGS_USE_PIP)
         )
         unset(_OGS_PYTHON_PACKAGES_SHA1 CACHE)
     endif()
+    set(_venv_bin_dir "bin")
+    if(MSVC)
+        set(_venv_bin_dir "Scripts")
+    endif()
+    set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/${_venv_bin_dir}
+        CACHE INTERNAL ""
+    )
+    # Fixes macOS install issues
+    execute_process(
+        COMMAND ${LOCAL_VIRTUALENV_BIN_DIR}/pip install wheel
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    )
 else()
     # Prefer unix location over frameworks (Apple-only)
     set(Python_FIND_FRAMEWORK LAST)
@@ -47,14 +59,8 @@ if(OGS_USE_PIP)
     set(Python_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
     if(MSVC)
         set(Python_EXECUTABLE ${Python_ROOT_DIR}/Scripts/python.exe)
-        set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/Scripts
-            CACHE INTERNAL ""
-        )
     else()
         set(Python_EXECUTABLE ${Python_ROOT_DIR}/bin/python)
-        set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/bin
-            CACHE INTERNAL ""
-        )
     endif()
     if(OGS_BUILD_TESTING)
         # Notebook requirements from versions.json
