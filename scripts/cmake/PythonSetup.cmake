@@ -1,9 +1,9 @@
 # cmake-lint: disable=C0103
 
+set(_python_version_max "...<3.11")
 if(OGS_USE_PIP)
     set(Python_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
     set(CMAKE_REQUIRE_FIND_PACKAGE_Python TRUE)
-    set(_python_version_max "...<3.11") # because VTK wheels for VTUInterface
     if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
         execute_process(
             COMMAND

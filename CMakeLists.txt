@@ -252,9 +252,18 @@ if(OGS_USE_PIP)
         file(WRITE ${PROJECT_BINARY_DIR}/requirements.txt
              ${REQUIREMENTS_CONTENT}
         )
-        message(STATUS "Installing Python packages into local virtual environment...")
+        message(
+            STATUS
+                "Installing Python packages into local virtual environment..."
+        )
+        if(APPLE)
+            # CC=/Library/Developer/CommandLineTools/usr/bin/cc and this somehow
+            # breaks wheel builds ...
+            set(_apple_env ${CMAKE_COMMAND} -E env CC=clang CXX=clang)
+        endif()
         execute_process(
-            COMMAND ${LOCAL_VIRTUALENV_BIN_DIR}/pip install -r requirements.txt
+            COMMAND ${_apple_env} ${LOCAL_VIRTUALENV_BIN_DIR}/pip install -r
+                    requirements.txt
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
             RESULT_VARIABLE _return_code
             OUTPUT_VARIABLE _out
