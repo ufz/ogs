@@ -213,6 +213,7 @@ MeshLib::Properties NodePartitionedMeshReader::readProperties(
     MeshLib::Properties p;
     readProperties(file_name_base, MeshLib::MeshItemType::Node, p);
     readProperties(file_name_base, MeshLib::MeshItemType::Cell, p);
+    readProperties(file_name_base, MeshLib::MeshItemType::IntegrationPoint, p);
     return p;
 }
 
@@ -220,8 +221,8 @@ void NodePartitionedMeshReader::readProperties(
     const std::string& file_name_base, MeshLib::MeshItemType t,
     MeshLib::Properties& p) const
 {
-    std::string const item_type =
-        t == MeshLib::MeshItemType::Node ? "node" : "cell";
+    const std::string item_type = MeshLib::toString(t);
+
     const std::string fname_cfg = file_name_base + "_partitioned_" + item_type +
                                   "_properties_cfg" +
                                   std::to_string(_mpi_comm_size) + ".bin";
@@ -312,16 +313,32 @@ void NodePartitionedMeshReader::readDomainSpecificPartOfPropertyVectors(
             _mpi_rank, global_offset,
             global_offset + pvpmd.offset * vec_pvmd[i]->number_of_components *
                                 vec_pvmd[i]->data_type_size_in_bytes);
+
+        if (vec_pvmd[i]->property_name == "OGS_VERSION" ||
+            vec_pvmd[i]->property_name == "IntegrationPointMetaData")
+        {
+            createSpecificPropertyVectorPart<char>(is, *vec_pvmd[i], t,
+                                                   global_offset, p);
+
+            global_offset += vec_pvmd[i]->data_type_size_in_bytes *
+                             vec_pvmd[i]->number_of_tuples;
+            continue;
+        }
+
         if (vec_pvmd[i]->is_int_type)
         {
             if (vec_pvmd[i]->is_data_type_signed)
             {
                 if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(char))
+                {
                     createPropertyVectorPart<char>(is, *vec_pvmd[i], pvpmd, t,
                                                    global_offset, p);
+                }
                 else if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(int))
+                {
                     createPropertyVectorPart<int>(is, *vec_pvmd[i], pvpmd, t,
                                                   global_offset, p);
+                }
                 else if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(long))
                     createPropertyVectorPart<long>(is, *vec_pvmd[i], pvpmd, t,
                                                    global_offset, p);
@@ -337,8 +354,10 @@ void NodePartitionedMeshReader::readDomainSpecificPartOfPropertyVectors(
             {
                 if (vec_pvmd[i]->data_type_size_in_bytes ==
                     sizeof(unsigned char))
+                {
                     createPropertyVectorPart<unsigned char>(
                         is, *vec_pvmd[i], pvpmd, t, global_offset, p);
+                }
                 else if (vec_pvmd[i]->data_type_size_in_bytes ==
                          sizeof(unsigned int))
                     createPropertyVectorPart<unsigned int>(

@@ -3,7 +3,7 @@ if(OGS_USE_MPI)
         binaryToPVTU BinaryToPVTU.cpp NodeWiseMeshPartitioner.cpp
     )
     target_link_libraries(
-        binaryToPVTU GitInfoLib MeshLib tclap
+           binaryToPVTU GitInfoLib ProcessLib MeshLib tclap
         $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX> VTK::ParallelMPI
     )
     install(TARGETS binaryToPVTU RUNTIME DESTINATION bin)
