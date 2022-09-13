@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="1d_decay_chain_OS_5year_ts_0_t_0.000000.vtu"/>
+    <DataSet timestep="3153600000000" group="" part="0" file="1d_decay_chain_OS_5year_ts_20000_t_3153600000000.000000.vtu"/>
+  </Collection>
+</VTKFile>

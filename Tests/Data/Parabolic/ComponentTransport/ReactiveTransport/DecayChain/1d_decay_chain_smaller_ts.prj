@@ -23,9 +23,6 @@
                 <pressure>pressure</pressure>
             </process_variables>
             <specific_body_force>0</specific_body_force>
-            <secondary_variables>
-                <secondary_variable internal_name="darcy_velocity" output_name="darcy_velocity"/>
-            </secondary_variables>
         </process>
     </processes>
     <media>
@@ -347,11 +344,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>3.1536e11</t_end>
+                    <t_end>3.1536e12</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>100</repeat>
-                            <delta_t>3.1536e9</delta_t>
+                            <repeat>20000</repeat>
+                            <delta_t>1.5768e8</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -370,11 +367,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>3.1536e11</t_end>
+                    <t_end>3.1536e12</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>100</repeat>
-                            <delta_t>3.1536e9</delta_t>
+                            <repeat>20000</repeat>
+                            <delta_t>1.5768e8</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -393,11 +390,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>3.1536e11</t_end>
+                    <t_end>3.1536e12</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>100</repeat>
-                            <delta_t>3.1536e9</delta_t>
+                            <repeat>20000</repeat>
+                            <delta_t>1.5768e8</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -416,11 +413,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>3.1536e11</t_end>
+                    <t_end>3.1536e12</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>100</repeat>
-                            <delta_t>3.1536e9</delta_t>
+                            <repeat>20000</repeat>
+                            <delta_t>1.5768e8</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -439,11 +436,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>3.1536e11</t_end>
+                    <t_end>3.1536e12</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>100</repeat>
-                            <delta_t>3.1536e9</delta_t>
+                            <repeat>20000</repeat>
+                            <delta_t>1.5768e8</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -462,11 +459,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>3.1536e11</t_end>
+                    <t_end>3.1536e12</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>100</repeat>
-                            <delta_t>3.1536e9</delta_t>
+                            <repeat>20000</repeat>
+                            <delta_t>1.5768e8</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -485,11 +482,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>3.1536e11</t_end>
+                    <t_end>3.1536e12</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>100</repeat>
-                            <delta_t>3.1536e9</delta_t>
+                            <repeat>20000</repeat>
+                            <delta_t>1.5768e8</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -508,11 +505,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>3.1536e11</t_end>
+                    <t_end>3.1536e12</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>100</repeat>
-                            <delta_t>3.1536e9</delta_t>
+                            <repeat>20000</repeat>
+                            <delta_t>1.5768e8</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -520,16 +517,12 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>1d_decay_chain</prefix>
+            <prefix>1d_decay_chain_OS_5year</prefix>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
-                    <each_steps>10</each_steps>
-                </pair>
-                <pair>
-                    <repeat>1</repeat>
-                    <each_steps>90</each_steps>
+                    <each_steps>20000</each_steps>
                 </pair>
             </timesteps>
             <variables>
@@ -541,7 +534,6 @@
                 <variable>[Pa-231]</variable>
                 <variable>[Ac-227]</variable>
                 <variable>pressure</variable>
-                <variable>darcy_velocity</variable>
             </variables>
         </output>
     </time_loop>
