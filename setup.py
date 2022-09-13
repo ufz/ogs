@@ -47,10 +47,17 @@ cmake_preset = "wheel"
 if platform.system() == "Windows":
     cmake_preset += "-win"
 
+from pathlib import Path
+
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
+
 setup(
     name="ogs",
     version=get_version(),
     description="OpenGeoSys Python Module",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     author="OpenGeoSys Community",
     license="BSD-3-Clause",
     packages=find_packages(where="Applications/Python"),
