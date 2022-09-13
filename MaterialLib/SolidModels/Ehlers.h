@@ -24,10 +24,9 @@
 
 #include "BaseLib/Error.h"
 #include "MathLib/KelvinVector.h"
+#include "MechanicsBase.h"
 #include "NumLib/NewtonRaphson.h"
 #include "ParameterLib/Parameter.h"
-
-#include "MechanicsBase.h"
 
 namespace MaterialLib
 {
@@ -250,8 +249,8 @@ struct StateVariables
     Damage damage_prev;                      ///< \copydoc damage
 
 #ifndef NDEBUG
-    friend std::ostream& operator<<(
-        std::ostream& os, StateVariables<DisplacementDim> const& m)
+    friend std::ostream& operator<<(std::ostream& os,
+                                    StateVariables<DisplacementDim> const& m)
     {
         os << "State:\n"
            << "eps_p_D: " << m.eps_p.D << "\n"
@@ -358,6 +357,9 @@ private:
 
 extern template class SolidEhlers<2>;
 extern template class SolidEhlers<3>;
+
+extern template struct StateVariables<2>;
+extern template struct StateVariables<3>;
 }  // namespace Ehlers
 }  // namespace Solids
 }  // namespace MaterialLib
