@@ -218,10 +218,10 @@ std::function<std::string(std::vector<double>)> write_xdmf(
             R"(
 <Grid Name="Grid" GridType="Uniform">
     <Time Value="{time_value:g}"/>
-    {geometry}
-    {topology}
-    {fix_attributes}
-    {variable_attributes}
+{geometry}
+{topology}
+{fix_attributes}
+{variable_attributes}
 </Grid>)",
             "time_value"_a = time_value, "geometry"_a = geometry,
             "topology"_a = topology, "fix_attributes"_a = constant_attributes,
