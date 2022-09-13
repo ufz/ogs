@@ -12,6 +12,6 @@ endif()
 ogs_add_executable(
     partmesh PartitionMesh.cpp Metis.cpp NodeWiseMeshPartitioner.cpp
 )
-target_link_libraries(partmesh GitInfoLib MeshLib tclap)
+target_link_libraries(partmesh GitInfoLib MeshLib tclap ProcessLib NumLib)
 add_dependencies(partmesh mpmetis)
 install(TARGETS partmesh RUNTIME DESTINATION bin)
