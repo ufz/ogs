@@ -122,8 +122,9 @@ void finalize()
 }
 
 /// python module name is OpenGeoSys
-PYBIND11_MODULE(_cli, m)
+PYBIND11_MODULE(simulator, m)
 {
+    m.attr("__name__") = "ogs.simulator";
     m.doc() = "pybind11 ogs example plugin";
     m.def("initialize", &initOGS, "init OGS");
     m.def("currentTime", &currentTime, "get current OGS time");

@@ -2,6 +2,7 @@ from skbuild import setup
 from setuptools import find_packages
 
 import os
+import platform
 import re
 import subprocess
 import sys
@@ -12,8 +13,11 @@ def get_version():
     if "OGS_VERSION" in os.environ:
         git_version = os.environ["OGS_VERSION"]
     else:
+        git_describe_cmd = ["git describe --tags"]
+        if platform.system() == "Windows":
+            git_describe_cmd = ["git", "describe", "--tags"]
         git_version = subprocess.run(
-            ["git", "describe", "--tags"],
+            git_describe_cmd,
             capture_output=True,
             text=True,
             shell=True,
@@ -33,28 +37,27 @@ def get_version():
 
 
 sys.path.append(os.path.join("Applications", "Python"))
-from OpenGeoSys import binaries_list
+from ogs import binaries_list
 
 console_scripts = []
 for b in binaries_list:
-    console_scripts.append(f"{b}=OpenGeoSys:{b}")
+    console_scripts.append(f"{b}=ogs:{b}")
 
-import platform
 cmake_preset = "wheel"
 if platform.system() == "Windows":
     cmake_preset += "-win"
 
 setup(
-    name="OpenGeoSys",
+    name="ogs",
     version=get_version(),
-    description="OpenGeoSys",
+    description="OpenGeoSys Python Module",
     author="OpenGeoSys Community",
     license="BSD-3-Clause",
     packages=find_packages(where="Applications/Python"),
     package_dir={"": "Applications/Python"},
-    cmake_install_dir="Applications/Python/OpenGeoSys",
+    cmake_install_dir="Applications/Python/ogs",
     extras_require={"test": ["pytest"]},
     cmake_args=[f"--preset {cmake_preset}", "-B ."],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     entry_points={"console_scripts": console_scripts},
 )

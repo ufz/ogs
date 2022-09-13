@@ -15,13 +15,12 @@ norecursedirs = ["Tests/Data"]
 [tool.cibuildwheel]
 archs = "auto64"
 build = "cp3*"
-skip = ["*musllinux*"]
 test-extras = "test"
 test-command = "pytest {project}/Tests/Python"
-# test-command = ""
 build-verbosity = "1"
 
 [tool.cibuildwheel.linux]
+skip = ["*musllinux*", "cp36-*"]
 manylinux-x86_64-image = "manylinux2014"
 manylinux-aarch64-image = "manylinux2014"
 environment-pass = ["OGS_VERSION"]
