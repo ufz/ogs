@@ -1,55 +1,32 @@
-build wheels linux:
+.wheels_template: &wheels_template
   stage: build
   needs: [meta]
-  tags: [envinf3-shell]
   script:
     - pipx run cibuildwheel
-    - >
-      pipx run twine upload
-      --repository-url https://gitlab.opengeosys.org/api/v4/projects/${CI_PROJECT_ID}/packages/pypi
-      --username gitlab-ci-token
-      --password ${CI_JOB_TOKEN}
-      wheelhouse/*
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_TAG
   artifacts:
     paths:
       - wheelhouse/
 
+build wheels linux:
+  tags: [envinf3-shell]
+  <<: *wheels_template
+
 build wheels mac:
-  stage: build
-  needs: [meta]
   tags:
     - mac
     - ${ARCHITECTURE}
-  script:
-    - CMAKE_OSX_DEPLOYMENT_TARGET=10.15 pipx run cibuildwheel
-    - >
-      pipx run twine upload
-      --repository-url https://gitlab.opengeosys.org/api/v4/projects/${CI_PROJECT_ID}/packages/pypi
-      --username gitlab-ci-token
-      --password ${CI_JOB_TOKEN}
-      wheelhouse/*
-  artifacts:
-    paths:
-      - wheelhouse/
+  variables:
+    CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
   parallel:
     matrix:
       - ARCHITECTURE: ["amd64", "arm64"]
+  <<: *wheels_template
 
 build wheels win:
-    stage: build
-    needs: [meta]
-    tags:
-      - windows
-    extends:
-      - .vs2019-environment
-    script:
-      - pipx run cibuildwheel
-      - >
-        pipx run twine upload
-        --repository-url https://gitlab.opengeosys.org/api/v4/projects/${CI_PROJECT_ID}/packages/pypi
-        --username gitlab-ci-token
-        --password ${CI_JOB_TOKEN}
-        wheelhouse/*
-    artifacts:
-      paths:
-        - wheelhouse/
+  tags: [windows]
+  extends:
+    - .vs2019-environment
+  <<: *wheels_template
