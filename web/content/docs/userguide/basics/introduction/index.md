@@ -15,13 +15,59 @@ weight = 1
 post = "Download, install and run an OGS benchmark in 5 minutes! No development setup required."
 +++
 
-## Download
+## Installation
+
+<div class='win'>
 
 Download the latest release of OpenGeoSys from the [Releases](/releases)-page. Be sure to pick the correct file for your operating system.
 
-## Installation
-
 OGS itself is a simple executable file so you can put it anywhere you like. For convenience you may put into a location which is in your `PATH`-environment variable which allows you to start the executable without specifying its full file path.
+
+<div class="note">
+
+### Alternative: Install via `pip`
+
+You can also install ogs via Python's [`pip`-tool](https://packaging.python.org/en/latest/tutorials/installing-packages/):
+
+```bat
+pip install ogs
+```
+
+If you install into an activated [virtual environment](https://docs.python.org/3/library/venv.html) then ogs and its tools are automatically also in the `PATH`. Otherwise `pip` will print instructions which directory needs to be added to the `PATH`.
+
+</div>
+
+</div>
+
+<div class='linux'>
+
+Install via Python's [`pip`-tool](https://packaging.python.org/en/latest/tutorials/installing-packages/):
+
+```bash
+pip install ogs
+```
+
+You may want to set up and activate a [virtual environment](https://docs.python.org/3/library/venv.html) before.
+
+You could also use [`pipx`](https://pypa.github.io/pipx/) to install into an isolated environment.
+
+</div>
+
+<div class='mac'>
+
+See Linux tab!
+
+</div>
+
+<div class="note">
+
+### Limitations of the `pip`-based installation
+
+- Serial config only! For PETSc-support please use a [Singularity container]({{< relref "container" >}}).
+- No embedded Python interpreter, i.e. no Python boundary conditions!
+- A Python (3.8 - 3.11) installation with `pip` is required.
+
+</div>
 
 ## Download benchmarks
 
