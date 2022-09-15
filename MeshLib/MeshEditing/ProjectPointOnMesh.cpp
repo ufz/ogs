@@ -21,10 +21,8 @@ namespace ProjectPointOnMesh
 Element const* getProjectedElement(std::vector<const Element*> const& elements,
                                    MathLib::Point3d const& node)
 {
-    auto is_right_of = [&node](Node const& a, Node const& b) {
-        return GeoLib::getOrientationFast(node, a, b) ==
-               GeoLib::Orientation::CW;
-    };
+    auto is_right_of = [&node](Node const& a, Node const& b)
+    { return GeoLib::getOrientation(node, a, b) == GeoLib::Orientation::CW; };
 
     for (auto const* e : elements)
     {
