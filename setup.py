@@ -29,11 +29,10 @@ def get_version():
         m = re.match(".+?(?=-g[\w]*$)", git_version)  # strip out commit hash
         if m:
             return m.group(0).replace("-", ".dev")  # insert dev
-        else:
-            print("WARNING: Could not get ogs version!")
-            exit(1)
-    else:
-        return git_version
+        print("ERROR: Could not get ogs version!")
+        exit(1)
+
+    return git_version
 
 
 sys.path.append(os.path.join("Applications", "Python"))
