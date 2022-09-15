@@ -3,7 +3,6 @@
     <meshes>
         <mesh>1d_decay_chain.vtu</mesh>
         <mesh>1d_decay_chain_upstream.vtu</mesh>
-        <mesh>1d_decay_chain_downstream.vtu</mesh>
         <mesh>1d_decay_chain_ReactiveDomain.vtu</mesh>
     </meshes>
     <processes>
@@ -46,8 +45,8 @@
                                 </property>
                                 <property>
                                     <name>decay_rate</name>
-                                    <type>Parameter</type>
-                                    <parameter_name>decay</parameter_name>
+                                    <type>Constant</type>
+                                    <value>0</value>
                                 </property>
                             </properties>
                         </component>
@@ -66,8 +65,8 @@
                                 </property>
                                 <property>
                                     <name>decay_rate</name>
-                                    <type>Parameter</type>
-                                    <parameter_name>decay</parameter_name>
+                                    <type>Constant</type>
+                                    <value>0</value>
                                 </property>
                             </properties>
                         </component>
@@ -86,8 +85,8 @@
                                 </property>
                                 <property>
                                     <name>decay_rate</name>
-                                    <type>Parameter</type>
-                                    <parameter_name>decay</parameter_name>
+                                    <type>Constant</type>
+                                    <value>0</value>
                                 </property>
                             </properties>
                         </component>
@@ -106,8 +105,8 @@
                                 </property>
                                 <property>
                                     <name>decay_rate</name>
-                                    <type>Parameter</type>
-                                    <parameter_name>decay</parameter_name>
+                                    <type>Constant</type>
+                                    <value>0</value>
                                 </property>
                             </properties>
                         </component>
@@ -126,8 +125,8 @@
                                 </property>
                                 <property>
                                     <name>decay_rate</name>
-                                    <type>Parameter</type>
-                                    <parameter_name>decay</parameter_name>
+                                    <type>Constant</type>
+                                    <value>0</value>
                                 </property>
                             </properties>
                         </component>
@@ -146,8 +145,8 @@
                                 </property>
                                 <property>
                                     <name>decay_rate</name>
-                                    <type>Parameter</type>
-                                    <parameter_name>decay</parameter_name>
+                                    <type>Constant</type>
+                                    <value>0</value>
                                 </property>
                             </properties>
                         </component>
@@ -166,8 +165,8 @@
                                 </property>
                                 <property>
                                     <name>decay_rate</name>
-                                    <type>Parameter</type>
-                                    <parameter_name>decay</parameter_name>
+                                    <type>Constant</type>
+                                    <value>0</value>
                                 </property>
                             </properties>
                         </component>
@@ -672,24 +671,9 @@
             <value>1</value>
         </parameter>
         <parameter>
-            <name>decay</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
             <name>p0</name>
             <type>Constant</type>
             <value>1e5</value>
-        </parameter>
-        <parameter>
-            <name>p_upstream</name>
-            <type>Constant</type>
-            <value>1e5</value>
-        </parameter>
-        <parameter>
-            <name>p_downstream_Neumann</name>
-            <type>Constant</type>
-            <value>0</value>
         </parameter>
         <parameter>
             <name>c0_H</name>
@@ -722,14 +706,9 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>1d_decay_chain_upstream</mesh>
+                    <mesh>1d_decay_chain_ReactiveDomain</mesh>
                     <type>Dirichlet</type>
-                    <parameter>p_upstream</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <mesh>1d_decay_chain_downstream</mesh>
-                    <type>Neumann</type>
-                    <parameter>p_downstream_Neumann</parameter>
+                    <parameter>p0</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
@@ -849,42 +828,4 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
-    <test_definition>
-        <vtkdiff>
-            <regex>1d_decay_chain_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
-            <field>[Cm-247]</field>
-            <absolute_tolerance>1e-10</absolute_tolerance>
-            <relative_tolerance>1e-10</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <regex>1d_decay_chain_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
-            <field>[Am-243]</field>
-            <absolute_tolerance>1e-10</absolute_tolerance>
-            <relative_tolerance>1e-16</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <regex>1d_decay_chain_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
-            <field>[Pu-239]</field>
-            <absolute_tolerance>1e-10</absolute_tolerance>
-            <relative_tolerance>1e-16</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <regex>1d_decay_chain_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
-            <field>[U-235]</field>
-            <absolute_tolerance>1e-10</absolute_tolerance>
-            <relative_tolerance>1e-16</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <regex>1d_decay_chain_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
-            <field>[Pa-231]</field>
-            <absolute_tolerance>1e-10</absolute_tolerance>
-            <relative_tolerance>1e-16</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <regex>1d_decay_chain_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
-            <field>[Ac-227]</field>
-            <absolute_tolerance>1e-9</absolute_tolerance>
-            <relative_tolerance>1e-16</relative_tolerance>
-        </vtkdiff>
-    </test_definition>
 </OpenGeoSysProject>
