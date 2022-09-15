@@ -236,6 +236,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
     checkMPLProperties(mesh, *media_map);
     DBUG("Media properties verified.");
 
+    auto stabilizer = NumLib::createNumericalStabilization(mesh, config);
     ComponentTransportProcessData process_data{
         std::move(media_map),
         specific_body_force,
@@ -244,7 +245,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
         temperature,
         chemically_induced_porosity_change,
         chemical_solver_interface.get(),
-        std::move(lookup_table)};
+        std::move(lookup_table),
+        std::move(stabilizer)};
 
     SecondaryVariableCollection secondary_variables;
 

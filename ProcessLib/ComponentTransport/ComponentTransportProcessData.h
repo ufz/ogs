@@ -16,6 +16,7 @@
 #include "LookupTable.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/NumericalStability/NumericalStabilization.h"
 #include "ParameterLib/Parameter.h"
 
 namespace MaterialPropertyLib
@@ -68,6 +69,8 @@ struct ComponentTransportProcessData
     bool const chemically_induced_porosity_change;
     ChemistryLib::ChemicalSolverInterface* const chemical_solver_interface;
     std::unique_ptr<LookupTable> lookup_table;
+
+    std::unique_ptr<NumLib::NumericalStabilization> stabilizer;
 
     static const int hydraulic_process_id = 0;
     // TODO (renchao-lu): This variable is used in the calculation of the
