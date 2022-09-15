@@ -612,7 +612,7 @@
             </eigen>
             <petsc>
                 <prefix>sd</prefix>
-                <parameters>-sd_ksp_type cg -sd_pc_type bjacobi -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10000</parameters>
+                <parameters>-sd_ksp_type bcgs -sd_pc_type lu -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10000</parameters>
             </petsc>
         </linear_solver>
     </linear_solvers>
