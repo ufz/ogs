@@ -2,10 +2,10 @@
 <OpenGeoSysProject>
     <meshes>
       <!-- use the right meshes, here -->
-      <mesh>out/disc_with_hole_idx_is_80_domain.vtu</mesh>
-      <mesh>out/disc_with_hole_idx_is_80_physical_group_Left.vtu</mesh>
-      <mesh>out/disc_with_hole_idx_is_80_physical_group_Bottom.vtu</mesh>
-      <mesh>out/disc_with_hole_idx_is_80_physical_group_Top.vtu</mesh>
+      <mesh>disc_with_hole_idx_is_80_domain.vtu</mesh>
+      <mesh>disc_with_hole_idx_is_80_physical_group_Left.vtu</mesh>
+      <mesh>disc_with_hole_idx_is_80_physical_group_Bottom.vtu</mesh>
+      <mesh>disc_with_hole_idx_is_80_physical_group_Top.vtu</mesh>
     </meshes>
     <processes>
         <process>
