@@ -9,6 +9,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <tclap/CmdLine.h>
+
 #include <memory>
 #include <string>
 
@@ -16,14 +18,17 @@
 #include <mpi.h>
 #endif
 
+#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/FileTools.h"
 #include "GeoLib/AABB.h"
+#include "GeoLib/Raster.h"
 #include "InfoLib/GitInfo.h"
 #include "MathLib/MathTools.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/ProjectPointOnMesh.h"
+#include "MeshLib/MeshGenerators/MeshLayerMapper.h"
 #include "MeshLib/MeshSearch/MeshElementGrid.h"
 #include "MeshLib/Node.h"
 
@@ -51,116 +56,113 @@ int main(int argc, char* argv[])
 #ifdef USE_PETSC
     MPI_Init(&argc, &argv);
 #endif
-    std::vector<std::string> keywords;
-    keywords.emplace_back("-ALL");
-    keywords.emplace_back("-MESH");
-    keywords.emplace_back("-LOWPASS");
-
-    if (argc < 3)
-    {
-        INFO(
-            "Moves mesh nodes and connected elements either by a given value "
-            "or based on a list.\n");
-        INFO("Usage: {:s} <msh-file.msh> <keyword> [<value1>] [<value2>]",
-             argv[0]);
-        INFO("Available keywords:");
-        INFO(
-            "\t-ALL <value1> <value2> : changes the elevation of all mesh "
-            "nodes by <value2> in direction <value1> [x,y,z].");
-        INFO(
-            "\t-MESH <value1> <value2> : changes the elevation of mesh nodes "
-            "based on a second mesh <value1> with a search range of <value2>.");
-        INFO(
-            "\t-LOWPASS : applies a lowpass filter over node elevation using "
-            "directly connected nodes.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
-        return EXIT_FAILURE;
-    }
-
-    const std::string msh_name(argv[1]);
-    const std::string current_key(argv[2]);
-    std::string const ext(BaseLib::getFileExtension(msh_name));
-    if (!(ext == ".msh" || ext == ".vtu"))
-    {
-        ERR("Error: Parameter 1 must be a mesh-file (*.msh / *.vtu).");
-        INFO("Usage: {:s} <msh-file.gml> <keyword> <value>", argv[0]);
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
-        return EXIT_FAILURE;
-    }
-
-    bool const is_keyword = std::any_of(keywords.begin(), keywords.end(),
-                                        [current_key](auto const& keyword)
-                                        { return current_key == keyword; });
-
-    if (!is_keyword)
-    {
-        ERR("Keyword not recognised. Available keywords:");
-        for (auto const& keyword : keywords)
-            INFO("\t{:s}", keyword);
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
-        return EXIT_FAILURE;
-    }
+    TCLAP::CmdLine cmd(
+        "Changes the elevation of 2D mesh nodes based on either raster data or "
+        "another 2D mesh. In addition, a low pass filter can be applied to "
+        "node elevation based connected nodes.\n\n"
+        "OpenGeoSys-6 software, version " +
+            GitInfoLib::GitInfo::ogs_version +
+            ".\n"
+            "Copyright (c) 2012-2022, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', GitInfoLib::GitInfo::ogs_version);
+    TCLAP::SwitchArg lowpass_arg(
+        "", "lowpass",
+        "Applies a lowpass filter to elevation over connected nodes.", false);
+    cmd.add(lowpass_arg);
+    TCLAP::ValueArg<double> map_static_arg(
+        "s", "static",
+        "Static elevation to map the input file to. This can be combined with "
+        "mapping based on rasters or other meshes to deal with locations where "
+        "no corresponding data exists.",
+        false, 0, "number");
+    cmd.add(map_static_arg);
+    TCLAP::ValueArg<double> max_dist_arg(
+        "d", "distance",
+        "Maximum distance to search for mesh nodes if there is no "
+        "corresponding data for input mesh nodes on the mesh it should be "
+        "mapped on. (Default value: 1)",
+        false, 1, "number");
+    cmd.add(max_dist_arg);
+    TCLAP::ValueArg<std::string> map_mesh_arg(
+        "m", "mesh", "2D mesh file (*.vtu) to map the input file on.", false,
+        "", "string");
+    cmd.add(map_mesh_arg);
+    TCLAP::ValueArg<std::string> map_raster_arg(
+        "r", "raster", "Raster file (*.asc) to map the input file on.", false,
+        "", "string");
+    cmd.add(map_raster_arg);
+    TCLAP::ValueArg<std::string> output_arg(
+        "o", "output", "Output mesh file (*.vtu)", true, "", "string");
+    cmd.add(output_arg);
+    TCLAP::ValueArg<std::string> input_arg(
+        "i", "input", "Input mesh file (*.vtu, *.msh)", true, "", "string");
+    cmd.add(input_arg);
+    cmd.parse(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::IO::readMeshFromFile(msh_name));
+        MeshLib::IO::readMeshFromFile(input_arg.getValue()));
     if (mesh == nullptr)
     {
         ERR("Error reading mesh file.");
 #ifdef USE_PETSC
         MPI_Finalize();
 #endif
-        return 1;
+        return EXIT_FAILURE;
     }
 
-    // Start keyword-specific selection of nodes
-
-    // moves the elevation of all nodes by value
-    if (current_key == "-ALL")
+    if (!(map_static_arg.isSet() || map_raster_arg.isSet() ||
+          map_mesh_arg.isSet()))
     {
-        if (argc < 5)
+        ERR("Nothing to do. Please choose mapping based on a raster or mesh "
+            "file, or to a static value.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
+        return EXIT_FAILURE;
+    }
+
+    if (map_raster_arg.isSet() && map_mesh_arg.isSet())
+    {
+        ERR("Please select mapping based on *either* a mesh or a raster file.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
+        return EXIT_FAILURE;
+    }
+
+    // Maps the elevation of mesh nodes to static value
+    if (map_static_arg.isSet())
+    {
+        MeshLib::MeshLayerMapper::mapToStaticValue(*mesh,
+                                                   map_static_arg.getValue());
+    }
+
+    // Maps the elevation of mesh nodes according to raster
+    if (map_raster_arg.isSet())
+    {
+        std::string const raster_path = map_raster_arg.getValue();
+        std::ifstream file_stream(raster_path, std::ifstream::in);
+        if (!file_stream.good())
         {
-            ERR("Missing parameter...");
+            ERR("Opening raster file {} failed.", raster_path);
 #ifdef USE_PETSC
             MPI_Finalize();
 #endif
             return EXIT_FAILURE;
         }
-        const std::string dir(argv[3]);
-        unsigned idx = (dir == "x") ? 0 : (dir == "y") ? 1 : 2;
-        const double value(strtod(argv[4], 0));
-        INFO("Moving all mesh nodes by {:g} in direction {:d} ({:s})...", value,
-             idx, dir);
-        // double value(-10);
-        const std::size_t nNodes(mesh->getNumberOfNodes());
-        std::vector<MeshLib::Node*> nodes(mesh->getNodes());
-        for (std::size_t i = 0; i < nNodes; i++)
-        {
-            (*nodes[i])[idx] += value;
-        }
+        file_stream.close();
+
+        std::unique_ptr<GeoLib::Raster> const raster(
+            FileIO::AsciiRasterInterface::readRaster(raster_path));
+        MeshLib::MeshLayerMapper::layerMapping(*mesh, *raster, 0, true);
     }
 
-    // maps the elevation of mesh nodes according to a ground truth mesh
-    // whenever nodes exist within max_dist
-    if (current_key == "-MESH")
+    // Maps the elevation of mesh nodes according to a ground truth mesh
+    if (map_mesh_arg.isSet())
     {
-        if (argc < 4)
-        {
-            ERR("Missing parameter...");
-#ifdef USE_PETSC
-            MPI_Finalize();
-#endif
-            return EXIT_FAILURE;
-        }
-        const std::string value(argv[3]);
-        double max_dist(pow(strtod(argv[4], 0), 2));
         std::unique_ptr<MeshLib::Mesh> ground_truth(
-            MeshLib::IO::readMeshFromFile(value));
+            MeshLib::IO::readMeshFromFile(map_mesh_arg.getValue()));
         if (ground_truth == nullptr)
         {
             ERR("Error reading mesh file.");
@@ -173,6 +175,7 @@ int main(int argc, char* argv[])
         std::vector<MeshLib::Node*> const& nodes = mesh->getNodes();
         MeshLib::MeshElementGrid const grid(*ground_truth);
         double const max_edge(mesh->getMaxEdgeLength());
+        double const max_dist(pow(max_dist_arg.getValue(), 2));
 
         for (MeshLib::Node* node : nodes)
         {
@@ -186,19 +189,25 @@ int main(int argc, char* argv[])
                 grid.getElementsInVolume(min_vol, max_vol);
             auto const* element =
                 MeshLib::ProjectPointOnMesh::getProjectedElement(elems, *node);
-            (*node)[2] =
-                (element != nullptr)
-                    ? MeshLib::ProjectPointOnMesh::getElevation(*element, *node)
-                    : getClosestPointElevation(*node, ground_truth->getNodes(),
-                                               max_dist);
+            if (element != nullptr)
+            {
+                (*node)[2] =
+                    MeshLib::ProjectPointOnMesh::getElevation(*element, *node);
+            }
+            else
+            {
+                (*node)[2] = getClosestPointElevation(
+                    *node, ground_truth->getNodes(), max_dist);
+            }
         }
     }
 
     // a simple lowpass filter for the elevation of mesh nodes using the
     // elevation of each node weighted by 2 and the elevation of each connected
     // node weighted by 1
-    if (current_key == "-LOWPASS")
+    if (lowpass_arg.isSet())
     {
+        INFO("lowpass");
         const std::size_t nNodes(mesh->getNumberOfNodes());
         std::vector<MeshLib::Node*> nodes(mesh->getNodes());
 
@@ -227,11 +236,8 @@ int main(int argc, char* argv[])
             (*nodes[i])[2] = elevation[i];
         }
     }
-    /**** add other keywords here ****/
 
-    std::string const new_mesh_name(msh_name.substr(0, msh_name.length() - 4) +
-                                    "_new.vtu");
-    if (MeshLib::IO::writeMeshToFile(*mesh, new_mesh_name) != 0)
+    if (MeshLib::IO::writeMeshToFile(*mesh, output_arg.getValue()) != 0)
     {
 #ifdef USE_PETSC
         MPI_Finalize();

@@ -946,3 +946,21 @@ AddTest(
     line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf temperature temperature 1e-13 0
     line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf heat_flux heat_flux 1e-13 0
 )
+
+MeshTest(
+    NAME MapMeshToMesh_Test
+    PATH MeshGeoToolsLib/Hamburg
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Hamburg
+    EXECUTABLE MeshMapping
+    EXECUTABLE_ARGS -i plain.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/meshmapping.vtu -m 00-surface.vtu -d 150
+    DIFF_DATA meshmapping.vtu meshmapping.vtu 8e-3
+)
+
+MeshTest(
+    NAME MapMeshToRaster_Test
+    PATH MeshGeoToolsLib/Hamburg
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Hamburg
+    EXECUTABLE MeshMapping
+    EXECUTABLE_ARGS -i plain.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/rastermapping.vtu -r 00-raster.asc -s 100
+    DIFF_DATA rastermapping.vtu rastermapping.vtu 1e-14
+)

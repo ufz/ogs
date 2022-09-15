@@ -15,7 +15,7 @@ set(TOOLS
     Layers2Grid
     MapGeometryToMeshSurface
     MoveMesh
-    moveMeshNodes
+    MeshMapping
     NodeReordering
     queryMesh
     removeMeshElements
@@ -51,4 +51,5 @@ target_link_libraries(
 )
 target_link_libraries(createLayeredMeshFromRasters ApplicationsFileIO)
 target_link_libraries(MapGeometryToMeshSurface MeshGeoToolsLib)
+target_link_libraries(MeshMapping ApplicationsFileIO)
 target_link_libraries(ResetPropertiesInPolygonalRegion ApplicationsFileIO)
