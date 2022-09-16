@@ -56,11 +56,11 @@ PropertyDataType SaturationBrooksCorey::value(
 }
 
 PropertyDataType SaturationBrooksCorey::dValue(
-    VariableArray const& variable_array, Variable const primary_variable,
+    VariableArray const& variable_array, Variable const variable,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    if (primary_variable != Variable::capillary_pressure)
+    if (variable != Variable::capillary_pressure)
     {
         OGS_FATAL(
             "SaturationBrooksCorey::dValue is implemented for derivatives with "
@@ -85,13 +85,12 @@ PropertyDataType SaturationBrooksCorey::dValue(
 }
 
 PropertyDataType SaturationBrooksCorey::d2Value(
-    VariableArray const& variable_array, Variable const primary_variable1,
-    Variable const primary_variable2,
-    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
-    double const /*dt*/) const
+    VariableArray const& variable_array, Variable const variable1,
+    Variable const variable2, ParameterLib::SpatialPosition const& /*pos*/,
+    double const /*t*/, double const /*dt*/) const
 {
-    if ((primary_variable1 != Variable::capillary_pressure) &&
-        (primary_variable2 != Variable::capillary_pressure))
+    if ((variable1 != Variable::capillary_pressure) &&
+        (variable2 != Variable::capillary_pressure))
     {
         OGS_FATAL(
             "SaturationBrooksCorey::d2Value is implemented for derivatives "

@@ -83,12 +83,12 @@ PropertyDataType AverageMolarMass::value(
 }
 
 PropertyDataType AverageMolarMass::dValue(
-    VariableArray const& variable_array, Variable const primary_variable,
+    VariableArray const& variable_array, Variable const variable,
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
 {
-    if ((primary_variable != Variable::phase_pressure) &&
-        (primary_variable != Variable::temperature))
+    if ((variable != Variable::phase_pressure) &&
+        (variable != Variable::temperature))
     {
         OGS_FATAL(
             "AverageMolarMass::dValue is implemented for derivatives with "
@@ -114,7 +114,7 @@ PropertyDataType AverageMolarMass::dValue(
     // for binary phases only.
     auto const dxnC = phase->property(PropertyType::mole_fraction)
                           .template dValue<Eigen::Vector2d>(
-                              variable_array, primary_variable, pos, t, dt)[0];
+                              variable_array, variable, pos, t, dt)[0];
 
     auto const M_0 = phase->component(0)
                          .property(PropertyType::molar_mass)
@@ -128,10 +128,9 @@ PropertyDataType AverageMolarMass::dValue(
 }  // namespace MaterialPropertyLib
 
 PropertyDataType AverageMolarMass::d2Value(
-    VariableArray const& /*variable_array*/,
-    Variable const /*primary_variable1*/, Variable const /*primary_variable2*/,
-    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
-    double const /*dt*/) const
+    VariableArray const& /*variable_array*/, Variable const /*variable1*/,
+    Variable const /*variable2*/, ParameterLib::SpatialPosition const& /*pos*/,
+    double const /*t*/, double const /*dt*/) const
 {
     OGS_FATAL("AverageMolarMass::d2Value is not yet implemented.");
 

@@ -67,11 +67,11 @@ PropertyDataType RelPermUdellNonwettingPhase::value(
     return std::max(min_relative_permeability_, S_e_g * S_e_g * S_e_g);
 }
 PropertyDataType RelPermUdellNonwettingPhase::dValue(
-    VariableArray const& variable_array, Variable const primary_variable,
+    VariableArray const& variable_array, Variable const variable,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    if (primary_variable != Variable::liquid_saturation)
+    if (variable != Variable::liquid_saturation)
     {
         OGS_FATAL(
             "RelPermUdellNonwettingPhase::dValue is implemented for "

@@ -46,15 +46,14 @@ PropertyDataType Linear::value(VariableArray const& variable_array,
 }
 
 PropertyDataType Linear::dValue(VariableArray const& /*variable_array*/,
-                                Variable const primary_variable,
+                                Variable const variable,
                                 ParameterLib::SpatialPosition const& /*pos*/,
                                 double const /*t*/, double const /*dt*/) const
 {
-    auto const independent_variable =
-        std::find_if(independent_variables_.begin(),
-                     independent_variables_.end(),
-                     [&primary_variable](auto const& iv) -> bool
-                     { return iv.type == primary_variable; });
+    auto const independent_variable = std::find_if(
+        independent_variables_.begin(),
+        independent_variables_.end(),
+        [&variable](auto const& iv) -> bool { return iv.type == variable; });
 
     return independent_variable != independent_variables_.end()
                ? std::get<double>(value_) *

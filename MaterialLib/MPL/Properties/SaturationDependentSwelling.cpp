@@ -103,11 +103,11 @@ PropertyDataType SaturationDependentSwelling::value(
 
 PropertyDataType SaturationDependentSwelling::dValue(
     VariableArray const& variable_array,
-    VariableArray const& variable_array_prev, Variable const primary_variable,
+    VariableArray const& variable_array_prev, Variable const variable,
     ParameterLib::SpatialPosition const& pos, double const /*t*/,
     double const /*dt*/) const
 {
-    if (primary_variable != Variable::liquid_saturation)
+    if (variable != Variable::liquid_saturation)
     {
         OGS_FATAL(
             "SaturationDependentSwelling::dValue is implemented for "

@@ -39,11 +39,11 @@ PropertyDataType Exponential::value(
 }
 
 PropertyDataType Exponential::dValue(
-    VariableArray const& variable_array, Variable const primary_variable,
+    VariableArray const& variable_array, Variable const variable,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    if (exponent_data_.type != primary_variable)
+    if (exponent_data_.type != variable)
     {
         return 0.;
     }

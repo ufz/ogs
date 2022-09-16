@@ -61,11 +61,11 @@ PropertyDataType SaturationVanGenuchten::value(
 }
 
 PropertyDataType SaturationVanGenuchten::dValue(
-    VariableArray const& variable_array, Variable const primary_variable,
+    VariableArray const& variable_array, Variable const variable,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    if (primary_variable != Variable::capillary_pressure)
+    if (variable != Variable::capillary_pressure)
     {
         OGS_FATAL(
             "SaturationVanGenuchten::dValue is implemented for derivatives "
@@ -98,15 +98,14 @@ PropertyDataType SaturationVanGenuchten::dValue(
 }
 
 PropertyDataType SaturationVanGenuchten::d2Value(
-    VariableArray const& variable_array, Variable const primary_variable1,
-    Variable const primary_variable2,
-    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
-    double const /*dt*/) const
+    VariableArray const& variable_array, Variable const variable1,
+    Variable const variable2, ParameterLib::SpatialPosition const& /*pos*/,
+    double const /*t*/, double const /*dt*/) const
 {
-    (void)primary_variable1;
-    (void)primary_variable2;
-    assert((primary_variable1 == Variable::capillary_pressure) &&
-           (primary_variable2 == Variable::capillary_pressure) &&
+    (void)variable1;
+    (void)variable2;
+    assert((variable1 == Variable::capillary_pressure) &&
+           (variable2 == Variable::capillary_pressure) &&
            "SaturationVanGenuchten::d2Value is implemented for  derivatives "
            "with respect to capillary pressure only.");
 
