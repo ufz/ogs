@@ -36,11 +36,11 @@ def get_version():
 
 
 sys.path.append(os.path.join("Applications", "Python"))
-from ogs import binaries_list
+from ogs._internal.provide_ogs_cli_tools_via_wheel import binaries_list
 
 console_scripts = []
 for b in binaries_list:
-    console_scripts.append(f"{b}=ogs:{b}")
+    console_scripts.append(f"{b}=ogs._internal.provide_ogs_cli_tools_via_wheel:{b}")
 
 cmake_preset = "wheel"
 if platform.system() == "Windows":
