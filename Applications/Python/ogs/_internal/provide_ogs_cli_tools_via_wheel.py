@@ -73,7 +73,7 @@ if "PEP517_BUILD_BACKEND" not in os.environ:
     OGS_BIN_DIR = os.path.join(os.path.join(os.path.dirname(__file__), "bin"))
 
     def _program(name, args):
-        return subprocess.call([os.path.join(OGS_BIN_DIR, name)] + args)
+        return subprocess.run([os.path.join(OGS_BIN_DIR, name)] + args).returncode
 
     FUNC_TEMPLATE = """def {0}(): raise SystemExit(_program("{0}", sys.argv[1:]))"""
     for f in binaries_list:
