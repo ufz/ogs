@@ -101,8 +101,7 @@ bool substituteKeyword(std::string& result, std::string& parenthesized_string,
     if (b == 'e' || b == 'E' || b == 'f' || b == 'F' || b == 'g' || b == 'G')
     {
         type_specification[std::type_index(typeid(double))] = b;
-        precision_specification = precision_specification.substr(
-            0, precision_specification.length() - 1);
+        precision_specification.pop_back();
     }
 
     std::string const generated_fmt_string =
