@@ -61,7 +61,7 @@ public:
 
     /*!
        \brief          Perform MPI collection of assembled entries in buffer
-       \param asm_type Assmebly type, either MAT_FLUSH_ASSEMBLY
+       \param asm_type Assembly type, either MAT_FLUSH_ASSEMBLY
                        or MAT_FINAL_ASSEMBLY
     */
     void finalizeAssembly(const MatAssemblyType asm_type = MAT_FINAL_ASSEMBLY)
@@ -140,7 +140,7 @@ public:
 
        For the setting of Dirichlet boundary condition
        in PETSc, please refer to the
-       [PETSc:Documentation:FAQ](https://www.petsc.org/release/faq/#when-solving-a-system-with-dirichlet-boundary-conditions-i-can-use-matzerorows-to-eliminate-the-dirichlet-rows-but-this-results-in-a-non-symmetric-system-how-can-i-apply-dirichlet-boundary-conditions-but-keep-the-matrix-symmetric").
+       [PETSc:Documentation:FAQ](https://petsc.org/release/faq/#when-solving-a-system-with-dirichlet-boundary-conditions-i-can-use-matzerorows-to-eliminate-the-dirichlet-rows-but-this-results-in-a-non-symmetric-system-how-can-i-apply-dirichlet-boundary-conditions-but-keep-the-matrix-symmetric).
      */
     template <class T_DENSE_MATRIX>
     void add(RowColumnIndices<PetscInt> const& indices,
@@ -272,7 +272,7 @@ void PETScMatrix::add(std::vector<PetscInt> const& row_pos,
 /*!
     \brief          General interface for the matrix assembly.
     \param mat      The matrix to be finalized.
-    \param asm_type Assmebly type, either MAT_FLUSH_ASSEMBLY
+    \param asm_type Assembly type, either MAT_FLUSH_ASSEMBLY
                      or MAT_FINAL_ASSEMBLY.
 */
 bool finalizeMatrixAssembly(
