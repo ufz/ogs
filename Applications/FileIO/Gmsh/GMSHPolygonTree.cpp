@@ -12,6 +12,7 @@
 
 #include <sstream>
 
+#include "BaseLib/Algorithm.h"
 #include "GMSHAdaptiveMeshDensity.h"
 #include "GMSHFixedMeshDensity.h"
 #include "GeoLib/AnalyticalGeometry.h"
@@ -44,10 +45,7 @@ GMSHPolygonTree::~GMSHPolygonTree()
     // responsible to cleanup up
     if (isRoot())
     {  // root
-        for (auto* polyline : _plys)
-        {
-            delete polyline;
-        }
+        BaseLib::cleanupVectorElements(_plys);
     }
 }
 
