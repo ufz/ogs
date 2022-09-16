@@ -30,7 +30,7 @@ std::ostream& operator<<(std::ostream& os, UserPunch const& user_punch)
        << "\n";
     os << "-headings ";
     auto const& secondary_variables = user_punch.secondary_variables;
-    for (auto& secondary_variable : secondary_variables)
+    for (auto const& secondary_variable : secondary_variables)
     {
         os << secondary_variable.name << " ";
     }

@@ -27,7 +27,7 @@ PhaseComponent::PhaseComponent(std::string&& name_,
 EquilibriumReactants::EquilibriumReactants(
     std::vector<PhaseComponent> const& phase_components)
 {
-    for (auto& phase_component : phase_components)
+    for (auto const& phase_component : phase_components)
     {
         auto& name = phase_component.getName();
         pp_assemblage_comps[name] = *phase_component.castToBaseClass();
