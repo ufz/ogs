@@ -167,9 +167,6 @@ private:
     /// 1) Diersch (2013) FEFLOW book on page 958, M.3, or
     /// 2) Diersch (2011) Comp & Geosci 37:1122-1135, Eq. 90-97.
     std::array<double, number_of_unknowns> _thermal_resistances;
-
-    /// Flow velocity inside the pipes. Depends on the flow_rate.
-    double _flow_velocity;
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE
