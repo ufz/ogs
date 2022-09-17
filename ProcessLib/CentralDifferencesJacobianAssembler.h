@@ -46,14 +46,14 @@ public:
     //! is called several times and the Jacobian is built from finite
     //! differences.
     //! The number of calls of the assemble() method is \f$2N+1\f$ if \f$N\f$ is
-    //! the size of \c local_x.
+    //! the size of \c local_x_data.
     //!
     //! \attention It is assumed that the local vectors and matrices are ordered
     //! by component.
     void assembleWithJacobian(LocalAssemblerInterface& local_assembler,
                               double const t, double const dt,
-                              std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
+                              std::vector<double> const& local_x_data,
+                              std::vector<double> const& local_xdot_data,
                               std::vector<double>& local_M_data,
                               std::vector<double>& local_K_data,
                               std::vector<double>& local_b_data,

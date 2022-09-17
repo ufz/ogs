@@ -45,8 +45,8 @@ public:
     //! by component.
     void assembleWithJacobian(LocalAssemblerInterface& local_assembler,
                               double const t, double const dt,
-                              std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
+                              std::vector<double> const& local_x_data,
+                              std::vector<double> const& local_xdot_data,
                               std::vector<double>& local_M_data,
                               std::vector<double>& local_K_data,
                               std::vector<double>& local_b_data,
