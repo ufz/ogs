@@ -19,20 +19,21 @@
 struct IceWaterRockParameters
 {
     double const k = 1;
-    double const T_c = 273.15;  // K
-    double const rho_I = 900;   // kg/m³
-    double const rho_W = 1000;  // kg/m³
-    double const rho_R = 3000;  // kg/m³
-    double const kap_I = 2.37;  // W/m/K
-    double const kap_W = 0.54;  // W/m/K
-    double const kap_R = 3.00;  // W/m/K
-    double const cp_I = 2052;   // J/kg/K
-    double const cp_W = 4186;   // J/kg/K
-    double const cp_R = 2500;   // J/kg/K
-    double const L_IW = 334.e3;    // J/kg
+    double const T_c = 273.15;   // K
+    double const rho_I = 900;    // kg/m³
+    double const rho_W = 1000;   // kg/m³
+    double const rho_R = 3000;   // kg/m³
+    double const kap_I = 2.37;   // W/m/K
+    double const kap_W = 0.54;   // W/m/K
+    double const kap_R = 3.00;   // W/m/K
+    double const cp_I = 2052;    // J/kg/K
+    double const cp_W = 4186;    // J/kg/K
+    double const cp_R = 2500;    // J/kg/K
+    double const L_IW = 334.e3;  // J/kg
 };
 
-std::unique_ptr<MaterialPropertyLib::Medium> createMyMedium(double L_IW, double porosity)
+std::unique_ptr<MaterialPropertyLib::Medium> createMyMedium(double L_IW,
+                                                            double porosity)
 {
     std::stringstream prj;
     IceWaterRockParameters water_ice_rock;
@@ -161,7 +162,8 @@ TEST(MaterialPropertyLib, SpecificHeatCapacityWithLatentHeat_trivial)
                 MaterialPropertyLib::PropertyType::specific_heat_capacity)
             .template value<double>(vars, pos, t, dt);
     auto const Capp_expected = Cvol_mix / rho_mix;
-    auto const relativeError = std::fabs((Capp_expected - Capp) / Capp_expected);
+    auto const relativeError =
+        std::fabs((Capp_expected - Capp) / Capp_expected);
 
     ASSERT_LE(relativeError, 1e-10)
         << "for expected apparent heat capacity " << Capp_expected
@@ -182,8 +184,9 @@ TEST(MaterialPropertyLib, SpecificHeatCapacityWithLatentHeat_atTc)
 
     // at the critical temperature the frozen and the liquid phase have same
     // volume fractions of 0.5
-    auto const rho_mix = phi * 0.5 * (water_ice_rock.rho_I + water_ice_rock.rho_W)
-                       + (1 - phi) * water_ice_rock.rho_R;
+    auto const rho_mix =
+        phi * 0.5 * (water_ice_rock.rho_I + water_ice_rock.rho_W) +
+        (1 - phi) * water_ice_rock.rho_R;
 
     auto const Cvol_mix =
         phi * 0.5 *
@@ -197,9 +200,11 @@ TEST(MaterialPropertyLib, SpecificHeatCapacityWithLatentHeat_atTc)
     auto const Capp =
         medium->property(MPL::PropertyType::specific_heat_capacity)
             .template value<double>(vars, pos, t, dt);
-    auto const Capp_expected =
-        (Cvol_mix + water_ice_rock.L_IW * rho_mix * phi * water_ice_rock.k / 4) / rho_mix;
-    auto const relativeError = std::fabs((Capp_expected - Capp) / Capp_expected);
+    auto const Capp_expected = (Cvol_mix + water_ice_rock.L_IW * rho_mix * phi *
+                                               water_ice_rock.k / 4) /
+                               rho_mix;
+    auto const relativeError =
+        std::fabs((Capp_expected - Capp) / Capp_expected);
 
     ASSERT_LE(relativeError, 1e-10)
         << "for expected apparent heat capacity " << Capp_expected
@@ -225,7 +230,8 @@ TEST(MaterialPropertyLib, SpecificHeatCapacityWithLatentHeat_belowTc)
         medium->property(MPL::PropertyType::specific_heat_capacity)
             .template value<double>(vars, pos, t, dt);
     auto const Capp_expected = water_ice_rock.cp_I;
-    auto const relativeError = std::fabs((Capp_expected - Capp) / Capp_expected);
+    auto const relativeError =
+        std::fabs((Capp_expected - Capp) / Capp_expected);
 
     ASSERT_LE(relativeError, 1e-10)
         << "for expected apparent heat capacity " << Capp_expected
@@ -251,7 +257,8 @@ TEST(MaterialPropertyLib, SpecificHeatCapacityWithLatentHeat_aboveTc)
         medium->property(MPL::PropertyType::specific_heat_capacity)
             .template value<double>(vars, pos, t, dt);
     auto const Capp_expected = water_ice_rock.cp_W;
-    auto const relativeError = std::fabs((Capp_expected - Capp) / Capp_expected);
+    auto const relativeError =
+        std::fabs((Capp_expected - Capp) / Capp_expected);
 
     ASSERT_LE(relativeError, 1e-10)
         << "for expected apparent heat capacity " << Capp_expected

@@ -123,8 +123,8 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         if (!sys.isLinear() && _convergence_criterion->hasResidualCheck())
         {
             GlobalVector res;
-            LinAlg::matMult(A, x_new_process, res);       // res = A * x_new
-            LinAlg::axpy(res, -1.0, rhs);                 // res -= rhs
+            LinAlg::matMult(A, x_new_process, res);  // res = A * x_new
+            LinAlg::axpy(res, -1.0, rhs);            // res -= rhs
             _convergence_criterion->checkResidual(res);
         }
 

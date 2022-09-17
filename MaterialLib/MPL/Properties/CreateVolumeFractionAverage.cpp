@@ -12,8 +12,8 @@
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<VolumeFractionAverage>
-createVolumeFractionAverage(BaseLib::ConfigTree const& config)
+std::unique_ptr<VolumeFractionAverage> createVolumeFractionAverage(
+    BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "VolumeFractionAverage");
@@ -27,8 +27,7 @@ createVolumeFractionAverage(BaseLib::ConfigTree const& config)
 
     // no input parameters required here (taken from phase properties)
 
-    return std::make_unique<
-        MaterialPropertyLib::VolumeFractionAverage>(
+    return std::make_unique<MaterialPropertyLib::VolumeFractionAverage>(
         std::move(property_name));
 }
 }  // namespace MaterialPropertyLib
