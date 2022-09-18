@@ -16,11 +16,10 @@ namespace ChemistryLib
 {
 namespace PhreeqcKernelData
 {
-KineticReactant::KineticReactant(std::string const& name,
-                                 double const initial_amount)
+KineticReactant::KineticReactant(std::string name, double const initial_amount)
 {
-    rate_name = name.c_str();
-    namecoef.add(name.c_str(), 1.0);
+    rate_name = std::move(name);
+    namecoef.add(rate_name.c_str(), 1.0);
     m = initial_amount;
     m0 = initial_amount;
 }

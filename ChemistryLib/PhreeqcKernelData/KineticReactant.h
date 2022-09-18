@@ -22,7 +22,7 @@ namespace PhreeqcKernelData
 class KineticReactant final : private cxxKineticsComp
 {
 public:
-    KineticReactant(std::string const& name, double const initial_amount);
+    KineticReactant(std::string name, double const initial_amount);
 
     cxxKineticsComp const* castToBaseClass() const
     {

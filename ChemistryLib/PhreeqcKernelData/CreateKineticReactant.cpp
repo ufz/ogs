@@ -49,7 +49,7 @@ std::unique_ptr<Kinetics> createKineticReactants(
             1);
         std::fill(std::begin(*amount), std::end(*amount), initial_amount);
 
-        kinetic_reactants.emplace_back(name, initial_amount);
+        kinetic_reactants.emplace_back(std::move(name), initial_amount);
     }
 
     return std::make_unique<Kinetics>(kinetic_reactants);
