@@ -168,8 +168,8 @@ struct AndersonBjorck
 {
     static double get_m(const double /*fa*/, const double fb, const double fc)
     {
-        const double f = 1.0 - fc / fb;
-        return (f >= 0.0) ? f : 0.5;
+        const double v = 1.0 - fc / fb;
+        return (v >= 0.0) ? v : 0.5;
     }
 };
 

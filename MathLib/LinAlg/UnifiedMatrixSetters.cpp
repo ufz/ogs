@@ -110,14 +110,14 @@ void addToMatrix(PETScMatrix& m, std::initializer_list<double> values)
 
 namespace MathLib
 {
-void setVector(EigenVector& v_, std::initializer_list<double> values)
+void setVector(EigenVector& v, std::initializer_list<double> values)
 {
-    auto& v(v_.getRawVector());
+    auto& w = v.getRawVector();
     assert((std::size_t)v.size() == values.size());
     auto it = values.begin();
     for (std::size_t i = 0; i < values.size(); ++i)
     {
-        v[i] = *(it++);
+        w[i] = *(it++);
     }
 }
 
