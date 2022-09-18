@@ -287,8 +287,8 @@ void HeatTransportBHEProcess::preTimestepConcreteProcess(
 
     // Transfer T_out to server_Communication and get back T_in and flowrate
     auto const server_communication_result =
-        _process_data.py_bc_object->serverCommunicationPreTimestep(t, dt, Tin_value,
-                                                        Tout_value, flowrate);
+        _process_data.py_bc_object->serverCommunicationPreTimestep(
+            t, dt, Tin_value, Tout_value, flowrate);
     if (!_process_data.py_bc_object
              ->isOverriddenServerCommunicationPreTimestep())
     {
@@ -335,8 +335,8 @@ void HeatTransportBHEProcess::postTimestepConcreteProcess(
     }
 
     // Transfer T_out to server_Communication
-    _process_data.py_bc_object->serverCommunicationPostTimestep(t, dt, Tin_value,
-                                                         Tout_value, flowrate);
+    _process_data.py_bc_object->serverCommunicationPostTimestep(
+        t, dt, Tin_value, Tout_value, flowrate);
     if (!_process_data.py_bc_object
              ->isOverriddenServerCommunicationPostTimestep())
     {

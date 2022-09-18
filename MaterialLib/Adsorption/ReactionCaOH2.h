@@ -43,10 +43,8 @@ public:
     // TODO merge with getReactionRate() above
     double getReactionRate(double const solid_density);
 
-    void updateParam(double T_solid,
-                      double _p_gas,
-                      double _x_react,
-                      double rho_s_initial);
+    void updateParam(double T_solid, double p_gas, double x_react,
+                     double rho_s_initial);
 
 private:
     void calculateQR();

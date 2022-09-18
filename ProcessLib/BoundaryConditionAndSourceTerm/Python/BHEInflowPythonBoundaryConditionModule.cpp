@@ -49,7 +49,8 @@ public:
                           tespySolver, t, Tin_val, Tout_val);
     }
 
-    std::tuple<std::vector<double>, std::vector<double>> serverCommunicationPreTimestep(
+    std::tuple<std::vector<double>, std::vector<double>>
+    serverCommunicationPreTimestep(
         double const t, double const dt, std::vector<double> const& Tin_val,
         std::vector<double> const& Tout_val,
         std::vector<double> const& flowrate) const override
@@ -60,14 +61,15 @@ public:
             serverCommunicationPreTimestep, t, dt, Tin_val, Tout_val, flowrate);
     }
 
-    void serverCommunicationPostTimestep(double const t, double const dt,
-                             std::vector<double> const& Tin_val,
-                             std::vector<double> const& Tout_val,
-                             std::vector<double> const& flowrate) const override
+    void serverCommunicationPostTimestep(
+        double const t, double const dt, std::vector<double> const& Tin_val,
+        std::vector<double> const& Tout_val,
+        std::vector<double> const& flowrate) const override
     {
-        PYBIND11_OVERLOAD(
-            void, BHEInflowPythonBoundaryConditionPythonSideInterface,
-            serverCommunicationPostTimestep, t, dt, Tin_val, Tout_val, flowrate);
+        PYBIND11_OVERLOAD(void,
+                          BHEInflowPythonBoundaryConditionPythonSideInterface,
+                          serverCommunicationPostTimestep, t, dt, Tin_val,
+                          Tout_val, flowrate);
     }
 };
 

@@ -119,8 +119,8 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
             "Required flow rate curve not found.");
 
         return PowerCurveFlowCurve{power_curve, flow_rate_curve,
-                                      refrigerant.specific_heat_capacity,
-                                      refrigerant.density};
+                                   refrigerant.specific_heat_capacity,
+                                   refrigerant.density};
     }
 
     if (type == "BuildingPowerCurveConstantFlow")

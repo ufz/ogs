@@ -52,7 +52,7 @@ PropertyDataType WaterVapourDensity::value(
 }
 
 PropertyDataType WaterVapourDensity::dValue(
-    VariableArray const& variable_array, Variable const primary_variable,
+    VariableArray const& variable_array, Variable const variable,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
@@ -60,7 +60,7 @@ PropertyDataType WaterVapourDensity::dValue(
     double const T = variable_array.temperature;
     double const water_density = variable_array.density;
 
-    if (primary_variable == Variable::temperature)
+    if (variable == Variable::temperature)
     {
         double const h = humidity(T, p, water_density);
         double const rho_v = h * saturatedVaporDensity(T);
@@ -72,7 +72,7 @@ PropertyDataType WaterVapourDensity::dValue(
                                          SpecificGasConstant::WaterVapour);
     }
 
-    if (primary_variable == Variable::phase_pressure)
+    if (variable == Variable::phase_pressure)
     {
         double const factor =
             1.0 /

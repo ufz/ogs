@@ -53,10 +53,10 @@ double ReactionCaOH2::getReactionRate(double const solid_density)
     return _qR;
 }
 
-void ReactionCaOH2::updateParam(double T_solid,
-                                double p_gas,
-                                double x_react,
-                                double rho_s_initial)
+void ReactionCaOH2::updateParam(double const T_solid,
+                                double const p_gas,
+                                double const x_react,
+                                double const rho_s_initial)
 {
     _T_s = T_solid;
     _p_gas = p_gas / 1e5;  // convert Pa to bar

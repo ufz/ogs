@@ -93,9 +93,9 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
             continue;
         }
         it = fields.begin();
-        std::array<double, 3> point{};
         try
         {
+            std::array<double, 3> point{};
             point[0] = std::stod(*it);
             point[1] = std::stod(*(++it));
             point[2] = std::stod(*(++it));

@@ -67,10 +67,9 @@ PropertyDataType IdealGasLawBinaryMixture::dValue(
 }
 
 PropertyDataType IdealGasLawBinaryMixture::d2Value(
-    VariableArray const& /*variable_array*/,
-    Variable const /*primary_variable1*/, Variable const /*primary_variable2*/,
-    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
-    double const /*dt*/) const
+    VariableArray const& /*variable_array*/, Variable const /*variable1*/,
+    Variable const /*variable2*/, ParameterLib::SpatialPosition const& /*pos*/,
+    double const /*t*/, double const /*dt*/) const
 {
     OGS_FATAL("IdealGasLawBinaryMixture::d2Value is not implemented.");
 

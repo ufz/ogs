@@ -88,7 +88,7 @@ PropertyDataType ClausiusClapeyron::value(
 }
 
 PropertyDataType ClausiusClapeyron::dValue(
-    VariableArray const& variable_array, Variable const primary_variable,
+    VariableArray const& variable_array, Variable const variable,
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
 {
@@ -103,7 +103,7 @@ PropertyDataType ClausiusClapeyron::dValue(
     {
         return 0.;
     }
-    if (primary_variable == Variable::phase_pressure)
+    if (variable == Variable::phase_pressure)
     {
         return 0.;
     }
@@ -112,7 +112,7 @@ PropertyDataType ClausiusClapeyron::dValue(
     const double dh = variable_array.enthalpy_of_evaporation;
     const double p_vap = std::get<double>(value(variable_array, pos, t, dt));
 
-    if (primary_variable == Variable::temperature)
+    if (variable == Variable::temperature)
     {
         return p_vap * M * dh / (R * T * T);
     }
@@ -122,10 +122,9 @@ PropertyDataType ClausiusClapeyron::dValue(
 }
 
 PropertyDataType ClausiusClapeyron::d2Value(
-    VariableArray const& /*variable_array*/,
-    Variable const /*primary_variable1*/, Variable const /*primary_variable2*/,
-    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
-    double const /*dt*/) const
+    VariableArray const& /*variable_array*/, Variable const /*variable1*/,
+    Variable const /*variable2*/, ParameterLib::SpatialPosition const& /*pos*/,
+    double const /*t*/, double const /*dt*/) const
 {
     OGS_FATAL("ClausiusClapeyron::d2Value is not implemented.");
 }

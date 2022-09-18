@@ -18,6 +18,7 @@
 #include "Applications/FileIO/Gmsh/GMSHMeshDensityStrategy.h"
 #include "Applications/FileIO/Gmsh/GMSHPoint.h"
 #include "Applications/FileIO/Gmsh/GMSHPolygonTree.h"
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "GeoLib/AnalyticalGeometry.h"
@@ -75,11 +76,8 @@ GMSHInterface::GMSHInterface(
 
 GMSHInterface::~GMSHInterface()
 {
-    for (auto* gmsh_pnt : _gmsh_pnts)
-    {
-        delete gmsh_pnt;
-    }
-    for (auto* polygon_tree : _polygon_tree_list)
+    BaseLib::cleanupVectorElements(_gmsh_pnts);
+    for (auto const* polygon_tree : _polygon_tree_list)
     {
         delete polygon_tree;
     }

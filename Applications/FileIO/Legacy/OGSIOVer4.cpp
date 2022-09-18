@@ -818,7 +818,7 @@ void writeAllDataToGLIFileV4(const std::string& fname,
 
     // writing surfaces as TIN files
     std::size_t sfcs_cnt(0);
-    for (auto& geo_name : geo_names)
+    for (auto const& geo_name : geo_names)
     {
         const GeoLib::SurfaceVec* sfcs_vec(geo.getSurfaceVecObj(geo_name));
         if (sfcs_vec)

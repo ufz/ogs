@@ -58,7 +58,6 @@ void addBulkMeshNodePropertyToSubMesh(MeshLib::Mesh const& bulk_mesh,
                    { return bulk_mesh_property[id]; });
 }
 
-
 bool Output::isOutputStep(int timestep, double const t) const
 {
     auto const fixed_output_time = std::lower_bound(

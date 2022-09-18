@@ -202,7 +202,6 @@ namespace MeshLib::IO
 struct HdfWriter::HdfMesh final
 {
     hid_t const group;
-    std::string const name;
     std::map<std::string, hid_t> const datasets;
     std::vector<HdfData> const variable_attributes;
 };
@@ -257,7 +256,7 @@ HdfWriter::HdfWriter(std::vector<MeshHdfData> meshes,
         }
 
         _hdf_meshes.push_back(std::make_unique<HdfMesh>(
-            HdfMesh{group, mesh.name, datasets, mesh.variable_attributes}));
+            HdfMesh{group, datasets, mesh.variable_attributes}));
     }
 }
 

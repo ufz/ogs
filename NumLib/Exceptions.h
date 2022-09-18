@@ -17,7 +17,7 @@ namespace NumLib
 {
 struct AssemblyException : public std::runtime_error
 {
-    AssemblyException(std::string const& reason)
+    explicit AssemblyException(std::string const& reason)
         : std::runtime_error{"Error in process' assembly: " + reason} {};
 };
 }  // namespace NumLib

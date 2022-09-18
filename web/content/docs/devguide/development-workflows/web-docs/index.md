@@ -67,7 +67,7 @@ This page will be available at the URL `/docs/my-post/` and the content of the p
 
 Page meta data is given in frontmatter.
 
-- `weight`: Navigation is handled automatically by the folder structure. Use the `weight`-paramter in the frontmatter to specify the order of pages in ascending order (top `->` down).
+- `weight`: Navigation is handled automatically by the folder structure. Use the `weight`-parameter in the frontmatter to specify the order of pages in ascending order (top `->` down).
 - `image`: Specify an image in the page bundle used for the gallery view.
 
 ### Write a page

@@ -10,6 +10,7 @@
  */
 
 #include <gtest/gtest.h>
+
 #include <sstream>
 
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
@@ -98,8 +99,9 @@ TEST(MaterialPropertyLib, VolumeFractionAverage_Density)
     MaterialPropertyLib::VariableArray vars;
     vars.temperature = water_ice_rock.T_c;
 
-    auto const& phi = medium->property(MaterialPropertyLib::PropertyType::porosity)
-                     .template value<double>(vars, pos, time, dt);
+    auto const& phi =
+        medium->property(MaterialPropertyLib::PropertyType::porosity)
+            .template value<double>(vars, pos, time, dt);
 
     auto rho_m = medium->property(MaterialPropertyLib::PropertyType::density)
                      .template value<double>(vars, pos, time, dt);
@@ -212,11 +214,14 @@ TEST(MaterialPropertyLib, VolumeFractionAverage_ThermalConductivity)
     MaterialPropertyLib::VariableArray vars;
     vars.temperature = water_ice_rock.T_c;
 
-    auto const& phi = medium->property(MaterialPropertyLib::PropertyType::porosity)
-                     .template value<double>(vars, pos, time, dt);
+    auto const& phi =
+        medium->property(MaterialPropertyLib::PropertyType::porosity)
+            .template value<double>(vars, pos, time, dt);
 
-    auto kap_m = medium->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
-                     .template value<double>(vars, pos, time, dt);
+    auto kap_m =
+        medium
+            ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .template value<double>(vars, pos, time, dt);
 
     auto const kap_expected =
         (1 - phi) * water_ice_rock.kap_R +

@@ -9,7 +9,7 @@ weight = 1061
     parent = "advanced"
 +++
 
-[Visual Studio Code](https://code.visualstudio.com/) is a powerful text editor which can be expanded to a full featured integrated development environment (IDE) with plugins. With the  [Visual Studio Code Remote - Containers](https://code.visualstudio.com/docs/remote/containers) extension you can use prebuilt Docker container as the runtime environment for your code development. This page serves as an alterntive to the [Getting Started]({{< relref "docs/devguide/getting-started/introduction.md" >}})-section. The following features make this a nice development environment:
+[Visual Studio Code](https://code.visualstudio.com/) is a powerful text editor which can be expanded to a full featured integrated development environment (IDE) with plugins. With the  [Visual Studio Code Remote - Containers](https://code.visualstudio.com/docs/remote/containers) extension you can use prebuilt Docker container as the runtime environment for your code development. This page serves as an alternative to the [Getting Started]({{< relref "docs/devguide/getting-started/introduction.md" >}})-section. The following features make this a nice development environment:
 
 - All ogs prerequisites (except of MPI / PETSc support, may come later) already setup.
 - Code editing with auto-completion.

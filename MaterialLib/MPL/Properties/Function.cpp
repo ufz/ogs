@@ -191,21 +191,21 @@ PropertyDataType Function::value(VariableArray const& variable_array,
 }
 
 PropertyDataType Function::dValue(VariableArray const& variable_array,
-                                  Variable const primary_variable,
+                                  Variable const variable,
                                   ParameterLib::SpatialPosition const& /*pos*/,
                                   double const /*t*/, double const /*dt*/) const
 {
     auto const it = std::find_if(begin(dvalue_expressions_),
                                  end(dvalue_expressions_),
-                                 [&primary_variable](auto const& v)
-                                 { return v.first == primary_variable; });
+                                 [&variable](auto const& v)
+                                 { return v.first == variable; });
 
     if (it == end(dvalue_expressions_))
     {
         OGS_FATAL(
             "Requested derivative with respect to the variable {:s} not "
             "provided for Function-type property {:s}.",
-            variable_enum_to_string[static_cast<int>(primary_variable)], name_);
+            variable_enum_to_string[static_cast<int>(variable)], name_);
     }
 
     return evaluateExpressions(symbol_values_, variable_array, it->second);

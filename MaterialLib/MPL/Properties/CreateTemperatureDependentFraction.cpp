@@ -22,8 +22,7 @@ createTemperatureDependentFraction(BaseLib::ConfigTree const& config)
     //! \ogs_file_param{properties__property__name}
     auto property_name = config.peekConfigParameter<std::string>("name");
 
-    DBUG("Create temperature dependent fraction property {:s}.",
-         property_name);
+    DBUG("Create temperature dependent fraction property {:s}.", property_name);
 
     auto const k =
         //! \ogs_file_param{properties__property__TemperatureDependentFraction__steepness}
@@ -33,8 +32,7 @@ createTemperatureDependentFraction(BaseLib::ConfigTree const& config)
         //! \ogs_file_param{properties__property__TemperatureDependentFraction__characteristic_temperature}
         config.getConfigParameter<double>("characteristic_temperature");
 
-    return std::make_unique<
-        MaterialPropertyLib::TemperatureDependentFraction>(
+    return std::make_unique<MaterialPropertyLib::TemperatureDependentFraction>(
         std::move(property_name), k, T_c);
 }
 }  // namespace MaterialPropertyLib

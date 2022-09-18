@@ -40,7 +40,7 @@ void VolumeFractionAverage::setProperties(
     std::vector<std::unique_ptr<Phase>> const& phases)
 {
     // run over phases, identify them and get properties
-    for (auto& phase : phases)
+    for (auto const& phase : phases)
     {
         if (phase == nullptr)
         {
@@ -48,7 +48,7 @@ void VolumeFractionAverage::setProperties(
                 "One of the required phases (AqueousLiquid/FrozenLiquid/Solid) "
                 "does not exist!");
         }
-        std::string phase_name = phase->name;
+        std::string const& phase_name = phase->name;
 
         if (!phase->hasProperty(prop_type_))
         {
