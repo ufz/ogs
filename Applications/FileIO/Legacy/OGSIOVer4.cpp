@@ -735,7 +735,7 @@ void writeAllDataToGLIFileV4(const std::string& fname,
     // writing all points
     os << "#POINTS"
        << "\n";
-    for (auto& geo_name : geo_names)
+    for (auto const& geo_name : geo_names)
     {
         os.precision(std::numeric_limits<double>::digits10);
         GeoLib::PointVec const* const pnt_vec(geo.getPointVecObj(geo_name));

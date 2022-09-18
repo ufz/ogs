@@ -151,12 +151,12 @@ SimpleMatrixVectorProvider::~SimpleMatrixVectorProvider()
             _used_vectors.size());
     }
 
-    for (auto& ptr_id : _used_matrices)
+    for (auto const& ptr_id : _used_matrices)
     {
         delete ptr_id.first;
     }
 
-    for (auto& ptr_id : _used_vectors)
+    for (auto const& ptr_id : _used_vectors)
     {
         delete ptr_id.first;
     }
