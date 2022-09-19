@@ -17,8 +17,8 @@ std::pair<Eigen::Vector3d, double> getNewellPlane(InputIterator pnts_begin,
     Eigen::Vector3d plane_normal({0, 0, 0});
     Eigen::Vector3d centroid({0, 0, 0});
     for (auto i=std::prev(pnts_end), j=pnts_begin; j!=pnts_end; i = j, ++j) {
-        auto &pt_i = *(*i);
-        auto &pt_j = *(*j);
+        auto const& pt_i = *(*i);
+        auto const& pt_j = *(*j);
         plane_normal[0] += (pt_i[1] - pt_j[1])
                            * (pt_i[2] + pt_j[2]); // projection on yz
         plane_normal[1] += (pt_i[2] - pt_j[2])
