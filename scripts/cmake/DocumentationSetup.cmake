@@ -90,6 +90,7 @@ if($ENV{CI_COMMIT_BRANCH} MATCHES "master|^v[0-9]\.[0-9]\.[0-9]")
     set(DOXYGEN_SEARCHENGINE_URL
         "https://doxysearch.opengeosys.org/$ENV{CI_COMMIT_BRANCH}/doxysearch.cgi"
     )
+    set(DOXYGEN_SEARCHENGINE YES)
     message(STATUS "Doxygen search server: ${DOXYGEN_SEARCHENGINE_URL}")
 endif()
 if(EXISTS ${PROJECT_BINARY_DIR}/cpp-dependencies.svg)
