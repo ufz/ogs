@@ -67,10 +67,10 @@ binaries_list = [
 ]
 
 if "PEP517_BUILD_BACKEND" not in os.environ:
-    if platform.system() == "Windows":
-        os.add_dll_directory(os.path.join(os.path.dirname(__file__), "bin"))
+    OGS_BIN_DIR = os.path.join(os.path.join(os.path.dirname(__file__), "..", "bin"))
 
-    OGS_BIN_DIR = os.path.join(os.path.join(os.path.dirname(__file__), "bin"))
+    if platform.system() == "Windows":
+        os.add_dll_directory(OGS_BIN_DIR)
 
     def _program(name, args):
         return subprocess.run([os.path.join(OGS_BIN_DIR, name)] + args).returncode
