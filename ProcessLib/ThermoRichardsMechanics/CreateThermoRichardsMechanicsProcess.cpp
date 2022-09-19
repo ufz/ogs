@@ -178,6 +178,11 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
         mass_lumping = *mass_lumping_ptr;
     }
 
+    bool const apply_body_force_for_deformation =
+        //! \ogs_file_param{prj__processes__process__THERMO_RICHARDS_MECHANICS__apply_body_force_for_deformation}
+        config.getConfigParameter<bool>("apply_body_force_for_deformation",
+                                        true);
+
     const bool use_TaylorHood_elements =
         variable_p->getShapeFunctionOrder() !=
                 variable_u->getShapeFunctionOrder()
@@ -191,7 +196,8 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
         initial_stress,
         specific_body_force,
         mass_lumping,
-        use_TaylorHood_elements};
+        use_TaylorHood_elements,
+        apply_body_force_for_deformation};
 
     SecondaryVariableCollection secondary_variables;
 
