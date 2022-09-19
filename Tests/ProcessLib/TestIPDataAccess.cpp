@@ -34,7 +34,7 @@ struct ProcessLib_IPDataAccess : ::testing::Test
 
         constexpr int off_diag_size = dim == 2 ? 1 : 3;
 
-        static constexpr std::size_t num_int_pts = 10;
+        constexpr std::size_t num_int_pts = 10;
 
         std::vector<IPData<dim>> ip_data(num_int_pts);
 
@@ -47,6 +47,24 @@ struct ProcessLib_IPDataAccess : ::testing::Test
             ip_data[i].kelvin.template tail<off_diag_size>() *= std::sqrt(2.0);
 
             ip_data[i].scalar = 10. * num_int_pts + i;
+        }
+
+        return ip_data;
+    }
+
+    static std::vector<IPData<Dim::value>> getIPDataNaNs()
+    {
+        using KV = typename IPData<dim>::KV;
+
+        constexpr std::size_t num_int_pts = 10;
+        constexpr double nan = std::numeric_limits<double>::quiet_NaN();
+
+        std::vector<IPData<dim>> ip_data(num_int_pts);
+
+        for (std::size_t i = 0; i < num_int_pts; ++i)
+        {
+            ip_data[i].kelvin = KV::Constant(nan);
+            ip_data[i].scalar = nan;
         }
 
         return ip_data;
@@ -161,4 +179,50 @@ TYPED_TEST(ProcessLib_IPDataAccess, GetKelvinVectorDataTransposedOrder)
     ASSERT_THAT(cache,
                 testing::Pointwise(testing::DoubleEq(),
                                    this->getKVDataTransposedOrder()));
+}
+
+TYPED_TEST(ProcessLib_IPDataAccess, SetScalarData)
+{
+    constexpr int dim = TypeParam::value;
+
+    auto ip_data = this->getIPDataNaNs();
+
+    auto const cache = this->getScalarData();
+
+    auto const num_read = ProcessLib::setIntegrationPointScalarData(
+        &cache[0], ip_data, &IPData<dim>::scalar);
+
+    ASSERT_EQ(ip_data.size(), num_read);
+
+    auto const ip_data_expected = this->getIPData();
+
+    for (std::size_t i = 0; i < ip_data_expected.size(); ++i)
+    {
+        EXPECT_DOUBLE_EQ(ip_data_expected[i].scalar, ip_data[i].scalar)
+            << "Values at integration point " << i << " differ.";
+    }
+}
+
+TYPED_TEST(ProcessLib_IPDataAccess, SetKelvinVectorData)
+{
+    constexpr int dim = TypeParam::value;
+
+    auto ip_data = this->getIPDataNaNs();
+
+    auto const cache = this->getKVDataTransposedOrder();
+
+    auto const num_read = ProcessLib::setIntegrationPointKelvinVectorData<dim>(
+        &cache[0], ip_data, &IPData<dim>::kelvin);
+
+    ASSERT_EQ(ip_data.size(), num_read);
+
+    auto const ip_data_expected = this->getIPData();
+
+    for (std::size_t i = 0; i < ip_data_expected.size(); ++i)
+    {
+        EXPECT_THAT(
+            ip_data[i].kelvin,
+            testing::Pointwise(testing::DoubleEq(), ip_data_expected[i].kelvin))
+            << "Values at integration point " << i << " differ.";
+    }
 }
