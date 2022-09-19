@@ -12,22 +12,36 @@ weight = 3
 ### Cite the software
 
 ```bibtex
-@software{ogs:6.4.2,
-  author = {Naumov, Dmitry Yu. and Bilke, Lars and Fischer, Thomas and
-            Rink, Karsten and Wang, Wenqing and Watanabe, Norihiro and
-            Lu, Renchao and Grunwald, Norbert and Zill, Florian and
-            Buchwald, Jörg and Huang, Yonghui and Bathmann, Jasper and
-            Chen, Chaofan and Chen, Shuang and Meng, Boyan and
-            Shao, Haibing and Kern, Dominik and Yoshioka, Keita and
-            Garibay Rodriguez, Jaime and Miao, Xingyuan and
-            Parisio, Francesco and Silbermann, Christian and Thiedau, Jan and
-            Walther, Marc and Kaiser, Sonja and Boog, Johannes and
-            Zheng, Tianyuan and Meisel, Tobias and Ning, Zhang},
-  doi    = {10.5281/zenodo.6405711},
-  month  = {4},
-  title  = {OpenGeoSys},
-  url    = {https://www.opengeosys.org},
-  year   = {2022}
+@software{ogs:6.4.3,
+  author       = {Lars Bilke and
+                  Thomas Fischer and
+                  Dmitri Naumov and
+                  Christoph Lehmann and
+                  Wenqing Wang and
+                  Renchao Lu and
+                  Boyan Meng and
+                  Karsten Rink and
+                  Norbert Grunwald and
+                  Jörg Buchwald and
+                  Christian Silbermann and
+                  Robert Habel and
+                  Linda Günther and
+                  Mostafa Mollaali and
+                  Tobias Meisel and
+                  Jakob Randow and
+                  Sophia Einspänner and
+                  Haibing Shao and
+                  Kata Kurgyis and
+                  Olaf Kolditz and
+                  Jaime Garibay},
+  title        = {OpenGeoSys},
+  month        = apr,
+  year         = 2022,
+  note         = {{If you use this software, please cite it using these metadata.}},
+  publisher    = {Zenodo},
+  version      = {6.4.3},
+  doi          = {10.5281/zenodo.7092676},
+  url          = {https://doi.org/10.5281/zenodo.7092676}
 }
 ```
 

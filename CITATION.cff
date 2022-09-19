@@ -10,8 +10,11 @@ license: BSD-3-Clause
 doi: 10.5281/zenodo.591265
 # The following needs to be adapted on releases:
 version: "6.4.3"
-date-released: "2022-04-01"
+date-released: "2022-09-19"
 identifiers:
+    - type: doi
+      description: "Zenodo DOI for 6.4.3"
+      value: 10.5281/zenodo.7092676
     - type: doi
       description: "Zenodo DOI for 6.4.2"
       value: 10.5281/zenodo.6405711
