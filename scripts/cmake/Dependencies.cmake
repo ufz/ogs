@@ -87,10 +87,9 @@ if(tetgen_ADDED)
     list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
 endif()
 
-if(OGS_USE_PYTHON)
+if(OGS_USE_PYTHON OR OGS_BUILD_PYTHON_MODULE)
     CPMAddPackage(
-        NAME pybind11 GITHUB_REPOSITORY pybind/pybind11
-        GIT_TAG f1abf5d9159b805674197f6bc443592e631c9130
+        NAME pybind11 GITHUB_REPOSITORY pybind/pybind11 VERSION 2.10.0
     )
 endif()
 
@@ -182,6 +181,7 @@ if(OGS_BUILD_SWMM)
     CPMAddPackage(
         NAME SWMMInterface GITHUB_REPOSITORY ufz/SwmmInterface
         GIT_TAG 141e05ae1f419918799d7bf9178ebcd97feb1ed3
+        OPTIONS "BUILD_SHARED_LIBS OFF"
     )
     if(SWMMInterface_ADDED)
         target_include_directories(

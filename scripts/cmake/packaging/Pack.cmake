@@ -76,7 +76,9 @@ if(OGS_USE_PYTHON)
         install(FILES ${PYTHON_RUNTIME_LIBS} DESTINATION bin)
         file(COPY ${PYTHON_RUNTIME_LIBS} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     else()
-        install(FILES ${Python_LIBRARIES} DESTINATION bin)
+        file(INSTALL ${Python_LIBRARIES} DESTINATION ${CMAKE_INSTALL_LIBDIR}
+             FOLLOW_SYMLINK_CHAIN
+        )
     endif()
 endif()
 

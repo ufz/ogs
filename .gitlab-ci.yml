@@ -37,6 +37,7 @@ include:
   - local: "/scripts/ci/jobs/build-win.yml"
   - local: "/scripts/ci/jobs/build-mac.yml"
   - local: "/scripts/ci/jobs/build-container.yml"
+  - local: "/scripts/ci/jobs/build-wheels.yml"
   - local: "/scripts/ci/jobs/jupyter.yml"
   - local: "/scripts/ci/jobs/code-quality.yml"
   - local: "/scripts/ci/jobs/code-coverage.yml"

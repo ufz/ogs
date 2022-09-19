@@ -20,7 +20,7 @@ clang-format:
   needs: [ci_images]
   allow_failure: true
   script:
-    - git clang-format ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA}
+    - git clang-format --extensions "h,cpp" ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA}
     - if [[ $(git diff) ]]; then exit 1; fi
   after_script:
     - git diff

@@ -24,6 +24,7 @@
 #include "GeoLib/AABB.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Raster.h"
+#include "InfoLib/GitInfo.h"
 
 double compute2DGaussBellCurveValues(GeoLib::Point const& point,
                                      GeoLib::AABB const& aabb)
@@ -51,7 +52,14 @@ double computeSinXSinY(GeoLib::Point const& point, GeoLib::AABB const& aabb)
 
 int main(int argc, char* argv[])
 {
-    TCLAP::CmdLine cmd("Add values to raster.", ' ', "0.1");
+    TCLAP::CmdLine cmd(
+        "Add values to raster.\n\n"
+        "OpenGeoSys-6 software, version " +
+            GitInfoLib::GitInfo::ogs_version +
+            ".\n"
+            "Copyright (c) 2012-2022, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', GitInfoLib::GitInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> out_raster_arg(
         "o",

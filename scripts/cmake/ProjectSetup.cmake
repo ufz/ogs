@@ -40,8 +40,12 @@ endif()
 file(RELATIVE_PATH relDir ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
      ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
 )
-list(APPEND CMAKE_INSTALL_RPATH ${BASEPOINT} ${BASEPOINT}/${relDir})
-list(APPEND CMAKE_BUILD_RPATH ${BASEPOINT} ${BASEPOINT}/${relDir})
+list(APPEND CMAKE_INSTALL_RPATH ${BASEPOINT} ${BASEPOINT}/${relDir}
+     ${BASEPOINT}/${CMAKE_INSTALL_LIBDIR} # Python modules
+)
+list(APPEND CMAKE_BUILD_RPATH ${BASEPOINT} ${BASEPOINT}/${relDir}
+     ${BASEPOINT}/${CMAKE_INSTALL_LIBDIR} # Python modules
+)
 
 # Some external dependencies always use lib instead of lib64, Fix for
 # lib64-based systems, e.g. OpenSUSE:

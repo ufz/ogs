@@ -842,6 +842,9 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
 template class SolidEhlers<2>;
 template class SolidEhlers<3>;
 
+template struct StateVariables<2>;
+template struct StateVariables<3>;
+
 template <>
 MathLib::KelvinVector::KelvinMatrixType<3> sOdotS<3>(
     MathLib::KelvinVector::KelvinVectorType<3> const& v)

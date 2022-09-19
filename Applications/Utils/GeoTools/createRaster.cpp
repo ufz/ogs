@@ -20,11 +20,18 @@
 #include "GeoLib/AABB.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Raster.h"
+#include "InfoLib/GitInfo.h"
 
 int main(int argc, char* argv[])
 {
-    TCLAP::CmdLine cmd("Create a raster where every pixel is zero.", ' ',
-                       "0.1");
+    TCLAP::CmdLine cmd(
+        "computeSurfaceNodeIDsInPolygonalRegion\n\n"
+        "OpenGeoSys-6 software, version " +
+            GitInfoLib::GitInfo::ogs_version +
+            ".\n"
+            "Copyright (c) 2012-2022, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', GitInfoLib::GitInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> output_arg("o", "output",
                                             "Name of the output raster (*.asc)",

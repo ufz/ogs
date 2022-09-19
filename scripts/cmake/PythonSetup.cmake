@@ -1,6 +1,9 @@
 # cmake-lint: disable=C0103
 
-set(_python_version_max "...<3.11")
+if(OGS_USE_PYTHON)
+    set(_python_version_max "...<3.11")
+endif()
+
 if(OGS_USE_PIP)
     set(Python_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
     set(CMAKE_REQUIRE_FIND_PACKAGE_Python TRUE)
@@ -38,9 +41,15 @@ endif()
 
 set(_python_componets Interpreter)
 if(OGS_USE_PYTHON)
-    set(CMAKE_REQUIRE_FIND_PACKAGE_Python TRUE)
-    list(APPEND _python_componets Development)
+    list(APPEND _python_componets Development.Embed)
 endif()
+if(OGS_BUILD_PYTHON_MODULE)
+    list(APPEND _python_componets Development.Module)
+endif()
+if(OGS_USE_PYTHON OR OGS_BUILD_PYTHON_MODULE)
+    set(CMAKE_REQUIRE_FIND_PACKAGE_Python TRUE)
+endif()
+
 find_package(
     Python ${ogs.minimum_version.python}${_python_version_max}
     COMPONENTS ${_python_componets}
