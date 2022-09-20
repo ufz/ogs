@@ -16,23 +16,9 @@
 
 #include "MaterialLib/SolidModels/MFront/TangentOperatorBlocksView.h"
 #include "MaterialLib/SolidModels/MFront/Variable.h"
+#include "OGSMFrontTestVariables.h"
 #include "Tests/TestTools.h"
 
-// Currently (09/2022) there are no vectorial and tensorial variables defined.
-// So we have to provide them here.
-struct Vector : MaterialLib::Solids::MFront::Variable<Vector>
-{
-    constexpr static const char* name = "vector";
-    constexpr static mgis::behaviour::Variable::Type type =
-        mgis::behaviour::Variable::Type::VECTOR;
-};
-
-struct Tensor : MaterialLib::Solids::MFront::Variable<Tensor>
-{
-    constexpr static const char* name = "tensor";
-    constexpr static mgis::behaviour::Variable::Type type =
-        mgis::behaviour::Variable::Type::TENSOR;
-};
 template <class Dim>
 struct MaterialLib_TangentOperatorBlocksView : ::testing::Test
 {
