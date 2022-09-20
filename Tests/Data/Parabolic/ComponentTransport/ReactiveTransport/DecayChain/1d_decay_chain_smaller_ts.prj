@@ -668,7 +668,7 @@
         <parameter>
             <name>porosity</name>
             <type>Constant</type>
-            <value>1</value>
+            <value>0.12</value>
         </parameter>
         <parameter>
             <name>p0</name>
