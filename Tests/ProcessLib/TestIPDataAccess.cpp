@@ -128,10 +128,11 @@ struct ProcessLib_IPDataAccess : ::testing::Test
     }
 };
 
-using TestCases = ::testing::Types<std::integral_constant<int, 2>,
-                                   std::integral_constant<int, 3>>;
+using ProcessLib_IPDataAccess_TestCases =
+    ::testing::Types<std::integral_constant<int, 2>,
+                     std::integral_constant<int, 3>>;
 
-TYPED_TEST_SUITE(ProcessLib_IPDataAccess, TestCases);
+TYPED_TEST_SUITE(ProcessLib_IPDataAccess, ProcessLib_IPDataAccess_TestCases);
 
 TYPED_TEST(ProcessLib_IPDataAccess, GetScalarData)
 {
