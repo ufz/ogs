@@ -18,10 +18,21 @@ elseif(
     WIN32
     AND CCACHE_TOOL_PATH
     AND NOT OGS_DISABLE_COMPILER_CACHE
-    AND "${CMAKE_GENERATOR}" STREQUAL "Ninja"
-)
-    set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_TOOL_PATH} CACHE STRING "" FORCE)
-    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_TOOL_PATH} CACHE STRING "" FORCE)
+    )
+    if("${CMAKE_GENERATOR}" STREQUAL "Ninja")
+        set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_TOOL_PATH} CACHE STRING "" FORCE)
+        set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_TOOL_PATH} CACHE STRING "" FORCE)
+    else()
+        # From https://github.com/ccache/ccache/discussions/1140#discussioncomment-3611405
+        file(COPY_FILE ${CCACHE_TOOL_PATH} ${PROJECT_BINARY_DIR}/cl.exe ONLY_IF_DIFFERENT)
+        set(CMAKE_VS_GLOBALS
+            "CLToolExe=cl.exe"
+            "CLToolPath=${PROJECT_BINARY_DIR}"
+            "TrackFileAccess=false"
+            "UseMultiToolTask=true"
+            "DebugInformationFormat=OldStyle"
+        )
+    endif()
     message(STATUS "Using ccache (${CCACHE_TOOL_PATH}).")
 endif()
 
