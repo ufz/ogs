@@ -291,7 +291,7 @@ pip install aqtinstall
 mkdir qt
 cd qt
 aqt install-qt win desktop {{< dataFile "versions.tested_version.qt" >}} win64_msvc2019_64
-aqt install-qt win desktop {{< dataFile "versions.tested_version.qt" >}} win64_msvc2019_64 --archives qtxmlpatterns qtx11extras
+aqt install-qt win desktop {{< dataFile "versions.tested_version.qt" >}} win64_msvc2019_64 --archives qtxmlpatterns
 ```
 
 This will install Qt to `[your-directory]/qt/{{< dataFile "versions.tested_version.qt" >}}/msvc2019_64`.
