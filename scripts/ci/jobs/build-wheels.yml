@@ -1,9 +1,6 @@
 stages:
-  - preparation
   - build
-  - check
   - release
-  - package
 
 workflow:
   rules:
@@ -21,11 +18,9 @@ workflow:
 
 include:
   - local: "scripts/ci/extends/*.yml"
-  - local: "/scripts/ci/jobs/meta.yml"
 
 .wheels_template: &wheels_template
   stage: build
-  needs: [meta]
   script:
     - pipx run cibuildwheel
   artifacts:
