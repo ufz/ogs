@@ -30,3 +30,24 @@ build wheels win:
   extends:
     - .vs2019-environment
   <<: *wheels_template
+
+publish wheels:
+  stage: release
+  needs: ["build wheels linux", "build wheels mac", "build wheels win"]
+  tags: [envinf, shell]
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+      variables:
+        PYPI_PASSWORD: "${TEST_PYPI_TOKEN}"
+        PYPI_REPO: testpypi
+    - if: $CI_COMMIT_TAG
+      variables:
+        PYPI_PASSWORD: "${PYPI_TOKEN}"
+        PYPI_REPO: pypi
+  script:
+    - >
+      pipx run twine upload
+      --repository ${PYPI_REPO}
+      --username __token__
+      --password ${PYPI_PASSWORD}
+      wheelhouse/*
