@@ -15,7 +15,7 @@ check web links:
       --check-extern
       --ignore-url='sciencedirect.com'
       --ignore-url='wiley.com'
-      --ignore-url='doi.org/10.1002'
+      --ignore-url='doi.org'
       --ignore-url='linkinghub.elsevier.com'
       --ignore-url='overleaf.com'
       --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/commit/'
