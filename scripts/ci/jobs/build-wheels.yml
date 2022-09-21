@@ -1,11 +1,33 @@
+stages:
+  - preparation
+  - build
+  - check
+  - release
+  - package
+
+workflow:
+  rules:
+    - if: $CI_COMMIT_TAG
+      variables:
+        PYPI_PASSWORD: "${PYPI_TOKEN}"
+        PYPI_REPO: pypi
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+      variables:
+        PYPI_PASSWORD: "${TEST_PYPI_TOKEN}"
+        PYPI_REPO: testpypi
+    - if: $CI_MERGE_REQUEST_ID
+      variables:
+        CIBW_BUILD: cp39* cp310*
+
+include:
+  - local: "scripts/ci/extends/*.yml"
+  - local: "/scripts/ci/jobs/meta.yml"
+
 .wheels_template: &wheels_template
   stage: build
   needs: [meta]
   script:
     - pipx run cibuildwheel
-  rules:
-    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-    - if: $CI_COMMIT_TAG
   artifacts:
     paths:
       - wheelhouse/
@@ -36,14 +58,9 @@ publish wheels:
   needs: ["build wheels linux", "build wheels mac", "build wheels win"]
   tags: [envinf, shell]
   rules:
-    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-      variables:
-        PYPI_PASSWORD: "${TEST_PYPI_TOKEN}"
-        PYPI_REPO: testpypi
     - if: $CI_COMMIT_TAG
-      variables:
-        PYPI_PASSWORD: "${PYPI_TOKEN}"
-        PYPI_REPO: pypi
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+    - when: never
   script:
     - >
       pipx run twine upload
