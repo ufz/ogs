@@ -290,7 +290,8 @@ Use [Another Qt installer (`aqt`)](https://github.com/miurahr/aqtinstall) for in
 pip install aqtinstall
 mkdir qt
 cd qt
-aqt install {{< dataFile "versions.tested_version.qt" >}} windows desktop win64_msvc2019_64 -m qtxmlpatterns
+aqt install-qt win desktop {{< dataFile "versions.tested_version.qt" >}} win64_msvc2019_64
+aqt install-qt win desktop {{< dataFile "versions.tested_version.qt" >}} win64_msvc2019_64 --archives qtxmlpatterns qtx11extras
 ```
 
 This will install Qt to `[your-directory]/qt/{{< dataFile "versions.tested_version.qt" >}}/msvc2019_64`.
@@ -305,7 +306,8 @@ To finish add `[your-directory]/qt/{{< dataFile "versions.tested_version.qt" >}}
 pip install aqtinstall
 mkdir /opt/qt
 cd /opt/qt
-aqt install {{< dataFile "versions.tested_version.qt" >}} linux desktop gcc_64 -m xmlpatterns,x11extras
+aqt install-qt linux desktop {{< dataFile "versions.tested_version.qt" >}} gcc_64
+aqt install-qt linux desktop {{< dataFile "versions.tested_version.qt" >}} gcc_64 --archives qtxmlpatterns qtx11extras
 ```
 
 Make sure to add `/opt/qt/{{< dataFile "versions.tested_version.qt" >}}/gcc_64/bin` to the `PATH`.
@@ -318,7 +320,8 @@ Make sure to add `/opt/qt/{{< dataFile "versions.tested_version.qt" >}}/gcc_64/b
 pip install aqtinstall
 mkdir /opt/qt
 cd /opt/qt
-aqt install {{< dataFile "versions.tested_version.qt" >}} mac desktop clang_64 -m xmlpatterns,x11extras
+aqt install-qt mac desktop {{< dataFile "versions.tested_version.qt" >}} clang_64
+aqt install-qt mac desktop {{< dataFile "versions.tested_version.qt" >}} clang_64 --archives qtxmlpatterns qtx11extras
 ```
 
 Make sure to add `/opt/qt/{{< dataFile "versions.tested_version.qt" >}}/clang_64/bin` to the `PATH`.
