@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <variant>
 
 #include "MaterialLib/MPL/Property.h"

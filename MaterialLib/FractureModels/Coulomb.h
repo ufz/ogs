@@ -12,10 +12,9 @@
 #include <Eigen/Eigen>
 #include <utility>
 
+#include "FractureModelBase.h"
 #include "NumLib/NewtonRaphson.h"
 #include "ParameterLib/Parameter.h"
-
-#include "FractureModelBase.h"
 
 namespace MaterialLib
 {

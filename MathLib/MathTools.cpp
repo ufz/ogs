@@ -9,7 +9,7 @@
 
 #include "MathTools.h"
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <cmath>
 
 #include "Point3d.h"

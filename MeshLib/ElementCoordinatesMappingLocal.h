@@ -9,8 +9,9 @@
 
 #pragma once
 
-#include <vector>
 #include <Eigen/Eigen>
+#include <vector>
+
 #include "MathLib/Point3d.h"
 
 namespace MeshLib

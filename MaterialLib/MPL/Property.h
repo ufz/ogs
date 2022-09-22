@@ -11,7 +11,7 @@
  */
 #pragma once
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <array>
 #include <string>
 #include <typeinfo>

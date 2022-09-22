@@ -12,9 +12,8 @@
 
 #include <Eigen/Eigen>
 
-#include "BaseLib/Error.h"
-
 #include "BHECommonCoaxial.h"
+#include "BaseLib/Error.h"
 
 namespace ProcessLib
 {

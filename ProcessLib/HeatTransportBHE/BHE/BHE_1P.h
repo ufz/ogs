@@ -13,9 +13,8 @@
 #include <Eigen/Eigen>
 #include <optional>
 
-#include "BaseLib/Error.h"
-
 #include "BHECommon.h"
+#include "BaseLib/Error.h"
 #include "FlowAndTemperatureControl.h"
 #include "PipeConfiguration1PType.h"
 

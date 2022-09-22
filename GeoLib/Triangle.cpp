@@ -9,7 +9,7 @@
 
 #include "Triangle.h"
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 #include "AnalyticalGeometry.h"
 #include "MathLib/GeometricBasics.h"

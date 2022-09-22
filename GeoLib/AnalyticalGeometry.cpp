@@ -14,7 +14,7 @@
 
 #include "AnalyticalGeometry.h"
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <algorithm>
 #include <cmath>
 #include <limits>

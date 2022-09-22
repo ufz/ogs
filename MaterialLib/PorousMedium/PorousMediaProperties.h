@@ -10,15 +10,14 @@
 
 #pragma once
 
+#include <Eigen/Core>
 #include <memory>
 #include <vector>
-#include <Eigen/Dense>
 
+#include "ParameterLib/SpatialPosition.h"
 #include "Permeability/Permeability.h"
 #include "Porosity/Porosity.h"
 #include "Storage/Storage.h"
-
-#include "ParameterLib/SpatialPosition.h"
 
 namespace MaterialLib
 {

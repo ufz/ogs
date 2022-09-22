@@ -14,7 +14,7 @@
 
 #include <BaseLib/Error.h>
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <array>
 #include <string>
 #include <variant>

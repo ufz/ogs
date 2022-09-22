@@ -9,7 +9,7 @@
 
 #include "GeometricBasics.h"
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 #include "BaseLib/Logging.h"
 #include "Point3d.h"

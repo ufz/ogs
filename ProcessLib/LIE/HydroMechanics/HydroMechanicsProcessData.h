@@ -10,16 +10,14 @@
 
 #pragma once
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <memory>
 #include <utility>
 
-#include "MeshLib/ElementStatus.h"
-#include "MeshLib/PropertyVector.h"
-
 #include "MaterialLib/FractureModels/FractureModelBase.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
-
+#include "MeshLib/ElementStatus.h"
+#include "MeshLib/PropertyVector.h"
 #include "ProcessLib/LIE/Common/FractureProperty.h"
 
 namespace MeshLib

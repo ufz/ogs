@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 

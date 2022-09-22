@@ -14,7 +14,7 @@
 #include <iosfwd>
 #endif  // NDEBUG
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <vector>
 
 #include "MathLib/LinAlg/RowColumnIndices.h"

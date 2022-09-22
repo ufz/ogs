@@ -12,9 +12,8 @@
 #include <Eigen/Eigen>
 #include <utility>
 
-#include "ParameterLib/Parameter.h"
-
 #include "FractureModelBase.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
 {

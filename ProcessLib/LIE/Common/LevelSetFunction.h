@@ -9,10 +9,9 @@
 
 #pragma once
 
+#include <Eigen/Eigen>
 #include <unordered_map>
 #include <vector>
-
-#include <Eigen/Eigen>
 
 namespace ProcessLib
 {
