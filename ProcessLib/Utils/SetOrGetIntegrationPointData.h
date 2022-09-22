@@ -16,7 +16,7 @@
 
 #include "BaseLib/DynamicSpan.h"
 #include "MathLib/KelvinVector.h"
-#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "TransposeInPlace.h"
 
 namespace ProcessLib
 {
@@ -65,17 +65,25 @@ std::vector<double> const& getIntegrationPointKelvinVectorData(
     return cache;
 }
 
+//! Overload without \c cache argument.
+//!
+//! \note This function returns the data in transposed storage order compared to
+//! the overloads that have a \c cache argument.
 template <int DisplacementDim, typename IntegrationPointDataVector,
           typename MemberType>
 std::vector<double> getIntegrationPointKelvinVectorData(
     IntegrationPointDataVector const& ip_data_vector, MemberType member)
 {
-    std::vector<double> ip_kelvin_vector_values;
+    constexpr int kelvin_vector_size =
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
 
-    getIntegrationPointKelvinVectorData<DisplacementDim>(
-        ip_data_vector, member, ip_kelvin_vector_values);
-
-    return ip_kelvin_vector_values;
+    return transposeInPlace<kelvin_vector_size>(
+        [&](std::vector<double>& values)
+        {
+            return getIntegrationPointKelvinVectorData<DisplacementDim>(
+                ip_data_vector, member, values);
+            ;
+        });
 }
 
 template <int DisplacementDim, typename IntegrationPointDataVector,
@@ -207,9 +215,9 @@ std::vector<double> getIntegrationPointDataMaterialStateVariables(
     std::vector<double> result;
     result.reserve(ip_data_vector.size() * n_components);
 
-    for (auto& ip_data_vector : ip_data_vector)
+    for (auto& ip_data : ip_data_vector)
     {
-        auto const values_span = get_values_span(*(ip_data_vector.*member));
+        auto const values_span = get_values_span(*(ip_data.*member));
         assert(values_span.size() == static_cast<std::size_t>(n_components));
 
         result.insert(end(result), values_span.begin(), values_span.end());
@@ -230,7 +238,7 @@ std::size_t setIntegrationPointDataMaterialStateVariables(
     auto const n_integration_points = ip_data_vector.size();
 
     std::size_t position = 0;
-    for (auto& ip_data : ip_data_vector)
+    for (auto const& ip_data : ip_data_vector)
     {
         auto const values_span = get_values_span(*(ip_data.*member));
         std::copy_n(values + position, values_span.size(), values_span.begin());
