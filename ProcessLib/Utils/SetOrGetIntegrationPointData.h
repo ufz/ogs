@@ -215,9 +215,9 @@ std::vector<double> getIntegrationPointDataMaterialStateVariables(
     std::vector<double> result;
     result.reserve(ip_data_vector.size() * n_components);
 
-    for (auto& ip_data_vector : ip_data_vector)
+    for (auto& ip_data : ip_data_vector)
     {
-        auto const values_span = get_values_span(*(ip_data_vector.*member));
+        auto const values_span = get_values_span(*(ip_data.*member));
         assert(values_span.size() == static_cast<std::size_t>(n_components));
 
         result.insert(end(result), values_span.begin(), values_span.end());
