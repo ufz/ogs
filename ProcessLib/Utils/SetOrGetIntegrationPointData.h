@@ -238,7 +238,7 @@ std::size_t setIntegrationPointDataMaterialStateVariables(
     auto const n_integration_points = ip_data_vector.size();
 
     std::size_t position = 0;
-    for (auto& ip_data : ip_data_vector)
+    for (auto const& ip_data : ip_data_vector)
     {
         auto const values_span = get_values_span(*(ip_data.*member));
         std::copy_n(values + position, values_span.size(), values_span.begin());
