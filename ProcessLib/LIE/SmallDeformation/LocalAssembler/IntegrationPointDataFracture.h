@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 
 #include "MaterialLib/FractureModels/FractureModelBase.h"
 

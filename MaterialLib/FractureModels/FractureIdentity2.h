@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 
 #include "materiallib_fracturemodels_export.h"
 

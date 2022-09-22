@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"

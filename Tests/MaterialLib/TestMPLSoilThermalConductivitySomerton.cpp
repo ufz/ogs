@@ -11,7 +11,7 @@
 
 #include <gtest/gtest.h>
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 #include <cmath>
 #include <functional>
 #include <limits>

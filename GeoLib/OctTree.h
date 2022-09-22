@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 #include <cstdint>
 #include <limits>
 #include <vector>

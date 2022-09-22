@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 #include <vector>
 
 #include "MathLib/Point3d.h"

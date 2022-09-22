@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 #include <cstddef>
 #include <vector>
 

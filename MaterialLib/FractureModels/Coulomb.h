@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 #include <utility>
 
 #include "FractureModelBase.h"

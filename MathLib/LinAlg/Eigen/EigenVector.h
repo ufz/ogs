@@ -16,7 +16,7 @@
 #include <string>
 #endif
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 #include <Eigen/Sparse>
 
 #include "EigenMapTools.h"

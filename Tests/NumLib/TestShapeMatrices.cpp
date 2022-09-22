@@ -12,7 +12,7 @@
 
 #include <gtest/gtest.h>
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 #include "Tests/TestTools.h"
