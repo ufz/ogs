@@ -12,10 +12,13 @@
 #include <cmath>
 #include <memory>
 
+#include "BaseLib/ConfigTree.h"
 #include "BaseLib/FileTools.h"
 #include "InfoLib/TestInfo.h"
+#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "ParameterLib/Parameter.h"
 #include "ProcessLib/ComponentTransport/CreateLookupTable.h"
 #include "ProcessLib/ComponentTransport/LookupTable.h"
 #include "ProcessLib/ProcessVariable.h"

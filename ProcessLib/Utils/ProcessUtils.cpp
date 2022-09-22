@@ -10,7 +10,9 @@
 
 #include "ProcessUtils.h"
 
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/Error.h"
 #include "ProcessLib/ProcessVariable.h"
 
 namespace

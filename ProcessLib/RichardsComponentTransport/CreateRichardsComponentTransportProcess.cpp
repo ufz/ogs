@@ -10,6 +10,7 @@
 
 #include "CreateRichardsComponentTransportProcess.h"
 
+#include "BaseLib/ConfigTree.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"

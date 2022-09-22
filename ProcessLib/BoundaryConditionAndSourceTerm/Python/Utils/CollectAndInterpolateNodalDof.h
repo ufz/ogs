@@ -10,7 +10,13 @@
 
 #pragma once
 
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "ProcessLib/ProcessVariable.h"
+
+namespace MeshLib
+{
+class Element;
+}  // namespace MeshLib
 
 namespace ProcessLib::BoundaryConditionAndSourceTerm::Python
 {

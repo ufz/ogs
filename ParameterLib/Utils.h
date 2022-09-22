@@ -12,7 +12,7 @@
 
 #include <vector>
 
-#include "BaseLib/ConfigTree-fwd.h"
+#include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "Parameter.h"
 
@@ -82,7 +82,6 @@ Parameter<ParameterDataType>* findParameterOptional(
                 error->c_str());
         }
     }
-
 
     return parameter;
 }

@@ -10,6 +10,7 @@
 
 #include "CreateHeatConductionProcess.h"
 
+#include "BaseLib/ConfigTree.h"
 #include "HeatConductionProcess.h"
 #include "HeatConductionProcessData.h"
 #include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"

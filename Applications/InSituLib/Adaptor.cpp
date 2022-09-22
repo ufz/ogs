@@ -18,6 +18,7 @@
 
 #include <filesystem>
 
+#include "BaseLib/ConfigTree.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 

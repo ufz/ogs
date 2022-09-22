@@ -9,10 +9,11 @@
 
 #pragma once
 
-#include "Adsorption.h"
-#include "BaseLib/ConfigTree-fwd.h"
-#include "Reaction.h"
 #include "materiallib_export.h"
+
+#include "BaseLib/ConfigTree.h"
+#include "Reaction.h"
+#include "Adsorption.h"
 
 namespace ProcessLib
 {

@@ -12,6 +12,7 @@
 
 #include <sstream>
 
+#include "BaseLib/ConfigTree.h"
 #include "CreateJacobianAssembler.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 

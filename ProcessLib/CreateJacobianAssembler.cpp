@@ -11,6 +11,7 @@
 #include "CreateJacobianAssembler.h"
 
 #include "AnalyticalJacobianAssembler.h"
+#include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "CentralDifferencesJacobianAssembler.h"
 #include "CompareJacobiansJacobianAssembler.h"

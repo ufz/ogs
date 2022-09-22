@@ -11,6 +11,7 @@
 #include "CreatePorousMediaProperties.h"
 
 #include "BaseLib/Algorithm.h"
+#include "BaseLib/ConfigTree.h"
 #include "MeshLib/Mesh.h"
 #include "Permeability/createPermeabilityModel.h"
 #include "Porosity/createPorosityModel.h"

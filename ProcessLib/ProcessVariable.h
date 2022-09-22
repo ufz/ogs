@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryConditionConfig.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/SourceTermConfig.h"

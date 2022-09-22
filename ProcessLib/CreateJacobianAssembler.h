@@ -10,6 +10,9 @@
 
 #pragma once
 
+#include <memory>
+#include <optional>
+
 #include "BaseLib/ConfigTree-fwd.h"
 
 namespace ProcessLib
@@ -18,4 +21,4 @@ class AbstractJacobianAssembler;
 
 std::unique_ptr<AbstractJacobianAssembler> createJacobianAssembler(
     std::optional<BaseLib::ConfigTree> const& config);
-}  // ProcessLib
+}  // namespace ProcessLib

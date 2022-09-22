@@ -10,6 +10,7 @@
 
 #include "CreateStokesFlowProcess.h"
 
+#include "BaseLib/ConfigTree.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
