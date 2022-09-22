@@ -277,7 +277,7 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     expected_square_1e2_UC_late_ts_10_t_1000.000000.vtu square_1e2_UC_late_ts_10_t_1000.000000.vtu displacement displacement 1e-13 1e-16
-    expected_square_1e2_UC_late_ts_10_t_1000.000000.vtu square_1e2_UC_late_ts_10_t_1000.000000.vtu pressure pressure 1e-13 1e-16
+    expected_square_1e2_UC_late_ts_10_t_1000.000000.vtu square_1e2_UC_late_ts_10_t_1000.000000.vtu pressure pressure 2e-13 1e-16
 )
 
 AddTest(

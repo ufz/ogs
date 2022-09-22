@@ -41,7 +41,7 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <reltol>1e-14</reltol>
+                    <reltol>1e-13</reltol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
