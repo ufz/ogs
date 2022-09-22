@@ -9,6 +9,7 @@
  */
 
 #include "MatrixVectorTraits.h"
+#include <cassert>
 
 #include "MatrixSpecifications.h"
 

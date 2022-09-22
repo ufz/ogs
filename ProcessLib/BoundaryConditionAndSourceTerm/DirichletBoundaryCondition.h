@@ -11,6 +11,7 @@
 #pragma once
 
 #include "BoundaryCondition.h"
+#include <memory>
 
 namespace BaseLib
 {
