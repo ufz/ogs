@@ -9,6 +9,7 @@
  */
 
 #include "BaseLib/Algorithm.h"
+#include "BaseLib/ConfigTree.h"
 #include "NumLib/ODESolver/TimeDiscretizationBuilder.h"
 #ifdef USE_PETSC
 #include "NumLib/ODESolver/PETScNonlinearSolver.h"

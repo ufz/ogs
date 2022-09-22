@@ -26,6 +26,7 @@
 #include "ProcessLib/Output/SecondaryVariable.h"
 #include "ProcessVariable.h"
 #include "VectorMatrixAssembler.h"
+#include "processlib_export.h"
 
 namespace MeshLib
 {
