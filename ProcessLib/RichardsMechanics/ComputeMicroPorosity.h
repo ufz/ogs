@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <Eigen/LU>
 #include <cassert>
 #include <ostream>
 

@@ -13,6 +13,7 @@
 
 #include <spdlog/fmt/ostr.h>
 
+#include <Eigen/LU>
 #include <cassert>
 
 #include "ConstitutiveSetting.h"

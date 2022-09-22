@@ -10,6 +10,7 @@
 
 #include <gtest/gtest.h>
 
+#include <Eigen/LU>
 #include <limits>
 TEST(NumLibNewtonRaphson, Sqrt3)
 {

@@ -8,7 +8,7 @@
  *
  */
 
-#include <Eigen/Core>
+#include <Eigen/QR>
 #include <array>
 
 #include "MeshLib/Elements/Elements.h"

@@ -10,6 +10,8 @@
 
 #include "FaceRule.h"
 
+#include <Eigen/Geometry>
+
 #include "Element.h"
 #include "MathLib/MathTools.h"
 #include "MeshLib/Node.h"

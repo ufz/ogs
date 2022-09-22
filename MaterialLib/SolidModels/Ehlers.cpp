@@ -9,6 +9,7 @@
 
 #include "Ehlers.h"
 
+#include <Eigen/LU>
 #include <boost/math/special_functions/pow.hpp>
 
 #include "BaseLib/cpp23.h"

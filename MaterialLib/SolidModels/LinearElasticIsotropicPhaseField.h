@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <Eigen/Eigenvalues>
 #include <boost/math/special_functions/pow.hpp>
 
 #include "MathLib/KelvinVector.h"

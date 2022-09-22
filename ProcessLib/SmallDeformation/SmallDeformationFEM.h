@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <Eigen/Eigenvalues>
 #include <limits>
 #include <memory>
 #include <vector>

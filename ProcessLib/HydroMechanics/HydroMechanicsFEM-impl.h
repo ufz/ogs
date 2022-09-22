@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include <Eigen/Eigenvalues>
+
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"

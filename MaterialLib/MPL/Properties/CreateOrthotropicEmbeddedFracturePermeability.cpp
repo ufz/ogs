@@ -8,6 +8,8 @@
  *
  */
 
+#include <Eigen/Geometry>
+
 #include "BaseLib/ConfigTree.h"
 #include "OrthotropicEmbeddedFracturePermeability.h"
 #include "ParameterLib/Utils.h"

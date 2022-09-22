@@ -9,7 +9,7 @@
 
 #include "GeometricBasics.h"
 
-#include <Eigen/Core>
+#include <Eigen/Geometry>
 
 #include "BaseLib/Logging.h"
 #include "Point3d.h"

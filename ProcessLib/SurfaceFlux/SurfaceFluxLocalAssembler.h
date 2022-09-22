@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <Eigen/Geometry>
+
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Elements/FaceRule.h"
 #include "MeshLib/Elements/MapBulkElementPoint.h"

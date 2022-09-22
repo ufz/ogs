@@ -15,6 +15,8 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
+#include <Eigen/Geometry>
+
 #ifdef USE_PETSC
 #include <mpi.h>
 #endif
