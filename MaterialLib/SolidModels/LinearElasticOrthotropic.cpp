@@ -9,8 +9,6 @@
 
 #include "LinearElasticOrthotropic.h"
 
-#include <Eigen/LU>
-
 #include "MaterialLib/MPL/Utils/GetSymmetricTensor.h"
 
 namespace MPL = MaterialPropertyLib;
