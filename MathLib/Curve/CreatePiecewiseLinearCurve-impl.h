@@ -10,10 +10,9 @@
  * Created on November 11, 2016, 10:49 AM
  */
 
-#include "CreatePiecewiseLinearCurve.h"
-
+#include "BaseLib/ConfigTree-fwd.h"
 #include "BaseLib/Error.h"
-#include "BaseLib/ConfigTree.h"
+#include "CreatePiecewiseLinearCurve.h"
 
 namespace MathLib
 {

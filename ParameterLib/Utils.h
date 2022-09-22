@@ -11,9 +11,9 @@
 #pragma once
 
 #include <vector>
-#include "BaseLib/ConfigTree.h"
-#include "BaseLib/Error.h"
 
+#include "BaseLib/ConfigTree-fwd.h"
+#include "BaseLib/Error.h"
 #include "Parameter.h"
 
 namespace ParameterLib

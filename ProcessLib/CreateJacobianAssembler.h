@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTree-fwd.h"
 
 namespace ProcessLib
 {

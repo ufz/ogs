@@ -18,8 +18,7 @@
 #include <string>
 #include <vector>
 
-
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTree-fwd.h"
 #include "BaseLib/IO/XmlIO/XMLInterface.h"
 
 namespace GeoLib

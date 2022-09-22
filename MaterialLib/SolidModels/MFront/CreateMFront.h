@@ -12,7 +12,7 @@
 #include <memory>
 #include <vector>
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTree-fwd.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "ParameterLib/Parameter.h"
 
