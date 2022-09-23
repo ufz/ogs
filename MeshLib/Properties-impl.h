@@ -230,3 +230,27 @@ PropertyVector<T>* Properties::getPropertyVector(std::string const& name,
     }
     return property;
 }
+
+template <typename Function>
+void applyToPropertyVectors(Properties const& properties, Function f)
+{
+    for (auto [name, property] : properties)
+    {
+        // Open question, why is the 'unsigned long' case not compiling giving
+        // an error "expected '(' for function-style cast or type construction"
+        // with clang-7, and "error C4576: a parenthesized type followed by an
+        // initializer list is a non-standard explicit type conversion syntax"
+        // with MSVC-15.
+        bool success = f(double{}, property) || f(float{}, property) ||
+                       f(int{}, property) || f(long{}, property) ||
+                       f(unsigned{}, property) || f(long{}, property) ||
+                       f(static_cast<unsigned long>(0), property) ||
+                       f(std::size_t{}, property) || f(char{}, property) ||
+                       f(static_cast<unsigned char>(0), property);
+        if (!success)
+        {
+            OGS_FATAL("Could not apply function to PropertyVector '{:s}'.",
+                      property->getPropertyName());
+        }
+    }
+}
