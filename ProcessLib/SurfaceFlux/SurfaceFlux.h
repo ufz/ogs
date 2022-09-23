@@ -12,7 +12,6 @@
 
 #include <vector>
 
-#include "ProcessLib/Process.h"
 #include "SurfaceFluxLocalAssembler.h"
 
 namespace ProcessLib
@@ -55,4 +54,4 @@ private:
         _local_assemblers;
 };
 
-}   // namespace ProcessLib
+}  // namespace ProcessLib
