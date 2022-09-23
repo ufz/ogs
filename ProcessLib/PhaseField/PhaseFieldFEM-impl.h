@@ -62,7 +62,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     x_position.setElementID(_element.getID());
 
     auto local_pressure = 0.0;
-    if (_process_data.crack_pressure)
+    if (_process_data.hydro_crack)
     {
         local_pressure = _process_data.unity_pressure;
     }
@@ -145,11 +145,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     x_position.setElementID(_element.getID());
 
     auto local_pressure = 0.0;
-    if (_process_data.crack_pressure)
-    {
-        local_pressure = _process_data.unity_pressure;
-    }
-    else if (_process_data.hydro_crack)
+    if (_process_data.hydro_crack)
     {
         local_pressure = _process_data.pressure;
     }
