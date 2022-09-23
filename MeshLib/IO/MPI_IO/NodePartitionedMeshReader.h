@@ -42,13 +42,14 @@ public:
     ~NodePartitionedMeshReader();
 
     /*!
-         \brief Create a NodePartitionedMesh object, read data to it, and return
-                a pointer to it. Data files are in binary format.
-         \param file_name_base  Name of file to be read, and it must be base name without name extension.
-         \return                Pointer to Mesh object. If the creation of mesh object
-                                fails, return a null pointer.
+        \brief Create a NodePartitionedMesh object, read data to it, and return
+               a pointer to it. Data files are in binary format.
+        \param file_name_base  Name of file to be read, and it must be base name
+                               without name extension.
+        \return Pointer to Mesh object. If the creation of mesh object fails,
+                it returns a null pointer.
      */
-    MeshLib::NodePartitionedMesh* read(const std::string &file_name_base);
+    MeshLib::NodePartitionedMesh* read(const std::string& file_name_base);
 
 private:
     /// Pointer to MPI communicator.
@@ -66,7 +67,7 @@ private:
     /// Node data only for parallel reading.
     struct NodeData
     {
-        std::size_t index;     ///< Global node index.
+        std::size_t index;  ///< Global node index.
         double x;
         double y;
         double z;
@@ -78,17 +79,17 @@ private:
     /// A collection of integers that configure the partitioned mesh data.
     struct PartitionedMeshInfo
     {
-        unsigned long nodes;  ///< 0: Number of all nodes of a partition,
-        unsigned long base_nodes;        ///< 1: Number of nodes for linear
-                                         ///elements of a partition,
-        unsigned long regular_elements;  ///< 2: Number of non-ghost elements
-                                         ///of a partition,
-        unsigned long
-            ghost_elements;  ///< 3: Number of ghost element of a partition,
+        unsigned long nodes;       ///< 0: Number of all nodes of a partition,
+        unsigned long base_nodes;  ///< 1: Number of nodes for linear
+                                   /// elements of a partition,
+        unsigned long regular_elements;   ///< 2: Number of non-ghost elements
+                                          /// of a partition,
+        unsigned long ghost_elements;     ///< 3: Number of ghost element of
+                                          /// a partition,
         unsigned long active_base_nodes;  ///< 4: Number of active nodes for
                                           /// linear element of a partition,
-        unsigned long
-            active_nodes;  ///< 5: Number of all active nodes a partition,
+        unsigned long active_nodes;       ///< 5: Number of all active nodes a
+                                          /// partition,
         unsigned long global_base_nodes;  ///< 6: unused, previously number of
                                           /// nodes for linear element of global
                                           /// mesh,
@@ -103,7 +104,7 @@ private:
 
     /*!
         \brief Create a new mesh of NodePartitionedMesh after reading and
-       processing the data.
+               processing the data.
         \param mesh_name    Name assigned to the new mesh.
         \param mesh_nodes   Node data.
         \param glb_node_ids Global IDs of nodes.
@@ -134,45 +135,46 @@ private:
         \param type     Type of data.
         \param data     A container to be filled with data. Its size is used
                         to determine how many values should be read.
-        \tparam DATA    A homogeneous contaner type supporting data() and size().
+        \tparam DATA    A homogeneous container type supporting data() and
+                        size().
 
         \return         True on success and false otherwise.
      */
     template <typename DATA>
     bool readDataFromFile(std::string const& filename, MPI_Offset offset,
-        MPI_Datatype type, DATA& data) const;
+                          MPI_Datatype type, DATA& data) const;
 
     /*!
-         \brief Create a NodePartitionedMesh object, read binary mesh data
+        \brief Create a NodePartitionedMesh object, read binary mesh data
                 in the manner of parallel, and return a pointer to it.
-                Four binary files have to been read in this function named as:
-                file_name_base+_partitioned_msh_cfg[number of partitions].bin
-                file_name_base+_partitioned_msh_nod[number of partitions].bin
-                file_name_base+_partitioned_msh_ele[number of partitions].bin
-                file_name_base+_partitioned_msh_ele_g[number of partitions].bin
-                in which, the first file contains an array of integers for the
-                PartitionMeshInfo for all partitions
+        Four binary files have to been read in this function named as:
+           - file_name_base+_partitioned_msh_cfg[number of partitions].bin
+           - file_name_base+_partitioned_msh_nod[number of partitions].bin
+           - file_name_base+_partitioned_msh_ele[number of partitions].bin
+           - file_name_base+_partitioned_msh_ele_g[number of partitions].bin
 
-                the second file contains a struct type (long, double double double) array of
-                nodes information of global IDs and coordinates of all partitions.
+        in which, the first file contains an array of integers for the
+        PartitionMeshInfo for all partitions, the second file contains a
+        struct type (long, double double double) array of nodes information of
+        global IDs and coordinates of all partitions, the third file contains
+        a long type integer array of element information of material ID,
+        element type and node IDs of each non-ghost element of all partitions,
+        and the forth file contains a long type integer array of element
+        information of material ID, element type and node IDs of each ghost
+         element of all partitions.
 
-                the third file contains a long type integer array of element information of
-                material ID, element type and node IDs of each non-ghost element of all partitoions.
-
-                the forth file contains a long type integer array of element information of
-                material ID, element type and node IDs of each ghost element of all partitoions.
-         \param file_name_base  Name of file to be read, which must be a name with the
-                           path to the file and without file extension.
-         \return           Pointer to Mesh object.
+        \param file_name_base  Name of file to be read, which must be a name
+                               with the path to the file and without file
+                               extension.
+        \return Pointer to Mesh object.
      */
-    MeshLib::NodePartitionedMesh* readMesh(const std::string &file_name_base);
+    MeshLib::NodePartitionedMesh* readMesh(const std::string& file_name_base);
 
-    MeshLib::Properties readProperties(
-        const std::string& file_name_base) const;
+    MeshLib::Properties readProperties(const std::string& file_name_base) const;
 
     void readProperties(const std::string& file_name_base,
-                              MeshLib::MeshItemType t,
-                              MeshLib::Properties& p) const;
+                        MeshLib::MeshItemType t,
+                        MeshLib::Properties& p) const;
 
     void readDomainSpecificPartOfPropertyVectors(
         std::vector<std::optional<MeshLib::IO::PropertyVectorMetaData>> const&
@@ -192,42 +194,73 @@ private:
         MeshLib::PropertyVector<T>* pv = p.createNewPropertyVector<T>(
             pvmd.property_name, t, pvmd.number_of_components);
         pv->resize(pvpmd.number_of_tuples * pvmd.number_of_components);
-        // jump to the place for reading the specific part of the
-        // PropertyVector
+
+        // Locate the start position of the data in the file for the current
+        // rank.
         is.seekg(global_offset +
                  pvpmd.offset * pvmd.number_of_components * sizeof(T));
         // read the values
-        unsigned long const number_of_bytes = pvmd.data_type_size_in_bytes *
-                                              pvpmd.number_of_tuples *
-                                              pvmd.number_of_components;
-        if (!is.read(reinterpret_cast<char*>(pv->data()), number_of_bytes))
+        if (!is.read(reinterpret_cast<char*>(pv->data()),
+                     pv->size() * sizeof(T)))
             OGS_FATAL(
                 "Error in NodePartitionedMeshReader::readProperties: "
                 "Could not read part {:d} of the PropertyVector.",
                 _mpi_rank);
     }
 
-    /*!
-         \brief Set mesh nodes from a temporary array containing node data read from file.
-         \param node_data     Vector containing node data read from file.
-         \param mesh_node     Vector of mesh nodes to be set.
-         \param glb_node_ids  Global IDs of nodes of a partition.
-     */
-    void setNodes(const std::vector<NodeData> &node_data,
-        std::vector<MeshLib::Node*> &mesh_node,
-        std::vector<unsigned long> &glb_node_ids) const;
+    /// Read data for property OGS_VERSION or IntegrationPointMetaData, and
+    /// create property vector for it.
+    template <typename T>
+    void createSpecificPropertyVectorPart(
+        std::istream& is, MeshLib::IO::PropertyVectorMetaData const& pvmd,
+        MeshLib::MeshItemType t, unsigned long global_offset,
+        MeshLib::Properties& p) const
+    {
+        MeshLib::PropertyVector<T>* pv = p.createNewPropertyVector<T>(
+            pvmd.property_name, t, pvmd.number_of_components);
+
+        std::size_t const property_vector_size =
+            pvmd.number_of_tuples / _mpi_comm_size;
+        pv->resize(property_vector_size);
+
+        // Locate the start position of the data in the file for the current
+        // rank.
+        is.seekg(global_offset + property_vector_size * sizeof(T) * _mpi_rank);
+
+        // read the values
+        if (!is.read(reinterpret_cast<char*>(pv->data()),
+                     pv->size() * sizeof(T)))
+        {
+            OGS_FATAL(
+                "Error in NodePartitionedMeshReader::readProperties: "
+                "Could not read part {:d} of the PropertyVector.",
+                _mpi_rank);
+        }
+    }
 
     /*!
-         \brief Set mesh elements from a temporary array containing node data read from file.
-         \param mesh_nodes        Vector of mesh nodes used to set element nodes.
-         \param elem_data         Vector containing element data read from file.
-         \param mesh_elems        Vector of mesh elements to be set.
-         \param ghost             Flag of processing ghost elements.
+        \brief Set mesh nodes from a temporary array containing node data read
+               from file.
+        \param node_data     Vector containing node data read from file.
+        \param mesh_node     Vector of mesh nodes to be set.
+        \param glb_node_ids  Global IDs of nodes of a partition.
      */
-    void setElements(const std::vector<MeshLib::Node*> &mesh_nodes,
-        const std::vector<unsigned long> &elem_data,
-        std::vector<MeshLib::Element*> &mesh_elems,
-        const bool ghost = false) const;
+    void setNodes(const std::vector<NodeData>& node_data,
+                  std::vector<MeshLib::Node*>& mesh_node,
+                  std::vector<unsigned long>& glb_node_ids) const;
+
+    /*!
+        \brief Set mesh elements from a temporary array containing node data
+               read from file.
+        \param mesh_nodes Vector of mesh nodes used to set element nodes.
+        \param elem_data  Vector containing element data read from file.
+        \param mesh_elems Vector of mesh elements to be set.
+        \param ghost      Flag of processing ghost elements.
+     */
+    void setElements(const std::vector<MeshLib::Node*>& mesh_nodes,
+                     const std::vector<unsigned long>& elem_data,
+                     std::vector<MeshLib::Element*>& mesh_elems,
+                     const bool ghost = false) const;
 };
-}   // end namespace IO
-}   // end namespace MeshLib
+}  // end namespace IO
+}  // end namespace MeshLib

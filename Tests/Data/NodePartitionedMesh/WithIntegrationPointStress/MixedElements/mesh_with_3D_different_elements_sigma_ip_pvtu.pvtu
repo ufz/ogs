@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<VTKFile type="PUnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64">
+  <PUnstructuredGrid GhostLevel="1">
+    <FieldData>
+      <DataArray type="Int8" Name="IntegrationPointMetaData" NumberOfTuples="97" format="binary" RangeMin="34" RangeMax="125">
+        YQAAAAAAAAB7ImludGVncmF0aW9uX3BvaW50X2FycmF5cyI6W3siaW50ZWdyYXRpb25fb3JkZXIiOjMsIm5hbWUiOiJzaWdtYV9pcCIsIm51bWJlcl9vZl9jb21wb25lbnRzIjo2fV19
+      </DataArray>
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="22" format="binary" RangeMin="45" RangeMax="103">
+        FgAAAAAAAAA2LjQuMi0xMTgwLWcxYjViOGRlNTdk
+      </DataArray>
+      <DataArray type="Float64" Name="sigma_ip" NumberOfComponents="6" NumberOfTuples="75" format="binary" RangeMin="0.000028897772464008626" RangeMax="20249157.961026005">
+        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
+        <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
+          <Value index="0">
+            2.8897772464e-05
+          </Value>
+          <Value index="1">
+            20249157.961
+          </Value>
+        </InformationKey>
+      </DataArray>
+    </FieldData>
+    <PPointData>
+      <PDataArray type="Float64" Name="MaterialForces" NumberOfComponents="3"/>
+      <PDataArray type="Float64" Name="NodalForces" NumberOfComponents="3"/>
+      <PDataArray type="Float64" Name="displacement" NumberOfComponents="3"/>
+      <PDataArray type="Float64" Name="epsilon" NumberOfComponents="6"/>
+      <PDataArray type="Float64" Name="sigma" NumberOfComponents="6"/>
+    </PPointData>
+    <PCellData>
+      <PDataArray type="Int32" Name="MaterialIDs"/>
+      <PDataArray type="Float64" Name="principal_stress_values" NumberOfComponents="3"/>
+      <PDataArray type="Float64" Name="principal_stress_vector_1" NumberOfComponents="3"/>
+      <PDataArray type="Float64" Name="principal_stress_vector_2" NumberOfComponents="3"/>
+      <PDataArray type="Float64" Name="principal_stress_vector_3" NumberOfComponents="3"/>
+      <PDataArray type="UInt8" Name="vtkGhostType"/>
+    </PCellData>
+    <PPoints>
+      <PDataArray type="Float64" Name="Points" NumberOfComponents="3"/>
+    </PPoints>
+    <Piece Source="mesh_with_3D_different_elements_sigma_ip_pvtu_0.vtu"/>
+    <Piece Source="mesh_with_3D_different_elements_sigma_ip_pvtu_1.vtu"/>
+    <Piece Source="mesh_with_3D_different_elements_sigma_ip_pvtu_2.vtu"/>
+  </PUnstructuredGrid>
+</VTKFile>

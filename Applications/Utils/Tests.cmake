@@ -351,6 +351,132 @@ AddTest(
                 basicQuadLine_partitioned_msh_ele_g2.bin
                 basicQuadLine_partitioned_msh_nod2.bin
 )
+
+# Mesh with integration point data
+AddTest(
+    NAME partmesh_mesh_with_sigm_ip_pointheatsource_quad_ogs2metis
+    PATH NodePartitionedMesh/WithIntegrationPointStress
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000.vtu --ogs2metis
+                    -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+)
+
+AddTest(
+    NAME partmesh_mesh_with_sigm_ip_pointheatsource_quad
+    PATH NodePartitionedMesh/WithIntegrationPointStress
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 4 -i expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+    REQUIREMENTS NOT APPLE
+    DEPENDS partmesh-partmesh_mesh_with_sigm_ip_pointheatsource_quad_ogs2metis
+    TESTER diff
+    DIFF_DATA
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_cell_properties_cfg4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_cell_properties_val4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_integration_point_properties_cfg4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_integration_point_properties_val4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_msh_cfg4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_msh_ele4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_msh_ele_g4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_msh_nod4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_node_properties_cfg4.bin
+        expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000_partitioned_node_properties_val4.bin
+)
+
+AddTest(
+    NAME partmesh_mesh_withsigma_ip_for_m1_3Dload_hex_ogs2metis
+    PATH NodePartitionedMesh/WithIntegrationPointStress
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i m1_3Dload_ts_1_t_1_000000.vtu --ogs2metis
+                    -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+)
+
+AddTest(
+    NAME partmesh_mesh_withsigma_ip_for_m1_3Dload_hex
+    PATH NodePartitionedMesh/WithIntegrationPointStress
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 3 -i m1_3Dload_ts_1_t_1_000000.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+    REQUIREMENTS NOT APPLE
+    DEPENDS partmesh-partmesh_mesh_withsigma_ip_for_m1_3Dload_hex_ogs2metis
+    TESTER diff
+    DIFF_DATA
+        m1_3Dload_ts_1_t_1_000000_partitioned_cell_properties_cfg3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_cell_properties_val3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_integration_point_properties_cfg3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_integration_point_properties_val3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_msh_cfg3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_msh_ele3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_msh_ele_g3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_msh_nod3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_node_properties_cfg3.bin
+        m1_3Dload_ts_1_t_1_000000_partitioned_node_properties_val3.bin
+)
+
+AddTest(
+    NAME partmesh_mesh_withsigma_ip_with_mixed_element_types_ogs2metis
+    PATH NodePartitionedMesh/WithIntegrationPointStress/MixedElements
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i mesh_with_3D_different_elements_sigma_ip.vtu --ogs2metis
+                    -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements
+)
+
+AddTest(
+    NAME partmesh_mesh_withsigma_ip_with_mixed_element_types
+    PATH NodePartitionedMesh/WithIntegrationPointStress/MixedElements
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 3 -i mesh_with_3D_different_elements_sigma_ip.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements
+    REQUIREMENTS NOT APPLE
+    DEPENDS partmesh-partmesh_mesh_withsigma_ip_with_mixed_element_types_ogs2metis
+    TESTER diff
+    DIFF_DATA
+       mesh_with_3D_different_elements_sigma_ip_partitioned_cell_properties_cfg3.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_cell_properties_val3.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_integration_point_properties_cfg3.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_integration_point_properties_val3.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_msh_cfg3.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_msh_ele3.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_msh_ele_g3.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_msh_nod3.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_node_properties_cfg3.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_node_properties_val3.bin
+)
+
+AddTest(
+    NAME partmesh_mesh_with_sigm_ip_quad_tri_ogs2metis
+    PATH NodePartitionedMesh/WithIntegrationPointStress/MixedElements/TriQuad
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements/TriQuad
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i quad_tri_THM_t_864000_000000.vtu --ogs2metis
+                    -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements/TriQuad
+)
+
+AddTest(
+    NAME partmesh_mesh_with_sigm_ip_quad_tri
+    PATH NodePartitionedMesh/WithIntegrationPointStress/MixedElements/TriQuad
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements/TriQuad
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 4 -i quad_tri_THM_t_864000_000000.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements/TriQuad
+    REQUIREMENTS NOT APPLE
+    DEPENDS partmesh-partmesh_mesh_with_sigm_ip_quad_tri_ogs2metis
+    TESTER diff
+    DIFF_DATA
+       quad_tri_THM_t_864000_000000_partitioned_cell_properties_cfg4.bin
+       quad_tri_THM_t_864000_000000_partitioned_cell_properties_val4.bin
+       quad_tri_THM_t_864000_000000_partitioned_integration_point_properties_cfg4.bin
+       quad_tri_THM_t_864000_000000_partitioned_integration_point_properties_val4.bin
+       quad_tri_THM_t_864000_000000_partitioned_msh_cfg4.bin
+       quad_tri_THM_t_864000_000000_partitioned_msh_ele4.bin
+       quad_tri_THM_t_864000_000000_partitioned_msh_ele_g4.bin
+       quad_tri_THM_t_864000_000000_partitioned_msh_nod4.bin
+       quad_tri_THM_t_864000_000000_partitioned_node_properties_cfg4.bin
+       quad_tri_THM_t_864000_000000_partitioned_node_properties_val4.bin
+)
+
 ################################################
 
 if(SNAKEMAKE AND TEE_TOOL_PATH AND BASH_TOOL_PATH)
@@ -765,6 +891,69 @@ AddTest(
     cube_1x1x1_hex_1e3_0 cube_1x1x1_hex_1e3_0.vtu 1e-16
     cube_1x1x1_hex_1e3_1.vtu cube_1x1x1_hex_1e3_1.vtu 1e-16
     cube_1x1x1_hex_1e3_2.vtu cube_1x1x1_hex_1e3_2.vtu 1e-16
+)
+
+AddTest(
+    NAME BinaryToPVTU_m1_load
+    PATH NodePartitionedMesh/WithIntegrationPointStress
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+    EXECUTABLE binaryToPVTU
+    EXECUTABLE_ARGS -i m1_3Dload_ts_1_t_1_000000 -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress/mi_load_binary_to_pvtu
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 3
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    mi_load_binary_to_pvtu_0.vtu mi_load_binary_to_pvtu_0.vtu 1e-16
+    mi_load_binary_to_pvtu_1.vtu mi_load_binary_to_pvtu_1.vtu 1e-16
+    mi_load_binary_to_pvtu_2.vtu mi_load_binary_to_pvtu_2.vtu 1e-16
+)
+
+AddTest(
+    NAME BinaryToPVTU_pointheatsource
+    PATH NodePartitionedMesh/WithIntegrationPointStress
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress
+    EXECUTABLE binaryToPVTU
+    EXECUTABLE_ARGS -i expected_pointheatsource_quadratic-mesh_ts_10_t_50000_000000 -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress/pointheatsource_to_pvtu
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 4
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    pointheatsource_to_pvtu_0.vtu pointheatsource_to_pvtu_0.vtu 1e-16
+    pointheatsource_to_pvtu_1.vtu pointheatsource_to_pvtu_1.vtu 1e-16
+    pointheatsource_to_pvtu_2.vtu pointheatsource_to_pvtu_2.vtu 1e-16
+    pointheatsource_to_pvtu_3.vtu pointheatsource_to_pvtu_3.vtu 1e-16
+)
+
+AddTest(
+    NAME BinaryToPVTU_mesh_with_sigma_ip_and_mixed_element_types
+    PATH NodePartitionedMesh/WithIntegrationPointStress/MixedElements
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements
+    EXECUTABLE binaryToPVTU
+    EXECUTABLE_ARGS -i mesh_with_3D_different_elements_sigma_ip -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements/mesh_with_3D_different_elements_sigma_ip_pvtu
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 3
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    mesh_with_3D_different_elements_sigma_ip_pvtu_0.vtu mesh_with_3D_different_elements_sigma_ip_pvtu_0.vtu 1e-16
+    mesh_with_3D_different_elements_sigma_ip_pvtu_1.vtu mesh_with_3D_different_elements_sigma_ip_pvtu_1.vtu 1e-16
+    mesh_with_3D_different_elements_sigma_ip_pvtu_2.vtu mesh_with_3D_different_elements_sigma_ip_pvtu_2.vtu 1e-16
+    mesh_with_3D_different_elements_sigma_ip_pvtu_3.vtu mesh_with_3D_different_elements_sigma_ip_pvtu_3.vtu 1e-16
+)
+
+AddTest(
+    NAME BinaryToPVTU_mesh_with_sigma_ip_quad_tri
+    PATH NodePartitionedMesh/WithIntegrationPointStress/MixedElements/TriQuad
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements/TriQuad
+    EXECUTABLE binaryToPVTU
+    EXECUTABLE_ARGS -i quad_tri_THM_t_864000_000000 -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements/TriQuad/quad_tri_THM_t_864000_000000_pvtu
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 4
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    quad_tri_THM_t_864000_000000_pvtu_0.vtu quad_tri_THM_t_864000_000000_pvtu_0.vtu 1e-16
+    quad_tri_THM_t_864000_000000_pvtu_1.vtu quad_tri_THM_t_864000_000000_pvtu_1.vtu 1e-16
+    quad_tri_THM_t_864000_000000_pvtu_2.vtu quad_tri_THM_t_864000_000000_pvtu_2.vtu 1e-16
+    quad_tri_THM_t_864000_000000_pvtu_3.vtu quad_tri_THM_t_864000_000000_pvtu_3.vtu 1e-16
 )
 
 AddTest(

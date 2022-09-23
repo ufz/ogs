@@ -22,7 +22,11 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/Stream.h"
+#include "MeshLib/Elements/Elements.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/MeshEnums.h"
+#include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
+#include "ProcessLib/Output/IntegrationPointWriter.h"
 
 namespace ApplicationUtils
 {
@@ -42,6 +46,84 @@ struct NodeStruct
     double z;
 };
 
+template <typename ElementType>
+int getNumberOfElementIntegrationPointsGeneral(
+    ProcessLib::IntegrationPointMetaData const& ip_meta_data)
+{
+    using IntegrationPolicy =
+        NumLib::GaussLegendreIntegrationPolicy<ElementType>;
+    using NonGenericIntegrationMethod =
+        typename IntegrationPolicy::IntegrationMethod;
+    NonGenericIntegrationMethod int_met{
+        (unsigned int)ip_meta_data.integration_order};
+    return int_met.getNumberOfPoints();
+}
+
+int getNumberOfElementIntegrationPoints(std::string const& data_name,
+                                        MeshLib::Properties const& properties,
+                                        MeshLib::Element const& e)
+{
+    auto const ip_meta_data =
+        ProcessLib::getIntegrationPointMetaData(properties, data_name);
+
+    switch (e.getCellType())
+    {
+        case MeshLib::CellType::LINE2:
+            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Line>(
+                ip_meta_data);
+        case MeshLib::CellType::LINE3:
+            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Line3>(
+                ip_meta_data);
+        case MeshLib::CellType::TRI3:
+            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Tri>(
+                ip_meta_data);
+        case MeshLib::CellType::TRI6:
+            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Tri6>(
+                ip_meta_data);
+        case MeshLib::CellType::QUAD4:
+            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Quad>(
+                ip_meta_data);
+        case MeshLib::CellType::QUAD8:
+            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Quad8>(
+                ip_meta_data);
+        case MeshLib::CellType::QUAD9:
+            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Quad9>(
+                ip_meta_data);
+        case MeshLib::CellType::TET4:
+            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Tet>(
+                ip_meta_data);
+        case MeshLib::CellType::TET10:
+            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Tet10>(
+                ip_meta_data);
+        case MeshLib::CellType::HEX8:
+            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Hex>(
+                ip_meta_data);
+        case MeshLib::CellType::HEX20:
+            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Hex20>(
+                ip_meta_data);
+        case MeshLib::CellType::PRISM6:
+            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Prism>(
+                ip_meta_data);
+        case MeshLib::CellType::PRISM15:
+            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Prism15>(
+                ip_meta_data);
+        case MeshLib::CellType::PYRAMID5:
+            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Pyramid>(
+                ip_meta_data);
+        case MeshLib::CellType::PYRAMID13:
+            return getNumberOfElementIntegrationPointsGeneral<
+                MeshLib::Pyramid13>(ip_meta_data);
+        case MeshLib::CellType::PRISM18:
+        case MeshLib::CellType::HEX27:
+            OGS_FATAL("Mesh element type {:s} is not supported",
+                      MeshLib::CellType2String(e.getCellType()));
+        case MeshLib::CellType::INVALID:
+        default:
+            OGS_FATAL("Invalid Element Type");
+    }
+    return 0;
+}
+
 std::size_t Partition::numberOfMeshItems(
     MeshLib::MeshItemType const item_type) const
 {
@@ -53,6 +135,11 @@ std::size_t Partition::numberOfMeshItems(
     if (item_type == MeshLib::MeshItemType::Cell)
     {
         return regular_elements.size() + ghost_elements.size();
+    }
+
+    if (item_type == MeshLib::MeshItemType::IntegrationPoint)
+    {
+        return number_of_integration_points;
     }
     OGS_FATAL("Mesh items other than nodes and cells are not supported.");
 }
@@ -356,8 +443,142 @@ std::size_t copyCellPropertyVectorValues(
 }
 
 template <typename T>
+std::vector<std::size_t> getIntegrationPointDataOffsetsOfGlobalMeshElements(
+    std::vector<MeshLib::Element*> const& global_mesh_elements,
+    MeshLib::PropertyVector<T> const& pv,
+    MeshLib::Properties const& properties)
+{
+    if (pv.getPropertyName() == "OGS_VERSION" ||
+        pv.getPropertyName() == "IntegrationPointMetaData")
+    {
+        return {};
+    }
+
+    auto const n_components = pv.getNumberOfGlobalComponents();
+
+    std::vector<std::size_t> element_ip_data_offsets(
+        global_mesh_elements.size() + 1);
+    std::size_t counter = 0;
+    for (std::size_t i = 0; i < global_mesh_elements.size(); i++)
+    {
+        auto const element = global_mesh_elements[i];
+
+#ifdef NDEBUG
+        // Assuming that element->getID() is the same as the element index of
+        // the vector.
+        assert(i == element->getID());
+#endif
+        element_ip_data_offsets[element->getID()] = counter;
+        counter += getNumberOfElementIntegrationPoints(pv.getPropertyName(),
+                                                       properties, *element) *
+                   n_components;
+    }
+    element_ip_data_offsets[global_mesh_elements.size()] = counter;
+
+    return element_ip_data_offsets;
+}
+
+/// Copies the data from the property vector \c pv belonging to the given
+/// Partition \c p to the property vector \c partitioned_pv.
+/// \c partitioned_pv is ordered by partition. Regular elements' and ghost
+/// elements' values are copied.
+template <typename T>
+std::size_t copyFieldPropertyDataToPartitions(
+    MeshLib::Properties const& properties,
+    Partition const& p,
+    std::size_t const id_offset_partition,
+    std::vector<std::size_t> const& element_ip_data_offsets,
+    MeshLib::PropertyVector<T> const& pv,
+    MeshLib::PropertyVector<T>& partitioned_pv)
+{
+    // special case for OGS_VERSION and IntegrationPointMetaData
+    // those are not "real" integration points
+    // they are copied "as is" (i.e. fully) for every partition
+    if (pv.getPropertyName() == "OGS_VERSION" ||
+        pv.getPropertyName() == "IntegrationPointMetaData")
+    {
+        std::copy_n(&pv[0], pv.size(), &partitioned_pv[id_offset_partition]);
+        return pv.size();
+    }
+
+    auto const n_components = pv.getNumberOfGlobalComponents();
+
+    std::size_t id_offset = 0;
+
+    auto copyFieldData =
+        [&](std::vector<const MeshLib::Element*> const& elements)
+    {
+        for (auto const element : elements)
+        {
+            int const number_of_element_field_data =
+                getNumberOfElementIntegrationPoints(pv.getPropertyName(),
+                                                    properties, *element) *
+                n_components;
+            // The original element ID is not changed.
+            auto const element_id = element->getID();
+            int const begin_pos = element_ip_data_offsets[element_id];
+            int const end_pos = element_ip_data_offsets[element_id + 1];
+
+            std::copy(pv.begin() + begin_pos, pv.begin() + end_pos,
+                      &partitioned_pv[id_offset + id_offset_partition]);
+            id_offset += number_of_element_field_data;
+        }
+    };
+
+    copyFieldData(p.regular_elements);
+    copyFieldData(p.ghost_elements);
+
+    return id_offset;
+}
+
+void setIntegrationPointNumberOfPartition(MeshLib::Properties const& properties,
+                                          std::vector<Partition>& partitions)
+{
+    for (auto const& [name, property] : properties)
+    {
+        auto const item_type = property->getMeshItemType();
+
+        if (item_type != MeshLib::MeshItemType::IntegrationPoint)
+        {
+            continue;
+        }
+
+        if (property->getPropertyName() == "OGS_VERSION" ||
+            property->getPropertyName() == "IntegrationPointMetaData")
+        {
+            continue;
+        }
+
+        std::string const property_name = property->getPropertyName();
+        auto countIntegrationPoints =
+            [&](std::vector<const MeshLib::Element*> const& elements)
+        {
+            std::size_t counter = 0;
+            for (auto const element : elements)
+            {
+                int const number_of_integration_points =
+                    getNumberOfElementIntegrationPoints(property_name,
+                                                        properties, *element);
+                counter += number_of_integration_points;
+            }
+            return counter;
+        };
+
+        for (auto& p : partitions)
+        {
+            p.number_of_integration_points =
+                countIntegrationPoints(p.regular_elements) +
+                countIntegrationPoints(p.ghost_elements);
+        }
+        return;
+    }
+}
+
+template <typename T>
 bool copyPropertyVector(
+    std::vector<MeshLib::Element*> const& global_mesh_elements,
     MeshLib::Properties& partitioned_properties,
+    MeshLib::Properties const& properties,
     std::vector<Partition> const& partitions,
     MeshLib::PropertyVector<T> const* const pv,
     std::map<MeshLib::MeshItemType, std::size_t> const& total_number_of_tuples)
@@ -368,22 +589,38 @@ bool copyPropertyVector(
     }
     auto const item_type = pv->getMeshItemType();
 
+    std::size_t partitioned_pv_size = total_number_of_tuples.at(item_type) *
+                                      pv->getNumberOfGlobalComponents();
+
+    std::vector<std::size_t> element_ip_data_offsets;
     if (item_type == MeshLib::MeshItemType::IntegrationPoint)
     {
-        return true;  // Skip integration point data. Requires parsing of json
-                      // for the integration point data. Return true, because
-                      // the property was "successfully" parsed.
+        if (pv->getPropertyName() == "OGS_VERSION" ||
+            pv->getPropertyName() == "IntegrationPointMetaData")
+        {
+            partitioned_pv_size = pv->size() * partitions.size();
+        }
+
+        element_ip_data_offsets =
+            getIntegrationPointDataOffsetsOfGlobalMeshElements<T>(
+                global_mesh_elements, *pv, properties);
     }
 
     auto partitioned_pv = partitioned_properties.createNewPropertyVector<T>(
         pv->getPropertyName(), pv->getMeshItemType(),
         pv->getNumberOfGlobalComponents());
-    partitioned_pv->resize(total_number_of_tuples.at(item_type) *
-                           pv->getNumberOfGlobalComponents());
+    partitioned_pv->resize(partitioned_pv_size);
 
     auto copy_property_vector_values =
         [&](Partition const& p, std::size_t offset)
     {
+        if (item_type == MeshLib::MeshItemType::IntegrationPoint)
+        {
+            return copyFieldPropertyDataToPartitions(properties, p, offset,
+                                                     element_ip_data_offsets,
+                                                     *pv, *partitioned_pv);
+        }
+
         if (item_type == MeshLib::MeshItemType::Node)
         {
             return copyNodePropertyVectorValues(p, offset, *pv,
@@ -394,6 +631,7 @@ bool copyPropertyVector(
             return copyCellPropertyVectorValues(p, offset, *pv,
                                                 *partitioned_pv);
         }
+
         OGS_FATAL(
             "Copying of property vector values for mesh item type {:s} is not "
             "implemented.",
@@ -468,13 +706,19 @@ void addVtkGhostTypeProperty(MeshLib::Properties& partitioned_properties,
 
 /// Partition existing properties and add vtkGhostType cell data array property.
 MeshLib::Properties partitionProperties(
-    MeshLib::Properties const& properties,
-    std::vector<Partition> const& partitions)
+    std::unique_ptr<MeshLib::Mesh> const& mesh,
+    std::vector<Partition>& partitions)
 {
     using namespace MeshLib;
+    using namespace ProcessLib;
+    using namespace NumLib;
+
+    MeshLib::Properties const& properties = mesh->getProperties();
+
+    // Count the number of integration point data of all partitions:
+    setIntegrationPointNumberOfPartition(properties, partitions);
 
     Properties partitioned_properties;
-
     auto count_tuples = [&](MeshItemType const mesh_item_type)
     {
         return std::accumulate(
@@ -482,25 +726,30 @@ MeshLib::Properties partitionProperties(
             [&](std::size_t const sum, Partition const& p)
             { return sum + p.numberOfMeshItems(mesh_item_type); });
     };
+
     std::map<MeshItemType, std::size_t> const total_number_of_tuples = {
         {MeshItemType::Cell, count_tuples(MeshItemType::Cell)},
-        {MeshItemType::Node, count_tuples(MeshItemType::Node)}};
+        {MeshItemType::Node, count_tuples(MeshItemType::Node)},
+        {MeshItemType::IntegrationPoint,
+         count_tuples(MeshItemType::IntegrationPoint)}};
 
     DBUG(
         "total number of tuples after partitioning defined for cells is {:d} "
-        "and for nodes {:d}.",
+        "and for nodes {:d} and for integration points {:d}.",
         total_number_of_tuples.at(MeshItemType::Cell),
-        total_number_of_tuples.at(MeshItemType::Node));
+        total_number_of_tuples.at(MeshItemType::Node),
+        total_number_of_tuples.at(MeshItemType::IntegrationPoint));
 
-    // 1 create new PV
-    // 2 resize the PV with total_number_of_tuples
-    // 3 copy the values according to the partition info
+    //  1 create new PV
+    //  2 resize the PV with total_number_of_tuples
+    //  3 copy the values according to the partition info
     applyToPropertyVectors(
         properties,
         [&](auto type, auto const property)
         {
             return copyPropertyVector<decltype(type)>(
-                partitioned_properties, partitions,
+                mesh->getElements(), partitioned_properties, properties,
+                partitions,
                 dynamic_cast<PropertyVector<decltype(type)> const*>(property),
                 total_number_of_tuples);
         });
@@ -534,6 +783,48 @@ void markDuplicateGhostCells(MeshLib::Mesh const& mesh,
     }
 }
 
+void checkFieldPropertyVectorSize(
+    std::vector<MeshLib::Element*> const& global_mesh_elements,
+    MeshLib::Properties const& properties)
+{
+    for (auto const& [name, property] : properties)
+    {
+        auto const item_type = property->getMeshItemType();
+
+        if (item_type != MeshLib::MeshItemType::IntegrationPoint)
+        {
+            continue;
+        }
+
+        if (property->getPropertyName() == "OGS_VERSION" ||
+            property->getPropertyName() == "IntegrationPointMetaData")
+        {
+            continue;
+        }
+
+        std::size_t number_of_total_integration_points = 0;
+        for (auto const element : global_mesh_elements)
+        {
+            int const number_of_integration_points =
+                getNumberOfElementIntegrationPoints(property->getPropertyName(),
+                                                    properties, *element);
+            number_of_total_integration_points += number_of_integration_points;
+        }
+
+        const auto pv =
+            dynamic_cast<MeshLib::PropertyVector<double> const*>(property);
+        std::size_t const component_number = pv->getNumberOfGlobalComponents();
+        if (pv->size() != number_of_total_integration_points * component_number)
+        {
+            OGS_FATAL(
+                "The property vector's size {:d} for integration point data "
+                "{:s} does not match its actual size {:d}. The field data in "
+                "the vtu file are wrong.",
+                pv->size(), name,
+                number_of_total_integration_points * component_number);
+        }
+    }
+}
 void NodeWiseMeshPartitioner::partitionByMETIS()
 {
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
@@ -546,8 +837,11 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
 
     renumberNodeIndices();
 
-    _partitioned_properties =
-        partitionProperties(_mesh->getProperties(), _partitions);
+    // In case the field data in the vtu file are manually added, e.g. by using
+    // some tools, the size of the field property vector has to be checked.
+    checkFieldPropertyVectorSize(_mesh->getElements(), _mesh->getProperties());
+
+    _partitioned_properties = partitionProperties(_mesh, _partitions);
 }
 
 void NodeWiseMeshPartitioner::renumberBulkNodeIdsProperty(
@@ -1043,6 +1337,8 @@ void NodeWiseMeshPartitioner::write(const std::string& file_name_base)
                     MeshLib::MeshItemType::Node);
     writeProperties(file_name_base, _partitioned_properties, _partitions,
                     MeshLib::MeshItemType::Cell);
+    writeProperties(file_name_base, _partitioned_properties, _partitions,
+                    MeshLib::MeshItemType::IntegrationPoint);
 
     const auto elements_offsets = writeConfigData(file_name_base, _partitions);
 

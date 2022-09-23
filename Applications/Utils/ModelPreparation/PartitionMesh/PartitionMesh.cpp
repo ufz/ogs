@@ -221,10 +221,9 @@ int main(int argc, char* argv[])
             BaseLib::joinPaths(
                 output_directory_arg.getValue(),
                 BaseLib::extractBaseNameWithoutExtension(filename));
-        auto const partitions = mesh_partitioner.partitionOtherMesh(*mesh);
+        auto partitions = mesh_partitioner.partitionOtherMesh(*mesh);
 
-        auto partitioned_properties =
-            partitionProperties(mesh->getProperties(), partitions);
+        auto partitioned_properties = partitionProperties(mesh, partitions);
         mesh_partitioner.renumberBulkNodeIdsProperty(
             partitioned_properties.getPropertyVector<std::size_t>(
                 "bulk_node_ids", MeshLib::MeshItemType::Node, 1),

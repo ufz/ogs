@@ -40,6 +40,12 @@ struct Partition
     std::vector<const MeshLib::Element*> ghost_elements;
     std::vector<bool> duplicate_ghost_cell;
 
+    std::size_t number_of_integration_points = 0;
+
+    // Note: for property vector OGS_VERSION or IntegrationPointMetaData, the
+    // number gotten from this function is not used for reading the property
+    // vector under MPI because the sizes of the partitions of such vectors are
+    // the same.
     std::size_t numberOfMeshItems(MeshLib::MeshItemType const item_type) const;
 
     std::ostream& writeNodes(
@@ -51,8 +57,8 @@ struct Partition
 
 /// Creates partitioned mesh properties for nodes and cells.
 MeshLib::Properties partitionProperties(
-    MeshLib::Properties const& properties,
-    std::vector<Partition> const& partitions);
+    std::unique_ptr<MeshLib::Mesh> const& mesh,
+    std::vector<Partition>& partitions);
 
 /// Mesh partitioner.
 class NodeWiseMeshPartitioner
