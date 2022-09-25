@@ -44,3 +44,4 @@ nohup.out
 *.egg-info/
 /wheelhouse
 .ipynb_checkpoints
+/Applications/Python/_version.py

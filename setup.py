@@ -3,37 +3,7 @@ from setuptools import find_packages
 
 import os
 import platform
-import re
-import subprocess
 import sys
-
-
-def get_version():
-    git_version = ""
-    if "OGS_VERSION" in os.environ:
-        git_version = os.environ["OGS_VERSION"]
-    else:
-        git_describe_cmd = ["git describe --tags"]
-        if platform.system() == "Windows":
-            git_describe_cmd = ["git", "describe", "--tags"]
-        git_version = subprocess.run(
-            git_describe_cmd,
-            capture_output=True,
-            text=True,
-            shell=True,
-        ).stdout.strip()
-
-    if re.match("\d+\.\d+\.\d+-\d+-g\w+", git_version):
-        # Make it PEP 440 compliant
-        # e.g. 6.4.2-1140-g85bbc8b4e1 -> 6.4.2.dev1140
-        m = re.match(".+?(?=-g[\w]*$)", git_version)  # strip out commit hash
-        if m:
-            return m.group(0).replace("-", ".dev")  # insert dev
-        print("ERROR: Could not get ogs version!")
-        exit(1)
-
-    return git_version
-
 
 sys.path.append(os.path.join("Applications", "Python"))
 from ogs._internal.provide_ogs_cli_tools_via_wheel import binaries_list
@@ -53,7 +23,6 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="ogs",
-    version=get_version(),
     description="OpenGeoSys Python Module",
     long_description=long_description,
     long_description_content_type="text/markdown",
