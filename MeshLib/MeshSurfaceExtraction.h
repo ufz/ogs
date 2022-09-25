@@ -14,10 +14,9 @@
 
 #pragma once
 
+#include <Eigen/Core>
 #include <cstddef>
 #include <vector>
-
-#include <Eigen/Eigen>
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Properties.h"

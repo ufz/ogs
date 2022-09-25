@@ -10,13 +10,12 @@
 
 #pragma once
 
-#include <Eigen/Eigen>
-
+#include <Eigen/Core>
 #include <optional>
-#include "BaseLib/Error.h"
 
 #include "BHECommon.h"
 #include "BHECommonUType.h"
+#include "BaseLib/Error.h"
 #include "FlowAndTemperatureControl.h"
 #include "PipeConfigurationUType.h"
 

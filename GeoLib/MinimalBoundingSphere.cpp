@@ -14,6 +14,7 @@
 
 #include "MinimalBoundingSphere.h"
 
+#include <Eigen/Geometry>
 #include <ctime>
 
 #include "MathLib/GeometricBasics.h"

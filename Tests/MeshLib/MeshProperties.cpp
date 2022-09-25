@@ -9,7 +9,7 @@
 
 #include <gtest/gtest.h>
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 #include <numeric>
 
 #include "MeshLib/Elements/Element.h"

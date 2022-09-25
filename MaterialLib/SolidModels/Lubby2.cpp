@@ -9,6 +9,8 @@
 
 #include "Lubby2.h"
 
+#include <Eigen/LU>
+
 #include "MaterialLib/MPL/Utils/GetSymmetricTensor.h"
 
 namespace MPL = MaterialPropertyLib;

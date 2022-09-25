@@ -9,7 +9,8 @@
  */
 #pragma once
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
+
 #include "BaseLib/Error.h"
 
 namespace MathLib

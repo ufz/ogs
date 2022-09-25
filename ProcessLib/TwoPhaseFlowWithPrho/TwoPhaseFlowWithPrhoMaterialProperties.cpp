@@ -10,6 +10,7 @@
 
 #include "TwoPhaseFlowWithPrhoMaterialProperties.h"
 
+#include <Eigen/LU>
 #include <utility>
 
 #include "BaseLib/Logging.h"

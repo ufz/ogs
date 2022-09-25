@@ -10,6 +10,7 @@
 
 #include "NaturalCoordinatesMapping.h"
 
+#include <Eigen/LU>
 #include <cassert>
 #ifndef NDEBUG
 #include <iostream>

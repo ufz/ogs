@@ -16,7 +16,7 @@
 
 #include <spdlog/fmt/bundled/ostream.h>
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 #include <bitset>
 #include <cassert>
 #include <cmath>

@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 #include "MaterialLib/PorousMedium/Permeability/Permeability.h"
 #include "ParameterLib/Parameter.h"

@@ -10,6 +10,8 @@
 
 #include "Swelling.h"
 
+#include <Eigen/LU>
+
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 
 namespace ProcessLib::ThermoRichardsMechanics

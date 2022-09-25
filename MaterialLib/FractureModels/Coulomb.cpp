@@ -9,6 +9,7 @@
 
 #include "Coulomb.h"
 
+#include <Eigen/LU>
 #include <boost/math/constants/constants.hpp>
 
 #include "BaseLib/Error.h"

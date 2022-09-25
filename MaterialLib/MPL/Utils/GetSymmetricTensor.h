@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 #include "MaterialLib/MPL/Property.h"
 #include "MathLib/KelvinVector.h"

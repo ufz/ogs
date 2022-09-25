@@ -8,7 +8,7 @@
  */
 #include "CreateDeactivatedSubdomain.h"
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <range/v3/algorithm/all_of.hpp>
 #include <range/v3/algorithm/copy_if.hpp>
 #include <range/v3/algorithm/partition_copy.hpp>

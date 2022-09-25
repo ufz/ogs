@@ -8,7 +8,7 @@
  *
  */
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <array>
 
 #include "MeshLib/Elements/Elements.h"

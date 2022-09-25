@@ -10,9 +10,8 @@
 
 #pragma once
 
+#include <Eigen/Core>
 #include <vector>
-
-#include <Eigen/Eigen>
 
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 

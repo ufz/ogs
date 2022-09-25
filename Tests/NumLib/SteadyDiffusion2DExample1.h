@@ -12,10 +12,9 @@
 
 #pragma once
 
+#include <Eigen/Core>
 #include <cmath>
 #include <vector>
-
-#include <Eigen/Dense>
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"

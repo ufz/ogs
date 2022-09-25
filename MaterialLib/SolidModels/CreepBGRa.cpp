@@ -11,6 +11,7 @@
 
 #include "CreepBGRa.h"
 
+#include <Eigen/LU>
 #include <limits>
 
 #include "MaterialLib/MPL/Utils/GetSymmetricTensor.h"

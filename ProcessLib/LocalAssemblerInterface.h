@@ -10,10 +10,10 @@
 
 #pragma once
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
-#include "NumLib/NumericsConfig.h"
 #include "MathLib/Point3d.h"
+#include "NumLib/NumericsConfig.h"
 
 namespace NumLib
 {

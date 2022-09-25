@@ -11,7 +11,7 @@
 
 #include <gtest/gtest.h>
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 #include <boost/math/constants/constants.hpp>
 
 #include "MaterialLib/MPL/Medium.h"

@@ -10,11 +10,10 @@
 
 #pragma once
 
-#include <Eigen/Eigen>
-
-#include "BaseLib/Error.h"
+#include <Eigen/Core>
 
 #include "BHECommonCoaxial.h"
+#include "BaseLib/Error.h"
 
 namespace ProcessLib
 {

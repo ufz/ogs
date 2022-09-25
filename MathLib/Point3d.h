@@ -12,8 +12,8 @@
 
 #pragma once
 
+#include <Eigen/Core>
 #include <limits>
-#include <Eigen/Dense>
 
 #include "mathlib_export.h"
 

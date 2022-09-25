@@ -12,7 +12,7 @@
  */
 #pragma once
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <memory>
 #include <optional>
 #include <string>

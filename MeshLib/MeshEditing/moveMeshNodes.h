@@ -13,7 +13,7 @@
  */
 #pragma once
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 
 #include "MathLib/Point3d.h"
 

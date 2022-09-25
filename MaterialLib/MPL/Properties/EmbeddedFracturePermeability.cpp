@@ -10,6 +10,9 @@
 
 #include "MaterialLib/MPL/Properties/EmbeddedFracturePermeability.h"
 
+#include <Eigen/Eigenvalues>
+#include <Eigen/Geometry>
+
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 

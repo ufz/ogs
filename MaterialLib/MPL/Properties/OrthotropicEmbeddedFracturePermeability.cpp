@@ -10,6 +10,8 @@
 
 #include "MaterialLib/MPL/Properties/OrthotropicEmbeddedFracturePermeability.h"
 
+#include <Eigen/Geometry>
+
 #include "MaterialLib/MPL/Medium.h"
 
 namespace MaterialPropertyLib

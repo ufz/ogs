@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 #include <memory>
 #include <vector>
 

@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <Eigen/LU>
 #include <cassert>
 
 #include "ComputeMicroPorosity.h"

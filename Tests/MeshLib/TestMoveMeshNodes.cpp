@@ -8,7 +8,7 @@
 
 #include <gtest/gtest.h>
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 #include <cstdlib>
 #include <ctime>
 #include <numeric>

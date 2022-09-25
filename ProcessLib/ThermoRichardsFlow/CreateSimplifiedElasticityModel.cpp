@@ -10,7 +10,7 @@
 
 #include "CreateSimplifiedElasticityModel.h"
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Logging.h"

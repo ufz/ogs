@@ -11,6 +11,7 @@
 
 #include "PermeabilityMohrCoulombFailureIndexModel.h"
 
+#include <Eigen/Eigenvalues>
 #include <boost/math/constants/constants.hpp>
 #include <cmath>
 #include <limits>

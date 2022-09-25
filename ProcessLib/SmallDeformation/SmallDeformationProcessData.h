@@ -10,10 +10,9 @@
 
 #pragma once
 
+#include <Eigen/Core>
 #include <memory>
 #include <utility>
-
-#include <Eigen/Eigen>
 
 #include "ParameterLib/Parameter.h"
 

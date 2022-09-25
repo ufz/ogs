@@ -10,14 +10,12 @@
 
 #pragma once
 
-#include "ParameterLib/Parameter.h"
-
+#include <Eigen/Core>
 #include <memory>
 #include <utility>
 
-#include <Eigen/Dense>
-
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
 {

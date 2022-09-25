@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <Eigen/Dense>
+#include <Eigen/LU>
 #include <vector>
 
 #include "IntegrationPointData.h"

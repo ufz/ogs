@@ -9,13 +9,12 @@
 
 #pragma once
 
-#include <Eigen/Eigen>
+#include <Eigen/Core>
 #include <utility>
 
+#include "FractureModelBase.h"
 #include "NumLib/NewtonRaphson.h"
 #include "ParameterLib/Parameter.h"
-
-#include "FractureModelBase.h"
 
 namespace MaterialLib
 {

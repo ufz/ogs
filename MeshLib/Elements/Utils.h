@@ -10,14 +10,14 @@
 
 #pragma once
 
+#include <Eigen/Geometry>
 #include <algorithm>
 #include <vector>
 
 #include "BaseLib/Algorithm.h"
-#include "MeshLib/Node.h"
-
 #include "Element.h"
 #include "FaceRule.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib
 {

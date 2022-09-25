@@ -11,6 +11,8 @@
 
 #include <gtest/gtest.h>
 
+#include <Eigen/LU>
+
 #include "Tests/AutoCheckTools.h"
 
 using namespace MathLib::KelvinVector;
