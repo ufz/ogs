@@ -22,11 +22,10 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/Stream.h"
+#include "IntegrationPointDataTools.h"
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/MeshEnums.h"
-#include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
-#include "ProcessLib/Output/IntegrationPointWriter.h"
 
 namespace ApplicationUtils
 {
@@ -45,84 +44,6 @@ struct NodeStruct
     double y;
     double z;
 };
-
-template <typename ElementType>
-int getNumberOfElementIntegrationPointsGeneral(
-    ProcessLib::IntegrationPointMetaData const& ip_meta_data)
-{
-    using IntegrationPolicy =
-        NumLib::GaussLegendreIntegrationPolicy<ElementType>;
-    using NonGenericIntegrationMethod =
-        typename IntegrationPolicy::IntegrationMethod;
-    NonGenericIntegrationMethod int_met{
-        (unsigned int)ip_meta_data.integration_order};
-    return int_met.getNumberOfPoints();
-}
-
-int getNumberOfElementIntegrationPoints(std::string const& data_name,
-                                        MeshLib::Properties const& properties,
-                                        MeshLib::Element const& e)
-{
-    auto const ip_meta_data =
-        ProcessLib::getIntegrationPointMetaData(properties, data_name);
-
-    switch (e.getCellType())
-    {
-        case MeshLib::CellType::LINE2:
-            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Line>(
-                ip_meta_data);
-        case MeshLib::CellType::LINE3:
-            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Line3>(
-                ip_meta_data);
-        case MeshLib::CellType::TRI3:
-            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Tri>(
-                ip_meta_data);
-        case MeshLib::CellType::TRI6:
-            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Tri6>(
-                ip_meta_data);
-        case MeshLib::CellType::QUAD4:
-            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Quad>(
-                ip_meta_data);
-        case MeshLib::CellType::QUAD8:
-            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Quad8>(
-                ip_meta_data);
-        case MeshLib::CellType::QUAD9:
-            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Quad9>(
-                ip_meta_data);
-        case MeshLib::CellType::TET4:
-            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Tet>(
-                ip_meta_data);
-        case MeshLib::CellType::TET10:
-            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Tet10>(
-                ip_meta_data);
-        case MeshLib::CellType::HEX8:
-            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Hex>(
-                ip_meta_data);
-        case MeshLib::CellType::HEX20:
-            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Hex20>(
-                ip_meta_data);
-        case MeshLib::CellType::PRISM6:
-            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Prism>(
-                ip_meta_data);
-        case MeshLib::CellType::PRISM15:
-            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Prism15>(
-                ip_meta_data);
-        case MeshLib::CellType::PYRAMID5:
-            return getNumberOfElementIntegrationPointsGeneral<MeshLib::Pyramid>(
-                ip_meta_data);
-        case MeshLib::CellType::PYRAMID13:
-            return getNumberOfElementIntegrationPointsGeneral<
-                MeshLib::Pyramid13>(ip_meta_data);
-        case MeshLib::CellType::PRISM18:
-        case MeshLib::CellType::HEX27:
-            OGS_FATAL("Mesh element type {:s} is not supported",
-                      MeshLib::CellType2String(e.getCellType()));
-        case MeshLib::CellType::INVALID:
-        default:
-            OGS_FATAL("Invalid Element Type");
-    }
-    return 0;
-}
 
 std::size_t Partition::numberOfMeshItems(
     MeshLib::MeshItemType const item_type) const
@@ -442,42 +363,6 @@ std::size_t copyCellPropertyVectorValues(
     return n_components * (n_regular + n_ghost);
 }
 
-template <typename T>
-std::vector<std::size_t> getIntegrationPointDataOffsetsOfGlobalMeshElements(
-    std::vector<MeshLib::Element*> const& global_mesh_elements,
-    MeshLib::PropertyVector<T> const& pv,
-    MeshLib::Properties const& properties)
-{
-    if (pv.getPropertyName() == "OGS_VERSION" ||
-        pv.getPropertyName() == "IntegrationPointMetaData")
-    {
-        return {};
-    }
-
-    auto const n_components = pv.getNumberOfGlobalComponents();
-
-    std::vector<std::size_t> element_ip_data_offsets(
-        global_mesh_elements.size() + 1);
-    std::size_t counter = 0;
-    for (std::size_t i = 0; i < global_mesh_elements.size(); i++)
-    {
-        auto const element = global_mesh_elements[i];
-
-#ifdef NDEBUG
-        // Assuming that element->getID() is the same as the element index of
-        // the vector.
-        assert(i == element->getID());
-#endif
-        element_ip_data_offsets[element->getID()] = counter;
-        counter += getNumberOfElementIntegrationPoints(pv.getPropertyName(),
-                                                       properties, *element) *
-                   n_components;
-    }
-    element_ip_data_offsets[global_mesh_elements.size()] = counter;
-
-    return element_ip_data_offsets;
-}
-
 /// Copies the data from the property vector \c pv belonging to the given
 /// Partition \c p to the property vector \c partitioned_pv.
 /// \c partitioned_pv is ordered by partition. Regular elements' and ghost
@@ -601,9 +486,8 @@ bool copyPropertyVector(
             partitioned_pv_size = pv->size() * partitions.size();
         }
 
-        element_ip_data_offsets =
-            getIntegrationPointDataOffsetsOfGlobalMeshElements<T>(
-                global_mesh_elements, *pv, properties);
+        element_ip_data_offsets = getIntegrationPointDataOffsetsOfMeshElements(
+            global_mesh_elements, *pv, properties);
     }
 
     auto partitioned_pv = partitioned_properties.createNewPropertyVector<T>(
@@ -681,8 +565,6 @@ MeshLib::Properties partitionProperties(
     std::vector<Partition>& partitions)
 {
     using namespace MeshLib;
-    using namespace ProcessLib;
-    using namespace NumLib;
 
     MeshLib::Properties const& properties = mesh->getProperties();
 
