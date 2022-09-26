@@ -11,7 +11,7 @@ weight = 1021
 
 ## Introduction
 
-[Unit testing](http://en.wikipedia.org/wiki/Unit_testing) can be used for testing small pieces of functionality. We use [GoogleTest](https://code.google.com/p/googletest/wiki/V1_6_Primer) as our test framework.
+[Unit testing](http://en.wikipedia.org/wiki/Unit_testing) can be used for testing small pieces of functionality. We use [GoogleTest](https://google.github.io/googletest/primer.html) as our test framework.
 
 ## Running Tests
 
