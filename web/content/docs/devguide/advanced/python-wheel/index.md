@@ -63,7 +63,7 @@ You can test it locally with, e.g. only building for Python 3.10:
 CIBW_BUILD="cp310*" pipx run cibuildwheel
 ```
 
-Please note that on Linux `cibuildwheel` runs the builds inside [`manylinux`](https://github.com/pypa/manylinux) Docker containers. On other platforms the build happens with native tools. See the [cibuildwheel docs](https://cibuildwheel.readthedocs.io/en/stable/#how-it-works) for more information.
+Please note that on Linux `cibuildwheel` runs the builds inside [`manylinux`](https://github.com/pypa/manylinux) Docker containers. On other platforms the build happens with native tools. See the [`cibuildwheel` docs](https://cibuildwheel.readthedocs.io/en/stable/#how-it-works) for more information.
 
 Wheels are generated in the `wheelhouse/`-folder.
 
