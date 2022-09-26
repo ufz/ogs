@@ -32,6 +32,7 @@ struct FormEigenVector
         {
             return Eigen::Matrix<double, 3, 1>{value, value, value};
         }
+        OGS_FATAL("Cannot convert 1d vector to {:d}d vector.", GlobalDim);
     }
 
     Eigen::Matrix<double, GlobalDim, 1> operator()(
