@@ -1153,3 +1153,18 @@ MeshTest(
     EXECUTABLE_ARGS -i plain.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/rastermapping.vtu -r 00-raster.asc -s 100
     DIFF_DATA rastermapping.vtu rastermapping.vtu 1e-14
 )
+
+AddTest(
+    NAME Utils_pvtu2vtu
+    PATH Utils/PVTU2VTU
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/PVTU2VTU
+    EXECUTABLE pvtu2vtu
+    EXECUTABLE_ARGS -i quad_tri_THM_MPI_t_86400_000000.pvtu -o ${Data_BINARY_DIR}/Utils/PVTU2VTU/merged_quad_tri_THM_MPI_t_86400_000000.vtu
+    TESTER vtkdiff
+    DIFF_DATA
+    merged_quad_tri_THM_MPI_t_86400_000000.vtu merged_quad_tri_THM_MPI_t_86400_000000.vtu displacement displacement 1e-15 1e-15
+    merged_quad_tri_THM_MPI_t_86400_000000.vtu merged_quad_tri_THM_MPI_t_86400_000000.vtu pressure pressure 1e-15 1e-15
+    merged_quad_tri_THM_MPI_t_86400_000000.vtu merged_quad_tri_THM_MPI_t_86400_000000.vtu temperature temperature 1e-15 1e-15
+    merged_quad_tri_THM_MPI_t_86400_000000.vtu merged_quad_tri_THM_MPI_t_86400_000000.vtu epsilon epsilon 1e-15 1e-15
+    merged_quad_tri_THM_MPI_t_86400_000000.vtu merged_quad_tri_THM_MPI_t_86400_000000.vtu sigma sigma 1e-15 1e-15
+)
