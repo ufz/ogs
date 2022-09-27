@@ -73,11 +73,11 @@ create cpm cache:
 
 offline configure:
   stage: package
-  needs:
-    - job: meta
-  tags: [shell, envinf]
+  tags: [docker]
+  needs: [meta, ci_images]
+  image: $CONTAINER_GCC_PM_OFF_IMAGE
   rules:
-    - if: $CI_COMMIT_TITLE == "[versions] Updated cpm cache info."
+    # For testing: remove rules-directive
     - if: '$CI_COMMIT_BRANCH == "master"'
   variables:
     BUILD_DIR: "../build/offline"
@@ -94,10 +94,8 @@ offline configure:
       wget --no-verbose --header "JOB-TOKEN: $CI_JOB_TOKEN" \
         ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/external-dependencies/${EXT_VERSION}/ext.tar.gz
     - tar xf ext.tar.gz
-    # Disable network access for CPM CMake run, does not work with petsc.
     - |
-      firejail --noprofile --net=none --blacklist=/usr/bin/mfront --read-write=${CI_BUILDS_DIR} \
-        cmake ../../ogs -B . -G Ninja --preset release \
+      cmake ../../ogs -B . -G Ninja --preset release \
           -DOGS_USE_PYTHON=OFF -DOGS_DOWNLOAD_CPM_CACHE=ON
       rm CMakeCache.txt
       cmake ../../ogs -B . -G Ninja --preset release-petsc \
