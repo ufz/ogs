@@ -44,11 +44,17 @@ std::unique_ptr<Function> createFunction(BaseLib::ConfigTree const& config)
             dvalue_config.getConfigParameter<std::string>("variable_name");
 
         std::vector<std::string> expressions;
-        //! \ogs_file_param{properties__property__Function__dvalue__expression}
-        for (auto const& p : dvalue_config.getConfigSubtreeList("expression"))
-        {
-            expressions.emplace_back(p.getValue<std::string>());
-        }
+        auto const& expression_configs =
+            //! \ogs_file_param{properties__property__Function__dvalue__expression}
+            dvalue_config.getConfigSubtreeList("expression");
+
+        expressions.reserve(expression_configs.size());
+        std::transform(std::begin(expression_configs),
+                       std::end(expression_configs),
+                       std::back_inserter(expressions),
+                       [](BaseLib::ConfigTree const& p)
+                       { return p.getValue<std::string>(); });
+
         dvalue_expressions.emplace_back(std::move(variable_name),
                                         std::move(expressions));
     }
