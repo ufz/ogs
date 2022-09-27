@@ -212,7 +212,9 @@ string(REPLACE "." "_" HDF5_TAG ${ogs.tested_version.hdf5})
 set(_hdf5_source GIT_REPOSITORY https://github.com/HDFGroup/hdf5.git GIT_TAG
                  hdf5-${HDF5_TAG}
 )
-set(_hdf5_source_file ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/hdf5-${HDF5_TAG}.zip)
+set(_hdf5_source_file
+    ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/hdf5-${ogs.tested_version.hdf5}.zip
+)
 if(EXISTS ${_hdf5_source_file})
     set(_hdf5_source URL ${_hdf5_source_file})
 elseif(NOT OGS_BUILD_HDF5)

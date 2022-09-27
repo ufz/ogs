@@ -32,6 +32,7 @@ ci_images:
     - |
       echo "CONTAINER_GCC_IMAGE=${CONTAINER_REGISTRY}/gcc:${CONTAINER_TAG}" >> build.env
       echo "CONTAINER_GCC_GUI_IMAGE=${CONTAINER_REGISTRY}/gcc-gui:${CONTAINER_TAG}" >> build.env
+      echo "CONTAINER_GCC_PM_OFF_IMAGE=${CONTAINER_REGISTRY}/gcc-pm-off:${CONTAINER_TAG}" >> build.env
       echo "CONTAINER_CLANG_IMAGE=${CONTAINER_REGISTRY}/clang:${CONTAINER_TAG}" >> build.env
       echo "XUNIT_TO_JUNIT_IMAGE=${CONTAINER_REGISTRY}/xunit-to-junit:${CONTAINER_TAG}" >> build.env
       echo "PRECOMMIT_IMAGE=${CONTAINER_REGISTRY}/pre-commit:${CONTAINER_TAG}" >> build.env
@@ -55,6 +56,13 @@ ci_images:
       --tag $CONTAINER_GCC_GUI_IMAGE --upload
       --cpu-target $CPU_TARGET
       --packages build-essential
+    - poetry run ogscm compiler.py ogs.py --build --ogs off
+      --compiler_version 11
+      --pm off
+      --version_file ../../web/data/versions.json
+      --tag $CONTAINER_GCC_PM_OFF_IMAGE --upload
+      --cpu-target $CPU_TARGET
+      --packages build-essential jq moreutils
     - poetry run ogscm compiler.py ogs.py --build --ogs off
       --compiler clang --compiler_version 11 --ccache
       --version_file ../../web/data/versions.json

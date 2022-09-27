@@ -1,7 +1,8 @@
 create cpm cache:
   stage: package
-  dependencies: [meta]
-  tags: [shell, envinf]
+  tags: [docker]
+  needs: [meta, ci_images]
+  image: $CONTAINER_GCC_PM_OFF_IMAGE
   rules:
     - if: $CI_COMMIT_TITLE == "[versions] Updated cpm cache info."
       when: never
@@ -47,9 +48,11 @@ create cpm cache:
         # Remove merge commit:
         if [ $(git show --no-patch --format="%P" HEAD | wc -w) -eq 2 ]; then git checkout HEAD^2; fi
         git diff
+        git config --global user.name "project_120_bot2"
+        git config --global user.email "project_120_bot2-no-reply@opengeosys.org"
         git add ${_versions_file}
-        git commit -m "[versions] Updated cpm cache info."
-        git push git@${CI_SERVER_HOST}:${CI_MERGE_REQUEST_SOURCE_PROJECT_PATH}.git HEAD:${CI_COMMIT_REF_NAME}
+        git commit -n -m "[versions] Updated cpm cache info."
+        git push "https://project_120_bot2:${REPO_WRITE_KEY}@${CI_SERVER_HOST}/${CI_MERGE_REQUEST_SOURCE_PROJECT_PATH}" HEAD:${CI_COMMIT_REF_NAME}
         exit 255 # marks with warning
       fi
     # external dependencies:
