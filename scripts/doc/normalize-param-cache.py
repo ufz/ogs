@@ -24,11 +24,16 @@ comment_special = re.compile(
     r"//! \\ogs_file(_param|_attr)?_special(\{[A-Za-z_0-9]+\})?( \\todo .*)?$"
 )
 
+# capture #1 is get/check/ignore/peek
+# capture #2 is Parameter/Attribute/Subtree
+# capture #3 is List/Optional/All
+# capture #4 is the parameter type
 # capture #5 is the parameter name
+# capture #6 is comma or bracket and, optionally the default value
 getter = re.compile(
     r"(get|check|ignore|peek)Config(Parameter|Attribute|Subtree)(List|Optional|All)?"
     + r"\s*(<.*>)?"
-    + r'\s*\(\s*"([a-zA-Z_0-9:]+)"\s*[,)]'
+    + r'\s*\(\s*"([a-zA-Z_0-9:]+)"\s*(\)|,\s*[^)]*\))'
 )
 
 getter_special = re.compile(
@@ -150,9 +155,25 @@ for inline in merge_lines(sys.stdin):
         param = m.group(5)
         paramtype = m.group(4)[1:-1] if m.group(4) else ""
         method = m.group(1) + "Config" + m.group(2) + (m.group(3) or "")
+        is_optional = m.group(3) == "Optional" or (
+            m.group(1) != "check" and m.group(6).startswith(",")
+        )
+        is_defaulted = m.group(1) != "check" and m.group(6).startswith(",")
+        default_value = "" if not is_defaulted else m.group(6)[1:-1].strip()
 
         if state != "comment" or oldpath != path:
-            write_out("NODOC", path, lineno, "NONE", param, paramtype, method)
+            write_out(
+                "NODOC",
+                path,
+                lineno,
+                "NONE",
+                param,
+                paramtype,
+                method,
+                is_optional,
+                is_defaulted,
+                default_value,
+            )
         else:
             debug(" {0:>5}  {1} {2} ".format(lineno, param, paramtype))
 
@@ -164,7 +185,16 @@ for inline in merge_lines(sys.stdin):
                     + param
                 )
                 write_out(
-                    "NODOC", path, lineno, tag_path_comment, param, paramtype, method
+                    "NODOC",
+                    path,
+                    lineno,
+                    tag_path_comment,
+                    param,
+                    paramtype,
+                    method,
+                    is_optional,
+                    is_defaulted,
+                    default_value,
                 )
             elif lineno != oldlineno + 1:
                 debug(
@@ -172,7 +202,16 @@ for inline in merge_lines(sys.stdin):
                     + " line numbers {0} vs. {1}".format(oldlineno, lineno)
                 )
                 write_out(
-                    "NODOC", path, lineno, tag_path_comment, param, paramtype, method
+                    "NODOC",
+                    path,
+                    lineno,
+                    tag_path_comment,
+                    param,
+                    paramtype,
+                    method,
+                    is_optional,
+                    is_defaulted,
+                    default_value,
                 )
             elif (
                 param_or_attr_comment == "param"
@@ -181,21 +220,57 @@ for inline in merge_lines(sys.stdin):
             ):
                 debug("error: comment says param but code says different.")
                 write_out(
-                    "NODOC", path, lineno, tag_path_comment, param, paramtype, method
+                    "NODOC",
+                    path,
+                    lineno,
+                    tag_path_comment,
+                    param,
+                    paramtype,
+                    method,
+                    is_optional,
+                    is_defaulted,
+                    default_value,
                 )
             elif param_or_attr_comment == "attr" and m.group(2) != "Attribute":
                 debug("error: comment says attr but code says different.")
                 write_out(
-                    "NODOC", path, lineno, tag_path_comment, param, paramtype, method
+                    "NODOC",
+                    path,
+                    lineno,
+                    tag_path_comment,
+                    param,
+                    paramtype,
+                    method,
+                    is_optional,
+                    is_defaulted,
+                    default_value,
                 )
             elif param_or_attr_comment == "special":
                 debug("error: comment comments a special line.")
                 write_out(
-                    "NODOC", path, lineno, "UNKNOWN", "UNKNOWN", paramtype, method
+                    "NODOC",
+                    path,
+                    lineno,
+                    "UNKNOWN",
+                    "UNKNOWN",
+                    paramtype,
+                    method,
+                    is_optional,
+                    is_defaulted,
+                    default_value,
                 )
             else:
                 write_out(
-                    "OK", path, lineno, tag_path_comment, param, paramtype, method
+                    "OK",
+                    path,
+                    lineno,
+                    tag_path_comment,
+                    param,
+                    paramtype,
+                    method,
+                    is_optional,
+                    is_defaulted,
+                    default_value,
                 )
 
         state = "getter"

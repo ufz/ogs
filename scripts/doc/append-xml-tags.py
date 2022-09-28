@@ -57,16 +57,37 @@ def write_parameter_type_info(fh, tagpath, tagpath_expanded, dict_tag_info):
                 fh.write(("\n## From {0} line {1}\n\n").format(path, line))
 
                 method = info[6]
-                if method.endswith("Optional"):
+
+                try:
+                    is_optional = info[7] == "True"
+                except IndexError:
+                    is_optional = False
+
+                try:
+                    is_defaulted = info[8] == "True"
+                except IndexError:
+                    is_defaulted = False
+
+                try:
+                    default_value = info[9]
+                except IndexError:
+                    default_value = ""
+
+                if is_optional:
                     fh.write("- This is an optional parameter.\n")
-                elif method.endswith("List"):
+                if is_defaulted:
+                    fh.write(
+                        f"- This parameter has a default value of <code>{default_value}</code>.\n"
+                    )
+
+                if method.endswith("List"):
                     fh.write("- This parameter can be given arbitrarily many times.\n")
-                elif method:  # method not empty
+                elif not is_optional:
                     fh.write("- This is a required parameter.\n")
 
                 datatype = info[5]
                 if datatype:
-                    fh.write("- Data type: <tt>{0}</tt>\n".format(datatype))
+                    fh.write("- Data type: <code>{0}</code>\n".format(datatype))
 
                 fh.write("- Expanded tag path: {0}\n".format(tagpath_expanded))
 
