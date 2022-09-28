@@ -17,7 +17,7 @@
 #include <optional>
 #include <string>
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTree-fwd.h"
 #include "ChemistryLib/ChemicalSolverInterface.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"

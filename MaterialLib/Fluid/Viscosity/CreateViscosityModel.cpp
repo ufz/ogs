@@ -12,6 +12,7 @@
 
 #include "CreateViscosityModel.h"
 
+#include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "LinearPressureDependentViscosity.h"
 #include "MaterialLib/Fluid/ConstantFluidProperty.h"

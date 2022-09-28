@@ -10,32 +10,47 @@
 
 #pragma once
 
-#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
-#include "ParameterLib/Parameter.h"
-#include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryConditionConfig.h"
-#include "ProcessLib/BoundaryConditionAndSourceTerm/SourceTermConfig.h"
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
 
-// DeactivatedSubdomain cannot be forwardly declared because that
-// std::unique_ptr<DeactivatedSubdomain> type member requires its full
-// definition (see https://stackoverflow.com/a/6089065).
-#include "ProcessLib/DeactivatedSubdomain.h"
+#include "BaseLib/ConfigTree-fwd.h"
+
+namespace MathLib
+{
+class PiecewiseLinearInterpolation;
+}  // namespace MathLib
 
 namespace MeshLib
 {
 class Mesh;
-template <typename T>
+
+template <typename PROP_VAL_TYPE>
 class PropertyVector;
 }  // namespace MeshLib
+
 namespace NumLib
 {
 class LocalToGlobalIndexMap;
-}
+}  // namespace NumLib
+
+namespace ParameterLib
+{
+struct ParameterBase;
+
+template <typename T>
+struct Parameter;
+}  // namespace ParameterLib
 
 namespace ProcessLib
 {
 class SourceTerm;
 class BoundaryCondition;
 class Process;
+struct DeactivatedSubdomain;
+struct BoundaryConditionConfig;
+struct SourceTermConfig;
 }  // namespace ProcessLib
 
 namespace ProcessLib
@@ -54,7 +69,7 @@ public:
                  std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
             curves);
 
-    ProcessVariable(ProcessVariable&& other) = default;
+    ProcessVariable(ProcessVariable&&);
 
     std::string const& getName() const;
 
@@ -104,6 +119,8 @@ public:
     {
         return _compensate_non_equilibrium_initial_residuum;
     }
+
+    ~ProcessVariable();
 
 private:
     std::string const _name;

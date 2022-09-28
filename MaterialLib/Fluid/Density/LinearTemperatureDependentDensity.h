@@ -15,8 +15,7 @@
 
 #include <string>
 
-#include "BaseLib/ConfigTree.h"
-
+#include "BaseLib/ConfigTree-fwd.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
 
 namespace MaterialLib

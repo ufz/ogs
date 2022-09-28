@@ -20,11 +20,14 @@
 #include "MeshLib/Node.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryCondition.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryConditionConfig.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/CreateBoundaryCondition.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/CreateSourceTerm.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/DeactivatedSubdomainDirichlet.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/SourceTerm.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/SourceTermConfig.h"
 #include "ProcessLib/CreateDeactivatedSubdomain.h"
+#include "ProcessLib/DeactivatedSubdomain.h"
 
 namespace
 {
@@ -201,6 +204,8 @@ ProcessVariable::ProcessVariable(
     }
 }
 
+ProcessVariable::ProcessVariable(ProcessVariable&&) = default;
+
 std::string const& ProcessVariable::getName() const
 {
     return _name;
@@ -363,5 +368,7 @@ std::vector<std::unique_ptr<SourceTerm>> ProcessVariable::createSourceTerms(
 
     return source_terms;
 }
+
+ProcessVariable::~ProcessVariable() = default;
 
 }  // namespace ProcessLib

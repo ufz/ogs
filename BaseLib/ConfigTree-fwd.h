@@ -10,15 +10,7 @@
 
 #pragma once
 
-#include <memory>
-#include <optional>
-
-#include "BaseLib/ConfigTree-fwd.h"
-
-namespace ProcessLib
+namespace BaseLib
 {
-class AbstractJacobianAssembler;
-
-std::unique_ptr<AbstractJacobianAssembler> createJacobianAssembler(
-    std::optional<BaseLib::ConfigTree> const& config);
-}  // namespace ProcessLib
+class ConfigTree;
+}  // namespace BaseLib

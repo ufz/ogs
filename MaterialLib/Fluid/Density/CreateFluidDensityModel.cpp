@@ -13,6 +13,7 @@
 
 #include <array>
 
+#include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "IdealGasLaw.h"
 #include "LinearConcentrationAndPressureDependentDensity.h"

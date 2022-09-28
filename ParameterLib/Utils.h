@@ -11,9 +11,9 @@
 #pragma once
 
 #include <vector>
+
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-
 #include "Parameter.h"
 
 namespace ParameterLib
@@ -82,7 +82,6 @@ Parameter<ParameterDataType>* findParameterOptional(
                 error->c_str());
         }
     }
-
 
     return parameter;
 }

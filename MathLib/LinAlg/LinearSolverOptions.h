@@ -10,7 +10,9 @@
 
 #pragma once
 
-#include "BaseLib/ConfigTree.h"
+#include <string>
+
+#include "BaseLib/ConfigTree-fwd.h"
 
 namespace MathLib
 {

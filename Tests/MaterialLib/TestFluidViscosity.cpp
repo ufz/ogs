@@ -16,6 +16,7 @@
 #include <cmath>
 #include <memory>
 
+#include "BaseLib/ConfigTree.h"
 #include "MaterialLib/Fluid/Viscosity/CreateViscosityModel.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "Tests/TestTools.h"

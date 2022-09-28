@@ -9,11 +9,9 @@
 
 #pragma once
 
-
-#include "Reaction.h"
-#include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/StringTools.h"
+#include "Reaction.h"
 
 namespace Adsorption
 {

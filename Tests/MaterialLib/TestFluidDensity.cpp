@@ -15,6 +15,7 @@
 
 #include <memory>
 
+#include "BaseLib/ConfigTree.h"
 #include "MaterialLib/Fluid/Density/CreateFluidDensityModel.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "Tests/TestTools.h"

@@ -14,7 +14,7 @@
  */
 #pragma once
 
-#include "BaseLib/ConfigTree.h"
+#include "BaseLib/ConfigTree-fwd.h"
 #include "MaterialLib/MPL/Property.h"
 
 namespace MaterialPropertyLib

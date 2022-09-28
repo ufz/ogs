@@ -11,6 +11,7 @@
 #include "CreateTwoPhaseFlowPrhoMaterialProperties.h"
 
 #include "BaseLib/Algorithm.h"
+#include "BaseLib/ConfigTree.h"
 #include "BaseLib/Logging.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
