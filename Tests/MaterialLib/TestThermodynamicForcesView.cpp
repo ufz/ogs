@@ -12,31 +12,10 @@
 
 #include "MaterialLib/SolidModels/MFront/ThermodynamicForcesView.h"
 #include "MathLib/KelvinVector.h"
+#include "OGSMFrontTestVariables.h"
 #include "Tests/TestTools.h"
 
-#ifdef OGS_USE_MFRONT
-#include "MaterialLib/SolidModels/MFront/Variable.h"
-#endif
-
 namespace MSM = MaterialLib::Solids::MFront;
-
-// /////////////////////////////////////////////////////////////////////////////
-// Currently (08/2022) there are no vectorial and tensorial variables defined.
-// So we have to provide them here.
-
-#ifdef OGS_USE_MFRONT
-struct Vector : MaterialLib::Solids::MFront::Variable<Vector>
-{
-    constexpr static mgis::behaviour::Variable::Type type =
-        mgis::behaviour::Variable::Type::VECTOR;
-};
-
-struct Tensor : MaterialLib::Solids::MFront::Variable<Tensor>
-{
-    constexpr static mgis::behaviour::Variable::Type type =
-        mgis::behaviour::Variable::Type::TENSOR;
-};
-#endif
 
 // /////////////////////////////////////////////////////////////////////////////
 // The unit tests in this file all have a version that needs MFront and a
