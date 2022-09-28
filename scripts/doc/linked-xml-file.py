@@ -215,7 +215,7 @@ with open(os.path.join(docauxdir, "documented-parameters-cache.txt")) as fh:
                 documented_tags_attrs.add((".".join(tagpath_parts), True))
                 tagpath_parts.pop()
 
-            method = line[-1]
+            method = line[6]
             is_tag = method.find("Attribute") == -1
             documented_tags_attrs.add((tagpath, is_tag))
             # print_(tagpath, is_tag)
