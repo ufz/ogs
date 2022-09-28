@@ -11,6 +11,10 @@ set(CPACK_INSTALL_CMAKE_PROJECTS
 )
 
 option(OGS_INSTALL_DEPENDENCIES "Package dependencies." ON)
+# Can be tweaked with the CMake variables OGS_INSTALL_DEPENDENCIES_PRE_EXCLUDES
+# and OGS_INSTALL_DEPENDENCIES_POST_EXCLUDES. Can contain a semicolon-separated
+# list. See PRE_EXCLUDE_REGEXES and POST_EXCLUDE_REGEXES in CMake docs:
+# https://cmake.org/cmake/help/latest/command/file.html#get-runtime-dependencies
 
 # Packaging setup
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OGS-6 THM/C Simulator")
@@ -74,7 +78,9 @@ if(OGS_USE_PYTHON)
         file(GLOB PYTHON_RUNTIME_LIBS "${Python_RUNTIME_LIBRARY_DIRS}/*.dll")
         message(STATUS "Install Python into bin-dir: ${PYTHON_RUNTIME_LIBS}")
         install(FILES ${PYTHON_RUNTIME_LIBS} DESTINATION bin)
-        file(COPY ${PYTHON_RUNTIME_LIBS} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        file(COPY ${PYTHON_RUNTIME_LIBS}
+             DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        )
     else()
         file(INSTALL ${Python_LIBRARIES} DESTINATION ${CMAKE_INSTALL_LIBDIR}
              FOLLOW_SYMLINK_CHAIN
