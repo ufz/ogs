@@ -32,7 +32,7 @@ struct FormEigenVector
         {
             return Eigen::Matrix<double, 3, 1>{value, value, value};
         }
-        OGS_FATAL("Cannot convert 1d vector to {:d}d vector.", GlobalDim);
+        OGS_FATAL("Cannot convert a scalar to a {:d}d vector.", GlobalDim);
     }
 
     Eigen::Matrix<double, GlobalDim, 1> operator()(
@@ -42,7 +42,7 @@ struct FormEigenVector
         {
             return values;
         }
-        OGS_FATAL("Cannot convert 2d vector to {:d}d vector.", GlobalDim);
+        OGS_FATAL("Cannot convert a 2d vector to a {:d}d vector.", GlobalDim);
     }
 
     Eigen::Matrix<double, GlobalDim, 1> operator()(
@@ -52,7 +52,7 @@ struct FormEigenVector
         {
             return values;
         }
-        OGS_FATAL("Cannot convert 3d vector to a {:d}d vector.", GlobalDim);
+        OGS_FATAL("Cannot convert a 3d vector to a {:d}d vector.", GlobalDim);
     }
 
     Eigen::Matrix<double, GlobalDim, 1> operator()(
@@ -81,7 +81,7 @@ struct FormEigenVector
     Eigen::Matrix<double, GlobalDim, 1> operator()(
         Eigen::MatrixXd const& /*values*/) const
     {
-        OGS_FATAL("Cannot convert dynamic Eigen matrix to a {:d}d vector ",
+        OGS_FATAL("Cannot convert a dynamic Eigen matrix to a {:d}d vector ",
                   GlobalDim);
     }
 };
