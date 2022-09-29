@@ -1,6 +1,9 @@
-set(SOURCES CreateMFront.cpp CreateMFront.h)
-
-list(APPEND SOURCES MFront.cpp MFront.h)
+set(SOURCES
+    CreateMFront.cpp CreateMFront.h
+    MFront.cpp MFront.h
+    MFrontGeneric.cpp MFrontGeneric.h
+    CreateMFrontGeneric.cpp CreateMFrontGeneric.h
+)
 
 ogs_add_library(MaterialLib_SolidModels_MFront ${SOURCES})
 
@@ -21,6 +24,7 @@ mfront_behaviours_check_library(
     PowerLawLinearCreep
     StandardElasticityBrick
     StandardElasticityBrickOrtho
+    ThermoPoroElasticity
 )
 
 target_link_libraries(
