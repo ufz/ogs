@@ -189,7 +189,7 @@ For the detailed syntax of job script of SLURM for EVE, please visit <https://wi
 
 ### 3. Check results
 
-There are two output types available, VTK and XMDF.
+There are two output types available, VTK and XDMF.
 In the project file, output type can be specified in `type` tag of `output` tag,
 for example:
 
@@ -213,14 +213,27 @@ or
 
 The results are output in the partitioned VTU files, which are governed by
  a PVTU file. The data in the ghost cells of VTU files are overlapped.
-An OGS utility, *RemoveGhostData*, is available to merge the partition VTU files into one VTU file,
-meanwhile to eliminate the data overlapping. Here is an example to use that utility:
+An OGS utility, *pvtu2vtu*, is available to merge the partition VTU files into one VTU file,
+meanwhile to eliminate the data overlapping. Here is an example to use that tool:
 
 ```bash
-RemoveGhostData -i foo.pvtu -o foo.vtu
+pvtu2vtu -i foo.pvtu -o foo.vtu
 ```
 
 Where the input file name is the name of PVTU file.
+
+If you use the merged mesh together with some meshes that for
+ initial or boundary conditions for a restart simulation,  you have to reset
+ the bulk geometry entity
+ ( node, face, or element) IDs of the meshes to the merged mesh by using tool
+  [`identifySubdomains`]({{<ref "identifySubdomains">}}).
+For example, `north.vtu`, `south.vtu`, and `top.vtu` are the meshes for the
+ boundary conditions, their bulk geometry entity IDs can be reset by running
+ the following command:
+
+```bash
+identifySubdomains -f -m foo.vtu  --  north.vtu  south.vtu  top.vtu
+```
 
 #### 3.2 XDMF output
 
