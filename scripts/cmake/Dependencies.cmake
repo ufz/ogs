@@ -104,7 +104,7 @@ if(OGS_USE_MFRONT)
     CPMAddPackage(
         NAME MGIS
         GITHUB_REPOSITORY ufz/MFrontGenericInterfaceSupport
-        GIT_TAG ff51a694957b2f1c16689962529fad0ee2b04558
+        GIT_TAG a0998e81eab81cf51d1b62585a78ac4f32b655bf
         OPTIONS "enable-doxygen-doc OFF" "enable-fortran-bindings OFF"
         EXCLUDE_FROM_ALL YES
     )
