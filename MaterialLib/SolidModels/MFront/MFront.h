@@ -9,12 +9,8 @@
 
 #pragma once
 
-#include "MaterialLib/SolidModels/MechanicsBase.h"
-
-#include <MGIS/Behaviour/Behaviour.hxx>
-#include <MGIS/Behaviour/BehaviourData.hxx>
-
-#include "ParameterLib/Parameter.h"
+#include "MFrontGeneric.h"
+#include "Variable.h"
 
 namespace MaterialLib
 {
@@ -22,64 +18,29 @@ namespace Solids
 {
 namespace MFront
 {
-/// Converts MGIS kinematic to a string representation.
-const char* toString(mgis::behaviour::Behaviour::Kinematic);
-
-/// Converts MGIS symmetry to a string representation.
-const char* toString(mgis::behaviour::Behaviour::Symmetry);
-
-/// Converts MGIS behaviour type to a string representation.
-const char* btypeToString(int);
-
-/// Converts MGIS variable type to a string representation.
-const char* varTypeToString(int);
-
-/// Uses a material model provided by MFront (via MFront's generic interface and
-/// the MGIS library).
 template <int DisplacementDim>
-class MFront : public MechanicsBase<DisplacementDim>
+class MFront : private MFrontGeneric<DisplacementDim,
+                                     boost::mp11::mp_list<Strain>,
+                                     boost::mp11::mp_list<Stress>,
+                                     boost::mp11::mp_list<>>,
+               public MechanicsBase<DisplacementDim>
 {
+    using Base = MFrontGeneric<DisplacementDim,
+                               boost::mp11::mp_list<Strain>,
+                               boost::mp11::mp_list<Stress>,
+                               boost::mp11::mp_list<>>;
+    using KelvinVector = typename Base::KelvinVector;
+    using KelvinMatrix = typename Base::KelvinMatrix;
+
 public:
-    struct MaterialStateVariables
-        : public MechanicsBase<DisplacementDim>::MaterialStateVariables
-    {
-        explicit MaterialStateVariables(
-            int const equivalent_plastic_strain_offset,
-            mgis::behaviour::Behaviour const& b)
-            : equivalent_plastic_strain_offset_(
-                  equivalent_plastic_strain_offset),
-              _behaviour_data{b}
-        {
-        }
-
-        MaterialStateVariables(MaterialStateVariables const&) = default;
-        MaterialStateVariables(MaterialStateVariables&&) = delete;
-
-        void pushBackState() override
-        {
-            mgis::behaviour::update(_behaviour_data);
-        }
-
-        int const equivalent_plastic_strain_offset_;
-        mgis::behaviour::BehaviourData _behaviour_data;
-
-        double getEquivalentPlasticStrain() const override;
-    };
-
-    using KelvinVector =
-        MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
-    using KelvinMatrix =
-        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
-
-    MFront(mgis::behaviour::Behaviour&& behaviour,
-           std::vector<ParameterLib::Parameter<double> const*>&&
-               material_properties,
-           std::optional<ParameterLib::CoordinateSystem> const&
-               local_coordinate_system);
+    using Base::Base;
 
     std::unique_ptr<
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
-    createMaterialStateVariables() const override;
+    createMaterialStateVariables() const override
+    {
+        return Base::createMaterialStateVariables();
+    }
 
     std::optional<std::tuple<KelvinVector,
                              std::unique_ptr<typename MechanicsBase<
@@ -92,14 +53,47 @@ public:
         ParameterLib::SpatialPosition const& x,
         double const dt,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-            material_state_variables) const override;
+            material_state_variables) const override
+    {
+        auto res = Base::integrateStress(variable_array_prev,
+                                         variable_array,
+                                         t,
+                                         x,
+                                         dt,
+                                         material_state_variables);
+
+        if (!res)
+        {
+            return std::nullopt;
+        }
+
+        auto& [stress_data, state, tangent_operator_data] = *res;
+        auto const view = this->createThermodynamicForcesView();
+
+        auto const C =
+            blocks_view_.block(stress, strain, tangent_operator_data);
+
+        return std::optional<
+            std::tuple<KelvinVector,
+                       std::unique_ptr<typename MechanicsBase<
+                           DisplacementDim>::MaterialStateVariables>,
+                       KelvinMatrix>>{std::in_place,
+                                      view.block(stress, stress_data),
+                                      std::move(state), C};
+    }
 
     std::vector<typename MechanicsBase<DisplacementDim>::InternalVariable>
-    getInternalVariables() const override;
+    getInternalVariables() const override
+    {
+        return Base ::getInternalVariables();
+    }
 
-    double getBulkModulus(double const /*t*/,
-                          ParameterLib::SpatialPosition const& /*x*/,
-                          KelvinMatrix const* const /*C*/) const override;
+    double getBulkModulus(double const t,
+                          ParameterLib::SpatialPosition const& x,
+                          KelvinMatrix const* const C) const override
+    {
+        return Base::getBulkModulus(t, x, C);
+    }
 
     double computeFreeEnergyDensity(
         double const t,
@@ -108,13 +102,18 @@ public:
         KelvinVector const& eps,
         KelvinVector const& sigma,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-            material_state_variables) const override;
+            material_state_variables) const override
+    {
+        return Base::computeFreeEnergyDensity(
+            t, x, dt, eps, sigma, material_state_variables);
+    }
 
 private:
-    mgis::behaviour::Behaviour _behaviour;
-    int const equivalent_plastic_strain_offset_;
-    std::vector<ParameterLib::Parameter<double> const*> _material_properties;
-    ParameterLib::CoordinateSystem const* const _local_coordinate_system;
+    OGSMFrontTangentOperatorBlocksView<DisplacementDim,
+                                       boost::mp11::mp_list<Strain>,
+                                       boost::mp11::mp_list<Stress>,
+                                       boost::mp11::mp_list<>>
+        blocks_view_{this->createTangentOperatorBlocksView()};
 };
 
 extern template class MFront<2>;
