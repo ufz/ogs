@@ -13,7 +13,7 @@ weight = 1068
 
 Python wheel builds are driven by [scikit-build](https://scikit-build.readthedocs.io/en/latest/) which basically is a `setuptools`-wrapper for CMake-based projects.
 
-The entrypoint is `setup.py` in the root directory. It uses the `wheel` CMake preset (or `wheel-win` on Windows).
+The entry point is `setup.py` in the root directory. It uses the `wheel` CMake preset (or `wheel-win` on Windows).
 
 You can locally develop and test with the following setup:
 
@@ -63,7 +63,7 @@ You can test it locally with, e.g. only building for Python 3.10:
 CIBW_BUILD="cp310*" pipx run cibuildwheel
 ```
 
-Please note that on Linux `cibuildwheel` runs the builds inside [manylinux](https://github.com/pypa/manylinux) Docker containers. On other platforms the build happens with native tools. See the [cibuildwheel docs](https://cibuildwheel.readthedocs.io/en/stable/#how-it-works) for more information.
+Please note that on Linux `cibuildwheel` runs the builds inside [`manylinux`](https://github.com/pypa/manylinux) Docker containers. On other platforms the build happens with native tools. See the [cibuildwheel docs](https://cibuildwheel.readthedocs.io/en/stable/#how-it-works) for more information.
 
 Wheels are generated in the `wheelhouse/`-folder.
 

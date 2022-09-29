@@ -187,8 +187,7 @@ void PetrelInterface::readPetrelWellTrace(std::istream& in)
                  it->c_str());
             ++it;
         }
-        it = (str_list.end())--;
-        --it;
+        it = --(str_list.end());
         double well_kb(strtod((*it).c_str(), &buf));
 
         INFO("PetrelInterface::readPetrelWellTrace(): {:f}, {:f}, {:f}.",

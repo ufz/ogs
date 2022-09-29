@@ -220,10 +220,6 @@ void ThermoHydroMechanicsLocalAssembler<
         displacement_size, pressure_size>
         Kup;
     Kup.setZero(displacement_size, pressure_size);
-    typename ShapeMatricesTypeDisplacement::template MatrixType<
-        displacement_size, temperature_size>
-        KuT;
-    KuT.setZero(displacement_size, temperature_size);
 
     auto const& solid_material =
         MaterialLib::Solids::selectSolidConstitutiveRelation(
@@ -564,12 +560,6 @@ void ThermoHydroMechanicsLocalAssembler<
         .template block<temperature_size, pressure_size>(temperature_index,
                                                          pressure_index)
         .noalias() += KTp + dKTT_dp;
-
-    // displacement equation, temperature part
-    local_Jac
-        .template block<displacement_size, temperature_size>(displacement_index,
-                                                             temperature_index)
-        .noalias() -= KuT;
 
     // displacement equation, pressure part
     local_Jac

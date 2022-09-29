@@ -63,7 +63,7 @@ See Linux tab!
 
 ### Limitations of the `pip`-based installation
 
-- Serial config only! For PETSc-support please use a [Singularity container]({{< relref "container" >}}).
+- Serial configuration only! For PETSc-support please use a [Singularity container]({{< relref "container" >}}).
 - No embedded Python interpreter, i.e. no Python boundary conditions!
 - A Python (3.8 - 3.11) installation with `pip` is required.
 
