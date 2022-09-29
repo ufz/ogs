@@ -59,6 +59,10 @@ if(OGS_USE_PETSC)
     list(REMOVE_ITEM TEST_SOURCES NumLib/TestSerialLinearSolver.cpp)
 endif()
 
+if(OGS_USE_MFRONT)
+    add_subdirectory(MaterialLib/MFront)
+endif()
+
 ogs_add_executable(testrunner ${TEST_SOURCES})
 
 target_link_libraries(
@@ -87,6 +91,7 @@ target_link_libraries(
             $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
             $<$<TARGET_EXISTS:InSituLib>:InSituLib>
             $<$<TARGET_EXISTS:petsc>:petsc>
+    PUBLIC  $<$<BOOL:${OGS_USE_MFRONT}>:OgsMFrontBehaviourForUnitTests>
 )
 
 if(OGS_BUILD_GUI)
