@@ -1,0 +1,89 @@
+@DSL DefaultGenericBehaviour;
+@Behaviour ThermoPoroElasticity;
+@Author Thomas Nagel;
+@Date 26 / 07 / 2022;
+@Description {
+A simple linear THM model returning
+total stress. Combines linear isotropic
+thermo-elasticity with van Genuchten retention
+and a Bishop'''s power law.
+}
+
+@Gradient StrainStensor εᵗᵒ;
+εᵗᵒ.setGlossaryName("Strain");
+
+@Gradient real p_LR;
+p_LR.setEntryName("LiquidPressure");
+
+@Flux StressStensor σ;
+σ.setGlossaryName("Stress");
+
+@Flux real S_L;
+S_L.setEntryName("Saturation");
+
+// @TangentOperatorBlocks{∂σ∕∂Δεᵗᵒ, ∂σ∕∂Δp_LR, ∂σ∕∂ΔT};
+@TangentOperatorBlocks{∂σ∕∂Δεᵗᵒ, ∂σ∕∂ΔT, ∂σ∕∂Δp_LR};
+
+@MaterialProperty stress E;
+E.setGlossaryName("YoungModulus");
+@MaterialProperty real ν;
+ν.setGlossaryName("PoissonRatio");
+@MaterialProperty real α;
+α.setGlossaryName("ThermalExpansion");
+@MaterialProperty real αᵇ;
+αᵇ.setEntryName("BiotCoefficient");
+@MaterialProperty real mᵪ;
+mᵪ.setEntryName("BishopsExponent");
+@MaterialProperty real S_L_res;
+S_L_res.setEntryName("ResidualLiquidSaturation");
+@MaterialProperty real S_G_res;
+S_G_res.setEntryName("ResidualGasSaturation");
+@MaterialProperty real pᵇ;
+pᵇ.setEntryName("BubblePressure");
+@MaterialProperty real m_S;
+m_S.setEntryName("VanGenuchtenExponent_m");
+
+@ProvidesTangentOperator;
+@Integrator {
+  // elastic constant
+  const auto λ = computeLambda(E, ν);
+  const auto μ = computeMu(E, ν);
+  const auto K = E / (3 ⋅ (1 - 2 ⋅ ν));
+
+  // retention
+  const auto Se = [&](const auto p_cap) {
+    return std::pow(
+        std::pow(std::max(p_cap, 0.0) / pᵇ, 1.0 / (1.0 - m_S)) + 1.0, -m_S);
+  };
+  const double S = Se(-(p_LR + Δp_LR)) ⋅ (1.0 - S_G_res - S_L_res) + S_L_res;
+  S_L = std::clamp(S, S_L_res, 1.0 - S_G_res);
+  // previous
+  const double S_prev = Se(-(p_LR)) ⋅ (1.0 - S_G_res - S_L_res) + S_L_res;
+  const double S_L_prev = std::clamp(S_prev, S_L_res, 1.0 - S_G_res);
+
+  const auto ∂S_L∕∂p_cap = [&](const auto p_cap) {
+    return (S_L < (1 - S_G_res) && S_L > S_L_res
+                ? -m_S / (pᵇ ⋅ (1 - m_S)) ⋅ std::pow(
+                             std::pow(std::max(p_cap, 0.0) / pᵇ,
+                                      1.0 / (1.0 - m_S)) +
+                                 1.0,
+                             -m_S - 1) ⋅ std::pow(std::max(p_cap, 0.0) / pᵇ,
+                                                  1.0 / (1.0 - m_S) - 1.0)
+                : 0.);
+  };
+
+  // Bishop
+  const auto χ = std::pow(S_L, mᵪ);
+  const auto ∂χ∕∂S_L = mᵪ ⋅ std::pow(S_L, mᵪ - 1);
+  const auto x_prev = std::pow(S_L_prev, mᵪ);
+
+  // Total stress
+  σ = σ + λ ⋅ trace(Δεᵗᵒ) ⋅ I₂ + 2 ⋅ μ ⋅ Δεᵗᵒ - 3 ⋅ K ⋅ α ⋅ ΔT ⋅ I₂ -
+      αᵇ ⋅ (χ ⋅ (p_LR + Δp_LR) - x_prev ⋅ p_LR) ⋅ I₂;
+  if (computeTangentOperator_) {
+    ∂σ∕∂Δεᵗᵒ = λ ⋅ (I₂ ⊗ I₂) + 2 ⋅ μ ⋅ I₄;
+    ∂σ∕∂Δp_LR = -αᵇ ⋅ (
+        χ - (p_LR + Δp_LR) ⋅ ∂χ∕∂S_L ⋅ ∂S_L∕∂p_cap(-(p_LR + Δp_LR))) ⋅ I₂;
+    ∂σ∕∂ΔT = -3 ⋅ K ⋅ α ⋅ I₂;
+  }
+}
