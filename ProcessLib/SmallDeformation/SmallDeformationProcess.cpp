@@ -11,7 +11,6 @@
 #include "SmallDeformationProcess.h"
 
 #include <cassert>
-#include <nlohmann/json.hpp>
 
 #include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
@@ -89,8 +88,6 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    using nlohmann::json;
-
     ProcessLib::SmallDeformation::createLocalAssemblers<
         DisplacementDim, SmallDeformationLocalAssembler>(
         mesh.getElements(), dof_table, _local_assemblers,
