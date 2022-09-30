@@ -84,8 +84,7 @@ void solidMaterialInternalToSecondaryVariables(
     }
 }
 
-template <typename LocalAssemblerInterface, typename IntegrationPointWriter,
-          int DisplacementDim>
+template <typename LocalAssemblerInterface, int DisplacementDim>
 void solidMaterialInternalVariablesToIntegrationPointWriter(
     std::map<int, std::unique_ptr<MaterialLib::Solids::MechanicsBase<
                       DisplacementDim>>> const& solid_materials,
