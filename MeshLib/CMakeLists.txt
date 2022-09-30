@@ -44,6 +44,7 @@ target_link_libraries(
            $<$<TARGET_EXISTS:VTK::IOParallelXML>:VTK::IOParallelXML>
            $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
            $<$<TARGET_EXISTS:petsc>:petsc>
+    PRIVATE nlohmann_json::nlohmann_json
 )
 
 target_include_directories(MeshLib PUBLIC ${HDF5_INCLUDE_DIRS})
