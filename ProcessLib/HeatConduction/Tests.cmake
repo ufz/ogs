@@ -142,13 +142,20 @@ AddTest(
         wedge_1e2_axi_ang_0.02_t_2s_extracted_surface.vtu square_1e2_axi_ts_2_t_2.000000.vtu heat_flux heat_flux 1.7e-5 1e-5
     REQUIREMENTS NOT OGS_USE_MPI
 )
-# # WEDGE 1x1 HEATCONDUCTION TEST -- computes reference results for the above test
-# AddTest(
-#      NAME 2D_HeatConduction_wedge
-#      PATH Parabolic/T/2D_axially_symmetric
-#      EXECUTABLE ogs
-#      EXECUTABLE_ARGS wedge_1e2_axi_ang_0.02.prj
-# )
+
+# WEDGE 1x1 HEATCONDUCTION TEST -- computes reference results for the above
+# 2D_HeatConduction_axi test
+AddTest(
+    NAME 2D_HeatConduction_wedge
+    PATH Parabolic/T/2D_axially_symmetric
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS wedge_1e2_axi_ang_0.02.prj
+    TESTER vtkdiff
+    DIFF_DATA
+    wedge_ang_0.02_ts_2_t_2.000000.vtu wedge_ang_0.02_ts_2_t_2.000000.vtu temperature temperature 1.7e-5 1e-5
+    wedge_ang_0.02_ts_2_t_2.000000.vtu wedge_ang_0.02_ts_2_t_2.000000.vtu heat_flux heat_flux 1.7e-5 1e-5
+    REQUIREMENTS NOT OGS_USE_MPI
+)
 
 # The 25 BHE array benchmark
 # test results are compared to 2D simulation result

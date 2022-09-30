@@ -20,11 +20,6 @@
             <phases/>
             <properties>
                 <property>
-                    <name>density</name>
-                    <type>Constant</type>
-                    <value>2.0</value>
-                </property>
-                <property>
                     <name>thermal_conductivity</name>
                     <type>Constant</type>
                     <value>1</value>
@@ -33,6 +28,11 @@
                     <name>specific_heat_capacity</name>
                     <type>Constant</type>
                     <value>1</value>
+                </property>
+                <property>
+                    <name>density</name>
+                    <type>Constant</type>
+                    <value>2.0</value>
                 </property>
             </properties>
         </medium>
@@ -52,7 +52,7 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
-                    <t_end> 10.0 </t_end>
+                    <t_end> 2.0 </t_end>
                     <timesteps>
                         <pair>
                             <repeat>1</repeat>
@@ -68,7 +68,7 @@
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
-                    <each_steps> 1 </each_steps>
+                    <each_steps> 2 </each_steps>
                 </pair>
             </timesteps>
             <variables>
