@@ -45,14 +45,14 @@ SmallDeformationNonlocalProcess<DisplacementDim>::
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 
     _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
+        std::make_unique<MeshLib::IntegrationPointWriter>(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, _local_assemblers,
             &LocalAssemblerInterface::getSigma));
 
     _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
+        std::make_unique<MeshLib::IntegrationPointWriter>(
             "kappa_d_ip", 1 /*n_components*/, integration_order,
             _local_assemblers, &LocalAssemblerInterface::getKappaD));
 }

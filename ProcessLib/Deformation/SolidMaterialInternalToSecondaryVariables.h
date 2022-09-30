@@ -88,7 +88,7 @@ void solidMaterialInternalVariablesToIntegrationPointWriter(
                       DisplacementDim>>> const& solid_materials,
     std::vector<std::unique_ptr<LocalAssemblerInterface>> const&
         local_assemblers,
-    std::vector<std::unique_ptr<IntegrationPointWriter>>&
+    std::vector<std::unique_ptr<MeshLib::IntegrationPointWriter>>&
         integration_point_writer,
     int const integration_order)
 {
@@ -109,7 +109,7 @@ void solidMaterialInternalVariablesToIntegrationPointWriter(
              iv.name);
 
         integration_point_writer.emplace_back(
-            std::make_unique<IntegrationPointWriter>(
+            std::make_unique<MeshLib::IntegrationPointWriter>(
                 "material_state_variable_" + iv.name + "_ip", iv.num_components,
                 integration_order, local_assemblers,
                 &LocalAssemblerInterface::getMaterialStateVariableInternalState,

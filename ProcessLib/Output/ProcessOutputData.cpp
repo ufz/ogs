@@ -126,7 +126,7 @@ getProcessVariablesOfAllProcesses(ProcessLib::Process const& process,
     return pvs_of_all_procs;
 }
 
-std::vector<std::unique_ptr<ProcessLib::IntegrationPointWriter>> const*
+std::vector<std::unique_ptr<MeshLib::IntegrationPointWriter>> const*
 getIntegrationPointWriters(ProcessLib::Process const& process,
                            MeshLib::Mesh const& output_mesh)
 {
@@ -164,7 +164,7 @@ ProcessOutputData::ProcessOutputData(
         const std::vector<std::reference_wrapper<ProcessVariable>>>>&&
         process_variables_of_all_processes,
     const SecondaryVariableCollection& secondary_variables,
-    const std::vector<std::unique_ptr<IntegrationPointWriter>>*
+    const std::vector<std::unique_ptr<MeshLib::IntegrationPointWriter>>*
         integration_point_writers,
     std::vector<const NumLib::LocalToGlobalIndexMap*>&&
         bulk_mesh_dof_tables_of_all_processes,

@@ -55,7 +55,7 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
          LocalAssemblerIF::getIPDataAccessorsForIPWriter())
     {
         _integration_point_writer.emplace_back(
-            std::make_unique<IntegrationPointWriter>(
+            std::make_unique<MeshLib::IntegrationPointWriter>(
                 name, num_comp, integration_order, local_assemblers_,
                 ip_data_accessor));
     }

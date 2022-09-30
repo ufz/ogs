@@ -55,26 +55,26 @@ TH2MProcess<DisplacementDim>::TH2MProcess(
     // properties, s.t. there is no "overlapping" with cell/point data.
     // See getOrCreateMeshProperty.
     _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
+        std::make_unique<MeshLib::IntegrationPointWriter>(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, _local_assemblers,
             &LocalAssemblerInterface::getSigma));
 
     _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
+        std::make_unique<MeshLib::IntegrationPointWriter>(
             "swelling_stress_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, _local_assemblers,
             &LocalAssemblerInterface::getSwellingStress));
 
     _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
+        std::make_unique<MeshLib::IntegrationPointWriter>(
             "saturation_ip", 1 /*n components*/, integration_order,
             _local_assemblers, &LocalAssemblerInterface::getSaturation));
 
     _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
+        std::make_unique<MeshLib::IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, _local_assemblers,

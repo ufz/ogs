@@ -18,7 +18,7 @@ namespace ProcessLib
 {
 template <typename LocalAssemblersVector>
 void setIPDataInitialConditions(
-    std::vector<std::unique_ptr<IntegrationPointWriter>> const&
+    std::vector<std::unique_ptr<MeshLib::IntegrationPointWriter>> const&
         _integration_point_writer,
     MeshLib::Properties const& mesh_properties,
     LocalAssemblersVector& local_assemblers)
