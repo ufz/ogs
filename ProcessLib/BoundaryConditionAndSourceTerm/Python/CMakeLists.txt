@@ -43,9 +43,17 @@ target_include_directories(
 
 target_link_libraries(
     ProcessLibBoundaryConditionAndSourceTermPython
-    PUBLIC BaseLib MathLib MeshLib NumLib Python::Python
+    PUBLIC BaseLib MathLib MeshLib NumLib
+           $<$<NOT:$<BOOL:${OGS_WHEEL_BUILD}>>:Python::Python>
     PRIVATE pybind11::pybind11
 )
+
+if(OGS_WHEEL_BUILD AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+    target_link_options(
+        ProcessLibBoundaryConditionAndSourceTermPython PUBLIC -undefined
+        dynamic_lookup
+    )
+endif()
 
 # For the embedded Python module
 ogs_add_library(
