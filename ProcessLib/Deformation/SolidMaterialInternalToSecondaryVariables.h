@@ -13,7 +13,10 @@
 #include <map>
 #include <memory>
 
+#include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "MeshLib/Utils/IntegrationPointWriter.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace ProcessLib::Deformation
 {
