@@ -195,8 +195,6 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    using nlohmann::json;
-
     ProcessLib::createLocalAssemblersHM<DisplacementDim,
                                         RichardsMechanicsLocalAssembler>(
         mesh.getElements(), dof_table, _local_assemblers,
