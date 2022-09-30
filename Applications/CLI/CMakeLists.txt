@@ -47,6 +47,7 @@ if(OGS_USE_PYTHON)
     )
 endif()
 
+if(NOT OGS_WHEEL_BUILD)
 ogs_add_executable(ogs ogs.cpp CommandLineArgumentParser.cpp)
 
 target_link_libraries(
@@ -81,3 +82,4 @@ cpack_add_component(
     DESCRIPTION "The command line interface for OpenGeoSys."
     GROUP Applications
 )
+endif()
