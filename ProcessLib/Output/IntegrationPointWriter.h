@@ -11,7 +11,6 @@
 #include <functional>
 #include <iterator>
 #include <memory>
-#include <nlohmann/json_fwd.hpp>
 #include <vector>
 
 #pragma once
@@ -20,7 +19,7 @@ namespace MeshLib
 {
 class Mesh;
 class Properties;
-}
+}  // namespace MeshLib
 
 namespace ProcessLib
 {
