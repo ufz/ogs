@@ -12,10 +12,10 @@
 
 #include <cassert>
 
+#include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
-#include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
 #include "ThermoMechanicsFEM.h"

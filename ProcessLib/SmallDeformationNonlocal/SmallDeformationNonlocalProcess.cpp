@@ -13,7 +13,7 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 
-#include "ProcessLib/Output/IntegrationPointWriter.h"
+#include "MeshLib/Utils/IntegrationPointWriter.h"
 
 // Reusing local assembler creation code.
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"

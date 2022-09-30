@@ -13,8 +13,8 @@
 #include <cassert>
 #include <nlohmann/json.hpp>
 
+#include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
-#include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"

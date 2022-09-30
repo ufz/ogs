@@ -11,7 +11,7 @@
 #include "AddProcessDataToMesh.h"
 
 #include "InfoLib/GitInfo.h"
-#include "IntegrationPointWriter.h"
+#include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "ProcessLib/Output/SecondaryVariable.h"
 #include "ProcessLib/ProcessVariable.h"
 #ifdef USE_PETSC

@@ -12,7 +12,7 @@
 
 #include "BaseLib/Error.h"
 #include "MeshLib/Properties.h"
-#include "ProcessLib/Output/IntegrationPointWriter.h"
+#include "MeshLib/Utils/IntegrationPointWriter.h"
 
 namespace ProcessLib
 {

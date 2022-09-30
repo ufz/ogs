@@ -15,6 +15,7 @@
 
 #include "AbstractJacobianAssembler.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
+#include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/ODESolver/ODESystem.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
@@ -22,7 +23,6 @@
 #include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryConditionCollection.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/SourceTermCollection.h"
 #include "ProcessLib/Output/ExtrapolatorData.h"
-#include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/Output/SecondaryVariable.h"
 #include "ProcessVariable.h"
 #include "VectorMatrixAssembler.h"
