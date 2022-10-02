@@ -20,8 +20,8 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Properties/ThermalConductivity/CreateSoilThermalConductivitySomerton.h"
-#include "MaterialLib/MPL/Properties/ThermalConductivity/SoilThermalConductivitySomerton.h"
+#include "MaterialLib/MPL/Properties/ThermalConductivity/CreateSaturationWeightedThermalConductivity.h"
+#include "MaterialLib/MPL/Properties/ThermalConductivity/SaturationWeightedThermalConductivity.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/CoordinateSystem.h"
@@ -30,7 +30,7 @@
 namespace MPL = MaterialPropertyLib;
 
 std::unique_ptr<MaterialPropertyLib::Property>
-createTestSoilThermalConductivitySomertonProperty(
+createTestSaturationWeightedThermalConductivityProperty(
     const char xml[], int const geometry_dimension,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     ParameterLib::CoordinateSystem const* const local_coordinate_system,
@@ -54,12 +54,14 @@ createTestSoilThermalConductivitySomertonProperty(
                           local_coordinate_system);
 }
 
-TEST(MaterialPropertyLib, SoilThermalConductivitySomerton1D)
+TEST(MaterialPropertyLib,
+     SaturationWeightedThermalConductivity1Darithmetic_squareroot)
 {
     const char xml[] =
         "<property>"
         "   <name>thermal_conductivity</name>"
-        "   <type>SoilThermalConductivitySomerton</type>"
+        "   <type>SaturationWeightedThermalConductivity</type>"
+        "   <mean_type>arithmetic_squareroot</mean_type>"
         "   <dry_thermal_conductivity>k_T_dry</dry_thermal_conductivity>"
         "   <wet_thermal_conductivity>k_T_wet</wet_thermal_conductivity>"
         "</property>";
@@ -76,9 +78,9 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton1D)
 
     const int dimemsion = 1;
     std::unique_ptr<MPL::Property> const k_T_ptr =
-        createTestSoilThermalConductivitySomertonProperty(
+        createTestSaturationWeightedThermalConductivityProperty(
             xml, dimemsion, parameters, nullptr,
-            MPL::createSoilThermalConductivitySomerton);
+            MPL::createSaturationWeightedThermalConductivity);
 
     MPL::Property const& k_T_property = *k_T_ptr;
 
@@ -180,12 +182,14 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton1D)
     }
 }
 
-TEST(MaterialPropertyLib, SoilThermalConductivitySomerton3D)
+TEST(MaterialPropertyLib,
+     SaturationWeightedThermalConductivity3Darithmetic_squareroot)
 {
     const char xml[] =
         "<property>"
         "   <name>thermal_conductivity</name>"
-        "   <type>SoilThermalConductivitySomerton</type>"
+        "   <type>SaturationWeightedThermalConductivity</type>"
+        "   <mean_type>arithmetic_squareroot</mean_type>"
         "   <dry_thermal_conductivity>k_T_dry</dry_thermal_conductivity>"
         "   <wet_thermal_conductivity>k_T_wet</wet_thermal_conductivity>"
         "</property>";
@@ -202,9 +206,9 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton3D)
 
     const int dimemsion = 3;
     std::unique_ptr<MPL::Property> const k_T_ptr =
-        createTestSoilThermalConductivitySomertonProperty(
+        createTestSaturationWeightedThermalConductivityProperty(
             xml, dimemsion, parameters, nullptr,
-            MPL::createSoilThermalConductivitySomerton);
+            MPL::createSaturationWeightedThermalConductivity);
 
     MPL::Property const& k_T_property = *k_T_ptr;
 
@@ -328,6 +332,271 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton3D)
                 << " and for computed derivative of thermal conductivity with "
                    "respect to saturation."
                 << approximated_dk_T_dS;
+        }
+    }
+}
+TEST(MaterialPropertyLib,
+     SaturationWeightedThermalConductivity1Darithmetic_linear)
+{
+    ParameterLib::ConstantParameter<double> const k_dry{"k_dry", {0.2}};
+    ParameterLib::ConstantParameter<double> const k_wet{"k_wet", {1.5}};
+
+    auto const k_model_eff = MPL::SaturationWeightedThermalConductivity<1>(
+        "thermal_conductivity", k_dry, k_wet,
+        MaterialPropertyLib::MeanType::ARITHMETIC_LINEAR, nullptr);
+
+    ParameterLib::SpatialPosition const pos;
+    double const t = std::numeric_limits<double>::quiet_NaN();
+    double const dt = std::numeric_limits<double>::quiet_NaN();
+    MPL::VariableArray vars;
+
+    /// check derivative
+    {
+        double const S_0 = -0.1;
+        double const S_max = 1.1;
+        int const n_steps = 10000;
+        double const eps = 1e-6;
+        for (int i = 0; i <= n_steps; i++)
+        {
+            double const S_L = S_0 + i * (S_max - S_0) / n_steps;
+            vars.liquid_saturation = S_L;
+
+            auto const lambda =
+                std::get<double>(k_model_eff.value(vars, pos, t, dt));
+
+            switch (i)
+            {
+                case 0:
+                    ASSERT_LE(std::abs(lambda - 0.2), 1e-9)
+                        << "for conductivity " << lambda << " and saturation "
+                        << S_L;
+                    break;
+                case 5000:
+                    ASSERT_LE(std::abs(lambda - 0.85), 1e-9)
+                        << "for conductivity " << lambda << " and saturation "
+                        << S_L;
+                    break;
+                case 10000:
+                    ASSERT_LE(std::abs(lambda - 1.5), 1e-9)
+                        << "for conductivity " << lambda << " and saturation "
+                        << S_L;
+                    break;
+            }
+
+            auto const dlambda = std::get<double>(k_model_eff.dValue(
+                vars, MaterialPropertyLib::Variable::liquid_saturation, pos, t,
+                dt));
+
+            vars.liquid_saturation = S_L - eps;
+            auto const lambda_minus =
+                std::get<double>(k_model_eff.value(vars, pos, t, dt));
+
+            vars.liquid_saturation = S_L + eps;
+            auto const lambda_plus =
+                std::get<double>(k_model_eff.value(vars, pos, t, dt));
+
+            double const Dlambda = (lambda_plus - lambda_minus) / 2 / eps;
+
+            ASSERT_LE(std::abs(dlambda - Dlambda), 1e-9)
+                << "for conductivity " << lambda << " and saturation " << S_L;
+        }
+    }
+}
+TEST(MaterialPropertyLib,
+     SaturationWeightedThermalConductivity3Darithmetic_linear)
+{
+    ParameterLib::ConstantParameter<double> const k_dry{"k_dry", {0.2}};
+    ParameterLib::ConstantParameter<double> const k_wet{"k_wet", {1.5}};
+
+    auto const k_model_eff = MPL::SaturationWeightedThermalConductivity<3>(
+        "thermal_conductivity", k_dry, k_wet,
+        MaterialPropertyLib::MeanType::ARITHMETIC_LINEAR, nullptr);
+
+    ParameterLib::SpatialPosition const pos;
+    double const t = std::numeric_limits<double>::quiet_NaN();
+    double const dt = std::numeric_limits<double>::quiet_NaN();
+    MPL::VariableArray vars;
+
+    {
+        double const S_0 = -0.1;
+        double const S_max = 1.1;
+        int const n_steps = 10000;
+        double const eps = 1e-6;
+        for (int i = 0; i <= n_steps; i++)
+        {
+            double const S_L = S_0 + i * (S_max - S_0) / n_steps;
+            vars.liquid_saturation = S_L;
+
+            auto const lambda =
+                std::get<double>(k_model_eff.value(vars, pos, t, dt));
+
+            switch (i)
+            {
+                case 0:
+                    ASSERT_LE(std::abs(lambda - 0.2), 1e-9)
+                        << "for conductivity " << lambda << " and saturation "
+                        << S_L;
+                    break;
+                case 5000:
+                    ASSERT_LE(std::abs(lambda - 0.85), 1e-9)
+                        << "for conductivity " << lambda << " and saturation "
+                        << S_L;
+                    break;
+                case 10000:
+                    ASSERT_LE(std::abs(lambda - 1.5), 1e-9)
+                        << "for conductivity " << lambda << " and saturation "
+                        << S_L;
+                    break;
+            }
+
+            auto const dlambda = std::get<double>(k_model_eff.dValue(
+                vars, MaterialPropertyLib::Variable::liquid_saturation, pos, t,
+                dt));
+
+            vars.liquid_saturation = S_L - eps;
+            auto const lambda_minus =
+                std::get<double>(k_model_eff.value(vars, pos, t, dt));
+
+            vars.liquid_saturation = S_L + eps;
+            auto const lambda_plus =
+                std::get<double>(k_model_eff.value(vars, pos, t, dt));
+
+            double const Dlambda = (lambda_plus - lambda_minus) / 2 / eps;
+
+            ASSERT_LE(std::abs(dlambda - Dlambda), 1e-9)
+                << "for conductivity " << lambda << " and saturation " << S_L;
+        }
+    }
+}
+TEST(MaterialPropertyLib, SaturationWeightedThermalConductivity1Dgeometric)
+{
+    ParameterLib::ConstantParameter<double> const k_dry{"k_dry", {0.2}};
+    ParameterLib::ConstantParameter<double> const k_wet{"k_wet", {1.5}};
+
+    auto const k_model_eff = MPL::SaturationWeightedThermalConductivity<1>(
+        "thermal_conductivity", k_dry, k_wet,
+        MaterialPropertyLib::MeanType::GEOMETRIC, nullptr);
+
+    ParameterLib::SpatialPosition const pos;
+    double const t = std::numeric_limits<double>::quiet_NaN();
+    double const dt = std::numeric_limits<double>::quiet_NaN();
+    MPL::VariableArray vars;
+
+    {
+        double const S_0 = -0.1;
+        double const S_max = 1.1;
+        int const n_steps = 10000;
+        double const eps = 1e-6;
+        for (int i = 0; i <= n_steps; i++)
+        {
+            double const S_L = S_0 + i * (S_max - S_0) / n_steps;
+            vars.liquid_saturation = S_L;
+
+            auto const lambda =
+                std::get<double>(k_model_eff.value(vars, pos, t, dt));
+
+            switch (i)
+            {
+                case 0:
+                    ASSERT_LE(std::abs(lambda - 0.2), 1e-9)
+                        << "for conductivity " << lambda << " and saturation "
+                        << S_L;
+                    break;
+                case 5000:
+                    ASSERT_LE(std::abs(lambda - 0.5477225575051661), 1e-9)
+                        << "for conductivity " << lambda << " and saturation "
+                        << S_L;
+                    break;
+                case 10000:
+                    ASSERT_LE(std::abs(lambda - 1.5), 1e-9)
+                        << "for conductivity " << lambda << " and saturation "
+                        << S_L;
+                    break;
+            }
+
+            auto const dlambda = std::get<double>(k_model_eff.dValue(
+                vars, MaterialPropertyLib::Variable::liquid_saturation, pos, t,
+                dt));
+
+            vars.liquid_saturation = S_L - eps;
+            auto const lambda_minus =
+                std::get<double>(k_model_eff.value(vars, pos, t, dt));
+
+            vars.liquid_saturation = S_L + eps;
+            auto const lambda_plus =
+                std::get<double>(k_model_eff.value(vars, pos, t, dt));
+
+            double const Dlambda = (lambda_plus - lambda_minus) / 2 / eps;
+
+            ASSERT_LE(std::abs(dlambda - Dlambda), 1e-9)
+                << "for conductivity " << dlambda << Dlambda << lambda
+                << " and saturation " << S_L;
+        }
+    }
+}
+TEST(MaterialPropertyLib, SaturationWeightedThermalConductivity3Dgeometric)
+{
+    ParameterLib::ConstantParameter<double> const k_dry{"k_dry", {0.2}};
+    ParameterLib::ConstantParameter<double> const k_wet{"k_wet", {1.5}};
+
+    auto const k_model_eff = MPL::SaturationWeightedThermalConductivity<3>(
+        "thermal_conductivity", k_dry, k_wet,
+        MaterialPropertyLib::MeanType::GEOMETRIC, nullptr);
+
+    ParameterLib::SpatialPosition const pos;
+    double const t = std::numeric_limits<double>::quiet_NaN();
+    double const dt = std::numeric_limits<double>::quiet_NaN();
+    MPL::VariableArray vars;
+
+    {
+        double const S_0 = -0.1;
+        double const S_max = 1.1;
+        int const n_steps = 10000;
+        double const eps = 1e-6;
+        for (int i = 0; i <= n_steps; i++)
+        {
+            double const S_L = S_0 + i * (S_max - S_0) / n_steps;
+            vars.liquid_saturation = S_L;
+
+            auto const lambda =
+                std::get<double>(k_model_eff.value(vars, pos, t, dt));
+
+            switch (i)
+            {
+                case 0:
+                    ASSERT_LE(std::abs(lambda - 0.2), 1e-9)
+                        << "for conductivity " << lambda << " and saturation "
+                        << S_L;
+                    break;
+                case 5000:
+                    ASSERT_LE(std::abs(lambda - 0.5477225575051661), 1e-9)
+                        << "for conductivity " << lambda << " and saturation "
+                        << S_L;
+                    break;
+                case 10000:
+                    ASSERT_LE(std::abs(lambda - 1.5), 1e-9)
+                        << "for conductivity " << lambda << " and saturation "
+                        << S_L;
+                    break;
+            }
+
+            auto const dlambda = std::get<double>(k_model_eff.dValue(
+                vars, MaterialPropertyLib::Variable::liquid_saturation, pos, t,
+                dt));
+
+            vars.liquid_saturation = S_L - eps;
+            auto const lambda_minus =
+                std::get<double>(k_model_eff.value(vars, pos, t, dt));
+
+            vars.liquid_saturation = S_L + eps;
+            auto const lambda_plus =
+                std::get<double>(k_model_eff.value(vars, pos, t, dt));
+
+            double const Dlambda = (lambda_plus - lambda_minus) / 2 / eps;
+
+            ASSERT_LE(std::abs(dlambda - Dlambda), 1e-9)
+                << "for conductivity " << dlambda << Dlambda << lambda
+                << " and saturation " << S_L;
         }
     }
 }
