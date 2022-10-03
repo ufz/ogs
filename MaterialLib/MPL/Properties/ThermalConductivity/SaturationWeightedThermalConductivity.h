@@ -35,14 +35,14 @@ enum class MeanType
 /**
  * \brief Saturation dependent thermal conductivity model for soil.
  *
- *  The arithmetic_squareroot model is proposed by Somerton, W.~H. et al. \cite
- * somerton1974high, which takes the form of \f[ \lambda = \lambda_{\text{dry}}
- * + \sqrt{S}(\lambda_{\text{wet}}-\lambda_{\text{dry}}), \f]. The
- * arithmetic_linear model is linear in the saturation and has the form \f[
- *   \lambda = \lambda_{\text{dry}} +
+ *  The arithmetic_squareroot model is proposed by Somerton, W.~H. et al.
+ *  \cite somerton1974high, which takes the form of 
+ *  \f[ \lambda = \lambda_{\text{dry}} + \sqrt{S}(\lambda_{\text{wet}}-
+ *  \lambda_{\text{dry}}), \f]. The arithmetic_linear model is linear in
+ *  the saturation and has the form \f[ \lambda = \lambda_{\text{dry}} +
  *     S(\lambda_{\text{wet}}-\lambda_{\text{dry}}),
  *  \f]
- *  The geometric_linear model uses the weighted geometric mean
+ *  The geometric model uses the weighted geometric mean
  *  \f[
  *   \lambda = \lambda_{\text{dry}}^{1-S} * \lambda_{\text{wet}}^S,
  *  \f]

@@ -1,1 +1,0 @@
-\copydoc MaterialPropertyLib::SaturationDependentThermalConductivity::K_dry_
