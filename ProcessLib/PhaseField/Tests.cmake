@@ -94,7 +94,7 @@ AddTest(
     NAME PhaseField_2D_surfing_AT1_vd
     PATH PhaseField/surfing
     EXECUTABLE ogs
-    EXECUTABLE_ARGS surfing.PRJ
+    EXECUTABLE_ARGS surfing.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
