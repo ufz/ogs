@@ -2,41 +2,6 @@ message(STATUS "┌─ Dependencies.cmake")
 list(APPEND CMAKE_MESSAGE_INDENT "│    ")
 set(CMAKE_FOLDER ThirdParty)
 
-# ccache, on Windows requires https://github.com/cristianadam/ccache/releases
-if(NOT WIN32 AND CCACHE_TOOL_PATH AND NOT OGS_DISABLE_COMPILER_CACHE)
-    set(CCACHE_OPTIONS "CCACHE_SLOPPINESS=pch_defines,time_macros")
-    if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang|AppleClang")
-        list(APPEND CCACHE_OPTIONS "CCACHE_CPP2=true")
-    endif()
-    CPMAddPackage(
-        NAME Ccache.cmake
-        GITHUB_REPOSITORY TheLartians/Ccache.cmake
-        VERSION 1.2.2
-        OPTIONS "USE_CCACHE ON"
-    )
-elseif(
-    WIN32
-    AND CCACHE_TOOL_PATH
-    AND NOT OGS_DISABLE_COMPILER_CACHE
-)
-    if("${CMAKE_GENERATOR}" STREQUAL "Ninja")
-        set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_TOOL_PATH} CACHE STRING "" FORCE)
-        set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_TOOL_PATH} CACHE STRING "" FORCE)
-    else()
-        # From https://github.com/ccache/ccache/discussions/1140#discussioncomment-3611405
-        # cmake-lint: disable=E1126
-        file(COPY_FILE ${CCACHE_TOOL_PATH} ${PROJECT_BINARY_DIR}/cl.exe ONLY_IF_DIFFERENT)
-        set(CMAKE_VS_GLOBALS
-            "CLToolExe=cl.exe"
-            "CLToolPath=${PROJECT_BINARY_DIR}"
-            "TrackFileAccess=false"
-            "UseMultiToolTask=true"
-            "DebugInformationFormat=OldStyle"
-        )
-    endif()
-    message(STATUS "Using ccache (${CCACHE_TOOL_PATH}).")
-endif()
-
 if(OGS_BUILD_TESTING)
     CPMAddPackage(
         NAME googletest
