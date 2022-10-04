@@ -143,7 +143,6 @@ if(MSVC)
         set(CPU_FLAGS /favor:${OGS_CPU_ARCHITECTURE})
     endif()
     add_compile_options(
-        /MP # multi-core compilation
         /wd4290
         /wd4267
         /wd4996
@@ -162,6 +161,14 @@ if(MSVC)
         /external:W0
     )
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")
+
+    # Use Multi-ToolTask scheduler
+    if(NOT CMAKE_VS_GLOBALS MATCHES "(^|;)UseMultiToolTask=")
+        list(APPEND CMAKE_VS_GLOBALS UseMultiToolTask=true)
+    endif()
+    if(NOT CMAKE_VS_GLOBALS MATCHES "(^|;)EnforceProcessCountAcrossBuilds=")
+        list(APPEND CMAKE_VS_GLOBALS EnforceProcessCountAcrossBuilds=true)
+    endif()
 endif()
 
 add_compile_options(
