@@ -55,7 +55,6 @@
       "name": "_petsc",
       "hidden": true,
       "cacheVariables": {
-        "OGS_USE_PYTHON": "OFF",
         "BUILD_SHARED_LIBS": "ON",
         "OGS_USE_PETSC": "ON"
       },
