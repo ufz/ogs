@@ -46,6 +46,8 @@ build wheels win:
   tags: [windows]
   extends:
     - .vs2019-environment
+  variables:
+    SKBUILD_BUILD_OPTIONS: "/m"
   <<: *wheels_template
 
 publish wheels:
