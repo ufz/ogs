@@ -69,6 +69,13 @@ public:
     /// Destructor
     virtual ~Mesh();
 
+    /// Only cleans vector members #_nodes and #_elements,
+    /// and does not touch the pointer entries of the vectors.
+    /// This function can only be called in the case that the pointers of
+    /// #_nodes and #_elements are shared with other instances
+    /// of this class and are deleted by them as well.
+    void shallowClean();
+
     /// Add an element to the mesh.
     void addElement(Element* elem);
 

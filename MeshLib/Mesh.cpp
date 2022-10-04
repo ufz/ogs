@@ -119,6 +119,12 @@ Mesh::Mesh(const Mesh& mesh)
 
 Mesh::Mesh(Mesh&& mesh) = default;
 
+void Mesh::shallowClean()
+{
+    _elements.clear();
+    _nodes.clear();
+}
+
 Mesh::~Mesh()
 {
     const std::size_t nElements(_elements.size());
