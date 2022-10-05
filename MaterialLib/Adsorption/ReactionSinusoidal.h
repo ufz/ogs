@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "BaseLib/Error.h"
-#include "BaseLib/StringTools.h"
 #include "Reaction.h"
 
 namespace Adsorption
@@ -19,23 +17,17 @@ namespace Adsorption
 class ReactionSinusoidal final : public Reaction
 {
 public:
-    explicit ReactionSinusoidal(BaseLib::ConfigTree const& conf) :
-        //! \ogs_file_param{material__adsorption__reaction__Sinusoidal__reaction_enthalpy}
-        _enthalpy(conf.getConfigParameter<double>("reaction_enthalpy"))
-    {
-    }
+    explicit ReactionSinusoidal(BaseLib::ConfigTree const& conf);
 
     double getEnthalpy(const double /*p_Ads*/, const double /*T_Ads*/,
-                        const double /*M_Ads*/) const override
+                       const double /*M_Ads*/) const override
     {
         return _enthalpy;
     }
 
-    double getReactionRate(const double /*p_Ads*/, const double /*T_Ads*/, const double /*M_Ads*/,
-                             const double /*loading*/) const override
-    {
-        OGS_FATAL("Method getReactionRate() should never be called directly");
-    }
+    double getReactionRate(const double /*p_Ads*/, const double /*T_Ads*/,
+                           const double /*M_Ads*/,
+                           const double /*loading*/) const override;
 
 private:
     double _enthalpy;
