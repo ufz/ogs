@@ -12,6 +12,7 @@ workflow:
       variables:
         PYPI_PASSWORD: "${TEST_PYPI_TOKEN}"
         PYPI_REPO: testpypi
+        SETUPTOOLS_SCM_LOCAL_SCHEME: no-local-version
     - if: $CI_MERGE_REQUEST_ID
       variables:
         CIBW_BUILD: cp39* cp310*
