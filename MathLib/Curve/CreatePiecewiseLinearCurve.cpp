@@ -10,14 +10,15 @@
  * Created on November 11, 2016, 10:49 AM
  */
 
-#include "BaseLib/ConfigTree-fwd.h"
-#include "BaseLib/Error.h"
 #include "CreatePiecewiseLinearCurve.h"
+
+#include "BaseLib/ConfigTree.h"
+#include "BaseLib/Error.h"
 
 namespace MathLib
 {
-template <typename CurveType>
-std::unique_ptr<CurveType> createPiecewiseLinearCurve(
+
+PiecewiseLinearCurveConfig parsePiecewiseLinearCurveConfig(
     BaseLib::ConfigTree const& config)
 {
     auto x =
@@ -37,6 +38,7 @@ std::unique_ptr<CurveType> createPiecewiseLinearCurve(
             "The given coordinates and values vector sizes are "
             "different.");
     }
-    return std::make_unique<CurveType>(std::move(x), std::move(y));
+
+    return {std::move(x), std::move(y)};
 }
 }  // namespace MathLib
