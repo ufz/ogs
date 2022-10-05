@@ -30,6 +30,8 @@ include:
 
 build wheels linux:
   tags: [envinf3-shell]
+  variables:
+    CIBW_ENVIRONMENT_PASS_LINUX: SETUPTOOLS_SCM_LOCAL_SCHEME
   <<: *wheels_template
 
 build wheels mac:
