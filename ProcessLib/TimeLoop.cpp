@@ -484,6 +484,43 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
     return {dt, last_step_rejected};
 }
 
+std::vector<double> calculateUniqueFixedTimesForAllOutputs(
+    std::vector<Output> const& outputs)
+{
+    std::vector<double> fixed_times;
+    for (auto const& output : outputs)
+    {
+        auto const& output_fixed_times = output.getFixedOutputTimes();
+        fixed_times.insert(fixed_times.end(), output_fixed_times.begin(),
+                           output_fixed_times.end());
+    }
+    std::sort(fixed_times.begin(), fixed_times.end());
+    auto const it = std::unique(fixed_times.begin(), fixed_times.end());
+    fixed_times.erase(it, fixed_times.end());
+    return fixed_times;
+}
+
+std::vector<std::function<double(double, double)>>
+TimeLoop::generateOutputTimeStepConstraints(
+    std::vector<double>&& fixed_times) const
+{
+    std::vector<std::function<double(double, double)>> const
+        time_step_constraints{
+            [fixed_times = std::move(fixed_times)](double t, double dt) {
+                return NumLib::possiblyClampDtToNextFixedTime(t, dt,
+                                                              fixed_times);
+            },
+            [this](double t, double dt)
+            {
+                if (t < _end_time && t + dt > _end_time)
+                {
+                    return _end_time - t;
+                }
+                return dt;
+            }};
+    return time_step_constraints;
+}
+
 /// initialize output, convergence criterion, etc.
 void TimeLoop::initialize()
 {
@@ -529,28 +566,9 @@ void TimeLoop::initialize()
         }
     }
 
-    std::vector<double> fixed_times;
-    for (auto const& output : _outputs)
-    {
-        auto const& output_fixed_times = output.getFixedOutputTimes();
-        fixed_times.insert(fixed_times.end(), output_fixed_times.begin(),
-                           output_fixed_times.end());
-    }
-    std::sort(fixed_times.begin(), fixed_times.end());
-    auto const it = std::unique(fixed_times.begin(), fixed_times.end());
-    fixed_times.erase(it, fixed_times.end());
+    auto const time_step_constraints = generateOutputTimeStepConstraints(
+        calculateUniqueFixedTimesForAllOutputs(_outputs));
 
-    std::vector<std::function<double(double, double)>> time_step_constraints{
-        [&fixed_times](double t, double dt)
-        { return NumLib::possiblyClampDtToNextFixedTime(t, dt, fixed_times); },
-        [this](double t, double dt)
-        {
-            if (t < _end_time && t + dt > _end_time)
-            {
-                return _end_time - t;
-            }
-            return dt;
-        }};
     std::tie(_dt, _last_step_rejected) =
         computeTimeStepping(0.0, _current_time, _accepted_steps,
                             _rejected_steps, time_step_constraints);
@@ -588,28 +606,8 @@ bool TimeLoop::calculateNextTimeStep()
 
     const std::size_t timesteps = _accepted_steps + 1;
 
-    std::vector<double> fixed_times;
-    for (auto const& output : _outputs)
-    {
-        auto const& output_fixed_times = output.getFixedOutputTimes();
-        fixed_times.insert(fixed_times.end(), output_fixed_times.begin(),
-                           output_fixed_times.end());
-    }
-    std::sort(fixed_times.begin(), fixed_times.end());
-    auto const it = std::unique(fixed_times.begin(), fixed_times.end());
-    fixed_times.erase(it, fixed_times.end());
-
-    std::vector<std::function<double(double, double)>> time_step_constraints{
-        [&fixed_times](double t, double dt)
-        { return NumLib::possiblyClampDtToNextFixedTime(t, dt, fixed_times); },
-        [this](double t, double dt)
-        {
-            if (t < _end_time && t + dt > _end_time)
-            {
-                return _end_time - t;
-            }
-            return dt;
-        }};
+    auto const time_step_constraints = generateOutputTimeStepConstraints(
+        calculateUniqueFixedTimesForAllOutputs(_outputs));
 
     // _last_step_rejected is also checked in computeTimeStepping.
     std::tie(_dt, _last_step_rejected) =
