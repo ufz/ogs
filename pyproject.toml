@@ -31,10 +31,3 @@ skip = ["cp36-*", "cp37-*", "cp38-*x86_64"]
 
 [tool.cibuildwheel.windows]
 skip = ["cp36-*", "cp37-*"]
-
-[tool.setuptools_scm]
-write_to = "Applications/Python/_version.py"
-write_to_template = "__version__ = '{version}'"
-# Switching to guess-next-dev (default) would increment the version number
-# This would be in line with PEP 440, switch OGS versioning too?
-version_scheme = "no-guess-dev"
