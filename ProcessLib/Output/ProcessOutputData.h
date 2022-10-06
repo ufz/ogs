@@ -10,15 +10,18 @@
 
 #pragma once
 
-#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+
+namespace MeshLib
+{
+struct IntegrationPointWriter;
+}  // namespace MeshLib
 
 namespace ProcessLib
 {
 class Process;
 class ProcessVariable;
 class SecondaryVariableCollection;
-struct IntegrationPointWriter;
 
 /// Holds all data of a process that are needed for output.
 class ProcessOutputData final
