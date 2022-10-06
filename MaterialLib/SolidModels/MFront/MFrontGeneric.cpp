@@ -55,7 +55,8 @@ int getEquivalentPlasticStrainOffset(mgis::behaviour::Behaviour const& b)
 template <int DisplacementDim>
 OGSMFrontTangentOperatorData tangentOperatorDataMFrontToOGS(
     std::vector<double> const& mfront_data,
-    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> const& Q,
+    std::optional<
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>> const& Q,
     mgis::behaviour::Behaviour const& behaviour)
 {
     using VT = mgis::behaviour::Variable::Type;
@@ -84,14 +85,28 @@ OGSMFrontTangentOperatorData tangentOperatorDataMFrontToOGS(
         {
             assert(var2.getVariableSize(var2, behaviour.hypothesis) == kv_size);
             size = kv_size;
-            // TODO rotation with Q
+
+            if (Q)
+            {
+                OGS_FATAL(
+                    "Coordinate frame rotation not yet implemented for "
+                    "dScalar/dSTensor.");
+            }
+
             Eigen::Map<KV>{d_out} = MFrontToOGS(Eigen::Map<const KV>{d_in});
         }
         else if (var1.type == VT::STENSOR && var2.type == VT::SCALAR)
         {
             assert(var1.getVariableSize(var1, behaviour.hypothesis) == kv_size);
             size = kv_size;
-            // TODO rotation with Q
+
+            if (Q)
+            {
+                OGS_FATAL(
+                    "Coordinate frame rotation not yet implemented for "
+                    "dSTensor/dScalar.");
+            }
+
             Eigen::Map<KV>{d_out} = MFrontToOGS(Eigen::Map<const KV>{d_in});
         }
         else if (var1.type == VT::STENSOR && var2.type == VT::STENSOR)
@@ -99,8 +114,17 @@ OGSMFrontTangentOperatorData tangentOperatorDataMFrontToOGS(
             assert(var1.getVariableSize(var1, behaviour.hypothesis) == kv_size);
             assert(var2.getVariableSize(var2, behaviour.hypothesis) == kv_size);
             size = kv_size * kv_size;
-            Eigen::Map<KM>{d_out} =
-                Q * MFrontToOGS(Eigen::Map<const KM>{d_in}) * Q.transpose();
+
+            if (Q)
+            {
+                Eigen::Map<KM>{d_out} =
+                    *Q * MFrontToOGS(Eigen::Map<const KM>{d_in}) *
+                    Q->transpose();
+            }
+            else
+            {
+                Eigen::Map<KM>{d_out} = MFrontToOGS(Eigen::Map<const KM>{d_in});
+            }
         }
         else
         {
@@ -115,11 +139,11 @@ OGSMFrontTangentOperatorData tangentOperatorDataMFrontToOGS(
 
 template OGSMFrontTangentOperatorData tangentOperatorDataMFrontToOGS<2>(
     std::vector<double> const& mfront_data,
-    MathLib::KelvinVector::KelvinMatrixType<2> const& Q,
+    std::optional<MathLib::KelvinVector::KelvinMatrixType<2>> const& Q,
     mgis::behaviour::Behaviour const& behaviour);
 template OGSMFrontTangentOperatorData tangentOperatorDataMFrontToOGS<3>(
     std::vector<double> const& mfront_data,
-    MathLib::KelvinVector::KelvinMatrixType<3> const& Q,
+    std::optional<MathLib::KelvinVector::KelvinMatrixType<3>> const& Q,
     mgis::behaviour::Behaviour const& behaviour);
 
 }  // namespace MaterialLib::Solids::MFront

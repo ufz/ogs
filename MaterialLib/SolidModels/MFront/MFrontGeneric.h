@@ -95,16 +95,17 @@ int getEquivalentPlasticStrainOffset(mgis::behaviour::Behaviour const& b);
 template <int DisplacementDim>
 OGSMFrontTangentOperatorData tangentOperatorDataMFrontToOGS(
     std::vector<double> const& mfront_data,
-    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> const& Q,
+    std::optional<
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>> const& Q,
     mgis::behaviour::Behaviour const& behaviour);
 
 extern template OGSMFrontTangentOperatorData tangentOperatorDataMFrontToOGS<2>(
     std::vector<double> const& mfront_data,
-    MathLib::KelvinVector::KelvinMatrixType<2> const& Q,
+    std::optional<MathLib::KelvinVector::KelvinMatrixType<2>> const& Q,
     mgis::behaviour::Behaviour const& behaviour);
 extern template OGSMFrontTangentOperatorData tangentOperatorDataMFrontToOGS<3>(
     std::vector<double> const& mfront_data,
-    MathLib::KelvinVector::KelvinMatrixType<3> const& Q,
+    std::optional<MathLib::KelvinVector::KelvinMatrixType<3>> const& Q,
     mgis::behaviour::Behaviour const& behaviour);
 
 // TODO template parameter only because of base class.
@@ -170,7 +171,8 @@ template <int DisplacementDim>
 struct SetGradient
 {
     MaterialPropertyLib::VariableArray const& variable_array;
-    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> const& Q;
+    std::optional<
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>> const& Q;
     double* target;
 
     template <typename Grad>
@@ -189,7 +191,8 @@ struct SetGradient
             auto const& grad_ogs =
                 std::get<MPLType>(variable_array.*Grad::mpl_var);
 
-            auto const grad_mfront = OGSToMFront(Q.transpose() * grad_ogs);
+            auto const grad_mfront = Q ? OGSToMFront(Q->transpose() * grad_ogs)
+                                       : OGSToMFront(grad_ogs);
             std::copy_n(grad_mfront.data(), num_comp, target);
         }
         else
@@ -429,15 +432,12 @@ public:
         }
 
         // rotation tensor
-        auto const Q = [this, &x]() -> KelvinMatrixType<DisplacementDim>
+        std::optional<KelvinMatrixType<DisplacementDim>> Q;
+        if (_local_coordinate_system)
         {
-            if (!_local_coordinate_system)
-            {
-                return KelvinMatrixType<DisplacementDim>::Identity();
-            }
-            return fourthOrderRotationMatrix(
+            Q = fourthOrderRotationMatrix(
                 _local_coordinate_system->transformation<DisplacementDim>(x));
-        }();
+        }
 
         boost::mp11::mp_for_each<Gradients>(
             detail::SetGradient<DisplacementDim>{
@@ -483,8 +483,16 @@ public:
                 if constexpr (TDF::type ==
                               mgis::behaviour::Variable::Type::STENSOR)
                 {
-                    view.block(tdf, out_data) =
-                        Q * MFrontToOGS(view.block(tdf, in_data));
+                    if (Q)
+                    {
+                        view.block(tdf, out_data) =
+                            *Q * MFrontToOGS(view.block(tdf, in_data));
+                    }
+                    else
+                    {
+                        view.block(tdf, out_data) =
+                            MFrontToOGS(view.block(tdf, in_data));
+                    }
                 }
                 else if constexpr (TDF::type ==
                                    mgis::behaviour::Variable::Type::SCALAR)
