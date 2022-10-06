@@ -167,9 +167,10 @@
         "debug"
       ],
       "cacheVariables": {
-        "OGS_COVERAGE": "ON",
         "CODE_COVERAGE_VERBOSE": "ON",
-        "OGS_CTEST_MAX_RUNTIME": "5"
+        "OGS_COVERAGE": "ON",
+        "OGS_CTEST_MAX_RUNTIME": "5",
+        "OGS_USE_MFRONT": "ON"
       }
     },
     {

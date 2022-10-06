@@ -79,6 +79,12 @@ struct Strain : Variable<Strain>
     /// The type of the variable in MFront.
     constexpr static mgis::behaviour::Variable::Type type =
         mgis::behaviour::Variable::Type::STENSOR;
+
+    /// The VariableArray entry that holds this variable in OGS.
+    ///
+    /// \note Currently we always pass strain via mechanical_strain.
+    constexpr static auto mpl_var =
+        &MaterialPropertyLib::VariableArray::mechanical_strain;
 };
 
 /// Instance that can be used for overload resolution/template type deduction.
@@ -90,6 +96,9 @@ struct LiquidPressure : Variable<LiquidPressure>
 
     constexpr static mgis::behaviour::Variable::Type type =
         mgis::behaviour::Variable::Type::SCALAR;
+
+    constexpr static auto mpl_var =
+        &MaterialPropertyLib::VariableArray::liquid_phase_pressure;
 };
 
 static constexpr LiquidPressure liquid_pressure;
@@ -100,6 +109,8 @@ struct Stress : Variable<Stress>
 
     constexpr static mgis::behaviour::Variable::Type type =
         mgis::behaviour::Variable::Type::STENSOR;
+
+    constexpr static auto mpl_var = &MaterialPropertyLib::VariableArray::stress;
 };
 
 static constexpr Stress stress;
@@ -110,6 +121,9 @@ struct Saturation : Variable<Saturation>
 
     constexpr static mgis::behaviour::Variable::Type type =
         mgis::behaviour::Variable::Type::SCALAR;
+
+    constexpr static auto mpl_var =
+        &MaterialPropertyLib::VariableArray::liquid_saturation;
 };
 
 static constexpr Saturation saturation;
@@ -120,6 +134,9 @@ struct Temperature : Variable<Temperature>
 
     constexpr static mgis::behaviour::Variable::Type type =
         mgis::behaviour::Variable::Type::SCALAR;
+
+    constexpr static auto mpl_var =
+        &MaterialPropertyLib::VariableArray::temperature;
 };
 
 static constexpr Temperature temperature;

@@ -1,0 +1,100 @@
+// vim: ft=cpp sw=2 ts=2 sts=2 et
+
+@DSL DefaultGenericBehaviour;
+@Behaviour CheckStiffnessMatrixAllBlocks;
+@Author Christoph Lehmann;
+@Date 01 / 08 / 2022;
+@Description {
+  Check passing the stiffness matrix between OGS and MFront.
+  In this behaviour all usual tangent operator blocks are computed
+  (except derivatives w.r.t. T).
+}
+
+@Gradient StrainStensor eps_total;
+eps_total.setGlossaryName("Strain");
+
+@Gradient real p_LR;
+p_LR.setEntryName("LiquidPressure");
+
+@Flux StressStensor sigma;
+sigma.setGlossaryName("Stress");
+
+@Flux real S_L;
+S_L.setEntryName("Saturation");
+
+// @TangentOperatorBlocks{dsigma_ddeps_total, dsigma_ddp_LR, dsigma_ddT};
+
+@ProvidesTangentOperator;
+@Integrator {
+  // TODO restrict to 3D!
+
+  sigma(0) = 2301;
+  sigma(1) = 2302;
+  sigma(2) = 2303;
+  sigma(3) = 2304;
+  sigma(5) = 2305;
+  sigma(4) = 2306;
+  S_L = 2307;
+
+  if (computeTangentOperator_)
+  {
+    dsigma_ddeps_total(0,0) = 1001;
+    dsigma_ddeps_total(0,1) = 1002;
+    dsigma_ddeps_total(0,2) = 1003;
+    dsigma_ddeps_total(0,3) = 1004;
+    dsigma_ddeps_total(0,5) = 1005;
+    dsigma_ddeps_total(0,4) = 1006;
+
+    dsigma_ddeps_total(1,0) = 1007;
+    dsigma_ddeps_total(1,1) = 1008;
+    dsigma_ddeps_total(1,2) = 1009;
+    dsigma_ddeps_total(1,3) = 1010;
+    dsigma_ddeps_total(1,5) = 1011;
+    dsigma_ddeps_total(1,4) = 1012;
+
+    dsigma_ddeps_total(2,0) = 1013;
+    dsigma_ddeps_total(2,1) = 1014;
+    dsigma_ddeps_total(2,2) = 1015;
+    dsigma_ddeps_total(2,3) = 1016;
+    dsigma_ddeps_total(2,5) = 1017;
+    dsigma_ddeps_total(2,4) = 1018;
+
+    dsigma_ddeps_total(3,0) = 1019;
+    dsigma_ddeps_total(3,1) = 1020;
+    dsigma_ddeps_total(3,2) = 1021;
+    dsigma_ddeps_total(3,3) = 1022;
+    dsigma_ddeps_total(3,5) = 1023;
+    dsigma_ddeps_total(3,4) = 1024;
+
+    dsigma_ddeps_total(5,0) = 1025;
+    dsigma_ddeps_total(5,1) = 1026;
+    dsigma_ddeps_total(5,2) = 1027;
+    dsigma_ddeps_total(5,3) = 1028;
+    dsigma_ddeps_total(5,5) = 1029;
+    dsigma_ddeps_total(5,4) = 1030;
+
+    dsigma_ddeps_total(4,0) = 1031;
+    dsigma_ddeps_total(4,1) = 1032;
+    dsigma_ddeps_total(4,2) = 1033;
+    dsigma_ddeps_total(4,3) = 1034;
+    dsigma_ddeps_total(4,5) = 1035;
+    dsigma_ddeps_total(4,4) = 1036;
+
+    dsigma_ddp_LR(0) = 2001;
+    dsigma_ddp_LR(1) = 2002;
+    dsigma_ddp_LR(2) = 2003;
+    dsigma_ddp_LR(3) = 2004;
+    dsigma_ddp_LR(5) = 2005;
+    dsigma_ddp_LR(4) = 2006;
+
+    dS_L_ddeps_total(0) = 3001;
+    dS_L_ddeps_total(1) = 3002;
+    dS_L_ddeps_total(2) = 3003;
+    dS_L_ddeps_total(3) = 3004;
+    dS_L_ddeps_total(5) = 3005;
+    dS_L_ddeps_total(4) = 3006;
+
+    dS_L_ddp_LR = 4001;
+  }
+
+}
