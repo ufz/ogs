@@ -15,10 +15,8 @@
 
 #pragma once
 
-struct CommandLineArgumentParser final
+struct CommandLineArguments final
 {
-    CommandLineArgumentParser(int argc, char* argv[]);
-
     std::string reference_path;
     std::string project;
     std::vector<std::string> xml_patch_file_names;
@@ -32,3 +30,6 @@ struct CommandLineArgumentParser final
     bool enable_fpe_is_set;
 #endif  // _WIN32
 };
+
+CommandLineArguments parseCommandLineArguments(
+    int argc, char* argv[], bool const exit_on_exception = true);
