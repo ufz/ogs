@@ -55,7 +55,7 @@ void enableFloatingPointExceptions()
 
 int main(int argc, char* argv[])
 {
-    CommandLineArgumentParser cli_arg(argc, argv);
+    CommandLineArguments cli_arg = parseCommandLineArguments(argc, argv);
     BaseLib::initOGSLogger(cli_arg.log_level);
 #ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
     if (cli_arg.enable_fpe_is_set)
