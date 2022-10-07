@@ -66,6 +66,15 @@ binaries_list = [
     "Vtu2Grid",
 ]
 
+
+def ogs():
+    import ogs.simulator as sim
+
+    sim.initialize(sys.argv)
+    sim.executeSimulation()
+    sim.finalize()
+
+
 if "PEP517_BUILD_BACKEND" not in os.environ:
     OGS_BIN_DIR = os.path.join(os.path.join(os.path.dirname(__file__), "..", "bin"))
 
@@ -77,4 +86,6 @@ if "PEP517_BUILD_BACKEND" not in os.environ:
 
     FUNC_TEMPLATE = """def {0}(): raise SystemExit(_program("{0}", sys.argv[1:]))"""
     for f in binaries_list:
+        if f == "ogs":
+            continue  # provided by separate function
         exec(FUNC_TEMPLATE.format(f))
