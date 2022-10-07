@@ -83,6 +83,7 @@ TEST(FileIO, TestSwmmInterface)
     ASSERT_EQ(0, bounds->first);
     ASSERT_EQ(0, bounds->second);
 
-    ASSERT_NEAR(186.06, mesh.getMinEdgeLength(), 0.01);
-    ASSERT_NEAR(3171.42, mesh.getMaxEdgeLength(), 0.01);
+    auto const [min, max] = minMaxEdgeLength(mesh.getElements());
+    ASSERT_NEAR(186.06, min, 0.01);
+    ASSERT_NEAR(3171.42, max, 0.01);
 }

@@ -308,7 +308,8 @@ void extractBoundaries(MeshLib::Mesh const& mesh,
                        std::string const& output_name,
                        MathLib::Point3d const& pnt_start)
 {
-    double const eps = mesh.getMinEdgeLength() / 100.0;
+    auto const edge_length = minMaxEdgeLength(mesh.getElements());
+    double const eps = edge_length.first / 100.0;
     std::unique_ptr<MeshLib::Mesh> boundary_mesh(
         MeshLib::BoundaryExtraction::getBoundaryElementsAsMesh(
             mesh, "bulk_node_ids", "bulk_element_ids", "bulk_face_ids"));
@@ -489,8 +490,11 @@ int main(int argc, char* argv[])
     // collapse all nodes that might have been created due to gmsh physically
     // separating layers
     MeshLib::MeshRevision rev(*new_mesh);
+    auto const edge_length = minMaxEdgeLength(new_mesh->getElements());
+    double const minimum_node_distance = edge_length.first / 100.0;
+
     std::unique_ptr<MeshLib::Mesh> revised_mesh(
-        rev.simplifyMesh("RevisedMesh", new_mesh->getMinEdgeLength() / 100.0));
+        rev.simplifyMesh("RevisedMesh", minimum_node_distance));
 
     if (bound_arg.getValue())
     {

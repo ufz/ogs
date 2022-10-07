@@ -37,6 +37,9 @@ std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
             ? *(std::max_element(begin(*material_ids), end(*material_ids)))
             : 0;
 
+    auto const edgeLengths = minMaxEdgeLength(mesh.getElements());
+    double const min_edge = edgeLengths.first;
+
     std::vector<int> new_mat_ids;
     const std::size_t n_ply(ply_vec.size());
     // for each polyline
@@ -46,8 +49,7 @@ std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
 
         // search nodes on the polyline
         MeshGeoToolsLib::MeshNodesAlongPolyline mshNodesAlongPoly(
-            mesh, *ply, mesh.getMinEdgeLength() * 0.5,
-            MeshGeoToolsLib::SearchAllNodes::Yes);
+            mesh, *ply, min_edge * 0.5, MeshGeoToolsLib::SearchAllNodes::Yes);
         auto& vec_nodes_on_ply = mshNodesAlongPoly.getNodeIDs();
         if (vec_nodes_on_ply.empty())
         {

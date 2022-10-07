@@ -174,7 +174,8 @@ int main(int argc, char* argv[])
 
         std::vector<MeshLib::Node*> const& nodes = mesh->getNodes();
         MeshLib::MeshElementGrid const grid(*ground_truth);
-        double const max_edge(mesh->getMaxEdgeLength());
+        auto const edgeLengths = minMaxEdgeLength(mesh->getElements());
+        double const max_edge = edgeLengths.second;
         double const max_dist(pow(max_dist_arg.getValue(), 2));
 
         for (MeshLib::Node* node : nodes)
