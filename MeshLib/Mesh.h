@@ -313,6 +313,10 @@ std::unique_ptr<Mesh> createMeshFromElementSelection(
 bool isBaseNode(Node const& node,
                 std::vector<Element const*> const& elements_connected_to_node);
 
+/// Returns the minimum and maximum edge length for given elements.
+std::pair<double, double> minMaxEdgeLength(
+    std::vector<Element*> const& elements);
+
 /// MeshLib specific, lazy, non-owning, non-mutating, composable range views.
 namespace views
 {
