@@ -64,7 +64,6 @@ Mesh::Mesh(std::string name,
            Properties const& properties)
     : _id(global_mesh_counter++),
       _mesh_dimension(0),
-      _edge_length(std::numeric_limits<double>::max(), 0),
       _node_distance(std::numeric_limits<double>::max(), 0),
       _name(std::move(name)),
       _nodes(std::move(nodes)),
@@ -78,13 +77,11 @@ Mesh::Mesh(std::string name,
     _elements_connected_to_nodes = findElementsConnectedToNodes(*this);
 
     this->setElementNeighbors();
-    this->calcEdgeLengthRange();
 }
 
 Mesh::Mesh(const Mesh& mesh)
     : _id(global_mesh_counter++),
       _mesh_dimension(mesh.getDimension()),
-      _edge_length(mesh._edge_length.first, mesh._edge_length.second),
       _node_distance(mesh._node_distance.first, mesh._node_distance.second),
       _name(mesh.getName()),
       _nodes(mesh.getNumberOfNodes()),
@@ -189,11 +186,6 @@ std::pair<double, double> minMaxEdgeLength(
         [](Element* const e) { return computeSqrEdgeLengthRange(*e); });
 
     return {std::sqrt(bounds.first), std::sqrt(bounds.second)};
-}
-
-void Mesh::calcEdgeLengthRange()
-{
-    _edge_length = minMaxEdgeLength(_elements);
 }
 
 void Mesh::setElementNeighbors()
