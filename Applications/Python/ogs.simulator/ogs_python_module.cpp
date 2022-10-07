@@ -30,7 +30,7 @@
 
 std::unique_ptr<Simulation> simulation;
 
-void initOGS(std::vector<std::string>& argv_str)
+int initOGS(std::vector<std::string>& argv_str)
 {
     int argc = argv_str.size();
     char** argv = new char*[argc];
@@ -72,9 +72,11 @@ void initOGS(std::vector<std::string>& argv_str)
     }
 
     INFO("OpenGeoSys is now initialized.");
+
+    return ogs_status;
 }
 
-void executeSimulation()
+int executeSimulation()
 {
     BaseLib::RunTime run_time;
 
@@ -104,6 +106,8 @@ void executeSimulation()
         auto const time_str = BaseLib::formatDate(end_time);
         INFO("OGS terminated on {:s}.", time_str);
     }
+
+    return ogs_status;
 }
 
 double currentTime()
