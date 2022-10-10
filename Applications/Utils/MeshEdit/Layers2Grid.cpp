@@ -137,7 +137,8 @@ void setMaterialIDs(MeshLib::Mesh& mesh,
     {
         INFO("-> Layer {:d}", n_layers - i - 1);
         MeshLib::MeshElementGrid const grid(*layers[i]);
-        double const max_edge(layers[i]->getMaxEdgeLength());
+        auto const edgeLengths = minMaxEdgeLength(layers[i]->getElements());
+        double const max_edge = edgeLengths.second;
         for (std::size_t j = 0; j < n_elems; ++j)
         {
             if (is_set[j])

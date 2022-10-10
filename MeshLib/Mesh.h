@@ -88,12 +88,6 @@ public:
     /// Get the element with the given index.
     const Element* getElement(std::size_t idx) const { return _elements[idx]; }
 
-    /// Get the minimum edge length over all elements of the mesh.
-    double getMinEdgeLength() const { return _edge_length.first; }
-
-    /// Get the maximum edge length over all elements of the mesh.
-    double getMaxEdgeLength() const { return _edge_length.second; }
-
     /// Get the number of elements
     std::size_t getNumberOfElements() const { return _elements.size(); }
 
@@ -153,10 +147,6 @@ protected:
 
     std::size_t const _id;
     unsigned _mesh_dimension;
-    /// The minimal and maximal edge length over all elements in the mesh
-    std::pair<double, double> _edge_length = {
-        std::numeric_limits<double>::quiet_NaN(),
-        std::numeric_limits<double>::quiet_NaN()};
     /// The minimal and maximal distance of nodes within an element over all elements in the mesh
     std::pair<double, double> _node_distance;
     std::string _name;
@@ -312,6 +302,10 @@ std::unique_ptr<Mesh> createMeshFromElementSelection(
 /// is not connected to any element i.e. an unconnected node.
 bool isBaseNode(Node const& node,
                 std::vector<Element const*> const& elements_connected_to_node);
+
+/// Returns the minimum and maximum edge length for given elements.
+std::pair<double, double> minMaxEdgeLength(
+    std::vector<Element*> const& elements);
 
 /// MeshLib specific, lazy, non-owning, non-mutating, composable range views.
 namespace views

@@ -77,9 +77,12 @@ int main(int argc, char* argv[])
         return 2;
     }
 
+    auto const edgeLengths = minMaxEdgeLength(mesh->getElements());
     double const cellsize =
-        (cell_arg.isSet()) ? cell_arg.getValue() : mesh->getMinEdgeLength();
+        (cell_arg.isSet()) ? cell_arg.getValue() : edgeLengths.first;
     INFO("Cellsize set to {:f}", cellsize);
+
+    double const max_edge = edgeLengths.second + cellsize;
 
     std::vector<MeshLib::Node*> const& nodes_vec(mesh->getNodes());
     GeoLib::AABB const bounding_box(nodes_vec.begin(), nodes_vec.end());
@@ -110,7 +113,6 @@ int main(int argc, char* argv[])
     INFO("Writing raster with {:d} x {:d} pixels.", n_cols, n_rows);
 
     MeshLib::MeshElementGrid const grid(*mesh);
-    double const max_edge(mesh->getMaxEdgeLength() + cellsize);
 
     for (std::size_t row = 0; row <= n_rows; ++row)
     {

@@ -15,6 +15,7 @@
 #include "Mesh.h"
 
 #include <memory>
+#include <range/v3/numeric.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/enumerate.hpp>
 #include <range/v3/view/indirect.hpp>
@@ -63,7 +64,6 @@ Mesh::Mesh(std::string name,
            Properties const& properties)
     : _id(global_mesh_counter++),
       _mesh_dimension(0),
-      _edge_length(std::numeric_limits<double>::max(), 0),
       _node_distance(std::numeric_limits<double>::max(), 0),
       _name(std::move(name)),
       _nodes(std::move(nodes)),
@@ -77,13 +77,11 @@ Mesh::Mesh(std::string name,
     _elements_connected_to_nodes = findElementsConnectedToNodes(*this);
 
     this->setElementNeighbors();
-    this->calcEdgeLengthRange();
 }
 
 Mesh::Mesh(const Mesh& mesh)
     : _id(global_mesh_counter++),
       _mesh_dimension(mesh.getDimension()),
-      _edge_length(mesh._edge_length.first, mesh._edge_length.second),
       _node_distance(mesh._node_distance.first, mesh._node_distance.second),
       _name(mesh.getName()),
       _nodes(mesh.getNumberOfNodes()),
@@ -175,18 +173,19 @@ void Mesh::setDimension()
     }
 }
 
-void Mesh::calcEdgeLengthRange()
+std::pair<double, double> minMaxEdgeLength(
+    std::vector<Element*> const& elements)
 {
-    const std::size_t nElems(getNumberOfElements());
-    for (std::size_t i = 0; i < nElems; ++i)
-    {
-        auto const& [min_length, max_length] =
-            computeSqrEdgeLengthRange(*_elements[i]);
-        _edge_length.first = std::min(_edge_length.first, min_length);
-        _edge_length.second = std::max(_edge_length.second, max_length);
-    }
-    _edge_length.first = std::sqrt(_edge_length.first);
-    _edge_length.second = std::sqrt(_edge_length.second);
+    auto min_max = [](auto const a, auto const b) -> std::pair<double, double> {
+        return {std::min(a.first, b.first), std::max(a.second, b.second)};
+    };
+
+    using limits = std::numeric_limits<double>;
+    auto const bounds = ranges::accumulate(
+        elements, std::pair{limits::infinity(), -limits::infinity()}, min_max,
+        [](Element* const e) { return computeSqrEdgeLengthRange(*e); });
+
+    return {std::sqrt(bounds.first), std::sqrt(bounds.second)};
 }
 
 void Mesh::setElementNeighbors()

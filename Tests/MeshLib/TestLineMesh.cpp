@@ -47,9 +47,10 @@ TEST_F(MeshLibLineMesh, Construction)
         ASSERT_EQ(2u, e->getNumberOfNeighbors());
     }
 
-    ASSERT_NEAR(extent / mesh_size, mesh->getMinEdgeLength(),
+    auto const [min, max] = minMaxEdgeLength(mesh->getElements());
+    ASSERT_NEAR(extent / mesh_size, min,
                 std::numeric_limits<double>::epsilon());
-    ASSERT_NEAR(extent / mesh_size, mesh->getMaxEdgeLength(),
+    ASSERT_NEAR(extent / mesh_size, max,
                 std::numeric_limits<double>::epsilon());
 }
 

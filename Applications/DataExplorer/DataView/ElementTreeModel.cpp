@@ -182,26 +182,33 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
     auto* aabb_item = new TreeItem(bounding_box, _rootItem);
     _rootItem->appendChild(aabb_item);
 
-    const GeoLib::AABB aabb(MeshLib::MeshInformation::getBoundingBox(mesh));
-    auto const [min, max] = aabb.getMinMaxPoints();
+    {
+        const GeoLib::AABB aabb(MeshLib::MeshInformation::getBoundingBox(mesh));
+        auto const [min, max] = aabb.getMinMaxPoints();
 
-    QList<QVariant> min_aabb;
-    min_aabb << "Min:" << QString::number(min[0], 'f')
-             << QString::number(min[1], 'f') << QString::number(min[2], 'f');
-    auto* min_item = new TreeItem(min_aabb, aabb_item);
-    aabb_item->appendChild(min_item);
+        QList<QVariant> min_aabb;
+        min_aabb << "Min:" << QString::number(min[0], 'f')
+                 << QString::number(min[1], 'f')
+                 << QString::number(min[2], 'f');
+        auto* min_item = new TreeItem(min_aabb, aabb_item);
+        aabb_item->appendChild(min_item);
 
-    QList<QVariant> max_aabb;
-    max_aabb << "Max:" << QString::number(max[0], 'f')
-             << QString::number(max[1], 'f') << QString::number(max[2], 'f');
-    auto* max_item = new TreeItem(max_aabb, aabb_item);
-    aabb_item->appendChild(max_item);
+        QList<QVariant> max_aabb;
+        max_aabb << "Max:" << QString::number(max[0], 'f')
+                 << QString::number(max[1], 'f')
+                 << QString::number(max[2], 'f');
+        auto* max_item = new TreeItem(max_aabb, aabb_item);
+        aabb_item->appendChild(max_item);
+    }
 
     QList<QVariant> edges;
-    edges << "Edge Length: "
-          << "[" + QString::number(mesh.getMinEdgeLength(), 'f') + ","
-          << QString::number(mesh.getMaxEdgeLength(), 'f') + "]"
-          << "";
+    {
+        auto const [min, max] = minMaxEdgeLength(mesh.getElements());
+        edges << "Edge Length: "
+              << "[" + QString::number(min, 'f') + ","
+              << QString::number(max, 'f') + "]"
+              << "";
+    }
     auto* edge_item = new TreeItem(edges, _rootItem);
     _rootItem->appendChild(edge_item);
 

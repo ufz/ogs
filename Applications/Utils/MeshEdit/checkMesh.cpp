@@ -82,8 +82,8 @@ int main(int argc, char* argv[])
     const GeoLib::AABB aabb(MeshLib::MeshInformation::getBoundingBox(*mesh));
     INFO("Axis aligned bounding box: {}", aabb);
 
-    INFO("Min/max edge lengths: [{:g}, {:g}]", mesh->getMinEdgeLength(),
-         mesh->getMaxEdgeLength());
+    auto const [min, max] = minMaxEdgeLength(mesh->getElements());
+    INFO("Min/max edge lengths: [{:g}, {:g}]", min, max);
 
     // Element information
 
