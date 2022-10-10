@@ -1,6 +1,6 @@
 if(OGS_USE_MPI)
     ogs_add_executable(
-        binaryToPVTU BinaryToPVTU.cpp NodeWiseMeshPartitioner.cpp
+        binaryToPVTU BinaryToPVTU.cpp IntegrationPointDataTools.cpp NodeWiseMeshPartitioner.cpp
     )
     target_link_libraries(
            binaryToPVTU GitInfoLib ProcessLib MeshLib tclap
@@ -10,7 +10,7 @@ if(OGS_USE_MPI)
 endif()
 
 ogs_add_executable(
-    partmesh PartitionMesh.cpp Metis.cpp NodeWiseMeshPartitioner.cpp
+    partmesh PartitionMesh.cpp Metis.cpp IntegrationPointDataTools.cpp NodeWiseMeshPartitioner.cpp
 )
 target_link_libraries(partmesh GitInfoLib MeshLib tclap ProcessLib NumLib)
 add_dependencies(partmesh mpmetis)

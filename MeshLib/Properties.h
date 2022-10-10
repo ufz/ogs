@@ -165,6 +165,14 @@ private:
     std::map<std::string, PropertyVectorBase*> _properties;
 }; // end class
 
+/// Applies a function of the form f(type, name) -> bool for each of the
+/// properties names.
+/// The type argument is used to call f<decltype(type)>(name).
+/// At least one of the functions must return the 'true' value, but at most one
+/// is executed.
+template <typename Function>
+void applyToPropertyVectors(Properties const& properties, Function f);
+
 #include "Properties-impl.h"
 
 } // end namespace MeshLib
