@@ -13,6 +13,7 @@
 #include "BaseLib/Algorithm.h"
 #include "NumLib/Extrapolation/ExtrapolatableElementCollection.h"
 #include "NumLib/Extrapolation/Extrapolator.h"
+#include "ProcessLib/Utils/TransposeInPlace.h"
 
 namespace NumLib
 {
@@ -174,8 +175,9 @@ SecondaryVariableFunctions makeExtrapolator(
             const double t,
             std::vector<GlobalVector*> const& x,
             std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-            std::unique_ptr<GlobalVector> & /*result_cache*/
-            ) -> GlobalVector const& {
+            std::unique_ptr<GlobalVector>& /*result_cache*/
+            ) -> GlobalVector const&
+    {
         auto const extrapolatables = NumLib::makeExtrapolatable(
             local_assemblers, integration_point_values_method);
         extrapolator.extrapolate(num_components, extrapolatables, t, x,
@@ -189,8 +191,9 @@ SecondaryVariableFunctions makeExtrapolator(
             const double t,
             std::vector<GlobalVector*> const& x,
             std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-            std::unique_ptr<GlobalVector> & /*result_cache*/
-            ) -> GlobalVector const& {
+            std::unique_ptr<GlobalVector>& /*result_cache*/
+            ) -> GlobalVector const&
+    {
         auto const extrapolatables = NumLib::makeExtrapolatable(
             local_assemblers, integration_point_values_method);
         extrapolator.calculateResiduals(num_components, extrapolatables, t, x,
@@ -198,6 +201,59 @@ SecondaryVariableFunctions makeExtrapolator(
         return extrapolator.getElementResiduals();
     };
     return {num_components, eval_field, eval_residuals};
+}
+
+//! A variant that takes an \c accessor function as a callback.
+//!
+//! The \c accessor must take a local assembler by const reference as its only
+//! argument and must return a <tt>std::vector\<double\></tt> of integration
+//! point data. The data returned by the accessor must be in "integration point
+//! writer order", which is transposed compared to "extrapolator order".
+template <typename LocalAssemblerCollection, typename IPDataAccessor>
+SecondaryVariableFunctions makeExtrapolator2(
+    const unsigned num_components,
+    NumLib::Extrapolator& extrapolator,
+    LocalAssemblerCollection const& local_assemblers,
+    IPDataAccessor&& accessor)
+{
+    using LocalAssemblerInterface = std::remove_cvref_t<
+        decltype(*std::declval<LocalAssemblerCollection>()[0])>;
+    static_assert(std::is_invocable_r_v<std::vector<double>, IPDataAccessor,
+                                        LocalAssemblerInterface const&>);
+
+    if (num_components == 1)
+    {
+        auto method_wrapped =
+            [accessor](
+                LocalAssemblerInterface const& loc_asm, const double /*t*/,
+                std::vector<GlobalVector*> const& /*x*/,
+                std::vector<
+                    NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+                std::vector<double>& cache) -> std::vector<double> const&
+        {
+            cache = accessor(loc_asm);
+            return cache;
+        };
+
+        return makeExtrapolator(num_components, extrapolator, local_assemblers,
+                                method_wrapped);
+    }
+
+    auto method_wrapped =
+        [accessor, num_components](
+            LocalAssemblerInterface const& loc_asm, const double /*t*/,
+            std::vector<GlobalVector*> const& /*x*/,
+            std::vector<
+                NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+            std::vector<double>& cache) -> std::vector<double> const&
+    {
+        cache = accessor(loc_asm);
+        transposeInPlace(cache, cache.size() / num_components);
+        return cache;
+    };
+
+    return makeExtrapolator(num_components, extrapolator, local_assemblers,
+                            method_wrapped);
 }
 
 }  // namespace ProcessLib
