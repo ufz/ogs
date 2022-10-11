@@ -15,8 +15,8 @@
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Properties.h"
 #include "MeshLib/PropertyVector.h"
-#include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
 #include "MeshLib/Utils/IntegrationPointWriter.h"
+#include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
 
 namespace ApplicationUtils
 {
