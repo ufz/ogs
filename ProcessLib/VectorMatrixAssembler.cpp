@@ -17,7 +17,6 @@
 #include "LocalAssemblerInterface.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
-#include "Process.h"
 
 namespace ProcessLib
 {

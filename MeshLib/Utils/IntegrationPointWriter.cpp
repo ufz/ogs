@@ -19,8 +19,8 @@ using nlohmann::json;
 /// Adds the integration point data and creates meta data for it.
 ///
 /// Returns meta data for the written integration point data.
-static ProcessLib::IntegrationPointMetaData addIntegrationPointData(
-    MeshLib::Mesh& mesh, ProcessLib::IntegrationPointWriter const& writer)
+static MeshLib::IntegrationPointMetaData addIntegrationPointData(
+    MeshLib::Mesh& mesh, MeshLib::IntegrationPointWriter const& writer)
 {
     auto const& ip_values = writer.values(/*t, x, dof_table*/);
     assert(ip_values.size() == mesh.getNumberOfElements());
@@ -46,7 +46,7 @@ static ProcessLib::IntegrationPointMetaData addIntegrationPointData(
 /// format, which is then stored as VTK's field data.
 static void addIntegrationPointMetaData(
     MeshLib::Mesh& mesh,
-    std::vector<ProcessLib::IntegrationPointMetaData> const& meta_data)
+    std::vector<MeshLib::IntegrationPointMetaData> const& meta_data)
 {
     json json_meta_data;
     json_meta_data["integration_point_arrays"] = json::array();
@@ -71,7 +71,7 @@ static void addIntegrationPointMetaData(
 
 /// For the given json object and the name extract integration point meta data,
 /// or fail if no meta data was found for the given name.
-static ProcessLib::IntegrationPointMetaData extractIntegrationPointMetaData(
+static MeshLib::IntegrationPointMetaData extractIntegrationPointMetaData(
     json const& meta_data, std::string const& name)
 {
     auto const& ip_meta_data = meta_data["integration_point_arrays"];
@@ -86,7 +86,7 @@ static ProcessLib::IntegrationPointMetaData extractIntegrationPointMetaData(
     OGS_FATAL("No integration point meta data with name '{:s}' found.", name);
 }
 
-namespace ProcessLib
+namespace MeshLib
 {
 void addIntegrationPointDataToMesh(
     MeshLib::Mesh& mesh,
@@ -135,4 +135,4 @@ IntegrationPointMetaData getIntegrationPointMetaData(
 
     return ip_meta_data;
 }
-}  // namespace ProcessLib
+}  // namespace MeshLib

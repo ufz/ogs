@@ -11,12 +11,13 @@
 #include "AddProcessDataToMesh.h"
 
 #include "InfoLib/GitInfo.h"
-#include "IntegrationPointWriter.h"
+#include "MeshLib/Utils/IntegrationPointWriter.h"
+#include "ProcessLib/Output/SecondaryVariable.h"
+#include "ProcessLib/ProcessVariable.h"
 #ifdef USE_PETSC
 #include "MeshLib/NodePartitionedMesh.h"
 #endif
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "ProcessLib/Process.h"
 
 /// Copies the ogs_version string containing the release number and the git
 /// hash.

@@ -11,10 +11,9 @@
 #include "SmallDeformationProcess.h"
 
 #include <cassert>
-#include <nlohmann/json.hpp>
 
+#include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
-#include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
@@ -70,7 +69,7 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     // properties, s.t. there is no "overlapping" with cell/point data.
     // See getOrCreateMeshProperty.
     _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
+        std::make_unique<MeshLib::IntegrationPointWriter>(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, _local_assemblers,
@@ -89,8 +88,6 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    using nlohmann::json;
-
     ProcessLib::SmallDeformation::createLocalAssemblers<
         DisplacementDim, SmallDeformationLocalAssembler>(
         mesh.getElements(), dof_table, _local_assemblers,

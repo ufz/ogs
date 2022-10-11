@@ -50,12 +50,12 @@ ThermoRichardsFlowProcess::ThermoRichardsFlowProcess(
     // properties, s.t. there is no "overlapping" with cell/point data.
     // See getOrCreateMeshProperty.
     _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
+        std::make_unique<MeshLib::IntegrationPointWriter>(
             "saturation_ip", 1 /*n components*/, integration_order,
             _local_assemblers, &LocalAssemblerIF::getSaturation));
 
     _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
+        std::make_unique<MeshLib::IntegrationPointWriter>(
             "porosity_ip", 1 /*n components*/, integration_order,
             _local_assemblers, &LocalAssemblerIF::getPorosity));
 }

@@ -26,6 +26,7 @@
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/MeshEnums.h"
+#include "MeshLib/Utils/IntegrationPointWriter.h"
 
 namespace ApplicationUtils
 {

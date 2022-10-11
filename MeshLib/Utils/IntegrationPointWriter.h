@@ -11,7 +11,6 @@
 #include <functional>
 #include <iterator>
 #include <memory>
-#include <nlohmann/json_fwd.hpp>
 #include <vector>
 
 #pragma once
@@ -20,10 +19,7 @@ namespace MeshLib
 {
 class Mesh;
 class Properties;
-}
 
-namespace ProcessLib
-{
 struct IntegrationPointWriter final
 {
     template <typename LocalAssemblerInterface, typename... Args>
@@ -95,4 +91,4 @@ struct IntegrationPointMetaData
 /// The data is read from a JSON encoded string stored in field data array.
 IntegrationPointMetaData getIntegrationPointMetaData(
     MeshLib::Properties const& properties, std::string const& name);
-}  // namespace ProcessLib
+}  // namespace MeshLib

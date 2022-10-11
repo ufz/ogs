@@ -49,13 +49,13 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
         mesh, "MassFlowRate", MeshLib::MeshItemType::Node, 1);
 
     _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
+        std::make_unique<MeshLib::IntegrationPointWriter>(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, _local_assemblers, &LocalAssemblerIF::getSigma));
 
     _integration_point_writer.emplace_back(
-        std::make_unique<IntegrationPointWriter>(
+        std::make_unique<MeshLib::IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, _local_assemblers,

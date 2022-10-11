@@ -15,14 +15,14 @@
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Properties.h"
 #include "MeshLib/PropertyVector.h"
+#include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
-#include "ProcessLib/Output/IntegrationPointWriter.h"
 
 namespace ApplicationUtils
 {
 template <typename ElementType>
 int getNumberOfElementIntegrationPointsGeneral(
-    ProcessLib::IntegrationPointMetaData const& ip_meta_data)
+    MeshLib::IntegrationPointMetaData const& ip_meta_data)
 {
     using IntegrationPolicy =
         NumLib::GaussLegendreIntegrationPolicy<ElementType>;
@@ -38,7 +38,7 @@ int getNumberOfElementIntegrationPoints(std::string const& data_name,
                                         MeshLib::Element const& e)
 {
     auto const ip_meta_data =
-        ProcessLib::getIntegrationPointMetaData(properties, data_name);
+        MeshLib::getIntegrationPointMetaData(properties, data_name);
 
     switch (e.getCellType())
     {

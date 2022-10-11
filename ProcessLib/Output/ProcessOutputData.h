@@ -10,15 +10,18 @@
 
 #pragma once
 
-#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+
+namespace MeshLib
+{
+struct IntegrationPointWriter;
+}  // namespace MeshLib
 
 namespace ProcessLib
 {
 class Process;
 class ProcessVariable;
 class SecondaryVariableCollection;
-struct IntegrationPointWriter;
 
 /// Holds all data of a process that are needed for output.
 class ProcessOutputData final
@@ -29,7 +32,7 @@ public:
             const std::vector<std::reference_wrapper<ProcessVariable>>>>&&
             process_variables_of_all_processes,
         const SecondaryVariableCollection& secondary_variables,
-        const std::vector<std::unique_ptr<IntegrationPointWriter>>*
+        const std::vector<std::unique_ptr<MeshLib::IntegrationPointWriter>>*
             integration_point_writers,
         std::vector<const NumLib::LocalToGlobalIndexMap*>&&
             bulk_mesh_dof_tables_of_all_processes,
@@ -50,7 +53,7 @@ public:
         return secondary_variables_;
     }
 
-    std::vector<std::unique_ptr<IntegrationPointWriter>> const*
+    std::vector<std::unique_ptr<MeshLib::IntegrationPointWriter>> const*
     getIntegrationPointWriters() const
     {
         return integration_point_writers_;
@@ -91,7 +94,7 @@ private:
     /// integration point writers defined on the #output_mesh_.
     ///
     /// The latter is the case for output on submeshes.
-    std::vector<std::unique_ptr<IntegrationPointWriter>> const*
+    std::vector<std::unique_ptr<MeshLib::IntegrationPointWriter>> const*
         integration_point_writers_;
 
     /// D.o.f. tables for the full simulation domain of the Process this
