@@ -519,7 +519,7 @@ bool parseSurface(std::ifstream& in,
     while (std::getline(in, line))
     {
         std::vector<std::string> str = BaseLib::splitString(line);
-        if (str[0] == "TFACE")
+        if (str[0] == "TFACE" || str[0] == "3DFace")
         {
             parseSurface(in, nodes, elems, node_id_map, mesh_prop);
             return true;
@@ -636,7 +636,8 @@ MeshLib::Mesh* readData(std::ifstream& in,
             return createMesh(in, type, mesh_name, mesh_prop, parseLine,
                               flip_elevation);
         }
-        else if (type == DataType::TSURF && str[0] == "TFACE")
+        else if (type == DataType::TSURF &&
+                 (str[0] == "TFACE" || str[0] == "3DFace"))
         {
             return createMesh(in, type, mesh_name, mesh_prop, parseSurface,
                               flip_elevation);
