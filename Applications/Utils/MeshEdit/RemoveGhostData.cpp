@@ -19,11 +19,18 @@
 #include <mpi.h>
 #endif
 
+#include "BaseLib/Logging.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 
 int main(int argc, char* argv[])
 {
+    WARN(
+        "Due to lack of functionality to handle VTU field data, this tool is "
+        "replaced with a new tool, pvtu2vtu. Please use pvtu2vtu instead. If "
+        "you use this tool, please make sure that the field data of the VTU "
+        "file are not used in an OGS simulation.");
+
     TCLAP::CmdLine cmd(
         "Reads a VTK partitioned unstructured grid (*.pvtu), cleans the ghost "
         "information and saves the data as as a regular, connected mesh file."
