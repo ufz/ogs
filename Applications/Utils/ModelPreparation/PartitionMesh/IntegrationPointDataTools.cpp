@@ -33,13 +33,10 @@ int getNumberOfElementIntegrationPointsGeneral(
     return int_met.getNumberOfPoints();
 }
 
-int getNumberOfElementIntegrationPoints(std::string const& data_name,
-                                        MeshLib::Properties const& properties,
-                                        MeshLib::Element const& e)
+int getNumberOfElementIntegrationPoints(
+    MeshLib::IntegrationPointMetaData const& ip_meta_data,
+    MeshLib::Element const& e)
 {
-    auto const ip_meta_data =
-        MeshLib::getIntegrationPointMetaData(properties, data_name);
-
     switch (e.getCellType())
     {
         case MeshLib::CellType::LINE2:
@@ -113,14 +110,15 @@ std::vector<std::size_t> getIntegrationPointDataOffsetsOfMeshElements(
 
     std::vector<std::size_t> element_ip_data_offsets(mesh_elements.size() + 1);
     std::size_t counter = 0;
+    auto const ip_meta_data =
+        MeshLib::getIntegrationPointMetaData(properties, pv.getPropertyName());
     for (std::size_t i = 0; i < mesh_elements.size(); i++)
     {
         auto const element = mesh_elements[i];
 
         // Assuming that the order of elements in mesh_elements is not touched.
         element_ip_data_offsets[i] = counter;
-        counter += getNumberOfElementIntegrationPoints(pv.getPropertyName(),
-                                                       properties, *element) *
+        counter += getNumberOfElementIntegrationPoints(ip_meta_data, *element) *
                    n_components;
     }
     element_ip_data_offsets[mesh_elements.size()] = counter;
