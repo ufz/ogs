@@ -31,7 +31,12 @@ include:
 build wheels linux:
   tags: [envinf3-shell]
   variables:
-    CIBW_ENVIRONMENT_PASS_LINUX: SETUPTOOLS_SCM_LOCAL_SCHEME
+    CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux2014_x86_64_ccache
+    CPM_SOURCE_CACHE: /host/cibuildwheel_cache/cpm
+    CCACHE_DIR: /host/cibuildwheel_cache/ccache
+    CCACHE_MAXSIZE: 15G
+  before_script:
+    - docker build -t ${CIBW_MANYLINUX_X86_64_IMAGE} -f Applications/Python/Dockerfile Applications/Python
   <<: *wheels_template
 
 build wheels mac:
