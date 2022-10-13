@@ -394,11 +394,13 @@ std::size_t copyFieldPropertyDataToPartitions(
     auto copyFieldData =
         [&](std::vector<const MeshLib::Element*> const& elements)
     {
+        auto const ip_meta_data = MeshLib::getIntegrationPointMetaData(
+            properties, pv.getPropertyName());
+
         for (auto const element : elements)
         {
             int const number_of_element_field_data =
-                getNumberOfElementIntegrationPoints(pv.getPropertyName(),
-                                                    properties, *element) *
+                getNumberOfElementIntegrationPoints(ip_meta_data, *element) *
                 n_components;
             // The original element ID is not changed.
             auto const element_id = element->getID();
@@ -439,12 +441,13 @@ void setIntegrationPointNumberOfPartition(MeshLib::Properties const& properties,
         auto countIntegrationPoints =
             [&](std::vector<const MeshLib::Element*> const& elements)
         {
+            auto const ip_meta_data =
+                MeshLib::getIntegrationPointMetaData(properties, property_name);
             std::size_t counter = 0;
             for (auto const element : elements)
             {
                 int const number_of_integration_points =
-                    getNumberOfElementIntegrationPoints(property_name,
-                                                        properties, *element);
+                    getNumberOfElementIntegrationPoints(ip_meta_data, *element);
                 counter += number_of_integration_points;
             }
             return counter;
@@ -657,11 +660,12 @@ void checkFieldPropertyVectorSize(
         }
 
         std::size_t number_of_total_integration_points = 0;
+        auto const ip_meta_data = MeshLib::getIntegrationPointMetaData(
+            properties, property->getPropertyName());
         for (auto const element : global_mesh_elements)
         {
             int const number_of_integration_points =
-                getNumberOfElementIntegrationPoints(property->getPropertyName(),
-                                                    properties, *element);
+                getNumberOfElementIntegrationPoints(ip_meta_data, *element);
             number_of_total_integration_points += number_of_integration_points;
         }
 

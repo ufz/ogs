@@ -29,6 +29,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
+#include "MeshLib/Utils/IntegrationPointWriter.h"
 
 struct MeshEntityMapInfo
 {
@@ -131,11 +132,14 @@ bool createPropertyVector(
 
         // Count the integration points
         std::size_t counter = 0;
+        auto const ip_meta_data =
+            MeshLib::getIntegrationPointMetaData(properties, pv_name);
+
         for (auto const element : merged_mesh.getElements())
         {
             int const number_of_integration_points =
                 ApplicationUtils::getNumberOfElementIntegrationPoints(
-                    pv_name, properties, *element);
+                    ip_meta_data, *element);
             counter += number_of_integration_points;
         }
         new_pv->resize(counter * pv_num_components);
