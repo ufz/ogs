@@ -24,7 +24,12 @@ build-verbosity = "1"
 skip = ["*musllinux*", "cp36-*"]
 manylinux-x86_64-image = "manylinux2014"
 manylinux-aarch64-image = "manylinux2014"
-environment-pass = ["OGS_VERSION"]
+environment-pass = [
+  "SETUPTOOLS_SCM_LOCAL_SCHEME",
+  "CPM_SOURCE_CACHE",
+  "CCACHE_DIR",
+  "CCACHE_MAXSIZE",
+]
 
 [tool.cibuildwheel.macos]
 skip = ["cp36-*", "cp37-*", "cp38-*x86_64"]

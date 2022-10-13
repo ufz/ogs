@@ -1,3 +1,7 @@
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.24)
+    cmake_policy(SET CMP0135 NEW)
+endif()
+
 # Build dependencies via ExternalProject_Add() at configure time in
 # ${PROJECT_BINARY_DIR}/_ext
 include(BuildExternalProject)
