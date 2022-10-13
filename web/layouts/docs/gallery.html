@@ -5,13 +5,20 @@
   {{ partial "docs/sidebar.html" . }}
 
   <div class="bg-white">
+    {{ if isset .Params "coupling" }}
+    <img class="h-12 md:h-16 lg:h-20 float-right" src="/images/coupling-icons/{{.Params.coupling}}-tet.svg" alt="">
+    {{ end }}
 
     {{ partial "docs/breadcrumbs.html" . }}
 
     <div class="mx-auto py-2 px-4 max-w-7xl sm:px-6 lg:px-8 lg:py-4">
       <div class="space-y-8">
         <div class="space-y-5 sm:space-y-4 md:max-w-xl lg:max-w-3xl xl:max-w-none">
-          <h2 class="text-3xl font-extrabold sm:text-4xl">{{ .Title }}</h2>
+
+          <h2 class="text-3xl font-extrabold sm:text-4xl mb-4">
+            {{ .Title }}
+          </h2>
+          <div class="clear-both"></div>
           {{ .Content }}
         </div>
 
@@ -20,12 +27,12 @@
         {{ $full_collection := union $image_collection $notebook_collection }}
 
         {{ if gt (len $full_collection) 0 }}
-          <ul role="list"
-            class="space-y-12 grid grid-cols-2 sm:grid-cols-3  sm:gap-x-6 gap-y-12 space-y-0 lg:grid-cols-4 lg:gap-x-8">
-            {{ range where $full_collection "Params.gallery" "!=" "false" }}
-            {{ partial "components/gallery-item.html" . }}
-            {{ end }}
-          </ul>
+        <ul role="list"
+          class="space-y-12 grid grid-cols-2 sm:grid-cols-3  sm:gap-x-6 gap-y-12 space-y-0 lg:grid-cols-4 lg:gap-x-8">
+          {{ range where $full_collection "Params.gallery" "!=" "false" }}
+          {{ partial "components/gallery-item.html" . }}
+          {{ end }}
+        </ul>
         {{ end }}
 
       </div>
