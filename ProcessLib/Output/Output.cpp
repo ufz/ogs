@@ -58,38 +58,6 @@ void addBulkMeshNodePropertyToSubMesh(MeshLib::Mesh const& bulk_mesh,
                    { return bulk_mesh_property[id]; });
 }
 
-bool Output::isOutputStep(int timestep, double const t) const
-{
-    auto const fixed_output_time = std::lower_bound(
-        cbegin(_output_data_specification.fixed_output_times),
-        cend(_output_data_specification.fixed_output_times), t);
-    if ((fixed_output_time !=
-         cend(_output_data_specification.fixed_output_times)) &&
-        (std::abs(*fixed_output_time - t) <
-         std::numeric_limits<double>::epsilon()))
-    {
-        return true;
-    }
-
-    int each_steps = 1;
-
-    for (auto const& pair : _output_data_specification.repeats_each_steps)
-    {
-        each_steps = pair.each_steps;
-
-        if (timestep > pair.repeat * each_steps)
-        {
-            timestep -= pair.repeat * each_steps;
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    return timestep % each_steps == 0;
-}
-
 bool Output::isOutputProcess(const int process_id, const Process& process) const
 {
     auto const is_last_process =
@@ -224,7 +192,7 @@ void Output::doOutput(Process const& process,
                       int const iteration,
                       std::vector<GlobalVector*> const& xs) const
 {
-    if (isOutputStep(timestep, t))
+    if (_output_data_specification.isOutputStep(timestep, t))
     {
         doOutputAlways(process, process_id, timestep, t, iteration, xs);
     }
@@ -243,7 +211,7 @@ void Output::doOutputLastTimestep(Process const& process,
                                   int const iteration,
                                   std::vector<GlobalVector*> const& xs) const
 {
-    if (!isOutputStep(timestep, t))
+    if (!_output_data_specification.isOutputStep(timestep, t))
     {
         doOutputAlways(process, process_id, timestep, t, iteration, xs);
     }

@@ -82,9 +82,6 @@ public:
     friend std::ostream& operator<<(std::ostream& os, Output const& output);
 
 private:
-    //! Determines if there should be output at the given \c timestep or \c t.
-    bool isOutputStep(int timestep, double const t) const;
-
     //! Determines if output should be written for the given process.
     //!
     //! With staggered coupling not every process writes output.
