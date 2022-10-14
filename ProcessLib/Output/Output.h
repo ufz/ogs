@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <iosfwd>
 #include <map>
 #include <utility>
 #include <vector>
@@ -36,6 +37,12 @@ public:
            std::vector<std::string> const& mesh_names_for_output,
            std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
 
+    Output(Output const& other) = delete;
+    Output(Output&& other) = default;
+    Output& operator=(Output const& src) = delete;
+    Output& operator=(Output&& src) = default;
+    ~Output() = default;
+
     //! TODO doc. Opens a PVD file for each process.
     void addProcess(ProcessLib::Process const& process);
 
@@ -43,7 +50,7 @@ public:
     //! given \c timestep.
     void doOutput(Process const& process, const int process_id,
                   int const timestep, const double t, int const iteration,
-                  std::vector<GlobalVector*> const& xs);
+                  std::vector<GlobalVector*> const& xs) const;
 
     //! Writes output for the given \c process if it has not been written yet.
     //! This method is intended for doing output after the last timestep in
@@ -51,26 +58,28 @@ public:
     void doOutputLastTimestep(Process const& process, const int process_id,
                               int const timestep, const double t,
                               int const iteration,
-                              std::vector<GlobalVector*> const& xs);
+                              std::vector<GlobalVector*> const& xs) const;
 
     //! Writes output for the given \c process.
     //! This method will always write.
     //! It is intended to write output in error handling routines.
     void doOutputAlways(Process const& process, const int process_id,
                         int const timestep, const double t, int const iteration,
-                        std::vector<GlobalVector*> const& xs);
+                        std::vector<GlobalVector*> const& xs) const;
 
     //! Writes output for the given \c process.
     //! To be used for debug output after an iteration of the nonlinear solver.
     void doOutputNonlinearIteration(Process const& process,
                                     const int process_id, int const timestep,
                                     const double t, const int iteration,
-                                    std::vector<GlobalVector*> const& xs);
+                                    std::vector<GlobalVector*> const& xs) const;
 
     std::vector<double> const& getFixedOutputTimes() const
     {
         return _output_data_specification.fixed_output_times;
     }
+
+    friend std::ostream& operator<<(std::ostream& os, Output const& output);
 
 private:
     //! Determines if there should be output at the given \c timestep or \c t.
@@ -84,7 +93,8 @@ private:
     void outputMeshes(
         Process const& process, const int process_id, int const timestep,
         const double t, int const iteration,
-        std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes);
+        std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes)
+        const;
 
     MeshLib::Mesh const& prepareSubmesh(
         std::string const& submesh_output_name, Process const& process,
@@ -93,12 +103,20 @@ private:
 
     std::unique_ptr<OutputFile> _output_file;
 
-    bool const _output_nonlinear_iteration_results;
+    bool _output_nonlinear_iteration_results;
 
-    OutputDataSpecification const _output_data_specification;
+    OutputDataSpecification _output_data_specification;
     std::vector<std::reference_wrapper<Process const>> _output_processes;
     std::vector<std::string> _mesh_names_for_output;
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& _meshes;
+    // The reference wrapper enables the compiler to generate a move constructor
+    // and move assignment operator
+    // - another possibility would be to transform the
+    // std::vector<std::unique_ptr<MeshLib::Mesh>> to
+    // std::vector<MeshLib::Mesh*>
+    // - this issue could also be solved by (globally) storing the meshes into a
+    // std::vector<std::shared_ptr<MeshLib::Mesh>>
+    std::reference_wrapper<std::vector<std::unique_ptr<MeshLib::Mesh>> const>
+        _meshes;
 };
 
 }  // namespace ProcessLib

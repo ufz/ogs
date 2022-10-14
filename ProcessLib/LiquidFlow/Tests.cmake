@@ -467,6 +467,58 @@ AddTest(
     LF_square_1x1_tri_1.8e1_surfaceflux_ts_2_t_0.864000_expected.vtu LF_square_1x1_tri_1.8e1_surfaceflux_square_1x1_tri_1.8e1_ts_2_t_0.864000.vtu pressure pressure 1e-7 1e-13
 )
 
+if(NOT OGS_USE_MPI)
+    AddTest(
+        NAME LiquidFlow_Flux_3D_HEX_MultipleOutputs_vtu
+        PATH Parabolic/LiquidFlow/Flux/3D/Hex
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS
+            cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_multiple_outputs.xml
+        WRAPPER time
+        TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
+        DIFF_DATA
+            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_ts_2_t_86400.000000.vtu
+            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_ts_2_t_86400.000000.vtu
+            pressure pressure 1e-10 1e-15
+            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_bottom_boundary_ts_2_t_86400.000000.vtu
+            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_bottom_boundary_ts_2_t_86400.000000.vtu
+            pressure pressure 1e-7 1e-13
+            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_top_boundary_ts_2_t_86400.000000.vtu
+            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_top_boundary_ts_2_t_86400.000000.vtu
+            pressure pressure 1e-7 1e-13
+    )
+
+    AddTest(
+        NAME LiquidFlow_Flux_3D_HEX_MultipleOutputs_xdmf
+        PATH Parabolic/LiquidFlow/Flux/3D/Hex
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS
+            cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_multiple_outputs.xml
+        WRAPPER time
+        REQUIREMENTS NOT OGS_USE_MPI
+        TESTER xdmfdiff
+        DIFF_DATA
+            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27.xdmf
+            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27.xdmf
+            pressure pressure 1e-10 1e-15
+            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27_bottom_boundary.xdmf
+            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27_bottom_boundary.xdmf
+            pressure pressure 1e-7 1e-13
+            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27_top_boundary.xdmf
+            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27_top_boundary.xdmf
+            pressure pressure 1e-7 1e-13
+    )
+
+    if(TEST ogs-LiquidFlow_Flux_3D_HEX_MultipleOutputs_xdmf-time)
+        set_tests_properties(
+            ogs-LiquidFlow_Flux_3D_HEX_MultipleOutputs_xdmf-time
+            PROPERTIES LABELS "default" DEPENDS
+                       ogs-LiquidFlow_Flux_3D_HEX_MultipleOutputs_vtu-time
+        )
+    endif()
+endif()
+
 AddTest(
     NAME LiquidFlow_Flux_3D_HEX_Parallel_2
     PATH Parabolic/LiquidFlow/Flux/3D/Hex/Parallel

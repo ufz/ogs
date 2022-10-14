@@ -36,7 +36,7 @@ struct ProcessData;
 class TimeLoop
 {
 public:
-    TimeLoop(std::unique_ptr<Output>&& output,
+    TimeLoop(std::vector<Output>&& outputs,
              std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
              const int global_coupling_max_iterations,
              std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
@@ -113,15 +113,17 @@ private:
         std::vector<std::function<double(double, double)>> const&
             time_step_constraints);
 
-    template <typename OutputClass, typename OutputClassMember>
+    template <typename OutputClassMember>
     void outputSolutions(bool const output_initial_condition, unsigned timestep,
-                         const double t, OutputClass& output_object,
+                         const double t, Output const& output_object,
                          OutputClassMember output_class_member) const;
 
 private:
+    std::vector<std::function<double(double, double)>>
+    generateOutputTimeStepConstraints(std::vector<double>&& fixed_times) const;
     std::vector<GlobalVector*> _process_solutions;
     std::vector<GlobalVector*> _process_solutions_prev;
-    std::unique_ptr<Output> _output;
+    std::vector<Output> _outputs;
     std::vector<std::unique_ptr<ProcessData>> _per_process_data;
 
     const double _start_time;

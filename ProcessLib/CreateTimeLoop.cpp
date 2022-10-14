@@ -57,10 +57,18 @@ std::unique_ptr<TimeLoop> createTimeLoop(
         }
     }
 
-    auto output =
-        //! \ogs_file_param{prj__time_loop__output}
-        createOutput(config.getConfigSubtree("output"), output_directory,
-                     meshes);
+    //! \ogs_file_param{prj__time_loop__output}
+    auto output_config_tree = config.getConfigSubtreeOptional("output");
+    if (!output_config_tree)
+    {
+        INFO("No output section found.");
+    }
+    auto outputs =
+        output_config_tree
+            ? createOutput(*output_config_tree, output_directory, meshes)
+            //! \ogs_file_param{prj__time_loop__outputs}
+            : createOutputs(config.getConfigSubtree("outputs"),
+                            output_directory, meshes);
 
     auto per_process_data = createPerProcessData(
         //! \ogs_file_param{prj__time_loop__processes}
@@ -110,7 +118,8 @@ std::unique_ptr<TimeLoop> createTimeLoop(
             ->timestep_algorithm->end();
 
     return std::make_unique<TimeLoop>(
-        std::move(output), std::move(per_process_data), max_coupling_iterations,
-        std::move(global_coupling_conv_criteria), start_time, end_time);
+        std::move(outputs), std::move(per_process_data),
+        max_coupling_iterations, std::move(global_coupling_conv_criteria),
+        start_time, end_time);
 }
 }  // namespace ProcessLib

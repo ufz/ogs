@@ -129,6 +129,7 @@ void Output::outputMeshes(
     const Process& process, const int process_id, const int timestep,
     const double t, const int iteration,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes)
+    const
 {
     _output_file->outputMeshes(process, process_id, timestep, t, iteration,
                                meshes,
@@ -141,7 +142,7 @@ MeshLib::Mesh const& Output::prepareSubmesh(
     std::vector<GlobalVector*> const& xs) const
 {
     auto& submesh = *BaseLib::findElementOrError(
-        begin(_meshes), end(_meshes),
+        _meshes.get().begin(), _meshes.get().end(),
         [&submesh_output_name](auto const& m)
         { return m->getName() == submesh_output_name; },
         "Need mesh '" + submesh_output_name + "' for the output.");
@@ -177,7 +178,7 @@ void Output::doOutputAlways(Process const& process,
                             int const timestep,
                             const double t,
                             int const iteration,
-                            std::vector<GlobalVector*> const& xs)
+                            std::vector<GlobalVector*> const& xs) const
 {
     BaseLib::RunTime time_output;
     time_output.start();
@@ -225,7 +226,7 @@ void Output::doOutput(Process const& process,
                       int const timestep,
                       const double t,
                       int const iteration,
-                      std::vector<GlobalVector*> const& xs)
+                      std::vector<GlobalVector*> const& xs) const
 {
     if (isOutputStep(timestep, t))
     {
@@ -244,7 +245,7 @@ void Output::doOutputLastTimestep(Process const& process,
                                   int const timestep,
                                   const double t,
                                   int const iteration,
-                                  std::vector<GlobalVector*> const& xs)
+                                  std::vector<GlobalVector*> const& xs) const
 {
     if (!isOutputStep(timestep, t))
     {
@@ -256,11 +257,10 @@ void Output::doOutputLastTimestep(Process const& process,
 #endif
 }
 
-void Output::doOutputNonlinearIteration(Process const& process,
-                                        const int process_id,
-                                        int const timestep, const double t,
-                                        int const iteration,
-                                        std::vector<GlobalVector*> const& xs)
+void Output::doOutputNonlinearIteration(
+    Process const& process, const int process_id, int const timestep,
+    const double t, int const iteration,
+    std::vector<GlobalVector*> const& xs) const
 {
     if (!_output_nonlinear_iteration_results)
     {
@@ -302,4 +302,13 @@ void Output::doOutputNonlinearIteration(Process const& process,
     }
     INFO("[time] Output took {:g} s.", time_output.elapsed());
 }
+
+std::ostream& operator<<(std::ostream& os, Output const& output)
+{
+    os << "Output::_output_data_specification:\t"
+       << output._output_data_specification;
+    os << "Output::_output_file:\t" << *(output._output_file);
+    return os;
+}
+
 }  // namespace ProcessLib

@@ -35,7 +35,8 @@ namespace ProcessLib
  */
 MeshLib::IO::PVDFile& findPVDFile(
     Process const& process, const int process_id, std::string const& filename,
-    std::multimap<Process const*, MeshLib::IO::PVDFile>& process_to_pvd_file)
+    std::multimap<Process const*, MeshLib::IO::PVDFile> const&
+        process_to_pvd_file)
 {
     auto range = process_to_pvd_file.equal_range(&process);
     int counter = 0;
@@ -46,7 +47,7 @@ MeshLib::IO::PVDFile& findPVDFile(
         {
             if (counter == process_id)
             {
-                pvd_file = &spd_it->second;
+                pvd_file = const_cast<MeshLib::IO::PVDFile*>(&spd_it->second);
                 break;
             }
             counter++;
@@ -132,7 +133,7 @@ std::string OutputXDMFHDF5Format::constructFilename(
 void OutputXDMFHDF5Format::outputMeshXdmf(
     std::set<std::string> const& output_variables,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
-    int const timestep, double const t, int const iteration)
+    int const timestep, double const t, int const iteration) const
 {
     // \TODO The XdmfOutput will create on construction the XdmfHdfWriter
     if (!mesh_xdmf_hdf_writer)
@@ -154,7 +155,7 @@ void OutputVTKFormat::outputMeshes(
     const Process& process, const int process_id, const int timestep,
     const double t, const int iteration,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
-    [[maybe_unused]] std::set<std::string> const& output_variables)
+    [[maybe_unused]] std::set<std::string> const& output_variables) const
 {
     for (auto const& mesh : meshes)
     {

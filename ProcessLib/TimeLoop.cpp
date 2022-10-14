@@ -229,7 +229,7 @@ void calculateNonEquilibriumInitialResiduum(
 NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     std::vector<GlobalVector*>& x, std::vector<GlobalVector*> const& x_prev,
     std::size_t const timestep, double const t, double const delta_t,
-    ProcessData const& process_data, Output& output_control,
+    ProcessData const& process_data, std::vector<Output> const& outputs,
     std::size_t& xdot_id)
 {
     auto& process = process_data.process;
@@ -250,8 +250,11 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     auto const post_iteration_callback =
         [&](int iteration, std::vector<GlobalVector*> const& x)
     {
-        output_control.doOutputNonlinearIteration(process, process_id, timestep,
-                                                  t, iteration, x);
+        for (auto const& output : outputs)
+        {
+            output.doOutputNonlinearIteration(process, process_id, timestep, t,
+                                              iteration, x);
+        }
     };
 
     auto const nonlinear_solver_status =
@@ -273,13 +276,13 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     return nonlinear_solver_status;
 }
 
-TimeLoop::TimeLoop(std::unique_ptr<Output>&& output,
+TimeLoop::TimeLoop(std::vector<Output>&& outputs,
                    std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
                    const int global_coupling_max_iterations,
                    std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
                        global_coupling_conv_crit,
                    const double start_time, const double end_time)
-    : _output(std::move(output)),
+    : _outputs{std::move(outputs)},
       _per_process_data(std::move(per_process_data)),
       _start_time(start_time),
       _end_time(end_time),
@@ -481,14 +484,53 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
     return {dt, last_step_rejected};
 }
 
+std::vector<double> calculateUniqueFixedTimesForAllOutputs(
+    std::vector<Output> const& outputs)
+{
+    std::vector<double> fixed_times;
+    for (auto const& output : outputs)
+    {
+        auto const& output_fixed_times = output.getFixedOutputTimes();
+        fixed_times.insert(fixed_times.end(), output_fixed_times.begin(),
+                           output_fixed_times.end());
+    }
+    std::sort(fixed_times.begin(), fixed_times.end());
+    auto const it = std::unique(fixed_times.begin(), fixed_times.end());
+    fixed_times.erase(it, fixed_times.end());
+    return fixed_times;
+}
+
+std::vector<std::function<double(double, double)>>
+TimeLoop::generateOutputTimeStepConstraints(
+    std::vector<double>&& fixed_times) const
+{
+    std::vector<std::function<double(double, double)>> const
+        time_step_constraints{
+            [fixed_times = std::move(fixed_times)](double t, double dt) {
+                return NumLib::possiblyClampDtToNextFixedTime(t, dt,
+                                                              fixed_times);
+            },
+            [this](double t, double dt)
+            {
+                if (t < _end_time && t + dt > _end_time)
+                {
+                    return _end_time - t;
+                }
+                return dt;
+            }};
+    return time_step_constraints;
+}
+
 /// initialize output, convergence criterion, etc.
 void TimeLoop::initialize()
 {
     for (auto& process_data : _per_process_data)
     {
         auto& pcs = process_data->process;
-        int const process_id = process_data->process_id;
-        _output->addProcess(pcs);
+        for (auto& output : _outputs)
+        {
+            output.addProcess(pcs);
+        }
 
         setTimeDiscretizedODESystem(*process_data);
 
@@ -496,6 +538,7 @@ void TimeLoop::initialize()
                 dynamic_cast<NumLib::ConvergenceCriterionPerComponent*>(
                     process_data->conv_crit.get()))
         {
+            int const process_id = process_data->process_id;
             conv_crit->setDOFTable(pcs.getDOFTable(process_id), pcs.getMesh());
         }
     }
@@ -516,22 +559,16 @@ void TimeLoop::initialize()
     // Output initial conditions
     {
         const bool output_initial_condition = true;
-        outputSolutions(output_initial_condition, 0, _start_time, *_output,
-                        &Output::doOutput);
+        for (auto const& output : _outputs)
+        {
+            outputSolutions(output_initial_condition, 0, _start_time, output,
+                            &Output::doOutput);
+        }
     }
 
-    auto const& fixed_times = _output->getFixedOutputTimes();
-    std::vector<std::function<double(double, double)>> time_step_constraints{
-        [&fixed_times](double t, double dt)
-        { return NumLib::possiblyClampDtToNextFixedTime(t, dt, fixed_times); },
-        [this](double t, double dt)
-        {
-            if (t < _end_time && t + dt > _end_time)
-            {
-                return _end_time - t;
-            }
-            return dt;
-        }};
+    auto const time_step_constraints = generateOutputTimeStepConstraints(
+        calculateUniqueFixedTimesForAllOutputs(_outputs));
+
     std::tie(_dt, _last_step_rejected) =
         computeTimeStepping(0.0, _current_time, _accepted_steps,
                             _rejected_steps, time_step_constraints);
@@ -569,18 +606,8 @@ bool TimeLoop::calculateNextTimeStep()
 
     const std::size_t timesteps = _accepted_steps + 1;
 
-    auto const& fixed_times = _output->getFixedOutputTimes();
-    std::vector<std::function<double(double, double)>> time_step_constraints{
-        [&fixed_times](double t, double dt)
-        { return NumLib::possiblyClampDtToNextFixedTime(t, dt, fixed_times); },
-        [this](double t, double dt)
-        {
-            if (t < _end_time && t + dt > _end_time)
-            {
-                return _end_time - t;
-            }
-            return dt;
-        }};
+    auto const time_step_constraints = generateOutputTimeStepConstraints(
+        calculateUniqueFixedTimesForAllOutputs(_outputs));
 
     // _last_step_rejected is also checked in computeTimeStepping.
     std::tie(_dt, _last_step_rejected) =
@@ -590,8 +617,11 @@ bool TimeLoop::calculateNextTimeStep()
     if (!_last_step_rejected)
     {
         const bool output_initial_condition = false;
-        outputSolutions(output_initial_condition, timesteps, current_time,
-                        *_output, &Output::doOutput);
+        for (auto const& output : _outputs)
+        {
+            outputSolutions(output_initial_condition, timesteps, current_time,
+                            output, &Output::doOutput);
+        }
     }
 
     if (std::abs(_current_time - _end_time) <
@@ -624,9 +654,12 @@ void TimeLoop::outputLastTimeStep() const
     if (successful_time_step)
     {
         const bool output_initial_condition = false;
-        outputSolutions(output_initial_condition,
-                        _accepted_steps + _rejected_steps, _current_time,
-                        *_output, &Output::doOutputLastTimestep);
+        for (auto const& output : _outputs)
+        {
+            outputSolutions(output_initial_condition,
+                            _accepted_steps + _rejected_steps, _current_time,
+                            output, &Output::doOutputLastTimestep);
+        }
     }
 }
 
@@ -666,14 +699,14 @@ bool TimeLoop::doNonlinearIteration(double const t, double const dt,
 static NumLib::NonlinearSolverStatus solveMonolithicProcess(
     const double t, const double dt, const std::size_t timestep_id,
     ProcessData const& process_data, std::vector<GlobalVector*>& x,
-    std::vector<GlobalVector*> const& x_prev, Output& output,
-    std::size_t& xdot_id)
+    std::vector<GlobalVector*> const& x_prev,
+    std::vector<Output> const& outputs, std::size_t& xdot_id)
 {
     BaseLib::RunTime time_timestep_process;
     time_timestep_process.start();
 
     auto const nonlinear_solver_status = solveOneTimeStepOneProcess(
-        x, x_prev, timestep_id, t, dt, process_data, output, xdot_id);
+        x, x_prev, timestep_id, t, dt, process_data, outputs, xdot_id);
 
     INFO("[time] Solving process #{:d} took {:g} s in time step #{:d} ",
          process_data.process_id, time_timestep_process.elapsed(), timestep_id);
@@ -697,7 +730,7 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
         auto const process_id = process_data->process_id;
         nonlinear_solver_status = solveMonolithicProcess(
             t, dt, timestep_id, *process_data, _process_solutions,
-            _process_solutions_prev, *_output, _xdot_vector_ids[cnt]);
+            _process_solutions_prev, _outputs, _xdot_vector_ids[cnt]);
         cnt++;
 
         process_data->nonlinear_solver_status = nonlinear_solver_status;
@@ -712,10 +745,13 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
                     process_data->timestep_previous))
             {
                 // save unsuccessful solution
-                _output->doOutputAlways(
-                    process_data->process, process_id, timestep_id, t,
-                    process_data->nonlinear_solver_status.number_iterations,
-                    _process_solutions);
+                for (auto const& output : _outputs)
+                {
+                    output.doOutputAlways(
+                        process_data->process, process_id, timestep_id, t,
+                        process_data->nonlinear_solver_status.number_iterations,
+                        _process_solutions);
+                }
                 OGS_FATAL(timestepper_cannot_reduce_dt.data());
             }
 
@@ -775,7 +811,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
 
             nonlinear_solver_status = solveOneTimeStepOneProcess(
                 _process_solutions, _process_solutions_prev, timestep_id, t, dt,
-                *process_data, *_output, _xdot_vector_ids[cnt]);
+                *process_data, _outputs, _xdot_vector_ids[cnt]);
             cnt++;
             process_data->nonlinear_solver_status = nonlinear_solver_status;
 
@@ -847,10 +883,10 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     return nonlinear_solver_status;
 }
 
-template <typename OutputClass, typename OutputClassMember>
+template <typename OutputClassMember>
 void TimeLoop::outputSolutions(bool const output_initial_condition,
                                unsigned timestep, const double t,
-                               OutputClass& output_object,
+                               Output const& output_object,
                                OutputClassMember output_class_member) const
 {
     // All _per_process_data share the first process.

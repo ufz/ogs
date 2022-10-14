@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <iosfwd>
 #include <vector>
 
 #include "MeshLib/IO/VtkIO/PVDFile.h"
@@ -40,7 +41,7 @@ struct OutputFile
         const Process& process, const int process_id, const int timestep,
         const double t, const int iteration,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
-        std::set<std::string> const& output_variables) = 0;
+        std::set<std::string> const& output_variables) const = 0;
 
     virtual void addProcess(
         [[maybe_unused]] ProcessLib::Process const& process,
@@ -48,10 +49,23 @@ struct OutputFile
     {
     }
 
-    virtual std::string constructFilename(std::string const& mesh_name,
-                                          int const timestep, double const t,
-                                          int const iteration) const = 0;
+    virtual std::string constructFilename(
+        [[maybe_unused]] std::string const& mesh_name,
+        [[maybe_unused]] int const timestep, [[maybe_unused]] double const t,
+        [[maybe_unused]] int const iteration) const
+    {
+        return "";
+    }
 };
+
+inline std::ostream& operator<<(std::ostream& os, OutputFile const& of)
+{
+    os << "OutputFile::directory:" << of.directory << std::endl;
+    os << "OutputFile::prefix:" << of.prefix << std::endl;
+    os << "OutputFile::suffix:" << of.suffix << std::endl;
+    os << "OutputFile::compression:" << of.compression << std::endl;
+    return os;
+}
 
 struct OutputVTKFormat final : public OutputFile
 {
@@ -68,7 +82,7 @@ struct OutputVTKFormat final : public OutputFile
         const Process& process, const int process_id, const int timestep,
         const double t, const int iteration,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
-        std::set<std::string> const& output_variables) override;
+        std::set<std::string> const& output_variables) const override;
 
     void addProcess(
         Process const& process,
@@ -111,7 +125,7 @@ struct OutputXDMFHDF5Format final : public OutputFile
         [[maybe_unused]] const int process_id, const int timestep,
         const double t, const int iteration,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
-        std::set<std::string> const& output_variables) override
+        std::set<std::string> const& output_variables) const override
     {
         outputMeshXdmf(output_variables, std::move(meshes), timestep, t,
                        iteration);
@@ -121,14 +135,14 @@ struct OutputXDMFHDF5Format final : public OutputFile
                                   int const timestep, double const t,
                                   int const iteration) const override;
 
-    std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;
+    mutable std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;
     //! Specifies the number of hdf5 output files.
     unsigned int n_files;
 
     void outputMeshXdmf(
         std::set<std::string> const& output_variables,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
-        int const timestep, double const t, int const iteration);
+        int const timestep, double const t, int const iteration) const;
 };
 
 void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,

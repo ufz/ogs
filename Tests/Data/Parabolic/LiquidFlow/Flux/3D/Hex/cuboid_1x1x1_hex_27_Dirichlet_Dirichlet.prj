@@ -22,6 +22,7 @@
                 <property_name>specific_flux</property_name>
             </calculatesurfaceflux-->
             <specific_body_force>-0. 0.0 0.0</specific_body_force>
+            <linear>true</linear>
         </process>
     </processes>
     <time_loop>
@@ -67,7 +68,6 @@
                 <mesh>cuboid_1x1x1_hex_27</mesh>
                 <mesh>cuboid_1x1x1_hex_27_top_boundary</mesh>
                 <mesh>cuboid_1x1x1_hex_27_bottom_boundary</mesh>
-                <!--mesh>cuboid_1x1x1_hex_27_entire_boundary</mesh-->
             </meshes>
         </output>
     </time_loop>
