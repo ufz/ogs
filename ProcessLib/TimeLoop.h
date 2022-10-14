@@ -115,7 +115,7 @@ private:
 
     template <typename OutputClassMember>
     void outputSolutions(bool const output_initial_condition, unsigned timestep,
-                         const double t, Output const& output_object,
+                         const double t,
                          OutputClassMember output_class_member) const;
 
 private:
