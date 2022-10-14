@@ -102,9 +102,7 @@ std::string OutputVTKFormat::constructFilename(std::string const& mesh_name,
 }
 
 std::string OutputXDMFHDF5Format::constructFilename(
-    std::string const& mesh_name,
-    int const timestep,
-    double const t,
+    std::string const& mesh_name, int const timestep, double const t,
     int const iteration) const
 {
     return BaseLib::constructFormattedFileName(prefix, mesh_name, timestep, t,

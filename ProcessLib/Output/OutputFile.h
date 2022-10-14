@@ -41,14 +41,10 @@ struct OutputFile
         const int timestep, const double t, const int iteration,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
         std::set<std::string> const& output_variables) const = 0;
-
-    virtual std::string constructFilename(
-        [[maybe_unused]] std::string const& mesh_name,
-        [[maybe_unused]] int const timestep, [[maybe_unused]] double const t,
-        [[maybe_unused]] int const iteration) const
-    {
-        return "";
-    }
+    virtual std::string constructFilename(std::string const& mesh_name,
+                                          int const timestep,
+                                          double const t,
+                                          int const iteration) const = 0;
 };
 
 inline std::ostream& operator<<(std::ostream& os, OutputFile const& of)
