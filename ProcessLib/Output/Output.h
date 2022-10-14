@@ -91,8 +91,7 @@ private:
     bool isOutputProcess(int const process_id, Process const& process) const;
 
     void outputMeshes(
-        Process const& process, const int process_id, int const timestep,
-        const double t, int const iteration,
+        int const timestep, const double t, int const iteration,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes)
         const;
 

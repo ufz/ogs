@@ -38,13 +38,11 @@ struct OutputFile
     bool compression;
 
     virtual void outputMeshes(
-        const Process& process, const int process_id, const int timestep,
-        const double t, const int iteration,
+        const int timestep, const double t, const int iteration,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
         std::set<std::string> const& output_variables) const = 0;
 
     virtual void addProcess(
-        [[maybe_unused]] ProcessLib::Process const& process,
         [[maybe_unused]] std::vector<std::string> const& mesh_names_for_output)
     {
     }
@@ -79,13 +77,11 @@ struct OutputVTKFormat final : public OutputFile
     }
 
     void outputMeshes(
-        const Process& process, const int process_id, const int timestep,
-        const double t, const int iteration,
+        const int timestep, const double t, const int iteration,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
         std::set<std::string> const& output_variables) const override;
 
     void addProcess(
-        Process const& process,
         std::vector<std::string> const& mesh_names_for_output) override;
 
     //! Chooses vtk's data mode for output following the enumeration given
@@ -94,13 +90,8 @@ struct OutputVTKFormat final : public OutputFile
     /// http://www.vtk.org/doc/nightly/html/classvtkXMLWriter.html
     int data_mode;
 
-    //! Holds the PVD files associated with each process.
-    //!
-    //! Each \c process_id of each Process (in the current simulation) has a PVD
-    //! file in this map for each element of Output::_mesh_names_for_output.
-    //! I.e., the number of elements in this map is (roughly): <no. of
-    //! processes> x <no. of process IDs per process> x <no. of meshes>.
-    std::multimap<Process const*, MeshLib::IO::PVDFile> process_to_pvd_file;
+    //! Holds the PVD files associated with the meshes.
+    std::map<std::string, MeshLib::IO::PVDFile> mesh_name_to_pvd_file;
 
     std::string constructFilename(std::string const& mesh_name,
                                   int const timestep, double const t,
@@ -121,9 +112,7 @@ struct OutputXDMFHDF5Format final : public OutputFile
     }
 
     void outputMeshes(
-        [[maybe_unused]] const Process& process,
-        [[maybe_unused]] const int process_id, const int timestep,
-        const double t, const int iteration,
+        const int timestep, const double t, const int iteration,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
         std::set<std::string> const& output_variables) const override
     {

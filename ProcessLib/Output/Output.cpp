@@ -122,17 +122,15 @@ void Output::addProcess(ProcessLib::Process const& process)
     {
         _mesh_names_for_output.push_back(process.getMesh().getName());
     }
-    _output_file->addProcess(process, _mesh_names_for_output);
+    _output_file->addProcess(_mesh_names_for_output);
 }
 
 void Output::outputMeshes(
-    const Process& process, const int process_id, const int timestep,
-    const double t, const int iteration,
+    const int timestep, const double t, const int iteration,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes)
     const
 {
-    _output_file->outputMeshes(process, process_id, timestep, t, iteration,
-                               meshes,
+    _output_file->outputMeshes(timestep, t, iteration, meshes,
                                _output_data_specification.output_variables);
 }
 
@@ -214,8 +212,7 @@ void Output::doOutputAlways(Process const& process,
         }
     }
 
-    outputMeshes(process, process_id, timestep, t, iteration,
-                 std::move(output_meshes));
+    outputMeshes(timestep, t, iteration, std::move(output_meshes));
 
     INFO("[time] Output of timestep {:d} took {:g} s.", timestep,
          time_output.elapsed());
