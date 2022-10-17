@@ -31,6 +31,11 @@
 
 std::unique_ptr<Simulation> simulation;
 
+static constexpr int EXIT_ARGPARSE_FAILURE = 3;  // "mangled" TCLAP status
+static constexpr int EXIT_ARGPARSE_EXIT_OK = 2;  // "mangled" TCLAP status
+static_assert(EXIT_FAILURE == 1);
+static_assert(EXIT_SUCCESS == 0);
+
 int initOGS(std::vector<std::string>& argv_str)
 {
     int argc = argv_str.size();
@@ -40,7 +45,29 @@ int initOGS(std::vector<std::string>& argv_str)
         argv[i] = argv_str[i].data();
     }
 
-    CommandLineArgumentParser cli_args(argc, argv);
+    CommandLineArguments cli_args;
+    try
+    {
+        cli_args = parseCommandLineArguments(argc, argv, false);
+    }
+    catch (TCLAP::ArgException const& e)
+    {
+        ERR("Parsing the OGS commandline failed: {}", e.what());
+
+        // "mangle" TCLAP's status
+        return EXIT_ARGPARSE_FAILURE;
+    }
+    catch (TCLAP::ExitException const& e)
+    {
+        if (e.getExitStatus() == 0)
+        {
+            return EXIT_ARGPARSE_EXIT_OK;
+        }
+
+        // "mangle" TCLAP's status
+        return EXIT_ARGPARSE_FAILURE;
+    }
+
     BaseLib::initOGSLogger(cli_args.log_level);
 
     INFO("This is OpenGeoSys-6 version {:s}.",
