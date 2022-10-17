@@ -10,8 +10,6 @@
 
 #include "LiquidViscosity.h"
 
-#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
-
 namespace ProcessLib::ThermoRichardsMechanics
 {
 template <int DisplacementDim>
