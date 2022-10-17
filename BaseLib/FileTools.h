@@ -190,6 +190,9 @@ std::string const& getProjectDirectory();
 /// Sets the project directory.
 void setProjectDirectory(std::string const& dir);
 
+/// Unsets the project directory.
+void unsetProjectDirectory();
+
 /// Removes a file. If a file does not exist nothing will happen, other errors
 /// lead to OGS_FATAL call.
 void removeFile(std::string const& filename);
