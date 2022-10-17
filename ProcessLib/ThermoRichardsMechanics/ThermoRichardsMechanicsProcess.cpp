@@ -17,6 +17,8 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
+#include "ProcessLib/Reflection/ReflectionForExtrapolation.h"
+#include "ProcessLib/Reflection/ReflectionForIPWriters.h"
 #include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
 #include "ThermoRichardsMechanicsFEM.h"
@@ -51,14 +53,10 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
     heat_flux_ = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "HeatFlowRate", MeshLib::MeshItemType::Node, 1);
 
-    for (auto& [name, num_comp, ip_data_accessor] :
-         LocalAssemblerIF::getIPDataAccessorsForIPWriter())
-    {
-        _integration_point_writer.emplace_back(
-            std::make_unique<MeshLib::IntegrationPointWriter>(
-                name, num_comp, integration_order, local_assemblers_,
-                ip_data_accessor));
-    }
+    ProcessLib::Reflection::addReflectedIntegrationPointWriters<
+        DisplacementDim>(LocalAssemblerIF::getReflectionDataForOutput(),
+                         _integration_point_writer, integration_order,
+                         local_assemblers_);
 }
 
 template <int DisplacementDim>
@@ -143,11 +141,9 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                              std::move(get_ip_values_function)));
     };
 
-    for (auto& [name, num_comp, fct] : LocalAssemblerInterface<
-             DisplacementDim>::getIPDataAccessorsForExtrapolation())
-    {
-        add_secondary_variable(name, num_comp, fct);
-    };
+    ProcessLib::Reflection::addReflectedSecondaryVariables<DisplacementDim>(
+        LocalAssemblerIF::getReflectionDataForOutput(), _secondary_variables,
+        getExtrapolator(), local_assemblers_);
 
     //
     // enable output of internal variables defined by material models
