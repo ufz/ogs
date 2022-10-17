@@ -10,13 +10,19 @@
 
 #pragma once
 
-#include "Porosity.h"
+#include "ProcessLib/ThermoRichardsMechanics/Constitutive/Base.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
 struct LiquidViscosityData
 {
     double viscosity;
+
+    static auto reflect()
+    {
+        return ProcessLib::Reflection::reflectWithName(
+            "viscosity", &LiquidViscosityData::viscosity);
+    }
 };
 
 template <int DisplacementDim>

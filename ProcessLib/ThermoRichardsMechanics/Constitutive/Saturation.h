@@ -17,6 +17,12 @@ namespace ProcessLib::ThermoRichardsMechanics
 struct SaturationData
 {
     double S_L;
+
+    static auto reflect()
+    {
+        return ProcessLib::Reflection::reflectWithName("saturation",
+                                                       &SaturationData::S_L);
+    }
 };
 
 struct SaturationDataDeriv

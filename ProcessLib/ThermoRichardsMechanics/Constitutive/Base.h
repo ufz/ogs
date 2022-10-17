@@ -13,6 +13,7 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "MathLib/KelvinVector.h"
 #include "ParameterLib/SpatialPosition.h"
+#include "ProcessLib/Reflection/ReflectionData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -116,6 +117,13 @@ struct StrainData
 {
     // TODO Move initialization to the local assembler.
     KelvinVector<DisplacementDim> eps = KVzero<DisplacementDim>();
+
+    static auto reflect()
+    {
+        using Self = StrainData<DisplacementDim>;
+
+        return ProcessLib::Reflection::reflectWithName("epsilon", &Self::eps);
+    }
 };
 
 }  // namespace ProcessLib::ThermoRichardsMechanics

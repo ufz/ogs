@@ -20,6 +20,14 @@ template <int DisplacementDim>
 struct SwellingDataStateful
 {
     KelvinVector<DisplacementDim> sigma_sw = KVzero<DisplacementDim>();
+
+    static auto reflect()
+    {
+        using Self = SwellingDataStateful<DisplacementDim>;
+
+        return ProcessLib::Reflection::reflectWithName("swelling_stress",
+                                                       &Self::sigma_sw);
+    }
 };
 
 template <int DisplacementDim>

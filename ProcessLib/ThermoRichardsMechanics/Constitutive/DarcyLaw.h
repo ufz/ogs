@@ -11,7 +11,6 @@
 #pragma once
 
 #include "LiquidDensity.h"
-#include "LiquidViscosity.h"
 #include "Permeability.h"
 #include "ThermoOsmosis.h"
 
@@ -21,6 +20,14 @@ template <int DisplacementDim>
 struct DarcyLawData
 {
     Eigen::Vector<double, DisplacementDim> v_darcy;
+
+    static auto reflect()
+    {
+        using Self = DarcyLawData<DisplacementDim>;
+
+        return ProcessLib::Reflection::reflectWithName("velocity",
+                                                       &Self::v_darcy);
+    }
 };
 
 template <int DisplacementDim>
