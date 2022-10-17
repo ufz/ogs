@@ -37,7 +37,9 @@
 #include "InfoLib/GitInfo.h"
 
 #ifdef OGS_USE_PYTHON
+#ifdef OGS_EMBED_PYTHON_INTERPRETER
 #include "ogs_embedded_python.h"
+#endif
 #endif
 
 #ifndef _WIN32  // On windows this command line option is not present.
@@ -68,8 +70,10 @@ int main(int argc, char* argv[])
          GitInfoLib::GitInfo::ogs_version);
 
 #ifdef OGS_USE_PYTHON
+#ifdef OGS_EMBED_PYTHON_INTERPRETER
     pybind11::scoped_interpreter guard = ApplicationsLib::setupEmbeddedPython();
     (void)guard;
+#endif
 #endif
 
     BaseLib::RunTime run_time;

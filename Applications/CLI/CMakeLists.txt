@@ -33,7 +33,9 @@ if(OGS_USE_PYTHON)
     # pybind11 compiles, but it does not pass these extra compiler flags (i.e.
     # this is up to you). TODO: Enable further compiler/linker flags.
     target_link_libraries(
-        ogs_embedded_python PUBLIC pybind11::embed
+        ogs_embedded_python
+        PUBLIC
+        $<IF:$<NOT:$<BOOL:${OGS_WHEEL_BUILD}>>,pybind11::embed,pybind11::pybind11>
         PRIVATE ProcessLibBoundaryConditionAndSourceTermPythonModule
     )
     target_compile_definitions(
@@ -44,6 +46,8 @@ if(OGS_USE_PYTHON)
                # removed by the linker.
                $<$<BOOL:${BUILD_SHARED_LIBS}>:PRIVATE
                OGS_BUILD_SHARED_LIBS>
+               $<$<NOT:$<BOOL:${OGS_WHEEL_BUILD}>>:PRIVATE
+               OGS_EMBED_PYTHON_INTERPRETER>
     )
 endif()
 
@@ -64,6 +68,11 @@ target_link_libraries(
             $<$<TARGET_EXISTS:petsc>:petsc>
             $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
             tclap
+)
+target_compile_definitions(
+    ogs
+    PRIVATE
+    $<$<NOT:$<BOOL:${OGS_WHEEL_BUILD}>>:OGS_EMBED_PYTHON_INTERPRETER>
 )
 
 # ---- Tests ----
