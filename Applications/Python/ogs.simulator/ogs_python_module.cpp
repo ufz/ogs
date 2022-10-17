@@ -19,6 +19,7 @@
 #include "Applications/ApplicationsLib/TestDefinition.h"
 #include "BaseLib/DateTools.h"
 #include "BaseLib/Error.h"
+#include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/RunTime.h"
 #include "CommandLineArgumentParser.h"
@@ -123,6 +124,12 @@ double endTime()
 void finalize()
 {
     simulation.reset(nullptr);
+
+    // TODO don't use global project directory, shared among different OGS
+    // instances.
+    // Unset project dir to make multiple OGS runs in one Python session
+    // possible.
+    BaseLib::unsetProjectDirectory();
 }
 
 /// python module name is OpenGeoSys
