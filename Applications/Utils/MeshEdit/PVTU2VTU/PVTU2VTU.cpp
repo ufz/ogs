@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include <filesystem>
 #include <fstream>
 #include <memory>
 #include <string>
@@ -195,7 +196,11 @@ std::vector<std::string> readVtuFileNames(std::string const& pvtu_file_name)
         if (v.first == "Piece")
         {
             vtu_file_names.push_back(BaseLib::joinPaths(
-                file_path, v.second.get("<xmlattr>.Source", "")));
+                file_path,
+                // only gets the vtu file name:
+                std::filesystem::path(v.second.get("<xmlattr>.Source", ""))
+                    .filename()
+                    .string()));
         }
     }
 
