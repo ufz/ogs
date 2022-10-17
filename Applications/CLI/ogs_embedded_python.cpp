@@ -7,6 +7,7 @@
  *
  */
 
+#ifdef OGS_EMBED_PYTHON_INTERPRETER
 #include "ogs_embedded_python.h"
 
 #include <pybind11/embed.h>
@@ -59,3 +60,4 @@ pybind11::scoped_interpreter setupEmbeddedPython()
 }
 
 }  // namespace ApplicationsLib
+#endif
