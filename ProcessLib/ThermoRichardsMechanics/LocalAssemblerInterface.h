@@ -15,9 +15,9 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
+#include "ProcessLib/Reflection/ReflectionSetIPData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveSetting.h"
 #include "ProcessLib/ThermoRichardsMechanics/ThermoRichardsMechanicsProcessData.h"
-#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -66,56 +66,20 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                 element_.getID());
         }
 
-        if (name == "sigma_ip")
+        if (name == "sigma_ip" && process_data_.initial_stress != nullptr)
         {
-            if (process_data_.initial_stress != nullptr)
-            {
-                OGS_FATAL(
-                    "Setting initial conditions for stress from integration "
-                    "point data and from a parameter '{:s}' is not possible "
-                    "simultaneously.",
-                    process_data_.initial_stress->name);
-            }
-            return ProcessLib::setIntegrationPointKelvinVectorData<
-                DisplacementDim>(
-                values, current_states_,
-                [](auto& cs) -> auto& { return cs.s_mech_data.sigma_eff; });
+            OGS_FATAL(
+                "Setting initial conditions for stress from integration "
+                "point data and from a parameter '{:s}' is not possible "
+                "simultaneously.",
+                process_data_.initial_stress->name);
         }
 
-        if (name == "saturation_ip")
-        {
-            return ProcessLib::setIntegrationPointScalarData(
-                values, current_states_,
-                [](auto& state) -> auto& { return state.S_L_data.S_L; });
-        }
-        if (name == "porosity_ip")
-        {
-            return ProcessLib::setIntegrationPointScalarData(
-                values, current_states_,
-                [](auto& state) -> auto& { return state.poro_data.phi; });
-        }
-        if (name == "transport_porosity_ip")
-        {
-            return ProcessLib::setIntegrationPointScalarData(
-                values, current_states_, [](auto& state) -> auto& {
-                    return state.transport_poro_data.phi;
-                });
-        }
-        if (name == "swelling_stress_ip")
-        {
-            return ProcessLib::setIntegrationPointKelvinVectorData<
-                DisplacementDim>(
-                values, current_states_,
-                [](auto& cs) -> auto& { return cs.swelling_data.sigma_sw; });
-        }
-        if (name == "epsilon_ip")
-        {
-            return ProcessLib::setIntegrationPointKelvinVectorData<
-                DisplacementDim>(
-                values, current_states_,
-                [](auto& cs) -> auto& { return cs.eps_data.eps; });
-        }
-        return 0;
+        // TODO this logic could be pulled out of the local assembler into the
+        // process. That might lead to a slightly better performance due to less
+        // string comparisons.
+        return ProcessLib::Reflection::reflectSetIPData<DisplacementDim>(
+            name, values, current_states_);
     }
 
     // TODO move to NumLib::ExtrapolatableElement
