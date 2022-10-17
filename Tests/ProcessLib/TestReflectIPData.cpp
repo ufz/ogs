@@ -15,6 +15,7 @@
 #include <random>
 
 #include "ProcessLib/Reflection/ReflectionIPData.h"
+#include "ProcessLib/Reflection/ReflectionSetIPData.h"
 
 template <int Dim>
 struct Level3
@@ -484,4 +485,77 @@ TYPED_TEST(ProcessLib_ReflectIPData, ReadTest)
     check("scalar1b", 1, ref.scalar1b);
     check("scalar2b", 1, ref.scalar2b);
     check("scalar3b", 1, ref.scalar3b);
+}
+
+TYPED_TEST(ProcessLib_ReflectIPData, WriteTest)
+{
+    constexpr int dim = TypeParam::value;
+
+    using LocAsm = LocAsmIF<dim>;
+
+    std::size_t const num_int_pts = 8;
+    LocAsm loc_asm(num_int_pts);
+
+    auto const ref = ReferenceData<dim>::create(loc_asm, false);
+
+    // data getters - used for checks //////////////////////////////////////////
+
+    std::map<std::string, NumCompAndFunction<dim>>
+        map_name_to_num_comp_and_function;
+
+    ProcessLib::Reflection::forEachReflectedFlattenedIPDataAccessor<dim,
+                                                                    LocAsm>(
+        LocAsm::reflect(),
+        [&map_name_to_num_comp_and_function](std::string const& name,
+                                             unsigned const num_comp,
+                                             auto&& double_vec_from_loc_asm)
+        {
+            EXPECT_FALSE(map_name_to_num_comp_and_function.contains(name));
+            map_name_to_num_comp_and_function[name] = {
+                num_comp, std::move(double_vec_from_loc_asm)};
+        });
+
+    // checks //////////////////////////////////////////////////////////////////
+
+    auto check = [&map_name_to_num_comp_and_function, &loc_asm](
+                     std::string const& name, std::size_t const size_expected,
+                     std::vector<double> const& values_plain)
+    {
+        auto const it = map_name_to_num_comp_and_function.find(name);
+
+        ASSERT_NE(map_name_to_num_comp_and_function.end(), it)
+            << "No accessor found for ip data with name '" << name << "'";
+
+        auto const& [num_comp, fct] = it->second;
+
+        EXPECT_THAT(fct(loc_asm), testing::Each(testing::IsNan()))
+            << "All values must be initialize to NaN in this unit test. Check "
+               "failed for ip data with name '"
+            << name << "'";
+
+        auto const size = ProcessLib::Reflection::reflectSetIPData<dim>(
+            name, values_plain.data(), loc_asm.ip_data_level1);
+
+        EXPECT_EQ(size_expected, size)
+            << "Unexpected size obtained for ip data with name '" << name
+            << "'";
+
+        // check set values via round-trip with getter tested in previous unit
+        // test
+        EXPECT_THAT(fct(loc_asm),
+                    testing::Pointwise(testing::DoubleEq(), values_plain))
+            << "Values not set correctly for ip data with name '" << name
+            << "'";
+    };
+
+    check("scalar1", num_int_pts, ref.scalar1);
+    check("vector1", num_int_pts, ref.vector1);
+    check("kelvin1", num_int_pts, ref.kelvin1);
+
+    check("scalar3", num_int_pts, ref.scalar3);
+    check("vector3", num_int_pts, ref.vector3);
+    check("kelvin3", num_int_pts, ref.kelvin3);
+
+    check("scalar2b", num_int_pts, ref.scalar2b);
+    check("scalar3b", num_int_pts, ref.scalar3b);
 }
