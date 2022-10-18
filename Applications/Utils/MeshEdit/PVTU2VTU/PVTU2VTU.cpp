@@ -388,13 +388,10 @@ int main(int argc, char* argv[])
 
     MeshLib::IO::VtuInterface writer(&merged_mesh);
 
-    std::string file_path = BaseLib::extractPath(output_arg.getValue());
-    auto const result = writer.writeToFile(
-        BaseLib::joinPaths(file_path, output_arg.getValue()));
+    auto const result = writer.writeToFile(output_arg.getValue());
     if (!result)
     {
-        ERR("Could not write mesh to '{:s}'.",
-            BaseLib::joinPaths(file_path, output_arg.getValue()));
+        ERR("Could not write mesh to '{:s}'.", output_arg.getValue());
         return EXIT_FAILURE;
     }
 
