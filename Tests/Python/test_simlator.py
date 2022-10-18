@@ -12,9 +12,11 @@ def test_simulator():
         "-o " + tempfile.mkdtemp(),
     ]
 
-    print("Python OpenGeoSys.init ...")
-    sim.initialize(arguments)
-    print("Python OpenGeoSys.executeSimulation ...")
-    sim.executeSimulation()
-    print("Python OpenGeoSys.finalize() ...")
-    sim.finalize()
+    try:
+        print("Python OpenGeoSys.init ...")
+        assert 0 == sim.initialize(arguments)
+        print("Python OpenGeoSys.executeSimulation ...")
+        assert 0 == sim.executeSimulation()
+    finally:
+        print("Python OpenGeoSys.finalize() ...")
+        sim.finalize()
