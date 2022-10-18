@@ -1,6 +1,6 @@
 import subprocess
 import os
-from .provide_ogs_cli_tools_via_wheel import binaries_list
+from .provide_ogs_cli_tools_via_wheel import binaries_list, ogs_with_args
 
 OGS_BIN_DIR = os.path.join(os.path.join(os.path.dirname(__file__), "..", "bin"))
 
@@ -37,26 +37,9 @@ class CLI:
         >>> cli.generateStructuredMesh(e="line", lx=1, nx=10, o=outfile)
         """
 
-        import ogs.simulator as sim
-
         cmdline = CLI._get_cmdline("ogs", *args, **kwargs)
-        return_code = sim.initialize(cmdline)
 
-        # map mangled TCLAP status to usual exit status
-        if return_code == 3:  # EXIT_ARGPARSE_FAILURE
-            sim.finalize()
-            return 1  # EXIT_FAILURE
-        elif return_code == 2:  # EXIT_ARGPARSE_EXIT_OK
-            sim.finalize()
-            return 0  # EXIT_SUCCESS
-
-        if return_code != 0:
-            sim.finalize()
-            return return_code
-
-        return_code = sim.executeSimulation()
-        sim.finalize()
-        return return_code
+        return ogs_with_args(cmdline)
 
     @staticmethod
     def _format_kv(kwargs):
