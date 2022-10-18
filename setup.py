@@ -43,7 +43,7 @@ setup(
     packages=find_packages(where="Applications/Python"),
     package_dir={"": "Applications/Python"},
     cmake_install_dir="Applications/Python/ogs",
-    extras_require={"test": ["pytest"]},
+    extras_require={"test": ["pytest", "numpy"]},
     cmake_args=[f"--preset {cmake_preset}", "-B ."],
     python_requires=">=3.7",
     entry_points={"console_scripts": console_scripts},
