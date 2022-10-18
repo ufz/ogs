@@ -32,7 +32,7 @@
                 <property>
                     <name>density</name>
                     <type>Constant</type>
-                    <value>2.0</value>
+                    <value>1</value>
                 </property>
             </properties>
         </medium>
@@ -44,19 +44,19 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1.e-6</abstol>
+                    <abstol>1e-13</abstol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
-                    <t_initial> 0.0 </t_initial>
-                    <t_end> 2.0 </t_end>
+                    <t_initial>0</t_initial>
+                    <t_end>1</t_end>
                     <timesteps>
                         <pair>
                             <repeat>1</repeat>
-                            <delta_t>1</delta_t>
+                            <delta_t>0.1</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -67,27 +67,27 @@
             <prefix>wedge_ang_0.02</prefix>
             <timesteps>
                 <pair>
-                    <repeat> 1 </repeat>
-                    <each_steps> 2 </each_steps>
+                    <repeat>1</repeat>
+                    <each_steps>10</each_steps>
                 </pair>
             </timesteps>
             <variables>
-                <variable> temperature </variable>
-                <variable> heat_flux </variable>
+                <variable>temperature</variable>
+                <variable>heat_flux</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
         <parameter>
-            <name>T0</name>
-            <type>Constant</type>
-            <value>0</value>
+            <name>solution</name>
+            <type>Function</type>
+            <expression>t * sin(2*pi*z) * (x^2+y^2)</expression>
         </parameter>
         <parameter>
-            <name>heat_flux_bottom</name>
-            <type>Constant</type>
-            <value>1</value>
+            <name>dsolution_dy</name>
+            <type>Function</type>
+            <expression>-t * 2*pi*cos(2*pi*z) * (x^2+y^2)</expression>
         </parameter>
         <parameter>
             <name>heat_transfer_coefficient</name>
@@ -96,8 +96,13 @@
         </parameter>
         <parameter>
             <name>ambient_temperature</name>
-            <type>Constant</type>
-            <value>0</value>
+            <type>Function</type>
+            <expression>3 * t * sin(2*pi*z)</expression>
+        </parameter>
+        <parameter>
+            <name>source_term</name>
+            <type>Function</type>
+            <expression>sin(2*pi*z) * ((1 + 4*pi^2*t)*(x^2+y^2) - 4*t)</expression>
         </parameter>
     </parameters>
     <process_variables>
@@ -105,13 +110,13 @@
             <name>temperature</name>
             <components>1</components>
             <order>1</order>
-            <initial_condition>T0</initial_condition>
+            <initial_condition>solution</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>bottom</geometry>
                     <type>Neumann</type>
-                    <parameter>heat_flux_bottom</parameter>
+                    <parameter>dsolution_dy</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>geometry</geometrical_set>
@@ -127,6 +132,13 @@
                     <u_0>ambient_temperature</u_0>
                 </boundary_condition>
             </boundary_conditions>
+            <source_terms>
+                <source_term>
+                    <mesh>wedge-1e2-ang-0.02</mesh>
+                    <type>Volumetric</type>
+                    <parameter>source_term</parameter>
+                </source_term>
+            </source_terms>
         </process_variable>
     </process_variables>
     <nonlinear_solvers>
