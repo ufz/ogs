@@ -31,7 +31,7 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>INFINITY_N</norm_type>
-                    <abstol>1e-8</abstol>
+                    <abstol>1e-16</abstol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -160,13 +160,13 @@
         <vtkdiff>
             <file>piston_ts_5_t_5.000000.vtu</file>
             <field>epsilon</field>
-            <absolute_tolerance>1e-14</absolute_tolerance>
+            <absolute_tolerance>6e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>piston_ts_5_t_5.000000.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>2e-8</absolute_tolerance>
+            <absolute_tolerance>8e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -178,13 +178,13 @@
         <vtkdiff>
             <file>piston_ts_10_t_10.000000.vtu</file>
             <field>epsilon</field>
-            <absolute_tolerance>1e-13</absolute_tolerance>
+            <absolute_tolerance>2e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>piston_ts_10_t_10.000000.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>1e-7</absolute_tolerance>
+            <absolute_tolerance>2e-8</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
