@@ -16,6 +16,7 @@
 #include "NumLib/Fem/CoordinatesMapping/NaturalNodeCoordinates.h"
 #include "NumLib/Fem/FiniteElement/ElementTraitsLagrange.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/ReferenceElement.h"
 #include "Tests/MathLib/PointUtils.h"
 #include "Tests/MeshLib/ElementUtils.h"
 #include "Tests/NumLib/ReferenceElementUtils.h"
@@ -112,7 +113,7 @@ static unsigned computeFaceDimensionFromPointsOnFace(
 template <typename MeshElementType>
 class MeshLibMapBulkElementPointTest : public ::testing::Test
 {
-    ReferenceElementUtils::ReferenceElement<MeshElementType> reference_element;
+    NumLib::ReferenceElement<MeshElementType> reference_element;
 
 protected:
     MeshElementType const& bulk_element = reference_element.element;
@@ -149,8 +150,7 @@ static void mapAllFaceNodesToBulkElementAndCheckIfTheyAreFound(
     some_node_of_this_face_has_not_been_found_in_the_bulk_element = false;
 
     auto const bulk_element_node_natural_coords =
-        ReferenceElementUtils::getNodeCoordsOfReferenceElement<
-            MeshElementType>();
+        NumLib::getNodeCoordsOfReferenceElement<MeshElementType>();
 
     auto const face_ptr = ElementUtils::getFace(bulk_element, face_id);
     auto const face_cell_type = face_ptr->getCellType();
@@ -226,8 +226,7 @@ TYPED_TEST(MeshLibMapBulkElementPointTest,
     }
 
     auto const bulk_element_node_natural_coords =
-        ReferenceElementUtils::getNodeCoordsOfReferenceElement<
-            MeshElementType>();
+        NumLib::getNodeCoordsOfReferenceElement<MeshElementType>();
     auto const bulk_element_num_nodes = MeshElementType::n_all_nodes;
 
     auto const num_faces = ElementUtils::getNumberOfFaces(this->bulk_element);
@@ -376,8 +375,7 @@ TYPED_TEST(MeshLibMapBulkElementPointTest, CheckInterpolatedFaceNodes)
     }
 
     auto const bulk_element_node_natural_coords =
-        ReferenceElementUtils::getNodeCoordsOfReferenceElement<
-            MeshElementType>();
+        NumLib::getNodeCoordsOfReferenceElement<MeshElementType>();
     auto const bulk_element_num_nodes = MeshElementType::n_all_nodes;
 
     auto const num_faces = ElementUtils::getNumberOfFaces(this->bulk_element);
@@ -417,8 +415,7 @@ static void mapAllFaceNodesToBulkElementAndCheckWithShapeFunctionInterpolation(
     std::size_t const face_id, BulkElementType const& bulk_element)
 {
     auto const bulk_element_node_natural_coords =
-        ReferenceElementUtils::getNodeCoordsOfReferenceElement<
-            BulkElementType>();
+        NumLib::getNodeCoordsOfReferenceElement<BulkElementType>();
     auto const bulk_nodes_wps =
         PointUtils::toWeightedPointsOfDim<BulkElementType::dimension>(
             bulk_element_node_natural_coords);

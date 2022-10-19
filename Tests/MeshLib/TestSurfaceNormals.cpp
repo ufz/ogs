@@ -13,13 +13,14 @@
 
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Elements/Utils.h"
+#include "NumLib/Fem/ReferenceElement.h"
 #include "Tests/MeshLib/ElementUtils.h"
-#include "Tests/NumLib/ReferenceElementUtils.h"
+#include "Tests/Utils.h"
 
 template <typename MeshElementType>
 class MeshLibSurfaceNormalsTest : public ::testing::Test
 {
-    ReferenceElementUtils::ReferenceElement<MeshElementType> reference_element;
+    NumLib::ReferenceElement<MeshElementType> reference_element;
 
 protected:
     MeshElementType const& bulk_element = reference_element.element;
