@@ -41,7 +41,7 @@
   "python": {
     "notebook_requirements": [
       "git+https://github.com/joergbuchwald/ogs6py@0f9e738e2ee469c8bde4204b2151238973417694#egg=ogs6py",
-      "git+https://github.com/joergbuchwald/VTUinterface@master#egg=VTUinterface",
+      "git+https://github.com/joergbuchwald/VTUinterface@003e172a2f08f6f0acc15855b33a256d063c9804#egg=VTUinterface",
       "git+https://github.com/joergbuchwald/heatsource_thm@main#egg=heatsource-py",
       "git+https://github.com/bilke/nb2hugo@53d62ae5aef1be271eb91491d3b37da487bd1498#egg=nb2hugo",
       "git+https://github.com/dominik-kern/msh2vtu@15f4838affe7056f12c0ea12034e9b48ecb19846#egg=msh2vtu",
