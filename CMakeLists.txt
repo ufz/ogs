@@ -5,7 +5,7 @@ project(OGS-6)
 
 option(OGS_USE_PYTHON "Interface with Python" ON)
 option(OGS_BUILD_PYTHON_MODULE "Should the OGS Python module be built?" ON)
-option(OGS_WHEEL_BUILD "Build Python wheels of OGS" OFF)
+option(OGS_BUILD_WHEEL "Build Python wheels of OGS" OFF)
 
 include(CMakeDependentOption)
 include(scripts/cmake/UseCompilerCache.cmake)

@@ -24,7 +24,7 @@ append_source_files(TEST_SOURCES GeoLib/IO)
 append_source_files(TEST_SOURCES MaterialLib)
 append_source_files(TEST_SOURCES MathLib)
 append_source_files(TEST_SOURCES MeshLib)
-if(NOT OGS_WHEEL_BUILD)
+if(NOT OGS_BUILD_WHEEL)
     append_source_files(TEST_SOURCES ApplicationsLib)
 endif()
 append_source_files(TEST_SOURCES MeshGeoToolsLib)
@@ -37,7 +37,7 @@ set_source_files_properties(
 set(TEST_SOURCES ${TEST_SOURCES} ${TEST_SOURCES_NUMLIB})
 append_source_files(TEST_SOURCES ParameterLib)
 
-if(NOT OGS_WHEEL_BUILD)
+if(NOT OGS_BUILD_WHEEL)
     append_source_files(TEST_SOURCES ProcessLib)
     if(OGS_BUILD_PROCESS_TH2M)
         append_source_files(TEST_SOURCES ProcessLib/TH2M)
@@ -72,7 +72,7 @@ ogs_add_executable(testrunner ${TEST_SOURCES})
 
 target_link_libraries(
     testrunner
-    PRIVATE $<$<NOT:$<BOOL:${OGS_WHEEL_BUILD}>>:ApplicationsLib>
+    PRIVATE $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:ApplicationsLib>
             ApplicationsFileIO
             autocheck
             gmock
@@ -83,8 +83,8 @@ target_link_libraries(
             MeshLib
             NumLib
             ParameterLib
-            $<$<NOT:$<BOOL:${OGS_WHEEL_BUILD}>>:ProcessLib>
-            $<$<NOT:$<BOOL:${OGS_WHEEL_BUILD}>>:Processes>
+            $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:ProcessLib>
+            $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:Processes>
             TestInfoLib
             VTK::FiltersGeneral
             VTK::FiltersSources

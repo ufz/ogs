@@ -1,4 +1,4 @@
-if(OGS_USE_PYTHON AND NOT OGS_WHEEL_BUILD)
+if(OGS_USE_PYTHON AND NOT OGS_BUILD_WHEEL)
     # Troubleshooting: If you get linker errors, such as   ogs.cpp:(.text+0xb4):
     # undefined reference to `_Py_ZeroStruct' it could be that OGS is compiled
     # with the wrong Python version. I (Ch. Leh.) observed the following: The
@@ -48,7 +48,7 @@ if(OGS_USE_PYTHON AND NOT OGS_WHEEL_BUILD)
     )
 endif()
 
-if(NOT OGS_WHEEL_BUILD)
+if(NOT OGS_BUILD_WHEEL)
     ogs_add_executable(ogs ogs.cpp CommandLineArgumentParser.cpp)
 
     target_link_libraries(

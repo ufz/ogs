@@ -44,10 +44,10 @@ target_include_directories(
 target_link_libraries(
     ProcessLibBoundaryConditionAndSourceTermPython
     PUBLIC BaseLib MathLib MeshLib NumLib
-           $<IF:$<BOOL:${OGS_WHEEL_BUILD}>,pybind11::module,pybind11::embed>
+           $<IF:$<BOOL:${OGS_BUILD_WHEEL}>,pybind11::module,pybind11::embed>
 )
 
-if(OGS_WHEEL_BUILD)
+if(OGS_BUILD_WHEEL)
     target_link_options(
         ProcessLibBoundaryConditionAndSourceTermPython PUBLIC
         $<$<CXX_COMPILER_ID:AppleClang>:-undefined dynamic_lookup>

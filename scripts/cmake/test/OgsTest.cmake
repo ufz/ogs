@@ -4,7 +4,7 @@ function(OgsTest)
         return()
     endif()
 
-    if (OGS_WHEEL_BUILD)
+    if(OGS_BUILD_WHEEL)
         return()
     endif()
 
