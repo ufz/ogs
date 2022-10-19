@@ -9,9 +9,8 @@
 
 #pragma once
 
-#ifdef OGS_EMBED_PYTHON_INTERPRETER
-
 #include <pybind11/embed.h>
+
 #include "BaseLib/ExportSymbol.h"
 
 namespace ApplicationsLib
@@ -21,5 +20,3 @@ namespace ApplicationsLib
 OGS_EXPORT_SYMBOL pybind11::scoped_interpreter setupEmbeddedPython();
 
 }  // namespace ApplicationsLib
-
-#endif

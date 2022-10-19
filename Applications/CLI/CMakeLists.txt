@@ -1,4 +1,4 @@
-if(OGS_USE_PYTHON)
+if(OGS_USE_PYTHON AND NOT OGS_WHEEL_BUILD)
     # Troubleshooting: If you get linker errors, such as   ogs.cpp:(.text+0xb4):
     # undefined reference to `_Py_ZeroStruct' it could be that OGS is compiled
     # with the wrong Python version. I (Ch. Leh.) observed the following: The
@@ -33,21 +33,18 @@ if(OGS_USE_PYTHON)
     # pybind11 compiles, but it does not pass these extra compiler flags (i.e.
     # this is up to you). TODO: Enable further compiler/linker flags.
     target_link_libraries(
-        ogs_embedded_python
-        PUBLIC
-            $<IF:$<NOT:$<BOOL:${OGS_WHEEL_BUILD}>>,pybind11::embed,pybind11::pybind11>
+        ogs_embedded_python PUBLIC pybind11::embed
         PRIVATE ProcessLibBoundaryConditionAndSourceTermPythonModule
     )
     target_compile_definitions(
         ogs_embedded_python
         PUBLIC OGS_USE_PYTHON
+               OGS_EMBED_PYTHON_INTERPRETER
                # Add macro definition, because static libs make special handling
                # necessary s.t. the embedded OpenGeoSys Python module won't be
                # removed by the linker.
                $<$<BOOL:${BUILD_SHARED_LIBS}>:PRIVATE
                OGS_BUILD_SHARED_LIBS>
-               $<$<NOT:$<BOOL:${OGS_WHEEL_BUILD}>>:PRIVATE
-               OGS_EMBED_PYTHON_INTERPRETER>
     )
 endif()
 
@@ -68,11 +65,6 @@ if(NOT OGS_WHEEL_BUILD)
                 $<$<TARGET_EXISTS:petsc>:petsc>
                 $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
                 tclap
-    )
-    target_compile_definitions(
-        ogs
-        PRIVATE
-            $<$<NOT:$<BOOL:${OGS_WHEEL_BUILD}>>:OGS_EMBED_PYTHON_INTERPRETER>
     )
 
     # ---- Tests ----
