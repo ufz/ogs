@@ -12,6 +12,7 @@ set(TOOLS
     ExtractBoundary
     ExtractMaterials
     ExtractSurface
+    ipDataToPointCloud
     Layers2Grid
     MapGeometryToMeshSurface
     MoveMesh
@@ -55,3 +56,4 @@ target_link_libraries(createLayeredMeshFromRasters ApplicationsFileIO)
 target_link_libraries(MapGeometryToMeshSurface MeshGeoToolsLib)
 target_link_libraries(MeshMapping ApplicationsFileIO)
 target_link_libraries(ResetPropertiesInPolygonalRegion ApplicationsFileIO)
+target_link_libraries(ipDataToPointCloud NumLib)
