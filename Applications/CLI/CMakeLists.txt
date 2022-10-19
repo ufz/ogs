@@ -35,7 +35,7 @@ if(OGS_USE_PYTHON)
     target_link_libraries(
         ogs_embedded_python
         PUBLIC
-        $<IF:$<NOT:$<BOOL:${OGS_WHEEL_BUILD}>>,pybind11::embed,pybind11::pybind11>
+            $<IF:$<NOT:$<BOOL:${OGS_WHEEL_BUILD}>>,pybind11::embed,pybind11::pybind11>
         PRIVATE ProcessLibBoundaryConditionAndSourceTermPythonModule
     )
     target_compile_definitions(
@@ -52,43 +52,43 @@ if(OGS_USE_PYTHON)
 endif()
 
 if(NOT OGS_WHEEL_BUILD)
-ogs_add_executable(ogs ogs.cpp CommandLineArgumentParser.cpp)
+    ogs_add_executable(ogs ogs.cpp CommandLineArgumentParser.cpp)
 
-target_link_libraries(
-    ogs
-    PRIVATE ApplicationsLib
-            BaseLib
-            CMakeInfoLib
-            GitInfoLib
-            MeshLib
-            ProcessLib
-            $<$<TARGET_EXISTS:ogs_embedded_python>:ogs_embedded_python>
-            $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
-            $<$<TARGET_EXISTS:InSituLib>:InSituLib>
-            $<$<TARGET_EXISTS:petsc>:petsc>
-            $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
-            tclap
-)
-target_compile_definitions(
-    ogs
-    PRIVATE
-    $<$<NOT:$<BOOL:${OGS_WHEEL_BUILD}>>:OGS_EMBED_PYTHON_INTERPRETER>
-)
+    target_link_libraries(
+        ogs
+        PRIVATE ApplicationsLib
+                BaseLib
+                CMakeInfoLib
+                GitInfoLib
+                MeshLib
+                ProcessLib
+                $<$<TARGET_EXISTS:ogs_embedded_python>:ogs_embedded_python>
+                $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
+                $<$<TARGET_EXISTS:InSituLib>:InSituLib>
+                $<$<TARGET_EXISTS:petsc>:petsc>
+                $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
+                tclap
+    )
+    target_compile_definitions(
+        ogs
+        PRIVATE
+            $<$<NOT:$<BOOL:${OGS_WHEEL_BUILD}>>:OGS_EMBED_PYTHON_INTERPRETER>
+    )
 
-# ---- Tests ----
-add_test(NAME ogs_no_args COMMAND ogs)
-set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE LABELS "default")
+    # ---- Tests ----
+    add_test(NAME ogs_no_args COMMAND ogs)
+    set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE LABELS "default")
 
-# ---- Installation ----
-install(TARGETS ogs RUNTIME DESTINATION bin)
+    # ---- Installation ----
+    install(TARGETS ogs RUNTIME DESTINATION bin)
 
-set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "ogs"
-                              "OGS Simulator"
-)
-cpack_add_component(
-    ogs_cli
-    DISPLAY_NAME "OGS THMC Simulator"
-    DESCRIPTION "The command line interface for OpenGeoSys."
-    GROUP Applications
-)
+    set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "ogs"
+                                  "OGS Simulator"
+    )
+    cpack_add_component(
+        ogs_cli
+        DISPLAY_NAME "OGS THMC Simulator"
+        DESCRIPTION "The command line interface for OpenGeoSys."
+        GROUP Applications
+    )
 endif()

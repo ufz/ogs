@@ -25,7 +25,7 @@ append_source_files(TEST_SOURCES MaterialLib)
 append_source_files(TEST_SOURCES MathLib)
 append_source_files(TEST_SOURCES MeshLib)
 if(NOT OGS_WHEEL_BUILD)
-append_source_files(TEST_SOURCES ApplicationsLib)
+    append_source_files(TEST_SOURCES ApplicationsLib)
 endif()
 append_source_files(TEST_SOURCES MeshGeoToolsLib)
 append_source_files(TEST_SOURCES_NUMLIB NumLib)
@@ -96,7 +96,7 @@ target_link_libraries(
             $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
             $<$<TARGET_EXISTS:InSituLib>:InSituLib>
             $<$<TARGET_EXISTS:petsc>:petsc>
-    PUBLIC  $<$<BOOL:${OGS_USE_MFRONT}>:OgsMFrontBehaviourForUnitTests>
+    PUBLIC $<$<BOOL:${OGS_USE_MFRONT}>:OgsMFrontBehaviourForUnitTests>
 )
 
 target_compile_definitions(

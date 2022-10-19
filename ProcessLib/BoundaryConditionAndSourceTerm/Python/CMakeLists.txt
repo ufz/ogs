@@ -49,10 +49,9 @@ target_link_libraries(
 
 if(OGS_WHEEL_BUILD)
     target_link_options(
-        ProcessLibBoundaryConditionAndSourceTermPython
-        PUBLIC
-            $<$<CXX_COMPILER_ID:AppleClang>:-undefined dynamic_lookup>
-            $<$<CXX_COMPILER_ID:MSVC>:/FORCE:UNRESOLVED>
+        ProcessLibBoundaryConditionAndSourceTermPython PUBLIC
+        $<$<CXX_COMPILER_ID:AppleClang>:-undefined dynamic_lookup>
+        $<$<CXX_COMPILER_ID:MSVC>:/FORCE:UNRESOLVED>
     )
 endif()
 
