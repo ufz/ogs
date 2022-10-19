@@ -93,7 +93,7 @@ Add Python dependencies to `web/data/versions.json` (under `python/notebook_requ
 Add to CTest with:
 
 ```cmake
-NotebookTest(NOTEBOOKFILE Notebooks/SimpleMechanics.ipynb RUNTIME 10)
+NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.ipynb RUNTIME 10)
 ```
 
 Then e.g. run with:
