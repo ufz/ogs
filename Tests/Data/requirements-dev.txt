@@ -1,0 +1,4 @@
+-e git+https://github.com/bilke/nb2hugo@53d62ae5aef1be271eb91491d3b37da487bd1498#egg=nb2hugo
+nbconvert==7.2.2 
+nbformat==5.7.0
+toml==0.10.2

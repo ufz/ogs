@@ -50,3 +50,23 @@ build jupyter:
       - web/content/docs/benchmarks
       - Tests/Data/_out/**/*.html
       - Tests/Data/_out/**/out.txt
+
+test notebooks via wheel:
+  stage: build
+  tags: [envinf23, shell]
+  script:
+    - cd Tests/Data
+    - python -m venv --upgrade-deps .venv
+    - source .venv/bin/activate
+    - pip install -r requirements.txt
+    - pip install -r requirements-dev.txt
+    - pip install -r requirements-ogs.txt
+    - find . -type f -iname '*.ipynb' | grep -vP '\.ipynb_checkpoints|\.ci-skip.ipynb$|_out|.venv' | PYVISTA_HEADLESS=1 xargs python Notebooks/testrunner.py --out _out
+  cache:
+    paths:
+      - Tests/Data/.venv
+  artifacts:
+    when: always
+    paths:
+      - Tests/Data/_out/**/*.html
+      - Tests/Data/_out/**/out.txt
