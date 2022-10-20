@@ -120,44 +120,27 @@ struct GetFlattenedIPDataFromLocAsm
                                  IPDataVectorElement const&>>;
 
         constexpr unsigned num_comp = NumberOfComponents<ConcreteIPData>::value;
+        auto const& ip_data_vector = accessor_ip_data_vec_in_loc_asm(loc_asm);
+        auto const num_ips = ip_data_vector.size();
 
-        if constexpr (num_comp == 1)
+        std::vector<double> result(num_comp * num_ips);
+
+        for (std::size_t ip = 0; ip < num_ips; ++ip)
         {
-            auto const& ip_data_vector =
-                accessor_ip_data_vec_in_loc_asm(loc_asm);
-            auto const num_ips = ip_data_vector.size();
+            auto const& ip_data_vector_element = ip_data_vector[ip];
+            auto const& ip_data =
+                accessor_current_level_from_ip_data_vec_element(
+                    ip_data_vector_element);
 
-            std::vector<double> result(num_ips);
-
-            // TODO optimization if nothing needs to be copied?
-            for (std::size_t ip = 0; ip < num_ips; ++ip)
+            if constexpr (num_comp == 1)
             {
-                auto const& ip_data_vector_element = ip_data_vector[ip];
-                auto const& ip_data =
-                    accessor_current_level_from_ip_data_vec_element(
-                        ip_data_vector_element);
-
+                // TODO optimization if nothing needs to be copied?
                 result[ip] = ip_data;
             }
-
-            return result;
-        }
-        else if constexpr (num_comp ==
-                           MathLib::KelvinVector::kelvin_vector_dimensions(Dim))
-        {
-            auto const& ip_data_vector =
-                accessor_ip_data_vec_in_loc_asm(loc_asm);
-            auto const num_ips = ip_data_vector.size();
-
-            std::vector<double> result(num_comp * num_ips);
-
-            for (std::size_t ip = 0; ip < num_ips; ++ip)
+            else if constexpr (num_comp ==
+                               MathLib::KelvinVector::kelvin_vector_dimensions(
+                                   Dim))
             {
-                auto const& ip_data_vector_element = ip_data_vector[ip];
-                auto const& ip_data =
-                    accessor_current_level_from_ip_data_vec_element(
-                        ip_data_vector_element);
-
                 auto const converted =
                     MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                         ip_data);
@@ -167,32 +150,15 @@ struct GetFlattenedIPDataFromLocAsm
                     result[ip * num_comp + comp] = converted[comp];
                 }
             }
-
-            return result;
-        }
-        else
-        {
-            auto const& ip_data_vector =
-                accessor_ip_data_vec_in_loc_asm(loc_asm);
-            auto const num_ips = ip_data_vector.size();
-
-            std::vector<double> result(num_comp * num_ips);
-
-            for (std::size_t ip = 0; ip < num_ips; ++ip)
+            else
             {
-                auto const& ip_data_vector_element = ip_data_vector[ip];
-                auto const& ip_data =
-                    accessor_current_level_from_ip_data_vec_element(
-                        ip_data_vector_element);
-
                 for (unsigned comp = 0; comp < num_comp; ++comp)
                 {
                     result[ip * num_comp + comp] = ip_data[comp];
                 }
             }
-
-            return result;
         }
+        return result;
     }
 };
 
