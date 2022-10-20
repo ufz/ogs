@@ -71,9 +71,11 @@ for notebook_file_path in args.notebooks:
 
     if "run-skip" not in notebook_file_path:
         notebook_basename = os.path.splitext(notebook_file_path)[0]
-        notebook_output_path = os.path.join(
-            args.out,
-            os.path.relpath(notebook_basename, start=os.environ["OGS_DATA_DIR"]),
+        notebook_output_path = os.path.abspath(
+            os.path.join(
+                args.out,
+                os.path.relpath(notebook_basename, start=os.environ["OGS_DATA_DIR"]),
+            )
         )
         os.makedirs(notebook_output_path, exist_ok=True)
         os.environ["OGS_TESTRUNNER_OUT_DIR"] = notebook_output_path

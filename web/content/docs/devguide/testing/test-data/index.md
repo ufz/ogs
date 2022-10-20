@@ -125,7 +125,7 @@ Run all notebooks in `Tests/Data` (ignoring notebooks with `.ci-skip.` in their 
 ```bash
 cd Tests/Data
 find . -type f -iname '*.ipynb' \
-  | grep -vP '\.ipynb_checkpoints|\.ci-skip.ipynb$' \
+  | grep -vP '\.ipynb_checkpoints|\.ci-skip.ipynb$|_out|.venv' \
   | xargs python Notebooks/testrunner.py --out _out
 ```
 
