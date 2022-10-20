@@ -1,10 +1,11 @@
 # cmake-lint: disable=C0103
 
 if(OGS_USE_PYTHON)
-    set(_python_version_max "...<3.11")
+    set(_python_version_max "...<3.12")
 endif()
 
 if(OGS_USE_PIP)
+    set(_python_version_max "...<3.11") # There are no VTK wheels for >3.10
     set(Python_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
     set(CMAKE_REQUIRE_FIND_PACKAGE_Python TRUE)
     if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
@@ -43,7 +44,7 @@ set(_python_componets Interpreter)
 if(OGS_USE_PYTHON AND NOT OGS_BUILD_WHEEL)
     list(APPEND _python_componets Development.Embed)
 endif()
-if(OGS_BUILD_PYTHON_MODULE)
+if(OGS_BUILD_PYTHON_MODULE OR OGS_USE_PYTHON)
     list(APPEND _python_componets Development.Module)
 endif()
 if(OGS_USE_PYTHON OR OGS_BUILD_PYTHON_MODULE)
