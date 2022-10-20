@@ -37,6 +37,7 @@ binaries_list = [
     "GocadTSurfaceReader",
     "identifySubdomains",
     "IntegrateBoreholesIntoMesh",
+    "ipDataToPointCloud",
     "Layers2Grid",
     "MapGeometryToMeshSurface",
     "Mesh2Raster",
