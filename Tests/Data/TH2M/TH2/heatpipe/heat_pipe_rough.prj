@@ -341,14 +341,15 @@
                 </pair>
             </timesteps>
             <fixed_output_times>
-                1000.
-                5000.
-                10000.
-                50000.
-                100000.
-                500000.
-                1000000.
-                5000000.
+                1000.0
+                5000.0
+                10000.0
+                50000.0
+                100000.0
+                500000.0
+                1000000.0
+                5000000.0
+                10000000.0
             </fixed_output_times>
             <output_iteration_results>false</output_iteration_results>
             <variables>
