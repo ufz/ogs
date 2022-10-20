@@ -1,4 +1,7 @@
-import OpenGeoSys
+try:
+    import ogs.callbacks as OpenGeoSys
+except ModuleNotFoundError:
+    import OpenGeoSys
 from math import pi, sin, cos, atan2, sqrt
 
 a = 2.0  # Length
