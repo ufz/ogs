@@ -10,6 +10,7 @@
 #pragma once
 
 #include <pybind11/embed.h>
+
 #include "BaseLib/ExportSymbol.h"
 
 namespace ApplicationsLib

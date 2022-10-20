@@ -40,7 +40,7 @@ else()
 endif()
 
 set(_python_componets Interpreter)
-if(OGS_USE_PYTHON)
+if(OGS_USE_PYTHON AND NOT OGS_BUILD_WHEEL)
     list(APPEND _python_componets Development.Embed)
 endif()
 if(OGS_BUILD_PYTHON_MODULE)

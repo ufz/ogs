@@ -43,9 +43,17 @@ target_include_directories(
 
 target_link_libraries(
     ProcessLibBoundaryConditionAndSourceTermPython
-    PUBLIC BaseLib MathLib MeshLib NumLib Python::Python
-    PRIVATE pybind11::pybind11
+    PUBLIC BaseLib MathLib MeshLib NumLib
+           $<IF:$<BOOL:${OGS_BUILD_WHEEL}>,pybind11::module,pybind11::embed>
 )
+
+if(OGS_BUILD_WHEEL)
+    target_link_options(
+        ProcessLibBoundaryConditionAndSourceTermPython PUBLIC
+        $<$<CXX_COMPILER_ID:AppleClang>:-undefined dynamic_lookup>
+        $<$<CXX_COMPILER_ID:MSVC>:/FORCE:UNRESOLVED>
+    )
+endif()
 
 # For the embedded Python module
 ogs_add_library(
@@ -60,5 +68,5 @@ ogs_add_library(
 
 target_link_libraries(
     ProcessLibBoundaryConditionAndSourceTermPythonModule
-    PUBLIC ProcessLibBoundaryConditionAndSourceTermPython pybind11::pybind11
+    PUBLIC ProcessLibBoundaryConditionAndSourceTermPython
 )

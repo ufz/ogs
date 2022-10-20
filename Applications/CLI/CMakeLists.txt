@@ -1,4 +1,4 @@
-if(OGS_USE_PYTHON)
+if(OGS_USE_PYTHON AND NOT OGS_BUILD_WHEEL)
     # Troubleshooting: If you get linker errors, such as   ogs.cpp:(.text+0xb4):
     # undefined reference to `_Py_ZeroStruct' it could be that OGS is compiled
     # with the wrong Python version. I (Ch. Leh.) observed the following: The
@@ -39,6 +39,7 @@ if(OGS_USE_PYTHON)
     target_compile_definitions(
         ogs_embedded_python
         PUBLIC OGS_USE_PYTHON
+               OGS_EMBED_PYTHON_INTERPRETER
                # Add macro definition, because static libs make special handling
                # necessary s.t. the embedded OpenGeoSys Python module won't be
                # removed by the linker.
@@ -47,37 +48,39 @@ if(OGS_USE_PYTHON)
     )
 endif()
 
-ogs_add_executable(ogs ogs.cpp CommandLineArgumentParser.cpp)
+if(NOT OGS_BUILD_WHEEL)
+    ogs_add_executable(ogs ogs.cpp CommandLineArgumentParser.cpp)
 
-target_link_libraries(
-    ogs
-    PRIVATE ApplicationsLib
-            BaseLib
-            CMakeInfoLib
-            GitInfoLib
-            MeshLib
-            ProcessLib
-            $<$<TARGET_EXISTS:ogs_embedded_python>:ogs_embedded_python>
-            $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
-            $<$<TARGET_EXISTS:InSituLib>:InSituLib>
-            $<$<TARGET_EXISTS:petsc>:petsc>
-            $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
-            tclap
-)
+    target_link_libraries(
+        ogs
+        PRIVATE ApplicationsLib
+                BaseLib
+                CMakeInfoLib
+                GitInfoLib
+                MeshLib
+                ProcessLib
+                $<$<TARGET_EXISTS:ogs_embedded_python>:ogs_embedded_python>
+                $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
+                $<$<TARGET_EXISTS:InSituLib>:InSituLib>
+                $<$<TARGET_EXISTS:petsc>:petsc>
+                $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
+                tclap
+    )
 
-# ---- Tests ----
-add_test(NAME ogs_no_args COMMAND ogs)
-set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE LABELS "default")
+    # ---- Tests ----
+    add_test(NAME ogs_no_args COMMAND ogs)
+    set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE LABELS "default")
 
-# ---- Installation ----
-install(TARGETS ogs RUNTIME DESTINATION bin)
+    # ---- Installation ----
+    install(TARGETS ogs RUNTIME DESTINATION bin)
 
-set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "ogs"
-                              "OGS Simulator"
-)
-cpack_add_component(
-    ogs_cli
-    DISPLAY_NAME "OGS THMC Simulator"
-    DESCRIPTION "The command line interface for OpenGeoSys."
-    GROUP Applications
-)
+    set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "ogs"
+                                  "OGS Simulator"
+    )
+    cpack_add_component(
+        ogs_cli
+        DISPLAY_NAME "OGS THMC Simulator"
+        DESCRIPTION "The command line interface for OpenGeoSys."
+        GROUP Applications
+    )
+endif()

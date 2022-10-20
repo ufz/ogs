@@ -66,6 +66,33 @@ binaries_list = [
     "Vtu2Grid",
 ]
 
+
+def ogs():
+    raise SystemExit(ogs_with_args(sys.argv))
+
+
+def ogs_with_args(argv):
+    import ogs.simulator as sim
+
+    return_code = sim.initialize(argv)
+
+    # map mangled TCLAP status to usual exit status
+    if return_code == 3:  # EXIT_ARGPARSE_FAILURE
+        sim.finalize()
+        return 1  # EXIT_FAILURE
+    elif return_code == 2:  # EXIT_ARGPARSE_EXIT_OK
+        sim.finalize()
+        return 0  # EXIT_SUCCESS
+
+    if return_code != 0:
+        sim.finalize()
+        return return_code
+
+    return_code = sim.executeSimulation()
+    sim.finalize()
+    return return_code
+
+
 if "PEP517_BUILD_BACKEND" not in os.environ:
     OGS_BIN_DIR = os.path.join(os.path.join(os.path.dirname(__file__), "..", "bin"))
 
@@ -77,4 +104,6 @@ if "PEP517_BUILD_BACKEND" not in os.environ:
 
     FUNC_TEMPLATE = """def {0}(): raise SystemExit(_program("{0}", sys.argv[1:]))"""
     for f in binaries_list:
+        if f == "ogs":
+            continue  # provided by separate function
         exec(FUNC_TEMPLATE.format(f))

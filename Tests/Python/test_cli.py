@@ -1,6 +1,3 @@
-import tempfile
-import os
-
 import pytest
 
 import ogs._internal.provide_ogs_cli_tools_via_wheel as ogs_cli_wheel

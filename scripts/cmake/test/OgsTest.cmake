@@ -1,9 +1,13 @@
-# cmake-lint: disable=C0103
+# cmake-lint: disable=C0103,R0912,R0915
 function(OgsTest)
-
     if(NOT OGS_BUILD_CLI OR NOT OGS_BUILD_TESTING)
         return()
     endif()
+
+    if(OGS_BUILD_WHEEL)
+        return()
+    endif()
+
     set(options DISABLED)
     set(oneValueArgs PROJECTFILE RUNTIME)
     set(multiValueArgs WRAPPER)
@@ -67,6 +71,7 @@ function(OgsTest)
                   ${OgsTest_SOURCE_DIR}/${OgsTest_NAME}
     )
     string(REPLACE "/" "_" TEST_NAME_UNDERSCORE ${TEST_NAME})
+
     add_test(
         NAME ${TEST_NAME}
         COMMAND

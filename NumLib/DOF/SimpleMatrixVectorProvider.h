@@ -55,6 +55,8 @@ public:
 
     void releaseMatrix(GlobalMatrix const& A) override;
 
+    void clear();
+
     ~SimpleMatrixVectorProvider() override;
 
 private:

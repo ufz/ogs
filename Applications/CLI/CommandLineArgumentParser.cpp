@@ -18,7 +18,8 @@
 #include "InfoLib/CMakeInfo.h"
 #include "InfoLib/GitInfo.h"
 
-CommandLineArgumentParser::CommandLineArgumentParser(int argc, char* argv[])
+CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
+                                               bool const exit_on_exception)
 {
     // Parse CLI arguments.
     TCLAP::CmdLine cmd(
@@ -34,6 +35,8 @@ CommandLineArgumentParser::CommandLineArgumentParser(int argc, char* argv[])
         ' ',
         GitInfoLib::GitInfo::ogs_version + "\n\n" +
             "CMake arguments: " + CMakeInfoLib::CMakeInfo::cmake_args);
+
+    cmd.setExceptionHandling(exit_on_exception);
 
     TCLAP::ValueArg<std::string> log_level_arg(
         "l", "log-level",
@@ -109,19 +112,21 @@ CommandLineArgumentParser::CommandLineArgumentParser(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-    reference_path = reference_path_arg.getValue();
-    reference_path_is_set = reference_path_arg.isSet();
-    project = project_arg.getValue();
+    CommandLineArguments cli_args;
+    cli_args.reference_path = reference_path_arg.getValue();
+    cli_args.reference_path_is_set = reference_path_arg.isSet();
+    cli_args.project = project_arg.getValue();
 
-    BaseLib::setProjectDirectory(BaseLib::extractPath(project));
+    BaseLib::setProjectDirectory(BaseLib::extractPath(cli_args.project));
 
-    xml_patch_file_names = xml_patch_files_arg.getValue();
-    outdir = outdir_arg.getValue();
-    mesh_dir = mesh_dir_arg.getValue().empty() ? BaseLib::getProjectDirectory()
-                                               : mesh_dir_arg.getValue();
-    nonfatal = nonfatal_arg.getValue();
-    log_level = log_level_arg.getValue();
-    write_prj = write_prj_arg.getValue();
+    cli_args.xml_patch_file_names = xml_patch_files_arg.getValue();
+    cli_args.outdir = outdir_arg.getValue();
+    cli_args.mesh_dir = mesh_dir_arg.getValue().empty()
+                            ? BaseLib::getProjectDirectory()
+                            : mesh_dir_arg.getValue();
+    cli_args.nonfatal = nonfatal_arg.getValue();
+    cli_args.log_level = log_level_arg.getValue();
+    cli_args.write_prj = write_prj_arg.getValue();
 
     // deactivate buffer for standard output if specified
     if (unbuffered_cout_arg.isSet())
@@ -129,6 +134,8 @@ CommandLineArgumentParser::CommandLineArgumentParser(int argc, char* argv[])
         std::cout.setf(std::ios::unitbuf);
     }
 #ifndef _WIN32
-    enable_fpe_is_set = enable_fpe_arg.isSet();
+    cli_args.enable_fpe_is_set = enable_fpe_arg.isSet();
 #endif  // _WIN32
+
+    return cli_args;
 }

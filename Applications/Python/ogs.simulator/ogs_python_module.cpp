@@ -19,6 +19,7 @@
 #include "Applications/ApplicationsLib/TestDefinition.h"
 #include "BaseLib/DateTools.h"
 #include "BaseLib/Error.h"
+#include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/RunTime.h"
 #include "CommandLineArgumentParser.h"
@@ -30,7 +31,12 @@
 
 std::unique_ptr<Simulation> simulation;
 
-void initOGS(std::vector<std::string>& argv_str)
+static constexpr int EXIT_ARGPARSE_FAILURE = 3;  // "mangled" TCLAP status
+static constexpr int EXIT_ARGPARSE_EXIT_OK = 2;  // "mangled" TCLAP status
+static_assert(EXIT_FAILURE == 1);
+static_assert(EXIT_SUCCESS == 0);
+
+int initOGS(std::vector<std::string>& argv_str)
 {
     int argc = argv_str.size();
     char** argv = new char*[argc];
@@ -39,7 +45,29 @@ void initOGS(std::vector<std::string>& argv_str)
         argv[i] = argv_str[i].data();
     }
 
-    CommandLineArgumentParser cli_args(argc, argv);
+    CommandLineArguments cli_args;
+    try
+    {
+        cli_args = parseCommandLineArguments(argc, argv, false);
+    }
+    catch (TCLAP::ArgException const& e)
+    {
+        ERR("Parsing the OGS commandline failed: {}", e.what());
+
+        // "mangle" TCLAP's status
+        return EXIT_ARGPARSE_FAILURE;
+    }
+    catch (TCLAP::ExitException const& e)
+    {
+        if (e.getExitStatus() == 0)
+        {
+            return EXIT_ARGPARSE_EXIT_OK;
+        }
+
+        // "mangle" TCLAP's status
+        return EXIT_ARGPARSE_FAILURE;
+    }
+
     BaseLib::initOGSLogger(cli_args.log_level);
 
     INFO("This is OpenGeoSys-6 version {:s}.",
@@ -72,9 +100,11 @@ void initOGS(std::vector<std::string>& argv_str)
     }
 
     INFO("OpenGeoSys is now initialized.");
+
+    return ogs_status;
 }
 
-void executeSimulation()
+int executeSimulation()
 {
     BaseLib::RunTime run_time;
 
@@ -104,6 +134,8 @@ void executeSimulation()
         auto const time_str = BaseLib::formatDate(end_time);
         INFO("OGS terminated on {:s}.", time_str);
     }
+
+    return ogs_status;
 }
 
 double currentTime()
@@ -119,6 +151,12 @@ double endTime()
 void finalize()
 {
     simulation.reset(nullptr);
+
+    // TODO don't use global project directory, shared among different OGS
+    // instances.
+    // Unset project dir to make multiple OGS runs in one Python session
+    // possible.
+    BaseLib::unsetProjectDirectory();
 }
 
 /// python module name is OpenGeoSys

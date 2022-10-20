@@ -230,8 +230,16 @@ void setProjectDirectory(std::string const& dir)
     {
         OGS_FATAL("The project directory has already been set.");
     }
+    // TODO Remove these global vars. They are a possible source of errors when
+    // invoking OGS from Python multiple times within a single session.
     project_directory = dir;
     project_directory_is_set = true;
+}
+
+void unsetProjectDirectory()
+{
+    project_directory.clear();
+    project_directory_is_set = false;
 }
 
 void removeFile(std::string const& filename)

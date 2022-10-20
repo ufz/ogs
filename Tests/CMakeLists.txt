@@ -24,7 +24,9 @@ append_source_files(TEST_SOURCES GeoLib/IO)
 append_source_files(TEST_SOURCES MaterialLib)
 append_source_files(TEST_SOURCES MathLib)
 append_source_files(TEST_SOURCES MeshLib)
-append_source_files(TEST_SOURCES ApplicationsLib)
+if(NOT OGS_BUILD_WHEEL)
+    append_source_files(TEST_SOURCES ApplicationsLib)
+endif()
 append_source_files(TEST_SOURCES MeshGeoToolsLib)
 append_source_files(TEST_SOURCES_NUMLIB NumLib)
 # Disable Unity build for NumLib tests
@@ -34,9 +36,12 @@ set_source_files_properties(
 # Keep order of source files, otherwise PETSc non-MPI tests fail
 set(TEST_SOURCES ${TEST_SOURCES} ${TEST_SOURCES_NUMLIB})
 append_source_files(TEST_SOURCES ParameterLib)
-append_source_files(TEST_SOURCES ProcessLib)
-if(OGS_BUILD_PROCESS_TH2M)
-    append_source_files(TEST_SOURCES ProcessLib/TH2M)
+
+if(NOT OGS_BUILD_WHEEL)
+    append_source_files(TEST_SOURCES ProcessLib)
+    if(OGS_BUILD_PROCESS_TH2M)
+        append_source_files(TEST_SOURCES ProcessLib/TH2M)
+    endif()
 endif()
 
 if(OGS_BUILD_GUI)
@@ -67,7 +72,7 @@ ogs_add_executable(testrunner ${TEST_SOURCES})
 
 target_link_libraries(
     testrunner
-    PRIVATE ApplicationsLib
+    PRIVATE $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:ApplicationsLib>
             ApplicationsFileIO
             autocheck
             gmock
@@ -78,8 +83,8 @@ target_link_libraries(
             MeshLib
             NumLib
             ParameterLib
-            ProcessLib
-            Processes
+            $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:ProcessLib>
+            $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:Processes>
             TestInfoLib
             VTK::FiltersGeneral
             VTK::FiltersSources
@@ -91,7 +96,18 @@ target_link_libraries(
             $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
             $<$<TARGET_EXISTS:InSituLib>:InSituLib>
             $<$<TARGET_EXISTS:petsc>:petsc>
-    PUBLIC  $<$<BOOL:${OGS_USE_MFRONT}>:OgsMFrontBehaviourForUnitTests>
+    PUBLIC $<$<BOOL:${OGS_USE_MFRONT}>:OgsMFrontBehaviourForUnitTests>
+)
+
+target_compile_definitions(
+    testrunner
+    PUBLIC # Enabled elements
+           OGS_MAX_ELEMENT_DIM=${OGS_MAX_ELEMENT_DIM}
+           OGS_MAX_ELEMENT_ORDER=${OGS_MAX_ELEMENT_ORDER}
+           $<$<BOOL:${OGS_ENABLE_ELEMENT_SIMPLEX}>:OGS_ENABLE_ELEMENT_SIMPLEX>
+           $<$<BOOL:${OGS_ENABLE_ELEMENT_CUBOID}>:OGS_ENABLE_ELEMENT_CUBOID>
+           $<$<BOOL:${OGS_ENABLE_ELEMENT_PRISM}>:OGS_ENABLE_ELEMENT_PRISM>
+           $<$<BOOL:${OGS_ENABLE_ELEMENT_PYRAMID}>:OGS_ENABLE_ELEMENT_PYRAMID>
 )
 
 if(OGS_BUILD_GUI)
