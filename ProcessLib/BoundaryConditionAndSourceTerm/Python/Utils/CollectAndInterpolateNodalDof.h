@@ -12,6 +12,7 @@
 
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "ProcessLib/ProcessVariable.h"
+#include <Eigen/Core>
 
 namespace MeshLib
 {
