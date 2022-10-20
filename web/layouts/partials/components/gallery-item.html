@@ -6,15 +6,15 @@
         {{ $white_image := resources.Get "images/white.png" }}
         {{ $image := "" }}
         {{ if isset .Params "image" }}
-          {{ $image = .Resources.GetMatch .Params.image }}
+        {{ $image = .Resources.GetMatch .Params.image }}
         {{ end }}
         {{ if not $image }}
-          {{ range first 1 (.Resources.ByType "image") }}
-            {{ $image = . }}
-          {{ end }}
-          {{ if not $image }}
-            {{ $image = $white_image }}
-          {{ end }}
+        {{ range first 1 (.Resources.ByType "image") }}
+        {{ $image = . }}
+        {{ end }}
+        {{ if not $image }}
+        {{ $image = $white_image }}
+        {{ end }}
         {{ end }}
         {{ $image := $image.Fit "600x400" }}
         <img class="object-cover shadow-lg rounded-lg no-fancybox border" src="{{ $image.RelPermalink }}" alt="">
@@ -24,8 +24,12 @@
         <div class="space-y-1">
           <h3 class="text-center">
             {{ if isset .Params "notebook" }}
-              <img style="margin-top: 0; margin-bottom: 0; height: 1.5em;"
-              class="inline-block mr-1" src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" alt="">
+            <img style="margin-top: 0; margin-bottom: 0; height: 1.5em;" class="inline-block mr-1"
+              src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" alt="">
+            {{ end }}
+            {{ if isset .Params "coupling" }}
+            <img style="height: 2em;" class="inline-block mr-1"
+              src="/images/coupling-icons/{{.Params.coupling}}-tet.svg" alt="">
             {{ end }}
             {{ .Title }}
           </h3>

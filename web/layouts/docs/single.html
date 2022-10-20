@@ -4,10 +4,10 @@
 {{ $top_section_name := index $elements (sub (len $elements) 4) }}
 {{ $baseSubsection := . }}
 {{ if eq $top_section_name .Section }}
-  {{ $baseSubsection = .Parent }}
+{{ $baseSubsection = .Parent }}
 {{ end }}
 {{ if not .IsSection }}
-  {{ $baseSubsection = .Parent.Parent }}
+{{ $baseSubsection = .Parent.Parent }}
 {{ end }}
 
 <div class="flex">
@@ -16,21 +16,27 @@
 
   <div class="overflow-y-auto focus:outline-none">
 
+    {{ if isset .Parent.Params "coupling" }}
+    <img class="h-12 md:h-16 lg:h-20 float-right" src="/images/coupling-icons/{{.Parent.Params.coupling}}-tet.svg"
+      alt="">
+    {{ end }}
+
     {{ if .Params.breadcrumbs }}
-      {{ partial "docs/breadcrumbs.html" . }}
+    {{ partial "docs/breadcrumbs.html" . }}
     {{ end }}
 
     <div class="mx-auto py-2 px-4 max-w-7xl sm:px-6 lg:px-8 lg:py-4">
       <h2 class="text-3xl font-extrabold sm:text-4xl mb-8">{{ .Title }}</h2>
       {{ if $baseSubsection.Params.os_selector }}
       <div class="flex justify-center">
-      <div class="invisible mb-8 bg-gray-200 shadow rounded-lg px-2 py-1 w-auto" id="os-selector">
-        <span class="text-gray-600">Select OS:</span>
-        <a class="btn mx-1" id="btn-win"><i class="fab fa-windows"></i><span class="hidden sm:inline">
-            Windows</span></a>
-        <a class="btn mx-1" id="btn-linux"><i class="fab fa-linux"></i><span class="hidden sm:inline"> Linux</span></a>
-        <a class="btn mx-1" id="btn-mac"><i class="fab fa-apple"></i><span class="hidden sm:inline"> macOS</span></a>
-      </div>
+        <div class="invisible mb-8 bg-gray-200 shadow rounded-lg px-2 py-1 w-auto" id="os-selector">
+          <span class="text-gray-600">Select OS:</span>
+          <a class="btn mx-1" id="btn-win"><i class="fab fa-windows"></i><span class="hidden sm:inline">
+              Windows</span></a>
+          <a class="btn mx-1" id="btn-linux"><i class="fab fa-linux"></i><span class="hidden sm:inline">
+              Linux</span></a>
+          <a class="btn mx-1" id="btn-mac"><i class="fab fa-apple"></i><span class="hidden sm:inline"> macOS</span></a>
+        </div>
       </div>
       {{ end }}
 
@@ -43,7 +49,8 @@
         {{ if .Params.notebook }}
         <div class="note">
           <p style="margin-top: 0; margin-bottom: 0%;"><img style="margin-top: 0; margin-bottom: 0; height: 2em;"
-              class="inline-block mr-2" src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" alt="">
+              class="inline-block mr-2" src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg"
+              alt="">
             This benchmark is available as a Jupyter notebook:
             <a href="https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/{{ .Params.notebook }}">
               {{ .Params.notebook }}.
