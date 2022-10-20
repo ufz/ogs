@@ -20,18 +20,10 @@ namespace ProcessLib::Reflection
 namespace detail
 {
 // Used in metaprogramming to check if the type T has a member "reflect".
-// Implementation based on https://stackoverflow.com/a/257382
 template <typename T>
-class HasReflect
+constexpr bool has_reflect = requires
 {
-    template <typename C>
-    static char test(decltype(&C::reflect));
-
-    template <typename C>
-    static double test(...);
-
-public:
-    static constexpr bool value = sizeof(test<T>(nullptr)) == sizeof(char);
+    T::reflect();
 };
 
 template <typename T>
@@ -271,7 +263,7 @@ void forEachReflectedFlattenedIPDataAccessor(
                        level;
             };
 
-            if constexpr (HasReflect<Member>::value)
+            if constexpr (has_reflect<Member>)
             {
                 forEachReflectedFlattenedIPDataAccessor<Dim>(
                     callback, Member::reflect(),
@@ -332,7 +324,7 @@ void forEachReflectedFlattenedIPDataAccessor(ReflData const& reflection_data,
                 return loc_asm.*ip_data_vector;
             };
 
-            if constexpr (detail::HasReflect<Member>::value)
+            if constexpr (detail::has_reflect<Member>)
             {
                 detail::forEachReflectedFlattenedIPDataAccessor<Dim>(
                     callback, Member::reflect(),
