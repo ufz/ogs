@@ -94,13 +94,13 @@ AddTest(
     NAME PhaseField_2D_surfing_AT1_vd
     PATH PhaseField/surfing
     EXECUTABLE ogs
-    EXECUTABLE_ARGS surfing.PRJ
+    EXECUTABLE_ARGS surfing.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI AND OGS_USE_PYTHON
     RUNTIME 18
     DIFF_DATA
-        expected_surfing_ts_20_t_1_000000_0.vtu surfing_ts_20_t_1_000000_0.vtu displacement displacement 1e-5 0
-        expected_surfing_ts_20_t_1_000000_0.vtu surfing_ts_20_t_1_000000_0.vtu phasefield phasefield 1e-6 0
+        expected_surfing_ts_20_t_1_000000_0.vtu surfing_ts_20_t_1.000000.vtu displacement displacement 1e-5 0
+        expected_surfing_ts_20_t_1_000000_0.vtu surfing_ts_20_t_1.000000.vtu phasefield phasefield 1e-6 0
 )
