@@ -922,7 +922,7 @@ AddTest(
     square_1x1_quad_1e2.vtu square_1e2_GMRES_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-14 1e-14
 )
 
-if(OGS_USE_MPI)
+if(OGS_USE_MPI AND OGS_USE_PIP)
     NotebookTest(NOTEBOOKFILE Notebooks/SimplePETSc.ipynb RUNTIME 10)
 else()
     OgsTest(PROJECTFILE "Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_1e4_anisotropic.prj")

@@ -863,3 +863,10 @@ AddTest(
     classical_transport_example_t_7200.00.vtu classical_transport_example_t_7200.00.vtu pressure pressure 1.e-9 1.0e-12
     classical_transport_example_t_7200.00.vtu classical_transport_example_t_7200.00.vtu velocity velocity 1.e-12 1.0e-12
 )
+
+NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/AxiSymTheis/axisym_theis.ipynb RUNTIME 5)
+NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/DecayChain.ipynb RUNTIME 160)
+NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/RadionuclidesMigration/RadionuclidesMigration.ipynb RUNTIME 55)
+NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/MultiLayerDiffusion/MultiLayerDiffusion.ipynb RUNTIME 25)
+NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/DiffusionSorptionDecay/DiffusionSorptionDecay.ipynb RUNTIME 16)
+NotebookTest(NOTEBOOKFILE Parabolic/ThermalTwoPhaseFlowPP/HeatPipe/heatpipe.ipynb RUNTIME 10)
