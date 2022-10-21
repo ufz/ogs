@@ -52,6 +52,7 @@ parser.add_argument("--out", default="./", help="Output directory.")
 parser.add_argument(
     "--hugo", action="store_true", help="Convert successful notebooks to web site."
 )
+parser.add_argument("--hugo-out", default="web", help="Hugo output directory.")
 parser.add_argument(
     "--timeout", default="600", type=int, help="Cell execution timeout."
 )
@@ -129,7 +130,9 @@ for notebook_file_path in args.notebooks:
     if notebook_success:
         status_string += "[Passed] "
         if args.hugo:
-            save_to_website(convert_notebook_file, os.path.join(ogs_source_path, "web"))
+            save_to_website(
+                convert_notebook_file, os.path.join(ogs_source_path, args.hugo_out)
+            )
     else:
         status_string += "[Failed] "
         # Save to html
