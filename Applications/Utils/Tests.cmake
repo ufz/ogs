@@ -429,21 +429,21 @@ AddTest(
     PATH NodePartitionedMesh/WithIntegrationPointStress/MixedElements
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements
     EXECUTABLE partmesh
-    EXECUTABLE_ARGS -m -n 3 -i mesh_with_3D_different_elements_sigma_ip.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements
+    EXECUTABLE_ARGS -m -n 2 -i mesh_with_3D_different_elements_sigma_ip.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements
     REQUIREMENTS NOT APPLE
     DEPENDS partmesh-partmesh_mesh_withsigma_ip_with_mixed_element_types_ogs2metis
     TESTER diff
     DIFF_DATA
-       mesh_with_3D_different_elements_sigma_ip_partitioned_cell_properties_cfg3.bin
-       mesh_with_3D_different_elements_sigma_ip_partitioned_cell_properties_val3.bin
-       mesh_with_3D_different_elements_sigma_ip_partitioned_integration_point_properties_cfg3.bin
-       mesh_with_3D_different_elements_sigma_ip_partitioned_integration_point_properties_val3.bin
-       mesh_with_3D_different_elements_sigma_ip_partitioned_msh_cfg3.bin
-       mesh_with_3D_different_elements_sigma_ip_partitioned_msh_ele3.bin
-       mesh_with_3D_different_elements_sigma_ip_partitioned_msh_ele_g3.bin
-       mesh_with_3D_different_elements_sigma_ip_partitioned_msh_nod3.bin
-       mesh_with_3D_different_elements_sigma_ip_partitioned_node_properties_cfg3.bin
-       mesh_with_3D_different_elements_sigma_ip_partitioned_node_properties_val3.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_cell_properties_cfg2.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_cell_properties_val2.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_integration_point_properties_cfg2.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_integration_point_properties_val2.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_msh_cfg2.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_msh_ele2.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_msh_ele_g2.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_msh_nod2.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_node_properties_cfg2.bin
+       mesh_with_3D_different_elements_sigma_ip_partitioned_node_properties_val2.bin
 )
 
 AddTest(
@@ -931,13 +931,11 @@ AddTest(
     EXECUTABLE binaryToPVTU
     EXECUTABLE_ARGS -i mesh_with_3D_different_elements_sigma_ip -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements/mesh_with_3D_different_elements_sigma_ip_pvtu
     WRAPPER mpirun
-    WRAPPER_ARGS -np 3
+    WRAPPER_ARGS -np 2
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
     mesh_with_3D_different_elements_sigma_ip_pvtu_0.vtu mesh_with_3D_different_elements_sigma_ip_pvtu_0.vtu 1e-16
     mesh_with_3D_different_elements_sigma_ip_pvtu_1.vtu mesh_with_3D_different_elements_sigma_ip_pvtu_1.vtu 1e-16
-    mesh_with_3D_different_elements_sigma_ip_pvtu_2.vtu mesh_with_3D_different_elements_sigma_ip_pvtu_2.vtu 1e-16
-    mesh_with_3D_different_elements_sigma_ip_pvtu_3.vtu mesh_with_3D_different_elements_sigma_ip_pvtu_3.vtu 1e-16
 )
 
 AddTest(
