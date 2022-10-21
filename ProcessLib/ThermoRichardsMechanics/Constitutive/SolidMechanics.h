@@ -25,6 +25,15 @@ struct SolidMechanicsDataStateful
     // TODO it seems fragile that some data have to be initialized that way.
     KelvinVector<DisplacementDim> sigma_eff = KVzero<DisplacementDim>();
     KelvinVector<DisplacementDim> eps_m = KVzero<DisplacementDim>();
+
+    static auto reflect()
+    {
+        using Self = SolidMechanicsDataStateful<DisplacementDim>;
+
+        // TODO add eps_m?
+        return ProcessLib::Reflection::reflectWithName("sigma",
+                                                       &Self::sigma_eff);
+    }
 };
 
 template <int DisplacementDim>

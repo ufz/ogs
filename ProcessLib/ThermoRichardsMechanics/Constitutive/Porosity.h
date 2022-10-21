@@ -11,7 +11,6 @@
 #pragma once
 
 #include "Bishops.h"
-#include "MathLib/KelvinVector.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
 
@@ -20,6 +19,23 @@ namespace ProcessLib::ThermoRichardsMechanics
 struct PorosityData
 {
     double phi;
+
+    static auto reflect()
+    {
+        return ProcessLib::Reflection::reflectWithName("porosity",
+                                                       &PorosityData::phi);
+    }
+};
+
+struct TransportPorosityData
+{
+    double phi;
+
+    static auto reflect()
+    {
+        return ProcessLib::Reflection::reflectWithName(
+            "transport_porosity", &TransportPorosityData::phi);
+    }
 };
 
 template <int DisplacementDim>

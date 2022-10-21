@@ -19,6 +19,12 @@ struct LiquidDensityData
     double rho_LR;
     double drho_LR_dp;
     double drho_LR_dT;
+
+    static auto reflect()
+    {
+        return ProcessLib::Reflection::reflectWithName(
+            "liquid_density", &LiquidDensityData::rho_LR);
+    }
 };
 
 template <int DisplacementDim>

@@ -13,6 +13,7 @@ append_source_files(SOURCES BoundaryConditionAndSourceTerm/Utils)
 append_source_files(SOURCES SurfaceFlux)
 append_source_files(SOURCES Output)
 append_source_files(SOURCES Utils)
+append_source_files(SOURCES Reflection)
 
 ogs_add_library(ProcessLib GENERATE_EXPORT_HEADER ${SOURCES})
 
@@ -29,6 +30,7 @@ target_link_libraries(
         MeshGeoToolsLib
         MeshLib
         NumLib
+        Boost::mp11
         range-v3
         $<$<TARGET_EXISTS:ProcessLibBoundaryConditionAndSourceTermPython>:ProcessLibBoundaryConditionAndSourceTermPython>
         $<$<TARGET_EXISTS:petsc>:petsc>

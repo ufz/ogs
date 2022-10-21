@@ -37,4 +37,32 @@ std::vector<double> transposeInPlace(
     return result;
 }
 
+template <int Components>
+void transposeInPlace(std::vector<double>& values)
+{
+    MathLib::toMatrix<
+        Eigen::Matrix<double, Eigen::Dynamic, Components, Eigen::RowMajor>>(
+        values, values.size() / Components, Components) =
+        MathLib::toMatrix<
+            Eigen::Matrix<double, Components, Eigen::Dynamic, Eigen::RowMajor>>(
+            values, Components, values.size() / Components)
+            .transpose()
+            .eval();
+}
+
+inline void transposeInPlace(std::vector<double>& values,
+                             unsigned const num_components)
+{
+    MathLib::toMatrix<
+        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(
+        values, values.size() / num_components, num_components) =
+        MathLib::toMatrix<Eigen::Matrix<double,
+                                        Eigen::Dynamic,
+                                        Eigen::Dynamic,
+                                        Eigen::RowMajor>>(
+            values, num_components, values.size() / num_components)
+            .transpose()
+            .eval();
+}
+
 }  // namespace ProcessLib

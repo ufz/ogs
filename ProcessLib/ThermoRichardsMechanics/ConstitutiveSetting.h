@@ -30,16 +30,30 @@
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
+
 /// Data whose state must be tracked by the TRM process.
 template <int DisplacementDim>
 struct StatefulData
 {
     SaturationData S_L_data;
     PorosityData poro_data;
-    PorosityData transport_poro_data;
+    TransportPorosityData transport_poro_data;
     StrainData<DisplacementDim> eps_data;
     SwellingDataStateful<DisplacementDim> swelling_data;
     SolidMechanicsDataStateful<DisplacementDim> s_mech_data;
+
+    static auto reflect()
+    {
+        using Self = StatefulData<DisplacementDim>;
+
+        return ProcessLib::Reflection::reflectWithoutName(
+            &Self::S_L_data,
+            &Self::poro_data,
+            &Self::transport_poro_data,
+            &Self::eps_data,
+            &Self::swelling_data,
+            &Self::s_mech_data);
+    }
 };
 
 /// Data that is needed for output purposes, but not directly for the assembly.
@@ -50,6 +64,16 @@ struct OutputData
     LiquidDensityData rho_L_data;
     LiquidViscosityData mu_L_data;
     SolidDensityData rho_S_data;
+
+    static auto reflect()
+    {
+        using Self = OutputData<DisplacementDim>;
+
+        return ProcessLib::Reflection::reflectWithoutName(&Self::darcy_data,
+                                                          &Self::rho_L_data,
+                                                          &Self::mu_L_data,
+                                                          &Self::rho_S_data);
+    }
 };
 
 /// Data that is needed for the equation system assembly.

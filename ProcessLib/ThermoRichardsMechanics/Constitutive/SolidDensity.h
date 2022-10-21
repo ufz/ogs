@@ -19,6 +19,12 @@ struct SolidDensityData
 {
     double rho_SR;
     double dry_density_solid;
+
+    static auto reflect()
+    {
+        return ProcessLib::Reflection::reflectWithName(
+            "dry_density_solid", &SolidDensityData::dry_density_solid);
+    }
 };
 
 template <int DisplacementDim>
