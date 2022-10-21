@@ -1,3 +1,7 @@
+foreach(file ${FILES_TO_DELETE})
+    file(REMOVE ${file})
+endforeach()
+
 execute_process(
     COMMAND ${WRAPPER_COMMAND} ${EXECUTABLE} ${EXECUTABLE_ARGS}
     WORKING_DIRECTORY ${WORKING_DIRECTORY}

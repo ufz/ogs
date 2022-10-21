@@ -54,7 +54,7 @@ function(NotebookTest)
 
     set(TEST_NAME "nb-${NotebookTest_DIR}/${NotebookTest_NAME_WE}")
 
-    set(_exe_args Notebooks/testrunner.py --out ${Data_BINARY_DIR}
+    set(_exe_args Notebooks/testrunner.py --hugo --out ${Data_BINARY_DIR}
                   ${NotebookTest_SOURCE_DIR}/${NotebookTest_NAME}
     )
 
@@ -64,6 +64,8 @@ function(NotebookTest)
             ${CMAKE_COMMAND}
             -E env PYVISTA_HEADLESS=1
             ${CMAKE_COMMAND}
+            # TODO: only works if notebook is in a leaf directory
+            # -DFILES_TO_DELETE=${Data_BINARY_DIR}/${NotebookTest_DIR}
             -DEXECUTABLE=${Python_EXECUTABLE}
             "-DEXECUTABLE_ARGS=${_exe_args}"
             -DWORKING_DIRECTORY=${Data_SOURCE_DIR} -DCAT_LOG=TRUE -P
@@ -82,7 +84,6 @@ function(NotebookTest)
                   PATH=path_list_prepend:$<TARGET_FILE_DIR:ogs>
     )
     if(DEFINED NotebookTest_RESOURCE_LOCK)
-        message(STATUS "NB: ${NotebookTest_RESOURCE_LOCK}")
         set_tests_properties(
             ${TEST_NAME}
             PROPERTIES RESOURCE_LOCK ${NotebookTest_RESOURCE_LOCK}
