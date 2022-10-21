@@ -323,7 +323,7 @@
       },
       "filter": {
         "include": {
-          "label": "default"
+          "label": "default|Notebook"
         }
       },
       "execution": {
