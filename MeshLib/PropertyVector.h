@@ -11,7 +11,6 @@
 
 #include <cassert>
 #include <iterator>
-#include <ostream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -237,23 +236,6 @@ public:
         }
         return p[component];
     }
-
-#ifndef NDEBUG
-    std::ostream& print(std::ostream& os) const
-    {
-        os << "\nPropertyVector<T*> at address: " << this << ":\n";
-        os << "\tmapping (" << size() << "):\n";
-        std::copy(this->cbegin(), this->cend(),
-                  std::ostream_iterator<std::size_t>(os, " "));
-        os << "\n\tvalues (" << _values.size() << "):\n";
-        for (std::size_t k(0); k < _values.size(); k++)
-        {
-            os << "val: " << *(_values[k]) << ", address: " << _values[k]
-               << "\n";
-        }
-        return os;
-    }
-#endif
 
 protected:
     /// @brief The constructor taking meta information for the data.

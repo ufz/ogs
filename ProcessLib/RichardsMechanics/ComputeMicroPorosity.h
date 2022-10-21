@@ -11,7 +11,7 @@
 
 #include <Eigen/LU>
 #include <cassert>
-#include <ostream>
+#include <iosfwd>
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
