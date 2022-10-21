@@ -6,7 +6,7 @@ function(NotebookTest)
     endif()
     set(options DISABLED)
     set(oneValueArgs NOTEBOOKFILE RUNTIME)
-    set(multiValueArgs WRAPPER)
+    set(multiValueArgs WRAPPER RESOURCE_LOCK)
     cmake_parse_arguments(
         NotebookTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
     )
@@ -61,7 +61,10 @@ function(NotebookTest)
     add_test(
         NAME ${TEST_NAME}
         COMMAND
-            ${CMAKE_COMMAND} -DEXECUTABLE=${Python_EXECUTABLE}
+            ${CMAKE_COMMAND}
+            -E env PYVISTA_HEADLESS=1
+            ${CMAKE_COMMAND}
+            -DEXECUTABLE=${Python_EXECUTABLE}
             "-DEXECUTABLE_ARGS=${_exe_args}"
             -DWORKING_DIRECTORY=${Data_SOURCE_DIR} -DCAT_LOG=TRUE -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/OgsTestWrapper.cmake
@@ -78,6 +81,13 @@ function(NotebookTest)
     set(_prop_env ENVIRONMENT_MODIFICATION
                   PATH=path_list_prepend:$<TARGET_FILE_DIR:ogs>
     )
+    if(DEFINED NotebookTest_RESOURCE_LOCK)
+        message(STATUS "NB: ${NotebookTest_RESOURCE_LOCK}")
+        set_tests_properties(
+            ${TEST_NAME}
+            PROPERTIES RESOURCE_LOCK ${NotebookTest_RESOURCE_LOCK}
+        )
+    endif()
 
     set_tests_properties(
         ${TEST_NAME}

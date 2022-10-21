@@ -73,12 +73,11 @@ if(OGS_USE_PIP)
         set(Python_EXECUTABLE ${Python_ROOT_DIR}/bin/python)
     endif()
     if(OGS_BUILD_TESTING)
-        # Notebook requirements from versions.json
-        foreach(var ${ogs.python.notebook_requirements})
-            list(APPEND OGS_PYTHON_PACKAGES
-                 "${ogs.python.notebook_requirements_${var}}"
-            )
-        endforeach()
+        # Notebook requirements from Tests/Data
+        file(STRINGS Tests/Data/requirements.txt _requirements)
+        file(STRINGS Tests/Data/requirements-dev.txt _requirements_dev)
+        list(APPEND OGS_PYTHON_PACKAGES ${_requirements} ${_requirements_dev})
+
         list(APPEND OGS_PYTHON_PACKAGES
              "snakemake==${ogs.minimum_version.snakemake}"
         )
