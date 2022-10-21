@@ -47,7 +47,7 @@ target_link_libraries(
            $<IF:$<BOOL:${OGS_BUILD_WHEEL}>,pybind11::module,pybind11::embed>
 )
 
-if(OGS_BUILD_WHEEL)
+if(OGS_BUILD_WHEEL OR (APPLE AND OGS_USE_PETSC))
     target_link_options(
         ProcessLibBoundaryConditionAndSourceTermPython PUBLIC
         $<$<CXX_COMPILER_ID:AppleClang>:-undefined dynamic_lookup>
