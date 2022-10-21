@@ -54,9 +54,11 @@ function(NotebookTest)
 
     set(TEST_NAME "nb-${NotebookTest_DIR}/${NotebookTest_NAME_WE}")
 
-    set(_exe_args Notebooks/testrunner.py --hugo --out ${Data_BINARY_DIR}
-                  ${NotebookTest_SOURCE_DIR}/${NotebookTest_NAME}
-    )
+    set(_exe_args Notebooks/testrunner.py --hugo --out ${Data_BINARY_DIR})
+    if(DEFINED ENV{CI})
+        list(APPEND _exe_args --hugo-out ${PROJECT_BINARY_DIR}/web)
+    endif()
+    list(APPEND _exe_args ${NotebookTest_SOURCE_DIR}/${NotebookTest_NAME})
 
     add_test(
         NAME ${TEST_NAME}
