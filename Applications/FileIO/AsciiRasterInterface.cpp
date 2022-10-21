@@ -13,6 +13,7 @@
 
 #include "AsciiRasterInterface.h"
 
+#include <fstream>
 #include <tuple>
 
 #include "BaseLib/FileTools.h"

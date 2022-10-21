@@ -11,15 +11,12 @@
 #pragma once
 
 #include <vector>
+
 #ifndef NDEBUG
-#include <fstream>
 #include <string>
 #endif
 
-#include <Eigen/Core>
 #include <Eigen/Sparse>
-
-#include "EigenMapTools.h"
 
 namespace MathLib
 {
@@ -103,19 +100,11 @@ public:
     /// Copy local entries to a vector.
     /// \param u a vector for the values of local entries. It will be resized to
     /// hold the current vector data.
-    void copyValues(std::vector<double>& u) const
-    {
-        u.resize(size());
-        toVector(u) = vec_;
-    }
+    void copyValues(std::vector<double>& u) const;
 
 #ifndef NDEBUG
-    /// printout this equation for debugging
-    void write(const std::string& filename) const
-    {
-        std::ofstream os(filename);
-        os << vec_;
-    }
+    /// write this vector to a file for debugging
+    void write(const std::string& filename) const;
 #endif
 
     /// return a raw Eigen vector object

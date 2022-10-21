@@ -10,6 +10,7 @@
 
 #include <boost/algorithm/string/trim.hpp>
 #include <cctype>
+#include <fstream>
 #include <memory>
 
 #include "Applications/FileIO/FEFLOW/FEFLOWGeoInterface.h"

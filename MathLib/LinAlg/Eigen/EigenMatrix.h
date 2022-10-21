@@ -11,10 +11,9 @@
 #pragma once
 
 #include <Eigen/Sparse>
-#include <fstream>
+#include <iosfwd>
 #include <string>
 
-#include "EigenVector.h"
 #include "MathLib/LinAlg/RowColumnIndices.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
 
@@ -137,27 +136,10 @@ public:
     static constexpr bool isAssembled() { return true; }
 
     /// printout this matrix for debugging
-    void write(const std::string& filename) const
-    {
-        std::ofstream of(filename);
-        if (of)
-        {
-            write(of);
-        }
-    }
+    void write(const std::string& filename) const;
 
     /// printout this matrix for debugging
-    void write(std::ostream& os) const
-    {
-        for (int k = 0; k < mat_.outerSize(); ++k)
-        {
-            for (RawMatrixType::InnerIterator it(mat_, k); it; ++it)
-            {
-                os << it.row() << " " << it.col() << ": " << it.value() << "\n";
-            }
-        }
-        os << std::endl;
-    }
+    void write(std::ostream& os) const;
 
     RawMatrixType& getRawMatrix() { return mat_; }
     const RawMatrixType& getRawMatrix() const { return mat_; }

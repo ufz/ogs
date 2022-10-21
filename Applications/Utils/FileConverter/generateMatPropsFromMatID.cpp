@@ -18,6 +18,7 @@
 #include <mpi.h>
 #endif
 
+#include <fstream>
 #include <memory>
 
 #include "BaseLib/FileTools.h"

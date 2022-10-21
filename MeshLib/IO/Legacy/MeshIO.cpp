@@ -18,6 +18,7 @@
 
 #include "MeshIO.h"
 
+#include <fstream>
 #include <iomanip>
 #include <memory>
 #include <sstream>

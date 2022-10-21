@@ -13,6 +13,7 @@
 #include <QtXml/QDomDocument>
 #include <boost/algorithm/string/trim.hpp>
 #include <cctype>
+#include <fstream>
 #include <memory>
 
 #include "BaseLib/FileTools.h"

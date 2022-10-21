@@ -9,7 +9,7 @@
 
 #include "GocadAsciiReader.h"
 
-#include <iosfwd>
+#include <fstream>
 
 #include "Applications/FileIO/GocadIO/CoordinateSystem.h"
 #include "BaseLib/FileTools.h"

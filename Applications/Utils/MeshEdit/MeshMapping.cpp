@@ -11,6 +11,7 @@
 
 #include <tclap/CmdLine.h>
 
+#include <fstream>
 #include <memory>
 #include <string>
 

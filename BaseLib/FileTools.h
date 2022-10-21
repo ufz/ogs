@@ -14,11 +14,9 @@
 
 #pragma once
 
-#include <fstream>
+#include <iosfwd>
 #include <string>
 #include <vector>
-
-#include "Logging.h"
 
 namespace BaseLib
 {
@@ -60,10 +58,7 @@ std::string constructFormattedFileName(std::string const& format_specification,
  * \param val   value
  */
 template <typename T>
-void writeValueBinary(std::ostream& out, T const& val)
-{
-    out.write(reinterpret_cast<const char*>(&val), sizeof(T));
-}
+void writeValueBinary(std::ostream& out, T const& val);
 
 template <typename T>
 T swapEndianness(T const& v)
@@ -86,51 +81,11 @@ T swapEndianness(T const& v)
 double swapEndianness(double const& v);
 
 template <typename T>
-T readBinaryValue(std::istream& in)
-{
-    T v;
-    in.read(reinterpret_cast<char*>(&v), sizeof(T));
-    return v;
-}
+T readBinaryValue(std::istream& in);
 
 template <typename T>
-std::vector<T> readBinaryArray(std::string const& filename, std::size_t const n)
-{
-    std::ifstream in(filename.c_str());
-    if (!in)
-    {
-        ERR("readBinaryArray(): Error while reading from file '{:s}'.",
-            filename);
-        ERR("Could not open file '{:s}' for input.", filename);
-        in.close();
-        return std::vector<T>();
-    }
-
-    std::vector<T> result;
-    result.reserve(n);
-
-    for (std::size_t p = 0; in && !in.eof() && p < n; ++p)
-    {
-        result.push_back(BaseLib::readBinaryValue<T>(in));
-    }
-
-    if (result.size() == n)
-    {
-        return result;
-    }
-
-    ERR("readBinaryArray(): Error while reading from file '{:s}'.", filename);
-    ERR("Read different number of values. Expected {:d}, got {:d}.",
-        n,
-        result.size());
-
-    if (!in.eof())
-    {
-        ERR("EOF reached.\n");
-    }
-
-    return std::vector<T>();
-}
+std::vector<T> readBinaryArray(std::string const& filename,
+                               std::size_t const n);
 
 /**
  * Extracts basename from given pathname with extension.
