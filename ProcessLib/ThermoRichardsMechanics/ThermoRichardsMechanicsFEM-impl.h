@@ -16,7 +16,6 @@
 #include <Eigen/LU>
 #include <cassert>
 
-#include "ConstitutiveSetting.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/Utils/FormKelvinVectorFromThermalExpansivity.h"
@@ -148,7 +147,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // restart.
         SpaceTimeData const x_t{x_position, t, dt};
         ElasticTangentStiffnessData<DisplacementDim> C_el_data;
-        ElasticTangentStiffnessModel<DisplacementDim>{this->solid_material_}
+        ConstitutiveOriginal::ElasticTangentStiffnessModel<DisplacementDim>{
+            this->solid_material_}
             .eval(x_t, {T_ip, 0, {}}, C_el_data);
 
         auto const& eps = this->current_states_[ip].eps_data.eps;
@@ -180,8 +180,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     LocalMatrices loc_mat_current_ip;
     loc_mat_current_ip.setZero();  // only to set the right matrix sizes
 
-    ConstitutiveSetting<DisplacementDim> constitutive_setting(
-        this->solid_material_, this->process_data_);
+    ConstitutiveOriginal::ConstitutiveSetting<DisplacementDim>
+        constitutive_setting;
 
     for (unsigned ip = 0; ip < this->integration_method_.getNumberOfPoints();
          ++ip)
@@ -297,15 +297,15 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         typename ThermoRichardsMechanicsLocalAssembler<
             ShapeFunctionDisplacement, ShapeFunction,
             DisplacementDim>::IpData const& ip_data,
-        ConstitutiveSetting<DisplacementDim>& CS,
+        ConstitutiveOriginal::ConstitutiveSetting<DisplacementDim>& CS,
         MaterialPropertyLib::Medium& medium,
         typename ThermoRichardsMechanicsLocalAssembler<
             ShapeFunctionDisplacement, ShapeFunction,
             DisplacementDim>::LocalMatrices& out,
-        StatefulData<DisplacementDim>& current_state,
-        StatefulData<DisplacementDim> const& prev_state,
+        ConstitutiveOriginal::StatefulData<DisplacementDim>& current_state,
+        ConstitutiveOriginal::StatefulData<DisplacementDim> const& prev_state,
         MaterialStateData<DisplacementDim>& mat_state,
-        OutputData<DisplacementDim>& output_data) const
+        ConstitutiveOriginal::OutputData<DisplacementDim>& output_data) const
 {
     auto const& N_u = ip_data.N_u;
     auto const& N_u_op = ip_data.N_u_op;
@@ -330,10 +330,10 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     GlobalDimVectorType const grad_T_ip = dNdx * T;
 
-    ConstitutiveModels<DisplacementDim> models(this->process_data_,
-                                               this->solid_material_);
-    ConstitutiveTempData<DisplacementDim> tmp;
-    ConstitutiveData<DisplacementDim> CD;
+    ConstitutiveOriginal::ConstitutiveModels<DisplacementDim> models(
+        this->process_data_, this->solid_material_);
+    ConstitutiveOriginal::ConstitutiveTempData<DisplacementDim> tmp;
+    ConstitutiveOriginal::ConstitutiveData<DisplacementDim> CD;
 
     {
         double const T_ip = N * T;
@@ -435,9 +435,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     block_uT(out.Jac).noalias() =
         B.transpose() * CD.s_mech_data.J_uT_BT_K_N * N;
     block_up(out.Jac).noalias() =
-        B.transpose() * CD.swelling_data.J_up_BT_K_N * N +
-        CD.eq_u_data.J_up_X_BTI2N * BTI2N +
-        N_u_op.transpose() * CD.eq_u_data.J_up_HT_V_N * N;
+        B.transpose() * CD.s_mech_data.J_up_BT_K_N * N +
+        N_u_op.transpose() * CD.grav_data.J_up_HT_V_N * N;
     block_uu(out.Jac).noalias() =
         B.transpose() * CD.s_mech_data.stiffness_tensor * B;
 
@@ -475,13 +474,13 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
     KV sigma_avg = KV::Zero();
 
-    ConstitutiveSetting<DisplacementDim> constitutive_setting(
-        this->solid_material_, process_data);
+    ConstitutiveOriginal::ConstitutiveSetting<DisplacementDim>
+        constitutive_setting;
 
-    ConstitutiveModels<DisplacementDim> models(process_data,
-                                               this->solid_material_);
-    ConstitutiveTempData<DisplacementDim> tmp;
-    ConstitutiveData<DisplacementDim> CD;
+    ConstitutiveOriginal::ConstitutiveModels<DisplacementDim> models(
+        process_data, this->solid_material_);
+    ConstitutiveOriginal::ConstitutiveTempData<DisplacementDim> tmp;
+    ConstitutiveOriginal::ConstitutiveData<DisplacementDim> CD;
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
