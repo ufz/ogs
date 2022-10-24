@@ -10,7 +10,7 @@ parent = "development-workflows"
 
 ## The big picture
 
-Jupyter notebooks in `Tests/Data` are automatically executed and converted to web pages in the benchmark documentation section.
+Jupyter notebooks can be placed in `Tests/Data` along regular benchmarks. See [Notebook testing]({{< relref "test-data#notebook-testing" >}}) for details on how to setup ogs execution (especially input data path handling) inside the notebook. See also the [SimpleMechanics.ipynb](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Mechanics/Linear/SimpleMechanics.ipynb)-notebook as an example.
 
 ## Add web meta information
 
@@ -24,9 +24,9 @@ Similar to regular web documentation pages the notebook requires to have a front
   title = "SimplePETSc"
   date = "2021-11-09"
   author = "Lars Bilke"
-  notebook = "Notebooks/SimplePETSc.ipynb"
+  notebook = "Mechanics/Linear/SimpleMechanics.ipynb"
   image = "optional_gallery_image.png"
-  web_subsection = "elliptic"
+  web_subsection = "small-deformations"
   <!--eofm-->
   ```
 
@@ -36,7 +36,6 @@ Static images e.g. for the gallery image or to be used in Markdown cells have to
 
 ### Python cells
 
-- See [Notebook testing]({{< relref "test-data#notebook-testing" >}}) for details on how to setup ogs execution (especially input data path handling) inside the notebook. See also the [SimplePETSc.ipynb](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Notebooks/SimplePETSc.ipynb)-notebook as an example.
 - Do not use machine-specific or absolute paths!
 - Assume that ogs and other tools are in the `PATH`.
 
