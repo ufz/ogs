@@ -8,7 +8,7 @@ test notebooks via wheel:
     - pip install -r requirements.txt
     - pip install -r requirements-dev.txt
     - pip install -r requirements-ogs.txt
-    - find . -type f -iname '*.ipynb' | grep -vP '\.ipynb_checkpoints|\.ci-skip.ipynb$|_out|.venv' | PYVISTA_HEADLESS=1 xargs python Notebooks/testrunner.py --out _out
+    - find . -type f -iname '*.ipynb' | grep -vP '\.ipynb_checkpoints|\.ci-skip.ipynb$|_out|.venv|PhaseField' | PYVISTA_HEADLESS=1 xargs python Notebooks/testrunner.py --out _out
   cache:
     paths:
       - Tests/Data/.venv
