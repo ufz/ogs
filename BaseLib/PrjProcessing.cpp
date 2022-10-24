@@ -17,6 +17,7 @@
 #include <filesystem>
 #include <fstream>
 #include <regex>
+#include <sstream>
 
 #include "DisableFPE.h"
 #include "Error.h"

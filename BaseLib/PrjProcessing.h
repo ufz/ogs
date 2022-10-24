@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <sstream>
+#include <iosfwd>
 #include <vector>
 
 namespace BaseLib

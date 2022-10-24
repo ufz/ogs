@@ -10,12 +10,10 @@
 #pragma once
 
 #include <boost/math/constants/constants.hpp>
+
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 #include "NumLib/ODESolver/ODESystem.h"
-
-// debug
-//#include <iostream>
 
 template <class Ode>
 class ODETraits;

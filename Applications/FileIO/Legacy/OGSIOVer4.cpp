@@ -14,6 +14,7 @@
 
 #include "OGSIOVer4.h"
 
+#include <fstream>
 #include <iomanip>
 #include <limits>
 #include <sstream>

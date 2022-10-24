@@ -17,6 +17,7 @@
 #endif
 
 #include <algorithm>
+#include <fstream>
 #include <memory>
 #include <string>
 #include <vector>

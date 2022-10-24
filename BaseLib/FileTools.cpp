@@ -16,6 +16,7 @@
 
 #include <boost/algorithm/string.hpp>
 #include <filesystem>
+#include <fstream>
 #include <typeindex>
 #include <unordered_map>
 
@@ -259,4 +260,69 @@ void removeFiles(std::vector<std::string> const& files)
         removeFile(file);
     }
 }
+
+template <typename T>
+T readBinaryValue(std::istream& in)
+{
+    T v;
+    in.read(reinterpret_cast<char*>(&v), sizeof(T));
+    return v;
+}
+
+// explicit template instantiation
+template float readBinaryValue<float>(std::istream&);
+template double readBinaryValue<double>(std::istream&);
+
+template <typename T>
+std::vector<T> readBinaryArray(std::string const& filename, std::size_t const n)
+{
+    std::ifstream in(filename.c_str());
+    if (!in)
+    {
+        ERR("readBinaryArray(): Error while reading from file '{:s}'.",
+            filename);
+        ERR("Could not open file '{:s}' for input.", filename);
+        in.close();
+        return std::vector<T>();
+    }
+
+    std::vector<T> result;
+    result.reserve(n);
+
+    for (std::size_t p = 0; in && !in.eof() && p < n; ++p)
+    {
+        result.push_back(BaseLib::readBinaryValue<T>(in));
+    }
+
+    if (result.size() == n)
+    {
+        return result;
+    }
+
+    ERR("readBinaryArray(): Error while reading from file '{:s}'.", filename);
+    ERR("Read different number of values. Expected {:d}, got {:d}.",
+        n,
+        result.size());
+
+    if (!in.eof())
+    {
+        ERR("EOF reached.\n");
+    }
+
+    return std::vector<T>();
+}
+
+// explicit template instantiation
+template std::vector<float> readBinaryArray<float>(std::string const&,
+                                                   std::size_t const);
+
+template <typename T>
+void writeValueBinary(std::ostream& out, T const& val)
+{
+    out.write(reinterpret_cast<const char*>(&val), sizeof(T));
+}
+
+// explicit template instantiation
+template void writeValueBinary<std::size_t>(std::ostream&, std::size_t const&);
+
 }  // end namespace BaseLib

@@ -10,9 +10,6 @@
  */
 #pragma once
 
-#include <fstream>
-#include <iostream>
-
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/SigmoidFunction.h"
 namespace MaterialPropertyLib

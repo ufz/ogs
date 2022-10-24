@@ -14,7 +14,6 @@
 #include "CsvInterface.h"
 
 #include <algorithm>
-#include <fstream>
 #include <numeric>
 
 #include "GeoLib/Point.h"

@@ -19,7 +19,7 @@
 #pragma once
 
 #ifndef NDEBUG
-#include <ostream>
+#include <iosfwd>
 #endif
 
 #include "BaseLib/Error.h"

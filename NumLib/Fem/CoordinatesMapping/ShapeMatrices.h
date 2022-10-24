@@ -13,7 +13,7 @@
 #pragma once
 
 #include <Eigen/Core>
-#include <ostream>
+#include <iosfwd>
 
 namespace NumLib
 {
