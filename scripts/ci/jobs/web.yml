@@ -4,7 +4,7 @@ check web links:
   tags: [docker]
   extends:
     - .rules-master-manual
-  needs: [ci_images, "build linux arch"]
+  needs: [ci_images, "build linux arch", "build linux petsc"]
   image: $WEB_IMAGE
   script:
     # Copy notebook pages
@@ -32,7 +32,7 @@ preview web site:
   stage: build
   tags: [docker]
   image: $WEB_IMAGE
-  needs: [ci_images, "build linux arch"]
+  needs: [ci_images, "build linux arch", "build linux petsc"]
   variables:
     HUGO_ENVIRONMENT: "staging"
   script:
@@ -67,6 +67,7 @@ deploy web site:
   needs:
     - job: ci_images
     - job: "build linux arch"
+    - job: "build linux petsc"
     - job: release
       optional: true
   rules:
