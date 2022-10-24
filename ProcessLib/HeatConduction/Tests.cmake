@@ -2,6 +2,8 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/T/1D_freezing_column_Stefan/Stefan_problem.prj RUNTIME 2)
     OgsTest(PROJECTFILE Parabolic/T/1D_freezing_column_Stefan/Stefan_problem_homogen.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/T/2D_freezing_disk/circle_disk.prj RUNTIME 2)
+    OgsTest(PROJECTFILE Parabolic/T/2D_Robin/square_1e4_robin.prj RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/T/2D_Robin/square_1e4_robin_newton.xml RUNTIME 1)
 endif()
 
 AddTest(
@@ -128,25 +130,31 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
 )
 # SQUARE 1x1 HEAT CONDUCTION TEST -- AXIALLY SYMMETRIC
-# test results are compared to 3D simulation on a wedge-shaped domain
+# The results were compared to an analytical solution (method of manufactured
+# solutions). The vtkdiff comparison is against the numerical solution.
 AddTest(
-        NAME 2D_HeatConduction_axi
-        PATH Parabolic/T/2D_axially_symmetric
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS square_1e2_axi.prj
-        TESTER vtkdiff
-        DIFF_DATA
-        wedge_1e2_axi_ang_0.02_t_2s_extracted_surface.vtu square_1e2_axi_ts_2_t_2.000000.vtu temperature temperature 1.7e-5 1e-5
-        wedge_1e2_axi_ang_0.02_t_2s_extracted_surface.vtu square_1e2_axi_ts_2_t_2.000000.vtu heat_flux heat_flux 1.7e-5 1e-5
+    NAME 2D_HeatConduction_axi
+    PATH Parabolic/T/2D_axially_symmetric
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_1e2_axi.prj
+    TESTER vtkdiff
+    DIFF_DATA
+    square_1e2_axi_ts_10_t_1.000000.vtu square_1e2_axi_ts_10_t_1.000000.vtu temperature temperature 2e-15 0
+    square_1e2_axi_ts_10_t_1.000000.vtu square_1e2_axi_ts_10_t_1.000000.vtu heat_flux heat_flux 1e-14 0
     REQUIREMENTS NOT OGS_USE_MPI
 )
-# # WEDGE 1x1 HEATCONDUCTION TEST -- computes reference results for the above test
-# AddTest(
-#      NAME 2D_HeatConduction_wedge
-#      PATH Parabolic/T/2D_axially_symmetric
-#      EXECUTABLE ogs
-#      EXECUTABLE_ARGS wedge_1e2_axi_ang_0.02.prj
-# )
+# WEDGE 1x1 HEAT CONDUCTION TEST -- same setup as above test but in cartesian coordinates
+AddTest(
+    NAME 2D_HeatConduction_wedge
+    PATH Parabolic/T/2D_axially_symmetric
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS wedge_1e2_axi_ang_0.02.prj
+    TESTER vtkdiff
+    DIFF_DATA
+    wedge_ang_0.02_ts_10_t_1.000000.vtu wedge_ang_0.02_ts_10_t_1.000000.vtu temperature temperature 2e-14 0
+    wedge_ang_0.02_ts_10_t_1.000000.vtu wedge_ang_0.02_ts_10_t_1.000000.vtu heat_flux heat_flux 1e-13 0
+    REQUIREMENTS NOT OGS_USE_MPI
+)
 
 # The 25 BHE array benchmark
 # test results are compared to 2D simulation result
