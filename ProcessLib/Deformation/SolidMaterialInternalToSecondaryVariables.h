@@ -13,24 +13,21 @@
 #include <map>
 #include <memory>
 
-#include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace ProcessLib::Deformation
 {
-template <typename LocalAssemblerInterface,
-          typename AddSecondaryVariableCallback, int DisplacementDim>
+template <typename LocalAssemblerInterface, typename SolidMaterial,
+          typename AddSecondaryVariableCallback>
 void solidMaterialInternalToSecondaryVariables(
-    std::map<int, std::unique_ptr<MaterialLib::Solids::MechanicsBase<
-                      DisplacementDim>>> const& solid_materials,
+    std::map<int, std::unique_ptr<SolidMaterial>> const& solid_materials,
     AddSecondaryVariableCallback const& add_secondary_variable)
 {
     // Collect the internal variables for all solid materials.
-    std::vector<typename MaterialLib::Solids::MechanicsBase<
-        DisplacementDim>::InternalVariable>
-        internal_variables;
+    std::vector<typename SolidMaterial::InternalVariable> internal_variables;
     for (auto const& material_id__solid_material : solid_materials)
     {
         auto const variables =
@@ -84,10 +81,9 @@ void solidMaterialInternalToSecondaryVariables(
     }
 }
 
-template <typename LocalAssemblerInterface, int DisplacementDim>
+template <typename LocalAssemblerInterface, typename SolidMaterial>
 void solidMaterialInternalVariablesToIntegrationPointWriter(
-    std::map<int, std::unique_ptr<MaterialLib::Solids::MechanicsBase<
-                      DisplacementDim>>> const& solid_materials,
+    std::map<int, std::unique_ptr<SolidMaterial>> const& solid_materials,
     std::vector<std::unique_ptr<LocalAssemblerInterface>> const&
         local_assemblers,
     std::vector<std::unique_ptr<MeshLib::IntegrationPointWriter>>&
@@ -95,9 +91,7 @@ void solidMaterialInternalVariablesToIntegrationPointWriter(
     int const integration_order)
 {
     // Collect the internal variables for all solid materials.
-    std::vector<typename MaterialLib::Solids::MechanicsBase<
-        DisplacementDim>::InternalVariable>
-        internal_variables;
+    std::vector<typename SolidMaterial::InternalVariable> internal_variables;
     for (auto const& solid_material : solid_materials)
     {
         auto const ivs = solid_material.second->getInternalVariables();
