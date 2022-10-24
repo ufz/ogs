@@ -4,9 +4,11 @@ check web links:
   tags: [docker]
   extends:
     - .rules-master-manual
-  needs: [ci_images, "build jupyter"]
+  needs: [ci_images, "build linux arch"]
   image: $WEB_IMAGE
   script:
+    # Copy notebook pages
+    - cp -rl build/*/web/content web/
     - cd web
     - hugo server &
     - sleep 20
@@ -30,12 +32,14 @@ preview web site:
   stage: build
   tags: [docker]
   image: $WEB_IMAGE
-  needs: [ci_images, "build jupyter"]
+  needs: [ci_images, "build linux arch"]
   variables:
     HUGO_ENVIRONMENT: "staging"
   script:
     # HACK to easier linking to the generated pages
     - echo '<meta http-equiv="REFRESH" content="0;URL=web/public/index.html">' >> WebPreview.html
+    # Copy notebook pages
+    - cp -rl build/*/web/content web/
     - cd web
     # Symlink for prj link checks (data-link shortcode)
     - ln -s ../Tests .
@@ -62,7 +66,7 @@ deploy web site:
   image: $WEB_IMAGE
   needs:
     - job: ci_images
-    - job: "build jupyter"
+    - job: "build linux arch"
     - job: release
       optional: true
   rules:
@@ -76,6 +80,8 @@ deploy web site:
       when: manual
       allow_failure: true
   script:
+    # Copy notebook pages
+    - cp -rl build/*/web/content web/
     - cd web
     - yarn
     - yarn build
