@@ -15,6 +15,8 @@
     - ([ "${CONAN_USER_HOME}" == "${CI_PROJECT_DIR}/.conan" ]) && conan remove --system-reqs '*'
     - ([[ $BUILD_CTEST_LARGE_ON_MASTER && "${CI_COMMIT_BRANCH}" == "master" && "${CMAKE_ARGS}" == *"USE_PYTHON=ON"* ]]) && export BUILD_CTEST_LARGE=true
     - cmake --preset=$CMAKE_PRESET -Wno-dev $CMAKE_ARGS
+    # Activate .venv
+    - test -f $build_dir_full/.venv/bin/activate && source $build_dir_full/.venv/bin/activate
     - |
       if [[ -z "$TARGETS" ]]; then
 
