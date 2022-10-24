@@ -10,7 +10,6 @@ set(_processes_list
     LiquidFlow
     LIE
     ThermoRichardsMechanics
-    PhaseField
     RichardsComponentTransport
     RichardsFlow
     RichardsMechanics
@@ -27,6 +26,9 @@ set(_processes_list
     TwoPhaseFlowWithPP
     TwoPhaseFlowWithPrho
 )
+if(OGS_USE_PETSC)
+    set(_processes_list ${_processes_list} PhaseField)
+endif()
 
 foreach(process ${_processes_list})
     option(OGS_BUILD_PROCESS_${process} "Build process ${process}" ON)
