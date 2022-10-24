@@ -294,7 +294,7 @@
         <vtkdiff>
             <file>out_bar_coarse_ED_ts_300_t_0.300000.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>5e-8</absolute_tolerance>
+            <absolute_tolerance>5.1e-8</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
