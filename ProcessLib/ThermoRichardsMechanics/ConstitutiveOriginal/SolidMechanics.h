@@ -10,14 +10,14 @@
 
 #pragma once
 
-#include "Biot.h"
-#include "Bishops.h"
-#include "MaterialLib/SolidModels/MechanicsBase.h"
-#include "MaterialState.h"
-#include "SolidThermalExpansion.h"
-#include "Swelling.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Biot.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Bishops.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MaterialState.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidThermalExpansion.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Swelling.h"
+#include "TraitsBase.h"
 
-namespace ProcessLib::ThermoRichardsMechanics
+namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
 {
 template <int DisplacementDim>
 struct SolidMechanicsDataStateful
@@ -42,6 +42,7 @@ struct SolidMechanicsDataStateless
     KelvinVector<DisplacementDim> sigma_total = KVnan<DisplacementDim>();
     KelvinMatrix<DisplacementDim> stiffness_tensor = KMnan<DisplacementDim>();
     KelvinVector<DisplacementDim> J_uT_BT_K_N = KVnan<DisplacementDim>();
+    KelvinVector<DisplacementDim> J_up_BT_K_N = KVnan<DisplacementDim>();
     double equivalent_plastic_strain = nan;
 };
 
@@ -49,8 +50,7 @@ template <int DisplacementDim>
 struct SolidMechanicsModel
 {
     explicit SolidMechanicsModel(
-        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
-            solid_material)
+        SolidConstitutiveRelation<DisplacementDim> const& solid_material)
         : solid_material_(solid_material)
     {
     }
@@ -63,6 +63,7 @@ struct SolidMechanicsModel
         CapillaryPressureData<DisplacementDim> const& p_cap_data,
         BiotData const& biot_data,
         BishopsData const& bishops_data,
+        SaturationDataDeriv const& dS_L_data,
         StrainData<DisplacementDim> const& eps_data,
         StrainData<DisplacementDim> const& eps_prev_data,
         MaterialStateData<DisplacementDim>& mat_state,
@@ -71,9 +72,9 @@ struct SolidMechanicsModel
         SolidMechanicsDataStateless<DisplacementDim>& out) const;
 
 private:
-    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material_;
+    SolidConstitutiveRelation<DisplacementDim> const& solid_material_;
 };
 
 extern template struct SolidMechanicsModel<2>;
 extern template struct SolidMechanicsModel<3>;
-}  // namespace ProcessLib::ThermoRichardsMechanics
+}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal

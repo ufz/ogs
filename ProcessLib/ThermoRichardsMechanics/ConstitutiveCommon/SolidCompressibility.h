@@ -11,7 +11,7 @@
 #pragma once
 
 #include "Biot.h"
-#include "ElasticTangentStiffness.h"
+#include "ElasticTangentStiffnessData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -20,12 +20,10 @@ struct SolidCompressibilityData
     double beta_SR;
 };
 
-template <int DisplacementDim>
+template <int DisplacementDim, typename SolidMaterial>
 struct SolidCompressibilityModel
 {
-    explicit SolidCompressibilityModel(
-        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
-            solid_material)
+    explicit SolidCompressibilityModel(SolidMaterial const& solid_material)
         : solid_material_(solid_material)
     {
     }
@@ -33,12 +31,14 @@ struct SolidCompressibilityModel
     void eval(SpaceTimeData const& x_t,
               BiotData const& biot_data,
               ElasticTangentStiffnessData<DisplacementDim> const& C_el_data,
-              SolidCompressibilityData& out) const;
+              SolidCompressibilityData& out) const
+    {
+        out.beta_SR =
+            (1 - biot_data.alpha) /
+            solid_material_.getBulkModulus(x_t.t, x_t.x, &C_el_data.C_el);
+    }
 
 private:
-    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material_;
+    SolidMaterial const& solid_material_;
 };
-
-extern template struct SolidCompressibilityModel<2>;
-extern template struct SolidCompressibilityModel<3>;
 }  // namespace ProcessLib::ThermoRichardsMechanics

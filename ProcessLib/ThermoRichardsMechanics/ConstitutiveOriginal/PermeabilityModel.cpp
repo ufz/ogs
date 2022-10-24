@@ -8,11 +8,11 @@
  *
  */
 
-#include "Permeability.h"
+#include "PermeabilityModel.h"
 
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 
-namespace ProcessLib::ThermoRichardsMechanics
+namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
 {
 template <int DisplacementDim>
 void PermeabilityModel<DisplacementDim>::eval(
@@ -106,4 +106,4 @@ void PermeabilityModel<DisplacementDim>::eval(
 
 template struct PermeabilityModel<2>;
 template struct PermeabilityModel<3>;
-}  // namespace ProcessLib::ThermoRichardsMechanics
+}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal

@@ -10,7 +10,7 @@
 
 #include "ConstitutiveSetting.h"
 
-namespace ProcessLib::ThermoRichardsMechanics
+namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
 {
 template <int DisplacementDim>
 void ConstitutiveSetting<DisplacementDim>::eval(
@@ -43,7 +43,7 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     auto& darcy_data = out.darcy_data;
     auto& f_therm_exp_data = tmp.f_therm_exp_data;
 
-    auto& swelling_data = cd.swelling_data;
+    auto& swelling_data = tmp.swelling_data;
     auto& s_mech_data = cd.s_mech_data;
     auto& grav_data = cd.grav_data;
     auto& heat_data = cd.heat_data;
@@ -100,7 +100,7 @@ void ConstitutiveSetting<DisplacementDim>::eval(
 
     models.s_mech_model.eval(
         x_t, s_therm_exp_data, swelling_data, T_data, p_cap_data, biot_data,
-        bishops_data, state.eps_data,
+        bishops_data, dS_L_data, state.eps_data,
         prev_state.eps_data /* TODO why is eps stateful? */, mat_state,
         prev_state.s_mech_data, state.s_mech_data, s_mech_data);
 
@@ -118,10 +118,7 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     models.rho_S_model.eval(x_t, media_data, poro_data, T_data, rho_S_data);
 
     models.grav_model.eval(poro_data, rho_S_data, rho_L_data, S_L_data,
-                           grav_data);
-
-    models.eq_u_model.eval(p_cap_data, dS_L_data, biot_data, bishops_data,
-                           rho_L_data, poro_data, cd.eq_u_data);
+                           dS_L_data, grav_data);
 
     models.mu_L_model.eval(x_t, media_data, T_data, mu_L_data);
 
@@ -166,4 +163,4 @@ void ConstitutiveSetting<DisplacementDim>::eval(
 template struct ConstitutiveSetting<2>;
 template struct ConstitutiveSetting<3>;
 
-}  // namespace ProcessLib::ThermoRichardsMechanics
+}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal

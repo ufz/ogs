@@ -14,10 +14,9 @@ namespace ProcessLib::ThermoRichardsMechanics
 {
 template <int DisplacementDim>
 void GravityModel<DisplacementDim>::eval(
-    PorosityData const& poro_data,
-    SolidDensityData const& rho_S_data,
-    LiquidDensityData const& rho_L_data,
-    SaturationData const& S_L_data,
+    PorosityData const& poro_data, SolidDensityData const& rho_S_data,
+    LiquidDensityData const& rho_L_data, SaturationData const& S_L_data,
+    SaturationDataDeriv const& dS_L_data,
     GravityData<DisplacementDim>& out) const
 {
     auto const rho_SR = rho_S_data.rho_SR;
@@ -28,6 +27,11 @@ void GravityModel<DisplacementDim>::eval(
 
     double const rho = rho_SR * (1 - phi) + S_L * phi * rho_LR;
     out.volumetric_body_force = rho * b;
+
+    // There is no minus in the Jacobian block, because volumetric_body_force is
+    // subtracted from the residual vector.
+    out.J_up_HT_V_N =
+        poro_data.phi * rho_L_data.rho_LR * dS_L_data.dS_L_dp_cap * b;
 }
 
 template struct GravityModel<2>;

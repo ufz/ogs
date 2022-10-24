@@ -10,20 +10,13 @@
 
 #pragma once
 
-#include "LiquidViscosity.h"
-#include "Porosity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidViscosity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/PermeabilityData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
 #include "SolidMechanics.h"
 
-namespace ProcessLib::ThermoRichardsMechanics
+namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
 {
-template <int DisplacementDim>
-struct PermeabilityData
-{
-    double k_rel;
-    double dk_rel_dS_L;
-    GlobalDimMatrix<DisplacementDim> Ki_over_mu;
-};
-
 template <int DisplacementDim>
 struct PermeabilityModel
 {
@@ -46,4 +39,4 @@ struct PermeabilityModel
 
 extern template struct PermeabilityModel<2>;
 extern template struct PermeabilityModel<3>;
-}  // namespace ProcessLib::ThermoRichardsMechanics
+}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal

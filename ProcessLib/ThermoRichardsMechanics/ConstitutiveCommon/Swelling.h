@@ -10,8 +10,7 @@
 
 #pragma once
 
-#include "ElasticTangentStiffness.h"
-#include "MathLib/KelvinVector.h"
+#include "ElasticTangentStiffnessData.h"
 #include "Saturation.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
