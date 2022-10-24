@@ -85,14 +85,14 @@
     </linear_solvers>
     <parameters>
         <parameter>
-            <name>T0</name>
-            <type>Constant</type>
-            <value>0</value>
+            <name>solution</name>
+            <type>Function</type>
+            <expression>sin(2*pi*z) * (x^2 + y^2)</expression>
         </parameter>
         <parameter>
-            <name>heat_flux_bottom</name>
-            <type>Constant</type>
-            <value>1</value>
+            <name>dsolution_dy</name>
+            <type>Function</type>
+            <expression>-2*pi * cos(2*pi*z) * (x^2 + y^2)</expression>
         </parameter>
         <parameter>
             <name>heat_transfer_coefficient</name>
@@ -101,8 +101,13 @@
         </parameter>
         <parameter>
             <name>ambient_temperature</name>
-            <type>Constant</type>
-            <value>0</value>
+            <type>Function</type>
+            <expression>3 * sin(2*pi*z)</expression>
+        </parameter>
+        <parameter>
+            <name>source_term</name>
+            <type>Function</type>
+            <expression>4 * sin(2*pi*z) * (pi^2 * (x^2 + y^2) - 1)</expression>
         </parameter>
     </parameters>
     <process_variables>
@@ -110,13 +115,13 @@
             <name>temperature</name>
             <components>1</components>
             <order>1</order>
-            <initial_condition>T0</initial_condition>
+            <initial_condition>solution</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>bottom</geometry>
                     <type>Neumann</type>
-                    <parameter>heat_flux_bottom</parameter>
+                    <parameter>dsolution_dy</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>geometry</geometrical_set>
@@ -132,6 +137,13 @@
                     <u_0>ambient_temperature</u_0>
                 </boundary_condition>
             </boundary_conditions>
+            <source_terms>
+                <source_term>
+                    <mesh>wedge-1e4-ang-0.02</mesh>
+                    <type>Volumetric</type>
+                    <parameter>source_term</parameter>
+                </source_term>
+            </source_terms>
         </process_variable>
     </process_variables>
 </OpenGeoSysProject>

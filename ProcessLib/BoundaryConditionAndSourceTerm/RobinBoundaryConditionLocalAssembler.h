@@ -47,15 +47,22 @@ public:
     {
     }
 
-    // TODO also implement derivative for Jacobian in Newton scheme.
     void assemble(std::size_t const id,
                   NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
-                  double const t, std::vector<GlobalVector*> const& /*x*/,
-                  int const /*process_id*/, GlobalMatrix& K, GlobalVector& b,
-                  GlobalMatrix* /*Jac*/) override
+                  double const t, std::vector<GlobalVector*> const& xs,
+                  int const process_id, GlobalMatrix& K, GlobalVector& b,
+                  GlobalMatrix* Jac) override
     {
         _local_K.setZero();
         _local_rhs.setZero();
+
+        auto& x = *xs[process_id];
+
+        auto const indices = NumLib::getIndices(id, dof_table_boundary);
+        auto const local_x = x.get(indices);
+        auto const u =
+            MathLib::toVector<Eigen::Matrix<double, ShapeFunction::NPOINTS, 1>>(
+                local_x, ShapeFunction::NPOINTS);
 
         unsigned const n_integration_points =
             Base::_integration_method.getNumberOfPoints();
@@ -86,19 +93,35 @@ public:
                 integral_measure = (*_data.integral_measure)(t, position)[0];
             }
 
-            // flux = alpha * ( u_0 - u )
-            // adding a alpha term to the diagonal of the stiffness matrix
-            // and a alpha * u_0 term to the rhs vector
-            _local_K.diagonal().noalias() +=
-                N * alpha.dot(N) * w * integral_measure;
-            _local_rhs.noalias() +=
-                N * alpha.dot(N) * u_0.dot(N) * w * integral_measure;
+            double const a = alpha.dot(N) * w * integral_measure;
+
+            // The local K matrix is used for both, the Newton and Picard
+            // methods.
+            _local_K.noalias() += N.transpose() * N * a;
+
+            if (Jac != nullptr)
+            {
+                _local_rhs.noalias() -= N.transpose() * (u - u_0).dot(N) * a;
+            }
+            else
+            {
+                _local_rhs.noalias() += N.transpose() * (u_0.dot(N) * a);
+            }
         }
 
-        auto const indices = NumLib::getIndices(id, dof_table_boundary);
-        K.add(NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices, indices),
-              _local_K);
         b.add(indices, _local_rhs);
+        if (Jac != nullptr)
+        {
+            Jac->add(NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices,
+                                                                     indices),
+                     _local_K);
+        }
+        else
+        {
+            K.add(NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices,
+                                                                  indices),
+                  _local_K);
+        }
     }
 
 private:
