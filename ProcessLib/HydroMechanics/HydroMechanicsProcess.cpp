@@ -299,8 +299,8 @@ void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
-        b);
+        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, &M, &K,
+        &b);
 }
 
 template <int DisplacementDim>
@@ -339,7 +339,7 @@ void HydroMechanicsProcess<DisplacementDim>::
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
-        process_id, M, K, b, Jac);
+        process_id, &M, &K, &b, &Jac);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {

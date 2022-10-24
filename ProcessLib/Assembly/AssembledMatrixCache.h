@@ -33,7 +33,7 @@ struct AssembledMatrixCache final
     void assemble(
         const double t, double const dt, std::vector<GlobalVector*> const& x,
         std::vector<GlobalVector*> const& x_prev, int const process_id,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+        GlobalMatrix* const M, GlobalMatrix* const K, GlobalVector* const b,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
         VectorMatrixAssembler& global_assembler,
         VectorOfLocalAssemblers const& local_assemblers,
@@ -53,7 +53,7 @@ template <typename VectorOfLocalAssemblers>
 void AssembledMatrixCache::assemble(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,
-    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+    GlobalMatrix* const M, GlobalMatrix* const K, GlobalVector* const b,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
     VectorMatrixAssembler& global_assembler,
     VectorOfLocalAssemblers const& local_assemblers,
@@ -70,9 +70,9 @@ void AssembledMatrixCache::assemble(
             local_assemblers, active_element_ids, dof_tables, t, dt, x, x_prev,
             process_id, M, K, b);
 
-        MathLib::finalizeMatrixAssembly(M);
-        MathLib::finalizeMatrixAssembly(K);
-        MathLib::finalizeVectorAssembly(b);
+        MathLib::finalizeMatrixAssembly(*M);
+        MathLib::finalizeMatrixAssembly(*K);
+        MathLib::finalizeVectorAssembly(*b);
 
         INFO("[time] Calling local assemblers took {:g} s", time_asm.elapsed());
 
@@ -83,9 +83,9 @@ void AssembledMatrixCache::assemble(
             BaseLib::RunTime time_save;
             time_save.start();
 
-            K_ = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(K);
-            M_ = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(M);
-            b_ = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(b);
+            K_ = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(*K);
+            M_ = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(*M);
+            b_ = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(*b);
 
             INFO("[time] Saving global K, M, b took {:g} s",
                  time_save.elapsed());
@@ -98,9 +98,9 @@ void AssembledMatrixCache::assemble(
         BaseLib::RunTime time_restore;
         time_restore.start();
 
-        MathLib::LinAlg::copy(*K_, K);
-        MathLib::LinAlg::copy(*M_, M);
-        MathLib::LinAlg::copy(*b_, b);
+        MathLib::LinAlg::copy(*K_, *K);
+        MathLib::LinAlg::copy(*M_, *M);
+        MathLib::LinAlg::copy(*b_, *b);
 
         INFO("[time] Restoring global K, M, b took {:g} s",
              time_restore.elapsed());

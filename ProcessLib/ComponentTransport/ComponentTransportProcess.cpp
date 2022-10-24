@@ -256,8 +256,8 @@ void ComponentTransportProcess::assembleConcreteProcess(
                         [&]() { return _local_to_global_index_map.get(); });
     }
 
-    _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, M, K, b, dof_tables,
-                            _global_assembler, _local_assemblers,
+    _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, &M, &K, &b,
+                            dof_tables, _global_assembler, _local_assemblers,
                             getActiveElementIDs());
 
     // TODO (naumov) What about temperature? A test with FCT would reveal any
@@ -296,7 +296,7 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
-        process_id, M, K, b, Jac);
+        process_id, &M, &K, &b, &Jac);
 
     // b is the negated residumm used in the Newton's method.
     // Here negating b is to recover the primitive residuum.

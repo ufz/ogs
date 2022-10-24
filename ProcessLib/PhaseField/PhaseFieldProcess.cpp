@@ -210,8 +210,8 @@ void PhaseFieldProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id, M, K,
-        b);
+        getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id, &M, &K,
+        &b);
 }
 
 template <int DisplacementDim>
@@ -242,7 +242,7 @@ void PhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
-        process_id, M, K, b, Jac);
+        process_id, &M, &K, &b, &Jac);
 
     if (process_id == 0)
     {

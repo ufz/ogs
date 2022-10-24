@@ -189,8 +189,8 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
-        b);
+        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, &M, &K,
+        &b);
 }
 
 template <int DisplacementDim>
@@ -224,7 +224,7 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x, x_prev,
-        process_id, M, K, b, Jac);
+        process_id, &M, &K, &b, &Jac);
 
     b.copyValues(*_nodal_forces);
     std::transform(_nodal_forces->begin(), _nodal_forces->end(),
