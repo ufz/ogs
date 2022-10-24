@@ -136,5 +136,5 @@ AddTest(
 )
 
 if(OGS_USE_PETSC)
-    NotebookTest(NOTEBOOKFILE PhaseField/surfing_jupyter_notebook/surfing_pyvista.ipynb RUNTIME 15 RESOURCE_LOCK PYVISTA)
+    NotebookTest(NOTEBOOKFILE PhaseField/surfing_jupyter_notebook/surfing_pyvista.ipynb RUNTIME 25 RESOURCE_LOCK PYVISTA)
 endif()
