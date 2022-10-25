@@ -295,41 +295,7 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
 {
     _process_data.crack_volume = 0.0;
 
-    if (!isPhaseFieldProcess(process_id))
-    {
-        std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-            dof_tables;
-
-        dof_tables.emplace_back(*_local_to_global_index_map);
-        dof_tables.emplace_back(*_local_to_global_index_map_single_component);
-
-        DBUG("PostNonLinearSolver crack volume computation.");
-
-        ProcessLib::ProcessVariable const& pv =
-            getProcessVariables(process_id)[0];
-        GlobalExecutor::executeSelectedMemberOnDereferenced(
-            &LocalAssemblerInterface::computeCrackIntegral, _local_assemblers,
-            pv.getActiveElementIDs(), dof_tables, x, t,
-            _process_data.crack_volume, _coupled_solutions);
-
-        INFO("Integral of crack: {:g}", _process_data.crack_volume);
-
-        if (_process_data.hydro_crack)
-        {
-            _process_data.pressure_old = _process_data.pressure;
-            _process_data.pressure =
-                _process_data.injected_volume / _process_data.crack_volume;
-            _process_data.pressure_error =
-                std::abs(_process_data.pressure_old - _process_data.pressure) /
-                _process_data.pressure;
-            INFO("Internal pressure: {:g} and Pressure error: {:.4e}",
-                 _process_data.pressure, _process_data.pressure_error);
-            auto& u = *_coupled_solutions->coupled_xs[0];
-            MathLib::LinAlg::scale(const_cast<GlobalVector&>(u),
-                                   _process_data.pressure);
-        }
-    }
-    else
+    if (isPhaseFieldProcess(process_id))
     {
         if (_process_data.hydro_crack)
         {
@@ -337,6 +303,44 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
             MathLib::LinAlg::scale(const_cast<GlobalVector&>(u),
                                    1 / _process_data.pressure);
         }
+        return;
+    }
+
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+        dof_tables;
+
+    dof_tables.emplace_back(*_local_to_global_index_map);
+    dof_tables.emplace_back(*_local_to_global_index_map_single_component);
+
+    DBUG("PostNonLinearSolver crack volume computation.");
+
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
+        &LocalAssemblerInterface::computeCrackIntegral, _local_assemblers,
+        pv.getActiveElementIDs(), dof_tables, x, t, _process_data.crack_volume,
+        _coupled_solutions);
+
+#ifdef USE_PETSC
+    double const crack_volume = _process_data.crack_volume;
+    MPI_Allreduce(&crack_volume, &_process_data.crack_volume, 1, MPI_DOUBLE,
+                  MPI_SUM, PETSC_COMM_WORLD);
+#endif
+
+    INFO("Integral of crack: {:g}", _process_data.crack_volume);
+
+    if (_process_data.hydro_crack)
+    {
+        _process_data.pressure_old = _process_data.pressure;
+        _process_data.pressure =
+            _process_data.injected_volume / _process_data.crack_volume;
+        _process_data.pressure_error =
+            std::abs(_process_data.pressure_old - _process_data.pressure) /
+            _process_data.pressure;
+        INFO("Internal pressure: {:g} and Pressure error: {:.4e}",
+             _process_data.pressure, _process_data.pressure_error);
+        auto& u = *_coupled_solutions->coupled_xs[0];
+        MathLib::LinAlg::scale(const_cast<GlobalVector&>(u),
+                               _process_data.pressure);
     }
 }
 
