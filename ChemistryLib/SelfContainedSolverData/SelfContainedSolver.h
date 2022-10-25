@@ -40,7 +40,7 @@ public:
         return &_stoichiometric_matrix;
     }
 
-    double getKineticPrefactor(unsigned int reaction_id) const override
+    double getKineticPrefactor(std::size_t reaction_id) const override
     {
         return _chemical_reactions[reaction_id]->getKineticPrefactor();
     }

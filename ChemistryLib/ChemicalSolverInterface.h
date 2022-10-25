@@ -87,7 +87,7 @@ public:
     }
 
     virtual double getKineticPrefactor(
-        [[maybe_unused]] unsigned int reaction_id) const
+        [[maybe_unused]] std::size_t reaction_id) const
     {
         return std::numeric_limits<double>::quiet_NaN();
     }
