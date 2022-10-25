@@ -19,7 +19,8 @@ namespace ProcessLib::ThermoRichardsMechanics
 template <int DisplacementDim>
 struct GravityData
 {
-    Eigen::Vector<double, DisplacementDim> volumetric_body_force;
+    GlobalDimVector<DisplacementDim> volumetric_body_force;
+    GlobalDimVector<DisplacementDim> J_up_HT_V_N;
 };
 
 template <int DisplacementDim>
@@ -35,6 +36,7 @@ struct GravityModel
               SolidDensityData const& rho_S_data,
               LiquidDensityData const& rho_L_data,
               SaturationData const& S_L_data,
+              SaturationDataDeriv const& dS_L_data,
               GravityData<DisplacementDim>& out) const;
 
 private:

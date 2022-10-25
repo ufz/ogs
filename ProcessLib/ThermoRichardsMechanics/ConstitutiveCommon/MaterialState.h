@@ -15,20 +15,19 @@
 namespace ProcessLib::ThermoRichardsMechanics
 {
 template <int DisplacementDim>
-struct MaterialStateData
+class MaterialStateData
 {
-    explicit MaterialStateData(
-        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
-            solid_material)
-        : material_state_variables(
-              solid_material.createMaterialStateVariables())
+    using MSV = typename MaterialLib::Solids::MechanicsBase<
+        DisplacementDim>::MaterialStateVariables;
+
+public:
+    explicit MaterialStateData(std::unique_ptr<MSV>&& material_state_variables)
+        : material_state_variables(std::move(material_state_variables))
     {
     }
 
     void pushBackState() { material_state_variables->pushBackState(); }
 
-    std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
-        DisplacementDim>::MaterialStateVariables>
-        material_state_variables;
+    std::unique_ptr<MSV> material_state_variables;
 };
 }  // namespace ProcessLib::ThermoRichardsMechanics

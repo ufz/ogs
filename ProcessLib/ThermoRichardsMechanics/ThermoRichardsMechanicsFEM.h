@@ -13,7 +13,7 @@
 #include <memory>
 #include <vector>
 
-#include "ConstitutiveSetting.h"
+#include "ConstitutiveOriginal/ConstitutiveSetting.h"
 #include "IntegrationPointData.h"
 #include "LocalAssemblerInterface.h"
 #include "MathLib/KelvinVector.h"
@@ -214,12 +214,12 @@ private:
         ParameterLib::SpatialPosition const& x_position,
         std::vector<double> const& local_x,
         std::vector<double> const& local_xdot, IpData const& ip_data,
-        ConstitutiveSetting<DisplacementDim>& CS,
+        ConstitutiveOriginal::ConstitutiveSetting<DisplacementDim>& CS,
         MaterialPropertyLib::Medium& medium, LocalMatrices& out,
-        StatefulData<DisplacementDim>& current_state,
-        StatefulData<DisplacementDim> const& prev_state,
+        ConstitutiveOriginal::StatefulData<DisplacementDim>& current_state,
+        ConstitutiveOriginal::StatefulData<DisplacementDim> const& prev_state,
         MaterialStateData<DisplacementDim>& mat_state,
-        OutputData<DisplacementDim>& output_data) const;
+        ConstitutiveOriginal::OutputData<DisplacementDim>& output_data) const;
 
     void addToLocalMatrixData(double const dt,
                               std::vector<double> const& local_x,

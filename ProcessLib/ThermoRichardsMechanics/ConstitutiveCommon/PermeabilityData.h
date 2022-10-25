@@ -10,19 +10,15 @@
 
 #pragma once
 
-#include "Saturation.h"
+#include "Base.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-struct BishopsData
+template <int DisplacementDim>
+struct PermeabilityData
 {
-    double chi_S_L = nan;
-    double dchi_dS_L = nan;
-};
-
-struct BishopsModel
-{
-    void eval(SpaceTimeData const& x_t, MediaData const& media_data,
-              SaturationData const& S_L_data, BishopsData& out) const;
+    double k_rel;
+    double dk_rel_dS_L;
+    GlobalDimMatrix<DisplacementDim> Ki_over_mu;
 };
 }  // namespace ProcessLib::ThermoRichardsMechanics

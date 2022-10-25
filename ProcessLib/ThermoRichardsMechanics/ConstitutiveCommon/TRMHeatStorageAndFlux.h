@@ -12,7 +12,7 @@
 
 #include "DarcyLaw.h"
 #include "LiquidDensity.h"
-#include "Permeability.h"
+#include "PermeabilityData.h"
 #include "Porosity.h"
 #include "SolidDensity.h"
 

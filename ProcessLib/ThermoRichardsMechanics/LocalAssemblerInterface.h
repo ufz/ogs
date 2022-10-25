@@ -16,7 +16,7 @@
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/Reflection/ReflectionSetIPData.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveSetting.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveOriginal/ConstitutiveData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ThermoRichardsMechanicsProcessData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
@@ -48,7 +48,8 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         material_states_.reserve(n_integration_points);
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
-            material_states_.emplace_back(solid_material_);
+            material_states_.emplace_back(
+                solid_material_.createMaterialStateVariables());
         }
     }
 
@@ -122,10 +123,11 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
 protected:
     ThermoRichardsMechanicsProcessData<DisplacementDim>& process_data_;
 
-    std::vector<StatefulData<DisplacementDim>>
+    std::vector<ConstitutiveOriginal::StatefulData<DisplacementDim>>
         current_states_;  // TODO maybe do not store but rather re-evaluate for
                           // state update
-    std::vector<StatefulData<DisplacementDim>> prev_states_;
+    std::vector<ConstitutiveOriginal::StatefulData<DisplacementDim>>
+        prev_states_;
 
     // Material state is special, because it contains both the current and the
     // old state.
@@ -137,7 +139,7 @@ protected:
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material_;
 
-    std::vector<OutputData<DisplacementDim>> output_data_;
+    std::vector<ConstitutiveOriginal::OutputData<DisplacementDim>> output_data_;
 };
 
 }  // namespace ProcessLib::ThermoRichardsMechanics

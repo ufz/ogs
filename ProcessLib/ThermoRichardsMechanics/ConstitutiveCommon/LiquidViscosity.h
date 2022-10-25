@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "ProcessLib/ThermoRichardsMechanics/Constitutive/Base.h"
+#include "Base.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {

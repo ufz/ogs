@@ -10,23 +10,17 @@
 
 #pragma once
 
-#include "Base.h"
-#include "MaterialLib/SolidModels/MechanicsBase.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Base.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/ElasticTangentStiffnessData.h"
+#include "TraitsBase.h"
 
-namespace ProcessLib::ThermoRichardsMechanics
+namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
 {
-template <int DisplacementDim>
-struct ElasticTangentStiffnessData
-{
-    KelvinMatrix<DisplacementDim> C_el;
-};
-
 template <int DisplacementDim>
 struct ElasticTangentStiffnessModel
 {
     explicit ElasticTangentStiffnessModel(
-        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
-            solid_material)
+        SolidConstitutiveRelation<DisplacementDim> const& solid_material)
         : solid_material_(solid_material)
     {
     }
@@ -36,9 +30,9 @@ struct ElasticTangentStiffnessModel
               ElasticTangentStiffnessData<DisplacementDim>& out) const;
 
 private:
-    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material_;
+    SolidConstitutiveRelation<DisplacementDim> const& solid_material_;
 };
 
 extern template struct ElasticTangentStiffnessModel<2>;
 extern template struct ElasticTangentStiffnessModel<3>;
-}  // namespace ProcessLib::ThermoRichardsMechanics
+}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal

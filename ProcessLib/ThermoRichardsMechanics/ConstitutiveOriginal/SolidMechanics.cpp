@@ -10,7 +10,7 @@
 
 #include "SolidMechanics.h"
 
-namespace ProcessLib::ThermoRichardsMechanics
+namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
 {
 template <int DisplacementDim>
 void SolidMechanicsModel<DisplacementDim>::eval(
@@ -21,6 +21,7 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     CapillaryPressureData<DisplacementDim> const& p_cap_data,
     BiotData const& biot_data,
     BishopsData const& bishops_data,
+    SaturationDataDeriv const& dS_L_data,
     StrainData<DisplacementDim> const& eps_data,
     StrainData<DisplacementDim> const& eps_prev_data,
     MaterialStateData<DisplacementDim>& mat_state,
@@ -41,6 +42,7 @@ void SolidMechanicsModel<DisplacementDim>::eval(
 
     variables.mechanical_strain.emplace<KelvinVector<DisplacementDim>>(
         current_state.eps_m);
+    variables.temperature = T_data.T;
 
     MPL::VariableArray variables_prev;
     variables_prev.stress.emplace<KelvinVector<DisplacementDim>>(
@@ -64,13 +66,21 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     auto const& identity2 = MathLib::KelvinVector::Invariants<
         MathLib::KelvinVector::kelvin_vector_dimensions(
             DisplacementDim)>::identity2;
-    out.sigma_total =
+    out.sigma_total.noalias() =
         current_state.sigma_eff +
         biot_data.alpha * bishops_data.chi_S_L * p_cap_data.p_cap * identity2;
 
-    out.J_uT_BT_K_N =  // TODO is this thermal stress?
+    out.J_uT_BT_K_N.noalias() =  // TODO is this thermal stress?
         -out.stiffness_tensor *
         s_therm_exp_data.solid_linear_thermal_expansivity_vector;
+
+    double const J_up_X_BTI2N =
+        -biot_data.alpha *
+        (bishops_data.chi_S_L +
+         bishops_data.dchi_dS_L * p_cap_data.p_cap * dS_L_data.dS_L_dp_cap);
+
+    out.J_up_BT_K_N.noalias() =
+        swelling_data.J_up_BT_K_N + J_up_X_BTI2N * identity2;
 
     out.equivalent_plastic_strain =
         mat_state.material_state_variables->getEquivalentPlasticStrain();
@@ -79,4 +89,4 @@ void SolidMechanicsModel<DisplacementDim>::eval(
 template struct SolidMechanicsModel<2>;
 template struct SolidMechanicsModel<3>;
 
-}  // namespace ProcessLib::ThermoRichardsMechanics
+}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal

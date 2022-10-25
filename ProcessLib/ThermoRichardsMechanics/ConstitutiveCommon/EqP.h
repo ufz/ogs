@@ -13,7 +13,7 @@
 #include "Biot.h"
 #include "FluidThermalExpansion.h"
 #include "LiquidDensity.h"
-#include "Permeability.h"
+#include "PermeabilityData.h"
 #include "Saturation.h"
 #include "TRMStorage.h"
 #include "TRMVaporDiffusion.h"
