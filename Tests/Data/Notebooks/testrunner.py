@@ -1,5 +1,6 @@
 import nbformat
 from nbconvert.preprocessors import ExecutePreprocessor, CellExecutionError
+from nbclient.exceptions import DeadKernelError
 from nbconvert import HTMLExporter
 import argparse
 import os
@@ -87,12 +88,22 @@ for notebook_file_path in args.notebooks:
 
         # 1. Run the notebook
         notebook_filename = os.path.basename(notebook_file_path)
+        convert_notebook_file = os.path.join(notebook_output_path, notebook_filename)
         print(f"[Start]  {notebook_filename}")
         start = timer()
         try:
             ep.preprocess(
                 nb, {"metadata": {"path": os.path.dirname(notebook_file_path)}}
             )
+        except DeadKernelError:
+            out = None
+            msg = 'Error executing the notebook "%s".\n\n' % notebook_filename
+            msg += 'See notebook "%s" for the traceback.' % convert_notebook_file
+            print(msg)
+            notebook_success = False
+            success = False
+            with open(convert_notebook_file, mode="w", encoding="utf-8") as f:
+                nbformat.write(nb, f)
         except CellExecutionError:
             notebook_success = False
             success = False
@@ -108,7 +119,6 @@ for notebook_file_path in args.notebooks:
         (body, resources) = html_exporter.from_notebook_node(nb)
 
         # 4. Write new notebook
-        convert_notebook_file = os.path.join(notebook_output_path, notebook_filename)
         with open(convert_notebook_file, "w", encoding="utf-8") as f:
             nbformat.write(nb, f)
 
