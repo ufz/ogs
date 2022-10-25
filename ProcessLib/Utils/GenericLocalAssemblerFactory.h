@@ -16,26 +16,41 @@
 #include <unordered_map>
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
-#include "NumLib/Fem/Integration/IntegrationMethodRegistry.h"
+#include "NumLib/Fem/Integration/IntegrationMethodProvider.h"
 
 namespace ProcessLib
 {
+/// Used for template type checks with createLocalAssemblers... functions.
+///
+/// With this concept the createLocalAssemblers... functions transparently
+/// support both OGS's default integration methods (requested via a
+/// NumLib::IntegrationOrder argument) and arbitrary
+/// NumLib::IntegrationMethodProvider's.
+template <typename T>
+concept IntegrationMethodProviderOrIntegrationOrder =
+    NumLib::IntegrationMethodProvider<T> ||
+    std::same_as<T, NumLib::IntegrationOrder>;
+
 /// A functor creating a local assembler with shape functions corresponding to
 /// the mesh element type.
-template <typename LocalAssemblerInterface, typename... ConstructorArgs>
+template <typename LocalAssemblerInterface,
+          NumLib::IntegrationMethodProvider IntMethProv,
+          typename... ConstructorArgs>
 struct GenericLocalAssemblerFactory
 {
     using LocAsmIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
-    using LocAsmBuilder =
-        std::function<LocAsmIntfPtr(MeshLib::Element const& e,
-                                    std::size_t const local_matrix_size,
-                                    ConstructorArgs&&...)>;
+    using LocAsmBuilder = std::function<LocAsmIntfPtr(
+        MeshLib::Element const& e,
+        std::size_t const local_matrix_size,
+        IntMethProv const& integration_method_provider,
+        ConstructorArgs&&...)>;
 
 protected:  // only allow instances of subclasses
     explicit GenericLocalAssemblerFactory(
-        NumLib::LocalToGlobalIndexMap const& dof_table)
-        : _dof_table(dof_table)
+        NumLib::LocalToGlobalIndexMap const& dof_table,
+        IntMethProv const& integration_method_provider)
+        : _dof_table{dof_table},
+          _integration_method_provider{integration_method_provider}
     {
     }
 
@@ -56,6 +71,7 @@ public:
         {
             auto const num_local_dof = _dof_table.getNumberOfElementDOF(id);
             return it->second(mesh_item, num_local_dof,
+                              _integration_method_provider,
                               std::forward<ConstructorArgs>(args)...);
         }
         OGS_FATAL(
@@ -69,6 +85,7 @@ public:
 
 private:
     NumLib::LocalToGlobalIndexMap const& _dof_table;
+    IntMethProv const& _integration_method_provider;
 
 protected:
     /// Mapping of element types to local assembler builders.
@@ -78,16 +95,14 @@ protected:
 template <typename ShapeFunction, typename LocalAssemblerInterface,
           template <typename /* shp fct */, int /* global dim */>
           class LocalAssemblerImplementation,
-          int GlobalDim, typename... ConstructorArgs>
+          NumLib::IntegrationMethodProvider IntMethProv, int GlobalDim,
+          typename... ConstructorArgs>
 class LocalAssemblerBuilderFactory
 {
     using GLAF = GenericLocalAssemblerFactory<LocalAssemblerInterface,
-                                              ConstructorArgs...>;
+                                              IntMethProv, ConstructorArgs...>;
     using LocAsmIntfPtr = typename GLAF::LocAsmIntfPtr;
     using LocAsmBuilder = typename GLAF::LocAsmBuilder;
-
-    using IntegrationMethod = typename NumLib::GaussLegendreIntegrationPolicy<
-        typename ShapeFunction::MeshElement>::IntegrationMethod;
 
     using LocAsmImpl = LocalAssemblerImplementation<ShapeFunction, GlobalDim>;
 
@@ -96,16 +111,24 @@ class LocalAssemblerBuilderFactory
 public:
     /// Generates a function that creates a new local assembler of type
     /// \c LocAsmImpl.
-    static LocAsmBuilder create(
-        NumLib::IntegrationOrder const integration_order)
+    template <typename MeshElement>
+    static LocAsmBuilder create()
     {
-        return [integration_order](MeshLib::Element const& e,
-                                   std::size_t const local_matrix_size,
-                                   ConstructorArgs&&... args)
+        return [](MeshLib::Element const& e,
+                  std::size_t const local_matrix_size,
+                  IntMethProv const& integration_method_provider,
+                  ConstructorArgs&&... args)
         {
-            auto const& integration_method = NumLib::IntegrationMethodRegistry::
-                template getIntegrationMethod<
-                    typename ShapeFunction::MeshElement>(integration_order);
+            auto const& integration_method =
+                integration_method_provider
+                    .template getIntegrationMethod<MeshElement>(e);
+
+            static_assert(
+                std::is_constructible_v<
+                    LocAsmImpl, MeshLib::Element const&, std::size_t,
+                    decltype(integration_method), ConstructorArgs&&...>,
+                "The given local assembler implementation is not "
+                "constructible from the provided arguments.");
 
             return std::make_unique<LocAsmImpl>(
                 e, local_matrix_size, integration_method,
