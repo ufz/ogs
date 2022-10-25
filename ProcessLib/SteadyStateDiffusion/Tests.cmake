@@ -336,8 +336,9 @@ AddTest(
     wedge_1x1x1_1e3_prism_complete_surface_specific_flux_t_1.000000.vtu wedge_1e3_surfaceflux_wedge_1x1x1_1e3_prism_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 2e-14 0
 )
 
-# SQUARE 1x1 GROUNDWATER FLOW TEST -- AXIALLY SYMMETRIC
-# test results are compared to 3D simulation on a wedge-shaped domain
+# SQUARE 1x1 GROUNDWATER FLOW TEST -- AXIALLY SYMMETRIC, 1e2
+# The results were compared to an analytical solution (method of manufactured
+# solutions). The vtkdiff comparison is against the numerical solution.
 AddTest(
     NAME SteadyStateDiffusion_square_1x1_1e2_axi
     PATH Elliptic/square_1x1_SteadyStateDiffusion
@@ -346,18 +347,23 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    wedge-1e2-ang-0.02-surface.vtu square_1e2_axi_ts_1_t_1.000000.vtu temperature temperature 1.6e-5 1e-5
+    square_1e2_axi_ts_1_t_1.000000.vtu square_1e2_axi_ts_1_t_1.000000.vtu temperature temperature 2e-15 0
 )
-# # WEDGE 1x1 GROUNDWATER FLOW TEST -- computes reference results for the above test
-# AddTest(
-#     NAME SteadyStateDiffusion_wedge_1e2_ang_0.02
-#     PATH Elliptic/square_1x1_SteadyStateDiffusion
-#     EXECUTABLE ogs
-#     EXECUTABLE_ARGS wedge_1e2_axi_ang_0.02.prj
-# )
+# WEDGE 1x1 GROUNDWATER FLOW TEST -- same setup as above test but in cartesian coordinates
+AddTest(
+    NAME SteadyStateDiffusion_wedge_1e2_ang_0.02
+    PATH Elliptic/square_1x1_SteadyStateDiffusion
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS wedge_1e2_axi_ang_0.02.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    wedge_1e2_ang_0.02_ts_1_t_1.000000.vtu wedge_1e2_ang_0.02_ts_1_t_1.000000.vtu temperature temperature 2e-14 0
+)
 
-# SQUARE 1x1 GROUNDWATER FLOW TEST -- AXIALLY SYMMETRIC
-# test results are compared to 3D simulation on a wedge-shaped domain
+# SQUARE 1x1 GROUNDWATER FLOW TEST -- AXIALLY SYMMETRIC, 1e4
+# The results were compared to an analytical solution (method of manufactured
+# solutions). The vtkdiff comparison is against the numerical solution.
 AddTest(
     NAME SteadyStateDiffusion_square_1x1_1e4_axi_ang_0.02
     PATH Elliptic/square_1x1_SteadyStateDiffusion
@@ -366,15 +372,19 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    wedge-1e4-ang-0.02-surface.vtu square_1e4_axi_ts_1_t_1.000000.vtu temperature temperature 1.6e-5 1e-5
+    square_1e4_axi_ts_1_t_1.000000.vtu square_1e4_axi_ts_1_t_1.000000.vtu temperature temperature 2e-14 0
 )
-# # WEDGE 1x1 GROUNDWATER FLOW TEST -- computes reference results for the above test
-# AddTest(
-#     NAME SteadyStateDiffusion_wedge_1e4_ang_0.02
-#     PATH Elliptic/square_1x1_SteadyStateDiffusion
-#     EXECUTABLE ogs
-#     EXECUTABLE_ARGS wedge_1e4_axi_ang_0.02.prj
-# )
+# WEDGE 1x1 GROUNDWATER FLOW TEST -- same setup as above test but in cartesian coordinates
+AddTest(
+    NAME SteadyStateDiffusion_wedge_1e4_ang_0.02
+    PATH Elliptic/square_1x1_SteadyStateDiffusion
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS wedge_1e4_axi_ang_0.02.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    wedge_1e4_axi_ang_0.02_ts_1_t_1.000000.vtu wedge_1e4_axi_ang_0.02_ts_1_t_1.000000.vtu temperature temperature 2e-14 0
+)
 
 # MPI groundwater flow tests
 AddTest(

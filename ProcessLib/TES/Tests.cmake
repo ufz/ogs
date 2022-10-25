@@ -44,13 +44,20 @@ AddTest(
     inert-wedge-extracted-surface-t-1s.vtu tes_inert_axi_ts_4_t_1.000000.vtu temperature temperature 1e-12 2e-9
     inert-wedge-extracted-surface-t-1s.vtu tes_inert_axi_ts_4_t_1.000000.vtu v_mass_frac v_mass_frac 1e-12 2e-9
 )
-# # WEDGE 1x1 TES TEST -- computes reference results for the above test
-# AddTest(
-#     NAME TES_inert_wedge
-#     PATH Parabolic/TES/2D
-#     EXECUTABLE ogs
-#     EXECUTABLE_ARGS tes-inert-wedge.prj
-# )
+# WEDGE 1x1 TES TEST -- computes reference results for the above test
+AddTest(
+    NAME TES_inert_wedge
+    PATH Parabolic/TES/2D
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS tes-inert-wedge.prj
+    TESTER vtkdiff
+    RUNTIME 90
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    tes_inert_wedge_ts_4_t_1.000000.vtu tes_inert_wedge_ts_4_t_1.000000.vtu pressure pressure 1e-12 2e-9
+    tes_inert_wedge_ts_4_t_1.000000.vtu tes_inert_wedge_ts_4_t_1.000000.vtu temperature temperature 1e-12 2e-9
+    tes_inert_wedge_ts_4_t_1.000000.vtu tes_inert_wedge_ts_4_t_1.000000.vtu v_mass_frac v_mass_frac 1e-12 2e-9
+)
 
 # For PETSc/MPI
 AddTest(
