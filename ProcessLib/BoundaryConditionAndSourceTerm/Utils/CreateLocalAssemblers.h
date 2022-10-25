@@ -44,8 +44,10 @@ void createLocalAssemblers(
 
     DBUG("Create local assemblers.");
 
-    LocalAssemblerFactory factory(dof_table, shapefunction_order,
-                                  integration_order);
+    NumLib::DefaultIntegrationMethodProvider integration_method_provider{
+        integration_order};
+    LocalAssemblerFactory factory(dof_table, integration_method_provider,
+                                  shapefunction_order);
     local_assemblers.resize(mesh_elements.size());
 
     DBUG("Calling local assembler builder for all mesh elements.");
