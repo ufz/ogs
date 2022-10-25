@@ -266,6 +266,8 @@ AddTest(
     arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu sigma sigma 1.e-9 5.e-7
 )
 
-NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.ipynb RUNTIME 5)
-NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.ipynb RUNTIME 15 RESOURCE_LOCK PYVISTA)
-NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole_convergence_analysis.ipynb RUNTIME 40 RESOURCE_LOCK PYVISTA)
+if(NOT OGS_USE_PETSC)
+    NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.ipynb RUNTIME 5)
+    NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.ipynb RUNTIME 15 RESOURCE_LOCK PYVISTA)
+    NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole_convergence_analysis.ipynb RUNTIME 40 RESOURCE_LOCK PYVISTA)
+endif()

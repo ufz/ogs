@@ -89,10 +89,12 @@ Add new Python dependencies to `Test/Data/requirements.txt`.
 
 ### Register with CTest
 
-Add the benchmark to CTest with:
+Add the benchmark to CTest with e.g.:
 
 ```cmake
-NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.ipynb RUNTIME 10)
+if(NOT OGS_USE_PETSC)
+    NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.ipynb RUNTIME 10)
+endif()
 ```
 
 By registering notebooks [are automatically added]({{< relref "jupyter-docs" >}}) to the benchmark documentation page.
