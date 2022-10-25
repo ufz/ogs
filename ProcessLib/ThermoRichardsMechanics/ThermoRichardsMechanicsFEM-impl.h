@@ -391,7 +391,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     block_p(out.res).noalias() = dNdx.transpose() * CD.eq_p_data.rhs_p_dNT_V;
     block_u(out.res).noalias() =
         B.transpose() * CD.s_mech_data.sigma_total -
-        N_u_op.transpose() * CD.grav_data.volumetric_body_force;
+        static_cast<int>(this->process_data_.apply_body_force_for_deformation) *
+            N_u_op.transpose() * CD.grav_data.volumetric_body_force;
 
     // Storage matrices
     out.storage_p_a_p.noalias() = CD.eq_p_data.storage_p_a_p_X_NTN * NTN;

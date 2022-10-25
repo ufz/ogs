@@ -278,3 +278,20 @@ AddTest(
     expected_Column_ts_68_t_7200000.000000.vtu Column_ts_68_t_7200000.000000.vtu epsilon epsilon 1e-5 1e-5
     expected_Column_ts_68_t_7200000.000000.vtu Column_ts_68_t_7200000.000000.vtu sigma sigma 1e-5 1e-5
 )
+# ThermoRichardsMechanics; test for removing body force from displacement equation
+AddTest(
+    NAME ThermoRichardsMechanics_dont_apply_body_force_for_deformation
+    PATH ThermoRichardsMechanics/BodyForce
+    RUNTIME 1
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    expected_dont_apply_body_force_for_deformation_ts_0_t_0.000000.vtu dont_apply_body_force_for_deformation_ts_10_t_864000.000000.vtu displacement displacement 1e-10 1e-10
+    expected_dont_apply_body_force_for_deformation_ts_0_t_0.000000.vtu dont_apply_body_force_for_deformation_ts_10_t_864000.000000.vtu pressure pressure 5e-2 1e-8
+    expected_dont_apply_body_force_for_deformation_ts_0_t_0.000000.vtu dont_apply_body_force_for_deformation_ts_10_t_864000.000000.vtu temperature temperature 1e-10 1e-10
+    expected_dont_apply_body_force_for_deformation_ts_0_t_0.000000.vtu dont_apply_body_force_for_deformation_ts_10_t_864000.000000.vtu epsilon epsilon 1e-10 1e-10
+    expected_dont_apply_body_force_for_deformation_ts_0_t_0.000000.vtu dont_apply_body_force_for_deformation_ts_10_t_864000.000000.vtu sigma sigma 5e-2 1e-8
+)
