@@ -12,16 +12,29 @@ function(NotebookTest)
         NotebookTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
     )
 
-    if(DEFINED ENV{PYVISTA_HEADLESS} AND "PYVISTA" IN_LIST
-                                         NotebookTest_RESOURCE_LOCK
+    if(APPLE AND DEFINED ENV{CI} AND "PYVISTA" IN_LIST
+                                     NotebookTest_RESOURCE_LOCK
+    )
+        message("Disabled NotebookTest ${NotebookTest_NOTEBOOKFILE} because "
+                "PyVista in CI on mac is not supported (headless)."
+        )
+        return()
+    endif()
+
+    if(UNIX
+       AND NOT APPLE
+       AND (DEFINED ENV{PYVISTA_HEADLESS} OR DEFINED ENV{CI})
+       AND "PYVISTA" IN_LIST NotebookTest_RESOURCE_LOCK
     )
         find_program(XVFB_TOOL_PATH Xvfb)
         if(NOT XVFB_TOOL_PATH)
             message(
                 "Disabled NotebookTest ${NotebookTest_NOTEBOOKFILE} because of"
-                " missing Xvfb tool which is required for PyVista."
+                " missing Xvfb tool which is required for PyVista headless on Linux."
             )
+            return()
         endif()
+        set(_pyvista_headless_env -E env PYVISTA_HEADLESS=1)
     endif()
 
     get_filename_component(
@@ -76,7 +89,7 @@ function(NotebookTest)
     add_test(
         NAME ${TEST_NAME}
         COMMAND
-            ${CMAKE_COMMAND} -E env PYVISTA_HEADLESS=1 ${CMAKE_COMMAND}
+            ${CMAKE_COMMAND} ${_pyvista_headless_env} ${CMAKE_COMMAND}
             # TODO: only works if notebook is in a leaf directory
             # -DFILES_TO_DELETE=${Data_BINARY_DIR}/${NotebookTest_DIR}
             -DEXECUTABLE=${Python_EXECUTABLE} "-DEXECUTABLE_ARGS=${_exe_args}"
