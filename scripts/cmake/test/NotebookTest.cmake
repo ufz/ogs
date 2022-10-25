@@ -1,15 +1,28 @@
-# cmake-lint: disable=C0103,R0915
+# cmake-lint: disable=C0103,R0915,R0912
 function(NotebookTest)
 
     if(NOT OGS_BUILD_CLI OR NOT OGS_BUILD_TESTING OR NOT OGS_USE_PIP)
         return()
     endif()
+
     set(options DISABLED)
     set(oneValueArgs NOTEBOOKFILE RUNTIME)
     set(multiValueArgs WRAPPER RESOURCE_LOCK)
     cmake_parse_arguments(
         NotebookTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
     )
+
+    if(DEFINED ENV{PYVISTA_HEADLESS} AND "PYVISTA" IN_LIST
+                                         NotebookTest_RESOURCE_LOCK
+    )
+        find_program(XVFB_TOOL_PATH Xvfb)
+        if(NOT XVFB_TOOL_PATH)
+            message(
+                "Disabled NotebookTest ${NotebookTest_NOTEBOOKFILE} because of"
+                " missing Xvfb tool which is required for PyVista."
+            )
+        endif()
+    endif()
 
     get_filename_component(
         NotebookTest_DIR "${NotebookTest_NOTEBOOKFILE}" DIRECTORY
@@ -63,13 +76,10 @@ function(NotebookTest)
     add_test(
         NAME ${TEST_NAME}
         COMMAND
-            ${CMAKE_COMMAND}
-            -E env PYVISTA_HEADLESS=1
-            ${CMAKE_COMMAND}
+            ${CMAKE_COMMAND} -E env PYVISTA_HEADLESS=1 ${CMAKE_COMMAND}
             # TODO: only works if notebook is in a leaf directory
             # -DFILES_TO_DELETE=${Data_BINARY_DIR}/${NotebookTest_DIR}
-            -DEXECUTABLE=${Python_EXECUTABLE}
-            "-DEXECUTABLE_ARGS=${_exe_args}"
+            -DEXECUTABLE=${Python_EXECUTABLE} "-DEXECUTABLE_ARGS=${_exe_args}"
             -DWORKING_DIRECTORY=${Data_SOURCE_DIR} -DCAT_LOG=TRUE -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/OgsTestWrapper.cmake
     )
@@ -87,8 +97,7 @@ function(NotebookTest)
     )
     if(DEFINED NotebookTest_RESOURCE_LOCK)
         set_tests_properties(
-            ${TEST_NAME}
-            PROPERTIES RESOURCE_LOCK ${NotebookTest_RESOURCE_LOCK}
+            ${TEST_NAME} PROPERTIES RESOURCE_LOCK ${NotebookTest_RESOURCE_LOCK}
         )
     endif()
 
