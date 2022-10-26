@@ -10,12 +10,13 @@
 
 #pragma once
 
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EquivalentPlasticStrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidViscosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/PermeabilityData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
-#include "SolidMechanics.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"
 
-namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+namespace ProcessLib::ThermoRichardsMechanics
 {
 template <int DisplacementDim>
 struct PermeabilityModel
@@ -31,12 +32,13 @@ struct PermeabilityModel
               // TODO evaluate transport porosity evolution separately
               TransportPorosityData& transport_poro_data,
               TransportPorosityData const& transport_poro_data_prev,
-              SolidMechanicsDataStateless<DisplacementDim> const& s_mech_data,
+              TotalStressData<DisplacementDim> const& total_stress_data,
               StrainData<DisplacementDim> const& eps_data,
               StrainData<DisplacementDim> const& eps_prev_data,
+              EquivalentPlasticStrainData const& equiv_plast_strain_data,
               PermeabilityData<DisplacementDim>& out) const;
 };
 
 extern template struct PermeabilityModel<2>;
 extern template struct PermeabilityModel<3>;
-}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+}  // namespace ProcessLib::ThermoRichardsMechanics

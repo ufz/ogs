@@ -11,12 +11,12 @@
 #pragma once
 
 #include "ElasticTangentStiffnessModel.h"
-#include "PermeabilityModel.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/DarcyLaw.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqP.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqT.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/FluidThermalExpansion.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Gravity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/PermeabilityModel.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidDensity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMHeatStorageAndFlux.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMStorage.h"

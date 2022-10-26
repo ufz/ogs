@@ -12,9 +12,11 @@
 
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Biot.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Bishops.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EquivalentPlasticStrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MaterialState.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidThermalExpansion.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Swelling.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"
 #include "TraitsBase.h"
 
 namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
@@ -39,11 +41,9 @@ struct SolidMechanicsDataStateful
 template <int DisplacementDim>
 struct SolidMechanicsDataStateless
 {
-    KelvinVector<DisplacementDim> sigma_total = KVnan<DisplacementDim>();
     KelvinMatrix<DisplacementDim> stiffness_tensor = KMnan<DisplacementDim>();
     KelvinVector<DisplacementDim> J_uT_BT_K_N = KVnan<DisplacementDim>();
     KelvinVector<DisplacementDim> J_up_BT_K_N = KVnan<DisplacementDim>();
-    double equivalent_plastic_strain = nan;
 };
 
 template <int DisplacementDim>
@@ -69,6 +69,8 @@ struct SolidMechanicsModel
         MaterialStateData<DisplacementDim>& mat_state,
         SolidMechanicsDataStateful<DisplacementDim> const& prev_state,
         SolidMechanicsDataStateful<DisplacementDim>& current_state,
+        TotalStressData<DisplacementDim>& total_stress_data,
+        EquivalentPlasticStrainData& equiv_plast_strain_data,
         SolidMechanicsDataStateless<DisplacementDim>& out) const;
 
 private:

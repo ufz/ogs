@@ -12,7 +12,7 @@
 
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 
-namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+namespace ProcessLib::ThermoRichardsMechanics
 {
 template <int DisplacementDim>
 void PermeabilityModel<DisplacementDim>::eval(
@@ -25,9 +25,10 @@ void PermeabilityModel<DisplacementDim>::eval(
     PorosityData const& poro_data, LiquidViscosityData const& mu_L_data,
     TransportPorosityData& transport_poro_data,
     TransportPorosityData const& transport_poro_data_prev,
-    SolidMechanicsDataStateless<DisplacementDim> const& s_mech_data,
+    TotalStressData<DisplacementDim> const& total_stress_data,
     StrainData<DisplacementDim> const& eps_data,
     StrainData<DisplacementDim> const& eps_prev_data,
+    EquivalentPlasticStrainData const& equiv_plast_strain_data,
     PermeabilityData<DisplacementDim>& out) const
 {
     namespace MPL = MaterialPropertyLib;
@@ -93,9 +94,10 @@ void PermeabilityModel<DisplacementDim>::eval(
                                         // semantics
     variables.total_stress.emplace<SymmetricTensor>(
         MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-            s_mech_data.sigma_total));
+            total_stress_data.sigma_total));
 
-    variables.equivalent_plastic_strain = s_mech_data.equivalent_plastic_strain;
+    variables.equivalent_plastic_strain =
+        equiv_plast_strain_data.equivalent_plastic_strain;
 
     auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
         medium.property(MPL::PropertyType::permeability)
@@ -106,4 +108,4 @@ void PermeabilityModel<DisplacementDim>::eval(
 
 template struct PermeabilityModel<2>;
 template struct PermeabilityModel<3>;
-}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+}  // namespace ProcessLib::ThermoRichardsMechanics
