@@ -12,11 +12,17 @@
 
 #include <cassert>
 
+#include "ConstitutiveOriginal/CreateConstitutiveSetting.h"
+#include "ConstitutiveOriginal/Traits.h"
+
+#ifdef OGS_USE_MFRONT
+#include "ConstitutiveStressSaturation_StrainPressureTemperature/CreateConstitutiveSetting.h"
+#include "ConstitutiveStressSaturation_StrainPressureTemperature/Traits.h"
+#endif
+
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
-#include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -68,8 +74,9 @@ void checkProcessVariableComponents(ProcessVariable const& variable,
     }
 }
 
-template <int DisplacementDim>
-std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
+template <int DisplacementDim, typename ConstitutiveTraits,
+          typename CreateConstitutiveSetting>
+std::unique_ptr<Process> createThermoRichardsMechanicsProcessStage2(
     std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
@@ -81,10 +88,6 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
     BaseLib::ConfigTree const& config,
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
-    //! \ogs_file_param{prj__processes__process__type}
-    config.checkConfigParameter("type", "THERMO_RICHARDS_MECHANICS");
-    DBUG("Create ThermoRichardsMechanicsProcess.");
-
     auto const coupling_scheme =
         //! \ogs_file_param{prj__processes__process__THERMO_RICHARDS_MECHANICS__coupling_scheme}
         config.getConfigParameterOptional<std::string>("coupling_scheme");
@@ -130,8 +133,9 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
     checkProcessVariableComponents(*variable_u, DisplacementDim);
 
     /// \section parameterstrm Process Parameters
+
     auto solid_constitutive_relations =
-        MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
+        CreateConstitutiveSetting::createSolidConstitutiveRelations(
             parameters, local_coordinate_system, config);
 
     // Specific body force
@@ -189,25 +193,79 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
             ? true
             : false;
 
-    ThermoRichardsMechanicsProcessData<DisplacementDim> process_data{
-        materialIDs(mesh),
-        std::move(media_map),
-        std::move(solid_constitutive_relations),
-        initial_stress,
-        specific_body_force,
-        mass_lumping,
-        use_TaylorHood_elements,
-        apply_body_force_for_deformation};
+    ThermoRichardsMechanicsProcessData<DisplacementDim, ConstitutiveTraits>
+        process_data{materialIDs(mesh),
+                     std::move(media_map),
+                     std::move(solid_constitutive_relations),
+                     initial_stress,
+                     specific_body_force,
+                     mass_lumping,
+                     use_TaylorHood_elements,
+                     apply_body_force_for_deformation};
 
     SecondaryVariableCollection secondary_variables;
 
     ProcessLib::createSecondaryVariables(config, secondary_variables);
 
-    return std::make_unique<ThermoRichardsMechanicsProcess<DisplacementDim>>(
+    return std::make_unique<
+        ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
         use_monolithic_scheme);
+}
+
+template <int DisplacementDim>
+std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
+    std::string name,
+    MeshLib::Mesh& mesh,
+    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
+    std::vector<ProcessVariable> const& variables,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    std::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
+    unsigned const integration_order,
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
+{
+    //! \ogs_file_param{prj__processes__process__type}
+    config.checkConfigParameter("type", "THERMO_RICHARDS_MECHANICS");
+    DBUG("Create ThermoRichardsMechanicsProcess.");
+
+    auto const subtype =
+        //! \ogs_file_param{prj__processes__process__THERMO_RICHARDS_MECHANICS__subtype}
+        config.getConfigParameter<std::string>("subtype", "Original");
+    INFO("TRM process subtype is '{}'", subtype);
+
+    if (subtype == "Original")
+    {
+        return createThermoRichardsMechanicsProcessStage2<
+            DisplacementDim,
+            ConstitutiveOriginal::ConstitutiveTraits<DisplacementDim>,
+            ConstitutiveOriginal::CreateConstitutiveSetting<DisplacementDim>>(
+            name, mesh, std::move(jacobian_assembler), variables, parameters,
+            local_coordinate_system, integration_order, config, media);
+    }
+
+    if (subtype == "StressSaturation_StrainPressureTemperature")
+    {
+#ifdef OGS_USE_MFRONT
+        return createThermoRichardsMechanicsProcessStage2<
+            DisplacementDim,
+            ConstitutiveStressSaturation_StrainPressureTemperature::
+                ConstitutiveTraits<DisplacementDim>,
+            ConstitutiveStressSaturation_StrainPressureTemperature::
+                CreateConstitutiveSetting<DisplacementDim>>(
+            name, mesh, std::move(jacobian_assembler), variables, parameters,
+            local_coordinate_system, integration_order, config, media);
+#else
+        OGS_FATAL(
+            "TRM process subtype 'StressSaturation_StrainPressureTemperature' "
+            "is not supported, because OGS has not been built with MFront.");
+#endif
+    }
+
+    OGS_FATAL("Unknown TRM process subtype '{}'.", subtype);
 }
 
 template std::unique_ptr<Process> createThermoRichardsMechanicsProcess<2>(

@@ -10,18 +10,17 @@
 
 #pragma once
 
-#include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/Reflection/ReflectionSetIPData.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveOriginal/ConstitutiveData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MaterialState.h"
 #include "ProcessLib/ThermoRichardsMechanics/ThermoRichardsMechanicsProcessData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-template <int DisplacementDim>
+template <int DisplacementDim, typename ConstitutiveTraits>
 struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                                  public NumLib::ExtrapolatableElement
 {
@@ -29,7 +28,8 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         MeshLib::Element const& e,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        ThermoRichardsMechanicsProcessData<DisplacementDim>& process_data)
+        ThermoRichardsMechanicsProcessData<DisplacementDim, ConstitutiveTraits>&
+            process_data)
         : process_data_(process_data),
           integration_method_(integration_method),
           element_(e),
@@ -67,6 +67,7 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                 element_.getID());
         }
 
+        // TODO check total vs effective stress
         if (name == "sigma" && process_data_.initial_stress != nullptr)
         {
             OGS_FATAL(
@@ -114,20 +115,21 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
 
     static auto getReflectionDataForOutput()
     {
-        using Self = LocalAssemblerInterface<DisplacementDim>;
+        using Self =
+            LocalAssemblerInterface<DisplacementDim, ConstitutiveTraits>;
 
         return ProcessLib::Reflection::reflectWithoutName(
             &Self::current_states_, &Self::output_data_);
     }
 
 protected:
-    ThermoRichardsMechanicsProcessData<DisplacementDim>& process_data_;
+    ThermoRichardsMechanicsProcessData<DisplacementDim, ConstitutiveTraits>&
+        process_data_;
 
-    std::vector<ConstitutiveOriginal::StatefulData<DisplacementDim>>
+    std::vector<typename ConstitutiveTraits::StatefulData>
         current_states_;  // TODO maybe do not store but rather re-evaluate for
                           // state update
-    std::vector<ConstitutiveOriginal::StatefulData<DisplacementDim>>
-        prev_states_;
+    std::vector<typename ConstitutiveTraits::StatefulData> prev_states_;
 
     // Material state is special, because it contains both the current and the
     // old state.
@@ -137,9 +139,10 @@ protected:
     MeshLib::Element const& element_;
     bool const is_axially_symmetric_;
 
-    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material_;
+    typename ConstitutiveTraits::SolidConstitutiveRelation const&
+        solid_material_;
 
-    std::vector<ConstitutiveOriginal::OutputData<DisplacementDim>> output_data_;
+    std::vector<typename ConstitutiveTraits::OutputData> output_data_;
 };
 
 }  // namespace ProcessLib::ThermoRichardsMechanics
