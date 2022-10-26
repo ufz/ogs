@@ -27,17 +27,6 @@ struct PorosityData
     }
 };
 
-struct TransportPorosityData
-{
-    double phi;
-
-    static auto reflect()
-    {
-        return ProcessLib::Reflection::reflectWithName(
-            "transport_porosity", &TransportPorosityData::phi);
-    }
-};
-
 template <int DisplacementDim>
 struct PorosityModel
 {

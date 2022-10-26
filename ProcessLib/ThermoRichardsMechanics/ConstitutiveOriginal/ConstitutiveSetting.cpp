@@ -123,14 +123,17 @@ void ConstitutiveSetting<DisplacementDim>::eval(
 
     models.mu_L_model.eval(x_t, media_data, T_data, mu_L_data);
 
-    models.perm_model.eval(
-        x_t, media_data, solid_compressibility_data, S_L_data, bishops_data,
-        bishops_data_prev, p_cap_data, T_data, poro_data, mu_L_data,
-        state.transport_poro_data, prev_state.transport_poro_data,
-        cd.total_stress_data, state.eps_data,
+    models.transport_poro_model.eval(
+        x_t, media_data, solid_compressibility_data, bishops_data,
+        bishops_data_prev, p_cap_data, poro_data, state.eps_data,
         StrainData<DisplacementDim>{
             eps_prev_arg} /* TODO why not eqU.eps_prev? */,
-        tmp.equiv_plast_strain_data, perm_data);
+        prev_state.transport_poro_data, state.transport_poro_data);
+
+    models.perm_model.eval(x_t, media_data, S_L_data, p_cap_data, T_data,
+                           mu_L_data, state.transport_poro_data,
+                           cd.total_stress_data, tmp.equiv_plast_strain_data,
+                           perm_data);
 
     models.th_osmosis_model.eval(x_t, media_data, T_data, rho_L_data,
                                  cd.th_osmosis_data);

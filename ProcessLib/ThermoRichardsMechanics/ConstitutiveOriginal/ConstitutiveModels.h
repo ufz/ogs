@@ -18,9 +18,11 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Gravity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/PermeabilityModel.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidDensity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Swelling.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMHeatStorageAndFlux.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMStorage.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMVaporDiffusion.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveOriginal/SolidMechanics.h"
 
 namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
 {
@@ -50,6 +52,7 @@ struct ConstitutiveModels
     SaturationModel<DisplacementDim> S_L_model;
     BishopsModel bishops_model;
     PorosityModel<DisplacementDim> poro_model;
+    TransportPorosityModel<DisplacementDim> transport_poro_model;
     SwellingModel<DisplacementDim> swelling_model;
     SolidThermalExpansionModel<DisplacementDim> s_therm_exp_model;
     SolidMechanicsModel<DisplacementDim> s_mech_model;

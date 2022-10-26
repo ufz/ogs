@@ -13,8 +13,8 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EquivalentPlasticStrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidViscosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/PermeabilityData.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TransportPorosity.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -22,19 +22,12 @@ template <int DisplacementDim>
 struct PermeabilityModel
 {
     void eval(SpaceTimeData const& x_t, MediaData const& media_data,
-              SolidCompressibilityData const& solid_compressibility_data,
-              SaturationData const& S_L_data, BishopsData const& bishops_data,
-              BishopsData const& bishops_data_prev,
+              SaturationData const& S_L_data,
               CapillaryPressureData<DisplacementDim> const& p_cap_data,
               TemperatureData<DisplacementDim> const& T_data,
-              PorosityData const& poro_data,
               LiquidViscosityData const& mu_L_data,
-              // TODO evaluate transport porosity evolution separately
-              TransportPorosityData& transport_poro_data,
-              TransportPorosityData const& transport_poro_data_prev,
+              TransportPorosityData const& transport_poro_data,
               TotalStressData<DisplacementDim> const& total_stress_data,
-              StrainData<DisplacementDim> const& eps_data,
-              StrainData<DisplacementDim> const& eps_prev_data,
               EquivalentPlasticStrainData const& equiv_plast_strain_data,
               PermeabilityData<DisplacementDim>& out) const;
 };
