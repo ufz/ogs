@@ -38,10 +38,8 @@ struct HydroMechanicsProcessData
         media_map = nullptr;
 
     /// The constitutive relation for the mechanical part.
-    /// \note Linear elasticity is the only supported one in the moment.
-    std::map<
-        int,
-        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
+    std::map<int, std::unique_ptr<
+                      MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
 
     /// Optional, initial stress field. A symmetric tensor, short vector
