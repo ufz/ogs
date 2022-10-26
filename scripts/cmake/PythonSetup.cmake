@@ -75,6 +75,8 @@ if(OGS_USE_PIP)
     if(OGS_BUILD_TESTING)
         # Notebook requirements from Tests/Data
         file(STRINGS Tests/Data/requirements.txt _requirements)
+        # \; are not preserved in list operations, substitute via a placeholder
+        string(REPLACE "\;" "_semicolon_" _requirements "${_requirements}")
         file(STRINGS Tests/Data/requirements-dev.txt _requirements_dev)
         list(APPEND OGS_PYTHON_PACKAGES ${_requirements} ${_requirements_dev})
 
@@ -104,6 +106,10 @@ function(setup_venv)
        AND ${OGS_PYTHON_PACKAGES_LENGTH} GREATER 0
     )
         string(REPLACE ";" "\n" REQUIREMENTS_CONTENT "${OGS_PYTHON_PACKAGES}")
+        # Revert back _semicolon_ placeholder
+        string(REPLACE "_semicolon_" "\\;" REQUIREMENTS_CONTENT
+                       "${REQUIREMENTS_CONTENT}"
+        )
         file(WRITE ${PROJECT_BINARY_DIR}/requirements.txt
              ${REQUIREMENTS_CONTENT}
         )
