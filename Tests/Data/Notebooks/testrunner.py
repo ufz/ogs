@@ -82,7 +82,7 @@ for notebook_file_path in args.notebooks:
         os.makedirs(notebook_output_path, exist_ok=True)
         os.environ["OGS_TESTRUNNER_OUT_DIR"] = notebook_output_path
 
-        with open(notebook_file_path) as f:
+        with open(notebook_file_path, mode="r", encoding="utf-8") as f:
             nb = nbformat.read(f, as_version=4)
         ep = ExecutePreprocessor(timeout=args.timeout, kernel_name="python3")
 
