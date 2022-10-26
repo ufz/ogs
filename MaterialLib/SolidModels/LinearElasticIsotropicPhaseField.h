@@ -50,10 +50,7 @@ std::tuple<MathLib::KelvinVector::KelvinVectorType<
                DisplacementDim> /* sigma_real */,
            MathLib::KelvinVector::KelvinVectorType<
                DisplacementDim> /* sigma_tensile */,
-           MathLib::KelvinVector::KelvinMatrixType<
-               DisplacementDim> /* C_tensile */,
-           MathLib::KelvinVector::KelvinMatrixType<
-               DisplacementDim> /* C_compressive */,
+           MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> /* D */,
            double /* strain_energy_tensile */, double /* elastic_energy */
            >
 calculateVolDevDegradedStress(
@@ -113,8 +110,11 @@ calculateVolDevDegradedStress(
         mu * epsd_curr.transpose() * epsd_curr;
     KelvinVector const sigma_real =
         degradation * sigma_tensile + sigma_compressive;
-    return std::make_tuple(sigma_real, sigma_tensile, C_tensile, C_compressive,
-                           strain_energy_tensile, elastic_energy);
+
+    KelvinMatrix const D = degradation * C_tensile + C_compressive;
+
+    return std::make_tuple(sigma_real, sigma_tensile, D, strain_energy_tensile,
+                           elastic_energy);
 }
 
 template <int DisplacementDim>
@@ -122,10 +122,7 @@ std::tuple<MathLib::KelvinVector::KelvinVectorType<
                DisplacementDim> /* sigma_real */,
            MathLib::KelvinVector::KelvinVectorType<
                DisplacementDim> /* sigma_tensile */,
-           MathLib::KelvinVector::KelvinMatrixType<
-               DisplacementDim> /* C_tensile */,
-           MathLib::KelvinVector::KelvinMatrixType<
-               DisplacementDim> /* C_compressive */,
+           MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> /* D */,
            double /* strain_energy_tensile */, double /* elastic_energy */
            >
 calculateIsotropicDegradedStress(
@@ -162,8 +159,10 @@ calculateIsotropicDegradedStress(
     C_tensile.noalias() += 2 * mu * P_dev * KelvinMatrix::Identity();
     KelvinVector const sigma_real = degradation * sigma_tensile;
 
-    return std::make_tuple(sigma_real, sigma_tensile, C_tensile, C_compressive,
-                           strain_energy_tensile, elastic_energy);
+    KelvinMatrix const D = degradation * C_tensile + C_compressive;
+
+    return std::make_tuple(sigma_real, sigma_tensile, D, strain_energy_tensile,
+                           elastic_energy);
 }
 
 template <int DisplacementDim>
@@ -171,10 +170,7 @@ std::tuple<MathLib::KelvinVector::KelvinVectorType<
                DisplacementDim> /* sigma_real */,
            MathLib::KelvinVector::KelvinVectorType<
                DisplacementDim> /* sigma_tensile */,
-           MathLib::KelvinVector::KelvinMatrixType<
-               DisplacementDim> /* C_tensile */,
-           MathLib::KelvinVector::KelvinMatrixType<
-               DisplacementDim> /* C_compressive */,
+           MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> /* D */,
            double /* strain_energy_tensile */, double /* elastic_energy */
            >
 calculateIsotropicDegradedStressWithRankineEnergy(
@@ -227,8 +223,9 @@ calculateIsotropicDegradedStressWithRankineEnergy(
     C_tensile.noalias() += 2 * mu * P_dev * KelvinMatrix::Identity();
     KelvinVector const sigma_real = degradation * sigma_tensile;
 
-    return std::make_tuple(sigma_real, sigma_tensile, C_tensile, C_compressive,
-                           strain_energy_tensile, elastic_energy);
+    KelvinMatrix const D = degradation * C_tensile + C_compressive;
+    return std::make_tuple(sigma_real, sigma_tensile, D, strain_energy_tensile,
+                           elastic_energy);
 }
 
 }  // namespace Phasefield

@@ -10,10 +10,9 @@
  */
 #pragma once
 
-#include "ThermoMechanicalPhaseFieldFEM.h"
-
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
+#include "ThermoMechanicalPhaseFieldFEM.h"
 
 namespace ProcessLib
 {
@@ -93,9 +92,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
 
         auto& eps = _ip_data[ip].eps;
 
-        auto const& C_tensile = _ip_data[ip].C_tensile;
-        auto const& C_compressive = _ip_data[ip].C_compressive;
-
+        auto const& D = _ip_data[ip].D;
         auto const& sigma = _ip_data[ip].sigma;
 
         auto const k = _process_data.residual_stiffness(t, x_position)[0];
@@ -113,7 +110,6 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
         double const d_ip = N.dot(d);
         double const degradation = d_ip * d_ip * (1 - k) + k;
 
-        auto const C_eff = degradation * C_tensile + C_compressive;
         eps.noalias() = B * u;
         _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u, alpha,
                                                 delta_T, degradation);
@@ -131,7 +127,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
                 .noalias() = N;
         }
 
-        local_Jac.noalias() += B.transpose() * C_eff * B * w;
+        local_Jac.noalias() += B.transpose() * D * B * w;
 
         local_rhs.noalias() -=
             (B.transpose() * sigma - N_u.transpose() * rho_s * b) * w;
