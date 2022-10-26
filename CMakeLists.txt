@@ -9,7 +9,7 @@ option(OGS_BUILD_WHEEL "Build Python wheels of OGS" OFF)
 
 include(CMakeDependentOption)
 include(scripts/cmake/UseCompilerCache.cmake)
-if (NOT OGS_DISABLE_COMPILER_CACHE)
+if(NOT OGS_DISABLE_COMPILER_CACHE)
     useCompilerCache()
 endif()
 include(scripts/cmake/DownloadCpmCache.cmake)
@@ -236,54 +236,7 @@ endif()
 include(UnityBuildSettings)
 
 if(OGS_USE_PIP)
-    # Caches a hash of requested Python packages when they were successfully
-    # installed. On subsequent runs compare new hash to cached. If equal do
-    # nothing.
-    get_property(
-        _addtest_python_packages GLOBAL PROPERTY AddTest_PYTHON_PACKAGES
-    )
-    list(APPEND OGS_PYTHON_PACKAGES ${_addtest_python_packages})
-    list(REMOVE_DUPLICATES OGS_PYTHON_PACKAGES)
-    list(SORT OGS_PYTHON_PACKAGES)
-    string(SHA1 _ogs_python_packages_sha1 "${OGS_PYTHON_PACKAGES}")
-    list(LENGTH OGS_PYTHON_PACKAGES OGS_PYTHON_PACKAGES_LENGTH)
-    if(NOT ${_ogs_python_packages_sha1} STREQUAL "${_OGS_PYTHON_PACKAGES_SHA1}"
-       AND ${OGS_PYTHON_PACKAGES_LENGTH} GREATER 0
-    )
-        string(REPLACE ";" "\n" REQUIREMENTS_CONTENT "${OGS_PYTHON_PACKAGES}")
-        file(WRITE ${PROJECT_BINARY_DIR}/requirements.txt
-             ${REQUIREMENTS_CONTENT}
-        )
-        message(
-            STATUS
-                "Installing Python packages into local virtual environment..."
-        )
-        if(APPLE)
-            # CC=/Library/Developer/CommandLineTools/usr/bin/cc and this somehow
-            # breaks wheel builds ...
-            set(_apple_env ${CMAKE_COMMAND} -E env CC=clang CXX=clang)
-        endif()
-        execute_process(
-            COMMAND ${_apple_env} ${LOCAL_VIRTUALENV_BIN_DIR}/pip install -r
-                    requirements.txt
-            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-            RESULT_VARIABLE _return_code
-            OUTPUT_VARIABLE _out
-            ERROR_VARIABLE _err
-        )
-        if(${_return_code} EQUAL 0)
-            set(_OGS_PYTHON_PACKAGES_SHA1 "${_ogs_python_packages_sha1}"
-                CACHE INTERNAL ""
-            )
-            message(STATUS "${_out}")
-        else()
-            message(
-                FATAL_ERROR
-                    "Installation of Python packages via pip failed!\n"
-                    "To disable pip set OGS_USE_PIP=OFF.\n\n${_out}\n${_err}"
-            )
-        endif()
-    endif()
+    setup_venv()
 endif()
 
 file(WRITE ${PROJECT_BINARY_DIR}/disabled-tests.log "${DISABLED_TESTS_LOG}")
