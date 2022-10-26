@@ -16,12 +16,15 @@
 #include "LocalAssemblerInterface.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropicPhaseField.h"
+#include "MaterialLib/SolidModels/LinearElasticOrthotropic.h"
+#include "MaterialLib/SolidModels/LinearElasticOrthotropicPhaseField.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "ParameterLib/CoordinateSystem.h"
 #include "ParameterLib/SpatialPosition.h"
 #include "PhaseFieldProcessData.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
@@ -47,7 +50,7 @@ struct IntegrationPointData final
     typename ShapeMatrixType::NodalRowVectorType N;
     typename ShapeMatrixType::GlobalDimNodalMatrixType dNdx;
 
-    typename BMatricesType::KelvinVectorType eps, eps_prev;
+    typename BMatricesType::KelvinVectorType eps, eps_prev, eps_tensile;
 
     typename BMatricesType::KelvinVectorType sigma_tensile, sigma_compressive,
         sigma;
@@ -58,7 +61,8 @@ struct IntegrationPointData final
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
 
-    typename BMatricesType::KelvinMatrixType C_tensile, C_compressive;
+    typename BMatricesType::KelvinMatrixType D;
+
     double integration_weight;
     double history_variable, history_variable_prev;
 
@@ -90,29 +94,58 @@ struct IntegrationPointData final
         {
             case EnergySplitModel::Isotropic:
             {
-                std::tie(sigma, sigma_tensile, C_tensile, C_compressive,
-                         strain_energy_tensile, elastic_energy) =
-                    MaterialLib::Solids::Phasefield::
-                        calculateIsotropicDegradedStress<DisplacementDim>(
-                            degradation, bulk_modulus, mu, eps);
+                std::tie(sigma, sigma_tensile, D, strain_energy_tensile,
+                         elastic_energy) = MaterialLib::Solids::Phasefield::
+                    calculateIsotropicDegradedStress<DisplacementDim>(
+                        degradation, bulk_modulus, mu, eps);
                 break;
             }
             case EnergySplitModel::VolDev:
             {
-                std::tie(sigma, sigma_tensile, C_tensile, C_compressive,
-                         strain_energy_tensile, elastic_energy) =
-                    MaterialLib::Solids::Phasefield::
-                        calculateVolDevDegradedStress<DisplacementDim>(
-                            degradation, bulk_modulus, mu, eps);
+                std::tie(sigma, sigma_tensile, D, strain_energy_tensile,
+                         elastic_energy) = MaterialLib::Solids::Phasefield::
+                    calculateVolDevDegradedStress<DisplacementDim>(
+                        degradation, bulk_modulus, mu, eps);
                 break;
             }
             case EnergySplitModel::EffectiveStress:
             {
-                std::tie(sigma, sigma_tensile, C_tensile, C_compressive,
-                         strain_energy_tensile,
+                std::tie(sigma, sigma_tensile, D, strain_energy_tensile,
                          elastic_energy) = MaterialLib::Solids::Phasefield::
                     calculateIsotropicDegradedStressWithRankineEnergy<
                         DisplacementDim>(degradation, bulk_modulus, mu, eps);
+                break;
+            }
+            case EnergySplitModel::OrthoVolDev:
+            {
+                double temperature = 0.;
+                MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
+                    C_ortho = static_cast<
+                                  MaterialLib::Solids::LinearElasticOrthotropic<
+                                      DisplacementDim> const&>(solid_material)
+                                  .getElasticTensor(t, x, temperature);
+
+                std::tie(eps_tensile, sigma, sigma_tensile, sigma_compressive,
+                         D, strain_energy_tensile, elastic_energy) =
+                    MaterialLib::Solids::Phasefield::
+                        calculateOrthoVolDevDegradedStress<DisplacementDim>(
+                            degradation, eps, C_ortho);
+                break;
+            }
+            case EnergySplitModel::OrthoMasonry:
+            {
+                double temperature = 0.;
+                MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
+                    C_ortho = static_cast<
+                                  MaterialLib::Solids::LinearElasticOrthotropic<
+                                      DisplacementDim> const&>(solid_material)
+                                  .getElasticTensor(t, x, temperature);
+
+                std::tie(eps_tensile, sigma, sigma_tensile, D,
+                         strain_energy_tensile, elastic_energy) =
+                    MaterialLib::Solids::Phasefield::
+                        calculateOrthoMasonryDegradedStress<DisplacementDim>(
+                            degradation, eps, C_ortho);
                 break;
             }
         }
@@ -188,13 +221,6 @@ public:
                 _process_data.solid_materials,
                 _process_data.material_ids,
                 e.getID());
-        if (!dynamic_cast<MaterialLib::Solids::LinearElasticIsotropic<
-                DisplacementDim> const*>(&solid_material))
-        {
-            OGS_FATAL(
-                "For phasefield process only linear elastic solid material "
-                "support is implemented.");
-        }
 
         auto const shape_matrices =
             NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
@@ -215,11 +241,11 @@ public:
             static const int kelvin_vector_size =
                 MathLib::KelvinVector::kelvin_vector_dimensions(
                     DisplacementDim);
+            ip_data.eps_tensile.setZero(kelvin_vector_size);
             ip_data.eps.setZero(kelvin_vector_size);
             ip_data.eps_prev.resize(kelvin_vector_size);
-            ip_data.C_tensile.setZero(kelvin_vector_size, kelvin_vector_size);
-            ip_data.C_compressive.setZero(kelvin_vector_size,
-                                          kelvin_vector_size);
+            ip_data.D.setZero(kelvin_vector_size, kelvin_vector_size);
+
             ip_data.sigma_tensile.setZero(kelvin_vector_size);
             ip_data.sigma_compressive.setZero(kelvin_vector_size);
             ip_data.sigma.setZero(kelvin_vector_size);
@@ -313,6 +339,26 @@ private:
             _ip_data, &IpData::sigma, cache);
     }
 
+    std::vector<double> const& getIntPtSigmaTensile(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+            _ip_data, &IpData::sigma_tensile, cache);
+    }
+
+    std::vector<double> const& getIntPtSigmaCompressive(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+            _ip_data, &IpData::sigma_compressive, cache);
+    }
+
     std::vector<double> const& getIntPtEpsilon(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -321,6 +367,16 @@ private:
     {
         return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
             _ip_data, &IpData::eps, cache);
+    }
+
+    std::vector<double> const& getIntPtEpsilonTensile(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+            _ip_data, &IpData::eps_tensile, cache);
     }
 
     void assembleWithJacobianPhaseFieldEquations(

@@ -29,7 +29,25 @@ struct PhaseFieldLocalAssemblerInterface
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
+    virtual std::vector<double> const& getIntPtSigmaTensile(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtSigmaCompressive(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const = 0;
+
     virtual std::vector<double> const& getIntPtEpsilon(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtEpsilonTensile(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,

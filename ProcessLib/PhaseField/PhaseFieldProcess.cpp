@@ -137,6 +137,27 @@ void PhaseFieldProcess<DisplacementDim>::initializeConcreteProcess(
                          getExtrapolator(), _local_assemblers,
                          &LocalAssemblerInterface::getIntPtEpsilon));
 
+    _secondary_variables.addSecondaryVariable(
+        "sigma_tensile",
+        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
+                             DisplacementDim>::RowsAtCompileTime,
+                         getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtSigmaTensile));
+
+    _secondary_variables.addSecondaryVariable(
+        "sigma_compressive",
+        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
+                             DisplacementDim>::RowsAtCompileTime,
+                         getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtSigmaCompressive));
+
+    _secondary_variables.addSecondaryVariable(
+        "eps_tensile",
+        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
+                             DisplacementDim>::RowsAtCompileTime,
+                         getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtEpsilonTensile));
+
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::initialize, _local_assemblers,

@@ -119,3 +119,18 @@ AddTest(
         expected_2D_PropagatingCrack_AT1_h0p01_ts_2_t_0.020000.vtu 2D_PropagatingCrack_AT1_h0p01_ts_2_t_0.020000.vtu displacement displacement 1e-5 0
         expected_2D_PropagatingCrack_AT1_h0p01_ts_2_t_0.020000.vtu 2D_PropagatingCrack_AT1_h0p01_ts_2_t_0.020000.vtu phasefield phasefield 1e-6 0
 )
+
+AddTest(
+    NAME PhaseField_3D_beam_tens_AT2_vd_ortho
+    PATH PhaseField/beam/voldev-ortho
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS AT2_vd_tensile_VZ.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 1
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    RUNTIME 120
+    DIFF_DATA
+    expected_AT2_vd_tensile_ts_10_t_1.000000.vtu AT2_vd_tensile_ts_10_t_1.000000.vtu displacement displacement 1e-5 0
+    expected_AT2_vd_tensile_ts_10_t_1.000000.vtu AT2_vd_tensile_ts_10_t_1.000000.vtu phasefield phasefield 1e-6 0
+)

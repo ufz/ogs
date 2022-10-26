@@ -247,6 +247,14 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         {
             return EnergySplitModel::EffectiveStress;
         }
+        if (energy_split_model_string == "OrthoVolDev")
+        {
+            return EnergySplitModel::OrthoVolDev;
+        }
+        if (energy_split_model_string == "OrthoMasonry")
+        {
+            return EnergySplitModel::OrthoMasonry;
+        }
         OGS_FATAL(
             "energy_split_model must be 'Isotropic' or 'VolumetricDeviatoric' "
             "but '{:s}' was given",

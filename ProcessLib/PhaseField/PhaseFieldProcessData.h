@@ -49,7 +49,9 @@ enum class EnergySplitModel
 {
     Isotropic,
     VolDev,
-    EffectiveStress
+    EffectiveStress,
+    OrthoVolDev,
+    OrthoMasonry
 };
 
 class DegradationDerivative

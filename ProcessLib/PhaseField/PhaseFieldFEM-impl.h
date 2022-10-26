@@ -97,8 +97,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
             _process_data.energy_split_model);
 
         auto& sigma = _ip_data[ip].sigma;
-        auto const& C_tensile = _ip_data[ip].C_tensile;
-        auto const& C_compressive = _ip_data[ip].C_compressive;
+        auto const& D = _ip_data[ip].D;
 
         typename ShapeMatricesType::template MatrixType<DisplacementDim,
                                                         displacement_size>
@@ -120,8 +119,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
             (B.transpose() * sigma - N_u.transpose() * rho_sr * b -
              local_pressure * N_u.transpose() * dNdx * d) *
             w;
-        local_Jac.noalias() +=
-            B.transpose() * (degradation * C_tensile + C_compressive) * B * w;
+        local_Jac.noalias() += B.transpose() * D * B * w;
     }
 }
 
