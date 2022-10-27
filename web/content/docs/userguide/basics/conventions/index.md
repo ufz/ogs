@@ -11,6 +11,8 @@ In general OpenGeoSys is not using any intrinsic units, i.e. OGS assumes that a 
 However, there are some exceptions to the rule as for instance some empirical laws like some expressions for the vapor diffusion and latent heat that assume the temperature to be given in Kelvin.
 Therefore, we recommend using SI base units.
 
+For more information on how to come up with a self-consistent unit scheme see [this PDF](units_ogs.pdf).
+
 ### Dimensional analysis of source and boundary terms based on their primary variables
 
 Most processes in OpenGeoSys are derived and implemented with a 3D setting in mind.
