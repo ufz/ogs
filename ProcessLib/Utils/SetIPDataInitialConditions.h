@@ -68,7 +68,8 @@ void setIPDataInitialConditions(
             {
                 OGS_FATAL(
                     "No integration points read in the integration point "
-                    "initial conditions set function.");
+                    "initial conditions set function for IP data with name {}.",
+                    name);
             }
             position += integration_points_read * ip_meta_data.n_components;
         }
