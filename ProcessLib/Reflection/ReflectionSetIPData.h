@@ -80,9 +80,9 @@ bool setIPDataIfNameMatches(std::string const& name, double const* values,
 
     if constexpr (detail::has_reflect<Member>)
     {
-        return 0 != reflectSetIPData<dim>(name, values, ip_data_vector,
-                                          accessor_field_from_ip_data,
-                                          Member::reflect());
+        return reflectSetIPData<dim>(name, values, ip_data_vector,
+                                     accessor_field_from_ip_data,
+                                     Member::reflect());
     }
     else
     {
@@ -99,7 +99,7 @@ bool setIPDataIfNameMatches(std::string const& name, double const* values,
 
 template <int dim, typename IPData, typename Accessor_CurrentLevelFromIPData,
           typename... Class, typename... Member, std::size_t... Idcs>
-std::size_t reflectSetIPData(
+bool reflectSetIPData(
     std::string const& name, double const* values,
     std::vector<IPData>& ip_data_vector,
     Accessor_CurrentLevelFromIPData const& accessor,
@@ -108,22 +108,14 @@ std::size_t reflectSetIPData(
 {
     // uses short-circuit evaluation of the fold || ... to stop after the first
     // match
-    bool have_consumed_data =
-        ((setIPDataIfNameMatches<dim>(name, values, ip_data_vector, accessor,
-                                      std::get<Idcs>(refl_data))) ||
-         ...);
-
-    if (have_consumed_data)
-    {
-        return ip_data_vector.size();
-    }
-
-    return 0;
+    return ((setIPDataIfNameMatches<dim>(name, values, ip_data_vector, accessor,
+                                         std::get<Idcs>(refl_data))) ||
+            ...);
 }
 
 template <int dim, typename IPData, typename Accessor_CurrentLevelFromIPData,
           typename... Class, typename... Member>
-std::size_t reflectSetIPData(
+bool reflectSetIPData(
     std::string const& name, double const* values,
     std::vector<IPData>& ip_data_vector,
     Accessor_CurrentLevelFromIPData const& accessor,
@@ -142,15 +134,16 @@ std::size_t reflectSetIPData(
  * Possible candidate properties are obtained from \c IPData via some sort of
  * reflection.
  *
- * \return The number of integration points if data has been set, zero
- * if no property with the given \c name has been found.
+ * \return The number of integration points.
  */
 template <int dim, typename IPData>
 std::size_t reflectSetIPData(std::string const& name, double const* values,
                              std::vector<IPData>& ip_data_vector)
 {
-    return detail::reflectSetIPData<dim>(name, values, ip_data_vector,
-                                         std::identity{}, IPData::reflect());
+    detail::reflectSetIPData<dim>(name, values, ip_data_vector, std::identity{},
+                                  IPData::reflect());
+
+    return ip_data_vector.size();
 }
 
 }  // namespace ProcessLib::Reflection
