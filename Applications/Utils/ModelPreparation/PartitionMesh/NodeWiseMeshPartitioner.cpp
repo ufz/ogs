@@ -376,11 +376,10 @@ std::size_t copyFieldPropertyDataToPartitions(
     MeshLib::PropertyVector<T> const& pv,
     MeshLib::PropertyVector<T>& partitioned_pv)
 {
-    // special case for OGS_VERSION and IntegrationPointMetaData
-    // those are not "real" integration points
-    // they are copied "as is" (i.e. fully) for every partition
-    if (pv.getPropertyName() == "OGS_VERSION" ||
-        pv.getPropertyName() == "IntegrationPointMetaData")
+    // Special field data such as OGS_VERSION, IntegrationPointMetaData,
+    // etc., which are not "real" integration points, are copied "as is"
+    // (i.e. fully) for every partition.
+    if (pv.getPropertyName().find("_ip") == std::string::npos)
     {
         std::copy_n(&pv[0], pv.size(), &partitioned_pv[id_offset_partition]);
         return pv.size();
@@ -430,8 +429,9 @@ void setIntegrationPointNumberOfPartition(MeshLib::Properties const& properties,
             continue;
         }
 
-        if (property->getPropertyName() == "OGS_VERSION" ||
-            property->getPropertyName() == "IntegrationPointMetaData")
+        // For special field data such as OGS_VERSION, IntegrationPointMetaData,
+        // etc., which are not "real" integration points:
+        if (property->getPropertyName().find("_ip") == std::string::npos)
         {
             continue;
         }
@@ -483,8 +483,10 @@ bool copyPropertyVector(
     std::vector<std::size_t> element_ip_data_offsets;
     if (item_type == MeshLib::MeshItemType::IntegrationPoint)
     {
-        if (pv->getPropertyName() == "OGS_VERSION" ||
-            pv->getPropertyName() == "IntegrationPointMetaData")
+        // Special field data such as OGS_VERSION, IntegrationPointMetaData,
+        // etc., which are not "real" integration points, are copied "as is"
+        // (i.e. fully) for every partition.
+        if (pv->getPropertyName().find("_ip") == std::string::npos)
         {
             partitioned_pv_size = pv->size() * partitions.size();
         }
@@ -652,8 +654,9 @@ void checkFieldPropertyVectorSize(
             continue;
         }
 
-        if (property->getPropertyName() == "OGS_VERSION" ||
-            property->getPropertyName() == "IntegrationPointMetaData")
+        // For special field data such as OGS_VERSION, IntegrationPointMetaData,
+        // etc., which are not "real" integration points:
+        if (property->getPropertyName().find("_ip") == std::string::npos)
         {
             continue;
         }
