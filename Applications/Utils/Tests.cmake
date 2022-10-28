@@ -477,6 +477,37 @@ AddTest(
        quad_tri_THM_t_864000_000000_partitioned_node_properties_val4.bin
 )
 
+AddTest(
+    NAME partmesh_mesh_with_field_data_without_ip_data_ogs2metis
+    PATH NodePartitionedMesh/FieldDataWithoutIPData
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/FieldDataWithoutIPData
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i A2_tunnel_surface.vtu --ogs2metis
+                    -o ${Data_BINARY_DIR}/NodePartitionedMesh/FieldDataWithoutIPData
+)
+
+AddTest(
+    NAME partmesh_mesh_with_field_data_without_ip_data
+    PATH NodePartitionedMesh/FieldDataWithoutIPData
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/FieldDataWithoutIPData
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 2 -i A2_tunnel_surface.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/FieldDataWithoutIPData
+    REQUIREMENTS NOT APPLE
+    DEPENDS partmesh-partmesh_mesh_with_field_data_without_ip_data_ogs2metis
+    TESTER diff
+    DIFF_DATA
+        A2_tunnel_surface_partitioned_cell_properties_cfg2.bin
+        A2_tunnel_surface_partitioned_msh_cfg2.bin
+        A2_tunnel_surface_partitioned_node_properties_cfg2.bin
+        A2_tunnel_surface_partitioned_cell_properties_val2.bin
+        A2_tunnel_surface_partitioned_msh_ele2.bin
+        A2_tunnel_surface_partitioned_node_properties_val2.bin
+        A2_tunnel_surface_partitioned_integration_point_properties_cfg2.bin
+        A2_tunnel_surface_partitioned_msh_ele_g2.bin
+        A2_tunnel_surface_partitioned_integration_point_properties_val2.bin
+        A2_tunnel_surface_partitioned_msh_nod2.bin
+)
+
 ################################################
 
 if(SNAKEMAKE AND TEE_TOOL_PATH AND BASH_TOOL_PATH)
@@ -952,6 +983,20 @@ AddTest(
     quad_tri_THM_t_864000_000000_pvtu_1.vtu quad_tri_THM_t_864000_000000_pvtu_1.vtu 1e-16
     quad_tri_THM_t_864000_000000_pvtu_2.vtu quad_tri_THM_t_864000_000000_pvtu_2.vtu 1e-16
     quad_tri_THM_t_864000_000000_pvtu_3.vtu quad_tri_THM_t_864000_000000_pvtu_3.vtu 1e-16
+)
+
+AddTest(
+    NAME BinaryToPVTU_mesh_with_field_data_without_ip_data
+    PATH NodePartitionedMesh/FieldDataWithoutIPData
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/FieldDataWithoutIPData
+    EXECUTABLE binaryToPVTU
+    EXECUTABLE_ARGS -i A2_tunnel_surface -o ${Data_BINARY_DIR}/NodePartitionedMesh/FieldDataWithoutIPData/A2_tunnel_surface_partitioned
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 2
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    A2_tunnel_surface_partitioned_0.vtu A2_tunnel_surface_partitioned_0.vtu 1e-16
+    A2_tunnel_surface_partitioned_1.vtu A2_tunnel_surface_partitioned_1.vtu 1e-16
 )
 
 AddTest(
