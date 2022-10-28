@@ -37,13 +37,13 @@ struct ConstitutiveSetting
         ConstitutiveData<DisplacementDim> const& cd,
         StatefulData<DisplacementDim> const& /*state*/)
     {
-        return cd.s_mech_data.sigma_total;
+        return cd.total_stress_data.sigma_total;
     }
     static KelvinVector<DisplacementDim>& totalStress(
         ConstitutiveData<DisplacementDim>& cd,
         StatefulData<DisplacementDim>& /*state*/)
     {
-        return cd.s_mech_data.sigma_total;
+        return cd.total_stress_data.sigma_total;
     }
 
     static KelvinVector<DisplacementDim> const& statefulStress(

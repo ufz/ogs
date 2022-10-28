@@ -390,7 +390,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     // residual, order T, p, u
     block_p(out.res).noalias() = dNdx.transpose() * CD.eq_p_data.rhs_p_dNT_V;
     block_u(out.res).noalias() =
-        B.transpose() * CD.s_mech_data.sigma_total -
+        B.transpose() * CD.total_stress_data.sigma_total -
         static_cast<int>(this->process_data_.apply_body_force_for_deformation) *
             N_u_op.transpose() * CD.grav_data.volumetric_body_force;
 

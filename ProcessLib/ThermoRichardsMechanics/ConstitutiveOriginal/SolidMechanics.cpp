@@ -27,6 +27,8 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     MaterialStateData<DisplacementDim>& mat_state,
     SolidMechanicsDataStateful<DisplacementDim> const& prev_state,
     SolidMechanicsDataStateful<DisplacementDim>& current_state,
+    TotalStressData<DisplacementDim>& total_stress_data,
+    EquivalentPlasticStrainData& equiv_plast_strain_data,
     SolidMechanicsDataStateless<DisplacementDim>& out) const
 {
     namespace MPL = MaterialPropertyLib;
@@ -66,7 +68,7 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     auto const& identity2 = MathLib::KelvinVector::Invariants<
         MathLib::KelvinVector::kelvin_vector_dimensions(
             DisplacementDim)>::identity2;
-    out.sigma_total.noalias() =
+    total_stress_data.sigma_total.noalias() =
         current_state.sigma_eff +
         biot_data.alpha * bishops_data.chi_S_L * p_cap_data.p_cap * identity2;
 
@@ -82,7 +84,7 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     out.J_up_BT_K_N.noalias() =
         swelling_data.J_up_BT_K_N + J_up_X_BTI2N * identity2;
 
-    out.equivalent_plastic_strain =
+    equiv_plast_strain_data.equivalent_plastic_strain =
         mat_state.material_state_variables->getEquivalentPlasticStrain();
 }
 

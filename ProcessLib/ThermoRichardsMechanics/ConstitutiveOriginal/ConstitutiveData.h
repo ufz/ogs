@@ -14,6 +14,7 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/DarcyLaw.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqP.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqT.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EquivalentPlasticStrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Gravity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Saturation.h"
@@ -22,6 +23,8 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMHeatStorageAndFlux.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMStorage.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMVaporDiffusion.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TransportPorosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveOriginal/SolidMechanics.h"
 
 namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
@@ -75,6 +78,7 @@ template <int DisplacementDim>
 struct ConstitutiveData
 {
     SolidMechanicsDataStateless<DisplacementDim> s_mech_data;
+    TotalStressData<DisplacementDim> total_stress_data;
     GravityData<DisplacementDim> grav_data;
     TRMHeatStorageAndFluxData<DisplacementDim> heat_data;
     TRMVaporDiffusionData<DisplacementDim> vap_data;
@@ -100,5 +104,6 @@ struct ConstitutiveTempData
     SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
     PermeabilityData<DisplacementDim> perm_data;
     FluidThermalExpansionData f_therm_exp_data;
+    EquivalentPlasticStrainData equiv_plast_strain_data;
 };
 }  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
