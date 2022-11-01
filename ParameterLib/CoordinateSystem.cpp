@@ -10,6 +10,7 @@
 
 #include "CoordinateSystem.h"
 
+#include <Eigen/Dense>
 #include <typeinfo>
 
 #include "Parameter.h"
