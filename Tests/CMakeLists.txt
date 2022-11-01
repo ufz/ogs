@@ -128,6 +128,10 @@ if(OGS_BUILD_GUI)
     endif()
 endif()
 
+target_precompile_headers(testrunner PRIVATE [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] <Eigen/Core>
+    <gtest/gtest.h>)
+
 # cmake-format: off
 # Add make-target tests which runs the testrunner
 if(DEFINED ENV{CI} AND NOT OGS_COVERAGE)

@@ -42,3 +42,7 @@ target_link_libraries(
                        MaterialLib_FractureModels PRIVATE MathLib MeshLib
                                                           ParameterLib exprtk
 )
+
+target_precompile_headers(MaterialLib PRIVATE [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]]
+    [["ParameterLib/Parameter.h"]] <Eigen/Core>)

@@ -27,3 +27,6 @@ foreach(xsd OpenGeoSysGLI.xsd OpenGeoSysSTN.xsd)
     )
     install(FILES IO/XmlIO/${xsd} DESTINATION bin)
 endforeach()
+
+target_precompile_headers(GeoLib PRIVATE [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] <Eigen/Core>)

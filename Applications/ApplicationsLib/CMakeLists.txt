@@ -40,3 +40,6 @@ foreach(process ${_enabled_processes})
                                                ${EnableProcess}
     )
 endforeach()
+
+target_precompile_headers(ApplicationsLib PRIVATE [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]])

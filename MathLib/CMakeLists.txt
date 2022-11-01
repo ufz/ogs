@@ -61,3 +61,6 @@ target_compile_definitions(
         $<$<AND:$<BOOL:${OGS_USE_MKL}>,$<BOOL:${OGS_EIGEN_USE_MKL}>>:EIGEN_USE_MKL_ALL>
     PRIVATE $<$<BOOL:${OGS_USE_MKL}>:USE_MKL>
 )
+
+target_precompile_headers(MathLib PRIVATE [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] <Eigen/Core>)

@@ -13,3 +13,6 @@ if(OGS_USE_MFRONT)
         MaterialLib_SolidModels PUBLIC MaterialLib_SolidModels_MFront
     )
 endif()
+
+target_precompile_headers(MaterialLib_SolidModels PRIVATE [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] <Eigen/Core>)
