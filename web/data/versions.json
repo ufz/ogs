@@ -57,7 +57,7 @@
     "jupyter_image": {
       "conda_packages": [
         "snakemake-minimal",
-        "pyvista==0.34.0",
+        "pyvista==0.34.2",
         "ipyvtklink",
         "pythreejs",
         "gmsh==4.10.0",
