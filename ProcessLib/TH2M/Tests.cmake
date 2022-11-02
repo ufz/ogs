@@ -19,6 +19,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE TH2M/H2/dissolution_diffusion/continuous_injection.prj RUNTIME 60)
     OgsTest(PROJECTFILE TH2M/H2/dissolution_diffusion/bourgeat.prj RUNTIME 60)
     NotebookTest(NOTEBOOKFILE TH2M/H2/dissolution_diffusion/phase_appearance.ipynb RUNTIME 60)
+    OgsTest(PROJECTFILE TH2M/H/diffusion/diffusion.prj RUNTIME 10)
     NotebookTest(NOTEBOOKFILE TH2M/H2/mcWhorter/mcWhorter.ipynb RUNTIME 55)
 endif()
 

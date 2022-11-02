@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="result_diffusion_t_0.vtu"/>
+    <DataSet timestep="1000000" group="" part="0" file="result_diffusion_t_1e+06.vtu"/>
+    <DataSet timestep="2000000" group="" part="0" file="result_diffusion_t_2e+06.vtu"/>
+    <DataSet timestep="4000000" group="" part="0" file="result_diffusion_t_4e+06.vtu"/>
+    <DataSet timestep="6000000" group="" part="0" file="result_diffusion_t_6e+06.vtu"/>
+    <DataSet timestep="8000000" group="" part="0" file="result_diffusion_t_8e+06.vtu"/>
+    <DataSet timestep="10000000" group="" part="0" file="result_diffusion_t_1e+07.vtu"/>
+  </Collection>
+</VTKFile>
