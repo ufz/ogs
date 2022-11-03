@@ -10,6 +10,11 @@
 
 #include "ReferenceElementUtils.h"
 
+#include <gtest/gtest.h>
+
+#include "NumLib/Fem/ReferenceElement.h"
+#include "Tests/Utils.h"
+
 namespace ReferenceElementUtils
 {
 // Returns the coordinates as a span of dynamic size.
@@ -17,41 +22,42 @@ BaseLib::DynamicSpan<const std::array<double, 3>>
 getNodeCoordsOfReferenceElement(MeshLib::CellType const cell_type)
 {
     using namespace MeshLib;
+    namespace NL = NumLib;
 
     switch (cell_type)
     {
         case CellType::POINT1:
-            return getNodeCoordsOfReferenceElement<Point>();
+            return NL::getNodeCoordsOfReferenceElement<Point>();
         case CellType::LINE2:
-            return getNodeCoordsOfReferenceElement<Line>();
+            return NL::getNodeCoordsOfReferenceElement<Line>();
         case CellType::LINE3:
-            return getNodeCoordsOfReferenceElement<Line3>();
+            return NL::getNodeCoordsOfReferenceElement<Line3>();
         case CellType::TRI3:
-            return getNodeCoordsOfReferenceElement<Tri>();
+            return NL::getNodeCoordsOfReferenceElement<Tri>();
         case CellType::TRI6:
-            return getNodeCoordsOfReferenceElement<Tri6>();
+            return NL::getNodeCoordsOfReferenceElement<Tri6>();
         case CellType::QUAD4:
-            return getNodeCoordsOfReferenceElement<Quad>();
+            return NL::getNodeCoordsOfReferenceElement<Quad>();
         case CellType::QUAD8:
-            return getNodeCoordsOfReferenceElement<Quad8>();
+            return NL::getNodeCoordsOfReferenceElement<Quad8>();
         case CellType::QUAD9:
-            return getNodeCoordsOfReferenceElement<Quad9>();
+            return NL::getNodeCoordsOfReferenceElement<Quad9>();
         case CellType::TET4:
-            return getNodeCoordsOfReferenceElement<Tet>();
+            return NL::getNodeCoordsOfReferenceElement<Tet>();
         case CellType::TET10:
-            return getNodeCoordsOfReferenceElement<Tet10>();
+            return NL::getNodeCoordsOfReferenceElement<Tet10>();
         case CellType::HEX8:
-            return getNodeCoordsOfReferenceElement<Hex>();
+            return NL::getNodeCoordsOfReferenceElement<Hex>();
         case CellType::HEX20:
-            return getNodeCoordsOfReferenceElement<Hex20>();
+            return NL::getNodeCoordsOfReferenceElement<Hex20>();
         case CellType::PRISM6:
-            return getNodeCoordsOfReferenceElement<Prism>();
+            return NL::getNodeCoordsOfReferenceElement<Prism>();
         case CellType::PRISM15:
-            return getNodeCoordsOfReferenceElement<Prism15>();
+            return NL::getNodeCoordsOfReferenceElement<Prism15>();
         case CellType::PYRAMID5:
-            return getNodeCoordsOfReferenceElement<Pyramid>();
+            return NL::getNodeCoordsOfReferenceElement<Pyramid>();
         case CellType::PYRAMID13:
-            return getNodeCoordsOfReferenceElement<Pyramid13>();
+            return NL::getNodeCoordsOfReferenceElement<Pyramid13>();
         default:
             OGS_FATAL("Unsupported cell type {}", CellType2String(cell_type));
     }
@@ -62,7 +68,8 @@ std::shared_ptr<MeshLib::Element const> getReferenceElement(
 {
     auto const create = []<typename ElementType>(Type<ElementType>)
     {
-        auto ref_elt = std::make_shared<ReferenceElement<ElementType>>();
+        auto ref_elt =
+            std::make_shared<NumLib::ReferenceElement<ElementType>>();
         return std::shared_ptr<MeshLib::Element const>{ref_elt,
                                                        &ref_elt->element};
     };

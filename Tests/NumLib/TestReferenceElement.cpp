@@ -8,6 +8,7 @@
  *
  */
 
+#include "NumLib/Fem/ReferenceElement.h"
 #include "Tests/MathLib/PointUtils.h"
 #include "Tests/NumLib/ReferenceElementUtils.h"
 #include "Tests/NumLib/ShapeFunctionUtils.h"
@@ -15,7 +16,7 @@
 template <typename MeshElementType>
 class NumLibReferenceElementTest : public ::testing::Test
 {
-    ReferenceElementUtils::ReferenceElement<MeshElementType> reference_element;
+    NumLib::ReferenceElement<MeshElementType> reference_element;
 
 protected:
     MeshElementType const& element = reference_element.element;
@@ -74,8 +75,7 @@ TYPED_TEST(NumLibReferenceElementTest, Prerequisite)
     using MeshElementType = TypeParam;
 
     auto const element_node_natural_coords =
-        ReferenceElementUtils::getNodeCoordsOfReferenceElement<
-            MeshElementType>();
+        NumLib::getNodeCoordsOfReferenceElement<MeshElementType>();
 
     ASSERT_EQ(MeshElementType::n_all_nodes, element_node_natural_coords.size())
         << "Number of nodes and natural coordinates do not match for this "
@@ -101,8 +101,7 @@ TYPED_TEST(NumLibReferenceElementTest, ElementNodes)
     using MeshElementType = TypeParam;
 
     auto const all_element_node_natural_coords =
-        ReferenceElementUtils::getNodeCoordsOfReferenceElement<
-            MeshElementType>();
+        NumLib::getNodeCoordsOfReferenceElement<MeshElementType>();
 
     // For pyramid 13 some higher order nodes would not pass this unit test.
     auto const element_node_natural_coords =

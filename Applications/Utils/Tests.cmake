@@ -1166,3 +1166,37 @@ AddTest(
     merged_quad_tri_THM_MPI_t_86400_000000.vtu merged_quad_tri_THM_MPI_t_86400_000000.vtu epsilon epsilon 1e-15 1e-15
     merged_quad_tri_THM_MPI_t_86400_000000.vtu merged_quad_tri_THM_MPI_t_86400_000000.vtu sigma sigma 1e-15 1e-15
 )
+
+AddTest(
+    NAME mixedElements
+    PATH NodePartitionedMesh/WithIntegrationPointStress/MixedElements
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements
+    EXECUTABLE ipDataToPointCloud
+    EXECUTABLE_ARGS -i mesh_with_3D_different_elements_sigma_ip.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements/mesh_with_3D_different_elements_sigma_ip_point_cloud.vtu
+    TESTER vtkdiff
+    DIFF_DATA
+    mesh_with_3D_different_elements_sigma_ip_point_cloud.vtu mesh_with_3D_different_elements_sigma_ip_point_cloud.vtu sigma_ip sigma_ip 1e-15 0
+)
+
+AddTest(
+    NAME triAndQuadMesh
+    PATH NodePartitionedMesh/WithIntegrationPointStress/MixedElements/TriQuad
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements/TriQuad
+    EXECUTABLE ipDataToPointCloud
+    EXECUTABLE_ARGS -i quad_tri_THM_t_864000_000000.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/WithIntegrationPointStress/MixedElements/TriQuad/quad_tri_THM_t_864000_000000_point_cloud.vtu
+    TESTER vtkdiff
+    DIFF_DATA
+    quad_tri_THM_t_864000_000000_point_cloud.vtu quad_tri_THM_t_864000_000000_point_cloud.vtu sigma_ip sigma_ip 1e-15 1e-15
+    quad_tri_THM_t_864000_000000_point_cloud.vtu quad_tri_THM_t_864000_000000_point_cloud.vtu epsilon_ip epsilon_ip 1e-15 0
+)
+
+AddTest(
+    NAME m1_3Dsquare
+    PATH Mechanics/m1_3Dsquare
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Mechanics/m1_3Dsquare
+    EXECUTABLE ipDataToPointCloud
+    EXECUTABLE_ARGS -i m1_3Dsquare_ts_1_t_1.000000.vtu -o ${Data_BINARY_DIR}/Mechanics/m1_3Dsquare/m1_3Dsquare_ts_1_t_1.000000_point_cloud.vtu
+    TESTER vtkdiff
+    DIFF_DATA
+    m1_3Dsquare_ts_1_t_1.000000_point_cloud.vtu m1_3Dsquare_ts_1_t_1.000000_point_cloud.vtu sigma_ip sigma_ip 1e-15 0
+)

@@ -15,9 +15,8 @@
 
 #include "GeoLib/Point.h"
 #include "MeshLib/Elements/Elements.h"
-#include "MeshLib/Elements/Utils.h"
-#include "MeshLib/Mesh.h"
-#include "Tests/NumLib/ReferenceElementUtils.h"
+#include "NumLib/Fem/ReferenceElement.h"
+#include "Tests/Utils.h"
 #include "Tests/VectorUtils.h"
 
 std::vector<MeshLib::Node*> createNodes()
@@ -158,7 +157,7 @@ TEST(IsPntInElement, Hex)
 template <typename MeshElementType>
 class MeshLibIsPntInElementTest : public ::testing::Test
 {
-    ReferenceElementUtils::ReferenceElement<MeshElementType> reference_element;
+    NumLib::ReferenceElement<MeshElementType> reference_element;
 
 protected:
     MeshElementType const& bulk_element = reference_element.element;
