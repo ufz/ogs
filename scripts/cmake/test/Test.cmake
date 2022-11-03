@@ -3,25 +3,12 @@ find_program(DIFF_TOOL_PATH diff)
 find_program(TIME_TOOL_PATH time)
 find_program(GREP_TOOL_PATH grep)
 find_program(BASH_TOOL_PATH bash)
-find_program(VALGRIND_TOOL_PATH valgrind)
 find_program(MPIRUN_TOOL_PATH mpirun)
 
 if(NOT TIME_TOOL_PATH)
     message(
         STATUS
             "time-command is required for time wrapper but was not found! All corresponding tests are disabled."
-    )
-endif()
-if(NOT VALGRIND_TOOL_PATH)
-    message(
-        STATUS
-            "Valgrind is required for memcheck wrapper but was not found! All corresponding tests are disabled."
-    )
-endif()
-if(NOT VALGRIND_TOOL_PATH)
-    message(
-        STATUS
-            "Valgrind is required for callgrind wrapper but was not found! All corresponding tests are disabled."
     )
 endif()
 if(NOT MPIRUN_TOOL_PATH)

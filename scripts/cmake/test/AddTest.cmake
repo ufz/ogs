@@ -10,7 +10,7 @@
 #   PATH <working directory> # relative to SourceDir/Tests/Data
 #   EXECUTABLE <executable target> # optional, defaults to ogs
 #   EXECUTABLE_ARGS <arguments>
-#   WRAPPER <time|memcheck|callgrind|mpirun> # optional
+#   WRAPPER <time|mpirun> # optional
 #   WRAPPER_ARGS <arguments> # optional
 #   TESTER <diff|vtkdiff|gmldiff|memcheck> # optional
 #   TESTER_ARGS <argument> # optional
@@ -160,32 +160,6 @@ function(AddTest)
         else()
             set(DISABLED_TESTS_LOG
                 "${DISABLED_TESTS_LOG}\nDisabling time wrapper for ${AddTest_NAME} as time exe was not found!"
-                CACHE INTERNAL ""
-            )
-            set(AddTest_WRAPPER_ARGS "")
-        endif()
-    elseif(AddTest_WRAPPER STREQUAL "memcheck")
-        if(VALGRIND_TOOL_PATH)
-            set(WRAPPER_COMMAND
-                "${VALGRIND_TOOL_PATH} --tool=memcheck --log-file=${AddTest_SOURCE_PATH}/${AddTest_NAME}_memcheck.txt -v --leak-check=full --show-reachable=yes --track-origins=yes --malloc-fill=0xff --free-fill=0xff"
-            )
-            set(tester memcheck)
-        else()
-            set(DISABLED_TESTS_LOG
-                "${DISABLED_TESTS_LOG}\nDisabling memcheck wrapper for ${AddTest_NAME} as memcheck exe was not found!"
-                CACHE INTERNAL ""
-            )
-            set(AddTest_WRAPPER_ARGS "")
-        endif()
-    elseif(AddTest_WRAPPER STREQUAL "callgrind")
-        if(VALGRIND_TOOL_PATH)
-            set(WRAPPER_COMMAND
-                "${VALGRIND_TOOL_PATH} --tool=callgrind --branch-sim=yes --cache-sim=yes --dump-instr=yes --collect-jumps=yes"
-            )
-            unset(tester)
-        else()
-            set(DISABLED_TESTS_LOG
-                "${DISABLED_TESTS_LOG}\nDisabling callgrind wrapper for ${AddTest_NAME} as callgrind exe was not found!"
                 CACHE INTERNAL ""
             )
             set(AddTest_WRAPPER_ARGS "")
