@@ -22,7 +22,7 @@ Nomenclature: $P_g$: gas pressure; $P_c$: capillary pressure; $T$: temperature; 
 
 Some remarks:
 
-1\. The `TwoPhaseFlowWithPP` process assumes that the two fluid phases are immiscible. Thus, it is most suitable for simulating two-phase flow under capillary effects (e.g. replacement of one phase by another due to gravity). Note that the wetting and non-wetting phases are not limited to water and gas, see the [McWhorter benchmark]({{< ref "docs/benchmarks/two-phase-flow-pp-form/two-phase-flow-pp-mcwhorter" >}}) for example.
+1\. The `TwoPhaseFlowWithPP` process assumes that the two fluid phases are immiscible. Thus, it is most suitable for simulating two-phase flow under capillary effects (e.g. replacement of one phase by another due to gravity). Note that the wetting and non-wetting phases are not limited to water and gas, see the [McWhorter benchmark]({{< ref "docs/benchmarks/two-phase-flow/two-phase-flow-pp-mcwhorter" >}}) for example.
 
 2\. The `TwoPhaseFlowWithPrho` process assumes that the main component of the gas phase can be dissolved in the liquid phase. Water evaporation is neglected here. The appearance/disappearance of the gas phase is controlled by the solubility (given by the Henry's Law) of the gaseous component, e.g. H2. It is therefore most suitable for nuclear waste repository (see the [MoMaS benchmark]({{< ref "docs/benchmarks/two-phase-flow/momas" >}})) or CO2 storage problems.
 

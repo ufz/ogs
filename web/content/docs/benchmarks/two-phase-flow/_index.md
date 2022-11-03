@@ -1,7 +1,7 @@
 +++
 title = "Two-phase Flow"
 layout = "gallery"
-image = "TODO"
+image = "hh-thumbnail.png"
 weight = 10
 coupling = "hh"
 +++
