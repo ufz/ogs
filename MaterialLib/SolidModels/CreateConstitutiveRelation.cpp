@@ -20,10 +20,8 @@
 #include "MFront/CreateMFront.h"
 #endif  // OGS_USE_MFRONT
 
-#include "BaseLib/ConfigTree.h"
-#include "BaseLib/Error.h"
+#include "CreateConstitutiveRelationsGeneric.h"
 #include "MechanicsBase.h"
-#include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
 {
@@ -93,41 +91,12 @@ createConstitutiveRelations(
         local_coordinate_system,
     BaseLib::ConfigTree const& config)
 {
-    auto const constitutive_relation_configs =
-        //! \ogs_file_param{material__solid__constitutive_relation}
-        config.getConfigSubtreeList("constitutive_relation");
-
-    std::map<int, std::unique_ptr<MechanicsBase<DisplacementDim>>>
-        constitutive_relations;
-
-    for (auto const& constitutive_relation_config :
-         constitutive_relation_configs)
-    {
-        int const material_id =
-            //! \ogs_file_attr{material__solid__constitutive_relation__id}
-            constitutive_relation_config.getConfigAttribute<int>("id", 0);
-
-        if (constitutive_relations.find(material_id) !=
-            constitutive_relations.end())
-        {
-            OGS_FATAL(
-                "Multiple constitutive relations were specified for the same "
-                "material id {:d}. Keep in mind, that if no material id is "
-                "specified, it is assumed to be 0 by default.",
-                material_id);
-        }
-
-        constitutive_relations.emplace(
-            material_id,
-            createConstitutiveRelation<DisplacementDim>(
-                parameters,
-                local_coordinate_system,
-                constitutive_relation_config));
-    }
-
-    DBUG("Found {:d} constitutive relations.", constitutive_relations.size());
-
-    return constitutive_relations;
+    return createConstitutiveRelationsGeneric<
+        MaterialLib::Solids::MechanicsBase<DisplacementDim>>(
+        parameters,
+        local_coordinate_system,
+        config,
+        createConstitutiveRelation<DisplacementDim>);
 }
 
 template std::map<int, std::unique_ptr<MaterialLib::Solids::MechanicsBase<2>>>
