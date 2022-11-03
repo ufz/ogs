@@ -382,6 +382,28 @@ Use six arguments version of AddTest with absolute and relative tolerances"
     set(TEST_NAME
         "${AddTest_EXECUTABLE}-${AddTest_NAME}${AddTest_WRAPPER_STRING}"
     )
+
+    # Process placeholders <PATH> <SOURCE_PATH> and <BUILD_PATH>
+    string(REPLACE "<PATH>" "${AddTest_PATH}" AddTest_WORKING_DIRECTORY
+                   "${AddTest_WORKING_DIRECTORY}"
+    )
+    string(REPLACE "<PATH>" "${AddTest_PATH}" AddTest_EXECUTABLE_ARGS
+                   "${AddTest_EXECUTABLE_ARGS}"
+    )
+
+    string(REPLACE "<SOURCE_PATH>" "${Data_SOURCE_DIR}/${AddTest_PATH}"
+                   AddTest_WORKING_DIRECTORY "${AddTest_WORKING_DIRECTORY}"
+    )
+    string(REPLACE "<SOURCE_PATH>" "${Data_SOURCE_DIR}/${AddTest_PATH}"
+                   AddTest_EXECUTABLE_ARGS "${AddTest_EXECUTABLE_ARGS}"
+    )
+    string(REPLACE "<BUILD_PATH>" "${Data_BINARY_DIR}/${AddTest_PATH}"
+                   AddTest_WORKING_DIRECTORY "${AddTest_WORKING_DIRECTORY}"
+    )
+    string(REPLACE "<BUILD_PATH>" "${Data_BINARY_DIR}/${AddTest_PATH}"
+                   AddTest_EXECUTABLE_ARGS "${AddTest_EXECUTABLE_ARGS}"
+    )
+
     add_test(
         NAME ${TEST_NAME}
         COMMAND
