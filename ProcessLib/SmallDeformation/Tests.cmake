@@ -269,5 +269,7 @@ AddTest(
 if(NOT OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.ipynb RUNTIME 5)
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.ipynb RUNTIME 15 RESOURCE_LOCK PYVISTA)
-    NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole_convergence_analysis.ipynb RUNTIME 40 RESOURCE_LOCK PYVISTA)
+    if(NOT WIN32)
+        NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole_convergence_analysis.ipynb RUNTIME 40 RESOURCE_LOCK PYVISTA)
+    endif()
 endif()
