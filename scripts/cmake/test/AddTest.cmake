@@ -136,19 +136,11 @@ function(AddTest)
 
     # check requirements, disable if not met
     if(NOT TARGET ${AddTest_EXECUTABLE})
-        set(DISABLED_TESTS_LOG
-            "${DISABLED_TESTS_LOG}\nTest exe ${AddTest_EXECUTABLE} not built! Disabling test ${AddTest_NAME}."
-            CACHE INTERNAL ""
-        )
         return()
     endif()
     if(${AddTest_REQUIREMENTS})
         message(DEBUG "Enabling test ${AddTest_NAME}.")
     else()
-        set(DISABLED_TESTS_LOG
-            "${DISABLED_TESTS_LOG}\nRequirement ${AddTest_REQUIREMENTS} not met! Disabling test ${AddTest_NAME}."
-            CACHE INTERNAL ""
-        )
         return()
     endif()
 
@@ -157,10 +149,6 @@ function(AddTest)
         if(TIME_TOOL_PATH)
             set(WRAPPER_COMMAND time)
         else()
-            set(DISABLED_TESTS_LOG
-                "${DISABLED_TESTS_LOG}\nDisabling time wrapper for ${AddTest_NAME} as time exe was not found!"
-                CACHE INTERNAL ""
-            )
             set(AddTest_WRAPPER_ARGS "")
         endif()
     elseif(AddTest_WRAPPER STREQUAL "mpirun")
