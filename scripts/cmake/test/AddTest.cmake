@@ -12,7 +12,7 @@
 #   EXECUTABLE_ARGS <arguments>
 #   WRAPPER <time|mpirun> # optional
 #   WRAPPER_ARGS <arguments> # optional
-#   TESTER <diff|vtkdiff|gmldiff|memcheck> # optional
+#   TESTER <diff|vtkdiff|vtkdiff-mesh|gmldiff|memcheck> # optional
 #   TESTER_ARGS <argument> # optional
 #   REQUIREMENTS # optional simple boolean expression which has to be true to
 #                  enable the test, e.g.
@@ -134,8 +134,7 @@ function(AddTest)
         endforeach()
     endif()
 
-    # --- Implement wrappers ---
-    # check if exe is part of build
+    # check requirements, disable if not met
     if(NOT TARGET ${AddTest_EXECUTABLE})
         set(DISABLED_TESTS_LOG
             "${DISABLED_TESTS_LOG}\nTest exe ${AddTest_EXECUTABLE} not built! Disabling test ${AddTest_NAME}."
@@ -143,7 +142,6 @@ function(AddTest)
         )
         return()
     endif()
-    # check requirements, disable if not met
     if(${AddTest_REQUIREMENTS})
         message(DEBUG "Enabling test ${AddTest_NAME}.")
     else()
@@ -154,6 +152,7 @@ function(AddTest)
         return()
     endif()
 
+    # --- Implement wrappers ---
     if(AddTest_WRAPPER STREQUAL "time")
         if(TIME_TOOL_PATH)
             set(WRAPPER_COMMAND time)
@@ -192,6 +191,9 @@ function(AddTest)
     if(AddTest_TESTER STREQUAL "vtkdiff" AND NOT TARGET vtkdiff)
         return()
     endif()
+    if(AddTest_TESTER STREQUAL "vtkdiff-mesh" AND NOT TARGET vtkdiff)
+        return()
+    endif()
     if(AddTest_TESTER STREQUAL "xdmfdiff" AND NOT TARGET xdmfdiff)
         return()
     endif()
@@ -215,7 +217,7 @@ function(AddTest)
         endif()
     endif()
 
-    if((AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER STREQUAL "vtkdiff"
+    if((AddTest_TESTER STREQUAL "diff" OR AddTest_TESTER MATCHES "vtkdiff"
         OR AddTest_TESTER STREQUAL "xdmfdiff") AND NOT AddTest_DIFF_DATA
     )
         message(FATAL_ERROR "AddTest(): ${AddTest_NAME} - no DIFF_DATA given!")
@@ -224,7 +226,7 @@ function(AddTest)
     if(AddTest_TESTER STREQUAL "diff")
         set(SELECTED_DIFF_TOOL_PATH ${DIFF_TOOL_PATH})
         set(TESTER_ARGS "-sbB")
-    elseif(AddTest_TESTER STREQUAL "vtkdiff")
+    elseif(AddTest_TESTER MATCHES "vtkdiff")
         set(SELECTED_DIFF_TOOL_PATH $<TARGET_FILE:vtkdiff>)
     elseif(AddTest_TESTER STREQUAL "xdmfdiff")
         set(SELECTED_DIFF_TOOL_PATH $<TARGET_FILE:xdmfdiff>)
@@ -331,6 +333,34 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                     "For vtkdiff tester the number of diff data arguments must be a multiple of six."
             )
         endif()
+    elseif(AddTest_TESTER STREQUAL "vtkdiff-mesh")
+        list(LENGTH AddTest_DIFF_DATA DiffDataLength)
+        math(EXPR DiffDataLengthMod3 "${DiffDataLength} % 3")
+        if(${DiffDataLengthMod3} EQUAL 0)
+            math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
+            foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 4)
+                list(GET AddTest_DIFF_DATA "${DiffDataIndex}"
+                     REFERENCE_VTK_FILE
+                )
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" VTK_FILE)
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" ABS_TOLERANCE)
+
+                list(
+                    APPEND
+                    TESTER_COMMAND
+                    "${SELECTED_DIFF_TOOL_PATH} -m \
+                ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
+                ${AddTest_BINARY_PATH}/${VTK_FILE} \
+                --abs ${ABS_TOLERANCE}"
+                )
+            endforeach()
+        else()
+            message(FATAL_ERROR "The number of diff data arguments must be a
+            multiple of three: expected.vtu output.vtu absolute_tolerance."
+            )
+        endif()
     elseif(AddTest_TESTER STREQUAL "gmldiff")
         list(LENGTH AddTest_DIFF_DATA DiffDataLength)
         math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
@@ -423,7 +453,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
         if(NOT (TEST ${AddTest_DEPENDS} OR TARGET ${AddTest_DEPENDS}))
             message(
                 FATAL_ERROR
-                    "AddTest ${AddTest_Name}: dependency ${AddTest_DEPENDS} does not exist!"
+                    "AddTest ${TEST_NAME}: dependency ${AddTest_DEPENDS} does not exist!"
             )
         endif()
         set_tests_properties(${TEST_NAME} PROPERTIES DEPENDS ${AddTest_DEPENDS})
