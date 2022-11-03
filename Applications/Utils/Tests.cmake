@@ -1212,7 +1212,7 @@ if(OGS_BUILD_SWMM)
         DIFF_DATA
         TestExample_SC2.gml TestExample_SC2.gml
     )
-    
+
     MeshTest(
         NAME SWMM_INP_Mesh_Test
         PATH FileConverter
