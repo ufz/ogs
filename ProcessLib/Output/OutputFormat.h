@@ -20,16 +20,16 @@ namespace ProcessLib
 {
 class Process;
 
-struct OutputFile
+struct OutputFormat
 {
-    OutputFile(std::string const& directory, std::string prefix,
-               std::string suffix, bool const compression);
-    virtual ~OutputFile() = default;
+    OutputFormat(std::string const& directory, std::string prefix,
+                 std::string suffix, bool const compression);
+    virtual ~OutputFormat() = default;
 
-    OutputFile(OutputFile const& other) = delete;
-    OutputFile(OutputFile&& other) = default;
-    OutputFile& operator=(OutputFile& other) = delete;
-    OutputFile& operator=(OutputFile&& other) = default;
+    OutputFormat(OutputFormat const& other) = delete;
+    OutputFormat(OutputFormat&& other) = default;
+    OutputFormat& operator=(OutputFormat& other) = delete;
+    OutputFormat& operator=(OutputFormat&& other) = default;
 
     std::string directory;
     std::string prefix;
@@ -47,22 +47,22 @@ struct OutputFile
                                           int const iteration) const = 0;
 };
 
-inline std::ostream& operator<<(std::ostream& os, OutputFile const& of)
+inline std::ostream& operator<<(std::ostream& os, OutputFormat const& of)
 {
-    os << "OutputFile::directory:" << of.directory << std::endl;
-    os << "OutputFile::prefix:" << of.prefix << std::endl;
-    os << "OutputFile::suffix:" << of.suffix << std::endl;
-    os << "OutputFile::compression:" << of.compression << std::endl;
+    os << "OutputFormat::directory:" << of.directory << std::endl;
+    os << "OutputFormat::prefix:" << of.prefix << std::endl;
+    os << "OutputFormat::suffix:" << of.suffix << std::endl;
+    os << "OutputFormat::compression:" << of.compression << std::endl;
     return os;
 }
 
-struct OutputVTKFormat final : public OutputFile
+struct OutputVTKFormat final : public OutputFormat
 {
     OutputVTKFormat(std::string const& directory, std::string prefix,
                     std::string suffix, bool const compression,
                     int const data_mode)
-        : OutputFile(directory, std::move(prefix), std::move(suffix),
-                     compression),
+        : OutputFormat(directory, std::move(prefix), std::move(suffix),
+                       compression),
           data_mode(data_mode)
     {
     }
@@ -91,13 +91,13 @@ struct OutputVTKFormat final : public OutputFile
     std::string constructPVDName(std::string const& mesh_name) const;
 };
 
-struct OutputXDMFHDF5Format final : public OutputFile
+struct OutputXDMFHDF5Format final : public OutputFormat
 {
     OutputXDMFHDF5Format(std::string const& directory, std::string prefix,
                          std::string suffix, bool const compression,
                          unsigned int const n_files)
-        : OutputFile(directory, std::move(prefix), std::move(suffix),
-                     compression),
+        : OutputFormat(directory, std::move(prefix), std::move(suffix),
+                       compression),
           n_files(n_files)
     {
     }

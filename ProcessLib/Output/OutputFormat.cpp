@@ -8,7 +8,7 @@
  *
  */
 
-#include "OutputFile.h"
+#include "OutputFormat.h"
 
 #include <cassert>
 #include <exception>
@@ -80,8 +80,8 @@ std::string OutputVTKFormat::constructPVDName(
             ".pvd");
 }
 
-OutputFile::OutputFile(std::string const& directory, std::string prefix,
-                       std::string suffix, bool const compression)
+OutputFormat::OutputFormat(std::string const& directory, std::string prefix,
+                           std::string suffix, bool const compression)
     : directory(directory),
       prefix(std::move(prefix)),
       suffix(std::move(suffix)),

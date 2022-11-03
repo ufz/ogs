@@ -70,7 +70,7 @@ bool Output::isOutputProcess(const int process_id, const Process& process) const
            || is_last_process;
 }
 
-Output::Output(std::unique_ptr<OutputFile> output_file,
+Output::Output(std::unique_ptr<OutputFormat> output_file,
                bool const output_nonlinear_iteration_results,
                OutputDataSpecification const& output_data_specification,
                std::vector<std::string> const& mesh_names_for_output,
