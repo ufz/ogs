@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <meshes>
-      <!-- use the right meshes, here -->
-      <mesh>disc_with_hole_idx_is_24_domain.vtu</mesh>
-      <mesh>disc_with_hole_idx_is_24_physical_group_Left.vtu</mesh>
-      <mesh>disc_with_hole_idx_is_24_physical_group_Bottom.vtu</mesh>
-      <mesh>disc_with_hole_idx_is_24_physical_group_Top.vtu</mesh>
+        <!-- use the right meshes, here -->
+        <mesh>disc_with_hole_idx_is_24_domain.vtu</mesh>
+        <mesh>disc_with_hole_idx_is_24_physical_group_Left.vtu</mesh>
+        <mesh>disc_with_hole_idx_is_24_physical_group_Bottom.vtu</mesh>
+        <mesh>disc_with_hole_idx_is_24_physical_group_Top.vtu</mesh>
     </meshes>
     <processes>
         <process>
@@ -34,7 +34,7 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1e-15</abstol>
+                    <abstol>1e-14</abstol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -54,7 +54,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>disc_with_hole_idx_is_24</prefix> <!-- changing the output prefix is important! -->
+            <!-- changing the output prefix is important! -->
+            <prefix>disc_with_hole_idx_is_24</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
