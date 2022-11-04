@@ -63,22 +63,21 @@ For adding new data files simply commit the new files as usual.
 
 ## Notebook testing
 
-Full Jupyter Notebooks based workflows can be tested too. Create the notebook in `Tests/Data`. Configure input and output directories:
+Full Jupyter Notebooks based workflows can be tested too. Create the notebook in `Tests/Data`. Configure output directory and try to use it for all outputs:
 
 ```python
 import os
 
-# Second parameter to get() is important if you want to run
-# the notebook standalone.
-data_dir = os.environ.get('OGS_DATA_DIR', '../../../Data')
+# On CI out_dir is set to the notebooks directory inside the build directory
+# similar to regular benchmark tests. On local testing it will output to the
+# notebooks source directory under a _out-subdirectory.
 out_dir = os.environ.get('OGS_TESTRUNNER_OUT_DIR', '_out')
-
 if not os.path.exists(out_dir):
     os.makedirs(out_dir)
-os.chdir(out_dir)
 
 # ...
-# Run ogs; get input data from `data_dir`; write to `out_dir
+# Run ogs; get input data from current directory; write to `out_dir`
+! ogs my_project.prj -o {out_dir} > {out_dir}/log.txt
 
 # Verify results; on failure assert with:
 assert False
@@ -86,47 +85,25 @@ assert False
 raise SystemExit()
 ```
 
-Add Python dependencies to `web/data/versions.json` (under `python/notebook_requirements`).
+Add new Python dependencies to `Test/Data/requirements.txt`.
 
-### Run with CTest
+### Register with CTest
 
-Add to CTest with:
+Add the benchmark to CTest with e.g.:
 
 ```cmake
-NotebookTest(NOTEBOOKFILE Notebooks/SimpleMechanics.ipynb RUNTIME 10)
+if(NOT OGS_USE_PETSC)
+    NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.ipynb RUNTIME 10)
+endif()
 ```
 
-Then e.g. run with:
+By registering notebooks [are automatically added]({{< relref "jupyter-docs" >}}) to the benchmark documentation page.
+
+For local testing please note that you need to configure OGS with `OGS_USE_PIP=ON` (to automatically create a virtual environment in the build directory which is used by the notebook tests).
+
+Then e.g. run all notebook test (`-R nb`) in parallel with:
 
 ```bash
+source .venv/bin/activate # May need to be activated
 ctest -R nb -j 4 --output-on-failure
 ```
-
-### Run manually with testrunner.py
-
-Make sure to have a Python virtual environment enabled and installed the requirements for your notebook. E.g.:
-
-```bash
-virtualenv .venv
-source .venv/bin/activate
-pip install $(jq -r '.python.notebook_requirements | join(" ")' path/to/ogs/web/data/versions.json)
-```
-
-This is handled **automatically** when `OGS_USE_PIP=ON`.
-
-Also make sure to have `ogs` or other required tools in the `PATH`:
-
-```bash
-export PATH=./path/to/build/release/bin:$PATH
-```
-
-Run all notebooks in `Tests/Data` (ignoring notebooks with `.ci-skip.` in their filename) with the notebook `testrunner.py`:
-
-```bash
-cd Tests/Data
-find . -type f -iname '*.ipynb' \
-  | grep -vP '\.ipynb_checkpoints|\.ci-skip.ipynb$' \
-  | xargs python Notebooks/testrunner.py --out _out
-```
-
-Notebooks [are automatically added]({{< relref "jupyter-docs" >}}) to the benchmark documentation page.

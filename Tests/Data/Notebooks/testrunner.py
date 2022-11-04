@@ -1,5 +1,6 @@
 import nbformat
 from nbconvert.preprocessors import ExecutePreprocessor, CellExecutionError
+from nbclient.exceptions import DeadKernelError
 from nbconvert import HTMLExporter
 import argparse
 import os
@@ -52,6 +53,7 @@ parser.add_argument("--out", default="./", help="Output directory.")
 parser.add_argument(
     "--hugo", action="store_true", help="Convert successful notebooks to web site."
 )
+parser.add_argument("--hugo-out", default="web", help="Hugo output directory.")
 parser.add_argument(
     "--timeout", default="600", type=int, help="Cell execution timeout."
 )
@@ -71,25 +73,37 @@ for notebook_file_path in args.notebooks:
 
     if "run-skip" not in notebook_file_path:
         notebook_basename = os.path.splitext(notebook_file_path)[0]
-        notebook_output_path = os.path.join(
-            args.out,
-            os.path.relpath(notebook_basename, start=os.environ["OGS_DATA_DIR"]),
+        notebook_output_path = os.path.abspath(
+            os.path.join(
+                args.out,
+                os.path.relpath(notebook_basename, start=os.environ["OGS_DATA_DIR"]),
+            )
         )
         os.makedirs(notebook_output_path, exist_ok=True)
         os.environ["OGS_TESTRUNNER_OUT_DIR"] = notebook_output_path
 
-        with open(notebook_file_path) as f:
+        with open(notebook_file_path, mode="r", encoding="utf-8") as f:
             nb = nbformat.read(f, as_version=4)
         ep = ExecutePreprocessor(timeout=args.timeout, kernel_name="python3")
 
         # 1. Run the notebook
         notebook_filename = os.path.basename(notebook_file_path)
+        convert_notebook_file = os.path.join(notebook_output_path, notebook_filename)
         print(f"[Start]  {notebook_filename}")
         start = timer()
         try:
             ep.preprocess(
                 nb, {"metadata": {"path": os.path.dirname(notebook_file_path)}}
             )
+        except DeadKernelError:
+            out = None
+            msg = 'Error executing the notebook "%s".\n\n' % notebook_filename
+            msg += 'See notebook "%s" for the traceback.' % convert_notebook_file
+            print(msg)
+            notebook_success = False
+            success = False
+            with open(convert_notebook_file, mode="w", encoding="utf-8") as f:
+                nbformat.write(nb, f)
         except CellExecutionError:
             notebook_success = False
             success = False
@@ -105,7 +119,6 @@ for notebook_file_path in args.notebooks:
         (body, resources) = html_exporter.from_notebook_node(nb)
 
         # 4. Write new notebook
-        convert_notebook_file = os.path.join(notebook_output_path, notebook_filename)
         with open(convert_notebook_file, "w", encoding="utf-8") as f:
             nbformat.write(nb, f)
 
@@ -127,7 +140,9 @@ for notebook_file_path in args.notebooks:
     if notebook_success:
         status_string += "[Passed] "
         if args.hugo:
-            save_to_website(convert_notebook_file, os.path.join(ogs_source_path, "web"))
+            save_to_website(
+                convert_notebook_file, os.path.join(ogs_source_path, args.hugo_out)
+            )
     else:
         status_string += "[Failed] "
         # Save to html

@@ -11,6 +11,7 @@
       # Notebook testrunner:
       - build/**/*.ipynb.html
       - build/**/out.txt
+      - build/**/web/content
     expire_in: 1 week
     reports:
       junit:

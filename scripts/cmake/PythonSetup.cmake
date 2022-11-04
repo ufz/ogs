@@ -73,21 +73,13 @@ if(OGS_USE_PIP)
         set(Python_EXECUTABLE ${Python_ROOT_DIR}/bin/python)
     endif()
     if(OGS_BUILD_TESTING)
-        # Notebook requirements from versions.json
-        foreach(var ${ogs.python.notebook_requirements})
-            list(APPEND OGS_PYTHON_PACKAGES
-                 "${ogs.python.notebook_requirements_${var}}"
-            )
-        endforeach()
-        if("${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}" VERSION_EQUAL
-           "3.10"
-        )
-            # Default python on arch is 3.10; there are no vtk wheels for it
-            # (VTUInterface). Use wheels for vtk from pyvista.
-            list(APPEND OGS_PYTHON_PACKAGES
-                 "--find-links https://wheels.pyvista.org vtk"
-            )
-        endif()
+        # Notebook requirements from Tests/Data
+        file(STRINGS Tests/Data/requirements.txt _requirements)
+        # \; are not preserved in list operations, substitute via a placeholder
+        string(REPLACE "\;" "_semicolon_" _requirements "${_requirements}")
+        file(STRINGS Tests/Data/requirements-dev.txt _requirements_dev)
+        list(APPEND OGS_PYTHON_PACKAGES ${_requirements} ${_requirements_dev})
+
         list(APPEND OGS_PYTHON_PACKAGES
              "snakemake==${ogs.minimum_version.snakemake}"
         )
@@ -96,3 +88,59 @@ if(OGS_USE_PIP)
         )
     endif()
 endif()
+
+# Sets up a Python virtual environment in the build directory
+function(setup_venv)
+    # Caches a hash of requested Python packages when they were successfully
+    # installed. On subsequent runs compare new hash to cached. If equal do
+    # nothing.
+    get_property(
+        _addtest_python_packages GLOBAL PROPERTY AddTest_PYTHON_PACKAGES
+    )
+    list(APPEND OGS_PYTHON_PACKAGES ${_addtest_python_packages})
+    list(REMOVE_DUPLICATES OGS_PYTHON_PACKAGES)
+    list(SORT OGS_PYTHON_PACKAGES)
+    string(SHA1 _ogs_python_packages_sha1 "${OGS_PYTHON_PACKAGES}")
+    list(LENGTH OGS_PYTHON_PACKAGES OGS_PYTHON_PACKAGES_LENGTH)
+    if(NOT ${_ogs_python_packages_sha1} STREQUAL "${_OGS_PYTHON_PACKAGES_SHA1}"
+       AND ${OGS_PYTHON_PACKAGES_LENGTH} GREATER 0
+    )
+        string(REPLACE ";" "\n" REQUIREMENTS_CONTENT "${OGS_PYTHON_PACKAGES}")
+        # Revert back _semicolon_ placeholder
+        string(REPLACE "_semicolon_" "\\;" REQUIREMENTS_CONTENT
+                       "${REQUIREMENTS_CONTENT}"
+        )
+        file(WRITE ${PROJECT_BINARY_DIR}/requirements.txt
+             ${REQUIREMENTS_CONTENT}
+        )
+        message(
+            STATUS
+                "Installing Python packages into local virtual environment..."
+        )
+        if(APPLE)
+            # CC=/Library/Developer/CommandLineTools/usr/bin/cc and this somehow
+            # breaks wheel builds ...
+            set(_apple_env ${CMAKE_COMMAND} -E env CC=clang CXX=clang)
+        endif()
+        execute_process(
+            COMMAND ${_apple_env} ${LOCAL_VIRTUALENV_BIN_DIR}/pip install -r
+                    requirements.txt
+            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+            RESULT_VARIABLE _return_code
+            OUTPUT_VARIABLE _out
+            ERROR_VARIABLE _err
+        )
+        if(${_return_code} EQUAL 0)
+            set(_OGS_PYTHON_PACKAGES_SHA1 "${_ogs_python_packages_sha1}"
+                CACHE INTERNAL ""
+            )
+            message(STATUS "${_out}")
+        else()
+            message(
+                FATAL_ERROR
+                    "Installation of Python packages via pip failed!\n"
+                    "To disable pip set OGS_USE_PIP=OFF.\n\n${_out}\n${_err}"
+            )
+        endif()
+    endif()
+endfunction()

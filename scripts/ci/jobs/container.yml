@@ -18,7 +18,15 @@ container:
     - >
       if [[ "$CI_COMMIT_BRANCH" == "master" ]] ; then
         export DOCKER_TAG_SERIAL="--tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial:latest"
-        export DOCKER_TAG_JUPYTER="--upload --tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial-jupyter:latest"
+        export DOCKER_TAG_PETSC="--tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-petsc:latest"
+        export DOCKER_TAG_JUPYTER="$CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial-jupyter:latest"
+        export DOCKER_TAG_JUPYTER_PETSC="$CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-petsc-jupyter:latest"
+        export ON_MASTER_ARGS="--upload -C"
+      else
+        export DOCKER_TAG_SERIAL="--tag ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-serial:latest"
+        export DOCKER_TAG_PETSC="--tag ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-petsc:latest"
+        export DOCKER_TAG_JUPYTER="ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-serial-jupyter:latest"
+        export DOCKER_TAG_JUPYTER_PETSC="ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-petsc-jupyter:latest"
       fi
     # serial container
     - >
@@ -28,6 +36,7 @@ container:
       --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_BUILD_TESTING=OFF'
       $DOCKER_TAG_SERIAL
+      $ON_MASTER_ARGS
     # petsc container
     - >
       poetry run ogscm compiler.py mpi.py ogs.py -B -C -R --ogs ../..
@@ -36,6 +45,8 @@ container:
       --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_BUILD_TESTING=OFF'
       --ompi 4.0.5 --mpi_benchmarks
+      $DOCKER_TAG_PETSC
+      $ON_MASTER_ARGS
     # test ogs can run in container
     - |
       for sif in _out/images/*.sif; do
@@ -52,6 +63,24 @@ container:
       --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_BUILD_UTILS=OFF -DOGS_BUILD_TESTING=OFF'
       --gui
+    ### Jupyter container ###
+    # Serial image
+    - >
+      poetry run ogscm compiler.py ogs.py ogs_jupyter.py -B -R --ogs ../..
+      --build_args ' --progress=plain' --cvode --ccache --cpmcache --mfront --cpu-target $CPU_TARGET
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
+      --runtime_base_image 'registry.opengeosys.org/ogs/ogs/jupyter/base-notebook:22.04_3.10'
+      --tag $DOCKER_TAG_JUPYTER
+      $ON_MASTER_ARGS
+    # PETSc image
+    - >
+      poetry run ogscm compiler.py mpi.py ogs.py ogs_jupyter.py -B -R --ogs ../..
+      --build_args ' --progress=plain' --cvode --ccache --cpmcache --mfront --cpu-target $CPU_TARGET
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
+      --runtime_base_image 'registry.opengeosys.org/ogs/ogs/jupyter/base-notebook:22.04_3.10'
+      --mpi_no_entrypoint
+      --tag $DOCKER_TAG_JUPYTER_PETSC
+      $ON_MASTER_ARGS
   artifacts:
     name: container
     paths:

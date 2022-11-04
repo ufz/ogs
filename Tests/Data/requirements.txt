@@ -1,0 +1,11 @@
+gmsh==4.10.5 ; sys_platform == 'win32' or sys_platform == 'linux'
+h5py==3.7.0
+-e git+https://github.com/joergbuchwald/heatsource_thm@bbd5bab17fc2ec228c773e087dc847e1ad5f9a4c#egg=heatsource-py
+jupyterlab==3.4.8
+matplotlib==3.5.1
+-e git+https://github.com/dominik-kern/msh2vtu@29b5f5ebe8cf98f0f99fae68720bf19cac02e582#egg=msh2vtu
+numpy==1.23.4
+-e git+https://github.com/joergbuchwald/ogs6py@71f49a896381152e648801740833450022115981#egg=ogs6py
+pandas==1.4.2
+pyvista==0.36.1
+-e git+https://github.com/joergbuchwald/VTUinterface@05793c7be84fbcb7d9f8f740c3dc667089a61505#egg=vtuinterface

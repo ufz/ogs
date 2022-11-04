@@ -39,34 +39,31 @@
     "large_runtime": 60
   },
   "python": {
-    "notebook_requirements": [
-      "git+https://github.com/joergbuchwald/ogs6py@71f49a896381152e648801740833450022115981#egg=ogs6py",
-      "git+https://github.com/joergbuchwald/VTUinterface@05793c7be84fbcb7d9f8f740c3dc667089a61505#egg=VTUinterface",
-      "git+https://github.com/joergbuchwald/heatsource_thm@main#egg=heatsource-py",
-      "git+https://github.com/bilke/nb2hugo@53d62ae5aef1be271eb91491d3b37da487bd1498#egg=nb2hugo",
-      "git+https://github.com/dominik-kern/msh2vtu@15f4838affe7056f12c0ea12034e9b48ecb19846#egg=msh2vtu",
-      "ipykernel==6.9.1",
-      "jinja2==3.0.3",
-      "nbconvert==6.4.0",
-      "ipython_genutils==0.2.0",
-      "pillow==9.0.0",
-      "matplotlib==3.5.1",
-      "pandas==1.4.2",
-      "toml==0.10.2"
-    ],
     "jupyter_image": {
       "conda_packages": [
         "snakemake-minimal",
         "pyvista==0.34.2",
         "ipyvtklink",
-        "pythreejs",
-        "gmsh==4.10.0",
-        "python-gmsh==4.10.0"
+        "pythreejs"
       ],
       "pip_packages": [
         "nbdime==3.1.1",
         "h5py==3.6.0",
-        "jupyterlab-gitlab==3.0.0"
+        "jupyterlab-gitlab==3.0.0",
+        "gmsh==4.10.5",
+        "git+https://github.com/joergbuchwald/ogs6py@71f49a896381152e648801740833450022115981#egg=ogs6py",
+        "git+https://github.com/joergbuchwald/VTUinterface@05793c7be84fbcb7d9f8f740c3dc667089a61505#egg=VTUinterface",
+        "git+https://github.com/joergbuchwald/heatsource_thm@main#egg=heatsource-py",
+        "git+https://github.com/bilke/nb2hugo@53d62ae5aef1be271eb91491d3b37da487bd1498#egg=nb2hugo",
+        "git+https://github.com/dominik-kern/msh2vtu@29b5f5ebe8cf98f0f99fae68720bf19cac02e582#egg=msh2vtu",
+        "ipykernel==6.9.1",
+        "jinja2==3.0.3",
+        "nbconvert==6.4.0",
+        "ipython_genutils==0.2.0",
+        "pillow==9.0.0",
+        "matplotlib==3.5.1",
+        "pandas==1.4.2",
+        "toml==0.10.2"
       ]
     }
   },

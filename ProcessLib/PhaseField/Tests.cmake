@@ -134,3 +134,7 @@ AddTest(
     expected_AT2_vd_tensile_ts_10_t_1.000000.vtu AT2_vd_tensile_ts_10_t_1.000000.vtu displacement displacement 1e-5 0
     expected_AT2_vd_tensile_ts_10_t_1.000000.vtu AT2_vd_tensile_ts_10_t_1.000000.vtu phasefield phasefield 1e-6 0
 )
+
+if(OGS_USE_PETSC)
+    NotebookTest(NOTEBOOKFILE PhaseField/surfing_jupyter_notebook/surfing_pyvista.ipynb RUNTIME 25 RESOURCE_LOCK PYVISTA)
+endif()

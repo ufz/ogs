@@ -414,3 +414,7 @@ AddTest(
     results_heatpipe_strict_ts_23_t_40000_000000_2.vtu results_heatpipe_strict_ts_23_t_40000_000000_2.vtu porosity porosity 1e-9 1e-8
     results_heatpipe_strict_ts_23_t_40000_000000_2.vtu results_heatpipe_strict_ts_23_t_40000_000000_2.vtu saturation saturation 1e-9 1e-8
 )
+
+if(NOT OGS_USE_PETSC)
+    NotebookTest(NOTEBOOKFILE TH2M/TH2/heatpipe/heatpipe.ipynb RUNTIME 140)
+endif()
