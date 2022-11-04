@@ -100,8 +100,9 @@ std::vector<std::size_t> getIntegrationPointDataOffsetsOfMeshElements(
     MeshLib::PropertyVectorBase const& pv,
     MeshLib::Properties const& properties)
 {
-    if (pv.getPropertyName() == "OGS_VERSION" ||
-        pv.getPropertyName() == "IntegrationPointMetaData")
+    // For special field data such as OGS_VERSION, IntegrationPointMetaData,
+    // etc., which are not "real" integration points:
+    if (pv.getPropertyName().find("_ip") == std::string::npos)
     {
         return {};
     }

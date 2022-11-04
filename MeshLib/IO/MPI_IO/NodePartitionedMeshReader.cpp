@@ -314,8 +314,11 @@ void NodePartitionedMeshReader::readDomainSpecificPartOfPropertyVectors(
             global_offset + pvpmd.offset * vec_pvmd[i]->number_of_components *
                                 vec_pvmd[i]->data_type_size_in_bytes);
 
-        if (vec_pvmd[i]->property_name == "OGS_VERSION" ||
-            vec_pvmd[i]->property_name == "IntegrationPointMetaData")
+        // Special field data such as OGS_VERSION, IntegrationPointMetaData,
+        // etc., which are not "real" integration points, are copied "as is"
+        // (i.e. fully) for every partition.
+        if (vec_pvmd[i]->property_name.find("_ip") == std::string::npos &&
+            t == MeshLib::MeshItemType::IntegrationPoint)
         {
             createSpecificPropertyVectorPart<char>(is, *vec_pvmd[i], t,
                                                    global_offset, p);
