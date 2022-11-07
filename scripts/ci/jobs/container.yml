@@ -85,6 +85,8 @@ container:
     name: container
     paths:
       - ThirdParty/container-maker/_out/images/*.sif
+    exclude:
+      - ThirdParty/container-maker/_out/images/*jupyter*.sif
 
 devcontainer:
   stage: package
