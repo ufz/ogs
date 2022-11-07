@@ -29,6 +29,23 @@ AddTest(
 )
 
 AddTest(
+    NAME ThermoRichardsMechanics_LiakopoulosMixedElementsPETSc
+    PATH ThermoRichardsMechanics/LiakopoulosPETSc
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS liakopoulos_mixElem_mumps.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 2
+    TESTER vtkdiff
+    # Run on envinf only because PETSc MUMPS solver is used
+    REQUIREMENTS OGS_USE_PETSC AND "${HOSTNAME}" MATCHES "envinf.*"
+    RUNTIME 2
+    DIFF_DATA
+    GLOB liakopoulosBulk_mixElem_t_*.vtu sigma sigma 1e-9 1e-12
+    GLOB liakopoulosBulk_mixElem_t_*.vtu displacement displacement 1e-10 1e-12
+    GLOB liakopoulosBulk_mixElem_t_*.vtu saturation saturation 1e-10 1e-12
+)
+
+AddTest(
     NAME ThermoRichardsMechanics_3D_ThermoElastic_Stress_Analysis
     PATH ThermoRichardsMechanics/Simple3DThermoMechanicsFromTM
     EXECUTABLE ogs
