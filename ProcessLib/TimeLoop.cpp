@@ -559,11 +559,8 @@ void TimeLoop::initialize()
     // Output initial conditions
     {
         const bool output_initial_condition = true;
-        for (auto const& output : _outputs)
-        {
-            outputSolutions(output_initial_condition, 0, _start_time, output,
-                            &Output::doOutput);
-        }
+        outputSolutions(output_initial_condition, 0, _start_time,
+                        &Output::doOutput);
     }
 
     auto const time_step_constraints = generateOutputTimeStepConstraints(
@@ -617,11 +614,8 @@ bool TimeLoop::calculateNextTimeStep()
     if (!_last_step_rejected)
     {
         const bool output_initial_condition = false;
-        for (auto const& output : _outputs)
-        {
-            outputSolutions(output_initial_condition, timesteps, current_time,
-                            output, &Output::doOutput);
-        }
+        outputSolutions(output_initial_condition, timesteps, current_time,
+                        &Output::doOutput);
     }
 
     if (std::abs(_current_time - _end_time) <
@@ -654,12 +648,9 @@ void TimeLoop::outputLastTimeStep() const
     if (successful_time_step)
     {
         const bool output_initial_condition = false;
-        for (auto const& output : _outputs)
-        {
-            outputSolutions(output_initial_condition,
-                            _accepted_steps + _rejected_steps, _current_time,
-                            output, &Output::doOutputLastTimestep);
-        }
+        outputSolutions(output_initial_condition,
+                        _accepted_steps + _rejected_steps, _current_time,
+                        &Output::doOutputLastTimestep);
     }
 }
 
@@ -883,10 +874,16 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     return nonlinear_solver_status;
 }
 
+void TimeLoop::outputSolutions(bool const output_initial_condition) const
+{
+    const std::size_t timesteps = _accepted_steps + 1;
+    outputSolutions(output_initial_condition, timesteps, _current_time,
+                    &Output::doOutput);
+}
+
 template <typename OutputClassMember>
 void TimeLoop::outputSolutions(bool const output_initial_condition,
                                unsigned timestep, const double t,
-                               Output const& output_object,
                                OutputClassMember output_class_member) const
 {
     // All _per_process_data share the first process.
@@ -954,10 +951,13 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
 
             NumLib::GlobalVectorProvider::provider.releaseVector(x_dot);
         }
-        (output_object.*output_class_member)(
-            pcs, process_id, timestep, t,
-            process_data->nonlinear_solver_status.number_iterations,
-            _process_solutions);
+        for (auto const& output_object : _outputs)
+        {
+            (output_object.*output_class_member)(
+                pcs, process_id, timestep, t,
+                process_data->nonlinear_solver_status.number_iterations,
+                _process_solutions);
+        }
     }
 }
 

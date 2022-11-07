@@ -52,7 +52,7 @@ enum class OutputType : uint8_t
     xdmf
 };
 
-std::unique_ptr<OutputFile> createOutputFile(
+std::unique_ptr<OutputFormat> createOutputFormat(
     std::string const& output_directory, OutputType const output_type,
     std::string prefix, std::string suffix, std::string const& data_mode,
     bool const compress_output, unsigned int const number_of_files)
@@ -209,6 +209,10 @@ void parseOutput(const BaseLib::ConfigTree& config,
         }
     }
 
+    auto output_format = createOutputFormat(
+        output_directory, output_type, std::move(prefix), std::move(suffix),
+        data_mode, compress_output, number_of_files);
+
     std::vector<double> fixed_output_times =
         //! \ogs_file_param{prj__time_loop__output__fixed_output_times}
         config.getConfigParameter<std::vector<double>>("fixed_output_times",
@@ -224,11 +228,7 @@ void parseOutput(const BaseLib::ConfigTree& config,
         //! \ogs_file_param{prj__time_loop__output__output_iteration_results}
         config.getConfigParameter<bool>("output_iteration_results", false);
 
-    auto output_file = createOutputFile(
-        output_directory, output_type, std::move(prefix), std::move(suffix),
-        data_mode, compress_output, number_of_files);
-
-    outputs.emplace_back(std::move(output_file), output_iteration_results,
+    outputs.emplace_back(std::move(output_format), output_iteration_results,
                          std::move(output_data_specification),
                          std::move(mesh_names_for_output), meshes);
 }

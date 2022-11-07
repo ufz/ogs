@@ -17,7 +17,7 @@
 
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "OutputDataSpecification.h"
-#include "OutputFile.h"
+#include "OutputFormat.h"
 
 namespace ProcessLib
 {
@@ -31,7 +31,7 @@ class Process;
 class Output
 {
 public:
-    Output(std::unique_ptr<OutputFile> output_file,
+    Output(std::unique_ptr<OutputFormat> output_file,
            bool const output_nonlinear_iteration_results,
            OutputDataSpecification const& output_data_specification,
            std::vector<std::string> const& mesh_names_for_output,
@@ -82,17 +82,13 @@ public:
     friend std::ostream& operator<<(std::ostream& os, Output const& output);
 
 private:
-    //! Determines if there should be output at the given \c timestep or \c t.
-    bool isOutputStep(int timestep, double const t) const;
-
     //! Determines if output should be written for the given process.
     //!
     //! With staggered coupling not every process writes output.
     bool isOutputProcess(int const process_id, Process const& process) const;
 
     void outputMeshes(
-        Process const& process, const int process_id, int const timestep,
-        const double t, int const iteration,
+        int const timestep, const double t, int const iteration,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes)
         const;
 
@@ -101,7 +97,7 @@ private:
         const int process_id, double const t,
         std::vector<GlobalVector*> const& xs) const;
 
-    std::unique_ptr<OutputFile> _output_file;
+    std::unique_ptr<OutputFormat> _output_file;
 
     bool _output_nonlinear_iteration_results;
 
