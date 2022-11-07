@@ -375,6 +375,7 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
         if (line == "[COORDINATES]" || line == "[VERTICES]" ||
             line == "[SYMBOLS]")
         {
+            INFO("Reading {:s}...", line);
             if (!readCoordinates<GeoLib::Point>(in, points, pnt_names))
             {
                 BaseLib::cleanupVectorElements(points, lines);
@@ -383,6 +384,7 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
         }
         if (line == "[Polygons]" && add_subcatchments)
         {
+            INFO("Reading {:s}...", line);
             if (!readPolygons(in, lines, line_names, points, pnt_names))
             {
                 BaseLib::cleanupVectorElements(points, lines);
@@ -419,9 +421,10 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
 
     while (std::getline(in, line))
     {
-        if (line == "[JUNCTIONS]")
+        if (line == "[JUNCTIONS]" || line == "[OUTFALLS]" ||
+            line == "[STORAGE]")
         {
-            INFO("Reading point elevation...");
+            INFO("Reading {:s} elevation...", line);
             if (!addPointElevation(in, points, name_id_map))
             {
                 BaseLib::cleanupVectorElements(points, lines);

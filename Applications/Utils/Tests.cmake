@@ -1245,3 +1245,25 @@ AddTest(
     DIFF_DATA
     m1_3Dsquare_ts_1_t_1.000000_point_cloud.vtu m1_3Dsquare_ts_1_t_1.000000_point_cloud.vtu sigma_ip sigma_ip 1e-15 0
 )
+
+if(OGS_BUILD_SWMM)
+    AddTest(
+        NAME SWMM_INP_Geo_Test
+        PATH FileConverter
+        WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileConverter
+        EXECUTABLE SWMMConverter
+        EXECUTABLE_ARGS -i TestExample_SC2.inp -g ${Data_BINARY_DIR}/FileConverter/TestExample_SC2.gml
+        TESTER diff
+        DIFF_DATA
+        TestExample_SC2.gml TestExample_SC2.gml
+    )
+
+    MeshTest(
+        NAME SWMM_INP_Mesh_Test
+        PATH FileConverter
+        WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileConverter
+        EXECUTABLE SWMMConverter
+        EXECUTABLE_ARGS -i TestExample_SC2.inp -m ${Data_BINARY_DIR}/FileConverter/TestExample_SC2.vtu
+        DIFF_DATA TestExample_SC2.vtu TestExample_SC2.vtu 1.e-16
+    )
+endif()

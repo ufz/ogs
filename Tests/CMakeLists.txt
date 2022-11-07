@@ -48,10 +48,6 @@ if(OGS_BUILD_GUI)
     append_source_files(TEST_SOURCES FileIO_Qt)
 endif()
 
-if(OGS_BUILD_SWMM)
-    append_source_files(TEST_SOURCES FileIO_SWMM)
-endif()
-
 if(TARGET ComponentTransport)
     append_source_files(TEST_SOURCES ProcessLib/ComponentTransport)
 endif()
