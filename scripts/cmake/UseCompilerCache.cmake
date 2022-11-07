@@ -79,4 +79,11 @@ function(useCompilerCache)
     endif()
 
     message(STATUS "Using ccache (${CCACHE_EXECUTABLE}).")
+
+    if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(CMAKE_DISABLE_PRECOMPILE_HEADERS ON CACHE BOOL "" FORCE)
+        message(STATUS "Precompiled headers disabled because of non-Debug "
+                       "build with ccache."
+        )
+    endif()
 endfunction()
