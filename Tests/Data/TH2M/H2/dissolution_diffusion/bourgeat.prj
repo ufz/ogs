@@ -329,7 +329,7 @@
                 <variable>xmCG</variable>
                 <variable>xmWL</variable>
             </variables>
-            <fixed_output_times>             
+            <fixed_output_times>
                 1e10
                 1e12
                 1e14
