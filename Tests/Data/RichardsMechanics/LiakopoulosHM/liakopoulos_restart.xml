@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="liakopoulos.prj">
+    <replace sel="/*/meshes/mesh[1]/text()">liakopoulos_t_600.vtu</replace>
+    <remove sel="/*/processes/process/initial_stress" />
+
+    <replace sel="/*/time_loop/processes/process/time_stepping/t_initial/text()">600</replace>
+
+    <remove sel="/*/time_loop/processes/process/time_stepping/timesteps/pair[1]" />
+    <remove sel="/*/time_loop/processes/process/time_stepping/timesteps/pair[1]" />
+    <replace sel="/*/time_loop/processes/process/time_stepping/timesteps/pair[1]/repeat/text()">6</replace>
+
+    <replace sel="/*/time_loop/output/prefix/text()">liakopoulos_restart</replace>
+
+    <replace sel="/*/time_loop/output/fixed_output_times/text()">1200 2400 4800 6000 7200</replace>
+
+    <remove sel="/*/parameters/parameter[name=&quot;Initial_stress&quot;]" />
+
+    <remove sel="/*/parameters/parameter[name=&quot;displacement_ic&quot;]" />
+    <add sel="/*/parameters">
+        <parameter>
+            <name>displacement_ic</name>
+            <type>MeshNode</type>
+            <field_name>displacement</field_name>
+        </parameter>
+    </add>
+
+    <remove sel="/*/parameters/parameter[name=&quot;pressure_ic&quot;]" />
+    <add sel="/*/parameters">
+        <parameter>
+            <name>pressure_ic</name>
+            <type>MeshNode</type>
+            <field_name>pressure</field_name>
+        </parameter>
+    </add>
+
+    <remove sel="/*/test_definition" />
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <regex>liakopoulos_restart_t_600.vtu</regex>
+                <field>MassFlowRate</field>
+                <absolute_tolerance>2e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>liakopoulos_restart_t_600.vtu</regex>
+                <field>NodalForces</field>
+                <absolute_tolerance>1e-11</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>liakopoulos_restart_t_.*.vtu</regex>
+                <field>displacement</field>
+                <absolute_tolerance>3.4e-7</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>liakopoulos_restart_t_.*.vtu</regex>
+                <field>epsilon</field>
+                <absolute_tolerance>5.1e-7</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>liakopoulos_restart_t_.*.vtu</regex>
+                <field>pressure</field>
+                <absolute_tolerance>0</absolute_tolerance>
+                <relative_tolerance>2.7e-4</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>liakopoulos_restart_t_.*.vtu</regex>
+                <field>pressure_interpolated</field>
+                <absolute_tolerance>0</absolute_tolerance>
+                <relative_tolerance>2.7e-4</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>liakopoulos_restart_t_.*.vtu</regex>
+                <field>saturation</field>
+                <absolute_tolerance>4e-5</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>liakopoulos_restart_t_.*.vtu</regex>
+                <field>sigma</field>
+                <absolute_tolerance>1.5</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>liakopoulos_restart_t_.*.vtu</regex>
+                <field>velocity</field>
+                <absolute_tolerance>1.1e-9</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
+</OpenGeoSysProjectDiff>
