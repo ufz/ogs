@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="liakopoulosBulk_mixElem_t_0.pvtu"/>
+    <DataSet timestep="0.06" group="" part="0" file="liakopoulosBulk_mixElem_t_0_06.pvtu"/>
+    <DataSet timestep="9.06" group="" part="0" file="liakopoulosBulk_mixElem_t_9_06.pvtu"/>
+    <DataSet timestep="60" group="" part="0" file="liakopoulosBulk_mixElem_t_60.pvtu"/>
+    <DataSet timestep="120" group="" part="0" file="liakopoulosBulk_mixElem_t_120.pvtu"/>
+    <DataSet timestep="300" group="" part="0" file="liakopoulosBulk_mixElem_t_300.pvtu"/>
+    <DataSet timestep="600" group="" part="0" file="liakopoulosBulk_mixElem_t_600.pvtu"/>
+    <DataSet timestep="1100" group="" part="0" file="liakopoulosBulk_mixElem_t_1100.pvtu"/>
+    <DataSet timestep="1200" group="" part="0" file="liakopoulosBulk_mixElem_t_1200.pvtu"/>
+    <DataSet timestep="2400" group="" part="0" file="liakopoulosBulk_mixElem_t_2400.pvtu"/>
+    <DataSet timestep="4800" group="" part="0" file="liakopoulosBulk_mixElem_t_4800.pvtu"/>
+    <DataSet timestep="6000" group="" part="0" file="liakopoulosBulk_mixElem_t_6000.pvtu"/>
+    <DataSet timestep="6606.06" group="" part="0" file="liakopoulosBulk_mixElem_t_6606_06.pvtu"/>
+    <DataSet timestep="6670" group="" part="0" file="liakopoulosBulk_mixElem_t_6670.pvtu"/>
+    <DataSet timestep="7200" group="" part="0" file="liakopoulosBulk_mixElem_t_7200.pvtu"/>
+  </Collection>
+</VTKFile>

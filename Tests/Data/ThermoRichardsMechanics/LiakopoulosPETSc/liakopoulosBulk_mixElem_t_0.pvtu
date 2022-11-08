@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<VTKFile type="PUnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64" compressor="vtkZLibDataCompressor">
+  <PUnstructuredGrid GhostLevel="1">
+    <FieldData>
+      <DataArray type="Int8" Name="IntegrationPointMetaData" NumberOfTuples="761" format="binary" RangeMin="34" RangeMax="125">
+        AQAAAAAAAAAAgAAAAAAAAPkCAAAAAAAAqgAAAAAAAAA=eF6t0TsKwzAMBuC7eM7Sx5SrlGLcWA0CW3IlJyWE3L0eSqFLPDijJPj4Ja0GKcMoLiOTTVwq60Tcoqa/rX9DFg9i+ktnyEUwvVGXp+8MkyntKT5ALD/twDExAeWinLau4iQWVsxLm5LFkRYq22M8SIphf7VrFdE3hIA0Ws0Cqo0YjtG1ETMEHiqnOVeVgK8JvfVA7WeeUYcDvuVl+eVRDiXdLnffPtJuF3A=
+      </DataArray>
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="26" format="binary" RangeMin="45" RangeMax="121">
+        AQAAAAAAAAAAgAAAAAAAABoAAAAAAAAAIgAAAAAAAAA=eF4z0zPRM9Y1trTUTU8yME9NSTVNMdJLySwqqQQAVrAHfA==
+      </DataArray>
+      <DataArray type="Float64" Name="dry_density_solid_ip" NumberOfTuples="228" format="binary" RangeMin="1405" RangeMax="1405">
+        AQAAAAAAAAAAgAAAAAAAACAHAAAAAAAAHQAAAAAAAAA=eF5jYACCL1MdGEbpUXqUHqVH6VF6lIbTAMxxlxQ=
+      </DataArray>
+      <DataArray type="Float64" Name="epsilon_ip" NumberOfComponents="4" NumberOfTuples="228" format="binary" RangeMin="0" RangeMax="0">
+        AQAAAAAAAAAAgAAAAAAAAIAcAAAAAAAAHgAAAAAAAAA=eF7twTEBAAAAwqD1T20JT6AAAAAAAAAAPgYcgAAB
+        <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
+          <Value index="0">
+            0
+          </Value>
+          <Value index="1">
+            0
+          </Value>
+        </InformationKey>
+      </DataArray>
+      <DataArray type="Float64" Name="liquid_density_ip" NumberOfTuples="228" format="binary" RangeMin="1000" RangeMax="1000">
+        AQAAAAAAAAAAgAAAAAAAACAHAAAAAAAAHQAAAAAAAAA=eF5jYAACh34HhlF6lB6lR+lRepQepeE0AC5u8V0=
+      </DataArray>
+      <DataArray type="Float64" Name="porosity_ip" NumberOfTuples="228" format="binary" RangeMin="0.2975" RangeMax="0.2975">
+        AQAAAAAAAAAAgAAAAAAAACAHAAAAAAAAHwAAAAAAAAA=eF7jur64wJbrsj3XKD1Kj9Kj9Cg9So/ScBoAcq3wsw==
+      </DataArray>
+      <DataArray type="Float64" Name="saturation_ip" NumberOfTuples="228" format="binary" RangeMin="1" RangeMax="1">
+        AQAAAAAAAAAAgAAAAAAAACAHAAAAAAAAHAAAAAAAAAA=eF5jYACBD/YMo/QoPUqP0qP0KD1Kw2kASz0N7A==
+      </DataArray>
+      <DataArray type="Float64" Name="sigma_ip" NumberOfComponents="4" NumberOfTuples="228" format="binary" RangeMin="4884.185912680879" RangeMax="16534.50975000037">
+        AQAAAAAAAAAAgAAAAAAAAIAcAAAAAAAATAMAAAAAAAA=eF7V1mtIU2EYB/Blk7y0El0xbIpKFqJZecXLEHE4LaSLYeUFdAxvlK5CJS/BWEmmZn1YFqhpq7xNXc1peZlTc9osGxM3ShTMW1AEZgYzHX3o8/McaBzWOV9/vP/3Oe97zvu8NNrfh8dxMA6vqdU04KFX1+a1XBsGPUsSUzklh8dnE7i15+8tZna62Y2AHseiJ8lcYW/3kF/Vn4frCwqtiP70DB4/V4bP7+uKzz8XiefXeOH1+TNvffXumwS9zQ33ABGL7uUC+8v6Nb1PxjvQBdNSYdj2FOhCA+4NMaEVwUmwu6c7XeA8/QA6X8FbMAeOgR4vw53J7Z6wmYVd4zNr2qx6A/rHhWKmVqoFfe8jfH0X98rY7pfg8Q+32lFffSDk5FW/Bf3XvD5hvzvs4TlRwa5jsJeX4u54MjPTuWjin31cbbqxRzcO+ukZvH5lDp5/JQ132m88v2MJr2/VwSjV2utAlwvw79e/SPW40RseT+Q2s/j/ReRE9Z07g/+fC774+ULkDCV+viif4P/Pi58G6e0ZDehNZTGVVaXw/rlczh246a8BPXUdz48UMzu7Ut6Drtotkihs4PVzIhi/aGrWtHfD6/O8CT/fiDz1AH6+rR3Gz8f6Erx+Pzv8/c9u4O+XXIDnx+40ovvDL8f3v4GBj58uwL+Pfr1U2Nw6Crp85dDxgH2w19nK2OmNsK9WsugCHrw/n2fw+SVf8Pm11Xh+rCNe31at+eIEawj0sI2SvB2jsEe0lkbXh8D3O2vnR1iYv4t9T8fNGASde52xXOaoAl1kuGPqUcJOdr49yfnOjZ684dZ+0BO2G1I2EwdAr0pmCwPNsBPln/rP890OKgY5P16Dniw6pi+s6wNdMt+x0hUL10f1fJ8WblBf+CvQBbYjcetLsEv5UWl+NXB9VM8P8DO0hYh7QM+vSBzKP9ILumxFN91ihJ3q+Rx5lqdishv0YsZy8LcCJejKXP4Jbw+4vgiS8y2tv5cg30xyfyS7/5Jdv6X9UUzx/k5Uv6X98a6V+6+l+UT1k90fqZ5Pdn+kej7Z/ZHq+fFBptqjTAXo4vuFsmwV7CPf19VN2XB/tTRfTXI+Uf2W3h+I7idUv/+Qvf6W5lvr+/kDntP1Hg==
+        <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
+          <Value index="0">
+            4884.1859127
+          </Value>
+          <Value index="1">
+            16534.50975
+          </Value>
+        </InformationKey>
+      </DataArray>
+      <DataArray type="Float64" Name="swelling_stress_ip" NumberOfComponents="4" NumberOfTuples="228" format="binary" RangeMin="0" RangeMax="0">
+        AQAAAAAAAAAAgAAAAAAAAIAcAAAAAAAAHgAAAAAAAAA=eF7twTEBAAAAwqD1T20JT6AAAAAAAAAAPgYcgAAB
+        <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
+          <Value index="0">
+            0
+          </Value>
+          <Value index="1">
+            0
+          </Value>
+        </InformationKey>
+      </DataArray>
+      <DataArray type="Float64" Name="transport_porosity_ip" NumberOfTuples="228" format="binary" RangeMin="0.2975" RangeMax="0.2975">
+        AQAAAAAAAAAAgAAAAAAAACAHAAAAAAAAHwAAAAAAAAA=eF7jur64wJbrsj3XKD1Kj9Kj9Cg9So/ScBoAcq3wsw==
+      </DataArray>
+      <DataArray type="Float64" Name="velocity_ip" NumberOfComponents="2" NumberOfTuples="228" format="binary" RangeMin="0.0000044145" RangeMax="0.0000044145">
+        AQAAAAAAAAAAgAAAAAAAAEAOAAAAAAAALwAAAAAAAAA=eF7txyEBACAQBLCTdKACMaER+kOQCIElwuaWPLuP1eapuLu7u7u7u39+AZ5FNx4=
+        <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
+          <Value index="0">
+            4.4145e-06
+          </Value>
+          <Value index="1">
+            4.4145e-06
+          </Value>
+        </InformationKey>
+      </DataArray>
+      <DataArray type="Float64" Name="viscosity_ip" NumberOfTuples="228" format="binary" RangeMin="0.001" RangeMax="0.001">
+        AQAAAAAAAAAAgAAAAAAAACAHAAAAAAAAHwAAAAAAAAA=eF77s/LjJd+kAPs/o/QoPUqP0qP0KD1Kw2kAtbokFQ==
+      </DataArray>
+    </FieldData>
+    <PPointData>
+      <PDataArray type="Float64" Name="HeatFlowRate"/>
+      <PDataArray type="Float64" Name="MassFlowRate"/>
+      <PDataArray type="Float64" Name="NodalForces" NumberOfComponents="2"/>
+      <PDataArray type="Float64" Name="displacement" NumberOfComponents="2"/>
+      <PDataArray type="Float64" Name="epsilon" NumberOfComponents="4"/>
+      <PDataArray type="Float64" Name="pressure"/>
+      <PDataArray type="Float64" Name="pressure_interpolated"/>
+      <PDataArray type="Float64" Name="saturation"/>
+      <PDataArray type="Float64" Name="sigma" NumberOfComponents="4"/>
+      <PDataArray type="Float64" Name="temperature_interpolated"/>
+      <PDataArray type="Float64" Name="velocity" NumberOfComponents="2"/>
+      <PDataArray type="Int64" Name="vtkOriginalPointIds"/>
+    </PPointData>
+    <PCellData>
+      <PDataArray type="Int32" Name="CellEntityIds"/>
+      <PDataArray type="Float64" Name="liquid_density_avg"/>
+      <PDataArray type="Float64" Name="porosity_avg"/>
+      <PDataArray type="Float64" Name="saturation_avg"/>
+      <PDataArray type="Float64" Name="stress_avg" NumberOfComponents="4"/>
+      <PDataArray type="Float64" Name="viscosity_avg"/>
+      <PDataArray type="UInt8" Name="vtkGhostType"/>
+      <PDataArray type="Int64" Name="vtkOriginalCellIds"/>
+    </PCellData>
+    <PPoints>
+      <PDataArray type="Float64" Name="Points" NumberOfComponents="3"/>
+    </PPoints>
+    <Piece Source="liakopoulosBulk_mixElem_t_0_0.vtu"/>
+    <Piece Source="liakopoulosBulk_mixElem_t_0_1.vtu"/>
+  </PUnstructuredGrid>
+</VTKFile>
