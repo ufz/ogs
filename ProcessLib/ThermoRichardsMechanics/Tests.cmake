@@ -29,6 +29,24 @@ AddTest(
 )
 
 AddTest(
+    NAME ThermoRichardsMechanics_liakopoulosHM_restart
+    PATH ThermoRichardsMechanics/LiakopoulosHM
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS liakopoulos_restart.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
+    DIFF_DATA
+    liakopoulos_t_600.vtu liakopoulos_restart_t_600.vtu sigma sigma 1e-9 1e-12
+    liakopoulos_t_600.vtu liakopoulos_restart_t_600.vtu displacement displacement 1e-10 1e-12
+    liakopoulos_t_600.vtu liakopoulos_restart_t_600.vtu saturation saturation 1e-10 1e-12
+    liakopoulos_t_7200.vtu liakopoulos_restart_t_7200.vtu sigma sigma 1.5 0
+    liakopoulos_t_7200.vtu liakopoulos_restart_t_7200.vtu displacement displacement 3.4e-7 0
+    liakopoulos_t_7200.vtu liakopoulos_restart_t_7200.vtu saturation saturation 4e-5 0
+)
+
+AddTest(
     NAME ThermoRichardsMechanics_LiakopoulosMixedElementsPETSc
     PATH ThermoRichardsMechanics/LiakopoulosPETSc
     EXECUTABLE ogs
