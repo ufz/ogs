@@ -21,9 +21,9 @@
     </processes>
     <media>
         <medium>
-           <phases>
+            <phases>
                 <phase>
-		                <!-- Pore water phase -->
+                    <!-- Pore water phase -->
                     <type>AqueousLiquid</type>
                     <properties>
                         <property>
@@ -44,7 +44,7 @@
                     </properties>
                 </phase>
                 <phase>
-		                <!-- Pore ice phase -->
+                    <!-- Pore ice phase -->
                     <type>FrozenLiquid</type>
                     <properties>
                         <property>
@@ -65,7 +65,7 @@
                     </properties>
                 </phase>
                 <phase>
-		                <!-- Porous solid phase -->
+                    <!-- Porous solid phase -->
                     <type>Solid</type>
                     <properties>
                         <property>
