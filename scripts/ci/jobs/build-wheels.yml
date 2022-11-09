@@ -6,13 +6,15 @@ workflow:
   rules:
     - if: $CI_COMMIT_TAG
       variables:
-        PYPI_PASSWORD: "${PYPI_TOKEN}"
-        PYPI_REPO: pypi
+        PYPI_REPO: --repository pypi
+        PYPI_AUTH: --username __token__ --password "${PYPI_TOKEN}"
+        GIT_DEPTH: 1000
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
       variables:
-        PYPI_PASSWORD: "${TEST_PYPI_TOKEN}"
-        PYPI_REPO: testpypi
+        PYPI_REPO: --repository testpypi
+        PYPI_AUTH: --username __token__ --password "${TEST_PYPI_TOKEN}"
         SETUPTOOLS_SCM_LOCAL_SCHEME: no-local-version
+        GIT_DEPTH: 1000
     - if: $CI_MERGE_REQUEST_ID
       variables:
         CIBW_BUILD: cp39* cp310*
@@ -62,6 +64,8 @@ publish wheels:
   stage: release
   needs: ["build wheels linux", "build wheels mac", "build wheels win"]
   tags: [envinf, shell]
+  variables:
+    GIT_STRATEGY: none
   rules:
     - if: $CI_COMMIT_TAG
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
@@ -69,7 +73,6 @@ publish wheels:
   script:
     - >
       pipx run twine upload
-      --repository ${PYPI_REPO}
-      --username __token__
-      --password ${PYPI_PASSWORD}
+      ${PYPI_REPO}
+      ${PYPI_AUTH}
       wheelhouse/*

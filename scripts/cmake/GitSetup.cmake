@@ -72,6 +72,7 @@ if(_IS_GIT_REPO AND NOT OGS_VERSION)
     # https://github.com/tomtom-international/cpp-dependencies
     execute_process(
         COMMAND ${GIT_EXECUTABLE} describe --tags --long --dirty --always
+                --abbrev=8
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         RESULT_VARIABLE DESCRIBE_RESULT
         OUTPUT_VARIABLE DESCRIBE_STDOUT
