@@ -16,12 +16,27 @@
 
 namespace ProcessLib
 {
+/// Removes the suffix '_ip' from the passed field name.
+inline std::string removeIPFieldDataNameSuffix(std::string const& name)
+{
+    if (!name.ends_with("_ip"))
+    {
+        OGS_FATAL(
+            "The name of integration point data must end with '_ip'. '{}' "
+            "does not.",
+            name);
+    }
+
+    return name.substr(0, name.size() - 3);
+}
+
 template <typename LocalAssemblersVector>
 void setIPDataInitialConditions(
     std::vector<std::unique_ptr<MeshLib::IntegrationPointWriter>> const&
         _integration_point_writer,
     MeshLib::Properties const& mesh_properties,
-    LocalAssemblersVector& local_assemblers)
+    LocalAssemblersVector& local_assemblers,
+    bool const remove_name_suffix = false)
 {
     for (auto const& ip_writer : _integration_point_writer)
     {
@@ -55,6 +70,11 @@ void setIPDataInitialConditions(
                 mesh_property.getNumberOfGlobalComponents());
         }
 
+        INFO("Setting initial integration point data for '{}'", name);
+
+        auto const& name_transformed =
+            remove_name_suffix ? removeIPFieldDataNameSuffix(name) : name;
+
         // Now we have a properly named vtk's field data array and the
         // corresponding meta data.
         std::size_t position = 0;
@@ -62,7 +82,7 @@ void setIPDataInitialConditions(
         {
             std::size_t const integration_points_read =
                 local_asm->setIPDataInitialConditions(
-                    name, &mesh_property[position],
+                    name_transformed, &mesh_property[position],
                     ip_meta_data.integration_order);
             if (integration_points_read == 0)
             {
