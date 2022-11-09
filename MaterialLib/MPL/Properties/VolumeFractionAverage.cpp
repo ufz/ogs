@@ -108,7 +108,7 @@ PropertyDataType VolumeFractionAverage::dValue(
 {
     (void)variable;
     assert((variable == Variable::temperature) &&
-           "VolumeFractionAverage::dvalue is implemented for "
+           "VolumeFractionAverage::dValue is implemented for "
            "derivatives with respect to temperature only.");
 
     double dphi_fr_dT = 0;
