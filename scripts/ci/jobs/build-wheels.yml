@@ -11,8 +11,8 @@ workflow:
         GIT_DEPTH: 1000
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
       variables:
-        PYPI_REPO: --repository testpypi
-        PYPI_AUTH: --username __token__ --password "${TEST_PYPI_TOKEN}"
+        PYPI_REPO: --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi
+        PYPI_AUTH: --username gitlab-ci-token --password ${CI_JOB_TOKEN}
         SETUPTOOLS_SCM_LOCAL_SCHEME: no-local-version
         GIT_DEPTH: 1000
     - if: $CI_MERGE_REQUEST_ID
