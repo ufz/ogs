@@ -11,8 +11,6 @@
 
 #include "VolumeFractionAverage.h"
 
-#include <iostream>
-
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/PropertyType.h"
 
