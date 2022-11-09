@@ -34,7 +34,7 @@ static void addOgsVersion(MeshLib::Mesh& mesh)
 static void addSecondaryVariableNodes(
     double const t,
     std::vector<GlobalVector*> const& x,
-    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
     ProcessLib::SecondaryVariable const& var,
     std::string const& output_name,
     MeshLib::Mesh& mesh)
@@ -57,7 +57,7 @@ static void addSecondaryVariableNodes(
 
     std::unique_ptr<GlobalVector> result_cache;
     auto const& nodal_values =
-        var.fcts.eval_field(t, x, dof_table, result_cache);
+        var.fcts.eval_field(t, x, dof_tables, result_cache);
 
 #ifdef USE_PETSC
     std::size_t const global_vector_size =

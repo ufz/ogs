@@ -60,7 +60,7 @@ public:
     virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
         std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
         std::vector<double>& cache) const = 0;
 };
 

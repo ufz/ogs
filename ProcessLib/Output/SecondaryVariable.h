@@ -174,14 +174,14 @@ SecondaryVariableFunctions makeExtrapolator(
          integration_point_values_method](
             const double t,
             std::vector<GlobalVector*> const& x,
-            std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+            std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
             std::unique_ptr<GlobalVector>& /*result_cache*/
             ) -> GlobalVector const&
     {
         auto const extrapolatables = NumLib::makeExtrapolatable(
             local_assemblers, integration_point_values_method);
         extrapolator.extrapolate(num_components, extrapolatables, t, x,
-                                 dof_table);
+                                 dof_tables);
         return extrapolator.getNodalValues();
     };
 
@@ -190,14 +190,14 @@ SecondaryVariableFunctions makeExtrapolator(
          integration_point_values_method](
             const double t,
             std::vector<GlobalVector*> const& x,
-            std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+            std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
             std::unique_ptr<GlobalVector>& /*result_cache*/
             ) -> GlobalVector const&
     {
         auto const extrapolatables = NumLib::makeExtrapolatable(
             local_assemblers, integration_point_values_method);
         extrapolator.calculateResiduals(num_components, extrapolatables, t, x,
-                                        dof_table);
+                                        dof_tables);
         return extrapolator.getElementResiduals();
     };
     return {num_components, eval_field, eval_residuals};
