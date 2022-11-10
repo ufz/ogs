@@ -197,9 +197,37 @@ MeshLib::Mesh const& Output::prepareSubmesh(
     auto const& bulk_mesh = process.getMesh();
     auto const& property_names =
         bulk_mesh.getProperties().getPropertyVectorNames();
+
+    auto filter_residuum = [](std::string const& name) -> bool
+    {
+        using namespace std::literals::string_view_literals;
+        static constexpr std::string_view names[] = {
+            "GasMassFlowRate"sv,    "heat_flux"sv,    "HeatFlowRate"sv,
+            "LiquidMassFlowRate"sv, "MassFlowRate"sv, "MaterialForces"sv,
+            "MolarFlowRate"sv,      "NodalForces"sv,  "NodalForcesJump"sv,
+            "VolumetricFlowRate"sv};
+        return std::find(std::begin(names), std::end(names), name) ==
+               std::end(names);
+    };
+
     for (auto const& name : property_names)
     {
-        addBulkMeshPropertyToSubMesh(bulk_mesh, submesh, name);
+        if (bulk_mesh.getDimension() == submesh.getDimension())
+        {
+            // omit the 'simple' transfer of the properties in the if condition
+            // on submeshes with equal dimension to the bulk mesh
+            // for those data extra assembly is required
+            if (filter_residuum(name))
+            {
+                continue;
+            }
+        }
+        else
+        {
+            // For residuum based properties it is assumed that the lower
+            // dimensional mesh is a boundary mesh!
+            addBulkMeshPropertyToSubMesh(bulk_mesh, submesh, name);
+        }
     }
     return submesh;
 }
