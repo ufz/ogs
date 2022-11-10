@@ -207,7 +207,8 @@
                 </property>
                 <property>
                     <name>thermal_conductivity</name>
-                    <type>SoilThermalConductivitySomerton</type>
+                    <type>SaturationWeightedThermalConductivity</type>
+                    <mean_type>arithmetic_squareroot</mean_type>
                     <dry_thermal_conductivity>k_T_dry</dry_thermal_conductivity>
                     <wet_thermal_conductivity>k_T_wet</wet_thermal_conductivity>
                 </property>

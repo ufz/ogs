@@ -223,11 +223,6 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createRelPermUdellNonwettingPhase(config);
     }
 
-    if (boost::iequals(property_type, "SaturationDependentThermalConductivity"))
-    {
-        return createSaturationDependentThermalConductivity(config);
-    }
-
     if (boost::iequals(property_type, "SaturationDependentSwelling"))
     {
         return createSaturationDependentSwelling(config,
@@ -259,10 +254,20 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createLinearSaturationSwellingStress(config);
     }
 
+    if (boost::iequals(property_type, "SaturationWeightedThermalConductivity"))
+    {
+        return createSaturationWeightedThermalConductivity(
+            geometry_dimension, config, parameters, local_coordinate_system);
+    }
+
     if (boost::iequals(property_type, "SoilThermalConductivitySomerton"))
     {
-        return createSoilThermalConductivitySomerton(
-            geometry_dimension, config, parameters, local_coordinate_system);
+        return createSoilThermalConductivitySomerton(config);
+    }
+
+    if (boost::iequals(property_type, "SaturationDependentThermalConductivity"))
+    {
+        return createSaturationDependentThermalConductivity(config);
     }
 
     if (boost::iequals(property_type, "WaterVapourDensity"))
