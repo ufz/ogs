@@ -120,7 +120,7 @@ int executeSimulation()
     {
         run_time.start();
         bool solver_succeeded = simulation->executeSimulation();
-        simulation.outputLastTimeStep();
+        simulation->outputLastTimeStep();
         // TODO: test definition ?
 
         INFO("[time] Execution took {:g} s.", run_time.elapsed());
