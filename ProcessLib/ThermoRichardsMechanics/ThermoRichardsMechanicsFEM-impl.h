@@ -316,15 +316,12 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& N = ip_data.N_p;
     auto const& dNdx = ip_data.dNdx_p;
 
-    auto const x_coord =
-        NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                       ShapeMatricesTypeDisplacement>(
-            this->element_, N_u);
     auto const B =
         LinearBMatrix::computeBMatrix<DisplacementDim,
                                       ShapeFunctionDisplacement::NPOINTS,
                                       typename BMatricesType::BMatrixType>(
-            dNdx_u, N_u, x_coord, this->is_axially_symmetric_);
+            dNdx_u, N_u, (*x_position.getCoordinates())[0],
+            this->is_axially_symmetric_);
 
     auto const [T, p_L, u] = localDOF(local_x);
     auto const [T_prev, p_L_prev, u_prev] = localDOF(local_x_prev);
