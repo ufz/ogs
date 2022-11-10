@@ -39,9 +39,10 @@ append_source_files(
 ogs_add_library(MaterialLib GENERATE_EXPORT_HEADER ${SOURCES})
 
 target_link_libraries(
-    MaterialLib PUBLIC BaseLib Eigen3::Eigen MaterialLib_SolidModels
-                       MaterialLib_FractureModels PRIVATE MathLib MeshLib
-                                                          ParameterLib exprtk
+    MaterialLib
+    PUBLIC BaseLib Eigen3::Eigen MaterialLib_SolidModels
+           MaterialLib_FractureModels
+    PRIVATE MathLib MeshLib ParameterLib exprtk Boost::mp11
 )
 
 target_precompile_headers(MaterialLib PRIVATE [["BaseLib/Error.h"]]
