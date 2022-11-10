@@ -120,6 +120,9 @@ int executeSimulation()
     {
         run_time.start();
         bool solver_succeeded = simulation->executeSimulation();
+        simulation.outputLastTimeStep();
+        // TODO: test definition ?
+
         INFO("[time] Execution took {:g} s.", run_time.elapsed());
         ogs_status = solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
     }
