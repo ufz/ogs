@@ -32,6 +32,59 @@ enum class MeanType
     GEOMETRIC
 };
 
+template <MeanType MeanType>
+inline double getValue(const double S, double const k_dry, double const k_wet)
+{
+  return 0.0;
+}
+
+template <MeanType MeanType>
+inline double getDValue(const double S, double const k_dry, double const k_wet)
+{
+  return 0.0;
+}
+
+
+// specialization
+template <>
+inline double getValue<MeanType::ARITHMETIC_LINEAR>(const double S, double const k_dry, double const k_wet)
+{
+    return k_dry * (1.0 - S) + k_wet * S;
+}
+
+template <>
+inline double getDValue<MeanType::ARITHMETIC_LINEAR>(const double /*S*/, double const k_dry, double const k_wet)
+{
+    return k_wet - k_dry;
+}
+
+
+template <>
+inline double getValue<MeanType::ARITHMETIC_SQUAREROOT>(const double S, double const k_dry, double const k_wet)
+{
+    return k_dry + std::sqrt(S) * (k_wet - k_dry);
+}
+
+template <>
+inline double getDValue<MeanType::ARITHMETIC_SQUAREROOT>(const double S, double const k_dry, double const k_wet)
+{
+    return 0.5 * (k_wet - k_dry) / std::sqrt(S);
+}
+
+
+template <>
+inline double getValue<MeanType::GEOMETRIC>(const double S, double const k_dry, double const k_wet)
+{
+    return k_dry * std::pow(k_wet / k_dry, S);
+}
+
+template <>
+inline double getDValue<MeanType::GEOMETRIC>(const double S, double const k_dry, double const k_wet)
+{
+    return k_dry * std::pow(k_wet / k_dry, S) * std::log(k_wet / k_dry);
+}
+
+
 /**
  * \brief Saturation dependent thermal conductivity model for soil.
  *
@@ -50,7 +103,7 @@ enum class MeanType
  *  dry state, \f$\lambda_{\text{wet}}\f$ is the thermal conductivity of soil at
  *  the fully water saturated state, and \f$S\f$ is the water saturation.
  */
-template <int GlobalDimension>
+template <MeanType MeantType, int GlobalDimension>
 class SaturationWeightedThermalConductivity final : public Property
 {
 public:
@@ -58,7 +111,6 @@ public:
         std::string name,
         ParameterLib::Parameter<double> const& dry_thermal_conductivity,
         ParameterLib::Parameter<double> const& wet_thermal_conductivity,
-        MeanType mean_type,
         ParameterLib::CoordinateSystem const* const local_coordinate_system);
 
     void checkScale() const override
@@ -88,13 +140,17 @@ private:
     /// Thermal conductivity of soil at the fully water saturated state.
     ParameterLib::Parameter<double> const& wet_thermal_conductivity_;
 
-    /// Type of mean shape
-    MeanType const mean_type_;
-
     ParameterLib::CoordinateSystem const* const local_coordinate_system_;
 };
 
-extern template class SaturationWeightedThermalConductivity<2>;
-extern template class SaturationWeightedThermalConductivity<3>;
+extern template class SaturationWeightedThermalConductivity<MeanType::ARITHMETIC_LINEAR, 1>;
+extern template class SaturationWeightedThermalConductivity<MeanType::ARITHMETIC_SQUAREROOT, 1>;
+extern template class SaturationWeightedThermalConductivity<MeanType::GEOMETRIC, 1>;
+extern template class SaturationWeightedThermalConductivity<MeanType::ARITHMETIC_LINEAR, 2>;
+extern template class SaturationWeightedThermalConductivity<MeanType::ARITHMETIC_SQUAREROOT, 2>;
+extern template class SaturationWeightedThermalConductivity<MeanType::GEOMETRIC, 2>;
+extern template class SaturationWeightedThermalConductivity<MeanType::ARITHMETIC_LINEAR, 3>;
+extern template class SaturationWeightedThermalConductivity<MeanType::ARITHMETIC_SQUAREROOT, 3>;
+extern template class SaturationWeightedThermalConductivity<MeanType::GEOMETRIC, 3>;
 
 }  // namespace MaterialPropertyLib

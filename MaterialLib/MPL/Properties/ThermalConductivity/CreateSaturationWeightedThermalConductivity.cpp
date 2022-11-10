@@ -62,31 +62,125 @@ std::unique_ptr<Property> createSaturationWeightedThermalConductivity(
         mean_type_map, mean_type_str,
         "Specified mean type for the thermal conductivity could not be found.");
 
-    if (geometry_dimension == 1)
+    switch (geometry_dimension)
     {
-        return std::make_unique<SaturationWeightedThermalConductivity<1>>(
-            std::move(property_name),
-            dry_thermal_conductivity,
-            wet_thermal_conductivity,
-            mean_type,
-            local_coordinate_system);
+        case 1:
+        {
+            switch (mean_type)
+            {
+                case MeanType::ARITHMETIC_LINEAR:
+                {
+                    return std::make_unique<SaturationWeightedThermalConductivity<
+                        MeanType::ARITHMETIC_LINEAR, 1>>(
+                            std::move(property_name),
+                            dry_thermal_conductivity,
+                            wet_thermal_conductivity,
+                            local_coordinate_system);
+                }
+                case MeanType::ARITHMETIC_SQUAREROOT:
+                {
+                    return std::make_unique<SaturationWeightedThermalConductivity<
+                        MeanType::ARITHMETIC_SQUAREROOT, 1>>(
+                            std::move(property_name),
+                            dry_thermal_conductivity,
+                            wet_thermal_conductivity,
+                            local_coordinate_system);
+                }
+                case MeanType::GEOMETRIC:
+                {
+                    return std::make_unique<SaturationWeightedThermalConductivity<
+                        MeanType::GEOMETRIC, 1>>(
+                            std::move(property_name),
+                            dry_thermal_conductivity,
+                            wet_thermal_conductivity,
+                            local_coordinate_system);
+                }
+                default:
+                {
+                    OGS_FATAL("The requested MeanType is not implemented.");
+                }
+            }
+        }
+        case 2:
+        {
+            switch (mean_type)
+            {
+                case MeanType::ARITHMETIC_LINEAR:
+                {
+                    return std::make_unique<SaturationWeightedThermalConductivity<
+                        MeanType::ARITHMETIC_LINEAR, 2>>(
+                            std::move(property_name),
+                            dry_thermal_conductivity,
+                            wet_thermal_conductivity,
+                            local_coordinate_system);
+                }
+                case MeanType::ARITHMETIC_SQUAREROOT:
+                {
+                    return std::make_unique<SaturationWeightedThermalConductivity<
+                        MeanType::ARITHMETIC_SQUAREROOT, 2>>(
+                            std::move(property_name),
+                            dry_thermal_conductivity,
+                            wet_thermal_conductivity,
+                            local_coordinate_system);
+                }
+                case MeanType::GEOMETRIC:
+                {
+                    return std::make_unique<SaturationWeightedThermalConductivity<
+                        MeanType::GEOMETRIC, 2>>(
+                            std::move(property_name),
+                            dry_thermal_conductivity,
+                            wet_thermal_conductivity,
+                            local_coordinate_system);
+                }
+                default:
+                {
+                    OGS_FATAL("The requested MeanType is not implemented.");
+                }
+            }
+
+        }
+        case 3:
+        {
+            switch (mean_type)
+            {
+                case MeanType::ARITHMETIC_LINEAR:
+                {
+                    return std::make_unique<SaturationWeightedThermalConductivity<
+                        MeanType::ARITHMETIC_LINEAR, 3>>(
+                            std::move(property_name),
+                            dry_thermal_conductivity,
+                            wet_thermal_conductivity,
+                            local_coordinate_system);
+                }
+                case MeanType::ARITHMETIC_SQUAREROOT:
+                {
+                    return std::make_unique<SaturationWeightedThermalConductivity<
+                        MeanType::ARITHMETIC_SQUAREROOT, 3>>(
+                            std::move(property_name),
+                            dry_thermal_conductivity,
+                            wet_thermal_conductivity,
+                            local_coordinate_system);
+                }
+                case MeanType::GEOMETRIC:
+                {
+                    return std::make_unique<SaturationWeightedThermalConductivity<
+                        MeanType::GEOMETRIC, 3>>(
+                            std::move(property_name),
+                            dry_thermal_conductivity,
+                            wet_thermal_conductivity,
+                            local_coordinate_system);
+                }
+                default:
+                {
+                    OGS_FATAL("The requested MeanType is not implemented.");
+                }
+            }
+        }
+        default:
+        {
+            OGS_FATAL("Dimension doesn't exist.");
+        }
     }
 
-    if (geometry_dimension == 2)
-    {
-        return std::make_unique<SaturationWeightedThermalConductivity<2>>(
-            std::move(property_name),
-            dry_thermal_conductivity,
-            wet_thermal_conductivity,
-            mean_type,
-            local_coordinate_system);
-    }
-
-    return std::make_unique<SaturationWeightedThermalConductivity<3>>(
-        std::move(property_name),
-        dry_thermal_conductivity,
-        wet_thermal_conductivity,
-        mean_type,
-        local_coordinate_system);
 }
 }  // namespace MaterialPropertyLib
