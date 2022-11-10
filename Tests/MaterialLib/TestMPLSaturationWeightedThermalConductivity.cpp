@@ -341,9 +341,9 @@ TEST(MaterialPropertyLib,
     ParameterLib::ConstantParameter<double> const k_dry{"k_dry", {0.2}};
     ParameterLib::ConstantParameter<double> const k_wet{"k_wet", {1.5}};
 
-    auto const k_model_eff = MPL::SaturationWeightedThermalConductivity<1>(
-        "thermal_conductivity", k_dry, k_wet,
-        MaterialPropertyLib::MeanType::ARITHMETIC_LINEAR, nullptr);
+    auto const k_model_eff = MPL::SaturationWeightedThermalConductivity<
+        MaterialPropertyLib::MeanType::ARITHMETIC_LINEAR, 1>(
+        "thermal_conductivity", k_dry, k_wet, nullptr);
 
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();
@@ -408,9 +408,9 @@ TEST(MaterialPropertyLib,
     ParameterLib::ConstantParameter<double> const k_dry{"k_dry", {0.2}};
     ParameterLib::ConstantParameter<double> const k_wet{"k_wet", {1.5}};
 
-    auto const k_model_eff = MPL::SaturationWeightedThermalConductivity<3>(
-        "thermal_conductivity", k_dry, k_wet,
-        MaterialPropertyLib::MeanType::ARITHMETIC_LINEAR, nullptr);
+    auto const k_model_eff = MPL::SaturationWeightedThermalConductivity<
+        MaterialPropertyLib::MeanType::ARITHMETIC_LINEAR, 3>(
+        "thermal_conductivity", k_dry, k_wet, nullptr);
 
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();
@@ -473,9 +473,9 @@ TEST(MaterialPropertyLib, SaturationWeightedThermalConductivity1Dgeometric)
     ParameterLib::ConstantParameter<double> const k_dry{"k_dry", {0.2}};
     ParameterLib::ConstantParameter<double> const k_wet{"k_wet", {1.5}};
 
-    auto const k_model_eff = MPL::SaturationWeightedThermalConductivity<1>(
-        "thermal_conductivity", k_dry, k_wet,
-        MaterialPropertyLib::MeanType::GEOMETRIC, nullptr);
+    auto const k_model_eff = MPL::SaturationWeightedThermalConductivity<
+        MaterialPropertyLib::MeanType::GEOMETRIC, 1>(
+        "thermal_conductivity", k_dry, k_wet, nullptr);
 
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();
@@ -539,9 +539,9 @@ TEST(MaterialPropertyLib, SaturationWeightedThermalConductivity3Dgeometric)
     ParameterLib::ConstantParameter<double> const k_dry{"k_dry", {0.2}};
     ParameterLib::ConstantParameter<double> const k_wet{"k_wet", {1.5}};
 
-    auto const k_model_eff = MPL::SaturationWeightedThermalConductivity<3>(
-        "thermal_conductivity", k_dry, k_wet,
-        MaterialPropertyLib::MeanType::GEOMETRIC, nullptr);
+    auto const k_model_eff = MPL::SaturationWeightedThermalConductivity<
+        MaterialPropertyLib::MeanType::GEOMETRIC, 3>(
+        "thermal_conductivity", k_dry, k_wet, nullptr);
 
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();
