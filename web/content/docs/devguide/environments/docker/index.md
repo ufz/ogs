@@ -72,4 +72,4 @@ There are docker images provided on the [GitLab Container Registry](https://gitl
 
 Even better for development is the usage of [Singularity container]({{< relref "singularity.md" >}}) because they offer a transparent mapping of the user to container space.
 
-[^1]: From [GCC docs](https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html): *Intel Ivy Bridge CPU with 64-bit extensions, MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2, POPCNT, CX16, SAHF, FXSR, AVX, XSAVE, PCLMUL, FSGSBASE, RDRND and F16C instruction set support.*
+[^1]: From [GCC docs](https://gcc.gnu.org/onlinedocs/gcc/gcc-command-options/machine-dependent-options/x86-options.html): *Intel Ivy Bridge CPU with 64-bit extensions, MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2, POPCNT, CX16, SAHF, FXSR, AVX, XSAVE, PCLMUL, FSGSBASE, RDRND and F16C instruction set support.*
