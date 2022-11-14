@@ -67,7 +67,7 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                 element_.getID());
         }
 
-        if (name == "sigma_ip" && process_data_.initial_stress != nullptr)
+        if (name == "sigma" && process_data_.initial_stress != nullptr)
         {
             OGS_FATAL(
                 "Setting initial conditions for stress from integration "
