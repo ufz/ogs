@@ -1,4 +1,7 @@
-import OpenGeoSys
+try:
+    import ogs.callbacks as OpenGeoSys
+except ModuleNotFoundError:
+    import OpenGeoSys
 
 rhoLR = 1000
 cpL = 2000

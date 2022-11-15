@@ -24,6 +24,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE TH2M/TH/Ogata-Banks/ogata-banks.prj RUNTIME 60)
     OgsTest(PROJECTFILE TH2M/H/diffusion/diffusion.prj RUNTIME 10)
     NotebookTest(NOTEBOOKFILE TH2M/H/diffusion/diffusion.ipynb RUNTIME 10)
+    NotebookTest(NOTEBOOKFILE TH2M/TH/Ogata-Banks/Ogata-Banks.ipynb RUNTIME 60)
 endif()
 
 # TH2M 1d heat diffusion w/ Dirichlet-BC
