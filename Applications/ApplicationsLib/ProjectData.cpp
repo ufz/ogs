@@ -291,7 +291,8 @@ ProjectData::ProjectData() = default;
 ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
                          std::string const& project_directory,
                          std::string const& output_directory,
-                         std::string const& mesh_directory)
+                         std::string const& mesh_directory,
+                         [[maybe_unused]] std::string const& script_directory)
     : _mesh_vec(readMeshes(project_config, mesh_directory))
 {
     if (auto const python_script =
@@ -303,19 +304,21 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 
         // Append to python's module search path
         auto py_path = py::module::import("sys").attr("path");
-        py_path.attr("append")(project_directory);  // .prj directory
+        py_path.attr("append")(script_directory);  // .prj or -s directory
         // virtualenv
         py_path.attr("append")(
             CMakeInfoLib::CMakeInfo::python_virtualenv_sitepackages);
 
         auto const script_path =
-            BaseLib::copyPathToFileName(*python_script, project_directory);
+            BaseLib::copyPathToFileName(*python_script, script_directory);
 
         // Evaluate in scope of main module
         py::object scope = py::module::import("__main__").attr("__dict__");
         // add (global) variables
         auto globals = py::dict(scope);
         globals["ogs_prj_directory"] = project_directory;
+        globals["ogs_mesh_directory"] = mesh_directory;
+        globals["ogs_script_directory"] = script_directory;
         py::eval_file(script_path, scope);
 #else
         OGS_FATAL("OpenGeoSys has not been built with Python support.");

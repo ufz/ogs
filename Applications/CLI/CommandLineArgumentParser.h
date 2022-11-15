@@ -22,6 +22,7 @@ struct CommandLineArguments final
     std::vector<std::string> xml_patch_file_names;
     std::string outdir;
     std::string mesh_dir;
+    std::string script_dir;
     std::string log_level;
     bool write_prj;
     bool nonfatal;

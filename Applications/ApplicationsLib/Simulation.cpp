@@ -48,7 +48,7 @@ void Simulation::initializeDataStructures(
     std::vector<std::string> const& xml_patch_file_names,
     bool const reference_path_is_set, std::string const& reference_path,
     bool const nonfatal, std::string const& outdir, std::string const& mesh_dir,
-    bool const write_prj)
+    std::string const& script_dir, bool const write_prj)
 {
     INFO("Reading project file {}.",
          std::filesystem::absolute(project).string());
@@ -93,8 +93,9 @@ void Simulation::initializeDataStructures(
     project_config.ignoreConfigParameter("insitu");
 #endif
 
-    project_data = std::make_unique<ProjectData>(
-        project_config, BaseLib::getProjectDirectory(), outdir, mesh_dir);
+    project_data = std::make_unique<ProjectData>(project_config,
+                                                 BaseLib::getProjectDirectory(),
+                                                 outdir, mesh_dir, script_dir);
 
     INFO("Initialize processes.");
     for (auto& p : project_data->getProcesses())

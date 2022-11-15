@@ -91,7 +91,8 @@ int initOGS(std::vector<std::string>& argv_str)
             std::move(cli_args.xml_patch_file_names),
             cli_args.reference_path_is_set, std::move(cli_args.reference_path),
             cli_args.nonfatal, std::move(cli_args.outdir),
-            std::move(cli_args.mesh_dir), cli_args.write_prj);
+            std::move(cli_args.mesh_dir), std::move(cli_args.script_dir),
+            cli_args.write_prj);
     }
     catch (std::exception& e)
     {

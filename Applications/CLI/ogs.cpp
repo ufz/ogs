@@ -96,7 +96,8 @@ int main(int argc, char* argv[])
             std::move(cli_arg.project), std::move(cli_arg.xml_patch_file_names),
             cli_arg.reference_path_is_set, std::move(cli_arg.reference_path),
             cli_arg.nonfatal, std::move(cli_arg.outdir),
-            std::move(cli_arg.mesh_dir), cli_arg.write_prj);
+            std::move(cli_arg.mesh_dir), std::move(cli_arg.script_dir),
+            cli_arg.write_prj);
         bool solver_succeeded = simulation.executeSimulation();
         simulation.outputLastTimeStep();
         test_definition = simulation.getTestDefinition();

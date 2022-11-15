@@ -87,6 +87,11 @@ CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
         "m", "mesh-input-directory",
         "the directory where the meshes are read from", false, "", "PATH");
 
+    TCLAP::ValueArg<std::string> script_dir_arg(
+        "s", "script-input-directory",
+        "the directory where script files (e.g. Python BCs) are read from",
+        false, "", "PATH");
+
     TCLAP::SwitchArg write_prj_arg("",
                                    "write-prj",
                                    "Writes processed project file to output "
@@ -101,6 +106,7 @@ CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
     cmd.add(xml_patch_files_arg);
     cmd.add(outdir_arg);
     cmd.add(mesh_dir_arg);
+    cmd.add(script_dir_arg);
     cmd.add(write_prj_arg);
     cmd.add(log_level_arg);
     cmd.add(nonfatal_arg);
@@ -124,6 +130,9 @@ CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
     cli_args.mesh_dir = mesh_dir_arg.getValue().empty()
                             ? BaseLib::getProjectDirectory()
                             : mesh_dir_arg.getValue();
+    cli_args.script_dir = script_dir_arg.getValue().empty()
+                              ? BaseLib::getProjectDirectory()
+                              : script_dir_arg.getValue();
     cli_args.nonfatal = nonfatal_arg.getValue();
     cli_args.log_level = log_level_arg.getValue();
     cli_args.write_prj = write_prj_arg.getValue();
