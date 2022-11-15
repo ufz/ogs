@@ -70,12 +70,12 @@ bool Output::isOutputProcess(const int process_id, const Process& process) const
            || is_last_process;
 }
 
-Output::Output(std::unique_ptr<OutputFormat> output_file,
+Output::Output(std::unique_ptr<OutputFormat> output_format,
                bool const output_nonlinear_iteration_results,
                OutputDataSpecification const& output_data_specification,
                std::vector<std::string> const& mesh_names_for_output,
                std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
-    : _output_file(std::move(output_file)),
+    : _output_format(std::move(output_format)),
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
       _output_data_specification(std::move(output_data_specification)),
       _mesh_names_for_output(mesh_names_for_output),
@@ -97,8 +97,8 @@ void Output::outputMeshes(
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes)
     const
 {
-    _output_file->outputMeshes(timestep, t, iteration, meshes,
-                               _output_data_specification.output_variables);
+    _output_format->outputMeshes(timestep, t, iteration, meshes,
+                                 _output_data_specification.output_variables);
 }
 
 MeshLib::Mesh const& Output::prepareSubmesh(
@@ -200,7 +200,7 @@ void Output::doOutput(Process const& process,
     // Note: last time step may be output twice: here and in
     // doOutputLastTimestep() which throws a warning.
     InSituLib::CoProcess(process.getMesh(), t, timestep, false,
-                         _output_file->directory);
+                         _output_format->directory);
 #endif
 }
 
@@ -217,7 +217,7 @@ void Output::doOutputLastTimestep(Process const& process,
     }
 #ifdef OGS_USE_INSITU
     InSituLib::CoProcess(process.getMesh(), t, timestep, true,
-                         _output_file->directory);
+                         _output_format->directory);
 #endif
 }
 
@@ -246,19 +246,19 @@ void Output::doOutputNonlinearIteration(
         return;
     }
 
-    std::string const output_file_name = _output_file->constructFilename(
+    std::string const output_file_name = _output_format->constructFilename(
         process.getMesh().getName(), timestep, t, iteration);
 
     std::string const output_file_path =
-        BaseLib::joinPaths(_output_file->directory, output_file_name);
+        BaseLib::joinPaths(_output_format->directory, output_file_name);
 
     DBUG("output iteration results to {:s}", output_file_path);
 
-    if (dynamic_cast<OutputVTKFormat*>(_output_file.get()))
+    if (dynamic_cast<OutputVTKFormat*>(_output_format.get()))
     {
         outputMeshVtk(
-            output_file_path, process.getMesh(), _output_file->compression,
-            dynamic_cast<OutputVTKFormat*>(_output_file.get())->data_mode);
+            output_file_path, process.getMesh(), _output_format->compression,
+            dynamic_cast<OutputVTKFormat*>(_output_format.get())->data_mode);
     }
     else
     {
@@ -271,7 +271,7 @@ std::ostream& operator<<(std::ostream& os, Output const& output)
 {
     os << "Output::_output_data_specification:\t"
        << output._output_data_specification;
-    os << "Output::_output_file:\t" << *(output._output_file);
+    os << "Output::_output_format:\t" << *(output._output_format);
     return os;
 }
 
