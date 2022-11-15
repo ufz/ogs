@@ -521,6 +521,16 @@ if(SNAKEMAKE AND TEE_TOOL_PATH AND BASH_TOOL_PATH)
         PROPERTIES LABELS "default")
 endif()
 
+if(SNAKEMAKE AND TEE_TOOL_PATH AND BASH_TOOL_PATH AND OGS_USE_MPI)
+    add_test(NAME snakemake_reorder_nodes_elements
+        COMMAND bash -c "${SNAKEMAKE} -j 1 \
+            --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml --forceall \
+            -s ${PROJECT_SOURCE_DIR}/Applications/Utils/TestReorderNodesElements.smk"
+    )
+    set_tests_properties(snakemake_reorder_nodes_elements
+        PROPERTIES LABELS "default")
+endif()
+
 # Regression test for https://github.com/ufz/ogs/issues/1845 fixed in
 # https://github.com/ufz/ogs/pull/2237
 # checkMesh crashed when encountered Line3 element.
