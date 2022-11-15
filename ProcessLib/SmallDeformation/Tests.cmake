@@ -100,7 +100,9 @@ if (OGS_USE_MFRONT)
     OgsTest(PROJECTFILE Mechanics/ModifiedCamClay/square_1e0_shear.prj)
     OgsTest(PROJECTFILE Mechanics/ModifiedCamClay/square_1e0_biax.prj)
     OgsTest(PROJECTFILE Mechanics/ModifiedCamClay/model_triaxtest.prj)
-    OgsTest(PROJECTFILE Mechanics/GuentherSalzer/model_triaxtest.prj)
+    if(NOT OGS_USE_MPI)
+        OgsTest(PROJECTFILE Mechanics/GuentherSalzer/model_triaxtest.prj)
+    endif()
 
     # Linear elastic, no internal state variables, no external state variables.
     AddTest(
