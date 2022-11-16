@@ -58,12 +58,11 @@ void createLocalAssemblersTaylorHood(
     auto const& integration_method_provider =
         getIntegrationMethodProvider(provider_or_order);
 
-    using IntMethProv =
+    using IntegrationMethodProvider =
         std::remove_cvref_t<decltype(integration_method_provider)>;
-    using LocAsmFac =
-        LocalAssemblerFactory<LocalAssemblerInterface,
-                              LocalAssemblerImplementation, IntMethProv,
-                              GlobalDim, ExtraCtorArgs...>;
+    using LocAsmFac = LocalAssemblerFactory<
+        LocalAssemblerInterface, LocalAssemblerImplementation,
+        IntegrationMethodProvider, GlobalDim, ExtraCtorArgs...>;
 
     LocAsmFac factory(dof_table, integration_method_provider);
     local_assemblers.resize(mesh_elements.size());

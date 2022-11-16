@@ -22,13 +22,13 @@ template <typename ShapeFunction,
                     typename /* lower order shp fct */,
                     int /* global dim */>
           class LocalAssemblerImplementation,
-          NumLib::IntegrationMethodProvider IntMethProv,
+          NumLib::IntegrationMethodProvider IntegrationMethodProvider,
           int GlobalDim,
           typename... ConstructorArgs>
 class LocalAssemblerBuilderFactoryTaylorHood
 {
     using GLAF = GenericLocalAssemblerFactory<LocalAssemblerInterface,
-                                              IntMethProv,
+                                              IntegrationMethodProvider,
                                               ConstructorArgs...>;
     using LocAsmIntfPtr = typename GLAF::LocAsmIntfPtr;
     using LocAsmBuilder = typename GLAF::LocAsmBuilder;
@@ -47,7 +47,7 @@ public:
     {
         return [](MeshLib::Element const& e,
                   std::size_t const local_matrix_size,
-                  IntMethProv const& integration_method_provider,
+                  IntegrationMethodProvider const& integration_method_provider,
                   ConstructorArgs&&... args)
         {
             auto const& integration_method =
@@ -89,17 +89,17 @@ template <int MinShapeFctOrder,
                     typename /* lower order shp fct */,
                     int /* global dim */>
           class LocalAssemblerImplementation,
-          NumLib::IntegrationMethodProvider IntMethProv,
+          NumLib::IntegrationMethodProvider IntegrationMethodProvider,
           int GlobalDim,
           typename... ConstructorArgs>
 class LocalAssemblerFactoryTaylorHood final
     : public ProcessLib::GenericLocalAssemblerFactory<LocalAssemblerInterface,
-                                                      IntMethProv,
+                                                      IntegrationMethodProvider,
                                                       ConstructorArgs...>
 {
     using Base =
         ProcessLib::GenericLocalAssemblerFactory<LocalAssemblerInterface,
-                                                 IntMethProv,
+                                                 IntegrationMethodProvider,
                                                  ConstructorArgs...>;
 
     template <typename ShapeFunction, typename LowerOrderShapeFunction>
@@ -108,7 +108,7 @@ class LocalAssemblerFactoryTaylorHood final
                                                LowerOrderShapeFunction,
                                                LocalAssemblerInterface,
                                                LocalAssemblerImplementation,
-                                               IntMethProv,
+                                               IntegrationMethodProvider,
                                                GlobalDim,
                                                ConstructorArgs...>;
 
@@ -134,7 +134,7 @@ class LocalAssemblerFactoryTaylorHood final
 public:
     explicit LocalAssemblerFactoryTaylorHood(
         NumLib::LocalToGlobalIndexMap const& dof_table,
-        IntMethProv const& integration_method_provider)
+        IntegrationMethodProvider const& integration_method_provider)
         : Base{dof_table, integration_method_provider}
     {
         using EnabledElementTraits =
@@ -163,7 +163,7 @@ template <typename LocalAssemblerInterface,
                     typename /* lower order shp fct */,
                     int /* global dim */>
           class LocalAssemblerImplementation,
-          NumLib::IntegrationMethodProvider IntMethProv,
+          NumLib::IntegrationMethodProvider IntegrationMethodProvider,
           int GlobalDim,
           typename... ConstructorArgs>
 using LocalAssemblerFactoryHM =
@@ -171,7 +171,7 @@ using LocalAssemblerFactoryHM =
                                     2 /* only in 2D and 3D */,
                                     LocalAssemblerInterface,
                                     LocalAssemblerImplementation,
-                                    IntMethProv,
+                                    IntegrationMethodProvider,
                                     GlobalDim,
                                     ConstructorArgs...>;
 
@@ -181,7 +181,7 @@ template <typename LocalAssemblerInterface,
                     typename /* lower order shp fct */,
                     int /* global dim */>
           class LocalAssemblerImplementation,
-          NumLib::IntegrationMethodProvider IntMethProv,
+          NumLib::IntegrationMethodProvider IntegrationMethodProvider,
           int GlobalDim,
           typename... ConstructorArgs>
 using LocalAssemblerFactoryStokes =
@@ -189,7 +189,7 @@ using LocalAssemblerFactoryStokes =
                                     2 /* only in 2D and 3D */,
                                     LocalAssemblerInterface,
                                     LocalAssemblerImplementation,
-                                    IntMethProv,
+                                    IntegrationMethodProvider,
                                     GlobalDim,
                                     ConstructorArgs...>;
 

@@ -26,16 +26,16 @@ template <int MinElementDim,
           typename LocalAssemblerInterface,
           template <typename /* shp fct */, int /* global dim */>
           class LocalAssemblerImplementation,
-          NumLib::IntegrationMethodProvider IntMethProv,
+          NumLib::IntegrationMethodProvider IntegrationMethodProvider,
           int GlobalDim,
           typename... ConstructorArgs>
 class LocalAssemblerFactoryForDimGreaterEqualN final
     : public GenericLocalAssemblerFactory<LocalAssemblerInterface,
-                                          IntMethProv,
+                                          IntegrationMethodProvider,
                                           ConstructorArgs...>
 {
     using Base = GenericLocalAssemblerFactory<LocalAssemblerInterface,
-                                              IntMethProv,
+                                              IntegrationMethodProvider,
                                               ConstructorArgs...>;
 
     struct IsElementEnabled
@@ -55,7 +55,7 @@ class LocalAssemblerFactoryForDimGreaterEqualN final
 public:
     explicit LocalAssemblerFactoryForDimGreaterEqualN(
         NumLib::LocalToGlobalIndexMap const& dof_table,
-        IntMethProv const& integration_method_provider)
+        IntegrationMethodProvider const& integration_method_provider)
         : Base{dof_table, integration_method_provider}
     {
         using EnabledElementTraits =
@@ -72,7 +72,7 @@ public:
                         ShapeFunction,
                         LocalAssemblerInterface,
                         LocalAssemblerImplementation,
-                        IntMethProv,
+                        IntegrationMethodProvider,
                         GlobalDim,
                         ConstructorArgs...>::template create<MeshElement>();
             });
@@ -83,14 +83,14 @@ public:
 template <typename LocalAssemblerInterface,
           template <typename /* shp fct */, int /* global dim */>
           class LocalAssemblerImplementation,
-          NumLib::IntegrationMethodProvider IntMethProv,
+          NumLib::IntegrationMethodProvider IntegrationMethodProvider,
           int GlobalDim,
           typename... ConstructorArgs>
 using LocalAssemblerFactory =
     LocalAssemblerFactoryForDimGreaterEqualN<1,
                                              LocalAssemblerInterface,
                                              LocalAssemblerImplementation,
-                                             IntMethProv,
+                                             IntegrationMethodProvider,
                                              GlobalDim,
                                              ConstructorArgs...>;
 
@@ -98,14 +98,14 @@ using LocalAssemblerFactory =
 template <typename LocalAssemblerInterface,
           template <typename /* shp fct */, int /* global dim */>
           class LocalAssemblerImplementation,
-          NumLib::IntegrationMethodProvider IntMethProv,
+          NumLib::IntegrationMethodProvider IntegrationMethodProvider,
           int GlobalDim,
           typename... ConstructorArgs>
 using LocalAssemblerFactorySD =
     LocalAssemblerFactoryForDimGreaterEqualN<2,
                                              LocalAssemblerInterface,
                                              LocalAssemblerImplementation,
-                                             IntMethProv,
+                                             IntegrationMethodProvider,
                                              GlobalDim,
                                              ConstructorArgs...>;
 }  // namespace ProcessLib

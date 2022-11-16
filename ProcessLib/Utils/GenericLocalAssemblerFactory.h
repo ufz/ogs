@@ -34,7 +34,7 @@ concept IntegrationMethodProviderOrIntegrationOrder =
 /// A functor creating a local assembler with shape functions corresponding to
 /// the mesh element type.
 template <typename LocalAssemblerInterface,
-          NumLib::IntegrationMethodProvider IntMethProv,
+          NumLib::IntegrationMethodProvider IntegrationMethodProvider,
           typename... ConstructorArgs>
 struct GenericLocalAssemblerFactory
 {
@@ -42,13 +42,13 @@ struct GenericLocalAssemblerFactory
     using LocAsmBuilder = std::function<LocAsmIntfPtr(
         MeshLib::Element const& e,
         std::size_t const local_matrix_size,
-        IntMethProv const& integration_method_provider,
+        IntegrationMethodProvider const& integration_method_provider,
         ConstructorArgs&&...)>;
 
 protected:  // only allow instances of subclasses
     explicit GenericLocalAssemblerFactory(
         NumLib::LocalToGlobalIndexMap const& dof_table,
-        IntMethProv const& integration_method_provider)
+        IntegrationMethodProvider const& integration_method_provider)
         : _dof_table{dof_table},
           _integration_method_provider{integration_method_provider}
     {
@@ -85,7 +85,7 @@ public:
 
 private:
     NumLib::LocalToGlobalIndexMap const& _dof_table;
-    IntMethProv const& _integration_method_provider;
+    IntegrationMethodProvider const& _integration_method_provider;
 
 protected:
     /// Mapping of element types to local assembler builders.
@@ -95,12 +95,12 @@ protected:
 template <typename ShapeFunction, typename LocalAssemblerInterface,
           template <typename /* shp fct */, int /* global dim */>
           class LocalAssemblerImplementation,
-          NumLib::IntegrationMethodProvider IntMethProv, int GlobalDim,
-          typename... ConstructorArgs>
+          NumLib::IntegrationMethodProvider IntegrationMethodProvider,
+          int GlobalDim, typename... ConstructorArgs>
 class LocalAssemblerBuilderFactory
 {
-    using GLAF = GenericLocalAssemblerFactory<LocalAssemblerInterface,
-                                              IntMethProv, ConstructorArgs...>;
+    using GLAF = GenericLocalAssemblerFactory<
+        LocalAssemblerInterface, IntegrationMethodProvider, ConstructorArgs...>;
     using LocAsmIntfPtr = typename GLAF::LocAsmIntfPtr;
     using LocAsmBuilder = typename GLAF::LocAsmBuilder;
 
@@ -116,7 +116,7 @@ public:
     {
         return [](MeshLib::Element const& e,
                   std::size_t const local_matrix_size,
-                  IntMethProv const& integration_method_provider,
+                  IntegrationMethodProvider const& integration_method_provider,
                   ConstructorArgs&&... args)
         {
             auto const& integration_method =
