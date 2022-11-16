@@ -60,9 +60,9 @@ inline DefaultIntegrationMethodProvider getIntegrationMethodProvider(
 
 /// Overload for <tt>IntegrationMethodProvider</tt>s returning the provider
 /// itself.
-template <IntegrationMethodProvider IntMethProv>
-IntMethProv const& getIntegrationMethodProvider(
-    IntMethProv const& integration_method_provider)
+template <IntegrationMethodProvider IntegrationMethodProvider_>
+IntegrationMethodProvider_ const& getIntegrationMethodProvider(
+    IntegrationMethodProvider_ const& integration_method_provider)
 {
     return integration_method_provider;
 }
