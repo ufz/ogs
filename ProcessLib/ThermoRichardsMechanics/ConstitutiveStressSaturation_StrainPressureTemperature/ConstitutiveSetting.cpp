@@ -33,19 +33,21 @@ void ConstitutiveSetting<DisplacementDim>::eval(
 {
     namespace MPL = MaterialPropertyLib;
 
-    auto& C_el_data = tmp.C_el_data;
-    auto& biot_data = tmp.biot_data;
-    auto& solid_compressibility_data = tmp.solid_compressibility_data;
-    auto& dS_L_data = tmp.dS_L_data;
-    auto& bishops_data = tmp.bishops_data;
-    auto& bishops_data_prev = tmp.bishops_data_prev;
-    auto& s_therm_exp_data = tmp.s_therm_exp_data;
-    auto& rho_L_data = out.rho_L_data;
-    auto& rho_S_data = out.rho_S_data;
-    auto& mu_L_data = out.mu_L_data;
-    auto& perm_data = out.perm_data;
-    auto& darcy_data = out.darcy_data;
-    auto& f_therm_exp_data = tmp.f_therm_exp_data;
+    auto& C_el_data =
+        std::get<ElasticTangentStiffnessData<DisplacementDim>>(tmp);
+    auto& biot_data = std::get<BiotData>(tmp);
+    auto& solid_compressibility_data = std::get<SolidCompressibilityData>(tmp);
+    auto& dS_L_data = std::get<SaturationDataDeriv>(tmp);
+    auto& bishops_data = std::get<BishopsData>(tmp);
+    auto& bishops_data_prev = std::get<PrevState<BishopsData>>(tmp);
+    auto& s_therm_exp_data =
+        std::get<SolidThermalExpansionData<DisplacementDim>>(tmp);
+    auto& rho_L_data = std::get<LiquidDensityData>(out);
+    auto& rho_S_data = std::get<SolidDensityData>(out);
+    auto& mu_L_data = std::get<LiquidViscosityData>(out);
+    auto& perm_data = std::get<PermeabilityData<DisplacementDim>>(out);
+    auto& darcy_data = std::get<DarcyLawData<DisplacementDim>>(out);
+    auto& f_therm_exp_data = std::get<FluidThermalExpansionData>(tmp);
 
     auto& s_mech_data = cd.s_mech_data;
     auto& grav_data = cd.grav_data;
@@ -127,7 +129,7 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     assertEvalArgsUnique(models.perm_model);
     models.perm_model.eval(x_t, media_data, S_L_data, p_cap_data, T_data,
                            state.transport_poro_data, state.total_stress_data,
-                           state.eps_data, tmp.equiv_plast_strain_data,
+                           state.eps_data, std::get<EquivalentPlasticStrainData>(tmp),
                            perm_data);
 
     assertEvalArgsUnique(models.th_osmosis_model);

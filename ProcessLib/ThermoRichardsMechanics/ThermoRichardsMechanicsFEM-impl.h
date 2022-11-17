@@ -23,6 +23,8 @@
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidDensity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidViscosity.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "ProcessLib/Utils/TransposeInPlace.h"
 #include "ThermoRichardsMechanicsFEM.h"
@@ -531,8 +533,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         saturation_avg += current_state.S_L_data.S_L;
         porosity_avg += current_state.poro_data.phi;
 
-        liquid_density_avg += output_data.rho_L_data.rho_LR;
-        viscosity_avg += output_data.mu_L_data.viscosity;
+        liquid_density_avg += std::get<LiquidDensityData>(output_data).rho_LR;
+        viscosity_avg += std::get<LiquidViscosityData>(output_data).viscosity;
         sigma_avg += ConstitutiveTraits::ConstitutiveSetting::statefulStress(
             current_state);
     }

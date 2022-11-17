@@ -42,11 +42,11 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     auto& bishops_data_prev = std::get<PrevState<BishopsData>>(tmp);
     auto& s_therm_exp_data =
         std::get<SolidThermalExpansionData<DisplacementDim>>(tmp);
-    auto& rho_L_data = out.rho_L_data;
-    auto& rho_S_data = out.rho_S_data;
-    auto& mu_L_data = out.mu_L_data;
-    auto& perm_data = out.perm_data;
-    auto& darcy_data = out.darcy_data;
+    auto& rho_L_data = std::get<LiquidDensityData>(out);
+    auto& rho_S_data = std::get<SolidDensityData>(out);
+    auto& mu_L_data = std::get<LiquidViscosityData>(out);
+    auto& perm_data = std::get<PermeabilityData<DisplacementDim>>(out);
+    auto& darcy_data = std::get<DarcyLawData<DisplacementDim>>(out);
     auto& f_therm_exp_data = std::get<FluidThermalExpansionData>(tmp);
 
     auto& swelling_data = std::get<SwellingDataStateless<DisplacementDim>>(tmp);

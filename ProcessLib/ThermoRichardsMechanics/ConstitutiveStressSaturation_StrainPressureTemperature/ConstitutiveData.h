@@ -89,25 +89,11 @@ struct StatefulDataPrev
 
 /// Data that is needed for output purposes, but not directly for the assembly.
 template <int DisplacementDim>
-struct OutputData
-{
-    DarcyLawData<DisplacementDim> darcy_data;
-    LiquidDensityData rho_L_data;
-    LiquidViscosityData mu_L_data;
-    SolidDensityData rho_S_data;
-    PermeabilityData<DisplacementDim> perm_data;
-
-    static auto reflect()
-    {
-        using Self = OutputData<DisplacementDim>;
-
-        return Reflection::reflectWithoutName(&Self::darcy_data,
-                                              &Self::rho_L_data,
-                                              &Self::mu_L_data,
-                                              &Self::rho_S_data,
-                                              &Self::perm_data);
-    }
-};
+using OutputData = std::tuple<DarcyLawData<DisplacementDim>,
+                              LiquidDensityData,
+                              LiquidViscosityData,
+                              SolidDensityData,
+                              PermeabilityData<DisplacementDim>>;
 
 /// Data that is needed for the equation system assembly.
 template <int DisplacementDim>
@@ -126,18 +112,16 @@ struct ConstitutiveData
 /// Data that stores intermediate values, which are not needed outside the
 /// constitutive setting.
 template <int DisplacementDim>
-struct ConstitutiveTempData
-{
-    ElasticTangentStiffnessData<DisplacementDim> C_el_data;
-    BiotData biot_data;
-    SolidCompressibilityData solid_compressibility_data;
-    SaturationDataDeriv dS_L_data;
-    BishopsData bishops_data;
-    // TODO why not usual state tracking for that?
-    PrevState<BishopsData> bishops_data_prev;
-    SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
-    FluidThermalExpansionData f_therm_exp_data;
-    EquivalentPlasticStrainData equiv_plast_strain_data;
-};
+using ConstitutiveTempData =
+    std::tuple<ElasticTangentStiffnessData<DisplacementDim>,
+               BiotData,
+               SolidCompressibilityData,
+               SaturationDataDeriv,
+               BishopsData,
+               // TODO why not usual state tracking for that?
+               PrevState<BishopsData>,
+               SolidThermalExpansionData<DisplacementDim>,
+               FluidThermalExpansionData,
+               EquivalentPlasticStrainData>;
 }  // namespace ConstitutiveStressSaturation_StrainPressureTemperature
 }  // namespace ProcessLib::ThermoRichardsMechanics

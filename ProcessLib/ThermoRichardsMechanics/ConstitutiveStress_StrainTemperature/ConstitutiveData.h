@@ -81,25 +81,11 @@ struct StatefulDataPrev
 
 /// Data that is needed for output purposes, but not directly for the assembly.
 template <int DisplacementDim>
-struct OutputData
-{
-    DarcyLawData<DisplacementDim> darcy_data;
-    LiquidDensityData rho_L_data;
-    LiquidViscosityData mu_L_data;
-    SolidDensityData rho_S_data;
-    PermeabilityData<DisplacementDim> perm_data;
-
-    static auto reflect()
-    {
-        using Self = OutputData<DisplacementDim>;
-
-        return Reflection::reflectWithoutName(&Self::darcy_data,
-                                              &Self::rho_L_data,
-                                              &Self::mu_L_data,
-                                              &Self::rho_S_data,
-                                              &Self::perm_data);
-    }
-};
+using OutputData = std::tuple<DarcyLawData<DisplacementDim>,
+                              LiquidDensityData,
+                              LiquidViscosityData,
+                              SolidDensityData,
+                              PermeabilityData<DisplacementDim>>;
 
 /// Data that is needed for the equation system assembly.
 template <int DisplacementDim>
