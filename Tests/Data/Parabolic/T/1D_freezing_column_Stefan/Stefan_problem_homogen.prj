@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!--units: kg, m, s, K and derived units: N, Pa=N/m�, Da=m� -->
+<!--units: kg, m, s, K and derived units: N, J=Nm -->
 <OpenGeoSysProject>
     <meshes>
         <mesh>mesh1FE.vtu</mesh>
@@ -41,7 +41,7 @@
                         <property>
                             <name>density</name>
                             <type>Constant</type>
-                            <value>1000</value> <!--kg/m�-->
+                            <value>1000</value> <!--kg/m^3-->
                         </property>
                     </properties>
                 </phase>
@@ -62,7 +62,7 @@
                         <property>
                             <name>density</name>
                             <type>Constant</type>
-                            <value>900</value> <!--kg/m�-->
+                            <value>900</value> <!--kg/m^3-->
                         </property>
                     </properties>
                 </phase>
@@ -83,7 +83,7 @@
                         <property>
                             <name>density</name>
                             <type>Constant</type>
-                            <value>0</value> <!--kg/m�-->
+                            <value>0</value> <!--kg/m^3-->
                         </property>
                     </properties>
                 </phase>
@@ -102,9 +102,7 @@
                 </property>
                 <property>
                     <name>density</name>
-                    <type>Constant</type>
-                    <value>1000</value> <!--kg/m�-->
-                    <!--<type>VolumeFractionAverage</type>-->
+                    <type>VolumeFractionAverage</type>
                 </property>
                 <property>
                     <name>thermal_conductivity</name>
@@ -122,12 +120,13 @@
         <parameter>
             <name>T0</name>
             <type>Constant</type>
-            <value>272.15</value>
+            <value>272.35</value>
+           <!-- T0 is chosen such that 99% of the phase change is captured and the temperature interval is symmetric-->
         </parameter>
         <parameter>
             <name>HeatSource</name>
             <type>Constant</type>
-            <value>1</value> <!-- W/m�-->
+            <value>1</value> <!-- W/m^2-->
         </parameter>
     </parameters>
     <process_variables>
@@ -164,13 +163,13 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>700e6</t_end> <!--s-->
+                    <t_end>630e6</t_end> <!--s-->
                     <!--  for sufficient heat input: -->
-                    <!--  dE  = 1 W/m� * 10  m� * 700e6 s =  7e9 J -->
-                    <!--  dQ =700 000 J/kg * 10  m� * 1000 kg / m� = 7e9 J -->
+                    <!--  dE  = 1 W/m^2 * 10 m^3 * 630e6 s =  630e7 J -->
+                    <!--  dQ =700 000 J/kg * 10 m^3 * 900 kg / m^3 = 630e7 J -->
                     <timesteps>
                         <pair>
-                            <repeat>350</repeat>
+                            <repeat>315</repeat>
                             <delta_t>2e6</delta_t> <!--s-->
                         </pair>
                     </timesteps>
@@ -225,9 +224,9 @@
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>Stefan_problem_hom_ts_330_t_660000000.000000.vtu</file>
+            <file>Stefan_problem_hom_ts_315_t_630000000.000000.vtu</file>
             <field>temperature</field>
-            <absolute_tolerance>2e-11</absolute_tolerance>
+            <absolute_tolerance>2e-10</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <!--secondary field-->
@@ -238,7 +237,7 @@
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>Stefan_problem_hom_ts_330_t_660000000.000000.vtu</file>
+            <file>Stefan_problem_hom_ts_315_t_630000000.000000.vtu</file>
             <field>heat_flux</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
