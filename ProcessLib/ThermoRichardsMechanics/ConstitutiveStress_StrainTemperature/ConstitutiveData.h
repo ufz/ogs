@@ -119,19 +119,17 @@ struct ConstitutiveData
 /// Data that stores intermediate values, which are not needed outside the
 /// constitutive setting.
 template <int DisplacementDim>
-struct ConstitutiveTempData
-{
-    SwellingDataStateless<DisplacementDim> swelling_data;
-    ElasticTangentStiffnessData<DisplacementDim> C_el_data;
-    BiotData biot_data;
-    SolidCompressibilityData solid_compressibility_data;
-    SaturationDataDeriv dS_L_data;
-    BishopsData bishops_data;
-    // TODO why not usual state tracking for that?
-    PrevState<BishopsData> bishops_data_prev;
-    SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
-    FluidThermalExpansionData f_therm_exp_data;
-    EquivalentPlasticStrainData equiv_plast_strain_data;
-};
+using ConstitutiveTempData =
+    std::tuple<SwellingDataStateless<DisplacementDim>,
+               ElasticTangentStiffnessData<DisplacementDim>,
+               BiotData,
+               SolidCompressibilityData,
+               SaturationDataDeriv,
+               BishopsData,
+               // TODO why not usual state tracking for that?
+               PrevState<BishopsData>,
+               SolidThermalExpansionData<DisplacementDim>,
+               FluidThermalExpansionData,
+               EquivalentPlasticStrainData>;
 }  // namespace ConstitutiveStress_StrainTemperature
 }  // namespace ProcessLib::ThermoRichardsMechanics
