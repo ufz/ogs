@@ -200,9 +200,10 @@ TEST(MaterialPropertyLib, SpecificHeatCapacityWithLatentHeat_atTc)
     auto const Capp =
         medium->property(MPL::PropertyType::specific_heat_capacity)
             .template value<double>(vars, pos, t, dt);
-    auto const Capp_expected = (Cvol_mix + water_ice_rock.L_IW * rho_mix * phi *
-                                               water_ice_rock.k / 4) /
-                               rho_mix;
+    auto const Capp_expected =
+        (Cvol_mix + water_ice_rock.rho_I * water_ice_rock.L_IW * phi *
+                        water_ice_rock.k / 4) /
+        rho_mix;
     auto const relativeError =
         std::fabs((Capp_expected - Capp) / Capp_expected);
 
