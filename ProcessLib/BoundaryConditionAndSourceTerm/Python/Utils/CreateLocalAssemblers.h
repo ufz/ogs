@@ -44,7 +44,9 @@ void createLocalAssemblersPython(
 
     DBUG("Create local assemblers.");
 
-    LocAsmFactory factory(dof_table, integration_order);
+    NumLib::DefaultIntegrationMethodProvider integration_method_provider{
+        integration_order};
+    LocAsmFactory factory(dof_table, integration_method_provider);
     local_assemblers.resize(mesh_elements.size());
 
     DBUG("Calling local assembler builder for all mesh elements.");

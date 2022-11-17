@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "ProcessLib/Utils/EnabledElements.h"
 #include "ProcessLib/Utils/LocalAssemblerFactoryTaylorHood.h"
 
 namespace ProcessLib
@@ -24,8 +23,8 @@ template <typename LocalAssemblerInterface,
           int GlobalDim, typename... ConstructorArgs>
 using LocalAssemblerFactoryPython = LocalAssemblerFactoryTaylorHood<
     0 /* all orders (point is 0) */, 0 /* all dimensions */,
-    LocalAssemblerInterface, LocalAssemblerImplementation, GlobalDim,
-    ConstructorArgs...>;
+    LocalAssemblerInterface, LocalAssemblerImplementation,
+    NumLib::DefaultIntegrationMethodProvider, GlobalDim, ConstructorArgs...>;
 
 }  // namespace BoundaryConditionAndSourceTerm
 }  // namespace ProcessLib

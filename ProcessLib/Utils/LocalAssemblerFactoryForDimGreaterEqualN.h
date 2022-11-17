@@ -26,13 +26,16 @@ template <int MinElementDim,
           typename LocalAssemblerInterface,
           template <typename /* shp fct */, int /* global dim */>
           class LocalAssemblerImplementation,
+          NumLib::IntegrationMethodProvider IntegrationMethodProvider,
           int GlobalDim,
           typename... ConstructorArgs>
 class LocalAssemblerFactoryForDimGreaterEqualN final
     : public GenericLocalAssemblerFactory<LocalAssemblerInterface,
+                                          IntegrationMethodProvider,
                                           ConstructorArgs...>
 {
     using Base = GenericLocalAssemblerFactory<LocalAssemblerInterface,
+                                              IntegrationMethodProvider,
                                               ConstructorArgs...>;
 
     struct IsElementEnabled
@@ -52,15 +55,15 @@ class LocalAssemblerFactoryForDimGreaterEqualN final
 public:
     explicit LocalAssemblerFactoryForDimGreaterEqualN(
         NumLib::LocalToGlobalIndexMap const& dof_table,
-        NumLib::IntegrationOrder const integration_order)
-        : Base{dof_table}
+        IntegrationMethodProvider const& integration_method_provider)
+        : Base{dof_table, integration_method_provider}
     {
         using EnabledElementTraits =
             decltype(BaseLib::TMP::filter<EnabledElementTraitsLagrange>(
                 std::declval<IsElementEnabled>()));
 
         BaseLib::TMP::foreach<EnabledElementTraits>(
-            [this, integration_order]<typename ET>(ET*)
+            [this]<typename ET>(ET*)
             {
                 using MeshElement = typename ET::Element;
                 using ShapeFunction = typename ET::ShapeFunction;
@@ -69,8 +72,9 @@ public:
                         ShapeFunction,
                         LocalAssemblerInterface,
                         LocalAssemblerImplementation,
+                        IntegrationMethodProvider,
                         GlobalDim,
-                        ConstructorArgs...>::create(integration_order);
+                        ConstructorArgs...>::template create<MeshElement>();
             });
     }
 };
@@ -79,12 +83,14 @@ public:
 template <typename LocalAssemblerInterface,
           template <typename /* shp fct */, int /* global dim */>
           class LocalAssemblerImplementation,
+          NumLib::IntegrationMethodProvider IntegrationMethodProvider,
           int GlobalDim,
           typename... ConstructorArgs>
 using LocalAssemblerFactory =
     LocalAssemblerFactoryForDimGreaterEqualN<1,
                                              LocalAssemblerInterface,
                                              LocalAssemblerImplementation,
+                                             IntegrationMethodProvider,
                                              GlobalDim,
                                              ConstructorArgs...>;
 
@@ -92,12 +98,14 @@ using LocalAssemblerFactory =
 template <typename LocalAssemblerInterface,
           template <typename /* shp fct */, int /* global dim */>
           class LocalAssemblerImplementation,
+          NumLib::IntegrationMethodProvider IntegrationMethodProvider,
           int GlobalDim,
           typename... ConstructorArgs>
 using LocalAssemblerFactorySD =
     LocalAssemblerFactoryForDimGreaterEqualN<2,
                                              LocalAssemblerInterface,
                                              LocalAssemblerImplementation,
+                                             IntegrationMethodProvider,
                                              GlobalDim,
                                              ConstructorArgs...>;
 }  // namespace ProcessLib

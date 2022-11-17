@@ -15,6 +15,7 @@
 #include "BaseLib/Logging.h"
 #include "LocalAssemblerFactoryTaylorHood.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "NumLib/Fem/Integration/IntegrationMethodProvider.h"
 
 namespace ProcessLib
 {
@@ -30,32 +31,40 @@ namespace detail
  *         Those arguments will be passed to the constructor of
  *         \c LocalAssemblerImplementation.
  */
-template <template <typename /*LocalAssemblerInterface*/,
+template <template <typename /* LocalAssemblerInterface */,
                     template <typename /* shp fct */,
                               typename /* lower order shp fct */,
                               int /* global dim */>
-                    class /*LocalAssemblerImplementation*/,
-                    int /* global dim */, typename... /*ConstructorArgs*/>
+                    class /* LocalAssemblerImplementation */,
+                    class /* IntegrationMethodProvider */, int /* global dim */,
+                    typename... /* ConstructorArgs */>
           class LocalAssemblerFactory,
           int GlobalDim,
           template <typename /* shp fct */, typename /* lower order shp fct */,
                     int /* global dim */>
           class LocalAssemblerImplementation,
-          typename LocalAssemblerInterface, typename... ExtraCtorArgs>
+          typename LocalAssemblerInterface,
+          IntegrationMethodProviderOrIntegrationOrder ProviderOrOrder,
+          typename... ExtraCtorArgs>
 void createLocalAssemblersTaylorHood(
     std::vector<MeshLib::Element*> const& mesh_elements,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
-    NumLib::IntegrationOrder const integration_order,
+    ProviderOrOrder const& provider_or_order,
     ExtraCtorArgs&&... extra_ctor_args)
 {
-    using LocAsmFac = LocalAssemblerFactory<LocalAssemblerInterface,
-                                            LocalAssemblerImplementation,
-                                            GlobalDim, ExtraCtorArgs...>;
-
     DBUG("Create local assemblers.");
 
-    LocAsmFac factory(dof_table, integration_order);
+    auto const& integration_method_provider =
+        getIntegrationMethodProvider(provider_or_order);
+
+    using IntegrationMethodProvider =
+        std::remove_cvref_t<decltype(integration_method_provider)>;
+    using LocAsmFac = LocalAssemblerFactory<
+        LocalAssemblerInterface, LocalAssemblerImplementation,
+        IntegrationMethodProvider, GlobalDim, ExtraCtorArgs...>;
+
+    LocAsmFac factory(dof_table, integration_method_provider);
     local_assemblers.resize(mesh_elements.size());
 
     DBUG("Calling local assembler builder for all mesh elements.");
@@ -70,18 +79,20 @@ template <int GlobalDim,
           template <typename /* shp fct */, typename /* lower order shp fct */,
                     int /* global dim */>
           class LocalAssemblerImplementation,
-          typename LocalAssemblerInterface, typename... ExtraCtorArgs>
+          typename LocalAssemblerInterface,
+          IntegrationMethodProviderOrIntegrationOrder ProviderOrOrder,
+          typename... ExtraCtorArgs>
 void createLocalAssemblersHM(
     std::vector<MeshLib::Element*> const& mesh_elements,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
-    NumLib::IntegrationOrder const integration_order,
+    ProviderOrOrder const& provider_or_order,
     ExtraCtorArgs&&... extra_ctor_args)
 {
     detail::createLocalAssemblersTaylorHood<LocalAssemblerFactoryHM, GlobalDim,
                                             LocalAssemblerImplementation,
                                             LocalAssemblerInterface>(
-        mesh_elements, dof_table, local_assemblers, integration_order,
+        mesh_elements, dof_table, local_assemblers, provider_or_order,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
 
@@ -89,18 +100,20 @@ template <int GlobalDim,
           template <typename /* shp fct */, typename /* lower order shp fct */,
                     int /* global dim */>
           class LocalAssemblerImplementation,
-          typename LocalAssemblerInterface, typename... ExtraCtorArgs>
+          typename LocalAssemblerInterface,
+          IntegrationMethodProviderOrIntegrationOrder ProviderOrOrder,
+          typename... ExtraCtorArgs>
 void createLocalAssemblersStokes(
     std::vector<MeshLib::Element*> const& mesh_elements,
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
-    NumLib::IntegrationOrder const integration_order,
+    ProviderOrOrder const& provider_or_order,
     ExtraCtorArgs&&... extra_ctor_args)
 {
     detail::createLocalAssemblersTaylorHood<
         LocalAssemblerFactoryStokes, GlobalDim, LocalAssemblerImplementation,
         LocalAssemblerInterface>(
-        mesh_elements, dof_table, local_assemblers, integration_order,
+        mesh_elements, dof_table, local_assemblers, provider_or_order,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
 

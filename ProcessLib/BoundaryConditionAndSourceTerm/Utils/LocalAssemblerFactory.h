@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "NumLib/Fem/Integration/IntegrationMethodRegistry.h"
+#include "NumLib/Fem/Integration/IntegrationMethodProvider.h"
 #include "ProcessLib/Utils/EnabledElements.h"
 #include "ProcessLib/Utils/GenericLocalAssemblerFactory.h"
 
@@ -24,20 +24,24 @@ template <typename LocalAssemblerInterface,
           int GlobalDim,
           typename... ConstructorArgs>
 class LocalAssemblerFactory final
-    : public ProcessLib::GenericLocalAssemblerFactory<LocalAssemblerInterface,
-                                                      ConstructorArgs...>
+    : public ProcessLib::GenericLocalAssemblerFactory<
+          LocalAssemblerInterface,
+          NumLib::DefaultIntegrationMethodProvider,
+          ConstructorArgs...>
 {
-    using Base =
-        ProcessLib::GenericLocalAssemblerFactory<LocalAssemblerInterface,
-                                                 ConstructorArgs...>;
+    using Base = ProcessLib::GenericLocalAssemblerFactory<
+        LocalAssemblerInterface,
+        NumLib::DefaultIntegrationMethodProvider,
+        ConstructorArgs...>;
 
     template <typename ShapeFunction>
-    using LocAsmBuilderFactory =
-        ProcessLib::LocalAssemblerBuilderFactory<ShapeFunction,
-                                                 LocalAssemblerInterface,
-                                                 LocalAssemblerImplementation,
-                                                 GlobalDim,
-                                                 ConstructorArgs...>;
+    using LocAsmBuilderFactory = ProcessLib::LocalAssemblerBuilderFactory<
+        ShapeFunction,
+        LocalAssemblerInterface,
+        LocalAssemblerImplementation,
+        NumLib::DefaultIntegrationMethodProvider,
+        GlobalDim,
+        ConstructorArgs...>;
 
     struct HasSuitableDimension
     {
@@ -66,9 +70,10 @@ class LocalAssemblerFactory final
 
 public:
     LocalAssemblerFactory(NumLib::LocalToGlobalIndexMap const& dof_table,
-                          const unsigned shapefunction_order,
-                          NumLib::IntegrationOrder const integration_order)
-        : Base(dof_table)
+                          NumLib::DefaultIntegrationMethodProvider const&
+                              integration_method_provider,
+                          const unsigned shapefunction_order)
+        : Base{dof_table, integration_method_provider}
     {
         if (shapefunction_order < 1 || 2 < shapefunction_order)
         {
@@ -84,7 +89,7 @@ public:
                     std::declval<HasSuitableDimension>()));
 
             BaseLib::TMP::foreach<EnabledElementTraits>(
-                [this, integration_order]<typename ET>(ET*)
+                [this]<typename ET>(ET*)
                 {
                     using MeshElement = typename ET::Element;
                     // this will use linear shape functions on higher order
@@ -92,8 +97,8 @@ public:
                     using LowerOrderShapeFunction =
                         typename ET::LowerOrderShapeFunction;
                     Base::_builders[std::type_index(typeid(MeshElement))] =
-                        LocAsmBuilderFactory<LowerOrderShapeFunction>::create(
-                            integration_order);
+                        LocAsmBuilderFactory<LowerOrderShapeFunction>::
+                            template create<MeshElement>();
                 });
         }
         else if (shapefunction_order == 2)
@@ -104,13 +109,13 @@ public:
                     std::declval<Is2ndOrderElementOfSuitableDimension>()));
 
             BaseLib::TMP::foreach<EnabledElementTraits>(
-                [this, integration_order]<typename ET>(ET*)
+                [this]<typename ET>(ET*)
                 {
                     using MeshElement = typename ET::Element;
                     using ShapeFunction2ndOrder = typename ET::ShapeFunction;
                     Base::_builders[std::type_index(typeid(MeshElement))] =
-                        LocAsmBuilderFactory<ShapeFunction2ndOrder>::create(
-                            integration_order);
+                        LocAsmBuilderFactory<ShapeFunction2ndOrder>::
+                            template create<MeshElement>();
                 });
         }
     }
