@@ -31,7 +31,7 @@ public:
         std::vector<std::string> const& xml_patch_file_names,
         bool reference_path_is_set, std::string const& reference_path,
         bool nonfatal, std::string const& outdir, std::string const& mesh_dir,
-        bool write_prj);
+        std::string const& script_dir, bool write_prj);
 
     double currentTime() const;
     double endTime() const;

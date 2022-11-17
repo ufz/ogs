@@ -60,10 +60,13 @@ public:
     ///                          \c config_tree.
     /// \param output_directory  Where to write simulation output files to.
     /// \param mesh_directory    Directory where meshes are read from.
+    /// \param script_directory  Directory where scripts (e.g. Python BCs) are
+    ///                          read from.
     ProjectData(BaseLib::ConfigTree const& project_config,
                 std::string const& project_directory,
                 std::string const& output_directory,
-                std::string const& mesh_directory);
+                std::string const& mesh_directory,
+                [[maybe_unused]] std::string const& script_directory);
 
     ProjectData(ProjectData&) = delete;
 
