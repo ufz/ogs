@@ -23,14 +23,15 @@ namespace MaterialPropertyLib
  * a phase transition spread over a temperature interval:
  *
  * \f[
- *      C_{\mathrm{app}} = \left[C - \varrho \ell \frac{\partial
+ *      C_{\mathrm{app}} = \left[C - \varrho_\mathrm{fR} \ell \frac{\partial
  *                         \phi_\mathrm{f}}{\partial T} \right]
  * \quad\rightarrow\quad c_{\mathrm{app}} = \frac{C_{\mathrm{app}}}{\varrho}
  * \f]
  *
  * with \f$\ell\f$ as specific enthalpy of melting, \f$C\f$ as effective
  * volumetric heat capacity and \f$\varrho\f$ as the effective density of the
- * mixture, as well as \f$\phi_\mathrm{f}\f$ as the temperature-dependent frozen
+ * mixture, \f$\varrho_\mathrm{fR}\f$ as the real density of the frozen phase
+ * as well as \f$\phi_\mathrm{f}\f$ as the temperature-dependent frozen
  * liquid volume fraction.
  **/
 class SpecificHeatCapacityWithLatentHeat final : public Property
