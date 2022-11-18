@@ -267,6 +267,17 @@ void Output::doOutputNonlinearIteration(
     INFO("[time] Output took {:g} s.", time_output.elapsed());
 }
 
+std::vector<std::string> Output::getFileNamesForOutput() const
+{
+    std::vector<std::string> output_names;
+    for (auto const& output_name : _mesh_names_for_output)
+    {
+        output_names.push_back(
+            _output_format->constructFilename(output_name, 0, 0, 0));
+    }
+    return output_names;
+}
+
 std::ostream& operator<<(std::ostream& os, Output const& output)
 {
     os << "Output::_output_data_specification:\t"

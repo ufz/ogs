@@ -79,6 +79,8 @@ public:
         return _output_data_specification.fixed_output_times;
     }
 
+    std::vector<std::string> getFileNamesForOutput() const;
+
     friend std::ostream& operator<<(std::ostream& os, Output const& output);
 
 private:
