@@ -81,10 +81,10 @@ double SpecificHeatCapacityWithLatentHeat::effectiveVolumetricHeatCapacity(
 
     auto const phi =
         std::get<double>(porosity_property.value(variable_array, pos, t, dt));
-    auto const pfr = std::get<double>(
+    auto const phi_fr = std::get<double>(
         frozen_fraction_property.value(variable_array, pos, t, dt));
-    auto const pli = phi - pfr;
-    auto const ppo = 1 - phi;
+    auto const phi_li = phi - phi_fr;
+    auto const phi_po = 1 - phi;
 
     auto const rho_li =
         std::get<double>(densities_.liquid->value(variable_array, pos, t, dt));
@@ -102,7 +102,8 @@ double SpecificHeatCapacityWithLatentHeat::effectiveVolumetricHeatCapacity(
 
     // rule of mixtures for resulting volumetric heat capacity
     // (mass fraction average of specific heat capacities!)
-    return pli * rho_li * c_li + pfr * rho_fr * c_fr + ppo * rho_po * c_po;
+    return phi_li * rho_li * c_li + phi_fr * rho_fr * c_fr +
+           phi_po * rho_po * c_po;
 }
 
 PropertyDataType SpecificHeatCapacityWithLatentHeat::value(
@@ -115,17 +116,19 @@ PropertyDataType SpecificHeatCapacityWithLatentHeat::value(
     auto const& frozen_fraction_property =
         medium[PropertyType::volume_fraction];
 
-    auto const rho_ef = effective_density_property.template value<double>(
+    auto const rho_eff = effective_density_property.template value<double>(
         variable_array, pos, t, dt);
-    auto const dpfr_dT = frozen_fraction_property.template dValue<double>(
+    auto const rho_fr =
+        std::get<double>(densities_.frozen->value(variable_array, pos, t, dt));
+    auto const dphi_fr_dT = frozen_fraction_property.template dValue<double>(
         variable_array, Variable::temperature, pos, t, dt);
 
     auto const Cvol =
         effectiveVolumetricHeatCapacity(variable_array, pos, t, dt);
-    auto const Lvol = l_ * rho_ef;
-    auto const Cvol_app = Cvol - Lvol * dpfr_dT;
+    auto const Lvol = l_ * rho_fr;
+    auto const Cvol_app = Cvol - Lvol * dphi_fr_dT;
     // divide volumetric quantity by density in order to obtain specific value
-    return Cvol_app / rho_ef;
+    return Cvol_app / rho_eff;
 }
 
 PropertyDataType SpecificHeatCapacityWithLatentHeat::dValue(
@@ -143,7 +146,7 @@ PropertyDataType SpecificHeatCapacityWithLatentHeat::dValue(
     auto const& frozen_fraction_property =
         medium[PropertyType::volume_fraction];
 
-    auto const rho_ef = effective_density_property.template value<double>(
+    auto const rho_eff = effective_density_property.template value<double>(
         variable_array, pos, t, dt);
     auto const rho_li =
         std::get<double>(densities_.liquid->value(variable_array, pos, t, dt));
@@ -155,18 +158,19 @@ PropertyDataType SpecificHeatCapacityWithLatentHeat::dValue(
         spec_heat_capacities_.frozen->value(variable_array, pos, t, dt));
     auto const drho_dT = effective_density_property.template dValue<double>(
         variable_array, Variable::temperature, pos, t, dt);
-    auto const dpfr_dT = frozen_fraction_property.template dValue<double>(
+    auto const dphi_fr_dT = frozen_fraction_property.template dValue<double>(
         variable_array, Variable::temperature, pos, t, dt);
-    auto const d2pfr_dT2 = frozen_fraction_property.template d2Value<double>(
+    auto const d2phi_fr_dT2 = frozen_fraction_property.template d2Value<double>(
         variable_array, Variable::temperature, Variable::temperature, pos, t,
         dt);
     auto const Cvol =
         effectiveVolumetricHeatCapacity(variable_array, pos, t, dt);
     // TODO: avoid duplicate code, call value()?
-    auto const C_app = (Cvol - l_ * rho_ef * dpfr_dT) / rho_ef;
-    auto const dCvol_dpfr = rho_fr * c_fr - rho_li * c_li;
-    auto const dCvol_app_dT = dCvol_dpfr * dpfr_dT - l_ * rho_ef * d2pfr_dT2;
+    auto const C_app = (Cvol - l_ * rho_eff * dphi_fr_dT) / rho_eff;
+    auto const dCvol_dphi_fr = rho_fr * c_fr - rho_li * c_li;
+    auto const dCvol_app_dT =
+        dCvol_dphi_fr * dphi_fr_dT - l_ * rho_eff * d2phi_fr_dT2;
 
-    return (dCvol_app_dT - drho_dT / rho_ef * C_app) / rho_ef;
+    return (dCvol_app_dT - drho_dT / rho_eff * C_app) / rho_eff;
 }
 }  // namespace MaterialPropertyLib

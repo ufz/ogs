@@ -11,8 +11,6 @@
 
 #include "VolumeFractionAverage.h"
 
-#include <iostream>
-
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/PropertyType.h"
 
@@ -79,26 +77,28 @@ PropertyDataType VolumeFractionAverage::value(
 {
     auto const& medium = *std::get<Medium*>(scale_);
     auto const& porosity = medium[PropertyType::porosity];
-    auto const& fraction = medium[PropertyType::volume_fraction];
+
+    double phi_fr = 0;
+    double prop_value_frozen = 0;
 
     // get frozen pore volume fraction, and porosity
-    auto const pfr =
-        std::get<double>(fraction.value(variable_array, pos, t, dt));
+    if (medium.hasProperty(PropertyType::volume_fraction))
+    {
+        auto const& fraction = medium[PropertyType::volume_fraction];
+        phi_fr = std::get<double>(fraction.value(variable_array, pos, t, dt));
+        prop_value_frozen = std::get<double>(
+            properties_.frozen->value(variable_array, pos, t, dt));
+    }
+
     auto const phi =
         std::get<double>(porosity.value(variable_array, pos, t, dt));
-
     auto const prop_value_liquid =
         std::get<double>(properties_.liquid->value(variable_array, pos, t, dt));
-    auto const prop_value_frozen =
-        std::get<double>(properties_.frozen->value(variable_array, pos, t, dt));
     auto const prop_value_porous =
         std::get<double>(properties_.porous->value(variable_array, pos, t, dt));
 
-    auto average_value = (phi - pfr) * prop_value_liquid +
-                         pfr * prop_value_frozen +
-                         (1 - phi) * prop_value_porous;
-
-    return average_value;
+    return (phi - phi_fr) * prop_value_liquid + phi_fr * prop_value_frozen +
+           (1 - phi) * prop_value_porous;
 }
 
 PropertyDataType VolumeFractionAverage::dValue(
@@ -108,20 +108,25 @@ PropertyDataType VolumeFractionAverage::dValue(
 {
     (void)variable;
     assert((variable == Variable::temperature) &&
-           "VolumeFractionAverage::dvalue is implemented for "
+           "VolumeFractionAverage::dValue is implemented for "
            "derivatives with respect to temperature only.");
 
-    auto const& medium = *std::get<Medium*>(scale_);
-    auto const& fraction = medium[PropertyType::volume_fraction];
+    double dphi_fr_dT = 0;
+    double prop_value_frozen = 0;
 
-    auto const dpfr_dT = std::get<double>(
-        fraction.dValue(variable_array, Variable::temperature, pos, t, dt));
+    auto const& medium = *std::get<Medium*>(scale_);
+    if (medium.hasProperty(PropertyType::volume_fraction))
+    {
+        auto const& fraction = medium[PropertyType::volume_fraction];
+        dphi_fr_dT = std::get<double>(
+            fraction.dValue(variable_array, Variable::temperature, pos, t, dt));
+        prop_value_frozen = std::get<double>(
+            properties_.frozen->value(variable_array, pos, t, dt));
+    }
 
     double prop_value_liquid =
         std::get<double>(properties_.liquid->value(variable_array, pos, t, dt));
-    double prop_value_frozen =
-        std::get<double>(properties_.frozen->value(variable_array, pos, t, dt));
 
-    return (prop_value_frozen - prop_value_liquid) * dpfr_dT;
+    return (prop_value_frozen - prop_value_liquid) * dphi_fr_dT;
 }
 }  // namespace MaterialPropertyLib

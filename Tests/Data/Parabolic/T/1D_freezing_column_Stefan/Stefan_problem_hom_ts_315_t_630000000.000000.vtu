@@ -6,9 +6,9 @@
     </FieldData>
     <Piece NumberOfPoints="4"                    NumberOfCells="1"                   >
       <PointData>
-        <DataArray type="Float64" Name="HeatFlowRate" format="appended" RangeMin="2.4999867546"         RangeMax="2.4999867546"         offset="84"                  />
-        <DataArray type="Float64" Name="heat_flux" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="0"                    offset="168"                 />
-        <DataArray type="Float64" Name="temperature" format="appended" RangeMin="272.7618844"          RangeMax="272.7618844"          offset="228"                 />
+        <DataArray type="Float64" Name="HeatFlowRate" format="appended" RangeMin="2.4999924158"         RangeMax="2.4999924158"         offset="84"                  />
+        <DataArray type="Float64" Name="heat_flux" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="0"                    offset="164"                 />
+        <DataArray type="Float64" Name="temperature" format="appended" RangeMin="273.9598066"          RangeMax="273.9598066"          offset="224"                 />
       </PointData>
       <CellData>
       </CellData>
@@ -23,6 +23,6 @@
     </Piece>
   </UnstructuredGrid>
   <AppendedData encoding="base64">
-   _AQAAAAAAAAAAgAAAAAAAABUAAAAAAAAAHQAAAAAAAAA=eF4z0zPRM9Y1MbTUTTcxT04yMkhKNDAFADOnBRM=AQAAAAAAAAAAgAAAAAAAACAAAAAAAAAAHAAAAAAAAAA=eF6rWGDF9/M/s4OShTWYFtsO4d9eAqEB3e8NzA==AQAAAAAAAAAAgAAAAAAAAEAAAAAAAAAADAAAAAAAAAA=eF5jYKAMAAAAQAABAQAAAAAAAAAAgAAAAAAAACAAAAAAAAAAGAAAAAAAAAA=eF4TTd281oCn0EEFSstCaWEoDQC7WAsyAQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAAGAAAAAAAAAA=eF5jYMAHVBzwSjN8sEflw9QjxAFURgMnAQAAAAAAAAAAgAAAAAAAACAAAAAAAAAAEwAAAAAAAAA=eF5jYIAARijNDKWZoDQAAHgABw==AQAAAAAAAAAAgAAAAAAAAAgAAAAAAAAACwAAAAAAAAA=eF5jYYAAAAAoAAU=AQAAAAAAAAAAgAAAAAAAAAEAAAAAAAAACQAAAAAAAAA=eF7jBAAACgAK
+   _AQAAAAAAAAAAgAAAAAAAABUAAAAAAAAAHQAAAAAAAAA=eF4z0zPRM9Y1MbTUTTcxT04yMkhKNDAFADOnBRM=AQAAAAAAAAAAgAAAAAAAACAAAAAAAAAAGwAAAAAAAAA=eF7bEc7P9uc/s4NFJITeEgGhS2MhNADTvwzLAQAAAAAAAAAAgAAAAAAAAEAAAAAAAAAADAAAAAAAAAA=eF5jYKAMAAAAQAABAQAAAAAAAAAAgAAAAAAAACAAAAAAAAAAGwAAAAAAAAA=eF5boKodFy1f6LBCFkKbqUFoD2UIDQCckQkiAQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAAGAAAAAAAAAA=eF5jYMAHVBzwSjN8sEflw9QjxAFURgMnAQAAAAAAAAAAgAAAAAAAACAAAAAAAAAAEwAAAAAAAAA=eF5jYIAARijNDKWZoDQAAHgABw==AQAAAAAAAAAAgAAAAAAAAAgAAAAAAAAACwAAAAAAAAA=eF5jYYAAAAAoAAU=AQAAAAAAAAAAgAAAAAAAAAEAAAAAAAAACQAAAAAAAAA=eF7jBAAACgAK
   </AppendedData>
 </VTKFile>

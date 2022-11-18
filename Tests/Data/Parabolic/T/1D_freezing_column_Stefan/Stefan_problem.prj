@@ -21,9 +21,9 @@
     </processes>
     <media>
         <medium>
-           <phases>
+            <phases>
                 <phase>
-		                <!-- Pore water phase -->
+                    <!-- Pore water phase -->
                     <type>AqueousLiquid</type>
                     <properties>
                         <property>
@@ -44,7 +44,7 @@
                     </properties>
                 </phase>
                 <phase>
-		                <!-- Pore ice phase -->
+                    <!-- Pore ice phase -->
                     <type>FrozenLiquid</type>
                     <properties>
                         <property>
@@ -65,7 +65,7 @@
                     </properties>
                 </phase>
                 <phase>
-		                <!-- Porous solid phase -->
+                    <!-- Porous solid phase -->
                     <type>Solid</type>
                     <properties>
                         <property>
@@ -217,7 +217,7 @@
         <vtkdiff>
             <file>Stefan_problem_ts_427_t_427000000.000000.vtu</file>
             <field>temperature</field>
-            <absolute_tolerance>6e-11</absolute_tolerance>
+            <absolute_tolerance>7e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <!--secondary field-->
