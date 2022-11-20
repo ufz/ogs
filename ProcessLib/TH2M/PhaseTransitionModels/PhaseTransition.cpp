@@ -360,6 +360,7 @@ PhaseTransitionModelVariables PhaseTransition::updateConstitutiveVariables(
     // fractions (ratio of the partial pressures).
     cv.rhoLR = liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                    .template value<double>(variables, pos, t, dt);
+    variables.density = cv.rhoLR;
 
     // Gas component partial density in liquid phase
     cv.rhoCLR = cv.rhoLR - cv.rhoWLR;

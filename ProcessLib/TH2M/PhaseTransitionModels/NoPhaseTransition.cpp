@@ -75,6 +75,7 @@ PhaseTransitionModelVariables NoPhaseTransition::updateConstitutiveVariables(
 
     cv.rhoLR = liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                    .template value<double>(variables, pos, t, dt);
+    variables.density = cv.rhoLR;
 
     cv.muLR =
         liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)

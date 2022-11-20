@@ -103,6 +103,7 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t, dt);
 
+        vars.density = fluid_density;
         const double dfluid_density_dp =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template dValue<double>(
@@ -242,6 +243,7 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHeatTransportEquation(
         auto const fluid_density =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t, dt);
+        vars.density = fluid_density;
         auto const specific_heat_capacity_fluid =
             liquid_phase.property(MaterialPropertyLib::specific_heat_capacity)
                 .template value<double>(vars, pos, t, dt);

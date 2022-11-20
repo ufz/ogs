@@ -124,7 +124,7 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     models.grav_model.eval(poro_data, rho_S_data, rho_L_data, S_L_data,
                            dS_L_data, grav_data);
 
-    models.mu_L_model.eval(x_t, media_data, T_data, mu_L_data);
+    models.mu_L_model.eval(x_t, media_data, rho_L_data, T_data, mu_L_data);
 
     models.transport_poro_model.eval(
         x_t, media_data, solid_compressibility_data, bishops_data,

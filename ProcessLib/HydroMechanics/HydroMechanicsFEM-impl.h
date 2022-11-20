@@ -247,9 +247,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             medium->property(MPL::PropertyType::porosity)
                 .template value<double>(vars, x_position, t, dt);
 
-        auto const mu = fluid.property(MPL::PropertyType::viscosity)
-                            .template value<double>(vars, x_position, t, dt);
-
         // Quick workaround: If fluid density is described as ideal gas, then
         // the molar mass must be passed to the MPL::IdealGasLaw via the
         // variable_array and the fluid must have the property
@@ -264,6 +261,11 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const rho_fr =
             fluid.property(MPL::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
+        vars.density = rho_fr;
+
+        auto const mu = fluid.property(MPL::PropertyType::viscosity)
+                            .template value<double>(vars, x_position, t, dt);
+
         auto const beta_p =
             fluid.property(MPL::PropertyType::density)
                 .template dValue<double>(vars, MPL::Variable::phase_pressure,
@@ -459,8 +461,6 @@ std::vector<double> const& HydroMechanicsLocalAssembler<
             medium->property(MPL::PropertyType::permeability)
                 .value(vars, x_position, t, dt));
 
-        auto const mu = fluid.property(MPL::PropertyType::viscosity)
-                            .template value<double>(vars, x_position, t, dt);
         // Quick workaround: If fluid density is described as ideal gas, then
         // the molar mass must be passed to the MPL::IdealGasLaw via the
         // variable_array and the fluid must have the property
@@ -472,9 +472,14 @@ std::vector<double> const& HydroMechanicsLocalAssembler<
                 fluid.property(MPL::PropertyType::molar_mass)
                     .template value<double>(vars, x_position, t, dt);
         }
+
         auto const rho_fr =
             fluid.property(MPL::PropertyType::density)
-                .template value<double>(vars, x_position, t, dt);
+                .template value<double>(vars, x_position, t, dt); 
+        vars.density = rho_fr;
+
+        auto const mu = fluid.property(MPL::PropertyType::viscosity)
+                            .template value<double>(vars, x_position, t, dt);
 
         auto const K_over_mu = K / mu;
 
@@ -596,8 +601,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             medium->property(MPL::PropertyType::porosity)
                 .template value<double>(vars, x_position, t, dt);
 
-        auto const mu = fluid.property(MPL::PropertyType::viscosity)
-                            .template value<double>(vars, x_position, t, dt);
         // Quick workaround: If fluid density is described as ideal gas, then
         // the molar mass must be passed to the MPL::IdealGasLaw via the
         // variable_array and the fluid must have the property
@@ -612,6 +615,10 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const rho_fr =
             fluid.property(MPL::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
+        vars.density = rho_fr;
+
+        auto const mu = fluid.property(MPL::PropertyType::viscosity)
+                            .template value<double>(vars, x_position, t, dt);
         auto const beta_p =
             fluid.property(MPL::PropertyType::density)
                 .template dValue<double>(vars, MPL::Variable::phase_pressure,

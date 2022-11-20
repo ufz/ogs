@@ -15,12 +15,14 @@ namespace ProcessLib::ThermoRichardsMechanics
 template <int DisplacementDim>
 void LiquidViscosityModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, MediaData const& media_data,
+    LiquidDensityData const& rho_L_data,
     TemperatureData<DisplacementDim> const& T_data,
     LiquidViscosityData& out) const
 {
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
     variables.temperature = T_data.T;
+    variables.density = rho_L_data.rho_LR;
 
     out.viscosity =
         media_data.liquid.property(MPL::PropertyType::viscosity)

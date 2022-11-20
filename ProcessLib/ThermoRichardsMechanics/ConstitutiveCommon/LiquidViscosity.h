@@ -11,6 +11,7 @@
 #pragma once
 
 #include "Base.h"
+#include "LiquidDensity.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -29,7 +30,8 @@ template <int DisplacementDim>
 struct LiquidViscosityModel
 {
     void eval(SpaceTimeData const& x_t, MediaData const& media_data,
-              TemperatureData<DisplacementDim> const& T_data,
+            LiquidDensityData const& rho_L_data,
+            TemperatureData<DisplacementDim> const& T_data,
               LiquidViscosityData& out) const;
 };
 

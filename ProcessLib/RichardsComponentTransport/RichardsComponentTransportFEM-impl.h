@@ -161,6 +161,8 @@ void LocalAssemblerData<ShapeFunction, GlobalDim>::assemble(
         // Use the fluid density model to compute the density
         auto const density = phase[MaterialPropertyLib::PropertyType::density]
                                  .template value<double>(vars, pos, t, dt);
+        vars.density = density;
+
         auto const decay_rate =
             component[MaterialPropertyLib::PropertyType::decay_rate]
                 .template value<double>(vars, pos, t, dt);

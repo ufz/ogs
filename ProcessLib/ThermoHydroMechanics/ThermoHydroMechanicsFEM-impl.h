@@ -336,6 +336,7 @@ void ThermoHydroMechanicsLocalAssembler<
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
 
+        vars.density = fluid_density;
         auto const drho_dp =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template dValue<double>(

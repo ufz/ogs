@@ -156,6 +156,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
             liquid_phase[MaterialPropertyLib::PropertyType::density]
                 .template value<double>(vars, pos, t, dt);
         assert(fluid_density > 0.);
+        vars.density = fluid_density;
+
         auto const ddensity_dpressure =
             liquid_phase[MaterialPropertyLib::PropertyType::density]
                 .template dValue<double>(
@@ -301,6 +303,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         auto const fluid_density =
             liquid_phase[MaterialPropertyLib::PropertyType::density]
                 .template value<double>(vars, pos, t, dt);
+        vars.density = fluid_density;
+
         // Compute viscosity:
         auto const viscosity =
             liquid_phase[MaterialPropertyLib::PropertyType::viscosity]
