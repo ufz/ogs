@@ -43,3 +43,7 @@ AddTest(
     ref_t_10000.000000.vtu twophaseflow_small_ts_50_t_10000.000000.vtu overall_mass_density overall_mass_density 1e-4 1e-10
     ref_t_10000.000000.vtu twophaseflow_small_ts_50_t_10000.000000.vtu saturation saturation 1e-6 1e-10
 )
+
+if(NOT WIN32 AND NOT OGS_USE_MPI)
+    NotebookTest(NOTEBOOKFILE Parabolic/TwoPhaseFlowPrho/MoMaS/MoMaS_jup.ipynb RUNTIME 10)
+endif()
