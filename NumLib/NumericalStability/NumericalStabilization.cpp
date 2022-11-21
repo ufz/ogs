@@ -36,7 +36,7 @@ IsotropicDiffusionStabilization::IsotropicDiffusionStabilization(
     }
 }
 
-double IsotropicDiffusionStabilization::getExtraDiffusionCoefficient(
+double IsotropicDiffusionStabilization::computeArtificialDiffusion(
     std::size_t const elemend_id,
     double const advection_coefficient,
     double const velocity_norm) const

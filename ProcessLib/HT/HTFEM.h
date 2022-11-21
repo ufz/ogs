@@ -210,7 +210,7 @@ protected:
         if (_process_data.stabilizer)
         {
             thermal_conductivity.noalias() +=
-                _process_data.stabilizer->getExtraDiffusionCoefficient(
+                _process_data.stabilizer->computeArtificialDiffusion(
                     _element.getID(),
                     fluid_density * specific_heat_capacity_fluid,
                     velocity.norm()) *
