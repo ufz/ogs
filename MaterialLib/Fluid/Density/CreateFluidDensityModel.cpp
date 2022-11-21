@@ -21,7 +21,6 @@
 #include "LinearTemperatureDependentDensity.h"
 #include "LiquidDensity.h"
 #include "MaterialLib/Fluid/ConstantFluidProperty.h"
-#include "WaterDensityIAPWSIF97Region1.h"
 
 namespace MaterialLib
 {
@@ -160,10 +159,6 @@ std::unique_ptr<FluidProperty> createFluidDensityModel(
         return std::make_unique<IdealGasLaw>(
             //! \ogs_file_param{material__fluid__density__IdealGasLaw__molar_mass}
             config.getConfigParameter<double>("molar_mass"));
-    }
-    if (type == "WaterDensityIAPWSIF97Region1")
-    {
-        return std::make_unique<WaterDensityIAPWSIF97Region1>();
     }
 
     OGS_FATAL(

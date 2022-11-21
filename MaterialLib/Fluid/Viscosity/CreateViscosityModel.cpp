@@ -18,7 +18,6 @@
 #include "MaterialLib/Fluid/ConstantFluidProperty.h"
 #include "TemperatureDependentViscosity.h"
 #include "VogelsLiquidDynamicViscosity.h"
-#include "WaterViscosityIAPWS.h"
 
 namespace MaterialLib
 {
@@ -134,12 +133,6 @@ std::unique_ptr<FluidProperty> createViscosityModel(
             "The fluid type {:s} for Vogels model is unavailable.\n"
             "The available fluid types are Water, CO2 and CH4\n",
             fluid_type.data());
-    }
-    if (type == "WaterViscosityIAPWS")
-    {
-        //! \ogs_file_param{material__fluid__viscosity__type}
-        config.checkConfigParameter("type", "WaterViscosityIAPWS");
-        return std::make_unique<WaterViscosityIAPWS>();
     }
 
     OGS_FATAL(
