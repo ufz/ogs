@@ -37,16 +37,13 @@ IsotropicDiffusionStabilization::IsotropicDiffusionStabilization(
 }
 
 double IsotropicDiffusionStabilization::computeArtificialDiffusion(
-    std::size_t const elemend_id,
-    double const advection_coefficient,
-    double const velocity_norm) const
+    std::size_t const elemend_id, double const velocity_norm) const
 {
     if (velocity_norm < cutoff_velocity_)
     {
         return 0.0;
     }
-    return 0.5 * advection_coefficient * tuning_parameter_ * velocity_norm *
-           element_sizes_[elemend_id];
+    return 0.5 * tuning_parameter_ * velocity_norm * element_sizes_[elemend_id];
 }
 
 std::unique_ptr<NumericalStabilization> createNumericalStabilization(

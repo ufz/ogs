@@ -464,8 +464,9 @@ void ThermoHydroMechanicsLocalAssembler<
         if (_process_data.stabilizer)
         {
             effective_thermal_conductivity.noalias() +=
+                fluid_density * c_f *
                 _process_data.stabilizer->computeArtificialDiffusion(
-                    _element.getID(), fluid_density * c_f, velocity.norm()) *
+                    _element.getID(), velocity.norm()) *
                 I;
         }
 

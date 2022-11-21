@@ -50,9 +50,7 @@ public:
 
     double getCutoffVelocity() const { return cutoff_velocity_; }
     virtual double computeArtificialDiffusion(
-        std::size_t const /*elemend_id*/,
-        double const /*advection_coefficient*/,
-        double const /*velocity_norm*/) const
+        std::size_t const /*elemend_id*/, double const /*velocity_norm*/) const
     {
         return 0.0;
     };
@@ -86,7 +84,6 @@ public:
 
     double computeArtificialDiffusion(
         std::size_t const elemend_id,
-        double const advection_coefficient,
         double const velocity_norm) const override;
 
 private:

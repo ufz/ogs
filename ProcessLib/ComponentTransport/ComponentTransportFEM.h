@@ -566,7 +566,7 @@ public:
         }
 
         return D_c + _process_data.stabilizer->computeArtificialDiffusion(
-                         _element.getID(), 1.0, velocity_magnitude) *
+                         _element.getID(), velocity_magnitude) *
                          I;
     }
 
