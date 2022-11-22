@@ -526,9 +526,11 @@ if(NOT OGS_USE_MPI)
         WRAPPER time
         REQUIREMENTS NOT OGS_USE_MPI
     )
-    set_tests_properties(
-        ogs-LiquidFlow_Flux_3D_HEX_MultipleOutputs_SameFiles-time
-        PROPERTIES WILL_FAIL TRUE)
+    if(TEST ogs-LiquidFlow_Flux_3D_HEX_MultipleOutputs_SameFiles-time)
+        set_tests_properties(
+            ogs-LiquidFlow_Flux_3D_HEX_MultipleOutputs_SameFiles-time
+            PROPERTIES WILL_FAIL TRUE)
+    endif()
 
 endif()
 
