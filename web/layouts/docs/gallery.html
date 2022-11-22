@@ -15,11 +15,13 @@
       <div class="space-y-8">
         <div class="space-y-5 sm:space-y-4 md:max-w-xl lg:max-w-3xl xl:max-w-none">
 
-          <h2 class="text-3xl font-extrabold sm:text-4xl mb-4">
+          <h2 class="text-3xl font-extrabold sm:text-4xl mb-8">
             {{ .Title }}
           </h2>
           <div class="clear-both"></div>
-          {{ .Content }}
+          <div class="prose min-w-full">
+            {{ .Content }}
+          </div>
         </div>
 
         {{ $image_collection := where .Pages "Params.image" "!=" nil }}

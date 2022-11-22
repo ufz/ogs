@@ -16,7 +16,9 @@
 
   <div class="overflow-y-auto focus:outline-none">
 
-    {{ if isset .Parent.Params "coupling" }}
+    {{ if isset .Params "coupling" }}
+    <img class="h-12 md:h-16 lg:h-20 float-right" src="/images/coupling-icons/{{.Params.coupling}}-tet.svg" alt="">
+    {{ else if isset .Parent.Params "coupling" }}
     <img class="h-12 md:h-16 lg:h-20 float-right" src="/images/coupling-icons/{{.Parent.Params.coupling}}-tet.svg"
       alt="">
     {{ end }}
