@@ -49,10 +49,8 @@ public:
     virtual ~NumericalStabilization() = 0;
 
     double getCutoffVelocity() const { return cutoff_velocity_; }
-    virtual double getExtraDiffusionCoefficient(
-        std::size_t const /*elemend_id*/,
-        double const /*advection_coefficient*/,
-        double const /*velocity_norm*/) const
+    virtual double computeArtificialDiffusion(
+        std::size_t const /*elemend_id*/, double const /*velocity_norm*/) const
     {
         return 0.0;
     };
@@ -84,9 +82,8 @@ public:
                                     double const tuning_parameter,
                                     std::vector<double>&& element_sizes_vector);
 
-    double getExtraDiffusionCoefficient(
+    double computeArtificialDiffusion(
         std::size_t const elemend_id,
-        double const advection_coefficient,
         double const velocity_norm) const override;
 
 private:
