@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--units: kg, m, s, K and derived units: N, Pa=N/m^2 -->
+<OpenGeoSysProject>
+    <meshes>
+        <!-- meshes with labels 0,1,2,3 are bottom, right, top and left, resp. -->
+        <mesh>ManSol3_mesh_unit_square_QU_10x10.vtu</mesh>
+        <mesh>ManSol3_mesh_unit_square_QU_10x10_0.vtu</mesh>
+        <mesh>ManSol3_mesh_unit_square_QU_10x10_1.vtu</mesh>
+        <mesh>ManSol3_mesh_unit_square_QU_10x10_2.vtu</mesh>
+        <mesh>ManSol3_mesh_unit_square_QU_10x10_3.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>HeatConduction</name>
+            <type>HEAT_CONDUCTION</type>
+            <integration_order>2</integration_order>
+            <process_variables>
+                <process_variable>temperature</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="heat_flux" output_name="heat_flux"/>
+            </secondary_variables>
+        </process>
+    </processes>
+    <media>
+        <medium id="4">
+            <phases>
+                <phase>
+                    <!-- Pore water phase -->
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>0.58</value> <!-- W/m/K-->
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>4.190</value> <!-- J/kg/K, this is 10^(-3) rescaled -->
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1.000</value> <!--kg/m^3, this is 10^(-3) rescaled -->
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <!-- Pore ice phase -->
+                    <type>FrozenLiquid</type>
+                    <properties>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>2.2</value> <!-- W/m/K-->
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>2.090</value> <!-- J/kg/K, this is 10^(-3) rescaled -->
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>0.920</value> <!--kg/m^3, this is 10^(-3) rescaled  -->
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <!-- Porous solid phase -->
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>1.1</value> <!-- W/m/K-->
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>0.900</value> <!-- J/kg/K, this is 10^(-3) rescaled  -->
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2.000</value>  <!--kg/m^3, this is 10^(-3) rescaled  -->
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.5</value>
+                </property>
+                <property>
+                    <name>volume_fraction</name>
+                    <type>TemperatureDependentFraction</type>
+                    <steepness>2</steepness> <!-- k in the Sigmoid function -->
+                    <characteristic_temperature>273.15</characteristic_temperature> <!-- melting temperature T_m -->
+                </property>
+                <property>
+                    <name>density</name>
+                    <type>VolumeFractionAverage</type>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>VolumeFractionAverage</type>
+                </property>
+                <property>
+                    <name>specific_heat_capacity</name>
+                    <type>SpecificHeatCapacityWithLatentHeat</type>
+                    <specific_latent_heat>334.000</specific_latent_heat> <!-- J/kg, this is 10^(-3) rescaled  -->
+                </property>
+            </properties>
+        </medium>
+    </media>
+    <parameters>
+        <parameter>
+            <name>HeatSource</name>  <!-- this where we insert Q_T(x,y,t) -->
+            <type>Function</type>
+            <expression>
+            (0.5*2.000*0.900
+             +0.5*exp(2*(17*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))-7))/(1+exp(2*(17*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))-7)))*1.000*4.190
+             +0.5/(1+exp(2*(17*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))-7)))*0.920*2.090
+             +3.34e2*0.920*0.5*2*exp(2*(17*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))-7))/(1+exp(2*(17*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))-7)))^2 )
+             *0.5*pi*17*y*((1-x)*cos(0.5*pi*t)-x*sin(0.5*pi*t))
+
+             +(2.2-0.58)*0.5*2*exp(2*(17*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))-7))/(1+exp(2*(17*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))-7)))^2
+             *17^2*(y^2*(1-sin(pi*t))+x*(1-x)*sin(pi*t)+(x-0.5)*cos(pi*t)+x^2-x+0.5)
+            </expression>
+            <!-- Here is the expression for Q_T in general terms:
+            ( (1-phi)*rho_SR*c_pS
+             +phi*exp(k*(b*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))+c-Tm))/(1+exp(k*(b*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))+c-Tm)))*rho_FR*c_pF
+             +phi/(1+exp(k*(b*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))+c-Tm)))*rho_IR*c_pI
+             +ell*rho_IR*phi*k*exp(k*(b*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))+c-Tm))/(1+exp(k*(b*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))+c-Tm)))^2 )
+             *0.5*pi*b*y*((1-x)*cos(0.5*pi*t)-x*sin(0.5*pi*t))
+
+             +(lambda_IR-lambda_FR)*phi*k*exp(k*(b*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))+c-Tm))/(1+exp(k*(b*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))+c-Tm)))^2
+             *b^2*(y^2*(1-sin(pi*t))+x*(1-x)*sin(pi*t)+(x-0.5)*cos(pi*t)+x^2-x+0.5)
+            -->
+        </parameter>
+        <parameter>
+            <name>T0</name>
+            <type>Function</type>
+            <expression> 17*x*y+266.15 </expression>  <!-- the IC function T_0 -->
+        </parameter>
+        <parameter>
+            <name>T1b</name>
+            <type>Function</type>
+            <expression> 266.15 </expression>   <!-- this is T1 on bottom side -->
+        </parameter>
+        <parameter>
+            <name>T1r</name>
+            <type>Function</type>
+            <expression> 17*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))+266.15 </expression>   <!-- this is T1 on right side -->
+        </parameter>
+        <parameter>
+            <name>T1t</name>
+            <type>Function</type>
+            <expression> 17*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))+266.15 </expression>   <!-- this is T1 on top side -->
+        </parameter>
+        <parameter>
+            <name>T1l</name>
+            <type>Function</type>
+            <expression> 17*y*(x*cos(0.5*pi*t)+(1-x)*sin(0.5*pi*t))+266.15 </expression>   <!-- this is T1 on left side -->
+        </parameter>
+    </parameters>
+    <process_variables>
+        <process_variable>
+            <name>temperature</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>T0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>ManSol3_mesh_unit_square_QU_10x10_0</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>T1b</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>ManSol3_mesh_unit_square_QU_10x10_1</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>T1r</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>ManSol3_mesh_unit_square_QU_10x10_2</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>T1t</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>ManSol3_mesh_unit_square_QU_10x10_3</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>T1l</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+            <source_terms>
+                <source_term>
+                    <mesh>ManSol3_mesh_unit_square_QU_10x10</mesh>
+                    <type>Volumetric</type>
+                    <parameter>HeatSource</parameter>
+                </source_term>
+            </source_terms>
+        </process_variable>
+    </process_variables>
+    <time_loop>
+        <processes>
+            <process ref="HeatConduction">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>2e-12</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>1.0</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>200</repeat>
+                            <delta_t>0.005</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>ManSol_IceWaterMix_T-plot</prefix>
+            <timesteps>
+                <pair>
+                    <repeat>10000</repeat>
+                    <each_steps>10</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+                <variable> temperature </variable>
+                <variable> heat_flux </variable>
+            </variables>
+            <suffix>_ts_{:timestep}_t_{:gtime}</suffix>
+        </output>
+    </time_loop>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_picard</name>
+            <type>Picard</type>
+            <max_iter>200</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <scaling>true</scaling>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+    <test_definition>
+        <!--primary field-->
+        <vtkdiff>
+            <file>ManSol_IceWaterMix_T-plot_ts_50_t_0.25.vtu</file>
+            <field>temperature</field>
+            <absolute_tolerance>2e-6</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>ManSol_IceWaterMix_T-plot_ts_100_t_0.5.vtu</file>
+            <field>temperature</field>
+            <absolute_tolerance>5e-6</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>
