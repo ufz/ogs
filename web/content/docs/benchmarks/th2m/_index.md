@@ -7,7 +7,6 @@ coupling = "th2m"
 featured = true
 +++
 
-
 ## Benchmark hierarchy
 
 Some of the collected benchmarks for the TH2M process can be accessed here. Since fully coupled benchmarks are very rare, and since the TH2M process is rather complex, part of the benchmark hierarchy presented and described in Grunwald et al. is provided here.

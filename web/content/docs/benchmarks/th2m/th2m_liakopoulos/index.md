@@ -4,6 +4,7 @@ author = "Norbert Grunwald"
 date = "2018-06-20T14:37:58+01:00"
 title = "Liakopoulos Experiment"
 image = "placeholder_liakopoulos.png"
+coupling = "h2m"
 +++
 
 {{< data-link >}}
