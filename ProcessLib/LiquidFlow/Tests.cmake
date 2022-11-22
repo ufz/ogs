@@ -517,6 +517,19 @@ if(NOT OGS_USE_MPI)
                        ogs-LiquidFlow_Flux_3D_HEX_MultipleOutputs_vtu-time
         )
     endif()
+
+    AddTest(
+        NAME LiquidFlow_Flux_3D_HEX_MultipleOutputs_SameFiles
+        PATH Parabolic/LiquidFlow/Flux/3D/Hex
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_invalid_multiple_outputs.xml
+        WRAPPER time
+        REQUIREMENTS NOT OGS_USE_MPI
+    )
+    set_tests_properties(
+        ogs-LiquidFlow_Flux_3D_HEX_MultipleOutputs_SameFiles-time
+        PROPERTIES WILL_FAIL TRUE)
+
 endif()
 
 AddTest(

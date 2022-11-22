@@ -79,6 +79,8 @@ public:
         return _output_data_specification.fixed_output_times;
     }
 
+    std::vector<std::string> getFileNamesForOutput() const;
+
     friend std::ostream& operator<<(std::ostream& os, Output const& output);
 
 private:
@@ -97,7 +99,7 @@ private:
         const int process_id, double const t,
         std::vector<GlobalVector*> const& xs) const;
 
-    std::unique_ptr<OutputFormat> _output_file;
+    std::unique_ptr<OutputFormat> _output_format;
 
     bool _output_nonlinear_iteration_results;
 

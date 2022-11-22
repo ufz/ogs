@@ -42,6 +42,20 @@ int convertVtkDataMode(std::string_view const& data_mode)
     }
     return static_cast<int>(std::distance(begin(data_mode_lookup_table), res));
 }
+
+bool areOutputNamesUnique(std::vector<ProcessLib::Output> const& outputs)
+{
+    std::vector<std::string> output_names;
+    for (auto const& output : outputs)
+    {
+        auto output_mesh_names = output.getFileNamesForOutput();
+        output_names.insert(output_names.end(), output_mesh_names.begin(),
+                            output_mesh_names.end());
+    }
+    std::sort(output_names.begin(), output_names.end());
+    auto const last = std::unique(output_names.begin(), output_names.end());
+    return last == output_names.end();
+}
 }  // namespace
 
 namespace ProcessLib
@@ -256,6 +270,16 @@ std::vector<Output> createOutputs(
     {
         parseOutput(output_config, output_directory, meshes, outputs);
     }
-    return outputs;
+    if (areOutputNamesUnique(outputs))
+    {
+        return outputs;
+    }
+    else
+    {
+        OGS_FATAL(
+            "Output configuration paths are not unique. This will lead to "
+            "overwritten results or invalid / corrupted data within the "
+            "files.");
+    }
 }
 }  // namespace ProcessLib
