@@ -19,8 +19,8 @@ set(TOOLS
     MeshMapping
     NodeReordering
     queryMesh
-    ReorderNodesElements
     removeMeshElements
+    ReorderMesh
     ResetPropertiesInPolygonalRegion
     reviseMesh
     swapNodeCoordinateAxes

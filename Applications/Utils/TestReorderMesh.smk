@@ -105,7 +105,7 @@ rule reorder_nodes_elements:
         "cube_1x1x1_{type}_{lx}x{ly}x{lz}_{number_of_partitions}/results/bulk_mesh_reordered.vtu"
     shell:
         """
-        ReorderNodesElements -i {input} -o {output}
+        ReorderMesh -i {input} -o {output}
         """
 
 rule vtk_diff:

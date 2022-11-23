@@ -54,7 +54,7 @@ binaries_list = [
     "Raster2Mesh",
     "RemoveGhostData",
     "removeMeshElements",
-    "ReorderNodesElements",
+    "ReorderMesh",
     "ResetPropertiesInPolygonalRegion",
     "reviseMesh",
     "scaleProperty",
