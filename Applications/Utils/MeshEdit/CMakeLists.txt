@@ -20,6 +20,7 @@ set(TOOLS
     NodeReordering
     queryMesh
     removeMeshElements
+    ReorderMesh
     ResetPropertiesInPolygonalRegion
     reviseMesh
     swapNodeCoordinateAxes
