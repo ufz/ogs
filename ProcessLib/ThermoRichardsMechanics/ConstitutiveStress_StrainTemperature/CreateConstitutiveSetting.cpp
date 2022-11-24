@@ -12,7 +12,9 @@
 
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 
-namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+namespace ProcessLib::ThermoRichardsMechanics
+{
+namespace ConstitutiveStress_StrainTemperature
 {
 template <int DisplacementDim>
 std::map<int, std::unique_ptr<SolidConstitutiveRelation<DisplacementDim>>>
@@ -28,4 +30,5 @@ CreateConstitutiveSetting<DisplacementDim>::createSolidConstitutiveRelations(
 
 template struct CreateConstitutiveSetting<2>;
 template struct CreateConstitutiveSetting<3>;
-}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+}  // namespace ConstitutiveStress_StrainTemperature
+}  // namespace ProcessLib::ThermoRichardsMechanics

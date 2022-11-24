@@ -10,7 +10,9 @@
 
 #include "ConstitutiveSetting.h"
 
-namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+namespace ProcessLib::ThermoRichardsMechanics
+{
+namespace ConstitutiveStress_StrainTemperature
 {
 template <int DisplacementDim>
 void ConstitutiveSetting<DisplacementDim>::eval(
@@ -168,4 +170,5 @@ void ConstitutiveSetting<DisplacementDim>::eval(
 template struct ConstitutiveSetting<2>;
 template struct ConstitutiveSetting<3>;
 
-}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+}  // namespace ConstitutiveStress_StrainTemperature
+}  // namespace ProcessLib::ThermoRichardsMechanics

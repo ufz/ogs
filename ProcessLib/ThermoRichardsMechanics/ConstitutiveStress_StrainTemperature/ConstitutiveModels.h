@@ -22,9 +22,11 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMHeatStorageAndFlux.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMStorage.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMVaporDiffusion.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveOriginal/SolidMechanics.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/SolidMechanics.h"
 
-namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+namespace ProcessLib::ThermoRichardsMechanics
+{
+namespace ConstitutiveStress_StrainTemperature
 {
 /// Constitutive models used for assembly.
 template <int DisplacementDim>
@@ -70,4 +72,5 @@ struct ConstitutiveModels
     EqTModel<DisplacementDim> eq_T_model;
     ThermoOsmosisModel<DisplacementDim> th_osmosis_model;
 };
-}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+}  // namespace ConstitutiveStress_StrainTemperature
+}  // namespace ProcessLib::ThermoRichardsMechanics

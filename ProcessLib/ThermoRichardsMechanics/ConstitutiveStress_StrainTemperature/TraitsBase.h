@@ -12,9 +12,12 @@
 
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 
-namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+namespace ProcessLib::ThermoRichardsMechanics
+{
+namespace ConstitutiveStress_StrainTemperature
 {
 template <int DisplacementDim>
 using SolidConstitutiveRelation =
     MaterialLib::Solids::MechanicsBase<DisplacementDim>;
-}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+}
+}  // namespace ProcessLib::ThermoRichardsMechanics

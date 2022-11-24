@@ -25,9 +25,11 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMVaporDiffusion.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TransportPorosity.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveOriginal/SolidMechanics.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/SolidMechanics.h"
 
-namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+namespace ProcessLib::ThermoRichardsMechanics
+{
+namespace ConstitutiveStress_StrainTemperature
 {
 /// Data whose state must be tracked by the TRM process.
 template <int DisplacementDim>
@@ -106,4 +108,5 @@ struct ConstitutiveTempData
     FluidThermalExpansionData f_therm_exp_data;
     EquivalentPlasticStrainData equiv_plast_strain_data;
 };
-}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+}  // namespace ConstitutiveStress_StrainTemperature
+}  // namespace ProcessLib::ThermoRichardsMechanics

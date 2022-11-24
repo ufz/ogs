@@ -15,7 +15,9 @@
 #include "ParameterLib/Parameter.h"
 #include "TraitsBase.h"
 
-namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+namespace ProcessLib::ThermoRichardsMechanics
+{
+namespace ConstitutiveStress_StrainTemperature
 {
 template <int DisplacementDim>
 struct CreateConstitutiveSetting
@@ -29,4 +31,5 @@ struct CreateConstitutiveSetting
             local_coordinate_system,
         BaseLib::ConfigTree const& config);
 };
-}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+}  // namespace ConstitutiveStress_StrainTemperature
+}  // namespace ProcessLib::ThermoRichardsMechanics

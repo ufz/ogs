@@ -14,7 +14,9 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/ElasticTangentStiffnessData.h"
 #include "TraitsBase.h"
 
-namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+namespace ProcessLib::ThermoRichardsMechanics
+{
+namespace ConstitutiveStress_StrainTemperature
 {
 template <int DisplacementDim>
 struct ElasticTangentStiffnessModel
@@ -35,4 +37,5 @@ private:
 
 extern template struct ElasticTangentStiffnessModel<2>;
 extern template struct ElasticTangentStiffnessModel<3>;
-}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+}  // namespace ConstitutiveStress_StrainTemperature
+}  // namespace ProcessLib::ThermoRichardsMechanics

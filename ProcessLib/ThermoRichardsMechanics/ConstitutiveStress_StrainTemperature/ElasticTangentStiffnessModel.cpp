@@ -12,7 +12,9 @@
 
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 
-namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+namespace ProcessLib::ThermoRichardsMechanics
+{
+namespace ConstitutiveStress_StrainTemperature
 {
 template <int DisplacementDim>
 void ElasticTangentStiffnessModel<DisplacementDim>::eval(
@@ -51,4 +53,5 @@ void ElasticTangentStiffnessModel<DisplacementDim>::eval(
 
 template struct ElasticTangentStiffnessModel<2>;
 template struct ElasticTangentStiffnessModel<3>;
-}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+}  // namespace ConstitutiveStress_StrainTemperature
+}  // namespace ProcessLib::ThermoRichardsMechanics

@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "ConstitutiveOriginal/Traits.h"
+#include "ConstitutiveStress_StrainTemperature/Traits.h"
 #ifdef OGS_USE_MFRONT
 #include "ConstitutiveStressSaturation_StrainPressureTemperature/Traits.h"
 #endif
@@ -229,9 +229,9 @@ private:
 };
 
 extern template class ThermoRichardsMechanicsProcess<
-    2, ConstitutiveOriginal::ConstitutiveTraits<2>>;
+    2, ConstitutiveStress_StrainTemperature::ConstitutiveTraits<2>>;
 extern template class ThermoRichardsMechanicsProcess<
-    3, ConstitutiveOriginal::ConstitutiveTraits<3>>;
+    3, ConstitutiveStress_StrainTemperature::ConstitutiveTraits<3>>;
 
 #ifdef OGS_USE_MFRONT
 extern template class ThermoRichardsMechanicsProcess<

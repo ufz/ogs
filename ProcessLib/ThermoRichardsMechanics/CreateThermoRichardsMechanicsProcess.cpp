@@ -12,8 +12,8 @@
 
 #include <cassert>
 
-#include "ConstitutiveOriginal/CreateConstitutiveSetting.h"
-#include "ConstitutiveOriginal/Traits.h"
+#include "ConstitutiveStress_StrainTemperature/CreateConstitutiveSetting.h"
+#include "ConstitutiveStress_StrainTemperature/Traits.h"
 
 #ifdef OGS_USE_MFRONT
 #include "ConstitutiveStressSaturation_StrainPressureTemperature/CreateConstitutiveSetting.h"
@@ -234,15 +234,18 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
 
     auto const subtype =
         //! \ogs_file_param{prj__processes__process__THERMO_RICHARDS_MECHANICS__subtype}
-        config.getConfigParameter<std::string>("subtype", "Original");
+        config.getConfigParameter<std::string>("subtype",
+                                               "Stress_StrainTemperature");
     INFO("TRM process subtype is '{}'", subtype);
 
-    if (subtype == "Original")
+    if (subtype == "Stress_StrainTemperature")
     {
         return createThermoRichardsMechanicsProcessStage2<
             DisplacementDim,
-            ConstitutiveOriginal::ConstitutiveTraits<DisplacementDim>,
-            ConstitutiveOriginal::CreateConstitutiveSetting<DisplacementDim>>(
+            ConstitutiveStress_StrainTemperature::ConstitutiveTraits<
+                DisplacementDim>,
+            ConstitutiveStress_StrainTemperature::CreateConstitutiveSetting<
+                DisplacementDim>>(
             name, mesh, std::move(jacobian_assembler), variables, parameters,
             local_coordinate_system, integration_order, config, media);
     }

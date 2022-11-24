@@ -349,9 +349,9 @@ ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 }
 
 template class ThermoRichardsMechanicsProcess<
-    2, ConstitutiveOriginal::ConstitutiveTraits<2>>;
+    2, ConstitutiveStress_StrainTemperature::ConstitutiveTraits<2>>;
 template class ThermoRichardsMechanicsProcess<
-    3, ConstitutiveOriginal::ConstitutiveTraits<3>>;
+    3, ConstitutiveStress_StrainTemperature::ConstitutiveTraits<3>>;
 
 #if OGS_USE_MFRONT
 template class ThermoRichardsMechanicsProcess<
