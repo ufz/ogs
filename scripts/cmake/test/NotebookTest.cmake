@@ -97,7 +97,9 @@ function(NotebookTest)
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/OgsTestWrapper.cmake
     )
 
-    current_dir_as_list(ProcessLib labels)
+    if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/ProcessLib)
+        current_dir_as_list(ProcessLib labels)
+    endif()
     list(APPEND labels Notebook)
     if(${NotebookTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
         list(APPEND labels default)
