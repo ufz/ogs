@@ -13,7 +13,6 @@ build linux:
       allow_failure: true
   timeout: 2h
   variables:
-    BUILD_CTEST_LARGE_ON_MASTER: "true"
     CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
       -DOGS_$USE_PYTHON
@@ -67,9 +66,11 @@ build linux arch:
   extends:
     - .template-build-linux
     - .test-artifacts
-  tags: [shell, envinf]
+  tags: [shell, envinf23]
   needs: [meta]
+  timeout: 2h
   variables:
+    BUILD_CTEST_LARGE_ON_MASTER: "true"
     CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
       -DBUILD_SHARED_LIBS=ON
