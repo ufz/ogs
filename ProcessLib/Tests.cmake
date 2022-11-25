@@ -10,4 +10,12 @@ if(TARGET ThermoHydroMechanics
         RUNTIME
         1800
     )
+    if(TEST
+       nb-ThermoHydroMechanics/Linear/Point_injection/SaturatedPointheatsource-LARGE
+    )
+        set_tests_properties(
+            nb-ThermoHydroMechanics/Linear/Point_injection/SaturatedPointheatsource-LARGE
+            PROPERTIES PROCESSORS 4
+        )
+    endif()
 endif()
