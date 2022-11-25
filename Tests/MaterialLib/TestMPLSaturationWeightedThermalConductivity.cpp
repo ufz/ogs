@@ -24,7 +24,6 @@
 #include "MaterialLib/MPL/Properties/ThermalConductivity/SaturationWeightedThermalConductivity.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "ParameterLib/ConstantParameter.h"
-#include "ParameterLib/CoordinateSystem.h"
 #include "Tests/TestTools.h"
 
 namespace MPL = MaterialPropertyLib;
@@ -33,13 +32,11 @@ std::unique_ptr<MaterialPropertyLib::Property>
 createTestSaturationWeightedThermalConductivityProperty(
     const char xml[], int const geometry_dimension,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    ParameterLib::CoordinateSystem const* const local_coordinate_system,
     std::function<std::unique_ptr<MaterialPropertyLib::Property>(
         int const geometry_dimension,
         BaseLib::ConfigTree const& config,
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
-            parameters,
-        ParameterLib::CoordinateSystem const* const local_coordinate_system)>
+            parameters)>
         createProperty)
 {
     auto ptree = Tests::readXml(xml);
@@ -50,8 +47,7 @@ createTestSaturationWeightedThermalConductivityProperty(
     auto const property_name =
         sub_config.getConfigParameter<std::string>("name");
 
-    return createProperty(geometry_dimension, sub_config, parameters,
-                          local_coordinate_system);
+    return createProperty(geometry_dimension, sub_config, parameters);
 }
 
 TEST(MaterialPropertyLib,
@@ -79,7 +75,7 @@ TEST(MaterialPropertyLib,
     const int dimemsion = 1;
     std::unique_ptr<MPL::Property> const k_T_ptr =
         createTestSaturationWeightedThermalConductivityProperty(
-            xml, dimemsion, parameters, nullptr,
+            xml, dimemsion, parameters,
             MPL::createSaturationWeightedThermalConductivity);
 
     MPL::Property const& k_T_property = *k_T_ptr;
@@ -207,7 +203,7 @@ TEST(MaterialPropertyLib,
     const int dimemsion = 3;
     std::unique_ptr<MPL::Property> const k_T_ptr =
         createTestSaturationWeightedThermalConductivityProperty(
-            xml, dimemsion, parameters, nullptr,
+            xml, dimemsion, parameters,
             MPL::createSaturationWeightedThermalConductivity);
 
     MPL::Property const& k_T_property = *k_T_ptr;
@@ -343,7 +339,7 @@ TEST(MaterialPropertyLib,
 
     auto const k_model_eff = MPL::SaturationWeightedThermalConductivity<
         MaterialPropertyLib::MeanType::ARITHMETIC_LINEAR, 1>(
-        "thermal_conductivity", k_dry, k_wet, nullptr);
+        "thermal_conductivity", k_dry, k_wet);
 
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();
@@ -410,7 +406,7 @@ TEST(MaterialPropertyLib,
 
     auto const k_model_eff = MPL::SaturationWeightedThermalConductivity<
         MaterialPropertyLib::MeanType::ARITHMETIC_LINEAR, 3>(
-        "thermal_conductivity", k_dry, k_wet, nullptr);
+        "thermal_conductivity", k_dry, k_wet);
 
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();
@@ -475,7 +471,7 @@ TEST(MaterialPropertyLib, SaturationWeightedThermalConductivity1Dgeometric)
 
     auto const k_model_eff = MPL::SaturationWeightedThermalConductivity<
         MaterialPropertyLib::MeanType::GEOMETRIC, 1>(
-        "thermal_conductivity", k_dry, k_wet, nullptr);
+        "thermal_conductivity", k_dry, k_wet);
 
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();
@@ -541,7 +537,7 @@ TEST(MaterialPropertyLib, SaturationWeightedThermalConductivity3Dgeometric)
 
     auto const k_model_eff = MPL::SaturationWeightedThermalConductivity<
         MaterialPropertyLib::MeanType::GEOMETRIC, 3>(
-        "thermal_conductivity", k_dry, k_wet, nullptr);
+        "thermal_conductivity", k_dry, k_wet);
 
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();

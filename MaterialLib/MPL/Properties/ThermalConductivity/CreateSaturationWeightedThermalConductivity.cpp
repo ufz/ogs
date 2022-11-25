@@ -17,7 +17,6 @@
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
 #include "MaterialLib/MPL/Property.h"
-#include "ParameterLib/CoordinateSystem.h"
 #include "ParameterLib/Parameter.h"
 #include "ParameterLib/Utils.h"
 #include "SaturationWeightedThermalConductivity.h"
@@ -29,16 +28,12 @@ std::unique_ptr<MaterialPropertyLib::Property>
 createSaturationWeightedThermalConductivity(
     std::string name,
     ParameterLib::Parameter<double> const& dry_thermal_conductivity,
-    ParameterLib::Parameter<double> const& wet_thermal_conductivity,
-    ParameterLib::CoordinateSystem const* const local_coordinate_system)
+    ParameterLib::Parameter<double> const& wet_thermal_conductivity)
 {
     return std::make_unique<
         MaterialPropertyLib::SaturationWeightedThermalConductivity<MeanType,
                                                                    Dim>>(
-        std::move(name),
-        dry_thermal_conductivity,
-        wet_thermal_conductivity,
-        local_coordinate_system);
+        std::move(name), dry_thermal_conductivity, wet_thermal_conductivity);
 }
 }  // namespace
 
@@ -47,8 +42,7 @@ namespace MaterialPropertyLib
 std::unique_ptr<Property> createSaturationWeightedThermalConductivity(
     int const geometry_dimension,
     BaseLib::ConfigTree const& config,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    ParameterLib::CoordinateSystem const* const local_coordinate_system)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type",
@@ -88,9 +82,8 @@ std::unique_ptr<Property> createSaturationWeightedThermalConductivity(
         std::unique_ptr<Property> (*)(
             std::string /*name*/,
             ParameterLib::Parameter<double> const& /*dry_thermal_conductivity*/,
-            ParameterLib::Parameter<double> const& /*wet_thermal_conductivity*/,
-            ParameterLib::CoordinateSystem const* const
-            /*local_coordinate_system*/)>
+            ParameterLib::Parameter<
+                double> const& /*wet_thermal_conductivity*/)>
         map_dim_and_mean_to_creator;
 
     // initialize the map
@@ -133,7 +126,6 @@ std::unique_ptr<Property> createSaturationWeightedThermalConductivity(
     auto* creator = it->second;
     return creator(std::move(property_name),
                    dry_thermal_conductivity,
-                   wet_thermal_conductivity,
-                   local_coordinate_system);
+                   wet_thermal_conductivity);
 }
 }  // namespace MaterialPropertyLib
