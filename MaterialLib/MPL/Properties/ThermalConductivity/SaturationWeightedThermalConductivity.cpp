@@ -29,6 +29,61 @@
 
 namespace MaterialPropertyLib
 {
+
+template <MeanType MeanType>
+double computeAverage(const double /*S*/, double const /*k_dry*/,
+                                             double const /*k_wet*/) = delete;
+
+template <MeanType MeanType>
+double computeDAverage(const double /*S*/, double const /*k_dry*/,
+                                             double const /*k_wet*/) = delete;
+
+// specialization
+template <>
+double computeAverage<MeanType::ARITHMETIC_LINEAR>(const double S, double const k_dry,
+                                             double const k_wet)
+{
+    return k_dry * (1.0 - S) + k_wet * S;
+}
+
+template <>
+double computeDAverage<MeanType::ARITHMETIC_LINEAR>(const double /*S*/,
+                                              double const k_dry,
+                                              double const k_wet)
+{
+    return k_wet - k_dry;
+}
+
+template <>
+double computeAverage<MeanType::ARITHMETIC_SQUAREROOT>(const double S,
+                                                 double const k_dry,
+                                                 double const k_wet)
+{
+    return k_dry + std::sqrt(S) * (k_wet - k_dry);
+}
+
+template <>
+double computeDAverage<MeanType::ARITHMETIC_SQUAREROOT>(const double S,
+                                                  double const k_dry,
+                                                  double const k_wet)
+{
+    return 0.5 * (k_wet - k_dry) / std::sqrt(S);
+}
+
+template <>
+double computeAverage<MeanType::GEOMETRIC>(const double S, double const k_dry,
+                                     double const k_wet)
+{
+    return k_dry * std::pow(k_wet / k_dry, S);
+}
+
+template <>
+double computeDAverage<MeanType::GEOMETRIC>(const double S, double const k_dry,
+                                      double const k_wet)
+{
+    return k_dry * std::pow(k_wet / k_dry, S) * std::log(k_wet / k_dry);
+}
+
 template <MeanType MeanType, int GlobalDimension>
 SaturationWeightedThermalConductivity<MeanType, GlobalDimension>::
     SaturationWeightedThermalConductivity(
@@ -98,12 +153,12 @@ PropertyDataType SaturationWeightedThermalConductivity<MeanType, GlobalDimension
         lambda_data = wet_thermal_conductivity_(t, pos);
     }
 
-    if (S_L > 0.0 && S_L <= 1.0)
+    else if (S_L > 0.0 && S_L <= 1.0)
     {
 
         for (std::size_t i = 0; i < lambda_data.size(); i++)
         {
-                lambda_data[i] = getValue<MeanType>(S_L, lambda_data[i],
+                lambda_data[i] = computeAverage<MeanType>(S_L, lambda_data[i],
                                       wet_thermal_conductivity_(t, pos)[i]);
         }
     }
@@ -161,7 +216,7 @@ PropertyDataType SaturationWeightedThermalConductivity<MeanType, GlobalDimension
     }
     for (std::size_t i = 0; i < lambda_dry_data.size(); i++)
     {
-            derivative_data[i] = getDValue<MeanType>(S_L, lambda_dry_data[i],
+            derivative_data[i] = computeDAverage<MeanType>(S_L, lambda_dry_data[i],
                                       wet_thermal_conductivity_(t, pos)[i]);
     }
     if constexpr (GlobalDimension == 1)

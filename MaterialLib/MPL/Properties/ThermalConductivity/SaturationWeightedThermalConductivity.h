@@ -32,59 +32,6 @@ enum class MeanType
     GEOMETRIC
 };
 
-template <MeanType MeanType>
-inline double getValue(const double S, double const k_dry, double const k_wet)
-{
-  return 0.0;
-}
-
-template <MeanType MeanType>
-inline double getDValue(const double S, double const k_dry, double const k_wet)
-{
-  return 0.0;
-}
-
-
-// specialization
-template <>
-inline double getValue<MeanType::ARITHMETIC_LINEAR>(const double S, double const k_dry, double const k_wet)
-{
-    return k_dry * (1.0 - S) + k_wet * S;
-}
-
-template <>
-inline double getDValue<MeanType::ARITHMETIC_LINEAR>(const double /*S*/, double const k_dry, double const k_wet)
-{
-    return k_wet - k_dry;
-}
-
-
-template <>
-inline double getValue<MeanType::ARITHMETIC_SQUAREROOT>(const double S, double const k_dry, double const k_wet)
-{
-    return k_dry + std::sqrt(S) * (k_wet - k_dry);
-}
-
-template <>
-inline double getDValue<MeanType::ARITHMETIC_SQUAREROOT>(const double S, double const k_dry, double const k_wet)
-{
-    return 0.5 * (k_wet - k_dry) / std::sqrt(S);
-}
-
-
-template <>
-inline double getValue<MeanType::GEOMETRIC>(const double S, double const k_dry, double const k_wet)
-{
-    return k_dry * std::pow(k_wet / k_dry, S);
-}
-
-template <>
-inline double getDValue<MeanType::GEOMETRIC>(const double S, double const k_dry, double const k_wet)
-{
-    return k_dry * std::pow(k_wet / k_dry, S) * std::log(k_wet / k_dry);
-}
-
-
 /**
  * \brief Saturation dependent thermal conductivity model for soil.
  *
