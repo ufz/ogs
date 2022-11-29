@@ -173,6 +173,12 @@ private:
 template <typename Function>
 void applyToPropertyVectors(Properties const& properties, Function f);
 
+/// Returns the mapping MeshItemType -> bulk ID property name, i.e.
+/// MeshItemType::Node -> bulk_node_ids
+/// MeshItemType::Cell -> bulk_element_ids
+/// MeshItemType::Face -> bulk_face_ids
+std::string getBulkIDString(MeshItemType mesh_item_type);
+
 #include "Properties-impl.h"
 
 } // end namespace MeshLib
