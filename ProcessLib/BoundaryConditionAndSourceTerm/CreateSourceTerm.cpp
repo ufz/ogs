@@ -47,7 +47,8 @@ std::unique_ptr<SourceTerm> createSourceTerm(
     }
 
     if (!source_term_mesh.getProperties()
-             .template existsPropertyVector<std::size_t>("bulk_node_ids"))
+             .template existsPropertyVector<std::size_t>(
+                 MeshLib::getBulkIDString(MeshLib::MeshItemType::Node)))
     {
         OGS_FATAL(
             "The required bulk node ids map does not exist in the source term "

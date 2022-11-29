@@ -47,10 +47,10 @@ void addBulkMeshPropertyToSubMesh(MeshLib::Mesh const& bulk_mesh,
         switch (mesh_item_type)
         {
             case MeshLib::MeshItemType::Node:
-                return "bulk_node_ids";
+                return MeshLib::getBulkIDString(MeshLib::MeshItemType::Node);
                 break;
             case MeshLib::MeshItemType::Cell:
-                return "bulk_element_ids";
+                return MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell);
                 break;
             case MeshLib::MeshItemType::Edge:
                 WARN(

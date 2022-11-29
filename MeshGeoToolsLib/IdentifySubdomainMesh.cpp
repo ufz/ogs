@@ -100,7 +100,8 @@ std::vector<std::vector<std::size_t>> identifySubdomainMeshElements(
 {
     auto& properties = subdomain_mesh.getProperties();
     auto const& bulk_node_ids = *properties.getPropertyVector<std::size_t>(
-        "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
+        MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+        MeshLib::MeshItemType::Node, 1);
 
     // Allocate space for all elements for random insertion.
     std::vector<std::vector<std::size_t>> bulk_element_ids_map(
@@ -200,8 +201,8 @@ void identifySubdomainMesh(MeshLib::Mesh& subdomain_mesh,
         identifySubdomainMeshNodes(subdomain_mesh, mesh_node_searcher);
 
     updateOrCheckExistingSubdomainProperty(
-        subdomain_mesh, "bulk_node_ids", bulk_node_ids,
-        MeshLib::MeshItemType::Node, force_overwrite);
+        subdomain_mesh, MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+        bulk_node_ids, MeshLib::MeshItemType::Node, force_overwrite);
 
     auto const& bulk_element_ids =
         identifySubdomainMeshElements(subdomain_mesh, bulk_mesh);
@@ -223,8 +224,10 @@ void identifySubdomainMesh(MeshLib::Mesh& subdomain_mesh,
                   [](std::vector<std::size_t> const& v) { return v[0]; });
 
         updateOrCheckExistingSubdomainProperty(
-            subdomain_mesh, "bulk_element_ids", unique_bulk_element_ids,
-            MeshLib::MeshItemType::Cell, force_overwrite);
+            subdomain_mesh,
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
+            unique_bulk_element_ids, MeshLib::MeshItemType::Cell,
+            force_overwrite);
     }
     else
     {
@@ -247,8 +250,10 @@ void identifySubdomainMesh(MeshLib::Mesh& subdomain_mesh,
             subdomain_mesh, "number_bulk_elements", number_of_bulk_element_ids,
             MeshLib::MeshItemType::Cell, force_overwrite);
         updateOrCheckExistingSubdomainProperty(
-            subdomain_mesh, "bulk_element_ids", flat_bulk_element_ids,
-            MeshLib::MeshItemType::IntegrationPoint, force_overwrite);
+            subdomain_mesh,
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
+            flat_bulk_element_ids, MeshLib::MeshItemType::IntegrationPoint,
+            force_overwrite);
     }
 }
 }  // namespace MeshGeoToolsLib

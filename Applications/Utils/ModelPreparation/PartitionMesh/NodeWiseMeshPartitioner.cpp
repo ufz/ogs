@@ -807,9 +807,11 @@ void NodeWiseMeshPartitioner::renumberBulkElementIdsProperty(
 std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
     MeshLib::Mesh const& mesh) const
 {
+    auto const bulk_node_ids_string =
+        MeshLib::getBulkIDString(MeshLib::MeshItemType::Node);
     auto const& bulk_node_ids =
         mesh.getProperties().getPropertyVector<std::size_t>(
-            "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
+            bulk_node_ids_string, MeshLib::MeshItemType::Node, 1);
 
     std::vector<Partition> partitions(_partitions.size());
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)

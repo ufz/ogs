@@ -40,7 +40,8 @@ void checkParametersOfDirichletBoundaryCondition(
             dof_table_bulk.getNumberOfVariableComponents(variable_id));
     }
 
-    if (!bc_mesh.getProperties().hasPropertyVector("bulk_node_ids"))
+    if (!bc_mesh.getProperties().hasPropertyVector(
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Node)))
     {
         OGS_FATAL(
             "The required bulk node ids map does not exist in the boundary "
@@ -49,10 +50,10 @@ void checkParametersOfDirichletBoundaryCondition(
     }
 
     if (!bc_mesh.getProperties().existsPropertyVector<std::size_t>(
-            "bulk_node_ids"))
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Node)))
     {
         OGS_FATAL(
-            "The required bulk node ids map exist in the boundary mesh '{:s}' "
+            "The required bulk node ids map exists in the boundary mesh '{:s}' "
             "but has wrong data type (should be equivalent to C++ data type "
             "std::size_t which is an unsigned integer of size {:d} or UInt64 "
             "in vtk terminology).",

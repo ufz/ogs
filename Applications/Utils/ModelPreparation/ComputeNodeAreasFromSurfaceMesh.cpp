@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<std::string> id_prop_name(
         "", "id-prop-name",
         "the name of the property containing the id information", false,
-        "bulk_node_ids", "property name");
+        MeshLib::getBulkIDString(MeshLib::MeshItemType::Node), "property name");
     cmd.add(id_prop_name);
     TCLAP::ValueArg<std::string> out_base_fname(
         "p", "output-base-name",

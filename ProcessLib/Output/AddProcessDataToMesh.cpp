@@ -144,8 +144,10 @@ MeshLib::PropertyVector<std::size_t> const* getBulkNodeIdMapForPetscIfNecessary(
 
     if (&bulk_mesh_dof_table != &dof_table)
     {
+        auto const bulk_id_string =
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Node);
         if (!mesh.getProperties().existsPropertyVector<std::size_t>(
-                "bulk_node_ids"))
+                bulk_id_string))
         {
             OGS_FATAL(
                 "The required bulk node ids map does not exist in "
@@ -156,7 +158,7 @@ MeshLib::PropertyVector<std::size_t> const* getBulkNodeIdMapForPetscIfNecessary(
                 mesh.getName(), sizeof(std::size_t));
         }
         return mesh.getProperties().getPropertyVector<std::size_t>(
-            "bulk_node_ids");
+            bulk_id_string);
     }
 #endif
 
