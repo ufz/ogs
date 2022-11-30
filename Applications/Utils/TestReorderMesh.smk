@@ -40,7 +40,12 @@ rule partitioning:
         partmesh -m -n {wildcards.number_of_partitions} -i {input.a} -o cube_1x1x1_{wildcards.type}_{wildcards.lx}x{wildcards.ly}x{wildcards.lz}_{wildcards.number_of_partitions}
         cd cube_1x1x1_{wildcards.type}_{wildcards.lx}x{wildcards.ly}x{wildcards.lz}_{wildcards.number_of_partitions}
 
-        rename cube_1x1x1_{wildcards.type}_{wildcards.lx}x{wildcards.ly}x{wildcards.lz}_ bulk_mesh_ cube_1x1x1_{wildcards.type}_{wildcards.lx}x{wildcards.ly}x{wildcards.lz}_*
+        mv cube_1x1x1_{wildcards.type}_{wildcards.lx}x{wildcards.ly}x{wildcards.lz}_partitioned_cell_properties_cfg{wildcards.number_of_partitions}.bin bulk_mesh_partitioned_cell_properties_cfg{wildcards.number_of_partitions}.bin
+        mv cube_1x1x1_{wildcards.type}_{wildcards.lx}x{wildcards.ly}x{wildcards.lz}_partitioned_cell_properties_val{wildcards.number_of_partitions}.bin bulk_mesh_partitioned_cell_properties_val{wildcards.number_of_partitions}.bin
+        mv cube_1x1x1_{wildcards.type}_{wildcards.lx}x{wildcards.ly}x{wildcards.lz}_partitioned_msh_cfg{wildcards.number_of_partitions}.bin bulk_mesh_partitioned_msh_cfg{wildcards.number_of_partitions}.bin
+        mv cube_1x1x1_{wildcards.type}_{wildcards.lx}x{wildcards.ly}x{wildcards.lz}_partitioned_msh_ele{wildcards.number_of_partitions}.bin bulk_mesh_partitioned_msh_ele{wildcards.number_of_partitions}.bin
+        mv cube_1x1x1_{wildcards.type}_{wildcards.lx}x{wildcards.ly}x{wildcards.lz}_partitioned_msh_ele_g{wildcards.number_of_partitions}.bin bulk_mesh_partitioned_msh_ele_g{wildcards.number_of_partitions}.bin
+        mv cube_1x1x1_{wildcards.type}_{wildcards.lx}x{wildcards.ly}x{wildcards.lz}_partitioned_msh_nod{wildcards.number_of_partitions}.bin bulk_mesh_partitioned_msh_nod{wildcards.number_of_partitions}.bin
         """
 
 rule copy_project_and_gml_files:

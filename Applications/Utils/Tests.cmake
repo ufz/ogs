@@ -521,8 +521,7 @@ if(SNAKEMAKE AND TEE_TOOL_PATH AND BASH_TOOL_PATH)
         PROPERTIES LABELS "default")
 endif()
 
-# TODO: disable on mac: rename command is not available
-if(SNAKEMAKE AND TEE_TOOL_PATH AND BASH_TOOL_PATH AND OGS_USE_MPI AND NOT APPLE)
+if(SNAKEMAKE AND TEE_TOOL_PATH AND BASH_TOOL_PATH AND OGS_USE_MPI)
     add_test(NAME snakemake_reorder_mesh
         COMMAND bash -c "${SNAKEMAKE} -j 1 \
             --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml --forceall \
