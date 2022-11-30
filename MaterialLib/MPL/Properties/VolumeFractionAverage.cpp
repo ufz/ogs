@@ -84,6 +84,7 @@ PropertyDataType VolumeFractionAverage::value(
     // get frozen pore volume fraction, and porosity
     if (medium.hasProperty(PropertyType::volume_fraction))
     {
+        assert(properties_.frozen != nullptr);
         auto const& fraction = medium[PropertyType::volume_fraction];
         phi_fr = std::get<double>(fraction.value(variable_array, pos, t, dt));
         prop_value_frozen = std::get<double>(
