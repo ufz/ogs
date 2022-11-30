@@ -9,9 +9,11 @@
     <remove sel="/*/time_loop/processes/process/time_stepping/timesteps/pair[1]" />
     <replace sel="/*/time_loop/processes/process/time_stepping/timesteps/pair[1]/repeat/text()">6</replace>
 
-    <replace sel="/*/time_loop/output/prefix/text()">liakopoulos_restart</replace>
+    <replace sel="/*/time_loop/output/prefix/text()">liakopoulos_restart_{:meshname}</replace>
 
     <replace sel="/*/time_loop/output/fixed_output_times/text()">1200 2400 4800 6000 7200</replace>
+
+    <replace sel="/*/time_loop/output/meshes/mesh[1]/text()">liakopoulos_t_600</replace>
 
     <remove sel="/*/parameters/parameter[name=&quot;Initial_stress&quot;]" />
 
