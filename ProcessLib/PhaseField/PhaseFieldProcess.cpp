@@ -303,9 +303,15 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
             _process_data.elastic_energy, _process_data.surface_energy,
             _process_data.pressure_work, _coupled_solutions);
 
-        INFO("Elastic energy: {:g} Surface energy: {:g} Pressure work: {:g} ",
-             _process_data.elastic_energy, _process_data.surface_energy,
-             _process_data.pressure_work);
+        INFO(
+            "Elastic energy: {:g} Surface energy: {:g} Pressure work: {:g}  at "
+            "time: {:g} ",
+            _process_data.elastic_energy, _process_data.surface_energy,
+            _process_data.pressure_work, t);
+        if (_process_data.propagating_pressurized_crack)
+        {
+            INFO("Pressure: {:g} at time: {:g} ", _process_data.pressure, t);
+        }
     }
 }
 
