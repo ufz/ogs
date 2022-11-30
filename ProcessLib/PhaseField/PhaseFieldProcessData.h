@@ -210,8 +210,9 @@ struct PhaseFieldProcessData
     ParameterLib::Parameter<double> const& crack_length_scale;
     ParameterLib::Parameter<double> const& solid_density;
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
-    bool hydro_crack = false;
-    bool crack_pressure = false;
+    bool pressurized_crack = false;
+    bool propagating_pressurized_crack = false;
+    bool static_pressurized_crack = false;
     double irreversible_threshold;
     PhaseFieldModel phasefield_model;
     EnergySplitModel energy_split_model;
