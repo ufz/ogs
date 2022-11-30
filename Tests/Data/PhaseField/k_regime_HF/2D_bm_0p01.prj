@@ -18,7 +18,7 @@
             <phasefield_model>AT1</phasefield_model>
             <coupling_scheme>staggered</coupling_scheme>
             <energy_split_model>Isotropic</energy_split_model>
-            <hydro_crack_scheme>propagating</hydro_crack_scheme>
+            <pressurized_crack_scheme>propagating</pressurized_crack_scheme>
             <integration_order>2</integration_order>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>

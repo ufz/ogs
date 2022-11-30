@@ -164,8 +164,8 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     }
 
     auto const crack_scheme =
-        //! \ogs_file_param{prj__processes__process__PHASE_FIELD__hydro_crack_scheme}
-        config.getConfigParameterOptional<std::string>("hydro_crack_scheme");
+        //! \ogs_file_param{prj__processes__process__PHASE_FIELD__pressurized_crack_scheme}
+        config.getConfigParameterOptional<std::string>("pressurized_crack_scheme");
     if (crack_scheme &&
         ((*crack_scheme != "propagating") && (*crack_scheme != "static")))
     {
@@ -175,8 +175,9 @@ std::unique_ptr<Process> createPhaseFieldProcess(
             crack_scheme->c_str());
     }
 
-    const bool hydro_crack = (crack_scheme && (*crack_scheme == "propagating"));
-    const bool crack_pressure = crack_scheme.has_value();
+    const bool pressurized_crack = crack_scheme.has_value();
+    const bool propagating_pressurized_crack = (crack_scheme && (*crack_scheme == "propagating"));
+    const bool static_pressurized_crack = (crack_scheme && (*crack_scheme == "static"));
 
     auto const irreversible_threshold =
         //! \ogs_file_param{prj__processes__process__PHASE_FIELD__irreversible_threshold}
@@ -281,8 +282,9 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         crack_length_scale,
         solid_density,
         specific_body_force,
-        hydro_crack,
-        crack_pressure,
+        pressurized_crack,
+        propagating_pressurized_crack,
+        static_pressurized_crack,
         irreversible_threshold,
         phasefield_model,
         energy_split_model,
