@@ -26,14 +26,16 @@ IterationNumberBasedTimeStepping::IterationNumberBasedTimeStepping(
     double const t_initial, double const t_end, double const min_dt,
     double const max_dt, double const initial_dt,
     std::vector<int>&& iter_times_vector,
-    std::vector<double>&& multiplier_vector)
+    std::vector<double>&& multiplier_vector,
+    std::vector<double> const& fixed_times_for_output)
     : TimeStepAlgorithm(t_initial, t_end),
       _iter_times_vector(std::move(iter_times_vector)),
       _multiplier_vector(std::move(multiplier_vector)),
       _min_dt(min_dt),
       _max_dt(max_dt),
       _initial_dt(initial_dt),
-      _max_iter(_iter_times_vector.empty() ? 0 : _iter_times_vector.back())
+      _max_iter(_iter_times_vector.empty() ? 0 : _iter_times_vector.back()),
+      _fixed_times_for_output(fixed_times_for_output)
 {
     if (_iter_times_vector.empty())
     {

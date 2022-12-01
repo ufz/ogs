@@ -81,14 +81,17 @@ public:
      * (\f$a_1\f$, \f$a_2\f$, ..., \f$a_n\f$) corresponding to the intervals
      * given by iter_times_vector.
      * A time step size is calculated by \f$\Delta t_{n+1} = a * \Delta t_{n}\f$
+     * @param fixed_times_for_output a vector of fixed time points for output
      */
-    IterationNumberBasedTimeStepping(double const t_initial,
-                                     double const t_end,
-                                     double const min_dt,
-                                     double const max_dt,
-                                     double const initial_dt,
-                                     std::vector<int>&& iter_times_vector,
-                                     std::vector<double>&& multiplier_vector);
+    IterationNumberBasedTimeStepping(
+        double const t_initial,
+        double const t_end,
+        double const min_dt,
+        double const max_dt,
+        double const initial_dt,
+        std::vector<int>&& iter_times_vector,
+        std::vector<double>&& multiplier_vector,
+        std::vector<double> const& fixed_times_for_output);
 
     ~IterationNumberBasedTimeStepping() override = default;
 
@@ -128,6 +131,7 @@ private:
     int _iter_times = 0;
 
     bool _previous_time_step_accepted = true;
+    std::vector<double> const _fixed_times_for_output;
 };
 
 }  // namespace NumLib

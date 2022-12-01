@@ -49,7 +49,8 @@ public:
     EvolutionaryPIDcontroller(const double t0, const double t_end,
                               const double h0, const double h_min,
                               const double h_max, const double rel_h_min,
-                              const double rel_h_max, const double tol)
+                              const double rel_h_max, const double tol,
+                              std::vector<double> const& fixed_times_for_output)
         : TimeStepAlgorithm(t0, t_end),
           _h0(h0),
           _h_min(h_min),
@@ -58,7 +59,8 @@ public:
           _rel_h_max(rel_h_max),
           _tol(tol),
           _e_n_minus1(0.),
-          _e_n_minus2(0.)
+          _e_n_minus2(0.),
+          _fixed_times_for_output(fixed_times_for_output)
     {
     }
 
@@ -91,6 +93,8 @@ private:
 
     double _e_n_minus1;  ///< \f$e_{n-1}\f$.
     double _e_n_minus2;  ///< \f$e_{n-2}\f$.
+
+    std::vector<double> const _fixed_times_for_output;
 
     /**
      * Force the computed time step size in the given range

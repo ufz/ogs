@@ -20,7 +20,8 @@ namespace NumLib
 {
 class TimeStepAlgorithm;
 std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::vector<double> const& fixed_times_for_output)
 {
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__type}
     config.checkConfigParameter("type", "EvolutionaryPIDcontroller");
@@ -44,7 +45,14 @@ std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__tol}
     auto const tol = config.getConfigParameter<double>("tol");
 
-    return std::make_unique<EvolutionaryPIDcontroller>(
-        t0, t_end, h0, h_min, h_max, rel_h_min, rel_h_max, tol);
+    return std::make_unique<EvolutionaryPIDcontroller>(t0,
+                                                       t_end,
+                                                       h0,
+                                                       h_min,
+                                                       h_max,
+                                                       rel_h_min,
+                                                       rel_h_max,
+                                                       tol,
+                                                       fixed_times_for_output);
 }
 }  // end of namespace NumLib

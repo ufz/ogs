@@ -22,7 +22,8 @@ namespace NumLib
 {
 class TimeStepAlgorithm;
 std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::vector<double> const& fixed_times_for_output)
 {
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__type}
     config.checkConfigParameter("type", "FixedTimeStepping");
