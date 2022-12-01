@@ -473,22 +473,6 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
     return {dt, last_step_rejected};
 }
 
-std::vector<double> calculateUniqueFixedTimesForAllOutputs(
-    std::vector<Output> const& outputs)
-{
-    std::vector<double> fixed_times;
-    for (auto const& output : outputs)
-    {
-        auto const& output_fixed_times = output.getFixedOutputTimes();
-        fixed_times.insert(fixed_times.end(), output_fixed_times.begin(),
-                           output_fixed_times.end());
-    }
-    std::sort(fixed_times.begin(), fixed_times.end());
-    auto const it = std::unique(fixed_times.begin(), fixed_times.end());
-    fixed_times.erase(it, fixed_times.end());
-    return fixed_times;
-}
-
 std::vector<std::function<double(double, double)>>
 TimeLoop::generateOutputTimeStepConstraints(
     std::vector<double>&& fixed_times) const
