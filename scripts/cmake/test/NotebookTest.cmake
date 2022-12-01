@@ -56,7 +56,7 @@ function(NotebookTest)
 
     set(timeout ${ogs.ctest.large_runtime})
     if(DEFINED NotebookTest_RUNTIME)
-        math(EXPR timeout "${NotebookTest_RUNTIME} * 3")
+        math(EXPR timeout "${NotebookTest_RUNTIME} * 5")
     else()
         set(NotebookTest_RUNTIME 1)
     endif()
@@ -80,7 +80,9 @@ function(NotebookTest)
 
     set(TEST_NAME "nb-${NotebookTest_DIR}/${NotebookTest_NAME_WE}")
 
-    set(_exe_args Notebooks/testrunner.py --hugo --out ${Data_BINARY_DIR})
+    set(_exe_args Notebooks/testrunner.py --hugo --out ${Data_BINARY_DIR}
+                  --timeout ${timeout}
+    )
     if(DEFINED ENV{CI})
         list(APPEND _exe_args --hugo-out ${PROJECT_BINARY_DIR}/web)
     endif()
@@ -97,7 +99,9 @@ function(NotebookTest)
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/OgsTestWrapper.cmake
     )
 
-    current_dir_as_list(ProcessLib labels)
+    if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/ProcessLib)
+        current_dir_as_list(ProcessLib labels)
+    endif()
     list(APPEND labels Notebook)
     if(${NotebookTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
         list(APPEND labels default)

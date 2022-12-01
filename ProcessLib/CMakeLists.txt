@@ -6,6 +6,7 @@ foreach(process ${_enabled_processes})
     target_link_libraries(Processes INTERFACE ${process})
     set_target_properties(${process} PROPERTIES JOB_POOL_COMPILE heavy_tasks)
 endforeach()
+include(Tests.cmake)
 
 get_source_files(SOURCES)
 append_source_files(SOURCES BoundaryConditionAndSourceTerm)
@@ -50,6 +51,12 @@ target_compile_definitions(
             $<$<BOOL:${OGS_USE_PYTHON}>:OGS_USE_PYTHON>
 )
 
-target_precompile_headers(ProcessLib PRIVATE [["BaseLib/Error.h"]]
-    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]]
-    [["ParameterLib/Parameter.h"]] <Eigen/Core>)
+target_precompile_headers(
+    ProcessLib
+    PRIVATE
+    [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]]
+    [["BaseLib/Logging.h"]]
+    [["ParameterLib/Parameter.h"]]
+    <Eigen/Core>
+)
