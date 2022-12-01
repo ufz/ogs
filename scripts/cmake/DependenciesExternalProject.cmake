@@ -14,18 +14,26 @@ if(OGS_USE_MFRONT)
     option(OGS_BUILD_TFEL
            "Build TFEL locally. Needs to be set with a clean cache!" OFF
     )
-    set(_tfel_source
-        GIT_REPOSITORY
-        https://github.com/${ogs.minimum_version.tfel-repo}/tfel.git GIT_TAG
-        rliv-${ogs.minimum_version.tfel-rliv}
+    set(_tfel_source GIT_REPOSITORY https://github.com/thelfer/tfel.git GIT_TAG
+                     ${ogs.minimum_version.tfel}
     )
     set(_tfel_source_file
-        ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/tfel-rliv-${ogs.minimum_version.tfel-rliv}.zip
+        ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/tfel-${ogs.minimum_version.tfel}.zip
     )
     if(EXISTS ${_tfel_source_file})
         set(_tfel_source URL ${_tfel_source_file})
     elseif(NOT OGS_BUILD_TFEL)
         find_program(MFRONT mfront)
+        if(MFRONT AND APPLE)
+            # TODO: check for version
+            # ~~~
+            # ➜ mfront --version
+            # tfel
+            # Version : 4.0.0
+            # ~~~
+            string(REPLACE "mfront" "" _mfront_bin_dir ${MFRONT})
+            set(TFELHOME ${_mfront_bin_dir}/..)
+        endif()
     endif()
     if(NOT MFRONT)
         BuildExternalProject(
