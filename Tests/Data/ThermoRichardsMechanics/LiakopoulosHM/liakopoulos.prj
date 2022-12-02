@@ -189,6 +189,13 @@
             <type>VTK</type>
             <prefix>{:meshname}</prefix>
             <suffix>_t_{:gtime}</suffix>
+            <meshes>
+                <mesh>liakopoulos</mesh>
+                <mesh>liakopoulos_left</mesh>
+                <mesh>liakopoulos_right</mesh>
+                <mesh>liakopoulos_top</mesh>
+                <mesh>liakopoulos_bottom</mesh>
+            </meshes>
             <timesteps>
                 <pair>
                     <repeat>500</repeat>

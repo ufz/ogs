@@ -216,7 +216,7 @@ std::vector<double> const&
 LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
     const double t,
     std::vector<GlobalVector*> const& x,
-    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
     std::vector<double>& velocity_cache) const
 {
     // TODO (tf) Temporary value not used by current material models. Need
@@ -225,7 +225,7 @@ LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
 
     constexpr int process_id = 0;
     auto const indices =
-        NumLib::getIndices(_element.getID(), *dof_table[process_id]);
+        NumLib::getIndices(_element.getID(), *dof_tables[process_id]);
     auto const local_x = x[process_id]->get(indices);
     auto const n_integration_points = _integration_method.getNumberOfPoints();
     velocity_cache.clear();

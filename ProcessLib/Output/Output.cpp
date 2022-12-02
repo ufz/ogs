@@ -24,38 +24,105 @@
 
 namespace ProcessLib
 {
-void addBulkMeshNodePropertyToSubMesh(MeshLib::Mesh const& bulk_mesh,
-                                      MeshLib::Mesh& sub_mesh,
-                                      std::string const& property_name)
+void addBulkMeshPropertyToSubMesh(MeshLib::Mesh const& bulk_mesh,
+                                  MeshLib::Mesh& sub_mesh,
+                                  std::string const& property_name)
 {
     if (bulk_mesh == sub_mesh)
     {
         return;
     }
-    if (!bulk_mesh.getProperties().existsPropertyVector<double>(
-            property_name, MeshLib::MeshItemType::Node, 1))
+
+    if (!bulk_mesh.getProperties().existsPropertyVector<double>(property_name))
+    {
+        return;
+    }
+    auto const& bulk_mesh_property =
+        *bulk_mesh.getProperties().getPropertyVector<double>(property_name);
+    auto const mesh_item_type = bulk_mesh_property.getMeshItemType();
+
+    std::string const mesh_item_type_string = [mesh_item_type,
+                                               &property_name]() -> std::string
+    {
+        switch (mesh_item_type)
+        {
+            case MeshLib::MeshItemType::Node:
+                return "bulk_node_ids";
+                break;
+            case MeshLib::MeshItemType::Cell:
+                return "bulk_element_ids";
+                break;
+            case MeshLib::MeshItemType::Edge:
+                WARN(
+                    "Property '{}' is assigned to edges. But mappings from the "
+                    "bulk edges to submesh edges isn't implemented. Mesh item "
+                    "type 'Edge' is not supported, only 'Node' and 'Cell' are "
+                    "implemented at the moment.",
+                    property_name);
+                return "";
+                break;
+            case MeshLib::MeshItemType::Face:
+                WARN(
+                    "Property '{}' is assigned to faces. But mappings from the "
+                    "bulk faces to submesh faces isn't implemented. Mesh item "
+                    "type 'Face' is not supported, only 'Node' and 'Cell' are "
+                    "implemented at the moment.",
+                    property_name);
+                return "";
+                break;
+            case MeshLib::MeshItemType::IntegrationPoint:
+                WARN(
+                    "Property '{}' is assigned to integration points. But "
+                    "mappings from the bulk integration points to submesh "
+                    "integration points isn't implemented. Mesh item type "
+                    "'IntegrationPoint' is not supported, only 'Node' and "
+                    "'Cell' are implemented at the moment.",
+                    property_name);
+                return "";
+                break;
+            default:
+                OGS_FATAL("Unknown mesh item type '{}'.",
+                          static_cast<int>(mesh_item_type));
+                return "";
+        }
+    }();
+
+    if (mesh_item_type_string.empty())
     {
         return;
     }
     if (!sub_mesh.getProperties().existsPropertyVector<std::size_t>(
-            "bulk_node_ids", MeshLib::MeshItemType::Node, 1))
+            mesh_item_type_string, mesh_item_type, 1))
     {
+        WARN(
+            "The property {} is required for output on the mesh {}, but it "
+            "doesn't exist.",
+            mesh_item_type_string, sub_mesh.getName());
         return;
     }
 
-    auto const& bulk_mesh_property =
-        *bulk_mesh.getProperties().getPropertyVector<double>(property_name);
-    auto const& bulk_node_ids =
+    auto const& bulk_ids =
         *sub_mesh.getProperties().getPropertyVector<std::size_t>(
-            "bulk_node_ids");
+            mesh_item_type_string);
 
+    auto const number_of_components =
+        bulk_mesh_property.getNumberOfGlobalComponents();
     auto& sub_mesh_property = *MeshLib::getOrCreateMeshProperty<double>(
-        sub_mesh, property_name, MeshLib::MeshItemType::Node, 1);
+        sub_mesh, property_name, mesh_item_type, number_of_components);
 
-    std::transform(std::begin(bulk_node_ids), std::end(bulk_node_ids),
-                   std::begin(sub_mesh_property),
-                   [&bulk_mesh_property](auto const id)
-                   { return bulk_mesh_property[id]; });
+    for (std::size_t sub_mesh_node_id = 0;
+         sub_mesh_node_id < bulk_ids.getNumberOfTuples();
+         ++sub_mesh_node_id)
+    {
+        auto const& bulk_id = bulk_ids[sub_mesh_node_id];
+        for (std::remove_cv_t<decltype(number_of_components)> c = 0;
+             c < number_of_components;
+             ++c)
+        {
+            sub_mesh_property.getComponent(sub_mesh_node_id, c) =
+                bulk_mesh_property.getComponent(bulk_id, c);
+        }
+    }
 }
 
 bool Output::isOutputProcess(const int process_id, const Process& process) const
@@ -128,12 +195,39 @@ MeshLib::Mesh const& Output::prepareSubmesh(
                          _output_data_specification);
 
     auto const& bulk_mesh = process.getMesh();
-    auto const& node_property_names =
-        bulk_mesh.getProperties().getPropertyVectorNames(
-            MeshLib::MeshItemType::Node);
-    for (auto const& name : node_property_names)
+    auto const& property_names =
+        bulk_mesh.getProperties().getPropertyVectorNames();
+
+    auto filter_residuum = [](std::string const& name) -> bool
     {
-        addBulkMeshNodePropertyToSubMesh(bulk_mesh, submesh, name);
+        using namespace std::literals::string_view_literals;
+        static constexpr std::string_view names[] = {
+            "GasMassFlowRate"sv,    "heat_flux"sv,    "HeatFlowRate"sv,
+            "LiquidMassFlowRate"sv, "MassFlowRate"sv, "MaterialForces"sv,
+            "MolarFlowRate"sv,      "NodalForces"sv,  "NodalForcesJump"sv,
+            "VolumetricFlowRate"sv};
+        return std::find(std::begin(names), std::end(names), name) ==
+               std::end(names);
+    };
+
+    for (auto const& name : property_names)
+    {
+        if (bulk_mesh.getDimension() == submesh.getDimension())
+        {
+            // omit the 'simple' transfer of the properties in the if condition
+            // on submeshes with equal dimension to the bulk mesh
+            // for those data extra assembly is required
+            if (filter_residuum(name))
+            {
+                continue;
+            }
+        }
+        else
+        {
+            // For residuum based properties it is assumed that the lower
+            // dimensional mesh is a boundary mesh!
+            addBulkMeshPropertyToSubMesh(bulk_mesh, submesh, name);
+        }
     }
     return submesh;
 }
