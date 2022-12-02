@@ -262,8 +262,8 @@
 
         <parameter>
             <name>E</name>
-            <type>Constant</type>
-            <value>21.e8</value>
+            <type>Function</type>
+            <expression>21.e8*sqrt((x+1)^2)/(x+1)</expression>
         </parameter>
 
         <parameter>
