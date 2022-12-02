@@ -105,7 +105,8 @@ if(OGS_USE_MFRONT)
     CPMAddPackage(
         NAME MGIS
         GITHUB_REPOSITORY ufz/MFrontGenericInterfaceSupport
-        GIT_TAG 5e04da987ca421b57759e8559b3f169289abe832 # ogs-fixes branch
+        # fixes branch: rliv-2.0-ogs
+        GIT_TAG 36c886f26e3aef89d377d43bd35a66ee0415ad9f
         OPTIONS "enable-doxygen-doc OFF" "enable-fortran-bindings OFF"
                 "enable-website OFF"
         EXCLUDE_FROM_ALL YES

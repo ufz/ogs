@@ -22,9 +22,8 @@
     "snakemake": "7.15.2",
     "hdf5": "1.12.1",
     "libxml2": "2.9.12",
-    "tfel-rliv": "3.4",
+    "tfel-rliv": "4.0",
     "tfel-repo": "thelfer",
-    "tfel": "c12e865a405f0d070f6113d0da439cffa3af376d",
     "lis": "1.7.37",
     "gtest": "1.11.0"
   },

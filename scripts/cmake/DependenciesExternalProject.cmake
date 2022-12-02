@@ -14,11 +14,13 @@ if(OGS_USE_MFRONT)
     option(OGS_BUILD_TFEL
            "Build TFEL locally. Needs to be set with a clean cache!" OFF
     )
-    set(_tfel_source GIT_REPOSITORY https://github.com/thelfer/tfel.git GIT_TAG
-                     ${ogs.minimum_version.tfel}
+    set(_tfel_source
+        GIT_REPOSITORY
+        https://github.com/${ogs.minimum_version.tfel-repo}/tfel.git GIT_TAG
+        rliv-${ogs.minimum_version.tfel-rliv}
     )
     set(_tfel_source_file
-        ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/tfel-${ogs.minimum_version.tfel}.zip
+        ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/tfel-rliv-${ogs.minimum_version.tfel-rliv}.zip
     )
     if(EXISTS ${_tfel_source_file})
         set(_tfel_source URL ${_tfel_source_file})
