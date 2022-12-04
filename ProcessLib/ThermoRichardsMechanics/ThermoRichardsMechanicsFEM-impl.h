@@ -23,6 +23,7 @@
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
+#include "ProcessLib/Graph/Get.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidDensity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidViscosity.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
@@ -390,14 +391,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
      *   argument, not add to it
      */
 
-    auto const& sigma_total =
-        ConstitutiveTraits::ConstitutiveSetting::totalStress(CD, current_state);
-
     // residual, order T, p, u
     block_p(out.res).noalias() =
         dNdx.transpose() * std::get<EqPData<DisplacementDim>>(CD).rhs_p_dNT_V;
     block_u(out.res).noalias() =
-        B.transpose() * sigma_total -
+        B.transpose() *
+            ProcessLib::Graph::get<TotalStressData<DisplacementDim>>(
+                CD, current_state)
+                .sigma_total -
         static_cast<int>(this->process_data_.apply_body_force_for_deformation) *
             N_u_op(N_u).transpose() *
             std::get<GravityData<DisplacementDim>>(CD).volumetric_body_force;
