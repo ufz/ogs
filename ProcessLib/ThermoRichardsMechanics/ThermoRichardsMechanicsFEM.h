@@ -22,6 +22,8 @@
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TransportPorosity.h"
 #include "ThermoRichardsMechanicsProcessData.h"
 
 namespace ProcessLib
@@ -303,22 +305,22 @@ public:
             {
                 // Initial porosity. Could be read from integration point data
                 // or mesh.
-                current_state.poro_data.phi =
+                std::get<PorosityData>(current_state).phi =
                     medium.property(MPL::porosity)
                         .template initialValue<double>(x_position,
                                                        time_independent);
 
                 if (medium.hasProperty(MPL::PropertyType::transport_porosity))
                 {
-                    current_state.transport_poro_data.phi =
+                    std::get<TransportPorosityData>(current_state).phi =
                         medium.property(MPL::transport_porosity)
                             .template initialValue<double>(x_position,
                                                            time_independent);
                 }
                 else
                 {
-                    current_state.transport_poro_data.phi =
-                        current_state.poro_data.phi;
+                    std::get<TransportPorosityData>(current_state).phi =
+                        std::get<PorosityData>(current_state).phi;
                 }
             }
 

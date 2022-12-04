@@ -33,33 +33,19 @@ namespace ConstitutiveStressSaturation_StrainPressureTemperature
 {
 /// Data whose state must be tracked by the TRM process.
 template <int DisplacementDim>
-struct StatefulData
-{
-    SaturationData S_L_data;
-    PorosityData poro_data;
-    TransportPorosityData transport_poro_data;
-    StrainData<DisplacementDim> eps_data;
-    // TODO swelling is not used in this constitutive setting, but the stateful
-    // data is set in setInitialConditionsConcrete()
-    // Once this has been refactored, the swelling code can be moved from the
-    // common to the original subdirectory for constitutive settings
-    SwellingDataStateful<DisplacementDim> swelling_data;
-    SolidMechanicsDataStateful<DisplacementDim> s_mech_data;
-    TotalStressData<DisplacementDim> total_stress_data;
+using StatefulData =
+    std::tuple<SaturationData, PorosityData, TransportPorosityData,
+               StrainData<DisplacementDim>,
+               // TODO swelling is not used in this constitutive setting, but
+               // the stateful data is set in setInitialConditionsConcrete()
+               // Once this has been refactored, the swelling code can be moved
+               // from the common to the original subdirectory for constitutive
+               // settings
+               SwellingDataStateful<DisplacementDim>,
+               SolidMechanicsDataStateful<DisplacementDim>,
+               TotalStressData<DisplacementDim>>;
 
-    static auto reflect()
-    {
-        using Self = StatefulData<DisplacementDim>;
-
-        return Reflection::reflectWithoutName(&Self::S_L_data,
-                                              &Self::poro_data,
-                                              &Self::transport_poro_data,
-                                              &Self::eps_data,
-                                              &Self::swelling_data,
-                                              &Self::total_stress_data);
-    }
-};
-
+// TODO convert to tuple
 /// Data whose state must be tracked by the TRM process.
 template <int DisplacementDim>
 struct StatefulDataPrev
@@ -75,13 +61,14 @@ struct StatefulDataPrev
     StatefulDataPrev<DisplacementDim>& operator=(
         StatefulData<DisplacementDim> const& state)
     {
-        S_L_data = state.S_L_data;
-        poro_data = state.poro_data;
-        transport_poro_data = state.transport_poro_data;
-        eps_data = state.eps_data;
-        swelling_data = state.swelling_data;
-        s_mech_data = state.s_mech_data;
-        total_stress_data = state.total_stress_data;
+        S_L_data = std::get<SaturationData>(state);
+        poro_data = std::get<PorosityData>(state);
+        transport_poro_data = std::get<TransportPorosityData>(state);
+        eps_data = std::get<StrainData<DisplacementDim>>(state);
+        swelling_data = std::get<SwellingDataStateful<DisplacementDim>>(state);
+        s_mech_data =
+            std::get<SolidMechanicsDataStateful<DisplacementDim>>(state);
+        total_stress_data = std::get<TotalStressData<DisplacementDim>>(state);
 
         return *this;
     }

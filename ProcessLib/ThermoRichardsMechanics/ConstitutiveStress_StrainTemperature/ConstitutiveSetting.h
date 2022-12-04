@@ -50,12 +50,14 @@ struct ConstitutiveSetting
     static KelvinVector<DisplacementDim> const& statefulStress(
         StatefulData<DisplacementDim> const& state)
     {
-        return state.s_mech_data.sigma_eff;
+        return std::get<SolidMechanicsDataStateful<DisplacementDim>>(state)
+            .sigma_eff;
     }
     static KelvinVector<DisplacementDim>& statefulStress(
         StatefulData<DisplacementDim>& state)
     {
-        return state.s_mech_data.sigma_eff;
+        return std::get<SolidMechanicsDataStateful<DisplacementDim>>(state)
+            .sigma_eff;
     }
 };
 

@@ -33,27 +33,11 @@ namespace ConstitutiveStress_StrainTemperature
 {
 /// Data whose state must be tracked by the TRM process.
 template <int DisplacementDim>
-struct StatefulData
-{
-    SaturationData S_L_data;
-    PorosityData poro_data;
-    TransportPorosityData transport_poro_data;
-    StrainData<DisplacementDim> eps_data;
-    SwellingDataStateful<DisplacementDim> swelling_data;
-    SolidMechanicsDataStateful<DisplacementDim> s_mech_data;
-
-    static auto reflect()
-    {
-        using Self = StatefulData<DisplacementDim>;
-
-        return Reflection::reflectWithoutName(&Self::S_L_data,
-                                              &Self::poro_data,
-                                              &Self::transport_poro_data,
-                                              &Self::eps_data,
-                                              &Self::swelling_data,
-                                              &Self::s_mech_data);
-    }
-};
+using StatefulData =
+    std::tuple<SaturationData, PorosityData, TransportPorosityData,
+               StrainData<DisplacementDim>,
+               SwellingDataStateful<DisplacementDim>,
+               SolidMechanicsDataStateful<DisplacementDim>>;
 
 template <int DisplacementDim>
 struct StatefulDataPrev
@@ -68,12 +52,13 @@ struct StatefulDataPrev
     StatefulDataPrev<DisplacementDim>& operator=(
         StatefulData<DisplacementDim> const& state)
     {
-        S_L_data = state.S_L_data;
-        poro_data = state.poro_data;
-        transport_poro_data = state.transport_poro_data;
-        eps_data = state.eps_data;
-        swelling_data = state.swelling_data;
-        s_mech_data = state.s_mech_data;
+        S_L_data = std::get<SaturationData>(state);
+        poro_data = std::get<PorosityData>(state);
+        transport_poro_data = std::get<TransportPorosityData>(state);
+        eps_data = std::get<StrainData<DisplacementDim>>(state);
+        swelling_data = std::get<SwellingDataStateful<DisplacementDim>>(state);
+        s_mech_data =
+            std::get<SolidMechanicsDataStateful<DisplacementDim>>(state);
 
         return *this;
     }

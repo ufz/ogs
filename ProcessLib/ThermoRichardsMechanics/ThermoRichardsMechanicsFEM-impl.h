@@ -147,9 +147,13 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 this->solid_material_}
                 .eval(x_t, {T_ip, 0, {}}, C_el_data);
 
-            auto const& eps = this->current_states_[ip].eps_data.eps;
+            auto const& eps =
+                std::get<StrainData<DisplacementDim>>(this->current_states_[ip])
+                    .eps;
             auto const& sigma_sw =
-                this->current_states_[ip].swelling_data.sigma_sw;
+                std::get<SwellingDataStateful<DisplacementDim>>(
+                    this->current_states_[ip])
+                    .sigma_sw;
             this->prev_states_[ip].s_mech_data->eps_m.noalias() =
                 solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
                     ? eps + C_el_data.C_el.inverse() * sigma_sw
@@ -568,8 +572,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   this->material_states_[ip], tmp, output_data,
                                   CD);
 
-        saturation_avg += current_state.S_L_data.S_L;
-        porosity_avg += current_state.poro_data.phi;
+        saturation_avg += std::get<SaturationData>(current_state).S_L;
+        porosity_avg += std::get<PorosityData>(current_state).phi;
 
         liquid_density_avg += std::get<LiquidDensityData>(output_data).rho_LR;
         viscosity_avg += std::get<LiquidViscosityData>(output_data).viscosity;
