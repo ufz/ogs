@@ -17,6 +17,7 @@ append_source_files(SOURCES SurfaceFlux)
 append_source_files(SOURCES Output)
 append_source_files(SOURCES Utils)
 append_source_files(SOURCES Reflection)
+append_source_files(SOURCES Graph)
 ### For processes that contains both hydraulical process and mechanical process
 # Define a function to check if enabled_processes contains LIE, HydroMechanics,
 # ThermoHydroMechanics, RichardsMechanics, or ThermoRichardsMechanics
