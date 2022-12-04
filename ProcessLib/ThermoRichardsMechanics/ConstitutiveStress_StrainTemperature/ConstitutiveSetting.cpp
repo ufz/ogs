@@ -11,7 +11,6 @@
 #include "ConstitutiveSetting.h"
 
 #include "ProcessLib/Graph/Apply.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Invoke.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
