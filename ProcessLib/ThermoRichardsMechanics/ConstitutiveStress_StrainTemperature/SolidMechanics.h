@@ -27,14 +27,14 @@ namespace ProcessLib::ThermoRichardsMechanics
 namespace ConstitutiveStress_StrainTemperature
 {
 template <int DisplacementDim>
-struct SolidMechanicsDataStateful
+struct EffectiveStressData
 {
     // TODO it seems fragile that some data have to be initialized that way.
     KelvinVector<DisplacementDim> sigma_eff = KV::KVzero<DisplacementDim>();
 
     static auto reflect()
     {
-        using Self = SolidMechanicsDataStateful<DisplacementDim>;
+        using Self = EffectiveStressData<DisplacementDim>;
 
         return ProcessLib::Reflection::reflectWithName("sigma",
                                                        &Self::sigma_eff);
@@ -62,9 +62,9 @@ struct SolidMechanicsModel
         StrainData<DisplacementDim> const& eps_data,
         PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
         MaterialStateData<DisplacementDim>& mat_state,
-        PrevState<SolidMechanicsDataStateful<DisplacementDim>> const&
-            prev_state,
-        SolidMechanicsDataStateful<DisplacementDim>& current_state,
+        PrevState<EffectiveStressData<DisplacementDim>> const&
+            sigma_eff_prev_data,
+        EffectiveStressData<DisplacementDim>& sigma_eff_data,
         PrevState<MechanicalStrainData<DisplacementDim>> const& eps_m_prev_data,
         MechanicalStrainData<DisplacementDim>& eps_m_data,
         TotalStressData<DisplacementDim>& total_stress_data,

@@ -38,7 +38,7 @@ using StatefulData =
                StrainData<DisplacementDim>,
                SwellingDataStateful<DisplacementDim>,
                MechanicalStrainData<DisplacementDim>,
-               SolidMechanicsDataStateful<DisplacementDim>>;
+               EffectiveStressData<DisplacementDim>>;
 
 template <int DisplacementDim>
 using StatefulDataPrev = PrevStateOf<StatefulData<DisplacementDim>>;

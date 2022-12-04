@@ -126,9 +126,8 @@ void ConstitutiveSetting<DisplacementDim>::eval(
         std::get<PrevState<StrainData<DisplacementDim>>>(
             prev_state) /* TODO why is eps stateful? */,
         mat_state,
-        std::get<PrevState<SolidMechanicsDataStateful<DisplacementDim>>>(
-            prev_state),
-        std::get<SolidMechanicsDataStateful<DisplacementDim>>(state),
+        std::get<PrevState<EffectiveStressData<DisplacementDim>>>(prev_state),
+        std::get<EffectiveStressData<DisplacementDim>>(state),
         std::get<PrevState<MechanicalStrainData<DisplacementDim>>>(prev_state),
         std::get<MechanicalStrainData<DisplacementDim>>(state),
         std::get<TotalStressData<DisplacementDim>>(cd),
