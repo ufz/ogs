@@ -32,21 +32,12 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     OutputData<DisplacementDim>& out,
     ConstitutiveData<DisplacementDim>& cd) const
 {
-    namespace MPL = MaterialPropertyLib;
-
-    auto& biot_data = std::get<BiotData>(tmp);
-    auto& bishops_data_prev = std::get<PrevState<BishopsData>>(tmp);
-    auto& poro_data = std::get<PorosityData>(state);
-
-    SpaceTimeData const x_t{x_position, t, dt};
-    MediaData const media_data{medium};
+    namespace G = ProcessLib::Graph;
 
     auto const aux_data = std::tuple{SpaceTimeData{x_position, t, dt},
                                      MediaData{medium}, T_data, p_cap_data};
 
     auto const mat_state_tuple = std::tie(mat_state);
-
-    namespace G = ProcessLib::Graph;
 
     // TODO will eps lag one iteration behind? (since it's not updated after
     // solving the global equation system)
@@ -58,22 +49,22 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     G::apply(models.S_L_model, aux_data, state, tmp);
 
     G::apply(models.bishops_model, aux_data, state, tmp);
-
-    assertEvalArgsUnique(models.bishops_model);
     // TODO why not ordinary state tracking?
-    models.bishops_model.eval(x_t, media_data,
-                              *std::get<PrevState<SaturationData>>(prev_state),
-                              *bishops_data_prev);
-
+    G::apply(models.bishops_prev_model, aux_data, prev_state, tmp);
     G::apply(models.poro_model, aux_data, tmp, state, prev_state);
 
-    if (biot_data() < poro_data.phi)
     {
-        OGS_FATAL(
-            "ThermoRichardsMechanics: Biot-coefficient {} is smaller than "
-            "porosity {} in element/integration point {}/{}.",
-            biot_data(), poro_data.phi, *x_position.getElementID(),
-            *x_position.getIntegrationPoint());
+        auto const& biot_data = std::get<BiotData>(tmp);
+        auto const& poro_data = std::get<PorosityData>(state);
+
+        if (biot_data() < poro_data.phi)
+        {
+            OGS_FATAL(
+                "ThermoRichardsMechanics: Biot-coefficient {} is smaller than "
+                "porosity {} in element/integration point {}/{}.",
+                biot_data(), poro_data.phi, *x_position.getElementID(),
+                *x_position.getIntegrationPoint());
+        }
     }
 
     G::apply(models.swelling_model, aux_data, state, prev_state, tmp);

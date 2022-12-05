@@ -53,6 +53,7 @@ struct ConstitutiveModels
         solid_compressibility_model;
     SaturationModel<DisplacementDim> S_L_model;
     BishopsModel bishops_model;
+    BishopsPrevModel bishops_prev_model;
     PorosityModel<DisplacementDim> poro_model;
     TransportPorosityModel<DisplacementDim> transport_poro_model;
     SwellingModel<DisplacementDim> swelling_model;

@@ -12,8 +12,10 @@
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-void BishopsModel::eval(SpaceTimeData const& x_t, MediaData const& media_data,
-                        SaturationData const& S_L_data, BishopsData& out) const
+static void bishopsModelEvalImpl(SpaceTimeData const& x_t,
+                                 MediaData const& media_data,
+                                 SaturationData const& S_L_data,
+                                 BishopsData& out)
 {
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
@@ -28,5 +30,19 @@ void BishopsModel::eval(SpaceTimeData const& x_t, MediaData const& media_data,
                         .template dValue<double>(
                             variables, MPL::Variable::liquid_saturation, x_t.x,
                             x_t.t, x_t.dt);
+}
+
+void BishopsModel::eval(SpaceTimeData const& x_t, MediaData const& media_data,
+                        SaturationData const& S_L_data, BishopsData& out) const
+{
+    bishopsModelEvalImpl(x_t, media_data, S_L_data, out);
+}
+
+void BishopsPrevModel::eval(SpaceTimeData const& x_t,
+                            MediaData const& media_data,
+                            PrevState<SaturationData> const& S_L_data,
+                            PrevState<BishopsData>& out) const
+{
+    bishopsModelEvalImpl(x_t, media_data, *S_L_data, *out);
 }
 }  // namespace ProcessLib::ThermoRichardsMechanics
