@@ -10,6 +10,10 @@
 
 #pragma once
 
+#include "ConstitutiveStress_StrainTemperature/Traits.h"
+#ifdef OGS_USE_MFRONT
+#include "ConstitutiveStressSaturation_StrainPressureTemperature/Traits.h"
+#endif
 #include "LocalAssemblerInterface.h"
 #include "ProcessLib/Process.h"
 #include "ThermoRichardsMechanicsProcessData.h"
@@ -105,7 +109,7 @@ namespace ThermoRichardsMechanics
  * \f]
  * where the superscript \f${\text T}\f$ means transpose,
  */
-template <int DisplacementDim>
+template <int DisplacementDim, typename ConstitutiveTraits>
 class ThermoRichardsMechanicsProcess final : public Process
 {
 public:
@@ -119,7 +123,8 @@ public:
         unsigned const integration_order,
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
-        ThermoRichardsMechanicsProcessData<DisplacementDim>&& process_data,
+        ThermoRichardsMechanicsProcessData<DisplacementDim,
+                                           ConstitutiveTraits>&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         bool const use_monolithic_scheme);
 
@@ -145,7 +150,8 @@ public:
         const int process_id) const override;
 
 private:
-    using LocalAssemblerIF = LocalAssemblerInterface<DisplacementDim>;
+    using LocalAssemblerIF =
+        LocalAssemblerInterface<DisplacementDim, ConstitutiveTraits>;
 
     void constructDofTable() override;
 
@@ -182,7 +188,8 @@ private:
 private:
     std::vector<MeshLib::Node*> base_nodes_;
     std::unique_ptr<MeshLib::MeshSubset const> mesh_subset_base_nodes_;
-    ThermoRichardsMechanicsProcessData<DisplacementDim> process_data_;
+    ThermoRichardsMechanicsProcessData<DisplacementDim, ConstitutiveTraits>
+        process_data_;
 
     std::vector<std::unique_ptr<LocalAssemblerIF>> local_assemblers_;
 
@@ -221,8 +228,19 @@ private:
     MeshLib::PropertyVector<double>* heat_flux_ = nullptr;
 };
 
-extern template class ThermoRichardsMechanicsProcess<2>;
-extern template class ThermoRichardsMechanicsProcess<3>;
+extern template class ThermoRichardsMechanicsProcess<
+    2, ConstitutiveStress_StrainTemperature::ConstitutiveTraits<2>>;
+extern template class ThermoRichardsMechanicsProcess<
+    3, ConstitutiveStress_StrainTemperature::ConstitutiveTraits<3>>;
+
+#ifdef OGS_USE_MFRONT
+extern template class ThermoRichardsMechanicsProcess<
+    2, ConstitutiveStressSaturation_StrainPressureTemperature::
+           ConstitutiveTraits<2>>;
+extern template class ThermoRichardsMechanicsProcess<
+    3, ConstitutiveStressSaturation_StrainPressureTemperature::
+           ConstitutiveTraits<3>>;
+#endif
 
 }  // namespace ThermoRichardsMechanics
 }  // namespace ProcessLib

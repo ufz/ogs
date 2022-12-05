@@ -27,18 +27,33 @@ namespace ProcessLib
 {
 namespace ThermoRichardsMechanics
 {
-template <int DisplacementDim>
-ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
-    std::string name,
-    MeshLib::Mesh& mesh,
-    std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    unsigned const integration_order,
-    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
-        process_variables,
-    ThermoRichardsMechanicsProcessData<DisplacementDim>&& process_data,
-    SecondaryVariableCollection&& secondary_variables,
-    bool const use_monolithic_scheme)
+template <typename ConstitutiveTraits>
+struct ThermoRichardsMechanicsLocalAssembler3Args
+{
+    template <typename ShapeFunctionDisplacement, typename ShapeFunction,
+              int DisplacementDim>
+    using LocalAssemblerImplementation =
+        ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
+                                              ShapeFunction, DisplacementDim,
+                                              ConstitutiveTraits>;
+};
+
+template <int DisplacementDim, typename ConstitutiveTraits>
+ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
+    ThermoRichardsMechanicsProcess(
+        std::string name,
+        MeshLib::Mesh& mesh,
+        std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
+            jacobian_assembler,
+        std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+            parameters,
+        unsigned const integration_order,
+        std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
+            process_variables,
+        ThermoRichardsMechanicsProcessData<DisplacementDim,
+                                           ConstitutiveTraits>&& process_data,
+        SecondaryVariableCollection&& secondary_variables,
+        bool const use_monolithic_scheme)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
@@ -59,24 +74,26 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
                          local_assemblers_);
 }
 
-template <int DisplacementDim>
-bool ThermoRichardsMechanicsProcess<DisplacementDim>::isLinear() const
+template <int DisplacementDim, typename ConstitutiveTraits>
+bool ThermoRichardsMechanicsProcess<DisplacementDim,
+                                    ConstitutiveTraits>::isLinear() const
 {
     return false;
 }
 
-template <int DisplacementDim>
-MathLib::MatrixSpecifications
-ThermoRichardsMechanicsProcess<DisplacementDim>::getMatrixSpecifications(
-    const int /*process_id*/) const
+template <int DisplacementDim, typename ConstitutiveTraits>
+MathLib::MatrixSpecifications ThermoRichardsMechanicsProcess<
+    DisplacementDim,
+    ConstitutiveTraits>::getMatrixSpecifications(const int /*process_id*/) const
 {
     auto const& l = *_local_to_global_index_map;
     return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
             &l.getGhostIndices(), &this->_sparsity_pattern};
 }
 
-template <int DisplacementDim>
-void ThermoRichardsMechanicsProcess<DisplacementDim>::constructDofTable()
+template <int DisplacementDim, typename ConstitutiveTraits>
+void ThermoRichardsMechanicsProcess<DisplacementDim,
+                                    ConstitutiveTraits>::constructDofTable()
 {
     // Create single component dof in every of the mesh's nodes.
     _mesh_subset_all_nodes = std::make_unique<MeshLib::MeshSubset>(
@@ -118,14 +135,16 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::constructDofTable()
     assert(_local_to_global_index_map);
 }
 
-template <int DisplacementDim>
-void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
-    NumLib::LocalToGlobalIndexMap const& dof_table,
-    MeshLib::Mesh const& mesh,
-    unsigned const integration_order)
+template <int DisplacementDim, typename ConstitutiveTraits>
+void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
+    initializeConcreteProcess(NumLib::LocalToGlobalIndexMap const& dof_table,
+                              MeshLib::Mesh const& mesh,
+                              unsigned const integration_order)
 {
-    createLocalAssemblersHM<DisplacementDim,
-                            ThermoRichardsMechanicsLocalAssembler>(
+    createLocalAssemblersHM<
+        DisplacementDim,
+        ThermoRichardsMechanicsLocalAssembler3Args<
+            ConstitutiveTraits>::template LocalAssemblerImplementation>(
         mesh.getElements(), dof_table, local_assemblers_,
         NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
         process_data_);
@@ -194,17 +213,17 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                                                 *_local_to_global_index_map);
 }
 
-template <int DisplacementDim>
+template <int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsProcess<
-    DisplacementDim>::initializeBoundaryConditions()
+    DisplacementDim, ConstitutiveTraits>::initializeBoundaryConditions()
 {
     const int process_id = 0;
     initializeProcessBoundaryConditionsAndSourceTerms(
         *_local_to_global_index_map, process_id);
 }
 
-template <int DisplacementDim>
-void ThermoRichardsMechanicsProcess<DisplacementDim>::
+template <int DisplacementDim, typename ConstitutiveTraits>
+void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
                                         double const t,
                                         int const process_id)
@@ -217,12 +236,13 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::
         process_id);
 }
 
-template <int DisplacementDim>
-void ThermoRichardsMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
-    const double /*t*/, double const /*dt*/,
-    std::vector<GlobalVector*> const& /*x*/,
-    std::vector<GlobalVector*> const& /*xdot*/, int const /*process_id*/,
-    GlobalMatrix& /*M*/, GlobalMatrix& /*K*/, GlobalVector& /*b*/)
+template <int DisplacementDim, typename ConstitutiveTraits>
+void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
+    assembleConcreteProcess(const double /*t*/, double const /*dt*/,
+                            std::vector<GlobalVector*> const& /*x*/,
+                            std::vector<GlobalVector*> const& /*xdot*/,
+                            int const /*process_id*/, GlobalMatrix& /*M*/,
+                            GlobalMatrix& /*K*/, GlobalVector& /*b*/)
 {
     OGS_FATAL(
         "The Picard method or the Newton-Raphson method with numerical "
@@ -230,8 +250,8 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
         "monolithic coupling scheme");
 }
 
-template <int DisplacementDim>
-void ThermoRichardsMechanicsProcess<DisplacementDim>::
+template <int DisplacementDim, typename ConstitutiveTraits>
+void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     assembleWithJacobianConcreteProcess(const double t, double const dt,
                                         std::vector<GlobalVector*> const& x,
                                         std::vector<GlobalVector*> const& xdot,
@@ -265,8 +285,8 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::
     copyRhs(2, *nodal_forces_);
 }
 
-template <int DisplacementDim>
-void ThermoRichardsMechanicsProcess<DisplacementDim>::
+template <int DisplacementDim, typename ConstitutiveTraits>
+void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                 double const t, double const dt,
                                 const int process_id)
@@ -281,8 +301,8 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::
         pv.getActiveElementIDs(), dof_tables, x, t, dt);
 }
 
-template <int DisplacementDim>
-void ThermoRichardsMechanicsProcess<DisplacementDim>::
+template <int DisplacementDim, typename ConstitutiveTraits>
+void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     computeSecondaryVariableConcrete(const double t, const double dt,
                                      std::vector<GlobalVector*> const& x,
                                      GlobalVector const& x_dot,
@@ -299,27 +319,27 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::
         pv.getActiveElementIDs(), dof_tables, t, dt, x, x_dot, process_id);
 }
 
-template <int DisplacementDim>
+template <int DisplacementDim, typename ConstitutiveTraits>
 std::tuple<NumLib::LocalToGlobalIndexMap*, bool> ThermoRichardsMechanicsProcess<
-    DisplacementDim>::getDOFTableForExtrapolatorData() const
+    DisplacementDim, ConstitutiveTraits>::getDOFTableForExtrapolatorData() const
 {
     const bool manage_storage = false;
     return std::make_tuple(local_to_global_index_map_single_component_.get(),
                            manage_storage);
 }
 
-template <int DisplacementDim>
-NumLib::LocalToGlobalIndexMap const&
-ThermoRichardsMechanicsProcess<DisplacementDim>::getDOFTable(
-    const int /*process_id*/) const
+template <int DisplacementDim, typename ConstitutiveTraits>
+NumLib::LocalToGlobalIndexMap const& ThermoRichardsMechanicsProcess<
+    DisplacementDim, ConstitutiveTraits>::getDOFTable(const int /*process_id*/)
+    const
 {
     return *_local_to_global_index_map;
 }
 
-template <int DisplacementDim>
+template <int DisplacementDim, typename ConstitutiveTraits>
 std::vector<NumLib::LocalToGlobalIndexMap const*>
-ThermoRichardsMechanicsProcess<DisplacementDim>::getDOFTables(
-    int const number_of_processes) const
+ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
+    getDOFTables(int const number_of_processes) const
 {
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
     dof_tables.reserve(number_of_processes);
@@ -328,8 +348,19 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::getDOFTables(
     return dof_tables;
 }
 
-template class ThermoRichardsMechanicsProcess<2>;
-template class ThermoRichardsMechanicsProcess<3>;
+template class ThermoRichardsMechanicsProcess<
+    2, ConstitutiveStress_StrainTemperature::ConstitutiveTraits<2>>;
+template class ThermoRichardsMechanicsProcess<
+    3, ConstitutiveStress_StrainTemperature::ConstitutiveTraits<3>>;
+
+#if OGS_USE_MFRONT
+template class ThermoRichardsMechanicsProcess<
+    2, ConstitutiveStressSaturation_StrainPressureTemperature::
+           ConstitutiveTraits<2>>;
+template class ThermoRichardsMechanicsProcess<
+    3, ConstitutiveStressSaturation_StrainPressureTemperature::
+           ConstitutiveTraits<3>>;
+#endif
 
 }  // namespace ThermoRichardsMechanics
 }  // namespace ProcessLib

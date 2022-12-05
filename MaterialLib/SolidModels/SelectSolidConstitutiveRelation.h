@@ -13,8 +13,6 @@
 
 #include "MeshLib/PropertyVector.h"
 
-#include "MechanicsBase.h"
-
 namespace MaterialLib
 {
 namespace Solids
@@ -29,10 +27,9 @@ namespace Solids
 /// the only constitutive relation (under id 0) is returned.
 /// 2. For each material id chosen for the given element id there exists a
 /// constitutive relation in the set.
-template <int DisplacementDim>
-MechanicsBase<DisplacementDim>& selectSolidConstitutiveRelation(
-    std::map<int, std::unique_ptr<MechanicsBase<DisplacementDim>>> const&
-        constitutive_relations,
+template <typename SolidMaterialsMap>
+auto& selectSolidConstitutiveRelation(
+    SolidMaterialsMap const& constitutive_relations,
     MeshLib::PropertyVector<int> const* const material_ids,
     std::size_t const element_id)
 {

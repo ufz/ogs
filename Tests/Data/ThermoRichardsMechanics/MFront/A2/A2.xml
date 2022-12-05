@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="A2.prj">
+    <add sel="/*/processes/process"><subtype>StressSaturation_StrainPressureTemperature</subtype></add>
+
+    <!-- Remove in reverse order, because the later commands will operate on the modified XML tree -->
+    <remove sel="/*/processes/process/constitutive_relation[2]" />
+    <remove sel="/*/processes/process/constitutive_relation[1]" />
+
+    <add sel="/*/processes/process">
+        <constitutive_relation id="0">
+            <type>MFront</type>
+            <behaviour>ThermoPoroElasticity</behaviour>
+            <material_properties>
+                <material_property name="YoungModulus" parameter="E"/>
+                <material_property name="PoissonRatio" parameter="nu"/>
+                <material_property name="ThermalExpansion" parameter="alpha"/>
+                <material_property name="BiotCoefficient" parameter="alpha_B"/>
+                <material_property name="BishopsExponent" parameter="m_chi"/>
+                <material_property name="ResidualLiquidSaturation" parameter="S_L_res"/>
+                <material_property name="ResidualGasSaturation" parameter="S_G_res"/>
+                <material_property name="BubblePressure" parameter="p_b"/>
+                <material_property name="VanGenuchtenExponent_m" parameter="m_S"/>
+            </material_properties>
+        </constitutive_relation>
+        <constitutive_relation id="1">
+            <type>MFront</type>
+            <behaviour>ThermoPoroElasticity</behaviour>
+            <material_properties>
+                <material_property name="YoungModulus" parameter="E"/>
+                <material_property name="PoissonRatio" parameter="nu"/>
+                <material_property name="ThermalExpansion" parameter="alpha"/>
+                <material_property name="BiotCoefficient" parameter="alpha_B"/>
+                <material_property name="BishopsExponent" parameter="m_chi"/>
+                <material_property name="ResidualLiquidSaturation" parameter="S_L_res"/>
+                <material_property name="ResidualGasSaturation" parameter="S_G_res"/>
+                <material_property name="BubblePressure" parameter="p_b"/>
+                <material_property name="VanGenuchtenExponent_m" parameter="m_S"/>
+            </material_properties>
+        </constitutive_relation>
+    </add>
+
+    <!-- Replace initial effective stress with total stress -->
+    <remove sel="/*/parameters/parameter[name=&quot;sigma0&quot;]/expression[6]" />
+    <remove sel="/*/parameters/parameter[name=&quot;sigma0&quot;]/expression[5]" />
+    <remove sel="/*/parameters/parameter[name=&quot;sigma0&quot;]/expression[4]" />
+    <remove sel="/*/parameters/parameter[name=&quot;sigma0&quot;]/expression[3]" />
+    <remove sel="/*/parameters/parameter[name=&quot;sigma0&quot;]/expression[2]" />
+    <remove sel="/*/parameters/parameter[name=&quot;sigma0&quot;]/expression[1]" />
+    <add sel="/*/parameters/parameter[name=&quot;sigma0&quot;]">
+        <expression>-10e6</expression>
+        <expression>-10e6</expression>
+        <expression>-12e6</expression>
+        <expression>0</expression>
+        <expression>0</expression>
+        <expression>0</expression>
+    </add>
+
+    <!-- Add parameters for the extended MFront model -->
+    <add sel="/*/parameters">
+        <parameter>
+            <name>alpha</name>
+            <type>Constant</type>
+            <value>1e-5</value>
+        </parameter>
+        <parameter>
+            <name>alpha_B</name>
+            <type>Constant</type>
+            <value>0.6</value>
+        </parameter>
+        <parameter>
+            <name>m_chi</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>S_L_res</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>S_G_res</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>p_b</name>
+            <type>Constant</type>
+            <value>42e6</value>
+        </parameter>
+        <parameter>
+            <name>m_S</name>
+            <type>Constant</type>
+            <value>0.4</value>
+        </parameter>
+    </add>
+
+    <!-- Replace name of stress output -->
+    <remove sel="/*/time_loop/output/variables/variable[text()=&quot;sigma&quot;]" />
+    <add sel="/*/time_loop/output/variables">
+        <variable>sigma_total</variable>
+    </add>
+    <remove sel="/*/processes/process/secondary_variables/secondary_variable[@internal_name=&quot;sigma&quot;]" />
+    <add sel="/*/processes/process/secondary_variables">
+        <secondary_variable internal_name="sigma_total" output_name="sigma_total" />
+    </add>
+
+    <!-- Due to different stress measures we cannot test against the stress values from the original test -->
+    <remove sel="/*/test_definition/vtkdiff[field=&quot;sigma&quot;]" />
+
+    <!-- Relax the tolerance a bit -->
+    <replace sel="/*/test_definition/vtkdiff[field=&quot;NodalForces&quot;]/absolute_tolerance/text()">
+        6e-10
+    </replace>
+</OpenGeoSysProjectDiff>

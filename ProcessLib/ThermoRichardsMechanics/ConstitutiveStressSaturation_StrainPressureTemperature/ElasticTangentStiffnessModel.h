@@ -14,14 +14,18 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/ElasticTangentStiffnessData.h"
 #include "TraitsBase.h"
 
-namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+namespace ProcessLib::ThermoRichardsMechanics
+{
+namespace ConstitutiveStressSaturation_StrainPressureTemperature
 {
 template <int DisplacementDim>
 struct ElasticTangentStiffnessModel
 {
     explicit ElasticTangentStiffnessModel(
         SolidConstitutiveRelation<DisplacementDim> const& solid_material)
-        : solid_material_(solid_material)
+        : solid_material_(solid_material),
+          tangent_operator_blocks_view_{
+              solid_material.createTangentOperatorBlocksView()}
     {
     }
 
@@ -31,8 +35,16 @@ struct ElasticTangentStiffnessModel
 
 private:
     SolidConstitutiveRelation<DisplacementDim> const& solid_material_;
+
+    MSM::OGSMFrontTangentOperatorBlocksView<
+        DisplacementDim,
+        boost::mp11::mp_list<MSM::Strain, MSM::LiquidPressure>,
+        boost::mp11::mp_list<MSM::Stress, MSM::Saturation>,
+        boost::mp11::mp_list<MSM::Temperature>>
+        tangent_operator_blocks_view_;
 };
 
 extern template struct ElasticTangentStiffnessModel<2>;
 extern template struct ElasticTangentStiffnessModel<3>;
-}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+}  // namespace ConstitutiveStressSaturation_StrainPressureTemperature
+}  // namespace ProcessLib::ThermoRichardsMechanics

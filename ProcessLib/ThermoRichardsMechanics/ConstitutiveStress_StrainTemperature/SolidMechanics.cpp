@@ -10,7 +10,9 @@
 
 #include "SolidMechanics.h"
 
-namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+namespace ProcessLib::ThermoRichardsMechanics
+{
+namespace ConstitutiveStress_StrainTemperature
 {
 template <int DisplacementDim>
 void SolidMechanicsModel<DisplacementDim>::eval(
@@ -91,4 +93,5 @@ void SolidMechanicsModel<DisplacementDim>::eval(
 template struct SolidMechanicsModel<2>;
 template struct SolidMechanicsModel<3>;
 
-}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+}  // namespace ConstitutiveStress_StrainTemperature
+}  // namespace ProcessLib::ThermoRichardsMechanics

@@ -33,16 +33,17 @@ namespace ProcessLib
 namespace ThermoRichardsMechanics
 {
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          int DisplacementDim>
+          int DisplacementDim, typename ConstitutiveTraits>
 ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
-                                      DisplacementDim>::
+                                      DisplacementDim, ConstitutiveTraits>::
     ThermoRichardsMechanicsLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        ThermoRichardsMechanicsProcessData<DisplacementDim>& process_data)
-    : LocalAssemblerInterface<DisplacementDim>(
+        ThermoRichardsMechanicsProcessData<DisplacementDim, ConstitutiveTraits>&
+            process_data)
+    : LocalAssemblerInterface<DisplacementDim, ConstitutiveTraits>(
           e, integration_method, is_axially_symmetric, process_data)
 {
     unsigned const n_integration_points =
@@ -90,9 +91,10 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          int DisplacementDim>
+          int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunction, DisplacementDim>::
+                                           ShapeFunction, DisplacementDim,
+                                           ConstitutiveTraits>::
     setInitialConditionsConcrete(std::vector<double> const& local_x,
                                  double const t,
                                  bool const /*use_monolithic_scheme*/,
@@ -143,27 +145,31 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             medium->property(MPL::PropertyType::saturation)
                 .template value<double>(variables, x_position, t, dt);
 
-        // Set eps_m_prev from potentially non-zero eps and sigma_sw from
-        // restart.
-        SpaceTimeData const x_t{x_position, t, dt};
-        ElasticTangentStiffnessData<DisplacementDim> C_el_data;
-        ConstitutiveOriginal::ElasticTangentStiffnessModel<DisplacementDim>{
-            this->solid_material_}
-            .eval(x_t, {T_ip, 0, {}}, C_el_data);
+        {
+            // Set eps_m_prev from potentially non-zero eps and sigma_sw from
+            // restart.
+            SpaceTimeData const x_t{x_position, t, dt};
+            ElasticTangentStiffnessData<DisplacementDim> C_el_data;
+            typename ConstitutiveTraits::ElasticTangentStiffnessModel{
+                this->solid_material_}
+                .eval(x_t, {T_ip, 0, {}}, C_el_data);
 
-        auto const& eps = this->current_states_[ip].eps_data.eps;
-        auto const& sigma_sw = this->current_states_[ip].swelling_data.sigma_sw;
-        this->prev_states_[ip].s_mech_data.eps_m.noalias() =
-            solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
-                ? eps + C_el_data.C_el.inverse() * sigma_sw
-                : eps;
+            auto const& eps = this->current_states_[ip].eps_data.eps;
+            auto const& sigma_sw =
+                this->current_states_[ip].swelling_data.sigma_sw;
+            this->prev_states_[ip].s_mech_data.eps_m.noalias() =
+                solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
+                    ? eps + C_el_data.C_el.inverse() * sigma_sw
+                    : eps;
+        }
     }
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          int DisplacementDim>
+          int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunction, DisplacementDim>::
+                                           ShapeFunction, DisplacementDim,
+                                           ConstitutiveTraits>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
                          std::vector<double> const& local_xdot,
@@ -180,8 +186,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     LocalMatrices loc_mat_current_ip;
     loc_mat_current_ip.setZero();  // only to set the right matrix sizes
 
-    ConstitutiveOriginal::ConstitutiveSetting<DisplacementDim>
-        constitutive_setting;
+    typename ConstitutiveTraits::ConstitutiveSetting constitutive_setting;
 
     for (unsigned ip = 0; ip < this->integration_method_.getNumberOfPoints();
          ++ip)
@@ -211,12 +216,13 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          int DisplacementDim>
+          int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunction, DisplacementDim>::
+                                           ShapeFunction, DisplacementDim,
+                                           ConstitutiveTraits>::
     massLumping(typename ThermoRichardsMechanicsLocalAssembler<
-                ShapeFunctionDisplacement, ShapeFunction,
-                DisplacementDim>::LocalMatrices& loc_mat) const
+                ShapeFunctionDisplacement, ShapeFunction, DisplacementDim,
+                ConstitutiveTraits>::LocalMatrices& loc_mat) const
 {
     if (this->process_data_.apply_mass_lumping)
     {
@@ -230,17 +236,19 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          int DisplacementDim>
+          int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunction, DisplacementDim>::
-    addToLocalMatrixData(double const dt,
-                         std::vector<double> const& local_x,
-                         std::vector<double> const& local_xdot,
-                         typename ThermoRichardsMechanicsLocalAssembler<
-                             ShapeFunctionDisplacement, ShapeFunction,
-                             DisplacementDim>::LocalMatrices const& loc_mat,
-                         std::vector<double>& local_rhs_data,
-                         std::vector<double>& local_Jac_data) const
+                                           ShapeFunction, DisplacementDim,
+                                           ConstitutiveTraits>::
+    addToLocalMatrixData(
+        double const dt,
+        std::vector<double> const& local_x,
+        std::vector<double> const& local_xdot,
+        typename ThermoRichardsMechanicsLocalAssembler<
+            ShapeFunctionDisplacement, ShapeFunction, DisplacementDim,
+            ConstitutiveTraits>::LocalMatrices const& loc_mat,
+        std::vector<double>& local_rhs_data,
+        std::vector<double>& local_Jac_data) const
 {
     constexpr auto local_matrix_dim =
         displacement_size + pressure_size + temperature_size;
@@ -286,26 +294,27 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          int DisplacementDim>
+          int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunction, DisplacementDim>::
+                                           ShapeFunction, DisplacementDim,
+                                           ConstitutiveTraits>::
     assembleWithJacobianSingleIP(
         double const t, double const dt,
         ParameterLib::SpatialPosition const& x_position,
         std::vector<double> const& local_x,
         std::vector<double> const& local_xdot,
         typename ThermoRichardsMechanicsLocalAssembler<
-            ShapeFunctionDisplacement, ShapeFunction,
-            DisplacementDim>::IpData const& ip_data,
-        ConstitutiveOriginal::ConstitutiveSetting<DisplacementDim>& CS,
+            ShapeFunctionDisplacement, ShapeFunction, DisplacementDim,
+            ConstitutiveTraits>::IpData const& ip_data,
+        typename ConstitutiveTraits::ConstitutiveSetting& CS,
         MaterialPropertyLib::Medium& medium,
         typename ThermoRichardsMechanicsLocalAssembler<
-            ShapeFunctionDisplacement, ShapeFunction,
-            DisplacementDim>::LocalMatrices& out,
-        ConstitutiveOriginal::StatefulData<DisplacementDim>& current_state,
-        ConstitutiveOriginal::StatefulData<DisplacementDim> const& prev_state,
+            ShapeFunctionDisplacement, ShapeFunction, DisplacementDim,
+            ConstitutiveTraits>::LocalMatrices& out,
+        typename ConstitutiveTraits::StatefulData& current_state,
+        typename ConstitutiveTraits::StatefulData const& prev_state,
         MaterialStateData<DisplacementDim>& mat_state,
-        ConstitutiveOriginal::OutputData<DisplacementDim>& output_data) const
+        typename ConstitutiveTraits::OutputData& output_data) const
 {
     auto const& N_u = ip_data.N_u;
     auto const& N_u_op = ip_data.N_u_op;
@@ -330,10 +339,10 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     GlobalDimVectorType const grad_T_ip = dNdx * T;
 
-    ConstitutiveOriginal::ConstitutiveModels<DisplacementDim> models(
+    typename ConstitutiveTraits::ConstitutiveModels models(
         this->process_data_, this->solid_material_);
-    ConstitutiveOriginal::ConstitutiveTempData<DisplacementDim> tmp;
-    ConstitutiveOriginal::ConstitutiveData<DisplacementDim> CD;
+    typename ConstitutiveTraits::ConstitutiveTempData tmp;
+    typename ConstitutiveTraits::ConstitutiveData CD;
 
     {
         double const T_ip = N * T;
@@ -387,10 +396,13 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
      *   argument, not add to it
      */
 
+    auto const& sigma_total =
+        ConstitutiveTraits::ConstitutiveSetting::totalStress(CD, current_state);
+
     // residual, order T, p, u
     block_p(out.res).noalias() = dNdx.transpose() * CD.eq_p_data.rhs_p_dNT_V;
     block_u(out.res).noalias() =
-        B.transpose() * CD.total_stress_data.sigma_total -
+        B.transpose() * sigma_total -
         static_cast<int>(this->process_data_.apply_body_force_for_deformation) *
             N_u_op.transpose() * CD.grav_data.volumetric_body_force;
 
@@ -444,9 +456,10 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          int DisplacementDim>
+          int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunction, DisplacementDim>::
+                                           ShapeFunction, DisplacementDim,
+                                           ConstitutiveTraits>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
                                      Eigen::VectorXd const& local_x_dot)
@@ -474,13 +487,12 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
     KV sigma_avg = KV::Zero();
 
-    ConstitutiveOriginal::ConstitutiveSetting<DisplacementDim>
-        constitutive_setting;
+    typename ConstitutiveTraits::ConstitutiveSetting constitutive_setting;
 
-    ConstitutiveOriginal::ConstitutiveModels<DisplacementDim> models(
+    typename ConstitutiveTraits::ConstitutiveModels models(
         process_data, this->solid_material_);
-    ConstitutiveOriginal::ConstitutiveTempData<DisplacementDim> tmp;
-    ConstitutiveOriginal::ConstitutiveData<DisplacementDim> CD;
+    typename ConstitutiveTraits::ConstitutiveTempData tmp;
+    typename ConstitutiveTraits::ConstitutiveData CD;
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -538,7 +550,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         liquid_density_avg += output_data.rho_L_data.rho_LR;
         viscosity_avg += output_data.mu_L_data.viscosity;
-        sigma_avg += current_state.s_mech_data.sigma_eff;
+        sigma_avg += ConstitutiveTraits::ConstitutiveSetting::statefulStress(
+            current_state);
     }
     saturation_avg /= n_integration_points;
     porosity_avg /= n_integration_points;

@@ -17,19 +17,11 @@
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "ParameterLib/Parameter.h"
 
-namespace MaterialLib
-{
-namespace Solids
-{
-template <int DisplacementDim>
-struct MechanicsBase;
-}
-}  // namespace MaterialLib
 namespace ProcessLib
 {
 namespace ThermoRichardsMechanics
 {
-template <int DisplacementDim>
+template <int DisplacementDim, typename ConstitutiveTraits>
 struct ThermoRichardsMechanicsProcessData
 {
     MeshLib::PropertyVector<int> const* const material_ids = nullptr;
@@ -39,7 +31,7 @@ struct ThermoRichardsMechanicsProcessData
 
     /// The constitutive relation for the mechanical part.
     std::map<int, std::unique_ptr<
-                      MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
+                      typename ConstitutiveTraits::SolidConstitutiveRelation>>
         solid_materials;
 
     /// Optional, initial stress field. A symmetric tensor, short vector

@@ -19,7 +19,9 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"
 #include "TraitsBase.h"
 
-namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+namespace ProcessLib::ThermoRichardsMechanics
+{
+namespace ConstitutiveStress_StrainTemperature
 {
 template <int DisplacementDim>
 struct SolidMechanicsDataStateful
@@ -79,4 +81,5 @@ private:
 
 extern template struct SolidMechanicsModel<2>;
 extern template struct SolidMechanicsModel<3>;
-}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+}  // namespace ConstitutiveStress_StrainTemperature
+}  // namespace ProcessLib::ThermoRichardsMechanics

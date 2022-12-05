@@ -12,6 +12,7 @@
         <process>
             <name>RM</name>
             <type>THERMO_RICHARDS_MECHANICS</type>
+            <subtype>Stress_StrainTemperature</subtype>
             <integration_order>3</integration_order>
             <!--KEEP FOR TESTING
             <jacobian_assembler>

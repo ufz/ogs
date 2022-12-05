@@ -18,7 +18,10 @@ namespace ProcessLib::ThermoRichardsMechanics
 template <int DisplacementDim>
 struct TotalStressData
 {
-    KelvinVector<DisplacementDim> sigma_total = KVnan<DisplacementDim>();
+    // Total stress is stateful for some constitutive settings and therefore
+    // must be initialized to something valid, e.g., zero.
+    // TODO find a better solution for that.
+    KelvinVector<DisplacementDim> sigma_total = KVzero<DisplacementDim>();
 
     static auto reflect()
     {

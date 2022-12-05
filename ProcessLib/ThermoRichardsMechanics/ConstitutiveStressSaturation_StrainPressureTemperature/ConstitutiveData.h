@@ -25,9 +25,11 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMVaporDiffusion.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TransportPorosity.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveOriginal/SolidMechanics.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStressSaturation_StrainPressureTemperature/SolidMechanics.h"
 
-namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+namespace ProcessLib::ThermoRichardsMechanics
+{
+namespace ConstitutiveStressSaturation_StrainPressureTemperature
 {
 /// Data whose state must be tracked by the TRM process.
 template <int DisplacementDim>
@@ -37,8 +39,13 @@ struct StatefulData
     PorosityData poro_data;
     TransportPorosityData transport_poro_data;
     StrainData<DisplacementDim> eps_data;
+    // TODO swelling is not used in this constitutive setting, but the stateful
+    // data is set in setInitialConditionsConcrete()
+    // Once this has been refactored, the swelling code can be moved from the
+    // common to the original subdirectory for constitutive settings
     SwellingDataStateful<DisplacementDim> swelling_data;
     SolidMechanicsDataStateful<DisplacementDim> s_mech_data;
+    TotalStressData<DisplacementDim> total_stress_data;
 
     static auto reflect()
     {
@@ -49,7 +56,7 @@ struct StatefulData
                                               &Self::transport_poro_data,
                                               &Self::eps_data,
                                               &Self::swelling_data,
-                                              &Self::s_mech_data);
+                                              &Self::total_stress_data);
     }
 };
 
@@ -78,7 +85,6 @@ template <int DisplacementDim>
 struct ConstitutiveData
 {
     SolidMechanicsDataStateless<DisplacementDim> s_mech_data;
-    TotalStressData<DisplacementDim> total_stress_data;
     GravityData<DisplacementDim> grav_data;
     TRMHeatStorageAndFluxData<DisplacementDim> heat_data;
     TRMVaporDiffusionData<DisplacementDim> vap_data;
@@ -93,7 +99,6 @@ struct ConstitutiveData
 template <int DisplacementDim>
 struct ConstitutiveTempData
 {
-    SwellingDataStateless<DisplacementDim> swelling_data;
     ElasticTangentStiffnessData<DisplacementDim> C_el_data;
     BiotData biot_data;
     SolidCompressibilityData solid_compressibility_data;
@@ -106,4 +111,5 @@ struct ConstitutiveTempData
     FluidThermalExpansionData f_therm_exp_data;
     EquivalentPlasticStrainData equiv_plast_strain_data;
 };
-}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+}  // namespace ConstitutiveStressSaturation_StrainPressureTemperature
+}  // namespace ProcessLib::ThermoRichardsMechanics

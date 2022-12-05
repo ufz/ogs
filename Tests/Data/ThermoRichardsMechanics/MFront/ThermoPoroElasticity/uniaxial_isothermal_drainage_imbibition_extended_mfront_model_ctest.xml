@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="uniaxial_isothermal_drainage_imbibition_extended_mfront_model.prj">
+    <replace sel="/*/time_loop/processes/process/time_stepping/timesteps/pair/delta_t/text()">0.3</replace>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <regex>uniaxial_isothermal_drainage_imbibition_extended_mfront_model_ts_.*.vtu</regex>
+                <field>displacement</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>uniaxial_isothermal_drainage_imbibition_extended_mfront_model_ts_.*.vtu</regex>
+                <field>epsilon</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>uniaxial_isothermal_drainage_imbibition_extended_mfront_model_ts_.*.vtu</regex>
+                <field>pressure_interpolated</field>
+                <absolute_tolerance>5e-10</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>uniaxial_isothermal_drainage_imbibition_extended_mfront_model_ts_.*.vtu</regex>
+                <field>temperature_interpolated</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>uniaxial_isothermal_drainage_imbibition_extended_mfront_model_ts_.*.vtu</regex>
+                <field>sigma_total</field>
+                <absolute_tolerance>9e-9</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>uniaxial_isothermal_drainage_imbibition_extended_mfront_model_ts_.*.vtu</regex>
+                <field>saturation_avg</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
+</OpenGeoSysProjectDiff>

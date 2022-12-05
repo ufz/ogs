@@ -13,7 +13,6 @@
 #include <memory>
 #include <vector>
 
-#include "ConstitutiveOriginal/ConstitutiveSetting.h"
 #include "IntegrationPointData.h"
 #include "LocalAssemblerInterface.h"
 #include "MathLib/KelvinVector.h"
@@ -30,9 +29,9 @@ namespace ThermoRichardsMechanics
 namespace MPL = MaterialPropertyLib;
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-          int DisplacementDim>
+          int DisplacementDim, typename ConstitutiveTraits>
 class ThermoRichardsMechanicsLocalAssembler
-    : public LocalAssemblerInterface<DisplacementDim>
+    : public LocalAssemblerInterface<DisplacementDim, ConstitutiveTraits>
 {
     static constexpr int temperature_index = 0;
     static constexpr int temperature_size = ShapeFunction::NPOINTS;
@@ -77,7 +76,8 @@ public:
         std::size_t const /*local_matrix_size*/,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        ThermoRichardsMechanicsProcessData<DisplacementDim>& process_data);
+        ThermoRichardsMechanicsProcessData<DisplacementDim, ConstitutiveTraits>&
+            process_data);
 
     void setInitialConditionsConcrete(std::vector<double> const& local_x,
                                       double const t,
@@ -174,6 +174,40 @@ public:
             return *this;
         }
 
+        template <typename OStream>
+        friend OStream& operator<<(OStream& os, LocalMatrices const& loc_mat)
+        {
+            os << "- M_TT:\n"
+               << loc_mat.M_TT  //
+               << "\n- M_Tp:\n"
+               << loc_mat.M_Tp  //
+               << "\n- K_TT:\n"
+               << loc_mat.K_TT  //
+               << "\n- K_Tp:\n"
+               << loc_mat.K_Tp  //
+               << "\n- dK_TT_dp:\n"
+               << loc_mat.dK_TT_dp  //
+               << "\n- M_pu:\n"
+               << loc_mat.M_pu  //
+               << "\n- M_pT:\n"
+               << loc_mat.M_pT  //
+               << "\n- K_pp:\n"
+               << loc_mat.K_pp  //
+               << "\n- K_pT:\n"
+               << loc_mat.K_pT  //
+               << "\n- storage_p_a_p:\n"
+               << loc_mat.storage_p_a_p  //
+               << "\n- storage_p_a_S_Jpp:\n"
+               << loc_mat.storage_p_a_S_Jpp  //
+               << "\n- storage_p_a_S:\n"
+               << loc_mat.storage_p_a_S  //
+               << "\n- Jac:\n"
+               << loc_mat.Jac  //
+               << "\n- res:\n"
+               << loc_mat.res;
+            return os;
+        }
+
         NodalMatrix M_TT;
         NodalMatrix M_Tp;
         NodalMatrix K_TT;
@@ -214,12 +248,12 @@ private:
         ParameterLib::SpatialPosition const& x_position,
         std::vector<double> const& local_x,
         std::vector<double> const& local_xdot, IpData const& ip_data,
-        ConstitutiveOriginal::ConstitutiveSetting<DisplacementDim>& CS,
+        typename ConstitutiveTraits::ConstitutiveSetting& CS,
         MaterialPropertyLib::Medium& medium, LocalMatrices& out,
-        ConstitutiveOriginal::StatefulData<DisplacementDim>& current_state,
-        ConstitutiveOriginal::StatefulData<DisplacementDim> const& prev_state,
+        typename ConstitutiveTraits::StatefulData& current_state,
+        typename ConstitutiveTraits::StatefulData const& prev_state,
         MaterialStateData<DisplacementDim>& mat_state,
-        ConstitutiveOriginal::OutputData<DisplacementDim>& output_data) const;
+        typename ConstitutiveTraits::OutputData& output_data) const;
 
     void addToLocalMatrixData(double const dt,
                               std::vector<double> const& local_x,
@@ -272,7 +306,8 @@ public:
             // Set initial stress from parameter.
             if (this->process_data_.initial_stress != nullptr)
             {
-                current_state.s_mech_data.sigma_eff =
+                ConstitutiveTraits::ConstitutiveSetting::statefulStress(
+                    current_state) =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
                         DisplacementDim>((*this->process_data_.initial_stress)(
                         time_independent, x_position));

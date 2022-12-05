@@ -10,13 +10,15 @@
 
 #include "ConstitutiveSetting.h"
 
-namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+namespace ProcessLib::ThermoRichardsMechanics
+{
+namespace ConstitutiveStress_StrainTemperature
 {
 template <int DisplacementDim>
 void ConstitutiveSetting<DisplacementDim>::eval(
     ConstitutiveModels<DisplacementDim>& models, double const t,
     double const dt, ParameterLib::SpatialPosition const& x_position,
-    MaterialPropertyLib::Medium& medium,
+    MaterialPropertyLib::Medium const& medium,
     TemperatureData<DisplacementDim> const& T_data,
     CapillaryPressureData<DisplacementDim> const& p_cap_data,
     KelvinVector<DisplacementDim> const& eps_arg,
@@ -25,7 +27,8 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     StatefulData<DisplacementDim> const& prev_state,
     MaterialStateData<DisplacementDim>& mat_state,
     ConstitutiveTempData<DisplacementDim>& tmp,
-    OutputData<DisplacementDim>& out, ConstitutiveData<DisplacementDim>& cd)
+    OutputData<DisplacementDim>& out,
+    ConstitutiveData<DisplacementDim>& cd) const
 {
     namespace MPL = MaterialPropertyLib;
 
@@ -167,4 +170,5 @@ void ConstitutiveSetting<DisplacementDim>::eval(
 template struct ConstitutiveSetting<2>;
 template struct ConstitutiveSetting<3>;
 
-}  // namespace ProcessLib::ThermoRichardsMechanics::ConstitutiveOriginal
+}  // namespace ConstitutiveStress_StrainTemperature
+}  // namespace ProcessLib::ThermoRichardsMechanics
