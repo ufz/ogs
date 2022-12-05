@@ -20,9 +20,13 @@ auto& getImpl(Tuple& t, Tuples&... ts)
 {
     using namespace boost::mp11;
 
-    if constexpr (mp_contains<std::remove_cv_t<Tuple>, T>::value)
+    using PlainTuple = std::remove_cv_t<Tuple>;
+    using TupleOfPlainTypes = mp_transform<std::remove_cvref_t, PlainTuple>;
+    using Index = mp_find<TupleOfPlainTypes, T>;
+
+    if constexpr (Index::value != mp_size<PlainTuple>::value)
     {
-        return std::get<T>(t);
+        return std::get<Index::value>(t);
     }
     else
     {
@@ -46,20 +50,27 @@ struct GetFlattenedTupleTypes
 /// This function does essentially the same as
 /// <code>std::get<T>(some_tuple)</code>, but for any number of passed tuples.
 ///
-/// The type \code T must be present in the \code Tuples's types exactly once.
+/// The type \code T must be present in the \code Tuples's member types exactly
+/// once. The passed \code Tuples's member types might be cvref qualified, but
+/// \code T must not.
 template <typename T, typename... Tuples>
 auto& get(Tuples&... ts)
 {
     using namespace boost::mp11;
 
+    static_assert(std::is_same_v<T, std::remove_cvref_t<T>>,
+                  "The passed type T must not be cvref qualified.");
+
     using FlattenedTuple = typename detail::GetFlattenedTupleTypes<
-        std::remove_cvref_t<Tuples>...>::type;
+        std::remove_cv_t<Tuples>...>::type;
+    using FlattenedTupleOfPlainTypes =
+        mp_transform<std::remove_cvref_t, FlattenedTuple>;
 
     static_assert(
-        mp_is_set<FlattenedTuple>::value,
+        mp_is_set<FlattenedTupleOfPlainTypes>::value,
         "The types of all elements of all passed tuples must be unique.");
 
-    static_assert(mp_contains<FlattenedTuple, T>::value,
+    static_assert(mp_contains<FlattenedTupleOfPlainTypes, T>::value,
                   "Type T must be inside any of the passed tuples.");
 
     return detail::getImpl<T>(ts...);
