@@ -123,9 +123,6 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
     auto const displacement =
         local_x.template segment<displacement_size>(displacement_index);
 
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
-
     auto const& medium = *_process_data.media_map->getMedium(_element.getID());
     auto const& gas_phase = medium.phase("Gas");
     auto const& liquid_phase = medium.phase("AqueousLiquid");
@@ -139,7 +136,6 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        pos.setIntegrationPoint(ip);
         auto& ip_data = _ip_data[ip];
         auto& ip_cv = ip_constitutive_variables[ip];
 
@@ -148,6 +144,12 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         auto const& Nu = ip_data.N_u;
         auto const& gradNu = ip_data.dNdx_u;
         auto const& gradNp = ip_data.dNdx_p;
+        ParameterLib::SpatialPosition const pos{
+            std::nullopt, _element.getID(), ip,
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, Nu))};
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
@@ -906,16 +908,19 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        pos.setIntegrationPoint(ip);
         MPL::VariableArray vars;
 
         auto& ip_data = _ip_data[ip];
         auto const& Np = ip_data.N_p;
         auto const& NT = Np;
+        ParameterLib::SpatialPosition const pos{
+            std::nullopt, _element.getID(), ip,
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, ip_data.N_u))};
 
         double const pCap = Np.dot(capillary_pressure);
         vars.capillary_pressure = pCap;
@@ -1050,9 +1055,6 @@ void TH2MLocalAssembler<
     // pointer-vectors to the right hand side terms - displacement equation
     auto fU = local_f.template segment<displacement_size>(displacement_index);
 
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
-
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
@@ -1064,13 +1066,18 @@ void TH2MLocalAssembler<
 
     for (unsigned int_point = 0; int_point < n_integration_points; int_point++)
     {
-        pos.setIntegrationPoint(int_point);
         auto& ip = _ip_data[int_point];
         auto& ip_cv = ip_constitutive_variables[int_point];
 
         auto const& Np = ip.N_p;
         auto const& NT = Np;
         auto const& Nu = ip.N_u;
+        ParameterLib::SpatialPosition const pos{
+            std::nullopt, _element.getID(), int_point,
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, Nu))};
 
         auto const& NpT = Np.transpose().eval();
         auto const& NTT = NT.transpose().eval();
@@ -1475,9 +1482,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     // pointer-vectors to the right hand side terms - displacement equation
     auto fU = local_f.template segment<displacement_size>(displacement_index);
 
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
-
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
@@ -1488,13 +1492,18 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     for (unsigned int_point = 0; int_point < n_integration_points; int_point++)
     {
-        pos.setIntegrationPoint(int_point);
         auto& ip = _ip_data[int_point];
         auto& ip_cv = ip_constitutive_variables[int_point];
 
         auto const& Np = ip.N_p;
         auto const& NT = Np;
         auto const& Nu = ip.N_u;
+        ParameterLib::SpatialPosition const pos{
+            std::nullopt, _element.getID(), int_point,
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, Nu))};
 
         auto const& NpT = Np.transpose().eval();
         auto const& NTT = NT.transpose().eval();
