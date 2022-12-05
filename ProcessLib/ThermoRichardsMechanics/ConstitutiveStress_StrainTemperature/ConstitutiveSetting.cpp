@@ -35,16 +35,7 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     namespace MPL = MaterialPropertyLib;
 
     auto& biot_data = std::get<BiotData>(tmp);
-    auto& dS_L_data = std::get<SaturationDataDeriv>(tmp);
-    auto& bishops_data = std::get<BishopsData>(tmp);
     auto& bishops_data_prev = std::get<PrevState<BishopsData>>(tmp);
-    auto& s_therm_exp_data =
-        std::get<SolidThermalExpansionData<DisplacementDim>>(tmp);
-
-    auto& swelling_data = std::get<SwellingDataStateless<DisplacementDim>>(tmp);
-    auto& s_mech_data =
-        std::get<SolidMechanicsDataStateless<DisplacementDim>>(cd);
-
     auto& poro_data = std::get<PorosityData>(state);
 
     SpaceTimeData const x_t{x_position, t, dt};
@@ -52,6 +43,8 @@ void ConstitutiveSetting<DisplacementDim>::eval(
 
     auto const aux_data = std::tuple{SpaceTimeData{x_position, t, dt},
                                      MediaData{medium}, T_data, p_cap_data};
+
+    auto const mat_state_tuple = std::tie(mat_state);
 
     namespace G = ProcessLib::Graph;
 
@@ -85,20 +78,8 @@ void ConstitutiveSetting<DisplacementDim>::eval(
 
     G::apply(models.swelling_model, aux_data, state, prev_state, tmp);
     G::apply(models.s_therm_exp_model, aux_data, tmp);
-
-    assertEvalArgsUnique(models.s_mech_model);
-    models.s_mech_model.eval(
-        x_t, s_therm_exp_data, swelling_data, T_data, p_cap_data, biot_data,
-        bishops_data, dS_L_data, std::get<StrainData<DisplacementDim>>(state),
-        std::get<PrevState<StrainData<DisplacementDim>>>(
-            prev_state) /* TODO why is eps stateful? */,
-        mat_state /* TODO implement handling of this in apply() */,
-        std::get<PrevState<EffectiveStressData<DisplacementDim>>>(prev_state),
-        std::get<EffectiveStressData<DisplacementDim>>(state),
-        std::get<PrevState<MechanicalStrainData<DisplacementDim>>>(prev_state),
-        std::get<MechanicalStrainData<DisplacementDim>>(state),
-        std::get<TotalStressData<DisplacementDim>>(cd),
-        std::get<EquivalentPlasticStrainData>(tmp), s_mech_data);
+    G::apply(models.s_mech_model, aux_data, tmp, state, prev_state,
+             mat_state_tuple, cd);
 
     G::apply(models.rho_L_model, aux_data, out);
 
