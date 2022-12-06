@@ -23,6 +23,7 @@ append_source_files(SOURCES MPL/Properties/RelativePermeability)
 append_source_files(SOURCES MPL/Properties/SwellingStress)
 append_source_files(SOURCES MPL/Properties/ThermalConductivity)
 append_source_files(SOURCES MPL/Properties/VapourDiffusion)
+append_source_files(SOURCES MPL/Properties/Viscosity)
 append_source_files(SOURCES MPL/Components)
 append_source_files(SOURCES MPL/Utils)
 

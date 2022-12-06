@@ -21,6 +21,7 @@
 #include "ClausiusClapeyron.h"
 #include "Constant.h"
 #include "Curve.h"
+#include "Density/WaterDensityIAPWSIF97Region1.h"
 #include "Density/WaterVapourDensity.h"
 #include "DupuitPermeability.h"
 #include "EffectiveThermalConductivityPorosityMixing.h"
@@ -52,3 +53,5 @@
 #include "VapourDiffusion/VapourDiffusionFEBEX.h"
 #include "VapourDiffusion/VapourDiffusionPMQ.h"
 #include "VolumeFractionAverage.h"
+#include "Viscosity/WaterViscosityIAPWS.h"
+#include "Viscosity/LiquidViscosityVogels.h"

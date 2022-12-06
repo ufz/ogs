@@ -47,6 +47,7 @@
 #include "CreateTransportPorosityFromMassBalance.h"
 #include "CreateVermaPruessModel.h"
 #include "CreateVolumeFractionAverage.h"
+#include "Density/CreateWaterDensityIAPWSIF97Region1.h"
 #include "Density/CreateWaterVapourDensity.h"
 #include "Enthalpy/CreateLinearWaterVapourLatentHeat.h"
 #include "Enthalpy/CreateWaterVapourLatentHeatWithCriticalTemperature.h"
@@ -62,3 +63,5 @@
 #include "ThermalConductivity/CreateSoilThermalConductivitySomerton.h"
 #include "VapourDiffusion/CreateVapourDiffusionFEBEX.h"
 #include "VapourDiffusion/CreateVapourDiffusionPMQ.h"
+#include "Viscosity/CreateWaterViscosityIAPWS.h"
+#include "Viscosity/CreateLiquidViscosityVogels.h"

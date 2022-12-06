@@ -485,6 +485,7 @@ void RichardsMechanicsLocalAssembler<
         auto const rho_LR =
             liquid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
+        variables.density = rho_LR;
 
         auto const& b = _process_data.specific_body_force;
 
@@ -840,6 +841,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const rho_LR =
             liquid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
+        variables.density = rho_LR;
+
         auto const& b = _process_data.specific_body_force;
 
         S_L = medium->property(MPL::PropertyType::saturation)
@@ -1628,11 +1631,12 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             variables.porosity = phi;
         }
 
-        auto const mu =
-            liquid_phase.property(MPL::PropertyType::viscosity)
-                .template value<double>(variables, x_position, t, dt);
         auto const rho_LR =
             liquid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t, dt);
+        variables.density = rho_LR;
+        auto const mu =
+            liquid_phase.property(MPL::PropertyType::viscosity)
                 .template value<double>(variables, x_position, t, dt);
 
         // Swelling and possibly volumetric strain rate update.

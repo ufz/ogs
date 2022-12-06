@@ -175,6 +175,7 @@ public:
                     .property(MaterialPropertyLib::PropertyType::density)
                     .template value<double>(vars, pos, t, dt);
 
+            vars.density = fluid_density;
             // Use the viscosity model to compute the viscosity
             auto const viscosity =
                 liquid_phase

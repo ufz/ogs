@@ -1,23 +1,22 @@
 /**
- *  \copyright
- *   Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
- *              Distributed under a Modified BSD License.
+ * \file
+ * \copyright
+ * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file
- *
- * Created on December 1, 2016, 1:41 PM
+ * Created on March 4, 2021, 3:05 PM
  */
 
 #include "WaterViscosityIAPWS.h"
 
-#include <array>
 #include <cmath>
 
-namespace MaterialLib
-{
-namespace Fluid
+#include "BaseLib/Error.h"
+#include "MaterialLib/MPL/Medium.h"
+
+namespace MaterialPropertyLib
 {
 static const double Hi[4] = {1.67752, 2.20462, 0.6366564, -0.241605};
 static const double Hij[6][7] = {
@@ -39,12 +38,14 @@ static double computeBarMu1Factor(
 static double computedBarMu_dbarT(const double barT, double bar_rho);
 static double computedBarMu_dbarRho(const double barT, double bar_rho);
 
-double WaterViscosityIAPWS::getValue(const ArrayType& var_vals) const
+
+PropertyDataType WaterViscosityIAPWS::value(
+    VariableArray const& variable_array,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
-    const double bar_T =
-        var_vals[static_cast<unsigned>(PropertyVariableType::T)] / _ref_T;
-    const double bar_rho =
-        var_vals[static_cast<unsigned>(PropertyVariableType::rho)] / _ref_rho;
+    const double bar_T = variable_array.temperature / ref_T_;
+    const double bar_rho = variable_array.density / ref_rho_;
 
     const double mu0 = 100. * std::sqrt(bar_T) / computeBarMu0Factor(bar_T);
 
@@ -53,25 +54,27 @@ double WaterViscosityIAPWS::getValue(const ArrayType& var_vals) const
     const double mu1 = std::exp(
         bar_rho * computeBarMu1Factor(series_factorT, series_factorRho));
 
-    return mu0 * mu1 * _ref_mu;
+    return mu0 * mu1 * ref_mu_;
 }
 
-double WaterViscosityIAPWS::getdValue(const ArrayType& var_vals,
-                                      const PropertyVariableType var_type) const
+PropertyDataType WaterViscosityIAPWS::dValue(
+    VariableArray const& variable_array, Variable const variable,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
-    const double bar_T =
-        var_vals[static_cast<unsigned>(PropertyVariableType::T)] / _ref_T;
-    const double bar_rho =
-        var_vals[static_cast<unsigned>(PropertyVariableType::rho)] / _ref_rho;
+    const double bar_T = variable_array.temperature / ref_T_;
+    const double bar_rho = variable_array.density / ref_rho_;
 
-    switch (var_type)
+    switch (variable)
     {
-        case PropertyVariableType::T:
-            return _ref_mu * computedBarMu_dbarT(bar_T, bar_rho) / _ref_T;
-        case PropertyVariableType::rho:
-            return _ref_mu * computedBarMu_dbarRho(bar_T, bar_rho) / _ref_rho;
+        case Variable::temperature:
+            return ref_mu_ * computedBarMu_dbarT(bar_T, bar_rho) / ref_T_;
+        case Variable::density:
+            return ref_mu_ * computedBarMu_dbarRho(bar_T, bar_rho) / ref_rho_;
         default:
-            return 0.;
+            OGS_FATAL(
+            "WaterViscosityIAPWS::dValue is implemented for "
+            "derivatives with respect to temperature and liquid density only.");
     }
 }
 
@@ -195,5 +198,4 @@ double computedBarMu_dbarRho(const double barT, double bar_rho)
            (mu1_factor + bar_rho * dmu1_factor_dbar_rho);
 }
 
-}  // namespace Fluid
-}  // namespace MaterialLib
+}  // namespace MaterialPropertyLib

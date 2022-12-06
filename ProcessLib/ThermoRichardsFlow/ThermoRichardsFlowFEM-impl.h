@@ -275,6 +275,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         auto const rho_LR =
             liquid_phase[MPL::PropertyType::density].template value<double>(
                 variables, x_position, t, dt);
+        variables.density = rho_LR;
         auto const& b = _process_data.specific_body_force;
 
         double const drho_LR_dp =
