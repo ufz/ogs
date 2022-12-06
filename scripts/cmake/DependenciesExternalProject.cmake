@@ -26,6 +26,16 @@ if(OGS_USE_MFRONT)
         set(_tfel_source URL ${_tfel_source_file})
     elseif(NOT OGS_BUILD_TFEL)
         find_program(MFRONT mfront)
+        if(MFRONT AND APPLE)
+            # TODO: check for version
+            # ~~~
+            # ➜ mfront --version
+            # tfel
+            # Version : 4.0.0
+            # ~~~
+            string(REPLACE "mfront" "" _mfront_bin_dir ${MFRONT})
+            set(TFELHOME ${_mfront_bin_dir}/..)
+        endif()
     endif()
     if(NOT MFRONT)
         BuildExternalProject(

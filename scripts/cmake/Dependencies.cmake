@@ -101,17 +101,18 @@ if(Eigen3_ADDED)
 endif()
 
 if(OGS_USE_MFRONT)
+    set(CMAKE_REQUIRE_FIND_PACKAGE_TFEL TRUE)
     CPMAddPackage(
         NAME MGIS
         GITHUB_REPOSITORY ufz/MFrontGenericInterfaceSupport
-        GIT_TAG a0998e81eab81cf51d1b62585a78ac4f32b655bf
+        # fixes branch: rliv-2.0-ogs
+        GIT_TAG 36c886f26e3aef89d377d43bd35a66ee0415ad9f
         OPTIONS "enable-doxygen-doc OFF" "enable-fortran-bindings OFF"
+                "enable-website OFF"
         EXCLUDE_FROM_ALL YES
     )
     if(MGIS_ADDED)
-        set_target_properties(MFrontGenericInterface PROPERTIES CXX_STANDARD 11)
         list(APPEND DISABLE_WARNINGS_TARGETS MFrontGenericInterface)
-        set(_MFRONT_TFEL_FOUND ON CACHE INTERNAL "")
     endif()
 endif()
 
@@ -156,7 +157,8 @@ CPMAddPackage(
 
 if(OGS_BUILD_SWMM)
     CPMAddPackage(
-        NAME SWMMInterface GITHUB_REPOSITORY ufz/SwmmInterface
+        NAME SWMMInterface
+        GITHUB_REPOSITORY ufz/SwmmInterface
         GIT_TAG 141e05ae1f419918799d7bf9178ebcd97feb1ed3
         OPTIONS "BUILD_SHARED_LIBS OFF"
     )

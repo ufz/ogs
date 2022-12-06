@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <ostream>
 #include <set>
 #include <string>
 #include <vector>
