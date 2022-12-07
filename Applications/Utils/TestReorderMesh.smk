@@ -88,7 +88,7 @@ rule remove_ghost_data:
         "cube_1x1x1_{type}_{lx}x{ly}x{lz}_{number_of_partitions}/results/bulk_mesh_ts_1_t_1_000000.vtu"
     shell:
         """
-        RemoveGhostData -i {input} -o {output}
+        pvtu2vtu -i {input} -o {output}
         """
 
 rule identifySubdomains:
