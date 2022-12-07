@@ -269,11 +269,19 @@ void scaleMeshPropertyVector(MeshLib::Mesh& mesh,
 PropertyVector<int> const* materialIDs(Mesh const& mesh)
 {
     auto const& properties = mesh.getProperties();
-    return properties.existsPropertyVector<int>("MaterialIDs",
-                                                MeshLib::MeshItemType::Cell, 1)
-               ? properties.getPropertyVector<int>(
-                     "MaterialIDs", MeshLib::MeshItemType::Cell, 1)
-               : nullptr;
+    if (properties.existsPropertyVector<int>("MaterialIDs",
+                                             MeshLib::MeshItemType::Cell, 1))
+    {
+        return properties.getPropertyVector<int>(
+            "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+    }
+    if (properties.hasPropertyVector("MaterialIDs"))
+    {
+        WARN(
+            "The 'MaterialIDs' mesh property exists but is either of wrong "
+            "type (must be int), or it is not defined on element / cell data.");
+    }
+    return nullptr;
 }
 
 std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
