@@ -36,7 +36,7 @@ enum class MeanType
  * \brief Saturation dependent thermal conductivity model for soil.
  *
  *  The arithmetic_squareroot model is proposed by Somerton, W.~H. et al.
- *  \cite somerton1974high, which takes the form of 
+ *  \cite somerton1974high, which takes the form of
  *  \f[ \lambda = \lambda_{\text{dry}} + \sqrt{S}(\lambda_{\text{wet}}-
  *  \lambda_{\text{dry}}), \f]. The arithmetic_linear model is linear in
  *  the saturation and has the form \f[ \lambda = \lambda_{\text{dry}} +
@@ -50,16 +50,14 @@ enum class MeanType
  *  dry state, \f$\lambda_{\text{wet}}\f$ is the thermal conductivity of soil at
  *  the fully water saturated state, and \f$S\f$ is the water saturation.
  */
-template <int GlobalDimension>
+template <MeanType MeantType, int GlobalDimension>
 class SaturationWeightedThermalConductivity final : public Property
 {
 public:
     SaturationWeightedThermalConductivity(
         std::string name,
         ParameterLib::Parameter<double> const& dry_thermal_conductivity,
-        ParameterLib::Parameter<double> const& wet_thermal_conductivity,
-        MeanType mean_type,
-        ParameterLib::CoordinateSystem const* const local_coordinate_system);
+        ParameterLib::Parameter<double> const& wet_thermal_conductivity);
 
     void checkScale() const override
     {
@@ -87,14 +85,31 @@ private:
     ParameterLib::Parameter<double> const& dry_thermal_conductivity_;
     /// Thermal conductivity of soil at the fully water saturated state.
     ParameterLib::Parameter<double> const& wet_thermal_conductivity_;
-
-    /// Type of mean shape
-    MeanType const mean_type_;
-
-    ParameterLib::CoordinateSystem const* const local_coordinate_system_;
 };
 
-extern template class SaturationWeightedThermalConductivity<2>;
-extern template class SaturationWeightedThermalConductivity<3>;
+extern template class SaturationWeightedThermalConductivity<
+    MeanType::ARITHMETIC_LINEAR,
+    1>;
+extern template class SaturationWeightedThermalConductivity<
+    MeanType::ARITHMETIC_SQUAREROOT,
+    1>;
+extern template class SaturationWeightedThermalConductivity<MeanType::GEOMETRIC,
+                                                            1>;
+extern template class SaturationWeightedThermalConductivity<
+    MeanType::ARITHMETIC_LINEAR,
+    2>;
+extern template class SaturationWeightedThermalConductivity<
+    MeanType::ARITHMETIC_SQUAREROOT,
+    2>;
+extern template class SaturationWeightedThermalConductivity<MeanType::GEOMETRIC,
+                                                            2>;
+extern template class SaturationWeightedThermalConductivity<
+    MeanType::ARITHMETIC_LINEAR,
+    3>;
+extern template class SaturationWeightedThermalConductivity<
+    MeanType::ARITHMETIC_SQUAREROOT,
+    3>;
+extern template class SaturationWeightedThermalConductivity<MeanType::GEOMETRIC,
+                                                            3>;
 
 }  // namespace MaterialPropertyLib

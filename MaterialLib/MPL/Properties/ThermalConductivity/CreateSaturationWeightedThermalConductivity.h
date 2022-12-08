@@ -21,7 +21,6 @@ class ConfigTree;
 
 namespace ParameterLib
 {
-struct CoordinateSystem;
 struct ParameterBase;
 }  // namespace ParameterLib
 
@@ -32,6 +31,6 @@ class Property;
 std::unique_ptr<Property> createSaturationWeightedThermalConductivity(
     int const geometry_dimension,
     BaseLib::ConfigTree const& config,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    ParameterLib::CoordinateSystem const* const local_coordinate_system);
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+        parameters);
 }  // namespace MaterialPropertyLib
