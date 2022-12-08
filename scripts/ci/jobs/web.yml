@@ -55,7 +55,7 @@ preview web site:
     expire_in: 1 week
   environment:
     name: web preview
-    url: "https://$CI_PROJECT_ROOT_NAMESPACE.$CI_PAGES_DOMAIN/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/web/public/index.html"
+    url: ${ARTIFACTS_PAGES_URL}/web/public/index.html
   cache:
     paths:
       - web/node_modules

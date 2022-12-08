@@ -54,7 +54,7 @@ build docs:
     when: always
   environment:
     name: doxygen preview
-    url: "https://$CI_PROJECT_ROOT_NAMESPACE.$CI_PAGES_DOMAIN/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/build/docs/index.html"
+    url: ${ARTIFACTS_PAGES_URL}/build/docs/index.html
 
 deploy docs:
   stage: package

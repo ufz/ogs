@@ -37,4 +37,4 @@ code coverage:
         path: build/coverage/coverage.xml
   environment:
     name: code coverage
-    url: "https://$CI_PROJECT_ROOT_NAMESPACE.$CI_PAGES_DOMAIN/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/build/coverage/coverage_report/index.html"
+    url: ${ARTIFACTS_PAGES_URL}/build/coverage/coverage_report/index.html
