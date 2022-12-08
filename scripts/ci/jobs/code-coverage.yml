@@ -11,9 +11,6 @@ code coverage:
     CMAKE_ARGS: >-
       -DOGS_USE_PIP=ON
       -DBUILD_SHARED_LIBS=ON
-  before_script:
-    # Shortcut to the generated pages:
-    - echo '<meta http-equiv="REFRESH" content="0;URL=build/coverage/coverage_report/index.html">' >> Coverage.html
   after_script:
     - cd ../build/coverage
     - source .venv/bin/activate
@@ -38,3 +35,6 @@ code coverage:
       coverage_report:
         coverage_format: cobertura
         path: build/coverage/coverage.xml
+  environment:
+    name: code coverage
+    url: "https://$CI_PROJECT_ROOT_NAMESPACE.$CI_PAGES_DOMAIN/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/build/coverage/coverage_report/index.html"
