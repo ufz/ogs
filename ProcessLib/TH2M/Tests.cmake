@@ -27,6 +27,7 @@ if (NOT OGS_USE_MPI)
         OgsTest(PROJECTFILE TH2M/TH/Ogata-Banks/ogata-banks.prj RUNTIME 60)
         NotebookTest(NOTEBOOKFILE TH2M/TH/Ogata-Banks/Ogata-Banks.ipynb RUNTIME 120)
     endif()
+    NotebookTest(NOTEBOOKFILE TH2M/TH/idealGasLaw/confined_gas_compression.ipynb RUNTIME 10)
 endif()
 
 # TH2M 1d heat diffusion w/ Dirichlet-BC
