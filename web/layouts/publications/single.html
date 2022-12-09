@@ -9,7 +9,7 @@
       {{ range where (sort .Site.Data.bib_ogs.entries "year" "desc") "category" "not in" "Book,Tutorial" }}
       <div class=" rounded-lg">
         <div class="my-4 mx-4">
-          <div class="py-2">
+          <div class="py-2" id="{{ .key }}">
             <div class="mb-2">
               <span
                 class="px-2 m-0 inline-flex text-xs leading-5 font-semibold rounded-l-full bg-yellow-200 text-gray-800">
@@ -20,7 +20,8 @@
               </span>
             </div>
             <h4 style="margin-top: 0.5em;" class="text-xl font-medium text-gray-900 title-font mb-2">
-              <i>{{ .title | safeHTML }}</i></h4>
+              <i>{{ .title | safeHTML }}</i>
+            </h4>
             <p>
               by
               {{ $len := (len .author) }}

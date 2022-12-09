@@ -393,6 +393,7 @@ entries:
         doi: 10.1016/j.cageo.2022.105106
         keywords: Reactive transport modeling, Operator splitting approach, Integration-point
             collocation scheme
+        category: Methods
         author:
         -   first: Renchao
             last: Lu
@@ -410,3 +411,45 @@ entries:
             last: Kolditz
         -   first: Haibing
             last: Shao
+    grunwald2020:
+        type: article
+        title: Non-iterative phase-equilibrium model of the H2O-CO2-NaCl-system for
+            large-scale numerical simulations
+        journal: Mathematics and Computers in Simulation
+        doi: 10.1016/j.matcom.2020.05.024
+        year: '2020'
+        publisher: Elsevier
+        category: Processes
+        key: grunwald2020
+        author:
+        -   first: N.
+            last: Grunwald
+        -   first: J.
+            last: Maßmann
+        -   first: O.
+            last: Kolditz
+        -   first: T.
+            last: Nagel
+    grunwald2022:
+        type: article
+        title: 'Non-isothermal two-phase flow in deformable porous media: Systematic
+            open-source implementation and verification procedure'
+        journal: Geomech. Geophys. Geo-Energy Geo-Resour.
+        year: '2022'
+        volume: '8'
+        number: '3'
+        art_number: '107'
+        doi: 10.1007/s40948-022-00394-2
+        category: Processes
+        key: grunwald2022
+        author:
+        -   first: N.
+            last: Grunwald
+        -   first: J.
+            last: Maßmann
+        -   first: D.
+            last: Naumov
+        -   first: O.
+            last: Kolditz
+        -   first: Th.
+            last: Nagel
