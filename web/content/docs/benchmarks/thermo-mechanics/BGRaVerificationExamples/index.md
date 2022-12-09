@@ -32,5 +32,5 @@ chapters in the benchmark books.
 
 ## References
 
-{{< bib "kolditz:2015" >}}
-{{< bib "kolditz:2016" >}}
+- {{< bib "kolditz:2015" >}}
+- {{< bib "kolditz:2016" >}}
