@@ -235,8 +235,8 @@ public:
     // Returns tangent stiffness.
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
     updateConstitutiveRelations(
-        Eigen::Ref<Eigen::VectorXd const> const& local_x,
-        Eigen::Ref<Eigen::VectorXd const> const& /*local_x_dot*/,
+        Eigen::Ref<Eigen::VectorXd const> const& u,
+        Eigen::Ref<Eigen::VectorXd const> const& u_dot,
         ParameterLib::SpatialPosition const& x_position, double const t,
         double const dt,
         IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>&
@@ -263,7 +263,7 @@ public:
                                           typename BMatricesType::BMatrixType>(
                 dNdx, N, x_coord, _is_axially_symmetric);
 
-        eps.noalias() = B * local_x;
+        eps.noalias() = B * u;
 
         variables_prev.stress
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
@@ -325,6 +325,14 @@ public:
         auto local_b = MathLib::createZeroedVector<NodalDisplacementVectorType>(
             local_b_data, local_matrix_size);
 
+        constexpr int displacement_size =
+            ShapeFunction::NPOINTS * DisplacementDim;
+        auto u = Eigen::Map<typename ShapeMatricesType::template VectorType<
+            displacement_size> const>(local_x.data(), displacement_size);
+
+        auto u_dot = Eigen::Map<typename ShapeMatricesType::template VectorType<
+            displacement_size> const>(local_x_dot.data(), displacement_size);
+
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
@@ -350,13 +358,8 @@ public:
 
             auto const& sigma = _ip_data[ip].sigma;
 
-            auto const C = updateConstitutiveRelations(
-                Eigen::Map<NodalForceVectorType const>(
-                    local_x.data(), ShapeFunction::NPOINTS * DisplacementDim),
-                Eigen::Map<NodalForceVectorType const>(
-                    local_x_dot.data(),
-                    ShapeFunction::NPOINTS * DisplacementDim),
-                x_position, t, dt, _ip_data[ip]);
+            auto const C = updateConstitutiveRelations(u, u_dot, x_position, t,
+                                                       dt, _ip_data[ip]);
 
             auto const rho = _process_data.solid_density(t, x_position)[0];
             local_b.noalias() -=
