@@ -29,38 +29,47 @@ namespace
 {
 template <typename T_ELEMENT>
 T_ELEMENT* createLinearElement(MeshLib::Element const* e,
-                               std::vector<MeshLib::Node*> const& vec_new_nodes)
+                               std::vector<MeshLib::Node*> const& vec_new_nodes,
+                               std::vector<std::size_t> const& map)
 {
     auto const n_base_nodes = T_ELEMENT::n_base_nodes;
     auto** nodes = new MeshLib::Node*[n_base_nodes];
-    for (unsigned i = 0; i < e->getNumberOfBaseNodes(); i++)
+    auto* const* element_nodes = e->getNodes();
+    for (unsigned i = 0; i < n_base_nodes; i++)
     {
-        auto const it = find_if(
-            begin(vec_new_nodes), end(vec_new_nodes),
-            [node_i = e->getNode(i)](Node* const new_node)
-            {
-                return *node_i ==
-                       *new_node;  // coordinate comparison up to epsilon
-            });
-        if (it == end(vec_new_nodes))
-        {
-            OGS_FATAL(
-                "A base node {:d} (with original global node id {:d}) not "
-                "found in the list for element {:d}.",
-                i, e->getNode(i)->getID(), e->getID());
-        }
-        nodes[i] = const_cast<MeshLib::Node*>(*it);
+        auto const n = vec_new_nodes[map[element_nodes[i]->getID()]];
+        nodes[i] = const_cast<MeshLib::Node*>(n);
     }
     return new T_ELEMENT(nodes);
 }
-
 }  // unnamed namespace
 
 std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
     MeshLib::Mesh const& org_mesh, std::string const& new_mesh_name)
 {
+    auto const& org_elements = org_mesh.getElements();
     std::vector<MeshLib::Node*> vec_new_nodes =
-        MeshLib::copyNodeVector(MeshLib::getBaseNodes(org_mesh.getElements()));
+        MeshLib::copyNodeVector(MeshLib::getBaseNodes(org_elements));
+
+    // map from old node ids (e->getNode(i)) to new node ids (vec_new_nodes).
+    std::vector<std::size_t> map(org_mesh.getNumberOfNodes(), -1);
+    for (std::size_t i = 0; i < vec_new_nodes.size(); ++i)
+    {
+        auto const it = find_if(
+            begin(org_mesh.getNodes()), end(org_mesh.getNodes()),
+            [node_i = vec_new_nodes[i]](Node* const org_node)
+            {
+                return *node_i ==
+                       *org_node;  // coordinate comparison up to epsilon
+            });
+        if (it == end(org_mesh.getNodes()))
+        {
+            OGS_FATAL("A base node");
+        }
+        map[(*it)->getID()] = i;
+    }
+
+
 
     // create new elements with the quadratic nodes
     std::vector<MeshLib::Element*> vec_new_eles;
@@ -69,27 +78,27 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
         if (e->getCellType() == MeshLib::CellType::LINE3)
         {
             vec_new_eles.push_back(
-                createLinearElement<MeshLib::Line>(e, vec_new_nodes));
+                createLinearElement<MeshLib::Line>(e, vec_new_nodes, map));
         }
         else if (e->getCellType() == MeshLib::CellType::QUAD8)
         {
             vec_new_eles.push_back(
-                createLinearElement<MeshLib::Quad>(e, vec_new_nodes));
+                createLinearElement<MeshLib::Quad>(e, vec_new_nodes, map));
         }
         else if (e->getCellType() == MeshLib::CellType::TRI6)
         {
             vec_new_eles.push_back(
-                createLinearElement<MeshLib::Tri>(e, vec_new_nodes));
+                createLinearElement<MeshLib::Tri>(e, vec_new_nodes, map));
         }
         else if (e->getCellType() == MeshLib::CellType::HEX20)
         {
             vec_new_eles.push_back(
-                createLinearElement<MeshLib::Hex>(e, vec_new_nodes));
+                createLinearElement<MeshLib::Hex>(e, vec_new_nodes, map));
         }
         else if (e->getCellType() == MeshLib::CellType::TET10)
         {
             vec_new_eles.push_back(
-                createLinearElement<MeshLib::Tet>(e, vec_new_nodes));
+                createLinearElement<MeshLib::Tet>(e, vec_new_nodes, map));
         }
         else
         {
