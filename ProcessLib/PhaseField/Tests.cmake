@@ -106,18 +106,20 @@ AddTest(
 )
 
 AddTest(
-    NAME PhaseField_2D_K_regime_HF
+    NAME PhaseField_2D_K_regime_HF_2cores
     PATH PhaseField/k_regime_HF
     EXECUTABLE ogs
     EXECUTABLE_ARGS 2D_bm_0p01.prj
     WRAPPER mpirun
-    WRAPPER_ARGS -np 1
+    WRAPPER_ARGS -np 2
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     RUNTIME 18
     DIFF_DATA
-        expected_2D_PropagatingCrack_AT1_h0p01_ts_2_t_0.020000.vtu 2D_PropagatingCrack_AT1_h0p01_ts_2_t_0.020000.vtu displacement displacement 1e-5 0
-        expected_2D_PropagatingCrack_AT1_h0p01_ts_2_t_0.020000.vtu 2D_PropagatingCrack_AT1_h0p01_ts_2_t_0.020000.vtu phasefield phasefield 1e-6 0
+        expected_2D_PropagatingCrack_AT1_h0p01_ts_2_t_0_020000_0.vtu 2D_PropagatingCrack_AT1_h0p01_ts_2_t_0_020000_0.vtu displacement displacement 1e-5 0
+        expected_2D_PropagatingCrack_AT1_h0p01_ts_2_t_0_020000_1.vtu 2D_PropagatingCrack_AT1_h0p01_ts_2_t_0_020000_1.vtu displacement displacement 1e-5 0
+        expected_2D_PropagatingCrack_AT1_h0p01_ts_2_t_0_020000_0.vtu 2D_PropagatingCrack_AT1_h0p01_ts_2_t_0_020000_0.vtu phasefield phasefield 1e-6 0
+        expected_2D_PropagatingCrack_AT1_h0p01_ts_2_t_0_020000_1.vtu 2D_PropagatingCrack_AT1_h0p01_ts_2_t_0_020000_1.vtu phasefield phasefield 1e-6 0
 )
 
 AddTest(
