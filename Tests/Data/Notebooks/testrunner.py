@@ -44,6 +44,22 @@ def save_to_website(exec_notebook_file, web_path):
             "nbconvert_templates/collapsed.md.j2",
         ),
     )
+    for subfolder in ["figures", "images"]:
+        figures_path = os.path.abspath(
+            os.path.join(os.path.dirname(notebook_file_path), subfolder)
+        )
+        symlink_figures_path = os.path.join(
+            web_path,
+            "content",
+            output_path,
+            os.path.splitext(os.path.basename(exec_notebook_file))[0],
+            subfolder,
+        )
+        if os.path.exists(figures_path) and not os.path.exists(symlink_figures_path):
+            print(
+                f"{subfolder} folder detected, symlink {figures_path} to {symlink_figures_path}"
+            )
+            os.symlink(figures_path, symlink_figures_path)
 
 
 # Script arguments
