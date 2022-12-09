@@ -4,6 +4,7 @@ from nbclient.exceptions import DeadKernelError
 from nbconvert import HTMLExporter
 import argparse
 import os
+import shutil
 import sys
 from timeit import default_timer as timer
 from datetime import timedelta
@@ -52,14 +53,14 @@ def save_to_website(exec_notebook_file, web_path):
             web_path,
             "content",
             output_path,
-            os.path.splitext(os.path.basename(exec_notebook_file))[0],
+            os.path.splitext(os.path.basename(exec_notebook_file))[0].lower(),
             subfolder,
         )
         if os.path.exists(figures_path) and not os.path.exists(symlink_figures_path):
             print(
-                f"{subfolder} folder detected, symlink {figures_path} to {symlink_figures_path}"
+                f"{subfolder} folder detected, copying {figures_path} to {symlink_figures_path}"
             )
-            os.symlink(figures_path, symlink_figures_path)
+            shutil.copytree(figures_path, symlink_figures_path)
 
 
 # Script arguments
