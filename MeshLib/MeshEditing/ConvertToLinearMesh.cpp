@@ -69,7 +69,18 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
         map[(*it)->getID()] = i;
     }
 
-
+    // mark base nodes
+    std::vector<bool> marked_base_nodes(org_mesh.getNodes().size(), false);
+    for (auto const org_element : org_elements)
+    {
+        for (std::size_t k = 0; k < org_element->getNumberOfBaseNodes(); ++k)
+        {
+            auto const& base_node = *org_element->getNode(k);
+            marked_base_nodes[base_node.getID()] = true;
+        }
+    }
+        }
+    }
 
     // create new elements with the quadratic nodes
     std::vector<MeshLib::Element*> vec_new_eles;
