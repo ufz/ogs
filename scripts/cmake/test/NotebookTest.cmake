@@ -7,7 +7,7 @@ function(NotebookTest)
 
     set(options DISABLED)
     set(oneValueArgs NOTEBOOKFILE RUNTIME)
-    set(multiValueArgs WRAPPER RESOURCE_LOCK)
+    set(multiValueArgs WRAPPER RESOURCE_LOCK PROPERTIES)
     cmake_parse_arguments(
         NotebookTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
     )
@@ -19,22 +19,6 @@ function(NotebookTest)
                 "PyVista in CI on mac is not supported (headless)."
         )
         return()
-    endif()
-
-    if(UNIX
-       AND NOT APPLE
-       AND (DEFINED ENV{PYVISTA_HEADLESS} OR DEFINED ENV{CI})
-       AND "PYVISTA" IN_LIST NotebookTest_RESOURCE_LOCK
-    )
-        find_program(XVFB_TOOL_PATH Xvfb)
-        if(NOT XVFB_TOOL_PATH)
-            message(
-                "Disabled NotebookTest ${NotebookTest_NOTEBOOKFILE} because of"
-                " missing Xvfb tool which is required for PyVista headless on Linux."
-            )
-            return()
-        endif()
-        set(_pyvista_headless_env -E env PYVISTA_HEADLESS=1)
     endif()
 
     get_filename_component(
@@ -54,6 +38,44 @@ function(NotebookTest)
         )
     endif()
 
+    set(NotebookTest_SOURCE_DIR "${Data_SOURCE_DIR}/${NotebookTest_DIR}")
+    set(_props "")
+
+    # Check for PyVista
+    set(_pyvista_check 0)
+    if(UNIX)
+        execute_process(
+            COMMAND nbdime show -s
+                    ${NotebookTest_SOURCE_DIR}/${NotebookTest_NAME}
+            COMMAND grep "import pyvista"
+            COMMAND wc -l
+            COMMAND tr -d "' '"
+            OUTPUT_VARIABLE _pyvista_check
+        )
+    endif()
+
+    if(UNIX
+       AND NOT APPLE
+       AND (DEFINED ENV{PYVISTA_HEADLESS} OR DEFINED ENV{CI})
+       AND "${_pyvista_check}" GREATER 0
+    )
+        find_program(XVFB_TOOL_PATH Xvfb)
+        if(NOT XVFB_TOOL_PATH)
+            message(
+                VERBOSE
+                "Disabled NotebookTest ${NotebookTest_NOTEBOOKFILE} because of"
+                " missing Xvfb tool which is required for PyVista headless on Linux."
+            )
+            return()
+        endif()
+        set(_pyvista_headless_env -E env PYVISTA_HEADLESS=1)
+    endif()
+
+    if("${_pyvista_check}" GREATER 0)
+        list(APPEND _props RESOURCE_LOCK PYVISTA)
+        message(VERBOSE "PyVista detected in notebookk: ${NotebookTest_NAME}")
+    endif()
+
     set(timeout ${ogs.ctest.large_runtime})
     if(DEFINED NotebookTest_RUNTIME)
         math(EXPR timeout "${NotebookTest_RUNTIME} * 5")
@@ -71,7 +93,6 @@ function(NotebookTest)
         string(APPEND NotebookTest_NAME_WE "-LARGE")
     endif()
 
-    set(NotebookTest_SOURCE_DIR "${Data_SOURCE_DIR}/${NotebookTest_DIR}")
     set(NotebookTest_BINARY_DIR "${Data_BINARY_DIR}/${NotebookTest_DIR}")
     file(MAKE_DIRECTORY ${NotebookTest_BINARY_DIR})
     file(TO_NATIVE_PATH "${NotebookTest_BINARY_DIR}"
@@ -109,18 +130,14 @@ function(NotebookTest)
         list(APPEND labels large)
     endif()
 
-    set(_prop_env ENVIRONMENT_MODIFICATION
-                  PATH=path_list_prepend:$<TARGET_FILE_DIR:ogs>
+    list(APPEND _props ENVIRONMENT_MODIFICATION
+         PATH=path_list_prepend:$<TARGET_FILE_DIR:ogs>
+         ${NotebookTest_PROPERTIES}
     )
-    if(DEFINED NotebookTest_RESOURCE_LOCK)
-        set_tests_properties(
-            ${TEST_NAME} PROPERTIES RESOURCE_LOCK ${NotebookTest_RESOURCE_LOCK}
-        )
-    endif()
 
     set_tests_properties(
         ${TEST_NAME}
-        PROPERTIES ${_prop_env}
+        PROPERTIES ${_props}
                    COST
                    ${NotebookTest_RUNTIME}
                    DISABLED
