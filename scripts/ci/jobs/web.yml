@@ -31,14 +31,11 @@ check web links:
 
 preview web site:
   stage: build
-  tags: [docker]
   image: $WEB_IMAGE
   needs: [ci_images, "build linux arch", "build linux petsc"]
   variables:
     HUGO_ENVIRONMENT: "staging"
   script:
-    # HACK to easier linking to the generated pages
-    - echo '<meta http-equiv="REFRESH" content="0;URL=web/public/index.html">' >> WebPreview.html
     # Copy notebook pages
     - cp -rl build/*/web/content web/
     - cd web
@@ -53,11 +50,12 @@ preview web site:
         - scripts/ci/jobs/web.yml
         - Tests/Data/**/*.ipynb
   artifacts:
-    expose_as: "Web Preview"
     paths:
-      - WebPreview.html
       - web/public
     expire_in: 1 week
+  environment:
+    name: web preview
+    url: ${ARTIFACTS_PAGES_URL}/web/public/index.html
   cache:
     paths:
       - web/node_modules

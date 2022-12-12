@@ -43,7 +43,3 @@ Or add `[ci skip]` to the commit message to skip the pipeline for this commit. E
 ```bash
 git commit -m "Added feature X [ci skip]"
 ```
-
-### Automatic testing for own repository
-
-TODO

@@ -15,6 +15,8 @@ aliases = ["/docs/devguide/documentation/introduction/"]
 
 - Development related content such as developer guide, benchmark documentation, tools description, ... are simple Markdown files in e.g. [/web/content/docs](https://www.opengeosys.org/docs/benchmarks/elliptic/elliptic-neumann)
 - You can preview documentation locally with [Hugo](https://gohugo.io) – a static site generator (minimum version: {{< dataFile "versions.minimum_version.hugo" >}})
+- A preview is also generated during [Continuous Integration]({{< ref "continuous-integration.md" >}} ):
+  ![View app button on MR widget](preview-web.png)
 
 Benchmark documentation can also be given in form of Jupyter Notebooks, see [Jupyter notebooks as documentation]({{< relref "jupyter-docs" >}}) for details.
 
