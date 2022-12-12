@@ -39,6 +39,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    PROPERTIES DEPENDS ogs-RichardsMechanics_square_1e2_confined_compression-time-vtkdiff
     DIFF_DATA
     confined_compression_fully_saturated_ts_20_t_100.000000.vtu confined_compression_fully_saturated_restart_ts_0_t_100.000000.vtu displacement displacement 1e-16 0
     confined_compression_fully_saturated_ts_120_t_1000.000000.vtu confined_compression_fully_saturated_restart_ts_100_t_1000.000000.vtu displacement displacement 1e-16 0
@@ -64,7 +65,3 @@ AddTest(
     confined_compression_fully_saturated_ts_120_t_1000.000000.vtu confined_compression_fully_saturated_restart_ts_100_t_1000.000000.vtu velocity velocity 1e-16 0
     confined_compression_fully_saturated_ts_420_t_4000.000000.vtu confined_compression_fully_saturated_restart_ts_400_t_4000.000000.vtu velocity velocity 1e-16 0
 )
-if(TEST ogs-RichardsMechanics_square_1e2_confined_compression_restart-time)
-    set_tests_properties(ogs-RichardsMechanics_square_1e2_confined_compression_restart-time PROPERTIES
-        DEPENDS ogs-RichardsMechanics_square_1e2_confined_compression-time-vtkdiff)
-endif()
