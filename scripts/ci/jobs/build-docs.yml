@@ -53,7 +53,7 @@ build docs:
       metrics: build/metrics.txt
     when: always
   environment:
-    name: doxygen preview
+    name: doxygen preview $CI_MERGE_REQUEST_IID
     url: ${ARTIFACTS_PAGES_URL}/build/docs/index.html
 
 deploy docs:

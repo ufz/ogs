@@ -36,5 +36,5 @@ code coverage:
         coverage_format: cobertura
         path: build/coverage/coverage.xml
   environment:
-    name: code coverage
+    name: code coverage $CI_MERGE_REQUEST_IID
     url: ${ARTIFACTS_PAGES_URL}/build/coverage/coverage_report/index.html
