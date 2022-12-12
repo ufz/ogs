@@ -222,7 +222,7 @@ void Mesh::setElementNeighbors()
     }
 }
 
-std::size_t Mesh::getNumberOfBaseNodes() const
+std::size_t Mesh::computeNumberOfBaseNodes() const
 {
     return std::count_if(begin(_nodes), end(_nodes),
                          [this](auto const* const node) {

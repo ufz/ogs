@@ -37,7 +37,7 @@ TEST(MeshLib, RemoveNodes)
         MeshLib::removeNodes(*mesh, removed_node_ids, "")};
 
     ASSERT_EQ(5u, new_mesh->getNumberOfNodes());
-    ASSERT_EQ(5u, new_mesh->getNumberOfBaseNodes());
+    ASSERT_EQ(5u, new_mesh->computeNumberOfBaseNodes());
     ASSERT_EQ(4u, new_mesh->getNumberOfElements());
     for (std::size_t i = 0; i < new_mesh->getNumberOfNodes(); i++)
     {
@@ -60,7 +60,7 @@ TEST(MeshLib, RemoveElements)
         MeshLib::removeElements(*mesh, removed_ele_ids, "")};
 
     ASSERT_EQ(5u, new_mesh->getNumberOfNodes());
-    ASSERT_EQ(5u, new_mesh->getNumberOfBaseNodes());
+    ASSERT_EQ(5u, new_mesh->computeNumberOfBaseNodes());
     ASSERT_EQ(4u, new_mesh->getNumberOfElements());
     for (std::size_t i = 0; i < new_mesh->getNumberOfNodes(); i++)
     {
