@@ -136,8 +136,8 @@ AddTest(
 )
 
 if(OGS_USE_PETSC)
-    NotebookTest(NOTEBOOKFILE PhaseField/surfing_jupyter_notebook/surfing_pyvista.ipynb RUNTIME 25 RESOURCE_LOCK PYVISTA)
-    NotebookTest(NOTEBOOKFILE PhaseField/beam_jupyter_notebook/beam.ipynb RUNTIME 500 RESOURCE_LOCK PYVISTA)
+    NotebookTest(NOTEBOOKFILE PhaseField/surfing_jupyter_notebook/surfing_pyvista.ipynb RUNTIME 25)
+    NotebookTest(NOTEBOOKFILE PhaseField/beam_jupyter_notebook/beam.ipynb RUNTIME 500)
 endif()
 
 if(TEST nb-PhaseField/beam_jupyter_notebook/beam-LARGE)
