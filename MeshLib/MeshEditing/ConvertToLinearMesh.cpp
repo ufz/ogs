@@ -48,26 +48,6 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
     MeshLib::Mesh const& org_mesh, std::string const& new_mesh_name)
 {
     auto const& org_elements = org_mesh.getElements();
-    std::vector<MeshLib::Node*> vec_new_nodes =
-        MeshLib::copyNodeVector(MeshLib::getBaseNodes(org_elements));
-
-    // map from old node ids (e->getNode(i)) to new node ids (vec_new_nodes).
-    std::vector<std::size_t> map(org_mesh.getNumberOfNodes(), -1);
-    for (std::size_t i = 0; i < vec_new_nodes.size(); ++i)
-    {
-        auto const it = find_if(
-            begin(org_mesh.getNodes()), end(org_mesh.getNodes()),
-            [node_i = vec_new_nodes[i]](Node* const org_node)
-            {
-                return *node_i ==
-                       *org_node;  // coordinate comparison up to epsilon
-            });
-        if (it == end(org_mesh.getNodes()))
-        {
-            OGS_FATAL("A base node");
-        }
-        map[(*it)->getID()] = i;
-    }
 
     // mark base nodes
     std::vector<bool> marked_base_nodes(org_mesh.getNodes().size(), false);
@@ -79,6 +59,21 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
             marked_base_nodes[base_node.getID()] = true;
         }
     }
+
+    // construct map and fill new_mesh_nodes
+    std::vector<MeshLib::Node*> new_mesh_nodes{static_cast<std::size_t>(
+        std::count(begin(marked_base_nodes), end(marked_base_nodes), true))};
+    std::size_t base_node_cnt = 0;
+    auto const& org_nodes = org_mesh.getNodes();
+    std::vector<std::size_t> base_node_map(org_nodes.size(), -1);
+    for (std::size_t k = 0; k < org_nodes.size(); ++k)
+    {
+        if (marked_base_nodes[k])
+        {
+            new_mesh_nodes[base_node_cnt] =
+                new Node(org_nodes[k]->data(), base_node_cnt);
+            base_node_map[k] = base_node_cnt;
+            base_node_cnt++;
         }
     }
 
@@ -88,28 +83,28 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
     {
         if (e->getCellType() == MeshLib::CellType::LINE3)
         {
-            vec_new_eles.push_back(
-                createLinearElement<MeshLib::Line>(e, vec_new_nodes, map));
+            vec_new_eles.push_back(createLinearElement<MeshLib::Line>(
+                e, new_mesh_nodes, base_node_map));
         }
         else if (e->getCellType() == MeshLib::CellType::QUAD8)
         {
-            vec_new_eles.push_back(
-                createLinearElement<MeshLib::Quad>(e, vec_new_nodes, map));
+            vec_new_eles.push_back(createLinearElement<MeshLib::Quad>(
+                e, new_mesh_nodes, base_node_map));
         }
         else if (e->getCellType() == MeshLib::CellType::TRI6)
         {
-            vec_new_eles.push_back(
-                createLinearElement<MeshLib::Tri>(e, vec_new_nodes, map));
+            vec_new_eles.push_back(createLinearElement<MeshLib::Tri>(
+                e, new_mesh_nodes, base_node_map));
         }
         else if (e->getCellType() == MeshLib::CellType::HEX20)
         {
-            vec_new_eles.push_back(
-                createLinearElement<MeshLib::Hex>(e, vec_new_nodes, map));
+            vec_new_eles.push_back(createLinearElement<MeshLib::Hex>(
+                e, new_mesh_nodes, base_node_map));
         }
         else if (e->getCellType() == MeshLib::CellType::TET10)
         {
-            vec_new_eles.push_back(
-                createLinearElement<MeshLib::Tet>(e, vec_new_nodes, map));
+            vec_new_eles.push_back(createLinearElement<MeshLib::Tet>(
+                e, new_mesh_nodes, base_node_map));
         }
         else
         {
@@ -119,7 +114,7 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
     }
 
     auto new_mesh = std::make_unique<MeshLib::Mesh>(
-        new_mesh_name, vec_new_nodes, vec_new_eles,
+        new_mesh_name, new_mesh_nodes, vec_new_eles,
         org_mesh.getProperties().excludeCopyProperties(
             std::vector<MeshLib::MeshItemType>(1,
                                                MeshLib::MeshItemType::Node)));
