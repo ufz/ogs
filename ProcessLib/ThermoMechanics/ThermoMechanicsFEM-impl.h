@@ -15,7 +15,7 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
-#include "MaterialLib/MPL/Utils/FormKelvinVectorFromThermalExpansivity.h"
+#include "MaterialLib/MPL/Utils/FormKelvinVector.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "ProcessLib/Utils/TransposeInPlace.h"
 
@@ -197,7 +197,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
 
         // Consider also anisotropic thermal expansion.
         auto const solid_linear_thermal_expansivity_vector =
-            MPL::formKelvinVectorFromThermalExpansivity<DisplacementDim>(
+            MPL::formKelvinVector<DisplacementDim>(
                 solid_phase
                     .property(
                         MaterialPropertyLib::PropertyType::thermal_expansivity)
@@ -429,7 +429,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
 
         // Consider also anisotropic thermal expansion.
         auto const solid_linear_thermal_expansivity_vector =
-            MPL::formKelvinVectorFromThermalExpansivity<DisplacementDim>(
+            MPL::formKelvinVector<DisplacementDim>(
                 solid_phase
                     .property(
                         MaterialPropertyLib::PropertyType::thermal_expansivity)

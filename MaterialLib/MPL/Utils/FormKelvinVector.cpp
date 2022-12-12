@@ -16,7 +16,7 @@
 namespace MaterialPropertyLib
 {
 static constexpr const char error_info[] =
-    "The conversion to a Kelvin vector of correct dimensionality is ambigous."
+    "The conversion to a Kelvin vector of correct dimensionality is ambiguous."
     "Please use a scalar number for isotropic properties, a three element "
     "array or a 3 x 3 matrix for anisotropic properties.";
 
@@ -78,22 +78,17 @@ struct FormKelvinVector
     }
 };
 
-
 template <int GlobalDim>
-MathLib::KelvinVector::KelvinVectorType<GlobalDim>
-formKelvinVector(
+MathLib::KelvinVector::KelvinVectorType<GlobalDim> formKelvinVector(
     MaterialPropertyLib::PropertyDataType const& values)
 {
-    return std::visit(FormKelvinVector<GlobalDim>(),
-                      values);
+    return std::visit(FormKelvinVector<GlobalDim>(), values);
 }
 
-template MathLib::KelvinVector::KelvinVectorType<2>
-formKelvinVector<2>(
+template MathLib::KelvinVector::KelvinVectorType<2> formKelvinVector<2>(
     MaterialPropertyLib::PropertyDataType const& values);
 
-template MathLib::KelvinVector::KelvinVectorType<3>
-formKelvinVector<3>(
+template MathLib::KelvinVector::KelvinVectorType<3> formKelvinVector<3>(
     MaterialPropertyLib::PropertyDataType const& values);
 
 }  // namespace MaterialPropertyLib

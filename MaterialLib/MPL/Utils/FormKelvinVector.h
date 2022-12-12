@@ -32,8 +32,7 @@ namespace MaterialPropertyLib
  * @return        Kelvin vector type property.
  */
 template <int GlobalDim>
-MathLib::KelvinVector::KelvinVectorType<GlobalDim>
-formKelvinVector(
+MathLib::KelvinVector::KelvinVectorType<GlobalDim> formKelvinVector(
     MaterialPropertyLib::PropertyDataType const& values);
 
 }  // namespace MaterialPropertyLib
