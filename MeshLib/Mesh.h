@@ -116,7 +116,7 @@ public:
     std::size_t getID() const {return _id; }
 
     /// Get the number of base nodes
-    std::size_t getNumberOfBaseNodes() const;
+    std::size_t computeNumberOfBaseNodes() const;
 
     /// Check if the mesh contains any nonlinear element.
     bool hasNonlinearElement() const;

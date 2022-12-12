@@ -34,7 +34,7 @@ public:
     explicit NodePartitionedMesh(const Mesh& mesh)
         : Mesh(mesh),
           _global_node_ids(mesh.getNumberOfNodes()),
-          _n_global_base_nodes(mesh.getNumberOfBaseNodes()),
+          _n_global_base_nodes(mesh.computeNumberOfBaseNodes()),
           _n_global_nodes(mesh.getNumberOfNodes()),
           _n_active_nodes(mesh.getNumberOfNodes()),
           _is_single_thread(true)
