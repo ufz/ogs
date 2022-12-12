@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include "NumLib/IndexValueVector.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryCondition.h"
 
