@@ -81,8 +81,6 @@ int main(int argc, char* argv[])
     INFO("Mesh read: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
          mesh->getNumberOfElements());
 
-    auto const bulk_node_ids_string =
-        MeshLib::getBulkIDString(MeshLib::MeshItemType::Node);
     // extract surface
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
         MeshLib::BoundaryExtraction::getBoundaryElementsAsMesh(
