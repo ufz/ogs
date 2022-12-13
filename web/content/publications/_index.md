@@ -47,7 +47,7 @@ weight = 3
 
 ### Highlighted paper
 
-<div class="bg-brand-50 rounded-lg p-2 mb-4 text-gray-900">
+<div class="bg-brand-50 rounded-lg shadow p-2 mb-4 text-gray-900">
 {{< bib "kolditz2012" >}}
 </div>
 

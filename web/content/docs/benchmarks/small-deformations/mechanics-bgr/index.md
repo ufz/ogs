@@ -37,8 +37,6 @@ Note that OGS uses plane strain assumptions in two dimensions (2D) as it is comm
 
 ## References
 
-{{< bib "kolditz:2015" >}}
-
-{{< bib "kolditz:2016" >}}
-
-{{< bib "kolditz:2018" >}}
+- {{< bib "kolditz:2015" >}}
+- {{< bib "kolditz:2016" >}}
+- {{< bib "kolditz:2018" >}}

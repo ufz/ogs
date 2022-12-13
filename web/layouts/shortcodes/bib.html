@@ -1,22 +1,21 @@
 {{ $full_bib := merge .Site.Data.bib_ogs .Site.Data.bib_other }}
 {{ $bib := index $full_bib.entries (.Get 0) }}
-<p>
-  {{ $len := (len $bib.author) }}
-  {{ range $index, $element := $bib.author }}
-  {{ $element.last }}, {{ $element.first}} {{ if ne (add $index 1) $len }}and{{ end }}
-  {{ end }}
-  ({{$bib.year}}):
-  <span class="italic">{{ $bib.title | safeHTML }}</span>.
-  {{ if isset $bib "journal" }}{{ $bib.journal }},{{ end }}
-  {{ if isset $bib "issue" }}Issue {{ $bib.issue }},{{ end }}
-  {{ if isset $bib "volume" }}vol. {{ $bib.volume }},{{ end }}
-  {{ if isset $bib "pages" }}p. {{ $bib.pages }},{{ end }}
-  {{ if isset $bib "isbn" }}ISBN: {{ $bib.isbn }},{{ end }}
-  {{ if isset $bib "publisher" }}{{ $bib.publisher }},{{ end }}
-  {{ if isset $bib "doi" }}
-  DOI:<a href="https://doi.org/{{ $bib.doi }}" class="mt-4">{{ $bib.doi }}</a>
-  {{ end }}
-  {{ if isset $bib "url" }}
-  <a href="{{ $bib.url }}" class="mt-4">{{ $bib.url }}</a>
-  {{ end }}
-</p>
+
+{{ $len := (len $bib.author) }}
+{{ range $index, $element := $bib.author }}
+{{ $element.last }}, {{ $element.first}} {{ if ne (add $index 1) $len }}and{{ end }}
+{{ end }}
+({{$bib.year}}):
+<span class="italic">{{ $bib.title | safeHTML }}</span>.
+{{ if isset $bib "journal" }}{{ $bib.journal }},{{ end }}
+{{ if isset $bib "issue" }}Issue {{ $bib.issue }},{{ end }}
+{{ if isset $bib "volume" }}vol. {{ $bib.volume }},{{ end }}
+{{ if isset $bib "pages" }}p. {{ $bib.pages }},{{ end }}
+{{ if isset $bib "isbn" }}ISBN: {{ $bib.isbn }},{{ end }}
+{{ if isset $bib "publisher" }}{{ $bib.publisher }},{{ end }}
+{{ if isset $bib "doi" }}
+DOI:<a href="https://doi.org/{{ $bib.doi }}" class="mt-4">{{ $bib.doi }}</a>
+{{ end }}
+{{ if isset $bib "url" }}
+<a href="{{ $bib.url }}" class="mt-4">{{ $bib.url }}</a>
+{{ end }}
