@@ -175,33 +175,4 @@ std::map<std::string, PropertyVectorBase*>::size_type Properties::size(
                     { return p.second->getMeshItemType() == mesh_item_type; });
 }
 
-std::string getBulkIDString(MeshItemType mesh_item_type)
-{
-    switch (mesh_item_type)
-    {
-        case MeshItemType::Node:
-            return "bulk_node_ids";
-            break;
-        case MeshItemType::Cell:
-            return "bulk_element_ids";
-            break;
-        case MeshItemType::Edge:
-            return "bulk_edge_ids";
-            break;
-        case MeshItemType::Face:
-            return "bulk_face_ids";
-            break;
-        case MeshItemType::IntegrationPoint:
-            OGS_FATAL("MeshItemType::IntegrationPoint is not handled.");
-            return "";
-            break;
-        default:
-            OGS_FATAL(
-                "Unknown mesh item type. At the moment only for mesh item "
-                "types 'Node', 'Cell', and 'Face' mapping names are "
-                "specified.");
-            return "";
-    }
-}
-
 }  // end namespace MeshLib
