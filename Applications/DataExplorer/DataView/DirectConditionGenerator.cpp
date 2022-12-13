@@ -86,8 +86,7 @@ DirectConditionGenerator::directWithSurfaceIntegration(
 
     Eigen::Vector3d const dir({0.0, 0.0, -1.0});
     double const angle(90);
-    std::string const prop_name =
-        MeshLib::getBulkIDString(MeshLib::MeshItemType::Node);
+    auto prop_name = MeshLib::getBulkIDString(MeshLib::MeshItemType::Node);
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
         MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir, angle,
                                                        prop_name));

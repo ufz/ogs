@@ -33,16 +33,18 @@ void addBulkMeshPropertyToSubMesh(MeshLib::Mesh const& bulk_mesh,
         return;
     }
 
-    if (!bulk_mesh.getProperties().existsPropertyVector<double>(property_name))
+    if (!bulk_mesh.getProperties().existsPropertyVector<double>(
+            std::string_view(property_name)))
     {
         return;
     }
     auto const& bulk_mesh_property =
-        *bulk_mesh.getProperties().getPropertyVector<double>(property_name);
+        *bulk_mesh.getProperties().getPropertyVector<double>(
+            std::string_view(property_name));
     auto const mesh_item_type = bulk_mesh_property.getMeshItemType();
 
-    std::string const mesh_item_type_string = [mesh_item_type,
-                                               &property_name]() -> std::string
+    std::string_view mesh_item_type_string =
+        [mesh_item_type, &property_name]() -> std::string_view
     {
         switch (mesh_item_type)
         {

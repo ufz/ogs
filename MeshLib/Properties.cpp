@@ -14,10 +14,9 @@
 
 namespace MeshLib
 {
-void Properties::removePropertyVector(std::string const& name)
+void Properties::removePropertyVector(std::string_view name)
 {
-    std::map<std::string, PropertyVectorBase*>::const_iterator it(
-        _properties.find(name));
+    auto it(_properties.find(std::string(name)));
     if (it == _properties.end())
     {
         WARN("A property of the name '{:s}' does not exist.", name);
@@ -27,9 +26,9 @@ void Properties::removePropertyVector(std::string const& name)
     _properties.erase(it);
 }
 
-bool Properties::hasPropertyVector(std::string const& name) const
+bool Properties::hasPropertyVector(std::string_view name) const
 {
-    return _properties.find(name) != _properties.end();
+    return _properties.find(std::string(name)) != _properties.end();
 }
 
 std::vector<std::string> Properties::getPropertyVectorNames() const
@@ -37,7 +36,7 @@ std::vector<std::string> Properties::getPropertyVectorNames() const
     std::vector<std::string> names;
     std::transform(_properties.begin(), _properties.end(),
                    std::back_inserter(names),
-                   [](auto const& pair) { return pair.first; });
+                   [](auto const& pair) { return std::string(pair.first); });
     return names;
 }
 
@@ -49,7 +48,7 @@ std::vector<std::string> Properties::getPropertyVectorNames(
     {
         if (p.second->getMeshItemType() == t)
         {
-            names.push_back(p.first);
+            names.push_back(std::string(p.first));
         }
     }
     return names;

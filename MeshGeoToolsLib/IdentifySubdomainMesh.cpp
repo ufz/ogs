@@ -144,7 +144,7 @@ std::vector<std::vector<std::size_t>> identifySubdomainMeshElements(
 
 /// Updates or checks the existing mesh's property with the given values.
 void updateOrCheckExistingSubdomainProperty(
-    MeshLib::Mesh& mesh, std::string const& property_name,
+    MeshLib::Mesh& mesh, std::string_view property_name,
     std::vector<std::size_t> const& values,
     MeshLib::MeshItemType const mesh_item_type, bool const force_overwrite)
 {

@@ -107,7 +107,7 @@ TEST_F(MeshLibProperties, AddDoubleProperties)
     ASSERT_TRUE(mesh != nullptr);
     const std::size_t size(mesh_size * mesh_size * mesh_size);
 
-    std::string const prop_name("TestProperty");
+    std::string_view prop_name("TestProperty");
     auto* const double_properties =
         mesh->getProperties().createNewPropertyVector<double>(
             prop_name, MeshLib::MeshItemType::Cell);

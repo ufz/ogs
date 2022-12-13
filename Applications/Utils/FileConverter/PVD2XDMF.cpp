@@ -185,7 +185,7 @@ int main(int argc, char* argv[])
 
         for (auto const& p : main_mesh->getProperties())
         {
-            variable_output_names.insert(p.first);
+            variable_output_names.insert(std::string(p.first));
         }
         mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
             std::vector{std::cref(*main_mesh)}, output_file_path,

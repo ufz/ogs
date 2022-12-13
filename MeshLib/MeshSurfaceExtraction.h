@@ -66,9 +66,9 @@ public:
         const MeshLib::Mesh& subsfc_mesh,
         Eigen::Vector3d const& dir,
         double angle,
-        std::string const& subsfc_node_id_prop_name = "",
-        std::string const& subsfc_element_id_prop_name = "",
-        std::string const& face_id_prop_name = "");
+        std::string_view subsfc_node_id_prop_name = "",
+        std::string_view subsfc_element_id_prop_name = "",
+        std::string_view face_id_prop_name = "");
 
 private:
     /// Functionality needed for getSurfaceNodes() and getMeshSurface()
@@ -86,18 +86,18 @@ namespace BoundaryExtraction
 {
 std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
     MeshLib::Mesh const& bulk_mesh,
-    std::string const& subsfc_node_id_prop_name,
-    std::string const& subsfc_element_id_prop_name,
-    std::string const& face_id_prop_name);
+    std::string_view subsfc_node_id_prop_name,
+    std::string_view subsfc_element_id_prop_name,
+    std::string_view face_id_prop_name);
 }
 
 void addBulkIDPropertiesToMesh(
     MeshLib::Mesh& surface_mesh,
-    std::string const& node_to_bulk_node_id_map_name,
+    std::string_view node_to_bulk_node_id_map_name,
     std::vector<std::size_t> const& node_to_bulk_node_id_map,
-    std::string const& element_to_bulk_element_id_map_name,
+    std::string_view element_to_bulk_element_id_map_name,
     std::vector<std::size_t> const& element_to_bulk_element_id_map,
-    std::string const& element_to_bulk_face_id_map_name,
+    std::string_view element_to_bulk_face_id_map_name,
     std::vector<std::size_t> const& element_to_bulk_face_id_map);
 
 }  // namespace MeshLib

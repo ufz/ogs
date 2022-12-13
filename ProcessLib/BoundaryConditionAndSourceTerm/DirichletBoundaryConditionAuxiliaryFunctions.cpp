@@ -41,7 +41,7 @@ void checkParametersOfDirichletBoundaryCondition(
     }
 
     if (!bc_mesh.getProperties().hasPropertyVector(
-            MeshLib::getBulkIDString(MeshLib::MeshItemType::Node)))
+            std::string(MeshLib::getBulkIDString(MeshLib::MeshItemType::Node))))
     {
         OGS_FATAL(
             "The required bulk node ids map does not exist in the boundary "

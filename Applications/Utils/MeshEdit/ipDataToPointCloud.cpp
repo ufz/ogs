@@ -141,7 +141,7 @@ unsigned determineIntegrationOrder(MeshLib::Mesh const& mesh)
         }
 
         auto const order =
-            MeshLib::getIntegrationPointMetaData(properties, name)
+            MeshLib::getIntegrationPointMetaData(properties, std::string(name))
                 .integration_order;
 
         if (!integration_order)

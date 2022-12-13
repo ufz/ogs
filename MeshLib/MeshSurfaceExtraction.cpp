@@ -228,9 +228,9 @@ std::vector<double> MeshSurfaceExtraction::getSurfaceAreaForNodes(
 
 MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
     const MeshLib::Mesh& subsfc_mesh, Eigen::Vector3d const& dir, double angle,
-    std::string const& subsfc_node_id_prop_name,
-    std::string const& subsfc_element_id_prop_name,
-    std::string const& face_id_prop_name)
+    std::string_view subsfc_node_id_prop_name,
+    std::string_view subsfc_element_id_prop_name,
+    std::string_view face_id_prop_name)
 {
     // allow slightly greater angles than 90 degrees for numerical errors
     if (angle < 0 || angle > 91)
@@ -458,9 +458,9 @@ namespace BoundaryExtraction
 {
 std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
     MeshLib::Mesh const& bulk_mesh,
-    std::string const& subsfc_node_id_prop_name,
-    std::string const& subsfc_element_id_prop_name,
-    std::string const& face_id_prop_name)
+    std::string_view subsfc_node_id_prop_name,
+    std::string_view subsfc_element_id_prop_name,
+    std::string_view face_id_prop_name)
 {
     auto const mesh_dimension = bulk_mesh.getDimension();
     if (mesh_dimension < 2 || mesh_dimension > 3)
@@ -512,11 +512,11 @@ std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
 
 void addBulkIDPropertiesToMesh(
     MeshLib::Mesh& surface_mesh,
-    std::string const& node_to_bulk_node_id_map_name,
+    std::string_view node_to_bulk_node_id_map_name,
     std::vector<std::size_t> const& node_to_bulk_node_id_map,
-    std::string const& element_to_bulk_element_id_map_name,
+    std::string_view element_to_bulk_element_id_map_name,
     std::vector<std::size_t> const& element_to_bulk_element_id_map,
-    std::string const& element_to_bulk_face_id_map_name,
+    std::string_view element_to_bulk_face_id_map_name,
     std::vector<std::size_t> const& element_to_bulk_face_id_map)
 {
     // transmit the original node ids of the bulk mesh as a property
