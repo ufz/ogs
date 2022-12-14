@@ -54,27 +54,6 @@ function(NotebookTest)
         )
     endif()
 
-    if(UNIX
-       AND NOT APPLE
-       AND (DEFINED ENV{PYVISTA_HEADLESS} OR DEFINED ENV{CI})
-       AND "${_pyvista_check}" GREATER 0
-    )
-        find_program(XVFB_TOOL_PATH Xvfb)
-        if(NOT XVFB_TOOL_PATH)
-            message(
-                VERBOSE
-                "Disabled NotebookTest ${NotebookTest_NOTEBOOKFILE} because of"
-                " missing Xvfb tool which is required for PyVista headless on Linux."
-            )
-            return()
-        endif()
-    endif()
-
-    if("${_pyvista_check}" GREATER 0)
-        list(APPEND _props RESOURCE_LOCK PYVISTA)
-        message(VERBOSE "PyVista detected in notebookk: ${NotebookTest_NAME}")
-    endif()
-
     set(timeout ${ogs.ctest.large_runtime})
     if(DEFINED NotebookTest_RUNTIME)
         math(EXPR timeout "${NotebookTest_RUNTIME} * 5")
