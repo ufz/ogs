@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--units: kg, m, s, K and derived units: N, Pa=N/m^2  -->
+<OpenGeoSysProject>
+    <meshes>
+        <!-- meshes with labels 0,1,2,3 are left, right, bottom and top, resp. -->
+        <mesh>Slab_RectMesh_fine.vtu</mesh>
+		<mesh>Slab_RectMesh_fine_0.vtu</mesh>
+		<mesh>Slab_RectMesh_fine_1.vtu</mesh>
+		<mesh>Slab_RectMesh_fine_2.vtu</mesh>
+        <mesh>Slab_RectMesh_fine_3.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>HeatConduction</name>
+            <type>HEAT_CONDUCTION</type>
+            <integration_order>2</integration_order>
+            <process_variables>
+                <process_variable>temperature</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="heat_flux" output_name="heat_flux"/>
+            </secondary_variables>
+        </process>
+    </processes>
+    <media>
+        <medium id="4">
+           <phases>
+                <phase>
+                    <!-- Pore water phase -->
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>0.58</value> <!-- W/m/K -->
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>4190</value> <!-- J/kg/K -->
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1000</value> <!-- kg/m^3 -->
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <!-- Ice phase -->
+                    <type>FrozenLiquid</type>
+                    <properties>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>2.2</value> <!-- W/m/K -->
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>2090</value> <!-- J/kg/K -->
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>920</value> <!-- kg/m^3 -->
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                <!-- In this problem there is NO solid phase, so we set porosity to 1 -->
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>1.1</value> <!-- W/m/K-->
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>900</value> <!-- J/kg/K-->
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2000</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>1.0</value>    <!-- we sfitch off the solid phase completely, since it is only a melted ice slab that we model -->
+                </property>
+                <property>
+                    <name>volume_fraction</name>
+                    <type>TemperatureDependentFraction</type>
+                    <steepness>5</steepness> <!-- k in the Sigmoid function, typical ref. value is k=2 (not suitable in Stefan problem) -->
+                    <characteristic_temperature>273.15</characteristic_temperature> <!-- melting/freezing temperature T_m -->
+                </property>
+                <property>
+                    <name>density</name>
+                    <type>VolumeFractionAverage</type>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>VolumeFractionAverage</type>
+                </property>
+                <property>
+                    <name>specific_heat_capacity</name>
+                    <type>SpecificHeatCapacityWithLatentHeat</type>
+                    <specific_latent_heat>334000</specific_latent_heat> <!-- J/kg-->
+                </property>
+            </properties>
+        </medium>
+    </media>
+
+    <parameters>
+        <parameter>
+            <name>T0</name>
+            <type>Function</type>
+            <expression>
+            if (x &lt; 0.01756080686, 308.15-82.94603542*erf(0.3733021733*sqrt(3600)*x), 263.15+11.99859445*erfc(0.1298443988*sqrt(3600)*x+0.0118965517))
+            </expression>  <!-- we take IC function T_0 to be the Stefan solution T calculated at the time t=3600 s -->
+        </parameter>
+        <parameter>
+            <name>T1l</name>
+            <type>Constant</type>
+            <value> 308.15 </value>   <!-- this is T1 on the left end of (0,4), the B.C. from Stefan problem -->
+        </parameter>
+        <parameter>
+            <name>T1r</name>
+            <type>Function</type>
+            <expression> 263.15+11.99859445*erfc(1869.759342/sqrt(t)+0.0118965517) </expression>   <!-- this is T1=T(4,t), where T(4,t) is from the Stefan solution -->
+        </parameter>
+    </parameters>
+    <process_variables>
+        <process_variable>
+            <name>temperature</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>T0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>Slab_RectMesh_fine_0</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>T1l</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>Slab_RectMesh_fine_1</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>T1r</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+
+    <time_loop>
+        <processes>
+            <process ref="HeatConduction">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1.e-8</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>3600</t_initial>
+                    <t_end>7200</t_end>  <!-- real case study:  3600 s * 24 h * 10 d = 864000 s  || if the cmake TEST: 3600+36*100=7200 s -->
+                    <timesteps>
+                        <pair>
+                            <repeat>100</repeat>   <!-- real case study: 23900 || if the cmake TEST: 100 -->
+                            <delta_t>36</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>Slab_melting_T-plot</prefix>
+            <timesteps>
+                <pair>
+                    <repeat>10000</repeat>
+                    <each_steps>10</each_steps> <!-- real case study: 100 || if the cmake TEST: 10 -->
+                </pair>
+            </timesteps>
+            <variables>
+                <variable> temperature </variable>
+                <variable> heat_flux </variable>
+            </variables>
+            <suffix>_ts_{:timestep}_t_{:gtime}_sec</suffix>
+        </output>
+    </time_loop>
+
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_picard</name>
+            <type>Picard</type>
+            <max_iter>200</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <precon_type>DIAGONAL</precon_type>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+    <test_definition>
+        <!--primary field-->
+        <vtkdiff>
+            <file>Slab_melting_T-plot_ts_0_t_3600_sec.vtu</file>
+            <field>temperature</field>
+            <absolute_tolerance>1e-8</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>Slab_melting_T-plot_ts_100_t_7200_sec.vtu</file>
+            <field>temperature</field>
+            <absolute_tolerance>1e-8</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>
