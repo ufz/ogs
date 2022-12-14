@@ -45,9 +45,14 @@
             xvfb_run_cmd="xvfb-run -a"
           fi
 
+          regex_argument=""
+          if [[ ! -z "$CTEST_INCLUDE_REGEX" ]]; then
+            regex_argument="-R ${CTEST_INCLUDE_REGEX}"
+          fi
+
           # -M Continuous does not run any tests -> -M Experimental --group Continuous
           # --test-dir has to be provided despite using a preset
-          ${xvfb_run_cmd} ctest -M Experimental --group Continuous --test-dir ${build_dir_full} -T Test -T Submit --preset=${CMAKE_PRESET}${preset_postfix} --output-junit Tests/ctest.xml --stop-time `date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'` ${CTEST_ARGS}
+          ${xvfb_run_cmd} ctest -M Experimental ${regex_argument} --group Continuous --test-dir ${build_dir_full} -T Test -T Submit --preset=${CMAKE_PRESET}${preset_postfix} --output-junit Tests/ctest.xml --stop-time `date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'` ${CTEST_ARGS}
         fi
 
       else
