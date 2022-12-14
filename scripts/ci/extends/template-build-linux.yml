@@ -38,11 +38,16 @@
             preset_postfix="-large"
           fi
 
-          if [[ "$OSTYPE" == "darwin"* ]]; then alias date=gdate ; fi
+          xvfb_run_cmd=""
+          if [[ "$OSTYPE" == "darwin"* ]]; then
+            alias date=gdate
+          else
+            xvfb_run_cmd="xvfb-run -a"
+          fi
 
           # -M Continuous does not run any tests -> -M Experimental --group Continuous
           # --test-dir has to be provided despite using a preset
-          ctest -M Experimental --group Continuous --test-dir ${build_dir_full} -T Test -T Submit --preset=${CMAKE_PRESET}${preset_postfix} --output-junit Tests/ctest.xml --stop-time `date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'` ${CTEST_ARGS}
+          ${xvfb_run_cmd} ctest -M Experimental --group Continuous --test-dir ${build_dir_full} -T Test -T Submit --preset=${CMAKE_PRESET}${preset_postfix} --output-junit Tests/ctest.xml --stop-time `date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'` ${CTEST_ARGS}
         fi
 
       else

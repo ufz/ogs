@@ -68,7 +68,6 @@ function(NotebookTest)
             )
             return()
         endif()
-        set(_pyvista_headless_env -E env PYVISTA_HEADLESS=1)
     endif()
 
     if("${_pyvista_check}" GREATER 0)
@@ -112,7 +111,7 @@ function(NotebookTest)
     add_test(
         NAME ${TEST_NAME}
         COMMAND
-            ${CMAKE_COMMAND} ${_pyvista_headless_env} ${CMAKE_COMMAND}
+            ${CMAKE_COMMAND} ${CMAKE_COMMAND}
             # TODO: only works if notebook is in a leaf directory
             # -DFILES_TO_DELETE=${Data_BINARY_DIR}/${NotebookTest_DIR}
             -DEXECUTABLE=${Python_EXECUTABLE} "-DEXECUTABLE_ARGS=${_exe_args}"

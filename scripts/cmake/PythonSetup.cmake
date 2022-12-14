@@ -130,6 +130,16 @@ function(setup_venv)
             OUTPUT_VARIABLE _out
             ERROR_VARIABLE _err
         )
+        if(DEFINED ENV{CI_JOB_IMAGE})
+            # Install gmsh package without X11 dependencies in Docker CI builds
+            execute_process(
+                COMMAND
+                    ${LOCAL_VIRTUALENV_BIN_DIR}/pip install -i
+                    https://gmsh.info/python-packages-dev-nox --force-reinstall
+                    --no-cache-dir gmsh
+                WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+            )
+        endif()
         if(${_return_code} EQUAL 0)
             set(_OGS_PYTHON_PACKAGES_SHA1 "${_ogs_python_packages_sha1}"
                 CACHE INTERNAL ""
