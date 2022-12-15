@@ -192,7 +192,7 @@ void scaleMeshPropertyVector(Mesh& mesh,
 /// \param values A vector containing the values that are used for
 /// initialization.
 template <typename T>
-void addPropertyToMesh(Mesh& mesh, std::string const& name,
+void addPropertyToMesh(Mesh& mesh, std::string_view name,
                        MeshItemType item_type, std::size_t number_of_components,
                        std::vector<T> const& values)
 {

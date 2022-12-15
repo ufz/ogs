@@ -212,7 +212,10 @@ unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh)
     }
 
     auto boundary_mesh = MeshLib::BoundaryExtraction::getBoundaryElementsAsMesh(
-        mesh, "bulk_node_ids", "bulk_element_ids", "bulk_face_ids");
+        mesh,
+        MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+        MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
+        MeshLib::getBulkIDString(MeshLib::MeshItemType::Face));
     std::vector<MeshLib::Element*> const& elements(
         boundary_mesh->getElements());
 

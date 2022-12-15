@@ -329,10 +329,10 @@ std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
         std::move(mesh_name), std::move(element_nodes), std::move(elements));
     assert(mesh != nullptr);
 
-    addPropertyToMesh(*mesh, "bulk_element_ids", MeshLib::MeshItemType::Cell, 1,
-                      bulk_element_ids);
-    addPropertyToMesh(*mesh, "bulk_node_ids", MeshLib::MeshItemType::Node, 1,
-                      bulk_node_ids);
+    addPropertyToMesh(*mesh, getBulkIDString(MeshLib::MeshItemType::Cell),
+                      MeshLib::MeshItemType::Cell, 1, bulk_element_ids);
+    addPropertyToMesh(*mesh, getBulkIDString(MeshLib::MeshItemType::Node),
+                      MeshLib::MeshItemType::Node, 1, bulk_node_ids);
 
     return mesh;
 }

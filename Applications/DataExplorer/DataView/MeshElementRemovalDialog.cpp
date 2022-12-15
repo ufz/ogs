@@ -197,7 +197,8 @@ std::size_t MeshElementRemovalDialog::addScalarArrays(
         {
             continue;
         }
-        this->scalarArrayComboBox->addItem(QString::fromStdString(name));
+        this->scalarArrayComboBox->addItem(
+            QString::fromStdString(std::string(name)));
         enableScalarArrayWidgets(true);
     }
     return this->scalarArrayComboBox->count();

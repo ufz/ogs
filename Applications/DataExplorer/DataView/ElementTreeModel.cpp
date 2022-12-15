@@ -214,7 +214,8 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
 
     for (auto [name, property] : mesh.getProperties())
     {
-        QList<QVariant> array_info{QString::fromStdString(name) + ": "};
+        QList<QVariant> array_info{QString::fromStdString(std::string(name)) +
+                                   ": "};
 
         if (auto p = dynamic_cast<MeshLib::PropertyVector<double>*>(property))
         {

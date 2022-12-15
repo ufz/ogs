@@ -34,7 +34,8 @@ extractInnerAndOuterNodes(MeshLib::Mesh const& mesh,
 {
     auto* const bulk_node_ids =
         sub_mesh.getProperties().template getPropertyVector<std::size_t>(
-            "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+            MeshLib::MeshItemType::Node, 1);
     if (bulk_node_ids == nullptr)
     {
         OGS_FATAL(
@@ -73,7 +74,8 @@ static std::vector<std::vector<std::size_t>> extractElementsAlongOuterNodes(
 {
     auto const& bulk_node_ids =
         *sub_mesh.getProperties().template getPropertyVector<std::size_t>(
-            "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+            MeshLib::MeshItemType::Node, 1);
 
     auto to_bulk_node_id =
         ranges::views::transform([&bulk_node_ids](std::size_t const node_id)

@@ -216,8 +216,8 @@ std::vector<XdmfHdfData> transformAttributes(MeshLib::Mesh const& mesh,
             continue;
         }
 
-        if (auto const attribute =
-                transformAttribute(std::pair(name, property_base), n_files))
+        if (auto const attribute = transformAttribute(
+                std::pair(std::string(name), property_base), n_files))
         {
             attributes.push_back(attribute.value());
         }

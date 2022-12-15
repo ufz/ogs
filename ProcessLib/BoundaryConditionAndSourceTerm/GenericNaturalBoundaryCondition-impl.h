@@ -45,7 +45,7 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
     }
 
     if (!_bc_mesh.getProperties().template existsPropertyVector<std::size_t>(
-            "bulk_node_ids"))
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Node)))
     {
         OGS_FATAL(
             "The required bulk node ids map does not exist in the boundary "

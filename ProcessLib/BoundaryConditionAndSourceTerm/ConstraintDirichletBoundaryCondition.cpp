@@ -72,10 +72,12 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
     // create _bulk_ids vector
     auto const* bulk_element_ids =
         _bc_mesh.getProperties().getPropertyVector<std::size_t>(
-            "bulk_element_ids", MeshLib::MeshItemType::Cell, 1);
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
+            MeshLib::MeshItemType::Cell, 1);
     auto const* bulk_node_ids =
         _bc_mesh.getProperties().getPropertyVector<std::size_t>(
-            "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+            MeshLib::MeshItemType::Node, 1);
     auto const& bulk_nodes = bulk_mesh.getNodes();
 
     auto get_bulk_element_face_id =

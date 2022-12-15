@@ -142,15 +142,17 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
+    auto const bulk_node_ids_string =
+        MeshLib::getBulkIDString(MeshLib::MeshItemType::Node);
     if (!mesh->getProperties().existsPropertyVector<std::size_t>(
-            "bulk_node_ids"))
+            bulk_node_ids_string))
     {
-        OGS_FATAL(
-            "Property / data array 'bulk_node_ids' has not been found in the "
-            "mesh.");
+        OGS_FATAL("Property / data array '{}' has not been found in the mesh.",
+                  bulk_node_ids_string);
     }
     auto const& bulk_node_ids =
-        *mesh->getProperties().getPropertyVector<std::size_t>("bulk_node_ids");
+        *mesh->getProperties().getPropertyVector<std::size_t>(
+            bulk_node_ids_string);
 
     auto const& nodes = mesh->getNodes();
     auto const node_ids_reverse_mapping(
@@ -165,16 +167,17 @@ int main(int argc, char* argv[])
         pos++;
     }
 
+    auto const bulk_element_ids_string =
+        MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell);
     if (!mesh->getProperties().existsPropertyVector<std::size_t>(
-            "bulk_element_ids"))
+            bulk_element_ids_string))
     {
-        OGS_FATAL(
-            "Property / data array 'bulk_element_ids' has not been found in "
-            "the mesh.");
+        OGS_FATAL("Property / data array '{}' has not been found in the mesh.",
+                  bulk_element_ids_string);
     }
     auto const& bulk_element_ids =
         *mesh->getProperties().getPropertyVector<std::size_t>(
-            "bulk_element_ids");
+            bulk_element_ids_string);
 
     std::vector<std::size_t> element_ids_reverse_mapping(
         generateBulkIDsReverseMapping(bulk_element_ids));

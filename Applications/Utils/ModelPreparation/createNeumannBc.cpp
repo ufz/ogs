@@ -143,7 +143,8 @@ int main(int argc, char* argv[])
         try
         {
             return surface_mesh->getProperties().getPropertyVector<std::size_t>(
-                "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
+                MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+                MeshLib::MeshItemType::Node, 1);
         }
         catch (std::runtime_error const& e)
         {

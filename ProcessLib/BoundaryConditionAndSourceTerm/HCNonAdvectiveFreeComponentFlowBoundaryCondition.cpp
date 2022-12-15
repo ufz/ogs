@@ -53,10 +53,12 @@ createHCNonAdvectiveFreeComponentFlowBoundaryCondition(
     }
     auto const bulk_element_ids =
         bc_mesh.getProperties().template getPropertyVector<std::size_t>(
-            "bulk_element_ids", MeshLib::MeshItemType::Cell, 1);
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
+            MeshLib::MeshItemType::Cell, 1);
     auto const bulk_face_ids =
         bc_mesh.getProperties().template getPropertyVector<std::size_t>(
-            "bulk_face_ids", MeshLib::MeshItemType::Cell, 1);
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Face),
+            MeshLib::MeshItemType::Cell, 1);
 
     // In case of partitioned mesh the boundary could be empty, i.e. there is no
     // boundary condition.

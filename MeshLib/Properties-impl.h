@@ -12,25 +12,19 @@
 
 template <typename T>
 PropertyVector<T>* Properties::createNewPropertyVector(
-    std::string const& name,
-    MeshItemType mesh_item_type,
+    std::string_view name, MeshItemType mesh_item_type,
     std::size_t n_components)
 {
-    std::map<std::string, PropertyVectorBase*>::const_iterator it(
-        _properties.find(name)
-    );
+    auto it(_properties.find(std::string(name)));
     if (it != _properties.end()) {
         ERR("A property of the name '{:s}' is already assigned to the mesh.",
             name);
         return nullptr;
     }
-    auto entry_info(
-        _properties.insert(
-            std::make_pair(
-                name, new PropertyVector<T>(name, mesh_item_type, n_components)
-            )
-        )
-    );
+    auto entry_info(_properties.insert(
+        std::make_pair(std::string(name),
+                       new PropertyVector<T>(std::string(name), mesh_item_type,
+                                             n_components))));
     return static_cast<PropertyVector<T>*>((entry_info.first)->second);
 }
 
@@ -43,9 +37,7 @@ PropertyVector<T>* Properties::createNewPropertyVector(
     std::size_t n_components)
 {
     // check if there is already a PropertyVector with the same name
-    std::map<std::string, PropertyVectorBase*>::const_iterator it(
-        _properties.find(name)
-    );
+    auto it(_properties.find(name));
     if (it != _properties.end()) {
         ERR("A property of the name '{:s}' already assigned to the mesh.",
             name);
@@ -76,9 +68,9 @@ PropertyVector<T>* Properties::createNewPropertyVector(
 }
 
 template <typename T>
-bool Properties::existsPropertyVector(std::string const& name) const
+bool Properties::existsPropertyVector(std::string_view name) const
 {
-    auto it(_properties.find(name));
+    auto it(_properties.find(std::string(name)));
     // Check that a PropertyVector with the appropriate name exists.
     if (it == _properties.end())
     {
@@ -89,11 +81,11 @@ bool Properties::existsPropertyVector(std::string const& name) const
 }
 
 template <typename T>
-bool Properties::existsPropertyVector(std::string const& name,
+bool Properties::existsPropertyVector(std::string_view name,
                                       MeshItemType const mesh_item_type,
                                       int const number_of_components) const
 {
-    auto const it = _properties.find(name);
+    auto const it = _properties.find(std::string(name));
     if (it == _properties.end())
     {
         return false;
@@ -117,9 +109,9 @@ bool Properties::existsPropertyVector(std::string const& name,
 
 template <typename T>
 PropertyVector<T> const* Properties::getPropertyVector(
-    std::string const& name) const
+    std::string_view name) const
 {
-    auto it(_properties.find(name));
+    auto it(_properties.find(std::string(name)));
     if (it == _properties.end())
     {
         OGS_FATAL("The PropertyVector '{:s}' is not available in the mesh.",
@@ -136,9 +128,9 @@ PropertyVector<T> const* Properties::getPropertyVector(
 }
 
 template <typename T>
-PropertyVector<T>* Properties::getPropertyVector(std::string const& name)
+PropertyVector<T>* Properties::getPropertyVector(std::string_view name)
 {
-    auto it(_properties.find(name));
+    auto it(_properties.find(std::string(name)));
     if (it == _properties.end())
     {
         OGS_FATAL(
@@ -157,10 +149,10 @@ PropertyVector<T>* Properties::getPropertyVector(std::string const& name)
 
 template <typename T>
 PropertyVector<T> const* Properties::getPropertyVector(
-    std::string const& name, MeshItemType const item_type,
+    std::string_view name, MeshItemType const item_type,
     int const n_components) const
 {
-    auto const it = _properties.find(name);
+    auto const it = _properties.find(std::string(name));
     if (it == _properties.end())
     {
         OGS_FATAL(
@@ -194,11 +186,11 @@ PropertyVector<T> const* Properties::getPropertyVector(
 }
 
 template <typename T>
-PropertyVector<T>* Properties::getPropertyVector(std::string const& name,
+PropertyVector<T>* Properties::getPropertyVector(std::string_view name,
                                                  MeshItemType const item_type,
                                                  int const n_components)
 {
-    auto const it = _properties.find(name);
+    auto const it = _properties.find(std::string(name));
     if (it == _properties.end())
     {
         OGS_FATAL(

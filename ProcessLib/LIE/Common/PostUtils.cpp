@@ -313,7 +313,7 @@ MeshLib::PropertyVector<T>* PostProcessTool::createProperty(
             "'{:s}' is not supported.",
             property.getPropertyName(), toString(item_type));
         _output_mesh->getProperties().removePropertyVector(
-            new_property->getPropertyName());
+            std::string(new_property->getPropertyName()));
         return nullptr;
     }
     return new_property;

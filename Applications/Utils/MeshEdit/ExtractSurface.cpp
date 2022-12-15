@@ -108,8 +108,9 @@ int main(int argc, char* argv[])
     double const angle(angle_arg.getValue());
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
         MeshLib::MeshSurfaceExtraction::getMeshSurface(
-            *mesh, dir, angle, "bulk_node_ids", "bulk_element_ids",
-            "bulk_face_ids"));
+            *mesh, dir, angle, getBulkIDString(MeshLib::MeshItemType::Node),
+            getBulkIDString(MeshLib::MeshItemType::Cell),
+            getBulkIDString(MeshLib::MeshItemType::Face)));
 
     std::string out_fname(mesh_out.getValue());
     if (out_fname.empty())

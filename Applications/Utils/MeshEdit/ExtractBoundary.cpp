@@ -84,7 +84,10 @@ int main(int argc, char* argv[])
     // extract surface
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
         MeshLib::BoundaryExtraction::getBoundaryElementsAsMesh(
-            *mesh, "bulk_node_ids", "bulk_element_ids", "bulk_face_ids"));
+            *mesh,
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Face)));
 
     INFO("Created surface mesh: {:d} nodes, {:d} elements.",
          surface_mesh->getNumberOfNodes(), surface_mesh->getNumberOfElements());

@@ -312,7 +312,10 @@ void extractBoundaries(MeshLib::Mesh const& mesh,
     double const eps = edge_length.first / 100.0;
     std::unique_ptr<MeshLib::Mesh> boundary_mesh(
         MeshLib::BoundaryExtraction::getBoundaryElementsAsMesh(
-            mesh, "bulk_node_ids", "bulk_element_ids", "bulk_face_ids"));
+            mesh,
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Face)));
 
     auto const& elems = boundary_mesh->getElements();
     std::vector<std::size_t> left_bound_idx, right_bound_idx, top_bound_idx,

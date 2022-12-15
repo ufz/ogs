@@ -300,7 +300,8 @@ bool SHPInterface::write2dMeshToSHP(const std::string& file_name,
     {
         if (auto p = dynamic_cast<MeshLib::PropertyVector<int>*>(property))
         {
-            int const field = DBFAddField(hDBF, name.c_str(), FTInteger, 16, 0);
+            int const field =
+                DBFAddField(hDBF, std::string(name).c_str(), FTInteger, 16, 0);
             for (int i = 0; i < n_recs; ++i)
             {
                 std::size_t const elem_idx =
@@ -311,7 +312,8 @@ bool SHPInterface::write2dMeshToSHP(const std::string& file_name,
         else if (auto p =
                      dynamic_cast<MeshLib::PropertyVector<double>*>(property))
         {
-            int const field = DBFAddField(hDBF, name.c_str(), FTDouble, 33, 16);
+            int const field =
+                DBFAddField(hDBF, std::string(name).c_str(), FTDouble, 33, 16);
             for (int i = 0; i < n_recs; ++i)
             {
                 std::size_t const elem_idx =
