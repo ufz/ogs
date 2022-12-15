@@ -5,11 +5,10 @@ message(
 )
 
 # cmake-lint: disable=C0103
-set(GKLIB_PATH ${metis_SOURCE_DIR}/GKlib CACHE INTERNAL "")
-include(${GKLIB_PATH}/GKlibSystem.cmake)
 
 # Metis library
 file(GLOB _metis_sources ${metis_SOURCE_DIR}/libmetis/*.c)
+file(GLOB GKlib_sources ${metis_SOURCE_DIR}/GKlib/*.c)
 if(WIN32)
     set(_metis_static STATIC)
 endif()
