@@ -13,7 +13,10 @@ if(WIN32)
     set(_metis_static STATIC)
 endif()
 ogs_add_library(ogs_metis ${_metis_static} ${GKlib_sources} ${_metis_sources})
-target_compile_definitions(ogs_metis PUBLIC USE_GKREGEX)
+target_compile_definitions(
+    ogs_metis PUBLIC USE_GKREGEX
+                     $<$<CXX_COMPILER_ID:MSVC>:__thread=__declspec\(thread\)>
+)
 target_include_directories(
     ogs_metis PUBLIC ${metis_SOURCE_DIR}/GKlib ${metis_SOURCE_DIR}/include
                      ${metis_SOURCE_DIR}/libmetis
