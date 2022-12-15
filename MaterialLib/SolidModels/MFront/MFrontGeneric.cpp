@@ -83,7 +83,7 @@ OGSMFrontTangentOperatorData tangentOperatorDataMFrontToOGS(
         }
         else if (var1.type == VT::SCALAR && var2.type == VT::STENSOR)
         {
-            assert(var2.getVariableSize(var2, behaviour.hypothesis) == kv_size);
+            assert(getVariableSize(var2, behaviour.hypothesis) == kv_size);
             size = kv_size;
 
             if (Q)
@@ -97,7 +97,7 @@ OGSMFrontTangentOperatorData tangentOperatorDataMFrontToOGS(
         }
         else if (var1.type == VT::STENSOR && var2.type == VT::SCALAR)
         {
-            assert(var1.getVariableSize(var1, behaviour.hypothesis) == kv_size);
+            assert(getVariableSize(var1, behaviour.hypothesis) == kv_size);
             size = kv_size;
 
             if (Q)
@@ -111,8 +111,8 @@ OGSMFrontTangentOperatorData tangentOperatorDataMFrontToOGS(
         }
         else if (var1.type == VT::STENSOR && var2.type == VT::STENSOR)
         {
-            assert(var1.getVariableSize(var1, behaviour.hypothesis) == kv_size);
-            assert(var2.getVariableSize(var2, behaviour.hypothesis) == kv_size);
+            assert(getVariableSize(var1, behaviour.hypothesis) == kv_size);
+            assert(getVariableSize(var2, behaviour.hypothesis) == kv_size);
             size = kv_size * kv_size;
 
             if (Q)
