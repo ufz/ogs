@@ -104,9 +104,8 @@ if(OGS_USE_MFRONT)
     set(CMAKE_REQUIRE_FIND_PACKAGE_TFEL TRUE)
     CPMAddPackage(
         NAME MGIS
-        GITHUB_REPOSITORY ufz/MFrontGenericInterfaceSupport
-        # fixes branch: rliv-2.0-ogs
-        GIT_TAG 36c886f26e3aef89d377d43bd35a66ee0415ad9f
+        GITHUB_REPOSITORY thelfer/MFrontGenericInterfaceSupport
+        GIT_TAG rliv-2.0
         OPTIONS "enable-doxygen-doc OFF" "enable-fortran-bindings OFF"
                 "enable-website OFF"
         EXCLUDE_FROM_ALL YES
