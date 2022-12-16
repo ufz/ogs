@@ -10,7 +10,7 @@ function(OgsTest)
 
     set(options DISABLED)
     set(oneValueArgs PROJECTFILE RUNTIME)
-    set(multiValueArgs WRAPPER)
+    set(multiValueArgs WRAPPER PROPERTIES)
     cmake_parse_arguments(
         OgsTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
     )
@@ -97,7 +97,8 @@ function(OgsTest)
 
     set_tests_properties(
         ${TEST_NAME}
-        PROPERTIES ENVIRONMENT
+        PROPERTIES ${OgsTest_PROPERTIES}
+                   ENVIRONMENT
                    VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>
                    COST
                    ${OgsTest_RUNTIME}

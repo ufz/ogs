@@ -2,21 +2,16 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e0.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e2.prj)
     if(OGS_USE_EIGEN_UNSUPPORTED)
-        OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_IDRS.xml)
-        if(TEST ogs-Mechanics/Linear/square_1e2_IDRS)
-            set_tests_properties(ogs-Mechanics/Linear/square_1e2_IDRS PROPERTIES
-                DEPENDS ogs-Mechanics/Linear/square_1e2) # Prevent race condition
-        endif()
-        OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_IDRSTABL.xml)
-        if(TEST ogs-Mechanics/Linear/square_1e2_IDRSTABL)
-            set_tests_properties(ogs-Mechanics/Linear/square_1e2_IDRSTABL PROPERTIES
-                DEPENDS ogs-Mechanics/Linear/square_1e2_IDRS) # Prevent race condition
-        endif()
-        OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_BiCGSTABL.xml)
-        if(TEST ogs-Mechanics/Linear/square_1e2_BiCGSTABL)
-            set_tests_properties(ogs-Mechanics/Linear/square_1e2_BiCGSTABL PROPERTIES
-                DEPENDS ogs-Mechanics/Linear/square_1e2_IDRSTABL) # Prevent race condition
-        endif()
+        # DEPENDS for preventing race condition
+        OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_IDRS.xml
+            PROPERTIES DEPENDS ogs-Mechanics/Linear/square_1e2
+        )
+        OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_IDRSTABL.xml
+            PROPERTIES DEPENDS ogs-Mechanics/Linear/square_1e2_IDRS
+        )
+        OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_BiCGSTABL.xml
+            PROPERTIES DEPENDS ogs-Mechanics/Linear/square_1e2_IDRSTABL
+        )
     endif()
     OgsTest(PROJECTFILE Mechanics/Linear/disc_with_hole.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/ElementDeactivation3D/element_deactivation_M_3D.prj)
@@ -24,11 +19,9 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_quad8_traction_top.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0.prj)
     if(OGS_USE_MKL)
-        OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0_mkl.xml)
-        if(TEST ogs-Mechanics/Linear/cube_1e0_mkl)
-            set_tests_properties(ogs-Mechanics/Linear/cube_1e0_mkl PROPERTIES
-                DEPENDS ogs-Mechanics/Linear/cube_1e0) # Prevent race condition
-        endif()
+        OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0_mkl.xml
+            PROPERTIES DEPENDS ogs-Mechanics/Linear/cube_1e0
+        )
     endif()
     OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0_simple_shear.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/MaterialForces/bar.prj)
@@ -79,10 +72,9 @@ if (OGS_USE_MPI)
 endif()
 
 if (OGS_USE_MFRONT)
-    OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/slope.prj RUNTIME 50)
-    if(TEST ogs-Mechanics/MohrCoulombAbboSloan/slope)
-        set_tests_properties(ogs-Mechanics/MohrCoulombAbboSloan/slope PROPERTIES WILL_FAIL true)
-    endif()
+    OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/slope.prj RUNTIME 50
+        PROPERTIES WILL_FAIL true
+    )
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/load_test_mc.prj)
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloanAnisotropic/triax_1e0_47.prj)
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloanAnisotropic/triax_ortho_1e0_47.prj)
@@ -270,8 +262,8 @@ AddTest(
 
 if(NOT OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.ipynb RUNTIME 5)
-    NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.ipynb RUNTIME 15 RESOURCE_LOCK PYVISTA)
+    NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.ipynb RUNTIME 15)
     if(NOT WIN32)
-        NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole_convergence_analysis.ipynb RUNTIME 40 RESOURCE_LOCK PYVISTA)
+        NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole_convergence_analysis.ipynb RUNTIME 40)
     endif()
 endif()

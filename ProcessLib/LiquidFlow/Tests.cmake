@@ -510,15 +510,8 @@ if(NOT OGS_USE_MPI)
             top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27_top_boundary.xdmf
             top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27_top_boundary.xdmf
             pressure pressure 1e-7 1e-13
+        PROPERTIES DEPENDS ogs-LiquidFlow_Flux_3D_HEX_MultipleOutputs_vtu-time
     )
-
-    if(TEST ogs-LiquidFlow_Flux_3D_HEX_MultipleOutputs_xdmf-time)
-        set_tests_properties(
-            ogs-LiquidFlow_Flux_3D_HEX_MultipleOutputs_xdmf-time
-            PROPERTIES LABELS "default" DEPENDS
-                       ogs-LiquidFlow_Flux_3D_HEX_MultipleOutputs_vtu-time
-        )
-    endif()
 
     AddTest(
         NAME LiquidFlow_Flux_3D_HEX_MultipleOutputs_SameFiles
@@ -527,12 +520,8 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_invalid_multiple_outputs.xml
         WRAPPER time
         REQUIREMENTS NOT OGS_USE_MPI
+        PROPERTIES WILL_FAIL TRUE
     )
-    if(TEST ogs-LiquidFlow_Flux_3D_HEX_MultipleOutputs_SameFiles-time)
-        set_tests_properties(
-            ogs-LiquidFlow_Flux_3D_HEX_MultipleOutputs_SameFiles-time
-            PROPERTIES WILL_FAIL TRUE)
-    endif()
 
 endif()
 

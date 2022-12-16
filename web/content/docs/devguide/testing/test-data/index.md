@@ -107,3 +107,17 @@ Then e.g. run all notebook test (`-R nb`) in parallel with:
 source .venv/bin/activate # May need to be activated
 ctest -R nb -j 4 --output-on-failure
 ```
+
+<div class='note'>
+
+### PyVista notebooks on headless Linux systems
+
+PyVista (or VTK) requires a windowing environment for rendering. You can provide a virtual window with `xvfb-run`:
+
+```bash
+sudo apt install libgl1-mesa-glx xvbf # install xvfb
+
+xvfb-run -a ctest [...] # provide a virtual window to the ctest-run
+```
+
+</div>

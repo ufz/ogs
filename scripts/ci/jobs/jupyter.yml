@@ -8,7 +8,10 @@ test notebooks via wheel:
     - pip install -r requirements.txt
     - pip install -r requirements-dev.txt
     - pip install -r requirements-ogs.txt
-    - find . -type f -iname '*.ipynb' | grep -vP '\.ipynb_checkpoints|\.ci-skip.ipynb$|_out|.venv|PhaseField' | PYVISTA_HEADLESS=1 xargs python Notebooks/testrunner.py --out _out
+    # TODO:
+    #  - better timeout
+    #  - run in parallel
+    - find . -type f -iname '*.ipynb' | grep -vP '\.ipynb_checkpoints|\.ci-skip.ipynb$|_out|.venv|PhaseField' | xargs xvfb-run -a python Notebooks/testrunner.py --out _out --timeout 1200
   artifacts:
     when: always
     paths:

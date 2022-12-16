@@ -51,10 +51,15 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/OgsTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/NotebookTest.cmake)
 
 # Check notebook testrunner
-NotebookTest(NOTEBOOKFILE Notebooks/FailingNotebook.ci-skip.ipynb RUNTIME 2)
-if(TEST nb-Notebooks/FailingNotebook)
-    set_tests_properties(nb-Notebooks/FailingNotebook PROPERTIES WILL_FAIL TRUE)
-endif()
+NotebookTest(
+    NOTEBOOKFILE
+    Notebooks/FailingNotebook.ci-skip.ipynb
+    RUNTIME
+    2
+    PROPERTIES
+    WILL_FAIL
+    TRUE
+)
 
 set(_ctest_parameter -T Test --force-new-ctest-process --output-on-failure)
 if(CMAKE_CONFIGURATION_TYPES)

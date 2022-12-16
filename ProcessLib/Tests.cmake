@@ -7,15 +7,7 @@ if(TARGET ThermoHydroMechanics
     NotebookTest(
         NOTEBOOKFILE
         ThermoHydroMechanics/Linear/Point_injection/SaturatedPointheatsource.ipynb
-        RUNTIME
-        1800
+        RUNTIME 1800
+        PROPERTIES PROCESSORS 4
     )
-    if(TEST
-       nb-ThermoHydroMechanics/Linear/Point_injection/SaturatedPointheatsource-LARGE
-    )
-        set_tests_properties(
-            nb-ThermoHydroMechanics/Linear/Point_injection/SaturatedPointheatsource-LARGE
-            PROPERTIES PROCESSORS 4
-        )
-    endif()
 endif()

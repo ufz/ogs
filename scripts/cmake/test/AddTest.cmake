@@ -22,6 +22,7 @@
 #                          values should be taken from envinf job
 #   WORKING_DIRECTORY # optional, specify the working directory of the test
 #   DISABLED # optional, disables the test
+#   PROPERTIES <test properties> # optional
 # )
 # ~~~
 #
@@ -75,6 +76,7 @@ function(AddTest)
         TESTER_ARGS
         REQUIREMENTS
         PYTHON_PACKAGES
+        PROPERTIES
     )
     cmake_parse_arguments(
         AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
@@ -423,7 +425,10 @@ Use six arguments version of AddTest with absolute and relative tolerances"
     )
     if(DEFINED AddTest_DEPENDS)
         if(NOT (TEST ${AddTest_DEPENDS} OR TARGET ${AddTest_DEPENDS}))
-            message(FATAL_ERROR "AddTest ${AddTest_Name}: dependency ${AddTest_DEPENDS} does not exist!")
+            message(
+                FATAL_ERROR
+                    "AddTest ${AddTest_Name}: dependency ${AddTest_DEPENDS} does not exist!"
+            )
         endif()
         set_tests_properties(${TEST_NAME} PROPERTIES DEPENDS ${AddTest_DEPENDS})
     endif()
@@ -461,8 +466,14 @@ Use six arguments version of AddTest with absolute and relative tolerances"
     endif()
 
     set_tests_properties(
-        ${TEST_NAME} PROPERTIES COST ${AddTest_RUNTIME} DISABLED
-                                ${AddTest_DISABLED} LABELS "${labels}"
+        ${TEST_NAME}
+        PROPERTIES ${AddTest_PROPERTIES}
+                   COST
+                   ${AddTest_RUNTIME}
+                   DISABLED
+                   ${AddTest_DISABLED}
+                   LABELS
+                   "${labels}"
     )
     # Disabled for the moment, does not work with CI under load
     # ~~~
