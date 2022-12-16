@@ -242,89 +242,20 @@ if(OGS_USE_CVODE)
 endif()
 
 # VTK ###
-unset(VTK_OPTIONS)
-foreach(option_index ${ogs.libraries.vtk.options})
-    if(${ogs.libraries.vtk.options_${option_index}.condition.cmake})
-        foreach(cmake_index ${ogs.libraries.vtk.options_${option_index}.cmake})
-            string(
-                REPLACE
-                    "="
-                    " "
-                    cmake_option
-                    "${ogs.libraries.vtk.options_${option_index}.cmake_${cmake_index}}"
-            )
-            list(APPEND VTK_OPTIONS ${cmake_option})
-        endforeach()
-    endif()
-endforeach()
-list(REMOVE_DUPLICATES VTK_OPTIONS)
-
-if(OGS_USE_INSITU)
-    find_package(ParaView REQUIRED)
-else()
-    unset(VTK_COMPONENTS)
-    foreach(opt ${VTK_OPTIONS})
-        if("${opt}" MATCHES "^VTK_MODULE_ENABLE_VTK_(.*) YES")
-            list(APPEND VTK_COMPONENTS ${CMAKE_MATCH_1})
-        endif()
-    endforeach()
-    message(STATUS "FINDING VTK: ${VTK_COMPONENTS}")
-    find_package(VTK ${ogs.minimum_version.vtk} COMPONENTS ${VTK_COMPONENTS})
-endif()
-
-if(NOT VTK_FOUND AND NOT OGS_USE_INSITU)
-    # Setting shared libs on PETSc, otherwise pvtu files only contain one
-    # <Piece>-element (one subdomain).
-    list(APPEND VTK_OPTIONS "BUILD_SHARED_LIBS ${OGS_USE_PETSC}")
-    if(OGS_USE_PETSC AND EXISTS ${PROJECT_BINARY_DIR}/_ext/HDF5)
-        # Use local hdf5 build
-        list(APPEND VTK_OPTIONS "VTK_MODULE_USE_EXTERNAL_VTK_hdf5 ON"
-             "HDF5_ROOT ${PROJECT_BINARY_DIR}/_ext/HDF5"
-        )
-    endif()
-
-    CPMAddPackage(
-        NAME VTK
-        GITHUB_REPOSITORY kitware/vtk
-        VERSION ${ogs.minimum_version.vtk}
-        OPTIONS ${VTK_OPTIONS}
-        EXCLUDE_FROM_ALL YES GIT_SUBMODULES "" # Disable submodules
-    )
-endif()
-if(VTK_ADDED)
-    if(OGS_USE_PETSC)
-        list(APPEND CMAKE_BUILD_RPATH
-             ${PROJECT_BINARY_DIR}/_deps/vtk-build/${CMAKE_INSTALL_LIBDIR}
-        )
-        # to properly install vtk libs
-        set(OGS_INSTALL_DEPENDENCIES ON CACHE BOOL "" FORCE)
-    endif()
-    if(OpenMP_FOUND AND TARGET vtkFiltersStatistics)
-        target_link_libraries(vtkFiltersStatistics PRIVATE OpenMP::OpenMP_C)
-    endif()
-    if(TARGET loguru)
-        # Fixes https://stackoverflow.com/questions/9894961 on vismac05:
-        set_target_properties(loguru PROPERTIES CXX_VISIBILITY_PRESET default)
-        # Also suppress warnings
-        list(APPEND DISABLE_WARNINGS_TARGETS loguru)
-    endif()
-    # VTK already comes with exprtk, reusing it.
-    target_include_directories(
-        exprtk SYSTEM
-        INTERFACE
-            $<BUILD_INTERFACE:${VTK_SOURCE_DIR}/ThirdParty/exprtk/vtkexprtk>
-    )
-else()
-    CPMAddPackage(
-        NAME exprtk
-        GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/exprtk.git
-        GIT_TAG 2a5c62b93c9661470e69be572f22d821308b6f61
-        DOWNLOAD_ONLY YES
-    )
-    if(exprtk_ADDED)
-        add_library(exprtk INTERFACE IMPORTED)
-        target_include_directories(exprtk SYSTEM INTERFACE ${exprtk_SOURCE_DIR})
-    endif()
+# ~~~
+# if(OGS_USE_INSITU)
+#     find_package(ParaView REQUIRED)
+# endif()
+# ~~~
+CPMAddPackage(
+    NAME exprtk
+    GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/exprtk.git
+    GIT_TAG 2a5c62b93c9661470e69be572f22d821308b6f61
+    DOWNLOAD_ONLY YES
+)
+if(exprtk_ADDED)
+    add_library(exprtk INTERFACE IMPORTED)
+    target_include_directories(exprtk SYSTEM INTERFACE ${exprtk_SOURCE_DIR})
 endif()
 
 CPMAddPackage(

@@ -244,6 +244,84 @@ if(NOT HDF5_FOUND)
     BuildExternalProject_find_package(HDF5)
 endif()
 
+# VTK
+option(OGS_BUILD_VTK "Build VTK locally. Needs to be set with a clean cache!"
+       OFF
+)
+unset(VTK_OPTIONS)
+foreach(option_index ${ogs.libraries.vtk.options})
+    if(${ogs.libraries.vtk.options_${option_index}.condition.cmake})
+        foreach(cmake_index ${ogs.libraries.vtk.options_${option_index}.cmake})
+            string(
+                REPLACE
+                    "="
+                    " "
+                    cmake_option
+                    "${ogs.libraries.vtk.options_${option_index}.cmake_${cmake_index}}"
+            )
+            list(
+                APPEND
+                VTK_OPTIONS
+                "-D${ogs.libraries.vtk.options_${option_index}.cmake_${cmake_index}}"
+            )
+        endforeach()
+    endif()
+endforeach()
+list(REMOVE_DUPLICATES VTK_OPTIONS)
+
+# Setting shared libs on PETSc, otherwise pvtu files only contain one
+# <Piece>-element (one subdomain).
+list(APPEND VTK_OPTIONS "-DBUILD_SHARED_LIBS=${OGS_USE_PETSC}"
+     "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+)
+message(STATUS "VTK_OPTIONS: ${VTK_OPTIONS}")
+if(OGS_USE_PETSC AND EXISTS ${PROJECT_BINARY_DIR}/_ext/HDF5)
+    # Use local hdf5 build
+    list(APPEND VTK_OPTIONS "-DVTK_MODULE_USE_EXTERNAL_VTK_hdf5=ON"
+         "-DHDF5_ROOT=${PROJECT_BINARY_DIR}/_ext/HDF5"
+    )
+endif()
+
+# Building from source requires newer hdf version
+string(REPLACE "." "_" HDF5_TAG ${ogs.tested_version.hdf5})
+
+set(_vtk_source GIT_REPOSITORY https://github.com/kitware/vtk.git GIT_TAG
+                v${ogs.minimum_version.vtk}
+)
+set(_hdf5_source_file
+    ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/vtk-v${ogs.minimum_version.vtk}.tar.gz
+)
+if(EXISTS ${_vtk_source_file})
+    set(_vtk_source URL ${_vtk_source_file})
+elseif(NOT OGS_BUILD_VTK AND NOT OGS_USE_MKL)
+    # Typically VTK also pulls in libgomp dependency when found on system
+    unset(VTK_COMPONENTS)
+    foreach(opt ${VTK_OPTIONS})
+        if("${opt}" MATCHES "^VTK_MODULE_ENABLE_VTK_(.*) YES")
+            list(APPEND VTK_COMPONENTS ${CMAKE_MATCH_1})
+        endif()
+    endforeach()
+    message(STATUS "Searching VTK on system with components: ${VTK_COMPONENTS}")
+    find_package(VTK ${ogs.minimum_version.vtk} COMPONENTS ${VTK_COMPONENTS})
+endif()
+if(NOT VTK_FOUND)
+
+    # Fixes https://stackoverflow.com/questions/9894961 on vismac05:
+    set(_loguru_patch git apply
+                      "${PROJECT_SOURCE_DIR}/scripts/cmake/loguru.patch"
+    )
+    BuildExternalProject(
+        VTK ${_vtk_source} CMAKE_ARGS ${VTK_OPTIONS} PATCH_COMMAND
+                                      ${_loguru_patch}
+    )
+    message(
+        STATUS
+            "ExternalProject_Add(): added package VTK@${ogs.minimum_version.vtk}"
+    )
+    set(_EXT_LIBS ${_EXT_LIBS} VTK CACHE INTERNAL "")
+    BuildExternalProject_find_package(VTK)
+endif()
+
 # append RPATHs
 foreach(lib ${_EXT_LIBS})
     list(APPEND CMAKE_BUILD_RPATH ${PROJECT_BINARY_DIR}/_ext/${lib}/lib)
