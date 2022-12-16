@@ -103,8 +103,8 @@ int main(int argc, char* argv[])
         output_name += ext;
     }
     std::ofstream out(output_name);
-    out << "ncols         " << n_cols + 1 << "\n";
-    out << "nrows         " << n_rows + 1 << "\n";
+    out << "ncols         " << n_cols << "\n";
+    out << "nrows         " << n_rows << "\n";
     out << std::fixed << "xllcorner     " << (min[0] - half_cell) << "\n";
     out << std::fixed << "yllcorner     " << (min[1] - half_cell) << "\n";
     out << std::fixed << "cellsize      " << cellsize << "\n";
@@ -114,10 +114,10 @@ int main(int argc, char* argv[])
 
     MeshLib::MeshElementGrid const grid(*mesh);
 
-    for (std::size_t row = 0; row <= n_rows; ++row)
+    for (std::size_t row = 0; row < n_rows; ++row)
     {
         double const y = max[1] - row * cellsize;
-        for (std::size_t column = 0; column <= n_cols; ++column)
+        for (std::size_t column = 0; column < n_cols; ++column)
         {
             // pixel values
             double const x = min[0] + column * cellsize;
