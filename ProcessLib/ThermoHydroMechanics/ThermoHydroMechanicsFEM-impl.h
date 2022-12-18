@@ -229,6 +229,9 @@ void ThermoHydroMechanicsLocalAssembler<
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
+    auto* const frozen_liquid_phase = medium->hasPhase("FrozenLiquid")
+                                          ? &medium->phase("FrozenLiquid")
+                                          : nullptr;
     MaterialPropertyLib::VariableArray vars;
 
     typename ShapeMatricesTypePressure::NodalVectorType node_flux_q;
@@ -484,13 +487,67 @@ void ThermoHydroMechanicsLocalAssembler<
                 std::max(max_velocity_magnitude, velocity.norm());
         }
 
-        auto const effective_volumetric_heat_capacity =
+        double const c_s =
+            solid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::specific_heat_capacity)
+                .template value<double>(vars, x_position, t, dt);
+
+        // Non-const for modification by freezing terms.
+        double effective_volumetric_heat_capacity =
             porosity * fluid_density * c_f +
-            (1.0 - porosity) * solid_density *
-                solid_phase
-                    .property(MaterialPropertyLib::PropertyType::
-                                  specific_heat_capacity)
+            (1.0 - porosity) * solid_density * c_s;
+
+        if (frozen_liquid_phase)
+        {
+            double const phi_fr =
+                (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
                     .template value<double>(vars, x_position, t, dt);
+
+            auto const frozen_liquid_value =
+                [&](MaterialPropertyLib::PropertyType const p)
+            {
+                return (*frozen_liquid_phase)[p].template value<double>(
+                    vars, x_position, t, dt);
+            };
+
+            double const rho_fr =
+                frozen_liquid_value(MaterialPropertyLib::PropertyType::density);
+
+            double const c_fr = frozen_liquid_value(
+                MaterialPropertyLib::PropertyType::specific_heat_capacity);
+
+            // specific latent heat of melting
+            double const l_fr = frozen_liquid_value(
+                MaterialPropertyLib::PropertyType::specific_latent_heat);
+
+            double const dphi_fr_dT =
+                (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
+                    .template dValue<double>(
+                        vars, MaterialPropertyLib::Variable::temperature,
+                        x_position, t, dt);
+
+            effective_volumetric_heat_capacity +=
+                -phi_fr * fluid_density * c_f + phi_fr * rho_fr * c_fr -
+                l_fr * rho_fr * dphi_fr_dT;
+
+            // part of dMTT_dT derivative for freezing
+            double const d2phi_fr_dT2 =
+                (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
+                    .template d2Value<double>(
+                        vars, MaterialPropertyLib::Variable::temperature,
+                        MaterialPropertyLib::Variable::temperature, x_position,
+                        t, dt);
+
+            local_Jac
+                .template block<temperature_size, temperature_size>(
+                    temperature_index, temperature_index)
+                .noalias() -=
+                N_T.transpose() *
+                ((rho_fr * c_fr - fluid_density * c_f) * dphi_fr_dT +
+                 l_fr * rho_fr * d2phi_fr_dT2) *
+                N_T.dot(T_dot) * N_T * w;
+        }
 
         MTT.noalias() +=
             N_T.transpose() * effective_volumetric_heat_capacity * N_T * w;
