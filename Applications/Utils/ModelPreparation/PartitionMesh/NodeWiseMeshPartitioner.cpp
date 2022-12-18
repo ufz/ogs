@@ -309,7 +309,7 @@ void NodeWiseMeshPartitioner::processPartition(std::size_t const part_id)
               std::back_inserter(partition.nodes));
 
     // Set the node numbers of base and all mesh nodes.
-    partition.number_of_mesh_base_nodes = _mesh->getNumberOfBaseNodes();
+    partition.number_of_mesh_base_nodes = _mesh->computeNumberOfBaseNodes();
     partition.number_of_mesh_all_nodes = _mesh->getNumberOfNodes();
 }
 
@@ -819,7 +819,7 @@ std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
         auto& partition = partitions[part_id];
         INFO("Processing partition: {:d}", part_id);
         // Set the node numbers of base and all mesh nodes.
-        partition.number_of_mesh_base_nodes = mesh.getNumberOfBaseNodes();
+        partition.number_of_mesh_base_nodes = mesh.computeNumberOfBaseNodes();
         partition.number_of_mesh_all_nodes = mesh.getNumberOfNodes();
 
         std::vector<MeshLib::Node*> higher_order_regular_nodes;

@@ -77,7 +77,7 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshElevation)
         MeshLib::UseIntensityAs::ELEVATION, "test");
     ASSERT_TRUE(mesh != nullptr);
 
-    ASSERT_EQ(_n_nodes, mesh->getNumberOfBaseNodes());
+    ASSERT_EQ(_n_nodes, mesh->computeNumberOfBaseNodes());
 
     ASSERT_EQ(0, mesh->getProperties().size());
 
@@ -112,7 +112,7 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshValue)
         MeshLib::UseIntensityAs::DATAVECTOR, "test");
     ASSERT_TRUE(mesh != nullptr);
 
-    ASSERT_EQ(_n_nodes, mesh->getNumberOfBaseNodes());
+    ASSERT_EQ(_n_nodes, mesh->computeNumberOfBaseNodes());
 
     ASSERT_EQ(1, mesh->getProperties().size());
 
@@ -143,7 +143,7 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshValue)
         MeshLib::UseIntensityAs::DATAVECTOR, "test");
     ASSERT_TRUE(mesh != nullptr);
 
-    ASSERT_EQ(_n_nodes, mesh->getNumberOfBaseNodes());
+    ASSERT_EQ(_n_nodes, mesh->computeNumberOfBaseNodes());
 
     ASSERT_EQ(1, mesh->getProperties().size());
 
@@ -174,7 +174,7 @@ TEST_F(RasterToMeshTest, convertRasterToPrismMeshValue)
         MeshLib::UseIntensityAs::DATAVECTOR, "test");
     ASSERT_TRUE(mesh != nullptr);
 
-    ASSERT_EQ(2 * _n_nodes, mesh->getNumberOfBaseNodes());
+    ASSERT_EQ(2 * _n_nodes, mesh->computeNumberOfBaseNodes());
 
     ASSERT_EQ(1, mesh->getProperties().size());
 
@@ -205,7 +205,7 @@ TEST_F(RasterToMeshTest, convertRasterToHexMeshValue)
         MeshLib::UseIntensityAs::MATERIALS, "MaterialIDs");
     ASSERT_TRUE(mesh != nullptr);
 
-    ASSERT_EQ(2 * _n_nodes, mesh->getNumberOfBaseNodes());
+    ASSERT_EQ(2 * _n_nodes, mesh->computeNumberOfBaseNodes());
 
     ASSERT_EQ(1, mesh->getProperties().size());
 
@@ -236,7 +236,7 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshNone)
                                        MeshLib::UseIntensityAs::NONE, "test");
     ASSERT_TRUE(mesh != nullptr);
 
-    ASSERT_EQ(_n_nodes, mesh->getNumberOfBaseNodes());
+    ASSERT_EQ(_n_nodes, mesh->computeNumberOfBaseNodes());
 
     ASSERT_EQ(0, mesh->getProperties().size());
 
@@ -263,7 +263,7 @@ TEST_F(RasterToMeshTest, vtkImage)
         MeshLib::UseIntensityAs::DATAVECTOR, "test");
     ASSERT_TRUE(mesh != nullptr);
 
-    ASSERT_EQ(_n_nodes, mesh->getNumberOfBaseNodes());
+    ASSERT_EQ(_n_nodes, mesh->computeNumberOfBaseNodes());
 
     ASSERT_EQ(1, mesh->getProperties().size());
 

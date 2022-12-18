@@ -120,7 +120,7 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
                                                MeshLib::MeshItemType::Node)));
 
     // copy property vectors for nodes
-    auto const number_of_base_nodes = org_mesh.getNumberOfBaseNodes();
+    auto const number_of_base_nodes = org_mesh.computeNumberOfBaseNodes();
     for (auto [name, property] : org_mesh.getProperties())
     {
         if (property->getMeshItemType() != MeshLib::MeshItemType::Node)

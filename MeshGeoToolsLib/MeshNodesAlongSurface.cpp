@@ -31,7 +31,7 @@ MeshNodesAlongSurface::MeshNodesAlongSurface(MeshLib::Mesh const& mesh,
     auto const& mesh_nodes = _mesh.getNodes();
     const std::size_t n_nodes(search_all_nodes == SearchAllNodes::Yes
                                   ? _mesh.getNumberOfNodes()
-                                  : _mesh.getNumberOfBaseNodes());
+                                  : _mesh.computeNumberOfBaseNodes());
     // loop over all nodes
     for (std::size_t i = 0; i < n_nodes; i++)
     {

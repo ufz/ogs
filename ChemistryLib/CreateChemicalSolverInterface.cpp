@@ -188,7 +188,7 @@ createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
         config.getConfigSubtreeOptional("equilibrium_reactants"), mesh);
 
     return std::make_unique<PhreeqcKernelData::PhreeqcKernel>(
-        mesh, *linear_solver, mesh.getNumberOfBaseNodes(),
+        mesh, *linear_solver, mesh.computeNumberOfBaseNodes(),
         process_id_to_component_name_map, std::move(path_to_database),
         std::move(aqueous_solution), std::move(equilibrium_reactants),
         std::move(kinetic_reactants), std::move(reaction_rates));
