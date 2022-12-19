@@ -1273,3 +1273,13 @@ if(OGS_BUILD_SWMM)
         DIFF_DATA TestExample_SC2.vtu TestExample_SC2.vtu 1.e-16
     )
 endif()
+
+AddTest(
+    NAME Mesh2Raster_Test
+    PATH FileIO/Mesh2Raster
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO/Mesh2Raster
+    EXECUTABLE Mesh2Raster
+    EXECUTABLE_ARGS -i tri_8_ascii.vtu -o ${Data_BINARY_DIR}/FileIO/Mesh2Raster/tri_8_ascii_raster.asc -c 0.1
+    TESTER diff
+    DIFF_DATA tri_8_ascii_raster.asc
+)
