@@ -183,7 +183,10 @@
     },
     {
       "name": "ci-no-unity",
-      "inherits": "release-all",
+      "inherits": [
+        "release-all",
+        "release-petsc"
+      ],
       "cacheVariables": {
         "OGS_USE_UNITY_BUILDS": "OFF"
       }

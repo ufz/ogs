@@ -26,10 +26,9 @@ linux ctest large:
     CMAKE_PRESET: release-all
 
 build linux (no unity):
-  image: $CONTAINER_GCC_IMAGE
   extends:
     - .template-build-linux
-  tags: [docker]
+  tags: [shell, envinf]
   needs: [meta, ci_images]
   timeout: 3h
   variables:
