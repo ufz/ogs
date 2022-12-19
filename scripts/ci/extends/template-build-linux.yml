@@ -41,13 +41,16 @@
           xvfb_run_cmd=""
           if [[ "$OSTYPE" == "darwin"* ]]; then
             alias date=gdate
-          else
+          elif command -v xvfb-run &> /dev/null ; then
             xvfb_run_cmd="xvfb-run -a"
           fi
 
           regex_argument=""
           if [[ ! -z "$CTEST_INCLUDE_REGEX" ]]; then
             regex_argument="-R ${CTEST_INCLUDE_REGEX}"
+          fi
+          if [[ ! -z "$CTEST_EXCLUDE_REGEX" ]]; then
+            regex_argument="${regex_argument} -E ${CTEST_EXCLUDE_REGEX}"
           fi
 
           # -M Continuous does not run any tests -> -M Experimental --group Continuous
