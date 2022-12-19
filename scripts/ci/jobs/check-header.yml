@@ -11,12 +11,13 @@ check header:
       -DOGS_CHECK_HEADER_COMPILATION=ON
       -DOGS_BUILD_GUI=ON
       -DBUILD_SHARED_LIBS=OFF
+      -DOGS_USE_PETSC=ON
   script:
     - rm -rf $BUILD_DIR
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
     - >
-      cmake ../../ogs -G Ninja
+      CC=mpicc CXX=mpic++ cmake ../../ogs -G Ninja
       $CMAKE_ARGS
       -DCMAKE_BUILD_TYPE=$BUILD_TYPE
       || (cat CMakeFiles/CMakeError.log; exit 1)
