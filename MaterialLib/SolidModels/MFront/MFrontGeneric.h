@@ -385,8 +385,9 @@ public:
     {
         using namespace MathLib::KelvinVector;
 
-        assert(dynamic_cast<MaterialStateVariables const*>(
-            &material_state_variables));
+        assert(
+            dynamic_cast<MaterialStateVariablesMFront<DisplacementDim> const*>(
+                &material_state_variables));
         // New state, copy of current one, packed in unique_ptr for return.
         auto state = std::make_unique<
             MaterialStateVariablesMFront<DisplacementDim>>(
