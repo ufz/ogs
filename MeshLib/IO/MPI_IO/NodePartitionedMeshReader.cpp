@@ -17,6 +17,7 @@
 
 #include <mpi.h>
 
+#include <fstream>
 #include <numeric>
 
 #include "BaseLib/FileTools.h"
