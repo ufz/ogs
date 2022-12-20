@@ -418,7 +418,7 @@ if(OGS_BUILD_UTILS)
     CPMAddPackage(
         NAME metis
         GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/metis.git
-        GIT_TAG 6596bee9cb316455df9ae4192df13d3ee7a73805
+        GIT_TAG d98094f42d0faf9d0e06eb149c870fb714623ecc
         VERSION 5.1.0
         DOWNLOAD_ONLY YES
     )
