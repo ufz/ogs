@@ -140,4 +140,5 @@ AddTest(
 if(OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE PhaseField/surfing_jupyter_notebook/surfing_pyvista.ipynb RUNTIME 25)
     NotebookTest(NOTEBOOKFILE PhaseField/beam_jupyter_notebook/beam.ipynb RUNTIME 500 PROPERTIES PROCESSORS 3)
+    NotebookTest(NOTEBOOKFILE PhaseField/tpb_jupyter_notebook/TPB.ipynb RUNTIME 110 PROPERTIES PROCESSORS 4)
 endif()
