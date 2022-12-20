@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
                     if (corner_element != nullptr)
                     {
                         sum += MeshLib::ProjectPointOnMesh::getElevation(
-                            *corner_element, corner_node);
+                            *corner_element, node);
                         nonzero_count++;
                     }
                 }
