@@ -81,14 +81,11 @@ void TRMVaporDiffusionModel<DisplacementDim>::eval(
         out.J_pT_X_dNTdN = f_Tv * D_v * drho_wv_dT;
         out.K_pp_X_dNTdN = D_v * drho_wv_dp;
 
-        // Vapour velocity
         out.vapor_velocity = -(out.J_pT_X_dNTdN * T_data.grad_T -
-                               out.K_pp_X_dNTdN * p_cap_data.grad_p_cap) /
-                             rho_L_data.rho_LR;
+                      out.K_pp_X_dNTdN * p_cap_data.grad_p_cap) /
+                    rho_L_data.rho_LR;
         double const specific_heat_capacity_vapor =
-            gas_phase
-                ->property(
-                    MaterialPropertyLib::PropertyType::specific_heat_capacity)
+            gas_phase.property(MaterialPropertyLib::specific_heat_capacity)
                 .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
         out.volumetric_heat_capacity_vapor =
