@@ -191,6 +191,17 @@
       }
     },
     {
+      "name": "ci-iwyy",
+      "inherits": "release-all",
+      "cacheVariables": {
+        "OGS_INCLUDE_WHAT_YOU_USE": "include-what-you-use"
+      },
+      "environment": {
+        "CC": "clang",
+        "CXX": "clang++"
+      }
+    },
+    {
       "name": "wheel",
       "inherits": "release",
       "cacheVariables": {
@@ -310,6 +321,10 @@
     {
       "name": "ci-no-unity",
       "configurePreset": "ci-no-unity"
+    },
+    {
+      "name": "ci-iwyy",
+      "configurePreset": "ci-iwyy"
     },
     {
       "name": "wheel",

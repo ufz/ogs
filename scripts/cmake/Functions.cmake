@@ -97,6 +97,13 @@ function(ogs_add_library targetName)
     set_target_properties(
         ${targetName} PROPERTIES UNITY_BUILD ${OGS_USE_UNITY_BUILDS}
     )
+
+    if(DEFINED OGS_INCLUDE_WHAT_YOU_USE)
+        set_target_properties(${targetName} PROPERTIES CXX_INCLUDE_WHAT_YOU_USE ${OGS_INCLUDE_WHAT_YOU_USE})
+    else()
+        message(FATAL_ERROR "OGS_INCLUDE_WHAT_YOU_USE requires the clang compiler!")
+    endif()
+
     GroupSourcesByFolder(${targetName})
 endfunction()
 
