@@ -297,7 +297,7 @@ elseif(NOT OGS_BUILD_VTK AND NOT OGS_USE_MKL)
     # Typically VTK also pulls in libgomp dependency when found on system
     unset(VTK_COMPONENTS)
     foreach(opt ${VTK_OPTIONS})
-        if("${opt}" MATCHES "^VTK_MODULE_ENABLE_VTK_(.*) YES")
+        if("${opt}" MATCHES "-DVTK_MODULE_ENABLE_VTK_(.*)=YES")
             list(APPEND VTK_COMPONENTS ${CMAKE_MATCH_1})
         endif()
     endforeach()
