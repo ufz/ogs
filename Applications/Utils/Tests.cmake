@@ -1200,7 +1200,7 @@ MeshTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Hamburg
     EXECUTABLE MeshMapping
     EXECUTABLE_ARGS -i plain.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/rastermapping.vtu -r 00-raster.asc -s 100
-    DIFF_DATA rastermapping.vtu rastermapping.vtu 1e-14
+    DIFF_DATA rastermapping.vtu rastermapping.vtu 1.5e-14
 )
 
 AddTest(
