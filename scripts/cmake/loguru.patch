@@ -1,0 +1,10 @@
+diff --git a/ThirdParty/loguru/vtkloguru/CMakeLists.txt b/ThirdParty/loguru/vtkloguru/CMakeLists.txt
+index 8a789a0407..440ac619bf 100644
+--- a/ThirdParty/loguru/vtkloguru/CMakeLists.txt
++++ b/ThirdParty/loguru/vtkloguru/CMakeLists.txt
+@@ -17,3 +17,5 @@ generate_export_header(loguru
+ 
+ vtk_module_find_package(PACKAGE Threads)
+ vtk_module_link(VTK::loguru PRIVATE Threads::Threads ${CMAKE_DL_LIBS})
++
++set_target_properties(loguru PROPERTIES CXX_VISIBILITY_PRESET default)

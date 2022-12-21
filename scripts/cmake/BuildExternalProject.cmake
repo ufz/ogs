@@ -28,6 +28,8 @@ function(BuildExternalProject target)
 
     file(MAKE_DIRECTORY ${build_dir})
 
+    string(REPLACE ";" " " ARGN_STRING "${ARGN}")
+
     set(CMAKE_LIST_CONTENT
         "
     cmake_minimum_required(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION})
@@ -37,13 +39,16 @@ function(BuildExternalProject target)
     ExternalProject_add(${target}
       PREFIX ${build_dir}
       CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
-      LOG_DOWNLOAD ON
-      LOG_UPDATE ON
-      LOG_CONFIGURE ON
-      LOG_BUILD ON
-      LOG_TEST ON
-      LOG_INSTALL ON
-      ${ARGN}
+      LOG_DOWNLOAD YES
+      LOG_UPDATE YES
+      LOG_PATCH YES
+      LOG_CONFIGURE YES
+      LOG_BUILD YES
+      LOG_TEST YES
+      LOG_INSTALL YES
+      LOG_MERGED_STDOUTERR YES
+      LOG_DIR logs
+      ${ARGN_STRING}
       )
 
     add_custom_target(build_${target})
