@@ -6,6 +6,8 @@ project = ["Parabolic/T/1D_Two-phase_Stefan_problem_for_ice_melting/Two-phase_St
 image = "Melting_slab.png"
 +++
 
+{{< data-link >}}
+
 ## Problem description
 
 This benchmark is testing the extended version of a classical heat conduction equation termed 'heat conduction equation with phase change' (with a slight abuse of notations, we also call it simply 'T+freezing' equation). The initial-boundary value problem (IBVP) for this equation models such processes as ice formation and ice melting in water-saturated porous medium. Since the equation is strongly non-linear in the temperature variable $T$ to be solved for and contains multiple parameters which may affect accuracy of finite element discretization, a carefully designed model and code verification must be performed.
@@ -28,6 +30,6 @@ Note that in these ParaView plots, we have tuned the color legend for temperatur
 {{< img src="Melting_slab_Stefan_problem_(analytic_vs_OGS).png" >}}
 In these plots, the temperature is given in kelvins as well.
 
-## Remark
+## *Remark*
 
-In the corresponding OGS project file {{< data-link "1D_Two-phase_Stefan_problem_for_ice_melting/Two-phase_Stefan_problem.prj" >}}, the time discretization is different for the "real case study" whose results are presented in the documentation and for the "cmake-TEST" case, and must be altered manually.
+In the corresponding OGS project file [`Two-phase_Stefan_problem.prj`](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/T/1D_Two-phase_Stefan_problem_for_ice_melting/Two-phase_Stefan_problem.prj) the time discretization is different for the "real case study" whose results are presented in the documentation and for the `ctest` case, and must be altered manually.

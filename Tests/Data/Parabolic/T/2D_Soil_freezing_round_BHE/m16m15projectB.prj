@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--units: kg, m, s, K and derived units: N, Pa=N/m^2 -->
+<OpenGeoSysProject>
+    <meshes>
+        <mesh axially_symmetric="true">m16m15mesh.vtu</mesh>
+		<mesh axially_symmetric="true">m16m15mesh_0.vtu</mesh> <!-- left 1-->
+		<mesh axially_symmetric="true">m16m15mesh_1.vtu</mesh> <!-- left_2 -->
+		<mesh axially_symmetric="true">m16m15mesh_2.vtu</mesh> <!-- bottom_1 -->
+		<mesh axially_symmetric="true">m16m15mesh_3.vtu</mesh> <!-- bottom_2 -->
+		<mesh axially_symmetric="true">m16m15mesh_4.vtu</mesh> <!-- right -->
+		<mesh axially_symmetric="true">m16m15mesh_5.vtu</mesh> <!-- top_1 -->
+		<mesh axially_symmetric="true">m16m15mesh_6.vtu</mesh> <!-- top_2 -->
+    </meshes>
+    <processes>
+        <process>
+            <name>HeatConduction</name>
+            <type>HEAT_CONDUCTION</type>
+            <integration_order>2</integration_order>
+            <process_variables>
+                <process_variable>temperature</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="heat_flux" output_name="heat_flux"/>
+            </secondary_variables>
+        </process>
+    </processes>
+    <media>
+        <medium id="0,1">
+           <phases>
+                <phase>
+                    <!-- Pore water phase -->
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>0.58</value> <!-- W/m/K -->
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>4190</value> <!-- J/kg/K -->
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1000</value> <!-- kg/m^3 -->
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <!-- Pore ice phase -->
+                    <type>FrozenLiquid</type>
+                    <properties>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>2.2</value> <!-- W/m/K -->
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>2090</value> <!-- J/kg/K -->
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>920</value> <!-- kg/m^3 -->
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <!-- Porous solid phase -->
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>1.1</value> <!-- W/m/K -->
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>900</value> <!-- J/kg/K -->
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2000</value> <!-- kg/m^3 -->
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+
+            <properties>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.5</value>
+                </property>
+                <property>
+                    <name>volume_fraction</name>
+                    <type>TemperatureDependentFraction</type>
+                    <steepness>2</steepness> <!-- 1/K, it is the k of the sigmoid function -->
+                    <characteristic_temperature>273.15</characteristic_temperature> <!-- K, it is the T_m -->
+                </property>
+                <property>
+                    <name>density</name>
+                    <type>VolumeFractionAverage</type>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>VolumeFractionAverage</type>
+                </property>
+                <property>
+                    <name>specific_heat_capacity</name>
+                    <type>SpecificHeatCapacityWithLatentHeat</type>
+                    <specific_latent_heat>334000</specific_latent_heat> <!-- J/kg -->
+                </property>
+            </properties>
+
+        </medium>
+    </media>
+
+    <parameters>
+        <parameter>
+            <name>T0</name>
+            <type>Function</type>
+            <expression>5./16*y+293.15</expression> <!-- it is the C temprerature T0(y):=-(Tsurf-Tbot)/Hbot*y+Tsurf -->
+        </parameter>
+        <!-- 10h=36000s, the time when T1(y,t) attains its steady-shape -->
+        <parameter>
+            <name>T10</name>
+            <type>Function</type>
+            <expression>
+                if (t &lt; 36000, 5./16*(1-t/36000)*y+35./10*t/36000*y+293.15, 35./10*y+293.15)
+            </expression> <!--it is T1(y,t) for y\in(-10,0) -->
+        </parameter>
+        <parameter>
+            <name>T11</name>
+            <type>Function</type>
+            <expression>
+                if (t &lt; 36000, 5./16*(1-t/36000)*y-35*t/36000+293.15, 258.15)
+            </expression> <!--it is T1(y,t) for y\in(-16,-10) -->
+        </parameter>
+    </parameters>
+
+    <process_variables>
+        <process_variable>
+            <name>temperature</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>T0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>m16m15mesh_0</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>T10</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>m16m15mesh_1</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>T11</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+
+    <time_loop>
+        <processes>
+            <process ref="HeatConduction">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1.e-4</abstol> <!-- checked with 1.e-8, works; the outcome difference between 1.e-8 and 1.e-4 is invisible -->
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>36000</t_end> <!-- real case study: 30 days = 720 h = 2592000 s || if the cmake TEST: 10 h = 36000 s -->
+                    <timesteps>
+                        <pair>
+                            <repeat>40</repeat> <!-- real case study: 2880 || if the cmake TEST: 40 -->
+                            <delta_t>900</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+
+        <output>
+            <type>VTK</type>
+            <prefix>Kiel_problem_T-plot</prefix>
+            <timesteps>
+                <pair>
+                    <repeat>10000</repeat>
+                    <each_steps>10</each_steps> <!-- real case study: 20 || if the cmake TEST: 10 -->
+                </pair>
+            </timesteps>
+            <variables>
+                <variable> temperature </variable>
+                <variable> heat_flux </variable>
+            </variables>
+            <suffix>_ts_{:timestep}_t_{:gtime}_sec</suffix>
+        </output>
+    </time_loop>
+
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_picard</name>
+            <type>Picard</type>
+            <max_iter>200</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <precon_type>DIAGONAL</precon_type>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+
+    <test_definition>
+        <!--primary field-->
+        <vtkdiff>
+            <file>Kiel_problem_T-plot_ts_20_t_18000_sec.vtu</file>
+            <field>temperature</field>
+            <absolute_tolerance>1e-8</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>Kiel_problem_T-plot_ts_40_t_36000_sec.vtu</file>
+            <field>temperature</field>
+            <absolute_tolerance>1e-8</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>

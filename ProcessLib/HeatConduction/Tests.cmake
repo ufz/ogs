@@ -6,6 +6,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/T/2D_Robin/square_1e4_robin_newton.xml RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/T/2D_Ice_melting-forming_manuf_solution/ManSol3_IceWaterMix_Scaled.prj RUNTIME 5)
     OgsTest(PROJECTFILE Parabolic/T/1D_Two-phase_Stefan_problem_for_ice_melting/Two-phase_Stefan_problem.prj RUNTIME 5)
+    OgsTest(PROJECTFILE Parabolic/T/2D_Soil_freezing_round_BHE/m16m15projectB.prj RUNTIME 35)
 endif()
 
 AddTest(
