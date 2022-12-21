@@ -288,7 +288,7 @@ string(REPLACE "." "_" HDF5_TAG ${ogs.tested_version.hdf5})
 set(_vtk_source GIT_REPOSITORY https://github.com/kitware/vtk.git GIT_TAG
                 v${ogs.minimum_version.vtk}
 )
-set(_hdf5_source_file
+set(_vtk_source_file
     ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/vtk-v${ogs.minimum_version.vtk}.tar.gz
 )
 if(EXISTS ${_vtk_source_file})
