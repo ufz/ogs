@@ -6,13 +6,15 @@ project = ["Parabolic/T/2D_Soil_freezing_round_BHE/m16m15projectB.prj"]
 image = "T-distribution_(OGS_vs_FF++_3d).png"
 +++
 
+{{< data-link >}}
+
 ## Problem description
 
 This benchmark is testing the extended version of a classical heat conduction equation termed 'heat conduction equation with phase change' (with a slight abuse of notations, we also call it simply 'T+freezing' equation). The initial-boundary value problem (IBVP) for this equation models such processes as ice formation and ice melting in water-saturated porous medium. Since the equation is strongly non-linear in the temperature variable $T$ to be solved for and contains multiple parameters which may affect accuracy of finite element discretization, a carefully designed model and code verification must be performed.
 
 Below, we model heat transfer process -- focusing specifically on ice formation -- in a cylindrical soil specimen around a borehole heat exchanger (BHE) which contains a refrigerant of *sub-zero* temperature. This (negative) temperature is used to prescribe a Dirichlet boundary condition on the specimen boundary adjacent to the BHE, what triggers cooling and consequent freezing of water-saturated soil whose initial temperature is positive.
 
-Simulations are performed using both our OpenGeoSys platform and the FreeFem++ open source finite element code (in the following, simply termed OGS and FF++, respectively), thus enabling cross-verification of the numerical codes.
+Simulations are performed using both our OpenGeoSys platform and the [FreeFem++](https://freefem.org) open source finite element code (in the following, simply termed OGS and FF++, respectively), thus enabling cross-verification of the numerical codes.
 
 ## Test case in figures
 
@@ -32,6 +34,6 @@ Temperature is given in kelvins. The color legend of $T$ in the corresponding Pa
 {{< img src="T-over_lines_(OGS_vs_FF++).png" >}}
 Here, origin of the horizontal axis on the right plot corresponds to line's origin. For the selected lines, the compared data seems identical point-wise, thus supporting the quantitative similarity of the OGS and FF++ results observed earlier.
 
-> ### Remark
->
-> In the corresponding OGS project file {{< data-link "2D_Soil_freezing_round_BHE/m16m15projectB.prj" >}} the time discretization is different for the "real case study" whose results are presented in the documentation and for the "cmake-TEST" case, and must be altered manually.
+### *Remark*
+
+In the corresponding OGS project file [`m16m15projectB.prj`](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/T/2D_Soil_freezing_round_BHE/m16m15projectB.prj) the time discretization is different for the "real case study" whose results are presented in the documentation and for the `ctest` case, and must be altered manually.
