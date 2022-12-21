@@ -1,16 +1,7 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
-    <meshes>
-    <mesh>quad_0deg_h0p01.vtu</mesh>
-    <mesh>bar_bottom.vtu</mesh>
-    <mesh>bar_top.vtu</mesh>
-    <mesh>bar_left.vtu</mesh>
-    <mesh>bar_right.vtu</mesh>
-    <mesh>bar_p_0.vtu</mesh>
-    <mesh>bar_p_1.vtu</mesh>
-    <mesh>bar_p_2.vtu</mesh>
-    <mesh>bar_p_3.vtu</mesh>
-    </meshes>
+    <mesh>mesh_full_pf_OGS_pf_ic.vtu</mesh>
+    <geometry>Kregime_Static.gml</geometry>
     <processes>
         <process>
             <name>PhaseField</name>
@@ -18,7 +9,7 @@
             <phasefield_model>AT1</phasefield_model>
             <coupling_scheme>staggered</coupling_scheme>
             <energy_split_model>Isotropic</energy_split_model>
-            <pressurized_crack_scheme>propagating</pressurized_crack_scheme>
+            <pressurized_crack_scheme>static</pressurized_crack_scheme>
             <integration_order>2</integration_order>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
@@ -50,8 +41,8 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>INFINITY_N</norm_type>
-                    <abstol>1.e-1</abstol>
-                    <reltol>1.e-1</reltol>
+                    <abstol>1.e-4</abstol>
+                    <reltol>1.e-4</reltol>
                 </convergence_criterion>
                 <!-- convergence criterion for the second process -->
                 <convergence_criterion>
@@ -76,12 +67,12 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>0.02</t_end>
+                    <t_end>1</t_end>
                     <timesteps>
-                      <pair>
-                          <repeat>1</repeat>
-                          <delta_t>0.01</delta_t>
-                      </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.5</delta_t>
+                        </pair>
                     </timesteps>
                 </time_stepping>
             </process>
@@ -98,11 +89,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>0.02</t_end>
+                    <t_end>1</t_end>
                     <timesteps>
                         <pair>
                             <repeat>1</repeat>
-                            <delta_t>0.01</delta_t>
+                            <delta_t>0.5</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -110,7 +101,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>2D_PropagatingCrack_AT1_h0p01</prefix>
+            <prefix>results_h_0.0100</prefix>
             <variables>
                 <variable>displacement</variable>
                 <variable>phasefield</variable>
@@ -216,19 +207,29 @@
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>bar_p_0</mesh>
+                    <geometrical_set>Kregime_Static</geometrical_set>
+                    <geometry>left</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>bar_p_0</mesh>
+                    <geometrical_set>Kregime_Static</geometrical_set>
+                    <geometry>right</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>Kregime_Static</geometrical_set>
+                    <geometry>top</geometry>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>bar_p_1</mesh>
+                    <geometrical_set>Kregime_Static</geometrical_set>
+                    <geometry>bottom</geometry>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
@@ -242,31 +243,35 @@
             <initial_condition>phasefield_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>bar_left</mesh>
+                    <geometrical_set>Kregime_Static</geometrical_set>
+                    <geometry>left</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>phasefield_bc</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>bar_right</mesh>
+                    <geometrical_set>Kregime_Static</geometrical_set>
+                    <geometry>right</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>phasefield_bc</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>bar_top</mesh>
+                    <geometrical_set>Kregime_Static</geometrical_set>
+                    <geometry>top</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>phasefield_bc</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>bar_bottom</mesh>
+                    <geometrical_set>Kregime_Static</geometrical_set>
+                    <geometry>bottom</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>phasefield_bc</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>bar_bottom</mesh>
+                    <mesh>Kregime_Static_bottom</mesh>
                     <type>PhaseFieldIrreversibleDamageOracleBoundaryCondition</type>
                     <component>0</component>
                 </boundary_condition>

@@ -303,9 +303,15 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
             _process_data.elastic_energy, _process_data.surface_energy,
             _process_data.pressure_work, _coupled_solutions);
 
-        INFO("Elastic energy: {:g} Surface energy: {:g} Pressure work: {:g} ",
-             _process_data.elastic_energy, _process_data.surface_energy,
-             _process_data.pressure_work);
+        INFO(
+            "Elastic energy: {:g} Surface energy: {:g} Pressure work: {:g}  at "
+            "time: {:g} ",
+            _process_data.elastic_energy, _process_data.surface_energy,
+            _process_data.pressure_work, t);
+        if (_process_data.propagating_pressurized_crack)
+        {
+            INFO("Pressure: {:g} at time: {:g} ", _process_data.pressure, t);
+        }
     }
 }
 
@@ -318,7 +324,7 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
 
     if (isPhaseFieldProcess(process_id))
     {
-        if (_process_data.hydro_crack)
+        if (_process_data.propagating_pressurized_crack)
         {
             auto& u = *_coupled_solutions->coupled_xs[0];
             MathLib::LinAlg::scale(const_cast<GlobalVector&>(u),
@@ -349,7 +355,7 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
 
     INFO("Integral of crack: {:g}", _process_data.crack_volume);
 
-    if (_process_data.hydro_crack)
+    if (_process_data.propagating_pressurized_crack)
     {
         _process_data.pressure_old = _process_data.pressure;
         _process_data.pressure =

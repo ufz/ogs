@@ -1,0 +1,3 @@
+Pressurized crack is part of the phase field process (in the toughness-dominated regime). Pressure is set to 1.0 in the case of a static pressurized crack (pressurized_crack_scheme ="static"). Pressure evolution is found for propagating pressurized cracks (pressurized_crack_scheme ="propagating") by enforcing the crack volume balance.
+
+The implementation was carried out in accordance with \cite yoshioka2019comparative .
