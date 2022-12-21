@@ -194,7 +194,8 @@
       "name": "ci-iwyy",
       "inherits": "release-all",
       "cacheVariables": {
-        "OGS_INCLUDE_WHAT_YOU_USE": "include-what-you-use"
+        "OGS_INCLUDE_WHAT_YOU_USE": "ON",
+        "OGS_USE_UNITY_BUILDS": "OFF"
       },
       "environment": {
         "CC": "clang",
@@ -308,6 +309,10 @@
     },
     {
       "name": "release-all",
+      "configurePreset": "release-all"
+    },
+    {
+      "name": "debug-all",
       "configurePreset": "release-all"
     },
     {

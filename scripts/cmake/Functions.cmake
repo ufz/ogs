@@ -98,9 +98,9 @@ function(ogs_add_library targetName)
         ${targetName} PROPERTIES UNITY_BUILD ${OGS_USE_UNITY_BUILDS}
     )
 
-    if(DEFINED OGS_INCLUDE_WHAT_YOU_USE)
+    if(OGS_INCLUDE_WHAT_YOU_USE)
         if(${CMAKE_CXX_COMPILER_ID} MATCHES ".*Clang")
-            set_target_properties(${targetName} PROPERTIES CXX_INCLUDE_WHAT_YOU_USE ${OGS_INCLUDE_WHAT_YOU_USE})
+            set_target_properties(${targetName} PROPERTIES CXX_INCLUDE_WHAT_YOU_USE include-what-you-use)
         else()
             message(FATAL_ERROR "OGS_INCLUDE_WHAT_YOU_USE requires the clang compiler!")
         endif()
