@@ -325,5 +325,8 @@ endif()
 
 # append RPATHs
 foreach(lib ${_EXT_LIBS})
-    list(APPEND CMAKE_BUILD_RPATH ${PROJECT_BINARY_DIR}/_ext/${lib}/lib)
+    set(CMAKE_BUILD_RPATH
+        ${CMAKE_BUILD_RPATH} ${PROJECT_BINARY_DIR}/_ext/${lib}/lib
+        ${PROJECT_BINARY_DIR}/_ext/${lib}/lib64
+    )
 endforeach()
