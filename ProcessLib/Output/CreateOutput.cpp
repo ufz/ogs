@@ -223,6 +223,28 @@ void parseOutput(const BaseLib::ConfigTree& config,
         }
     }
 
+    if (auto const geometrical_sets_config =
+            //! \ogs_file_param{prj__time_loop__output__geometrical_sets}
+        config.getConfigSubtreeOptional("geometrical_sets"))
+    {
+        for (
+            auto geometrical_set_config :
+            //! \ogs_file_param{prj__time_loop__output__geometrical_sets__geometrical_set}
+            geometrical_sets_config->getConfigSubtreeList("geometrical_set"))
+        {
+            auto const geometrical_set_name =
+                //! \ogs_file_param{prj__time_loop__output__geometrical_sets__geometrical_set__name}
+                geometrical_set_config.getConfigParameter<std::string>("name",
+                                                                       "");
+            auto const geometry_name =
+                //! \ogs_file_param{prj__time_loop__output__geometrical_sets__geometrical_set__geometry}
+                geometrical_set_config.getConfigParameter<std::string>(
+                    "geometry");
+            mesh_names_for_output.push_back(geometrical_set_name + "_" +
+                                            geometry_name);
+        }
+    }
+
     auto output_format = createOutputFormat(
         output_directory, output_type, std::move(prefix), std::move(suffix),
         data_mode, compress_output, number_of_files);
