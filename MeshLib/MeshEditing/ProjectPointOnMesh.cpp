@@ -55,10 +55,14 @@ Element const* getProjectedElement(std::vector<const Element*> const& elements,
 
 double getElevation(Element const& element, MathLib::Point3d const& node)
 {
-    Eigen::Vector3d const v =
-        node.asEigenVector3d() - element.getNode(0)->asEigenVector3d();
+    // mathematical description of the plane spanned by the 2d element
+    // compute coefficients of the plane equation (Hesse normal form)
+    // d = scalar_product(normal, element_node[0])
     auto const n = FaceRule::getSurfaceNormal(element).normalized();
-    return node[2] - n.dot(v) * n[2];
+    auto const d = n.dot(element.getNode(0)->asEigenVector3d());
+    // insert node[0] and node[1] into plane equation and transpose the equation
+    // to node[2]
+    return (d - (node[0] * n[0] + node[1] * n[1])) / n[2];
 }
 
 }  // namespace ProjectPointOnMesh
