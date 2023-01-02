@@ -8,7 +8,7 @@ model for salt creep. Bérest et al. (2019). Rock Mech Rock Eng.
 @Algorithm NewtonRaphson;
 @MaximumNumberOfIterations 100;
 
-@Epsilon 1.e-14;
+@Epsilon 1.e-12;
 @Theta 1.0;
 
 @ModellingHypotheses{".+"};
