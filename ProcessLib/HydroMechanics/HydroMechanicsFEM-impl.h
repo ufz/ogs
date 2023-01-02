@@ -475,7 +475,7 @@ std::vector<double> const& HydroMechanicsLocalAssembler<
 
         auto const rho_fr =
             fluid.property(MPL::PropertyType::density)
-                .template value<double>(vars, x_position, t, dt); 
+                .template value<double>(vars, x_position, t, dt);
         vars.density = rho_fr;
 
         auto const mu = fluid.property(MPL::PropertyType::viscosity)
