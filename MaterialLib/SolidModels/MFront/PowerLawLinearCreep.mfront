@@ -56,7 +56,7 @@ Ru.setEntryName("UniversalGasConstant");
 
     const auto bPL = std::pow(3. / 2., (m + 1) / 2) * A1 *
                      std::exp(-Q1 / Ru / (T + dT)) / std::pow(sig0, m);
-    const auto bL = 3. / 2. * A2 / std::pow(Dgrain, 3) *
+    const auto bL = 3. / 2. * A2 / (std::pow(Dgrain, 3) * (T + dT)) *
                     std::exp(-Q2 / Ru / (T + dT)) / sig0;
 
     const auto norm_s_pow = std::pow(norm_s, m - 1);
