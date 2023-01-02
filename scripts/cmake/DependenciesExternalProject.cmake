@@ -10,6 +10,12 @@ set(OGS_EXTERNAL_DEPENDENCIES_CACHE ""
     CACHE PATH "Directory containing source archives of external dependencies."
 )
 
+if(CCACHE_EXECUTABLE)
+    set(_defaultCMakeArgs "-DCMAKE_C_COMPILER_LAUNCHER=${CCACHE_EXECUTABLE}"
+                          "-DCMAKE_CXX_COMPILER_LAUNCHER=${CCACHE_EXECUTABLE}"
+    )
+endif()
+
 if(OGS_USE_MFRONT)
     option(OGS_BUILD_TFEL
            "Build TFEL locally. Needs to be set with a clean cache!" OFF
@@ -44,6 +50,7 @@ if(OGS_USE_MFRONT)
                        "-DBUILD_SHARED_LIBS=OFF"
                        "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
                        "-Denable-testing=OFF"
+                       ${_defaultCMakeArgs}
         )
         message(
             STATUS
@@ -174,8 +181,8 @@ elseif(NOT OGS_BUILD_ZLIB)
 endif()
 if(NOT ZLIB_FOUND)
     BuildExternalProject(
-        ZLIB ${_zlib_source}
-        CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+        ZLIB ${_zlib_source} CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+                                        ${_defaultCMakeArgs}
     )
     message(
         STATUS
@@ -235,7 +242,9 @@ elseif(NOT OGS_BUILD_HDF5)
     find_package(HDF5 ${ogs.minimum_version.hdf5})
 endif()
 if(NOT HDF5_FOUND)
-    BuildExternalProject(HDF5 ${_hdf5_source} CMAKE_ARGS ${_hdf5_options})
+    BuildExternalProject(
+        HDF5 ${_hdf5_source} CMAKE_ARGS ${_hdf5_options} ${_defaultCMakeArgs}
+    )
     message(
         STATUS
             "ExternalProject_Add(): added package HDF5@${ogs.tested_version.hdf5}"
@@ -313,7 +322,8 @@ if(NOT VTK_FOUND)
         )
     endif()
     BuildExternalProject(
-        VTK ${_vtk_source} CMAKE_ARGS ${VTK_OPTIONS} ${_loguru_patch}
+        VTK ${_vtk_source} CMAKE_ARGS ${VTK_OPTIONS} ${_defaultCMakeArgs}
+                                      ${_loguru_patch}
     )
     message(
         STATUS
