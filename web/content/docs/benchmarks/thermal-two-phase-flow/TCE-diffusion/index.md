@@ -2,7 +2,7 @@
 author = "Boyan Meng"
 title = "TCE Diffusion"
 date = "2022-05-12T16:47:18+02:00"
-project = ["Parabolic/ThermalTwoPhaseFlowPP/HeatPipe/Twophase_HeatPipe_quad_curve_small.prj"]
+project = ["Parabolic/ThermalTwoPhaseFlowPP/TCEDiffusion/Twophase_TCE_diffusion_1D_small.prj"]
 image = "err.png"
 +++
 
@@ -42,7 +42,7 @@ By performing numerical integration, we have
 \begin{equation}
     x^c_a=c+J\cdot I(z)\ \mathrm{with}\ I(z)=\int\frac{1}{A(z)}dz.
 \end{equation}
-where $I(z)$ is integrated w.r.t. $z$ in the unsaturated zone. Since at steady state, the diffusive flux should be uniform at any depth, the integral constants $c$ and $J$ can be solved by the upper and lower values of $x^c_a$ which are given as Dirichlet boundary conditions.
+where $I(z)$ is integrated w.r.t. $z$ in the unsaturated zone. Since at steady state, the diffusive flux should be uniform at any depth, the integral constants $c$ and $J$ can be solved by the upper and lower values of $x^c_a$ which are given as Dirichlet boundary conditions. A [MATLAB script](AH2010.m) is provided for the above solution.
 
 Figure 2 compares the normalized gas phase TCE concentration profiles given by the numerical model and the above semianalytical solution at steady state. Figure 3 shows the absolute and relative errors between the two curves in Fig. 2. The maximum relative error is less than 1\% except one point. Thus, a very good agreement was obtained. It is interesting to note the sharp decline of the TCE concentration immediately above the water table, which is due to the several orders of magnitude difference between $D_{0a}$ and $D_{0w}$.
 
