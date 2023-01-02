@@ -179,18 +179,18 @@ class BC(OpenGeoSys.BHENetwork):
         flowrate_file.close()
 
         return (Tin_val, flowrate)
-        
+
     def serverCommunicationPostTimestep(self, t, dt, Tin_val, Tout_val, flowrate):
-        Tin_val = [305,305,305]
+        Tin_val = [305, 305, 305]
 
         tin = open("T_in.txt", "a")
         tin.write("post: " + str(t) + str(Tin_val) + "\n")
         tin.close()
-        
+
         tout = open("T_out.txt", "a")
         tout.write("post: " + str(t) + str(Tout_val) + "\n")
         tout.close()
-        
+
         flowrate_file = open("flowrate.txt", "a")
         flowrate_file.write("post: " + str(t) + str(flowrate) + "\n")
         flowrate_file.close()
