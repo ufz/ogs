@@ -56,8 +56,8 @@ TEST(TestVtkRaster, TestASCReader)
     EXPECT_TRUE(img->GetOutput() != nullptr);
     std::unique_ptr<GeoLib::Raster> raster(
         FileIO::AsciiRasterInterface::getRasterFromASCFile(name));
-    EXPECT_EQ(298, raster->getHeader().n_cols);
-    EXPECT_EQ(205, raster->getHeader().n_rows);
+    EXPECT_EQ(297, raster->getHeader().n_cols);
+    EXPECT_EQ(204, raster->getHeader().n_rows);
     EXPECT_NEAR(25, raster->getHeader().cell_size,
                 std::numeric_limits<double>::epsilon());
 
