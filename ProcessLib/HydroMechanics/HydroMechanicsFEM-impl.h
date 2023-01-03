@@ -1,6 +1,6 @@
 /**
  * \copyright
- * Copyright (c) 2012-2022, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -475,7 +475,7 @@ std::vector<double> const& HydroMechanicsLocalAssembler<
 
         auto const rho_fr =
             fluid.property(MPL::PropertyType::density)
-                .template value<double>(vars, x_position, t, dt); 
+                .template value<double>(vars, x_position, t, dt);
         vars.density = rho_fr;
 
         auto const mu = fluid.property(MPL::PropertyType::viscosity)
