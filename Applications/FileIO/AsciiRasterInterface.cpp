@@ -19,6 +19,7 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
+#include "GeoLib/Point.h"
 
 namespace FileIO
 {
@@ -235,6 +236,89 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(
             const double val = readDoubleFromStream(in);
             values[idx + i] = (val > max || val < min) ? no_data_val : val;
         }
+    }
+
+    return new GeoLib::Raster(header, values.begin(), values.end());
+}
+
+GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
+    std::string const& fname)
+{
+    std::ifstream in(fname.c_str());
+
+    if (!in.is_open())
+    {
+        ERR("Raster::getRasterFromXyzFile() - Could not open file {:s}",
+            fname);
+        return nullptr;
+    }
+
+    //in.open(fname.c_str());
+    std::string line("");
+    double x_old(0), y_old(0), x(0), y(0), z(0);
+    GeoLib::RasterHeader header{0, 0, 1, GeoLib::Point{{0, 0, 0}}, 1, -9999};
+    std::vector<double> values;
+    if (std::getline(in, line))
+    {
+        std::stringstream str_stream(line);
+        str_stream >> x >> y >> z;
+        header.origin[0] = x;
+        header.origin[1] = y;
+        header.origin[2] = 0;
+        values.push_back(z);
+        if (!std::getline(in, line))
+        {
+            return nullptr;
+        }
+        str_stream.clear();
+        str_stream.str(line);
+        str_stream >> x_old >> y_old >> z;
+        values.push_back(z);
+        header.cell_size = x_old - x;
+    }
+    else
+    {
+        return nullptr;
+    }
+
+    std::size_t n_cols = 2, n_rows = 1;
+    while (std::getline(in, line))
+    {
+        std::stringstream str(line);
+        str >> x >> y >> z;
+        values.push_back(z);
+        if (x > x_old)
+        {
+            n_cols++;
+        }
+        else //new line
+        {
+            n_rows++;
+            // define #columns
+            if (header.n_cols == 0)
+            {
+                header.n_cols = n_cols;
+            }
+            // just check if #columns is consistent
+            else
+            {
+                if (n_cols != header.n_cols)
+                {
+                    ERR("Different number of pixels per line. Aborting!");
+                    return nullptr;
+                }
+            }
+            n_cols = 1;
+        }
+        x_old = x;
+        y_old = y;
+    }
+    header.n_rows = n_rows;
+    if (header.n_cols == 0)
+    {
+        ERR("Could not determine raster size. Note that minimum allowed raster "
+            "size is 2 x 2 pixels.");
+        return nullptr;
     }
 
     return new GeoLib::Raster(header, values.begin(), values.end());

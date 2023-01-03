@@ -105,7 +105,7 @@ public:
         if (t == ImportFileType::PETREL)
             return "Petrel files (*)";
         if (t == ImportFileType::RASTER)
-            return "Raster files (*.asc *.grd *.bmp *.jpg *.png *.tif)";
+            return "Raster files (*.asc *.grd *.xyz *.bmp *.jpg *.png *.tif)";
         if (t == ImportFileType::SHAPE)
             return "ESRI Shape files (*.shp)";
         else if (t == ImportFileType::TETGEN)

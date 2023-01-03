@@ -55,6 +55,11 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string& fileName)
         raster.reset(
             FileIO::AsciiRasterInterface::getRasterFromSurferFile(fileName));
     }
+    else if (fileInfo.suffix().toLower() == "xyz")
+    {
+        raster.reset(
+            FileIO::AsciiRasterInterface::getRasterFromXyzFile(fileName));
+    }
     if (raster)
     {
         return VtkRaster::loadImageFromArray(raster->begin(),

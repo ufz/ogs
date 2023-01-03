@@ -1024,7 +1024,7 @@ void MainWindow::mapGeometry(const std::string& geo_name)
     if (choice < 2)  // load something from a file
     {
         QString file_type[2] = {"OpenGeoSys mesh files (*.vtu *.msh)",
-                                "Raster files(*.asc *.grd)"};
+                                "Raster files(*.asc *.grd *.xyz)"};
         QSettings settings;
         file_name = QFileDialog::getOpenFileName(
             this,
