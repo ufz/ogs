@@ -1,9 +1,10 @@
 <output>
     <type>VTK</type>
-    <prefix>cube_1e0</prefix>
+    <prefix>{:meshname}</prefix>
+    <suffix>_ts_{:timestep}_t_{:time}</suffix>
     <variables>
         <variable> pressure </variable>
         <variable> v      </variable>
     </variables>
-    <suffix>_ts_{:timestep}_t_{:time}</suffix>
+
 </output>

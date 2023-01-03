@@ -8,7 +8,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+        cube_1x1x1_hex_${mesh_size}.vtu cube_1x1x1_hex_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
     )
 
     if(TEST ogs-SteadyStateDiffusion_cube_1x1x1_${mesh_size} AND DIFF_TOOL_PATH)
