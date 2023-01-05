@@ -26,6 +26,9 @@
 
 #ifdef USE_PETSC
 #include <mpi.h>
+#include <vtkMPI.h>
+#include <vtkMPICommunicator.h>
+#include <vtkMPIController.h>
 #endif
 
 class vtkXMLPUnstructuredGridWriter;
@@ -82,6 +85,19 @@ bool VtuInterface::writeVTU(std::string const& file_name,
     if constexpr (std::is_same_v<UnstructuredGridWriter,
                                  vtkXMLPUnstructuredGridWriter>)
     {
+        // Set the writer controller to same communicator as OGS
+        vtkSmartPointer<vtkMPICommunicator> vtk_comm =
+            vtkSmartPointer<vtkMPICommunicator>::New();
+        MPI_Comm mpi_comm = MPI_COMM_WORLD;
+        vtkMPICommunicatorOpaqueComm vtk_opaque_comm(&mpi_comm);
+        vtk_comm->InitializeExternal(&vtk_opaque_comm);
+
+        vtkSmartPointer<vtkMPIController> vtk_mpi_ctrl =
+            vtkSmartPointer<vtkMPIController>::New();
+        vtk_mpi_ctrl->SetCommunicator(vtk_comm);
+
+        vtuWriter->SetController(vtk_mpi_ctrl);
+
         vtuWriter->SetGhostLevel(1);
         vtuWriter->SetNumberOfPieces(num_partitions);
         vtuWriter->SetStartPiece(rank);
