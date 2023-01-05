@@ -40,7 +40,7 @@ install(
   find_program(PATCHELF_TOOL patchelf)
   foreach(_lib ${_r_deps})
     string(REGEX MATCH "libpetsc.*" _petsc_lib ${_lib})
-    if(_petsc_lib AND EXISTS _ext/PETSc/lib/${_petsc_lib})
+    if(_petsc_lib AND EXISTS _ext/PETSc/lib/${_petsc_lib} AND NOT APPLE)
       if(PATCHELF_TOOL)
         message(STATUS "Patching RPATH of ${_petsc_lib} -> ${_rpath}")
         execute_process(COMMAND patchelf --set-rpath ${_rpath} _ext/PETSc/lib/${_petsc_lib} COMMAND_ERROR_IS_FATAL ANY)
