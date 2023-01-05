@@ -253,7 +253,6 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
         return nullptr;
     }
 
-    //in.open(fname.c_str());
     std::string line("");
     double x_old(0), y_old(0), x(0), y(0), z(0);
     GeoLib::RasterHeader header{0, 0, 1, GeoLib::Point{{0, 0, 0}}, 1, -9999};
@@ -289,10 +288,22 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
         values.push_back(z);
         if (x > x_old)
         {
+            if (x - x_old != header.cell_size)
+            {
+                ERR("Varying cellsizes or unordered pixel vales found. "
+                    "Aborting...");
+                return nullptr;
+            }
             n_cols++;
         }
         else //new line
         {
+            if (y - y_old != header.cell_size)
+            {
+                ERR("Varying cellsizes or unordered pixel vales found. "
+                    "Aborting...");
+                return nullptr;
+            }
             n_rows++;
             // define #columns
             if (header.n_cols == 0)
