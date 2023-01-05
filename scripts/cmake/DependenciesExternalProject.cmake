@@ -57,7 +57,6 @@ if(OGS_USE_MFRONT)
                 "ExternalProject_Add(): added package TFEL@rliv-${ogs.minimum_version.tfel-rliv}"
         )
         set(TFELHOME ${PROJECT_BINARY_DIR}/_ext/TFEL CACHE PATH "" FORCE)
-        set(_EXT_LIBS ${_EXT_LIBS} TFEL CACHE INTERNAL "")
     endif()
 endif()
 
@@ -249,7 +248,6 @@ if(NOT HDF5_FOUND)
         STATUS
             "ExternalProject_Add(): added package HDF5@${ogs.tested_version.hdf5}"
     )
-    set(_EXT_LIBS ${_EXT_LIBS} HDF5 CACHE INTERNAL "")
     BuildExternalProject_find_package(HDF5)
 endif()
 
@@ -278,9 +276,8 @@ foreach(option_index ${ogs.libraries.vtk.options})
 endforeach()
 list(REMOVE_DUPLICATES VTK_OPTIONS)
 
-# Setting shared libs on PETSc, otherwise pvtu files only contain one
-# <Piece>-element (one subdomain).
-list(APPEND VTK_OPTIONS "-DBUILD_SHARED_LIBS=${OGS_USE_PETSC}"
+# Setting static libs for easier packaging.
+list(APPEND VTK_OPTIONS "-DBUILD_SHARED_LIBS=OFF"
      "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
 )
 message(STATUS "VTK_OPTIONS: ${VTK_OPTIONS}")
@@ -329,7 +326,6 @@ if(NOT VTK_FOUND)
         STATUS
             "ExternalProject_Add(): added package VTK@${ogs.minimum_version.vtk}"
     )
-    set(_EXT_LIBS ${_EXT_LIBS} VTK CACHE INTERNAL "")
     BuildExternalProject_find_package(VTK)
 endif()
 

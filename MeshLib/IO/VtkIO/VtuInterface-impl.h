@@ -82,6 +82,7 @@ bool VtuInterface::writeVTU(std::string const& file_name,
 
     vtuWriter->SetFileName(file_name.c_str());
 
+#ifdef USE_PETSC
     if constexpr (std::is_same_v<UnstructuredGridWriter,
                                  vtkXMLPUnstructuredGridWriter>)
     {
@@ -103,6 +104,7 @@ bool VtuInterface::writeVTU(std::string const& file_name,
         vtuWriter->SetStartPiece(rank);
         vtuWriter->SetEndPiece(rank);
     }
+#endif
 
 #ifdef VTK_USE_64BIT_IDS
     vtuWriter->SetHeaderTypeToUInt64();
