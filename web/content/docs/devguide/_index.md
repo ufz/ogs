@@ -4,4 +4,5 @@ os_selector = true
 
 [cascade]
 breadcumbs = false
+collapsed = true
 +++
