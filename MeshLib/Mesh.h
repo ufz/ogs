@@ -314,5 +314,8 @@ namespace views
 inline constexpr ranges::views::view_closure ids =
     ranges::views::transform([](auto const& a) { return a->getID(); });
 
+/// For an element of a range view return its name.
+inline constexpr ranges::views::view_closure names =
+    ranges::views::transform([](auto const& a) { return a->getName(); });
 }  // namespace views
 }  // namespace MeshLib
