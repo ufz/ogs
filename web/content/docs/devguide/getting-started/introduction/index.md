@@ -11,7 +11,8 @@ name = "Developer Guide"
 identifier = "devguide"
 weight = 2
 post = "You want to contribute to the OpenGeoSys project or implement a custom feature? In the Developer Guide you will find everything to get you started into OpenGeoSys development. Experienced developers will find a comprehensive list of advanced development topics."
-
+[menu.docs.params]
+category = "Developer"
 +++
 
 In this help section you will find everything related to setting up a native development environment. Please walk through the Getting Started-section **step by step**[^1]. At the end you will have the latest OGS source code and the OGS finite element simulator compiled and ready to run! This first section of the developer guide will give you just a brief introduction, make sure to read the more advanced topics after you have familiarized yourself with the basics.

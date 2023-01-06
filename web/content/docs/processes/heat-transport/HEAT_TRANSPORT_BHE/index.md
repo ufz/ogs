@@ -9,6 +9,8 @@ name = "Process-dependent configuration"
 identifier = "processes"
 weight = 5
 post = "Get more insight into process-specific configurations."
+[menu.docs.params]
+category = "Advanced"
 +++
 
 ## Description
