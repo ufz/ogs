@@ -260,8 +260,7 @@ struct StateVariables
            << "eps_p_D_prev: " << m.eps_p_prev.D << "\n"
            << "eps_p_eff_prev: " << m.eps_p_prev.eff << "\n"
            << "kappa_d_prev: " << m.damage_prev.kappa_d() << "\n"
-           << "damage_prev: " << m.damage_prev.value() << "\n"
-           << "lambda: " << m.lambda << "\n";
+           << "damage_prev: " << m.damage_prev.value() << "\n";
         return os;
     }
 #endif  // NDEBUG
