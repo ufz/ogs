@@ -137,6 +137,21 @@ AddTest(
     expected_AT2_vd_tensile_ts_10_t_1.000000.vtu AT2_vd_tensile_ts_10_t_1.000000.vtu phasefield phasefield 1e-6 0
 )
 
+AddTest(
+    NAME PhaseField_2D_square_tens_AT2_masonry_ortho
+    PATH PhaseField/single_edge_notched/masonry-ortho
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS shear.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 1
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    RUNTIME 600
+    DIFF_DATA
+    expected_AT2_OrthoMasonry_ts_100_t_1.000000.vtu AT2_OrthoMasonry_ts_100_t_1.000000.vtu displacement displacement 1e-5 0
+    expected_AT2_OrthoMasonry_ts_100_t_1.000000.vtu AT2_OrthoMasonry_ts_100_t_1.000000.vtu phasefield phasefield 1e-6 0
+)
+
 if(OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE PhaseField/surfing_jupyter_notebook/surfing_pyvista.ipynb RUNTIME 25)
     NotebookTest(NOTEBOOKFILE PhaseField/beam_jupyter_notebook/beam.ipynb RUNTIME 500 PROPERTIES PROCESSORS 3)
