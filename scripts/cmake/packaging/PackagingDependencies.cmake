@@ -8,6 +8,7 @@ else()
     set(INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
 endif()
 list(JOIN CMAKE_INSTALL_RPATH ":" _rpath)
+install(CODE "set(CMAKE_BUILD_RPATH \"${CMAKE_BUILD_RPATH}\")")
 
 install(CODE "set(INSTALL_DIR \"${INSTALL_DIR}\")")
 install(CODE "set(CMAKE_INSTALL_LIBDIR \"${CMAKE_INSTALL_LIBDIR}\")")
@@ -27,7 +28,10 @@ install(
         $<$<TARGET_EXISTS:DataExplorer>:$<TARGET_FILE:DataExplorer>>
         $<$<TARGET_EXISTS:testrunner>:$<TARGET_FILE:testrunner>>
         $<$<TARGET_EXISTS:RemoveGhostData>:$<TARGET_FILE:RemoveGhostData>>
-    DIRECTORIES ${MKL_ROOT_DIR}/redist/intel64 ${MKL_ROOT_DIR}/../../tbb/latest/redist/intel64/vc_mt
+    DIRECTORIES
+        ${MKL_ROOT_DIR}/redist/intel64
+        ${MKL_ROOT_DIR}/../../tbb/latest/redist/intel64/vc_mt
+        ${CMAKE_BUILD_RPATH}
     RESOLVED_DEPENDENCIES_VAR _r_deps
     UNRESOLVED_DEPENDENCIES_VAR _u_deps
     PRE_EXCLUDE_REGEXES "api-ms-" "ext-ms-" ${OGS_INSTALL_DEPENDENCIES_PRE_EXCLUDES}
@@ -36,10 +40,10 @@ install(
   find_program(PATCHELF_TOOL patchelf)
   foreach(_lib ${_r_deps})
     string(REGEX MATCH "libpetsc.*" _petsc_lib ${_lib})
-    if(_petsc_lib AND EXISTS _ext/PETSc/lib/${_petsc_lib})
+    if(_petsc_lib AND EXISTS _ext/PETSc/lib/${_petsc_lib} AND NOT APPLE)
       if(PATCHELF_TOOL)
-        execute_process(COMMAND patchelf --set-rpath ${_rpath} _ext/PETSc/lib/${_petsc_lib} COMMAND_ERROR_IS_FATAL ANY)
         message(STATUS "Patching RPATH of ${_petsc_lib} -> ${_rpath}")
+        execute_process(COMMAND patchelf --set-rpath ${_rpath} _ext/PETSc/lib/${_petsc_lib} COMMAND_ERROR_IS_FATAL ANY)
       else()
           message(WARNING "patchelf tool not found: installed ogs binaries may not work (error: shared libraries not found)! "
             "Install the patchelf tool for proper runtime library search paths!")

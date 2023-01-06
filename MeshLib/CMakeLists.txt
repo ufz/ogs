@@ -42,6 +42,7 @@ target_link_libraries(
            VTK::IOLegacy
            range-v3
            $<$<TARGET_EXISTS:VTK::IOParallelXML>:VTK::IOParallelXML>
+           $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
            $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
            $<$<TARGET_EXISTS:petsc>:petsc>
     PRIVATE nlohmann_json::nlohmann_json
@@ -55,5 +56,12 @@ target_compile_definitions(
         $<$<AND:$<BOOL:$ENV{VTK_USE_64BIT_IDS}>,$<NOT:$<BOOL:VTK_ADDED>>>:VTK_USE_64BIT_IDS>
 )
 
-target_precompile_headers(MeshLib PRIVATE [["BaseLib/Error.h"]]
-    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] Elements/Element.h <Eigen/Core>)
+target_precompile_headers(
+    MeshLib
+    PRIVATE
+    [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]]
+    [["BaseLib/Logging.h"]]
+    Elements/Element.h
+    <Eigen/Core>
+)

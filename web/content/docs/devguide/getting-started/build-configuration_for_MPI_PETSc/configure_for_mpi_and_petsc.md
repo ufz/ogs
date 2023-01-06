@@ -52,7 +52,7 @@ Please note that the PETSc package is preferred to build in release model regard
 
 PESTSc is recommended to use on Linux. On Windows, it only runs on
  UNIX emulator Cygwin. A detailed description about how to use PETSc on Windows
-  is available on this PETSc site: <https://petsc.org/main/install/windows/>.
+  is available on this PETSc site: <https://petsc.org/release/install/windows/>.
 
 One the frontends of EVE cluster of UFZ, your can load specified MPI, PETSc and
  other modules by command:

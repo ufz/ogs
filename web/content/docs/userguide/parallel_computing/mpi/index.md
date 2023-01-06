@@ -93,7 +93,7 @@ The above example shows that once a prefix is given for PETSc linear solver
 above example, `-`, is replaced with `-T_` and `-H_`, respectively.
 
 A introduction and a list of PETSc KSP solvers and preconditioners can be found by
-[this link](https://petsc.org/main/docs/manual/ksp/).
+[this link](https://petsc.org/release/docs/manual/ksp/).
 
 ### 2. Launch MPI OGS
 

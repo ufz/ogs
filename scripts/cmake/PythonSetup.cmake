@@ -17,7 +17,15 @@ if(OGS_USE_PIP)
                 ${PROJECT_SOURCE_DIR}/scripts/cmake/PythonCreateVirtualEnv.cmake
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR} COMMAND_ECHO STDOUT
                               ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
+            RESULT_VARIABLE _return_code
         )
+        if(NOT ${_return_code} EQUAL 0)
+            message(
+                FATAL_ERROR
+                    "Creation of Python virtual environment failed!\n"
+                    "To disable virtual environments set OGS_USE_PIP=OFF."
+            )
+        endif()
         unset(_OGS_PYTHON_PACKAGES_SHA1 CACHE)
     endif()
     set(_venv_bin_dir "bin")
