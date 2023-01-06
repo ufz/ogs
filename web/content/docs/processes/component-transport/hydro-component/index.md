@@ -1,21 +1,21 @@
 +++
 date = "2022-03-21T12:00:13+01:00"
-title = "Component Transport Process"
+title = "ComponentTransport"
 author = "Haibing Shao, Renchao Lu"
-weight = 44
+weight = 4
 
 [menu]
   [menu.userguide]
     parent = "process-dependent-configuration"
 +++
 
-## Description of the ComponentTransport process
+## Introduction
 
-ComponentTransport process is widely used to predict the distribution of chemical components in the subsurface, which is controlled by the groundwater flow (advection), the hydrodynamic dispersion and diffusion, the sorption on the solid phase, as well as the decay of component.
+`ComponentTransport` process is widely used to predict the distribution of chemical components in the subsurface, which is controlled by the groundwater flow (advection), the hydrodynamic dispersion and diffusion, the sorption on the solid phase, as well as the decay of component.
 
 ## Mathematical framework
 
-The governing equation implemented in OGS-6 is the so-called advective and diffusion equation (`ADE`), with the consideration of sorption and decay process. ADE is widely used to describe the concentration of chemical components in groundwater aquifer and porous media. The equations can be solved analytically in (simplified) 1D cases. For more complex geometry, especially with heterogeneous material properties, numerical solution is often preferred. The ComponentTransport process has the following assumptions.
+The governing equation implemented in OGS-6 is the so-called advective and diffusion equation (`ADE`), with the consideration of sorption and decay process. ADE is widely used to describe the concentration of chemical components in groundwater aquifer and porous media. The equations can be solved analytically in (simplified) 1D cases. For more complex geometry, especially with heterogeneous material properties, numerical solution is often preferred. The `ComponentTransport` process has the following assumptions.
 
 * The model domain is a porous media and it is fully saturated with water.
 * The fluid velocity in the porous media is assumed to be slow, and the flow process is regulated by Darcy's law.
@@ -73,11 +73,11 @@ The following table shows an overview of all input parameters available in the C
 In the `ComponentTransport` process, the configuration is as follows.
 
 * `<name>`: name of the chemical component.
-* `<type>`: must be ComponentTransport.
-* `<integration_order>`: This is the order of the integration method for element-wise integration. In common cases set to 2.
-* `<process_variables>`: The primary variables of the ComponentTransport process are either `<concentration>` or  `<pressure>`. For the variable concentration, the name of the chemical component is given. Like in the following example, there are 3 chemical components, i.e. Si, Al and Cl. The `<pressure>` process' variable is also named 'pressure', see `<process_variables>` section outside of process' definition.
+* `<type>`: must be `ComponentTransport`.
+* `<integration_order>`: This is the order of the integration method for element-wise integration. In common cases set to `2`.
+* `<process_variables>`: The primary variables of the `ComponentTransport` process are either `<concentration>` or  `<pressure>`. For the variable concentration, the name of the chemical component is given. Like in the following example, there are 3 chemical components, i.e. Si, Al and Cl. The `<pressure>` process' variable is also named 'pressure', see `<process_variables>` section outside of process' definition.
 
-```bash
+```xml
 <processes>
     <process>
         <name>hc</name>
@@ -101,27 +101,27 @@ In the `ComponentTransport` process, the configuration is as follows.
 
 Under the keyword `<component>`, the properties of the transported chemical component are defined. The parameters here are the pore diffusion coefficient, the retardation factor, and the decay rate. Below is an example of the Si component with the corresponding transport parameters.
 
-```bash
-                        <component>
-                            <name>Si</name>
-                            <properties>
-                                <property>
-                                    <name>pore_diffusion</name>
-                                    <type>Constant</type>
-                                    <value>1</value>
-                                </property>
-                                <property>
-                                    <name>retardation_factor</name>
-                                    <type>Constant</type>
-                                    <value>0</value>
-                                </property>
-                                <property>
-                                    <name>decay_rate</name>
-                                    <type>Parameter</type>
-                                    <parameter_name>decay</parameter_name>
-                                </property>
-                            </properties>
-                        </component>
+```xml
+<component>
+    <name>Si</name>
+    <properties>
+        <property>
+            <name>pore_diffusion</name>
+            <type>Constant</type>
+            <value>1</value>
+        </property>
+        <property>
+            <name>retardation_factor</name>
+            <type>Constant</type>
+            <value>0</value>
+        </property>
+        <property>
+            <name>decay_rate</name>
+            <type>Parameter</type>
+            <parameter_name>decay</parameter_name>
+        </property>
+    </properties>
+</component>
 ```
 
 ## Available benchmarks
