@@ -20,6 +20,7 @@ Image `registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter` contains:
 - A set of Python packages:
   - [ogs6py](https://github.com/joergbuchwald/ogs6py) — OGS model manipulation
   - [VTUInterface](https://github.com/joergbuchwald/VTUinterface) — VTU / PVD IO
+  - [ogstools](https://pypi.org/project/ogstools/) — OGS-related helper scripts, e.g. `msh2vtu`: Gmsh to VTU conversion
   - [h5py](https://docs.h5py.org/en/latest/index.html) — HDF5 IO
   - [MFront python bindings](http://tfel.sourceforge.net/mfront-python.html) – Material model manipulation
   - [Matplotlib](https://matplotlib.org) — Plotting
@@ -29,8 +30,7 @@ Image `registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter` contains:
   - [VTK](https://pypi.org/project/vtk/) — Visualization
   - [PyVista][pyvista] — Visualization
   - [Snakemake](https://snakemake.github.io) — Workflow management
-  - [msh2vtu](https://github.com/dominik-kern/msh2vtu) — Gmsh to VTU conversion, (script in `/opt/conda/lib/python3.9/site-packages/msh2vtu/msh2vtu.py`)
-  - [meshio](https://github.com/nschloe/meshio) — Mesh conversions between many formats. Pulled in via msh2vtu.
+  - [meshio](https://github.com/nschloe/meshio) — Mesh conversions between many formats. Pulled in via osgtools.
 - Jupyter-related tools:
   - [nbconvert](https://nbconvert.readthedocs.io) — Format conversion
   - [nbdime](https://nbdime.readthedocs.io) — Diffs for notebooks
