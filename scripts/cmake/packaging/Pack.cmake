@@ -94,6 +94,6 @@ install(FILES ${PROJECT_BINARY_DIR}/README.txt DESTINATION .)
 install(FILES ${PROJECT_BINARY_DIR}/CMakeCache.txt TYPE INFO)
 install(FILES ${PROJECT_BINARY_DIR}/cmake_args TYPE INFO OPTIONAL)
 install(
-    CODE "execute_process(COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} -t write-licenses)"
+    CODE "execute_process(COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --config ${CMAKE_BUILD_TYPE} -t write-licenses)"
 )
 install(FILES ${PROJECT_BINARY_DIR}/third_party_licenses.txt TYPE INFO)
