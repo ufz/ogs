@@ -865,7 +865,7 @@ AddTest(
 )
 
 if(NOT OGS_USE_PETSC)
-    NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/AxiSymTheis/axisym_theis.ipynb RUNTIME 5)
+    NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/AxiSymTheis/axisym_theis.ipynb RUNTIME 10)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/DecayChain.ipynb RUNTIME 160)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/RadionuclidesMigration/RadionuclidesMigration.ipynb RUNTIME 55)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/MultiLayerDiffusion/MultiLayerDiffusion.ipynb RUNTIME 25)
