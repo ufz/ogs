@@ -312,7 +312,8 @@ elseif(NOT OGS_BUILD_VTK AND NOT OGS_USE_MKL)
 endif()
 if(NOT VTK_FOUND)
 
-    if("${OGS_EXTERNAL_DEPENDENCIES_CACHE}" STREQUAL "")
+    if("${OGS_EXTERNAL_DEPENDENCIES_CACHE}" STREQUAL "" AND
+      NOT EXISTS "${PROJECT_BINARY_DIR}/_ext/VTK/src/VTK")
         # Fixes https://stackoverflow.com/questions/9894961 on vismac05:
         set(_loguru_patch PATCH_COMMAND git apply
                           "${PROJECT_SOURCE_DIR}/scripts/cmake/loguru.patch"

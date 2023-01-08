@@ -16,7 +16,8 @@
       "hidden": true,
       "inherits": "_binary_dir",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CONFIGURATION_TYPES": "Release"
       }
     },
     {
@@ -24,7 +25,8 @@
       "hidden": true,
       "inherits": "_binary_dir",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CONFIGURATION_TYPES": "Debug"
       }
     },
     {
@@ -266,17 +268,20 @@
     {
       "name": "msvc-release",
       "inherits": "_win",
-      "configurePreset": "msvc-release"
+      "configurePreset": "msvc-release",
+      "configuration": "Release"
     },
     {
       "name": "msvc-debug",
       "inherits": "_win",
-      "configurePreset": "msvc-debug"
+      "configurePreset": "msvc-debug",
+      "configuration": "Debug"
     },
     {
       "name": "msvc-release-gui",
       "inherits": "_win",
       "configurePreset": "msvc-release-gui",
+      "configuration": "Release",
       "targets": [
         "DataExplorer"
       ]
@@ -285,6 +290,7 @@
       "name": "msvc-debug-gui",
       "inherits": "_win",
       "configurePreset": "msvc-debug-gui",
+      "configuration": "Debug",
       "targets": [
         "DataExplorer"
       ]
@@ -375,6 +381,7 @@
     {
       "name": "msvc-release",
       "configurePreset": "msvc-release",
+      "configuration": "Release",
       "inherits": [
         "release"
       ]
@@ -382,6 +389,7 @@
     {
       "name": "msvc-release-large",
       "configurePreset": "msvc-release",
+      "configuration": "Release",
       "inherits": [
         "release-large"
       ]

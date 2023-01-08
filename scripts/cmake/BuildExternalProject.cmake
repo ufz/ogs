@@ -90,8 +90,8 @@ endfunction()
 
 function(BuildExternalProject_build build_dir)
     execute_process(
-        COMMAND ${CMAKE_COMMAND} --build . RESULT_VARIABLE result
-        WORKING_DIRECTORY ${build_dir}
+        COMMAND ${CMAKE_COMMAND} --build . --config ${CMAKE_BUILD_TYPE}
+        RESULT_VARIABLE result WORKING_DIRECTORY ${build_dir}
     )
 
     if(result)
