@@ -95,6 +95,7 @@ if (OGS_USE_MFRONT)
     if(NOT OGS_USE_MPI)
         OgsTest(PROJECTFILE Mechanics/GuentherSalzer/model_triaxtest.prj)
     endif()
+    OgsTest(PROJECTFILE Mechanics/PLLC/uniax_compression.prj)
 
     # Linear elastic, no internal state variables, no external state variables.
     AddTest(
@@ -265,5 +266,8 @@ if(NOT OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.ipynb RUNTIME 15)
     if(NOT WIN32)
         NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole_convergence_analysis.ipynb RUNTIME 40)
+    endif()
+    if (OGS_USE_MFRONT)
+        NotebookTest(NOTEBOOKFILE Mechanics/PLLC/PLLC.ipynb RUNTIME 7)
     endif()
 endif()

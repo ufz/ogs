@@ -8,7 +8,7 @@ model for salt creep. Bérest et al. (2019). Rock Mech Rock Eng.
 @Algorithm NewtonRaphson;
 @MaximumNumberOfIterations 100;
 
-@Epsilon 1.e-14;
+@Epsilon 1.e-12;
 @Theta 1.0;
 
 @ModellingHypotheses{".+"};
@@ -51,23 +51,20 @@ Ru.setEntryName("UniversalGasConstant");
 @Integrator
 {
     const auto s = deviator(sig);
-    const auto norm_s = sigmaeq(sig) / std::sqrt(3. / 2.);
+    const auto norm_s = std::max(sigmaeq(sig),1e-14*mu) / std::sqrt(3. / 2.);
     constexpr auto Pdev = Stensor4::K();
 
     const auto bPL = std::pow(3. / 2., (m + 1) / 2) * A1 *
                      std::exp(-Q1 / Ru / (T + dT)) / std::pow(sig0, m);
-    const auto bL = 3. / 2. * A2 / std::pow(Dgrain, 3) *
+    const auto bL = 3. / 2. * A2 / (std::pow(Dgrain, 3) * (T + dT)) *
                     std::exp(-Q2 / Ru / (T + dT)) / sig0;
 
-    if (norm_s > 1e-14 * mu)
-    {
-        const auto norm_s_pow = std::pow(norm_s, m - 1);
-        depsPL = dt * bPL * norm_s_pow * s;
-        depsL = dt * bL * s;
-        feel += depsPL + depsL;
-        dfeel_ddeel +=
-            2. * mu * dt *
-            (bPL * norm_s_pow * (Pdev + (((m - 1) / norm_s / norm_s) * s ^ s)) +
-             bL * Pdev);
-    }
+    const auto norm_s_pow = std::pow(norm_s, m - 1);
+    depsPL = dt * bPL * norm_s_pow * s;
+    depsL = dt * bL * s;
+    feel += depsPL + depsL;
+    dfeel_ddeel +=
+        2. * mu * dt *
+        (bPL * norm_s_pow * (Pdev + (((m - 1) / norm_s / norm_s) * s ^ s)) +
+         bL * Pdev);
 }
