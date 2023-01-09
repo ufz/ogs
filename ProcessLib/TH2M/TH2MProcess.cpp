@@ -12,13 +12,12 @@
 
 #include <cassert>
 
+#include "CreateTH2MLocalAssemblers.h"
 #include "MeshLib/Elements/Utils.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Utils/ComputeResiduum.h"
-#include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
-#include "TH2MFEM.h"
 #include "TH2MProcessData.h"
 
 namespace ProcessLib
@@ -170,7 +169,7 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    ProcessLib::createLocalAssemblersHM<DisplacementDim, TH2MLocalAssembler>(
+    createLocalAssemblers<DisplacementDim>(
         mesh.getElements(), dof_table, _local_assemblers,
         NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
         _process_data);
