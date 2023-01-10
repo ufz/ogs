@@ -65,7 +65,9 @@ These variables in `.gitlab-ci.yml` modify the pipeline:
 
 - `BUILD_TESTS`: Set this to `false` to disable unit tests.
 - `BUILD_CTEST`: Set this to `false` to disable ctest (benchmark) tests.
-- `CTEST_INCLUDE_REGEX`: Set this to a regex to select benchmarks to run, e.g. `nb` would select all notebook-based tests and would disable all other benchmarks.
+- `CTEST_ARGS`: Supply additional arguments to the `ctest`-command to select which benchmarks are run, e.g.:
+  - `-R nb` would select all notebook-based tests and would disable all other benchmarks
+  - `-LE large` would exclude all tests with label `large`
 
 All jobs get included in the `include:`-section in the file `scripts/ci/pipelines/regular.yml`. You can simple comment out files to disable jobs defined in that files. Please note that some jobs depend on other jobs.
 
