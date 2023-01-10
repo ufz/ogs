@@ -34,7 +34,7 @@ namespace ProcessLib
 {
 class TimeLoop;
 class Process;
-}
+}  // namespace ProcessLib
 
 namespace ProcessLib
 {
