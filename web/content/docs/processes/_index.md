@@ -1,4 +1,7 @@
 +++
 title = "Process-dependent configuration"
-weight = 4
+os_selector = false
+
+[cascade]
+breadcumbs = false
 +++

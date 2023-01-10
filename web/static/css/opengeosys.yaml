@@ -1,5 +1,5 @@
 projectName: opengeosys
-version: 5.13.0
+version: 5.15.4
 icons:
   - file:
       - regular
@@ -70,3 +70,7 @@ icons:
       - regular
   - file-check:
       - regular
+  - caret-right:
+      - light
+  - caret-down:
+      - light

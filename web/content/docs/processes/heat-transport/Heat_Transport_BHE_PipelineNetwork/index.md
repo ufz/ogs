@@ -1,26 +1,24 @@
 +++
 date = "2020-02-03T12:00:13+01:00"
-title = "Heat_Transport_BHE PipeNetwork Feature"
+title = "HEAT_TRANSPORT_BHE PipeNetwork Feature"
 author = "Shuang Chen, Haibing Shao, Francesco Witte"
 weight = 2
 project = ["Parabolic/T/3D_3BHEs_array/3bhes_1U.prj"]
 +++
 
-{{< data-link >}}
+## Introduction
 
-## Introduction of the Pipe Network feature for the process Heat_Transport_BHE
+In a large borehole heat exchanger (BHE) array, all BHEs are connected with each other through a pipeline network. As the circulating fluid temperatures within each BHE are controlled by the network, the array itself has an intrinsic feature of balancing thermal extraction rates among different BHEs. This leads to the BHE thermal load shifting phenomena in the long-term operation. In OGS-6, this process can be simulated by using the PipeNetwork feature in the `HEAT_TRANSPORT_BHE` process.
 
-In a large borehole heat exchanger (BHE) array, all BHEs are connected with each other through a pipeline network. As the circulating fluid temperatures within each BHE are controlled by the network, the array itself has an intrinsic feature of balancing thermal extraction rates among different BHEs. This leads to the BHE thermal load shifting phenomena in the long-term operation. In OGS-6, this process can be simulated by using the PipeNetwork feature in the `Heat_Transport_BHE` process.
+This short tutorial aims to give the user a guide to the PipeNetwork feature. It includes the following main parts:
 
-This short tutorial aims to give the user a guide to the PipeNetwork feature. It includes the following main parts:\
-
-* The basic requirements for the PipeNetwork feature.\
-* The workflow of creating a pipeline network model using the software TESPy.\
-* The workflow of connecting the TESPy pipeline network model with the OGS model.\
+* The basic requirements for the PipeNetwork feature.
+* The workflow of creating a pipeline network model using the software TESPy.
+* The workflow of connecting the TESPy pipeline network model with the OGS model.
 
 ## Requirements on the computer
 
-In order to use the PipeNetwork feature, the computer running the `Heat_Transport_BHE` process of OpenGeoSys is required to have a Python 3 environment with the TESPy program installed. For the Python 3 environmental installation, there are various tutorial available on the Internet. For the TESPy package, one can install it with the following command line in the Python3 environment:
+In order to use the PipeNetwork feature, the computer running the `HEAT_TRANSPORT_BHE` process of OpenGeoSys is required to have a Python 3 environment with the TESPy program installed. For the Python 3 environmental installation, there are various tutorial available on the Internet. For the TESPy package, one can install it with the following command line in the Python3 environment:
 
 ```bash
 pip3 install tespy
@@ -32,15 +30,13 @@ Thermal Engineering Systems in Python (software paper: <https://doi.org/10.21105
 
 The coupled model that is going to be built is demonstrated in Figure 1. It consists of a pipeline network connected with 3 BHEs, a water pump, a virtual heat pump as the consumer, a splitter to split up the feeding fluid flow and a merge to returned flow. These devices are all defined as `components` in TESPy. A full list of available components can be found in the TESPy components module. In the pipeline network, these components are connected with each other through `connections` parts, which are illustrated by the black lines in the figure. With these two main parts, a completely TESPy pipeline network model can be set up.
 
-{{< img src="BHE_network.png" width="200">}}
-
-Figure 1: Pipeline network model in TESPy
+{{< img src="BHE_network.png" width="200" caption="Pipeline network model in TESPy" >}}
 
 ### < Network >
 
-Firstly a network needs to be created. It is the main container for the model. Several parameters will be set here. For example the required fluids in the network and the unit systems for the networks variables are specified as follows.\
+Firstly a network needs to be created. It is the main container for the model. Several parameters will be set here. For example the required fluids in the network and the unit systems for the networks variables are specified as follows.
 
-```bash
+```python
 from tespy.networks import network
 from tespy.connections import connection, ref
 from tespy.components import source, sink, pump, splitter, merge, heat_exchanger_simple, cycle_closer
@@ -51,11 +47,11 @@ import numpy as np
 btes = network(fluids=['water'], T_unit='K', p_unit='bar', h_unit='kJ / kg')
 ```
 
-### < Components >
+### `<Components>`
 
 In the next step different components in the network needed to be configured. In TESPy model the fluid usually emerges from a `source` and drains in a `sink` term. However, using a virtual loop system can is created by using the component `cycle_closer`. This component ensures, that enthalpy and pressure at the `source` and the `sink` are identical. In our model, TESPy components of type `cycle_closer`, `pump`, `splitter`, `merge` and `heat_exchanger_simple` are created with locally defined names surrounded by quotes. To simplify the model the heat pump is specified as a pure heat exchanger to consume the heat.
 
-```bash
+```python
 # %% components
 fc = cycle_closer('cycle closer')
 pu = pump('pump')
@@ -72,7 +68,7 @@ cons = heat_exchanger_simple('consumer')
 
 When all components are set up, it is needed to specify parameters for them. One can find the full list of parameters for a specific component in the respective TESPy class documentation. In this model, a pump curve for the water pump, physical properties (length, diameter, roughness) for the BHE pipes, the imposed thermal load on the virtual heat pump are specified as follows.
 
-```bash
+```python
 ## components paramerization
 # pump
 # flow_char
@@ -111,11 +107,11 @@ cons.set_attr(D=0.2, L=20, ks=0.00001)
 cons.set_attr(Q=-3000) # W
 ```
 
-### < Connections >
+### Connections
 
 Connections are used to link two components. It starts from the outlet of the component 1 to the inlet of component 2. In order to connect all components with each other a system workflow sequence needs to be determined. In this case the fluid flowing from the inlet source term will be firstly lifted by the pump. Then the inflow will be divided into 3 branches by the splitter and then flow into each BHEs. After that the outflow from the BHEs will be mixed together at the merging point and then feed into the heat pump for heat extraction. The total sequence ends up when the flow reaches the outlet sink term. In the last step, all connections have to be added into the network container to form a complete network.
 
-```bash
+```python
 # connections
 fc_pu = connection(fc, 'out1', pu, 'in1')
 pu_sp = connection(pu, 'out1', sp, 'in1')
@@ -137,7 +133,7 @@ btes.add_conns(fc_pu, pu_sp, sp_bhe1, sp_bhe2, sp_bhe3, bhe1_mg, bhe2_mg,
 
 Here the fluid properties within the connection is set to be identical. It means when two components are connected with each other, the fluid properties for instance the mass flow rate, the pressure, the temperature at the outlet of component 1 will be equal to the values at the inlet of component 2. In order to complete the calculation, several boundary conditions are required to be imposed on the connections. First, the inflow pressure is fixed. A temporary outflow temperature on each BHEs is specified to make sure the network is computable. In this case the consumed heat on the virtual heat pump is assumed to be totally supplied by the 3 BHEs. The cycle closer ensures, that pressure and enthalpy at the consumer's outlet are identical to those at the pump's inlet.
 
-```bash
+```python
 ## connection parametrization
 # system inlet
 fc_pu.set_attr(p=2, fluid={'water': 1})
@@ -149,7 +145,7 @@ bhe2_mg.set_attr(T=303.15)
 bhe3_mg.set_attr(T=303.15)
 ```
 
-### < Solve >
+### Solve
 
 After the network, components and connections are completely set up, the system can be solved to get its steady states results. One can use the `print_results` to find the details parameters during the calculation.
 
@@ -159,7 +155,7 @@ btes.solve('design')
 #btes.print_results()
 ```
 
-### < Save the network >
+### Save the network
 
 At last, the built BHE pipe network model needs to be saved into the project working folder.
 
@@ -172,11 +168,9 @@ btes.save('tespy_nw')
 
 The work flow of the PipeNetwork feature is illustrated in Figure 2. To explicitly simulate both the BHE and the pipe network, OGS is coupled with the TESPy through a Python interface. Within every time step and each iteration, the outflow temperature `Tout` from each BHE is computed by OGS and transferred to TESPy via the interface. Then TESPy will use these `Tout` temperature and the current hydraulic state as the boundary condition imposed on the pipeline network to calculate the current inflow temperature `Tin` of each BHE and the currently flow rate, which satisfies the overall thermal load of the building. After the calculation, all data will be transferred back to OGS and update the inlet temperature and flow rate of each BHE for the next iteration. The convergence is set to be satisfied when the difference from the last two iteration results is smaller than a preset tolerance value. Additionally, OGS will transfer the currently time step 't' to TESPy within each iteration, which makes TESPy able to adjust its time dependent network boundary conditions according to the user's configuration.
 
-{{< img src="BHE_PipeNetwork_feature_workflow.png" width="100">}}
+{{< img src="BHE_PipeNetwork_feature_workflow.png" width="100" caption="Work flow of the model with BHEs coupled with a pipe network" >}}
 
-Figure 2: Work flow of the model with BHEs coupled with a pipe network
-
-### < BHE data container >
+### BHE data container
 
 In order to use the PipeNetwork feature, the pre-built and saved TESPy network model in the above section is required. A CSV file `bhe_network.csv` which containing all the OGS-TESPy transferred BHE's information needs to be created. The PipeNetwork feature will access this CSV file to initialize the exchange data container between OGS and TESPy during the simulation. All BHEs have to be included in this CSV file. Please take notice that all BHE names located in the data_index column have to be identical with the BHE names defined in the corresponding TESPy network model.
 
@@ -187,7 +181,7 @@ BHE2;2;283.15;283.15;0;0
 BHE3;3;283.15;283.15;0;0
 ```
 
-### < PipeNetwork feature interface >
+### PipeNetwork feature interface
 
 The python script `bcs_tespy.py` is the data exchange interface for running the PipeNetwork feature.
 It contains the main procedure of data exchange during the simulation.
@@ -196,7 +190,7 @@ The function `network_status` receives the current time step information from OG
 When the switch for dynamic thermal load `switch_dyn_demand` and dynamic flow rate `switch_dyn_frate` are `off`, the thermal and hydraulic boundary conditions, which were defined in the pre-constructed TESPy model, will be used throughout the simulation.
 When the switches are `on`, a user defined system thermal load curve and inlet flow rate curve can be specified according to the current time step from OGS.
 
-```bash
+```python
 # User setting ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # parameters
 # refrigerant density
@@ -256,25 +250,27 @@ def dyn_frate(t):
 # End User setting+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ```
 
-### < Configuration in OGS >
+### Configuration in OGS
 
 To use the PipeNetwork feature, several input parameters need to be adjusted in comparison to the standard settings in the OGS project file. The python script interface `bcs_tespy.py` is required to be added in the `prj` file. Besides, within the configuration of each BHE, an input parameter `use_bhe_pipe_network` needs to be added to determine whether the related BHE is included in the pipeline network or not.
 
-```bash
+```xml
 <OpenGeoSysProject>
     <mesh>3bhes_1U.vtu</mesh>
     <geometry>3bhes_1U.gml</geometry>
     <python_script>bcs_tespy.py</python_script>
 ```
 
-```bash
+```xml
 <borehole_heat_exchangers>
     <borehole_heat_exchanger>
         <type>1U</type>
         <use_bhe_pipe_network>true</use_bhe_pipe_network>
 ```
 
-After the configuration of the OGS project file, all the required files for using the PipeNetwork feature are prepared. The process explicitly couple the BHE and the pipe network can be simulated in the `Heat_Transport_BHE` process by OGS.
+After the configuration of the OGS project file, all the required files for using the PipeNetwork feature are prepared. The process explicitly couple the BHE and the pipe network can be simulated in the `HEAT_TRANSPORT_BHE` process by OGS.
+
+{{< data-link >}}
 
 ## References
 

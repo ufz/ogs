@@ -110,16 +110,22 @@ weight = 5
 name = "Data Explorer Manual"
 url = "https://gitlab.opengeosys.org/ogs/data_explorer_manual/-/jobs/artifacts/master/raw/ogsde-man.pdf?job=build"
 post = "Manual for the graphical user interface for OpenGeoSys, the Data Explorer."
+[menu.docs.params]
+category = "Advanced"
 
 [[menu.docs]]
 name = "Source code documentation"
 url = "https://doxygen.opengeosys.org/"
 post = "The OGS source code documentation is automatically generated right from the code itself via Doxygen and is a nice reference while coding."
+[menu.docs.params]
+category = "Developer"
 
 [[menu.docs]]
 name = "Styleguide"
 url = "https://ufz.github.io/styleguide/cppguide.xml"
 post = "OpenGeoSys C++ Style Guide"
+[menu.docs.params]
+category = "Developer"
 
 [security.funcs]
 getenv = ['^HUGO_', '^CI_']
