@@ -15,19 +15,10 @@
 #include <utility>
 
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "ParameterLib/Parameter.h"
-#include "PhaseTransitionModels/NoPhaseTransition.h"
-#include "PhaseTransitionModels/PhaseTransition.h"
 #include "PhaseTransitionModels/PhaseTransitionModel.h"
 
-namespace MaterialLib
-{
-namespace Solids
-{
-template <int DisplacementDim>
-struct MechanicsBase;
-}
-}  // namespace MaterialLib
 namespace ProcessLib
 {
 namespace TH2M

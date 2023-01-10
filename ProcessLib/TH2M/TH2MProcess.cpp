@@ -43,15 +43,6 @@ TH2MProcess<DisplacementDim>::TH2MProcess(
               std::move(secondary_variables), use_monolithic_scheme),
       _process_data(std::move(process_data))
 {
-    _heat_flow_rate = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "HeatFlowRate", MeshLib::MeshItemType::Node, 1);
-    _gas_mass_flow_rate = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "GasMassFlowRate", MeshLib::MeshItemType::Node, 1);
-    _liquid_mass_flow_rate = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "LiquidMassFlowRate", MeshLib::MeshItemType::Node, 1);
-    _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
-
     // TODO (naumov) remove ip suffix. Probably needs modification of the mesh
     // properties, s.t. there is no "overlapping" with cell/point data.
     // See getOrCreateMeshProperty.
@@ -59,26 +50,26 @@ TH2MProcess<DisplacementDim>::TH2MProcess(
         std::make_unique<MeshLib::IntegrationPointWriter>(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, _local_assemblers,
+            integration_order, local_assemblers_,
             &LocalAssemblerInterface::getSigma));
 
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
             "swelling_stress_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, _local_assemblers,
+            integration_order, local_assemblers_,
             &LocalAssemblerInterface::getSwellingStress));
 
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
             "saturation_ip", 1 /*n components*/, integration_order,
-            _local_assemblers, &LocalAssemblerInterface::getSaturation));
+            local_assemblers_, &LocalAssemblerInterface::getSaturation));
 
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, _local_assemblers,
+            integration_order, local_assemblers_,
             &LocalAssemblerInterface::getEpsilon));
 }
 
@@ -172,7 +163,7 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
     unsigned const integration_order)
 {
     createLocalAssemblers<DisplacementDim>(
-        mesh.getElements(), dof_table, _local_assemblers,
+        mesh.getElements(), dof_table, local_assemblers_,
         NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
         _process_data);
 
@@ -183,7 +174,7 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
         _secondary_variables.addSecondaryVariable(
             name,
             makeExtrapolator(num_components, getExtrapolator(),
-                             _local_assemblers,
+                             local_assemblers_,
                              std::move(get_ip_values_function)));
     };
 
@@ -278,11 +269,11 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
             MeshLib::MeshItemType::Node, 1);
 
     setIPDataInitialConditions(_integration_point_writer, mesh.getProperties(),
-                               _local_assemblers);
+                               local_assemblers_);
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::initialize, _local_assemblers,
+        &LocalAssemblerInterface::initialize, local_assemblers_,
         *_local_to_global_index_map);
 }
 
@@ -312,7 +303,7 @@ void TH2MProcess<DisplacementDim>::setInitialConditionsConcreteProcess(
     DBUG("Set initial conditions of TH2MProcess.");
 
     GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::setInitialConditions, _local_assemblers,
+        &LocalAssemblerInterface::setInitialConditions, local_assemblers_,
         getDOFTable(process_id), *x[process_id], t, _use_monolithic_scheme,
         process_id);
 }
@@ -325,27 +316,8 @@ void TH2MProcess<DisplacementDim>::assembleConcreteProcess(
 {
     DBUG("Assemble the equations for TH2M");
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
-
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
-        b);
-
-    auto const residuum = computeResiduum(*x[0], *xdot[0], M, K, b);
-    auto copyRhs = [&](int const variable_id, auto& output_vector)
-    {
-        transformVariableFromGlobalVector(residuum, variable_id, dof_table[0],
-                                          output_vector, std::negate<double>());
-    };
-
-    copyRhs(0, *_gas_mass_flow_rate);
-    copyRhs(1, *_liquid_mass_flow_rate);
-    copyRhs(2, *_heat_flow_rate);
-    copyRhs(3, *_nodal_forces);
+    AssemblyMixin<TH2MProcess<DisplacementDim>>::assemble(t, dt, x, xdot,
+                                                          process_id, M, K, b);
 }
 
 template <int DisplacementDim>
@@ -354,37 +326,13 @@ void TH2MProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
     std::vector<GlobalVector*> const& xdot, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
-    // For the monolithic scheme
-    if (_use_monolithic_scheme)
+    if (!_use_monolithic_scheme)
     {
-        DBUG("Assemble the Jacobian of TH2M for the monolithic scheme.");
-        dof_tables.emplace_back(*_local_to_global_index_map);
-    }
-    else
-    {
-        // For the staggered scheme
         OGS_FATAL("A Staggered version of TH2M is not implemented.");
     }
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        process_id, M, K, b, Jac);
-
-    auto copyRhs = [&](int const variable_id, auto& output_vector)
-    {
-        transformVariableFromGlobalVector(b, variable_id, dof_tables[0],
-                                          output_vector, std::negate<double>());
-    };
-
-    copyRhs(0, *_gas_mass_flow_rate);
-    copyRhs(1, *_liquid_mass_flow_rate);
-    copyRhs(2, *_heat_flow_rate);
-    copyRhs(3, *_nodal_forces);
+    AssemblyMixin<TH2MProcess<DisplacementDim>>::assembleWithJacobian(
+        t, dt, x, xdot, process_id, M, K, b, Jac);
 }
 
 template <int DisplacementDim>
@@ -400,10 +348,13 @@ void TH2MProcess<DisplacementDim>::preTimestepConcreteProcess(
             getProcessVariables(process_id)[0];
 
         GlobalExecutor::executeSelectedMemberOnDereferenced(
-            &LocalAssemblerInterface::preTimestep, _local_assemblers,
+            &LocalAssemblerInterface::preTimestep, local_assemblers_,
             pv.getActiveElementIDs(), *_local_to_global_index_map,
             *x[process_id], t, dt);
     }
+
+    AssemblyMixin<TH2MProcess<DisplacementDim>>::updateActiveElements(
+        process_id);
 }
 
 template <int DisplacementDim>
@@ -415,7 +366,7 @@ void TH2MProcess<DisplacementDim>::postTimestepConcreteProcess(
     auto const dof_tables = getDOFTables(x.size());
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::postTimestep, _local_assemblers,
+        &LocalAssemblerInterface::postTimestep, local_assemblers_,
         pv.getActiveElementIDs(), dof_tables, x, t, dt);
 }
 
@@ -434,8 +385,24 @@ void TH2MProcess<DisplacementDim>::computeSecondaryVariableConcrete(
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
+        &LocalAssemblerInterface::computeSecondaryVariable, local_assemblers_,
         pv.getActiveElementIDs(), dof_tables, t, dt, x, x_dot, process_id);
+}
+
+template <int DisplacementDim>
+std::vector<std::string>
+TH2MProcess<DisplacementDim>::initializeAssemblyOnSubmeshes(
+    std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+{
+    INFO("TH2M process initializeSubmeshOutput().");
+    const int process_id = 0;
+    std::vector<std::string> residuum_names{
+        "GasMassFlowRate", "LiquidMassFlowRate", "HeatFlowRate", "NodalForces"};
+
+    AssemblyMixin<TH2MProcess<DisplacementDim>>::initializeAssemblyOnSubmeshes(
+        process_id, meshes, residuum_names);
+
+    return residuum_names;
 }
 
 template <int DisplacementDim>

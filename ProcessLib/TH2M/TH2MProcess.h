@@ -11,6 +11,7 @@
 #pragma once
 
 #include "LocalAssemblerInterface.h"
+#include "ProcessLib/AssemblyMixin.h"
 #include "ProcessLib/Process.h"
 #include "TH2MProcessData.h"
 
@@ -23,8 +24,11 @@ struct LocalAssemblerInterface;
 /// Thermally induced deformation process in linear kinematics
 /// poro-mechanical/triphasic model.
 template <int DisplacementDim>
-class TH2MProcess final : public Process
+class TH2MProcess final : public Process,
+                          private AssemblyMixin<TH2MProcess<DisplacementDim>>
 {
+    friend class AssemblyMixin<TH2MProcess<DisplacementDim>>;
+
 public:
     TH2MProcess(
         std::string name,
@@ -101,12 +105,16 @@ private:
     std::vector<NumLib::LocalToGlobalIndexMap const*> getDOFTables(
         int const number_of_processes) const;
 
+    std::vector<std::string> initializeAssemblyOnSubmeshes(
+        std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+        override;
+
 private:
     std::vector<MeshLib::Node*> _base_nodes;
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_base_nodes;
     TH2MProcessData<DisplacementDim> _process_data;
 
-    std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssemblerInterface>> local_assemblers_;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;
@@ -137,11 +145,6 @@ private:
     {
         return _use_monolithic_scheme || process_id == deformation_process_id;
     }
-
-    MeshLib::PropertyVector<double>* _heat_flow_rate = nullptr;
-    MeshLib::PropertyVector<double>* _gas_mass_flow_rate = nullptr;
-    MeshLib::PropertyVector<double>* _liquid_mass_flow_rate = nullptr;
-    MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
 
     static constexpr int monolithic_process_id = 0;
     static constexpr int deformation_process_id = 3;
