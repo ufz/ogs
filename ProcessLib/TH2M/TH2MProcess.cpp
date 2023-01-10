@@ -13,8 +13,10 @@
 #include <cassert>
 
 #include "CreateTH2MLocalAssemblers.h"
+#include "MaterialLib/SolidModels/MechanicsBase.h"  // for the instantiation of process data
+#include "MathLib/KelvinVector.h"
 #include "MeshLib/Elements/Utils.h"
-#include "NumLib/DOF/ComputeSparsityPattern.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Utils/ComputeResiduum.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
