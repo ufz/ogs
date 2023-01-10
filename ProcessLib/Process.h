@@ -25,6 +25,7 @@
 #include "ProcessLib/Output/ExtrapolatorData.h"
 #include "ProcessLib/Output/SecondaryVariable.h"
 #include "ProcessVariable.h"
+#include "SubmeshAssemblySupport.h"
 #include "VectorMatrixAssembler.h"
 #include "processlib_export.h"
 
@@ -40,7 +41,8 @@ struct CoupledSolutionsForStaggeredScheme;
 class Process
     : public NumLib::ODESystem<  // TODO: later on use a simpler ODE system
           NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
-          NumLib::NonlinearSolverTag::Newton>
+          NumLib::NonlinearSolverTag::Newton>,
+      public SubmeshAssemblySupport
 {
 public:
     PROCESSLIB_EXPORT static const std::string constant_one_parameter_name;
