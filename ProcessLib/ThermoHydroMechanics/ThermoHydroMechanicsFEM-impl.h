@@ -715,9 +715,6 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
         // TODO (naumov) Temporary value not used by current material models.
         // Need extension of secondary variables interface.
         double const dt = std::numeric_limits<double>::quiet_NaN();
-        auto const viscosity =
-            liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                .template value<double>(vars, x_position, t, dt);
 
         auto const alpha =
             medium
@@ -738,6 +735,13 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
         vars.equivalent_plastic_strain =
             _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
 
+        auto const fluid_density =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(vars, x_position, t, dt);
+        vars.density = fluid_density;
+        auto const viscosity =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+                .template value<double>(vars, x_position, t, dt);
         GlobalDimMatrixType K_over_mu =
             MaterialPropertyLib::formEigenTensor<DisplacementDim>(
                 medium
@@ -745,9 +749,6 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
                     .value(vars, x_position, t, dt)) /
             viscosity;
 
-        auto const fluid_density =
-            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(vars, x_position, t, dt);
         auto const& b = _process_data.specific_body_force;
 
         auto const K_pT_thermal_osmosis =
