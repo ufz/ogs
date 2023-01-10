@@ -15,7 +15,6 @@
 #include "BaseLib/Error.h"
 #include "CreateThermoRichardsMechanicsLocalAssemblers.h"
 #include "MeshLib/Elements/Utils.h"
-#include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Reflection/ReflectionForExtrapolation.h"
@@ -47,15 +46,6 @@ ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
               std::move(secondary_variables), use_monolithic_scheme),
       process_data_(std::move(process_data))
 {
-    nodal_forces_ = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
-
-    hydraulic_flow_ = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "MassFlowRate", MeshLib::MeshItemType::Node, 1);
-
-    heat_flux_ = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "HeatFlowRate", MeshLib::MeshItemType::Node, 1);
-
     ProcessLib::Reflection::addReflectedIntegrationPointWriters<
         DisplacementDim>(LocalAssemblerIF::getReflectionDataForOutput(),
                          _integration_point_writer, integration_order,
@@ -244,30 +234,41 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
                                         GlobalMatrix& K, GlobalVector& b,
                                         GlobalMatrix& Jac)
 {
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
+    AssemblyMixin<ThermoRichardsMechanicsProcess<
+        DisplacementDim, ConstitutiveTraits>>::assembleWithJacobian(t, dt, x,
+                                                                    xdot,
+                                                                    process_id,
+                                                                    M, K, b,
+                                                                    Jac);
+}
 
-    DBUG(
-        "Assemble the Jacobian of ThermoRichardsMechanics for the monolithic "
-        "scheme.");
-    dof_tables.emplace_back(*_local_to_global_index_map);
+template <int DisplacementDim, typename ConstitutiveTraits>
+void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
+    preTimestepConcreteProcess(std::vector<GlobalVector*> const& /*x*/,
+                               const double /*t*/,
+                               const double /*dt*/,
+                               const int process_id)
+{
+    AssemblyMixin<ThermoRichardsMechanicsProcess<
+        DisplacementDim, ConstitutiveTraits>>::updateActiveElements(process_id);
+}
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+template <int DisplacementDim, typename ConstitutiveTraits>
+std::vector<std::string>
+ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
+    initializeAssemblyOnSubmeshes(
+        std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+{
+    INFO("TRM process initializeSubmeshOutput().");
+    const int process_id = 0;
+    std::vector<std::string> residuum_names{"HeatFlowRate", "MassFlowRate",
+                                            "NodalForces"};
 
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        local_assemblers_, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        process_id, M, K, b, Jac);
+    AssemblyMixin<
+        ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>>::
+        initializeAssemblyOnSubmeshes(process_id, meshes, residuum_names);
 
-    auto copyRhs = [&](int const variable_id, auto& output_vector)
-    {
-        transformVariableFromGlobalVector(b, variable_id, dof_tables[0],
-                                          output_vector, std::negate<double>());
-    };
-
-    copyRhs(0, *heat_flux_);
-    copyRhs(1, *hydraulic_flow_);
-    copyRhs(2, *nodal_forces_);
+    return residuum_names;
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>
@@ -321,6 +322,7 @@ NumLib::LocalToGlobalIndexMap const& ThermoRichardsMechanicsProcess<
     return *_local_to_global_index_map;
 }
 
+// TODO can't that be implemented in the Process base class?
 template <int DisplacementDim, typename ConstitutiveTraits>
 std::vector<NumLib::LocalToGlobalIndexMap const*>
 ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
