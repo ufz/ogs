@@ -35,6 +35,10 @@ GeoLib::Raster* AsciiRasterInterface::readRaster(std::string const& fname)
     {
         return getRasterFromSurferFile(fname);
     }
+    if (ext == ".xyz")
+    {
+        return getRasterFromXyzFile(fname);
+    }
     return nullptr;
 }
 
@@ -241,7 +245,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(
     return new GeoLib::Raster(header, values.begin(), values.end());
 }
 
-std::optional < std::array<double, 3>> readCoordinates(std::istream& in)
+std::optional<std::array<double, 3>> readCoordinates(std::istream& in)
 {
     std::array<double, 3> coords;
     std::string line("");
@@ -260,8 +264,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
     std::ifstream in(fname.c_str());
     if (!in.is_open())
     {
-        ERR("Raster::getRasterFromXyzFile() - Could not open file {:s}",
-            fname);
+        ERR("Raster::getRasterFromXyzFile() - Could not open file {:s}", fname);
         return nullptr;
     }
 
@@ -295,7 +298,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
         {
             if ((*coords)[0] - (*coords2)[0] != header.cell_size)
             {
-                ERR("Varying cellsizes or unordered pixel vales found. "
+                ERR("Varying cell sizes or unordered pixel values found. "
                     "Aborting...");
                 return nullptr;
             }
@@ -305,7 +308,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
         {
             if ((*coords)[1] - (*coords2)[1] != header.cell_size)
             {
-                ERR("Varying cellsizes or unordered pixel vales found. "
+                ERR("Varying cell sizes or unordered pixel values found. "
                     "Aborting...");
                 return nullptr;
             }

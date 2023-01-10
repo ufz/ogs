@@ -90,8 +90,9 @@ int main(int argc, char* argv[])
         "", "string");
     cmd.add(map_mesh_arg);
     TCLAP::ValueArg<std::string> map_raster_arg(
-        "r", "raster", "Raster file (*.asc) to map the input file on.", false,
-        "", "string");
+        "r", "raster",
+        "Raster file (*.asc *.grd *.xyz) to map the input file on.", false, "",
+        "string");
     cmd.add(map_raster_arg);
     TCLAP::ValueArg<std::string> output_arg(
         "o", "output", "Output mesh file (*.vtu)", true, "", "string");
