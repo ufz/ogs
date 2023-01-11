@@ -268,11 +268,9 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
         return nullptr;
     }
 
-    std::optional<std::array<double, 3>> coords;
-    std::optional<std::array<double, 3>> coords2;
     GeoLib::RasterHeader header{0, 0, 1, GeoLib::Point{{0, 0, 0}}, 1, -9999};
     std::vector<double> values;
-    coords = readCoordinates(in);
+    auto coords = readCoordinates(in);
     if (coords == std::nullopt)
     {
         return nullptr;
@@ -282,7 +280,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
     header.origin[2] = (*coords)[2];
     values.push_back((*coords)[2]);
 
-    coords2 = readCoordinates(in);
+    auto coords2 = readCoordinates(in);
     if (coords2 == std::nullopt)
     {
         return nullptr;
