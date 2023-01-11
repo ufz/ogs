@@ -287,7 +287,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
         0, 0, 1, GeoLib::Point(*coords), (*coords2)[0] - (*coords)[0], -9999};
 
     std::size_t n_cols = 2, n_rows = 1;
-    while (coords = readCoordinates(in))
+    while ((coords = readCoordinates(in)))
     {
         values.push_back((*coords)[2]);
         if ((*coords)[0] > (*coords2)[0])
