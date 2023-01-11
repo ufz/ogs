@@ -268,12 +268,13 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
         return nullptr;
     }
 
-    std::vector<double> values;
     auto coords = readCoordinates(in);
     if (coords == std::nullopt)
     {
         return nullptr;
     }
+
+    std::vector<double> values;
     values.push_back((*coords)[2]);
 
     auto coords2 = readCoordinates(in);
