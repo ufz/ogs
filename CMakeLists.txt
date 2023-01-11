@@ -200,6 +200,10 @@ option(OGS_USE_MFRONT
        OFF
 )
 
+option(OGS_WRITE_BENCHMARK_COMMANDS "" OFF)
+message(STATUS "${_benchmark_run_commands}")
+# set(_benchmark_run_commands "exe ; cmd ; name\n" CACHE INTERNAL "")
+
 include(packaging/Pack)
 
 # ---- Subdirectories ----
@@ -239,6 +243,14 @@ if(OGS_USE_PIP)
     setup_venv()
 endif()
 
+message(STATUS "${_benchmark_run_commands}")
+
+if(OGS_WRITE_BENCHMARK_COMMANDS)
+    file(WRITE ${PROJECT_BINARY_DIR}/benchmark_commands.csv
+         "${_benchmark_run_commands}"
+    )
+    unset(_benchmark_run_commands CACHE)
+endif()
 file(WRITE ${PROJECT_BINARY_DIR}/disabled-tests.log "${DISABLED_TESTS_LOG}")
 unset(DISABLED_TESTS_LOG CACHE) # Don't write to CMakeCache.txt
 
