@@ -200,7 +200,7 @@ MeshLib::Mesh const& Output::prepareSubmesh(
     auto const& property_names =
         bulk_mesh.getProperties().getPropertyVectorNames();
 
-    auto filter_residuum = [](std::string const& name) -> bool
+    auto is_residuum_field = [](std::string const& name) -> bool
     {
         using namespace std::literals::string_view_literals;
         static constexpr std::string_view names[] = {
@@ -208,7 +208,7 @@ MeshLib::Mesh const& Output::prepareSubmesh(
             "LiquidMassFlowRate"sv, "MassFlowRate"sv, "MaterialForces"sv,
             "MolarFlowRate"sv,      "NodalForces"sv,  "NodalForcesJump"sv,
             "VolumetricFlowRate"sv};
-        return std::find(std::begin(names), std::end(names), name) ==
+        return std::find(std::begin(names), std::end(names), name) !=
                std::end(names);
     };
 
@@ -219,10 +219,11 @@ MeshLib::Mesh const& Output::prepareSubmesh(
             // omit the 'simple' transfer of the properties in the if condition
             // on submeshes with equal dimension to the bulk mesh
             // for those data extra assembly is required
-            if (filter_residuum(name))
+            if (is_residuum_field(name))
             {
                 continue;
             }
+            addBulkMeshPropertyToSubMesh(bulk_mesh, submesh, name);
         }
         else
         {
