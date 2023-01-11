@@ -247,11 +247,11 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(
 
 std::optional<std::array<double, 3>> readCoordinates(std::istream& in)
 {
-    std::array<double, 3> coords;
     std::string line("");
     if (std::getline(in, line))
     {
         std::stringstream str_stream(line);
+        std::array<double, 3> coords;
         str_stream >> coords[0] >> coords[1] >> coords[2];
         return std::make_optional(coords);
     }
