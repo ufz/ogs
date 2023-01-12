@@ -71,8 +71,8 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     RUNTIME 300
     DIFF_DATA
-        expected_bar_COHESIVE_linear_ts_10_t_1_000000_0.vtu bar_COHESIVE_linear_ts_10_t_1.000000.vtu displacement displacement 1e-5 0
-        expected_bar_COHESIVE_linear_ts_10_t_1_000000_0.vtu bar_COHESIVE_linear_ts_10_t_1.000000.vtu phasefield phasefield 1e-6 0
+        expected_bar_COHESIVE_linear_ts_11_t_1.100000.vtu bar_COHESIVE_linear_ts_11_t_1.100000.vtu displacement displacement 1e-5 0
+        expected_bar_COHESIVE_linear_ts_11_t_1.100000.vtu bar_COHESIVE_linear_ts_11_t_1.100000.vtu phasefield phasefield 1e-6 0
 )
 
 AddTest(
@@ -86,8 +86,8 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     RUNTIME 300
     DIFF_DATA
-        expected_bar_COHESIVE_exponential_ts_10_t_1_000000_0.vtu bar_COHESIVE_exponential_ts_10_t_1.000000.vtu displacement displacement 1e-5 0
-        expected_bar_COHESIVE_exponential_ts_10_t_1_000000_0.vtu bar_COHESIVE_exponential_ts_10_t_1.000000.vtu phasefield phasefield 1e-6 0
+        expected_bar_COHESIVE_exponential_ts_11_t_1.100000.vtu bar_COHESIVE_exponential_ts_11_t_1.100000.vtu displacement displacement 1e-5 0
+        expected_bar_COHESIVE_exponential_ts_11_t_1.100000.vtu bar_COHESIVE_exponential_ts_11_t_1.100000.vtu phasefield phasefield 1e-6 0
 )
 
 AddTest(
