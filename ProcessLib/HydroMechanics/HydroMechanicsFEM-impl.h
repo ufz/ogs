@@ -1119,6 +1119,17 @@ unsigned HydroMechanicsLocalAssembler<
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
+int HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
+                                 ShapeFunctionPressure,
+                                 DisplacementDim>::getMaterialID() const
+{
+    return _process_data.material_ids == nullptr
+               ? 0
+               : (*_process_data.material_ids)[_element.getID()];
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
 typename MaterialLib::Solids::MechanicsBase<
     DisplacementDim>::MaterialStateVariables const&
 HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,

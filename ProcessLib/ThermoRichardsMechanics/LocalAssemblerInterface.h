@@ -90,6 +90,13 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         return integration_method_.getNumberOfPoints();
     }
 
+    int getMaterialID() const
+    {
+        return process_data_.material_ids == nullptr
+                   ? 0
+                   : (*process_data_.material_ids)[element_.getID()];
+    }
+
     typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables const&
     getMaterialStateVariablesAt(unsigned integration_point) const

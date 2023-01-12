@@ -236,6 +236,8 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
+    int getMaterialID() const override;
+
     std::vector<double> getMaterialStateVariableInternalState(
         std::function<BaseLib::DynamicSpan<double>(
             typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::

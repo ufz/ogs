@@ -446,6 +446,13 @@ public:
         return _integration_method.getNumberOfPoints();
     }
 
+    int getMaterialID() const override
+    {
+        return _process_data.material_ids == nullptr
+                   ? 0
+                   : (*_process_data.material_ids)[_element.getID()];
+    }
+
     typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables const&
     getMaterialStateVariablesAt(unsigned integration_point) const override
