@@ -1195,12 +1195,21 @@ MeshTest(
 )
 
 MeshTest(
-    NAME MapMeshToRaster_Test
+    NAME MapMeshToRasterASC_Test
     PATH MeshGeoToolsLib/Hamburg
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Hamburg
     EXECUTABLE MeshMapping
     EXECUTABLE_ARGS -i plain.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/rastermapping.vtu -r 00-raster.asc -s 100
     DIFF_DATA rastermapping.vtu rastermapping.vtu 1.5e-14
+)
+
+MeshTest(
+    NAME MapMeshToRasterXYZ_Test
+    PATH FileIO
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO
+    EXECUTABLE MeshMapping
+    EXECUTABLE_ARGS -i XyzTest.vtu -o ${Data_BINARY_DIR}/FileIO/XyzTest-Mapped.vtu -r XyzTest.xyz
+    DIFF_DATA XyzTest-Mapped.vtu XyzTest-Mapped.vtu 1e-12
 )
 
 AddTest(

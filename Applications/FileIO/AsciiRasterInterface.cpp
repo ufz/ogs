@@ -19,6 +19,7 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
+#include "GeoLib/Point.h"
 
 namespace FileIO
 {
@@ -33,6 +34,10 @@ GeoLib::Raster* AsciiRasterInterface::readRaster(std::string const& fname)
     if (ext == ".grd")
     {
         return getRasterFromSurferFile(fname);
+    }
+    if (ext == ".xyz")
+    {
+        return getRasterFromXyzFile(fname);
     }
     return nullptr;
 }
@@ -237,6 +242,98 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(
         }
     }
 
+    return new GeoLib::Raster(header, values.begin(), values.end());
+}
+
+std::optional<std::array<double, 3>> readCoordinates(std::istream& in)
+{
+    std::string line("");
+    if (std::getline(in, line))
+    {
+        std::stringstream str_stream(line);
+        std::array<double, 3> coords;
+        str_stream >> coords[0] >> coords[1] >> coords[2];
+        return std::make_optional(coords);
+    }
+    return std::nullopt;
+}
+
+GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
+    std::string const& fname)
+{
+    std::ifstream in(fname.c_str());
+    if (!in.is_open())
+    {
+        ERR("Raster::getRasterFromXyzFile() - Could not open file {:s}", fname);
+        return nullptr;
+    }
+
+    auto coords = readCoordinates(in);
+    if (coords == std::nullopt)
+    {
+        return nullptr;
+    }
+
+    std::vector<double> values;
+    values.push_back((*coords)[2]);
+
+    auto coords2 = readCoordinates(in);
+    if (coords2 == std::nullopt)
+    {
+        return nullptr;
+    }
+    values.push_back((*coords2)[2]);
+    GeoLib::RasterHeader header{
+        0, 0, 1, GeoLib::Point(*coords), (*coords2)[0] - (*coords)[0], -9999};
+
+    std::size_t n_cols = 2, n_rows = 1;
+    while ((coords = readCoordinates(in)))
+    {
+        values.push_back((*coords)[2]);
+        if ((*coords)[0] > (*coords2)[0])
+        {
+            if ((*coords)[0] - (*coords2)[0] != header.cell_size)
+            {
+                ERR("Varying cell sizes or unordered pixel values found. "
+                    "Aborting...");
+                return nullptr;
+            }
+            n_cols++;
+        }
+        else  // new line
+        {
+            if ((*coords)[1] - (*coords2)[1] != header.cell_size)
+            {
+                ERR("Varying cell sizes or unordered pixel values found. "
+                    "Aborting...");
+                return nullptr;
+            }
+            n_rows++;
+            // define #columns
+            if (header.n_cols == 0)
+            {
+                header.n_cols = n_cols;
+            }
+            // just check if #columns is consistent
+            else
+            {
+                if (n_cols != header.n_cols)
+                {
+                    ERR("Different number of pixels per line. Aborting!");
+                    return nullptr;
+                }
+            }
+            n_cols = 1;
+        }
+        coords2 = coords;
+    }
+    header.n_rows = n_rows;
+    if (header.n_cols == 0)
+    {
+        ERR("Could not determine raster size. Note that minimum allowed raster "
+            "size is 2 x 2 pixels.");
+        return nullptr;
+    }
     return new GeoLib::Raster(header, values.begin(), values.end());
 }
 

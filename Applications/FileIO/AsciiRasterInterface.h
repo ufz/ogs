@@ -37,6 +37,9 @@ public:
     /// Reads a Surfer GRD raster file
     static GeoLib::Raster* getRasterFromSurferFile(std::string const& fname);
 
+    /// Reads a XYZ raster file
+    static GeoLib::Raster* getRasterFromXyzFile(std::string const& fname);
+
     /// Writes an Esri asc-file
     static void writeRasterAsASC(GeoLib::Raster const& raster, std::string const& file_name);
 };
