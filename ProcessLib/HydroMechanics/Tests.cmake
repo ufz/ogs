@@ -828,3 +828,7 @@ AddTest(
     drainage_staggered_ts_10_t_10_000000_0.vtu drainage_staggered_ts_10_t_10_000000_0.vtu epsilon epsilon 1e-10 1e-9
     drainage_staggered_ts_10_t_10_000000_1.vtu drainage_staggered_ts_10_t_10_000000_1.vtu epsilon epsilon 1e-10 1e-9
 )
+
+if(NOT WIN32 AND NOT OGS_USE_MPI)
+    NotebookTest(NOTEBOOKFILE HydroMechanics/SeabedResponse/Stationary_waves.ipynb RUNTIME 65)
+endif()
