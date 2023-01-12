@@ -6,5 +6,5 @@ include-what-you-use:
   tags: [shell, envinf]
   needs: [meta]
   variables:
-    CMAKE_PRESET: ci-iwyy
+    CMAKE_PRESET: ci-iwyu
     TARGETS: "all"

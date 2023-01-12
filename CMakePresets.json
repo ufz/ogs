@@ -191,7 +191,7 @@
       }
     },
     {
-      "name": "ci-iwyy",
+      "name": "ci-iwyu",
       "inherits": "release-all",
       "cacheVariables": {
         "OGS_INCLUDE_WHAT_YOU_USE": "ON",
@@ -328,8 +328,8 @@
       "configurePreset": "ci-no-unity"
     },
     {
-      "name": "ci-iwyy",
-      "configurePreset": "ci-iwyy"
+      "name": "ci-iwyu",
+      "configurePreset": "ci-iwyu"
     },
     {
       "name": "wheel",
