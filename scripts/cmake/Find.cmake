@@ -2,7 +2,7 @@
 # Find tools
 # ##############################################################################
 
-find_package(Doxygen OPTIONAL_COMPONENTS dot)
+find_package(Doxygen 1.9.2 OPTIONAL_COMPONENTS dot)
 if(TARGET Doxygen::dot)
     # Create dependency graph in build dir with:
     # ~~~
