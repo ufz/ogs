@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
-        <mesh>out/square_200x100_domain.vtu</mesh>
-        <mesh>out/square_200x100_physical_group_Left.vtu</mesh>
-        <mesh>out/square_200x100_physical_group_Right.vtu</mesh>
-        <mesh>out/square_200x100_physical_group_Top.vtu</mesh>
-        <mesh>out/square_200x100_physical_group_Bottom.vtu</mesh>
+        <mesh>square_200x100_domain.vtu</mesh>
+        <mesh>square_200x100_physical_group_Left.vtu</mesh>
+        <mesh>square_200x100_physical_group_Right.vtu</mesh>
+        <mesh>square_200x100_physical_group_Top.vtu</mesh>
+        <mesh>square_200x100_physical_group_Bottom.vtu</mesh>
     </meshes>
     <processes>
         <process>
@@ -230,13 +230,9 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
-            <lis>-i bicgstab -p ilu -tol 1e-16 -maxiter 10000</lis>
             <eigen>
-                <!--solver_type>BiCGSTAB</solver_type-->
                 <solver_type>SparseLU</solver_type>
-                <precon_type>DIAGONAL</precon_type>
-                <max_iteration_step>10000</max_iteration_step>
-                <error_tolerance>1e-15</error_tolerance>
+                <scaling>true</scaling>
             </eigen>
         </linear_solver>
     </linear_solvers>
