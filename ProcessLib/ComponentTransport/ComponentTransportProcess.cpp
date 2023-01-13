@@ -21,6 +21,7 @@
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFlux.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
+#include "ProcessLib/Utils/ComputeResiduum.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 namespace ProcessLib
@@ -48,9 +49,14 @@ ComponentTransportProcess::ComponentTransportProcess(
       _surfaceflux(std::move(surfaceflux)),
       _chemical_solver_interface(std::move(chemical_solver_interface))
 {
-    // Todo(renchao): Need to adapt for the multi-component case.
-    _molar_flow_rate = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "MolarFlowRate", MeshLib::MeshItemType::Node, 1);
+    std::size_t n_processes = _process_variables.size();
+    _molar_flow_rate.resize(n_processes - 1);
+    for (int process_id = 0; process_id < n_processes - 1; ++process_id)
+    {
+        _molar_flow_rate[process_id] = MeshLib::getOrCreateMeshProperty<double>(
+            mesh, "MolarFlowRate_" + std::to_string(process_id),
+            MeshLib::MeshItemType::Node, 1);
+    }
 }
 
 void ComponentTransportProcess::initializeConcreteProcess(
@@ -170,6 +176,15 @@ void ComponentTransportProcess::assembleConcreteProcess(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
         pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot, process_id, M, K,
         b);
+
+    MathLib::finalizeMatrixAssembly(M);
+    MathLib::finalizeMatrixAssembly(K);
+    MathLib::finalizeVectorAssembly(b);
+
+    auto const residuum = computeResiduum(*x[0], *xdot[0], M, K, b);
+    transformVariableFromGlobalVector(residuum, 0, *_local_to_global_index_map,
+                                      *_molar_flow_rate[process_id],
+                                      std::negate<double>());
 }
 
 void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
@@ -201,9 +216,9 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
 
     // b is the negated residumm used in the Newton's method.
     // Here negating b is to recover the primitive residuum.
-    transformVariableFromGlobalVector(b, 0 /*variable id*/,
-                                      *_local_to_global_index_map,
-                                      *_molar_flow_rate, std::negate<double>());
+    transformVariableFromGlobalVector(
+        b, process_id, *_local_to_global_index_map,
+        *_molar_flow_rate[process_id], std::negate<double>());
 }
 
 Eigen::Vector3d ComponentTransportProcess::getFlux(
