@@ -59,9 +59,8 @@ public:
      * points are assigned an elevation value on the mesh surface. Additional
      * points are inserted whenever a polyline from the original geometry
      * intersects a mesh node or the edge of a mesh element.
+     * A new geometry with the given name is inserted into _geo_objects.
      * \param mesh          Mesh the geometry is mapped on
-     * \result              A new geometry with the given name is inserted into
-     * _geo_objects
      */
     void advancedMapOnMesh(MeshLib::Mesh const& mesh);
 

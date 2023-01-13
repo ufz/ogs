@@ -189,8 +189,8 @@ private:
     /**
      * Writes the elements from a 2D mesh to a TetGen smesh-file.
      * @param out               the output stream the information is written to.
-     * @param mesh              mesh containing the subsurface boundary representation used for meshing.
-     * @return returns true on success and false otherwise.
+     * @param mesh              mesh containing the subsurface boundary
+     * representation used for meshing.
      */
     void write2dElements(std::ofstream &out,
                          const MeshLib::Mesh &mesh) const;
@@ -199,8 +199,8 @@ private:
      * Writes the elements from a 3D mesh to a TetGen smesh-file.
      * @param out               the output stream the information is written to.
      * @param mesh              the 3D mesh.
-     * @param attribute_points  attribute points containing material IDs (emptied when called and then filled with correct values).
-     * @return returns true on success and false otherwise.
+     * @param attribute_points  attribute points containing material IDs
+     * (emptied when called and then filled with correct values).
      */
     void write3dElements(std::ofstream &out,
                          const MeshLib::Mesh &mesh,
