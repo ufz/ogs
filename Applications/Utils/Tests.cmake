@@ -542,7 +542,17 @@ AddTest(
 )
 
 AddTest(
-    NAME mesh2raster_test
+    NAME Mesh2Raster_small_Test
+    PATH FileIO/Mesh2Raster
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO/Mesh2Raster
+    EXECUTABLE Mesh2Raster
+    EXECUTABLE_ARGS -i tri_8_ascii.vtu -o ${Data_BINARY_DIR}/FileIO/Mesh2Raster/tri_8_ascii_raster.asc -c 0.1
+    TESTER diff
+    DIFF_DATA tri_8_ascii_raster.asc
+)
+
+AddTest(
+    NAME Mesh2Raster_large_Test
     PATH MeshGeoToolsLib/Hamburg
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Hamburg
     EXECUTABLE Mesh2Raster
@@ -1284,11 +1294,21 @@ if(OGS_BUILD_SWMM)
 endif()
 
 AddTest(
-    NAME Mesh2Raster_Test
-    PATH FileIO/Mesh2Raster
-    WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO/Mesh2Raster
-    EXECUTABLE Mesh2Raster
-    EXECUTABLE_ARGS -i tri_8_ascii.vtu -o ${Data_BINARY_DIR}/FileIO/Mesh2Raster/tri_8_ascii_raster.asc -c 0.1
+    NAME xyz2asc_Test
+    PATH FileIO/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO
+    EXECUTABLE Raster2ASC
+    EXECUTABLE_ARGS -i XyzTest.xyz -o ${Data_BINARY_DIR}/FileIO/XyzTest.asc
     TESTER diff
-    DIFF_DATA tri_8_ascii_raster.asc
+    DIFF_DATA XyzTest.asc
+)
+
+AddTest(
+    NAME grd2asc_Test
+    PATH FileIO/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO
+    EXECUTABLE Raster2ASC
+    EXECUTABLE_ARGS -i GrdTest.grd -o ${Data_BINARY_DIR}/FileIO/GrdTest.asc
+    TESTER diff
+    DIFF_DATA GrdTest.asc
 )
