@@ -13,31 +13,19 @@
 #include <cassert>
 
 #include "BaseLib/Error.h"
+#include "CreateThermoRichardsMechanicsLocalAssemblers.h"
 #include "MeshLib/Elements/Utils.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Reflection/ReflectionForExtrapolation.h"
 #include "ProcessLib/Reflection/ReflectionForIPWriters.h"
-#include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
-#include "ThermoRichardsMechanicsFEM.h"
 
 namespace ProcessLib
 {
 namespace ThermoRichardsMechanics
 {
-template <typename ConstitutiveTraits>
-struct ThermoRichardsMechanicsLocalAssembler3Args
-{
-    template <typename ShapeFunctionDisplacement, typename ShapeFunction,
-              int DisplacementDim>
-    using LocalAssemblerImplementation =
-        ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                              ShapeFunction, DisplacementDim,
-                                              ConstitutiveTraits>;
-};
-
 template <int DisplacementDim, typename ConstitutiveTraits>
 ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     ThermoRichardsMechanicsProcess(
@@ -141,10 +129,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
                               MeshLib::Mesh const& mesh,
                               unsigned const integration_order)
 {
-    createLocalAssemblersHM<
-        DisplacementDim,
-        ThermoRichardsMechanicsLocalAssembler3Args<
-            ConstitutiveTraits>::template LocalAssemblerImplementation>(
+    createLocalAssemblers<DisplacementDim, ConstitutiveTraits>(
         mesh.getElements(), dof_table, local_assemblers_,
         NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
         process_data_);
