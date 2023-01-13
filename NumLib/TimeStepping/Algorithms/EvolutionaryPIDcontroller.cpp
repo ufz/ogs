@@ -100,8 +100,6 @@ std::tuple<bool, double> EvolutionaryPIDcontroller::next(
 
         return std::make_tuple(timestep_current.isAccepted(), h_new);
     }
-
-    return {};
 }
 
 double EvolutionaryPIDcontroller::limitStepSize(
