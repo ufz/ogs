@@ -19,6 +19,7 @@
 #include "MathLib/LinAlg/FinalizeVectorAssembly.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
+#include "ProcessLib/Process.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFlux.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/ComputeResiduum.h"
@@ -49,13 +50,31 @@ ComponentTransportProcess::ComponentTransportProcess(
       _surfaceflux(std::move(surfaceflux)),
       _chemical_solver_interface(std::move(chemical_solver_interface))
 {
-    std::size_t n_processes = _process_variables.size();
-    _molar_flow_rate.resize(n_processes - 1);
-    for (int process_id = 0; process_id < n_processes - 1; ++process_id)
+    _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
+        mesh, "LiquidFlowRate", MeshLib::MeshItemType::Node, 1);
+
+    if (_use_monolithic_scheme)
     {
-        _molar_flow_rate[process_id] = MeshLib::getOrCreateMeshProperty<double>(
-            mesh, "MolarFlowRate_" + std::to_string(process_id),
-            MeshLib::MeshItemType::Node, 1);
+        const int process_id = 0;
+        for (auto pv_iter = std::next(_process_variables[process_id].begin());
+             pv_iter != _process_variables[process_id].end();
+             ++pv_iter)
+        {
+            _molar_flow_rate.push_back(MeshLib::getOrCreateMeshProperty<double>(
+                mesh, pv_iter->get().getName() + "FlowRate",
+                MeshLib::MeshItemType::Node, 1));
+        }
+    }
+    else
+    {
+        for (auto pv_iter = std::next(_process_variables.begin());
+             pv_iter != _process_variables.end();
+             ++pv_iter)
+        {
+            _molar_flow_rate.push_back(MeshLib::getOrCreateMeshProperty<double>(
+                mesh, (*pv_iter)[0].get().getName() + "FlowRate",
+                MeshLib::MeshItemType::Node, 1));
+        }
     }
 }
 
@@ -180,11 +199,37 @@ void ComponentTransportProcess::assembleConcreteProcess(
     MathLib::finalizeMatrixAssembly(M);
     MathLib::finalizeMatrixAssembly(K);
     MathLib::finalizeVectorAssembly(b);
-
     auto const residuum = computeResiduum(*x[0], *xdot[0], M, K, b);
-    transformVariableFromGlobalVector(residuum, 0, *_local_to_global_index_map,
-                                      *_molar_flow_rate[process_id],
-                                      std::negate<double>());
+    auto copyRhs = [&](int const variable_id, auto& output_vector)
+    {
+        if (_use_monolithic_scheme)
+        {
+            transformVariableFromGlobalVector(residuum, variable_id,
+                                              dof_tables[0], output_vector,
+                                              std::negate<double>());
+        }
+        else
+        {
+            transformVariableFromGlobalVector(
+                residuum, 0, dof_tables[process_id], output_vector,
+                std::negate<double>());
+        }
+    };
+    if (_use_monolithic_scheme || process_id == 0)
+    {
+        copyRhs(0, *_hydraulic_flow);
+    }
+    if (_use_monolithic_scheme)
+    {
+        for (std::size_t c_idx = 0; c_idx < _molar_flow_rate.size(); ++c_idx)
+        {
+            copyRhs(c_idx + 1, *_molar_flow_rate[c_idx]);
+        }
+    }
+    if (process_id > 0)
+    {
+        copyRhs(process_id, *_molar_flow_rate[process_id - 1]);
+    }
 }
 
 void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
@@ -209,16 +254,20 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
         process_id, M, K, b, Jac);
 
-    if (process_id == _process_data.hydraulic_process_id)
-    {
-        return;
-    }
-
     // b is the negated residumm used in the Newton's method.
     // Here negating b is to recover the primitive residuum.
-    transformVariableFromGlobalVector(
-        b, process_id, *_local_to_global_index_map,
-        *_molar_flow_rate[process_id], std::negate<double>());
+    if (process_id == _process_data.hydraulic_process_id)
+    {
+        transformVariableFromGlobalVector(b, 0, *_local_to_global_index_map,
+                                          *_hydraulic_flow,
+                                          std::negate<double>());
+    }
+    else
+    {
+        transformVariableFromGlobalVector(b, 0, *_local_to_global_index_map,
+                                          *_molar_flow_rate[process_id - 1],
+                                          std::negate<double>());
+    }
 }
 
 Eigen::Vector3d ComponentTransportProcess::getFlux(
