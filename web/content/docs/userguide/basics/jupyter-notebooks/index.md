@@ -30,7 +30,7 @@ Image `registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter` contains:
   - [VTK](https://pypi.org/project/vtk/) — Visualization
   - [PyVista][pyvista] — Visualization
   - [Snakemake](https://snakemake.github.io) — Workflow management
-  - [meshio](https://github.com/nschloe/meshio) — Mesh conversions between many formats. Pulled in via osgtools.
+  - [meshio](https://github.com/nschloe/meshio) — Mesh conversions between many formats. Pulled in via ogstools.
 - Jupyter-related tools:
   - [nbconvert](https://nbconvert.readthedocs.io) — Format conversion
   - [nbdime](https://nbdime.readthedocs.io) — Diffs for notebooks
