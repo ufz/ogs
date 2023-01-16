@@ -930,11 +930,11 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1x1x1_hex_1e2_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e2_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-    cube_1x1x1_hex_1e2_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e2_ts_1_t_1.000000.vtu v v 1e-10 1e-10
-    cube_1x1x1_hex_1e2_inner_bar_domain_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e2_inner_bar_domain_ts_0_t_0.000000.vtu pressure pressure 1e-15 1e-15
-    cube_1x1x1_hex_1e2_inner_bar_domain_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e2_inner_bar_domain_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-    cube_1x1x1_hex_1e2_inner_bar_domain_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e2_inner_bar_domain_ts_1_t_1.000000.vtu v v 1e-13 1e-13
+    cube_1x1x1_hex_1e2_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e2_3d_submesh_output_test_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+    cube_1x1x1_hex_1e2_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e2_3d_submesh_output_test_ts_1_t_1.000000.vtu v v 1e-10 1e-10
+    cube_1x1x1_hex_1e2_inner_bar_domain_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e2_inner_bar_domain_3d_submesh_output_test_ts_0_t_0.000000.vtu pressure pressure 1e-15 1e-15
+    cube_1x1x1_hex_1e2_inner_bar_domain_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e2_inner_bar_domain_3d_submesh_output_test_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+    cube_1x1x1_hex_1e2_inner_bar_domain_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e2_inner_bar_domain_3d_submesh_output_test_ts_1_t_1.000000.vtu v v 1e-13 1e-13
 )
 
 if(OGS_USE_MPI AND OGS_USE_PIP)

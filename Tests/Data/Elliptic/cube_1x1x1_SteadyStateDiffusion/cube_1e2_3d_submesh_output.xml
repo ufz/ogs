@@ -10,7 +10,7 @@
     </add>
     <remove sel="/*/mesh" />
     <remove sel="/*/geometry" />
-    <replace sel="/*/time_loop/output/prefix/text()" after_includes="true">{:meshname}</replace>
+    <replace sel="/*/time_loop/output/prefix/text()" after_includes="true">{:meshname}_3d_submesh_output_test</replace>
     <add sel="/*/time_loop/output" after_includes="true">
       <meshes>
         <mesh>cube_1x1x1_hex_1e2</mesh>
