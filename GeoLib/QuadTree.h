@@ -489,7 +489,6 @@ private:
      * @param father father in the tree
      * @param depth depth of the node
      * @param max_points_per_leaf maximum number of points per leaf
-     * @return
      */
     QuadTree(POINT ll,
              POINT ur,

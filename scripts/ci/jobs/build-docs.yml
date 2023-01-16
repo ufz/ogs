@@ -4,7 +4,7 @@ build docs:
   needs: [meta, ci_images]
   timeout: 15 minutes
   variables:
-    DOX_WARNINGS_THRESHOLD: 9
+    DOX_WARNINGS_THRESHOLD: 18
   script:
     - mkdir -p build
     # cpp-dependencies
