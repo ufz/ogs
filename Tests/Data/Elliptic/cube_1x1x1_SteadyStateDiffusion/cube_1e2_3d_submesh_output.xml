@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="cube_1e0.prj">
+    <add sel="/*/processes" after_includes="true" pos="before">
+      <meshes>
+        <mesh>cube_1x1x1_hex_1e2.vtu</mesh>
+        <mesh>cube_1x1x1_hex_1e2_left.vtu</mesh>
+        <mesh>cube_1x1x1_hex_1e2_right.vtu</mesh>
+        <mesh>cube_1x1x1_hex_1e2_inner_bar_domain.vtu</mesh>
+      </meshes>
+    </add>
+    <remove sel="/*/mesh" />
+    <remove sel="/*/geometry" />
+    <replace sel="/*/time_loop/output/prefix/text()" after_includes="true">{:meshname}_3d_submesh_output_test</replace>
+    <add sel="/*/time_loop/output" after_includes="true">
+      <meshes>
+        <mesh>cube_1x1x1_hex_1e2</mesh>
+        <mesh>cube_1x1x1_hex_1e2_inner_bar_domain</mesh>
+      </meshes>
+    </add>
+    <remove sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[1]/geometrical_set" after_includes="true"/>
+    <remove sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[1]/geometry" after_includes="true"/>
+    <add sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[1]" after_includes="true">
+      <mesh>cube_1x1x1_hex_1e2_left</mesh>
+    </add>
+    <remove sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[2]/geometrical_set" after_includes="true"/>
+    <remove sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[2]/geometry" after_includes="true"/>
+    <add sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[2]" after_includes="true">
+      <mesh>cube_1x1x1_hex_1e2_right</mesh>
+    </add>
+</OpenGeoSysProjectDiff>
