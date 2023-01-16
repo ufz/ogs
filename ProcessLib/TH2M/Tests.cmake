@@ -28,6 +28,11 @@ if (NOT OGS_USE_MPI)
         NotebookTest(NOTEBOOKFILE TH2M/TH/Ogata-Banks/Ogata-Banks.ipynb RUNTIME 120)
     endif()
     NotebookTest(NOTEBOOKFILE TH2M/TH/idealGasLaw/confined_gas_compression.ipynb RUNTIME 10)
+    # submesh residuum output
+    OgsTest(PROJECTFILE TH2M/submesh_residuum_assembly/T.xml RUNTIME 1)
+    OgsTest(PROJECTFILE TH2M/submesh_residuum_assembly/p_G.xml RUNTIME 1)
+    OgsTest(PROJECTFILE TH2M/submesh_residuum_assembly/p_cap.xml RUNTIME 1)
+    OgsTest(PROJECTFILE TH2M/submesh_residuum_assembly/u.xml RUNTIME 1)
 endif()
 
 # TH2M 1d heat diffusion w/ Dirichlet-BC
