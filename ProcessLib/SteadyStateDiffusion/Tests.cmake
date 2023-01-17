@@ -963,6 +963,19 @@ AddTest(
     cube_1x1x1_hex_1e2_inner_bar_domain_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e2_inner_bar_domain_3d_submesh_output_test_ts_1_t_1.000000.vtu v v 1e-13 1e-13
 )
 
+AddTest(
+    NAME SteadyStateDiffusion_square_1x1_1e2_GMRES_GML_output_xdmf-hdf5
+    PATH Elliptic/square_1x1_SteadyStateDiffusion
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_1e2_GMRES_GML_output_xdmf-hdf5.prj
+    WRAPPER time
+    TESTER xdmfdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    square_1x1_quad_1e2_GMRES_GML_output_square_1x1_quad_1e2.xdmf square_1x1_quad_1e2_GMRES_GML_output_square_1x1_quad_1e2.xdmf pressure pressure 1e-14 1e-14
+    square_1x1_quad_1e2_GMRES_GML_output_square_1x1_geometry_left.xdmf square_1x1_quad_1e2_GMRES_GML_output_square_1x1_geometry_left.xdmf pressure pressure 1e-14 1e-14
+)
+
 if(OGS_USE_MPI AND OGS_USE_PIP)
     NotebookTest(NOTEBOOKFILE Notebooks/SimplePETSc.ipynb RUNTIME 10)
 else()
