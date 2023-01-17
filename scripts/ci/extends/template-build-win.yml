@@ -25,7 +25,9 @@
       }
     - cmake --build --preset=$env:CMAKE_PRESET --target package | Tee-Object -FilePath $log_file
     - if($env:BUILD_TESTS -eq "true") { cmake --build --preset=$env:CMAKE_PRESET --target tests }
-    - if($env:BUILD_CTEST -eq "true") { ctest --preset=$env:CMAKE_PRESET --output-junit Tests/ctest.xml -M Experimental --group Continuous --test-dir $build_directory_full -T Test -T Submit }
+    - $ctest_model = "Experimental"
+    - if($env:CI_COMMIT_BRANCH -eq "master") { $ctest_model = "Continuous" }
+    - if($env:BUILD_CTEST -eq "true") { ctest --preset=$env:CMAKE_PRESET --output-junit Tests/ctest.xml -M $ctest_model --test-dir $build_directory_full -T Test -T Submit }
     - |
       if($env:CHECK_WARNINGS -eq "true" -and (cat $log_file | Select-String -Pattern ': warning') )
       {

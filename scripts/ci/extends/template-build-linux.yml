@@ -56,9 +56,12 @@
             regex_argument="${regex_argument} -E ${CTEST_EXCLUDE_REGEX}"
           fi
 
-          # -M Continuous does not run any tests -> -M Experimental --group Continuous
-          # --test-dir has to be provided despite using a preset
-          ${xvfb_run_cmd} ctest -M Experimental ${regex_argument} --group Continuous --test-dir ${build_dir_full} -T Test -T Submit --preset=${CMAKE_PRESET}${preset_postfix} --output-junit Tests/ctest.xml --stop-time `date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'` ${CTEST_ARGS}
+          ctest_model="Experimental"
+          if [ "${CI_COMMIT_BRANCH}" = "master" ]; then
+            ctest_model="Continuous"
+          fi
+
+          ${xvfb_run_cmd} ctest -M ${ctest_model} ${regex_argument} --test-dir ${build_dir_full} -T Test -T Submit --preset=${CMAKE_PRESET}${preset_postfix} --output-junit Tests/ctest.xml --stop-time `date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'` ${CTEST_ARGS}
         fi
 
       else
