@@ -7,7 +7,7 @@
     <Piece NumberOfPoints="95"                   NumberOfCells="94"                  >
       <PointData>
         <DataArray type="Float64" Name="Cs" format="appended" RangeMin="0"                    RangeMax="0.011771181282"       offset="84"                  />
-        <DataArray type="Float64" Name="MolarFlowRate" format="appended" RangeMin="-6.4634665781e-06"    RangeMax="4.3368086899e-19"     offset="1152"                />
+        <DataArray type="Float64" Name="CsFlowRate" format="appended" RangeMin="-6.4634665781e-06"    RangeMax="4.3368086899e-19"     offset="1152"                />
         <DataArray type="Float64" Name="darcy_velocity" format="appended" RangeMin="6.5509299998e-06"     RangeMax="6.5509300003e-06"     offset="1552"                />
         <DataArray type="Float64" Name="molar_flux" format="appended" RangeMin="-2.5184294297e-09"    RangeMax="7.6814002898e-08"     offset="2104"                />
         <DataArray type="Float64" Name="pressure" format="appended" RangeMin="9810"                 RangeMax="9813.0789371"         offset="3176"                />
