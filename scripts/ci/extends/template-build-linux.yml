@@ -37,6 +37,9 @@
             ctest_timeout=90
             preset_postfix="-large"
           fi
+          if [ "$CTEST_PARALLEL_LEVEL" = 1 ]; then
+            ctest_timeout=480
+          fi
 
           xvfb_run_cmd=""
           if [[ "$OSTYPE" == "darwin"* ]]; then
