@@ -16,4 +16,4 @@ test notebooks via wheel:
     when: always
     paths:
       - Tests/Data/_out/**/*.html
-      - Tests/Data/_out/**/out.txt
+      - Tests/Data/_out/**/*out.txt
