@@ -191,6 +191,18 @@
       }
     },
     {
+      "name": "ci-iwyu",
+      "inherits": "release-all",
+      "cacheVariables": {
+        "OGS_INCLUDE_WHAT_YOU_USE": "ON",
+        "OGS_USE_UNITY_BUILDS": "OFF"
+      },
+      "environment": {
+        "CC": "clang",
+        "CXX": "clang++"
+      }
+    },
+    {
       "name": "wheel",
       "inherits": "release",
       "cacheVariables": {
@@ -300,6 +312,10 @@
       "configurePreset": "release-all"
     },
     {
+      "name": "debug-all",
+      "configurePreset": "release-all"
+    },
+    {
       "name": "coverage",
       "configurePreset": "coverage"
     },
@@ -310,6 +326,10 @@
     {
       "name": "ci-no-unity",
       "configurePreset": "ci-no-unity"
+    },
+    {
+      "name": "ci-iwyu",
+      "configurePreset": "ci-iwyu"
     },
     {
       "name": "wheel",

@@ -200,6 +200,8 @@ option(OGS_USE_MFRONT
        OFF
 )
 
+option(OGS_INCLUDE_WHAT_YOU_USE "Enable include-what-you-use checks." OFF)
+
 option(OGS_WRITE_BENCHMARK_COMMANDS "" OFF)
 message(STATUS "${_benchmark_run_commands}")
 # set(_benchmark_run_commands "exe ; cmd ; name\n" CACHE INTERNAL "")

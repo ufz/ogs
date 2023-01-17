@@ -36,6 +36,10 @@ find_program(GMSH gmsh)
 
 find_program(XMLSTARLET_TOOL_PATH xmlstarlet)
 
+if(OGS_INCLUDE_WHAT_YOU_USE)
+    find_program(INCLUDE_WHAT_YOU_USE_TOOL_PATH include-what-you-use REQUIRED)
+endif()
+
 # ##############################################################################
 # Find libraries
 # ##############################################################################

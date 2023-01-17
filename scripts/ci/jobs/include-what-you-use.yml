@@ -1,0 +1,10 @@
+include-what-you-use:
+  stage: check
+  extends:
+    - .template-build-linux
+    - .rules-manual
+  tags: [shell, envinf]
+  needs: [meta]
+  variables:
+    CMAKE_PRESET: ci-iwyu
+    TARGETS: "all"
