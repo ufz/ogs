@@ -51,7 +51,11 @@ void VtkCompositeContourFilter::init()
         vtkPointData* pointData = dataSet->GetPointData();
         if (pointData)
         {
-            pointData->GetScalars()->GetRange(range);
+            auto* scalars = pointData->GetScalars();
+            if (scalars)
+            {
+                scalars->GetRange(range);
+            }
         }
     }
     else
