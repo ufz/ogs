@@ -18,7 +18,6 @@
                       eel, deel (elastic strain (increment))
                       sig (stress)
                       dlp (plastic increment)
-                      dpc (pre-consolidation pressure increment)
 
    Output:            feel (strain residual depending on deel, dlp, dpc)
                       flp  (yield function residual depending on deel, dpc)
@@ -67,10 +66,6 @@ pc0.setEntryName("InitialPreConsolidationPressure");
 @StateVariable real lp;
 lp.setGlossaryName("EquivalentPlasticStrain");
 
-// @StateVariable stress pc;
-// pc.setEntryName("ReducedPreConsolidationPressure");
-@IntegrationVariable strain rpc;
-
 // An auxiliary state variable is a persistent variable but not an integration variable.
 @AuxiliaryStateVariable stress pc;
 pc.setEntryName("PreConsolidationPressure");
@@ -93,7 +88,6 @@ p0.setEntryName("InitialPressure");
 @LocalVariable bool withinElasticRange;
 @LocalVariable real M2;
 @LocalVariable real young;
-@LocalVariable real rpcMin;
 
 @Includes{
 #ifndef MFRONT_PRESSUREDEPENDANTBULKMODULUS_IMPLEMENTATION
@@ -114,11 +108,10 @@ p0.setEntryName("InitialPressure");
         const auto s = deviator(eel);
 		const auto r = 3 * (1 - 2 * nu) / (2 * (1 + nu));
 
-        double K, G, p;
         // explicit computation of the hydrostatic pressure
-        p = p0 * exp(-v0_ka * e);
-        K = v0_ka * p;
-        G = r * K;  //  dG_de = r * dK_de = r * dK_dp * dp_de = - G * dK_dp;
+        const auto  p = p0 * exp(-v0_ka * e);
+        const auto  K = v0_ka * p;
+        const auto  G = r * K;  //  dG_de = r * dK_de = r * dK_dp * dp_de = - G * dK_dp;
         const auto dp_de = -K;
         const auto dK_dp = v0_ka;
         // Hooke's law
@@ -152,10 +145,7 @@ p0.setEntryName("InitialPressure");
         p0 = p;
         v = v0;
     }
-
     young = 3.0 * K * (1.0 - 2*nu);
-    rpc = pc / young;
-    rpcMin = pcMin / young;
 
     // computation of the elastic prediction (does not work for plane stress!)
     const auto eps_el = StrainStensor{eel + deto};
@@ -190,56 +180,63 @@ p0.setEntryName("InitialPressure");
     const auto s = deviator(sig);
     const auto q = std::sqrt(1.5 * s | s);
     const auto p = -trace(sig) / 3;
-    // update the internal (state) variables (rpc holds the old value!)
-    const auto rpcNew = rpc + theta * drpc;
-    const auto pcNew = rpcNew * young;
+    // update the internal (state) variables (pc holds the old value!)
+    const auto deelV = trace(deel);
+    const auto detoV = trace(deto);
+    auto deplV = detoV - deelV;
+    auto eplV = epl_V + theta * deplV;
+    const auto pcNew = (pc0 - pcMin) * exp(-the * eplV) + pcMin; // TODO only for eplV0=0!
     // calculate the direction of plastic flow
-    const auto f = (q * q + M2 * p * (p - pcNew));
+    const auto f = q * q + M2 * p * (p - pcNew);
     const auto df_dp = M2 * (2 * p - pcNew);
+    const auto df_dpc = -M2 * p;
     const auto df_dsig = eval(3 * s - df_dp * id2 / 3);
     auto norm = std::sqrt(6 * q * q + df_dp * df_dp / 3);  // = std::sqrt(df_dsig|df_dsig);
     norm = std::max(norm, epsr * young);
     const auto n = df_dsig / norm;
     const auto ntr = -df_dp / norm;
     // plastic strain and volumetric part
-    auto depl = eval(dlp * n);
-    const auto deplV = trace(depl);
+    const auto depl = eval(dlp * n);
+    deplV = trace(depl);
+    eplV = epl_V + theta * deplV;
 
     const auto fchar = pc0 * young;  // OR: young*young
 
     // residual
     feel = deel + depl - deto;
     flp = f / fchar;
-    frpc = drpc + deplV * the * (rpcNew - rpcMin);
 
     // auxiliary derivatives
     const auto dnorm_dsig = (9 * s - 2 * M2 / 9 * df_dp * id2) / norm;
     const auto dn_ddeel = (3 * Pr4 + 2 * M2 / 9 * (id2 ^ id2) - (n ^ dnorm_dsig)) / norm * dsig_deel * theta;
-    const auto dn_ddrpc = (id2 + df_dp * n / norm) * M2 / (3 * norm) * theta * young;
-    const auto dfrpc_ddeplV = the * (rpcNew - rpcMin);
+    const auto dn_dpc = (id2 + df_dp * n / norm) * M2 / (3 * norm);
+    const auto dpc_deplV = -the * (pcNew - pcMin);
+    const auto ddeplV_ddlp = ntr;
+    const auto ddeplV_dn = eval(dlp * id2);
+    //const auto dpc_dn = dpc_deplV * theta * ddeplV_dn;
+
+    const auto dpc_ddlp = dpc_deplV * theta * ddeplV_ddlp;
+    const auto dpc_ddeel = dpc_deplV * theta * (ddeplV_dn | dn_ddeel);
+    //const auto dpc_ddeel = dpc_deplV * theta * dlp * (id2 | dn_ddeel);
 
     // jacobian (all other parts are zero)
-    dfeel_ddeel += dlp * dn_ddeel;
-    dfeel_ddlp = n;
-    dfeel_ddrpc = dlp * dn_ddrpc;
+    const auto dfeel_dpc = dlp * dn_dpc;
+    dfeel_ddeel += dlp * dn_ddeel + (dfeel_dpc ^ dpc_ddeel);
+    dfeel_ddlp = n + dfeel_dpc * dpc_ddlp;
 
-    dflp_ddeel = (df_dsig | dsig_deel) * theta / fchar;    // in case of problems with zero use:
-    dflp_ddlp  = strain(0);                         // (q<epsr) ? strain(1) : strain(0);
-    dflp_ddrpc = -M2 * p * theta / fchar * young;
-
-    dfrpc_ddlp = dfrpc_ddeplV * ntr;
-    dfrpc_ddeel = dfrpc_ddeplV * dlp * (id2 | dn_ddeel);
-    dfrpc_ddrpc = 1 + (deplV * the + dfrpc_ddeplV * dlp * trace(dn_ddrpc)) * theta;
+    const auto dflp_dpc = df_dpc / fchar;
+    dflp_ddeel = (df_dsig | dsig_deel) * theta / fchar + dflp_dpc * dpc_ddeel;
+    dflp_ddlp  = strain(0) + dflp_dpc * dpc_ddlp;
 }
 
 // explicit treatment as long as change of v (or e) during time increment is small
 @UpdateAuxiliaryStateVariables
 {
     Time += dt;
-    pc += drpc * young;
     const auto deelV = trace(deel);
     const auto detoV = trace(deto);
     epl_V += detoV - deelV;
+    pc = (pc0 - pcMin) * exp(-v0 / (la - ka) * epl_V) + pcMin;
     v += v0 * detoV;
 }
 
