@@ -92,12 +92,12 @@ check docs links:
   extends:
     - .rules-master-manual
   script:
-    - cd build
     - >
       linkchecker --no-warnings --check-extern
       --ignore-url='sciencedirect.com'
       --ignore-url='search_opensearch.php'
-      docs
+      --ignore-url='doxygen.css'
+      build/docs
 
 spell check docs:
   image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.15-vale-2.16.1-markdownlint-0.31.1
