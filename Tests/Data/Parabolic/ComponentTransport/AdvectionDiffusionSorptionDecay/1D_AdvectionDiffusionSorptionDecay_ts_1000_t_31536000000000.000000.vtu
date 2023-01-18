@@ -7,7 +7,7 @@
     <Piece NumberOfPoints="2001"                 NumberOfCells="2000"                >
       <PointData>
         <DataArray type="Float64" Name="Cs" format="appended" RangeMin="1.2774319966e-137"    RangeMax="1"                    offset="84"                  />
-        <DataArray type="Float64" Name="MolarFlowRate" format="appended" RangeMin="0"                    RangeMax="0"                    offset="21356"               />
+        <DataArray type="Float64" Name="CsFlowRate" format="appended" RangeMin="0"                    RangeMax="0"                    offset="21356"               />
         <DataArray type="Float64" Name="pressure" format="appended" RangeMin="100000"               RangeMax="499999.99999"         offset="21452"               />
       </PointData>
       <CellData>

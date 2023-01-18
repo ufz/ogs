@@ -199,36 +199,33 @@ void ComponentTransportProcess::assembleConcreteProcess(
     MathLib::finalizeMatrixAssembly(M);
     MathLib::finalizeMatrixAssembly(K);
     MathLib::finalizeVectorAssembly(b);
-    auto const residuum = computeResiduum(*x[0], *xdot[0], M, K, b);
-    auto copyRhs = [&](int const variable_id, auto& output_vector)
-    {
-        if (_use_monolithic_scheme)
-        {
-            transformVariableFromGlobalVector(residuum, variable_id,
-                                              dof_tables[0], output_vector,
-                                              std::negate<double>());
-        }
-        else
-        {
-            transformVariableFromGlobalVector(
-                residuum, 0, dof_tables[process_id], output_vector,
-                std::negate<double>());
-        }
-    };
+
     if (_use_monolithic_scheme || process_id == 0)
     {
-        copyRhs(0, *_hydraulic_flow);
-    }
-    if (_use_monolithic_scheme)
-    {
-        for (std::size_t c_idx = 0; c_idx < _molar_flow_rate.size(); ++c_idx)
+        auto const residuum = computeResiduum(*x[0], *xdot[0], M, K, b);
+        transformVariableFromGlobalVector(residuum, 0, dof_tables[0],
+                                          *_hydraulic_flow,
+                                          std::negate<double>());
+        if (_use_monolithic_scheme)
         {
-            copyRhs(c_idx + 1, *_molar_flow_rate[c_idx]);
+            for (std::size_t c_idx = 0; c_idx < _molar_flow_rate.size();
+                 ++c_idx)
+            {
+                transformVariableFromGlobalVector(
+                    residuum, c_idx + 1, dof_tables[0],
+                    *_molar_flow_rate[c_idx], std::negate<double>());
+            }
         }
+        return;
     }
+
     if (process_id > 0)
     {
-        copyRhs(process_id, *_molar_flow_rate[process_id - 1]);
+        auto const residuum =
+            computeResiduum(*x[process_id], *xdot[process_id], M, K, b);
+        transformVariableFromGlobalVector(residuum, 0, dof_tables[process_id],
+                                          *_molar_flow_rate[process_id - 1],
+                                          std::negate<double>());
     }
 }
 
