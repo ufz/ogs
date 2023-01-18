@@ -56,12 +56,12 @@
             regex_argument="${regex_argument} -E ${CTEST_EXCLUDE_REGEX}"
           fi
 
-          ctest_model="Experimental"
+          ctest_group="Experimental"
           if [ "${CI_COMMIT_BRANCH}" = "master" ]; then
-            ctest_model="Continuous"
+            ctest_group="master"
           fi
 
-          ${xvfb_run_cmd} ctest -M ${ctest_model} ${regex_argument} --test-dir ${build_dir_full} -T Test -T Submit --preset=${CMAKE_PRESET}${preset_postfix} --output-junit Tests/ctest.xml --stop-time `date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'` ${CTEST_ARGS}
+          ${xvfb_run_cmd} ctest -M Experimental --group ${ctest_group} ${regex_argument} --test-dir ${build_dir_full} -T Start -T Test -T Submit --preset=${CMAKE_PRESET}${preset_postfix} --output-junit Tests/ctest.xml --stop-time `date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'` ${CTEST_ARGS}
         fi
 
       else
