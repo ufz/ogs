@@ -19,6 +19,8 @@ mfront_behaviours_check_library(
     Lubby2
     Lubby2mod
     ModCamClay_semiExpl_constE
+    ModCamClay_semiExplParaInitNLnu_abs
+    ModCamClay_semiExplParaInitNLnu_inc
     MohrCoulombAbboSloan
     MohrCoulombAbboSloanAniso
     MohrCoulombAbboSloanOrtho
