@@ -85,6 +85,7 @@ p0.setEntryName("InitialPressure");
 
 // local variables
 @LocalVariable StiffnessTensor dsig_deel;
+@LocalVariable StressStensor s0;
 @LocalVariable bool withinElasticRange;
 @LocalVariable real M2;
 @LocalVariable real young;
@@ -96,7 +97,9 @@ p0.setEntryName("InitialPressure");
     template <unsigned short N, typename stress, typename strain>
     void computeStress(tfel::math::st2tost2<N, stress> & dsig_deel,
                         tfel::math::stensor<N, stress> & sig,
+                        tfel::math::stensor<N, stress> & s0,
                         const tfel::math::stensor<N, strain>& eel,
+                        const tfel::math::stensor<N, strain>& deel,
                         const double nu, const stress p0, const strain v0_ka)
     {
         using namespace tfel::math;
@@ -105,20 +108,18 @@ p0.setEntryName("InitialPressure");
 
         constexpr auto id = Stensor::Id();
         const auto e = trace(eel);
-        const auto s = deviator(eel);
+        const auto de = deviator(deel);
 		const auto r = 3 * (1 - 2 * nu) / (2 * (1 + nu));
 
         // explicit computation of the hydrostatic pressure
         const auto  p = p0 * exp(-v0_ka * e);
         const auto  K = v0_ka * p;
-        const auto  G = r * K;  //  dG_de = r * dK_de = r * dK_dp * dp_de = - G * dK_dp;
-        const auto dp_de = -K;
-        const auto dK_dp = v0_ka;
-        // Hooke's law
-        sig = 2 * G * s - p * id;
+        const auto  G = r * K;
+        // incremental form of Hooke's law for deviatoric stress
+        const auto s = s0 + 2 * G * de;
+        sig = s - p * id;
         // stress derivative
-        dsig_deel = 2 * G * ( Stensor4::K() - dK_dp * (s^id) ) - dp_de * Stensor4::IxI();
-
+        dsig_deel = 2 * G * Stensor4::K() + K * Stensor4::IxI();
     }  // end of computeStress
 #endif /* MFRONT_PRESSUREDEPENDANTBULKMODULUS_IMPLEMENTATION */
 }
@@ -126,7 +127,8 @@ p0.setEntryName("InitialPressure");
 
 @ComputeStress{
     const auto eps_el = StrainStensor{eel};
-    ::computeStress(dsig_deel, sig, eps_el, nu, p0, v0/ka);
+    const auto deps_el = StrainStensor{deel};
+    ::computeStress(dsig_deel, sig, s0, eps_el, deps_el, nu, p0, v0/ka);
 }
 
 @InitLocalVariables
@@ -134,6 +136,7 @@ p0.setEntryName("InitialPressure");
     tfel::raise_if(la < ka, "Invalid parameters: la<ka");
     M2 = M * M;
 
+    const auto s = deviator(sig);
     const auto p = -trace(sig) / 3;
     const auto K = v0/ka * p;
 
@@ -147,10 +150,13 @@ p0.setEntryName("InitialPressure");
     }
     young = 3.0 * K * (1.0 - 2*nu);
 
+    s0 = s;
+
     // computation of the elastic prediction (does not work for plane stress!)
     const auto eps_el = StrainStensor{eel + deto};
+    const auto deps_el = StrainStensor{deto};
     auto sig_el = StressStensor{};
-    ::computeStress(dsig_deel, sig_el, eps_el, nu, p0, v0/ka);
+    ::computeStress(dsig_deel, sig_el, s0, eps_el, deps_el, nu, p0, v0/ka);
 
     // elastic estimators
     const auto s_el = deviator(sig_el);
