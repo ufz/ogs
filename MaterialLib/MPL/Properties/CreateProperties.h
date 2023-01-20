@@ -65,3 +65,4 @@
 #include "VapourDiffusion/CreateVapourDiffusionPMQ.h"
 #include "Viscosity/CreateWaterViscosityIAPWS.h"
 #include "Viscosity/CreateLiquidViscosityVogels.h"
+#include "ThermalConductivity/CreateWaterThermalConductivityIAPWS.h"

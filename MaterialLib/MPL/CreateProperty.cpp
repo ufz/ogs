@@ -300,16 +300,21 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     {
         return createVolumeFractionAverage(config);
     }
+
     if (boost::iequals(property_type, "WaterViscosityIAPWS"))
     {
         return createWaterViscosityIAPWS(config);
     }
+
     if (boost::iequals(property_type, "LiquidViscosityVogels"))
     {
         return createLiquidViscosityVogels(config);
     }
 
-
+    if (boost::iequals(property_type, "WaterThermalConductivityIAPWS"))
+    {
+        return createWaterThermalConductivityIAPWS(config);
+    }
 
     // If none of the above property types are found, OGS throws an error.
     OGS_FATAL("The specified component property type '{:s}' was not recognized",
