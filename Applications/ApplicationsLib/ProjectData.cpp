@@ -16,6 +16,9 @@
 #include <algorithm>
 #include <boost/algorithm/string/predicate.hpp>
 #include <cctype>
+#include <range/v3/action/sort.hpp>
+#include <range/v3/action/unique.hpp>
+#include <range/v3/range/conversion.hpp>
 #include <set>
 
 #ifdef OGS_USE_PYTHON
@@ -221,6 +224,20 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
 
         std::move(begin(additional_meshes), end(additional_meshes),
                   std::back_inserter(meshes));
+    }
+
+    auto mesh_names = MeshLib::views::names | ranges::to<std::vector>() |
+                      ranges::actions::sort;
+    auto const sorted_names = meshes | mesh_names;
+    auto const unique_names = meshes | mesh_names | ranges::actions::unique;
+    if (unique_names.size() < sorted_names.size())
+    {
+        WARN(
+            "Mesh names aren't unique. From project file read mesh names are:");
+        for (auto const& name : meshes | MeshLib::views::names)
+        {
+            INFO("- {}", name);
+        }
     }
 
     MeshLib::setMeshSpaceDimension(meshes);

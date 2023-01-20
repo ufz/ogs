@@ -50,12 +50,124 @@
     </processes>
     <output>
       <type>VTK</type>
-      <prefix>cube_1e2</prefix>
+      <prefix>1e2_{:meshname}</prefix>
+      <suffix>_ts_{:timestep}_t_{:time}</suffix>
+      <meshes>
+        <mesh>cube_1x1x1_hex_1e2</mesh>
+      </meshes>
+      <geometrical_sets>
+        <!-- points -->
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>left_front_bottom</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>left_front_top</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>left_back_top</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>left_back_bottom</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>right_front_bottom</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>right_front_top</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>right_back_top</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>right_back_bottom</geometry>
+        </geometrical_set>
+        <!-- polylines -->
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>vertical_polyline_left_front</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>vertical_polyline_right_front</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>vertical_polyline_left_back</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>vertical_polyline_right_back</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>horizontal_polyline_front_bottom</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>horizontal_polyline_front_top</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>horizontal_polyline_back_bottom</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>horizontal_polyline_back_top</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>horizontal_polyline_left_bottom</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>horizontal_polyline_left_top</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>horizontal_polyline_right_top</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>horizontal_polyline_right_bottom</geometry>
+        </geometrical_set>
+        <!-- surfaces -->
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>left</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>right</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>top</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>bottom</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>front</geometry>
+        </geometrical_set>
+        <geometrical_set>
+          <name>cube_1x1x1_geometry</name>
+          <geometry>back</geometry>
+        </geometrical_set>
+      </geometrical_sets>
       <variables>
         <variable> pressure </variable>
         <variable> v      </variable>
       </variables>
-      <suffix>_ts_{:timestep}_t_{:time}</suffix>
     </output>
   </time_loop>
   <parameters>

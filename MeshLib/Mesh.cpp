@@ -32,6 +32,10 @@
 #include "Elements/Tet.h"
 #include "Elements/Tri.h"
 
+#ifdef USE_PETSC
+#include "MeshLib/NodePartitionedMesh.h"
+#endif
+
 /// Mesh counter used to uniquely identify meshes by id.
 static std::size_t global_mesh_counter = 0;
 
@@ -294,9 +298,9 @@ std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
     // Store bulk element ids for each of the new elements.
     auto bulk_element_ids = elements | ids_vector;
 
-    // original node pointers to newly created nodes.
-    std::unordered_map<const MeshLib::Node*, MeshLib::Node*> nodes_map;
-    nodes_map.reserve(
+    // original node ids to newly created nodes.
+    std::unordered_map<std::size_t, MeshLib::Node*> id_node_hash_map;
+    id_node_hash_map.reserve(
         elements.size());  // There will be at least one node per element.
 
     for (auto& e : elements)
@@ -306,10 +310,11 @@ std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
         for (unsigned i = 0; i < n_nodes; ++i)
         {
             const MeshLib::Node* n = e->getNode(i);
-            auto const it = nodes_map.find(n);
-            if (it == nodes_map.end())
+            auto const it = id_node_hash_map.find(n->getID());
+            if (it == id_node_hash_map.end())
             {
-                auto new_node_in_map = nodes_map[n] = new MeshLib::Node(*n);
+                auto new_node_in_map = id_node_hash_map[n->getID()] =
+                    new MeshLib::Node(*n);
                 e->setNode(i, new_node_in_map);
             }
             else
@@ -319,11 +324,17 @@ std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
         }
     }
 
+    std::map<std::size_t, MeshLib::Node*> nodes_map;
+    for (const auto& n : id_node_hash_map)
+    {
+        nodes_map[n.first] = n.second;
+    }
+
     // Copy the unique nodes pointers.
     auto element_nodes = nodes_map | ranges::views::values | to<std::vector>;
 
     // Store bulk node ids for each of the new nodes.
-    auto bulk_node_ids = nodes_map | ranges::views::keys | ids_vector;
+    auto bulk_node_ids = nodes_map | ranges::views::keys | to<std::vector>;
 
     auto mesh = std::make_unique<MeshLib::Mesh>(
         std::move(mesh_name), std::move(element_nodes), std::move(elements));
@@ -334,7 +345,11 @@ std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
     addPropertyToMesh(*mesh, getBulkIDString(MeshLib::MeshItemType::Node),
                       MeshLib::MeshItemType::Node, 1, bulk_node_ids);
 
+#ifdef USE_PETSC
+    return std::make_unique<MeshLib::NodePartitionedMesh>(*mesh);
+#else
     return mesh;
+#endif
 }
 
 std::vector<std::vector<Node*>> calculateNodesConnectedByElements(

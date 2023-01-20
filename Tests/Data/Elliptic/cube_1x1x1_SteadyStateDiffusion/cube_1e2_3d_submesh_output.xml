@@ -11,12 +11,11 @@
     <remove sel="/*/mesh" />
     <remove sel="/*/geometry" />
     <replace sel="/*/time_loop/output/prefix/text()" after_includes="true">{:meshname}_3d_submesh_output_test</replace>
-    <add sel="/*/time_loop/output" after_includes="true">
-      <meshes>
-        <mesh>cube_1x1x1_hex_1e2</mesh>
-        <mesh>cube_1x1x1_hex_1e2_inner_bar_domain</mesh>
-      </meshes>
+    <replace sel="/*/time_loop/output/meshes/mesh/text()" after_includes="true">cube_1x1x1_hex_1e2</replace>
+    <add sel="/*/time_loop/output/meshes" after_includes="true">
+      <mesh>cube_1x1x1_hex_1e2_inner_bar_domain</mesh>
     </add>
+    <remove sel="/*/time_loop/output/geometrical_sets" after_includes="true"/>
     <remove sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[1]/geometrical_set" after_includes="true"/>
     <remove sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[1]/geometry" after_includes="true"/>
     <add sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[1]" after_includes="true">
