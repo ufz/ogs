@@ -42,7 +42,7 @@ TEST(Material, checkWaterThermalConductivityIAPWS_)
 
     const double expected_lambda[] = {18.4341883e-3, 607.712868e-3, 799.038144e-3, 79.1034659e-3};
 
-    const double perturbation = 1.e-9;
+    const double perturbation = 1.e-8;
     for (int i = 0; i < 4; i++)
     {
         // Test lambda
@@ -58,7 +58,7 @@ TEST(Material, checkWaterThermalConductivityIAPWS_)
         const double dlambda_drho = property.template dValue<double>(
                 variable_array, MaterialPropertyLib::Variable::density, pos,
                 t, dt);
-        /*
+
         // Test dlambda/dT
         variable_array.temperature =
             T[i] + perturbation;
@@ -74,6 +74,5 @@ TEST(Material, checkWaterThermalConductivityIAPWS_)
                 variable_array, pos, t, dt);
 
         ASSERT_NEAR((lambda1 - lambda) / perturbation, dlambda_drho, 8.e-6);
-        */
     }
 }

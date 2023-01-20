@@ -138,7 +138,7 @@ double computedBarLambda_dbarT(const double barT, double bar_rho)
 
     double dlambda0_factor_dbarT = 0.0;
     double barT_i = barT * barT;
-    for (int i = 1; i < 4; i++)
+    for (int i = 1; i < 5; i++)
     {
         dlambda0_factor_dbarT -= static_cast<double>(i) * (Li[i] / barT_i);
         barT_i *= barT;
