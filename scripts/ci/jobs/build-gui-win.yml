@@ -2,17 +2,6 @@ build gui win:
   extends:
     - .template-build-win
     - .vs2019-environment
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-      variables:
-        ADDITIONAL_CMAKE_ARGS: " -DOGS_BUILD_CLI=ON -DOGS_BUILD_PROCESS_TH2M=OFF"
-        BUILD_TESTS: "false"
-        BUILD_CTEST: "false"
-    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
-    - changes:
-        - Applications/DataExplorer/**/*
-    - when: manual
-      allow_failure: true
   variables:
     CMAKE_PRESET: release-gui
     CMAKE_ARGS: >-
@@ -21,4 +10,4 @@ build gui win:
       $ADDITIONAL_CMAKE_ARGS
   parallel:
     matrix:
-      - USE_PYTHON: ["USE_PYTHON=ON", "USE_PYTHON=OFF"]
+      - USE_PYTHON: ["USE_PYTHON=ON"]
