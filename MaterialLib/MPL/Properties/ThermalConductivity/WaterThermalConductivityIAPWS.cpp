@@ -18,6 +18,7 @@
 
 namespace MaterialPropertyLib
 {
+    // Li and Lij are coefficients from Tables 1 and 2 (Daucik and Dooley, 2011)
 static const double Li[5] = {2.443221e-3, 1.323095e-2, 6.770357e-3, -3.454586e-3, 4.096266e-4};
 static const double Lij[5][6] = {
     {1.60397357, -0.646013523, 0.111443906, 0.102997357, -0.0504123634, 0.00609859258},

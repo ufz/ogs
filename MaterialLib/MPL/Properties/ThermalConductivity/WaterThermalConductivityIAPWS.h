@@ -21,17 +21,14 @@ class Phase;
  * \brief A class for thermal conductivity model that is defined by
  *        The International Association for the Properties of Water and Steam
  *        <a href="http://www.iapws.org/relguide/ThCond.pdf">IAPWS</a>
- *        (File accessed at 13.01.2023)
+ *        (File accessed at 13.01.2023) - (Daucik and Dooley, 2011)
  *
  *        With the definition, the thermal conductivity is a function of temperature and
  *        water density
  *
- *  \attention The critical enhancement, \f$\bar{\mu}_2\f$, which is significant
- *             only within the boundaries specified by
- *                 \f[ T (\mbox{in K}) \in (645.91, 650.77) \f]
- *             and
- *                 \f[ \rho (\mbox{in kg m}^{-3}) \in (245.8, 405.3)\f],
- *             is not considered.
+ *  \attention The critical enhancement, \f$\bar{\lambda}_2\f$, is not considered.
+ *              For information on region of significance and the significance,
+ *              please see Figure 2 from the document linked in the upper paragraph.
  */
 class WaterThermalConductivityIAPWS final : public Property
 {
@@ -62,6 +59,5 @@ private:
     static constexpr double ref_rho_ = 322.0;  ///< reference density in `kg/m^3`
     static constexpr double ref_lambda_ = 1.0e-3;  ///< reference thermal conductivity in `W.K^-1.m^-1`
 
-    // Coefficients Li and Lij are given in two static arrays in the cpp file.
 };
 }  // namespace MaterialPropertyLib
