@@ -16,6 +16,15 @@ if(CCACHE_EXECUTABLE)
     )
 endif()
 
+if(MSVC)
+    find_program(NINJA_CMD ninja)
+    if(NINJA_CMD)
+        # When ninja is available use it to speed up builds
+        set(_cmake_generator CMAKE_GENERATOR Ninja)
+        message(STATUS "Ninja generator will be used for external projects.")
+    endif()
+endif()
+
 if(OGS_USE_MFRONT)
     option(OGS_BUILD_TFEL
            "Build TFEL locally. Needs to be set with a clean cache!" OFF
@@ -243,6 +252,7 @@ endif()
 if(NOT HDF5_FOUND)
     BuildExternalProject(
         HDF5 ${_hdf5_source} CMAKE_ARGS ${_hdf5_options} ${_defaultCMakeArgs}
+        ${_cmake_generator}
     )
     message(
         STATUS
@@ -321,7 +331,7 @@ if(NOT VTK_FOUND)
     endif()
     BuildExternalProject(
         VTK ${_vtk_source} CMAKE_ARGS ${VTK_OPTIONS} ${_defaultCMakeArgs}
-                                      ${_loguru_patch}
+                                      ${_loguru_patch} ${_cmake_generator}
     )
     message(
         STATUS
