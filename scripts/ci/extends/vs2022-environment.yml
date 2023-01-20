@@ -1,4 +1,4 @@
-.vs2019-environment:
+.vs2022-environment:
   before_script:
     # Load VS environment
     - |
