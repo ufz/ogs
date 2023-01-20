@@ -211,15 +211,9 @@ void calculateNonEquilibriumInitialResiduum(
 {
     for (auto& process_data : per_process_data)
     {
-        auto& time_disc = *process_data->time_disc;
         auto& nonlinear_solver = process_data->nonlinear_solver;
 
         setEquationSystem(*process_data);
-        // dummy values to handle the time derivative terms more or less
-        // correctly, i.e. to ignore them.
-        double const t = 0;
-        double const dt = 1;
-        time_disc.nextTimestep(t, dt);
         nonlinear_solver.calculateNonEquilibriumInitialResiduum(
             process_solutions, process_solutions_prev,
             process_data->process_id);
