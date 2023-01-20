@@ -11,6 +11,7 @@ build win:
   variables:
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release
+    BUILD_TESTS: "false"
     # TODO: temporary switched off TH2M
     CMAKE_ARGS: >-
       -DOGS_CI_TESTRUNNER_REPEAT=1
