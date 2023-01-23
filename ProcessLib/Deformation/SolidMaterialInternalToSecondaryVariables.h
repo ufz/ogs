@@ -50,6 +50,18 @@ void solidMaterialInternalToSecondaryVariables(
         auto const num_components =
             mat_iv_collection.front().second.num_components;
 
+        // Check that the number of components is equal for all materials.
+        if (!std::all_of(
+                begin(mat_iv_collection), end(mat_iv_collection),
+                [num_components](auto const& mat_iv)
+                { return mat_iv.second.num_components == num_components; }))
+        {
+            OGS_FATAL(
+                "Not for all material ids the secondary variable '{:s}' has "
+                "{:d} components.",
+                name, num_components);
+        }
+
         DBUG("Registering internal variable {:s}.", name);
 
         auto callback =
