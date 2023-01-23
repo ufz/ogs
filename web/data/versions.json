@@ -19,7 +19,7 @@
     "petsc": "3.16.3",
     "qt": "5.14.2",
     "python": "3.6",
-    "snakemake": "7.15.2",
+    "snakemake": "7.20.0",
     "hdf5": "1.12.1",
     "libxml2": "2.9.12",
     "tfel-rliv": "4.0",
