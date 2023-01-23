@@ -2,6 +2,10 @@
 
 if(OGS_USE_PYTHON)
     set(_python_version_max "...<3.12")
+    if(WIN32)
+        # 3.11 crashes at initialization on Windows.
+        set(_python_version_max "...<3.11")
+    endif()
 endif()
 
 if(OGS_USE_PIP)
