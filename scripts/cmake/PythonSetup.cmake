@@ -5,7 +5,6 @@ if(OGS_USE_PYTHON)
 endif()
 
 if(OGS_USE_PIP)
-    set(_python_version_max "...<3.11") # There are no VTK wheels for >3.10
     set(Python_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
     set(CMAKE_REQUIRE_FIND_PACKAGE_Python TRUE)
     if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
