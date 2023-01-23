@@ -50,8 +50,8 @@ ComponentTransportProcess::ComponentTransportProcess(
       _surfaceflux(std::move(surfaceflux)),
       _chemical_solver_interface(std::move(chemical_solver_interface))
 {
-    _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "LiquidFlowRate", MeshLib::MeshItemType::Node, 1);
+    _residua.push_back(MeshLib::getOrCreateMeshProperty<double>(
+        mesh, "LiquidFlowRate", MeshLib::MeshItemType::Node, 1));
 
     if (_use_monolithic_scheme)
     {
@@ -60,7 +60,7 @@ ComponentTransportProcess::ComponentTransportProcess(
              pv_iter != _process_variables[process_id].end();
              ++pv_iter)
         {
-            _molar_flow_rate.push_back(MeshLib::getOrCreateMeshProperty<double>(
+            _residua.push_back(MeshLib::getOrCreateMeshProperty<double>(
                 mesh, pv_iter->get().getName() + "FlowRate",
                 MeshLib::MeshItemType::Node, 1));
         }
@@ -71,7 +71,7 @@ ComponentTransportProcess::ComponentTransportProcess(
              pv_iter != _process_variables.end();
              ++pv_iter)
         {
-            _molar_flow_rate.push_back(MeshLib::getOrCreateMeshProperty<double>(
+            _residua.push_back(MeshLib::getOrCreateMeshProperty<double>(
                 mesh, (*pv_iter)[0].get().getName() + "FlowRate",
                 MeshLib::MeshItemType::Node, 1));
         }
@@ -200,31 +200,23 @@ void ComponentTransportProcess::assembleConcreteProcess(
     MathLib::finalizeMatrixAssembly(K);
     MathLib::finalizeVectorAssembly(b);
 
-    if (_use_monolithic_scheme || process_id == 0)
+    if (_use_monolithic_scheme)
     {
         auto const residuum = computeResiduum(*x[0], *xdot[0], M, K, b);
-        transformVariableFromGlobalVector(residuum, 0, dof_tables[0],
-                                          *_hydraulic_flow,
-                                          std::negate<double>());
-        if (_use_monolithic_scheme)
+        for (std::size_t variable_id = 0; variable_id < _residua.size();
+             ++variable_id)
         {
-            for (std::size_t c_idx = 0; c_idx < _molar_flow_rate.size();
-                 ++c_idx)
-            {
-                transformVariableFromGlobalVector(
-                    residuum, c_idx + 1, dof_tables[0],
-                    *_molar_flow_rate[c_idx], std::negate<double>());
-            }
+            transformVariableFromGlobalVector(
+                residuum, variable_id, dof_tables[0], *_residua[variable_id],
+                std::negate<double>());
         }
-        return;
     }
-
-    if (process_id > 0)
+    else
     {
         auto const residuum =
             computeResiduum(*x[process_id], *xdot[process_id], M, K, b);
         transformVariableFromGlobalVector(residuum, 0, dof_tables[process_id],
-                                          *_molar_flow_rate[process_id - 1],
+                                          *_residua[process_id],
                                           std::negate<double>());
     }
 }
@@ -253,18 +245,9 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
 
     // b is the negated residumm used in the Newton's method.
     // Here negating b is to recover the primitive residuum.
-    if (process_id == _process_data.hydraulic_process_id)
-    {
-        transformVariableFromGlobalVector(b, 0, *_local_to_global_index_map,
-                                          *_hydraulic_flow,
-                                          std::negate<double>());
-    }
-    else
-    {
-        transformVariableFromGlobalVector(b, 0, *_local_to_global_index_map,
-                                          *_molar_flow_rate[process_id - 1],
-                                          std::negate<double>());
-    }
+    transformVariableFromGlobalVector(b, 0, *_local_to_global_index_map,
+                                      *_residua[process_id],
+                                      std::negate<double>());
 }
 
 Eigen::Vector3d ComponentTransportProcess::getFlux(
