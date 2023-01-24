@@ -3,7 +3,6 @@
   tags:
     - windows
   extends:
-    - .vs2019-environment
     - .test-artifacts
   needs: [meta]
   variables:

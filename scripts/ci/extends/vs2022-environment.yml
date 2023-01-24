@@ -1,0 +1,13 @@
+.vs2022-environment:
+  before_script:
+    # Load VS environment
+    - |
+      pushd $env:VS170COMNTOOLS
+      cmd /c "VsDevCmd.bat -arch=amd64 -host_arch=amd64&set" |
+      foreach {
+        if ($_ -match "=") {
+          $v = $_.split("=", 2); set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
+        }
+      }
+      popd
+      Write-Host "`nVisual Studio Command Prompt variables set." -ForegroundColor Yellow

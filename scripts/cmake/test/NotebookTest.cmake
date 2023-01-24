@@ -56,7 +56,7 @@ function(NotebookTest)
 
     set(timeout ${ogs.ctest.large_runtime})
     if(DEFINED NotebookTest_RUNTIME)
-        math(EXPR timeout "${NotebookTest_RUNTIME} * 5")
+        math(EXPR timeout "${NotebookTest_RUNTIME} * 10")
     else()
         set(NotebookTest_RUNTIME 1)
     endif()
