@@ -1,7 +1,7 @@
 {{ $job_url := os.Getenv "CI_JOB_URL" }}
 {{ $job_id := os.Getenv "CI_JOB_ID" }}
 <div class="mt-20 text-sm text-gray-700 prose prose-sm max-w-none">
-    <p>This article was written by {{ .Params.Author }}. If you are missing something or you find an error please <a href="mailto:ogs-devs@googlegroups.com">let us know</a>.<br>
+    <p>This article was written by {{ .Params.Author }}. If you are missing something or you find an error please <a href="mailto:info@opengeosys.org">let us know</a>.<br>
         Generated with <a href="https://gohugo.io">Hugo</a> {{ hugo.Version }}
         {{ if $job_url }}
           in CI job <a href="{{ $job_url }}">{{ $job_id }}</a>
