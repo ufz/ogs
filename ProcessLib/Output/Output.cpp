@@ -216,13 +216,13 @@ MeshLib::Mesh const& Output::prepareSubmesh(
     auto is_residuum_field = [](std::string const& name) -> bool
     {
         using namespace std::literals::string_view_literals;
-        static constexpr std::string_view names[] = {
-            "GasMassFlowRate"sv,    "heat_flux"sv,    "HeatFlowRate"sv,
-            "LiquidMassFlowRate"sv, "MassFlowRate"sv, "MaterialForces"sv,
-            "MolarFlowRate"sv,      "NodalForces"sv,  "NodalForcesJump"sv,
-            "VolumetricFlowRate"sv};
-        return std::find(std::begin(names), std::end(names), name) !=
-               std::end(names);
+        static constexpr std::string_view endings[] = {
+            "FlowRate"sv, "heat_flux"sv, "MaterialForces"sv, "NodalForces"sv,
+            "NodalForcesJump"sv};
+        auto ends_with = [&](std::string_view const& ending)
+        { return name.ends_with(ending); };
+        return std::find_if(std::begin(endings), std::end(endings),
+                            ends_with) != std::end(endings);
     };
 
     for (auto const& name : property_names)

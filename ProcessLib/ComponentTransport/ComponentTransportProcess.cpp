@@ -11,6 +11,7 @@
 #include "ComponentTransportProcess.h"
 
 #include <cassert>
+#include <range/v3/view/drop.hpp>
 
 #include "BaseLib/RunTime.h"
 #include "ChemistryLib/ChemicalSolverInterface.h"
@@ -19,7 +20,6 @@
 #include "MathLib/LinAlg/FinalizeVectorAssembly.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
-#include "ProcessLib/Process.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFlux.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/ComputeResiduum.h"
@@ -51,28 +51,25 @@ ComponentTransportProcess::ComponentTransportProcess(
       _chemical_solver_interface(std::move(chemical_solver_interface))
 {
     _residua.push_back(MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "LiquidFlowRate", MeshLib::MeshItemType::Node, 1));
+        mesh, "LiquidMassFlowRate", MeshLib::MeshItemType::Node, 1));
 
     if (_use_monolithic_scheme)
     {
         const int process_id = 0;
-        for (auto pv_iter = std::next(_process_variables[process_id].begin());
-             pv_iter != _process_variables[process_id].end();
-             ++pv_iter)
+        for (auto const& pv :
+             _process_variables[process_id] | ranges::views::drop(1))
         {
             _residua.push_back(MeshLib::getOrCreateMeshProperty<double>(
-                mesh, pv_iter->get().getName() + "FlowRate",
+                mesh, pv.get().getName() + "FlowRate",
                 MeshLib::MeshItemType::Node, 1));
         }
     }
     else
     {
-        for (auto pv_iter = std::next(_process_variables.begin());
-             pv_iter != _process_variables.end();
-             ++pv_iter)
+        for (auto const& pv : _process_variables | ranges::views::drop(1))
         {
             _residua.push_back(MeshLib::getOrCreateMeshProperty<double>(
-                mesh, (*pv_iter)[0].get().getName() + "FlowRate",
+                mesh, pv[0].get().getName() + "FlowRate",
                 MeshLib::MeshItemType::Node, 1));
         }
     }
