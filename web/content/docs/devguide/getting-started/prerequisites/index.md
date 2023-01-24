@@ -128,6 +128,14 @@ git config --global user.name "Your Name Here"
 git config --global user.email "your_email@example.com"
 ```
 
+Enable the long paths feature:
+
+```bash
+git config --global core.longpaths true
+```
+
+You may also have [enable the long paths feature in the Windows registry](https://www.thewindowsclub.com/how-to-enable-or-disable-win32-long-paths-in-windows-11-10).
+
 In some corporate environments you may have to use a proxy server. In this case tell git about it:
 
 ```bash
