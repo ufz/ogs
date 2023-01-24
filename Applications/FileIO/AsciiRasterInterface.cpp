@@ -201,7 +201,7 @@ readSurferHeader(std::ifstream& in)
         return {};
     }
     header.n_depth = 1;
-    header.no_data = min - 1;
+    header.no_data = -9999;
     in >> min >> max;
 
     return {{header, min, max}};
@@ -229,7 +229,6 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(
     }
 
     auto const [header, min, max] = *optional_header;
-    const double no_data_val(min - 1);
     std::vector<double> values(header.n_cols * header.n_rows);
     // read the data into the double-array
     for (std::size_t j(0); j < header.n_rows; ++j)
@@ -238,7 +237,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(
         for (std::size_t i(0); i < header.n_cols; ++i)
         {
             const double val = readDoubleFromStream(in);
-            values[idx + i] = (val > max || val < min) ? no_data_val : val;
+            values[idx + i] = (val > max || val < min) ? header.no_data : val;
         }
     }
 

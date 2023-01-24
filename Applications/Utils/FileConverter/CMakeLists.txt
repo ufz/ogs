@@ -11,6 +11,7 @@ set(TOOLS
     GocadTSurfaceReader
     Mesh2Raster
     PVD2XDMF
+    Raster2ASC
 )
 
 if(OGS_USE_NETCDF)
