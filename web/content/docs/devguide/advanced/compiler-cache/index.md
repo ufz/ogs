@@ -13,7 +13,7 @@ aliases = ["/docs/devguide/advanced/using-ccache"]
 
 ## Introduction
 
-A compiler cache speeds up compilation times by caching object files and reusing them on subsequent builds. This even works for complete rebuilds (i.e. deleting the full build-directory). The compiler cache [Ccache](https://ccache.samba.org) is automatically used when it is found by CMake.
+A compiler cache speeds up compilation times by caching object files and reusing them on subsequent builds. This even works for complete rebuilds (i.e. deleting the full build-directory). The compiler cache [Ccache](https://ccache.dev) is automatically used when it is found by CMake.
 
 <div class='linux'>
 
@@ -43,13 +43,13 @@ brew install ccache
 
 <div class='win'>
 
-Windows support in ccache is not yet in the main ccache development line. Please install [ccache](https://github.com/cristianadam/ccache/releases).
+[Download the `Windows x86_64 (binary release)`](https://ccache.dev/download.html).
 
 Just extract the archive and put the `ccache.exe` into the `PATH`.
 
 </div>
 
-You may want to change the cache directory (environment variable `CCACHE_DIR`) or increase the cache size (e.g. `ccache -M 10G` or `CCACHE_MAXSIZE`). See the [ccache docs](https://ccache.dev/manual/4.3.html#_configuration) for configuration instructions.
+You may want to change the cache directory (environment variable `CCACHE_DIR`) or increase the cache size (e.g. run `ccache -M 10G` once or set the environment variable `CCACHE_MAXSIZE`). See the [Ccache docs](https://ccache.dev/documentation.html) for configuration instructions.
 
 You can check cache hit statistics with `ccache -s`.
 
