@@ -26,6 +26,14 @@ void solidMaterialInternalToSecondaryVariables(
     std::map<int, std::unique_ptr<SolidMaterial>> const& solid_materials,
     AddSecondaryVariableCallback const& add_secondary_variable)
 {
+    assert(!solid_materials.empty());
+
+    // Multiple material ids could be present but only one material for the
+    // whole domain. In this case the choice of callbacks is independent of
+    // local assembler's material id, and the material id is 0.
+    // \see selectSolidConstitutiveRelation() for material id logic.
+    bool const material_id_independent = solid_materials.size() == 1;
+
     // For each name of an internal variable collect all solid material/
     // internal variable pairs.
     std::map<
@@ -65,7 +73,8 @@ void solidMaterialInternalToSecondaryVariables(
         DBUG("Registering internal variable {:s}.", name);
 
         auto callback =
-            [mat_iv_collection = mat_iv_collection, num_components](
+            [mat_iv_collection = mat_iv_collection, num_components,
+             material_id_independent](
                 LocalAssemblerInterface const& loc_asm,
                 const double /*t*/,
                 std::vector<GlobalVector*> const& /*x*/,
@@ -78,7 +87,8 @@ void solidMaterialInternalToSecondaryVariables(
             const unsigned num_int_pts = loc_asm.getNumberOfIntegrationPoints();
             assert(num_int_pts > 0);
 
-            int const material_id = loc_asm.getMaterialID();
+            int const material_id =
+                material_id_independent ? 0 : loc_asm.getMaterialID();
 
             auto const mat_iv =
                 std::find_if(begin(mat_iv_collection), end(mat_iv_collection),
