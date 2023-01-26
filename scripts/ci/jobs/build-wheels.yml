@@ -18,6 +18,7 @@ workflow:
     - if: $CI_MERGE_REQUEST_ID
       variables:
         CIBW_BUILD: cp39* cp310*
+        GIT_DEPTH: 1000
 
 include:
   - local: "scripts/ci/extends/*.yml"
