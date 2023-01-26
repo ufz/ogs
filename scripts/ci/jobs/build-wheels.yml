@@ -18,6 +18,7 @@ workflow:
     - if: $CI_MERGE_REQUEST_ID
       variables:
         CIBW_BUILD: cp39* cp310*
+        GIT_DEPTH: 1000
 
 include:
   - local: "scripts/ci/extends/*.yml"
@@ -33,12 +34,9 @@ include:
 build wheels linux:
   tags: [envinf3-shell]
   variables:
-    CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux2014_x86_64_ccache
     CPM_SOURCE_CACHE: /host/cibuildwheel_cache/cpm
     CCACHE_DIR: /host/cibuildwheel_cache/ccache
     CCACHE_MAXSIZE: 15G
-  before_script:
-    - docker build -t ${CIBW_MANYLINUX_X86_64_IMAGE} -f Applications/Python/Dockerfile Applications/Python
   <<: *wheels_template
 
 build wheels mac:
@@ -58,6 +56,9 @@ build wheels win:
     - .vs2019-environment
   variables:
     SKBUILD_BUILD_OPTIONS: "/m"
+    SKBUILD_GENERATOR: "Visual Studio 16 2019"
+    # Does not work as it does not select the host64 compiler:
+    # SKBUILD_GENERATOR: "Ninja"
   <<: *wheels_template
 
 publish wheels:

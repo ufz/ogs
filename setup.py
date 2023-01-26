@@ -33,6 +33,10 @@ if "SETUPTOOLS_SCM_LOCAL_SCHEME" in os.environ:
     if os.environ["SETUPTOOLS_SCM_LOCAL_SCHEME"] in local_scheme_values:
         scm_local_scheme = os.environ["SETUPTOOLS_SCM_LOCAL_SCHEME"]
 
+cmake_args = [f"--preset {cmake_preset}", "-B ."]
+if "SKBUILD_GENERATOR" in os.environ:
+    cmake_args.extend(["-G", os.environ["SKBUILD_GENERATOR"]])
+
 setup(
     name="ogs",
     description="OpenGeoSys Python Module",
@@ -44,7 +48,7 @@ setup(
     package_dir={"": "Applications/Python"},
     cmake_install_dir="Applications/Python/ogs",
     extras_require={"test": ["pytest", "numpy"]},
-    cmake_args=[f"--preset {cmake_preset}", "-B ."],
+    cmake_args=cmake_args,
     python_requires=">=3.7",
     entry_points={"console_scripts": console_scripts},
     use_scm_version={
@@ -54,5 +58,8 @@ setup(
         # This would be in line with PEP 440, switch OGS versioning too?
         "version_scheme": "no-guess-dev",
         "local_scheme": scm_local_scheme,
+        # Was in pyproject.toml but it somehow reset the version scheme. Maybe
+        # it is better to do all scm config here.
+        "git_describe_command": 'git describe --dirty --tags --long --match "*[0-9]*" --abbrev=8',
     },
 )
