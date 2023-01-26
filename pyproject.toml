@@ -9,10 +9,6 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools_scm]
-# added --abbrev=8 to force consistent length
-git_describe_command = "git describe --dirty --tags --long --match \"*[0-9]*\" --abbrev=8"
-
 [tool.pytest.ini_options]
 testpaths = ["Tests"]
 norecursedirs = ["Tests/Data"]

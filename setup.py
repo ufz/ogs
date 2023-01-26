@@ -35,7 +35,7 @@ if "SETUPTOOLS_SCM_LOCAL_SCHEME" in os.environ:
 
 cmake_args = [f"--preset {cmake_preset}", "-B ."]
 if "SKBUILD_GENERATOR" in os.environ:
-    cmake_args.extend(['-G', os.environ["SKBUILD_GENERATOR"]])
+    cmake_args.extend(["-G", os.environ["SKBUILD_GENERATOR"]])
 
 setup(
     name="ogs",
@@ -58,5 +58,8 @@ setup(
         # This would be in line with PEP 440, switch OGS versioning too?
         "version_scheme": "no-guess-dev",
         "local_scheme": scm_local_scheme,
+        # Was in pyproject.toml but it somehow reset the version scheme. Maybe
+        # it is better to do all scm config here.
+        "git_describe_command": 'git describe --dirty --tags --long --match "*[0-9]*" --abbrev=8',
     },
 )
