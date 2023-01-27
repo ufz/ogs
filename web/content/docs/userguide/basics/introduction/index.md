@@ -63,10 +63,17 @@ See Linux tab!
 
 <div class="note">
 
+### Get current development version with `pip`
+
+The following command will download the latest development version:
+
+```bash
+pip install --index-url https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple ogs
+```
+
 ### Limitations of the `pip`-based installation
 
 - Serial configuration only! For PETSc-support please use a [Singularity container]({{< relref "container" >}}).
-- No embedded Python interpreter, i.e. no Python boundary conditions!
 - A Python (3.8 - 3.11) installation with `pip` is required.
 
 </div>
