@@ -11,6 +11,7 @@
 #pragma once
 
 #include <iosfwd>
+#include <string>
 #include <vector>
 
 namespace BaseLib

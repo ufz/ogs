@@ -14,8 +14,10 @@
 
 #pragma once
 
+#include <cstddef>
 #include <iosfwd>
 #include <string>
+#include <tuple>
 #include <vector>
 
 namespace BaseLib

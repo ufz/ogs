@@ -14,12 +14,15 @@
 
 #include "FileTools.h"
 
-#include <boost/algorithm/string.hpp>
+#include <spdlog/fmt/bundled/core.h>
+
+#include <boost/algorithm/string/predicate.hpp>
 #include <filesystem>
 #include <fstream>
 #include <typeindex>
 #include <unordered_map>
 
+#include "BaseLib/Logging.h"
 #include "Error.h"
 
 namespace

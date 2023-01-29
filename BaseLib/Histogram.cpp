@@ -10,6 +10,7 @@
 
 #include "Histogram.h"
 
+#include <cmath>
 #include <fstream>
 
 #include "BaseLib/Logging.h"

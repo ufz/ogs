@@ -7,7 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "BaseLib/IO/readStringListFromFile.h"
+#include "readStringListFromFile.h"
 
 #include <fstream>
 

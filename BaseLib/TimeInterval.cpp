@@ -14,6 +14,8 @@
 
 #include "TimeInterval.h"
 
+#include <memory>
+
 #include "ConfigTree.h"
 
 namespace BaseLib

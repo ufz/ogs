@@ -10,6 +10,7 @@
 
 #include "ConfigTree.h"
 
+#include <cstddef>
 #include <forward_list>
 #include <utility>
 
