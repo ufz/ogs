@@ -1,0 +1,30 @@
+check web links:
+  stage: check
+  allow_failure: true
+  tags: [docker]
+  extends:
+    - .rules-master-manual
+  needs: [ci_images, "build linux arch", "build linux petsc"]
+  image: $WEB_IMAGE
+  script:
+    # Copy notebook pages
+    - cp -rl build/*/web/content web/
+    - cd web
+    - hugo server &
+    - sleep 20
+    - >
+      linkchecker --no-warnings
+      --check-extern
+      --ignore-url='sciencedirect.com'
+      --ignore-url='wiley.com'
+      --ignore-url='doi.org'
+      --ignore-url='linkinghub.elsevier.com'
+      --ignore-url='overleaf.com'
+      --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/commit/'
+      --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/new'
+      --ignore-url='https://ogsstorage.blob.core.windows.net/binaries/ogs6'
+      --ignore-url='/css/all.css'
+      --ignore-url='www.grs.de'
+      --ignore-url='www.smartkd-concept.de'
+      http://localhost:1313
+    - kill $!

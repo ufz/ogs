@@ -4,6 +4,7 @@ include:
   # jobs, can be indiviually disabled for testing
   - local: "/scripts/ci/jobs/pre-commit.yml"
   - local: "/scripts/ci/jobs/build-linux.yml"
+  - local: "/scripts/ci/jobs/build-linux-arch.yml"
   - local: "/scripts/ci/jobs/build-linux-petsc.yml"
   - local: "/scripts/ci/jobs/build-linux-frontend.yml"
   - local: "/scripts/ci/jobs/build-docs.yml"
@@ -20,7 +21,9 @@ include:
   - local: "/scripts/ci/jobs/include-what-you-use.yml"
   - local: "/scripts/ci/jobs/clang-sanitizer.yml"
   - local: "/scripts/ci/jobs/clang-tidy.yml"
-  - local: "/scripts/ci/jobs/web.yml"
+  - local: "/scripts/ci/jobs/web-preview.yml"
+  - local: "/scripts/ci/jobs/web-check.yml"
+  - local: "/scripts/ci/jobs/web-deploy.yml"
   - local: "/scripts/ci/jobs/container.yml"
   - local: "/scripts/ci/jobs/release.yml"
   - local: "/scripts/ci/jobs/package.yml"
