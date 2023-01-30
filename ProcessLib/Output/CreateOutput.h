@@ -10,9 +10,8 @@
 
 #pragma once
 
-#include <memory>
-#include <string>
-#include <vector>
+#include "ProcessLib/Output/Output.h"
+#include "ProcessLib/Output/OutputConfig.h"
 
 namespace BaseLib
 {
@@ -26,12 +25,9 @@ class Mesh;
 
 namespace ProcessLib
 {
-class Process;
-class Output;
-}  // namespace ProcessLib
+Output createOutput(OutputConfig&& oc, std::string const& output_directory,
+                    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
 
-namespace ProcessLib
-{
 std::vector<Output> createOutput(
     const BaseLib::ConfigTree& config,
     const std::string& output_directory,

@@ -15,6 +15,7 @@
 #include "ConstitutiveStressSaturation_StrainPressureTemperature/Traits.h"
 #endif
 #include "LocalAssemblerInterface.h"
+#include "ProcessLib/AssemblyMixin.h"
 #include "ProcessLib/Process.h"
 #include "ThermoRichardsMechanicsProcessData.h"
 
@@ -110,8 +111,14 @@ namespace ThermoRichardsMechanics
  * where the superscript \f${\text T}\f$ means transpose,
  */
 template <int DisplacementDim, typename ConstitutiveTraits>
-class ThermoRichardsMechanicsProcess final : public Process
+class ThermoRichardsMechanicsProcess final
+    : public Process,
+      private AssemblyMixin<
+          ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>>
 {
+    friend class AssemblyMixin<
+        ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>>;
+
 public:
     ThermoRichardsMechanicsProcess(
         std::string name,
@@ -178,12 +185,21 @@ private:
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
+    void preTimestepConcreteProcess(std::vector<GlobalVector*> const& /*x*/,
+                                    const double /*t*/,
+                                    const double /*dt*/,
+                                    const int /*process_id*/) override;
+
     void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                      double const t, double const dt,
                                      const int process_id) override;
 
     NumLib::LocalToGlobalIndexMap const& getDOFTable(
         const int process_id) const override;
+
+    std::vector<std::string> initializeAssemblyOnSubmeshes(
+        std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+        override;
 
 private:
     std::vector<MeshLib::Node*> base_nodes_;
@@ -222,10 +238,6 @@ private:
     /// mechanical process. In the present implementation, the mechanical
     /// process has process_id == 1 in the staggered scheme.
     bool hasMechanicalProcess(int const /*process_id*/) const { return true; }
-
-    MeshLib::PropertyVector<double>* nodal_forces_ = nullptr;
-    MeshLib::PropertyVector<double>* hydraulic_flow_ = nullptr;
-    MeshLib::PropertyVector<double>* heat_flux_ = nullptr;
 };
 
 extern template class ThermoRichardsMechanicsProcess<

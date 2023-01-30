@@ -59,12 +59,15 @@ template <typename Functor>
 void transformVariableFromGlobalVector(
     GlobalVector const& input_vector, int const variable_id,
     NumLib::LocalToGlobalIndexMap const& local_to_global_index_map,
-    MeshLib::PropertyVector<double>& output_vector, Functor mapFunction)
+    MeshLib::PropertyVector<double>& output_vector, Functor map_function)
 {
     MathLib::LinAlg::setLocalAccessibleVector(input_vector);
 
-    std::fill(begin(output_vector), end(output_vector),
-              std::numeric_limits<double>::quiet_NaN());
+    // We fill the output with zeroes, because filling with NaN
+    // "breaks" visualization, e.g. of heat or mass flow rate
+    // with Taylor-Hood elements. I.e., all lower order
+    // properties would have NaN on the higher order nodes.
+    std::fill(begin(output_vector), end(output_vector), 0);
 
     int const n_components =
         local_to_global_index_map.getNumberOfVariableComponents(variable_id);
@@ -78,9 +81,65 @@ void transformVariableFromGlobalVector(
             auto const node_id = node->getID();
             MeshLib::Location const l(mesh_id, MeshLib::MeshItemType::Node,
                                       node_id);
-            output_vector.getComponent(node_id, component) = mapFunction(
-                input_vector[local_to_global_index_map.getGlobalIndex(
-                    l, variable_id, component)]);
+            auto const input_index = local_to_global_index_map.getGlobalIndex(
+                l, variable_id, component);
+            double const value = input_vector[input_index];
+
+            output_vector.getComponent(node_id, component) =
+                map_function(value);
+        }
+    }
+}
+
+/// Overload that can be used to transform and project nodal data from the bulk
+/// mesh to submeshes, e.g., for the output if residuum vectors on submeshes.
+template <typename Functor>
+void transformVariableFromGlobalVector(
+    GlobalVector const& input_vector_on_bulk_mesh, int const variable_id,
+    NumLib::LocalToGlobalIndexMap const& local_to_global_index_map,
+    MeshLib::PropertyVector<double>& output_vector_on_submesh,
+    std::vector<std::size_t> const& map_submesh_node_id_to_bulk_mesh_node_id,
+    Functor map_function)
+{
+    MathLib::LinAlg::setLocalAccessibleVector(input_vector_on_bulk_mesh);
+
+    // We fill the output with zeroes, because filling with NaN
+    // "breaks" visualization, e.g. of heat or mass flow rate
+    // with Taylor-Hood elements. I.e., all lower order
+    // properties would have NaN on the higher order nodes.
+    std::fill(begin(output_vector_on_submesh), end(output_vector_on_submesh),
+              0);
+
+    int const n_components =
+        local_to_global_index_map.getNumberOfVariableComponents(variable_id);
+    for (int component = 0; component < n_components; ++component)
+    {
+        auto const& mesh_subset =
+            local_to_global_index_map.getMeshSubset(variable_id, component);
+        auto const mesh_id = mesh_subset.getMeshID();
+
+        for (std::size_t submesh_node_id = 0;
+             submesh_node_id < map_submesh_node_id_to_bulk_mesh_node_id.size();
+             ++submesh_node_id)
+        {
+            std::size_t const bulk_node_id =
+                map_submesh_node_id_to_bulk_mesh_node_id[submesh_node_id];
+            MeshLib::Location const l(mesh_id, MeshLib::MeshItemType::Node,
+                                      bulk_node_id);
+            auto const input_index = local_to_global_index_map.getGlobalIndex(
+                l, variable_id, component);
+
+            // On higher-order meshes some d.o.f.s might not be defined on all
+            // nodes. We silently ignore the d.o.f.s we cannot find.
+            [[unlikely]] if (input_index == NumLib::MeshComponentMap::nop)
+            {
+                continue;
+            }
+
+            double const value = input_vector_on_bulk_mesh[input_index];
+
+            output_vector_on_submesh.getComponent(submesh_node_id, component) =
+                map_function(value);
         }
     }
 }

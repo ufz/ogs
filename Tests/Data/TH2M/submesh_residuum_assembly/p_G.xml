@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="base.prj">
+    <!-- u -->
+    <add sel="/*/process_variables/process_variable[name=&quot;displacement&quot;]">
+        <initial_condition>displacement0</initial_condition>
+    </add>
+    <add sel="/*/processes/process">
+        <initial_stress>initial_stress</initial_stress>
+    </add>
+    <add sel="/*/parameters">
+        <parameter>
+            <name>initial_stress</name>
+            <type>Function</type>
+            <expression>5e4 * 0.25 * x</expression>
+            <expression>5e4 * 0.25 * x</expression>
+            <expression>0</expression>
+            <expression>0</expression>
+        </parameter>
+    </add>
+
+    <!-- p_G -->
+    <add sel="/*/process_variables/process_variable[name=&quot;gas_pressure&quot;]">
+        <initial_condition>p_G_initial</initial_condition>
+    </add>
+    <add sel="/*/process_variables/process_variable[name=&quot;gas_pressure&quot;]/boundary_conditions">
+        <boundary_condition>
+            <mesh>surface_x_max</mesh>
+            <type>Dirichlet</type>
+            <component>0</component>
+            <parameter>p_G_right</parameter>
+        </boundary_condition>
+    </add>
+    <add sel="/*/parameters">
+        <parameter>
+            <name>p_G_right</name>
+            <type>Constant</type>
+            <value>1e5</value>
+        </parameter>
+        <parameter>
+            <name>p_G_initial</name>
+            <type>Function</type>
+            <expression>1e5 * 0.25 * x</expression>
+        </parameter>
+    </add>
+
+    <!-- p_cap -->
+    <add sel="/*/process_variables/process_variable[name=&quot;capillary_pressure&quot;]">
+        <initial_condition>p_cap_initial</initial_condition>
+    </add>
+    <add sel="/*/process_variables/process_variable[name=&quot;capillary_pressure&quot;]/boundary_conditions">
+        <boundary_condition>
+            <mesh>surface_x_max</mesh>
+            <type>Dirichlet</type>
+            <component>0</component>
+            <parameter>p_cap_right</parameter>
+        </boundary_condition>
+    </add>
+    <add sel="/*/parameters">
+        <parameter>
+            <name>p_cap_right</name>
+            <type>Constant</type>
+            <value>1e5</value>
+        </parameter>
+        <parameter>
+            <name>p_cap_initial</name>
+            <type>Function</type>
+            <expression>1e5 * 0.25 * x</expression>
+        </parameter>
+    </add>
+
+    <!-- T -->
+    <add sel="/*/process_variables/process_variable[name=&quot;temperature&quot;]">
+        <initial_condition>zero</initial_condition>
+    </add>
+
+    <!-- output -->
+    <add sel="/*/time_loop/output">
+        <prefix>p_G</prefix>
+    </add>
+    <add sel="/*/time_loop/submesh_residuum_output">
+        <prefix>p_G_{:meshname}</prefix>
+    </add>
+    
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <regex>p_G.*_ts_[0-9]*_.*\.vtu</regex>
+                <field>temperature_interpolated</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>p_G.*_ts_[0-9]*_.*\.vtu</regex>
+                <field>HeatFlowRate</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            
+            <vtkdiff>
+                <regex>p_G.*_ts_[0-9]*_.*\.vtu</regex>
+                <field>gas_pressure_interpolated</field>
+                <absolute_tolerance>3e-10</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>p_G.*_ts_[0-9]*_.*\.vtu</regex>
+                <field>GasMassFlowRate</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            
+            <vtkdiff>
+                <regex>p_G.*_ts_[0-9]*_.*\.vtu</regex>
+                <field>capillary_pressure_interpolated</field>
+                <absolute_tolerance>5e-10</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>p_G.*_ts_[0-9]*_.*\.vtu</regex>
+                <field>LiquidMassFlowRate</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            
+            <vtkdiff>
+                <regex>p_G.*_ts_[0-9]*_.*\.vtu</regex>
+                <field>displacement</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>p_G.*_ts_[0-9]*_.*\.vtu</regex>
+                <field>NodalForces</field>
+                <absolute_tolerance>1.1e-11</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
+</OpenGeoSysProjectDiff>

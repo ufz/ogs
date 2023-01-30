@@ -104,11 +104,32 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu displacement displacement 1e-6 5.0e-3
-    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu pressure pressure 0.2 0.2
-    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu temperature temperature 5e-5 5e-4
-    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu epsilon epsilon 5e-6 1e-5
-    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu sigma sigma 200.0 200.0
+    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu displacement displacement 1e-6 0
+    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu pressure pressure 2.9e4 0
+    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu temperature temperature 0.2 0
+    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu epsilon epsilon 5e-6 0
+    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu sigma sigma 1.4e4 0
+    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu HeatFlowRate HeatFlowRate 4e-11 0
+    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu MassFlowRate MassFlowRate 2e-8 0
+    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu NodalForces NodalForces 3.6e2 0
+    # submesh residuum output quarter_002_2nd_r_gt_2
+    PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu displacement displacement 1e-15 0
+    PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu pressure pressure 8e-8 0
+    PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu temperature temperature 1.2e-13 0
+    PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu epsilon epsilon 1e-15 0
+    PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu sigma sigma 7e-8 0
+    PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu HeatFlowRate HeatFlowRate 4e-11 0
+    PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu MassFlowRate MassFlowRate 1e-15 0
+    PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu NodalForces NodalForces 4.3e-8 0
+    # submesh residuum output quarter_002_2nd_r_lt_2
+    PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu displacement displacement 1e-15 0
+    PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu pressure pressure 2.3e-7 0
+    PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu temperature temperature 2.2e-11 0
+    PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu epsilon epsilon 1e-15 0
+    PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu sigma sigma 1.1e-5 0
+    PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu HeatFlowRate HeatFlowRate 6.1e-12 0
+    PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu MassFlowRate MassFlowRate 1e-15 0
+    PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu NodalForces NodalForces 2e-8 0
 )
 
 AddTest(

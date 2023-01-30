@@ -31,10 +31,10 @@ class Process;
 class Output
 {
 public:
-    Output(std::unique_ptr<OutputFormat> output_file,
+    Output(std::unique_ptr<OutputFormat>&& output_file,
            bool const output_nonlinear_iteration_results,
-           OutputDataSpecification const& output_data_specification,
-           std::vector<std::string> const& mesh_names_for_output,
+           OutputDataSpecification&& output_data_specification,
+           std::vector<std::string>&& mesh_names_for_output,
            std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
 
     Output(Output const& other) = delete;
@@ -46,8 +46,14 @@ public:
     //! TODO doc. Opens a PVD file for each process.
     void addProcess(ProcessLib::Process const& process);
 
-    //! Writes output for the given \c process if it should be written in the
-    //! given \c timestep.
+    //! Declare that the specified mesh property should not be projected from
+    //! the bulk mesh to submeshes during submesh output.
+    void doNotProjectFromBulkMeshToSubmeshes(
+        std::string const& property_name,
+        MeshLib::MeshItemType const mesh_item_type);
+
+    //! Writes output for the given \c process if it should be written in
+    //! the given \c timestep.
     void doOutput(Process const& process, const int process_id,
                   int const timestep, const double t, int const iteration,
                   std::vector<GlobalVector*> const& xs) const;
@@ -115,6 +121,9 @@ private:
     // std::vector<std::shared_ptr<MeshLib::Mesh>>
     std::reference_wrapper<std::vector<std::unique_ptr<MeshLib::Mesh>> const>
         _meshes;
+
+    std::set<std::pair<std::string, MeshLib::MeshItemType>>
+        _do_not_project_from_bulk_mesh_to_submeshes;
 };
 
 }  // namespace ProcessLib

@@ -16,6 +16,7 @@
 #include "ProcessLib/CreateProcessData.h"
 #include "ProcessLib/Output/CreateOutput.h"
 #include "ProcessLib/Output/Output.h"
+#include "ProcessLib/Output/SubmeshResiduumOutputConfig.h"
 #include "TimeLoop.h"
 
 namespace ProcessLib
@@ -69,6 +70,37 @@ std::unique_ptr<TimeLoop> createTimeLoop(
             //! \ogs_file_param{prj__time_loop__outputs}
             : createOutputs(config.getConfigSubtree("outputs"),
                             output_directory, meshes);
+
+    if (auto const submesh_residuum_output_config_tree =
+            //! \ogs_file_param{prj__time_loop__submesh_residuum_output}
+        config.getConfigSubtreeOptional("submesh_residuum_output");
+        submesh_residuum_output_config_tree)
+    {
+        auto smroc = createSubmeshResiduumOutputConfig(
+            *submesh_residuum_output_config_tree, output_directory, meshes);
+
+        for (auto& process : processes)
+        {
+            auto const& residuum_vector_names =
+                process->initializeAssemblyOnSubmeshes(smroc.meshes);
+
+            for (auto& name : residuum_vector_names)
+            {
+                smroc.output.doNotProjectFromBulkMeshToSubmeshes(
+                    name, MeshLib::MeshItemType::Node);
+            }
+        }
+
+        outputs.push_back(std::move(smroc.output));
+    }
+    else
+    {
+        // Submesh assembly must always be initialized.
+        for (auto& process : processes)
+        {
+            process->initializeAssemblyOnSubmeshes({});
+        }
+    }
 
     auto per_process_data = createPerProcessData(
         //! \ogs_file_param{prj__time_loop__processes}

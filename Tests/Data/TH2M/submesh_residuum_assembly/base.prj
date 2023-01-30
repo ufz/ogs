@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProject>
+    <meshes>
+        <mesh axially_symmetric="false">domain.vtu</mesh>
+        <mesh axially_symmetric="false">surface_x_min.vtu</mesh>
+        <mesh axially_symmetric="false">surface_x_max.vtu</mesh>
+        <mesh axially_symmetric="false">surface_y_min.vtu</mesh>
+        <mesh axially_symmetric="false">submesh_0.vtu</mesh>
+        <mesh axially_symmetric="false">submesh_1.vtu</mesh>
+        <mesh axially_symmetric="false">submesh_2.vtu</mesh>
+        <mesh axially_symmetric="false">submesh_3.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>TH2M</name>
+            <type>TH2M</type>
+            <integration_order>3</integration_order>
+            <constitutive_relation>
+                <type>LinearElasticIsotropic</type>
+                <youngs_modulus>E</youngs_modulus>
+                <poissons_ratio>nu</poissons_ratio>
+            </constitutive_relation>
+
+            <jacobian_assembler>
+                <type>CentralDifferences</type>
+                <component_magnitudes>
+                   1e5 1e5 1e5 1e5
+                   1e5 1e5 1e5 1e5
+                   1e2 1e2 1e2 1e2
+                   1e-2 1e-2 1e-2 1e-2
+                   1e-2 1e-2 1e-2 1e-2
+                   1e-2 1e-2 1e-2 1e-2
+                   1e-2 1e-2 1e-2 1e-2
+                </component_magnitudes>
+                <relative_epsilons>
+                   1e-08 1e-08 1e-08 1e-08
+                   1e-08 1e-08 1e-08 1e-08
+                   1e-08 1e-08 1e-08 1e-08
+                   1e-08 1e-08 1e-08 1e-08
+                   1e-08 1e-08 1e-08 1e-08
+                   1e-08 1e-08 1e-08 1e-08
+                   1e-08 1e-08 1e-08 1e-08
+                </relative_epsilons>
+            </jacobian_assembler>
+
+            <reference_temperature>temperature_ic</reference_temperature>
+            <process_variables>
+                <gas_pressure>gas_pressure</gas_pressure>
+                <capillary_pressure>capillary_pressure</capillary_pressure>
+                <temperature>temperature</temperature>
+                <displacement>displacement</displacement>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="velocity_gas" output_name="velocity_gas" />
+                <secondary_variable internal_name="velocity_liquid" output_name="velocity_liquid" />
+                <secondary_variable internal_name="sigma" output_name="sigma" />
+                <secondary_variable internal_name="epsilon" output_name="epsilon" />
+                <secondary_variable internal_name="liquid_density" output_name="liquid_density" />
+                <secondary_variable internal_name="gas_density" output_name="gas_density" />
+                <secondary_variable internal_name="porosity" output_name="porosity" />
+                <secondary_variable internal_name="saturation" output_name="saturation" />
+            </secondary_variables>
+            <specific_body_force>0 0</specific_body_force>
+        </process>
+    </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>4019.0</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1000</value>
+                        </property>
+                        <property>
+                            <name>molar_mass</name>
+                            <type>Constant</type>
+                            <value>0.018</value>
+                        </property>
+
+                        <property>
+                            <name>thermal_expansivity</name>
+                            <type>Constant</type>
+                            <value>0.2</value>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Gas</type>
+                    <properties>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>4280.0</value>
+                        </property>
+                        <property>
+                            <name>molar_mass</name>
+                            <type>Constant</type>
+                            <value>.028949</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>0.6</value>
+                        </property>
+
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1.e-5</value>
+                        </property>
+
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2e3</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>1.838</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>917.654</value>
+                        </property>
+
+                        <property>
+                            <name>thermal_expansivity</name>
+                            <type>Constant</type>
+                            <value>1.5e-5</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1.e-12</value>
+                </property>
+
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>1.0</value>
+                </property>
+
+                <property>
+                    <name>saturation</name>
+                    <type>Constant</type>
+                    <value>0.5</value>
+                </property>
+
+                <property>
+                    <name>relative_permeability</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
+
+                <property>
+                    <name>relative_permeability_nonwetting_phase</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
+
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
+                </property>
+
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.4</value>
+                </property>
+
+                <property>
+                    <name>bishops_effective_stress</name>
+                    <type>BishopsPowerLaw</type>
+                    <exponent>1</exponent>
+                </property>
+
+            </properties>
+        </medium>
+    </media>
+    <time_loop>
+        <processes>
+            <process ref="TH2M">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>PerComponentDeltaX</type>
+                    <norm_type>INFINITY_N</norm_type>
+                    <abstols>1e-3 1e-3 1e-5 1e-6 1.e-6</abstols>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0</t_initial>
+                    <!-- start option 1 - ->
+                    <t_end>1e5</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>1e3</delta_t>
+                        </pair>
+                    </timesteps>
+                    <!- - end option 1 -->
+                    <!-- start option 2 -->
+                    <t_end>4</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>1</delta_t>
+                        </pair>
+                    </timesteps>
+                    <!-- end option 2 -->
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <timesteps>
+                <pair>
+                    <repeat>1</repeat>
+                    <each_steps>1</each_steps>
+                </pair>
+            </timesteps>
+
+            <variables>
+                <variable>gas_pressure_interpolated</variable>
+                <variable>capillary_pressure_interpolated</variable>
+                <variable>temperature_interpolated</variable>
+                <variable>displacement</variable>
+                <variable>liquid_pressure_interpolated</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+                <variable>velocity_gas</variable>
+                <variable>velocity_liquid</variable>
+                <variable>liquid_density</variable>
+                <variable>gas_density</variable>
+                <variable>porosity</variable>
+                <variable>saturation</variable>
+            </variables>
+        </output>
+        <submesh_residuum_output>
+            <type>VTK</type>
+            <timesteps>
+                <pair>
+                    <repeat>1</repeat>
+                    <each_steps>1</each_steps>
+                </pair>
+            </timesteps>
+
+            <variables>
+                <variable>gas_pressure_interpolated</variable>
+                <variable>capillary_pressure_interpolated</variable>
+                <variable>temperature_interpolated</variable>
+                <variable>displacement</variable>
+                <variable>liquid_pressure_interpolated</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+                <variable>velocity_gas</variable>
+                <variable>velocity_liquid</variable>
+                <variable>liquid_density</variable>
+                <variable>gas_density</variable>
+                <variable>porosity</variable>
+                <variable>saturation</variable>
+            </variables>
+            <meshes>
+                <mesh>submesh_0</mesh>
+                <mesh>submesh_1</mesh>
+                <mesh>submesh_2</mesh>
+                <mesh>submesh_3</mesh>
+            </meshes>
+        </submesh_residuum_output>
+    </time_loop>
+    <parameters>
+        <!-- Mechanics -->
+        <parameter>
+            <name>E</name>
+            <type>Constant</type>
+            <value>1e9</value>
+        </parameter>
+        <parameter>
+            <name>nu</name>
+            <type>Constant</type>
+            <value>0.1</value>
+        </parameter>
+        <!-- Model parameters -->
+        <parameter>
+            <name>displacement0</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>zero</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>temperature_ic</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+    </parameters>
+
+    <!-- ## Displacement equation #########################################-->
+    <process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>surface_y_min</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+
+                <!-- fix primary var at the left boundary -->
+                <boundary_condition>
+                    <mesh>surface_x_min</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+
+        <!-- ## Gas pressure equation #############################################-->
+        <process_variable>
+            <name>gas_pressure</name>
+            <components>1</components>
+            <order>1</order>
+            <boundary_conditions>
+
+                <!-- fix primary var at the left boundary -->
+                <boundary_condition>
+                    <mesh>surface_x_min</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+
+            </boundary_conditions>
+        </process_variable>
+
+        <!-- ## Capillary pressure equation #######################################-->
+        <process_variable>
+            <name>capillary_pressure</name>
+            <components>1</components>
+            <order>1</order>
+            <boundary_conditions>
+
+                <!-- fix primary var at the left boundary -->
+                <boundary_condition>
+                    <mesh>surface_x_min</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+
+            </boundary_conditions>
+        </process_variable>
+
+        <!-- ## Temperature equation ##############################################-->
+        <process_variable>
+            <name>temperature</name>
+            <components>1</components>
+            <order>1</order>
+            <boundary_conditions>
+
+                <!-- fix primary var at the left boundary -->
+                <boundary_condition>
+                    <mesh>surface_x_min</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>20</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <lis>-i bicgstab -p ilu -tol 1e-16 -maxiter 10000</lis>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <scaling>true</scaling>
+            </eigen>
+            <petsc>
+                <prefix>sd</prefix>
+                <parameters>-sd_ksp_type cg -sd_pc_type bjacobi -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10000</parameters>
+            </petsc>
+        </linear_solver>
+    </linear_solvers>
+</OpenGeoSysProject>

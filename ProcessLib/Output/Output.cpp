@@ -139,15 +139,15 @@ bool Output::isOutputProcess(const int process_id, const Process& process) const
            || is_last_process;
 }
 
-Output::Output(std::unique_ptr<OutputFormat> output_format,
+Output::Output(std::unique_ptr<OutputFormat>&& output_format,
                bool const output_nonlinear_iteration_results,
-               OutputDataSpecification const& output_data_specification,
-               std::vector<std::string> const& mesh_names_for_output,
+               OutputDataSpecification&& output_data_specification,
+               std::vector<std::string>&& mesh_names_for_output,
                std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
     : _output_format(std::move(output_format)),
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
       _output_data_specification(std::move(output_data_specification)),
-      _mesh_names_for_output(mesh_names_for_output),
+      _mesh_names_for_output(std::move(mesh_names_for_output)),
       _meshes(meshes)
 {
 }
@@ -159,6 +159,14 @@ void Output::addProcess(ProcessLib::Process const& process)
     {
         _mesh_names_for_output.push_back(process.getMesh().getName());
     }
+}
+
+void Output::doNotProjectFromBulkMeshToSubmeshes(
+    std::string const& property_name,
+    MeshLib::MeshItemType const mesh_item_type)
+{
+    _do_not_project_from_bulk_mesh_to_submeshes.emplace(property_name,
+                                                        mesh_item_type);
 }
 
 void Output::outputMeshes(
@@ -200,6 +208,11 @@ MeshLib::Mesh const& Output::prepareSubmesh(
     auto const& property_names =
         bulk_mesh.getProperties().getPropertyVectorNames();
 
+    // TODO Once all processes have been refactored to use the new residuum
+    // assembly logic, the functionality of this lambda should be refactored.
+    // Currently (Jan '23) there is a difference between the logic using this
+    // lambda and doNotProjectFromBulkMeshToSubmeshes(): The latter is
+    // considered regardless of submesh dimension.
     auto is_residuum_field = [](std::string const& name) -> bool
     {
         using namespace std::literals::string_view_literals;
@@ -214,6 +227,14 @@ MeshLib::Mesh const& Output::prepareSubmesh(
 
     for (auto const& name : property_names)
     {
+        if (_do_not_project_from_bulk_mesh_to_submeshes.contains(
+                {name, MeshLib::MeshItemType::Node}))
+        {
+            // the projection is disabled regardless of mesh and submesh
+            // dimension
+            continue;
+        }
+
         if (bulk_mesh.getDimension() == submesh.getDimension())
         {
             // omit the 'simple' transfer of the properties in the if condition
