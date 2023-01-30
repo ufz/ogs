@@ -1,5 +1,0 @@
-ufz-bgr/hpc/tutorial:
-  stage: check
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-  trigger: ufz-bgr/hpc/tutorial
