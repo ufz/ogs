@@ -14,55 +14,35 @@ variables:
   CTEST_EXCLUDE_REGEX: "" # Regex is given via ctest -E [regex]
   CPU_TARGET: ivybridge # envinf1 has oldest cpu
   ARTIFACTS_PAGES_URL: https://$CI_PROJECT_ROOT_NAMESPACE.$CI_PAGES_DOMAIN/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts
+  PIPELINE_NAME: "Default pipeline name"
 
 workflow:
+  name: "$PIPELINE_NAME"
   rules:
     # Disable CI for non-MR user-scoped pipelines
     - if: '$CI_MERGE_REQUEST_IID == null && $CI_PROJECT_PATH != "ogs/ogs"'
       when: never
     - if: "$CI_MERGE_REQUEST_LABELS =~ /.*(workflow::paused|ci skip).*/"
       when: never
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only.*/
+      variables:
+        PIPELINE_NAME: "web only MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+        CTEST_INCLUDE_REGEX: "nb-"
     - if: $CI_MERGE_REQUEST_IID # merge requests
+      variables:
+        PIPELINE_NAME: "MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
     - if: $CI_COMMIT_TAG # tags, ogs/ogs repo only
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PROJECT_PATH == "ogs/ogs"' # master, ogs/ogs repo only
     - if: '$CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/ && $CI_PROJECT_PATH == "ogs/ogs"' # release branches, e.g. v6.x.x
 
 include:
   - local: "scripts/ci/extends/*.yml"
-  - local: "/scripts/ci/jobs/meta.yml"
-  - local: "/scripts/ci/jobs/ci_images.yml"
-  # jobs, can be indiviually disabled for testing
-  - local: "/scripts/ci/jobs/pre-commit.yml"
-  - local: "/scripts/ci/jobs/build-linux.yml"
-  - local: "/scripts/ci/jobs/build-linux-petsc.yml"
-  - local: "/scripts/ci/jobs/build-linux-frontend.yml"
-  - local: "/scripts/ci/jobs/build-docs.yml"
-  - local: "/scripts/ci/jobs/build-win.yml"
-  - local: "/scripts/ci/jobs/build-mac.yml"
-  - local: "/scripts/ci/jobs/build-container.yml"
-  - local: "/scripts/ci/jobs/jupyter.yml"
-  - local: "/scripts/ci/jobs/code-quality.yml"
-  - local: "/scripts/ci/jobs/code-coverage.yml"
-  - local: "/scripts/ci/jobs/build-gui-linux.yml"
-  - local: "/scripts/ci/jobs/build-gui-win.yml"
-  - local: "/scripts/ci/jobs/build-gui-mac.yml"
-  - local: "/scripts/ci/jobs/check-header.yml"
-  - local: "/scripts/ci/jobs/include-what-you-use.yml"
-  - local: "/scripts/ci/jobs/clang-sanitizer.yml"
-  - local: "/scripts/ci/jobs/clang-tidy.yml"
-  - local: "/scripts/ci/jobs/web.yml"
-  - local: "/scripts/ci/jobs/container.yml"
-  - local: "/scripts/ci/jobs/release.yml"
-  - local: "/scripts/ci/jobs/package.yml"
-  - local: "/scripts/ci/jobs/trigger.yml"
-
-# child pipelines
-wheels:
-  stage: build
-  needs: []
-  trigger:
-    include: /scripts/ci/jobs/build-wheels.yml
-  rules:
-    - if: $CI_COMMIT_TAG
-    - when: manual
-      allow_failure: true
+  - local: "/scripts/ci/pipelines/web.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only.*/
+  - local: "/scripts/ci/pipelines/regular.yml"
+    rules:
+      - if: $CI_PIPELINE_SOURCE != "schedule" && $CI_MERGE_REQUEST_LABELS !~ /.*ci::web only.*/
+  - local: "/scripts/ci/pipelines/scheduled.yml"
+    rules:
+      - if: '$CI_PIPELINE_SOURCE == "schedule"'

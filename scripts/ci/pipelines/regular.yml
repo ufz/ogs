@@ -1,0 +1,46 @@
+include:
+  - local: "/scripts/ci/jobs/meta.yml"
+  - local: "/scripts/ci/jobs/ci_images.yml"
+  # jobs, can be indiviually disabled for testing
+  - local: "/scripts/ci/jobs/pre-commit.yml"
+  - local: "/scripts/ci/jobs/build-linux.yml"
+  - local: "/scripts/ci/jobs/build-linux-arch.yml"
+  - local: "/scripts/ci/jobs/build-linux-petsc.yml"
+  - local: "/scripts/ci/jobs/build-linux-frontend.yml"
+  - local: "/scripts/ci/jobs/build-docs.yml"
+  - local: "/scripts/ci/jobs/build-win.yml"
+  - local: "/scripts/ci/jobs/build-mac.yml"
+  - local: "/scripts/ci/jobs/build-container.yml"
+  - local: "/scripts/ci/jobs/jupyter.yml"
+  - local: "/scripts/ci/jobs/code-quality.yml"
+  - local: "/scripts/ci/jobs/code-coverage.yml"
+  - local: "/scripts/ci/jobs/build-gui-linux.yml"
+  - local: "/scripts/ci/jobs/build-gui-win.yml"
+  - local: "/scripts/ci/jobs/build-gui-mac.yml"
+  - local: "/scripts/ci/jobs/check-header.yml"
+  - local: "/scripts/ci/jobs/include-what-you-use.yml"
+  - local: "/scripts/ci/jobs/clang-sanitizer.yml"
+  - local: "/scripts/ci/jobs/clang-tidy.yml"
+  - local: "/scripts/ci/jobs/web-preview.yml"
+  - local: "/scripts/ci/jobs/web-check.yml"
+  - local: "/scripts/ci/jobs/web-deploy.yml"
+  - local: "/scripts/ci/jobs/container.yml"
+  - local: "/scripts/ci/jobs/release.yml"
+  - local: "/scripts/ci/jobs/package.yml"
+
+# child pipelines
+wheels:
+  stage: build
+  needs: []
+  trigger:
+    include: /scripts/ci/jobs/build-wheels.yml
+  rules:
+    - if: $CI_COMMIT_TAG
+    - when: manual
+      allow_failure: true
+
+ufz-bgr/hpc/tutorial:
+  stage: check
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+  trigger: ufz-bgr/hpc/tutorial

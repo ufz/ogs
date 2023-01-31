@@ -44,19 +44,30 @@ Or add `[ci skip]` to the commit message to skip the pipeline for this commit. E
 git commit -m "Added feature X [ci skip]"
 ```
 
+Or use the merge request label `ci::skip`.
+
 ## (Temporarily) reduce pipeline run time
 
-During work on MR you may want to reduce the pipeline run time to get feedback faster. You can change the pipeline by editing the `.gitlab-ci.yml` and `scripts/ci/jobs/*.yml` files. It is good practice to mark these changes with commits starting with `drop: ...` in the commit message so they can be removed later easily.
+During work on MR you may want to reduce the pipeline run time to get feedback faster. You can use a pre-configured reduced pipeline or manually editing the pipeline configuration files.
 
-### `.gitlab-ci.yml`
+## Pre-configured reduced pipelines
 
-These variables modify the pipeline:
+These pipelines can be selected by using merge request labels:
+
+- `ci::web only`: Runs Jupyter notebook ctests only and builds the web site.
+- More to come in the future...
+
+### Manually editing `.gitlab-ci.yml` and `scripts/ci/pipelines/regular.yml`
+
+You can change the pipeline by editing the `.gitlab-ci.yml` and `scripts/ci/jobs/*.yml` files. It is good practice to mark these changes with commits starting with `drop: ...` in the commit message so they can be removed later easily.
+
+These variables in `.gitlab-ci.yml` modify the pipeline:
 
 - `BUILD_TESTS`: Set this to `false` to disable unit tests.
 - `BUILD_CTEST`: Set this to `false` to disable ctest (benchmark) tests.
 - `CTEST_INCLUDE_REGEX`: Set this to a regex to select benchmarks to run, e.g. `nb` would select all notebook-based tests and would disable all other benchmarks.
 
-All jobs get included in the `include:`-section. You can simple comment out files to disable jobs defined in that files. Please note that some jobs depend on other jobs.
+All jobs get included in the `include:`-section in the file `scripts/ci/pipelines/regular.yml`. You can simple comment out files to disable jobs defined in that files. Please note that some jobs depend on other jobs.
 
 ### `scripts/ci/jobs/*.yml`
 
