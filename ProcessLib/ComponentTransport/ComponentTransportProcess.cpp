@@ -225,12 +225,18 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian ComponentTransportProcess.");
 
+    if (_use_monolithic_scheme)
+    {
+        OGS_FATAL(
+            "The AssembleWithJacobian() for ComponentTransportProcess is "
+            "implemented only for staggered scheme.");
+    }
+
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
 
-    assert(!_use_monolithic_scheme);
     std::generate_n(std::back_inserter(dof_tables), _process_variables.size(),
                     [&]() { return std::ref(*_local_to_global_index_map); });
 
