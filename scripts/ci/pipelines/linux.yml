@@ -1,6 +1,9 @@
 include:
+  - local: "/scripts/ci/extends/*.yml"
   - local: "/scripts/ci/jobs/meta.yml"
   - local: "/scripts/ci/jobs/ci_images.yml"
+  - local: "/scripts/ci/jobs/build-linux.yml"
   - local: "/scripts/ci/jobs/build-linux-arch.yml"
   - local: "/scripts/ci/jobs/build-linux-petsc.yml"
-  - local: "/scripts/ci/jobs/web-preview.yml"
+  - local: "/scripts/ci/jobs/build-linux-frontend.yml"
+  - local: "/scripts/ci/jobs/build-gui-linux.yml"

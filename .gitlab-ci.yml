@@ -29,6 +29,9 @@ workflow:
         PIPELINE_NAME: "web only MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
         BUILD_TESTS: "false"
         CTEST_INCLUDE_REGEX: "nb-"
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::linux only.*/
+      variables:
+        PIPELINE_NAME: "linux only MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
     - if: $CI_MERGE_REQUEST_IID # merge requests
       variables:
         PIPELINE_NAME: "MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
@@ -42,12 +45,15 @@ workflow:
 
 include:
   - local: "scripts/ci/extends/*.yml"
+  - local: "/scripts/ci/pipelines/regular.yml"
+    rules:
+      - if: $CI_PIPELINE_SOURCE != "schedule" && $CI_MERGE_REQUEST_LABELS !~ /.*ci::\w* only.*/
   - local: "/scripts/ci/pipelines/web.yml"
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only.*/
-  - local: "/scripts/ci/pipelines/regular.yml"
-    rules:
-      - if: $CI_PIPELINE_SOURCE != "schedule" && $CI_MERGE_REQUEST_LABELS !~ /.*ci::web only.*/
   - local: "/scripts/ci/pipelines/scheduled.yml"
     rules:
       - if: '$CI_PIPELINE_SOURCE == "schedule"'
+  - local: "/scripts/ci/pipelines/linux.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::linux only.*/
