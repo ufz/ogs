@@ -32,6 +32,9 @@ workflow:
     - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::linux only.*/
       variables:
         PIPELINE_NAME: "linux only MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::mac only.*/
+      variables:
+        PIPELINE_NAME: "mac only MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
     - if: $CI_MERGE_REQUEST_IID # merge requests
       variables:
         PIPELINE_NAME: "MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
@@ -57,3 +60,6 @@ include:
   - local: "/scripts/ci/pipelines/linux.yml"
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::linux only.*/
+  - local: "/scripts/ci/pipelines/mac.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::mac only.*/
