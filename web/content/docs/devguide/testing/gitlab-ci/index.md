@@ -55,7 +55,7 @@ During work on MR you may want to reduce the pipeline run time to get feedback f
 These pipelines can be selected by using merge request labels:
 
 - `ci::web only`: Runs Jupyter notebook ctests only and builds the web site.
-- More to come in the future...
+- `ci::linux only` and `ci::mac only` and `ci::win only`: Runs platform specific builds only.
 
 ### Manually editing `.gitlab-ci.yml` and `scripts/ci/pipelines/regular.yml`
 

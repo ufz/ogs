@@ -27,22 +27,45 @@ workflow:
     - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only.*/
       variables:
         PIPELINE_NAME: "web only MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+        BUILD_TESTS: "false"
         CTEST_INCLUDE_REGEX: "nb-"
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::linux only.*/
+      variables:
+        PIPELINE_NAME: "linux only MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::mac only.*/
+      variables:
+        PIPELINE_NAME: "mac only MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::win only.*/
+      variables:
+        PIPELINE_NAME: "win only MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
     - if: $CI_MERGE_REQUEST_IID # merge requests
       variables:
         PIPELINE_NAME: "MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
     - if: $CI_COMMIT_TAG # tags, ogs/ogs repo only
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PROJECT_PATH == "ogs/ogs"' # master, ogs/ogs repo only
+      variables:
+        PIPELINE_NAME: "master pipeline"
     - if: '$CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/ && $CI_PROJECT_PATH == "ogs/ogs"' # release branches, e.g. v6.x.x
+      variables:
+        PIPELINE_NAME: "bugfix branch $CI_COMMIT_BRANCH pipeline"
 
 include:
   - local: "scripts/ci/extends/*.yml"
+  - local: "/scripts/ci/pipelines/regular.yml"
+    rules:
+      - if: $CI_PIPELINE_SOURCE != "schedule" && $CI_MERGE_REQUEST_LABELS !~ /.*ci::\w* only.*/
   - local: "/scripts/ci/pipelines/web.yml"
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only.*/
-  - local: "/scripts/ci/pipelines/regular.yml"
-    rules:
-      - if: $CI_PIPELINE_SOURCE != "schedule" && $CI_MERGE_REQUEST_LABELS !~ /.*ci::web only.*/
   - local: "/scripts/ci/pipelines/scheduled.yml"
     rules:
       - if: '$CI_PIPELINE_SOURCE == "schedule"'
+  - local: "/scripts/ci/pipelines/linux.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::linux only.*/
+  - local: "/scripts/ci/pipelines/mac.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::mac only.*/
+  - local: "/scripts/ci/pipelines/win.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::win only.*/
