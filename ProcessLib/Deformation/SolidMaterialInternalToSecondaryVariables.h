@@ -26,41 +26,94 @@ void solidMaterialInternalToSecondaryVariables(
     std::map<int, std::unique_ptr<SolidMaterial>> const& solid_materials,
     AddSecondaryVariableCallback const& add_secondary_variable)
 {
-    // Collect the internal variables for all solid materials.
-    std::vector<typename SolidMaterial::InternalVariable> internal_variables;
-    for (auto const& material_id__solid_material : solid_materials)
+    assert(!solid_materials.empty());
+
+    // Multiple material ids could be present but only one material for the
+    // whole domain. In this case the choice of callbacks is independent of
+    // local assembler's material id, and the material id is 0.
+    // \see selectSolidConstitutiveRelation() for material id logic.
+    bool const material_id_independent = solid_materials.size() == 1;
+
+    // For each name of an internal variable collect all solid material/
+    // internal variable pairs.
+    std::map<
+        std::string,
+        std::vector<std::pair<int, typename SolidMaterial::InternalVariable>>>
+        internal_variables_by_name;
+    for (auto const& [material_id, solid_material] : solid_materials)
     {
-        auto const variables =
-            material_id__solid_material.second->getInternalVariables();
-        copy(begin(variables), end(variables),
-             back_inserter(internal_variables));
+        auto const& internal_variables = solid_material->getInternalVariables();
+        for (auto const& iv : internal_variables)
+        {
+            internal_variables_by_name[iv.name].push_back({material_id, iv});
+        }
     }
 
-    // Register the internal variables.
-    for (auto const& internal_variable : internal_variables)
+    // Create *single* callback passing all solid materials to it. Choose
+    // correct solid material based on the local assembler's solid material in
+    // the callback.
+    for (auto const& [name, mat_iv_collection] : internal_variables_by_name)
     {
-        auto const& name = internal_variable.name;
-        auto const& fct = internal_variable.getter;
-        auto const num_components = internal_variable.num_components;
+        assert(!mat_iv_collection.empty());
+        auto const num_components =
+            mat_iv_collection.front().second.num_components;
+
+        // Check that the number of components is equal for all materials.
+        if (!std::all_of(
+                begin(mat_iv_collection), end(mat_iv_collection),
+                [num_components](auto const& mat_iv)
+                { return mat_iv.second.num_components == num_components; }))
+        {
+            OGS_FATAL(
+                "Not for all material ids the secondary variable '{:s}' has "
+                "{:d} components.",
+                name, num_components);
+        }
+
         DBUG("Registering internal variable {:s}.", name);
 
-        auto getIntPtValues =
-            [fct, num_components](
+        auto callback =
+            [mat_iv_collection = mat_iv_collection, num_components,
+             material_id_independent](
                 LocalAssemblerInterface const& loc_asm,
                 const double /*t*/,
                 std::vector<GlobalVector*> const& /*x*/,
                 std::vector<
                     NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-                std::vector<double>& cache) -> std::vector<double> const& {
-            const unsigned num_int_pts = loc_asm.getNumberOfIntegrationPoints();
-
+                std::vector<double>& cache) -> std::vector<double> const&
+        {
             cache.clear();
+
+            const unsigned num_int_pts = loc_asm.getNumberOfIntegrationPoints();
+            assert(num_int_pts > 0);
+
+            int const material_id =
+                material_id_independent ? 0 : loc_asm.getMaterialID();
+
+            auto const mat_iv =
+                std::find_if(begin(mat_iv_collection), end(mat_iv_collection),
+                             [material_id](auto const& x)
+                             { return x.first == material_id; });
+            if (mat_iv == end(mat_iv_collection))
+            {
+                // If local assembler does not provide correct solid material
+                // model return empty vector, which will be ignored by the
+                // extrapolation algorithm.
+                return cache;
+            }
+
             auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
                 double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(
                 cache, num_components, num_int_pts);
 
             // TODO avoid the heap allocation (one per finite element)
             std::vector<double> cache_column(num_int_pts);
+
+            auto const& iv = mat_iv->second;
+            auto const& fct = iv.getter;
+
+            assert(material_id == mat_iv->first);
+            assert(num_components == iv.num_components);
 
             for (unsigned i = 0; i < num_int_pts; ++i)
             {
@@ -77,7 +130,7 @@ void solidMaterialInternalToSecondaryVariables(
             return cache;
         };
 
-        add_secondary_variable(name, num_components, std::move(getIntPtValues));
+        add_secondary_variable(name, num_components, std::move(callback));
     }
 }
 

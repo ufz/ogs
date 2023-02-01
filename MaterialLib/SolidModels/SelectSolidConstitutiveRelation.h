@@ -33,6 +33,15 @@ auto& selectSolidConstitutiveRelation(
     MeshLib::PropertyVector<int> const* const material_ids,
     std::size_t const element_id)
 {
+    // Multiple constitutive relations and no material ids should not be valid.
+    if (constitutive_relations.size() > 1 && material_ids == nullptr)
+    {
+        OGS_FATAL(
+            "There are {} constitutive relations provided in the project file "
+            "but no MaterialIDs could be found in the mesh.",
+            constitutive_relations.size());
+    }
+
     int material_id;
     if (constitutive_relations.size() == 1 || material_ids == nullptr)
     {

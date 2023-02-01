@@ -1278,6 +1278,17 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
+int RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
+                                    ShapeFunctionPressure,
+                                    DisplacementDim>::getMaterialID() const
+{
+    return _process_data.material_ids == nullptr
+               ? 0
+               : (*_process_data.material_ids)[_element.getID()];
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
 std::vector<double> RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getMaterialStateVariableInternalState(

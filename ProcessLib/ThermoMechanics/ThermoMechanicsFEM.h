@@ -333,6 +333,8 @@ private:
 
     unsigned getNumberOfIntegrationPoints() const override;
 
+    int getMaterialID() const override;
+
     typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables const&
     getMaterialStateVariablesAt(unsigned integration_point) const override;

@@ -666,6 +666,15 @@ unsigned ThermoMechanicsLocalAssembler<
 }
 
 template <typename ShapeFunction, int DisplacementDim>
+int ThermoMechanicsLocalAssembler<ShapeFunction,
+                                  DisplacementDim>::getMaterialID() const
+{
+    return _process_data.material_ids == nullptr
+               ? 0
+               : (*_process_data.material_ids)[_element.getID()];
+}
+
+template <typename ShapeFunction, int DisplacementDim>
 typename MaterialLib::Solids::MechanicsBase<
     DisplacementDim>::MaterialStateVariables const&
 ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::

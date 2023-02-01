@@ -111,6 +111,8 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
     // TODO move to NumLib::ExtrapolatableElement
     virtual unsigned getNumberOfIntegrationPoints() const = 0;
 
+    virtual int getMaterialID() const = 0;
+
     virtual typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables const&
     getMaterialStateVariablesAt(unsigned /*integration_point*/) const = 0;
