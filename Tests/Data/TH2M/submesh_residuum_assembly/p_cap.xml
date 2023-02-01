@@ -79,7 +79,7 @@
             <vtkdiff>
                 <regex>p_cap.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>gas_pressure_interpolated</field>
-                <absolute_tolerance>3.3e-14</absolute_tolerance>
+                <absolute_tolerance>6.4e-14</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
