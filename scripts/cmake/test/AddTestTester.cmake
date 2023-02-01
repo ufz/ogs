@@ -36,11 +36,20 @@ foreach(cmd ${TESTER_COMMAND})
             if("$ENV{HOSTNAME}" MATCHES "frontend.*")
                 string(REPLACE "gpfs0" "../.." file ${file})
             endif()
+            set(_source_file ${SOURCE_PATH}/${file})
+            set(_binary_file ${BINARY_PATH}/${file})
+            if(WIN32)
+                file(TO_NATIVE_PATH "${_source_file}" _source_file)
+                file(TO_NATIVE_PATH "${_binary_file}" _binary_file)
+                # Prefix with extended path identifier \\?\
+                set(_source_file "\\\\?\\${_source_file}")
+                set(_binary_file "\\\\?\\${_binary_file}")
+            endif()
+
             execute_process(
                 COMMAND
-                    ${SELECTED_DIFF_TOOL_PATH} ${SOURCE_PATH}/${file}
-                    ${BINARY_PATH}/${file} -a ${NAME_A} -b ${NAME_B} --abs
-                    ${ABS_TOL} --rel ${REL_TOL}
+                    ${SELECTED_DIFF_TOOL_PATH} ${_source_file} ${_binary_file}
+                    -a ${NAME_A} -b ${NAME_B} --abs ${ABS_TOL} --rel ${REL_TOL}
                 WORKING_DIRECTORY ${SOURCE_PATH}
                 RESULT_VARIABLE EXIT_CODE
                 OUTPUT_VARIABLE OUTPUT
