@@ -13,7 +13,7 @@ To migrate your repository run the following commands in your local repository (
 
 ## Disable Git LFS
 
-We used Git LFS to store large files but [switched back to plain git](https://github.com/ufz/ogs/issues/2961).
+We used Git LFS to store large files but [switched back to plain git](https://gitlab.opengeosys.org/ogs/ogs/-/issues/2961).
 
 <div class='note'>
 

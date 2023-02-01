@@ -122,7 +122,7 @@ option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 # smaller than 3.3.!). At least we only observed vectorization issues with Eigen
 # 3.3.x. If you want to use Eigen vectorization, make sure that you run all the
 # ctests several times, e.g.: $ ctest --repeat-until-fail 50 You might also want
-# to take a look at https://github.com/ufz/ogs/issues/1881.
+# to take a look at https://gitlab.opengeosys.org/ogs/ogs/-/issues/1881.
 option(EIGEN_DONT_VECTORIZE "Disables explicit vectorization when defined." ON)
 
 set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES "Default"

@@ -530,7 +530,7 @@ if(SNAKEMAKE AND TEE_TOOL_PATH AND BASH_TOOL_PATH AND OGS_USE_MPI)
     set_tests_properties(snakemake_reorder_mesh PROPERTIES LABELS "default")
 endif()
 
-# Regression test for https://github.com/ufz/ogs/issues/1845 fixed in
+# Regression test for https://gitlab.opengeosys.org/ogs/ogs/-/issues/1845 fixed in
 # https://github.com/ufz/ogs/pull/2237
 # checkMesh crashed when encountered Line3 element.
 AddTest(

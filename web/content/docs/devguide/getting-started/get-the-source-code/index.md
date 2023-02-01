@@ -44,6 +44,6 @@ git clone --filter=blob:limit=100 https://gitlab.opengeosys.org/ogs/ogs.git
 
 <div class='note'>
 
-The `--filter=blob:limit=100k`-parameter instructs git to only fetch files which are smaller than 100 Kilobyte. Larger files (e.g. benchmark files, images, PDFs) are fetched on-demand only. This happens automatically and [is a replacement for the previous Git LFS tracked files](https://github.com/ufz/ogs/issues/2961). Requires at least **git 2.22**!
+The `--filter=blob:limit=100k`-parameter instructs git to only fetch files which are smaller than 100 Kilobyte. Larger files (e.g. benchmark files, images, PDFs) are fetched on-demand only. This happens automatically and [is a replacement for the previous Git LFS tracked files](https://gitlab.opengeosys.org/ogs/ogs/-/issues/2961). Requires at least **git 2.22**!
 
 </div>
