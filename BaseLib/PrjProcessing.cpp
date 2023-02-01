@@ -10,14 +10,14 @@
 
 #include "PrjProcessing.h"
 
+#include <libxml/globals.h>
 #include <libxml/parser.h>
-#include <libxml/tree.h>
+#include <libxml/xmlstring.h>
 #include <xml_patch.h>
 
 #include <filesystem>
 #include <fstream>
 #include <regex>
-#include <sstream>
 
 #include "DisableFPE.h"
 #include "Error.h"

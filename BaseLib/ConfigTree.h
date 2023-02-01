@@ -12,6 +12,8 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <functional>
+#include <iosfwd>
+#include <iterator>
 #include <map>
 #include <memory>
 #include <optional>
@@ -688,4 +690,4 @@ private:
 
 }  // namespace BaseLib
 
-#include "ConfigTree-impl.h"
+#include "ConfigTree-impl.h"  // IWYU pragma: keep

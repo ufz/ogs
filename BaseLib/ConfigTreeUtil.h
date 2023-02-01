@@ -10,6 +10,9 @@
 
 #pragma once
 
+#include <iosfwd>
+#include <string>
+
 #include "ConfigTree.h"
 
 namespace BaseLib

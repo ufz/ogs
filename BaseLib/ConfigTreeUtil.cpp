@@ -10,9 +10,12 @@
 
 #include "ConfigTreeUtil.h"
 
+#include <boost/operators.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include <regex>
+#include <ostream>
+#include <utility>
 
+#include "ConfigTree.h"
 #include "Error.h"
 #include "Logging.h"
 

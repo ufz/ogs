@@ -8,6 +8,8 @@
  *
  */
 
+// IWYU pragma: private, include "ConfigTree.h"
+
 #include <sstream>
 #include <utility>
 
