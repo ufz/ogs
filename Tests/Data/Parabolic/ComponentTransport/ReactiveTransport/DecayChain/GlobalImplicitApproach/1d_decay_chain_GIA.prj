@@ -477,5 +477,47 @@
             <absolute_tolerance>1e-8</absolute_tolerance>
             <relative_tolerance>1e-16</relative_tolerance>
         </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>LiquidMassFlowRate</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[Cm-247]FlowRate</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[Cm-247]FlowRate</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[Pu-239]FlowRate</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[U-235]FlowRate</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[Pa-231]FlowRate</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[Ac-227]FlowRate</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>
