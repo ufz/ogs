@@ -250,20 +250,39 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
 
         for (auto const& filename : filenames)
         {
-            std::string const& output_filename =
+            std::string output_filename =
                 BaseLib::joinPaths(output_directory, filename);
             _output_files.push_back(output_filename);
-            std::string const& reference_filename =
+            std::string reference_filename =
                 BaseLib::joinPaths(reference_path, filename);
+#if _WIN32
+            // vtk does not handle Windows long paths:
+            // https://gitlab.kitware.com/vtk/vtk/-/blob/master/Utilities/KWSys/vtksys/SystemTools.cxx#L1519-1521
+            // workaround is to make path absolute and prefix with a special
+            // marker and put everything in quotes, see
+            // https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=powershell
+            auto const& long_path_indicator = R"(\\?\)";
 
+            reference_filename =
+                std::filesystem::absolute(reference_filename).string();
+            reference_filename = std::format("\"{}{}\"", long_path_indicator,
+                                             reference_filename);
+            output_filename =
+                std::filesystem::absolute(output_filename).string();
+            output_filename =
+                std::format("\"{}{}\"", long_path_indicator, output_filename);
+
+#else
+            output_filename = safeString(output_filename);
+            reference_filename = safeString(reference_filename);
+#endif
             //
             // Construct command line.
             //
             std::string command_line =
                 vtkdiff + " -a " + safeString(field_name) + " -b " +
-                safeString(field_name) + " " + safeString(reference_filename) +
-                " " + safeString(output_filename) + " " +
-                absolute_tolerance_parameter + " " +
+                safeString(field_name) + " " + reference_filename + " " +
+                output_filename + " " + absolute_tolerance_parameter + " " +
                 relative_tolerance_parameter;
             INFO("Will run '{:s}'", command_line);
             _command_lines.emplace_back(std::move(command_line));
