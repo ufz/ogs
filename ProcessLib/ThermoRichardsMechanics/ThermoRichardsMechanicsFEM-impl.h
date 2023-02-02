@@ -17,17 +17,12 @@
 #include <type_traits>
 
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
-#include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
-#include "MaterialLib/PhysicalConstant.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Fem/Interpolation.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/Graph/Get.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidDensity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidViscosity.h"
-#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
-#include "ProcessLib/Utils/TransposeInPlace.h"
 #include "ThermoRichardsMechanicsFEM.h"
 
 namespace ProcessLib
