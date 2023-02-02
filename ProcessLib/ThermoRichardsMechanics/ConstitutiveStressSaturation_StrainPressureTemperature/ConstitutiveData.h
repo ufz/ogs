@@ -60,12 +60,10 @@ using ConstitutiveData =
 /// Data that stores intermediate values, which are not needed outside the
 /// constitutive setting.
 template <int DisplacementDim>
-using ConstitutiveTempData =
-    std::tuple<ElasticTangentStiffnessData<DisplacementDim>, BiotData,
-               SolidCompressibilityData, SaturationDataDeriv, BishopsData,
-               // TODO why not usual state tracking for that?
-               PrevState<BishopsData>,
-               SolidThermalExpansionData<DisplacementDim>,
-               FluidThermalExpansionData, EquivalentPlasticStrainData>;
+using ConstitutiveTempData = std::tuple<
+    BiotData, SolidCompressibilityData, SaturationDataDeriv, BishopsData,
+    // TODO why not usual state tracking for that?
+    PrevState<BishopsData>, SolidThermalExpansionData<DisplacementDim>,
+    FluidThermalExpansionData, EquivalentPlasticStrainData>;
 }  // namespace ConstitutiveStressSaturation_StrainPressureTemperature
 }  // namespace ProcessLib::ThermoRichardsMechanics

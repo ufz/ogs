@@ -51,11 +51,6 @@ struct ConstitutiveTraits
     using ConstitutiveSetting = ProcessLib::ThermoRichardsMechanics::
         ConstitutiveStressSaturation_StrainPressureTemperature::
             ConstitutiveSetting<DisplacementDim>;
-
-    // TODO get rid of this construct.
-    using ElasticTangentStiffnessModel = ProcessLib::ThermoRichardsMechanics::
-        ConstitutiveStressSaturation_StrainPressureTemperature::
-            ElasticTangentStiffnessModel<DisplacementDim>;
 };
 }  // namespace ConstitutiveStressSaturation_StrainPressureTemperature
 }  // namespace ProcessLib::ThermoRichardsMechanics

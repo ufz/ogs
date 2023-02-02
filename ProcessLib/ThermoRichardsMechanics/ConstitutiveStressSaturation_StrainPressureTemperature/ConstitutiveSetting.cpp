@@ -42,7 +42,6 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     // solving the global equation system)
     std::get<StrainData<DisplacementDim>>(state).eps.noalias() = eps_arg;
 
-    G::eval(models.elastic_tangent_stiffness_model, aux_data, tmp);
     G::eval(models.biot_model, aux_data, tmp);
     G::eval(models.solid_compressibility_model, aux_data, tmp);
 
