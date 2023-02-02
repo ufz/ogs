@@ -13,7 +13,6 @@
 
 #include <spdlog/fmt/bundled/format.h>
 
-#include <Eigen/LU>
 #include <cassert>
 #include <type_traits>
 
@@ -106,9 +105,12 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     constexpr double dt = std::numeric_limits<double>::quiet_NaN();
     auto const& medium =
         this->process_data_.media_map.getMedium(this->element_.getID());
-    MPL::VariableArray variables;
 
-    auto const& solid_phase = medium->phase("Solid");
+    MediaData const media_data{medium};
+
+    typename ConstitutiveTraits::ConstitutiveSetting const constitutive_setting;
+    typename ConstitutiveTraits::ConstitutiveModels models(
+        this->process_data_, this->solid_material_);
 
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
@@ -123,48 +125,29 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
                     this->element_, ip_data_[ip].N_u))};
+
+        double T_ip;
+        NumLib::shapeFunctionInterpolate(T, N, T_ip);
+
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
 
+        MPL::VariableArray variables;
         variables.capillary_pressure = p_cap_ip;
         variables.liquid_phase_pressure = -p_cap_ip;
         // setting pG to 1 atm
         // TODO : rewrite equations s.t. p_L = pG-p_cap
         variables.gas_phase_pressure = 1.0e5;
-
-        double T_ip;
-        NumLib::shapeFunctionInterpolate(T, N, T_ip);
         variables.temperature = T_ip;
 
         double const S_L =
             medium->property(MPL::PropertyType::saturation)
                 .template value<double>(variables, x_position, t, dt);
-
         std::get<PrevState<SaturationData>>(this->prev_states_[ip])->S_L = S_L;
 
-        {
-            // Set eps_m_prev from potentially non-zero eps and sigma_sw from
-            // restart.
-            SpaceTimeData const x_t{x_position, t, dt};
-            ElasticTangentStiffnessData<DisplacementDim> C_el_data;
-            typename ConstitutiveTraits::ElasticTangentStiffnessModel{
-                this->solid_material_}
-                .eval(x_t, {T_ip, 0, {}}, C_el_data);
-
-            auto const& eps =
-                std::get<StrainData<DisplacementDim>>(this->current_states_[ip])
-                    .eps;
-            auto const& sigma_sw =
-                std::get<SwellingDataStateful<DisplacementDim>>(
-                    this->current_states_[ip])
-                    .sigma_sw;
-            std::get<PrevState<MechanicalStrainData<DisplacementDim>>>(
-                this->prev_states_[ip])
-                ->eps_m.noalias() =
-                solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
-                    ? eps + C_el_data.C_el.inverse() * sigma_sw
-                    : eps;
-        }
+        constitutive_setting.init(models, t, dt, x_position, media_data,
+                                  {T_ip, 0, {}}, this->current_states_[ip],
+                                  this->prev_states_[ip]);
 
         if (this->process_data_.initial_stress.value)
         {

@@ -10,12 +10,40 @@
 
 #include "ConstitutiveSetting.h"
 
+#include <Eigen/LU>
+
+#include "MaterialLib/MPL/PropertyType.h"
 #include "ProcessLib/Graph/Apply.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
 namespace ConstitutiveStress_StrainTemperature
 {
+template <int DisplacementDim>
+void ConstitutiveSetting<DisplacementDim>::init(
+    ConstitutiveModels<DisplacementDim>& models, double const t,
+    double const dt, ParameterLib::SpatialPosition const& x_position,
+    MediaData const& media_data, TemperatureData<DisplacementDim> const& T_data,
+    StatefulData<DisplacementDim>& state,
+    StatefulDataPrev<DisplacementDim>& prev_state) const
+{
+    // Set eps_m_prev from potentially non-zero eps and sigma_sw from
+    // restart.
+    SpaceTimeData const x_t{x_position, t, dt};
+    ElasticTangentStiffnessData<DisplacementDim> C_el_data;
+    models.elastic_tangent_stiffness_model.eval(x_t, T_data, C_el_data);
+
+    auto const& eps = std::get<StrainData<DisplacementDim>>(state).eps;
+    auto const& sigma_sw =
+        std::get<SwellingDataStateful<DisplacementDim>>(state).sigma_sw;
+    std::get<PrevState<MechanicalStrainData<DisplacementDim>>>(prev_state)
+        ->eps_m.noalias() =
+        media_data.solid.hasProperty(
+            MaterialPropertyLib::PropertyType::swelling_stress_rate)
+            ? eps + C_el_data.C_el.inverse() * sigma_sw
+            : eps;
+}
+
 template <int DisplacementDim>
 void ConstitutiveSetting<DisplacementDim>::eval(
     ConstitutiveModels<DisplacementDim>& models, double const t,
