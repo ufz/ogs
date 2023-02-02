@@ -234,8 +234,8 @@ void applyToPropertyVectors(Properties const& properties, Function f)
         // initializer list is a non-standard explicit type conversion syntax"
         // with MSVC-15.
         bool success = f(double{}, property) || f(float{}, property) ||
-                       f(int{}, property) || f(long{}, property) ||
-                       f(unsigned{}, property) || f(long{}, property) ||
+                       f(int{}, property) || f(unsigned{}, property) ||
+                       f(long{}, property) ||
                        f(static_cast<unsigned long>(0), property) ||
                        f(std::size_t{}, property) || f(char{}, property) ||
                        f(static_cast<unsigned char>(0), property);

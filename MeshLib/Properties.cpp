@@ -103,11 +103,9 @@ Properties Properties::excludeCopyProperties(
 Properties::Properties(Properties const& properties)
     : _properties(properties._properties)
 {
-    std::vector<std::size_t> exclude_positions;
     for (auto& name_vector_pair : _properties)
     {
-        PropertyVectorBase* t(
-            name_vector_pair.second->clone(exclude_positions));
+        PropertyVectorBase* t(name_vector_pair.second->clone({}));
         name_vector_pair.second = t;
     }
 }

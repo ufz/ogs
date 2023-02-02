@@ -25,7 +25,8 @@
 int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
-        "computeSurfaceNodeIDsInPolygonalRegion\n\n"
+        "Create a raster of specified size at specified origin where every "
+        "pixel has the value zero.\n\n"
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"
