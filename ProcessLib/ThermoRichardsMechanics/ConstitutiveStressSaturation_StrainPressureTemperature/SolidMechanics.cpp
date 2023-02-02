@@ -21,7 +21,6 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     StrainData<DisplacementDim> const& eps_data,
     PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
     MaterialStateData<DisplacementDim>& mat_state,
-    MechanicalStrainData<DisplacementDim>& eps_m_data,
     PrevState<TotalStressData<DisplacementDim>> const& total_stress_data_prev,
     TotalStressData<DisplacementDim>& total_stress_data,
     EquivalentPlasticStrainData& equiv_plast_strain_data,
@@ -32,12 +31,6 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     namespace MPL = MaterialPropertyLib;
 
     double const T_prev = T_data.T_prev;
-
-    // This constitutive setting does not need eps_m. But eps_m is there,
-    // because it is set in setInitialConditionsConcrete()
-    // We set it to NaN for now.
-    eps_m_data.eps_m.noalias() = KV::KVnan<DisplacementDim>();
-
     auto const& eps_total = eps_data.eps;
     auto const& eps_total_prev = eps_prev_data->eps;
     auto const& sigma_total_prev = total_stress_data_prev->sigma_total;

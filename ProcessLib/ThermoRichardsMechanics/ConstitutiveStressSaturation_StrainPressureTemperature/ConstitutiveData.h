@@ -16,12 +16,10 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqT.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EquivalentPlasticStrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Gravity.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MechanicalStrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Saturation.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidDensity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidMechanicsDataStateless.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Swelling.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMHeatStorageAndFlux.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMStorage.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMVaporDiffusion.h"
@@ -38,16 +36,7 @@ namespace ConstitutiveStressSaturation_StrainPressureTemperature
 template <int DisplacementDim>
 using StatefulData =
     std::tuple<SaturationData, PorosityData, TransportPorosityData,
-               StrainData<DisplacementDim>,
-               // TODO swelling is not used in this constitutive setting, but
-               // the stateful data is set in setInitialConditionsConcrete()
-               // Once this has been refactored, the swelling code can be moved
-               // from the common to the original subdirectory for constitutive
-               // settings
-               SwellingDataStateful<DisplacementDim>,
-               // TODO get rid of that
-               MechanicalStrainData<DisplacementDim>,
-               TotalStressData<DisplacementDim>>;
+               StrainData<DisplacementDim>, TotalStressData<DisplacementDim>>;
 
 template <int DisplacementDim>
 using StatefulDataPrev = PrevStateOf<StatefulData<DisplacementDim>>;

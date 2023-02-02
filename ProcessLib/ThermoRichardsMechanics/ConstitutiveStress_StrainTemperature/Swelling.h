@@ -12,9 +12,11 @@
 
 #include "ElasticTangentStiffnessData.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
-#include "Saturation.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Saturation.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
+{
+namespace ConstitutiveStress_StrainTemperature
 {
 template <int DisplacementDim>
 struct SwellingDataStateful
@@ -55,4 +57,5 @@ struct SwellingModel
 
 extern template struct SwellingModel<2>;
 extern template struct SwellingModel<3>;
+}  // namespace ConstitutiveStress_StrainTemperature
 }  // namespace ProcessLib::ThermoRichardsMechanics

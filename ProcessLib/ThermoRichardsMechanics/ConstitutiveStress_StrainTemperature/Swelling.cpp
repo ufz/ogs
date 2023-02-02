@@ -16,6 +16,8 @@
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
+namespace ConstitutiveStress_StrainTemperature
+{
 template <int DisplacementDim>
 void SwellingModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, MediaData const& media_data,
@@ -92,4 +94,5 @@ void SwellingModel<DisplacementDim>::eval(
 
 template struct SwellingModel<2>;
 template struct SwellingModel<3>;
+}  // namespace ConstitutiveStress_StrainTemperature
 }  // namespace ProcessLib::ThermoRichardsMechanics

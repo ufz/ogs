@@ -18,11 +18,11 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Gravity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/PermeabilityModel.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidDensity.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Swelling.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMHeatStorageAndFlux.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMStorage.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMVaporDiffusion.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/SolidMechanics.h"
+#include "Swelling.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {

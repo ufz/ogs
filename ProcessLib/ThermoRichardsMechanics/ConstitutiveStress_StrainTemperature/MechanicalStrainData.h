@@ -10,9 +10,11 @@
 
 #pragma once
 
-#include "Base.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Base.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
+{
+namespace ConstitutiveStress_StrainTemperature
 {
 template <int DisplacementDim>
 struct MechanicalStrainData
@@ -27,4 +29,5 @@ struct MechanicalStrainData
         return ProcessLib::Reflection::reflectWithName("eps_m", &Self::eps_m);
     }
 };
+}  // namespace ConstitutiveStress_StrainTemperature
 }  // namespace ProcessLib::ThermoRichardsMechanics

@@ -53,7 +53,6 @@ struct ConstitutiveModels
     BishopsPrevModel bishops_prev_model;
     PorosityModel<DisplacementDim> poro_model;
     TransportPorosityModel<DisplacementDim> transport_poro_model;
-    SwellingModel<DisplacementDim> swelling_model;
     SolidThermalExpansionModel<DisplacementDim> s_therm_exp_model;
     SolidMechanicsModel<DisplacementDim> s_mech_model;
     LiquidDensityModel<DisplacementDim> rho_L_model;
