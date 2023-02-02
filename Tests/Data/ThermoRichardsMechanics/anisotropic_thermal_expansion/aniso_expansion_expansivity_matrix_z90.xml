@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="aniso_expansion.prj">
+    <replace sel="/*/media/medium/phases/phase/properties/property/name[text()=&quot;thermal_expansivity&quot;]/../parameter_name/text()">expansivity_tensor</replace>
+    <replace sel="/*/parameters/parameter/name[text()=&quot;expansivity_tensor&quot;]/../use_local_coordinate_system/text()">true</replace>
+    <replace sel="/*/time_loop/output/prefix/text()">anisotropic_thermal_expansion_expansivity_matrix_z90</replace>
+</OpenGeoSysProjectDiff>

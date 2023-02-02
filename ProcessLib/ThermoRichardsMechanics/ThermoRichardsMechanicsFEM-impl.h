@@ -18,7 +18,6 @@
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
-#include "MaterialLib/MPL/Utils/FormKelvinVectorFromThermalExpansivity.h"
 #include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MathLib/KelvinVector.h"

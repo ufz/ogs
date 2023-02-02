@@ -9,19 +9,19 @@
  * Created on February 12, 2021, 4:34 PM
  */
 
-#include "FormKelvinVectorFromThermalExpansivity.h"
+#include "FormKelvinVector.h"
 
 #include "BaseLib/Error.h"
 
 namespace MaterialPropertyLib
 {
 static constexpr const char error_info[] =
-    "The thermal expansivity can only be either a scalar number for isotropic "
-    "thermal expansion or a three element array for anisotropic thermal "
-    "expansion.";
+    "The conversion to a Kelvin vector of correct dimensionality is ambiguous."
+    "Please use a scalar number for isotropic properties, a three element "
+    "array or a 3 x 3 matrix for anisotropic properties.";
 
 template <int GlobalDim>
-struct FormKelvinVectorFromThermalExpansivity
+struct FormKelvinVector
 {
     MathLib::KelvinVector::KelvinVectorType<GlobalDim> operator()(
         double const& value) const
@@ -54,9 +54,9 @@ struct FormKelvinVectorFromThermalExpansivity
     }
 
     MathLib::KelvinVector::KelvinVectorType<GlobalDim> operator()(
-        Eigen::Matrix<double, 3, 3> const& /*values*/) const
+        Eigen::Matrix<double, 3, 3> const& values) const
     {
-        OGS_FATAL(error_info);
+        return MathLib::KelvinVector::tensorToKelvin<GlobalDim>(values);
     }
 
     MathLib::KelvinVector::KelvinVectorType<GlobalDim> operator()(
@@ -79,20 +79,16 @@ struct FormKelvinVectorFromThermalExpansivity
 };
 
 template <int GlobalDim>
-MathLib::KelvinVector::KelvinVectorType<GlobalDim>
-formKelvinVectorFromThermalExpansivity(
+MathLib::KelvinVector::KelvinVectorType<GlobalDim> formKelvinVector(
     MaterialPropertyLib::PropertyDataType const& values)
 {
-    return std::visit(FormKelvinVectorFromThermalExpansivity<GlobalDim>(),
-                      values);
+    return std::visit(FormKelvinVector<GlobalDim>(), values);
 }
 
-template MathLib::KelvinVector::KelvinVectorType<2>
-formKelvinVectorFromThermalExpansivity<2>(
+template MathLib::KelvinVector::KelvinVectorType<2> formKelvinVector<2>(
     MaterialPropertyLib::PropertyDataType const& values);
 
-template MathLib::KelvinVector::KelvinVectorType<3>
-formKelvinVectorFromThermalExpansivity<3>(
+template MathLib::KelvinVector::KelvinVectorType<3> formKelvinVector<3>(
     MaterialPropertyLib::PropertyDataType const& values);
 
 }  // namespace MaterialPropertyLib

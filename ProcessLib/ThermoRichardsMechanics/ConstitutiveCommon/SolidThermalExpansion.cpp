@@ -10,7 +10,7 @@
 
 #include "SolidThermalExpansion.h"
 
-#include "MaterialLib/MPL/Utils/FormKelvinVectorFromThermalExpansivity.h"
+#include "MaterialLib/MPL/Utils/FormKelvinVector.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -24,7 +24,7 @@ void SolidThermalExpansionModel<DisplacementDim>::eval(
 
     // Consider also anisotropic thermal expansion.
     out.solid_linear_thermal_expansivity_vector =
-        MPL::formKelvinVectorFromThermalExpansivity<DisplacementDim>(
+        MPL::formKelvinVector<DisplacementDim>(
             media_data.solid.property(MPL::PropertyType::thermal_expansivity)
                 .value(variables, x_t.x, x_t.t, x_t.dt));
 }

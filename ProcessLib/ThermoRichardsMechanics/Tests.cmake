@@ -8,6 +8,96 @@ if (NOT OGS_USE_MPI)
 endif()
 
 AddTest(
+    NAME ThermoRichardsMechanics_anisotropic_thermal_expansion_vector
+    PATH ThermoRichardsMechanics/anisotropic_thermal_expansion
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS aniso_expansion.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 1
+    DIFF_DATA
+    expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu sigma sigma 1e-12 1e-12
+    expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu displacement displacement 1e-14 1e-14
+    expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu saturation saturation 1e-12 1e-12
+    expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu pressure pressure 1e-10 1e-10
+    expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu epsilon epsilon 1e-14 1e-14
+)
+
+AddTest(
+    NAME ThermoRichardsMechanics_anisotropic_thermal_expansion_expansivity_matrix
+    PATH ThermoRichardsMechanics/anisotropic_thermal_expansion
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS aniso_expansion_expansivity_matrix.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 1
+    DIFF_DATA
+    expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_ts_1_t_1000000.000000.vtu sigma sigma 1e-12 1e-12
+    expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_ts_1_t_1000000.000000.vtu displacement displacement 1e-14 1e-14
+    expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_ts_1_t_1000000.000000.vtu saturation saturation 1e-14 1e-14
+    expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_ts_1_t_1000000.000000.vtu pressure pressure 1e-10 1e-10
+    expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_ts_1_t_1000000.000000.vtu epsilon epsilon 1e-12 1e-12
+)
+
+AddTest(
+    NAME ThermoRichardsMechanics_anisotropic_thermal_expansion_expansivity_matrix_z90
+    PATH ThermoRichardsMechanics/anisotropic_thermal_expansion
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS aniso_expansion_expansivity_matrix_z90.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 1
+    DIFF_DATA
+    expected_anisotropic_thermal_expansion_z90_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_z90_ts_1_t_1000000.000000.vtu sigma sigma 1e-12 1e-12
+    expected_anisotropic_thermal_expansion_z90_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_z90_ts_1_t_1000000.000000.vtu displacement displacement 1e-14 1e-14
+    expected_anisotropic_thermal_expansion_z90_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_z90_ts_1_t_1000000.000000.vtu saturation saturation 1e-12 1e-12
+    expected_anisotropic_thermal_expansion_z90_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_z90_ts_1_t_1000000.000000.vtu pressure pressure 1e-10 1e-10
+    expected_anisotropic_thermal_expansion_z90_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_z90_ts_1_t_1000000.000000.vtu epsilon epsilon 1e-12 1e-12
+)
+
+AddTest(
+    NAME ThermoRichardsMechanics_anisotropic_thermal_expansion_x45
+    PATH ThermoRichardsMechanics/anisotropic_thermal_expansion
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS aniso_expansion_x45.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 1
+    DIFF_DATA
+    expected_anisotropic_thermal_expansion_x45_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_x45_ts_1_t_1000000.000000.vtu epsilon epsilon 1e-12 1e-12
+)
+
+AddTest(
+    NAME ThermoRichardsMechanics_anisotropic_thermal_expansion_y45
+    PATH ThermoRichardsMechanics/anisotropic_thermal_expansion
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS aniso_expansion_y45.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 1
+    DIFF_DATA
+    expected_anisotropic_thermal_expansion_y45_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_y45_ts_1_t_1000000.000000.vtu epsilon epsilon 1e-12 1e-12
+)
+
+AddTest(
+    NAME ThermoRichardsMechanics_anisotropic_thermal_expansion_z45
+    PATH ThermoRichardsMechanics/anisotropic_thermal_expansion
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS aniso_expansion_z45.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 1
+    DIFF_DATA
+    expected_anisotropic_thermal_expansion_z45_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_z45_ts_1_t_1000000.000000.vtu epsilon epsilon 1e-12 1e-12
+)
+
+AddTest(
     NAME ThermoRichardsMechanics_liakopoulosHM
     PATH ThermoRichardsMechanics/LiakopoulosHM
     EXECUTABLE ogs
