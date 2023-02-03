@@ -27,13 +27,16 @@ if(OGS_BUILD_TESTING)
     endif()
 endif()
 
-# Check spdlog release for compatible fmt release
-CPMFindPackage(
-    NAME fmt
-    GIT_TAG 8.1.1
-    VERSION 8.1.1...<9.0.0
-    GITHUB_REPOSITORY fmtlib/fmt
-)
+# Check spdlog release for compatible fmt release. fmt may be provided by vtk
+# _ext build.
+if(NOT TARGET fmt::fmt)
+    CPMFindPackage(
+        NAME fmt
+        GIT_TAG 8.1.1
+        VERSION 8.1.1...<9.0.0
+        GITHUB_REPOSITORY fmtlib/fmt
+    )
+endif()
 CPMFindPackage(
     NAME spdlog
     GITHUB_REPOSITORY gabime/spdlog
