@@ -17,6 +17,7 @@ namespace ProcessLib
 {
 namespace TH2M
 {
+template <int DisplacementDim>
 struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                                  public NumLib::ExtrapolatableElement
 {

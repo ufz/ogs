@@ -47,7 +47,7 @@ struct SecondaryData
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
-class TH2MLocalAssembler : public LocalAssemblerInterface
+class TH2MLocalAssembler : public LocalAssemblerInterface<DisplacementDim>
 {
 public:
     using ShapeMatricesTypeDisplacement =

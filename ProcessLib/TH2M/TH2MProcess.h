@@ -19,6 +19,7 @@ namespace ProcessLib
 {
 namespace TH2M
 {
+template <int DisplacementDim>
 struct LocalAssemblerInterface;
 
 /// Thermally induced deformation process in linear kinematics
@@ -115,7 +116,8 @@ private:
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_base_nodes;
     TH2MProcessData<DisplacementDim> _process_data;
 
-    std::vector<std::unique_ptr<LocalAssemblerInterface>> local_assemblers_;
+    std::vector<std::unique_ptr<LocalAssemblerInterface<DisplacementDim>>>
+        local_assemblers_;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;
