@@ -28,7 +28,12 @@ if(OGS_BUILD_TESTING)
 endif()
 
 # Check spdlog release for compatible fmt release
-CPMFindPackage(NAME fmt GIT_TAG 8.1.1 GITHUB_REPOSITORY fmtlib/fmt)
+CPMFindPackage(
+    NAME fmt
+    GIT_TAG 8.1.1
+    VERSION 8.1.1...<9.0.0
+    GITHUB_REPOSITORY fmtlib/fmt
+)
 CPMFindPackage(
     NAME spdlog
     GITHUB_REPOSITORY gabime/spdlog
