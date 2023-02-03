@@ -35,7 +35,7 @@ The parameter ```n``` determines how many layers are created between the two inp
 
 **Input data:**
 
-![Two input rasters](createIntermediateRasters-input.png "Two input rasters as well as their 3D surface representation. Darker pixels represent values at a lower elevation while brighter pixels represent higher elevaton. In the 3D visualisation, the left-most raster is represented by the green surface and the right-most raster by the yellow surface.")
+![Two input rasters](createIntermediateRasters-input.png "Two input rasters as well as their 3D surface representation. Darker pixels represent values at a lower elevation while brighter pixels represent higher elevaton. In the 3D visualisation, the left-most raster is represented by the yellow surface and the right-most raster by the green surface.")
 
 **Command:**
 
