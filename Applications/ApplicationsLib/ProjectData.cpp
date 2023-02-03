@@ -184,6 +184,8 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
 {
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
 
+    GeoLib::GEOObjects geoObjects;
+
     //! \ogs_file_param{prj__meshes}
     auto optional_meshes = config.getConfigSubtreeOptional("meshes");
     if (optional_meshes)
@@ -195,14 +197,17 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
                        std::back_inserter(meshes),
                        [&directory](auto const& mesh_config)
                        { return readSingleMesh(mesh_config, directory); });
+        if (auto const geometry_file_name =
+                //! \ogs_file_param{prj__geometry}
+            config.getConfigParameterOptional<std::string>("geometry"))
+        {
+            std::string const geometry_file =
+                BaseLib::copyPathToFileName(*geometry_file_name, directory);
+            readGeometry(geometry_file, geoObjects);
+        }
     }
     else
     {  // Read single mesh with geometry.
-        WARN(
-            "Consider switching from mesh and geometry input to multiple "
-            "meshes input. See "
-            "https://www.opengeosys.org/docs/tools/meshing-submeshes/"
-            "constructmeshesfromgeometry/ tool for conversion.");
         meshes.push_back(
             //! \ogs_file_param{prj__mesh}
             readSingleMesh(config.getConfigParameter("mesh"), directory));
@@ -211,9 +216,10 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
             //! \ogs_file_param{prj__geometry}
             config.getConfigParameter<std::string>("geometry"),
             directory);
-        GeoLib::GEOObjects geoObjects;
         readGeometry(geometry_file, geoObjects);
+    }
 
+    {  // generate meshes from geometries
         std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_algorithm =
             MeshGeoToolsLib::createSearchLengthAlgorithm(config, *meshes[0]);
         bool const multiple_nodes_allowed = false;
