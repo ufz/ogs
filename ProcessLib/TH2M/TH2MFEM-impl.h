@@ -146,6 +146,8 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
                 _element, Nu);
 
         double const T = NT.dot(temperature);
+        double const T_dot = NT.dot(temperature_dot);
+        double const T_prev = T - T_dot * dt;
         double const pGR = Np.dot(gas_pressure);
         double const pCap = Np.dot(capillary_pressure);
         double const pLR = pGR - pCap;
@@ -161,7 +163,9 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         vars.liquid_phase_pressure = pLR;
 
         // medium properties
-        auto const K_S = ip_data.solid_material.getBulkModulus(t, pos);
+        auto const C_el =
+            ip_data.computeElasticTangentStiffness(t, pos, dt, T_prev, T);
+        auto const K_S = ip_data.solid_material.getBulkModulus(t, pos, &C_el);
 
         ip_data.alpha_B = medium.property(MPL::PropertyType::biot_coefficient)
                               .template value<double>(vars, pos, t, dt);
@@ -273,9 +277,6 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         // isotropic solid phase volumetric thermal expansion coefficient
         ip_data.beta_T_SR = Invariants::trace(ip_data.alpha_T_SR);
 
-        double const T_dot = NT.dot(temperature_dot);
-        double const T_prev = T - T_dot * dt;
-
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
             dthermal_strain = ip_data.alpha_T_SR * T_dot * dt;
 
@@ -287,8 +288,6 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
 
         if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
         {
-            auto const C_el =
-                ip_data.computeElasticTangentStiffness(t, pos, dt, T_prev, T);
             eps_m.noalias() +=
                 C_el.inverse() * (ip_data.sigma_sw - ip_data.sigma_sw_prev);
         }
