@@ -27,11 +27,14 @@ if(OGS_BUILD_TESTING)
     endif()
 endif()
 
+# Check spdlog release for compatible fmt release
+CPMFindPackage(NAME fmt GIT_TAG 8.1.1 GITHUB_REPOSITORY fmtlib/fmt)
 CPMFindPackage(
     NAME spdlog
     GITHUB_REPOSITORY gabime/spdlog
     VERSION 1.10.0
     OPTIONS "BUILD_SHARED_LIBS OFF" "SPDLOG_BUILD_SHARED OFF"
+            "SPDLOG_FMT_EXTERNAL 1"
 )
 if(spdlog_ADDED)
     set_target_properties(
