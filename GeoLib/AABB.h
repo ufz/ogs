@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <spdlog/fmt/bundled/ostream.h>
+#include <fmt/ostream.h>
 
 #include <Eigen/Core>
 #include <bitset>
