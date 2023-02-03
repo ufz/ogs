@@ -443,6 +443,25 @@ private:
                                                          cache);
     }
 
+    unsigned getNumberOfIntegrationPoints() const override
+    {
+        return _integration_method.getNumberOfPoints();
+    }
+
+    int getMaterialID() const override
+    {
+        return _process_data.material_ids == nullptr
+                   ? 0
+                   : (*_process_data.material_ids)[_element.getID()];
+    }
+
+    typename MaterialLib::Solids::MechanicsBase<
+        DisplacementDim>::MaterialStateVariables const&
+    getMaterialStateVariablesAt(unsigned integration_point) const override
+    {
+        return *_ip_data[integration_point].material_state_variables;
+    }
+
 private:
     TH2MProcessData<DisplacementDim>& _process_data;
 

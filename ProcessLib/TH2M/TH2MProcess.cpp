@@ -17,6 +17,7 @@
 #include "MathLib/KelvinVector.h"
 #include "MeshLib/Elements/Utils.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Utils/ComputeResiduum.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
@@ -271,6 +272,13 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
     add_secondary_variable(
         "enthalpy_solid", 1,
         &LocalAssemblerInterface<DisplacementDim>::getIntPtEnthalpySolid);
+
+    //
+    // enable output of internal variables defined by material models
+    //
+    ProcessLib::Deformation::solidMaterialInternalToSecondaryVariables<
+        LocalAssemblerInterface<DisplacementDim>>(_process_data.solid_materials,
+                                                  add_secondary_variable);
 
     _process_data.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "saturation_avg",
