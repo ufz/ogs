@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <OpenGeoSysProject>
-  <mesh>cube_1x1x1_hex_1e1.vtu</mesh>
+  <meshes>
+    <mesh>cube_1x1x1_hex_1e1.vtu</mesh>
+    <mesh>cube_1x1x1_hex_1e1_left.vtu</mesh>
+  </meshes>
   <geometry>cube_1x1x1.gml</geometry>
   <processes>
     <process>
@@ -200,8 +203,7 @@
       <initial_condition>p0</initial_condition>
       <boundary_conditions>
         <boundary_condition>
-          <geometrical_set>cube_1x1x1_geometry</geometrical_set>
-          <geometry>left</geometry>
+          <mesh>cube_1x1x1_hex_1e1_left</mesh>
           <type>Dirichlet</type>
           <parameter>p_Dirichlet_left</parameter>
         </boundary_condition>
