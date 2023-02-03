@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <hdf5.h>
+
 #include <string>
 #include <vector>
 
@@ -19,7 +21,7 @@
 
 namespace MeshLib::IO
 {
-using Hdf5DimType = unsigned long long;
+using Hdf5DimType = hsize_t;
 
 struct HdfData final
 {
