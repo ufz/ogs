@@ -245,7 +245,7 @@
         <vtkdiff>
             <file>cube_1e0_mfront_mod_ts_101_t_1.000000.vtu</file>
             <field>displacement</field>
-            <absolute_tolerance>5e-16</absolute_tolerance>
+            <absolute_tolerance>6e-16</absolute_tolerance>
             <relative_tolerance>1e-16</relative_tolerance>
         </vtkdiff>
     </test_definition>

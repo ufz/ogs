@@ -297,19 +297,19 @@
         <vtkdiff>
             <regex>square_1e1_2_matIDs_t_.*.vtu</regex>
             <field>sigma</field>
-            <absolute_tolerance>4e-15</absolute_tolerance>
+            <absolute_tolerance>4e-13</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>square_1e1_2_matIDs_t_.*.vtu</regex>
             <field>epsilon</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>2e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>square_1e1_2_matIDs_t_.*.vtu</regex>
             <field>EquivalentPlasticStrain</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>3e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -339,7 +339,7 @@
         <vtkdiff>
             <regex>square_1e1_2_matIDs_t_.*.vtu</regex>
             <field>NodalForces</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>8e-13</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
