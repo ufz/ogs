@@ -56,17 +56,18 @@ struct DeactivatedSubdomainMesh
     std::vector<std::vector<std::size_t>> outer_nodes_elements;
 };
 
-/// Time dependent subdomain deactivation.
+/// Time-dependent subdomain deactivation.
 ///
-/// Subdomain deactivation is space and time dependent.
-/// The spatial extent of deactivated elements is defined through a set of
-/// material ids.
-/// Additionally a line segment separates through its normal plane and position
-/// on the line segment an active and inactive part.
+/// Subdomain deactivation is space and time-dependent.
+/// The spatial extent of deactivated elements is defined through an
+/// intersection between a half-space and a set of material ids. The half-space
+/// is defined by a line segment that separates through its normal plane and
+/// position on the line segment an active and an inactive part.
 ///
 /// The subdomain can be deactivated at once using a time interval.
-/// For fine grained control a time curve can be specified.
-/// It maps current time to position on the line segment.
+/// For fine-grained control, a time curve can be specified.
+/// It maps the current time to the position given as distance (in length units)
+/// between the start and the end points on the line segment.
 /// Elements, which center points lie left of this position are deactivated.
 ///
 /// \internal
