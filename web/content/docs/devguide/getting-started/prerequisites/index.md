@@ -288,7 +288,7 @@ brew install python
 
 </div>
 
-## Optional: Install Qt for the Data Explorer
+## Optional: Install Qt and other dependencies for the Data Explorer
 
 Use [Another Qt installer (`aqt`)](https://github.com/miurahr/aqtinstall) for installing the Qt binaries to some path on your machine:
 
@@ -306,6 +306,29 @@ This will install Qt to `[your-directory]/qt/{{< dataFile "versions.tested_versi
 
 To finish add `[your-directory]/qt/{{< dataFile "versions.tested_version.qt" >}}/msvc2019_64/bin` bin to the `PATH` environment variable.
 
+## Install Conan package manager (for NetCDF)
+
+Install Conan (>= {{< dataFile "versions.minimum_version.conan" >}}) with Python's pip:
+
+```bash
+pip3 install --user conan
+```
+
+This installed `conan` to `C:\Users\[username]\AppData\Roaming\Python\Python39\Scripts` in your home directory. Make sure to have this directory in your `PATH`!
+
+Check on a newly opened command line if Conan was installed successfully:
+
+```bash
+$ conan --version
+Conan version {{< dataFile "versions.minimum_version.conan" >}}
+```
+
+<div class='note'>
+
+**Advanced usage:** You can also have Conan auto-installed when using the CMake-option `OGS_USE_CONAN=auto`. See the page on [Python environment]({{% ref "python-env.md" %}}) for details.
+
+</div>
+
 </div>
 
 <div class='linux'>
@@ -319,6 +342,13 @@ aqt install-qt linux desktop {{< dataFile "versions.tested_version.qt" >}} gcc_6
 ```
 
 Make sure to add `/opt/qt/{{< dataFile "versions.tested_version.qt" >}}/gcc_64/bin` to the `PATH`.
+
+Install more dependencies for VTK rendering and for NetCDF IO:
+
+```bash
+sudo apt-get install freeglut3 freeglut3-dev libglew-dev libglu1-mesa libglu1-mesa-dev \
+  libgl1-mesa-glx libgl1-mesa-dev libnetcdf-c++4-dev
+```
 
 </div>
 
@@ -334,31 +364,10 @@ aqt install-qt mac desktop {{< dataFile "versions.tested_version.qt" >}} clang_6
 
 Make sure to add `/opt/qt/{{< dataFile "versions.tested_version.qt" >}}/clang_64/bin` to the `PATH`.
 
-</div>
-
-## Optional: Install Conan package manager
-
-You only need Conan if you intend to build with one of the following settings **and** do not want to install their dependencies manually:
-
-- `OGS_USE_NETCDF` – NetCDF IO, requires netcdf-cxx4
-
-Install Conan (>= {{< dataFile "versions.minimum_version.conan" >}}) with Python's pip:
+Install NetCDF:
 
 ```bash
-pip3 install --user conan
+brew install netcdf-cxx
 ```
-
-This installed `conan` to `.local/bin` (or `C:\Users\[username]\AppData\Roaming\Python\Python39\Scripts` on Windows) in your home directory. Make sure to have this directory in your `PATH`!
-
-Check on a newly opened command line if Conan was installed successfully:
-
-```bash
-$ conan --version
-Conan version {{< dataFile "versions.minimum_version.conan" >}}
-```
-
-<div class='note'>
-
-**Advanced usage:** You can also have Conan auto-installed when using the CMake-option `OGS_USE_CONAN=auto`. See the page on [Python environment]({{% ref "python-env.md" %}}) for details.
 
 </div>
