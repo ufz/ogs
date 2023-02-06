@@ -283,3 +283,11 @@ private:
     }
 };
 }  // namespace GeoLib
+
+namespace fmt
+{
+template <>
+struct formatter<::GeoLib::AABB> : ostream_formatter
+{
+};
+}  // namespace fmt
