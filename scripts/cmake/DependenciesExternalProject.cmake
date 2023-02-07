@@ -53,6 +53,35 @@ if(OGS_USE_MFRONT)
         endif()
     endif()
     if(NOT MFRONT)
+        if(OGS_USE_PYTHON)
+            set(_py_version_major_minor
+                "${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}"
+            )
+            set(_py_boost_comp
+                "python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}"
+            )
+            find_package(Boost COMPONENTS ${_py_boost_comp})
+            if(Boost_${_py_boost_comp}_FOUND)
+                set(_tfel_cmake_args
+                    "-DPython_ADDITIONAL_VERSIONS=${_py_version_major_minor}"
+                    "-Denable-python-bindings=ON"
+                )
+                message(
+                    STATUS
+                        "TFEL build with Python bindings. To use them:\n "
+                        "  export PYTHONPATH=${PROJECT_BINARY_DIR}/_ext/TFEL/lib/python"
+                        "${_py_version_major_minor}/site-packages:$PYTHONPATH"
+                )
+            else()
+                # Cleanup variables from previous find_package()-call
+                unset(Boost_INCLUDE_DIR)
+                unset(Boost_INCLUDE_DIRS)
+                message(
+                    STATUS
+                        "TFEL Python bindings disabled as Boosts Python library was not found."
+                )
+            endif()
+        endif()
         BuildExternalProject(
             TFEL ${_tfel_source}
             CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
@@ -60,6 +89,7 @@ if(OGS_USE_MFRONT)
                        "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
                        "-Denable-testing=OFF"
                        ${_defaultCMakeArgs}
+                       ${_tfel_cmake_args}
         )
         message(
             STATUS
@@ -252,7 +282,7 @@ endif()
 if(NOT HDF5_FOUND)
     BuildExternalProject(
         HDF5 ${_hdf5_source} CMAKE_ARGS ${_hdf5_options} ${_defaultCMakeArgs}
-        ${_cmake_generator}
+                                        ${_cmake_generator}
     )
     message(
         STATUS
@@ -322,8 +352,9 @@ elseif(NOT OGS_BUILD_VTK AND NOT OGS_USE_MKL)
 endif()
 if(NOT VTK_FOUND)
 
-    if("${OGS_EXTERNAL_DEPENDENCIES_CACHE}" STREQUAL "" AND
-      NOT EXISTS "${PROJECT_BINARY_DIR}/_ext/VTK/src/VTK")
+    if("${OGS_EXTERNAL_DEPENDENCIES_CACHE}" STREQUAL ""
+       AND NOT EXISTS "${PROJECT_BINARY_DIR}/_ext/VTK/src/VTK"
+    )
         # Fixes https://stackoverflow.com/questions/9894961 on vismac05:
         set(_loguru_patch PATCH_COMMAND git apply
                           "${PROJECT_SOURCE_DIR}/scripts/cmake/loguru.patch"
