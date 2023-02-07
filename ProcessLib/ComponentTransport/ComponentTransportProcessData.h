@@ -17,6 +17,7 @@
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/NumericalStability/NumericalStabilization.h"
+#include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Parameter.h"
 
 namespace MaterialPropertyLib
@@ -38,7 +39,6 @@ struct ComponentTransportProcessData
 {
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
-    Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
     bool const non_advective_form;
     /// This optional tag provides a simple means of considering the temperature
@@ -71,6 +71,16 @@ struct ComponentTransportProcessData
     std::unique_ptr<LookupTable> lookup_table;
 
     std::unique_ptr<NumLib::NumericalStabilization> stabilizer;
+
+    /// Projected specific body force vector: R * R^T * b.
+    std::vector<Eigen::VectorXd> const projected_specific_body_force_vectors;
+
+    int const mesh_space_dimension;
+
+    /// The aperture size is the thickness of 2D element or the
+    /// cross section area of 1D element. For 3D element, the value is set to 1.
+    ParameterLib::Parameter<double> const& aperture_size =
+        ParameterLib::ConstantParameter<double>("constant_one", 1.0);
 
     static const int hydraulic_process_id = 0;
     // TODO (renchao-lu): This variable is used in the calculation of the

@@ -26,7 +26,7 @@
                 <concentration>Xs_m</concentration>
                 <concentration>Xi_m</concentration>
             </process_variables>
-            <specific_body_force>0 0</specific_body_force>
+            <specific_body_force>0</specific_body_force>
             <secondary_variables>
                 <secondary_variable internal_name="darcy_velocity" output_name="darcy_velocity"/>
             </secondary_variables>

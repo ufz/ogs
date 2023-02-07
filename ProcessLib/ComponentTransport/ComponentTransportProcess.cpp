@@ -80,9 +80,11 @@ void ComponentTransportProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
+    int const mesh_space_dimension = _process_data.mesh_space_dimension;
+
     _process_data.mesh_prop_velocity = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "velocity",
-        MeshLib::MeshItemType::Cell, mesh.getDimension());
+        MeshLib::MeshItemType::Cell, mesh_space_dimension);
 
     _process_data.mesh_prop_porosity = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "porosity_avg",
@@ -111,7 +113,7 @@ void ComponentTransportProcess::initializeConcreteProcess(
     }
 
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(
-        mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
+        mesh_space_dimension, mesh.getElements(), dof_table, _local_assemblers,
         NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
         _process_data, transport_process_variables);
 
@@ -127,13 +129,13 @@ void ComponentTransportProcess::initializeConcreteProcess(
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",
         makeExtrapolator(
-            mesh.getDimension(), getExtrapolator(), _local_assemblers,
+            mesh_space_dimension, getExtrapolator(), _local_assemblers,
             &ComponentTransportLocalAssemblerInterface::getIntPtDarcyVelocity));
 
     _secondary_variables.addSecondaryVariable(
         "molar_flux",
         makeExtrapolator(
-            mesh.getDimension(), getExtrapolator(), _local_assemblers,
+            mesh_space_dimension, getExtrapolator(), _local_assemblers,
             &ComponentTransportLocalAssemblerInterface::getIntPtMolarFlux));
 }
 

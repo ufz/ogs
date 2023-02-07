@@ -49,7 +49,6 @@ struct IntegrationPointData final
     }
 
     void pushBackState() { porosity_prev = porosity; }
-
     NodalRowVectorType const N;
     GlobalDimNodalMatrixType const dNdx;
     double const integration_weight;
@@ -262,6 +261,8 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
+        double const aperture_size = _process_data.aperture_size(0.0, pos)[0];
+
         auto const shape_matrices =
             NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                       GlobalDim>(element, is_axially_symmetric,
@@ -274,7 +275,7 @@ public:
                 shape_matrices[ip].N, shape_matrices[ip].dNdx,
                 _integration_method.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
-                    shape_matrices[ip].detJ);
+                    shape_matrices[ip].detJ * aperture_size);
 
             pos.setIntegrationPoint(ip);
 
@@ -466,6 +467,10 @@ public:
         auto local_p = Eigen::Map<const NodalVectorType>(
             &local_x[pressure_index], pressure_size);
 
+        auto const& b =
+            _process_data
+                .projected_specific_body_force_vectors[_element.getID()];
+
         auto const number_of_components = num_nodal_dof - 1;
         for (int component_id = 0; component_id < number_of_components;
              ++component_id)
@@ -498,7 +503,7 @@ public:
             auto local_C = Eigen::Map<const NodalVectorType>(
                 &local_x[concentration_index], concentration_size);
 
-            assembleBlockMatrices(component_id, t, dt, local_C, local_p, KCC,
+            assembleBlockMatrices(b, component_id, t, dt, local_C, local_p, KCC,
                                   MCC, MCp, MpC, Kpp, Mpp, Bp);
 
             if (_process_data.chemical_solver_interface)
@@ -571,7 +576,8 @@ public:
     }
 
     void assembleBlockMatrices(
-        int const component_id, double const t, double const dt,
+        GlobalDimVectorType const& b, int const component_id, double const t,
+        double const dt,
         Eigen::Ref<const NodalVectorType> const& C_nodal_values,
         Eigen::Ref<const NodalVectorType> const& p_nodal_values,
         Eigen::Ref<LocalBlockMatrixType> KCC,
@@ -587,8 +593,6 @@ public:
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
-
-        auto const& b = _process_data.specific_body_force;
 
         MaterialPropertyLib::VariableArray vars;
 
@@ -824,7 +828,9 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b =
+            _process_data
+                .projected_specific_body_force_vectors[_element.getID()];
 
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
@@ -949,7 +955,9 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b =
+            _process_data
+                .projected_specific_body_force_vectors[_element.getID()];
 
         MaterialPropertyLib::VariableArray vars;
         MaterialPropertyLib::VariableArray vars_prev;
@@ -1139,8 +1147,9 @@ public:
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
-
-        auto const& b = _process_data.specific_body_force;
+        auto const& b =
+            _process_data
+                .projected_specific_body_force_vectors[_element.getID()];
 
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
@@ -1250,7 +1259,9 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b =
+            _process_data
+                .projected_specific_body_force_vectors[_element.getID()];
 
         MaterialPropertyLib::VariableArray vars;
         MaterialPropertyLib::VariableArray vars_prev;
@@ -1489,6 +1500,10 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
+        auto const& b =
+            _process_data
+                .projected_specific_body_force_vectors[_element.getID()];
+
         MaterialPropertyLib::VariableArray vars;
 
         auto const& medium =
@@ -1530,7 +1545,6 @@ public:
                 auto const rho_w =
                     phase[MaterialPropertyLib::PropertyType::density]
                         .template value<double>(vars, pos, t, dt);
-                auto const b = _process_data.specific_body_force;
                 // here it is assumed that the vector b is directed 'downwards'
                 cache_mat.col(ip).noalias() += K_over_mu * rho_w * b;
             }
@@ -1568,6 +1582,9 @@ public:
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
+        auto const& b =
+            _process_data
+                .projected_specific_body_force_vectors[_element.getID()];
 
         MaterialPropertyLib::VariableArray vars;
 
@@ -1600,7 +1617,6 @@ public:
                                .template value<double>(vars, pos, t, dt);
         if (_process_data.has_gravity)
         {
-            auto const b = _process_data.specific_body_force;
             q += K_over_mu * rho_w * b;
         }
         Eigen::Vector3d flux(0.0, 0.0, 0.0);
@@ -1707,7 +1723,9 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b =
+            _process_data
+                .projected_specific_body_force_vectors[_element.getID()];
 
         MaterialPropertyLib::VariableArray vars;
 

@@ -16,6 +16,8 @@
 #include "CreateLookupTable.h"
 #include "LookupTable.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MeshLib/Utils/GetElementRotationMatrices.h"
+#include "MeshLib/Utils/GetSpaceDimension.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
@@ -191,23 +193,24 @@ std::unique_ptr<Process> createComponentTransportProcess(
     }
 
     /// \section parameterscomponenttransport Process Parameters
-    // Specific body force parameter.
-    Eigen::VectorXd specific_body_force;
     std::vector<double> const b =
         //! \ogs_file_param{prj__processes__process__ComponentTransport__specific_body_force}
         config.getConfigParameter<std::vector<double>>("specific_body_force");
     assert(!b.empty() && b.size() < 4);
-    if (b.size() < mesh.getDimension())
+    // Specific body force parameter.
+    Eigen::VectorXd specific_body_force(b.size());
+    int const mesh_space_dimension =
+        MeshLib::getSpaceDimension(mesh.getNodes());
+    if (static_cast<int>(b.size()) != mesh_space_dimension)
     {
         OGS_FATAL(
             "specific body force (gravity vector) has {:d} components, mesh "
             "dimension is {:d}",
-            b.size(), mesh.getDimension());
+            b.size(), mesh_space_dimension);
     }
     bool const has_gravity = MathLib::toVector(b).norm() > 0;
     if (has_gravity)
     {
-        specific_body_force.resize(b.size());
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
@@ -237,16 +240,41 @@ std::unique_ptr<Process> createComponentTransportProcess(
     DBUG("Media properties verified.");
 
     auto stabilizer = NumLib::createNumericalStabilization(mesh, config);
+
+    auto const* aperture_size_parameter = &ParameterLib::findParameter<double>(
+        ProcessLib::Process::constant_one_parameter_name, parameters, 1);
+    auto const aperture_config =
+        //! \ogs_file_param{prj__processes__process__ComponentTransport__aperture_size}
+        config.getConfigSubtreeOptional("aperture_size");
+    if (aperture_config)
+    {
+        aperture_size_parameter = &ParameterLib::findParameter<double>(
+            //! \ogs_file_param_special{prj__processes__process__ComponentTransport__aperture_size__parameter}
+            *aperture_config, "parameter", parameters, 1);
+    }
+
+    auto const rotation_matrices = MeshLib::getElementRotationMatrices(
+        mesh_space_dimension, mesh.getDimension(), mesh.getElements());
+    std::vector<Eigen::VectorXd> projected_specific_body_force_vectors;
+    projected_specific_body_force_vectors.reserve(rotation_matrices.size());
+
+    std::transform(rotation_matrices.begin(), rotation_matrices.end(),
+                   std::back_inserter(projected_specific_body_force_vectors),
+                   [&specific_body_force](const auto& R)
+                   { return R * R.transpose() * specific_body_force; });
+
     ComponentTransportProcessData process_data{
         std::move(media_map),
-        specific_body_force,
         has_gravity,
         non_advective_form,
         temperature,
         chemically_induced_porosity_change,
         chemical_solver_interface.get(),
         std::move(lookup_table),
-        std::move(stabilizer)};
+        std::move(stabilizer),
+        projected_specific_body_force_vectors,
+        mesh_space_dimension,
+        *aperture_size_parameter};
 
     SecondaryVariableCollection secondary_variables;
 

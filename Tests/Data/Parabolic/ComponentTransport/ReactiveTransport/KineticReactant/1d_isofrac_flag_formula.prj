@@ -18,7 +18,7 @@
                 <concentration>Syntheticb</concentration>
                 <pressure>pressure</pressure>
             </process_variables>
-            <specific_body_force>0 0</specific_body_force>
+            <specific_body_force>0</specific_body_force>
             <chemically_induced_porosity_change>true</chemically_induced_porosity_change>
             <secondary_variables>
                 <secondary_variable internal_name="darcy_velocity" output_name="darcy_velocity"/>
