@@ -29,9 +29,26 @@ if(NOT OGS_BUILD_WHEEL)
 endif()
 append_source_files(TEST_SOURCES MeshGeoToolsLib)
 append_source_files(TEST_SOURCES_NUMLIB NumLib)
-# Disable Unity build for NumLib tests
+# Disable Unity build for some files
+if("$ENV{HOSTNAME}" MATCHES "frontend.*")
+    execute_process(
+        COMMAND pwd -P
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE _current_source_dir
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+else()
+    set(_current_source_dir ${CMAKE_CURRENT_SOURCE_DIR})
+endif()
+set(_unity_disabled
+    ${_current_source_dir}/NumLib/TestFe.cpp
+    ${_current_source_dir}/NumLib/TestGradShapeFunction.cpp
+    ${_current_source_dir}/NumLib/TestODEInt.cpp
+    ${_current_source_dir}/NumLib/TestCoordinateMapping.cpp
+)
+
 set_source_files_properties(
-    ${TEST_SOURCES_NUMLIB} PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
+    ${_unity_disabled} PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
 )
 # Keep order of source files, otherwise PETSc non-MPI tests fail
 set(TEST_SOURCES ${TEST_SOURCES} ${TEST_SOURCES_NUMLIB})
@@ -124,9 +141,15 @@ if(OGS_BUILD_GUI)
     endif()
 endif()
 
-target_precompile_headers(testrunner PRIVATE [["BaseLib/Error.h"]]
-    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] <Eigen/Core>
-    <gtest/gtest.h>)
+target_precompile_headers(
+    testrunner
+    PRIVATE
+    [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]]
+    [["BaseLib/Logging.h"]]
+    <Eigen/Core>
+    <gtest/gtest.h>
+)
 
 # cmake-format: off
 # Add make-target tests which runs the testrunner
