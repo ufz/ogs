@@ -26,10 +26,6 @@ template <typename ShapeMatrixTypeDisplacement,
           typename ShapeMatricesTypePressure, int DisplacementDim, int NPoints>
 struct IntegrationPointData final
 {
-    typename ShapeMatrixTypeDisplacement::template MatrixType<
-        DisplacementDim, NPoints * DisplacementDim>
-        N_u_op;
-
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
     typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
 

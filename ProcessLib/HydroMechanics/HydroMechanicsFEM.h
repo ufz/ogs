@@ -17,6 +17,7 @@
 #include "LocalAssemblerInterface.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
+#include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
@@ -48,10 +49,6 @@ struct IntegrationPointData final
     {
     }
 
-    typename ShapeMatricesTypeDisplacement::template MatrixType<
-        DisplacementDim, NPoints * DisplacementDim>
-        N_u_op; /**< for interpolation of the displacement vector, whereas N_u
-                   interpolates one component (scalar) */
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
 
@@ -179,6 +176,10 @@ public:
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
     using SymmetricTensor = Eigen::Matrix<double, KelvinVectorSize, 1>;
+
+    static constexpr auto& N_u_op = MathLib::eigenBlockMatrixView<
+        DisplacementDim,
+        typename ShapeMatricesTypeDisplacement::NodalRowVectorType>;
 
     HydroMechanicsLocalAssembler(HydroMechanicsLocalAssembler const&) = delete;
     HydroMechanicsLocalAssembler(HydroMechanicsLocalAssembler&&) = delete;

@@ -15,6 +15,7 @@
 
 #include "IntegrationPointData.h"
 #include "LocalAssemblerInterface.h"
+#include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
@@ -65,6 +66,10 @@ public:
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
     using SymmetricTensor = Eigen::Matrix<double, KelvinVectorSize, 1>;
+
+    static constexpr auto& N_u_op = MathLib::eigenBlockMatrixView<
+        DisplacementDim,
+        typename ShapeMatricesTypeDisplacement::NodalRowVectorType>;
 
     ThermoRichardsMechanicsLocalAssembler(
         ThermoRichardsMechanicsLocalAssembler const&) = delete;

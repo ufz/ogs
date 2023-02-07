@@ -17,6 +17,7 @@
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
+#include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
@@ -73,17 +74,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_data.integration_weight =
             _integration_method.getWeightedPoint(ip).getWeight() *
             sm_u.integralMeasure * sm_u.detJ;
-
-        ip_data.N_u_op = ShapeMatricesTypeDisplacement::template MatrixType<
-            DisplacementDim, displacement_size>::Zero(DisplacementDim,
-                                                      displacement_size);
-        for (int i = 0; i < DisplacementDim; ++i)
-        {
-            ip_data.N_u_op
-                .template block<1, displacement_size / DisplacementDim>(
-                    i, i * displacement_size / DisplacementDim)
-                .noalias() = sm_u.N;
-        }
 
         ip_data.N_u = sm_u.N;
         ip_data.dNdx_u = sm_u.dNdx;
@@ -1089,7 +1079,6 @@ void TH2MLocalAssembler<
         auto const& gradNpT = gradNp.transpose().eval();
         auto const& gradNTT = gradNT.transpose().eval();
 
-        auto const& Nu_op = ip.N_u_op;
         auto const& w = ip.integration_weight;
 
         auto const& m = Invariants::identity2;
@@ -1349,7 +1338,8 @@ void TH2MLocalAssembler<
 
         KUpC.noalias() += (BuT * alpha_B * ip_cv.chi_s_L * m * Np) * w;
 
-        fU.noalias() -= (BuT * ip.sigma_eff - Nu_op.transpose() * rho * b) * w;
+        fU.noalias() -=
+            (BuT * ip.sigma_eff - N_u_op(Nu).transpose() * rho * b) * w;
 
         if (_process_data.apply_mass_lumping)
         {
@@ -1515,7 +1505,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const& gradNpT = gradNp.transpose().eval();
         auto const& gradNTT = gradNT.transpose().eval();
 
-        auto const& Nu_op = ip.N_u_op;
         auto const& w = ip.integration_weight;
 
         auto const& m = Invariants::identity2;
@@ -2047,7 +2036,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .noalias() += BuT * ip_cv.C * Bu * w;
 
         // fU_1
-        fU.noalias() -= (BuT * ip.sigma_eff - Nu_op.transpose() * rho * b) * w;
+        fU.noalias() -=
+            (BuT * ip.sigma_eff - N_u_op(Nu).transpose() * rho * b) * w;
 
         // KuT
         local_Jac
@@ -2059,8 +2049,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         local_Jac
             .template block<displacement_size, temperature_size>(
                 displacement_index, temperature_index)
-            .noalias() += Nu_op.transpose() * ip_cv.drho_dT * b * Nu_op * w;
-            */
+            .noalias() += N_u_op(Nu).transpose() * ip_cv.drho_dT * b *
+                          N_u_op(Nu).transpose() * w;
+         */
 
         if (_process_data.apply_mass_lumping)
         {

@@ -69,17 +69,6 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
             integration_method.getWeightedPoint(ip).getWeight() *
             sm_u.integralMeasure * sm_u.detJ;
 
-        ip_data.N_u_op = ShapeMatricesTypeDisplacement::template MatrixType<
-            DisplacementDim, displacement_size>::Zero(DisplacementDim,
-                                                      displacement_size);
-        for (int i = 0; i < DisplacementDim; ++i)
-        {
-            ip_data.N_u_op
-                .template block<1, displacement_size / DisplacementDim>(
-                    i, i * displacement_size / DisplacementDim)
-                .noalias() = sm_u.N;
-        }
-
         ip_data.N_u = sm_u.N;
         ip_data.dNdx_u = sm_u.dNdx;
 
@@ -316,7 +305,6 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         typename ConstitutiveTraits::OutputData& output_data) const
 {
     auto const& N_u = ip_data.N_u;
-    auto const& N_u_op = ip_data.N_u_op;
     auto const& dNdx_u = ip_data.dNdx_u;
 
     // N and dNdx are used for both p and T variables
@@ -403,7 +391,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     block_u(out.res).noalias() =
         B.transpose() * sigma_total -
         static_cast<int>(this->process_data_.apply_body_force_for_deformation) *
-            N_u_op.transpose() * CD.grav_data.volumetric_body_force;
+            N_u_op(N_u).transpose() * CD.grav_data.volumetric_body_force;
 
     // Storage matrices
     out.storage_p_a_p.noalias() = CD.eq_p_data.storage_p_a_p_X_NTN * NTN;
@@ -447,7 +435,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         B.transpose() * CD.s_mech_data.J_uT_BT_K_N * N;
     block_up(out.Jac).noalias() =
         B.transpose() * CD.s_mech_data.J_up_BT_K_N * N +
-        N_u_op.transpose() * CD.grav_data.J_up_HT_V_N * N;
+        N_u_op(N_u).transpose() * CD.grav_data.J_up_HT_V_N * N;
     block_uu(out.Jac).noalias() =
         B.transpose() * CD.s_mech_data.stiffness_tensor * B;
 
