@@ -39,7 +39,6 @@ struct ComponentTransportProcessData
 {
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
-    Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
     bool const non_advective_form;
     /// This optional tag provides a simple means of considering the temperature
@@ -73,8 +72,8 @@ struct ComponentTransportProcessData
 
     std::unique_ptr<NumLib::NumericalStabilization> stabilizer;
 
-    /// A vector of the rotation matrices for all elements.
-    std::vector<Eigen::MatrixXd> const element_rotation_matrices;
+    /// Projected specific body force vector: R * R^T * b.
+    std::vector<Eigen::VectorXd> const projected_specific_body_force_vectors;
 
     int const mesh_space_dimension;
 

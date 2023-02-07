@@ -211,7 +211,6 @@ std::unique_ptr<Process> createComponentTransportProcess(
     bool const has_gravity = MathLib::toVector(b).norm() > 0;
     if (has_gravity)
     {
-        specific_body_force.resize(b.size());
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
@@ -254,9 +253,18 @@ std::unique_ptr<Process> createComponentTransportProcess(
             *aperture_config, "parameter", parameters, 1);
     }
 
+    auto const rotation_matrices = MeshLib::getElementRotationMatrices(
+        mesh_space_dimension, mesh.getDimension(), mesh.getElements());
+    std::vector<Eigen::VectorXd> projected_specific_body_force_vectors;
+    projected_specific_body_force_vectors.reserve(rotation_matrices.size());
+
+    std::transform(rotation_matrices.begin(), rotation_matrices.end(),
+                   std::back_inserter(projected_specific_body_force_vectors),
+                   [&specific_body_force](const auto& R)
+                   { return R * R.transpose() * specific_body_force; });
+
     ComponentTransportProcessData process_data{
         std::move(media_map),
-        specific_body_force,
         has_gravity,
         non_advective_form,
         temperature,
@@ -264,8 +272,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
         chemical_solver_interface.get(),
         std::move(lookup_table),
         std::move(stabilizer),
-        MeshLib::getElementRotationMatrices(
-            mesh_space_dimension, mesh.getDimension(), mesh.getElements()),
+        projected_specific_body_force_vectors,
         mesh_space_dimension,
         *aperture_size_parameter};
 
