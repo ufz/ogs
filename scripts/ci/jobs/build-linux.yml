@@ -43,7 +43,7 @@ build linux (no unity):
     - .template-build-linux
   tags: [docker]
   needs: [meta, ci_images]
-  timeout: 1h
+  timeout: 2h
   variables:
     BUILD_TESTS: "false"
     BUILD_CTEST: "false"
