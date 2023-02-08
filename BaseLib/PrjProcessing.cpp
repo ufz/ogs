@@ -45,7 +45,8 @@ void traverseIncludes(xmlDoc* doc, xmlNode* node,
                 OGS_FATAL(
                     "Error while processing includes in prj file. Error in "
                     "element '{:s}' on line {:d}: no file attribute given!",
-                    cur_node->name, cur_node->line);
+                    reinterpret_cast<const char*>(cur_node->name),
+                    cur_node->line);
             }
             auto filename_length = xmlStrlen(include_file_char_pointer);
             std::string filename(
@@ -64,7 +65,9 @@ void traverseIncludes(xmlDoc* doc, xmlNode* node,
                     "element '{:s}' on line {:d}: Include file is not "
                     "existing: "
                     "{:s}!",
-                    cur_node->name, cur_node->line, include_file_char_pointer);
+                    reinterpret_cast<const char*>(cur_node->name),
+                    cur_node->line,
+                    reinterpret_cast<const char*>(include_file_char_pointer));
             }
             INFO("Including {:s} into project file.", filename);
 
@@ -202,7 +205,8 @@ void patchStream(std::string const& patch_file, std::stringstream& prj_stream,
                 "Error while patching prj file with patch file {:}. Only "
                 "'add', 'replace' and 'remove' elements are allowed! Got an "
                 "element '{:s}' on line {:d}.",
-                patch_file, node->name, node->line);
+                patch_file, reinterpret_cast<const char*>(node->name),
+                node->line);
         }
 
         if (rc)
@@ -210,7 +214,8 @@ void patchStream(std::string const& patch_file, std::stringstream& prj_stream,
             OGS_FATAL(
                 "Error while patching prj file with patch file {:}. Error in "
                 "element '{:s}' on line {:d}.",
-                patch_file, node->name, node->line);
+                patch_file, reinterpret_cast<const char*>(node->name),
+                node->line);
         }
     }
 

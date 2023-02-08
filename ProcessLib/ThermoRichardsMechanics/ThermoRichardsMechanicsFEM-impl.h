@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <spdlog/fmt/ostr.h>
+#include <fmt/format.h>
 
 #include <Eigen/LU>
 #include <cassert>
