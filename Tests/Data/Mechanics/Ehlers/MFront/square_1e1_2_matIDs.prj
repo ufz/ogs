@@ -80,10 +80,10 @@
                     <t_initial>0</t_initial>
                     <t_end>1</t_end>
                     <initial_dt>0.01</initial_dt>
-                    <minimum_dt>1.e-4</minimum_dt>
-                    <maximum_dt>1.e-2</maximum_dt>
-                    <number_iterations>1   4    10   15</number_iterations>
-                    <multiplier>1.2 1.0 0.8 0.6</multiplier>
+                    <minimum_dt>1.e-3</minimum_dt>
+                    <maximum_dt>1.e-1</maximum_dt>
+                    <number_iterations>1   3  5  10   15</number_iterations>
+                    <multiplier>1.2 1.05 0.95 0.8 0.6</multiplier>
                 </time_stepping>
             </process>
         </processes>
