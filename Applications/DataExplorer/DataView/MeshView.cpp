@@ -397,15 +397,20 @@ void MeshView::exportToTetGen()
     MeshLib::Mesh const* const mesh =
         static_cast<MeshModel*>(this->model())->getMesh(index);
     QSettings const settings;
-    QString const filename = QFileDialog::getSaveFileName(
+    QFileDialog dialog(
         this, "Write TetGen input file to",
         settings.value("lastOpenedTetgenFileDirectory").toString(),
         "TetGen Geometry (*.smesh)");
-    if (!filename.isEmpty())
+    dialog.setDefaultSuffix("smesh");
+    if (dialog.exec())
     {
-        FileIO::TetGenInterface tg;
-        std::vector<MeshLib::Node> attr;
-        tg.writeTetGenSmesh(filename.toStdString(), *mesh, attr);
+        QString const filename = dialog.getSaveFileName();
+        if (!filename.isEmpty())
+        {
+            FileIO::TetGenInterface tg;
+            std::vector<MeshLib::Node> attr;
+            tg.writeTetGenSmesh(filename.toStdString(), *mesh, attr);
+        }
     }
 }
 
