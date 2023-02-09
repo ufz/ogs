@@ -55,8 +55,9 @@ public:
         for (auto& p : test_pnts)
         {
             points.push_back(new GeoLib::Point(p));
-            pnt_name_id_map["p" + std::to_string(pos)] = pos;
-            cpy_name_id_map["p" + std::to_string(pos)] = pos;
+            std::string const position_name = 'p' + std::to_string(pos);
+            pnt_name_id_map[position_name] = pos;
+            cpy_name_id_map[position_name] = pos;
             pos++;
         }
 
