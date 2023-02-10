@@ -18,9 +18,10 @@
 #include <QPen>
 
 /**
- * \brief A 2D carthesian grid as a QGraphicsItem.
+ * \brief A 2D cartesian grid as a QGraphicsItem.
  *
- * A 2D carthesian grid as a QGraphicsItem. The size of the grid cells is constant but can be anisotroph.
+ * A 2D cartesian grid as a QGraphicsItem. The size of the grid cells is
+ * constant but can be anisotroph.
  */
 class QGraphicsGrid : public QGraphicsItem
 {

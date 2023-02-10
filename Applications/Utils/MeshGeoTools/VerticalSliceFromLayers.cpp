@@ -207,7 +207,7 @@ std::pair<Eigen::Matrix3d, double> rotateGeometryToXY(
 /// This encapsulates a workaround:
 /// For unknown reasons, the GML->GEO converter will not work correctly when
 /// inputting the merged geometry directly. However, if the geometry is saved to
-/// a file and immedeately loaded again, everything works fine.
+/// a file and immediately loaded again, everything works fine.
 void consolidateGeometry(GeoLib::GEOObjects& geo,
                          std::string const& output_name,
                          std::string& merged_geo_name,

@@ -15,15 +15,15 @@ z = [1	0.980568	0.961883	0.943917	0.926642	0.910031	0.89406	0.878702	0.863935	0.
 S_w = [0.00634606	0.00725321	0.00828275	0.00945034	0.010773	0.0122694	0.0139604	0.0158688	0.0180196	0.0204401	0.02316	0.0262117	0.02963	0.0334521	0.0377181	0.0424703	0.0477534	0.0536138	0.0601001	0.0672615	0.075148	0.0838096	0.093295	0.103651	0.11492	0.127141	0.140347	0.154563	0.169803	0.186072	0.203364	0.221657	0.240916	0.261092	0.282118	0.303916	0.326391	0.349439	0.372943	0.396778	0.420821	0.443602	0.466042	0.488095	0.509719	0.530879	0.551545	0.571695	0.591309	0.610375	0.628884	0.646829	0.664209	0.681023	0.697275	0.71297	0.728113	0.742713	0.756779	0.770321	0.78335	0.795875	0.80791	0.819465	0.830553	0.841184	0.851372	0.861126	0.870459	0.879381	0.887903	0.896036	0.903789	0.911172	0.918195	0.924865	0.931193	0.937186	0.942851	0.948197	0.953231	0.95796	0.962391	0.96653	0.970384	0.97396	0.977263	0.980301	0.983081	0.985608	0.987891	0.989937	0.991754	0.993351	0.994737	0.995925	0.996924	0.997747	0.998409	0.998925	0.99931	0.999585	0.999755	0.99984	0.999867	0.999873	0.999878	0.999884	0.999889	0.999894	0.9999	0.999905	0.99991	0.999916	0.999921	0.999926	0.999932	0.999937	0.999942	0.999947	0.999952	0.999957	0.999961	0.999965	0.99997	0.999974	0.999977	0.999981	0.999984	0.999987	0.999989	0.999991	0.999993	0.999995	0.999996	0.999997	0.999998	0.999999	0.999999	1	1	1	1	1	1	1];
 depth = 1 - z;
 phi = 0.38; % porosity
-D_a = 8.3e-6; % TCE diffusion coefficient in air 
-D_w = 9.1e-10; % TCE diffusion coefficient in water 
+D_a = 8.3e-6; % TCE diffusion coefficient in air
+D_w = 9.1e-10; % TCE diffusion coefficient in water
 theta_a = phi * (1-S_w); % volumetric air content
 theta_w = phi * S_w; % volumetric water content
 alpha_z = 1e-3; % vertical transverse dispersivity
 v = 0; % seepage velocity
 H = 0.38; % Henry constant of TCE (non-dimensional)
 N_G = 101325/8.31446/298.15; % molar density of ideal gas at 25 dC
-m = 0.8; % van Genuchten paramter
+m = 0.8; % van Genuchten parameter
 k_rel_wet = sqrt(S_w).*(1-(1-S_w.^(1/m)).^m).^2; % relative permeability of wetting phase
 A = D_a*theta_a.^(10/3)/phi/phi + (D_w*theta_w.^(10/3)/phi/phi + alpha_z*v*k_rel_wet)/H;
 F = 1./A;
@@ -32,7 +32,7 @@ for i=2:110
     ddepth = depth(i)-depth(i-1);
     I(i) = I(i-1) + (F(i)+F(i-1))/2 * ddepth;
 end
-c_rel = I./I(end); % relative TCE concentration in the gas phase 
+c_rel = I./I(end); % relative TCE concentration in the gas phase
 d2WT = depth(110) - depth; % distance to water table (+ means above)
 semilogx(c_rel, d2WT(1:110));
 ylim([0 0.6]);

@@ -18,8 +18,8 @@
 #include <limits>
 
 // default size of a new window
-const float DEFAULTX = 500.0;
-const float DEFAULTY = 300.0;
+static constexpr float kDefaultX = 500.0;
+static constexpr float kDefaultY = 300.0;
 
 /**
  * Creates a new scene. Since no data points are given some default
@@ -175,8 +175,8 @@ void DiagramScene::adjustScaling()
 {
     if ((_unscaledBounds.width() > 0) && (_unscaledBounds.height() > 0))
     {
-        _scaleX = DEFAULTX / static_cast<float>(_unscaledBounds.width());
-        _scaleY = DEFAULTY / static_cast<float>(_unscaledBounds.height());
+        _scaleX = kDefaultX / static_cast<float>(_unscaledBounds.width());
+        _scaleY = kDefaultY / static_cast<float>(_unscaledBounds.height());
     }
 }
 
