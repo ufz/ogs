@@ -18,6 +18,7 @@
 #include "MaterialLib/MPL/Utils/FormKelvinVector.h"
 #include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
+#include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
@@ -73,15 +74,6 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ip_data.integration_weight =
             _integration_method.getWeightedPoint(ip).getWeight() *
             sm_u.integralMeasure * sm_u.detJ;
-
-        ip_data.N_u_op = ShapeMatricesTypeDisplacement::template MatrixType<
-            DisplacementDim, displacement_size>::Zero(DisplacementDim,
-                                                      displacement_size);
-        for (int i = 0; i < DisplacementDim; ++i)
-            ip_data.N_u_op
-                .template block<1, displacement_size / DisplacementDim>(
-                    i, i * displacement_size / DisplacementDim)
-                .noalias() = sm_u.N;
 
         ip_data.N_u = sm_u.N;
         ip_data.dNdx_u = sm_u.dNdx;
@@ -253,8 +245,6 @@ void ThermoHydroMechanicsLocalAssembler<
     {
         auto const& w = _ip_data[ip].integration_weight;
 
-        auto const& N_u_op = _ip_data[ip].N_u_op;
-
         auto const& N_u = _ip_data[ip].N_u;
         auto const& dNdx_u = _ip_data[ip].dNdx_u;
 
@@ -409,9 +399,10 @@ void ThermoHydroMechanicsLocalAssembler<
 
         auto const rho =
             solid_density * (1 - porosity) + porosity * fluid_density;
+
         local_rhs.template segment<displacement_size>(displacement_index)
             .noalias() -=
-            (B.transpose() * sigma_eff - N_u_op.transpose() * rho * b) * w;
+            (B.transpose() * sigma_eff - N_u_op(N_u).transpose() * rho * b) * w;
 
         //
         // displacement equation, pressure part (K_up)

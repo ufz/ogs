@@ -17,6 +17,7 @@
 #include "LocalAssemblerInterface.h"
 #include "MaterialLib/MPL/VariableType.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
+#include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
@@ -71,6 +72,10 @@ public:
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
     using SymmetricTensor = Eigen::Matrix<double, KelvinVectorSize, 1>;
+
+    static constexpr auto& N_u_op = MathLib::eigenBlockMatrixView<
+        DisplacementDim,
+        typename ShapeMatricesTypeDisplacement::NodalRowVectorType>;
 
     RichardsMechanicsLocalAssembler(RichardsMechanicsLocalAssembler const&) =
         delete;

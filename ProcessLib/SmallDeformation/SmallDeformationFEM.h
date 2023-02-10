@@ -18,6 +18,7 @@
 #include "LocalAssemblerInterface.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
+#include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -106,6 +107,9 @@ public:
     using GradientMatrixType = typename GMatricesType::GradientMatrixType;
     using IpData =
         IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>;
+
+    static constexpr auto& N_u_op = MathLib::eigenBlockMatrixView<
+        DisplacementDim, typename ShapeMatricesType::NodalRowVectorType>;
 
     SmallDeformationLocalAssembler(SmallDeformationLocalAssembler const&) =
         delete;
@@ -272,20 +276,6 @@ public:
             auto const& N = _ip_data[ip].N;
             auto const& dNdx = _ip_data[ip].dNdx;
 
-            typename ShapeMatricesType::template MatrixType<DisplacementDim,
-                                                            displacement_size>
-                N_u_op = ShapeMatricesType::template MatrixType<
-                    DisplacementDim,
-                    displacement_size>::Zero(DisplacementDim,
-                                             displacement_size);
-            for (int i = 0; i < DisplacementDim; ++i)
-            {
-                N_u_op
-                    .template block<1, displacement_size / DisplacementDim>(
-                        i, i * displacement_size / DisplacementDim)
-                    .noalias() = N;
-            }
-
             auto const x_coord =
                 NumLib::interpolateXCoordinate<ShapeFunction,
                                                ShapeMatricesType>(_element, N);
@@ -336,7 +326,7 @@ public:
 
             auto const rho = _process_data.solid_density(t, x_position)[0];
             local_b.noalias() -=
-                (B.transpose() * sigma - N_u_op.transpose() * rho * b) * w;
+                (B.transpose() * sigma - N_u_op(N).transpose() * rho * b) * w;
             local_Jac.noalias() += B.transpose() * C * B * w;
         }
     }

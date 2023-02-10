@@ -45,9 +45,6 @@ struct IntegrationPointData final
         sigma_eff_prev.resize(kelvin_vector_size);
     }
 
-    typename ShapeMatrixTypeDisplacement::template MatrixType<
-        DisplacementDim, NPoints * DisplacementDim>
-        N_u_op;
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
