@@ -28,7 +28,7 @@ class SensorData;
 class DiagramList
 {
 public:
-    /// Constructur containing an empty list.
+    /// Constructor containing an empty list.
     DiagramList();
     ~DiagramList();
 

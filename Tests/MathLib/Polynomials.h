@@ -312,7 +312,7 @@ template <>
 struct FNonseparablePolynomial<3> final : FBase
 {
     // The number of coefficients/monomials are obtained as follows: Compute the
-    // number of combinations with repititions when drawing
+    // number of combinations with repetitions when drawing
     // polynomial_degree times from the set { x, y, z, 1 }
     explicit FNonseparablePolynomial(unsigned polynomial_degree)
         : FBase(binomial_coefficient(4 + polynomial_degree - 1, 4 - 1)),
@@ -394,7 +394,7 @@ template <>
 struct FNonseparablePolynomial<2> final : FBase
 {
     // The number of coefficients/monomials are obtained as follows: Compute the
-    // number of combinations with repititions when drawing
+    // number of combinations with repetitions when drawing
     // polynomial_degree times from the set { x, y, 1 }
     explicit FNonseparablePolynomial(unsigned polynomial_degree)
         : FBase(binomial_coefficient(3 + polynomial_degree - 1, 3 - 1)),
@@ -464,7 +464,7 @@ template <>
 struct FNonseparablePolynomial<1> final : FBase
 {
     // The number of coefficients/monomials are obtained as follows: Compute the
-    // number of combinations with repititions when drawing
+    // number of combinations with repetitions when drawing
     // polynomial_degree times from the set { x, 1 }
     explicit FNonseparablePolynomial(unsigned polynomial_degree)
         : FBase(binomial_coefficient(2 + polynomial_degree - 1, 2 - 1)),

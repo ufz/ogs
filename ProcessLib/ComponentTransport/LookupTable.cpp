@@ -64,7 +64,7 @@ void LookupTable::lookup(std::vector<GlobalVector*> const& x,
         EntryInput base_entry_input;
         for (auto const& input_field : input_fields)
         {
-            // process id and variable id are equilvalent in the case the
+            // process id and variable id are equivalent in the case the
             // staggered coupling scheme is adopted.
             auto const process_id = input_field.variable_id;
             auto const& variable_name = input_field.name;
