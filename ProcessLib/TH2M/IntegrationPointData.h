@@ -171,6 +171,8 @@ struct IntegrationPointData final
 
     // solid phase linear thermal expansivity
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> alpha_T_SR;
+
+    // Intrinsic permeability
     GlobalDimMatrixType k_S;
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;

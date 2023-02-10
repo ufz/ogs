@@ -235,6 +235,10 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
         "relative_permeability_liquid", 1,
         &LocalAssemblerInterface::getIntPtRelativePermeabilityLiquid);
 
+    add_secondary_variable(
+        "intrinsic_permeability", mesh.getDimension() * mesh.getDimension(),
+        &LocalAssemblerInterface::getIntPtIntrinsicPermeability);
+
     add_secondary_variable("enthalpy_gas", 1,
                            &LocalAssemblerInterface::getIntPtEnthalpyGas);
 
