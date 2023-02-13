@@ -2,7 +2,7 @@
 date = "2021-05-06T13:00:13+01`:00"
 title = "Command-line arguments"
 author = "Lars Bilke"
-weight = 3
+weight = 2
 +++
 
 The following arguments are available:

@@ -2,7 +2,7 @@
 title = "Running OGS with MPI"
 date = "2022-05-06T11:20:34+02:00"
 author = "Wenqing Wang"
-weight = 1
+weight = 4
 +++
 
 <!-- vale off -->
