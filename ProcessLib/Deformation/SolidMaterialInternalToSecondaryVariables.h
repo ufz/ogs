@@ -20,19 +20,14 @@
 
 namespace ProcessLib::Deformation
 {
-template <typename LocalAssemblerInterface, typename SolidMaterial,
-          typename AddSecondaryVariableCallback>
-void solidMaterialInternalToSecondaryVariables(
-    std::map<int, std::unique_ptr<SolidMaterial>> const& solid_materials,
-    AddSecondaryVariableCallback const& add_secondary_variable)
+
+template <typename SolidMaterial>
+std::map<std::string,
+         std::vector<std::pair<int, typename SolidMaterial::InternalVariable>>>
+collectInternalVariables(
+    std::map<int, std::unique_ptr<SolidMaterial>> const& solid_materials)
 {
     assert(!solid_materials.empty());
-
-    // Multiple material ids could be present but only one material for the
-    // whole domain. In this case the choice of callbacks is independent of
-    // local assembler's material id, and the material id is 0.
-    // \see selectSolidConstitutiveRelation() for material id logic.
-    bool const material_id_independent = solid_materials.size() == 1;
 
     // For each name of an internal variable collect all solid material/
     // internal variable pairs.
@@ -48,6 +43,24 @@ void solidMaterialInternalToSecondaryVariables(
             internal_variables_by_name[iv.name].push_back({material_id, iv});
         }
     }
+
+    return internal_variables_by_name;
+}
+
+template <typename LocalAssemblerInterface, typename SolidMaterial,
+          typename AddSecondaryVariableCallback>
+void solidMaterialInternalToSecondaryVariables(
+    std::map<int, std::unique_ptr<SolidMaterial>> const& solid_materials,
+    AddSecondaryVariableCallback const& add_secondary_variable)
+{
+    auto const internal_variables_by_name =
+        collectInternalVariables(solid_materials);
+
+    // Multiple material ids could be present but only one material for the
+    // whole domain. In this case the choice of callbacks is independent of
+    // local assembler's material id, and the material id is 0.
+    // \see selectSolidConstitutiveRelation() for material id logic.
+    bool const material_id_independent = solid_materials.size() == 1;
 
     // Create *single* callback passing all solid materials to it. Choose
     // correct solid material based on the local assembler's solid material in
