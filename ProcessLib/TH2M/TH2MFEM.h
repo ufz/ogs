@@ -455,6 +455,17 @@ private:
                    : (*_process_data.material_ids)[_element.getID()];
     }
 
+    std::vector<double> getMaterialStateVariableInternalState(
+        std::function<std::span<double>(
+            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
+                MaterialStateVariables&)> const& get_values_span,
+        int const& n_components) const override
+    {
+        return ProcessLib::getIntegrationPointDataMaterialStateVariables(
+            _ip_data, &IpData::material_state_variables, get_values_span,
+            n_components);
+    }
+
     typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables const&
     getMaterialStateVariablesAt(unsigned integration_point) const override

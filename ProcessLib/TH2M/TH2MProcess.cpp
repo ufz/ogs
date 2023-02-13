@@ -280,6 +280,11 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
         LocalAssemblerInterface<DisplacementDim>>(_process_data.solid_materials,
                                                   add_secondary_variable);
 
+    ProcessLib::Deformation::
+        solidMaterialInternalVariablesToIntegrationPointWriter(
+            _process_data.solid_materials, local_assemblers_,
+            _integration_point_writer, integration_order);
+
     _process_data.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "saturation_avg",
         MeshLib::MeshItemType::Cell, 1);
