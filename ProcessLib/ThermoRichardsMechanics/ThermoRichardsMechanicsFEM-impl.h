@@ -21,8 +21,12 @@
 #include "NumLib/Fem/Interpolation.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/Graph/Get.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqP.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqT.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Gravity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidDensity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidViscosity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"
 #include "ThermoRichardsMechanicsFEM.h"
 
 namespace ProcessLib
@@ -99,7 +103,7 @@ void ThermoRichardsMechanicsLocalAssembler<
     MediaData const media_data{medium};
 
     typename ConstitutiveTraits::ConstitutiveSetting const constitutive_setting;
-    typename ConstitutiveTraits::ConstitutiveModels models(
+    auto models = ConstitutiveTraits::createConstitutiveModels(
         this->process_data_, this->solid_material_);
 
     unsigned const n_integration_points =
@@ -357,19 +361,19 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             dNdx_u, N_u, (*x_position.getCoordinates())[0],
             this->is_axially_symmetric_);
 
+    typename ConstitutiveTraits::ConstitutiveData CD;
+
     auto const [T, p_L, u] = localDOF(local_x);
     auto const [T_prev, p_L_prev, u_prev] = localDOF(local_x_prev);
 
-    GlobalDimVectorType const grad_T_ip = dNdx * T;
-
-    typename ConstitutiveTraits::ConstitutiveModels models(
-        this->process_data_, this->solid_material_);
-    typename ConstitutiveTraits::ConstitutiveTempData tmp;
-    typename ConstitutiveTraits::ConstitutiveData CD;
-
     {
+        auto models = ConstitutiveTraits::createConstitutiveModels(
+            this->process_data_, this->solid_material_);
+        typename ConstitutiveTraits::ConstitutiveTempData tmp;
+
         double const T_ip = N * T;
         double const T_prev_ip = N * T_prev;
+        GlobalDimVectorType const grad_T_ip = dNdx * T;
 
         double const p_cap_ip = -N * p_L;
         double const p_cap_prev_ip = -N * p_L_prev;
@@ -547,7 +551,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     typename ConstitutiveTraits::ConstitutiveSetting constitutive_setting;
 
-    typename ConstitutiveTraits::ConstitutiveModels models(
+    auto models = ConstitutiveTraits::createConstitutiveModels(
         process_data, this->solid_material_);
     typename ConstitutiveTraits::ConstitutiveTempData tmp;
     typename ConstitutiveTraits::ConstitutiveData CD;

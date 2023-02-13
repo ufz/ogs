@@ -31,48 +31,70 @@ namespace ConstitutiveStress_StrainTemperature
 {
 /// Constitutive models used for assembly.
 template <int DisplacementDim>
-struct ConstitutiveModels
-{
-    template <typename TRMProcessData>
-    explicit ConstitutiveModels(
-        TRMProcessData const& process_data,
-        SolidConstitutiveRelation<DisplacementDim> const& solid_material)
-        : elastic_tangent_stiffness_model(solid_material),
-          solid_compressibility_model(solid_material),
-          s_mech_model(solid_material),
-          grav_model(process_data.specific_body_force),
-          darcy_model(process_data.specific_body_force),
-          eq_p_model(process_data.specific_body_force)
-    {
-    }
-
-    ElasticTangentStiffnessModel<DisplacementDim>
-        elastic_tangent_stiffness_model;
-    BiotModel biot_model;
+using ConstitutiveModels = std::tuple<
+    ElasticTangentStiffnessModel<DisplacementDim>,
+    BiotModel,
     SolidCompressibilityModel<DisplacementDim,
-                              SolidConstitutiveRelation<DisplacementDim>>
-        solid_compressibility_model;
-    SaturationModel<DisplacementDim> S_L_model;
-    BishopsModel bishops_model;
-    BishopsPrevModel bishops_prev_model;
-    PorosityModel<DisplacementDim> poro_model;
-    TransportPorosityModel<DisplacementDim> transport_poro_model;
-    SwellingModel<DisplacementDim> swelling_model;
-    SolidThermalExpansionModel<DisplacementDim> s_therm_exp_model;
-    SolidMechanicsModel<DisplacementDim> s_mech_model;
-    LiquidDensityModel<DisplacementDim> rho_L_model;
-    SolidDensityModel<DisplacementDim> rho_S_model;
-    GravityModel<DisplacementDim> grav_model;
-    LiquidViscosityModel<DisplacementDim> mu_L_model;
-    PermeabilityModel<DisplacementDim> perm_model;
-    DarcyLawModel<DisplacementDim> darcy_model;
-    TRMHeatStorageAndFluxModel<DisplacementDim> heat_storage_and_flux_model;
-    TRMVaporDiffusionModel<DisplacementDim> vapor_diffusion_model;
-    FluidThermalExpansionModel<DisplacementDim> f_therm_exp_model;
-    TRMStorageModel<DisplacementDim> storage_model;
-    EqPModel<DisplacementDim> eq_p_model;
-    EqTModel<DisplacementDim> eq_T_model;
-    ThermoOsmosisModel<DisplacementDim> th_osmosis_model;
-};
+                              SolidConstitutiveRelation<DisplacementDim>>,
+    SaturationModel<DisplacementDim>,
+    BishopsModel,
+    BishopsPrevModel,
+    PorosityModel<DisplacementDim>,
+
+    SwellingModel<DisplacementDim>,
+    SolidThermalExpansionModel<DisplacementDim>,
+    SolidMechanicsModel<DisplacementDim>,
+    LiquidDensityModel<DisplacementDim>,
+
+    SolidDensityModel<DisplacementDim>,
+    GravityModel<DisplacementDim>,
+    LiquidViscosityModel<DisplacementDim>,
+    TransportPorosityModel<DisplacementDim>,
+    PermeabilityModel<DisplacementDim>,
+    ThermoOsmosisModel<DisplacementDim>,
+    DarcyLawModel<DisplacementDim>,
+    TRMHeatStorageAndFluxModel<DisplacementDim>,
+    TRMVaporDiffusionModel<DisplacementDim>,
+    FluidThermalExpansionModel<DisplacementDim>,
+    TRMStorageModel<DisplacementDim>,
+    EqPModel<DisplacementDim>,
+    EqTModel<DisplacementDim>>;
+
+template <int DisplacementDim, typename TRMProcessData>
+ConstitutiveModels<DisplacementDim> createConstitutiveModels(
+    TRMProcessData const& process_data,
+    SolidConstitutiveRelation<DisplacementDim> const& solid_material)
+{
+    return {
+        ElasticTangentStiffnessModel<DisplacementDim>{solid_material},
+        {} /* BiotModel */,
+        SolidCompressibilityModel<DisplacementDim,
+                                  SolidConstitutiveRelation<DisplacementDim>>{
+            solid_material},
+        {} /* SaturationModel<DisplacementDim> */,
+        {} /* BishopsModel */,
+        {} /* BishopsPrevModel */,
+        {} /* PorosityModel<DisplacementDim> */,
+
+        {} /* SwellingModel<DisplacementDim> */,
+        {} /* SolidThermalExpansionModel<DisplacementDim> */,
+        SolidMechanicsModel<DisplacementDim>{solid_material},
+        {} /* LiquidDensityModel<DisplacementDim> */,
+
+        {} /* SolidDensityModel<DisplacementDim> */,
+        GravityModel<DisplacementDim>{process_data.specific_body_force},
+        {} /* LiquidViscosityModel<DisplacementDim> */,
+        {} /* TransportPorosityModel<DisplacementDim> */,
+        {} /* PermeabilityModel<DisplacementDim> */,
+        {} /* ThermoOsmosisModel<DisplacementDim> */,
+        DarcyLawModel<DisplacementDim>{process_data.specific_body_force},
+        {} /* TRMHeatStorageAndFluxModel<DisplacementDim> */,
+        {} /* TRMVaporDiffusionModel<DisplacementDim> */,
+        {} /* FluidThermalExpansionModel<DisplacementDim> */,
+        {} /* TRMStorageModel<DisplacementDim> */,
+        EqPModel<DisplacementDim>{process_data.specific_body_force},
+        {} /* EqTModel<DisplacementDim> */
+    };
+}
 }  // namespace ConstitutiveStress_StrainTemperature
 }  // namespace ProcessLib::ThermoRichardsMechanics

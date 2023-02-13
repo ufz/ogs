@@ -31,7 +31,8 @@ void ConstitutiveSetting<DisplacementDim>::init(
     // restart.
     SpaceTimeData const x_t{x_position, t, dt};
     ElasticTangentStiffnessData<DisplacementDim> C_el_data;
-    models.elastic_tangent_stiffness_model.eval(x_t, T_data, C_el_data);
+    std::get<ElasticTangentStiffnessModel<DisplacementDim>>(models).eval(
+        x_t, T_data, C_el_data);
 
     auto const& eps = std::get<StrainData<DisplacementDim>>(state).eps;
     auto const& sigma_sw =
@@ -70,15 +71,22 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     // solving the global equation system)
     std::get<StrainData<DisplacementDim>>(state).eps.noalias() = eps_arg;
 
-    G::eval(models.elastic_tangent_stiffness_model, aux_data, tmp);
-    G::eval(models.biot_model, aux_data, tmp);
-    G::eval(models.solid_compressibility_model, aux_data, tmp);
-    G::eval(models.S_L_model, aux_data, state, tmp);
+    G::eval(std::get<ElasticTangentStiffnessModel<DisplacementDim>>(models),
+            aux_data, tmp);
+    G::eval(std::get<BiotModel>(models), aux_data, tmp);
+    // TODO check if model eval order is still correct under all circumstances!
+    G::eval(std::get<SolidCompressibilityModel<
+                DisplacementDim, SolidConstitutiveRelation<DisplacementDim>>>(
+                models),
+            aux_data, tmp, cd);
+    G::eval(std::get<SaturationModel<DisplacementDim>>(models), aux_data, state,
+            tmp);
 
-    G::eval(models.bishops_model, aux_data, state, tmp);
+    G::eval(std::get<BishopsModel>(models), aux_data, state, tmp);
     // TODO why not ordinary state tracking?
-    G::eval(models.bishops_prev_model, aux_data, prev_state, tmp);
-    G::eval(models.poro_model, aux_data, tmp, state, prev_state);
+    G::eval(std::get<BishopsPrevModel>(models), aux_data, prev_state, tmp);
+    G::eval(std::get<PorosityModel<DisplacementDim>>(models), aux_data, tmp,
+            state, prev_state);
 
     {
         auto const& biot_data = std::get<BiotData>(tmp);
@@ -94,12 +102,15 @@ void ConstitutiveSetting<DisplacementDim>::eval(
         }
     }
 
-    G::eval(models.swelling_model, aux_data, state, prev_state, tmp);
-    G::eval(models.s_therm_exp_model, aux_data, tmp);
-    G::eval(models.s_mech_model, aux_data, tmp, state, prev_state,
-            mat_state_tuple, cd);
+    G::eval(std::get<SwellingModel<DisplacementDim>>(models), aux_data, state,
+            prev_state, tmp);
+    G::eval(std::get<SolidThermalExpansionModel<DisplacementDim>>(models),
+            aux_data, tmp);
+    G::eval(std::get<SolidMechanicsModel<DisplacementDim>>(models), aux_data,
+            tmp, state, prev_state, mat_state_tuple, cd);
 
-    G::eval(models.rho_L_model, aux_data, out);
+    G::eval(std::get<LiquidDensityModel<DisplacementDim>>(models), aux_data,
+            out);
 
     /* {
         double const p_FR = -bishops_data.chi_S_L * p_cap_data.p_cap;
@@ -111,19 +122,31 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     - phi));
     } */
 
-    G::eval(models.rho_S_model, aux_data, state, out);
-    G::eval(models.grav_model, state, out, tmp, cd);
-    G::eval(models.mu_L_model, aux_data, out);
-    G::eval(models.transport_poro_model, aux_data, tmp, state, prev_state);
-    G::eval(models.perm_model, aux_data, state, out, cd, tmp);
-    G::eval(models.th_osmosis_model, aux_data, out, cd);
-    G::eval(models.darcy_model, aux_data, out, tmp, cd);
-    G::eval(models.heat_storage_and_flux_model, aux_data, out, state, tmp, cd);
-    G::eval(models.vapor_diffusion_model, aux_data, out, state, tmp, cd);
-    G::eval(models.f_therm_exp_model, aux_data, tmp, state, out);
-    G::eval(models.storage_model, aux_data, tmp, state, out, prev_state, cd);
-    G::eval(models.eq_p_model, aux_data, state, tmp, out, cd);
-    G::eval(models.eq_T_model, cd);
+    G::eval(std::get<SolidDensityModel<DisplacementDim>>(models), aux_data,
+            state, out);
+    G::eval(std::get<GravityModel<DisplacementDim>>(models), state, out, tmp,
+            cd);
+    G::eval(std::get<LiquidViscosityModel<DisplacementDim>>(models), aux_data,
+            out);
+    G::eval(std::get<TransportPorosityModel<DisplacementDim>>(models), aux_data,
+            tmp, state, prev_state);
+    G::eval(std::get<PermeabilityModel<DisplacementDim>>(models), aux_data,
+            state, out, cd, tmp);
+    G::eval(std::get<ThermoOsmosisModel<DisplacementDim>>(models), aux_data,
+            out, cd);
+    G::eval(std::get<DarcyLawModel<DisplacementDim>>(models), aux_data, out,
+            tmp, cd);
+    G::eval(std::get<TRMHeatStorageAndFluxModel<DisplacementDim>>(models),
+            aux_data, out, state, tmp, cd);
+    G::eval(std::get<TRMVaporDiffusionModel<DisplacementDim>>(models), aux_data,
+            out, state, tmp, cd);
+    G::eval(std::get<FluidThermalExpansionModel<DisplacementDim>>(models),
+            aux_data, tmp, state, out);
+    G::eval(std::get<TRMStorageModel<DisplacementDim>>(models), aux_data, tmp,
+            state, out, prev_state, cd);
+    G::eval(std::get<EqPModel<DisplacementDim>>(models), aux_data, state, tmp,
+            out, cd);
+    G::eval(std::get<EqTModel<DisplacementDim>>(models), cd);
 }
 
 template struct ConstitutiveSetting<2>;
