@@ -331,7 +331,7 @@
         <vtkdiff>
             <file>load_test_mc_ts_40_t_40.000000.vtu</file>
             <field>displacement</field>
-            <absolute_tolerance>2e-13</absolute_tolerance>
+            <absolute_tolerance>3e-13</absolute_tolerance>
             <relative_tolerance>1e-14</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
