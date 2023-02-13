@@ -1,6 +1,6 @@
 +++
 date = "2018-11-14T11:00:13+01`:00"
-title = "Project file syntax"
+title = "Modularizing project files"
 author = "Lars Bilke"
 weight = 4
 +++
