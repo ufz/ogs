@@ -10,6 +10,8 @@
 #include <gmock/gmock-matchers.h>
 #include <gtest/gtest.h>
 
+#include <Eigen/Core>
+
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 
 template <int DisplacementDim>
@@ -226,4 +228,101 @@ TYPED_TEST(ProcessLib_IPDataAccess, SetKelvinVectorData)
             testing::Pointwise(testing::DoubleEq(), ip_data_expected[i].kelvin))
             << "Values at integration point " << i << " differ.";
     }
+}
+
+template <int DisplacementDim>
+struct IPDimMatrixData
+{
+    Eigen::Matrix<double, DisplacementDim, DisplacementDim, Eigen::RowMajor>
+        dim_matrix_row_major;
+    Eigen::Matrix<double, DisplacementDim, DisplacementDim, Eigen::ColMajor>
+        dim_matrix_col_major;
+};
+
+template <class Dim>
+struct ProcessLib_IPDimMatrixDataAccess : ::testing::Test
+{
+    static constexpr int dim = Dim::value;
+
+    static std::vector<IPDimMatrixData<Dim::value>> getIPData()
+    {
+        constexpr std::size_t num_int_pts = 4;
+
+        std::vector<IPDimMatrixData<dim>> ip_data(num_int_pts);
+
+        for (std::size_t i = 0; i < num_int_pts; ++i)
+        {
+            // Create a test square matrix from vector.
+            constexpr auto N = dim * dim;
+            double const low = static_cast<double>(N * i);
+            double const high = static_cast<double>(low + N - 1);
+            auto const K0 = Eigen::VectorXd::LinSpaced(N, low, high)
+                                .reshaped<Eigen::ColMajor>(dim, dim);
+
+            ip_data[i].dim_matrix_row_major = K0;
+            ip_data[i].dim_matrix_col_major = K0;
+        }
+
+        return ip_data;
+    }
+
+    static std::vector<double> getDimMatrixData()
+    {
+        if constexpr (dim == 1)
+        {
+            return {0.0, 1.0, 2.0, 3.0};  // K(0,0), ip = 0, 1, 2, 3
+        }
+        if constexpr (dim == 2)
+        {
+            return {0.0, 4.0, 8.0,  12.0,   // K(0,0), ip = 0, 1, 2, 3
+                    2.0, 6.0, 10.0, 14.0,   // K(0,1), ip = 0, 1, 2, 3
+                    1.0, 5.0, 9.0,  13.0,   // K(1,0), ip = 0, 1, 2, 3
+                    3.0, 7.0, 11.0, 15.0};  // K(1,1), ip = 0, 1, 2, 3
+        }
+        else if constexpr (dim == 3)
+        {
+            return {
+                0.0, 9.0,  18.0, 27.0,  // K(0,0), ip = 0, 1, 2, 3
+                3.0, 12.0, 21.0, 30.0,  // K(0,1), ip = 0, 1, 2, 3
+                6.0, 15.0, 24.0, 33.0,  // K(0,2), ip = 0, 1, 2, 3
+                1.0, 10.0, 19.0, 28.0,  // K(1,0), ip = 0, 1, 2, 3
+                4.0, 13.0, 22.0, 31.0,  // K(1,1), ip = 0, 1, 2, 3
+                7.0, 16.0, 25.0, 34.0,  // K(1,2), ip = 0, 1, 2, 3
+                2.0, 11.0, 20.0, 29.0,  // K(2,0), ip = 0, 1, 2, 3
+                5.0, 14.0, 23.0, 32.0,  // K(2,1), ip = 0, 1, 2, 3
+                8.0, 17.0, 26.0, 35.0   // K(2,2), ip = 0, 1, 2, 3
+            };
+        }
+    }
+};
+
+using ProcessLib_IPDimMatrixDataAccess_TestCases =
+    ::testing::Types<std::integral_constant<int, 1>,
+                     std::integral_constant<int, 2>,
+                     std::integral_constant<int, 3>>;
+
+TYPED_TEST_SUITE(ProcessLib_IPDimMatrixDataAccess,
+                 ProcessLib_IPDimMatrixDataAccess_TestCases);
+
+TYPED_TEST(ProcessLib_IPDimMatrixDataAccess, GetDimMatrixData)
+{
+    constexpr int dim = TypeParam::value;
+
+    auto const ip_data = this->getIPData();
+
+    std::vector<double> cache;
+
+    ProcessLib::getIntegrationPointDimMatrixData<dim>(
+        ip_data, &IPDimMatrixData<dim>::dim_matrix_row_major, cache);
+
+    ASSERT_THAT(
+        cache,
+        testing::Pointwise(testing::DoubleEq(), this->getDimMatrixData()));
+
+    ProcessLib::getIntegrationPointDimMatrixData<dim>(
+        ip_data, &IPDimMatrixData<dim>::dim_matrix_col_major, cache);
+
+    ASSERT_THAT(
+        cache,
+        testing::Pointwise(testing::DoubleEq(), this->getDimMatrixData()));
 }
