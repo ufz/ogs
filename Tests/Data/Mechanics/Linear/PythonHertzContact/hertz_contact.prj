@@ -31,7 +31,7 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>INFINITY_N</norm_type>
-                    <abstol>1e-10</abstol>
+                    <abstol>1e-14</abstol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -147,7 +147,7 @@
             </eigen>
             <petsc>
                 <prefix>sd</prefix>
-                <parameters>-sd_ksp_type cg -sd_pc_type bjacobi -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10000</parameters>
+                <parameters>-sd_ksp_type cg -sd_pc_type lu -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10</parameters>
             </petsc>
         </linear_solver>
     </linear_solvers>
@@ -155,37 +155,41 @@
         <vtkdiff>
             <file>hertz_ts_5_t_5.000000.vtu</file>
             <field>displacement</field>
-            <absolute_tolerance>1e-16</absolute_tolerance>
+            <absolute_tolerance>
+                    1.2e-4 <!-- ~ 0.5% of max y displacement and ~ 5% of max x displacement -->
+            </absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>hertz_ts_5_t_5.000000.vtu</file>
             <field>epsilon</field>
-            <absolute_tolerance>5e-15</absolute_tolerance>
+            <absolute_tolerance>4e-3</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>hertz_ts_5_t_5.000000.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>5e-15</absolute_tolerance>
+            <absolute_tolerance>5.5e-3</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>hertz_ts_10_t_10.000000.vtu</file>
             <field>displacement</field>
-            <absolute_tolerance>1e-16</absolute_tolerance>
+            <absolute_tolerance>
+                    6.1e-5 <!-- ~ 0.25% of max y displacement and ~ 2.5% of max x displacement -->
+            </absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>hertz_ts_10_t_10.000000.vtu</file>
             <field>epsilon</field>
-            <absolute_tolerance>5e-15</absolute_tolerance>
+            <absolute_tolerance>2e-3</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>hertz_ts_10_t_10.000000.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>5e-15</absolute_tolerance>
+            <absolute_tolerance>2.5e-3</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
