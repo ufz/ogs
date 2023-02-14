@@ -47,6 +47,68 @@ collectInternalVariables(
     return internal_variables_by_name;
 }
 
+template <typename LocalAssemblerInterface, typename InternalVariable>
+auto createCallback(
+    std::vector<std::pair<int, InternalVariable>> const& mat_iv_collection,
+    int const num_components,
+    bool const material_id_independent)
+{
+    return [mat_iv_collection, num_components, material_id_independent](
+               LocalAssemblerInterface const& loc_asm,
+               const double /*t*/,
+               std::vector<GlobalVector*> const& /*x*/,
+               std::vector<
+                   NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+               std::vector<double>& cache) -> std::vector<double> const&
+    {
+        cache.clear();
+
+        const unsigned num_int_pts = loc_asm.getNumberOfIntegrationPoints();
+        assert(num_int_pts > 0);
+
+        int const material_id =
+            material_id_independent ? 0 : loc_asm.getMaterialID();
+
+        auto const mat_iv = std::find_if(
+            begin(mat_iv_collection), end(mat_iv_collection),
+            [material_id](auto const& x) { return x.first == material_id; });
+        if (mat_iv == end(mat_iv_collection))
+        {
+            // If local assembler does not provide correct solid material
+            // model return empty vector, which will be ignored by the
+            // extrapolation algorithm.
+            return cache;
+        }
+
+        auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+            double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(
+            cache, num_components, num_int_pts);
+
+        // TODO avoid the heap allocation (one per finite element)
+        std::vector<double> cache_column(num_int_pts);
+
+        auto const& iv = mat_iv->second;
+        auto const& fct = iv.getter;
+
+        assert(material_id == mat_iv->first);
+        assert(num_components == iv.num_components);
+
+        for (unsigned i = 0; i < num_int_pts; ++i)
+        {
+            auto const& state = loc_asm.getMaterialStateVariablesAt(i);
+
+            auto const& int_pt_values = fct(state, cache_column);
+            assert(int_pt_values.size() ==
+                   static_cast<std::size_t>(num_components));
+            auto const int_pt_values_vec = MathLib::toVector(int_pt_values);
+
+            cache_mat.col(i).noalias() = int_pt_values_vec;
+        }
+
+        return cache;
+    };
+}
+
 template <typename LocalAssemblerInterface, typename SolidMaterial,
           typename AddSecondaryVariableCallback>
 void solidMaterialInternalToSecondaryVariables(
@@ -85,65 +147,10 @@ void solidMaterialInternalToSecondaryVariables(
 
         DBUG("Registering internal variable {:s}.", name);
 
-        auto callback =
-            [mat_iv_collection = mat_iv_collection, num_components,
-             material_id_independent](
-                LocalAssemblerInterface const& loc_asm,
-                const double /*t*/,
-                std::vector<GlobalVector*> const& /*x*/,
-                std::vector<
-                    NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-                std::vector<double>& cache) -> std::vector<double> const&
-        {
-            cache.clear();
-
-            const unsigned num_int_pts = loc_asm.getNumberOfIntegrationPoints();
-            assert(num_int_pts > 0);
-
-            int const material_id =
-                material_id_independent ? 0 : loc_asm.getMaterialID();
-
-            auto const mat_iv =
-                std::find_if(begin(mat_iv_collection), end(mat_iv_collection),
-                             [material_id](auto const& x)
-                             { return x.first == material_id; });
-            if (mat_iv == end(mat_iv_collection))
-            {
-                // If local assembler does not provide correct solid material
-                // model return empty vector, which will be ignored by the
-                // extrapolation algorithm.
-                return cache;
-            }
-
-            auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-                double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(
-                cache, num_components, num_int_pts);
-
-            // TODO avoid the heap allocation (one per finite element)
-            std::vector<double> cache_column(num_int_pts);
-
-            auto const& iv = mat_iv->second;
-            auto const& fct = iv.getter;
-
-            assert(material_id == mat_iv->first);
-            assert(num_components == iv.num_components);
-
-            for (unsigned i = 0; i < num_int_pts; ++i)
-            {
-                auto const& state = loc_asm.getMaterialStateVariablesAt(i);
-
-                auto const& int_pt_values = fct(state, cache_column);
-                assert(int_pt_values.size() ==
-                       static_cast<std::size_t>(num_components));
-                auto const int_pt_values_vec = MathLib::toVector(int_pt_values);
-
-                cache_mat.col(i).noalias() = int_pt_values_vec;
-            }
-
-            return cache;
-        };
-
-        add_secondary_variable(name, num_components, std::move(callback));
+        add_secondary_variable(
+            name, num_components,
+            createCallback<LocalAssemblerInterface>(
+                mat_iv_collection, num_components, material_id_independent));
     }
 }
 
