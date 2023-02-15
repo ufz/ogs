@@ -190,22 +190,22 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
                            MathLib::KelvinVector::KelvinVectorType<
                                DisplacementDim>::RowsAtCompileTime,
                            &LocalAssemblerInterface::getIntPtEpsilon);
-    add_secondary_variable("velocity_gas", mesh.getDimension(),
+    add_secondary_variable("velocity_gas", DisplacementDim,
                            &LocalAssemblerInterface::getIntPtDarcyVelocityGas);
     add_secondary_variable(
-        "velocity_liquid", mesh.getDimension(),
+        "velocity_liquid", DisplacementDim,
         &LocalAssemblerInterface::getIntPtDarcyVelocityLiquid);
     add_secondary_variable(
-        "diffusion_velocity_vapour_gas", mesh.getDimension(),
+        "diffusion_velocity_vapour_gas", DisplacementDim,
         &LocalAssemblerInterface::getIntPtDiffusionVelocityVapourGas);
     add_secondary_variable(
-        "diffusion_velocity_gas_gas", mesh.getDimension(),
+        "diffusion_velocity_gas_gas", DisplacementDim,
         &LocalAssemblerInterface::getIntPtDiffusionVelocityGasGas);
     add_secondary_variable(
-        "diffusion_velocity_solute_liquid", mesh.getDimension(),
+        "diffusion_velocity_solute_liquid", DisplacementDim,
         &LocalAssemblerInterface::getIntPtDiffusionVelocitySoluteLiquid);
     add_secondary_variable(
-        "diffusion_velocity_liquid_liquid", mesh.getDimension(),
+        "diffusion_velocity_liquid_liquid", DisplacementDim,
         &LocalAssemblerInterface::getIntPtDiffusionVelocityLiquidLiquid);
 
     add_secondary_variable("saturation", 1,
@@ -236,7 +236,7 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
         &LocalAssemblerInterface::getIntPtRelativePermeabilityLiquid);
 
     add_secondary_variable(
-        "intrinsic_permeability", mesh.getDimension() * mesh.getDimension(),
+        "intrinsic_permeability", DisplacementDim * DisplacementDim,
         &LocalAssemblerInterface::getIntPtIntrinsicPermeability);
 
     add_secondary_variable("enthalpy_gas", 1,
