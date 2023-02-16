@@ -147,4 +147,27 @@ void MeshInformation::writeMeshValidationResults(MeshLib::Mesh& mesh)
     }
 }
 
+std::vector<int> MeshInformation::getMaterialIDs(const MeshLib::Mesh& mesh)
+{
+    auto const* matids = MeshLib::materialIDs(mesh);
+    if (!matids)
+    {
+        INFO("No MaterialIDs were found.");
+        return {};
+    }
+    std::vector<int> unique_matids = {};
+
+    for (auto matid : *matids)
+    {
+        if (std::find(unique_matids.begin(), unique_matids.end(), matid) ==
+            unique_matids.end())
+        {
+            unique_matids.push_back(matid);
+        }
+    }
+    std::sort(unique_matids.begin(), unique_matids.end());
+
+    return unique_matids;
+}
+
 }  // namespace MeshLib

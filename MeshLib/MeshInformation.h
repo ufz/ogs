@@ -75,6 +75,9 @@ public:
     /// writes out mesh validation results
     /// Remark: MeshValidation can modify the original mesh
     static void writeMeshValidationResults(MeshLib::Mesh& mesh);
+
+    /// writes out a list of all material IDs that occur in the mesh.
+    static std::vector<int> getMaterialIDs(const MeshLib::Mesh& mesh);
 };
 
 }  // namespace MeshLib
