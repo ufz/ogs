@@ -70,6 +70,46 @@ InternalVariable const* findInternalVariable(
     return &mat_iv_it->second;
 }
 
+template <typename SolidMaterial>
+void forEachSolidMaterialInternalVariable(
+    std::map<int, std::unique_ptr<SolidMaterial>> const& solid_materials,
+    auto const& function)
+{
+    auto const internal_variables_by_name =
+        collectInternalVariables(solid_materials);
+
+    // Multiple material ids could be present but only one material for the
+    // whole domain. In this case the choice of callbacks is independent of
+    // local assembler's material id, and the material id is 0.
+    // \see selectSolidConstitutiveRelation() for material id logic.
+    bool const material_id_independent = solid_materials.size() == 1;
+
+    // Create *single* callback passing all solid materials to it. Choose
+    // correct solid material based on the local assembler's solid material in
+    // the callback.
+    for (auto const& [name, mat_iv_collection] : internal_variables_by_name)
+    {
+        assert(!mat_iv_collection.empty());
+        auto const num_components =
+            mat_iv_collection.front().second.num_components;
+
+        // Check that the number of components is equal for all materials.
+        if (!std::all_of(
+                begin(mat_iv_collection), end(mat_iv_collection),
+                [num_components](auto const& mat_iv)
+                { return mat_iv.second.num_components == num_components; }))
+        {
+            OGS_FATAL(
+                "Not for all material ids the secondary variable '{:s}' has "
+                "{:d} components.",
+                name, num_components);
+        }
+
+        function(name, num_components, mat_iv_collection,
+                 material_id_independent);
+    }
+}
+
 template <typename LocalAssemblerInterface, typename InternalVariable>
 auto createCallback(
     std::vector<std::pair<int, InternalVariable>> const& mat_iv_collection,
@@ -132,43 +172,24 @@ void solidMaterialInternalToSecondaryVariables(
     std::map<int, std::unique_ptr<SolidMaterial>> const& solid_materials,
     AddSecondaryVariableCallback const& add_secondary_variable)
 {
-    auto const internal_variables_by_name =
-        collectInternalVariables(solid_materials);
-
-    // Multiple material ids could be present but only one material for the
-    // whole domain. In this case the choice of callbacks is independent of
-    // local assembler's material id, and the material id is 0.
-    // \see selectSolidConstitutiveRelation() for material id logic.
-    bool const material_id_independent = solid_materials.size() == 1;
-
-    // Create *single* callback passing all solid materials to it. Choose
-    // correct solid material based on the local assembler's solid material in
-    // the callback.
-    for (auto const& [name, mat_iv_collection] : internal_variables_by_name)
+    auto register_secondary_variable =
+        [&add_secondary_variable](
+            std::string name, char const num_components,
+            std::vector<
+                std::pair<int, typename SolidMaterial::InternalVariable>> const&
+                mat_iv_collection,
+            bool const material_id_independent)
     {
-        assert(!mat_iv_collection.empty());
-        auto const num_components =
-            mat_iv_collection.front().second.num_components;
-
-        // Check that the number of components is equal for all materials.
-        if (!std::all_of(
-                begin(mat_iv_collection), end(mat_iv_collection),
-                [num_components](auto const& mat_iv)
-                { return mat_iv.second.num_components == num_components; }))
-        {
-            OGS_FATAL(
-                "Not for all material ids the secondary variable '{:s}' has "
-                "{:d} components.",
-                name, num_components);
-        }
-
         DBUG("Registering internal variable {:s}.", name);
 
         add_secondary_variable(
             name, num_components,
             createCallback<LocalAssemblerInterface>(
                 mat_iv_collection, num_components, material_id_independent));
-    }
+    };
+
+    forEachSolidMaterialInternalVariable(solid_materials,
+                                         register_secondary_variable);
 }
 
 template <typename LocalAssemblerInterface, typename InternalVariable>
@@ -207,36 +228,14 @@ void solidMaterialInternalVariablesToIntegrationPointWriter(
         integration_point_writer,
     int const integration_order)
 {
-    auto const internal_variables_by_name =
-        collectInternalVariables(solid_materials);
-
-    // Multiple material ids could be present but only one material for the
-    // whole domain. In this case the choice of callbacks is independent of
-    // local assembler's material id, and the material id is 0.
-    // \see selectSolidConstitutiveRelation() for material id logic.
-    bool const material_id_independent = solid_materials.size() == 1;
-
-    // Create *single* callback passing all solid materials to it. Choose
-    // correct solid material based on the local assembler's solid material in
-    // the callback.
-    for (auto const& [name, mat_iv_collection] : internal_variables_by_name)
+    auto add_integration_point_writer =
+        [&local_assemblers, &integration_point_writer, integration_order](
+            std::string name, char const num_components,
+            std::vector<
+                std::pair<int, typename SolidMaterial::InternalVariable>> const&
+                mat_iv_collection,
+            bool const material_id_independent)
     {
-        assert(!mat_iv_collection.empty());
-        auto const num_components =
-            mat_iv_collection.front().second.num_components;
-
-        // Check that the number of components is equal for all materials.
-        if (!std::all_of(
-                begin(mat_iv_collection), end(mat_iv_collection),
-                [num_components](auto const& mat_iv)
-                { return mat_iv.second.num_components == num_components; }))
-        {
-            OGS_FATAL(
-                "Not for all material ids the secondary variable '{:s}' has "
-                "{:d} components.",
-                name, num_components);
-        }
-
         DBUG("Creating integration point writer for  internal variable {:s}.",
              name);
 
@@ -247,6 +246,9 @@ void solidMaterialInternalVariablesToIntegrationPointWriter(
                 createCallbackForIpWriter<LocalAssemblerInterface>(
                     mat_iv_collection, num_components,
                     material_id_independent)));
-    }
+    };
+
+    forEachSolidMaterialInternalVariable(solid_materials,
+                                         add_integration_point_writer);
 }
 }  // namespace ProcessLib::Deformation
