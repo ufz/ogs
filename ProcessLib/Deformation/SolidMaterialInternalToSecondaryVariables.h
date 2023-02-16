@@ -48,6 +48,29 @@ collectInternalVariables(
 }
 
 template <typename LocalAssemblerInterface, typename InternalVariable>
+InternalVariable const* findInternalVariable(
+    std::vector<std::pair<int, InternalVariable>> const& mat_iv_collection,
+    bool const material_id_independent,
+    LocalAssemblerInterface const& loc_asm)
+{
+    int const material_id =
+        material_id_independent ? 0 : loc_asm.getMaterialID();
+
+    auto const mat_iv_it = std::find_if(
+        begin(mat_iv_collection), end(mat_iv_collection),
+        [material_id](auto const& x) { return x.first == material_id; });
+    if (mat_iv_it == end(mat_iv_collection))
+    {
+        // If local assembler does not provide correct solid material
+        // model return empty vector, which will be ignored by the
+        // extrapolation algorithm.
+        return nullptr;
+    }
+
+    return &mat_iv_it->second;
+}
+
+template <typename LocalAssemblerInterface, typename InternalVariable>
 auto createCallback(
     std::vector<std::pair<int, InternalVariable>> const& mat_iv_collection,
     int const num_components,
@@ -63,16 +86,10 @@ auto createCallback(
     {
         cache.clear();
 
-        const unsigned num_int_pts = loc_asm.getNumberOfIntegrationPoints();
-        assert(num_int_pts > 0);
+        auto const iv = findInternalVariable(mat_iv_collection,
+                                             material_id_independent, loc_asm);
 
-        int const material_id =
-            material_id_independent ? 0 : loc_asm.getMaterialID();
-
-        auto const mat_iv = std::find_if(
-            begin(mat_iv_collection), end(mat_iv_collection),
-            [material_id](auto const& x) { return x.first == material_id; });
-        if (mat_iv == end(mat_iv_collection))
+        if (iv == nullptr)
         {
             // If the material model for the present material group does not
             // have the requested internal variable, return an empty vector,
@@ -80,18 +97,18 @@ auto createCallback(
             return cache;
         }
 
+        auto const& fct = iv->getter;
+        assert(num_components == iv->num_components);
+
+        const unsigned num_int_pts = loc_asm.getNumberOfIntegrationPoints();
+        assert(num_int_pts > 0);
+
         auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
             double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(
             cache, num_components, num_int_pts);
 
         // TODO avoid the heap allocation (one per finite element)
         std::vector<double> cache_column(num_int_pts);
-
-        auto const& iv = mat_iv->second;
-        auto const& fct = iv.getter;
-
-        assert(material_id == mat_iv->first);
-        assert(num_components == iv.num_components);
 
         for (unsigned i = 0; i < num_int_pts; ++i)
         {
@@ -163,16 +180,9 @@ auto createCallbackForIpWriter(
     return [mat_iv_collection, num_components, material_id_independent](
                LocalAssemblerInterface const& loc_asm) -> std::vector<double>
     {
-        const unsigned num_int_pts = loc_asm.getNumberOfIntegrationPoints();
-        assert(num_int_pts > 0);
-
-        int const material_id =
-            material_id_independent ? 0 : loc_asm.getMaterialID();
-
-        auto const mat_iv = std::find_if(
-            begin(mat_iv_collection), end(mat_iv_collection),
-            [material_id](auto const& x) { return x.first == material_id; });
-        if (mat_iv == end(mat_iv_collection))
+        auto const iv = findInternalVariable(mat_iv_collection,
+                                             material_id_independent, loc_asm);
+        if (iv == nullptr)
         {
             // If the material model for the present material group does not
             // have the requested internal variable, return an empty vector,
@@ -180,22 +190,11 @@ auto createCallbackForIpWriter(
             return {};
         }
 
-        auto const& iv = mat_iv->second;
-        auto const& fct = iv.getter;
+        auto const& fct = iv->reference;
+        assert(num_components == iv->num_components);
 
-        assert(material_id == mat_iv->first);
-        assert(num_components == iv.num_components);
-
-        std::vector<double> result;
-        // TODO reserve
-        for (unsigned i = 0; i < num_int_pts; ++i)
-        {
-            auto const& state = loc_asm.getMaterialStateVariableInternalState(
-                iv.reference, num_components);
-            result.insert(result.end(), state.begin(), state.end());
-        }
-
-        return result;
+        return loc_asm.getMaterialStateVariableInternalState(fct,
+                                                             num_components);
     };
 }
 
