@@ -11,7 +11,7 @@ test notebooks via wheel:
     # TODO:
     #  - better timeout
     #  - run in parallel
-    - find . -type f -iname '*.ipynb' | grep -vP '\.ipynb_checkpoints|\.ci-skip.ipynb$|_out|.venv|PhaseField' | xargs xvfb-run -a python Notebooks/testrunner.py --out _out --timeout 1200
+    - find . -type f -iname '*.ipynb' | grep -vP '\.ipynb_checkpoints|\.ci-skip.ipynb$|_out|.venv|PhaseField' | xargs xvfb-run -a python Notebooks/testrunner.py --out _out
   artifacts:
     when: always
     paths:

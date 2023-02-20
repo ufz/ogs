@@ -242,7 +242,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    hex.vtu anisotropic_gravity_driven3D_ts_1_t_1_000000_0.vtu analytic_pressure pressure 1e-6 1e-6
+    hex.vtu anisotropic_gravity_driven3D_ts_1_t_1.000000.vtu analytic_pressure pressure 1e-6 1e-6
 )
 
 AddTest(
@@ -256,7 +256,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    hex.vtu isotropic_gravity_driven3D_ts_1_t_1_000000_0.vtu analytic_pressure pressure 1e-6 1e-6
+    hex.vtu isotropic_gravity_driven3D_ts_1_t_1.000000.vtu analytic_pressure pressure 1e-6 1e-6
 )
 
 AddTest(

@@ -47,15 +47,15 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>INFINITY_N</norm_type>
-                    <abstol>1.e-1</abstol>
-                    <reltol>1.e-1</reltol>
+                    <!-- <abstol>1.e-1</abstol> -->
+                    <reltol>1.e-6</reltol>
                 </convergence_criterion>
                 <!-- convergence criterion for the second process -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>INFINITY_N</norm_type>
-                    <abstol>1.e-4</abstol>
-                    <reltol>1.e-10</reltol>
+                    <!-- <abstol>1.e-4</abstol> -->
+                    <reltol>1.e-6</reltol>
                 </convergence_criterion>
             </convergence_criteria>
         </global_process_coupling>
@@ -73,7 +73,7 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>1.0</t_end>
+                    <t_end>1.1</t_end>
                     <timesteps>
                         <pair>
                             <repeat>1</repeat>
@@ -95,7 +95,7 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>1.0</t_end>
+                    <t_end>1.1</t_end>
                     <timesteps>
                         <pair>
                             <repeat>1</repeat>

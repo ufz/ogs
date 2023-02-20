@@ -71,9 +71,6 @@ parser.add_argument(
     "--hugo", action="store_true", help="Convert successful notebooks to web site."
 )
 parser.add_argument("--hugo-out", default="web", help="Hugo output directory.")
-parser.add_argument(
-    "--timeout", default="600", type=int, help="Cell execution timeout."
-)
 args = parser.parse_args()
 
 # Path setup
@@ -101,7 +98,7 @@ for notebook_file_path in args.notebooks:
 
         with open(notebook_file_path, mode="r", encoding="utf-8") as f:
             nb = nbformat.read(f, as_version=4)
-        ep = ExecutePreprocessor(timeout=args.timeout, kernel_name="python3")
+        ep = ExecutePreprocessor(kernel_name="python3")
 
         # 1. Run the notebook
         notebook_filename = os.path.basename(notebook_file_path)

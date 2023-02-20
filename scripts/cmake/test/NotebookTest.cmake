@@ -54,10 +54,7 @@ function(NotebookTest)
         )
     endif()
 
-    set(timeout ${ogs.ctest.large_runtime})
-    if(DEFINED NotebookTest_RUNTIME)
-        math(EXPR timeout "${NotebookTest_RUNTIME} * 10")
-    else()
+    if(NOT DEFINED NotebookTest_RUNTIME)
         set(NotebookTest_RUNTIME 1)
     endif()
 
@@ -79,9 +76,7 @@ function(NotebookTest)
 
     set(TEST_NAME "nb-${NotebookTest_DIR}/${NotebookTest_NAME_WE}")
 
-    set(_exe_args Notebooks/testrunner.py --hugo --out ${Data_BINARY_DIR}
-                  --timeout ${timeout}
-    )
+    set(_exe_args Notebooks/testrunner.py --hugo --out ${Data_BINARY_DIR})
     if(DEFINED ENV{CI})
         list(APPEND _exe_args --hugo-out ${PROJECT_BINARY_DIR}/web)
     endif()
