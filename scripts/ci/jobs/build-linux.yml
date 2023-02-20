@@ -11,7 +11,7 @@ build linux:
     - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
     - when: manual
       allow_failure: true
-  timeout: 2h
+  timeout: 3h
   variables:
     CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
@@ -29,7 +29,7 @@ linux ctest large:
   rules:
     - when: manual
       allow_failure: true
-  timeout: 2h
+  timeout: 3h
   variables:
     BUILD_TESTS: "false"
     BUILD_CTEST_LARGE: "true"
@@ -43,7 +43,7 @@ build linux (no unity):
     - .template-build-linux
   tags: [docker]
   needs: [meta, ci_images]
-  timeout: 2h
+  timeout: 3h
   variables:
     BUILD_TESTS: "false"
     BUILD_CTEST: "false"
@@ -55,7 +55,7 @@ build linux (no deps, no procs):
   extends: .template-build-linux
   tags: [docker]
   needs: [meta, ci_images]
-  timeout: 1h
+  timeout: 2h
   variables:
     BUILD_TESTS: "false"
     BUILD_CTEST: "false"

@@ -6,7 +6,7 @@ build linux petsc:
     - envinf
     - shell
   needs: [meta]
-  timeout: 2h
+  timeout: 3h
   variables:
     BUILD_CTEST_LARGE_ON_MASTER: "true"
     CMAKE_PRESET: release-petsc

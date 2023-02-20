@@ -2,7 +2,7 @@ build docs:
   stage: build
   image: $CONTAINER_GCC_IMAGE
   needs: [meta, ci_images]
-  timeout: 15 minutes
+  timeout: 30 minutes
   variables:
     DOX_WARNINGS_THRESHOLD: 18
   script:

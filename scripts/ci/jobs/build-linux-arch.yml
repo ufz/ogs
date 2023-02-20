@@ -4,7 +4,7 @@ build linux arch:
     - .test-artifacts
   tags: [shell, envinf23]
   needs: [meta]
-  timeout: 2h
+  timeout: 3h
   variables:
     BUILD_CTEST_LARGE_ON_MASTER: "true"
     CMAKE_PRESET: release-all
