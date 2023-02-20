@@ -20,7 +20,6 @@ namespace ProcessLib::ThermoRichardsMechanics
 {
 namespace ConstitutiveStress_StrainTemperature
 {
-
 template <int DisplacementDim>
 static bool checkCorrectModelEvalOrder()
 {
@@ -93,8 +92,6 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     OutputData<DisplacementDim>& out,
     ConstitutiveData<DisplacementDim>& cd) const
 {
-    namespace G = ProcessLib::Graph;
-
     auto const aux_data = std::tuple{SpaceTimeData{x_position, t, dt},
                                      MediaData{medium}, T_data, p_cap_data};
 
@@ -104,22 +101,10 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     // solving the global equation system)
     std::get<StrainData<DisplacementDim>>(state).eps.noalias() = eps_arg;
 
-    G::eval(std::get<ElasticTangentStiffnessModel<DisplacementDim>>(models),
-            aux_data, tmp);
-    G::eval(std::get<BiotModel>(models), aux_data, tmp);
-    // TODO check if model eval order is still correct under all circumstances!
-    G::eval(std::get<SolidCompressibilityModel<
-                DisplacementDim, SolidConstitutiveRelation<DisplacementDim>>>(
-                models),
-            aux_data, tmp, cd);
-    G::eval(std::get<SaturationModel<DisplacementDim>>(models), aux_data, state,
-            tmp);
+    ProcessLib::Graph::evalAllInOrder(models, aux_data, cd, mat_state_tuple,
+                                      out, prev_state, state, tmp);
 
-    G::eval(std::get<BishopsModel>(models), aux_data, state, tmp);
-    // TODO why not ordinary state tracking?
-    G::eval(std::get<BishopsPrevModel>(models), aux_data, prev_state, tmp);
-    G::eval(std::get<PorosityModel<DisplacementDim>>(models), aux_data, tmp,
-            state, prev_state);
+    // TODO why not ordinary state tracking for BishopsPrevModel?
 
     {
         auto const& biot_data = std::get<BiotData>(tmp);
@@ -134,52 +119,6 @@ void ConstitutiveSetting<DisplacementDim>::eval(
                 *x_position.getIntegrationPoint());
         }
     }
-
-    G::eval(std::get<SwellingModel<DisplacementDim>>(models), aux_data, state,
-            prev_state, tmp);
-    G::eval(std::get<SolidThermalExpansionModel<DisplacementDim>>(models),
-            aux_data, tmp);
-    G::eval(std::get<SolidMechanicsModel<DisplacementDim>>(models), aux_data,
-            tmp, state, prev_state, mat_state_tuple, cd);
-
-    G::eval(std::get<LiquidDensityModel<DisplacementDim>>(models), aux_data,
-            out);
-
-    /* {
-        double const p_FR = -bishops_data.chi_S_L * p_cap_data.p_cap;
-        // p_SR
-        // TODO used by no MPL model
-        variables.solid_grain_pressure =
-            p_FR -
-            Invariants::trace(std::get<s_mech_data>(state).sigma_eff) / (3 * (1
-    - phi));
-    } */
-
-    G::eval(std::get<SolidDensityModel<DisplacementDim>>(models), aux_data,
-            state, out);
-    G::eval(std::get<GravityModel<DisplacementDim>>(models), state, out, tmp,
-            cd);
-    G::eval(std::get<LiquidViscosityModel<DisplacementDim>>(models), aux_data,
-            out);
-    G::eval(std::get<TransportPorosityModel<DisplacementDim>>(models), aux_data,
-            tmp, state, prev_state);
-    G::eval(std::get<PermeabilityModel<DisplacementDim>>(models), aux_data,
-            state, out, cd, tmp);
-    G::eval(std::get<ThermoOsmosisModel<DisplacementDim>>(models), aux_data,
-            out, cd);
-    G::eval(std::get<DarcyLawModel<DisplacementDim>>(models), aux_data, out,
-            tmp, cd);
-    G::eval(std::get<TRMHeatStorageAndFluxModel<DisplacementDim>>(models),
-            aux_data, out, state, tmp, cd);
-    G::eval(std::get<TRMVaporDiffusionModel<DisplacementDim>>(models), aux_data,
-            out, state, tmp, cd);
-    G::eval(std::get<FluidThermalExpansionModel<DisplacementDim>>(models),
-            aux_data, tmp, state, out);
-    G::eval(std::get<TRMStorageModel<DisplacementDim>>(models), aux_data, tmp,
-            state, out, prev_state, cd);
-    G::eval(std::get<EqPModel<DisplacementDim>>(models), aux_data, state, tmp,
-            out, cd);
-    G::eval(std::get<EqTModel<DisplacementDim>>(models), cd);
 }
 
 template struct ConstitutiveSetting<2>;

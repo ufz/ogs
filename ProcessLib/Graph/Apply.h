@@ -280,4 +280,19 @@ auto eval(Function& f, Tuples&... ts) ->
 
     return detail::applyImpl(&Function::eval, f, ts...);
 }
+
+/**
+ * Invokes the eval() method of the passed objects \c fs with arguments taken
+ * from the passed tuples.
+ *
+ * \c fs must be a tuple of objects having an eval() method. The method
+ * invocation proceeds in the order of the objects in the tuple.
+ *
+ * \see eval()
+ */
+template <typename Functions, typename... Tuples>
+void evalAllInOrder(Functions& fs, Tuples&... ts)
+{
+    boost::mp11::tuple_for_each(fs, [&ts...](auto& f) { eval(f, ts...); });
+}
 }  // namespace ProcessLib::Graph

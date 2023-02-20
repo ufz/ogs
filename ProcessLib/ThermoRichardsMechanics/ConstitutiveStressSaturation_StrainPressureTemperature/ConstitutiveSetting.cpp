@@ -17,7 +17,6 @@ namespace ProcessLib::ThermoRichardsMechanics
 {
 namespace ConstitutiveStressSaturation_StrainPressureTemperature
 {
-
 template <int DisplacementDim>
 static bool checkCorrectModelEvalOrder()
 {
@@ -76,9 +75,6 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     OutputData<DisplacementDim>& out,
     ConstitutiveData<DisplacementDim>& cd) const
 {
-    namespace G = ProcessLib::Graph;
-    constexpr auto D = DisplacementDim;
-
     auto const aux_data = std::tuple{SpaceTimeData{x_position, t, dt},
                                      MediaData{medium}, T_data, p_cap_data};
 
@@ -86,25 +82,13 @@ void ConstitutiveSetting<DisplacementDim>::eval(
 
     // TODO will eps lag one iteration behind? (since it's not updated after
     // solving the global equation system)
-    std::get<StrainData<D>>(state).eps.noalias() = eps_arg;
+    std::get<StrainData<DisplacementDim>>(state).eps.noalias() = eps_arg;
 
-    G::eval(std::get<BiotModel>(models), aux_data, tmp);
+    ProcessLib::Graph::evalAllInOrder(models, aux_data, cd, mat_state_tuple,
+                                      out, prev_state, state, tmp);
 
-    G::eval(std::get<SolidMechanicsModel<D>>(models), aux_data, tmp, state,
-             prev_state, mat_state_tuple, cd);
+    // TODO why not ordinary state tracking for BishopsPrevModel?
 
-    G::eval(
-        std::get<SolidCompressibilityModel<D, SolidConstitutiveRelation<D>>>(
-            models),
-        aux_data, tmp, cd);
-
-    G::eval(std::get<BishopsModel>(models), aux_data, state, tmp);
-    // TODO why not ordinary state tracking?
-    G::eval(std::get<BishopsPrevModel>(models), aux_data, prev_state, tmp);
-    G::eval(std::get<PorosityModel<D>>(models), aux_data, tmp, state,
-             prev_state);
-
-    // TODO move to local assembler?
     {
         auto const& biot_data = std::get<BiotData>(tmp);
         auto const& poro_data = std::get<PorosityData>(state);
@@ -119,32 +103,9 @@ void ConstitutiveSetting<DisplacementDim>::eval(
         }
     }
 
-    G::eval(std::get<LiquidDensityModel<D>>(models), aux_data, out);
-    G::eval(std::get<SolidDensityModel<D>>(models), aux_data, state, out);
-    G::eval(std::get<GravityModel<D>>(models), state, out, tmp, cd);
-    G::eval(std::get<LiquidViscosityModel<D>>(models), aux_data, out);
-    G::eval(std::get<TransportPorosityModel<D>>(models), aux_data, tmp, state,
-             prev_state);
-    G::eval(std::get<PermeabilityModel<D>>(models), aux_data, state, out, cd,
-             tmp);
-    G::eval(std::get<ThermoOsmosisModel<D>>(models), aux_data, out, cd);
-    G::eval(std::get<DarcyLawModel<D>>(models), aux_data, out, tmp, cd);
-    G::eval(std::get<TRMHeatStorageAndFluxModel<D>>(models), aux_data, out,
-             state, tmp, cd);
-    G::eval(std::get<TRMVaporDiffusionModel<D>>(models), aux_data, out, state,
-             tmp, cd);
-
-    // TODO Not needed for solid mechanics (solid thermal expansion is computed
-    // by the solid material model), but for fluid expansion. This duplication
-    // should be avoided in the future.
-    G::eval(std::get<SolidThermalExpansionModel<D>>(models), aux_data, tmp);
-
-    G::eval(std::get<FluidThermalExpansionModel<D>>(models), aux_data, tmp,
-             state, out);
-    G::eval(std::get<TRMStorageModel<D>>(models), aux_data, tmp, state, out,
-             prev_state, cd);
-    G::eval(std::get<EqPModel<D>>(models), aux_data, state, tmp, out, cd);
-    G::eval(std::get<EqTModel<D>>(models), cd);
+    // TODO Solid thermal expansion is not needed for solid mechanics (it is
+    // computed by the solid material model itself), but for fluid expansion.
+    // This duplication should be avoided in the future.
 }
 
 template struct ConstitutiveSetting<2>;
