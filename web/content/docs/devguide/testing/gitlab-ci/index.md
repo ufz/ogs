@@ -57,6 +57,10 @@ These pipelines can be selected by using merge request labels:
 - `ci::web only`: Runs Jupyter notebook ctests only and builds the web site.
 - `ci::linux only` and `ci::mac only` and `ci::win only`: Runs platform specific builds only.
 
+## More MR labels affecting CI pipelines
+
+- `ci_large` for enabling large ctests in merge request pipelines. Combine with `ci::linux only` for faster feedback on the benchmarks.
+
 ### Manually editing `.gitlab-ci.yml` and `scripts/ci/pipelines/regular.yml`
 
 You can change the pipeline by editing the `.gitlab-ci.yml` and `scripts/ci/jobs/*.yml` files. It is good practice to mark these changes with commits starting with `drop: ...` in the commit message so they can be removed later easily.
