@@ -13,7 +13,7 @@
     - if [[ "$OSTYPE" == "darwin"* ]] ; then readlink_cmd=greadlink; else readlink_cmd=readlink; fi
     - ln -s `$readlink_cmd -f $build_dir_full` build/${CMAKE_PRESET}
     - ([ "${CONAN_USER_HOME}" == "${CI_PROJECT_DIR}/.conan" ]) && conan remove --system-reqs '*'
-    - ([[ $BUILD_CTEST_LARGE_ON_MASTER && "${CI_COMMIT_BRANCH}" == "master" && "${CMAKE_ARGS}" == *"USE_PYTHON=ON"* ]]) && export BUILD_CTEST_LARGE=true
+    - ([[ $BUILD_CTEST_LARGE_ON_MASTER && "${CI_COMMIT_BRANCH}" == "master" ]]) && export BUILD_CTEST_LARGE=true
     - cmake --preset=$CMAKE_PRESET --log-level=VERBOSE -Wno-dev $CMAKE_ARGS
     # Activate .venv
     - test -f $build_dir_full/.venv/bin/activate && source $build_dir_full/.venv/bin/activate
