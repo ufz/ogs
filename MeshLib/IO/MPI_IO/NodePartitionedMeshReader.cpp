@@ -154,6 +154,8 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readMesh(
     const std::string fname_header = file_name_base + "_partitioned_msh_";
     const std::string fname_num_p_ext = std::to_string(_mpi_comm_size) + ".bin";
 
+    // Read the config meta data from *cfg* file into struct PartitionedMeshInfo
+    // _mesh_info
     if (!readDataFromFile(
             fname_header + "cfg" + fname_num_p_ext,
             static_cast<MPI_Offset>(static_cast<unsigned>(_mpi_rank) *
