@@ -21,7 +21,7 @@ Liquid phase in porous media. Can be used in THM process....
 
 ### Constitutive relation
 
-Known also as constitutive equation. It is an equation defining a relation between physical quantities that is specific to material for which the equation is valid and describes how it responds to external stimulation. For more information click [here](https://en.wikipedia.org/wiki/Constitutive_equation) and for more information on how they are used in OpenGeoSys click [here](/docs/userguide/blocks/processes/#constitutive-relations), for the list of relations available in OpenGeoSys and details on them click [here](/docs//ConstitutiveRelations/ConstitutiveRelationsOverview.md).
+Known also as constitutive equation. It is an equation defining a relation between physical quantities that is specific to material for which the equation is valid and describes how it responds to external stimulation. For more information click [here](https://en.wikipedia.org/wiki/Constitutive_equation) and for more information on how they are used in OpenGeoSys click [here](/docs/userguide/blocks/processes/#constitutive-relations), for the list of relations available in OpenGeoSys and details on them click [here](/docs/userguide/blocks/misc/constitutive_relations).
 
 ### Constitutive equation
 

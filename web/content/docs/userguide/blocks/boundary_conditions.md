@@ -19,7 +19,7 @@ It was published in this state to make existing content available to users and h
 </div>
 
 All types of boundary conditions discussed in this article can be defined directly in the project file (more details can be found [here](/docs/userguide/blocks/process_variables/#boundary-conditions)).
-Additionally Dirichlet and Neumann boundary conditions can be defined using [Python boundary conditions functionality](/docs/userguide/features/python-bc/).
+Additionally Dirichlet and Neumann boundary conditions can be defined using [Python boundary conditions functionality](/docs/userguide/features/python_bc/).
 
 ## Dirichlet
 
@@ -53,7 +53,7 @@ Can be used to define [Dirichlet](/docs/userguide/blocks/boundary_conditions/#di
 
 ## Setting source term at a boundary
 
-In some models, the position of the source (of for example heat) can coincide with the boundary condition. 
+In some models, the position of the source (of for example heat) can coincide with the boundary condition.
 It is possible to use boundary condition to define source.
 You need to keep in mind, that in such a case, from the numerical point of view, the source term defined as boundary condition is a boundary condition. It will be integrated not over the domain (as it would be if it was defined as source term), but over the boundary condition. This is why it has to be scaled (see [next section](/docs/userguide/blocks/boundary_conditions/#scaling-a-source)).
 

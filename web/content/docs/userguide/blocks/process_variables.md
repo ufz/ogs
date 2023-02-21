@@ -23,9 +23,10 @@ All "process parameters" defined in "Process" Section has to be addressed here (
     </boundary_conditions>
 </process_variable>
 ```
-The block `<process_variable>` has be defined separately for each process variable defined in [Block "Process/Process variables"](/docs/userguide/blocks/process/#process-variables).
 
-There are three major blocks in this one. 
+The block `<process_variable>` has be defined separately for each process variable defined in [Block "Process/Process variables"](/docs/userguide/blocks/processes/#process-variables).
+
+There are three major blocks in this one.
 Two of them are mandatory, in following order:
 
 - [Initial conditions](/docs/userguide/blocks/process_variables/#initial-conditions)
@@ -69,7 +70,7 @@ See following example:
  For more details on both issues, see [sources](/docs/userguide/blocks/process_variables/#sources).
  For simulations which require more complicated values at boundaries (for example spatially variable), [Python boundary conditions](/docs/userguide/blocks/boundary_conditions/#python) can be used.
 
- It is possible to define source at the boundaries of the simulation domain using boundary conditions. 
+ It is possible to define source at the boundaries of the simulation domain using boundary conditions.
  For more details, see [Setting source term at a boundary](/docs/userguide/blocks/boundary_conditions/#setting-source-term-at-a-boundary)
 
 ## Sources
