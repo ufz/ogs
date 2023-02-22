@@ -60,8 +60,9 @@ public:
     std::vector<MeshLib::Element*> const& getBoundaryElements(
         GeoLib::GeoObject const& geoObj, bool const multiple_nodes_allowed);
 
-private:
     MeshLib::Mesh const& _mesh;
+
+private:
     MeshNodeSearcher const& _mshNodeSearcher;
     std::vector<BoundaryElementsAtPoint*> _boundary_elements_at_point;
     std::vector<BoundaryElementsAlongPolyline*> _boundary_elements_along_polylines;
