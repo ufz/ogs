@@ -32,10 +32,6 @@
 #include "Elements/Tet.h"
 #include "Elements/Tri.h"
 
-#ifdef USE_PETSC
-#include "MeshLib/NodePartitionedMesh.h"
-#endif
-
 /// Mesh counter used to uniquely identify meshes by id.
 static std::size_t global_mesh_counter = 0;
 
@@ -361,11 +357,7 @@ std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
     addPropertyToMesh(*mesh, getBulkIDString(MeshLib::MeshItemType::Node),
                       MeshLib::MeshItemType::Node, 1, bulk_node_ids);
 
-#ifdef USE_PETSC
-    return std::make_unique<MeshLib::NodePartitionedMesh>(*mesh);
-#else
     return mesh;
-#endif
 }
 
 std::vector<std::vector<Node*>> calculateNodesConnectedByElements(

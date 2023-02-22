@@ -11,6 +11,8 @@
 
 #ifdef USE_PETSC
 #include <mpi.h>
+
+#include "MeshLib/NodePartitionedMesh.h"
 #endif
 
 #include "BaseLib/Logging.h"
@@ -64,13 +66,23 @@ constructAdditionalMeshesFromGeometries(
             DBUG("Creating mesh from geometry {:s} {:s}.", vec_name,
                  geometry_name);
 
+#ifndef USE_PETSC
             additional_meshes.emplace_back(createMeshFromElementSelection(
                 meshNameFromGeometry(vec_name, geometry_name),
                 MeshLib::cloneElements(
                     boundary_element_searcher.getBoundaryElements(
                         geometry, multiple_nodes_allowed))));
+#else
+            auto subdomain_mesh =
+                std::make_unique<MeshLib::NodePartitionedMesh>(
+                    *createMeshFromElementSelection(
+                         meshNameFromGeometry(vec_name, geometry_name),
+                         MeshLib::cloneElements(
+                             boundary_element_searcher.getBoundaryElements(
+                                 geometry, multiple_nodes_allowed)))
+                         .get());
+            additional_meshes.push_back(std::move(subdomain_mesh));
 
-#ifdef USE_PETSC
             MPI_Barrier(MPI_COMM_WORLD);
 #endif
         }
