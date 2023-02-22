@@ -290,6 +290,8 @@ PropertyVector<T>* getOrCreateMeshProperty(Mesh& mesh,
 /// If the property does not exists (or is of different type), a nullptr is
 /// returned.
 PropertyVector<int> const* materialIDs(Mesh const& mesh);
+PropertyVector<std::size_t> const* bulkNodeIDs(Mesh const& mesh);
+PropertyVector<std::size_t> const* bulkElementIDs(Mesh const& mesh);
 
 /// Creates a new mesh from a vector of elements.
 ///
