@@ -74,9 +74,9 @@ auto createCallback(
             [material_id](auto const& x) { return x.first == material_id; });
         if (mat_iv == end(mat_iv_collection))
         {
-            // If local assembler does not provide correct solid material
-            // model return empty vector, which will be ignored by the
-            // extrapolation algorithm.
+            // If the material model for the present material group does not
+            // have the requested internal variable, return an empty vector,
+            // which will be ignored by the extrapolation algorithm.
             return cache;
         }
 
@@ -154,6 +154,51 @@ void solidMaterialInternalToSecondaryVariables(
     }
 }
 
+template <typename LocalAssemblerInterface, typename InternalVariable>
+auto createCallbackForIpWriter(
+    std::vector<std::pair<int, InternalVariable>> const& mat_iv_collection,
+    int const num_components,
+    bool const material_id_independent)
+{
+    return [mat_iv_collection, num_components, material_id_independent](
+               LocalAssemblerInterface const& loc_asm) -> std::vector<double>
+    {
+        const unsigned num_int_pts = loc_asm.getNumberOfIntegrationPoints();
+        assert(num_int_pts > 0);
+
+        int const material_id =
+            material_id_independent ? 0 : loc_asm.getMaterialID();
+
+        auto const mat_iv = std::find_if(
+            begin(mat_iv_collection), end(mat_iv_collection),
+            [material_id](auto const& x) { return x.first == material_id; });
+        if (mat_iv == end(mat_iv_collection))
+        {
+            // If the material model for the present material group does not
+            // have the requested internal variable, return an empty vector,
+            // which will be ignored by the integration point writer.
+            return {};
+        }
+
+        auto const& iv = mat_iv->second;
+        auto const& fct = iv.getter;
+
+        assert(material_id == mat_iv->first);
+        assert(num_components == iv.num_components);
+
+        std::vector<double> result;
+        // TODO reserve
+        for (unsigned i = 0; i < num_int_pts; ++i)
+        {
+            auto const& state = loc_asm.getMaterialStateVariableInternalState(
+                iv.reference, num_components);
+            result.insert(result.end(), state.begin(), state.end());
+        }
+
+        return result;
+    };
+}
+
 template <typename LocalAssemblerInterface, typename SolidMaterial>
 void solidMaterialInternalVariablesToIntegrationPointWriter(
     std::map<int, std::unique_ptr<SolidMaterial>> const& solid_materials,
@@ -163,26 +208,46 @@ void solidMaterialInternalVariablesToIntegrationPointWriter(
         integration_point_writer,
     int const integration_order)
 {
-    // Collect the internal variables for all solid materials.
-    std::vector<typename SolidMaterial::InternalVariable> internal_variables;
-    for (auto const& solid_material : solid_materials)
-    {
-        auto const ivs = solid_material.second->getInternalVariables();
-        copy(begin(ivs), end(ivs), back_inserter(internal_variables));
-    }
+    auto const internal_variables_by_name =
+        collectInternalVariables(solid_materials);
 
-    // Create integration point writers for each of the internal variables.
-    for (auto const& iv : internal_variables)
+    // Multiple material ids could be present but only one material for the
+    // whole domain. In this case the choice of callbacks is independent of
+    // local assembler's material id, and the material id is 0.
+    // \see selectSolidConstitutiveRelation() for material id logic.
+    bool const material_id_independent = solid_materials.size() == 1;
+
+    // Create *single* callback passing all solid materials to it. Choose
+    // correct solid material based on the local assembler's solid material in
+    // the callback.
+    for (auto const& [name, mat_iv_collection] : internal_variables_by_name)
     {
+        assert(!mat_iv_collection.empty());
+        auto const num_components =
+            mat_iv_collection.front().second.num_components;
+
+        // Check that the number of components is equal for all materials.
+        if (!std::all_of(
+                begin(mat_iv_collection), end(mat_iv_collection),
+                [num_components](auto const& mat_iv)
+                { return mat_iv.second.num_components == num_components; }))
+        {
+            OGS_FATAL(
+                "Not for all material ids the secondary variable '{:s}' has "
+                "{:d} components.",
+                name, num_components);
+        }
+
         DBUG("Creating integration point writer for  internal variable {:s}.",
-             iv.name);
+             name);
 
         integration_point_writer.emplace_back(
             std::make_unique<MeshLib::IntegrationPointWriter>(
-                "material_state_variable_" + iv.name + "_ip", iv.num_components,
+                "material_state_variable_" + name + "_ip", num_components,
                 integration_order, local_assemblers,
-                &LocalAssemblerInterface::getMaterialStateVariableInternalState,
-                iv.reference, iv.num_components));
+                createCallbackForIpWriter<LocalAssemblerInterface>(
+                    mat_iv_collection, num_components,
+                    material_id_independent)));
     }
 }
 }  // namespace ProcessLib::Deformation
