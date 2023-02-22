@@ -63,20 +63,24 @@ void checkBulkIDMappingsPresent(MeshLib::Mesh const& mesh)
     auto const& properties = mesh.getProperties();
 
     if (!properties.existsPropertyVector<std::size_t>(
-            "bulk_node_ids", MeshLib::MeshItemType::Node, 1))
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+            MeshLib::MeshItemType::Node, 1))
     {
         OGS_FATAL(
-            "The required nodal property 'bulk_node_ids' is missing in mesh "
-            "'{}' or has the wrong data type or the wrong number of components",
+            "The required nodal property '{}' is missing in mesh '{}' or has "
+            "the wrong data type or the wrong number of components",
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
             mesh.getName());
     }
 
     if (!properties.existsPropertyVector<std::size_t>(
-            "bulk_element_ids", MeshLib::MeshItemType::Cell, 1))
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
+            MeshLib::MeshItemType::Cell, 1))
     {
         OGS_FATAL(
-            "The required cell property 'bulk_element_ids' is missing in mesh "
-            "'{}' or has the wrong data type or the wrong number of components",
+            "The required cell property '{}' is missing in mesh '{}' or has "
+            "the wrong data type or the wrong number of components",
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
             mesh.getName());
     }
 }
