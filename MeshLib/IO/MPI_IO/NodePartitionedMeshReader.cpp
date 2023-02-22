@@ -77,8 +77,6 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
     BaseLib::RunTime timer;
     timer.start();
 
-    MeshLib::NodePartitionedMesh* mesh = nullptr;
-
     // Always try binary file first
     std::string const fname_new = file_name_base + "_partitioned_msh_cfg" +
                                   std::to_string(_mpi_comm_size) + ".bin";
@@ -99,7 +97,8 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
 
     INFO("Reading corresponding part of mesh data from binary file {:s} ...",
          file_name_base);
-    mesh = readMesh(file_name_base);
+
+    MeshLib::NodePartitionedMesh* mesh = readMesh(file_name_base);
 
     INFO("[time] Reading the mesh took {:f} s.", timer.elapsed());
 
