@@ -3,7 +3,7 @@ if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.24)
 endif()
 
 # Build dependencies via ExternalProject_Add() at configure time in
-# ${PROJECT_BINARY_DIR}/_ext
+# ${PROJECT_BINARY_DIR}/_ext or in $CPM_SOURCE_CACHE/_ext
 include(BuildExternalProject)
 
 set(OGS_EXTERNAL_DEPENDENCIES_CACHE ""
@@ -95,7 +95,7 @@ if(OGS_USE_MFRONT)
             STATUS
                 "ExternalProject_Add(): added package TFEL@rliv-${ogs.minimum_version.tfel-rliv}"
         )
-        set(TFELHOME ${PROJECT_BINARY_DIR}/_ext/TFEL CACHE PATH "" FORCE)
+        set(TFELHOME ${build_dir_TFEL} CACHE PATH "" FORCE)
     endif()
 endif()
 
@@ -197,7 +197,7 @@ if(OGS_USE_LIS)
             STATUS
                 "ExternalProject_Add(): added package LIS@${ogs.minimum_version.lis}"
         )
-        set(ENV{LIS_ROOT_DIR} ${PROJECT_BINARY_DIR}/_ext/LIS)
+        set(ENV{LIS_ROOT_DIR} ${build_dir_LIS})
         find_package(LIS REQUIRED)
     endif()
 endif()
@@ -229,7 +229,7 @@ if(NOT ZLIB_FOUND)
     if(WIN32)
         # requires CMake 3.24 to be effective:
         set(ZLIB_USE_STATIC_LIBS "ON")
-        set(ZLIB_ROOT ${PROJECT_BINARY_DIR}/_ext/ZLIB)
+        set(ZLIB_ROOT ${build_dir_ZLIB})
     endif()
     set(_EXT_LIBS ${_EXT_LIBS} ZLIB CACHE INTERNAL "")
     BuildExternalProject_find_package(ZLIB)
@@ -251,8 +251,8 @@ set(_hdf5_options
     "-DBUILD_TESTING=OFF"
     "-DHDF5_ENABLE_Z_LIB_SUPPORT=ON"
 )
-if("${ZLIB_INCLUDE_DIRS}" MATCHES "${PROJECT_BINARY_DIR}/_ext/ZLIB")
-    list(APPEND _hdf5_options "-DZLIB_ROOT=${PROJECT_BINARY_DIR}/_ext/ZLIB")
+if("${ZLIB_INCLUDE_DIRS}" MATCHES "${build_dir_ZLIB}")
+    list(APPEND _hdf5_options "-DZLIB_ROOT=${build_dir_ZLIB}")
     if(WIN32)
         list(APPEND _hdf5_options "-DZLIB_USE_STATIC_LIBS=ON")
     endif()
@@ -321,10 +321,10 @@ list(APPEND VTK_OPTIONS "-DBUILD_SHARED_LIBS=OFF"
      "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
 )
 message(STATUS "VTK_OPTIONS: ${VTK_OPTIONS}")
-if(OGS_USE_PETSC AND EXISTS ${PROJECT_BINARY_DIR}/_ext/HDF5)
+if(OGS_USE_PETSC AND EXISTS ${build_dir_HDF5})
     # Use local hdf5 build
     list(APPEND VTK_OPTIONS "-DVTK_MODULE_USE_EXTERNAL_VTK_hdf5=ON"
-         "-DHDF5_ROOT=${PROJECT_BINARY_DIR}/_ext/HDF5"
+         "-DHDF5_ROOT=${build_dir_HDF5}"
     )
 endif()
 
@@ -351,14 +351,12 @@ elseif(NOT OGS_BUILD_VTK AND NOT OGS_USE_MKL)
     find_package(VTK ${ogs.minimum_version.vtk} COMPONENTS ${VTK_COMPONENTS})
 endif()
 if(NOT VTK_FOUND)
-
-    if("${OGS_EXTERNAL_DEPENDENCIES_CACHE}" STREQUAL ""
-       AND NOT EXISTS "${PROJECT_BINARY_DIR}/_ext/VTK/src/VTK"
-    )
+    if(APPLE AND "${OGS_EXTERNAL_DEPENDENCIES_CACHE}" STREQUAL "")
         # Fixes https://stackoverflow.com/questions/9894961 on vismac05:
         set(_loguru_patch PATCH_COMMAND git apply
                           "${PROJECT_SOURCE_DIR}/scripts/cmake/loguru.patch"
         )
+        message(DEBUG "Applying VTK loguru patch")
     endif()
     BuildExternalProject(
         VTK ${_vtk_source} CMAKE_ARGS ${VTK_OPTIONS} ${_defaultCMakeArgs}
@@ -373,8 +371,7 @@ endif()
 
 # append RPATHs
 foreach(lib ${_EXT_LIBS})
-    set(CMAKE_BUILD_RPATH
-        ${CMAKE_BUILD_RPATH} ${PROJECT_BINARY_DIR}/_ext/${lib}/lib
-        ${PROJECT_BINARY_DIR}/_ext/${lib}/lib64
+    set(CMAKE_BUILD_RPATH ${CMAKE_BUILD_RPATH} ${build_dir_${lib}}/lib
+                          {build_dir_${lib}}/lib64
     )
 endforeach()
