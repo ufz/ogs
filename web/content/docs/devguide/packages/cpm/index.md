@@ -26,6 +26,8 @@ cmake ... -DCPM_SOURCE_CACHE=$HOME/.cache/CPM
 
 Some dependencies (those which are added with `CPMFindPackage()`) are first searched to be locally installed on the system with a fallback to CPM if not found. You can disable the search for local packages with [`CPM_DOWNLOAD_ALL`](https://github.com/cpm-cmake/CPM.cmake#cpm_download_all).
 
+All dependencies integrated with CPM internally become part of the CMake configuration. Some dependencies are not compatible with this approach (e.g. VTK and PETSc) and are therefore integrated as [CMake external projects](https://cmake.org/cmake/help/latest/module/ExternalProject.html). Per default they are automatically downloaded, configured and build inside the build directory during CMake configuration. If `CPM_SOURCE_CACHE` is set the downloads and builds are cached in the specified directory as well under `$CPM_SOURCE_CACHE/_ext`. To remove the cache simply delete the cache folder and configure a new build.
+
 ## Further information
 
 - [CPM on GitHub](https://github.com/cpm-cmake/CPM.cmake#options)
