@@ -21,7 +21,7 @@ workflow:
     # Disable CI for non-MR user-scoped pipelines
     - if: '$CI_MERGE_REQUEST_IID == null && $CI_PROJECT_PATH != "ogs/ogs"'
       when: never
-    - if: "$CI_MERGE_REQUEST_LABELS =~ /.*(workflow::paused|ci skip).*/"
+    - if: "$CI_MERGE_REQUEST_LABELS =~ /.*(workflow::paused|ci::skip).*/"
       when: never
     - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only.*/
       variables:
