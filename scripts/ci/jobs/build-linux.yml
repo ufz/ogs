@@ -67,7 +67,7 @@ build linux debug with sanitizers:
     - .template-build-linux
     - .test-artifacts
     - .rules-master-manual
-  tags: [envinf2-shell]
+  tags: [envinf23, shell]
   needs: [meta]
   variables:
     BUILD_PACKAGE: "false"

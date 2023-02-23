@@ -1,18 +1,18 @@
 # Modified from
 # https://github.com/Sbte/BuildExternalProject/commit/ce1a70996aa538aac17a6faf07db487c3a238838
 macro(BuildExternalProject_find_package target)
-    set(build_dir ${PROJECT_BINARY_DIR}/_ext/${target})
 
     # Set CMake prefix path so we can look there for the module
     set(_CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH})
     mark_as_advanced(_CMAKE_PREFIX_PATH)
-    list(APPEND CMAKE_PREFIX_PATH ${build_dir})
+    list(APPEND CMAKE_PREFIX_PATH ${build_dir_${target}})
 
     find_package(${target} MODULE QUIET)
     if(NOT ${target}_FOUND)
         # Look for config version if there was no module
         find_package(
-            ${target} CONFIG REQUIRED HINTS ${build_dir} NO_DEFAULT_PATH
+            ${target} CONFIG REQUIRED HINTS ${build_dir_${target}}
+            NO_DEFAULT_PATH
         )
     endif()
 
@@ -22,13 +22,27 @@ macro(BuildExternalProject_find_package target)
 endmacro()
 
 function(BuildExternalProject target)
-    set(build_dir ${PROJECT_BINARY_DIR}/_ext/${target})
 
-    message(STATUS "Building ${target}")
+    message(STATUS "┌─ BuildExternalProject ${target}")
+    list(APPEND CMAKE_MESSAGE_INDENT "│    ")
+
+    set(build_dir ${PROJECT_BINARY_DIR}/_ext/${target})
+    string(REPLACE ";" " " ARGN_STRING "${ARGN}")
+
+    if(CPM_SOURCE_CACHE)
+        cmake_path(
+            IS_PREFIX PROJECT_BINARY_DIR "${CPM_SOURCE_CACHE}" _is_inside_build
+        )
+        if(NOT _is_inside_build)
+            string(SHA256 _hash "${ARGN_STRING}")
+            set(build_dir "${CPM_SOURCE_CACHE}/_ext/${target}/${_hash}")
+        endif()
+    endif()
+
+    message(STATUS "Building ${target} in ${build_dir}")
+    set(build_dir_${target} "${build_dir}" CACHE INTERNAL "")
 
     file(MAKE_DIRECTORY ${build_dir})
-
-    string(REPLACE ";" " " ARGN_STRING "${ARGN}")
 
     set(CMAKE_LIST_CONTENT
         "
@@ -73,6 +87,8 @@ function(BuildExternalProject target)
         STATUS
             "Finished building ${target}. Logs in ${build_dir}/src/${target}-stamp"
     )
+    list(POP_BACK CMAKE_MESSAGE_INDENT)
+    message(STATUS "└─ End BuildExternalProject ${_target}")
 endfunction()
 
 function(BuildExternalProject_configure build_dir)
