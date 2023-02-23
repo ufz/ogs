@@ -34,7 +34,7 @@ function(BuildExternalProject target)
             IS_PREFIX PROJECT_BINARY_DIR "${CPM_SOURCE_CACHE}" _is_inside_build
         )
         if(NOT _is_inside_build)
-            string(SHA256 _hash "${ARGN_STRING}")
+            string(SHA256 _hash "${CMAKE_GENERATOR};${ARGN_STRING}")
             set(build_dir "${CPM_SOURCE_CACHE}/_ext/${target}/${_hash}")
         endif()
     endif()
