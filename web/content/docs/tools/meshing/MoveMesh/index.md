@@ -12,7 +12,7 @@ The displacement vector is defined via input parameters -x, -y, -z.
    MoveMesh  [-o <string>] [-z <floating point number>] 
              [-y <floating point number>] 
              [-x <floating point number>] 
-              -m <string> [--] [--version] [-h]
+             -m <string> [--] [--version] [-h]
 
 Where: 
 

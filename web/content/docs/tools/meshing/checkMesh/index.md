@@ -35,10 +35,10 @@ Where:
 ```
 
 ## Example:
-In this example we use a 3D mesh from a previous examples ([createLayeredMeshfromRaster](/docs/tools/preprocessing/createLayeredMeshFromRasters/index.md)).
+In this example we use a 3D mesh from another example ([createLayeredMeshfromRaster](../../preprocessing/createLayeredMeshFromRasters/index.md)).
 
 ```bash
-checkMesh mesh_layerd.vtu -p -v
+checkMesh mesh_layered.vtu -p -v
 ```
 
  **general output:**
@@ -56,10 +56,13 @@ checkMesh mesh_layerd.vtu -p -v
 [2023-02-10 11:44:56.552] [ogs] [info] 	Prisms: 4426
  ```
  **-p output:**
- The properties output refers to material properties. The bounds of the materialID vector are [0,6].
+ The properties output refers to material properties. 
+ The bounds of the materialID vector are [0,6]. 
+ Also, the corresponding list is given as: MaterialID-list: [0, 1, 2, 3, 4, 5, 6].
  ```bash
-[2023-02-10 11:39:56.092] [ogs] [info] There are 1 properties in the mesh:
-[2023-02-10 11:39:56.092] [ogs] [info] 	MaterialIDs: (4609 values) [0, 6]
+[2023-02-23 16:16:02.680] [ogs] [info] There are 1 properties in the mesh:
+[2023-02-23 16:16:02.680] [ogs] [info] 	MaterialIDs: (4609 values) [0, 6]
+[2023-02-23 16:16:02.681] [ogs] [info] MaterialID-list: [0, 1, 2, 3, 4, 5, 6]
  ```
  **-v output:**
  The quality of the underlying mesh is checked and no errors are found.

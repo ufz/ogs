@@ -7,8 +7,8 @@ weight = 1
 
 ## Description
 This tool is used to generate either a quad/rectangle or a line. 
-For this purpose two points are used to define the geometry.
-To create a quad the defining points need to be in a plane parallel to the xy-, xz- or yz-plane. 
+For this purpose, two points are used to define the geometry.
+To create a quad, the defining points need to be in a plane parallel to the xy-, xz- or yz-plane. 
 To create a line, they must define a line parallel to the standard basis vectors of 3D space. 
 Quads and lines then can be combined to create more complex geometries.
 This tool is mainly used to create simple geometries for benchmarking or testing purposes. 
