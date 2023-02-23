@@ -47,6 +47,12 @@ struct SolidMechanicsModel
               PrevState<SaturationData> const& S_L_prev_data,
               SaturationData& S_L_data, SaturationDataDeriv& dS_L_data) const;
 
+    static SolidMechanicsModel create(
+        SolidConstitutiveRelation<DisplacementDim> const& solid_material)
+    {
+        return SolidMechanicsModel{solid_material};
+    }
+
 private:
     SolidConstitutiveRelation<DisplacementDim> const& solid_material_;
 

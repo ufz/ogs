@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "ProcessLib/Graph/ConstructModels.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/DarcyLaw.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqP.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqT.h"
@@ -60,32 +61,11 @@ ConstitutiveModels<DisplacementDim> createConstitutiveModels(
     TRMProcessData const& process_data,
     SolidConstitutiveRelation<DisplacementDim> const& solid_material)
 {
-    return {
-        {},
-        SolidMechanicsModel<DisplacementDim>{solid_material},
-        SolidCompressibilityModel<DisplacementDim,
-                                  SolidConstitutiveRelation<DisplacementDim>>{
-            solid_material},
-        {},
-        {},
-        {},
-
-        {},
-        {},
-        GravityModel<DisplacementDim>{process_data.specific_body_force},
-        {},
-        {},
-        {},
-        {},
-        DarcyLawModel<DisplacementDim>{process_data.specific_body_force},
-        {},
-        {},
-
-        {},
-        {},
-        {},
-        EqPModel<DisplacementDim>{process_data.specific_body_force},
-        {}};
+    return ProcessLib::Graph::constructModels<
+        ConstitutiveModels<DisplacementDim>>(
+        SpecificBodyForceData<DisplacementDim>{
+            process_data.specific_body_force},
+        solid_material);
 }
 
 }  // namespace ConstitutiveStressSaturation_StrainPressureTemperature

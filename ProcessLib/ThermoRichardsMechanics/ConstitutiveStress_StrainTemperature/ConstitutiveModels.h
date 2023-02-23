@@ -11,6 +11,7 @@
 #pragma once
 
 #include "ElasticTangentStiffnessModel.h"
+#include "ProcessLib/Graph/ConstructModels.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/DarcyLaw.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqP.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqT.h"
@@ -65,36 +66,11 @@ ConstitutiveModels<DisplacementDim> createConstitutiveModels(
     TRMProcessData const& process_data,
     SolidConstitutiveRelation<DisplacementDim> const& solid_material)
 {
-    return {
-        ElasticTangentStiffnessModel<DisplacementDim>{solid_material},
-        {} /* BiotModel */,
-        SolidCompressibilityModel<DisplacementDim,
-                                  SolidConstitutiveRelation<DisplacementDim>>{
-            solid_material},
-        {} /* SaturationModel<DisplacementDim> */,
-        {} /* BishopsModel */,
-        {} /* BishopsPrevModel */,
-        {} /* PorosityModel<DisplacementDim> */,
-
-        {} /* SwellingModel<DisplacementDim> */,
-        {} /* SolidThermalExpansionModel<DisplacementDim> */,
-        SolidMechanicsModel<DisplacementDim>{solid_material},
-        {} /* LiquidDensityModel<DisplacementDim> */,
-
-        {} /* SolidDensityModel<DisplacementDim> */,
-        GravityModel<DisplacementDim>{process_data.specific_body_force},
-        {} /* LiquidViscosityModel<DisplacementDim> */,
-        {} /* TransportPorosityModel<DisplacementDim> */,
-        {} /* PermeabilityModel<DisplacementDim> */,
-        {} /* ThermoOsmosisModel<DisplacementDim> */,
-        DarcyLawModel<DisplacementDim>{process_data.specific_body_force},
-        {} /* TRMHeatStorageAndFluxModel<DisplacementDim> */,
-        {} /* TRMVaporDiffusionModel<DisplacementDim> */,
-        {} /* FluidThermalExpansionModel<DisplacementDim> */,
-        {} /* TRMStorageModel<DisplacementDim> */,
-        EqPModel<DisplacementDim>{process_data.specific_body_force},
-        {} /* EqTModel<DisplacementDim> */
-    };
+    return ProcessLib::Graph::constructModels<
+        ConstitutiveModels<DisplacementDim>>(
+        SpecificBodyForceData<DisplacementDim>{
+            process_data.specific_body_force},
+        solid_material);
 }
 }  // namespace ConstitutiveStress_StrainTemperature
 }  // namespace ProcessLib::ThermoRichardsMechanics

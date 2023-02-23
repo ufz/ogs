@@ -18,6 +18,7 @@ namespace ProcessLib::ThermoRichardsMechanics
 {
 namespace ConstitutiveStress_StrainTemperature
 {
+// TODO remove typename SolidMaterial
 template <int DisplacementDim, typename SolidMaterial>
 struct SolidCompressibilityModel
 {
@@ -33,6 +34,11 @@ struct SolidCompressibilityModel
     {
         out.beta_SR = (1 - biot_data()) / solid_material_.getBulkModulus(
                                               x_t.t, x_t.x, &C_el_data.C_el);
+    }
+
+    static SolidCompressibilityModel create(SolidMaterial const& solid_material)
+    {
+        return SolidCompressibilityModel{solid_material};
     }
 
 private:

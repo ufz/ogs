@@ -16,6 +16,7 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqT.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EquivalentPlasticStrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Gravity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidViscosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Saturation.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidDensity.h"

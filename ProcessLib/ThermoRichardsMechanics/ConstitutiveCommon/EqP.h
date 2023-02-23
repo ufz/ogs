@@ -16,6 +16,7 @@
 #include "LiquidViscosity.h"
 #include "PermeabilityData.h"
 #include "Saturation.h"
+#include "SpecificBodyForceData.h"
 #include "TRMStorage.h"
 #include "TRMVaporDiffusion.h"
 
@@ -58,6 +59,12 @@ struct EqPModel
               TRMVaporDiffusionData<DisplacementDim> const& vap_data,
               TRMStorageData const& storage_data,
               EqPData<DisplacementDim>& out) const;
+
+    static EqPModel create(
+        SpecificBodyForceData<DisplacementDim> const& specific_body_force_data)
+    {
+        return EqPModel{specific_body_force_data.specific_body_force};
+    }
 
 private:
     /// Gravity vector (specific body force).
