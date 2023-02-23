@@ -12,15 +12,6 @@ function(NotebookTest)
         NotebookTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
     )
 
-    if(APPLE AND DEFINED ENV{CI} AND "PYVISTA" IN_LIST
-                                     NotebookTest_RESOURCE_LOCK
-    )
-        message("Disabled NotebookTest ${NotebookTest_NOTEBOOKFILE} because "
-                "PyVista in CI on mac is not supported (headless)."
-        )
-        return()
-    endif()
-
     get_filename_component(
         NotebookTest_DIR "${NotebookTest_NOTEBOOKFILE}" DIRECTORY
     )
