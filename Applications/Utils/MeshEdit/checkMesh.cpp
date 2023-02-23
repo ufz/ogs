@@ -13,6 +13,8 @@
 #include <mpi.h>
 #endif
 
+#include <fmt/ranges.h>
+
 #include <array>
 #include <string>
 
@@ -92,6 +94,8 @@ int main(int argc, char* argv[])
     if (print_properties_arg.isSet())
     {
         MeshLib::MeshInformation::writePropertyVectorInformation(*mesh);
+        INFO("MaterialID-list: [{}]",
+             fmt::join(MeshLib::MeshInformation::getMaterialIDs(*mesh), ", "));
     }
 
     if (valid_arg.isSet())

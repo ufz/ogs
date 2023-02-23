@@ -21,6 +21,7 @@
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/ElementValueModification.h"
+#include "MeshLib/MeshInformation.h"
 
 int main(int argc, char* argv[])
 {
@@ -122,11 +123,18 @@ int main(int argc, char* argv[])
     if (condenseArg.isSet())
     {
         INFO("Condensing material ID...");
+        INFO("The MaterialIDs of the input file: [{}]",
+             fmt::join(MeshLib::MeshInformation::getMaterialIDs(*mesh), ", "));
         MeshLib::ElementValueModification::condense(*mesh);
+        INFO("The MaterialIDs of the output file: [{}]",
+             fmt::join(MeshLib::MeshInformation::getMaterialIDs(*mesh), ", "));
     }
     else if (replaceArg.isSet())
     {
         INFO("Replacing material ID...");
+        INFO("The MaterialIDs of the input file: [{}]",
+             fmt::join(MeshLib::MeshInformation::getMaterialIDs(*mesh), ", "));
+
         const auto vecOldID = matIDArg.getValue();
         const unsigned newID = newIDArg.getValue();
         for (auto oldID : vecOldID)
@@ -135,10 +143,15 @@ int main(int argc, char* argv[])
             MeshLib::ElementValueModification::replace(*mesh, oldID, newID,
                                                        true);
         }
+        INFO("The MaterialIDs of the output file: [{}]",
+             fmt::join(MeshLib::MeshInformation::getMaterialIDs(*mesh), ", "));
     }
     else if (specifyArg.isSet())
     {
         INFO("Specifying material ID...");
+        INFO("The MaterialIDs of the input file: [{}]",
+             fmt::join(MeshLib::MeshInformation::getMaterialIDs(*mesh), ", "));
+
         const std::string eleTypeName(eleTypeArg.getValue());
         const MeshLib::MeshElemType eleType =
             MeshLib::String2MeshElemType(eleTypeName);
@@ -146,8 +159,9 @@ int main(int argc, char* argv[])
         unsigned cnt = MeshLib::ElementValueModification::setByElementType(
             *mesh, eleType, newID);
         INFO("updated {:d} elements", cnt);
+        INFO("The MaterialIDs of the output file: [{}]",
+             fmt::join(MeshLib::MeshInformation::getMaterialIDs(*mesh), ", "));
     }
-
     MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());
 
 #ifdef USE_PETSC
