@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="point_heat_source_2D.prj">
+    <remove sel="/*/time_loop/submesh_residuum_output" />
+    <remove sel="/*/meshes/mesh[7]" />
+    <remove sel="/*/meshes/mesh[6]" />
+</OpenGeoSysProjectDiff>
