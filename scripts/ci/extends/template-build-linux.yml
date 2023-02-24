@@ -33,6 +33,9 @@
         if [ "$BUILD_CTEST" = true ]; then
           ctest_timeout=60
           preset_postfix=""
+          if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*ci_large.* ]]; then
+            export BUILD_CTEST_LARGE=true
+          fi
           if [ "$BUILD_CTEST_LARGE" = true ]; then
             ctest_timeout=90
             preset_postfix="-large"
