@@ -85,6 +85,9 @@
 #ifdef OGS_BUILD_PROCESS_HYDROMECHANICS
 #include "ProcessLib/HydroMechanics/CreateHydroMechanicsProcess.h"
 #endif
+#ifdef OGS_BUILD_PROCESS_LARGEDEFORMATION
+#include "ProcessLib/LargeDeformation/CreateLargeDeformationProcess.h"
+#endif
 #ifdef OGS_BUILD_PROCESS_LIE
 #include "ProcessLib/LIE/HydroMechanics/CreateHydroMechanicsProcess.h"
 #include "ProcessLib/LIE/SmallDeformation/CreateSmallDeformationProcess.h"
@@ -869,6 +872,35 @@ void ProjectData::parseProcesses(
                 default:
                     OGS_FATAL(
                         "HYDRO_MECHANICS process does not support given "
+                        "dimension");
+            }
+        }
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_LARGEDEFORMATION
+            if (type == "LARGE_DEFORMATION")
+        {
+            switch (_mesh_vec[0]->getDimension())
+            {
+                case 2:
+                    process = ProcessLib::LargeDeformation::
+                        createLargeDeformationProcess<2>(
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
+                            _process_variables, _parameters,
+                            _local_coordinate_system, integration_order,
+                            process_config, _media);
+                    break;
+                case 3:
+                    process = ProcessLib::LargeDeformation::
+                        createLargeDeformationProcess<3>(
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
+                            _process_variables, _parameters,
+                            _local_coordinate_system, integration_order,
+                            process_config, _media);
+                    break;
+                default:
+                    OGS_FATAL(
+                        "LARGE_DEFORMATION process does not support given "
                         "dimension");
             }
         }
