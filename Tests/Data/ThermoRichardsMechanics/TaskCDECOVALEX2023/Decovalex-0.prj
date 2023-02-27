@@ -905,8 +905,9 @@
                 <scaling>true</scaling>
             </eigen>
             <petsc>
-                <parameters>-ksp_type tfqmr
-                    -pc_type jacobi
+                <parameters>
+                    -ksp_type bcgs
+                    -pc_type lu
                     -ksp_rtol 1.e-20 -ksp_atol 1.e-18
                     -ksp_max_it 4000
                 </parameters>
