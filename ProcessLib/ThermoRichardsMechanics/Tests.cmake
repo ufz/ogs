@@ -319,7 +319,7 @@ AddTest(
     PATH ThermoRichardsMechanics/PointHeatSource
     RUNTIME 635
     EXECUTABLE ogs
-    EXECUTABLE_ARGS point_heat_source_2D.prj
+    EXECUTABLE_ARGS -p point_heat_source_2D_non_submesh_r_output.xml point_heat_source_2D.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 3
     TESTER vtkdiff
