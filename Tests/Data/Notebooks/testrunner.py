@@ -9,6 +9,8 @@ import sys
 from timeit import default_timer as timer
 from datetime import timedelta
 import toml
+from pathlib import Path
+import jupytext
 
 
 def save_to_website(exec_notebook_file, web_path):
@@ -95,14 +97,20 @@ for notebook_file_path in args.notebooks:
         )
         os.makedirs(notebook_output_path, exist_ok=True)
         os.environ["OGS_TESTRUNNER_OUT_DIR"] = notebook_output_path
+        notebook_filename = os.path.basename(notebook_file_path)
+        convert_notebook_file = os.path.join(
+            notebook_output_path, Path(notebook_filename).stem
+        )
+        convert_notebook_file += ".ipynb"
 
-        with open(notebook_file_path, mode="r", encoding="utf-8") as f:
-            nb = nbformat.read(f, as_version=4)
+        if Path(notebook_file_path).suffix == ".md":
+            nb = jupytext.read(notebook_file_path)
+        else:
+            with open(notebook_file_path, mode="r", encoding="utf-8") as f:
+                nb = nbformat.read(f, as_version=4)
         ep = ExecutePreprocessor(kernel_name="python3")
 
         # 1. Run the notebook
-        notebook_filename = os.path.basename(notebook_file_path)
-        convert_notebook_file = os.path.join(notebook_output_path, notebook_filename)
         print(f"[Start]  {notebook_filename}")
         start = timer()
         try:
