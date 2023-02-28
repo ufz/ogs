@@ -70,8 +70,8 @@ publish wheels:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
     - when: never
   script:
+    - pipx run build --sdist --outdir wheelhouse
     - >
-      pipx run build --sdist --outdir wheelhouse
       pipx run twine upload
       ${PYPI_REPO}
       ${PYPI_AUTH}
