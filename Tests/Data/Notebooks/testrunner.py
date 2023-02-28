@@ -24,17 +24,20 @@ def save_to_website(exec_notebook_file, web_path):
         last_line = lines[-1]
         if "<!--eofm-->" not in last_line:
             print(
-                f"Warning: {exec_notebook_file} does not contain '<!--eofm-->' as the last line in the RAW cell!"
+                f"Warning: {exec_notebook_file} does not contain '<!--eofm-->' as the "
+                "last line in the RAW cell!"
             )
         parsed_frontmatter = toml.loads("\n".join(lines[:-1]))
-        if not "web_subsection" in parsed_frontmatter:
+        if "web_subsection" not in parsed_frontmatter:
             print(
-                f"Error: {exec_notebook_file} frontmatter does not contain 'web_subsection'!"
+                f"Error: {exec_notebook_file} frontmatter does not contain "
+                "'web_subsection'!"
             )
         output_path = os.path.join(output_path, parsed_frontmatter["web_subsection"])
     else:
         print(
-            f"Warning: {exec_notebook_file} does not contain a RAW cell as its first cell!"
+            f"Warning: {exec_notebook_file} does not contain a RAW cell as its first "
+            "cell!"
         )
         output_path = os.path.join(output_path, "notebooks")
     writer = HugoWriter()
@@ -60,7 +63,8 @@ def save_to_website(exec_notebook_file, web_path):
         )
         if os.path.exists(figures_path) and not os.path.exists(symlink_figures_path):
             print(
-                f"{subfolder} folder detected, copying {figures_path} to {symlink_figures_path}"
+                f"{subfolder} folder detected, copying {figures_path} to "
+                f"{symlink_figures_path}"
             )
             shutil.copytree(figures_path, symlink_figures_path)
 
@@ -132,8 +136,8 @@ for notebook_file_path in args.notebooks:
             pass
         end = timer()
 
-        # 2. Instantiate the exporter. We use the `classic` template for now; we'll get into more details
-        # later about how to customize the exporter further.
+        # 2. Instantiate the exporter. We use the `classic` template for now; we'll get
+        # into more details later about how to customize the exporter further.
         html_exporter = HTMLExporter()
         html_exporter.template_name = "classic"
 
@@ -154,7 +158,8 @@ for notebook_file_path in args.notebooks:
                 symlink_figures_path
             ):
                 print(
-                    f"{subfolder} folder detected, symlink {figures_path} to {symlink_figures_path}"
+                    f"{subfolder} folder detected, symlink {figures_path} to "
+                    f"{symlink_figures_path}"
                 )
                 os.symlink(figures_path, symlink_figures_path)
 
@@ -172,7 +177,8 @@ for notebook_file_path in args.notebooks:
         with open(html_file, "w", encoding="utf-8") as fh:
             fh.write(body)
 
-    status_string += f"{notebook_filename} in {timedelta(seconds=end-start).total_seconds()} seconds."
+    status_string += f"{notebook_filename} in "
+    status_string += f"{timedelta(seconds=end-start).total_seconds()} seconds."
     if not notebook_success:
         status_string += f" --> {html_file} <--"
     print(status_string)
