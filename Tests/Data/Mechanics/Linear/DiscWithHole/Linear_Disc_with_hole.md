@@ -57,39 +57,65 @@ The overall stress distributions in the plate around the hole can be represented
 For visualization of the stress distribution within the plate the stresses $\sigma_{rr}$, $\sigma_{\theta\theta}$ and $\sigma_{r\theta}$ are plotted along the $x$- and $y$-axes as well as along the diagonal ($\theta = -45°$).
 As can be seen below, the hole causes characteristic stress distributions.
 
-```python
-#HIDDEN
+```python jupyter={"source_hidden": true}
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
 
-#Some plot settings
-plt.style.use('seaborn-deep')
-plt.rcParams['lines.linewidth']= 2.0
-plt.rcParams['lines.color']= 'black'
-plt.rcParams['legend.frameon']=True
-plt.rcParams['font.family'] = 'serif'
-plt.rcParams['legend.fontsize']=14
-plt.rcParams['font.size'] = 14
-plt.rcParams['axes.spines.right'] = False
-plt.rcParams['axes.spines.top'] = False
-plt.rcParams['axes.spines.left'] = True
-plt.rcParams['axes.spines.bottom'] = True
-plt.rcParams['axes.axisbelow'] = True
-plt.rcParams['figure.figsize'] = (8, 6)
+# Some plot settings
+plt.style.use("seaborn-deep")
+plt.rcParams["lines.linewidth"] = 2.0
+plt.rcParams["lines.color"] = "black"
+plt.rcParams["legend.frameon"] = True
+plt.rcParams["font.family"] = "serif"
+plt.rcParams["legend.fontsize"] = 14
+plt.rcParams["font.size"] = 14
+plt.rcParams["axes.spines.right"] = False
+plt.rcParams["axes.spines.top"] = False
+plt.rcParams["axes.spines.left"] = True
+plt.rcParams["axes.spines.bottom"] = True
+plt.rcParams["axes.axisbelow"] = True
+plt.rcParams["figure.figsize"] = (8, 6)
 ```
 
-```python
-#HIDDEN
-def kirsch_sig_rr(sig,r,theta,a):
+```python jupyter={"source_hidden": true}
+def kirsch_sig_rr(sig, r, theta, a):
     # Änderung in Heaviside-Funktion: Spannung erst ab r=1.99... auf Null setzen, da erster Eintrag von dist_sorted etwas kleiner als 2 ist
-    return 0.5*sig*((1-a**2/r**2)+(1+3*np.power(a,4)/np.power(r,4)-4*a**2/r**2)*np.cos(2*np.pi*theta/180)) * np.heaviside(r+1e-7-a,1) 
-    
-def kirsch_sig_tt(sig,r,theta,a):
-    return 0.5*sig*((1+a**2/r**2)-(1+3*np.power(a,4)/np.power(r,4))*np.cos(2*np.pi*theta/180)) * np.heaviside(r+1e-7-a,1)
+    return (
+        0.5
+        * sig
+        * (
+            (1 - a**2 / r**2)
+            + (1 + 3 * np.power(a, 4) / np.power(r, 4) - 4 * a**2 / r**2)
+            * np.cos(2 * np.pi * theta / 180)
+        )
+        * np.heaviside(r + 1e-7 - a, 1)
+    )
 
-def kirsch_sig_rt(sig,r,theta,a):
-    return -0.5*sig*((1-3*np.power(a,4)/np.power(r,4)+2*a**2/r**2)*np.sin(2*np.pi*theta/180)) * np.heaviside(r+1e-7-a,1)
+
+def kirsch_sig_tt(sig, r, theta, a):
+    return (
+        0.5
+        * sig
+        * (
+            (1 + a**2 / r**2)
+            - (1 + 3 * np.power(a, 4) / np.power(r, 4))
+            * np.cos(2 * np.pi * theta / 180)
+        )
+        * np.heaviside(r + 1e-7 - a, 1)
+    )
+
+
+def kirsch_sig_rt(sig, r, theta, a):
+    return (
+        -0.5
+        * sig
+        * (
+            (1 - 3 * np.power(a, 4) / np.power(r, 4) + 2 * a**2 / r**2)
+            * np.sin(2 * np.pi * theta / 180)
+        )
+        * np.heaviside(r + 1e-7 - a, 1)
+    )
 ```
 
 ### Stress distribution along the $x$-axis ($\theta= -90°$, orthogonal to the load)
@@ -99,35 +125,41 @@ As the hole is approached, the tangential stress increases until it reaches its 
 Interestingly, that value is three times as high as the applied traction. It can be concluded that the hole leads to a **threefold stress concentration**.
 
 ```python
-r = np.linspace(2,10,1000)
-plt.plot(r, kirsch_sig_rr(10,r,-90,2), label = r"$\sigma_{rr} \equiv \sigma_{xx}$")
-plt.plot(r, kirsch_sig_tt(10,r,-90,2), label = r"$\sigma_{\theta \theta} \equiv \sigma_{yy}$")
-plt.plot(r, kirsch_sig_rt(10,r,-90,2), label = r"$\sigma_{r \theta} \equiv \sigma_{xy}$")
-plt.plot([2,2], [0,30], color="0.6", linestyle = "--", label = "Hole Radius")
+r = np.linspace(2, 10, 1000)
+plt.plot(r, kirsch_sig_rr(10, r, -90, 2), label=r"$\sigma_{rr} \equiv \sigma_{xx}$")
+plt.plot(
+    r,
+    kirsch_sig_tt(10, r, -90, 2),
+    label=r"$\sigma_{\theta \theta} \equiv \sigma_{yy}$",
+)
+plt.plot(
+    r, kirsch_sig_rt(10, r, -90, 2), label=r"$\sigma_{r \theta} \equiv \sigma_{xy}$"
+)
+plt.plot([2, 2], [0, 30], color="0.6", linestyle="--", label="Hole Radius")
 plt.legend(loc="upper right")
 plt.tight_layout()
 plt.grid(True)
-plt.xlabel(r'$r\equiv x$ / cm')
-plt.xlim(0,10)
-plt.ylabel(r'$\sigma$ / kPa')
-plt.ylim(0,30);
+plt.xlabel(r"$r\equiv x$ / cm")
+plt.xlim(0, 10)
+plt.ylabel(r"$\sigma$ / kPa")
+plt.ylim(0, 30)
 ```
 
 ### Stress distribution along the diagonal ($\theta= -45°$)
 
 ```python
-r = np.linspace(2,14.14,1000)
-plt.plot(r, kirsch_sig_rr(10,r,-45,2), label = r"$\sigma_{rr}$")
-plt.plot(r, kirsch_sig_tt(10,r,-45,2), label = r"$\sigma_{\theta \theta}$")
-plt.plot(r, kirsch_sig_rt(10,r,-45,2), label = r"$\sigma_{r \theta}$")
-plt.axvline(2, color="0.6", linestyle = "--", label = "Hole Radius")
+r = np.linspace(2, 14.14, 1000)
+plt.plot(r, kirsch_sig_rr(10, r, -45, 2), label=r"$\sigma_{rr}$")
+plt.plot(r, kirsch_sig_tt(10, r, -45, 2), label=r"$\sigma_{\theta \theta}$")
+plt.plot(r, kirsch_sig_rt(10, r, -45, 2), label=r"$\sigma_{r \theta}$")
+plt.axvline(2, color="0.6", linestyle="--", label="Hole Radius")
 plt.legend(loc="upper right")
 plt.tight_layout()
 plt.grid(True)
-plt.xlabel(r'$r$ / cm')
-plt.xlim(0,14.14)
-plt.ylabel(r'$\sigma$ / kPa')
-plt.ylim(0,10);
+plt.xlabel(r"$r$ / cm")
+plt.xlim(0, 14.14)
+plt.ylabel(r"$\sigma$ / kPa")
+plt.ylim(0, 10)
 ```
 
 ### Stress distribution along the $y$-axis ($\theta=0°$, parallel to the applied tension)
@@ -139,18 +171,20 @@ The horizontal stress near the hole amounts to the negative of the applied tensi
 The vertical stress is zero at the edge of the hole and exhibits a sign change in the vicinity of the hole.
 
 ```python
-r = np.linspace(2,10,1000)
-plt.plot(kirsch_sig_rr(10,r,0,2), r, label = r"$\sigma_{rr} \equiv \sigma_{yy}$")
-plt.plot(kirsch_sig_tt(10,r,0,2), r, label = r"$\sigma_{\theta \theta} \equiv \sigma_{xx}$")
-plt.plot(kirsch_sig_rt(10,r,0,2), r, label = r"$\sigma_{r \theta} \equiv \sigma_{xy}$")
-plt.axhline(2, color="0.6", linestyle = "--", label = "Hole Radius")
+r = np.linspace(2, 10, 1000)
+plt.plot(kirsch_sig_rr(10, r, 0, 2), r, label=r"$\sigma_{rr} \equiv \sigma_{yy}$")
+plt.plot(
+    kirsch_sig_tt(10, r, 0, 2), r, label=r"$\sigma_{\theta \theta} \equiv \sigma_{xx}$"
+)
+plt.plot(kirsch_sig_rt(10, r, 0, 2), r, label=r"$\sigma_{r \theta} \equiv \sigma_{xy}$")
+plt.axhline(2, color="0.6", linestyle="--", label="Hole Radius")
 plt.legend()
 plt.tight_layout()
 plt.grid(True)
-ax = plt.gca()  
-plt.ylabel(r'$r\equiv y$ / cm')
-plt.xlabel(r'$\sigma$ / kPa')
-plt.xlim(-10,10);
+ax = plt.gca()
+plt.ylabel(r"$r\equiv y$ / cm")
+plt.xlabel(r"$\sigma$ / kPa")
+plt.xlim(-10, 10)
 ```
 
 ### 2D color plots
@@ -158,33 +192,39 @@ plt.xlim(-10,10);
 For gaining a deeper insight for the planar stress distribution in the plate around the hole the following 2D plots are helpful. The magnitude of the acting stresses is expressed by a chromatic graduated scale in separate plots for $\sigma_{rr}$, $\sigma_{\theta\theta}$ and $\sigma_{r\theta}$.
 
 ```python
-cart_to_cyl = lambda x,y: [np.sqrt(x**2+y**2), np.rad2deg(np.arctan(x/y))]
+cart_to_cyl = lambda x, y: [np.sqrt(x**2 + y**2), np.rad2deg(np.arctan(x / y))]
 ```
 
 ```python
-X, Y = np.meshgrid(np.linspace(.1,10,1000),np.linspace(0.1,10,1000))
+X, Y = np.meshgrid(np.linspace(0.1, 10, 1000), np.linspace(0.1, 10, 1000))
 ```
 
 ```python
-#cylindical coordinates from Cartesian grid
-r, theta = cart_to_cyl(X,Y)
+# cylindical coordinates from Cartesian grid
+r, theta = cart_to_cyl(X, Y)
 eps = 1e-2
 
-fig, ax = plt.subplots(ncols=3,figsize=(18,6))
-l1=ax[0].contourf(X,Y,np.ma.masked_array(kirsch_sig_rr(10,r,-theta,2),mask=r<2))
-l2=ax[1].contourf(X,Y,np.ma.masked_array(kirsch_sig_tt(10,r,-theta,2),mask=r<2))
-l3=ax[2].contourf(X,Y,np.ma.masked_array(kirsch_sig_rt(10,r,-theta,2),mask=r<2))
-fig.colorbar(l1,ax=ax[0])
-fig.colorbar(l2,ax=ax[1])
-fig.colorbar(l3,ax=ax[2])
+fig, ax = plt.subplots(ncols=3, figsize=(18, 6))
+l1 = ax[0].contourf(
+    X, Y, np.ma.masked_array(kirsch_sig_rr(10, r, -theta, 2), mask=r < 2)
+)
+l2 = ax[1].contourf(
+    X, Y, np.ma.masked_array(kirsch_sig_tt(10, r, -theta, 2), mask=r < 2)
+)
+l3 = ax[2].contourf(
+    X, Y, np.ma.masked_array(kirsch_sig_rt(10, r, -theta, 2), mask=r < 2)
+)
+fig.colorbar(l1, ax=ax[0])
+fig.colorbar(l2, ax=ax[1])
+fig.colorbar(l3, ax=ax[2])
 for i in range(3):
-    ax[i].set_aspect('equal')
-    ax[i].set_xlabel('$x$ / cm')
-    ax[i].set_ylabel('$y$ / cm')
-ax[0].set_title('$\\sigma_{rr}$ / kPa')
-ax[1].set_title('$\\sigma_{\\theta\\theta}$ / kPa')
-ax[2].set_title('$\\sigma_{r\\theta}$ / kPa')
-fig.tight_layout();
+    ax[i].set_aspect("equal")
+    ax[i].set_xlabel("$x$ / cm")
+    ax[i].set_ylabel("$y$ / cm")
+ax[0].set_title("$\\sigma_{rr}$ / kPa")
+ax[1].set_title("$\\sigma_{\\theta\\theta}$ / kPa")
+ax[2].set_title("$\\sigma_{r\\theta}$ / kPa")
+fig.tight_layout()
 ```
 
 ## Numerical solution
@@ -217,13 +257,15 @@ For a better presentation of these differences and as a basis for the following 
 from ogs6py import ogs
 import os
 
-out_dir = os.environ.get('OGS_TESTRUNNER_OUT_DIR', '_out')
+out_dir = os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out")
 if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 ```
 
 ```python
-model=ogs.OGS(INPUT_FILE="../disc_with_hole.prj", PROJECT_FILE="../disc_with_hole.prj")
+model = ogs.OGS(
+    INPUT_FILE="../disc_with_hole.prj", PROJECT_FILE="../disc_with_hole.prj"
+)
 ```
 
 ```python
@@ -232,57 +274,62 @@ model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir}")
 
 ```python
 import pyvista as pv
+
 pv.set_plot_theme("document")
-pv.set_jupyter_backend("static") # comment out for interactive graphics
+pv.set_jupyter_backend("static")  # comment out for interactive graphics
 ```
 
 ```python
 reader = pv.get_reader(f"{out_dir}/disc_with_hole.pvd")
-reader.set_active_time_value(1.0) # go to 1 s
-mesh = reader.read()[0] # nulltes Gitter lesen
+reader.set_active_time_value(1.0)  # go to 1 s
+mesh = reader.read()[0]  # nulltes Gitter lesen
 ```
 
 ```python
 def vec4_to_mat3x3cart(vec4):
     theta = np.arctan2(ys, xs)
-    
-    m = np.zeros((3,3))
-    m[0,0] = vec4[0]
-    m[1,1] = vec4[1]
-    m[2,2] = vec4[2]
-    m[0,1] = vec4[3]
-    m[1,0] = vec4[3]
-    
+
+    m = np.zeros((3, 3))
+    m[0, 0] = vec4[0]
+    m[1, 1] = vec4[1]
+    m[2, 2] = vec4[2]
+    m[0, 1] = vec4[3]
+    m[1, 0] = vec4[3]
+
     return np.matrix(m)
 
-def vec4_to_mat3x3polar(vec4, xs, ys):     # Fkt wandelt Kelvin Darstellung (von ogs ausgegeben) in Tensor um
-    
+
+def vec4_to_mat3x3polar(
+    vec4, xs, ys
+):  # Fkt wandelt Kelvin Darstellung (von ogs ausgegeben) in Tensor um
     m_cart = vec4_to_mat3x3cart(vec4)
-    
+
     theta = np.arctan2(ys, xs)
 
     rot = np.matrix(np.eye(3))  # 3x3 Einheitsmatrix
-    rot[0,0] = np.cos(theta)
-    rot[0,1] = -np.sin(theta)
-    rot[1,0] = np.sin(theta)
-    rot[1,1] = np.cos(theta)  # rot = Drehmatrix, Drehung um z-Achse
-    
+    rot[0, 0] = np.cos(theta)
+    rot[0, 1] = -np.sin(theta)
+    rot[1, 0] = np.sin(theta)
+    rot[1, 1] = np.cos(theta)  # rot = Drehmatrix, Drehung um z-Achse
+
     return rot.T * m_cart * rot
 ```
 
 ### Stress distribution along the x-axis ($\theta = -90°$)
 
 ```python
-pt1 = (0,1e-6,0)
-pt2= (10,1e-6,0)
-xaxis = pv.Line(pt1, pt2, resolution = 2)
+pt1 = (0, 1e-6, 0)
+pt2 = (10, 1e-6, 0)
+xaxis = pv.Line(pt1, pt2, resolution=2)
 line_mesh = mesh.slice_along_line(xaxis)
 
-xs = line_mesh.points[:,0]    # x (0) coordinate of each point (Spalte 0)
-ys = line_mesh.points[:,1]    # y Koordinate jedes Punktes (Spalte 1)
-dist_from_origin = np.hypot(xs, ys)   # Abstand vom Ursprung (= Radius)
-indices_sorted = np.argsort(dist_from_origin)    # Indizes der Punkte sortieren nach ihrem Abstand vom Ursprung
-dist_sorted = dist_from_origin[indices_sorted]   # index magic
+xs = line_mesh.points[:, 0]  # x (0) coordinate of each point (Spalte 0)
+ys = line_mesh.points[:, 1]  # y Koordinate jedes Punktes (Spalte 1)
+dist_from_origin = np.hypot(xs, ys)  # Abstand vom Ursprung (= Radius)
+indices_sorted = np.argsort(
+    dist_from_origin
+)  # Indizes der Punkte sortieren nach ihrem Abstand vom Ursprung
+dist_sorted = dist_from_origin[indices_sorted]  # index magic
 ```
 
 ```python jupyter={"source_hidden": true}
@@ -290,8 +337,8 @@ sig = line_mesh.point_data["sigma"]
 ```
 
 ```python jupyter={"source_hidden": true}
-num_points = sig.shape[0]        # entspricht len(sig) d.h Anzahl der Punkte, hier 36
-sig_rr = np.zeros(num_points)    # Liste von 36 Nullen
+num_points = sig.shape[0]  # entspricht len(sig) d.h Anzahl der Punkte, hier 36
+sig_rr = np.zeros(num_points)  # Liste von 36 Nullen
 sig_tt = np.zeros(num_points)
 sig_rt = np.zeros(num_points)
 f_abs_rr = np.zeros(num_points)
@@ -305,12 +352,12 @@ f_rel_rt = np.zeros(num_points)
 ```python jupyter={"source_hidden": true}
 for pt_idx in range(num_points):
     sig_vec = sig[pt_idx, :]
-    xs = line_mesh.points[pt_idx,0]
-    ys = line_mesh.points[pt_idx,1]
+    xs = line_mesh.points[pt_idx, 0]
+    ys = line_mesh.points[pt_idx, 1]
     sig_polar = vec4_to_mat3x3polar(sig_vec, xs, ys)
-    sig_rr[pt_idx] = sig_polar[0,0]
-    sig_tt[pt_idx] = sig_polar[1,1]
-    sig_rt[pt_idx] = sig_polar[0,1]
+    sig_rr[pt_idx] = sig_polar[0, 0]
+    sig_tt[pt_idx] = sig_polar[1, 1]
+    sig_rt[pt_idx] = sig_polar[0, 1]
 ```
 
 ```python jupyter={"source_hidden": true}
@@ -321,67 +368,105 @@ sig_rt_sorted = sig_rt[indices_sorted]
 
 ```python jupyter={"source_hidden": true}
 for pt_idx in range(num_points):
-    f_abs_rr[pt_idx] = sig_rr_sorted[pt_idx]*1000 - kirsch_sig_rr(10,dist_sorted[pt_idx],-90,2)
-    f_abs_tt[pt_idx] = sig_tt_sorted[pt_idx]*1000 - kirsch_sig_tt(10,dist_sorted[pt_idx],-90,2)
-    f_abs_rt[pt_idx] = sig_rt_sorted[pt_idx]*1000 - kirsch_sig_rt(10,dist_sorted[pt_idx],-90,2)
-    if kirsch_sig_rr(10,dist_sorted[pt_idx],-90,2) == 0:
+    f_abs_rr[pt_idx] = sig_rr_sorted[pt_idx] * 1000 - kirsch_sig_rr(
+        10, dist_sorted[pt_idx], -90, 2
+    )
+    f_abs_tt[pt_idx] = sig_tt_sorted[pt_idx] * 1000 - kirsch_sig_tt(
+        10, dist_sorted[pt_idx], -90, 2
+    )
+    f_abs_rt[pt_idx] = sig_rt_sorted[pt_idx] * 1000 - kirsch_sig_rt(
+        10, dist_sorted[pt_idx], -90, 2
+    )
+    if kirsch_sig_rr(10, dist_sorted[pt_idx], -90, 2) == 0:
         f_rel_rr[pt_idx] = f_abs_rr[pt_idx] / 1e-2
     else:
-        f_rel_rr[pt_idx] = f_abs_rr[pt_idx] / kirsch_sig_rr(10,dist_sorted[pt_idx],-90,2)
-    if kirsch_sig_tt(10,dist_sorted[pt_idx],-90,2) == 0:
+        f_rel_rr[pt_idx] = f_abs_rr[pt_idx] / kirsch_sig_rr(
+            10, dist_sorted[pt_idx], -90, 2
+        )
+    if kirsch_sig_tt(10, dist_sorted[pt_idx], -90, 2) == 0:
         f_rel_tt[pt_idx] = f_abs_tt[pt_idx] / 1e-2
     else:
-        f_rel_tt[pt_idx] = f_abs_tt[pt_idx] / kirsch_sig_tt(10,dist_sorted[pt_idx],-90,2)
-    if kirsch_sig_rt(10,dist_sorted[pt_idx],-90,2) == 0:
+        f_rel_tt[pt_idx] = f_abs_tt[pt_idx] / kirsch_sig_tt(
+            10, dist_sorted[pt_idx], -90, 2
+        )
+    if kirsch_sig_rt(10, dist_sorted[pt_idx], -90, 2) == 0:
         f_rel_rt[pt_idx] = f_abs_rt[pt_idx] / 1e-2
     else:
-        f_rel_rt[pt_idx] = f_abs_rt[pt_idx] / kirsch_sig_rt(10,dist_sorted[pt_idx],-90,2)
+        f_rel_rt[pt_idx] = f_abs_rt[pt_idx] / kirsch_sig_rt(
+            10, dist_sorted[pt_idx], -90, 2
+        )
 ```
 
 ```python jupyter={"source_hidden": true}
-r = np.linspace(2,10,1000)
+r = np.linspace(2, 10, 1000)
 
-fig, ax = plt.subplots(ncols=3, figsize=(18,6))
-for i in range (3):
-    ax[i].axvline(2, color="0.6", linestyle = "--", label = "Hole Radius")
+fig, ax = plt.subplots(ncols=3, figsize=(18, 6))
+for i in range(3):
+    ax[i].axvline(2, color="0.6", linestyle="--", label="Hole Radius")
     ax[i].grid(True)
-    ax[i].set(xlim=(0,10))
-    ax[i].set_xlabel('$r$ / cm')
-    
-ax[0].plot(r, kirsch_sig_rr(10,r,-90,2), color = "deepskyblue", linestyle = ":", label = "$\sigma_{rr,\mathrm{analytical}}$")
-ax[0].plot(r, kirsch_sig_tt(10,r,-90,2), color = "yellowgreen", linestyle = ":", label = "$\sigma_{\\theta\\theta,\mathrm{analytical}}$")
-ax[0].plot(r, kirsch_sig_rt(10,r,-90,2), color = "orangered", linestyle = ":", label = "$\sigma_{r\\theta,\mathrm{analytical}}$")
+    ax[i].set(xlim=(0, 10))
+    ax[i].set_xlabel("$r$ / cm")
 
-ax[0].plot(dist_sorted, sig_rr_sorted*1000, label = "$\sigma_{rr}$")
-ax[0].plot(dist_sorted, sig_tt_sorted*1000, label = "$\sigma_{\\theta\\theta}$")
-ax[0].plot(dist_sorted, sig_rt_sorted*1000, label = "$\sigma_{r\\theta}$")
+ax[0].plot(
+    r,
+    kirsch_sig_rr(10, r, -90, 2),
+    color="deepskyblue",
+    linestyle=":",
+    label="$\sigma_{rr,\mathrm{analytical}}$",
+)
+ax[0].plot(
+    r,
+    kirsch_sig_tt(10, r, -90, 2),
+    color="yellowgreen",
+    linestyle=":",
+    label="$\sigma_{\\theta\\theta,\mathrm{analytical}}$",
+)
+ax[0].plot(
+    r,
+    kirsch_sig_rt(10, r, -90, 2),
+    color="orangered",
+    linestyle=":",
+    label="$\sigma_{r\\theta,\mathrm{analytical}}$",
+)
 
-ax[0].set_ylabel('$\\sigma$ / kPa') 
-ax[0].set(ylim=(-2,35.5))
+ax[0].plot(dist_sorted, sig_rr_sorted * 1000, label="$\sigma_{rr}$")
+ax[0].plot(dist_sorted, sig_tt_sorted * 1000, label="$\sigma_{\\theta\\theta}$")
+ax[0].plot(dist_sorted, sig_rt_sorted * 1000, label="$\sigma_{r\\theta}$")
+
+ax[0].set_ylabel("$\\sigma$ / kPa")
+ax[0].set(ylim=(-2, 35.5))
 ax[0].legend(loc="upper right")
 
-ax[1].plot(dist_sorted, f_abs_rr, label = "$\Delta\sigma_{rr}$")
-ax[1].plot(dist_sorted, f_abs_tt, label = "$\Delta\sigma_{\\theta\\theta}$")
-ax[1].plot(dist_sorted, f_abs_rt, label = "$\Delta\sigma_{r\\theta}$")
+ax[1].plot(dist_sorted, f_abs_rr, label="$\Delta\sigma_{rr}$")
+ax[1].plot(dist_sorted, f_abs_tt, label="$\Delta\sigma_{\\theta\\theta}$")
+ax[1].plot(dist_sorted, f_abs_rt, label="$\Delta\sigma_{r\\theta}$")
 
-#ax[1].spines['bottom'].set_position('zero')
-ax[1].spines['top'].set_color('none')
+# ax[1].spines['bottom'].set_position('zero')
+ax[1].spines["top"].set_color("none")
 ax[1].xaxis.tick_bottom()
-ax[1].set_ylabel('$\Delta\\sigma$ / kPa')
-ax[1].set(ylim=(-2,4.5))
+ax[1].set_ylabel("$\Delta\\sigma$ / kPa")
+ax[1].set(ylim=(-2, 4.5))
 ax[1].legend(loc="upper right")
 
-ax[2].plot(dist_sorted, f_rel_rr, label = "$\Delta\sigma_{rr}$ / $\sigma_{rr,\mathrm{analytical}}$")
-ax[2].plot(dist_sorted, f_rel_tt, label = "$\Delta\sigma_{\\theta\\theta}$ / $\sigma_{\\theta\\theta,\mathrm{analytical}}$")
-#ax[2].plot(dist_sorted, f_rel_rt, label = "$\Delta\sigma_{r\\theta}$ / $\sigma_{r\\theta,analytical}$")
+ax[2].plot(
+    dist_sorted,
+    f_rel_rr,
+    label="$\Delta\sigma_{rr}$ / $\sigma_{rr,\mathrm{analytical}}$",
+)
+ax[2].plot(
+    dist_sorted,
+    f_rel_tt,
+    label="$\Delta\sigma_{\\theta\\theta}$ / $\sigma_{\\theta\\theta,\mathrm{analytical}}$",
+)
+# ax[2].plot(dist_sorted, f_rel_rt, label = "$\Delta\sigma_{r\\theta}$ / $\sigma_{r\\theta,analytical}$")
 ax[2].set_ylim(-0.2, 0.2)
 
-ax[2].set_ylabel('$\Delta\\sigma$ / $\sigma_{\mathrm{analytical}}$')
-ax[2].legend()#loc="upper right")
+ax[2].set_ylabel("$\Delta\\sigma$ / $\sigma_{\mathrm{analytical}}$")
+ax[2].legend()  # loc="upper right")
 
-ax[0].set_title('Stress distribution')
-ax[1].set_title('Absolute error')
-ax[2].set_title('Relative error')
+ax[0].set_title("Stress distribution")
+ax[1].set_title("Absolute error")
+ax[2].set_title("Relative error")
 
 fig.tight_layout()
 ```
@@ -389,27 +474,34 @@ fig.tight_layout()
 ### Stress distribution along the diagonal ($\theta = 45°$)
 
 ```python jupyter={"source_hidden": true}
-pt1 = (0,0,0)
-pt2 = (10,10,0)
-diagonal = pv.Line(pt1, pt2, resolution=2)    # erstellt Linie zwischen den Punkten und teilt sie in 2 Teile (resolution)
-line_mesh = mesh.slice_along_line(diagonal)   # Schnitt durch das Gitter entlang der Linie (ergibt 1D Gitter mit 35 Zellen und 36 Punkten)
+pt1 = (0, 0, 0)
+pt2 = (10, 10, 0)
+diagonal = pv.Line(
+    pt1, pt2, resolution=2
+)  # erstellt Linie zwischen den Punkten und teilt sie in 2 Teile (resolution)
+line_mesh = mesh.slice_along_line(
+    diagonal
+)  # Schnitt durch das Gitter entlang der Linie (ergibt 1D Gitter mit 35 Zellen und 36 Punkten)
 
-xs = line_mesh.points[:,0]    # x (0) coordinate of each point (Spalte 0)
-ys = line_mesh.points[:,1]    # y Koordinate jedes Punktes (Spalte 1)
-dist_from_origin = np.hypot(xs, ys)   # Abstand vom Ursprung (Radius)
-indices_sorted = np.argsort(dist_from_origin)    # Indizes der Punkte sortieren nach ihrem Abstand vom Ursprung
-dist_sorted = dist_from_origin[indices_sorted]   # index magic
-
+xs = line_mesh.points[:, 0]  # x (0) coordinate of each point (Spalte 0)
+ys = line_mesh.points[:, 1]  # y Koordinate jedes Punktes (Spalte 1)
+dist_from_origin = np.hypot(xs, ys)  # Abstand vom Ursprung (Radius)
+indices_sorted = np.argsort(
+    dist_from_origin
+)  # Indizes der Punkte sortieren nach ihrem Abstand vom Ursprung
+dist_sorted = dist_from_origin[indices_sorted]  # index magic
 ```
 
 ```python jupyter={"source_hidden": true}
-sig = line_mesh.point_data["sigma"] # Spannung in Kelvin Darstellung als 4 zeiliger Vector statt 3x3 Matrix
+sig = line_mesh.point_data[
+    "sigma"
+]  # Spannung in Kelvin Darstellung als 4 zeiliger Vector statt 3x3 Matrix
 # Achtung (CL): Das ist nicht ganz die Kelvin-Darstellung. Die Kelvin-Darstellung hat noch Faktoren sqrt(2) bei den Nichtdiagonalelementen.
 ```
 
 ```python jupyter={"source_hidden": true}
-num_points = sig.shape[0]        # entspricht len(sig) d.h Anzahl der Punkte, hier 36
-sig_rr = np.zeros(num_points)    # Liste von 36 Nullen
+num_points = sig.shape[0]  # entspricht len(sig) d.h Anzahl der Punkte, hier 36
+sig_rr = np.zeros(num_points)  # Liste von 36 Nullen
 sig_tt = np.zeros(num_points)
 sig_rt = np.zeros(num_points)
 f_abs_rr = np.zeros(num_points)
@@ -423,12 +515,12 @@ f_rel_rt = np.zeros(num_points)
 ```python jupyter={"source_hidden": true}
 for pt_idx in range(num_points):
     sig_vec = sig[pt_idx, :]
-    xs = line_mesh.points[pt_idx,0]
-    ys = line_mesh.points[pt_idx,1]
+    xs = line_mesh.points[pt_idx, 0]
+    ys = line_mesh.points[pt_idx, 1]
     sig_polar = vec4_to_mat3x3polar(sig_vec, xs, ys)
-    sig_rr[pt_idx] = sig_polar[0,0]
-    sig_tt[pt_idx] = sig_polar[1,1]
-    sig_rt[pt_idx] = sig_polar[0,1]
+    sig_rr[pt_idx] = sig_polar[0, 0]
+    sig_tt[pt_idx] = sig_polar[1, 1]
+    sig_rt[pt_idx] = sig_polar[0, 1]
 ```
 
 ```python jupyter={"source_hidden": true}
@@ -439,67 +531,109 @@ sig_rt_sorted = sig_rt[indices_sorted]
 
 ```python jupyter={"source_hidden": true}
 for pt_idx in range(num_points):
-    f_abs_rr[pt_idx] = sig_rr_sorted[pt_idx]*1000 - kirsch_sig_rr(10,dist_sorted[pt_idx],-45,2)
-    f_abs_tt[pt_idx] = sig_tt_sorted[pt_idx]*1000 - kirsch_sig_tt(10,dist_sorted[pt_idx],-45,2)
-    f_abs_rt[pt_idx] = sig_rt_sorted[pt_idx]*1000 - kirsch_sig_rt(10,dist_sorted[pt_idx],-45,2)
-    if kirsch_sig_rr(10,dist_sorted[pt_idx],-45,2) == 0:
+    f_abs_rr[pt_idx] = sig_rr_sorted[pt_idx] * 1000 - kirsch_sig_rr(
+        10, dist_sorted[pt_idx], -45, 2
+    )
+    f_abs_tt[pt_idx] = sig_tt_sorted[pt_idx] * 1000 - kirsch_sig_tt(
+        10, dist_sorted[pt_idx], -45, 2
+    )
+    f_abs_rt[pt_idx] = sig_rt_sorted[pt_idx] * 1000 - kirsch_sig_rt(
+        10, dist_sorted[pt_idx], -45, 2
+    )
+    if kirsch_sig_rr(10, dist_sorted[pt_idx], -45, 2) == 0:
         f_rel_rr[pt_idx] = f_abs_rr[pt_idx] / 1e-2
     else:
-        f_rel_rr[pt_idx] = f_abs_rr[pt_idx] / kirsch_sig_rr(10,dist_sorted[pt_idx],-45,2)
-    if kirsch_sig_tt(10,dist_sorted[pt_idx],-45,2) == 0:
+        f_rel_rr[pt_idx] = f_abs_rr[pt_idx] / kirsch_sig_rr(
+            10, dist_sorted[pt_idx], -45, 2
+        )
+    if kirsch_sig_tt(10, dist_sorted[pt_idx], -45, 2) == 0:
         f_rel_tt[pt_idx] = f_abs_tt[pt_idx] / 1e-2
     else:
-        f_rel_tt[pt_idx] = f_abs_tt[pt_idx] / kirsch_sig_tt(10,dist_sorted[pt_idx],-45,2)
-    if kirsch_sig_rt(10,dist_sorted[pt_idx],-45,2) == 0:
+        f_rel_tt[pt_idx] = f_abs_tt[pt_idx] / kirsch_sig_tt(
+            10, dist_sorted[pt_idx], -45, 2
+        )
+    if kirsch_sig_rt(10, dist_sorted[pt_idx], -45, 2) == 0:
         f_rel_rt[pt_idx] = f_abs_rt[pt_idx] / 1e-2
     else:
-        f_rel_rt[pt_idx] = f_abs_rt[pt_idx] / kirsch_sig_rt(10,dist_sorted[pt_idx],-45,2)
+        f_rel_rt[pt_idx] = f_abs_rt[pt_idx] / kirsch_sig_rt(
+            10, dist_sorted[pt_idx], -45, 2
+        )
 ```
 
 ```python jupyter={"source_hidden": true}
-r = np.linspace(2,14.14,1000)
+r = np.linspace(2, 14.14, 1000)
 
-fig, ax = plt.subplots(ncols=3, figsize=(18,6))
+fig, ax = plt.subplots(ncols=3, figsize=(18, 6))
 
-for i in range (3):
-    ax[i].axvline(2, color="0.6", linestyle = "--", label = "Hole Radius")
+for i in range(3):
+    ax[i].axvline(2, color="0.6", linestyle="--", label="Hole Radius")
     ax[i].grid(True)
-    ax[i].set(xlim=(0,14.14))
-    ax[i].set_xlabel('$r$ / cm')
+    ax[i].set(xlim=(0, 14.14))
+    ax[i].set_xlabel("$r$ / cm")
 
-ax[0].plot(r, kirsch_sig_rr(10,r,-45,2), color = "deepskyblue", linestyle = ":", label = "$\sigma_{rr,\mathrm{analytical}}$")
-ax[0].plot(r, kirsch_sig_tt(10,r,-45,2), color = "yellowgreen", linestyle = ":", label = "$\sigma_{\\theta\\theta,\mathrm{analytical}}$")
-ax[0].plot(r, kirsch_sig_rt(10,r,-45,2), color = "orangered", linestyle = ":", label = "$\sigma_{r\\theta,\mathrm{analytical}}$")
+ax[0].plot(
+    r,
+    kirsch_sig_rr(10, r, -45, 2),
+    color="deepskyblue",
+    linestyle=":",
+    label="$\sigma_{rr,\mathrm{analytical}}$",
+)
+ax[0].plot(
+    r,
+    kirsch_sig_tt(10, r, -45, 2),
+    color="yellowgreen",
+    linestyle=":",
+    label="$\sigma_{\\theta\\theta,\mathrm{analytical}}$",
+)
+ax[0].plot(
+    r,
+    kirsch_sig_rt(10, r, -45, 2),
+    color="orangered",
+    linestyle=":",
+    label="$\sigma_{r\\theta,\mathrm{analytical}}$",
+)
 
-ax[0].plot(dist_sorted, sig_rr_sorted*1000, label = "$\sigma_{rr}$")
-ax[0].plot(dist_sorted, sig_tt_sorted*1000, label = "$\sigma_{\\theta\\theta}$")
-ax[0].plot(dist_sorted, sig_rt_sorted*1000, label = "$\sigma_{r\\theta}$")
+ax[0].plot(dist_sorted, sig_rr_sorted * 1000, label="$\sigma_{rr}$")
+ax[0].plot(dist_sorted, sig_tt_sorted * 1000, label="$\sigma_{\\theta\\theta}$")
+ax[0].plot(dist_sorted, sig_rt_sorted * 1000, label="$\sigma_{r\\theta}$")
 
 ax[0].legend(loc="upper right")
-ax[0].set_ylabel('$\\sigma$ / kPa') 
+ax[0].set_ylabel("$\\sigma$ / kPa")
 ax[0].set(ylim=(0, 12))
 
-ax[1].plot(dist_sorted, f_abs_rr, label = "$\Delta\sigma_{rr}$")
-ax[1].plot(dist_sorted, f_abs_tt, label = "$\Delta\sigma_{\\theta\\theta}$")
-ax[1].plot(dist_sorted, f_abs_rt, label = "$\Delta\sigma_{r\\theta}$")
+ax[1].plot(dist_sorted, f_abs_rr, label="$\Delta\sigma_{rr}$")
+ax[1].plot(dist_sorted, f_abs_tt, label="$\Delta\sigma_{\\theta\\theta}$")
+ax[1].plot(dist_sorted, f_abs_rt, label="$\Delta\sigma_{r\\theta}$")
 
-ax[1].spines['top'].set_color('none')
+ax[1].spines["top"].set_color("none")
 ax[1].xaxis.tick_bottom()
-ax[1].set_ylabel('$\Delta\\sigma$ / kPa')
+ax[1].set_ylabel("$\Delta\\sigma$ / kPa")
 ax[1].set(ylim=(-0.5, 1.3))
 ax[1].legend(loc="upper right")
 
-ax[2].plot(dist_sorted, f_rel_rr, label = "$\Delta\sigma_{rr}$ / $\sigma_{rr,\mathrm{analytical}}$")
-ax[2].plot(dist_sorted, f_rel_tt, label = "$\Delta\sigma_{\\theta\\theta}$ / $\sigma_{\\theta\\theta,\mathrm{analytical}}$")
-ax[2].plot(dist_sorted, f_rel_rt, label = "$\Delta\sigma_{r\\theta}$ / $\sigma_{r\\theta,\mathrm{analytical}}$")
-ax[2].set(ylim=(-0.1,0.3))
+ax[2].plot(
+    dist_sorted,
+    f_rel_rr,
+    label="$\Delta\sigma_{rr}$ / $\sigma_{rr,\mathrm{analytical}}$",
+)
+ax[2].plot(
+    dist_sorted,
+    f_rel_tt,
+    label="$\Delta\sigma_{\\theta\\theta}$ / $\sigma_{\\theta\\theta,\mathrm{analytical}}$",
+)
+ax[2].plot(
+    dist_sorted,
+    f_rel_rt,
+    label="$\Delta\sigma_{r\\theta}$ / $\sigma_{r\\theta,\mathrm{analytical}}$",
+)
+ax[2].set(ylim=(-0.1, 0.3))
 
-ax[2].set_ylabel('$\Delta\\sigma$ / $\sigma_{\mathrm{analytical}}$')
+ax[2].set_ylabel("$\Delta\\sigma$ / $\sigma_{\mathrm{analytical}}$")
 ax[2].legend(loc="upper right")
 
-ax[0].set_title('Stress distribution')
-ax[1].set_title('Absolute error')
-ax[2].set_title('Relative error')
+ax[0].set_title("Stress distribution")
+ax[1].set_title("Absolute error")
+ax[2].set_title("Relative error")
 
 fig.tight_layout()
 ```
@@ -507,16 +641,16 @@ fig.tight_layout()
 ### Stress distribution along the $y$-axis ($\theta=0°$)
 
 ```python jupyter={"source_hidden": true}
-pt1 = (0,0,0)
-pt2 = (0,10,0)
+pt1 = (0, 0, 0)
+pt2 = (0, 10, 0)
 yaxis = pv.Line(pt1, pt2, resolution=2)
 line_mesh = mesh.slice_along_line(yaxis)
 
-xs = line_mesh.points[:,0]
-ys = line_mesh.points[:,1]
+xs = line_mesh.points[:, 0]
+ys = line_mesh.points[:, 1]
 dist_from_origin = np.hypot(xs, ys)
 indices_sorted = np.argsort(dist_from_origin)
-dist_sorted = dist_from_origin[indices_sorted]   
+dist_sorted = dist_from_origin[indices_sorted]
 ```
 
 ```python jupyter={"source_hidden": true}
@@ -539,12 +673,12 @@ f_rel_rt = np.zeros(num_points)
 ```python jupyter={"source_hidden": true}
 for pt_idx in range(num_points):
     sig_vec = sig[pt_idx, :]
-    xs = line_mesh.points[pt_idx,0]
-    ys = line_mesh.points[pt_idx,1]
+    xs = line_mesh.points[pt_idx, 0]
+    ys = line_mesh.points[pt_idx, 1]
     sig_polar = vec4_to_mat3x3polar(sig_vec, xs, ys)
-    sig_rr[pt_idx] = sig_polar[0,0]
-    sig_tt[pt_idx] = sig_polar[1,1]
-    sig_rt[pt_idx] = sig_polar[0,1]
+    sig_rr[pt_idx] = sig_polar[0, 0]
+    sig_tt[pt_idx] = sig_polar[1, 1]
+    sig_rt[pt_idx] = sig_polar[0, 1]
 ```
 
 ```python jupyter={"source_hidden": true}
@@ -555,70 +689,108 @@ sig_rt_sorted = sig_rt[indices_sorted]
 
 ```python jupyter={"source_hidden": true}
 for pt_idx in range(num_points):
-    f_abs_rr[pt_idx] = sig_rr_sorted[pt_idx]*1000 - kirsch_sig_rr(10,dist_sorted[pt_idx],0,2)
-    f_abs_tt[pt_idx] = sig_tt_sorted[pt_idx]*1000 - kirsch_sig_tt(10,dist_sorted[pt_idx],0,2)
-    f_abs_rt[pt_idx] = sig_rt_sorted[pt_idx]*1000 - kirsch_sig_rt(10,dist_sorted[pt_idx],0,2)
-    if kirsch_sig_rr(10,dist_sorted[pt_idx],0,2) == 0:
+    f_abs_rr[pt_idx] = sig_rr_sorted[pt_idx] * 1000 - kirsch_sig_rr(
+        10, dist_sorted[pt_idx], 0, 2
+    )
+    f_abs_tt[pt_idx] = sig_tt_sorted[pt_idx] * 1000 - kirsch_sig_tt(
+        10, dist_sorted[pt_idx], 0, 2
+    )
+    f_abs_rt[pt_idx] = sig_rt_sorted[pt_idx] * 1000 - kirsch_sig_rt(
+        10, dist_sorted[pt_idx], 0, 2
+    )
+    if kirsch_sig_rr(10, dist_sorted[pt_idx], 0, 2) == 0:
         f_rel_rr[pt_idx] = f_abs_rr[pt_idx] / 1e-6
     else:
-        f_rel_rr[pt_idx] = f_abs_rr[pt_idx] / kirsch_sig_rr(10,dist_sorted[pt_idx],0,2)
-    if kirsch_sig_tt(10,dist_sorted[pt_idx],0,2) == 0:
+        f_rel_rr[pt_idx] = f_abs_rr[pt_idx] / kirsch_sig_rr(
+            10, dist_sorted[pt_idx], 0, 2
+        )
+    if kirsch_sig_tt(10, dist_sorted[pt_idx], 0, 2) == 0:
         f_rel_tt[pt_idx] = f_abs_tt[pt_idx] / 1e-6
     else:
-        f_rel_tt[pt_idx] = f_abs_tt[pt_idx] / kirsch_sig_tt(10,dist_sorted[pt_idx],0,2)
-    if kirsch_sig_rt(10,dist_sorted[pt_idx],0,2) == 0:
+        f_rel_tt[pt_idx] = f_abs_tt[pt_idx] / kirsch_sig_tt(
+            10, dist_sorted[pt_idx], 0, 2
+        )
+    if kirsch_sig_rt(10, dist_sorted[pt_idx], 0, 2) == 0:
         f_rel_rt[pt_idx] = f_abs_rt[pt_idx] / 1e-6
     else:
-        f_rel_rt[pt_idx] = f_abs_rt[pt_idx] / kirsch_sig_rt(10,dist_sorted[pt_idx],0,2)
+        f_rel_rt[pt_idx] = f_abs_rt[pt_idx] / kirsch_sig_rt(
+            10, dist_sorted[pt_idx], 0, 2
+        )
 ```
 
 ```python jupyter={"source_hidden": true}
-r = np.linspace(2,10,1000)
+r = np.linspace(2, 10, 1000)
 
-fig, ax = plt.subplots(ncols=3, figsize=(18,6))
-for i in range (3):
-    ax[i].axvline(2, color="0.6", linestyle = "--", label = "Hole Radius")
+fig, ax = plt.subplots(ncols=3, figsize=(18, 6))
+for i in range(3):
+    ax[i].axvline(2, color="0.6", linestyle="--", label="Hole Radius")
     ax[i].grid(True)
-    ax[i].set(xlim=(0,10))
-    ax[i].set_xlabel('$r$ / cm')
-    
-ax[0].plot(r, kirsch_sig_rr(10,r,0,2), color = "deepskyblue", linestyle = ":", label = "$\sigma_{rr,\mathrm{analytical}}$")
-ax[0].plot(r, kirsch_sig_tt(10,r,0,2), color = "yellowgreen", linestyle = ":", label = "$\sigma_{\\theta\\theta,\mathrm{analytical}}$")
-ax[0].plot(r, kirsch_sig_rt(10,r,0,2), color = "orangered", linestyle = ":", label = "$\sigma_{r\\theta,\mathrm{analytical}}$")
+    ax[i].set(xlim=(0, 10))
+    ax[i].set_xlabel("$r$ / cm")
 
-ax[0].plot(dist_sorted, sig_rr_sorted*1000, label = "$\sigma_{rr}$")
-ax[0].plot(dist_sorted, sig_tt_sorted*1000, label = "$\sigma_{\\theta\\theta}$")
-ax[0].plot(dist_sorted, sig_rt_sorted*1000, label = "$\sigma_{r\\theta}$")
+ax[0].plot(
+    r,
+    kirsch_sig_rr(10, r, 0, 2),
+    color="deepskyblue",
+    linestyle=":",
+    label="$\sigma_{rr,\mathrm{analytical}}$",
+)
+ax[0].plot(
+    r,
+    kirsch_sig_tt(10, r, 0, 2),
+    color="yellowgreen",
+    linestyle=":",
+    label="$\sigma_{\\theta\\theta,\mathrm{analytical}}$",
+)
+ax[0].plot(
+    r,
+    kirsch_sig_rt(10, r, 0, 2),
+    color="orangered",
+    linestyle=":",
+    label="$\sigma_{r\\theta,\mathrm{analytical}}$",
+)
 
-ax[0].set_ylabel('$\\sigma$ / kPa') 
-ax[0].set(ylim=(-14,10.5))
+ax[0].plot(dist_sorted, sig_rr_sorted * 1000, label="$\sigma_{rr}$")
+ax[0].plot(dist_sorted, sig_tt_sorted * 1000, label="$\sigma_{\\theta\\theta}$")
+ax[0].plot(dist_sorted, sig_rt_sorted * 1000, label="$\sigma_{r\\theta}$")
+
+ax[0].set_ylabel("$\\sigma$ / kPa")
+ax[0].set(ylim=(-14, 10.5))
 ax[0].legend(loc="lower right")
-ax[0].spines['right'].set_color('none')
-ax[0].spines['top'].set_color('none')
-ax[0].xaxis.set_ticks_position('bottom')
-ax[0].yaxis.set_ticks_position('left')
-ax[0].spines['left'].set_position(('data',0))
+ax[0].spines["right"].set_color("none")
+ax[0].spines["top"].set_color("none")
+ax[0].xaxis.set_ticks_position("bottom")
+ax[0].yaxis.set_ticks_position("left")
+ax[0].spines["left"].set_position(("data", 0))
 
-ax[1].plot(dist_sorted, f_abs_rr, label = "$\Delta\sigma_{rr}$")
-ax[1].plot(dist_sorted, f_abs_tt, label = "$\Delta\sigma_{\\theta\\theta}$")
-ax[1].plot(dist_sorted, f_abs_rt, label = "$\Delta\sigma_{r\\theta}$")
+ax[1].plot(dist_sorted, f_abs_rr, label="$\Delta\sigma_{rr}$")
+ax[1].plot(dist_sorted, f_abs_tt, label="$\Delta\sigma_{\\theta\\theta}$")
+ax[1].plot(dist_sorted, f_abs_rt, label="$\Delta\sigma_{r\\theta}$")
 
-ax[1].spines['top'].set_color('none')
+ax[1].spines["top"].set_color("none")
 ax[1].xaxis.tick_bottom()
-ax[1].set_ylabel('$\Delta\\sigma$ / kPa')
-ax[1].set(ylim=(-3.5,2.5))
+ax[1].set_ylabel("$\Delta\\sigma$ / kPa")
+ax[1].set(ylim=(-3.5, 2.5))
 ax[1].legend(loc="lower right")
 
-ax[2].plot(dist_sorted, f_rel_rr, label = "$\Delta\sigma_{rr}$ / $\sigma_{rr,\mathrm{analytical}}$")
-ax[2].plot(dist_sorted, f_rel_tt, label = "$\Delta\sigma_{\\theta\\theta}$ / $\sigma_{\\theta\\theta,\mathrm{analytical}}$")
-#ax[2].plot(dist_sorted, f_rel_rt, label = "$\Delta\sigma_{r\\theta}$ / $\sigma_{r\\theta,analytical}$")
-ax[2].set(ylim=(-1,1))
-ax[2].set_ylabel('$\Delta\\sigma$ / $\sigma_{\mathrm{analytical}}$')
+ax[2].plot(
+    dist_sorted,
+    f_rel_rr,
+    label="$\Delta\sigma_{rr}$ / $\sigma_{rr,\mathrm{analytical}}$",
+)
+ax[2].plot(
+    dist_sorted,
+    f_rel_tt,
+    label="$\Delta\sigma_{\\theta\\theta}$ / $\sigma_{\\theta\\theta,\mathrm{analytical}}$",
+)
+# ax[2].plot(dist_sorted, f_rel_rt, label = "$\Delta\sigma_{r\\theta}$ / $\sigma_{r\\theta,analytical}$")
+ax[2].set(ylim=(-1, 1))
+ax[2].set_ylabel("$\Delta\\sigma$ / $\sigma_{\mathrm{analytical}}$")
 ax[2].legend(loc="lower right")
 
-ax[0].set_title('Stress distribution')
-ax[1].set_title('Absolute error')
-ax[2].set_title('Relative error')
+ax[0].set_title("Stress distribution")
+ax[1].set_title("Absolute error")
+ax[2].set_title("Relative error")
 
 fig.tight_layout()
 ```
@@ -633,11 +805,11 @@ Accordingly, this error smaller or larger and has to be acceptable for the field
 The following image illustrates the chosen mesh for this benchmark example. In the area around the cavity, the stress gradients are rather high, as can also be seen in the diagrams above, and thus call for a finer mesh resolution.
 
 ```python jupyter={"source_hidden": true}
-plotter = pv.Plotter(window_size = [1024, 500])
+plotter = pv.Plotter(window_size=[1024, 500])
 
 plotter.add_mesh(mesh, show_edges=True, show_scalar_bar=False, color=None, scalars=None)
 plotter.show_bounds(ticks="outside", xlabel="x / cm", ylabel="y / cm")
-#plotter.add_axes()
+# plotter.add_axes()
 plotter.view_xy()
 plotter.show()
 ```
@@ -659,21 +831,21 @@ points = mesh.point_data["sigma"].shape[0]
 ```
 
 ```python jupyter={"source_hidden": true}
-sig_polar = np.zeros([points,3,3])
-sig_rr = np.zeros([points,1])
-sig_tt = np.zeros([points,1])
-sig_rt = np.zeros([points,1])
+sig_polar = np.zeros([points, 3, 3])
+sig_rr = np.zeros([points, 1])
+sig_tt = np.zeros([points, 1])
+sig_rt = np.zeros([points, 1])
 ```
 
 ```python jupyter={"source_hidden": true}
-xs = mesh.points[:,0]
-ys = mesh.points[:,1]
+xs = mesh.points[:, 0]
+ys = mesh.points[:, 1]
 sig_vec = mesh.point_data["sigma"]
-for i in range (xs.shape[0]):
-    sig_polar[i] = vec4_to_mat3x3polar(sig_vec[i,:], xs[i], ys[i])
-    sig_rr[i] = sig_polar[i,0,0]
-    sig_tt[i] = sig_polar[i,1,1]
-    sig_rt[i] = sig_polar[i,0,1]
+for i in range(xs.shape[0]):
+    sig_polar[i] = vec4_to_mat3x3polar(sig_vec[i, :], xs[i], ys[i])
+    sig_rr[i] = sig_polar[i, 0, 0]
+    sig_tt[i] = sig_polar[i, 1, 1]
+    sig_rt[i] = sig_polar[i, 0, 1]
 ```
 
 ```python jupyter={"source_hidden": true}
@@ -682,65 +854,118 @@ if False:
     print(np.min(sig_rt), np.max(sig_rt))
     print(np.min(sig_tt), np.max(sig_tt))
 
-mesh2 = mesh.copy(deep=False) # workaround some pyvista bug with multiple plots
+mesh2 = mesh.copy(deep=False)  # workaround some pyvista bug with multiple plots
 mesh3 = mesh.copy(deep=False)
 
-sargs=dict(title='sigma_rr / kPa', title_font_size=25, label_font_size=15, n_labels=4,
-           position_x=0.05, position_y=0.85, fmt="%.1f", width=0.9)
-clim=[-10, 10]
+sargs = dict(
+    title="sigma_rr / kPa",
+    title_font_size=25,
+    label_font_size=15,
+    n_labels=4,
+    position_x=0.05,
+    position_y=0.85,
+    fmt="%.1f",
+    width=0.9,
+)
+clim = [-10, 10]
 
 p = pv.Plotter(shape=(1, 3), border=False)
-p.subplot(0,0)
-p.add_mesh(mesh, scalars = sig_rr*1000,
-           show_edges=False, show_scalar_bar=True,
-           colormap="RdBu_r", clim=clim,
-           scalar_bar_args=sargs)
-#p.show_bounds(ticks="outside", xlabel="", ylabel="")
-#p.add_axes()
+p.subplot(0, 0)
+p.add_mesh(
+    mesh,
+    scalars=sig_rr * 1000,
+    show_edges=False,
+    show_scalar_bar=True,
+    colormap="RdBu_r",
+    clim=clim,
+    scalar_bar_args=sargs,
+)
+# p.show_bounds(ticks="outside", xlabel="", ylabel="")
+# p.add_axes()
 p.view_xy()
 p.camera.zoom(2)
 
-sargs1=dict(title='sigma_tt / kPa', title_font_size=25, label_font_size=15, n_labels=4,
-            position_x=0.05, position_y=0.85, fmt="%.1f", width=0.9)
-clim=[-35, 35]
+sargs1 = dict(
+    title="sigma_tt / kPa",
+    title_font_size=25,
+    label_font_size=15,
+    n_labels=4,
+    position_x=0.05,
+    position_y=0.85,
+    fmt="%.1f",
+    width=0.9,
+)
+clim = [-35, 35]
 
-p.subplot(0,1)
-p.add_mesh(mesh2, scalars = sig_tt*1000,
-           show_edges=False, show_scalar_bar=True,
-           colormap="RdBu_r", clim=clim,
-           scalar_bar_args=sargs1)
-#p.show_bounds(ticks="outside", xlabel="", ylabel="")
-#p.add_axes()
+p.subplot(0, 1)
+p.add_mesh(
+    mesh2,
+    scalars=sig_tt * 1000,
+    show_edges=False,
+    show_scalar_bar=True,
+    colormap="RdBu_r",
+    clim=clim,
+    scalar_bar_args=sargs1,
+)
+# p.show_bounds(ticks="outside", xlabel="", ylabel="")
+# p.add_axes()
 p.view_xy()
 p.camera.zoom(2)
 
-sargs2=dict(title='sigma_rt / kPa', title_font_size=25, label_font_size=15, n_labels=4,
-            position_x=0.05, position_y=0.85, fmt="%.1f", width=0.9)
-clim=[-10, 10]
+sargs2 = dict(
+    title="sigma_rt / kPa",
+    title_font_size=25,
+    label_font_size=15,
+    n_labels=4,
+    position_x=0.05,
+    position_y=0.85,
+    fmt="%.1f",
+    width=0.9,
+)
+clim = [-10, 10]
 
-p.subplot(0,2)
-p.add_mesh(mesh3, scalars = sig_rt*1000,
-           show_edges=False, show_scalar_bar=True,
-           colormap="RdBu_r", clim=clim,
-           scalar_bar_args=sargs2)
-#p.show_bounds(ticks="outside", xlabel="", ylabel="")
-#p.add_axes()
+p.subplot(0, 2)
+p.add_mesh(
+    mesh3,
+    scalars=sig_rt * 1000,
+    show_edges=False,
+    show_scalar_bar=True,
+    colormap="RdBu_r",
+    clim=clim,
+    scalar_bar_args=sargs2,
+)
+# p.show_bounds(ticks="outside", xlabel="", ylabel="")
+# p.add_axes()
 p.view_xy()
 p.camera.zoom(2)
 
-p.window_size = [1000,400]
-p.show();
+p.window_size = [1000, 400]
+p.show()
 ```
 
 ```python jupyter={"source_hidden": true}
 if True:
     plotter = pv.Plotter()
 
-    sargs=dict(title='sigma_rr', title_font_size=20, label_font_size=16, n_labels=4, position_x=0.2, position_y=0.9, fmt="%.1f")
+    sargs = dict(
+        title="sigma_rr",
+        title_font_size=20,
+        label_font_size=16,
+        n_labels=4,
+        position_x=0.2,
+        position_y=0.9,
+        fmt="%.1f",
+    )
 
-    plotter.add_mesh(mesh, scalars = sig_rr*1000, show_edges=True, show_scalar_bar=False, scalar_bar_args=sargs)
-    #plotter.show_bounds(ticks="outside")
-    #plotter.add_axes()
+    plotter.add_mesh(
+        mesh,
+        scalars=sig_rr * 1000,
+        show_edges=True,
+        show_scalar_bar=False,
+        scalar_bar_args=sargs,
+    )
+    # plotter.show_bounds(ticks="outside")
+    # plotter.add_axes()
     plotter.view_xy()
     plotter.show()
 ```
@@ -749,11 +974,25 @@ if True:
 if False:
     plotter = pv.Plotter()
 
-    sargs=dict(title='sigma_tt', title_font_size=20, label_font_size=16, n_labels=4, position_x=0.2, position_y=0.9, fmt="%.1f")
+    sargs = dict(
+        title="sigma_tt",
+        title_font_size=20,
+        label_font_size=16,
+        n_labels=4,
+        position_x=0.2,
+        position_y=0.9,
+        fmt="%.1f",
+    )
 
-    plotter.add_mesh(mesh, scalars = sig_tt*1000, show_edges=True, show_scalar_bar=False,scalar_bar_args=sargs)
-    #plotter.show_bounds(ticks="outside")
-    #plotter.add_axes()
+    plotter.add_mesh(
+        mesh,
+        scalars=sig_tt * 1000,
+        show_edges=True,
+        show_scalar_bar=False,
+        scalar_bar_args=sargs,
+    )
+    # plotter.show_bounds(ticks="outside")
+    # plotter.add_axes()
     plotter.view_xy()
     plotter.show()
 ```
@@ -762,9 +1001,23 @@ if False:
 if False:
     plotter = pv.Plotter()
 
-    sargs=dict(title='sigma_rt', title_font_size=20, label_font_size=16, n_labels=4, position_x=0.2, position_y=0.9, fmt="%.1f")
+    sargs = dict(
+        title="sigma_rt",
+        title_font_size=20,
+        label_font_size=16,
+        n_labels=4,
+        position_x=0.2,
+        position_y=0.9,
+        fmt="%.1f",
+    )
 
-    plotter.add_mesh(mesh, scalars = sig_rt*1000, show_edges=True, show_scalar_bar=True, scalar_bar_args=sargs)
+    plotter.add_mesh(
+        mesh,
+        scalars=sig_rt * 1000,
+        show_edges=True,
+        show_scalar_bar=True,
+        scalar_bar_args=sargs,
+    )
     plotter.show_bounds(ticks="outside")
     plotter.add_axes()
     plotter.view_xy()
