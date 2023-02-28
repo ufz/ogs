@@ -24,14 +24,11 @@ web_subsection = "small-deformations"
 |<div style="width:330px"><img src="https://www.ufz.de/static/custom/weblayout/DefaultInternetLayout/img/logos/ufz_transparent_de_blue.png" width="300"/></div>|<div style="width:330px"><img src="https://discourse.opengeosys.org/uploads/default/original/1X/a288c27cc8f73e6830ad98b8729637a260ce3490.png" width="300"/></div>|<div style="width:330px"><img src="https://tu-freiberg.de/sites/default/files/media/freiberger-alumni-netzwerk-6127/wbm_orig_rgb_0.jpg" width="300"/></div>|
 |---|---|--:|
 
-
-
-
-In this benchmark example we consider a linear elastic small deformation problem. More specifically, a plate with a central hole that is put under tension on its top boundary is simulated. By exploiting symmetries, below we evaluate this problem just for the top right quarter of this disc. 
+In this benchmark example we consider a linear elastic small deformation problem. More specifically, a plate with a central hole that is put under tension on its top boundary is simulated. By exploiting symmetries, below we evaluate this problem just for the top right quarter of this disc.
 
 Doing this it is important to define boundary conditions for the regarded section of the plate. For the bottom boundary ($x$-axis, $\theta=-90°$) and the left boundary ($y$-axis, $\theta=0°$) we prescribe Dirichlet boundary conditions that constrain the normal displacement along the edge to be zero. On the top, where a tensile traction is applied to the plate, Neumann boundary conditions are prescribed.
 
-For the description of the plate and its load, some dimensions need to be defined. The quarter disc under consideration can be seen as a square with an edge length of $10\, \text{cm}$. The radius of the circular hole is $a = 2\, \text{cm}$ and the applied tension on the top boundary has a value of $\sigma = 10\, \text{kPa}$. 
+For the description of the plate and its load, some dimensions need to be defined. The quarter disc under consideration can be seen as a square with an edge length of $10\, \text{cm}$. The radius of the circular hole is $a = 2\, \text{cm}$ and the applied tension on the top boundary has a value of $\sigma = 10\, \text{kPa}$.
 
 To fully capture and understand the behaviour of stress and strain distributions around the hole, it is necessary to also define material properties. In case of isotropic linear elasticity, the relevant parameters are the Young's modulus and Poisson's ratio. The following parameters are chosen here:
 
@@ -39,13 +36,9 @@ $ E = 1\,\text{MPa} \qquad \nu = 0.3$
 
 For verification of the numerical implementation, the numerical solution of the problem will be compared to the analytical solution.
 
-
-
-
 ## Analytical solution
 
 The overall stress distributions in the plate around the hole can be represented by Kirsch's Solution, which is expressed here in cylindrical coordinates. The following equations are valid for an infinitely extended plate. Since the hole is very small compared to the dimension of the plate, we can consider this condition as fulfilled. The parameter $\sigma$ is the applied tension and $a$ is the radius of the inner hole. $r$ and $\theta$ are the cylindrical coordinates of a point in the plate. $r$ is measured from the origin (i.e., center of the hole), and $\theta$ is measured clockwise from the positive $y$-axis, i.e. the $x$-axis is at $\theta = -90°$.
-
 
 \begin{align}
     \sigma_{rr} \left( r , \theta \right) &=
@@ -61,9 +54,8 @@ The overall stress distributions in the plate around the hole can be represented
     \left[ \left( 1 - 3 \frac{a^4}{r^4} + 2 \frac{a^2}{r^2} \right) \sin \left( 2 \theta \right) \right]
 \end{align}
 
-
 For visualization of the stress distribution within the plate the stresses $\sigma_{rr}$, $\sigma_{\theta\theta}$ and $\sigma_{r\theta}$ are plotted along the $x$- and $y$-axes as well as along the diagonal ($\theta = -45°$).
-As can be seen below, the hole causes characteristic stress distributions. 
+As can be seen below, the hole causes characteristic stress distributions.
 
 ```python
 #HIDDEN
@@ -102,10 +94,9 @@ def kirsch_sig_rt(sig,r,theta,a):
 
 ### Stress distribution along the $x$-axis ($\theta= -90°$, orthogonal to the load)
 
-
 At larger distances from the hole the stresses are approximately distibuted as if the plate had no hole ($\sigma_{rr} \equiv \sigma_{xx} \approx 0$, $\sigma_{r\theta} \equiv \sigma_{xy} = 0$, $\sigma_{\theta\theta} \equiv \sigma_{yy} = 10\,\text{kPa}$).
-As the hole is approached, the tangential stress increases until it reaches its maximum value directly at the contour. 
-Interestingly, that value is three times as high as the applied traction. It can be concluded that the hole leads to a **threefold stress concentration**. 
+As the hole is approached, the tangential stress increases until it reaches its maximum value directly at the contour.
+Interestingly, that value is three times as high as the applied traction. It can be concluded that the hole leads to a **threefold stress concentration**.
 
 ```python
 r = np.linspace(2,10,1000)
@@ -141,7 +132,6 @@ plt.ylim(0,10);
 
 ### Stress distribution along the $y$-axis ($\theta=0°$, parallel to the applied tension)
 
-
 **Attention**: Radius is plotted along the vertical axis. I.e., upwards direction in the plot corresponds to the upwards ($y$) direction of the problem.
 
 The horizontal stress near the hole amounts to the negative of the applied tension. Far away from the hole ($r\to\infty$) it vanishes.
@@ -164,7 +154,6 @@ plt.xlim(-10,10);
 ```
 
 ### 2D color plots
-
 
 For gaining a deeper insight for the planar stress distribution in the plate around the hole the following 2D plots are helpful. The magnitude of the acting stresses is expressed by a chromatic graduated scale in separate plots for $\sigma_{rr}$, $\sigma_{\theta\theta}$ and $\sigma_{r\theta}$.
 
@@ -200,7 +189,6 @@ fig.tight_layout();
 
 ## Numerical solution
 
-
 In the following section the previously analytically considered problem of the plate with a central hole is solved with numerical methods (FEM in OpenGeoSys).
 OpenGeoSys performs computations in Cartesian coordinates.
 In order to control, display and compare the results of the numerical solution with the analytical it is necessary to convert the output values from  Cartesian coordinates to polar coordinates.
@@ -215,14 +203,12 @@ $$
 \end{align}
 $$
 
-
 For the simulation of the numerical model, some assumptions have to be made:
+
 * The analytical solution is stricty correct only for an infinitely extended plate.
     This requirement can only be approximated in the numerical method. The dimensions of the considered plate must be much larger than the hole. With a hole diameter of $4\, \text{cm}$ and a size of $20\times20\, \text{cm}$ the plate can be considered as infinitely extended. Indeed, a general rule implied that the range of borders should be about five times the size of the cavity.
 * For numerical simulations, it is necessary to specify the mesh resolution with which the model is calculated. A finer mesh provides more detailed gradients but takes more time for calculation, whereas a coarser mesh yields less accurate values, but in a shorter time.
-* Another assumption that enables us to work with a two-dimensional plate model is the plain strain condition. That means that deformations only occur in one plane. 
-
-
+* Another assumption that enables us to work with a two-dimensional plate model is the plain strain condition. That means that deformations only occur in one plane.
 
 Simultaneous to the analytical solution the results of the numerical model are plotted along the $x$-, $y$- and diagonal axis. To visualize local differences to the analytically computed stress distribution of $\sigma_{rr}$, $\sigma_{\theta\theta}$ and $\sigma_{r\theta}$ the latter are also added in the plots as dotted lines.<br>
 For a better presentation of these differences and as a basis for the following error analysis, plots for absolute and relative error along the regarded axes are have been made.
@@ -639,7 +625,6 @@ fig.tight_layout()
 
 ### Error analysis
 
-
 In this following section, the differences of the numerical to the analytical solution are discussed. Doing this, one studies various aspects of the numerical solution.
 
 Whenever a problem is solved by finite element method (FEM), discretization errors occur. They arise from the creation of the mesh, since the result is calculated only at a finite number of nodes. Discretization errors can be minimized by refining the mesh. However, this increases computing time, so a compromise must be found.<br>
@@ -659,17 +644,13 @@ plotter.show()
 
 All three stress components of the numerical solution show a more or less pronounced buckle most obviously along the diagonal- and y-axes in the middle of the observed radius range. The reason for this is the fact that the **mesh is refined** in the area around the hole. This increases the accuracy and resolution, but at the same time, the cells become distorted rectangles instead of squares.
 
-
 Another source of error is the **limitation of the plate's geometry**. In a continuous, infinitely extended plate the stress distribution approaches the primary stress state with distance from the cavity. The example of the stress distribution along the y-axis shows that the numerical solution for $\sigma_{rr}$ reaches the Neumann boundary condition set with a value of $10\, \text{kPa}$ for $\text{r} = 10\, \text{cm}$. With Kirsch's Solution for the analytical calculation, $\sigma_{rr}$ converges only at infinity towards the value of $10\, \text{kPa}$ and amounts approximately $9\, \text{kPa}$ for $r = 10\, \text{cm}$.<br>
 A similar error becomes visible along the $x$-axis. The Neumann boundary condition constrains the normal stress along the right edge to be zero . As a consequence $\sigma_{rr}$ must reach a value of $0\, \text{MPa}$ for $r = 10\, \text{cm}$ to satisfy the boundary condition. In the analytical solution however, $\sigma_{rr}$ approaches zero at infinity and thus is larger than in the numerical solution. Errors of that type can be minimized by increasing the plates dimensions or decreasing the diameter of the cavity, so that the boundary conditions do not interfere with the cavity-disturbed stress distribution.<br>
 As a rule of thumb, it can be assumed in this case that the boundaries of the problem can be drawn after at least five-hole radii.
 
-
 Further artefacts, called **extrapolation errors** occur at all boundaries of the numerical model. It can be recognised by a discontinuity in the graph for the stress distribution and absolute error next to the cavity ($r = 2\, \text{cm}$) and the plate boundaries ($r = 10\, \text{cm}$ resp. $r = 14.14\, \text{cm}$). The stress is derived from strain and this in turn from the nodal displacement. Therefore, there are no calculated stress magnitudes on the nodes, but they are formed as the average value of the neighboring cells. However, if the node is located on the edge directly next to the cavity or plate boundary, no average value can be formed, but the stress is extrapolated. In contrast to most of the other errors, this one is not based on an defect in the calculation of the numerical model, but rather in the output.
 
-
 ### 2D Color Plots
-
 
 As can see below the 2D color plots of the numerical solution resemble those of the analytical solution. The plot of the tangential stress $\sigma_{\theta\theta}$ also shows a threefold stress concentration. From the plot of the radial stress $\sigma_{rr}$ it becomes clear that the Neumann boundary condition that respects the applied tensile stress of $10 \text{kPa}$  at the top boundary is satisfied.
 
