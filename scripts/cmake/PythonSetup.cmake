@@ -9,9 +9,10 @@ if(OGS_USE_PYTHON)
 endif()
 
 if(OGS_USE_PIP)
-    set(Python_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
+    set(LOCAL_VIRTUALENV_DIR ${PROJECT_BINARY_DIR}/.venv CACHE INTERNAL "")
+    set(Python_ROOT_DIR ${LOCAL_VIRTUALENV_DIR})
     set(CMAKE_REQUIRE_FIND_PACKAGE_Python TRUE)
-    if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
+    if(NOT EXISTS ${LOCAL_VIRTUALENV_DIR})
         execute_process(
             COMMAND
                 ${CMAKE_COMMAND} -DPROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}
@@ -35,13 +36,28 @@ if(OGS_USE_PIP)
     if(MSVC)
         set(_venv_bin_dir "Scripts")
     endif()
-    set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/${_venv_bin_dir}
+    set(LOCAL_VIRTUALENV_BIN_DIR ${LOCAL_VIRTUALENV_DIR}/${_venv_bin_dir}
         CACHE INTERNAL ""
     )
     # Fixes macOS install issues
     execute_process(
         COMMAND ${LOCAL_VIRTUALENV_BIN_DIR}/pip install wheel
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    )
+    # Create jupytext config
+    file(
+        WRITE
+        ${LOCAL_VIRTUALENV_DIR}/etc/jupyter/labconfig/default_setting_overrides.json
+        [=[
+{
+  "@jupyterlab/docmanager-extension:plugin": {
+    "defaultViewers": {
+      "markdown": "Jupytext Notebook",
+      "myst": "Jupytext Notebook"
+    }
+  }
+}
+]=]
     )
 else()
     # Prefer unix location over frameworks (Apple-only)
@@ -77,7 +93,7 @@ if(OGS_USE_PIP)
     set(OGS_PYTHON_PACKAGES ""
         CACHE INTERNAL "List of Python packages to be installed via pip."
     )
-    set(Python_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
+    set(Python_ROOT_DIR ${LOCAL_VIRTUALENV_DIR})
     if(MSVC)
         set(Python_EXECUTABLE ${Python_ROOT_DIR}/Scripts/python.exe)
     else()
