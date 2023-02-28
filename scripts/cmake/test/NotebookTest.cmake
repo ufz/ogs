@@ -32,19 +32,6 @@ function(NotebookTest)
     set(NotebookTest_SOURCE_DIR "${Data_SOURCE_DIR}/${NotebookTest_DIR}")
     set(_props "")
 
-    # Check for PyVista
-    set(_pyvista_check 0)
-    if(UNIX)
-        execute_process(
-            COMMAND nbdime show -s
-                    ${NotebookTest_SOURCE_DIR}/${NotebookTest_NAME}
-            COMMAND grep "import pyvista"
-            COMMAND wc -l
-            COMMAND tr -d "' '"
-            OUTPUT_VARIABLE _pyvista_check
-        )
-    endif()
-
     if(NOT DEFINED NotebookTest_RUNTIME)
         set(NotebookTest_RUNTIME 1)
     endif()
