@@ -256,6 +256,15 @@ endif()
 file(WRITE ${PROJECT_BINARY_DIR}/disabled-tests.log "${DISABLED_TESTS_LOG}")
 unset(DISABLED_TESTS_LOG CACHE) # Don't write to CMakeCache.txt
 
+# cmake-lint: disable=E1126
+file(
+    CONFIGURE
+    OUTPUT
+    .envrc
+    CONTENT
+    "PATH_add ${CMAKE_INSTALL_BINDIR}\n[ -d \".venv\" ] && source .venv/bin/activate"
+)
+
 check_header_compilation()
 
 include(scripts/cmake/MarkVariablesAdvanced.cmake)
