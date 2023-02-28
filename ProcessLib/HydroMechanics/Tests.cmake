@@ -3,15 +3,13 @@
 ### With monolithic scheme
 if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE HydroMechanics/Linear/Confined_Compression/square_1e2.prj RUNTIME 9)
-endif()
-if (NOT OGS_USE_MPI)
-    OgsTest(PROJECTFILE HydroMechanics/Linear/Confined_Compression/square_1e2_linear.prj)
-endif()
-if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE HydroMechanics/Linear/DrainageEexcavation/HMdrainage.prj RUNTIME 330)
     OgsTest(PROJECTFILE HydroMechanics/A2/A2.prj RUNTIME 10)
     OgsTest(PROJECTFILE HydroMechanics/ExcavationNiches/excavation_niches.prj RUNTIME 60)
-    OgsTest(PROJECTFILE HydroMechanics/ExcavationNiches/excavation_niches2.prj RUNTIME 4)
+    if(NOT OGS_ADDRESS_SANITIZER)
+        OgsTest(PROJECTFILE HydroMechanics/Linear/Confined_Compression/square_1e2_linear.prj RUNTIME 2)
+        OgsTest(PROJECTFILE HydroMechanics/ExcavationNiches/excavation_niches2.prj RUNTIME 4)
+    endif()
 endif()
 
 # Ground equilibrium

@@ -263,7 +263,8 @@ AddTest(
     EXECUTABLE_ARGS SimpleAxisymmetricCreep.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI OR OGS_ADDRESS_SANITIZER)
+    RUNTIME 4
     DIFF_DATA
     expected_SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu displacement displacement 1e-14 1e-10
     expected_SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu sigma sigma 1e-7 0
