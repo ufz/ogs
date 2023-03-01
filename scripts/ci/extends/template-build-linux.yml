@@ -40,9 +40,6 @@
             ctest_timeout=90
             preset_postfix="-large"
           fi
-          if [ "$CTEST_PARALLEL_LEVEL" = 1 ]; then
-            ctest_timeout=480
-          fi
 
           xvfb_run_cmd=""
           if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -57,6 +54,10 @@
             ctest_timeout=90 # Assume large
           else
             ctest_arguments="--preset=${CMAKE_PRESET}${preset_postfix}"
+          fi
+
+          if [[ ! -z "$CTEST_TIMEOUT" ]]; then
+            ctest_timeout="$CTEST_TIMEOUT"
           fi
 
           ctest_group="Experimental"

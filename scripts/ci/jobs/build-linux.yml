@@ -85,6 +85,7 @@ build linux debug with sanitizers:
       -DOGS_USE_PIP=ON
     UBSAN_OPTIONS: "print_stacktrace=1"
     LSAN_OPTIONS: "suppressions=$CI_PROJECT_DIR/scripts/test/leak_sanitizer.suppressions"
+    CTEST_TIMEOUT: 120
 
 build linux ubuntu perf:
   extends:
@@ -96,3 +97,4 @@ build linux ubuntu perf:
   variables:
     CMAKE_PRESET: release-all
     CTEST_PARALLEL_LEVEL: 1 # Run ctests serially
+    CTEST_TIMEOUT: 480
