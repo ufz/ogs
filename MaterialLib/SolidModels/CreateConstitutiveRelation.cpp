@@ -82,6 +82,20 @@ createConstitutiveRelation(
               type);
 }
 
+template std::unique_ptr<MaterialLib::Solids::MechanicsBase<2>>
+createConstitutiveRelation(
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    std::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
+    BaseLib::ConfigTree const& config);
+
+template std::unique_ptr<MaterialLib::Solids::MechanicsBase<3>>
+createConstitutiveRelation(
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    std::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
+    BaseLib::ConfigTree const& config);
+
 template <int DisplacementDim>
 std::map<int,
          std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
