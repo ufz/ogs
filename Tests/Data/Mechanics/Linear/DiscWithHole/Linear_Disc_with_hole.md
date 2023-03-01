@@ -16,7 +16,6 @@ jupyter:
 title = "Linear elasticity: disc with hole"
 date = "2022-04-27"
 author = "Linda Günther, Sophia Einspänner, Robert Habel, Christoph Lehmann and Thomas Nagel"
-notebook = "Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.ipynb"
 web_subsection = "small-deformations"
 <!--eofm-->
 <!-- #endraw -->
