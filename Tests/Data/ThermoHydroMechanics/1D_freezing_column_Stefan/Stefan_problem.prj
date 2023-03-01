@@ -17,6 +17,11 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
+            <ice_constitutive_relation>
+                <type>LinearElasticIsotropic</type>
+                <youngs_modulus>E_ice</youngs_modulus>
+                <poissons_ratio>nu_ice</poissons_ratio>
+            </ice_constitutive_relation>
             <process_variables>
                 <temperature>temperature</temperature>
                 <pressure>pressure</pressure>
@@ -85,6 +90,11 @@
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
+                            <type>Constant</type>
+                            <value>0</value>
+                        </property>
+                        <property>
+                            <name>phase_change_expansivity</name>
                             <type>Constant</type>
                             <value>0</value>
                         </property>
@@ -160,6 +170,16 @@
             <name>nu</name>
             <type>Constant</type>
             <value>.3</value>
+        </parameter>
+        <parameter>
+            <name>E_ice</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>nu_ice</name>
+            <type>Constant</type>
+            <value>0</value>
         </parameter>
         <parameter>
             <name>T0</name>
