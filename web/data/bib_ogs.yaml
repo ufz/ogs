@@ -1,5 +1,5 @@
 entries:
-    kolditz2012:
+    kolditz2012-book-chapter:
         type: book
         title: Thermo-Hydro-Mechanical-Chemical Processes in Porous Media - Benchmarks
             and Examples
@@ -18,6 +18,100 @@ entries:
             last: Shao
         -   first: W.
             last: Wang
+    kolditz2012:
+        type: article
+        title: 'OpenGeoSys: an open-source initiative for numerical simulation of
+            thermo-hydro-mechanical/chemical (THM/C) processes in porous media'
+        journal: Environmental Earth Sciences
+        year: '2012'
+        month: Sep
+        day: '01'
+        volume: '67'
+        number: '2'
+        pages: 589-599
+        abstract: In this paper we describe the OpenGeoSys (OGS) project, which is
+            a scientific open-source initiative for numerical simulation of thermo-hydro-mechanical-chemical
+            processes in porous media. The basic concept is to provide a flexible
+            numerical framework (using primarily the Finite Element Method (FEM))
+            for solving multifield problems in porous and fractured media for applications
+            in geoscience and hydrology. To this purpose OGS is based on an object-oriented
+            FEM concept including a broad spectrum of interfaces for pre- and postprocessing.
+            The OGS idea has been in development since the mid-eighties. We provide
+            a short historical note about the continuous process of concept and software
+            development having evolved through Fortran, C, and C++ implementations.
+            The idea behind OGS is to provide an open platform to the community, outfitted
+            with professional software-engineering tools such as platform-independent
+            compiling and automated benchmarking. A comprehensive benchmarking book
+            has been prepared for publication. Benchmarking has been proven to be
+            a valuable tool for cooperation between different developer teams, for
+            example, for code comparison and validation purposes (DEVOVALEX and CO2
+            BENCH projects). On one hand, object-orientation (OO) provides a suitable
+            framework for distributed code development; however, the parallelization
+            of OO codes still lacks efficiency. High-performance-computing efficiency
+            of OO codes is subject to future research.
+        issn: 1866-6299
+        doi: 10.1007/s12665-012-1546-x
+        category: Methods
+        author:
+        -   first: O.
+            last: Kolditz
+        -   first: S.
+            last: Bauer
+        -   first: L.
+            last: Bilke
+        -   first: N.
+            last: Böttcher
+        -   first: J.
+            middle: O.
+            last: Delfs
+        -   first: T.
+            last: Fischer
+        -   first: U.
+            middle: J.
+            last: Görke
+        -   first: T.
+            last: Kalbacher
+        -   first: G.
+            last: Kosakowski
+        -   first: C.
+            middle: I.
+            last: McDermott
+        -   first: C.
+            middle: H.
+            last: Park
+        -   first: F.
+            last: Radu
+        -   first: K.
+            last: Rink
+        -   first: H.
+            last: Shao
+        -   first: H.
+            middle: B.
+            last: Shao
+        -   first: F.
+            last: Sun
+        -   first: Y.
+            middle: Y.
+            last: Sun
+        -   first: A.
+            middle: K.
+            last: Singh
+        -   first: J.
+            last: Taron
+        -   first: M.
+            last: Walther
+        -   first: W.
+            last: Wang
+        -   first: N.
+            last: Watanabe
+        -   first: Y.
+            last: Wu
+        -   first: M.
+            last: Xie
+        -   first: W.
+            last: Xu
+        -   first: B.
+            last: Zehner
     nagel2016:
         type: article
         title: On Advantages of the Kelvin Mapping in Finite Element Implementations
@@ -394,6 +488,7 @@ entries:
         keywords: Reactive transport modeling, Operator splitting approach, Integration-point
             collocation scheme
         category: Methods
+        key: lu2022
         author:
         -   first: Renchao
             last: Lu
