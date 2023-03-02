@@ -9,7 +9,10 @@
 
 #pragma once
 
+#include <fmt/ranges.h>
+
 #include <map>
+#include <range/v3/view/map.hpp>
 
 #include "MeshLib/PropertyVector.h"
 
@@ -53,8 +56,10 @@ auto& selectSolidConstitutiveRelation(
     {
         OGS_FATAL(
             "No constitutive relation found for material id {:d} and element "
-            "{:d}. There are {:d} constitutive relations available.",
-            material_id, element_id, constitutive_relations.size());
+            "{:d}. There are {:d} constitutive relations available, "
+            "corresponding to the ids: {}",
+            material_id, element_id, constitutive_relations.size(),
+            fmt::join(constitutive_relations | ranges::views::keys, " "));
     }
 
     if (constitutive_relation->second == nullptr)
