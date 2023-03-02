@@ -6,7 +6,7 @@ fi
 
 source $DIR/mpi.sh
 
-module load petsc-bilke/3.16.5_foss2020b
+module load petsc/3.18.5_foss2020b
 module load vtk/9.2.5_mpi_foss2020b
 module load hdf5/1.14.0_mpi_foss_2020b
 
