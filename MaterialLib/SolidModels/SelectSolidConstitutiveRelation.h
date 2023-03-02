@@ -42,15 +42,11 @@ auto& selectSolidConstitutiveRelation(
             constitutive_relations.size());
     }
 
-    int material_id;
-    if (constitutive_relations.size() == 1 || material_ids == nullptr)
-    {
-        material_id = 0;
-    }
-    else
-    {
-        material_id = (*material_ids)[element_id];
-    }
+    int const material_id = ((constitutive_relations.size() == 1 &&
+                              constitutive_relations.begin()->first == 0) ||
+                             material_ids == nullptr)
+                                ? 0
+                                : (*material_ids)[element_id];
 
     auto const constitutive_relation = constitutive_relations.find(material_id);
     if (constitutive_relation == end(constitutive_relations))
