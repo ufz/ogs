@@ -24,6 +24,14 @@ repos:
     hooks:
       - id: black
         exclude: "ThirdParty|LinearMFront/generate_ref.py"
+  # Run black on markdown notebooks
+  - repo: https://github.com/mwouts/jupytext
+    rev: v1.14.5
+    hooks:
+      - id: jupytext
+        args: [--pipe, black]
+        additional_dependencies:
+          - black==23.1.0 # Matches black hook
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.2
     hooks:
