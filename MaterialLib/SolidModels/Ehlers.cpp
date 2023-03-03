@@ -150,6 +150,48 @@ double yieldFunction(MaterialProperties const& mp,
 }
 
 template <int DisplacementDim>
+std::pair<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>,
+          MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>>
+thetaSigmaDerivatives(double theta,
+                      PhysicalStressWithInvariants<DisplacementDim> const& s)
+{
+    constexpr int KelvinVectorSize =
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    using KelvinVector =
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+    using KelvinMatrix =
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
+
+    if (theta == 0)
+    {
+        return {KelvinVector::Zero(), KelvinMatrix::Zero()};
+    }
+
+    auto const& P_dev = Invariants::deviatoric_projection;
+
+    // inverse of deviatoric stress tensor
+    if (Invariants::determinant(s.D) == 0)
+    {
+        OGS_FATAL("Determinant is zero. Matrix is non-invertable.");
+    }
+    // inverse of sigma_D
+    KelvinVector const sigma_D_inverse = MathLib::KelvinVector::inverse(s.D);
+    KelvinVector const sigma_D_inverse_D = P_dev * sigma_D_inverse;
+
+    KelvinVector const dtheta_dsigma =
+        theta * sigma_D_inverse_D - 3. / 2. * theta / s.J_2 * s.D;
+    KelvinMatrix const d2theta_dsigma2 =
+        theta * P_dev * sOdotS<DisplacementDim>(sigma_D_inverse) * P_dev +
+        sigma_D_inverse_D * dtheta_dsigma.transpose() -
+        3. / 2. * theta / s.J_2 * P_dev -
+        3. / 2. * dtheta_dsigma / s.J_2 * s.D.transpose() +
+        3. / 2. * theta / boost::math::pow<2>(s.J_2) * s.D * s.D.transpose();
+
+    return {dtheta_dsigma, d2theta_dsigma2};
+}
+
+template <int DisplacementDim>
 typename SolidEhlers<DisplacementDim>::ResidualVectorType
 calculatePlasticResidual(
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const& eps_D,
@@ -170,7 +212,6 @@ calculatePlasticResidual(
     using KelvinVector =
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
-    auto const& P_dev = Invariants::deviatoric_projection;
     auto const& identity2 = Invariants::identity2;
 
     double const theta = s.J_3 / (s.J_2 * std::sqrt(s.J_2));
@@ -181,11 +222,8 @@ calculatePlasticResidual(
         s.value / mp.G - 2 * (eps_D - eps_p_D) -
         mp.K / mp.G * (eps_V - eps_p_V) * identity2;
 
-    // deviatoric plastic strain
-    KelvinVector const sigma_D_inverse_D =
-        P_dev * MathLib::KelvinVector::inverse(s.D);
-    KelvinVector const dtheta_dsigma =
-        theta * sigma_D_inverse_D - 3. / 2. * theta / s.J_2 * s.D;
+    auto const [dtheta_dsigma, d2theta_dsigma2] =
+        thetaSigmaDerivatives(theta, s);
 
     OnePlusGamma_pTheta const one_gt{mp.gamma_p, theta, mp.m_p};
     double const sqrtPhi = std::sqrt(
@@ -236,17 +274,8 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
     double const theta = s.J_3 / (s.J_2 * std::sqrt(s.J_2));
     OnePlusGamma_pTheta const one_gt{mp.gamma_p, theta, mp.m_p};
 
-    // inverse of deviatoric stress tensor
-    if (Invariants::determinant(s.D) == 0)
-    {
-        OGS_FATAL("Determinant is zero. Matrix is non-invertable.");
-    }
-    // inverse of sigma_D
-    KelvinVector const sigma_D_inverse = MathLib::KelvinVector::inverse(s.D);
-    KelvinVector const sigma_D_inverse_D = P_dev * sigma_D_inverse;
-
-    KelvinVector const dtheta_dsigma =
-        theta * sigma_D_inverse_D - 3. / 2. * theta / s.J_2 * s.D;
+    auto const [dtheta_dsigma, d2theta_dsigma2] =
+        thetaSigmaDerivatives(theta, s);
 
     // deviatoric flow
     double const sqrtPhi = std::sqrt(
@@ -293,13 +322,6 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
     // intermediate variable for derivative of deviatoric flow
     KelvinMatrix const M2 =
         one_gt.pow_m_p * (P_dev + s.D * gm_p * M0.transpose());
-    // second derivative of theta
-    KelvinMatrix const d2theta_dsigma2 =
-        theta * P_dev * sOdotS<DisplacementDim>(sigma_D_inverse) * P_dev +
-        sigma_D_inverse_D * dtheta_dsigma.transpose() -
-        3. / 2. * theta / s.J_2 * P_dev -
-        3. / 2. * dtheta_dsigma / s.J_2 * s.D.transpose() +
-        3. / 2. * theta / boost::math::pow<2>(s.J_2) * s.D * s.D.transpose();
 
     // intermediate variable for derivative of deviatoric flow
     KelvinMatrix const M3 =

@@ -231,6 +231,71 @@ public:
         }
     }
 
+    // Updates sigma, eps, and state through passed integration point data
+    // Returns tangent stiffness.
+    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
+    updateConstitutiveRelations(
+        Eigen::Ref<Eigen::VectorXd const> const& local_x,
+        ParameterLib::SpatialPosition const& x_position, double const t,
+        double const dt,
+        IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>&
+            ip_data) const
+    {
+        MPL::VariableArray variables_prev;
+        MPL::VariableArray variables;
+
+        auto const& eps_prev = ip_data.eps_prev;
+        auto const& sigma_prev = ip_data.sigma_prev;
+
+        auto& eps = ip_data.eps;
+        auto& sigma = ip_data.sigma;
+        auto& state = ip_data.material_state_variables;
+
+        auto const& N = ip_data.N;
+        auto const& dNdx = ip_data.dNdx;
+        auto const x_coord =
+            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
+                _element, N);
+        auto const B =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunction::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                dNdx, N, x_coord, _is_axially_symmetric);
+
+        eps.noalias() = B * local_x;
+
+        variables_prev.stress
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                sigma_prev);
+        variables_prev.mechanical_strain
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_prev);
+
+        double const T_ref =
+            _process_data.reference_temperature
+                ? (*_process_data.reference_temperature)(t, x_position)[0]
+                : std::numeric_limits<double>::quiet_NaN();
+
+        variables_prev.temperature = T_ref;
+        variables.mechanical_strain
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
+        variables.temperature = T_ref;
+
+        auto&& solution = ip_data.solid_material.integrateStress(
+            variables_prev, variables, t, x_position, dt, *state);
+
+        if (!solution)
+        {
+            OGS_FATAL("Computation of local constitutive relation failed.");
+        }
+
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
+        std::tie(sigma, state, C) = std::move(*solution);
+
+        return C;
+    }
+
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& /*local_x*/,
                   std::vector<double> const& /*local_xdot*/,
@@ -262,8 +327,6 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        MPL::VariableArray variables_prev;
-        MPL::VariableArray variables;
         ParameterLib::SpatialPosition x_position;
         x_position.setElementID(_element.getID());
 
@@ -284,45 +347,12 @@ public:
                 typename BMatricesType::BMatrixType>(dNdx, N, x_coord,
                                                      _is_axially_symmetric);
 
-            auto const& eps_prev = _ip_data[ip].eps_prev;
-            auto const& sigma_prev = _ip_data[ip].sigma_prev;
+            auto const& sigma = _ip_data[ip].sigma;
 
-            auto& eps = _ip_data[ip].eps;
-            auto& sigma = _ip_data[ip].sigma;
-            auto& state = _ip_data[ip].material_state_variables;
-
-            eps.noalias() =
-                B *
-                Eigen::Map<typename BMatricesType::NodalForceVectorType const>(
-                    local_x.data(), ShapeFunction::NPOINTS * DisplacementDim);
-
-            variables_prev.stress.emplace<
-                MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                sigma_prev);
-            variables_prev.mechanical_strain.emplace<
-                MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps_prev);
-
-            double const T_ref =
-                _process_data.reference_temperature
-                    ? (*_process_data.reference_temperature)(t, x_position)[0]
-                    : std::numeric_limits<double>::quiet_NaN();
-
-            variables_prev.temperature = T_ref;
-            variables.mechanical_strain.emplace<
-                MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(eps);
-            variables.temperature = T_ref;
-
-            auto&& solution = _ip_data[ip].solid_material.integrateStress(
-                variables_prev, variables, t, x_position, dt, *state);
-
-            if (!solution)
-            {
-                OGS_FATAL("Computation of local constitutive relation failed.");
-            }
-
-            MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
-            std::tie(sigma, state, C) = std::move(*solution);
+            auto const C = updateConstitutiveRelations(
+                Eigen::Map<NodalForceVectorType const>(
+                    local_x.data(), ShapeFunction::NPOINTS * DisplacementDim),
+                x_position, t, dt, _ip_data[ip]);
 
             auto const rho = _process_data.solid_density(t, x_position)[0];
             local_b.noalias() -=
@@ -331,16 +361,11 @@ public:
         }
     }
 
-    void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              double const t, double const dt) override
+    void postTimestepConcrete(Eigen::VectorXd const& local_x, double const t,
+                              double const dt) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
-
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            _ip_data[ip].pushBackState();
-        }
 
         ParameterLib::SpatialPosition x_position;
         x_position.setElementID(_element.getID());
@@ -349,13 +374,19 @@ public:
         {
             x_position.setIntegrationPoint(ip);
 
-            auto& ip_data = _ip_data[ip];
+            updateConstitutiveRelations(local_x, x_position, t, dt,
+                                        _ip_data[ip]);
+
+            auto& eps = _ip_data[ip].eps;
+            auto& sigma = _ip_data[ip].sigma;
+            auto& state = _ip_data[ip].material_state_variables;
 
             // Update free energy density needed for material forces.
-            ip_data.free_energy_density =
-                ip_data.solid_material.computeFreeEnergyDensity(
-                    t, x_position, dt, ip_data.eps, ip_data.sigma,
-                    *ip_data.material_state_variables);
+            _ip_data[ip].free_energy_density =
+                _ip_data[ip].solid_material.computeFreeEnergyDensity(
+                    t, x_position, dt, eps, sigma, *state);
+
+            _ip_data[ip].pushBackState();
         }
     }
 
