@@ -54,7 +54,7 @@ struct IntegrationPointData final
     }
 
     typename BMatricesType::KelvinVectorType sigma, sigma_prev;
-    typename BMatricesType::KelvinVectorType eps, eps_prev;
+    typename BMatricesType::KelvinVectorType eps;
     double free_energy_density = 0;
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
@@ -68,7 +68,6 @@ struct IntegrationPointData final
 
     void pushBackState()
     {
-        eps_prev = eps;
         sigma_prev = sigma;
         material_state_variables->pushBackState();
     }
@@ -164,7 +163,6 @@ public:
 
             // Previous time step values are not initialized and are set later.
             ip_data.sigma_prev.resize(kelvin_vector_size);
-            ip_data.eps_prev.resize(kelvin_vector_size);
 
             _secondary_data.N[ip] = shape_matrices[ip].N;
         }
@@ -245,7 +243,6 @@ public:
         MPL::VariableArray variables_prev;
         MPL::VariableArray variables;
 
-        auto const& eps_prev = ip_data.eps_prev;
         auto const& sigma_prev = ip_data.sigma_prev;
 
         auto& eps = ip_data.eps;
@@ -270,7 +267,7 @@ public:
                 sigma_prev);
         variables_prev.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps_prev);
+                B * (u - u_dot * dt));
 
         double const T_ref =
             _process_data.reference_temperature
