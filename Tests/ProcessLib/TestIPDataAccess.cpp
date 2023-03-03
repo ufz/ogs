@@ -254,10 +254,23 @@ struct ProcessLib_IPDimMatrixDataAccess : ::testing::Test
         {
             // Create a test square matrix from vector.
             constexpr auto N = dim * dim;
-            double const low = static_cast<double>(N * i);
+            constexpr auto stride = 10;  // The data for each IP will be 10
+                                         // apart from the previous/next IP.
+            static_assert(stride >= N);
+
+            double const low = static_cast<double>(stride * i);
             double const high = static_cast<double>(low + N - 1);
             auto const K0 = Eigen::VectorXd::LinSpaced(N, low, high)
-                                .reshaped<Eigen::ColMajor>(dim, dim);
+                                .reshaped<Eigen::RowMajor>(dim, dim)
+                                .eval();
+
+            // Double-check row major storage order.
+            if constexpr (dim > 1)
+            {
+                EXPECT_DOUBLE_EQ(low + 1, K0(0, 1))
+                    << "Something extremely bad happened: there is an error in "
+                       "the internal logic of this test case.";
+            }
 
             ip_data[i].dim_matrix_row_major = K0;
             ip_data[i].dim_matrix_col_major = K0;
@@ -270,28 +283,28 @@ struct ProcessLib_IPDimMatrixDataAccess : ::testing::Test
     {
         if constexpr (dim == 1)
         {
-            return {0.0, 1.0, 2.0, 3.0};  // K(0,0), ip = 0, 1, 2, 3
+            return {0, 10, 20, 30};  // K(0,0), ip = 0, 1, 2, 3
         }
         if constexpr (dim == 2)
         {
-            return {0.0, 4.0, 8.0,  12.0,   // K(0,0), ip = 0, 1, 2, 3
-                    2.0, 6.0, 10.0, 14.0,   // K(0,1), ip = 0, 1, 2, 3
-                    1.0, 5.0, 9.0,  13.0,   // K(1,0), ip = 0, 1, 2, 3
-                    3.0, 7.0, 11.0, 15.0};  // K(1,1), ip = 0, 1, 2, 3
+            return {
+                0, 10, 20, 30,  // K(0,0), ip = 0, 1, 2, 3
+                1, 11, 21, 31,  // K(0,1), ip = 0, 1, 2, 3
+                2, 12, 22, 32,  // K(1,0), ip = 0, 1, 2, 3
+                3, 13, 23, 33   // K(1,1), ip = 0, 1, 2, 3
+            };
         }
         else if constexpr (dim == 3)
         {
-            return {
-                0.0, 9.0,  18.0, 27.0,  // K(0,0), ip = 0, 1, 2, 3
-                3.0, 12.0, 21.0, 30.0,  // K(0,1), ip = 0, 1, 2, 3
-                6.0, 15.0, 24.0, 33.0,  // K(0,2), ip = 0, 1, 2, 3
-                1.0, 10.0, 19.0, 28.0,  // K(1,0), ip = 0, 1, 2, 3
-                4.0, 13.0, 22.0, 31.0,  // K(1,1), ip = 0, 1, 2, 3
-                7.0, 16.0, 25.0, 34.0,  // K(1,2), ip = 0, 1, 2, 3
-                2.0, 11.0, 20.0, 29.0,  // K(2,0), ip = 0, 1, 2, 3
-                5.0, 14.0, 23.0, 32.0,  // K(2,1), ip = 0, 1, 2, 3
-                8.0, 17.0, 26.0, 35.0   // K(2,2), ip = 0, 1, 2, 3
-            };
+            return {0, 10, 20, 30,  // K(0,0), ip = 0, 1, 2, 3
+                    1, 11, 21, 31,  // K(0,1), ip = 0, 1, 2, 3
+                    2, 12, 22, 32,  // K(0,2), ip = 0, 1, 2, 3
+                    3, 13, 23, 33,  // K(1,0), ip = 0, 1, 2, 3
+                    4, 14, 24, 34,  // ...
+                    5, 15, 25, 35,  //
+                    6, 16, 26, 36,  //
+                    7, 17, 27, 37,  //
+                    8, 18, 28, 38};
         }
     }
 };
