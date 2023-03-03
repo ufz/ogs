@@ -143,31 +143,8 @@ void ThermoHydroMechanicsLocalAssembler<
     assert(local_x.size() ==
            pressure_size + displacement_size + temperature_size);
 
-    auto T = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-        temperature_size> const>(local_x.data() + temperature_index,
-                                 temperature_size);
-
-    auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-        pressure_size> const>(local_x.data() + pressure_index, pressure_size);
-
-    auto u =
-        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_x.data() + displacement_index,
-                                      displacement_size);
-
-    auto T_dot =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            temperature_size> const>(local_xdot.data() + temperature_index,
-                                     temperature_size);
-
-    auto p_dot =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_xdot.data() + pressure_index,
-                                  pressure_size);
-    auto u_dot =
-        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_xdot.data() + displacement_index,
-                                      displacement_size);
+    auto const [T, p, u] = localDOF(local_x);
+    auto const [T_dot, p_dot, u_dot] = localDOF(local_xdot);
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesTypeDisplacement::template MatrixType<
@@ -676,12 +653,6 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
         double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
         cache, DisplacementDim, n_integration_points);
 
-    auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-        pressure_size> const>(local_x.data() + pressure_index, pressure_size);
-    auto T = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-        temperature_size> const>(local_x.data() + temperature_index,
-                                 temperature_size);
-
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
@@ -692,6 +663,8 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& N_p = _ip_data[ip].N_p;
+
+        auto const [T, p, u] = localDOF(local_x);
 
         ParameterLib::SpatialPosition const x_position{
             std::nullopt, _element.getID(), ip,
