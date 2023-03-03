@@ -574,6 +574,15 @@ public:
         auto const& component = phase.component(
             _transport_process_variables[component_id].get().getName());
 
+        LocalBlockMatrixType KCC_Laplacian =
+            LocalBlockMatrixType::Zero(concentration_size, concentration_size);
+
+        LocalBlockMatrixType KCC_advection;
+        if (!_process_data.non_advective_form)
+        {
+            KCC_advection.setZero(KCC.rows(), KCC.cols());
+        }
+
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
             pos.setIntegrationPoint(ip);
@@ -672,13 +681,13 @@ public:
             }
             else
             {
-                KCC.noalias() +=
+                KCC_advection.noalias() +=
                     N.transpose() * mass_density_flow.transpose() * dNdx * w;
             }
             MCC.noalias() += N_t_N * (R_times_phi * density * w);
-            KCC.noalias() += dNdx.transpose() * hydrodynamic_dispersion * dNdx *
-                                 (density * w) +
-                             N_t_N * (decay_rate * R_times_phi * density * w);
+            KCC.noalias() += N_t_N * (decay_rate * R_times_phi * density * w);
+            KCC_Laplacian.noalias() +=
+                dNdx.transpose() * hydrodynamic_dispersion * dNdx * density * w;
 
             MpC.noalias() += N_t_N * (porosity * drho_dC * w);
 
@@ -696,6 +705,13 @@ public:
                 }
             }
         }
+
+        if (!_process_data.non_advective_form)
+        {
+            KCC_Laplacian.noalias() += KCC_advection;
+        }
+
+        KCC.noalias() += KCC_Laplacian;
     }
 
     void assembleKCmCn(int const component_id, double const t, double const dt,
@@ -912,6 +928,15 @@ public:
         auto local_K = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_K_data, concentration_size, concentration_size);
 
+        LocalBlockMatrixType KCC_Laplacian =
+            LocalBlockMatrixType::Zero(concentration_size, concentration_size);
+
+        LocalBlockMatrixType KCC_advection;
+        if (!_process_data.non_advective_form)
+        {
+            KCC_advection.setZero(concentration_size, concentration_size);
+        }
+
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
@@ -1052,14 +1077,22 @@ public:
             }
             else
             {
-                local_K.noalias() +=
+                KCC_advection.noalias() +=
                     N.transpose() * velocity.transpose() * dNdx * (density * w);
             }
             local_K.noalias() +=
-                dNdx.transpose() * hydrodynamic_dispersion * dNdx *
-                    (density * w) +
                 N_t_N * (decay_rate * R_times_phi * density * w);
+
+            KCC_Laplacian.noalias() += dNdx.transpose() *
+                                       hydrodynamic_dispersion * dNdx *
+                                       (density * w);
         }
+
+        if (!_process_data.non_advective_form)
+        {
+            KCC_Laplacian.noalias() += KCC_advection;
+        }
+        local_K.noalias() += KCC_Laplacian;
     }
 
     void assembleWithJacobianForStaggeredScheme(
@@ -1213,6 +1246,12 @@ public:
         auto local_rhs = MathLib::createZeroedVector<LocalSegmentVectorType>(
             local_b_data, concentration_size);
 
+        LocalBlockMatrixType KCC_Laplacian =
+            LocalBlockMatrixType::Zero(concentration_size, concentration_size);
+
+        LocalBlockMatrixType KCC_advection;
+        KCC_advection.setZero(concentration_size, concentration_size);
+
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
@@ -1304,22 +1343,24 @@ public:
 
             // matrix assembly
             local_Jac.noalias() +=
-                w * rho *
-                (N.transpose() * phi * R * (alpha + 1 / dt) * N +
-                 dNdx.transpose() * D * dNdx);
+                w * rho * N.transpose() * phi * R * (alpha + 1 / dt) * N;
+
+            KCC_Laplacian.noalias() += w * rho * dNdx.transpose() * D * dNdx;
 
             local_rhs.noalias() -=
-                w * rho *
-                (N.transpose() * phi * R * N * (cdot + alpha * c) +
-                 dNdx.transpose() * D * dNdx * c);
+                w * rho * N.transpose() * phi * R * N * (cdot + alpha * c);
 
             assert(!_process_data.non_advective_form);
-            local_Jac.noalias() +=
-                w * rho * N.transpose() * q.transpose() * dNdx;
 
-            local_rhs.noalias() -=
-                w * rho * N.transpose() * q.transpose() * dNdx * c;
+            KCC_advection.noalias() +=
+                w * rho * N.transpose() * q.transpose() * dNdx;
         }
+
+        KCC_Laplacian.noalias() += KCC_advection;
+
+        local_rhs.noalias() -= KCC_Laplacian * c;
+
+        local_Jac.noalias() += KCC_Laplacian;
     }
 
     void assembleReactionEquationConcrete(
