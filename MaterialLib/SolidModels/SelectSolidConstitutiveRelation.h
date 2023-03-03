@@ -25,11 +25,13 @@ namespace Solids
 ///
 /// Only two possibilities yield a valid result and result in OGS_FATAL call
 /// otherwise.
-/// 1. There is only one constitutive relation in the set of
-/// constitutive_relations, then the material and element ids are ignored and
-/// the only constitutive relation (under id 0) is returned.
-/// 2. For each material id chosen for the given element id there exists a
-/// constitutive relation in the set.
+/// 1. If the material id is not defined then search for a constitutive
+/// relation with id 0 (the default value if not specified).
+/// 2. There is only one constitutive relation with id 0 then the material and
+/// element ids are ignored and the only constitutive relation (under id 0) is
+/// returned.
+/// 3. If material ids are defined then search for a constitutive relation
+/// corresponding to the material id of the current element.
 template <typename SolidMaterialsMap>
 auto& selectSolidConstitutiveRelation(
     SolidMaterialsMap const& constitutive_relations,
