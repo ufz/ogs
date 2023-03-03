@@ -18,6 +18,7 @@
 #include "CapillaryPressureSaturation/SaturationExponential.h"
 #include "CapillaryPressureSaturation/SaturationLiakopoulos.h"
 #include "CapillaryPressureSaturation/SaturationVanGenuchten.h"
+#include "CapillaryPressureSaturation/SaturationVolStrain.h"
 #include "ClausiusClapeyron.h"
 #include "Constant.h"
 #include "Curve.h"
