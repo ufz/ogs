@@ -22,6 +22,7 @@
 #include "MeshLib/NodePartitionedMesh.h"
 #include "MeshLib/Properties.h"
 #include "MeshLib/IO/MPI_IO/PropertyVectorMetaData.h"
+#include "MeshLib/IO/NodeData.h"
 
 namespace MeshLib
 {
@@ -63,15 +64,6 @@ private:
 
     /// MPI data type for struct NodeData.
     MPI_Datatype _mpi_node_type;
-
-    /// Node data only for parallel reading.
-    struct NodeData
-    {
-        std::size_t index;  ///< Global node index.
-        double x;
-        double y;
-        double z;
-    };
 
     /// Define MPI data type for NodeData struct.
     void registerNodeDataMpiType();
