@@ -236,6 +236,7 @@ public:
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
     updateConstitutiveRelations(
         Eigen::Ref<Eigen::VectorXd const> const& local_x,
+        Eigen::Ref<Eigen::VectorXd const> const& /*local_x_dot*/,
         ParameterLib::SpatialPosition const& x_position, double const t,
         double const dt,
         IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>&
@@ -310,7 +311,7 @@ public:
 
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& /*local_xdot*/,
+                              std::vector<double> const& local_x_dot,
                               std::vector<double>& /*local_M_data*/,
                               std::vector<double>& /*local_K_data*/,
                               std::vector<double>& local_b_data,
@@ -352,6 +353,9 @@ public:
             auto const C = updateConstitutiveRelations(
                 Eigen::Map<NodalForceVectorType const>(
                     local_x.data(), ShapeFunction::NPOINTS * DisplacementDim),
+                Eigen::Map<NodalForceVectorType const>(
+                    local_x_dot.data(),
+                    ShapeFunction::NPOINTS * DisplacementDim),
                 x_position, t, dt, _ip_data[ip]);
 
             auto const rho = _process_data.solid_density(t, x_position)[0];
@@ -361,8 +365,9 @@ public:
         }
     }
 
-    void postTimestepConcrete(Eigen::VectorXd const& local_x, double const t,
-                              double const dt) override
+    void postTimestepConcrete(Eigen::VectorXd const& local_x,
+                              Eigen::VectorXd const& local_x_dot,
+                              double const t, double const dt) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -374,7 +379,7 @@ public:
         {
             x_position.setIntegrationPoint(ip);
 
-            updateConstitutiveRelations(local_x, x_position, t, dt,
+            updateConstitutiveRelations(local_x, local_x_dot, x_position, t, dt,
                                         _ip_data[ip]);
 
             auto& eps = _ip_data[ip].eps;

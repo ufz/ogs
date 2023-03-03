@@ -274,6 +274,7 @@ ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 template <int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                std::vector<GlobalVector*> const& x_dot,
                                 double const t, double const dt,
                                 const int process_id)
 {
@@ -284,7 +285,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, local_assemblers_,
-        pv.getActiveElementIDs(), dof_tables, x, t, dt);
+        pv.getActiveElementIDs(), dof_tables, x, x_dot, t, dt);
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>

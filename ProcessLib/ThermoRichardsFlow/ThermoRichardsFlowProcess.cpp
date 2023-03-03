@@ -173,7 +173,8 @@ void ThermoRichardsFlowProcess::assembleWithJacobianConcreteProcess(
 }
 
 void ThermoRichardsFlowProcess::postTimestepConcreteProcess(
-    std::vector<GlobalVector*> const& x, double const t, double const dt,
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_dot, double const t, double const dt,
     const int process_id)
 {
     if (process_id != 0)
@@ -188,7 +189,7 @@ void ThermoRichardsFlowProcess::postTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, x, t, dt);
+        pv.getActiveElementIDs(), dof_tables, x, x_dot, t, dt);
 }
 
 void ThermoRichardsFlowProcess::computeSecondaryVariableConcrete(

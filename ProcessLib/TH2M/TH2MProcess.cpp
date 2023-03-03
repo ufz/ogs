@@ -363,7 +363,8 @@ void TH2MProcess<DisplacementDim>::preTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void TH2MProcess<DisplacementDim>::postTimestepConcreteProcess(
-    std::vector<GlobalVector*> const& x, double const t, double const dt,
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_dot, double const t, double const dt,
     const int process_id)
 {
     DBUG("PostTimestep TH2MProcess.");
@@ -371,7 +372,7 @@ void TH2MProcess<DisplacementDim>::postTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, local_assemblers_,
-        pv.getActiveElementIDs(), dof_tables, x, t, dt);
+        pv.getActiveElementIDs(), dof_tables, x, x_dot, t, dt);
 }
 
 template <int DisplacementDim>

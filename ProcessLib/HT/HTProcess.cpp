@@ -189,10 +189,12 @@ Eigen::Vector3d HTProcess::getFlux(std::size_t element_id,
 }
 
 // this is almost a copy of the implementation in the GroundwaterFlow
-void HTProcess::postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
-                                            const double t,
-                                            const double /*delta_t*/,
-                                            int const process_id)
+void HTProcess::postTimestepConcreteProcess(
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& /*x_dot*/,
+    const double t,
+    const double /*delta_t*/,
+    int const process_id)
 {
     // For the monolithic scheme, process_id is always zero.
     if (_use_monolithic_scheme && process_id != 0)
