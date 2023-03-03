@@ -275,7 +275,7 @@ AddTest(
 AddTest(
     NAME ParallelFEM_ThermoRichardsMechanics_3D_ThermoElastic_Stress_Analysis
     PATH ThermoRichardsMechanics/Simple3DThermoMechanicsFromTM
-    RUNTIME 280
+    RUNTIME 40
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_1e3.prj
     WRAPPER mpirun
