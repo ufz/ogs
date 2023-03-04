@@ -1,3 +1,12 @@
+/**
+ * \file
+ * \copyright
+ * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ */
+
 @DSL Implicit;
 @Behaviour StandardElasticityBrick;
 @Author Thomas Nagel;
@@ -8,11 +17,18 @@
 
 @Brick StandardElasticity;
 
-@Theta 1.;       // time integration scheme
+@Theta 1.0;       // time integration scheme
 @Epsilon 1e-14;  // tolerance of local stress integration algorithm
 @ModellingHypotheses{".+"};
 
 @RequireStiffnessTensor<UnAltered>;
+
+@InitLocalVariables
+{
+    // Compute initial elastic strain
+    const auto S = invert(D);
+    eel = S * sig;
+}
 
 @Integrator
 {

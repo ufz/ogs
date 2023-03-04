@@ -11,7 +11,6 @@ mfront_behaviours_check_library(
     OgsMFrontBehaviour
     BDT
     DruckerPrager
-    Elasticity
     GuentherSalzer
     Lubby2
     Lubby2mod
