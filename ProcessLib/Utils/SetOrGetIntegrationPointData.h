@@ -20,6 +20,50 @@
 
 namespace ProcessLib
 {
+
+template <int DisplacementDim, typename IntegrationPointDataVector,
+          typename IpData, typename MemberType>
+std::vector<double> const& getIntegrationPointDimMatrixData(
+    IntegrationPointDataVector const& ip_data_vector,
+    MemberType IpData::*const member, std::vector<double>& cache)
+{
+    return getIntegrationPointDimMatrixData<DisplacementDim>(
+        ip_data_vector,
+        [member](IpData const& ip_data) -> auto const& {
+            return ip_data.*member;
+        },
+        cache);
+}
+
+template <int DisplacementDim, typename IntegrationPointDataVector,
+          typename Accessor>
+std::vector<double> const& getIntegrationPointDimMatrixData(
+    IntegrationPointDataVector const& ip_data_vector, Accessor&& accessor,
+    std::vector<double>& cache)
+{
+    using AccessorResult = decltype(std::declval<Accessor>()(
+        std::declval<IntegrationPointDataVector>()[0]));
+    static_assert(std::is_lvalue_reference_v<AccessorResult>,
+                  "The ip data accessor should return a reference. This check "
+                  "prevents accidental copies.");
+
+    auto const n_integration_points = ip_data_vector.size();
+    constexpr int size = DisplacementDim * DisplacementDim;
+
+    cache.clear();
+    auto cache_mat = MathLib::createZeroedMatrix<
+        Eigen::Matrix<double, size, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, size, n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ++ip)
+    {
+        auto const& dim_matix = accessor(ip_data_vector[ip]);
+        cache_mat.col(ip) = dim_matix.template reshaped<Eigen::RowMajor>();
+    }
+
+    return cache;
+}
+
 template <int DisplacementDim, typename IntegrationPointDataVector,
           typename IpData, typename MemberType>
 std::vector<double> const& getIntegrationPointKelvinVectorData(

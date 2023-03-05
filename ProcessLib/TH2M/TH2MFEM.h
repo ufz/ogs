@@ -403,6 +403,16 @@ private:
             _ip_data, &IpData::k_rel_L, cache);
     }
 
+    virtual std::vector<double> const& getIntPtIntrinsicPermeability(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        return ProcessLib::getIntegrationPointDimMatrixData<DisplacementDim>(
+            _ip_data, &IpData::k_S, cache);
+    }
+
     virtual std::vector<double> const& getIntPtEnthalpyGas(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
