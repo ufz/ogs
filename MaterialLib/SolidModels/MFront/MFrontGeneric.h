@@ -477,6 +477,16 @@ public:
         behaviour_data.K[0] =
             4.0;  // if K[0] is greater than 3.5, the consistent
                   // tangent operator must be computed.
+        if (behaviour_data.s0.b.btype ==
+            mgis::behaviour::Behaviour::STANDARDFINITESTRAINBEHAVIOUR)
+        {
+            behaviour_data.K[1] = 1.0;  // The second Piola-Kirchoff stress is
+                                        // used for the stress measure
+            behaviour_data.K[2] =
+                1.0;  // The derivative of the second
+                      // Piola-Kirchoff stress with respect to
+                      // the Green-Lagrange strain is returned.
+        }
 
         // evaluate parameters at (t, x)
         {
