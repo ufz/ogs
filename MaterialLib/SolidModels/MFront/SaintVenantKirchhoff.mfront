@@ -1,0 +1,38 @@
+@DSL DefaultFiniteStrainDSL;
+@Behaviour SaintVenantKirchhoff;
+@Author Thomas Nagel;
+@Date 04/03/2023;
+@Description{
+  Hyperelastic model modelling linear elasticity based on Green-Lagrange strain
+  and 2nd Piola- Kirchhoff stress.
+
+  ToDo: Add initial stress capabilities.
+}
+
+@AuxiliaryStateVariable Stensor PK2;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress lambda;
+@LocalVariable stress mu;
+@LocalVariable StrainStensor E;
+
+@InitLocalVariables{
+  lambda = computeLambda(young, nu);
+  mu = computeMu(young, nu);
+}
+
+@Integrator{
+  E = computeGreenLagrangeTensor(F1);
+  // ATTENTION: Requires MGIS interface to be set to 2PK
+  sig = lambda * trace(E) * StrainStensor::Id() + 2 * mu * E;
+  PK2 = sig;
+  sig = convertSecondPiolaKirchhoffStressToCauchyStress(sig, F1);
+}
+
+@TangentOperator<DS_DEGL>{
+  Dt = lambda * Stensor4::IxI() + 2 * mu * Stensor4::Id();
+}

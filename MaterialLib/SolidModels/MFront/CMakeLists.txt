@@ -43,6 +43,7 @@ set(_mfront_behaviours
     MohrCoulombAbboSloanUBI
     MohrCoulombAbboSloanUBIOrtho
     PowerLawLinearCreep
+    SaintVenantKirchhoff
     StandardElasticityBrick
     StandardElasticityBrickOrtho
     ThermoPoroElasticity
