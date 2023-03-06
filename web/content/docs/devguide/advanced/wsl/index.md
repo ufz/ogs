@@ -13,7 +13,7 @@ The [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsyste
 
 ## Setup
 
-- Install WSL2 by following [this guide](https://docs.microsoft.com/en-us/windows/wsl/install-win10). **Important:** Choose **Ubuntu 20.04 LTS** as the Linux distribution. Other distributions may not have a sufficient compiler.
+- Install WSL2 by following [this guide](https://docs.microsoft.com/en-us/windows/wsl/install-win10). **Important:** Choose **Ubuntu {{< dataFile "versions.tested_version.ubuntu" >}} LTS** as the Linux distribution. Other distributions may not have a sufficient compiler.
 - Optional but recommended: Install the new [Windows Terminal](https://docs.microsoft.com/en-us/windows/terminal/get-started)
 - Follow the [developer guide for Linux]({{< ref "prerequisites.md" >}}) from now on.
 
@@ -31,12 +31,12 @@ You can use the native Windows Visual Studio Code IDE (VS Code) for developing i
 
 ### Build and debug OGS
 
-- Configure your project by following [this guide](https://vector-of-bool.github.io/docs/vscode-cmake-tools/getting_started.html#configuring-your-project). Select `GCC 9.3.0` as the [CMake kit](https://vector-of-bool.github.io/docs/vscode-cmake-tools/kits.html#kits).
+- Configure your project by following [this guide](https://vector-of-bool.github.io/docs/vscode-cmake-tools/getting_started.html#configuring-your-project). Select `GCC {{< dataFile “versions.minimum_version.gcc” >}}` (or higher, depending on your installed version) as the [CMake kit](https://vector-of-bool.github.io/docs/vscode-cmake-tools/kits.html#kits).
 - Follow [this guide](https://vector-of-bool.github.io/docs/vscode-cmake-tools/debugging.html#selecting-a-launch-target) for debug a target. Select `ogs` as the debug target.
 
 ## Additional notes
 
-The filesystem of the WSL is not inside your regular user directories. You can find it by running `explorer.exe .` inside the WSL shell. It should be something like `\\wsl$\Ubuntu-20.04\home\[username]\...`.
+The filesystem of the WSL is not inside your regular user directories. You can find it by running `explorer.exe .` inside the WSL shell. It should be something like `\\wsl$\Ubuntu-{{< dataFile "versions.tested_version.ubuntu" >}}\home\[username]\...`.
 
 You can also run OGS inside the WSL with benchmarks located in your regular Windows directories. You regular filesystem can be accessed inside WSL with the `/mnt/c/`-prefix. E.g. to run an OGS benchmark:
 
