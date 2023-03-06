@@ -13,16 +13,16 @@
 
 #pragma once
 
+#include <mpi.h>
+
 #include <iosfwd>
 #include <string>
 #include <vector>
 
-#include <mpi.h>
-
-#include "MeshLib/NodePartitionedMesh.h"
-#include "MeshLib/Properties.h"
 #include "MeshLib/IO/MPI_IO/PropertyVectorMetaData.h"
 #include "MeshLib/IO/NodeData.h"
+#include "MeshLib/NodePartitionedMesh.h"
+#include "MeshLib/Properties.h"
 
 namespace MeshLib
 {
