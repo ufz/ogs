@@ -78,10 +78,10 @@ private:
                                           /// of a partition,
         unsigned long ghost_elements;     ///< 3: Number of ghost element of
                                           /// a partition,
-        unsigned long active_base_nodes;  ///< 4: Number of active nodes for
-                                          /// linear element of a partition,
-        unsigned long active_nodes;       ///< 5: Number of all active nodes a
-                                          /// partition,
+        unsigned long regular_base_nodes;  ///< 4: Number of regular nodes for
+                                           /// linear element of a partition,
+        unsigned long regular_nodes;       ///< 5: Number of all regular nodes a
+                                           /// partition,
         unsigned long global_base_nodes;  ///< 6: unused, previously number of
                                           /// nodes for linear element of global
                                           /// mesh,
