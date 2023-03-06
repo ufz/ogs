@@ -253,8 +253,6 @@ if(OGS_WRITE_BENCHMARK_COMMANDS)
     )
     unset(_benchmark_run_commands CACHE)
 endif()
-file(WRITE ${PROJECT_BINARY_DIR}/disabled-tests.log "${DISABLED_TESTS_LOG}")
-unset(DISABLED_TESTS_LOG CACHE) # Don't write to CMakeCache.txt
 
 # cmake-lint: disable=E1126
 file(
