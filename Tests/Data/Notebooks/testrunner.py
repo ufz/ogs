@@ -90,7 +90,9 @@ success = True
 for notebook_file_path in args.notebooks:
     notebook_success = True
     convert_notebook_file = notebook_file_path
-    notebook_file_path_relative = Path(notebook_file_path).relative_to(ogs_source_path)
+    notebook_file_path_relative = (
+        Path(notebook_file_path).absolute().relative_to(ogs_source_path)
+    )
 
     if "run-skip" not in notebook_file_path:
         notebook_basename = os.path.splitext(notebook_file_path)[0]
