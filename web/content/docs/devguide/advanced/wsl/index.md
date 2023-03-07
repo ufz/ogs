@@ -31,7 +31,7 @@ You can use the native Windows Visual Studio Code IDE (VS Code) for developing i
 
 ### Build and debug OGS
 
-- Configure your project by following [this guide](https://vector-of-bool.github.io/docs/vscode-cmake-tools/getting_started.html#configuring-your-project). Select `GCC {{< dataFile “versions.minimum_version.gcc” >}}` (or higher, depending on your installed version) as the [CMake kit](https://vector-of-bool.github.io/docs/vscode-cmake-tools/kits.html#kits).
+- Configure your project by following [this guide](https://vector-of-bool.github.io/docs/vscode-cmake-tools/getting_started.html#configuring-your-project). Select `GCC {{< dataFile "versions.minimum_version.gcc" >}}` (or higher, depending on your installed version) as the [CMake kit](https://vector-of-bool.github.io/docs/vscode-cmake-tools/kits.html#kits).
 - Follow [this guide](https://vector-of-bool.github.io/docs/vscode-cmake-tools/debugging.html#selecting-a-launch-target) for debug a target. Select `ogs` as the debug target.
 
 ## Additional notes
