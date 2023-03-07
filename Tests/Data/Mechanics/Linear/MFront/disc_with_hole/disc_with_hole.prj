@@ -9,7 +9,7 @@
             <integration_order>2</integration_order>
             <constitutive_relation>
                 <type>MFront</type>
-                <behaviour>Elasticity</behaviour>
+                <behaviour>StandardElasticityBrick</behaviour>
                 <material_properties>
                     <material_property name="YoungModulus" parameter="E"/>
                     <material_property name="PoissonRatio" parameter="nu"/>
