@@ -5,7 +5,9 @@
 @Description
 {
 Günther Salzer model for rock salt.
-Semi-explicit treatment of damage/dilatancy.
+Semi-explicit treatment of damage/dilatancy. Requires very small time
+steps, otherwise neither robust nor accurate.
+Fully implicit treatment WIP.
 
 Günther, R., & Salzer, K. (2012). Advanced strain-hardening approach.
 In Mechanical Behaviour of Salt VII (Issue December 2016).
@@ -16,7 +18,8 @@ Steady-State Creep of Rock Salt: Improved Approaches for Lab Determination
 and Modelling. Rock Mechanics and Rock Engineering,
 48(6), 2603–2613. https://doi.org/10.1007/s00603-015-0839-2
 
-Parameters: Asse
+Fixed parameter set: Asse.
+Units: MPa d
 };
 
 @Algorithm NewtonRaphson;
@@ -31,19 +34,6 @@ Parameters: Asse
 @ModellingHypotheses{".+"};
 @Brick StandardElasticity;
 
-@MaterialProperty real As1;
-As1.setEntryName("SecondaryPowerLawFactor1");
-@MaterialProperty real ns1;
-ns1.setEntryName("SecondaryPowerLawExponent1");
-@MaterialProperty real Q1;
-Q1.setEntryName("SecondaryActivationEnergy1");
-@MaterialProperty real As2;
-As2.setEntryName("SecondaryPowerLawFactor2");
-@MaterialProperty real ns2;
-ns2.setEntryName("SecondaryPowerLawExponent2");
-@MaterialProperty real Q2;
-Q2.setEntryName("SecondaryActivationEnergy2");
-
 // Activation energies in input files in J/mol
 @Parameter real Ru = 8.314472;  // J/(Kmol)
 Ru.setEntryName("UniversalGasConstant");
@@ -55,6 +45,14 @@ Ru.setEntryName("UniversalGasConstant");
 
 // initial hardenging -- can be critical for initial convergence!
 @Parameter real epsV0 = 1.e-8;
+
+// secondary power law
+@Parameter real As1 = 0.001;
+@Parameter real ns1 = 4.0;
+@Parameter real Q1 = 40.e3;
+@Parameter real As2 = 0.001;
+@Parameter real ns2 = 1.0;
+@Parameter real Q2 = 65.e3;
 
 // primary power law and stress/dilatancy dependence
 @Parameter real Ap = 3.98e-29;
