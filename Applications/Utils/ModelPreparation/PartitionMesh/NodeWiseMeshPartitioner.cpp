@@ -687,6 +687,8 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
     checkFieldPropertyVectorSize(_mesh->getElements(), _mesh->getProperties());
 
     _partitioned_properties = partitionProperties(_mesh, _partitions);
+
+    renumberBulkIdsProperty(_partitions, _partitioned_properties);
 }
 
 void NodeWiseMeshPartitioner::renumberBulkIdsProperty(
