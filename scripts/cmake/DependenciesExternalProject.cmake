@@ -162,7 +162,9 @@ if(OGS_USE_PETSC)
 
     add_library(petsc SHARED IMPORTED)
     target_include_directories(petsc INTERFACE ${PETSC_INCLUDES})
-    set_target_properties(petsc PROPERTIES IMPORTED_LOCATION ${PETSC_LIBRARIES})
+    # Get first petsc lib as import location
+    list(GET PETSC_LIBRARIES 0 _first_petsc_lib)
+    set_target_properties(petsc PROPERTIES IMPORTED_LOCATION ${_first_petsc_lib})
     target_compile_definitions(petsc INTERFACE USE_PETSC)
 endif()
 
