@@ -100,7 +100,7 @@ if (OGS_USE_MFRONT)
     OgsTest(PROJECTFILE Mechanics/Ehlers/MFront/square_1e1_2_matIDs_restart.prj RUNTIME 4)
     OgsTest(PROJECTFILE Mechanics/Ehlers/MFront/two_material_ids_single_solid.prj RUNTIME 1)
     if(NOT OGS_USE_MPI)
-        OgsTest(PROJECTFILE Mechanics/GuentherSalzer/model_triaxtest.prj)
+        OgsTest(PROJECTFILE Mechanics/GuentherSalzer/model_uniaxial_test.prj)
     endif()
     OgsTest(PROJECTFILE Mechanics/PLLC/uniax_compression.prj)
 
