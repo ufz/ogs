@@ -101,6 +101,7 @@ if (OGS_USE_MFRONT)
     OgsTest(PROJECTFILE Mechanics/Ehlers/MFront/two_material_ids_single_solid.prj RUNTIME 1)
     if(NOT OGS_USE_MPI)
         OgsTest(PROJECTFILE Mechanics/GuentherSalzer/model_uniaxial_test.prj)
+        OgsTest(PROJECTFILE Mechanics/GuentherSalzer/model_triaxial_test.prj RUNTIME 100)
     endif()
     OgsTest(PROJECTFILE Mechanics/PLLC/uniax_compression.prj)
 
