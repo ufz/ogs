@@ -29,6 +29,7 @@ set(_mfront_behaviours
     BDT
     DruckerPrager
     GuentherSalzer
+    GuentherSalzerDilatancy_semi_expl
     Lubby2
     Lubby2mod
     ModCamClay_semiExpl
