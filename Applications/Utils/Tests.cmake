@@ -933,9 +933,9 @@ AddTest(
     basin_mesh_fixed.vtu basin_mesh_fixed.vtu MaterialIDs MaterialIDs 0 0
 )
 
-if(TEST reviseMesh-ReviseMesh_Test-vtkdiff-mesh AND TEST reviseMesh-ReviseMesh_Test_Arrays-vtkdiff)
+if(TEST reviseMesh-ReviseMesh_Test-vtkdiff-mesh AND TEST reviseMesh-ReviseMesh_Test_Arrays)
     # Execute tests in order to prevent race condition
-    set_tests_properties(reviseMesh-ReviseMesh_Test_Arrays-vtkdiff PROPERTIES DEPENDS reviseMesh-ReviseMesh_Test-vtkdiff-mesh)
+    set_tests_properties(reviseMesh-ReviseMesh_Test_Arrays PROPERTIES DEPENDS reviseMesh-ReviseMesh_Test-vtkdiff-mesh)
 endif()
 
 AddTest(
