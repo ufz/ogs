@@ -288,6 +288,7 @@ if(NOT HDF5_FOUND)
         STATUS
             "ExternalProject_Add(): added package HDF5@${ogs.tested_version.hdf5}"
     )
+    set(_EXT_LIBS ${_EXT_LIBS} HDF5 CACHE INTERNAL "")
     BuildExternalProject_find_package(HDF5)
 endif()
 
@@ -366,12 +367,13 @@ if(NOT VTK_FOUND)
         STATUS
             "ExternalProject_Add(): added package VTK@${ogs.minimum_version.vtk}"
     )
+    set(_EXT_LIBS ${_EXT_LIBS} VTK CACHE INTERNAL "")
     BuildExternalProject_find_package(VTK)
 endif()
 
 # append RPATHs
 foreach(lib ${_EXT_LIBS})
     set(CMAKE_BUILD_RPATH ${CMAKE_BUILD_RPATH} ${build_dir_${lib}}/lib
-                          {build_dir_${lib}}/lib64
+                          ${build_dir_${lib}}/lib64
     )
 endforeach()
