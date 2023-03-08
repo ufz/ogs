@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <cstddef>
+
 namespace MeshLib::IO
 {
 /// struct NodeData used for parallel reading and also partitioning
