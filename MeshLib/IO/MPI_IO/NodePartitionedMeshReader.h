@@ -13,15 +13,16 @@
 
 #pragma once
 
+#include <mpi.h>
+
 #include <iosfwd>
 #include <string>
 #include <vector>
 
-#include <mpi.h>
-
+#include "MeshLib/IO/MPI_IO/PropertyVectorMetaData.h"
+#include "MeshLib/IO/NodeData.h"
 #include "MeshLib/NodePartitionedMesh.h"
 #include "MeshLib/Properties.h"
-#include "MeshLib/IO/MPI_IO/PropertyVectorMetaData.h"
 
 namespace MeshLib
 {
@@ -64,42 +65,40 @@ private:
     /// MPI data type for struct NodeData.
     MPI_Datatype _mpi_node_type;
 
-    /// Node data only for parallel reading.
-    struct NodeData
-    {
-        std::size_t index;  ///< Global node index.
-        double x;
-        double y;
-        double z;
-    };
-
     /// Define MPI data type for NodeData struct.
     void registerNodeDataMpiType();
 
     /// A collection of integers that configure the partitioned mesh data.
     struct PartitionedMeshInfo
     {
-        unsigned long nodes;       ///< 0: Number of all nodes of a partition,
-        unsigned long base_nodes;  ///< 1: Number of nodes for linear
-                                   /// elements of a partition,
-        unsigned long regular_elements;   ///< 2: Number of non-ghost elements
-                                          /// of a partition,
-        unsigned long ghost_elements;     ///< 3: Number of ghost element of
-                                          /// a partition,
-        unsigned long active_base_nodes;  ///< 4: Number of active nodes for
-                                          /// linear element of a partition,
-        unsigned long active_nodes;       ///< 5: Number of all active nodes a
-                                          /// partition,
-        unsigned long global_base_nodes;  ///< 6: unused, previously number of
+        unsigned long
+            number_of_nodes;  ///< 0: Number of all nodes of a partition,
+        unsigned long number_of_base_nodes;  ///< 1: Number of nodes for linear
+                                             /// elements of a partition,
+        unsigned long
+            number_of_regular_elements;  ///< 2: Number of non-ghost elements
+                                         /// of a partition,
+        unsigned long
+            number_of_ghost_elements;  ///< 3: Number of ghost element of
+                                       /// a partition,
+        unsigned long
+            number_of_regular_base_nodes;  ///< 4: Number of regular nodes for
+                                           /// linear element of a partition,
+        unsigned long
+            number_of_regular_nodes;  ///< 5: Number of all regular nodes a
+                                      /// partition,
+        unsigned long
+            number_of_global_base_nodes;  ///< 6: unused, previously number of
                                           /// nodes for linear element of global
                                           /// mesh,
-        unsigned long global_nodes;  ///< 7: Number of all nodes of global mesh,
+        unsigned long
+            number_of_global_nodes;  ///< 7: Number of all nodes of global mesh,
         unsigned long offset[5];   ///< 8~12: Offsets of positions of partitions
                                    /// in the data arrays.
         unsigned long extra_flag;  ///< 13: Reserved for extra flag.
 
         std::size_t size() const { return 14; }
-        unsigned long* data() { return &nodes; }
+        unsigned long* data() { return &number_of_nodes; }
     } _mesh_info;
 
     /*!

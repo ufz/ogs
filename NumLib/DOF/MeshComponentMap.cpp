@@ -339,10 +339,10 @@ GlobalIndexType getGlobalIndexWithTaylorHoodElement(
     int const partition_id = partitioned_mesh.getPartitionID(global_node_id);
 
     auto const n_total_active_base_nodes_before_this_rank =
-        partitioned_mesh.getNumberOfActiveBaseNodesAtRank(partition_id);
+        partitioned_mesh.getNumberOfRegularBaseNodesAtRank(partition_id);
 
     auto const n_total_active_high_order_nodes_before_this_rank =
-        partitioned_mesh.getNumberOfActiveHighOrderNodesAtRank(partition_id);
+        partitioned_mesh.getNumberOfRegularHighOrderNodesAtRank(partition_id);
 
     auto const node_id_offset =
         n_total_active_base_nodes_before_this_rank +
@@ -362,7 +362,7 @@ GlobalIndexType getGlobalIndexWithTaylorHoodElement(
     }
 
     int const n_active_base_nodes_of_this_partition =
-        partitioned_mesh.getNumberOfActiveBaseNodesAtRank(partition_id + 1) -
+        partitioned_mesh.getNumberOfRegularBaseNodesAtRank(partition_id + 1) -
         n_total_active_base_nodes_before_this_rank;
 
     /*
@@ -370,13 +370,13 @@ GlobalIndexType getGlobalIndexWithTaylorHoodElement(
         assuming that the base node has three components and the high order node
         has two components:
 
-        Partition    |       0       |      1       |   ...
-                     --------------------------------
-        Active nodes | Base | higher | Base | higher|   ...
-                     --------------------------------
-                 c0  x      x         x      x          ...
-                 c1  x      x         x      x          ...
-                 c2  x                x                 ...
+        Partition     |       0       |      1       |   ...
+                      --------------------------------
+        Regular nodes | Base | higher | Base | higher|   ...
+                      --------------------------------
+                  c0  x      x         x      x          ...
+                  c1  x      x         x      x          ...
+                  c2  x                x                 ...
     */
     return static_cast<GlobalIndexType>(
                index_offset +

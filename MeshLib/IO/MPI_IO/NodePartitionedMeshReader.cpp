@@ -163,7 +163,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readMesh(
 
     //----------------------------------------------------------------------------------
     // Read Nodes
-    std::vector<NodeData> nodes(_mesh_info.nodes);
+    std::vector<NodeData> nodes(_mesh_info.number_of_nodes);
 
     if (!readDataFromFile(fname_header + "nod" + fname_num_p_ext,
                           static_cast<MPI_Offset>(_mesh_info.offset[2]),
@@ -176,21 +176,22 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readMesh(
 
     //----------------------------------------------------------------------------------
     // Read non-ghost elements
-    std::vector<unsigned long> elem_data(_mesh_info.regular_elements +
+    std::vector<unsigned long> elem_data(_mesh_info.number_of_regular_elements +
                                          _mesh_info.offset[0]);
     if (!readDataFromFile(fname_header + "ele" + fname_num_p_ext,
                           static_cast<MPI_Offset>(_mesh_info.offset[3]),
                           MPI_LONG, elem_data))
         return nullptr;
 
-    std::vector<MeshLib::Element*> mesh_elems(_mesh_info.regular_elements +
-                                              _mesh_info.ghost_elements);
+    std::vector<MeshLib::Element*> mesh_elems(
+        _mesh_info.number_of_regular_elements +
+        _mesh_info.number_of_ghost_elements);
     setElements(mesh_nodes, elem_data, mesh_elems);
 
     //----------------------------------------------------------------------------------
     // Read ghost element
-    std::vector<unsigned long> ghost_elem_data(_mesh_info.ghost_elements +
-                                               _mesh_info.offset[1]);
+    std::vector<unsigned long> ghost_elem_data(
+        _mesh_info.number_of_ghost_elements + _mesh_info.offset[1]);
 
     if (!readDataFromFile(fname_header + "ele_g" + fname_num_p_ext,
                           static_cast<MPI_Offset>(_mesh_info.offset[4]),
@@ -408,44 +409,47 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::newMesh(
     std::vector<MeshLib::Element*> const& mesh_elems,
     MeshLib::Properties const& properties) const
 {
-    std::vector<std::size_t> gathered_n_active_base_nodes(_mpi_comm_size);
+    std::vector<std::size_t> gathered_n_regular_base_nodes(_mpi_comm_size);
 
-    MPI_Allgather(&_mesh_info.active_base_nodes,
+    MPI_Allgather(&_mesh_info.number_of_regular_base_nodes,
                   1,
                   MPI_UNSIGNED_LONG,
-                  gathered_n_active_base_nodes.data(),
-                  1,
-                  MPI_UNSIGNED_LONG,
-                  _mpi_comm);
-
-    std::vector<std::size_t> n_active_base_nodes_at_rank;
-    n_active_base_nodes_at_rank.push_back(0);
-    std::partial_sum(begin(gathered_n_active_base_nodes),
-                     end(gathered_n_active_base_nodes),
-                     back_inserter(n_active_base_nodes_at_rank));
-
-    std::vector<std::size_t> gathered_n_active_high_order_nodes(_mpi_comm_size);
-    std::size_t const n_active_high_order_nodes =
-        _mesh_info.active_nodes - _mesh_info.active_base_nodes;
-    MPI_Allgather(&n_active_high_order_nodes,
-                  1,
-                  MPI_UNSIGNED_LONG,
-                  gathered_n_active_high_order_nodes.data(),
+                  gathered_n_regular_base_nodes.data(),
                   1,
                   MPI_UNSIGNED_LONG,
                   _mpi_comm);
 
-    std::vector<std::size_t> n_active_high_order_nodes_at_rank;
-    n_active_high_order_nodes_at_rank.push_back(0);
-    std::partial_sum(begin(gathered_n_active_high_order_nodes),
-                     end(gathered_n_active_high_order_nodes),
-                     back_inserter(n_active_high_order_nodes_at_rank));
+    std::vector<std::size_t> n_regular_base_nodes_at_rank;
+    n_regular_base_nodes_at_rank.push_back(0);
+    std::partial_sum(begin(gathered_n_regular_base_nodes),
+                     end(gathered_n_regular_base_nodes),
+                     back_inserter(n_regular_base_nodes_at_rank));
+
+    std::vector<std::size_t> gathered_n_regular_high_order_nodes(
+        _mpi_comm_size);
+    std::size_t const n_regular_high_order_nodes =
+        _mesh_info.number_of_regular_nodes -
+        _mesh_info.number_of_regular_base_nodes;
+    MPI_Allgather(&n_regular_high_order_nodes,
+                  1,
+                  MPI_UNSIGNED_LONG,
+                  gathered_n_regular_high_order_nodes.data(),
+                  1,
+                  MPI_UNSIGNED_LONG,
+                  _mpi_comm);
+
+    std::vector<std::size_t> n_regular_high_order_nodes_at_rank;
+    n_regular_high_order_nodes_at_rank.push_back(0);
+    std::partial_sum(begin(gathered_n_regular_high_order_nodes),
+                     end(gathered_n_regular_high_order_nodes),
+                     back_inserter(n_regular_high_order_nodes_at_rank));
 
     return new MeshLib::NodePartitionedMesh(
         mesh_name, mesh_nodes, glb_node_ids, mesh_elems, properties,
-        _mesh_info.global_base_nodes, _mesh_info.global_nodes,
-        _mesh_info.active_nodes, std::move(n_active_base_nodes_at_rank),
-        std::move(n_active_high_order_nodes_at_rank));
+        _mesh_info.number_of_global_base_nodes,
+        _mesh_info.number_of_global_nodes, _mesh_info.number_of_regular_nodes,
+        std::move(n_regular_base_nodes_at_rank),
+        std::move(n_regular_high_order_nodes_at_rank));
 }
 
 void NodePartitionedMeshReader::setNodes(
@@ -453,8 +457,8 @@ void NodePartitionedMeshReader::setNodes(
     std::vector<MeshLib::Node*>& mesh_node,
     std::vector<unsigned long>& glb_node_ids) const
 {
-    mesh_node.resize(_mesh_info.nodes);
-    glb_node_ids.resize(_mesh_info.nodes);
+    mesh_node.resize(_mesh_info.number_of_nodes);
+    glb_node_ids.resize(_mesh_info.number_of_nodes);
 
     for (std::size_t i = 0; i < mesh_node.size(); i++)
     {
@@ -470,10 +474,10 @@ void NodePartitionedMeshReader::setElements(
     std::vector<MeshLib::Element*>& mesh_elems, const bool ghost) const
 {
     // Number of elements, either ghost or regular
-    unsigned long const ne =
-        ghost ? _mesh_info.ghost_elements : _mesh_info.regular_elements;
+    unsigned long const ne = ghost ? _mesh_info.number_of_ghost_elements
+                                   : _mesh_info.number_of_regular_elements;
     unsigned long const id_offset_ghost =
-        ghost ? _mesh_info.regular_elements : 0;
+        ghost ? _mesh_info.number_of_regular_elements : 0;
 
     for (unsigned long i = 0; i < ne; i++)
     {

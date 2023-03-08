@@ -23,28 +23,13 @@
 #include "BaseLib/Logging.h"
 #include "IntegrationPointDataTools.h"
 #include "MeshLib/Elements/Elements.h"
+#include "MeshLib/IO/NodeData.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Utils/IntegrationPointWriter.h"
 
 namespace ApplicationUtils
 {
-struct NodeStruct
-{
-    NodeStruct(NodeWiseMeshPartitioner::IntegerType const id_,
-               double const x_,
-               double const y_,
-               double const z_)
-        : id(id_), x(x_), y(y_), z(z_)
-    {
-    }
-
-    NodeWiseMeshPartitioner::IntegerType id;
-    double x;
-    double y;
-    double z;
-};
-
 std::size_t Partition::numberOfMeshItems(
     MeshLib::MeshItemType const item_type) const
 {
@@ -68,7 +53,7 @@ std::size_t Partition::numberOfMeshItems(
 std::ostream& Partition::writeNodes(
     std::ostream& os, std::vector<std::size_t> const& global_node_ids) const
 {
-    std::vector<NodeStruct> nodes_buffer;
+    std::vector<MeshLib::IO::NodeData> nodes_buffer;
     nodes_buffer.reserve(nodes.size());
 
     for (const auto* node : nodes)
@@ -78,7 +63,7 @@ std::ostream& Partition::writeNodes(
                                   coords[1], coords[2]);
     }
     return os.write(reinterpret_cast<const char*>(nodes_buffer.data()),
-                    sizeof(NodeStruct) * nodes_buffer.size());
+                    sizeof(MeshLib::IO::NodeData) * nodes_buffer.size());
 }
 
 /// Calculate the total number of integer variables of an element vector. Each
@@ -1008,7 +993,7 @@ ConfigOffsets incrementConfigOffsets(ConfigOffsets const& oldConfig,
 {
     return {
         static_cast<long>(oldConfig.node_rank_offset +
-                          offsets.node * sizeof(NodeStruct)),
+                          offsets.node * sizeof(MeshLib::IO::NodeData)),
         // Offset the ending entry of the element integer variables of
         // the non-ghost elements of this partition in the vector of elem_info.
         static_cast<long>(oldConfig.element_rank_offset +
