@@ -57,17 +57,20 @@ Where:
 ```
 
 ## Example:
-1. In this example we change all elements of material ID 1 to ID 14.
+1. In this example we change all elements of material ID 4 to ID 24.
 
 ```bash
-editMaterialID -i mesh_layerd.vtu -o mesh_newID.vtu -r -m 1 -n 14
+editMaterialID -i mesh_layered.vtu -o mesh_newID.vtu -r -m 4 -n 24
 ```
 
 **output:**
 ```bash
-[2023-02-10 16:12:32.804] [ogs] [info] Mesh read: 2915 nodes, 4609 elements.
-[2023-02-10 16:12:32.804] [ogs] [info] Replacing material ID...
-[2023-02-10 16:12:32.804] [ogs] [info] 1 -> 14
+[2023-02-23 16:19:09.663] [ogs] [info] Mesh read: 2915 nodes, 4609 elements.
+[2023-02-23 16:19:09.664] [ogs] [info] Replacing material ID...
+[2023-02-23 16:19:09.664] [ogs] [info] The MaterialIDs of the input file: [0, 1, 2, 3, 4, 5, 6]
+[2023-02-23 16:19:09.664] [ogs] [info] 4 -> 24
+[2023-02-23 16:19:09.664] [ogs] [info] The MaterialIDs of the output file: [0, 1, 2, 3, 5, 6, 24]
+
 ```
 
 2. In this example we compress/condense the list of material IDs. 
@@ -77,6 +80,15 @@ The input mesh has a list of material IDs of [0,4,5,6,14,42,53]. Then we call th
 editMaterialID -i mesh_newID.vtu -o mesh_newID_c.vtu -c
 ```
 
+**output:**
+
+```bash
+[2023-02-23 16:20:21.688] [ogs] [info] Mesh read: 2915 nodes, 4609 elements.
+[2023-02-23 16:20:21.688] [ogs] [info] Condensing material ID...
+[2023-02-23 16:20:21.688] [ogs] [info] The MaterialIDs of the input file: [0, 4, 5, 6, 14, 42, 53]
+[2023-02-23 16:20:21.688] [ogs] [info] The MaterialIDs of the output file: [0, 1, 2, 3, 4, 5, 6]
+```
+
 <p align='center'>
  <img src = newID.png width = "60%" height = "60%"> <img src = condense.png width = "60%" height = "60%"> 
 </p>
@@ -84,3 +96,21 @@ editMaterialID -i mesh_newID.vtu -o mesh_newID_c.vtu -c
 Fig.1 The upper image shows a mesh with material IDs [0,4,5,6,14,42,53]. The lower one the same mesh with material IDs [0,1,2,3,4,5,6] after applying --condense.
  </p>
 
+3. In this example we specify all elements that are shaped as tetrahedra to have a new MaterialID of 66. 
+
+```bash
+editMaterialID -i mesh_newID.vtu -o mesh_specified.vtu -s -e tet -n 66
+```
+
+**output:**
+
+```bash
+[2023-02-23 16:21:44.629] [ogs] [info] Mesh read: 2915 nodes, 4609 elements.
+[2023-02-23 16:21:44.629] [ogs] [info] Specifying material ID...
+[2023-02-23 16:21:44.629] [ogs] [info] The MaterialIDs of the input file: [0, 4, 5, 6, 14, 42, 53]
+[2023-02-23 16:21:44.629] [ogs] [info] updated 88 elements
+[2023-02-23 16:21:44.630] [ogs] [info] The MaterialIDs of the output file: [0, 4, 5, 6, 14, 42, 53, 66]
+```
+
+No material ID was lost as no MaterialID referred only to tetrahedra before. 
+That is why only a new MaterialID is gained by this process.

@@ -6,7 +6,7 @@ author = "Julian Heinze"
 
 ## Description
 OGS2VTK is a tool to convert OGS-mesh-files to VTK-files. 
-It can be applied to format OGS-5 legacy meshes files or visualize them in ParaView.
+It can be applied to format OGS-5 legacy mesh files or visualize them in ParaView.
 ## Usage
 ```bash
 USAGE: 
