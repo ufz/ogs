@@ -164,7 +164,9 @@ if(OGS_USE_PETSC)
     target_include_directories(petsc INTERFACE ${PETSC_INCLUDES})
     # Get first petsc lib as import location
     list(GET PETSC_LIBRARIES 0 _first_petsc_lib)
-    set_target_properties(petsc PROPERTIES IMPORTED_LOCATION ${_first_petsc_lib})
+    set_target_properties(
+        petsc PROPERTIES IMPORTED_LOCATION ${_first_petsc_lib}
+    )
     target_compile_definitions(petsc INTERFACE USE_PETSC)
 endif()
 
@@ -373,9 +375,17 @@ if(NOT VTK_FOUND)
     BuildExternalProject_find_package(VTK)
 endif()
 
+# cmake-lint: disable=C0103
+
 # append RPATHs
 foreach(lib ${_EXT_LIBS})
     set(CMAKE_BUILD_RPATH ${CMAKE_BUILD_RPATH} ${build_dir_${lib}}/lib
                           ${build_dir_${lib}}/lib64
     )
+    set(${lib}_SOURCE_DIR ${build_dir_${lib}}/src/${lib})
 endforeach()
+if(_EXT_LIBS)
+    write_license_disclaimer(
+        ${PROJECT_BINARY_DIR}/third_party_licenses_ext.txt "${_EXT_LIBS}"
+    )
+endif()
