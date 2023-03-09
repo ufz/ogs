@@ -402,12 +402,8 @@ if(CLANG_FORMAT_PROGRAM OR CMAKE_FORMAT_PROGRAM)
 endif()
 
 # Third-party licenses
-CPMAddPackage(
-    NAME CPMLicenses.cmake GITHUB_REPOSITORY cpm-cmake/CPMLicenses.cmake
-    VERSION 0.0.5
-)
 cpm_licenses_create_disclaimer_target(
-    write-licenses "${PROJECT_BINARY_DIR}/third_party_licenses.txt"
+    write-licenses "${PROJECT_BINARY_DIR}/third_party_licenses_cpm.txt"
     "${CPM_PACKAGES}"
 )
 

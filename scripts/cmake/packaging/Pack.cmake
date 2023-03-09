@@ -96,4 +96,7 @@ install(FILES ${PROJECT_BINARY_DIR}/cmake_args TYPE INFO OPTIONAL)
 install(
     CODE "execute_process(COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --config ${CMAKE_BUILD_TYPE} -t write-licenses)"
 )
-install(FILES ${PROJECT_BINARY_DIR}/third_party_licenses.txt TYPE INFO)
+install(FILES ${PROJECT_BINARY_DIR}/third_party_licenses_cpm.txt TYPE INFO)
+if(EXISTS ${PROJECT_BINARY_DIR}/third_party_licenses_ext.txt)
+    install(FILES ${PROJECT_BINARY_DIR}/third_party_licenses_ext.txt TYPE INFO)
+endif()
