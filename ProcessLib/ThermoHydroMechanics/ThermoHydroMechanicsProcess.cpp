@@ -206,6 +206,11 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                          &LocalAssemblerInterface::getIntPtEpsilon));
 
     _secondary_variables.addSecondaryVariable(
+        "ice_volume_fraction",
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtIceVolume));
+
+    _secondary_variables.addSecondaryVariable(
         "velocity",
         makeExtrapolator(mesh.getDimension(), getExtrapolator(),
                          _local_assemblers,

@@ -284,6 +284,17 @@ private:
             _ip_data, &IpData::eps, cache);
     }
 
+    std::vector<double> const& getIntPtIceVolume(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        return ProcessLib::getIntegrationPointScalarData(
+            _ip_data, &IpData::phi_fr, cache);
+    }
+
+private:
     template <typename SolutionVector>
     static constexpr auto localDOF(SolutionVector const& x)
     {
