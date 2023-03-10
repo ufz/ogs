@@ -254,6 +254,16 @@ private:
             _ip_data, &IpData::sigma_eff, cache);
     }
 
+    std::vector<double> const& getIntPtSigmaIce(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+            _ip_data, &IpData::sigma_eff_ice, cache);
+    }
+
     std::vector<double> getEpsilon() const override
     {
         constexpr int kelvin_vector_size =
