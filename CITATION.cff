@@ -9,8 +9,8 @@ license: BSD-3-Clause
 # DOI representing all versions, do not change:
 doi: 10.5281/zenodo.591265
 # The following needs to be adapted on releases:
-version: "6.4.3"
-date-released: "2022-09-19"
+version: "6.4.4"
+date-released: "2023-03-10"
 identifiers:
     - type: doi
       description: "Zenodo DOI for 6.4.3"
