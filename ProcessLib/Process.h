@@ -339,6 +339,9 @@ protected:
 
     SecondaryVariableCollection _secondary_variables;
 
+    // TODO (CL) switch to the parallel vector matrix assembler here, once
+    // feature complete, or use the assembly mixin and remove these two members.
+    std::unique_ptr<ProcessLib::AbstractJacobianAssembler> _jacobian_assembler;
     VectorMatrixAssembler _global_assembler;
 
     const bool _use_monolithic_scheme;

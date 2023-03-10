@@ -34,7 +34,7 @@ class VectorMatrixAssembler final
 {
 public:
     explicit VectorMatrixAssembler(
-        std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler);
+        AbstractJacobianAssembler& jacobian_assembler);
 
     void preAssemble(const std::size_t mesh_item_id,
                      LocalAssemblerInterface& local_assembler,
@@ -73,7 +73,7 @@ private:
     std::vector<double> _local_Jac_data;
 
     //! Used to assemble the Jacobian.
-    std::unique_ptr<AbstractJacobianAssembler> _jacobian_assembler;
+    AbstractJacobianAssembler& _jacobian_assembler;
 
     Assembly::LocalMatrixOutput _local_output;
 };
