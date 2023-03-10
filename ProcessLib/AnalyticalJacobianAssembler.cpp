@@ -38,4 +38,10 @@ void AnalyticalJacobianAssembler::assembleWithJacobianForStaggeredScheme(
         local_b_data, local_Jac_data);
 }
 
+std::unique_ptr<AbstractJacobianAssembler> AnalyticalJacobianAssembler::copy()
+    const
+{
+    return std::make_unique<AnalyticalJacobianAssembler>(*this);
+}
+
 }  // namespace ProcessLib

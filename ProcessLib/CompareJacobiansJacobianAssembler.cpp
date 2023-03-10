@@ -396,6 +396,15 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
     }
 }
 
+std::unique_ptr<AbstractJacobianAssembler>
+CompareJacobiansJacobianAssembler::copy() const
+{
+    OGS_FATAL(
+        "CompareJacobiansJacobianAssembler should not be copied. This class "
+        "logs to a file, which would most certainly break after copying "
+        "(concurrent file access) with the current implementation.");
+}
+
 std::unique_ptr<CompareJacobiansJacobianAssembler>
 createCompareJacobiansJacobianAssembler(BaseLib::ConfigTree const& config)
 {
@@ -427,5 +436,4 @@ createCompareJacobiansJacobianAssembler(BaseLib::ConfigTree const& config)
         std::move(asm1), std::move(asm2), abs_tol, rel_tol, fail_on_error,
         log_file);
 }
-
 }  // namespace ProcessLib

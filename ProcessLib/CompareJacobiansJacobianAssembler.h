@@ -13,6 +13,7 @@
 #include <fstream>
 #include <limits>
 #include <memory>
+
 #include "AbstractJacobianAssembler.h"
 
 namespace BaseLib
@@ -59,6 +60,8 @@ public:
                               std::vector<double>& local_K_data,
                               std::vector<double>& local_b_data,
                               std::vector<double>& local_Jac_data) override;
+
+    std::unique_ptr<AbstractJacobianAssembler> copy() const override;
 
 private:
     std::unique_ptr<AbstractJacobianAssembler> _asm1;

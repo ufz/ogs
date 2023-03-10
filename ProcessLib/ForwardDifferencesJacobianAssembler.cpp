@@ -153,4 +153,10 @@ void ForwardDifferencesJacobianAssembler::assembleWithJacobian(
     }
 }
 
+std::unique_ptr<AbstractJacobianAssembler>
+ForwardDifferencesJacobianAssembler::copy() const
+{
+    return std::make_unique<ForwardDifferencesJacobianAssembler>(*this);
+}
+
 }  // namespace ProcessLib
