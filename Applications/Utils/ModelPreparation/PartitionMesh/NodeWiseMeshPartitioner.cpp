@@ -687,6 +687,34 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
     checkFieldPropertyVectorSize(_mesh->getElements(), _mesh->getProperties());
 
     _partitioned_properties = partitionProperties(_mesh, _partitions);
+
+    renumberBulkIdsProperty(_partitions, _partitioned_properties);
+}
+
+void NodeWiseMeshPartitioner::renumberBulkIdsProperty(
+    std::vector<Partition> const& partitions,
+    MeshLib::Properties& partitioned_properties)
+{
+    auto const bulk_node_ids_string =
+        MeshLib::getBulkIDString(MeshLib::MeshItemType::Node);
+    if (partitioned_properties.hasPropertyVector(bulk_node_ids_string))
+    {
+        renumberBulkNodeIdsProperty(
+            partitioned_properties.getPropertyVector<std::size_t>(
+                bulk_node_ids_string, MeshLib::MeshItemType::Node, 1),
+            partitions);
+    }
+    auto const bulk_element_ids_string =
+        MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell);
+    if (partitioned_properties.hasPropertyVector<std::size_t>(
+            static_cast<std::string>(bulk_element_ids_string),
+            MeshLib::MeshItemType::Cell))
+    {
+        renumberBulkElementIdsProperty(
+            partitioned_properties.getPropertyVector<std::size_t>(
+                bulk_element_ids_string, MeshLib::MeshItemType::Cell, 1),
+            partitions);
+    }
 }
 
 void NodeWiseMeshPartitioner::renumberBulkNodeIdsProperty(

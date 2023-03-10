@@ -224,21 +224,9 @@ int main(int argc, char* argv[])
         auto partitions = mesh_partitioner.partitionOtherMesh(*mesh);
 
         auto partitioned_properties = partitionProperties(mesh, partitions);
-        auto const bulk_node_ids_string =
-            MeshLib::getBulkIDString(MeshLib::MeshItemType::Node);
-        mesh_partitioner.renumberBulkNodeIdsProperty(
-            partitioned_properties.getPropertyVector<std::size_t>(
-                bulk_node_ids_string, MeshLib::MeshItemType::Node, 1),
-            partitions);
-        auto const bulk_element_ids_string =
-            MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell);
-        if (partitioned_properties.hasPropertyVector(bulk_element_ids_string))
-        {
-            mesh_partitioner.renumberBulkElementIdsProperty(
-                partitioned_properties.getPropertyVector<std::size_t>(
-                    bulk_element_ids_string, MeshLib::MeshItemType::Cell, 1),
-                partitions);
-        }
+        mesh_partitioner.renumberBulkIdsProperty(partitions,
+                                                 partitioned_properties);
+
         mesh_partitioner.writeOtherMesh(
             other_mesh_output_file_name_wo_extension, partitions,
             partitioned_properties);

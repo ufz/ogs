@@ -123,6 +123,14 @@ public:
     /// @param name the name of the property (for instance porosity)
     bool hasPropertyVector(std::string_view name) const;
 
+    /// Check if a PropertyVector accessible by the name and by the item type
+    /// is already stored within the Properties object.
+    /// @param name      the name of the property, e.g. porosity.
+    /// @param item_type the type of mesh entity, e.g. CELL.
+    template <typename T>
+    bool hasPropertyVector(std::string const& name,
+                           MeshItemType const item_type) const;
+
     std::vector<std::string> getPropertyVectorNames() const;
     std::vector<std::string> getPropertyVectorNames(
         MeshLib::MeshItemType t) const;
