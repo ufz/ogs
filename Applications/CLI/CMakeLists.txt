@@ -1,4 +1,4 @@
-if(OGS_USE_PYTHON AND NOT OGS_BUILD_WHEEL)
+if(NOT OGS_BUILD_WHEEL)
     # Troubleshooting: If you get linker errors, such as   ogs.cpp:(.text+0xb4):
     # undefined reference to `_Py_ZeroStruct' it could be that OGS is compiled
     # with the wrong Python version. I (Ch. Leh.) observed the following: The
@@ -38,8 +38,7 @@ if(OGS_USE_PYTHON AND NOT OGS_BUILD_WHEEL)
     )
     target_compile_definitions(
         ogs_embedded_python
-        PUBLIC OGS_USE_PYTHON
-               OGS_EMBED_PYTHON_INTERPRETER
+        PUBLIC OGS_EMBED_PYTHON_INTERPRETER
                # Add macro definition, because static libs make special handling
                # necessary s.t. the embedded OpenGeoSys Python module won't be
                # removed by the linker.

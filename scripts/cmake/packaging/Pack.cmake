@@ -26,9 +26,7 @@ set(CPACK_RESOURCE_FILE_README "${PROJECT_SOURCE_DIR}/README.md")
 # set(CPACK_RESOURCE_FILE_WELCOME "${PROJECT_SOURCE_DIR}/README.md")
 
 # Package file name
-if(OGS_USE_PYTHON)
-    list(APPEND SUFFIX_LIST "python-${Python_VERSION}")
-endif()
+list(APPEND SUFFIX_LIST "python-${Python_VERSION}")
 if(OGS_BUILD_GUI)
     list(APPEND SUFFIX_LIST "de")
 endif()
@@ -73,19 +71,17 @@ if(OGS_USE_CONAN)
     )
 endif()
 
-if(OGS_USE_PYTHON)
-    if(WIN32)
-        file(GLOB PYTHON_RUNTIME_LIBS "${Python_RUNTIME_LIBRARY_DIRS}/*.dll")
-        message(STATUS "Install Python into bin-dir: ${PYTHON_RUNTIME_LIBS}")
-        install(FILES ${PYTHON_RUNTIME_LIBS} DESTINATION bin)
-        file(COPY ${PYTHON_RUNTIME_LIBS}
-             DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        )
-    else()
-        file(INSTALL ${Python_LIBRARIES} DESTINATION ${CMAKE_INSTALL_LIBDIR}
-             FOLLOW_SYMLINK_CHAIN
-        )
-    endif()
+if(WIN32)
+    file(GLOB PYTHON_RUNTIME_LIBS "${Python_RUNTIME_LIBRARY_DIRS}/*.dll")
+    message(STATUS "Install Python into bin-dir: ${PYTHON_RUNTIME_LIBS}")
+    install(FILES ${PYTHON_RUNTIME_LIBS} DESTINATION bin)
+    file(COPY ${PYTHON_RUNTIME_LIBS}
+         DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    )
+else()
+    file(INSTALL ${Python_LIBRARIES} DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         FOLLOW_SYMLINK_CHAIN
+    )
 endif()
 
 configure_file(Documentation/README.txt.in ${PROJECT_BINARY_DIR}/README.txt)
