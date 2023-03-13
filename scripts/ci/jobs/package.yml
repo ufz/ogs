@@ -98,8 +98,8 @@ offline configure:
     - tar xf ext.tar.gz
     - |
       cmake ../../ogs -B . -G Ninja --preset release \
-          -DOGS_USE_PYTHON=OFF -DOGS_DOWNLOAD_CPM_CACHE=ON
+          -DOGS_DOWNLOAD_CPM_CACHE=ON
       rm CMakeCache.txt
       cmake ../../ogs -B . -G Ninja --preset release-petsc \
-        -DOGS_USE_PYTHON=OFF -DOGS_DOWNLOAD_CPM_CACHE=ON \
+        -DOGS_DOWNLOAD_CPM_CACHE=ON \
         -DOGS_USE_MFRONT=ON -DOGS_USE_LIS=ON -DOGS_EXTERNAL_DEPENDENCIES_CACHE=./ext
