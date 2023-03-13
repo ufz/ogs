@@ -121,14 +121,20 @@ struct FunctionParameter final : public Parameter<T>
                 "coordinates.");
         }
         auto const coords = pos.getCoordinates().value();
-        x = coords[0];
-        y = coords[1];
-        z = coords[2];
-        time = t;
 
-        for (unsigned i = 0; i < _vec_expression.size(); i++)
         {
-            cache[i] = _vec_expression[i].value();
+            std::lock_guard lock_guard(_mutex);
+            x = coords[0];
+            y = coords[1];
+            z = coords[2];
+            time = t;
+
+            {
+                for (unsigned i = 0; i < _vec_expression.size(); i++)
+                {
+                    cache[i] = _vec_expression[i].value();
+                }
+            }
         }
 
         if (!this->_coordinate_system)
@@ -143,6 +149,7 @@ private:
     symbol_table_t _symbol_table;
     std::vector<expression_t> _vec_expression;
     std::vector<std::pair<std::string, CurveWrapper>> _curves;
+    mutable std::mutex _mutex;
 };
 
 std::unique_ptr<ParameterBase> createFunctionParameter(
