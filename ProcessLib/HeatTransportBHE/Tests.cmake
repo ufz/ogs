@@ -91,7 +91,7 @@ if("${Python_VERSION}" VERSION_LESS 3.9)
         EXECUTABLE_ARGS 3bhes_1U.prj
         WRAPPER time
         TESTER vtkdiff
-        REQUIREMENTS OGS_USE_PYTHON AND NOT OGS_USE_MPI
+        REQUIREMENTS NOT OGS_USE_MPI
         PYTHON_PACKAGES "TESPy==0.3.2"
         DIFF_DATA
         3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
@@ -107,7 +107,7 @@ if("${Python_VERSION}" VERSION_LESS 3.9)
         EXECUTABLE_ARGS beier_sandbox.prj
         WRAPPER time
         TESTER vtkdiff
-        REQUIREMENTS OGS_USE_PYTHON AND NOT OGS_USE_MPI
+        REQUIREMENTS NOT OGS_USE_MPI
         RUNTIME 50
         PYTHON_PACKAGES "pandas==1.4.2"
         DIFF_DATA
@@ -123,7 +123,7 @@ if("${Python_VERSION}" VERSION_LESS 3.9)
         EXECUTABLE_ARGS 3bhes_1U.prj
         WRAPPER time
         TESTER vtkdiff
-        REQUIREMENTS OGS_USE_PYTHON AND NOT OGS_USE_MPI
+        REQUIREMENTS NOT OGS_USE_MPI
         PYTHON_PACKAGES "TESPy==0.3.2"
         DIFF_DATA
         3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13

@@ -62,10 +62,8 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Excavation/time_linear_excavation.prj RUNTIME 4)
 endif()
 
-if (OGS_USE_PYTHON)
-    OgsTest(PROJECTFILE Mechanics/Linear/PythonPiston/piston.prj)
-    OgsTest(PROJECTFILE Mechanics/Linear/PythonHertzContact/hertz_contact.prj RUNTIME 16)
-endif()
+OgsTest(PROJECTFILE Mechanics/Linear/PythonPiston/piston.prj)
+OgsTest(PROJECTFILE Mechanics/Linear/PythonHertzContact/hertz_contact.prj RUNTIME 16)
 
 if (OGS_USE_MPI)
     # OgsTest(WRAPPER mpirun -np 4 PROJECTFILE Mechanics/Linear/disc_with_hole.prj)

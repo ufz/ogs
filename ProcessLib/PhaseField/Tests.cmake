@@ -98,7 +98,7 @@ AddTest(
     WRAPPER mpirun
     WRAPPER_ARGS -np 1
     TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI AND OGS_USE_PYTHON
+    REQUIREMENTS OGS_USE_MPI
     RUNTIME 18
     DIFF_DATA
         expected_surfing_ts_20_t_1_000000_0.vtu surfing_ts_20_t_1.000000.vtu displacement displacement 1e-5 0

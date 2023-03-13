@@ -21,13 +21,10 @@
 #include "NormalTractionBoundaryCondition.h"
 #include "PhaseFieldIrreversibleDamageOracleBoundaryCondition.h"
 #include "PrimaryVariableConstraintDirichletBoundaryCondition.h"
+#include "Python/PythonBoundaryCondition.h"
 #include "RobinBoundaryCondition.h"
 #include "SolutionDependentDirichletBoundaryCondition.h"
 #include "VariableDependentNeumannBoundaryCondition.h"
-
-#ifdef OGS_USE_PYTHON
-#include "Python/PythonBoundaryCondition.h"
-#endif
 
 namespace ProcessLib
 {
@@ -91,14 +88,10 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
 
     if (type == "Python")
     {
-#ifdef OGS_USE_PYTHON
         return ProcessLib::createPythonBoundaryCondition(
             config.config, config.boundary_mesh, dof_table, bulk_mesh,
             variable_id, *config.component_id, integration_order,
             shapefunction_order, all_process_variables_for_this_process);
-#else
-        OGS_FATAL("OpenGeoSys has not been built with Python support.");
-#endif
     }
 
     //
