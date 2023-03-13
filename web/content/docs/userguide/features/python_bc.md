@@ -25,7 +25,6 @@ For example it can be used to insert time series data or measurements as boundar
 
 ## Prerequisites
 
-OpenGeoSys has to be compiled with `-DOGS_USE_PYTHON` enabled. For more details about compiling OpenGeoSys, see [developer guide - build configuration](/docs/devguide/getting-started/build-configuration/).
 This feature requires basic understanding of classes in Python. Information about them and their syntax can be found in [official Python documentation](https://docs.python.org/3/tutorial/classes.html).
 
 ## Using python boundary condition in project file
