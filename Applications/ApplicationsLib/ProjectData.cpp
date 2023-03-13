@@ -13,6 +13,8 @@
 
 #include "ProjectData.h"
 
+#include <pybind11/eval.h>
+
 #include <algorithm>
 #include <boost/algorithm/string/predicate.hpp>
 #include <cctype>
@@ -20,10 +22,6 @@
 #include <range/v3/action/unique.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <set>
-
-#ifdef OGS_USE_PYTHON
-#include <pybind11/eval.h>
-#endif
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
@@ -322,7 +320,6 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
             //! \ogs_file_param{prj__python_script}
         project_config.getConfigParameterOptional<std::string>("python_script"))
     {
-#ifdef OGS_USE_PYTHON
         namespace py = pybind11;
 
         // Append to python's module search path
@@ -343,9 +340,6 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         globals["ogs_mesh_directory"] = mesh_directory;
         globals["ogs_script_directory"] = script_directory;
         py::eval_file(script_path, scope);
-#else
-        OGS_FATAL("OpenGeoSys has not been built with Python support.");
-#endif  // OGS_USE_PYTHON
     }
 
     //! \ogs_file_param{prj__curves}
