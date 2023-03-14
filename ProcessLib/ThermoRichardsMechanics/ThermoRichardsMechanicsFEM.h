@@ -17,6 +17,7 @@
 #include "LocalAssemblerInterface.h"
 #include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/KelvinVector.h"
+#include "NumLib/DOF/LocalDOF.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -269,26 +270,6 @@ private:
 
     void massLumping(LocalMatrices& loc_mat) const;
 
-    //! Makes local d.o.f.s more accessible.
-    //! Order of the returned Eigen vectors: T, p_L, u.
-    auto localDOF(std::vector<double> const& local_dof_data) const
-    {
-        static_assert(temperature_size == pressure_size);
-
-        using NodalTOrPVec =
-            typename ShapeMatricesType::template VectorType<temperature_size>;
-        using NodalDispVec =
-            typename ShapeMatricesTypeDisplacement::template VectorType<
-                displacement_size>;
-
-        return std::tuple<Eigen::Map<NodalTOrPVec const>,
-                          Eigen::Map<NodalTOrPVec const>,
-                          Eigen::Map<NodalDispVec const>>(
-            {local_dof_data.data() + temperature_index, temperature_size},
-            {local_dof_data.data() + pressure_index, pressure_size},
-            {local_dof_data.data() + displacement_index, displacement_size});
-    };
-
 public:
     void initializeConcrete() override
     {
@@ -361,6 +342,13 @@ public:
 
 private:
     std::vector<IpData> ip_data_;
+
+    static constexpr auto localDOF(std::vector<double> const& x)
+    {
+        return NumLib::localDOF<
+            ShapeFunction, ShapeFunction,
+            NumLib::Vectorial<ShapeFunctionDisplacement, DisplacementDim>>(x);
+    }
 
     static auto block_uu(auto& mat)
     {

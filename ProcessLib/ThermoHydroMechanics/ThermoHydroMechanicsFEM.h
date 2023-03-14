@@ -21,6 +21,7 @@
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "NumLib/DOF/LocalDOF.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -233,7 +234,13 @@ private:
             _ip_data, &IpData::eps, cache);
     }
 
-private:
+    static constexpr auto localDOF(std::vector<double> const& x)
+    {
+        return NumLib::localDOF<
+            ShapeFunctionPressure, ShapeFunctionPressure,
+            NumLib::Vectorial<ShapeFunctionDisplacement, DisplacementDim>>(x);
+    }
+
     ThermoHydroMechanicsProcessData<DisplacementDim>& _process_data;
 
     using BMatricesType =
