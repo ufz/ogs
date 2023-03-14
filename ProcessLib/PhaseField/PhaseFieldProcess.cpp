@@ -303,6 +303,18 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
             _process_data.elastic_energy, _process_data.surface_energy,
             _process_data.pressure_work, _coupled_solutions);
 
+#ifdef USE_PETSC
+        double const elastic_energy = _process_data.elastic_energy;
+        MPI_Allreduce(&elastic_energy, &_process_data.elastic_energy, 1,
+                      MPI_DOUBLE, MPI_SUM, PETSC_COMM_WORLD);
+        double const surface_energy = _process_data.surface_energy;
+        MPI_Allreduce(&surface_energy, &_process_data.surface_energy, 1,
+                      MPI_DOUBLE, MPI_SUM, PETSC_COMM_WORLD);
+        double const pressure_work = _process_data.pressure_work;
+        MPI_Allreduce(&pressure_work, &_process_data.pressure_work, 1,
+                      MPI_DOUBLE, MPI_SUM, PETSC_COMM_WORLD);
+#endif
+
         INFO(
             "Elastic energy: {:g} Surface energy: {:g} Pressure work: {:g}  at "
             "time: {:g} ",
