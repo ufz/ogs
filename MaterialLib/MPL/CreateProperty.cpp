@@ -189,6 +189,10 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     {
         return createSaturationVanGenuchten(config);
     }
+    if (boost::iequals(property_type, "SaturationVolStrain"))
+    {
+        return createSaturationVolStrain(config);
+    }
 
     if (boost::iequals(property_type, "CapillaryPressureVanGenuchten"))
     {
