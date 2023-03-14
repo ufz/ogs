@@ -65,17 +65,14 @@ else()
     set(Python_FIND_STRATEGY VERSION)
 endif()
 
-set(_python_componets Interpreter)
+set(_python_componets Interpreter Development.Module)
 if(NOT OGS_BUILD_WHEEL)
     list(APPEND _python_componets Development.Embed)
 endif()
 
-list(APPEND _python_componets Development.Module)
-set(CMAKE_REQUIRE_FIND_PACKAGE_Python TRUE)
-
 find_package(
     Python ${ogs.minimum_version.python}${_python_version_max}
-    COMPONENTS ${_python_componets}
+    COMPONENTS ${_python_componets} REQUIRED
 )
 
 if(OGS_USE_PIP)
