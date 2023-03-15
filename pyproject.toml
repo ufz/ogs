@@ -32,6 +32,7 @@ environment-pass = [
   "CPM_SOURCE_CACHE",
   "CCACHE_DIR",
   "CCACHE_MAXSIZE",
+  "CMAKE_ARGS",
 ]
 
 [tool.cibuildwheel.macos]

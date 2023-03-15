@@ -12,10 +12,6 @@ console_scripts = []
 for b in binaries_list:
     console_scripts.append(f"{b}=ogs._internal.provide_ogs_cli_tools_via_wheel:{b}")
 
-cmake_preset = "wheel"
-if platform.system() == "Windows":
-    cmake_preset += "-win"
-
 from pathlib import Path
 
 this_directory = Path(__file__).parent
@@ -33,7 +29,13 @@ if "SETUPTOOLS_SCM_LOCAL_SCHEME" in os.environ:
     if os.environ["SETUPTOOLS_SCM_LOCAL_SCHEME"] in local_scheme_values:
         scm_local_scheme = os.environ["SETUPTOOLS_SCM_LOCAL_SCHEME"]
 
-cmake_args = [f"--preset {cmake_preset}", "-B ."]
+if not "CMAKE_ARGS" in os.environ:
+    cmake_preset = "wheel"
+    if platform.system() == "Windows":
+        cmake_preset += "-win"
+    os.environ["CMAKE_ARGS"] = f"--preset {cmake_preset}"
+
+cmake_args = ["-B ."]
 if "SKBUILD_GENERATOR" in os.environ:
     cmake_args.extend(["-G", os.environ["SKBUILD_GENERATOR"]])
 

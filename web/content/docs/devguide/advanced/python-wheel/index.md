@@ -13,7 +13,7 @@ weight = 1068
 
 Python wheel builds are driven by [scikit-build](https://scikit-build.readthedocs.io/en/latest/) which basically is a `setuptools`-wrapper for CMake-based projects.
 
-The entry point is `setup.py` in the root directory. It uses the `wheel` CMake preset (or `wheel-win` on Windows).
+The entry point is `setup.py` in the root directory. It uses the `wheel` CMake preset. The preset can be overridden and even other CMake options can be passed via the environment variable `CMAKE_ARGS`.
 
 You can locally develop and test with the following setup:
 
