@@ -45,9 +45,7 @@ if(NOT OGS_BUILD_WHEEL)
                $<$<BOOL:${BUILD_SHARED_LIBS}>:PRIVATE
                OGS_BUILD_SHARED_LIBS>
     )
-endif()
 
-if(NOT OGS_BUILD_WHEEL)
     ogs_add_executable(ogs ogs.cpp CommandLineArgumentParser.cpp)
 
     target_link_libraries(
@@ -58,7 +56,6 @@ if(NOT OGS_BUILD_WHEEL)
                 GitInfoLib
                 MeshLib
                 ProcessLib
-                $<$<TARGET_EXISTS:ogs_embedded_python>:ogs_embedded_python>
                 $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
                 $<$<TARGET_EXISTS:InSituLib>:InSituLib>
                 $<$<TARGET_EXISTS:petsc>:petsc>

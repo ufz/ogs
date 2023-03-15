@@ -9,7 +9,12 @@ target_link_libraries(
     ApplicationsLib
     PUBLIC BaseLib GeoLib NumLib
            $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
-    PRIVATE CMakeInfoLib MathLib MeshLib MeshGeoToolsLib pybind11::pybind11
+    PRIVATE CMakeInfoLib
+            MathLib
+            MeshLib
+            MeshGeoToolsLib
+            pybind11::pybind11
+            $<$<TARGET_EXISTS:ogs_embedded_python>:ogs_embedded_python>
             $<$<BOOL:${OGS_USE_PETSC}>:petsc>
 )
 

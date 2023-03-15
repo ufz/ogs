@@ -56,6 +56,10 @@
 #include "ProcessLib/CreateTimeLoop.h"
 #include "ProcessLib/TimeLoop.h"
 
+#ifdef OGS_EMBED_PYTHON_INTERPRETER
+#include "Applications/CLI/ogs_embedded_python.h"
+#endif
+
 #ifdef OGS_BUILD_PROCESS_COMPONENTTRANSPORT
 #include "ChemistryLib/CreateChemicalSolverInterface.h"
 #include "ProcessLib/ComponentTransport/CreateComponentTransportProcess.h"
@@ -321,6 +325,10 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         project_config.getConfigParameterOptional<std::string>("python_script"))
     {
         namespace py = pybind11;
+
+#ifdef OGS_EMBED_PYTHON_INTERPRETER
+        _py_scoped_interpreter.emplace(ApplicationsLib::setupEmbeddedPython());
+#endif
 
         // Append to python's module search path
         auto py_path = py::module::import("sys").attr("path");
