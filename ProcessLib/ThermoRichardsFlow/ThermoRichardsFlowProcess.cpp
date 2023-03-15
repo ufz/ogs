@@ -157,10 +157,9 @@ void ThermoRichardsFlowProcess::assembleWithJacobianConcreteProcess(
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        process_id, M, K, b, Jac);
+    _pvma.assembleWithJacobian(_local_assemblers, pv.getActiveElementIDs(),
+                               dof_tables, t, dt, x, xdot, process_id, M, K, b,
+                               Jac);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {

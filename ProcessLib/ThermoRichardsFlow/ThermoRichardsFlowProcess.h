@@ -11,6 +11,7 @@
 #pragma once
 
 #include "LocalAssemblerInterface.h"
+#include "ProcessLib/Assembly/ParallelVectorMatrixAssembler.h"
 #include "ProcessLib/Process.h"
 #include "ThermoRichardsFlowProcessData.h"
 
@@ -67,13 +68,11 @@ namespace ThermoRichardsFlow
  *  \f$\beta\f$ is a composite coefficient by the liquid compressibility and
  * solid compressibility, \f$\alpha_B\f$ is the Biot's constant,
  * \f$\alpha_T^s\f$ is the linear thermal  expansivity of solid, \f$Q_H\f$
- * is the point source or sink term,  \f$H(S-1)\f$ is the Heaviside function, and
- * \f$ \mathbf u\f$ is the displacement. While this process does not contain a fully
- * mechanical coupling, simplfied expressions can be given to approximate the latter
- * term under certain stress conditions.
- * The liquid velocity \f$\mathbf{v}^l\f$ is
- * described by the Darcy's law as
- * \f[
+ * is the point source or sink term,  \f$H(S-1)\f$ is the Heaviside function,
+ * and \f$ \mathbf u\f$ is the displacement. While this process does not contain
+ * a fully mechanical coupling, simplfied expressions can be given to
+ * approximate the latter term under certain stress conditions. The liquid
+ * velocity \f$\mathbf{v}^l\f$ is described by the Darcy's law as \f[
  * \mathbf{v}^l=-\frac{{\mathbf k} k_{ref}}{\mu} (\nabla p - \rho^l \mathbf g)
  * \f]
  * with \f${\mathbf k}\f$ the intrinsic permeability, \f$k_{ref}\f$ the relative
@@ -135,6 +134,8 @@ private:
     std::vector<MeshLib::Node*> _base_nodes;
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_base_nodes;
     ThermoRichardsFlowProcessData _process_data;
+
+    Assembly::ParallelVectorMatrixAssembler _pvma{*_jacobian_assembler};
 
     std::vector<std::unique_ptr<LocalAssemblerIF>> _local_assemblers;
 
