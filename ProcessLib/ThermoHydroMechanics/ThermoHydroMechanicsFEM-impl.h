@@ -411,6 +411,11 @@ void ThermoHydroMechanicsLocalAssembler<
     assert(local_x.size() ==
            pressure_size + displacement_size + temperature_size);
 
+    auto const x =
+        Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size());
+    auto const xdot =
+        Eigen::Map<Eigen::VectorXd const>(local_xdot.data(), local_xdot.size());
+
     auto const [T, p, u] = localDOF(local_x);
     auto const [T_dot, p_dot, u_dot] = localDOF(local_xdot);
 
@@ -458,18 +463,8 @@ void ThermoHydroMechanicsLocalAssembler<
         Kup;
     Kup.setZero(displacement_size, pressure_size);
 
-    auto const& solid_material =
-        MaterialLib::Solids::selectSolidConstitutiveRelation(
-            _process_data.solid_materials, _process_data.material_ids,
-            _element.getID());
-
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
-    auto const& solid_phase = medium->phase("Solid");
-    auto* const frozen_liquid_phase = medium->hasPhase("FrozenLiquid")
-                                          ? &medium->phase("FrozenLiquid")
-                                          : nullptr;
-    MaterialPropertyLib::VariableArray vars;
+    bool const has_frozen_liquid_phase = medium->hasPhase("FrozenLiquid");
 
     typename ShapeMatricesTypePressure::NodalVectorType node_flux_q;
     node_flux_q.setZero(temperature_size);
@@ -480,17 +475,23 @@ void ThermoHydroMechanicsLocalAssembler<
 
     double max_velocity_magnitude = 0.;
 
-    auto const& identity2 = Invariants::identity2;
-    GlobalDimMatrixType const& I(
-        GlobalDimMatrixType::Identity(DisplacementDim, DisplacementDim));
-
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
+        auto const& N_u = _ip_data[ip].N_u;
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(), ip,
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, N_u))};
+
+        auto const crv = updateConstitutiveRelations(
+            x, xdot, x_position, t, dt, _ip_data[ip], _ip_data_output[ip]);
+
         auto const& w = _ip_data[ip].integration_weight;
 
-        auto const& N_u = _ip_data[ip].N_u;
         auto const& dNdx_u = _ip_data[ip].dNdx_u;
 
         auto const& N_p = _ip_data[ip].N_p;
@@ -501,14 +502,7 @@ void ThermoHydroMechanicsLocalAssembler<
         auto const& N_T = N_p;
         auto const& dNdx_T = dNdx_p;
         auto const T_int_pt = N_T.dot(T);
-        double const dT_int_pt = N_T.dot(T_dot) * dt;
 
-        ParameterLib::SpatialPosition const x_position{
-            std::nullopt, _element.getID(), ip,
-            MathLib::Point3d(
-                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
-                                               ShapeMatricesTypeDisplacement>(
-                    _element, N_u))};
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
@@ -519,167 +513,49 @@ void ThermoHydroMechanicsLocalAssembler<
                                           typename BMatricesType::BMatrixType>(
                 dNdx_u, N_u, x_coord, _is_axially_symmetric);
 
-        auto& eps = _ip_data[ip].eps;
-        eps.noalias() = B * u;
-        auto const& sigma_eff = _ip_data[ip].sigma_eff;
-
-        vars.temperature = T_int_pt;
-        double const p_int_pt = N_p.dot(p);
-        vars.phase_pressure = p_int_pt;
-
-        vars.liquid_saturation = 1.0;
-
-        auto const solid_density =
-            solid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(vars, x_position, t, dt);
-
-        auto const porosity =
-            medium->property(MaterialPropertyLib::PropertyType::porosity)
-                .template value<double>(vars, x_position, t, dt);
-        vars.porosity = porosity;
-
-        auto const alpha =
-            medium
-                ->property(MaterialPropertyLib::PropertyType::biot_coefficient)
-                .template value<double>(vars, x_position, t, dt);
-
-        auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
-            t, x_position, dt, static_cast<double>(T_int_pt));
-        auto const solid_skeleton_compressibility =
-            1 / solid_material.getBulkModulus(t, x_position, &C_el);
-
-        auto const beta_SR = (1 - alpha) * solid_skeleton_compressibility;
-
-        // Set mechanical variables for the intrinsic permeability model
-        // For stress dependent permeability.
-        {
-            auto const sigma_total =
-                (_ip_data[ip].sigma_eff - alpha * p_int_pt * identity2).eval();
-            vars.total_stress.emplace<SymmetricTensor>(
-                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                    sigma_total));
-        }
-        // For strain dependent permeability
-        vars.volumetric_strain = Invariants::trace(_ip_data[ip].eps);
-        vars.equivalent_plastic_strain =
-            _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
-
-        auto const intrinsic_permeability =
-            MaterialPropertyLib::formEigenTensor<DisplacementDim>(
-                medium
-                    ->property(MaterialPropertyLib::PropertyType::permeability)
-                    .value(vars, x_position, t, dt));
-
-        auto const fluid_density =
-            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(vars, x_position, t, dt);
-
-        vars.density = fluid_density;
-        auto const drho_dp =
-            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template dValue<double>(
-                    vars, MaterialPropertyLib::Variable::phase_pressure,
-                    x_position, t, dt);
-
-        auto const fluid_compressibility = 1 / fluid_density * drho_dp;
-
-        double const fluid_volumetric_thermal_expansion_coefficient =
-            MaterialPropertyLib::getLiquidThermalExpansivity(
-                liquid_phase, vars, fluid_density, x_position, t, dt);
-
-        // Use the viscosity model to compute the viscosity
-        auto const viscosity =
-            liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                .template value<double>(vars, x_position, t, dt);
-        GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
-
         auto const& b = _process_data.specific_body_force;
-
-        // Consider also anisotropic thermal expansion.
-        MathLib::KelvinVector::KelvinVectorType<
-            DisplacementDim> const solid_linear_thermal_expansion_coefficient =
-            MPL::formKelvinVector<DisplacementDim>(
-                solid_phase
-                    .property(
-                        MaterialPropertyLib::PropertyType::thermal_expansivity)
-                    .value(vars, x_position, t, dt));
-
-        MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dthermal_strain =
-                solid_linear_thermal_expansion_coefficient * dT_int_pt;
-
-        auto const K_pT_thermal_osmosis =
-            (solid_phase.hasProperty(
-                 MaterialPropertyLib::PropertyType::thermal_osmosis_coefficient)
-                 ? MaterialPropertyLib::formEigenTensor<DisplacementDim>(
-                       solid_phase
-                           .property(MaterialPropertyLib::PropertyType::
-                                         thermal_osmosis_coefficient)
-                           .value(vars, x_position, t, dt))
-                 : Eigen::MatrixXd::Zero(DisplacementDim, DisplacementDim));
-
-        auto velocity =
-            (-K_over_mu * dNdx_p * p - K_pT_thermal_osmosis * dNdx_T * T)
-                .eval();
-        velocity += K_over_mu * fluid_density * b;
+        auto const velocity = _ip_data_output[ip].velocity;
 
         //
         // displacement equation, displacement part
         //
-        auto& eps_prev = _ip_data[ip].eps_prev;
-        auto& eps_m = _ip_data[ip].eps_m;
-        auto& eps_m_prev = _ip_data[ip].eps_m_prev;
-        eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
-        vars.mechanical_strain
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps_m);
-
-        auto C = _ip_data[ip].updateConstitutiveRelation(
-            vars, t, x_position, dt, T_int_pt - dT_int_pt);
-
         local_Jac
             .template block<displacement_size, displacement_size>(
                 displacement_index, displacement_index)
-            .noalias() += B.transpose() * C * B * w;
-
-        auto const rho =
-            solid_density * (1 - porosity) + porosity * fluid_density;
+            .noalias() += B.transpose() * crv.C * B * w;
 
         local_rhs.template segment<displacement_size>(displacement_index)
-            .noalias() -=
-            (B.transpose() * sigma_eff - N_u_op(N_u).transpose() * rho * b) * w;
+            .noalias() -= (B.transpose() * _ip_data[ip].sigma_eff -
+                           N_u_op(N_u).transpose() * crv.rho * b) *
+                          w;
 
         //
         // displacement equation, pressure part (K_up)
         //
-
-        Kup.noalias() += B.transpose() * alpha * identity2 * N_p * w;
+        Kup.noalias() +=
+            B.transpose() * crv.alpha_biot * Invariants::identity2 * N_p * w;
 
         //
         // pressure equation, pressure part (K_pp and M_pp).
         //
-        laplace_p.noalias() += dNdx_p.transpose() * K_over_mu * dNdx_p * w;
+        laplace_p.noalias() += dNdx_p.transpose() * crv.K_over_mu * dNdx_p * w;
 
-        storage_p.noalias() +=
-            N_p.transpose() *
-            (porosity * fluid_compressibility + (alpha - porosity) * beta_SR) *
-            N_p * w;
+        storage_p.noalias() += N_p.transpose() *
+                               (crv.porosity * crv.fluid_compressibility +
+                                (crv.alpha_biot - crv.porosity) * crv.beta_SR) *
+                               N_p * w;
 
         laplace_T.noalias() +=
-            dNdx_p.transpose() * K_pT_thermal_osmosis * dNdx_T * w;
+            dNdx_p.transpose() * crv.K_pT_thermal_osmosis * dNdx_T * w;
         //
         //  RHS, pressure part
         //
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
-            dNdx_p.transpose() * fluid_density * K_over_mu * b * w;
+            dNdx_p.transpose() * crv.fluid_density * crv.K_over_mu * b * w;
         //
         // pressure equation, temperature part (M_pT)
         //
-        auto const beta =
-            porosity * fluid_volumetric_thermal_expansion_coefficient +
-            (alpha - porosity) *
-                Invariants::trace(solid_linear_thermal_expansion_coefficient);
-        storage_T.noalias() += N_T.transpose() * beta * N_T * w;
+        storage_T.noalias() += N_T.transpose() * crv.beta * N_T * w;
 
         //
         // pressure equation, displacement part.
@@ -689,114 +565,40 @@ void ThermoHydroMechanicsLocalAssembler<
         //
         // temperature equation, temperature part.
         //
-        const double c_f =
-            liquid_phase
-                .property(
-                    MaterialPropertyLib::PropertyType::specific_heat_capacity)
-                .template value<double>(vars, x_position, t, dt);
-        auto effective_thermal_conductivity =
-            MaterialPropertyLib::formEigenTensor<DisplacementDim>(
-                medium
-                    ->property(
-                        MaterialPropertyLib::PropertyType::thermal_conductivity)
-                    .value(vars, x_position, t, dt));
-
-        if (_process_data.stabilizer)
-        {
-            effective_thermal_conductivity.noalias() +=
-                fluid_density * c_f *
-                _process_data.stabilizer->computeArtificialDiffusion(
-                    _element.getID(), velocity.norm()) *
-                I;
-        }
-
-        KTT.noalias() +=
-            dNdx_T.transpose() * effective_thermal_conductivity * dNdx_T * w;
+        KTT.noalias() += dNdx_T.transpose() *
+                         crv.effective_thermal_conductivity * dNdx_T * w;
         K_TT_advection.noalias() += N_T.transpose() * velocity.transpose() *
-                                    dNdx_T * fluid_density * c_f * w;
+                                    dNdx_T * crv.fluid_density * crv.c_f * w;
 
         if (apply_full_upwind)
         {
             node_flux_q.noalias() -=
-                fluid_density * c_f * velocity.transpose() * dNdx_T * w;
+                crv.fluid_density * crv.c_f * velocity.transpose() * dNdx_T * w;
             max_velocity_magnitude =
                 std::max(max_velocity_magnitude, velocity.norm());
         }
 
-        double const c_s =
-            solid_phase
-                .property(
-                    MaterialPropertyLib::PropertyType::specific_heat_capacity)
-                .template value<double>(vars, x_position, t, dt);
-
-        // Non-const for modification by freezing terms.
-        double effective_volumetric_heat_capacity =
-            porosity * fluid_density * c_f +
-            (1.0 - porosity) * solid_density * c_s;
-
-        if (frozen_liquid_phase)
+        if (has_frozen_liquid_phase)
         {
-            double const phi_fr =
-                (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
-                    .template value<double>(vars, x_position, t, dt);
-
-            auto const frozen_liquid_value =
-                [&](MaterialPropertyLib::PropertyType const p)
-            {
-                return (*frozen_liquid_phase)[p].template value<double>(
-                    vars, x_position, t, dt);
-            };
-
-            double const rho_fr =
-                frozen_liquid_value(MaterialPropertyLib::PropertyType::density);
-
-            double const c_fr = frozen_liquid_value(
-                MaterialPropertyLib::PropertyType::specific_heat_capacity);
-
-            // specific latent heat of melting
-            double const l_fr = frozen_liquid_value(
-                MaterialPropertyLib::PropertyType::specific_latent_heat);
-
-            double const dphi_fr_dT =
-                (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
-                    .template dValue<double>(
-                        vars, MaterialPropertyLib::Variable::temperature,
-                        x_position, t, dt);
-
-            effective_volumetric_heat_capacity +=
-                -phi_fr * fluid_density * c_f + phi_fr * rho_fr * c_fr -
-                l_fr * rho_fr * dphi_fr_dT;
-
-            // part of dMTT_dT derivative for freezing
-            double const d2phi_fr_dT2 =
-                (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
-                    .template d2Value<double>(
-                        vars, MaterialPropertyLib::Variable::temperature,
-                        MaterialPropertyLib::Variable::temperature, x_position,
-                        t, dt);
-
             local_Jac
                 .template block<temperature_size, temperature_size>(
                     temperature_index, temperature_index)
-                .noalias() -=
-                N_T.transpose() *
-                ((rho_fr * c_fr - fluid_density * c_f) * dphi_fr_dT +
-                 l_fr * rho_fr * d2phi_fr_dT2) *
-                N_T.dot(T_dot) * N_T * w;
+                .noalias() -= N_T.transpose() * crv.J_TT_fr * N_T * w;
         }
 
         MTT.noalias() +=
-            N_T.transpose() * effective_volumetric_heat_capacity * N_T * w;
+            N_T.transpose() * crv.effective_volumetric_heat_capacity * N_T * w;
 
         //
         // temperature equation, pressure part
         //
-        KTp.noalias() +=
-            dNdx_T.transpose() * T_int_pt * K_pT_thermal_osmosis * dNdx_p * w;
+        KTp.noalias() += dNdx_T.transpose() * T_int_pt *
+                         crv.K_pT_thermal_osmosis * dNdx_p * w;
 
         // linearized darcy
-        dKTT_dp.noalias() -= fluid_density * c_f * N_T.transpose() *
-                             (dNdx_T * T).transpose() * K_over_mu * dNdx_p * w;
+        dKTT_dp.noalias() -= crv.fluid_density * crv.c_f * N_T.transpose() *
+                             (dNdx_T * T).transpose() * crv.K_over_mu * dNdx_p *
+                             w;
 
         /* TODO (Joerg) Temperature changes due to thermal dilatation of the
          * fluid, which are usually discarded as being very small.
@@ -805,9 +607,16 @@ void ThermoHydroMechanicsLocalAssembler<
          * completeness"
          * Keeping the code here in the case these are needed for the named
          * effects in the future.
-
         if (fluid_compressibility != 0)
         {
+            auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
+                t, x_position, dt, static_cast<double>(T_int_pt));
+            auto const solid_skeleton_compressibility =
+                1 / solid_material.getBulkModulus(t, x_position, &C_el);
+            double const fluid_volumetric_thermal_expansion_coefficient =
+                MaterialPropertyLib::getLiquidThermalExpansivity(
+                    liquid_phase, vars, fluid_density, x_position, t, dt);
+
             KTT.noalias() +=
                 dNdx_T.transpose() *
                 (-T_int_pt * fluid_volumetric_thermal_expansion_coefficient *
