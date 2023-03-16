@@ -77,8 +77,6 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
     BaseLib::RunTime timer;
     timer.start();
 
-    MeshLib::NodePartitionedMesh* mesh = nullptr;
-
     // Always try binary file first
     std::string const fname_new = file_name_base + "_partitioned_msh_cfg" +
                                   std::to_string(_mpi_comm_size) + ".bin";
@@ -99,7 +97,8 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
 
     INFO("Reading corresponding part of mesh data from binary file {:s} ...",
          file_name_base);
-    mesh = readMesh(file_name_base);
+
+    MeshLib::NodePartitionedMesh* mesh = readMesh(file_name_base);
 
     INFO("[time] Reading the mesh took {:f} s.", timer.elapsed());
 
@@ -154,6 +153,8 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readMesh(
     const std::string fname_header = file_name_base + "_partitioned_msh_";
     const std::string fname_num_p_ext = std::to_string(_mpi_comm_size) + ".bin";
 
+    // Read the config meta data from *cfg* file into struct PartitionedMeshInfo
+    // _mesh_info
     if (!readDataFromFile(
             fname_header + "cfg" + fname_num_p_ext,
             static_cast<MPI_Offset>(static_cast<unsigned>(_mpi_rank) *
@@ -277,9 +278,8 @@ void NodePartitionedMeshReader::readProperties(
             "Could not read the partition meta data for the mpi process {:d}",
             _mpi_rank);
     }
-    DBUG("[{:d}] offset in the PropertyVector: {:d}", _mpi_rank, pvpmd->offset);
-    DBUG("[{:d}] {:d} tuples in partition.", _mpi_rank,
-         pvpmd->number_of_tuples);
+    DBUG("offset in the PropertyVector: {:d}", pvpmd->offset);
+    DBUG("{:d} tuples in partition.", pvpmd->number_of_tuples);
     is.close();
 
     const std::string fname_val = file_name_base + "_partitioned_" + item_type +
@@ -309,12 +309,10 @@ void NodePartitionedMeshReader::readDomainSpecificPartOfPropertyVectors(
     std::size_t const number_of_properties = vec_pvmd.size();
     for (std::size_t i(0); i < number_of_properties; ++i)
     {
-        DBUG(
-            "[{:d}] global offset: {:d}, offset within the PropertyVector: "
-            "{:d}.",
-            _mpi_rank, global_offset,
-            global_offset + pvpmd.offset * vec_pvmd[i]->number_of_components *
-                                vec_pvmd[i]->data_type_size_in_bytes);
+        DBUG("global offset: {:d}, offset within the PropertyVector: {:d}.",
+             global_offset,
+             global_offset + pvpmd.offset * vec_pvmd[i]->number_of_components *
+                                 vec_pvmd[i]->data_type_size_in_bytes);
 
         // Special field data such as OGS_VERSION, IntegrationPointMetaData,
         // etc., which are not "real" integration points, are copied "as is"
