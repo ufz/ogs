@@ -199,6 +199,21 @@ public:
     }
 
 private:
+    using BMatricesType =
+        BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
+    using IpData =
+        IntegrationPointData<BMatricesType, ShapeMatricesTypeDisplacement,
+                             ShapeMatricesTypePressure, DisplacementDim,
+                             ShapeFunctionDisplacement::NPOINTS>;
+
+private:
+    ConstitutiveRelationsValues<DisplacementDim> updateConstitutiveRelations(
+        Eigen::Ref<Eigen::VectorXd const> const local_x,
+        Eigen::Ref<Eigen::VectorXd const> const local_xdot,
+        ParameterLib::SpatialPosition const& x_position, double const t,
+        double const dt, IpData& ip_data,
+        IntegrationPointDataForOutput<DisplacementDim>& ip_data_output) const;
+
     std::size_t setSigma(double const* values)
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
@@ -245,12 +260,6 @@ private:
 
     ThermoHydroMechanicsProcessData<DisplacementDim>& _process_data;
 
-    using BMatricesType =
-        BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
-    using IpData =
-        IntegrationPointData<BMatricesType, ShapeMatricesTypeDisplacement,
-                             ShapeMatricesTypePressure, DisplacementDim,
-                             ShapeFunctionDisplacement::NPOINTS>;
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
     std::vector<IntegrationPointDataForOutput<DisplacementDim>,
                 Eigen::aligned_allocator<
