@@ -235,7 +235,8 @@ private:
             _ip_data, &IpData::eps, cache);
     }
 
-    static constexpr auto localDOF(std::vector<double> const& x)
+    template <typename SolutionVector>
+    static constexpr auto localDOF(SolutionVector const& x)
     {
         return NumLib::localDOF<
             ShapeFunctionPressure, ShapeFunctionPressure,
