@@ -252,6 +252,10 @@ private:
                              ShapeMatricesTypePressure, DisplacementDim,
                              ShapeFunctionDisplacement::NPOINTS>;
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
+    std::vector<IntegrationPointDataForOutput<DisplacementDim>,
+                Eigen::aligned_allocator<
+                    IntegrationPointDataForOutput<DisplacementDim>>>
+        _ip_data_output;
 
     NumLib::GenericIntegrationMethod const& _integration_method;
     MeshLib::Element const& _element;

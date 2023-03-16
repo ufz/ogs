@@ -48,6 +48,7 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         _integration_method.getNumberOfPoints();
 
     _ip_data.reserve(n_integration_points);
+    _ip_data_output.resize(n_integration_points);
     _secondary_data.N_u.resize(n_integration_points);
 
     auto const shape_matrices_u =
@@ -634,51 +635,117 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtDarcyVelocity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
-
-    constexpr int process_id = 0;  // monolithic scheme;
-    auto const indices =
-        NumLib::getIndices(_element.getID(), *dof_table[process_id]);
-    assert(!indices.empty());
-    auto const local_x = x[process_id]->get(indices);
 
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
         double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
         cache, DisplacementDim, n_integration_points);
 
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        cache_matrix.col(ip).noalias() = _ip_data_output[ip].velocity;
+    }
+
+    return cache;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+void ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    postNonLinearSolverConcrete(std::vector<double> const& local_x,
+                                std::vector<double> const& local_xdot,
+                                double const t, double const dt,
+                                bool const use_monolithic_scheme,
+                                int const /*process_id*/)
+{
+    const int displacement_offset =
+        use_monolithic_scheme ? displacement_index : 0;
+
+    auto u =
+        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
+            displacement_size> const>(local_x.data() + displacement_offset,
+                                      displacement_size);
+
+    auto T = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+        temperature_size> const>(local_x.data() + temperature_index,
+                                 temperature_size);
+    auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+        pressure_size> const>(local_x.data() + pressure_index, pressure_size);
+
+    auto const T_dot =
+        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+            temperature_size> const>(local_xdot.data() + temperature_index,
+                                     temperature_size);
+
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
+    auto const& identity2 = Invariants::identity2;
     MaterialPropertyLib::VariableArray vars;
 
-    auto const& identity2 = Invariants::identity2;
-
-    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    int const n_integration_points = _integration_method.getNumberOfPoints();
+    for (int ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& N_p = _ip_data[ip].N_p;
-
-        auto const [T, p, u] = localDOF(local_x);
+        auto const& N_u = _ip_data[ip].N_u;
+        auto const& N_T = _ip_data[ip].N_p;
+        auto const& dNdx_u = _ip_data[ip].dNdx_u;
 
         ParameterLib::SpatialPosition const x_position{
             std::nullopt, _element.getID(), ip,
             MathLib::Point3d(
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
-                    _element, _ip_data[ip].N_u))};
-        vars.temperature = N_p.dot(T);  // N_p = N_T
-        double const p_int_pt = N_p.dot(p);
+                    _element, N_u))};
+        auto const x_coord =
+            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                           ShapeMatricesTypeDisplacement>(
+                _element, N_u);
+        auto const B =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunctionDisplacement::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+
+        double const T_int_pt = N_T.dot(T);
+        vars.temperature = T_int_pt;
+        double const p_int_pt = N_T.dot(p);
         vars.phase_pressure = p_int_pt;
 
-        // TODO (naumov) Temporary value not used by current material models.
-        // Need extension of secondary variables interface.
-        double const dt = std::numeric_limits<double>::quiet_NaN();
+        // Consider also anisotropic thermal expansion.
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim> const solid_linear_thermal_expansion_coefficient =
+            MPL::formKelvinVector<DisplacementDim>(
+                solid_phase
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_expansivity)
+                    .value(vars, x_position, t, dt));
+
+        double const dT_int_pt = N_T.dot(T_dot) * dt;
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
+            dthermal_strain =
+                solid_linear_thermal_expansion_coefficient * dT_int_pt;
+
+        auto& eps = _ip_data[ip].eps;
+        eps.noalias() = B * u;
+
+        auto& eps_prev = _ip_data[ip].eps_prev;
+        auto& eps_m = _ip_data[ip].eps_m;
+        auto& eps_m_prev = _ip_data[ip].eps_m_prev;
+        eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
+        vars.mechanical_strain
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_m);
+
+        _ip_data[ip].updateConstitutiveRelation(vars, t, x_position, dt,
+                                                T_int_pt - dT_int_pt);
 
         auto const alpha =
             medium
@@ -727,101 +794,9 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
 
         // Compute the velocity and add thermal osmosis effect on velocity
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
-        cache_matrix.col(ip).noalias() = -K_over_mu * dNdx_p * p -
-                                         K_pT_thermal_osmosis * dNdx_p * T +
-                                         K_over_mu * fluid_density * b;
-    }
-
-    return cache;
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int DisplacementDim>
-void ThermoHydroMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
-    postNonLinearSolverConcrete(std::vector<double> const& local_x,
-                                std::vector<double> const& local_xdot,
-                                double const t, double const dt,
-                                bool const use_monolithic_scheme,
-                                int const /*process_id*/)
-{
-    const int displacement_offset =
-        use_monolithic_scheme ? displacement_index : 0;
-
-    auto u =
-        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_x.data() + displacement_offset,
-                                      displacement_size);
-
-    auto T = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-        temperature_size> const>(local_x.data() + temperature_index,
-                                 temperature_size);
-    auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-        pressure_size> const>(local_x.data() + pressure_index, pressure_size);
-
-    auto const T_dot =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            temperature_size> const>(local_xdot.data() + temperature_index,
-                                     temperature_size);
-
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
-    auto const& solid_phase = medium->phase("Solid");
-    MaterialPropertyLib::VariableArray vars;
-
-    int const n_integration_points = _integration_method.getNumberOfPoints();
-    for (int ip = 0; ip < n_integration_points; ip++)
-    {
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& N_T = _ip_data[ip].N_p;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
-
-        ParameterLib::SpatialPosition const x_position{
-            std::nullopt, _element.getID(), ip,
-            MathLib::Point3d(
-                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
-                                               ShapeMatricesTypeDisplacement>(
-                    _element, N_u))};
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                _element, N_u);
-        auto const B =
-            LinearBMatrix::computeBMatrix<DisplacementDim,
-                                          ShapeFunctionDisplacement::NPOINTS,
-                                          typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
-
-        double const T_int_pt = N_T.dot(T);
-        vars.temperature = T_int_pt;
-        vars.phase_pressure = N_T.dot(p);  // N_T = N_p
-
-        // Consider also anisotropic thermal expansion.
-        MathLib::KelvinVector::KelvinVectorType<
-            DisplacementDim> const solid_linear_thermal_expansion_coefficient =
-            MPL::formKelvinVector<DisplacementDim>(
-                solid_phase
-                    .property(
-                        MaterialPropertyLib::PropertyType::thermal_expansivity)
-                    .value(vars, x_position, t, dt));
-
-        double const dT_int_pt = N_T.dot(T_dot) * dt;
-        MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dthermal_strain =
-                solid_linear_thermal_expansion_coefficient * dT_int_pt;
-
-        auto& eps = _ip_data[ip].eps;
-        eps.noalias() = B * u;
-
-        auto& eps_prev = _ip_data[ip].eps_prev;
-        auto& eps_m = _ip_data[ip].eps_m;
-        auto& eps_m_prev = _ip_data[ip].eps_m_prev;
-        eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
-        vars.mechanical_strain
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps_m);
-
-        _ip_data[ip].updateConstitutiveRelation(vars, t, x_position, dt,
-                                                T_int_pt - dT_int_pt);
+        _ip_data_output[ip].velocity = -K_over_mu * dNdx_p * p -
+                                       K_pT_thermal_osmosis * dNdx_p * T +
+                                       K_over_mu * fluid_density * b;
     }
 }
 
