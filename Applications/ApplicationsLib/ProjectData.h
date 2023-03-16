@@ -18,6 +18,7 @@
 #include <string>
 
 #include "BaseLib/ConfigTree-fwd.h"
+#include "BaseLib/ExportSymbol.h"
 #include "ChemistryLib/ChemicalSolverInterface.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
@@ -157,4 +158,5 @@ private:
 /// Parses a comma separated list of integers.
 /// Such lists occur in the medium definition in the OGS prj file.
 /// Error messages in this function refer to this specific purpose.
-std::vector<int> splitMaterialIdString(std::string const& material_id_string);
+OGS_EXPORT_SYMBOL std::vector<int> splitMaterialIdString(
+    std::string const& material_id_string);

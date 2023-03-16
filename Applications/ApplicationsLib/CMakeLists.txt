@@ -9,12 +9,7 @@ target_link_libraries(
     ApplicationsLib
     PUBLIC BaseLib GeoLib NumLib
            $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
-    PRIVATE CMakeInfoLib
-            MathLib
-            MeshLib
-            MeshGeoToolsLib
-            pybind11::pybind11
-            $<$<TARGET_EXISTS:ogs_embedded_python>:ogs_embedded_python>
+    PRIVATE CMakeInfoLib MathLib MeshLib MeshGeoToolsLib pybind11::pybind11
             $<$<BOOL:${OGS_USE_PETSC}>:petsc>
 )
 
@@ -34,6 +29,18 @@ target_compile_definitions(
     ApplicationsLib PUBLIC $<$<BOOL:${USE_LIS}>:USE_LIS>
     PRIVATE $<$<BOOL:${OGS_USE_INSITU}>:OGS_USE_INSITU>
 )
+
+# ~~~
+# Prevent warning:
+# warning: ‘ProjectData’ declared with greater visibility than the type of its field ‘ProjectData::_py_scoped_interpreter’
+# see https://pybind11.readthedocs.io/en/stable/faq.html#someclass-declared-with-greater-visibility-than-the-type-of-its-field-someclass-member-wattributes
+# ~~~
+if(NOT OGS_BUILD_WHEEL)
+    target_link_libraries(ApplicationsLib PRIVATE ogs_embedded_python)
+    set_target_properties(
+        ApplicationsLib PROPERTIES CXX_VISIBILITY_PRESET hidden
+    )
+endif()
 
 # Set cpp definitions if the cmake option is enabled for the given process.
 foreach(process ${_enabled_processes})
