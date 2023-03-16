@@ -24,6 +24,7 @@ linux ctest large:
   image: $CONTAINER_GCC_IMAGE
   extends:
     - .template-build-linux
+    - .test-artifacts
   tags: [docker, envinf2]
   needs: [meta, ci_images]
   rules:
