@@ -9,6 +9,7 @@ endforeach()
 include(Tests.cmake)
 
 get_source_files(SOURCES)
+append_source_files(SOURCES Assembly)
 append_source_files(SOURCES BoundaryConditionAndSourceTerm)
 append_source_files(SOURCES BoundaryConditionAndSourceTerm/Utils)
 append_source_files(SOURCES SurfaceFlux)
