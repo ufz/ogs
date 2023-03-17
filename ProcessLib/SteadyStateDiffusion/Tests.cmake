@@ -539,6 +539,10 @@ AddTest(
     square_1e1_neumann_ts_1_t_1_000000_1.vtu square_1e1_neumann_ts_1_t_1_000000_1.vtu pressure pressure 1e-14 0
 )
 
+if(NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE "Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_1e4_anisotropic.prj")
+endif()
+
 AddTest(
     NAME ParallelFEM_SteadyStateDiffusion_cube_2
     PATH EllipticPETSc/cube_1x1x1_SteadyStateDiffusion/2
@@ -552,7 +556,6 @@ AddTest(
     cube_1e4_anisotropic_ts_1_t_1_000000_0.vtu cube_1e4_anisotropic_ts_1_t_1_000000_0.vtu pressure pressure 1e-14 0
     cube_1e4_anisotropic_ts_1_t_1_000000_1.vtu cube_1e4_anisotropic_ts_1_t_1_000000_1.vtu pressure pressure 1e-14 0
 )
-#OgsTest(PROJECTFILE "EllipticPETSc/cube_1x1x1_SteadyStateDiffusion/2/cube_1e4_anisotropic.prj")
 
 # Single core
 # CUBE 1x1x1 GROUNDWATER FLOW TESTS
@@ -978,6 +981,4 @@ AddTest(
 
 if(OGS_USE_MPI AND OGS_USE_PIP)
     NotebookTest(NOTEBOOKFILE Notebooks/SimplePETSc.ipynb RUNTIME 10)
-else()
-    OgsTest(PROJECTFILE "Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_1e4_anisotropic.prj")
-endif() # OGS_USE_MPI
+endif()
