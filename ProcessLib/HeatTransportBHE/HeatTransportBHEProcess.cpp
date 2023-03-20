@@ -307,8 +307,9 @@ void HeatTransportBHEProcess::preTimestepConcreteProcess(
 }
 
 void HeatTransportBHEProcess::postTimestepConcreteProcess(
-    std::vector<GlobalVector*> const& x, const double t, const double dt,
-    int const process_id)
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& /*x_dot*/, const double t,
+    const double dt, int const process_id)
 {
     if (_process_data.py_bc_object == nullptr ||
         !_process_data._use_server_communication)

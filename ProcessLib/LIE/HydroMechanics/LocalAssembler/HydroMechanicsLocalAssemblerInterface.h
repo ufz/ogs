@@ -99,7 +99,9 @@ public:
         }
     }
 
-    void postTimestepConcrete(Eigen::VectorXd const& local_x_, const double t,
+    void postTimestepConcrete(Eigen::VectorXd const& local_x_,
+                              Eigen::VectorXd const& /*local_x_dot*/,
+                              const double t,
                               double const dt) override
     {
         _local_u.setZero();

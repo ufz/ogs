@@ -20,6 +20,7 @@
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/DOF/LocalDOF.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
@@ -54,7 +55,7 @@ struct IntegrationPointData final
     }
 
     typename BMatricesType::KelvinVectorType sigma, sigma_prev;
-    typename BMatricesType::KelvinVectorType eps, eps_prev;
+    typename BMatricesType::KelvinVectorType eps;
     double free_energy_density = 0;
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
@@ -68,7 +69,6 @@ struct IntegrationPointData final
 
     void pushBackState()
     {
-        eps_prev = eps;
         sigma_prev = sigma;
         material_state_variables->pushBackState();
     }
@@ -164,7 +164,6 @@ public:
 
             // Previous time step values are not initialized and are set later.
             ip_data.sigma_prev.resize(kelvin_vector_size);
-            ip_data.eps_prev.resize(kelvin_vector_size);
 
             _secondary_data.N[ip] = shape_matrices[ip].N;
         }
@@ -235,7 +234,8 @@ public:
     // Returns tangent stiffness.
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
     updateConstitutiveRelations(
-        Eigen::Ref<Eigen::VectorXd const> const& local_x,
+        Eigen::Ref<Eigen::VectorXd const> const& u,
+        Eigen::Ref<Eigen::VectorXd const> const& u_dot,
         ParameterLib::SpatialPosition const& x_position, double const t,
         double const dt,
         IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>&
@@ -244,7 +244,6 @@ public:
         MPL::VariableArray variables_prev;
         MPL::VariableArray variables;
 
-        auto const& eps_prev = ip_data.eps_prev;
         auto const& sigma_prev = ip_data.sigma_prev;
 
         auto& eps = ip_data.eps;
@@ -262,14 +261,14 @@ public:
                                           typename BMatricesType::BMatrixType>(
                 dNdx, N, x_coord, _is_axially_symmetric);
 
-        eps.noalias() = B * local_x;
+        eps.noalias() = B * u;
 
         variables_prev.stress
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 sigma_prev);
         variables_prev.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps_prev);
+                B * (u - u_dot * dt));
 
         double const T_ref =
             _process_data.reference_temperature
@@ -310,7 +309,7 @@ public:
 
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& /*local_xdot*/,
+                              std::vector<double> const& local_x_dot,
                               std::vector<double>& /*local_M_data*/,
                               std::vector<double>& /*local_K_data*/,
                               std::vector<double>& local_b_data,
@@ -323,6 +322,9 @@ public:
 
         auto local_b = MathLib::createZeroedVector<NodalDisplacementVectorType>(
             local_b_data, local_matrix_size);
+
+        auto [u] = localDOF(local_x);
+        auto [u_dot] = localDOF(local_x_dot);
 
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -349,10 +351,8 @@ public:
 
             auto const& sigma = _ip_data[ip].sigma;
 
-            auto const C = updateConstitutiveRelations(
-                Eigen::Map<NodalForceVectorType const>(
-                    local_x.data(), ShapeFunction::NPOINTS * DisplacementDim),
-                x_position, t, dt, _ip_data[ip]);
+            auto const C = updateConstitutiveRelations(u, u_dot, x_position, t,
+                                                       dt, _ip_data[ip]);
 
             auto const rho = _process_data.solid_density(t, x_position)[0];
             local_b.noalias() -=
@@ -361,8 +361,9 @@ public:
         }
     }
 
-    void postTimestepConcrete(Eigen::VectorXd const& local_x, double const t,
-                              double const dt) override
+    void postTimestepConcrete(Eigen::VectorXd const& local_x,
+                              Eigen::VectorXd const& local_x_dot,
+                              double const t, double const dt) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -374,7 +375,7 @@ public:
         {
             x_position.setIntegrationPoint(ip);
 
-            updateConstitutiveRelations(local_x, x_position, t, dt,
+            updateConstitutiveRelations(local_x, local_x_dot, x_position, t, dt,
                                         _ip_data[ip]);
 
             auto& eps = _ip_data[ip].eps;
@@ -523,6 +524,13 @@ public:
     }
 
 private:
+    static constexpr auto localDOF(std::vector<double> const& x)
+    {
+        return NumLib::localDOF<
+            NumLib::Vectorial<ShapeFunction, DisplacementDim>>(x);
+    }
+
+private:
     SmallDeformationProcessData<DisplacementDim>& _process_data;
 
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
@@ -531,9 +539,6 @@ private:
     MeshLib::Element const& _element;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
     bool const _is_axially_symmetric;
-
-    static const int displacement_size =
-        ShapeFunction::NPOINTS * DisplacementDim;
 };
 
 }  // namespace SmallDeformation

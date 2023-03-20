@@ -108,6 +108,7 @@ private:
                                     const int process_id) override;
 
     void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                     std::vector<GlobalVector*> const& x_dot,
                                      double const t, double const dt,
                                      int const process_id) override;
 

@@ -149,6 +149,7 @@ Eigen::Vector3d LiquidFlowProcess::getFlux(
 // this is almost a copy of the implementation in the GroundwaterFlow
 void LiquidFlowProcess::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& /*x_dot*/,
     const double t,
     const double /*dt*/,
     int const process_id)

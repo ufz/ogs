@@ -100,7 +100,7 @@ void postTimestepForAllProcesses(
         auto& x_dot = *x_dots[process_id];
         pcs.computeSecondaryVariable(t, dt, process_solutions, x_dot,
                                      process_id);
-        pcs.postTimestep(process_solutions, t, dt, process_id);
+        pcs.postTimestep(process_solutions, x_dots, t, dt, process_id);
     }
     for (auto& x_dot : x_dots)
     {

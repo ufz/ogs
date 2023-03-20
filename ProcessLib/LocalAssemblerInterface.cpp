@@ -131,9 +131,11 @@ void LocalAssemblerInterface::preTimestep(
 void LocalAssemblerInterface::postTimestep(
     std::size_t const mesh_item_id,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
-    std::vector<GlobalVector*> const& x, double const t, double const dt)
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_dot, double const t, double const dt)
 {
     std::vector<double> local_x_vec;
+    std::vector<double> local_x_dot_vec;
 
     auto const n_processes = x.size();
     for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
@@ -144,10 +146,16 @@ void LocalAssemblerInterface::postTimestep(
         auto const local_solution = x[process_id]->get(indices);
         local_x_vec.insert(std::end(local_x_vec), std::begin(local_solution),
                            std::end(local_solution));
+
+        auto const local_solution_dot = x_dot[process_id]->get(indices);
+        local_x_dot_vec.insert(std::end(local_x_dot_vec),
+                               std::begin(local_solution_dot),
+                               std::end(local_solution_dot));
     }
     auto const local_x = MathLib::toVector(local_x_vec);
+    auto const local_x_dot = MathLib::toVector(local_x_dot_vec);
 
-    postTimestepConcrete(local_x, t, dt);
+    postTimestepConcrete(local_x, local_x_dot, t, dt);
 }
 
 void LocalAssemblerInterface::postNonLinearSolver(

@@ -105,6 +105,7 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
     }
 
     void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
+                              Eigen::VectorXd const& /*local_x_dot*/,
                               double const /*t*/,
                               double const /*dt*/) override
     {

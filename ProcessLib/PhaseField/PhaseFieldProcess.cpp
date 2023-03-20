@@ -277,7 +277,8 @@ void PhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
-    std::vector<GlobalVector*> const& x, const double t,
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& /*x_dot*/, const double t,
     const double /*delta_t*/, int const process_id)
 {
     if (isPhaseFieldProcess(process_id))
