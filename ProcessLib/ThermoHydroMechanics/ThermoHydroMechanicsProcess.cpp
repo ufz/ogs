@@ -15,6 +15,7 @@
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
+#include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
@@ -267,6 +268,18 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "temperature_interpolated",
             MeshLib::MeshItemType::Node, 1);
+
+    //
+    // enable output of internal variables defined by material models
+    //
+    ProcessLib::Deformation::solidMaterialInternalToSecondaryVariables<
+        LocalAssemblerInterface<DisplacementDim>>(_process_data.solid_materials,
+                                                  add_secondary_variable);
+
+    ProcessLib::Deformation::
+        solidMaterialInternalVariablesToIntegrationPointWriter(
+            _process_data.solid_materials, _local_assemblers,
+            _integration_point_writer, integration_order);
 
     setIPDataInitialConditions(_integration_point_writer, mesh.getProperties(),
                                _local_assemblers);

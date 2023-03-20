@@ -106,7 +106,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 std::size_t ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure,
-    DisplacementDim>::setIPDataInitialConditions(std::string_view const name,
+    DisplacementDim>::setIPDataInitialConditions(std::string_view name,
                                                  double const* values,
                                                  int const integration_order)
 {
@@ -138,6 +138,31 @@ std::size_t ThermoHydroMechanicsLocalAssembler<
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, _ip_data, &IpData::eps);
+    }
+    if (name.starts_with("material_state_variable_"))
+    {
+        name.remove_prefix(24);
+
+        // Using first ip data for solid material. TODO (naumov) move solid
+        // material into element, store only material state in IPs.
+        auto const& internal_variables =
+            _ip_data[0].solid_material.getInternalVariables();
+        if (auto const iv = std::find_if(
+                begin(internal_variables), end(internal_variables),
+                [&name](auto const& iv) { return iv.name == name; });
+            iv != end(internal_variables))
+        {
+            DBUG("Setting material state variable '{:s}'", name);
+            return ProcessLib::setIntegrationPointDataMaterialStateVariables(
+                values, _ip_data, &IpData::material_state_variables,
+                iv->reference);
+        }
+
+        int const element_id = _element.getID();
+        DBUG(
+            "The solid material of element {:d} (material ID {:d}) does not "
+            "have an internal state variable called {:s}.",
+            element_id, (*_process_data.material_ids)[element_id], name);
     }
 
     return 0;
