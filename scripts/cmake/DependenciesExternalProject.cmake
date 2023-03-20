@@ -149,8 +149,8 @@ if(OGS_USE_PETSC)
                 ${_configure_opts}
                 ${OGS_PETSC_CONFIG_OPTIONS}
             BUILD_IN_SOURCE ON
-            BUILD_COMMAND make -j all
-            INSTALL_COMMAND make -j install
+            BUILD_COMMAND make -j$ENV{CMAKE_BUILD_PARALLEL_LEVEL} all
+            INSTALL_COMMAND make -j$ENV{CMAKE_BUILD_PARALLEL_LEVEL} install
         )
         message(
             STATUS
@@ -194,8 +194,8 @@ if(OGS_USE_LIS)
             CONFIGURE_COMMAND ./configure --enable-omp --prefix=<INSTALL_DIR>
                               ${_lis_config_args}
             BUILD_IN_SOURCE ON
-            BUILD_COMMAND make -j
-            INSTALL_COMMAND make -j install
+            BUILD_COMMAND make -j$ENV{CMAKE_BUILD_PARALLEL_LEVEL}
+            INSTALL_COMMAND make -j$ENV{CMAKE_BUILD_PARALLEL_LEVEL} install
         )
         message(
             STATUS
