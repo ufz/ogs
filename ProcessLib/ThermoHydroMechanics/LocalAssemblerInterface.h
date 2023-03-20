@@ -17,6 +17,7 @@ namespace ProcessLib
 {
 namespace ThermoHydroMechanics
 {
+template <int DisplacementDim>
 struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                                  public NumLib::ExtrapolatableElement
 {

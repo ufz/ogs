@@ -56,14 +56,14 @@ ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, _local_assemblers,
-            &LocalAssemblerInterface::getSigma));
+            &LocalAssemblerInterface<DisplacementDim>::getSigma));
 
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, _local_assemblers,
-            &LocalAssemblerInterface::getEpsilon));
+            &LocalAssemblerInterface<DisplacementDim>::getEpsilon));
 }
 
 template <int DisplacementDim>
@@ -273,8 +273,8 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::initialize, _local_assemblers,
-        *_local_to_global_index_map);
+        &LocalAssemblerInterface<DisplacementDim>::initialize,
+        _local_assemblers, *_local_to_global_index_map);
 }
 
 template <int DisplacementDim>
@@ -430,8 +430,9 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     if (hasMechanicalProcess(process_id))
     {
         GlobalExecutor::executeMemberOnDereferenced(
-            &LocalAssemblerInterface::preTimestep, _local_assemblers,
-            *_local_to_global_index_map, *x[process_id], t, dt);
+            &LocalAssemblerInterface<DisplacementDim>::preTimestep,
+            _local_assemblers, *_local_to_global_index_map, *x[process_id], t,
+            dt);
     }
 }
 
@@ -458,9 +459,9 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, x, x_prev, t, dt,
-        _use_monolithic_scheme, process_id);
+        &LocalAssemblerInterface<DisplacementDim>::postTimestep,
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, x_prev, t,
+        dt, _use_monolithic_scheme, process_id);
 }
 
 template <int DisplacementDim>
@@ -486,8 +487,9 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
+        &LocalAssemblerInterface<DisplacementDim>::computeSecondaryVariable,
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
+        x_prev, process_id);
 }
 
 template <int DisplacementDim>
