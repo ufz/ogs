@@ -198,47 +198,50 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
         _process_data);
 
-    _secondary_variables.addSecondaryVariable(
+    auto add_secondary_variable = [&](std::string const& name,
+                                      int const num_components,
+                                      auto get_ip_values_function)
+    {
+        _secondary_variables.addSecondaryVariable(
+            name,
+            makeExtrapolator(num_components, getExtrapolator(),
+                             _local_assemblers,
+                             std::move(get_ip_values_function)));
+    };
+
+    add_secondary_variable(
         "sigma",
-        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
-                             DisplacementDim>::RowsAtCompileTime,
-                         getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtSigma));
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim>::RowsAtCompileTime,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtSigma);
 
-    _secondary_variables.addSecondaryVariable(
+    add_secondary_variable(
         "sigma_ice",
-        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
-                             DisplacementDim>::RowsAtCompileTime,
-                         getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtSigmaIce));
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim>::RowsAtCompileTime,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtSigmaIce);
 
-    _secondary_variables.addSecondaryVariable(
+    add_secondary_variable(
         "epsilon",
-        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
-                             DisplacementDim>::RowsAtCompileTime,
-                         getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtEpsilon));
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim>::RowsAtCompileTime,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtEpsilon);
 
-    _secondary_variables.addSecondaryVariable(
-        "ice_volume_fraction",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtIceVolume));
+    add_secondary_variable(
+        "ice_volume_fraction", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtIceVolume);
 
-    _secondary_variables.addSecondaryVariable(
-        "velocity",
-        makeExtrapolator(mesh.getDimension(), getExtrapolator(),
-                         _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtDarcyVelocity));
+    add_secondary_variable(
+        "velocity", mesh.getDimension(),
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtDarcyVelocity);
 
-    _secondary_variables.addSecondaryVariable(
-        "fluid_density",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtFluidDensity));
+    add_secondary_variable(
+        "fluid_density", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtFluidDensity);
 
-    _secondary_variables.addSecondaryVariable(
-        "viscosity",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtViscosity));
+    add_secondary_variable(
+        "viscosity", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtViscosity);
 
     _process_data.element_fluid_density =
         MeshLib::getOrCreateMeshProperty<double>(
