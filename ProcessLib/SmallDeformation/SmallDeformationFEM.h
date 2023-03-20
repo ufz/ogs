@@ -20,6 +20,7 @@
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/DOF/LocalDOF.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
@@ -322,13 +323,8 @@ public:
         auto local_b = MathLib::createZeroedVector<NodalDisplacementVectorType>(
             local_b_data, local_matrix_size);
 
-        constexpr int displacement_size =
-            ShapeFunction::NPOINTS * DisplacementDim;
-        auto u = Eigen::Map<typename ShapeMatricesType::template VectorType<
-            displacement_size> const>(local_x.data(), displacement_size);
-
-        auto u_dot = Eigen::Map<typename ShapeMatricesType::template VectorType<
-            displacement_size> const>(local_x_dot.data(), displacement_size);
+        auto [u] = localDOF(local_x);
+        auto [u_dot] = localDOF(local_x_dot);
 
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -528,6 +524,13 @@ public:
     }
 
 private:
+    static constexpr auto localDOF(std::vector<double> const& x)
+    {
+        return NumLib::localDOF<
+            NumLib::Vectorial<ShapeFunction, DisplacementDim>>(x);
+    }
+
+private:
     SmallDeformationProcessData<DisplacementDim>& _process_data;
 
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
@@ -536,9 +539,6 @@ private:
     MeshLib::Element const& _element;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
     bool const _is_axially_symmetric;
-
-    static const int displacement_size =
-        ShapeFunction::NPOINTS * DisplacementDim;
 };
 
 }  // namespace SmallDeformation
