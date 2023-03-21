@@ -1,8 +1,12 @@
 set(SOURCES
-    CreateMFront.cpp CreateMFront.h
-    MFront.cpp MFront.h
-    MFrontGeneric.cpp MFrontGeneric.h
-    CreateMFrontGeneric.cpp CreateMFrontGeneric.h
+    CreateMFront.cpp
+    CreateMFront.h
+    MFront.cpp
+    MFront.h
+    MFrontGeneric.cpp
+    MFrontGeneric.h
+    CreateMFrontGeneric.cpp
+    CreateMFrontGeneric.h
 )
 
 ogs_add_library(MaterialLib_SolidModels_MFront ${SOURCES})
@@ -28,8 +32,7 @@ mfront_behaviours_check_library(
 
 target_link_libraries(
     MaterialLib_SolidModels_MFront PUBLIC BaseLib NumLib MFrontGenericInterface
-                                          OgsMFrontBehaviour
-                                          Boost::mp11
+                                          OgsMFrontBehaviour Boost::boost
     PRIVATE MathLib MeshLib ParameterLib
 )
 

@@ -19,9 +19,11 @@ ogs_add_library(NumLib GENERATE_EXPORT_HEADER ${SOURCES})
 set_target_properties(NumLib PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(
-    NumLib PUBLIC BaseLib GeoLib MathLib MeshLib $<$<TARGET_EXISTS:petsc>:petsc> Boost::mp11
-    PRIVATE MeshGeoToolsLib
+    NumLib PUBLIC BaseLib GeoLib MathLib MeshLib $<$<TARGET_EXISTS:petsc>:petsc>
+                  Boost::boost PRIVATE MeshGeoToolsLib
 )
 
-target_precompile_headers(NumLib PRIVATE [["BaseLib/Error.h"]]
-    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] <Eigen/Core>)
+target_precompile_headers(
+    NumLib PRIVATE [["BaseLib/Error.h"]] [["BaseLib/ConfigTree.h"]]
+    [["BaseLib/Logging.h"]] <Eigen/Core>
+)
