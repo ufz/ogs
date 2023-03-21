@@ -9,4 +9,5 @@ weight = 2
 [cascade]
 breadcumbs = false
 collapsed = true
+sort_alphabetically = false
 +++

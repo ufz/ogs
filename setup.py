@@ -29,7 +29,12 @@ if "SETUPTOOLS_SCM_LOCAL_SCHEME" in os.environ:
     if os.environ["SETUPTOOLS_SCM_LOCAL_SCHEME"] in local_scheme_values:
         scm_local_scheme = os.environ["SETUPTOOLS_SCM_LOCAL_SCHEME"]
 
-if not "CMAKE_ARGS" in os.environ:
+if "CMAKE_ARGS" in os.environ:
+    print(
+        "WARNING: Default CMake preset 'wheel' overridden! "
+        "Be sure to pass a proper preset or configuration!"
+    )
+else:
     cmake_preset = "wheel"
     if platform.system() == "Windows":
         cmake_preset += "-win"
