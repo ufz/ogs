@@ -4,6 +4,7 @@ layout = "subsections"
 
 [cascade]
 breadcrumbs = true
+sort_alphabetically = true
 
 [menu.docs]
 name = "Benchmarks"
