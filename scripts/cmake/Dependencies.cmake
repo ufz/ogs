@@ -75,7 +75,7 @@ if(tetgen_ADDED)
     list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
 endif()
 
-CPMAddPackage(NAME pybind11 GITHUB_REPOSITORY pybind/pybind11 VERSION 2.10.3)
+CPMFindPackage(NAME pybind11 GITHUB_REPOSITORY pybind/pybind11 VERSION 2.10.3)
 
 if(_build_chemistry_lib)
     CPMAddPackage(
@@ -272,7 +272,7 @@ if(exprtk_ADDED)
     target_include_directories(exprtk SYSTEM INTERFACE ${exprtk_SOURCE_DIR})
 endif()
 
-CPMAddPackage(
+CPMFindPackage(
     NAME range-v3
     GITHUB_REPOSITORY ericniebler/range-v3
     VERSION 0.12.0
