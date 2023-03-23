@@ -83,6 +83,7 @@ private:
     T_SOLVER solver_;
 };
 
+#ifdef USE_EIGEN_UNSUPPORTED
 // implementations for some iterative linear solver methods --------------------
 
 // restart
@@ -178,6 +179,7 @@ void setResidualUpdateImpl(Eigen::IDRS<Matrix, Precon>& solver,
 }
 
 // -----------------------------------------------------------------------------
+#endif
 
 /// Template class for Eigen iterative linear solvers
 template <class T_SOLVER>
@@ -191,6 +193,8 @@ public:
              EigenOption::getPreconName(opt.precon_type));
         solver_.setTolerance(opt.error_tolerance);
         solver_.setMaxIterations(opt.max_iterations);
+
+#ifdef USE_EIGEN_UNSUPPORTED
         MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setRestart(
             opt.restart);
         MathLib::details::EigenIterativeLinearSolver<T_SOLVER>::setL(opt.l);
@@ -201,6 +205,7 @@ public:
             opt.angle);
         MathLib::details::EigenIterativeLinearSolver<
             T_SOLVER>::setResidualUpdate(opt.residualupdate);
+#endif
 
         if (!A.isCompressed())
         {
@@ -230,6 +235,7 @@ public:
 
 private:
     T_SOLVER solver_;
+#ifdef USE_EIGEN_UNSUPPORTED
     void setRestart(int const restart) { setRestartImpl(solver_, restart); }
     void setL(int const l) { setLImpl(solver_, l); }
     void setS(int const s) { setSImpl(solver_, s); }
@@ -242,6 +248,7 @@ private:
     {
         setResidualUpdateImpl(solver_, residual_update);
     }
+#endif
 };
 
 template <template <typename, typename> class Solver, typename Precon>
