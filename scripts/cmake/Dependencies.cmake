@@ -94,13 +94,20 @@ if(_build_chemistry_lib)
     endif()
 endif()
 
+set(_eigen_version ${ogs.minimum_version.eigen})
+set(_eigen_url https://gitlab.com/libeigen/eigen/-/archive/${_eigen_version}/eigen-${_eigen_version}.tar.gz)
+if(OGS_USE_EIGEN_UNSUPPORTED)
+    set(_eigen_version 3.4.90)
+    set(_eigen_url https://gitlab.com/libeigen/eigen/-/archive/${ogs.minimum_version.eigen-unsupported}/eigen-${ogs.minimum_version.eigen-unsupported}.tar.gz)
+endif()
+
 CPMFindPackage(
     NAME Eigen3
     # Error as in
     # https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/8475
     # GITLAB_REPOSITORY libeigen/eigen
-    URL https://gitlab.com/libeigen/eigen/-/archive/${ogs.minimum_version.eigen}/eigen-${ogs.minimum_version.eigen}.tar.gz
-    GIT_TAG ${ogs.minimum_version.eigen}
+    URL ${_eigen_url}
+    VERSION ${_eigen_version}
     DOWNLOAD_ONLY YES
 )
 if(Eigen3_ADDED)
