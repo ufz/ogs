@@ -72,14 +72,14 @@ void SolidMechanicsModel<DisplacementDim>::eval(
             DisplacementDim)>::identity2;
     total_stress_data.sigma_total.noalias() =
         current_state.sigma_eff +
-        biot_data.alpha * bishops_data.chi_S_L * p_cap_data.p_cap * identity2;
+        biot_data() * bishops_data.chi_S_L * p_cap_data.p_cap * identity2;
 
     out.J_uT_BT_K_N.noalias() =  // TODO is this thermal stress?
         -out.stiffness_tensor *
         s_therm_exp_data.solid_linear_thermal_expansivity_vector;
 
     double const J_up_X_BTI2N =
-        -biot_data.alpha *
+        -biot_data() *
         (bishops_data.chi_S_L +
          bishops_data.dchi_dS_L * p_cap_data.p_cap * dS_L_data.dS_L_dp_cap);
 

@@ -11,13 +11,11 @@
 #pragma once
 
 #include "Base.h"
+#include "BaseLib/StrongType.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-struct BiotData
-{
-    double alpha;
-};
+using BiotData = BaseLib::StrongType<double, struct BiotTag>;
 
 struct BiotModel
 {

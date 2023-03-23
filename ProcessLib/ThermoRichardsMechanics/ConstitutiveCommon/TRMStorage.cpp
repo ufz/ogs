@@ -26,7 +26,7 @@ void TRMStorageModel<DisplacementDim>::eval(
     double const p_cap_dot = p_cap_data.p_cap_dot;
 
     double const phi = poro_data.phi;
-    double const alphaB_minus_phi = biot_data.alpha - phi;
+    double const alphaB_minus_phi = biot_data() - phi;
 
     double const beta_LR = rho_L_data.drho_LR_dp / rho_L_data.rho_LR;
 
