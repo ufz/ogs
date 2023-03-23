@@ -26,7 +26,9 @@
     "tfel-rliv": "4.0",
     "tfel-repo": "thelfer",
     "lis": "1.7.37",
-    "gtest": "1.11.0"
+    "gtest": "1.11.0",
+    "pybind11": "2.8.1",
+    "range-v3": "0.11.0"
   },
   "tested_version": {
     "ubuntu": "22.04",
