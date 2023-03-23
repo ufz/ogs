@@ -75,6 +75,11 @@ if(OGS_USE_MKL)
     )
 endif()
 
+# Eigen
+option(OGS_USE_EIGEN_UNSUPPORTED "Use Eigen unsupported modules" ON)
+option(OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN "" ON)
+option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
+
 # ---- CMake includes ----
 include(Versions)
 include(GitSetup)
@@ -112,11 +117,6 @@ option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
 option(OGS_USE_INSITU "Builds OGS with insitu visualization capabilities." OFF)
 option(OGS_USE_LIS "Use Lis" OFF)
 option(OGS_USE_NETCDF "Add NetCDF support." OFF)
-
-# Eigen
-option(OGS_USE_EIGEN_UNSUPPORTED "Use Eigen unsupported modules" ON)
-option(OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN "" ON)
-option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 
 # We assume that it's save to use vectorization with Eigen < 3.3 (strictly
 # smaller than 3.3.!). At least we only observed vectorization issues with Eigen
