@@ -129,7 +129,7 @@ endif()
 CPMFindPackage(
     NAME Boost
     VERSION ${ogs.minimum_version.boost}
-    URL https://gitlab.opengeosys.org/ogs/libs/boost-subset/-/jobs/302588/artifacts/raw/ogs-boost-${ogs.minimum_version.boost}.tar.gz
+    URL https://gitlab.opengeosys.org/ogs/libs/boost-subset/-/jobs/303158/artifacts/raw/ogs-boost-${ogs.minimum_version.boost}.tar.gz
 )
 if(Boost_ADDED)
     add_library(Boost::boost INTERFACE IMPORTED)
