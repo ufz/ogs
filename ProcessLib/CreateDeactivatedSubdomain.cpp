@@ -32,10 +32,7 @@ extractInnerAndOuterNodes(MeshLib::Mesh const& mesh,
                           MeshLib::Mesh const& sub_mesh,
                           IsActive is_active)
 {
-    auto* const bulk_node_ids =
-        sub_mesh.getProperties().template getPropertyVector<std::size_t>(
-            MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
-            MeshLib::MeshItemType::Node, 1);
+    auto* const bulk_node_ids = MeshLib::bulkNodeIDs(sub_mesh);
     if (bulk_node_ids == nullptr)
     {
         OGS_FATAL(

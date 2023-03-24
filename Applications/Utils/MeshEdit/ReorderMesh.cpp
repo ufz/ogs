@@ -142,21 +142,16 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    auto const bulk_node_ids_string =
-        MeshLib::getBulkIDString(MeshLib::MeshItemType::Node);
-    if (!mesh->getProperties().existsPropertyVector<std::size_t>(
-            bulk_node_ids_string))
+    auto const* bulk_node_ids = MeshLib::bulkNodeIDs(*mesh);
+    if (!bulk_node_ids)
     {
         OGS_FATAL("Property / data array '{}' has not been found in the mesh.",
-                  bulk_node_ids_string);
+                  MeshLib::getBulkIDString(MeshLib::MeshItemType::Node));
     }
-    auto const& bulk_node_ids =
-        *mesh->getProperties().getPropertyVector<std::size_t>(
-            bulk_node_ids_string);
 
     auto const& nodes = mesh->getNodes();
     auto const node_ids_reverse_mapping(
-        generateBulkIDsReverseMapping(bulk_node_ids));
+        generateBulkIDsReverseMapping(*bulk_node_ids));
 
     std::vector<MeshLib::Node*> reordered_nodes(nodes.size());
     std::size_t pos = 0;
@@ -197,8 +192,8 @@ int main(int argc, char* argv[])
         {
             reordered_element->setNode(
                 node_number,
-                reordered_nodes
-                    [bulk_node_ids[e.getNode(node_number)->getID()]]);
+                reordered_nodes[(
+                    *bulk_node_ids)[e.getNode(node_number)->getID()]]);
         }
         reordered_elements[pos] = reordered_element;
         pos++;
@@ -219,7 +214,7 @@ int main(int argc, char* argv[])
     auto const node_property_names =
         mesh->getProperties().getPropertyVectorNames(
             MeshLib::MeshItemType::Node);
-    reorderProperties(original_properties, bulk_node_ids, node_property_names,
+    reorderProperties(original_properties, *bulk_node_ids, node_property_names,
                       properties);
 
     // element based properties

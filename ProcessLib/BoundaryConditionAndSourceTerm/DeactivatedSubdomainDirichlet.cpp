@@ -56,15 +56,9 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
     [[maybe_unused]] auto const& bulk_node_ids =
-        *_subdomain.mesh.getProperties()
-             .template getPropertyVector<std::size_t>(
-                 MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
-                 MeshLib::MeshItemType::Node, 1);
+        *MeshLib::bulkNodeIDs(_subdomain.mesh);
     [[maybe_unused]] auto const& bulk_element_ids =
-        *_subdomain.mesh.getProperties()
-             .template getPropertyVector<std::size_t>(
-                 MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
-                 MeshLib::MeshItemType::Cell, 1);
+        *MeshLib::bulkElementIDs(_subdomain.mesh);
 
     auto is_inactive_id = [&](std::size_t const bulk_element_id)
     { return _is_active[bulk_element_id] == 0; };

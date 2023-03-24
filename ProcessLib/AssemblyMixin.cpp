@@ -49,10 +49,8 @@ SubmeshAssemblyData::SubmeshAssemblyData(
     MeshLib::Mesh const& mesh,
     std::vector<std::reference_wrapper<MeshLib::PropertyVector<double>>>&&
         residuum_vectors)
-    : bulk_element_ids{*mesh.getProperties().getPropertyVector<std::size_t>(
-          "bulk_element_ids", MeshLib::MeshItemType::Cell, 1)},
-      bulk_node_ids{*mesh.getProperties().getPropertyVector<std::size_t>(
-          "bulk_node_ids", MeshLib::MeshItemType::Node, 1)},
+    : bulk_element_ids{*MeshLib::bulkElementIDs(mesh)},
+      bulk_node_ids{*MeshLib::bulkNodeIDs(mesh)},
       residuum_vectors{std::move(residuum_vectors)}
 {
 }
