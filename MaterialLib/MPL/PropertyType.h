@@ -107,6 +107,7 @@ enum PropertyType : int
     vapour_diffusion,
     viscosity,
     volume_fraction,
+    water_saturation_temperature,
     youngs_modulus,
     number_of_properties
 };
@@ -176,6 +177,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "vapour_diffusion",
                              "viscosity",
                              "volume_fraction",
+                             "water_saturation_temperature",
                              "youngs_modulus"}};
 
 /// This function converts a string (e.g. a string from the configuration-tree)
