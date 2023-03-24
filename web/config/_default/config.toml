@@ -108,7 +108,7 @@ weight = 5
 # docs
 [[menu.docs]]
 name = "Data Explorer Manual"
-url = "https://gitlab.opengeosys.org/ogs/data_explorer_manual/-/jobs/artifacts/master/raw/ogsde-man.pdf?job=build"
+url = "https://gitlab.opengeosys.org/ogs/documentation/data_explorer_manual/-/jobs/artifacts/master/raw/ogsde-man.pdf?job=build"
 post = "Manual for the graphical user interface for OpenGeoSys, the Data Explorer."
 [menu.docs.params]
 category = "Advanced"
