@@ -946,7 +946,7 @@ AddTest(
     EXECUTABLE_ARGS square_1e2_GMRES.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI)
+    REQUIREMENTS OGS_USE_EIGEN_UNSUPPORTED AND NOT OGS_USE_MPI
     DIFF_DATA
     square_1x1_quad_1e2.vtu square_1e2_GMRES_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-14 1e-14
 )
@@ -973,7 +973,7 @@ AddTest(
     EXECUTABLE_ARGS square_1e2_GMRES_GML_output_xdmf-hdf5.prj
     WRAPPER time
     TESTER xdmfdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS OGS_USE_EIGEN_UNSUPPORTED AND NOT OGS_USE_MPI
     DIFF_DATA
     square_1x1_quad_1e2_GMRES_GML_output_square_1x1_quad_1e2.xdmf square_1x1_quad_1e2_GMRES_GML_output_square_1x1_quad_1e2.xdmf pressure pressure 1e-14 1e-14
     square_1x1_quad_1e2_GMRES_GML_output_square_1x1_geometry_left.xdmf square_1x1_quad_1e2_GMRES_GML_output_square_1x1_geometry_left.xdmf pressure pressure 1e-14 1e-14
