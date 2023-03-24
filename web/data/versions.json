@@ -13,7 +13,7 @@
     "git": "2.14",
     "cmake": "3.22",
     "hugo": "0.64.1",
-    "boost": "1.69.0",
+    "boost": "1.73.0",
     "eigen": "9441d94dccccd5db8d64179516fdc5b53994a047",
     "vtk": "9.1.0",
     "petsc": "3.16.3",
@@ -68,8 +68,8 @@
     }
   },
   "cpm": {
-    "package_file_id": 372,
-    "package_file_sha256": "cdd10361ac3a708959df5b50946df1bd4295dac2bc45980e0eb11ceccfb9c674"
+    "package_file_id": 408,
+    "package_file_sha256": "1adbe86dbc48a51bd2ff80a23e4729571bc338a5a76a8fb5acb3fc6d253e80f5"
   },
   "ext": {
     "cache_hash": "4ebd62e0ce484732dbf3cd9932f60b67762e156b"

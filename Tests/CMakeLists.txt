@@ -101,7 +101,8 @@ target_link_libraries(
             TestInfoLib
             VTK::FiltersGeneral
             VTK::FiltersSources
-            Boost::mp11 # TODO move OGSMFrontThermodynamicForcesView to MathLib?
+            Boost::boost # TODO move OGSMFrontThermodynamicForcesView to
+                         # MathLib?
             $<$<TARGET_EXISTS:Threads::Threads>:Threads::Threads>
             $<$<TARGET_EXISTS:LIE>:LIE>
             $<$<TARGET_EXISTS:TH2M>:TH2M>

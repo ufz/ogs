@@ -129,7 +129,7 @@ endif()
 CPMFindPackage(
     NAME Boost
     VERSION ${ogs.minimum_version.boost}
-    URL https://gitlab.opengeosys.org/ogs/libs/boost-subset/-/jobs/187805/artifacts/raw/ogs-boost-${ogs.minimum_version.boost}.tar.gz
+    URL https://gitlab.opengeosys.org/ogs/libs/boost-subset/-/jobs/303158/artifacts/raw/ogs-boost-${ogs.minimum_version.boost}.tar.gz
 )
 if(Boost_ADDED)
     add_library(Boost::boost INTERFACE IMPORTED)
@@ -275,13 +275,6 @@ CPMAddPackage(
     VERSION 0.12.0
     GIT_TAG 0.12.0
     EXCLUDE_FROM_ALL YES
-)
-
-CPMFindPackage(
-    NAME boost_mp11
-    VERSION 1.79.0
-    GITHUB_REPOSITORY boostorg/mp11
-    GIT_TAG boost-1.79.0
 )
 
 if(OGS_BUILD_TESTING OR OGS_BUILD_UTILS)

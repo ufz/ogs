@@ -31,7 +31,7 @@ target_link_libraries(
         MeshGeoToolsLib
         MeshLib
         NumLib
-        Boost::mp11
+        Boost::boost
         range-v3
         $<$<TARGET_EXISTS:ProcessLibBoundaryConditionAndSourceTermPython>:ProcessLibBoundaryConditionAndSourceTermPython>
         $<$<TARGET_EXISTS:petsc>:petsc>
