@@ -75,8 +75,7 @@ void forEachSolidMaterialInternalVariable(
     std::map<int, std::unique_ptr<SolidMaterial>> const& solid_materials,
     auto const& function)
 {
-    auto const internal_variables_by_name =
-        collectInternalVariables(solid_materials);
+    auto internal_variables_by_name = collectInternalVariables(solid_materials);
 
     // Multiple material ids could be present but only one material for the
     // whole domain. In this case the choice of callbacks is independent of
@@ -87,7 +86,7 @@ void forEachSolidMaterialInternalVariable(
     // Create *single* callback passing all solid materials to it. Choose
     // correct solid material based on the local assembler's solid material in
     // the callback.
-    for (auto const& [name, mat_iv_collection] : internal_variables_by_name)
+    for (auto&& [name, mat_iv_collection] : internal_variables_by_name)
     {
         assert(!mat_iv_collection.empty());
         auto const num_components =
@@ -105,18 +104,19 @@ void forEachSolidMaterialInternalVariable(
                 name, num_components);
         }
 
-        function(name, num_components, mat_iv_collection,
+        function(name, num_components, std::move(mat_iv_collection),
                  material_id_independent);
     }
 }
 
 template <typename LocalAssemblerInterface, typename InternalVariable>
 auto createCallback(
-    std::vector<std::pair<int, InternalVariable>> const& mat_iv_collection,
+    std::vector<std::pair<int, InternalVariable>>&& mat_iv_collection,
     int const num_components,
     bool const material_id_independent)
 {
-    return [mat_iv_collection, num_components, material_id_independent](
+    return [mat_iv_collection = std::move(mat_iv_collection), num_components,
+            material_id_independent](
                LocalAssemblerInterface const& loc_asm,
                const double /*t*/,
                std::vector<GlobalVector*> const& /*x*/,
@@ -174,18 +174,18 @@ void solidMaterialInternalToSecondaryVariables(
 {
     auto register_secondary_variable =
         [&add_secondary_variable](
-            std::string name, char const num_components,
+            std::string const& name, char const num_components,
             std::vector<
-                std::pair<int, typename SolidMaterial::InternalVariable>> const&
+                std::pair<int, typename SolidMaterial::InternalVariable>>&&
                 mat_iv_collection,
             bool const material_id_independent)
     {
         DBUG("Registering internal variable {:s}.", name);
 
-        add_secondary_variable(
-            name, num_components,
-            createCallback<LocalAssemblerInterface>(
-                mat_iv_collection, num_components, material_id_independent));
+        add_secondary_variable(name, num_components,
+                               createCallback<LocalAssemblerInterface>(
+                                   std::move(mat_iv_collection), num_components,
+                                   material_id_independent));
     };
 
     forEachSolidMaterialInternalVariable(solid_materials,
@@ -194,11 +194,12 @@ void solidMaterialInternalToSecondaryVariables(
 
 template <typename LocalAssemblerInterface, typename InternalVariable>
 auto createCallbackForIpWriter(
-    std::vector<std::pair<int, InternalVariable>> const& mat_iv_collection,
+    std::vector<std::pair<int, InternalVariable>>&& mat_iv_collection,
     int const num_components,
     bool const material_id_independent)
 {
-    return [mat_iv_collection, num_components, material_id_independent](
+    return [mat_iv_collection = std::move(mat_iv_collection), num_components,
+            material_id_independent](
                LocalAssemblerInterface const& loc_asm) -> std::vector<double>
     {
         auto const iv = findInternalVariable(mat_iv_collection,
@@ -230,9 +231,9 @@ void solidMaterialInternalVariablesToIntegrationPointWriter(
 {
     auto add_integration_point_writer =
         [&local_assemblers, &integration_point_writer, integration_order](
-            std::string name, char const num_components,
+            std::string const& name, char const num_components,
             std::vector<
-                std::pair<int, typename SolidMaterial::InternalVariable>> const&
+                std::pair<int, typename SolidMaterial::InternalVariable>>&&
                 mat_iv_collection,
             bool const material_id_independent)
     {
@@ -244,7 +245,7 @@ void solidMaterialInternalVariablesToIntegrationPointWriter(
                 "material_state_variable_" + name + "_ip", num_components,
                 integration_order, local_assemblers,
                 createCallbackForIpWriter<LocalAssemblerInterface>(
-                    mat_iv_collection, num_components,
+                    std::move(mat_iv_collection), num_components,
                     material_id_independent)));
     };
 
