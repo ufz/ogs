@@ -26,7 +26,11 @@
     - if($env:BUILD_TESTS -eq "true") { cmake --build --preset=$env:CMAKE_PRESET --target tests }
     - $ctest_group = "Experimental"
     - if($env:CI_COMMIT_BRANCH -eq "master") { $ctest_group = "master" }
-    - if($env:BUILD_CTEST -eq "true") { ctest --preset=$env:CMAKE_PRESET --output-junit Tests/ctest.xml -M Experimental --group $ctest_group --test-dir $build_directory_full -T Test -T Submit }
+    - |
+      if($env:BUILD_CTEST -eq "true" -And -Not $env:CI_MERGE_REQUEST_LABELS -contains "unit_tests" )
+      {
+        ctest --preset=$env:CMAKE_PRESET --output-junit Tests/ctest.xml -M Experimental --group $ctest_group --test-dir $build_directory_full -T Test -T Submit
+      }
     - |
       if($env:CHECK_WARNINGS -eq "true" -and (cat $log_file | Select-String -Pattern ': warning') )
       {

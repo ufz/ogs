@@ -65,7 +65,11 @@
             ctest_group="master"
           fi
 
-          ${xvfb_run_cmd} ctest -M Experimental --group ${ctest_group} ${regex_argument} --test-dir ${build_dir_full} -T Start -T Test -T Submit ${ctest_arguments} --output-junit Tests/ctest.xml --stop-time `date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'` ${CTEST_ARGS}
+          if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*unit_tests.* ]]; then
+            echo "Skipping ctests because of unit_tests-label."
+          else
+            ${xvfb_run_cmd} ctest -M Experimental --group ${ctest_group} ${regex_argument} --test-dir ${build_dir_full} -T Start -T Test -T Submit ${ctest_arguments} --output-junit Tests/ctest.xml --stop-time `date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'` ${CTEST_ARGS}
+          fi
         fi
 
       else
