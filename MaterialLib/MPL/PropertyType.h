@@ -83,6 +83,7 @@ enum PropertyType : int
     saturation,
     /// capillary pressure saturation relationship for microstructure.
     saturation_micro,
+    saturated_liquid_water_enthalpy,
     specific_heat_capacity,
     specific_latent_heat,
     storage,
@@ -158,6 +159,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "retardation_factor",
                              "saturation",
                              "saturation_micro",
+                             "saturated_liquid_water_enthalpy",
                              "specific_heat_capacity",
                              "specific_latent_heat",
                              "storage",

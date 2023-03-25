@@ -20,7 +20,7 @@ namespace MaterialPropertyLib::IAPWSIF97Region4
 /// The saturation-temperature equation function in region 4, from
 /// "The International Association for the Properties of Water and Steam"
 /// (see http://www.iapws.org/relguide/IF97-Rev.pdf) p.35, section 8.2.
-double waterSaturationTemperature(double const pressure)
+inline double waterSaturationTemperature(double const pressure)
 {
     static constexpr std::array n = {0.11670521452767e4,  -0.72421316703206e6,
                                      -0.17073846940092e2, 0.12020824702470e5,
