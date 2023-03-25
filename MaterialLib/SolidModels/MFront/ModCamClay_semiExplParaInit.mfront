@@ -38,6 +38,10 @@
 @PhysicalBounds pamb in [0:*[;
 pamb.setEntryName("AmbientPressure");
 
+@Parameter stress pcMin = 1e-3; //1e+3 Pa
+@PhysicalBounds pcMin in [0:*[;
+pcMin.setEntryName("MinimalPreConsolidationPressure");
+
 // material parameters
 @MaterialProperty stress young;
 @PhysicalBounds young in [0:*[;
@@ -92,6 +96,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
 // local variables
 @LocalVariable bool withinElasticRange;
 @LocalVariable real M2;
+@LocalVariable real rpcMin;
 
 @InitLocalVariables
 {
@@ -106,6 +111,8 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
         eel = eval(S * sig);
     }
     rpc = pc / young;
+    rpcMin = pcMin / young;
+
     // elastic estimators
     const auto sig_el = computeElasticPrediction();
     const auto s_el = deviator(sig_el);
@@ -156,7 +163,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
     // residual
     feel += depl;
     flp = f / fchar;
-    frpc = drpc + deplV * the * rpcNew;
+    frpc = drpc + deplV * the * (rpcNew - rpcMin);
 
     // auxiliary derivatives
     const auto dnorm_dsig = (9 * s - 2 * M2 / 9 * df_dp * id2) / norm;
@@ -165,7 +172,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
         theta;
     const auto dn_ddrpc =
         (id2 + df_dp * n / norm) * M2 / (3 * norm) * theta * young;
-    const auto dfrpc_ddeplV = the * rpcNew;
+    const auto dfrpc_ddeplV = the * (rpcNew - rpcMin);
 
     // jacobian (all other parts are zero)
     dfeel_ddeel += dlp * dn_ddeel;
