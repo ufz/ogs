@@ -54,9 +54,9 @@ ka.setEntryName("SwellingLineSlope");
 la.setEntryName("VirginConsolidationLineSlope");
 
 // initial values
-@MaterialProperty real v0;
-@PhysicalBounds v0 in [1:*[;
-v0.setEntryName("InitialVolumeRatio");
+@MaterialProperty real phi0;
+@PhysicalBounds phi0 in [0:1];
+phi0.setEntryName("InitialPorosity");
 
 @MaterialProperty stress pc0;
 pc0.setEntryName("InitialPreConsolidationPressure");
@@ -90,6 +90,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
 @LocalVariable StiffnessTensor dsig_deel;
 @LocalVariable bool withinElasticRange;
 @LocalVariable real M2;
+@LocalVariable real v0;
 @LocalVariable real young;
 @LocalVariable real rpcMin;
 
@@ -97,6 +98,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
 {
     tfel::raise_if(la < ka, "Invalid parameters: la<ka");
     M2 = M * M;
+    v0 = 1 / (1 - phi0);
 
     // TODO may fail in restart simulations
     if (Time == 0)
