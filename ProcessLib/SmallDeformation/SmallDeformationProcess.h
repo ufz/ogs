@@ -78,6 +78,8 @@ private:
 
     MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
     MeshLib::PropertyVector<double>* _material_forces = nullptr;
+
+    Assembly::GlobalMatrixOutput _global_output;
 };
 
 extern template class SmallDeformationProcess<2>;
