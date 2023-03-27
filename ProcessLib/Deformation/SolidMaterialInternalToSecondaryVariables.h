@@ -44,6 +44,29 @@ collectInternalVariables(
         }
     }
 
+    // Check for each internal variable name, that the number of components is
+    // equal for all materials.
+    for (auto const& [name, mat_iv_collection] : internal_variables_by_name)
+    {
+        if (mat_iv_collection.empty())
+        {
+            continue;
+        }
+        auto const num_components =
+            mat_iv_collection.front().second.num_components;
+
+        if (!std::all_of(
+                begin(mat_iv_collection), end(mat_iv_collection),
+                [num_components](auto const& mat_iv)
+                { return mat_iv.second.num_components == num_components; }))
+        {
+            OGS_FATAL(
+                "Not for all material ids the secondary variable '{:s}' has "
+                "{:d} components.",
+                name, num_components);
+        }
+    }
+
     return internal_variables_by_name;
 }
 
@@ -100,21 +123,8 @@ void forEachSolidMaterialInternalVariable(
     // the callback.
     for (auto&& [name, mat_iv_collection] : internal_variables_by_name)
     {
-        assert(!mat_iv_collection.empty());
         auto const num_components =
             mat_iv_collection.front().second.num_components;
-
-        // Check that the number of components is equal for all materials.
-        if (!std::all_of(
-                begin(mat_iv_collection), end(mat_iv_collection),
-                [num_components](auto const& mat_iv)
-                { return mat_iv.second.num_components == num_components; }))
-        {
-            OGS_FATAL(
-                "Not for all material ids the secondary variable '{:s}' has "
-                "{:d} components.",
-                name, num_components);
-        }
 
         function(name,
                  InternalVariablesCollection{std::move(mat_iv_collection),
