@@ -109,20 +109,27 @@ void forEachSolidMaterialInternalVariable(
     }
 }
 
-template <typename LocalAssemblerInterface, typename InternalVariable>
-auto createCallback(
-    std::vector<std::pair<int, InternalVariable>>&& mat_iv_collection,
-    int const num_components,
-    bool const material_id_independent)
+template <typename InternalVariable>
+class CollectIntegrationPointDataForExtrapolation final
 {
-    return [mat_iv_collection = std::move(mat_iv_collection), num_components,
-            material_id_independent](
-               LocalAssemblerInterface const& loc_asm,
-               const double /*t*/,
-               std::vector<GlobalVector*> const& /*x*/,
-               std::vector<
-                   NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-               std::vector<double>& cache) -> std::vector<double> const&
+public:
+    CollectIntegrationPointDataForExtrapolation(
+        std::vector<std::pair<int, InternalVariable>>&& mat_iv_collection,
+        int const num_components,
+        bool const material_id_independent)
+        : mat_iv_collection(std::move(mat_iv_collection)),
+          num_components(num_components),
+          material_id_independent(material_id_independent)
+    {
+    }
+
+    template <typename LocalAssemblerInterface>
+    std::vector<double> const& operator()(
+        LocalAssemblerInterface const& loc_asm,
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
     {
         cache.clear();
 
@@ -163,8 +170,13 @@ auto createCallback(
         }
 
         return cache;
-    };
-}
+    }
+
+private:
+    std::vector<std::pair<int, InternalVariable>> const mat_iv_collection;
+    int const num_components;
+    bool const material_id_independent;
+};
 
 template <typename LocalAssemblerInterface, typename SolidMaterial,
           typename AddSecondaryVariableCallback>
@@ -183,24 +195,31 @@ void solidMaterialInternalToSecondaryVariables(
         DBUG("Registering internal variable {:s}.", name);
 
         add_secondary_variable(name, num_components,
-                               createCallback<LocalAssemblerInterface>(
+                               CollectIntegrationPointDataForExtrapolation{
                                    std::move(mat_iv_collection), num_components,
-                                   material_id_independent));
+                                   material_id_independent});
     };
 
     forEachSolidMaterialInternalVariable(solid_materials,
                                          register_secondary_variable);
 }
 
-template <typename LocalAssemblerInterface, typename InternalVariable>
-auto createCallbackForIpWriter(
-    std::vector<std::pair<int, InternalVariable>>&& mat_iv_collection,
-    int const num_components,
-    bool const material_id_independent)
+template <typename InternalVariable>
+class CollectIntegrationPointDataForIpWriter final
 {
-    return [mat_iv_collection = std::move(mat_iv_collection), num_components,
-            material_id_independent](
-               LocalAssemblerInterface const& loc_asm) -> std::vector<double>
+public:
+    CollectIntegrationPointDataForIpWriter(
+        std::vector<std::pair<int, InternalVariable>>&& mat_iv_collection,
+        int const num_components,
+        bool const material_id_independent)
+        : mat_iv_collection(std::move(mat_iv_collection)),
+          num_components(num_components),
+          material_id_independent(material_id_independent)
+    {
+    }
+
+    template <typename LocalAssemblerInterface>
+    std::vector<double> operator()(LocalAssemblerInterface const& loc_asm) const
     {
         auto const iv = findInternalVariable(mat_iv_collection,
                                              material_id_independent, loc_asm);
@@ -218,7 +237,12 @@ auto createCallbackForIpWriter(
         return loc_asm.getMaterialStateVariableInternalState(fct,
                                                              num_components);
     };
-}
+
+private:
+    std::vector<std::pair<int, InternalVariable>> const mat_iv_collection;
+    int const num_components;
+    bool const material_id_independent;
+};
 
 template <typename LocalAssemblerInterface, typename SolidMaterial>
 void solidMaterialInternalVariablesToIntegrationPointWriter(
@@ -244,9 +268,9 @@ void solidMaterialInternalVariablesToIntegrationPointWriter(
             std::make_unique<MeshLib::IntegrationPointWriter>(
                 "material_state_variable_" + name + "_ip", num_components,
                 integration_order, local_assemblers,
-                createCallbackForIpWriter<LocalAssemblerInterface>(
+                CollectIntegrationPointDataForIpWriter{
                     std::move(mat_iv_collection), num_components,
-                    material_id_independent)));
+                    material_id_independent}));
     };
 
     forEachSolidMaterialInternalVariable(solid_materials,
