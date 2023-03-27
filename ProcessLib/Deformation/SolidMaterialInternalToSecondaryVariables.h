@@ -47,32 +47,32 @@ collectInternalVariables(
     return internal_variables_by_name;
 }
 
-template <typename LocalAssemblerInterface, typename InternalVariable>
-InternalVariable const* findInternalVariable(
-    std::vector<std::pair<int, InternalVariable>> const& mat_iv_collection,
-    bool const material_id_independent,
-    LocalAssemblerInterface const& loc_asm)
-{
-    int const material_id =
-        material_id_independent ? 0 : loc_asm.getMaterialID();
-
-    auto const mat_iv_it = std::find_if(
-        begin(mat_iv_collection), end(mat_iv_collection),
-        [material_id](auto const& x) { return x.first == material_id; });
-    if (mat_iv_it == end(mat_iv_collection))
-    {
-        // If local assembler does not provide correct solid material
-        // model return empty vector, which will be ignored by the
-        // extrapolation algorithm.
-        return nullptr;
-    }
-
-    return &mat_iv_it->second;
-}
-
 template <typename InternalVariable>
 struct InternalVariablesCollection
 {
+    template <typename LocalAssemblerInterface>
+    InternalVariable const* findInternalVariable(
+        LocalAssemblerInterface const& loc_asm) const
+    {
+        int const material_id =
+            material_id_independent ? 0 : loc_asm.getMaterialID();
+
+        auto const mat_iv_it = std::find_if(
+            begin(mat_iv_collection), end(mat_iv_collection),
+            [material_id](auto const& x) { return x.first == material_id; });
+        if (mat_iv_it == end(mat_iv_collection))
+        {
+            // If local assembler does not provide correct solid material
+            // model return empty vector, which will be ignored by the
+            // extrapolation algorithm.
+            return nullptr;
+        }
+
+        assert(num_components == mat_iv_it->second.num_components);
+
+        return &mat_iv_it->second;
+    }
+
     std::vector<std::pair<int, InternalVariable>> mat_iv_collection;
     int num_components;
     bool material_id_independent;
@@ -157,7 +157,6 @@ public:
         }
 
         auto const& fct = iv->getter;
-        assert(data_.num_components == iv->num_components);
 
         const unsigned num_int_pts = loc_asm.getNumberOfIntegrationPoints();
         assert(num_int_pts > 0);
@@ -229,8 +228,8 @@ public:
     template <typename LocalAssemblerInterface>
     std::vector<double> operator()(LocalAssemblerInterface const& loc_asm) const
     {
-        auto const iv = findInternalVariable(
-            internal_variables_collection_.mat_iv_collection, data_.material_id_independent, loc_asm);
+        auto const iv =
+            internal_variables_collection_.findInternalVariable(loc_asm);
         if (iv == nullptr)
         {
             // If the material model for the present material group does not
@@ -240,7 +239,6 @@ public:
         }
 
         auto const& fct = iv->reference;
-        assert(data_.num_components == iv->num_components);
 
         return loc_asm.getMaterialStateVariableInternalState(
             fct, internal_variables_collection_.num_components);
