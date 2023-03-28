@@ -9,10 +9,11 @@ if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
     )
 endif()
 
-if(EXISTS "${OGS_HELPER_REPO}")
-    include(${OGS_HELPER_REPO}/Setup.cmake)
-elseif(DEFINED OGS_HELPER_REPO)
-    message(FATAL_ERROR "Helper repo at ${OGS_HELPER_REPO} not found!")
+set(_collection ${PROJECT_SOURCE_DIR}/ThirdParty/collection)
+# If submodules in ThirdParty/collection are initialized and is a Guix
+# build use submodule as CPM sources.
+if(EXISTS ${_collection}/ufz/vtkdiff/CMakeLists.txt AND GUIX_BUILD)
+    include(${_collection}/Setup.cmake)
 endif()
 
 # Set additional CMake modules path
