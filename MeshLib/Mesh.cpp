@@ -288,6 +288,22 @@ PropertyVector<int> const* materialIDs(Mesh const& mesh)
     return nullptr;
 }
 
+PropertyVector<std::size_t> const* bulkNodeIDs(Mesh const& mesh)
+{
+    auto const& properties = mesh.getProperties();
+    return properties.getPropertyVector<std::size_t>(
+        MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+        MeshLib::MeshItemType::Node, 1);
+}
+
+PropertyVector<std::size_t> const* bulkElementIDs(Mesh const& mesh)
+{
+    auto const& properties = mesh.getProperties();
+    return properties.getPropertyVector<std::size_t>(
+        MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
+        MeshLib::MeshItemType::Cell, 1);
+}
+
 std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
     std::string mesh_name, std::vector<MeshLib::Element*> const& elements)
 {

@@ -76,18 +76,18 @@ MeshComponentMap MeshComponentMap::getSubset(
     }
 
     // Mapping of the nodes in the new_mesh_subset to the bulk mesh nodes
-    auto const& new_mesh_properties = new_mesh_subset.getMesh().getProperties();
-    if (!new_mesh_properties.template existsPropertyVector<std::size_t>(
-            getBulkIDString(MeshLib::MeshItemType::Node)))
+    auto bulk_node_ids = [](auto const& mesh)
     {
-        OGS_FATAL(
-            "Bulk node ids map expected in the construction of the mesh "
-            "subset.");
-    }
-    auto const& bulk_node_ids_map =
-        *new_mesh_properties.template getPropertyVector<std::size_t>(
-            getBulkIDString(MeshLib::MeshItemType::Node),
-            MeshLib::MeshItemType::Node, 1);
+        auto const* bulk_node_ids_ptr = MeshLib::bulkNodeIDs(mesh);
+        if (bulk_node_ids_ptr == nullptr)
+        {
+            OGS_FATAL(
+                "Bulk node ids map expected in the construction of the mesh "
+                "subset.");
+        }
+        return *bulk_node_ids_ptr;
+    };
+    auto const& bulk_node_ids_map = bulk_node_ids(new_mesh_subset.getMesh());
 
     // New dictionary for the subset.
     ComponentGlobalIndexDict subset_dict;
