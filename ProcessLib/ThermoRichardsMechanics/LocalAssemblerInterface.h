@@ -17,6 +17,7 @@
 #include "ProcessLib/Reflection/ReflectionSetIPData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MaterialState.h"
 #include "ProcessLib/ThermoRichardsMechanics/ThermoRichardsMechanicsProcessData.h"
+#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -77,11 +78,49 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                 process_data_.initial_stress->name);
         }
 
+        // TODO (naumov) this information is runtime information and I'm not
+        // sure how to put it into the reflected data structure. The
+        // reflectWithName function also supports only a single return value.
+        if (name.starts_with("material_state_variable_"))
+        {
+            std::string const variable_name = name.substr(24, name.size() - 24);
+            DBUG("Setting material state variable '{:s}'", variable_name);
+
+            auto const& internal_variables =
+                solid_material_.getInternalVariables();
+            if (auto const iv = std::find_if(
+                    begin(internal_variables), end(internal_variables),
+                    [&variable_name](auto const& iv)
+                    { return iv.name == variable_name; });
+                iv != end(internal_variables))
+            {
+                return ProcessLib::
+                    setIntegrationPointDataMaterialStateVariables(
+                        values, material_states_,
+                        &MaterialStateData<
+                            DisplacementDim>::material_state_variables,
+                        iv->reference);
+            }
+            return 0;
+        }
+
         // TODO this logic could be pulled out of the local assembler into the
         // process. That might lead to a slightly better performance due to less
         // string comparisons.
         return ProcessLib::Reflection::reflectSetIPData<DisplacementDim>(
             name, values, current_states_);
+    }
+
+    std::vector<double> getMaterialStateVariableInternalState(
+        std::function<std::span<double>(
+            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
+                MaterialStateVariables&)> const& get_values_span,
+        int const& n_components) const
+    {
+        return ProcessLib::getIntegrationPointDataMaterialStateVariables(
+            material_states_,
+            &MaterialStateData<DisplacementDim>::material_state_variables,
+            get_values_span, n_components);
     }
 
     // TODO move to NumLib::ExtrapolatableElement
