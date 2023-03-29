@@ -170,6 +170,18 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         ip_data.alpha_B = medium.property(MPL::PropertyType::biot_coefficient)
                               .template value<double>(vars, pos, t, dt);
 
+        auto const Bu =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunctionDisplacement::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                gradNu, Nu, x_coord, _is_axially_symmetric);
+
+        auto& eps = ip_data.eps;
+        eps.noalias() = Bu * displacement;
+
+        // Set volumetric strain for the general case without swelling.
+        vars.volumetric_strain = Invariants::trace(eps);
+
         ip_data.s_L =
             medium.property(MPL::PropertyType::saturation)
                 .template value<double>(
@@ -191,15 +203,6 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
                 .template dValue<double>(vars, MPL::Variable::liquid_saturation,
                                          pos, t, dt);
 
-        auto const Bu =
-            LinearBMatrix::computeBMatrix<DisplacementDim,
-                                          ShapeFunctionDisplacement::NPOINTS,
-                                          typename BMatricesType::BMatrixType>(
-                gradNu, Nu, x_coord, _is_axially_symmetric);
-
-        auto& eps = ip_data.eps;
-        eps.noalias() = Bu * displacement;
-
         // relative permeability
         // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
@@ -214,8 +217,6 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
                 MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                     sigma_total));
         }
-        // Set volumetric strain rate for the general case without swelling.
-        vars.volumetric_strain = Invariants::trace(eps);
         vars.equivalent_plastic_strain =
             _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
         vars.mechanical_strain
@@ -917,6 +918,11 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const T = NT.dot(temperature);
         vars.temperature = T;
 
+        auto& eps = ip_data.eps;
+
+        // Set volumetric strain rate for the general case without swelling.
+        vars.volumetric_strain = Invariants::trace(eps);
+
         ip_data.s_L_prev =
             medium.property(MPL::PropertyType::saturation)
                 .template value<double>(
@@ -926,7 +932,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // restart.
         auto const C_el =
             ip_data.computeElasticTangentStiffness(t, pos, dt, T, T);
-        auto& eps = ip_data.eps;
         auto& sigma_sw = ip_data.sigma_sw;
         ip_data.eps_m_prev.noalias() =
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
