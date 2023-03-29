@@ -84,13 +84,10 @@ void setIPDataInitialConditions(
                 local_asm->setIPDataInitialConditions(
                     name_transformed, &mesh_property[position],
                     ip_meta_data.integration_order);
-            if (integration_points_read == 0)
-            {
-                OGS_FATAL(
-                    "No integration points read in the integration point "
-                    "initial conditions set function for IP data with name {}.",
-                    name);
-            }
+            // The number of read integration points could be zero in case there
+            // are e.g. multiple materials with different sets of internal state
+            // variables.
+
             position += integration_points_read * ip_meta_data.n_components;
         }
     }

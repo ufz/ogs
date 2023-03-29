@@ -126,6 +126,11 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
         LocalAssemblerInterface>(_process_data.solid_materials,
                                  add_secondary_variable);
 
+    ProcessLib::Deformation::
+        solidMaterialInternalVariablesToIntegrationPointWriter(
+            _process_data.solid_materials, _local_assemblers,
+            _integration_point_writer, integration_order);
+
     setIPDataInitialConditions(_integration_point_writer, mesh.getProperties(),
                                _local_assemblers);
 
