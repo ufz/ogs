@@ -464,7 +464,7 @@ public:
         if (status != 1)
         {
             throw NumLib::AssemblyException(
-                "MFront: integration failed with status" +
+                "MFront: integration failed with status " +
                 std::to_string(status) + ".");
         }
 
