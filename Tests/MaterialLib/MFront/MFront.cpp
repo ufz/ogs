@@ -7,8 +7,6 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#ifdef OGS_USE_MFRONT
-
 #include "MaterialLib/SolidModels/MFront/MFront.h"
 
 #include <gtest/gtest.h>
@@ -180,4 +178,3 @@ TYPED_TEST(MaterialLib_SolidModelsMFront3, IntegrateZeroDisplacement)
     state.reset(nullptr);
     ASSERT_TRUE(state == nullptr);
 }
-#endif  // OGS_USE_MFRONT
