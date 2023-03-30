@@ -279,13 +279,17 @@ if(exprtk_ADDED)
     target_include_directories(exprtk SYSTEM INTERFACE ${exprtk_SOURCE_DIR})
 endif()
 
-CPMFindPackage(
-    NAME range-v3
-    GITHUB_REPOSITORY ericniebler/range-v3
-    VERSION ${ogs.minimum_version.range-v3}
-    GIT_TAG ${ogs.minimum_version.range-v3}
-    EXCLUDE_FROM_ALL YES
-)
+if(GUIX_BUILD)
+    find_package(range-v3 REQUIRED)
+else()
+    CPMFindPackage(
+        NAME range-v3
+        GITHUB_REPOSITORY ericniebler/range-v3
+        VERSION ${ogs.minimum_version.range-v3}
+        GIT_TAG ${ogs.minimum_version.range-v3}
+        EXCLUDE_FROM_ALL YES
+    )
+endif()
 
 if(OGS_BUILD_TESTING OR OGS_BUILD_UTILS)
     CPMAddPackage(
