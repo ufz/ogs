@@ -146,6 +146,19 @@ public:
         }
     }
 
+    void preTimestepConcrete(std::vector<double> const& /*local_x*/,
+                             double const /*t*/, double const /*dt*/) override
+    {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            _ip_data_output[ip].velocity.setConstant(
+                DisplacementDim, std::numeric_limits<double>::quiet_NaN());
+        }
+    }
+
     void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
                               Eigen::VectorXd const& /*local_x_dot*/,
                               double const /*t*/,
