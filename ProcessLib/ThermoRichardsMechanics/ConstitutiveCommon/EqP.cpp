@@ -26,13 +26,13 @@ void EqPModel<DisplacementDim>::eval(
     TRMStorageData const& storage_data,
     EqPData<DisplacementDim>& out) const
 {
-    out.M_pu_X_BTI2N = S_L_data.S_L * rho_L_data.rho_LR * biot_data.alpha;
+    out.M_pu_X_BTI2N = S_L_data.S_L * rho_L_data.rho_LR * biot_data();
 
     out.K_pp_Laplace =
         perm_data.k_rel * rho_L_data.rho_LR * perm_data.Ki_over_mu;
 
     out.J_pp_X_BTI2NT_u_dot_N =
-        -rho_L_data.rho_LR * dS_L_data.dS_L_dp_cap * biot_data.alpha;
+        -rho_L_data.rho_LR * dS_L_data.dS_L_dp_cap * biot_data();
 
     out.J_pp_dNT_V_N =
         perm_data.Ki_over_mu *

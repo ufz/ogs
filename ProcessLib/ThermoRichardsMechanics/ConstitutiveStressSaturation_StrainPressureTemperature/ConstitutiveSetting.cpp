@@ -88,12 +88,12 @@ void ConstitutiveSetting<DisplacementDim>::eval(
                            StrainData<DisplacementDim>{eps_prev_arg},
                            prev_state.poro_data, poro_data);
 
-    if (biot_data.alpha < poro_data.phi)
+    if (biot_data() < poro_data.phi)
     {
         OGS_FATAL(
             "ThermoRichardsMechanics: Biot-coefficient {} is smaller than "
             "porosity {} in element/integration point {}/{}.",
-            biot_data.alpha, poro_data.phi, *x_position.getElementID(),
+            biot_data(), poro_data.phi, *x_position.getElementID(),
             *x_position.getIntegrationPoint());
     }
 

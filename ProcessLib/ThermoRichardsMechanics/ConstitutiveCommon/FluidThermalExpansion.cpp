@@ -33,7 +33,6 @@ void FluidThermalExpansionModel<DisplacementDim>::eval(
     variables.temperature = T_data.T;
 
     double const phi = poro_data.phi;
-    double const alpha = biot_data.alpha;
 
     double const fluid_volumetric_thermal_expansion =
         phi * MPL::getLiquidThermalExpansivity(media_data.liquid, variables,
@@ -41,7 +40,7 @@ void FluidThermalExpansionModel<DisplacementDim>::eval(
                                                x_t.dt);
 
     out.eff_thermal_expansion =
-        (alpha - phi) *
+        (biot_data() - phi) *
             Invariants::trace(
                 s_therm_exp_data.solid_linear_thermal_expansivity_vector) +
         fluid_volumetric_thermal_expansion;
