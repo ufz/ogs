@@ -736,41 +736,9 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 void ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
-    postNonLinearSolverConcrete(std::vector<double> const& local_x,
-                                std::vector<double> const& local_xdot,
-                                double const t, double const dt,
-                                bool const /*use_monolithic_scheme*/,
-                                int const /*process_id*/)
-{
-    auto const x =
-        Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size());
-    auto const xdot =
-        Eigen::Map<Eigen::VectorXd const>(local_xdot.data(), local_xdot.size());
-
-    int const n_integration_points = _integration_method.getNumberOfPoints();
-    for (int ip = 0; ip < n_integration_points; ip++)
-    {
-        auto const& N_u = _ip_data[ip].N_u;
-
-        ParameterLib::SpatialPosition const x_position{
-            std::nullopt, _element.getID(), ip,
-            MathLib::Point3d(
-                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
-                                               ShapeMatricesTypeDisplacement>(
-                    _element, N_u))};
-
-        updateConstitutiveRelations(x, xdot, x_position, t, dt, _ip_data[ip],
-                                    _ip_data_output[ip]);
-    }
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int DisplacementDim>
-void ThermoHydroMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
-    computeSecondaryVariableConcrete(double const /*t*/, double const /*dt*/,
+    computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
-                                     Eigen::VectorXd const& /*local_x_dot*/)
+                                     Eigen::VectorXd const& local_x_dot)
 {
     auto const p = local_x.template segment<pressure_size>(pressure_index);
 
@@ -785,6 +753,22 @@ void ThermoHydroMechanicsLocalAssembler<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
         DisplacementDim>(_element, _is_axially_symmetric, T,
                          *_process_data.temperature_interpolated);
+
+    int const n_integration_points = _integration_method.getNumberOfPoints();
+    for (int ip = 0; ip < n_integration_points; ip++)
+    {
+        auto const& N_u = _ip_data[ip].N_u;
+
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(), ip,
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, N_u))};
+
+        updateConstitutiveRelations(local_x, local_x_dot, x_position, t, dt,
+                                    _ip_data[ip], _ip_data_output[ip]);
+    }
 }
 }  // namespace ThermoHydroMechanics
 }  // namespace ProcessLib
