@@ -18,7 +18,7 @@ workflow:
         GIT_DEPTH: 1000
     - if: $CI_MERGE_REQUEST_ID
       variables:
-        CIBW_BUILD: cp39* cp310*
+        CIBW_BUILD: cp310*
         GIT_DEPTH: 1000
 
 include:
