@@ -31,10 +31,10 @@ namespace
 bool isRegularNode(
     MeshLib::NodePartitionedMesh const& bulk_mesh,
     std::vector<std::size_t> const& local_bulk_node_ids_for_subdomain,
-    MeshLib::Node const* subdomain_node)
+    std::size_t const subdomain_node_id)
 {
     return (!bulk_mesh.isGhostNode(
-        local_bulk_node_ids_for_subdomain[subdomain_node->getID()]));
+        local_bulk_node_ids_for_subdomain[subdomain_node_id]));
 };
 }  // namespace
 
@@ -99,8 +99,10 @@ unsigned long computeNumberOfRegularNodes(NodePartitionedMesh const* bulk_mesh,
     auto const subdomain_nodes = subdomain_mesh->getNodes();
     auto const local_bulk_node_ids_for_subdomain =
         *bulkNodeIDs(*subdomain_mesh);
+    auto const subdomain_node_ids =
+        subdomain_nodes | MeshLib::views::ids | ranges::to<std::vector>;
     unsigned long const number_of_regular_nodes =
-        std::count_if(subdomain_nodes.begin(), subdomain_nodes.end(),
+        std::count_if(subdomain_node_ids.begin(), subdomain_node_ids.end(),
                       std::bind_front(isRegularNode, *bulk_mesh,
                                       local_bulk_node_ids_for_subdomain));
 
@@ -156,13 +158,11 @@ computeRegularBaseNodeGlobalNodeIDsOfSubDomainPartition(
     DBUG("[{}] partition offset: {}", subdomain_mesh->getName(),
          partition_offset);
     // set the global id for the regular base nodes
-    for (auto const* subdomain_node : subdomain_nodes)
+    for (auto const id : subdomain_nodes | MeshLib::views::ids)
     {
-        if (isRegularNode(*bulk_mesh, local_bulk_node_ids_for_subdomain,
-                          subdomain_node))
+        if (isRegularNode(*bulk_mesh, local_bulk_node_ids_for_subdomain, id))
         {
-            subdomain_global_node_ids.emplace_back(partition_offset +
-                                                   subdomain_node->getID());
+            subdomain_global_node_ids.emplace_back(partition_offset + id);
         }
     }
     return subdomain_global_node_ids;
@@ -183,13 +183,11 @@ std::vector<std::size_t> computeGhostBaseNodeGlobalNodeIDsOfSubDomainPartition(
 
     // compute mapping subdomain ghost node id <-> bulk ghost node id
     std::vector<std::size_t> subdomain_node_id_to_bulk_node_id;
-    for (auto const* subdomain_node : subdomain_mesh->getNodes())
+    for (auto const id : subdomain_mesh->getNodes() | MeshLib::views::ids)
     {
-        if (!isRegularNode(*bulk_mesh, local_bulk_node_ids_for_subdomain,
-                           subdomain_node))
+        if (!isRegularNode(*bulk_mesh, local_bulk_node_ids_for_subdomain, id))
         {
-            auto const bulk_node_id =
-                local_bulk_node_ids_for_subdomain[subdomain_node->getID()];
+            auto const bulk_node_id = local_bulk_node_ids_for_subdomain[id];
             // this puts the global bulk node id at pos:
             // subdomain_node->getID() - number_of_regular_nodes
             subdomain_node_id_to_bulk_node_id.push_back(
@@ -229,22 +227,19 @@ std::vector<std::size_t> computeGhostBaseNodeGlobalNodeIDsOfSubDomainPartition(
 
     // construct a map for fast search of local bulk node ids
     std::map<std::size_t, std::size_t> global_to_local_bulk_node_ids;
-    for (auto bulk_node : bulk_mesh->getNodes())
+    for (auto const id : bulk_mesh->getNodes() | MeshLib::views::ids)
     {
-        if (!bulk_mesh->isGhostNode(bulk_node->getID()))
+        if (!bulk_mesh->isGhostNode(id))
         {
-            global_to_local_bulk_node_ids[bulk_mesh->getGlobalNodeID(
-                bulk_node->getID())] = bulk_node->getID();
+            global_to_local_bulk_node_ids[bulk_mesh->getGlobalNodeID(id)] = id;
         }
     }
 
     // construct a map for fast search of local sub-domain node ids
     std::map<std::size_t, std::size_t> local_subdomain_node_ids;
-    for (auto subdomain_node : subdomain_mesh->getNodes())
+    for (auto const id : subdomain_mesh->getNodes() | MeshLib::views::ids)
     {
-        local_subdomain_node_ids
-            [local_bulk_node_ids_for_subdomain[subdomain_node->getID()]] =
-                subdomain_node->getID();
+        local_subdomain_node_ids[local_bulk_node_ids_for_subdomain[id]] = id;
     }
 
     std::vector<std::size_t> local_subdomain_node_ids_of_all_ranks(
