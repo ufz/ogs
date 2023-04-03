@@ -346,7 +346,7 @@
       },
       "filter": {
         "include": {
-          "label": "default|Notebook"
+          "label": "default"
         }
       },
       "execution": {
