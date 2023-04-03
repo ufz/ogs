@@ -287,7 +287,7 @@ CPMAddPackage(
 if(OGS_BUILD_TESTING OR OGS_BUILD_UTILS)
     CPMAddPackage(
         NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
-        GIT_TAG 788100291f73e472febf7e5550eea36ec4be518b
+        GIT_TAG master
     )
     if(vtkdiff_ADDED)
         install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)
