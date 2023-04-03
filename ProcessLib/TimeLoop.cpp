@@ -550,6 +550,8 @@ void TimeLoop::initialize()
         setCoupledSolutions();
     }
 
+    updateDeactivatedSubdomains(_per_process_data, _start_time);
+
     // Output initial conditions
     {
         const bool output_initial_condition = true;
@@ -563,8 +565,6 @@ void TimeLoop::initialize()
     std::tie(_dt, _last_step_rejected) =
         computeTimeStepping(0.0, _current_time, _accepted_steps,
                             _rejected_steps, time_step_constraints);
-
-    updateDeactivatedSubdomains(_per_process_data, _start_time);
 
     calculateNonEquilibriumInitialResiduum(
         _per_process_data, _process_solutions, _process_solutions_prev);

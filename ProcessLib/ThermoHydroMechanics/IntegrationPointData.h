@@ -15,6 +15,7 @@
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
@@ -138,6 +139,40 @@ struct IntegrationPointData final
     }
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+};
+
+template <int DisplacementDim>
+struct IntegrationPointDataForOutput
+{
+    using DimVector = MatrixPolicyType::VectorType<DisplacementDim>;
+    // Darcy velocity for output. Care must be taken for the deactivated
+    // elements.
+    DimVector velocity = DimVector::Constant(
+        DisplacementDim, std::numeric_limits<double>::quiet_NaN());
+};
+
+template <int DisplacementDim>
+struct ConstitutiveRelationsValues
+{
+    using DimMatrix =
+        typename MatrixPolicyType::MatrixType<DisplacementDim, DisplacementDim>;
+
+    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
+    DimMatrix K_over_mu;
+    DimMatrix K_pT_thermal_osmosis;
+    DimMatrix effective_thermal_conductivity;
+    double alpha_biot;
+    double beta;
+    double beta_SR;
+    double c_f;
+    double effective_volumetric_heat_capacity;
+    double fluid_compressibility;
+    double fluid_density;
+    double porosity;
+    double rho;
+
+    // Freezing related values.
+    double J_TT_fr;
 };
 
 }  // namespace ThermoHydroMechanics

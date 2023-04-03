@@ -360,13 +360,9 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 
     if (hasMechanicalProcess(process_id))
     {
-        ProcessLib::ProcessVariable const& pv =
-            getProcessVariables(process_id)[0];
-
-        GlobalExecutor::executeSelectedMemberOnDereferenced(
+        GlobalExecutor::executeMemberOnDereferenced(
             &LocalAssemblerInterface::preTimestep, _local_assemblers,
-            pv.getActiveElementIDs(), *_local_to_global_index_map,
-            *x[process_id], t, dt);
+            *_local_to_global_index_map, *x[process_id], t, dt);
     }
 }
 
@@ -395,28 +391,6 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
         pv.getActiveElementIDs(), dof_tables, x, x_dot, t, dt);
-}
-
-template <int DisplacementDim>
-void ThermoHydroMechanicsProcess<DisplacementDim>::
-    postNonLinearSolverConcreteProcess(GlobalVector const& x,
-                                       GlobalVector const& xdot, const double t,
-                                       double const dt, const int process_id)
-{
-    if (!hasMechanicalProcess(process_id))
-    {
-        return;
-    }
-
-    DBUG("PostNonLinearSolver ThermoHydroMechanicsProcess.");
-    // Calculate strain, stress or other internal variables of mechanics.
-
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
-    GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), x, xdot, t, dt,
-        _use_monolithic_scheme, process_id);
 }
 
 template <int DisplacementDim>
