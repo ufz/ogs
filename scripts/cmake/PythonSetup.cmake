@@ -1,11 +1,9 @@
 # cmake-lint: disable=C0103
 
-if(OGS_USE_PYTHON)
-    set(_python_version_max "...<3.12")
-    if(WIN32 AND NOT OGS_BUILD_WHEEL)
-        # 3.11 crashes at initialization on Windows.
-        set(_python_version_max "...<3.11")
-    endif()
+set(_python_version_max "...<3.12")
+if(WIN32 AND NOT OGS_BUILD_WHEEL)
+    # 3.11 crashes at initialization on Windows.
+    set(_python_version_max "...<3.11")
 endif()
 
 if(OGS_USE_PIP)
@@ -68,15 +66,12 @@ else()
 endif()
 
 set(_python_componets Interpreter)
-if(OGS_USE_PYTHON AND NOT OGS_BUILD_WHEEL)
+if(NOT OGS_BUILD_WHEEL)
     list(APPEND _python_componets Development.Embed)
 endif()
-if(OGS_BUILD_PYTHON_MODULE OR OGS_USE_PYTHON)
-    list(APPEND _python_componets Development.Module)
-endif()
-if(OGS_USE_PYTHON OR OGS_BUILD_PYTHON_MODULE)
-    set(CMAKE_REQUIRE_FIND_PACKAGE_Python TRUE)
-endif()
+
+list(APPEND _python_componets Development.Module)
+set(CMAKE_REQUIRE_FIND_PACKAGE_Python TRUE)
 
 find_package(
     Python ${ogs.minimum_version.python}${_python_version_max}

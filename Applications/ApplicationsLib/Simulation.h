@@ -18,15 +18,16 @@
 
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
+#include "BaseLib/ExportSymbol.h"
 
 class ProjectData;
 
 class Simulation final
 {
 public:
-    Simulation(int argc, char* argv[]);
+    OGS_EXPORT_SYMBOL Simulation(int argc, char* argv[]);
 
-    void initializeDataStructures(
+    OGS_EXPORT_SYMBOL void initializeDataStructures(
         std::string const& project,
         std::vector<std::string> const& xml_patch_file_names,
         bool reference_path_is_set, std::string const& reference_path,
@@ -35,13 +36,14 @@ public:
 
     double currentTime() const;
     double endTime() const;
-    bool executeTimeStep();
-    bool executeSimulation();
-    void outputLastTimeStep() const;
+    OGS_EXPORT_SYMBOL bool executeTimeStep();
+    OGS_EXPORT_SYMBOL bool executeSimulation();
+    OGS_EXPORT_SYMBOL void outputLastTimeStep() const;
 
-    std::optional<ApplicationsLib::TestDefinition> getTestDefinition() const;
+    OGS_EXPORT_SYMBOL std::optional<ApplicationsLib::TestDefinition>
+    getTestDefinition() const;
 
-    ~Simulation();
+    OGS_EXPORT_SYMBOL ~Simulation();
 
 private:
     ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup;

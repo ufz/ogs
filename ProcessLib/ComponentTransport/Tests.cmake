@@ -561,7 +561,7 @@ AddTest(
     EXECUTABLE_ARGS elder-python.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS OGS_USE_PYTHON AND NOT OGS_USE_MPI
+    REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     elder_ts_0_t_0.000000_reference.vtu            elder_python_ts_0_t_0.000000.vtu            pressure  pressure  1e-1  1e-5
     elder_ts_100_t_26298000.000000_reference.vtu   elder_python_ts_100_t_26298000.000000.vtu   pressure  pressure  1e-1  1e-5

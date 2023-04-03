@@ -75,11 +75,7 @@ if(tetgen_ADDED)
     list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
 endif()
 
-if(OGS_USE_PYTHON OR OGS_BUILD_PYTHON_MODULE)
-    CPMAddPackage(
-        NAME pybind11 GITHUB_REPOSITORY pybind/pybind11 VERSION 2.10.3
-    )
-endif()
+CPMAddPackage(NAME pybind11 GITHUB_REPOSITORY pybind/pybind11 VERSION 2.10.3)
 
 if(_build_chemistry_lib)
     CPMAddPackage(

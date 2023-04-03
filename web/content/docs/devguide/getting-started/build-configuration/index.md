@@ -11,7 +11,7 @@ weight = 4
 
 ## Overview
 
-Before compiling the developer has to choose a configuration of the software. OGS comes in lots of different flavours (e.g. serial / parallelized), can be build with optional features (e.g. with Python scripting support) or modules (e.g. MFront material models).
+Before compiling the developer has to choose a configuration of the software. OGS comes in lots of different flavours (e.g. serial / parallelized), can be build with optional features or modules (e.g. MFront material models).
 
 To separate source code from generated files such as compiled libraries, executables, test outputs and IDE projects we create build-directories. They can be placed arbitrarily. You can have as many build-directories as you like for e.g. different configurations but they will all use one source code directory. A typically directory structure:
 

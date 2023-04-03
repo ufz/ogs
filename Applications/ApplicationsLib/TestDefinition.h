@@ -15,6 +15,8 @@
 #include <string>
 #include <vector>
 
+#include "BaseLib/ExportSymbol.h"
+
 namespace BaseLib
 {
 class ConfigTree;
@@ -32,7 +34,7 @@ public:
                    std::string const& reference_path,
                    std::string const& output_directory);
 
-    bool runTests() const;
+    OGS_EXPORT_SYMBOL bool runTests() const;
     std::vector<std::string> const& getOutputFiles() const;
     std::size_t numberOfTests() const;
 

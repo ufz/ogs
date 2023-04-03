@@ -79,5 +79,5 @@
       fi
     - |
       if [[ "$CHECK_WARNINGS" = true ]] ; then
-        if [[ $(cat $log_file | grep warning -i | grep -v 'WARNING: no license files found' | grep -v 'WARNING: multiple license files found') ]]; then printf 'There were compiler warnings:\n\n'; cat $log_file | grep warning -i | grep -v 'WARNING: no license files found' | grep -v 'WARNING: multiple license files found'; exit 1; fi
+        if [[ $(cat $log_file | grep warning -i | grep -v 'WARNING: no license files found' | grep -v 'WARNING: multiple license files found' | grep -v 'means the weak symbol cannot be overridden at runtime') ]]; then printf 'There were compiler warnings:\n\n'; cat $log_file | grep warning -i | grep -v 'WARNING: no license files found' | grep -v 'WARNING: multiple license files found' | grep -v 'means the weak symbol cannot be overridden at runtime'; exit 1; fi
       fi

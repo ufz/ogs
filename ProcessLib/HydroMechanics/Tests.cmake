@@ -27,24 +27,24 @@ AddTest(
     simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_ts_1_t_1000000.000000.vtu sigma sigma 1e-7 0
     simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_ts_1_t_1000000.000000.vtu DarcyVelocity DarcyVelocity 1e-7 0
 )
-if (OGS_USE_PYTHON)
-    # same, but using Python BCs
-    AddTest(
-        NAME HydroMechanics_GroundEquilibriumPython
-        PATH HydroMechanics/GroundEquilibrium
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS simHM_ground_python.prj
-        WRAPPER time
-        TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
-        PYTHON_PACKAGES numpy
-        DIFF_DATA
-        simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_python_ts_1_t_1000000.000000.vtu pressure_interpolated pressure_interpolated 1e-10 0
-        simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_python_ts_1_t_1000000.000000.vtu displacement displacement 1e-14 0
-        simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_python_ts_1_t_1000000.000000.vtu sigma sigma 1e-7 0
-        simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_python_ts_1_t_1000000.000000.vtu DarcyVelocity DarcyVelocity 1e-7 0
-    )
-endif()
+
+# same, but using Python BCs
+AddTest(
+    NAME HydroMechanics_GroundEquilibriumPython
+    PATH HydroMechanics/GroundEquilibrium
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS simHM_ground_python.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    PYTHON_PACKAGES numpy
+    DIFF_DATA
+    simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_python_ts_1_t_1000000.000000.vtu pressure_interpolated pressure_interpolated 1e-10 0
+    simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_python_ts_1_t_1000000.000000.vtu displacement displacement 1e-14 0
+    simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_python_ts_1_t_1000000.000000.vtu sigma sigma 1e-7 0
+    simHM_ground_ts_1_t_1000000.000000.vtu simHM_ground_python_ts_1_t_1000000.000000.vtu DarcyVelocity DarcyVelocity 1e-7 0
+)
+
 AddTest(
     NAME HydroMechanics_GroundEquilibriumQuadBCu
     PATH HydroMechanics/GroundEquilibrium
@@ -59,24 +59,23 @@ AddTest(
     simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu sigma sigma 1e-7 0
     simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu DarcyVelocity DarcyVelocity 1e-7 0
 )
-if (OGS_USE_PYTHON)
-    # same, but using Python BCs
-    AddTest(
-        NAME HydroMechanics_GroundEquilibriumQuadBCuPython
-        PATH HydroMechanics/GroundEquilibrium
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS simHM_ground_quadBCu_python.prj
-        WRAPPER time
-        TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
-        PYTHON_PACKAGES numpy
-        DIFF_DATA
-        simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu pressure_interpolated pressure_interpolated 1e-10 0
-        simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu displacement displacement 1e-14 0
-        simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu sigma sigma 1e-7 0
-        simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu DarcyVelocity DarcyVelocity 1e-7 0
-    )
-endif()
+
+# same, but using Python BCs
+AddTest(
+    NAME HydroMechanics_GroundEquilibriumQuadBCuPython
+    PATH HydroMechanics/GroundEquilibrium
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS simHM_ground_quadBCu_python.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    PYTHON_PACKAGES numpy
+    DIFF_DATA
+    simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu pressure_interpolated pressure_interpolated 1e-10 0
+    simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu displacement displacement 1e-14 0
+    simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu sigma sigma 1e-7 0
+    simHM_ground_quadBCu_ts_10_t_1000000.000000.vtu simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu DarcyVelocity DarcyVelocity 1e-7 0
+)
 
 AddTest(
     NAME HydroMechanics_HML_square_1e2_quad9_confined_compression
@@ -248,21 +247,20 @@ AddTest(
     expected_square_1e2_UC_early_ts_10_t_1.000000.vtu square_1e2_UC_early_ts_10_t_1.000000.vtu displacement displacement 1e-11 1e-16
     expected_square_1e2_UC_early_ts_10_t_1.000000.vtu square_1e2_UC_early_ts_10_t_1.000000.vtu pressure pressure 1e-10 1e-16
 )
-if (OGS_USE_PYTHON)
-    # same, but using Python BCs
-    AddTest(
-        NAME HydroMechanics_HML_square_1e2_unconfined_compression_early_python
-        PATH HydroMechanics/Linear/Unconfined_Compression_early
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS square_1e2_UC_early_python.prj
-        WRAPPER time
-        TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
-        DIFF_DATA
-        expected_square_1e2_UC_early_ts_10_t_1.000000.vtu square_1e2_UC_early_python_ts_10_t_1.000000.vtu displacement displacement 1e-11 1e-16
-        expected_square_1e2_UC_early_ts_10_t_1.000000.vtu square_1e2_UC_early_python_ts_10_t_1.000000.vtu pressure pressure 1e-10 1e-16
-    )
-endif()
+
+# same, but using Python BCs
+AddTest(
+    NAME HydroMechanics_HML_square_1e2_unconfined_compression_early_python
+    PATH HydroMechanics/Linear/Unconfined_Compression_early
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_1e2_UC_early_python.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    expected_square_1e2_UC_early_ts_10_t_1.000000.vtu square_1e2_UC_early_python_ts_10_t_1.000000.vtu displacement displacement 1e-11 1e-16
+    expected_square_1e2_UC_early_ts_10_t_1.000000.vtu square_1e2_UC_early_python_ts_10_t_1.000000.vtu pressure pressure 1e-10 1e-16
+)
 
 # HydroMechanics; Small deformation, linear poroelastic (unconfined compression late) the drainage process is finished and the displacement of the porous media is only a result of solid properties.
 AddTest(
@@ -365,21 +363,20 @@ AddTest(
     flow_pressure_boundary_ts_100_t_4000.000000.vtu flow_pressure_boundary_ts_100_t_4000.000000.vtu pressure pressure 0 1e-13
     flow_pressure_boundary_ts_100_t_4000.000000.vtu flow_pressure_boundary_ts_100_t_4000.000000.vtu displacement displacement 1e-12 0
 )
-if (OGS_USE_PYTHON)
-    # same, but using Python BCs
-    AddTest(
-        NAME HydroMechanics_IdealGas_flow_pressure_boundary_python
-        PATH HydroMechanics/IdealGas/flow_pressure_boundary
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS flow_pressure_boundary_python.prj
-        WRAPPER time
-        TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
-        DIFF_DATA
-        flow_pressure_boundary_ts_100_t_4000.000000.vtu flow_pressure_boundary_python_ts_100_t_4000.000000.vtu pressure pressure 0 1e-13
-        flow_pressure_boundary_ts_100_t_4000.000000.vtu flow_pressure_boundary_python_ts_100_t_4000.000000.vtu displacement displacement 1e-12 0
-    )
-endif()
+
+# same, but using Python BCs
+AddTest(
+    NAME HydroMechanics_IdealGas_flow_pressure_boundary_python
+    PATH HydroMechanics/IdealGas/flow_pressure_boundary
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS flow_pressure_boundary_python.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    flow_pressure_boundary_ts_100_t_4000.000000.vtu flow_pressure_boundary_python_ts_100_t_4000.000000.vtu pressure pressure 0 1e-13
+    flow_pressure_boundary_ts_100_t_4000.000000.vtu flow_pressure_boundary_python_ts_100_t_4000.000000.vtu displacement displacement 1e-12 0
+)
 
 # Permeability models
 AddTest(
@@ -561,25 +558,23 @@ AddTest(
     InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_ts_1_t_86400.000000.vtu epsilon epsilon 1e-14 1.e-9
     InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_ts_1_t_86400.000000.vtu sigma sigma 1e-7 1.e-9
 )
-if (OGS_USE_PYTHON)
-    # same but using Python BCs
-    AddTest(
-        NAME MonolithicInjectionProduction1DPython
-        PATH HydroMechanics/StaggeredScheme/InjectionProduction1D
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS InjectionProduction1DMono_python.prj
-        WRAPPER time
-        TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
-        DIFF_DATA
-        InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_Python_ts_1_t_86400.000000.vtu displacement displacement 1e-14 0
-        InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_Python_ts_1_t_86400.000000.vtu pressure pressure 1e-7 0
-        InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_Python_ts_1_t_86400.000000.vtu velocity velocity 1e-19 0
-        InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_Python_ts_1_t_86400.000000.vtu epsilon epsilon 1e-14 0
-        InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_Python_ts_1_t_86400.000000.vtu sigma sigma 1e-7 0
-    )
-endif()
 
+# same but using Python BCs
+AddTest(
+    NAME MonolithicInjectionProduction1DPython
+    PATH HydroMechanics/StaggeredScheme/InjectionProduction1D
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS InjectionProduction1DMono_python.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_Python_ts_1_t_86400.000000.vtu displacement displacement 1e-14 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_Python_ts_1_t_86400.000000.vtu pressure pressure 1e-7 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_Python_ts_1_t_86400.000000.vtu velocity velocity 1e-19 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_Python_ts_1_t_86400.000000.vtu epsilon epsilon 1e-14 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_Python_ts_1_t_86400.000000.vtu sigma sigma 1e-7 0
+)
 
 ### With staggered scheme
 AddTest(
@@ -597,24 +592,23 @@ AddTest(
     InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_ts_1_t_86400.000000.vtu epsilon epsilon 1e-13 0
     InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_ts_1_t_86400.000000.vtu sigma sigma 1e-6 0
 )
-if (OGS_USE_PYTHON)
-    # same but using Python BCs
-    AddTest(
-        NAME StaggeredInjectionProduction1DPython
-        PATH HydroMechanics/StaggeredScheme/InjectionProduction1D
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS InjectionProduction1D_python.prj
-        WRAPPER time
-        TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
-        DIFF_DATA
-        InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Python_ts_1_t_86400.000000.vtu displacement displacement 1e-13 0
-        InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Python_ts_1_t_86400.000000.vtu pressure pressure 1e-6 0
-        InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Python_ts_1_t_86400.000000.vtu velocity velocity 1e-18 0
-        InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Python_ts_1_t_86400.000000.vtu epsilon epsilon 1e-13 0
-        InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Python_ts_1_t_86400.000000.vtu sigma sigma 1e-6 0
-    )
-endif()
+
+# same but using Python BCs
+AddTest(
+    NAME StaggeredInjectionProduction1DPython
+    PATH HydroMechanics/StaggeredScheme/InjectionProduction1D
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS InjectionProduction1D_python.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Python_ts_1_t_86400.000000.vtu displacement displacement 1e-13 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Python_ts_1_t_86400.000000.vtu pressure pressure 1e-6 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Python_ts_1_t_86400.000000.vtu velocity velocity 1e-18 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Python_ts_1_t_86400.000000.vtu epsilon epsilon 1e-13 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Python_ts_1_t_86400.000000.vtu sigma sigma 1e-6 0
+)
 
 AddTest(
     NAME StaggeredInjectionProduction1D_MFront

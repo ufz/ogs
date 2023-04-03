@@ -178,15 +178,13 @@
       "name": "ci-simplest",
       "inherits": "release",
       "cacheVariables": {
-        "OGS_BUILD_UTILS": "OFF",
-        "OGS_USE_PYTHON": "OFF"
+        "OGS_BUILD_UTILS": "OFF"
       }
     },
     {
       "name": "ci-no-unity",
       "inherits": "release-all",
       "cacheVariables": {
-        "OGS_USE_PYTHON": "OFF",
         "OGS_USE_UNITY_BUILDS": "OFF"
       }
     },
@@ -208,7 +206,6 @@
       "cacheVariables": {
         "HDF5_USE_STATIC_LIBRARIES": "ON",
         "OGS_BUILD_HDF5": "ON",
-        "OGS_USE_PYTHON": "ON",
         "OGS_BUILD_PYTHON_MODULE": "ON",
         "OGS_BUILD_WHEEL": "ON",
         "OGS_BUILD_TESTING": "OFF",
