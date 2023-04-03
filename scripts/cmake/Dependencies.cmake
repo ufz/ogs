@@ -75,9 +75,13 @@ if(tetgen_ADDED)
     list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
 endif()
 
+set(_pybind_version ${ogs.minimum_version.pybind11})
+if("${Python_VERSION}" VERSION_GREATER_EQUAL 3.11)
+    set(_pybind_version ${ogs.minimum_version.pybind11_for_py311})
+endif()
 CPMFindPackage(
     NAME pybind11 GITHUB_REPOSITORY pybind/pybind11
-    VERSION ${ogs.minimum_version.pybind11}
+    VERSION ${_pybind_version}
 )
 
 if(_build_chemistry_lib)
