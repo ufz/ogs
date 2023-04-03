@@ -2,25 +2,15 @@ build win:
   extends:
     - .template-build-win
     - .vs2019-environment
-  rules:
-    - if: "$USE_PYTHON =~ /ON$/"
-    - if: '$CI_COMMIT_BRANCH == "master"'
-    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
-    - when: manual
-      allow_failure: true
   variables:
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release
     # TODO: temporary switched off TH2M
     CMAKE_ARGS: >-
       -DOGS_CI_TESTRUNNER_REPEAT=1
-      -DOGS_$USE_PYTHON
       -DOGS_BUILD_PROCESS_TH2M=OFF
       -DOGS_USE_PIP=ON
       -DOGS_USE_MKL=ON
-  parallel:
-    matrix:
-      - USE_PYTHON: ["USE_PYTHON=ON", "USE_PYTHON=OFF"]
 
 build win msvc:
   extends:

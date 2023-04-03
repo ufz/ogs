@@ -212,7 +212,6 @@ void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
         x_dot, process_id);
 }
 
-#ifdef OGS_USE_PYTHON
 NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
     GlobalVector const& x)
 {
@@ -343,7 +342,6 @@ void HeatTransportBHEProcess::postTimestepConcreteProcess(
         DBUG("Method `serverCommunication' not overridden in Python script.");
     }
 }
-#endif  // OGS_USE_PYTHON
 
 void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
     std::vector<std::vector<MeshLib::Node*>> const& all_bhe_nodes)
@@ -450,7 +448,6 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                     _process_data._use_server_communication)
                 // call BHEPythonBoundarycondition
                 {
-#ifdef OGS_USE_PYTHON
                     if (_process_data.py_bc_object)  // the bc object exist
                     {
                         // apply the customized top, inflow BC.
@@ -469,11 +466,6 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                             "The Python Boundary Condition was switched on, "
                             "but the data object does not exist! ");
                     }
-#else
-                    OGS_FATAL(
-                        "The Python Boundary Condition was switched off! "
-                        "Not able to create Boundary Condition for BHE! ");
-#endif  // OGS_USE_PYTHON
                 }
                 else
                 {

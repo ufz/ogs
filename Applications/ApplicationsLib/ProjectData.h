@@ -18,6 +18,7 @@
 #include <string>
 
 #include "BaseLib/ConfigTree-fwd.h"
+#include "BaseLib/ExportSymbol.h"
 #include "ChemistryLib/ChemicalSolverInterface.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
@@ -25,6 +26,10 @@
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/ProcessVariable.h"
+
+#ifdef OGS_EMBED_PYTHON_INTERPRETER
+#include <pybind11/embed.h>
+#endif
 
 namespace MeshLib
 {
@@ -144,9 +149,14 @@ private:
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
         _curves;
+
+#ifdef OGS_EMBED_PYTHON_INTERPRETER
+    std::optional<pybind11::scoped_interpreter> _py_scoped_interpreter;
+#endif
 };
 
 /// Parses a comma separated list of integers.
 /// Such lists occur in the medium definition in the OGS prj file.
 /// Error messages in this function refer to this specific purpose.
-std::vector<int> splitMaterialIdString(std::string const& material_id_string);
+OGS_EXPORT_SYMBOL std::vector<int> splitMaterialIdString(
+    std::string const& material_id_string);

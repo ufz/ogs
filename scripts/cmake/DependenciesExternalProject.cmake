@@ -53,34 +53,32 @@ if(OGS_USE_MFRONT)
         endif()
     endif()
     if(NOT MFRONT)
-        if(OGS_USE_PYTHON)
-            set(_py_version_major_minor
-                "${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}"
+        set(_py_version_major_minor
+            "${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}"
+        )
+        set(_py_boost_comp
+            "python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}"
+        )
+        find_package(Boost COMPONENTS ${_py_boost_comp})
+        if(Boost_${_py_boost_comp}_FOUND)
+            set(_tfel_cmake_args
+                "-DPython_ADDITIONAL_VERSIONS=${_py_version_major_minor}"
+                "-Denable-python-bindings=ON"
             )
-            set(_py_boost_comp
-                "python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}"
+            message(
+                STATUS
+                    "TFEL build with Python bindings. To use them:\n "
+                    "  export PYTHONPATH=${PROJECT_BINARY_DIR}/_ext/TFEL/lib/python"
+                    "${_py_version_major_minor}/site-packages:$PYTHONPATH"
             )
-            find_package(Boost COMPONENTS ${_py_boost_comp})
-            if(Boost_${_py_boost_comp}_FOUND)
-                set(_tfel_cmake_args
-                    "-DPython_ADDITIONAL_VERSIONS=${_py_version_major_minor}"
-                    "-Denable-python-bindings=ON"
-                )
-                message(
-                    STATUS
-                        "TFEL build with Python bindings. To use them:\n "
-                        "  export PYTHONPATH=${PROJECT_BINARY_DIR}/_ext/TFEL/lib/python"
-                        "${_py_version_major_minor}/site-packages:$PYTHONPATH"
-                )
-            else()
-                # Cleanup variables from previous find_package()-call
-                unset(Boost_INCLUDE_DIR)
-                unset(Boost_INCLUDE_DIRS)
-                message(
-                    STATUS
-                        "TFEL Python bindings disabled as Boosts Python library was not found."
-                )
-            endif()
+        else()
+            # Cleanup variables from previous find_package()-call
+            unset(Boost_INCLUDE_DIR)
+            unset(Boost_INCLUDE_DIRS)
+            message(
+                STATUS
+                    "TFEL Python bindings disabled as Boosts Python library was not found."
+            )
         endif()
         BuildExternalProject(
             TFEL ${_tfel_source}

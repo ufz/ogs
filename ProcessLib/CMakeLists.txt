@@ -18,9 +18,7 @@ append_source_files(SOURCES Reflection)
 
 ogs_add_library(ProcessLib GENERATE_EXPORT_HEADER ${SOURCES})
 
-if(OGS_USE_PYTHON)
-    add_subdirectory(BoundaryConditionAndSourceTerm/Python)
-endif()
+add_subdirectory(BoundaryConditionAndSourceTerm/Python)
 
 target_link_libraries(
     ProcessLib
@@ -48,7 +46,6 @@ target_compile_definitions(
            $<$<BOOL:${OGS_ENABLE_ELEMENT_PRISM}>:OGS_ENABLE_ELEMENT_PRISM>
            $<$<BOOL:${OGS_ENABLE_ELEMENT_PYRAMID}>:OGS_ENABLE_ELEMENT_PYRAMID>
     PRIVATE $<$<BOOL:${OGS_USE_INSITU}>:OGS_USE_INSITU>
-            $<$<BOOL:${OGS_USE_PYTHON}>:OGS_USE_PYTHON>
 )
 
 target_precompile_headers(

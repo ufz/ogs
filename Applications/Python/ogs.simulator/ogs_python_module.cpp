@@ -24,10 +24,7 @@
 #include "BaseLib/RunTime.h"
 #include "CommandLineArgumentParser.h"
 #include "InfoLib/GitInfo.h"
-
-#ifdef OGS_USE_PYTHON
 #include "ogs_embedded_python.h"
-#endif
 
 std::unique_ptr<Simulation> simulation;
 

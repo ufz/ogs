@@ -10,6 +10,8 @@
 
 #include "CreateHeatTransportBHEProcess.h"
 
+#include <pybind11/pybind11.h>
+
 #include <vector>
 
 #include "BHE/BHETypes.h"
@@ -20,9 +22,6 @@
 #include "HeatTransportBHEProcessData.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
-#ifdef OGS_USE_PYTHON
-#include <pybind11/pybind11.h>
-#endif  // OGS_USE_PYTHON
 
 namespace ProcessLib
 {
@@ -164,7 +163,6 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     // create a pythonBoundaryCondition object
     if (using_tespy || using_server_communication)
     {
-#ifdef OGS_USE_PYTHON
         // Evaluate Python code in scope of main module
         pybind11::object scope =
             pybind11::module::import("__main__").attr("__dict__");
@@ -215,12 +213,6 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
             visit(update_flow_rate, bhes[idx_bhe]);
         }
         */
-#else
-        OGS_FATAL(
-            "Input files suggest the coupling of BHE with pipe network. "
-            "This means the compiling flag OGS_USE_PYTHON must be switched "
-            "on. ");
-#endif  // OGS_USE_PYTHON
     }
 
     HeatTransportBHEProcessData process_data(
