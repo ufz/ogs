@@ -290,6 +290,7 @@
                 <variable>Syntheticb</variable>
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
+                <variable>porosity_avg</variable>
             </variables>
         </output>
     </time_loop>

@@ -182,6 +182,7 @@
                 <variable>Si</variable>
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
+                <variable>specific_flux</variable>
             </variables>
         </output>
     </time_loop>

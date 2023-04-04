@@ -238,6 +238,12 @@
                 <variable>[Pa-231]</variable>
                 <variable>[Ac-227]</variable>
                 <variable>pressure</variable>
+                <variable>LiquidMassFlowRate</variable>
+                <variable>[Cm-247]FlowRate</variable>
+                <variable>[Pu-239]FlowRate</variable>
+                <variable>[U-235]FlowRate</variable>
+                <variable>[Pa-231]FlowRate</variable>
+                <variable>[Ac-227]FlowRate</variable>
             </variables>
         </output>
     </time_loop>
