@@ -33,7 +33,7 @@ if(OGS_USE_NETCDF)
          "netcdf/4.7.4#3af05a96c74c5ec03320790eb6aa8d2b"
          "netcdf-cxx/4.3.1-3@bilke/testing#ca3ccf6c9a33aebdcaff7c5b8f493770"
          "zlib/1.2.12#a30750797caa71bd61bd0a18189caa28"
-         "hdf5/${ogs.minimum_version.hdf5}#71171442d15f19773a1c0cd7abe95988"
+         "hdf5/1.12.1#71171442d15f19773a1c0cd7abe95988"
     )
     set(CONAN_OPTIONS netcdf:dap=False)
 endif()
