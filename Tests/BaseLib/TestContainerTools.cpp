@@ -11,6 +11,7 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <iterator>
 #include <memory>
 #include <span>
 #include <string>
@@ -74,6 +75,14 @@ void assertPetsLegs(auto const& pets)
     EXPECT_EQ(4, pets[1].legs());
 }
 }  // namespace
+
+TEST(BaseLib, ContainerToolsIteratorAndRangeConcepts)
+{
+    std::vector<Dog> data;
+    BaseLib::PolymorphicRandomAccessContainerView<Dog> const view{data};
+    using IteratorType = decltype(view.begin());
+    static_assert(std::input_iterator<IteratorType>);
+}
 
 TEST(BaseLib, ContainerToolsNoUpCast)
 {

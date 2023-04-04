@@ -24,6 +24,9 @@ struct PolymorphicRandomAccessContainerViewInterface;
 template <typename Element>
 struct PolymorphicRandomAccessContainerViewIterator
 {
+    using value_type = Element;
+    using difference_type = std::ptrdiff_t;
+
     PolymorphicRandomAccessContainerViewIterator(
         std::size_t n,
         PolymorphicRandomAccessContainerViewInterface<Element> const&
@@ -32,10 +35,23 @@ struct PolymorphicRandomAccessContainerViewIterator
     {
     }
 
+    PolymorphicRandomAccessContainerViewIterator& operator=(
+        PolymorphicRandomAccessContainerViewIterator const& other)
+    {
+        n_ = other.n_;
+        view_ = other.view_;
+    }
+
     PolymorphicRandomAccessContainerViewIterator& operator++() noexcept
     {
         ++n_;
         return *this;
+    }
+    PolymorphicRandomAccessContainerViewIterator operator++(int) noexcept
+    {
+        auto copy{*this};
+        operator++();
+        return copy;
     }
 
     [[nodiscard]] Element& operator*() const { return view_[n_]; }
