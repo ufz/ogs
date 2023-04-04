@@ -216,6 +216,11 @@ std::vector<XdmfHdfData> transformAttributes(MeshLib::Mesh const& mesh,
             continue;
         }
 
+        if (!property_base->is_for_output)
+        {
+            continue;
+        }
+
         if (auto const attribute = transformAttribute(
                 std::pair(std::string(name), property_base), n_files))
         {
