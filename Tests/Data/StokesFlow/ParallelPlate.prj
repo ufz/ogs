@@ -73,6 +73,7 @@
             <variables>
                 <variable>liquid_velocity</variable>
                 <variable>pressure</variable>
+                <variable>pressure_interpolated</variable>
             </variables>
         </output>
     </time_loop>
