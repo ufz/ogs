@@ -203,7 +203,7 @@ private:
         std::vector<T> data_array;
         std::string line;
         std::size_t line_count(0);
-        std::size_t error_count(0);
+        int error_count(0);
         while (std::getline(in, line))
         {
             line_count++;
