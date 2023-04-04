@@ -10,9 +10,6 @@
 
 #pragma once
 
-#include <Eigen/Core>
-#include <Eigen/Sparse>
-#include <functional>
 #include <numeric>
 #include <vector>
 
@@ -238,10 +235,6 @@ class LocalAssemblerData : public ComponentTransportLocalAssemblerInterface
     using GlobalDimNodalMatrixType =
         typename ShapeMatricesType::GlobalDimNodalMatrixType;
     using GlobalDimMatrixType = typename ShapeMatricesType::GlobalDimMatrixType;
-    using LaplaceCoefficientFunction = std::function<GlobalDimMatrixType(
-        const LocalAssemblerData<ShapeFunction, GlobalDim>&,
-        GlobalDimMatrixType const&, GlobalDimMatrixType const&,
-        GlobalDimVectorType const&, double const, double const, double const)>;
 
 public:
     LocalAssemblerData(
@@ -291,12 +284,6 @@ public:
 
             _ip_data[ip].pushBackState();
         }
-        _laplace_coefficient_function =
-            _process_data.stabilizer
-                ? &LocalAssemblerData<ShapeFunction, GlobalDim>::
-                      getHydrodynamicDispersionWithArtificialDiffusion
-                : &LocalAssemblerData<ShapeFunction,
-                                      GlobalDim>::getHydrodynamicDispersion;
     }
 
     void setChemicalSystemID(std::size_t const /*mesh_item_id*/) override
@@ -575,9 +562,6 @@ public:
 
         MaterialPropertyLib::VariableArray vars;
 
-        GlobalDimMatrixType const& I(
-            GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
-
         // Get material properties
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
@@ -671,9 +655,9 @@ public:
                         t, dt);
 
             GlobalDimMatrixType const hydrodynamic_dispersion =
-                _laplace_coefficient_function(
-                    *this, I, pore_diffusion_coefficient, velocity, porosity,
-                    solute_dispersivity_transverse,
+                _process_data.laplace_coefficient_function(
+                    _element.getID(), pore_diffusion_coefficient, velocity,
+                    porosity, solute_dispersivity_transverse,
                     solute_dispersivity_longitudinal);
 
             const double R_times_phi(retardation_factor * porosity);
@@ -941,9 +925,6 @@ public:
         MaterialPropertyLib::VariableArray vars;
         MaterialPropertyLib::VariableArray vars_prev;
 
-        GlobalDimMatrixType const& I(
-            GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
-
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
@@ -1032,9 +1013,9 @@ public:
                     : GlobalDimVectorType(-K_over_mu * dNdx * local_p);
 
             GlobalDimMatrixType const hydrodynamic_dispersion =
-                _laplace_coefficient_function(
-                    *this, I, pore_diffusion_coefficient, velocity, porosity,
-                    solute_dispersivity_transverse,
+                _process_data.laplace_coefficient_function(
+                    _element.getID(), pore_diffusion_coefficient, velocity,
+                    porosity, solute_dispersivity_transverse,
                     solute_dispersivity_longitudinal);
 
             double const R_times_phi = retardation_factor * porosity;
@@ -1245,9 +1226,6 @@ public:
         MaterialPropertyLib::VariableArray vars;
         MaterialPropertyLib::VariableArray vars_prev;
 
-        GlobalDimMatrixType const& I(
-            GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
-
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
@@ -1320,8 +1298,9 @@ public:
                     ? GlobalDimVectorType(-k / mu * (dNdx * p - rho * b))
                     : GlobalDimVectorType(-k / mu * dNdx * p);
 
-            GlobalDimMatrixType const D = _laplace_coefficient_function(
-                *this, I, Dp, q, phi, alpha_T, alpha_L);
+            GlobalDimMatrixType const D =
+                _process_data.laplace_coefficient_function(
+                    _element.getID(), Dp, q, phi, alpha_T, alpha_L);
 
             // matrix assembly
             local_Jac.noalias() +=
@@ -1708,9 +1687,6 @@ public:
 
         MaterialPropertyLib::VariableArray vars;
 
-        GlobalDimMatrixType const& I(
-            GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
-
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
@@ -1759,14 +1735,10 @@ public:
                 component[MaterialPropertyLib::PropertyType::pore_diffusion]
                     .value(vars, pos, t, dt));
 
-            double const q_magnitude = q.norm();
             // hydrodymanic dispersion
             GlobalDimMatrixType const D =
-                q_magnitude != 0.0
-                    ? GlobalDimMatrixType(phi * Dp + alpha_T * q_magnitude * I +
-                                          (alpha_L - alpha_T) / q_magnitude *
-                                              q * q.transpose())
-                    : GlobalDimMatrixType(phi * Dp);
+                _process_data.getHydrodynamicDispersion(_element.getID(), Dp, q,
+                                                        phi, alpha_T, alpha_L);
 
             cache_mat.col(ip).noalias() = q * c_ip - phi * D * dNdx * c;
         }
@@ -1800,56 +1772,6 @@ private:
         Eigen::aligned_allocator<
             IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
         _ip_data;
-
-    LaplaceCoefficientFunction _laplace_coefficient_function;
-
-    GlobalDimMatrixType getHydrodynamicDispersion(
-        GlobalDimMatrixType const& I,
-        GlobalDimMatrixType const& pore_diffusion_coefficient,
-        GlobalDimVectorType const& velocity,
-        double const porosity,
-        double const solute_dispersivity_transverse,
-        double const solute_dispersivity_longitudinal) const
-    {
-        double const velocity_magnitude = velocity.norm();
-        if (velocity_magnitude == 0.0)
-        {
-            return porosity * pore_diffusion_coefficient;
-        }
-
-        return GlobalDimMatrixType(
-            porosity * pore_diffusion_coefficient +
-            solute_dispersivity_transverse * velocity_magnitude * I +
-            (solute_dispersivity_longitudinal -
-             solute_dispersivity_transverse) /
-                velocity_magnitude * velocity * velocity.transpose());
-    }
-
-    GlobalDimMatrixType getHydrodynamicDispersionWithArtificialDiffusion(
-        GlobalDimMatrixType const& I,
-        GlobalDimMatrixType const& pore_diffusion_coefficient,
-        GlobalDimVectorType const& velocity,
-        double const porosity,
-        double const solute_dispersivity_transverse,
-        double const solute_dispersivity_longitudinal) const
-    {
-        double const velocity_magnitude = velocity.norm();
-        if (velocity_magnitude == 0.0)
-        {
-            return porosity * pore_diffusion_coefficient;
-        }
-
-        GlobalDimMatrixType const D_c = GlobalDimMatrixType(
-            porosity * pore_diffusion_coefficient +
-            solute_dispersivity_transverse * velocity_magnitude * I +
-            (solute_dispersivity_longitudinal -
-             solute_dispersivity_transverse) /
-                velocity_magnitude * velocity * velocity.transpose());
-
-        return D_c + _process_data.stabilizer->computeArtificialDiffusion(
-                         _element.getID(), velocity_magnitude) *
-                         I;
-    }
 };
 
 }  // namespace ComponentTransport
