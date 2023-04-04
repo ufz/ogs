@@ -75,7 +75,14 @@ if(tetgen_ADDED)
     list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
 endif()
 
-CPMAddPackage(NAME pybind11 GITHUB_REPOSITORY pybind/pybind11 VERSION 2.10.3)
+set(_pybind_version ${ogs.minimum_version.pybind11})
+if("${Python_VERSION}" VERSION_GREATER_EQUAL 3.11)
+    set(_pybind_version ${ogs.minimum_version.pybind11_for_py311})
+endif()
+CPMFindPackage(
+    NAME pybind11 GITHUB_REPOSITORY pybind/pybind11
+    VERSION ${_pybind_version}
+)
 
 if(_build_chemistry_lib)
     CPMAddPackage(
@@ -91,10 +98,14 @@ if(_build_chemistry_lib)
 endif()
 
 set(_eigen_version ${ogs.minimum_version.eigen})
-set(_eigen_url https://gitlab.com/libeigen/eigen/-/archive/${_eigen_version}/eigen-${_eigen_version}.tar.gz)
+set(_eigen_url
+    https://gitlab.com/libeigen/eigen/-/archive/${_eigen_version}/eigen-${_eigen_version}.tar.gz
+)
 if(OGS_USE_EIGEN_UNSUPPORTED)
     set(_eigen_version 3.4.90)
-    set(_eigen_url https://gitlab.com/libeigen/eigen/-/archive/${ogs.minimum_version.eigen-unsupported}/eigen-${ogs.minimum_version.eigen-unsupported}.tar.gz)
+    set(_eigen_url
+        https://gitlab.com/libeigen/eigen/-/archive/${ogs.minimum_version.eigen-unsupported}/eigen-${ogs.minimum_version.eigen-unsupported}.tar.gz
+    )
 endif()
 
 CPMFindPackage(
@@ -272,13 +283,17 @@ if(exprtk_ADDED)
     target_include_directories(exprtk SYSTEM INTERFACE ${exprtk_SOURCE_DIR})
 endif()
 
-CPMAddPackage(
-    NAME range-v3
-    GITHUB_REPOSITORY ericniebler/range-v3
-    VERSION 0.12.0
-    GIT_TAG 0.12.0
-    EXCLUDE_FROM_ALL YES
-)
+if(GUIX_BUILD)
+    find_package(range-v3 REQUIRED)
+else()
+    CPMFindPackage(
+        NAME range-v3
+        GITHUB_REPOSITORY ericniebler/range-v3
+        VERSION ${ogs.minimum_version.range-v3}
+        GIT_TAG ${ogs.minimum_version.range-v3}
+        EXCLUDE_FROM_ALL YES
+    )
+endif()
 
 if(OGS_BUILD_TESTING OR OGS_BUILD_UTILS)
     CPMAddPackage(

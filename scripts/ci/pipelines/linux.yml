@@ -7,3 +7,4 @@ include:
   - local: "/scripts/ci/jobs/build-linux-petsc.yml"
   - local: "/scripts/ci/jobs/build-linux-frontend.yml"
   - local: "/scripts/ci/jobs/build-gui-linux.yml"
+  - local: "/scripts/ci/jobs/build-guix.yml"

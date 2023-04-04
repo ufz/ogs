@@ -9,6 +9,13 @@ if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
     )
 endif()
 
+set(_collection ${PROJECT_SOURCE_DIR}/ThirdParty/collection)
+# If submodules in ThirdParty/collection are initialized and is a Guix
+# build use submodule as CPM sources.
+if(EXISTS ${_collection}/ufz/vtkdiff/CMakeLists.txt AND GUIX_BUILD)
+    include(${_collection}/Setup.cmake)
+endif()
+
 # Set additional CMake modules path
 CPMAddPackage(
     NAME cmake-modules
