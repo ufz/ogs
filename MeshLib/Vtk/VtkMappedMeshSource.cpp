@@ -119,6 +119,10 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
     // Arrays
     for (auto [name, property] : _mesh->getProperties())
     {
+        if (!property->is_for_output)
+        {
+            continue;
+        }
         if (auto p = dynamic_cast<PropertyVector<double>*>(property))
         {
             addProperty(*p);
