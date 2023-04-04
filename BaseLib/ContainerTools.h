@@ -49,6 +49,18 @@ struct PolymorphicRandomAccessContainerViewIterator
         return copy;
     }
 
+    PolymorphicRandomAccessContainerViewIterator& operator--() noexcept
+    {
+        --n_;
+        return *this;
+    }
+    PolymorphicRandomAccessContainerViewIterator operator--(int) noexcept
+    {
+        auto copy{*this};
+        operator--();
+        return copy;
+    }
+
     [[nodiscard]] Element& operator*() const { return (*view_)[n_]; }
 
     [[nodiscard]] bool operator==(

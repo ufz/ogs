@@ -83,6 +83,7 @@ TEST(BaseLib, ContainerToolsIteratorAndRangeConcepts)
     using IteratorType = decltype(view.begin());
     static_assert(std::input_iterator<IteratorType>);
     static_assert(std::forward_iterator<IteratorType>);
+    static_assert(std::bidirectional_iterator<IteratorType>);
 }
 
 TEST(BaseLib, ContainerToolsNoUpCast)
