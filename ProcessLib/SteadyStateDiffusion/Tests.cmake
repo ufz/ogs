@@ -982,3 +982,22 @@ AddTest(
 if(OGS_USE_MPI AND OGS_USE_PIP)
     NotebookTest(NOTEBOOKFILE Notebooks/SimplePETSc.ipynb RUNTIME 10)
 endif()
+
+AddTest(
+    NAME SteadyStateDiffusion_cube_1x1x1_hex_27_gml_output
+    PATH EllipticPETSc/cube_1x1x1_SteadyStateDiffusion/gml_output/3
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cube_hex_27.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 3
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    GLOB hex_27_cube_1x1x1_geometry_back_*.vtu pressure pressure 1e-15 1e-15
+    GLOB hex_27_cube_1x1x1_geometry_bottom_*.vtu pressure pressure 1e-15 1e-15
+    GLOB hex_27_cube_1x1x1_geometry_front_*.vtu pressure pressure 1e-15 1e-15
+    GLOB hex_27_cube_1x1x1_geometry_left_*.vtu pressure pressure 1e-15 1e-15
+    GLOB hex_27_cube_1x1x1_geometry_right_*.vtu pressure pressure 1e-15 1e-15
+    GLOB hex_27_cube_1x1x1_geometry_top_*.vtu pressure pressure 1e-15 1e-15
+    GLOB hex_27_cube_1x1x1_hex_27_*.vtu pressure pressure 1e-15 1e-15
+)

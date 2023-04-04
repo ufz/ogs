@@ -49,9 +49,9 @@ public:
         \brief Constructor
         \param name          Name assigned to the mesh.
         \param nodes         Vector for nodes, which storage looks like:
-                             ||--active base nodes--|--ghost base nodes--|
-                              --active extra nodes--|--ghost extra nodes--||
-                             (extra nodes: nodes for high order interpolations)
+                             |regular base nodes|ghost base nodes| ...
+                              ... regular higher order nodes| ...
+                              ... ghost higher order nodes|
         \param glb_node_ids  Global IDs of nodes of a partition.
         \param elements      Vector for elements. Ghost elements are stored
                              after regular (non-ghost) elements.
