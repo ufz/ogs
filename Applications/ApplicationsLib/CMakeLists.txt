@@ -35,7 +35,7 @@ target_compile_definitions(
 # warning: ‘ProjectData’ declared with greater visibility than the type of its field ‘ProjectData::_py_scoped_interpreter’
 # see https://pybind11.readthedocs.io/en/stable/faq.html#someclass-declared-with-greater-visibility-than-the-type-of-its-field-someclass-member-wattributes
 # ~~~
-if(NOT OGS_BUILD_WHEEL)
+if(NOT OGS_BUILD_WHEEL AND OGS_BUILD_CLI)
     target_link_libraries(ApplicationsLib PRIVATE ogs_embedded_python)
     set_target_properties(
         ApplicationsLib PROPERTIES CXX_VISIBILITY_PRESET hidden
