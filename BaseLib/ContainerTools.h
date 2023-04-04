@@ -27,19 +27,14 @@ struct PolymorphicRandomAccessContainerViewIterator
     using value_type = Element;
     using difference_type = std::ptrdiff_t;
 
+    PolymorphicRandomAccessContainerViewIterator() = default;
+
     PolymorphicRandomAccessContainerViewIterator(
         std::size_t n,
-        PolymorphicRandomAccessContainerViewInterface<Element> const&
+        PolymorphicRandomAccessContainerViewInterface<Element> const* const
             view) noexcept
         : n_{n}, view_{view}
     {
-    }
-
-    PolymorphicRandomAccessContainerViewIterator& operator=(
-        PolymorphicRandomAccessContainerViewIterator const& other)
-    {
-        n_ = other.n_;
-        view_ = other.view_;
     }
 
     PolymorphicRandomAccessContainerViewIterator& operator++() noexcept
@@ -54,20 +49,33 @@ struct PolymorphicRandomAccessContainerViewIterator
         return copy;
     }
 
-    [[nodiscard]] Element& operator*() const { return view_[n_]; }
+    [[nodiscard]] Element& operator*() const { return (*view_)[n_]; }
 
     [[nodiscard]] bool operator==(
         PolymorphicRandomAccessContainerViewIterator const& other)
         const noexcept
     {
-        return n_ == other.n_ && view_ == other.view_;
+        // default constructed iterators
+        if (view_ == nullptr && other.view_ == nullptr && n_ == 0 &&
+            other.n_ == 0)
+        {
+            return true;
+        }
+        if ((view_ == nullptr && other.view_ != nullptr) ||
+            (view_ != nullptr && other.view_ == nullptr))
+        {
+            return false;
+        }
+
+        return n_ == other.n_ && view_ == other.view_ && *view_ == *other.view_;
     }
 
     // more member functions might be implemented in the future
 
 private:
-    std::size_t n_;
-    PolymorphicRandomAccessContainerViewInterface<Element> const& view_;
+    std::size_t n_ = 0;
+    PolymorphicRandomAccessContainerViewInterface<Element> const* view_ =
+        nullptr;
 };
 
 template <typename Element>
@@ -76,12 +84,12 @@ struct PolymorphicRandomAccessContainerViewInterface
     [[nodiscard]] PolymorphicRandomAccessContainerViewIterator<Element> begin()
         const noexcept
     {
-        return {0, *this};
+        return {0, this};
     }
     [[nodiscard]] PolymorphicRandomAccessContainerViewIterator<Element> end()
         const noexcept
     {
-        return {size(), *this};
+        return {size(), this};
     }
 
     [[nodiscard]] virtual std::size_t size() const noexcept = 0;

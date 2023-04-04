@@ -82,6 +82,7 @@ TEST(BaseLib, ContainerToolsIteratorAndRangeConcepts)
     BaseLib::PolymorphicRandomAccessContainerView<Dog> const view{data};
     using IteratorType = decltype(view.begin());
     static_assert(std::input_iterator<IteratorType>);
+    static_assert(std::forward_iterator<IteratorType>);
 }
 
 TEST(BaseLib, ContainerToolsNoUpCast)
