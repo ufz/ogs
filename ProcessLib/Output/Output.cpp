@@ -174,6 +174,28 @@ void Output::outputMeshes(
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes)
     const
 {
+    if (_output_data_specification.output_variables.empty())
+    {
+        // special case: no output properties specified => output all properties
+        for (auto const& mesh : meshes)
+        {
+            for (auto [name, property] : mesh.get().getProperties())
+            {
+                property->is_for_output = true;
+            }
+        }
+    }
+    else
+    {
+        for (auto const& mesh : meshes)
+        {
+            for (auto [name, property] : mesh.get().getProperties())
+            {
+                property->is_for_output =
+                    _output_data_specification.output_variables.contains(name);
+            }
+        }
+    }
     _output_format->outputMeshes(timestep, t, iteration, meshes,
                                  _output_data_specification.output_variables);
 }
