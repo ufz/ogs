@@ -63,26 +63,8 @@ struct PolymorphicRandomAccessContainerViewIterator
 
     [[nodiscard]] Element& operator*() const { return (*view_)[n_]; }
 
-    [[nodiscard]] bool operator==(
-        PolymorphicRandomAccessContainerViewIterator const& other)
-        const noexcept
-    {
-        // default constructed iterators
-        if (view_ == nullptr && other.view_ == nullptr && n_ == 0 &&
-            other.n_ == 0)
-        {
-            return true;
-        }
-        if ((view_ == nullptr && other.view_ != nullptr) ||
-            (view_ != nullptr && other.view_ == nullptr))
-        {
-            return false;
-        }
-
-        return n_ == other.n_ && view_ == other.view_ && *view_ == *other.view_;
-    }
-
-    // more member functions might be implemented in the future
+    auto operator<=>(
+        PolymorphicRandomAccessContainerViewIterator const&) const = default;
 
 private:
     std::size_t n_ = 0;
