@@ -145,6 +145,10 @@ boundary meshes will be written as well -->
             <variables>
                 <variable> pressure </variable>
                 <variable> v </variable>
+                <variable> bulk_node_ids </variable>
+                <variable> bulk_element_ids </variable>
+                <variable> MaterialIDs </variable>
+                <variable> VolumetricFlowRate </variable>
             </variables>
         </output>
     </time_loop>

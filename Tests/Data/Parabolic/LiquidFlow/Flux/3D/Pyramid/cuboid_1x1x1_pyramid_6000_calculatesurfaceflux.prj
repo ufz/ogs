@@ -62,6 +62,7 @@
             <variables>
                 <variable> pressure </variable>
                 <variable> v </variable>
+                <variable> specific_flux </variable>
             </variables>
             <meshes>
                 <mesh>cuboid_1x1x1_pyramid_6000</mesh>
