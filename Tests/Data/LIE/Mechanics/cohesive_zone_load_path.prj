@@ -79,6 +79,7 @@
                 <variable>sigma_yy</variable>
                 <variable>sigma_zz</variable>
                 <variable>sigma_xy</variable>
+                <variable>f_stress_n</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

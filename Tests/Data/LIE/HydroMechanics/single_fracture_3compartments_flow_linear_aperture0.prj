@@ -93,8 +93,18 @@
             </timesteps>
             <variables>
                 <variable>pressure</variable>
+                <variable>pressure_interpolated</variable>
                 <variable>displacement</variable>
                 <variable>displacement_jump1</variable>
+                <variable>nodal_w</variable>
+                <variable>nodal_aperture</variable>
+                <variable>strain_xx</variable>
+                <variable>strain_yy</variable>
+                <variable>strain_xy</variable>
+                <variable>stress_xx</variable>
+                <variable>stress_yy</variable>
+                <variable>stress_xy</variable>
+                <variable>velocity</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

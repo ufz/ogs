@@ -82,6 +82,8 @@
                 <variable>sigma_xx</variable>
                 <variable>sigma_yy</variable>
                 <variable>sigma_xy</variable>
+                <variable>f_stress_n</variable>
+                <variable>f_stress_s</variable>
             </variables>
         </output>
     </time_loop>
