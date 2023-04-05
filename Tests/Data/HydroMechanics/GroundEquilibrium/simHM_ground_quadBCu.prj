@@ -275,6 +275,8 @@
             <variables>
                 <variable>displacement</variable>
                 <variable>sigma</variable>
+                <variable>pressure_interpolated</variable>
+                <variable>DarcyVelocity</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

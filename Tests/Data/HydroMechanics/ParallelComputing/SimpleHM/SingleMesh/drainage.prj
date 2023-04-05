@@ -120,6 +120,7 @@
             </timesteps>
             <variables>
                 <variable>pressure</variable>
+                <variable>q</variable>
                 <variable>displacement</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
