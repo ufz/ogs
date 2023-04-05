@@ -61,7 +61,55 @@ struct PolymorphicRandomAccessContainerViewIterator
         return copy;
     }
 
+    PolymorphicRandomAccessContainerViewIterator& operator+=(
+        difference_type const increment) noexcept
+    {
+        n_ += increment;
+        return *this;
+    }
+    PolymorphicRandomAccessContainerViewIterator& operator-=(
+        difference_type const decrement) noexcept
+    {
+        n_ -= decrement;
+        return *this;
+    }
+
+    [[nodiscard]] friend PolymorphicRandomAccessContainerViewIterator operator+(
+        PolymorphicRandomAccessContainerViewIterator iterator,
+        difference_type const increment) noexcept
+    {
+        iterator.n_ += increment;
+        return iterator;
+    }
+
+    [[nodiscard]] friend PolymorphicRandomAccessContainerViewIterator operator+(
+        difference_type const increment,
+        PolymorphicRandomAccessContainerViewIterator iterator) noexcept
+    {
+        iterator.n_ += increment;
+        return iterator;
+    }
+
+    [[nodiscard]] difference_type operator-(
+        PolymorphicRandomAccessContainerViewIterator const other) const noexcept
+    {
+        assert(view_ == other.view_);
+        return n_ - other.n_;
+    }
+
+    [[nodiscard]] friend PolymorphicRandomAccessContainerViewIterator operator-(
+        PolymorphicRandomAccessContainerViewIterator iterator,
+        difference_type const decrement) noexcept
+    {
+        iterator.n_ -= decrement;
+        return iterator;
+    }
+
     [[nodiscard]] Element& operator*() const { return (*view_)[n_]; }
+    [[nodiscard]] Element& operator[](difference_type n) const
+    {
+        return (*view_)[n_ + n];
+    }
 
     auto operator<=>(
         PolymorphicRandomAccessContainerViewIterator const&) const = default;

@@ -84,6 +84,7 @@ TEST(BaseLib, ContainerToolsIteratorAndRangeConcepts)
     static_assert(std::input_iterator<IteratorType>);
     static_assert(std::forward_iterator<IteratorType>);
     static_assert(std::bidirectional_iterator<IteratorType>);
+    static_assert(std::random_access_iterator<IteratorType>);
 }
 
 TEST(BaseLib, ContainerToolsNoUpCast)
