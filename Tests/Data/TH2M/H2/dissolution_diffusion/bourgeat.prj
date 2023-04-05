@@ -328,6 +328,10 @@
                 <variable>xnCG</variable>
                 <variable>xmCG</variable>
                 <variable>xmWL</variable>
+                <variable>d_CG</variable>
+                <variable>d_CL</variable>
+                <variable>d_WG</variable>
+                <variable>d_WL</variable>
             </variables>
             <fixed_output_times>
                 1e10

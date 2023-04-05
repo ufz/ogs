@@ -253,6 +253,11 @@
                 <variable>gas_density</variable>
                 <variable>porosity</variable>
                 <variable>saturation</variable>
+                <variable>GasMassFlowRate</variable>
+                <variable>HeatFlowRate</variable>
+                <variable>LiquidMassFlowRate</variable>
+                <variable>NodalForces</variable>
+                <variable>liquid_pressure_interpolated</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

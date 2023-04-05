@@ -269,6 +269,7 @@
                 <variable>xmCG</variable>
                 <variable>xmWL</variable>
                 <variable>xnCG</variable>
+                <variable>liquid_pressure_interpolated</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
