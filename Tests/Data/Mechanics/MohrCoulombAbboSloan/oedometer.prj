@@ -74,6 +74,11 @@
             </timesteps>
             <variables>
                 <variable>displacement</variable>
+                <variable>ElasticStrain</variable>
+                <variable>EquivalentPlasticStrain</variable>
+                <variable>NodalForces</variable>
+                <variable>epsilon</variable>
+                <variable>sigma</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

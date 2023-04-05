@@ -67,6 +67,7 @@
                 <variable>pressure</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
+                <variable>principal_stress_values</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
