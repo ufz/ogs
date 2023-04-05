@@ -195,6 +195,9 @@
                 <variable>saturation</variable>
                 <variable>sigma_total</variable>
                 <variable>epsilon</variable>
+                <variable>pressure_interpolated</variable>
+                <variable>temperature_interpolated</variable>
+                <variable>saturation_avg</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

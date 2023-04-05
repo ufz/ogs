@@ -245,6 +245,11 @@
                 <variable>velocity</variable>
                 <variable>liquid_density</variable>
                 <variable>viscosity</variable>
+                <variable>HeatFlowRate</variable>
+                <variable>MassFlowRate</variable>
+                <variable>NodalForces</variable>
+                <variable>liquid_density_avg</variable>
+                <variable>viscosity_avg</variable>
             </variables>
         </output>
     </time_loop>
