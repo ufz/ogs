@@ -577,10 +577,11 @@ public:
         LocalBlockMatrixType KCC_Laplacian =
             LocalBlockMatrixType::Zero(concentration_size, concentration_size);
 
-        LocalBlockMatrixType KCC_advection;
+        std::vector<GlobalDimVectorType> ip_flux_vector;
+        double average_velocity_norm = 0.0;
         if (!_process_data.non_advective_form)
         {
-            KCC_advection.setZero(KCC.rows(), KCC.cols());
+            ip_flux_vector.reserve(n_integration_points);
         }
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
@@ -681,8 +682,8 @@ public:
             }
             else
             {
-                KCC_advection.noalias() +=
-                    N.transpose() * mass_density_flow.transpose() * dNdx * w;
+                ip_flux_vector.emplace_back(mass_density_flow);
+                average_velocity_norm += velocity.norm();
             }
             MCC.noalias() += N_t_N * (R_times_phi * density * w);
             KCC.noalias() += N_t_N * (decay_rate * R_times_phi * density * w);
@@ -708,7 +709,13 @@ public:
 
         if (!_process_data.non_advective_form)
         {
-            KCC_Laplacian.noalias() += KCC_advection;
+            NumLib::assembleAdvectionMatrix(
+                _process_data.stabilizer.get(),
+                _ip_data,
+                average_velocity_norm /
+                    static_cast<double>(n_integration_points),
+                ip_flux_vector,
+                KCC_Laplacian);
         }
 
         KCC.noalias() += KCC_Laplacian;
@@ -931,14 +938,15 @@ public:
         LocalBlockMatrixType KCC_Laplacian =
             LocalBlockMatrixType::Zero(concentration_size, concentration_size);
 
-        LocalBlockMatrixType KCC_advection;
-        if (!_process_data.non_advective_form)
-        {
-            KCC_advection.setZero(concentration_size, concentration_size);
-        }
-
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
+
+        std::vector<GlobalDimVectorType> ip_flux_vector;
+        double average_velocity_norm = 0.0;
+        if (!_process_data.non_advective_form)
+        {
+            ip_flux_vector.reserve(n_integration_points);
+        }
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
@@ -1077,8 +1085,8 @@ public:
             }
             else
             {
-                KCC_advection.noalias() +=
-                    N.transpose() * velocity.transpose() * dNdx * (density * w);
+                ip_flux_vector.emplace_back(velocity * density);
+                average_velocity_norm += velocity.norm();
             }
             local_K.noalias() +=
                 N_t_N * (decay_rate * R_times_phi * density * w);
@@ -1090,7 +1098,13 @@ public:
 
         if (!_process_data.non_advective_form)
         {
-            KCC_Laplacian.noalias() += KCC_advection;
+            NumLib::assembleAdvectionMatrix(
+                _process_data.stabilizer.get(),
+                _ip_data,
+                average_velocity_norm /
+                    static_cast<double>(n_integration_points),
+                ip_flux_vector,
+                KCC_Laplacian);
         }
         local_K.noalias() += KCC_Laplacian;
     }
@@ -1249,11 +1263,12 @@ public:
         LocalBlockMatrixType KCC_Laplacian =
             LocalBlockMatrixType::Zero(concentration_size, concentration_size);
 
-        LocalBlockMatrixType KCC_advection;
-        KCC_advection.setZero(concentration_size, concentration_size);
-
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
+
+        std::vector<GlobalDimVectorType> ip_flux_vector;
+        double average_velocity_norm = 0.0;
+        ip_flux_vector.reserve(n_integration_points);
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
@@ -1350,13 +1365,16 @@ public:
             local_rhs.noalias() -=
                 w * rho * N.transpose() * phi * R * N * (cdot + alpha * c);
 
-            assert(!_process_data.non_advective_form);
-
-            KCC_advection.noalias() +=
-                w * rho * N.transpose() * q.transpose() * dNdx;
+            ip_flux_vector.emplace_back(q * rho);
+            average_velocity_norm += q.norm();
         }
 
-        KCC_Laplacian.noalias() += KCC_advection;
+        NumLib::assembleAdvectionMatrix(
+            _process_data.stabilizer.get(),
+            _ip_data,
+            average_velocity_norm / static_cast<double>(n_integration_points),
+            ip_flux_vector,
+            KCC_Laplacian);
 
         local_rhs.noalias() -= KCC_Laplacian * c;
 
