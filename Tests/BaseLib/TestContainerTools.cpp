@@ -13,6 +13,7 @@
 #include <array>
 #include <iterator>
 #include <memory>
+#include <numeric>
 #include <span>
 #include <string>
 #include <vector>
@@ -309,6 +310,23 @@ TEST(BaseLib, ContainerToolsRangeFor)
         auto const& dogs_const = dogs;
         f(dogs_const);
     }
+}
+
+TEST(BaseLib, ContainerToolsAlgorithms)
+{
+    std::vector<std::unique_ptr<Pet>> pets;
+    pets.push_back(std::make_unique<Budgie>());
+    pets.push_back(std::make_unique<Dog>());
+
+    PRACView<Animal> animals{pets};
+    ASSERT_EQ(2, animals[0].legs());
+    ASSERT_EQ(4, animals[1].legs());
+
+    auto const total_legs =
+        std::accumulate(std::begin(animals), std::end(animals), 0,
+                        [](auto const legs, Animal const& animal)
+                        { return legs + animal.legs(); });
+    ASSERT_EQ(6, total_legs);
 }
 
 TEST(BaseLib, ContainerToolsModify)
