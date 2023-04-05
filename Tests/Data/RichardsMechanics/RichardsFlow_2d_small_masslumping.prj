@@ -175,6 +175,10 @@
                 <variable>epsilon</variable>
                 <variable>velocity</variable>
                 <variable>saturation</variable>
+                <variable>MassFlowRate</variable>
+                <variable>NodalForces</variable>
+                <variable>pressure_interpolated</variable>
+                <variable>saturation_avg</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

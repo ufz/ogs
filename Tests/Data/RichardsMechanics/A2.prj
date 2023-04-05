@@ -245,6 +245,8 @@
                 <variable>epsilon</variable>
                 <variable>saturation</variable>
                 <variable>velocity</variable>
+                <variable>MassFlowRate</variable>
+                <variable>NodalForces</variable>
             </variables>
         </output>
     </time_loop>
