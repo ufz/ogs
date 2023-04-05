@@ -14,6 +14,7 @@
 #include <iterator>
 #include <memory>
 #include <numeric>
+#include <ranges>
 #include <span>
 #include <string>
 #include <vector>
@@ -90,6 +91,20 @@ TEST(BaseLib, ContainerToolsIteratorAndRangeConcepts)
     static_assert(std::forward_iterator<IteratorType>);
     static_assert(std::bidirectional_iterator<IteratorType>);
     static_assert(std::random_access_iterator<IteratorType>);
+
+    static_assert(!std::ranges::view<PRACView<Dog>>);
+    static_assert(std::ranges::range<PRACView<Dog>>);
+    static_assert(std::ranges::sized_range<PRACView<Dog>>);
+    static_assert(std::ranges::random_access_range<PRACView<Dog>>);
+    static_assert(std::ranges::common_range<PRACView<Dog>>);
+    static_assert(std::ranges::viewable_range<PRACView<Dog>>);
+
+    static_assert(!std::ranges::view<PRACView<Animal>>);
+    static_assert(std::ranges::range<PRACView<Animal>>);
+    static_assert(std::ranges::sized_range<PRACView<Animal>>);
+    static_assert(std::ranges::random_access_range<PRACView<Animal>>);
+    static_assert(std::ranges::common_range<PRACView<Animal>>);
+    static_assert(std::ranges::viewable_range<PRACView<Animal>>);
 }
 
 TEST(BaseLib, ContainerToolsNoUpCast)
@@ -327,6 +342,16 @@ TEST(BaseLib, ContainerToolsAlgorithms)
                         [](auto const legs, Animal const& animal)
                         { return legs + animal.legs(); });
     ASSERT_EQ(6, total_legs);
+
+    animals | std::ranges::views::all;
+
+    constexpr auto legs =
+        std::ranges::views::transform([](auto const& a) { return a.legs(); });
+
+    ASSERT_TRUE(std::ranges::all_of(animals | legs,
+                                    [](int legs) { return legs >= 2; }));
+    ASSERT_TRUE(std::ranges::all_of(animals | legs,
+                                    [](int legs) { return legs <= 4; }));
 }
 
 TEST(BaseLib, ContainerToolsModify)
