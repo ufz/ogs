@@ -272,6 +272,7 @@
             <variables>
                 <variable> temperature </variable>
                 <variable> heat_flux </variable>
+                <variable>HeatFlowRate</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

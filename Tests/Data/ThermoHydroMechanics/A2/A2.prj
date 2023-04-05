@@ -219,6 +219,9 @@
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
                 <variable>velocity</variable>
+                <variable>HeatFlowRate</variable>
+                <variable>MassFlowRate</variable>
+                <variable>NodalForces</variable>
             </variables>
         </output>
     </time_loop>
