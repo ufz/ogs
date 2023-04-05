@@ -19,6 +19,9 @@
 
 #include "BaseLib/ContainerTools.h"
 
+template <typename T>
+using PRACView = BaseLib::PolymorphicRandomAccessContainerView<T>;
+
 namespace
 {
 struct Animal
@@ -79,7 +82,8 @@ void assertPetsLegs(auto const& pets)
 TEST(BaseLib, ContainerToolsIteratorAndRangeConcepts)
 {
     std::vector<Dog> data;
-    BaseLib::PolymorphicRandomAccessContainerView<Dog> const view{data};
+    PRACView<Dog> const view{data};
+
     using IteratorType = decltype(view.begin());
     static_assert(std::input_iterator<IteratorType>);
     static_assert(std::forward_iterator<IteratorType>);
@@ -93,9 +97,7 @@ TEST(BaseLib, ContainerToolsNoUpCast)
 
     {
         // Dog -> Dog
-        auto f =
-            [](BaseLib::PolymorphicRandomAccessContainerView<Dog> const& dogs_)
-        { assertDogsNames(dogs_); };
+        auto f = [](PRACView<Dog> const& dogs_) { assertDogsNames(dogs_); };
 
         // pass mutable vector
         f(dogs);
@@ -109,9 +111,8 @@ TEST(BaseLib, ContainerToolsNoUpCast)
 
     {
         // Dog -> const Dog
-        auto f =
-            [](BaseLib::PolymorphicRandomAccessContainerView<const Dog> const&
-                   dogs_) { assertDogsNames(dogs_); };
+        auto f = [](PRACView<const Dog> const& dogs_)
+        { assertDogsNames(dogs_); };
 
         // pass mutable vector
         f(dogs);
@@ -128,8 +129,8 @@ TEST(BaseLib, ContainerToolsUpCast)
 
     {
         // Dog -> Animal
-        auto f = [](BaseLib::PolymorphicRandomAccessContainerView<Animal> const&
-                        animals_) { assertDogsLegs(animals_); };
+        auto f = [](PRACView<Animal> const& animals_)
+        { assertDogsLegs(animals_); };
 
         // pass mutable vector
         f(dogs);
@@ -143,8 +144,7 @@ TEST(BaseLib, ContainerToolsUpCast)
 
     {
         // Dog -> const Animal
-        auto f = [](BaseLib::PolymorphicRandomAccessContainerView<
-                     const Animal> const& animals_)
+        auto f = [](PRACView<const Animal> const& animals_)
         { assertDogsLegs(animals_); };
 
         // pass mutable vector
@@ -164,9 +164,7 @@ TEST(BaseLib, ContainerToolsUniquePtrNoUpCast)
 
     {
         // Pet -> Pet
-        auto f =
-            [](BaseLib::PolymorphicRandomAccessContainerView<Pet> const& pets_)
-        { assertPetsNames(pets_); };
+        auto f = [](PRACView<Pet> const& pets_) { assertPetsNames(pets_); };
 
         // pass mutable vector
         f(pets);
@@ -178,9 +176,8 @@ TEST(BaseLib, ContainerToolsUniquePtrNoUpCast)
 
     {
         // Pet -> const Pet
-        auto f =
-            [](BaseLib::PolymorphicRandomAccessContainerView<const Pet> const&
-                   pets_) { assertPetsNames(pets_); };
+        auto f = [](PRACView<const Pet> const& pets_)
+        { assertPetsNames(pets_); };
 
         // pass mutable vector
         f(pets);
@@ -199,8 +196,8 @@ TEST(BaseLib, ContainerToolsUniquePtrUpCast)
 
     {
         // Pet -> Animal
-        auto f = [](BaseLib::PolymorphicRandomAccessContainerView<Animal> const&
-                        animals_) { assertPetsLegs(animals_); };
+        auto f = [](PRACView<Animal> const& animals_)
+        { assertPetsLegs(animals_); };
 
         // pass mutable vector
         f(pets);
@@ -212,8 +209,7 @@ TEST(BaseLib, ContainerToolsUniquePtrUpCast)
 
     {
         // Pet -> const Animal
-        auto f = [](BaseLib::PolymorphicRandomAccessContainerView<
-                     const Animal> const& animals_)
+        auto f = [](PRACView<const Animal> const& animals_)
         { assertPetsLegs(animals_); };
 
         // pass mutable vector
@@ -233,9 +229,8 @@ TEST(BaseLib, ContainerToolsUniquePtrConstNoUpCast)
 
     {
         // const Pet -> const Pet
-        auto f =
-            [](BaseLib::PolymorphicRandomAccessContainerView<const Pet> const&
-                   pets_) { assertPetsNames(pets_); };
+        auto f = [](PRACView<const Pet> const& pets_)
+        { assertPetsNames(pets_); };
 
         // pass mutable vector
         f(pets);
@@ -254,8 +249,7 @@ TEST(BaseLib, ContainerToolsUniquePtrConstUpCast)
 
     {
         // const Pet -> const Animal
-        auto f = [](BaseLib::PolymorphicRandomAccessContainerView<
-                     const Animal> const& animals_)
+        auto f = [](PRACView<const Animal> const& animals_)
         { assertPetsLegs(animals_); };
 
         // pass mutable vector
@@ -275,8 +269,7 @@ TEST(BaseLib, ContainerToolsRangeFor)
         pets.push_back(std::make_unique<Dog>());
 
         // Pet -> Animal
-        auto f = [](BaseLib::PolymorphicRandomAccessContainerView<Animal> const&
-                        animals_)
+        auto f = [](PRACView<Animal> const& animals_)
         {
             ASSERT_EQ(2, animals_.size());
 
@@ -299,8 +292,7 @@ TEST(BaseLib, ContainerToolsRangeFor)
         std::vector<Dog> dogs{{}, {}};
 
         // Dog -> const Animal
-        auto f = [](BaseLib::PolymorphicRandomAccessContainerView<
-                     const Animal> const& animals_)
+        auto f = [](PRACView<const Animal> const& animals_)
         {
             ASSERT_EQ(2, animals_.size());
 
@@ -326,8 +318,7 @@ TEST(BaseLib, ContainerToolsModify)
         std::vector<Dog> dogs{{}, {}};
 
         // Pet -> Animal
-        auto f = [](BaseLib::PolymorphicRandomAccessContainerView<Animal> const&
-                        animals_)
+        auto f = [](PRACView<Animal> const& animals_)
         {
             ASSERT_EQ(2, animals_.size());
 
@@ -352,8 +343,7 @@ TEST(BaseLib, ContainerToolsModify)
         std::vector<Dog> dogs{{}, {}};
 
         // Pet -> Animal
-        auto f = [](BaseLib::PolymorphicRandomAccessContainerView<Animal> const&
-                        animals_)
+        auto f = [](PRACView<Animal> const& animals_)
         {
             ASSERT_EQ(2, animals_.size());
 
@@ -380,8 +370,7 @@ TEST(BaseLib, ContainerToolsUniquePtrModify)
         pets[1] = std::make_shared<Dog>();
 
         // Pet -> Animal
-        auto f = [](BaseLib::PolymorphicRandomAccessContainerView<Animal> const&
-                        animals_)
+        auto f = [](PRACView<Animal> const& animals_)
         {
             ASSERT_EQ(2, animals_.size());
 
@@ -419,8 +408,7 @@ TEST(BaseLib, ContainerToolsUniquePtrModify)
         pets.push_back(std::make_unique<Dog>());
 
         // Pet -> Animal
-        auto f = [](BaseLib::PolymorphicRandomAccessContainerView<Animal> const&
-                        animals_)
+        auto f = [](PRACView<Animal> const& animals_)
         {
             ASSERT_EQ(2, animals_.size());
 
