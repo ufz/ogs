@@ -78,6 +78,8 @@
             <variables>
                 <variable> temperature </variable>
                 <variable> heat_flux </variable>
+                <variable> HeatFlowRate </variable>
+                <variable> MaterialIDs </variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
