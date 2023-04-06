@@ -550,7 +550,7 @@ AddTest(
 )
 
 AddTest(
-    NAME SimpleSynthetics_XDMF
+    NAME LiquidFlow_SimpleSynthetics_XDMF
     PATH Parabolic/LiquidFlow/SimpleSynthetics/XDMF
     EXECUTABLE ogs
     EXECUTABLE_ARGS FunctionParameterTest_XDMF.prj
@@ -571,7 +571,7 @@ AddTest(
 )
 
 AddTest(
-    NAME SimpleSynthetics_XDMF_compression_off
+    NAME LiquidFlow_SimpleSynthetics_XDMF_compression_off
     PATH Parabolic/LiquidFlow/SimpleSynthetics/XDMF_compression_off
     EXECUTABLE ogs
     EXECUTABLE_ARGS FunctionParameterTest_XDMF.prj
