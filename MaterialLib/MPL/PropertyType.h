@@ -108,6 +108,7 @@ enum PropertyType : int
     vapour_diffusion,
     viscosity,
     volume_fraction,
+    water_temperature,
     water_saturation_temperature,
     youngs_modulus,
     number_of_properties
@@ -179,6 +180,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "vapour_diffusion",
                              "viscosity",
                              "volume_fraction",
+                             "water_temperature",
                              "water_saturation_temperature",
                              "youngs_modulus"}};
 
