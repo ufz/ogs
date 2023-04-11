@@ -80,8 +80,7 @@ if("${Python_VERSION}" VERSION_GREATER_EQUAL 3.11)
     set(_pybind_version ${ogs.minimum_version.pybind11_for_py311})
 endif()
 CPMFindPackage(
-    NAME pybind11 GITHUB_REPOSITORY pybind/pybind11
-    VERSION ${_pybind_version}
+    NAME pybind11 GITHUB_REPOSITORY pybind/pybind11 VERSION ${_pybind_version}
 )
 
 if(_build_chemistry_lib)
@@ -296,10 +295,7 @@ else()
 endif()
 
 if(OGS_BUILD_TESTING OR OGS_BUILD_UTILS)
-    CPMAddPackage(
-        NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
-        GIT_TAG master
-    )
+    CPMAddPackage(NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff GIT_TAG master)
     if(vtkdiff_ADDED)
         install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)
     endif()
