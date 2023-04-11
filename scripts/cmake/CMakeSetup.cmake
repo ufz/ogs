@@ -10,7 +10,7 @@ if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 endif()
 
 set(_collection ${PROJECT_SOURCE_DIR}/ThirdParty/collection)
-# If submodules in ThirdParty/collection are initialized and is a Guix
+# If submodules in ThirdParty/collection are initialized and this is a Guix
 # build use submodule as CPM sources.
 if(EXISTS ${_collection}/ufz/vtkdiff/CMakeLists.txt AND GUIX_BUILD)
     include(${_collection}/Setup.cmake)
@@ -30,13 +30,6 @@ CPMAddPackage(
     GITHUB_REPOSITORY bilke/findmkl_cmake
     GIT_TAG ee49c4f973f66bb7bfd644658d14e43459f557fa
     DOWNLOAD_ONLY YES
-)
-CPMAddPackage(
-    # TODO: VERSION 0.0.7 when
-    # https://github.com/cpm-cmake/CPMLicenses.cmake/pull/6 is merged
-    NAME CPMLicenses.cmake
-    GITHUB_REPOSITORY bilke/CPMLicenses.cmake
-    GIT_TAG 71b1512d81e6294a15aafd78df431ce2dd64a805
 )
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
