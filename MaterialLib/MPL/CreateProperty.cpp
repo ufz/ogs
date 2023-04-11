@@ -271,6 +271,16 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createWaterSaturationTemperatureIAPWSIF97Region4(config);
     }
 
+    if (boost::iequals(property_type, "WaterLiquidDensityIAPWSIF97Region4"))
+    {
+        return createWaterLiquidDensityIAPWSIF97Region4(config);
+    }
+
+    if (boost::iequals(property_type, "WaterLiquidEnthalpyIAPWSIF97Region4"))
+    {
+        return createWaterLiquidEnthalpyIAPWSIF97Region4(config);
+    }
+
     if (boost::iequals(property_type, "WaterVapourDensity"))
     {
         return createWaterVapourDensity(config);
