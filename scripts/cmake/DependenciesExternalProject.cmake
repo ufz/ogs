@@ -281,7 +281,7 @@ if(EXISTS ${_hdf5_source_file})
 elseif(NOT OGS_BUILD_HDF5)
     find_package(HDF5 ${ogs.minimum_version.hdf5})
 endif()
-if(NOT HDF5_FOUND)
+if(NOT _HDF5_FOUND AND NOT HDF5_FOUND)
     BuildExternalProject(
         HDF5 ${_hdf5_source} CMAKE_ARGS ${_hdf5_options} ${_defaultCMakeArgs}
                                         ${_cmake_generator}
@@ -291,6 +291,9 @@ if(NOT HDF5_FOUND)
             "ExternalProject_Add(): added package HDF5@${ogs.tested_version.hdf5}"
     )
     set(_EXT_LIBS ${_EXT_LIBS} HDF5 CACHE INTERNAL "")
+    set(_HDF5_FOUND ON CACHE INTERNAL "")
+endif()
+if(_HDF5_FOUND)
     BuildExternalProject_find_package(HDF5)
 endif()
 
@@ -382,8 +385,3 @@ foreach(lib ${_EXT_LIBS})
     )
     set(${lib}_SOURCE_DIR ${build_dir_${lib}}/src/${lib})
 endforeach()
-if(_EXT_LIBS)
-    write_license_disclaimer(
-        ${PROJECT_BINARY_DIR}/third_party_licenses_ext.txt "${_EXT_LIBS}"
-    )
-endif()

@@ -89,12 +89,4 @@ install(FILES ${PROJECT_BINARY_DIR}/README.txt DESTINATION .)
 
 install(FILES ${PROJECT_BINARY_DIR}/CMakeCache.txt TYPE INFO)
 install(FILES ${PROJECT_BINARY_DIR}/cmake_args TYPE INFO OPTIONAL)
-if(NOT WIN32)
-    install(
-       CODE "execute_process(COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --config ${CMAKE_BUILD_TYPE} -t write-licenses)"
-    )
-endif()
-install(FILES ${PROJECT_BINARY_DIR}/third_party_licenses_cpm.txt TYPE INFO)
-if(EXISTS ${PROJECT_BINARY_DIR}/third_party_licenses_ext.txt)
-    install(FILES ${PROJECT_BINARY_DIR}/third_party_licenses_ext.txt TYPE INFO)
-endif()
+install(FILES ${PROJECT_BINARY_DIR}/third_party_licenses.txt TYPE INFO)

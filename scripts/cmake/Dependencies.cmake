@@ -409,10 +409,56 @@ if(CLANG_FORMAT_PROGRAM OR CMAKE_FORMAT_PROGRAM)
 endif()
 
 # Third-party licenses
-cpm_licenses_create_disclaimer_target(
-    write-licenses "${PROJECT_BINARY_DIR}/third_party_licenses_cpm.txt"
-    "${CPM_PACKAGES}"
-)
+set(_licenses_file ${PROJECT_BINARY_DIR}/third_party_licenses.txt)
+if(NOT EXISTS ${_licenses_file})
+    set(_licenses_string "")
+    # Adapted from https://github.com/cpm-cmake/CPMLicenses.cmake:
+    set(_print_delimiter OFF)
+    foreach(package ${CPM_PACKAGES} ${_EXT_LIBS})
+        file(
+            GLOB
+            licenses
+            "${${package}_SOURCE_DIR}/LICENSE*"
+            "${${package}_SOURCE_DIR}/LICENCE*"
+            "${${package}_SOURCE_DIR}/COPYING*"
+            "${${package}_SOURCE_DIR}/Copyright*"
+        )
+        list(LENGTH licenses LICENSE_COUNT)
+        if(LICENSE_COUNT GREATER_EQUAL 1)
+            if(_print_delimiter)
+                set(_licenses_string
+                    "${_licenses_string}\n----------------------------------------------------------------------------\n\n"
+                )
+            endif()
+
+            list(GET licenses 0 _license)
+            file(READ ${_license} license_TEXT)
+            set(_licenses_string
+                "${_licenses_string}The following software may be included in this product: **${package}**.\nThis software contains the following license and notice below:\n\n${license_TEXT}\n"
+            )
+            set(_print_delimiter ON)
+        else()
+            message(
+                VERBOSE
+                "WARNING: no license files found for package \"${package}\" in ${${package}_SOURCE_DIR} ."
+            )
+        endif()
+        if(LICENSE_COUNT GREATER 1)
+            message(
+                VERBOSE
+                "WARNING: multiple license files found for package \"${package}\": ${licenses}. Only first file will be used."
+            )
+        endif()
+    endforeach()
+
+    file(READ
+         ${PROJECT_SOURCE_DIR}/scripts/cmake/packaging/additional-licenses.txt
+         _additional_licenses
+    )
+
+    file(WRITE ${_licenses_file} "${_licenses_string}\n${_additional_licenses}")
+    message(STATUS "Wrote licenses to ${_licenses_file}")
+endif()
 
 unset(CMAKE_FOLDER)
 list(POP_BACK CMAKE_MESSAGE_INDENT)
