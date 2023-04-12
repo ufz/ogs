@@ -81,7 +81,7 @@ IntegrateBoreholesIntoMesh -i input_3Dmesh.vtu -o boreholes_3Dmesh.vtu -g boreho
 If some boreholes are given at the beginning of the meshing process, it is recommended to use the OpenGeoSys DataExplorer -- [Manual](https://gitlab.opengeosys.org/ogs/documentation/data_explorer_manual/-/jobs/artifacts/master/raw/ogsde-man.pdf?job=build) / [Download](/releases).
 At first, the nodes for boreholes can be integrated into the mesh, when the mesh is generated from a geometry.
 For this purpose, the boreholes and the boundaries of the geometry need to be imported in DataExplorer.
-Then this mesh can be used to create a 3D mesh, either with the DataExplorer or with [createLayeredMeshfromRaster](../../preprocessing/createLayeredMeshFromRasters/index.md), which then can be used for integrating boreholes.
+Then this mesh can be used to create a 3D mesh, either with the DataExplorer or with [createLayeredMeshfromRaster]({{< ref "createLayeredMeshFromRasters.md" >}}), which then can be used for integrating boreholes.
 This procedure is useful because the mesh is generated in a way that the coordinates of the boreholes are nodes in the mesh.
 Otherwise the borehole's coordinates need to be adjusted according to a existing mesh.
 This process is schematically depicted in Fig.1, below.
