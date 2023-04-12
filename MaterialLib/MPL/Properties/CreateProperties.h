@@ -48,6 +48,7 @@
 #include "CreateVermaPruessModel.h"
 #include "CreateVolumeFractionAverage.h"
 #include "CreateWaterSaturationTemperatureIAPWSIF97Region4.h"
+#include "CreateWaterTemperatureIAPWSIF97Region1.h"
 #include "Density/CreateWaterDensityIAPWSIF97Region1.h"
 #include "Density/CreateWaterLiquidDensityIAPWSIF97Region4.h"
 #include "Density/CreateWaterVapourDensity.h"
