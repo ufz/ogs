@@ -74,11 +74,9 @@ endif()
 # Get the hostname
 site_name(HOSTNAME)
 
-if(BUILD_SHARED_LIBS OR OGS_BUILD_PYTHON_MODULE)
-    # When static libraries are used in some shared libraries it is required
-    # that also the static libraries have position independent code.
-    set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+# When static libraries are used in some shared libraries it is required that
+# also the static libraries have position independent code.
+set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
-    # Enable Windows DLL support.
-    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
-endif()
+# Enable Windows DLL support.
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
