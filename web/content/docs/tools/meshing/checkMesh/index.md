@@ -39,7 +39,7 @@ Where:
 
 ## Example
 
-In this example we use a 3D mesh from another example ([createLayeredMeshfromRaster](../../preprocessing/createLayeredMeshFromRasters/index.md)).
+In this example we use a 3D mesh from another example ([createLayeredMeshfromRasters]({{< ref "createLayeredMeshfromRasters.md" >}})).
 
 ```bash
 checkMesh mesh_layered.vtu -p -v
