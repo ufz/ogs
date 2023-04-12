@@ -42,7 +42,7 @@ public:
                        that owns an instance of this class.
         \param petsc_options PETSc options string which is passed to PETSc lib
         and inserted in the PETSc option database (see
-        https://petsc.org/release/docs/manualpages/Sys/PetscOptionsInsertString.html).
+        https://petsc.org/release/manualpages/Sys/PetscOptionsInsertString/).
     */
     PETScLinearSolver(std::string const& prefix,
                       std::string const& petsc_options);
@@ -69,4 +69,4 @@ private:
     double elapsed_ctime_ = 0.0;  ///< Clock time
 };
 
-}  // end namespace
+}  // namespace MathLib
