@@ -14,8 +14,6 @@
 #include <limits>
 #include <typeinfo>
 
-#include "NumericalStabilization.h"
-
 namespace NumLib
 {
 template <typename IPData, typename FluxVectorType, typename Derived>

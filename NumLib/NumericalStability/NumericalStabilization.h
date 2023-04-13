@@ -203,4 +203,4 @@ void applyFullUpwind(Eigen::VectorXd const& quasi_nodal_flux,
                      Eigen::EigenBase<Derived>& diffusion_matrix);
 }  // namespace NumLib
 
-#include "NumericalStabilization_impl.h"
+#include "NumericalStabilization-impl.h"
