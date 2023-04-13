@@ -62,8 +62,8 @@ void applyFullUpwind(IPData const& ip_data_vector,
                      FluxVectorType const& ip_flux_vector,
                      Eigen::MatrixBase<Derived>& laplacian_matrix)
 {
-    Eigen::VectorXd quasi_nodal_flux(laplacian_matrix.rows());
-    quasi_nodal_flux.setZero();
+    Eigen::VectorXd quasi_nodal_flux =
+        Eigen::VectorXd::Zero(laplacian_matrix.rows());
 
     for (std::size_t ip = 0; ip < ip_flux_vector.size(); ++ip)
     {
