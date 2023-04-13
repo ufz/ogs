@@ -79,3 +79,18 @@ std::vector<double> OGSMesh::getPointDataArray(std::string const& name) const
 
     return data_array;
 }
+
+void OGSMesh::setCellDataArray(std::string const& name,
+                               std::vector<double> const& values)
+{
+    auto* pv = MeshLib::getOrCreateMeshProperty<double>(
+        *_mesh, name, MeshLib::MeshItemType::Cell, 1);
+    if (pv == nullptr)
+    {
+        OGS_FATAL("Couldn't access cell/element property '{}'.", name);
+    }
+    for (int i = 0; i < pv->getNumberOfTuples(); ++i)
+    {
+        pv->getComponent(i, 0) = values[i];
+    }
+}

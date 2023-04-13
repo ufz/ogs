@@ -37,7 +37,9 @@ public:
     explicit OGSMesh(MeshLib::Mesh* mesh);
 
     std::vector<double> getPointCoordinates() const;
-    std::vector<double> getPointDataArray(std::string const& name);
+    std::vector<double> getPointDataArray(std::string const& name) const;
+    void setCellDataArray(std::string const& name,
+                          std::vector<double> const& values);
 
 private:
     MeshLib::Mesh* _mesh = nullptr;
