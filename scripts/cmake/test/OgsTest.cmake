@@ -72,6 +72,25 @@ function(OgsTest)
     )
     string(REPLACE "/" "_" TEST_NAME_UNDERSCORE ${TEST_NAME})
 
+    current_dir_as_list(ProcessLib labels)
+    if(${OgsTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
+        list(APPEND labels default)
+    else()
+        list(APPEND labels large)
+    endif()
+
+    _ogs_add_test(${TEST_NAME})
+
+    # OpenMP tests for specific processes only.
+    # TODO (CL) Once all processes can be assembled OpenMP parallel, the condition should be removed.
+    if("${labels}" MATCHES "TH2M|ThermoRichards")
+        _ogs_add_test(${TEST_NAME}-omp)
+        _set_omp_test_properties()
+    endif()
+endfunction()
+
+# Add a ctest and sets properties
+macro(_ogs_add_test TEST_NAME)
     add_test(
         NAME ${TEST_NAME}
         COMMAND
@@ -82,18 +101,6 @@ function(OgsTest)
             -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME_UNDERSCORE}.txt
             -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/OgsTestWrapper.cmake
     )
-
-    # For debugging: message("Adding test with NAME ${TEST_NAME}
-    # WORKING_DIRECTORY ${OgsTest_BINARY_DIR} COMMAND ${OgsTest_WRAPPER}
-    # $<TARGET_FILE:ogs> -r ${OgsTest_SOURCE_DIR}
-    # ${OgsTest_SOURCE_DIR}/${OgsTest_NAME})
-
-    current_dir_as_list(ProcessLib labels)
-    if(${OgsTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
-        list(APPEND labels default)
-    else()
-        list(APPEND labels large)
-    endif()
 
     set_tests_properties(
         ${TEST_NAME}
@@ -107,7 +114,6 @@ function(OgsTest)
                    LABELS
                    "${labels}"
     )
-    # Disabled for the moment, does not work with CI under load if(NOT
-    # OGS_COVERAGE) set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT
-    # ${timeout}) endif()
-endfunction()
+endmacro()
+
+# macro(_set_omp_test_properties) defined in AddTest.cmake
