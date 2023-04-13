@@ -193,7 +193,7 @@ template <typename IPData, typename FluxVectorType, typename Derived>
 void assembleAdvectionMatrix(NumericalStabilization const* const stabilizer,
                              IPData const& ip_data_vector,
                              double const average_velocity,
-                             FluxVectorType const& ip_flux_vector,
+                             std::vector<FluxVectorType> const& ip_flux_vector,
                              Eigen::MatrixBase<Derived>& laplacian_matrix);
 
 // TODO: remove the following function once the advection matrix of TH, THM is

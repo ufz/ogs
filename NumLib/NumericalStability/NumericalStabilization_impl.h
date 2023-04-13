@@ -21,7 +21,7 @@ namespace NumLib
 template <typename IPData, typename FluxVectorType, typename Derived>
 void assembleOriginalAdvectionMatrix(
     IPData const& ip_data_vector,
-    FluxVectorType const& ip_flux_vector,
+    std::vector<FluxVectorType> const& ip_flux_vector,
     Eigen::MatrixBase<Derived>& laplacian_matrix)
 {
     for (std::size_t ip = 0; ip < ip_flux_vector.size(); ++ip)
@@ -59,7 +59,7 @@ void applyFullUpwind(Eigen::VectorXd const& quasi_nodal_flux,
 
 template <typename IPData, typename FluxVectorType, typename Derived>
 void applyFullUpwind(IPData const& ip_data_vector,
-                     FluxVectorType const& ip_flux_vector,
+                     std::vector<FluxVectorType> const& ip_flux_vector,
                      Eigen::MatrixBase<Derived>& laplacian_matrix)
 {
     Eigen::VectorXd quasi_nodal_flux =
@@ -81,7 +81,7 @@ template <typename IPData, typename FluxVectorType, typename Derived>
 void assembleAdvectionMatrix(NumericalStabilization const* const stabilizer,
                              IPData const& ip_data_vector,
                              double const average_velocity,
-                             FluxVectorType const& ip_flux_vector,
+                             std::vector<FluxVectorType> const& ip_flux_vector,
                              Eigen::MatrixBase<Derived>& laplacian_matrix)
 {
     if (stabilizer)
