@@ -29,7 +29,9 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 
-class OGSMesh
+// Needs to be exported, see
+// https://pybind11.readthedocs.io/en/stable/advanced/misc.html#partitioning-code-over-multiple-extension-modules
+class PYBIND11_EXPORT OGSMesh
 {
 public:
     explicit OGSMesh(MeshLib::Mesh* mesh);

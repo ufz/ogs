@@ -182,7 +182,12 @@ void finalize()
     BaseLib::unsetProjectDirectory();
 }
 
-/// python module name is OpenGeoSys
+/// To use this module import dependencies first:
+///   import ogs.mesh as mesh
+///   import ogs.simulator as sim
+///
+/// See also
+/// https://github.com/pybind/pybind11/issues/1391#issuecomment-912642979
 PYBIND11_MODULE(simulator, m)
 {
     m.attr("__name__") = "ogs.simulator";
