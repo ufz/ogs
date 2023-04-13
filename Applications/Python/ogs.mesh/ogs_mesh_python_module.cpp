@@ -36,5 +36,7 @@ PYBIND11_MODULE(mesh, m)
     m.doc() = "pybind11 ogs mesh example plugin";
     pybind11::class_<OGSMesh>(m, "OGSMesh")
         .def("getPointCoordinates", &OGSMesh::getPointCoordinates,
-             "get node coordinates");
+             "get node coordinates")
+        .def("getPointDataArray", &OGSMesh::getPointDataArray,
+             "get point data");
 }
