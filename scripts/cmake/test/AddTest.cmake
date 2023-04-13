@@ -422,41 +422,20 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                    AddTest_EXECUTABLE_ARGS "${AddTest_EXECUTABLE_ARGS}"
     )
 
-    add_test(
-        NAME ${TEST_NAME}
-        COMMAND
-            ${CMAKE_COMMAND} -DEXECUTABLE=${AddTest_EXECUTABLE_PARSED}
-            "-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}" # Quoted because
-                                                           # passed as list see
-                                                           # https://stackoverflow.com/a/33248574/80480
-            -DBINARY_PATH=${AddTest_BINARY_PATH}
-            -DWRAPPER_COMMAND=${WRAPPER_COMMAND}
-            "-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
-            "-DFILES_TO_DELETE=${FILES_TO_DELETE}"
-            -DWORKING_DIRECTORY=${AddTest_WORKING_DIRECTORY}
-            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME}.txt -P
-            ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
-    )
-    if(DEFINED AddTest_DEPENDS)
-        if(NOT (TEST ${AddTest_DEPENDS} OR TARGET ${AddTest_DEPENDS}))
-            message(
-                FATAL_ERROR
-                    "AddTest ${TEST_NAME}: dependency ${AddTest_DEPENDS} does not exist!"
-            )
-        endif()
-        set_tests_properties(${TEST_NAME} PROPERTIES DEPENDS ${AddTest_DEPENDS})
-    endif()
-    if(DEFINED MPI_PROCESSORS)
-        set_tests_properties(
-            ${TEST_NAME} PROPERTIES PROCESSORS ${MPI_PROCESSORS}
-        )
-    endif()
-
     current_dir_as_list(ProcessLib labels)
     if(${AddTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
         list(APPEND labels default)
     else()
         list(APPEND labels large)
+    endif()
+
+    _add_test(${TEST_NAME})
+
+    # OpenMP tests for specific processes only.
+    # TODO (CL) Once all processes can be assembled OpenMP parallel, the condition should be removed.
+    if("${labels}" MATCHES "TH2M|ThermoRichards")
+        _add_test(${TEST_NAME}-omp)
+        _set_omp_test_properties()
     endif()
 
     if(AddTest_PYTHON_PACKAGES)
@@ -478,23 +457,6 @@ Use six arguments version of AddTest with absolute and relative tolerances"
             )
         endif()
     endif()
-
-    set_tests_properties(
-        ${TEST_NAME}
-        PROPERTIES ${AddTest_PROPERTIES}
-                   COST
-                   ${AddTest_RUNTIME}
-                   DISABLED
-                   ${AddTest_DISABLED}
-                   LABELS
-                   "${labels}"
-    )
-    # Disabled for the moment, does not work with CI under load
-    # ~~~
-    # if(NOT OGS_COVERAGE)
-    #     set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT ${timeout})
-    # endif()
-    # ~~~
 
     add_dependencies(ctest ${AddTest_EXECUTABLE})
     add_dependencies(ctest-large ${AddTest_EXECUTABLE})
@@ -541,3 +503,66 @@ Use six arguments version of AddTest with absolute and relative tolerances"
     )
 
 endfunction()
+
+# Add a ctest and sets properties
+macro(_add_test TEST_NAME)
+    message(STATUS "working: ${AddTest_WORKING_DIRECTORY}")
+    add_test(
+        NAME ${TEST_NAME}
+        COMMAND
+            ${CMAKE_COMMAND} -DEXECUTABLE=${AddTest_EXECUTABLE_PARSED}
+            "-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}" # Quoted because
+                                                           # passed as list see
+                                                           # https://stackoverflow.com/a/33248574/80480
+            -DBINARY_PATH=${AddTest_BINARY_PATH}
+            -DWRAPPER_COMMAND=${WRAPPER_COMMAND}
+            "-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
+            "-DFILES_TO_DELETE=${FILES_TO_DELETE}"
+            -DWORKING_DIRECTORY=${AddTest_WORKING_DIRECTORY}
+            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME}.txt -P
+            ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
+    )
+
+    if(DEFINED AddTest_DEPENDS)
+        if(NOT (TEST ${AddTest_DEPENDS} OR TARGET ${AddTest_DEPENDS}))
+            message(
+                FATAL_ERROR
+                    "AddTest ${TEST_NAME}: dependency ${AddTest_DEPENDS} does not exist!"
+            )
+        endif()
+        set_tests_properties(${TEST_NAME} PROPERTIES DEPENDS ${AddTest_DEPENDS})
+    endif()
+    if(DEFINED MPI_PROCESSORS)
+        set_tests_properties(
+            ${TEST_NAME} PROPERTIES PROCESSORS ${MPI_PROCESSORS}
+        )
+    endif()
+
+    set_tests_properties(
+        ${TEST_NAME}
+        PROPERTIES ${AddTest_PROPERTIES}
+                   COST
+                   ${AddTest_RUNTIME}
+                   DISABLED
+                   ${AddTest_DISABLED}
+                   LABELS
+                   "${labels}"
+    )
+endmacro()
+
+# Sets number of threads, adds label 'omp' and adds a dependency to the
+# non-OpenMP test because both write to the same output files.
+macro(_set_omp_test_properties)
+    get_test_property(${TEST_NAME}-omp ENVIRONMENT _environment)
+    set_tests_properties(
+        ${TEST_NAME}-omp
+        PROPERTIES ENVIRONMENT
+                   "OGS_ASM_THREADS=4;${_environment}"
+                   PROCESSORS
+                   4
+                   DEPENDS
+                   ${TEST_NAME}
+                   LABELS
+                   "${labels};omp"
+    )
+endmacro()
