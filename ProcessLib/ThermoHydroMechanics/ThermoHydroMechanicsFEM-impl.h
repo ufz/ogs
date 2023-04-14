@@ -326,14 +326,16 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                     MaterialPropertyLib::PropertyType::thermal_conductivity)
                 .value(vars, x_position, t, dt));
 
-    if (_process_data.stabilizer)
+    if (auto const* const s =
+            dynamic_cast<NumLib::IsotropicDiffusionStabilization const* const>(
+                _process_data.stabilizer.get());
+        s != nullptr)
     {
         GlobalDimMatrixType const& I(
             GlobalDimMatrixType::Identity(DisplacementDim, DisplacementDim));
         crv.effective_thermal_conductivity.noalias() +=
             fluid_density * crv.c_f *
-            _process_data.stabilizer->computeArtificialDiffusion(
-                _element.getID(), velocity.norm()) *
+            s->computeArtificialDiffusion(_element.getID(), velocity.norm()) *
             I;
     }
 

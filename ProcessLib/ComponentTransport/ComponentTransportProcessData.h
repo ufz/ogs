@@ -104,9 +104,8 @@ struct ComponentTransportProcessData
     {
         if (stabilizer)
         {
-            auto const& stabilizer_ref = *(stabilizer.get());
-            if (typeid(stabilizer_ref) ==
-                typeid(NumLib::IsotropicDiffusionStabilization))
+            if (dynamic_cast<NumLib::IsotropicDiffusionStabilization const*>(
+                    stabilizer.get()) != nullptr)
             {
                 laplace_coefficient_function =
                     [=, this](std::size_t const element_id,
@@ -185,8 +184,11 @@ struct ComponentTransportProcessData
         }
 
         double const artificial_diffusion =
-            stabilizer->computeArtificialDiffusion(element_id,
-                                                   velocity_magnitude);
+            // Cast is already checked, this function is called iff the
+            // stabilizer is of this type.
+            static_cast<NumLib::IsotropicDiffusionStabilization const&>(
+                *stabilizer)
+                .computeArtificialDiffusion(element_id, velocity_magnitude);
 
         auto const dim = velocity.size();
         Eigen::MatrixXd const& I(Eigen::MatrixXd::Identity(dim, dim));

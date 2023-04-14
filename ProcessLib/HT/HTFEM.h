@@ -207,12 +207,15 @@ protected:
                         MaterialPropertyLib::PropertyType::thermal_conductivity)
                     .value(vars, pos, t, dt));
 
-        if (_process_data.stabilizer)
+        if (auto const* const s = dynamic_cast<
+                NumLib::IsotropicDiffusionStabilization const* const>(
+                _process_data.stabilizer.get());
+            s != nullptr)
         {
             thermal_conductivity.noalias() +=
                 fluid_density * specific_heat_capacity_fluid *
-                _process_data.stabilizer->computeArtificialDiffusion(
-                    _element.getID(), velocity.norm()) *
+                s->computeArtificialDiffusion(_element.getID(),
+                                              velocity.norm()) *
                 I;
         }
 

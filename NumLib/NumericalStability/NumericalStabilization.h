@@ -32,12 +32,6 @@ class NumericalStabilization
 {
 public:
     virtual ~NumericalStabilization() = default;
-
-    virtual double computeArtificialDiffusion(
-        std::size_t const /*element_id*/, double const /*velocity_norm*/) const
-    {
-        return 0.0;
-    }
 };
 
 /**
@@ -61,9 +55,8 @@ public:
                                     double const tuning_parameter,
                                     std::vector<double>&& element_sizes_vector);
 
-    double computeArtificialDiffusion(
-        std::size_t const element_id,
-        double const velocity_norm) const override;
+    double computeArtificialDiffusion(std::size_t const element_id,
+                                      double const velocity_norm) const;
 
 private:
     /// The cutoff velocity. The stabilization is not applied
