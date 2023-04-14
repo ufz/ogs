@@ -75,25 +75,29 @@ void applyFullUpwind(IPData const& ip_data_vector,
 }
 
 template <typename IPData, typename FluxVectorType, typename Derived>
-void assembleAdvectionMatrix(NumericalStabilization const* const stabilizer,
+void assembleAdvectionMatrix(NumericalStabilization const& stabilizer,
                              IPData const& ip_data_vector,
-                             double const average_velocity,
                              std::vector<FluxVectorType> const& ip_flux_vector,
+                             double const average_velocity,
                              Eigen::MatrixBase<Derived>& laplacian_matrix)
 {
-    if (stabilizer)
-    {
-        if (auto const* const s =
-                dynamic_cast<NumLib::FullUpwind const* const>(stabilizer);
-            s != nullptr && (average_velocity > s->getCutoffVelocity()))
+    std::visit(
+        [&](auto&& stabilizer)
         {
-            applyFullUpwind(ip_data_vector, ip_flux_vector, laplacian_matrix);
-            return;
-        }
-    }
-
-    assembleOriginalAdvectionMatrix(ip_data_vector, ip_flux_vector,
+            using Stabilizer = std::decay_t<decltype(stabilizer)>;
+            if constexpr (std::is_same_v<Stabilizer, FullUpwind>)
+            {
+                if (average_velocity > stabilizer.getCutoffVelocity())
+                {
+                    applyFullUpwind(ip_data_vector, ip_flux_vector,
                                     laplacian_matrix);
-}
+                    return;
+                }
+            }
 
+            assembleOriginalAdvectionMatrix(ip_data_vector, ip_flux_vector,
+                                            laplacian_matrix);
+        },
+        stabilizer);
+}
 }  // namespace NumLib

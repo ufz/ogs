@@ -174,7 +174,7 @@ using NumericalStabilization =
     std::variant<NoStabilization, IsotropicDiffusionStabilization, FullUpwind>;
 
 template <typename IPData, typename FluxVectorType, typename Derived>
-void assembleAdvectionMatrix(NumericalStabilization const* const stabilizer,
+void assembleAdvectionMatrix(NumericalStabilization const& stabilizer,
                              IPData const& ip_data_vector,
                              double const average_velocity,
                              std::vector<FluxVectorType> const& ip_flux_vector,
