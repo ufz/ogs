@@ -239,7 +239,7 @@ LocalMatrixOutput::LocalMatrixOutput()
 
     if (!opt_prefix)
     {
-        if (!opt_elements)
+        if (opt_elements)
         {
             WARN(
                 "Environment variable OGS_LOCAL_MAT_OUT_ELEMENTS is set, but "
