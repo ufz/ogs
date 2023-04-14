@@ -157,6 +157,8 @@ void SmallDeformationProcess<DisplacementDim>::assembleConcreteProcess(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
         pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
         b);
+
+    _global_output(t, process_id, M, K, b);
 }
 
 template <int DisplacementDim>
@@ -182,6 +184,8 @@ void SmallDeformationProcess<DisplacementDim>::
 
     transformVariableFromGlobalVector(b, 0, *_local_to_global_index_map,
                                       *_nodal_forces, std::negate<double>());
+
+    _global_output(t, process_id, M, K, b, &Jac);
 }
 
 template <int DisplacementDim>

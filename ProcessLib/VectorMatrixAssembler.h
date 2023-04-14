@@ -11,14 +11,14 @@
 #pragma once
 
 #include <vector>
-#include "NumLib/NumericsConfig.h"
+
 #include "AbstractJacobianAssembler.h"
-#include "CoupledSolutionsForStaggeredScheme.h"
+#include "Assembly/MatrixOutput.h"
 
 namespace NumLib
 {
 class LocalToGlobalIndexMap;
-}  // NumLib
+}  // namespace NumLib
 
 namespace ProcessLib
 {
@@ -74,6 +74,8 @@ private:
 
     //! Used to assemble the Jacobian.
     std::unique_ptr<AbstractJacobianAssembler> _jacobian_assembler;
+
+    Assembly::LocalMatrixOutput _local_output;
 };
 
 }  // namespace ProcessLib
