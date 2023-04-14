@@ -710,11 +710,11 @@ public:
         if (!_process_data.non_advective_form)
         {
             NumLib::assembleAdvectionMatrix(
-                _process_data.stabilizer.get(),
+                _process_data.stabilizer,
                 _ip_data,
+                ip_flux_vector,
                 average_velocity_norm /
                     static_cast<double>(n_integration_points),
-                ip_flux_vector,
                 KCC_Laplacian);
         }
 
@@ -1099,11 +1099,11 @@ public:
         if (!_process_data.non_advective_form)
         {
             NumLib::assembleAdvectionMatrix(
-                _process_data.stabilizer.get(),
+                _process_data.stabilizer,
                 _ip_data,
+                ip_flux_vector,
                 average_velocity_norm /
                     static_cast<double>(n_integration_points),
-                ip_flux_vector,
                 KCC_Laplacian);
         }
         local_K.noalias() += KCC_Laplacian;
@@ -1370,10 +1370,8 @@ public:
         }
 
         NumLib::assembleAdvectionMatrix(
-            _process_data.stabilizer.get(),
-            _ip_data,
+            _process_data.stabilizer, _ip_data, ip_flux_vector,
             average_velocity_norm / static_cast<double>(n_integration_points),
-            ip_flux_vector,
             KCC_Laplacian);
 
         local_rhs.noalias() -= KCC_Laplacian * c;
