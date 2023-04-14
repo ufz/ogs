@@ -10,9 +10,6 @@
 
 #pragma once
 
-#include <Eigen/Core>
-#include <Eigen/Sparse>
-#include <functional>
 #include <numeric>
 #include <vector>
 
@@ -238,10 +235,6 @@ class LocalAssemblerData : public ComponentTransportLocalAssemblerInterface
     using GlobalDimNodalMatrixType =
         typename ShapeMatricesType::GlobalDimNodalMatrixType;
     using GlobalDimMatrixType = typename ShapeMatricesType::GlobalDimMatrixType;
-    using LaplaceCoefficientFunction = std::function<GlobalDimMatrixType(
-        const LocalAssemblerData<ShapeFunction, GlobalDim>&,
-        GlobalDimMatrixType const&, GlobalDimMatrixType const&,
-        GlobalDimVectorType const&, double const, double const, double const)>;
 
 public:
     LocalAssemblerData(
@@ -291,12 +284,6 @@ public:
 
             _ip_data[ip].pushBackState();
         }
-        _laplace_coefficient_function =
-            _process_data.stabilizer
-                ? &LocalAssemblerData<ShapeFunction, GlobalDim>::
-                      getHydrodynamicDispersionWithArtificialDiffusion
-                : &LocalAssemblerData<ShapeFunction,
-                                      GlobalDim>::getHydrodynamicDispersion;
     }
 
     void setChemicalSystemID(std::size_t const /*mesh_item_id*/) override
@@ -575,9 +562,6 @@ public:
 
         MaterialPropertyLib::VariableArray vars;
 
-        GlobalDimMatrixType const& I(
-            GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
-
         // Get material properties
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
@@ -589,6 +573,16 @@ public:
         // pressure.
         auto const& component = phase.component(
             _transport_process_variables[component_id].get().getName());
+
+        LocalBlockMatrixType KCC_Laplacian =
+            LocalBlockMatrixType::Zero(concentration_size, concentration_size);
+
+        std::vector<GlobalDimVectorType> ip_flux_vector;
+        double average_velocity_norm = 0.0;
+        if (!_process_data.non_advective_form)
+        {
+            ip_flux_vector.reserve(n_integration_points);
+        }
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
@@ -671,9 +665,9 @@ public:
                         t, dt);
 
             GlobalDimMatrixType const hydrodynamic_dispersion =
-                _laplace_coefficient_function(
-                    *this, I, pore_diffusion_coefficient, velocity, porosity,
-                    solute_dispersivity_transverse,
+                _process_data.laplace_coefficient_function(
+                    _element.getID(), pore_diffusion_coefficient, velocity,
+                    porosity, solute_dispersivity_transverse,
                     solute_dispersivity_longitudinal);
 
             const double R_times_phi(retardation_factor * porosity);
@@ -688,13 +682,13 @@ public:
             }
             else
             {
-                KCC.noalias() +=
-                    N.transpose() * mass_density_flow.transpose() * dNdx * w;
+                ip_flux_vector.emplace_back(mass_density_flow);
+                average_velocity_norm += velocity.norm();
             }
             MCC.noalias() += N_t_N * (R_times_phi * density * w);
-            KCC.noalias() += dNdx.transpose() * hydrodynamic_dispersion * dNdx *
-                                 (density * w) +
-                             N_t_N * (decay_rate * R_times_phi * density * w);
+            KCC.noalias() += N_t_N * (decay_rate * R_times_phi * density * w);
+            KCC_Laplacian.noalias() +=
+                dNdx.transpose() * hydrodynamic_dispersion * dNdx * density * w;
 
             MpC.noalias() += N_t_N * (porosity * drho_dC * w);
 
@@ -712,6 +706,19 @@ public:
                 }
             }
         }
+
+        if (!_process_data.non_advective_form)
+        {
+            NumLib::assembleAdvectionMatrix(
+                _process_data.stabilizer.get(),
+                _ip_data,
+                average_velocity_norm /
+                    static_cast<double>(n_integration_points),
+                ip_flux_vector,
+                KCC_Laplacian);
+        }
+
+        KCC.noalias() += KCC_Laplacian;
     }
 
     void assembleKCmCn(int const component_id, double const t, double const dt,
@@ -928,8 +935,18 @@ public:
         auto local_K = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_K_data, concentration_size, concentration_size);
 
+        LocalBlockMatrixType KCC_Laplacian =
+            LocalBlockMatrixType::Zero(concentration_size, concentration_size);
+
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
+
+        std::vector<GlobalDimVectorType> ip_flux_vector;
+        double average_velocity_norm = 0.0;
+        if (!_process_data.non_advective_form)
+        {
+            ip_flux_vector.reserve(n_integration_points);
+        }
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
@@ -940,9 +957,6 @@ public:
 
         MaterialPropertyLib::VariableArray vars;
         MaterialPropertyLib::VariableArray vars_prev;
-
-        GlobalDimMatrixType const& I(
-            GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
 
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
@@ -1032,9 +1046,9 @@ public:
                     : GlobalDimVectorType(-K_over_mu * dNdx * local_p);
 
             GlobalDimMatrixType const hydrodynamic_dispersion =
-                _laplace_coefficient_function(
-                    *this, I, pore_diffusion_coefficient, velocity, porosity,
-                    solute_dispersivity_transverse,
+                _process_data.laplace_coefficient_function(
+                    _element.getID(), pore_diffusion_coefficient, velocity,
+                    porosity, solute_dispersivity_transverse,
                     solute_dispersivity_longitudinal);
 
             double const R_times_phi = retardation_factor * porosity;
@@ -1071,14 +1085,28 @@ public:
             }
             else
             {
-                local_K.noalias() +=
-                    N.transpose() * velocity.transpose() * dNdx * (density * w);
+                ip_flux_vector.emplace_back(velocity * density);
+                average_velocity_norm += velocity.norm();
             }
             local_K.noalias() +=
-                dNdx.transpose() * hydrodynamic_dispersion * dNdx *
-                    (density * w) +
                 N_t_N * (decay_rate * R_times_phi * density * w);
+
+            KCC_Laplacian.noalias() += dNdx.transpose() *
+                                       hydrodynamic_dispersion * dNdx *
+                                       (density * w);
         }
+
+        if (!_process_data.non_advective_form)
+        {
+            NumLib::assembleAdvectionMatrix(
+                _process_data.stabilizer.get(),
+                _ip_data,
+                average_velocity_norm /
+                    static_cast<double>(n_integration_points),
+                ip_flux_vector,
+                KCC_Laplacian);
+        }
+        local_K.noalias() += KCC_Laplacian;
     }
 
     void assembleWithJacobianForStaggeredScheme(
@@ -1232,8 +1260,15 @@ public:
         auto local_rhs = MathLib::createZeroedVector<LocalSegmentVectorType>(
             local_b_data, concentration_size);
 
+        LocalBlockMatrixType KCC_Laplacian =
+            LocalBlockMatrixType::Zero(concentration_size, concentration_size);
+
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
+
+        std::vector<GlobalDimVectorType> ip_flux_vector;
+        double average_velocity_norm = 0.0;
+        ip_flux_vector.reserve(n_integration_points);
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
@@ -1244,9 +1279,6 @@ public:
 
         MaterialPropertyLib::VariableArray vars;
         MaterialPropertyLib::VariableArray vars_prev;
-
-        GlobalDimMatrixType const& I(
-            GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
 
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
@@ -1320,27 +1352,33 @@ public:
                     ? GlobalDimVectorType(-k / mu * (dNdx * p - rho * b))
                     : GlobalDimVectorType(-k / mu * dNdx * p);
 
-            GlobalDimMatrixType const D = _laplace_coefficient_function(
-                *this, I, Dp, q, phi, alpha_T, alpha_L);
+            GlobalDimMatrixType const D =
+                _process_data.laplace_coefficient_function(
+                    _element.getID(), Dp, q, phi, alpha_T, alpha_L);
 
             // matrix assembly
             local_Jac.noalias() +=
-                w * rho *
-                (N.transpose() * phi * R * (alpha + 1 / dt) * N +
-                 dNdx.transpose() * D * dNdx);
+                w * rho * N.transpose() * phi * R * (alpha + 1 / dt) * N;
+
+            KCC_Laplacian.noalias() += w * rho * dNdx.transpose() * D * dNdx;
 
             local_rhs.noalias() -=
-                w * rho *
-                (N.transpose() * phi * R * N * (cdot + alpha * c) +
-                 dNdx.transpose() * D * dNdx * c);
+                w * rho * N.transpose() * phi * R * N * (cdot + alpha * c);
 
-            assert(!_process_data.non_advective_form);
-            local_Jac.noalias() +=
-                w * rho * N.transpose() * q.transpose() * dNdx;
-
-            local_rhs.noalias() -=
-                w * rho * N.transpose() * q.transpose() * dNdx * c;
+            ip_flux_vector.emplace_back(q * rho);
+            average_velocity_norm += q.norm();
         }
+
+        NumLib::assembleAdvectionMatrix(
+            _process_data.stabilizer.get(),
+            _ip_data,
+            average_velocity_norm / static_cast<double>(n_integration_points),
+            ip_flux_vector,
+            KCC_Laplacian);
+
+        local_rhs.noalias() -= KCC_Laplacian * c;
+
+        local_Jac.noalias() += KCC_Laplacian;
     }
 
     void assembleReactionEquationConcrete(
@@ -1708,9 +1746,6 @@ public:
 
         MaterialPropertyLib::VariableArray vars;
 
-        GlobalDimMatrixType const& I(
-            GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
-
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
@@ -1759,14 +1794,10 @@ public:
                 component[MaterialPropertyLib::PropertyType::pore_diffusion]
                     .value(vars, pos, t, dt));
 
-            double const q_magnitude = q.norm();
             // hydrodymanic dispersion
             GlobalDimMatrixType const D =
-                q_magnitude != 0.0
-                    ? GlobalDimMatrixType(phi * Dp + alpha_T * q_magnitude * I +
-                                          (alpha_L - alpha_T) / q_magnitude *
-                                              q * q.transpose())
-                    : GlobalDimMatrixType(phi * Dp);
+                _process_data.getHydrodynamicDispersion(_element.getID(), Dp, q,
+                                                        phi, alpha_T, alpha_L);
 
             cache_mat.col(ip).noalias() = q * c_ip - phi * D * dNdx * c;
         }
@@ -1800,56 +1831,6 @@ private:
         Eigen::aligned_allocator<
             IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
         _ip_data;
-
-    LaplaceCoefficientFunction _laplace_coefficient_function;
-
-    GlobalDimMatrixType getHydrodynamicDispersion(
-        GlobalDimMatrixType const& I,
-        GlobalDimMatrixType const& pore_diffusion_coefficient,
-        GlobalDimVectorType const& velocity,
-        double const porosity,
-        double const solute_dispersivity_transverse,
-        double const solute_dispersivity_longitudinal) const
-    {
-        double const velocity_magnitude = velocity.norm();
-        if (velocity_magnitude == 0.0)
-        {
-            return porosity * pore_diffusion_coefficient;
-        }
-
-        return GlobalDimMatrixType(
-            porosity * pore_diffusion_coefficient +
-            solute_dispersivity_transverse * velocity_magnitude * I +
-            (solute_dispersivity_longitudinal -
-             solute_dispersivity_transverse) /
-                velocity_magnitude * velocity * velocity.transpose());
-    }
-
-    GlobalDimMatrixType getHydrodynamicDispersionWithArtificialDiffusion(
-        GlobalDimMatrixType const& I,
-        GlobalDimMatrixType const& pore_diffusion_coefficient,
-        GlobalDimVectorType const& velocity,
-        double const porosity,
-        double const solute_dispersivity_transverse,
-        double const solute_dispersivity_longitudinal) const
-    {
-        double const velocity_magnitude = velocity.norm();
-        if (velocity_magnitude == 0.0)
-        {
-            return porosity * pore_diffusion_coefficient;
-        }
-
-        GlobalDimMatrixType const D_c = GlobalDimMatrixType(
-            porosity * pore_diffusion_coefficient +
-            solute_dispersivity_transverse * velocity_magnitude * I +
-            (solute_dispersivity_longitudinal -
-             solute_dispersivity_transverse) /
-                velocity_magnitude * velocity * velocity.transpose());
-
-        return D_c + _process_data.stabilizer->computeArtificialDiffusion(
-                         _element.getID(), velocity_magnitude) *
-                         I;
-    }
 };
 
 }  // namespace ComponentTransport

@@ -50,6 +50,8 @@ ComponentTransportProcess::ComponentTransportProcess(
       _surfaceflux(std::move(surfaceflux)),
       _chemical_solver_interface(std::move(chemical_solver_interface))
 {
+    _process_data.setLaplaceCoefficientFunction();
+
     _residua.push_back(MeshLib::getOrCreateMeshProperty<double>(
         mesh, "LiquidMassFlowRate", MeshLib::MeshItemType::Node, 1));
 

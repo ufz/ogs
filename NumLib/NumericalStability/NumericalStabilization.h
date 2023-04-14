@@ -46,7 +46,7 @@ public:
     {
     }
 
-    virtual ~NumericalStabilization() = 0;
+    virtual ~NumericalStabilization() = default;
 
     double getCutoffVelocity() const { return cutoff_velocity_; }
     virtual double computeArtificialDiffusion(
@@ -189,9 +189,18 @@ public:
 std::unique_ptr<NumericalStabilization> createNumericalStabilization(
     MeshLib::Mesh const& mesh, BaseLib::ConfigTree const& config);
 
+template <typename IPData, typename FluxVectorType, typename Derived>
+void assembleAdvectionMatrix(NumericalStabilization const* const stabilizer,
+                             IPData const& ip_data_vector,
+                             double const average_velocity,
+                             std::vector<FluxVectorType> const& ip_flux_vector,
+                             Eigen::MatrixBase<Derived>& laplacian_matrix);
+
+// TODO: remove the following function once the advection matrix of TH, THM is
+// assembled by assembleAdvectionMatrix.
 template <typename Derived>
 void applyFullUpwind(Eigen::VectorXd const& quasi_nodal_flux,
                      Eigen::EigenBase<Derived>& diffusion_matrix);
 }  // namespace NumLib
 
-#include "NumericalStabilization_impl.h"
+#include "NumericalStabilization-impl.h"

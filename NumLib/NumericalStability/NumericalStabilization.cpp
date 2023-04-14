@@ -17,7 +17,6 @@
 
 namespace NumLib
 {
-NumericalStabilization::~NumericalStabilization() {}
 
 IsotropicDiffusionStabilization::IsotropicDiffusionStabilization(
     double const cutoff_velocity,

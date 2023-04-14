@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <Eigen/Core>
+#include <functional>
 #include <memory>
 
 #include "ChemistryLib/ChemicalSolverInterface.h"
@@ -92,6 +94,110 @@ struct ComponentTransportProcessData
 
     MeshLib::PropertyVector<double>* mesh_prop_velocity = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_porosity = nullptr;
+
+    using LaplaceCoefficientFunction = std::function<Eigen::MatrixXd(
+        std::size_t const, Eigen::MatrixXd const&, Eigen::VectorXd const&,
+        double const, double const, double const)>;
+    LaplaceCoefficientFunction laplace_coefficient_function = nullptr;
+
+    void setLaplaceCoefficientFunction()
+    {
+        if (stabilizer)
+        {
+            auto const& stabilizer_ref = *(stabilizer.get());
+            if (typeid(stabilizer_ref) ==
+                typeid(NumLib::IsotropicDiffusionStabilization))
+            {
+                laplace_coefficient_function =
+                    [=, this](std::size_t const element_id,
+                              Eigen::MatrixXd const& pore_diffusion_coefficient,
+                              Eigen::VectorXd const& velocity,
+                              double const porosity,
+                              double const solute_dispersivity_transverse,
+                              double const solute_dispersivity_longitudinal)
+                {
+                    return this
+                        ->getHydrodynamicDispersionWithArtificialDiffusion(
+                            element_id,
+                            pore_diffusion_coefficient,
+                            velocity,
+                            porosity,
+                            solute_dispersivity_transverse,
+                            solute_dispersivity_longitudinal);
+                };
+                return;
+            }
+        }
+
+        laplace_coefficient_function =
+            [=, this](std::size_t const element_id,
+                      Eigen::MatrixXd const& pore_diffusion_coefficient,
+                      Eigen::VectorXd const& velocity,
+                      double const porosity,
+                      double const solute_dispersivity_transverse,
+                      double const solute_dispersivity_longitudinal)
+        {
+            return this->getHydrodynamicDispersion(
+                element_id,
+                pore_diffusion_coefficient,
+                velocity,
+                porosity,
+                solute_dispersivity_transverse,
+                solute_dispersivity_longitudinal);
+        };
+    }
+
+    Eigen::MatrixXd getHydrodynamicDispersion(
+        std::size_t const /*element_id*/,
+        Eigen::MatrixXd const& pore_diffusion_coefficient,
+        Eigen::VectorXd const& velocity,
+        double const porosity,
+        double const solute_dispersivity_transverse,
+        double const solute_dispersivity_longitudinal) const
+    {
+        double const velocity_magnitude = velocity.norm();
+        if (velocity_magnitude == 0.0)
+        {
+            return porosity * pore_diffusion_coefficient;
+        }
+
+        auto const dim = velocity.size();
+        Eigen::MatrixXd const& I(Eigen::MatrixXd::Identity(dim, dim));
+        return porosity * pore_diffusion_coefficient +
+               solute_dispersivity_transverse * velocity_magnitude * I +
+               (solute_dispersivity_longitudinal -
+                solute_dispersivity_transverse) /
+                   velocity_magnitude * velocity * velocity.transpose();
+    }
+
+    Eigen::MatrixXd getHydrodynamicDispersionWithArtificialDiffusion(
+        std::size_t const element_id,
+        Eigen::MatrixXd const& pore_diffusion_coefficient,
+        Eigen::VectorXd const& velocity,
+        double const porosity,
+        double const solute_dispersivity_transverse,
+        double const solute_dispersivity_longitudinal) const
+    {
+        double const velocity_magnitude = velocity.norm();
+        if (velocity_magnitude == 0.0)
+        {
+            return porosity * pore_diffusion_coefficient;
+        }
+
+        double const artificial_diffusion =
+            stabilizer->computeArtificialDiffusion(element_id,
+                                                   velocity_magnitude);
+
+        auto const dim = velocity.size();
+        Eigen::MatrixXd const& I(Eigen::MatrixXd::Identity(dim, dim));
+        return porosity * pore_diffusion_coefficient +
+               (solute_dispersivity_transverse * velocity_magnitude +
+                artificial_diffusion) *
+                   I +
+               (solute_dispersivity_longitudinal -
+                solute_dispersivity_transverse) /
+                   velocity_magnitude * velocity * velocity.transpose();
+    }
 };
 
 }  // namespace ComponentTransport
