@@ -124,6 +124,8 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
     std::vector<ConstitutiveVariables<DisplacementDim>>
         ip_constitutive_variables(n_integration_points);
 
+    PhaseTransitionModelVariables ptmv;
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto& ip_data = _ip_data[ip];
@@ -338,8 +340,9 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
 
         // constitutive model object as specified in process creation
         auto& ptm = *_process_data.phase_transition_model_;
-        ptm.computeConstitutiveVariables(&medium, vars, pos, t, dt);
-        auto& c = ptm.cv;
+        ptmv = ptm.updateConstitutiveVariables(ptmv, &medium, vars, pos, t, dt);
+        auto const& c = ptmv;
+
         auto const phi_L = ip_data.s_L * ip_data.phi;
         auto const phi_G = (1. - ip_data.s_L) * ip_data.phi;
 
