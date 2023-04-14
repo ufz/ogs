@@ -17,7 +17,7 @@ namespace MaterialPropertyLib
 {
 class Phase;
 
-/// Water temperature model
+/// Water saturation temperature model
 /// based on the IAPWS Industrial Formulation 1997
 /// <a href="http://www.iapws.org/relguide/IF97-Rev.pdf">IF97-Rev</a>
 struct WaterSaturationTemperatureIAPWSIF97Region4 final : public Property
@@ -36,11 +36,11 @@ struct WaterSaturationTemperatureIAPWSIF97Region4 final : public Property
         }
     }
 
-    /// \return The water temperature.
+    /// \return The water saturation temperature.
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& pos,
                            double const t, double const dt) const override;
-    /// \return The derivative of  water temperature.
+    /// \return The derivative of water saturation temperature.
     PropertyDataType dValue(VariableArray const& variable_array,
                             Variable const variable,
                             ParameterLib::SpatialPosition const& pos,

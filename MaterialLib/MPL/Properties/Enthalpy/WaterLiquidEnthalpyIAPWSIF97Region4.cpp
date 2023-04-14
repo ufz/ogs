@@ -14,7 +14,7 @@
 #include <cmath>
 
 #include "BaseLib/Error.h"
-#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/Fluid/GibbsFreeEnergy/DimensionLessGibbsFreeEnergyRegion1.h"
 #include "MaterialLib/MPL/Properties/WaterSaturationCurveIAPWSIF97Region4.h"
 #include "MaterialLib/PhysicalConstant.h"
 
@@ -25,13 +25,22 @@ PropertyDataType WaterLiquidEnthalpyIAPWSIF97Region4::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
+    /// According to the IAPWS-IF97:
+    /// http://www.iapws.org/relguide/IF97-Rev.pdf,
+    /// the vapor-liquid saturation line only covers
+    /// the pressure range between 611.213 Pa and 22.064 MPa.
+    /// Thus, for the liquid saturation enthalpy calculated from
+    /// the saturation temperature, the lower limit of
+    /// phase pressure is 611.213 Pa.
     double const p = variable_array.phase_pressure;
-    if (p < 0)
+
+    if ((p < 611.213) || (p > 22.064e6))
     {
-        OGS_FATAL(
-            "WaterLiquidEnthalpyIAPWSIF97Region4 can not be calculated from "
-            "a negative phase pressure value.");
+        WARN(
+            "Pressure is out of the range for the water liquid saturation "
+            "enthalpy.");
     }
+
     const MaterialLib::Fluid::DimensionLessGibbsFreeEnergyRegion1
         gibbs_free_energy_;
 
