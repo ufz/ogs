@@ -35,7 +35,7 @@ void assembleOriginalAdvectionMatrix(
 
 template <typename Derived>
 void applyFullUpwind(Eigen::VectorXd const& quasi_nodal_flux,
-                     Eigen::MatrixBase<Derived>& diffusion_matrix)
+                     Eigen::MatrixBase<Derived>& laplacian_matrix)
 {
     Eigen::VectorXd const down_mask =
         (quasi_nodal_flux.array() < 0).cast<double>();
@@ -51,8 +51,8 @@ void applyFullUpwind(Eigen::VectorXd const& quasi_nodal_flux,
         (quasi_nodal_flux.array() >= 0).cast<double>();
     Eigen::VectorXd const up = quasi_nodal_flux.cwiseProduct(up_mask);
 
-    diffusion_matrix.diagonal().noalias() += up;
-    diffusion_matrix.noalias() += down * up.transpose() / q_in;
+    laplacian_matrix.diagonal().noalias() += up;
+    laplacian_matrix.noalias() += down * up.transpose() / q_in;
 }
 
 template <typename IPData, typename FluxVectorType, typename Derived>
