@@ -5,12 +5,15 @@ author = "Julian Heinze"
 +++
 
 ## Description
+
 This tool is used to integrate line elements representing boreholes into a pre-existing 3D mesh.
 Corresponding nodes matching the (x,y)-coordinates given in the gml-file are found in the mesh and connected from top to bottom via line elements.
 Each borehole (i.e. all points at a given (x,y)-location but at different depths) is assigned a unique material ID.
 Vertical limits of boreholes can be specified via Material IDs and/or elevation.
 Points that do not match any mesh nodes or are located outside the mesh are ignored.
+
 ## Usage
+
 ```bash
     IntegrateBoreholesIntoMesh  -i <input file name> -o <output file name>
                                  -g <geometry file name> [--min-id <a number>]
@@ -49,7 +52,8 @@ Where:
      Displays usage information and exits.
 ```
 
-## Example:
+## Example
+
 In this example we apply the tool to integrate boreholes into a mesh.
 For this purpose we need to generate a .gml-file that holds the information about the x-y-coordinates for these boreholes.
 The .gml-file is given as:
@@ -65,6 +69,7 @@ The .gml-file is given as:
  </points>
 </OpenGeoSysGLI>
 ```
+
 It is mandatory that the x-y-coordinates of the boreholes are aligned with nodes of the input mesh.
 Also they must be given with same precision as the mesh nodes, otherwise the tool will not find the nodes.
 
@@ -76,7 +81,7 @@ IntegrateBoreholesIntoMesh -i input_3Dmesh.vtu -o boreholes_3Dmesh.vtu -g boreho
 If some boreholes are given at the beginning of the meshing process, it is recommended to use the OpenGeoSys DataExplorer -- [Manual](https://gitlab.opengeosys.org/ogs/documentation/data_explorer_manual/-/jobs/artifacts/master/raw/ogsde-man.pdf?job=build) / [Download](/releases).
 At first, the nodes for boreholes can be integrated into the mesh, when the mesh is generated from a geometry.
 For this purpose, the boreholes and the boundaries of the geometry need to be imported in DataExplorer.
-Then this mesh can be used to create a 3D mesh, either with the DataExplorer or with [createLayeredMeshfromRaster](../../preprocessing/createLayeredMeshFromRasters/index.md), which then can be used for integrating boreholes.
+Then this mesh can be used to create a 3D mesh, either with the DataExplorer or with [createLayeredMeshfromRaster]({{< ref "createLayeredMeshFromRasters.md" >}}), which then can be used for integrating boreholes.
 This procedure is useful because the mesh is generated in a way that the coordinates of the boreholes are nodes in the mesh.
 Otherwise the borehole's coordinates need to be adjusted according to a existing mesh.
 This process is schematically depicted in Fig.1, below.
