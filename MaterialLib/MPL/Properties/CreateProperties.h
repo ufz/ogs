@@ -56,6 +56,7 @@
 #include "Enthalpy/CreateLinearWaterVapourLatentHeat.h"
 #include "Enthalpy/CreateWaterLiquidEnthalpyIAPWSIF97Region4.h"
 #include "Enthalpy/CreateWaterEnthalpyIAPWSIF97Region1.h"
+#include "Enthalpy/CreateWaterVapourEnthalpyIAPWSIF97Region4.h"
 #include "Enthalpy/CreateWaterVapourLatentHeatWithCriticalTemperature.h"
 #include "RelativePermeability/CreateRelPermBrooksCorey.h"
 #include "RelativePermeability/CreateRelPermBrooksCoreyNonwettingPhase.h"
