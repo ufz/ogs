@@ -21,6 +21,8 @@
 #include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
+#include "NumLib/NumericalStability/AdvectionMatrixAssembler.h"
+#include "NumLib/NumericalStability/HydrodynamicDispersion.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "ThermoHydroMechanicsFEM.h"
@@ -322,18 +324,15 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                     MaterialPropertyLib::PropertyType::thermal_conductivity)
                 .value(vars, x_position, t, dt));
 
-    if (auto const* const s =
-            dynamic_cast<NumLib::IsotropicDiffusionStabilization const* const>(
-                _process_data.stabilizer.get());
-        s != nullptr)
-    {
-        GlobalDimMatrixType const& I(
-            GlobalDimMatrixType::Identity(DisplacementDim, DisplacementDim));
-        crv.effective_thermal_conductivity.noalias() +=
-            fluid_density * crv.c_f *
-            s->computeArtificialDiffusion(_element.getID(), velocity.norm()) *
-            I;
-    }
+    // Thermal conductivity is moved outside and zero matrix is passed instead
+    // due to multiplication with fluid's density times specific heat capacity.
+    crv.effective_thermal_conductivity.noalias() +=
+        fluid_density * crv.c_f *
+        NumLib::computeHydrodynamicDispersion(
+            _process_data.stabilizer, _element.getID(),
+            GlobalDimMatrixType::Zero(DisplacementDim, DisplacementDim),
+            velocity, 0. /* phi */, 0. /* dispersivity_transversal */,
+            0. /*dispersivity_longitudinal*/);
 
     double const c_s =
         solid_phase
@@ -435,9 +434,6 @@ void ThermoHydroMechanicsLocalAssembler<
     typename ShapeMatricesTypePressure::NodalMatrixType KTT;
     KTT.setZero(temperature_size, temperature_size);
 
-    typename ShapeMatricesTypePressure::NodalMatrixType K_TT_advection;
-    K_TT_advection.setZero(temperature_size, temperature_size);
-
     typename ShapeMatricesTypePressure::NodalMatrixType KTp;
     KTp.setZero(temperature_size, pressure_size);
 
@@ -464,18 +460,13 @@ void ThermoHydroMechanicsLocalAssembler<
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     bool const has_frozen_liquid_phase = medium->hasPhase("FrozenLiquid");
 
-    typename ShapeMatricesTypePressure::NodalVectorType node_flux_q;
-    node_flux_q.setZero(temperature_size);
-
-    bool const apply_full_upwind =
-        (_process_data.stabilizer != nullptr) &&
-        (dynamic_cast<NumLib::FullUpwind const*>(
-             _process_data.stabilizer.get()) != nullptr);
-
-    double max_velocity_magnitude = 0.;
-
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
+
+    std::vector<GlobalDimVectorType> ip_flux_vector;
+    double average_velocity_norm = 0.0;
+    ip_flux_vector.reserve(n_integration_points);
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& N_u = _ip_data[ip].N_u;
@@ -563,16 +554,9 @@ void ThermoHydroMechanicsLocalAssembler<
         //
         KTT.noalias() +=
             dNdx.transpose() * crv.effective_thermal_conductivity * dNdx * w;
-        K_TT_advection.noalias() += N.transpose() * velocity.transpose() *
-                                    dNdx * fluid_density * crv.c_f * w;
 
-        if (apply_full_upwind)
-        {
-            node_flux_q.noalias() -=
-                fluid_density * crv.c_f * velocity.transpose() * dNdx * w;
-            max_velocity_magnitude =
-                std::max(max_velocity_magnitude, velocity.norm());
-        }
+        ip_flux_vector.emplace_back(velocity * fluid_density * crv.c_f);
+        average_velocity_norm += velocity.norm();
 
         if (has_frozen_liquid_phase)
         {
@@ -638,18 +622,9 @@ void ThermoHydroMechanicsLocalAssembler<
          */
     }
 
-    if (apply_full_upwind &&
-        // Cast to FullUpwind is checked in apply_full_upwind variable creation.
-        max_velocity_magnitude >
-            static_cast<NumLib::FullUpwind const&>(*_process_data.stabilizer)
-                .getCutoffVelocity())
-    {
-        NumLib::applyFullUpwind(node_flux_q, KTT);
-    }
-    else
-    {
-        KTT.noalias() += K_TT_advection;
-    }
+    NumLib::assembleAdvectionMatrix(
+        _process_data.stabilizer, _ip_data, ip_flux_vector,
+        average_velocity_norm / static_cast<double>(n_integration_points), KTT);
 
     // temperature equation, temperature part
     local_Jac
