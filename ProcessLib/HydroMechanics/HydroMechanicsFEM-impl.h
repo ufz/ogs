@@ -13,6 +13,7 @@
 
 #include <Eigen/Eigenvalues>
 
+#include "HydroMechanicsProcessData.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
@@ -516,10 +517,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
                                                          pressure_size);
 
-    typename ShapeMatricesTypePressure::NodalMatrixType coupling =
-        ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
-                                                         pressure_size);
-
     typename ShapeMatricesTypePressure::NodalMatrixType add_p_derivative =
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
                                                          pressure_size);
@@ -614,16 +611,16 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const K_over_mu = K / mu;
 
-        // artificial compressibility to account for coupling
-        auto const beta_FS =
-            fixed_stress_stabilization_parameter * alpha_b * alpha_b / K_S;
-
         laplace.noalias() +=
             rho_fr * dNdx_p.transpose() * K_over_mu * dNdx_p * w;
 
-        storage.noalias() +=
-            rho_fr * N_p.transpose() * N_p * w *
-            ((alpha_b - porosity) * (1.0 - alpha_b) / K_S + porosity * beta_p);
+        // Artificial compressibility from the fixed stress splitting:
+        auto const beta_FS =
+            fixed_stress_stabilization_parameter * alpha_b * alpha_b / K_S;
+
+        storage.noalias() += rho_fr * N_p.transpose() * N_p * w *
+                             ((alpha_b - porosity) * (1.0 - alpha_b) / K_S +
+                              porosity * beta_p + beta_FS);
 
         auto const& b = _process_data.specific_body_force;
 
@@ -638,23 +635,20 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                       K_over_mu *
                                       (dNdx_p * p - 2.0 * rho_fr * b) * N_p * w;
 
-        auto& eps = _ip_data[ip].eps;
-        auto& eps_prev = _ip_data[ip].eps_prev;
+        auto const& eps = _ip_data[ip].eps;
+        auto const& eps_prev = _ip_data[ip].eps_prev;
         const double eps_v_dot =
             (Invariants::trace(eps) - Invariants::trace(eps_prev)) / dt;
 
-        const double p_c = _ip_data[ip].coupling_pressure;
+        // Constant portion of strain rate term:
+        double const strain_rate_b =
+            alpha_b * eps_v_dot - beta_FS * _ip_data[ip].strain_rate_variable;
 
-        // pressure-dependent part of fixed-stress coupling
-        coupling.noalias() += rho_fr * N_p.transpose() * N_p * w * beta_FS / dt;
-
-        // constant part of fixed-stress coupling
-        local_rhs.noalias() -=
-            (alpha_b * eps_v_dot - beta_FS * p_c / dt) * rho_fr * N_p * w;
+        local_rhs.noalias() -= strain_rate_b * rho_fr * N_p * w;
     }
-    local_Jac.noalias() = laplace + storage / dt + add_p_derivative + coupling;
+    local_Jac.noalias() = laplace + storage / dt + add_p_derivative;
 
-    local_rhs.noalias() -= laplace * p + storage * p_dot + coupling * p;
+    local_rhs.noalias() -= laplace * p + storage * p_dot;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -801,22 +795,14 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                  bool const use_monolithic_scheme,
                                  int const process_id)
 {
-    int const n_integration_points = _integration_method.getNumberOfPoints();
-
-    if (use_monolithic_scheme || process_id == 0)
+    if (!use_monolithic_scheme &&
+        process_id == _process_data.hydraulic_process_id)
     {
-        auto p =
-            Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-                pressure_size> const>(local_x.data(), pressure_size);
-
-        for (int ip = 0; ip < n_integration_points; ip++)
-        {
-            auto const& N_p = _ip_data[ip].N_p;
-            _ip_data[ip].coupling_pressure = N_p.dot(p);
-        }
+        return;
     }
 
-    if (use_monolithic_scheme || process_id == 1)
+    if (use_monolithic_scheme ||
+        process_id == _process_data.mechanics_related_process_id)
     {
         ParameterLib::SpatialPosition x_position;
         x_position.setElementID(_element.getID());
@@ -830,6 +816,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         MPL::VariableArray vars;
 
+        int const n_integration_points =
+            _integration_method.getNumberOfPoints();
         for (int ip = 0; ip < n_integration_points; ip++)
         {
             x_position.setIntegrationPoint(ip);
@@ -858,27 +846,36 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, DisplacementDim>::
     postNonLinearSolverConcrete(std::vector<double> const& local_x,
-                                std::vector<double> const& /*local_xdot*/,
+                                std::vector<double> const& local_xdot,
                                 double const t, double const dt,
                                 bool const use_monolithic_scheme,
                                 int const process_id)
 {
+    // Note: local_x and local_xdot only contain the solutions of current
+    // process in the staggered scheme. This has to be changed according to the
+    // same two arguments in postTimestepConcrete.
+
     int const n_integration_points = _integration_method.getNumberOfPoints();
 
-    if (use_monolithic_scheme || process_id == 0)
+    if (!use_monolithic_scheme &&
+        process_id == _process_data.hydraulic_process_id)
     {
-        auto p =
+        auto const p_dot =
             Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-                pressure_size> const>(local_x.data(), pressure_size);
+                pressure_size> const>(local_xdot.data(), pressure_size);
 
         for (int ip = 0; ip < n_integration_points; ip++)
         {
-            auto const& N_p = _ip_data[ip].N_p;
-            _ip_data[ip].coupling_pressure = N_p.dot(p);
+            auto& ip_data = _ip_data[ip];
+
+            auto const& N_p = ip_data.N_p;
+
+            ip_data.strain_rate_variable = N_p.dot(p_dot);
         }
     }
 
-    if (use_monolithic_scheme || process_id == 1)
+    if (use_monolithic_scheme ||
+        process_id == _process_data.mechanics_related_process_id)
     {
         ParameterLib::SpatialPosition x_position;
         x_position.setElementID(_element.getID());
