@@ -5,21 +5,25 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
- * Created on June 24, 2022, 12:53 PM
  */
 
 #pragma once
 
+#include <Eigen/Core>
 #include <limits>
+#include <memory>
+#include <vector>
+
+#include "NumericalStabilization.h"
 
 namespace NumLib
 {
+namespace detail
+{
 template <typename IPData, typename FluxVectorType, typename Derived>
-void assembleOriginalAdvectionMatrix(
-    IPData const& ip_data_vector,
-    std::vector<FluxVectorType> const& ip_flux_vector,
-    Eigen::MatrixBase<Derived>& laplacian_matrix)
+void assembleAdvectionMatrix(IPData const& ip_data_vector,
+                             std::vector<FluxVectorType> const& ip_flux_vector,
+                             Eigen::MatrixBase<Derived>& laplacian_matrix)
 {
     for (std::size_t ip = 0; ip < ip_flux_vector.size(); ++ip)
     {
@@ -73,6 +77,7 @@ void applyFullUpwind(IPData const& ip_data_vector,
 
     applyFullUpwind(quasi_nodal_flux, laplacian_matrix);
 }
+}  // namespace detail
 
 template <typename IPData, typename FluxVectorType, typename Derived>
 void assembleAdvectionMatrix(NumericalStabilization const& stabilizer,
@@ -89,13 +94,13 @@ void assembleAdvectionMatrix(NumericalStabilization const& stabilizer,
             {
                 if (average_velocity > stabilizer.getCutoffVelocity())
                 {
-                    applyFullUpwind(ip_data_vector, ip_flux_vector,
-                                    laplacian_matrix);
+                    detail::applyFullUpwind(ip_data_vector, ip_flux_vector,
+                                            laplacian_matrix);
                     return;
                 }
             }
 
-            assembleOriginalAdvectionMatrix(ip_data_vector, ip_flux_vector,
+            detail::assembleAdvectionMatrix(ip_data_vector, ip_flux_vector,
                                             laplacian_matrix);
         },
         stabilizer);
