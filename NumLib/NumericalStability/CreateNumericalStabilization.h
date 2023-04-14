@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <memory>
+#include <variant>
 
 namespace MeshLib
 {
@@ -23,11 +23,15 @@ class ConfigTree;
 
 namespace NumLib
 {
-class NumericalStabilization;
-}
+struct NoStabilization;
+class IsotropicDiffusionStabilization;
+class FullUpwind;
+using NumericalStabilization =
+    std::variant<NoStabilization, IsotropicDiffusionStabilization, FullUpwind>;
+}  // namespace NumLib
 
 namespace NumLib
 {
-std::unique_ptr<NumericalStabilization> createNumericalStabilization(
+NumericalStabilization createNumericalStabilization(
     MeshLib::Mesh const& mesh, BaseLib::ConfigTree const& config);
 }  // namespace NumLib

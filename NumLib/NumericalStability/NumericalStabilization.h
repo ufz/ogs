@@ -12,7 +12,7 @@
 #pragma once
 
 #include <Eigen/Core>
-#include <memory>
+#include <variant>
 #include <vector>
 
 namespace NumLib
@@ -28,10 +28,8 @@ namespace NumLib
  *  with \f$u\f$ the primary variable,  \f$\mathbf v\f$ the fluid velocity,
  *  \f$\mathbf{K}\f$ the diffusion coefficient.
  */
-class NumericalStabilization
+struct NoStabilization final
 {
-public:
-    virtual ~NumericalStabilization() = default;
 };
 
 /**
@@ -48,7 +46,7 @@ public:
  *  size (e.g. the maximum edge length of element), and \f$\mathbf I\f$ the
  * identity matrix.
  */
-class IsotropicDiffusionStabilization final : public NumericalStabilization
+class IsotropicDiffusionStabilization final
 {
 public:
     IsotropicDiffusionStabilization(double const cutoff_velocity,
@@ -156,11 +154,9 @@ private:
  * which means the nodal mass balance of element is guaranteed.
  *
  */
-class FullUpwind final : public NumericalStabilization
+class FullUpwind final
 {
 public:
-    using NumericalStabilization::NumericalStabilization;
-
     explicit FullUpwind(double const cutoff_velocity)
         : cutoff_velocity_(cutoff_velocity)
     {
@@ -173,6 +169,9 @@ private:
     /// if the velocity magnitude is below the cutoff velocity.
     double const cutoff_velocity_;
 };
+
+using NumericalStabilization =
+    std::variant<NoStabilization, IsotropicDiffusionStabilization, FullUpwind>;
 
 template <typename IPData, typename FluxVectorType, typename Derived>
 void assembleAdvectionMatrix(NumericalStabilization const* const stabilizer,

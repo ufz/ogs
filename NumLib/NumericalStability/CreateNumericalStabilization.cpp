@@ -17,7 +17,7 @@
 
 namespace NumLib
 {
-std::unique_ptr<NumericalStabilization> createNumericalStabilization(
+NumericalStabilization createNumericalStabilization(
     MeshLib::Mesh const& mesh, BaseLib::ConfigTree const& config)
 {
     auto const stabilization_config =
@@ -25,7 +25,7 @@ std::unique_ptr<NumericalStabilization> createNumericalStabilization(
         config.getConfigSubtreeOptional("numerical_stabilization");
     if (!stabilization_config)
     {
-        return nullptr;
+        return NoStabilization{};
     }
 
     auto const type =
@@ -44,10 +44,9 @@ std::unique_ptr<NumericalStabilization> createNumericalStabilization(
             stabilization_config->getConfigParameter<double>(
                 "tuning_parameter");
 
-        return std::make_unique<IsotropicDiffusionStabilization>(
-            cutoff_velocity,
-            tuning_parameter,
-            MeshLib::getMaxiumElementEdgeLengths(mesh.getElements()));
+        return IsotropicDiffusionStabilization{
+            cutoff_velocity, tuning_parameter,
+            MeshLib::getMaxiumElementEdgeLengths(mesh.getElements())};
     }
     if (type == "FullUpwind")
     {
@@ -55,7 +54,7 @@ std::unique_ptr<NumericalStabilization> createNumericalStabilization(
             //! \ogs_file_param{prj__processes__process__numerical_stabilization__FullUpwind__cutoff_velocity}
             stabilization_config->getConfigParameter<double>("cutoff_velocity");
 
-        return std::make_unique<FullUpwind>(cutoff_velocity);
+        return FullUpwind{cutoff_velocity};
     }
 
     OGS_FATAL("The stabilization type {:s} is not available.", type);

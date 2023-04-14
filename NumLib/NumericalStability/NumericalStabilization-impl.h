@@ -12,7 +12,6 @@
 #pragma once
 
 #include <limits>
-#include <typeinfo>
 
 namespace NumLib
 {
