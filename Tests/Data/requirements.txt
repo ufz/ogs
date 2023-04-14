@@ -1,6 +1,8 @@
 ogstools==0.0.3
 gmsh==4.11.0
 h5py==3.8.0
+--extra-index-url https://gmsh.info/python-packages-dev-nox gmsh>=4.11; sys.platform == "linux"
+gmsh>=4.11; sys.platform != "linux"
 -e git+https://github.com/joergbuchwald/heatsource_thm@bbd5bab17fc2ec228c773e087dc847e1ad5f9a4c#egg=heatsource-py
 jupyterlab==3.4.8
 matplotlib==3.6.3
