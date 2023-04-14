@@ -52,6 +52,7 @@
 #include "Density/CreateWaterDensityIAPWSIF97Region1.h"
 #include "Density/CreateWaterLiquidDensityIAPWSIF97Region4.h"
 #include "Density/CreateWaterVapourDensity.h"
+#include "Density/CreateWaterVapourDensityIAPWSIF97Region4.h"
 #include "Enthalpy/CreateLinearWaterVapourLatentHeat.h"
 #include "Enthalpy/CreateWaterLiquidEnthalpyIAPWSIF97Region4.h"
 #include "Enthalpy/CreateWaterEnthalpyIAPWSIF97Region1.h"
