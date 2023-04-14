@@ -186,35 +186,24 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHeatTransportEquation(
     auto local_K = MathLib::createZeroedMatrix<LocalMatrixType>(
         local_K_data, temperature_size, temperature_size);
 
-    typename ShapeMatricesType::NodalMatrixType K_TT_advection =
-        ShapeMatricesType::NodalMatrixType::Zero(temperature_size,
-                                                 temperature_size);
-
     ParameterLib::SpatialPosition pos;
     pos.setElementID(this->_element.getID());
 
     auto const& process_data = this->_process_data;
-    NodalVectorType node_flux_q;
-    node_flux_q.setZero(temperature_size);
-    bool const apply_full_upwind =
-        (process_data.stabilizer != nullptr) &&
-        (dynamic_cast<NumLib::FullUpwind const*>(
-             process_data.stabilizer.get()) != nullptr);
-    double max_velocity_magnitude = 0.;
-
     auto const& medium =
         *process_data.media_map->getMedium(this->_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     auto const& b = process_data.specific_body_force;
 
-    GlobalDimMatrixType const& I(
-        GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
-
     MaterialPropertyLib::VariableArray vars;
 
     unsigned const n_integration_points =
         this->_integration_method.getNumberOfPoints();
+
+    std::vector<GlobalDimVectorType> ip_flux_vector;
+    double average_velocity_norm = 0.0;
+    ip_flux_vector.reserve(n_integration_points);
 
     for (unsigned ip(0); ip < n_integration_points; ip++)
     {
@@ -276,37 +265,21 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHeatTransportEquation(
 
         GlobalDimMatrixType const thermal_conductivity_dispersivity =
             this->getThermalConductivityDispersivity(
-                vars, fluid_density, specific_heat_capacity_fluid, velocity, I,
+                vars, fluid_density, specific_heat_capacity_fluid, velocity,
                 pos, t, dt);
 
         local_K.noalias() +=
             w * dNdx.transpose() * thermal_conductivity_dispersivity * dNdx;
 
-        K_TT_advection.noalias() += w * N.transpose() * velocity.transpose() *
-                                    dNdx * fluid_density *
-                                    specific_heat_capacity_fluid;
+        ip_flux_vector.emplace_back(velocity * fluid_density *
+                                    specific_heat_capacity_fluid);
+        average_velocity_norm += velocity.norm();
+    }
 
-        if (apply_full_upwind)
-        {
-            node_flux_q.noalias() -= fluid_density *
-                                     specific_heat_capacity_fluid *
-                                     velocity.transpose() * dNdx * w;
-            max_velocity_magnitude =
-                std::max(max_velocity_magnitude, velocity.norm());
-        }
-    }
-    if (apply_full_upwind &&
-        // Cast to FullUpwind is checked in apply_full_upwind variable creation.
-        max_velocity_magnitude >
-            static_cast<NumLib::FullUpwind const&>(*process_data.stabilizer)
-                .getCutoffVelocity())
-    {
-        NumLib::applyFullUpwind(node_flux_q, local_K);
-    }
-    else
-    {
-        local_K.noalias() += K_TT_advection;
-    }
+    NumLib::assembleAdvectionMatrix(
+        process_data.stabilizer, this->_ip_data, ip_flux_vector,
+        average_velocity_norm / static_cast<double>(n_integration_points),
+        local_K);
 }
 
 template <typename ShapeFunction, int GlobalDim>

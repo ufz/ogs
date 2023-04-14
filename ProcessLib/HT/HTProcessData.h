@@ -34,7 +34,7 @@ struct HTProcessData final
     int const heat_transport_process_id;
     int const hydraulic_process_id;
 
-    std::unique_ptr<NumLib::NumericalStabilization> stabilizer;
+    NumLib::NumericalStabilization stabilizer;
 };
 
 }  // namespace HT
