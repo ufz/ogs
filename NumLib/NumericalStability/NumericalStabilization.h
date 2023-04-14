@@ -51,7 +51,7 @@ class IsotropicDiffusionStabilization final
 public:
     IsotropicDiffusionStabilization(double const cutoff_velocity,
                                     double const tuning_parameter,
-                                    std::vector<double>&& element_sizes_vector);
+                                    std::vector<double>&& element_sizes);
 
     double computeArtificialDiffusion(std::size_t const element_id,
                                       double const velocity_norm) const;

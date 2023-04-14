@@ -21,10 +21,10 @@ namespace NumLib
 IsotropicDiffusionStabilization::IsotropicDiffusionStabilization(
     double const cutoff_velocity,
     double const tuning_parameter,
-    std::vector<double>&& element_sizes_vector)
+    std::vector<double>&& element_sizes)
     : cutoff_velocity_(cutoff_velocity),
       tuning_parameter_(tuning_parameter),
-      element_sizes_(std::move(element_sizes_vector))
+      element_sizes_(std::move(element_sizes))
 {
     if (tuning_parameter_ < 0 || tuning_parameter_ > 1.0)
     {
