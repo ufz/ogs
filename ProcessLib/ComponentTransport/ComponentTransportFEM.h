@@ -28,6 +28,7 @@
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
 #include "NumLib/NumericalStability/AdvectionMatrixAssembler.h"
+#include "NumLib/NumericalStability/HydrodynamicDispersion.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
@@ -666,9 +667,10 @@ public:
                         t, dt);
 
             GlobalDimMatrixType const hydrodynamic_dispersion =
-                _process_data.laplace_coefficient_function(
-                    _element.getID(), pore_diffusion_coefficient, velocity,
-                    porosity, solute_dispersivity_transverse,
+                NumLib::computeHydrodynamicDispersion(
+                    _process_data.stabilizer, _element.getID(),
+                    pore_diffusion_coefficient, velocity, porosity,
+                    solute_dispersivity_transverse,
                     solute_dispersivity_longitudinal);
 
             const double R_times_phi(retardation_factor * porosity);
@@ -1047,9 +1049,10 @@ public:
                     : GlobalDimVectorType(-K_over_mu * dNdx * local_p);
 
             GlobalDimMatrixType const hydrodynamic_dispersion =
-                _process_data.laplace_coefficient_function(
-                    _element.getID(), pore_diffusion_coefficient, velocity,
-                    porosity, solute_dispersivity_transverse,
+                NumLib::computeHydrodynamicDispersion(
+                    _process_data.stabilizer, _element.getID(),
+                    pore_diffusion_coefficient, velocity, porosity,
+                    solute_dispersivity_transverse,
                     solute_dispersivity_longitudinal);
 
             double const R_times_phi = retardation_factor * porosity;
@@ -1353,9 +1356,9 @@ public:
                     ? GlobalDimVectorType(-k / mu * (dNdx * p - rho * b))
                     : GlobalDimVectorType(-k / mu * dNdx * p);
 
-            GlobalDimMatrixType const D =
-                _process_data.laplace_coefficient_function(
-                    _element.getID(), Dp, q, phi, alpha_T, alpha_L);
+            GlobalDimMatrixType const D = NumLib::computeHydrodynamicDispersion(
+                _process_data.stabilizer, _element.getID(), Dp, q, phi, alpha_T,
+                alpha_L);
 
             // matrix assembly
             local_Jac.noalias() +=
@@ -1793,10 +1796,10 @@ public:
                 component[MaterialPropertyLib::PropertyType::pore_diffusion]
                     .value(vars, pos, t, dt));
 
-            // hydrodymanic dispersion
-            GlobalDimMatrixType const D =
-                _process_data.getHydrodynamicDispersion(_element.getID(), Dp, q,
-                                                        phi, alpha_T, alpha_L);
+            // Hydrodynamic dispersion
+            GlobalDimMatrixType const D = NumLib::computeHydrodynamicDispersion(
+                _process_data.stabilizer, _element.getID(), Dp, q, phi, alpha_T,
+                alpha_L);
 
             cache_mat.col(ip).noalias() = q * c_ip - phi * D * dNdx * c;
         }
