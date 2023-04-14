@@ -56,38 +56,34 @@ std::unique_ptr<NumericalStabilization> createNumericalStabilization(
         return nullptr;
     }
 
-    const auto type =
+    auto const type =
         //! \ogs_file_param{prj__processes__process__numerical_stabilization__type}
         stabilization_config->getConfigParameter<std::string>("type");
-    if (type.compare("IsotropicDiffusion") == 0)
+
+    INFO("Using {:s} numerical stabilization.", type);
+    if (type == "IsotropicDiffusion")
     {
-        INFO("Using numerical stabilization {:s}.", type);
-
-        auto const stabilization_cutoff_velocity_opt =
+        auto const cutoff_velocity =
             //! \ogs_file_param{prj__processes__process__numerical_stabilization__IsotropicDiffusion__cutoff_velocity}
-            stabilization_config->getConfigParameterOptional<double>(
-                "cutoff_velocity");
+            stabilization_config->getConfigParameter<double>("cutoff_velocity");
 
-        const auto tuning_parameter =
+        auto const tuning_parameter =
             //! \ogs_file_param{prj__processes__process__numerical_stabilization__IsotropicDiffusion__tuning_parameter}
             stabilization_config->getConfigParameter<double>(
                 "tuning_parameter");
 
         return std::make_unique<IsotropicDiffusionStabilization>(
-            *stabilization_cutoff_velocity_opt,
+            cutoff_velocity,
             tuning_parameter,
             MeshLib::getMaxiumElementEdgeLengths(mesh.getElements()));
     }
-    else if (type.compare("FullUpwind") == 0)
+    if (type == "FullUpwind")
     {
-        INFO("Numerical stabilization of {:s} is used", type);
-
-        auto const stabilization_cutoff_velocity_ptr =
+        auto const cutoff_velocity =
             //! \ogs_file_param{prj__processes__process__numerical_stabilization__FullUpwind__cutoff_velocity}
-            stabilization_config->getConfigParameterOptional<double>(
-                "cutoff_velocity");
+            stabilization_config->getConfigParameter<double>("cutoff_velocity");
 
-        return std::make_unique<FullUpwind>(*stabilization_cutoff_velocity_ptr);
+        return std::make_unique<FullUpwind>(cutoff_velocity);
     }
 
     OGS_FATAL("The stabilization type {:s} is not available.", type);
