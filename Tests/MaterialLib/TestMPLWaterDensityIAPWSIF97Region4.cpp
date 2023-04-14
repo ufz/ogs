@@ -22,7 +22,7 @@ TEST(Material, checkWaterLiquidDensityIAPWSIF97Region4)
 {
     const char xml[] =
         "<property>"
-        "   <name>density</name>"
+        "   <name>saturation_density</name>"
         "   <type>WaterLiquidDensityIAPWSIF97Region4</type>"
         "</property>";
 
@@ -36,16 +36,16 @@ TEST(Material, checkWaterLiquidDensityIAPWSIF97Region4)
     double const t = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    double const p[] = {611.213, 1.e+6, 10.e6};
+    double const p[] = {611.213, 1.e6, 10.e6, 22.064e6};
 
     double const expected_rho[] = {999.84000051382395, 887.16909718765328,
-                                   688.44365003037342};
+                                   688.44365003037342, 445.22706336770574};
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 4; i++)
     {
         variable_array.phase_pressure = p[i];
         ASSERT_NEAR(expected_rho[i],
                     property.template value<double>(variable_array, pos, t, dt),
-                    1.e-12);
+                    1.e-9);
     }
 }

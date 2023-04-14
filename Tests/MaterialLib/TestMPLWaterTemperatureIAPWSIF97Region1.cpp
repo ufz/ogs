@@ -22,7 +22,7 @@ TEST(Material, checkWaterTemperatureIAPWSIF97Region1)
 {
     const char xml[] =
         "<property>"
-        "   <name>water_temperature</name>"
+        "   <name>temperature</name>"
         "   <type>WaterTemperatureIAPWSIF97Region1</type>"
         "</property>";
 
