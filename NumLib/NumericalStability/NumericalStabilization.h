@@ -15,16 +15,6 @@
 #include <memory>
 #include <vector>
 
-namespace MeshLib
-{
-class Mesh;
-}
-
-namespace BaseLib
-{
-class ConfigTree;
-}
-
 namespace NumLib
 {
 /** It defines stabilization method for solving the advection diffusion
@@ -190,9 +180,6 @@ private:
     /// if the velocity magnitude is below the cutoff velocity.
     double const cutoff_velocity_;
 };
-
-std::unique_ptr<NumericalStabilization> createNumericalStabilization(
-    MeshLib::Mesh const& mesh, BaseLib::ConfigTree const& config);
 
 template <typename IPData, typename FluxVectorType, typename Derived>
 void assembleAdvectionMatrix(NumericalStabilization const* const stabilizer,

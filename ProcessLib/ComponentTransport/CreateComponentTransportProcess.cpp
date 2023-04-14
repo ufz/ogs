@@ -18,6 +18,7 @@
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MeshLib/Utils/GetElementRotationMatrices.h"
 #include "MeshLib/Utils/GetSpaceDimension.h"
+#include "NumLib/NumericalStability/CreateNumericalStabilization.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"

@@ -44,49 +44,4 @@ double IsotropicDiffusionStabilization::computeArtificialDiffusion(
     }
     return 0.5 * tuning_parameter_ * velocity_norm * element_sizes_[element_id];
 }
-
-std::unique_ptr<NumericalStabilization> createNumericalStabilization(
-    MeshLib::Mesh const& mesh, BaseLib::ConfigTree const& config)
-{
-    auto const stabilization_config =
-        //! \ogs_file_param{prj__processes__process__numerical_stabilization}
-        config.getConfigSubtreeOptional("numerical_stabilization");
-    if (!stabilization_config)
-    {
-        return nullptr;
-    }
-
-    auto const type =
-        //! \ogs_file_param{prj__processes__process__numerical_stabilization__type}
-        stabilization_config->getConfigParameter<std::string>("type");
-
-    INFO("Using {:s} numerical stabilization.", type);
-    if (type == "IsotropicDiffusion")
-    {
-        auto const cutoff_velocity =
-            //! \ogs_file_param{prj__processes__process__numerical_stabilization__IsotropicDiffusion__cutoff_velocity}
-            stabilization_config->getConfigParameter<double>("cutoff_velocity");
-
-        auto const tuning_parameter =
-            //! \ogs_file_param{prj__processes__process__numerical_stabilization__IsotropicDiffusion__tuning_parameter}
-            stabilization_config->getConfigParameter<double>(
-                "tuning_parameter");
-
-        return std::make_unique<IsotropicDiffusionStabilization>(
-            cutoff_velocity,
-            tuning_parameter,
-            MeshLib::getMaxiumElementEdgeLengths(mesh.getElements()));
-    }
-    if (type == "FullUpwind")
-    {
-        auto const cutoff_velocity =
-            //! \ogs_file_param{prj__processes__process__numerical_stabilization__FullUpwind__cutoff_velocity}
-            stabilization_config->getConfigParameter<double>("cutoff_velocity");
-
-        return std::make_unique<FullUpwind>(cutoff_velocity);
-    }
-
-    OGS_FATAL("The stabilization type {:s} is not available.", type);
-}
-
 }  // namespace NumLib

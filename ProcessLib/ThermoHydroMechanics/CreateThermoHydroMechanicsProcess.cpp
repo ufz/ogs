@@ -16,6 +16,7 @@
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
+#include "NumLib/NumericalStability/CreateNumericalStabilization.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
