@@ -44,7 +44,7 @@ public:
     virtual ~NumericalStabilization() = default;
 
     virtual double computeArtificialDiffusion(
-        std::size_t const /*elemend_id*/, double const /*velocity_norm*/) const
+        std::size_t const /*element_id*/, double const /*velocity_norm*/) const
     {
         return 0.0;
     }
@@ -72,7 +72,7 @@ public:
                                     std::vector<double>&& element_sizes_vector);
 
     double computeArtificialDiffusion(
-        std::size_t const elemend_id,
+        std::size_t const element_id,
         double const velocity_norm) const override;
 
 private:
