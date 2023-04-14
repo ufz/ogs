@@ -84,9 +84,9 @@ void assembleAdvectionMatrix(NumericalStabilization const* const stabilizer,
 {
     if (stabilizer)
     {
-        auto const& stabilizer_ref = *(stabilizer);
-        if (typeid(stabilizer_ref) == typeid(NumLib::FullUpwind) &&
-            (average_velocity > stabilizer->getCutoffVelocity()))
+        if (auto const* const s =
+                dynamic_cast<NumLib::FullUpwind const* const>(stabilizer);
+            s != nullptr && (average_velocity > s->getCutoffVelocity()))
         {
             applyFullUpwind(ip_data_vector, ip_flux_vector, laplacian_matrix);
             return;

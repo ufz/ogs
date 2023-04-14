@@ -22,7 +22,7 @@ IsotropicDiffusionStabilization::IsotropicDiffusionStabilization(
     double const cutoff_velocity,
     double const tuning_parameter,
     std::vector<double>&& element_sizes_vector)
-    : NumericalStabilization(cutoff_velocity),
+    : cutoff_velocity_(cutoff_velocity),
       tuning_parameter_(tuning_parameter),
       element_sizes_(std::move(element_sizes_vector))
 {

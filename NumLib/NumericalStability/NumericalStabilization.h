@@ -41,24 +41,13 @@ namespace NumLib
 class NumericalStabilization
 {
 public:
-    explicit NumericalStabilization(double const cutoff_velocity)
-        : cutoff_velocity_(cutoff_velocity)
-    {
-    }
-
     virtual ~NumericalStabilization() = default;
 
-    double getCutoffVelocity() const { return cutoff_velocity_; }
     virtual double computeArtificialDiffusion(
         std::size_t const /*elemend_id*/, double const /*velocity_norm*/) const
     {
         return 0.0;
-    };
-
-protected:
-    /// The cutoff velocity. The stabilization is not applied
-    /// if the velocity magnitude is below the cutoff velocity.
-    double const cutoff_velocity_ = 0.0;
+    }
 };
 
 /**
@@ -87,6 +76,10 @@ public:
         double const velocity_norm) const override;
 
 private:
+    /// The cutoff velocity. The stabilization is not applied
+    /// if the velocity magnitude is below the cutoff velocity.
+    double const cutoff_velocity_;
+
     /// The tuning parameter in the range [0,1].
     double const tuning_parameter_ = 0.5;
 
@@ -184,6 +177,18 @@ class FullUpwind final : public NumericalStabilization
 {
 public:
     using NumericalStabilization::NumericalStabilization;
+
+    explicit FullUpwind(double const cutoff_velocity)
+        : cutoff_velocity_(cutoff_velocity)
+    {
+    }
+
+    double getCutoffVelocity() const { return cutoff_velocity_; }
+
+private:
+    /// The cutoff velocity. The stabilization is not applied
+    /// if the velocity magnitude is below the cutoff velocity.
+    double const cutoff_velocity_;
 };
 
 std::unique_ptr<NumericalStabilization> createNumericalStabilization(

@@ -470,8 +470,9 @@ void ThermoHydroMechanicsLocalAssembler<
     node_flux_q.setZero(temperature_size);
 
     bool const apply_full_upwind =
-        _process_data.stabilizer &&
-        (typeid(*_process_data.stabilizer) == typeid(NumLib::FullUpwind));
+        (_process_data.stabilizer != nullptr) &&
+        (dynamic_cast<NumLib::FullUpwind const*>(
+             _process_data.stabilizer.get()) != nullptr);
 
     double max_velocity_magnitude = 0.;
 
@@ -645,7 +646,10 @@ void ThermoHydroMechanicsLocalAssembler<
     }
 
     if (apply_full_upwind &&
-        max_velocity_magnitude > _process_data.stabilizer->getCutoffVelocity())
+        // Cast to FullUpwind is checked in apply_full_upwind variable creation.
+        max_velocity_magnitude >
+            static_cast<NumLib::FullUpwind const&>(*_process_data.stabilizer)
+                .getCutoffVelocity())
     {
         NumLib::applyFullUpwind(node_flux_q, KTT);
     }
