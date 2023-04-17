@@ -79,8 +79,8 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ip_data.N_u = sm_u.N;
         ip_data.dNdx_u = sm_u.dNdx;
 
-        ip_data.N_p = shape_matrices_p[ip].N;
-        ip_data.dNdx_p = shape_matrices_p[ip].dNdx;
+        ip_data.N = shape_matrices_p[ip].N;
+        ip_data.dNdx = shape_matrices_p[ip].dNdx;
 
         _secondary_data.N_u[ip] = shape_matrices_u[ip].N;
     }
@@ -160,15 +160,11 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     auto const& N_u = ip_data.N_u;
     auto const& dNdx_u = ip_data.dNdx_u;
 
-    auto const& N_p = ip_data.N_p;
-    auto const& dNdx_p = ip_data.dNdx_p;
+    auto const& N = ip_data.N;
+    auto const& dNdx = ip_data.dNdx;
 
-    // same shape function for pressure and temperature since they have the
-    // same order
-    auto const& N_T = N_p;
-    auto const& dNdx_T = dNdx_p;
-    auto const T_int_pt = N_T.dot(T);
-    double const dT_int_pt = N_T.dot(T_dot) * dt;
+    auto const T_int_pt = N.dot(T);
+    double const dT_int_pt = N.dot(T_dot) * dt;
 
     auto const x_coord =
         NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -186,7 +182,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     eps.noalias() = B * u;
 
     vars.temperature = T_int_pt;
-    double const p_int_pt = N_p.dot(p);
+    double const p_int_pt = N.dot(p);
     vars.phase_pressure = p_int_pt;
 
     vars.liquid_saturation = 1.0;
@@ -281,8 +277,8 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                        .value(vars, x_position, t, dt))
              : Eigen::MatrixXd::Zero(DisplacementDim, DisplacementDim));
 
-    GlobalDimVectorType const velocity = -crv.K_over_mu * dNdx_p * p -
-                                         crv.K_pT_thermal_osmosis * dNdx_T * T +
+    GlobalDimVectorType const velocity = -crv.K_over_mu * dNdx * p -
+                                         crv.K_pT_thermal_osmosis * dNdx * T +
                                          crv.K_over_mu * fluid_density * b;
     ip_data_output.velocity = velocity;
 
@@ -391,7 +387,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
         crv.J_TT_fr = ((rho_fr * c_fr - fluid_density * crv.c_f) * dphi_fr_dT +
                        l_fr * rho_fr * d2phi_fr_dT2) *
-                      N_T.dot(T_dot);
+                      N.dot(T_dot);
     }
     return crv;
 }
@@ -497,14 +493,10 @@ void ThermoHydroMechanicsLocalAssembler<
 
         auto const& dNdx_u = _ip_data[ip].dNdx_u;
 
-        auto const& N_p = _ip_data[ip].N_p;
-        auto const& dNdx_p = _ip_data[ip].dNdx_p;
+        auto const& N = _ip_data[ip].N;
+        auto const& dNdx = _ip_data[ip].dNdx;
 
-        // same shape function for pressure and temperature since they have the
-        // same order
-        auto const& N_T = N_p;
-        auto const& dNdx_T = dNdx_p;
-        auto const T_int_pt = N_T.dot(T);
+        auto const T_int_pt = N.dot(T);
 
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -536,30 +528,30 @@ void ThermoHydroMechanicsLocalAssembler<
         // displacement equation, pressure part (K_up)
         //
         Kup.noalias() +=
-            B.transpose() * crv.alpha_biot * Invariants::identity2 * N_p * w;
+            B.transpose() * crv.alpha_biot * Invariants::identity2 * N * w;
 
         //
         // pressure equation, pressure part (K_pp and M_pp).
         //
-        laplace_p.noalias() += dNdx_p.transpose() * crv.K_over_mu * dNdx_p * w;
+        laplace_p.noalias() += dNdx.transpose() * crv.K_over_mu * dNdx * w;
 
-        storage_p.noalias() += N_p.transpose() *
+        storage_p.noalias() += N.transpose() *
                                (crv.porosity * crv.fluid_compressibility +
                                 (crv.alpha_biot - crv.porosity) * crv.beta_SR) *
-                               N_p * w;
+                               N * w;
 
         laplace_T.noalias() +=
-            dNdx_p.transpose() * crv.K_pT_thermal_osmosis * dNdx_T * w;
+            dNdx.transpose() * crv.K_pT_thermal_osmosis * dNdx * w;
         //
         //  RHS, pressure part
         //
         double const fluid_density = _ip_data_output[ip].fluid_density;
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
-            dNdx_p.transpose() * fluid_density * crv.K_over_mu * b * w;
+            dNdx.transpose() * fluid_density * crv.K_over_mu * b * w;
         //
         // pressure equation, temperature part (M_pT)
         //
-        storage_T.noalias() += N_T.transpose() * crv.beta * N_T * w;
+        storage_T.noalias() += N.transpose() * crv.beta * N * w;
 
         //
         // pressure equation, displacement part.
@@ -569,15 +561,15 @@ void ThermoHydroMechanicsLocalAssembler<
         //
         // temperature equation, temperature part.
         //
-        KTT.noalias() += dNdx_T.transpose() *
-                         crv.effective_thermal_conductivity * dNdx_T * w;
-        K_TT_advection.noalias() += N_T.transpose() * velocity.transpose() *
-                                    dNdx_T * fluid_density * crv.c_f * w;
+        KTT.noalias() +=
+            dNdx.transpose() * crv.effective_thermal_conductivity * dNdx * w;
+        K_TT_advection.noalias() += N.transpose() * velocity.transpose() *
+                                    dNdx * fluid_density * crv.c_f * w;
 
         if (apply_full_upwind)
         {
             node_flux_q.noalias() -=
-                fluid_density * crv.c_f * velocity.transpose() * dNdx_T * w;
+                fluid_density * crv.c_f * velocity.transpose() * dNdx * w;
             max_velocity_magnitude =
                 std::max(max_velocity_magnitude, velocity.norm());
         }
@@ -587,22 +579,21 @@ void ThermoHydroMechanicsLocalAssembler<
             local_Jac
                 .template block<temperature_size, temperature_size>(
                     temperature_index, temperature_index)
-                .noalias() -= N_T.transpose() * crv.J_TT_fr * N_T * w;
+                .noalias() -= N.transpose() * crv.J_TT_fr * N * w;
         }
 
         MTT.noalias() +=
-            N_T.transpose() * crv.effective_volumetric_heat_capacity * N_T * w;
+            N.transpose() * crv.effective_volumetric_heat_capacity * N * w;
 
         //
         // temperature equation, pressure part
         //
-        KTp.noalias() += dNdx_T.transpose() * T_int_pt *
-                         crv.K_pT_thermal_osmosis * dNdx_p * w;
+        KTp.noalias() +=
+            dNdx.transpose() * T_int_pt * crv.K_pT_thermal_osmosis * dNdx * w;
 
         // linearized darcy
-        dKTT_dp.noalias() -= fluid_density * crv.c_f * N_T.transpose() *
-                             (dNdx_T * T).transpose() * crv.K_over_mu * dNdx_p *
-                             w;
+        dKTT_dp.noalias() -= fluid_density * crv.c_f * N.transpose() *
+                             (dNdx * T).transpose() * crv.K_over_mu * dNdx * w;
 
         /* TODO (Joerg) Temperature changes due to thermal dilatation of the
          * fluid, which are usually discarded as being very small.
@@ -622,14 +613,14 @@ void ThermoHydroMechanicsLocalAssembler<
                     liquid_phase, vars, fluid_density, x_position, t, dt);
 
             KTT.noalias() +=
-                dNdx_T.transpose() *
+                dNdx.transpose() *
                 (-T_int_pt * fluid_volumetric_thermal_expansion_coefficient *
                 K_pT_thermal_osmosis / fluid_compressibility) *
-                dNdx_T * w;
+                dNdx * w;
 
             local_rhs.template segment<temperature_size>(temperature_index)
                 .noalias() +=
-                dNdx_T.transpose() *
+                dNdx.transpose() *
                 (-T_int_pt * fluid_volumetric_thermal_expansion_coefficient /
                 fluid_compressibility) *
                 fluid_density * K_over_mu * b * w;
@@ -637,12 +628,12 @@ void ThermoHydroMechanicsLocalAssembler<
                 (-T_int_pt *
                 Invariants::trace(solid_linear_thermal_expansion_coefficient) /
                 solid_skeleton_compressibility) *
-                N_T.transpose() * identity2.transpose() * B * w;
+                N.transpose() * identity2.transpose() * B * w;
             KTp part for rhs and Jacobian:
-                dNdx_T.transpose() *
+                dNdx.transpose() *
                 (T_int_pt * fluid_volumetric_thermal_expansion_coefficient *
                 K_over_mu / fluid_compressibility) *
-                dNdx_p * w;
+                dNdx * w;
         }
          */
     }
