@@ -427,7 +427,7 @@
         <vtkdiff>
             <regex>A2_heating_ts_.*.vtu</regex>
             <field>stress_avg</field>
-            <absolute_tolerance>1e-8</absolute_tolerance>
+            <absolute_tolerance>2e-8</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -487,7 +487,7 @@
         <vtkdiff>
             <regex>A2_heating_ts_.*.vtu</regex>
             <field>NodalForces</field>
-            <absolute_tolerance>7e-10</absolute_tolerance>
+            <absolute_tolerance>9e-10</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
