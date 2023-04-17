@@ -76,6 +76,7 @@
 #include "DataView/LineEditDialog.h"
 #include "DataView/MergeGeometriesDialog.h"
 #include "DataView/MeshAnalysisDialog.h"
+#include "DataView/TranslateDataDialog.h"
 #include "DataView/MeshElementRemovalDialog.h"
 #include "DataView/MeshQualitySelectionDialog.h"
 #ifdef OGS_USE_NETCDF
@@ -1342,6 +1343,12 @@ void MainWindow::showMeshElementRemovalDialog()
 void MainWindow::showMeshAnalysisDialog()
 {
     auto* dlg = new MeshAnalysisDialog(this->_project.getMeshObjects());
+    dlg->exec();
+}
+
+void MainWindow::showTranslateDataDialog()
+{
+    auto* dlg = new TranslateDataDialog(_meshModel.get(), _geo_model.get());
     dlg->exec();
 }
 
