@@ -36,11 +36,27 @@ struct Animal
     virtual ~Animal() = default;
 
     std::string color = "transparent";
+
+    // All constructors and assignments in protected section to prevent slicing.
+protected:
+    Animal() = default;
+    Animal(Animal const&) = default;
+    Animal(Animal&&) = default;
+    Animal& operator=(Animal const&) = default;
+    Animal& operator=(Animal&&) = default;
 };
 
 struct Pet : Animal
 {
     virtual std::string name() const = 0;
+
+    // All constructors and assignments in protected section to prevent slicing.
+protected:
+    Pet() = default;
+    Pet(Pet const&) = default;
+    Pet(Pet&&) = default;
+    Pet& operator=(Pet const&) = default;
+    Pet& operator=(Pet&&) = default;
 };
 
 struct Budgie final : Pet
