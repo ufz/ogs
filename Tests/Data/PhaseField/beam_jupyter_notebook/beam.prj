@@ -108,6 +108,7 @@
                 <variable>phasefield</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
+                <variable>NodalForces</variable>
             </variables>
             <type>VTK</type>
             <prefix>AT1_iso_compressive</prefix>

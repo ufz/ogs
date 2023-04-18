@@ -124,6 +124,9 @@
                 <variable>sigma_tensile</variable>
                 <variable>epsilon</variable>
                 <variable>epsilon_tensile</variable>
+                <variable>NodalForces</variable>
+                <variable>bulk_node_ids</variable>
+                <variable>bulk_element_ids</variable>
             </variables>
             <type>VTK</type>
             <prefix>shear_deg_0</prefix>
