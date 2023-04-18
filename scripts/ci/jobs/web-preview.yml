@@ -13,6 +13,7 @@ preview web site:
     - yarn
     - yarn build
   rules:
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only.*/
     - if: $CI_MERGE_REQUEST_ID
       changes:
         - web/**/*
