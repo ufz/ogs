@@ -255,7 +255,6 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         LocalAssemblerIF>(_process_data.solid_materials,
                           add_secondary_variable);
 
-    // Assume all materials have same internal variables.
     ProcessLib::Deformation::
         solidMaterialInternalVariablesToIntegrationPointWriter(
             _process_data.solid_materials, _local_assemblers,
