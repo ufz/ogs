@@ -390,7 +390,8 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, x, x_dot, t, dt);
+        pv.getActiveElementIDs(), dof_tables, x, x_dot, t, dt,
+        _use_monolithic_scheme, process_id);
 }
 
 template <int DisplacementDim>

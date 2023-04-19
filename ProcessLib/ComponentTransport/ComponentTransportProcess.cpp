@@ -443,7 +443,7 @@ void ComponentTransportProcess::postTimestepConcreteProcess(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::postTimestep,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, x_dot, t,
-        dt);
+        dt, _use_monolithic_scheme, process_id);
 
     if (!_surfaceflux)  // computing the surfaceflux is optional
     {

@@ -101,8 +101,9 @@ public:
 
     void postTimestepConcrete(Eigen::VectorXd const& local_x_,
                               Eigen::VectorXd const& /*local_x_dot*/,
-                              const double t,
-                              double const dt) override
+                              const double t, double const dt,
+                              bool const /*use_monolithic_scheme*/,
+                              int const /*process_id*/) override
     {
         _local_u.setZero();
         for (Eigen::Index i = 0; i < local_x_.rows(); i++)
