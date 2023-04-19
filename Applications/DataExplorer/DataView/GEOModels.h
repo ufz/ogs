@@ -74,6 +74,10 @@ public slots:
 
     void addSurfaceVec(std::string const& name);
 
+    std::vector<std::string> getGeometryNames() const;
+
+    const std::vector<GeoLib::Point*>* getPointVec(const std::string& name) const;
+
     void appendSurfaceVec(std::string const& name);
     void removeSurfaceVec(std::string const& name);
 
