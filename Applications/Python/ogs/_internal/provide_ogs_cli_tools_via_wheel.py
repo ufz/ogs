@@ -2,6 +2,9 @@ import os
 import platform
 import subprocess
 import sys
+from pathlib import Path
+
+OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"
 
 binaries_list = [
     "addDataToRaster",
@@ -69,6 +72,15 @@ binaries_list = [
 ]
 
 
+def pyproject_get_scripts():
+    return dict(
+        [
+            (binary, f"ogs._internal.provide_ogs_cli_tools_via_wheel:{binary}")
+            for binary in binaries_list
+        ]
+    )
+
+
 def ogs():
     raise SystemExit(ogs_with_args(sys.argv))
 
@@ -96,8 +108,6 @@ def ogs_with_args(argv):
 
 
 if "PEP517_BUILD_BACKEND" not in os.environ:
-    OGS_BIN_DIR = os.path.join(os.path.join(os.path.dirname(__file__), "..", "bin"))
-
     if platform.system() == "Windows":
         os.add_dll_directory(OGS_BIN_DIR)
 

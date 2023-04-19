@@ -1,8 +1,9 @@
 import subprocess
 import os
+from pathlib import Path
 from .provide_ogs_cli_tools_via_wheel import binaries_list, ogs_with_args
 
-OGS_BIN_DIR = os.path.join(os.path.join(os.path.dirname(__file__), "..", "bin"))
+OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"
 
 
 class CLI:
