@@ -262,20 +262,11 @@ public:
         }
     }
 
-    void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              Eigen::VectorXd const& /*local_x_dot*/,
-                              double const /*t*/, double const /*dt*/,
-                              bool const /*use_monolithic_scheme*/,
-                              int const /*process_id*/) override
-    {
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            _ip_data[ip].pushBackState();
-        }
-    }
+    void postTimestepConcrete(Eigen::VectorXd const& local_x,
+                              Eigen::VectorXd const& local_x_dot,
+                              double const t, double const dt,
+                              bool const use_monolithic_scheme,
+                              int const process_id) override;
 
     void computeSecondaryVariableConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_xs,

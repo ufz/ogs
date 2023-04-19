@@ -61,6 +61,15 @@ struct HydroMechanicsProcessData
     /// conventions](https://www.opengeosys.org/docs/userguide/basics/conventions/#fixed-stress-split-for-hydro-mechanical-processes).
     double const fixed_stress_stabilization_parameter;
 
+    /// If set, the volume stress rate is fixed over time step, e.g.
+    /// \f[\dot{\sigma}_v^{n} = \dot{\sigma}_v^{n-1}, \f]
+    /// where \f$n\f$ is the time step index.
+    /// Otherwise, the volume stress rate is fixed over coupling iteration, e.g.
+    /// \f[\dot{\sigma}_v^{n, k} = \dot{\sigma}_v^{n, k-1}, \f]
+    /// where \f$k\f$ is the coupling iteration index, and
+    /// \f[ \dot{()}^{n, k} = \left(()^{n, k} - ()^{n-1}\right)/dt. \f]
+    bool fixed_stress_over_time_step;
+
     /// ID of hydraulic process.
     int const hydraulic_process_id;
 

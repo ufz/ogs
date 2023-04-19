@@ -61,14 +61,16 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     const bool use_monolithic_scheme =
         !(coupling_scheme && (*coupling_scheme == "staggered"));
 
-    auto coupling_scheme_parameter_optional =
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__coupling_scheme_parameter}
-        config.getConfigParameterOptional<double>("coupling_scheme_parameter");
-    double coupling_scheme_parameter = std::numeric_limits<double>::quiet_NaN();
+    auto fixed_stress_stabilization_parameter_optional =
+        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__fixed_stress_stabilization_parameter}
+        config.getConfigParameterOptional<double>(
+            "fixed_stress_stabilization_parameter");
+    double fixed_stress_stabilization_parameter =
+        std::numeric_limits<double>::quiet_NaN();
 
     if (use_monolithic_scheme)
     {
-        if (coupling_scheme_parameter_optional)
+        if (fixed_stress_stabilization_parameter_optional)
         {
             WARN(
                 "Monolithic scheme ignores coupling scheme parameter set in "
@@ -77,30 +79,30 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     }
     else
     {
-        if (coupling_scheme_parameter_optional)
+        if (fixed_stress_stabilization_parameter_optional)
         {
-            coupling_scheme_parameter =
-                coupling_scheme_parameter_optional.value();
+            fixed_stress_stabilization_parameter =
+                fixed_stress_stabilization_parameter_optional.value();
             // optimum not a-priori known, but within certain interval [Storvik
             // & Nordbotten]
             double const csp_min = 1.0 / 6.0;
             double const csp_max = 1.0;
-            if (coupling_scheme_parameter < csp_min ||
-                coupling_scheme_parameter > csp_max)
+            if (fixed_stress_stabilization_parameter < csp_min ||
+                fixed_stress_stabilization_parameter > csp_max)
             {
                 WARN(
                     "Value of coupling scheme parameter = {:g} is out of "
                     "reasonable range ({:g}, {:g}).",
-                    coupling_scheme_parameter, csp_min, csp_max);
+                    fixed_stress_stabilization_parameter, csp_min, csp_max);
             }
         }
         else
         {
-            coupling_scheme_parameter =
+            fixed_stress_stabilization_parameter =
                 0.5;  // default value recommended [Mikelic & Wheeler]
         }
         DBUG("Using value {:g} for coupling parameter of staggered scheme.",
-             coupling_scheme_parameter);
+             fixed_stress_stabilization_parameter);
     }
 
     /// \section processvariableshm Process Variables
@@ -232,9 +234,10 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         materialIDs(mesh), std::move(media_map),
         std::move(solid_constitutive_relations), initial_stress,
         specific_body_force, mass_lumping,
-        coupling_scheme_parameter,  // this parameter gets its specific meaning
-                                    // in the process depending on implemented
-                                    // coupling scheme
+        fixed_stress_stabilization_parameter,  // this parameter gets its
+                                               // specific meaning in the
+                                               // process depending on
+                                               // implemented coupling scheme
         hydraulic_process_id, mechanics_related_process_id,
         use_taylor_hood_elements};
 

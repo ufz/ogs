@@ -635,16 +635,26 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                       K_over_mu *
                                       (dNdx_p * p - 2.0 * rho_fr * b) * N_p * w;
 
-        auto const& eps = _ip_data[ip].eps;
-        auto const& eps_prev = _ip_data[ip].eps_prev;
-        const double eps_v_dot =
-            (Invariants::trace(eps) - Invariants::trace(eps_prev)) / dt;
+        if (!_process_data.fixed_stress_over_time_step)
+        {
+            auto const& eps = _ip_data[ip].eps;
+            auto const& eps_prev = _ip_data[ip].eps_prev;
+            const double eps_v_dot =
+                (Invariants::trace(eps) - Invariants::trace(eps_prev)) / dt;
 
-        // Constant portion of strain rate term:
-        double const strain_rate_b =
-            alpha_b * eps_v_dot - beta_FS * _ip_data[ip].strain_rate_variable;
+            // Constant portion of strain rate term:
+            double const strain_rate_b =
+                alpha_b * eps_v_dot -
+                beta_FS * _ip_data[ip].strain_rate_variable;
 
-        local_rhs.noalias() -= strain_rate_b * rho_fr * N_p * w;
+            local_rhs.noalias() -= strain_rate_b * rho_fr * N_p * w;
+        }
+        else
+        {
+            // Constant portion of strain rate term:
+            local_rhs.noalias() -=
+                alpha_b * _ip_data[ip].strain_rate_variable * rho_fr * N_p * w;
+        }
     }
     local_Jac.noalias() = laplace + storage / dt + add_p_derivative;
 
@@ -858,7 +868,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     int const n_integration_points = _integration_method.getNumberOfPoints();
 
     if (!use_monolithic_scheme &&
-        process_id == _process_data.hydraulic_process_id)
+        process_id == _process_data.hydraulic_process_id &&
+        !_process_data.fixed_stress_over_time_step)
     {
         auto const p_dot =
             Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
@@ -921,6 +932,80 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             _ip_data[ip].updateConstitutiveRelation(vars, t, x_position, dt, u,
                                                     T_ref);
         }
+    }
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+void HydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
+    DisplacementDim>::postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
+                                           Eigen::VectorXd const& local_x_dot,
+                                           double const t, double const dt,
+                                           bool const use_monolithic_scheme,
+                                           int const process_id)
+{
+    if (!use_monolithic_scheme &&
+        process_id == _process_data.hydraulic_process_id)
+    {
+        if (_process_data.fixed_stress_over_time_step)
+        {
+            auto const p_dot =
+                local_x_dot.template segment<pressure_size>(pressure_index);
+
+            ParameterLib::SpatialPosition x_position;
+            x_position.setElementID(_element.getID());
+
+            auto const& solid_material =
+                MaterialLib::Solids::selectSolidConstitutiveRelation(
+                    _process_data.solid_materials, _process_data.material_ids,
+                    _element.getID());
+
+            auto const& medium =
+                _process_data.media_map->getMedium(_element.getID());
+            MPL::VariableArray vars;
+
+            auto const T_ref =
+                medium->property(MPL::PropertyType::reference_temperature)
+                    .template value<double>(vars, x_position, t, dt);
+            vars.temperature = T_ref;
+
+            int const n_integration_points =
+                _integration_method.getNumberOfPoints();
+            for (int ip = 0; ip < n_integration_points; ip++)
+            {
+                auto& ip_data = _ip_data[ip];
+
+                auto const& N_p = ip_data.N_p;
+
+                auto const& eps = ip_data.eps;
+                auto const& eps_prev = ip_data.eps_prev;
+                const double eps_v_dot =
+                    (Invariants::trace(eps) - Invariants::trace(eps_prev)) / dt;
+
+                auto const C_el = ip_data.computeElasticTangentStiffness(
+                    t, x_position, dt, T_ref);
+                auto const K_S =
+                    solid_material.getBulkModulus(t, x_position, &C_el);
+
+                auto const alpha_b =
+                    medium->property(MPL::PropertyType::biot_coefficient)
+                        .template value<double>(vars, x_position, t, dt);
+
+                ip_data.strain_rate_variable =
+                    eps_v_dot -
+                    _process_data.fixed_stress_stabilization_parameter *
+                        alpha_b * N_p.dot(p_dot) / K_S;
+            }
+        }
+    }
+
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        _ip_data[ip].pushBackState();
     }
 }
 
