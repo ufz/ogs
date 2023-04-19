@@ -61,6 +61,14 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, _local_assemblers,
             &LocalAssemblerIF::getEpsilon));
+
+    if (!_use_monolithic_scheme)
+    {
+        _integration_point_writer.emplace_back(
+            std::make_unique<MeshLib::IntegrationPointWriter>(
+                "strain_rate_variable_ip", 1, integration_order,
+                _local_assemblers, &LocalAssemblerIF::getStrainRateVariable));
+    }
 }
 
 template <int DisplacementDim>

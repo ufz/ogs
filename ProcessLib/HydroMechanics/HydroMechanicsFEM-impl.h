@@ -13,6 +13,7 @@
 
 #include <Eigen/Eigenvalues>
 
+#include "HydroMechanicsFEM.h"
 #include "HydroMechanicsProcessData.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
@@ -1048,6 +1049,12 @@ std::size_t HydroMechanicsLocalAssembler<
             values, _ip_data, &IpData::eps);
     }
 
+    if (name == "strain_rate_variable_ip")
+    {
+        return ProcessLib::setIntegrationPointScalarData(
+            values, _ip_data, &IpData::strain_rate_variable);
+    }
+
     return 0;
 }
 
@@ -1085,6 +1092,25 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     }
 
     return ip_epsilon_values;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+std::vector<double>
+HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
+                             DisplacementDim>::getStrainRateVariable() const
+{
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+
+    std::vector<double> ip_strain_rate_variables(n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ++ip)
+    {
+        ip_strain_rate_variables[ip] = _ip_data[ip].strain_rate_variable;
+    }
+
+    return ip_strain_rate_variables;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
