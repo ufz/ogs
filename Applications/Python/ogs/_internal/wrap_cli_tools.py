@@ -1,6 +1,6 @@
 import subprocess
-import os
 from pathlib import Path
+
 from .provide_ogs_cli_tools_via_wheel import binaries_list, ogs_with_args
 
 OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"
@@ -57,14 +57,14 @@ class CLI:
 
     @staticmethod
     def _get_cmdline(cmd, *args, **kwargs):
-        str_kwargs = [arg for arg in CLI._format_kv(kwargs)]
+        str_kwargs = list(CLI._format_kv(kwargs))
         return [cmd] + str_kwargs + list(args)
 
     @staticmethod
     def _get_run_cmd(attr):
         def run_cmd(*args, **kwargs):
             # TODO provide override via os.environ?
-            cmd = os.path.join(OGS_BIN_DIR, attr)
+            cmd = OGS_BIN_DIR / attr
             cmdline = CLI._get_cmdline(cmd, *args, **kwargs)
             return subprocess.call(cmdline)
 

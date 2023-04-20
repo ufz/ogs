@@ -73,12 +73,10 @@ binaries_list = [
 
 
 def pyproject_get_scripts():
-    return dict(
-        [
-            (binary, f"ogs._internal.provide_ogs_cli_tools_via_wheel:{binary}")
-            for binary in binaries_list
-        ]
-    )
+    return {
+        binary: f"ogs._internal.provide_ogs_cli_tools_via_wheel:{binary}"
+        for binary in binaries_list
+    }
 
 
 def ogs():
@@ -94,7 +92,7 @@ def ogs_with_args(argv):
     if return_code == 3:  # EXIT_ARGPARSE_FAILURE
         sim.finalize()
         return 1  # EXIT_FAILURE
-    elif return_code == 2:  # EXIT_ARGPARSE_EXIT_OK
+    if return_code == 2:  # EXIT_ARGPARSE_EXIT_OK
         sim.finalize()
         return 0  # EXIT_SUCCESS
 
@@ -112,7 +110,7 @@ if "PEP517_BUILD_BACKEND" not in os.environ:
         os.add_dll_directory(OGS_BIN_DIR)
 
     def _program(name, args):
-        return subprocess.run([os.path.join(OGS_BIN_DIR, name)] + args).returncode
+        return subprocess.run([OGS_BIN_DIR / name] + args).returncode
 
     FUNC_TEMPLATE = """def {0}(): raise SystemExit(_program("{0}", sys.argv[1:]))"""
     for f in binaries_list:
