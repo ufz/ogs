@@ -479,6 +479,21 @@ Polyline::SegmentIterator Polyline::SegmentIterator::operator-(
     return t;
 }
 
+void resetPointIDs(Polyline& polyline, std::vector<std::size_t> const& mapping)
+{
+    if (polyline.getPointsVec().size() != mapping.size())
+    {
+        OGS_FATAL(
+            "internal error in resetPointIDs(): polyline based on point vector "
+            "of size {}, given mapping has size {}",
+            polyline.getPointsVec().size(), mapping.size());
+    }
+    for (std::size_t i = 0; i < polyline.getNumberOfPoints(); ++i)
+    {
+        polyline.setPointID(i, mapping[polyline.getPointID(i)]);
+    }
+}
+
 bool containsEdge(const Polyline& ply, std::size_t id0, std::size_t id1)
 {
     if (id0 == id1)
