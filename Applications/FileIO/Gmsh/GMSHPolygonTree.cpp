@@ -499,10 +499,7 @@ void GMSHPolygonTree::writeAdditionalPointData(std::size_t& pnt_id_offset,
             (_geo_objs.getPointVecObj(quad_tree_geo))->getIDMap());
         for (std::size_t k(0); k < plys.size(); k++)
         {
-            for (std::size_t j(0); j < plys[k]->getNumberOfPoints(); j++)
-            {
-                (plys[k])->setPointID(j, id_map[(plys[k])->getPointID(j)]);
-            }
+            GeoLib::resetPointIDs(*plys[k], id_map);
         }
         _geo_objs.addPolylineVec(std::move(plys), quad_tree_geo,
                                  GeoLib::PolylineVec::NameIdMap{});
