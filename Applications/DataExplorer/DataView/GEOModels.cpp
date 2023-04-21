@@ -100,6 +100,15 @@ void GEOModels::removeGeometry(std::string const& geo_name,
     }
 }
 
+std::vector<std::string> GEOModels::getGeometryNames() const
+{
+    return _geo_objects.getGeometryNames();
+}
+const std::vector<GeoLib::Point*>* GEOModels::getPointVec(const std::string& name) const
+{
+    return _geo_objects.getPointVec(name);
+}
+
 void GEOModels::addPointVec(std::string const& name)
 {
     _geoModel->addPointList(QString::fromStdString(name),
