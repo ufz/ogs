@@ -40,6 +40,7 @@ public:
     std::vector<double> getPointDataArray(std::string const& name) const;
     void setCellDataArray(std::string const& name,
                           std::vector<double> const& values);
+    std::pair<std::vector<int>, std::vector<int>> getCells() const;
 
 private:
     MeshLib::Mesh* _mesh = nullptr;

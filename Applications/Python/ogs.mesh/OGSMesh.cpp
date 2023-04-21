@@ -29,8 +29,11 @@
 #include "BaseLib/ExportSymbol.h"
 #include "BaseLib/Logging.h"
 #include "InfoLib/GitInfo.h"
+#include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
+#include "MeshLib/VtkOGSEnum.h"
 
 OGSMesh::OGSMesh(MeshLib::Mesh* mesh) : _mesh(mesh) {}
 
