@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>311</width>
-    <height>302</height>
+    <width>517</width>
+    <height>384</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>-100</x>
-     <y>260</y>
+     <x>170</x>
+     <y>340</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -29,168 +29,139 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QComboBox" name="meshListBox">
+  <widget class="QGroupBox" name="TranslationBox">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>10</y>
-     <width>121</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-  </widget>
-  <widget class="QLabel" name="meshListLabel">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>10</y>
-     <width>110</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>110</width>
-     <height>0</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>110</width>
-     <height>16777215</height>
-    </size>
-   </property>
-   <property name="text">
-    <string>   Select mesh:</string>
-   </property>
-  </widget>
-  <widget class="QGroupBox" name="groupBox">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>90</y>
-     <width>281</width>
-     <height>161</height>
+     <x>0</x>
+     <y>260</y>
+     <width>511</width>
+     <height>69</height>
     </rect>
    </property>
    <property name="title">
     <string>Translation Vector</string>
    </property>
-   <widget class="QLineEdit" name="xlineEdit">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>40</y>
-      <width>71</width>
-      <height>25</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="ylineEdit">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>80</y>
-      <width>71</width>
-      <height>25</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="zlineEdit">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>120</y>
-      <width>71</width>
-      <height>25</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="xLengthLabel">
-    <property name="geometry">
-     <rect>
-      <x>80</x>
-      <y>40</y>
-      <width>16</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>x</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="yLengthLabel">
-    <property name="geometry">
-     <rect>
-      <x>80</x>
-      <y>80</y>
-      <width>16</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>y</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="zLengthLabel">
-    <property name="geometry">
-     <rect>
-      <x>80</x>
-      <y>120</y>
-      <width>16</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>z</string>
-    </property>
-   </widget>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="xLengthLabel">
+      <property name="text">
+       <string>x:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="xlineEdit"/>
+    </item>
+    <item>
+     <widget class="QLabel" name="yLengthLabel">
+      <property name="text">
+       <string>y:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="ylineEdit"/>
+    </item>
+    <item>
+     <widget class="QLabel" name="zLengthLabel">
+      <property name="text">
+       <string>z:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="zlineEdit"/>
+    </item>
+   </layout>
   </widget>
-  <widget class="QLabel" name="geoListLabel">
+  <widget class="QListView" name="allDataView">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>50</y>
-     <width>110</width>
-     <height>21</height>
+     <x>10</x>
+     <y>40</y>
+     <width>215</width>
+     <height>216</height>
     </rect>
    </property>
-   <property name="minimumSize">
-    <size>
-     <width>110</width>
-     <height>0</height>
-    </size>
+  </widget>
+  <widget class="QListView" name="selectedDataView">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>40</y>
+     <width>215</width>
+     <height>216</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="selectDataButton">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>110</y>
+     <width>40</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <property name="maximumSize">
     <size>
-     <width>110</width>
+     <width>40</width>
      <height>16777215</height>
     </size>
    </property>
    <property name="text">
-    <string>   Select geo:</string>
+    <string>&gt;&gt;</string>
    </property>
   </widget>
-  <widget class="QComboBox" name="geoListBox">
+  <widget class="QPushButton" name="deselectDataButton">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>50</y>
-     <width>121</width>
-     <height>21</height>
+     <x>240</x>
+     <y>140</y>
+     <width>40</width>
+     <height>25</height>
     </rect>
    </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
+   <property name="maximumSize">
+    <size>
+     <width>40</width>
+     <height>16777215</height>
+    </size>
+   </property>
+   <property name="text">
+    <string>&lt;&lt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="alDataLabel">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>215</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Available data:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="selectedDataLabel">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>20</y>
+     <width>215</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Selected data:</string>
    </property>
   </widget>
  </widget>
@@ -203,8 +174,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>450</x>
+     <y>440</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -219,8 +190,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>450</x>
+     <y>440</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

@@ -14,6 +14,8 @@
 
 #include "TranslateDataDialog.h"
 
+#include <QStringList>
+
 #include "Base/StrictDoubleValidator.h"
 #include "GEOModels.h"
 #include "GeoLib/AABB.h"
@@ -28,52 +30,131 @@ TranslateDataDialog::TranslateDataDialog(MeshModel* mesh_model,
     : QDialog(parent), _mesh_model(mesh_model), _geo_models(geo_models)
 {
     setupUi(this);
+    assert(_geo_models != nullptr);
+    assert(_mesh_model != nullptr);
+    auto const geoNames = _geo_models->getGeometryNames();
 
-    auto const geoNames = geo_models->getGeometryNames();
-
-    std::size_t nGeoObjects(geoNames.size());
-
-    QStringList list;
-    for (unsigned i = 0; i < nGeoObjects; ++i)
+    QStringList dataList;
+    for (auto const& name : geoNames)
     {
-        this->geoListBox->addItem(QString::fromStdString(geoNames[i]));
+        dataList.append(QString::fromStdString(name));
     }
 
-    for (int model_index = 0; model_index < mesh_model->rowCount();
+    for (int model_index = 0; model_index < _mesh_model->rowCount();
          ++model_index)
     {
         auto const* mesh =
-            mesh_model->getMesh(mesh_model->index(model_index, 0));
-        this->meshListBox->addItem(QString::fromStdString(mesh->getName()));
+            _mesh_model->getMesh(_mesh_model->index(model_index, 0));
+        dataList.append(QString::fromStdString(mesh->getName()));
     }
+
+    if (dataList.empty())
+    {
+        this->selectDataButton->setDisabled(true);
+        this->deselectDataButton->setDisabled(true);
+        dataList.append("[No data available.]");
+    }
+
+    _allData.setStringList(dataList);
+    this->allDataView->setModel(&_allData);
+    this->selectedDataView->setModel(&_selData);
 }
 
-TranslateDataDialog::~TranslateDataDialog() = default;
+void TranslateDataDialog::on_selectDataButton_pressed()
+{
+    QModelIndexList const selected =
+        this->allDataView->selectionModel()->selectedIndexes();
+    QStringList list = _selData.stringList();
+
+    for (auto& index : selected)
+    {
+        list.append(index.data().toString());
+
+        _allData.removeRow(index.row());
+    }
+    _selData.setStringList(list);
+}
+
+void TranslateDataDialog::on_deselectDataButton_pressed()
+{
+    QModelIndexList selected =
+        this->selectedDataView->selectionModel()->selectedIndexes();
+    QStringList list = _allData.stringList();
+
+    for (auto& index : selected)
+    {
+        list.append(index.data().toString());
+
+        _selData.removeRow(index.row());
+    }
+    _allData.setStringList(list);
+}
+
+void TranslateDataDialog::moveGeometry(Eigen::Vector3d displacement,
+                                       const std::string name)
+{
+    std::vector<GeoLib::Point*> const* point_vec =
+        _geo_models->getPointVec(name);
+    if (point_vec == nullptr)
+    {
+        OGSError::box("The geometry is faulty.");
+        return;
+    }
+    std::size_t const n_points = point_vec->size();
+    for (std::size_t i = 0; i < n_points; ++i)
+    {
+        for (std::size_t c = 0; c < 3; ++c)
+        {
+            (*(*point_vec)[i])[c] += displacement[c];
+        }
+    }
+    for (auto* point : *point_vec)
+    {
+        point->asEigenVector3d() += displacement;
+    }
+    _geo_models->updateGeometry(name);
+}
+
+void TranslateDataDialog::moveMesh(Eigen::Vector3d displacement,
+                                   const std::string name)
+{
+    MeshLib::Mesh const* mesh(_mesh_model->getMesh(name));
+    if (mesh == nullptr)
+    {
+        OGSError::box("The mesh is faulty.");
+        return;
+    }
+    /*
+    if (std::fabs(xinput.toDouble()) < std::numeric_limits<double>::epsilon() &&
+        std::fabs(yinput.toDouble()) < std::numeric_limits<double>::epsilon() &&
+        std::fabs(zinput.toDouble()) < std::numeric_limits<double>::epsilon())
+    {
+        GeoLib::AABB const aabb(mesh->getNodes().begin(),
+                                mesh->getNodes().end());
+        auto const [min, max] = aabb.getMinMaxPoints();
+        displacement = -(max + min) / 2.0;
+    }
+    */
+    MeshLib::moveMeshNodes(mesh->getNodes().begin(), mesh->getNodes().end(),
+                           displacement);
+    _mesh_model->updateMesh(const_cast<MeshLib::Mesh*>(mesh));
+}
 
 void TranslateDataDialog::accept()
 {
-    if (this->meshListBox->count() == 0 and this->geoListBox->count() == 0)
+    if (this->_selData.rowCount() == 0)
     {
         OGSError::box("Please specify the input data.");
         return;
     }
 
-    QString xinput = this->xlineEdit->text();
-    QString yinput = this->ylineEdit->text();
-    QString zinput = this->zlineEdit->text();
+    QString const xinput = this->xlineEdit->text();
+    QString const yinput = this->ylineEdit->text();
+    QString const zinput = this->zlineEdit->text();
 
     if (xinput.isEmpty() || yinput.isEmpty() || zinput.isEmpty())
     {
         OGSError::box("Please specify coordinates to translate the data.");
-        return;
-    }
-
-    MeshLib::Mesh const* mesh(_mesh_model->getMesh(
-        _mesh_model->index(this->meshListBox->currentIndex(), 0)));
-
-    if (mesh == nullptr)
-    {
-        OGSError::box("No mesh was found.");
         return;
     }
 
@@ -86,40 +167,36 @@ void TranslateDataDialog::accept()
 
     Eigen::Vector3d displacement{xinput.toDouble(), yinput.toDouble(),
                                  zinput.toDouble()};
-    if (fabs(xinput.toDouble()) < std::numeric_limits<double>::epsilon() &&
-        fabs(yinput.toDouble()) < std::numeric_limits<double>::epsilon() &&
-        fabs(zinput.toDouble()) < std::numeric_limits<double>::epsilon())
-    {
-        GeoLib::AABB aabb(mesh->getNodes().begin(), mesh->getNodes().end());
-        auto const [min, max] = aabb.getMinMaxPoints();
-        displacement = -(max + min) / 2.0;
-    }
 
     INFO("translate model ({:f}, {:f}, {:f}).",
          displacement[0],
          displacement[1],
          displacement[2]);
 
-    auto const geo_name =
-        _geo_models->getGeometryNames()[this->meshListBox->currentIndex()];
+    std::vector<std::string> const selectedData =
+        this->getSelectedObjects(_selData.stringList());
 
-    std::vector<GeoLib::Point*> const* point_vec =
-        _geo_models->getPointVec(geo_name);
-    std::size_t const n_points = point_vec->size();
-    for (std::size_t i = 0; i < n_points; ++i)
+    auto const geoNames = _geo_models->getGeometryNames();
+
+    for (auto const& data_name: selectedData)
     {
-        for (std::size_t c = 0; c < 3; ++c)
+        if (std::find(std::begin(geoNames), std::end(geoNames), data_name) !=
+            std::end(geoNames))
         {
-            (*(*point_vec)[i])[c] += displacement[c];
+            moveGeometry(displacement, data_name);
+            continue;
         }
+        moveMesh(displacement, data_name);
     }
 
-    MeshLib::moveMeshNodes(mesh->getNodes().begin(), mesh->getNodes().end(),
-                           displacement);
-
-    _mesh_model->updateMesh(const_cast<MeshLib::Mesh*>(mesh));
-
-    _geo_models->updateGeometry(geo_name);
-
     this->done(QDialog::Accepted);
+}
+
+std::vector<std::string> TranslateDataDialog::getSelectedObjects(
+    QStringList list)
+{
+    std::vector<std::string> indexList;
+    std::transform(list.begin(), list.end(), std::back_inserter(indexList),
+                   [](auto const& index) { return index.toStdString(); });
+    return indexList;
 }
