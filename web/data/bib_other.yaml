@@ -296,3 +296,42 @@ entries:
         last: Popp
       - first: K.
         last: Salzer
+
+  murad1992improved:
+    type: article
+    title:
+      "Improved accuracy in finite element analysis of Biot's consolidation problem"
+    journal: "Computer Methods in Applied Mechanics and Engineering"
+    volume: "95"
+    number: "3"
+    pages: 359--382
+    year: "1992"
+    doi: 10.1016/0045-7825(92)90193-N
+    publisher: Elsevier
+    author:
+      - first: Márcio A
+        last: Murad
+      - first: Abimael FD
+        last: Loula
+
+  korsawe2006finite:
+    type: article
+    title:
+      "Finite element analysis of poro-elastic consolidation in porous media: Standard
+       and mixed approaches"
+    journal: "Computer Methods in Applied Mechanics and Engineering"
+    volume: "195"
+    number: "9-12"
+    pages: 1096–-1115
+    year: "2006"
+    doi: 10.1016/j.cma.2005.04.011
+    publisher: Elsevier
+    author:
+      - first: Johannes
+        last: Korsawe
+      - first: Starke
+        last: Gerhard
+      - first: Wenqing
+        last: Wang
+      - first: Olaf
+        last: Kolditz
