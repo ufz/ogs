@@ -54,10 +54,6 @@ function(OgsTest)
     endif()
 
     set(OgsTest_SOURCE_DIR "${Data_SOURCE_DIR}/${OgsTest_DIR}")
-    set(OgsTest_BINARY_DIR "${Data_BINARY_DIR}/${OgsTest_DIR}")
-    file(MAKE_DIRECTORY ${OgsTest_BINARY_DIR})
-    file(TO_NATIVE_PATH "${OgsTest_BINARY_DIR}" OgsTest_BINARY_DIR_NATIVE)
-
     set(TEST_NAME "ogs-${OgsTest_DIR}/${OgsTest_NAME_WE}")
     # Add wrapper postfix (-mpi for mpirun).
     if(OgsTest_WRAPPER)
@@ -70,7 +66,6 @@ function(OgsTest)
     set(_exe_args -r ${OgsTest_SOURCE_DIR}
                   ${OgsTest_SOURCE_DIR}/${OgsTest_NAME}
     )
-    string(REPLACE "/" "_" TEST_NAME_UNDERSCORE ${TEST_NAME})
 
     current_dir_as_list(ProcessLib labels)
     if(${OgsTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
@@ -81,8 +76,8 @@ function(OgsTest)
 
     _ogs_add_test(${TEST_NAME})
 
-    # OpenMP tests for specific processes only.
-    # TODO (CL) Once all processes can be assembled OpenMP parallel, the condition should be removed.
+    # OpenMP tests for specific processes only. TODO (CL) Once all processes can
+    # be assembled OpenMP parallel, the condition should be removed.
     if("${labels}" MATCHES "TH2M|ThermoRichards")
         _ogs_add_test(${TEST_NAME}-omp)
         _set_omp_test_properties()
@@ -91,6 +86,14 @@ endfunction()
 
 # Add a ctest and sets properties
 macro(_ogs_add_test TEST_NAME)
+    if("${TEST_NAME}" MATCHES "-omp")
+        set(OgsTest_BINARY_DIR "${Data_BINARY_DIR}/${OgsTest_DIR}-omp")
+    else()
+        set(OgsTest_BINARY_DIR "${Data_BINARY_DIR}/${OgsTest_DIR}")
+    endif()
+    file(MAKE_DIRECTORY ${OgsTest_BINARY_DIR})
+    file(TO_NATIVE_PATH "${OgsTest_BINARY_DIR}" OgsTest_BINARY_DIR_NATIVE)
+    string(REPLACE "/" "_" TEST_NAME_UNDERSCORE ${TEST_NAME})
     add_test(
         NAME ${TEST_NAME}
         COMMAND

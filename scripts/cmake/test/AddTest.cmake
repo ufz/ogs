@@ -84,8 +84,6 @@ function(AddTest)
 
     set(AddTest_SOURCE_PATH "${Data_SOURCE_DIR}/${AddTest_PATH}")
     set(AddTest_BINARY_PATH "${Data_BINARY_DIR}/${AddTest_PATH}")
-    file(MAKE_DIRECTORY ${AddTest_BINARY_PATH})
-    file(TO_NATIVE_PATH "${AddTest_BINARY_PATH}" AddTest_BINARY_PATH_NATIVE)
     set(AddTest_STDOUT_FILE_PATH
         "${AddTest_BINARY_PATH}/${AddTest_NAME}_stdout.txt"
     )
@@ -108,9 +106,6 @@ function(AddTest)
     endif()
 
     if("${AddTest_EXECUTABLE}" STREQUAL "ogs")
-        set(AddTest_EXECUTABLE_ARGS -o ${AddTest_BINARY_PATH_NATIVE}
-                                    ${AddTest_EXECUTABLE_ARGS}
-        )
         set(AddTest_WORKING_DIRECTORY ${AddTest_SOURCE_PATH})
     endif()
 
@@ -220,172 +215,6 @@ function(AddTest)
         set(SELECTED_DIFF_TOOL_PATH $<TARGET_FILE:xdmfdiff>)
     endif()
 
-    if(AddTest_TESTER STREQUAL "diff")
-        foreach(FILE ${AddTest_DIFF_DATA})
-            get_filename_component(FILE_EXPECTED ${FILE} NAME)
-            list(
-                APPEND
-                TESTER_COMMAND
-                "${SELECTED_DIFF_TOOL_PATH} \
-                ${TESTER_ARGS} ${AddTest_TESTER_ARGS} ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
-                ${AddTest_BINARY_PATH}/${FILE}"
-            )
-            list(APPEND FILES_TO_DELETE "${FILE}")
-
-        endforeach()
-    elseif(AddTest_TESTER STREQUAL "vtkdiff" OR AddTest_TESTER STREQUAL
-                                                "xdmfdiff"
-    )
-        list(LENGTH AddTest_DIFF_DATA DiffDataLength)
-        math(EXPR DiffDataLengthMod4 "${DiffDataLength} % 4")
-        math(EXPR DiffDataLengthMod6 "${DiffDataLength} % 6")
-        if(${DiffDataLengthMod4} EQUAL 0 AND NOT ${DiffDataLengthMod6} EQUAL 0)
-            message(WARNING "DEPRECATED AddTest call with four arguments.\
-Use six arguments version of AddTest with absolute and relative tolerances"
-            )
-            if(NOT AddTest_ABSTOL)
-                set(AddTest_ABSTOL 1e-16)
-            endif()
-            if(NOT AddTest_RELTOL)
-                set(AddTest_RELTOL 1e-16)
-            endif()
-            set(TESTER_ARGS "--abs ${AddTest_ABSTOL} --rel ${AddTest_RELTOL}")
-            math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
-            foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 4)
-                list(GET AddTest_DIFF_DATA "${DiffDataIndex}"
-                     REFERENCE_VTK_FILE
-                )
-                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
-                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" VTK_FILE)
-                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
-                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_A)
-                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+3")
-                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_B)
-
-                list(
-                    APPEND
-                    TESTER_COMMAND
-                    "${SELECTED_DIFF_TOOL_PATH} \
-                ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
-                ${AddTest_BINARY_PATH}/${VTK_FILE} \
-                -a ${NAME_A} -b ${NAME_B} \
-                ${TESTER_ARGS} ${AddTest_TESTER_ARGS}"
-                )
-                list(APPEND FILES_TO_DELETE "${VTK_FILE}")
-            endforeach()
-        elseif(${DiffDataLengthMod6} EQUAL 0)
-            if(${AddTest_ABSTOL} OR ${AddTest_RELTOL})
-                message(
-                    FATAL_ERROR
-                        "ABSTOL or RELTOL arguments must not be present."
-                )
-            endif()
-            math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
-            foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 6)
-                list(GET AddTest_DIFF_DATA "${DiffDataIndex}"
-                     REFERENCE_VTK_FILE
-                )
-                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
-                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" VTK_FILE)
-                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
-                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_A)
-                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+3")
-                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_B)
-                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+4")
-                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" ABS_TOL)
-                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+5")
-                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" REL_TOL)
-
-                if("${REFERENCE_VTK_FILE}" STREQUAL "GLOB")
-                    list(APPEND TESTER_COMMAND
-                         "${VTK_FILE} ${NAME_A} ${NAME_B} ${ABS_TOL} ${REL_TOL}"
-                    )
-                    set(GLOB_MODE TRUE)
-                else()
-                    list(
-                        APPEND
-                        TESTER_COMMAND
-                        "${SELECTED_DIFF_TOOL_PATH} \
-                    ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
-                    ${AddTest_BINARY_PATH}/${VTK_FILE} \
-                    -a ${NAME_A} -b ${NAME_B} \
-                    --abs ${ABS_TOL} --rel ${REL_TOL} \
-                    ${TESTER_ARGS} ${AddTest_TESTER_ARGS}"
-                    )
-                endif()
-                list(APPEND FILES_TO_DELETE "${VTK_FILE}")
-            endforeach()
-        else()
-            message(
-                FATAL_ERROR
-                    "For vtkdiff tester the number of diff data arguments must be a multiple of six."
-            )
-        endif()
-    elseif(AddTest_TESTER STREQUAL "vtkdiff-mesh")
-        list(LENGTH AddTest_DIFF_DATA DiffDataLength)
-        math(EXPR DiffDataLengthMod3 "${DiffDataLength} % 3")
-        if(${DiffDataLengthMod3} EQUAL 0)
-            math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
-            foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 4)
-                list(GET AddTest_DIFF_DATA "${DiffDataIndex}"
-                     REFERENCE_VTK_FILE
-                )
-                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
-                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" VTK_FILE)
-                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
-                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" ABS_TOLERANCE)
-
-                list(
-                    APPEND
-                    TESTER_COMMAND
-                    "${SELECTED_DIFF_TOOL_PATH} -m \
-                ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
-                ${AddTest_BINARY_PATH}/${VTK_FILE} \
-                --abs ${ABS_TOLERANCE}"
-                )
-            endforeach()
-        else()
-            message(FATAL_ERROR "The number of diff data arguments must be a
-            multiple of three: expected.vtu output.vtu absolute_tolerance."
-            )
-        endif()
-    elseif(AddTest_TESTER STREQUAL "gmldiff")
-        list(LENGTH AddTest_DIFF_DATA DiffDataLength)
-        math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
-        foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 3)
-            list(GET AddTest_DIFF_DATA "${DiffDataIndex}" GML_FILE)
-            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
-            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" ABS_TOL)
-            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
-            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" REL_TOL)
-
-            get_filename_component(FILE_EXPECTED ${GML_FILE} NAME)
-            if(WIN32)
-                file(TO_NATIVE_PATH "${Python_EXECUTABLE}" PY_EXE)
-                # Dirty hack for Windows Python paths with spaces:
-                string(REPLACE "Program Files" "\"Program Files\"" PY_EXE
-                               ${PY_EXE}
-                )
-            else()
-                set(PY_EXE ${Python_EXECUTABLE})
-            endif()
-            list(
-                APPEND
-                TESTER_COMMAND
-                "${PY_EXE} ${PROJECT_SOURCE_DIR}/scripts/test/gmldiff.py \
-                --abs ${ABS_TOL} --rel ${REL_TOL} \
-                ${TESTER_ARGS} ${AddTest_TESTER_ARGS}\
-                ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
-                ${AddTest_BINARY_PATH}/${GML_FILE}"
-            )
-            list(APPEND FILES_TO_DELETE "${GML_FILE}")
-        endforeach()
-    elseif(AddTest_TESTER STREQUAL "memcheck")
-        set(TESTER_COMMAND
-            "! ${GREP_TOOL_PATH} definitely ${AddTest_SOURCE_PATH}/${AddTest_NAME}_memcheck.txt"
-        )
-    endif()
-
     # -----------
     if(TARGET ${AddTest_EXECUTABLE})
         set(AddTest_EXECUTABLE_PARSED $<TARGET_FILE:${AddTest_EXECUTABLE}>)
@@ -431,8 +260,8 @@ Use six arguments version of AddTest with absolute and relative tolerances"
 
     _add_test(${TEST_NAME})
 
-    # OpenMP tests for specific processes only.
-    # TODO (CL) Once all processes can be assembled OpenMP parallel, the condition should be removed.
+    # OpenMP tests for specific processes only. TODO (CL) Once all processes can
+    # be assembled OpenMP parallel, the condition should be removed.
     if("${labels}" MATCHES "TH2M|ThermoRichards")
         _add_test(${TEST_NAME}-omp)
         _set_omp_test_properties()
@@ -483,39 +312,37 @@ Use six arguments version of AddTest with absolute and relative tolerances"
     endif()
 
     # Run the tester
-    set(TESTER_NAME "${TEST_NAME}-${AddTest_TESTER}")
-    add_test(
-        NAME ${TESTER_NAME}
-        COMMAND
-            ${CMAKE_COMMAND} -DSOURCE_PATH=${AddTest_SOURCE_PATH}
-            -DBINARY_PATH=${${AddTest_BINARY_PATH}}
-            -DSELECTED_DIFF_TOOL_PATH=${SELECTED_DIFF_TOOL_PATH}
-            "-DTESTER_COMMAND=${TESTER_COMMAND}"
-            -DBINARY_PATH=${AddTest_BINARY_PATH} -DGLOB_MODE=${GLOB_MODE}
-            -DLOG_FILE_BASE=${PROJECT_BINARY_DIR}/logs/${TESTER_NAME} -P
-            ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
-            --debug-output
-        WORKING_DIRECTORY ${AddTest_SOURCE_PATH}
-    )
-    set_tests_properties(
-        ${TESTER_NAME} PROPERTIES DEPENDS ${TEST_NAME} DISABLED
-                                  ${AddTest_DISABLED} LABELS "tester;${labels}"
-    )
+    _add_test_tester(${TEST_NAME})
+    if("${labels}" MATCHES "TH2M|ThermoRichards")
+        _add_test_tester(${TEST_NAME}-omp)
+    endif()
 
 endfunction()
 
 # Add a ctest and sets properties
 macro(_add_test TEST_NAME)
-    message(STATUS "working: ${AddTest_WORKING_DIRECTORY}")
+
+    set(_binary_path ${AddTest_BINARY_PATH})
+    if("${TEST_NAME}" MATCHES "-omp")
+        set(_binary_path ${_binary_path}-omp)
+    endif()
+
+    file(TO_NATIVE_PATH "${_binary_path}" AddTest_BINARY_PATH_NATIVE)
+    file(MAKE_DIRECTORY ${_binary_path})
+    set(_exe_args ${AddTest_EXECUTABLE_ARGS})
+    if("${AddTest_EXECUTABLE}" STREQUAL "ogs")
+        set(_exe_args -o ${AddTest_BINARY_PATH_NATIVE}
+                      ${AddTest_EXECUTABLE_ARGS}
+        )
+    endif()
+
     add_test(
         NAME ${TEST_NAME}
         COMMAND
             ${CMAKE_COMMAND} -DEXECUTABLE=${AddTest_EXECUTABLE_PARSED}
-            "-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}" # Quoted because
-                                                           # passed as list see
-                                                           # https://stackoverflow.com/a/33248574/80480
-            -DBINARY_PATH=${AddTest_BINARY_PATH}
-            -DWRAPPER_COMMAND=${WRAPPER_COMMAND}
+            "-DEXECUTABLE_ARGS=${_exe_args}" # Quoted because
+            # passed as list see https://stackoverflow.com/a/33248574/80480
+            -DBINARY_PATH=${_binary_path} -DWRAPPER_COMMAND=${WRAPPER_COMMAND}
             "-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
             "-DFILES_TO_DELETE=${FILES_TO_DELETE}"
             -DWORKING_DIRECTORY=${AddTest_WORKING_DIRECTORY}
@@ -554,15 +381,206 @@ endmacro()
 # non-OpenMP test because both write to the same output files.
 macro(_set_omp_test_properties)
     get_test_property(${TEST_NAME}-omp ENVIRONMENT _environment)
+    if(NOT _environment)
+        set(_environment "")
+    endif()
     set_tests_properties(
         ${TEST_NAME}-omp
-        PROPERTIES ENVIRONMENT
-                   "OGS_ASM_THREADS=4;${_environment}"
-                   PROCESSORS
-                   4
-                   DEPENDS
-                   ${TEST_NAME}
-                   LABELS
-                   "${labels};omp"
+        PROPERTIES ENVIRONMENT "OGS_ASM_THREADS=4;${_environment}" PROCESSORS 4
+                   LABELS "${labels};omp"
+    )
+endmacro()
+
+# Adds subsequent tester ctest.
+macro(_add_test_tester TEST_NAME)
+
+    set(_binary_path ${AddTest_BINARY_PATH})
+    if("${TEST_NAME}" MATCHES "-omp")
+        set(_binary_path ${_binary_path}-omp)
+    endif()
+
+    set(TESTER_NAME "${TEST_NAME}-${AddTest_TESTER}")
+
+    if(AddTest_TESTER STREQUAL "diff")
+        foreach(FILE ${AddTest_DIFF_DATA})
+            get_filename_component(FILE_EXPECTED ${FILE} NAME)
+            list(
+                APPEND
+                TESTER_COMMAND
+                "${SELECTED_DIFF_TOOL_PATH} \
+                ${TESTER_ARGS} ${AddTest_TESTER_ARGS} ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
+                ${_binary_path}/${FILE}"
+            )
+            list(APPEND FILES_TO_DELETE "${FILE}")
+
+        endforeach()
+    elseif(AddTest_TESTER STREQUAL "vtkdiff" OR AddTest_TESTER STREQUAL
+                                                "xdmfdiff"
+    )
+        list(LENGTH AddTest_DIFF_DATA DiffDataLength)
+        math(EXPR DiffDataLengthMod4 "${DiffDataLength} % 4")
+        math(EXPR DiffDataLengthMod6 "${DiffDataLength} % 6")
+        if(${DiffDataLengthMod4} EQUAL 0 AND NOT ${DiffDataLengthMod6} EQUAL 0)
+            message(WARNING "DEPRECATED AddTest call with four arguments.\
+Use six arguments version of AddTest with absolute and relative tolerances"
+            )
+            if(NOT AddTest_ABSTOL)
+                set(AddTest_ABSTOL 1e-16)
+            endif()
+            if(NOT AddTest_RELTOL)
+                set(AddTest_RELTOL 1e-16)
+            endif()
+            set(TESTER_ARGS "--abs ${AddTest_ABSTOL} --rel ${AddTest_RELTOL}")
+            math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
+            foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 4)
+                list(GET AddTest_DIFF_DATA "${DiffDataIndex}"
+                     REFERENCE_VTK_FILE
+                )
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" VTK_FILE)
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_A)
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+3")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_B)
+
+                list(
+                    APPEND
+                    TESTER_COMMAND
+                    "${SELECTED_DIFF_TOOL_PATH} \
+                ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
+                ${_binary_path}/${VTK_FILE} \
+                -a ${NAME_A} -b ${NAME_B} \
+                ${TESTER_ARGS} ${AddTest_TESTER_ARGS}"
+                )
+                list(APPEND FILES_TO_DELETE "${VTK_FILE}")
+            endforeach()
+        elseif(${DiffDataLengthMod6} EQUAL 0)
+            if(${AddTest_ABSTOL} OR ${AddTest_RELTOL})
+                message(
+                    FATAL_ERROR
+                        "ABSTOL or RELTOL arguments must not be present."
+                )
+            endif()
+            math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
+            foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 6)
+                list(GET AddTest_DIFF_DATA "${DiffDataIndex}"
+                     REFERENCE_VTK_FILE
+                )
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" VTK_FILE)
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_A)
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+3")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_B)
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+4")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" ABS_TOL)
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+5")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" REL_TOL)
+
+                if("${REFERENCE_VTK_FILE}" STREQUAL "GLOB")
+                    list(APPEND TESTER_COMMAND
+                         "${VTK_FILE} ${NAME_A} ${NAME_B} ${ABS_TOL} ${REL_TOL}"
+                    )
+                    set(GLOB_MODE TRUE)
+                else()
+                    list(
+                        APPEND
+                        TESTER_COMMAND
+                        "${SELECTED_DIFF_TOOL_PATH} \
+                    ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
+                    ${_binary_path}/${VTK_FILE} \
+                    -a ${NAME_A} -b ${NAME_B} \
+                    --abs ${ABS_TOL} --rel ${REL_TOL} \
+                    ${TESTER_ARGS} ${AddTest_TESTER_ARGS}"
+                    )
+                endif()
+                list(APPEND FILES_TO_DELETE "${VTK_FILE}")
+            endforeach()
+        else()
+            message(
+                FATAL_ERROR
+                    "For vtkdiff tester the number of diff data arguments must be a multiple of six."
+            )
+        endif()
+    elseif(AddTest_TESTER STREQUAL "vtkdiff-mesh")
+        list(LENGTH AddTest_DIFF_DATA DiffDataLength)
+        math(EXPR DiffDataLengthMod3 "${DiffDataLength} % 3")
+        if(${DiffDataLengthMod3} EQUAL 0)
+            math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
+            foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 4)
+                list(GET AddTest_DIFF_DATA "${DiffDataIndex}"
+                     REFERENCE_VTK_FILE
+                )
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" VTK_FILE)
+                math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
+                list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" ABS_TOLERANCE)
+
+                list(
+                    APPEND
+                    TESTER_COMMAND
+                    "${SELECTED_DIFF_TOOL_PATH} -m \
+                ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
+                ${_binary_path}/${VTK_FILE} \
+                --abs ${ABS_TOLERANCE}"
+                )
+            endforeach()
+        else()
+            message(FATAL_ERROR "The number of diff data arguments must be a
+            multiple of three: expected.vtu output.vtu absolute_tolerance."
+            )
+        endif()
+    elseif(AddTest_TESTER STREQUAL "gmldiff")
+        list(LENGTH AddTest_DIFF_DATA DiffDataLength)
+        math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
+        foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 3)
+            list(GET AddTest_DIFF_DATA "${DiffDataIndex}" GML_FILE)
+            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
+            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" ABS_TOL)
+            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
+            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" REL_TOL)
+
+            get_filename_component(FILE_EXPECTED ${GML_FILE} NAME)
+            if(WIN32)
+                file(TO_NATIVE_PATH "${Python_EXECUTABLE}" PY_EXE)
+                # Dirty hack for Windows Python paths with spaces:
+                string(REPLACE "Program Files" "\"Program Files\"" PY_EXE
+                               ${PY_EXE}
+                )
+            else()
+                set(PY_EXE ${Python_EXECUTABLE})
+            endif()
+            list(
+                APPEND
+                TESTER_COMMAND
+                "${PY_EXE} ${PROJECT_SOURCE_DIR}/scripts/test/gmldiff.py \
+                --abs ${ABS_TOL} --rel ${REL_TOL} \
+                ${TESTER_ARGS} ${AddTest_TESTER_ARGS}\
+                ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
+                ${_binary_path}/${GML_FILE}"
+            )
+            list(APPEND FILES_TO_DELETE "${GML_FILE}")
+        endforeach()
+    elseif(AddTest_TESTER STREQUAL "memcheck")
+        set(TESTER_COMMAND
+            "! ${GREP_TOOL_PATH} definitely ${AddTest_SOURCE_PATH}/${AddTest_NAME}_memcheck.txt"
+        )
+    endif()
+
+    add_test(
+        NAME ${TESTER_NAME}
+        COMMAND
+            ${CMAKE_COMMAND} -DSOURCE_PATH=${AddTest_SOURCE_PATH}
+            -DSELECTED_DIFF_TOOL_PATH=${SELECTED_DIFF_TOOL_PATH}
+            "-DTESTER_COMMAND=${TESTER_COMMAND}" -DBINARY_PATH=${_binary_path}
+            -DGLOB_MODE=${GLOB_MODE}
+            -DLOG_FILE_BASE=${PROJECT_BINARY_DIR}/logs/${TESTER_NAME} -P
+            ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
+            --debug-output
+        WORKING_DIRECTORY ${AddTest_SOURCE_PATH}
+    )
+    set_tests_properties(
+        ${TESTER_NAME} PROPERTIES DEPENDS ${TEST_NAME} DISABLED
+                                  ${AddTest_DISABLED} LABELS "tester;${labels}"
     )
 endmacro()
