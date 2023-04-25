@@ -1,6 +1,6 @@
 +++
 date = "2021-03-17"
-title = "Staggered Scheme"
+title = "Injection and Production in 1D Linear Poroelastic Medium with the Staggered Scheme"
 weight = 151
 project = ["HydroMechanics/StaggeredScheme/InjectionProduction1D/InjectionProduction1D.prj"]
 author = "Wenqing Wang and Dominik Kern"
