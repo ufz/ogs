@@ -16,6 +16,7 @@ set(SOURCES
     GeoTreeModel.cpp
     GeoTreeView.cpp
     GMSHPrefsDialog.cpp
+    Layers2GridDialog.cpp
     LicenseDialog.cpp
     LinearEditDialog.cpp
     LineEditDialog.cpp
@@ -68,6 +69,7 @@ set(HEADERS
     GeoTreeModel.h
     GeoTreeView.h
     GMSHPrefsDialog.h
+    Layers2GridDialog.h
     LicenseDialog.h
     LinearEditDialog.h
     LineEditDialog.h

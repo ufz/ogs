@@ -72,6 +72,7 @@
 #include "DataView/DiagramView/DiagramPrefsDialog.h"
 #include "DataView/GMSHPrefsDialog.h"
 #include "DataView/GeoOnMeshMappingDialog.h"
+#include "DataView/Layers2GridDialog.h"
 #include "DataView/LicenseDialog.h"
 #include "DataView/LineEditDialog.h"
 #include "DataView/MergeGeometriesDialog.h"
@@ -1349,6 +1350,12 @@ void MainWindow::showMeshAnalysisDialog()
 void MainWindow::showTranslateDataDialog()
 {
     auto dlg = TranslateDataDialog(_meshModel.get(), _geo_model.get());
+    dlg.exec();
+}
+
+void MainWindow::showLayers2GridDialog()
+{
+    auto dlg = Layers2GridDialog(_meshModel.get());
     dlg.exec();
 }
 

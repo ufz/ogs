@@ -103,6 +103,7 @@ protected slots:
     void showMergeGeometriesDialog();
     void showMeshAnalysisDialog();
     void showTranslateDataDialog();
+    void showLayers2GridDialog();
     void showMeshQualitySelectionDialog(
         MeshLib::VtkMappedMeshSource* mshSource);
     void showVisalizationPrefsDialog();
