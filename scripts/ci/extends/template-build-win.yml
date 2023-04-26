@@ -27,7 +27,10 @@
     - $ctest_group = "Experimental"
     - if($env:CI_COMMIT_BRANCH -eq "master") { $ctest_group = "master" }
     - |
-      if($env:BUILD_CTEST -eq "true" -And -Not $env:CI_MERGE_REQUEST_LABELS -contains "unit_tests" )
+      $ctest_condition = $false
+      if ($null -eq $env:CI_MERGE_REQUEST_LABELS) { $ctest_condition = $true }
+      elseif (-Not ($env:CI_MERGE_REQUEST_LABELS -match "unit_tests")) { $ctest_condition = $true }
+      if($env:BUILD_CTEST -eq "true" -And $ctest_condition -eq $true)
       {
         ctest --preset=$env:CMAKE_PRESET --output-junit Tests/ctest.xml -M Experimental --group $ctest_group --test-dir $build_directory_full -T Test -T Submit --no-tests=error
       }
