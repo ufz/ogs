@@ -100,10 +100,10 @@ void assertPetsLegs(auto const& pets)
 }
 }  // namespace
 
-TEST(BaseLib, ContainerToolsIteratorAndRangeConcepts)
+TEST(BaseLib, ContainerToolsIterators)
 {
-    std::vector<Dog> data;
-    PRACView<Dog> const view{data};
+    std::vector<Dog> data(10);
+    PRACView<Animal> const view{data};
 
     using IteratorType = decltype(view.begin());
     static_assert(std::input_iterator<IteratorType>);
@@ -111,6 +111,107 @@ TEST(BaseLib, ContainerToolsIteratorAndRangeConcepts)
     static_assert(std::bidirectional_iterator<IteratorType>);
     static_assert(std::random_access_iterator<IteratorType>);
 
+    // Sizes and comparisons
+    {
+        // same view
+        auto const it1 = view.begin();
+        ASSERT_EQ(it1, it1);
+        ASSERT_LE(it1, it1);
+        ASSERT_GE(it1, it1);
+
+        auto it2 = view.begin();
+
+        ASSERT_EQ(it1, it2);
+
+        ASSERT_EQ(10, view.size());  // non-empty => end must be different from
+                                     // begin.
+
+        // reset it2 to the end
+        it2 = view.end();
+        ASSERT_EQ(it2, it2);
+        ASSERT_LE(it2, it2);
+        ASSERT_GE(it2, it2);
+
+        ASSERT_EQ(view.size(), std::distance(it1, it2));
+
+        ASSERT_NE(it1, it2);
+        ASSERT_LE(it1, it2);
+        ASSERT_LT(it1, it2);
+        ASSERT_GE(it2, it1);
+        ASSERT_GT(it2, it1);
+
+        // different view on same data
+        {
+            PRACView<Animal> const another_view{data};
+            auto const it = another_view.begin();
+            ASSERT_NE(it1, it);
+            ASSERT_NE(it2, it);
+        }
+
+        // different view on different data
+        {
+            std::vector<Dog> data2(10);
+            PRACView<Animal> const another_view2{data2};
+            auto const it = another_view2.begin();
+            ASSERT_NE(it1, it);
+            ASSERT_NE(it2, it);
+        }
+    }
+
+    // Increments and decrements
+    {
+        auto it1 = view.begin();
+        auto const it2 = ++view.begin();
+        ASSERT_EQ(1, std::distance(it1, it2));
+        ASSERT_EQ(1, it2 - it1);
+        ASSERT_EQ(-1, it1 - it2);
+
+        auto const it3 = it1++;
+        // it3 still points to begin...
+        ASSERT_EQ(view.begin(), it3);
+        // .. but it1 advanced
+        ASSERT_EQ(it1, it2);
+
+        auto it4 = it1--;
+        // it4 still points to second element...
+        ASSERT_EQ(it2, it4);
+        // .. but it1 stepped back
+        ASSERT_EQ(view.begin(), it1);
+
+        --it4;
+        ASSERT_EQ(view.begin(), it4);
+    }
+
+    // Random access
+    {
+        // Compare addresses of pointed objects because access operator returns
+        // value, not in iterator.
+
+        ASSERT_EQ(&(*view.begin()), &(view[0]));
+        ASSERT_EQ(&(*(--view.end())), &(view[view.size() - 1]));
+
+        ASSERT_EQ(&(*(view.begin() + 2)), &(view[2]));
+        ASSERT_EQ(&(*(view.begin() + 2)), &(*(2 + view.begin())));
+        ASSERT_EQ(&(*(view.end() - 2)), &(view[view.size() - 2]));
+
+        auto it1 = view.begin();
+        it1 += 2;
+        ASSERT_EQ(view.begin() + 2, it1);
+        ASSERT_EQ(&(*(view.begin() + 4)), &(it1[2]));
+
+        ASSERT_EQ(&(it1[0]), &(*it1));
+
+        auto it2 = view.end();
+        it2 -= 2;
+        ASSERT_EQ(view.end() - 2, it2);
+        ASSERT_EQ(&(*(view.end() - 4)), &it2[-2]);
+
+        ASSERT_EQ(&(it2[0]), &(*it2));
+    }
+}
+
+TEST(BaseLib, ContainerToolsRangeConcepts)
+{
     static_assert(!ranges::view_<PRACView<Dog>>);
     static_assert(!ranges::viewable_range<PRACView<Dog>>);
     static_assert(ranges::range<PRACView<Dog>>);
