@@ -195,6 +195,9 @@
                 <variable>epsilon</variable>
                 <variable>velocity</variable>
                 <variable>saturation</variable>
+                <variable>MassFlowRate</variable>
+                <variable>NodalForces</variable>
+                <variable>pressure_interpolated</variable>
             </variables>
             <fixed_output_times>
                 0.06

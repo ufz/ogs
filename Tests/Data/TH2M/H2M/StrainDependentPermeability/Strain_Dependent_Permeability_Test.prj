@@ -304,6 +304,7 @@
                 <variable>velocity_gas</variable>
                 <variable>velocity_liquid</variable>
                 <variable>liquid_pressure</variable>
+                <variable>liquid_pressure_interpolated</variable>
                 <variable>liquid_density</variable>
                 <variable>gas_density</variable>
                 <variable>porosity</variable>

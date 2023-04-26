@@ -172,6 +172,7 @@
                 <variable>velocity</variable>
                 <variable>saturation</variable>
                 <variable>porosity</variable>
+                <variable>porosity_avg</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

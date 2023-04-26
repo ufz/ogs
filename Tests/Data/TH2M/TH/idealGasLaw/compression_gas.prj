@@ -272,6 +272,8 @@
                 <variable>rhoL_hL_dot</variable>
                 <variable>k_rel_G</variable>
                 <variable>k_rel_L</variable>
+                <variable>xmCG</variable>
+                <variable>xnCG</variable>
             </variables>
         </output>
     </time_loop>

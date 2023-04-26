@@ -106,6 +106,8 @@
                 <variable>eps_p.D</variable>
                 <variable>eps_p.V</variable>
                 <variable>eps_p.eff</variable>
+                <variable>MaterialForces</variable>
+                <variable>NodalForces</variable>
             </variables>
         </output>
     </time_loop>

@@ -169,6 +169,8 @@
                 <variable>velocity</variable>
                 <variable>saturation</variable>
                 <variable>porosity</variable>
+                <variable>MassFlowRate</variable>
+                <variable>NodalForces</variable>
             </variables>
         </output>
     </time_loop>

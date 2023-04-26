@@ -165,6 +165,8 @@
             <variables>
                 <variable>Cs</variable>
                 <variable>pressure</variable>
+                <variable>molar_flux</variable>
+                <variable>CsFlowRate</variable>
                 <variable>darcy_velocity</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>

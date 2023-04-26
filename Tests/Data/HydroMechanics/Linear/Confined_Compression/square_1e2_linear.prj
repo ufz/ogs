@@ -134,6 +134,9 @@
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
                 <variable>velocity</variable>
+                <variable>MassFlowRate</variable>
+                <variable>NodalForces</variable>
+                <variable>pressure_interpolated</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

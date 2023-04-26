@@ -21,6 +21,7 @@
 #include <vtkUnstructuredGrid.h>
 
 #include "BaseLib/Logging.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 #include "VtuInterface.h"
 
@@ -47,6 +48,26 @@ bool VtuInterface::writeVTU(std::string const& file_name,
         ERR("VtuInterface::write(): No mesh specified.");
         return false;
     }
+
+#ifdef USE_PETSC
+    if (_mesh->getProperties().existsPropertyVector<unsigned char>(
+            "vtkGhostType", MeshLib::MeshItemType::Cell, 1))
+    {
+        auto* ghost_cell_property =
+            _mesh->getProperties().getPropertyVector<unsigned char>(
+                "vtkGhostType", MeshLib::MeshItemType::Cell, 1);
+        if (ghost_cell_property)
+        {
+            const_cast<MeshLib::PropertyVector<unsigned char>*>(
+                ghost_cell_property)
+                ->is_for_output = true;
+        }
+    }
+    else
+    {
+        DBUG("No vtkGhostType data in mesh '{}'.", _mesh->getName());
+    }
+#endif
 
     vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
     vtkSource->SetMesh(_mesh);

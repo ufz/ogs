@@ -38,6 +38,7 @@
             <variables>
                 <variable>displacement</variable>
                 <variable>pressure</variable>
+                <variable>permeability</variable>
                 <variable>sigma_xx</variable>
                 <variable>sigma_yy</variable>
                 <variable>sigma_zz</variable>
@@ -46,6 +47,7 @@
                 <variable>epsilon_yy</variable>
                 <variable>epsilon_zz</variable>
                 <variable>epsilon_xy</variable>
+                <variable>epsilon</variable>
                 <variable>velocity</variable>
             </variables>
         </output>

@@ -102,6 +102,7 @@
             <variables>
                 <variable>displacement</variable>
                 <variable>pressure</variable>
+                <variable>permeability</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
                 <variable>velocity</variable>

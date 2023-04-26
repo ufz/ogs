@@ -154,7 +154,9 @@
             <variables>
                 <variable>displacement</variable>
                 <variable>pressure</variable>
+                <variable>pressure_interpolated</variable>
                 <variable>temperature</variable>
+                <variable>temperature_interpolated</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
             </variables>

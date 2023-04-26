@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="cuboid_1x1x1_hex_27_Dirichlet_Dirichlet.prj">
+    <add sel="/*/time_loop/output" pos="after">
+        <outputs>
+            <output>
+                <type>VTK</type>
+                <prefix>first_output_config_{:meshname}</prefix>
+                <suffix>_ts_{:timestep}_t_{:time}</suffix>
+                <timesteps>
+                    <pair>
+                        <repeat> 1 </repeat>
+                        <each_steps> 1 </each_steps>
+                    </pair>
+                </timesteps>
+                <variables>
+                    <variable> pressure </variable>
+                    <variable> v </variable>
+                    <variable> VolumetricFlowRate </variable>
+                </variables>
+                <meshes>
+                    <mesh>cuboid_1x1x1_hex_27</mesh>
+                    <mesh>cuboid_1x1x1_hex_27_top_boundary</mesh>
+                    <mesh>cuboid_1x1x1_hex_27_bottom_boundary</mesh>
+                </meshes>
+            </output>
+            <output>
+                <type>VTK</type>
+                <prefix>second_output_config_{:meshname}</prefix>
+                <suffix>_ts_{:timestep}_t_{:time}</suffix>
+                <timesteps>
+                    <pair>
+                        <repeat> 1 </repeat>
+                        <each_steps> 2 </each_steps>
+                    </pair>
+                </timesteps>
+                <variables>
+                    <variable> v </variable>
+                </variables>
+                <meshes>
+                    <mesh>cuboid_1x1x1_hex_27</mesh>
+                </meshes>
+            </output>
+            <output>
+                <type>VTK</type>
+                <prefix>third_output_config_{:meshname}</prefix>
+                <suffix>_ts_{:timestep}_t_{:time}</suffix>
+                <timesteps>
+                    <pair>
+                        <repeat> 1 </repeat>
+                        <each_steps> 2 </each_steps>
+                    </pair>
+                </timesteps>
+                <variables>
+                    <variable> VolumetricFlowRate </variable>
+                </variables>
+                <meshes>
+                    <mesh>cuboid_1x1x1_hex_27</mesh>
+                </meshes>
+            </output>
+            <output>
+                <type>VTK</type>
+                <prefix>fourth_output_config_{:meshname}</prefix>
+                <suffix>_ts_{:timestep}_t_{:time}</suffix>
+                <timesteps>
+                    <pair>
+                        <repeat> 1 </repeat>
+                        <each_steps> 2 </each_steps>
+                    </pair>
+                </timesteps>
+                <variables>
+                </variables>
+                <meshes>
+                    <mesh>cuboid_1x1x1_hex_27</mesh>
+                </meshes>
+            </output>
+        </outputs>
+    </add>
+    <remove sel="/*/time_loop/output"/>
+    <add sel="/*/linear_solvers" pos="after">
+        <test_definition>
+            <vtkdiff>
+                <regex>first_output_config_cuboid_1x1x1_hex_27.*.vtu</regex>
+                <field>pressure</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>first_output_config_cuboid_1x1x1_hex_27.*.vtu</regex>
+                <field>v</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>first_output_config_cuboid_1x1x1_hex_27.*.vtu</regex>
+                <field>VolumetricFlowRate</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+
+            <vtkdiff>
+                <regex>second_output_config_cuboid_1x1x1_hex_27.*.vtu</regex>
+                <field>v</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+
+            <vtkdiff>
+                <regex>third_output_config_cuboid_1x1x1_hex_27.*.vtu</regex>
+                <field>VolumetricFlowRate</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+
+            <vtkdiff>
+                <regex>fourth_output_config_cuboid_1x1x1_hex_27.*.vtu</regex>
+                <field>pressure</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>fourth_output_config_cuboid_1x1x1_hex_27.*.vtu</regex>
+                <field>v</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>fourth_output_config_cuboid_1x1x1_hex_27.*.vtu</regex>
+                <field>VolumetricFlowRate</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
+</OpenGeoSysProjectDiff>

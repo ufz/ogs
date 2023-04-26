@@ -171,6 +171,7 @@
                 <variable>T</variable>
                 <variable>p</variable>
                 <variable>darcy_velocity</variable>
+                <variable>specific_flux</variable>
             </variables>
             <meshes>
                 <mesh>cube_1x1x1_hex_1e4</mesh>

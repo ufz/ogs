@@ -208,6 +208,7 @@
                 <variable>porosity</variable>
                 <variable>transport_porosity</variable>
                 <variable>dry_density_solid</variable>
+                <variable>porosity_avg</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

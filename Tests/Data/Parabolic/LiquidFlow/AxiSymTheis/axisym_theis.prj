@@ -120,6 +120,7 @@
             <variables>
                 <variable> pressure </variable>
                 <variable> v </variable>
+                <variable> OGS5_pressure </variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

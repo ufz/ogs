@@ -81,6 +81,19 @@
         <prefix>p_G_{:meshname}</prefix>
     </add>
     
+    <add sel="/*/time_loop/output/variables">
+        <variable>HeatFlowRate</variable>
+        <variable>GasMassFlowRate</variable>
+        <variable>LiquidMassFlowRate</variable>
+        <variable>NodalForces</variable>
+    </add>
+    <add sel="/*/time_loop/submesh_residuum_output/variables">
+        <variable>HeatFlowRate</variable>
+        <variable>GasMassFlowRate</variable>
+        <variable>LiquidMassFlowRate</variable>
+        <variable>NodalForces</variable>
+    </add>
+
     <add sel="/*">
         <test_definition>
             <vtkdiff>

@@ -118,6 +118,8 @@
             <variables>
                 <variable>displacement</variable>
                 <variable>pressure</variable>
+                <variable>pressure_interpolated</variable>
+                <variable>sigma</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

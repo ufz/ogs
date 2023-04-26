@@ -106,7 +106,6 @@
                         </pair>
                     </timesteps>
                 </time_stepping>
-
             </process>
         </processes>
         <output>
@@ -122,6 +121,7 @@
                 <variable>displacement</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
+                <variable>PreConsolidationPressure</variable>
             </variables>
         </output>
     </time_loop>

@@ -238,7 +238,9 @@
             </timesteps>
             <variables>
                 <variable>HTO</variable>
+                <variable>HTOFlowRate</variable>
                 <variable>pressure</variable>
+                <variable>molar_flux</variable>
             </variables>
         </output>
     </time_loop>

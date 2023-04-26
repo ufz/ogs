@@ -523,6 +523,7 @@ if(NOT OGS_USE_MPI)
         PROPERTIES WILL_FAIL TRUE
     )
 
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/Flux/3D/Hex/MultipleOutputsDifferentVariablesSections/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_multiple_outputs_different_variables.xml)
 endif()
 
 AddTest(
@@ -550,7 +551,7 @@ AddTest(
 )
 
 AddTest(
-    NAME SimpleSynthetics_XDMF
+    NAME LiquidFlow_SimpleSynthetics_XDMF
     PATH Parabolic/LiquidFlow/SimpleSynthetics/XDMF
     EXECUTABLE ogs
     EXECUTABLE_ARGS FunctionParameterTest_XDMF.prj
@@ -571,7 +572,7 @@ AddTest(
 )
 
 AddTest(
-    NAME SimpleSynthetics_XDMF_compression_off
+    NAME LiquidFlow_SimpleSynthetics_XDMF_compression_off
     PATH Parabolic/LiquidFlow/SimpleSynthetics/XDMF_compression_off
     EXECUTABLE ogs
     EXECUTABLE_ARGS FunctionParameterTest_XDMF.prj
