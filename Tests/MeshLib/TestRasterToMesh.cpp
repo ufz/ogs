@@ -24,6 +24,7 @@
 
 #ifdef OGS_BUILD_GUI
 #include <vtkImageData.h>
+#include <vtkSmartPointer.h>
 
 #include "Applications/DataExplorer/VtkVis/VtkGeoImageSource.h"
 #include "Applications/DataExplorer/VtkVis/VtkRaster.h"
@@ -256,12 +257,15 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshNone)
 TEST_F(RasterToMeshTest, vtkImage)
 {
     double const spacing = std::numeric_limits<double>::quiet_NaN();
-    vtkImageAlgorithm* const raster = VtkRaster::loadImage(_file_name);
-    double origin[3];
-    raster->GetOutput()->GetOrigin(origin);
+    vtkSmartPointer<vtkImageAlgorithm> const vtk_raster =
+        VtkRaster::loadImage(_file_name);
+    vtkSmartPointer<VtkGeoImageSource> geoImage = VtkGeoImageSource::New();
+    geoImage->setImage(vtk_raster, "vtkImage");
+    geoImage->Update();
+    GeoLib::Raster ascii_raster = VtkGeoImageSource::convertToRaster(geoImage);
 
     auto const mesh = MeshToolsLib::RasterToMesh::convert(
-        raster->GetOutput(), origin, spacing, MeshLib::MeshElemType::TRIANGLE,
+        ascii_raster, MeshLib::MeshElemType::TRIANGLE,
         MeshLib::UseIntensityAs::DATAVECTOR, "test");
     ASSERT_TRUE(mesh != nullptr);
 
