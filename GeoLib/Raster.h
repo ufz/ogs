@@ -70,10 +70,11 @@ public:
         std::copy(begin, end, _raster_data.begin());
     }
 
-    Raster(Raster const&) = delete;
-    Raster(Raster&&) = delete;
-    Raster& operator=(Raster const&) = delete;
-    Raster& operator=(Raster&&) = delete;
+    Raster(Raster const&) = default;
+    Raster(Raster&&) = default;
+    Raster& operator=(Raster const&) = default;
+    Raster& operator=(Raster&&) = default;
+    ~Raster() = default;
 
     /// Returns the complete header information
     RasterHeader const& getHeader() const { return _header; }
@@ -131,8 +132,6 @@ public:
 
     /// Checks if the given point is located within the (x,y)-extension of the raster.
     bool isPntOnRaster(MathLib::Point3d const& pnt) const;
-
-    ~Raster();
 
 private:
     void setCellSize(double cell_size);

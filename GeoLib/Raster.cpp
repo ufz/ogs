@@ -54,10 +54,6 @@ void Raster::refineRaster(std::size_t scaling)
     _header.n_rows *= scaling;
 }
 
-Raster::~Raster()
-{
-}
-
 double Raster::getValueAtPoint(const MathLib::Point3d& pnt) const
 {
     if (pnt[0] >= _header.origin[0] &&
