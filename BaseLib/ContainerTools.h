@@ -138,17 +138,7 @@ struct PolymorphicRandomAccessContainerViewInterface
 
     [[nodiscard]] virtual Element& operator[](std::size_t) const = 0;
 
-    [[nodiscard]] bool operator==(
-        PolymorphicRandomAccessContainerViewInterface const& other)
-        const noexcept
-    {
-        return underlyingContainerPtr() == other.underlyingContainerPtr();
-    }
-
     virtual ~PolymorphicRandomAccessContainerViewInterface() = default;
-
-protected:
-    virtual void const* underlyingContainerPtr() const noexcept = 0;
 };
 
 template <typename Element, typename Container>
@@ -189,12 +179,6 @@ struct CovariantRandomAccessContainerView final
     }
 
     std::size_t size() const noexcept override { return container_.size(); }
-
-protected:
-    void const* underlyingContainerPtr() const noexcept override
-    {
-        return &container_;
-    }
 
 private:
     Container& container_;
