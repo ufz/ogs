@@ -221,6 +221,45 @@ MeshLib::Mesh* removeUnusedElements(MeshLib::Mesh const& mesh)
     return MeshLib::removeElements(mesh, marked_elems, "mesh");
 }
 
+std::unique_ptr<MeshLib::Mesh> createVoxelfromLayeredMesh(
+    std::pair<MathLib::Point3d, MathLib::Point3d>& extent,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& layers,
+    std::array<double, 3> const cellsize)
+{
+    for (auto const& layer : layers)
+    {
+        adjustExtent(extent, *layer);
+    }
+
+    std::unique_ptr<MeshLib::Mesh> mesh(generateInitialMesh(extent, cellsize));
+    if (mesh == nullptr)
+    {
+        /*
+        ERR("Error creating mesh...");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
+        return EXIT_FAILURE;
+        */
+       return nullptr;
+    }
+    setMaterialIDs(*mesh, layers, false); //dilate_arg.getValue()
+
+    std::unique_ptr<MeshLib::Mesh> new_mesh(removeUnusedElements(*mesh));
+    if (new_mesh == nullptr)
+    {
+        /*
+        ERR("Error generating mesh...");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
+        return EXIT_FAILURE;
+        */
+       return nullptr;
+    }
+    return new_mesh;
+}
+
 int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
@@ -310,9 +349,10 @@ int main(int argc, char* argv[])
     std::pair<MathLib::Point3d, MathLib::Point3d> extent(
         MathLib::Point3d{{minval, minval, minval}},
         MathLib::Point3d{{maxval, maxval, maxval}});
+
     for (auto const& layer : layer_names)
-    {
-        std::unique_ptr<MeshLib::Mesh> mesh(
+    {   
+        auto mesh(
             MeshLib::IO::readMeshFromFile(layer));
         if (mesh == nullptr)
         {
@@ -322,32 +362,10 @@ int main(int argc, char* argv[])
 #endif
             return EXIT_FAILURE;
         }
-        adjustExtent(extent, *mesh);
-        layers.emplace_back(std::move(mesh));
+        layers.emplace_back(mesh);
     }
-
-    std::unique_ptr<MeshLib::Mesh> mesh(generateInitialMesh(extent, cellsize));
-    if (mesh == nullptr)
-    {
-        ERR("Error creating mesh...");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
-        return EXIT_FAILURE;
-    }
-    setMaterialIDs(*mesh, layers, dilate_arg.getValue());
-
-    std::unique_ptr<MeshLib::Mesh> new_mesh(removeUnusedElements(*mesh));
-    if (new_mesh == nullptr)
-    {
-        ERR("Error generating mesh...");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
-        return EXIT_FAILURE;
-    }
-
-    MeshLib::IO::VtuInterface vtu(new_mesh.get());
+    auto mesh(createVoxelfromLayeredMesh(extent, layers, cellsize));
+    MeshLib::IO::VtuInterface vtu(mesh.get());
     vtu.writeToFile(output_name);
 #ifdef USE_PETSC
     MPI_Finalize();
