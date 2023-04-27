@@ -44,9 +44,6 @@ struct RasterHeader final
 class Raster final
 {
 public:
-    using const_iterator = const double*;
-    using iterator = double*;
-
     /**
      * @brief Constructor for an object of class Raster. The raster data have
      * to be handed over via input iterators. Deploying iterators has the
@@ -59,19 +56,18 @@ public:
     template <typename InputIterator>
     Raster(RasterHeader header, InputIterator begin, InputIterator end)
         : _header(std::move(header)),
-          _raster_data(new double[_header.n_cols * _header.n_rows])
+          _raster_data(_header.n_cols * _header.n_rows)
     {
         unsigned long const number_of_input_values =
             static_cast<unsigned long>(std::distance(begin, end));
         if (number_of_input_values != _header.n_cols * _header.n_rows)
         {
-            delete[] _raster_data;
             throw std::out_of_range(
                 "Number of raster data mismatch, need " +
                 std::to_string(_header.n_cols * _header.n_rows) +
                 " values, but got " + std::to_string(number_of_input_values));
         }
-        std::copy(begin, end, _raster_data);
+        std::copy(begin, end, _raster_data.begin());
     }
 
     Raster(Raster const&) = delete;
@@ -91,13 +87,21 @@ public:
      * Constant iterator that is pointing to the first raster pixel value.
      * @return constant iterator
      */
-    const_iterator begin() const { return _raster_data; }
+    std::vector<double>::const_iterator begin() const
+    {
+        return _raster_data.begin();
+    }
 
     /**
-     * Constant iterator that is pointing to the last raster pixel value.
+     * Iterator to the element following the last pixel element of the raster
      * @return constant iterator
      */
-    const_iterator end() const { return _raster_data + _header.n_rows*_header.n_cols; }
+    std::vector<double>::const_iterator end() const
+    {
+        return _raster_data.end();
+    }
+
+    double const* data() const { return _raster_data.data(); }
 
     /**
      * Access the pixel specified by row, col.
@@ -135,7 +139,7 @@ private:
     void setNoDataVal (double no_data_val);
 
     GeoLib::RasterHeader _header;
-    double* _raster_data;
+    std::vector<double> _raster_data;
 };
 
 }  // namespace GeoLib
