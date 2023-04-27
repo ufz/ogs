@@ -86,8 +86,6 @@ function(NotebookTest)
          ${NotebookTest_PROPERTIES}
     )
 
-    message(STATUS "Labels of ${TEST_NAME}:\n      ${labels}")
-
     set_tests_properties(
         ${TEST_NAME}
         PROPERTIES ${_props}

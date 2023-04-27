@@ -84,8 +84,6 @@ function(AddTest)
 
     set(AddTest_SOURCE_PATH "${Data_SOURCE_DIR}/${AddTest_PATH}")
     set(AddTest_BINARY_PATH "${Data_BINARY_DIR}/${AddTest_PATH}")
-    file(MAKE_DIRECTORY ${AddTest_BINARY_PATH})
-    file(TO_NATIVE_PATH "${AddTest_BINARY_PATH}" AddTest_BINARY_PATH_NATIVE)
     set(AddTest_STDOUT_FILE_PATH
         "${AddTest_BINARY_PATH}/${AddTest_NAME}_stdout.txt"
     )
@@ -108,9 +106,6 @@ function(AddTest)
     endif()
 
     if("${AddTest_EXECUTABLE}" STREQUAL "ogs")
-        set(AddTest_EXECUTABLE_ARGS -o ${AddTest_BINARY_PATH_NATIVE}
-                                    ${AddTest_EXECUTABLE_ARGS}
-        )
         set(AddTest_WORKING_DIRECTORY ${AddTest_SOURCE_PATH})
     endif()
 
@@ -220,6 +215,192 @@ function(AddTest)
         set(SELECTED_DIFF_TOOL_PATH $<TARGET_FILE:xdmfdiff>)
     endif()
 
+    # -----------
+    if(TARGET ${AddTest_EXECUTABLE})
+        set(AddTest_EXECUTABLE_PARSED $<TARGET_FILE:${AddTest_EXECUTABLE}>)
+    else()
+        set(AddTest_EXECUTABLE_PARSED ${AddTest_EXECUTABLE})
+    endif()
+
+    # Run the wrapper
+    if(DEFINED AddTest_WRAPPER)
+        set(AddTest_WRAPPER_STRING "-${AddTest_WRAPPER}")
+    endif()
+    set(TEST_NAME
+        "${AddTest_EXECUTABLE}-${AddTest_NAME}${AddTest_WRAPPER_STRING}"
+    )
+
+    # Process placeholders <PATH> <SOURCE_PATH> and <BUILD_PATH>
+    string(REPLACE "<PATH>" "${AddTest_PATH}" AddTest_WORKING_DIRECTORY
+                   "${AddTest_WORKING_DIRECTORY}"
+    )
+    string(REPLACE "<PATH>" "${AddTest_PATH}" AddTest_EXECUTABLE_ARGS
+                   "${AddTest_EXECUTABLE_ARGS}"
+    )
+
+    string(REPLACE "<SOURCE_PATH>" "${Data_SOURCE_DIR}/${AddTest_PATH}"
+                   AddTest_WORKING_DIRECTORY "${AddTest_WORKING_DIRECTORY}"
+    )
+    string(REPLACE "<SOURCE_PATH>" "${Data_SOURCE_DIR}/${AddTest_PATH}"
+                   AddTest_EXECUTABLE_ARGS "${AddTest_EXECUTABLE_ARGS}"
+    )
+    string(REPLACE "<BUILD_PATH>" "${Data_BINARY_DIR}/${AddTest_PATH}"
+                   AddTest_WORKING_DIRECTORY "${AddTest_WORKING_DIRECTORY}"
+    )
+    string(REPLACE "<BUILD_PATH>" "${Data_BINARY_DIR}/${AddTest_PATH}"
+                   AddTest_EXECUTABLE_ARGS "${AddTest_EXECUTABLE_ARGS}"
+    )
+
+    current_dir_as_list(ProcessLib labels)
+    if(${AddTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
+        list(APPEND labels default)
+    else()
+        list(APPEND labels large)
+    endif()
+
+    _add_test(${TEST_NAME})
+
+    # OpenMP tests for specific processes only. TODO (CL) Once all processes can
+    # be assembled OpenMP parallel, the condition should be removed.
+    if("${labels}" MATCHES "TH2M|ThermoRichards")
+        _add_test(${TEST_NAME}-omp)
+        _set_omp_test_properties()
+    endif()
+
+    if(AddTest_PYTHON_PACKAGES)
+        list(APPEND labels python_modules)
+        if(OGS_USE_PIP)
+            # Info has to be passed by global property because it is not
+            # possible to set cache variables from inside a function.
+            set_property(
+                GLOBAL APPEND PROPERTY AddTest_PYTHON_PACKAGES
+                                       ${AddTest_PYTHON_PACKAGES}
+            )
+        else()
+            message(
+                STATUS
+                    "Warning: Benchmark ${AddTest_NAME} requires these "
+                    "Python packages: ${AddTest_PYTHON_PACKAGES}!\n Make sure to "
+                    "have them installed in your current Python environment OR "
+                    "set OGS_USE_PIP=ON!"
+            )
+        endif()
+    endif()
+
+    add_dependencies(ctest ${AddTest_EXECUTABLE})
+    add_dependencies(ctest-large ${AddTest_EXECUTABLE})
+
+    if(OGS_WRITE_BENCHMARK_COMMANDS)
+        string(
+            REPLACE
+                ";"
+                " "
+                _cmd
+                "${AddTest_WRAPPER} ${AddTest_WRAPPER_ARGS} ${AddTest_EXECUTABLE} ${AddTest_EXECUTABLE_ARGS}"
+        )
+        string(REPLACE "${Data_BINARY_DIR}/" "" _cmd "${_cmd}")
+        string(REPLACE "-o" "" _cmd "${_cmd}")
+        # string(STRIP "${_cmd}" _cmd)
+        set(_benchmark_run_commands
+            "${_benchmark_run_commands} ${AddTest_EXECUTABLE} ; ${_cmd} ; ${TEST_NAME}\n"
+            CACHE INTERNAL ""
+        )
+    endif()
+
+    if(NOT AddTest_TESTER OR OGS_COVERAGE)
+        return()
+    endif()
+
+    # Run the tester
+    _add_test_tester(${TEST_NAME})
+    if("${labels}" MATCHES "TH2M|ThermoRichards")
+        _add_test_tester(${TEST_NAME}-omp)
+    endif()
+
+endfunction()
+
+# Add a ctest and sets properties
+macro(_add_test TEST_NAME)
+
+    set(_binary_path ${AddTest_BINARY_PATH})
+    if("${TEST_NAME}" MATCHES "-omp")
+        set(_binary_path ${_binary_path}-omp)
+    endif()
+
+    file(TO_NATIVE_PATH "${_binary_path}" AddTest_BINARY_PATH_NATIVE)
+    file(MAKE_DIRECTORY ${_binary_path})
+    set(_exe_args ${AddTest_EXECUTABLE_ARGS})
+    if("${AddTest_EXECUTABLE}" STREQUAL "ogs")
+        set(_exe_args -o ${AddTest_BINARY_PATH_NATIVE}
+                      ${AddTest_EXECUTABLE_ARGS}
+        )
+    endif()
+
+    add_test(
+        NAME ${TEST_NAME}
+        COMMAND
+            ${CMAKE_COMMAND} -DEXECUTABLE=${AddTest_EXECUTABLE_PARSED}
+            "-DEXECUTABLE_ARGS=${_exe_args}" # Quoted because
+            # passed as list see https://stackoverflow.com/a/33248574/80480
+            -DBINARY_PATH=${_binary_path} -DWRAPPER_COMMAND=${WRAPPER_COMMAND}
+            "-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
+            "-DFILES_TO_DELETE=${FILES_TO_DELETE}"
+            -DWORKING_DIRECTORY=${AddTest_WORKING_DIRECTORY}
+            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME}.txt -P
+            ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
+    )
+
+    if(DEFINED AddTest_DEPENDS)
+        if(NOT (TEST ${AddTest_DEPENDS} OR TARGET ${AddTest_DEPENDS}))
+            message(
+                FATAL_ERROR
+                    "AddTest ${TEST_NAME}: dependency ${AddTest_DEPENDS} does not exist!"
+            )
+        endif()
+        set_tests_properties(${TEST_NAME} PROPERTIES DEPENDS ${AddTest_DEPENDS})
+    endif()
+    if(DEFINED MPI_PROCESSORS)
+        set_tests_properties(
+            ${TEST_NAME} PROPERTIES PROCESSORS ${MPI_PROCESSORS}
+        )
+    endif()
+
+    set_tests_properties(
+        ${TEST_NAME}
+        PROPERTIES ${AddTest_PROPERTIES}
+                   COST
+                   ${AddTest_RUNTIME}
+                   DISABLED
+                   ${AddTest_DISABLED}
+                   LABELS
+                   "${labels}"
+    )
+endmacro()
+
+# Sets number of threads, adds label 'omp' and adds a dependency to the
+# non-OpenMP test because both write to the same output files.
+macro(_set_omp_test_properties)
+    get_test_property(${TEST_NAME}-omp ENVIRONMENT _environment)
+    if(NOT _environment)
+        set(_environment "")
+    endif()
+    set_tests_properties(
+        ${TEST_NAME}-omp
+        PROPERTIES ENVIRONMENT "OGS_ASM_THREADS=4;${_environment}" PROCESSORS 4
+                   LABELS "${labels};omp"
+    )
+endmacro()
+
+# Adds subsequent tester ctest.
+macro(_add_test_tester TEST_NAME)
+
+    set(_binary_path ${AddTest_BINARY_PATH})
+    if("${TEST_NAME}" MATCHES "-omp")
+        set(_binary_path ${_binary_path}-omp)
+    endif()
+
+    set(TESTER_NAME "${TEST_NAME}-${AddTest_TESTER}")
+
     if(AddTest_TESTER STREQUAL "diff")
         foreach(FILE ${AddTest_DIFF_DATA})
             get_filename_component(FILE_EXPECTED ${FILE} NAME)
@@ -228,7 +409,7 @@ function(AddTest)
                 TESTER_COMMAND
                 "${SELECTED_DIFF_TOOL_PATH} \
                 ${TESTER_ARGS} ${AddTest_TESTER_ARGS} ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
-                ${AddTest_BINARY_PATH}/${FILE}"
+                ${_binary_path}/${FILE}"
             )
             list(APPEND FILES_TO_DELETE "${FILE}")
 
@@ -267,7 +448,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                     TESTER_COMMAND
                     "${SELECTED_DIFF_TOOL_PATH} \
                 ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
-                ${AddTest_BINARY_PATH}/${VTK_FILE} \
+                ${_binary_path}/${VTK_FILE} \
                 -a ${NAME_A} -b ${NAME_B} \
                 ${TESTER_ARGS} ${AddTest_TESTER_ARGS}"
                 )
@@ -307,7 +488,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                         TESTER_COMMAND
                         "${SELECTED_DIFF_TOOL_PATH} \
                     ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
-                    ${AddTest_BINARY_PATH}/${VTK_FILE} \
+                    ${_binary_path}/${VTK_FILE} \
                     -a ${NAME_A} -b ${NAME_B} \
                     --abs ${ABS_TOL} --rel ${REL_TOL} \
                     ${TESTER_ARGS} ${AddTest_TESTER_ARGS}"
@@ -340,7 +521,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                     TESTER_COMMAND
                     "${SELECTED_DIFF_TOOL_PATH} -m \
                 ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
-                ${AddTest_BINARY_PATH}/${VTK_FILE} \
+                ${_binary_path}/${VTK_FILE} \
                 --abs ${ABS_TOLERANCE}"
                 )
             endforeach()
@@ -376,7 +557,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                 --abs ${ABS_TOL} --rel ${REL_TOL} \
                 ${TESTER_ARGS} ${AddTest_TESTER_ARGS}\
                 ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
-                ${AddTest_BINARY_PATH}/${GML_FILE}"
+                ${_binary_path}/${GML_FILE}"
             )
             list(APPEND FILES_TO_DELETE "${GML_FILE}")
         endforeach()
@@ -386,150 +567,13 @@ Use six arguments version of AddTest with absolute and relative tolerances"
         )
     endif()
 
-    # -----------
-    if(TARGET ${AddTest_EXECUTABLE})
-        set(AddTest_EXECUTABLE_PARSED $<TARGET_FILE:${AddTest_EXECUTABLE}>)
-    else()
-        set(AddTest_EXECUTABLE_PARSED ${AddTest_EXECUTABLE})
-    endif()
-
-    # Run the wrapper
-    if(DEFINED AddTest_WRAPPER)
-        set(AddTest_WRAPPER_STRING "-${AddTest_WRAPPER}")
-    endif()
-    set(TEST_NAME
-        "${AddTest_EXECUTABLE}-${AddTest_NAME}${AddTest_WRAPPER_STRING}"
-    )
-
-    # Process placeholders <PATH> <SOURCE_PATH> and <BUILD_PATH>
-    string(REPLACE "<PATH>" "${AddTest_PATH}" AddTest_WORKING_DIRECTORY
-                   "${AddTest_WORKING_DIRECTORY}"
-    )
-    string(REPLACE "<PATH>" "${AddTest_PATH}" AddTest_EXECUTABLE_ARGS
-                   "${AddTest_EXECUTABLE_ARGS}"
-    )
-
-    string(REPLACE "<SOURCE_PATH>" "${Data_SOURCE_DIR}/${AddTest_PATH}"
-                   AddTest_WORKING_DIRECTORY "${AddTest_WORKING_DIRECTORY}"
-    )
-    string(REPLACE "<SOURCE_PATH>" "${Data_SOURCE_DIR}/${AddTest_PATH}"
-                   AddTest_EXECUTABLE_ARGS "${AddTest_EXECUTABLE_ARGS}"
-    )
-    string(REPLACE "<BUILD_PATH>" "${Data_BINARY_DIR}/${AddTest_PATH}"
-                   AddTest_WORKING_DIRECTORY "${AddTest_WORKING_DIRECTORY}"
-    )
-    string(REPLACE "<BUILD_PATH>" "${Data_BINARY_DIR}/${AddTest_PATH}"
-                   AddTest_EXECUTABLE_ARGS "${AddTest_EXECUTABLE_ARGS}"
-    )
-
-    add_test(
-        NAME ${TEST_NAME}
-        COMMAND
-            ${CMAKE_COMMAND} -DEXECUTABLE=${AddTest_EXECUTABLE_PARSED}
-            "-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}" # Quoted because
-                                                           # passed as list see
-                                                           # https://stackoverflow.com/a/33248574/80480
-            -DBINARY_PATH=${AddTest_BINARY_PATH}
-            -DWRAPPER_COMMAND=${WRAPPER_COMMAND}
-            "-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
-            "-DFILES_TO_DELETE=${FILES_TO_DELETE}"
-            -DWORKING_DIRECTORY=${AddTest_WORKING_DIRECTORY}
-            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME}.txt -P
-            ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
-    )
-    if(DEFINED AddTest_DEPENDS)
-        if(NOT (TEST ${AddTest_DEPENDS} OR TARGET ${AddTest_DEPENDS}))
-            message(
-                FATAL_ERROR
-                    "AddTest ${TEST_NAME}: dependency ${AddTest_DEPENDS} does not exist!"
-            )
-        endif()
-        set_tests_properties(${TEST_NAME} PROPERTIES DEPENDS ${AddTest_DEPENDS})
-    endif()
-    if(DEFINED MPI_PROCESSORS)
-        set_tests_properties(
-            ${TEST_NAME} PROPERTIES PROCESSORS ${MPI_PROCESSORS}
-        )
-    endif()
-
-    current_dir_as_list(ProcessLib labels)
-    if(${AddTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
-        list(APPEND labels default)
-    else()
-        list(APPEND labels large)
-    endif()
-
-    if(AddTest_PYTHON_PACKAGES)
-        list(APPEND labels python_modules)
-        if(OGS_USE_PIP)
-            # Info has to be passed by global property because it is not
-            # possible to set cache variables from inside a function.
-            set_property(
-                GLOBAL APPEND PROPERTY AddTest_PYTHON_PACKAGES
-                                       ${AddTest_PYTHON_PACKAGES}
-            )
-        else()
-            message(
-                STATUS
-                    "Warning: Benchmark ${AddTest_NAME} requires these "
-                    "Python packages: ${AddTest_PYTHON_PACKAGES}!\n Make sure to "
-                    "have them installed in your current Python environment OR "
-                    "set OGS_USE_PIP=ON!"
-            )
-        endif()
-    endif()
-
-    set_tests_properties(
-        ${TEST_NAME}
-        PROPERTIES ${AddTest_PROPERTIES}
-                   COST
-                   ${AddTest_RUNTIME}
-                   DISABLED
-                   ${AddTest_DISABLED}
-                   LABELS
-                   "${labels}"
-    )
-    # Disabled for the moment, does not work with CI under load
-    # ~~~
-    # if(NOT OGS_COVERAGE)
-    #     set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT ${timeout})
-    # endif()
-    # ~~~
-
-    add_dependencies(ctest ${AddTest_EXECUTABLE})
-    add_dependencies(ctest-large ${AddTest_EXECUTABLE})
-
-    if(OGS_WRITE_BENCHMARK_COMMANDS)
-        string(
-            REPLACE
-                ";"
-                " "
-                _cmd
-                "${AddTest_WRAPPER} ${AddTest_WRAPPER_ARGS} ${AddTest_EXECUTABLE} ${AddTest_EXECUTABLE_ARGS}"
-        )
-        string(REPLACE "${Data_BINARY_DIR}/" "" _cmd "${_cmd}")
-        string(REPLACE "-o" "" _cmd "${_cmd}")
-        # string(STRIP "${_cmd}" _cmd)
-        set(_benchmark_run_commands
-            "${_benchmark_run_commands} ${AddTest_EXECUTABLE} ; ${_cmd} ; ${TEST_NAME}\n"
-            CACHE INTERNAL ""
-        )
-    endif()
-
-    if(NOT AddTest_TESTER OR OGS_COVERAGE)
-        return()
-    endif()
-
-    # Run the tester
-    set(TESTER_NAME "${TEST_NAME}-${AddTest_TESTER}")
     add_test(
         NAME ${TESTER_NAME}
         COMMAND
             ${CMAKE_COMMAND} -DSOURCE_PATH=${AddTest_SOURCE_PATH}
-            -DBINARY_PATH=${${AddTest_BINARY_PATH}}
             -DSELECTED_DIFF_TOOL_PATH=${SELECTED_DIFF_TOOL_PATH}
-            "-DTESTER_COMMAND=${TESTER_COMMAND}"
-            -DBINARY_PATH=${AddTest_BINARY_PATH} -DGLOB_MODE=${GLOB_MODE}
+            "-DTESTER_COMMAND=${TESTER_COMMAND}" -DBINARY_PATH=${_binary_path}
+            -DGLOB_MODE=${GLOB_MODE}
             -DLOG_FILE_BASE=${PROJECT_BINARY_DIR}/logs/${TESTER_NAME} -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
             --debug-output
@@ -539,5 +583,4 @@ Use six arguments version of AddTest with absolute and relative tolerances"
         ${TESTER_NAME} PROPERTIES DEPENDS ${TEST_NAME} DISABLED
                                   ${AddTest_DISABLED} LABELS "tester;${labels}"
     )
-
-endfunction()
+endmacro()

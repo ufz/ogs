@@ -50,6 +50,8 @@ public:
         OGS_FATAL("not implemented.");
     }
 
+    virtual std::unique_ptr<AbstractJacobianAssembler> copy() const = 0;
+
     virtual ~AbstractJacobianAssembler() = default;
 };
 

@@ -221,4 +221,10 @@ createCentralDifferencesJacobianAssembler(BaseLib::ConfigTree const& config)
         std::move(abs_eps));
 }
 
+std::unique_ptr<AbstractJacobianAssembler>
+CentralDifferencesJacobianAssembler::copy() const
+{
+    return std::make_unique<CentralDifferencesJacobianAssembler>(*this);
+}
+
 }  // namespace ProcessLib

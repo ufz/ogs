@@ -10,8 +10,12 @@
 
 #pragma once
 
+#include <istream>
 #include <optional>
+#include <ostream>
 #include <string>
+
+#include "BaseLib/Logging.h"
 
 namespace MeshLib
 {

@@ -21,8 +21,8 @@
 namespace ProcessLib
 {
 VectorMatrixAssembler::VectorMatrixAssembler(
-    std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler)
-    : _jacobian_assembler(std::move(jacobian_assembler))
+    AbstractJacobianAssembler& jacobian_assembler)
+    : _jacobian_assembler(jacobian_assembler)
 {
 }
 
@@ -133,7 +133,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
     {
         auto const local_x = x[process_id]->get(indices);
         auto const local_xdot = xdot[process_id]->get(indices);
-        _jacobian_assembler->assembleWithJacobian(
+        _jacobian_assembler.assembleWithJacobian(
             local_assembler, t, dt, local_x, local_xdot, _local_M_data,
             _local_K_data, _local_b_data, _local_Jac_data);
     }
@@ -147,7 +147,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
             getCoupledLocalSolutions(xdot, indices_of_processes);
         auto const local_xdot = MathLib::toVector(local_coupled_xdots);
 
-        _jacobian_assembler->assembleWithJacobianForStaggeredScheme(
+        _jacobian_assembler.assembleWithJacobianForStaggeredScheme(
             local_assembler, t, dt, local_x, local_xdot, process_id,
             _local_M_data, _local_K_data, _local_b_data, _local_Jac_data);
     }

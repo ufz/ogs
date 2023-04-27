@@ -11,12 +11,13 @@
 #pragma once
 
 #include <memory>
+
 #include "AbstractJacobianAssembler.h"
 
 namespace BaseLib
 {
 class ConfigTree;
-}  // BaseLib
+}  // namespace BaseLib
 
 namespace ProcessLib
 {
@@ -58,6 +59,8 @@ public:
                               std::vector<double>& local_K_data,
                               std::vector<double>& local_b_data,
                               std::vector<double>& local_Jac_data) override;
+
+    std::unique_ptr<AbstractJacobianAssembler> copy() const override;
 
 private:
     std::vector<double> const _absolute_epsilons;

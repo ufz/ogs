@@ -41,6 +41,7 @@ TH2MProcess<DisplacementDim>::TH2MProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
+      AssemblyMixin<TH2MProcess<DisplacementDim>>{*_jacobian_assembler},
       _process_data(std::move(process_data))
 {
     // TODO (naumov) remove ip suffix. Probably needs modification of the mesh

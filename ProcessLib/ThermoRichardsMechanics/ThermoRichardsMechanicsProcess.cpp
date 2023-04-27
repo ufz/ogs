@@ -44,6 +44,9 @@ ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
+      AssemblyMixin<
+          ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>>{
+          *_jacobian_assembler},
       process_data_(std::move(process_data))
 {
     ProcessLib::Reflection::addReflectedIntegrationPointWriters<

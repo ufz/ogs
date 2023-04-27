@@ -108,7 +108,7 @@
                 <absolute_tolerance>1e-15</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
-            
+
             <vtkdiff>
                 <regex>p_G.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>gas_pressure_interpolated</field>
@@ -121,11 +121,11 @@
                 <absolute_tolerance>1e-15</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
-            
+
             <vtkdiff>
                 <regex>p_G.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>capillary_pressure_interpolated</field>
-                <absolute_tolerance>5e-10</absolute_tolerance>
+                <absolute_tolerance>5.3e-10</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
@@ -134,7 +134,7 @@
                 <absolute_tolerance>1e-15</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
-            
+
             <vtkdiff>
                 <regex>p_G.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>displacement</field>
