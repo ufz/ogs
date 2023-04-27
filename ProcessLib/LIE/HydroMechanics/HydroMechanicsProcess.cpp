@@ -469,7 +469,7 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &HydroMechanicsLocalAssemblerInterface::postTimestep,
             _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, x_dot,
-            t, dt);
+            t, dt, _use_monolithic_scheme, process_id);
     }
 
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");

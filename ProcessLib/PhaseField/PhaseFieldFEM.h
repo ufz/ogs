@@ -291,8 +291,9 @@ public:
 
     void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
                               Eigen::VectorXd const& /*local_x_dot*/,
-                              double const /*t*/,
-                              double const /*dt*/) override
+                              double const /*t*/, double const /*dt*/,
+                              bool const /*use_monolithic_scheme*/,
+                              int const /*process_id*/) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
