@@ -258,15 +258,6 @@ function(AddTest)
         list(APPEND labels large)
     endif()
 
-    _add_test(${TEST_NAME})
-
-    # OpenMP tests for specific processes only. TODO (CL) Once all processes can
-    # be assembled OpenMP parallel, the condition should be removed.
-    if("${labels}" MATCHES "TH2M|ThermoRichards")
-        _add_test(${TEST_NAME}-omp)
-        _set_omp_test_properties()
-    endif()
-
     if(AddTest_PYTHON_PACKAGES)
         list(APPEND labels python_modules)
         if(OGS_USE_PIP)
@@ -285,6 +276,15 @@ function(AddTest)
                     "set OGS_USE_PIP=ON!"
             )
         endif()
+    endif()
+
+    _add_test(${TEST_NAME})
+
+    # OpenMP tests for specific processes only. TODO (CL) Once all processes can
+    # be assembled OpenMP parallel, the condition should be removed.
+    if("${labels}" MATCHES "TH2M|ThermoRichards")
+        _add_test(${TEST_NAME}-omp)
+        _set_omp_test_properties()
     endif()
 
     add_dependencies(ctest ${AddTest_EXECUTABLE})
