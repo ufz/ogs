@@ -57,9 +57,6 @@ build wheels win:
     - .vs2019-environment
   variables:
     SKBUILD_BUILD_OPTIONS: "/m" # TODO not supported yet in scikit-build-core
-    CMAKE_GENERATOR: "Visual Studio 16 2019"
-    # Does not work as it does not select the host64 compiler:
-    # SKBUILD_GENERATOR: "Ninja"
   <<: *wheels_template
 
 publish wheels:
