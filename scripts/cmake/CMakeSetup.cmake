@@ -9,6 +9,13 @@ if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
     )
 endif()
 
+message(STATUS "Generator: ${CMAKE_GENERATOR}")
+if(WIN32 AND (NOT "${CMAKE_GENERATOR}" MATCHES "Visual Studio")
+   AND "$ENV{CIBUILDWHEEL}"
+)
+    message(FATAL_ERROR "Wheels only build in Visual Studio!")
+endif()
+
 set(_collection ${PROJECT_SOURCE_DIR}/ThirdParty/collection)
 # If submodules in ThirdParty/collection are initialized and this is a Guix
 # build use submodule as CPM sources.
