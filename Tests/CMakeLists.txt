@@ -79,6 +79,7 @@ endif()
 
 if(OGS_USE_MFRONT)
     add_subdirectory(MaterialLib/MFront)
+    append_source_files(TEST_SOURCES MaterialLib/MFront)
 endif()
 
 ogs_add_executable(testrunner ${TEST_SOURCES})

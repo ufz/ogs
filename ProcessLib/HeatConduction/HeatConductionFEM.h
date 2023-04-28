@@ -101,17 +101,20 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
         MaterialPropertyLib::VariableArray vars;
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            pos.setIntegrationPoint(ip);
             auto const& sm = _shape_matrices[ip];
+            ParameterLib::SpatialPosition const pos{
+                std::nullopt, _element.getID(), ip,
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(_element,
+                                                                      sm.N))};
+
             auto const& wp = _integration_method.getWeightedPoint(ip);
 
             // get the local temperature and put it in the variable array for

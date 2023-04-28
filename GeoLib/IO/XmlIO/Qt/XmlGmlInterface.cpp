@@ -18,6 +18,7 @@
 #include <QTextCodec>
 #include <QtXml/QDomDocument>
 
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/Logging.h"
 #include "GeoLib/Triangle.h"
 

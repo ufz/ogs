@@ -23,6 +23,7 @@
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polyline.h"
+#include "GeoLib/Station.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tri.h"

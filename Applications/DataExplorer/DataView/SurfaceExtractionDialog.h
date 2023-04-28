@@ -14,8 +14,10 @@
 
 #pragma once
 
-#include "ui_SurfaceExtraction.h"
+#include <Eigen/Core>
 #include <QDialog>
+
+#include "ui_SurfaceExtraction.h"
 
 namespace MeshLib {
     class Mesh;
