@@ -193,10 +193,9 @@ bool VtkVisImageItem::writeAsRaster()
 
     auto const raster = VtkGeoImageSource::convertToRaster(imageSource);
 
-    // if raster empty
-    if (raster.begin() == raster.end())
+    if (!raster)
     {
-        OGSError::box("Unsupported pixel composition!");
+        OGSError::box("Image could not be converted to a raster.");
         return false;
     }
 
@@ -207,7 +206,7 @@ bool VtkVisImageItem::writeAsRaster()
         nullptr, "Save raster as",
         LastSavedFileDirectory::getDir() + rastername, filetype);
     LastSavedFileDirectory::setDir(filename);
-    FileIO::AsciiRasterInterface::writeRasterAsASC(raster,
+    FileIO::AsciiRasterInterface::writeRasterAsASC(*raster,
                                                    filename.toStdString());
     return true;
 }

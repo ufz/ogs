@@ -24,7 +24,6 @@
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 
-#include "GeoLib/Raster.h"
 #include "VtkRaster.h"
 
 vtkStandardNewMacro(VtkGeoImageSource);
@@ -120,7 +119,7 @@ void VtkGeoImageSource::SetUserProperty(QString name, QVariant value)
     Q_UNUSED(value);
 }
 
-GeoLib::Raster VtkGeoImageSource::convertToRaster(
+std::optional<GeoLib::Raster> VtkGeoImageSource::convertToRaster(
     VtkGeoImageSource* const source)
 {
     int dims[3];
@@ -147,8 +146,7 @@ GeoLib::Raster VtkGeoImageSource::convertToRaster(
     {
         ERR("VtkMeshConverter::convertImgToMesh(): Unsupported pixel "
             "composition!");
-        std::vector<double> const dummy_vec(0);
-        return GeoLib::Raster(header, dummy_vec.begin(), dummy_vec.end());
+        return {};
     }
 
     std::vector<double> pix(header.n_cols * header.n_rows * header.n_depth, 0);
@@ -178,5 +176,5 @@ GeoLib::Raster VtkGeoImageSource::convertToRaster(
         }
     }
 
-    return GeoLib::Raster(header, pix.begin(), pix.end());
+    return std::make_optional<GeoLib::Raster>(header, pix.begin(), pix.end());
 }

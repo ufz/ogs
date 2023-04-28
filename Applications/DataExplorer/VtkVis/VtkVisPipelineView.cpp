@@ -179,8 +179,14 @@ void VtkVisPipelineView::showImageToMeshConversionDialog()
         VtkGeoImageSource::SafeDownCast(algorithm);
 
     auto const raster = VtkGeoImageSource::convertToRaster(imageSource);
+    if (!raster)
+    {
+        OGSError::box("Image could not be converted to a raster.");
+        return;
+    }
+
     auto mesh = MeshToolsLib::RasterToMesh::convert(
-        raster, dlg.getElementSelection(), dlg.getIntensitySelection(),
+        *raster, dlg.getElementSelection(), dlg.getIntensitySelection(),
         dlg.getArrayName());
     if (mesh)
     {

@@ -262,10 +262,11 @@ TEST_F(RasterToMeshTest, vtkImage)
     vtkSmartPointer<VtkGeoImageSource> geoImage = VtkGeoImageSource::New();
     geoImage->setImage(vtk_raster, "vtkImage");
     geoImage->Update();
-    GeoLib::Raster ascii_raster = VtkGeoImageSource::convertToRaster(geoImage);
+    auto const ascii_raster = VtkGeoImageSource::convertToRaster(geoImage);
 
+    ASSERT_TRUE(ascii_raster != std::nullopt);
     auto const mesh = MeshToolsLib::RasterToMesh::convert(
-        ascii_raster, MeshLib::MeshElemType::TRIANGLE,
+        *ascii_raster, MeshLib::MeshElemType::TRIANGLE,
         MeshLib::UseIntensityAs::DATAVECTOR, "test");
     ASSERT_TRUE(mesh != nullptr);
 
