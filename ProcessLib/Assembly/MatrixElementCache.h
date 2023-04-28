@@ -59,12 +59,6 @@ struct MatrixElementCacheEntry
         default;
     MatrixElementCacheEntry& operator=(MatrixElementCacheEntry&&) = default;
 
-    bool indicesEqualTo(MatrixElementCacheEntry<Dim> const& other) const
-    {
-        return std::equal(indices.begin(), indices.end(),
-                          other.indices.begin());
-    }
-
     std::array<GlobalIndexType, Dim> indices;
     double value;
 };
