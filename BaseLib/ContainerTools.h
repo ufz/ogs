@@ -24,9 +24,14 @@ struct PolymorphicRandomAccessContainerViewInterface;
 template <typename Element>
 struct PolymorphicRandomAccessContainerViewIterator
 {
+    using value_type = Element;
+    using difference_type = std::ptrdiff_t;
+
+    PolymorphicRandomAccessContainerViewIterator() = default;
+
     PolymorphicRandomAccessContainerViewIterator(
         std::size_t n,
-        PolymorphicRandomAccessContainerViewInterface<Element> const&
+        PolymorphicRandomAccessContainerViewInterface<Element> const* const
             view) noexcept
         : n_{n}, view_{view}
     {
@@ -37,21 +42,82 @@ struct PolymorphicRandomAccessContainerViewIterator
         ++n_;
         return *this;
     }
-
-    [[nodiscard]] Element& operator*() const { return view_[n_]; }
-
-    [[nodiscard]] bool operator==(
-        PolymorphicRandomAccessContainerViewIterator const& other)
-        const noexcept
+    PolymorphicRandomAccessContainerViewIterator operator++(int) noexcept
     {
-        return n_ == other.n_ && view_ == other.view_;
+        auto copy{*this};
+        operator++();
+        return copy;
     }
 
-    // more member functions might be implemented in the future
+    PolymorphicRandomAccessContainerViewIterator& operator--() noexcept
+    {
+        --n_;
+        return *this;
+    }
+    PolymorphicRandomAccessContainerViewIterator operator--(int) noexcept
+    {
+        auto copy{*this};
+        operator--();
+        return copy;
+    }
+
+    PolymorphicRandomAccessContainerViewIterator& operator+=(
+        difference_type const increment) noexcept
+    {
+        n_ += increment;
+        return *this;
+    }
+    PolymorphicRandomAccessContainerViewIterator& operator-=(
+        difference_type const decrement) noexcept
+    {
+        n_ -= decrement;
+        return *this;
+    }
+
+    [[nodiscard]] friend PolymorphicRandomAccessContainerViewIterator operator+(
+        PolymorphicRandomAccessContainerViewIterator iterator,
+        difference_type const increment) noexcept
+    {
+        iterator.n_ += increment;
+        return iterator;
+    }
+
+    [[nodiscard]] friend PolymorphicRandomAccessContainerViewIterator operator+(
+        difference_type const increment,
+        PolymorphicRandomAccessContainerViewIterator iterator) noexcept
+    {
+        iterator.n_ += increment;
+        return iterator;
+    }
+
+    [[nodiscard]] difference_type operator-(
+        PolymorphicRandomAccessContainerViewIterator const other) const noexcept
+    {
+        assert(view_ == other.view_);
+        return n_ - other.n_;
+    }
+
+    [[nodiscard]] friend PolymorphicRandomAccessContainerViewIterator operator-(
+        PolymorphicRandomAccessContainerViewIterator iterator,
+        difference_type const decrement) noexcept
+    {
+        iterator.n_ -= decrement;
+        return iterator;
+    }
+
+    [[nodiscard]] Element& operator*() const { return (*view_)[n_]; }
+    [[nodiscard]] Element& operator[](difference_type n) const
+    {
+        return (*view_)[n_ + n];
+    }
+
+    auto operator<=>(
+        PolymorphicRandomAccessContainerViewIterator const&) const = default;
 
 private:
-    std::size_t n_;
-    PolymorphicRandomAccessContainerViewInterface<Element> const& view_;
+    std::size_t n_ = 0;
+    PolymorphicRandomAccessContainerViewInterface<Element> const* view_ =
+        nullptr;
 };
 
 template <typename Element>
@@ -60,29 +126,19 @@ struct PolymorphicRandomAccessContainerViewInterface
     [[nodiscard]] PolymorphicRandomAccessContainerViewIterator<Element> begin()
         const noexcept
     {
-        return {0, *this};
+        return {0, this};
     }
     [[nodiscard]] PolymorphicRandomAccessContainerViewIterator<Element> end()
         const noexcept
     {
-        return {size(), *this};
+        return {size(), this};
     }
 
     [[nodiscard]] virtual std::size_t size() const noexcept = 0;
 
     [[nodiscard]] virtual Element& operator[](std::size_t) const = 0;
 
-    [[nodiscard]] bool operator==(
-        PolymorphicRandomAccessContainerViewInterface const& other)
-        const noexcept
-    {
-        return underlyingContainerPtr() == other.underlyingContainerPtr();
-    }
-
     virtual ~PolymorphicRandomAccessContainerViewInterface() = default;
-
-protected:
-    virtual void const* underlyingContainerPtr() const noexcept = 0;
 };
 
 template <typename Element, typename Container>
@@ -123,12 +179,6 @@ struct CovariantRandomAccessContainerView final
     }
 
     std::size_t size() const noexcept override { return container_.size(); }
-
-protected:
-    void const* underlyingContainerPtr() const noexcept override
-    {
-        return &container_;
-    }
 
 private:
     Container& container_;
