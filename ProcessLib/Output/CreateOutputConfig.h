@@ -15,5 +15,7 @@
 
 namespace ProcessLib
 {
-OutputConfig createOutputConfig(const BaseLib::ConfigTree& config);
+OutputConfig createOutputConfig(
+    const BaseLib::ConfigTree& config,
+    std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes);
 }

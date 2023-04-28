@@ -101,10 +101,10 @@ Output createOutput(OutputConfig&& oc, std::string const& output_directory,
 std::vector<Output> createOutput(
     const BaseLib::ConfigTree& config,
     std::string const& output_directory,
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
+    std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes)
 {
     std::vector<Output> outputs;
-    auto oc = createOutputConfig(config);
+    auto oc = createOutputConfig(config, meshes);
     outputs.push_back(createOutput(std::move(oc), output_directory, meshes));
     return outputs;
 }
@@ -112,7 +112,7 @@ std::vector<Output> createOutput(
 std::vector<Output> createOutputs(
     const BaseLib::ConfigTree& output_configs,
     std::string const& output_directory,
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
+    std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes)
 {
     DBUG("Parse outputs configuration:");
     std::vector<Output> outputs;
@@ -120,7 +120,7 @@ std::vector<Output> createOutputs(
          //! \ogs_file_param{prj__time_loop__outputs__output}
          output_configs.getConfigSubtreeList("output"))
     {
-        auto oc = createOutputConfig(output_config);
+        auto oc = createOutputConfig(output_config, meshes);
         outputs.push_back(
             createOutput(std::move(oc), output_directory, meshes));
     }

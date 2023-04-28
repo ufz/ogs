@@ -204,9 +204,9 @@ namespace ProcessLib
 {
 SubmeshResiduumOutputConfig createSubmeshResiduumOutputConfig(
     BaseLib::ConfigTree const& config, std::string const& output_directory,
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
+    std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes)
 {
-    auto oc = createOutputConfig(config);
+    auto oc = createOutputConfig(config, meshes);
 
     if (oc.mesh_names_for_output.empty())
     {

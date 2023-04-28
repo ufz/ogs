@@ -31,10 +31,10 @@ Output createOutput(OutputConfig&& oc, std::string const& output_directory,
 std::vector<Output> createOutput(
     const BaseLib::ConfigTree& config,
     const std::string& output_directory,
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
+    std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes);
 
 std::vector<Output> createOutputs(
     const BaseLib::ConfigTree& config,
     std::string const& output_directory,
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
+    std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes);
 }  // namespace ProcessLib
