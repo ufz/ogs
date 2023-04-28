@@ -188,7 +188,7 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
             std::ptrdiff_t const n_loc_asm =
                 static_cast<std::ptrdiff_t>(local_assemblers.size());
 
-#pragma omp for
+#pragma omp for nowait
             for (std::ptrdiff_t element_id = 0; element_id < n_loc_asm;
                  ++element_id)
             {
@@ -212,7 +212,7 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
             std::ptrdiff_t const n_act_elem =
                 static_cast<std::ptrdiff_t>(active_elements.size());
 
-#pragma omp for
+#pragma omp for nowait
             for (std::ptrdiff_t i = 0; i < n_act_elem; ++i)
             {
                 auto const element_id = active_elements[i];
