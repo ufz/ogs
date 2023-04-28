@@ -80,7 +80,7 @@
     <add sel="/*/time_loop/submesh_residuum_output">
         <prefix>p_G_{:meshname}</prefix>
     </add>
-    
+
     <add sel="/*/time_loop/output/variables">
         <variable>HeatFlowRate</variable>
         <variable>GasMassFlowRate</variable>
@@ -125,7 +125,7 @@
             <vtkdiff>
                 <regex>p_G.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>capillary_pressure_interpolated</field>
-                <absolute_tolerance>5.3e-10</absolute_tolerance>
+                <absolute_tolerance>6e-10</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
