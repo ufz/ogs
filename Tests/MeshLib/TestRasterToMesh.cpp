@@ -256,7 +256,6 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshNone)
 #ifdef OGS_BUILD_GUI
 TEST_F(RasterToMeshTest, vtkImage)
 {
-    double const spacing = std::numeric_limits<double>::quiet_NaN();
     vtkSmartPointer<vtkImageAlgorithm> const vtk_raster =
         VtkRaster::loadImage(_file_name);
     vtkSmartPointer<VtkGeoImageSource> geoImage = VtkGeoImageSource::New();
