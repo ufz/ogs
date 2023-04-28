@@ -309,6 +309,9 @@ bool isBaseNode(Node const& node,
 std::pair<double, double> minMaxEdgeLength(
     std::vector<Element*> const& elements);
 
+std::vector<MeshLib::Element*> getMeshElementsForMaterialIDs(
+    MeshLib::Mesh const& mesh, std::vector<int> const& selected_material_ids);
+
 /// MeshLib specific, lazy, non-owning, non-mutating, composable range views.
 namespace views
 {
