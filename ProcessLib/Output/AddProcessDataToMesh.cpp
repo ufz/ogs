@@ -289,7 +289,7 @@ static std::set<std::string> addPrimaryVariablesToMesh(
         global_component_offset_next += n_components;
 
         if (!output_variables.empty() &&
-            output_variables.find(pv.getName()) == output_variables.cend())
+            !output_variables.contains(pv.getName()))
         {
             continue;
         }
