@@ -14,6 +14,7 @@
 #include <fstream>
 
 #include "BaseLib/StringTools.h"
+#include "BaseLib/ThreadException.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Assembly/MatrixAssemblyStats.h"
 #include "ProcessLib/Assembly/MatrixElementCache.h"
@@ -155,6 +156,8 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
     ConcurrentMatrixView b_view(b);
     ConcurrentMatrixView Jac_view(Jac);
 
+    ThreadException exception;
+    bool assembly_error = false;
 #pragma omp parallel num_threads(num_threads_)
     {
 #ifdef _OPENMP
@@ -192,12 +195,25 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
             for (std::ptrdiff_t element_id = 0; element_id < n_loc_asm;
                  ++element_id)
             {
+                if (assembly_error)
+                {
+                    continue;
+                }
                 auto& loc_asm = local_assemblers[element_id];
 
-                assembleWithJacobianOneElement(
-                    element_id, loc_asm, dof_table, t, dt, x, xdot,
-                    local_M_data, local_K_data, local_b_data, local_Jac_data,
-                    indices, *jac_asm, cache);
+                try
+                {
+                    assembleWithJacobianOneElement(
+                        element_id, loc_asm, dof_table, t, dt, x, xdot,
+                        local_M_data, local_K_data, local_b_data,
+                        local_Jac_data, indices, *jac_asm, cache);
+                }
+                catch (...)
+                {
+                    exception.capture();
+                    assembly_error = true;
+                    continue;
+                }
 
                 local_matrix_output_(t, process_id, element_id, local_M_data,
                                      local_K_data, local_b_data,
@@ -215,13 +231,27 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
 #pragma omp for nowait
             for (std::ptrdiff_t i = 0; i < n_act_elem; ++i)
             {
+                if (assembly_error)
+                {
+                    continue;
+                }
+
                 auto const element_id = active_elements[i];
                 auto& loc_asm = local_assemblers[element_id];
 
-                assembleWithJacobianOneElement(
-                    element_id, loc_asm, dof_table, t, dt, x, xdot,
-                    local_M_data, local_K_data, local_b_data, local_Jac_data,
-                    indices, *jac_asm, cache);
+                try
+                {
+                    assembleWithJacobianOneElement(
+                        element_id, loc_asm, dof_table, t, dt, x, xdot,
+                        local_M_data, local_K_data, local_b_data,
+                        local_Jac_data, indices, *jac_asm, cache);
+                }
+                catch (...)
+                {
+                    exception.capture();
+                    assembly_error = true;
+                    continue;
+                }
 
                 local_matrix_output_(t, process_id, element_id, local_M_data,
                                      local_K_data, local_b_data,
@@ -233,5 +263,6 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
     stats->print();
 
     global_matrix_output_(t, process_id, M, K, b, &Jac);
+    exception.rethrow();
 }
 }  // namespace ProcessLib::Assembly
