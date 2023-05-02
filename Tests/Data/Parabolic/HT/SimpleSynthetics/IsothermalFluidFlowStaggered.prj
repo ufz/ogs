@@ -175,9 +175,7 @@
                 </pair>
             </timesteps>
             <variables>
-                <variable>T</variable>
-                <variable>p</variable>
-                <variable>darcy_velocity</variable>
+                <!-- Test output of all variables, primary T, and p, and secondary darcy_velocity. -->
             </variables>
         </output>
     </time_loop>
