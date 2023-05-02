@@ -59,22 +59,6 @@ struct MatrixElementCacheEntry
         default;
     MatrixElementCacheEntry& operator=(MatrixElementCacheEntry&&) = default;
 
-    static bool compareIndices(MatrixElementCacheEntry<Dim> const& a,
-                               MatrixElementCacheEntry<Dim> const& b)
-    {
-        auto const& ia = a.indices;
-        auto const& ib = b.indices;
-
-        return std::lexicographical_compare(ia.begin(), ia.end(), ib.begin(),
-                                            ib.end());
-    }
-
-    bool indicesEqualTo(MatrixElementCacheEntry<Dim> const& other) const
-    {
-        return std::equal(indices.begin(), indices.end(),
-                          other.indices.begin());
-    }
-
     std::array<GlobalIndexType, Dim> indices;
     double value;
 };
@@ -258,9 +242,6 @@ private:
 
     void addToGlobal()
     {
-        std::sort(cache_.begin(), cache_.end(),
-                  MatrixElementCacheEntry<Dim>::compareIndices);
-
         mat_or_vec_.add(cache_);
         stats_.count_global += cache_.size();
         cache_.clear();
