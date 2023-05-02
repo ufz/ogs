@@ -22,6 +22,14 @@
 
 namespace
 {
+std::string getSeparatorAfterFilenamePrefix(std::string const& filenamePrefix)
+{
+    return filenamePrefix.empty() || filenamePrefix.ends_with('/') ||
+                   filenamePrefix.ends_with('\\')
+               ? ""
+               : "_";
+}
+
 #ifndef USE_PETSC
 static void outputGlobalMatrix(GlobalMatrix const& mat, std::ostream& os)
 {
@@ -34,22 +42,6 @@ static void outputGlobalVector(GlobalVector const& vec, std::ostream& os)
 {
     os << "(" << vec.size() << ")\n";
     os << vec.getRawVector() << '\n';
-}
-#endif
-
-static std::optional<std::string> getEnvironmentVariable(
-    std::string const& env_var)
-{
-    char const* const prefix = std::getenv(env_var.c_str());
-    return prefix ? std::make_optional(prefix) : std::nullopt;
-}
-
-std::string getSeparatorAfterFilenamePrefix(std::string const& filenamePrefix)
-{
-    return filenamePrefix.empty() || filenamePrefix.ends_with('/') ||
-                   filenamePrefix.ends_with('\\')
-               ? ""
-               : "_";
 }
 
 std::ofstream openGlobalMatrixOutputFile(std::string const& filenamePrefix,
@@ -72,6 +64,14 @@ std::ofstream openGlobalMatrixOutputFile(std::string const& filenamePrefix,
     }
 
     return fh;
+}
+#endif
+
+static std::optional<std::string> getEnvironmentVariable(
+    std::string const& env_var)
+{
+    char const* const prefix = std::getenv(env_var.c_str());
+    return prefix ? std::make_optional(prefix) : std::nullopt;
 }
 
 std::string localMatrixOutputFilename(std::string const& filenamePrefix)
