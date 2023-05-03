@@ -36,6 +36,7 @@
 #include "FeTestData/TestFeTRI6.h"
 #include "MeshLib/CoordinateSystem.h"
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
+#include "MeshToolsLib/ComputeElementVolumeNumerically.h"
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 #include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
@@ -192,4 +193,8 @@ TYPED_TEST(GradShapeFunctionTest,
     }
 
     ASSERT_NEAR(this->element_volume, computed_element_volume, 1.e-11);
+
+    ASSERT_NEAR(
+        MeshToolsLib::computeElementVolumeNumerically(*this->mesh_element),
+        computed_element_volume, 1.e-11);
 }
