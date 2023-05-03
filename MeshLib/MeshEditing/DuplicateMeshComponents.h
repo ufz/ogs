@@ -18,7 +18,6 @@
 
 namespace MeshLib
 {
-class Mesh;
 class Node;
 class Element;
 

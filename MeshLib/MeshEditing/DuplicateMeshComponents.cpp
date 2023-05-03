@@ -15,7 +15,6 @@
 #include "DuplicateMeshComponents.h"
 
 #include "MeshLib/Elements/Elements.h"
-#include "MeshLib/Mesh.h"
 
 namespace MeshLib
 {
