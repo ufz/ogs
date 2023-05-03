@@ -312,6 +312,10 @@ std::pair<double, double> minMaxEdgeLength(
 std::vector<MeshLib::Element*> getMeshElementsForMaterialIDs(
     MeshLib::Mesh const& mesh, std::vector<int> const& selected_material_ids);
 
+std::unique_ptr<MeshLib::Mesh> createMaterialIDsBasedSubMesh(
+    MeshLib::Mesh const& mesh, std::vector<int> const& material_ids,
+    std::string const& name_for_created_mesh);
+
 /// MeshLib specific, lazy, non-owning, non-mutating, composable range views.
 namespace views
 {

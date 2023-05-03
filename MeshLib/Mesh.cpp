@@ -32,6 +32,7 @@
 #include "Elements/Quad.h"
 #include "Elements/Tet.h"
 #include "Elements/Tri.h"
+#include "MeshEditing/DuplicateMeshComponents.h"
 
 /// Mesh counter used to uniquely identify meshes by id.
 static std::size_t global_mesh_counter = 0;
@@ -431,6 +432,16 @@ std::vector<MeshLib::Element*> getMeshElementsForMaterialIDs(
         }
     }
     return selected_elements;
+}
+
+std::unique_ptr<MeshLib::Mesh> createMaterialIDsBasedSubMesh(
+    MeshLib::Mesh const& mesh, std::vector<int> const& material_ids,
+    std::string const& name_for_created_mesh)
+{
+    auto const elements =
+        MeshLib::getMeshElementsForMaterialIDs(mesh, material_ids);
+    return MeshLib::createMeshFromElementSelection(
+        name_for_created_mesh, MeshLib::cloneElements(elements));
 }
 
 }  // namespace MeshLib
