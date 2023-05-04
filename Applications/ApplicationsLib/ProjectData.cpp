@@ -638,7 +638,7 @@ void ProjectData::parseProcesses(
             //! \ogs_file_param{prj__processes__process__name}
             process_config.getConfigParameter<std::string>("name");
 
-        auto const integration_order =
+        [[maybe_unused]] auto const integration_order =
             //! \ogs_file_param{prj__processes__process__integration_order}
             process_config.getConfigParameter<int>("integration_order");
 
