@@ -43,16 +43,17 @@ std::string parseOutputMeshConfig(
         "Required mesh with name '" + mesh_name + "' not found.");
 
     auto material_id_string =
-        //! //\ogs_file_attr{prj__time_loop__output__meshes__mesh__material_ids}
-        output_mesh_config.getConfigAttribute<std::string>("material_ids", {});
+        //! \ogs_file_attr{prj__time_loop__output__meshes__mesh__material_ids}
+        output_mesh_config.getConfigAttributeOptional<std::string>(
+            "material_ids");
 
-    if (material_id_string.empty())
+    if (!material_id_string)
     {
         return mesh_name;
     }
 
     auto const material_ids_for_output =
-        BaseLib::splitMaterialIdString(material_id_string);
+        BaseLib::splitMaterialIdString(*material_id_string);
 #ifdef USE_PETSC
     // this mesh isn't yet a NodePartitionedMesh
     auto subdomain_mesh = MeshLib::createMaterialIDsBasedSubMesh(
