@@ -76,6 +76,8 @@ Patch files contain `<replace>`, `<add>` and `<remove>`-elements with [XPath](ht
 </OpenGeoSysProjectDiff>
 ```
 
+For more examples see [this page on the XML Patch Operations Framework](https://www.rfc-editor.org/rfc/rfc5261.html).
+
 ### Option 2a: Supply patch file(s) additionally to the prj-file
 
 ```bash
