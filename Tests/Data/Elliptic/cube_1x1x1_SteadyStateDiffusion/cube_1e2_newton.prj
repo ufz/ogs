@@ -19,7 +19,7 @@
         </process>
     </processes>
     <media>
-        <medium id="0">
+        <medium id="0,1,2,3,4">
             <phases/>
             <properties>
                 <property>
