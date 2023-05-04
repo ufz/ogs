@@ -3,6 +3,9 @@
     <replace sel="/*/meshes/mesh[1]/text()">cube_1x1x1_hex_1e2.vtu</replace>
     <replace sel="/*/meshes/mesh[2]/text()">cube_1x1x1_hex_1e2_left.vtu</replace>
     <replace sel="/*/time_loop/output/meshes/mesh/text()" after_includes="true">cube_1x1x1_hex_1e2</replace>
+    <add sel="/*/time_loop/output/meshes/mesh" after_includes="true" pos="after">
+        <mesh material_ids="0, 1">cube_1x1x1_hex_1e2</mesh>
+    </add>
     <replace sel="/*/media/medium/@id" after_includes="true">0,1,2,3,4</replace>
     <replace sel="/*/time_loop/output/prefix/text()" after_includes="true">1e2_{:meshname}</replace>
     <add sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[1]/type" after_includes="true" pos="before">
