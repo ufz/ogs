@@ -214,10 +214,12 @@ std::function<std::string(std::vector<double>)> write_xdmf(
         [](double const& time_value, auto const& geometry, auto const& topology,
            auto const& constant_attributes, auto const& variable_attributes)
     {
+        // Output of "Time Value" with sufficient precision.
+        static_assert(15 == std::numeric_limits<double>::digits10);
         return fmt::format(
             R"(
 <Grid Name="Grid" GridType="Uniform">
-    <Time Value="{time_value:g}"/>
+    <Time Value="{time_value:.15g}"/>
 {geometry}
 {topology}
 {fix_attributes}
