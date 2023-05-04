@@ -1,41 +1,85 @@
 # CUBE 1x1x1 GROUNDWATER FLOW TESTS
 foreach(mesh_size 1e0 1e1 1e2 1e3)
-    AddTest(
-        NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}
-        PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS cube_${mesh_size}.xml --write-prj
-        TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
-        DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu ${mesh_size}_cube_1x1x1_hex_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_back_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_back_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_front_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_front_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_back_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_back_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_back_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_back_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_front_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_front_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_front_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_front_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_left_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_left_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_left_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_left_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_right_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_right_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_right_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_right_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_left_back_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_left_back_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_left_back_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_left_back_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_left_front_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_left_front_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_left_front_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_left_front_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_left_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_left_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_right_back_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_right_back_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_right_back_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_right_back_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_right_front_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_right_front_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_right_front_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_right_front_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_right_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_right_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_vertical_polyline_left_back_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_vertical_polyline_left_back_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_vertical_polyline_left_front_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_vertical_polyline_left_front_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_vertical_polyline_right_back_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_vertical_polyline_right_back_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-        meshes/${mesh_size}_cube_1x1x1_geometry_vertical_polyline_right_front_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_vertical_polyline_right_front_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-    )
+    if (${mesh_size} STREQUAL "1e2")
+        AddTest(
+            NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}
+            PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
+            EXECUTABLE ogs
+            EXECUTABLE_ARGS cube_${mesh_size}.xml --write-prj
+            TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
+            DIFF_DATA
+            cube_1x1x1_hex_${mesh_size}.vtu ${mesh_size}_cube_1x1x1_hex_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_hex_${mesh_size}_0_1_ts_0_t_0.000000.vtu ${mesh_size}_cube_1x1x1_hex_${mesh_size}_0_1_ts_0_t_0.000000.vtu pressure pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_hex_${mesh_size}_0_1_ts_0_t_0.000000.vtu ${mesh_size}_cube_1x1x1_hex_${mesh_size}_0_1_ts_0_t_0.000000.vtu v v 5e-13 3e-13
+            meshes/${mesh_size}_cube_1x1x1_hex_${mesh_size}_0_1_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_hex_${mesh_size}_0_1_ts_1_t_1.000000.vtu pressure pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_hex_${mesh_size}_0_1_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_hex_${mesh_size}_0_1_ts_1_t_1.000000.vtu v v 5e-13 3e-13
+            meshes/${mesh_size}_cube_1x1x1_geometry_back_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_back_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_front_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_front_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_back_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_back_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_back_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_back_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_front_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_front_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_front_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_front_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_left_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_left_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_left_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_left_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_right_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_right_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_right_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_right_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_left_back_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_left_back_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_left_back_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_left_back_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_left_front_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_left_front_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_left_front_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_left_front_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_left_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_left_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_right_back_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_right_back_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_right_back_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_right_back_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_right_front_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_right_front_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_right_front_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_right_front_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_right_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_right_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_vertical_polyline_left_back_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_vertical_polyline_left_back_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_vertical_polyline_left_front_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_vertical_polyline_left_front_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_vertical_polyline_right_back_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_vertical_polyline_right_back_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_vertical_polyline_right_front_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_vertical_polyline_right_front_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_vertical_polyline_right_front_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_vertical_polyline_right_front_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+        )
+    else (${mesh_size} STREQUAL "1e2")
+        AddTest(
+            NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}
+            PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
+            EXECUTABLE ogs
+            EXECUTABLE_ARGS cube_${mesh_size}.xml --write-prj
+            TESTER vtkdiff
+            REQUIREMENTS NOT OGS_USE_MPI
+            DIFF_DATA
+            cube_1x1x1_hex_${mesh_size}.vtu ${mesh_size}_cube_1x1x1_hex_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_back_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_back_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_front_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_front_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_back_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_back_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_back_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_back_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_front_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_front_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_front_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_front_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_left_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_left_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_left_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_left_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_right_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_right_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_right_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_horizontal_polyline_right_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_left_back_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_left_back_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_left_back_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_left_back_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_left_front_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_left_front_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_left_front_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_left_front_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_left_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_left_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_right_back_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_right_back_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_right_back_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_right_back_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_right_front_bottom_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_right_front_bottom_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_right_front_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_right_front_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_right_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_right_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_top_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_top_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_vertical_polyline_left_back_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_vertical_polyline_left_back_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_vertical_polyline_left_front_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_vertical_polyline_left_front_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_vertical_polyline_right_back_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_vertical_polyline_right_back_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+            meshes/${mesh_size}_cube_1x1x1_geometry_vertical_polyline_right_front_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_vertical_polyline_right_front_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+        )
+    endif()
 
     if(TEST ogs-SteadyStateDiffusion_cube_1x1x1_${mesh_size} AND DIFF_TOOL_PATH)
         set(_processed_path Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_${mesh_size}_processed.prj)
