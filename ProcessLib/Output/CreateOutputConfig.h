@@ -13,6 +13,11 @@
 #include "BaseLib/ConfigTree-fwd.h"
 #include "OutputConfig.h"
 
+namespace MeshLib
+{
+class Mesh;
+}
+
 namespace ProcessLib
 {
 OutputConfig createOutputConfig(
