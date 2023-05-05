@@ -154,9 +154,3 @@ private:
     std::optional<pybind11::scoped_interpreter> _py_scoped_interpreter;
 #endif
 };
-
-/// Parses a comma separated list of integers.
-/// Such lists occur in the medium definition in the OGS prj file.
-/// Error messages in this function refer to this specific purpose.
-OGS_EXPORT_SYMBOL std::vector<int> splitMaterialIdString(
-    std::string const& material_id_string);

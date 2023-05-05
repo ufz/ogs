@@ -511,7 +511,7 @@ void ProjectData::parseMedia(
             medium_config.getConfigAttribute<std::string>("id", "0");
 
         auto const material_ids_of_this_medium =
-            splitMaterialIdString(material_id_string);
+            BaseLib::splitMaterialIdString(material_id_string);
 
         for (auto const& id : material_ids_of_this_medium)
         {
@@ -1257,55 +1257,4 @@ void ProjectData::parseCurves(std::optional<BaseLib::ConfigTree> const& config)
                 MathLib::PiecewiseLinearInterpolation>(conf),
             "The curve name is not unique.");
     }
-}
-
-std::vector<int> splitMaterialIdString(std::string const& material_id_string)
-{
-    auto const material_ids_strings =
-        BaseLib::splitString(material_id_string, ',');
-
-    std::vector<int> material_ids;
-    for (auto& mid_str : material_ids_strings)
-    {
-        std::size_t num_chars_processed = 0;
-        int material_id;
-        try
-        {
-            material_id = std::stoi(mid_str, &num_chars_processed);
-        }
-        catch (std::invalid_argument&)
-        {
-            OGS_FATAL(
-                "Could not parse material ID from '{}' to a valid "
-                "integer.",
-                mid_str);
-        }
-        catch (std::out_of_range&)
-        {
-            OGS_FATAL(
-                "Could not parse material ID from '{}'. The integer value "
-                "of the given string exceeds the permitted range.",
-                mid_str);
-        }
-
-        if (num_chars_processed != mid_str.size())
-        {
-            // Not the whole string has been parsed. Check the rest.
-            if (auto const it = std::find_if_not(
-                    begin(mid_str) + num_chars_processed, end(mid_str),
-                    [](unsigned char const c) { return std::isspace(c); });
-                it != end(mid_str))
-            {
-                OGS_FATAL(
-                    "Could not parse material ID from '{}'. Please "
-                    "separate multiple material IDs by comma only. "
-                    "Invalid character: '{}' at position {}.",
-                    mid_str, *it, distance(begin(mid_str), it));
-            }
-        }
-
-        material_ids.push_back(material_id);
-    };
-
-    return material_ids;
 }
