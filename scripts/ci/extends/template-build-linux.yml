@@ -18,25 +18,6 @@
     # Activate .venv
     - test -f $build_dir_full/.venv/bin/activate && source $build_dir_full/.venv/bin/activate
     - |
-      function maybe_run_with_xvfb()
-      {
-          if [[ "$OSTYPE" == "darwin"* ]]; then
-            "$@"
-          elif command -v xvfb-run &> /dev/null ; then
-            local ctest_status_file="$build_dir_full/ctest_status"
-            rm -f "$ctest_status_file"
-            # status file and sh -c to workaround xvfb-run problems:
-            # /usr/bin/xvfb-run: line 186: kill: (<PID>) - No such process"
-            xvfb-run -a \
-                sh -c 'statf="$1"; shift; "$@"; echo "$?" >"$statf"' \
-                -- "$ctest_status_file" "$@" \
-                || true
-            [ 0 = "`cat "$ctest_status_file"`" ]
-          else
-            "$@"
-          fi
-      }
-
       if [[ -z "$TARGETS" ]]; then
 
         if [ "$BUILD_PACKAGE" = false ]; then
@@ -60,8 +41,11 @@
             preset_postfix="-large"
           fi
 
+          xvfb_run_cmd=""
           if [[ "$OSTYPE" == "darwin"* ]]; then
             alias date=gdate
+          elif command -v xvfb-run &> /dev/null ; then
+            xvfb_run_cmd="xvfb-run -a"
           fi
 
           ctest_arguments=""
@@ -84,13 +68,7 @@
           if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*unit_tests.* ]]; then
             echo "Skipping ctests because of unit_tests-label."
           else
-            maybe_run_with_xvfb ctest \
-                -M Experimental --group "${ctest_group}" "${regex_argument}" \
-                --test-dir "${build_dir_full}" -T Start -T Test -T Submit \
-                ${ctest_arguments} \
-                --output-junit Tests/ctest.xml \
-                --stop-time "`date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'`" \
-                --no-tests=error
+            eval ${xvfb_run_cmd} ctest -M Experimental --group ${ctest_group} ${regex_argument} --test-dir ${build_dir_full} -T Start -T Test -T Submit ${ctest_arguments} --output-junit Tests/ctest.xml --stop-time `date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'`
           fi
         fi
 
