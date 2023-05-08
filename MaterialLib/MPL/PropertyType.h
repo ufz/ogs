@@ -82,13 +82,17 @@ enum PropertyType : int
     /// specify retardation factor used in component transport process.
     retardation_factor,
     saturation,
+    saturation_density,
+    saturation_enthalpy,
     /// capillary pressure saturation relationship for microstructure.
     saturation_micro,
+    saturation_temperature,
     specific_heat_capacity,
     specific_latent_heat,
     storage,
     storage_contribution,
     swelling_stress_rate,
+    temperature,
     thermal_conductivity,
     /// Thermal diffusion enhancement factor for water vapor flow
     thermal_diffusion_enhancement_factor,
@@ -108,8 +112,6 @@ enum PropertyType : int
     vapour_diffusion,
     viscosity,
     volume_fraction,
-    water_temperature,
-    water_saturation_temperature,
     youngs_modulus,
     number_of_properties
 };
@@ -160,12 +162,16 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "residual_liquid_saturation",
                              "retardation_factor",
                              "saturation",
+                             "saturation_density",
+                             "saturation_enthalpy",
                              "saturation_micro",
+                             "saturation_temperature",
                              "specific_heat_capacity",
                              "specific_latent_heat",
                              "storage",
                              "storage_contribution",
                              "swelling_stress_rate",
+                             "temperature",
                              "thermal_conductivity",
                              "thermal_diffusion_enhancement_factor",
                              "thermal_expansivity",
@@ -180,8 +186,6 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "vapour_diffusion",
                              "viscosity",
                              "volume_fraction",
-                             "water_temperature",
-                             "water_saturation_temperature",
                              "youngs_modulus"}};
 
 /// This function converts a string (e.g. a string from the configuration-tree)
