@@ -16,6 +16,8 @@
 
 #include <limits>
 
+#include "MeshToolsLib/ComputeElementVolumeNumerically.h"
+
 namespace MeshToolsLib
 {
 void ElementSizeMetric::calculateQuality()
@@ -49,7 +51,8 @@ std::size_t ElementSizeMetric::calc1dQuality()
     for (std::size_t k(0); k < nElems; k++)
     {
         double area(std::numeric_limits<double>::max());
-        _element_quality_metric[k] = elements[k]->getContent();
+        _element_quality_metric[k] =
+            MeshToolsLib::computeElementVolumeNumerically(*elements[k]);
         if (_element_quality_metric[k] <
             std::sqrt(std::abs(std::numeric_limits<double>::epsilon())))
         {
@@ -84,7 +87,8 @@ std::size_t ElementSizeMetric::calc2dOr3dQuality()
             continue;
         }
 
-        double const volume(elem.getContent());
+        double const volume =
+            MeshToolsLib::computeElementVolumeNumerically(elem);
         if (volume < sqrt(std::abs(std::numeric_limits<double>::epsilon())))
         {
             error_count++;
