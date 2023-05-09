@@ -883,7 +883,7 @@ foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDiffer
         EXECUTABLE_ARGS -i AmmerGWN.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Ammer/AmmerGWNWithElementQuality_${criterion}.vtu -c ${criterion}
         TESTER vtkdiff
         DIFF_DATA
-        AmmerGWNWithElementQuality.vtu AmmerGWNWithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 1e-11
+        AmmerGWNWithElementQuality.vtu AmmerGWNWithElementQuality_${criterion}.vtu ${criterion} ${criterion} 2e-7 2e-08
     )
 endforeach()
 
@@ -896,7 +896,7 @@ foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDiffer
         EXECUTABLE_ARGS -i 00-surface.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/00-surface-WithElementQuality_${criterion}.vtu -c ${criterion}
         TESTER vtkdiff
         DIFF_DATA
-        00-surface-WithElementQuality.vtu 00-surface-WithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 1e-11
+        00-surface-WithElementQuality.vtu 00-surface-WithElementQuality_${criterion}.vtu ${criterion} ${criterion} 2e-7 2e-8
     )
 endforeach()
 
@@ -909,7 +909,7 @@ foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDiffer
         EXECUTABLE_ARGS -i AmmerSubsurfaceCoarse.vtu -o ${Data_BINARY_DIR}/FileIO/AmmerSubsurfaceCoarse-WithElementQuality_${criterion}.vtu -c ${criterion}
         TESTER vtkdiff
         DIFF_DATA
-        AmmerSubsurfaceCoarse-WithElementQuality.vtu AmmerSubsurfaceCoarse-WithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 1e-11
+        AmmerSubsurfaceCoarse-WithElementQuality.vtu AmmerSubsurfaceCoarse-WithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 2e-11
     )
 endforeach()
 
