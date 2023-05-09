@@ -31,7 +31,6 @@ public:
 
 private:
     std::size_t calc1dQuality();
-    std::size_t calc2dQuality();
-    std::size_t calc3dQuality();
+    std::size_t calc2dOr3dQuality();
 };
 }  // namespace MeshToolsLib
