@@ -68,6 +68,7 @@ function(ogs_add_library targetName)
         list(APPEND files ${file_path})
     endforeach()
 
+    set(type "") # somehow type may be set to MODULE_LIBRARY from outside, bug?
     if(ogs_add_library_STATIC)
         set(type STATIC)
     elseif(ogs_add_library_SHARED)
@@ -100,9 +101,15 @@ function(ogs_add_library targetName)
 
     if(OGS_INCLUDE_WHAT_YOU_USE)
         if(${CMAKE_CXX_COMPILER_ID} MATCHES ".*Clang")
-            set_target_properties(${targetName} PROPERTIES CXX_INCLUDE_WHAT_YOU_USE include-what-you-use)
+            set_target_properties(
+                ${targetName} PROPERTIES CXX_INCLUDE_WHAT_YOU_USE
+                                         include-what-you-use
+            )
         else()
-            message(FATAL_ERROR "OGS_INCLUDE_WHAT_YOU_USE requires the clang compiler!")
+            message(
+                FATAL_ERROR
+                    "OGS_INCLUDE_WHAT_YOU_USE requires the clang compiler!"
+            )
         endif()
     endif()
 
