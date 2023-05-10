@@ -35,7 +35,7 @@ struct XdmfHdfMesh final
 };
 
 XdmfHdfWriter::XdmfHdfWriter(
-    std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+    std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
     std::filesystem::path const& filepath, unsigned long long const time_step,
     double const initial_time,
     std::set<std::string> const& variable_output_names,
