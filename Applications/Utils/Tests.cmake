@@ -914,6 +914,17 @@ foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDiffer
 endforeach()
 
 AddTest(
+    NAME AddElementQuality_Behaelter_BE_ElementSize_Test
+    PATH MeshGeoToolsLib/Behaelter_BE
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Behaelter_BE
+    EXECUTABLE AddElementQuality
+    EXECUTABLE_ARGS -i Behaelter_BE.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Behaelter_BE/Behaelter_BE_quality.vtu -c ElementSize
+    TESTER vtkdiff
+    DIFF_DATA
+    Behaelter_BE_quality.vtu Behaelter_BE_quality.vtu ElementSize ElementSize 1e-12 1e-14
+)
+
+AddTest(
     NAME IntegrateBoreholesIntoMesh_MatOnly_Test
     PATH MeshGeoToolsLib/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib
