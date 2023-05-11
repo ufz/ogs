@@ -12,6 +12,7 @@
 
 #include <gtest/gtest.h>
 
+#include <numeric>
 #include <random>
 
 #include "GeoLib/Point.h"
@@ -113,23 +114,7 @@ TEST_F(GeoLibRaster, CopyConstructor)
     GeoLib::Raster const raster{header, data.begin(), data.end()};
     GeoLib::Raster const raster_copy(raster);
 
-    // compare raster header data
-    ASSERT_EQ(raster.getHeader().n_cols, raster_copy.getHeader().n_cols);
-    ASSERT_EQ(raster.getHeader().n_rows, raster_copy.getHeader().n_rows);
-    ASSERT_EQ(raster.getHeader().n_depth, raster_copy.getHeader().n_depth);
-    ASSERT_EQ(raster.getHeader().origin[0], raster_copy.getHeader().origin[0]);
-    ASSERT_EQ(raster.getHeader().origin[1], raster_copy.getHeader().origin[1]);
-    ASSERT_EQ(raster.getHeader().origin[2], raster_copy.getHeader().origin[2]);
-    ASSERT_EQ(raster.getHeader().cell_size, raster_copy.getHeader().cell_size);
-    ASSERT_EQ(raster.getHeader().no_data, raster_copy.getHeader().no_data);
-
-    for (std::size_t c = 0; c < header.n_cols; ++c)
-    {
-        for (std::size_t r = 0; r < header.n_rows; ++r)
-        {
-            EXPECT_EQ(raster(r, c), raster_copy(r, c));
-        }
-    }
+    ASSERT_EQ(raster, raster_copy);
 }
 
 TEST_F(GeoLibRaster, AssignmentOperator)
@@ -143,24 +128,7 @@ TEST_F(GeoLibRaster, AssignmentOperator)
     GeoLib::Raster raster_copy{dummy_header, empty_data.begin(),
                                empty_data.end()};
     raster_copy = raster;
-
-    // compare raster header data
-    ASSERT_EQ(raster.getHeader().n_cols, raster_copy.getHeader().n_cols);
-    ASSERT_EQ(raster.getHeader().n_rows, raster_copy.getHeader().n_rows);
-    ASSERT_EQ(raster.getHeader().n_depth, raster_copy.getHeader().n_depth);
-    ASSERT_EQ(raster.getHeader().origin[0], raster_copy.getHeader().origin[0]);
-    ASSERT_EQ(raster.getHeader().origin[1], raster_copy.getHeader().origin[1]);
-    ASSERT_EQ(raster.getHeader().origin[2], raster_copy.getHeader().origin[2]);
-    ASSERT_EQ(raster.getHeader().cell_size, raster_copy.getHeader().cell_size);
-    ASSERT_EQ(raster.getHeader().no_data, raster_copy.getHeader().no_data);
-
-    for (std::size_t c = 0; c < header.n_cols; ++c)
-    {
-        for (std::size_t r = 0; r < header.n_rows; ++r)
-        {
-            EXPECT_EQ(raster(r, c), raster_copy(r, c));
-        }
-    }
+    ASSERT_EQ(raster, raster_copy);
 }
 
 TEST_F(GeoLibRaster, MoveAssignmentOperator)
@@ -169,28 +137,7 @@ TEST_F(GeoLibRaster, MoveAssignmentOperator)
     GeoLib::Raster const raster_copy{header, data.begin(), data.end()};
 
     GeoLib::Raster raster_move = std::move(raster);
-
-    // compare raster header data
-    ASSERT_EQ(raster_copy.getHeader().n_cols, raster_move.getHeader().n_cols);
-    ASSERT_EQ(raster_copy.getHeader().n_rows, raster_move.getHeader().n_rows);
-    ASSERT_EQ(raster_copy.getHeader().n_depth, raster_move.getHeader().n_depth);
-    ASSERT_EQ(raster_copy.getHeader().origin[0],
-              raster_move.getHeader().origin[0]);
-    ASSERT_EQ(raster_copy.getHeader().origin[1],
-              raster_move.getHeader().origin[1]);
-    ASSERT_EQ(raster_copy.getHeader().origin[2],
-              raster_move.getHeader().origin[2]);
-    ASSERT_EQ(raster_copy.getHeader().cell_size,
-              raster_move.getHeader().cell_size);
-    ASSERT_EQ(raster_copy.getHeader().no_data, raster_move.getHeader().no_data);
-
-    for (std::size_t c = 0; c < header.n_cols; ++c)
-    {
-        for (std::size_t r = 0; r < header.n_rows; ++r)
-        {
-            EXPECT_EQ(raster_copy(r, c), raster_move(r, c));
-        }
-    }
+    ASSERT_EQ(raster_copy, raster_move);
 }
 
 TEST_F(GeoLibRaster, MoveConstructor)
@@ -199,26 +146,5 @@ TEST_F(GeoLibRaster, MoveConstructor)
     GeoLib::Raster const raster_copy{header, data.begin(), data.end()};
 
     GeoLib::Raster raster_move{std::move(raster)};
-
-    // compare raster header data
-    ASSERT_EQ(raster_copy.getHeader().n_cols, raster_move.getHeader().n_cols);
-    ASSERT_EQ(raster_copy.getHeader().n_rows, raster_move.getHeader().n_rows);
-    ASSERT_EQ(raster_copy.getHeader().n_depth, raster_move.getHeader().n_depth);
-    ASSERT_EQ(raster_copy.getHeader().origin[0],
-              raster_move.getHeader().origin[0]);
-    ASSERT_EQ(raster_copy.getHeader().origin[1],
-              raster_move.getHeader().origin[1]);
-    ASSERT_EQ(raster_copy.getHeader().origin[2],
-              raster_move.getHeader().origin[2]);
-    ASSERT_EQ(raster_copy.getHeader().cell_size,
-              raster_move.getHeader().cell_size);
-    ASSERT_EQ(raster_copy.getHeader().no_data, raster_move.getHeader().no_data);
-
-    for (std::size_t c = 0; c < header.n_cols; ++c)
-    {
-        for (std::size_t r = 0; r < header.n_rows; ++r)
-        {
-            EXPECT_EQ(raster_copy(r, c), raster_move(r, c));
-        }
-    }
+    ASSERT_EQ(raster_copy, raster_move);
 }
