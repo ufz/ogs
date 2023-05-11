@@ -38,22 +38,24 @@ struct RasterHeader final
 /**
  * @brief Class Raster is used for managing raster data.
  *
- * A raster consists of the meta data like number of columns and rows, the lower
- * left point, the size of a raster pixel and a value for invalid data pixels.
- * Additional the object needs the raster data itself. The raster data will be
- * copied from the constructor. The destructor will release the memory.
+ * A raster consists of the meta data like number of columns and rows, the
+ * lower left point, the size of a raster pixel and a value for invalid data
+ * pixels. Additional the object needs the raster data itself. The raster
+ * data will be copied from the constructor. The destructor will release the
+ * memory.
  */
 class Raster final
 {
 public:
     /**
-     * @brief Constructor for an object of class Raster. The raster data have
-     * to be handed over via input iterators. Deploying iterators has the
-     * advantage that the use of the class is independent from the input
+     * @brief Constructor for an object of class Raster. The raster data
+     * have to be handed over via input iterators. Deploying iterators has
+     * the advantage that the use of the class is independent from the input
      * container.
      * @param header meta-information about the raster (height, width, etc.)
      * @param begin input iterator pointing to the first element of the data
-     * @param end input iterator pointing to the last element of the data, end have to be reachable from begin
+     * @param end input iterator pointing to the last element of the data,
+     * end have to be reachable from begin
      */
     template <typename InputIterator>
     Raster(RasterHeader header, InputIterator begin, InputIterator end)
@@ -96,7 +98,8 @@ public:
     }
 
     /**
-     * Iterator to the element following the last pixel element of the raster
+     * Iterator to the element following the last pixel element of the
+     * raster
      * @return constant iterator
      */
     std::vector<double>::const_iterator end() const
@@ -127,19 +130,21 @@ public:
     /**
      * Returns the raster value at the position of the given point.
      */
-    double getValueAtPoint(const MathLib::Point3d &pnt) const;
+    double getValueAtPoint(const MathLib::Point3d& pnt) const;
 
-    /// Interpolates the elevation of the given point based on the 8-neighbourhood of the raster cell it is located on
-    double interpolateValueAtPoint(const MathLib::Point3d &pnt) const;
+    /// Interpolates the elevation of the given point based on the
+    /// 8-neighbourhood of the raster cell it is located on
+    double interpolateValueAtPoint(const MathLib::Point3d& pnt) const;
 
-    /// Checks if the given point is located within the (x,y)-extension of the raster.
+    /// Checks if the given point is located within the (x,y)-extension of
+    /// the raster.
     bool isPntOnRaster(MathLib::Point3d const& pnt) const;
 
     bool operator==(Raster const&) const = default;
 
 private:
     void setCellSize(double cell_size);
-    void setNoDataVal (double no_data_val);
+    void setNoDataVal(double no_data_val);
 
     GeoLib::RasterHeader _header;
     std::vector<double> _raster_data;
