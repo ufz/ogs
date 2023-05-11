@@ -11,6 +11,8 @@
 #pragma once
 
 #include <fstream>
+#include <functional>
+#include <mutex>
 #include <unordered_set>
 
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
