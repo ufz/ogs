@@ -13,14 +13,16 @@
 
 #include <algorithm>
 
-#include "Applications/ApplicationsLib/ProjectData.h"
+#include "BaseLib/StringTools.h"
 
-TEST(ApplicationsLib_ProjectData_SplitIntegerList, EmptyList)
+using namespace BaseLib;
+
+TEST(BaseLib_SplitIntegerList, EmptyList)
 {
     ASSERT_TRUE(splitMaterialIdString("").empty());
 }
 
-TEST(ApplicationsLib_ProjectData_SplitIntegerList, SingleInt)
+TEST(BaseLib_SplitIntegerList, SingleInt)
 {
     using namespace testing;
 
@@ -39,7 +41,7 @@ TEST(ApplicationsLib_ProjectData_SplitIntegerList, SingleInt)
                 ContainerEq(std::vector<int>{-20}));
 }
 
-TEST(ApplicationsLib_ProjectData_SplitIntegerList, SingleIntFail)
+TEST(BaseLib_SplitIntegerList, SingleIntFail)
 {
     // wrong character prefix/suffix
     EXPECT_THROW(splitMaterialIdString("x"), std::runtime_error);
@@ -60,7 +62,7 @@ TEST(ApplicationsLib_ProjectData_SplitIntegerList, SingleIntFail)
         std::runtime_error);
 }
 
-TEST(ApplicationsLib_ProjectData_SplitIntegerList, IntList)
+TEST(BaseLib_SplitIntegerList, IntList)
 {
     using namespace testing;
 
@@ -76,20 +78,20 @@ TEST(ApplicationsLib_ProjectData_SplitIntegerList, IntList)
                 ContainerEq(std::vector<int>{20, 22, 24}));
 }
 
-TEST(ApplicationsLib_ProjectData_SplitIntegerList, IntListFail)
+TEST(BaseLib_SplitIntegerList, IntListFail)
 {
     // only delimiter
-    EXPECT_THROW(splitMaterialIdString(","), std::runtime_error);
+    EXPECT_THROW(BaseLib::splitMaterialIdString(","), std::runtime_error);
 
     // empty element
-    EXPECT_THROW(splitMaterialIdString("5,,6"), std::runtime_error);
+    EXPECT_THROW(BaseLib::splitMaterialIdString("5,,6"), std::runtime_error);
 
     // leading comma
-    EXPECT_THROW(splitMaterialIdString(",40"), std::runtime_error);
+    EXPECT_THROW(BaseLib::splitMaterialIdString(",40"), std::runtime_error);
 
     // missing comma
-    EXPECT_THROW(splitMaterialIdString("12   20"), std::runtime_error);
+    EXPECT_THROW(BaseLib::splitMaterialIdString("12   20"), std::runtime_error);
 
     // wrong number in the list
-    EXPECT_THROW(splitMaterialIdString("1,2,x,5"), std::runtime_error);
+    EXPECT_THROW(BaseLib::splitMaterialIdString("1,2,x,5"), std::runtime_error);
 }

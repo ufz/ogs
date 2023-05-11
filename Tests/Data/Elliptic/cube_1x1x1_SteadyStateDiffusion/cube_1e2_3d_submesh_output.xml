@@ -12,6 +12,7 @@
     <remove sel="/*/geometry" />
     <replace sel="/*/time_loop/output/prefix/text()" after_includes="true">{:meshname}_3d_submesh_output_test</replace>
     <replace sel="/*/time_loop/output/meshes/mesh/text()" after_includes="true">cube_1x1x1_hex_1e2</replace>
+    <replace sel="/*/media/medium/@id" after_includes="true">0,1,2,3,4</replace>
     <add sel="/*/time_loop/output/meshes" after_includes="true">
       <mesh>cube_1x1x1_hex_1e2_inner_bar_domain</mesh>
     </add>

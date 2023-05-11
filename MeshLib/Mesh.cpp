@@ -15,6 +15,7 @@
 #include "Mesh.h"
 
 #include <memory>
+#include <range/v3/algorithm/contains.hpp>
 #include <range/v3/numeric.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/enumerate.hpp>
@@ -31,6 +32,7 @@
 #include "Elements/Quad.h"
 #include "Elements/Tet.h"
 #include "Elements/Tri.h"
+#include "MeshEditing/DuplicateMeshComponents.h"
 
 /// Mesh counter used to uniquely identify meshes by id.
 static std::size_t global_mesh_counter = 0;
@@ -414,4 +416,32 @@ bool isBaseNode(Node const& node,
     auto const local_index = getNodeIDinElement(*e, &node);
     return local_index < n_base_nodes;
 }
+
+std::vector<MeshLib::Element*> getMeshElementsForMaterialIDs(
+    MeshLib::Mesh const& mesh, std::vector<int> const& selected_material_ids)
+{
+    auto const material_ids = *materialIDs(mesh);
+    auto const& elements = mesh.getElements();
+    std::vector<MeshLib::Element*> selected_elements;
+
+    for (std::size_t i = 0; i < material_ids.size(); ++i)
+    {
+        if (ranges::contains(selected_material_ids, material_ids[i]))
+        {
+            selected_elements.push_back(elements[i]);
+        }
+    }
+    return selected_elements;
+}
+
+std::unique_ptr<MeshLib::Mesh> createMaterialIDsBasedSubMesh(
+    MeshLib::Mesh const& mesh, std::vector<int> const& material_ids,
+    std::string const& name_for_created_mesh)
+{
+    auto const elements =
+        MeshLib::getMeshElementsForMaterialIDs(mesh, material_ids);
+    return MeshLib::createMeshFromElementSelection(
+        name_for_created_mesh, MeshLib::cloneElements(elements));
+}
+
 }  // namespace MeshLib

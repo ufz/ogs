@@ -14,10 +14,69 @@
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/StringTools.h"  // required for splitMaterialIDString
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/transformMeshToNodePartitionedMesh.h"
+
+std::string createMeshOutputName(std::vector<int> const& material_ids,
+                                 std::string const& mesh_name)
+{
+    if (material_ids.empty())
+    {
+        return mesh_name;
+    }
+    return mesh_name + "_" + fmt::format("{}", fmt::join(material_ids, "_"));
+}
+
+std::string parseOutputMeshConfig(
+    BaseLib::ConfigTree const& output_mesh_config,
+    std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes)
+{
+    auto const mesh_name = output_mesh_config.getValue<std::string>();
+    auto const& mesh = *BaseLib::findElementOrError(
+        begin(meshes), end(meshes),
+        [&mesh_name](auto const& mesh)
+        {
+            assert(mesh != nullptr);
+            return mesh->getName() == mesh_name;
+        },
+        "Required mesh with name '" + mesh_name + "' not found.");
+
+    auto material_id_string =
+        //! \ogs_file_attr{prj__time_loop__output__meshes__mesh__material_ids}
+        output_mesh_config.getConfigAttributeOptional<std::string>(
+            "material_ids");
+
+    if (!material_id_string)
+    {
+        return mesh_name;
+    }
+
+    auto const material_ids_for_output =
+        BaseLib::splitMaterialIdString(*material_id_string);
+#ifdef USE_PETSC
+    // this mesh isn't yet a NodePartitionedMesh
+    auto subdomain_mesh = MeshLib::createMaterialIDsBasedSubMesh(
+        mesh, material_ids_for_output,
+        createMeshOutputName(material_ids_for_output, mesh_name));
+    auto const* bulk_mesh =
+        dynamic_cast<MeshLib::NodePartitionedMesh const*>(&mesh);
+    meshes.push_back(MeshLib::transformMeshToNodePartitionedMesh(
+        bulk_mesh, subdomain_mesh.get()));
+#else
+    meshes.push_back(MeshLib::createMaterialIDsBasedSubMesh(
+        mesh, material_ids_for_output,
+        createMeshOutputName(material_ids_for_output, mesh_name)));
+#endif
+
+    return meshes.back()->getName();
+}
 
 namespace ProcessLib
 {
-OutputConfig createOutputConfig(const BaseLib::ConfigTree& config)
+OutputConfig createOutputConfig(
+    const BaseLib::ConfigTree& config,
+    std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes)
 {
     OutputConfig output_config;
 
@@ -142,9 +201,8 @@ OutputConfig createOutputConfig(const BaseLib::ConfigTree& config)
         //! \ogs_file_param{prj__time_loop__output__meshes__mesh}
         for (auto mesh_config : meshes_config->getConfigParameterList("mesh"))
         {
-            // TODO CL check here that meshes name can be found in meshes list?
             mesh_names_for_output.push_back(
-                mesh_config.getValue<std::string>());
+                parseOutputMeshConfig(mesh_config, meshes));
             INFO("Configure mesh '{:s}' for output.",
                  mesh_names_for_output.back());
         }

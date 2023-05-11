@@ -35,5 +35,5 @@ struct SubmeshResiduumOutputConfig
 
 SubmeshResiduumOutputConfig createSubmeshResiduumOutputConfig(
     BaseLib::ConfigTree const& config, std::string const& output_directory,
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
+    std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes);
 }  // namespace ProcessLib
