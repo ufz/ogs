@@ -11,6 +11,8 @@ source $DIR/mpi.sh
 #module load vtk/9.2.5_mpi_foss2020b
 #module load hdf5/1.14.0_mpi_foss_2020b
 
+export OGS_PETSC_CONFIG_OPTIONS="--download-fc;--download-mumps;--download-hypre;--download-scalapack"
+
 echo -e "Note: If you want to run a simulation on the cluster be aware of the"\
      "mixed CPU architecture. There are Sandy-Bridge-based nodes (orte-28,"\
      "frontend2) as well as Skylake-based nodes (orte-40, frontend1)"\
