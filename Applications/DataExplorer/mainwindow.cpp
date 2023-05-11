@@ -80,6 +80,7 @@
 #include "DataView/MeshElementRemovalDialog.h"
 #include "DataView/MeshQualitySelectionDialog.h"
 #include "DataView/TranslateDataDialog.h"
+#include "DataView/Vtu2GridDialog.h"
 #ifdef OGS_USE_NETCDF
 #include "VtkVis/NetCdfConfigureDialog.h"
 #endif  // OGS_USE_NETCDF
@@ -1361,6 +1362,16 @@ void MainWindow::showLayers2GridDialog()
     }
 
     auto dlg = Layers2GridDialog(*_meshModel);
+    dlg.exec();
+}
+
+void MainWindow::showVtu2GridDialog()
+{
+    if (_meshModel == nullptr)
+    {
+        OGSError::box("The supplied mesh_model is not existing.");
+    }
+    auto dlg = Vtu2GridDialog(*_meshModel);
     dlg.exec();
 }
 
