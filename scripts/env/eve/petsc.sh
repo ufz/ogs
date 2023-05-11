@@ -6,9 +6,10 @@ fi
 
 source $DIR/mpi.sh
 
-module load petsc/3.18.5_foss2020b
-module load vtk/9.2.5_mpi_foss2020b
-module load hdf5/1.14.0_mpi_foss_2020b
+# TODO build these for foss2022b or remove it:
+#module load petsc/3.18.5_foss2020b
+#module load vtk/9.2.5_mpi_foss2020b
+#module load hdf5/1.14.0_mpi_foss_2020b
 
 echo -e "Note: If you want to run a simulation on the cluster be aware of the"\
      "mixed CPU architecture. There are Sandy-Bridge-based nodes (orte-28,"\
