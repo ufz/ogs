@@ -31,6 +31,8 @@ struct RasterHeader final
     MathLib::Point3d origin; // lower left corner
     double cell_size; // edge length of each pixel
     double no_data; // no data value
+
+    bool operator==(RasterHeader const&) const = default;
 };
 
 /**
@@ -132,6 +134,8 @@ public:
 
     /// Checks if the given point is located within the (x,y)-extension of the raster.
     bool isPntOnRaster(MathLib::Point3d const& pnt) const;
+
+    bool operator==(Raster const&) const = default;
 
 private:
     void setCellSize(double cell_size);
