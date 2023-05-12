@@ -246,7 +246,7 @@ public:
     int getMaterialID() const override;
 
     std::vector<double> getMaterialStateVariableInternalState(
-        std::function<BaseLib::DynamicSpan<double>(
+        std::function<std::span<double>(
             typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
                 MaterialStateVariables&)> const& get_values_span,
         int const& n_components) const override;

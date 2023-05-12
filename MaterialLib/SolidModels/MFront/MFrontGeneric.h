@@ -559,7 +559,7 @@ public:
                 },
                 [offset, size](typename MechanicsBase<
                                DisplacementDim>::MaterialStateVariables& state)
-                    -> BaseLib::DynamicSpan<double>
+                    -> std::span<double>
                 {
                     assert(dynamic_cast<MaterialStateVariablesMFront<
                                DisplacementDim> const*>(&state) != nullptr);
