@@ -10,30 +10,19 @@
 
 #pragma once
 
-#include <span>
 #include <vector>
 
 #include "NumLib/Fem/CoordinatesMapping/NaturalNodeCoordinates.h"
 
 namespace NumLib
 {
-// Returns the coordinates as a span of dynamic size.
-template <typename MeshElementType>
-std::span<const std::array<double, 3>> getNodeCoordsOfReferenceElement()
-{
-    auto const& coords =
-        NumLib::NaturalCoordinates<MeshElementType>::coordinates;
-
-    return {coords.begin(), coords.size()};
-}
-
 template <typename MeshElementType>
 class ReferenceElement
 {
     static std::vector<MeshLib::Node> createReferenceElementNodes()
     {
-        auto const natural_node_coordss =
-            getNodeCoordsOfReferenceElement<MeshElementType>();
+        constexpr auto natural_node_coordss =
+            NumLib::NaturalCoordinates<MeshElementType>::coordinates;
 
         return {natural_node_coordss.begin(), natural_node_coordss.end()};
     }

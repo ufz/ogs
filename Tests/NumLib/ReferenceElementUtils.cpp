@@ -27,37 +27,37 @@ std::span<const std::array<double, 3>> getNodeCoordsOfReferenceElement(
     switch (cell_type)
     {
         case CellType::POINT1:
-            return NL::getNodeCoordsOfReferenceElement<Point>();
+            return getNodeCoordsOfReferenceElement<Point>();
         case CellType::LINE2:
-            return NL::getNodeCoordsOfReferenceElement<Line>();
+            return getNodeCoordsOfReferenceElement<Line>();
         case CellType::LINE3:
-            return NL::getNodeCoordsOfReferenceElement<Line3>();
+            return getNodeCoordsOfReferenceElement<Line3>();
         case CellType::TRI3:
-            return NL::getNodeCoordsOfReferenceElement<Tri>();
+            return getNodeCoordsOfReferenceElement<Tri>();
         case CellType::TRI6:
-            return NL::getNodeCoordsOfReferenceElement<Tri6>();
+            return getNodeCoordsOfReferenceElement<Tri6>();
         case CellType::QUAD4:
-            return NL::getNodeCoordsOfReferenceElement<Quad>();
+            return getNodeCoordsOfReferenceElement<Quad>();
         case CellType::QUAD8:
-            return NL::getNodeCoordsOfReferenceElement<Quad8>();
+            return getNodeCoordsOfReferenceElement<Quad8>();
         case CellType::QUAD9:
-            return NL::getNodeCoordsOfReferenceElement<Quad9>();
+            return getNodeCoordsOfReferenceElement<Quad9>();
         case CellType::TET4:
-            return NL::getNodeCoordsOfReferenceElement<Tet>();
+            return getNodeCoordsOfReferenceElement<Tet>();
         case CellType::TET10:
-            return NL::getNodeCoordsOfReferenceElement<Tet10>();
+            return getNodeCoordsOfReferenceElement<Tet10>();
         case CellType::HEX8:
-            return NL::getNodeCoordsOfReferenceElement<Hex>();
+            return getNodeCoordsOfReferenceElement<Hex>();
         case CellType::HEX20:
-            return NL::getNodeCoordsOfReferenceElement<Hex20>();
+            return getNodeCoordsOfReferenceElement<Hex20>();
         case CellType::PRISM6:
-            return NL::getNodeCoordsOfReferenceElement<Prism>();
+            return getNodeCoordsOfReferenceElement<Prism>();
         case CellType::PRISM15:
-            return NL::getNodeCoordsOfReferenceElement<Prism15>();
+            return getNodeCoordsOfReferenceElement<Prism15>();
         case CellType::PYRAMID5:
-            return NL::getNodeCoordsOfReferenceElement<Pyramid>();
+            return getNodeCoordsOfReferenceElement<Pyramid>();
         case CellType::PYRAMID13:
-            return NL::getNodeCoordsOfReferenceElement<Pyramid13>();
+            return getNodeCoordsOfReferenceElement<Pyramid13>();
         default:
             OGS_FATAL("Unsupported cell type {}", CellType2String(cell_type));
     }

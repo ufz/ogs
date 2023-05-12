@@ -75,7 +75,8 @@ TYPED_TEST(NumLibReferenceElementTest, Prerequisite)
     using MeshElementType = TypeParam;
 
     auto const element_node_natural_coords =
-        NumLib::getNodeCoordsOfReferenceElement<MeshElementType>();
+        ReferenceElementUtils::getNodeCoordsOfReferenceElement<
+            MeshElementType>();
 
     ASSERT_EQ(MeshElementType::n_all_nodes, element_node_natural_coords.size())
         << "Number of nodes and natural coordinates do not match for this "
@@ -101,7 +102,8 @@ TYPED_TEST(NumLibReferenceElementTest, ElementNodes)
     using MeshElementType = TypeParam;
 
     auto const all_element_node_natural_coords =
-        NumLib::getNodeCoordsOfReferenceElement<MeshElementType>();
+        ReferenceElementUtils::getNodeCoordsOfReferenceElement<
+            MeshElementType>();
 
     // For pyramid 13 some higher order nodes would not pass this unit test.
     auto const element_node_natural_coords =
