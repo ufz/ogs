@@ -357,14 +357,13 @@ void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster,
     out << "NODATA_value " << header.no_data << "\n";
 
     // write data
-    double const* const elevation(raster.begin());
     for (unsigned row(0); row < nRows; ++row)
     {
         for (unsigned col(0); col < nCols - 1; ++col)
         {
-            out << elevation[(nRows - row - 1) * nCols + col] << " ";
+            out << raster.data()[(nRows - row - 1) * nCols + col] << " ";
         }
-        out << elevation[(nRows - row) * nCols - 1] << "\n";
+        out << raster.data()[(nRows - row) * nCols - 1] << "\n";
     }
     out.close();
 }

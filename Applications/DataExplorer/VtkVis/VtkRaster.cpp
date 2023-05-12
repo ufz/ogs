@@ -62,7 +62,7 @@ vtkImageAlgorithm* VtkRaster::loadImage(const std::string& fileName)
     }
     if (raster)
     {
-        return VtkRaster::loadImageFromArray(raster->begin(),
+        return VtkRaster::loadImageFromArray(raster->data(),
                                              raster->getHeader());
     }
     if ((fileInfo.suffix().toLower() == "tif") ||

@@ -24,8 +24,9 @@ namespace GeoLib
 {
 void Raster::refineRaster(std::size_t scaling)
 {
-    auto* new_raster_data(
-        new double[_header.n_rows * _header.n_cols * scaling * scaling]);
+    std::vector<double> new_raster_data;
+    new_raster_data.reserve(_header.n_rows * _header.n_cols * scaling *
+                            scaling);
 
     for (std::size_t row(0); row < _header.n_rows; row++)
     {
@@ -51,13 +52,6 @@ void Raster::refineRaster(std::size_t scaling)
     _header.cell_size /= scaling;
     _header.n_cols *= scaling;
     _header.n_rows *= scaling;
-
-    delete[] new_raster_data;
-}
-
-Raster::~Raster()
-{
-    delete[] _raster_data;
 }
 
 double Raster::getValueAtPoint(const MathLib::Point3d& pnt) const

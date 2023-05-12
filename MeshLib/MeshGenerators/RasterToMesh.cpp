@@ -33,7 +33,7 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
     UseIntensityAs intensity_type,
     std::string const& array_name)
 {
-    return convert(raster.begin(),
+    return convert(raster.data(),
                    raster.getHeader(),
                    elem_type,
                    intensity_type,
