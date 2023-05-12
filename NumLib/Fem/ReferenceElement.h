@@ -10,23 +10,21 @@
 
 #pragma once
 
+#include <span>
 #include <vector>
 
-#include "BaseLib/DynamicSpan.h"
 #include "NumLib/Fem/CoordinatesMapping/NaturalNodeCoordinates.h"
 
 namespace NumLib
 {
 // Returns the coordinates as a span of dynamic size.
 template <typename MeshElementType>
-BaseLib::DynamicSpan<const std::array<double, 3>>
-getNodeCoordsOfReferenceElement()
+std::span<const std::array<double, 3>> getNodeCoordsOfReferenceElement()
 {
     auto const& coords =
         NumLib::NaturalCoordinates<MeshElementType>::coordinates;
 
-    return BaseLib::DynamicSpan<const std::array<double, 3>>(coords.begin(),
-                                                             coords.size());
+    return {coords.begin(), coords.size()};
 }
 
 template <typename MeshElementType>

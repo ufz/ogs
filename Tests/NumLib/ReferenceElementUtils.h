@@ -10,15 +10,16 @@
 
 #pragma once
 
-#include "BaseLib/DynamicSpan.h"
+#include <span>
+
 #include "MeshLib/Elements/Element.h"
 
 namespace ReferenceElementUtils
 {
 
 // Returns the coordinates as a span of dynamic size.
-BaseLib::DynamicSpan<const std::array<double, 3>>
-getNodeCoordsOfReferenceElement(MeshLib::CellType const cell_type);
+std::span<const std::array<double, 3>> getNodeCoordsOfReferenceElement(
+    MeshLib::CellType const cell_type);
 
 std::shared_ptr<MeshLib::Element const> getReferenceElement(
     MeshLib::CellType const cell_type);

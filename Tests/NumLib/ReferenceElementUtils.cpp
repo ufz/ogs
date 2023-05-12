@@ -18,8 +18,8 @@
 namespace ReferenceElementUtils
 {
 // Returns the coordinates as a span of dynamic size.
-BaseLib::DynamicSpan<const std::array<double, 3>>
-getNodeCoordsOfReferenceElement(MeshLib::CellType const cell_type)
+std::span<const std::array<double, 3>> getNodeCoordsOfReferenceElement(
+    MeshLib::CellType const cell_type)
 {
     using namespace MeshLib;
     namespace NL = NumLib;

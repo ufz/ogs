@@ -107,8 +107,8 @@ TYPED_TEST(NumLibReferenceElementTest, ElementNodes)
     auto const element_node_natural_coords =
         !std::is_same_v<MeshElementType, MeshLib::Pyramid13>
             ? all_element_node_natural_coords
-            : BaseLib::DynamicSpan{all_element_node_natural_coords.data,
-                                   MeshLib::Pyramid13::n_base_nodes};
+            : std::span{all_element_node_natural_coords.data(),
+                        MeshLib::Pyramid13::n_base_nodes};
 
     interpolateNodeCoordsAndCheckTheResult(this->element,
                                            element_node_natural_coords);
