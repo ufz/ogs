@@ -15,7 +15,8 @@
 #include "MeshLib/Utils/createMaterialIDsBasedSubMesh.h"
 
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
+#include "MeshLib/Utils/createMeshFromElementSelection.h"
 #include "MeshLib/Utils/getMeshElementsForMaterialIDs.h"
 
 namespace MeshLib

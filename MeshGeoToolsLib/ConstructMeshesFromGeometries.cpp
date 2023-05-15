@@ -22,6 +22,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
+#include "MeshLib/Utils/createMeshFromElementSelection.h"
 #include "MeshNodeSearcher.h"
 
 namespace MeshGeoToolsLib

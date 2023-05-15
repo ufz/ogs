@@ -293,13 +293,6 @@ PropertyVector<int> const* materialIDs(Mesh const& mesh);
 PropertyVector<std::size_t> const* bulkNodeIDs(Mesh const& mesh);
 PropertyVector<std::size_t> const* bulkElementIDs(Mesh const& mesh);
 
-/// Creates a new mesh from a vector of elements.
-///
-/// \note The elements are owned by the returned mesh object as well as the
-/// nodes and will be destructed together with the mesh.
-std::unique_ptr<Mesh> createMeshFromElementSelection(
-    std::string mesh_name, std::vector<Element*> const& elements);
-
 /// Returns true if the given node is a base node of a (first) element, or if it
 /// is not connected to any element i.e. an unconnected node.
 bool isBaseNode(Node const& node,

@@ -21,6 +21,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
+#include "MeshLib/Utils/createMeshFromElementSelection.h"
 #include "ParameterLib/Parameter.h"
 #include "ParameterLib/Utils.h"
 
