@@ -33,6 +33,7 @@
 #include "Elements/Tet.h"
 #include "Elements/Tri.h"
 #include "Utils/DuplicateMeshComponents.h"
+#include "Utils/getMeshElementsForMaterialIDs.h"
 
 /// Mesh counter used to uniquely identify meshes by id.
 static std::size_t global_mesh_counter = 0;
@@ -415,23 +416,6 @@ bool isBaseNode(Node const& node,
     auto const n_base_nodes = e->getNumberOfBaseNodes();
     auto const local_index = getNodeIDinElement(*e, &node);
     return local_index < n_base_nodes;
-}
-
-std::vector<MeshLib::Element*> getMeshElementsForMaterialIDs(
-    MeshLib::Mesh const& mesh, std::vector<int> const& selected_material_ids)
-{
-    auto const material_ids = *materialIDs(mesh);
-    auto const& elements = mesh.getElements();
-    std::vector<MeshLib::Element*> selected_elements;
-
-    for (std::size_t i = 0; i < material_ids.size(); ++i)
-    {
-        if (ranges::contains(selected_material_ids, material_ids[i]))
-        {
-            selected_elements.push_back(elements[i]);
-        }
-    }
-    return selected_elements;
 }
 
 std::unique_ptr<MeshLib::Mesh> createMaterialIDsBasedSubMesh(

@@ -16,6 +16,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
+#include "MeshLib/Utils/getMeshElementsForMaterialIDs.h"
 
 using namespace MeshLib;
 

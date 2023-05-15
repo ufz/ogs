@@ -309,9 +309,6 @@ bool isBaseNode(Node const& node,
 std::pair<double, double> minMaxEdgeLength(
     std::vector<Element*> const& elements);
 
-std::vector<MeshLib::Element*> getMeshElementsForMaterialIDs(
-    MeshLib::Mesh const& mesh, std::vector<int> const& selected_material_ids);
-
 std::unique_ptr<MeshLib::Mesh> createMaterialIDsBasedSubMesh(
     MeshLib::Mesh const& mesh, std::vector<int> const& material_ids,
     std::string const& name_for_created_mesh);
