@@ -12,10 +12,10 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <span>
 #include <tuple>
 #include <vector>
 
-#include "BaseLib/DynamicSpan.h"
 #include "BaseLib/Error.h"
 #include "MaterialLib/MPL/VariableType.h"
 #include "MathLib/KelvinVector.h"
@@ -97,8 +97,8 @@ struct MechanicsBase
     {
         using Getter = std::function<std::vector<double> const&(
             MaterialStateVariables const&, std::vector<double>& /*cache*/)>;
-        using WriteAccess = std::function<BaseLib::DynamicSpan<double>(
-            MaterialStateVariables&)>;
+        using WriteAccess =
+            std::function<std::span<double>(MaterialStateVariables&)>;
 
         /// name of the internal variable
         std::string const name;

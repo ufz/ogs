@@ -749,7 +749,7 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                  return cache;
              },
              [](typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-                    state) -> BaseLib::DynamicSpan<double>
+                    state) -> std::span<double>
              {
                  assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                             &state) != nullptr);
@@ -773,7 +773,7 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                  return cache;
              },
              [](typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-                    state) -> BaseLib::DynamicSpan<double>
+                    state) -> std::span<double>
              {
                  assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                             &state) != nullptr);
@@ -801,7 +801,7 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                  return cache;
              },
              [](typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-                    state) -> BaseLib::DynamicSpan<double>
+                    state) -> std::span<double>
              {
                  assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                             &state) != nullptr);
@@ -827,7 +827,7 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                  return cache;
              },
              [](typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-                    state) -> BaseLib::DynamicSpan<double>
+                    state) -> std::span<double>
              {
                  assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                             &state) != nullptr);
@@ -851,7 +851,7 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                  return cache;
              },
              [](typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-                    state) -> BaseLib::DynamicSpan<double>
+                    state) -> std::span<double>
              {
                  assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                             &state) != nullptr);

@@ -1278,7 +1278,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 std::vector<double> RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getMaterialStateVariableInternalState(
-        std::function<BaseLib::DynamicSpan<double>(
+        std::function<std::span<double>(
             typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
                 MaterialStateVariables&)> const& get_values_span,
         int const& n_components) const

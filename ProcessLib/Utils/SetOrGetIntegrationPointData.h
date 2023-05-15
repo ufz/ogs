@@ -12,9 +12,9 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <span>
 #include <vector>
 
-#include "BaseLib/DynamicSpan.h"
 #include "MathLib/KelvinVector.h"
 #include "TransposeInPlace.h"
 
@@ -252,7 +252,7 @@ template <typename IntegrationPointDataVector, typename MemberType,
 std::vector<double> getIntegrationPointDataMaterialStateVariables(
     IntegrationPointDataVector const& ip_data_vector,
     MemberType member,
-    std::function<BaseLib::DynamicSpan<double>(MaterialStateVariables&)>
+    std::function<std::span<double>(MaterialStateVariables&)>
         get_values_span,
     int const n_components)
 {
@@ -276,7 +276,7 @@ std::size_t setIntegrationPointDataMaterialStateVariables(
     double const* values,
     IntegrationPointDataVector& ip_data_vector,
     MemberType member,
-    std::function<BaseLib::DynamicSpan<double>(MaterialStateVariables&)>
+    std::function<std::span<double>(MaterialStateVariables&)>
         get_values_span)
 {
     auto const n_integration_points = ip_data_vector.size();
