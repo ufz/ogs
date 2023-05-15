@@ -78,7 +78,7 @@ bool removeUnusedGridCells(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
 template <typename T, typename VTK_TYPE>
 void mapArray(MeshLib::Mesh& grid, VTK_TYPE vtk_arr, std::string const& name)
 {
-    MeshLib::PropertyVector<int> const& cell_ids =
+    auto const& cell_ids =
         *grid.getProperties().getPropertyVector<int>(
             cell_id_name, MeshLib::MeshItemType::Cell, 1);
     std::vector<T>& arr = *grid.getProperties().createNewPropertyVector<T>(
