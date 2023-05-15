@@ -49,7 +49,10 @@ NetCdfConfigureDialog::NetCdfConfigureDialog(std::string const& fileName,
     this->radioMesh->setChecked(true);
 }
 
-NetCdfConfigureDialog::~NetCdfConfigureDialog() = default;
+NetCdfConfigureDialog::~NetCdfConfigureDialog()
+{
+    _currentMesh.release();
+}
 
 // Instructions if the OK-Button has been pressed.
 void NetCdfConfigureDialog::accept()
