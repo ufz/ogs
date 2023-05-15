@@ -418,14 +418,4 @@ bool isBaseNode(Node const& node,
     return local_index < n_base_nodes;
 }
 
-std::unique_ptr<MeshLib::Mesh> createMaterialIDsBasedSubMesh(
-    MeshLib::Mesh const& mesh, std::vector<int> const& material_ids,
-    std::string const& name_for_created_mesh)
-{
-    auto const elements =
-        MeshLib::getMeshElementsForMaterialIDs(mesh, material_ids);
-    return MeshLib::createMeshFromElementSelection(
-        name_for_created_mesh, MeshLib::cloneElements(elements));
-}
-
 }  // namespace MeshLib
