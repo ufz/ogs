@@ -21,15 +21,15 @@ namespace MeshLib
 {
 
 /**
-    * Function that moves mesh nodes.
-    *
-    * The function iterates over all mesh nodes between the
-    * begin and the end iterator and moves them using the
-    * given displacement.
-    * @param begin begin iterator
-    * @param end end iterator
-    * @param displacement the displacement to use
-*/
+ * Function that moves mesh nodes.
+ *
+ * The function iterates over all mesh nodes between the
+ * begin and the end iterator and moves them using the
+ * given displacement.
+ * @param begin begin iterator
+ * @param end end iterator
+ * @param displacement the displacement to use
+ */
 template <typename Iterator>
 void moveMeshNodes(Iterator begin,
                    Iterator end,
@@ -40,4 +40,4 @@ void moveMeshNodes(Iterator begin,
                   { node->asEigenVector3d() += displacement; });
 };
 
-} // end namespace MeshLib
+}  // end namespace MeshLib

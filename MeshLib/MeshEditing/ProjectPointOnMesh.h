@@ -11,8 +11,9 @@
 #pragma once
 
 #include <vector>
-#include "MeshLib/Node.h"
+
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib
 {

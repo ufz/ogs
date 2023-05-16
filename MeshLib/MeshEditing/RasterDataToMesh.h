@@ -13,7 +13,6 @@
 #include "GeoLib/Raster.h"
 #include "MeshLib/Mesh.h"
 
-
 namespace MeshLib
 {
 

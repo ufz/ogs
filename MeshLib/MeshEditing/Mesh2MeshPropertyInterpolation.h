@@ -16,7 +16,8 @@
 
 #include "MeshLib/PropertyVector.h"
 
-namespace MeshLib {
+namespace MeshLib
+{
 
 class Mesh;
 
@@ -70,4 +71,4 @@ private:
     std::string const& _property_name;
 };
 
-} // end namespace MeshLib
+}  // end namespace MeshLib
