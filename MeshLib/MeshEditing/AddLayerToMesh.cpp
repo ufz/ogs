@@ -19,10 +19,10 @@
 #include <vector>
 
 #include "BaseLib/Logging.h"
+#include "DuplicateMeshComponents.h"
+#include "FlipElements.h"
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
-#include "MeshLib/MeshEditing/FlipElements.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
 
