@@ -152,17 +152,17 @@ void TranslateDataDialog::accept()
     QString const yinput = this->ylineEdit->text();
     QString const zinput = this->zlineEdit->text();
 
+    /*
     if (xinput.isEmpty() || yinput.isEmpty() || zinput.isEmpty())
     {
         OGSError::box("Please specify coordinates to translate the data.");
         return;
     }
-
-    // why is 0 not a valid input ?
-    if (!xinput.toDouble() or !yinput.toDouble() or !zinput.toDouble())
+    */
+    bool ok;
+    if (!xinput.toDouble(&ok) or !yinput.toDouble(&ok) or !zinput.toDouble(&ok))
     {
-        OGSError::box("The input must be a real number.");
-        return;
+        INFO("If the x/y/z-input is 0, not specified or not a real number, it is used as 0.");
     }
 
     Eigen::Vector3d displacement{xinput.toDouble(), yinput.toDouble(),
