@@ -19,8 +19,8 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/TemplateElement.h"
+#include "MeshLib/IO/VtkIO/VtkMeshConverter.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 #include "Tests/Utils.h"
 
 inline VTKCellType toVtk(MeshLib::CellType const cell_type)

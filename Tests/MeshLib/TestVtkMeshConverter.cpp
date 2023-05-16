@@ -20,8 +20,8 @@
 #include <memory>
 
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/IO/VtkIO/VtkMeshConverter.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 
 /// Constructs this VTK mesh: https://gist.github.com/bilke/8bc7e5e7084ad4d806e1
 class TestVtkMeshConverter : public ::testing::Test
