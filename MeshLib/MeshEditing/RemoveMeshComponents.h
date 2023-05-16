@@ -20,7 +20,8 @@ class Element;
 class Node;
 
 /**
- * Removes mesh elements and returns a new mesh object. The original mesh is kept unchanged.
+ * Removes mesh elements and returns a new mesh object. The original mesh is
+ * kept unchanged.
  * @param mesh                 an original mesh whose elements are removed
  * @param removed_element_ids  a vector of element indices to be removed
  * @param new_mesh_name        a new mesh name
@@ -50,4 +51,4 @@ std::vector<bool> markUnusedNodes(std::vector<Element*> const& elements,
 /// Deallocates and removes nodes marked true.
 void removeMarkedNodes(std::vector<bool> const& nodes_to_delete,
                        std::vector<Node*>& nodes);
-} // end namespace MeshLib
+}  // end namespace MeshLib

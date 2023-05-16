@@ -16,10 +16,11 @@
 
 #include <vector>
 
-#include "MeshLib/MeshEnums.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEnums.h"
 
-namespace MeshLib {
+namespace MeshLib
+{
 // forward declarations
 class Mesh;
 template <typename T>
@@ -31,20 +32,25 @@ class PropertyVector;
 class ElementValueModification
 {
 public:
-    /// Reduces the values assigned the elements of mesh to the smallest possible range.
-    /// Returns the number of different values.
-    static std::size_t condense(MeshLib::Mesh &mesh);
+    /// Reduces the values assigned the elements of mesh to the smallest
+    /// possible range. Returns the number of different values.
+    static std::size_t condense(MeshLib::Mesh& mesh);
 
-    /// Replaces for all elements of mesh with the value old_value with new_value if possible.
-    /// Returns true if successful or false if the value is already taken.
-    static bool replace(MeshLib::Mesh &mesh, int const old_value, int const new_value, bool replace_if_exists = false);
+    /// Replaces for all elements of mesh with the value old_value with
+    /// new_value if possible. Returns true if successful or false if the value
+    /// is already taken.
+    static bool replace(MeshLib::Mesh& mesh, int const old_value,
+                        int const new_value, bool replace_if_exists = false);
 
-    static bool replace(MeshLib::Mesh &mesh, std::string const& property_name,
-        int const old_value, int const new_value, bool replace_if_exists = false);
+    static bool replace(MeshLib::Mesh& mesh, std::string const& property_name,
+                        int const old_value, int const new_value,
+                        bool replace_if_exists = false);
 
     /// Sets new value for all elements having the given element type
     /// Returns the number of elements having the given element type
-    static std::size_t setByElementType(MeshLib::Mesh &mesh, MeshElemType ele_type, int const new_value);
+    static std::size_t setByElementType(MeshLib::Mesh& mesh,
+                                        MeshElemType ele_type,
+                                        int const new_value);
 
 private:
     /// Returns sorted values of properties within the PropertyVector
@@ -55,12 +61,15 @@ private:
     {
         std::vector<T> value_mapping;
         const std::size_t n_property_values(property_vector.size());
-        for (std::size_t i=0; i<n_property_values; ++i) {
+        for (std::size_t i = 0; i < n_property_values; ++i)
+        {
             bool exists(false);
-            T const& value (property_vector[i]);
+            T const& value(property_vector[i]);
             std::size_t const size(value_mapping.size());
-            for (std::size_t j=0; j<size; ++j) {
-                if (value == value_mapping[j]) {
+            for (std::size_t j = 0; j < size; ++j)
+            {
+                if (value == value_mapping[j])
+                {
                     exists = true;
                     break;
                 }
@@ -74,7 +83,6 @@ private:
         std::sort(value_mapping.begin(), value_mapping.end());
         return value_mapping;
     }
-
 };
 
-} // end namespace MeshLib
+}  // end namespace MeshLib

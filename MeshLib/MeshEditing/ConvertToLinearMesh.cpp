@@ -10,6 +10,7 @@
 
 #include "ConvertToLinearMesh.h"
 
+#include "DuplicateMeshComponents.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Hex.h"
 #include "MeshLib/Elements/Line.h"
@@ -18,7 +19,6 @@
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
 #include "MeshLib/PropertyVector.h"

@@ -14,8 +14,8 @@
 
 #pragma once
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace MeshLib
 {
@@ -30,4 +30,4 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
                               std::string const& name, bool on_top,
                               bool copy_material_ids);
 
-} // end namespace MeshLib
+}  // end namespace MeshLib
