@@ -3,8 +3,9 @@ build linux petsc:
     - .template-build-linux
     - .test-artifacts
   tags:
-    - envinf3
+    - envinf
     - shell
+    - petsc
   needs: [meta]
   timeout: 3h
   variables:
