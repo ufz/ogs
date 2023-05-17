@@ -90,7 +90,7 @@ void TranslateDataDialog::on_deselectDataButton_pressed()
     _allData.setStringList(list);
 }
 
-void TranslateDataDialog::moveGeometry(Eigen::Vector3d displacement,
+void TranslateDataDialog::moveGeometry(Eigen::Vector3d const& displacement,
                                        const std::string name)
 {
     std::vector<GeoLib::Point*> const* point_vec =
@@ -100,14 +100,7 @@ void TranslateDataDialog::moveGeometry(Eigen::Vector3d displacement,
         OGSError::box("The geometry is faulty.");
         return;
     }
-    std::size_t const n_points = point_vec->size();
-    for (std::size_t i = 0; i < n_points; ++i)
-    {
-        for (std::size_t c = 0; c < 3; ++c)
-        {
-            (*(*point_vec)[i])[c] += displacement[c];
-        }
-    }
+
     for (auto* point : *point_vec)
     {
         point->asEigenVector3d() += displacement;
@@ -115,7 +108,7 @@ void TranslateDataDialog::moveGeometry(Eigen::Vector3d displacement,
     _geo_models->updateGeometry(name);
 }
 
-void TranslateDataDialog::moveMesh(Eigen::Vector3d displacement,
+void TranslateDataDialog::moveMesh(Eigen::Vector3d const& displacement,
                                    const std::string name)
 {
     MeshLib::Mesh const* mesh(_mesh_model->getMesh(name));
@@ -124,17 +117,7 @@ void TranslateDataDialog::moveMesh(Eigen::Vector3d displacement,
         OGSError::box("The mesh is faulty.");
         return;
     }
-    /*
-    if (std::fabs(xinput.toDouble()) < std::numeric_limits<double>::epsilon() &&
-        std::fabs(yinput.toDouble()) < std::numeric_limits<double>::epsilon() &&
-        std::fabs(zinput.toDouble()) < std::numeric_limits<double>::epsilon())
-    {
-        GeoLib::AABB const aabb(mesh->getNodes().begin(),
-                                mesh->getNodes().end());
-        auto const [min, max] = aabb.getMinMaxPoints();
-        displacement = -(max + min) / 2.0;
-    }
-    */
+
     MeshLib::moveMeshNodes(mesh->getNodes().begin(), mesh->getNodes().end(),
                            displacement);
     _mesh_model->updateMesh(const_cast<MeshLib::Mesh*>(mesh));
@@ -152,21 +135,16 @@ void TranslateDataDialog::accept()
     QString const yinput = this->ylineEdit->text();
     QString const zinput = this->zlineEdit->text();
 
-    /*
-    if (xinput.isEmpty() || yinput.isEmpty() || zinput.isEmpty())
-    {
-        OGSError::box("Please specify coordinates to translate the data.");
-        return;
-    }
-    */
     bool ok;
     if (!xinput.toDouble(&ok) or !yinput.toDouble(&ok) or !zinput.toDouble(&ok))
     {
-        INFO("If the x/y/z-input is 0, not specified or not a real number, it is used as 0.");
+        INFO(
+            "If the x/y/z-input is 0, not specified or not a real number, it "
+            "is used as 0.");
     }
 
-    Eigen::Vector3d displacement{xinput.toDouble(), yinput.toDouble(),
-                                 zinput.toDouble()};
+    Eigen::Vector3d const displacement{xinput.toDouble(), yinput.toDouble(),
+                                       zinput.toDouble()};
 
     INFO("translate model ({:f}, {:f}, {:f}).",
          displacement[0],
@@ -178,7 +156,7 @@ void TranslateDataDialog::accept()
 
     auto const geoNames = _geo_models->getGeometryNames();
 
-    for (auto const& data_name: selectedData)
+    for (auto const& data_name : selectedData)
     {
         if (std::find(std::begin(geoNames), std::end(geoNames), data_name) !=
             std::end(geoNames))

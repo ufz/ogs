@@ -44,8 +44,9 @@ public:
 
 private:
     std::vector<std::string> getSelectedObjects(QStringList list);
-    void moveGeometry(Eigen::Vector3d displacement, const std::string name);
-    void moveMesh(Eigen::Vector3d displacement, const std::string name);
+    void moveGeometry(Eigen::Vector3d const& displacement,
+                      const std::string name);
+    void moveMesh(Eigen::Vector3d const& displacement, const std::string name);
     MeshModel* _mesh_model;
     GEOModels* _geo_models;
     QStringListModel _allData;
@@ -61,25 +62,6 @@ private slots:
     /// Instructions if the "<<-button" has been pressed.
     void on_deselectDataButton_pressed();
 
-    /*
-    private:
-        /// Prepares the output for the node message window
-        void nodesMsgOutput(std::vector<std::size_t> const& node_ids,
-    std::vector<std::size_t> const& collapsibleNodeIds);
-
-        /// Prepares the output for the node message window
-        void elementsMsgOutput(const std::vector<ElementErrorCode>
-    &error_codes);
-
-        std::vector<std::unique_ptr<MeshLib::Mesh>> const& _mesh_vec;
-
-    private slots:
-        /// Starts the analysis
-        void on_startButton_pressed();
-
-        /// Closes the dialog
-        void on_closeButton_pressed() { this->close(); }
-    */
 signals:
     void meshAdded(MeshLib::Mesh const* mesh);
 };

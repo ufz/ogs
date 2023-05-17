@@ -1348,8 +1348,8 @@ void MainWindow::showMeshAnalysisDialog()
 
 void MainWindow::showTranslateDataDialog()
 {
-    auto* dlg = new TranslateDataDialog(_meshModel.get(), _geo_model.get());
-    dlg->exec();
+    auto dlg = TranslateDataDialog(_meshModel.get(), _geo_model.get());
+    dlg.exec();
 }
 
 void MainWindow::convertPointsToStations(std::string const& geo_name)
