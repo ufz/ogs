@@ -6,7 +6,7 @@ weight = 1
 
 ## Required blocks
 
-Following blocks with valid content have to be provided in each project file, their content will be discussed in following pages:
+Following blocks with valid content have to be provided in each project file, their content will be discussed in the following pages:
 
 - [Meshes](/docs/userguide/blocks/meshes/)
 - [Processes](/docs/userguide/blocks/processes/)
@@ -25,10 +25,10 @@ Blocks in this list are optional but may be convenient to use and are used in ma
 - [Test definitions](/docs/userguide/blocks/test_definitions/)
 - [Geometry](/docs/userguide/blocks/geometry/)
 
-If you already have a project file but you are wondering how to modify it automatically or how it can be interacted with from external tools, please have a look at [Working with project files](/docs/userguide/basics/working_with_project_files/) section.
+If you already have a project file but you are wondering how to modify it automatically or how it can be interacted with from external tools, please have a look at the [Working with project files](/docs/userguide/basics/working_with_project_files/) section.
 
 ## Minimum requirements for a valid project file
 
-Generally there is a certain degree of flexibility, when it comes to the internal structure of the project file.
+Generally, there is a certain degree of flexibility, when it comes to the internal structure of the project file.
 Still, there are some exceptions.
-In "Time loop" section, "set stepping" subsection has to be defined after "add process".
+For instance, in the "Time loop" section, the "set stepping" subsection has to be defined after "add process".

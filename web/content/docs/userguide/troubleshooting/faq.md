@@ -7,7 +7,8 @@ weight = 1
 
 ## "XSDError: Loaded schema file is invalid" error encountered when running DataExplorer
 
-You may encountering the following error (or similar) on opening `.gml`, `.cnd`, `std` or `.prj` files in the Data Explorer or file conversion tools (e.g. `OGSFileConverter`):
+You may encounter the following error (or similar) on opening `.gml`, `.cnd`, `std` or `.prj` files in the Data Explorer or file
+conversion tools (e.g., `OGSFileConverter`):
 
 <i class="far fa-exclamation-triangle"></i> Error message:
 
@@ -28,7 +29,7 @@ xsi:noNamespaceSchemaLocation="http://www.opengeosys.org/images/xsd/OpenGeoSysXX
 
 where `XXX` can be `CND`, `GLI`, `PRJ` or `STN` depending on the file type.
 
-Now the save the modified file and try to load it again.
+Now, save the modified file and try to load it again.
 
 <!-- vale off -->
 
@@ -39,13 +40,15 @@ Now the save the modified file and try to load it again.
 
 ## Oh, no! It diverges
 
-OpenGeoSys will sometimes crash with an error message stating, that it couldn't reduce the time step any more. There are several things that can be done to solve this:
+OpenGeoSys will sometimes crash with an error message stating, that it couldn't reduce the time step any more. There are several
+things that can be done to solve this:
 
 - In [Time loop](/docs/userguide/blocks/time_loop/) adjust time stepping allowing smaller time steps to be taken.
 - In [Time loop](/docs/userguide/blocks/time_loop/) adjust the [error tolerance](/docs/userguide/blocks/time_loop/#error-tolerances)
 - Check if [mesh quality](/docs/userguide/blocks/meshes/#mesh-quality) is sufficient
-- Verify if all [parameters](/docs/userguide/blocks/parameters/), especially those that vary during the simulation, make physical sense through out the whole experiment and combined with other parameters.
+- Verify if all [parameters](/docs/userguide/blocks/parameters/), especially those that vary during the simulation, make physical sense throughout the whole experiment and combined with other parameters.
 
 ## Oh, no! There are NaNs everywhere
 
-If in the output log all values are [NaN](/docs/userguide/troubleshooting/glossary/#nan) and one or more parameters were defined as functions, there is a good chance that division by zero, or other undefined operation happened.
+If in the output log all values are [NaN](/docs/userguide/troubleshooting/glossary/#nan) and one or more parameters were defined
+as functions, there is a good chance that a division by zero, or other undefined operation happened.

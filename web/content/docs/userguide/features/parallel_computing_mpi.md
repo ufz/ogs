@@ -6,7 +6,7 @@ weight = 4
 +++
 
 <!-- vale off -->
-The executable OGS for MPI parallel computing is compiled with special
+The executable OGS for MPI parallel computing is compiled with a special
 build configuration. If you need to compile the source code, please read
 [Build configuration for MPI and PETSc]({{<relref "configure_for_mpi_and_petsc.md">}}).
 <!-- vale on -->
@@ -17,7 +17,7 @@ To conduct DDC enabled parallel computing with OGS, following steps are required
 
 #### 1.1 Partition mesh
 
-For the domain decomposition approach, an application of OGS using METIS as a node wise
+For the domain decomposition approach, an application of OGS using METIS as a node-wise
  mesh topology partitioner, [`partmesh`]({{<ref
 "mesh-partition">}}), is provided to partition meshes by node. An example of how
  to partition meshes is available in a workflow documentation on how to [create a simple parallel model]({{<ref
@@ -29,8 +29,8 @@ The partitioned meshes are written in binary files for a fast parallel reading
 
 #### 1.2 Configure PETSc solver in project file
 
-Setting  PETSc solver is the only change in project file for running parallel OGS with PETSc.
-For linear solver, it is done by adding a tag of `petsc` inside `linear_solver` tag,
+Setting the PETSc solver is the only change the in project file for running parallel OGS with PETSc.
+For the linear solver, it is done by adding a tag of `petsc` inside `linear_solver` tag,
  e.g:
 
 ```xml
@@ -52,12 +52,14 @@ For linear solver, it is done by adding a tag of `petsc` inside `linear_solver` 
     </linear_solvers>
 ```
 
-If tag of `petsc` is not given in project file, the default setting of PETSc
+If the tag of `petsc` is not given in project file, the default setting of the PETSc
  linear solver will be taken, which uses the solver type of `cg` and
  the preconditioner type of `jacobi`.
 
+ TODO: Explain the example above at best a little bit more. This can be done by comments in the `xml`-code snippet.
+
 For the simulation of coupled processes with the staggered scheme, a prefix
-can be used by tag `prefix` to set PETSc solver for each process, individually.
+can be used by the tag `prefix` to set the PETSc solver for each process, individually.
  For example:
 
 ```xml
@@ -92,8 +94,10 @@ The above example shows that once a prefix is given for PETSc linear solver
  keyword, `-`, can be replaced with a new prefix, `-[given prefix string]_`. In the
 above example, `-`, is replaced with `-T_` and `-H_`, respectively.
 
-A introduction and a list of PETSc KSP solvers and preconditioners can be found by
+An introduction and a list of PETSc KSP solvers and preconditioners can be found by
 [this link](https://petsc.org/release/manualpages/KSP).
+
+TODO: At best explain the example above in more detail. This can be done by comments in the `xml`-code snippet.
 
 ### 2. Launch MPI OGS
 
@@ -115,12 +119,13 @@ Running PETSc enabled OGS with one compute thread does not need mesh partitionin
 mpiexec -n 1 ogs ...
 ```
 
-Additional PETSc command line options can be given as unlabelled arguments at the end of the OGS run command preceded by two minus-signs
+Additional PETSc command line options can be given as unlabelled arguments at the end of the OGS run command preceded by two
+minus-signs
 (`... ogs ... -- [PETSc options]`).
 
-With  PETSc command line options, you can
+With PETSc command line options, you can
 
-* monitor KSP solver convergence status, e.g.
+* monitor KSP solver convergence status, e.g.:
 
 ```bash
 mpiexec -n 5 ogs foo.prj -o output -- -ksp_converged_reason -ksp_monitor_true_residual
@@ -134,14 +139,14 @@ mpiexec -n 5 ogs foo.prj -o output -- -ksp_type gmres -ksp_rtol 1e-16 -ksp_max_i
 
 * or use other PETSc command line options.
 
-For Linux clusters or supercomputer, computation job has to be submitted to
- queue and job management system, which may provide a special command to
- launch MPI job. A job script for such
+For Linux clusters or supercomputers, a computation job has to be submitted to the
+ queue and job management system, which may require a special command to
+ launch the MPI job. A job script for such
  queue system is required.
 
 The cluster system EVE of UFZ uses SLURM
  (Simple Linux Utility for Resource Management) to manage computing jobs.
-Here is an example of job script for the SLURM system on EVE:
+Here is an example of a job script for the SLURM system on EVE:
 
 ```bash
 #!/bin/bash
@@ -173,8 +178,8 @@ srun -n "$SLURM_NTASKS"  $APP /home/wwang/data_D/project/AREHS/HM_3D/simHM_glaci
 
 In the job script for EVE, `module load  foss/2020b` must be presented, and
  `srun` is a sort of MPI job launcher.
- If a job fails with an error message about shared library not found, you can check
- the EVE modules specified in the files in source code directory:
+ If a job fails with an error message about a 'shared library not found', you can check
+ the EVE modules specified in the files in the source code directory:
  *scripts/env/eve*, and add the corresponding modules to the load list
 in the job script.
 
@@ -190,7 +195,7 @@ For the detailed syntax of job script of SLURM for EVE, please visit <https://wi
 ### 3. Check results
 
 There are two output types available, VTK and XDMF.
-In the project file, output type can be specified in `type` tag of `output` tag,
+In the project file, output type can be specified in the `type` tag of the `output` tag,
 for example:
 
 ```xml
@@ -234,6 +239,8 @@ For example, `north.vtu`, `south.vtu`, and `top.vtu` are the meshes for the
 ```bash
 identifySubdomains -f -m foo.vtu  --  north.vtu  south.vtu  top.vtu
 ```
+
+TODO: Check paragraph above for grammar and content.
 
 #### 3.2 XDMF output
 

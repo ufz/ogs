@@ -5,9 +5,11 @@ author = "Feliks Kiszkurno"
 weight = 1
 +++
 
-This file will list in alphabetical order some most important terms, that may not be know to wider audience or are used in non standard way in the OpeGeoSys project.
+This file will list in alphabetical order some most important terms, that may not be know to wider audience or are used in non
+standard way in the OpeGeoSys project.
 
-The terms explained in this section are relevant for the "Beginners Guide" in other sections (for example in process descriptions), the meaning of some terms used here may vary.
+The terms explained in this section are relevant for the "Beginners Guide" in other sections (for example in process
+descriptions), the meaning of some terms used here may vary.
 
 ## A
 
@@ -21,7 +23,9 @@ Liquid phase in porous media. Can be used in THM process....
 
 ### Constitutive relation
 
-Known also as constitutive equation. It is an equation defining a relation between physical quantities that is specific to material for which the equation is valid and describes how it responds to external stimulation. For more information click [here](https://en.wikipedia.org/wiki/Constitutive_equation) and for more information on how they are used in OpenGeoSys click [here](/docs/userguide/blocks/processes/#constitutive-relations), for the list of relations available in OpenGeoSys and details on them click [here](/docs/userguide/blocks/misc/constitutive_relations).
+Known also as constitutive equation. It is an equation defining a relation between physical quantities that is specific to
+material for which the equation is valid and describes how it responds to external stimulation. For more information click [here](https://en.wikipedia.org/wiki/Constitutive_equation) and for more information on how they are used in OpenGeoSys click [here](/docs/userguide/blocks/processes/#constitutive-relations), for the list of relations available in OpenGeoSys and details on
+them click [here](/docs/userguide/blocks/misc/constitutive_relations).
 
 ### Constitutive equation
 
@@ -66,7 +70,8 @@ NaN is an acronym for not-a-number. This value is a result of:
 
 ### Native installation
 
-Setup in which program (e.g. OpenGeoSys platform) is installed directly in the system running on a specific machine without containers or other intermediary.
+Setup in which program (e.g. OpenGeoSys platform) is installed directly in the system running on a specific machine without
+containers or other intermediary.
 
 ## O
 
@@ -78,7 +83,8 @@ Setup in which program (e.g. OpenGeoSys platform) is installed directly in the s
 
 ### Project file
 
-Input file provided to OGS executable as the required input argument. It defines all aspects of the simulation that is to be executed.
+Input file provided to OGS executable as the required input argument. It defines all aspects of the simulation that is to be
+executed.
 
 ## Q
 
@@ -86,7 +92,8 @@ Input file provided to OGS executable as the required input argument. It defines
 
 ### Residuals
 
-Residuals is the difference between left and right hand side of the modeled equation. In theory, if a perfect solution was available, both sides would be equal. Due to numerical errors, it is usually not the case.
+Residuals is the difference between left and right hand side of the modeled equation. In theory, if a perfect solution was
+available, both sides would be equal. Due to numerical errors, it is usually not the case.
 
 ## S
 
@@ -102,7 +109,8 @@ Residuals is the difference between left and right hand side of the modeled equa
 
 ### Vectorial process variable
 
-Is a subtype of [process variable](/docs/userguide/troubleshooting/glossary/#process-variable) which is defined as vector. It is mostly directional. An example of vector process variable is displacement which can have a different value in each direction:
+Is a subtype of [process variable](/docs/userguide/troubleshooting/glossary/#process-variable) which is defined as vector. It
+is mostly directional. An example of vector process variable is displacement which can have a different value in each direction:
 $$
 \mathbf{u} = [u_x u_y u_z]
 $$

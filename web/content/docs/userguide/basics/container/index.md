@@ -9,11 +9,13 @@ weight = 3
 
 ### Important note
 
-This page describes how to **run** OGS with the help of a Linux container (for **users**). To **build** OGS with the help of a container go to the [developer guide]({{< ref "singularity.md" >}}) (for **developers**).
+TODO: Consider to place this section somewhere outside of basics, e.g., as an individual section as the context may be
+considered already pretty advanced. This page describes how to **run** OGS with the help of a Linux container (for **users**).
+To **build** OGS with the help of a container go to the [Developer Guide]({{< ref "singularity.md" >}}) (for **developers**).
 
 </div>
 
-## With Singularity
+## With Singularity TODO: Update this section regarding Apptainer
 
 ### Prerequisites
 
@@ -38,7 +40,8 @@ Simply download an image from the [latest master-branch build](https://gitlab.op
 singularity exec ogs-6.x.x-serial.sif ogs some/path/project.prj
 ```
 
-This starts the container, mounts your home directory inside the container, passes the current working directory and runs the `ogs` executable (in your home directory which is mounted inside the container) with the passed project file. Everything works as expected and is transparent to the user. When OGS finishes the container stops and returns to the host system.
+This starts the container, mounts your home directory inside the container, passes the current working directory and runs the `ogs` executable (in your home directory which is mounted inside the container) with the passed project file. When using
+containers, everything stays transparent to the user. When OGS finishes the container stops and returns to the host system.
 
 You can also specify the full executable path in the container:
 
