@@ -17,14 +17,14 @@
 #include <memory>
 #include <vector>
 
+#include "AngleSkewMetric.h"
 #include "BaseLib/Histogram.h"
+#include "EdgeRatioMetric.h"
+#include "ElementQualityMetric.h"
+#include "ElementSizeMetric.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshQuality/AngleSkewMetric.h"
-#include "MeshLib/MeshQuality/EdgeRatioMetric.h"
-#include "MeshLib/MeshQuality/ElementQualityMetric.h"
-#include "MeshLib/MeshQuality/ElementSizeMetric.h"
-#include "MeshLib/MeshQuality/RadiusEdgeRatioMetric.h"
-#include "MeshLib/MeshQuality/SizeDifferenceMetric.h"
+#include "RadiusEdgeRatioMetric.h"
+#include "SizeDifferenceMetric.h"
 
 namespace MeshLib
 {

@@ -15,11 +15,11 @@
 #include "LayeredVolume.h"
 
 #include "GeoLib/Raster.h"
+#include "MeshLayerMapper.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
-#include "MeshLib/MeshGenerators/MeshLayerMapper.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Properties.h"
 

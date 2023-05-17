@@ -18,10 +18,10 @@
 #include <vtkSmartPointer.h>
 
 #include "BaseLib/Logging.h"
+#include "MeshGenerator.h"
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Node.h"
 
