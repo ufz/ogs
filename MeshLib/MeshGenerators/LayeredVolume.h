@@ -17,13 +17,14 @@
 #include <string>
 #include <vector>
 
-#include "MeshLib/Node.h"
 #include "LayeredMeshGenerator.h"
+#include "MeshLib/Node.h"
 
-namespace GeoLib {
-    class GEOObjects;
-    class Surface;
-}
+namespace GeoLib
+{
+class GEOObjects;
+class Surface;
+}  // namespace GeoLib
 
 /**
  * \brief Creates a volume geometry from 2D mesh layers based on raster data.
@@ -71,11 +72,13 @@ private:
                         unsigned layer_id,
                         GeoLib::Raster const& raster) override;
 
-    /// Creates boundary surfaces between the mapped layers to make the volumes watertight
-    void addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t nLayers);
+    /// Creates boundary surfaces between the mapped layers to make the volumes
+    /// watertight
+    void addLayerBoundaries(const MeshLib::Mesh& layer, std::size_t nLayers);
 
     /// Removes duplicate 2D elements (possible due to outcroppings)
-    void removeCongruentElements(std::size_t nLayers, std::size_t nElementsPerLayer);
+    void removeCongruentElements(std::size_t nLayers,
+                                 std::size_t nElementsPerLayer);
 
     std::vector<MeshLib::Node> _attribute_points;
 };

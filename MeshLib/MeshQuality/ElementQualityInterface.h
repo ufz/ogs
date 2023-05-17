@@ -37,7 +37,7 @@ class ElementQualityInterface
 public:
     /// Constructor
     ElementQualityInterface(MeshLib::Mesh const& mesh, MeshQualityType t)
-    : _type(t), _mesh(mesh), _quality_tester(nullptr)
+        : _type(t), _mesh(mesh), _quality_tester(nullptr)
     {
         calculateElementQuality(_mesh, _type);
     }
@@ -52,29 +52,35 @@ public:
         return empty_quality_vec;
     }
 
-    /// Returns a histogram of the quality vector separated into the given number of bins.
-    /// If no number of bins is specified, one will be calculated based on the Sturges criterium.
+    /// Returns a histogram of the quality vector separated into the given
+    /// number of bins. If no number of bins is specified, one will be
+    /// calculated based on the Sturges criterium.
     BaseLib::Histogram<double> getHistogram(std::size_t n_bins = 0) const
     {
         if (_quality_tester)
-            return _quality_tester->getHistogram(static_cast<std::size_t>(n_bins));
+            return _quality_tester->getHistogram(
+                static_cast<std::size_t>(n_bins));
 
         return BaseLib::Histogram<double>{{}};
     }
 
     /// Writes a histogram of the quality vector to a specified file.
-    int writeHistogram(std::string const& file_name, std::size_t n_bins = 0) const
+    int writeHistogram(std::string const& file_name,
+                       std::size_t n_bins = 0) const
     {
         if (_quality_tester == nullptr)
             return 1;
 
-        BaseLib::Histogram<double> const histogram (_quality_tester->getHistogram(n_bins));
-        histogram.write(file_name, _mesh.getName(), MeshQualityType2String(_type));
+        BaseLib::Histogram<double> const histogram(
+            _quality_tester->getHistogram(n_bins));
+        histogram.write(file_name, _mesh.getName(),
+                        MeshQualityType2String(_type));
         return 0;
     }
 
 private:
-    /// Calculates the quality of each mesh element based on the specified metric
+    /// Calculates the quality of each mesh element based on the specified
+    /// metric
     void calculateElementQuality(MeshLib::Mesh const& mesh, MeshQualityType t)
     {
         if (t == MeshQualityType::EDGERATIO)
@@ -92,7 +98,8 @@ private:
                 std::make_unique<MeshLib::RadiusEdgeRatioMetric>(mesh);
         else
         {
-            ERR("ElementQualityInterface::calculateElementQuality(): Unknown MeshQualityType.");
+            ERR("ElementQualityInterface::calculateElementQuality(): Unknown "
+                "MeshQualityType.");
             return;
         }
         _quality_tester->calculateQuality();
