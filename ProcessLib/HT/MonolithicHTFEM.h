@@ -108,7 +108,9 @@ public:
         auto const& liquid_phase = medium.phase("AqueousLiquid");
         auto const& solid_phase = medium.phase("Solid");
 
-        auto const& b = process_data.specific_body_force;
+        auto const& b =
+            process_data
+                .projected_specific_body_force_vectors[this->_element.getID()];
 
         MaterialPropertyLib::VariableArray vars;
 

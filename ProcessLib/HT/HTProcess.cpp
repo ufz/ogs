@@ -48,24 +48,26 @@ void HTProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
+    int const mesh_space_dimension = _process_data.mesh_space_dimension;
+
     if (_use_monolithic_scheme)
     {
         ProcessLib::createLocalAssemblers<MonolithicHTFEM>(
-            mesh.getDimension(), mesh.getElements(), dof_table,
+            mesh_space_dimension, mesh.getElements(), dof_table,
             _local_assemblers, NumLib::IntegrationOrder{integration_order},
             mesh.isAxiallySymmetric(), _process_data);
     }
     else
     {
         ProcessLib::createLocalAssemblers<StaggeredHTFEM>(
-            mesh.getDimension(), mesh.getElements(), dof_table,
+            mesh_space_dimension, mesh.getElements(), dof_table,
             _local_assemblers, NumLib::IntegrationOrder{integration_order},
             mesh.isAxiallySymmetric(), _process_data);
     }
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",
-        makeExtrapolator(mesh.getDimension(), getExtrapolator(),
+        makeExtrapolator(mesh_space_dimension, getExtrapolator(),
                          _local_assemblers,
                          &HTLocalAssemblerInterface::getIntPtDarcyVelocity));
 }
