@@ -17,15 +17,15 @@
 #include <vector>
 
 #include "BaseLib/Histogram.h"
-
-#include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
 
 namespace MeshLib
 {
 
 /**
- * Base class for calculating the quality of mesh element based on a given metric
+ * Base class for calculating the quality of mesh element based on a given
+ * metric
  */
 class ElementQualityMetric
 {
@@ -35,14 +35,16 @@ public:
     virtual ~ElementQualityMetric() = default;
 
     /// Calculates the quality metric for each element of the mesh
-    virtual void calculateQuality () = 0;
+    virtual void calculateQuality() = 0;
 
     /// Returns the result vector
-    std::vector<double> const& getElementQuality () const;
+    std::vector<double> const& getElementQuality() const;
 
-    /// Returns a histogram of the quality vector separated into the given number of bins.
-    /// If no number of bins is specified, one will be calculated based on the Sturges criterium.
-    virtual BaseLib::Histogram<double> getHistogram (std::size_t n_bins = 0) const;
+    /// Returns a histogram of the quality vector separated into the given
+    /// number of bins. If no number of bins is specified, one will be
+    /// calculated based on the Sturges criterium.
+    virtual BaseLib::Histogram<double> getHistogram(
+        std::size_t n_bins = 0) const;
 
 protected:
     double _min = std::numeric_limits<double>::max();

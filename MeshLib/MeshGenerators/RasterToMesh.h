@@ -15,9 +15,10 @@
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Properties.h"
 
-class vtkImageData; // For conversion from Image to QuadMesh
+class vtkImageData;  // For conversion from Image to QuadMesh
 
-namespace MeshLib {
+namespace MeshLib
+{
 
 class Mesh;
 class Node;
@@ -83,16 +84,15 @@ public:
         std::string const& array_name = "Colour");
 
 private:
-    template<typename T>
-    static void fillPropertyVector(
-        MeshLib::PropertyVector<T> &prop_vec,
-        double const*const img,
-        GeoLib::RasterHeader const& header,
-        MeshElemType elem_type)
+    template <typename T>
+    static void fillPropertyVector(MeshLib::PropertyVector<T>& prop_vec,
+                                   double const* const img,
+                                   GeoLib::RasterHeader const& header,
+                                   MeshElemType elem_type)
     {
         for (std::size_t k = 0; k < header.n_depth; k++)
         {
-            std::size_t const layer_idx = (k*header.n_rows*header.n_cols);
+            std::size_t const layer_idx = (k * header.n_rows * header.n_cols);
             for (std::size_t i = 0; i < header.n_cols; i++)
             {
                 std::size_t idx(i * header.n_rows + layer_idx);
@@ -103,7 +103,8 @@ private:
                     if (elem_type == MeshElemType::TRIANGLE ||
                         elem_type == MeshElemType::PRISM)
                     {
-                        prop_vec.push_back(val); // because each pixel is represented by two cells
+                        prop_vec.push_back(val);  // because each pixel is
+                                                  // represented by two cells
                     }
                 }
             }
@@ -111,4 +112,4 @@ private:
     }
 };
 
-} // end namespace MeshLib
+}  // end namespace MeshLib
