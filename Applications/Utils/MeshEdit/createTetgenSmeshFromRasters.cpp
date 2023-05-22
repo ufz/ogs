@@ -1,7 +1,7 @@
 /**
  * \file
  * \date 2023-04-25
- * \Creates a boundary representation for a layered 3D mes.
+ * \brief Creates a boundary representation for a layered 3D mesh.
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
@@ -142,10 +142,8 @@ int main(int argc, char* argv[])
 
     INFO("Writing mesh '{:s}' ... ", output_name);
 
-    LayeredVolume lv;
-    // MeshLib::Mesh* tg_mesh(nullptr);
-    std::unique_ptr<MeshLib::Mesh> tg_mesh;
     auto const rasters = FileIO::readRasters(raster_paths);
+    LayeredVolume lv;
     if (rasters)
     {
         if (!lv.createLayers(*sfc_mesh, *rasters, min_thickness))
@@ -165,7 +163,8 @@ int main(int argc, char* argv[])
 #endif
         return EXIT_FAILURE;
     }
-    tg_mesh = lv.getMesh("BoundaryRepresentation");
+    std::unique_ptr<MeshLib::Mesh> tg_mesh =
+        lv.getMesh("BoundaryRepresentation");
     if (tg_mesh != nullptr)
     {
         std::vector<MeshLib::Node> tg_attr(lv.getAttributePoints());
