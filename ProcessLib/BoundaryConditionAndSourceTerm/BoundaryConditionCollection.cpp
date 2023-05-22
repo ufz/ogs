@@ -26,16 +26,17 @@ void BoundaryConditionCollection::addBCsForProcessVariables(
     std::vector<std::reference_wrapper<ProcessVariable>> const&
         process_variables,
     NumLib::LocalToGlobalIndexMap const& dof_table,
-    unsigned const integration_order, Process const& process)
+    unsigned const integration_order, Process const& process,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     for (int variable_id = 0;
          variable_id < static_cast<int>(process_variables.size());
          ++variable_id)
     {
         ProcessVariable& pv = process_variables[variable_id];
-        auto bcs = pv.createBoundaryConditions(dof_table, variable_id,
-                                               integration_order, _parameters,
-                                               process, process_variables);
+        auto bcs = pv.createBoundaryConditions(
+            dof_table, variable_id, integration_order, _parameters, process,
+            process_variables, media);
 
         std::move(bcs.begin(), bcs.end(),
                   std::back_inserter(_boundary_conditions));

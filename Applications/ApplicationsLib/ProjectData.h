@@ -91,6 +91,12 @@ public:
 
     MeshLib::Mesh* getMesh(std::string const& mesh_name) const;
 
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+    getMedia() const
+    {
+        return _media;
+    }
+
 private:
     /// Parses the process variables configuration and creates new variables for
     /// each variable entry passing the corresponding subtree to the process

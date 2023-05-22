@@ -68,20 +68,22 @@ Process::Process(
 }
 
 void Process::initializeProcessBoundaryConditionsAndSourceTerms(
-    const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id)
+    const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     auto const& per_process_variables = _process_variables[process_id];
     auto& per_process_BCs = _boundary_conditions[process_id];
 
     per_process_BCs.addBCsForProcessVariables(per_process_variables, dof_table,
-                                              _integration_order, *this);
+                                              _integration_order, *this, media);
 
     auto& per_process_sts = _source_term_collections[process_id];
     per_process_sts.addSourceTermsForProcessVariables(
         per_process_variables, dof_table, _integration_order);
 }
 
-void Process::initializeBoundaryConditions()
+void Process::initializeBoundaryConditions(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     // The number of processes is identical to the size of _process_variables,
     // the vector contains variables for different processes. See the
@@ -90,11 +92,12 @@ void Process::initializeBoundaryConditions()
     for (std::size_t pcs_id = 0; pcs_id < number_of_processes; pcs_id++)
     {
         initializeProcessBoundaryConditionsAndSourceTerms(
-            *_local_to_global_index_map, pcs_id);
+            *_local_to_global_index_map, pcs_id, media);
     }
 }
 
-void Process::initialize()
+void Process::initialize(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     DBUG("Initialize process.");
 
@@ -111,7 +114,7 @@ void Process::initialize()
                               _integration_order);
 
     DBUG("Initialize boundary conditions.");
-    initializeBoundaryConditions();
+    initializeBoundaryConditions(media);
 }
 
 void Process::setInitialConditions(
