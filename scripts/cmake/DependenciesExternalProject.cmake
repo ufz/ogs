@@ -116,6 +116,11 @@ if(OGS_USE_PETSC)
     set(_petsc_source_file
         ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/petsc-v${ogs.minimum_version.petsc}.zip
     )
+    if(DEFINED ENV{OGS_PETSC_CONFIG_OPTIONS} AND "${OGS_PETSC_CONFIG_OPTIONS}"
+                                                 STREQUAL ""
+    )
+        set(OGS_PETSC_CONFIG_OPTIONS "$ENV{OGS_PETSC_CONFIG_OPTIONS}")
+    endif()
     if(EXISTS ${_petsc_source_file})
         set(_petsc_source URL ${_petsc_source_file})
     elseif(NOT (OGS_PETSC_CONFIG_OPTIONS OR OGS_BUILD_PETSC))
@@ -124,7 +129,7 @@ if(OGS_USE_PETSC)
 
     if(NOT PETSC_FOUND)
         set(_configure_opts "")
-        if(NOT "--download-fc=1" IN_LIST OGS_PETSC_CONFIG_OPTIONS)
+        if(NOT "--download-fc" IN_LIST OGS_PETSC_CONFIG_OPTIONS)
             list(APPEND _configure_opts --with-fc=0)
         endif()
         if(ENV{CC})
