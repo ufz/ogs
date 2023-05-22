@@ -25,15 +25,14 @@ PropertyDataType WaterLiquidEnthalpyIAPWSIF97Region4::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
+    double const p = variable_array.phase_pressure;
+
     /// According to the IAPWS-IF97:
     /// http://www.iapws.org/relguide/IF97-Rev.pdf,
     /// the vapor-liquid saturation line only covers
     /// the pressure range between 611.213 Pa and 22.064 MPa.
     /// Thus, for the liquid saturation enthalpy calculated from
-    /// the saturation temperature, the lower limit of
-    /// phase pressure is 611.213 Pa.
-    double const p = variable_array.phase_pressure;
-
+    /// the saturation temperature, it has the same pressure boundaries.
     if ((p < 611.213) || (p > 22.064e6))
     {
         WARN(

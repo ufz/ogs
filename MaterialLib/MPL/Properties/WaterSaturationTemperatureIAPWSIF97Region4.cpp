@@ -21,12 +21,12 @@ PropertyDataType WaterSaturationTemperatureIAPWSIF97Region4::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
+    double const p = variable_array.phase_pressure;
+
     /// According to the IAPWS-IF97:
     /// http://www.iapws.org/relguide/IF97-Rev.pdf,
     /// the vapor-liquid saturation line in region4 only covers
     /// the pressure range between 611.213 Pa and 22.064 MPa.
-    double const p = variable_array.phase_pressure;
-
     if ((p < 611.213) || (p > 22.064e6))
     {
         WARN(
