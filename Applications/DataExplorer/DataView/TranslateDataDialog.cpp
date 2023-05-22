@@ -20,9 +20,9 @@
 #include "GEOModels.h"
 #include "GeoLib/AABB.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/moveMeshNodes.h"
 #include "MeshLib/Node.h"
 #include "MeshModel.h"
+#include "MeshToolsLib/MeshEditing/moveMeshNodes.h"
 
 TranslateDataDialog::TranslateDataDialog(MeshModel* mesh_model,
                                          GEOModels* geo_models,
@@ -91,7 +91,7 @@ void TranslateDataDialog::on_deselectDataButton_pressed()
 }
 
 void TranslateDataDialog::moveGeometry(Eigen::Vector3d const& displacement,
-                                       const std::string name)
+                                       std::string const& name)
 {
     std::vector<GeoLib::Point*> const* point_vec =
         _geo_models->getPointVec(name);
@@ -101,15 +101,14 @@ void TranslateDataDialog::moveGeometry(Eigen::Vector3d const& displacement,
         return;
     }
 
-    for (auto* point : *point_vec)
-    {
-        point->asEigenVector3d() += displacement;
-    }
+    MeshToolsLib::moveMeshNodes(point_vec->begin(), point_vec->end(),
+                                displacement);
+
     _geo_models->updateGeometry(name);
 }
 
 void TranslateDataDialog::moveMesh(Eigen::Vector3d const& displacement,
-                                   const std::string name)
+                                   std::string const& name)
 {
     MeshLib::Mesh const* mesh(_mesh_model->getMesh(name));
     if (mesh == nullptr)
@@ -118,8 +117,8 @@ void TranslateDataDialog::moveMesh(Eigen::Vector3d const& displacement,
         return;
     }
 
-    MeshLib::moveMeshNodes(mesh->getNodes().begin(), mesh->getNodes().end(),
-                           displacement);
+    MeshToolsLib::moveMeshNodes(mesh->getNodes().begin(),
+                                mesh->getNodes().end(), displacement);
     _mesh_model->updateMesh(const_cast<MeshLib::Mesh*>(mesh));
 }
 

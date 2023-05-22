@@ -18,7 +18,7 @@
 #include <memory>
 
 #include "MeshLib/Elements/ElementErrorCode.h"
-#include "MeshLib/MeshEditing/moveMeshNodes.h"
+#include "MeshToolsLib/MeshEditing/moveMeshNodes.h"
 #include "ui_TranslateData.h"
 
 namespace MeshLib
@@ -45,8 +45,8 @@ public:
 private:
     std::vector<std::string> getSelectedObjects(QStringList list);
     void moveGeometry(Eigen::Vector3d const& displacement,
-                      const std::string name);
-    void moveMesh(Eigen::Vector3d const& displacement, const std::string name);
+                      std::string const& name);
+    void moveMesh(Eigen::Vector3d const& displacement, std::string const& name);
     MeshModel* _mesh_model;
     GEOModels* _geo_models;
     QStringListModel _allData;
