@@ -30,7 +30,7 @@
 #include "Base/OGSError.h"
 #include "MeshLib/IO/VtkIO/VtkMeshConverter.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/RasterToMesh.h"
+#include "MeshToolsLib/MeshGenerators/RasterToMesh.h"
 #include "VtkVisPipeline.h"
 #include "VtkVisPipelineItem.h"
 #include "VtkVisPointSetItem.h"

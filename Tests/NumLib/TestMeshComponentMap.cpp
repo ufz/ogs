@@ -15,8 +15,8 @@
 #include <memory>
 #include <vector>
 
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSubset.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "NumLib/DOF/MeshComponentMap.h"
 
 class NumLibMeshComponentMapTest : public ::testing::Test

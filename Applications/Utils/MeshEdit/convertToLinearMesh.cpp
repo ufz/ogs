@@ -7,7 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "MeshLib/MeshEditing/ConvertToLinearMesh.h"
+#include "MeshToolsLib/MeshEditing/ConvertToLinearMesh.h"
 
 #include <tclap/CmdLine.h>
 

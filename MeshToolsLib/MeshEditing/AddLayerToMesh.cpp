@@ -22,9 +22,9 @@
 #include "FlipElements.h"
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
 
 namespace MeshLib
 {
@@ -53,8 +53,8 @@ MeshLib::Element* extrudeElement(
     }
 
     const unsigned nElemNodes(sfc_elem.getNumberOfBaseNodes());
-    auto new_nodes = std::unique_ptr<MeshLib::Node* []>
-    { new MeshLib::Node*[2 * nElemNodes] };
+    auto new_nodes =
+        std::unique_ptr<MeshLib::Node*[]>{new MeshLib::Node*[2 * nElemNodes]};
 
     for (unsigned j = 0; j < nElemNodes; ++j)
     {

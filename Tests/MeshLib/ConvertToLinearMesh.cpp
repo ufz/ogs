@@ -7,7 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "MeshLib/MeshEditing/ConvertToLinearMesh.h"
+#include "MeshToolsLib/MeshEditing/ConvertToLinearMesh.h"
 
 #include <gtest/gtest.h>
 
@@ -18,9 +18,9 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/QuadraticMeshGenerator.h"
 
 using namespace MeshLib;
 using namespace std::string_literals;

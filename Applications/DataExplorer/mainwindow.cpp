@@ -60,11 +60,11 @@
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshQuality/ElementQualityInterface.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
-#include "MeshLib/convertMeshToGeo.h"
+#include "MeshToolsLib/MeshQuality/ElementQualityInterface.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
+#include "MeshToolsLib/convertMeshToGeo.h"
 
 // Dialogs
 #include "DataView/CreateStructuredGridDialog.h"

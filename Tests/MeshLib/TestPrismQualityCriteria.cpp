@@ -15,9 +15,9 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshQuality/ElementQualityInterface.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshQuality/ElementQualityInterface.h"
 
 class PrismElementQuality : public ::testing::Test
 {

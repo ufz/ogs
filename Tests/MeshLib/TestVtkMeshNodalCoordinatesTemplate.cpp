@@ -16,8 +16,8 @@
 #include <vtkUnstructuredGrid.h>
 
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Vtk/VtkMeshNodalCoordinatesTemplate.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 TEST(MeshLibdalCoordinates, Init)
 {

@@ -23,7 +23,7 @@
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/RasterDataToMesh.h"
+#include "MeshToolsLib/MeshEditing/RasterDataToMesh.h"
 
 int main(int argc, char* argv[])
 {

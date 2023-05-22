@@ -15,14 +15,14 @@
 #include "convertMeshToGeo.h"
 
 #include "BaseLib/Logging.h"
-#include "Elements/Quad.h"
-#include "Elements/Tri.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Surface.h"
 #include "GeoLib/Triangle.h"
-#include "Mesh.h"
-#include "MeshEditing/MeshRevision.h"
-#include "MeshInformation.h"
+#include "MeshLib/Elements/Quad.h"
+#include "MeshLib/Elements/Tri.h"
+#include "MeshLib/Mesh.h"
+#include "MeshToolsLib/MeshEditing/MeshRevision.h"
+#include "MeshToolsLib/MeshInformation.h"
 
 namespace
 {

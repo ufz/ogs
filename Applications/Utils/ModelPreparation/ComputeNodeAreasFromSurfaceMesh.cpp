@@ -26,8 +26,8 @@
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
 
 static void writeToFile(
     std::string const& id_area_fname, std::string const& csv_fname,

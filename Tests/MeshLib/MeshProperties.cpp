@@ -14,8 +14,8 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/PropertyVector.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 class MeshLibProperties : public ::testing::Test
 {

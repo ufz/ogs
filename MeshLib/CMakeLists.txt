@@ -5,8 +5,6 @@ if(NOT OGS_USE_PETSC)
     list(REMOVE_ITEM SOURCES NodePartitionedMesh.h)
 endif()
 
-append_source_files(SOURCES MeshEditing)
-append_source_files(SOURCES MeshGenerators)
 append_source_files(SOURCES MeshSearch)
 append_source_files(SOURCES Elements)
 append_source_files(SOURCES IO)
@@ -24,7 +22,6 @@ else()
     append_source_files(SOURCES IO/XDMF/posix)
 endif()
 
-append_source_files(SOURCES MeshQuality)
 append_source_files(SOURCES Vtk)
 
 # It could be used for other MPI based DDC approach in future.

@@ -14,9 +14,9 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/FaceRule.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/FlipElements.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/FlipElements.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 TEST(MeshLib, FlipLineMesh)
 {

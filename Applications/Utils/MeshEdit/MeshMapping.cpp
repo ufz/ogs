@@ -28,10 +28,10 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/ProjectPointOnMesh.h"
-#include "MeshLib/MeshGenerators/MeshLayerMapper.h"
 #include "MeshLib/MeshSearch/MeshElementGrid.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/ProjectPointOnMesh.h"
+#include "MeshToolsLib/MeshGenerators/MeshLayerMapper.h"
 
 double getClosestPointElevation(MeshLib::Node const& p,
                                 std::vector<MeshLib::Node*> const& nodes,

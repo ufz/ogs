@@ -26,7 +26,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
-#include "MeshLib/MeshGenerators/VoxelGridFromLayeredMeshes.h"
+#include "MeshToolsLib/MeshGenerators/VoxelGridFromLayeredMeshes.h"
 
 int main(int argc, char* argv[])
 {
@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
                    std::back_inserter(layers_ptr),
                    [](auto const& layer) { return layer.get(); });
     bool const dilate = dilate_arg.getValue();
-    auto mesh = MeshLib::MeshGenerators::VoxelFromLayeredMeshes::
+    auto mesh = MeshToolsLib::MeshGenerators::VoxelFromLayeredMeshes::
         createVoxelFromLayeredMesh(extent, layers_ptr, cellsize, dilate);
     if (mesh == nullptr)
     {

@@ -11,7 +11,7 @@
 
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MeshLib/IO/writeMeshToFile.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/MatrixProvider.h"
 #include "NumLib/DOF/VectorProvider.h"

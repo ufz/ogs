@@ -24,10 +24,10 @@
 #include "GeoLib/AABB.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
+#include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
 
 /// Constructor
 MeshElementRemovalDialog::MeshElementRemovalDialog(

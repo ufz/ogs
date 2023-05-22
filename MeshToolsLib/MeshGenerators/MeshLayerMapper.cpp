@@ -23,8 +23,8 @@
 #include "MeshLib/Elements/Prism.h"
 #include "MeshLib/Elements/Pyramid.h"
 #include "MeshLib/Elements/Tet.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Properties.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
 
 namespace MeshLib
 {

@@ -15,9 +15,9 @@
 #include <vector>
 
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshSubset.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 class NumLibLocalToGlobalIndexMapTest : public ::testing::Test
 {

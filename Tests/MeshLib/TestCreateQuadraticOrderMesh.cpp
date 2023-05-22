@@ -27,8 +27,8 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEnums.h"
-#include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshGenerators/QuadraticMeshGenerator.h"
 
 const unsigned* getEdgeNodeLocalIDs(MeshLib::Element const& element,
                                     unsigned const edge_id)

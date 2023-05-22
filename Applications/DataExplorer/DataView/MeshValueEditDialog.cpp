@@ -15,7 +15,7 @@
 #include "MeshValueEditDialog.h"
 
 #include "Base/OGSError.h"
-#include "MeshLib/MeshEditing/ElementValueModification.h"
+#include "MeshToolsLib/MeshEditing/ElementValueModification.h"
 
 MeshValueEditDialog::MeshValueEditDialog(MeshLib::Mesh* mesh, QDialog* parent)
     : QDialog(parent), _mesh(mesh)

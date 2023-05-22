@@ -27,7 +27,7 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
 
 int main(int argc, char* argv[])
 {

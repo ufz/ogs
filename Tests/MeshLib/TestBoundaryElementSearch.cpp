@@ -19,10 +19,10 @@
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/QuadraticMeshGenerator.h"
 
 using namespace MeshLib;
 

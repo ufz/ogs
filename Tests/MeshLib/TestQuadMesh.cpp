@@ -15,7 +15,7 @@
 
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 class MeshLibQuadMesh : public ::testing::Test
 {

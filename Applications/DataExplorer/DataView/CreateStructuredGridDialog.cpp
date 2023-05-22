@@ -19,7 +19,7 @@
 #include "Base/OGSError.h"
 #include "Base/StrictDoubleValidator.h"
 #include "GeoLib/Point.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 CreateStructuredGridDialog::CreateStructuredGridDialog(QDialog* parent)
     : QDialog(parent)

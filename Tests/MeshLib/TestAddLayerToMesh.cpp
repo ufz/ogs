@@ -13,12 +13,12 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/AddLayerToMesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshInformation.h"
-#include "MeshLib/MeshQuality/MeshValidation.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/AddLayerToMesh.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshInformation.h"
+#include "MeshToolsLib/MeshQuality/MeshValidation.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
 
 namespace AddLayerValidation
 {

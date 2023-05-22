@@ -13,9 +13,9 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/NodeAdjacencyTable.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 TEST(MeshLib, CreateNodeAdjacencyTable1D)
 {

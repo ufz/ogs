@@ -25,7 +25,7 @@
 #include "GeoLib/Triangle.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/convertMeshToGeo.h"
+#include "MeshToolsLib/convertMeshToGeo.h"
 
 namespace FileIO
 {

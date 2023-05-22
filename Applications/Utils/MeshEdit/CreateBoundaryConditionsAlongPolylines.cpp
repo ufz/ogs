@@ -30,8 +30,8 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
 
 void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
                                 std::vector<std::size_t> const& node_ids,

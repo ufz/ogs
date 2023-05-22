@@ -20,7 +20,7 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/QuadraticMeshGenerator.h"
 
 int main(int argc, char* argv[])
 {

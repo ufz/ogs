@@ -31,9 +31,9 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/Mesh2MeshPropertyInterpolation.h"
 #include "MeshLib/MeshEnums.h"
-#include "MeshLib/MeshGenerators/RasterToMesh.h"
+#include "MeshToolsLib/MeshEditing/Mesh2MeshPropertyInterpolation.h"
+#include "MeshToolsLib/MeshGenerators/RasterToMesh.h"
 
 int main(int argc, char* argv[])
 {

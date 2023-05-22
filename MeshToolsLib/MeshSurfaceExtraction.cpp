@@ -23,9 +23,9 @@
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
+#include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
 
 namespace MeshLib
 {

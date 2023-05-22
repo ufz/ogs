@@ -11,12 +11,12 @@
 #pragma once
 
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/ProjectPointOnMesh.h"
-#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSearch/MeshElementGrid.h"
+#include "MeshToolsLib/MeshEditing/ProjectPointOnMesh.h"
+#include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
-namespace MeshLib::MeshGenerators::VoxelFromLayeredMeshes
+namespace MeshToolsLib::MeshGenerators::VoxelFromLayeredMeshes
 {
 
 /**
@@ -37,4 +37,4 @@ std::unique_ptr<MeshLib::Mesh> createVoxelFromLayeredMesh(
     std::vector<MeshLib::Mesh const*> const& layers,
     std::array<double, 3> const cellsize,
     bool const dilate);
-}  // namespace MeshLib::MeshGenerators::VoxelFromLayeredMeshes
+}  // namespace MeshToolsLib::MeshGenerators::VoxelFromLayeredMeshes

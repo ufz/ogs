@@ -14,8 +14,8 @@
 
 #include "MeshInformation.h"
 
-#include "Elements/Element.h"
-#include "MeshLib/MeshQuality/MeshValidation.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshQuality/MeshValidation.h"
 
 namespace
 {

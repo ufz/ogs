@@ -22,9 +22,9 @@
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/ProjectPointOnMesh.h"
 #include "MeshLib/MeshSearch/MeshElementGrid.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/ProjectPointOnMesh.h"
 
 int main(int argc, char* argv[])
 {

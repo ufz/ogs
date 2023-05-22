@@ -11,8 +11,8 @@
 
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/QuadraticMeshGenerator.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/NumericsConfig.h"

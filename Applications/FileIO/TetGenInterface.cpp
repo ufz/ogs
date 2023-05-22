@@ -25,8 +25,8 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshInformation.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshInformation.h"
 
 namespace FileIO
 {

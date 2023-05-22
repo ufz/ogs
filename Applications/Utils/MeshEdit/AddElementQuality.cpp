@@ -22,7 +22,7 @@
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEnums.h"
-#include "MeshLib/MeshQuality/ElementQualityInterface.h"
+#include "MeshToolsLib/MeshQuality/ElementQualityInterface.h"
 
 int main(int argc, char* argv[])
 {

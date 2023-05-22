@@ -37,10 +37,10 @@
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
-#include "MeshLib/MeshInformation.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
+#include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshToolsLib/MeshInformation.h"
 
 static std::unique_ptr<MeshLib::Mesh> createMeshFromElements(
     MeshLib::Mesh const& mesh,

@@ -28,7 +28,7 @@
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshLayerMapper.h"
+#include "MeshToolsLib/MeshGenerators/MeshLayerMapper.h"
 
 int main(int argc, char* argv[])
 {

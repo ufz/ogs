@@ -24,7 +24,7 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/ConvertToLinearMesh.h"
+#include "MeshToolsLib/MeshEditing/ConvertToLinearMesh.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
 #include "ProcessLib/LIE/Common/PostUtils.h"
 

@@ -16,7 +16,7 @@
 #include "GeoLib/Point.h"
 #include "MeshGeoToolsLib/GeoMapper.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "Tests/AutoCheckTools.h"
 
 namespace ac = autocheck;

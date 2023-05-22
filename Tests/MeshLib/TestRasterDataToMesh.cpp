@@ -20,7 +20,7 @@
 #include "InfoLib/TestInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/RasterDataToMesh.h"
+#include "MeshToolsLib/MeshEditing/RasterDataToMesh.h"
 
 class RasterDataToMeshTest : public ::testing::Test
 {

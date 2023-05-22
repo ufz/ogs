@@ -34,7 +34,7 @@
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/LayeredVolume.h"
+#include "MeshToolsLib/MeshGenerators/LayeredVolume.h"
 
 MeshLayerEditDialog::MeshLayerEditDialog(const MeshLib::Mesh* mesh,
                                          QDialog* parent)

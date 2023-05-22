@@ -22,7 +22,7 @@
 #ifdef USE_PETSC
 #include "MeshLib/IO/readMeshFromFile.h"
 #else
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #endif
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"

@@ -17,7 +17,7 @@
 #include "GeoLib/Raster.h"
 #include "MathLib/Point3d.h"
 #include "MeshLib/MeshEnums.h"
-#include "MeshLib/MeshGenerators/RasterToMesh.h"
+#include "MeshToolsLib/MeshGenerators/RasterToMesh.h"
 #include "VtkVis/VtkGeoImageSource.h"
 #include "VtkVis/VtkRaster.h"
 

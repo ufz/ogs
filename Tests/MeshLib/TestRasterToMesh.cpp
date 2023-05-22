@@ -18,9 +18,9 @@
 #include "InfoLib/TestInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/RasterToMesh.h"
-#include "MeshLib/MeshInformation.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshGenerators/RasterToMesh.h"
+#include "MeshToolsLib/MeshInformation.h"
 
 #ifdef OGS_BUILD_GUI
 #include <vtkImageData.h>

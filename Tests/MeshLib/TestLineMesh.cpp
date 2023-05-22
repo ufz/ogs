@@ -13,7 +13,7 @@
 
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 class MeshLibLineMesh : public ::testing::Test
 {

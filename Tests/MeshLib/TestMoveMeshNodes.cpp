@@ -14,8 +14,8 @@
 #include <numeric>
 #include <vector>
 
-#include "MeshLib/MeshEditing/moveMeshNodes.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/moveMeshNodes.h"
 
 TEST(MeshLib, moveMeshNodes)
 {

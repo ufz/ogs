@@ -19,9 +19,9 @@
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
-#include "MeshLib/MeshEditing/AddLayerToMesh.h"
-#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/AddLayerToMesh.h"
+#include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
 
 namespace MeshLib
 {

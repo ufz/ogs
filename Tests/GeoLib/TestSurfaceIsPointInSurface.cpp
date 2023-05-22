@@ -24,9 +24,9 @@
 #include "GeoLib/Triangle.h"
 #include "MathLib/Point3d.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
-#include "MeshLib/convertMeshToGeo.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/convertMeshToGeo.h"
 
 inline double constant(double /*unused*/, double /*unused*/)
 {

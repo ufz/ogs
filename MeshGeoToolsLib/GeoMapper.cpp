@@ -29,8 +29,8 @@
 #include "MeshLib/Elements/FaceRule.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSearch/MeshElementGrid.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
 
 namespace MeshGeoToolsLib
 {

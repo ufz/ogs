@@ -22,7 +22,7 @@
 #include "MeshLib/NodePartitionedMesh.h"
 #endif
 
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "Tests/GeoLib/CreateTestPoints.h"
 
 TEST(ConstructAdditionalMeshesFromGeoObjects, PointMesh)

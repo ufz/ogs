@@ -21,8 +21,8 @@
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/MeshRevision.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/MeshRevision.h"
 
 TEST(MeshEditing, Tri)
 {

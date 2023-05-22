@@ -31,7 +31,7 @@
 
 // MeshLib
 #include "MeshLib/Mesh.h"
-#include "MeshLib/convertMeshToGeo.h"
+#include "MeshToolsLib/convertMeshToGeo.h"
 
 int main(int argc, char* argv[])
 {

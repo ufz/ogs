@@ -24,8 +24,8 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/MeshRevision.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/MeshRevision.h"
 
 int main(int argc, char* argv[])
 {

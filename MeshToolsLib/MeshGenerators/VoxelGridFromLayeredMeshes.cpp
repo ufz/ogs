@@ -60,7 +60,7 @@ std::unique_ptr<MeshLib::Mesh> generateInitialMesh(
 }
 
 // returns the element the given node is projected on (or nullptr otherwise)
-MeshLib::Element const* getProjectedElement(
+MeshToolsLib::Element const* getProjectedElement(
     MeshLib::MeshElementGrid const& grid,
     MathLib::Point3d const& node,
     double const max_edge)
@@ -196,12 +196,12 @@ std::vector<std::size_t> markSpecificElements(MeshLib::Mesh const& mesh,
 }
 
 // Creates a VoxelGrid after extending the AABB for each layer.
-std::unique_ptr<MeshLib::Mesh>
-MeshLib::MeshGenerators::VoxelFromLayeredMeshes::createVoxelFromLayeredMesh(
-    std::pair<MathLib::Point3d, MathLib::Point3d>& extent,
-    std::vector<MeshLib::Mesh const*> const& layers,
-    std::array<double, 3> const cellsize,
-    bool const dilate)
+std::unique_ptr<MeshLib::Mesh> MeshToolsLib::MeshGenerators::
+    VoxelFromLayeredMeshes::createVoxelFromLayeredMesh(
+        std::pair<MathLib::Point3d, MathLib::Point3d>& extent,
+        std::vector<MeshLib::Mesh const*> const& layers,
+        std::array<double, 3> const cellsize,
+        bool const dilate)
 {
     for (auto const& layer : layers)
     {

@@ -21,10 +21,10 @@
 #include "BaseLib/Logging.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/MeshRevision.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/MeshRevision.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
 
 namespace MeshLib
 {

@@ -21,12 +21,12 @@
 #include "GeoLib/Raster.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
-#include "MeshLib/MeshInformation.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
 #include "MeshLib/PropertyVector.h"
+#include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshToolsLib/MeshInformation.h"
 
 bool LayeredMeshGenerator::createLayers(
     MeshLib::Mesh const& mesh,

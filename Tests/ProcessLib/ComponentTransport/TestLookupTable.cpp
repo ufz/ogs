@@ -17,7 +17,7 @@
 #include "InfoLib/TestInfo.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/ComponentTransport/CreateLookupTable.h"
 #include "ProcessLib/ComponentTransport/LookupTable.h"
