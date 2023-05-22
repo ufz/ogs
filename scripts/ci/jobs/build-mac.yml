@@ -21,7 +21,23 @@ build mac:
     matrix:
       - ARCHITECTURE: ["amd64", "arm64"]
 
-build mac petsc:
+build mac petsc arm64:
+  tags:
+    - mac
+    - arm64
+  extends:
+    - .template-build-linux
+    - .test-artifacts
+  needs: [meta]
+  timeout: 3h
+  variables:
+    BUILD_CTEST_LARGE_ON_MASTER: "true"
+    CMAKE_PRESET: release-petsc
+    CMAKE_ARGS: >-
+      -DOGS_USE_PIP=ON
+    CTEST_ARGS: -L default|Notebook
+
+build mac petsc amd64:
   tags:
     - mac
     - amd64
