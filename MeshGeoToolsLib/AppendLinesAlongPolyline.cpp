@@ -16,9 +16,9 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
 
 namespace MeshGeoToolsLib
 {

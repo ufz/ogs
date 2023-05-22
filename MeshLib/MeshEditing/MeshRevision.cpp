@@ -18,11 +18,11 @@
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/Logging.h"
-#include "DuplicateMeshComponents.h"
 #include "GeoLib/Grid.h"
 #include "MathLib/GeometricBasics.h"
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
 
 namespace MeshLib
 {

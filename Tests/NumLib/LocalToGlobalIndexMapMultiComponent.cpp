@@ -17,10 +17,10 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Location.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshSubset.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace NL = NumLib;

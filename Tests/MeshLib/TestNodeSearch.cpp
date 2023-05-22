@@ -14,11 +14,11 @@
 #include "GeoLib/Raster.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshGenerators/RasterToMesh.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
 
 TEST(NodeSearch, UnusedNodes)
 {

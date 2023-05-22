@@ -10,11 +10,11 @@
 
 #include "RemoveMeshComponents.h"
 
-#include "DuplicateMeshComponents.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
 
 namespace MeshLib
 {

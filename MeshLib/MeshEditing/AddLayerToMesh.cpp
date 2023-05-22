@@ -19,12 +19,12 @@
 #include <vector>
 
 #include "BaseLib/Logging.h"
-#include "DuplicateMeshComponents.h"
 #include "FlipElements.h"
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
 
 namespace MeshLib
 {

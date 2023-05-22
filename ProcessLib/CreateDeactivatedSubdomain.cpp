@@ -19,8 +19,8 @@
 #include "DeactivatedSubdomain.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
 #include "ParameterLib/Parameter.h"
 #include "ParameterLib/Utils.h"
 

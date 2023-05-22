@@ -19,11 +19,11 @@
 #include "MathLib/Point3d.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshGenerators/RasterToMesh.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
 
 void detectHoles(MeshLib::Mesh const& mesh,
                  std::vector<std::size_t>

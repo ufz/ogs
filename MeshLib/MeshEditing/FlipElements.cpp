@@ -10,12 +10,12 @@
 
 #include "FlipElements.h"
 
-#include "DuplicateMeshComponents.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
 
 namespace MeshLib
 {

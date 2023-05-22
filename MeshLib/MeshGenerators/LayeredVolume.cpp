@@ -18,10 +18,10 @@
 #include "MeshLayerMapper.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tri.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Properties.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
 
 bool LayeredVolume::createRasterLayers(
     const MeshLib::Mesh& mesh,

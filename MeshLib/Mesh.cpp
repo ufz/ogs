@@ -32,7 +32,7 @@
 #include "Elements/Quad.h"
 #include "Elements/Tet.h"
 #include "Elements/Tri.h"
-#include "MeshEditing/DuplicateMeshComponents.h"
+#include "Utils/DuplicateMeshComponents.h"
 
 /// Mesh counter used to uniquely identify meshes by id.
 static std::size_t global_mesh_counter = 0;
