@@ -130,7 +130,7 @@ std::optional<GeoLib::Raster> VtkGeoImageSource::convertToRaster(
     source->GetOutput()->GetSpacing(spacing);
     MathLib::Point3d const origin_pnt(
         std::array<double, 3>{{origin[0] - 0.5 * spacing[0],
-                               origin[1] - 0.5 * spacing[0], origin[2]}});
+                               origin[1] - 0.5 * spacing[1], origin[2]}});
     GeoLib::RasterHeader const header = {static_cast<std::size_t>(dims[0]),
                                          static_cast<std::size_t>(dims[1]),
                                          static_cast<std::size_t>(dims[2]),
