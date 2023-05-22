@@ -35,7 +35,8 @@ int main(int argc, char* argv[])
     TCLAP::CmdLine cmd(
         "Creates a layered 3D OGS mesh from an existing 2D OGS mesh and a list "
         "of raster files representing subsurface layers. Supported raster "
-        "formats are ArcGIS ascii rasters (*.asc) and Surfer Grids (*.grd). "
+        "formats are ArcGIS ascii rasters (*.asc), Surfer Grids (*.grd), or "
+        "gridded XYZ rasters (*.xyz)."
         "Only input meshes consisting of line and triangle elements are "
         "currently supported as mapping of quads might result in invalid mesh "
         "elements.\n\n"

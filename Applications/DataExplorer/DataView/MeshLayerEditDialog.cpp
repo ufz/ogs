@@ -364,7 +364,7 @@ void MeshLayerEditDialog::getFileName()
     QString filename = QFileDialog::getOpenFileName(
         this, "Select raster file to open",
         settings.value("lastOpenedRasterFileDirectory").toString(),
-        "ASCII raster files (*.asc);;All files (* *.*)");
+        "ASCII raster files (*.asc *.grd *.xyz);;All files (* *.*)");
     _fileButtonMap[button]->setText(filename);
     QFileInfo fi(filename);
     settings.setValue("lastOpenedRasterFileDirectory", fi.absolutePath());
