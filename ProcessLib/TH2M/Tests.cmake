@@ -1,4 +1,8 @@
 if (NOT OGS_USE_MPI)
+    if (OGS_USE_MFRONT)
+        OgsTest(PROJECTFILE TH2M/M/MultiMaterialEhlers/square_1e1_2_matIDs.prj RUNTIME 1)
+        OgsTest(PROJECTFILE TH2M/M/MultiMaterialEhlers/square_1e1_2_matIDs_restart.prj RUNTIME 1)
+    endif()
     OgsTest(PROJECTFILE TH2M/HM/flow_fully_saturated.prj RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/HM/flow_fully_saturated_newton.xml RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/HM/flow_fully_saturated_gas.prj RUNTIME 1)
