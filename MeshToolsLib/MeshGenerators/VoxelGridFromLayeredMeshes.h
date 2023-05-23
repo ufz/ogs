@@ -10,11 +10,20 @@
 
 #pragma once
 
-#include "MeshLib/Mesh.h"
-#include "MeshLib/MeshSearch/MeshElementGrid.h"
-#include "MeshToolsLib/MeshEditing/ProjectPointOnMesh.h"
-#include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
-#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
+#include <array>
+#include <memory>
+#include <utility>
+#include <vector>
+
+namespace MeshLib
+{
+class Mesh;
+}
+
+namespace MathLib
+{
+class Point3d;
+}
 
 namespace MeshToolsLib::MeshGenerators::VoxelFromLayeredMeshes
 {

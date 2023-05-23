@@ -9,6 +9,12 @@
 
 #include "VoxelGridFromLayeredMeshes.h"
 
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshSearch/MeshElementGrid.h"
+#include "MeshToolsLib/MeshEditing/ProjectPointOnMesh.h"
+#include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
+
 static std::string mat_name = "MaterialIDs";
 
 // returns the AABB of all mesh nodes of layers read so far
