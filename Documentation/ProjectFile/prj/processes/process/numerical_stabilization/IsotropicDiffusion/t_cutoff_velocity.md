@@ -1,3 +1,3 @@
-\copydoc NumLib::NumericalStabilization::cutoff_velocity_
+\copydoc NumLib::IsotropicDiffusionStabilization::cutoff_velocity_
 
 It is an optional tag.

@@ -52,7 +52,7 @@ struct ThermoHydroMechanicsProcessData
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
 
-    std::unique_ptr<NumLib::NumericalStabilization> stabilizer;
+    NumLib::NumericalStabilization stabilizer;
 
     MeshLib::PropertyVector<double>* element_fluid_density = nullptr;
     MeshLib::PropertyVector<double>* element_viscosity = nullptr;

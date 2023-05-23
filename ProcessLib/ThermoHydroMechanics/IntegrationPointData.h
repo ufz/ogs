@@ -53,8 +53,9 @@ struct IntegrationPointData final
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
     typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
 
-    typename ShapeMatricesTypePressure::NodalRowVectorType N_p;
-    typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
+    // Scalar shape matrices for pressure and temperature.
+    typename ShapeMatricesTypePressure::NodalRowVectorType N;
+    typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx;
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<

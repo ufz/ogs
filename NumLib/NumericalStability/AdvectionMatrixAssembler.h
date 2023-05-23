@@ -5,22 +5,25 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
- * Created on June 24, 2022, 12:53 PM
  */
 
 #pragma once
 
+#include <Eigen/Core>
 #include <limits>
-#include <typeinfo>
+#include <memory>
+#include <vector>
+
+#include "NumericalStabilization.h"
 
 namespace NumLib
 {
+namespace detail
+{
 template <typename IPData, typename FluxVectorType, typename Derived>
-void assembleOriginalAdvectionMatrix(
-    IPData const& ip_data_vector,
-    std::vector<FluxVectorType> const& ip_flux_vector,
-    Eigen::MatrixBase<Derived>& laplacian_matrix)
+void assembleAdvectionMatrix(IPData const& ip_data_vector,
+                             std::vector<FluxVectorType> const& ip_flux_vector,
+                             Eigen::MatrixBase<Derived>& laplacian_matrix)
 {
     for (std::size_t ip = 0; ip < ip_flux_vector.size(); ++ip)
     {
@@ -74,27 +77,32 @@ void applyFullUpwind(IPData const& ip_data_vector,
 
     applyFullUpwind(quasi_nodal_flux, laplacian_matrix);
 }
+}  // namespace detail
 
 template <typename IPData, typename FluxVectorType, typename Derived>
-void assembleAdvectionMatrix(NumericalStabilization const* const stabilizer,
+void assembleAdvectionMatrix(NumericalStabilization const& stabilizer,
                              IPData const& ip_data_vector,
-                             double const average_velocity,
                              std::vector<FluxVectorType> const& ip_flux_vector,
+                             double const average_velocity,
                              Eigen::MatrixBase<Derived>& laplacian_matrix)
 {
-    if (stabilizer)
-    {
-        auto const& stabilizer_ref = *(stabilizer);
-        if (typeid(stabilizer_ref) == typeid(NumLib::FullUpwind) &&
-            (average_velocity > stabilizer->getCutoffVelocity()))
+    std::visit(
+        [&](auto&& stabilizer)
         {
-            applyFullUpwind(ip_data_vector, ip_flux_vector, laplacian_matrix);
-            return;
-        }
-    }
+            using Stabilizer = std::decay_t<decltype(stabilizer)>;
+            if constexpr (std::is_same_v<Stabilizer, FullUpwind>)
+            {
+                if (average_velocity > stabilizer.getCutoffVelocity())
+                {
+                    detail::applyFullUpwind(ip_data_vector, ip_flux_vector,
+                                            laplacian_matrix);
+                    return;
+                }
+            }
 
-    assembleOriginalAdvectionMatrix(ip_data_vector, ip_flux_vector,
-                                    laplacian_matrix);
+            detail::assembleAdvectionMatrix(ip_data_vector, ip_flux_vector,
+                                            laplacian_matrix);
+        },
+        stabilizer);
 }
-
 }  // namespace NumLib
