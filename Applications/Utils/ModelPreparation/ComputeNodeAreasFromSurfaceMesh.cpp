@@ -128,7 +128,8 @@ int main(int argc, char* argv[])
     }
 
     std::vector<double> areas(
-        MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(*surface_mesh));
+        MeshToolsLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(
+            *surface_mesh));
 
     // pack area and node id together
     std::vector<std::pair<std::size_t, double>> ids_and_areas;

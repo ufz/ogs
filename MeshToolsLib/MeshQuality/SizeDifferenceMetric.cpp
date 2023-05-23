@@ -16,7 +16,7 @@
 
 #include <limits>
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 void SizeDifferenceMetric::calculateQuality()
 {
@@ -26,7 +26,7 @@ void SizeDifferenceMetric::calculateQuality()
 
     for (std::size_t k = 0; k < nElements; ++k)
     {
-        Element const& elem(*elements[k]);
+        MeshLib::Element const& elem(*elements[k]);
         if (elem.getDimension() < mesh_dim)
         {
             _element_quality_metric[k] = 0;

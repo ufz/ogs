@@ -26,7 +26,7 @@
 #include "MeshToolsLib/MeshQuality/RadiusEdgeRatioMetric.h"
 #include "MeshToolsLib/MeshQuality/SizeDifferenceMetric.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 
 /**
@@ -36,7 +36,8 @@ class ElementQualityInterface
 {
 public:
     /// Constructor
-    ElementQualityInterface(MeshLib::Mesh const& mesh, MeshQualityType t)
+    ElementQualityInterface(MeshLib::Mesh const& mesh,
+                            MeshLib::MeshQualityType t)
         : _type(t), _mesh(mesh), _quality_tester(nullptr)
     {
         calculateElementQuality(_mesh, _type);
@@ -81,21 +82,24 @@ public:
 private:
     /// Calculates the quality of each mesh element based on the specified
     /// metric
-    void calculateElementQuality(MeshLib::Mesh const& mesh, MeshQualityType t)
+    void calculateElementQuality(MeshLib::Mesh const& mesh,
+                                 MeshLib::MeshQualityType t)
     {
-        if (t == MeshQualityType::EDGERATIO)
-            _quality_tester = std::make_unique<MeshLib::EdgeRatioMetric>(mesh);
-        else if (t == MeshQualityType::ELEMENTSIZE)
+        if (t == MeshLib::MeshQualityType::EDGERATIO)
             _quality_tester =
-                std::make_unique<MeshLib::ElementSizeMetric>(mesh);
-        else if (t == MeshQualityType::SIZEDIFFERENCE)
+                std::make_unique<MeshToolsLib::EdgeRatioMetric>(mesh);
+        else if (t == MeshLib::MeshQualityType::ELEMENTSIZE)
             _quality_tester =
-                std::make_unique<MeshLib::SizeDifferenceMetric>(mesh);
-        else if (t == MeshQualityType::EQUIANGLESKEW)
-            _quality_tester = std::make_unique<MeshLib::AngleSkewMetric>(mesh);
-        else if (t == MeshQualityType::RADIUSEDGERATIO)
+                std::make_unique<MeshToolsLib::ElementSizeMetric>(mesh);
+        else if (t == MeshLib::MeshQualityType::SIZEDIFFERENCE)
             _quality_tester =
-                std::make_unique<MeshLib::RadiusEdgeRatioMetric>(mesh);
+                std::make_unique<MeshToolsLib::SizeDifferenceMetric>(mesh);
+        else if (t == MeshLib::MeshQualityType::EQUIANGLESKEW)
+            _quality_tester =
+                std::make_unique<MeshToolsLib::AngleSkewMetric>(mesh);
+        else if (t == MeshLib::MeshQualityType::RADIUSEDGERATIO)
+            _quality_tester =
+                std::make_unique<MeshToolsLib::RadiusEdgeRatioMetric>(mesh);
         else
         {
             ERR("ElementQualityInterface::calculateElementQuality(): Unknown "
@@ -105,9 +109,9 @@ private:
         _quality_tester->calculateQuality();
     }
 
-    MeshQualityType const _type;
+    MeshLib::MeshQualityType const _type;
     MeshLib::Mesh const& _mesh;
-    std::unique_ptr<MeshLib::ElementQualityMetric> _quality_tester;
+    std::unique_ptr<MeshToolsLib::ElementQualityMetric> _quality_tester;
 };
 
 }  // namespace MeshLib

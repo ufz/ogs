@@ -302,7 +302,7 @@ int main(int argc, char* argv[])
     }
 
     // remove the elements and create a new mesh object.
-    std::unique_ptr<MeshLib::Mesh const> new_mesh(MeshLib::removeElements(
+    std::unique_ptr<MeshLib::Mesh const> new_mesh(MeshToolsLib::removeElements(
         *mesh, searcher.getSearchedElementIDs(), mesh->getName()));
 
     if (new_mesh == nullptr)

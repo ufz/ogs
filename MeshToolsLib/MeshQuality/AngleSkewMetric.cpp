@@ -22,7 +22,7 @@
 
 using namespace boost::math::double_constants;
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 namespace
 {
@@ -43,7 +43,7 @@ std::tuple<double, double> getMinMaxAngle(
     return {min_angle, max_angle};
 }
 
-double checkTriangle(Element const& elem)
+double checkTriangle(MeshLib::Element const& elem)
 {
     std::array const nodes = {*elem.getNode(0), *elem.getNode(1),
                               *elem.getNode(2)};
@@ -52,7 +52,7 @@ double checkTriangle(Element const& elem)
                     (third_pi - min_angle) / third_pi);
 }
 
-double checkQuad(Element const& elem)
+double checkQuad(MeshLib::Element const& elem)
 {
     std::array const nodes = {*elem.getNode(0), *elem.getNode(1),
                               *elem.getNode(2), *elem.getNode(3)};
@@ -62,13 +62,13 @@ double checkQuad(Element const& elem)
                     (half_pi - min_angle) / half_pi);
 }
 
-double checkTetrahedron(Element const& elem)
+double checkTetrahedron(MeshLib::Element const& elem)
 {
     std::array<double, 4> min;
     std::array<double, 4> max;
     for (auto face_number = 0; face_number < 4; ++face_number)
     {
-        std::unique_ptr<Element const> face{elem.getFace(face_number)};
+        std::unique_ptr<MeshLib::Element const> face{elem.getFace(face_number)};
         std::array const nodes = {*face->getNode(0), *face->getNode(1),
                                   *face->getNode(2)};
         std::tie(min[face_number], max[face_number]) = getMinMaxAngle(nodes);
@@ -81,13 +81,13 @@ double checkTetrahedron(Element const& elem)
                     (third_pi - min_angle) / third_pi);
 }
 
-double checkHexahedron(Element const& elem)
+double checkHexahedron(MeshLib::Element const& elem)
 {
     std::array<double, 6> min;
     std::array<double, 6> max;
     for (auto face_number = 0; face_number < 6; ++face_number)
     {
-        std::unique_ptr<Element const> face{elem.getFace(face_number)};
+        std::unique_ptr<MeshLib::Element const> face{elem.getFace(face_number)};
         std::array const nodes = {*face->getNode(0), *face->getNode(1),
                                   *face->getNode(2), *face->getNode(3)};
         std::tie(min[face_number], max[face_number]) = getMinMaxAngle(nodes);
@@ -100,16 +100,16 @@ double checkHexahedron(Element const& elem)
                     (half_pi - min_angle) / half_pi);
 }
 
-double checkPrism(Element const& elem)
+double checkPrism(MeshLib::Element const& elem)
 {
     // face 0: triangle (0,1,2)
-    std::unique_ptr<Element const> f0{elem.getFace(0)};
+    std::unique_ptr<MeshLib::Element const> f0{elem.getFace(0)};
     std::array const nodes_f0 = {*f0->getNode(0), *f0->getNode(1),
                                  *f0->getNode(2)};
     auto const& [min_angle_tri0, max_angle_tri0] = getMinMaxAngle(nodes_f0);
 
     // face 4: triangle (3,4,5)
-    std::unique_ptr<Element const> f4{elem.getFace(4)};
+    std::unique_ptr<MeshLib::Element const> f4{elem.getFace(4)};
     std::array const nodes_f4 = {*f4->getNode(0), *f4->getNode(1),
                                  *f4->getNode(2)};
     auto const& [min_angle_tri1, max_angle_tri1] = getMinMaxAngle(nodes_f4);
@@ -125,7 +125,7 @@ double checkPrism(Element const& elem)
     std::array<double, 3> max;
     for (int i = 1; i < 4; ++i)
     {
-        std::unique_ptr<Element const> f{elem.getFace(i)};
+        std::unique_ptr<MeshLib::Element const> f{elem.getFace(i)};
         std::array const nodes = {*f->getNode(0), *f->getNode(1),
                                   *f->getNode(2), *f->getNode(3)};
         std::tie(min[i - 1], max[i - 1]) = getMinMaxAngle(nodes);
@@ -148,22 +148,22 @@ void AngleSkewMetric::calculateQuality()
     {
         switch (e->getGeomType())
         {
-            case MeshElemType::LINE:
+            case MeshLib::MeshElemType::LINE:
                 _element_quality_metric[e->getID()] = -1.0;
                 break;
-            case MeshElemType::TRIANGLE:
+            case MeshLib::MeshElemType::TRIANGLE:
                 _element_quality_metric[e->getID()] = checkTriangle(*e);
                 break;
-            case MeshElemType::QUAD:
+            case MeshLib::MeshElemType::QUAD:
                 _element_quality_metric[e->getID()] = checkQuad(*e);
                 break;
-            case MeshElemType::TETRAHEDRON:
+            case MeshLib::MeshElemType::TETRAHEDRON:
                 _element_quality_metric[e->getID()] = checkTetrahedron(*e);
                 break;
-            case MeshElemType::HEXAHEDRON:
+            case MeshLib::MeshElemType::HEXAHEDRON:
                 _element_quality_metric[e->getID()] = checkHexahedron(*e);
                 break;
-            case MeshElemType::PRISM:
+            case MeshLib::MeshElemType::PRISM:
                 _element_quality_metric[e->getID()] = checkPrism(*e);
                 break;
             default:

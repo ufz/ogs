@@ -16,7 +16,7 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 namespace details
 {
@@ -72,7 +72,7 @@ MeshLib::Mesh* removeElements(
         MeshLib::copyElementVector(tmp_elems, new_nodes);
 
     // delete unused nodes
-    NodeSearch ns(mesh);
+    MeshLib::NodeSearch ns(mesh);
     ns.searchNodesConnectedToOnlyGivenElements(removed_element_ids);
     auto& removed_node_ids(ns.getSearchedNodeIDs());
     INFO("Removing total {:d} nodes...", removed_node_ids.size());
@@ -97,8 +97,9 @@ MeshLib::Mesh* removeElements(
     return nullptr;
 }
 
-std::vector<bool> markUnusedNodes(std::vector<Element*> const& elements,
-                                  std::vector<Node*> const& nodes)
+std::vector<bool> markUnusedNodes(
+    std::vector<MeshLib::Element*> const& elements,
+    std::vector<MeshLib::Node*> const& nodes)
 {
     std::vector<bool> unused_nodes(nodes.size(), true);
     for (auto e : elements)
@@ -113,7 +114,7 @@ std::vector<bool> markUnusedNodes(std::vector<Element*> const& elements,
 }
 
 void removeMarkedNodes(std::vector<bool> const& nodes_to_delete,
-                       std::vector<Node*>& nodes)
+                       std::vector<MeshLib::Node*>& nodes)
 {
     assert(nodes_to_delete.size() == nodes.size());
 

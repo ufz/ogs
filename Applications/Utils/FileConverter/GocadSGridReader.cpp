@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
     }
 
     std::unique_ptr<MeshLib::Mesh> mesh(reader.getMesh());
-    MeshLib::MeshInformation::writePropertyVectorInformation(*mesh);
+    MeshToolsLib::MeshInformation::writePropertyVectorInformation(*mesh);
 
     INFO("Writing mesh to '{:s}'.", mesh_output_arg.getValue());
     MeshLib::IO::writeMeshToFile(*mesh, mesh_output_arg.getValue());

@@ -15,19 +15,21 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 namespace ProjectPointOnMesh
 {
 
 /// Returns the element in which the given node is located when projected onto a
 /// mesh, or nullptr if no such element was found.
-Element const* getProjectedElement(std::vector<const Element*> const& elements,
-                                   MathLib::Point3d const& node);
+MeshLib::Element const* getProjectedElement(
+    std::vector<const MeshLib::Element*> const& elements,
+    MathLib::Point3d const& node);
 
 /// Returns the z-coordinate of a point projected onto the plane defined by a
 /// mesh element.
-double getElevation(Element const& element, MathLib::Point3d const& node);
+double getElevation(MeshLib::Element const& element,
+                    MathLib::Point3d const& node);
 
 }  // namespace ProjectPointOnMesh
 

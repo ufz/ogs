@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 
     INFO("Converting the mesh to TIN");
     GeoLib::GEOObjects geo_objects;
-    if (MeshLib::convertMeshToGeo(*mesh, geo_objects))
+    if (MeshToolsLib::convertMeshToGeo(*mesh, geo_objects))
     {
         INFO("Writing TIN into the file");
         GeoLib::IO::TINInterface::writeSurfaceAsTIN(

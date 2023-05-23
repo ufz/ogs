@@ -107,8 +107,8 @@ bool createSurface(GeoLib::Polyline const& ply,
     }
 
     // convert the surface mesh into a geometric surface
-    if (!MeshLib::convertMeshToGeo(*surface_mesh, geometries,
-                                   std::numeric_limits<double>::epsilon()))
+    if (!MeshToolsLib::convertMeshToGeo(*surface_mesh, geometries,
+                                        std::numeric_limits<double>::epsilon()))
     {
         WARN("The surface mesh could not be converted to a geometry.");
         return false;

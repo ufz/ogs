@@ -16,7 +16,7 @@
 
 #include "LayeredMeshGenerator.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 
 /**

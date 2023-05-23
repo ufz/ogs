@@ -33,8 +33,8 @@ public:
     static const std::size_t mesh_subdivs = 4;
     NumLibLocalToGlobalIndexMapMultiDOFTest()
     {
-        mesh.reset(
-            MeL::MeshGenerator::generateRegularQuadMesh(2.0, mesh_subdivs));
+        mesh.reset(MeshToolsLib::MeshGenerator::generateRegularQuadMesh(
+            2.0, mesh_subdivs));
         mesh_items_all_nodes =
             std::make_unique<MeL::MeshSubset>(*mesh, mesh->getNodes());
 

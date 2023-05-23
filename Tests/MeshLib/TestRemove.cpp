@@ -25,7 +25,7 @@
 TEST(MeshLib, RemoveNodes)
 {
     auto mesh = std::unique_ptr<MeshLib::Mesh>{
-        MeshLib::MeshGenerator::generateLineMesh(1.0, 9)};
+        MeshToolsLib::MeshGenerator::generateLineMesh(1.0, 9)};
 
     std::vector<std::size_t> removed_node_ids;
     for (std::size_t i = 0; i < 5; i++)
@@ -34,7 +34,7 @@ TEST(MeshLib, RemoveNodes)
     }
 
     auto new_mesh = std::unique_ptr<MeshLib::Mesh>{
-        MeshLib::removeNodes(*mesh, removed_node_ids, "")};
+        MeshToolsLib::removeNodes(*mesh, removed_node_ids, "")};
 
     ASSERT_EQ(5u, new_mesh->getNumberOfNodes());
     ASSERT_EQ(5u, new_mesh->computeNumberOfBaseNodes());
@@ -48,7 +48,7 @@ TEST(MeshLib, RemoveNodes)
 TEST(MeshLib, RemoveElements)
 {
     auto mesh = std::unique_ptr<MeshLib::Mesh>{
-        MeshLib::MeshGenerator::generateLineMesh(1.0, 9)};
+        MeshToolsLib::MeshGenerator::generateLineMesh(1.0, 9)};
 
     std::vector<std::size_t> removed_ele_ids;
     for (std::size_t i = 0; i < 5; i++)
@@ -57,7 +57,7 @@ TEST(MeshLib, RemoveElements)
     }
 
     auto new_mesh = std::unique_ptr<MeshLib::Mesh>{
-        MeshLib::removeElements(*mesh, removed_ele_ids, "")};
+        MeshToolsLib::removeElements(*mesh, removed_ele_ids, "")};
 
     ASSERT_EQ(5u, new_mesh->getNumberOfNodes());
     ASSERT_EQ(5u, new_mesh->computeNumberOfBaseNodes());

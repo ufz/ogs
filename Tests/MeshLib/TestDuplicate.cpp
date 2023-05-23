@@ -26,7 +26,7 @@
 TEST(MeshLib, Duplicate)
 {
     auto mesh = std::unique_ptr<MeshLib::Mesh>{
-        MeshLib::MeshGenerator::generateRegularQuadMesh(10, 5, 1)};
+        MeshToolsLib::MeshGenerator::generateRegularQuadMesh(10, 5, 1)};
 
     std::vector<MeshLib::Node*> new_nodes(
         MeshLib::copyNodeVector(mesh->getNodes()));
@@ -40,7 +40,7 @@ TEST(MeshLib, Duplicate)
 
     std::vector<std::size_t> del_idx(1, 1);
     std::unique_ptr<MeshLib::Mesh> mesh2(
-        MeshLib::removeNodes(*mesh, del_idx, "mesh2"));
+        MeshToolsLib::removeNodes(*mesh, del_idx, "mesh2"));
 
     ASSERT_EQ(mesh2->getNumberOfElements(), new_mesh.getNumberOfElements() - 2);
     ASSERT_EQ(mesh2->getNumberOfNodes(), new_mesh.getNumberOfNodes() - 2);

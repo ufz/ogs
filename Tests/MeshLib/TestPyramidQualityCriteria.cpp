@@ -43,9 +43,9 @@ public:
         }
 
         std::unique_ptr<MeshLib::Mesh> mesh(
-            MeshLib::MeshGenerator::generateRegularPyramidMesh(
+            MeshToolsLib::MeshGenerator::generateRegularPyramidMesh(
                 *vec_div[0], *vec_div[1], *vec_div[2]));
-        MeshLib::ElementQualityInterface element_quality(*mesh, type);
+        MeshToolsLib::ElementQualityInterface element_quality(*mesh, type);
         return element_quality.getQualityVector();
     }
 

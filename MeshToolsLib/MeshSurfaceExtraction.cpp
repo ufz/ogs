@@ -27,7 +27,7 @@
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
 #include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 template <typename T>
 void processPropertyVector(MeshLib::PropertyVector<T> const& property,
@@ -72,15 +72,15 @@ bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,
         return false;
     }
     std::map<MeshLib::MeshItemType, std::vector<std::size_t> const*> const
-        id_maps = {{MeshItemType::Cell, &element_ids_map},
-                   {MeshItemType::Node, &node_ids_map}};
+        id_maps = {{MeshLib::MeshItemType::Cell, &element_ids_map},
+                   {MeshLib::MeshItemType::Node, &node_ids_map}};
 
     std::size_t vectors_copied(0);
     std::size_t vectors_skipped(0);
     for (auto [name, property] : properties)
     {
-        if (property->getMeshItemType() != MeshItemType::Cell &&
-            property->getMeshItemType() != MeshItemType::Node)
+        if (property->getMeshItemType() != MeshLib::MeshItemType::Cell &&
+            property->getMeshItemType() != MeshLib::MeshItemType::Node)
         {
             WARN(
                 "Skipping property vector '{:s}' - not defined on cells or "
@@ -91,54 +91,61 @@ bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,
         }
 
         auto const& id_map = *id_maps.at(property->getMeshItemType());
-        if (auto p = dynamic_cast<PropertyVector<double>*>(property))
-        {
-            processPropertyVector(*p, id_map, sfc_mesh);
-            vectors_copied++;
-        }
-        else if (auto p = dynamic_cast<PropertyVector<float>*>(property))
-        {
-            processPropertyVector(*p, id_map, sfc_mesh);
-            vectors_copied++;
-        }
-        else if (auto p = dynamic_cast<PropertyVector<int>*>(property))
-        {
-            processPropertyVector(*p, id_map, sfc_mesh);
-            vectors_copied++;
-        }
-        else if (auto p = dynamic_cast<PropertyVector<unsigned>*>(property))
-        {
-            processPropertyVector(*p, id_map, sfc_mesh);
-            vectors_copied++;
-        }
-        else if (auto p = dynamic_cast<PropertyVector<long>*>(property))
-        {
-            processPropertyVector(*p, id_map, sfc_mesh);
-            vectors_copied++;
-        }
-        else if (auto p = dynamic_cast<PropertyVector<long long>*>(property))
+        if (auto p = dynamic_cast<MeshLib::PropertyVector<double>*>(property))
         {
             processPropertyVector(*p, id_map, sfc_mesh);
             vectors_copied++;
         }
         else if (auto p =
-                     dynamic_cast<PropertyVector<unsigned long>*>(property))
+                     dynamic_cast<MeshLib::PropertyVector<float>*>(property))
         {
             processPropertyVector(*p, id_map, sfc_mesh);
             vectors_copied++;
         }
-        else if (auto p = dynamic_cast<PropertyVector<unsigned long long>*>(
+        else if (auto p = dynamic_cast<MeshLib::PropertyVector<int>*>(property))
+        {
+            processPropertyVector(*p, id_map, sfc_mesh);
+            vectors_copied++;
+        }
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<unsigned>*>(property))
+        {
+            processPropertyVector(*p, id_map, sfc_mesh);
+            vectors_copied++;
+        }
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<long>*>(property))
+        {
+            processPropertyVector(*p, id_map, sfc_mesh);
+            vectors_copied++;
+        }
+        else if (auto p = dynamic_cast<MeshLib::PropertyVector<long long>*>(
                      property))
         {
             processPropertyVector(*p, id_map, sfc_mesh);
             vectors_copied++;
         }
-        else if (auto p = dynamic_cast<PropertyVector<std::size_t>*>(property))
+        else if (auto p = dynamic_cast<MeshLib::PropertyVector<unsigned long>*>(
+                     property))
         {
             processPropertyVector(*p, id_map, sfc_mesh);
             vectors_copied++;
         }
-        else if (auto p = dynamic_cast<PropertyVector<char>*>(property))
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<unsigned long long>*>(
+                         property))
+        {
+            processPropertyVector(*p, id_map, sfc_mesh);
+            vectors_copied++;
+        }
+        else if (auto p = dynamic_cast<MeshLib::PropertyVector<std::size_t>*>(
+                     property))
+        {
+            processPropertyVector(*p, id_map, sfc_mesh);
+            vectors_copied++;
+        }
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<char>*>(property))
         {
             processPropertyVector(*p, id_map, sfc_mesh);
             vectors_copied++;
@@ -212,7 +219,8 @@ std::vector<double> MeshSurfaceExtraction::getSurfaceAreaForNodes(
         {
             const MeshLib::Element* elem(conn_elems[i]);
             const unsigned nElemParts =
-                (elem->getGeomType() == MeshElemType::TRIANGLE) ? 3 : 4;
+                (elem->getGeomType() == MeshLib::MeshElemType::TRIANGLE) ? 3
+                                                                         : 4;
             const double area = conn_elems[i]->getContent() / nElemParts;
             node_area += area;
             total_area += area;
@@ -267,8 +275,8 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
     std::transform(begin(sfc_nodes), end(sfc_nodes), std::back_inserter(id_map),
                    [](MeshLib::Node* const n) { return n->getID(); });
 
-    MeshLib::Mesh* result(
-        new Mesh(subsfc_mesh.getName() + "-Surface", sfc_nodes, new_elements));
+    MeshLib::Mesh* result(new MeshLib::Mesh(subsfc_mesh.getName() + "-Surface",
+                                            sfc_nodes, new_elements));
 
     addBulkIDPropertiesToMesh(*result, subsfc_node_id_prop_name, id_map,
                               subsfc_element_id_prop_name, element_ids_map,
@@ -312,7 +320,7 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
         {
             if (!complete_surface)
             {
-                if (FaceRule::getSurfaceNormal(*elem).normalized().dot(
+                if (MeshLib::FaceRule::getSurfaceNormal(*elem).normalized().dot(
                         norm_dir) > cos_theta)
                 {
                     continue;
@@ -340,8 +348,9 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
                     std::unique_ptr<MeshLib::Element const>{elem->getFace(j)};
                 if (!complete_surface)
                 {
-                    if (FaceRule::getSurfaceNormal(*face).normalized().dot(
-                            norm_dir) < cos_theta)
+                    if (MeshLib::FaceRule::getSurfaceNormal(*face)
+                            .normalized()
+                            .dot(norm_dir) < cos_theta)
                     {
                         continue;
                     }
@@ -490,7 +499,7 @@ std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
                    std::back_inserter(nodes_to_bulk_nodes_id_map),
                    [](MeshLib::Node* const n) { return n->getID(); });
 
-    std::unique_ptr<MeshLib::Mesh> boundary_mesh(new Mesh(
+    std::unique_ptr<MeshLib::Mesh> boundary_mesh(new MeshLib::Mesh(
         bulk_mesh.getName() + "-boundary", boundary_nodes, new_elements));
 
     addBulkIDPropertiesToMesh(

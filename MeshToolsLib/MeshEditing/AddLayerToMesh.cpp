@@ -26,7 +26,7 @@
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
 #include "MeshToolsLib/MeshSurfaceExtraction.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 /** Extrudes point, line, triangle or quad elements to its higher dimensional
  * versions, i.e. line, quad, prism, hexahedron.
@@ -96,14 +96,14 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
 
     if (mesh.getDimension() == 3)
     {
-        sfc_mesh.reset(MeshLib::MeshSurfaceExtraction::getMeshSurface(
+        sfc_mesh.reset(MeshToolsLib::MeshSurfaceExtraction::getMeshSurface(
             mesh, dir, angle, prop_name));
     }
     else
     {
         sfc_mesh = (on_top) ? std::make_unique<MeshLib::Mesh>(mesh)
                             : std::unique_ptr<MeshLib::Mesh>(
-                                  MeshLib::createFlippedMesh(mesh));
+                                  MeshToolsLib::createFlippedMesh(mesh));
         // add property storing node ids
         auto* const pv =
             sfc_mesh->getProperties().createNewPropertyVector<std::size_t>(

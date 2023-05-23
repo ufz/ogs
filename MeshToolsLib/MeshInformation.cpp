@@ -22,7 +22,7 @@ namespace
 template <typename T>
 void printBounds(MeshLib::PropertyVector<T> const& property)
 {
-    auto const bounds = MeshLib::MeshInformation::getValueBounds(property);
+    auto const bounds = MeshToolsLib::MeshInformation::getValueBounds(property);
     if (!bounds.has_value())
     {
         INFO("\t{:s}: Could not get value bounds for property vector.",
@@ -34,7 +34,7 @@ void printBounds(MeshLib::PropertyVector<T> const& property)
 }
 }  // namespace
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 GeoLib::AABB MeshInformation::getBoundingBox(const MeshLib::Mesh& mesh)
 {
@@ -42,14 +42,14 @@ GeoLib::AABB MeshInformation::getBoundingBox(const MeshLib::Mesh& mesh)
     return GeoLib::AABB(nodes.begin(), nodes.end());
 }
 
-std::map<MeshElemType, unsigned> MeshInformation::getNumberOfElementTypes(
-    const MeshLib::Mesh& mesh)
+std::map<MeshLib::MeshElemType, unsigned>
+MeshInformation::getNumberOfElementTypes(const MeshLib::Mesh& mesh)
 {
-    std::map<MeshElemType, unsigned> n_element_types;
+    std::map<MeshLib::MeshElemType, unsigned> n_element_types;
     const std::vector<MeshLib::Element*>& elements(mesh.getElements());
     for (auto element : elements)
     {
-        MeshElemType t = element->getGeomType();
+        MeshLib::MeshElemType t = element->getGeomType();
         n_element_types[t]++;
     }
     return n_element_types;
@@ -58,7 +58,7 @@ std::map<MeshElemType, unsigned> MeshInformation::getNumberOfElementTypes(
 void MeshInformation::writeAllNumbersOfElementTypes(const MeshLib::Mesh& mesh)
 {
     auto const& nr_ele_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(mesh);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(mesh);
 
     INFO("Number of elements in the mesh:");
     for (auto entry : nr_ele_types)
@@ -77,45 +77,52 @@ void MeshInformation::writePropertyVectorInformation(const MeshLib::Mesh& mesh)
 
     for (auto [name, property] : properties)
     {
-        if (auto p = dynamic_cast<PropertyVector<double>*>(property))
-        {
-            printBounds(*p);
-        }
-        else if (auto p = dynamic_cast<PropertyVector<float>*>(property))
-        {
-            printBounds(*p);
-        }
-        else if (auto p = dynamic_cast<PropertyVector<int>*>(property))
-        {
-            printBounds(*p);
-        }
-        else if (auto p = dynamic_cast<PropertyVector<unsigned>*>(property))
-        {
-            printBounds(*p);
-        }
-        else if (auto p = dynamic_cast<PropertyVector<long>*>(property))
-        {
-            printBounds(*p);
-        }
-        else if (auto p = dynamic_cast<PropertyVector<long long>*>(property))
+        if (auto p = dynamic_cast<MeshLib::PropertyVector<double>*>(property))
         {
             printBounds(*p);
         }
         else if (auto p =
-                     dynamic_cast<PropertyVector<unsigned long>*>(property))
+                     dynamic_cast<MeshLib::PropertyVector<float>*>(property))
         {
             printBounds(*p);
         }
-        else if (auto p = dynamic_cast<PropertyVector<unsigned long long>*>(
+        else if (auto p = dynamic_cast<MeshLib::PropertyVector<int>*>(property))
+        {
+            printBounds(*p);
+        }
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<unsigned>*>(property))
+        {
+            printBounds(*p);
+        }
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<long>*>(property))
+        {
+            printBounds(*p);
+        }
+        else if (auto p = dynamic_cast<MeshLib::PropertyVector<long long>*>(
                      property))
         {
             printBounds(*p);
         }
-        else if (auto p = dynamic_cast<PropertyVector<std::size_t>*>(property))
+        else if (auto p = dynamic_cast<MeshLib::PropertyVector<unsigned long>*>(
+                     property))
         {
             printBounds(*p);
         }
-        else if (auto p = dynamic_cast<PropertyVector<char>*>(property))
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<unsigned long long>*>(
+                         property))
+        {
+            printBounds(*p);
+        }
+        else if (auto p = dynamic_cast<MeshLib::PropertyVector<std::size_t>*>(
+                     property))
+        {
+            printBounds(*p);
+        }
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<char>*>(property))
         {
             printBounds(*p);
         }
@@ -132,11 +139,11 @@ void MeshInformation::writePropertyVectorInformation(const MeshLib::Mesh& mesh)
 void MeshInformation::writeMeshValidationResults(MeshLib::Mesh& mesh)
 {
     INFO("Mesh Quality Control:");
-    MeshLib::MeshValidation::allNodesUsed(mesh);
-    MeshLib::MeshValidation::existCollapsibleNodes(mesh);
-    MeshLib::MeshValidation::evaluateElementGeometry(mesh);
+    MeshToolsLib::MeshValidation::allNodesUsed(mesh);
+    MeshToolsLib::MeshValidation::existCollapsibleNodes(mesh);
+    MeshToolsLib::MeshValidation::evaluateElementGeometry(mesh);
 
-    unsigned const n_holes(MeshLib::MeshValidation::detectHoles(mesh));
+    unsigned const n_holes(MeshToolsLib::MeshValidation::detectHoles(mesh));
     if (n_holes > 0)
     {
         INFO("{:d} hole(s) detected within the mesh", n_holes);

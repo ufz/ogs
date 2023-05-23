@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
          sfc->getNumberOfTriangles());
 
     INFO("converting to mesh data");
-    std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::convertSurfaceToMesh(
+    std::unique_ptr<MeshLib::Mesh> mesh(MeshToolsLib::convertSurfaceToMesh(
         *sfc, BaseLib::extractBaseNameWithoutExtension(tinFileName),
         std::numeric_limits<double>::epsilon()));
     INFO("Mesh created: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),

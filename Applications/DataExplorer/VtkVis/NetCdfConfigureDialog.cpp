@@ -351,7 +351,7 @@ void NetCdfConfigureDialog::createDataObject()
         {
             useIntensity = MeshLib::UseIntensityAs::DATAVECTOR;
         }
-        _currentMesh = MeshLib::RasterToMesh::convert(
+        _currentMesh = MeshToolsLib::RasterToMesh::convert(
             data_array.data(), header, meshElemType, useIntensity,
             _currentVar.getName());
     }

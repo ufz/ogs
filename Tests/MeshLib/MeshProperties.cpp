@@ -22,7 +22,8 @@ class MeshLibProperties : public ::testing::Test
 public:
     MeshLibProperties()
     {
-        mesh = MeshLib::MeshGenerator::generateRegularHexMesh(1.0, mesh_size);
+        mesh =
+            MeshToolsLib::MeshGenerator::generateRegularHexMesh(1.0, mesh_size);
     }
 
     ~MeshLibProperties() override { delete mesh; }

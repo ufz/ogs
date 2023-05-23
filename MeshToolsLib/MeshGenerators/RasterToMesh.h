@@ -25,6 +25,10 @@ class Node;
 class Element;
 template <typename T>
 class PropertyVector;
+}  // namespace MeshLib
+
+namespace MeshToolsLib
+{
 
 /**
  * \brief Converts raster data into an OGS mesh.
@@ -43,8 +47,8 @@ public:
      */
     static std::unique_ptr<MeshLib::Mesh> convert(
         GeoLib::Raster const& raster,
-        MeshElemType elem_type,
-        UseIntensityAs intensity_type,
+        MeshLib::MeshElemType elem_type,
+        MeshLib::UseIntensityAs intensity_type,
         std::string const& array_name = "Colour");
 
     /**
@@ -62,8 +66,8 @@ public:
         vtkImageData* img,
         const double origin[3],
         const double scalingFactor,
-        MeshElemType elem_type,
-        UseIntensityAs intensity_type,
+        MeshLib::MeshElemType elem_type,
+        MeshLib::UseIntensityAs intensity_type,
         std::string const& array_name = "Colour");
 
     /**
@@ -79,8 +83,8 @@ public:
     static std::unique_ptr<MeshLib::Mesh> convert(
         const double* const img,
         GeoLib::RasterHeader const& header,
-        MeshElemType elem_type,
-        UseIntensityAs intensity_type,
+        MeshLib::MeshElemType elem_type,
+        MeshLib::UseIntensityAs intensity_type,
         std::string const& array_name = "Colour");
 
 private:
@@ -88,7 +92,7 @@ private:
     static void fillPropertyVector(MeshLib::PropertyVector<T>& prop_vec,
                                    double const* const img,
                                    GeoLib::RasterHeader const& header,
-                                   MeshElemType elem_type)
+                                   MeshLib::MeshElemType elem_type)
     {
         for (std::size_t k = 0; k < header.n_depth; k++)
         {
@@ -100,8 +104,8 @@ private:
                 {
                     auto val(static_cast<T>(img[idx + j]));
                     prop_vec.push_back(val);
-                    if (elem_type == MeshElemType::TRIANGLE ||
-                        elem_type == MeshElemType::PRISM)
+                    if (elem_type == MeshLib::MeshElemType::TRIANGLE ||
+                        elem_type == MeshLib::MeshElemType::PRISM)
                     {
                         prop_vec.push_back(val);  // because each pixel is
                                                   // represented by two cells
@@ -112,4 +116,4 @@ private:
     }
 };
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

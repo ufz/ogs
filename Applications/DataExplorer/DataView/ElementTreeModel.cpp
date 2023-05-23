@@ -27,7 +27,7 @@ namespace
 template <typename PropertyType>
 QList<QVariant> propertyBounds(PropertyType const& property)
 {
-    auto const bounds = MeshLib::MeshInformation::getValueBounds(property);
+    auto const bounds = MeshToolsLib::MeshInformation::getValueBounds(property);
     if (bounds.has_value())
     {
         return {"[" + QString::number(bounds->first) + ",",
@@ -159,7 +159,7 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
     _rootItem->appendChild(elements_item);
 
     auto const& n_element_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(mesh);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(mesh);
     for (auto entry : n_element_types)
     {
         QList<QVariant> number_of_element_types;
@@ -183,7 +183,8 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
     _rootItem->appendChild(aabb_item);
 
     {
-        const GeoLib::AABB aabb(MeshLib::MeshInformation::getBoundingBox(mesh));
+        const GeoLib::AABB aabb(
+            MeshToolsLib::MeshInformation::getBoundingBox(mesh));
         auto const [min, max] = aabb.getMinMaxPoints();
 
         QList<QVariant> min_aabb;

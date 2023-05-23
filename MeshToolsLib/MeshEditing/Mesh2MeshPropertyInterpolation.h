@@ -20,6 +20,10 @@ namespace MeshLib
 {
 
 class Mesh;
+}
+
+namespace MeshToolsLib
+{
 
 /**
  * Class Mesh2MeshPropertyInterpolation transfers properties of
@@ -36,7 +40,7 @@ public:
      * @param property_name is the name of a PropertyVector in the \c
      * source_mesh
      */
-    Mesh2MeshPropertyInterpolation(Mesh const& src_mesh,
+    Mesh2MeshPropertyInterpolation(MeshLib::Mesh const& src_mesh,
                                    std::string const& property_name);
 
     /**
@@ -46,7 +50,7 @@ public:
      * set via weighted interpolation
      * @return true if the operation was successful, false on error
      */
-    bool setPropertiesForMesh(Mesh& dest_mesh) const;
+    bool setPropertiesForMesh(MeshLib::Mesh& dest_mesh) const;
 
 private:
     /**
@@ -54,7 +58,7 @@ private:
      * @param dest_properties
      */
     void interpolatePropertiesForMesh(
-        Mesh const& dest_mesh,
+        MeshLib::Mesh const& dest_mesh,
         MeshLib::PropertyVector<double>& dest_properties) const;
 
     /**
@@ -67,8 +71,8 @@ private:
     void interpolateElementPropertiesToNodeProperties(
         std::vector<double>& interpolated_properties) const;
 
-    Mesh const& _src_mesh;
+    MeshLib::Mesh const& _src_mesh;
     std::string const& _property_name;
 };
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

@@ -40,7 +40,7 @@ bool LayeredMeshGenerator::createLayers(
     }
 
     auto const elem_count =
-        MeshLib::MeshInformation::getNumberOfElementTypes(mesh);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(mesh);
     if (elem_count.find(MeshLib::MeshElemType::QUAD) != elem_count.end())
     {
         ERR("Input mesh contains QUAD-elements. Please use input mesh "
@@ -93,8 +93,8 @@ std::unique_ptr<MeshLib::Mesh> LayeredMeshGenerator::getMesh(
     MeshLib::NodeSearch ns(*result);
     if (ns.searchUnused() > 0)
     {
-        std::unique_ptr<MeshLib::Mesh> new_mesh(
-            MeshLib::removeNodes(*result, ns.getSearchedNodeIDs(), mesh_name));
+        std::unique_ptr<MeshLib::Mesh> new_mesh(MeshToolsLib::removeNodes(
+            *result, ns.getSearchedNodeIDs(), mesh_name));
         return new_mesh;
     }
     return result;

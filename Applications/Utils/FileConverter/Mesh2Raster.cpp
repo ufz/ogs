@@ -129,11 +129,13 @@ int main(int argc, char* argv[])
             std::vector<const MeshLib::Element*> const& elems =
                 grid.getElementsInVolume(min_vol, max_vol);
             auto const* element =
-                MeshLib::ProjectPointOnMesh::getProjectedElement(elems, node);
+                MeshToolsLib::ProjectPointOnMesh::getProjectedElement(elems,
+                                                                      node);
             // centre of the pixel is located within a mesh element
             if (element != nullptr)
             {
-                out << MeshLib::ProjectPointOnMesh::getElevation(*element, node)
+                out << MeshToolsLib::ProjectPointOnMesh::getElevation(*element,
+                                                                      node)
                     << " ";
             }
             else
@@ -151,11 +153,11 @@ int main(int argc, char* argv[])
                     MeshLib::Node const corner_node(x + x_off[i], y + y_off[i],
                                                     0);
                     auto const* corner_element =
-                        MeshLib::ProjectPointOnMesh::getProjectedElement(
+                        MeshToolsLib::ProjectPointOnMesh::getProjectedElement(
                             elems, corner_node);
                     if (corner_element != nullptr)
                     {
-                        sum += MeshLib::ProjectPointOnMesh::getElevation(
+                        sum += MeshToolsLib::ProjectPointOnMesh::getElevation(
                             *corner_element, node);
                         nonzero_count++;
                     }

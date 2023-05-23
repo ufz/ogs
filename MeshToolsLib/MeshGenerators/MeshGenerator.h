@@ -22,7 +22,10 @@
 namespace MeshLib
 {
 class Node;
+}
 
+namespace MeshToolsLib
+{
 namespace MeshGenerator
 {
 
@@ -91,9 +94,10 @@ std::vector<MeshLib::Node*> generateRegularNodes(
  * \param origin Optional mesh's origin (the left-most point) with
  * MathLib::ORIGIN default. \param mesh_name Name of the new mesh.
  */
-Mesh* generateLineMesh(const BaseLib::ISubdivision& div,
-                       MathLib::Point3d const& origin = MathLib::ORIGIN,
-                       std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateLineMesh(
+    const BaseLib::ISubdivision& div,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate an 1D Line-Element mesh. The mesh is generated in x-direction.
@@ -103,10 +107,11 @@ Mesh* generateLineMesh(const BaseLib::ISubdivision& div,
  * \param origin Optional mesh's origin (the left-most point) with
  * MathLib::ORIGIN default. \param mesh_name Name of the new mesh.
  */
-Mesh* generateLineMesh(const double length,
-                       const std::size_t subdivision,
-                       MathLib::Point3d const& origin = MathLib::ORIGIN,
-                       std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateLineMesh(
+    const double length,
+    const std::size_t subdivision,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate an 1D Line-Element mesh. The mesh is generated in x-direction.
@@ -116,10 +121,11 @@ Mesh* generateLineMesh(const double length,
  * \param origin Optional mesh's origin (the left-most point) with
  * MathLib::ORIGIN default. \param mesh_name Name of the new mesh.
  */
-Mesh* generateLineMesh(const unsigned n_cells,
-                       const double cell_size,
-                       MathLib::Point3d const& origin = MathLib::ORIGIN,
-                       std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateLineMesh(
+    const unsigned n_cells,
+    const double cell_size,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 2D Quad-Element mesh. The mesh is generated in the
@@ -130,10 +136,11 @@ Mesh* generateLineMesh(const unsigned n_cells,
  * \param origin Optional mesh's origin (the left-most point) with
  * MathLib::ORIGIN default. \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularQuadMesh(const BaseLib::ISubdivision& div_x,
-                              const BaseLib::ISubdivision& div_y,
-                              MathLib::Point3d const& origin = MathLib::ORIGIN,
-                              std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularQuadMesh(
+    const BaseLib::ISubdivision& div_x,
+    const BaseLib::ISubdivision& div_y,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 2D Quad-Element mesh. The mesh is generated in the
@@ -145,10 +152,11 @@ Mesh* generateRegularQuadMesh(const BaseLib::ISubdivision& div_x,
  *               MathLib::ORIGIN default.
  * \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularQuadMesh(const double length,
-                              const std::size_t subdivision,
-                              MathLib::Point3d const& origin = MathLib::ORIGIN,
-                              std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularQuadMesh(
+    const double length,
+    const std::size_t subdivision,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 2D Quad-Element mesh. The mesh is generated in the
@@ -162,12 +170,13 @@ Mesh* generateRegularQuadMesh(const double length,
  *               MathLib::ORIGIN default.
  * \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularQuadMesh(const double x_length,
-                              const double y_length,
-                              const std::size_t x_subdivision,
-                              const std::size_t y_subdivision,
-                              MathLib::Point3d const& origin = MathLib::ORIGIN,
-                              std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularQuadMesh(
+    const double x_length,
+    const double y_length,
+    const std::size_t x_subdivision,
+    const std::size_t y_subdivision,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 2D Quad-Element mesh. The mesh is generated in the
@@ -179,11 +188,12 @@ Mesh* generateRegularQuadMesh(const double x_length,
  * \param origin Optional mesh's origin (the lower left corner) with
  * MathLib::ORIGIN default. \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularQuadMesh(const unsigned n_x_cells,
-                              const unsigned n_y_cells,
-                              const double cell_size,
-                              MathLib::Point3d const& origin = MathLib::ORIGIN,
-                              std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularQuadMesh(
+    const unsigned n_x_cells,
+    const unsigned n_y_cells,
+    const double cell_size,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 2D Quad-Element mesh. The mesh is generated in the
@@ -196,12 +206,13 @@ Mesh* generateRegularQuadMesh(const unsigned n_x_cells,
  * \param origin Optional mesh's origin (the lower left corner) with
  * MathLib::ORIGIN default. \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularQuadMesh(const unsigned n_x_cells,
-                              const unsigned n_y_cells,
-                              const double cell_size_x,
-                              const double cell_size_y,
-                              MathLib::Point3d const& origin = MathLib::ORIGIN,
-                              std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularQuadMesh(
+    const unsigned n_x_cells,
+    const unsigned n_y_cells,
+    const double cell_size_x,
+    const double cell_size_y,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 3D Hex-Element mesh.
@@ -213,11 +224,12 @@ Mesh* generateRegularQuadMesh(const unsigned n_x_cells,
  *               MathLib::ORIGIN default.
  * \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularHexMesh(const BaseLib::ISubdivision& div_x,
-                             const BaseLib::ISubdivision& div_y,
-                             const BaseLib::ISubdivision& div_z,
-                             MathLib::Point3d const& origin = MathLib::ORIGIN,
-                             std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularHexMesh(
+    const BaseLib::ISubdivision& div_x,
+    const BaseLib::ISubdivision& div_y,
+    const BaseLib::ISubdivision& div_z,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 3D Hex-Element mesh.
@@ -227,10 +239,11 @@ Mesh* generateRegularHexMesh(const BaseLib::ISubdivision& div_x,
  * \param origin      Optional mesh's origin (the bottom lower left corner) with
  * MathLib::ORIGIN default. \param mesh_name   Name of the new mesh.
  */
-Mesh* generateRegularHexMesh(const double length,
-                             const std::size_t subdivision,
-                             MathLib::Point3d const& origin = MathLib::ORIGIN,
-                             std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularHexMesh(
+    const double length,
+    const std::size_t subdivision,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 3D Hex-Element mesh.
@@ -244,14 +257,15 @@ Mesh* generateRegularHexMesh(const double length,
  * \param origin        Optional mesh's origin (the bottom lower left corner)
  * with MathLib::ORIGIN default. \param mesh_name     Name of the new mesh.
  */
-Mesh* generateRegularHexMesh(const double x_length,
-                             const double y_length,
-                             const double z_length,
-                             const std::size_t x_subdivision,
-                             const std::size_t y_subdivision,
-                             const std::size_t z_subdivision,
-                             MathLib::Point3d const& origin = MathLib::ORIGIN,
-                             std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularHexMesh(
+    const double x_length,
+    const double y_length,
+    const double z_length,
+    const std::size_t x_subdivision,
+    const std::size_t y_subdivision,
+    const std::size_t z_subdivision,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 3D Hex-Element mesh.
@@ -263,12 +277,13 @@ Mesh* generateRegularHexMesh(const double x_length,
  * \param origin    Optional mesh's origin (the lower left corner) with
  * MathLib::ORIGIN default. \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularHexMesh(const unsigned n_x_cells,
-                             const unsigned n_y_cells,
-                             const unsigned n_z_cells,
-                             const double cell_size,
-                             MathLib::Point3d const& origin = MathLib::ORIGIN,
-                             std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularHexMesh(
+    const unsigned n_x_cells,
+    const unsigned n_y_cells,
+    const unsigned n_z_cells,
+    const double cell_size,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 3D Hex-Element mesh.
@@ -282,14 +297,15 @@ Mesh* generateRegularHexMesh(const unsigned n_x_cells,
  * \param origin       Optional mesh's origin (the lower left corner) with
  * MathLib::ORIGIN default. \param mesh_name    Name of the new mesh.
  */
-Mesh* generateRegularHexMesh(const unsigned n_x_cells,
-                             const unsigned n_y_cells,
-                             const unsigned n_z_cells,
-                             const double cell_size_x,
-                             const double cell_size_y,
-                             const double cell_size_z,
-                             MathLib::Point3d const& origin = MathLib::ORIGIN,
-                             std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularHexMesh(
+    const unsigned n_x_cells,
+    const unsigned n_y_cells,
+    const unsigned n_z_cells,
+    const double cell_size_x,
+    const double cell_size_y,
+    const double cell_size_z,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 3D mesh that consists of pyramid elements.
@@ -304,7 +320,7 @@ Mesh* generateRegularHexMesh(const unsigned n_x_cells,
  * MathLib::ORIGIN default.
  * \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularPyramidMesh(
+MeshLib::Mesh* generateRegularPyramidMesh(
     const BaseLib::ISubdivision& div_x,
     const BaseLib::ISubdivision& div_y,
     const BaseLib::ISubdivision& div_z,
@@ -321,10 +337,11 @@ Mesh* generateRegularPyramidMesh(
  *               MathLib::ORIGIN default.
  * \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularTriMesh(const BaseLib::ISubdivision& div_x,
-                             const BaseLib::ISubdivision& div_y,
-                             MathLib::Point3d const& origin = MathLib::ORIGIN,
-                             std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularTriMesh(
+    const BaseLib::ISubdivision& div_x,
+    const BaseLib::ISubdivision& div_y,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 2D Triangle-Element mesh. The mesh is generated in the
@@ -336,10 +353,11 @@ Mesh* generateRegularTriMesh(const BaseLib::ISubdivision& div_x,
  *               MathLib::ORIGIN default.
  * \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularTriMesh(const double length,
-                             const std::size_t subdivision,
-                             MathLib::Point3d const& origin = MathLib::ORIGIN,
-                             std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularTriMesh(
+    const double length,
+    const std::size_t subdivision,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 2D Triangle-Element mesh. The mesh is generated in the
@@ -353,12 +371,13 @@ Mesh* generateRegularTriMesh(const double length,
  *               MathLib::ORIGIN default.
  * \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularTriMesh(const double x_length,
-                             const double y_length,
-                             const std::size_t x_subdivision,
-                             const std::size_t y_subdivision,
-                             MathLib::Point3d const& origin = MathLib::ORIGIN,
-                             std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularTriMesh(
+    const double x_length,
+    const double y_length,
+    const std::size_t x_subdivision,
+    const std::size_t y_subdivision,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 2D Triangle-Element mesh. The mesh is generated in the
@@ -370,11 +389,12 @@ Mesh* generateRegularTriMesh(const double x_length,
  * \param origin Optional mesh's origin (the lower left corner) with
  * MathLib::ORIGIN default. \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularTriMesh(const unsigned n_x_cells,
-                             const unsigned n_y_cells,
-                             const double cell_size,
-                             MathLib::Point3d const& origin = MathLib::ORIGIN,
-                             std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularTriMesh(
+    const unsigned n_x_cells,
+    const unsigned n_y_cells,
+    const double cell_size,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 2D Triangle-Element mesh. The mesh is generated in the
@@ -387,12 +407,13 @@ Mesh* generateRegularTriMesh(const unsigned n_x_cells,
  * \param origin Optional mesh's origin (the lower left corner) with
  * MathLib::ORIGIN default. \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularTriMesh(const unsigned n_x_cells,
-                             const unsigned n_y_cells,
-                             const double cell_size_x,
-                             const double cell_size_y,
-                             MathLib::Point3d const& origin = MathLib::ORIGIN,
-                             std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularTriMesh(
+    const unsigned n_x_cells,
+    const unsigned n_y_cells,
+    const double cell_size_x,
+    const double cell_size_y,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 3D Prism-Element mesh.
@@ -407,14 +428,15 @@ Mesh* generateRegularTriMesh(const unsigned n_x_cells,
  *               MathLib::ORIGIN default.
  * \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularPrismMesh(const double x_length,
-                               const double y_length,
-                               const double z_length,
-                               const std::size_t x_subdivision,
-                               const std::size_t y_subdivision,
-                               const std::size_t z_subdivision,
-                               MathLib::Point3d const& origin = MathLib::ORIGIN,
-                               std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularPrismMesh(
+    const double x_length,
+    const double y_length,
+    const double z_length,
+    const std::size_t x_subdivision,
+    const std::size_t y_subdivision,
+    const std::size_t z_subdivision,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 3D Prism-Element mesh.
@@ -426,12 +448,13 @@ Mesh* generateRegularPrismMesh(const double x_length,
  * height of prism \param origin Optional mesh's origin (the lower left corner)
  * with MathLib::ORIGIN default. \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularPrismMesh(const unsigned n_x_cells,
-                               const unsigned n_y_cells,
-                               const unsigned n_z_cells,
-                               const double cell_size,
-                               MathLib::Point3d const& origin = MathLib::ORIGIN,
-                               std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularPrismMesh(
+    const unsigned n_x_cells,
+    const unsigned n_y_cells,
+    const unsigned n_z_cells,
+    const double cell_size,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 3D Prism-Element mesh.
@@ -445,14 +468,15 @@ Mesh* generateRegularPrismMesh(const unsigned n_x_cells,
  * \param origin Optional mesh's origin (the lower left corner) with
  * MathLib::ORIGIN default. \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularPrismMesh(const unsigned n_x_cells,
-                               const unsigned n_y_cells,
-                               const unsigned n_z_cells,
-                               const double cell_size_x,
-                               const double cell_size_y,
-                               const double cell_size_z,
-                               MathLib::Point3d const& origin = MathLib::ORIGIN,
-                               std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularPrismMesh(
+    const unsigned n_x_cells,
+    const unsigned n_y_cells,
+    const unsigned n_z_cells,
+    const double cell_size_x,
+    const double cell_size_y,
+    const double cell_size_z,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 3D Tet-Element mesh.
@@ -466,11 +490,12 @@ Mesh* generateRegularPrismMesh(const unsigned n_x_cells,
  * \param origin Optional mesh's origin (the bottom lower left corner) with
  * MathLib::ORIGIN default. \param mesh_name Name of the new mesh.
  */
-Mesh* generateRegularTetMesh(const BaseLib::ISubdivision& div_x,
-                             const BaseLib::ISubdivision& div_y,
-                             const BaseLib::ISubdivision& div_z,
-                             MathLib::Point3d const& origin = MathLib::ORIGIN,
-                             std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularTetMesh(
+    const BaseLib::ISubdivision& div_x,
+    const BaseLib::ISubdivision& div_y,
+    const BaseLib::ISubdivision& div_z,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 3D Tet-Element mesh.
@@ -487,14 +512,15 @@ Mesh* generateRegularTetMesh(const BaseLib::ISubdivision& div_x,
  * \param origin        Optional mesh's origin (the bottom lower left corner)
  * with MathLib::ORIGIN default. \param mesh_name     Name of the new mesh.
  */
-Mesh* generateRegularTetMesh(const double x_length,
-                             const double y_length,
-                             const double z_length,
-                             const std::size_t x_subdivision,
-                             const std::size_t y_subdivision,
-                             const std::size_t z_subdivision,
-                             MathLib::Point3d const& origin = MathLib::ORIGIN,
-                             std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularTetMesh(
+    const double x_length,
+    const double y_length,
+    const double z_length,
+    const std::size_t x_subdivision,
+    const std::size_t y_subdivision,
+    const std::size_t z_subdivision,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 3D Tet-Element mesh.
@@ -511,14 +537,15 @@ Mesh* generateRegularTetMesh(const double x_length,
  * \param origin       Optional mesh's origin (the lower left corner) with
  * MathLib::ORIGIN default. \param mesh_name    Name of the new mesh.
  */
-Mesh* generateRegularTetMesh(const unsigned n_x_cells,
-                             const unsigned n_y_cells,
-                             const unsigned n_z_cells,
-                             const double cell_size_x,
-                             const double cell_size_y,
-                             const double cell_size_z,
-                             MathLib::Point3d const& origin = MathLib::ORIGIN,
-                             std::string const& mesh_name = "mesh");
+MeshLib::Mesh* generateRegularTetMesh(
+    const unsigned n_x_cells,
+    const unsigned n_y_cells,
+    const unsigned n_z_cells,
+    const double cell_size_x,
+    const double cell_size_y,
+    const double cell_size_z,
+    MathLib::Point3d const& origin = MathLib::ORIGIN,
+    std::string const& mesh_name = "mesh");
 
 /// Constructs a surface mesh approximating a surface in the 3d space given by
 /// a function.
@@ -530,4 +557,4 @@ MeshLib::Mesh* createSurfaceMesh(
     const std::function<double(double, double)>& f);
 
 }  // namespace MeshGenerator
-}  // namespace MeshLib
+}  // namespace MeshToolsLib

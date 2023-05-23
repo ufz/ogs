@@ -21,7 +21,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/PropertyVector.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 bool ElementValueModification::replace(MeshLib::Mesh& mesh,
                                        std::string const& property_name,
@@ -112,9 +112,8 @@ std::size_t ElementValueModification::condense(MeshLib::Mesh& mesh)
     return nValues;
 }
 
-std::size_t ElementValueModification::setByElementType(MeshLib::Mesh& mesh,
-                                                       MeshElemType ele_type,
-                                                       int const new_value)
+std::size_t ElementValueModification::setByElementType(
+    MeshLib::Mesh& mesh, MeshLib::MeshElemType ele_type, int const new_value)
 {
     MeshLib::PropertyVector<int>* property_value_vector = nullptr;
     try

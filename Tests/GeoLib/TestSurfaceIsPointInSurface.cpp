@@ -110,8 +110,8 @@ TEST(GeoLib, SurfaceIsPointInSurface)
             {uniform_dist(re), uniform_dist(re)}};
 
         std::unique_ptr<MeshLib::Mesh> sfc_mesh(
-            MeshLib::MeshGenerator::createSurfaceMesh(name, ll, ur, n_steps,
-                                                      f));
+            MeshToolsLib::MeshGenerator::createSurfaceMesh(name, ll, ur,
+                                                           n_steps, f));
 
         // random rotation angles
         std::normal_distribution<> normal_dist_angles(
@@ -133,7 +133,7 @@ TEST(GeoLib, SurfaceIsPointInSurface)
         Eigen::Vector3d const displacement(scaling * surface_normal);
 
         GeoLib::GEOObjects geometries;
-        MeshLib::convertMeshToGeo(*sfc_mesh, geometries);
+        MeshToolsLib::convertMeshToGeo(*sfc_mesh, geometries);
 
         std::vector<GeoLib::Surface*> const& sfcs(
             *geometries.getSurfaceVec(name));

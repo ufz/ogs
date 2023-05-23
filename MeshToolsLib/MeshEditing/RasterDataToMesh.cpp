@@ -14,7 +14,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 namespace RasterDataToMesh
 {

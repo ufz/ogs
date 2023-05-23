@@ -46,7 +46,7 @@ std::unique_ptr<MeshLib::Mesh> generateInitialMesh(
         extent.second[i] += offset;
     }
     std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::MeshGenerator::generateRegularHexMesh(
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(
             mesh_range[0], mesh_range[1], mesh_range[2], n_cells[0], n_cells[1],
             n_cells[2], extent.first));
     auto mat_id = mesh->getProperties().createNewPropertyVector<int>(
@@ -60,7 +60,7 @@ std::unique_ptr<MeshLib::Mesh> generateInitialMesh(
 }
 
 // returns the element the given node is projected on (or nullptr otherwise)
-MeshToolsLib::Element const* getProjectedElement(
+MeshLib::Element const* getProjectedElement(
     MeshLib::MeshElementGrid const& grid,
     MathLib::Point3d const& node,
     double const max_edge)
@@ -72,7 +72,7 @@ MeshToolsLib::Element const* getProjectedElement(
         {node[0] + max_edge, node[1] + max_edge, max_val}};
     auto const& intersection_candidates =
         grid.getElementsInVolume(min_vol, max_vol);
-    return MeshLib::ProjectPointOnMesh::getProjectedElement(
+    return MeshToolsLib::ProjectPointOnMesh::getProjectedElement(
         intersection_candidates, node);
 }
 
@@ -91,7 +91,8 @@ void voteMatId(MathLib::Point3d const& node,
         nullptr_cnt++;
         return;
     }
-    if (node[2] > MeshLib::ProjectPointOnMesh::getElevation(*proj_elem, node))
+    if (node[2] >
+        MeshToolsLib::ProjectPointOnMesh::getElevation(*proj_elem, node))
     {
         upper_layer_cnt++;
         return;
@@ -220,6 +221,6 @@ std::unique_ptr<MeshLib::Mesh> MeshToolsLib::MeshGenerators::
         return nullptr;
     }
     std::unique_ptr<MeshLib::Mesh> new_mesh(
-        MeshLib::removeElements(*mesh, marked_elements, "mesh"));
+        MeshToolsLib::removeElements(*mesh, marked_elements, "mesh"));
     return new_mesh;
 }

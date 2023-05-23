@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
 
     if (create_node_array)
     {
-        bool const assigned = MeshLib::RasterDataToMesh::projectToNodes(
+        bool const assigned = MeshToolsLib::RasterDataToMesh::projectToNodes(
             *mesh, *raster, nodata_arg.getValue(), array_name_arg.getValue());
 
         if (!assigned)
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
 
     if (create_cell_array)
     {
-        bool const assigned = MeshLib::RasterDataToMesh::projectToElements(
+        bool const assigned = MeshToolsLib::RasterDataToMesh::projectToElements(
             *mesh, *raster, nodata_arg.getValue(), array_name_arg.getValue());
 
         if (!assigned)

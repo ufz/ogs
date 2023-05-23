@@ -116,7 +116,7 @@ TEST(FileIO, TetGenMeshReaderWithMaterials)
 
     ASSERT_NE(nullptr, materialIDs(*mesh));
     auto const& bounds =
-        MeshLib::MeshInformation::getValueBounds(*materialIDs(*mesh));
+        MeshToolsLib::MeshInformation::getValueBounds(*materialIDs(*mesh));
     ASSERT_TRUE(bounds.has_value());
     ASSERT_EQ(-20, bounds->first);
     ASSERT_EQ(-10, bounds->second);

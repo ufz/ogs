@@ -32,7 +32,7 @@ void MeshValueEditDialog::accept()
 {
     if (this->condenseButton->isChecked())
     {
-        MeshLib::ElementValueModification::condense(*_mesh);
+        MeshToolsLib::ElementValueModification::condense(*_mesh);
     }
     else
     {
@@ -52,7 +52,7 @@ void MeshValueEditDialog::accept()
         unsigned new_value =
             static_cast<unsigned>(this->edit_new_value->text().toInt());
         bool do_not_replace = this->replaceCheckBox->isChecked();
-        bool result = MeshLib::ElementValueModification::replace(
+        bool result = MeshToolsLib::ElementValueModification::replace(
             *_mesh, old_value, new_value, !do_not_replace);
         if (!result && do_not_replace)
         {

@@ -38,7 +38,8 @@ std::unique_ptr<LookupTable> createTestLookupTable(const char xml[])
     {
         std::size_t const n_elements = 4;
         auto mesh = std::unique_ptr<MeshLib::Mesh>(
-            MeshLib::MeshGenerator::generateRegularQuadMesh(1.0, n_elements));
+            MeshToolsLib::MeshGenerator::generateRegularQuadMesh(1.0,
+                                                                 n_elements));
         meshes.push_back(std::move(mesh));
     }
 

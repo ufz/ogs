@@ -26,7 +26,7 @@
 #include "MeshToolsLib/MeshEditing/MeshRevision.h"
 #include "MeshToolsLib/MeshSurfaceExtraction.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 /** Finds all surface elements that can be reached from element. All elements
  * that are found in this way are marked in the global sfc_idx vector using the
@@ -64,7 +64,7 @@ static void trackSurface(MeshLib::Element const* const element,
 bool MeshValidation::allNodesUsed(MeshLib::Mesh const& mesh)
 {
     INFO("Looking for unused nodes...");
-    NodeSearch ns(mesh);
+    MeshLib::NodeSearch ns(mesh);
     ns.searchUnused();
     if (!ns.getSearchedNodeIDs().empty())
     {
@@ -85,10 +85,10 @@ bool MeshValidation::existCollapsibleNodes(MeshLib::Mesh& mesh)
 void MeshValidation::evaluateElementGeometry(MeshLib::Mesh const& mesh)
 {
     const std::vector<ElementErrorCode> codes(
-        MeshLib::MeshValidation::testElementGeometry(mesh));
+        MeshToolsLib::MeshValidation::testElementGeometry(mesh));
     std::array<std::string,
                static_cast<std::size_t>(ElementErrorFlag::MaxValue)>
-        output_str(MeshLib::MeshValidation::ElementErrorCodeOutput(codes));
+        output_str(MeshToolsLib::MeshValidation::ElementErrorCodeOutput(codes));
     for (auto& i : output_str)
     {
         INFO("{:s}", i);
@@ -211,11 +211,12 @@ unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh)
         return 0;
     }
 
-    auto boundary_mesh = MeshLib::BoundaryExtraction::getBoundaryElementsAsMesh(
-        mesh,
-        MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
-        MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
-        MeshLib::getBulkIDString(MeshLib::MeshItemType::Face));
+    auto boundary_mesh =
+        MeshToolsLib::BoundaryExtraction::getBoundaryElementsAsMesh(
+            mesh,
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Face));
     std::vector<MeshLib::Element*> const& elements(
         boundary_mesh->getElements());
 

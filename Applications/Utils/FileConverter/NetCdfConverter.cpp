@@ -588,9 +588,9 @@ static bool convert(NcFile const& dataset, NcVar const& var,
             MeshLib::UseIntensityAs::DATAVECTOR;
         if (output == OutputType::MULTIMESH)
         {
-            mesh = MeshLib::RasterToMesh::convert(data_vec.data(), header,
-                                                  elem_type, useIntensity,
-                                                  var.getName());
+            mesh = MeshToolsLib::RasterToMesh::convert(data_vec.data(), header,
+                                                       elem_type, useIntensity,
+                                                       var.getName());
             std::string const output_file_name(
                 BaseLib::dropFileExtension(output_name) +
                 getIterationString(i, time_bounds.second) + ".vtu");
@@ -603,15 +603,15 @@ static bool convert(NcFile const& dataset, NcVar const& var,
             if (time_bounds.first != time_bounds.second)
                 array_name.append(getIterationString(i, time_bounds.second));
             if (i == time_bounds.first)  // create persistent mesh
-                mesh = MeshLib::RasterToMesh::convert(data_vec.data(), header,
-                                                      elem_type, useIntensity,
-                                                      array_name);
+                mesh = MeshToolsLib::RasterToMesh::convert(
+                    data_vec.data(), header, elem_type, useIntensity,
+                    array_name);
             else  // copy array to mesh
             {
                 std::unique_ptr<MeshLib::Mesh> const temp(
-                    MeshLib::RasterToMesh::convert(data_vec.data(), header,
-                                                   elem_type, useIntensity,
-                                                   array_name));
+                    MeshToolsLib::RasterToMesh::convert(data_vec.data(), header,
+                                                        elem_type, useIntensity,
+                                                        array_name));
                 MeshLib::PropertyVector<double> const* const vec =
                     temp->getProperties().getPropertyVector<double>(array_name);
                 if (vec == nullptr)

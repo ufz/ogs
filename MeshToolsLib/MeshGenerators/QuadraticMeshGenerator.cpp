@@ -190,10 +190,10 @@ struct nodeByCoordinatesComparator
     }
 };
 
-namespace MeshLib
+namespace MeshToolsLib
 {
-std::unique_ptr<Mesh> createQuadraticOrderMesh(Mesh const& linear_mesh,
-                                               bool const add_centre_node)
+std::unique_ptr<MeshLib::Mesh> createQuadraticOrderMesh(
+    MeshLib::Mesh const& linear_mesh, bool const add_centre_node)
 {
     // Clone the linear mesh nodes.
     auto quadratic_mesh_nodes = MeshLib::copyNodeVector(linear_mesh.getNodes());
@@ -220,8 +220,8 @@ std::unique_ptr<Mesh> createQuadraticOrderMesh(Mesh const& linear_mesh,
         int const number_all_nodes = quadratic_element->getNumberOfNodes();
         for (int i = number_base_nodes; i < number_all_nodes; ++i)
         {
-            Node* original_node =
-                const_cast<Node*>(quadratic_element->getNode(i));
+            MeshLib::Node* original_node =
+                const_cast<MeshLib::Node*>(quadratic_element->getNode(i));
 
             auto it = unique_nodes.insert(original_node);
             if (!it.second)  // same node was already inserted before, no

@@ -16,7 +16,7 @@
 
 #include "ElementQualityMetric.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 
 /**

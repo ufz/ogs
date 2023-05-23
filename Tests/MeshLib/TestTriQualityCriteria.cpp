@@ -45,9 +45,9 @@ public:
         }
 
         std::unique_ptr<MeshLib::Mesh> mesh(
-            MeshLib::MeshGenerator::generateRegularTriMesh(*vec_div[0],
-                                                           *vec_div[1]));
-        MeshLib::ElementQualityInterface element_quality(*mesh, type);
+            MeshToolsLib::MeshGenerator::generateRegularTriMesh(*vec_div[0],
+                                                                *vec_div[1]));
+        MeshToolsLib::ElementQualityInterface element_quality(*mesh, type);
         return element_quality.getQualityVector();
     }
 

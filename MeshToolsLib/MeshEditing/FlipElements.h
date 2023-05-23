@@ -19,6 +19,10 @@ namespace MeshLib
 {
 class Mesh;
 class Node;
+}  // namespace MeshLib
+
+namespace MeshToolsLib
+{
 
 /**
  * Creates a copy of an 1d / 2d element where the node order is reversed,
@@ -28,8 +32,8 @@ class Node;
  * @param nodes node vector used for the copy of the element
  * @return a flipped copy of the element
  */
-std::unique_ptr<Element> createFlippedElement(Element const& elem,
-                                              std::vector<Node*> const& nodes);
+std::unique_ptr<MeshLib::Element> createFlippedElement(
+    MeshLib::Element const& elem, std::vector<MeshLib::Node*> const& nodes);
 
 /**
  * Creates a copy of a 1d / 2d mesh where the node order of all elements
@@ -38,6 +42,6 @@ std::unique_ptr<Element> createFlippedElement(Element const& elem,
  * @param mesh input mesh
  * @return a flipped copy of the input mesh
  */
-std::unique_ptr<Mesh> createFlippedMesh(Mesh const& mesh);
+std::unique_ptr<MeshLib::Mesh> createFlippedMesh(MeshLib::Mesh const& mesh);
 
-}  // namespace MeshLib
+}  // namespace MeshToolsLib

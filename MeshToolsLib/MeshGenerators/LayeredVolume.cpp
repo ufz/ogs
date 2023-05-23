@@ -44,21 +44,21 @@ bool LayeredVolume::createRasterLayers(
     // remove line elements, only tri + quad remain
     MeshLib::ElementSearch ex(mesh);
     ex.searchByElementType(MeshLib::MeshElemType::LINE);
-    std::unique_ptr<MeshLib::Mesh> top(
-        removeElements(mesh, ex.getSearchedElementIDs(), "MeshLayer"));
+    std::unique_ptr<MeshLib::Mesh> top(MeshToolsLib::removeElements(
+        mesh, ex.getSearchedElementIDs(), "MeshLayer"));
     if (top == nullptr)
     {
         top = std::make_unique<MeshLib::Mesh>(mesh);
     }
 
-    if (!MeshLib::MeshLayerMapper::layerMapping(
+    if (!MeshToolsLib::MeshLayerMapper::layerMapping(
             *top, *rasters.back(), noDataReplacementValue))
     {
         return false;
     }
 
     std::unique_ptr<MeshLib::Mesh> bottom(new MeshLib::Mesh(*top));
-    if (!MeshLib::MeshLayerMapper::layerMapping(*bottom, *rasters[0], 0))
+    if (!MeshToolsLib::MeshLayerMapper::layerMapping(*bottom, *rasters[0], 0))
     {
         return false;
     }

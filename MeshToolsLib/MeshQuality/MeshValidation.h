@@ -24,6 +24,10 @@ namespace MeshLib
 {
 class Mesh;
 class Element;
+}  // namespace MeshLib
+
+namespace MeshToolsLib
+{
 
 /**
  * \brief A collection of methods for testing mesh quality and correctness
@@ -84,4 +88,4 @@ struct MeshValidation final
     static unsigned detectHoles(MeshLib::Mesh const& mesh);
 };
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

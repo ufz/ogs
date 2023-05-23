@@ -231,11 +231,11 @@ int writeDataToMesh(std::string const& file_name,
                                 origin,     cellsize,    -9999};
 
     std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::RasterToMesh::convert(scalars[0].data(),
-                                       header,
-                                       MeshLib::MeshElemType::QUAD,
-                                       MeshLib::UseIntensityAs::DATAVECTOR,
-                                       vec_names[0]));
+        MeshToolsLib::RasterToMesh::convert(scalars[0].data(),
+                                            header,
+                                            MeshLib::MeshElemType::QUAD,
+                                            MeshLib::UseIntensityAs::DATAVECTOR,
+                                            vec_names[0]));
     MeshLib::Properties& properties = mesh->getProperties();
     for (std::size_t i = 1; i < vec_names.size(); ++i)
     {

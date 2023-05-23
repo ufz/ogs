@@ -38,7 +38,7 @@ TEST(MeshEditing, Tri)
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
 
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(MeshLib::MeshElemType::LINE,
@@ -69,7 +69,7 @@ TEST(MeshEditing, NonPlanarQuad)
     MeshLib::Element* elem(new MeshLib::Quad(nodes_array));
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(2u, result->getNumberOfElements());
@@ -94,7 +94,7 @@ TEST(MeshEditing, Quad2Line)
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
 
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(MeshLib::MeshElemType::LINE,
@@ -121,7 +121,7 @@ TEST(MeshEditing, Quad2Tri)
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
 
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(MeshLib::MeshElemType::TRIANGLE,
@@ -153,7 +153,7 @@ TEST(MeshEditing, NonPlanarHex)
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
 
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(6u, result->getNumberOfElements());
@@ -187,7 +187,7 @@ TEST(MeshEditing, Hex2PyramidPrism)
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
 
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(2u, result->getNumberOfElements());
@@ -223,7 +223,7 @@ TEST(MeshEditing, Hex2FourTets)
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
 
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(4u, result->getNumberOfElements());
@@ -261,7 +261,7 @@ TEST(MeshEditing, Hex2TwoTets)
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
 
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(2u, result->getNumberOfElements());
@@ -291,7 +291,7 @@ TEST(MeshEditing, NonPlanarPyramid)
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
 
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(2u, result->getNumberOfElements());
@@ -321,7 +321,7 @@ TEST(MeshEditing, Pyramid2Tet)
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
 
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(1u, result->getNumberOfElements());
@@ -349,7 +349,7 @@ TEST(MeshEditing, Pyramid2Quad)
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
 
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(1u, result->getNumberOfElements());
@@ -377,7 +377,7 @@ TEST(MeshEditing, Pyramid2Tri)
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
 
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(3u, result->getNumberOfNodes());
@@ -407,7 +407,7 @@ TEST(MeshEditing, NonPlanarPrism)
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
 
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(3u, result->getNumberOfElements());
@@ -436,7 +436,7 @@ TEST(MeshEditing, Prism2TwoTets)
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
 
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(5u, result->getNumberOfNodes());
@@ -468,7 +468,7 @@ TEST(MeshEditing, Prism2Quad)
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
 
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(1u, result->getNumberOfElements());
@@ -497,7 +497,7 @@ TEST(MeshEditing, Prism2Tet)
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
 
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(1u, result->getNumberOfElements());
@@ -526,7 +526,7 @@ TEST(MeshEditing, Prism2Tri)
     elements.push_back(elem);
     MeshLib::Mesh mesh("testmesh", nodes, elements);
 
-    MeshLib::MeshRevision rev(mesh);
+    MeshToolsLib::MeshRevision rev(mesh);
     MeshLib::Mesh* result = rev.simplifyMesh("new_mesh", 0.2);
 
     ASSERT_EQ(1u, result->getNumberOfElements());

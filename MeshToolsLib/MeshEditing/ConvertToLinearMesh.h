@@ -15,7 +15,7 @@
 
 #include "MeshLib/Mesh.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 /// Converts a non-linear mesh to a linear mesh. All the mesh properties will
 /// be copied except for entries for non-linear nodes.

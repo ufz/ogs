@@ -47,7 +47,8 @@ struct ParameterLibParameter : public ::testing::Test
     void SetUp() override
     {
         // A mesh with four elements, five points.
-        meshes.emplace_back(MeshLib::MeshGenerator::generateLineMesh(4u, 1.0));
+        meshes.emplace_back(
+            MeshToolsLib::MeshGenerator::generateLineMesh(4u, 1.0));
     }
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
 };

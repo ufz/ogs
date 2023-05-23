@@ -72,7 +72,7 @@ void addElementToSurface(MeshLib::Element const& e,
 
 }  // namespace
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 bool convertMeshToGeo(const MeshLib::Mesh& mesh,
                       GeoLib::GEOObjects& geo_objects,
@@ -94,7 +94,8 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
             return std::make_tuple(nullptr, std::make_pair(0, 0));
         }
 
-        auto const bounds = MeshInformation::getValueBounds(*materialIds);
+        auto const bounds =
+            MeshToolsLib::MeshInformation::getValueBounds(*materialIds);
         if (!bounds)
         {
             OGS_FATAL(
@@ -172,7 +173,7 @@ MeshLib::Mesh* convertSurfaceToMesh(const GeoLib::Surface& sfc,
     MeshLib::Mesh mesh_with_duplicated_nodes(mesh_name, nodes, elements);
 
     // remove duplicated nodes
-    MeshLib::MeshRevision rev(mesh_with_duplicated_nodes);
+    MeshToolsLib::MeshRevision rev(mesh_with_duplicated_nodes);
     return rev.simplifyMesh(mesh_with_duplicated_nodes.getName(), eps);
 }
 

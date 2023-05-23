@@ -26,12 +26,12 @@
 #include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
     GeoLib::Raster const& raster,
-    MeshElemType elem_type,
-    UseIntensityAs intensity_type,
+    MeshLib::MeshElemType elem_type,
+    MeshLib::UseIntensityAs intensity_type,
     std::string const& array_name)
 {
     return convert(raster.data(),
@@ -45,22 +45,22 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
     vtkImageData* img,
     const double origin[3],
     const double scalingFactor,
-    MeshElemType elem_type,
-    UseIntensityAs intensity_type,
+    MeshLib::MeshElemType elem_type,
+    MeshLib::UseIntensityAs intensity_type,
     std::string const& array_name)
 {
-    if ((elem_type != MeshElemType::TRIANGLE) &&
-        (elem_type != MeshElemType::QUAD) &&
-        (elem_type != MeshElemType::HEXAHEDRON) &&
-        (elem_type != MeshElemType::PRISM))
+    if ((elem_type != MeshLib::MeshElemType::TRIANGLE) &&
+        (elem_type != MeshLib::MeshElemType::QUAD) &&
+        (elem_type != MeshLib::MeshElemType::HEXAHEDRON) &&
+        (elem_type != MeshLib::MeshElemType::PRISM))
     {
         ERR("Invalid Mesh Element Type.");
         return nullptr;
     }
 
     int* dims = img->GetDimensions();
-    if (((elem_type == MeshElemType::TRIANGLE) ||
-         (elem_type == MeshElemType::QUAD)) &&
+    if (((elem_type == MeshLib::MeshElemType::TRIANGLE) ||
+         (elem_type == MeshLib::MeshElemType::QUAD)) &&
         dims[2] != 1)
     {
         ERR("Triangle or Quad elements cannot be used to construct meshes from "
@@ -121,21 +121,21 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
 std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
     double const* const img,
     GeoLib::RasterHeader const& header,
-    MeshElemType elem_type,
-    UseIntensityAs intensity_type,
+    MeshLib::MeshElemType elem_type,
+    MeshLib::UseIntensityAs intensity_type,
     std::string const& array_name)
 {
-    if ((elem_type != MeshElemType::TRIANGLE) &&
-        (elem_type != MeshElemType::QUAD) &&
-        (elem_type != MeshElemType::HEXAHEDRON) &&
-        (elem_type != MeshElemType::PRISM))
+    if ((elem_type != MeshLib::MeshElemType::TRIANGLE) &&
+        (elem_type != MeshLib::MeshElemType::QUAD) &&
+        (elem_type != MeshLib::MeshElemType::HEXAHEDRON) &&
+        (elem_type != MeshLib::MeshElemType::PRISM))
     {
         ERR("Invalid Mesh Element Type.");
         return nullptr;
     }
 
-    if (((elem_type == MeshElemType::TRIANGLE) ||
-         (elem_type == MeshElemType::QUAD)) &&
+    if (((elem_type == MeshLib::MeshElemType::TRIANGLE) ||
+         (elem_type == MeshLib::MeshElemType::QUAD)) &&
         header.n_depth != 1)
     {
         ERR("Triangle or Quad elements cannot be used to construct meshes from "
@@ -143,63 +143,64 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
         return nullptr;
     }
 
-    if (intensity_type == UseIntensityAs::ELEVATION &&
-        ((elem_type == MeshElemType::PRISM) ||
-         (elem_type == MeshElemType::HEXAHEDRON)))
+    if (intensity_type == MeshLib::UseIntensityAs::ELEVATION &&
+        ((elem_type == MeshLib::MeshElemType::PRISM) ||
+         (elem_type == MeshLib::MeshElemType::HEXAHEDRON)))
     {
         ERR("Elevation mapping can only be performed for 2D meshes.");
         return nullptr;
     }
 
     std::unique_ptr<MeshLib::Mesh> mesh;
-    if (elem_type == MeshElemType::TRIANGLE)
+    if (elem_type == MeshLib::MeshElemType::TRIANGLE)
     {
-        mesh.reset(
-            MeshLib::MeshGenerator::generateRegularTriMesh(header.n_cols,
-                                                           header.n_rows,
-                                                           header.cell_size,
-                                                           header.origin,
-                                                           "RasterDataMesh"));
+        mesh.reset(MeshToolsLib::MeshGenerator::generateRegularTriMesh(
+            header.n_cols,
+            header.n_rows,
+            header.cell_size,
+            header.origin,
+            "RasterDataMesh"));
     }
-    else if (elem_type == MeshElemType::QUAD)
+    else if (elem_type == MeshLib::MeshElemType::QUAD)
     {
-        mesh.reset(
-            MeshLib::MeshGenerator::generateRegularQuadMesh(header.n_cols,
-                                                            header.n_rows,
-                                                            header.cell_size,
-                                                            header.origin,
-                                                            "RasterDataMesh"));
+        mesh.reset(MeshToolsLib::MeshGenerator::generateRegularQuadMesh(
+            header.n_cols,
+            header.n_rows,
+            header.cell_size,
+            header.origin,
+            "RasterDataMesh"));
     }
-    else if (elem_type == MeshElemType::PRISM)
+    else if (elem_type == MeshLib::MeshElemType::PRISM)
     {
-        mesh.reset(
-            MeshLib::MeshGenerator::generateRegularPrismMesh(header.n_cols,
-                                                             header.n_rows,
-                                                             header.n_depth,
-                                                             header.cell_size,
-                                                             header.origin,
-                                                             "RasterDataMesh"));
+        mesh.reset(MeshToolsLib::MeshGenerator::generateRegularPrismMesh(
+            header.n_cols,
+            header.n_rows,
+            header.n_depth,
+            header.cell_size,
+            header.origin,
+            "RasterDataMesh"));
     }
-    else if (elem_type == MeshElemType::HEXAHEDRON)
+    else if (elem_type == MeshLib::MeshElemType::HEXAHEDRON)
     {
-        mesh.reset(
-            MeshLib::MeshGenerator::generateRegularHexMesh(header.n_cols,
-                                                           header.n_rows,
-                                                           header.n_depth,
-                                                           header.cell_size,
-                                                           header.origin,
-                                                           "RasterDataMesh"));
+        mesh.reset(MeshToolsLib::MeshGenerator::generateRegularHexMesh(
+            header.n_cols,
+            header.n_rows,
+            header.n_depth,
+            header.cell_size,
+            header.origin,
+            "RasterDataMesh"));
     }
 
     std::unique_ptr<MeshLib::Mesh> new_mesh;
     std::vector<std::size_t> elements_to_remove;
-    if (intensity_type == UseIntensityAs::ELEVATION)
+    if (intensity_type == MeshLib::UseIntensityAs::ELEVATION)
     {
         std::vector<MeshLib::Node*> const& nodes(mesh->getNodes());
         std::vector<MeshLib::Element*> const& elems(mesh->getElements());
         std::size_t const n_nodes(elems[0]->getNumberOfNodes());
-        bool const double_idx = (elem_type == MeshElemType::TRIANGLE) ||
-                                (elem_type == MeshElemType::PRISM);
+        bool const double_idx =
+            (elem_type == MeshLib::MeshElemType::TRIANGLE) ||
+            (elem_type == MeshLib::MeshElemType::PRISM);
         std::size_t const m = (double_idx) ? 2 : 1;
         for (std::size_t k = 0; k < header.n_depth; k++)
         {
@@ -256,7 +257,7 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
     }
     if (!elements_to_remove.empty())
     {
-        new_mesh.reset(MeshLib::removeElements(
+        new_mesh.reset(MeshToolsLib::removeElements(
             *mesh, elements_to_remove, mesh->getName()));
     }
     else
@@ -264,7 +265,7 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
         new_mesh = std::move(mesh);
     }
 
-    if (intensity_type == UseIntensityAs::NONE)
+    if (intensity_type == MeshLib::UseIntensityAs::NONE)
     {
         new_mesh->getProperties().removePropertyVector(array_name);
     }

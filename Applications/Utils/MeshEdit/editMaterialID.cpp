@@ -124,43 +124,49 @@ int main(int argc, char* argv[])
     {
         INFO("Condensing material ID...");
         INFO("The MaterialIDs of the input file: [{}]",
-             fmt::join(MeshLib::MeshInformation::getMaterialIDs(*mesh), ", "));
-        MeshLib::ElementValueModification::condense(*mesh);
+             fmt::join(MeshToolsLib::MeshInformation::getMaterialIDs(*mesh),
+                       ", "));
+        MeshToolsLib::ElementValueModification::condense(*mesh);
         INFO("The MaterialIDs of the output file: [{}]",
-             fmt::join(MeshLib::MeshInformation::getMaterialIDs(*mesh), ", "));
+             fmt::join(MeshToolsLib::MeshInformation::getMaterialIDs(*mesh),
+                       ", "));
     }
     else if (replaceArg.isSet())
     {
         INFO("Replacing material ID...");
         INFO("The MaterialIDs of the input file: [{}]",
-             fmt::join(MeshLib::MeshInformation::getMaterialIDs(*mesh), ", "));
+             fmt::join(MeshToolsLib::MeshInformation::getMaterialIDs(*mesh),
+                       ", "));
 
         const auto vecOldID = matIDArg.getValue();
         const unsigned newID = newIDArg.getValue();
         for (auto oldID : vecOldID)
         {
             INFO("{:d} -> {:d}", oldID, newID);
-            MeshLib::ElementValueModification::replace(*mesh, oldID, newID,
-                                                       true);
+            MeshToolsLib::ElementValueModification::replace(*mesh, oldID, newID,
+                                                            true);
         }
         INFO("The MaterialIDs of the output file: [{}]",
-             fmt::join(MeshLib::MeshInformation::getMaterialIDs(*mesh), ", "));
+             fmt::join(MeshToolsLib::MeshInformation::getMaterialIDs(*mesh),
+                       ", "));
     }
     else if (specifyArg.isSet())
     {
         INFO("Specifying material ID...");
         INFO("The MaterialIDs of the input file: [{}]",
-             fmt::join(MeshLib::MeshInformation::getMaterialIDs(*mesh), ", "));
+             fmt::join(MeshToolsLib::MeshInformation::getMaterialIDs(*mesh),
+                       ", "));
 
         const std::string eleTypeName(eleTypeArg.getValue());
         const MeshLib::MeshElemType eleType =
             MeshLib::String2MeshElemType(eleTypeName);
         const unsigned newID = newIDArg.getValue();
-        unsigned cnt = MeshLib::ElementValueModification::setByElementType(
+        unsigned cnt = MeshToolsLib::ElementValueModification::setByElementType(
             *mesh, eleType, newID);
         INFO("updated {:d} elements", cnt);
         INFO("The MaterialIDs of the output file: [{}]",
-             fmt::join(MeshLib::MeshInformation::getMaterialIDs(*mesh), ", "));
+             fmt::join(MeshToolsLib::MeshInformation::getMaterialIDs(*mesh),
+                       ", "));
     }
     MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());
 

@@ -14,20 +14,21 @@
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/MeshSearch/MeshElementGrid.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 namespace ProjectPointOnMesh
 {
-Element const* getProjectedElement(std::vector<const Element*> const& elements,
-                                   MathLib::Point3d const& node)
+MeshLib::Element const* getProjectedElement(
+    std::vector<const MeshLib::Element*> const& elements,
+    MathLib::Point3d const& node)
 {
-    auto is_right_of = [&node](Node const& a, Node const& b)
+    auto is_right_of = [&node](MeshLib::Node const& a, MeshLib::Node const& b)
     { return GeoLib::getOrientation(node, a, b) == GeoLib::Orientation::CW; };
 
     for (auto const* e : elements)
     {
         auto const* nodes = e->getNodes();
-        if (e->getGeomType() == MeshElemType::TRIANGLE)
+        if (e->getGeomType() == MeshLib::MeshElemType::TRIANGLE)
         {
             auto const& a = *nodes[0];
             auto const& b = *nodes[1];
@@ -37,7 +38,7 @@ Element const* getProjectedElement(std::vector<const Element*> const& elements,
                 return e;
             }
         }
-        else if (e->getGeomType() == MeshElemType::QUAD)
+        else if (e->getGeomType() == MeshLib::MeshElemType::QUAD)
         {
             auto const& a = *nodes[0];
             auto const& b = *nodes[1];
@@ -53,12 +54,13 @@ Element const* getProjectedElement(std::vector<const Element*> const& elements,
     return nullptr;
 }
 
-double getElevation(Element const& element, MathLib::Point3d const& node)
+double getElevation(MeshLib::Element const& element,
+                    MathLib::Point3d const& node)
 {
     // mathematical description of the plane spanned by the 2d element
     // compute coefficients of the plane equation (Hesse normal form)
     // d = scalar_product(normal, element_node[0])
-    auto const n = FaceRule::getSurfaceNormal(element).normalized();
+    auto const n = MeshLib::FaceRule::getSurfaceNormal(element).normalized();
     auto const d = n.dot(element.getNode(0)->asEigenVector3d());
     // insert node[0] and node[1] into plane equation and transpose the equation
     // to node[2]

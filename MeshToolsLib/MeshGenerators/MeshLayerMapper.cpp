@@ -26,7 +26,7 @@
 #include "MeshLib/Properties.h"
 #include "MeshToolsLib/MeshSurfaceExtraction.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 MeshLib::Mesh* MeshLayerMapper::createStaticLayers(
     MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector,

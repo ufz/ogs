@@ -23,7 +23,7 @@
 #include "MeshLib/PropertyVector.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 namespace
 {
@@ -71,7 +71,7 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
         if (marked_base_nodes[k])
         {
             new_mesh_nodes[base_node_cnt] =
-                new Node(org_nodes[k]->data(), base_node_cnt);
+                new MeshLib::Node(org_nodes[k]->data(), base_node_cnt);
             base_node_map[k] = base_node_cnt;
             base_node_cnt++;
         }
@@ -127,7 +127,8 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
         {
             continue;
         }
-        auto double_property = dynamic_cast<PropertyVector<double>*>(property);
+        auto double_property =
+            dynamic_cast<MeshLib::PropertyVector<double>*>(property);
         if (double_property == nullptr)
         {
             continue;

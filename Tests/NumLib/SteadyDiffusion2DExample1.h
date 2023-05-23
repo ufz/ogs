@@ -86,7 +86,8 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
     SteadyDiffusion2DExample1()
         : _localA(4, 4), _localRhs(4)
     {
-        msh = MeshLib::MeshGenerator::generateRegularQuadMesh(2.0, mesh_subdivs);
+        msh = MeshToolsLib::MeshGenerator::generateRegularQuadMesh(
+            2.0, mesh_subdivs);
         for (auto* node : msh->getNodes())
         {
             vec_nodeIDs.push_back(node->getID());

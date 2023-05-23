@@ -24,7 +24,8 @@ class NumLibLocalToGlobalIndexMapTest : public ::testing::Test
 public:
     NumLibLocalToGlobalIndexMapTest()
     {
-        mesh.reset(MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size));
+        mesh.reset(
+            MeshToolsLib::MeshGenerator::generateLineMesh(1.0, mesh_size));
         nodesSubset =
             std::make_unique<MeshLib::MeshSubset>(*mesh, mesh->getNodes());
     }

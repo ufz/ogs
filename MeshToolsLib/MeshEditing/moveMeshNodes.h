@@ -17,7 +17,7 @@
 
 #include "MathLib/Point3d.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 
 /**

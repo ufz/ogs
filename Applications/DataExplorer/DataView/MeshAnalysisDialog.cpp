@@ -56,7 +56,7 @@ void MeshAnalysisDialog::on_startButton_pressed()
     MeshLib::NodeSearch ns(mesh);
     ns.searchUnused();
     const std::vector<std::size_t> unusedNodesIdx(ns.getSearchedNodeIDs());
-    MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(mesh));
+    MeshToolsLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(mesh));
     std::vector<std::size_t> const& collapsibleNodeIds(rev.collapseNodeIndices(
         this->collapsibleNodesThreshold->text().toDouble() +
         std::numeric_limits<double>::epsilon()));
@@ -65,7 +65,7 @@ void MeshAnalysisDialog::on_startButton_pressed()
     this->nodesMsgOutput(unusedNodesIdx, collapsibleNodeIds);
 
     const std::vector<ElementErrorCode> element_error_codes(
-        MeshLib::MeshValidation::testElementGeometry(
+        MeshToolsLib::MeshValidation::testElementGeometry(
             mesh,
             this->zeroVolumeThreshold->text().toDouble() +
                 std::numeric_limits<double>::epsilon()));
@@ -74,7 +74,7 @@ void MeshAnalysisDialog::on_startButton_pressed()
         ")");
     this->elementsMsgOutput(element_error_codes);
 
-    unsigned const n_holes(MeshLib::MeshValidation::detectHoles(mesh));
+    unsigned const n_holes(MeshToolsLib::MeshValidation::detectHoles(mesh));
     if (n_holes > 0)
     {
         this->meshHoleOutputLabel->setText(
@@ -126,7 +126,7 @@ void MeshAnalysisDialog::elementsMsgOutput(
 {
     std::array<std::string,
                static_cast<std::size_t>(ElementErrorFlag::MaxValue)>
-        output_str(MeshLib::MeshValidation::ElementErrorCodeOutput(
+        output_str(MeshToolsLib::MeshValidation::ElementErrorCodeOutput(
             element_error_codes));
 
     this->zeroVolumeText->setText(QString::fromStdString(output_str[0]));

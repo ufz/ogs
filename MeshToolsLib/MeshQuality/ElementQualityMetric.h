@@ -20,7 +20,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 
 /**
@@ -30,7 +30,7 @@ namespace MeshLib
 class ElementQualityMetric
 {
 public:
-    explicit ElementQualityMetric(Mesh const& mesh);
+    explicit ElementQualityMetric(MeshLib::Mesh const& mesh);
 
     virtual ~ElementQualityMetric() = default;
 
@@ -49,7 +49,7 @@ public:
 protected:
     double _min = std::numeric_limits<double>::max();
     double _max = 0;
-    Mesh const& _mesh;
+    MeshLib::Mesh const& _mesh;
     std::vector<double> _element_quality_metric;
 };
 }  // namespace MeshLib

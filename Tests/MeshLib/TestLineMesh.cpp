@@ -20,7 +20,7 @@ class MeshLibLineMesh : public ::testing::Test
 public:
     MeshLibLineMesh()
     {
-        mesh = MeshLib::MeshGenerator::generateLineMesh(extent, mesh_size);
+        mesh = MeshToolsLib::MeshGenerator::generateLineMesh(extent, mesh_size);
     }
 
     ~MeshLibLineMesh() override { delete mesh; }

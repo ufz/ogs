@@ -27,7 +27,10 @@ namespace MeshLib
 class Mesh;
 class Element;
 class Node;
+}  // namespace MeshLib
 
+namespace MeshToolsLib
+{
 /**
  * \brief A set of tools concerned with extracting nodes and elements from a
  * mesh surface
@@ -100,4 +103,4 @@ void addBulkIDPropertiesToMesh(
     std::string_view element_to_bulk_face_id_map_name,
     std::vector<std::size_t> const& element_to_bulk_face_id_map);
 
-}  // namespace MeshLib
+}  // namespace MeshToolsLib

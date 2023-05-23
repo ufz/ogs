@@ -196,7 +196,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 {
     const unsigned nLayers = _layerEdit->text().toInt();
 
-    MeshLib::MeshLayerMapper mapper;
+    MeshToolsLib::MeshLayerMapper mapper;
 
     QElapsedTimer myTimer0;
     myTimer0.start();
@@ -228,7 +228,8 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
         layer_thickness.push_back(this->_edits[i]->text().toFloat());
     }
     INFO("Mesh construction time: {:d} ms.", myTimer0.elapsed());
-    return MeshLib::MeshLayerMapper::createStaticLayers(*_msh, layer_thickness);
+    return MeshToolsLib::MeshLayerMapper::createStaticLayers(*_msh,
+                                                             layer_thickness);
 }
 
 MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
@@ -283,8 +284,8 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
         {
             layer_thickness.push_back(this->_edits[i]->text().toFloat());
         }
-        tg_mesh = MeshLib::MeshLayerMapper::createStaticLayers(*_msh,
-                                                               layer_thickness);
+        tg_mesh = MeshToolsLib::MeshLayerMapper::createStaticLayers(
+            *_msh, layer_thickness);
         std::vector<MeshLib::Node> tg_attr;
         FileIO::TetGenInterface tetgen_interface;
         tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh,

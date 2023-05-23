@@ -25,7 +25,7 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 /**
  * \brief A set of tools for extracting information from a mesh
@@ -37,7 +37,7 @@ public:
     /// name.
     template <typename T>
     static std::optional<std::pair<T, T>> const getValueBounds(
-        PropertyVector<T> const& property)
+        MeshLib::PropertyVector<T> const& property)
     {
         if (property.empty())
         {
@@ -63,7 +63,7 @@ public:
      *        5: \#pyramids
      *        6: \#prisms
      */
-    static std::map<MeshElemType, unsigned> getNumberOfElementTypes(
+    static std::map<MeshLib::MeshElemType, unsigned> getNumberOfElementTypes(
         const MeshLib::Mesh& mesh);
 
     /// writes all numbers of element types

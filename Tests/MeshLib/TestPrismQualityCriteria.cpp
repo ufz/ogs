@@ -36,10 +36,10 @@ public:
         MeshLib::MeshQualityType const type)
     {
         std::unique_ptr<MeshLib::Mesh> mesh(
-            MeshLib::MeshGenerator::generateRegularPrismMesh(
+            MeshToolsLib::MeshGenerator::generateRegularPrismMesh(
                 lengths[0], lengths[1], lengths[2], n_subdivisions[0],
                 n_subdivisions[1], n_subdivisions[2]));
-        MeshLib::ElementQualityInterface element_quality(*mesh, type);
+        MeshToolsLib::ElementQualityInterface element_quality(*mesh, type);
         return element_quality.getQualityVector();
     }
 

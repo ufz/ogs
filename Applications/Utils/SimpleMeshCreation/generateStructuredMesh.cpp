@@ -261,32 +261,32 @@ int main(int argc, char* argv[])
     switch (eleType)
     {
         case MeshLib::MeshElemType::LINE:
-            mesh.reset(
-                MeshLib::MeshGenerator::generateLineMesh(*vec_div[0], origin));
+            mesh.reset(MeshToolsLib::MeshGenerator::generateLineMesh(
+                *vec_div[0], origin));
             break;
         case MeshLib::MeshElemType::TRIANGLE:
-            mesh.reset(MeshLib::MeshGenerator::generateRegularTriMesh(
+            mesh.reset(MeshToolsLib::MeshGenerator::generateRegularTriMesh(
                 *vec_div[0], *vec_div[1], origin));
             break;
         case MeshLib::MeshElemType::QUAD:
-            mesh.reset(MeshLib::MeshGenerator::generateRegularQuadMesh(
+            mesh.reset(MeshToolsLib::MeshGenerator::generateRegularQuadMesh(
                 *vec_div[0], *vec_div[1], origin));
             break;
         case MeshLib::MeshElemType::HEXAHEDRON:
-            mesh.reset(MeshLib::MeshGenerator::generateRegularHexMesh(
+            mesh.reset(MeshToolsLib::MeshGenerator::generateRegularHexMesh(
                 *vec_div[0], *vec_div[1], *vec_div[2], origin));
             break;
         case MeshLib::MeshElemType::PRISM:
-            mesh.reset(MeshLib::MeshGenerator::generateRegularPrismMesh(
+            mesh.reset(MeshToolsLib::MeshGenerator::generateRegularPrismMesh(
                 length[0], length[1], length[2], n_subdivision[0],
                 n_subdivision[1], n_subdivision[2], origin));
             break;
         case MeshLib::MeshElemType::TETRAHEDRON:
-            mesh.reset(MeshLib::MeshGenerator::generateRegularTetMesh(
+            mesh.reset(MeshToolsLib::MeshGenerator::generateRegularTetMesh(
                 *vec_div[0], *vec_div[1], *vec_div[2], origin));
             break;
         case MeshLib::MeshElemType::PYRAMID:
-            mesh.reset(MeshLib::MeshGenerator::generateRegularPyramidMesh(
+            mesh.reset(MeshToolsLib::MeshGenerator::generateRegularPyramidMesh(
                 *vec_div[0], *vec_div[1], *vec_div[2], origin));
             break;
         default:

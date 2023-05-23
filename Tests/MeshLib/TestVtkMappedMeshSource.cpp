@@ -40,7 +40,7 @@ class InSituMesh : public ::testing::Test
 public:
     InSituMesh()
     {
-        mesh = MeshLib::MeshGenerator::generateRegularHexMesh(
+        mesh = MeshToolsLib::MeshGenerator::generateRegularHexMesh(
             this->length, this->subdivisions);
 
         std::string const point_prop_name("PointDoubleProperty");

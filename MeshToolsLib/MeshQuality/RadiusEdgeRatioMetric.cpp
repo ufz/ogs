@@ -17,7 +17,7 @@
 #include "GeoLib/MinimalBoundingSphere.h"
 #include "MeshLib/Node.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 void RadiusEdgeRatioMetric::calculateQuality()
 {
@@ -25,7 +25,7 @@ void RadiusEdgeRatioMetric::calculateQuality()
     std::size_t const nElements(_mesh.getNumberOfElements());
     for (std::size_t k(0); k < nElements; k++)
     {
-        Element const& elem(*elements[k]);
+        MeshLib::Element const& elem(*elements[k]);
         std::size_t const n_nodes(elem.getNumberOfBaseNodes());
         std::vector<MathLib::Point3d*> pnts(n_nodes);
         std::copy_n(elem.getNodes(), n_nodes, pnts.begin());

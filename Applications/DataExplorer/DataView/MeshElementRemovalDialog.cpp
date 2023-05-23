@@ -157,7 +157,7 @@ void MeshElementRemovalDialog::accept()
 
     if (anything_checked)
     {
-        MeshLib::Mesh* new_mesh = MeshLib::removeElements(
+        MeshLib::Mesh* new_mesh = MeshToolsLib::removeElements(
             *msh, ex.getSearchedElementIDs(),
             this->newMeshNameEdit->text().toStdString());
         if (new_mesh)

@@ -21,8 +21,9 @@
 TEST(MeshLib, FlipLineMesh)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::MeshGenerator::generateLineMesh(1.0, 5));
-    std::unique_ptr<MeshLib::Mesh> result(MeshLib::createFlippedMesh(*mesh));
+        MeshToolsLib::MeshGenerator::generateLineMesh(1.0, 5));
+    std::unique_ptr<MeshLib::Mesh> result(
+        MeshToolsLib::createFlippedMesh(*mesh));
 
     ASSERT_EQ(mesh->getNumberOfNodes(), result->getNumberOfNodes());
     ASSERT_EQ(mesh->getNumberOfElements(), result->getNumberOfElements());
@@ -38,8 +39,9 @@ TEST(MeshLib, FlipLineMesh)
 TEST(MeshLib, FlipTriMesh)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::MeshGenerator::generateRegularTriMesh(5, 5));
-    std::unique_ptr<MeshLib::Mesh> result(MeshLib::createFlippedMesh(*mesh));
+        MeshToolsLib::MeshGenerator::generateRegularTriMesh(5, 5));
+    std::unique_ptr<MeshLib::Mesh> result(
+        MeshToolsLib::createFlippedMesh(*mesh));
 
     ASSERT_EQ(mesh->getNumberOfNodes(), result->getNumberOfNodes());
     ASSERT_EQ(mesh->getNumberOfElements(), result->getNumberOfElements());
@@ -60,8 +62,9 @@ TEST(MeshLib, FlipTriMesh)
 TEST(MeshLib, FlipQuadMesh)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::MeshGenerator::generateRegularQuadMesh(5, 5));
-    std::unique_ptr<MeshLib::Mesh> result(MeshLib::createFlippedMesh(*mesh));
+        MeshToolsLib::MeshGenerator::generateRegularQuadMesh(5, 5));
+    std::unique_ptr<MeshLib::Mesh> result(
+        MeshToolsLib::createFlippedMesh(*mesh));
 
     ASSERT_EQ(mesh->getNumberOfNodes(), result->getNumberOfNodes());
     ASSERT_EQ(mesh->getNumberOfElements(), result->getNumberOfElements());
@@ -84,8 +87,9 @@ TEST(MeshLib, FlipQuadMesh)
 TEST(MeshLib, FlipHexMesh)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::MeshGenerator::generateRegularHexMesh(2, 2));
-    std::unique_ptr<MeshLib::Mesh> result(MeshLib::createFlippedMesh(*mesh));
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(2, 2));
+    std::unique_ptr<MeshLib::Mesh> result(
+        MeshToolsLib::createFlippedMesh(*mesh));
 
     ASSERT_EQ(nullptr, result);
     std::vector<MeshLib::Node*> nodes;
@@ -94,7 +98,7 @@ TEST(MeshLib, FlipHexMesh)
         nodes.push_back(new MeshLib::Node(*mesh->getNode(i)));
     }
     std::unique_ptr<MeshLib::Element> elem(
-        MeshLib::createFlippedElement(*mesh->getElement(0), nodes));
+        MeshToolsLib::createFlippedElement(*mesh->getElement(0), nodes));
     ASSERT_EQ(nullptr, elem);
     for (MeshLib::Node* n : nodes)
     {
@@ -105,9 +109,11 @@ TEST(MeshLib, FlipHexMesh)
 TEST(MeshLib, DoubleFlipQuadMesh)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::MeshGenerator::generateRegularQuadMesh(5, 5));
-    std::unique_ptr<MeshLib::Mesh> result(MeshLib::createFlippedMesh(*mesh));
-    std::unique_ptr<MeshLib::Mesh> result2(MeshLib::createFlippedMesh(*result));
+        MeshToolsLib::MeshGenerator::generateRegularQuadMesh(5, 5));
+    std::unique_ptr<MeshLib::Mesh> result(
+        MeshToolsLib::createFlippedMesh(*mesh));
+    std::unique_ptr<MeshLib::Mesh> result2(
+        MeshToolsLib::createFlippedMesh(*result));
 
     ASSERT_EQ(mesh->getNumberOfNodes(), result2->getNumberOfNodes());
     ASSERT_EQ(mesh->getNumberOfElements(), result2->getNumberOfElements());

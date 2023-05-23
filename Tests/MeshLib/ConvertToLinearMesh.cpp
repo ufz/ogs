@@ -30,10 +30,10 @@ class ConvertToLinearMesh : public ::testing::Test
 public:
     ConvertToLinearMesh()
     {
-        linear_mesh.reset(
-            MeshGenerator::generateRegularHexMesh(1.0, mesh_size));
-        quadratic_mesh =
-            createQuadraticOrderMesh(*linear_mesh, false /* add centre node*/);
+        linear_mesh.reset(MeshToolsLib::MeshGenerator::generateRegularHexMesh(
+            1.0, mesh_size));
+        quadratic_mesh = MeshToolsLib::createQuadraticOrderMesh(
+            *linear_mesh, false /* add centre node*/);
     }
 
     static constexpr int mesh_size = 5;
@@ -45,7 +45,8 @@ public:
 // Returns the (inverse) permutation vector of b_nodes to a_nodes, or an error
 // message.
 std::variant<std::vector<std::size_t>, std::string> compareNodes(
-    std::vector<Node*> const& a_nodes, std::vector<Node*> const& b_nodes)
+    std::vector<MeshLib::Node*> const& a_nodes,
+    std::vector<MeshLib::Node*> const& b_nodes)
 {
     // For each 'a' mesh node find a corresponding 'b' mesh node, not checking
     // the ids, but store the id's in a map.
@@ -158,10 +159,11 @@ std::optional<std::string> inversePermutationIdentityTest(
 }
 
 // Create new nodes in permuted order with new ids.
-std::vector<Node*> permuteNodes(std::vector<std::size_t> const& permutation,
-                                std::vector<Node*> const& nodes)
+std::vector<MeshLib::Node*> permuteNodes(
+    std::vector<std::size_t> const& permutation,
+    std::vector<MeshLib::Node*> const& nodes)
 {
-    std::vector<Node*> permuted_nodes;
+    std::vector<MeshLib::Node*> permuted_nodes;
     for (std::size_t i = 0; i < permutation.size(); ++i)
     {
         auto const node_p_i = nodes[permutation[i]];
@@ -173,7 +175,7 @@ std::vector<Node*> permuteNodes(std::vector<std::size_t> const& permutation,
 // Tests the nodes of two meshes and returns a string in case of error with
 // message, otherwise a permutation vector as in compareNodes().
 std::variant<std::vector<std::size_t>, std::string> compareNodeVectors(
-    std::vector<Node*> const& a, std::vector<Node*> const& b)
+    std::vector<MeshLib::Node*> const& a, std::vector<MeshLib::Node*> const& b)
 {
     if (a.size() != b.size())
     {
@@ -236,7 +238,7 @@ TEST_F(ConvertToLinearMesh, GeneratedHexMeshRandomizedNodes)
     };
 
     // Create new elements in the same order, but using new nodes.
-    std::vector<Element*> new_quadratic_elements;
+    std::vector<MeshLib::Element*> new_quadratic_elements;
     std::transform(begin(quadratic_mesh->getElements()),
                    end(quadratic_mesh->getElements()),
                    back_inserter(new_quadratic_elements),
@@ -265,7 +267,7 @@ TEST_F(ConvertToLinearMesh, GeneratedHexMeshRandomizedNodes)
     }
 
     {
-        auto const converted_mesh = convertToLinearMesh(
+        auto const converted_mesh = MeshToolsLib::convertToLinearMesh(
             permuted_nodes_quadratic_mesh, "back_to_linear_mesh");
 
         //
@@ -302,8 +304,8 @@ TEST_F(ConvertToLinearMesh, GeneratedHexMeshBackToLinear)
     ASSERT_TRUE(linear_mesh != nullptr);
     ASSERT_TRUE(quadratic_mesh != nullptr);
 
-    auto const converted_mesh =
-        convertToLinearMesh(*quadratic_mesh, "back_to_linear_mesh");
+    auto const converted_mesh = MeshToolsLib::convertToLinearMesh(
+        *quadratic_mesh, "back_to_linear_mesh");
 
     //
     // Two meshes are equal if all of their nodes have exactly same coordinates.

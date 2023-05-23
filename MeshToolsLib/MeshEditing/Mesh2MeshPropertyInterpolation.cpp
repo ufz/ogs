@@ -25,15 +25,16 @@
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Node.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 Mesh2MeshPropertyInterpolation::Mesh2MeshPropertyInterpolation(
-    Mesh const& src_mesh, std::string const& property_name)
+    MeshLib::Mesh const& src_mesh, std::string const& property_name)
     : _src_mesh(src_mesh), _property_name(property_name)
 {
 }
 
-bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh& dest_mesh) const
+bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(
+    MeshLib::Mesh& dest_mesh) const
 {
     if (_src_mesh.getDimension() != dest_mesh.getDimension())
     {
@@ -64,7 +65,7 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh& dest_mesh) const
              _property_name);
         dest_properties =
             dest_mesh.getProperties().createNewPropertyVector<double>(
-                _property_name, MeshItemType::Cell, 1);
+                _property_name, MeshLib::MeshItemType::Cell, 1);
         if (!dest_properties)
         {
             WARN(
@@ -85,7 +86,7 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh& dest_mesh) const
 }
 
 void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
-    Mesh const& dest_mesh,
+    MeshLib::Mesh const& dest_mesh,
     MeshLib::PropertyVector<double>& dest_properties) const
 {
     std::vector<double> interpolated_src_node_properties(
@@ -105,7 +106,7 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
     for (std::size_t k(0); k < n_dest_elements; k++)
     {
         MeshLib::Element& dest_element(*dest_elements[k]);
-        if (dest_element.getGeomType() == MeshElemType::LINE)
+        if (dest_element.getGeomType() == MeshLib::MeshElemType::LINE)
         {
             continue;
         }

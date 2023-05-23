@@ -286,7 +286,7 @@ MeshLib::Mesh* removeLineElements(MeshLib::Mesh const& mesh)
     {
         return nullptr;
     }
-    return MeshLib::removeElements(mesh, line_idx, "mesh");
+    return MeshToolsLib::removeElements(mesh, line_idx, "mesh");
 }
 
 void writeBoundary(MeshLib::Mesh const& mesh,
@@ -294,7 +294,7 @@ void writeBoundary(MeshLib::Mesh const& mesh,
                    std::string const& file_name)
 {
     std::unique_ptr<MeshLib::Mesh> const boundary(
-        MeshLib::removeElements(mesh, idx_array, "mesh"));
+        MeshToolsLib::removeElements(mesh, idx_array, "mesh"));
     if (boundary == nullptr)
     {
         ERR("Error extracting boundary '{:s}'", file_name);
@@ -311,7 +311,7 @@ void extractBoundaries(MeshLib::Mesh const& mesh,
     auto const edge_length = minMaxEdgeLength(mesh.getElements());
     double const eps = edge_length.first / 100.0;
     std::unique_ptr<MeshLib::Mesh> boundary_mesh(
-        MeshLib::BoundaryExtraction::getBoundaryElementsAsMesh(
+        MeshToolsLib::BoundaryExtraction::getBoundaryElementsAsMesh(
             mesh,
             MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
             MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
@@ -492,7 +492,7 @@ int main(int argc, char* argv[])
 
     // collapse all nodes that might have been created due to gmsh physically
     // separating layers
-    MeshLib::MeshRevision rev(*new_mesh);
+    MeshToolsLib::MeshRevision rev(*new_mesh);
     auto const edge_length = minMaxEdgeLength(new_mesh->getElements());
     double const minimum_node_distance = edge_length.first / 100.0;
 

@@ -18,9 +18,10 @@
 
 #include "MeshLib/Node.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
-ElementQualityMetric::ElementQualityMetric(Mesh const& mesh) : _mesh(mesh)
+ElementQualityMetric::ElementQualityMetric(MeshLib::Mesh const& mesh)
+    : _mesh(mesh)
 {
     _element_quality_metric.resize(_mesh.getNumberOfElements(), -1.0);
 }

@@ -29,7 +29,7 @@ class Node;
 class Element;
 }  // namespace MeshLib
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 /**
  * Collapses nodes with a distance smaller min_distance and
@@ -207,7 +207,7 @@ private:
     static unsigned lutPrismThirdNode(unsigned id1, unsigned id2);
 
     /// The original mesh used for constructing the class
-    Mesh& _mesh;
+    MeshLib::Mesh& _mesh;
 
     static const std::array<unsigned, 8> _hex_diametral_nodes;
 };

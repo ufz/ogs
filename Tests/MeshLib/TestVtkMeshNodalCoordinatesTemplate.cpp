@@ -25,8 +25,8 @@ TEST(MeshLibdalCoordinates, Init)
     const double length = 10.0;
     const double dx = length / subdivisions;
 
-    MeshLib::Mesh* mesh =
-        MeshLib::MeshGenerator::generateRegularQuadMesh(length, subdivisions);
+    MeshLib::Mesh* mesh = MeshToolsLib::MeshGenerator::generateRegularQuadMesh(
+        length, subdivisions);
 
     vtkNew<MeshLib::VtkMeshNodalCoordinatesTemplate<double>> nodeCoords;
     nodeCoords->SetNodes(mesh->getNodes());

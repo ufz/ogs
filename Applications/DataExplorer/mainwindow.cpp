@@ -1109,7 +1109,7 @@ void MainWindow::mapGeometry(const std::string& geo_name)
 
 void MainWindow::convertMeshToGeometry(const MeshLib::Mesh* mesh)
 {
-    MeshLib::convertMeshToGeo(*mesh, _project.getGEOObjects());
+    MeshToolsLib::convertMeshToGeo(*mesh, _project.getGEOObjects());
 }
 
 void MainWindow::exportBoreholesToGMS(std::string listName,
@@ -1412,8 +1412,8 @@ void MainWindow::showMeshQualitySelectionDialog(
         return;
     }
     MeshLib::MeshQualityType const type(dlg.getSelectedMetric());
-    MeshLib::ElementQualityInterface quality_interface(*mshSource->GetMesh(),
-                                                       type);
+    MeshToolsLib::ElementQualityInterface quality_interface(
+        *mshSource->GetMesh(), type);
     _vtkVisPipeline->showMeshElementQuality(
         mshSource, type, quality_interface.getQualityVector());
 

@@ -25,6 +25,10 @@ namespace MeshLib
 class Mesh;
 template <typename T>
 class PropertyVector;
+}  // namespace MeshLib
+
+namespace MeshToolsLib
+{
 
 /**
  * \brief A set of methods for manipulating mesh element values
@@ -49,7 +53,7 @@ public:
     /// Sets new value for all elements having the given element type
     /// Returns the number of elements having the given element type
     static std::size_t setByElementType(MeshLib::Mesh& mesh,
-                                        MeshElemType ele_type,
+                                        MeshLib::MeshElemType ele_type,
                                         int const new_value);
 
 private:
@@ -85,4 +89,4 @@ private:
     }
 };
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

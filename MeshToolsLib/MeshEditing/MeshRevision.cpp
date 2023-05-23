@@ -24,7 +24,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
 
-namespace MeshLib
+namespace MeshToolsLib
 {
 const std::array<unsigned, 8> MeshRevision::_hex_diametral_nodes = {
     {6, 7, 4, 5, 2, 3, 0, 1}};
@@ -259,55 +259,63 @@ MeshLib::Properties MeshRevision::copyProperties(
 
     for (auto name : prop_names)
     {
-        if (props.existsPropertyVector<int>(name, MeshItemType::Node, 1))
+        if (props.existsPropertyVector<int>(name, MeshLib::MeshItemType::Node,
+                                            1))
         {
-            auto p = props.getPropertyVector<int>(name, MeshItemType::Node, 1);
+            auto p = props.getPropertyVector<int>(
+                name, MeshLib::MeshItemType::Node, 1);
             auto new_node_vec = new_properties.createNewPropertyVector<int>(
-                name, MeshItemType::Node, 1);
+                name, MeshLib::MeshItemType::Node, 1);
             fillNodeProperty(*new_node_vec, *p, node_ids);
             continue;
         }
-        if (props.existsPropertyVector<float>(name, MeshItemType::Node, 1))
+        if (props.existsPropertyVector<float>(name, MeshLib::MeshItemType::Node,
+                                              1))
         {
-            auto p =
-                props.getPropertyVector<float>(name, MeshItemType::Node, 1);
+            auto p = props.getPropertyVector<float>(
+                name, MeshLib::MeshItemType::Node, 1);
             auto new_node_vec = new_properties.createNewPropertyVector<float>(
-                name, MeshItemType::Node, 1);
+                name, MeshLib::MeshItemType::Node, 1);
             fillNodeProperty(*new_node_vec, *p, node_ids);
             continue;
         }
-        if (props.existsPropertyVector<double>(name, MeshItemType::Node, 1))
+        if (props.existsPropertyVector<double>(name,
+                                               MeshLib::MeshItemType::Node, 1))
         {
-            auto p =
-                props.getPropertyVector<double>(name, MeshItemType::Node, 1);
+            auto p = props.getPropertyVector<double>(
+                name, MeshLib::MeshItemType::Node, 1);
             auto new_node_vec = new_properties.createNewPropertyVector<double>(
-                name, MeshItemType::Node, 1);
+                name, MeshLib::MeshItemType::Node, 1);
             fillNodeProperty(*new_node_vec, *p, node_ids);
             continue;
         }
-        if (props.existsPropertyVector<int>(name, MeshItemType::Cell, 1))
+        if (props.existsPropertyVector<int>(name, MeshLib::MeshItemType::Cell,
+                                            1))
         {
-            auto p = props.getPropertyVector<int>(name, MeshItemType::Cell, 1);
+            auto p = props.getPropertyVector<int>(
+                name, MeshLib::MeshItemType::Cell, 1);
             auto new_cell_vec = new_properties.createNewPropertyVector<int>(
-                name, MeshItemType::Cell, 1);
+                name, MeshLib::MeshItemType::Cell, 1);
             fillElemProperty(*new_cell_vec, *p, elem_ids);
             continue;
         }
-        if (props.existsPropertyVector<float>(name, MeshItemType::Cell, 1))
+        if (props.existsPropertyVector<float>(name, MeshLib::MeshItemType::Cell,
+                                              1))
         {
-            auto p =
-                props.getPropertyVector<float>(name, MeshItemType::Cell, 1);
+            auto p = props.getPropertyVector<float>(
+                name, MeshLib::MeshItemType::Cell, 1);
             auto new_cell_vec = new_properties.createNewPropertyVector<float>(
-                name, MeshItemType::Cell, 1);
+                name, MeshLib::MeshItemType::Cell, 1);
             fillElemProperty(*new_cell_vec, *p, elem_ids);
             continue;
         }
-        if (props.existsPropertyVector<double>(name, MeshItemType::Cell, 1))
+        if (props.existsPropertyVector<double>(name,
+                                               MeshLib::MeshItemType::Cell, 1))
         {
-            auto p =
-                props.getPropertyVector<double>(name, MeshItemType::Cell, 1);
+            auto p = props.getPropertyVector<double>(
+                name, MeshLib::MeshItemType::Cell, 1);
             auto new_cell_vec = new_properties.createNewPropertyVector<double>(
-                name, MeshItemType::Cell, 1);
+                name, MeshLib::MeshItemType::Cell, 1);
             fillElemProperty(*new_cell_vec, *p, elem_ids);
             continue;
         }
@@ -321,19 +329,19 @@ std::size_t MeshRevision::subdivideElement(
     std::vector<MeshLib::Node*> const& nodes,
     std::vector<MeshLib::Element*>& elements) const
 {
-    if (element->getGeomType() == MeshElemType::QUAD)
+    if (element->getGeomType() == MeshLib::MeshElemType::QUAD)
     {
         return this->subdivideQuad(element, nodes, elements);
     }
-    if (element->getGeomType() == MeshElemType::HEXAHEDRON)
+    if (element->getGeomType() == MeshLib::MeshElemType::HEXAHEDRON)
     {
         return this->subdivideHex(element, nodes, elements);
     }
-    if (element->getGeomType() == MeshElemType::PYRAMID)
+    if (element->getGeomType() == MeshLib::MeshElemType::PYRAMID)
     {
         return this->subdividePyramid(element, nodes, elements);
     }
-    if (element->getGeomType() == MeshElemType::PRISM)
+    if (element->getGeomType() == MeshLib::MeshElemType::PRISM)
     {
         return this->subdividePrism(element, nodes, elements);
     }
@@ -350,13 +358,14 @@ std::size_t MeshRevision::reduceElement(
     /***************
      * TODO: modify neighbouring elements if one elements has been subdivided
      ***************/
-    if (element->getGeomType() == MeshElemType::TRIANGLE && min_elem_dim == 1)
+    if (element->getGeomType() == MeshLib::MeshElemType::TRIANGLE &&
+        min_elem_dim == 1)
     {
         elements.push_back(this->constructLine(element, nodes));
         return 1;
     }
-    if ((element->getGeomType() == MeshElemType::QUAD) ||
-        (element->getGeomType() == MeshElemType::TETRAHEDRON))
+    if ((element->getGeomType() == MeshLib::MeshElemType::QUAD) ||
+        (element->getGeomType() == MeshLib::MeshElemType::TETRAHEDRON))
     {
         if (n_unique_nodes == 3 && min_elem_dim < 3)
         {
@@ -368,18 +377,18 @@ std::size_t MeshRevision::reduceElement(
         }
         return 1;
     }
-    if (element->getGeomType() == MeshElemType::HEXAHEDRON)
+    if (element->getGeomType() == MeshLib::MeshElemType::HEXAHEDRON)
     {
         return reduceHex(element, n_unique_nodes, nodes, elements,
                          min_elem_dim);
     }
-    if (element->getGeomType() == MeshElemType::PYRAMID)
+    if (element->getGeomType() == MeshLib::MeshElemType::PYRAMID)
     {
         this->reducePyramid(element, n_unique_nodes, nodes, elements,
                             min_elem_dim);
         return 1;
     }
-    if (element->getGeomType() == MeshElemType::PRISM)
+    if (element->getGeomType() == MeshLib::MeshElemType::PRISM)
     {
         return reducePrism(element, n_unique_nodes, nodes, elements,
                            min_elem_dim);
@@ -412,7 +421,7 @@ unsigned MeshRevision::subdivideHex(
     std::vector<MeshLib::Node*> const& nodes,
     std::vector<MeshLib::Element*>& new_elements) const
 {
-    std::array<Node*, 6> prism1_nodes;
+    std::array<MeshLib::Node*, 6> prism1_nodes;
     prism1_nodes[0] = nodes[hex->getNode(0)->getID()];
     prism1_nodes[1] = nodes[hex->getNode(2)->getID()];
     prism1_nodes[2] = nodes[hex->getNode(1)->getID()];
@@ -423,7 +432,7 @@ unsigned MeshRevision::subdivideHex(
     this->subdividePrism(prism1, nodes, new_elements);
     delete prism1;
 
-    std::array<Node*, 6> prism2_nodes;
+    std::array<MeshLib::Node*, 6> prism2_nodes;
     prism2_nodes[0] = nodes[hex->getNode(4)->getID()];
     prism2_nodes[1] = nodes[hex->getNode(6)->getID()];
     prism2_nodes[2] = nodes[hex->getNode(7)->getID()];
@@ -446,7 +455,7 @@ unsigned MeshRevision::subdividePyramid(
         [&pyramid, &nodes, &new_elements](std::size_t id0, std::size_t id1,
                                           std::size_t id2, std::size_t id3)
     {
-        std::array<Node*, 4> tet_nodes;
+        std::array<MeshLib::Node*, 4> tet_nodes;
         tet_nodes[0] = nodes[pyramid->getNode(id0)->getID()];
         tet_nodes[1] = nodes[pyramid->getNode(id1)->getID()];
         tet_nodes[2] = nodes[pyramid->getNode(id2)->getID()];
@@ -470,7 +479,7 @@ unsigned MeshRevision::subdividePrism(
         [&prism, &nodes, &new_elements](std::size_t id0, std::size_t id1,
                                         std::size_t id2, std::size_t id3)
     {
-        std::array<Node*, 4> tet_nodes;
+        std::array<MeshLib::Node*, 4> tet_nodes;
         tet_nodes[0] = nodes[prism->getNode(id0)->getID()];
         tet_nodes[1] = nodes[prism->getNode(id1)->getID()];
         tet_nodes[2] = nodes[prism->getNode(id2)->getID()];
@@ -708,7 +717,7 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const* const org_elem,
             this->findPyramidTopNode(*org_elem, first_four_nodes));
 
         bool tet_changed(false);
-        if (tet1->getGeomType() == MeshElemType::QUAD)
+        if (tet1->getGeomType() == MeshLib::MeshElemType::QUAD)
         {
             delete tet1;
             tet_changed = true;
@@ -874,7 +883,7 @@ MeshLib::Element* MeshRevision::constructLine(
     MeshLib::Element const* const element,
     const std::vector<MeshLib::Node*>& nodes) const
 {
-    std::array<Node*, 2> line_nodes;
+    std::array<MeshLib::Node*, 2> line_nodes;
     line_nodes[0] = nodes[element->getNode(0)->getID()];
     line_nodes[1] = nullptr;
     for (unsigned i = 1; i < element->getNumberOfBaseNodes(); ++i)
@@ -897,7 +906,7 @@ MeshLib::Element* MeshRevision::constructTri(
     // In theory three unique nodes could also be reduced to two lines e.g. with
     // a quad where two diametral nodes collapse. This case is currently not
     // implemented!
-    std::array<Node*, 3> tri_nodes;
+    std::array<MeshLib::Node*, 3> tri_nodes;
     tri_nodes[0] = nodes[element->getNode(0)->getID()];
     tri_nodes[2] = nullptr;
     for (unsigned i = 1; i < element->getNumberOfBaseNodes(); ++i)
@@ -928,7 +937,7 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(
     std::vector<MeshLib::Node*> const& nodes,
     unsigned min_elem_dim) const
 {
-    std::array<Node*, 4> new_nodes;
+    std::array<MeshLib::Node*, 4> new_nodes;
     unsigned count(0);
     new_nodes[count++] = nodes[element->getNode(0)->getID()];
     for (unsigned i = 1; i < element->getNumberOfBaseNodes(); ++i)

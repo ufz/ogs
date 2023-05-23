@@ -30,7 +30,7 @@ class MeshLibBoundaryElementSearchInSimpleQuadMesh : public testing::Test
 {
 public:
     MeshLibBoundaryElementSearchInSimpleQuadMesh()
-        : _quad_mesh(MeshGenerator::generateRegularQuadMesh(
+        : _quad_mesh(MeshToolsLib::MeshGenerator::generateRegularQuadMesh(
               _geometric_size, _number_of_subdivisions_per_direction))
     {
     }
@@ -54,7 +54,7 @@ class MeshLibBoundaryElementSearchInSimpleHexMesh : public testing::Test
 {
 public:
     MeshLibBoundaryElementSearchInSimpleHexMesh()
-        : _hex_mesh(MeshGenerator::generateRegularHexMesh(
+        : _hex_mesh(MeshToolsLib::MeshGenerator::generateRegularHexMesh(
               _geometric_size, _number_of_subdivisions_per_direction))
     {
         // Points for the surfaces. Corners of a cube.
@@ -272,8 +272,8 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
 TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, QuadElementsSurfaceSearch)
 {
     ASSERT_TRUE(_hex_mesh != nullptr);
-    auto mesh = MeshLib::createQuadraticOrderMesh(*_hex_mesh,
-                                                  false /* add centre node*/);
+    auto mesh = MeshToolsLib::createQuadraticOrderMesh(
+        *_hex_mesh, false /* add centre node*/);
 
     const std::size_t& s = _number_of_subdivisions_per_direction;
     const std::size_t n_nodes_2d = (s + 1) * (3 * s + 1);

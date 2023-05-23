@@ -88,7 +88,7 @@ bool removeUnusedGridCells(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
 
     if (n_elems_marked)
     {
-        grid.reset(MeshLib::removeElements(
+        grid.reset(MeshToolsLib::removeElements(
             *grid, search.getSearchedElementIDs(), "trimmed_grid"));
     }
     return true;
@@ -210,7 +210,7 @@ int main(int argc, char* argv[])
         std::array<double, 3>{bounds[1], bounds[3], bounds[5]});
     std::array<std::size_t, 3> const dims = getDimensions(min, max, cellsize);
     std::unique_ptr<MeshLib::Mesh> grid(
-        MeshLib::MeshGenerator::generateRegularHexMesh(
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(
             dims[0], dims[1], dims[2], cellsize[0], cellsize[1], cellsize[2],
             min, "grid"));
 

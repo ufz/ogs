@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
     Eigen::Vector3d const dir({x.getValue(), y.getValue(), z.getValue()});
     double const angle(angle_arg.getValue());
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
-        MeshLib::MeshSurfaceExtraction::getMeshSurface(
+        MeshToolsLib::MeshSurfaceExtraction::getMeshSurface(
             *mesh, dir, angle, getBulkIDString(MeshLib::MeshItemType::Node),
             getBulkIDString(MeshLib::MeshItemType::Cell),
             getBulkIDString(MeshLib::MeshItemType::Face)));

@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 
     // extract surface
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
-        MeshLib::BoundaryExtraction::getBoundaryElementsAsMesh(
+        MeshToolsLib::BoundaryExtraction::getBoundaryElementsAsMesh(
             *mesh,
             MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
             MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),

@@ -38,7 +38,7 @@ void postVTU(std::string const& int_vtu_filename,
         MeshLib::IO::readMeshFromFile(int_vtu_filename));
     if (mesh->hasNonlinearElement())
     {
-        mesh = MeshLib::convertToLinearMesh(*mesh, mesh->getName());
+        mesh = MeshToolsLib::convertToLinearMesh(*mesh, mesh->getName());
     }
 
     // post-process

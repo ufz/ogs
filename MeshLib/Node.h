@@ -25,6 +25,11 @@ namespace ApplicationUtils
     class NodeWiseMeshPartitioner;
 }
 
+namespace MeshToolsLib
+{
+class MeshRevision;
+}
+
 namespace MeshLib
 {
 /**
@@ -34,7 +39,7 @@ class Node : public MathLib::Point3dWithID
 {
     /* friend classes: */
     friend class Mesh;
-    friend class MeshRevision;
+    friend class MeshToolsLib::MeshRevision;
 
 public:
     /// Constructor using a coordinate array

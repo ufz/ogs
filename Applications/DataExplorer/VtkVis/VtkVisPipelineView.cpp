@@ -178,7 +178,7 @@ void VtkVisPipelineView::showImageToMeshConversionDialog()
     double spacing[3];
     imageSource->GetOutput()->GetSpacing(spacing);
 
-    auto mesh = MeshLib::RasterToMesh::convert(
+    auto mesh = MeshToolsLib::RasterToMesh::convert(
         imageSource->GetOutput(), origin, spacing[0], dlg.getElementSelection(),
         dlg.getIntensitySelection(), dlg.getArrayName());
     if (mesh)

@@ -26,7 +26,10 @@ class Surface;
 namespace MeshLib
 {
 class Mesh;
+}
 
+namespace MeshToolsLib
+{
 /**
  * Converts a 2D mesh into a geometry.
  * A new geometry with the name of the mesh will be inserted into geo_objects,
@@ -50,4 +53,4 @@ MeshLib::Mesh* convertSurfaceToMesh(
     const GeoLib::Surface& sfc, const std::string& mesh_name,
     double eps = std::numeric_limits<double>::epsilon());
 
-}  // namespace MeshLib
+}  // namespace MeshToolsLib

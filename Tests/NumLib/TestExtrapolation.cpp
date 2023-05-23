@@ -267,7 +267,7 @@ TEST(NumLib, DISABLED_Extrapolation)
 
     // generate mesh
     std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::MeshGenerator::generateRegularHexMesh(
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(
             mesh_length, mesh_elements_in_each_direction));
 
     for (unsigned integration_order : {2, 3, 4})

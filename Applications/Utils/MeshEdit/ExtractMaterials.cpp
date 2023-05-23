@@ -42,7 +42,7 @@ MeshLib::Mesh* extractMatGroup(MeshLib::Mesh const& mesh, int const mat_id)
         return nullptr;
     }
 
-    return MeshLib::removeElements(mesh, elem_list, "matgroup");
+    return MeshToolsLib::removeElements(mesh, elem_list, "matgroup");
 }
 
 int main(int argc, char* argv[])

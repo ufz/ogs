@@ -122,13 +122,13 @@ int main(int argc, char* argv[])
     }
 
     std::unique_ptr<MeshLib::Mesh> src_mesh(
-        MeshLib::RasterToMesh::convert(*raster,
-                                       MeshLib::MeshElemType::QUAD,
-                                       MeshLib::UseIntensityAs::DATAVECTOR,
-                                       property_arg.getValue()));
+        MeshToolsLib::RasterToMesh::convert(*raster,
+                                            MeshLib::MeshElemType::QUAD,
+                                            MeshLib::UseIntensityAs::DATAVECTOR,
+                                            property_arg.getValue()));
 
     // do the interpolation
-    MeshLib::Mesh2MeshPropertyInterpolation mesh_interpolation(
+    MeshToolsLib::Mesh2MeshPropertyInterpolation mesh_interpolation(
         *src_mesh, property_arg.getValue());
     mesh_interpolation.setPropertiesForMesh(*dest_mesh);
 

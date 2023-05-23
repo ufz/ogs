@@ -50,7 +50,7 @@ struct DOFTableData
               TestInfoLib::TestInfo::data_path +
               "/EllipticPETSc/quad_20x10_GroundWaterFlow.")),
 #else
-        : mesh(MeshLib::MeshGenerator::generateRegularHexMesh(
+        : mesh(MeshToolsLib::MeshGenerator::generateRegularHexMesh(
               mesh_length, mesh_elements_in_each_direction)),
 #endif
           mesh_subset_all_nodes(*mesh, mesh->getNodes()),

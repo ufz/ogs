@@ -18,6 +18,10 @@ namespace MeshLib
 class Mesh;
 class Element;
 class Node;
+}  // namespace MeshLib
+
+namespace MeshToolsLib
+{
 
 /**
  * Removes mesh elements and returns a new mesh object. The original mesh is
@@ -45,10 +49,11 @@ MeshLib::Mesh* removeNodes(const MeshLib::Mesh& mesh,
                            const std::string& new_mesh_name);
 
 /// Marks nodes not used by any of the elements.
-std::vector<bool> markUnusedNodes(std::vector<Element*> const& elements,
-                                  std::vector<Node*> const& nodes);
+std::vector<bool> markUnusedNodes(
+    std::vector<MeshLib::Element*> const& elements,
+    std::vector<MeshLib::Node*> const& nodes);
 
 /// Deallocates and removes nodes marked true.
 void removeMarkedNodes(std::vector<bool> const& nodes_to_delete,
-                       std::vector<Node*>& nodes);
-}  // end namespace MeshLib
+                       std::vector<MeshLib::Node*>& nodes);
+}  // namespace MeshToolsLib

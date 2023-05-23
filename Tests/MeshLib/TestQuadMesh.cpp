@@ -22,7 +22,8 @@ class MeshLibQuadMesh : public ::testing::Test
 public:
     MeshLibQuadMesh()
     {
-        mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(1.0, n_elements);
+        mesh = MeshToolsLib::MeshGenerator::generateRegularQuadMesh(1.0,
+                                                                    n_elements);
     }
 
     ~MeshLibQuadMesh() override { delete mesh; }

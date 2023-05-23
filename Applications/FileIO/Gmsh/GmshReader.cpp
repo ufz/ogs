@@ -387,7 +387,7 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
                              materials.cend());
     }
 
-    MeshLib::ElementValueModification::condense(*mesh);
+    MeshToolsLib::ElementValueModification::condense(*mesh);
 
     INFO("\t... finished.");
     INFO("Nr. Nodes: {:d}.", nodes.size());
