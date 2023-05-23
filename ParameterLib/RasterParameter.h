@@ -35,7 +35,7 @@ struct RasterParameter final : public Parameter<double>
         {
             OGS_FATAL("RasterParameter::operator(): couldn't get coordinates.");
         }
-        auto const value = _named_raster.raster.getValueAtPoint(*coordinates);
+        auto const value = _named_raster.raster->getValueAtPoint(*coordinates);
         return {value};
     }
 
