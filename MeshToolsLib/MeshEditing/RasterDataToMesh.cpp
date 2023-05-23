@@ -90,4 +90,4 @@ bool projectToElements(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
 }
 
 }  // end namespace RasterDataToMesh
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

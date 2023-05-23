@@ -35,4 +35,4 @@ void RadiusEdgeRatioMetric::calculateQuality()
     }
 }
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

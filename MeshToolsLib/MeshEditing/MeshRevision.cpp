@@ -1275,4 +1275,4 @@ unsigned MeshRevision::lutPrismThirdNode(unsigned id1, unsigned id2)
     }
     return std::numeric_limits<unsigned>::max();
 }
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

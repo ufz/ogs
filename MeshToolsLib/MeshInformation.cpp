@@ -177,4 +177,4 @@ std::vector<int> MeshInformation::getMaterialIDs(const MeshLib::Mesh& mesh)
     return unique_matids;
 }
 
-}  // namespace MeshLib
+}  // namespace MeshToolsLib

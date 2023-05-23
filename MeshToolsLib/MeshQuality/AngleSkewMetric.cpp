@@ -172,4 +172,4 @@ void AngleSkewMetric::calculateQuality()
     }
 }
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

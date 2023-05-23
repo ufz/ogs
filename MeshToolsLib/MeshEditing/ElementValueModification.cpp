@@ -142,4 +142,4 @@ std::size_t ElementValueModification::setByElementType(
     return cnt;
 }
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

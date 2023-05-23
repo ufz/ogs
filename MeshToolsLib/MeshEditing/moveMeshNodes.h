@@ -40,4 +40,4 @@ void moveMeshNodes(Iterator begin,
                   { node->asEigenVector3d() += displacement; });
 };
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

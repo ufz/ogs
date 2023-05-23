@@ -22,4 +22,4 @@ namespace MeshToolsLib
 std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
     const MeshLib::Mesh& mesh, const std::string& new_mesh_name);
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

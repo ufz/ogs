@@ -212,4 +212,4 @@ private:
     static const std::array<unsigned, 8> _hex_diametral_nodes;
 };
 
-}  // namespace MeshLib
+}  // namespace MeshToolsLib

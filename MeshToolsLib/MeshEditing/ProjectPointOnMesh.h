@@ -33,4 +33,4 @@ double getElevation(MeshLib::Element const& element,
 
 }  // namespace ProjectPointOnMesh
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

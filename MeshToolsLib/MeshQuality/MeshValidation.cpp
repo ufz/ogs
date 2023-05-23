@@ -239,4 +239,4 @@ unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh)
     // holes.
     return (--current_surface_id);
 }
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

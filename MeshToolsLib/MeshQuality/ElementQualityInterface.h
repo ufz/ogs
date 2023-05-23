@@ -114,4 +114,4 @@ private:
     std::unique_ptr<MeshToolsLib::ElementQualityMetric> _quality_tester;
 };
 
-}  // namespace MeshLib
+}  // namespace MeshToolsLib

@@ -43,4 +43,4 @@ std::vector<double> const& ElementQualityMetric::getElementQuality() const
 {
     return _element_quality_metric;
 }
-}  // namespace MeshLib
+}  // namespace MeshToolsLib

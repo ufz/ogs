@@ -22,4 +22,4 @@ namespace MeshToolsLib
 std::unique_ptr<MeshLib::Mesh> createQuadraticOrderMesh(
     MeshLib::Mesh const& linear_mesh, bool const add_centre_node);
 
-}  // namespace MeshLib
+}  // namespace MeshToolsLib

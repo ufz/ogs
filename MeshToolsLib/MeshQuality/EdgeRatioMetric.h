@@ -30,4 +30,4 @@ struct EdgeRatioMetric final : public ElementQualityMetric
 
     void calculateQuality() override;
 };
-}  // namespace MeshLib
+}  // namespace MeshToolsLib

@@ -250,4 +250,4 @@ std::unique_ptr<MeshLib::Mesh> createQuadraticOrderMesh(
                                                MeshLib::MeshItemType::Node)));
 }
 
-}  // namespace MeshLib
+}  // namespace MeshToolsLib

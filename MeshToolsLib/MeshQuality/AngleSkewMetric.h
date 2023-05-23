@@ -28,4 +28,4 @@ struct AngleSkewMetric final : public ElementQualityMetric
 
     void calculateQuality() override;
 };
-}  // namespace MeshLib
+}  // namespace MeshToolsLib

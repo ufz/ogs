@@ -352,4 +352,4 @@ bool MeshLayerMapper::mapToStaticValue(MeshLib::Mesh const& mesh,
     return true;
 }
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

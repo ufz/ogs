@@ -181,4 +181,4 @@ void Mesh2MeshPropertyInterpolation::
     }
 }
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

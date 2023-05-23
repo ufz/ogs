@@ -174,4 +174,4 @@ MeshLib::Mesh* removeNodes(const MeshLib::Mesh& mesh,
 
     return nullptr;
 }
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

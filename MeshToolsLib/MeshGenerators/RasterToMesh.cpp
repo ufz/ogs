@@ -273,4 +273,4 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
     return new_mesh;
 }
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

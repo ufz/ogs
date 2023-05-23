@@ -77,4 +77,4 @@ std::unique_ptr<MeshLib::Mesh> createFlippedMesh(MeshLib::Mesh const& mesh)
                                            new_elems, mesh.getProperties());
 }
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

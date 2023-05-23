@@ -142,4 +142,4 @@ std::size_t ElementSizeMetric::calc3dQuality()
     return error_count;
 }
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

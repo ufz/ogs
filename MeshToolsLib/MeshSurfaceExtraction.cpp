@@ -553,4 +553,4 @@ void addBulkIDPropertiesToMesh(
     }
 }
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

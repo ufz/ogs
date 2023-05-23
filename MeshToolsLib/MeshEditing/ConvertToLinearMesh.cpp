@@ -153,4 +153,4 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
     return new_mesh;
 }
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

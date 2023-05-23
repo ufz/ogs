@@ -778,4 +778,4 @@ MeshLib::Mesh* MeshGenerator::createSurfaceMesh(
     return new MeshLib::Mesh(mesh_name, nodes, sfc_eles);
 }
 
-}  // namespace MeshLib
+}  // namespace MeshToolsLib

@@ -80,4 +80,4 @@ public:
     static std::vector<int> getMaterialIDs(const MeshLib::Mesh& mesh);
 };
 
-}  // namespace MeshLib
+}  // namespace MeshToolsLib

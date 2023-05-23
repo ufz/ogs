@@ -29,4 +29,4 @@ struct SizeDifferenceMetric final : public ElementQualityMetric
 
     void calculateQuality() override;
 };
-}  // namespace MeshLib
+}  // namespace MeshToolsLib

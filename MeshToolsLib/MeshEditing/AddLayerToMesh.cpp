@@ -209,4 +209,4 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
     return new_mesh;
 }
 
-}  // namespace MeshLib
+}  // namespace MeshToolsLib

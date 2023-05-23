@@ -50,4 +50,4 @@ void EdgeRatioMetric::calculateQuality()
     }
 }
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib

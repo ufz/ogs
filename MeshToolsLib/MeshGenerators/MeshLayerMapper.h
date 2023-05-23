@@ -85,4 +85,4 @@ private:
                         GeoLib::Raster const& raster) override;
 };
 
-}  // end namespace MeshLib
+}  // namespace MeshToolsLib
