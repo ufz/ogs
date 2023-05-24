@@ -88,6 +88,8 @@ public:
 
     ProcessLib::TimeLoop& getTimeLoop() { return *_time_loop; }
 
+    MeshLib::Mesh* getMesh(std::string const& mesh_name) const;
+
 private:
     /// Parses the process variables configuration and creates new variables for
     /// each variable entry passing the corresponding subtree to the process

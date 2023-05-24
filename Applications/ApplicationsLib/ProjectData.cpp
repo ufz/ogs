@@ -1258,3 +1258,13 @@ void ProjectData::parseCurves(std::optional<BaseLib::ConfigTree> const& config)
             "The curve name is not unique.");
     }
 }
+
+MeshLib::Mesh* ProjectData::getMesh(std::string const& mesh_name) const
+{
+    return BaseLib::findElementOrError(
+               begin(_mesh_vec), end(_mesh_vec),
+               [&mesh_name](auto const& m)
+               { return m->getName() == mesh_name; },
+               "Expected to find a mesh named " + mesh_name + ".")
+        .get();
+}
