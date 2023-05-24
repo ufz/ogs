@@ -30,8 +30,8 @@
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/LayeredVolume.h"
-#include "MeshLib/MeshGenerators/MeshLayerMapper.h"
+#include "MeshToolsLib/MeshGenerators/LayeredVolume.h"
+#include "MeshToolsLib/MeshGenerators/MeshLayerMapper.h"
 
 int main(int argc, char* argv[])
 {
@@ -141,8 +141,6 @@ int main(int argc, char* argv[])
         output_name.append(".smesh");
     }
 
-    INFO("Writing mesh '{:s}' ... ", output_name);
-
     auto const rasters = FileIO::readRasters(raster_paths);
     LayeredVolume lv;
     if (rasters)
@@ -171,7 +169,7 @@ int main(int argc, char* argv[])
         std::vector<MeshLib::Node> tg_attr(lv.getAttributePoints());
         FileIO::TetGenInterface tetgen_interface;
         tetgen_interface.writeTetGenSmesh(output_name, *tg_mesh, tg_attr);
-        INFO("done.");
+        INFO("Smesh was successfully written.");
     }
     else
     {
