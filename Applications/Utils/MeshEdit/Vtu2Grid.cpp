@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
 #endif
         return -1;
     }
-    using namespace MeshLib::MeshGenerator;
+    using namespace MeshToolsLib::MeshGenerator;
 
     double const x_size = x_arg.getValue();
     double const y_size = (y_arg.isSet()) ? y_arg.getValue() : x_arg.getValue();

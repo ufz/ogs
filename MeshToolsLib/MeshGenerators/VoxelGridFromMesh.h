@@ -22,14 +22,14 @@
 
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/MeshSearch/MeshElementGrid.h"
 
 static constexpr std::string const cell_id_name = "CellIds";
 
-namespace MeshLib::MeshGenerator::VoxelGridFromMesh
+namespace MeshToolsLib::MeshGenerator::VoxelGridFromMesh
 {
 
     std::array<std::size_t, 3> getDimensions(

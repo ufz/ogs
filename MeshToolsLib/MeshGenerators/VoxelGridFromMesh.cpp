@@ -9,7 +9,7 @@
 
 #include "VoxelGridFromMesh.h"
 
-namespace MeshLib::MeshGenerator::VoxelGridFromMesh
+namespace MeshToolsLib::MeshGenerator::VoxelGridFromMesh
 {
 
 std::array<std::size_t, 3> getDimensions(MathLib::Point3d const& min,
@@ -69,7 +69,7 @@ bool removeUnusedGridCells(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
 
     if (n_elems_marked)
     {
-        grid.reset(MeshLib::removeElements(
+        grid.reset(MeshToolsLib::removeElements(
             *grid, search.getSearchedElementIDs(), "trimmed_grid"));
     }
     return true;
