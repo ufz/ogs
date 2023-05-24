@@ -14,15 +14,15 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 using namespace MeshLib;
 
 TEST(MeshLib, createMaterialIDsBasedSubMesh)
 {
-    auto input_mesh =
-        std::unique_ptr<Mesh>(MeshGenerator::generateLineMesh(1.0, 11));
+    auto input_mesh = std::unique_ptr<Mesh>(
+        MeshToolsLib::MeshGenerator::generateLineMesh(1.0, 11));
     auto* material_ids = getOrCreateMeshProperty<int>(
         *input_mesh.get(), "MaterialIDs", MeshItemType::Cell, 1);
     std::iota(material_ids->begin(), material_ids->end(), 0);

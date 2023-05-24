@@ -18,8 +18,8 @@
 #include "MeshLib/ElementStatus.h"
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshInformation.h"
 #include "MeshLib/Properties.h"
+#include "MeshToolsLib/MeshInformation.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ParameterLib/MeshElementParameter.h"
@@ -99,7 +99,7 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     else
     {
         auto const range =
-            MeshLib::MeshInformation::getValueBounds(*materialIDs(mesh));
+            MeshToolsLib::MeshInformation::getValueBounds(*materialIDs(mesh));
         if (!range)
         {
             OGS_FATAL(

@@ -28,9 +28,9 @@
 
 #include "Base/CheckboxDelegate.h"
 #include "Base/OGSError.h"
+#include "MeshLib/IO/VtkIO/VtkMeshConverter.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/RasterToMesh.h"
-#include "MeshLib/MeshGenerators/VtkMeshConverter.h"
+#include "MeshToolsLib/MeshGenerators/RasterToMesh.h"
 #include "VtkVisPipeline.h"
 #include "VtkVisPipelineItem.h"
 #include "VtkVisPointSetItem.h"
@@ -178,7 +178,7 @@ void VtkVisPipelineView::showImageToMeshConversionDialog()
     double spacing[3];
     imageSource->GetOutput()->GetSpacing(spacing);
 
-    auto mesh = MeshLib::RasterToMesh::convert(
+    auto mesh = MeshToolsLib::RasterToMesh::convert(
         imageSource->GetOutput(), origin, spacing[0], dlg.getElementSelection(),
         dlg.getIntensitySelection(), dlg.getArrayName());
     if (mesh)

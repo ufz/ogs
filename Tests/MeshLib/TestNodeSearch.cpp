@@ -14,11 +14,11 @@
 #include "GeoLib/Raster.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshGenerators/RasterToMesh.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/RasterToMesh.h"
 
 TEST(NodeSearch, UnusedNodes)
 {
@@ -27,9 +27,9 @@ TEST(NodeSearch, UnusedNodes)
     GeoLib::RasterHeader header = {
         4, 3, 1, MathLib::Point3d(std::array<double, 3>{{0, 0, 0}}), 1, -9999};
     GeoLib::Raster const raster(std::move(header), pix.begin(), pix.end());
-    auto mesh =
-        MeshLib::RasterToMesh::convert(raster, MeshLib::MeshElemType::TRIANGLE,
-                                       MeshLib::UseIntensityAs::ELEVATION);
+    auto mesh = MeshToolsLib::RasterToMesh::convert(
+        raster, MeshLib::MeshElemType::TRIANGLE,
+        MeshLib::UseIntensityAs::ELEVATION);
     MeshLib::NodeSearch ns(*mesh);
     ns.searchUnused();
     std::vector<std::size_t> u_nodes = ns.getSearchedNodeIDs();
@@ -51,7 +51,7 @@ TEST(NodeSearch, UnusedNodes)
 TEST(NodeSearch, BoundaryNodes1D)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::MeshGenerator::generateLineMesh(5, 1.0));
+        MeshToolsLib::MeshGenerator::generateLineMesh(5, 1.0));
     MeshLib::NodeSearch ns(*mesh);
     ns.searchBoundaryNodes();
     std::vector<std::size_t> searched_nodes = ns.getSearchedNodeIDs();
@@ -63,7 +63,7 @@ TEST(NodeSearch, BoundaryNodes1D)
 TEST(NodeSearch, BoundaryNodes2D)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::MeshGenerator::generateRegularQuadMesh(5, 5, 1.0, 1.0));
+        MeshToolsLib::MeshGenerator::generateRegularQuadMesh(5, 5, 1.0, 1.0));
     MeshLib::NodeSearch ns(*mesh);
     ns.searchBoundaryNodes();
     std::vector<std::size_t> searched_nodes = ns.getSearchedNodeIDs();
@@ -88,7 +88,8 @@ TEST(NodeSearch, BoundaryNodes2D)
 TEST(NodeSearch, BoundaryNodes3D)
 {
     std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::MeshGenerator::generateRegularHexMesh(5, 5, 5, 1.0, 1.0, 1.0));
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(5, 5, 5, 1.0, 1.0,
+                                                            1.0));
     MeshLib::NodeSearch ns(*mesh);
     ns.searchBoundaryNodes();
     std::vector<std::size_t> searched_nodes = ns.getSearchedNodeIDs();

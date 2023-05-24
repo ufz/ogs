@@ -221,6 +221,7 @@ add_subdirectory(GeoLib)
 add_subdirectory(InfoLib)
 add_subdirectory(MathLib)
 add_subdirectory(MeshLib)
+add_subdirectory(MeshToolsLib)
 add_subdirectory(MeshGeoToolsLib)
 add_subdirectory(NumLib)
 

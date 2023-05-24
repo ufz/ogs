@@ -24,7 +24,7 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/ConvertToLinearMesh.h"
+#include "MeshToolsLib/MeshEditing/ConvertToLinearMesh.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
 #include "ProcessLib/LIE/Common/PostUtils.h"
 
@@ -38,7 +38,7 @@ void postVTU(std::string const& int_vtu_filename,
         MeshLib::IO::readMeshFromFile(int_vtu_filename));
     if (mesh->hasNonlinearElement())
     {
-        mesh = MeshLib::convertToLinearMesh(*mesh, mesh->getName());
+        mesh = MeshToolsLib::convertToLinearMesh(*mesh, mesh->getName());
     }
 
     // post-process

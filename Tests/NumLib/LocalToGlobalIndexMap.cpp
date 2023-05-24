@@ -15,16 +15,17 @@
 #include <vector>
 
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshSubset.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 class NumLibLocalToGlobalIndexMapTest : public ::testing::Test
 {
 public:
     NumLibLocalToGlobalIndexMapTest()
     {
-        mesh.reset(MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size));
+        mesh.reset(
+            MeshToolsLib::MeshGenerator::generateLineMesh(1.0, mesh_size));
         nodesSubset =
             std::make_unique<MeshLib::MeshSubset>(*mesh, mesh->getNodes());
     }

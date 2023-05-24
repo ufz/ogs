@@ -37,10 +37,10 @@
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
-#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
-#include "MeshLib/MeshInformation.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
+#include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshToolsLib/MeshInformation.h"
 
 static std::unique_ptr<MeshLib::Mesh> createMeshFromElements(
     MeshLib::Mesh const& mesh,
@@ -52,7 +52,8 @@ static std::unique_ptr<MeshLib::Mesh> createMeshFromElements(
     auto elements = copyElementVector(selected_elements, nodes);
 
     // Cleanup unused nodes
-    removeMarkedNodes(markUnusedNodes(elements, nodes), nodes);
+    MeshToolsLib::removeMarkedNodes(
+        MeshToolsLib::markUnusedNodes(elements, nodes), nodes);
 
     return std::make_unique<MeshLib::Mesh>(std::move(mesh_name), nodes,
                                            elements);
@@ -219,8 +220,8 @@ int main(int argc, char* argv[])
 
         if (exclude_lines_arg.getValue())
         {
-            auto m = MeshLib::removeElements(*mesh, selected_element_ids,
-                                             mesh->getName() + "-withoutLines");
+            auto m = MeshToolsLib::removeElements(
+                *mesh, selected_element_ids, mesh->getName() + "-withoutLines");
             if (m != nullptr)
             {
                 INFO("Removed {:d} lines.",
@@ -249,20 +250,21 @@ int main(int argc, char* argv[])
     INFO("Use the -e option to delete redundant line elements.");
 
     // Geometric information
-    const GeoLib::AABB aabb = MeshLib::MeshInformation::getBoundingBox(*mesh);
+    const GeoLib::AABB aabb =
+        MeshToolsLib::MeshInformation::getBoundingBox(*mesh);
     INFO("Axis aligned bounding box: {}", aabb);
 
     auto const [min, max] = minMaxEdgeLength(mesh->getElements());
     INFO("Edge length: [{:g}, {:g}]", min, max);
 
     // Element information
-    MeshLib::MeshInformation::writeAllNumbersOfElementTypes(*mesh);
+    MeshToolsLib::MeshInformation::writeAllNumbersOfElementTypes(*mesh);
 
-    MeshLib::MeshInformation::writePropertyVectorInformation(*mesh);
+    MeshToolsLib::MeshInformation::writePropertyVectorInformation(*mesh);
 
     if (valid_arg.isSet())
     {
-        MeshLib::MeshInformation::writeMeshValidationResults(*mesh);
+        MeshToolsLib::MeshInformation::writeMeshValidationResults(*mesh);
     }
 
     // *** write mesh in new format

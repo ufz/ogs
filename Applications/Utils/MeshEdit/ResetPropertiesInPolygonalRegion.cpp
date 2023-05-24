@@ -27,7 +27,7 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshInformation.h"
+#include "MeshToolsLib/MeshInformation.h"
 
 int main(int argc, char* argv[])
 {
@@ -181,7 +181,7 @@ int main(int argc, char* argv[])
             restrict_arg.getValue(), any_of_arg.getValue());
     }
 
-    MeshLib::MeshInformation::writePropertyVectorInformation(*mesh);
+    MeshToolsLib::MeshInformation::writePropertyVectorInformation(*mesh);
 
     MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());
 

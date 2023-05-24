@@ -20,8 +20,8 @@
 #include "BoundaryElementsSearcher.h"
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
 #include "MeshNodeSearcher.h"
 
 namespace MeshGeoToolsLib

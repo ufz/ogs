@@ -13,12 +13,12 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/AddLayerToMesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshInformation.h"
-#include "MeshLib/MeshQuality/MeshValidation.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/AddLayerToMesh.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshInformation.h"
+#include "MeshToolsLib/MeshQuality/MeshValidation.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
 
 namespace AddLayerValidation
 {
@@ -35,7 +35,7 @@ void validate(MeshLib::Mesh const& mesh, bool testNodeOrder)
         ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar,
         ElementErrorFlag::NonConvex, ElementErrorFlag::NodeOrder};
     std::vector<ElementErrorCode> const codes(
-        MeshLib::MeshValidation::testElementGeometry(mesh));
+        MeshToolsLib::MeshValidation::testElementGeometry(mesh));
     for (auto code : codes)
     {
         for (std::size_t j = 0; j < nErrorFlags - reduce_tests; ++j)
@@ -71,17 +71,17 @@ void testZCoords3D(MeshLib::Mesh const& input, MeshLib::Mesh const& output,
 TEST(MeshLib, AddTopLayerToLineMesh)
 {
     std::unique_ptr<MeshLib::Mesh> const mesh(
-        MeshLib::MeshGenerator::generateLineMesh(1.0, 5));
+        MeshToolsLib::MeshGenerator::generateLineMesh(1.0, 5));
     double const height(1);
     constexpr bool const copy_material_ids = false;
-    std::unique_ptr<MeshLib::Mesh> const result(MeshLib::addLayerToMesh(
+    std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
         *mesh, height, "mesh", true, copy_material_ids));
 
     ASSERT_EQ(2 * mesh->getNumberOfNodes(), result->getNumberOfNodes());
     ASSERT_EQ(2 * mesh->getNumberOfElements(), result->getNumberOfElements());
 
     auto const& n_elems =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*result);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*result);
     ASSERT_EQ(5, n_elems.at(MeshLib::MeshElemType::LINE));
     ASSERT_EQ(5, n_elems.at(MeshLib::MeshElemType::QUAD));
 
@@ -92,17 +92,17 @@ TEST(MeshLib, AddTopLayerToLineMesh)
 TEST(MeshLib, AddBottomLayerToLineMesh)
 {
     std::unique_ptr<MeshLib::Mesh> const mesh(
-        MeshLib::MeshGenerator::generateLineMesh(1.0, 5));
+        MeshToolsLib::MeshGenerator::generateLineMesh(1.0, 5));
     double const height(1);
     constexpr bool const copy_material_ids = false;
-    std::unique_ptr<MeshLib::Mesh> const result(MeshLib::addLayerToMesh(
+    std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
         *mesh, height, "mesh", false, copy_material_ids));
 
     ASSERT_EQ(2 * mesh->getNumberOfNodes(), result->getNumberOfNodes());
     ASSERT_EQ(2 * mesh->getNumberOfElements(), result->getNumberOfElements());
 
     auto const& n_elems =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*result);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*result);
     ASSERT_EQ(5, n_elems.at(MeshLib::MeshElemType::LINE));
     ASSERT_EQ(5, n_elems.at(MeshLib::MeshElemType::QUAD));
 
@@ -113,7 +113,7 @@ TEST(MeshLib, AddBottomLayerToLineMesh)
 TEST(MeshLib, AddTopLayerToTriMesh)
 {
     std::unique_ptr<MeshLib::Mesh> const mesh(
-        MeshLib::MeshGenerator::generateRegularTriMesh(5, 5));
+        MeshToolsLib::MeshGenerator::generateRegularTriMesh(5, 5));
     std::string const& mat_name("MaterialIDs");
     auto* const mats = mesh->getProperties().createNewPropertyVector<int>(
         mat_name, MeshLib::MeshItemType::Cell);
@@ -130,14 +130,14 @@ TEST(MeshLib, AddTopLayerToTriMesh)
     ASSERT_EQ(2, mesh->getProperties().size());
     double const height(1);
     constexpr bool copy_material_ids = false;
-    std::unique_ptr<MeshLib::Mesh> const result(MeshLib::addLayerToMesh(
+    std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
         *mesh, height, "mesh", true, copy_material_ids));
 
     ASSERT_EQ(2 * mesh->getNumberOfNodes(), result->getNumberOfNodes());
     ASSERT_EQ(2 * mesh->getNumberOfElements(), result->getNumberOfElements());
 
     auto const& n_elems =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*result);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*result);
     ASSERT_EQ(mesh->getNumberOfElements(),
               n_elems.at(MeshLib::MeshElemType::TRIANGLE));
     ASSERT_EQ(mesh->getNumberOfElements(),
@@ -158,17 +158,17 @@ TEST(MeshLib, AddTopLayerToTriMesh)
 TEST(MeshLib, AddBottomLayerToTriMesh)
 {
     std::unique_ptr<MeshLib::Mesh> const mesh(
-        MeshLib::MeshGenerator::generateRegularTriMesh(5, 5));
+        MeshToolsLib::MeshGenerator::generateRegularTriMesh(5, 5));
     double const height(1);
     constexpr bool copy_material_ids = false;
-    std::unique_ptr<MeshLib::Mesh> const result(MeshLib::addLayerToMesh(
+    std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
         *mesh, height, "mesh", false, copy_material_ids));
 
     ASSERT_EQ(2 * mesh->getNumberOfNodes(), result->getNumberOfNodes());
     ASSERT_EQ(2 * mesh->getNumberOfElements(), result->getNumberOfElements());
 
     auto const& n_elems =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*result);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*result);
     ASSERT_EQ(50, n_elems.at(MeshLib::MeshElemType::TRIANGLE));
     ASSERT_EQ(50, n_elems.at(MeshLib::MeshElemType::PRISM));
 
@@ -179,17 +179,17 @@ TEST(MeshLib, AddBottomLayerToTriMesh)
 TEST(MeshLib, AddTopLayerToQuadMesh)
 {
     std::unique_ptr<MeshLib::Mesh> const mesh(
-        MeshLib::MeshGenerator::generateRegularQuadMesh(5, 5));
+        MeshToolsLib::MeshGenerator::generateRegularQuadMesh(5, 5));
     double const height(1);
     constexpr bool copy_material_ids = false;
-    std::unique_ptr<MeshLib::Mesh> const result(MeshLib::addLayerToMesh(
+    std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
         *mesh, height, "mesh", true, copy_material_ids));
 
     ASSERT_EQ(2 * mesh->getNumberOfNodes(), result->getNumberOfNodes());
     ASSERT_EQ(2 * mesh->getNumberOfElements(), result->getNumberOfElements());
 
     auto const& n_elems =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*result);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*result);
     ASSERT_EQ(25, n_elems.at(MeshLib::MeshElemType::QUAD));
     ASSERT_EQ(25, n_elems.at(MeshLib::MeshElemType::HEXAHEDRON));
 
@@ -200,17 +200,17 @@ TEST(MeshLib, AddTopLayerToQuadMesh)
 TEST(MeshLib, AddBottomLayerToQuadMesh)
 {
     std::unique_ptr<MeshLib::Mesh> const mesh(
-        MeshLib::MeshGenerator::generateRegularQuadMesh(5, 5));
+        MeshToolsLib::MeshGenerator::generateRegularQuadMesh(5, 5));
     double const height(1);
     constexpr bool copy_material_ids = false;
-    std::unique_ptr<MeshLib::Mesh> const result(MeshLib::addLayerToMesh(
+    std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
         *mesh, height, "mesh", false, copy_material_ids));
 
     ASSERT_EQ(2 * mesh->getNumberOfNodes(), result->getNumberOfNodes());
     ASSERT_EQ(2 * mesh->getNumberOfElements(), result->getNumberOfElements());
 
     auto const& n_elems =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*result);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*result);
     ASSERT_EQ(25, n_elems.at(MeshLib::MeshElemType::QUAD));
     ASSERT_EQ(25, n_elems.at(MeshLib::MeshElemType::HEXAHEDRON));
 
@@ -221,24 +221,24 @@ TEST(MeshLib, AddBottomLayerToQuadMesh)
 TEST(MeshLib, AddTopLayerToHexMesh)
 {
     std::unique_ptr<MeshLib::Mesh> const mesh(
-        MeshLib::MeshGenerator::generateRegularHexMesh(5, 5));
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(5, 5));
     double const height(1);
     constexpr bool copy_material_ids = false;
-    std::unique_ptr<MeshLib::Mesh> const result(MeshLib::addLayerToMesh(
+    std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
         *mesh, height, "mesh", true, copy_material_ids));
 
     ASSERT_EQ(mesh->getNumberOfNodes(), result->getNumberOfNodes() - 36);
     ASSERT_EQ(mesh->getNumberOfElements(), result->getNumberOfElements() - 25);
 
     auto const& n_elems =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*result);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*result);
     ASSERT_EQ(150, n_elems.at(MeshLib::MeshElemType::HEXAHEDRON));
 
     Eigen::Vector3d const dir({0, 0, -1});
     std::unique_ptr<MeshLib::Mesh> const test_input(
-        MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 90));
+        MeshToolsLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 90));
     std::unique_ptr<MeshLib::Mesh> const test_output(
-        MeshLib::MeshSurfaceExtraction::getMeshSurface(*result, dir, 90));
+        MeshToolsLib::MeshSurfaceExtraction::getMeshSurface(*result, dir, 90));
     AddLayerValidation::testZCoords3D(*test_input, *test_output, height);
     AddLayerValidation::validate(*result, true);
 }
@@ -246,24 +246,24 @@ TEST(MeshLib, AddTopLayerToHexMesh)
 TEST(MeshLib, AddBottomLayerToHexMesh)
 {
     std::unique_ptr<MeshLib::Mesh> const mesh(
-        MeshLib::MeshGenerator::generateRegularHexMesh(5, 5));
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(5, 5));
     double const height(1);
     constexpr bool copy_material_ids = false;
-    std::unique_ptr<MeshLib::Mesh> const result(MeshLib::addLayerToMesh(
+    std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
         *mesh, height, "mesh", false, copy_material_ids));
 
     ASSERT_EQ(mesh->getNumberOfNodes(), result->getNumberOfNodes() - 36);
     ASSERT_EQ(mesh->getNumberOfElements(), result->getNumberOfElements() - 25);
 
     auto const& n_elems =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*result);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*result);
     ASSERT_EQ(150, n_elems.at(MeshLib::MeshElemType::HEXAHEDRON));
 
     Eigen::Vector3d const dir({0, 0, 1});
     std::unique_ptr<MeshLib::Mesh> const test_input(
-        MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 90));
+        MeshToolsLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 90));
     std::unique_ptr<MeshLib::Mesh> const test_output(
-        MeshLib::MeshSurfaceExtraction::getMeshSurface(*result, dir, 90));
+        MeshToolsLib::MeshSurfaceExtraction::getMeshSurface(*result, dir, 90));
     AddLayerValidation::testZCoords3D(*test_input, *test_output, -1 * height);
     AddLayerValidation::validate(*result, true);
 }
@@ -271,12 +271,12 @@ TEST(MeshLib, AddBottomLayerToHexMesh)
 TEST(MeshLib, AddTopLayerToPrismMesh)
 {
     std::unique_ptr<MeshLib::Mesh> const mesh(
-        MeshLib::MeshGenerator::generateRegularTriMesh(5, 5));
+        MeshToolsLib::MeshGenerator::generateRegularTriMesh(5, 5));
     constexpr bool copy_material_ids = false;
-    std::unique_ptr<MeshLib::Mesh> const mesh2(
-        MeshLib::addLayerToMesh(*mesh, 5, "mesh", true, copy_material_ids));
+    std::unique_ptr<MeshLib::Mesh> const mesh2(MeshToolsLib::addLayerToMesh(
+        *mesh, 5, "mesh", true, copy_material_ids));
     double const height(1);
-    std::unique_ptr<MeshLib::Mesh> const result(MeshLib::addLayerToMesh(
+    std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
         *mesh2, height, "mesh", true, copy_material_ids));
 
     ASSERT_EQ(mesh2->getNumberOfNodes() / 2.0 * 3, result->getNumberOfNodes());
@@ -284,15 +284,15 @@ TEST(MeshLib, AddTopLayerToPrismMesh)
               result->getNumberOfElements());
 
     auto const& n_elems =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*result);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*result);
     ASSERT_EQ(50, n_elems.at(MeshLib::MeshElemType::TRIANGLE));
     ASSERT_EQ(100, n_elems.at(MeshLib::MeshElemType::PRISM));
 
     Eigen::Vector3d const dir({0, 0, -1});
     std::unique_ptr<MeshLib::Mesh> test_input(
-        MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh2, dir, 90));
+        MeshToolsLib::MeshSurfaceExtraction::getMeshSurface(*mesh2, dir, 90));
     std::unique_ptr<MeshLib::Mesh> test_output(
-        MeshLib::MeshSurfaceExtraction::getMeshSurface(*result, dir, 90));
+        MeshToolsLib::MeshSurfaceExtraction::getMeshSurface(*result, dir, 90));
     AddLayerValidation::testZCoords3D(*test_input, *test_output, height);
     AddLayerValidation::validate(*result, true);
 }
@@ -300,10 +300,10 @@ TEST(MeshLib, AddTopLayerToPrismMesh)
 TEST(MeshLib, AddBottomLayerToPrismMesh)
 {
     std::unique_ptr<MeshLib::Mesh> const mesh(
-        MeshLib::MeshGenerator::generateRegularTriMesh(5, 5));
+        MeshToolsLib::MeshGenerator::generateRegularTriMesh(5, 5));
     constexpr bool copy_material_ids = false;
-    std::unique_ptr<MeshLib::Mesh> const mesh2(
-        MeshLib::addLayerToMesh(*mesh, 5, "mesh", true, copy_material_ids));
+    std::unique_ptr<MeshLib::Mesh> const mesh2(MeshToolsLib::addLayerToMesh(
+        *mesh, 5, "mesh", true, copy_material_ids));
     double const height(1);
     std::string const& mat_name("MaterialIDs");
     auto* const mats = mesh2->getProperties().createNewPropertyVector<int>(
@@ -313,14 +313,14 @@ TEST(MeshLib, AddBottomLayerToPrismMesh)
         mats->resize(mesh2->getNumberOfElements(), 0);
     }
 
-    std::unique_ptr<MeshLib::Mesh> const result(MeshLib::addLayerToMesh(
+    std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
         *mesh2, height, "mesh", false, copy_material_ids));
     ASSERT_EQ(mesh2->getNumberOfNodes() / 2.0 * 3, result->getNumberOfNodes());
     ASSERT_EQ(mesh2->getNumberOfElements() / 2.0 * 3,
               result->getNumberOfElements());
 
     auto const& n_elems =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*result);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*result);
     ASSERT_EQ(mesh->getNumberOfElements(),
               n_elems.at(MeshLib::MeshElemType::TRIANGLE));
     ASSERT_EQ(2 * mesh->getNumberOfElements(),
@@ -336,9 +336,9 @@ TEST(MeshLib, AddBottomLayerToPrismMesh)
 
     Eigen::Vector3d const dir({0, 0, 1});
     std::unique_ptr<MeshLib::Mesh> test_input(
-        MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh2, dir, 90));
+        MeshToolsLib::MeshSurfaceExtraction::getMeshSurface(*mesh2, dir, 90));
     std::unique_ptr<MeshLib::Mesh> test_output(
-        MeshLib::MeshSurfaceExtraction::getMeshSurface(*result, dir, 90));
+        MeshToolsLib::MeshSurfaceExtraction::getMeshSurface(*result, dir, 90));
     AddLayerValidation::testZCoords3D(*test_input, *test_output, -1 * height);
     AddLayerValidation::validate(*result, true);
 }

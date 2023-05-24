@@ -15,9 +15,9 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshQuality/ElementQualityInterface.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshQuality/ElementQualityInterface.h"
 
 class PrismElementQuality : public ::testing::Test
 {
@@ -36,10 +36,10 @@ public:
         MeshLib::MeshQualityType const type)
     {
         std::unique_ptr<MeshLib::Mesh> mesh(
-            MeshLib::MeshGenerator::generateRegularPrismMesh(
+            MeshToolsLib::MeshGenerator::generateRegularPrismMesh(
                 lengths[0], lengths[1], lengths[2], n_subdivisions[0],
                 n_subdivisions[1], n_subdivisions[2]));
-        MeshLib::ElementQualityInterface element_quality(*mesh, type);
+        MeshToolsLib::ElementQualityInterface element_quality(*mesh, type);
         return element_quality.getQualityVector();
     }
 

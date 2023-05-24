@@ -22,9 +22,9 @@
 #include "BaseLib/Logging.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/NodePartitionedMesh.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
 
 namespace
 {

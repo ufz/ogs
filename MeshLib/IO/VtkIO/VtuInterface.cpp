@@ -32,9 +32,10 @@
 #endif
 
 #include "BaseLib/FileTools.h"
+#include "MeshLib/IO/VtkIO/VtkMeshConverter.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
+#include "VtkMeshConverter.h"
 
 namespace MeshLib
 {

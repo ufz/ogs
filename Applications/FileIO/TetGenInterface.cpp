@@ -25,8 +25,8 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshInformation.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshInformation.h"
 
 namespace FileIO
 {
@@ -752,7 +752,8 @@ void TetGenInterface::write2dElements(std::ofstream& out,
                                       const MeshLib::Mesh& mesh) const
 {
     // the surfaces header
-    auto const& types = MeshLib::MeshInformation::getNumberOfElementTypes(mesh);
+    auto const& types =
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(mesh);
     std::size_t const n_tri =
         (types.find(MeshLib::MeshElemType::TRIANGLE) != types.end())
             ? types.at(MeshLib::MeshElemType::TRIANGLE)

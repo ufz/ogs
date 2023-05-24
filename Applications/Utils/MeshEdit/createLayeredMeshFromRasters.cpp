@@ -28,7 +28,7 @@
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshLayerMapper.h"
+#include "MeshToolsLib/MeshGenerators/MeshLayerMapper.h"
 
 int main(int argc, char* argv[])
 {
@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
     }
     std::reverse(raster_paths.begin(), raster_paths.end());
 
-    MeshLib::MeshLayerMapper mapper;
+    MeshToolsLib::MeshLayerMapper mapper;
     if (auto const rasters = FileIO::readRasters(raster_paths))
     {
         if (!mapper.createLayers(*sfc_mesh, *rasters, min_thickness))

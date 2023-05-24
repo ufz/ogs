@@ -16,7 +16,7 @@
 #include "GeoLib/Point.h"
 #include "MeshGeoToolsLib/GeoMapper.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "Tests/AutoCheckTools.h"
 
 namespace ac = autocheck;
@@ -33,7 +33,7 @@ struct MeshGeoToolsLibGeoMapper : public ::testing::Test
     // Generates structured surface mesh, approximation of the surface described
     // by the given function, i.e., std::cos(x+y).
     std::unique_ptr<MeshLib::Mesh> _surface_mesh{
-        MeshLib::MeshGenerator::createSurfaceMesh(
+        MeshToolsLib::MeshGenerator::createSurfaceMesh(
             "Test", MathLib::Point3d{{{0.0, 0.0, 0.0}}},
             MathLib::Point3d{{{1.0, 1.0, 0.0}}}, {{110, 60}},
             [](double x, double y) { return std::cos(x + y); })};
@@ -42,10 +42,10 @@ struct MeshGeoToolsLibGeoMapper : public ::testing::Test
 };
 
 // The test maps points with random z coordinate on the surface mesh create by
-// MeshLib::MeshGenerator::createSurfaceMesh that approximates a given surface
-// function. If the distance of the z coordinate of the mapped point p and the
-// value of the surface function f(p_x, p_y) is smaller than a tolerance it is
-// assumed that the mapping is correct.
+// MeshToolsLib::MeshGenerator::createSurfaceMesh that approximates a given
+// surface function. If the distance of the z coordinate of the mapped point p
+// and the value of the surface function f(p_x, p_y) is smaller than a tolerance
+// it is assumed that the mapping is correct.
 TEST_F(MeshGeoToolsLibGeoMapper, PointsOnSurfaceMesh)
 {
     auto testMapPointsOnMeshSurface =

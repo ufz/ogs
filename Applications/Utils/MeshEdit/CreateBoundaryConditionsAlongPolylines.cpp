@@ -30,8 +30,8 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
 
 void convertMeshNodesToGeometry(std::vector<MeshLib::Node*> const& nodes,
                                 std::vector<std::size_t> const& node_ids,
@@ -195,8 +195,8 @@ int main(int argc, char* argv[])
     Eigen::Vector3d const dir({0, 0, -1});
     double const angle(90);
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
-        MeshLib::MeshSurfaceExtraction::getMeshSurface(*subsurface_mesh, dir,
-                                                       angle));
+        MeshToolsLib::MeshSurfaceExtraction::getMeshSurface(*subsurface_mesh,
+                                                            dir, angle));
     INFO("done.");
     subsurface_mesh.reset(nullptr);
 

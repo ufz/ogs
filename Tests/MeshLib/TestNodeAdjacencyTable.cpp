@@ -13,16 +13,16 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/NodeAdjacencyTable.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 TEST(MeshLib, CreateNodeAdjacencyTable1D)
 {
     using namespace MeshLib;
 
-    std::unique_ptr<Mesh> mesh(
-        MeshGenerator::generateLineMesh(double(1), std::size_t(10)));
+    std::unique_ptr<Mesh> mesh(MeshToolsLib::MeshGenerator::generateLineMesh(
+        double(1), std::size_t(10)));
 
     NodeAdjacencyTable table(*mesh);
 
@@ -58,8 +58,9 @@ TEST(MeshLib, CreateNodeAdjacencyTable2D)
 {
     using namespace MeshLib;
 
-    std::unique_ptr<Mesh> mesh(MeshGenerator::generateRegularQuadMesh(
-        1, 1, std::size_t(10), std::size_t(10)));
+    std::unique_ptr<Mesh> mesh(
+        MeshToolsLib::MeshGenerator::generateRegularQuadMesh(
+            1, 1, std::size_t(10), std::size_t(10)));
 
     NodeAdjacencyTable table(*mesh);
 
@@ -97,7 +98,8 @@ TEST(MeshLib, CreateNodeAdjacencyTable3D)
     using namespace MeshLib;
 
     std::unique_ptr<Mesh> mesh(
-        MeshGenerator::generateRegularHexMesh(1, 1, 1, 10.0, 10.0, 10.0));
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(1, 1, 1, 10.0, 10.0,
+                                                            10.0));
     // double(1), double(1), double(1), std::size_t(10), std::size_t(10),
     // std::size_t(10)));
 

@@ -23,7 +23,7 @@
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEnums.h"
-#include "MeshLib/MeshGenerators/RasterToMesh.h"
+#include "MeshToolsLib/MeshGenerators/RasterToMesh.h"
 
 int main(int argc, char* argv[])
 {
@@ -100,8 +100,9 @@ int main(int argc, char* argv[])
     else if (intensity_type == MeshLib::UseIntensityAs::MATERIALS)
         array_name = "MaterialIDs";
 
-    std::unique_ptr<MeshLib::Mesh> const mesh(MeshLib::RasterToMesh::convert(
-        *raster, elem_type, intensity_type, array_name));
+    std::unique_ptr<MeshLib::Mesh> const mesh(
+        MeshToolsLib::RasterToMesh::convert(*raster, elem_type, intensity_type,
+                                            array_name));
 
     if (mesh == nullptr)
     {

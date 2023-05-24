@@ -28,8 +28,8 @@
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
 
 std::vector<std::size_t> getNodes(
     GeoLib::Point const& pnt, std::vector<MeshLib::Node*> const& nodes,

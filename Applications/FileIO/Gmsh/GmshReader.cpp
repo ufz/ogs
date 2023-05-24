@@ -26,8 +26,8 @@
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/ElementValueModification.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/ElementValueModification.h"
 
 namespace FileIO
 {
@@ -387,7 +387,7 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
                              materials.cend());
     }
 
-    MeshLib::ElementValueModification::condense(*mesh);
+    MeshToolsLib::ElementValueModification::condense(*mesh);
 
     INFO("\t... finished.");
     INFO("Nr. Nodes: {:d}.", nodes.size());

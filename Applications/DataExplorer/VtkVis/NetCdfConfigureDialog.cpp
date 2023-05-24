@@ -17,7 +17,7 @@
 #include "GeoLib/Raster.h"
 #include "MathLib/Point3d.h"
 #include "MeshLib/MeshEnums.h"
-#include "MeshLib/MeshGenerators/RasterToMesh.h"
+#include "MeshToolsLib/MeshGenerators/RasterToMesh.h"
 #include "VtkVis/VtkGeoImageSource.h"
 #include "VtkVis/VtkRaster.h"
 
@@ -351,7 +351,7 @@ void NetCdfConfigureDialog::createDataObject()
         {
             useIntensity = MeshLib::UseIntensityAs::DATAVECTOR;
         }
-        _currentMesh = MeshLib::RasterToMesh::convert(
+        _currentMesh = MeshToolsLib::RasterToMesh::convert(
             data_array.data(), header, meshElemType, useIntensity,
             _currentVar.getName());
     }

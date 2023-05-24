@@ -22,7 +22,7 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/AddLayerToMesh.h"
+#include "MeshToolsLib/MeshEditing/AddLayerToMesh.h"
 
 int main(int argc, char* argv[])
 {
@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
     }
     INFO("done.");
 
-    std::unique_ptr<MeshLib::Mesh> result(MeshLib::addLayerToMesh(
+    std::unique_ptr<MeshLib::Mesh> result(MeshToolsLib::addLayerToMesh(
         *subsfc_mesh, layer_thickness_arg.getValue(), mesh_out_arg.getValue(),
         layer_position_arg.getValue(), copy_material_ids_arg.getValue()));
     if (!result)

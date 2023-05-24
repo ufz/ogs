@@ -4,7 +4,7 @@ ogs_add_library(
 )
 target_link_libraries(
     OGSFileConverterLib PUBLIC ApplicationsFileIO MathLib QtBase
-    INTERFACE MeshLib
+    INTERFACE MeshLib MeshToolsLib
 )
 
 set_target_properties(OGSFileConverterLib PROPERTIES AUTOMOC TRUE AUTOUIC TRUE)

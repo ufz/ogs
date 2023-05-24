@@ -26,8 +26,8 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshInformation.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshInformation.h"
 
 int main(int argc, char* argv[])
 {
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
     }
 
     std::unique_ptr<MeshLib::Mesh> mesh(reader.getMesh());
-    MeshLib::MeshInformation::writePropertyVectorInformation(*mesh);
+    MeshToolsLib::MeshInformation::writePropertyVectorInformation(*mesh);
 
     INFO("Writing mesh to '{:s}'.", mesh_output_arg.getValue());
     MeshLib::IO::writeMeshToFile(*mesh, mesh_output_arg.getValue());

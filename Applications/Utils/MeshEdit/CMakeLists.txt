@@ -37,13 +37,13 @@ target_include_directories(
     RemoveGhostData PRIVATE ${PROJECT_SOURCE_DIR}/ThirdParty/paraview
 )
 target_link_libraries(
-    RemoveGhostData GitInfoLib MeshLib tclap VTK::FiltersParallel
+    RemoveGhostData GitInfoLib MeshLib MeshToolsLib tclap VTK::FiltersParallel
 )
 install(TARGETS RemoveGhostData RUNTIME DESTINATION bin)
 
 foreach(tool ${TOOLS})
     ogs_add_executable(${tool} ${tool}.cpp)
-    target_link_libraries(${tool} GitInfoLib MeshLib tclap)
+    target_link_libraries(${tool} GitInfoLib MeshLib MeshToolsLib tclap)
 endforeach()
 install(TARGETS ${TOOLS} RUNTIME DESTINATION bin)
 
@@ -53,6 +53,7 @@ target_link_libraries(
 target_link_libraries(
     CreateBoundaryConditionsAlongPolylines MeshGeoToolsLib ApplicationsFileIO
 )
+
 target_link_libraries(createLayeredMeshFromRasters ApplicationsFileIO)
 target_link_libraries(MapGeometryToMeshSurface MeshGeoToolsLib)
 target_link_libraries(MeshMapping ApplicationsFileIO)

@@ -18,16 +18,16 @@
 #include "MeshLib/ElementStatus.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 TEST(MeshLib, ElementStatus)
 {
     const unsigned width(100);
     const unsigned elements_per_side(20);
     auto const mesh = std::unique_ptr<MeshLib::Mesh>{
-        MeshLib::MeshGenerator::generateRegularQuadMesh(width,
-                                                        elements_per_side)};
+        MeshToolsLib::MeshGenerator::generateRegularQuadMesh(
+            width, elements_per_side)};
 
     auto* const material_id_properties =
         mesh->getProperties().createNewPropertyVector<int>(

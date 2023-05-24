@@ -17,9 +17,9 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Logging.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/PropertyVector.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "ParameterLib/CurveScaledParameter.h"
 #include "ParameterLib/GroupBasedParameter.h"
 #include "Tests/TestTools.h"
@@ -47,7 +47,8 @@ struct ParameterLibParameter : public ::testing::Test
     void SetUp() override
     {
         // A mesh with four elements, five points.
-        meshes.emplace_back(MeshLib::MeshGenerator::generateLineMesh(4u, 1.0));
+        meshes.emplace_back(
+            MeshToolsLib::MeshGenerator::generateLineMesh(4u, 1.0));
     }
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
 };

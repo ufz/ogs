@@ -88,6 +88,7 @@ target_link_libraries(
             autocheck
             gmock
             gtest
+            MeshToolsLib
             MeshGeoToolsLib
             MaterialLib
             MathLib

@@ -20,7 +20,7 @@
 #include "InfoLib/TestInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/RasterDataToMesh.h"
+#include "MeshToolsLib/MeshEditing/RasterDataToMesh.h"
 
 class RasterDataToMeshTest : public ::testing::Test
 {
@@ -43,8 +43,8 @@ protected:
 TEST_F(RasterDataToMeshTest, readRasterValuesToNodes)
 {
     std::string const vec_name = "imgvalues";
-    bool ret = MeshLib::RasterDataToMesh::projectToNodes(*_mesh, *_raster, 0,
-                                                         vec_name);
+    bool ret = MeshToolsLib::RasterDataToMesh::projectToNodes(*_mesh, *_raster,
+                                                              0, vec_name);
     ASSERT_TRUE(ret);
 
     std::string const compare_path = TestInfoLib::TestInfo::data_path +
@@ -65,8 +65,8 @@ TEST_F(RasterDataToMeshTest, readRasterValuesToNodes)
 TEST_F(RasterDataToMeshTest, readRasterValuesToElements)
 {
     std::string const vec_name = "imgvalues";
-    bool ret = MeshLib::RasterDataToMesh::projectToElements(*_mesh, *_raster, 0,
-                                                            vec_name);
+    bool ret = MeshToolsLib::RasterDataToMesh::projectToElements(
+        *_mesh, *_raster, 0, vec_name);
     ASSERT_TRUE(ret);
 
     std::string const compare_path = TestInfoLib::TestInfo::data_path +

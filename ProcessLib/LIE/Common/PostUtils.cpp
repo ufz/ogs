@@ -10,8 +10,8 @@
 #include "PostUtils.h"
 
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
 
 namespace ProcessLib
 {
