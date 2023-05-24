@@ -10,7 +10,7 @@ function(OgsTest)
 
     set(options DISABLED)
     set(oneValueArgs PROJECTFILE RUNTIME)
-    set(multiValueArgs WRAPPER PROPERTIES)
+    set(multiValueArgs WRAPPER PROPERTIES LABELS)
     cmake_parse_arguments(
         OgsTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
     )
@@ -68,8 +68,14 @@ function(OgsTest)
     )
 
     current_dir_as_list(ProcessLib labels)
-    if(${OgsTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
+    if(${AddTest_LABELS})
+        list(APPEND labels ${AddTest_LABELS})
+    else()
         list(APPEND labels default)
+    endif()
+
+    if(${OgsTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
+        list(APPEND labels small)
     else()
         list(APPEND labels large)
     endif()
