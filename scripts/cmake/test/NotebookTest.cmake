@@ -7,7 +7,7 @@ function(NotebookTest)
 
     set(options DISABLED)
     set(oneValueArgs NOTEBOOKFILE RUNTIME)
-    set(multiValueArgs WRAPPER RESOURCE_LOCK PROPERTIES)
+    set(multiValueArgs WRAPPER RESOURCE_LOCK PROPERTIES LABELS)
     cmake_parse_arguments(
         NotebookTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
     )
@@ -75,10 +75,10 @@ function(NotebookTest)
         current_dir_as_list(ProcessLib labels)
     endif()
     list(APPEND labels Notebook)
-    if(${NotebookTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
-        list(APPEND labels default)
+    if(DEFINED NotebookTest_LABELS)
+        list(APPEND labels ${NotebookTest_LABELS})
     else()
-        list(APPEND labels large)
+        list(APPEND labels default)
     endif()
 
     list(APPEND _props ENVIRONMENT_MODIFICATION
