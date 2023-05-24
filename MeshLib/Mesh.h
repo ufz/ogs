@@ -21,6 +21,7 @@
 #include <vector>
 
 #include "BaseLib/Error.h"
+#include "MathLib/Point3d.h"
 #include "MeshEnums.h"
 #include "Properties.h"
 
@@ -203,5 +204,9 @@ inline constexpr ranges::views::view_closure ids =
 /// For an element of a range view return its name.
 inline constexpr ranges::views::view_closure names =
     ranges::views::transform([](auto const& a) { return a->getName(); });
+
+inline constexpr ranges::views::view_closure coords =
+    ranges::views::transform([](MathLib::Point3d const* n)
+                             { return std::span(n->data(), n->data() + 3); });
 }  // namespace views
 }  // namespace MeshLib
