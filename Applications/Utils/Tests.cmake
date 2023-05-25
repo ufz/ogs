@@ -523,11 +523,14 @@ endif()
 
 if(SNAKEMAKE AND TEE_TOOL_PATH AND BASH_TOOL_PATH AND OGS_USE_MPI)
     add_test(NAME snakemake_reorder_mesh
-        COMMAND bash -c "${SNAKEMAKE} -j 1 \
+        COMMAND bash -c "${SNAKEMAKE} -j 4 \
             --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml --forceall \
             -s ${PROJECT_SOURCE_DIR}/Applications/Utils/TestReorderMesh.smk"
     )
-    set_tests_properties(snakemake_reorder_mesh PROPERTIES LABELS "default")
+    set_tests_properties(snakemake_reorder_mesh PROPERTIES
+        LABELS "default"
+        RUN_SERIAL TRUE # prevent unidentified race condition
+    )
 endif()
 
 # Regression test for https://gitlab.opengeosys.org/ogs/ogs/-/issues/1845 fixed in

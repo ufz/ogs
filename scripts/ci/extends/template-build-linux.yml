@@ -72,6 +72,10 @@
             ctest_arguments="--preset=${CMAKE_PRESET}${preset_postfix}"
           fi
 
+          if [ "$BUILD_CTEST_LARGE" != true ]; then
+            ctest_arguments="${ctest_arguments} -LE large"
+          fi
+
           if [[ ! -z "$CTEST_TIMEOUT" ]]; then
             ctest_timeout="$CTEST_TIMEOUT"
           fi
@@ -84,6 +88,7 @@
           if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*unit_tests.* ]]; then
             echo "Skipping ctests because of unit_tests-label."
           else
+            echo "ctest arguments: ${ctest_arguments}"
             maybe_run_with_xvfb ctest \
                 -M Experimental --group "${ctest_group}" "${regex_argument}" \
                 --test-dir "${build_dir_full}" -T Start -T Test -T Submit \

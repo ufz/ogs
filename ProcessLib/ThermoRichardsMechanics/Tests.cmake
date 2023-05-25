@@ -145,7 +145,8 @@ AddTest(
     WRAPPER_ARGS -np 2
     TESTER vtkdiff
     # Run on envinf only because PETSc MUMPS solver is used
-    REQUIREMENTS OGS_USE_PETSC AND "${HOSTNAME}" MATCHES "envinf.*"
+    REQUIREMENTS OGS_USE_PETSC
+    LABELS "petsc-mumps"
     RUNTIME 2
     DIFF_DATA
     GLOB liakopoulosBulk_mixElem_t_*.vtu sigma sigma 1e-9 1e-12
@@ -282,6 +283,7 @@ AddTest(
     WRAPPER_ARGS -np 3
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
+    LABELS "petsc-mumps"
     DIFF_DATA
     cube_1e3_tm_ts_17_t_72000_000000_0.vtu cube_1e3_tm_ts_17_t_72000_000000_0.vtu velocity velocity 1e-10 1e-9
     cube_1e3_tm_ts_17_t_72000_000000_1.vtu cube_1e3_tm_ts_17_t_72000_000000_1.vtu velocity velocity 1e-10 1e-9
@@ -325,6 +327,7 @@ AddTest(
     WRAPPER_ARGS -np 3
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
+    LABELS "petsc-mumps"
     DIFF_DATA
     PointHeatSource_ts_10_t_50000_000000_0.vtu PointHeatSource_ts_10_t_50000_000000_0.vtu displacement displacement 1e-10 1.0e-9
     PointHeatSource_ts_10_t_50000_000000_0.vtu PointHeatSource_ts_10_t_50000_000000_0.vtu pressure pressure 1e-10 1.0e-6
@@ -355,6 +358,7 @@ AddTest(
     WRAPPER_ARGS -np 3
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
+    LABELS "petsc-mumps"
     DIFF_DATA
     PointHeatSource_gml_ts_10_t_50000_000000_0.vtu PointHeatSource_gml_ts_10_t_50000_000000_0.vtu displacement displacement 1e-10 1.0e-9
     PointHeatSource_gml_ts_10_t_50000_000000_0.vtu PointHeatSource_gml_ts_10_t_50000_000000_0.vtu pressure pressure 1e-10 1.0e-6
@@ -385,6 +389,7 @@ AddTest(
     WRAPPER_ARGS -np 3
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
+    LABELS "petsc-mumps"
     DIFF_DATA
 #
     Decovalex-0_ts_10_t_864000_000000_0.vtu Decovalex-0_ts_10_t_864000_000000_0.vtu displacement displacement 1e-10 1.0e-9

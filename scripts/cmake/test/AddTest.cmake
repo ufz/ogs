@@ -77,6 +77,7 @@ function(AddTest)
         REQUIREMENTS
         PYTHON_PACKAGES
         PROPERTIES
+        LABELS
     )
     cmake_parse_arguments(
         AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
@@ -252,8 +253,13 @@ function(AddTest)
     )
 
     current_dir_as_list(ProcessLib labels)
-    if(${AddTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
+    if(DEFINED AddTest_LABELS)
+        list(APPEND labels ${AddTest_LABELS})
+    else()
         list(APPEND labels default)
+    endif()
+    if(${AddTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
+        list(APPEND labels small)
     else()
         list(APPEND labels large)
     endif()
