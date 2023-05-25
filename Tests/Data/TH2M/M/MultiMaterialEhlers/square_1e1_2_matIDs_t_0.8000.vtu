@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="20"                   NumberOfCells="12"                  >
+      <PointData>
+        <DataArray type="Float64" Name="EquivalentPlasticStrain" format="appended" RangeMin="0.0001669833"         RangeMax="0.0001669833"         offset="0"                   />
+        <DataArray type="Float64" Name="NodalForces" NumberOfComponents="2" format="appended" RangeMin="4.8334078197e-16"     RangeMax="0.027913543667"       offset="124"                 />
+        <DataArray type="Float64" Name="capillary_pressure" format="appended" RangeMin="0"                    RangeMax="0"                    offset="452"                 />
+        <DataArray type="Float64" Name="displacement" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="0.00056568542495"     offset="512"                 />
+        <DataArray type="Float64" Name="eps_p.D" NumberOfComponents="4" format="appended" RangeMin="0.00011807502378"     RangeMax="0.00011807502378"     offset="724"                 />
+        <DataArray type="Float64" Name="eps_p.V" format="appended" RangeMin="8.350834833e-05"      RangeMax="8.350834833e-05"      offset="1184"                />
+        <DataArray type="Float64" Name="eps_p.eff" format="appended" RangeMin="9.6407853205e-05"     RangeMax="9.6407853205e-05"     offset="1312"                />
+        <DataArray type="Float64" Name="epsilon" NumberOfComponents="4" format="appended" RangeMin="0.00056568542495"     RangeMax="0.00056568542495"     offset="1440"                />
+        <DataArray type="Float64" Name="gas_pressure" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1892"                />
+        <DataArray type="Float64" Name="sigma" NumberOfComponents="4" format="appended" RangeMin="0.13736372782"        RangeMax="0.13736372782"        offset="1952"                />
+        <DataArray type="Float64" Name="temperature" format="appended" RangeMin="0"                    RangeMax="0"                    offset="2472"                />
+      </PointData>
+      <CellData>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="1.4142135624"         offset="2532"                />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="2680"                />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="2836"                />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="2936"                />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _AQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAAOwAAAAAAAAA=eF5bbfV3PvtjVft51hC6xgZCM4DBj/8w+hhU/gqUtsChrsIWIh4EVeduiV1dO1RdBVSdGQ51AGckO1M=AQAAAAAAAAAAgAAAAAAAAEABAAAAAAAA1AAAAAAAAAA=eF5b9MWgb+XWrv0Xty83iZvaY88ABnP2/MgB8edA+BXPbK5lLkPwHVbuifm5FMx/88wQpN++OmoZWL9IF8i8Wfsh6q7sAVENL7T3gugFPuZg+oJBGJgO0PC0Bavb8NIGTBd82hO3HWTeLIg9CkdtHj3Vh5t3QScKrH5BYAJYv8IsGzCd4OwFFp+wNBRiHsN+iHkH1u+xCEcyz+DKnm/1+mD/5sxYCXIv2NwbNkF7n3CtAPkH4u6GxTY6+5Yh+A927Cl6D+H/MoT4N6IT7N/9AJQ3cYI=AQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAADAAAAAAAAAA=eF5jYBjcAAAAoAABAQAAAAAAAAAAgAAAAAAAAEABAAAAAAAAfgAAAAAAAAA=eF5jYEAFrM4yrx+ZSdnD+MFgvhacX28UaqC10hjO1wXLW8H5cHOa9s55U6m43xNqngiUnwc1zx7KL4WaJw3lw8zjhvJh5smC+Yb7GV0g5glC+SZQ8wyg/CSoeTJQPsw8USgfzd37paDmwfhOUPNg/FCoeTA+zDwYHwBl32m7AQAAAAAAAAAAgAAAAAAAAIACAAAAAAAANwEAAAAAAAA=eF5jYACBH/8ZyKSnW/+dz/5Y1H4GhN6/lnW2e0XaI+tYtciD/m0frPdZQeSPQej9P97MEmay/2m9tHzauztW/HvYoPKSUPk9IZZtixiFbRRm73cMK7tjTch+QvRyqPlboOZXmWidVX7PabNnbZ7rEjkxmzKofANUXuoWF/OUuv/W9WsfK5TavrZOhsrnQOW3fRIo7xNhs2ljqXS6LSJsQ8h+QvRDqPl3oOb/f/fthxXnk91X438k/H3HYiMGDV9xaPj+v8kcYyrwcLfRGjO/yyLPrZWg8nJQ+X73kwfWpn7d/X97VPp2Iy6K3acPdZ8C1H1Tjtk2/tnCvWf7bj1J34vCez5A5Z9D5Q/e/TfZgPHf7kNeGbenVvLt2Qh13yKo+zzvT2CXiuXbs7uNXaz2xR1rAPOW9pM=AQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAAPgAAAAAAAAA=eF5jYACBH/8ZoPSiHNYGtSei9keyITQXlGZAU7cBKl4DpbNxqHsEFReHmquUg12dFlTdByi9CqoOAAelMUs=AQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAAPwAAAAAAAAA=eF5jYACBH/8ZoDTftjy/S66S9nJbIbTnFgjNgKaOHSp/DCq/DYc6J6i6SijdshW7uhyofh+ovBrUHQBoTjZMAQAAAAAAAAAAgAAAAAAAAIACAAAAAAAAMAEAAAAAAAA=eF5jdpZ5/cjMyp4VQu9ngIIAf783lXtP7w6BysugyS8KaUv0VLa0qYPKx6PJK51qVX+haGzDBpVXQ5MvPLnpwW1hzT07nCDy/GjyB/Z7uN99cW63G1S/Bpr8k0b/WXwvtfbkQeWl0O1/u0uuXMbIxhkq74omP91hGuP/x7p7XkHt10KTd0kMsOY4JmrzECqviCYvdadzHrOMoc0/qPnWaPJrpiUJKOmZ2RhC5fXR5V+teyj9ycTmINR8QTR539ald9tqbPdAw81eD01+1waTs+6KgjY6UHkrNPlvu+w3+obq2Ii4YA+/GRa/qh5pPbB2guoPQpP/t+7d86WaijZzoO774oQqzxAvF/5LT9VGBKrfBE3/ttCpSRuvGe9Jgcr7ocn3eR8UuvPnjzUABMXUCQ==AQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAADAAAAAAAAAA=eF5jYBjcAAAAoAABAQAAAAAAAAAAgAAAAAAAAIACAAAAAAAAYwEAAAAAAAA=eF5zvb9Ey55ji33d32UmcVP37I+zYRGxk5q4v+rl9Prb3QF7EqDyPlD5EKi8h9Wj9s7ju20soPJbofLythB59Tm572web7FxhMp3QOWToPqZ8rM/stku2aMHlV8DlXeDyqtMzYjr3525JwIqHwWVXwyV38Gb78Ijsn1PHFQ+BCrfD5Wv0ONwPhixw8YUKr8aKn8WKt/yUVflj/WKPSZQ+QVo/he6YfB3QttUGzOo/CKofDhU3sx4AVPB6zU2DVB5eai8AtT/AmmCj8W+7LRxgspPgMqvgupne/0s0ixzt40hmv0yUPm97Dd1q+bu2mOHpr8JKv9oT4tB8cYJNjD5+VD5Pqi8gXR+gHT7SpsOqDwbVJ4T6r4VIuU3L8SkwuMPFv7voPq9NDi3TzBsg/sfZv9za4j8rZ88ezec3AjXD3N/DVR/reXj7BMnNu1xgcrPgsrvgsqLBLQ5mDZU2gAAtf8cEA==AQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAADAAAAAAAAAA=eF5jYBjcAAAAoAABAQAAAAAAAAAAgAAAAAAAAOABAAAAAAAATgAAAAAAAAA=eF590LEJACAMRNFs5hTuncY+jZAyIwiCiNHvdXlXHETkFy1vN3AHD3CROtNSr+XtBu7gAb52O+xmN3AHD/Ddn/f6c3YDd/C4fADMATcAAQAAAAAAAAAAgAAAAAAAAIABAAAAAAAAUwAAAAAAAAA=eF5djTcOwEAQhM45+xz+/1cXHhq2QUJotpT/mnAMB/k2nNThu3BWh+/DRR1/2NvCVZ69XR2evUMdnr+nOv6wd4VVnr1bHZ69Rx2ev6+6DwNvAck=AQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAAKAAAAAAAAAA=eF5jYYAADijNA6UFoLQIlJaA0jJQWgFKq0BpDSitA6UNoDQALeABOQ==AQAAAAAAAAAAgAAAAAAAAAwAAAAAAAAACwAAAAAAAAA=eF7j5EQAAALKAG0=
+  </AppendedData>
+</VTKFile>

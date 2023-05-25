@@ -47,7 +47,7 @@ struct SecondaryData
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
-class TH2MLocalAssembler : public LocalAssemblerInterface
+class TH2MLocalAssembler : public LocalAssemblerInterface<DisplacementDim>
 {
 public:
     using ShapeMatricesTypeDisplacement =
@@ -441,6 +441,36 @@ private:
     {
         return ProcessLib::getIntegrationPointScalarData(_ip_data, &IpData::h_S,
                                                          cache);
+    }
+
+    unsigned getNumberOfIntegrationPoints() const override
+    {
+        return _integration_method.getNumberOfPoints();
+    }
+
+    int getMaterialID() const override
+    {
+        return _process_data.material_ids == nullptr
+                   ? 0
+                   : (*_process_data.material_ids)[_element.getID()];
+    }
+
+    std::vector<double> getMaterialStateVariableInternalState(
+        std::function<std::span<double>(
+            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
+                MaterialStateVariables&)> const& get_values_span,
+        int const& n_components) const override
+    {
+        return ProcessLib::getIntegrationPointDataMaterialStateVariables(
+            _ip_data, &IpData::material_state_variables, get_values_span,
+            n_components);
+    }
+
+    typename MaterialLib::Solids::MechanicsBase<
+        DisplacementDim>::MaterialStateVariables const&
+    getMaterialStateVariablesAt(unsigned integration_point) const override
+    {
+        return *_ip_data[integration_point].material_state_variables;
     }
 
 private:

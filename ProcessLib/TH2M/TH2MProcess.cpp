@@ -17,6 +17,7 @@
 #include "MathLib/KelvinVector.h"
 #include "MeshLib/Elements/Utils.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Utils/ComputeResiduum.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
@@ -52,26 +53,27 @@ TH2MProcess<DisplacementDim>::TH2MProcess(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, local_assemblers_,
-            &LocalAssemblerInterface::getSigma));
+            &LocalAssemblerInterface<DisplacementDim>::getSigma));
 
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
             "swelling_stress_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, local_assemblers_,
-            &LocalAssemblerInterface::getSwellingStress));
+            &LocalAssemblerInterface<DisplacementDim>::getSwellingStress));
 
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
             "saturation_ip", 1 /*n components*/, integration_order,
-            local_assemblers_, &LocalAssemblerInterface::getSaturation));
+            local_assemblers_,
+            &LocalAssemblerInterface<DisplacementDim>::getSaturation));
 
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, local_assemblers_,
-            &LocalAssemblerInterface::getEpsilon));
+            &LocalAssemblerInterface<DisplacementDim>::getEpsilon));
 }
 
 template <int DisplacementDim>
@@ -179,75 +181,109 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
                              std::move(get_ip_values_function)));
     };
 
-    add_secondary_variable("sigma",
-                           MathLib::KelvinVector::KelvinVectorType<
-                               DisplacementDim>::RowsAtCompileTime,
-                           &LocalAssemblerInterface::getIntPtSigma);
-    add_secondary_variable("swelling_stress",
-                           MathLib::KelvinVector::KelvinVectorType<
-                               DisplacementDim>::RowsAtCompileTime,
-                           &LocalAssemblerInterface::getIntPtSwellingStress);
-    add_secondary_variable("epsilon",
-                           MathLib::KelvinVector::KelvinVectorType<
-                               DisplacementDim>::RowsAtCompileTime,
-                           &LocalAssemblerInterface::getIntPtEpsilon);
-    add_secondary_variable("velocity_gas", DisplacementDim,
-                           &LocalAssemblerInterface::getIntPtDarcyVelocityGas);
     add_secondary_variable(
-        "velocity_liquid", DisplacementDim,
-        &LocalAssemblerInterface::getIntPtDarcyVelocityLiquid);
+        "sigma",
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim>::RowsAtCompileTime,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtSigma);
     add_secondary_variable(
-        "diffusion_velocity_vapour_gas", DisplacementDim,
-        &LocalAssemblerInterface::getIntPtDiffusionVelocityVapourGas);
+        "swelling_stress",
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim>::RowsAtCompileTime,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtSwellingStress);
     add_secondary_variable(
-        "diffusion_velocity_gas_gas", DisplacementDim,
-        &LocalAssemblerInterface::getIntPtDiffusionVelocityGasGas);
+        "epsilon",
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim>::RowsAtCompileTime,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtEpsilon);
     add_secondary_variable(
-        "diffusion_velocity_solute_liquid", DisplacementDim,
-        &LocalAssemblerInterface::getIntPtDiffusionVelocitySoluteLiquid);
+        "velocity_gas", mesh.getDimension(),
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtDarcyVelocityGas);
     add_secondary_variable(
-        "diffusion_velocity_liquid_liquid", DisplacementDim,
-        &LocalAssemblerInterface::getIntPtDiffusionVelocityLiquidLiquid);
+        "velocity_liquid", mesh.getDimension(),
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtDarcyVelocityLiquid);
+    add_secondary_variable(
+        "diffusion_velocity_vapour_gas", mesh.getDimension(),
+        &LocalAssemblerInterface<
+            DisplacementDim>::getIntPtDiffusionVelocityVapourGas);
+    add_secondary_variable(
+        "diffusion_velocity_gas_gas", mesh.getDimension(),
+        &LocalAssemblerInterface<
+            DisplacementDim>::getIntPtDiffusionVelocityGasGas);
+    add_secondary_variable(
+        "diffusion_velocity_solute_liquid", mesh.getDimension(),
+        &LocalAssemblerInterface<
+            DisplacementDim>::getIntPtDiffusionVelocitySoluteLiquid);
+    add_secondary_variable(
+        "diffusion_velocity_liquid_liquid", mesh.getDimension(),
+        &LocalAssemblerInterface<
+            DisplacementDim>::getIntPtDiffusionVelocityLiquidLiquid);
 
-    add_secondary_variable("saturation", 1,
-                           &LocalAssemblerInterface::getIntPtSaturation);
-    add_secondary_variable("vapour_pressure", 1,
-                           &LocalAssemblerInterface::getIntPtVapourPressure);
-    add_secondary_variable("porosity", 1,
-                           &LocalAssemblerInterface::getIntPtPorosity);
-    add_secondary_variable("gas_density", 1,
-                           &LocalAssemblerInterface::getIntPtGasDensity);
-    add_secondary_variable("solid_density", 1,
-                           &LocalAssemblerInterface::getIntPtSolidDensity);
-    add_secondary_variable("liquid_density", 1,
-                           &LocalAssemblerInterface::getIntPtLiquidDensity);
-    add_secondary_variable("mole_fraction_gas", 1,
-                           &LocalAssemblerInterface::getIntPtMoleFractionGas);
-    add_secondary_variable("mass_fraction_gas", 1,
-                           &LocalAssemblerInterface::getIntPtMassFractionGas);
+    add_secondary_variable(
+        "saturation", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtSaturation);
+    add_secondary_variable(
+        "vapour_pressure", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtVapourPressure);
+    add_secondary_variable(
+        "porosity", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtPorosity);
+    add_secondary_variable(
+        "gas_density", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtGasDensity);
+    add_secondary_variable(
+        "solid_density", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtSolidDensity);
+    add_secondary_variable(
+        "liquid_density", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtLiquidDensity);
+    add_secondary_variable(
+        "mole_fraction_gas", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtMoleFractionGas);
+    add_secondary_variable(
+        "mass_fraction_gas", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtMassFractionGas);
     add_secondary_variable(
         "mass_fraction_liquid", 1,
-        &LocalAssemblerInterface::getIntPtMassFractionLiquid);
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtMassFractionLiquid);
 
     add_secondary_variable(
         "relative_permeability_gas", 1,
-        &LocalAssemblerInterface::getIntPtRelativePermeabilityGas);
+        &LocalAssemblerInterface<
+            DisplacementDim>::getIntPtRelativePermeabilityGas);
     add_secondary_variable(
         "relative_permeability_liquid", 1,
-        &LocalAssemblerInterface::getIntPtRelativePermeabilityLiquid);
+        &LocalAssemblerInterface<
+            DisplacementDim>::getIntPtRelativePermeabilityLiquid);
+
+    add_secondary_variable("intrinsic_permeability",
+                           DisplacementDim * DisplacementDim,
+                           &LocalAssemblerInterface<
+                               DisplacementDim>::getIntPtIntrinsicPermeability);
 
     add_secondary_variable(
-        "intrinsic_permeability", DisplacementDim * DisplacementDim,
-        &LocalAssemblerInterface::getIntPtIntrinsicPermeability);
+        "enthalpy_gas", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtEnthalpyGas);
 
-    add_secondary_variable("enthalpy_gas", 1,
-                           &LocalAssemblerInterface::getIntPtEnthalpyGas);
+    add_secondary_variable(
+        "enthalpy_liquid", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtEnthalpyLiquid);
 
-    add_secondary_variable("enthalpy_liquid", 1,
-                           &LocalAssemblerInterface::getIntPtEnthalpyLiquid);
+    add_secondary_variable(
+        "enthalpy_solid", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtEnthalpySolid);
 
-    add_secondary_variable("enthalpy_solid", 1,
-                           &LocalAssemblerInterface::getIntPtEnthalpySolid);
+    //
+    // enable output of internal variables defined by material models
+    //
+    ProcessLib::Deformation::solidMaterialInternalToSecondaryVariables<
+        LocalAssemblerInterface<DisplacementDim>>(_process_data.solid_materials,
+                                                  add_secondary_variable);
+
+    ProcessLib::Deformation::
+        solidMaterialInternalVariablesToIntegrationPointWriter(
+            _process_data.solid_materials, local_assemblers_,
+            _integration_point_writer, integration_order);
 
     _process_data.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "saturation_avg",
@@ -278,8 +314,8 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::initialize, local_assemblers_,
-        *_local_to_global_index_map);
+        &LocalAssemblerInterface<DisplacementDim>::initialize,
+        local_assemblers_, *_local_to_global_index_map);
 }
 
 template <int DisplacementDim>
@@ -308,9 +344,9 @@ void TH2MProcess<DisplacementDim>::setInitialConditionsConcreteProcess(
     DBUG("Set initial conditions of TH2MProcess.");
 
     GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::setInitialConditions, local_assemblers_,
-        getDOFTable(process_id), *x[process_id], t, _use_monolithic_scheme,
-        process_id);
+        &LocalAssemblerInterface<DisplacementDim>::setInitialConditions,
+        local_assemblers_, getDOFTable(process_id), *x[process_id], t,
+        _use_monolithic_scheme, process_id);
 }
 
 template <int DisplacementDim>
@@ -353,9 +389,9 @@ void TH2MProcess<DisplacementDim>::preTimestepConcreteProcess(
             getProcessVariables(process_id)[0];
 
         GlobalExecutor::executeSelectedMemberOnDereferenced(
-            &LocalAssemblerInterface::preTimestep, local_assemblers_,
-            pv.getActiveElementIDs(), *_local_to_global_index_map,
-            *x[process_id], t, dt);
+            &LocalAssemblerInterface<DisplacementDim>::preTimestep,
+            local_assemblers_, pv.getActiveElementIDs(),
+            *_local_to_global_index_map, *x[process_id], t, dt);
     }
 
     AssemblyMixin<TH2MProcess<DisplacementDim>>::updateActiveElements(
@@ -372,9 +408,9 @@ void TH2MProcess<DisplacementDim>::postTimestepConcreteProcess(
     auto const dof_tables = getDOFTables(x.size());
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::postTimestep, local_assemblers_,
-        pv.getActiveElementIDs(), dof_tables, x, x_dot, t, dt,
-        _use_monolithic_scheme, process_id);
+        &LocalAssemblerInterface<DisplacementDim>::postTimestep,
+        local_assemblers_, pv.getActiveElementIDs(), dof_tables, x, x_dot, t,
+        dt, _use_monolithic_scheme, process_id);
 }
 
 template <int DisplacementDim>
@@ -392,8 +428,9 @@ void TH2MProcess<DisplacementDim>::computeSecondaryVariableConcrete(
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::computeSecondaryVariable, local_assemblers_,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_dot, process_id);
+        &LocalAssemblerInterface<DisplacementDim>::computeSecondaryVariable,
+        local_assemblers_, pv.getActiveElementIDs(), dof_tables, t, dt, x,
+        x_dot, process_id);
 }
 
 template <int DisplacementDim>

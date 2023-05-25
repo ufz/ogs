@@ -16,6 +16,7 @@
 
 namespace ProcessLib::TH2M
 {
+template <int DisplacementDim>
 struct LocalAssemblerInterface;
 
 template <int DisplacementDim>
@@ -25,7 +26,8 @@ template <int DisplacementDim>
 void createLocalAssemblers(
     std::vector<MeshLib::Element*> const& mesh_elements,
     NumLib::LocalToGlobalIndexMap const& dof_table,
-    std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
+    std::vector<std::unique_ptr<LocalAssemblerInterface<DisplacementDim>>>&
+        local_assemblers,
     NumLib::IntegrationOrder const integration_order,
     bool const is_axially_symmetric,
     TH2MProcessData<DisplacementDim>& process_data);

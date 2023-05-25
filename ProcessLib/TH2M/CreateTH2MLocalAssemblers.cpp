@@ -19,7 +19,8 @@ template <int DisplacementDim>
 void createLocalAssemblers(
     std::vector<MeshLib::Element*> const& mesh_elements,
     NumLib::LocalToGlobalIndexMap const& dof_table,
-    std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
+    std::vector<std::unique_ptr<LocalAssemblerInterface<DisplacementDim>>>&
+        local_assemblers,
     NumLib::IntegrationOrder const integration_order,
     bool const is_axially_symmetric,
     TH2MProcessData<DisplacementDim>& process_data)
@@ -32,7 +33,7 @@ void createLocalAssemblers(
 template void createLocalAssemblers<2>(
     std::vector<MeshLib::Element*> const& mesh_elements,
     NumLib::LocalToGlobalIndexMap const& dof_table,
-    std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
+    std::vector<std::unique_ptr<LocalAssemblerInterface<2>>>& local_assemblers,
     NumLib::IntegrationOrder const integration_order,
     bool const is_axially_symmetric,
     TH2MProcessData<2>& process_data);
@@ -40,7 +41,7 @@ template void createLocalAssemblers<2>(
 template void createLocalAssemblers<3>(
     std::vector<MeshLib::Element*> const& mesh_elements,
     NumLib::LocalToGlobalIndexMap const& dof_table,
-    std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
+    std::vector<std::unique_ptr<LocalAssemblerInterface<3>>>& local_assemblers,
     NumLib::IntegrationOrder const integration_order,
     bool const is_axially_symmetric,
     TH2MProcessData<3>& process_data);

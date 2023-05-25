@@ -403,13 +403,25 @@ public:
 
         // evaluate parameters at (t, x)
         {
-            auto out = behaviour_data.s1.material_properties.begin();
-            for (auto* param : _material_properties)
             {
-                auto const& vals = (*param)(t, x);
-                out = std::copy(vals.begin(), vals.end(), out);
+                auto out = behaviour_data.s0.material_properties.begin();
+                for (auto* param : _material_properties)
+                {
+                    auto const& vals = (*param)(t - dt, x);
+                    out = std::copy(vals.begin(), vals.end(), out);
+                }
+                assert(out == behaviour_data.s0.material_properties.end());
             }
-            assert(out == behaviour_data.s1.material_properties.end());
+
+            {
+                auto out = behaviour_data.s1.material_properties.begin();
+                for (auto* param : _material_properties)
+                {
+                    auto const& vals = (*param)(t, x);
+                    out = std::copy(vals.begin(), vals.end(), out);
+                }
+                assert(out == behaviour_data.s1.material_properties.end());
+            }
         }
 
         // TODO unify with gradient handling? Make gradient and external state

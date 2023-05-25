@@ -578,13 +578,16 @@ SolidEhlers<DisplacementDim>::integrateStress(
     KelvinMatrix tangentStiffness;
 
     PhysicalStressWithInvariants<DisplacementDim> s{mp.G * sigma};
-    // Quit early if sigma is zero (nothing to do) or if we are still in elastic
-    // zone.
-    if ((sigma.squaredNorm() == 0 ||
+    // Quit early if sigma is zero (nothing to do), or dt is zero, or if we are
+    // still in elastic zone.
+    // dt can be zero if we are in the initialization phase and the tangent
+    // stiffness will no be necessary. Anyway the newton loop below would not
+    // work because of division by zero.
+    if ((sigma.squaredNorm() == 0. || dt == 0. ||
          yieldFunction(
              mp, s,
              calculateIsotropicHardening(mp.kappa, mp.hardening_coefficient,
-                                         state.eps_p.eff)) < 0))
+                                         state.eps_p.eff)) < 0.))
     {
         tangentStiffness = elasticTangentStiffness<DisplacementDim>(
             mp.K - 2. / 3 * mp.G, mp.G);

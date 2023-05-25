@@ -632,19 +632,33 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         // here with S_rho_C_eff.
         double const s_L = ip_data.s_L;
         double const s_G = 1. - ip_data.s_L;
-        double const rho_C_GR_dot = (ip_data.rhoCGR - ip_data.rhoCGR_prev) / dt;
-        double const rho_C_LR_dot = (ip_data.rhoCLR - ip_data.rhoCLR_prev) / dt;
         double const rho_C_FR = s_G * ip_data.rhoCGR + s_L * ip_data.rhoCLR;
         double const rho_W_FR = s_G * ip_data.rhoWGR + s_L * ip_data.rhoWLR;
         // TODO (naumov) Extend for partially saturated media.
         constexpr double drho_C_GR_dp_cap = 0;
-        ip_cv.dfC_3a_dp_GR =
-            /*(ds_G_dp_GR = 0) * rho_C_GR_dot +*/ s_G * c.drho_C_GR_dp_GR / dt +
-            /*(ds_L_dp_GR = 0) * rho_C_LR_dot +*/ s_L * c.drho_C_LR_dp_GR / dt;
-        ip_cv.dfC_3a_dp_cap =
-            ds_G_dp_cap * rho_C_GR_dot + s_G * drho_C_GR_dp_cap / dt +
-            ip_cv.ds_L_dp_cap * rho_C_LR_dot - s_L * c.drho_C_LR_dp_LR / dt;
-        ip_cv.dfC_3a_dT = s_G * c.drho_C_GR_dT / dt + s_L * c.drho_C_LR_dT / dt;
+        if (dt == 0.)
+        {
+            ip_cv.dfC_3a_dp_GR = 0.;
+            ip_cv.dfC_3a_dp_cap = 0.;
+            ip_cv.dfC_3a_dT = 0.;
+        }
+        else
+        {
+            double const rho_C_GR_dot =
+                (ip_data.rhoCGR - ip_data.rhoCGR_prev) / dt;
+            double const rho_C_LR_dot =
+                (ip_data.rhoCLR - ip_data.rhoCLR_prev) / dt;
+            ip_cv.dfC_3a_dp_GR =
+                /*(ds_G_dp_GR = 0) * rho_C_GR_dot +*/ s_G * c.drho_C_GR_dp_GR /
+                    dt +
+                /*(ds_L_dp_GR = 0) * rho_C_LR_dot +*/ s_L * c.drho_C_LR_dp_GR /
+                    dt;
+            ip_cv.dfC_3a_dp_cap =
+                ds_G_dp_cap * rho_C_GR_dot + s_G * drho_C_GR_dp_cap / dt +
+                ip_cv.ds_L_dp_cap * rho_C_LR_dot - s_L * c.drho_C_LR_dp_LR / dt;
+            ip_cv.dfC_3a_dT =
+                s_G * c.drho_C_GR_dT / dt + s_L * c.drho_C_LR_dT / dt;
+        }
 
         double const drho_C_FR_dp_GR =
             /*(ds_G_dp_GR = 0) * ip_data.rhoCGR +*/ s_G * c.drho_C_GR_dp_GR +
@@ -746,16 +760,30 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
 #endif
             ;
 
-        double const rho_W_GR_dot = (ip_data.rhoWGR - ip_data.rhoWGR_prev) / dt;
-        double const rho_W_LR_dot = (ip_data.rhoWLR - ip_data.rhoWLR_prev) / dt;
+        if (dt == 0.)
+        {
+            ip_cv.dfW_3a_dp_GR = 0.;
+            ip_cv.dfW_3a_dp_cap = 0.;
+            ip_cv.dfW_3a_dT = 0.;
+        }
+        else
+        {
+            double const rho_W_GR_dot =
+                (ip_data.rhoWGR - ip_data.rhoWGR_prev) / dt;
+            double const rho_W_LR_dot =
+                (ip_data.rhoWLR - ip_data.rhoWLR_prev) / dt;
 
-        ip_cv.dfW_3a_dp_GR =
-            /*(ds_G_dp_GR = 0) * rho_W_GR_dot +*/ s_G * c.drho_W_GR_dp_GR / dt +
-            /*(ds_L_dp_GR = 0) * rho_W_LR_dot +*/ s_L * c.drho_W_LR_dp_GR / dt;
-        ip_cv.dfW_3a_dp_cap =
-            ds_G_dp_cap * rho_W_GR_dot + s_G * c.drho_W_GR_dp_cap / dt +
-            ip_cv.ds_L_dp_cap * rho_W_LR_dot - s_L * c.drho_W_LR_dp_LR / dt;
-        ip_cv.dfW_3a_dT = s_G * c.drho_W_GR_dT / dt + s_L * c.drho_W_LR_dT / dt;
+            ip_cv.dfW_3a_dp_GR =
+                /*(ds_G_dp_GR = 0) * rho_W_GR_dot +*/ s_G * c.drho_W_GR_dp_GR /
+                    dt +
+                /*(ds_L_dp_GR = 0) * rho_W_LR_dot +*/ s_L * c.drho_W_LR_dp_GR /
+                    dt;
+            ip_cv.dfW_3a_dp_cap =
+                ds_G_dp_cap * rho_W_GR_dot + s_G * c.drho_W_GR_dp_cap / dt +
+                ip_cv.ds_L_dp_cap * rho_W_LR_dot - s_L * c.drho_W_LR_dp_LR / dt;
+            ip_cv.dfW_3a_dT =
+                s_G * c.drho_W_GR_dT / dt + s_L * c.drho_W_LR_dT / dt;
+        }
 
         ip_cv.dfW_4_LWpG_a_dp_GR = c.drho_W_GR_dp_GR * k_over_mu_G
                                    // + rhoWGR * (dk_over_mu_G_dp_GR = 0)
@@ -866,6 +894,26 @@ std::size_t TH2MLocalAssembler<
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, _ip_data, &IpData::eps);
+    }
+    if (name.starts_with("material_state_variable_") && name.ends_with("_ip"))
+    {
+        std::string const variable_name = name.substr(24, name.size() - 24 - 3);
+        DBUG("Setting material state variable '{:s}'", variable_name);
+
+        // Using first ip data for solid material. TODO (naumov) move solid
+        // material into element, store only material state in IPs.
+        auto const& internal_variables =
+            _ip_data[0].solid_material.getInternalVariables();
+        if (auto const iv =
+                std::find_if(begin(internal_variables), end(internal_variables),
+                             [&variable_name](auto const& iv)
+                             { return iv.name == variable_name; });
+            iv != end(internal_variables))
+        {
+            return ProcessLib::setIntegrationPointDataMaterialStateVariables(
+                values, _ip_data, &IpData::material_state_variables,
+                iv->reference);
+        }
     }
     return 0;
 }
