@@ -12,7 +12,7 @@
 #   EXECUTABLE_ARGS <arguments>
 #   WRAPPER <time|mpirun> # optional
 #   WRAPPER_ARGS <arguments> # optional
-#   TESTER <diff|vtkdiff|vtkdiff-mesh|gmldiff|memcheck> # optional
+#   TESTER <diff|vtkdiff|vtkdiff-mesh|gmldiff|memcheck|numdiff> # optional
 #   TESTER_ARGS <argument> # optional
 #   REQUIREMENTS # optional simple boolean expression which has to be true to
 #                  enable the test, e.g.
@@ -187,6 +187,9 @@ function(AddTest)
     if(AddTest_TESTER STREQUAL "memcheck" AND NOT GREP_TOOL_PATH)
         return()
     endif()
+    if(AddTest_TESTER STREQUAL "numdiff" AND NOT NUMDIFF_TOOL_PATH)
+        return()
+    endif()
 
     set(FILES_TO_DELETE "")
     list(APPEND FILES_TO_DELETE "${AddTest_STDOUT_FILE_PATH}")
@@ -214,6 +217,8 @@ function(AddTest)
         set(SELECTED_DIFF_TOOL_PATH $<TARGET_FILE:vtkdiff>)
     elseif(AddTest_TESTER STREQUAL "xdmfdiff")
         set(SELECTED_DIFF_TOOL_PATH $<TARGET_FILE:xdmfdiff>)
+    elseif(AddTest_TESTER STREQUAL "numdiff")
+        set(SELECTED_DIFF_TOOL_PATH ${NUMDIFF_TOOL_PATH})
     endif()
 
     # -----------
@@ -571,6 +576,25 @@ Use six arguments version of AddTest with absolute and relative tolerances"
         set(TESTER_COMMAND
             "! ${GREP_TOOL_PATH} definitely ${AddTest_SOURCE_PATH}/${AddTest_NAME}_memcheck.txt"
         )
+    elseif(AddTest_TESTER STREQUAL "numdiff")
+        list(LENGTH AddTest_DIFF_DATA DiffDataLength)
+        math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
+        foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 3)
+            list(GET AddTest_DIFF_DATA "${DiffDataIndex}" FILE)
+            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
+            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" ABS_TOL)
+            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
+            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" REL_TOL)
+            get_filename_component(FILE_EXPECTED ${FILE} NAME)
+            list(
+                APPEND
+                TESTER_COMMAND
+                "${SELECTED_DIFF_TOOL_PATH} -a ${ABS_TOL} -r ${REL_TOL}  \
+        ${TESTER_ARGS} ${AddTest_TESTER_ARGS} ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
+        ${_binary_path}/${FILE}"
+            )
+            list(APPEND FILES_TO_DELETE "${FILE}")
+        endforeach()
     endif()
 
     add_test(
