@@ -30,7 +30,7 @@ using namespace CoordinatesMappingTestData;
 namespace
 {
 // Element types to be tested
-using TestTypes =
+using TestElementTypes =
     ::testing::Types<TestLine2, TestLine3, TestTri3, TestQuad4, TestHex8>;
 }  // namespace
 
@@ -103,7 +103,7 @@ public:
     ElementType* zeroVolumeEle;
 };
 
-TYPED_TEST_SUITE(NumLibFemNaturalCoordinatesMappingTest, TestTypes);
+TYPED_TEST_SUITE(NumLibFemNaturalCoordinatesMappingTest, TestElementTypes);
 
 TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_N)
 {

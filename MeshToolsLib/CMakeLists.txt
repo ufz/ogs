@@ -15,7 +15,7 @@ target_link_libraries(
                         VTK::IOLegacy
                         $<$<TARGET_EXISTS:VTK::IOParallelXML>:VTK::IOParallelXML>
                         $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
-                 PRIVATE BaseLib MathLib GitInfoLib
+                 PRIVATE BaseLib MathLib NumLib GitInfoLib
 )
 
 target_precompile_headers(MeshToolsLib PRIVATE [["BaseLib/Error.h"]]
