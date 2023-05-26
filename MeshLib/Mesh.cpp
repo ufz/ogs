@@ -255,20 +255,6 @@ std::vector<MeshLib::Element const*> const& Mesh::getElementsConnectedToNode(
     return _elements_connected_to_nodes[node.getID()];
 }
 
-void scaleMeshPropertyVector(MeshLib::Mesh& mesh,
-                             std::string const& property_name,
-                             double factor)
-{
-    if (!mesh.getProperties().existsPropertyVector<double>(property_name))
-    {
-        WARN("Did not find PropertyVector '{:s}' for scaling.", property_name);
-        return;
-    }
-    auto& pv = *mesh.getProperties().getPropertyVector<double>(property_name);
-    std::transform(pv.begin(), pv.end(), pv.begin(),
-                   [factor](auto const& v) { return v * factor; });
-}
-
 PropertyVector<int> const* materialIDs(Mesh const& mesh)
 {
     auto const& properties = mesh.getProperties();

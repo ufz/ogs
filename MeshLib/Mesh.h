@@ -175,12 +175,6 @@ inline bool operator!=(Mesh const& a, Mesh const& b)
     return !(a == b);
 }
 
-/// Scales the mesh property with name \c property_name by given \c factor.
-/// \note The property must be a "double" property.
-void scaleMeshPropertyVector(Mesh& mesh,
-                             std::string const& property_name,
-                             double factor);
-
 /// Creates a new \c PropertyVector in the given mesh and initializes it with
 /// the given data. A \c PropertyVector with the same name must not exist.
 /// \param mesh A \c Mesh the new \c ProperyVector will be created in.
