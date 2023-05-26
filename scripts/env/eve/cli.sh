@@ -10,3 +10,8 @@ module load Ninja/1.11.1
 module load ccache/3.3.3
 module load git-lfs
 module load Python/3.10.8
+
+# Python dependencies
+virtualenv .venv
+source .venv/bin/activate
+pip install numpy
