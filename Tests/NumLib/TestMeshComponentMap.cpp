@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "MeshLib/MeshSubset.h"
+#include "MeshLib/Utils/addPropertyToMesh.h"
 #include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "NumLib/DOF/MeshComponentMap.h"
 

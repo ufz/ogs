@@ -13,6 +13,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/addPropertyToMesh.h"
 #include "MeshNodeSearcher.h"
 
 namespace
