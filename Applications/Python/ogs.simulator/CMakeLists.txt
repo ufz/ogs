@@ -13,7 +13,7 @@ if(_link_options)
 endif()
 
 target_link_libraries(
-    simulator PRIVATE ApplicationsLib BaseLib CMakeInfoLib GitInfoLib tclap
+    simulator PRIVATE ApplicationsLib BaseLib CMakeInfoLib GitInfoLib mesh tclap
 )
 target_include_directories(simulator PRIVATE ../../CLI)
 
