@@ -4,6 +4,7 @@ find_program(TIME_TOOL_PATH time)
 find_program(GREP_TOOL_PATH grep)
 find_program(BASH_TOOL_PATH bash)
 find_program(MPIRUN_TOOL_PATH mpirun)
+find_program(NUMDIFF_TOOL_PATH numdiff)
 
 if(NOT TIME_TOOL_PATH)
     message(

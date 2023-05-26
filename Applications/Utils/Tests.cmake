@@ -31,6 +31,27 @@ AddTest(
 )
 
 AddTest(
+    NAME createTetgenSmeshFromRasters
+    PATH Utils/createTetgenSmeshFromRasters
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/createTetgenSmeshFromRasters
+    EXECUTABLE createTetgenSmeshFromRasters
+    EXECUTABLE_ARGS -i sfc_mesh_9k.vtu -o ${Data_BINARY_DIR}/Utils/createTetgenSmeshFromRasters/CTSMFL-test -r rasterlist.txt
+    RUNTIME 1
+    TESTER numdiff
+    DIFF_DATA CTSMFL-test.smesh 0 5e-13
+)
+
+AddTest(
+    NAME createTetgenSmeshFromRasters-fail
+    PATH Utils/createTetgenSmeshFromRasters
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/createTetgenSmeshFromRasters
+    EXECUTABLE createTetgenSmeshFromRasters
+    EXECUTABLE_ARGS -i 3D.vtu -o ${Data_BINARY_DIR}/Utils/createTetgenSmeshFromRasters/CTSMFL-fail -r rasterlist.txt
+    RUNTIME 1
+    PROPERTIES WILL_FAIL true
+)
+
+AddTest(
     NAME postLIE
     PATH LIE/PostProcessing
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/LIE/PostProcessing

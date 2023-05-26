@@ -7,6 +7,7 @@ set(TOOLS
     convertToLinearMesh
     CreateBoundaryConditionsAlongPolylines
     createLayeredMeshFromRasters
+    createTetgenSmeshFromRasters
     createQuadraticMesh
     editMaterialID
     ExtractBoundary
@@ -55,6 +56,7 @@ target_link_libraries(
 )
 
 target_link_libraries(createLayeredMeshFromRasters ApplicationsFileIO)
+target_link_libraries(createTetgenSmeshFromRasters ApplicationsFileIO)
 target_link_libraries(MapGeometryToMeshSurface MeshGeoToolsLib)
 target_link_libraries(MeshMapping ApplicationsFileIO)
 target_link_libraries(ResetPropertiesInPolygonalRegion ApplicationsFileIO)
