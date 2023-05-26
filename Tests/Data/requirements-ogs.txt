@@ -1,2 +1,3 @@
+--pre
 --extra-index-url https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple
-ogs==6.4.4.post1.dev217
+ogs
