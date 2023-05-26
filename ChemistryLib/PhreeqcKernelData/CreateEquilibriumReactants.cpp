@@ -16,6 +16,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "EquilibriumReactants.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 
 namespace ChemistryLib
 {

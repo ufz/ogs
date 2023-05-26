@@ -12,6 +12,7 @@
 
 #include <cassert>
 
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "PhaseFieldFEM.h"
 #include "ProcessLib/Process.h"

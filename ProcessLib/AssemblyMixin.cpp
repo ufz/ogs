@@ -12,6 +12,7 @@
 
 #include <unordered_set>
 
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 
 namespace

@@ -18,6 +18,7 @@
 #include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryCondition.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryConditionConfig.h"

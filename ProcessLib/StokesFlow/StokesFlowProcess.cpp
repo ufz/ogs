@@ -13,6 +13,7 @@
 #include <cassert>
 
 #include "MeshLib/Elements/Utils.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"
 
 namespace ProcessLib

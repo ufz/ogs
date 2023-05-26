@@ -26,6 +26,7 @@
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
 #include "MeshLib/Utils/addPropertyToMesh.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
 
 namespace MeshToolsLib

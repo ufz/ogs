@@ -13,6 +13,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "Exchange.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 
 namespace ChemistryLib
 {

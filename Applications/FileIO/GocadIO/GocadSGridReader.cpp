@@ -20,6 +20,7 @@
 #include "MeshLib/Elements/Hex.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 
 namespace FileIO
 {

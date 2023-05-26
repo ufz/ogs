@@ -31,6 +31,7 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
 #include "MeshLib/Utils/IntegrationPointWriter.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 
 struct MeshEntityMapInfo
 {

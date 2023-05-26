@@ -13,6 +13,7 @@
 #include <iostream>
 
 #include "MeshLib/Utils/IntegrationPointWriter.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 
 // Reusing local assembler creation code.
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"

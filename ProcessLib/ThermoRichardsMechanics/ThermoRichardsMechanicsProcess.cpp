@@ -15,6 +15,7 @@
 #include "BaseLib/Error.h"
 #include "CreateThermoRichardsMechanicsLocalAssemblers.h"
 #include "MeshLib/Elements/Utils.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Reflection/ReflectionForExtrapolation.h"
