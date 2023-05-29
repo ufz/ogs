@@ -16,6 +16,8 @@
 
 #include <limits>
 
+#include "MeshToolsLib/ComputeElementVolumeNumerically.h"
+
 namespace MeshToolsLib
 {
 void ElementSizeMetric::calculateQuality()
@@ -25,13 +27,9 @@ void ElementSizeMetric::calculateQuality()
     {
         error_count = calc1dQuality();
     }
-    else if (_mesh.getDimension() == 2)
+    else
     {
-        error_count = calc2dQuality();
-    }
-    else if (_mesh.getDimension() == 3)
-    {
-        error_count = calc3dQuality();
+        error_count = calc2dOr3dQuality();
     }
 
     INFO(
@@ -53,7 +51,8 @@ std::size_t ElementSizeMetric::calc1dQuality()
     for (std::size_t k(0); k < nElems; k++)
     {
         double area(std::numeric_limits<double>::max());
-        _element_quality_metric[k] = elements[k]->getContent();
+        _element_quality_metric[k] =
+            MeshToolsLib::computeElementVolumeNumerically(*elements[k]);
         if (_element_quality_metric[k] <
             std::sqrt(std::abs(std::numeric_limits<double>::epsilon())))
         {
@@ -73,7 +72,7 @@ std::size_t ElementSizeMetric::calc1dQuality()
     return error_count;
 }
 
-std::size_t ElementSizeMetric::calc2dQuality()
+std::size_t ElementSizeMetric::calc2dOr3dQuality()
 {
     const std::vector<MeshLib::Element*>& elements(_mesh.getElements());
     const std::size_t nElems(elements.size());
@@ -82,48 +81,14 @@ std::size_t ElementSizeMetric::calc2dQuality()
     for (std::size_t k(0); k < nElems; k++)
     {
         MeshLib::Element const& elem(*elements[k]);
-
-        if (elem.getDimension() == 1)
-        {
-            _element_quality_metric[k] = 0.0;
-            continue;
-        }
-        double const area = elem.getContent();
-        if (area < std::sqrt(std::abs(std::numeric_limits<double>::epsilon())))
-        {
-            error_count++;
-        }
-
-        // update _min and _max values
-        if (_min > area)
-        {
-            _min = area;
-        }
-        if (_max < area)
-        {
-            _max = area;
-        }
-        _element_quality_metric[k] = area;
-    }
-    return error_count;
-}
-
-std::size_t ElementSizeMetric::calc3dQuality()
-{
-    const std::vector<MeshLib::Element*>& elements(_mesh.getElements());
-    const std::size_t nElems(elements.size());
-    std::size_t error_count(0);
-
-    for (std::size_t k(0); k < nElems; k++)
-    {
-        MeshLib::Element const& elem(*elements[k]);
-        if (elem.getDimension() < 3)
+        if (elem.getDimension() < _mesh.getDimension())
         {
             _element_quality_metric[k] = 0.0;
             continue;
         }
 
-        double const volume(elem.getContent());
+        double const volume =
+            MeshToolsLib::computeElementVolumeNumerically(elem);
         if (volume < sqrt(std::abs(std::numeric_limits<double>::epsilon())))
         {
             error_count++;

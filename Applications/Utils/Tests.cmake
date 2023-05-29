@@ -883,7 +883,7 @@ foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDiffer
         EXECUTABLE_ARGS -i AmmerGWN.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Ammer/AmmerGWNWithElementQuality_${criterion}.vtu -c ${criterion}
         TESTER vtkdiff
         DIFF_DATA
-        AmmerGWNWithElementQuality.vtu AmmerGWNWithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 1e-11
+        AmmerGWNWithElementQuality.vtu AmmerGWNWithElementQuality_${criterion}.vtu ${criterion} ${criterion} 2e-7 2e-08
     )
 endforeach()
 
@@ -896,7 +896,7 @@ foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDiffer
         EXECUTABLE_ARGS -i 00-surface.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/00-surface-WithElementQuality_${criterion}.vtu -c ${criterion}
         TESTER vtkdiff
         DIFF_DATA
-        00-surface-WithElementQuality.vtu 00-surface-WithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 1e-11
+        00-surface-WithElementQuality.vtu 00-surface-WithElementQuality_${criterion}.vtu ${criterion} ${criterion} 2e-7 2e-8
     )
 endforeach()
 
@@ -909,9 +909,20 @@ foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDiffer
         EXECUTABLE_ARGS -i AmmerSubsurfaceCoarse.vtu -o ${Data_BINARY_DIR}/FileIO/AmmerSubsurfaceCoarse-WithElementQuality_${criterion}.vtu -c ${criterion}
         TESTER vtkdiff
         DIFF_DATA
-        AmmerSubsurfaceCoarse-WithElementQuality.vtu AmmerSubsurfaceCoarse-WithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 1e-11
+        AmmerSubsurfaceCoarse-WithElementQuality.vtu AmmerSubsurfaceCoarse-WithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 2e-11
     )
 endforeach()
+
+AddTest(
+    NAME AddElementQuality_Behaelter_BE_ElementSize_Test
+    PATH MeshGeoToolsLib/Behaelter_BE
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Behaelter_BE
+    EXECUTABLE AddElementQuality
+    EXECUTABLE_ARGS -i Behaelter_BE.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Behaelter_BE/Behaelter_BE_quality.vtu -c ElementSize
+    TESTER vtkdiff
+    DIFF_DATA
+    Behaelter_BE_quality.vtu Behaelter_BE_quality.vtu ElementSize ElementSize 1e-12 1e-14
+)
 
 AddTest(
     NAME IntegrateBoreholesIntoMesh_MatOnly_Test

@@ -50,10 +50,10 @@ double computeElementVolumeNumerically(MeshLib::Element const& e)
     constexpr int space_dim = 3;
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, space_dim>;
 
-    // Integration order is set to 2:
+    // Integration order is set to 3:
     auto const& integration_method =
         NumLib::IntegrationMethodRegistry::template getIntegrationMethod<
-            typename ShapeFunction::MeshElement>(NumLib::IntegrationOrder{2});
+            typename ShapeFunction::MeshElement>(NumLib::IntegrationOrder{3});
 
     auto const shape_function_data =
         NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType, space_dim>(
