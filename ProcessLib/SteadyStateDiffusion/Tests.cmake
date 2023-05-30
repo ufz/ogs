@@ -1028,7 +1028,7 @@ if(OGS_USE_MPI)
 else()
     NotebookTest(
         NOTEBOOKFILE Elliptic/cube_1x1x1_SteadyStateDiffusion/ssd-cube.ipynb
-        RUNTIME 5
+        RUNTIME 6
     )
 endif()
 
