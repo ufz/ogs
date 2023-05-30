@@ -149,6 +149,17 @@ function(setup_venv)
             OUTPUT_VARIABLE _out
             ERROR_VARIABLE _err
         )
+        if(DEFINED ENV{CI} AND UNIX AND NOT APPLE)
+            execute_process(
+                COMMAND ${_apple_env} ${LOCAL_VIRTUALENV_BIN_DIR}/pip install
+                    --force-reinstall
+                    -r ${PROJECT_SOURCE_DIR}/Tests/Data/requirements-gmsh-nox.txt
+                WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+                RESULT_VARIABLE _return_code
+                OUTPUT_VARIABLE _out
+                ERROR_VARIABLE _err
+            )
+        endif()
         if(${_return_code} EQUAL 0)
             set(_OGS_PYTHON_PACKAGES_SHA1 "${_ogs_python_packages_sha1}"
                 CACHE INTERNAL ""

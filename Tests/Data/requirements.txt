@@ -1,4 +1,3 @@
---extra-index-url https://gmsh.info/python-packages-dev-nox
 --extra-index-url https://gitlab.kitware.com/api/v4/projects/13/packages/pypi/simple
 ogstools==0.0.3
 gmsh>=4.11
