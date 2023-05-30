@@ -345,9 +345,11 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
     if (frozen_liquid_phase)
     {
+        MaterialPropertyLib::VariableArray vars_ice;
         double const phi_fr =
             (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
                 .template value<double>(vars, x_position, t, dt);
+        ip_data.phi_fr = phi_fr;
 
         auto const frozen_liquid_value =
             [&](MaterialPropertyLib::PropertyType const p)
@@ -371,6 +373,56 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                     vars, MaterialPropertyLib::Variable::temperature,
                     x_position, t, dt);
 
+        double const& phi_fr_prev = ip_data.phi_fr_prev;
+        // alpha_T^I
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim> const ice_linear_thermal_expansion_coefficient =
+            MPL::formKelvinVector<DisplacementDim>(
+                frozen_liquid_phase
+                    ->property(
+                        MaterialPropertyLib::PropertyType::thermal_expansivity)
+                    .value(vars, x_position, t, dt));
+
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
+            dthermal_strain_ice =
+                ice_linear_thermal_expansion_coefficient * dT_int_pt;
+
+        // alpha_{phi_I} -- linear expansion coeff. due to water-to-ice
+        // transition (phase change), and related phase_change_strain term
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
+            phase_change_expansion_coefficient =
+                MPL::formKelvinVector<DisplacementDim>(
+                    frozen_liquid_phase
+                        ->property(MaterialPropertyLib::PropertyType::
+                                       phase_change_expansivity)
+                        .value(vars, x_position, t, dt));
+
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
+            dphase_change_strain =
+                phase_change_expansion_coefficient * (phi_fr - phi_fr_prev);
+
+        // eps0 ia a 'history variable' -- a solid matrix strain accrued
+        // prior to the onset of ice forming
+        auto& eps0_prev = ip_data.eps0_prev;
+        auto const& eps0_prev2 = ip_data.eps0_prev2;
+        // definition of eps_m_ice
+        eps0_prev =
+            eps0_prev2 + (1 - phi_fr_prev / porosity) * (eps_prev - eps0_prev2);
+
+        // ice
+        auto& eps_m_ice = ip_data.eps_m_ice;
+        auto const& eps_m_ice_prev = ip_data.eps_m_ice_prev;
+
+        eps_m_ice.noalias() = eps_m_ice_prev + eps - eps_prev -
+                              (eps0_prev - eps0_prev2) - dthermal_strain_ice -
+                              dphase_change_strain;
+
+        vars_ice.mechanical_strain
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_m_ice);
+        auto const C_IR = ip_data.updateConstitutiveRelationIce(
+            *_process_data.ice_constitutive_relation, vars_ice, t, x_position,
+            dt, T_int_pt - dT_int_pt);
         crv.effective_volumetric_heat_capacity +=
             -phi_fr * fluid_density * crv.c_f + phi_fr * rho_fr * c_fr -
             l_fr * rho_fr * dphi_fr_dT;
@@ -382,6 +434,15 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                     vars, MaterialPropertyLib::Variable::temperature,
                     MaterialPropertyLib::Variable::temperature, x_position, t,
                     dt);
+
+        crv.J_uu_fr = phi_fr * C_IR;
+
+        auto const& sigma_eff_ice = ip_data.sigma_eff_ice;
+        crv.r_u_fr = phi_fr * sigma_eff_ice;
+        crv.J_uT_fr = dphi_fr_dT * sigma_eff_ice +
+                      phi_fr * C_IR *
+                          (ice_linear_thermal_expansion_coefficient +
+                           phase_change_expansion_coefficient * dphi_fr_dT);
 
         crv.J_TT_fr = ((rho_fr * c_fr - fluid_density * crv.c_f) * dphi_fr_dT +
                        l_fr * rho_fr * d2phi_fr_dT2) *
@@ -504,6 +565,23 @@ void ThermoHydroMechanicsLocalAssembler<
         //
         // displacement equation, displacement part
         //
+
+        if (has_frozen_liquid_phase)
+        {
+            local_Jac
+                .template block<displacement_size, displacement_size>(
+                    displacement_index, displacement_index)
+                .noalias() += B.transpose() * crv.J_uu_fr * B * w;
+
+            local_rhs.template segment<displacement_size>(displacement_index)
+                .noalias() -= B.transpose() * crv.r_u_fr * w;
+
+            local_Jac
+                .template block<displacement_size, temperature_size>(
+                    displacement_index, temperature_index)
+                .noalias() -= B.transpose() * crv.J_uT_fr * N * w;
+        }
+
         local_Jac
             .template block<displacement_size, displacement_size>(
                 displacement_index, displacement_index)

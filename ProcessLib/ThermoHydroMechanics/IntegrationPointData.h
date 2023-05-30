@@ -232,6 +232,9 @@ struct ConstitutiveRelationsValues
 
     // Freezing related values.
     double J_TT_fr;
+    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> J_uu_fr;
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> J_uT_fr;
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> r_u_fr;
 };
 
 }  // namespace ThermoHydroMechanics
