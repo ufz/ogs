@@ -1023,8 +1023,13 @@ AddTest(
     square_1x1_quad_1e2_GMRES_GML_output_square_1x1_geometry_left.xdmf square_1x1_quad_1e2_GMRES_GML_output_square_1x1_geometry_left.xdmf pressure pressure 1e-14 1e-14
 )
 
-if(OGS_USE_MPI AND OGS_USE_PIP)
+if(OGS_USE_MPI)
     NotebookTest(NOTEBOOKFILE Notebooks/SimplePETSc.ipynb RUNTIME 10)
+else()
+    NotebookTest(
+        NOTEBOOKFILE Elliptic/cube_1x1x1_SteadyStateDiffusion/ssd-cube.ipynb
+        RUNTIME 5
+    )
 endif()
 
 AddTest(
