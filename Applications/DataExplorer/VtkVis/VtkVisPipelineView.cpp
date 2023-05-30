@@ -31,6 +31,7 @@
 #include "MeshLib/IO/VtkIO/VtkMeshConverter.h"
 #include "MeshLib/Mesh.h"
 #include "MeshToolsLib/MeshGenerators/RasterToMesh.h"
+#include "VtkVisImageItem.h"
 #include "VtkVisPipeline.h"
 #include "VtkVisPipelineItem.h"
 #include "VtkVisPointSetItem.h"
@@ -90,8 +91,11 @@ void VtkVisPipelineView::contextMenuEvent(QContextMenuEvent* event)
             // this exception is needed as image object are only displayed in
             // the vis-pipeline
             isSourceItem = false;
+            QAction* saveRasterAction = menu.addAction("Save Raster...");
+            connect(saveRasterAction, SIGNAL(triggered()), this,
+                    SLOT(writeRaster()));
             QAction* addMeshingAction =
-                menu.addAction("Convert Image to Mesh...");
+                menu.addAction("Convert Raster to Mesh...");
             connect(addMeshingAction, SIGNAL(triggered()), this,
                     SLOT(showImageToMeshConversionDialog()));
         }
@@ -173,14 +177,17 @@ void VtkVisPipelineView::showImageToMeshConversionDialog()
 
     vtkSmartPointer<VtkGeoImageSource> imageSource =
         VtkGeoImageSource::SafeDownCast(algorithm);
-    double origin[3];
-    imageSource->GetOutput()->GetOrigin(origin);
-    double spacing[3];
-    imageSource->GetOutput()->GetSpacing(spacing);
+
+    auto const raster = VtkGeoImageSource::convertToRaster(imageSource);
+    if (!raster)
+    {
+        OGSError::box("Image could not be converted to a raster.");
+        return;
+    }
 
     auto mesh = MeshToolsLib::RasterToMesh::convert(
-        imageSource->GetOutput(), origin, spacing[0], dlg.getElementSelection(),
-        dlg.getIntensitySelection(), dlg.getArrayName());
+        *raster, dlg.getElementSelection(), dlg.getIntensitySelection(),
+        dlg.getArrayName());
     if (mesh)
     {
         mesh->setName(dlg.getMeshName());
@@ -190,6 +197,14 @@ void VtkVisPipelineView::showImageToMeshConversionDialog()
     {
         OGSError::box("Error creating mesh.");
     }
+}
+
+void VtkVisPipelineView::writeRaster()
+{
+    QModelIndex const index = this->selectionModel()->currentIndex();
+    static_cast<VtkVisImageItem*>(
+        static_cast<VtkVisPipeline*>(this->model())->getItem(index))
+        ->writeAsRaster();
 }
 
 void VtkVisPipelineView::convertVTKToOGSMesh()

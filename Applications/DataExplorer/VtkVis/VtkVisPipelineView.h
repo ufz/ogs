@@ -76,6 +76,9 @@ private slots:
     /// Calls the conversion method for making a vtk grid an ogs mesh.
     void convertVTKToOGSMesh();
 
+    /// Calls the conversion method for saving this as an *.asc-file
+    void writeRaster();
+
 signals:
     void requestViewUpdate();
     void requestRemovePipelineItem(QModelIndex);
