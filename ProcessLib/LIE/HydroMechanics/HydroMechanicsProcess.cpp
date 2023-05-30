@@ -19,6 +19,7 @@
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Properties.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "MeshToolsLib/MeshInformation.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"

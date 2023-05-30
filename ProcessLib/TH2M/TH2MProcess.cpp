@@ -16,6 +16,7 @@
 #include "MaterialLib/SolidModels/MechanicsBase.h"  // for the instantiation of process data
 #include "MathLib/KelvinVector.h"
 #include "MeshLib/Elements/Utils.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"

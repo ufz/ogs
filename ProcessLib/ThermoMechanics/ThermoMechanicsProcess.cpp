@@ -13,6 +13,7 @@
 #include <cassert>
 
 #include "MeshLib/Utils/IntegrationPointWriter.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"

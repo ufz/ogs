@@ -22,6 +22,7 @@
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 
 namespace MeshGeoToolsLib
 {

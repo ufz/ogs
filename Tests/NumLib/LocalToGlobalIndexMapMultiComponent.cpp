@@ -20,6 +20,7 @@
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
+#include "MeshLib/Utils/createMeshFromElementSelection.h"
 #include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 

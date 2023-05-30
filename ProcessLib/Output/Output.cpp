@@ -20,6 +20,7 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/RunTime.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "ProcessLib/Process.h"
 
 namespace ProcessLib

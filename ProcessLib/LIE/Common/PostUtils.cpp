@@ -12,6 +12,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 
 namespace ProcessLib
 {

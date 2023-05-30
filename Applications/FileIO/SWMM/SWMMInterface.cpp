@@ -27,6 +27,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 
 namespace FileIO
 {

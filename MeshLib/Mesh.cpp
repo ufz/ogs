@@ -33,6 +33,7 @@
 #include "Elements/Tet.h"
 #include "Elements/Tri.h"
 #include "Utils/DuplicateMeshComponents.h"
+#include "Utils/getMeshElementsForMaterialIDs.h"
 
 /// Mesh counter used to uniquely identify meshes by id.
 static std::size_t global_mesh_counter = 0;
@@ -254,20 +255,6 @@ std::vector<MeshLib::Element const*> const& Mesh::getElementsConnectedToNode(
     return _elements_connected_to_nodes[node.getID()];
 }
 
-void scaleMeshPropertyVector(MeshLib::Mesh& mesh,
-                             std::string const& property_name,
-                             double factor)
-{
-    if (!mesh.getProperties().existsPropertyVector<double>(property_name))
-    {
-        WARN("Did not find PropertyVector '{:s}' for scaling.", property_name);
-        return;
-    }
-    auto& pv = *mesh.getProperties().getPropertyVector<double>(property_name);
-    std::transform(pv.begin(), pv.end(), pv.begin(),
-                   [factor](auto const& v) { return v * factor; });
-}
-
 PropertyVector<int> const* materialIDs(Mesh const& mesh)
 {
     auto const& properties = mesh.getProperties();
@@ -300,66 +287,6 @@ PropertyVector<std::size_t> const* bulkElementIDs(Mesh const& mesh)
     return properties.getPropertyVector<std::size_t>(
         MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
         MeshLib::MeshItemType::Cell, 1);
-}
-
-std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
-    std::string mesh_name, std::vector<MeshLib::Element*> const& elements)
-{
-    auto ids_vector = views::ids | to<std::vector>();
-
-    DBUG("Found {:d} elements in the mesh", elements.size());
-
-    // Store bulk element ids for each of the new elements.
-    auto bulk_element_ids = elements | ids_vector;
-
-    // original node ids to newly created nodes.
-    std::unordered_map<std::size_t, MeshLib::Node*> id_node_hash_map;
-    id_node_hash_map.reserve(
-        elements.size());  // There will be at least one node per element.
-
-    for (auto& e : elements)
-    {
-        // For each node find a cloned node in map or create if there is none.
-        unsigned const n_nodes = e->getNumberOfNodes();
-        for (unsigned i = 0; i < n_nodes; ++i)
-        {
-            const MeshLib::Node* n = e->getNode(i);
-            auto const it = id_node_hash_map.find(n->getID());
-            if (it == id_node_hash_map.end())
-            {
-                auto new_node_in_map = id_node_hash_map[n->getID()] =
-                    new MeshLib::Node(*n);
-                e->setNode(i, new_node_in_map);
-            }
-            else
-            {
-                e->setNode(i, it->second);
-            }
-        }
-    }
-
-    std::map<std::size_t, MeshLib::Node*> nodes_map;
-    for (const auto& n : id_node_hash_map)
-    {
-        nodes_map[n.first] = n.second;
-    }
-
-    // Copy the unique nodes pointers.
-    auto element_nodes = nodes_map | ranges::views::values | to<std::vector>;
-
-    // Store bulk node ids for each of the new nodes.
-    auto bulk_node_ids = nodes_map | ranges::views::keys | to<std::vector>;
-
-    auto mesh = std::make_unique<MeshLib::Mesh>(
-        std::move(mesh_name), std::move(element_nodes), std::move(elements));
-    assert(mesh != nullptr);
-
-    addPropertyToMesh(*mesh, getBulkIDString(MeshLib::MeshItemType::Cell),
-                      MeshLib::MeshItemType::Cell, 1, bulk_element_ids);
-    addPropertyToMesh(*mesh, getBulkIDString(MeshLib::MeshItemType::Node),
-                      MeshLib::MeshItemType::Node, 1, bulk_node_ids);
-
-    return mesh;
 }
 
 std::vector<std::vector<Node*>> calculateNodesConnectedByElements(
@@ -415,33 +342,6 @@ bool isBaseNode(Node const& node,
     auto const n_base_nodes = e->getNumberOfBaseNodes();
     auto const local_index = getNodeIDinElement(*e, &node);
     return local_index < n_base_nodes;
-}
-
-std::vector<MeshLib::Element*> getMeshElementsForMaterialIDs(
-    MeshLib::Mesh const& mesh, std::vector<int> const& selected_material_ids)
-{
-    auto const material_ids = *materialIDs(mesh);
-    auto const& elements = mesh.getElements();
-    std::vector<MeshLib::Element*> selected_elements;
-
-    for (std::size_t i = 0; i < material_ids.size(); ++i)
-    {
-        if (ranges::contains(selected_material_ids, material_ids[i]))
-        {
-            selected_elements.push_back(elements[i]);
-        }
-    }
-    return selected_elements;
-}
-
-std::unique_ptr<MeshLib::Mesh> createMaterialIDsBasedSubMesh(
-    MeshLib::Mesh const& mesh, std::vector<int> const& material_ids,
-    std::string const& name_for_created_mesh)
-{
-    auto const elements =
-        MeshLib::getMeshElementsForMaterialIDs(mesh, material_ids);
-    return MeshLib::createMeshFromElementSelection(
-        name_for_created_mesh, MeshLib::cloneElements(elements));
 }
 
 }  // namespace MeshLib

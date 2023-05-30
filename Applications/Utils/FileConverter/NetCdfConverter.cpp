@@ -31,6 +31,7 @@
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/addPropertyToMesh.h"
 #include "MeshToolsLib/MeshGenerators/RasterToMesh.h"
 
 using namespace netCDF;

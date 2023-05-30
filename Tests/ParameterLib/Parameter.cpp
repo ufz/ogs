@@ -19,6 +19,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/PropertyVector.h"
+#include "MeshLib/Utils/addPropertyToMesh.h"
 #include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "ParameterLib/CurveScaledParameter.h"
 #include "ParameterLib/GroupBasedParameter.h"

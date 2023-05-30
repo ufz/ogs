@@ -13,6 +13,7 @@
 #include <nlohmann/json.hpp>
 
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 
 using nlohmann::json;
 

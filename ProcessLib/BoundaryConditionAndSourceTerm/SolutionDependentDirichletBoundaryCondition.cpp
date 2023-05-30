@@ -17,6 +17,7 @@
 #include "BaseLib/Logging.h"
 #include "DirichletBoundaryConditionAuxiliaryFunctions.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ParameterLib/Utils.h"
 

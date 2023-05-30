@@ -13,6 +13,7 @@
 #include <cassert>
 
 #include "MeshLib/Elements/Utils.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"

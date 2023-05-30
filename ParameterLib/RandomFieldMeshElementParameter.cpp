@@ -15,6 +15,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/addPropertyToMesh.h"
 
 namespace ParameterLib
 {

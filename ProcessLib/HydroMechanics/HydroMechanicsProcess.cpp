@@ -15,6 +15,7 @@
 #include "HydroMechanicsFEM.h"
 #include "HydroMechanicsProcessData.h"
 #include "MeshLib/Elements/Utils.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"

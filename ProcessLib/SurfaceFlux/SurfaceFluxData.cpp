@@ -12,6 +12,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Logging.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFlux.h"
 

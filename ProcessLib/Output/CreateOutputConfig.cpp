@@ -16,6 +16,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/StringTools.h"  // required for splitMaterialIDString
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/createMaterialIDsBasedSubMesh.h"
 #include "MeshLib/Utils/transformMeshToNodePartitionedMesh.h"
 #ifdef USE_PETSC
 #include "MeshLib/NodePartitionedMesh.h"

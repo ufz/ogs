@@ -175,115 +175,6 @@ inline bool operator!=(Mesh const& a, Mesh const& b)
     return !(a == b);
 }
 
-/// Scales the mesh property with name \c property_name by given \c factor.
-/// \note The property must be a "double" property.
-void scaleMeshPropertyVector(Mesh& mesh,
-                             std::string const& property_name,
-                             double factor);
-
-/// Creates a new \c PropertyVector in the given mesh and initializes it with
-/// the given data. A \c PropertyVector with the same name must not exist.
-/// \param mesh A \c Mesh the new \c ProperyVector will be created in.
-/// \param name A string that contains the name of the new \c PropertyVector.
-/// \param item_type One of the values \c MeshLib::MeshItemType::Cell or \c
-/// \c MeshLib::MeshItemType::Node that shows the association of the property
-/// values either to \c Element's / cells or \c Node's
-/// \param number_of_components the number of components of a property
-/// \param values A vector containing the values that are used for
-/// initialization.
-template <typename T>
-void addPropertyToMesh(Mesh& mesh, std::string_view name,
-                       MeshItemType item_type, std::size_t number_of_components,
-                       std::vector<T> const& values)
-{
-    if (item_type == MeshItemType::Node)
-    {
-        if (mesh.getNumberOfNodes() != values.size() / number_of_components)
-        {
-            OGS_FATAL(
-                "Error number of nodes ({:d}) does not match the number of "
-                "tuples ({:d}).",
-                mesh.getNumberOfNodes(), values.size() / number_of_components);
-        }
-    }
-    if (item_type == MeshItemType::Cell)
-    {
-        if (mesh.getNumberOfElements() != values.size() / number_of_components)
-        {
-            OGS_FATAL(
-                "Error number of elements ({:d}) does not match the number of "
-                "tuples ({:d}).",
-                mesh.getNumberOfElements(),
-                values.size() / number_of_components);
-        }
-    }
-
-    auto* const property = mesh.getProperties().createNewPropertyVector<T>(
-        name, item_type, number_of_components);
-    if (!property)
-    {
-        OGS_FATAL("Error while creating PropertyVector '{:s}'.", name);
-    }
-    property->reserve(values.size());
-    std::copy(values.cbegin(), values.cend(), std::back_inserter(*property));
-}
-
-/// \returns a PropertyVector of the corresponding type, name on nodes, or
-/// cells, or integration points if such exists, or creates a new one.
-/// \attention For the integration points the result's size is zero.
-/// \see MeshLib::addPropertyToMesh()
-template <typename T>
-PropertyVector<T>* getOrCreateMeshProperty(Mesh& mesh,
-                                           std::string const& property_name,
-                                           MeshItemType const item_type,
-                                           int const number_of_components)
-{
-    if (property_name.empty())
-    {
-        OGS_FATAL(
-            "Trying to get or to create a mesh property with empty name.");
-    }
-
-    auto numberOfMeshItems = [&mesh, &item_type]() -> std::size_t {
-        switch (item_type)
-        {
-            case MeshItemType::Cell:
-                return mesh.getNumberOfElements();
-            case MeshItemType::Node:
-                return mesh.getNumberOfNodes();
-            case MeshItemType::IntegrationPoint:
-                return 0;  // For the integration point data the size is
-                           // variable
-            default:
-                OGS_FATAL(
-                    "getOrCreateMeshProperty cannot handle other "
-                    "types than Node, Cell, or IntegrationPoint.");
-        }
-        return 0;
-    };
-
-    if (mesh.getProperties().existsPropertyVector<T>(property_name))
-    {
-        auto result =
-            mesh.getProperties().template getPropertyVector<T>(property_name);
-        assert(result);
-        if (item_type != MeshItemType::IntegrationPoint)
-        {
-            // Test the size if number of mesh items is known, which is not the
-            // case for the integration point data.
-            assert(result->size() ==
-                   numberOfMeshItems() * number_of_components);
-        }
-        return result;
-    }
-
-    auto result = mesh.getProperties().template createNewPropertyVector<T>(
-        property_name, item_type, number_of_components);
-    assert(result);
-    result->resize(numberOfMeshItems() * number_of_components);
-    return result;
-}
-
 /// Returns the material ids property vector defined on the mesh.
 ///
 /// The material ids are always an \c int property named "MaterialIDs".
@@ -293,13 +184,6 @@ PropertyVector<int> const* materialIDs(Mesh const& mesh);
 PropertyVector<std::size_t> const* bulkNodeIDs(Mesh const& mesh);
 PropertyVector<std::size_t> const* bulkElementIDs(Mesh const& mesh);
 
-/// Creates a new mesh from a vector of elements.
-///
-/// \note The elements are owned by the returned mesh object as well as the
-/// nodes and will be destructed together with the mesh.
-std::unique_ptr<Mesh> createMeshFromElementSelection(
-    std::string mesh_name, std::vector<Element*> const& elements);
-
 /// Returns true if the given node is a base node of a (first) element, or if it
 /// is not connected to any element i.e. an unconnected node.
 bool isBaseNode(Node const& node,
@@ -308,13 +192,6 @@ bool isBaseNode(Node const& node,
 /// Returns the minimum and maximum edge length for given elements.
 std::pair<double, double> minMaxEdgeLength(
     std::vector<Element*> const& elements);
-
-std::vector<MeshLib::Element*> getMeshElementsForMaterialIDs(
-    MeshLib::Mesh const& mesh, std::vector<int> const& selected_material_ids);
-
-std::unique_ptr<MeshLib::Mesh> createMaterialIDsBasedSubMesh(
-    MeshLib::Mesh const& mesh, std::vector<int> const& material_ids,
-    std::string const& name_for_created_mesh);
 
 /// MeshLib specific, lazy, non-owning, non-mutating, composable range views.
 namespace views
