@@ -72,10 +72,13 @@ struct IntegrationPointData final
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
 
+    double phi_fr = 0;
+    double phi_fr_prev;
     double integration_weight;
 
     void pushBackState()
     {
+        phi_fr_prev = phi_fr;
         eps0_prev2 = eps0_prev;
         eps_prev = eps;
         eps_m_prev = eps_m;
