@@ -4,6 +4,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Here, we assume that this script is installed, e.g., in a virtual environment
+# alongside a "bin" directory.
 OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"
 
 binaries_list = [
@@ -72,7 +74,7 @@ binaries_list = [
 ]
 
 
-def pyproject_get_scripts():
+def pyproject_get_binaries():
     return {
         binary: f"ogs._internal.provide_ogs_cli_tools_via_wheel:{binary}"
         for binary in binaries_list

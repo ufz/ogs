@@ -39,9 +39,9 @@ write_to = "Applications/Python/_version.py"
 write_to_template = '__version__ = "{version}"'
 version_scheme = "no-guess-dev"
 git_describe_command = 'git describe --dirty --tags --long --match "*[0-9]*" --abbrev=8'
-# TODO neither local_scheme callable (https://github.com/pypa/setuptools_scm/issues/832)
-# or env var (https://github.com/pypa/setuptools_scm/issues/455) does not work.
-# Should be node-and-date by default and no-local-version in CI
+# local_scheme should be node-and-date by default and no-local-version in CI.
+# Unfortunately setting via env var does not work.
+# See https://github.com/pypa/setuptools_scm/issues/455.
 local_scheme = "no-local-version"
 
 [tool.pytest.ini_options]

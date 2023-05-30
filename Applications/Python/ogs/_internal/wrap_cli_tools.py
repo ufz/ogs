@@ -3,6 +3,8 @@ from pathlib import Path
 
 from .provide_ogs_cli_tools_via_wheel import binaries_list, ogs_with_args
 
+# Here, we assume that this script is installed, e.g., in a virtual environment
+# alongside a "bin" directory.
 OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"
 
 
