@@ -68,16 +68,17 @@ std::pair<std::vector<int>, std::vector<int>> OGSMesh::getCells() const
     return {cells, cell_types};
 }
 
-std::vector<double> OGSMesh::getPointDataArray(std::string const& name) const
+std::vector<double> OGSMesh::getPointDataArray(
+    std::string const& name, std::size_t const number_of_components) const
 {
     auto const* pv = MeshLib::getOrCreateMeshProperty<double>(
-        *_mesh, name, MeshLib::MeshItemType::Node, 1);
+        *_mesh, name, MeshLib::MeshItemType::Node, number_of_components);
     if (pv == nullptr)
     {
         OGS_FATAL("Couldn't access point/node property '{}'.", name);
     }
     std::vector<double> data_array;
-    data_array.reserve(pv->getNumberOfTuples());
+    data_array.reserve(pv->getNumberOfTuples() * number_of_components);
     std::copy(pv->begin(), pv->end(), std::back_inserter(data_array));
 
     return data_array;
