@@ -6,8 +6,22 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  */
-
 #include "VoxelGridFromMesh.h"
+
+#include <vtkAbstractArray.h>
+#include <vtkCellData.h>
+#include <vtkCellLocator.h>
+#include <vtkDataArray.h>
+#include <vtkDoubleArray.h>
+#include <vtkIntArray.h>
+#include <vtkXMLUnstructuredGridReader.h>
+
+#include "InfoLib/GitInfo.h"
+#include "MathLib/Point3d.h"
+#include "MeshLib/MeshSearch/ElementSearch.h"
+#include "MeshLib/MeshSearch/MeshElementGrid.h"
+#include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 namespace MeshToolsLib::MeshGenerator::VoxelGridFromMesh
 {
@@ -54,6 +68,7 @@ std::vector<int> assignCellIds(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
     return cell_ids;
 }
 
+// PropertyVector is required to contain parameter cell_id_name
 bool removeUnusedGridCells(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
                            std::unique_ptr<MeshLib::Mesh>& grid)
 {
@@ -76,17 +91,22 @@ bool removeUnusedGridCells(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
 }
 
 template <typename T, typename VTK_TYPE>
+// PropertyVector is required to contain parameter cell_id_name
 void mapArray(MeshLib::Mesh& grid, VTK_TYPE vtk_arr, std::string const& name)
 {
-    auto const& cell_ids =
-        *grid.getProperties().getPropertyVector<int>(
-            cell_id_name, MeshLib::MeshItemType::Cell, 1);
-    std::vector<T>& arr = *grid.getProperties().createNewPropertyVector<T>(
+    auto const* cell_ids = grid.getProperties().getPropertyVector<int>(
+        cell_id_name, MeshLib::MeshItemType::Cell, 1);
+    if (cell_ids == nullptr)
+    {
+        // Error message
+        return;
+    }
+    auto& arr = *grid.getProperties().createNewPropertyVector<T>(
         name, MeshLib::MeshItemType::Cell, vtk_arr->GetNumberOfComponents());
-    std::size_t const n_elems = cell_ids.size();
+    std::size_t const n_elems = cell_ids->size();
     arr.resize(n_elems);
     for (std::size_t j = 0; j < n_elems; ++j)
-        arr[j] = vtk_arr->GetValue(cell_ids[j]);
+        arr[j] = vtk_arr->GetValue((*cell_ids)[j]);
 }
 
 void mapMeshArraysOntoGrid(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
@@ -114,4 +134,4 @@ void mapMeshArraysOntoGrid(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
         WARN("Ignoring array '{:s}', array type not implemented...", name);
     }
 }
-}  // namespace MeshLib::MeshGenerator::VoxelGridFromMesh
+}  // namespace MeshToolsLib::MeshGenerator::VoxelGridFromMesh

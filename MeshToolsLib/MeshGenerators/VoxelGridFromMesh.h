@@ -10,27 +10,22 @@
 
 #pragma once
 
-#include <vtkAbstractArray.h>
-#include <vtkCellData.h>
-#include <vtkCellLocator.h>
-#include <vtkDataArray.h>
-#include <vtkDoubleArray.h>
-#include <vtkIntArray.h>
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
-#include <vtkXMLUnstructuredGridReader.h>
 
-#include "InfoLib/GitInfo.h"
-#include "MeshLib/Mesh.h"
-#include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
-#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshSearch/ElementSearch.h"
-#include "MeshLib/MeshSearch/MeshElementGrid.h"
+#include <memory>
+#include <array>
 
-static constexpr std::string const cell_id_name = "CellIds";
+namespace MeshLib{
+    class Mesh;
+}
 
+namespace MathLib{
+    class Point3d;
+}
 namespace MeshToolsLib::MeshGenerator::VoxelGridFromMesh
 {
+    static constexpr std::string const cell_id_name = "CellIds";
 
     std::array<std::size_t, 3> getDimensions(
         MathLib::Point3d const& min,

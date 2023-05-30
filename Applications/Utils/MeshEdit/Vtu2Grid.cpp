@@ -8,7 +8,9 @@
  */
 
 #include <tclap/CmdLine.h>
+#include <vtkXMLUnstructuredGridReader.h>
 
+#include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
@@ -94,16 +96,18 @@ int main(int argc, char* argv[])
         std::array<double, 3>{bounds[0], bounds[2], bounds[4]});
     MathLib::Point3d const max(
         std::array<double, 3>{bounds[1], bounds[3], bounds[5]});
-    std::array<std::size_t, 3> const dims = VoxelGridFromMesh::getDimensions(min, max, cellsize);
+    std::array<std::size_t, 3> const dims =
+        VoxelGridFromMesh::getDimensions(min, max, cellsize);
     std::unique_ptr<MeshLib::Mesh> grid(
         MeshToolsLib::MeshGenerator::generateRegularHexMesh(
             dims[0], dims[1], dims[2], cellsize[0], cellsize[1], cellsize[2],
             min, "grid"));
 
-    std::vector<int> const tmp_ids = VoxelGridFromMesh::assignCellIds(mesh, min, dims, cellsize);
+    std::vector<int> const tmp_ids =
+        VoxelGridFromMesh::assignCellIds(mesh, min, dims, cellsize);
     std::vector<int>& cell_ids =
         *grid->getProperties().createNewPropertyVector<int>(
-            cell_id_name, MeshLib::MeshItemType::Cell, 1);
+            VoxelGridFromMesh::cell_id_name, MeshLib::MeshItemType::Cell, 1);
     std::copy(tmp_ids.cbegin(), tmp_ids.cend(), std::back_inserter(cell_ids));
 
     if (!VoxelGridFromMesh::removeUnusedGridCells(mesh, grid))
