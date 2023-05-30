@@ -51,16 +51,17 @@ std::vector<int> assignCellIds(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
     std::array<double, 3> const grid_max = {min[0] + dims[0] * cellsize[0],
                                             min[1] + dims[1] * cellsize[1],
                                             min[2] + dims[2] * cellsize[2]};
-    for (double k = min[2] + (cellsize[2] / 2.0); k < grid_max[2];
-         k += cellsize[2])
+
+    double const start[3] = {min[0] + cellsize[0] / 2.,
+                             min[1] + cellsize[1] / 2.,
+                             min[2] + cellsize[2] / 2.};
+    double pnt[3];
+    for (pnt[2] = start[2]; pnt[2] < grid_max[2]; pnt[2] += cellsize[2])
     {
-        for (double j = min[1] + (cellsize[1] / 2.0); j < grid_max[1];
-             j += cellsize[1])
+        for (pnt[1] = start[1]; pnt[1] < grid_max[1]; pnt[1] += cellsize[1])
         {
-            for (double i = min[0] + (cellsize[0] / 2.0); i < grid_max[0];
-                 i += cellsize[0])
+            for (pnt[0] = start[0]; pnt[0] < grid_max[0]; pnt[0] += cellsize[0])
             {
-                double pnt[3] = {i, j, k};
                 cell_ids.push_back(static_cast<int>(locator->FindCell(pnt)));
             }
         }
