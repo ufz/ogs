@@ -43,7 +43,6 @@ public:
                                  QDialog* parent = nullptr);
 
 private:
-    std::vector<std::string> getSelectedObjects(QStringList list);
     void moveGeometry(Eigen::Vector3d const& displacement,
                       std::string const& name);
     void moveMesh(Eigen::Vector3d const& displacement, std::string const& name);

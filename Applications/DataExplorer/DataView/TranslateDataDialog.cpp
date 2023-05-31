@@ -24,6 +24,18 @@
 #include "MeshModel.h"
 #include "MeshToolsLib/MeshEditing/moveMeshNodes.h"
 
+namespace
+{
+std::vector<std::string> getSelectedObjects(
+    QStringList const& list)
+{
+    std::vector<std::string> indexList;
+    std::transform(list.begin(), list.end(), std::back_inserter(indexList),
+                   [](auto const& index) { return index.toStdString(); });
+    return indexList;
+}
+}  // namespace
+
 TranslateDataDialog::TranslateDataDialog(MeshModel* mesh_model,
                                          GEOModels* geo_models,
                                          QDialog* parent)
@@ -151,7 +163,7 @@ void TranslateDataDialog::accept()
          displacement[2]);
 
     std::vector<std::string> const selectedData =
-        this->getSelectedObjects(_selData.stringList());
+        getSelectedObjects(_selData.stringList());
 
     auto const geoNames = _geo_models->getGeometryNames();
 
@@ -167,13 +179,4 @@ void TranslateDataDialog::accept()
     }
 
     this->done(QDialog::Accepted);
-}
-
-std::vector<std::string> TranslateDataDialog::getSelectedObjects(
-    QStringList list)
-{
-    std::vector<std::string> indexList;
-    std::transform(list.begin(), list.end(), std::back_inserter(indexList),
-                   [](auto const& index) { return index.toStdString(); });
-    return indexList;
 }
