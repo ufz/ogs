@@ -43,6 +43,7 @@ set(SOURCES
     StationTreeModel.cpp
     StationTreeView.cpp
     SurfaceExtractionDialog.cpp
+    TranslateDataDialog.cpp
 )
 
 set(HEADERS

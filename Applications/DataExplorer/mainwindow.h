@@ -101,6 +101,7 @@ protected slots:
     void showGMSHPrefsDialog();
     void showMergeGeometriesDialog();
     void showMeshAnalysisDialog();
+    void showTranslateDataDialog();
     void showMeshQualitySelectionDialog(MeshLib::VtkMappedMeshSource* mshSource);
     void showVisalizationPrefsDialog();
     void updateDataViews();
