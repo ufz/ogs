@@ -150,6 +150,11 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
         LocalAssemblerIF>(process_data_.solid_materials,
                           add_secondary_variable);
 
+    ProcessLib::Deformation::
+        solidMaterialInternalVariablesToIntegrationPointWriter(
+            process_data_.solid_materials, local_assemblers_,
+            _integration_point_writer, integration_order);
+
     process_data_.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "saturation_avg",
         MeshLib::MeshItemType::Cell, 1);

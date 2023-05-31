@@ -449,8 +449,9 @@ AddTest(
 )
 
 if(OGS_USE_MFRONT)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MultiMaterialEhlers/square_1e1_2_matIDs.prj RUNTIME 1)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MultiMaterialEhlers/square_1e1_2_matIDs_restart.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/ThermoPoroElasticity/uniaxial_isothermal_drainage_imbibition_basic_mfront_model_ctest.xml)
-
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/ThermoPoroElasticity/uniaxial_isothermal_drainage_imbibition_extended_mfront_model_ctest.xml)
 
     if (NOT OGS_USE_MPI)
