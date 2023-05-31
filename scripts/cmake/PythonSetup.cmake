@@ -149,14 +149,15 @@ function(setup_venv)
             OUTPUT_VARIABLE _out
             ERROR_VARIABLE _err
         )
-        if(DEFINED ENV{CI_JOB_IMAGE})
-            # Install gmsh package without X11 dependencies in Docker CI builds
+        if(DEFINED ENV{CI} AND UNIX AND NOT APPLE)
             execute_process(
-                COMMAND
-                    ${LOCAL_VIRTUALENV_BIN_DIR}/pip install -i
-                    https://gmsh.info/python-packages-dev-nox --force-reinstall
-                    --no-cache-dir gmsh
+                COMMAND ${_apple_env} ${LOCAL_VIRTUALENV_BIN_DIR}/pip install
+                    --force-reinstall
+                    -r ${PROJECT_SOURCE_DIR}/Tests/Data/requirements-gmsh-nox.txt
                 WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+                RESULT_VARIABLE _return_code
+                OUTPUT_VARIABLE _out
+                ERROR_VARIABLE _err
             )
         endif()
         if(${_return_code} EQUAL 0)
