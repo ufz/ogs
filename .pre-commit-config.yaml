@@ -77,3 +77,8 @@ repos:
         entry: bash -c 'if command -v vale &> /dev/null; then vale sync; VALE_MIN_ALERT_LEVEL=error scripts/ci/helper/run-vale; else exit 0; fi'
         pass_filenames: false
         language: system
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.0.262"
+    hooks:
+      - id: ruff
+        files: "Applications/Python/.*"
