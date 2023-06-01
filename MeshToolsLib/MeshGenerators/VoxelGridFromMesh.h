@@ -13,34 +13,33 @@
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
 
-#include <memory>
 #include <array>
+#include <memory>
 
-namespace MeshLib{
-    class Mesh;
+namespace MeshLib
+{
+class Mesh;
 }
 
-namespace MathLib{
-    class Point3d;
+namespace MathLib
+{
+class Point3d;
 }
 namespace MeshToolsLib::MeshGenerator::VoxelGridFromMesh
 {
-    static constexpr std::string const cell_id_name = "CellIds";
+static std::string const cell_id_name = "CellIds";
 
-    std::array<std::size_t, 3> getDimensions(
-        MathLib::Point3d const& min,
-        MathLib::Point3d const& max,
-        std::array<double, 3> const& cellsize);
+std::array<std::size_t, 3> getNumberOfVoxelPerDimension(
+    std::array<double, 3> const& ranges, std::array<double, 3> const& cellsize);
 
-    std::vector<int> assignCellIds(
-        vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
-        MathLib::Point3d const& min,
-        std::array<std::size_t, 3> const& dims,
-        std::array<double, 3> const& cellsize);
+std::vector<int> assignCellIds(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
+                               MathLib::Point3d const& min,
+                               std::array<std::size_t, 3> const& dims,
+                               std::array<double, 3> const& cellsize);
 
-    bool removeUnusedGridCells(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
-                               std::unique_ptr<MeshLib::Mesh>& grid);
+bool removeUnusedGridCells(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
+                           std::unique_ptr<MeshLib::Mesh>& grid);
 
-    void mapMeshArraysOntoGrid(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
-                               std::unique_ptr<MeshLib::Mesh>& grid);
-};
+void mapMeshArraysOntoGrid(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
+                           std::unique_ptr<MeshLib::Mesh>& grid);
+};  // namespace MeshToolsLib::MeshGenerator::VoxelGridFromMesh

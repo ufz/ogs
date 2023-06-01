@@ -16,6 +16,9 @@
 #include <vtkIntArray.h>
 #include <vtkXMLUnstructuredGridReader.h>
 
+#include <cassert>
+#include <cmath>
+
 #include "InfoLib/GitInfo.h"
 #include "MathLib/Point3d.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
@@ -25,15 +28,34 @@
 
 namespace MeshToolsLib::MeshGenerator::VoxelGridFromMesh
 {
-
-std::array<std::size_t, 3> getDimensions(MathLib::Point3d const& min,
-                                         MathLib::Point3d const& max,
-                                         std::array<double, 3> const& cellsize)
+// getNumberOfVoxelPerDimension is used to calculate how many voxel fit to
+// a bounding box. For this calculation the differnce of min and max point of
+// the bounding box is devided by the cellsize, for every dimension. The
+// calculation is restricted to work only with positive values for the cellsize.
+// If the there is no differencec in min and max, we assign one voxel for the
+// respective dimension.
+std::array<std::size_t, 3> getNumberOfVoxelPerDimension(
+    std::array<double, 3> const& ranges, std::array<double, 3> const& cellsize)
 {
-    return {
-        static_cast<std::size_t>(std::ceil((max[0] - min[0]) / cellsize[0])),
-        static_cast<std::size_t>(std::ceil((max[1] - min[1]) / cellsize[1])),
-        static_cast<std::size_t>(std::ceil((max[2] - min[2]) / cellsize[2]))};
+    if (cellsize[0] <= 0 || cellsize[1] <= 0 || cellsize[2] <= 0)
+    {
+        OGS_FATAL("A cellsize ({},{},{}) is not allowed to be <= 0",
+                  cellsize[0], cellsize[1], cellsize[2]);
+    }
+    std::array<double, 3> numberOfVoxel = {
+        ranges[0] / cellsize[0], ranges[1] / cellsize[1], ranges[2] / cellsize[2]};
+
+    if (ranges[0] < 0 || ranges[1] < 0 || ranges[2] < 0)
+    {
+        OGS_FATAL(
+            "The difference of max-min ({},{},{}) is not allowed to be < 0",
+            ranges[0], ranges[1], ranges[2]);
+    }
+    std::replace(numberOfVoxel.begin(), numberOfVoxel.end(), 0, 1);
+
+    return {static_cast<std::size_t>(std::lround(numberOfVoxel[0])),
+            static_cast<std::size_t>(std::lround(numberOfVoxel[1])),
+            static_cast<std::size_t>(std::lround(numberOfVoxel[2]))};
 }
 
 std::vector<int> assignCellIds(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
@@ -91,8 +113,8 @@ bool removeUnusedGridCells(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
     return true;
 }
 
-template <typename T, typename VTK_TYPE>
 // PropertyVector is required to contain parameter cell_id_name
+template <typename T, typename VTK_TYPE>
 void mapArray(MeshLib::Mesh& grid, VTK_TYPE vtk_arr, std::string const& name)
 {
     auto const* cell_ids = grid.getProperties().getPropertyVector<int>(

@@ -83,6 +83,17 @@ int main(int argc, char* argv[])
     double const x_size = x_arg.getValue();
     double const y_size = (y_arg.isSet()) ? y_arg.getValue() : x_arg.getValue();
     double const z_size = (z_arg.isSet()) ? z_arg.getValue() : x_arg.getValue();
+
+    if (x_size <= 0 || y_size <= 0 || z_size <= 0)
+    {
+        ERR("A cellsize ({},{},{}) is not allowed to be <= 0", x_size, y_size,
+            z_size);
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
+        return -1;
+    }
+
     std::array<double, 3> const cellsize = {x_size, y_size, z_size};
 
     vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
@@ -96,8 +107,19 @@ int main(int argc, char* argv[])
         std::array<double, 3>{bounds[0], bounds[2], bounds[4]});
     MathLib::Point3d const max(
         std::array<double, 3>{bounds[1], bounds[3], bounds[5]});
+    std::array<double, 3> ranges = {max[0] - min[0], max[1] - min[1],
+                                   max[2] - min[2]};
+    if (ranges[0] < 0 || ranges[1] < 0 || ranges[2] < 0)
+    {
+        ERR("The range ({},{},{}) is not allowed to be < 0",
+            ranges[0], ranges[1], ranges[2]);
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
+        return -1;
+    }
     std::array<std::size_t, 3> const dims =
-        VoxelGridFromMesh::getDimensions(min, max, cellsize);
+        VoxelGridFromMesh::getNumberOfVoxelPerDimension(ranges, cellsize);
     std::unique_ptr<MeshLib::Mesh> grid(
         MeshToolsLib::MeshGenerator::generateRegularHexMesh(
             dims[0], dims[1], dims[2], cellsize[0], cellsize[1], cellsize[2],
