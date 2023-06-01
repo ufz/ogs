@@ -19,6 +19,7 @@
 
 #include "BaseLib/Error.h"
 #include "CoordinateSystem.h"
+#include "GeoLib/Raster.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
 #include "SpatialPosition.h"
@@ -189,9 +190,12 @@ struct Parameter : public ParameterBase
 //! Constructs a new ParameterBase from the given configuration.
 //!
 //! The \c meshes vector is used to set up parameters from mesh input data.
+//! The \c named_rasters vector is used to set up parameters from raster input
+//! data.
 std::unique_ptr<ParameterBase> createParameter(
     BaseLib::ConfigTree const& config,
     const std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes,
+    std::vector<GeoLib::NamedRaster> const& named_rasters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves);

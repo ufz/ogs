@@ -19,6 +19,7 @@
 #include "MeshElementParameter.h"
 #include "MeshNodeParameter.h"
 #include "RandomFieldMeshElementParameter.h"
+#include "RasterParameter.h"
 #include "TimeDependentHeterogeneousParameter.h"
 
 namespace ParameterLib
@@ -26,6 +27,7 @@ namespace ParameterLib
 std::unique_ptr<ParameterBase> createParameter(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+    std::vector<GeoLib::NamedRaster> const& named_rasters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
