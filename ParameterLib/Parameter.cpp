@@ -88,6 +88,11 @@ std::unique_ptr<ParameterBase> createParameter(
         INFO("RandomFieldMeshElement: {:s}", name);
         return createRandomFieldMeshElementParameter(name, config, mesh_var);
     }
+    if (type == "Raster")
+    {
+        INFO("RasterParameter: {:s}", name);
+        return createRasterParameter(name, config, named_rasters);
+    }
     if (type == "TimeDependentHeterogeneousParameter")
     {
         INFO("TimeDependentHeterogeneousParameter: {:s}", name);
