@@ -49,7 +49,7 @@ target_link_libraries(
 
 if(OGS_BUILD_WHEEL OR (APPLE AND OGS_USE_PETSC))
     target_link_options(
-        ProcessLibBoundaryConditionAndSourceTermPython PUBLIC
+        ProcessLibBoundaryConditionAndSourceTermPython PRIVATE
         $<$<CXX_COMPILER_ID:AppleClang>:-undefined dynamic_lookup>
         $<$<CXX_COMPILER_ID:MSVC>:/FORCE:UNRESOLVED>
     )
