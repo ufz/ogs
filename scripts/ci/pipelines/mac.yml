@@ -3,3 +3,4 @@ include:
   - local: "/scripts/ci/jobs/meta.yml"
   - local: "/scripts/ci/jobs/build-mac.yml"
   - local: "/scripts/ci/jobs/build-gui-mac.yml"
+  - local: "/scripts/ci/jobs/build-mac-petsc.yml"
