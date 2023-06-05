@@ -46,10 +46,8 @@ class CLI:
 
     @staticmethod
     def _format_kv(kwargs):
-        for k, v in kwargs.items():
-            key = k.replace("_", "-")
-
-            if len(k) == 1:
+        for key, v in kwargs.items():
+            if len(key) == 1:
                 yield f"-{key}"
             else:
                 yield f"--{key}"
