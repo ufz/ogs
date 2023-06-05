@@ -38,7 +38,7 @@ void processPropertyVector(MeshLib::PropertyVector<T> const& property,
 {
     auto const number_of_components = property.getNumberOfGlobalComponents();
 
-    auto sfc_prop = getOrCreateMeshProperty<T>(
+    auto sfc_prop = MeshLib::getOrCreateMeshProperty<T>(
         sfc_mesh, property.getPropertyName(), property.getMeshItemType(),
         number_of_components);
     sfc_prop->clear();
