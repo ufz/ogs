@@ -69,6 +69,21 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             _process_data.solid_materials, _process_data.material_ids,
             e.getID());
 
+    // Consistency check: if frozen liquid phase is given, then the constitutive
+    // relation for ice must also be given, and vice versa.
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    if (medium->hasPhase("FrozenLiquid") !=
+        (_process_data.ice_constitutive_relation != nullptr))
+    {
+        OGS_FATAL(
+            "Frozen liquid phase is {:s} and the solid material constitutive "
+            "relation for ice is {:s}. But both must be given (or both "
+            "omitted).",
+            medium->hasPhase("FrozenLiquid") ? "specified" : "not specified",
+            _process_data.ice_constitutive_relation != nullptr
+                ? "specified"
+                : "not specified");
+    }
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         _ip_data.emplace_back(solid_material);
