@@ -513,3 +513,19 @@ AddTest(
     HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu temperature temperature 1.e-9 1.0e-8
     HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu pressure pressure 1.e-9 1.0e-8
 )
+
+AddTest(
+    NAME 2D_single_fracture_HT
+    PATH Parabolic/HT/LowerDimensionalFracture
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS 2D_single_fracture_HT.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 55
+    DIFF_DATA
+    2D_single_fracture_HT_ts_3_t_1800.000000.vtu 2D_single_fracture_HT_ts_3_t_1800.000000.vtu temperature temperature 1.e-9 1.0e-11
+    2D_single_fracture_HT_ts_3_t_1800.000000.vtu 2D_single_fracture_HT_ts_3_t_1800.000000.vtu pressure pressure 1.e-9 1.0e-11
+    2D_single_fracture_HT_ts_6_t_3600.000000.vtu 2D_single_fracture_HT_ts_6_t_3600.000000.vtu temperature temperature 1.e-9 1.0e-11
+    2D_single_fracture_HT_ts_6_t_3600.000000.vtu 2D_single_fracture_HT_ts_6_t_3600.000000.vtu pressure pressure 1.e-9 1.0e-11
+)
