@@ -226,7 +226,7 @@ The desired format for output files can be declared as follows:
 
 The number of time steps at which the output files are written doesn't need to match the simulation time steps.
 
-There are two ways how the times at which the output will be written can be specified: as fixed output times and timesteps.
+There are two ways how the times at which the output will be written can be specified: as fixed output times and time steps.
 
 The fixed output times can be defined in the same way as in [fixed time step time stepping](/docs/userguide/blocks/time_loop/#fixed-time-stepping).
 
@@ -245,11 +245,11 @@ In such a case, OpenGeoSys can write the output files at times provided in a lis
 </fixed_output_times>
 ```
 
-If output times are supposed to be cyclic, or follow some patterns, defining them as timesteps will be more convenient.
+If output times are supposed to be cyclic, or follow some patterns, defining them as time steps will be more convenient.
 In order to do so, block ```xml <timesteps> </timesteps>```has to be placed in ```<output>```block.
 It can contain arbitrary number of blocks ```xml <pair> </pair>```, which define a cyclical pattern each.
 The block ```<pair>``` has to contain two tags: ```<repeat>``` and ```<each_steps>```.
-```<repeat>``` defines how many outputs with spacing of ```<each_steps>``` timesteps should be written.
+```<repeat>``` defines how many outputs with spacing of ```<each_steps>``` time steps should be written.
 All pair defined in ```<timesteps>``` block share the same "counter".
 This means, that the starting timestep for the next pair is the last timestep from the previous one.
 Following example illustrates this:
@@ -271,17 +271,17 @@ Following example illustrates this:
 </timesteps>
 ```
 
-Using this block in the project file will result in the output being written at timesteps: 10, 100 and 1000.
+Using this block in the project file will result in the output being written at time steps: 10, 100 and 1000.
 First file would be written as result of the fist ```<pair>```.
-It will write output once (as ```<repeat>``` has value of 1) after 10 timesteps (10 is the value provided in ```<each_steps>```).
-Second pair will write an output file after 90 timesteps, but the counting starts not at timestep 0, but at the last timestep resulting from the previous pair.
-In this cas this is timestep 10, hence second pair will write an output at 100 (10 timesteps from first pair plus 90 timesteps from second pair).
+It will write output once (as ```<repeat>``` has value of 1) after 10 time steps (10 is the value provided in ```<each_steps>```).
+Second pair will write an output file after 90 time steps, but the counting starts not at timestep 0, but at the last timestep resulting from the previous pair.
+In this cas this is timestep 10, hence second pair will write an output at 100 (10 time steps from first pair plus 90 time steps from second pair).
 The same applies to the third pair.
 It will write an output at 1000 as 1000 is the result of addition of 10, 90, and 900 from first, second and third steps respectively.
 Note, that in this case the values in ```<each_steps>``` tag can be summed directly, as each pair is repeated only once.
 
 Now, consider more complicated pattern.
-Let's assume, that output has to be written at every timestep for range 1-10 timesteps, every tenth in range 10-100 timesteps and every hundredth for range 100-1000.
+Let's assume, that output has to be written at every timestep for range 1-10 time steps, every tenth in range 10-100 time steps and every hundredth for range 100-1000.
 Block defining this pattern would be written as follows:
 
 ```xml
@@ -301,13 +301,13 @@ Block defining this pattern would be written as follows:
 </timesteps>
 ```
 
-This will result in output being written at timesteps: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900 and 1000.
+This will result in output being written at time steps: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900 and 1000.
 Note, that since output at 10th timestep is the last one resulting from first pair, it will be the starting point for the second pair, therefore the second pair needs to be repeated only 9 times.
 Otherwise last output from second pair would be written at timestep 110.
 The same applied to third pair.
 Output at timestep 100 is written by the second pair, therefore to get to 1000, third pair only needs to be repeated 9 times.
 
-Regardless of the user defined output timesteps, OpenGeoSys will write the output files at $t=0$ and $t=t_{end}$.
+Regardless of the user defined output time steps, OpenGeoSys will write the output files at $t=0$ and $t=t_{end}$.
 
 The naming of output files written at different time steps is handled automatically by OpenGeoSys.
 User can use two tags that allow control over how the file names are structured and what they contain: tags `<suffix> </suffix>` and `<prefix> </prefix>`.
