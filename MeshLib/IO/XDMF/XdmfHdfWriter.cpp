@@ -12,10 +12,13 @@
 #include <algorithm>
 #include <functional>
 
+#include "BaseLib/Algorithm.h"
 #include "InfoLib/GitInfo.h"
 #include "partition.h"
 #include "transformData.h"
 #include "writeXdmf.h"
+
+using namespace std::literals;
 
 namespace MeshLib::IO
 {
@@ -34,6 +37,20 @@ struct XdmfHdfMesh final
     std::unique_ptr<TransformedMeshData> transformed_data;
 };
 
+template <typename Data>
+std::function<bool(Data)> isVariableAttribute(
+    std::set<std::string> const& variable_output_names,
+    std::set<std::string> const& constant_output_names)
+{
+    if (variable_output_names.empty())
+    {
+        return [&constant_output_names](Data const& data) -> bool
+        { return !constant_output_names.contains(data.name); };
+    }
+    return [&variable_output_names](Data const& data) -> bool
+    { return variable_output_names.contains(data.name); };
+}
+
 XdmfHdfWriter::XdmfHdfWriter(
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
     std::filesystem::path const& filepath, unsigned long long const time_step,
@@ -44,37 +61,22 @@ XdmfHdfWriter::XdmfHdfWriter(
     // ogs meshes to vector of Xdmf/HDF meshes (we keep Xdmf and HDF together
     // because XDMF depends on HDF) to meta
 
+    std::set<std::string> constant_output_names;
+    for (std::string_view item :
+         {"MaterialIDs"sv, "topology"sv, "geometry"sv,
+          MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+          MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
+          MeshLib::getBulkIDString(MeshLib::MeshItemType::Edge),
+          MeshLib::getBulkIDString(MeshLib::MeshItemType::Face)})
+    {
+        constant_output_names.insert(std::string(item));
+    };
+
     // if no output name is specified, all data will be assumened to be
     // variable over the timesteps. The xdmfhdfwriter is an alternative to
     // other writers, that do not consider the constantness of data Callers
     // of xdmfwriter (e.g. ogs tools) do not provide these information yet
     // and indicate with empty list
-    std::function<bool(HdfData)> const is_variable_hdf_attribute =
-        [&variable_output_names](
-            bool outputnames) -> std::function<bool(HdfData)>
-    {
-        if (outputnames)
-        {
-            return [&variable_output_names](HdfData const& data) -> bool
-            {
-                return std::find(variable_output_names.begin(),
-                                 variable_output_names.end(),
-                                 data.name) != variable_output_names.end();
-            };
-        }
-        else
-        {
-            return [](HdfData const&) -> bool { return true; };
-        }
-    }(!variable_output_names.empty());
-
-    auto is_variable_xdmf_attribute =
-        [&variable_output_names](XdmfData const& data) -> bool
-    {
-        return std::find(variable_output_names.begin(),
-                         variable_output_names.end(),
-                         data.name) != variable_output_names.end();
-    };
 
     // Transform the data to be written into a format conforming with the rules
     // of xdmf topology and geometry
@@ -111,10 +113,12 @@ XdmfHdfWriter::XdmfHdfWriter(
                            std::move(attributes), mesh.get().getName(),
                            std::move(xdmf_conforming_data)};
     };
+    auto isVariableHdfAttribute = isVariableAttribute<HdfData>(
+        variable_output_names, constant_output_names);
 
     // extract meta data relevant for HDFWriter
     auto const transform_metamesh_to_hdf =
-        [&is_variable_hdf_attribute](auto const& metamesh)
+        [&isVariableHdfAttribute](auto const& metamesh)
     {
         // topology and geometry can be treated as any other attribute
         std::vector<HdfData> hdf_data_attributes = {metamesh.geometry.hdf,
@@ -129,11 +133,11 @@ XdmfHdfWriter::XdmfHdfWriter(
         HDFAttributes constant_attributes;
         std::copy_if(hdf_data_attributes.begin(), hdf_data_attributes.end(),
                      back_inserter(constant_attributes),
-                     std::not_fn(is_variable_hdf_attribute));
+                     std::not_fn(isVariableHdfAttribute));
         HDFAttributes variable_attributes;
         std::copy_if(hdf_data_attributes.begin(), hdf_data_attributes.end(),
                      back_inserter(variable_attributes),
-                     is_variable_hdf_attribute);
+                     isVariableHdfAttribute);
 
         return MeshHdfData{
             .constant_attributes = std::move(constant_attributes),
@@ -168,10 +172,12 @@ XdmfHdfWriter::XdmfHdfWriter(
         return;
     }
 
+    auto isVariableXdmfAttribute = isVariableAttribute<XdmfData>(
+        variable_output_names, constant_output_names);
     // xdmf section
     // extract meta data relevant for XDMFWriter
     auto const transform_metamesh_to_xdmf =
-        [&is_variable_xdmf_attribute, &filepath, &hdf_filepath,
+        [&isVariableXdmfAttribute, &filepath, &hdf_filepath,
          &initial_time](XdmfHdfMesh& metamesh)
     {
         std::string const xdmf_name = metamesh.name;
@@ -195,11 +201,11 @@ XdmfHdfWriter::XdmfHdfWriter(
         std::vector<XdmfData> xdmf_variable_attributes;
         std::copy_if(xdmf_attributes.begin(), xdmf_attributes.end(),
                      back_inserter(xdmf_variable_attributes),
-                     is_variable_xdmf_attribute);
+                     isVariableXdmfAttribute);
         std::vector<XdmfData> xdmf_constant_attributes;
         std::copy_if(xdmf_attributes.begin(), xdmf_attributes.end(),
                      back_inserter(xdmf_constant_attributes),
-                     std::not_fn(is_variable_xdmf_attribute));
+                     std::not_fn(isVariableXdmfAttribute));
 
         auto const xdmf_writer_fn =
             write_xdmf(metamesh.geometry.xdmf, metamesh.topology.xdmf,
