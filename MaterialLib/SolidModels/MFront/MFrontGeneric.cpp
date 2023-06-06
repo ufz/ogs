@@ -11,24 +11,6 @@
 
 namespace MaterialLib::Solids::MFront
 {
-std::ptrdiff_t OGSToMFront(std::ptrdiff_t i)
-{
-    // MFront: 11 22 33 12 13 23
-    // OGS:    11 22 33 12 23 13
-    if (i < 4)
-        return i;
-    if (i == 4)
-        return 5;
-    return 4;
-}
-
-std::ptrdiff_t MFrontToOGS(std::ptrdiff_t i)
-{
-    // MFront: 11 22 33 12 13 23
-    // OGS:    11 22 33 12 23 13
-    return OGSToMFront(i);  // Same algorithm: indices 4 and 5 swapped.
-}
-
 const char* varTypeToString(int v)
 {
     using V = mgis::behaviour::Variable;
@@ -93,7 +75,7 @@ OGSMFrontTangentOperatorData tangentOperatorDataMFrontToOGS(
                     "dScalar/dSTensor.");
             }
 
-            Eigen::Map<KV>{d_out} = MFrontToOGS(Eigen::Map<const KV>{d_in});
+            Eigen::Map<KV>{d_out} = eigenSwap45View(Eigen::Map<const KV>{d_in});
         }
         else if (var1.type == VT::STENSOR && var2.type == VT::SCALAR)
         {
@@ -107,7 +89,7 @@ OGSMFrontTangentOperatorData tangentOperatorDataMFrontToOGS(
                     "dSTensor/dScalar.");
             }
 
-            Eigen::Map<KV>{d_out} = MFrontToOGS(Eigen::Map<const KV>{d_in});
+            Eigen::Map<KV>{d_out} = eigenSwap45View(Eigen::Map<const KV>{d_in});
         }
         else if (var1.type == VT::STENSOR && var2.type == VT::STENSOR)
         {
@@ -118,12 +100,13 @@ OGSMFrontTangentOperatorData tangentOperatorDataMFrontToOGS(
             if (Q)
             {
                 Eigen::Map<KM>{d_out} =
-                    *Q * MFrontToOGS(Eigen::Map<const KM>{d_in}) *
+                    *Q * eigenSwap45View(Eigen::Map<const KM>{d_in}) *
                     Q->transpose();
             }
             else
             {
-                Eigen::Map<KM>{d_out} = MFrontToOGS(Eigen::Map<const KM>{d_in});
+                Eigen::Map<KM>{d_out} =
+                    eigenSwap45View(Eigen::Map<const KM>{d_in});
             }
         }
         else

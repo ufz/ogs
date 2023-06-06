@@ -197,15 +197,15 @@ TEST(MaterialLib_SolidModelsMFront, Conversion)
         KelvinVector<2> const ogs2{0, 1, 2, 3};
         KelvinVector<2> const mfront2 = ogs2;
 
-        ASSERT_EQ(mfront2, OGSToMFront(ogs2));
-        ASSERT_EQ(ogs2, MFrontToOGS(mfront2));
+        ASSERT_EQ(mfront2, eigenSwap45View(ogs2).eval());
+        ASSERT_EQ(ogs2, eigenSwap45View(mfront2).eval());
 
         // 3D
         KelvinVector<3> const ogs3{0, 1, 2, 3, 4, 5};
         KelvinVector<3> const mfront3{0, 1, 2, 3, 5, 4};
 
-        ASSERT_EQ(mfront3, OGSToMFront(ogs3));
-        ASSERT_EQ(ogs3, MFrontToOGS(mfront3));
+        ASSERT_EQ(mfront3, eigenSwap45View(ogs3).eval());
+        ASSERT_EQ(ogs3, eigenSwap45View(mfront3).eval());
     }
 
     {  // matrices
@@ -221,8 +221,8 @@ TEST(MaterialLib_SolidModelsMFront, Conversion)
         KelvinMatrix<2> const mfront2 = ogs2;
         // clang-format on
 
-        ASSERT_EQ(mfront2, OGSToMFront(ogs2));
-        ASSERT_EQ(ogs2, MFrontToOGS(mfront2));
+        ASSERT_EQ(mfront2, eigenSwap45View(ogs2).eval());
+        ASSERT_EQ(ogs2, eigenSwap45View(mfront2).eval());
 
         // 3D matrix
         // clang-format off
@@ -244,7 +244,7 @@ TEST(MaterialLib_SolidModelsMFront, Conversion)
             24, 25, 26, 27, 29, 28;
         // clang-format on
 
-        ASSERT_EQ(mfront3, OGSToMFront(ogs3));
-        ASSERT_EQ(ogs3, MFrontToOGS(mfront3));
+        ASSERT_EQ(mfront3, eigenSwap45View(ogs3).eval());
+        ASSERT_EQ(ogs3, eigenSwap45View(mfront3).eval());
     }
 }
