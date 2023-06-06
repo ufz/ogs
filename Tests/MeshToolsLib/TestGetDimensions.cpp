@@ -17,7 +17,7 @@
 #include "MathLib/Point3d.h"
 #include "MeshToolsLib/MeshGenerators/VoxelGridFromMesh.h"
 
-TEST(MeshToolsLib, getDim)
+TEST(MeshToolsLib, getNumberOfVoxelPerDimension)
 {
     std::array<double, 3> const cellsize = {1, 2, 5};
     std::array<double, 3> const ranges = {10, 10, 10};
@@ -29,7 +29,7 @@ TEST(MeshToolsLib, getDim)
     ASSERT_EQ(2, dims[2]);
 }
 
-TEST(MeshToolsLib, getDimMinMax)
+TEST(MeshToolsLib, getNumberOfVoxelPerDimensionMinMax)
 {
     std::array<double, 3> const cellsize = {1, 2, 5};
     std::array<double, 3> const ranges = {0, 0, 10};
@@ -41,7 +41,7 @@ TEST(MeshToolsLib, getDimMinMax)
     ASSERT_EQ(2, dims[2]);
 }
 
-TEST(MeshToolsLib, getDimCell)
+TEST(MeshToolsLib, getNumberOfVoxelPerDimensionCellSize)
 {
     std::array<double, 3> const cellsize = {0, 2, 5};
     std::array<double, 3> const ranges = {1, 2, 5};
