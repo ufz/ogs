@@ -19,6 +19,8 @@ struct MFrontConfig
 {
     mgis::behaviour::Behaviour behaviour;
     std::vector<ParameterLib::Parameter<double> const*> material_properties;
+    std::map<std::string, ParameterLib::Parameter<double> const*>
+        state_variables_initial_properties;
 };
 
 MFrontConfig createMFrontConfig(
@@ -44,6 +46,7 @@ createMFrontGeneric(
     return std::make_unique<
         MFrontGeneric<DisplacementDim, Gradients, TDynForces, ExtStateVars>>(
         std::move(conf.behaviour), std::move(conf.material_properties),
+        std::move(conf.state_variables_initial_properties),
         local_coordinate_system);
 }
 }  // namespace MaterialLib::Solids::MFront

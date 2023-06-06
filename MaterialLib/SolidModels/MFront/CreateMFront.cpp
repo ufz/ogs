@@ -35,6 +35,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
 
     return std::make_unique<MFront<DisplacementDim>>(
         std::move(conf.behaviour), std::move(conf.material_properties),
+        std::move(conf.state_variables_initial_properties),
         local_coordinate_system);
 }
 }  // namespace MFront

@@ -229,15 +229,20 @@ public:
     using KelvinMatrix =
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 
-    MFrontGeneric(mgis::behaviour::Behaviour&& behaviour,
-                  std::vector<ParameterLib::Parameter<double> const*>&&
-                      material_properties,
-                  std::optional<ParameterLib::CoordinateSystem> const&
-                      local_coordinate_system)
+    MFrontGeneric(
+        mgis::behaviour::Behaviour&& behaviour,
+        std::vector<ParameterLib::Parameter<double> const*>&&
+            material_properties,
+        std::map<std::string, ParameterLib::Parameter<double> const*>&&
+            state_variables_initial_properties,
+        std::optional<ParameterLib::CoordinateSystem> const&
+            local_coordinate_system)
         : _behaviour(std::move(behaviour)),
           equivalent_plastic_strain_offset_(
               getEquivalentPlasticStrainOffset(_behaviour)),
           _material_properties(std::move(material_properties)),
+          _state_variables_initial_properties(
+              std::move(state_variables_initial_properties)),
           _local_coordinate_system(local_coordinate_system
                                        ? &local_coordinate_system.value()
                                        : nullptr)
@@ -642,6 +647,8 @@ private:
     mgis::behaviour::Behaviour _behaviour;
     int const equivalent_plastic_strain_offset_;
     std::vector<ParameterLib::Parameter<double> const*> _material_properties;
+    std::map<std::string, ParameterLib::Parameter<double> const*>
+        _state_variables_initial_properties;
     ParameterLib::CoordinateSystem const* const _local_coordinate_system;
 };
 }  // namespace MaterialLib::Solids::MFront

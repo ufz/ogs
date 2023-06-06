@@ -52,9 +52,12 @@ struct StandardElasticityBrickBehaviour
         static P const poisson_ratio("", 0.3);
         std::vector<ParameterLib::Parameter<double> const*> parameters{
             &young_modulus, &poisson_ratio};
+        std::map<std::string, ParameterLib::Parameter<double> const*>
+            state_variables_initial_properties;
 
         auto result = std::make_unique<MFront::MFront<Dim>>(
-            std::move(behaviour), std::move(parameters), std::nullopt);
+            std::move(behaviour), std::move(parameters),
+            std::move(state_variables_initial_properties), std::nullopt);
         return result;
     }
 };
@@ -85,9 +88,12 @@ struct MohrCoulombAbboSloanBehaviour
             &dilatancy_angle,
             &transition_angle,
             &tension_cut_off_parameter};
+        std::map<std::string, ParameterLib::Parameter<double> const*>
+            state_variables_initial_properties;
 
         auto result = std::make_unique<MFront::MFront<Dim>>(
-            std::move(behaviour), std::move(parameters), std::nullopt);
+            std::move(behaviour), std::move(parameters),
+            std::move(state_variables_initial_properties), std::nullopt);
         return result;
     }
 };
