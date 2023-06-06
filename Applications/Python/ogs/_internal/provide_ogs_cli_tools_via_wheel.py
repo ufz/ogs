@@ -29,6 +29,7 @@ binaries_list = [
     "createNeumannBc",
     "createQuadraticMesh",
     "createRaster",
+    "createTetgenSmeshFromRasters",
     "editMaterialID",
     "ExtractBoundary",
     "ExtractMaterials",
