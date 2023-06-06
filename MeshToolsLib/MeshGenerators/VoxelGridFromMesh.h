@@ -29,6 +29,12 @@ namespace MeshToolsLib::MeshGenerator::VoxelGridFromMesh
 {
 static std::string const cell_id_name = "CellIds";
 
+/// getNumberOfVoxelPerDimension is used to calculate how many voxel fit into
+/// a bounding box. For this calculation the difference of min and max point of
+/// the bounding box is divided by the cell size, for every dimension. The
+/// calculation is restricted to work only with positive values for the cell
+/// size. If the difference between min and max is zero, we assign one voxel for
+/// the respective dimension.
 std::array<std::size_t, 3> getNumberOfVoxelPerDimension(
     std::array<double, 3> const& ranges, std::array<double, 3> const& cellsize);
 
