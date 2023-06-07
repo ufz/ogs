@@ -17,9 +17,13 @@
                     <material_property name="CriticalStateLineSlope" parameter="CriticalStateLineSlope"/>
                     <material_property name="SwellingLineSlope" parameter="SwellingLineSlope"/>
                     <material_property name="VirginConsolidationLineSlope" parameter="VirginConsolidationLineSlope"/>
-                    <material_property name="InitialPreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
-                    <material_property name="InitialPorosity" parameter="InitialPorosity"/>
+                    <material_property name="CharacteristicPreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
                 </material_properties>
+                <initial_values>
+                    <state_variable name="PreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
+                    <state_variable name="Porosity" parameter="InitialPorosity"/>
+                    <state_variable name="VolumeRatio" parameter="InitialVolumeRatio"/>
+                </initial_values>
             </constitutive_relation>
             <solid_density>rho_sr</solid_density>
             <specific_body_force>0 0</specific_body_force>
@@ -115,6 +119,11 @@
             <name>InitialPorosity</name>
             <type>Constant</type>
             <value>0.44</value>
+        </parameter>
+        <parameter>
+            <name>InitialVolumeRatio</name>
+            <type>Constant</type>
+            <value>1.78571428571428571429</value>
         </parameter>
         <!-- Initial and boundary values -->
         <parameter>
