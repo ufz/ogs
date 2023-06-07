@@ -19,8 +19,12 @@ weight = 1023
 
 1. In the Markdown files, each sentence should be placed in a separate line.
 It will make reviewing and tracking of changes easier.
-2. Missing content can be marked by adding `TODO:` followed by a brief description of the missing content.
-The line containing `TODO:` should be placed below the heading of the section it refers to.
+2. Missing content can be marked by adding a commented out TODO tag followed by a brief description of the missing content.
+The line containing TODO should be placed below the heading of the section it refers to.
+Please, see following example:
+```xml
+<!-- TODO: describe briefly what needs to be done here-->
+```
 
 ## Style recommendations
 
