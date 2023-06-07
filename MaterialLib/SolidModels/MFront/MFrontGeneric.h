@@ -228,6 +228,8 @@ public:
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
     using KelvinMatrix =
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
+    using InternalVariable =
+        typename MechanicsBase<DisplacementDim>::InternalVariable;
 
     MFrontGeneric(
         mgis::behaviour::Behaviour&& behaviour,
@@ -373,6 +375,41 @@ public:
     {
         return std::make_unique<MaterialStateVariablesMFront<DisplacementDim>>(
             equivalent_plastic_strain_offset_, _behaviour);
+    }
+
+    void initializeInternalStateVariables(
+        double const t,
+        ParameterLib::SpatialPosition const& x,
+        typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
+            material_state_variables) const
+    {
+        assert(dynamic_cast<MaterialStateVariablesMFront<DisplacementDim>*>(
+            &material_state_variables));
+
+        auto& state =
+            static_cast<MaterialStateVariablesMFront<DisplacementDim>&>(
+                material_state_variables);
+
+        auto const& ivs = getInternalVariables();
+
+        for (auto& [name, parameter] : _state_variables_initial_properties)
+        {
+            // find corresponding internal variable
+            auto const& iv = BaseLib::findElementOrError(
+                begin(ivs),
+                end(ivs),
+                [name = name](InternalVariable const& iv)
+                { return iv.name == name; },
+                fmt::format("Internal variable `{:s}' not found.", name));
+
+            // evaluate parameter
+            std::vector<double> values = (*parameter)(t, x);
+
+            // copy parameter data into iv
+            auto const values_span = iv.reference(state);
+            assert(values.size() == values_span.size());
+            std::copy_n(begin(values), values_span.size(), values_span.begin());
+        }
     }
 
     std::optional<std::tuple<OGSMFrontThermodynamicForcesData,
@@ -533,9 +570,6 @@ public:
                 tangentOperatorDataMFrontToOGS<DisplacementDim>(
                     behaviour_data.K, Q, _behaviour)));
     }
-
-    using InternalVariable =
-        typename MechanicsBase<DisplacementDim>::InternalVariable;
 
     std::vector<InternalVariable> getInternalVariables() const
     {
