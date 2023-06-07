@@ -59,14 +59,9 @@ ka.setEntryName("SwellingLineSlope");
 @PhysicalBounds la in [0:*[;
 la.setEntryName("VirginConsolidationLineSlope");
 
-// initial values
-@MaterialProperty stress pc0;
-pc0.setEntryName("InitialPreConsolidationPressure");
-@PhysicalBounds pc0 in [0:*[;
-
-@MaterialProperty real phi0;
-@PhysicalBounds phi0 in [0:1];
-phi0.setEntryName("InitialPorosity");
+@MaterialProperty stress pc_char;
+pc_char.setEntryName("CharacteristicPreConsolidationPressure");
+@PhysicalBounds pc_char in [0:*[;
 
 // state variables (beside eel):
 // A "standard" state variable is a persistent state variable and an integration variable.
@@ -106,10 +101,6 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
     // TODO may fail in restart simulations
     if (Time == 0)
     {
-        // initialize state variables
-        pc = pc0;
-        phi = phi0;
-        v = 1 / (1 - phi0);
         // initial elastic strain
         const auto S = invert(D);
         eel = eval(S * sig);
@@ -160,7 +151,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
     auto depl = eval(dlp * n);
     const auto deplV = trace(depl);
 
-    const auto fchar = pc0 * young;  // OR: young*young
+    const auto fchar = pc_char * young;
 
     // residual
     feel += depl;

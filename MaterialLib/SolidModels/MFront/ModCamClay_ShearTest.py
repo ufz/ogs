@@ -84,9 +84,7 @@ for k in range(runs):
     m.setMaterialProperty("CriticalStateLineSlope", M)
     m.setMaterialProperty("SwellingLineSlope", ka)
     m.setMaterialProperty("VirginConsolidationLineSlope", la)
-    # only for the ParaInit code version!
-    m.setMaterialProperty("InitialPreConsolidationPressure", pc0)
-    m.setMaterialProperty("InitialPorosity", phi0)
+    m.setMaterialProperty("CharateristicPreConsolidationPressure", pc0)
 
     m.setInternalStateVariableInitialValue("PreConsolidationPressure", pc0)
     m.setInternalStateVariableInitialValue("Porosity", phi0)

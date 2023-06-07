@@ -44,10 +44,11 @@ m.setMaterialProperty("PoissonRatio", nu)
 m.setMaterialProperty("CriticalStateLineSlope", M)
 m.setMaterialProperty("SwellingLineSlope", ka)
 m.setMaterialProperty("VirginConsolidationLineSlope", la)
+m.setMaterialProperty("CharateristicPreConsolidationPressure", pc0)
 
-# Initial values (only for the ParaInit code version!)
-m.setMaterialProperty("InitialPreConsolidationPressure", pc0)
-m.setMaterialProperty("InitialPorosity", phi0)
+# Initial values
+m.setInternalStateVariableInitialValue("PreConsolidationPressure", pc0)
+m.setInternalStateVariableInitialValue("Porosity", phi0)
 
 s = mtest.MTestCurrentState()
 wk = mtest.MTestWorkSpace()
