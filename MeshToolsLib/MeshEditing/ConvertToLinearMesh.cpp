@@ -120,7 +120,6 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
                                                MeshLib::MeshItemType::Node)));
 
     // copy property vectors for nodes
-    auto const number_of_base_nodes = org_mesh.computeNumberOfBaseNodes();
     for (auto [name, property] : org_mesh.getProperties())
     {
         if (property->getMeshItemType() != MeshLib::MeshItemType::Node)
@@ -139,17 +138,17 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
                 name, MeshLib::MeshItemType::Node, n_src_comp);
         new_prop->resize(new_mesh->getNumberOfNodes() * n_src_comp);
 
-        // copy only base node values
-        for (unsigned i = 0; i < number_of_base_nodes; i++)
+        for (std::size_t k = 0; k < org_nodes.size(); ++k)
         {
-            for (int j = 0; j < n_src_comp; j++)
+            if (!marked_base_nodes[k])
             {
-                (*new_prop)[i * n_src_comp + j] =
-                    (*double_property)[i * n_src_comp + j];
+                continue;
             }
+            std::copy_n(double_property->begin() + k * n_src_comp,
+                        n_src_comp,
+                        new_prop->begin() + base_node_map[k] * n_src_comp);
         }
     }
-
     return new_mesh;
 }
 
