@@ -22,6 +22,14 @@ It will make reviewing and tracking of changes easier.
 2. Missing content can be marked by adding `TODO:` followed by a brief description of the missing content.
 The line containing `TODO:` should be placed below the heading of the section it refers to.
 
+## Style recommendations
+
+1. Linking directly to the relevant paragraph should be preferred over linking to the whole page (see code snippet below point 2.).
+2. Titles of links to other pages should be written in bold:
+```md
+[**Title of the link**](/link/to/page/#paragraph)
+```
+
 ## Links to templates
 
 [Process description](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/web/content/docs/devguide/documentation/docs-guidelines/templates/process/index.md)
