@@ -94,7 +94,7 @@ for i in range(nTime - 1):
             s.e1[0] ** 2
             + s.e1[1] ** 2
             + s.e1[2] ** 2
-            - epsilonV ** 2 / 3
+            - epsilonV**2 / 3
             + 2 * s.e1[3] ** 2
         )
         / 3
