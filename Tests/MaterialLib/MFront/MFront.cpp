@@ -20,6 +20,8 @@ namespace MPL = MaterialPropertyLib;
 using namespace MaterialLib::Solids;
 template <int Dim>
 using KelvinVector = MathLib::KelvinVector::KelvinVectorType<Dim>;
+template <int Dim>
+using KelvinMatrix = MathLib::KelvinVector::KelvinMatrixType<Dim>;
 
 constexpr mgis::behaviour::Hypothesis hypothesis(int dim)
 {
@@ -183,4 +185,66 @@ TYPED_TEST(MaterialLib_SolidModelsMFront3, IntegrateZeroDisplacement)
     ASSERT_TRUE(state != nullptr);
     state.reset(nullptr);
     ASSERT_TRUE(state == nullptr);
+}
+
+TEST(MaterialLib_SolidModelsMFront, Conversion)
+{
+    using namespace MaterialLib::Solids::MFront;
+
+    {  // vectors
+
+        // 2D
+        KelvinVector<2> const ogs2{0, 1, 2, 3};
+        KelvinVector<2> const mfront2 = ogs2;
+
+        ASSERT_EQ(mfront2, OGSToMFront(ogs2));
+        ASSERT_EQ(ogs2, MFrontToOGS(mfront2));
+
+        // 3D
+        KelvinVector<3> const ogs3{0, 1, 2, 3, 4, 5};
+        KelvinVector<3> const mfront3{0, 1, 2, 3, 5, 4};
+
+        ASSERT_EQ(mfront3, OGSToMFront(ogs3));
+        ASSERT_EQ(ogs3, MFrontToOGS(mfront3));
+    }
+
+    {  // matrices
+
+        // 2D
+        // clang-format off
+        KelvinMatrix<2> ogs2;
+        ogs2 <<
+            0, 1, 2, 3,
+            4, 5, 6, 7,
+            8, 9, 10, 11,
+            12, 13, 14, 15;
+        KelvinMatrix<2> const mfront2 = ogs2;
+        // clang-format on
+
+        ASSERT_EQ(mfront2, OGSToMFront(ogs2));
+        ASSERT_EQ(ogs2, MFrontToOGS(mfront2));
+
+        // 3D matrix
+        // clang-format off
+        KelvinMatrix<3> ogs3;
+        ogs3 <<
+            0 , 1 , 2 , 3 , 4 , 5 ,
+            6 , 7 , 8 , 9 , 10, 11,
+            12, 13, 14, 15, 16, 17,
+            18, 19, 20, 21, 22, 23,
+            24, 25, 26, 27, 28, 29,
+            30, 31, 32, 33, 34, 35;
+        KelvinMatrix<3> mfront3;
+        mfront3 <<                  // fourth and fifth rows/cols swapped
+            0 , 1 , 2 , 3 , 5 , 4 ,
+            6 , 7 , 8 , 9 , 11, 10,
+            12, 13, 14, 15, 17, 16,
+            18, 19, 20, 21, 23, 22,
+            30, 31, 32, 33, 35, 34,
+            24, 25, 26, 27, 29, 28;
+        // clang-format on
+
+        ASSERT_EQ(mfront3, OGSToMFront(ogs3));
+        ASSERT_EQ(ogs3, MFrontToOGS(mfront3));
+    }
 }
