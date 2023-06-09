@@ -192,6 +192,13 @@ void Output::outputMeshes(
         {
             for (auto [name, property] : mesh.get().getProperties())
             {
+                // special case: always output OGS_VERSION
+                if (name == "OGS_VERSION")
+                {
+                    property->is_for_output = true;
+                    continue;
+                }
+
                 property->is_for_output =
                     _output_data_specification.output_variables.contains(name);
             }

@@ -50,6 +50,7 @@ std::function<bool(Data)> isVariableAttribute(
                 "MaterialIDs"sv,
                 "topology"sv,
                 "geometry"sv,
+                "OGS_VERSION"sv,
                 MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
                 MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
                 MeshLib::getBulkIDString(MeshLib::MeshItemType::Edge),
