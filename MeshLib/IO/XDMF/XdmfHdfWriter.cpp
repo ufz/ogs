@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <range/v3/algorithm/contains.hpp>
 
 #include "BaseLib/Algorithm.h"
 #include "InfoLib/GitInfo.h"
@@ -39,13 +40,23 @@ struct XdmfHdfMesh final
 
 template <typename Data>
 std::function<bool(Data)> isVariableAttribute(
-    std::set<std::string> const& variable_output_names,
-    std::set<std::string> const& constant_output_names)
+    std::set<std::string> const& variable_output_names)
 {
     if (variable_output_names.empty())
     {
-        return [&constant_output_names](Data const& data) -> bool
-        { return !constant_output_names.contains(data.name); };
+        return [](Data const& data) -> bool
+        {
+            constexpr std::array constant_output_names{
+                "MaterialIDs"sv,
+                "topology"sv,
+                "geometry"sv,
+                "OGS_VERSION"sv,
+                MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+                MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
+                MeshLib::getBulkIDString(MeshLib::MeshItemType::Edge),
+                MeshLib::getBulkIDString(MeshLib::MeshItemType::Face)};
+            return !ranges::contains(constant_output_names, data.name);
+        };
     }
     return [&variable_output_names](Data const& data) -> bool
     { return variable_output_names.contains(data.name); };
@@ -60,17 +71,6 @@ XdmfHdfWriter::XdmfHdfWriter(
 {
     // ogs meshes to vector of Xdmf/HDF meshes (we keep Xdmf and HDF together
     // because XDMF depends on HDF) to meta
-
-    std::set<std::string> constant_output_names;
-    for (std::string_view item :
-         {"MaterialIDs"sv, "topology"sv, "geometry"sv,
-          MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
-          MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
-          MeshLib::getBulkIDString(MeshLib::MeshItemType::Edge),
-          MeshLib::getBulkIDString(MeshLib::MeshItemType::Face)})
-    {
-        constant_output_names.insert(std::string(item));
-    };
 
     // if no output name is specified, all data will be assumened to be
     // variable over the timesteps. The xdmfhdfwriter is an alternative to
@@ -113,8 +113,8 @@ XdmfHdfWriter::XdmfHdfWriter(
                            std::move(attributes), mesh.get().getName(),
                            std::move(xdmf_conforming_data)};
     };
-    auto isVariableHdfAttribute = isVariableAttribute<HdfData>(
-        variable_output_names, constant_output_names);
+    auto isVariableHdfAttribute =
+        isVariableAttribute<HdfData>(variable_output_names);
 
     // extract meta data relevant for HDFWriter
     auto const transform_metamesh_to_hdf =
@@ -172,8 +172,8 @@ XdmfHdfWriter::XdmfHdfWriter(
         return;
     }
 
-    auto isVariableXdmfAttribute = isVariableAttribute<XdmfData>(
-        variable_output_names, constant_output_names);
+    auto isVariableXdmfAttribute =
+        isVariableAttribute<XdmfData>(variable_output_names);
     // xdmf section
     // extract meta data relevant for XDMFWriter
     auto const transform_metamesh_to_xdmf =
