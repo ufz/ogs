@@ -43,6 +43,7 @@ std::vector<int> assignCellIds(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
                                std::array<std::size_t, 3> const& dims,
                                std::array<double, 3> const& cellsize);
 
+// grid has to contain a PropertyVector with the name 'CellIds'
 bool removeUnusedGridCells(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
                            std::unique_ptr<MeshLib::Mesh>& grid);
 

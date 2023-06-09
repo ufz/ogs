@@ -86,7 +86,6 @@ std::vector<int> assignCellIds(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
     return cell_ids;
 }
 
-// PropertyVector is required to contain parameter cell_id_name
 bool removeUnusedGridCells(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
                            std::unique_ptr<MeshLib::Mesh>& grid)
 {
