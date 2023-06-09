@@ -17,7 +17,7 @@ It was published in this state to make existing content available to users and h
 
 **Users:** the content of this page has been verified and is correct. Please return later for more content!
 
-TODO: Give links to specific examples. The description found below is still somewhat generic, examples help here.
+<!-- TODO: Give links to specific examples. The description found below is still somewhat generic, examples help here. -->
 
 </div>
 
@@ -62,7 +62,7 @@ If only one phase is considered inside a medium, the definition of that phase ca
 
 The available phases depend on the type of the process.
 
-TODO: Add overview which media are available in different processes
+<!-- TODO: Add overview which media are available in different processes -->
 
 ## Properties
 
@@ -98,7 +98,7 @@ The properties belonging to a specific phase within a medium, have to be placed 
 The properties share very similar structure with [parameters](/docs/userguide/blocks/parameters), but they are not
 interchangeable.
 
-TODO: Describe the differences between `properties` and `parameters`.
+<!-- TODO: Describe the differences between `properties` and `parameters`. -->
 
 Following basic types of properties are available:
 
@@ -148,7 +148,7 @@ The types linear, function, and curve can depend on a set of variables listed in
 
 Keep in mind that not all of those variables will be available in all the processes. For example, in THM there is phase_pressure, but not liquid_phase_pressure.
 
-TODO: At best, give links and a little bit more information on the variables listed above.
+<!-- TODO: At best, give links and a little bit more information on the variables listed above. -->
 
 ### Constant
 
@@ -293,7 +293,7 @@ as follows:
 There are limitations of what variables can be used inside of the `<expression> </expression>` tags. Only the ones related to
 the process variables can be called. The values defined for example in the `parameter` block are out of reach.
 
-TODO: Check if this is correct. Please also check again the code-example above.
+<!-- TODO: Check if this is correct. Please also check again the code-example above. -->
 
 For example if `thermal_conductivity` is defined and density is provided as a function, the `dvalue` of density, which is the
 derivative with respect to temperature, will be ignored.
@@ -369,4 +369,4 @@ For those properties SI units are used, remember that OpenGeoSys doesn't convert
 
 ### Supported types of properties and special cases
 
-TODO: Add content
+<!-- TODO: Add content -->

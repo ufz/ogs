@@ -149,7 +149,7 @@ There are two two ways of defining error tolerances:
 Both of them can be defined as single value, that will be applied to all process variables, or with multiple ones applied to
 them individually.
 
-TODO: Describe the definition of the relative tolerance.
+<!-- TODO: Describe the definition of the relative tolerance. -->
 
 If tolerances per process variable are provided, the order of values defined inside of the tags `<abstols> </abstols>` and
 `<reltosl> </reltols>` has to match order of process variables defined in [processes](/docs/userguide/blocks/processes/).
@@ -256,7 +256,7 @@ $$
 
 ### Time discretization
 
-<!-- TODO: describe different options for time discretization-->
+<!-- TODO: describe different options for time discretization -->
 
 For the time being only backward Euler time stepping scheme is available.
 
@@ -392,7 +392,7 @@ If only temperature and pressure are important, this block can be defined as fol
 
 The list of available variables differs between processes.
 
-<!-- TODO: Create list of variables available in different processes-->
+<!-- TODO: Create list of variables available in different processes -->
 
 In order to save space, the compression of output files can be enabled with:
 

@@ -5,12 +5,7 @@ author = "Lars Bilke"
 weight = 6
 +++
 
-<div class=note>
-
-TODO: Consider to move this section out of **BASICS** and to devote an extra first-order section to the Python-bindings of OGS
-and how to operate OGS via Python and Jupyter Notebooks.
-
-</div>
+<!-- TODO: Consider to move this section out of **BASICS** and to devote an extra first-order section to the Python-bindings of OGS and how to operate OGS via Python and Jupyter Notebooks.-->
 
 [Jupyter Notebooks](https://jupyter.org) are documents which can contain live (Python) code, equations, visualizations and
 narrative text and can be used as an intuitive interface for OGS projects. The following video gives an introduction to using

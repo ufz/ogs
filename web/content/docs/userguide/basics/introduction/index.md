@@ -110,8 +110,8 @@ pip install --index-url https://gitlab.opengeosys.org/api/v4/projects/120/packag
 ### Limitations of the `pip`-based installation
 
 - Please note that via the `pip`-based installation only the serial configuration is available! For parallel execution of the
-source code, PETSc is required. For PETSc-support please use a [Singularity container]({{< relref "container" >}}). TODO: The
-link is outdated. Please replace Singularity by Apptainer.
+source code, PETSc is required. For PETSc-support please use a [Singularity container]({{< relref "container" >}}). <!-- TODO: The
+link is outdated. Please replace Singularity by Apptainer. -->
 - A Python (3.8 - 3.11) installation with `pip` is required.
 
 </div>

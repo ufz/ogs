@@ -26,7 +26,7 @@ All "process parameters" defined in the "Process" section have to be addressed h
 
 The block `<process_variable>` has be defined separately for each process variable defined in [Block "Process/Process variables"](/docs/userguide/blocks/processes/#process-variables).
 
-TODO: Explain the little example above in a little bit more detail or give a link to a tutorial.
+<!-- TODO: Explain the little example above in a little bit more detail or give a link to a tutorial. -->
 
 There are three major blocks in this one.
 Two of them are mandatory, in following order:

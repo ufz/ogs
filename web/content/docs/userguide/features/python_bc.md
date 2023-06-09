@@ -31,7 +31,7 @@ This feature requires a basic understanding of classes in Python. Information ab
 
 ## Using a Python boundary condition in a project file
 
-TODO: add a description of how to call a Python bc from the boundary condition tag
+<!-- TODO: add a description of how to call a Python bc from the boundary condition tag -->
 
 In order to define a boundary condition with Python, the path to the `*.py` file, containing the boundary condition script, has
 to be provided.

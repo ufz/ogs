@@ -25,7 +25,7 @@ For the domain decomposition approach, an application of OGS using METIS as a no
 command line options.
 
 The partitioned meshes are written in binary files for a fast parallel reading
- in OGS.
+in OGS.
 
 #### 1.2 Configure PETSc solver in project file
 
@@ -53,14 +53,14 @@ For the linear solver, it is done by adding a tag of `petsc` inside `linear_solv
 ```
 
 If the tag of `petsc` is not given in project file, the default setting of the PETSc
- linear solver will be taken, which uses the solver type of `cg` and
- the preconditioner type of `jacobi`.
+linear solver will be taken, which uses the solver type of `cg` and
+the preconditioner type of `jacobi`.
 
- TODO: Explain the example above at best a little bit more. This can be done by comments in the `xml`-code snippet.
+<!-- TODO: Explain the example above at best a little bit more. This can be done by comments in the `xml`-code snippet. -->
 
 For the simulation of coupled processes with the staggered scheme, a prefix
 can be used by the tag `prefix` to set the PETSc solver for each process, individually.
- For example:
+For example:
 
 ```xml
     <linear_solvers>
@@ -90,23 +90,22 @@ can be used by the tag `prefix` to set the PETSc solver for each process, indivi
 ```
 
 The above example shows that once a prefix is given for PETSc linear solver
- settings, the original prefix of PETSc
- keyword, `-`, can be replaced with a new prefix, `-[given prefix string]_`. In the
+settings, the original prefix of PETSc
+keyword, `-`, can be replaced with a new prefix, `-[given prefix string]_`. In the
 above example, `-`, is replaced with `-T_` and `-H_`, respectively.
 
 An introduction and a list of PETSc KSP solvers and preconditioners can be found by
 [this link](https://petsc.org/release/manualpages/KSP).
 
-TODO: At best explain the example above in more detail. This can be done by comments in the `xml`-code snippet.
+<!-- TODO: At best explain the example above in more detail. This can be done by comments in the `xml`-code snippet. -->
 
 ### 2. Launch MPI OGS
 
 For MPI launcher, either `mpiexec` or `mpirun` can be used to run OGS.
- Preferably, `mpiexec` is recommended because it is defined in the MPI standard.
-The number of processes to run of `mpiexec` must be identical to the number of
- mesh partitions.
+Preferably, `mpiexec` is recommended because it is defined in the MPI standard.
+The number of processes to run of `mpiexec` must be identical to the number of mesh partitions.
 For example, if the meshes of a project, `foo.prj`, are partitioned into 5 partitions,
- OGS can be launched in MPI as
+OGS can be launched in MPI as
 
 ```bash
 mpiexec -n 5 ogs foo.prj -o [path to the output directory]
@@ -140,9 +139,8 @@ mpiexec -n 5 ogs foo.prj -o output -- -ksp_type gmres -ksp_rtol 1e-16 -ksp_max_i
 * or use other PETSc command line options.
 
 For Linux clusters or supercomputers, a computation job has to be submitted to the
- queue and job management system, which may require a special command to
- launch the MPI job. A job script for such
- queue system is required.
+queue and job management system, which may require a special command to
+launch the MPI job. A job script for such queue system is required.
 
 The cluster system EVE of UFZ uses SLURM
  (Simple Linux Utility for Resource Management) to manage computing jobs.
@@ -177,10 +175,10 @@ srun -n "$SLURM_NTASKS"  $APP /home/wwang/data_D/project/AREHS/HM_3D/simHM_glaci
 ```
 
 In the job script for EVE, `module load  foss/2020b` must be presented, and
- `srun` is a sort of MPI job launcher.
- If a job fails with an error message about a 'shared library not found', you can check
- the EVE modules specified in the files in the source code directory:
- *scripts/env/eve*, and add the corresponding modules to the load list
+`srun` is a sort of MPI job launcher.
+If a job fails with an error message about a 'shared library not found', you can check
+the EVE modules specified in the files in the source code directory:
+*scripts/env/eve*, and add the corresponding modules to the load list
 in the job script.
 
 Once the job script is ready, you can
@@ -217,7 +215,7 @@ or
 #### 3.1 VTK output
 
 The results are output in the partitioned VTU files, which are governed by
- a PVTU file. The data in the ghost cells of VTU files are overlapped.
+a PVTU file. The data in the ghost cells of VTU files are overlapped.
 An OGS utility, *pvtu2vtu*, is available to merge the partition VTU files into one VTU file,
 meanwhile to eliminate the data overlapping. Here is an example to use that tool:
 
@@ -228,23 +226,20 @@ pvtu2vtu -i foo.pvtu -o foo.vtu
 Where the input file name is the name of PVTU file.
 
 If you use the merged mesh together with some meshes that for
- initial or boundary conditions for a restart simulation,  you have to reset
- the bulk geometry entity
- ( node, face, or element) IDs of the meshes to the merged mesh by using tool
-  [`identifySubdomains`]({{<ref "identifySubdomains">}}).
+initial or boundary conditions for a restart simulation,  you have to reset
+the bulk geometry entity ( node, face, or element) IDs of the meshes to the merged mesh by using tool[`identifySubdomains`]({{<ref "identifySubdomains">}}).
 For example, `north.vtu`, `south.vtu`, and `top.vtu` are the meshes for the
- boundary conditions, their bulk geometry entity IDs can be reset by running
- the following command:
+boundary conditions, their bulk geometry entity IDs can be reset by running
+the following command:
 
 ```bash
 identifySubdomains -f -m foo.vtu  --  north.vtu  south.vtu  top.vtu
 ```
 
-TODO: Check paragraph above for grammar and content.
+<!-- TODO: Check paragraph above for grammar and content. -->
 
 #### 3.2 XDMF output
 
 With XDMF, OGS outputs two files, one XDMF file and one HDF5 file with file name
- extension of `h5`. You can use ParaView to open the XDMF file by selecting
- `Xdmf3ReaderS` or `Xdmf3ReaderT`. The XDMF output is highly recommended for
-  running OGS with a large mesh, especially on supercomputers.
+extension of `h5`. You can use ParaView to open the XDMF file by selecting
+`Xdmf3ReaderS` or `Xdmf3ReaderT`. The XDMF output is highly recommended for running OGS with a large mesh, especially on supercomputers.

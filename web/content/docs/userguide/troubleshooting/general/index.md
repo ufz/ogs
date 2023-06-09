@@ -6,12 +6,7 @@ weight = 2
 toc = true
 +++
 
-
-<div class=note>
-
-TODO: This part so far is only repetition. It could be deleted.
-
-</div>
+<!-- TODO: This part so far is only repetition. It could be deleted. -->
 
 ## Data Explorer
 

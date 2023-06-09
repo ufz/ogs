@@ -10,11 +10,7 @@ One for the mesh of the domain and one for the boundaries. However, arbitrary ma
 Generally, if the boundary conditions vary between boundaries, there should be one mesh file provided for each set of boundaries
 sharing the same conditions. Alternatively, boundary conditions can be manipulated via Python, too.
 
-<div class = note>
-
-TODO: Give examples for the both files named above and how to incorporate them. Give a link to a tutorial, how to build mesh-files as well as boudary-files.
-
-</div>
+<!-- TODO: Give examples for the both files named above and how to incorporate them. Give a link to a tutorial, how to build mesh-files as well as boudary-files. -->
 
 ```xml
   <mesh>mesh_file_name.mesh_extension</mesh>

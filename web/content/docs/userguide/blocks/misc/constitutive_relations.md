@@ -22,27 +22,27 @@ It was published in this state to make existing content available to users and h
 
 ## CreepBGRa
 
-TODO: Add content
+<!-- TODO: Add content -->
 
 ## Ehlers
 
-TODO: Add content
+<!-- TODO: Add content -->
 
 ## Linear Elastic Isotropic
 
-TODO: Add content
+<!-- TODO: Add content -->
 
 ## Linear Elastic Orthotropic
 
-TODO: Add content
+<!-- TODO: Add content -->
 
 ## Lubby2
 
-TODO: Add content
+<!-- TODO: Add content -->
 
 ## MFront
 
-TODO: What is MFront and for what do I need it?
+<!-- TODO: What is MFront and for what do I need it? -->
 
 This section only describes how to use an MFront constitutive relation inside of the project file. For details on how to create such a constitutive relation, please see [MFront](/docs/userguide/features/mfront/) section.
 

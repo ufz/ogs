@@ -5,4 +5,4 @@ author = "Feliks Kiszkurno"
 weight = 11
 +++
 
-TODO: describe usage of test definitions, reference the `-o` and `-r` command line arguments, `vtkdiff`.
+<!-- TODO: describe usage of test definitions, reference the `-o` and `-r` command line arguments, `vtkdiff`. -->

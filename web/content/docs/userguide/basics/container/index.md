@@ -9,13 +9,15 @@ weight = 3
 
 ### Important note
 
-TODO: Consider to place this section somewhere outside of basics, e.g., as an individual section as the context may be
-considered already pretty advanced. This page describes how to **run** OGS with the help of a Linux container (for **users**).
+<!-- TODO: Consider to place this section somewhere outside of basics, e.g., as an individual section as the context may be
+considered already pretty advanced. -->
+This page describes how to **run** OGS with the help of a Linux container (for **users**).
 To **build** OGS with the help of a container go to the [Developer Guide]({{< ref "singularity.md" >}}) (for **developers**).
 
 </div>
 
-## With Singularity TODO: Update this section regarding Apptainer
+## With Singularity
+<!-- TODO: Update this section regarding Apptainer -->
 
 ### Prerequisites
 

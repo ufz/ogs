@@ -5,7 +5,7 @@ author = "Lars Bilke"
 weight = 4
 +++
 
-TODO: This section already contains a more advanced topic. Consider moving it to a more advanced section outside of **BASICS**
+<!-- TODO: This section already contains a more advanced topic. Consider moving it to a more advanced section outside of **Basics** -->
 
 Project files `.prj` have to be valid XML documents. For information of specific tags see our [Doxygen-documentation](https://doxygen.opengeosys.org/d1/d91/ogs_file_param__projectfile).
 
@@ -78,7 +78,7 @@ Patch files contain `<replace>`, `<add>` and `<remove>`-elements with [XPath](ht
 </OpenGeoSysProjectDiff>
 ```
 
-TODO: This example would have, at best, a little bit more information and explanation on syntax and how to use it exactly in a `.prj`-file. One may also show iteratively what this example does to the pre-existing `.prj`-file.
+<!-- TODO: This example would have, at best, a little bit more information and explanation on syntax and how to use it exactly in a `.prj`-file. One may also show iteratively what this example does to the pre-existing `.prj`-file. -->
 
 For more examples see [this page on the XML Patch Operations Framework](https://www.rfc-editor.org/rfc/rfc5261.html).
 
@@ -189,8 +189,4 @@ brew install xmlstarlet
 
 </div>
 
-<div class='note'>
-
-TODO: Consider showing here an example (including the results) how `xmllint` works
-
-</div>
+<!-- TODO: Consider showing here an example (including the results) how `xmllint` works -->

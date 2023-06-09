@@ -28,8 +28,8 @@ Generally, the error tolerance of a linear solver should always be tighter than 
 Unlike "abstol", "error tolerance" is not specific to "process variables" and is defined as one value.
 For most cases value below $10^{-10}$ is recommended.
 
-TODO: The text above is not completely clear. It needs re-wording and additional clarifications.
+<!-- TODO: The text above is not completely clear. It needs re-wording and additional clarifications. -->
 
 ## Eigen
 
-TODO: Add description of Eigen
+<!-- TODO: Add description of Eigen -->

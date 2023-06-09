@@ -24,7 +24,7 @@ Additionally Dirichlet and Neumann boundary conditions can be defined using [Pyt
 
 ## Dirichlet
 
-TODO: add description of Dirichlet boundary condition (including different subvariants) and how it can be used in prj file
+<!-- TODO: add description of Dirichlet boundary condition (including different subvariants) and how it can be used in prj file -->
 
 ### Constrained Dirichlet
 
@@ -36,7 +36,7 @@ TODO: add description of Dirichlet boundary condition (including different subva
 
 ## Neumann
 
-TODO: add description of Dirichlet boundary condition (including different subvariants) and how it can be used in prj file
+<!-- TODO: add description of Dirichlet boundary condition (including different subvariants) and how it can be used in prj file -->
 
 Can be used to define [source terms](/docs/userguide/blocks/process_variables/#sources) at the boundary of the mesh.
 
@@ -83,4 +83,4 @@ If radius is non zero, it can be defined using source term.
 
 For more detailed description see [scaling a source term](/docs/userguide/blocks/misc/scaling_source_term/).
 
-TODO: This text is the same as in **Process variables**
+<!-- TODO: This text is the same as in **Process variables** -->

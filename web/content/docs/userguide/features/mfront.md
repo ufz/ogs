@@ -30,7 +30,7 @@ For more details about compiling OpenGeoSys, see [developer guide - build config
 
 ## Preparing MFront file
 
-TODO: add content
+<!-- TODO: add content -->
 
 The details of preparing MFront file will not be discussed here. Only the necessary details will be stated.
 
@@ -99,16 +99,16 @@ It is case sensitive and it has to be written in exactly the same way everywhere
 
 ## References
 
-TODO: add content
+<!-- TODO: add content -->
 
 ### Benchmarks using MFront
 
-TODO: add content
+<!-- TODO: add content -->
 
 ### Available MFront models
 
-TODO: add content
+<!-- TODO: add content -->
 
 ## Testing MFront model with MTest
 
-TODO: add content
+<!-- TODO: add content -->

@@ -33,7 +33,7 @@ The parameters defined in this block can be used in blocks:
 
 ## Parameters vs properties
 
-TODO: describe differences in access to parameters and properties
+<!-- TODO: describe differences in access to parameters and properties -->
 
 ## How to define a parameter?
 
@@ -83,7 +83,7 @@ This example will be interpreted as a 3D vector.
 </parameter>
 ```
 
-TODO: This is already (partially) described in the section **Media**
+<!-- TODO: This is already (partially) described in the section **Media** -->
 
 ### CurveScaled
 

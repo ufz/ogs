@@ -18,7 +18,7 @@ Depending on the scope of the simulation, the content of the project file will d
 
 <div class="note">
 Please note, that this page is not a complete description of the XML standard. It only provides some information to interact
-with and understand OpenGeoSys "*.prj" files. More meta-information on xml can be found here: <a href="https://www.w3.org/standards/xml/">XML Standard</a>. TODO: Consider giving a direct link to an xml-tutorial.
+with and understand OpenGeoSys "*.prj" files. More meta-information on xml can be found here: <a href="https://www.w3.org/standards/xml/">XML Standard</a>. <!-- TODO: Consider giving a direct link to an xml-tutorial. -->
 </div>
 
 The XML files structure follows an abstract idea of a tree: i.e., here one starts from the roots and continues up to the

@@ -13,8 +13,8 @@ However, there are some exceptions to that rule concerning empirical laws. For i
 vapor diffusion and latent heat implemented, which assume that temperature is given in Kelvin. Therefore, we recommend just
 using SI units everywhere.
 
-For more information on how to come up with a self-consistent unit scheme see [this PDF](units_ogs.pdf). TODO: Consider
-updating and extending the pdf-file on unit conventions.
+For more information on how to come up with a self-consistent unit scheme see [this PDF](units_ogs.pdf).
+<!-- TODO: Consider updating and extending the pdf-file on unit conventions. -->
 
 ### Dimensional analysis of source and boundary terms based on their primary variables
 
@@ -27,17 +27,16 @@ pre-defined area) to parts of the boundary of the domain or to
 respectively.
 Here, $Q$ in our formulation is an already integrated flux. Meaning it is typically a different quantity than the primary
 unknown of the `process` under consideration. It may be e.g. a secondary variable being a function of the primary unknown. This
- is for instance the case, if we consider prescribed fluxes of water in a porous medium on a Neumann boundary. Here, $Q$ would
- be a prescribed Dary velocity integrated over some area being a function of the pressure gradient.
+is for instance the case, if we consider prescribed fluxes of water in a porous medium on a Neumann boundary. Here, $Q$ would
+be a prescribed Dary velocity integrated over some area being a function of the pressure gradient.
 For energy balances in OpenGeoSys the primary unknown is usually the temperature $T$,
 while corresponding fluxes $Q$ are usually expressed in terms of energy.
 
 **Note**: The connection between the primary unknown and these canonical BCs and STs is made via the implemented partial
 differential equation (PDE).
 If a PDE is implemented slightly differently (e.g. PDE (B) is PDE (A) multiplied by a factor of density),
-the corresponding quantities in the BCs and STs generally also change (by a factor of density in this example). TODO: Please
-explain why some PDEs are defined when differently. Are these changes made automatically, like a multipliction with density, or
-is it up to user to do that?
+the corresponding quantities in the BCs and STs generally also change (by a factor of density in this example).
+<!-- TODO: Please explain why some PDEs are defined when differently. Are these changes made automatically, like a multipliction with density, or is it up to user to do that? -->
 
 Lower-dimensional realizations of the mentioned processes are essentially 2D slices through a 3D world.
 Hence, the parameterization does not change.
@@ -111,11 +110,7 @@ However, there are some exceptions and as there are also different primary varia
 containing the process variables as they appear in the global component vector.
 This order is used, e.g., to display the per component convergence of the non-linear solver in the output.
 
-<div class=note>
-
-TODO: The considered processes beneath need a more detailed explanation on which physical processes are exactly considered how.
-
-</div>
+<!-- TODO: The considered processes beneath need a more detailed explanation on which physical processes are exactly considered how. -->
 
 * [ComponentTransport](https://doxygen.opengeosys.org/de/d0d/namespaceProcessLib_1_1ComponentTransport.html#processvariablescomponenttransport)
 * [HeatConduction](https://doxygen.opengeosys.org/df/d77/namespaceProcessLib_1_1HeatConduction.html#processvariablesheatconduction)

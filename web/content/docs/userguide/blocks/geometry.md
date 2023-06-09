@@ -5,6 +5,6 @@ author = "Feliks Kiszkurno"
 weight = 12
 +++
 
-TODO: describe what geometry block does
+<!-- TODO: describe what geometry block does -->
 
-TODO: describe how geometry files are structured
+<!-- TODO: describe how geometry files are structured -->

@@ -35,7 +35,7 @@ the [Process-dependent configuration](/docs/processes/heat-transport/heat_transp
 
 The tag `<integration_order> </integration_order>` is mandatory and defines the integration order of the Gauss-Legendre
 integration over an element. Currently orders 1 to 4 are supported.
-TODO: If it is mandatory, it would be great to have an example here.
+<!-- TODO: If it is mandatory, it would be great to have an example here. -->
 
 ## Process variables
 
@@ -90,13 +90,9 @@ For the process variables listed above, relative error tolerances can be defined
 The order can differ based on the order in which the processes are defined and on dimensionality of the process (e.g., number
 of components in displacement, or number of chemical constituents).
 Keep in mind that some process variables have more than one value like displacement in the example above.
-In such a case, a matching number of reltols has to be defined. TODO: Explain the matching number.
+In such a case, a matching number of reltols has to be defined. <!-- TODO: Explain the matching number. -->
 
-<div class=note>
-
-TODO: Explain a relative tolerance.
-
-</div>
+<!-- TODO: Explain the relative tolerance. -->
 
 ## Constitutive relations
 
@@ -177,10 +173,10 @@ If meshes are defined as axially symmetric, the stress has to be provided in pol
 
 ## Jacobian Assembler
 
-TODO: Explanations for each type.
+<!-- TODO: Explanations for each type. -->
 
-The global non-linear equation system can be solved either with Picard fix-point iterations or a Newton scheme. (TODO:
-Reference NLS scheme)
+The global non-linear equation system can be solved either with Picard fix-point iterations or a Newton scheme.
+<!-- (TODO: Reference NLS scheme) -->
 For the latter the process has to provide a Jacobian.
 If the analytical Jacobian is not implemented, one can use a quasi-Newton scheme where the Jacobian is approximated by
 numerical differentiation using a central differences or a forward difference scheme.

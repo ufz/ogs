@@ -18,7 +18,7 @@ It was published in this state to make existing content available to users and h
 
 </div>
 
-TODO: Add general description
+<!-- TODO: Add general description -->
 
 This block can be used to define one or more ...
 
