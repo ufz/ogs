@@ -24,6 +24,7 @@ append_source_files(TEST_SOURCES GeoLib/IO)
 append_source_files(TEST_SOURCES MaterialLib)
 append_source_files(TEST_SOURCES MathLib)
 append_source_files(TEST_SOURCES MeshLib)
+append_source_files(TEST_SOURCES MeshToolsLib)
 append_source_files(TEST_SOURCES MeshGeoToolsLib)
 append_source_files(TEST_SOURCES_NUMLIB NumLib)
 # Disable Unity build for some files
@@ -93,6 +94,7 @@ target_link_libraries(
             MaterialLib
             MathLib
             MeshLib
+            MeshToolsLib
             NumLib
             ParameterLib
             $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:ProcessLib>
