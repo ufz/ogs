@@ -31,11 +31,11 @@ class Layers2GridDialog : public QDialog, private Ui_Layers2Grid
     Q_OBJECT
 
 public:
-    explicit Layers2GridDialog(MeshModel* mesh_model,
+    explicit Layers2GridDialog(MeshModel& mesh_model,
                                QDialog* parent = nullptr);
 
 private:
-    MeshModel* _mesh_model;
+    MeshModel& _mesh_model;
     QStringListModel _layeredMeshes;
     QStringListModel _neglectedMeshes;
 

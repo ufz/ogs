@@ -1355,7 +1355,12 @@ void MainWindow::showTranslateDataDialog()
 
 void MainWindow::showLayers2GridDialog()
 {
-    auto dlg = Layers2GridDialog(_meshModel.get());
+    if (_meshModel == nullptr)
+    {
+        OGSError::box("The supplied mesh_model is not existing.");
+    }
+
+    auto dlg = Layers2GridDialog(*_meshModel);
     dlg.exec();
 }
 

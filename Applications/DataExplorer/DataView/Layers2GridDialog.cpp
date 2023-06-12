@@ -34,18 +34,16 @@ std::vector<std::string> getSelectedObjects(QStringList const& list)
 }
 }  // namespace
 
-Layers2GridDialog::Layers2GridDialog(MeshModel* mesh_model, QDialog* parent)
+Layers2GridDialog::Layers2GridDialog(MeshModel& mesh_model, QDialog* parent)
     : QDialog(parent), _mesh_model(mesh_model)
 {
     setupUi(this);
-    assert(_mesh_model != nullptr);
     QStringList MeshList;
 
-    for (int model_index = 0; model_index < mesh_model->rowCount();
+    for (int model_index = 0; model_index < mesh_model.rowCount();
          ++model_index)
     {
-        auto const* mesh =
-            mesh_model->getMesh(mesh_model->index(model_index, 0));
+        auto const* mesh = mesh_model.getMesh(mesh_model.index(model_index, 0));
         MeshList.append(QString::fromStdString(mesh->getName()));
     }
 
@@ -108,18 +106,20 @@ void Layers2GridDialog::on_downOrderButton_pressed()
 
 void Layers2GridDialog::updateExpectedVoxel()
 {
-    QString const xinput = this->xlineEdit->text();
-    QString const yinput = this->ylineEdit->text();
-    QString const zinput = this->zlineEdit->text();
+    QString const xin = this->xlineEdit->text();
+    QString const yin = this->ylineEdit->text();
+    QString const zin = this->zlineEdit->text();
+    bool ok;
+    double const xinput = xin.toDouble();
+    double const yinput = (yin.toDouble(&ok)) ? yin.toDouble() : xin.toDouble();
+    double const zinput = (zin.toDouble(&ok)) ? zin.toDouble() : xin.toDouble();
 
     if (_layeredMeshes.stringList()[0] == "[No Mesh available.]")
     {
         this->expectedVoxelLabel->setText("approximated Voxel: undefined");
         return;
     }
-    if (xinput.isEmpty() || yinput.isEmpty() || zinput.isEmpty() ||
-        xinput.toDouble() == 0 || yinput.toDouble() == 0 ||
-        zinput.toDouble() == 0)
+    if (xin.isEmpty() || xinput == 0)
     {
         this->expectedVoxelLabel->setText("approximated Voxel: undefined");
         return;
@@ -127,8 +127,8 @@ void Layers2GridDialog::updateExpectedVoxel()
 
     std::vector<std::string> layered_meshes =
         getSelectedObjects(_layeredMeshes.stringList());
-    auto* const mesh_top = _mesh_model->getMesh(layered_meshes.front());
-    auto* const mesh_bottom = _mesh_model->getMesh(layered_meshes.back());
+    auto* const mesh_top = _mesh_model.getMesh(layered_meshes.front());
+    auto* const mesh_bottom = _mesh_model.getMesh(layered_meshes.back());
     auto const& nodes_top = mesh_top->getNodes();
 
     GeoLib::AABB const aabb_top(nodes_top.cbegin(), nodes_top.cend());
@@ -137,9 +137,9 @@ void Layers2GridDialog::updateExpectedVoxel()
     auto const min_b = aabb_bottom.getMinPoint();
     auto const max_b = aabb_bottom.getMaxPoint();
     auto const max_t = aabb_top.getMaxPoint();
-    double const expectedVoxel = (max_b[0] - min_b[0]) * (max_b[1] - min_b[0]) *
-                                 (max_t[2] - min_b[2]) / xinput.toDouble() /
-                                 yinput.toDouble() / zinput.toDouble();
+    double const expectedVoxel = (max_b[0] - min_b[0]) * (max_b[1] - min_b[1]) *
+                                 (max_t[2] - min_b[2]) / xinput / yinput /
+                                 zinput;
 
     int const exponent = std::floor(std::log10(abs(expectedVoxel)));
     this->expectedVoxelLabel->setText(
@@ -200,7 +200,7 @@ void Layers2GridDialog::accept()
 
     for (auto const& layer : layered_meshes)
     {
-        auto mesh(_mesh_model->getMesh(layer));
+        auto mesh(_mesh_model.getMesh(layer));
         if (mesh == nullptr)
         {
             OGSError::box(
@@ -227,6 +227,6 @@ void Layers2GridDialog::accept()
     }
     OGSError::box("The VoxelGrid is fine");
 
-    _mesh_model->addMesh(mesh.release());
+    _mesh_model.addMesh(mesh.release());
     this->done(QDialog::Accepted);
 }
