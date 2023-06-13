@@ -97,6 +97,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
 @LocalVariable bool withinElasticRange;
 @LocalVariable real M2;
 @LocalVariable real rpcMin;
+@LocalVariable stress mu;       // Second Lamé coefficient
 
 @InitLocalVariables
 {
@@ -107,8 +108,8 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
     if (Time == 0)
     {
         // initial elastic strain
-        const auto S = invert(D);
-        eel = eval(S * sig);
+        mu = computeMu(young, nu);
+        eel = 1. / (2. * mu) * sig - nu / young * trace(sig) * Stensor::Id();
     }
     rpc = pc / young;
     rpcMin = pcMin / young;
