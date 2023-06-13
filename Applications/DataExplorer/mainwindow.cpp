@@ -76,9 +76,9 @@
 #include "DataView/LineEditDialog.h"
 #include "DataView/MergeGeometriesDialog.h"
 #include "DataView/MeshAnalysisDialog.h"
-#include "DataView/TranslateDataDialog.h"
 #include "DataView/MeshElementRemovalDialog.h"
 #include "DataView/MeshQualitySelectionDialog.h"
+#include "DataView/TranslateDataDialog.h"
 #ifdef OGS_USE_NETCDF
 #include "VtkVis/NetCdfConfigureDialog.h"
 #endif  // OGS_USE_NETCDF
