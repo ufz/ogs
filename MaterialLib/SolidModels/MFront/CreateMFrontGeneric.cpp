@@ -75,7 +75,7 @@ void varInfo(std::string const& msg,
          msg,
          vars.size(),
          mgis::behaviour::getArraySize(vars, hypothesis));
-    for (auto& var : vars)
+    for (auto const& var : vars)
     {
         INFO("  --> type `{:s}' with name `{:s}', size {:d}, offset {:d}.",
              MaterialLib::Solids::MFront::varTypeToString(var.type),
@@ -112,13 +112,13 @@ std::vector<ParameterLib::Parameter<double> const*> readMaterialProperties(
     //! \ogs_file_param{material__solid__constitutive_relation__MFront__material_properties}
     auto const mps_config = config.getConfigSubtree("material_properties");
     for (
-        auto const mp_config :
+        auto const& mp_config :
         //! \ogs_file_param{material__solid__constitutive_relation__MFront__material_properties__material_property}
         mps_config.getConfigParameterList("material_property"))
     {
         //! \ogs_file_attr{material__solid__constitutive_relation__MFront__material_properties__material_property__name}
         auto name = mp_config.getConfigAttribute<std::string>("name");
-        auto const param_name =
+        auto param_name =
             //! \ogs_file_attr{material__solid__constitutive_relation__MFront__material_properties__material_property__parameter}
             mp_config.getConfigAttribute<std::string>("parameter");
 
@@ -126,7 +126,7 @@ std::vector<ParameterLib::Parameter<double> const*> readMaterialProperties(
     }
 
     std::vector<ParameterLib::Parameter<double> const*> material_properties;
-    for (auto& mp : behaviour.mps)
+    for (auto const& mp : behaviour.mps)
     {
         auto const it = map_name_to_param.find(mp.name);
         if (it == map_name_to_param.end())
@@ -135,7 +135,7 @@ std::vector<ParameterLib::Parameter<double> const*> readMaterialProperties(
                 "project file.",
                 mp.name);
 
-        auto const param_name = it->second;
+        auto const& param_name = it->second;
         auto const num_comp = mgis::behaviour::getVariableSize(mp, hypothesis);
         auto const* param = &ParameterLib::findParameter<double>(
             param_name, parameters, num_comp);
@@ -164,7 +164,7 @@ std::vector<ParameterLib::Parameter<double> const*> readMaterialProperties(
             "the material model.");
         ERR("These parameters are:");
 
-        for (auto& e : map_name_to_param)
+        for (auto const& e : map_name_to_param)
         {
             ERR("  name: `{:s}', parameter: `{:s}'.", e.first, e.second);
         }
