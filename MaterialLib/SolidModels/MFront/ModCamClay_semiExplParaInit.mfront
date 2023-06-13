@@ -197,12 +197,8 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
     Time += dt;
     pc += drpc * young;
     epl_V += trace(deto - deel);
-    const auto detoV = trace(deto);
-    // calculate change of porosity
-    const auto dphi = (1 - phi) * (1 - exp(-detoV));
-    phi += dphi;
-    // v = e + 1 = (1 - phi)^-1; with e as pore number
-    v = 1.0 / (1 - phi);
+    // calculate change of volume ratio
+    v *= exp(trace(deto));
 }
 
 @AdditionalConvergenceChecks
