@@ -200,7 +200,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
 
     dfrpc_ddlp = dfrpc_ddeplV * ntr;
     dfrpc_ddeel = dfrpc_ddeplV * dlp * (id2 | dn_ddeel);
-    dfrpc_ddrpc = 1 + (deplV * the + dfrpc_ddeplV * dlp * trace(dn_ddrpc)) * theta;
+    dfrpc_ddrpc = 1 + deplV * the * theta + dfrpc_ddeplV * dlp * trace(dn_ddrpc);
 }
 
 // compute resulting stresses
