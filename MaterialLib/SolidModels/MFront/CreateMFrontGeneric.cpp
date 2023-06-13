@@ -75,7 +75,7 @@ void varInfo(std::string const& msg,
          msg,
          vars.size(),
          mgis::behaviour::getArraySize(vars, hypothesis));
-    for (auto& var : vars)
+    for (auto const& var : vars)
     {
         INFO("  --> type `{:s}' with name `{:s}', size {:d}, offset {:d}.",
              MaterialLib::Solids::MFront::varTypeToString(var.type),
@@ -93,6 +93,179 @@ void varInfo(std::string const& msg, std::vector<std::string> const& parameters)
     {
         INFO("  --> with name `{:s}'.", parameter);
     }
+}
+
+std::vector<ParameterLib::Parameter<double> const*> readMaterialProperties(
+    mgis::behaviour::Behaviour const& behaviour,
+    mgis::behaviour::Hypothesis const& hypothesis,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    BaseLib::ConfigTree const& config)
+{
+    if (behaviour.mps.empty())
+    {
+        return {};
+    }
+
+    std::map<std::string, std::string> map_name_to_param;
+
+    // gather material properties from the prj file
+    //! \ogs_file_param{material__solid__constitutive_relation__MFront__material_properties}
+    auto const mps_config = config.getConfigSubtree("material_properties");
+    for (
+        auto const& mp_config :
+        //! \ogs_file_param{material__solid__constitutive_relation__MFront__material_properties__material_property}
+        mps_config.getConfigParameterList("material_property"))
+    {
+        //! \ogs_file_attr{material__solid__constitutive_relation__MFront__material_properties__material_property__name}
+        auto name = mp_config.getConfigAttribute<std::string>("name");
+        auto param_name =
+            //! \ogs_file_attr{material__solid__constitutive_relation__MFront__material_properties__material_property__parameter}
+            mp_config.getConfigAttribute<std::string>("parameter");
+
+        map_name_to_param.emplace(std::move(name), std::move(param_name));
+    }
+
+    std::vector<ParameterLib::Parameter<double> const*> material_properties;
+    for (auto const& mp : behaviour.mps)
+    {
+        auto const it = map_name_to_param.find(mp.name);
+        if (it == map_name_to_param.end())
+            OGS_FATAL(
+                "Material Property `{:s}' has not been configured in the "
+                "project file.",
+                mp.name);
+
+        auto const& param_name = it->second;
+        auto const num_comp = mgis::behaviour::getVariableSize(mp, hypothesis);
+        auto const* param = &ParameterLib::findParameter<double>(
+            param_name, parameters, num_comp);
+
+        INFO("Using OGS parameter `{:s}' for material property `{:s}'.",
+             param_name, mp.name);
+
+        using V = mgis::behaviour::Variable;
+        if (mp.type == V::STENSOR || mp.type == V::TENSOR)
+        {
+            WARN(
+                "Material property `{:s}' is a tensorial quantity. You, "
+                "the "
+                "user, have to make sure that the component order of "
+                "parameter `{:s}' matches the one required by MFront!",
+                mp.name, param_name);
+        }
+
+        material_properties.push_back(param);
+        map_name_to_param.erase(it);
+    }
+
+    if (!map_name_to_param.empty())
+    {
+        ERR("Some material parameters that were configured are not used by "
+            "the material model.");
+        ERR("These parameters are:");
+
+        for (auto const& e : map_name_to_param)
+        {
+            ERR("  name: `{:s}', parameter: `{:s}'.", e.first, e.second);
+        }
+
+        OGS_FATAL(
+            "Configuration errors occurred. Please fix the project file.");
+    }
+
+    return material_properties;
+}
+
+// Very similar to above readMaterialProperties but does not generalize because
+// of config specific strings for ogs_file_param and return type.
+std::map<std::string, ParameterLib::Parameter<double> const*>
+readStateVariablesInitialValueProperties(
+    mgis::behaviour::Behaviour const& behaviour,
+    mgis::behaviour::Hypothesis const& hypothesis,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    BaseLib::ConfigTree const& config)
+{
+    if (behaviour.isvs.empty())
+    {
+        return {};
+    }
+
+    // gather state variables from the prj file
+    auto const initial_values_config =
+        //! \ogs_file_param{material__solid__constitutive_relation__MFront__initial_values}
+        config.getConfigSubtreeOptional("initial_values");
+    if (!initial_values_config)
+    {
+        return {};
+    }
+
+    std::map<std::string, std::string> map_name_to_param;
+    for (
+        auto const c :
+        //! \ogs_file_param{material__solid__constitutive_relation__MFront__initial_values__state_variable}
+        initial_values_config->getConfigParameterList("state_variable"))
+    {
+        //! \ogs_file_attr{material__solid__constitutive_relation__MFront__initial_values__state_variable__name}
+        auto name = c.getConfigAttribute<std::string>("name");
+        //! \ogs_file_attr{material__solid__constitutive_relation__MFront__initial_values__state_variable__parameter}
+        auto param_name = c.getConfigAttribute<std::string>("parameter");
+
+        map_name_to_param.emplace(std::move(name), std::move(param_name));
+    }
+
+    std::map<std::string, ParameterLib::Parameter<double> const*>
+        state_variables_initial_properties;
+    for (auto const& isv : behaviour.isvs)
+    {
+        auto const it = map_name_to_param.find(isv.name);
+
+        // Not all internal state variables might need initialization and are
+        // skipped.
+        if (it == map_name_to_param.end())
+        {
+            continue;
+        }
+
+        auto const& param_name = it->second;
+        auto const num_comp = mgis::behaviour::getVariableSize(isv, hypothesis);
+        auto const* param = &ParameterLib::findParameter<double>(
+            param_name, parameters, num_comp);
+
+        INFO(
+            "Using OGS parameter `{:s}' for initial value of internal "
+            "state variable `{:s}'.",
+            param_name, isv.name);
+
+        using V = mgis::behaviour::Variable;
+        if (isv.type == V::STENSOR || isv.type == V::TENSOR)
+        {
+            WARN(
+                "State variable `{:s}' is a tensorial quantity. You, the user, "
+                "have to make sure that the component order of parameter "
+                "`{:s}' matches the one required by MFront!",
+                isv.name, param_name);
+        }
+
+        state_variables_initial_properties[isv.name] = param;
+        map_name_to_param.erase(it);
+    }
+
+    if (!map_name_to_param.empty())
+    {
+        ERR("Some state variables initial value parameters that were "
+            "configured are not used by the material model.");
+        ERR("These parameters are:");
+
+        for (auto const& e : map_name_to_param)
+        {
+            ERR("  name: `{:s}', parameter: `{:s}'.", e.first, e.second);
+        }
+
+        OGS_FATAL(
+            "Configuration errors occurred. Please fix the project file.");
+    }
+
+    return state_variables_initial_properties;
 }
 }  // namespace
 
@@ -181,81 +354,18 @@ MFrontConfig createMFrontConfig(
         INFO("  --> ({}, {}).", var1.name, var2.name);
     }
 
-    std::vector<ParameterLib::Parameter<double> const*> material_properties;
+    std::vector<ParameterLib::Parameter<double> const*> material_properties =
+        readMaterialProperties(behaviour, hypothesis, parameters, config);
 
-    if (!behaviour.mps.empty())
-    {
-        std::map<std::string, std::string> map_name_to_param;
-
-        // gather material properties from the prj file
-        //! \ogs_file_param{material__solid__constitutive_relation__MFront__material_properties}
-        auto const mps_config = config.getConfigSubtree("material_properties");
-        for (
-            auto const mp_config :
-            //! \ogs_file_param{material__solid__constitutive_relation__MFront__material_properties__material_property}
-            mps_config.getConfigParameterList("material_property"))
-        {
-            //! \ogs_file_attr{material__solid__constitutive_relation__MFront__material_properties__material_property__name}
-            auto name = mp_config.getConfigAttribute<std::string>("name");
-            auto const param_name =
-                //! \ogs_file_attr{material__solid__constitutive_relation__MFront__material_properties__material_property__parameter}
-                mp_config.getConfigAttribute<std::string>("parameter");
-
-            map_name_to_param.emplace(std::move(name), std::move(param_name));
-        }
-
-        for (auto& mp : behaviour.mps)
-        {
-            auto const it = map_name_to_param.find(mp.name);
-            if (it == map_name_to_param.end())
-                OGS_FATAL(
-                    "Material Property `{:s}' has not been configured in the "
-                    "project file.",
-                    mp.name);
-
-            auto const param_name = it->second;
-            auto const num_comp =
-                mgis::behaviour::getVariableSize(mp, hypothesis);
-            auto const* param = &ParameterLib::findParameter<double>(
-                param_name, parameters, num_comp);
-
-            INFO("Using OGS parameter `{:s}' for material property `{:s}'.",
-                 param_name, mp.name);
-
-            using V = mgis::behaviour::Variable;
-            if (mp.type == V::STENSOR || mp.type == V::TENSOR)
-            {
-                WARN(
-                    "Material property `{:s}' is a tensorial quantity. You, "
-                    "the "
-                    "user, have to make sure that the component order of "
-                    "parameter `{:s}' matches the one required by MFront!",
-                    mp.name, param_name);
-            }
-
-            material_properties.push_back(param);
-            map_name_to_param.erase(it);
-        }
-
-        if (!map_name_to_param.empty())
-        {
-            ERR("Some material parameters that were configured are not used by "
-                "the material model.");
-            ERR("These parameters are:");
-
-            for (auto& e : map_name_to_param)
-            {
-                ERR("  name: `{:s}', parameter: `{:s}'.", e.first, e.second);
-            }
-
-            OGS_FATAL(
-                "Configuration errors occurred. Please fix the project file.");
-        }
-    }
+    std::map<std::string, ParameterLib::Parameter<double> const*>
+        state_variables_initial_properties =
+            readStateVariablesInitialValueProperties(behaviour, hypothesis,
+                                                     parameters, config);
 
     INFO("### MFRONT END ####################################################");
 
-    return {std::move(behaviour), std::move(material_properties)};
+    return {std::move(behaviour), std::move(material_properties),
+            std::move(state_variables_initial_properties)};
 }
 
 }  // namespace MaterialLib::Solids::MFront

@@ -42,6 +42,15 @@ public:
         return Base::createMaterialStateVariables();
     }
 
+    void initializeInternalStateVariables(
+        double const t,
+        ParameterLib::SpatialPosition const& x,
+        typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
+            material_state_variables) const override
+    {
+        Base::initializeInternalStateVariables(t, x, material_state_variables);
+    }
+
     std::optional<std::tuple<KelvinVector,
                              std::unique_ptr<typename MechanicsBase<
                                  DisplacementDim>::MaterialStateVariables>,

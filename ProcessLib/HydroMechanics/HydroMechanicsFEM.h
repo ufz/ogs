@@ -88,6 +88,8 @@ struct IntegrationPointData final
         MPL::VariableArray variable_array_prev;
 
         auto const null_state = solid_material.createMaterialStateVariables();
+        solid_material.initializeInternalStateVariables(t, x_position,
+                                                        *null_state);
 
         using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
@@ -233,16 +235,16 @@ public:
         {
             auto& ip_data = _ip_data[ip];
 
+            ParameterLib::SpatialPosition const x_position{
+                std::nullopt, _element.getID(), ip,
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunctionPressure,
+                                                   ShapeMatricesTypePressure>(
+                        _element, ip_data.N_p))};
+
             /// Set initial stress from parameter.
             if (_process_data.initial_stress != nullptr)
             {
-                ParameterLib::SpatialPosition const x_position{
-                    std::nullopt, _element.getID(), ip,
-                    MathLib::Point3d(NumLib::interpolateCoordinates<
-                                     ShapeFunctionDisplacement,
-                                     ShapeMatricesTypeDisplacement>(
-                        _element, ip_data.N_u))};
-
                 ip_data.sigma_eff =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
                         DisplacementDim>((*_process_data.initial_stress)(
@@ -250,6 +252,10 @@ public:
                             double>::quiet_NaN() /* time independent */,
                         x_position));
             }
+
+            double const t = 0;  // TODO (naumov) pass t from top
+            ip_data.solid_material.initializeInternalStateVariables(
+                t, x_position, *ip_data.material_state_variables);
 
             ip_data.pushBackState();
         }

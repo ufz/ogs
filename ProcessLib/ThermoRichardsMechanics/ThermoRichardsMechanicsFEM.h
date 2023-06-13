@@ -317,6 +317,11 @@ public:
                 current_state.transport_poro_data.phi =
                     current_state.poro_data.phi;
             }
+
+            double const t = 0;  // TODO (naumov) pass t from top
+            this->solid_material_.initializeInternalStateVariables(
+                t, x_position,
+                *this->material_states_[ip].material_state_variables);
         }
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
