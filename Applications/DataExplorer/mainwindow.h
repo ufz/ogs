@@ -13,10 +13,7 @@
 #include <memory>
 
 #include "Applications/DataHolderLib/Project.h"
-
 #include "Base/ImportFileTypes.h"
-#include "ui_mainwindow.h"
-
 #include "DataView/ElementTreeModel.h"
 #include "DataView/FemConditionModel.h"
 #include "DataView/GEOModels.h"
@@ -24,12 +21,13 @@
 #include "DataView/ProcessModel.h"
 #include "VtkVis/VisPrefsDialog.h"
 #include "VtkVis/VtkVisPipeline.h"
+#include "ui_mainwindow.h"
 
 class TreeModel;
 
 namespace MeshLib
 {
-    class VtkMappedMeshSource;
+class VtkMappedMeshSource;
 }
 
 class QSignalMapper;
@@ -46,35 +44,35 @@ public:
 
     void ShowWindow();
     void HideWindow();
-    void loadFileOnStartUp(const QString &fileName);
+    void loadFileOnStartUp(const QString& fileName);
 
 protected:
     void closeEvent(QCloseEvent* event) override;
 
 protected slots:
-    void showGeoDockWidget( bool show );
-    void showStationDockWidget( bool show );
-    void showMshDockWidget( bool show );
-    void showConditionDockWidget( bool show );
-    void showVisDockWidget( bool show );
+    void showGeoDockWidget(bool show);
+    void showStationDockWidget(bool show);
+    void showMshDockWidget(bool show);
+    void showConditionDockWidget(bool show);
+    void showVisDockWidget(bool show);
 
     /// Function calls for opening files.
     void open(int file_type = 0);
     /// Function calls for saving files.
     void save();
     /// Function calls for generating GMSH files from the GUI
-    void callGMSH(std::vector<std::string> & selectedGeometries,
+    void callGMSH(std::vector<std::string>& selectedGeometries,
                   unsigned param1,
-                  double   param2,
-                  double   param3,
-                  double   param4,
-                  bool     delete_geo_file);
+                  double param2,
+                  double param3,
+                  double param4,
+                  bool delete_geo_file);
     /// Function calls for GMS export.
     void exportBoreholesToGMS(std::string listName, std::string fileName);
     /// Testing functionality for connection to FEM lib
     void FEMTestStart();
     void loadPetrelFiles();
-    void mapGeometry(const std::string &geo_name);
+    void mapGeometry(const std::string& geo_name);
     void convertMeshToGeometry(const MeshLib::Mesh* mesh);
     void convertPointsToStations(std::string const& geo_name);
     void openRecentFile();
@@ -82,7 +80,9 @@ protected slots:
     void showAddPipelineFilterItemDialog(QModelIndex parentIndex);
     void showDataExplorerSettingsDialog();
     /// Allows setting the name for a geometric object
-    void showGeoNameDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, std::size_t id);
+    void showGeoNameDialog(const std::string& geometry_name,
+                           const GeoLib::GEOTYPE object_type,
+                           std::size_t id);
     /// Allows setting the name for a station
     void showStationNameDialog(const std::string& stn_vec_name, std::size_t id);
     /// Creates a structured grid with user-specified parameters.
@@ -91,18 +91,21 @@ protected slots:
     void showMeshElementRemovalDialog();
     /// Calls the diagram prefs dialog from the Tools menu.
     void showDiagramPrefsDialog();
-    /// Calls the diagram prefs dialog from the station list (i.e. for a specific station).
-    void showDiagramPrefsDialog(QModelIndex &index);
+    /// Calls the diagram prefs dialog from the station list (i.e. for a
+    /// specific station).
+    void showDiagramPrefsDialog(QModelIndex& index);
     /// Calls the OGSFileConverter as an external tool
     void showFileConverter();
-    //TODO6 void showFileConverterDialog();
+    // TODO6 void showFileConverterDialog();
     void showLicense();
-    void showLineEditDialog(const std::string &geoName);
+    void showLineEditDialog(const std::string& geoName);
     void showGMSHPrefsDialog();
     void showMergeGeometriesDialog();
     void showMeshAnalysisDialog();
     void showTranslateDataDialog();
-    void showMeshQualitySelectionDialog(MeshLib::VtkMappedMeshSource* mshSource);
+    void showLayers2GridDialog();
+    void showMeshQualitySelectionDialog(
+        MeshLib::VtkMappedMeshSource* mshSource);
     void showVisalizationPrefsDialog();
     void updateDataViews();
     void writeGeometryToFile(QString gliName, QString fileName);
@@ -118,8 +121,9 @@ protected slots:
 
 private:
     QMenu* createImportFilesMenu();
-    void loadFile(ImportFileType::type t, const QString &fileName);
-    void loadFEMConditionsFromFile(const QString &fileName, std::string geoName = "");
+    void loadFile(ImportFileType::type t, const QString& fileName);
+    void loadFEMConditionsFromFile(const QString& fileName,
+                                   std::string geoName = "");
     void readSettings();
     void writeSettings();
     QString getLastUsedDir();
@@ -139,6 +143,6 @@ private:
     std::unique_ptr<GEOModels> _geo_model;
 
 signals:
-    void fileUsed( QString filename );
-    void fileOpenRequested( int );
+    void fileUsed(QString filename);
+    void fileOpenRequested(int);
 };

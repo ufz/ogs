@@ -132,6 +132,7 @@
     <addaction name="actionDiagram_Viewer"/>
     <addaction name="actionFEM_Test"/>
     <addaction name="actionTranslating_Data"/>
+    <addaction name="actionCreate_a_Voxelgrid"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -475,6 +476,11 @@
     <string>Translating Data</string>
    </property>
   </action>
+  <action name="actionCreate_a_Voxelgrid">
+   <property name="text">
+    <string>Create a Voxelgrid from Layers</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -746,6 +752,22 @@
    <signal>triggered()</signal>
    <receiver>MainWindowClass</receiver>
    <slot>showTranslateDataDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>372</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCreate_a_Voxelgrid</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>showLayers2GridDialog()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>

@@ -72,13 +72,14 @@
 #include "DataView/DiagramView/DiagramPrefsDialog.h"
 #include "DataView/GMSHPrefsDialog.h"
 #include "DataView/GeoOnMeshMappingDialog.h"
+#include "DataView/Layers2GridDialog.h"
 #include "DataView/LicenseDialog.h"
 #include "DataView/LineEditDialog.h"
 #include "DataView/MergeGeometriesDialog.h"
 #include "DataView/MeshAnalysisDialog.h"
-#include "DataView/TranslateDataDialog.h"
 #include "DataView/MeshElementRemovalDialog.h"
 #include "DataView/MeshQualitySelectionDialog.h"
+#include "DataView/TranslateDataDialog.h"
 #ifdef OGS_USE_NETCDF
 #include "VtkVis/NetCdfConfigureDialog.h"
 #endif  // OGS_USE_NETCDF
@@ -1349,6 +1350,17 @@ void MainWindow::showMeshAnalysisDialog()
 void MainWindow::showTranslateDataDialog()
 {
     auto dlg = TranslateDataDialog(_meshModel.get(), _geo_model.get());
+    dlg.exec();
+}
+
+void MainWindow::showLayers2GridDialog()
+{
+    if (_meshModel == nullptr)
+    {
+        OGSError::box("The supplied mesh_model is not existing.");
+    }
+
+    auto dlg = Layers2GridDialog(*_meshModel);
     dlg.exec();
 }
 
