@@ -2,7 +2,6 @@ build linux petsc:
   extends:
     - .template-build-linux
     - .test-artifacts
-    - .rules-manual
   tags:
     - envinf
     - shell
