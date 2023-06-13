@@ -478,7 +478,7 @@
   </action>
   <action name="actionCreate_a_Voxelgrid">
    <property name="text">
-    <string>Create a Voxelgrid</string>
+    <string>Create a Voxelgrid from Layers</string>
    </property>
   </action>
  </widget>

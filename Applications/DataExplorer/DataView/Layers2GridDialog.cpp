@@ -203,8 +203,8 @@ void Layers2GridDialog::accept()
         auto mesh(_mesh_model.getMesh(layer));
         if (mesh == nullptr)
         {
-            OGSError::box(
-                "Input layer not found. Aborting...");  // write name of layer.
+            OGSError::box("Input layer " + QString::fromStdString(layer) +
+                          " not found. Aborting...");
             return;
         }
         layers.push_back(mesh);
