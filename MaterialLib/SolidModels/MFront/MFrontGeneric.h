@@ -410,6 +410,10 @@ public:
             assert(values.size() == values_span.size());
             std::copy_n(begin(values), values_span.size(), values_span.begin());
         }
+
+        auto const& s1 = state._behaviour_data.s1.internal_state_variables;
+        auto& s0 = state._behaviour_data.s0.internal_state_variables;
+        std::copy(begin(s1), end(s1), begin(s0));
     }
 
     std::optional<std::tuple<OGSMFrontThermodynamicForcesData,
