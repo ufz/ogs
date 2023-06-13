@@ -24,6 +24,7 @@ void ElasticTangentStiffnessModel<DisplacementDim>::eval(
     namespace MPL = MaterialPropertyLib;
 
     auto const null_state = solid_material_.createMaterialStateVariables();
+    solid_material_.initializeInternalStateVariables(x_t.t, x_t.x, *null_state);
 
     using KV = KelvinVector<DisplacementDim>;
 

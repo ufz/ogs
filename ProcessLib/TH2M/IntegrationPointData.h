@@ -215,6 +215,8 @@ struct IntegrationPointData final
         MPL::VariableArray variable_array_prev;
 
         auto const null_state = solid_material.createMaterialStateVariables();
+        solid_material.initializeInternalStateVariables(t, x_position,
+                                                        *null_state);
 
         using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
