@@ -112,12 +112,10 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
 
     // compute elastic stiffness (constant during time step)
     const auto p = -trace(sig) / 3;
-    const auto K = v0/ka * p;
+    const auto K = v0 / ka * p;
     const auto E = 3.0 * K * (1.0 - 2*nu);
 
-    const auto lame_lambda = computeLambda(E, nu);
-    const auto lame_mu = computeMu(E, nu);
-    De = lame_lambda * Stensor4::IxI() + 2 * lame_mu * Stensor4::Id();
+    De = E / (1.0 + nu) * Stensor4::K() + K * Stensor4::IxI();
     young = E;
 
     rpc = pc / young;
