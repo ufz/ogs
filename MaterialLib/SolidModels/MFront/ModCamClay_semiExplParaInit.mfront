@@ -38,10 +38,6 @@
 @PhysicalBounds pamb in [0:*[;
 pamb.setEntryName("AmbientPressure");
 
-@Parameter stress pcMin = 1e-3; //1e+3 Pa
-@PhysicalBounds pcMin in [0:*[;
-pcMin.setEntryName("MinimalPreConsolidationPressure");
-
 // material parameters
 @MaterialProperty stress young;
 @PhysicalBounds young in [0:*[;
@@ -72,8 +68,7 @@ pc_char.setEntryName("CharacteristicPreConsolidationPressure");
 @StateVariable real lp;
 lp.setGlossaryName("EquivalentPlasticStrain");
 
-// @StateVariable stress pc;
-// pc.setEntryName("PreConsolidationPressure");
+// Reduced (normalized) pre-consolidation pressure for better integration performance
 @IntegrationVariable strain rpc;
 
 // An auxiliary state variable is a persistent variable but not an integration variable.
@@ -96,7 +91,8 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
 // local variables
 @LocalVariable bool withinElasticRange;
 @LocalVariable real M2;
-@LocalVariable real rpcMin;
+@LocalVariable real pc_min;
+@LocalVariable real rpc_min;
 @LocalVariable stress mu;       // Second Lamé coefficient
 
 @InitLocalVariables
@@ -112,7 +108,8 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
         eel = 1. / (2. * mu) * sig - nu / young * trace(sig) * Stensor::Id();
     }
     rpc = pc / young;
-    rpcMin = pcMin / young;
+    pc_min = 1e-15 * pc_char;
+    rpc_min = pc_min / young;
 
     // elastic estimators
     const auto sig_el = computeElasticPrediction();
@@ -164,7 +161,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
     // residual
     feel += depl;
     flp = f / fchar;
-    frpc = drpc + deplV * the * (rpcNew - rpcMin);
+    frpc = drpc + deplV * the * (rpcNew - rpc_min);
 
     // auxiliary derivatives
     const auto dnorm_dsig = (9 * s - 2 * M2 / 9 * df_dp * id2) / norm;
@@ -173,7 +170,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
         theta;
     const auto dn_ddrpc =
         (id2 + df_dp * n / norm) * M2 / (3 * norm) * theta * young;
-    const auto dfrpc_ddeplV = the * (rpcNew - rpcMin);
+    const auto dfrpc_ddeplV = the * (rpcNew - rpc_min);
 
     // jacobian (all other parts are zero)
     dfeel_ddeel += dlp * dn_ddeel;
