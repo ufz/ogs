@@ -28,5 +28,6 @@ check web links:
       --ignore-url='/css/all.css'
       --ignore-url='www.grs.de'
       --ignore-url='www.smartkd-concept.de'
+      --ignore-url='https://mybinder.org'
       http://localhost:1313
     - kill $!
