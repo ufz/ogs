@@ -15,7 +15,6 @@
                       eel, deel (elastic strain (increment))
                       sig (stress)
                       dlp (plastic increment)
-                      dphi (porosity increment)
                       dpc (pre-consolidation pressure increment)
 
    Output:            feel (strain residual depending on deel, dlp, dpc)
@@ -78,13 +77,9 @@ pc.setEntryName("PreConsolidationPressure");
 @AuxiliaryStateVariable real epl_V;
 epl_V.setEntryName("PlasticVolumetricStrain");
 
-@AuxiliaryStateVariable real phi;
-@PhysicalBounds phi in [0:1];
-phi.setGlossaryName("Porosity");// Pore volume per total volume
-
 @AuxiliaryStateVariable real v;
 @PhysicalBounds v in [1:*[;
-v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore number
+v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - porosity)
 
 @AuxiliaryStateVariable real Time;
 
