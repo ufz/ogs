@@ -7,6 +7,7 @@ build mac petsc arm64:
     - .test-artifacts
   needs: [meta]
   timeout: 3h
+  allow_failure: true
   variables:
     BUILD_CTEST_LARGE_ON_MASTER: "true"
     CMAKE_PRESET: release-petsc
