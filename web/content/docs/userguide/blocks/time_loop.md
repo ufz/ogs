@@ -18,11 +18,13 @@ It was published in this state to make existing content available to users and h
 
 </div>
 
-This block defines all aspects related to the progress of time in the simulation and controls when the output files will be written, their naming pattern and content.
+This block defines all aspects related to the progress of time in the simulation and controls when the output files will be
+written, their naming pattern and content.
 
 ## Process
 
-First section of this block, the one controlling time progress has to be set up separately for each process defined in [processes block](/docs/userguide/blocks/processes/#process-variables) separately.
+First section of this block, the one controlling time progress has to be set up separately for each process defined in
+[processes block](/docs/userguide/blocks/processes/#process-variables) separately.
 There can be more than one process defined.
 They are distinguished with the parameter "ref" in the `<process>` tag:
 
@@ -34,8 +36,8 @@ They are distinguished with the parameter "ref" in the `<process>` tag:
 
 ### Time stepping
 
-Numerical simulations proceed in time steps.
-Their size is important factor impacting if a stable solution will be found.
+Numerical simulations proceed in time steps, if they are transient.
+Their size is an important factor impacting, if a stable solution will be found.
 
 In OpenGeoSys the following time step definitions are available:
 
@@ -47,7 +49,7 @@ In OpenGeoSys the following time step definitions are available:
 #### Single time step
 
 This is the simplest type of time steppings used for solution of elliptic pdes as in the `SteadyStateDiffusion` process.
-It only requires its type to be given:
+It only requires its type to be given and is used for stead-state problems:
 
 ```xml
 <time_stepping>
@@ -57,10 +59,13 @@ It only requires its type to be given:
 
 #### Fixed time stepping
 
-This type of time stepping will run the simulation with predetermined number of steps from start to end of the simulation.
-The steps are defined with parameter pair of number of repetitions and length. It is allowed to define multiple pairs. This way, the time step can vary throughout the experiment.
+This type of time stepping will run the simulation with a predetermined number of steps from the start to the end of the
+simulation.
+The steps are defined with parameter pairs giving the number of repetitions and the length of an individual step. It is allowed
+to define multiple pairs. This way, the time step can vary throughout the experiment.
 
-In the example below, a duration of $1$ time unit is simulated, with first 5 time steps being $0.1$ time unit long and next 10 being $0.05$ time unit long.
+In the example below, a duration of $1$ time unit is simulated, with first 5 time steps being $0.1$ time unit long and next 10
+being $0.05$ time unit long.
 
 ```xml
 <time_stepping>
@@ -86,8 +91,9 @@ If this is not the case, a time step at t_end will be added.
 The first time step of the simulation is always at t_initial.
 
 The unit for time has to be consistent with the rest of the units used in the experiment.
-Following SI system, second is a common choice.
-This is how to define experiment simulating a year of time in daily time step using second as time unit:
+Following the SI system, second is the common choice as time unit.
+This is how to define the time-stepping for an experiment simulating a year of time in daily time step using second as time
+unit:
 
 ```xml
 <time_stepping>
@@ -105,12 +111,11 @@ This is how to define experiment simulating a year of time in daily time step us
 </time_stepping>
 ```
 
-The fixed time stepping is the most commonly used type.
-As it is one of the simplest available, it makes a good starting point.
+As fixed time stepping is one of the simplest available, it is a good starting point.
 
 #### Iteration number based time stepping
 
-[See doxygen](https://doxygen.opengeosys.org/df/df4/ogs_file_param__prj__time_loop__processes__process__time_stepping__iterationnumberbasedtimestepping)
+[See Doxygen](https://doxygen.opengeosys.org/df/df4/ogs_file_param__prj__time_loop__processes__process__time_stepping__iterationnumberbasedtimestepping)
 The examples discussed above, would be defined in the project file as follows:
 
 ```xml
@@ -126,9 +131,12 @@ The examples discussed above, would be defined in the project file as follows:
 </time_stepping>
 ```
 
+Iteration number based time stepping corresponds to adaptive time steps. Experiences users may prefer this time-stepping
+especially for the solution of non-linear problems.
+
 #### Evolutionary PID controller
 
-[See doxygen](https://doxygen.opengeosys.org/d3/d86/ogs_file_param__prj__time_loop__processes__process__time_stepping__evolutionarypidcontroller)
+[See Doxygen](https://doxygen.opengeosys.org/d3/d86/ogs_file_param__prj__time_loop__processes__process__time_stepping__evolutionarypidcontroller)
 
 ### Error tolerances
 
@@ -138,15 +146,21 @@ There are two two ways of defining error tolerances:
 - relative `<reltosl> </reltols>`
 - absolute `<abstols> </abstols>`
 
-Both of them can be defined as single value, that will be applied to all process variables, or with multiple ones applied to them individually.
+Both of them can be defined as single value, that will be applied to all process variables, or with multiple ones applied to
+them individually.
 
-If tolerances per process variable are provided, the order of values defined inside of the tags `<abstols> </abstols>` and `<reltosl> </reltols>` has to match order of process variables defined in [processes](/docs/userguide/blocks/processes/).
-If process variable is directional, XYZ pattern is followed.
-For example for a 3D THM problem with directional displacement $\mathbf{u}$ following order has to be used: $T$, $p$, $u_x$, $u_y$, $u_z$.
-The order of $T$, $p$ and $u$ is prescribed by the THM process.
+<!-- TODO: Describe the definition of the relative tolerance. -->
+
+If tolerances per process variable are provided, the order of values defined inside of the tags `<abstols> </abstols>` and
+`<reltosl> </reltols>` has to match order of process variables defined in [processes](/docs/userguide/blocks/processes/).
+If process variable is directional, an XYZ order is followed.
+For example for a 3D THM problem with directional displacement $\mathbf{u}$ the following order has to be used: $T$, $p$, $u_x$
+, $u_y$, $u_z$.
+The order of $T$, $p$, and $u$ is prescribed by the THM process.
 
 Depending on process and simulation setup, the number of variables in the solution vector can vary.
-In the following example, there are four tolerances given in "abstol": one for T, one for p and two for $\mathbf{u}$ ($u_x$ and $u_y$ as this is a 2D problem):
+In the following example, there are four tolerances given in `abstol`: one for $T$, one for $p$, and two for $\mathbf{u}$ ($u_x$
+and $u_y$ as this is a 2D problem):
 
 ```xml
 <process_variables>
@@ -160,42 +174,45 @@ The same order is preserved for [output variables](/docs/userguide/blocks/time_l
 
 ### Convergence criteria
 
-In this part convergence criterion has to be selected. Following options are available:
+In this part the selection of a convergence criterion is described. The following options are available:
 
 - [DeltaX and PerComponentDeltaX](/docs/userguide/blocks/time_loop/#deltax-and-percomponentdeltax)
 - [Residual and PerComponentResidual](/docs/userguide/blocks/time_loop/#residual-and-percomponentresidual)
 
-All of the criterions mentioned above compare value quantifying error with user defined tolerances.
+All of the criteria mentioned above compare a value quantifying the error (a residual or a discrete change in time) with a
+userdefined tolerance.
 
 There are three way how error tolerances can be set up:
 
 - only relative tolerances $e_{\mathrm{rel}} \le \epsilon_{\mathrm{rel}}$
 - only absolute tolerances $e_{\mathrm{abs}} \le \epsilon_{\mathrm{abs}}$
-- relative and absolute tolerances $e_{\mathrm{abs}} \le \epsilon_{\mathrm{abs}} \vee e_{\mathrm{rel}} \le \epsilon_{\mathrm{rel}} $
+- relative or absolute tolerances $e_{\mathrm{abs}} \le \epsilon_{\mathrm{abs}} \vee e_{\mathrm{rel}} \le \epsilon_{\mathrm{rel}} $
 
-where $e$ indicates error and $\epsilon$ indicates tolerance.
+where $e$ indicates the observed error and $\epsilon$ indicates the defined tolerance.
 
-In the last case convergence criterion will be satisfied with **at least one** of the tolerances being met.
+In the last case the convergence criterion will be satisfied with **at least one** of the tolerances being met.
 
-Both relative and absolute tolerances can be defined as single value or with separate values for each component, see [error tolerances](/docs/userguide/blocks/time_loop/#error-tolerances) for more details.
+Both relative and absolute tolerances can be defined as a single value or using separate values for each component, see [error tolerances](/docs/userguide/blocks/time_loop/#error-tolerances) for more details.
 
 #### DeltaX and PerComponentDeltaX
 
-DeltaX criteria are based on the norm value of the update (difference) of the solution between two consecutive iterations and is applied to each process variable.
-If process variable is vectorial, criteria will be applied to each component of the vector.
+DeltaX criteria are based on a norm applied to the whole solution or increment vector. It reflects the difference of the initial value and its update in time for the next iteration according to a defined norm.
 
-In this criteria, the error is defined as difference between results vector obtained from two consecutive iterations.
-If this difference drops below tolerance, the criteria is fulfilled and solver will proceed to the next time step.
+Therefore, the error is defined as difference between the results vector obtained from two consecutive iterations.
+If this difference drops below the defined tolerance, the criterion is fulfilled and the solver will proceed to the next time step.
 
 The DeltaX criterion usually uses the [euclidean norm](/docs/userguide/blocks/time_loop/#euclidan-norm) as indicated by the `<norm_type>` tag value `NORM2`.
 Other possible values are `NORM1` and `INFINITY_N`.  
 
-The norm value of the solution vector is compared with the error tolerances.
-They can be provided as absolute, relative or both.
+The norm of the solution vector is compared with the error tolerances.
+They can be provided as absolute, relative, or both.
+
+In opposite to DeltaX, PerComponentDeltaX is applied to an individual variable, or to each component of a vectorial variable. A PerComponentDeltaX criterion will be fulfilled, if the resulting variable under consideration (or all resulting components of a vectorial variable) are close enough to a user-defined criterion of maximum change between two consecutive time steps.
 
 #### Residual and PerComponentResidual
 
-Differently than [DeltaX](/docs/userguide/blocks/time_loop/#deltax-and-percomponentdeltax), the residual based convergence criteria use the residuum values for evaluation, not the increment values.
+Differently than [DeltaX](/docs/userguide/blocks/time_loop/#deltax-and-percomponentdeltax), the residual based convergence
+criteria use the residuum values for evaluation, not the increment values.
 
 The residual value is the difference between two sides of modeled equation.
 In analytical solution, they would be perfectly equal, but in numerical solution, this will usually not be the case.
@@ -207,9 +224,39 @@ Once the residual values drop below user defined tolerances, solution is accepte
 The normal of the residuum vector is compared with the error tolerances.
 They can be provided as absolute, relative or both.
 
-### Time discretizationn
+### Norms
 
-<!-- TODO: describe different options for time discretization-->
+In following section $x$ denotes solution vector.
+
+#### Absolute-value norm
+
+`NORM1` is defined as the absolute-value norm in the [LinAlg library](https://doxygen.opengeosys.org/d6/dcd/namespacemathlib_1_1linalg#ac7415e1254b70c4015ccd3b6f2873338).
+
+It is defined by the following equation:
+$$
+x_{norm}=\sum_{i=0}^{n}{|x_i|}
+$$
+
+#### Euclidean norm
+
+`NORM2` in the OpenGeoSys implementation is as well in the [LinAlg library](https://doxygen.opengeosys.org/d6/dcd/namespacemathlib_1_1linalg#af298d1ddc92d7ce52046adc669e9904f).
+
+It is defined by the following equation:
+$$
+x_{norm} = \sqrt{\sum_{i=0}^{n}{x^2_i}}
+$$
+
+#### Infinity norm
+
+Moreover, `INFINITY_N` is the infinity norm (sometimes also called maximum norm), which can be found as well in the [LinAlg Library](https://doxygen.opengeosys.org/d6/dcd/namespacemathlib_1_1linalg#a49abd74780cb8a1a7135a722ca762394) and which reads as follows:
+
+$$
+x_{norm} = \mathrm{max} ((|x_i|)_{i = 1,...,n})
+$$
+
+### Time discretization
+
+<!-- TODO: describe different options for time discretization -->
 
 For the time being only backward Euler time stepping scheme is available.
 
@@ -231,7 +278,7 @@ There are two ways how the times at which the output will be written can be spec
 The fixed output times can be defined in the same way as in [fixed time step time stepping](/docs/userguide/blocks/time_loop/#fixed-time-stepping).
 
 This approach is suitable, if specific times of the simulation are of a special interest to the user.
-In such a case, OpenGeoSys can write the output files at times provided in a list in `<fixed_output_times> </fixed_output_times>` tag:
+In such a case, OpenGeoSys can write the output files at times provided in a list within the `<fixed_output_times> </fixed_output_times>` tag:
 
 ```xml
 <fixed_output_times>
@@ -310,29 +357,30 @@ Output at timestep 100 is written by the second pair, therefore to get to 1000, 
 Regardless of the user defined output time steps, OpenGeoSys will write the output files at $t=0$ and $t=t_{end}$.
 
 The naming of output files written at different time steps is handled automatically by OpenGeoSys.
-User can use two tags that allow control over how the file names are structured and what they contain: tags `<suffix> </suffix>` and `<prefix> </prefix>`.
+The user can use two tags that allow to control how the file names are structured and what they contain: tags `<suffix> </suffix>` and `<prefix> </prefix>`.
 The rules regarding their content are the same.
-They should contain text string.
+They should contain text strings.
 Variables can be used to allow those strings to vary between files.
-Following variables can be called:
+The following variables can be called:
 
 - meshname
 - timestep
 - time
 - iteration
 
-They can be used in the file name with syntax illustrated by following example:
+They can be used in the file name with the syntax illustrated by the following example:
 
 ```xml
 <suffix>Experiment_name</suffix>
 <prefix>_at_time_step_{:timestep}_time_{:time}_iteration_{:iteration}</prefix>
 ```
 
-Name of each file will be automatically appended by a file extension appropriate to the content of `<type> </type>` tag.
+The name of each file will be automatically appended by a file extension appropriate to the content of `<type> </type>` tag.
 No user action is needed in this regard.
 
-Block `<variables> </variables>` allows user to control what process variables are included in the output files.
-If only some of them are of interest, it may be convenient to reduce size of the output files by only writing the necessary ones.
+The block `<variables> </variables>` allows users to control what process variables are included in the output files.
+If only some of them are of interest, it may be convenient to reduce the size of the output files by only writing the necessary
+ones.
 If only temperature and pressure are important, this block can be defined as follows:
 
 ```xml
@@ -343,7 +391,8 @@ If only temperature and pressure are important, this block can be defined as fol
 ```
 
 The list of available variables differs between processes.
-<!-- TODO: Create list of variables available in different processes-->
+
+<!-- TODO: Create list of variables available in different processes -->
 
 In order to save space, the compression of output files can be enabled with:
 
@@ -352,31 +401,3 @@ In order to save space, the compression of output files can be enabled with:
 ```
 
 Compression will be performed with zlib.
-
-## Norms
-
-In following section $x$ denotes solution vector.
-
-### Manhattan norm
-
-Norm1 is defined as Manhattan norm in [LinAlg library](https://doxygen.opengeosys.org/d6/dcd/namespacemathlib_1_1linalg#ac7415e1254b70c4015ccd3b6f2873338).
-
-Defined with following equation:
-$$
-x_{norm}=\sum_{i=0}^{n}{|x_i|}
-$$
-
-### Euclidan norm
-
-Norm2 in OpenGeoSys implementation in the [LinAlg library](https://doxygen.opengeosys.org/d6/dcd/namespacemathlib_1_1linalg#af298d1ddc92d7ce52046adc669e9904f).
-
-Defined with following equation:
-$$
-x_{norm} = \sqrt{\sum_{i=0}^{n}{x_i}}
-$$
-
-### Max norm
-
-$$
-\mathrm{max}_i |x_i|
-$$

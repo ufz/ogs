@@ -19,13 +19,12 @@ It was published in this state to make existing content available to users and h
 </div>
 
 ## Setting up a project file
-The best starting point for setting your own project with OGS is to browse a catalogue of benchmarks (either at documentation page or gitlab).
+
+The best starting point for setting your own project with OGS is to browse a catalogue of benchmarks (either at documentation
+page or gitlab).
 
 ## Creating a new project file
 
 ## Modifying an existing project file
 
-### Operation on project file using ogs6py
-
-
-
+### Manipulation of project files using ogs6py

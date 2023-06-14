@@ -19,16 +19,18 @@ It was published in this state to make existing content available to users and h
 
 ## Goal
 
-[MFront](https://tfel.sourceforge.net/) can be used to run simulation with constitutive model not available in OpenGeoSys or with a modification of one of available ones.
+[MFront](https://tfel.sourceforge.net/) can be used to run simulation with constitutive model not available in OpenGeoSys or
+with a modification of one of available ones.
 
 ## Prerequisites
 
-OpenGeoSys has to be compiled with flag `-DOGS_USE_MFRONT`. It will enable MFront support and download necessary libraries.
+OpenGeoSys has to be compiled with the flag `-DOGS_USE_MFRONT` in that case. It will enable MFront support and download
+necessary libraries.
 For more details about compiling OpenGeoSys, see [developer guide - build configuration](/docs/devguide/getting-started/build-configuration/) and [developer guide - MFront installation](/docs/devguide/packages/mfront/).
 
 ## Preparing MFront file
 
-TODO: add content
+<!-- TODO: add content -->
 
 The details of preparing MFront file will not be discussed here. Only the necessary details will be stated.
 
@@ -48,7 +50,8 @@ ModelName.mfront
 
 ### Material properties
 
-The material properties, that should be read from project file and be used in the MFront model have to be defined using following syntax:
+The material properties, that should be read from project file and be used in the MFront model have to be defined using
+following syntax:
 
 ```c++
 @MaterialProperty type MatPropName
@@ -61,15 +64,16 @@ For details, see next section.
 
 Details on how to use a constitutive relation defined with MFront is described [here](/docs/userguide/blocks/misc/constitutive_relations/#mfront).
 
-## Preparing OpenGeoSys to use new MFront model
+## Preparing OpenGeoSys to use a new MFront model
 
-After the MFront file has been prepared, it has to be placed in the folder containing OpenGeoSys source code at following path:
+After the MFront file has been prepared, it has to be placed in the folder containing OpenGeoSys source code at the following
+path:
 
 ```c++
 ogs-source-code/MaterialLib/SolidModels/MFront
 ```
 
-in the same folder there is `CMakeLists.txt`.
+in the same folder there is the `CMakeLists.txt`.
 In that file, there is a list containing names of all MFront models stored in the folder.
 Name of the newly added model has to be added to that list:
 
@@ -95,16 +99,16 @@ It is case sensitive and it has to be written in exactly the same way everywhere
 
 ## References
 
-TODO: add content
+<!-- TODO: add content -->
 
 ### Benchmarks using MFront
 
-TODO: add content
+<!-- TODO: add content -->
 
 ### Available MFront models
 
-TODO: add content
+<!-- TODO: add content -->
 
 ## Testing MFront model with MTest
 
-TODO: add content
+<!-- TODO: add content -->

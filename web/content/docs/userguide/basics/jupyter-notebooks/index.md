@@ -5,7 +5,11 @@ author = "Lars Bilke"
 weight = 6
 +++
 
-[Jupyter Notebooks](https://jupyter.org) are documents which can contain live (Python) code, equations, visualizations and narrative text and can be used as an intuitive interface for OGS projects. The following video gives an introduction to using OpenGeoSys with Jupyter Notebooks:
+<!-- TODO: Consider to move this section out of **BASICS** and to devote an extra first-order section to the Python-bindings of OGS and how to operate OGS via Python and Jupyter Notebooks.-->
+
+[Jupyter Notebooks](https://jupyter.org) are documents which can contain live (Python) code, equations, visualizations and
+narrative text and can be used as an intuitive interface for OGS projects. The following video gives an introduction to using
+OpenGeoSys with Jupyter Notebooks:
 
 {{< youtube eihNKjK-I-s >}}
 
@@ -90,7 +94,8 @@ You may have to modify the IP address if this is running on a remote machine.
 
 #### <i class="fab fa-windows"></i> Specific OGS version
 
-You can append a version number to the image name (applies both to Docker and Singularity) to get an image for a specific OGS release (starting with 6.4.1):
+You can append a version number to the image name (applies both to Docker and Singularity) to get an image for a specific OGS
+release (starting with 6.4.1):
 
 ```bash
 singularity run docker://registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter:6.4.1
@@ -102,7 +107,9 @@ Available images are [listed on GitLab](https://gitlab.opengeosys.org/ogs/ogs/co
 
 ### Browsing notebooks on GitLab
 
-In the file browser on the left-hand side of the Jupyter Lab interface there is a GitLab-tab which allows for browsing and opening notebooks from the [`ogs/ogs`](https://gitlab.opengeosys.org/ogs/ogs)-repository. You can directly modify and execute a notebook, but the notebook is not saved back to GitLab. You can change the browsed repository by typing into the top text field.
+In the file browser on the left-hand side of the Jupyter Lab interface there is a GitLab-tab which allows for browsing and
+opening notebooks from the [`ogs/ogs`](https://gitlab.opengeosys.org/ogs/ogs)-repository. You can directly modify and execute a
+notebook, but the notebook is not saved back to GitLab. You can change the browsed repository by typing into the top text field.
 
 If you would like to us this with private repositories you have to supply an [access token](https://gitlab.opengeosys.org/-/profile/personal_access_tokens) at container start-up:
 

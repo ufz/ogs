@@ -17,11 +17,13 @@ It was published in this state to make existing content available to users and h
 
 **Users:** the content of this page has been verified and is correct. Please return later for more content!
 
+<!-- TODO: Give links to specific examples. The description found below is still somewhat generic, examples help here. -->
+
 </div>
 
-Inside of this block, all media in the simulation are defined.
+Inside of this block, all media of the simulation are defined.
  There has to be a medium for every value of Material IDs used in the mesh.
- Those IDs are assigned when mesh is created or converted by msh2vtu script.
+ Those IDs are assigned when the mesh is created or converted by msh2vtu script.
 
 ```xml
 <media>
@@ -33,10 +35,11 @@ Inside of this block, all media in the simulation are defined.
 
 ## Phases
 
-Medium can consist of multiple phases.
-For example porous geological would consist of solid phase (for example clay) and liquid phase (e.g.: water in the pores).
+A medium can consist of multiple phases.
+For example geological porous media would consist of a solid phase (for example gravel, sand, silt, clay, or some mix of the
+former) and a liquid phase (in most cases water, which fills the pore space either fully or just partially).
 
-In media with multiple phases, each of them can occur maximal once per medium.
+In media with multiple phases, each of them can occur at maximum once per medium.
 Phases within one medium are distinguished by their type:
 
 ```xml
@@ -59,12 +62,12 @@ If only one phase is considered inside a medium, the definition of that phase ca
 
 The available phases depend on the type of the process.
 
-TODO: Add overview of what mediums are available in different processes
+<!-- TODO: Add overview which media are available in different processes -->
 
 ## Properties
 
-The tag `<properties> </properties>` contains all values describing the properties of the medium as whole or of the specific phase of the medium. 
-The properties describing medium as a whole have to be placed on the same level as phases:
+The tag `<properties> </properties>` either contains all values describing the properties of the medium as a whole or just the properties of a specific phase of the medium.
+The properties, which describe the medium as a whole, have to be placed on the same level as phases:
 
 ```xml
 <medium id="0">
@@ -77,7 +80,7 @@ The properties describing medium as a whole have to be placed on the same level 
 </medium>
 ```
 
-The properties belonging to a phase within a medium, have to be placed inside `<phase> </phase>` tag:
+The properties belonging to a specific phase within a medium, have to be placed inside `<phase> </phase>` tag:
 
 ```xml
 <medium id="0">
@@ -92,7 +95,10 @@ The properties belonging to a phase within a medium, have to be placed inside `<
 </medium>
 ```
 
-The properties share very similar structure with [parameters](/docs/userguide/blocks/parameters/), but they are not interchangeable. 
+The properties share very similar structure with [parameters](/docs/userguide/blocks/parameters), but they are not
+interchangeable.
+
+<!-- TODO: Describe the differences between `properties` and `parameters`. -->
 
 Following basic types of properties are available:
 
@@ -106,12 +112,14 @@ They can be used by the user to define the properties in a way, that is specific
 There are more general properties available.
 They are described in section [Other types of properties](/docs/userguide/blocks/media/#other-types-of-properties).
 
-Generally, it is the most safe to use "Constant" type for properties and when it is not sufficient, type "Parameter" can be used as fallback.
-Still, there are some limitations to what types of parameter can be used in different processes.
+Generally, it is most safe to use the "Constant" type for properties, if properties are not transient. If this is not
+sufficient, the type "Parameter" can be used. Still, there are some limitations to what types of parameter can be used in
+different processes.
 
-Differently than the parameters in the Parameter block, in the Media block parameters can depend on more variables than x, y, z and t.
+In opposite to the parameters in the `parameter` block, in the `media` block parameters can depend on more variables than x, y,
+ z, and t.
 
-Type linear, function and curve can depend on a set of variable listed in [MPL->VariableType.h](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/MaterialLib/MPL/VariableType.h):
+The types linear, function, and curve can depend on a set of variables listed in [MPL->VariableType.h](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/MaterialLib/MPL/VariableType.h):
 
 - capillary_pressure
 - concentration
@@ -140,9 +148,12 @@ Type linear, function and curve can depend on a set of variable listed in [MPL->
 
 Keep in mind that not all of those variables will be available in all the processes. For example, in THM there is phase_pressure, but not liquid_phase_pressure.
 
+<!-- TODO: At best, give links and a little bit more information on the variables listed above. -->
+
 ### Constant
 
-This is the most basic type. It only requires `<value> </value>` tag additionally where the value of the parameter is provided as a number. It will not change throughout the experiment. For example:
+This is the most basic type. It only requires the `<value> </value>` tag additionally where the value of the parameter is
+provided as a number. It will not change throughout the experiment. For example:
 
 ```xml
 <parameter>
@@ -152,26 +163,28 @@ This is the most basic type. It only requires `<value> </value>` tag additionall
 </parameter>
 ```
 
-For vectorial quantities use plural, `<values>0.5 1 2</values>`, for example will be interpreted as a 3d vector.
+For vectorial quantities, please list the individual entries, `<values>0.5 1 2</values>`. This example will be interpreted as a
+3D vector.
 
 ### Linear
 
-Type linear, can be used to declare parameters that vary linearly depending on value of another parameter.
+The type linear can be used to declare parameters that vary linearly depending on the value of another parameter.
 
-Apart from standard required tags: `<name> </name>` and `<type> </type>`, `<reference_value> </reference_value>` has to be provided.
+Apart from the standard tags, which are required: `<name> </name>` and `<type> </type>`, `<reference_value> </reference_value>`
+has to be provided, too.
 
-Linear parameter can depend on values describing position (x, y and z) and time (t).
+Linearly varying parameters can be a function of space (x, y, and z) and time (t).
 Linear dependency on each independent variable requires `<reference_condition> </reference_condition>` and `<slope> </slope>`.
 
-Consider simple linear equation:
+Consider the simple linear equation:
 $$
-y(x)=ax+b
+y(x)=ax+b.
 $$
-let's say that there is a parameter $y$ that depends linearly on time:
+Specifically, a parameter $y$ may depends linearly on time:
 $$
-y(T)=a*t+y_0
+y(t)=a \cdot t+y_0.
 $$
-Defining it as linear type would look like this in project file:
+Defining it as type `linear` would look like this in project file:
 
 ```xml
 <property>
@@ -186,7 +199,7 @@ Defining it as linear type would look like this in project file:
 </property>
 ```
 
-where reference value $y_0$ is defined as follows:
+where the reference value $y_0$ is defined as follows:
 $$
 y_0=y(t_0)
 $$
@@ -213,26 +226,28 @@ A more realistic example can be found in benchmark [A2](https://gitlab.opengeosy
 
 The definition of density provided in the snippet above can be expressed by following equations:
 $$
-\rho(T=298.15, p=4e6)=1200
+\rho (T=298.15, p=4e6)=1200
 $$
+
 $$
-\rho(T)=(-6*10^{-4})*T+1200
+\rho (T)=(-6 \cdot 10^{-4})\cdot T+1200
 $$
+
 $$
-\rho(p)=(0.5*10^{9})*p+1200
+\rho (p)=(0.5 \cdot 10^{9}) \cdot p+1200
 $$
 
 ### Function
 
-Type function extends the basic structure of [constant type](/docs/userguide/blocks/parameters/#constant).
-There are two major differences though.
+The type `function` extends the basic structure of [constant type](/docs/userguide/blocks/parameters/#constant).
+There are two major differences syntax-wise though.
 The expression that defines a function has to be placed inside of the `<expression> </expression>` tag nested inside of the `<value> </value>` tag.
-Additionally, derivations with respect to applicable process variables have to be provided inside following this template:
+Additionally, derivatives with respect to applicable process variables have to be provided inside a template as follows:
 
 ```xml
 <dvalue>
     <variable_name>primary variable derived over</variable_name>  
-    <expression>expression of derivation of function w.r.t. specific primary variable </expression>
+    <expression>derivative of function w.r.t. specific primary variable </expression>
 </dvalue>
 ```
 
@@ -240,22 +255,26 @@ Additionally, derivations with respect to applicable process variables have to b
 
 Powers are indicated by "^", e.g.: 2^3=8.
 
-In scientific notation, power can be appended by leading zeros. So `0.002=2e-3=2e-03`, those three expression will evaluate to the same value in OpenGeoSys.
+However, following standard conventions, powers to the basis of 10 may also be expressed as  `0.002=2e-3=2e-03`. All three
+expression can be used in OpenGeoSys and are obviously equivalent.
 
 C++ functions (for example std::pow) cannot be called from the expression tag.
 
-The [`exprtk`](http://www.partow.net/programming/exprtk/) library interpreting such expressions is used in OGS and the full list of available functions and control structures can be found on its web page.
+The [`exprtk`](http://www.partow.net/programming/exprtk/) library interpreting such expressions is used in OGS and the full
+list of available functions and control structures can be found on its web page.
 
 #### Example
 
-Consider function defining viscosity of water depending on temperature:
+Consider the following function defining viscosity of water depending on temperature:
 
-$$ \mu = ( -0.0002 * T^3 + 0.05 * T^2 - 4 * T + 178) * 10^{-5}$$
+$$ \mu = ( -0.0002 \cdot T^3 + 0.05 \cdot T^2 - 4 \cdot T + 178) \cdot 10^{-5}$$
 
 and its partial derivative with respect to temperature:
-$$ \frac{\partial \mu}{\partial T} = ( -0.0006 * T^2 + 0.1 * T - 4) * 10^{-5} $$
 
-With the two equations above, the full implementation of water viscosity depending on phase pressure and temperature will look as follows:
+$$ \frac{\partial \mu}{\partial T} = ( -0.0006 \cdot T^2 + 0.1 \cdot T - 4) \cdot 10^{-5} $$
+
+With the two equations above, the full implementation of water viscosity depending on phase pressure and temperature will look
+as follows:
 
 ```xml
 <property>
@@ -271,25 +290,29 @@ With the two equations above, the full implementation of water viscosity dependi
 </property>
 ```
 
-There are limitations of what variables can be used inside of the `<expression> </expression>` tags. Only the ones related to the process variables can be called. The values defined for example in parameter block are out of reach.
-TODO: Check if this is correct
+There are limitations of what variables can be used inside of the `<expression> </expression>` tags. Only the ones related to
+the process variables can be called. The values defined for example in the `parameter` block are out of reach.
 
-For example if ```thermal_conductivity``` is defined and density is provided as Function, the dvalue of density with respect to temperature will be ignored.
+<!-- TODO: Check if this is correct. Please also check again the code-example above. -->
+
+For example if `thermal_conductivity` is defined and density is provided as a function, the `dvalue` of density, which is the
+derivative with respect to temperature, will be ignored.
 
 Notice, that OpenGeoSys assumes self consistent set of units.
-In the code snippet above temperature has to be converted from kelvins (used by other temperature dependent parameters in the project from which this snippet comes) to degrees Celsius required by the provided formula.
+In the code snippet above temperature has to be converted from kelvins (used by other temperature dependent parameters in the `.prj`-file from which this snippet comes) to degrees Celsius required by the provided formula.
 OpenGeoSys doesn't have an internal unit management system.
-It is your task to ensure, that the units used are consistent and compatible!
+It is your task to ensure, that the units used are consistent!
 
 ### Curve
 
-Curve is a bit special type, as it requires presence of another block in the project file.
-Whether the parameter is defined in Parameters block, or anywhere else in the project file, type curve will always refer to curve defined in [curve block](/docs/userguide/blocks//curves/).
-Regardless, of whether there is only one curve defined or multiple, they are always identified by the content of tag `<name> </name>`.
+Curve is a special type, as it requires the presence of another block in the project file.
+Whether the parameter is defined in the Parameters block, or anywhere else in the project file, type curve will always refer to
+the curve defined in [curve block](/docs/userguide/blocks//curves/).
+Regardless, of whether there is only one curve defined or multiple, they are always identified by the content of the tag `<name> </name>`.
 
 ![Relation between parameter of type curve and curves block](/docs/userguide/blocks/figures/curve.svg)
 
-Parameter of type curve can be defined using the following template:
+Parameters of the type `curve` can be defined using the following template:
 
 ```xml
 <property>
@@ -308,19 +331,19 @@ In the "Expression" tag only numerical values and x, y, z, t variables and curve
 
 ## Other types of properties
 
-Some properties that are valid for different simulation and can be reused are implemented in OpenGeoSys.
-In this section they will be discussed, but this list is not complete. 
+Some properties being an outcome of other models are implemented in OpenGeoSys and may be used as well.
+In this section some examples will be discussed, however, more models than discussed are available in OGS.
 
 ### Water properties - IAPWS97 model
 
-The water property model [IAPWS97](http://www.iapws.org/relguide/IF97-Rev.html) ([International Association for the Properties of Water and Steam](http://www.iapws.org)) is implemented in the OpenGeoSys.
+The water property model [IAPWS97](http://www.iapws.org/relguide/IF97-Rev.html) ([International Association for the Properties of Water and Steam](http://www.iapws.org)) is implemented in OpenGeoSys.
 Various properties of water can be called by providing an appropriate tag:
 
 - density `<type>WaterDensityIAPWSIF97Region1</type>`
 - viscosity `<type>WaterViscosityIAPWS</type>`
 - thermal conductivity `<type>WaterThermalConductivityIAPWS</type>`
 
-Those tags can be used only on the phase level. Please see following example:
+Those tags can be used only on the phase level. Please see the following example:
 
 ```xml
 <phase>
@@ -342,9 +365,8 @@ Those tags can be used only on the phase level. Please see following example:
 </phase>
 ```
 
-For those properties SI units are used, OpenGeoSys doesn't convert units internally.
-Users need to ensure, that the parameters that are provided in the project file use consistent and correct units.
+For those properties SI units are used, remember that OpenGeoSys doesn't convert units internally.
 
 ### Supported types of properties and special cases
 
-TODO: Add content
+<!-- TODO: Add content -->
