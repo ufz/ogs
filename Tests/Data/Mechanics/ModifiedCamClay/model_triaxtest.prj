@@ -26,7 +26,6 @@
                 </material_properties>
                 <initial_values>
                     <state_variable name="PreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
-                    <state_variable name="Porosity" parameter="InitialPorosity"/>
                     <state_variable name="VolumeRatio" parameter="InitialVolumeRatio"/>
                 </initial_values>
             </constitutive_relation>
@@ -42,7 +41,6 @@
                 <secondary_variable internal_name="EquivalentPlasticStrain" output_name="EquivalentPlasticStrain"/>
                 <secondary_variable internal_name="PreConsolidationPressure" output_name="PreConsolidationPressure"/>
                 <secondary_variable internal_name="VolumeRatio" output_name="VolumeRatio"/>
-                <secondary_variable internal_name="Porosity" output_name="Porosity"/>
                 <secondary_variable internal_name="PlasticVolumetricStrain" output_name="PlasticVolumetricStrain"/>
             </secondary_variables>
         </process>
@@ -162,14 +160,9 @@
             <value>2.e5</value>            <!--Pa-->
         </parameter>
         <parameter>
-            <name>InitialPorosity</name>
-            <type>Constant</type>
-            <value>0.44</value>
-        </parameter>
-        <parameter>
             <name>InitialVolumeRatio</name>
             <type>Constant</type>
-            <value>1.78571428571428571429</value>
+            <value>1.78571428571428571429</value> <!--= 1/(1-0.44)-->
         </parameter>
         <!-- Initial and boundary values -->
         <parameter>

@@ -29,7 +29,6 @@
                 </material_properties>
                 <initial_values>
                     <state_variable name="PreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
-                    <state_variable name="Porosity" parameter="InitialPorosity"/>
                     <state_variable name="VolumeRatio" parameter="InitialVolumeRatio"/>
                 </initial_values>
             </constitutive_relation>
@@ -45,7 +44,7 @@
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
                 <secondary_variable internal_name="velocity" output_name="velocity"/>
                 <secondary_variable internal_name="saturation" output_name="saturation"/>
-                <secondary_variable internal_name="porosity" output_name="porosity"/>
+                <secondary_variable internal_name="VolumeRatio" output_name="VolumeRatio"/>
                 <secondary_variable internal_name="transport_porosity" output_name="transport_porosity"/>
                 <secondary_variable internal_name="dry_density_solid" output_name="dry_density_solid"/>
             </secondary_variables>
