@@ -25,42 +25,25 @@ namespace MaterialLib::Solids::MFront
 {
 namespace MPL = MaterialPropertyLib;
 
-namespace detail
-{
-template <typename M>
-class EigenSwap45View
-{
-public:
-    constexpr explicit EigenSwap45View(const M& matrix) : matrix_(matrix){};
-
-    using Scalar = typename M::Scalar;
-    using Matrix =
-        Eigen::Matrix<Scalar, M::RowsAtCompileTime, M::ColsAtCompileTime>;
-
-    constexpr Scalar operator()(Eigen::Index row, Eigen::Index col) const
-    {
-        constexpr std::ptrdiff_t result[6] = {0, 1, 2, 3, 5, 4};
-        return matrix_(result[row], result[col]);
-    }
-
-private:
-    M const& matrix_;
-};
-}  // namespace detail
-
 /// Converts between OGS' and MFront's Kelvin vectors and matrices and vice
 /// versa. Numbering of the Kelvin vectors and matrices in the two cases is:
 /// MFront: 11 22 33 12 13 23
 /// OGS:    11 22 33 12 23 13
 /// The function swaps the 4th and 5th row and column of a matrix.
-template <typename M>
-constexpr Eigen::CwiseNullaryOp<detail::EigenSwap45View<M>,
-                                typename detail::EigenSwap45View<M>::Matrix>
-eigenSwap45View(const Eigen::MatrixBase<M>& matrix)
+template <typename Derived>
+constexpr auto eigenSwap45View(Eigen::MatrixBase<Derived> const& matrix)
 {
-    using Matrix = typename detail::EigenSwap45View<M>::Matrix;
-    return Matrix::NullaryExpr(matrix.rows(), matrix.cols(),
-                               detail::EigenSwap45View<M>(matrix.derived()));
+    using Matrix =
+        Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime,
+                      Derived::ColsAtCompileTime>;
+
+    return Matrix::NullaryExpr(
+        matrix.rows(), matrix.cols(),
+        [&m = matrix.derived()](Eigen::Index const row, Eigen::Index const col)
+        {
+            constexpr std::ptrdiff_t result[6] = {0, 1, 2, 3, 5, 4};
+            return m(result[row], result[col]);
+        });
 }
 
 const char* varTypeToString(int v);
