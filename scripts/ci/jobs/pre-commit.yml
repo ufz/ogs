@@ -1,6 +1,8 @@
 pre commit:
   stage: preparation
   image: $PRECOMMIT_IMAGE
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
   needs: [ci_images]
   variables:
     SKIP: clang-format,git-diff-check
@@ -11,6 +13,8 @@ pre commit:
 clang-format:
   stage: check
   image: $PRECOMMIT_IMAGE
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
   needs: [ci_images]
   allow_failure: true
   script:
