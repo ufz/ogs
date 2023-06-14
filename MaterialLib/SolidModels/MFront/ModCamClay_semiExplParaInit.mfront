@@ -81,8 +81,6 @@ epl_V.setEntryName("PlasticVolumetricStrain");
 @PhysicalBounds v in [1:*[;
 v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - porosity)
 
-@AuxiliaryStateVariable real Time;
-
 // local variables
 @LocalVariable bool withinElasticRange;
 @LocalVariable real M2;
@@ -95,13 +93,10 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
     tfel::raise_if(la < ka, "Invalid parameters: la<ka");
     M2 = M * M;
 
-    // TODO may fail in restart simulations
-    if (Time == 0)
-    {
-        // initial elastic strain
-        mu = computeMu(young, nu);
-        eel = 1. / (2. * mu) * sig - nu / young * trace(sig) * Stensor::Id();
-    }
+    // initial elastic strain
+    mu = computeMu(young, nu);
+    eel = 1. / (2. * mu) * sig - nu / young * trace(sig) * Stensor::Id();
+
     rpc = pc / young;
     pc_min = 1e-15 * pc_char;
     rpc_min = pc_min / young;
@@ -183,13 +178,11 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
         1 + deplV * the * theta + dfrpc_ddeplV * dlp * trace(dn_ddrpc);
 }
 
-// explicit treatment as long as change of v (or e) during time increment is small
+// explicit treatment as long as change of v during time increment is small
 @UpdateAuxiliaryStateVariables
 {
-    Time += dt;
     pc += drpc * young;
     epl_V += trace(deto - deel);
-    // calculate change of volume ratio
     v *= exp(trace(deto));
 }
 
