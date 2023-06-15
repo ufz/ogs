@@ -86,7 +86,6 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
 @LocalVariable real M2;
 @LocalVariable real pc_min;
 @LocalVariable real rpc_min;
-@LocalVariable stress mu;       // Second Lamé coefficient
 
 @InitLocalVariables
 {
@@ -94,8 +93,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
     M2 = M * M;
 
     // initial elastic strain
-    mu = computeMu(young, nu);
-    eel = 1. / (2. * mu) * sig - nu / young * trace(sig) * Stensor::Id();
+    eel = (1 + nu) / young * sig - nu / young * trace(sig) * Stensor::Id();
 
     rpc = pc / young;
     pc_min = 1e-15 * pc_char;
