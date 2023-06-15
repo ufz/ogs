@@ -168,7 +168,7 @@ double endTime()
 
 OGSMesh getMesh(std::string const& name)
 {
-    return OGSMesh(simulation->getMesh(name));
+    return OGSMesh(*simulation->getMesh(name));
 }
 
 void finalize()

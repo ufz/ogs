@@ -34,7 +34,7 @@
 class PYBIND11_EXPORT OGSMesh
 {
 public:
-    explicit OGSMesh(MeshLib::Mesh* mesh);
+    explicit OGSMesh(MeshLib::Mesh& mesh);
 
     std::vector<double> getPointCoordinates() const;
     void setPointDataArray(std::string const& name,
@@ -50,5 +50,5 @@ public:
         std::string const& name, std::size_t const number_of_components) const;
 
 private:
-    MeshLib::Mesh* _mesh = nullptr;
+    MeshLib::Mesh& _mesh;
 };

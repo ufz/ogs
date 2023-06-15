@@ -35,11 +35,11 @@
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "MeshLib/VtkOGSEnum.h"
 
-OGSMesh::OGSMesh(MeshLib::Mesh* mesh) : _mesh(mesh) {}
+OGSMesh::OGSMesh(MeshLib::Mesh& mesh) : _mesh(mesh) {}
 
 std::vector<double> OGSMesh::getPointCoordinates() const
 {
-    auto const& nodes = _mesh->getNodes();
+    auto const& nodes = _mesh.getNodes();
     std::vector<double> coordinates;
     for (auto const& coords : nodes | MeshLib::views::coords)
     {
@@ -51,7 +51,7 @@ std::vector<double> OGSMesh::getPointCoordinates() const
 
 std::pair<std::vector<int>, std::vector<int>> OGSMesh::getCells() const
 {
-    auto const& elements = _mesh->getElements();
+    auto const& elements = _mesh.getElements();
     std::vector<int> cells;
     std::vector<int> cell_types;
     for (auto const* element : elements)
@@ -73,7 +73,7 @@ void OGSMesh::setPointDataArray(std::string const& name,
                                 std::size_t const number_of_components)
 {
     auto* pv = MeshLib::getOrCreateMeshProperty<double>(
-        *_mesh, name, MeshLib::MeshItemType::Node, number_of_components);
+        _mesh, name, MeshLib::MeshItemType::Node, number_of_components);
     if (pv == nullptr)
     {
         OGS_FATAL("Couldn't access cell/element property '{}'.", name);
@@ -91,7 +91,7 @@ std::vector<double> OGSMesh::getPointDataArray(
     std::string const& name, std::size_t const number_of_components) const
 {
     auto const* pv = MeshLib::getOrCreateMeshProperty<double>(
-        *_mesh, name, MeshLib::MeshItemType::Node, number_of_components);
+        _mesh, name, MeshLib::MeshItemType::Node, number_of_components);
     if (pv == nullptr)
     {
         OGS_FATAL("Couldn't access point/node property '{}'.", name);
@@ -107,7 +107,7 @@ void OGSMesh::setCellDataArray(std::string const& name,
                                std::vector<double> const& values)
 {
     auto* pv = MeshLib::getOrCreateMeshProperty<double>(
-        *_mesh, name, MeshLib::MeshItemType::Cell, 1);
+        _mesh, name, MeshLib::MeshItemType::Cell, 1);
     if (pv == nullptr)
     {
         OGS_FATAL("Couldn't access cell/element property '{}'.", name);
@@ -122,7 +122,7 @@ std::vector<double> OGSMesh::getCellDataArray(
     std::string const& name, std::size_t const number_of_components) const
 {
     auto const* pv = MeshLib::getOrCreateMeshProperty<double>(
-        *_mesh, name, MeshLib::MeshItemType::Cell, number_of_components);
+        _mesh, name, MeshLib::MeshItemType::Cell, number_of_components);
     if (pv == nullptr)
     {
         OGS_FATAL("Couldn't access cell/element property '{}'.", name);
