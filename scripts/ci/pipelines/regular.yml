@@ -1,7 +1,7 @@
 include:
   - local: "/scripts/ci/jobs/meta.yml"
   - local: "/scripts/ci/jobs/ci_images.yml"
-  # jobs, can be indiviually disabled for testing
+  # jobs, can be individually disabled for testing
   - local: "/scripts/ci/jobs/pre-commit.yml"
   - local: "/scripts/ci/pipelines/linux.yml"
   - local: "/scripts/ci/pipelines/mac.yml"
@@ -29,6 +29,9 @@ wheels:
   trigger:
     include: /scripts/ci/jobs/build-wheels.yml
   rules:
+    - changes:
+        - Applications/Python/**/*
+        - Tests/Python/**/*
     - if: $CI_COMMIT_TAG
     - when: manual
       allow_failure: true
