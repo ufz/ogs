@@ -78,13 +78,14 @@ void OGSMesh::setPointDataArray(std::string const& name,
     {
         OGS_FATAL("Couldn't access cell/element property '{}'.", name);
     }
-    for (int i = 0; i < pv->getNumberOfTuples(); ++i)
+    if (pv->size() != values.size())
     {
-        for (std::size_t k = 0; k < number_of_components; ++k)
-        {
-            pv->getComponent(i, k) = values[i * number_of_components + k];
-        }
+        OGS_FATAL(
+            "OGSMesh::setPointDataArray: size mismatch: property vector has "
+            "size '{}', while the number of values is '{}'.",
+            pv->size(), values.size());
     }
+    std::copy(values.begin(), values.end(), pv->data());
 }
 
 std::vector<double> OGSMesh::getPointDataArray(
@@ -104,18 +105,23 @@ std::vector<double> OGSMesh::getPointDataArray(
 }
 
 void OGSMesh::setCellDataArray(std::string const& name,
-                               std::vector<double> const& values)
+                               std::vector<double> const& values,
+                               std::size_t const number_of_components)
 {
     auto* pv = MeshLib::getOrCreateMeshProperty<double>(
-        _mesh, name, MeshLib::MeshItemType::Cell, 1);
+        _mesh, name, MeshLib::MeshItemType::Cell, number_of_components);
     if (pv == nullptr)
     {
         OGS_FATAL("Couldn't access cell/element property '{}'.", name);
     }
-    for (int i = 0; i < pv->getNumberOfTuples(); ++i)
+    if (pv->size() != values.size())
     {
-        pv->getComponent(i, 0) = values[i];
+        OGS_FATAL(
+            "OGSMesh::setCellDataArray: size mismatch: property vector has "
+            "size '{}', while the number of values is '{}'.",
+            pv->size(), values.size());
     }
+    std::copy(values.begin(), values.end(), pv->data());
 }
 
 std::vector<double> OGSMesh::getCellDataArray(
