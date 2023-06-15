@@ -68,7 +68,7 @@ for k in range(runs):
     m = mtest.MTest()
     mtest.setVerboseMode(mtest.VerboseLevel.VERBOSE_QUIET)
     m.setMaximumNumberOfSubSteps(10)
-    m.setBehaviour("generic", "src/libBehaviour.so", "ModCamClay_semiExplParaInit")
+    m.setBehaviour("generic", "src/libBehaviour.so", "ModCamClay_semiExpl_constE")
 
     m.setExternalStateVariable("Temperature", 293.15)
     m.setImposedStress("SXX", {0: 0, 0.5: -p})

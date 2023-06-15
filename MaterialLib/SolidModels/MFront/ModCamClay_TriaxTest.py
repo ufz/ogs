@@ -6,7 +6,7 @@ m = mtest.MTest()
 mtest.setVerboseMode(mtest.VerboseLevel.VERBOSE_QUIET)
 m.setMaximumNumberOfSubSteps(20)
 m.setModellingHypothesis("Axisymmetrical")
-m.setBehaviour("generic", "src/libBehaviour.so", "ModCamClay_semiExplParaInit")
+m.setBehaviour("generic", "src/libBehaviour.so", "ModCamClay_semiExpl_constE")
 
 # Material constants (according to Modified Cam clay model Report)
 nu = 0.3  # Poisson ratio

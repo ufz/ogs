@@ -15,7 +15,7 @@
             <integration_order>2</integration_order>
             <constitutive_relation>
                 <type>MFront</type>
-                <behaviour>ModCamClay_semiExplParaInit</behaviour>
+                <behaviour>ModCamClay_semiExpl_constE</behaviour>
                 <material_properties>
                     <material_property name="YoungModulus" parameter="YoungModulus"/>
                     <material_property name="PoissonRatio" parameter="PoissonRatio"/>

@@ -1,12 +1,13 @@
 @DSL Implicit;
-@Behaviour ModCamClay_semiExplParaInit;
+@Behaviour ModCamClay_semiExpl_constE;
 @Author Christian Silbermann, Thomas Helfer;
 @Date 07/07/20;
 @Description{
-    The modified cam-clay model according to Callari (1998), semi-explicit version
+    The modified cam-clay model (semi-explicit version) according to Callari (1998):
     "A finite-strain cam-clay model in the framework of multiplicative elasto-plasticity"
-    but here in a geometrically linear form and with normalized plastic flow direction
-    minimum of elastic cohesion is provided taking into account a small ambient pressure
+    but here in a geometrically linear form and with normalized plastic flow direction,
+    minimum of elastic cohesion is provided taking into account a small ambient pressure,
+    the elastic parameters (young, nu) are kept constant.
 }
 
 /* Domain variables:  dt (time increment)
@@ -21,7 +22,7 @@
                       flp  (yield function residual depending on deel, dpc)
                       fpc  (pc evolution residual depending on deel, dlp, dpc, dphi)
                       df..._dd... partial derivatives of the residuals
- */
+*/
 
 @Theta 1.0;                     // time integration scheme
 @Epsilon 1e-14;                 // tolerance of local stress integration algorithm
