@@ -25,62 +25,25 @@ namespace MaterialLib::Solids::MFront
 {
 namespace MPL = MaterialPropertyLib;
 
-/// Converts between OGSes and MFront's Kelvin vector indices.
-std::ptrdiff_t OGSToMFront(std::ptrdiff_t i);
-
-/// Converts between OGSes and MFront's Kelvin vector indices.
-std::ptrdiff_t MFrontToOGS(std::ptrdiff_t i);
-
-/// Converts between OGSes and MFront's Kelvin vectors and matrices.
+/// Converts between OGS' and MFront's Kelvin vectors and matrices and vice
+/// versa. Numbering of the Kelvin vectors and matrices in the two cases is:
+/// MFront: 11 22 33 12 13 23
+/// OGS:    11 22 33 12 23 13
+/// The function swaps the 4th and 5th row and column of a matrix.
 template <typename Derived>
-typename Derived::PlainObject OGSToMFront(Eigen::DenseBase<Derived> const& m)
+constexpr auto eigenSwap45View(Eigen::MatrixBase<Derived> const& matrix)
 {
-    static_assert(Derived::RowsAtCompileTime != Eigen::Dynamic, "Error");
-    static_assert(Derived::ColsAtCompileTime != Eigen::Dynamic, "Error");
+    using Matrix =
+        Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime,
+                      Derived::ColsAtCompileTime>;
 
-    typename Derived::PlainObject n;
-
-    // optimal for row-major storage order
-    for (std::ptrdiff_t r = 0; r < Eigen::DenseBase<Derived>::RowsAtCompileTime;
-         ++r)
-    {
-        auto const R = OGSToMFront(r);
-        for (std::ptrdiff_t c = 0;
-             c < Eigen::DenseBase<Derived>::ColsAtCompileTime;
-             ++c)
+    return Matrix::NullaryExpr(
+        matrix.rows(), matrix.cols(),
+        [&m = matrix.derived()](Eigen::Index const row, Eigen::Index const col)
         {
-            auto const C = OGSToMFront(c);
-            n(R, C) = m(r, c);
-        }
-    }
-
-    return n;
-}
-
-/// Converts between OGSes and MFront's Kelvin vectors and matrices.
-template <typename Derived>
-typename Derived::PlainObject MFrontToOGS(Eigen::DenseBase<Derived> const& m)
-{
-    static_assert(Derived::RowsAtCompileTime != Eigen::Dynamic, "Error");
-    static_assert(Derived::ColsAtCompileTime != Eigen::Dynamic, "Error");
-
-    typename Derived::PlainObject n;
-
-    // optimal for row-major storage order
-    for (std::ptrdiff_t r = 0; r < Eigen::DenseBase<Derived>::RowsAtCompileTime;
-         ++r)
-    {
-        auto const R = MFrontToOGS(r);
-        for (std::ptrdiff_t c = 0;
-             c < Eigen::DenseBase<Derived>::ColsAtCompileTime;
-             ++c)
-        {
-            auto const C = MFrontToOGS(c);
-            n(R, C) = m(r, c);
-        }
-    }
-
-    return n;
+            constexpr std::ptrdiff_t result[6] = {0, 1, 2, 3, 5, 4};
+            return m(result[row], result[col]);
+        });
 }
 
 const char* varTypeToString(int v);
@@ -191,8 +154,9 @@ struct SetGradient
             auto const& grad_ogs =
                 std::get<MPLType>(variable_array.*Grad::mpl_var);
 
-            auto const grad_mfront = Q ? OGSToMFront(Q->transpose() * grad_ogs)
-                                       : OGSToMFront(grad_ogs);
+            auto const grad_mfront =
+                Q ? eigenSwap45View(Q->transpose() * grad_ogs).eval()
+                  : eigenSwap45View(grad_ogs).eval();
             std::copy_n(grad_mfront.data(), num_comp, target);
         }
         else
@@ -545,12 +509,12 @@ public:
                     if (Q)
                     {
                         view.block(tdf, out_data) =
-                            *Q * MFrontToOGS(view.block(tdf, in_data));
+                            *Q * eigenSwap45View(view.block(tdf, in_data));
                     }
                     else
                     {
                         view.block(tdf, out_data) =
-                            MFrontToOGS(view.block(tdf, in_data));
+                            eigenSwap45View(view.block(tdf, in_data));
                     }
                 }
                 else if constexpr (TDF::type ==
