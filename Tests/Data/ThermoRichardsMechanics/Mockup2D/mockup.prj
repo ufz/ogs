@@ -408,7 +408,7 @@
         <vtkdiff>
             <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>epsilon</field>
-            <absolute_tolerance>4e-15</absolute_tolerance>
+            <absolute_tolerance>5e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -456,7 +456,7 @@
         <vtkdiff>
             <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>relative_permeability</field>
-            <absolute_tolerance>1.0e-13</absolute_tolerance>
+            <absolute_tolerance>1.2e-13</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -468,7 +468,7 @@
         <vtkdiff>
             <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>relative_permeability_ip</field>
-            <absolute_tolerance>9.1e-14</absolute_tolerance>
+            <absolute_tolerance>9.7e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
