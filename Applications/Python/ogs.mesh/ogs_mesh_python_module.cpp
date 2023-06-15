@@ -40,5 +40,7 @@ PYBIND11_MODULE(mesh, m)
         .def("getCells", &OGSMesh::getCells,
              pybind11::return_value_policy::copy, "get cells")
         .def("getPointDataArray", &OGSMesh::getPointDataArray, "get point data")
-        .def("setCellDataArray", &OGSMesh::setCellDataArray, "set cell data");
+        .def("setPointDataArray", &OGSMesh::setPointDataArray, "set point data")
+        .def("setCellDataArray", &OGSMesh::setCellDataArray, "set cell data")
+        .def("getCellDataArray", &OGSMesh::getCellDataArray, "get cell data");
 }

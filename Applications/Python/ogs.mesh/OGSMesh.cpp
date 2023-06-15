@@ -68,6 +68,25 @@ std::pair<std::vector<int>, std::vector<int>> OGSMesh::getCells() const
     return {cells, cell_types};
 }
 
+void OGSMesh::setPointDataArray(std::string const& name,
+                                std::vector<double> const& values,
+                                std::size_t const number_of_components)
+{
+    auto* pv = MeshLib::getOrCreateMeshProperty<double>(
+        *_mesh, name, MeshLib::MeshItemType::Node, number_of_components);
+    if (pv == nullptr)
+    {
+        OGS_FATAL("Couldn't access cell/element property '{}'.", name);
+    }
+    for (int i = 0; i < pv->getNumberOfTuples(); ++i)
+    {
+        for (std::size_t k = 0; k < number_of_components; ++k)
+        {
+            pv->getComponent(i, k) = values[i * number_of_components + k];
+        }
+    }
+}
+
 std::vector<double> OGSMesh::getPointDataArray(
     std::string const& name, std::size_t const number_of_components) const
 {
@@ -97,4 +116,20 @@ void OGSMesh::setCellDataArray(std::string const& name,
     {
         pv->getComponent(i, 0) = values[i];
     }
+}
+
+std::vector<double> OGSMesh::getCellDataArray(
+    std::string const& name, std::size_t const number_of_components) const
+{
+    auto const* pv = MeshLib::getOrCreateMeshProperty<double>(
+        *_mesh, name, MeshLib::MeshItemType::Cell, number_of_components);
+    if (pv == nullptr)
+    {
+        OGS_FATAL("Couldn't access cell/element property '{}'.", name);
+    }
+    std::vector<double> data_array;
+    data_array.reserve(pv->getNumberOfTuples() * number_of_components);
+    std::copy(pv->begin(), pv->end(), std::back_inserter(data_array));
+
+    return data_array;
 }
