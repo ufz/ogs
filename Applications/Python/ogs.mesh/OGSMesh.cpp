@@ -43,8 +43,8 @@ std::vector<double> OGSMesh::getPointCoordinates() const
     std::vector<double> coordinates;
     for (auto const& coords : nodes | MeshLib::views::coords)
     {
-        std::copy(
-            coords.begin(), coords.end(), std::back_inserter(coordinates));
+        std::copy(coords.begin(), coords.end(),
+                  std::back_inserter(coordinates));
     }
     return coordinates;
 }
