@@ -31,10 +31,6 @@
 @ModellingHypotheses{".+"};     // supporting all stress and strain states
 @Algorithm NewtonRaphson;       //_NumericalJacobian;_LevenbergMarquardt
 
-@Parameter stress pcMin = 1e-3; //1e+3 Pa
-@PhysicalBounds pcMin in [0:*[;
-pcMin.setEntryName("MinimalPreConsolidationPressure");
-
 // material parameters
 @MaterialProperty real nu;
 @PhysicalBounds nu in [-1:0.5];
@@ -52,14 +48,14 @@ ka.setEntryName("SwellingLineSlope");
 @PhysicalBounds la in [0:*[;
 la.setEntryName("VirginConsolidationLineSlope");
 
-// initial values
+@MaterialProperty stress pc_char;
+pc_char.setEntryName("CharacteristicPreConsolidationPressure");
+@PhysicalBounds pc_char in [0:*[;
+
+// Initial value of the volume ratio represents the operating point for the linearization.
 @MaterialProperty real v0;
 @PhysicalBounds v0 in [1:*[;
 v0.setEntryName("InitialVolumeRatio");
-
-@MaterialProperty stress pc0;
-pc0.setEntryName("InitialPreConsolidationPressure");
-@PhysicalBounds pc0 in [0:*[;
 
 // state variables (beside eel):
 // A "standard" state variable is a persistent state variable and an integration variable.
@@ -89,6 +85,7 @@ p0.setEntryName("InitialPressure");
 @LocalVariable bool withinElasticRange;
 @LocalVariable real M2;
 @LocalVariable real young;
+@LocalVariable real pc_min;
 
 @Includes{
 #ifndef MFRONT_PRESSUREDEPENDANTBULKMODULUS_IMPLEMENTATION
@@ -144,11 +141,10 @@ p0.setEntryName("InitialPressure");
     if (Time == 0)
     {
         // initialize state variables
-        pc = pc0;
         p0 = p;
-        v = v0;
     }
     young = 3.0 * K * (1.0 - 2*nu);
+    pc_min = 0.5e-8 * pc_char;
 
     s0 = s;
 
@@ -191,7 +187,8 @@ p0.setEntryName("InitialPressure");
     const auto detoV = trace(deto);
     auto deplV = detoV - deelV;
     auto eplV = epl_V + theta * deplV;
-    const auto pcNew = (pc0 - pcMin) * exp(-the * eplV) + pcMin; // TODO only for eplV0=0!
+    // TODO only for eplV0=0! make incrementel: pc_char==pc_char->pc
+    const auto pcNew = (pc_char - pc_min) * exp(-the * eplV) + pc_min;
     // calculate the direction of plastic flow
     const auto f = q * q + M2 * p * (p - pcNew);
     const auto df_dp = M2 * (2 * p - pcNew);
@@ -206,7 +203,7 @@ p0.setEntryName("InitialPressure");
     deplV = trace(depl);
     eplV = epl_V + theta * deplV;
 
-    const auto fchar = pc0 * young;  // OR: young*young
+    const auto fchar = pc_char * young;
 
     // residual
     feel = deel + depl - deto;
@@ -216,7 +213,7 @@ p0.setEntryName("InitialPressure");
     const auto dnorm_dsig = (9 * s - 2 * M2 / 9 * df_dp * id2) / norm;
     const auto dn_ddeel = (3 * Pr4 + 2 * M2 / 9 * (id2 ^ id2) - (n ^ dnorm_dsig)) / norm * dsig_deel * theta;
     const auto dn_dpc = (id2 + df_dp * n / norm) * M2 / (3 * norm);
-    const auto dpc_deplV = -the * (pcNew - pcMin);
+    const auto dpc_deplV = -the * (pcNew - pc_min);
     const auto ddeplV_ddlp = ntr;
     const auto ddeplV_dn = eval(dlp * id2);
     //const auto dpc_dn = dpc_deplV * theta * ddeplV_dn;
@@ -242,7 +239,7 @@ p0.setEntryName("InitialPressure");
     const auto deelV = trace(deel);
     const auto detoV = trace(deto);
     epl_V += detoV - deelV;
-    pc = (pc0 - pcMin) * exp(-v0 / (la - ka) * epl_V) + pcMin;
+    pc = (pc_char - pc_min) * exp(-v0 / (la - ka) * epl_V) + pc_min;
     v += v0 * detoV;
 }
 
