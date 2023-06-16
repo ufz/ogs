@@ -1,1 +1,1 @@
-\copydoc ProcessLib::HydroMechanics::HydroMechanicsProcessData::fixed_stress_stabilization_parameter
+\copydoc ProcessLib::HydroMechanics::Staggered::fixed_stress_stabilization_parameter
