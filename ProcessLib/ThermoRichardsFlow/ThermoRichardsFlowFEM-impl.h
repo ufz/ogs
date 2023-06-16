@@ -534,6 +534,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
             variables.porosity = phi;
             double const D_v =
+                phi * (1.0 - S_L) *
                 gas_phase->property(MPL::PropertyType::diffusion)
                     .template value<double>(variables, x_position, t, dt);
 
@@ -990,6 +991,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
 
             variables.porosity = phi;
             double const D_v =
+                phi * (1.0 - S_L) *
                 gas_phase->property(MPL::PropertyType::diffusion)
                     .template value<double>(variables, x_position, t, dt);
 
