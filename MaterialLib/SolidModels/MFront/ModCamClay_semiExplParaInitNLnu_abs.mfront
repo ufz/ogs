@@ -186,9 +186,7 @@ p0.setEntryName("InitialPressure");
     const auto deelV = trace(deel);
     const auto detoV = trace(deto);
     auto deplV = detoV - deelV;
-    auto eplV = epl_V + theta * deplV;
-    // TODO only for eplV0=0! make incrementel: pc_char==pc_char->pc
-    const auto pcNew = (pc_char - pc_min) * exp(-the * eplV) + pc_min;
+    const auto pcNew = (pc - pc_min) * exp(-the * deplV) + pc_min;
     // calculate the direction of plastic flow
     const auto f = q * q + M2 * p * (p - pcNew);
     const auto df_dp = M2 * (2 * p - pcNew);
@@ -201,7 +199,6 @@ p0.setEntryName("InitialPressure");
     // plastic strain and volumetric part
     const auto depl = eval(dlp * n);
     deplV = trace(depl);
-    eplV = epl_V + theta * deplV;
 
     const auto fchar = pc_char * young;
 
@@ -238,8 +235,9 @@ p0.setEntryName("InitialPressure");
     Time += dt;
     const auto deelV = trace(deel);
     const auto detoV = trace(deto);
-    epl_V += detoV - deelV;
-    pc = (pc_char - pc_min) * exp(-v0 / (la - ka) * epl_V) + pc_min;
+    const auto deplV = detoV - deelV;
+    epl_V += deplV;
+    pc = (pc - pc_min) * exp(-v0 / (la - ka) * deplV) + pc_min;
     v += v0 * detoV;
 }
 
