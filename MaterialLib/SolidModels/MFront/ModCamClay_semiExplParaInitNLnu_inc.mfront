@@ -32,10 +32,6 @@
 @ModellingHypotheses{".+"};     // supporting all stress and strain states
 @Algorithm NewtonRaphson;       //_NumericalJacobian;_LevenbergMarquardt
 
-@Parameter stress pcMin = 1e-3; //1e+3 Pa
-@PhysicalBounds pcMin in [0:*[;
-pcMin.setEntryName("MinimalPreConsolidationPressure");
-
 // material parameters
 @MaterialProperty real nu;
 @PhysicalBounds nu in [-1:0.5];
@@ -52,6 +48,10 @@ ka.setEntryName("SwellingLineSlope");
 @MaterialProperty real la;
 @PhysicalBounds la in [0:*[;
 la.setEntryName("VirginConsolidationLineSlope");
+
+@MaterialProperty stress pc_char;
+pc_char.setEntryName("CharacteristicPreConsolidationPressure");
+@PhysicalBounds pc_char in [0:*[;
 
 // initial values
 @MaterialProperty real phi0;
@@ -92,7 +92,8 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
 @LocalVariable real M2;
 @LocalVariable real v0;
 @LocalVariable real young;
-@LocalVariable real rpcMin;
+@LocalVariable real pc_min;
+@LocalVariable real rpc_min;
 
 @InitLocalVariables
 {
@@ -119,7 +120,8 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
     young = E;
 
     rpc = pc / young;
-    rpcMin = pcMin / young;
+    pc_min = 0.5e-8 * pc_char;
+    rpc_min = pc_min / young;
 
     // stress derivative
     dsig_deel = De;
@@ -179,13 +181,13 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
     // residual
     feel = deel + depl - deto;
     flp = f / fchar;
-    frpc = drpc + deplV * the * (rpcNew - rpcMin);
+    frpc = drpc + deplV * the * (rpcNew - rpc_min);
 
     // auxiliary derivatives
     const auto dnorm_dsig = (9 * s - 2 * M2 / 9 * df_dp * id2) / norm;
     const auto dn_ddeel = (3 * Pr4 + 2 * M2 / 9 * (id2 ^ id2) - (n ^ dnorm_dsig)) / norm * dsig_deel * theta;
     const auto dn_ddrpc = (id2 + df_dp * n / norm) * M2 / (3 * norm) * theta * young;
-    const auto dfrpc_ddeplV = the * (rpcNew - rpcMin);
+    const auto dfrpc_ddeplV = the * (rpcNew - rpc_min);
 
     // jacobian (all other parts are zero)
     dfeel_ddeel += dlp * dn_ddeel;

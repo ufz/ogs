@@ -22,6 +22,7 @@
                     <material_property name="SwellingLineSlope" parameter="SwellingLineSlope"/>
                     <material_property name="VirginConsolidationLineSlope" parameter="VirginConsolidationLineSlope"/>
                     <material_property name="InitialPreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
+                    <material_property name="CharacteristicPreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
                     <material_property name="InitialPorosity" parameter="InitialPorosity"/>
                 </material_properties>
             </constitutive_relation>
