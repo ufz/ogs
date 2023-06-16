@@ -20,11 +20,8 @@ class Phase;
 /**
  * \brief The Penman-Millington-Quirk (PMQ) Vapour diffusion model.
  *
- * The model was presented in \cite chau2005simulation
- *
  *  The vapour diffusion can be described by
  *   \cite moldrup1997modeling, \cite moldrup2000predicting,
- *  \cite chau2005simulation
  *  \f[
  * 	D_v=2.16\cdot 10^{-5} \left(\frac{T}{273.15}\right)^{1.8}
  * 	D_{vr},
@@ -32,15 +29,29 @@ class Phase;
  *  where \f$D_{vr}\f$ is the the relative diffusion coefficient,
  *  and \f$T\f$ is the temperature.
  *
- *  In the PMQ type, \f$D_{vr}\f$ takes the form of \cite chau2005simulation
- *   \f[
- *     D_{vr}=0.66 \phi (1 - S_L )^2,
- *   \f]
- *    with \f$\phi\f$, the porosity, \f$S_L\f$, the water saturation, \f$0.66\f$
- *     the tortuosity constant.
+ *  The Penman–Millington–Quirk (PMQ) model \cite moldrup1997modeling is given
+ *  as
+ *  \f[
+ *     D_{vr}=0.66 \phi \left(\frac{\kappa}{\phi}\right)^{\frac{12-m}{3}},
+ *  \f]
+ * where \f$\phi\f$ is the total porosity, \f$\kappa\f$ is the air filled
+ *  porosity, and \f$m\f$ is a fitting parameter. The air filled porosity is
+ *  defined as \f$ \kappa = \phi-\theta = \phi -S_L \phi \f$ with \f$\theta\f$
+ *  the liquid content, and \f$S_L\f$ the liquid saturation.
  *
+ * According to the study presented in \cite moldrup1997modeling, \f$m=6\f$
+ *  is the best fitting parameter for the sieved, repacked soils that the
+ *  authors tested. Therefore,  \f$m=6\f$ is used in the implementation, which
+ * gives
+ *   \f[
+ *     D_{vr}=0.66 \phi (1 - S_L )^2.
+ *   \f]
+ *
+ * Note: In order to maintain consistency with the implementation of the
+ *  computations of other vapor-related parameters, \f$ \phi (1 - S_L )\f$ is
+ *  removed from the implementation for this class and is multiplied back in
+ *  the local assembler.
  */
-
 class VapourDiffusionPMQ final : public Property
 {
 public:

@@ -28,10 +28,9 @@ PropertyDataType VapourDiffusionPMQ::value(
     const double S_L = std::clamp(variable_array.liquid_saturation, 0.0, 1.0);
 
     const double T = variable_array.temperature;
-    const double phi = variable_array.porosity;
 
     const double S_v = 1 - S_L;
-    const double D_vr = tortuosity_ * phi * S_v * S_v;
+    const double D_vr = tortuosity_ * S_v;
 
     return 2.16e-5 *
            std::pow(T / MaterialLib::PhysicalConstant::CelsiusZeroInKelvin,
@@ -47,12 +46,11 @@ PropertyDataType VapourDiffusionPMQ::dValue(
     const double S_L = std::clamp(variable_array.liquid_saturation, 0.0, 1.0);
 
     const double T = variable_array.temperature;
-    const double phi = variable_array.porosity;
 
     if (variable == Variable::temperature)
     {
         const double S_v = 1 - S_L;
-        const double D_vr = tortuosity_ * phi * S_v * S_v;
+        const double D_vr = tortuosity_ * S_v;
 
         return 1.8 * 2.16e-5 *
                std::pow(T / MaterialLib::PhysicalConstant::CelsiusZeroInKelvin,
@@ -65,7 +63,7 @@ PropertyDataType VapourDiffusionPMQ::dValue(
         return -2.16e-5 *
                std::pow(T / MaterialLib::PhysicalConstant::CelsiusZeroInKelvin,
                         1.8) *
-               2.0 * tortuosity_ * phi * S_L;
+               tortuosity_;
     }
 
     OGS_FATAL(
