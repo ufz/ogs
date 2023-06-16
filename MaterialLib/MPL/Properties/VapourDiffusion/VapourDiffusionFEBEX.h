@@ -34,11 +34,15 @@ class Phase;
  *
  *  In the FEBEX type, \f$D_{vr}\f$ takes the form of \cite Rutquist2007TaskA1
  *   \f[
- *     D_{vr}=\tau \phi (1 - S ),
+ *     D_{vr}=\tau \phi (1-S_L),
  *   \f]
- *    with \f$\phi\f$, the porosity, \f$S\f$, the water saturation,
- *    and  \f$\tau\f$ the tortuosity.
+ *    with \f$\phi\f$, the porosity, \f$S_L\f$, the liquid saturation,
+ *    and  \f$\tau\f$, the tortuosity.
  *
+ *  Note: In order to maintain consistency with the implementation of the
+ *  computations of other vapor-related parameters, \f$ \phi (1 - S_L )\f$ is
+ *  removed from the implementation for this class and is multiplied back in
+ *  the local assembler.
  */
 class VapourDiffusionFEBEX final : public Property
 {
