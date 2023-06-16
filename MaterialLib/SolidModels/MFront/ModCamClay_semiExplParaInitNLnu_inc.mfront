@@ -53,22 +53,17 @@ la.setEntryName("VirginConsolidationLineSlope");
 pc_char.setEntryName("CharacteristicPreConsolidationPressure");
 @PhysicalBounds pc_char in [0:*[;
 
-// initial values
-@MaterialProperty real phi0;
-@PhysicalBounds phi0 in [0:1];
-phi0.setEntryName("InitialPorosity");
-
-@MaterialProperty stress pc0;
-pc0.setEntryName("InitialPreConsolidationPressure");
-@PhysicalBounds pc0 in [0:*[;
+// Initial value of the volume ratio represents the operating point for the linearization.
+@MaterialProperty real v0;
+@PhysicalBounds v0 in [1:*[;
+v0.setEntryName("InitialVolumeRatio");
 
 // state variables (beside eel):
 // A "standard" state variable is a persistent state variable and an integration variable.
 @StateVariable real lp;
 lp.setGlossaryName("EquivalentPlasticStrain");
 
-// @StateVariable stress pc;
-// pc.setEntryName("ReducedPreConsolidationPressure");
+// Reduced (normalized) pre-consolidation pressure for better integration performance
 @IntegrationVariable strain rpc;
 
 // An auxiliary state variable is a persistent variable but not an integration variable.
@@ -82,15 +77,12 @@ epl_V.setEntryName("PlasticVolumetricStrain");
 @PhysicalBounds v in [1:*[;
 v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore number
 
-@AuxiliaryStateVariable real Time;
-
 // local variables
 @LocalVariable StressStensor sig0;
 @LocalVariable StiffnessTensor De;
 @LocalVariable StiffnessTensor dsig_deel;
 @LocalVariable bool withinElasticRange;
 @LocalVariable real M2;
-@LocalVariable real v0;
 @LocalVariable real young;
 @LocalVariable real pc_min;
 @LocalVariable real rpc_min;
@@ -99,15 +91,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
 {
     tfel::raise_if(la < ka, "Invalid parameters: la<ka");
     M2 = M * M;
-    v0 = 1 / (1 - phi0);
 
-    // TODO may fail in restart simulations
-    if (Time == 0)
-    {
-        // initialize state variables
-        pc = pc0;
-        v = v0;
-    }
     // update sig0
     sig0 = sig;
 
@@ -165,7 +149,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
     const auto rpcNew = rpc + theta * drpc;
     const auto pcNew = rpcNew * young;
     // calculate the direction of plastic flow
-    const auto f = (q * q + M2 * p * (p - pcNew));
+    const auto f = q * q + M2 * p * (p - pcNew);
     const auto df_dp = M2 * (2 * p - pcNew);
     const auto df_dsig = eval(3 * s - df_dp * id2 / 3);
     auto norm = std::sqrt(6 * q * q + df_dp * df_dp / 3);  // = std::sqrt(df_dsig|df_dsig);
@@ -176,7 +160,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
     auto depl = eval(dlp * n);
     const auto deplV = trace(depl);
 
-    const auto fchar = pc0 * young;  // OR: young*young
+    const auto fchar = pc_char * young;
 
     // residual
     feel = deel + depl - deto;
@@ -212,7 +196,6 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
 // explicit treatment as long as change of v (or e) during time increment is small
 @UpdateAuxiliaryStateVariables
 {
-    Time += dt;
     pc += drpc * young;
     const auto deelV = trace(deel);
     const auto detoV = trace(deto);
