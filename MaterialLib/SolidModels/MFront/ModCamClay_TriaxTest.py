@@ -6,7 +6,7 @@ m = mtest.MTest()
 mtest.setVerboseMode(mtest.VerboseLevel.VERBOSE_QUIET)
 m.setMaximumNumberOfSubSteps(20)
 m.setModellingHypothesis("Axisymmetrical")
-m.setBehaviour("generic", "src/libBehaviour.so", "ModCamClay_semiExplParaInit")
+m.setBehaviour("generic", "src/libBehaviour.so", "ModCamClay_semiExpl_constE")
 
 # Material constants (according to Modified Cam clay model Report)
 nu = 0.3  # Poisson ratio
@@ -15,7 +15,7 @@ la = 7.7e-2  # slope of the virgin consolidation line
 ka = 6.6e-3  # slope of the swelling line
 M = 1.2  # slope of the critical state line (CSL)
 v0 = 1.788  # initial volume ratio
-phi0 = 1 - 1 / v0  # Initial porosity
+phi0 = 1 - 1 / v0  # initial porosity
 pc0 = 200.0e3  # Initial pre-consolidation pressure in Pa
 pamb = 1.0e3  # Ambient pressure in Pa
 
@@ -44,11 +44,11 @@ m.setMaterialProperty("PoissonRatio", nu)
 m.setMaterialProperty("CriticalStateLineSlope", M)
 m.setMaterialProperty("SwellingLineSlope", ka)
 m.setMaterialProperty("VirginConsolidationLineSlope", la)
-m.setMaterialProperty("CharateristicPreConsolidationPressure", pc0)
+m.setMaterialProperty("CharacteristicPreConsolidationPressure", pc0)
 
 # Initial values
 m.setInternalStateVariableInitialValue("PreConsolidationPressure", pc0)
-m.setInternalStateVariableInitialValue("Porosity", phi0)
+m.setInternalStateVariableInitialValue("VolumeRatio", v0)
 
 s = mtest.MTestCurrentState()
 wk = mtest.MTestWorkSpace()
@@ -101,7 +101,7 @@ for i in range(nTime - 1):
     )
     vMstrain = np.sqrt(max(argument, 0))
     eplEquiv = s.getInternalStateVariableValue("EquivalentPlasticStrain")
-    porosity = s.getInternalStateVariableValue("Porosity")
+    porosity = 1 - 1 / s.getInternalStateVariableValue("VolumeRatio")
     pc = s.getInternalStateVariableValue("PreConsolidationPressure")
     eplV = s.getInternalStateVariableValue("PlasticVolumetricStrain")
 
@@ -156,13 +156,13 @@ print("confining strain in z direction: ", e_con)
 # plots
 fig, ax = plt.subplots()
 ax.set_title("Numerical solution versus analytical solution (Peric, 2006)")
-ax.scatter(v0xEpsQ / v0, qRangeAna / 1e3, label="analytical")
-ax.plot(eQCurve, qCurve / 1e3, color="black", label="numerical")
+ax.plot(eQCurve, qCurve / 1e3, "+", markersize=14, markevery=4, label="numerical")
+ax.plot(v0xEpsQ / v0, qRangeAna / 1e3, linewidth=2, label="analytical")
 ax.set_xlabel("$\epsilon_{q}$")
 ax.set_ylabel("q / kPa")
 ax.grid()
 ax.legend()
-fig.savefig("out/ModCamClay_TriaxStudy_NumVsAnal.pdf")
+fig.savefig("ModCamClay_TriaxStudy_NumVsAnal.pdf")
 
 fig, ax = plt.subplots()
 ax.set_title("Loading trajectories in the stress space")
@@ -184,7 +184,7 @@ ax.set_xlabel("$p$ / Pa")
 ax.set_ylabel("$q$ / Pa")
 ax.grid()
 ax.legend()
-fig.savefig("out/ModCamClay_TriaxStudy_YieldSurface.pdf")
+fig.savefig("ModCamClay_TriaxStudy_YieldSurface.pdf")
 
 fig, ax = plt.subplots()
 ax.plot(ltime, pCurve, label="$p$ / Pa")
@@ -214,7 +214,7 @@ ax.set_xlabel("$t$ / s")
 ax.set_ylabel("strain")
 ax.grid()
 ax.legend(loc="lower left")
-fig.savefig("out/ModCamClay_TriaxStudy_Strains.pdf")
+fig.savefig("ModCamClay_TriaxStudy_Strains.pdf")
 
 fig, ax = plt.subplots()
 ax.plot(ltime, phiCurve - phi0, label="$\phi-\phi_0$")

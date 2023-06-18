@@ -1,12 +1,13 @@
 @DSL Implicit;
-@Behaviour ModCamClay_semiExplParaInit;
+@Behaviour ModCamClay_semiExpl_constE;
 @Author Christian Silbermann, Thomas Helfer;
 @Date 07/07/20;
 @Description{
-    The modified cam-clay model according to Callari (1998), semi-explicit version
+    The modified cam-clay model (semi-explicit version) according to Callari (1998):
     "A finite-strain cam-clay model in the framework of multiplicative elasto-plasticity"
-    but here in a geometrically linear form and with normalized plastic flow direction
-    minimum of elastic cohesion is provided taking into account a small ambient pressure
+    but here in a geometrically linear form and with normalized plastic flow direction,
+    minimum of elastic cohesion is provided taking into account a small ambient pressure,
+    the elastic parameters (young, nu) are kept constant.
 }
 
 /* Domain variables:  dt (time increment)
@@ -15,14 +16,13 @@
                       eel, deel (elastic strain (increment))
                       sig (stress)
                       dlp (plastic increment)
-                      dphi (porosity increment)
                       dpc (pre-consolidation pressure increment)
 
    Output:            feel (strain residual depending on deel, dlp, dpc)
                       flp  (yield function residual depending on deel, dpc)
                       fpc  (pc evolution residual depending on deel, dlp, dpc, dphi)
                       df..._dd... partial derivatives of the residuals
- */
+*/
 
 @Theta 1.0;                     // time integration scheme
 @Epsilon 1e-14;                 // tolerance of local stress integration algorithm
@@ -68,8 +68,7 @@ pc_char.setEntryName("CharacteristicPreConsolidationPressure");
 @StateVariable real lp;
 lp.setGlossaryName("EquivalentPlasticStrain");
 
-// @StateVariable stress pc;
-// pc.setEntryName("PreConsolidationPressure");
+// Reduced (normalized) pre-consolidation pressure for better integration performance
 @IntegrationVariable strain rpc;
 
 // An auxiliary state variable is a persistent variable but not an integration variable.
@@ -79,33 +78,28 @@ pc.setEntryName("PreConsolidationPressure");
 @AuxiliaryStateVariable real epl_V;
 epl_V.setEntryName("PlasticVolumetricStrain");
 
-@AuxiliaryStateVariable real phi;
-@PhysicalBounds phi in [0:1];
-phi.setGlossaryName("Porosity");// Pore volume per total volume
-
 @AuxiliaryStateVariable real v;
 @PhysicalBounds v in [1:*[;
-v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore number
-
-@AuxiliaryStateVariable real Time;
+v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - porosity)
 
 // local variables
 @LocalVariable bool withinElasticRange;
 @LocalVariable real M2;
+@LocalVariable real pc_min;
+@LocalVariable real rpc_min;
 
 @InitLocalVariables
 {
     tfel::raise_if(la < ka, "Invalid parameters: la<ka");
     M2 = M * M;
 
-    // TODO may fail in restart simulations
-    if (Time == 0)
-    {
-        // initial elastic strain
-        const auto S = invert(D);
-        eel = eval(S * sig);
-    }
+    // initial elastic strain
+    eel = (1 + nu) / young * sig - nu / young * trace(sig) * Stensor::Id();
+
     rpc = pc / young;
+    pc_min = 1e-15 * pc_char;
+    rpc_min = pc_min / young;
+
     // elastic estimators
     const auto sig_el = computeElasticPrediction();
     const auto s_el = deviator(sig_el);
@@ -156,7 +150,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
     // residual
     feel += depl;
     flp = f / fchar;
-    frpc = drpc + deplV * the * rpcNew;
+    frpc = drpc + deplV * the * (rpcNew - rpc_min);
 
     // auxiliary derivatives
     const auto dnorm_dsig = (9 * s - 2 * M2 / 9 * df_dp * id2) / norm;
@@ -165,7 +159,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
         theta;
     const auto dn_ddrpc =
         (id2 + df_dp * n / norm) * M2 / (3 * norm) * theta * young;
-    const auto dfrpc_ddeplV = the * rpcNew;
+    const auto dfrpc_ddeplV = the * (rpcNew - rpc_min);
 
     // jacobian (all other parts are zero)
     dfeel_ddeel += dlp * dn_ddeel;
@@ -180,21 +174,15 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
     dfrpc_ddlp = dfrpc_ddeplV * ntr;
     dfrpc_ddeel = dfrpc_ddeplV * dlp * (id2 | dn_ddeel);
     dfrpc_ddrpc =
-        1 + (deplV * the + dfrpc_ddeplV * dlp * trace(dn_ddrpc)) * theta;
+        1 + deplV * the * theta + dfrpc_ddeplV * dlp * trace(dn_ddrpc);
 }
 
-// explicit treatment as long as change of v (or e) during time increment is small
+// explicit treatment as long as change of v during time increment is small
 @UpdateAuxiliaryStateVariables
 {
-    Time += dt;
     pc += drpc * young;
     epl_V += trace(deto - deel);
-    const auto detoV = trace(deto);
-    // calculate change of porosity
-    const auto dphi = (1 - phi) * (1 - exp(-detoV));
-    phi += dphi;
-    // v = e + 1 = (1 - phi)^-1; with e as pore number
-    v = 1.0 / (1 - phi);
+    v *= exp(trace(deto));
 }
 
 @AdditionalConvergenceChecks
