@@ -130,11 +130,11 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
     const auto q = std::sqrt(1.5 * s | s);
     const auto p = -trace(sig) / 3 + pamb;
     // update the internal (state) variables (rpc holds the old value!)
-    const auto rpcNew = rpc + theta * drpc;
-    const auto pcNew = rpcNew * young;
+    const auto rpc_new = rpc + theta * drpc;
+    const auto pc_new = rpc_new * young;
     // calculate the direction of plastic flow
-    const auto f = (q * q + M2 * p * (p - pcNew));
-    const auto df_dp = M2 * (2 * p - pcNew);
+    const auto f = (q * q + M2 * p * (p - pc_new));
+    const auto df_dp = M2 * (2 * p - pc_new);
     const auto df_dsig = eval(3 * s - df_dp * id2 / 3);
     auto norm =
         std::sqrt(6 * q * q + df_dp * df_dp / 3);  // = std::sqrt(df_dsig|df_dsig);
@@ -142,7 +142,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
     const auto n = df_dsig / norm;
     const auto ntr = -df_dp / norm;
     // plastic strain and volumetric part
-    auto depl = eval(dlp * n);
+    const auto depl = eval(dlp * n);
     const auto deplV = trace(depl);
 
     const auto fchar = pc_char * young;
@@ -150,7 +150,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
     // residual
     feel += depl;
     flp = f / fchar;
-    frpc = drpc + deplV * the * (rpcNew - rpc_min);
+    frpc = drpc + deplV * the * (rpc_new - rpc_min);
 
     // auxiliary derivatives
     const auto dnorm_dsig = (9 * s - 2 * M2 / 9 * df_dp * id2) / norm;
@@ -159,7 +159,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
         theta;
     const auto dn_ddrpc =
         (id2 + df_dp * n / norm) * M2 / (3 * norm) * theta * young;
-    const auto dfrpc_ddeplV = the * (rpcNew - rpc_min);
+    const auto dfrpc_ddeplV = the * (rpc_new - rpc_min);
 
     // jacobian (all other parts are zero)
     dfeel_ddeel += dlp * dn_ddeel;
