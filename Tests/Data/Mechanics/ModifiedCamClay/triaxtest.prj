@@ -192,7 +192,7 @@
             <value>-625.e3</value>            <!--Pa-->
         </parameter>
         <parameter>
-            <name>confining_pressure_value</name>
+            <name>loading_value_side</name>
             <type>Constant</type>
             <values>-200.e3</values>            <!--Pa-->
         </parameter>
@@ -200,7 +200,7 @@
             <name>confining_pressure</name>
             <type>CurveScaled</type>
             <curve>pre_loading_curve</curve>
-            <parameter>confining_pressure_value</parameter>
+            <parameter>loading_value_side</parameter>
         </parameter>
     </parameters>
     <curves>
