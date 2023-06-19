@@ -20,9 +20,9 @@
 #include <memory>
 #include <numeric>
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/quicksort.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/GitInfo.h"
 #include "MathLib/MathTools.h"

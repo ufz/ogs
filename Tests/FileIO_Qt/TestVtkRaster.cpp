@@ -17,7 +17,7 @@
 #include <memory>
 
 #include "Applications/DataExplorer/VtkVis/VtkRaster.h"
-#include "Applications/FileIO/AsciiRasterInterface.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/TestInfo.h"
 

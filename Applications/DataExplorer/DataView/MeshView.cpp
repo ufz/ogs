@@ -23,12 +23,12 @@
 #include <memory>
 
 #include "AddLayerToMeshDialog.h"
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "Applications/FileIO/SHPInterface.h"
 #include "Applications/FileIO/TetGenInterface.h"
 #include "Base/ImportFileTypes.h"
 #include "Base/LastSavedFileDirectory.h"
 #include "Base/OGSError.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "MeshItem.h"
 #include "MeshLayerEditDialog.h"
 #include "MeshLib/Mesh.h"

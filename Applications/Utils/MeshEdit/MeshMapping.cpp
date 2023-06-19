@@ -19,9 +19,9 @@
 #include <mpi.h>
 #endif
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/FileTools.h"
 #include "GeoLib/AABB.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/GitInfo.h"
 #include "MathLib/MathTools.h"

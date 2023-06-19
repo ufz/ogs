@@ -28,11 +28,11 @@
 
 #include <QFileDialog>
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "Base/LastSavedFileDirectory.h"
 #include "Base/OGSError.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "VtkAlgorithmProperties.h"
 #include "VtkGeoImageSource.h"
