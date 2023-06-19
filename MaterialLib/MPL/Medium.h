@@ -12,10 +12,10 @@
 #pragma once
 
 #include <memory>
+#include <span>
 #include <string>
 #include <vector>
 
-#include "BaseLib/Error.h"
 #include "Phase.h"
 
 namespace MaterialPropertyLib
@@ -105,20 +105,9 @@ private:
     int const material_id_;
 };
 
-template <typename Container>
-void checkRequiredProperties(Medium const& medium,
-                             Container const& required_properties)
-{
-    for (auto const& p : required_properties)
-    {
-        if (!medium.hasProperty(p))
-        {
-            OGS_FATAL(
-                "The property '{:s}' is missing in the medium definition.",
-                property_enum_to_string[p]);
-        }
-    }
-}
+void checkRequiredProperties(
+    Medium const& medium,
+    std::span<PropertyType const> const required_properties);
 
 /// Returns a gas or aqueous liquid phase of the given medium.
 Phase const& fluidPhase(Medium const& medium);
