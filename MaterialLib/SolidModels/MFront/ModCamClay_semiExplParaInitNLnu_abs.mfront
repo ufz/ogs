@@ -71,13 +71,7 @@ epl_V.setEntryName("PlasticVolumetricStrain");
 
 @AuxiliaryStateVariable real v;
 @PhysicalBounds v in [1:*[;
-v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore number
-
-@AuxiliaryStateVariable stress p0;
-@PhysicalBounds p0 in [0:*[;
-p0.setEntryName("InitialPressure");
-
-@AuxiliaryStateVariable real Time;
+v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - porosity)
 
 // local variables
 @LocalVariable StiffnessTensor dsig_deel;
@@ -86,6 +80,7 @@ p0.setEntryName("InitialPressure");
 @LocalVariable real M2;
 @LocalVariable real young;
 @LocalVariable real pc_min;
+@LocalVariable stress p0;
 
 @Includes{
 #ifndef MFRONT_PRESSUREDEPENDANTBULKMODULUS_IMPLEMENTATION
@@ -95,25 +90,26 @@ p0.setEntryName("InitialPressure");
     void computeStress(tfel::math::st2tost2<N, stress> & dsig_deel,
                         tfel::math::stensor<N, stress> & sig,
                         tfel::math::stensor<N, stress> & s0,
+                        const stress p0,
                         const tfel::math::stensor<N, strain>& eel,
                         const tfel::math::stensor<N, strain>& deel,
-                        const double nu, const stress p0, const strain v0_ka)
+                        const double nu, const strain v0_ka)
     {
         using namespace tfel::math;
         using Stensor = tfel::math::stensor<N, strain>;
         using Stensor4 = tfel::math::st2tost2<N, strain>;
 
         constexpr auto id = Stensor::Id();
-        const auto e = trace(eel);
-        const auto de = deviator(deel);
-		const auto r = 3 * (1 - 2 * nu) / (2 * (1 + nu));
+        const auto deelV = trace(deel);
+        const auto deelD = deviator(deel);
+		const auto alpha = 3 * (1 - 2 * nu) / (2 * (1 + nu));
 
-        // explicit computation of the hydrostatic pressure
-        const auto  p = p0 * exp(-v0_ka * e);
+        // incremental computation of the hydrostatic pressure
+        const auto  p = p0 * exp(-v0_ka * deelV);
         const auto  K = v0_ka * p;
-        const auto  G = r * K;
+        const auto  G = alpha * K;
         // incremental form of Hooke's law for deviatoric stress
-        const auto s = s0 + 2 * G * de;
+        const auto s = s0 + 2 * G * deelD;
         sig = s - p * id;
         // stress derivative
         dsig_deel = 2 * G * Stensor4::K() + K * Stensor4::IxI();
@@ -125,7 +121,7 @@ p0.setEntryName("InitialPressure");
 @ComputeStress{
     const auto eps_el = StrainStensor{eel};
     const auto deps_el = StrainStensor{deel};
-    ::computeStress(dsig_deel, sig, s0, eps_el, deps_el, nu, p0, v0/ka);
+    ::computeStress(dsig_deel, sig, s0, p0, eps_el, deps_el, nu, v0/ka);
 }
 
 @InitLocalVariables
@@ -133,26 +129,22 @@ p0.setEntryName("InitialPressure");
     tfel::raise_if(la < ka, "Invalid parameters: la<ka");
     M2 = M * M;
 
+    // get deviator and pressure from current stress
     const auto s = deviator(sig);
     const auto p = -trace(sig) / 3;
     const auto K = v0/ka * p;
 
-    // TODO may fail in restart simulations
-    if (Time == 0)
-    {
-        // initialize state variables
-        p0 = p;
-    }
     young = 3.0 * K * (1.0 - 2*nu);
     pc_min = 0.5e-8 * pc_char;
 
     s0 = s;
+    p0 = p;
 
     // computation of the elastic prediction (does not work for plane stress!)
     const auto eps_el = StrainStensor{eel + deto};
     const auto deps_el = StrainStensor{deto};
     auto sig_el = StressStensor{};
-    ::computeStress(dsig_deel, sig_el, s0, eps_el, deps_el, nu, p0, v0/ka);
+    ::computeStress(dsig_deel, sig_el, s0, p0, eps_el, deps_el, nu, v0/ka);
 
     // elastic estimators
     const auto s_el = deviator(sig_el);
@@ -186,10 +178,10 @@ p0.setEntryName("InitialPressure");
     const auto deelV = trace(deel);
     const auto detoV = trace(deto);
     auto deplV = detoV - deelV;
-    const auto pcNew = (pc - pc_min) * exp(-the * deplV) + pc_min;
+    const auto pc_new = (pc - pc_min) * exp(-the * deplV) + pc_min;
     // calculate the direction of plastic flow
-    const auto f = q * q + M2 * p * (p - pcNew);
-    const auto df_dp = M2 * (2 * p - pcNew);
+    const auto f = q * q + M2 * p * (p - pc_new);
+    const auto df_dp = M2 * (2 * p - pc_new);
     const auto df_dpc = -M2 * p;
     const auto df_dsig = eval(3 * s - df_dp * id2 / 3);
     auto norm = std::sqrt(6 * q * q + df_dp * df_dp / 3);  // = std::sqrt(df_dsig|df_dsig);
@@ -210,7 +202,7 @@ p0.setEntryName("InitialPressure");
     const auto dnorm_dsig = (9 * s - 2 * M2 / 9 * df_dp * id2) / norm;
     const auto dn_ddeel = (3 * Pr4 + 2 * M2 / 9 * (id2 ^ id2) - (n ^ dnorm_dsig)) / norm * dsig_deel * theta;
     const auto dn_dpc = (id2 + df_dp * n / norm) * M2 / (3 * norm);
-    const auto dpc_deplV = -the * (pcNew - pc_min);
+    const auto dpc_deplV = -the * (pc_new - pc_min);
     const auto ddeplV_ddlp = ntr;
     const auto ddeplV_dn = eval(dlp * id2);
     //const auto dpc_dn = dpc_deplV * theta * ddeplV_dn;
@@ -232,7 +224,6 @@ p0.setEntryName("InitialPressure");
 // explicit treatment as long as change of v (or e) during time increment is small
 @UpdateAuxiliaryStateVariables
 {
-    Time += dt;
     const auto deelV = trace(deel);
     const auto detoV = trace(deto);
     const auto deplV = detoV - deelV;
