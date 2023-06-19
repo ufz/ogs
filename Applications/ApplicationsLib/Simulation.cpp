@@ -21,6 +21,7 @@
 #include "BaseLib/ConfigTreeUtil.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/PrjProcessing.h"
+#include "MeshLib/Mesh.h"
 #include "NumLib/NumericsConfig.h"
 #include "ProcessLib/TimeLoop.h"
 
@@ -128,9 +129,19 @@ bool Simulation::executeTimeStep()
     auto& time_loop = project_data->getTimeLoop();
     if (time_loop.currentTime() < time_loop.endTime())
     {
-        return time_loop.executeTimeStep();
+        auto const result = time_loop.executeTimeStep();
+        if (time_loop.calculateNextTimeStep())
+        {
+            time_loop.outputLastTimeStep();
+        }
+        return result;
     }
     return false;
+}
+
+MeshLib::Mesh* Simulation::getMesh(std::string const& name)
+{
+    return project_data->getMesh(name);
 }
 
 bool Simulation::executeSimulation()

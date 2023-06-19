@@ -6,7 +6,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     rm -rf /var/lib/apt/lists/*
 RUN apt -y install curl dirmngr apt-transport-https ca-certificates \
     && curl -sL https://deb.nodesource.com/setup_16.x | bash - \
-    && apt-get -y install nodejs \
+    && apt-get -y install nodejs npm \
     && rm -rf /var/lib/apt/lists/*
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \

@@ -15,6 +15,7 @@
 #include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
 
+#include "../ogs.mesh/OGSMesh.h"
 #include "Applications/ApplicationsLib/Simulation.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
 #include "BaseLib/DateTools.h"
@@ -139,6 +140,22 @@ int executeSimulation()
     return ogs_status;
 }
 
+int executeTimeStep()
+{
+    auto ogs_status = EXIT_SUCCESS;
+    try
+    {
+        bool solver_succeeded = simulation->executeTimeStep();
+        ogs_status = solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
+    }
+    catch (std::exception& e)
+    {
+        ERR("{}", e.what());
+        ogs_status = EXIT_FAILURE;
+    }
+    return ogs_status;
+}
+
 double currentTime()
 {
     return simulation->currentTime();
@@ -147,6 +164,11 @@ double currentTime()
 double endTime()
 {
     return simulation->endTime();
+}
+
+OGSMesh getMesh(std::string const& name)
+{
+    return OGSMesh(*simulation->getMesh(name));
 }
 
 void finalize()
@@ -160,7 +182,12 @@ void finalize()
     BaseLib::unsetProjectDirectory();
 }
 
-/// python module name is OpenGeoSys
+/// To use this module import dependencies first:
+///   import ogs.mesh as mesh
+///   import ogs.simulator as sim
+///
+/// See also
+/// https://github.com/pybind/pybind11/issues/1391#issuecomment-912642979
 PYBIND11_MODULE(simulator, m)
 {
     m.attr("__name__") = "ogs.simulator";
@@ -169,5 +196,7 @@ PYBIND11_MODULE(simulator, m)
     m.def("currentTime", &currentTime, "get current OGS time");
     m.def("endTime", &endTime, "get end OGS time");
     m.def("executeSimulation", &executeSimulation, "execute OGS simulation");
+    m.def("executeTimeStep", &executeTimeStep, "execute OGS time step");
+    m.def("getMesh", &getMesh, "get unstructured grid from ogs");
     m.def("finalize", &finalize, "finalize OGS simulation");
 }

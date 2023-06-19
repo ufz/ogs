@@ -14,6 +14,7 @@ endif()
 
 target_link_libraries(
     simulator PRIVATE ApplicationsLib BaseLib CMakeInfoLib GitInfoLib tclap
+                      _python_mesh
 )
 target_include_directories(simulator PRIVATE ../../CLI)
 
