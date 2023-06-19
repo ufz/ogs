@@ -209,21 +209,6 @@ void uniquePushBack(Container& container,
 }
 
 template <typename Container>
-bool contains(Container const& container,
-              typename Container::value_type const& element)
-{
-    return std::find(container.begin(), container.end(), element) !=
-           container.end();
-}
-
-template <typename Container, typename Predicate>
-bool containsIf(Container const& container, Predicate&& predicate)
-{
-    return std::find_if(container.begin(), container.end(), predicate) !=
-           container.end();
-}
-
-template <typename Container>
 std::optional<typename Container::value_type> findFirstNotEqualElement(
     Container const& container, typename Container::value_type const& element)
 {
