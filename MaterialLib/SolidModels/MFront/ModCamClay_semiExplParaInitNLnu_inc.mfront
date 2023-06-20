@@ -79,7 +79,6 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
 
 // local variables
 @LocalVariable StressStensor sig0;
-@LocalVariable StiffnessTensor De;
 @LocalVariable StiffnessTensor dsig_deel;
 @LocalVariable bool withinElasticRange;
 @LocalVariable real M2;
@@ -100,18 +99,16 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
     const auto K = v0 / ka * p;
     const auto E = 3.0 * K * (1.0 - 2*nu);
 
-    De = E / (1.0 + nu) * Stensor4::K() + K * Stensor4::IxI();
     young = E;
-
     rpc = pc / young;
     pc_min = 0.5e-8 * pc_char;
     rpc_min = pc_min / young;
 
     // stress derivative
-    dsig_deel = De;
+    dsig_deel = E / (1.0 + nu) * Stensor4::K() + K * Stensor4::IxI();
 
     // elastic trial stress
-    const auto sig_el = sig0 + De * deto;
+    const auto sig_el = sig0 + dsig_deel * deto;
 
     // elastic estimators
     const auto s_el = deviator(sig_el);
@@ -124,7 +121,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
 }
 
 @ComputeStress {
-    sig = sig0 + theta * De * deel;
+    sig = sig0 + theta * dsig_deel * deel;
 }
 
 @Integrator
@@ -187,10 +184,9 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
     dfrpc_ddrpc = 1 + deplV * the * theta + dfrpc_ddeplV * dlp * trace(dn_ddrpc);
 }
 
-// compute resulting stresses
 @ComputeFinalStress {
-  // updating the stress at the end of the time step
-  sig = sig0 + De * deel;
+    // updating the stress at the end of the time step
+    sig = sig0 + dsig_deel * deel;
 }
 
 // explicit treatment as long as change of v (or e) during time increment is small
@@ -211,7 +207,6 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
         {
             if (dlp < 0)
             {
-                std::cout << " Negative plastic increment! " << std::endl;
                 converged = false;
                 withinElasticRange = true;
             }
