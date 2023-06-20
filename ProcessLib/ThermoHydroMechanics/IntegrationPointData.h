@@ -270,6 +270,7 @@ struct ConstitutiveRelationsValues
     double rho;
 
     // Freezing related values.
+    double beta_IR;
     double J_TT_fr;
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> J_uu_fr;
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> J_uT_fr;

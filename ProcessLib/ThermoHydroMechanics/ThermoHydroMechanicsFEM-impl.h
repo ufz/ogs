@@ -526,6 +526,14 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
         auto const C_IR = ip_data.updateConstitutiveRelationIce(
             *_process_data.ice_constitutive_relation, vars_ice, t, x_position,
             dt, T_prev_int_pt);
+
+        auto const C_el_ice = ip_data.computeElasticTangentStiffnessIce(
+            *_process_data.ice_constitutive_relation, t, x_position, dt,
+            static_cast<double>(T_int_pt));
+        crv.beta_IR =
+            1. / _process_data.ice_constitutive_relation->getBulkModulus(
+                     t, x_position, &C_el_ice);
+
         crv.effective_volumetric_heat_capacity +=
             -phi_fr * fluid_density * crv.c_f + phi_fr * rho_fr * c_fr -
             l_fr * rho_fr * dphi_fr_dT;
