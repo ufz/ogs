@@ -726,6 +726,15 @@ void ThermoHydroMechanicsLocalAssembler<
         Kup.noalias() +=
             B.transpose() * crv.alpha_biot * Invariants::identity2 * N * w;
 
+        double const fluid_density = _ip_data_output[ip].fluid_density;
+        if (has_frozen_liquid_phase)
+        {
+            Kup.noalias() += B.transpose() * crv.alpha_biot *
+                             _ip_data[ip].phi_fr / _ip_data[ip].porosity *
+                             (_ip_data_output[ip].rho_fr / fluid_density - 1) *
+                             Invariants::identity2 * N * w;
+        }
+
         //
         // pressure equation, pressure part (K_pp and M_pp).
         //
@@ -737,7 +746,6 @@ void ThermoHydroMechanicsLocalAssembler<
              (crv.alpha_biot - _ip_data[ip].porosity) * crv.beta_SR) *
             N * w;
 
-        double const fluid_density = _ip_data_output[ip].fluid_density;
         if (has_frozen_liquid_phase)
         {
             storage_p.noalias() +=
