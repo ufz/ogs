@@ -730,12 +730,24 @@ void ThermoHydroMechanicsLocalAssembler<
              (crv.alpha_biot - _ip_data[ip].porosity) * crv.beta_SR) *
             N * w;
 
+        double const fluid_density = _ip_data_output[ip].fluid_density;
+        if (has_frozen_liquid_phase)
+        {
+            storage_p.noalias() +=
+                N.transpose() * _ip_data[ip].phi_fr / _ip_data[ip].porosity *
+                ((_ip_data[ip].porosity * crv.beta_IR +
+                  (crv.alpha_biot - _ip_data[ip].porosity) * crv.beta_SR) *
+                     _ip_data_output[ip].rho_fr / fluid_density -
+                 (_ip_data[ip].porosity * crv.fluid_compressibility +
+                  (crv.alpha_biot - _ip_data[ip].porosity) * crv.beta_SR)) *
+                N * w;
+        }
+
         laplace_T.noalias() +=
             dNdx.transpose() * crv.K_pT_thermal_osmosis * dNdx * w;
         //
         //  RHS, pressure part
         //
-        double const fluid_density = _ip_data_output[ip].fluid_density;
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
             dNdx.transpose() * fluid_density * crv.K_over_mu * b * w;
         //
