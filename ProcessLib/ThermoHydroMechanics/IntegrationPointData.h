@@ -180,6 +180,8 @@ struct IntegrationPointData final
         // Extend for non-linear ice materials if necessary.
         auto const null_state =
             ice_constitutive_relation.createMaterialStateVariables();
+        ice_constitutive_relation.initializeInternalStateVariables(
+            t, x_position, *null_state);
         auto&& solution = ice_constitutive_relation.integrateStress(
             variable_array_prev, variable_array, t, x_position, dt,
             *null_state);
