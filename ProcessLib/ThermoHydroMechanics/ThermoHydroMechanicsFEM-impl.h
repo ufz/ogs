@@ -485,6 +485,9 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
         }();
         ip_data.phi_fr_prev = phi_fr_prev;
 
+        crv.mass_exchange = -dphi_fr_dT * porosity *
+                            (1. - ip_data_output.rho_fr / fluid_density);
+
         // alpha_T^I
         MathLib::KelvinVector::KelvinVectorType<
             DisplacementDim> const ice_linear_thermal_expansion_coefficient =
@@ -773,9 +776,12 @@ void ThermoHydroMechanicsLocalAssembler<
         if (has_frozen_liquid_phase)
         {
             storage_T.noalias() +=
-                N.transpose() * _ip_data[ip].phi_fr / _ip_data[ip].porosity *
-                (crv.beta_T_SI * _ip_data_output[ip].rho_fr / fluid_density -
-                 crv.beta) *
+                N.transpose() *
+                (_ip_data[ip].phi_fr / _ip_data[ip].porosity *
+                     (crv.beta_T_SI * _ip_data_output[ip].rho_fr /
+                          fluid_density -
+                      crv.beta) -
+                 crv.mass_exchange) *
                 N * w;
         }
 

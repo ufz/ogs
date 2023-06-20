@@ -274,6 +274,7 @@ struct ConstitutiveRelationsValues
     double beta_IR;
     double beta_T_SI;
     double J_TT_fr;
+    double mass_exchange;
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> J_uu_fr;
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> J_uT_fr;
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> r_u_fr;
