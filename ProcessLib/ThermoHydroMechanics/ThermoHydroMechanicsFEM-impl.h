@@ -396,6 +396,14 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                                                T_prev_int_pt);
 
     crv.rho = solid_density * (1 - porosity) + porosity * fluid_density;
+    if (frozen_liquid_phase)
+    {
+        double const rho_fr =
+            (*frozen_liquid_phase)[MaterialPropertyLib::PropertyType::density]
+                .template value<double>(vars, x_position, t, dt);
+        ip_data_output.rho_fr = rho_fr;
+        crv.rho += ip_data.phi_fr * rho_fr - ip_data.phi_fr * fluid_density;
+    }
 
     crv.beta =
         porosity * fluid_volumetric_thermal_expansion_coefficient +
@@ -455,10 +463,6 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             return (*frozen_liquid_phase)[p].template value<double>(
                 vars, x_position, t, dt);
         };
-
-        double const rho_fr =
-            frozen_liquid_value(MaterialPropertyLib::PropertyType::density);
-        ip_data_output.rho_fr = rho_fr;
 
         double const c_fr = frozen_liquid_value(
             MaterialPropertyLib::PropertyType::specific_heat_capacity);
@@ -536,8 +540,9 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                      t, x_position, &C_el_ice);
 
         crv.effective_volumetric_heat_capacity +=
-            -phi_fr * fluid_density * crv.c_f + phi_fr * rho_fr * c_fr -
-            l_fr * rho_fr * dphi_fr_dT;
+            -phi_fr * fluid_density * crv.c_f +
+            phi_fr * ip_data_output.rho_fr * c_fr -
+            l_fr * ip_data_output.rho_fr * dphi_fr_dT;
 
         // part of dMTT_dT derivative for freezing
         double const d2phi_fr_dT2 =
@@ -554,9 +559,11 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
         crv.J_uT_fr = phi_fr * C_IR * ice_linear_thermal_expansion_coefficient;
 
-        crv.J_TT_fr = ((rho_fr * c_fr - fluid_density * crv.c_f) * dphi_fr_dT +
-                       l_fr * rho_fr * d2phi_fr_dT2) *
-                      dT_int_pt / dt;
+        crv.J_TT_fr =
+            ((ip_data_output.rho_fr * c_fr - fluid_density * crv.c_f) *
+                 dphi_fr_dT +
+             l_fr * ip_data_output.rho_fr * d2phi_fr_dT2) *
+            dT_int_pt / dt;
     }
     return crv;
 }
