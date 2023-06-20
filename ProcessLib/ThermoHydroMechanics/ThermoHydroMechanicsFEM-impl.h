@@ -498,6 +498,13 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             dthermal_strain_ice =
                 ice_linear_thermal_expansion_coefficient * dT_int_pt;
 
+        crv.beta_T_SI =
+            porosity *
+                Invariants::trace(ice_linear_thermal_expansion_coefficient) +
+            (alpha - porosity) *
+                Invariants::trace(
+                    crv.solid_linear_thermal_expansion_coefficient);
+
         // alpha_{phi_I} -- linear expansion coeff. due to water-to-ice
         // transition (phase change), and related phase_change_strain term
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
@@ -754,6 +761,15 @@ void ThermoHydroMechanicsLocalAssembler<
         // pressure equation, temperature part (M_pT)
         //
         storage_T.noalias() += N.transpose() * crv.beta * N * w;
+
+        if (has_frozen_liquid_phase)
+        {
+            storage_T.noalias() +=
+                N.transpose() * _ip_data[ip].phi_fr / _ip_data[ip].porosity *
+                (crv.beta_T_SI * _ip_data_output[ip].rho_fr / fluid_density -
+                 crv.beta) *
+                N * w;
+        }
 
         //
         // pressure equation, displacement part.
