@@ -353,6 +353,19 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             .template value<double>(vars, x_position, t, dt);
     crv.K_over_mu = intrinsic_permeability / ip_data_output.viscosity;
 
+    if (frozen_liquid_phase)
+    {
+        ip_data.phi_fr =
+            (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
+                .template value<double>(vars, x_position, t, dt);
+
+        // TODO (naumov) Extract this as a property.
+        double const relative_permeability =
+            1. - (1. - 1e-5) * ip_data.phi_fr / porosity;
+
+        crv.K_over_mu *= relative_permeability;
+    }
+
     auto const& b = _process_data.specific_body_force;
 
     // Consider also anisotropic thermal expansion.
@@ -452,10 +465,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     if (frozen_liquid_phase)
     {
         MaterialPropertyLib::VariableArray vars_ice;
-        double const phi_fr =
-            (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
-                .template value<double>(vars, x_position, t, dt);
-        ip_data.phi_fr = phi_fr;
+        double const phi_fr = ip_data.phi_fr;
 
         auto const frozen_liquid_value =
             [&](MaterialPropertyLib::PropertyType const p)
