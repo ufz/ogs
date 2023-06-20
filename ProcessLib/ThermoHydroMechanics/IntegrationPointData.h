@@ -164,6 +164,8 @@ struct ConstitutiveRelationsValues
         typename MatrixPolicyType::MatrixType<DisplacementDim, DisplacementDim>;
 
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim>
+        solid_linear_thermal_expansion_coefficient;
     DimMatrix K_over_mu;
     DimMatrix K_pT_thermal_osmosis;
     DimMatrix effective_thermal_conductivity;

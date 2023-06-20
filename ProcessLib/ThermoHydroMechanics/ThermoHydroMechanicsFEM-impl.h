@@ -257,17 +257,16 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     auto const& b = _process_data.specific_body_force;
 
     // Consider also anisotropic thermal expansion.
-    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-        solid_linear_thermal_expansion_coefficient =
-            MPL::formKelvinVector<DisplacementDim>(
-                solid_phase
-                    .property(
-                        MaterialPropertyLib::PropertyType::thermal_expansivity)
-                    .value(vars, x_position, t, dt));
+    crv.solid_linear_thermal_expansion_coefficient =
+        MPL::formKelvinVector<DisplacementDim>(
+            solid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::thermal_expansivity)
+                .value(vars, x_position, t, dt));
 
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
         dthermal_strain =
-            solid_linear_thermal_expansion_coefficient * dT_int_pt;
+            crv.solid_linear_thermal_expansion_coefficient * dT_int_pt;
 
     crv.K_pT_thermal_osmosis =
         (solid_phase.hasProperty(
@@ -303,7 +302,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     crv.beta =
         porosity * fluid_volumetric_thermal_expansion_coefficient +
         (alpha - porosity) *
-            Invariants::trace(solid_linear_thermal_expansion_coefficient);
+            Invariants::trace(crv.solid_linear_thermal_expansion_coefficient);
 
     //
     // pressure equation, displacement part.
@@ -509,6 +508,13 @@ void ThermoHydroMechanicsLocalAssembler<
             .template block<displacement_size, displacement_size>(
                 displacement_index, displacement_index)
             .noalias() += B.transpose() * crv.C * B * w;
+
+        local_Jac
+            .template block<displacement_size, temperature_size>(
+                displacement_index, temperature_index)
+            .noalias() -= B.transpose() * crv.C *
+                          crv.solid_linear_thermal_expansion_coefficient * N *
+                          w;
 
         local_rhs.template segment<displacement_size>(displacement_index)
             .noalias() -= (B.transpose() * _ip_data[ip].sigma_eff -
