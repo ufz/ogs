@@ -413,8 +413,8 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                         .value(vars, x_position, t, dt));
 
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dphase_change_strain =
-                phase_change_expansion_coefficient * (phi_fr - phi_fr_prev);
+            dphase_change_strain = phase_change_expansion_coefficient /
+                                   porosity * (phi_fr - phi_fr_prev);
 
         // eps0 ia a 'history variable' -- a solid matrix strain accrued
         // prior to the onset of ice forming
@@ -454,10 +454,11 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
         auto const& sigma_eff_ice = ip_data.sigma_eff_ice;
         crv.r_u_fr = phi_fr * sigma_eff_ice;
-        crv.J_uT_fr = dphi_fr_dT * sigma_eff_ice +
-                      phi_fr * C_IR *
-                          (ice_linear_thermal_expansion_coefficient +
-                           phase_change_expansion_coefficient * dphi_fr_dT);
+        crv.J_uT_fr =
+            dphi_fr_dT * sigma_eff_ice +
+            phi_fr * C_IR *
+                (ice_linear_thermal_expansion_coefficient +
+                 phase_change_expansion_coefficient / porosity * dphi_fr_dT);
 
         crv.J_TT_fr = ((rho_fr * c_fr - fluid_density * crv.c_f) * dphi_fr_dT +
                        l_fr * rho_fr * d2phi_fr_dT2) *
