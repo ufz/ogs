@@ -31,11 +31,9 @@ class Vtu2GridDialog : public QDialog, private Ui_Vtu2Grid
     Q_OBJECT
 
 public:
-    explicit Vtu2GridDialog(MeshModel& mesh_model,
-                               QDialog* parent = nullptr);
+    explicit Vtu2GridDialog(MeshModel& mesh_model, QDialog* parent = nullptr);
 
 private:
-    std::vector<std::string> getSelectedObjects(QStringList list);
     MeshModel& _mesh_model;
     QStringListModel _allMeshes;
 
@@ -44,10 +42,13 @@ private slots:
     void accept() override;
     /// Instructions if the Cancel-Button has been pressed.
     void reject() override { this->done(QDialog::Rejected); };
-    /// Instructions if the ">>-button" has been pressed.
-    /// Instructions if the ↑-button" has been pressed.
+    /// As the x/y/z input changes an estimation of the expected Voxel is given.
     void updateExpectedVoxel();
     void on_xlineEdit_textChanged();
     void on_ylineEdit_textChanged();
     void on_zlineEdit_textChanged();
 };
+
+std::optional<std::array<double, 3>> fillXYZ(QString xin,
+                                             QString yin,
+                                             QString zin);

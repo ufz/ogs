@@ -17,6 +17,7 @@
 
 #include <QStringList>
 #include <QStringListModel>
+#include <optional>
 #include <string>
 
 #include "Base/StrictDoubleValidator.h"
@@ -53,37 +54,57 @@ Vtu2GridDialog::Vtu2GridDialog(MeshModel& mesh_model, QDialog* parent)
     this->xlineEdit->setFocus();
 }
 
+std::optional<std::array<double, 3>> fillXYZ(QString xin, QString yin,
+                                             QString zin)
+{
+    bool ok;
+    if (!xin.toDouble(&ok))
+    {
+        return std::nullopt;
+    }
+    double const xinput = xin.toDouble();
+    double const yinput = (yin.toDouble(&ok)) ? yin.toDouble() : xinput;
+    double const zinput = (zin.toDouble(&ok)) ? zin.toDouble() : xinput;
+
+    if (xinput <= 0 || yinput <= 0 || zinput <= 0)
+    {
+        return std::nullopt;
+    }
+
+    return std::optional<std::array<double, 3>>{{xinput, yinput, zinput}};
+}
+
+Eigen::Vector3d getMeshExtent(MeshLib::Mesh const* _mesh)
+{
+    auto const& nodes = _mesh->getNodes();
+    GeoLib::AABB const aabb(nodes.cbegin(), nodes.cend());
+    auto const& min = aabb.getMinPoint();
+    auto const& max = aabb.getMaxPoint();
+    return max - min;
+}
+
 void Vtu2GridDialog::updateExpectedVoxel()
 {
-    QString const xin = this->xlineEdit->text();
-    QString const yin = this->ylineEdit->text();
-    QString const zin = this->zlineEdit->text();
-    bool ok;
-    double const xinput = xin.toDouble();
-    double const yinput = (yin.toDouble(&ok)) ? yin.toDouble() : xin.toDouble();
-    double const zinput = (zin.toDouble(&ok)) ? zin.toDouble() : xin.toDouble();
-
     if (_allMeshes.stringList()[0] == "[No Mesh available.]")
     {
         this->expectedVoxelLabel->setText("approximated Voxel: undefined");
         return;
     }
-    if (xin.isEmpty() || xinput == 0)
+
+    auto const opt_xyz =
+        fillXYZ(this->xlineEdit->text(), this->ylineEdit->text(),
+                this->zlineEdit->text());
+
+    if (!opt_xyz)
     {
         this->expectedVoxelLabel->setText("approximated Voxel: undefined");
         return;
     }
-
-    auto* const _mesh(
+    auto const& xyz = opt_xyz.value();
+    auto const delta = getMeshExtent(
         _mesh_model.getMesh(this->meshListBox->currentText().toStdString()));
-    auto const& nodes = _mesh->getNodes();
-    GeoLib::AABB const aabb(nodes.cbegin(), nodes.cend());
-
-    auto const min = aabb.getMinPoint();
-    auto const max = aabb.getMaxPoint();
-
-    double const expectedVoxel = (max[0] - min[0]) * (max[1] - min[1]) *
-                                 (max[2] - min[2]) / xinput / yinput / zinput;
+    double const expectedVoxel =
+        (delta[0]) * (delta[1]) * (delta[2]) / xyz[0] / xyz[1] / xyz[2];
 
     int const exponent = std::floor(std::log10(abs(expectedVoxel)));
     this->expectedVoxelLabel->setText(
@@ -118,26 +139,19 @@ void Vtu2GridDialog::accept()
         return;
     }
 
-    QString const xin = this->xlineEdit->text();
-    QString const yin = this->ylineEdit->text();
-    QString const zin = this->zlineEdit->text();
+    auto opt_xyz = fillXYZ(this->xlineEdit->text(), this->ylineEdit->text(),
+                           this->zlineEdit->text());
 
-    bool ok;
-    if (!xin.toDouble(&ok))
+    if (!opt_xyz)
     {
         OGSError::box(
-            "At least the x-length of a voxel must be specified.\n If "
+            "At least the x-length of a voxel must be specified and > 0.\n If "
             "y-/z-input "
             "are not specified, equal to 0, or not a real number, they are "
             "treated as "
             "the x-input.");
-        return;
     }
-    double const xinput = xin.toDouble();
-    double const yinput = (yin.toDouble(&ok)) ? yin.toDouble() : xin.toDouble();
-    double const zinput = (zin.toDouble(&ok)) ? zin.toDouble() : xin.toDouble();
-    std::array<double, 3> const cellsize = {xinput, yinput, zinput};
-
+    auto const& cellsize = opt_xyz.value();
     auto _mesh(
         _mesh_model.getMesh(this->meshListBox->currentText().toStdString()));
 
@@ -192,12 +206,4 @@ void Vtu2GridDialog::accept()
 
     _mesh_model.addMesh(grid.release());
     this->done(QDialog::Accepted);
-}
-
-std::vector<std::string> Vtu2GridDialog::getSelectedObjects(QStringList list)
-{
-    std::vector<std::string> indexList;
-    std::transform(list.begin(), list.end(), std::back_inserter(indexList),
-                   [](auto const& index) { return index.toStdString(); });
-    return indexList;
 }
