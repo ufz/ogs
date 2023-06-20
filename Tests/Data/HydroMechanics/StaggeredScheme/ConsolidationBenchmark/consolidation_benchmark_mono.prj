@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
-        <mesh>quad_q.vtu</mesh>
+        <mesh>hm_tri_q.vtu</mesh>
         <mesh>geometry_top.vtu</mesh>
         <mesh>geometry_bottom.vtu</mesh>
         <mesh>geometry_left.vtu</mesh>
@@ -9,12 +9,9 @@
     </meshes>
     <processes>
         <process>
-            <name>HM</name>
+            <name>ConsolidationBenchmark</name>
             <type>HYDRO_MECHANICS</type>
-            <coupling_scheme>
-                <type>staggered</type>
-            </coupling_scheme>
-            <integration_order>3</integration_order>
+            <integration_order>4</integration_order>
             <dimension>2</dimension>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
@@ -26,11 +23,11 @@
                 <displacement>displacement</displacement>
             </process_variables>
             <secondary_variables>
-                <secondary_variable internal_name="velocity" output_name="q"/>
                 <secondary_variable internal_name="sigma" output_name="sigma"/>
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable internal_name="velocity" output_name="velocity"/>
             </secondary_variables>
-            <specific_body_force> 0 0  </specific_body_force>
+            <specific_body_force>0 0</specific_body_force>
         </process>
     </processes>
     <media>
@@ -42,12 +39,12 @@
                         <property>
                             <name>viscosity</name>
                             <type>Constant</type>
-                            <value>1e-3</value>
+                            <value>1.0e-3</value>
                         </property>
                         <property>
                             <name>density</name>
                             <type>Constant</type>
-                            <value>1.0e-5</value>
+                            <value>1000.0</value>
                         </property>
                     </properties>
                 </phase>
@@ -71,7 +68,7 @@
                 <property>
                     <name>biot_coefficient</name>
                     <type>Constant</type>
-                    <value>1</value>
+                    <value>1.0</value>
                 </property>
                 <property>
                     <name>reference_temperature</name>
@@ -81,65 +78,19 @@
                 <property>
                     <name>permeability</name>
                     <type>Constant</type>
-                    <value>1e-10</value>
+                    <value>1.0e-10</value>
                 </property>
             </properties>
         </medium>
     </media>
     <time_loop>
-        <global_process_coupling>
-            <max_iter> 10 </max_iter>
-            <convergence_criteria>
-                <convergence_criterion>
-                    <!-- convergence criterion for the first process -->
-                    <type>DeltaX</type>
-                    <norm_type>NORM2</norm_type>
-                    <reltol> 1.0e-10 </reltol>
-                </convergence_criterion>
-                <convergence_criterion>
-                    <!-- convergence criterion for the second process -->
-                    <type>DeltaX</type>
-                    <norm_type>NORM2</norm_type>
-                    <reltol> 1.0e-10 </reltol>
-                </convergence_criterion>
-            </convergence_criteria>
-        </global_process_coupling>
         <processes>
-            <process ref="HM">
-                <!--For the equations of pressure-->
-                <nonlinear_solver>
-                    basic_newton_p
-                </nonlinear_solver>
-                <convergence_criterion>
-                    <type>DeltaX</type>
-                    <norm_type>NORM2</norm_type>
-                    <abstol>1.0e-7</abstol>
-                </convergence_criterion>
-                <time_discretization>
-                    <type>BackwardEuler</type>
-                </time_discretization>
-                <time_stepping>
-                    <type>FixedTimeStepping</type>
-                    <t_initial>0</t_initial>
-                    <t_end>10</t_end>
-                    <timesteps>
-                        <pair>
-                            <repeat> 10 </repeat>
-                            <delta_t> 1 </delta_t>
-                        </pair>
-                    </timesteps>
-                </time_stepping>
-            </process>
-            <process ref="HM">
-                <!--For the equations of deformation-->
-                <nonlinear_solver>
-                    basic_newton_u
-                </nonlinear_solver>
+            <process ref="ConsolidationBenchmark">
+                <nonlinear_solver>basic_newton_u</nonlinear_solver>
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstols> 1.0e-17 1.0e-17 </abstols>
-                    <!-- 2D nothing happening in z-direction-->
+                    <abstols>1.e-10 1e-14 1e-14 </abstols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -147,11 +98,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end>10</t_end>
+                    <t_end>10.0</t_end>
                     <timesteps>
                         <pair>
-                            <repeat> 10 </repeat>
-                            <delta_t> 1 </delta_t>
+                            <repeat>10</repeat>
+                            <delta_t>1.0</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -159,25 +110,26 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>drainage_staggered</prefix>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
-            <compress_output>false</compress_output>
+            <prefix>ConsolidationBenchmark_mono</prefix>
             <timesteps>
                 <pair>
-                    <repeat> 10 </repeat>
-                    <each_steps> 1 </each_steps>
+                    <repeat>5</repeat>
+                    <each_steps>2</each_steps>
                 </pair>
             </timesteps>
+            <fixed_output_times>2.0 4.0 6.0 8.0 10.0</fixed_output_times>
             <variables>
-                <variable>pressure</variable>
-                <variable>q</variable>
                 <variable>displacement</variable>
+                <variable>pressure</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
+                <variable>velocity</variable>
             </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
+        <!-- Mechanics -->
         <parameter>
             <name>E</name>
             <type>Constant</type>
@@ -188,25 +140,26 @@
             <type>Constant</type>
             <value>0.2</value>
         </parameter>
+        <!-- Model parameters -->
         <parameter>
-            <name>zero</name>
+            <name>zero_vector_2d</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>pressure_ic</name>
+            <type>Constant</type>
+            <values>0.0</values>
+        </parameter>
+        <parameter>
+            <name>dirichlet0</name>
             <type>Constant</type>
             <value>0</value>
         </parameter>
         <parameter>
-            <name>initial_displacement</name>
-            <type>Constant</type>
-            <values> 0 0 </values>
-        </parameter>
-        <parameter>
-            <name>initial_pressure</name>
-            <type>Constant</type>
-            <values>0</values>
-        </parameter>
-        <parameter>
             <name>load</name>
             <type>Constant</type>
-            <values>-1000.0</values>
+            <value>-1.e+3</value>
         </parameter>
     </parameters>
     <process_variables>
@@ -214,13 +167,13 @@
             <name>pressure</name>
             <components>1</components>
             <order>1</order>
-            <initial_condition>initial_pressure</initial_condition>
+            <initial_condition>pressure_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
                     <mesh>geometry_top</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
-                    <parameter>zero</parameter>
+                    <parameter>dirichlet0</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
@@ -228,25 +181,25 @@
             <name>displacement</name>
             <components>2</components>
             <order>2</order>
-            <initial_condition>initial_displacement</initial_condition>
+            <initial_condition>zero_vector_2d</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
                     <mesh>geometry_left</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
-                    <parameter>zero</parameter>
+                    <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>geometry_right</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
-                    <parameter>zero</parameter>
+                    <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>geometry_bottom</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
-                    <parameter>zero</parameter>
+                    <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>geometry_top</mesh>
@@ -259,12 +212,6 @@
     </process_variables>
     <nonlinear_solvers>
         <nonlinear_solver>
-            <name>basic_newton_p</name>
-            <type>Newton</type>
-            <max_iter>100</max_iter>
-            <linear_solver>linear_solver_p</linear_solver>
-        </nonlinear_solver>
-        <nonlinear_solver>
             <name>basic_newton_u</name>
             <type>Newton</type>
             <max_iter>100</max_iter>
@@ -273,26 +220,75 @@
     </nonlinear_solvers>
     <linear_solvers>
         <linear_solver>
-            <name>linear_solver_p</name>
-            <eigen>
-                <solver_type>SparseLU</solver_type>
-                <precon_type>DIAGONAL</precon_type>
-            </eigen>
-            <petsc>
-                <prefix>p</prefix>
-                <parameters>-p_ksp_type bcgs -p_pc_type mg -p_ksp_rtol 1.e-16 -p_ksp_max_it 4000</parameters>
-            </petsc>
-        </linear_solver>
-        <linear_solver>
             <name>linear_solver_u</name>
             <eigen>
-                <solver_type>SparseLU</solver_type>
+                <solver_type>BiCGSTAB</solver_type>
                 <precon_type>DIAGONAL</precon_type>
+                <max_iteration_step>10000</max_iteration_step>
+                <error_tolerance>1e-16</error_tolerance>
             </eigen>
-            <petsc>
-                <prefix>u</prefix>
-                <parameters>-u_ksp_type bcgs -u_pc_type mg -u_ksp_rtol 1.e-16 -u_ksp_max_it 4000</parameters>
-            </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>ConsolidationBenchmark_mono_ts_6_t_6.000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>ConsolidationBenchmark_mono_ts_6_t_6.000000.vtu</file>
+            <field>epsilon</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>ConsolidationBenchmark_mono_ts_6_t_6.000000.vtu</file>
+            <field>sigma</field>
+            <absolute_tolerance>4e-8</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>ConsolidationBenchmark_mono_ts_6_t_6.000000.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>2e-8</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>ConsolidationBenchmark_mono_ts_6_t_6.000000.vtu</file>
+            <field>velocity</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>ConsolidationBenchmark_mono_ts_10_t_10.000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>ConsolidationBenchmark_mono_ts_10_t_10.000000.vtu</file>
+            <field>epsilon</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>ConsolidationBenchmark_mono_ts_10_t_10.000000.vtu</file>
+            <field>sigma</field>
+            <absolute_tolerance>4e-8</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>ConsolidationBenchmark_mono_ts_10_t_10.000000.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>2e-8</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>ConsolidationBenchmark_mono_ts_10_t_10.000000.vtu</file>
+            <field>velocity</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

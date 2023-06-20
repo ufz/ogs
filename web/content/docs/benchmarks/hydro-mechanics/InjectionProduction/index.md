@@ -1,9 +1,9 @@
 +++
 date = "2021-03-17"
-title = "Staggered Scheme"
+title = "Injection and Production in 1D Linear Poroelastic Medium with the Staggered Scheme"
 weight = 151
 project = ["HydroMechanics/StaggeredScheme/InjectionProduction1D/InjectionProduction1D.prj"]
-author = "Dominik Kern and Wenqing Wang"
+author = "Wenqing Wang and Dominik Kern"
 image = "InjectionProduction_results.png"
 +++
 
@@ -183,43 +183,117 @@ The fixed-stress split starts with the mass balance (H) followed by the momentum
 These coupling iterations (H,M,H,M,...) add another iteration level compared to the monolithic formulation (HM).
 However, due to splitting into smaller problems this may result in a speedup.
 
-The weak form of mass (scalar test function $v$) and momentum balance (vectorial test function $\mathbf{v}$) after discretization in time (Euler-backward) reads at the $n^\mathrm{th}$ time step for the field equations (boundary terms omitted)
+The balance equations of mass and momentum for the fully saturated porous medium read
 $$
 \eqalign{
-\int_V \left( \alpha \frac{ \varepsilon_V(\mathbf{u}^{n})- \varepsilon_V(\mathbf{u}^{n-1})}{\Delta t}v
-+S\frac{p^n-p^{n-1}}{\Delta t}v
-+\frac{k}{\mu}\nabla p^n \cdot \nabla v \right) \mathrm{d}V
-&=&\int_V \left(s v-\frac{k}{\mu}\varrho_\mathrm{f} \nabla \cdot \mathbf{g} v \right) \mathrm{d}V, \cr
-\int_V \left( \boldsymbol{\sigma}^\mathrm{eff}(\mathbf{u}^n):\boldsymbol{\varepsilon}(\mathbf{v})
--\alpha p^n \varepsilon_V(\mathbf{v}) \right) \mathrm{d}V
-&=& \int_V \ \varrho_\mathrm{b} \mathbf{g}\cdot \mathbf{v}  \ \mathrm{d}V,
+S\varrho_\mathrm{f}{\dot p}-\frac{k}{\mu}\nabla \left(\varrho_\mathrm{f}\left(\nabla p-
+ \varrho_\mathrm{f} \mathbf{g}  \right) \right) + \alpha \varrho_\mathrm{f} {\dot\varepsilon_v} &=& 0\cr
+\nabla\cdot \left( \boldsymbol{\sigma}^\mathrm{eff}(\mathbf{u})
+-\alpha p \mathbf{I} \right)
+&=&  \varrho_\mathrm{b} \mathbf{g}.
 }
 $$
-where $\alpha$ denotes Biot coefficient, $S$ storage coefficient, $k$ permeability, $\mu$ viscosity, $\varrho_\mathrm{f}$ fluid density and $\varrho_\mathrm{b}$ bulk density.
-The fixed-stress split makes the assumption of constant volumetric stress to eliminate the displacement from the mass balance.
-At the $i^\mathrm{th}$ coupling iteration this assumption leads to
-$$
-K_\mathrm{b} \varepsilon_V(\mathbf{u}^{n,i})-\alpha p^{n,i} = K_\mathrm{b} \varepsilon_V(\mathbf{u}^{n,i-1})-\alpha p^{n,i-1},
-$$
-where $K_\mathrm{b}$ denotes the drained bulk modulus.
-Thus the weak form of the mass balance (H) depends only on pressure $p^{n,i}$ as unknown
-$$
-\int_V \left( \beta_\mathrm{FS}\frac{p^{n,i}-p^{n,i-1}}{\Delta t}v
-+S\frac{p^{n,i}-p^{n-1}}{\Delta t}v
-+\frac{k}{\mu}\nabla p^{n,i} \cdot \nabla v \right) \mathrm{d}V
-=\int_V \left( s v-\frac{k}{\mu}\varrho_\mathrm{f} \nabla \cdot \mathbf{g} v
--\alpha\frac{ \varepsilon_V(\mathbf{u}^{n,i-1})- \varepsilon_V(\mathbf{u}^{n-1})}{\Delta t} v \right) \mathrm{d}V,
-$$
-where $\beta_\mathrm{FS}=\beta_\mathrm{FS}^\mathrm{ph}=\frac{\alpha^2}{K_\mathrm{b}}$ would correspond to the physically motivated volumetric stress.
-However, choosing another artificial volumetric stress, i.e. using a different bulk modulus than $K_\mathrm{b}$, may accelerate the convergence of the coupling iterations.
-The analysis by Mikelic and Wheeler [[2]](#2) revealed that $\beta_\mathrm{FS}^\mathrm{MW}=\frac{\alpha^2}{2K_\mathrm{b}}$ is generally close to the a-priori unknown optimal value $\beta_\mathrm{FS}^\mathrm{opt}$, for more information see [user guide - conventions]({{< ref "conventions.md#staggered-scheme" >}}).
+where $\alpha$ denotes Biot coefficient, $S$ is the storage coefficient,
+ $k$ is the intrinsic permeability, $\mu$ the liquid viscosity,
+ $\varrho_\mathrm{f}$ is the fluid density, and $\varrho_\mathrm{b}$ is the
+  bulk density.
 
-The obtained pressure $p^{n,i}$ is then inserted into the momentum equation (M) with $\mathbf{u}^{n,i}$ as unknown
+In the staggered scheme for solving HM coupled equations, the fixed-stress splitting
+ is employed to enhance the convergence. The fixed stress splitting is based on the
+ the volumetric total stress rate definition the hydro-mechanics:
 $$
-\int_V \ \boldsymbol{\sigma}^\mathrm{eff}(\mathbf{u}^{n,i}):\boldsymbol{\varepsilon}(\mathbf{v}) \ \mathrm{d}V
-= \int_V \left( \varrho_\mathrm{b} \mathbf{g}\cdot \mathbf{v} + \alpha p^{n,i} \varepsilon_V(\mathbf{v}) \right) \mathrm{d}V.
+ \dot{\sigma}_v=K_b ({\dot \varepsilon}_v-\dot{\varepsilon}^{ne}_v)- \alpha\dot {p},
 $$
-These two steps (H,M) are repeated until convergence is reached and thus the solution of the $n^\mathrm{th}$ time step is found.
+with $K_b$ the drained bulk modulus of porous medium, and $\dot{\varepsilon}^{ne}_v$
+the volumetric  non-elastic strain rate.
+
+### Fixed stress rate over coupling iteration
+
+As the first option, we consider to fix the volumetric total stress rate over coupling iteration.
+ This means
+$$
+    \dot{\sigma}_v^{n, k} = \dot{\sigma}_v^{n, k-1},
+$$
+with $n$ the time step index, $k$ the coupling iteration index, and
+$\dot{()}^{n, k} = \left(()^{n, k} - ()^{n}\right)/dt$.
+
+This gives the volumetric strain rate of the current time step as
+$$
+\dot{\varepsilon_v}^{n, k} \approx  \dot{\epsilon}_v^{n, k-1} +
+\dfrac{ \alpha}{K_b}   (\dot {p}^{n, k}-\dot {p}^{n, k-1})
+    +(\dot{\epsilon}^{ne}_v|^{n, k}-
+\dot{\epsilon}^{ne}_v|^{n, k-1}).
+$$
+Practically, we can set $\dot{\epsilon}^{ne}_v|^{n, k}-
+\dot{\epsilon}^{ne}_v|^{n, k-1} = 0$.
+
+Under that  volumetric strain rate approximation, the mass balance equation
+ for coupling iteration $k$ at time step $n$ becomes
+ $$
+\varrho_\mathrm{f}(\beta_{\text S} +\dfrac{ \alpha^2}{K_b} ) {\dot p}^{n, k}-
+\frac{k}{\mu}\nabla \left(\varrho_\mathrm{f}\left(\nabla p^{n. k}-
+ \varrho_\mathrm{f} \mathbf{g}  \right) \right) +
+  \varrho_\mathrm{f} \left(\alpha {\dot\varepsilon_v}^{n,k-1}-
+ \dfrac{ \alpha^2}{K_b} {\dot p}^{n, k-1}\right)= 0.
+$$
+Denoting $\frac{ \alpha^2}{K_b} $  as  $\beta_\mathrm{FS}$, the above equation turns into
+ $$
+\varrho_\mathrm{f}(\beta_{\text S} +\beta_\mathrm{FS} ) {\dot p}^{n, k}-
+\frac{k}{\mu}\nabla \left(\varrho_\mathrm{f}\left(\nabla p^{n. k}-
+ \varrho_\mathrm{f} \mathbf{g}  \right) \right) +
+  \varrho_\mathrm{f} \left(\alpha {\dot\varepsilon_v}^{n,k-1}-
+ \beta_\mathrm{FS} {\dot p}^{n, k-1}\right)= 0.
+$$
+
+One can see from the above equation that $\beta_\mathrm{FS}$ can be any scalar
+ number once the coupling iteration converges, i.e.
+${\dot p}^{n, k}\approx{\dot p}^{n, k-1}$.
+Therefore, one can choose an arbitrary value for $\beta_\mathrm{FS}$ if it can
+ make the coupling iteration converge.
+The analysis by Mikelic and Wheeler [2] revealed that
+$\beta_\mathrm{FS}=\frac{\alpha^2}{2K_\mathrm{b}}$ is generally close to the
+ a-priori unknown optimal value that enhances the convergence of the coupling
+ iteration. For more information,
+see the [user guide - conventions]({{< ref "conventions.md#staggered-scheme" >}}).
+ For code implementation, we introduce a stabilization factor $\gamma$ to the physically
+meaningful parameter $\frac{\alpha^2}{K_\mathrm{b}}$ as:
+$$
+\beta_\mathrm{FS}=\gamma\dfrac{\alpha^2}{K_\mathrm{b}},
+$$
+where $\gamma$ is treated as an input parameter.
+
+### Fixed stress rate over time step
+
+We  assume that the volumetric stress rate of the current time step is the same as
+ that of the previous time step:
+
+$$
+  \dot{\sigma}_v^{n} = \dot{\sigma}_v^{n-1}.
+$$
+
+That means the current volumetric strain rate is approximated as
+
+$$
+\dot{\varepsilon_v}^{n} \approx  \dot{\epsilon}_v^{n-1} +
+\dfrac{ \alpha}{K_b}   (\dot {p}^{n}-\dot {p}^{n-1}).
+$$
+
+Consequently, and similarly to the fixed stress over coupling iteration,
+the mass balance equation at time step $n$ becomes
+
+$$
+\varrho_\mathrm{f}(S +\beta_\mathrm{FS} ) {\dot p}^{n}-
+\frac{k}{\mu}\nabla \left(\varrho_\mathrm{f}\left(\nabla p^{n}-
+ \varrho_\mathrm{f} \mathbf{g}  \right) \right) +
+  \varrho_\mathrm{f} \left(\alpha {\dot\varepsilon_v}^{n-1}-
+ \beta_\mathrm{FS} {\dot p}^{n-1}\right)= 0.
+$$
+
+In that sense, only one coupling iteration is needed, and the solution accuracy
+ is dependent on the time step size. The approach of a fixed stress rate over
+ the time step enables the staggered scheme to efficiently solve more HM
+ problems, especially those with small strain change, e.g. hydro-mechanical
+ modeling of reservoirs.
 
 ## References
 

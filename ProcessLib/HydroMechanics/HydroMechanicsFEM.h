@@ -64,9 +64,10 @@ struct IntegrationPointData final
         material_state_variables;
     double integration_weight;
 
-    // TODO disable in monolithic scheme to save memory
-    double coupling_pressure = std::numeric_limits<double>::quiet_NaN(); /**<
-    needed for staggered scheme to store value from last coupling iteration */
+    // previous pressure rate for the fixed stress splitting
+    // approach in the staggered scheme.
+    // TODO: disable in monolithic scheme to save memory.
+    double strain_rate_variable = 0.0;
 
     void pushBackState()
     {
@@ -261,20 +262,11 @@ public:
         }
     }
 
-    void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              Eigen::VectorXd const& /*local_x_dot*/,
-                              double const /*t*/, double const /*dt*/,
-                              bool const /*use_monolithic_scheme*/,
-                              int const /*process_id*/) override
-    {
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            _ip_data[ip].pushBackState();
-        }
-    }
+    void postTimestepConcrete(Eigen::VectorXd const& local_x,
+                              Eigen::VectorXd const& local_x_dot,
+                              double const t, double const dt,
+                              bool const use_monolithic_scheme,
+                              int const process_id) override;
 
     void computeSecondaryVariableConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_xs,
@@ -306,6 +298,8 @@ public:
     std::vector<double> getSigma() const override;
 
     std::vector<double> getEpsilon() const override;
+
+    std::vector<double> getStrainRateVariable() const override;
 
     std::vector<double> const& getIntPtDarcyVelocity(
         const double t,

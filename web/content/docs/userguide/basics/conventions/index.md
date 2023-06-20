@@ -177,7 +177,8 @@ K_\mathrm{3D} &=& \lambda + \frac{2}{3}\mu, \\
 K_\mathrm{2D} &=& \lambda + \frac{2}{2}\mu, \\
 K_\mathrm{1D} &=& \lambda + \frac{2}{1}\mu. \\
 \end{eqnarray}
-OGS sets the stabilization parameter, which corresponds to a coupling compressibility, via the `coupling_scheme_parameter`
+OGS sets the stabilization parameter, which corresponds to a coupling compressibility,
+ via an optional tag `fixed_stress_stabilization_parameter` inside the tag `coupling_scheme`.
 \begin{equation}
 \beta_\mathrm{FS} = p_\mathrm{FS} \frac{\alpha^2}{K_\mathrm{3D}},
 \end{equation}
@@ -190,6 +191,11 @@ Poisson's ratio $\nu$ (note $\frac{\lambda}{\mu}=\frac{2\nu}{1-2\nu}$).
 | $p_\mathrm{FS}^\mathrm{min}$          | $\frac{1}{6}\frac{1+\nu}{1-\nu}$      | same as 2D  |
 | $p_\mathrm{FS}^\mathrm{MW}$        | $\frac{1+\nu}{3}$      | $\frac{1}{2}$  |
 | $p_\mathrm{FS}^\mathrm{max}$          | $\frac{2(1+\nu)}{3}$      | $1$ |
+
+For more information about the algorithms of the fixed stress splitting, please
+ visit the page about a HM benchmark:
+   [Injection and Production in 1D Linear Poroelastic
+  Medium with the Staggered Scheme]({{< relref "InjectionProduction#staggered-scheme-fixed-stress-splitting" >}}).
 
 ## References
 

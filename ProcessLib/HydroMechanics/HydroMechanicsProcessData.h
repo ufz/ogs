@@ -13,6 +13,7 @@
 #include <Eigen/Core>
 #include <memory>
 #include <utility>
+#include <variant>
 
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "ParameterLib/Parameter.h"
@@ -29,6 +30,32 @@ namespace ProcessLib
 {
 namespace HydroMechanics
 {
+
+struct Monolithic
+{
+};
+
+struct Staggered
+{
+    /// An optional input to set an algorithmic parameter of the staggered
+    /// scheme. In the HydroMechanics process the fixed-stress split has been
+    /// implemented as staggered scheme with a stabilization parameter to be
+    /// set. For more details see [user guide -
+    /// conventions](https://www.opengeosys.org/docs/userguide/basics/conventions/#fixed-stress-split-for-hydro-mechanical-processes).
+    double const fixed_stress_stabilization_parameter;
+
+    /// If set, the volume stress rate is fixed over time step, e.g.
+    /// \f[\dot{\sigma}_v^{n} = \dot{\sigma}_v^{n-1}, \f]
+    /// where \f$n\f$ is the time step index.
+    /// Otherwise, the volume stress rate is fixed over coupling iteration, e.g.
+    /// \f[\dot{\sigma}_v^{n, k} = \dot{\sigma}_v^{n, k-1}, \f]
+    /// where \f$k\f$ is the coupling iteration index, and
+    /// \f[ \dot{()}^{n, k} = \left(()^{n, k} - ()^{n-1}\right)/dt. \f]
+    bool const fixed_stress_over_time_step;
+};
+
+using CouplingScheme = std::variant<Monolithic, Staggered>;
+
 template <int DisplacementDim>
 struct HydroMechanicsProcessData
 {
@@ -54,12 +81,7 @@ struct HydroMechanicsProcessData
     /// If set mass lumping will be applied to the pressure equation.
     bool const mass_lumping;
 
-    /// An optional input to set an algorithmic parameter of the staggered
-    /// scheme. In the HydroMechanics process the fixed-stress split has been
-    /// implemented as staggered scheme with a stabilization parameter to be
-    /// set. For more details see [user guide -
-    /// conventions](https://www.opengeosys.org/docs/userguide/basics/conventions/#fixed-stress-split-for-hydro-mechanical-processes).
-    double const fixed_stress_stabilization_parameter;
+    CouplingScheme coupling_scheme;
 
     /// ID of hydraulic process.
     int const hydraulic_process_id;

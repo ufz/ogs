@@ -11,8 +11,10 @@
         <process>
             <name>MandelCryer</name>
             <type>HYDRO_MECHANICS</type>
-            <coupling_scheme>staggered</coupling_scheme>
-            <coupling_scheme_parameter>0.7774</coupling_scheme_parameter>
+            <coupling_scheme>
+                <type>staggered</type>
+                <fixed_stress_stabilization_parameter>0.7774</fixed_stress_stabilization_parameter>
+            </coupling_scheme>
             <integration_order>3</integration_order>
             <dimension>3</dimension>
             <constitutive_relation>
