@@ -41,6 +41,7 @@ target_link_libraries(
     VtkVisFilter
     PUBLIC MeshLib
     PRIVATE GeoLib
+            MeshToolsLib
             Qt5::Core
             Qt5::Widgets
             VTK::CommonExecutionModel
