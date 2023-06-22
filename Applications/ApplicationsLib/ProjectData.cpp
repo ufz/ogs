@@ -20,6 +20,7 @@
 #include <cctype>
 #include <range/v3/action/sort.hpp>
 #include <range/v3/action/unique.hpp>
+#include <range/v3/algorithm/contains.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <set>
 
@@ -1157,10 +1158,9 @@ void ProjectData::parseProcesses(
             OGS_FATAL("Unknown process type: {:s}", type);
         }
 
-        if (BaseLib::containsIf(
-                _processes,
-                [&name](std::unique_ptr<ProcessLib::Process> const& p)
-                { return p->name == name; }))
+        if (ranges::contains(_processes, name,
+                             [](std::unique_ptr<ProcessLib::Process> const& p)
+                             { return p->name; }))
         {
             OGS_FATAL("The process name '{:s}' is not unique.", name);
         }

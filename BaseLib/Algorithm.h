@@ -83,25 +83,6 @@ typename std::iterator_traits<InputIt>::reference findElementOrError(
 //! given \c key does not yet exist; otherwise an \c error_message is printed
 //! and the
 //! program is aborted.
-//! Note: The type of \c key must be std::type_index.
-template <typename Map, typename Key, typename Value>
-void insertIfTypeIndexKeyUniqueElseError(Map& map, Key const& key,
-                                         Value&& value,
-                                         std::string const& error_message)
-{
-    auto const inserted = map.emplace(key, std::forward<Value>(value));
-    if (!inserted.second)
-    {  // insertion failed, i.e., key already exists
-        OGS_FATAL("{:s} Key `{:s}' already exists.", error_message,
-                  std::to_string(key.hash_code()));
-    }
-}
-
-//! Inserts the given \c key with the given \c value into the \c map if an entry
-//! with the
-//! given \c key does not yet exist; otherwise an \c error_message is printed
-//! and the
-//! program is aborted.
 template <typename Map, typename Key, typename Value>
 void insertIfKeyUniqueElseError(Map& map, Key const& key, Value&& value,
                                 std::string const& error_message)
@@ -110,31 +91,6 @@ void insertIfKeyUniqueElseError(Map& map, Key const& key, Value&& value,
     if (!inserted.second)
     {  // insertion failed, i.e., key already exists
         OGS_FATAL("{} Key `{}' already exists.", error_message, key);
-    }
-}
-
-//! Inserts the given \c key with the given \c value into the \c map if neither
-//! an entry
-//! with the given \c key nor an entry with the given \c value already exists;
-//! otherwise an \c error_message is printed and the program is aborted.
-template <typename Map, typename Key, typename Value>
-void insertIfKeyValueUniqueElseError(Map& map, Key const& key, Value&& value,
-                                     std::string const& error_message)
-{
-    auto value_compare = [&value](typename Map::value_type const& elem)
-    { return value == elem.second; };
-
-    if (std::find_if(map.cbegin(), map.cend(), value_compare) != map.cend())
-    {
-        OGS_FATAL("{:s} Value `{:s}' already exists.", error_message,
-                  std::to_string(value));
-    }
-
-    auto const inserted = map.emplace(key, std::forward<Value>(value));
-    if (!inserted.second)
-    {  // insertion failed, i.e., key already exists
-        OGS_FATAL("{:s} Key `{:s}' already exists.", error_message,
-                  std::to_string(key));
     }
 }
 
@@ -250,21 +206,6 @@ void uniquePushBack(Container& container,
     {
         container.push_back(element);
     }
-}
-
-template <typename Container>
-bool contains(Container const& container,
-              typename Container::value_type const& element)
-{
-    return std::find(container.begin(), container.end(), element) !=
-           container.end();
-}
-
-template <typename Container, typename Predicate>
-bool containsIf(Container const& container, Predicate&& predicate)
-{
-    return std::find_if(container.begin(), container.end(), predicate) !=
-           container.end();
 }
 
 template <typename Container>

@@ -13,6 +13,7 @@
 #include "Phase.h"
 
 #include "BaseLib/Algorithm.h"
+#include "BaseLib/Error.h"
 #include "Component.h"
 #include "Properties/Properties.h"
 
@@ -78,4 +79,18 @@ std::string Phase::description() const
 {
     return "phase '" + name + "'";
 }
+
+void checkRequiredProperties(
+    Phase const& phase, std::span<PropertyType const> const required_properties)
+{
+    for (auto const& p : required_properties)
+    {
+        if (!phase.hasProperty(p))
+        {
+            OGS_FATAL("The property '{:s}' is missing in the {:s} phase.",
+                      property_enum_to_string[p], phase.name);
+        }
+    }
+}
+
 }  // namespace MaterialPropertyLib

@@ -18,12 +18,15 @@
 #include <spdlog/spdlog.h>
 
 #include <numeric>
+#include <range/v3/algorithm/copy.hpp>
 #include <range/v3/numeric.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/enumerate.hpp>
 #include <range/v3/view/indirect.hpp>
+#include <range/v3/view/join.hpp>
 #include <range/v3/view/map.hpp>
 #include <range/v3/view/transform.hpp>
+#include <span>
 #include <vector>
 
 #include "BaseLib/ExportSymbol.h"
@@ -39,14 +42,8 @@ OGSMesh::OGSMesh(MeshLib::Mesh& mesh) : _mesh(mesh) {}
 
 std::vector<double> OGSMesh::getPointCoordinates() const
 {
-    auto const& nodes = _mesh.getNodes();
-    std::vector<double> coordinates;
-    for (auto const& coords : nodes | MeshLib::views::coords)
-    {
-        std::copy(coords.begin(), coords.end(),
-                  std::back_inserter(coordinates));
-    }
-    return coordinates;
+    return ranges::to<std::vector>(_mesh.getNodes() | MeshLib::views::coords |
+                                   ranges::views::join);
 }
 
 std::pair<std::vector<int>, std::vector<int>> OGSMesh::getCells() const
@@ -56,13 +53,9 @@ std::pair<std::vector<int>, std::vector<int>> OGSMesh::getCells() const
     std::vector<int> cell_types;
     for (auto const* element : elements)
     {
-        auto const number_of_nodes =
-            static_cast<int>(element->getNumberOfNodes());
-        cells.push_back(number_of_nodes);
-        for (int i = 0; i < number_of_nodes; ++i)
-        {
-            cells.push_back(element->getNode(i)->getID());
-        }
+        cells.push_back(static_cast<int>(element->getNumberOfNodes()));
+        ranges::copy(element->nodes() | MeshLib::views::ids,
+                     std::back_inserter(cells));
         cell_types.push_back(OGSToVtkCellType(element->getCellType()));
     }
     return {cells, cell_types};
@@ -97,11 +90,7 @@ std::vector<double> OGSMesh::getPointDataArray(
     {
         OGS_FATAL("Couldn't access point/node property '{}'.", name);
     }
-    std::vector<double> data_array;
-    data_array.reserve(pv->getNumberOfTuples() * number_of_components);
-    std::copy(pv->begin(), pv->end(), std::back_inserter(data_array));
-
-    return data_array;
+    return ranges::to<std::vector>(std::span(pv->data(), pv->size()));
 }
 
 void OGSMesh::setCellDataArray(std::string const& name,
@@ -133,9 +122,5 @@ std::vector<double> OGSMesh::getCellDataArray(
     {
         OGS_FATAL("Couldn't access cell/element property '{}'.", name);
     }
-    std::vector<double> data_array;
-    data_array.reserve(pv->getNumberOfTuples() * number_of_components);
-    std::copy(pv->begin(), pv->end(), std::back_inserter(data_array));
-
-    return data_array;
+    return ranges::to<std::vector>(std::span(pv->data(), pv->size()));
 }

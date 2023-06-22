@@ -9,25 +9,16 @@
  *
  */
 
-#include <pybind11/eigen.h>
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
-#include <spdlog/spdlog.h>
 
-#include <numeric>
-#include <range/v3/numeric.hpp>
-#include <range/v3/range/conversion.hpp>
-#include <range/v3/view/enumerate.hpp>
-#include <range/v3/view/indirect.hpp>
-#include <range/v3/view/map.hpp>
-#include <range/v3/view/transform.hpp>
+#include <string>
+#include <utility>
 #include <vector>
 
-#include "BaseLib/ExportSymbol.h"
-#include "BaseLib/Logging.h"
-#include "InfoLib/GitInfo.h"
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
+namespace MeshLib
+{
+class Mesh;
+}
 
 // Needs to be exported, see
 // https://pybind11.readthedocs.io/en/stable/advanced/misc.html#partitioning-code-over-multiple-extension-modules
