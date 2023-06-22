@@ -19,8 +19,8 @@
 #include <limits>
 #include <memory>
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/Logging.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"

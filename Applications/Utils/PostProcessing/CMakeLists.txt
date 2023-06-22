@@ -7,7 +7,13 @@ endif()
 if(OGS_BUILD_GUI)
     ogs_add_executable(Raster2PointCloud Raster2PointCloud.cpp)
     target_link_libraries(
-        Raster2PointCloud ApplicationsFileIO BaseLib MeshToolsLib GitInfoLib tclap
+        Raster2PointCloud
+        ApplicationsFileIO
+        BaseLib
+        GeoLib
+        MeshToolsLib
+        GitInfoLib
+        tclap
         VtkVisFilter
     )
     install(TARGETS Raster2PointCloud RUNTIME DESTINATION bin)

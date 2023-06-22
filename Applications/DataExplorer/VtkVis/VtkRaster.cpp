@@ -34,10 +34,10 @@
 
 #include <memory>
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 
 vtkImageAlgorithm* VtkRaster::loadImage(const std::string& fileName)

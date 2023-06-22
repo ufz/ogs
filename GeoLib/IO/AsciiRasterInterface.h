@@ -26,9 +26,11 @@ namespace FileIO
  * Currently supported are reading and writing of Esri asc-files and
  * reading of Surfer grd-files.
  */
-class AsciiRasterInterface {
+class AsciiRasterInterface
+{
 public:
-    /// Reads raster file by detecting type based on extension and then calling the appropriate method
+    /// Reads raster file by detecting type based on extension and then calling
+    /// the appropriate method
     static GeoLib::Raster* readRaster(std::string const& fname);
 
     /// Reads an ArcGis ASC raster file
@@ -41,11 +43,12 @@ public:
     static GeoLib::Raster* getRasterFromXyzFile(std::string const& fname);
 
     /// Writes an Esri asc-file
-    static void writeRasterAsASC(GeoLib::Raster const& raster, std::string const& file_name);
+    static void writeRasterAsASC(GeoLib::Raster const& raster,
+                                 std::string const& file_name);
 };
 
 /// Reads a vector of rasters given by file names. On error nothing is returned,
 /// otherwise the returned vector contains pointers to the read rasters.
 std::optional<std::vector<GeoLib::Raster const*>> readRasters(
     std::vector<std::string> const& raster_paths);
-} // end namespace FileIO
+}  // end namespace FileIO

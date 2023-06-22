@@ -36,7 +36,6 @@
 #include <vtkRenderer.h>
 #include <vtkVRMLExporter.h>
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "Applications/FileIO/FEFLOW/FEFLOWGeoInterface.h"
 #include "Applications/FileIO/FEFLOW/FEFLOWMeshInterface.h"
 #include "Applications/FileIO/GMSInterface.h"
@@ -51,6 +50,7 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Histogram.h"
 #include "GeoLib/DuplicateGeometry.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
 #include "GeoLib/Raster.h"

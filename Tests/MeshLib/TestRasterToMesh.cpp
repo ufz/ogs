@@ -13,7 +13,7 @@
 #include <cstdio>
 #include <memory>
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/TestInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
