@@ -182,6 +182,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
     // calculate the direction of plastic flow
     const auto f = q * q + M2 * p * (p - pc_new);
     const auto df_dp = M2 * (2 * p - pc_new);
+    const auto df_ds = 3 * s;
     const auto df_dpc = -M2 * p;
     const auto df_dsig = eval(3 * s - df_dp * id2 / 3);
     auto norm = std::sqrt(6 * q * q + df_dp * df_dp / 3);  // = std::sqrt(df_dsig|df_dsig);
@@ -198,27 +199,36 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
     feel = deel + depl - deto;
     flp = f / fchar;
 
+    const auto alpha = 3 * (1 - 2 * nu) / (2 * (1 + nu));
+    const auto K = v0 / ka * p;
+    const auto G = alpha * K;
+
     // auxiliary derivatives
-    const auto dnorm_dsig = (9 * s - 2 * M2 / 9 * df_dp * id2) / norm;
-    const auto dn_ddeel = (3 * Pr4 + 2 * M2 / 9 * (id2 ^ id2) - (n ^ dnorm_dsig)) / norm * dsig_deel * theta;
-    const auto dn_dpc = (id2 + df_dp * n / norm) * M2 / (3 * norm);
-    const auto dpc_deplV = -the * (pc_new - pc_min);
+    const auto dp_ddeelV = -K;
+
+    const auto dn_dpc = 1 * (id2 + df_dp * n / norm) * M2 / (3 * norm);
+    const auto dn_dp = -2 * (id2 + df_dp * n / norm) * M2 / (3 * norm);
+
+    const auto dn_ddeelD = 3 / norm * (Pr4 - 3 / norm * (n ^ s))  * 2 * G;
+    const auto dn_ddeelV = eval(dn_dp * dp_ddeelV ^ id2);
+    const auto dn_ddeel = dn_ddeelD + dn_ddeelV;
+
+    const auto dpc_ddeplV = -the * (pc - pc_min) * exp(-the * deplV);
     const auto ddeplV_ddlp = ntr;
     const auto ddeplV_dn = eval(dlp * id2);
-    //const auto dpc_dn = dpc_deplV * theta * ddeplV_dn;
 
-    const auto dpc_ddlp = dpc_deplV * theta * ddeplV_ddlp;
-    const auto dpc_ddeel = dpc_deplV * theta * (ddeplV_dn | dn_ddeel);
+    const auto dpc_ddlp = dpc_ddeplV * ddeplV_ddlp;
+    const auto dpc_ddeel = dpc_ddeplV * (ddeplV_dn | dn_ddeel);
+    //const auto dpc_dn = dpc_ddeplV * ddeplV_dn;
     //const auto dpc_ddeel = dpc_deplV * theta * dlp * (id2 | dn_ddeel);
 
     // jacobian (all other parts are zero)
     const auto dfeel_dpc = dlp * dn_dpc;
-    dfeel_ddeel += dlp * dn_ddeel + (dfeel_dpc ^ dpc_ddeel);
+    dfeel_ddeel += dlp * dn_ddeel + eval(dfeel_dpc ^ dpc_ddeel);
     dfeel_ddlp = n + dfeel_dpc * dpc_ddlp;
 
-    const auto dflp_dpc = df_dpc / fchar;
-    dflp_ddeel = (df_dsig | dsig_deel) * theta / fchar + dflp_dpc * dpc_ddeel;
-    dflp_ddlp  = strain(0) + dflp_dpc * dpc_ddlp;
+    dflp_ddeel = (6 * s *G + df_dp * dp_ddeelV * id2 + df_dpc * dpc_ddeel) / fchar;
+    dflp_ddlp  = strain(0) + 1 * df_dpc * dpc_ddlp / fchar;
 }
 
 // explicit treatment as long as change of v (or e) during time increment is small
