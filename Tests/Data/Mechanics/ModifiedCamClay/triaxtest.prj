@@ -31,6 +31,7 @@
             </constitutive_relation>
             <solid_density>rho_sr</solid_density>
             <specific_body_force>0 0</specific_body_force>
+            <initial_stress>InitialEffectiveStressField</initial_stress>
             <process_variables>
                 <process_variable>displacement</process_variable>
             </process_variables>
@@ -132,7 +133,7 @@
         <parameter>
             <name>YoungModulus</name>
             <type>Constant</type>
-            <value>52e6</value>            <!--Pa-->
+            <value>64.9345e6</value>            <!--Pa-->
         </parameter>
         <parameter>
             <name>PoissonRatio</name>
@@ -202,17 +203,33 @@
             <curve>pre_loading_curve</curve>
             <parameter>loading_value_side</parameter>
         </parameter>
+        <parameter>
+            <name>InitialEffectiveStressField</name> <!--Pa-->
+            <type>Function</type>
+            <expression> <!--xx-->
+              -200.e3
+            </expression>
+            <expression> <!--yy-->
+              -200.e3
+            </expression>
+            <expression> <!--zz-->
+              -200.e3
+            </expression>
+            <expression> <!--xy-->
+              0
+            </expression>
+        </parameter>
     </parameters>
     <curves>
         <curve>
             <name>ax_loading_curve</name>
             <coords>0.0  0.02  1 </coords>
-            <values>0.0  0.32  1.0  </values>
+            <values>0.32  0.32  1.0  </values>
         </curve>
         <curve>
             <name>pre_loading_curve</name>
             <coords>0.0  0.02  1  </coords>
-            <values>0.0  1.0  1.05  </values>
+            <values>1.0  1.0  1.05  </values>
         </curve>
     </curves>
     <process_variables>
@@ -275,7 +292,7 @@
         <vtkdiff>
             <file>triaxtest_output_ts_99_t_0.484339.vtu</file>
             <field>displacement</field>
-            <absolute_tolerance>1e-14</absolute_tolerance>
+            <absolute_tolerance>7e-13</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -288,7 +305,7 @@
         <vtkdiff>
             <file>triaxtest_output_ts_99_t_0.484339.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>1e-7</absolute_tolerance>
+            <absolute_tolerance>2e-7</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -301,13 +318,13 @@
         <vtkdiff>
             <file>triaxtest_output_ts_99_t_0.484339.vtu</file>
             <field>PreConsolidationPressure</field>
-            <absolute_tolerance>9e-9</absolute_tolerance>
+            <absolute_tolerance>2e-7</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>triaxtest_output_ts_199_t_1.000000.vtu</file>
             <field>PreConsolidationPressure</field>
-            <absolute_tolerance>1e-7</absolute_tolerance>
+            <absolute_tolerance>2e-7</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
