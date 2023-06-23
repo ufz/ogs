@@ -412,17 +412,22 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                                        phase_change_expansivity)
                         .value(vars, x_position, t, dt));
 
+        // Heaviside(S_I - 0.5) = Heaviside(phi_I / phi - 0.5)
+        auto heaviside_I = [porosity](double const phi_fr)
+        { return phi_fr >= 0.5 * porosity ? 1. : 0.; };
+
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dphase_change_strain = phase_change_expansion_coefficient /
-                                   porosity * (phi_fr - phi_fr_prev);
+            dphase_change_strain =
+                phase_change_expansion_coefficient *
+                (heaviside_I(phi_fr) - heaviside_I(phi_fr_prev));
 
         // eps0 ia a 'history variable' -- a solid matrix strain accrued
         // prior to the onset of ice forming
         auto& eps0_prev = ip_data.eps0_prev;
         auto const& eps0_prev2 = ip_data.eps0_prev2;
         // definition of eps_m_ice
-        eps0_prev =
-            eps0_prev2 + (1 - phi_fr_prev / porosity) * (eps_prev - eps0_prev2);
+        eps0_prev = eps0_prev2 +
+                    (1 - heaviside_I(phi_fr_prev)) * (eps_prev - eps0_prev2);
 
         // ice
         auto& eps_m_ice = ip_data.eps_m_ice;
@@ -450,15 +455,16 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                     MaterialPropertyLib::Variable::temperature, x_position, t,
                     dt);
 
-        crv.J_uu_fr = phi_fr * C_IR;
+        crv.J_uu_fr = heaviside_I(phi_fr) * porosity * C_IR;
 
         auto const& sigma_eff_ice = ip_data.sigma_eff_ice;
-        crv.r_u_fr = phi_fr * sigma_eff_ice;
+        crv.r_u_fr = heaviside_I(phi_fr) * porosity * sigma_eff_ice;
         crv.J_uT_fr =
-            dphi_fr_dT * sigma_eff_ice +
-            phi_fr * C_IR *
+            dphi_fr_dT * sigma_eff_ice +  // here, there must be a Dirac-delta
+            heaviside_I(phi_fr) * porosity * C_IR *
                 (ice_linear_thermal_expansion_coefficient +
-                 phase_change_expansion_coefficient / porosity * dphi_fr_dT);
+                 phase_change_expansion_coefficient * dphi_fr_dT /
+                     porosity);  // here, there must be a Dirac-delta
 
         crv.J_TT_fr = ((rho_fr * c_fr - fluid_density * crv.c_f) * dphi_fr_dT +
                        l_fr * rho_fr * d2phi_fr_dT2) *
