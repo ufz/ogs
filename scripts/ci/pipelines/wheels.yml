@@ -1,0 +1,6 @@
+wheels:
+  stage: build
+  needs: []
+  trigger:
+    include: /scripts/ci/jobs/build-wheels.yml
+    strategy: depend

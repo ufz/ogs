@@ -69,3 +69,6 @@ include:
   - local: "/scripts/ci/pipelines/win.yml"
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::win only.*/
+  - local: "/scripts/ci/pipelines/wheels.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::wheels only.*/
