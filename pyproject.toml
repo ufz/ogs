@@ -37,7 +37,7 @@ provider-path = "scripts/python/scikit-build-plugins"
 [tool.setuptools_scm]
 write_to = "Applications/Python/_version.py"
 write_to_template = '__version__ = "{version}"'
-version_scheme = "no-guess-dev"
+version_scheme = "guess-next-dev"
 git_describe_command = 'git describe --dirty --tags --long --match "*[0-9]*" --abbrev=8'
 # local_scheme should be node-and-date by default and no-local-version in CI.
 # Unfortunately setting via env var does not work.
