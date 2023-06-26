@@ -262,7 +262,7 @@
         <linear_solver>
             <name>linear_solver_d</name>
             <petsc>
-                <parameters>-ksp_type cg -pc_type bjacobi -ksp_atol 1e-10 -ksp_rtol 1e-10 -snes_type vinewtonrsls -snes_linesearch_type l2 -snes_atol 1.e-8 -snes_rtol 1.e-8 -snes_max_it 1000 -snes_monitor </parameters>
+                <parameters>-ksp_type cg -pc_type bjacobi -ksp_atol 1e-14 -ksp_rtol 1e-14 -snes_type vinewtonrsls -snes_linesearch_type l2 -snes_atol 1.e-14 -snes_rtol 1.e-14 -snes_max_it 1000 -snes_monitor </parameters>
             </petsc>
         </linear_solver>
         <linear_solver>
