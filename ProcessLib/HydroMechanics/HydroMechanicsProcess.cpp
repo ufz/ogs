@@ -84,7 +84,7 @@ HydroMechanicsProcess<DisplacementDim>::getMatrixSpecifications(
 {
     // For the monolithic scheme or the M process (deformation) in the staggered
     // scheme.
-    if (_use_monolithic_scheme || process_id == 1)
+    if (_process_data.isMonolithicSchemeUsed() || process_id == 1)
     {
         auto const& l = *_local_to_global_index_map;
         return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
@@ -119,7 +119,7 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
             // by location order is needed for output
             NumLib::ComponentOrder::BY_LOCATION);
 
-    if (_use_monolithic_scheme)
+    if (_process_data.isMonolithicSchemeUsed())
     {
         // For pressure, which is the first
         std::vector<MeshLib::MeshSubset> all_mesh_subsets{
@@ -260,7 +260,7 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 {
-    if (_use_monolithic_scheme)
+    if (_process_data.isMonolithicSchemeUsed())
     {
         const int process_id_of_hydromechanics = 0;
         initializeProcessBoundaryConditionsAndSourceTerms(
@@ -315,7 +315,8 @@ void HydroMechanicsProcess<DisplacementDim>::
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
     // For the monolithic scheme
-    if (_use_monolithic_scheme)
+    bool const use_monolithic_scheme = _process_data.isMonolithicSchemeUsed();
+    if (use_monolithic_scheme)
     {
         DBUG(
             "Assemble the Jacobian of HydroMechanics for the monolithic "
@@ -350,7 +351,7 @@ void HydroMechanicsProcess<DisplacementDim>::
 
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {
-        if (_use_monolithic_scheme)
+        if (use_monolithic_scheme)
         {
             transformVariableFromGlobalVector(b, variable_id, dof_tables[0],
                                               output_vector,
@@ -363,11 +364,11 @@ void HydroMechanicsProcess<DisplacementDim>::
                                               std::negate<double>());
         }
     };
-    if (_use_monolithic_scheme || process_id == 0)
+    if (use_monolithic_scheme || process_id == 0)
     {
         copyRhs(0, *_hydraulic_flow);
     }
-    if (_use_monolithic_scheme || process_id == 1)
+    if (use_monolithic_scheme || process_id == 1)
     {
         copyRhs(1, *_nodal_forces);
     }
@@ -415,7 +416,7 @@ void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, _local_assemblers,
         pv.getActiveElementIDs(), dof_tables, x, x_dot, t, dt,
-        _use_monolithic_scheme, process_id);
+        _process_data.isMonolithicSchemeUsed(), process_id);
 }
 
 template <int DisplacementDim>
@@ -429,7 +430,7 @@ void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postNonLinearSolver, _local_assemblers,
         pv.getActiveElementIDs(), getDOFTable(process_id), x, xdot, t, dt,
-        _use_monolithic_scheme, process_id);
+        _process_data.isMonolithicSchemeUsed(), process_id);
 }
 
 template <int DisplacementDim>
@@ -449,7 +450,7 @@ void HydroMechanicsProcess<DisplacementDim>::
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, _local_assemblers,
         pv.getActiveElementIDs(), getDOFTable(process_id), *x[process_id], t,
-        _use_monolithic_scheme, process_id);
+        _process_data.isMonolithicSchemeUsed(), process_id);
 }
 
 template <int DisplacementDim>

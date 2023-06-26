@@ -106,7 +106,10 @@ public:
 
     void updateDeactivatedSubdomains(double const time, const int process_id);
 
-    bool isMonolithicSchemeUsed() const { return _use_monolithic_scheme; }
+    virtual bool isMonolithicSchemeUsed() const
+    {
+        return _use_monolithic_scheme;
+    }
     virtual void setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
         int const /*process_id*/)
     {

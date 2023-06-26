@@ -100,6 +100,11 @@ struct HydroMechanicsProcessData
     /// with elements in the order k_xx, k_yy, k_zz, k_xy, k_yz, k_xz
     MeshLib::PropertyVector<double>* permeability = nullptr;
 
+    bool isMonolithicSchemeUsed() const
+    {
+        return std::holds_alternative<Monolithic>(coupling_scheme);
+    }
+
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
