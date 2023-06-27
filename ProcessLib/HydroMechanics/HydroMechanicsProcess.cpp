@@ -415,8 +415,8 @@ void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, x, x_dot, t, dt,
-        _process_data.isMonolithicSchemeUsed(), process_id);
+        pv.getActiveElementIDs(), dof_tables, x, x_dot, t, dt, false /*unused*/,
+        process_id);
 }
 
 template <int DisplacementDim>
@@ -425,12 +425,13 @@ void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     double const dt, const int process_id)
 {
     DBUG("PostNonLinearSolver HydroMechanicsProcess.");
+
     // Calculate strain, stress or other internal variables of mechanics.
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postNonLinearSolver, _local_assemblers,
         pv.getActiveElementIDs(), getDOFTable(process_id), x, xdot, t, dt,
-        _process_data.isMonolithicSchemeUsed(), process_id);
+        false /*unused*/, process_id);
 }
 
 template <int DisplacementDim>
