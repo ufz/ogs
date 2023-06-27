@@ -84,7 +84,7 @@ HydroMechanicsProcess<DisplacementDim>::getMatrixSpecifications(
 {
     // For the monolithic scheme or the M process (deformation) in the staggered
     // scheme.
-    if (_process_data.isMonolithicSchemeUsed() || process_id == 1)
+    if (process_id == _process_data.mechanics_related_process_id)
     {
         auto const& l = *_local_to_global_index_map;
         return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
@@ -326,7 +326,7 @@ void HydroMechanicsProcess<DisplacementDim>::
     else
     {
         // For the staggered scheme
-        if (process_id == 0)
+        if (process_id == _process_data.hydraulic_process_id)
         {
             DBUG(
                 "Assemble the Jacobian equations of liquid fluid process in "
@@ -364,11 +364,11 @@ void HydroMechanicsProcess<DisplacementDim>::
                                               std::negate<double>());
         }
     };
-    if (use_monolithic_scheme || process_id == 0)
+    if (process_id == _process_data.hydraulic_process_id)
     {
         copyRhs(0, *_hydraulic_flow);
     }
-    if (use_monolithic_scheme || process_id == 1)
+    if (process_id == _process_data.mechanics_related_process_id)
     {
         copyRhs(1, *_nodal_forces);
     }
@@ -398,7 +398,7 @@ void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x_dot, double const t, double const dt,
     const int process_id)
 {
-    if (process_id != 0)
+    if (process_id != _process_data.hydraulic_process_id)
     {
         return;
     }
@@ -458,7 +458,7 @@ void HydroMechanicsProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
     GlobalVector const& x_dot, const int process_id)
 {
-    if (process_id != 0)
+    if (process_id != _process_data.hydraulic_process_id)
     {
         return;
     }

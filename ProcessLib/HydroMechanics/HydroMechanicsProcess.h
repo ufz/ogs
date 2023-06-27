@@ -146,7 +146,7 @@ private:
     /// process has process_id == 1 in the staggered scheme.
     bool hasMechanicalProcess(int const process_id) const
     {
-        return _process_data.isMonolithicSchemeUsed() || process_id == 1;
+        return process_id == _process_data.mechanics_related_process_id;
     }
 
     MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
