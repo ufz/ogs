@@ -34,7 +34,7 @@ bool DeactivatedSubdomain::isDeactivated(MeshLib::Element const& element,
                                          double const time) const
 {
     auto const& bulk_element_ids = deactivated_subdomain_mesh.bulk_element_ids;
-    if (!ranges::contains(bulk_element_ids, element.getID()))
+    if (!bulk_element_ids.contains(element.getID()))
     {
         return false;
     }

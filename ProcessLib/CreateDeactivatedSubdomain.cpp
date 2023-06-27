@@ -110,8 +110,8 @@ static DeactivatedSubdomainMesh createDeactivatedSubdomainMesh(
     ranges::copy_if(elements, back_inserter(deactivated_elements), is_active,
                     [](auto const e) { return e->getID(); });
 
-    auto bulk_element_ids =
-        deactivated_elements | MeshLib::views::ids | ranges::to<std::vector>;
+    auto bulk_element_ids = deactivated_elements | MeshLib::views::ids |
+                            ranges::to<std::unordered_set>;
 
     static int mesh_number = 0;
     // Subdomain mesh consisting of deactivated elements.
