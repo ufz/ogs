@@ -95,8 +95,9 @@ static DeactivatedSubdomainMesh createDeactivatedSubdomainMesh(
 {
     // An element is active if its material id matches one of the deactivated
     // subdomain material ids.
-    auto is_active = [deactivated_subdomain_material_ids,
-                      material_ids = *materialIDs(mesh)](std::size_t element_id)
+    auto is_active =
+        [&deactivated_subdomain_material_ids,
+         &material_ids = *materialIDs(mesh)](std::size_t element_id)
     {
         int const element_material_id = material_ids[element_id];
         return std::any_of(begin(deactivated_subdomain_material_ids),
