@@ -107,6 +107,11 @@ private:
     NumLib::LocalToGlobalIndexMap const& getDOFTable(
         const int process_id) const override;
 
+    bool isMonolithicSchemeUsed() const override
+    {
+        return _process_data.isMonolithicSchemeUsed();
+    }
+
 private:
     std::vector<MeshLib::Node*> _base_nodes;
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_base_nodes;
@@ -141,7 +146,7 @@ private:
     /// process has process_id == 1 in the staggered scheme.
     bool hasMechanicalProcess(int const process_id) const
     {
-        return _use_monolithic_scheme || process_id == 1;
+        return process_id == _process_data.mechanics_related_process_id;
     }
 
     MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
