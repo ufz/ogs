@@ -15,7 +15,7 @@
             <integration_order>2</integration_order>
             <constitutive_relation>
                 <type>MFront</type>
-                <behaviour>ModCamClay_semiExplParaInitNLnu_inc</behaviour> 
+                <behaviour>ModCamClay_semiExpl</behaviour> 
                 <material_properties>
                     <material_property name="PoissonRatio" parameter="PoissonRatio"/>
                     <material_property name="CriticalStateLineSlope" parameter="CriticalStateLineSlope"/>

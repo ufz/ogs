@@ -8,15 +8,15 @@ m.setMaximumNumberOfSubSteps(20)
 m.setModellingHypothesis("Axisymmetrical")
 
 mcc_models = [
+    "ModCamClay_semiExpl",
+    "ModCamClay_semiExpl_absP",
     "ModCamClay_semiExpl_constE",
-    "ModCamClay_semiExplParaInitNLnu_inc",
-    "ModCamClay_semiExplParaInitNLnu_abs",
 ]
 controls = ["stress", "strain"]
 
 # Set MCC material model implementation and path
 lib_path = "./src/libBehaviour.so"
-mcc_model = mcc_models[1]
+mcc_model = mcc_models[0]
 control = controls[0]
 
 m.setBehaviour("generic", lib_path, mcc_model)
@@ -54,8 +54,8 @@ if mcc_model == "ModCamClay_semiExpl_constE":
     m.setParameter("AmbientPressure", pamb)
     print("Young Modulus set to E =", E0 / 1e6, " MPa")
 if mcc_model in (
-    "ModCamClay_semiExplParaInitNLnu_inc",
-    "ModCamClay_semiExplParaInitNLnu_abs",
+    "ModCamClay_semiExpl",
+    "ModCamClay_semiExpl_absP",
 ):
     m.setMaterialProperty("InitialVolumeRatio", v0)
 m.setMaterialProperty("PoissonRatio", nu)
