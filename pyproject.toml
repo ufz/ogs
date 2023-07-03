@@ -70,6 +70,9 @@ environment-pass = [
   "CMAKE_ARGS",
 ]
 
+[tool.cibuildwheel.linux.config-settings]
+"cmake.define.OGS_CPU_ARCHITECTURE" = "sandybridge"
+
 [tool.cibuildwheel.macos]
 skip = ["cp36-*", "cp37-*", "cp38-*x86_64"]
 
