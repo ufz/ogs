@@ -18,6 +18,8 @@ mfront_behaviours_check_library(
     GuentherSalzer
     Lubby2
     Lubby2mod
+    ModCamClay_semiExpl
+    ModCamClay_semiExpl_absP
     ModCamClay_semiExpl_constE
     MohrCoulombAbboSloan
     MohrCoulombAbboSloanAniso

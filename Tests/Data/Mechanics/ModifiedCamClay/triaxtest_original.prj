@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- units: kg, m, s, N -->
+<OpenGeoSysProject>
+    <meshes>
+        <mesh axially_symmetric="true">model.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_left.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_right.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_top.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_bottom.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>SD</name>
+            <type>SMALL_DEFORMATION</type>
+            <integration_order>2</integration_order>
+            <constitutive_relation>
+                <type>MFront</type>
+                <behaviour>ModCamClay_semiExpl</behaviour> 
+                <material_properties>
+                    <material_property name="PoissonRatio" parameter="PoissonRatio"/>
+                    <material_property name="CriticalStateLineSlope" parameter="CriticalStateLineSlope"/>
+                    <material_property name="SwellingLineSlope" parameter="SwellingLineSlope"/>
+                    <material_property name="VirginConsolidationLineSlope" parameter="VirginConsolidationLineSlope"/>
+                    <material_property name="CharacteristicPreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
+                    <material_property name="InitialVolumeRatio" parameter="InitialVolumeRatio"/>
+                </material_properties>
+                <initial_values>
+                    <state_variable name="PreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
+                    <state_variable name="VolumeRatio" parameter="InitialVolumeRatio"/>
+                </initial_values>
+            </constitutive_relation>
+            <solid_density>rho_sr</solid_density>
+            <specific_body_force>0 0</specific_body_force>
+            <initial_stress>InitialEffectiveStressField</initial_stress>
+            <process_variables>
+                <process_variable>displacement</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="sigma" output_name="sigma"/>
+                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable internal_name="ElasticStrain" output_name="ElasticStrain"/>
+                <secondary_variable internal_name="EquivalentPlasticStrain" output_name="EquivalentPlasticStrain"/>
+                <secondary_variable internal_name="PreConsolidationPressure" output_name="PreConsolidationPressure"/>
+                <secondary_variable internal_name="VolumeRatio" output_name="VolumeRatio"/>
+                <secondary_variable internal_name="PlasticVolumetricStrain" output_name="PlasticVolumetricStrain"/>
+            </secondary_variables>
+        </process>
+    </processes>
+    <time_loop>
+        <processes>
+            <process ref="SD">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>INFINITY_N</norm_type>
+                    <abstol>1e-13</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0</t_initial>
+                    <t_end>1</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.001</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.0012</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.00144</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.001728</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.002074</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.002488</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.002986</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.003583</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>2</repeat>
+                            <delta_t>0.0043</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>188</repeat>
+                            <delta_t>0.00516</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.004863</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>triaxtest_original_output</prefix>
+            <timesteps>
+                <pair>
+                    <repeat>10000</repeat>
+                    <each_steps>1</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+                <variable>PreConsolidationPressure</variable>
+            </variables>
+        </output>
+    </time_loop>
+    <parameters>
+        <!--Modified Cam clay parameters-->
+        <parameter>
+            <name>PoissonRatio</name>
+            <type>Constant</type>
+            <value>0.3</value>
+        </parameter>
+        <parameter>
+            <name>CriticalStateLineSlope</name>
+            <type>Constant</type>
+            <value>1.2</value>
+        </parameter>
+        <parameter>
+            <name>SwellingLineSlope</name>
+            <type>Constant</type>
+            <value>6.6e-3</value>
+        </parameter>
+        <parameter>
+            <name>VirginConsolidationLineSlope</name>
+            <type>Constant</type>
+            <value>7.7e-2</value>
+        </parameter>
+        <parameter>
+            <name>InitialPreConsolidationPressure</name>
+            <type>Constant</type>
+            <value>200.e3</value> <!--Pa-->
+        </parameter>
+        <parameter>
+            <name>InitialVolumeRatio</name>
+            <type>Constant</type>
+            <value>1.78571428571428571429</value>
+        </parameter>
+        <!-- Initial and boundary values -->
+        <parameter>
+            <name>rho_sr</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>displacement0</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>zero</name>
+            <type>Constant</type>
+            <value>0.0</value>
+        </parameter>
+        <parameter>
+            <name>axial_pressure</name>
+            <type>CurveScaled</type>
+            <curve>ax_loading_curve</curve>
+            <parameter>loading_value_top</parameter>
+        </parameter>
+        <parameter>
+            <name>loading_value_top</name>
+            <type>Constant</type>
+            <value>-625.e3</value> <!--Pa-->
+        </parameter>
+        <parameter>
+            <name>loading_value_side</name>
+            <type>Constant</type>
+            <values>-200.e3</values> <!--Pa-->
+        </parameter>
+        <parameter>
+            <name>confining_pressure</name>
+            <type>CurveScaled</type>
+            <curve>pre_loading_curve</curve>
+            <parameter>loading_value_side</parameter>
+        </parameter>
+        <parameter>
+            <name>InitialEffectiveStressField</name> <!--Pa-->
+            <type>Function</type>
+            <expression> <!--xx-->
+              -200.e3
+            </expression>
+            <expression> <!--yy-->
+              -200.e3
+            </expression>
+            <expression> <!--zz-->
+              -200.e3
+            </expression>
+            <expression> <!--xy-->
+              0
+            </expression>
+        </parameter>
+    </parameters>
+    <curves>
+        <curve>
+            <name>ax_loading_curve</name>
+            <coords>0.0  0.02  1 </coords>
+            <values>0.32  0.32  1.0  </values>
+        </curve>
+        <curve>
+            <name>pre_loading_curve</name>
+            <coords>0.0  0.02  1  </coords>
+            <values>1.0  1.0  1.05  </values>
+        </curve>
+    </curves>
+    <process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <initial_condition>displacement0</initial_condition>
+            <boundary_conditions>
+                <!--fix left in radial direction-->
+                <boundary_condition>
+                    <mesh>geometry_left</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <!--fix bottom in axial direction-->
+                <boundary_condition>
+                    <mesh>geometry_bottom</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <!--compression in axial direction -->
+                <boundary_condition>
+                    <mesh>geometry_top</mesh>
+                    <type>Neumann</type>
+                    <component>1</component>
+                    <parameter>axial_pressure</parameter>
+                </boundary_condition>
+                <!--compression in -radial direction-->
+                <boundary_condition>
+                    <mesh>geometry_right</mesh>
+                    <type>Neumann</type>
+                    <component>0</component>
+                    <parameter>confining_pressure</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>60</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <scaling>true</scaling>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+    <test_definition>
+        <!--primary field-->
+        <vtkdiff>
+            <file>triaxtest_original_output_ts_99_t_0.484339.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>triaxtest_original_output_ts_199_t_1.000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>7e-12</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <!--secondary field-->
+        <vtkdiff>
+            <file>triaxtest_original_output_ts_99_t_0.484339.vtu</file>
+            <field>sigma</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>triaxtest_original_output_ts_199_t_1.000000.vtu</file>
+            <field>sigma</field>
+            <absolute_tolerance>2e-7</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <!--material-specific internal variable-->
+        <vtkdiff>
+            <file>triaxtest_original_output_ts_99_t_0.484339.vtu</file>
+            <field>PreConsolidationPressure</field>
+            <absolute_tolerance>9e-9</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>triaxtest_original_output_ts_199_t_1.000000.vtu</file>
+            <field>PreConsolidationPressure</field>
+            <absolute_tolerance>2e-6</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>
