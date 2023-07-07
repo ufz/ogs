@@ -339,7 +339,7 @@ Block defining this pattern would be written as follows:
     </pair>
     <pair> <!-- Second pair -->
         <repeat>9</repeat>
-        <each_steps>90</each_steps>
+        <each_steps>10</each_steps>
     </pair>
     <pair> <!-- Third pair -->
         <repeat>9</repeat>
