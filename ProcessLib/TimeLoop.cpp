@@ -451,11 +451,6 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
                                                      ppd.timestep_current);
         }
 
-        if (t == timestep_algorithm->begin())
-        {
-            continue;
-        }
-
         auto& x = *_process_solutions[i];
         auto& x_prev = *_process_solutions_prev[i];
         if (all_process_steps_accepted)
