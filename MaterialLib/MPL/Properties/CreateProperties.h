@@ -22,6 +22,7 @@
 #include "CreateBishopsSaturationCutoff.h"
 #include "CreateClausiusClapeyron.h"
 #include "CreateConstant.h"
+#include "CreateCubicLawPermeability.h"
 #include "CreateCurve.h"
 #include "CreateDupuitPermeability.h"
 #include "CreateEffectiveThermalConductivityPorosityMixing.h"
