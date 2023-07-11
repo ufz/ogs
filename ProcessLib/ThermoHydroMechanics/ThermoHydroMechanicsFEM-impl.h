@@ -150,7 +150,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     updateConstitutiveRelations(
         Eigen::Ref<Eigen::VectorXd const> const local_x,
-        Eigen::Ref<Eigen::VectorXd const> const local_xdot,
+        Eigen::Ref<Eigen::VectorXd const> const local_x_prev,
         ParameterLib::SpatialPosition const& x_position, double const t,
         double const dt, IpData& ip_data,
         IntegrationPointDataForOutput<DisplacementDim>& ip_data_output) const
@@ -159,7 +159,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
            pressure_size + displacement_size + temperature_size);
 
     auto const [T, p, u] = localDOF(local_x);
-    auto const [T_dot, p_dot, u_dot] = localDOF(local_xdot);
+    auto const [T_prev, p_prev, u_prev] = localDOF(local_x_prev);
 
     auto const& solid_material =
         MaterialLib::Solids::selectSolidConstitutiveRelation(
@@ -481,7 +481,7 @@ void ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
-                         std::vector<double> const& local_xdot,
+                         std::vector<double> const& local_x_prev,
                          std::vector<double>& /*local_M_data*/,
                          std::vector<double>& /*local_K_data*/,
                          std::vector<double>& local_rhs_data,
@@ -492,11 +492,11 @@ void ThermoHydroMechanicsLocalAssembler<
 
     auto const x =
         Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size());
-    auto const xdot =
-        Eigen::Map<Eigen::VectorXd const>(local_xdot.data(), local_xdot.size());
+    auto const x_prev = Eigen::Map<Eigen::VectorXd const>(local_x_prev.data(),
+                                                          local_x_prev.size());
 
     auto const [T, p, u] = localDOF(local_x);
-    auto const [T_dot, p_dot, u_dot] = localDOF(local_xdot);
+    auto const [T_prev, p_prev, u_prev] = localDOF(local_x_prev);
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesTypeDisplacement::template MatrixType<
@@ -560,7 +560,7 @@ void ThermoHydroMechanicsLocalAssembler<
                     _element, N_u))};
 
         auto const crv = updateConstitutiveRelations(
-            x, xdot, x_position, t, dt, _ip_data[ip], _ip_data_output[ip]);
+            x, x_prev, x_position, t, dt, _ip_data[ip], _ip_data_output[ip]);
 
         auto const& w = _ip_data[ip].integration_weight;
 
@@ -847,7 +847,7 @@ void ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
-                                     Eigen::VectorXd const& local_x_dot)
+                                     Eigen::VectorXd const& local_x_prev)
 {
     auto const p = local_x.template segment<pressure_size>(pressure_index);
     auto const T =
@@ -874,7 +874,7 @@ void ThermoHydroMechanicsLocalAssembler<
                                                ShapeMatricesTypeDisplacement>(
                     _element, N_u))};
 
-        updateConstitutiveRelations(local_x, local_x_dot, x_position, t, dt,
+        updateConstitutiveRelations(local_x, local_x_prev, x_position, t, dt,
                                     _ip_data[ip], _ip_data_output[ip]);
 
         fluid_density_avg += _ip_data_output[ip].fluid_density;
