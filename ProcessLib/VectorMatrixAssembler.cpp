@@ -42,7 +42,7 @@ void VectorMatrixAssembler::assemble(
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
         dof_tables,
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
@@ -62,8 +62,8 @@ void VectorMatrixAssembler::assemble(
     if (number_of_processes == 1)
     {
         auto const local_x = x[process_id]->get(indices);
-        auto const local_xdot = xdot[process_id]->get(indices);
-        local_assembler.assemble(t, dt, local_x, local_xdot, _local_M_data,
+        auto const local_x_prev = x_prev[process_id]->get(indices);
+        local_assembler.assemble(t, dt, local_x, local_x_prev, _local_M_data,
                                  _local_K_data, _local_b_data);
     }
     else  // Staggered scheme
@@ -72,12 +72,12 @@ void VectorMatrixAssembler::assemble(
             getCoupledLocalSolutions(x, indices_of_processes);
         auto const local_x = MathLib::toVector(local_coupled_xs);
 
-        auto local_coupled_xdots =
-            getCoupledLocalSolutions(xdot, indices_of_processes);
-        auto const local_xdot = MathLib::toVector(local_coupled_xdots);
+        auto local_coupled_x_prevs =
+            getCoupledLocalSolutions(x_prev, indices_of_processes);
+        auto const local_x_prev = MathLib::toVector(local_coupled_x_prevs);
 
         local_assembler.assembleForStaggeredScheme(
-            t, dt, local_x, local_xdot, process_id, _local_M_data,
+            t, dt, local_x, local_x_prev, process_id, _local_M_data,
             _local_K_data, _local_b_data);
     }
 
@@ -110,7 +110,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
         dof_tables,
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
@@ -132,9 +132,9 @@ void VectorMatrixAssembler::assembleWithJacobian(
     if (number_of_processes == 1)
     {
         auto const local_x = x[process_id]->get(indices);
-        auto const local_xdot = xdot[process_id]->get(indices);
+        auto const local_x_prev = x_prev[process_id]->get(indices);
         _jacobian_assembler.assembleWithJacobian(
-            local_assembler, t, dt, local_x, local_xdot, _local_M_data,
+            local_assembler, t, dt, local_x, local_x_prev, _local_M_data,
             _local_K_data, _local_b_data, _local_Jac_data);
     }
     else  // Staggered scheme
@@ -143,12 +143,12 @@ void VectorMatrixAssembler::assembleWithJacobian(
             getCoupledLocalSolutions(x, indices_of_processes);
         auto const local_x = MathLib::toVector(local_coupled_xs);
 
-        auto local_coupled_xdots =
-            getCoupledLocalSolutions(xdot, indices_of_processes);
-        auto const local_xdot = MathLib::toVector(local_coupled_xdots);
+        auto local_coupled_x_prevs =
+            getCoupledLocalSolutions(x_prev, indices_of_processes);
+        auto const local_x_prev = MathLib::toVector(local_coupled_x_prevs);
 
         _jacobian_assembler.assembleWithJacobianForStaggeredScheme(
-            local_assembler, t, dt, local_x, local_xdot, process_id,
+            local_assembler, t, dt, local_x, local_x_prev, process_id,
             _local_M_data, _local_K_data, _local_b_data, _local_Jac_data);
     }
 
