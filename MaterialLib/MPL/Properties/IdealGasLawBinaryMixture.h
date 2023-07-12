@@ -2,7 +2,6 @@
  * \file
  * \author Norbert Grunwald
  * \date   Jan, 2021
- * \brief
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)

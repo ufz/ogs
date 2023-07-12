@@ -2,7 +2,6 @@
  * \file
  * \author Norbert Grunwald
  * \date   Oct 22, 2018
- * \brief
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)

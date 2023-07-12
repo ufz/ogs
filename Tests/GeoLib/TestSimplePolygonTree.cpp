@@ -1,6 +1,5 @@
 /**
  * \file
- * \author
  * \date Apr 02, 2014
  * \brief Test functionality of class SimplePolygonTree.
  *

@@ -22,7 +22,6 @@
 #include <vector>
 
 /**
- * \brief
  */
 class VtkAppendArrayFilter : public vtkUnstructuredGridAlgorithm, public VtkAlgorithmProperties
 {
