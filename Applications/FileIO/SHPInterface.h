@@ -9,9 +9,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
- * \date 25/01/2010
- * \author Karsten Rink
  */
 
 #pragma once
