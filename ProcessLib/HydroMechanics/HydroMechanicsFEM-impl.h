@@ -103,7 +103,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
-                         std::vector<double> const& local_xdot,
+                         std::vector<double> const& local_x_prev,
                          std::vector<double>& /*local_M_data*/,
                          std::vector<double>& /*local_K_data*/,
                          std::vector<double>& local_rhs_data,
@@ -119,13 +119,13 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             displacement_size> const>(local_x.data() + displacement_index,
                                       displacement_size);
 
-    auto p_dot =
+    auto p_prev =
         Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_xdot.data() + pressure_index,
+            pressure_size> const>(local_x_prev.data() + pressure_index,
                                   pressure_size);
-    auto u_dot =
+    auto u_prev =
         Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_xdot.data() + displacement_index,
+            displacement_size> const>(local_x_prev.data() + displacement_index,
                                       displacement_size);
 
     auto local_Jac = MathLib::createZeroedMatrix<
@@ -489,7 +489,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobianForPressureEquations(
         const double t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data)
 {
     auto local_rhs =
@@ -502,8 +502,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const p = local_x.template segment<pressure_size>(pressure_index);
 
-    auto const p_dot =
-        local_xdot.template segment<pressure_size>(pressure_index);
+    auto const p_prev =
+        local_x_prev.template segment<pressure_size>(pressure_index);
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesTypeDisplacement::template MatrixType<
@@ -783,7 +783,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         const double t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, int const process_id,
+        Eigen::VectorXd const& local_x_prev, int const process_id,
         std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
@@ -791,7 +791,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     // For the equations with pressure
     if (process_id == _process_data.hydraulic_process_id)
     {
-        assembleWithJacobianForPressureEquations(t, dt, local_x, local_xdot,
+        assembleWithJacobianForPressureEquations(t, dt, local_x, local_x_prev,
                                                  local_b_data, local_Jac_data);
         return;
     }
@@ -861,12 +861,12 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, DisplacementDim>::
     postNonLinearSolverConcrete(std::vector<double> const& local_x,
-                                std::vector<double> const& local_xdot,
+                                std::vector<double> const& local_x_prev,
                                 double const t, double const dt,
                                 bool const /*use_monolithic_scheme*/,
                                 int const process_id)
 {
-    // Note: local_x and local_xdot only contain the solutions of current
+    // Note: local_x and local_x_prev only contain the solutions of current
     // process in the staggered scheme. This has to be changed according to the
     // same two arguments in postTimestepConcrete.
 
@@ -950,8 +950,8 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 void HydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure,
-    DisplacementDim>::postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                                           Eigen::VectorXd const& local_x_dot,
+    DisplacementDim>::postTimestepConcrete(Eigen::VectorXd const& local_x,
+                                           Eigen::VectorXd const& local_x_prev,
                                            double const t, double const dt,
                                            bool const /*use_monolithic_scheme*/,
                                            int const process_id)
@@ -1134,7 +1134,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, DisplacementDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
-                                     Eigen::VectorXd const& /*local_x_dot*/)
+                                     Eigen::VectorXd const& /*local_x_prev*/)
 {
     auto const p = local_x.template segment<pressure_size>(pressure_index);
 
