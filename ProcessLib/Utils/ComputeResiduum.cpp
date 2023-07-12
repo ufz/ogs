@@ -13,16 +13,20 @@
 
 namespace ProcessLib
 {
-GlobalVector computeResiduum(GlobalVector const& x, GlobalVector const& xdot,
-                             GlobalMatrix const& M, GlobalMatrix const& K,
-                             GlobalVector const& b)
+GlobalVector computeResiduum(double const dt, GlobalVector const& x,
+                             GlobalVector const& x_prev, GlobalMatrix const& M,
+                             GlobalMatrix const& K, GlobalVector const& b)
 {
     using namespace MathLib::LinAlg;
     GlobalVector residuum;
-    matMult(M, xdot, residuum);
-    matMultAdd(K, x, residuum, residuum);
-    axpy(residuum, -1, b);
-    scale(residuum, -1);
+    GlobalVector x_dot;
+    copy(x, x_dot);                        // tmp = x
+    axpy(x_dot, -1., x_prev);              // tmp = x - x_prev
+    scale(x_dot, 1. / dt);                 // tmp = (x - x_prev)/dt
+    matMult(M, x_dot, residuum);           // r = M*x_dot
+    matMultAdd(K, x, residuum, residuum);  // r = M*x_dot + K*x
+    axpy(residuum, -1., b);                // r = M*x_dot + K*x - b
+    scale(residuum, -1.);                  // r = -r
     return residuum;
 }
 }  // namespace ProcessLib
