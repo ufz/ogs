@@ -426,6 +426,20 @@ std::vector<std::string> Output::getFileNamesForOutput() const
     return output_names;
 }
 
+std::vector<double> calculateUniqueFixedTimesForAllOutputs(
+    std::vector<Output> const& outputs)
+{
+    std::vector<double> fixed_times;
+    for (auto const& output : outputs)
+    {
+        auto const& output_fixed_times = output.getFixedOutputTimes();
+        fixed_times.insert(fixed_times.end(), output_fixed_times.begin(),
+                           output_fixed_times.end());
+    }
+    BaseLib::makeVectorUnique(fixed_times);
+    return fixed_times;
+}
+
 std::ostream& operator<<(std::ostream& os, Output const& output)
 {
     os << "Output::_output_data_specification:\t"

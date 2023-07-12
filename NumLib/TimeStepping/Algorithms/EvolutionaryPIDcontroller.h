@@ -93,7 +93,7 @@ private:
     double _e_n_minus2;  ///< \f$e_{n-2}\f$.
 
     /**
-     * Forced the computed time step size in the given range
+     * Force the computed time step size in the given range
      * (see the formulas in the documentation of the class)
      * or use the half of the previous time step size under some other
      * constrains.

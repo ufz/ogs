@@ -126,4 +126,7 @@ private:
         _do_not_project_from_bulk_mesh_to_submeshes;
 };
 
+std::vector<double> calculateUniqueFixedTimesForAllOutputs(
+    std::vector<Output> const& outputs);
+
 }  // namespace ProcessLib
