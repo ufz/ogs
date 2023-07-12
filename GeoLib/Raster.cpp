@@ -1,10 +1,10 @@
 /**
- * @file Raster.cpp
- * @author Thomas Fischer
- * @date 2011-09-07
- * @brief Implementation of the GeoLib::Raster class.
+ * \file
+ * \author Thomas Fischer
+ * \date 2011-09-07
+ * \brief Implementation of the GeoLib::Raster class.
  *
- * @copyright
+ * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or

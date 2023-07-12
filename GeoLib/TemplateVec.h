@@ -1,10 +1,10 @@
 /**
- * @file TemplateVec.h
- * @date 2010-02-26
- * @author Thomas Fischer
- * @brief Definition of the GeoLib::TemplateVec class.
+ * \file
+ * \date 2010-02-26
+ * \author Thomas Fischer
+ * \brief Definition of the GeoLib::TemplateVec class.
  *
- * @copyright
+ * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or

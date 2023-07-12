@@ -1,8 +1,8 @@
 /**
+ * \file
  * \author Norihiro Watanabe
  * \date   2012-08-03
  *
- * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.

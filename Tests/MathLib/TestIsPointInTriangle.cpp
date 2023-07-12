@@ -1,6 +1,6 @@
 /**
- * @file TestIsPointInTriangle.cpp
- * @date 2014-05-27
+ * \file
+ * \date 2014-05-27
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)

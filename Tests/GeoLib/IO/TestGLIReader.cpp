@@ -1,4 +1,5 @@
 /**
+ * \file
  * \date   2014-10-14
  *
  * \copyright

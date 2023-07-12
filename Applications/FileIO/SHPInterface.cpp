@@ -10,9 +10,8 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * @file SHPInterface.cpp
- * @date 25/01/2010
- * @author Karsten Rink
+ * \date 25/01/2010
+ * \author Karsten Rink
  */
 
 #include "SHPInterface.h"

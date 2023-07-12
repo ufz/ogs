@@ -10,9 +10,8 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * @file PetrelInterface.h
- * @date 2010-02-16
- * @author Thomas Fischer
+ * \date 2010-02-16
+ * \author Thomas Fischer
  */
 
 #pragma once

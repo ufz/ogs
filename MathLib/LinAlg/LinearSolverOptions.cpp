@@ -1,13 +1,15 @@
 #include "LinearSolverOptions.h"
+* \file
 
 #include <set>
 
 #include "BaseLib/ConfigTree.h"
 
-//! Configuration tag names of all known linear solvers for their
-//! configuration in the project file.
-//! Add your tag name here when you add a new solver.
-static std::set<std::string> known_linear_solvers{"eigen", "lis", "petsc"};
+    //! Configuration tag names of all known linear solvers for their
+    //! configuration in the project file.
+    //! Add your tag name here when you add a new solver.
+    static std::set<std::string>
+        known_linear_solvers{"eigen", "lis", "petsc"};
 
 namespace MathLib
 {

@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (https://www.opengeosys.org)
  *            Distributed under a Modified BSD License.

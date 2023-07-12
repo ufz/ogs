@@ -1,8 +1,8 @@
 /**
- * @file TestSimplePolygonTree.cpp
- * @author
- * @date Apr 02, 2014
- * @brief Test functionality of class SimplePolygonTree.
+ * \file
+ * \author
+ * \date Apr 02, 2014
+ * \brief Test functionality of class SimplePolygonTree.
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)

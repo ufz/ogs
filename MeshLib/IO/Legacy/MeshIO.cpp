@@ -11,9 +11,8 @@
  *              http://www.opengeosys.org/project/license
  *
  *
- * @file MeshIO.cpp
- * @date 2012-05-08
- * @author Karsten Rink
+ * \date 2012-05-08
+ * \author Karsten Rink
  */
 
 #include "MeshIO.h"

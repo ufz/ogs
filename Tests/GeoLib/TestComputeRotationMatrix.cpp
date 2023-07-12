@@ -1,6 +1,6 @@
 /**
- * @file TestComputeRotationMatrix.cpp
- * @date 2015-04-23
+ * \file
+ * \date 2015-04-23
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)

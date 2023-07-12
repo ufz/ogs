@@ -1,4 +1,5 @@
 /**
+ * \file
  *  \brief A function for creating a specific heat capacity model for fluid
  *
  *  \copyright
@@ -7,7 +8,6 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *   \file
  */
 
 #pragma once

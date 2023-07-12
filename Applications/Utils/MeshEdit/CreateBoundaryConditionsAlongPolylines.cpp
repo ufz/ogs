@@ -1,4 +1,5 @@
 /*
+ * \file
  * \date 2014-09-30
  * \brief Create BoundaryConditions from a polylines.
  *

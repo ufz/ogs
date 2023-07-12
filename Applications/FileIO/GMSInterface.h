@@ -10,9 +10,8 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * @file GMSInterface.h
- * @date 2010-06-08
- * @author Lars Bilke
+ * \date 2010-06-08
+ * \author Lars Bilke
  */
 
 #pragma once

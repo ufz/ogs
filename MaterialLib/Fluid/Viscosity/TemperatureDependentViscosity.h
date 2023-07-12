@@ -1,4 +1,5 @@
 /**
+ * \file
  *  \brief A linear temperature dependent viscosity model.
  *
  *  \copyright
@@ -7,7 +8,6 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file
  *
  *  Created on August 10, 2016, 10:45 AM
  */

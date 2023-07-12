@@ -4,7 +4,6 @@
  * \date   Dec 07, 2020
  * \brief
  *
- * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
