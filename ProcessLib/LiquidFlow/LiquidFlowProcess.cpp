@@ -70,7 +70,7 @@ void LiquidFlowProcess::initializeConcreteProcess(
 
 void LiquidFlowProcess::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble LiquidFlowProcess.");
@@ -83,14 +83,14 @@ void LiquidFlowProcess::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
+        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
         b);
 
     MathLib::finalizeMatrixAssembly(M);
     MathLib::finalizeMatrixAssembly(K);
     MathLib::finalizeVectorAssembly(b);
 
-    auto const residuum = computeResiduum(*x[0], *xdot[0], M, K, b);
+    auto const residuum = computeResiduum(dt, *x[0], *x_prev[0], M, K, b);
     transformVariableFromGlobalVector(residuum, 0 /*variable id*/,
                                       *_local_to_global_index_map,
                                       *_hydraulic_flow, std::negate<double>());
@@ -98,7 +98,7 @@ void LiquidFlowProcess::assembleConcreteProcess(
 
 void LiquidFlowProcess::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian LiquidFlowProcess.");
@@ -110,13 +110,13 @@ void LiquidFlowProcess::assembleWithJacobianConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
-        process_id, M, K, b, Jac);
+        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x,
+        x_prev, process_id, M, K, b, Jac);
 }
 
 void LiquidFlowProcess::computeSecondaryVariableConcrete(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_dot, int const process_id)
+    GlobalVector const& x_prev, int const process_id)
 {
     DBUG("Compute the velocity for LiquidFlowProcess.");
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
@@ -128,7 +128,7 @@ void LiquidFlowProcess::computeSecondaryVariableConcrete(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LiquidFlowLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_dot, process_id);
+        x_prev, process_id);
 }
 
 Eigen::Vector3d LiquidFlowProcess::getFlux(
@@ -150,7 +150,7 @@ Eigen::Vector3d LiquidFlowProcess::getFlux(
 // this is almost a copy of the implementation in the GroundwaterFlow
 void LiquidFlowProcess::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& /*x_dot*/,
+    std::vector<GlobalVector*> const& /*x_prev*/,
     const double t,
     const double /*dt*/,
     int const process_id)
