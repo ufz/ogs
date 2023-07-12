@@ -25,7 +25,7 @@ namespace HT
 template <typename ShapeFunction, int GlobalDim>
 void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleForStaggeredScheme(
     double const t, double const dt, Eigen::VectorXd const& local_x,
-    Eigen::VectorXd const& local_xdot, int const process_id,
+    Eigen::VectorXd const& local_x_prev, int const process_id,
     std::vector<double>& local_M_data, std::vector<double>& local_K_data,
     std::vector<double>& local_b_data)
 {
@@ -36,14 +36,14 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleForStaggeredScheme(
         return;
     }
 
-    assembleHydraulicEquation(t, dt, local_x, local_xdot, local_M_data,
+    assembleHydraulicEquation(t, dt, local_x, local_x_prev, local_M_data,
                               local_K_data, local_b_data);
 }
 
 template <typename ShapeFunction, int GlobalDim>
 void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
     double const t, double const dt, Eigen::VectorXd const& local_x,
-    Eigen::VectorXd const& local_xdot, std::vector<double>& local_M_data,
+    Eigen::VectorXd const& local_x_prev, std::vector<double>& local_M_data,
     std::vector<double>& local_K_data, std::vector<double>& local_b_data)
 {
     auto const local_p =
@@ -51,8 +51,8 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
     auto const local_T =
         local_x.template segment<temperature_size>(temperature_index);
 
-    auto const local_Tdot =
-        local_xdot.template segment<temperature_size>(temperature_index);
+    auto const local_T_prev =
+        local_x_prev.template segment<temperature_size>(temperature_index);
 
     auto local_M = MathLib::createZeroedMatrix<LocalMatrixType>(
         local_M_data, pressure_size, pressure_size);
