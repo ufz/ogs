@@ -25,10 +25,10 @@ class Element;
  * local vector to the global coordinate system. If an element is not inclined,
  * the identity matrix is used as its rotation matrix.
  *
- * @param space_dimension The space dimension.
- * @param mesh_dimension  The mesh dimension.
- * @param elements        The mesh elements.
- * @return A vector of rotation matrices of given elements.
+ * \param space_dimension The space dimension.
+ * \param mesh_dimension  The mesh dimension.
+ * \param elements        The mesh elements.
+ * \return A vector of rotation matrices of given elements.
  */
 std::vector<Eigen::MatrixXd> getElementRotationMatrices(
     int const space_dimension, int const mesh_dimension,

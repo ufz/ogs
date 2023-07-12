@@ -30,10 +30,11 @@ class TINInterface
 public:
     /**
      * Reads TIN file
-     * @param fname    TIN file name
-     * @param pnt_vec  a point vector to which triangle vertices are added
-     * @param errors   a vector of error messages
-     * @return a pointer to a GeoLib::Surface object created from TIN data. nullptr is returned if it fails to read the file.
+     * \param fname    TIN file name
+     * \param pnt_vec  a point vector to which triangle vertices are added
+     * \param errors   a vector of error messages
+     * \return a pointer to a GeoLib::Surface object created from TIN data.
+     * nullptr is returned if it fails to read the file.
      */
     static GeoLib::Surface* readTIN(std::string const& fname,
                                     GeoLib::PointVec &pnt_vec,
@@ -41,8 +42,8 @@ public:
 
     /**
      * Writes surface data into TIN file
-     * @param surface    surface object
-     * @param file_name  TIN file name
+     * \param surface    surface object
+     * \param file_name  TIN file name
      */
     static void writeSurfaceAsTIN(GeoLib::Surface const& surface, std::string const& file_name);
 };

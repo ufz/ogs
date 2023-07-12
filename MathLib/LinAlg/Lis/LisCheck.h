@@ -26,8 +26,8 @@ namespace MathLib
 /**
  * check Lis error codes
  *
- * @param err   Lis error code
- * @return success or not
+ * \param err   Lis error code
+ * \return success or not
  */
 inline bool checkLisError(int err)
 {

@@ -20,8 +20,8 @@ namespace Fluid
 namespace DimensionlessGibbsFreeEnergyRegion2
 {
 /**
- * @param pi  Dimensionless temperature
- * @param tau Dimensionless pressure
+ * \param pi  Dimensionless temperature
+ * \param tau Dimensionless pressure
  */
 double getGamma(const double tau, const double pi);
 

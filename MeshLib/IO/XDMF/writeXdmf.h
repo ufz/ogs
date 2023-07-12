@@ -27,14 +27,14 @@ namespace MeshLib::IO
 /**
  * \brief Generator function that creates a function capturing the spatial data
  * of a mesh Temporal data can later be passed as argument
- * @param geometry Metadata for the geometry (points) of the mesh
- * @param topology Metadata for the topology of the mesh
- * @param variable_attributes Meta data for attributes changing over time
- * @param constant_attributes Meta data for attributes NOT changing over time
- * @param h5filename Name of the file where the actual data was written
- * @param ogs_version OGS Version to be added to XdmfInformation tag
- * @param mesh_name Name of the output mesh
- * @return unary function with vector of time step values, returning XDMF string
+ * \param geometry Metadata for the geometry (points) of the mesh
+ * \param topology Metadata for the topology of the mesh
+ * \param variable_attributes Meta data for attributes changing over time
+ * \param constant_attributes Meta data for attributes NOT changing over time
+ * \param h5filename Name of the file where the actual data was written
+ * \param ogs_version OGS Version to be added to XdmfInformation tag
+ * \param mesh_name Name of the output mesh
+ * \return unary function with vector of time step values, returning XDMF string
  */
 std::function<std::string(std::vector<double>)> write_xdmf(
     XdmfData const& geometry, XdmfData const& topology,

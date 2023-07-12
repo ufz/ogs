@@ -25,29 +25,29 @@ namespace MeshLib::IO
 {
 /**
  * \brief Create meta data for attributes used for hdf5 and xdmf
- * @param mesh OGS mesh can be mesh or partitionedMesh
- * @param n_files specifies the number of files. If greater than 1 it groups the
+ * \param mesh OGS mesh can be mesh or partitionedMesh
+ * \param n_files specifies the number of files. If greater than 1 it groups the
  * data of each process to n_files
- * @return vector of meta data
+ * \return vector of meta data
  */
 std::vector<XdmfHdfData> transformAttributes(MeshLib::Mesh const& mesh,
                                              unsigned int n_files);
 /**
  * \brief Create meta data for geometry used for hdf5 and xdmf
- * @param mesh OGS mesh can be mesh or partitionedMesh
- * @param data_ptr Memory location of geometry values.
- * @param n_files specifies the number of files. If greater than 1 it groups the
+ * \param mesh OGS mesh can be mesh or partitionedMesh
+ * \param data_ptr Memory location of geometry values.
+ * \param n_files specifies the number of files. If greater than 1 it groups the
  * data of each process to n_files
- * @return Geometry meta data
+ * \return Geometry meta data
  */
 XdmfHdfData transformGeometry(MeshLib::Mesh const& mesh, double const* data_ptr,
                               unsigned int n_files);
 /**
  * \brief  Create meta data for topology used for HDF5 and XDMF
- * @param values actual topology values to get size and memory location
- * @param n_files specifies the number of files. If greater than 1 it groups the
+ * \param values actual topology values to get size and memory location
+ * \param n_files specifies the number of files. If greater than 1 it groups the
  * data of each process to n_files
- * @return Topology meta data
+ * \return Topology meta data
  */
 XdmfHdfData transformTopology(std::vector<int> const& values,
                               unsigned int n_files);
@@ -55,18 +55,18 @@ XdmfHdfData transformTopology(std::vector<int> const& values,
  * \brief Copies all node points into a new vector. Contiguous data used for
  * writing. Conform with XDMF standard in
  * https://xdmf.org/index.php/XDMF_Model_and_Format
- * @param mesh OGS mesh can be mesh or partitionedMesh
- * @return vector containing a copy of the data
+ * \param mesh OGS mesh can be mesh or partitionedMesh
+ * \return vector containing a copy of the data
  */
 std::vector<double> transformToXDMFGeometry(MeshLib::Mesh const& mesh);
 /**
  * \brief Copies all cells into a new vector. Contiguous data used for writing.
  * The topology is specific to xdmf because it contains the xdmf cell types!!
  * See section topology in https://xdmf.org/index.php/XDMF_Model_and_Format
- * @param mesh OGS mesh can be mesh or partitionedMesh
- * @param offset Local offset to transform local to global cell ID. Offset must
+ * \param mesh OGS mesh can be mesh or partitionedMesh
+ * \param offset Local offset to transform local to global cell ID. Offset must
  * be zero in serial and must be defined for each process in parallel execution.
- * @return vector containing a copy of the data
+ * \return vector containing a copy of the data
  */
 std::vector<int> transformToXDMFTopology(MeshLib::Mesh const& mesh,
                                          std::size_t const offset);

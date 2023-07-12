@@ -26,10 +26,10 @@ namespace MaterialLib
 namespace PorousMedium
 {
 /** Create a porosity model
- * @param config  ConfigTree object has a tag of `<permeability>` that
+ * \param config  ConfigTree object has a tag of `<permeability>` that
  * describes the permeability relationsship and contains the name of the
  * parameter
- * @param parameters a vector containing the available parameters
+ * \param parameters a vector containing the available parameters
  */
 std::unique_ptr<Permeability> createPermeabilityModel(
     BaseLib::ConfigTree const& config,

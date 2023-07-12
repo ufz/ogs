@@ -20,7 +20,7 @@ namespace MeshLib
 
 /**
  * A 8-nodes Hexahedron Element.
- * @code
+ * \code
  *
  *  Hex:
  *                6
@@ -41,7 +41,7 @@ namespace MeshLib
  *    0-----------1
  *          0
  *
- * @endcode
+ * \endcode
  */
 class HexRule8 : public CellRule
 {
@@ -81,7 +81,7 @@ public:
 
     /**
      * \copydoc MeshLib::Element::isPntInElement()
-     * @param nodes the nodes of the element.
+     * \param nodes the nodes of the element.
      */
     static bool isPntInElement(Node const* const* nodes,
                                MathLib::Point3d const& pnt, double eps);

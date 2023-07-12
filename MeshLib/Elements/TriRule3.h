@@ -19,9 +19,10 @@ namespace MeshLib
 {
 
 /**
- * This class represents a 2d triangle element. The following sketch shows the node and edge numbering.
- * @anchor TriNodeAndEdgeNumbering
- * @code
+ * This class represents a 2d triangle element. The following sketch shows the
+ * node and edge numbering.
+ * \anchor TriNodeAndEdgeNumbering
+ * \code
  *
  *          2
  *          o
@@ -33,7 +34,7 @@ namespace MeshLib
  *    0-----------1
  *          0
  *
- * @endcode
+ * \endcode
  */
 class TriRule3 : public FaceRule
 {
@@ -64,7 +65,7 @@ public:
 
     /**
      * \copydoc MeshLib::Element::isPntInElement()
-     * @param nodes the nodes of the element.
+     * \param nodes the nodes of the element.
      */
     static bool isPntInElement(Node const* const* nodes,
                                MathLib::Point3d const& pnt, double eps);

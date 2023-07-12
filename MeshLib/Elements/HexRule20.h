@@ -20,7 +20,7 @@ namespace MeshLib
 
 /**
  * A 20-nodes Hexahedron Element.
- * @code
+ * \code
  *
  *  Hex:
  *                14
@@ -41,7 +41,7 @@ namespace MeshLib
  *    0-----------1
  *          8
  *
- * @endcode
+ * \endcode
  */
 class HexRule20 : public HexRule8
 {

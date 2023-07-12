@@ -26,8 +26,8 @@ namespace ProcessLib
 {
 /**
  * Get a reference to the PVDFile corresponding to the given filename
- * @param mesh_name the name of the mesh the PVD file is searched for
- * @return Reference to a PVDFile object
+ * \param mesh_name the name of the mesh the PVD file is searched for
+ * \return Reference to a PVDFile object
  */
 MeshLib::IO::PVDFile& OutputVTKFormat::findOrCreatePVDFile(
     std::string const& mesh_name) const

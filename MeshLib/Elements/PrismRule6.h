@@ -19,9 +19,10 @@ namespace MeshLib
 {
 
 /**
- * This class represents a 3d prism element. The following sketch shows the node and edge numbering.
- * @anchor Prism6NodeAndEdgeNumbering
- * @code
+ * This class represents a 3d prism element. The following sketch shows the node
+ * and edge numbering.
+ * \anchor Prism6NodeAndEdgeNumbering
+ * \code
  *            5
  *           / \
  *          / : \
@@ -39,7 +40,7 @@ namespace MeshLib
  *      0-----------1
  *            0
  *
- * @endcode
+ * \endcode
  */
 class PrismRule6 : public CellRule
 {
@@ -82,7 +83,7 @@ public:
 
     /**
      * \copydoc MeshLib::Element::isPntInElement()
-     * @param nodes the nodes of the element.
+     * \param nodes the nodes of the element.
      */
     static bool isPntInElement(Node const* const* nodes,
                                MathLib::Point3d const& pnt, double eps);

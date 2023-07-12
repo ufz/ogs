@@ -43,10 +43,10 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
 
 /**
  * Converts a surface into a triangular mesh
- * @param sfc         Surface object
- * @param mesh_name   New mesh name
- * @param eps         Minimum distance for nodes not to be collapsed
- * @return a pointer to a converted mesh object. nullptr is returned if the
+ * \param sfc         Surface object
+ * \param mesh_name   New mesh name
+ * \param eps         Minimum distance for nodes not to be collapsed
+ * \return a pointer to a converted mesh object. nullptr is returned if the
  * conversion fails.
  */
 MeshLib::Mesh* convertSurfaceToMesh(

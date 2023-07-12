@@ -25,9 +25,9 @@ namespace MeshToolsLib
  * The function iterates over all mesh nodes between the
  * begin and the end iterator and moves them using the
  * given displacement.
- * @param begin begin iterator
- * @param end end iterator
- * @param displacement the displacement to use
+ * \param begin begin iterator
+ * \param end end iterator
+ * \param displacement the displacement to use
  */
 template <typename Iterator>
 void moveMeshNodes(Iterator begin,

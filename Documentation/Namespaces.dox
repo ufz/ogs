@@ -17,14 +17,14 @@ namespace AssemblerLib {
 }
 
 /**
- * @namespace BaseLib
+ * \namespace BaseLib
  * Basic algorithms and helper functions provided for all other libraries.
  */
 namespace BaseLib {
 }
 
 /**
- * @namespace FileIO
+ * \namespace FileIO
  * Contains the interfaces for all file types that can be read and/or written using
  * OpenGeoSys.
  *
@@ -34,7 +34,7 @@ namespace BaseLib {
 namespace FileIO {
 
     /**
-     * @namespace FileIO::GMSH
+     * \namespace FileIO::GMSH
      * Sub-namespace containing all functionality needed for reading and writing GMSH files.
      *
      * \sa GMSHInterface
@@ -43,7 +43,7 @@ namespace FileIO {
     }
 
     /**
-     * @namespace FileIO::Legacy
+     * \namespace FileIO::Legacy
      * Includes the interfaces to OGS legacy file formats (OGS-5 and below).
      */
     namespace Legacy {
@@ -51,13 +51,13 @@ namespace FileIO {
 }
 
 /**
- * @namespace FiniteElement
+ * \namespace FiniteElement
  */
 namespace FiniteElement {
 }
 
 /**
- * @namespace GeoLib
+ * \namespace GeoLib
  * Contains all functionality concerned with defining and obtaining information
  * about geometric objects such as points, (poly-)lines, polygones, surfaces, etc.
  * Also includes additional algorithms for modifying such data.
@@ -66,7 +66,7 @@ namespace GeoLib {
 }
 
 /**
- * @namespace MathLib
+ * \namespace MathLib
  * Contains all mathematical functionality used in OpenGeoSys, from defining a vector
  * or calculating a norm to integration schemes and matrix preconditioners.
  *
@@ -74,14 +74,14 @@ namespace GeoLib {
  */
 namespace MathLib {
     /**
-     * @namespace MathLib::detail
+     * \namespace MathLib::detail
      */
     namespace detail {
     }
 }
 
 /**
- * @namespace MeshLib
+ * \namespace MeshLib
  * Contains all functionality concerned with defining and obtaining information
  * about meshes and their components (nodes, elements). Also includes additional
  * algorithms for generating and modifying meshes and elements.
@@ -90,7 +90,7 @@ namespace MathLib {
  */
 namespace MeshLib {
     /**
-     * @namespace MeshLib::MeshGenerator
+     * \namespace MeshLib::MeshGenerator
      * Functionality for generating meshing.
      */
     namespace MeshGenerator {
@@ -98,12 +98,12 @@ namespace MeshLib {
 }
 
 /**
- * @namespace NumLib
+ * \namespace NumLib
  * The numerical algorithms used in OpenGeoSys
  */
 namespace NumLib {
     /**
-     * @namespace NumLib::detail
+     * \namespace NumLib::detail
      */
     namespace detail {
     }

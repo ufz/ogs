@@ -32,12 +32,12 @@ class LinearConcentrationAndPressureDependentDensity final
 {
 public:
     /**
-     * @param reference_density  \f$\rho_0\f$
-     * @param reference_concentration \f$C_0\f$
-     * @param fluid_density_concentration_difference_ratio  \f$ \bar \alpha \f$
+     * \param reference_density  \f$\rho_0\f$
+     * \param reference_concentration \f$C_0\f$
+     * \param fluid_density_concentration_difference_ratio  \f$ \bar \alpha \f$
      * in reference
-     * @param reference_pressure \f$p_0\f$
-     * @param fluid_density_pressure_difference_ratio  \f$ \bar \beta \f$ in
+     * \param reference_pressure \f$p_0\f$
+     * \param fluid_density_pressure_difference_ratio  \f$ \bar \beta \f$ in
      * reference Coupled groundwater flow and transport: 2. Thermohaline and 3D
      * convection systems
      */

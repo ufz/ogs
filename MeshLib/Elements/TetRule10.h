@@ -19,9 +19,10 @@ namespace MeshLib
 {
 
 /**
- * This class represents a 3d tetrahedron element with 10 nodes. The following sketch shows the node and edge numbering.
- * @anchor TetrahedronNodeAndEdgeNumbering
- * @code
+ * This class represents a 3d tetrahedron element with 10 nodes. The following
+ * sketch shows the node and edge numbering.
+ * \anchor TetrahedronNodeAndEdgeNumbering
+ * \code
  *          3
  *         /|\
  *        / | \
@@ -36,7 +37,7 @@ namespace MeshLib
  *         \|/
  *          1
  *
- * @endcode
+ * \endcode
  */
 class TetRule10 : public TetRule4
 {

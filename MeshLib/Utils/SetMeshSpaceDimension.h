@@ -30,7 +30,7 @@ class Mesh;
  * with higher dimension can be used to discretise the porous medium matrix
  * domain.
  *
- * @param meshes All meshes include the bulk mesh and the meshes for boundary
+ * \param meshes All meshes include the bulk mesh and the meshes for boundary
  * conditions.
  */
 void setMeshSpaceDimension(std::vector<std::unique_ptr<Mesh>> const& meshes);

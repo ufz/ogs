@@ -20,8 +20,8 @@ namespace MeshLib
 /**
  * This class represents a 3d pyramid element. The following sketch shows the
  node numbering.
- * @anchor Pyramid13NodeNumbering
- * @code
+ * \anchor Pyramid13NodeNumbering
+ * \code
  *
  *               4
  *             //|\
@@ -37,7 +37,7 @@ namespace MeshLib
  *   ./          |/
  *  0------------1
  *        5
- * @endcode
+ * \endcode
 
  */
 class PyramidRule13 : public PyramidRule5

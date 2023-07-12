@@ -36,7 +36,7 @@ struct RasterHeader final
 };
 
 /**
- * @brief Class Raster is used for managing raster data.
+ * \brief Class Raster is used for managing raster data.
  *
  * A raster consists of the meta data like number of columns and rows, the
  * lower left point, the size of a raster pixel and a value for invalid data
@@ -48,13 +48,13 @@ class Raster final
 {
 public:
     /**
-     * @brief Constructor for an object of class Raster. The raster data
+     * \brief Constructor for an object of class Raster. The raster data
      * have to be handed over via input iterators. Deploying iterators has
      * the advantage that the use of the class is independent from the input
      * container.
-     * @param header meta-information about the raster (height, width, etc.)
-     * @param begin input iterator pointing to the first element of the data
-     * @param end input iterator pointing to the last element of the data,
+     * \param header meta-information about the raster (height, width, etc.)
+     * \param begin input iterator pointing to the first element of the data
+     * \param end input iterator pointing to the last element of the data,
      * end have to be reachable from begin
      */
     template <typename InputIterator>
@@ -90,7 +90,7 @@ public:
 
     /**
      * Constant iterator that is pointing to the first raster pixel value.
-     * @return constant iterator
+     * \return constant iterator
      */
     std::vector<double>::const_iterator begin() const
     {
@@ -100,7 +100,7 @@ public:
     /**
      * Iterator to the element following the last pixel element of the
      * raster
-     * @return constant iterator
+     * \return constant iterator
      */
     std::vector<double>::const_iterator end() const
     {

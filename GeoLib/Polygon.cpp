@@ -48,10 +48,10 @@ enum class EdgeType
  * of the point relative to the line segment specified by the points source and
  * destination. (literature reference:
  * Computational Geometry and Computer Graphics in C++; Michael J. Laszlo)
- * @param source the first point of the line segment
- * @param destination the end point of the line segment
- * @param pnt the test point
- * @return a value of enum Location
+ * \param source the first point of the line segment
+ * \param destination the end point of the line segment
+ * \param pnt the test point
+ * \return a value of enum Location
  */
 Location getLocationOfPoint(MathLib::Point3d const& source,
                             MathLib::Point3d const& destination,
@@ -95,10 +95,10 @@ Location getLocationOfPoint(MathLib::Point3d const& source,
 /**
  * from book: Computational Geometry and Computer Graphics in C++, page 119
  * get the type of edge with respect to the given point (2d method!)
- * @param a first point of line segment
- * @param b last point of line segment
- * @param pnt point that is edge type computed for
- * @return a value of enum EdgeType
+ * \param a first point of line segment
+ * \param b last point of line segment
+ * \param pnt point that is edge type computed for
+ * \return a value of enum EdgeType
  */
 EdgeType getEdgeType(MathLib::Point3d const& a,
                      MathLib::Point3d const& b,
@@ -183,9 +183,9 @@ bool Polygon::initialise()
 /**
  * Computes all intersections of the straight line segment and the polyline
  * boundary
- * @param polygon the polygon the segment line segment that will be processed
- * @param segment the line segment that will be processed
- * @return a possible empty vector containing the intersection points
+ * \param polygon the polygon the segment line segment that will be processed
+ * \param segment the line segment that will be processed
+ * \return a possible empty vector containing the intersection points
  */
 std::vector<GeoLib::Point> getAllIntersectionPoints(
     Polygon const& polygon, GeoLib::LineSegment const& segment)

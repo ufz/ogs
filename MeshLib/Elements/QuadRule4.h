@@ -20,9 +20,10 @@ namespace MeshLib
 {
 
 /**
- * This class represents a 2d quadrilateral element. The following sketch shows the node and edge numbering.
- * @anchor QuadNodeAndEdgeNumbering
- * @code
+ * This class represents a 2d quadrilateral element. The following sketch shows
+ * the node and edge numbering.
+ * \anchor QuadNodeAndEdgeNumbering
+ * \code
  *              2
  *        3-----------2
  *        |           |
@@ -32,7 +33,7 @@ namespace MeshLib
  *        |           |
  *        0-----------1
  *              0
- * @endcode
+ * \endcode
  */
 class QuadRule4 : public FaceRule
 {
@@ -63,7 +64,7 @@ public:
 
     /**
      * \copydoc MeshLib::Element::isPntInElement()
-     * @param nodes the nodes of the element.
+     * \param nodes the nodes of the element.
      */
     static bool isPntInElement(Node const* const* nodes,
                                MathLib::Point3d const& pnt, double eps);
