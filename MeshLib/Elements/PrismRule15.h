@@ -19,9 +19,10 @@ namespace MeshLib
 {
 
 /**
- * This class represents a 3d prism element with 15 nodes. The following sketch shows the node and edge numbering.
- * @anchor PrismNodeAndEdgeNumbering
- * @code
+ * This class represents a 3d prism element with 15 nodes. The following sketch
+ * shows the node and edge numbering.
+ * \anchor PrismNodeAndEdgeNumbering
+ * \code
  *            5
  *           / \
  *          / : \
@@ -39,7 +40,7 @@ namespace MeshLib
  *      0-----------1
  *            6
  *
- * @endcode
+ * \endcode
  */
 class PrismRule15 : public PrismRule6
 {

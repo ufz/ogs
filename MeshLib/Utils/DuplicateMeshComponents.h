@@ -25,12 +25,12 @@ class Element;
 std::vector<Node*> copyNodeVector(const std::vector<Node*>& nodes);
 
 /** Creates a deep copy of an element vector using the given Node vector.
- * @param elements The element vector that should be duplicated.
- * @param new_nodes The new node vector used for the duplicated element vector.
- * @param node_id_map An optional mapping from the nodes the 'old' elements
+ * \param elements The element vector that should be duplicated.
+ * \param new_nodes The new node vector used for the duplicated element vector.
+ * \param node_id_map An optional mapping from the nodes the 'old' elements
  * based on to the new nodes. This should be consistent with the original node
  * vector.
- * @return A deep copy of the elements vector using the new nodes vector.
+ * \return A deep copy of the elements vector using the new nodes vector.
  */
 std::vector<Element*> copyElementVector(
     std::vector<Element*> const& elements,

@@ -1,6 +1,6 @@
 /**
- * \brief  Implementation of class Simulation
  * \file
+ * \brief  Implementation of class Simulation
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)

@@ -1,4 +1,5 @@
 /**
+ * \file
  *  \brief Declare a class for dimensionless Gibbs free energy, region1.
  *
  *  \copyright
@@ -7,7 +8,6 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  *
  * Created on December 8, 2016, 12:31 PM
  */

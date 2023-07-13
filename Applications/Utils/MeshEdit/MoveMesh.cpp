@@ -1,7 +1,6 @@
 /**
- * @file MoveMesh.cpp
- * @date Jan 17, 2014
- * @brief
+ * \file
+ * \date Jan 17, 2014
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)

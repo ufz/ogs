@@ -1,13 +1,9 @@
 /**
  * \file
  * \author Lars Bilke
+ * \author Wenqing Wang
  * \date   2014-09-25
  * \brief  Implementation of the VtuInterface class.
- *
- * \author Wenqing Wang
- * \date   2015-10-19
- * \brief  Added parallel output of vtu pieces, and visualisation
- *         of the vtu picess via pvtu.
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)

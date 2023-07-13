@@ -31,7 +31,7 @@ public:
 
     /** constructor - constructs a Point3d object
      *
-     * @param x std::array containing the coordinates of the point
+     * \param x std::array containing the coordinates of the point
      */
     explicit Point3d(std::array<double, 3> x);
 
@@ -80,11 +80,11 @@ inline bool operator<(Point3d const& a, Point3d const& b)
 /**
  * Lexicographic comparison of points taking an epsilon into account.
  *
- * @param a first input point.
- * @param b second input point.
- * @param eps tolerance used in comparison of coordinates.
+ * \param a first input point.
+ * \param b second input point.
+ * \param eps tolerance used in comparison of coordinates.
  *
- * @return true, if a is smaller then or equal to b according to the following
+ * \return true, if a is smaller then or equal to b according to the following
  * test \f$ |a_i - b_i| > \epsilon \cdot \min (|a_i|, |b_i|) \f$ \b and
  * \f$  |a_i - b_i| > \epsilon \f$ for all coordinates \f$ 0 \le i < 3 \f$.
  */
@@ -101,9 +101,9 @@ inline std::ostream& operator<<(std::ostream& os, const Point3d& p)
 extern MATHLIB_EXPORT const Point3d ORIGIN;
 /**
  * rotation of points
- * @param mat a rotation matrix
- * @param p   a point to be transformed
- * @return a rotated point
+ * \param mat a rotation matrix
+ * \param p   a point to be transformed
+ * \return a rotated point
  */
 MathLib::Point3d operator*(Eigen::Matrix3d const& mat,
                            MathLib::Point3d const& p);

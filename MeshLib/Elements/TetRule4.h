@@ -19,9 +19,10 @@ namespace MeshLib
 {
 
 /**
- * This class represents a 3d tetrahedron element. The following sketch shows the node and edge numbering.
- * @anchor Tetrahedron4NodeAndEdgeNumbering
- * @code
+ * This class represents a 3d tetrahedron element. The following sketch shows
+ * the node and edge numbering.
+ * \anchor Tetrahedron4NodeAndEdgeNumbering
+ * \code
  *          3
  *         /|\
  *        / | \
@@ -36,7 +37,7 @@ namespace MeshLib
  *         \|/
  *          1
  *
- * @endcode
+ * \endcode
  */
 class TetRule4 : public CellRule
 {
@@ -76,7 +77,7 @@ public:
 
     /**
      * \copydoc MeshLib::Element::isPntInElement()
-     * @param nodes the nodes of the element.
+     * \param nodes the nodes of the element.
      */
     static bool isPntInElement(Node const* const* nodes,
                                MathLib::Point3d const& pnt, double eps);

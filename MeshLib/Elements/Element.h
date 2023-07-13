@@ -49,19 +49,19 @@ public:
     /**
      * Get node with local index where the local index should be at most the
      * number of nodes of the element.
-     * @param idx local index of node, at most the number of nodes of the
+     * \param idx local index of node, at most the number of nodes of the
      * element that you can obtain with Element::getNumberOfBaseNodes()
-     * @return a pointer to the appropriate (and constant, i.e. not
+     * \return a pointer to the appropriate (and constant, i.e. not
      * modifiable by the user) instance of class Node or a nullptr
-     * @sa getNodeIndex()
+     * \sa getNodeIndex()
      */
     virtual const Node* getNode(unsigned idx) const = 0;
     virtual Node* getNode(unsigned idx) = 0;
 
     /**
      * (Re)Sets the node of the element.
-     * @param idx the index of the pointer to a node within the element
-     * @param node a pointer to a node
+     * \param idx the index of the pointer to a node within the element
+     * \param node a pointer to a node
      */
     virtual void setNode(unsigned idx, Node* node) = 0;
 
@@ -119,7 +119,7 @@ public:
 
     /**
      * Get the type of the element in context of the finite element method.
-     * @return a value of the enum FEMElemType::type
+     * \return a value of the enum FEMElemType::type
      */
     virtual CellType getCellType() const = 0;
 
@@ -132,10 +132,10 @@ public:
 
     /**
      * Checks if a point is inside the element.
-     * @param pnt a 3D MathLib::Point3d object
-     * @param eps tolerance for numerical algorithm used or computing the
+     * \param pnt a 3D MathLib::Point3d object
+     * \param eps tolerance for numerical algorithm used or computing the
      * property
-     * @return true if the point is not outside the element, false otherwise
+     * \return true if the point is not outside the element, false otherwise
      */
     virtual bool isPntInElement(
         MathLib::Point3d const& pnt,
@@ -153,7 +153,7 @@ public:
      * Method clone is a pure virtual method in the abstract base class Element.
      * It has to be implemented in the derived classes (for instance in class
      * Hex).
-     * @return an exact copy of the object
+     * \return an exact copy of the object
      */
     virtual Element* clone() const = 0;
 
@@ -237,13 +237,13 @@ unsigned getNodeIDinElement(Element const& element, const Node* node);
 /**
  * Get the global node index of the node with the local index idx within the
  * element. The index should be at most the number of nodes of the element.
- * @param element The element object that will be searched for the index.
- * @param idx Local index of Node, at most the number of nodes of the
+ * \param element The element object that will be searched for the index.
+ * \param idx Local index of Node, at most the number of nodes of the
  * element that you can obtain with Element::getNumberOfBaseNodes().
- * @return the global index if idx < Element::getNumberOfBaseNodes. Otherwise in
+ * \return the global index if idx < Element::getNumberOfBaseNodes. Otherwise in
  * debug mode the value std::numeric_limits<unsigned>::max(). In release mode
  * the behaviour is undefined.
- * @sa Element::getNode()
+ * \sa Element::getNode()
  */
 std::size_t getNodeIndex(Element const& element, unsigned idx);
 

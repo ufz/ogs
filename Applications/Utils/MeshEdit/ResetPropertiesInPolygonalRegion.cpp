@@ -1,4 +1,5 @@
 /*
+ * \file
  * \brief Reset material properties in meshes in a polygonal region.
  *
  * \copyright

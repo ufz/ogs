@@ -1,6 +1,6 @@
 /**
- * \brief  Implementation of CommandLineArgumentParser.
  * \file
+ * \brief  Implementation of CommandLineArgumentParser.
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)

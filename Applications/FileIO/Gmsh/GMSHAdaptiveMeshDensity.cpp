@@ -1,4 +1,5 @@
 /**
+ * \file
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
@@ -6,9 +7,8 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * @file GMSHAdaptiveMeshDensity.cpp
- * @date 2012-03-05
- * @author Thomas Fischer
+ * \date 2012-03-05
+ * \author Thomas Fischer
  */
 
 #include "GMSHAdaptiveMeshDensity.h"

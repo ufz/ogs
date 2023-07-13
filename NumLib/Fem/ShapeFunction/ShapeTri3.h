@@ -2,7 +2,6 @@
  * \file
  * \author Norihiro Watanabe
  * \date   2013-08-13
- * \brief
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)

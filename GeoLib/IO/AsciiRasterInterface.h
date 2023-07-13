@@ -1,10 +1,10 @@
 /**
- * @file AsciiRasterInterface.h
- * @author Karsten Rink
- * @date 2014-09-10
- * @brief Definition of the AsciiRasterInterface class.
+ * \file
+ * \author Karsten Rink
+ * \date 2014-09-10
+ * \brief Definition of the AsciiRasterInterface class.
  *
- * @copyright
+ * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or

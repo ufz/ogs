@@ -21,8 +21,8 @@ namespace MeshLib
  * This class represents a 2d triangle element with 6 nodes.
  *
  * The following sketch shows the node and edge numbering.
- * @anchor Tri6NodeAndEdgeNumbering
- * @code
+ * \anchor Tri6NodeAndEdgeNumbering
+ * \code
  *
  *          2
  *          o
@@ -34,7 +34,7 @@ namespace MeshLib
  *    0-----------1
  *          3
  *
- * @endcode
+ * \endcode
  */
 class TriRule6 : public TriRule3
 {

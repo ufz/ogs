@@ -1,4 +1,5 @@
 /**
+ * \file
  * \author Karsten Rink
  * \date   2010-08-25
  * \brief  Implementation of the project data class.

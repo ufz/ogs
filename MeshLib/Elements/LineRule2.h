@@ -20,9 +20,9 @@ namespace MeshLib
 
 /**
  * A 1d Edge or Line Element.
- * @code
+ * \code
  *  0--------1
- * @endcode
+ * \endcode
  */
 class LineRule2 : public EdgeRule
 {
@@ -50,7 +50,7 @@ public:
 
     /**
      * \copydoc MeshLib::Element::isPntInElement()
-     * @param nodes the nodes of the element.
+     * \param nodes the nodes of the element.
      */
     static bool isPntInElement(Node const* const* nodes,
                                MathLib::Point3d const& pnt, double eps);

@@ -1,4 +1,5 @@
 /**
+ * \file
  * \brief Test the gradient of shape functions via the numerical volume
  *        integration.
  *
@@ -8,7 +9,6 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  *  Created on July 14, 2017, 10:08 AM
  */
 

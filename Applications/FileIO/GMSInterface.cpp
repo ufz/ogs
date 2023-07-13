@@ -9,10 +9,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
- * @file GMSInterface.cpp
- * @date 2010-06-08
- * @author Karsten Rink
  */
 
 #include "GMSInterface.h"

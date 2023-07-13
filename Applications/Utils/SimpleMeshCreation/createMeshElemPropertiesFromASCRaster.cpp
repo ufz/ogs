@@ -1,4 +1,5 @@
 /**
+ * \file
  * \brief  Implementation of the createMeshElemPropertiesFromASCRaster tool.
  *
  * \copyright

@@ -18,9 +18,9 @@ namespace MeshLib
 
 /**
  * A 1d Edge or Line element with 3 nodes.
- * @code
+ * \code
  *  0----2----1
- * @endcode
+ * \endcode
  */
 class LineRule3 : public LineRule2
 {

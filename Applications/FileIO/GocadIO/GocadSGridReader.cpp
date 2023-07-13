@@ -280,8 +280,8 @@ void GocadSGridReader::parseFileName(std::string const& line,
 }
 
 /**
- * @param line input/output
- * @param in input stream containing the face set
+ * \param line input/output
+ * \param in input stream containing the face set
  */
 void GocadSGridReader::parseFaceSet(std::string& line, std::istream& in)
 {

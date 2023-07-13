@@ -31,13 +31,13 @@ namespace MeshToolsLib::MeshGenerators::VoxelFromLayeredMeshes
 /**
  * Constructs a VoxelGrid with a specified resolution of a list of
  * layered meshes.
- * @param extent  The axis-aligned boundary-box (AABB) which is initially
+ * \param extent  The axis-aligned boundary-box (AABB) which is initially
  * defined.
- * @param layers                 Containing all the meshes that will be used
+ * \param layers                 Containing all the meshes that will be used
  * to create the VoxelGrid.
- * @param cellsize       Contains the resolution of the Voxel (i.e.
+ * \param cellsize       Contains the resolution of the Voxel (i.e.
  * length in x-,y-,z-directions)
- * @param dilate  A flag to set dilate. If dilate is True all Voxels which
+ * \param dilate  A flag to set dilate. If dilate is True all Voxels which
  * are not fully covered by the meshes are included in the resulting
  * VoxelGrid.
  */

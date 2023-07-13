@@ -1,11 +1,11 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file
  *
  * Created on August 17, 2016, 2:36 PM
  */
@@ -26,10 +26,10 @@ namespace MaterialLib
 namespace PorousMedium
 {
 /** Create a porosity model
- * @param config  ConfigTree object has a tag of `<permeability>` that
+ * \param config  ConfigTree object has a tag of `<permeability>` that
  * describes the permeability relationsship and contains the name of the
  * parameter
- * @param parameters a vector containing the available parameters
+ * \param parameters a vector containing the available parameters
  */
 std::unique_ptr<Permeability> createPermeabilityModel(
     BaseLib::ConfigTree const& config,

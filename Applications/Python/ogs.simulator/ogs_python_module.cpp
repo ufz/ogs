@@ -1,6 +1,6 @@
 /**
- * \brief  Implementation of OpenGeoSys simulation application python module
  * \file
+ * \brief  Implementation of OpenGeoSys simulation application python module
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)

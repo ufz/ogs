@@ -1,7 +1,7 @@
 /**
+ * \file
  * \brief  Definition of the quicksort function.
  *
- * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.

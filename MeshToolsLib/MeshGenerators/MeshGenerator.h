@@ -31,9 +31,9 @@ namespace MeshGenerator
 
 /**
  * Generate regularly placed mesh nodes in 3D spaces
- * @param vec_xyz_coords  a vector of coordinates in x,y,z directions
- * @param origin          coordinates of the left-most point
- * @return a vector of created mesh nodes
+ * \param vec_xyz_coords  a vector of coordinates in x,y,z directions
+ * \param origin          coordinates of the left-most point
+ * \return a vector of created mesh nodes
  */
 std::vector<MeshLib::Node*> generateRegularNodes(
     const std::vector<const std::vector<double>*>& vec_xyz_coords,
@@ -41,9 +41,9 @@ std::vector<MeshLib::Node*> generateRegularNodes(
 
 /**
  * Generate regularly placed mesh nodes in 1D space
- * @param vec_x_coords  a vector of x coordinates
- * @param origin        coordinates of the left-most point
- * @return a vector of created mesh nodes
+ * \param vec_x_coords  a vector of x coordinates
+ * \param origin        coordinates of the left-most point
+ * \return a vector of created mesh nodes
  */
 std::vector<MeshLib::Node*> generateRegularNodes(
     const std::vector<double>& vec_x_coords,
@@ -51,10 +51,10 @@ std::vector<MeshLib::Node*> generateRegularNodes(
 
 /**
  * Generate regularly placed mesh nodes in 1D space
- * @param vec_x_coords  a vector of x coordinates
- * @param vec_y_coords  a vector of y coordinates
- * @param origin        coordinates of the left-most point
- * @return a vector of created mesh nodes
+ * \param vec_x_coords  a vector of x coordinates
+ * \param vec_y_coords  a vector of y coordinates
+ * \param origin        coordinates of the left-most point
+ * \return a vector of created mesh nodes
  */
 std::vector<MeshLib::Node*> generateRegularNodes(
     std::vector<double>& vec_x_coords,
@@ -63,11 +63,11 @@ std::vector<MeshLib::Node*> generateRegularNodes(
 
 /**
  * Generate regularly placed mesh nodes in 1D space
- * @param vec_x_coords  a vector of x coordinates
- * @param vec_y_coords  a vector of y coordinates
- * @param vec_z_coords  a vector of z coordinates
- * @param origin        coordinates of the left-most point
- * @return a vector of created mesh nodes
+ * \param vec_x_coords  a vector of x coordinates
+ * \param vec_y_coords  a vector of y coordinates
+ * \param vec_z_coords  a vector of z coordinates
+ * \param origin        coordinates of the left-most point
+ * \return a vector of created mesh nodes
  */
 std::vector<MeshLib::Node*> generateRegularNodes(
     std::vector<double>& vec_x_coords,
@@ -77,10 +77,10 @@ std::vector<MeshLib::Node*> generateRegularNodes(
 
 /**
  * Generate regularly placed mesh nodes in 3D spaces
- * @param n_cells    an array of the number of cells in x,y,z directions
- * @param cell_size  an array of cell sizes in x,y,z directions
- * @param origin     coordinates of the left-most point
- * @return a vector of created mesh nodes
+ * \param n_cells    an array of the number of cells in x,y,z directions
+ * \param cell_size  an array of cell sizes in x,y,z directions
+ * \param origin     coordinates of the left-most point
+ * \return a vector of created mesh nodes
  */
 std::vector<MeshLib::Node*> generateRegularNodes(
     const std::array<unsigned, 3>& n_cells,

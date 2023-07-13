@@ -19,8 +19,8 @@ namespace MeshLib
 /**
  * This class represents a 2d quadrilateral element with 9 nodes.
  * The following sketch shows the node and edge numbering.
- * @anchor Quad9NodeAndEdgeNumbering
- * @code
+ * \anchor Quad9NodeAndEdgeNumbering
+ * \code
  *              2
  *        3-----6-----2
  *        |           |
@@ -30,7 +30,7 @@ namespace MeshLib
  *        |           |
  *        0-----4-----1
  *              0
- * @endcode
+ * \endcode
  */
 class QuadRule9 : public QuadRule8
 {

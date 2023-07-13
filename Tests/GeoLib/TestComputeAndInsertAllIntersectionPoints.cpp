@@ -1,6 +1,6 @@
 /**
- * @file TestComputeAndInsertAllIntersectionPoints.cpp
- * @date 2014-05-09
+ * \file
+ * \date 2014-05-09
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)

@@ -25,11 +25,11 @@ enum TriangleTest
 /**
  * Checks if a point p is on the left or right side of a plane spanned by three
  * points a, b, c.
- * @param p point to test
- * @param a first point on plane
- * @param b second point on plane
- * @param c third point on plane
- * @return If the triangle abc is ordered counterclockwise when viewed from p,
+ * \param p point to test
+ * \param a first point on plane
+ * \param b second point on plane
+ * \param c third point on plane
+ * \return If the triangle abc is ordered counterclockwise when viewed from p,
  * the method will return a negative value,
  * otherwise it will return a positive value. If p is coplanar with abc, the
  * function will return 0.
@@ -63,14 +63,14 @@ double calcTriangleArea(MathLib::Point3d const& a, MathLib::Point3d const& b,
  * coplanar) the function
  * will return false because there is no meaningful concept of "inside" for such
  * elements.
- * @param p test point
- * @param a edge node of tetrahedron
- * @param b edge node of tetrahedron
- * @param c edge node of tetrahedron
- * @param d edge node of tetrahedron
- * @param eps Accounts for numerical inaccuracies by allowing a point to be
+ * \param p test point
+ * \param a edge node of tetrahedron
+ * \param b edge node of tetrahedron
+ * \param c edge node of tetrahedron
+ * \param d edge node of tetrahedron
+ * \param eps Accounts for numerical inaccuracies by allowing a point to be
  * slightly outside of the element and still be regarded as inside.
- * @return true if the test point p is not located outside of abcd (i.e. inside
+ * \return true if the test point p is not located outside of abcd (i.e. inside
  * or on a plane/edge).
  */
 bool isPointInTetrahedron(MathLib::Point3d const& p, MathLib::Point3d const& a,
@@ -83,16 +83,16 @@ bool isPointInTetrahedron(MathLib::Point3d const& p, MathLib::Point3d const& a,
  * a, b and c.Using two eps-values it is possible to test an 'epsilon'
  * neighbourhood around the triangle as well as an 'epsilon' outside the
  * triangles plane.
- * @param p test point
- * @param a edge node of triangle
- * @param b edge node of triangle
- * @param c edge node of triangle
- * @param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane
+ * \param p test point
+ * \param a edge node of triangle
+ * \param b edge node of triangle
+ * \param c edge node of triangle
+ * \param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane
  * spanned by abc
- * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of
+ * \param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of
  * abc
- * @param algorithm defines the method to use
- * @return true if the test point p is within the 'epsilon'-neighbourhood of the
+ * \param algorithm defines the method to use
+ * \return true if the test point p is within the 'epsilon'-neighbourhood of the
  * triangle
  */
 bool isPointInTriangle(
@@ -110,15 +110,15 @@ bool isPointInTriangle(
  * Using two eps-values it is possible to test an 'epsilon' neighbourhood around
  * the triangle
  * as well as an 'epsilon' outside the triangles plane.
- * @param q test point
- * @param a edge node of triangle
- * @param b edge node of triangle
- * @param c edge node of triangle
- * @param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane
+ * \param q test point
+ * \param a edge node of triangle
+ * \param b edge node of triangle
+ * \param c edge node of triangle
+ * \param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane
  * spanned by abc ((orthogonal distance to the plane spaned by triangle)
- * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of
+ * \param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of
  * abc
- * @return true if the test point p is within the 'epsilon'-neighbourhood of the
+ * \return true if the test point p is within the 'epsilon'-neighbourhood of the
  * triangle
  */
 bool gaussPointInTriangle(
@@ -134,15 +134,15 @@ bool gaussPointInTriangle(
  * the triangle
  * as well as an 'epsilon' outside the triangles plane.
  * Algorithm based on "Fundamentals of Computer Graphics" by Peter Shirley.
- * @param p test point
- * @param a edge node of triangle
- * @param b edge node of triangle
- * @param c edge node of triangle
- * @param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane
+ * \param p test point
+ * \param a edge node of triangle
+ * \param b edge node of triangle
+ * \param c edge node of triangle
+ * \param eps_pnt_out_of_plane eps allowing for p to be slightly off the plane
  * spanned by abc
- * @param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of
+ * \param eps_pnt_out_of_tri eps allowing for p to be slightly off outside of
  * abc
- * @return true if the test point p is within the 'epsilon'-neighbourhood of the
+ * \return true if the test point p is within the 'epsilon'-neighbourhood of the
  * triangle
  */
 bool barycentricPointInTriangle(
@@ -162,11 +162,11 @@ MathLib::Point3d const& b, MathLib::Point3d const& c);
  * Checks if a and b can be placed on a plane such that c and d lie on different
  * sides of said plane. (In 2D space this checks if c and d are on different
  * sides of a line through a and b.)
- * @param a first point on plane
- * @param b second point on plane
- * @param c first point to test
- * @param d second point to test
- * @return true, if such a plane can be found, false otherwise
+ * \param a first point on plane
+ * \param b second point on plane
+ * \param c first point to test
+ * \param d second point to test
+ * \return true, if such a plane can be found, false otherwise
  */
 bool dividedByPlane(const MathLib::Point3d& a, const MathLib::Point3d& b,
                     const MathLib::Point3d& c, const MathLib::Point3d& d);

@@ -1,6 +1,6 @@
 /**
- * @file TestParall.cpp
- * @date Feb 26, 2014
+ * \file
+ * \date Feb 26, 2014
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)

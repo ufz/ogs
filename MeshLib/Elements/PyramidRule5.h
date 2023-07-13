@@ -19,9 +19,10 @@ namespace MeshLib
 {
 
 /**
- * This class represents a 3d pyramid element. The following sketch shows the node and edge numbering.
- * @anchor Pyramid5NodeAndEdgeNumbering
- * @code
+ * This class represents a 3d pyramid element. The following sketch shows the
+ node and edge numbering.
+ * \anchor Pyramid5NodeAndEdgeNumbering
+ * \code
  *
  *               4
  *             //|\
@@ -37,7 +38,7 @@ namespace MeshLib
  *   ./          |/
  *  0------------1
  *        0
- * @endcode
+ * \endcode
 
  */
 class PyramidRule5 : public CellRule
@@ -81,7 +82,7 @@ public:
 
     /**
      * \copydoc MeshLib::Element::isPntInElement()
-     * @param nodes the nodes of the element.
+     * \param nodes the nodes of the element.
      */
     static bool isPntInElement(Node const* const* nodes,
                                MathLib::Point3d const& pnt, double eps);

@@ -1,4 +1,5 @@
 /**
+ * \file
  * \date   2014-08-04
  * \brief  Implementation of OpenGeoSys simulation application
  *

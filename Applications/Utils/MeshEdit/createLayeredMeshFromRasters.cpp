@@ -1,4 +1,5 @@
 /*
+ * \file
  * \date 2016-02-11
  * \brief Creates a layered mesh from a 2D mesh and a bunch of raster files.
  *

@@ -22,10 +22,10 @@ namespace NumLib
  * Compute and return the relative change of solutions between two
  * successive time steps by \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
  *
- * @param x         The current solution
- * @param x_old     The previous solution
- * @param norm_type The norm type of global vector
- * @return          \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
+ * \param x         The current solution
+ * \param x_old     The previous solution
+ * \param norm_type The norm type of global vector
+ * \return          \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
  *
  */
 double computeRelativeChangeFromPreviousTimestep(

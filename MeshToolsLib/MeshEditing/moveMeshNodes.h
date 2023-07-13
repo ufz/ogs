@@ -1,10 +1,9 @@
 /**
- * @file moveMeshNodes.h
- * @author Thomas Fischer
- * @date Feb 03, 2014
- * @brief Functionality to move mesh nodes using a given displacement vec.
- *
  * \file
+ * \author Thomas Fischer
+ * \date Feb 03, 2014
+ * \brief Functionality to move mesh nodes using a given displacement vec.
+ *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -26,9 +25,9 @@ namespace MeshToolsLib
  * The function iterates over all mesh nodes between the
  * begin and the end iterator and moves them using the
  * given displacement.
- * @param begin begin iterator
- * @param end end iterator
- * @param displacement the displacement to use
+ * \param begin begin iterator
+ * \param end end iterator
+ * \param displacement the displacement to use
  */
 template <typename Iterator>
 void moveMeshNodes(Iterator begin,
