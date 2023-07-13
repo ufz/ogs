@@ -100,11 +100,11 @@ void Vtu2GridDialog::updateExpectedVoxel()
         this->expectedVoxelLabel->setText("approximated Voxel: undefined");
         return;
     }
-    auto const& xyz = opt_xyz.value();
+
     auto const delta = getMeshExtent(
         _mesh_model.getMesh(this->meshListBox->currentText().toStdString()));
-    double const expected_voxel =
-        (delta[0]) * (delta[1]) * (delta[2]) / xyz[0] / xyz[1] / xyz[2];
+    double const expected_voxel = (delta[0]) * (delta[1]) * (delta[2]) /
+                                  (*opt_xyz)[0] / (*opt_xyz)[1] / (*opt_xyz)[2];
 
     int const exponent = std::floor(std::log10(std::abs(expected_voxel)));
     this->expectedVoxelLabel->setText(
@@ -139,10 +139,10 @@ void Vtu2GridDialog::accept()
         return;
     }
 
-    auto opt_xyz = fillXYZ(this->xlineEdit->text(), this->ylineEdit->text(),
-                           this->zlineEdit->text());
+    auto cellsize = fillXYZ(this->xlineEdit->text(), this->ylineEdit->text(),
+                            this->zlineEdit->text());
 
-    if (!opt_xyz)
+    if (!cellsize)
     {
         OGSError::box(
             "At least the x-length of a voxel must be specified and > 0.\n If "
@@ -151,7 +151,6 @@ void Vtu2GridDialog::accept()
             "treated as "
             "the x-input.");
     }
-    auto const& cellsize = opt_xyz.value();
     auto _mesh(
         _mesh_model.getMesh(this->meshListBox->currentText().toStdString()));
 
@@ -179,17 +178,18 @@ void Vtu2GridDialog::accept()
             "The range (max-min of the bounding box) is not allowed to be < 0");
     }
     std::array<std::size_t, 3> const dims =
-        VoxelGridFromMesh::getNumberOfVoxelPerDimension(ranges, cellsize);
+        VoxelGridFromMesh::getNumberOfVoxelPerDimension(ranges, *cellsize);
     std::unique_ptr<MeshLib::Mesh> grid(
-        generateRegularHexMesh(dims[0], dims[1], dims[2], cellsize[0],
-                               cellsize[1], cellsize[2], min, "grid"));
+        generateRegularHexMesh(dims[0], dims[1], dims[2], (*cellsize)[0],
+                               (*cellsize)[1], (*cellsize)[2], min, "grid"));
     if (grid == nullptr)
     {
         OGS_FATAL(
             "Could not generate regular hex mesh. With parameters dims={} {} "
             "{}, "
             "cellsize={} {} {}",
-            dims[0], dims[1], dims[2], cellsize[0], cellsize[1], cellsize[2]);
+            dims[0], dims[1], dims[2], (*cellsize)[0], (*cellsize)[1],
+            (*cellsize)[2]);
     }
 
     std::vector<int>* cell_ids =
@@ -199,7 +199,7 @@ void Vtu2GridDialog::accept()
     {
         OGS_FATAL("Could not create cell ids.");
     }
-    *cell_ids = VoxelGridFromMesh::assignCellIds(mesh, min, dims, cellsize);
+    *cell_ids = VoxelGridFromMesh::assignCellIds(mesh, min, dims, *cellsize);
     if (!VoxelGridFromMesh::removeUnusedGridCells(mesh, grid))
     {
         return;
