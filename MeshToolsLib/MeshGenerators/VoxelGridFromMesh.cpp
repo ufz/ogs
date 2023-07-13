@@ -128,9 +128,11 @@ void mapArray(MeshLib::Mesh& grid, VTK_TYPE vtk_arr, std::string const& name)
 }
 
 template <typename T>
-bool check_dyncast(MeshLib::Mesh& mesh,
-                   vtkSmartPointer<vtkCellData> const cell_data,
-                   char const* const name)
+// check whether dynamic_cast of cell data is possible the type of cell data to
+// map them on voxelgrid
+bool checkDyncast(MeshLib::Mesh& mesh,
+                  vtkSmartPointer<vtkCellData> const cell_data,
+                  char const* const name)
 {
     using DataArrayType = vtkAOSDataArrayTemplate<T>;
     vtkSmartPointer<DataArrayType> const arr =
@@ -153,10 +155,10 @@ void mapMeshArraysOntoGrid(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
     {
         auto const name = cell_data->GetArrayName(i);
 
-        if (!(check_dyncast<double>(*grid, cell_data, name) ||
-              check_dyncast<long>(*grid, cell_data, name) ||
-              check_dyncast<long long>(*grid, cell_data, name) ||
-              check_dyncast<int>(*grid, cell_data, name)))
+        if (!(checkDyncast<double>(*grid, cell_data, name) ||
+              checkDyncast<long>(*grid, cell_data, name) ||
+              checkDyncast<long long>(*grid, cell_data, name) ||
+              checkDyncast<int>(*grid, cell_data, name)))
         {
             WARN("Ignoring array '{:s}', array type {:s} not implemented...",
                  name,

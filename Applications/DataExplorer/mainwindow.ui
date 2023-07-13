@@ -132,8 +132,8 @@
     <addaction name="actionDiagram_Viewer"/>
     <addaction name="actionFEM_Test"/>
     <addaction name="actionTranslating_Data"/>
-    <addaction name="action3D_mesh_to_Voxelgrid"/>
-    <addaction name="actionCreate_a_Voxelgrid"/>
+    <addaction name="action3D_mesh_to_voxelgrid"/>
+    <addaction name="actionCreate_a_voxelgrid"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -477,14 +477,14 @@
     <string>Translating Data</string>
    </property>
   </action>
-  <action name="action3D_mesh_to_Voxelgrid">
+  <action name="action3D_mesh_to_voxelgrid">
    <property name="text">
-    <string>3D mesh to Voxelgrid</string>
+    <string>3D mesh to voxelgrid</string>
    </property>
   </action>
-  <action name="actionCreate_a_Voxelgrid">
+  <action name="actionCreate_a_voxelgrid">
    <property name="text">
-    <string>Create a Voxelgrid from Layers</string>
+    <string>Create a voxelgrid from Layers</string>
    </property>
   </action>
  </widget>
@@ -770,7 +770,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionCreate_a_Voxelgrid</sender>
+   <sender>actionCreate_a_voxelgrid</sender>
    <signal>triggered()</signal>
    <receiver>MainWindowClass</receiver>
    <slot>showLayers2GridDialog()</slot>
@@ -786,7 +786,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>action3D_mesh_to_Voxelgrid</sender>
+   <sender>action3D_mesh_to_voxelgrid</sender>
    <signal>triggered()</signal>
    <receiver>MainWindowClass</receiver>
    <slot>showVtu2GridDialog()</slot>
@@ -800,7 +800,7 @@
      <y>372</y>
     </hint>
    </hints>
-  </connection>  
+  </connection>
   <connection>
    <sender>actionCreate_Structured_Mesh</sender>
    <signal>triggered()</signal>

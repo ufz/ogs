@@ -1358,7 +1358,7 @@ void MainWindow::showLayers2GridDialog()
 {
     if (_meshModel == nullptr)
     {
-        OGSError::box("The supplied mesh_model is not existing.");
+        OGSError::box("The given mesh model does not exist.");
     }
 
     auto dlg = Layers2GridDialog(*_meshModel);
@@ -1369,7 +1369,7 @@ void MainWindow::showVtu2GridDialog()
 {
     if (_meshModel == nullptr)
     {
-        OGSError::box("The supplied mesh_model is not existing.");
+        OGSError::box("The given mesh model does not exist.");
     }
     auto dlg = Vtu2GridDialog(*_meshModel);
     dlg.exec();

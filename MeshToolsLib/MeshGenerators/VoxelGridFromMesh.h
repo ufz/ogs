@@ -49,9 +49,4 @@ bool removeUnusedGridCells(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
 // map the cell data of mesh to voxelgrid
 void mapMeshArraysOntoGrid(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
                            std::unique_ptr<MeshLib::Mesh>& grid);
-// check whether dynamic_cast of cell data is possible the type of cell data to
-// map them on voxelgrid
-bool check_dyncast(MeshLib::Mesh& mesh,
-                   vtkSmartPointer<vtkCellData> const cell_data,
-                   char const* const name);
 }  // namespace MeshToolsLib::MeshGenerator::VoxelGridFromMesh

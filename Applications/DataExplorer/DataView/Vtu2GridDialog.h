@@ -48,7 +48,3 @@ private slots:
     void on_ylineEdit_textChanged();
     void on_zlineEdit_textChanged();
 };
-
-std::optional<std::array<double, 3>> fillXYZ(QString xin,
-                                             QString yin,
-                                             QString zin);

@@ -103,13 +103,13 @@ void Vtu2GridDialog::updateExpectedVoxel()
     auto const& xyz = opt_xyz.value();
     auto const delta = getMeshExtent(
         _mesh_model.getMesh(this->meshListBox->currentText().toStdString()));
-    double const expectedVoxel =
+    double const expected_voxel =
         (delta[0]) * (delta[1]) * (delta[2]) / xyz[0] / xyz[1] / xyz[2];
 
-    int const exponent = std::floor(std::log10(abs(expectedVoxel)));
+    int const exponent = std::floor(std::log10(std::abs(expected_voxel)));
     this->expectedVoxelLabel->setText(
         "approximated Voxel = " +
-        QString::number(std::round(expectedVoxel / std::pow(10, exponent))) +
+        QString::number(std::round(expected_voxel / std::pow(10, exponent))) +
         " x 10^" + QString::number(exponent));
 }
 
@@ -198,9 +198,9 @@ void Vtu2GridDialog::accept()
 
     VoxelGridFromMesh::mapMeshArraysOntoGrid(mesh, grid);
 
-    if (mesh == nullptr)
+    if (grid == nullptr)
     {
-        OGSError::box("The VoxelGrid is faulty");  // write name of layer.
+        OGSError::box("No voxelgrid could be created from the mesh.");
         return;
     }
 
