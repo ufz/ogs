@@ -28,117 +28,100 @@ extern void incorporateFixedTimesForOutput(
     std::vector<double> const& fixed_times_for_output);
 }
 
-TEST(NumLib, TimeSteppingFixed_findDeltatInterval)
+class NumLibTimeSteppingFixed_FindDeltaT : public ::testing::Test
 {
-    double const initial_dt = 1e-12;
-    std::vector dts = {initial_dt};
-    dts.insert(dts.end(), 10, 1e-1);
-    double const t_initial = 0.0;
+    std::vector<double> dts;
 
+protected:
+    double const initial_dt = 1e-12;
+
+    void SetUp() override
     {
-        std::size_t const expected_interval = 5;
-        double time_point = 0.5;
-        auto const interval =
-            NumLib::findDeltatInterval(t_initial, dts, time_point);
-        ASSERT_EQ(expected_interval, interval);
+        dts = {initial_dt};
+        dts.insert(dts.end(), 10, 1e-1);
     }
+
+    std::size_t find(double const t)
     {
-        std::size_t const expected_interval = 5;
-        double time_point = 0.5 + std::numeric_limits<double>::epsilon();
-        auto const interval =
-            NumLib::findDeltatInterval(t_initial, dts, time_point);
-        ASSERT_EQ(expected_interval, interval);
+        double const t_initial = 0.0;
+        return NumLib::findDeltatInterval(t_initial, dts, t);
     }
-    {
-        std::size_t const expected_interval = 6;
-        double time_point = 0.6 - initial_dt;
-        auto const interval_number =
-            NumLib::findDeltatInterval(t_initial, dts, time_point);
-        INFO("value {} in interval [{}, {})", time_point,
-             std::accumulate(begin(dts), begin(dts) + interval_number,
-                             initial_dt),
-             std::accumulate(begin(dts), begin(dts) + interval_number + 1,
-                             initial_dt));
-        ASSERT_EQ(expected_interval, interval_number);
-    }
-    {
-        std::size_t const expected_interval =
-            std::numeric_limits<std::size_t>::max();
-        double time_point = -initial_dt;
-        auto const interval_number =
-            NumLib::findDeltatInterval(t_initial, dts, time_point);
-        ASSERT_EQ(expected_interval, interval_number);
-    }
-    {
-        std::size_t const expected_interval =
-            std::numeric_limits<std::size_t>::max();
-        double time_point = 1000;
-        auto const interval_number =
-            NumLib::findDeltatInterval(t_initial, dts, time_point);
-        ASSERT_EQ(expected_interval, interval_number);
-    }
+};
+
+TEST_F(NumLibTimeSteppingFixed_FindDeltaT, TestPointWithinMiddleInterval)
+{
+    EXPECT_EQ(5, find(0.5));
 }
 
-TEST(NumLib, TimeSteppingFixed)
+TEST_F(NumLibTimeSteppingFixed_FindDeltaT, TestPointAtBoundary)
+{
+    EXPECT_EQ(5, find(0.5 + std::numeric_limits<double>::epsilon()));
+}
+
+TEST_F(NumLibTimeSteppingFixed_FindDeltaT, TestPointJustBeforeNextInterval)
+{
+    EXPECT_EQ(6, find(0.6 - initial_dt));
+}
+
+TEST_F(NumLibTimeSteppingFixed_FindDeltaT, TestPointBeforeInitialTime)
+{
+    EXPECT_EQ(std::numeric_limits<std::size_t>::max(), find(-initial_dt));
+}
+
+TEST_F(NumLibTimeSteppingFixed_FindDeltaT, TestPointBeyondEndTime)
+{
+    EXPECT_EQ(std::numeric_limits<std::size_t>::max(), find(1000));
+}
+
+class NumLibTimeSteppingFixed_TimeSteps : public ::testing::Test
 {
     std::vector<int> const dummy_number_iterations = {0, 0, 0, 0};
-    // homogeneous dt
+
+protected:
+    void checkExpectedTimes(NumLib::FixedTimeStepping& algorithm,
+                            std::vector<double> const expected_times) const
     {
-        NumLib::FixedTimeStepping fixed(1, 31, 10);
-        const std::vector<double> expected_vec_t = {1, 11, 21, 31};
+        std::vector<double> times =
+            timeStepping(algorithm, dummy_number_iterations, {});
 
-        std::vector<double> vec_t =
-            timeStepping(fixed, dummy_number_iterations, {});
-
-        ASSERT_EQ(expected_vec_t.size(), vec_t.size());
-        ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(),
+        ASSERT_EQ(expected_times.size(), times.size());
+        ASSERT_ARRAY_NEAR(expected_times, times, expected_times.size(),
                           std::numeric_limits<double>::epsilon());
     }
+};
 
-    // dt vector (t_end == t0 + sum(dt))
-    {
-        const std::vector<double> fixed_dt = {10, 10, 10};
-        NumLib::FixedTimeStepping fixed(1, 31, fixed_dt);
-        const std::vector<double> expected_vec_t = {1, 11, 21, 31};
+TEST_F(NumLibTimeSteppingFixed_TimeSteps, HomogeneousDt)
+{
+    NumLib::FixedTimeStepping algorithm(1, 31, 10);
 
-        std::vector<double> vec_t =
-            timeStepping(fixed, dummy_number_iterations, {});
-
-        ASSERT_EQ(expected_vec_t.size(), vec_t.size());
-        ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(),
-                          std::numeric_limits<double>::epsilon());
-    }
-
-    // dt vector (t_end < t0 + sum(dt))
-    {
-        const std::vector<double> fixed_dt = {5, 10, 20};
-        NumLib::FixedTimeStepping fixed(1, 31, fixed_dt);
-        const std::vector<double> expected_vec_t = {1, 6, 16, 31};
-
-        std::vector<double> vec_t =
-            timeStepping(fixed, dummy_number_iterations, {});
-
-        ASSERT_EQ(expected_vec_t.size(), vec_t.size());
-        ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(),
-                          std::numeric_limits<double>::epsilon());
-    }
-
-    // dt vector (t_end > t0 + sum(dt))
-    {
-        const std::vector<double> fixed_dt = {5, 10, 10};
-        NumLib::FixedTimeStepping fixed(1, 31, fixed_dt);
-        const std::vector<double> expected_vec_t = {1, 6, 16, 26};
-
-        std::vector<double> vec_t =
-            timeStepping(fixed, dummy_number_iterations, {});
-
-        ASSERT_EQ(expected_vec_t.size(), vec_t.size());
-        ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(),
-                          std::numeric_limits<double>::epsilon());
-    }
+    checkExpectedTimes(algorithm, {1, 11, 21, 31});
 }
 
-TEST(NumLib, TimeSteppingFixed_incorporateFixedTimesForOutput_2)
+TEST_F(NumLibTimeSteppingFixed_TimeSteps, DtVectorEqualSum)
+{
+    std::vector<double> const fixed_dt = {10, 10, 10};
+    NumLib::FixedTimeStepping algorithm(1, 31, fixed_dt);
+
+    checkExpectedTimes(algorithm, {1, 11, 21, 31});
+}
+
+TEST_F(NumLibTimeSteppingFixed_TimeSteps, DtVectorLessThanSum)
+{
+    std::vector<double> const fixed_dt = {5, 10, 20};
+    NumLib::FixedTimeStepping algorithm(1, 31, fixed_dt);
+
+    checkExpectedTimes(algorithm, {1, 6, 16, 31});
+}
+
+TEST_F(NumLibTimeSteppingFixed_TimeSteps, DtVectorGreaterThanSum)
+{
+    std::vector<double> const fixed_dt = {5, 10, 10};
+    NumLib::FixedTimeStepping algorithm(1, 31, fixed_dt);
+
+    checkExpectedTimes(algorithm, {1, 6, 16, 26});
+}
+
+TEST(NumLibTimeSteppingFixed_FixedOutputTimes, incorporateFixedTimesForOutput_2)
 {
     double t_initial = 1e-10;
     std::vector<double> dts{};
@@ -173,7 +156,7 @@ TEST(NumLib, TimeSteppingFixed_incorporateFixedTimesForOutput_2)
 }
 
 // unit test related to ThermoRichardsMechanics/LiakopoulosHM/liakopoulos.prj
-TEST(NumLib, TimeSteppingFixed_incorporateFixedTimesForOutput_3)
+TEST(NumLibTimeSteppingFixed_FixedOutputTimes, incorporateFixedTimesForOutput_3)
 {
     double t_initial = 0.0;
     std::vector<double> dts{};
@@ -237,7 +220,7 @@ TEST(NumLib, TimeSteppingFixed_incorporateFixedTimesForOutput_3)
 
 // unit test related to
 // ogs-ThermoMechanics_CreepBGRa_Verification_m2_3Dload_m2_3Dload
-TEST(NumLib, TimeSteppingFixed_incorporateFixedTimesForOutput_4)
+TEST(NumLibTimeSteppingFixed_FixedOutputTimes, incorporateFixedTimesForOutput_4)
 {
     double t_initial = 0.0;
     std::vector<double> dts{t_initial};
@@ -264,7 +247,7 @@ TEST(NumLib, TimeSteppingFixed_incorporateFixedTimesForOutput_4)
               std::accumulate(dts.begin(), dts.end(), t_initial));
 }
 
-TEST(NumLib, TimeSteppingFixed_incorporateFixedTimesForOutput)
+TEST(NumLibTimeSteppingFixed_FixedOutputTimes, incorporateFixedTimesForOutput)
 {
     double t_initial = 1.0;
     std::vector<double> dts{{10, 10, 10}};
@@ -284,7 +267,8 @@ TEST(NumLib, TimeSteppingFixed_incorporateFixedTimesForOutput)
     ASSERT_EQ(3.0, dts[5]);
 }
 
-TEST(NumLib, TimeSteppingFixed_incorporateFixedTimesForOutput_Matching)
+TEST(NumLibTimeSteppingFixed_FixedOutputTimes,
+     incorporateFixedTimesForOutput_Matching)
 {
     double t_initial = 1.0;
     std::vector<double> timesteps{{10, 10, 10}};
@@ -304,9 +288,8 @@ TEST(NumLib, TimeSteppingFixed_incorporateFixedTimesForOutput_Matching)
     ASSERT_EQ(10.0, timesteps[3]);
 }
 
-TEST(
-    NumLib,
-    TimeSteppingFixed_incorporateFixedTimesForOutput_OutputTimeBeforeSimulationStartTime)
+TEST(NumLibTimeSteppingFixed_FixedOutputTimes,
+     OutputTimeBeforeSimulationStartTime)
 {
     double t_initial = 10.0;
     std::vector<double> timesteps{{10, 10, 10}};
@@ -326,9 +309,7 @@ TEST(
     ASSERT_EQ(10.0, timesteps[4]);
 }
 
-TEST(
-    NumLib,
-    TimeSteppingFixed_incorporateFixedTimesForOutput_OutputTimeAfterSimulationEndTime)
+TEST(NumLibTimeSteppingFixed_FixedOutputTimes, OutputTimeAfterSimulationEndTime)
 {
     double t_initial = 1.0;
     std::vector<double> timesteps{{10, 10, 10}};
