@@ -183,14 +183,23 @@ void Vtu2GridDialog::accept()
     std::unique_ptr<MeshLib::Mesh> grid(
         generateRegularHexMesh(dims[0], dims[1], dims[2], cellsize[0],
                                cellsize[1], cellsize[2], min, "grid"));
+    if (grid == nullptr)
+    {
+        OGS_FATAL(
+            "Could not generate regular hex mesh. With parameters dims={} {} "
+            "{}, "
+            "cellsize={} {} {}",
+            dims[0], dims[1], dims[2], cellsize[0], cellsize[1], cellsize[2]);
+    }
 
-    std::vector<int> const tmp_ids =
-        VoxelGridFromMesh::assignCellIds(mesh, min, dims, cellsize);
-    std::vector<int>& cell_ids =
-        *grid->getProperties().createNewPropertyVector<int>(
+    std::vector<int>* cell_ids =
+        grid->getProperties().createNewPropertyVector<int>(
             VoxelGridFromMesh::cell_id_name, MeshLib::MeshItemType::Cell, 1);
-    std::copy(tmp_ids.cbegin(), tmp_ids.cend(), std::back_inserter(cell_ids));
-
+    if (cell_ids == nullptr)
+    {
+        OGS_FATAL("Could not create cell ids.");
+    }
+    *cell_ids = VoxelGridFromMesh::assignCellIds(mesh, min, dims, cellsize);
     if (!VoxelGridFromMesh::removeUnusedGridCells(mesh, grid))
     {
         return;
