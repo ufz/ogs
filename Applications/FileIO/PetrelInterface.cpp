@@ -122,7 +122,11 @@ void PetrelInterface::readPetrelWellTrace(std::istream& in)
     in.getline(buffer, MAX_COLS_PER_ROW);
     std::string line(buffer);
 
-    if (line.find("# WELL TRACE FROM PETREL") != std::string::npos)
+    if (line.find("# WELL TRACE FROM PETREL") == std::string::npos)
+    {
+        return;
+    }
+
     {
         // read header
         // read well name
