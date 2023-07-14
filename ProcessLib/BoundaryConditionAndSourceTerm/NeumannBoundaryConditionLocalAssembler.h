@@ -10,10 +10,13 @@
 
 #pragma once
 
+#include <typeinfo>
+
 #include "GenericNaturalBoundaryConditionLocalAssembler.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "ParameterLib/MeshNodeParameter.h"
 #include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
@@ -60,12 +63,18 @@ public:
         unsigned const n_integration_points =
             Base::_integration_method.getNumberOfPoints();
 
-        // Get element nodes for the interpolation from nodes to integration
-        // point.
-        NodalVectorType parameter_node_values =
-            _data.neumann_bc_parameter
-                .getNodalValuesOnElement(Base::_element, t)
-                .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
+        NodalVectorType parameter_node_values;
+        if (typeid(ParameterLib::MeshNodeParameter<double> const) ==
+            typeid(_data.neumann_bc_parameter))
+        {
+            // Get element nodes for the interpolation from nodes to integration
+            // point.
+            parameter_node_values =
+                _data.neumann_bc_parameter
+                    .getNodalValuesOnElement(Base::_element, t)
+                    .template topRows<
+                        ShapeFunction::MeshElement::n_all_nodes>();
+        }
 
         double integral_measure = 1.0;
         for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -85,8 +94,17 @@ public:
             {
                 integral_measure = (*_data.integral_measure)(t, position)[0];
             }
-            _local_rhs.noalias() +=
-                N * parameter_node_values.dot(N) * w * integral_measure;
+            if (typeid(ParameterLib::MeshNodeParameter<double> const) ==
+                typeid(_data.neumann_bc_parameter))
+            {
+                _local_rhs.noalias() +=
+                    N * parameter_node_values.dot(N) * w * integral_measure;
+            }
+            else
+            {
+                auto const value = _data.neumann_bc_parameter(t, position);
+                _local_rhs.noalias() += N * value[0] * w * integral_measure;
+            }
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);
