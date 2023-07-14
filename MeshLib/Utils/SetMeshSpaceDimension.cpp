@@ -21,7 +21,7 @@ void setMeshSpaceDimension(std::vector<std::unique_ptr<Mesh>> const& meshes)
 {
     // Get the space dimension from the bulk mesh:
     auto const space_dimension = getSpaceDimension(meshes[0]->getNodes());
-    for (auto& mesh : meshes)
+    for (auto const& mesh : meshes)
     {
         auto elements = mesh->getElements();
         for (auto element : elements)

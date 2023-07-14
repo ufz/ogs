@@ -26,7 +26,7 @@ SimplePolygonTree::SimplePolygonTree(Polygon* polygon,
 
 SimplePolygonTree::~SimplePolygonTree()
 {
-    for (auto* child : _children)
+    for (auto const* child : _children)
     {
         delete child;
     }

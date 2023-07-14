@@ -41,8 +41,8 @@ namespace MeshLib
 {
 namespace IO
 {
-VtuInterface::VtuInterface(const MeshLib::Mesh* mesh, int dataMode,
-                           bool compress)
+VtuInterface::VtuInterface(MeshLib::Mesh const* const mesh, int const dataMode,
+                           bool const compress)
     : _mesh(mesh), _data_mode(dataMode), _use_compressor(compress)
 {
     if (_data_mode == vtkXMLWriter::Ascii && compress)

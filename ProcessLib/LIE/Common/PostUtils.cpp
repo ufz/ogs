@@ -80,7 +80,7 @@ PostProcessTool::PostProcessTool(
         }
     }
     // at a junction, generate one more duplicated node (total 4 nodes)
-    for (auto& entry : vec_junction_nodeID_matIDs)
+    for (auto const& entry : vec_junction_nodeID_matIDs)
     {
         auto* org_node = org_mesh.getNode(entry.first);
         auto duplicated_node =

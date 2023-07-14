@@ -230,7 +230,7 @@ ProcessVariable::createBoundaryConditions(
     std::vector<std::unique_ptr<BoundaryCondition>> bcs;
     bcs.reserve(_bc_configs.size());
 
-    for (auto& config : _bc_configs)
+    for (auto const& config : _bc_configs)
     {
         auto bc = createBoundaryCondition(
             config, dof_table, _mesh, variable_id, integration_order,

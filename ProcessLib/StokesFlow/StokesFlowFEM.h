@@ -173,7 +173,7 @@ public:
         {
             pos.setIntegrationPoint(ip);
 
-            auto& ip_data = _ip_data[ip];
+            auto const& ip_data = _ip_data[ip];
 
             auto const& N_p = ip_data.N_p;
             auto const& N_v_op = ip_data.N_v_op;

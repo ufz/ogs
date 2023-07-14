@@ -1223,7 +1223,7 @@ void ProjectData::parseNonlinearSolvers(BaseLib::ConfigTree const& config)
         auto const ls_name =
             //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__linear_solver}
             conf.getConfigParameter<std::string>("linear_solver");
-        auto& linear_solver = BaseLib::getOrError(
+        auto const& linear_solver = BaseLib::getOrError(
             _linear_solvers, ls_name,
             "A linear solver with the given name does not exist.");
 

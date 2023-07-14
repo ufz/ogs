@@ -84,7 +84,7 @@ std::unique_ptr<TimeLoop> createTimeLoop(
             auto const& residuum_vector_names =
                 process->initializeAssemblyOnSubmeshes(smroc.meshes);
 
-            for (auto& name : residuum_vector_names)
+            for (auto const& name : residuum_vector_names)
             {
                 smroc.output.doNotProjectFromBulkMeshToSubmeshes(
                     name, MeshLib::MeshItemType::Node);

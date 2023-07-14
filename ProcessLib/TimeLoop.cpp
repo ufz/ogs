@@ -205,8 +205,7 @@ setInitialConditions(
 
 void calculateNonEquilibriumInitialResiduum(
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
-    std::vector<GlobalVector*>
-        process_solutions,
+    std::vector<GlobalVector*> const& process_solutions,
     std::vector<GlobalVector*> const& process_solutions_prev)
 {
     for (auto& process_data : per_process_data)
@@ -759,7 +758,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         coupling_iteration_converged = true;
         _xdot_vector_ids.resize(_per_process_data.size());
         std::size_t cnt = 0;
-        for (auto& process_data : _per_process_data)
+        for (auto const& process_data : _per_process_data)
         {
             auto const process_id = process_data->process_id;
             BaseLib::RunTime time_timestep_process;
