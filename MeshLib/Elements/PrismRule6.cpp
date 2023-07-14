@@ -11,7 +11,6 @@
 #include "PrismRule6.h"
 
 #include "BaseLib/Logging.h"
-#include "MathLib/GeometricBasics.h"
 #include "MeshLib/Node.h"
 #include "Quad.h"
 #include "Tri.h"
@@ -61,74 +60,4 @@ const Element* PrismRule6::getFace(const Element* e, unsigned i)
     ERR("Error in MeshLib::Element::getFace() - Index {:d} does not exist.", i);
     return nullptr;
 }
-
-double PrismRule6::computeVolume(Node const* const* _nodes)
-{
-    return MathLib::calcTetrahedronVolume(
-               *_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]) +
-           MathLib::calcTetrahedronVolume(
-               *_nodes[1], *_nodes[4], *_nodes[2], *_nodes[3]) +
-           MathLib::calcTetrahedronVolume(
-               *_nodes[2], *_nodes[4], *_nodes[5], *_nodes[3]);
-}
-
-bool PrismRule6::isPntInElement(Node const* const* nodes,
-                                MathLib::Point3d const& pnt,
-                                double eps)
-{
-    return (MathLib::isPointInTetrahedron(
-                pnt, *nodes[0], *nodes[1], *nodes[2], *nodes[3], eps) ||
-            MathLib::isPointInTetrahedron(
-                pnt, *nodes[1], *nodes[4], *nodes[2], *nodes[3], eps) ||
-            MathLib::isPointInTetrahedron(
-                pnt, *nodes[2], *nodes[4], *nodes[5], *nodes[3], eps));
-}
-
-unsigned PrismRule6::identifyFace(Node const* const* _nodes,
-                                  Node const* nodes[3])
-{
-    for (unsigned i = 0; i < 5; i++)
-    {
-        unsigned flag(0);
-        for (unsigned j = 0; j < 4; j++)
-        {
-            for (unsigned k = 0; k < 3; k++)
-            {
-                if (face_nodes[i][j] != 99 &&
-                    _nodes[face_nodes[i][j]] == nodes[k])
-                {
-                    flag++;
-                }
-            }
-        }
-        if (flag == 3)
-        {
-            return i;
-        }
-    }
-    return std::numeric_limits<unsigned>::max();
-}
-
-ElementErrorCode PrismRule6::validate(const Element* e)
-{
-    ElementErrorCode error_code;
-    error_code[ElementErrorFlag::ZeroVolume] = hasZeroVolume(*e);
-
-    for (unsigned i = 1; i < 4; ++i)
-    {
-        const auto* quad(dynamic_cast<const MeshLib::Quad*>(e->getFace(i)));
-        if (quad)
-        {
-            error_code |= quad->validate();
-        }
-        else
-        {
-            error_code.set(ElementErrorFlag::NodeOrder);
-        }
-        delete quad;
-    }
-    error_code[ElementErrorFlag::NodeOrder] = !e->testElementNodeOrder();
-    return error_code;
-}
-
 }  // end namespace MeshLib

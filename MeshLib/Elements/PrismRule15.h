@@ -10,10 +10,9 @@
 
 #pragma once
 
-#include "MeshLib/MeshEnums.h"
-#include "Element.h"
 #include "EdgeReturn.h"
-#include "PrismRule6.h"
+#include "Element.h"
+#include "PrismRule.h"
 
 namespace MeshLib
 {
@@ -42,7 +41,7 @@ namespace MeshLib
  *
  * \endcode
  */
-class PrismRule15 : public PrismRule6
+class PrismRule15 : public PrismRule
 {
 public:
     /// Constant: The number of all nodes for this element
@@ -66,6 +65,12 @@ public:
     /// Returns the i-th face of the element.
     static const Element* getFace(const Element* e, unsigned i);
 
+    /// Returns the ID of a face given an array of nodes.
+    static unsigned identifyFace(Node const* const* _nodes,
+                                 Node const* nodes[3])
+    {
+        return PrismRule::identifyFace(_nodes, nodes, face_nodes);
+    }
 }; /* class */
 
 }  // namespace MeshLib
