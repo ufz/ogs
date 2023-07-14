@@ -10,16 +10,16 @@
 
 #pragma once
 
-#include "MeshLib/MeshEnums.h"
-#include "Element.h"
 #include "EdgeReturn.h"
-#include "PyramidRule5.h"
+#include "Element.h"
+#include "PyramidRule.h"
 
 namespace MeshLib
 {
+
 /**
- * This class represents a 3d pyramid element. The following sketch shows the
- node numbering.
+ * This class represents a 3d pyramid element with 13 nodes.
+ * The following sketch shows the node numbering.
  * \anchor Pyramid13NodeNumbering
  * \code
  *
@@ -40,7 +40,7 @@ namespace MeshLib
  * \endcode
 
  */
-class PyramidRule13 : public PyramidRule5
+class PyramidRule13 : public PyramidRule
 {
 public:
     /// Constant: The number of all nodes for this element
@@ -64,6 +64,12 @@ public:
     /// Returns the i-th face of the element.
     static const Element* getFace(const Element* e, unsigned i);
 
+    /// Returns the ID of a face given an array of nodes.
+    static unsigned identifyFace(Node const* const* _nodes,
+                                 Node const* nodes[3])
+    {
+        return PyramidRule::identifyFace(_nodes, nodes, face_nodes);
+    }
 }; /* class */
 
 }  // namespace MeshLib
