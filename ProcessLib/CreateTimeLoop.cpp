@@ -46,16 +46,15 @@ std::unique_ptr<TimeLoop> createTimeLoop(
             //! \ogs_file_param{prj__time_loop__global_process_coupling__convergence_criteria}
             coupling_config->getConfigSubtree("convergence_criteria");
 
-        for (
-            auto coupling_convergence_criterion_config :
+        auto coupling_convergence_criterion_config =
             //! \ogs_file_param{prj__time_loop__global_process_coupling__convergence_criteria__convergence_criterion}
             coupling_convergence_criteria_config.getConfigSubtreeList(
-                "convergence_criterion"))
-        {
-            global_coupling_conv_criteria.push_back(
-                NumLib::createConvergenceCriterion(
-                    coupling_convergence_criterion_config));
-        }
+                "convergence_criterion");
+        std::transform(coupling_convergence_criterion_config.begin(),
+                       coupling_convergence_criterion_config.end(),
+                       std::back_inserter(global_coupling_conv_criteria),
+                       [](BaseLib::ConfigTree const& c)
+                       { return NumLib::createConvergenceCriterion(c); });
     }
 
     //! \ogs_file_param{prj__time_loop__output}
