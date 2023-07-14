@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include "MeshLib/MeshEnums.h"
-#include "LineRule2.h"
+#include "EdgeReturn.h"
+#include "LineRule.h"
 
 namespace MeshLib
 {
@@ -22,7 +22,7 @@ namespace MeshLib
  *  0----2----1
  * \endcode
  */
-class LineRule3 : public LineRule2
+class LineRule3 : public LineRule
 {
 public:
     /// Constant: The number of all nodes for this element
