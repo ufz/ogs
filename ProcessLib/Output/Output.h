@@ -31,7 +31,7 @@ class Process;
 class Output
 {
 public:
-    Output(std::unique_ptr<OutputFormat>&& output_file,
+    Output(std::unique_ptr<OutputFormat>&& output_format,
            bool const output_nonlinear_iteration_results,
            OutputDataSpecification&& output_data_specification,
            std::vector<std::string>&& mesh_names_for_output,
