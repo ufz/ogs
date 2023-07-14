@@ -124,6 +124,16 @@ void PetrelInterface::readPetrelSurfacePoints(std::istream& in)
     }
 }
 
+static void printListInfo(const std::list<std::string>& str_list,
+                          std::string_view const prefix,
+                          std::string_view const message)
+{
+    for (auto const& str : str_list)
+    {
+        INFO("PetrelInterface::{:s}(): {:s}: {:s}.", prefix, message, str);
+    }
+}
+
 static double getLastNumberFromList(const std::list<std::string>& str_list)
 {
     return std::stod(*(--str_list.end()));
@@ -138,53 +148,27 @@ void PetrelInterface::readPetrelWellTrace(std::istream& in)
         return;
     }
 
+    auto printInfo = [](auto const& list, std::string_view const message)
+    { printListInfo(list, "readPetrelWellTrace", message); };
+
     {
         // read header
         // read well name
-        std::list<std::string> str_list = split(readLine(in));
-        std::list<std::string>::const_iterator it(str_list.begin());
-        while (it != str_list.end())
-        {
-            INFO("PetrelInterface::readPetrelWellTrace(): well name: {:s}.",
-                 it->c_str());
-            ++it;
-        }
+        printInfo(split(readLine(in)), "well name");
 
         // read well head x coordinate
-        str_list = split(readLine(in));
-        it = str_list.begin();
-        while (it != str_list.end())
-        {
-            INFO(
-                "PetrelInterface::readPetrelWellTrace(): well head x coord: "
-                "{:s}.",
-                it->c_str());
-            ++it;
-        }
+        auto str_list = split(readLine(in));
+        printInfo(str_list, "well head x coord");
         double const well_head_x = getLastNumberFromList(str_list);
 
         // read well head y coordinate
         str_list = split(readLine(in));
-        it = str_list.begin();
-        while (it != str_list.end())
-        {
-            INFO(
-                "PetrelInterface::readPetrelWellTrace(): well head y coord: "
-                "{:s}.",
-                it->c_str());
-            ++it;
-        }
+        printInfo(str_list, "well head y coord");
         double const well_head_y = getLastNumberFromList(str_list);
 
         // read well KB
         str_list = split(readLine(in));
-        it = str_list.begin();
-        while (it != str_list.end())
-        {
-            INFO("PetrelInterface::readPetrelWellTrace(): well kb entry: {:s}.",
-                 it->c_str());
-            ++it;
-        }
+        printInfo(str_list, "well kb entry");
         double const well_kb = getLastNumberFromList(str_list);
 
         INFO("PetrelInterface::readPetrelWellTrace(): {:f}, {:f}, {:f}.",
@@ -217,16 +201,7 @@ void PetrelInterface::readPetrelWellTraceData(std::istream& in)
     }
 
     // read column information
-    std::list<std::string> str_list = split(line);
-    auto it = str_list.begin();
-    while (it != str_list.end())
-    {
-        INFO(
-            "PetrelInterface::readPetrelWellTraceData(): column information: "
-            "{:s}.",
-            it->c_str());
-        ++it;
-    }
+    printListInfo(split(line), "readPetrelWellTraceData", "column information");
 
     // read points
     double md;
