@@ -16,6 +16,7 @@
 
 #include <cstddef>
 #include <fstream>
+#include <range/v3/numeric/accumulate.hpp>
 #include <string>
 
 #include "BaseLib/FileTools.h"
@@ -201,11 +202,9 @@ bool TetGenInterface::parseSmeshFacets(
     // the poly-file potentially defines a number of region attributes, these
     // are ignored for now
 
-    std::size_t nTotalTriangles(0);
-    for (auto& surface : surfaces)
-    {
-        nTotalTriangles += surface->getNumberOfTriangles();
-    }
+    auto const nTotalTriangles = ranges::accumulate(
+        surfaces, std::size_t{0}, {},
+        [](auto const* surface) { return surface->getNumberOfTriangles(); });
     if (nTotalTriangles == nFacets)
     {
         return true;
