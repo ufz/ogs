@@ -124,6 +124,11 @@ void PetrelInterface::readPetrelSurfacePoints(std::istream& in)
     }
 }
 
+static double getLastNumberFromList(const std::list<std::string>& str_list)
+{
+    return std::stod(*(--str_list.end()));
+}
+
 void PetrelInterface::readPetrelWellTrace(std::istream& in)
 {
     std::string line = readLine(in);
@@ -156,10 +161,7 @@ void PetrelInterface::readPetrelWellTrace(std::istream& in)
                 it->c_str());
             ++it;
         }
-        it = (str_list.end())--;
-        --it;
-        char* buf;
-        double well_head_x(strtod((*it).c_str(), &buf));
+        double const well_head_x = getLastNumberFromList(str_list);
 
         // read well head y coordinate
         str_list = split(readLine(in));
@@ -172,9 +174,7 @@ void PetrelInterface::readPetrelWellTrace(std::istream& in)
                 it->c_str());
             ++it;
         }
-        it = (str_list.end())--;
-        --it;
-        double well_head_y(strtod((*it).c_str(), &buf));
+        double const well_head_y = getLastNumberFromList(str_list);
 
         // read well KB
         str_list = split(readLine(in));
@@ -185,8 +185,7 @@ void PetrelInterface::readPetrelWellTrace(std::istream& in)
                  it->c_str());
             ++it;
         }
-        it = --(str_list.end());
-        double well_kb(strtod((*it).c_str(), &buf));
+        double const well_kb = getLastNumberFromList(str_list);
 
         INFO("PetrelInterface::readPetrelWellTrace(): {:f}, {:f}, {:f}.",
              well_head_x,
