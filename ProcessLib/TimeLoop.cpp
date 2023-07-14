@@ -440,12 +440,12 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
     // Update the solution of the previous time step.
     for (std::size_t i = 0; i < _per_process_data.size(); i++)
     {
-        auto& ppd = *_per_process_data[i];
-        auto& timestep_algorithm = ppd.timestep_algorithm;
         if (all_process_steps_accepted)
         {
+            auto& ppd = *_per_process_data[i];
             NumLib::updateTimeSteps(dt, ppd.timestep_previous,
                                     ppd.timestep_current);
+            auto& timestep_algorithm = ppd.timestep_algorithm;
             timestep_algorithm->resetCurrentTimeStep(dt, ppd.timestep_previous,
                                                      ppd.timestep_current);
         }
