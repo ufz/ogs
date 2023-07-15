@@ -206,7 +206,6 @@ void EarClippingTriangulation::initLists()
 
 void EarClippingTriangulation::clipEars()
 {
-    std::list<std::size_t>::iterator it, prev, next;
     // *** clip an ear
     while (_vertex_list.size() > 3)
     {
@@ -219,8 +218,8 @@ void EarClippingTriangulation::clipEars()
         // remove ear from vertex_list, apply changes to _ear_list,
         // _convex_vertex_list
         bool nfound(true);
-        it = _vertex_list.begin();
-        prev = _vertex_list.end();
+        std::list<std::size_t>::iterator it = _vertex_list.begin();
+        std::list<std::size_t>::iterator prev = _vertex_list.end();
         --prev;
         while (nfound && it != _vertex_list.end())
         {
@@ -228,7 +227,7 @@ void EarClippingTriangulation::clipEars()
             {
                 nfound = false;
                 it = _vertex_list.erase(it);  // remove ear tip
-                next = it;
+                std::list<std::size_t>::iterator next = it;
                 if (next == _vertex_list.end())
                 {
                     next = _vertex_list.begin();
@@ -344,28 +343,30 @@ void EarClippingTriangulation::clipEars()
     }
 
     // add last triangle
-    next = _vertex_list.begin();
-    prev = next;
-    ++next;
-    if (next == _vertex_list.end())
     {
-        return;
-    }
-    it = next;
-    ++next;
-    if (next == _vertex_list.end())
-    {
-        return;
-    }
+        std::list<std::size_t>::iterator next = _vertex_list.begin();
+        std::list<std::size_t>::iterator prev = next;
+        ++next;
+        if (next == _vertex_list.end())
+        {
+            return;
+        }
+        std::list<std::size_t>::iterator it = next;
+        ++next;
+        if (next == _vertex_list.end())
+        {
+            return;
+        }
 
-    if (getOrientation(*_pnts[*prev], *_pnts[*it], *_pnts[*next]) ==
-        GeoLib::CCW)
-    {
-        _triangles.emplace_back(_pnts, *prev, *it, *next);
-    }
-    else
-    {
-        _triangles.emplace_back(_pnts, *prev, *next, *it);
+        if (getOrientation(*_pnts[*prev], *_pnts[*it], *_pnts[*next]) ==
+            GeoLib::CCW)
+        {
+            _triangles.emplace_back(_pnts, *prev, *it, *next);
+        }
+        else
+        {
+            _triangles.emplace_back(_pnts, *prev, *next, *it);
+        }
     }
 }
 
