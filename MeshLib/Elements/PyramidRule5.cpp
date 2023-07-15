@@ -40,7 +40,7 @@ const unsigned PyramidRule5::n_face_nodes[5] = {3, 3, 3, 3, 4};
 
 const Element* PyramidRule5::getFace(const Element* e, unsigned i)
 {
-    if (i < e->getNumberOfFaces())
+    if (i < n_faces)
     {
         unsigned nFaceNodes(PyramidRule5::n_face_nodes[i]);
         auto** nodes = new Node*[nFaceNodes];
