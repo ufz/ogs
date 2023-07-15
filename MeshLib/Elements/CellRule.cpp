@@ -12,7 +12,6 @@
 
 #include "Element.h"
 #include "FaceRule.h"
-#include "MeshLib/Node.h"
 
 namespace MeshLib
 {

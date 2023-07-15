@@ -65,7 +65,7 @@ public:
     static unsigned identifyFace(Node const* const* _nodes,
                                  Node const* nodes[3])
     {
-        return HexRule::identifyFace(_nodes, nodes, face_nodes);
+        return CellRule::identifyFace<HexRule8>(_nodes, nodes);
     }
 }; /* class */
 

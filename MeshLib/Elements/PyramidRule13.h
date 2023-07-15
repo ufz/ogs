@@ -68,7 +68,7 @@ public:
     static unsigned identifyFace(Node const* const* _nodes,
                                  Node const* nodes[3])
     {
-        return PyramidRule::identifyFace(_nodes, nodes, face_nodes);
+        return CellRule::identifyFace<PyramidRule13>(_nodes, nodes);
     }
 }; /* class */
 

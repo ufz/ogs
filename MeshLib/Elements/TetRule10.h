@@ -63,7 +63,7 @@ public:
     static unsigned identifyFace(Node const* const* _nodes,
                                  Node const* nodes[3])
     {
-        return TetRule::identifyFace(_nodes, nodes, face_nodes);
+        return CellRule::identifyFace<TetRule10>(_nodes, nodes);
     }
 }; /* class */
 

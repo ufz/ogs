@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "MeshLib/Node.h"
+
 namespace MeshLib
 {
 
@@ -30,6 +32,36 @@ public:
      * center of gravity to lie outside of the actual element
      */
     static bool testElementNodeOrder(Element const& e);
+
+protected:
+    /// Returns the ID of a face given an array of nodes.
+    template <typename ElementRule>
+    static unsigned identifyFace(Node const* const* _nodes,
+                                 Node const* nodes[3])
+    {
+        for (unsigned i = 0; i < ElementRule::n_faces; i++)
+        {
+            unsigned flag(0);
+            constexpr std::size_t n = sizeof(ElementRule::face_nodes[0]) /
+                                      sizeof(ElementRule::face_nodes[0][0]);
+            for (unsigned j = 0; j < n; j++)
+            {
+                for (unsigned k = 0; k < 3; k++)
+                {
+                    if (ElementRule::face_nodes[i][j] != 99 &&
+                        _nodes[ElementRule::face_nodes[i][j]] == nodes[k])
+                    {
+                        flag++;
+                    }
+                }
+            }
+            if (flag == 3)
+            {
+                return i;
+            }
+        }
+        return std::numeric_limits<unsigned>::max();
+    }
 }; /* class */
 
 }  // namespace MeshLib

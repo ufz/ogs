@@ -49,33 +49,5 @@ public:
     /// Calculates the volume of a convex hexahedron by partitioning it into six
     /// tetrahedra.
     static double computeVolume(Node const* const* _nodes);
-
-protected:
-    template <std::size_t N>
-    static unsigned identifyFace(Node const* const* _nodes,
-                                 Node const* nodes[3],
-                                 unsigned const face_nodes[5][N])
-    {
-        for (unsigned i = 0; i < 5; i++)
-        {
-            unsigned flag(0);
-            for (unsigned j = 0; j < 4; j++)
-            {
-                for (unsigned k = 0; k < 3; k++)
-                {
-                    if (face_nodes[i][j] != 99 &&
-                        _nodes[face_nodes[i][j]] == nodes[k])
-                    {
-                        flag++;
-                    }
-                }
-            }
-            if (flag == 3)
-            {
-                return i;
-            }
-        }
-        return std::numeric_limits<unsigned>::max();
-    }
 };
 }  // namespace MeshLib

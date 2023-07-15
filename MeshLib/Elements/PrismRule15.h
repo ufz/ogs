@@ -69,7 +69,7 @@ public:
     static unsigned identifyFace(Node const* const* _nodes,
                                  Node const* nodes[3])
     {
-        return PrismRule::identifyFace(_nodes, nodes, face_nodes);
+        return CellRule::identifyFace<PrismRule15>(_nodes, nodes);
     }
 }; /* class */
 
