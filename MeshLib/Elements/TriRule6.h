@@ -53,7 +53,7 @@ public:
 
     /// Returns the ID of a face given an array of nodes.
     static unsigned identifyFace(Node const* const* _nodes,
-                                 Node const* nodes[3])
+                                 Node const* nodes[2])
     {
         return FaceRule::identifyFace<TriRule6>(_nodes, nodes);
     }
