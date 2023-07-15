@@ -42,6 +42,35 @@ public:
     /// Returns the surface normal of a 2D element.
     static Eigen::Vector3d getSurfaceNormal(Element const& e);
 
+protected:
+    /// Returns the ID of an edge given an array of nodes.
+    template <typename ElementRule>
+    static unsigned identifyFace(Node const* const* _nodes,
+                                 Node const* nodes[3])
+    {
+        for (unsigned i = 0; i < ElementRule::n_edges; i++)
+        {
+            unsigned flag(0);
+            constexpr std::size_t n = sizeof(ElementRule::edge_nodes[0]) /
+                                      sizeof(ElementRule::edge_nodes[0][0]);
+            for (unsigned j = 0; j < n; j++)
+            {
+                for (unsigned k = 0; k < 2; k++)
+                {
+                    if (_nodes[ElementRule::edge_nodes[i][j]] == nodes[k])
+                    {
+                        flag++;
+                    }
+                }
+            }
+            if (flag == 2)
+            {
+                return i;
+            }
+        }
+        return std::numeric_limits<unsigned>::max();
+    }
+
 }; /* class */
 
 }  // namespace MeshLib

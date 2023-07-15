@@ -51,7 +51,7 @@ public:
     static unsigned identifyFace(Node const* const* _nodes,
                                  Node const* nodes[3])
     {
-        return QuadRule::identifyFace<3>(_nodes, nodes, edge_nodes);
+        return FaceRule::identifyFace<QuadRule9>(_nodes, nodes);
     }
 }; /* class */
 

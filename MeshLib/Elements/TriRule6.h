@@ -55,7 +55,7 @@ public:
     static unsigned identifyFace(Node const* const* _nodes,
                                  Node const* nodes[3])
     {
-        return TriRule::identifyFace(_nodes, nodes, edge_nodes);
+        return FaceRule::identifyFace<TriRule6>(_nodes, nodes);
     }
 
 }; /* class */
