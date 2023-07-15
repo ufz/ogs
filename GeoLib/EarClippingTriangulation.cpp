@@ -39,6 +39,7 @@ EarClippingTriangulation::EarClippingTriangulation(
     initVertexList();
     initLists();
     clipEars();
+    addLastTriangle();
 
     std::vector<GeoLib::Point*> const& ref_pnts_vec(polygon.getPointsVec());
     if (_original_orientation == GeoLib::CW)
@@ -333,33 +334,32 @@ void EarClippingTriangulation::clipEars()
             }
         }
     }
-
-    // add last triangle
-    {
-        auto next = _vertex_list.begin();
-        auto prev = next;
-        ++next;
-        if (next == _vertex_list.end())
-        {
-            return;
-        }
-        auto it = next;
-        ++next;
-        if (next == _vertex_list.end())
-        {
-            return;
-        }
-
-        if (getOrientation(*_pnts[*prev], *_pnts[*it], *_pnts[*next]) ==
-            GeoLib::CCW)
-        {
-            _triangles.emplace_back(_pnts, *prev, *it, *next);
-        }
-        else
-        {
-            _triangles.emplace_back(_pnts, *prev, *next, *it);
-        }
-    }
 }
 
+void EarClippingTriangulation::addLastTriangle()
+{
+    auto next = _vertex_list.begin();
+    auto prev = next;
+    ++next;
+    if (next == _vertex_list.end())
+    {
+        return;
+    }
+    auto it = next;
+    ++next;
+    if (next == _vertex_list.end())
+    {
+        return;
+    }
+
+    if (getOrientation(*_pnts[*prev], *_pnts[*it], *_pnts[*next]) ==
+        GeoLib::CCW)
+    {
+        _triangles.emplace_back(_pnts, *prev, *it, *next);
+    }
+    else
+    {
+        _triangles.emplace_back(_pnts, *prev, *next, *it);
+    }
+}
 }  // end namespace GeoLib
