@@ -222,14 +222,14 @@ const PolylineVec* GEOObjects::getPolylineVecObj(const std::string& name) const
 bool GEOObjects::removePolylineVec(std::string const& name)
 {
     _callbacks->removePolylineVec(name);
-    for (auto it = _ply_vecs.begin(); it != _ply_vecs.end(); ++it)
+    auto it =
+        std::find_if(_ply_vecs.begin(), _ply_vecs.end(),
+                     [&name](PolylineVec* v) { return v->getName() == name; });
+    if (it != _ply_vecs.end())
     {
-        if ((*it)->getName() == name)
-        {
-            delete *it;
-            _ply_vecs.erase(it);
-            return true;
-        }
+        delete *it;
+        _ply_vecs.erase(it);
+        return true;
     }
 
     DBUG("GEOObjects::removePolylineVec() - No entry found with name '{:s}'.",
