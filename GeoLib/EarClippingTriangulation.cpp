@@ -162,10 +162,10 @@ void EarClippingTriangulation::initLists()
 {
     // go through points checking ccw, cw or collinear order and identifying
     // ears
-    std::list<std::size_t>::iterator it(_vertex_list.begin()),
-        prev(_vertex_list.end()), next;
+    auto it = _vertex_list.begin();
+    auto prev = _vertex_list.end();
     --prev;
-    next = it;
+    auto next = it;
     ++next;
     GeoLib::Orientation orientation;
     bool first_run(
@@ -218,8 +218,8 @@ void EarClippingTriangulation::clipEars()
         // remove ear from vertex_list, apply changes to _ear_list,
         // _convex_vertex_list
         bool nfound(true);
-        std::list<std::size_t>::iterator it = _vertex_list.begin();
-        std::list<std::size_t>::iterator prev = _vertex_list.end();
+        auto it = _vertex_list.begin();
+        auto prev = _vertex_list.end();
         --prev;
         while (nfound && it != _vertex_list.end())
         {
@@ -227,7 +227,7 @@ void EarClippingTriangulation::clipEars()
             {
                 nfound = false;
                 it = _vertex_list.erase(it);  // remove ear tip
-                std::list<std::size_t>::iterator next = it;
+                auto next = it;
                 if (next == _vertex_list.end())
                 {
                     next = _vertex_list.begin();
@@ -238,14 +238,10 @@ void EarClippingTriangulation::clipEars()
                 _triangles.emplace_back(_pnts, *prev, *next, ear);
 
                 // check the orientation of prevprev, prev, next
-                std::list<std::size_t>::iterator prevprev;
+                auto prevprev = prev;
                 if (prev == _vertex_list.begin())
                 {
                     prevprev = _vertex_list.end();
-                }
-                else
-                {
-                    prevprev = prev;
                 }
                 --prevprev;
 
@@ -289,17 +285,13 @@ void EarClippingTriangulation::clipEars()
                 }
 
                 // check the orientation of prev, next, nextnext
-                std::list<std::size_t>::iterator nextnext,
-                    help_it(_vertex_list.end());
+                auto nextnext = next;
+                ++nextnext;
+                auto help_it = _vertex_list.end();
                 --help_it;
                 if (next == help_it)
                 {
                     nextnext = _vertex_list.begin();
-                }
-                else
-                {
-                    nextnext = next;
-                    ++nextnext;
                 }
 
                 // apply changes to _convex_vertex_list and _ear_list looking
@@ -344,14 +336,14 @@ void EarClippingTriangulation::clipEars()
 
     // add last triangle
     {
-        std::list<std::size_t>::iterator next = _vertex_list.begin();
-        std::list<std::size_t>::iterator prev = next;
+        auto next = _vertex_list.begin();
+        auto prev = next;
         ++next;
         if (next == _vertex_list.end())
         {
             return;
         }
-        std::list<std::size_t>::iterator it = next;
+        auto it = next;
         ++next;
         if (next == _vertex_list.end())
         {
