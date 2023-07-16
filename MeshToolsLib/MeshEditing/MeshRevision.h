@@ -115,44 +115,6 @@ private:
     void cleanUp(std::vector<MeshLib::Node*>& nodes,
                  std::vector<MeshLib::Element*>& new_elements) const;
 
-    /// Subdivides a nonplanar quad into two triangles
-    unsigned subdivideQuad(MeshLib::Element const* const quad,
-                           const std::vector<MeshLib::Node*>& nodes,
-                           std::vector<MeshLib::Element*>& new_elements) const;
-
-    /// Subdivides a Hex with nonplanar faces into tets
-    unsigned subdivideHex(MeshLib::Element const* const hex,
-                          const std::vector<MeshLib::Node*>& nodes,
-                          std::vector<MeshLib::Element*>& new_elements) const;
-
-    /// Subdivides a pyramid with a nonplanar base into two tets
-    unsigned subdividePyramid(
-        MeshLib::Element const* const pyramid,
-        const std::vector<MeshLib::Node*>& nodes,
-        std::vector<MeshLib::Element*>& new_elements) const;
-
-    /// Subdivides a prism with nonplanar quad faces into two tets
-    unsigned subdividePrism(MeshLib::Element const* const prism,
-                            const std::vector<MeshLib::Node*>& nodes,
-                            std::vector<MeshLib::Element*>& new_elements) const;
-
-    /// Creates a line element from the first two unique nodes found in the
-    /// element (element *should* have exactly two unique nodes!)
-    MeshLib::Element* constructLine(
-        MeshLib::Element const* const element,
-        const std::vector<MeshLib::Node*>& nodes) const;
-    /// Creates a triangle element from the first three unique nodes found in
-    /// the element (element *should* have exactly three unique nodes!)
-    MeshLib::Element* constructTri(
-        MeshLib::Element const* const element,
-        const std::vector<MeshLib::Node*>& nodes) const;
-    /// Creates a quad or a tet, depending if the four nodes being coplanar or
-    /// not (element *should* have exactly four unique nodes!)
-    MeshLib::Element* constructFourNodeElement(
-        MeshLib::Element const* const element,
-        const std::vector<MeshLib::Node*>& nodes,
-        unsigned min_elem_dim = 1) const;
-
     /**
      * Reduces a hexahedron element by removing collapsed nodes and constructing
      * one or more new elements from the remaining nodes.
