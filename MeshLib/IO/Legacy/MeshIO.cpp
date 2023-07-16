@@ -27,138 +27,9 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/PropertyVector.h"
 
-namespace MeshLib
+namespace
 {
-namespace IO
-{
-namespace Legacy
-{
-MeshIO::MeshIO() = default;
-
-MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
-{
-    INFO("Reading OGS legacy mesh ... ");
-
-    std::ifstream in(file_name.c_str(), std::ios::in);
-    if (!in.is_open())
-    {
-        WARN("MeshIO::loadMeshFromFile() - Could not open file {:s}.",
-             file_name);
-        return nullptr;
-    }
-
-    std::string line_string;
-    getline(in, line_string);
-
-    if (line_string.find("#FEM_MSH") != std::string::npos)  // OGS mesh file
-    {
-        std::vector<MeshLib::Node*> nodes;
-        std::vector<MeshLib::Element*> elements;
-        std::vector<std::size_t> materials;
-
-        while (!in.eof())
-        {
-            getline(in, line_string);
-
-            // check keywords
-            if (line_string.find("#STOP") != std::string::npos)
-            {
-                break;
-            }
-            if (line_string.find("$NODES") != std::string::npos)
-            {
-                double x;
-                double y;
-                double z;
-                double double_dummy;
-                unsigned idx;
-                getline(in, line_string);
-                BaseLib::trim(line_string);
-                unsigned nNodes = atoi(line_string.c_str());
-                std::string s;
-                for (unsigned i = 0; i < nNodes; ++i)
-                {
-                    getline(in, line_string);
-                    std::stringstream iss(line_string);
-                    iss >> idx >> x >> y >> z;
-                    auto* node(new MeshLib::Node(x, y, z, idx));
-                    nodes.push_back(node);
-                    iss >> s;
-                    if (s.find("$AREA") != std::string::npos)
-                    {
-                        iss >> double_dummy;
-                    }
-                }
-            }
-            else if (line_string.find("$ELEMENTS") != std::string::npos)
-            {
-                getline(in, line_string);
-                BaseLib::trim(line_string);
-                unsigned nElements = atoi(line_string.c_str());
-                for (unsigned i = 0; i < nElements; ++i)
-                {
-                    getline(in, line_string);
-                    std::stringstream ss(line_string);
-                    materials.push_back(readMaterialID(ss));
-                    MeshLib::Element* elem(readElement(ss, nodes));
-                    if (elem == nullptr)
-                    {
-                        ERR("Reading mesh element {:d} from file '{:s}' "
-                            "failed.",
-                            i, file_name);
-                        // clean up the elements vector
-                        std::for_each(elements.begin(), elements.end(),
-                                      std::default_delete<MeshLib::Element>());
-                        // clean up the nodes vector
-                        std::for_each(nodes.begin(), nodes.end(),
-                                      std::default_delete<MeshLib::Node>());
-                        return nullptr;
-                    }
-                    elements.push_back(elem);
-                }
-            }
-        }
-
-        if (elements.empty())
-        {
-            ERR("MeshIO::loadMeshFromFile() - File did not contain element "
-                "information.");
-            for (auto& node : nodes)
-            {
-                delete node;
-            }
-            return nullptr;
-        }
-
-        MeshLib::Mesh* mesh(new MeshLib::Mesh(
-            BaseLib::extractBaseNameWithoutExtension(file_name), nodes,
-            elements));
-
-        auto* const material_ids =
-            mesh->getProperties().createNewPropertyVector<int>(
-                "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
-        if (!material_ids)
-        {
-            WARN("Could not create PropertyVector for MaterialIDs in Mesh.");
-        }
-        else
-        {
-            material_ids->insert(material_ids->end(), materials.cbegin(),
-                                 materials.cend());
-        }
-        INFO("\t... finished.");
-        INFO("Nr. Nodes: {:d}.", nodes.size());
-        INFO("Nr. Elements: {:d}.", elements.size());
-
-        in.close();
-        return mesh;
-    }
-
-    in.close();
-    return nullptr;
-}
-
-std::size_t MeshIO::readMaterialID(std::istream& in)
+std::size_t readMaterialID(std::istream& in)
 {
     unsigned index;
     unsigned material_id;
@@ -169,8 +40,8 @@ std::size_t MeshIO::readMaterialID(std::istream& in)
     return material_id;
 }
 
-MeshLib::Element* MeshIO::readElement(
-    std::istream& in, const std::vector<MeshLib::Node*>& nodes) const
+MeshLib::Element* readElement(std::istream& in,
+                              const std::vector<MeshLib::Node*>& nodes)
 {
     std::string elem_type_str;
     MeshLib::MeshElemType elem_type(MeshLib::MeshElemType::INVALID);
@@ -319,6 +190,209 @@ MeshLib::Element* MeshIO::readElement(
     return elem;
 }
 
+std::string ElemType2StringOutput(const MeshLib::MeshElemType t)
+{
+    if (t == MeshLib::MeshElemType::LINE)
+    {
+        return "line";
+    }
+    if (t == MeshLib::MeshElemType::QUAD)
+    {
+        return "quad";
+    }
+    if (t == MeshLib::MeshElemType::HEXAHEDRON)
+    {
+        return "hex";
+    }
+    if (t == MeshLib::MeshElemType::TRIANGLE)
+    {
+        return "tri";
+    }
+    if (t == MeshLib::MeshElemType::TETRAHEDRON)
+    {
+        return "tet";
+    }
+    if (t == MeshLib::MeshElemType::PRISM)
+    {
+        return "pris";
+    }
+    if (t == MeshLib::MeshElemType::PYRAMID)
+    {
+        return "pyra";
+    }
+    return "none";
+}
+
+void writeElements(std::vector<MeshLib::Element*> const& ele_vec,
+                   MeshLib::PropertyVector<int> const* const material_ids,
+                   std::ostream& out)
+{
+    const std::size_t ele_vector_size(ele_vec.size());
+
+    out << ele_vector_size << "\n";
+    for (std::size_t i(0); i < ele_vector_size; ++i)
+    {
+        auto const& element = *ele_vec[i];
+        if (element.getNumberOfBaseNodes() != element.getNumberOfNodes())
+        {
+            OGS_FATAL(
+                "Found high order element in the mesh that is not required by "
+                "OGS 5 input. High order elements are generated in OGS 5 on "
+                "demand.");
+        }
+
+        out << i << " ";
+        if (!material_ids)
+        {
+            out << "0 ";
+        }
+        else
+        {
+            out << (*material_ids)[i] << " ";
+        }
+        out << ElemType2StringOutput(element.getGeomType()) << " ";
+        unsigned nElemNodes(element.getNumberOfBaseNodes());
+        for (std::size_t j = 0; j < nElemNodes; ++j)
+        {
+            out << element.getNode(j)->getID() << " ";
+        }
+        out << "\n";
+    }
+}
+
+}  // namespace
+
+namespace MeshLib
+{
+namespace IO
+{
+namespace Legacy
+{
+MeshIO::MeshIO() = default;
+
+MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
+{
+    INFO("Reading OGS legacy mesh ... ");
+
+    std::ifstream in(file_name.c_str(), std::ios::in);
+    if (!in.is_open())
+    {
+        WARN("MeshIO::loadMeshFromFile() - Could not open file {:s}.",
+             file_name);
+        return nullptr;
+    }
+
+    std::string line_string;
+    getline(in, line_string);
+
+    if (line_string.find("#FEM_MSH") != std::string::npos)  // OGS mesh file
+    {
+        std::vector<MeshLib::Node*> nodes;
+        std::vector<MeshLib::Element*> elements;
+        std::vector<std::size_t> materials;
+
+        while (!in.eof())
+        {
+            getline(in, line_string);
+
+            // check keywords
+            if (line_string.find("#STOP") != std::string::npos)
+            {
+                break;
+            }
+            if (line_string.find("$NODES") != std::string::npos)
+            {
+                double x;
+                double y;
+                double z;
+                double double_dummy;
+                unsigned idx;
+                getline(in, line_string);
+                BaseLib::trim(line_string);
+                unsigned nNodes = atoi(line_string.c_str());
+                std::string s;
+                for (unsigned i = 0; i < nNodes; ++i)
+                {
+                    getline(in, line_string);
+                    std::stringstream iss(line_string);
+                    iss >> idx >> x >> y >> z;
+                    auto* node(new MeshLib::Node(x, y, z, idx));
+                    nodes.push_back(node);
+                    iss >> s;
+                    if (s.find("$AREA") != std::string::npos)
+                    {
+                        iss >> double_dummy;
+                    }
+                }
+            }
+            else if (line_string.find("$ELEMENTS") != std::string::npos)
+            {
+                getline(in, line_string);
+                BaseLib::trim(line_string);
+                unsigned nElements = atoi(line_string.c_str());
+                for (unsigned i = 0; i < nElements; ++i)
+                {
+                    getline(in, line_string);
+                    std::stringstream ss(line_string);
+                    materials.push_back(readMaterialID(ss));
+                    MeshLib::Element* elem(readElement(ss, nodes));
+                    if (elem == nullptr)
+                    {
+                        ERR("Reading mesh element {:d} from file '{:s}' "
+                            "failed.",
+                            i, file_name);
+                        // clean up the elements vector
+                        std::for_each(elements.begin(), elements.end(),
+                                      std::default_delete<MeshLib::Element>());
+                        // clean up the nodes vector
+                        std::for_each(nodes.begin(), nodes.end(),
+                                      std::default_delete<MeshLib::Node>());
+                        return nullptr;
+                    }
+                    elements.push_back(elem);
+                }
+            }
+        }
+
+        if (elements.empty())
+        {
+            ERR("MeshIO::loadMeshFromFile() - File did not contain element "
+                "information.");
+            for (auto& node : nodes)
+            {
+                delete node;
+            }
+            return nullptr;
+        }
+
+        MeshLib::Mesh* mesh(new MeshLib::Mesh(
+            BaseLib::extractBaseNameWithoutExtension(file_name), nodes,
+            elements));
+
+        auto* const material_ids =
+            mesh->getProperties().createNewPropertyVector<int>(
+                "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
+        if (!material_ids)
+        {
+            WARN("Could not create PropertyVector for MaterialIDs in Mesh.");
+        }
+        else
+        {
+            material_ids->insert(material_ids->end(), materials.cbegin(),
+                                 materials.cend());
+        }
+        INFO("\t... finished.");
+        INFO("Nr. Nodes: {:d}.", nodes.size());
+        INFO("Nr. Elements: {:d}.", elements.size());
+
+        in.close();
+        return mesh;
+    }
+
+    in.close();
+    return nullptr;
+}
+
 bool MeshIO::write()
 {
     if (!_mesh)
@@ -360,77 +434,6 @@ bool MeshIO::write()
 void MeshIO::setMesh(const MeshLib::Mesh* mesh)
 {
     _mesh = mesh;
-}
-
-void MeshIO::writeElements(
-    std::vector<MeshLib::Element*> const& ele_vec,
-    MeshLib::PropertyVector<int> const* const material_ids,
-    std::ostream& out) const
-{
-    const std::size_t ele_vector_size(ele_vec.size());
-
-    out << ele_vector_size << "\n";
-    for (std::size_t i(0); i < ele_vector_size; ++i)
-    {
-        auto const& element = *ele_vec[i];
-        if (element.getNumberOfBaseNodes() != element.getNumberOfNodes())
-        {
-            OGS_FATAL(
-                "Found high order element in the mesh that is not required by "
-                "OGS 5 input. High order elements are generated in OGS 5 on "
-                "demand.");
-        }
-
-        out << i << " ";
-        if (!material_ids)
-        {
-            out << "0 ";
-        }
-        else
-        {
-            out << (*material_ids)[i] << " ";
-        }
-        out << ElemType2StringOutput(element.getGeomType()) << " ";
-        unsigned nElemNodes(element.getNumberOfBaseNodes());
-        for (std::size_t j = 0; j < nElemNodes; ++j)
-        {
-            out << element.getNode(j)->getID() << " ";
-        }
-        out << "\n";
-    }
-}
-
-std::string MeshIO::ElemType2StringOutput(const MeshLib::MeshElemType t)
-{
-    if (t == MeshLib::MeshElemType::LINE)
-    {
-        return "line";
-    }
-    if (t == MeshLib::MeshElemType::QUAD)
-    {
-        return "quad";
-    }
-    if (t == MeshLib::MeshElemType::HEXAHEDRON)
-    {
-        return "hex";
-    }
-    if (t == MeshLib::MeshElemType::TRIANGLE)
-    {
-        return "tri";
-    }
-    if (t == MeshLib::MeshElemType::TETRAHEDRON)
-    {
-        return "tet";
-    }
-    if (t == MeshLib::MeshElemType::PRISM)
-    {
-        return "pris";
-    }
-    if (t == MeshLib::MeshElemType::PYRAMID)
-    {
-        return "pyra";
-    }
-    return "none";
 }
 
 }  // end namespace Legacy
