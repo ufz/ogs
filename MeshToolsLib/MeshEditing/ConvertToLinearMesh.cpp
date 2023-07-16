@@ -45,12 +45,12 @@ T_ELEMENT* createLinearElement(MeshLib::Element const* e,
 }  // unnamed namespace
 
 std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
-    MeshLib::Mesh const& org_mesh, std::string const& new_mesh_name)
+    MeshLib::Mesh const& mesh, std::string const& new_mesh_name)
 {
-    auto const& org_elements = org_mesh.getElements();
+    auto const& org_elements = mesh.getElements();
 
     // mark base nodes
-    std::vector<bool> marked_base_nodes(org_mesh.getNodes().size(), false);
+    std::vector<bool> marked_base_nodes(mesh.getNodes().size(), false);
     for (auto const org_element : org_elements)
     {
         for (std::size_t k = 0; k < org_element->getNumberOfBaseNodes(); ++k)
@@ -64,7 +64,7 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
     std::vector<MeshLib::Node*> new_mesh_nodes{static_cast<std::size_t>(
         std::count(begin(marked_base_nodes), end(marked_base_nodes), true))};
     std::size_t base_node_cnt = 0;
-    auto const& org_nodes = org_mesh.getNodes();
+    auto const& org_nodes = mesh.getNodes();
     std::vector<std::size_t> base_node_map(org_nodes.size(), -1);
     for (std::size_t k = 0; k < org_nodes.size(); ++k)
     {
@@ -79,7 +79,7 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
 
     // create new elements with the quadratic nodes
     std::vector<MeshLib::Element*> vec_new_eles;
-    for (MeshLib::Element const* e : org_mesh.getElements())
+    for (MeshLib::Element const* e : mesh.getElements())
     {
         if (e->getCellType() == MeshLib::CellType::LINE3)
         {
@@ -115,12 +115,12 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
 
     auto new_mesh = std::make_unique<MeshLib::Mesh>(
         new_mesh_name, new_mesh_nodes, vec_new_eles,
-        org_mesh.getProperties().excludeCopyProperties(
+        mesh.getProperties().excludeCopyProperties(
             std::vector<MeshLib::MeshItemType>(1,
                                                MeshLib::MeshItemType::Node)));
 
     // copy property vectors for nodes
-    for (auto [name, property] : org_mesh.getProperties())
+    for (auto [name, property] : mesh.getProperties())
     {
         if (property->getMeshItemType() != MeshLib::MeshItemType::Node)
         {
