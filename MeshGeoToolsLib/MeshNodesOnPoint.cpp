@@ -9,6 +9,8 @@
 
 #include "MeshNodesOnPoint.h"
 
+#include <range/v3/algorithm/copy_if.hpp>
+
 #include "MeshLib/Mesh.h"
 
 namespace MeshGeoToolsLib
@@ -28,14 +30,14 @@ MeshNodesOnPoint::MeshNodesOnPoint(MeshLib::Mesh const& mesh,
     }
     else
     {
-        for (auto id : vec_ids)
+        auto is_base_node = [this](std::size_t const id)
         {
-            if (MeshLib::isBaseNode(*_mesh.getNode(id),
-                                    _mesh.getElementsConnectedToNode(id)))
-            {
-                _msh_node_ids.push_back(id);
-            }
-        }
+            return MeshLib::isBaseNode(*_mesh.getNode(id),
+                                       _mesh.getElementsConnectedToNode(id));
+        };
+
+        ranges::copy_if(
+            vec_ids, std::back_inserter(_msh_node_ids), is_base_node);
     }
 }
 
