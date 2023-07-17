@@ -47,7 +47,7 @@ public:
      */
     static ElementErrorCode validate(const Element* e);
 
-    /// Calculates the volume of the element
+    /// Calculates the volume of a tetrahedron.
     static double computeVolume(Node const* const* _nodes);
 };
 }  // namespace MeshLib

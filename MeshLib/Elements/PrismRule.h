@@ -46,8 +46,8 @@ public:
      */
     static ElementErrorCode validate(const Element* e);
 
-    /// Calculates the volume of a convex hexahedron by partitioning it into six
-    /// tetrahedra.
+    /// Calculates the volume of a prism with flat faces by partitioning it into
+    /// three tetrahedra.
     static double computeVolume(Node const* const* _nodes);
 };
 }  // namespace MeshLib

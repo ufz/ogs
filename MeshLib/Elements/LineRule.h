@@ -47,7 +47,7 @@ public:
     static unsigned identifyFace(Node const* const* /*_nodes*/,
                                  Node const* nodes[1]);
 
-    /// Calculates the length of a line
+    /// Calculates the length of a line.
     static double computeVolume(Node const* const* _nodes);
 };
 }  // namespace MeshLib

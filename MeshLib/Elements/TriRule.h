@@ -46,8 +46,7 @@ public:
      */
     static ElementErrorCode validate(const Element* e);
 
-    /// Calculates the volume of a convex hexahedron by partitioning it into six
-    /// tetrahedra.
+    /// Calculates the area of the triangle with straight edges.
     static double computeVolume(Node const* const* _nodes);
 };
 }  // namespace MeshLib
