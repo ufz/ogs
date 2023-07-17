@@ -45,6 +45,7 @@ set(SOURCES
     StationTreeView.cpp
     SurfaceExtractionDialog.cpp
     TranslateDataDialog.cpp
+    Vtu2GridDialog.cpp
 )
 
 set(HEADERS
@@ -98,6 +99,7 @@ set(HEADERS
     StationTreeModel.h
     StationTreeView.h
     SurfaceExtractionDialog.h
+    Vtu2GridDialog.h
 )
 
 # Visual Studio folder

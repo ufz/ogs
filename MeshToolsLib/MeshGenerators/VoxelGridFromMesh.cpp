@@ -14,6 +14,7 @@
 #include <vtkDataArray.h>
 #include <vtkDoubleArray.h>
 #include <vtkIntArray.h>
+#include <vtkLongLongArray.h>
 #include <vtkXMLUnstructuredGridReader.h>
 
 #include <cassert>
@@ -126,29 +127,43 @@ void mapArray(MeshLib::Mesh& grid, VTK_TYPE vtk_arr, std::string const& name)
         arr[j] = vtk_arr->GetValue((*cell_ids)[j]);
 }
 
+template <typename T>
+// check whether dynamic_cast of cell data is possible the type of cell data to
+// map them on voxelgrid
+bool checkDyncast(MeshLib::Mesh& mesh,
+                  vtkSmartPointer<vtkCellData> const cell_data,
+                  char const* const name)
+{
+    using DataArrayType = vtkAOSDataArrayTemplate<T>;
+    vtkSmartPointer<DataArrayType> const arr =
+        dynamic_cast<DataArrayType*>(cell_data->GetArray(name));
+    if (!arr)
+    {
+        return false;
+    }
+    mapArray<T, vtkSmartPointer<DataArrayType>>(mesh, arr, name);
+    return true;
+}
+
 void mapMeshArraysOntoGrid(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
                            std::unique_ptr<MeshLib::Mesh>& grid)
 {
+    assert(mesh != nullptr);
+    assert(grid != nullptr);
     vtkSmartPointer<vtkCellData> const cell_data = mesh->GetCellData();
     for (int i = 0; i < cell_data->GetNumberOfArrays(); ++i)
     {
-        std::string const& name = cell_data->GetArrayName(i);
-        vtkSmartPointer<vtkDoubleArray> const dbl_arr =
-            dynamic_cast<vtkDoubleArray*>(cell_data->GetArray(name.c_str()));
-        if (dbl_arr)
+        auto const name = cell_data->GetArrayName(i);
+
+        if (!(checkDyncast<double>(*grid, cell_data, name) ||
+              checkDyncast<long>(*grid, cell_data, name) ||
+              checkDyncast<long long>(*grid, cell_data, name) ||
+              checkDyncast<int>(*grid, cell_data, name)))
         {
-            mapArray<double, vtkSmartPointer<vtkDoubleArray>>(*grid, dbl_arr,
-                                                              name);
-            continue;
+            WARN("Ignoring array '{:s}', array type {:s} not implemented...",
+                 name,
+                 cell_data->GetArray(name)->GetDataTypeAsString());
         }
-        vtkSmartPointer<vtkIntArray> const int_arr =
-            dynamic_cast<vtkIntArray*>(cell_data->GetArray(name.c_str()));
-        if (int_arr)
-        {
-            mapArray<int, vtkSmartPointer<vtkIntArray>>(*grid, int_arr, name);
-            continue;
-        }
-        WARN("Ignoring array '{:s}', array type not implemented...", name);
     }
 }
 }  // namespace MeshToolsLib::MeshGenerator::VoxelGridFromMesh

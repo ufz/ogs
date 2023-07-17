@@ -46,7 +46,7 @@ std::vector<int> assignCellIds(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
 // grid has to contain a PropertyVector with the name 'CellIds'
 bool removeUnusedGridCells(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
                            std::unique_ptr<MeshLib::Mesh>& grid);
-
+// map the cell data of mesh to voxelgrid
 void mapMeshArraysOntoGrid(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
                            std::unique_ptr<MeshLib::Mesh>& grid);
-};  // namespace MeshToolsLib::MeshGenerator::VoxelGridFromMesh
+}  // namespace MeshToolsLib::MeshGenerator::VoxelGridFromMesh

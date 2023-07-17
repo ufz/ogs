@@ -107,6 +107,7 @@ protected slots:
     void showMeshQualitySelectionDialog(
         MeshLib::VtkMappedMeshSource* mshSource);
     void showVisalizationPrefsDialog();
+    void showVtu2GridDialog();
     void updateDataViews();
     void writeGeometryToFile(QString gliName, QString fileName);
     void writeStationListToFile(QString listName, QString fileName);
