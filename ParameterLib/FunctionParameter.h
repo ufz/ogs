@@ -31,7 +31,8 @@ struct FunctionParameter final : public Parameter<T>
     class CurveWrapper : public exprtk::ifunction<T>
     {
     public:
-        CurveWrapper(MathLib::PiecewiseLinearInterpolation const& curve)
+        explicit CurveWrapper(
+            MathLib::PiecewiseLinearInterpolation const& curve)
             : exprtk::ifunction<T>(1), _curve(curve)
         {
             exprtk::disable_has_side_effects(*this);
