@@ -217,12 +217,12 @@ TEST_F(ComponentTransport_FieldGetBoundingSeedPointsTests, TestOneElementVector)
 {
     auto const field = createField({3.0});
     double const value = 3.0;
-    ASSERT_DEATH(field.getBoundingSeedPoints(value), "");
+    ASSERT_THROW(field.getBoundingSeedPoints(value), std::runtime_error);
 }
 
 TEST_F(ComponentTransport_FieldGetBoundingSeedPointsTests, TestEmptyVector)
 {
     auto const field = createField({});
     double const value = 3.0;
-    ASSERT_DEATH(field.getBoundingSeedPoints(value), "");
+    ASSERT_THROW(field.getBoundingSeedPoints(value), std::runtime_error);
 }

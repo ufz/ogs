@@ -35,21 +35,27 @@ static void intersection(std::vector<std::size_t>& vec1,
 
 std::pair<double, double> Field::getBoundingSeedPoints(double const value) const
 {
-    auto it = std::lower_bound(seed_points.cbegin(), seed_points.cend(), value);
-    if (it == seed_points.begin())
+    if (seed_points.size() < 2)
     {
-        WARN("The interpolation point is below the lower bound.");
-        auto const nx = std::next(it);
-        return std::make_pair(*it, *nx);
-    }
-    if (it == seed_points.end())
-    {
-        WARN("The interpolation point is above the upper bound.");
-        std::advance(it, -1);
+        OGS_FATAL("The lookup table for seed_points has less then two values.");
     }
 
-    auto const pv = std::prev(it);
-    return std::make_pair(*pv, *it);
+    auto lower =
+        std::lower_bound(seed_points.cbegin(), seed_points.cend(), value);
+    if (lower == seed_points.begin())
+    {
+        WARN("The interpolation point is below the lower bound.");
+        return std::make_pair(seed_points[0], seed_points[1]);
+    }
+    if (lower == seed_points.end())
+    {
+        WARN("The interpolation point is above the upper bound.");
+        return std::make_pair(seed_points[seed_points.size() - 2],
+                              seed_points[seed_points.size() - 1]);
+    }
+
+    auto const upper = lower--;
+    return std::make_pair(*lower, *upper);
 }
 
 void LookupTable::lookup(std::vector<GlobalVector*> const& x,
