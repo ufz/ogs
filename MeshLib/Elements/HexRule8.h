@@ -62,10 +62,10 @@ public:
     static const Element* getFace(const Element* e, unsigned i);
 
     /// Returns the ID of a face given an array of nodes.
-    static unsigned identifyFace(Node const* const* _nodes,
+    static unsigned identifyFace(Node const* const* element_nodes,
                                  Node const* nodes[3])
     {
-        return CellRule::identifyFace<HexRule8>(_nodes, nodes);
+        return CellRule::identifyFace<HexRule8>(element_nodes, nodes);
     }
 }; /* class */
 

@@ -49,6 +49,6 @@ public:
 
     /// Calculates the volume of a flat-sided pyramid by partitioning it into
     /// two tetrahedra.
-    static double computeVolume(Node const* const* _nodes);
+    static double computeVolume(Node const* const* element_nodes);
 };
 }  // namespace MeshLib

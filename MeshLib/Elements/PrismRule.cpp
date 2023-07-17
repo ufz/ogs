@@ -15,14 +15,20 @@
 
 namespace MeshLib
 {
-double PrismRule::computeVolume(Node const* const* _nodes)
+double PrismRule::computeVolume(Node const* const* element_nodes)
 {
-    return MathLib::calcTetrahedronVolume(
-               *_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]) +
-           MathLib::calcTetrahedronVolume(
-               *_nodes[1], *_nodes[4], *_nodes[2], *_nodes[3]) +
-           MathLib::calcTetrahedronVolume(
-               *_nodes[2], *_nodes[4], *_nodes[5], *_nodes[3]);
+    return MathLib::calcTetrahedronVolume(*element_nodes[0],
+                                          *element_nodes[1],
+                                          *element_nodes[2],
+                                          *element_nodes[3]) +
+           MathLib::calcTetrahedronVolume(*element_nodes[1],
+                                          *element_nodes[4],
+                                          *element_nodes[2],
+                                          *element_nodes[3]) +
+           MathLib::calcTetrahedronVolume(*element_nodes[2],
+                                          *element_nodes[4],
+                                          *element_nodes[5],
+                                          *element_nodes[3]);
 }
 
 bool PrismRule::isPntInElement(Node const* const* nodes,

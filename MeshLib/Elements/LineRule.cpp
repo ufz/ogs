@@ -14,9 +14,9 @@
 
 namespace MeshLib
 {
-double LineRule::computeVolume(Node const* const* _nodes)
+double LineRule::computeVolume(Node const* const* element_nodes)
 {
-    return std::sqrt(MathLib::sqrDist(*_nodes[0], *_nodes[1]));
+    return std::sqrt(MathLib::sqrDist(*element_nodes[0], *element_nodes[1]));
 }
 
 bool LineRule::isPntInElement(Node const* const* nodes,
@@ -52,13 +52,14 @@ bool LineRule::isPntInElement(Node const* const* nodes,
     }
 }
 
-unsigned LineRule::identifyFace(Node const* const* _nodes, Node const* nodes[1])
+unsigned LineRule::identifyFace(Node const* const* element_nodes,
+                                Node const* nodes[1])
 {
-    if (nodes[0] == _nodes[0])
+    if (nodes[0] == element_nodes[0])
     {
         return 0;
     }
-    if (nodes[0] == _nodes[1])
+    if (nodes[0] == element_nodes[1])
     {
         return 1;
     }

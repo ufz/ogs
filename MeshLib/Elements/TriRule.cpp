@@ -14,9 +14,10 @@
 
 namespace MeshLib
 {
-double TriRule::computeVolume(Node const* const* _nodes)
+double TriRule::computeVolume(Node const* const* element_nodes)
 {
-    return MathLib::calcTriangleArea(*_nodes[0], *_nodes[1], *_nodes[2]);
+    return MathLib::calcTriangleArea(*element_nodes[0], *element_nodes[1],
+                                     *element_nodes[2]);
 }
 
 bool TriRule::isPntInElement(Node const* const* nodes,

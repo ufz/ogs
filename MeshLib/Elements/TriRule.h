@@ -47,6 +47,6 @@ public:
     static ElementErrorCode validate(const Element* e);
 
     /// Calculates the area of the triangle with straight edges.
-    static double computeVolume(Node const* const* _nodes);
+    static double computeVolume(Node const* const* element_nodes);
 };
 }  // namespace MeshLib

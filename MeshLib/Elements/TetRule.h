@@ -48,6 +48,6 @@ public:
     static ElementErrorCode validate(const Element* e);
 
     /// Calculates the volume of a tetrahedron.
-    static double computeVolume(Node const* const* _nodes);
+    static double computeVolume(Node const* const* element_nodes);
 };
 }  // namespace MeshLib

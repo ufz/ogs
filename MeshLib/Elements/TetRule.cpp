@@ -14,10 +14,10 @@
 
 namespace MeshLib
 {
-double TetRule::computeVolume(Node const* const* _nodes)
+double TetRule::computeVolume(Node const* const* element_nodes)
 {
-    return MathLib::calcTetrahedronVolume(*_nodes[0], *_nodes[1], *_nodes[2],
-                                          *_nodes[3]);
+    return MathLib::calcTetrahedronVolume(*element_nodes[0], *element_nodes[1],
+                                          *element_nodes[2], *element_nodes[3]);
 }
 
 bool TetRule::isPntInElement(Node const* const* nodes,

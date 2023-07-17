@@ -48,6 +48,6 @@ public:
 
     /// Calculates the volume of a convex hexahedron by partitioning it into six
     /// tetrahedra.
-    static double computeVolume(Node const* const* _nodes);
+    static double computeVolume(Node const* const* element_nodes);
 };
 }  // namespace MeshLib

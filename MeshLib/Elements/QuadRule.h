@@ -48,6 +48,6 @@ public:
     static ElementErrorCode validate(const Element* e);
 
     /// Calculates the area of a quad with straight edges.
-    static double computeVolume(Node const* const* _nodes);
+    static double computeVolume(Node const* const* element_nodes);
 };
 }  // namespace MeshLib

@@ -15,12 +15,16 @@
 
 namespace MeshLib
 {
-double PyramidRule::computeVolume(Node const* const* _nodes)
+double PyramidRule::computeVolume(Node const* const* element_nodes)
 {
-    return MathLib::calcTetrahedronVolume(
-               *_nodes[0], *_nodes[1], *_nodes[2], *_nodes[4]) +
-           MathLib::calcTetrahedronVolume(
-               *_nodes[2], *_nodes[3], *_nodes[0], *_nodes[4]);
+    return MathLib::calcTetrahedronVolume(*element_nodes[0],
+                                          *element_nodes[1],
+                                          *element_nodes[2],
+                                          *element_nodes[4]) +
+           MathLib::calcTetrahedronVolume(*element_nodes[2],
+                                          *element_nodes[3],
+                                          *element_nodes[0],
+                                          *element_nodes[4]);
 }
 
 bool PyramidRule::isPntInElement(Node const* const* nodes,

@@ -15,20 +15,32 @@
 
 namespace MeshLib
 {
-double HexRule::computeVolume(Node const* const* _nodes)
+double HexRule::computeVolume(Node const* const* element_nodes)
 {
-    return MathLib::calcTetrahedronVolume(
-               *_nodes[4], *_nodes[7], *_nodes[5], *_nodes[0]) +
-           MathLib::calcTetrahedronVolume(
-               *_nodes[5], *_nodes[3], *_nodes[1], *_nodes[0]) +
-           MathLib::calcTetrahedronVolume(
-               *_nodes[5], *_nodes[7], *_nodes[3], *_nodes[0]) +
-           MathLib::calcTetrahedronVolume(
-               *_nodes[5], *_nodes[7], *_nodes[6], *_nodes[2]) +
-           MathLib::calcTetrahedronVolume(
-               *_nodes[1], *_nodes[3], *_nodes[5], *_nodes[2]) +
-           MathLib::calcTetrahedronVolume(
-               *_nodes[3], *_nodes[7], *_nodes[5], *_nodes[2]);
+    return MathLib::calcTetrahedronVolume(*element_nodes[4],
+                                          *element_nodes[7],
+                                          *element_nodes[5],
+                                          *element_nodes[0]) +
+           MathLib::calcTetrahedronVolume(*element_nodes[5],
+                                          *element_nodes[3],
+                                          *element_nodes[1],
+                                          *element_nodes[0]) +
+           MathLib::calcTetrahedronVolume(*element_nodes[5],
+                                          *element_nodes[7],
+                                          *element_nodes[3],
+                                          *element_nodes[0]) +
+           MathLib::calcTetrahedronVolume(*element_nodes[5],
+                                          *element_nodes[7],
+                                          *element_nodes[6],
+                                          *element_nodes[2]) +
+           MathLib::calcTetrahedronVolume(*element_nodes[1],
+                                          *element_nodes[3],
+                                          *element_nodes[5],
+                                          *element_nodes[2]) +
+           MathLib::calcTetrahedronVolume(*element_nodes[3],
+                                          *element_nodes[7],
+                                          *element_nodes[5],
+                                          *element_nodes[2]);
 }
 
 bool HexRule::isPntInElement(Node const* const* nodes,

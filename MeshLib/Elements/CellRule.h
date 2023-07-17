@@ -36,7 +36,7 @@ public:
 protected:
     /// Returns the ID of a face given an array of nodes.
     template <typename ElementRule>
-    static unsigned identifyFace(Node const* const* _nodes,
+    static unsigned identifyFace(Node const* const* element_nodes,
                                  Node const* nodes[ElementRule::dimension])
     {
         for (unsigned i = 0; i < ElementRule::n_faces; i++)
@@ -49,7 +49,8 @@ protected:
                 for (unsigned k = 0; k < ElementRule::dimension; k++)
                 {
                     if (ElementRule::face_nodes[i][j] != 99 &&
-                        _nodes[ElementRule::face_nodes[i][j]] == nodes[k])
+                        element_nodes[ElementRule::face_nodes[i][j]] ==
+                            nodes[k])
                     {
                         flag++;
                     }

@@ -17,7 +17,7 @@ namespace MeshLib
 {
 const unsigned PointRule1::edge_nodes[1][1] = {{0}};
 
-double PointRule1::computeVolume(Node const* const* /*_nodes*/)
+double PointRule1::computeVolume(Node const* const* /*element_nodes*/)
 {
     return 0;
 }
@@ -29,10 +29,10 @@ bool PointRule1::isPntInElement(Node const* const* nodes,
     return (dist < eps);
 }
 
-unsigned PointRule1::identifyFace(Node const* const* _nodes,
+unsigned PointRule1::identifyFace(Node const* const* element_nodes,
                                   Node const* nodes[1])
 {
-    if (nodes[0] == _nodes[0])
+    if (nodes[0] == element_nodes[0])
     {
         return 0;
     }

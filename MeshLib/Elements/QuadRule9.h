@@ -48,10 +48,10 @@ public:
     /// Returns the i-th edge of the element.
     using EdgeReturn = MeshLib::QuadraticEdgeReturn;
 
-    static unsigned identifyFace(Node const* const* _nodes,
+    static unsigned identifyFace(Node const* const* element_nodes,
                                  Node const* nodes[3])
     {
-        return FaceRule::identifyFace<QuadRule9>(_nodes, nodes);
+        return FaceRule::identifyFace<QuadRule9>(element_nodes, nodes);
     }
 }; /* class */
 

@@ -48,6 +48,6 @@ public:
 
     /// Calculates the volume of a prism with flat faces by partitioning it into
     /// three tetrahedra.
-    static double computeVolume(Node const* const* _nodes);
+    static double computeVolume(Node const* const* element_nodes);
 };
 }  // namespace MeshLib

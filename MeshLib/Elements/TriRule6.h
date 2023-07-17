@@ -52,10 +52,10 @@ public:
     using EdgeReturn = MeshLib::QuadraticEdgeReturn;
 
     /// Returns the ID of a face given an array of nodes.
-    static unsigned identifyFace(Node const* const* _nodes,
+    static unsigned identifyFace(Node const* const* element_nodes,
                                  Node const* nodes[2])
     {
-        return FaceRule::identifyFace<TriRule6>(_nodes, nodes);
+        return FaceRule::identifyFace<TriRule6>(element_nodes, nodes);
     }
 
 }; /* class */

@@ -45,7 +45,7 @@ public:
 protected:
     /// Returns the ID of an edge given an array of nodes.
     template <typename ElementRule>
-    static unsigned identifyFace(Node const* const* _nodes,
+    static unsigned identifyFace(Node const* const* element_nodes,
                                  Node const* nodes[ElementRule::dimension])
     {
         for (unsigned i = 0; i < ElementRule::n_edges; i++)
@@ -57,7 +57,8 @@ protected:
             {
                 for (unsigned k = 0; k < ElementRule::dimension; k++)
                 {
-                    if (_nodes[ElementRule::edge_nodes[i][j]] == nodes[k])
+                    if (element_nodes[ElementRule::edge_nodes[i][j]] ==
+                        nodes[k])
                     {
                         flag++;
                     }
