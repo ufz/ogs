@@ -110,7 +110,7 @@ PhreeqcKernel::PhreeqcKernel(
 }
 
 void PhreeqcKernel::tidyEquilibriumReactants(
-    EquilibriumReactants const equilibrium_reactants)
+    EquilibriumReactants const& equilibrium_reactants)
 {
     // extract a part of function body from int
     // Phreeqc::tidy_pp_assemblage(void)

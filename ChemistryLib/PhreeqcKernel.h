@@ -56,7 +56,7 @@ private:
     void initializePhreeqcGeneralSettings() { do_initialize(); }
 
     void tidyEquilibriumReactants(
-        EquilibriumReactants const equilibrium_reactants);
+        EquilibriumReactants const& equilibrium_reactants);
 
     void loadDatabase(std::string const& database);
 
