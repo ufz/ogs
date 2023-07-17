@@ -264,6 +264,10 @@ void PhreeqcKernel::setTimeStepSize(double const dt)
 
 void PhreeqcKernel::callPhreeqc(std::vector<GlobalVector*>& process_solutions)
 {
+    if (process_solutions.empty())
+    {
+        OGS_FATAL("About to access an empty process solutions vector.");
+    }
     std::size_t const num_chemical_systems = process_solutions[0]->size();
     for (std::size_t chemical_system_id = 0;
          chemical_system_id < num_chemical_systems;
