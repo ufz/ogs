@@ -10,8 +10,9 @@
 
 #pragma once
 
+#include "EdgeReturn.h"
 #include "MeshLib/MeshEnums.h"
-#include "QuadRule8.h"
+#include "QuadRule.h"
 
 namespace MeshLib
 {
@@ -32,7 +33,7 @@ namespace MeshLib
  *              0
  * \endcode
  */
-class QuadRule9 : public QuadRule8
+class QuadRule9 : public QuadRule
 {
 public:
     /// Constant: The number of all nodes for this element
@@ -40,6 +41,18 @@ public:
 
     /// Constant: The FEM type of the element
     static const CellType cell_type = CellType::QUAD9;
+
+    /// Constant: Local node index table for edge
+    static const unsigned edge_nodes[4][3];
+
+    /// Returns the i-th edge of the element.
+    using EdgeReturn = MeshLib::QuadraticEdgeReturn;
+
+    static unsigned identifyFace(Node const* const* element_nodes,
+                                 Node const* nodes[3])
+    {
+        return FaceRule::identifyFace<QuadRule9>(element_nodes, nodes);
+    }
 }; /* class */
 
 }  // namespace MeshLib

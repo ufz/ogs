@@ -10,17 +10,17 @@
 
 #pragma once
 
-#include "MeshLib/MeshEnums.h"
-#include "Element.h"
-#include "FaceRule.h"
 #include "EdgeReturn.h"
+#include "Element.h"
+#include "TriRule.h"
 
 namespace MeshLib
 {
 
 /**
- * This class represents a 2d triangle element. The following sketch shows the
- * node and edge numbering.
+ * This class represents a 2d triangle element with 3 nodes.
+ *
+ * The following sketch shows the node and edge numbering.
  * \anchor TriNodeAndEdgeNumbering
  * \code
  *
@@ -36,26 +36,14 @@ namespace MeshLib
  *
  * \endcode
  */
-class TriRule3 : public FaceRule
+class TriRule3 : public TriRule
 {
 public:
-    /// Constant: The number of base nodes for this element
-    static const unsigned n_base_nodes = 3u;
-
     /// Constant: The number of all nodes for this element
     static const unsigned n_all_nodes = 3u;
 
-    /// Constant: The geometric type of the element
-    static const MeshElemType mesh_elem_type = MeshElemType::TRIANGLE;
-
     /// Constant: The FEM type of the element
     static const CellType cell_type = CellType::TRI3;
-
-    /// Constant: The number of edges
-    static const unsigned n_edges = 3;
-
-    /// Constant: The number of neighbors
-    static const unsigned n_neighbors = 3;
 
     /// Constant: Local node index table for edge
     static const unsigned edge_nodes[3][2];
@@ -63,24 +51,12 @@ public:
     /// Returns the i-th edge of the element.
     using EdgeReturn = MeshLib::LinearEdgeReturn;
 
-    /**
-     * \copydoc MeshLib::Element::isPntInElement()
-     * \param nodes the nodes of the element.
-     */
-    static bool isPntInElement(Node const* const* nodes,
-                               MathLib::Point3d const& pnt, double eps);
-
-    /**
-     * Tests if the element is geometrically valid.
-     */
-    static ElementErrorCode validate(const Element* e);
-
     /// Returns the ID of a face given an array of nodes.
-    static unsigned identifyFace(Node const* const* /*_nodes*/,
-                                 Node const* nodes[3]);
-
-    /// Calculates the volume of a convex hexahedron by partitioning it into six tetrahedra.
-    static double computeVolume(Node const* const* _nodes);
+    static unsigned identifyFace(Node const* const* element_nodes,
+                                 Node const* nodes[2])
+    {
+        return FaceRule::identifyFace<TriRule3>(element_nodes, nodes);
+    }
 
 }; /* class */
 

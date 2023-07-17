@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include "MeshLib/MeshEnums.h"
-#include "TriRule3.h"
 #include "EdgeReturn.h"
+#include "MeshLib/MeshEnums.h"
+#include "TriRule.h"
 
 namespace MeshLib
 {
@@ -36,7 +36,7 @@ namespace MeshLib
  *
  * \endcode
  */
-class TriRule6 : public TriRule3
+class TriRule6 : public TriRule
 {
 public:
     /// Constant: The number of all nodes for this element
@@ -50,6 +50,13 @@ public:
 
     /// Returns the i-th edge of the element.
     using EdgeReturn = MeshLib::QuadraticEdgeReturn;
+
+    /// Returns the ID of a face given an array of nodes.
+    static unsigned identifyFace(Node const* const* element_nodes,
+                                 Node const* nodes[2])
+    {
+        return FaceRule::identifyFace<TriRule6>(element_nodes, nodes);
+    }
 
 }; /* class */
 

@@ -17,6 +17,7 @@
 #include <range/v3/view/enumerate.hpp>
 #include <range/v3/view/indirect.hpp>
 #include <range/v3/view/map.hpp>
+#include <unordered_map>
 #include <vector>
 
 #include "BaseLib/Logging.h"

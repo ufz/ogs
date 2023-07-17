@@ -40,7 +40,7 @@ const unsigned PyramidRule13::n_face_nodes[5] = {6, 6, 6, 6, 8};
 
 const Element* PyramidRule13::getFace(const Element* e, unsigned i)
 {
-    if (i < e->getNumberOfFaces())
+    if (i < n_faces)
     {
         unsigned nFaceNodes(PyramidRule13::n_face_nodes[i]);
         auto** nodes = new Node*[nFaceNodes];

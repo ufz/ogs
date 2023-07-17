@@ -13,8 +13,6 @@
 #include <array>
 
 #include "BaseLib/Logging.h"
-#include "Line.h"
-#include "MathLib/GeometricBasics.h"
 #include "MeshLib/Node.h"
 #include "Tri.h"
 
@@ -50,49 +48,4 @@ const Element* TetRule4::getFace(const Element* e, unsigned i)
     ERR("Error in MeshLib::Element::getFace() - Index {:d} does not exist.", i);
     return nullptr;
 }
-
-double TetRule4::computeVolume(Node const* const* _nodes)
-{
-    return MathLib::calcTetrahedronVolume(*_nodes[0], *_nodes[1], *_nodes[2],
-                                          *_nodes[3]);
-}
-
-bool TetRule4::isPntInElement(Node const* const* nodes,
-                              MathLib::Point3d const& pnt, double eps)
-{
-    return MathLib::isPointInTetrahedron(pnt, *nodes[0], *nodes[1], *nodes[2],
-                                         *nodes[3], eps);
-}
-
-unsigned TetRule4::identifyFace(Node const* const* _nodes, Node const* nodes[3])
-{
-    for (unsigned i = 0; i < 4; i++)
-    {
-        unsigned flag(0);
-        for (unsigned j = 0; j < 3; j++)
-        {
-            for (unsigned k = 0; k < 3; k++)
-            {
-                if (_nodes[face_nodes[i][j]] == nodes[k])
-                {
-                    flag++;
-                }
-            }
-        }
-        if (flag == 3)
-        {
-            return i;
-        }
-    }
-    return std::numeric_limits<unsigned>::max();
-}
-
-ElementErrorCode TetRule4::validate(const Element* e)
-{
-    ElementErrorCode error_code;
-    error_code[ElementErrorFlag::ZeroVolume] = hasZeroVolume(*e);
-    error_code[ElementErrorFlag::NodeOrder] = !e->testElementNodeOrder();
-    return error_code;
-}
-
 }  // end namespace MeshLib

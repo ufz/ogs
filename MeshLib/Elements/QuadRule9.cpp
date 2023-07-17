@@ -5,20 +5,17 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
-#include "QuadRule4.h"
-
-#include "MathLib/GeometricBasics.h"
-#include "MeshLib/Node.h"
+#include "QuadRule9.h"
 
 namespace MeshLib
 {
-const unsigned QuadRule4::edge_nodes[4][2] = {
-    {0, 1},  // Edge 0
-    {1, 2},  // Edge 1
-    {2, 3},  // Edge 2
-    {3, 0}   // Edge 3
+const unsigned QuadRule9::edge_nodes[4][3] = {
+    {0, 1, 4},  // Edge 0
+    {1, 2, 5},  // Edge 1
+    {2, 3, 6},  // Edge 2
+    {3, 0, 7}   // Edge 3
 };
+
 }  // end namespace MeshLib
