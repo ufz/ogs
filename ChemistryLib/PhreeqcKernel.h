@@ -69,11 +69,6 @@ private:
     cxxISolution* getOrCreateInitialAqueousSolution(
         cxxSolution& aqueous_solution);
 
-    bool isHydrogen(char const* element) const
-    {
-        return strcmp(element, "H") == 0;
-    }
-
     void setTimeStepSize(double const dt);
 
     void reset(std::size_t const chemical_system_id);
