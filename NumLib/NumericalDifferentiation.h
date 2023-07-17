@@ -143,9 +143,9 @@ struct DefaultPerturbationStrategy
     }
 
     template <typename T>
-    T const& perturbIf(std::false_type, T const& value,
-                       double const /*plus_or_minus*/,
-                       Eigen::Index /*comp*/) const
+    static T const& perturbIf(std::false_type, T const& value,
+                              double const /*plus_or_minus*/,
+                              Eigen::Index /*comp*/)
     {
         return value;
     }
