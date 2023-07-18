@@ -60,7 +60,7 @@ struct IntegrationPointData final
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
 
-    typename BMatricesType::KelvinMatrixType D;
+    typename BMatricesType::KelvinMatrixType D, C_tensile, C_compressive;
     double integration_weight;
 
     void pushBackState()
@@ -91,8 +91,8 @@ struct IntegrationPointData final
         auto const bulk_modulus = linear_elastic_mp.bulk_modulus(t, x);
         auto const mu = linear_elastic_mp.mu(t, x);
 
-        std::tie(sigma, sigma_tensile, D, strain_energy_tensile,
-                 elastic_energy) =
+        std::tie(sigma, sigma_tensile, D, strain_energy_tensile, elastic_energy,
+                 C_tensile, C_compressive) =
             MaterialLib::Solids::Phasefield::calculateVolDevDegradedStress<
                 DisplacementDim>(degradation, bulk_modulus, mu, eps_m);
     }

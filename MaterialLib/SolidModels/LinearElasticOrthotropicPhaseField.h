@@ -28,7 +28,12 @@ std::tuple<MathLib::KelvinVector::KelvinVectorType<
            MathLib::KelvinVector::KelvinVectorType<
                DisplacementDim> /* sigma_compressive */,
            MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> /* D */,
-           double /* strain_energy_tensile */, double /* elastic_energy */
+           double /* strain_energy_tensile */, double /* elastic_energy */,
+           MathLib::KelvinVector::KelvinMatrixType<
+               DisplacementDim> /* C_tensile */,
+           MathLib::KelvinVector::KelvinMatrixType<
+               DisplacementDim> /* C_compressive
+                                 */
            >
 calculateOrthoVolDevDegradedStress(
     double const degradation,
@@ -101,7 +106,7 @@ calculateOrthoVolDevDegradedStress(
 
     return std::make_tuple(eps_tensile, sigma_real, sigma_tensile,
                            sigma_compressive, D, strain_energy_tensile,
-                           elastic_energy);
+                           elastic_energy, C_tensile, C_compressive);
 }
 
 template <int DisplacementDim>
@@ -112,7 +117,12 @@ std::tuple<MathLib::KelvinVector::KelvinVectorType<
            MathLib::KelvinVector::KelvinVectorType<
                DisplacementDim> /* sigma_tensile */,
            MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> /* D */,
-           double /* strain_energy_tensile */, double /* elastic_energy */
+           double /* strain_energy_tensile */, double /* elastic_energy */,
+           MathLib::KelvinVector::KelvinMatrixType<
+               DisplacementDim> /* C_tensile */,
+           MathLib::KelvinVector::KelvinMatrixType<
+               DisplacementDim> /* C_compressive
+                                 */
            >
 calculateOrthoMasonryDegradedStress(
     double const degradation,
@@ -213,7 +223,8 @@ calculateOrthoMasonryDegradedStress(
     KelvinMatrix const D = degradation * C_tensile + C_compressive;
 
     return std::make_tuple(eps_tensile, sigma_real, sigma_tensile, D,
-                           strain_energy_tensile, elastic_energy);
+                           strain_energy_tensile, elastic_energy, C_tensile,
+                           C_compressive);
 }
 
 }  // namespace Phasefield
