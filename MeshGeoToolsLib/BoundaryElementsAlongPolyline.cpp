@@ -82,18 +82,14 @@ MeshLib::Element* modifyEdgeNodeOrdering(
                                 const_cast<MeshLib::Node*>(e->getNode(0))};
             return new MeshLib::Line(nodes);
         }
-        else if (auto const* e = dynamic_cast<MeshLib::Line3 const*>(&edge))
+        if (auto const* e = dynamic_cast<MeshLib::Line3 const*>(&edge))
         {
             std::array nodes = {const_cast<MeshLib::Node*>(e->getNode(1)),
                                 const_cast<MeshLib::Node*>(e->getNode(0)),
                                 const_cast<MeshLib::Node*>(e->getNode(2))};
             return new MeshLib::Line3(nodes);
         }
-        else
-        {
-            OGS_FATAL("Not implemented for element type {:s}",
-                      typeid(edge).name());
-        }
+        OGS_FATAL("Not implemented for element type {:s}", typeid(edge).name());
     }
 
     // Return the original edge otherwise.
