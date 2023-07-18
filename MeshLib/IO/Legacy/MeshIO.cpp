@@ -302,25 +302,25 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
             }
             if (line_string.find("$NODES") != std::string::npos)
             {
-                double x;
-                double y;
-                double z;
-                double double_dummy;
-                unsigned idx;
                 getline(in, line_string);
                 BaseLib::trim(line_string);
                 unsigned nNodes = atoi(line_string.c_str());
-                std::string s;
                 for (unsigned i = 0; i < nNodes; ++i)
                 {
                     getline(in, line_string);
                     std::stringstream iss(line_string);
+                    unsigned idx;
+                    double x;
+                    double y;
+                    double z;
                     iss >> idx >> x >> y >> z;
                     auto* node(new MeshLib::Node(x, y, z, idx));
                     nodes.push_back(node);
+                    std::string s;
                     iss >> s;
                     if (s.find("$AREA") != std::string::npos)
                     {
+                        double double_dummy;
                         iss >> double_dummy;
                     }
                 }
