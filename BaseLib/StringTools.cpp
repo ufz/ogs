@@ -41,7 +41,7 @@ std::list<std::string> splitString(const std::string& str, char delim)
     std::list<std::string> strList;
     std::stringstream ss(str);
     std::string item;
-    while (getline(ss, item, delim))
+    while (std::getline(ss, item, delim))
     {
         strList.push_back(item);
     }

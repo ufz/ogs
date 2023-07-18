@@ -283,7 +283,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
     }
 
     std::string line_string;
-    getline(in, line_string);
+    std::getline(in, line_string);
 
     if (line_string.find("#FEM_MSH") != std::string::npos)  // OGS mesh file
     {
@@ -293,7 +293,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 
         while (!in.eof())
         {
-            getline(in, line_string);
+            std::getline(in, line_string);
 
             // check keywords
             if (line_string.find("#STOP") != std::string::npos)
@@ -302,12 +302,12 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
             }
             if (line_string.find("$NODES") != std::string::npos)
             {
-                getline(in, line_string);
+                std::getline(in, line_string);
                 BaseLib::trim(line_string);
                 unsigned nNodes = atoi(line_string.c_str());
                 for (unsigned i = 0; i < nNodes; ++i)
                 {
-                    getline(in, line_string);
+                    std::getline(in, line_string);
                     std::stringstream iss(line_string);
                     unsigned idx;
                     double x;
@@ -327,12 +327,12 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
             }
             else if (line_string.find("$ELEMENTS") != std::string::npos)
             {
-                getline(in, line_string);
+                std::getline(in, line_string);
                 BaseLib::trim(line_string);
                 unsigned nElements = atoi(line_string.c_str());
                 for (unsigned i = 0; i < nElements; ++i)
                 {
-                    getline(in, line_string);
+                    std::getline(in, line_string);
                     std::stringstream ss(line_string);
                     materials.push_back(readMaterialID(ss));
                     MeshLib::Element* elem(readElement(ss, nodes));

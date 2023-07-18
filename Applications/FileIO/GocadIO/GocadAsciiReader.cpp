@@ -207,7 +207,7 @@ bool parseProperties(std::ifstream& in,
     // related keywords is found.
     std::streampos pos = in.tellg();
     std::string line;
-    while (getline(in, line))
+    while (std::getline(in, line))
     {
         std::string const key = propertyCheck(line);
         // This is the intended way to exit this method:

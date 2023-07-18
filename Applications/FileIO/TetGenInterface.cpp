@@ -95,7 +95,7 @@ std::size_t TetGenInterface::getNFacets(std::ifstream& input)
     std::string line;
     while (!input.fail())
     {
-        getline(input, line);
+        std::getline(input, line);
         if (input.fail())
         {
             ERR("TetGenInterface::getNFacets(): Error reading number of "
@@ -138,7 +138,7 @@ bool TetGenInterface::parseSmeshFacets(
     std::size_t k(0);
     while (k < nFacets && !input.fail())
     {
-        getline(input, line);
+        std::getline(input, line);
         if (input.fail())
         {
             ERR("TetGenInterface::parseFacets(): Error reading facet {:d}.", k);
@@ -276,7 +276,7 @@ bool TetGenInterface::readNodesFromStream(std::ifstream& ins,
                                           std::vector<MeshLib::Node*>& nodes)
 {
     std::string line;
-    getline(ins, line);
+    std::getline(ins, line);
     std::size_t n_nodes;
     std::size_t dim;
     std::size_t n_attributes;
@@ -288,7 +288,7 @@ bool TetGenInterface::readNodesFromStream(std::ifstream& ins,
         if (line.empty() || line.compare(0, 1, "#") == 0)
         {
             // this line is a comment - skip
-            getline(ins, line);
+            std::getline(ins, line);
             continue;
         }
         // read header line
@@ -517,7 +517,7 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
     const unsigned offset = (_zero_based_idx) ? 0 : 1;
     for (std::size_t k(0); k < n_tets && !ins.fail(); k++)
     {
-        getline(ins, line);
+        std::getline(ins, line);
         if (ins.fail())
         {
             ERR("TetGenInterface::parseElements(): Error reading tetrahedron "
