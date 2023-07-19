@@ -21,6 +21,16 @@ Use [`clang-format`](https://clang.llvm.org/docs/ClangFormat.html). It can be ad
 
 The current style is defined in [.clang-format](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/.clang-format).
 
+You can also run via the command line:
+
+```bash
+clang-format -i path/to/file.cpp
+# OR clang-format on changed lines only:
+git clang-format -i path/to/file.cpp
+# OR run on all files, e.g.:
+find -E . -regex '.*\.(cpp|h)' -exec clang-format -i {} \;
+```
+
 ## Python
 
 Use [`black`](https://black.readthedocs.io/en/stable/). It can be added to be automatically run on save in your editor / IDE:

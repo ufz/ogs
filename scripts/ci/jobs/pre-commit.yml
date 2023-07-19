@@ -16,7 +16,6 @@ clang-format:
   rules:
     - if: $CI_MERGE_REQUEST_IID
   needs: [ci_images]
-  allow_failure: true
   script:
     - git clang-format --extensions "h,cpp" ${CI_MERGE_REQUEST_DIFF_BASE_SHA}
     - if [[ $(git diff) ]]; then exit 1; fi
