@@ -61,7 +61,7 @@ struct IntegrationPointData final
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
 
-    typename BMatricesType::KelvinMatrixType D;
+    typename BMatricesType::KelvinMatrixType D, C_tensile, C_compressive;
 
     double integration_weight;
     double history_variable, history_variable_prev;
@@ -95,23 +95,26 @@ struct IntegrationPointData final
             case EnergySplitModel::Isotropic:
             {
                 std::tie(sigma, sigma_tensile, D, strain_energy_tensile,
-                         elastic_energy) = MaterialLib::Solids::Phasefield::
-                    calculateIsotropicDegradedStress<DisplacementDim>(
-                        degradation, bulk_modulus, mu, eps);
+                         elastic_energy, C_tensile, C_compressive) =
+                    MaterialLib::Solids::Phasefield::
+                        calculateIsotropicDegradedStress<DisplacementDim>(
+                            degradation, bulk_modulus, mu, eps);
                 break;
             }
             case EnergySplitModel::VolDev:
             {
                 std::tie(sigma, sigma_tensile, D, strain_energy_tensile,
-                         elastic_energy) = MaterialLib::Solids::Phasefield::
-                    calculateVolDevDegradedStress<DisplacementDim>(
-                        degradation, bulk_modulus, mu, eps);
+                         elastic_energy, C_tensile, C_compressive) =
+                    MaterialLib::Solids::Phasefield::
+                        calculateVolDevDegradedStress<DisplacementDim>(
+                            degradation, bulk_modulus, mu, eps);
                 break;
             }
             case EnergySplitModel::EffectiveStress:
             {
                 std::tie(sigma, sigma_tensile, D, strain_energy_tensile,
-                         elastic_energy) = MaterialLib::Solids::Phasefield::
+                         elastic_energy, C_tensile,
+                         C_compressive) = MaterialLib::Solids::Phasefield::
                     calculateIsotropicDegradedStressWithRankineEnergy<
                         DisplacementDim>(degradation, bulk_modulus, mu, eps);
                 break;
@@ -126,10 +129,10 @@ struct IntegrationPointData final
                                   .getElasticTensor(t, x, temperature);
 
                 std::tie(eps_tensile, sigma, sigma_tensile, sigma_compressive,
-                         D, strain_energy_tensile, elastic_energy) =
-                    MaterialLib::Solids::Phasefield::
-                        calculateOrthoVolDevDegradedStress<DisplacementDim>(
-                            degradation, eps, C_ortho);
+                         D, strain_energy_tensile, elastic_energy, C_tensile,
+                         C_compressive) = MaterialLib::Solids::Phasefield::
+                    calculateOrthoVolDevDegradedStress<DisplacementDim>(
+                        degradation, eps, C_ortho);
                 break;
             }
             case EnergySplitModel::OrthoMasonry:
@@ -142,10 +145,10 @@ struct IntegrationPointData final
                                   .getElasticTensor(t, x, temperature);
 
                 std::tie(eps_tensile, sigma, sigma_tensile, D,
-                         strain_energy_tensile, elastic_energy) =
-                    MaterialLib::Solids::Phasefield::
-                        calculateOrthoMasonryDegradedStress<DisplacementDim>(
-                            degradation, eps, C_ortho);
+                         strain_energy_tensile, elastic_energy, C_tensile,
+                         C_compressive) = MaterialLib::Solids::Phasefield::
+                    calculateOrthoMasonryDegradedStress<DisplacementDim>(
+                        degradation, eps, C_ortho);
                 break;
             }
         }
