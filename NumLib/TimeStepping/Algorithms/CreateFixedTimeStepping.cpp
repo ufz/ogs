@@ -192,7 +192,11 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
                     e.what());
             }
 
-            t_curr += repeat * delta_t;
+            // Multiplying dt * repeat is not the same as in the current
+            // implementation of the time loop, where the dt's are added.
+            // Therefore the sum of all dt is taken here.
+            t_curr =
+                std::accumulate(end(delta_ts) - repeat, end(delta_ts), t_curr);
         }
     }
 
