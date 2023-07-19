@@ -29,7 +29,6 @@
 
 namespace
 {
-static std::string mat_name = "MaterialIDs";
 // tests if a plane and an AABB are intersecting
 // (based on Christer Ericson "Real Time Collision Detection" 5.2.3)
 bool testAABBIntersectingPlane(Eigen::Vector3d const& aabb_centre,
@@ -99,7 +98,7 @@ void markFaults(MeshLib::Mesh& mesh, MeshLib::Mesh const& fault,
 {
     auto const& elems = mesh.getElements();
     std::size_t const n_elems = mesh.getNumberOfElements();
-    auto mat_ids = mesh.getProperties().getPropertyVector<int>("MaterialIDs");
+    auto mat_ids = MeshLib::materialIDs(mesh);
     auto const& fnodes = fault.getNodes();
     auto const& felems = fault.getElements();
     GeoLib::AABB const fault_aabb(fnodes.cbegin(), fnodes.cend());

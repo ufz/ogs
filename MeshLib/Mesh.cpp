@@ -273,6 +273,12 @@ PropertyVector<int> const* materialIDs(Mesh const& mesh)
     return nullptr;
 }
 
+PropertyVector<int>* materialIDs(Mesh& mesh)
+{
+    return const_cast<PropertyVector<int>*>(
+        MeshLib::materialIDs(std::as_const(mesh)));
+}
+
 PropertyVector<std::size_t> const* bulkNodeIDs(Mesh const& mesh)
 {
     auto const& properties = mesh.getProperties();

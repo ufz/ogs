@@ -182,6 +182,7 @@ inline bool operator!=(Mesh const& a, Mesh const& b)
 /// If the property does not exists (or is of different type), a nullptr is
 /// returned.
 PropertyVector<int> const* materialIDs(Mesh const& mesh);
+PropertyVector<int>* materialIDs(Mesh& mesh);
 PropertyVector<std::size_t> const* bulkNodeIDs(Mesh const& mesh);
 PropertyVector<std::size_t> const* bulkElementIDs(Mesh const& mesh);
 
