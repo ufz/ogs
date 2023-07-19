@@ -84,7 +84,9 @@ if(OGS_BUILD_WHEEL)
 else()
     # Build behaviours lib as part of ogs' build process
     mfront_behaviours_check_library(OgsMFrontBehaviour ${_mfront_behaviours})
-    # Disable warnings for generated OgsMFrontBehaviour
+    # ------------------------------ ATTENTION --------------------------------
+    # Disable warnings for generated OgsMFrontBehaviour. To enable warnings
+    # comment out the following target_compile_options()-statement:
     target_compile_options(
         OgsMFrontBehaviour PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-w>
                                    $<$<CXX_COMPILER_ID:MSVC>:/W0>
