@@ -126,7 +126,7 @@ void FEFLOWGeoInterface::readPoints(QDomElement& nodesEle,
     std::string line_str;
     while (!ss.eof())
     {
-        std::std::getline(ss, line_str);
+        std::getline(ss, line_str);
         boost::trim_right(line_str);
         if (line_str.empty())
         {
