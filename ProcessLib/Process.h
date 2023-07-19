@@ -306,7 +306,7 @@ protected:
      * member of this class, @c _local_to_global_index_map.
      */
     void constructDofTableOfSpecifiedProcessStaggeredScheme(
-        const int specified_prosess_id);
+        const int specified_process_id);
 
     /**
      * Get the address of a LocalToGlobalIndexMap, and the status of its memory.

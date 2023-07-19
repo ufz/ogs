@@ -9,8 +9,40 @@
 
 #include "CoordinateSystem.h"
 
+#include <cmath>
+
+#include "GeoLib/AABB.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
+
+namespace
+{
+unsigned char getCoordinateSystem(GeoLib::AABB const& bbox)
+{
+    unsigned char coords = 0;
+
+    auto const [bbox_min, bbox_max] = bbox.getMinMaxPoints();
+    Eigen::Vector3d const pt_diff = bbox_max - bbox_min;
+
+    // The axis aligned bounding box is a from the right half-open interval.
+    // Therefore, the difference between the particular coordinates of the
+    // points is modified by the unit in the last place towards zero.
+    if (std::nexttoward(std::abs(pt_diff[0]), 0.0) > .0)
+    {
+        coords |= MeshLib::CoordinateSystemType::X;
+    }
+    if (std::nexttoward(std::abs(pt_diff[1]), 0.0) > .0)
+    {
+        coords |= MeshLib::CoordinateSystemType::Y;
+    }
+    if (std::nexttoward(std::abs(pt_diff[2]), 0.0) > .0)
+    {
+        coords |= MeshLib::CoordinateSystemType::Z;
+    }
+
+    return coords;
+}
+}  // namespace
 
 namespace MeshLib
 {
@@ -40,31 +72,9 @@ CoordinateSystem::CoordinateSystem(const Element& ele)
     }
 }
 
-unsigned char CoordinateSystem::getCoordinateSystem(
-    const GeoLib::AABB& bbox) const
+CoordinateSystem::CoordinateSystem(GeoLib::AABB const& bbox)
+    : _type(getCoordinateSystem(bbox))
 {
-    unsigned char coords = 0;
-
-    auto const [bbox_min, bbox_max] = bbox.getMinMaxPoints();
-    Eigen::Vector3d const pt_diff = bbox_max - bbox_min;
-
-    // The axis aligned bounding box is a from the right half-open interval.
-    // Therefore, the difference between the particular coordinates of the
-    // points is modified by the unit in the last place towards zero.
-    if (std::nexttoward(std::abs(pt_diff[0]), 0.0) > .0)
-    {
-        coords |= CoordinateSystemType::X;
-    }
-    if (std::nexttoward(std::abs(pt_diff[1]), 0.0) > .0)
-    {
-        coords |= CoordinateSystemType::Y;
-    }
-    if (std::nexttoward(std::abs(pt_diff[2]), 0.0) > .0)
-    {
-        coords |= CoordinateSystemType::Z;
-    }
-
-    return coords;
 }
 
 }  // namespace MeshLib

@@ -191,7 +191,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
         // GRAVITY
         else if (line_string == "GRAVITY")
         {
-            getline(in, line_string);
+            std::getline(in, line_string);
             line_stream.str(line_string);
             double vec[3] = {};
             line_stream >> vec[0] >> vec[1] >> vec[2];
@@ -325,7 +325,7 @@ void FEFLOWMeshInterface::readNodeCoordinates(
         // each line
         for (std::size_t i = 0; i < n_lines; i++)
         {
-            getline(in, line_string);
+            std::getline(in, line_string);
             line_stream.str(line_string);
             for (unsigned j = 0; j < 12; j++)
             {
@@ -626,7 +626,7 @@ void FEFLOWMeshInterface::readELEMENTALSETS(
     while (true)
     {
         pos_prev_line = in.tellg();
-        getline(in, line_string);
+        std::getline(in, line_string);
 
         unsigned mode = 0;
         if (!in)

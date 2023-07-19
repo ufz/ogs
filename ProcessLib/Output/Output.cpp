@@ -13,6 +13,8 @@
 #include <cassert>
 #include <exception>
 #include <fstream>
+#include <range/v3/algorithm/transform.hpp>
+#include <range/v3/range/conversion.hpp>
 #include <vector>
 
 #include "AddProcessDataToMesh.h"
@@ -417,13 +419,12 @@ void Output::doOutputNonlinearIteration(
 
 std::vector<std::string> Output::getFileNamesForOutput() const
 {
-    std::vector<std::string> output_names;
-    for (auto const& output_name : _mesh_names_for_output)
-    {
-        output_names.push_back(
-            _output_format->constructFilename(output_name, 0, 0, 0));
-    }
-    return output_names;
+    auto construct_filename = ranges::views::transform(
+        [&](auto const& output_name)
+        { return _output_format->constructFilename(output_name, 0, 0, 0); });
+
+    return _mesh_names_for_output | construct_filename |
+           ranges::to<std::vector>;
 }
 
 std::vector<double> calculateUniqueFixedTimesForAllOutputs(

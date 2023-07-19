@@ -56,7 +56,7 @@ private:
     void initializePhreeqcGeneralSettings() { do_initialize(); }
 
     void tidyEquilibriumReactants(
-        EquilibriumReactants const equilibrium_reactants);
+        EquilibriumReactants const& equilibrium_reactants);
 
     void loadDatabase(std::string const& database);
 
@@ -68,11 +68,6 @@ private:
 
     cxxISolution* getOrCreateInitialAqueousSolution(
         cxxSolution& aqueous_solution);
-
-    bool isHydrogen(char const* element) const
-    {
-        return strcmp(element, "H") == 0;
-    }
 
     void setTimeStepSize(double const dt);
 

@@ -167,14 +167,6 @@ std::vector<int> MeshComponentMap::getComponentIDs(const Location& l) const
     return vec_compID;
 }
 
-Line MeshComponentMap::getLine(Location const& l, int const comp_id) const
-{
-    auto const& m = _dict.get<ByLocationAndComponent>();
-    auto const itr = m.find(Line(l, comp_id));
-    assert(itr != m.end());  // The line must exist in the current dictionary.
-    return *itr;
-}
-
 GlobalIndexType MeshComponentMap::getGlobalIndex(Location const& l,
                                                  int const comp_id) const
 {

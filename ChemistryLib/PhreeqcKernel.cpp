@@ -110,7 +110,7 @@ PhreeqcKernel::PhreeqcKernel(
 }
 
 void PhreeqcKernel::tidyEquilibriumReactants(
-    EquilibriumReactants const equilibrium_reactants)
+    EquilibriumReactants const& equilibrium_reactants)
 {
     // extract a part of function body from int
     // Phreeqc::tidy_pp_assemblage(void)
@@ -184,6 +184,11 @@ void PhreeqcKernel::executeSpeciationCalculation(double const dt)
     callPhreeqc(process_solutions);
 }
 
+static bool isHydrogen(std::string_view const element)
+{
+    return element == "H";
+}
+
 void PhreeqcKernel::setAqueousSolutions(
     std::vector<GlobalVector*> const& process_solutions)
 {
@@ -209,7 +214,7 @@ void PhreeqcKernel::setAqueousSolutions(
             auto& transport_process_solution =
                 process_solutions[transport_process_id];
 
-            auto& element_name = master_species->elt->name;
+            char const* const element_name = master_species->elt->name;
             auto const concentration =
                 transport_process_solution->get(chemical_system_id);
             if (isHydrogen(element_name))
@@ -259,6 +264,10 @@ void PhreeqcKernel::setTimeStepSize(double const dt)
 
 void PhreeqcKernel::callPhreeqc(std::vector<GlobalVector*>& process_solutions)
 {
+    if (process_solutions.empty())
+    {
+        OGS_FATAL("About to access an empty process solutions vector.");
+    }
     std::size_t const num_chemical_systems = process_solutions[0]->size();
     for (std::size_t chemical_system_id = 0;
          chemical_system_id < num_chemical_systems;
@@ -339,7 +348,7 @@ void PhreeqcKernel::updateNodalProcessSolutions(
         auto& transport_process_solution =
             process_solutions[transport_process_id];
 
-        auto const& element_name = master_species->elt->name;
+        char const* const element_name = master_species->elt->name;
         if (isHydrogen(element_name))
         {
             // Update hydrogen concentration by pH value.

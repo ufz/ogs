@@ -24,6 +24,222 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
 
+namespace
+{
+/// Subdivides a nonplanar quad into two triangles.
+unsigned subdivideQuad(MeshLib::Element const* const quad,
+                       std::vector<MeshLib::Node*> const& nodes,
+                       std::vector<MeshLib::Element*>& new_elements)
+{
+    std::array tri1_nodes{nodes[quad->getNode(0)->getID()],
+                          nodes[quad->getNode(1)->getID()],
+                          nodes[quad->getNode(2)->getID()]};
+    new_elements.push_back(new MeshLib::Tri(tri1_nodes));
+
+    std::array tri2_nodes{nodes[quad->getNode(0)->getID()],
+                          nodes[quad->getNode(2)->getID()],
+                          nodes[quad->getNode(3)->getID()]};
+    new_elements.push_back(new MeshLib::Tri(tri2_nodes));
+
+    return 2;
+}
+
+/// Subdivides a prism with nonplanar quad faces into two tets.
+unsigned subdividePrism(MeshLib::Element const* const prism,
+                        std::vector<MeshLib::Node*> const& nodes,
+                        std::vector<MeshLib::Element*>& new_elements)
+{
+    auto addTetrahedron =
+        [&prism, &nodes, &new_elements](std::size_t id0, std::size_t id1,
+                                        std::size_t id2, std::size_t id3)
+    {
+        std::array<MeshLib::Node*, 4> tet_nodes;
+        tet_nodes[0] = nodes[prism->getNode(id0)->getID()];
+        tet_nodes[1] = nodes[prism->getNode(id1)->getID()];
+        tet_nodes[2] = nodes[prism->getNode(id2)->getID()];
+        tet_nodes[3] = nodes[prism->getNode(id3)->getID()];
+        new_elements.push_back(new MeshLib::Tet(tet_nodes));
+    };
+
+    addTetrahedron(0, 1, 2, 3);
+
+    addTetrahedron(3, 2, 4, 5);
+
+    addTetrahedron(2, 1, 3, 4);
+
+    return 3;
+}
+
+/// Subdivides a Hex with nonplanar faces into tets.
+unsigned subdivideHex(MeshLib::Element const* const hex,
+                      std::vector<MeshLib::Node*> const& nodes,
+                      std::vector<MeshLib::Element*>& new_elements)
+{
+    std::array<MeshLib::Node*, 6> prism1_nodes;
+    prism1_nodes[0] = nodes[hex->getNode(0)->getID()];
+    prism1_nodes[1] = nodes[hex->getNode(2)->getID()];
+    prism1_nodes[2] = nodes[hex->getNode(1)->getID()];
+    prism1_nodes[3] = nodes[hex->getNode(4)->getID()];
+    prism1_nodes[4] = nodes[hex->getNode(6)->getID()];
+    prism1_nodes[5] = nodes[hex->getNode(5)->getID()];
+    auto* prism1(new MeshLib::Prism(prism1_nodes));
+    subdividePrism(prism1, nodes, new_elements);
+    delete prism1;
+
+    std::array<MeshLib::Node*, 6> prism2_nodes;
+    prism2_nodes[0] = nodes[hex->getNode(4)->getID()];
+    prism2_nodes[1] = nodes[hex->getNode(6)->getID()];
+    prism2_nodes[2] = nodes[hex->getNode(7)->getID()];
+    prism2_nodes[3] = nodes[hex->getNode(0)->getID()];
+    prism2_nodes[4] = nodes[hex->getNode(2)->getID()];
+    prism2_nodes[5] = nodes[hex->getNode(3)->getID()];
+    auto* prism2(new MeshLib::Prism(prism2_nodes));
+    subdividePrism(prism2, nodes, new_elements);
+    delete prism2;
+
+    return 6;
+}
+
+/// Subdivides a pyramid with a nonplanar base into two tets.
+unsigned subdividePyramid(MeshLib::Element const* const pyramid,
+                          std::vector<MeshLib::Node*> const& nodes,
+                          std::vector<MeshLib::Element*>& new_elements)
+{
+    auto addTetrahedron =
+        [&pyramid, &nodes, &new_elements](std::size_t id0, std::size_t id1,
+                                          std::size_t id2, std::size_t id3)
+    {
+        std::array<MeshLib::Node*, 4> tet_nodes;
+        tet_nodes[0] = nodes[pyramid->getNode(id0)->getID()];
+        tet_nodes[1] = nodes[pyramid->getNode(id1)->getID()];
+        tet_nodes[2] = nodes[pyramid->getNode(id2)->getID()];
+        tet_nodes[3] = nodes[pyramid->getNode(id3)->getID()];
+        new_elements.push_back(new MeshLib::Tet(tet_nodes));
+    };
+
+    addTetrahedron(0, 1, 2, 4);
+
+    addTetrahedron(0, 2, 3, 4);
+
+    return 2;
+}
+
+/// Creates a line element from the first two unique nodes found in the element
+/// (element *should* have exactly two unique nodes!)
+MeshLib::Element* constructLine(MeshLib::Element const* const element,
+                                const std::vector<MeshLib::Node*>& nodes)
+{
+    std::array<MeshLib::Node*, 2> line_nodes;
+    line_nodes[0] = nodes[element->getNode(0)->getID()];
+    line_nodes[1] = nullptr;
+    for (unsigned i = 1; i < element->getNumberOfBaseNodes(); ++i)
+    {
+        if (element->getNode(i)->getID() != element->getNode(0)->getID())
+        {
+            line_nodes[1] = nodes[element->getNode(i)->getID()];
+            break;
+        }
+    }
+    assert(line_nodes[1] != nullptr);
+    return new MeshLib::Line(line_nodes);
+}
+
+/// Creates a triangle element from the first three unique nodes found in the
+/// element (element *should* have exactly three unique nodes!)
+MeshLib::Element* constructTri(MeshLib::Element const* const element,
+                               const std::vector<MeshLib::Node*>& nodes)
+{
+    // TODO?
+    // In theory three unique nodes could also be reduced to two lines e.g. with
+    // a quad where two diametral nodes collapse. This case is currently not
+    // implemented!
+    std::array<MeshLib::Node*, 3> tri_nodes;
+    tri_nodes[0] = nodes[element->getNode(0)->getID()];
+    tri_nodes[2] = nullptr;
+    for (unsigned i = 1; i < element->getNumberOfBaseNodes(); ++i)
+    {
+        if (element->getNode(i)->getID() != tri_nodes[0]->getID())
+        {
+            tri_nodes[1] = nodes[element->getNode(i)->getID()];
+            for (unsigned j = i + 1; j < element->getNumberOfBaseNodes(); ++j)
+            {
+                if (element->getNode(j)->getID() != tri_nodes[1]->getID())
+                {
+                    tri_nodes[2] = nodes[element->getNode(j)->getID()];
+                    break;
+                }
+            }
+            if (tri_nodes[2])
+            {
+                break;
+            }
+        }
+    }
+    assert(tri_nodes[2] != nullptr);
+    return new MeshLib::Tri(tri_nodes);
+}
+
+/// Creates a quad or a tet, depending if the four nodes being coplanar or not
+/// (element *should* have exactly four unique nodes!)
+MeshLib::Element* constructFourNodeElement(
+    MeshLib::Element const* const element,
+    std::vector<MeshLib::Node*> const& nodes,
+    unsigned const min_elem_dim = 1)
+{
+    std::array<MeshLib::Node*, 4> new_nodes;
+    unsigned count(0);
+    new_nodes[count++] = nodes[element->getNode(0)->getID()];
+    for (unsigned i = 1; i < element->getNumberOfBaseNodes(); ++i)
+    {
+        if (count > 3)
+        {
+            break;
+        }
+        bool unique_node(true);
+        for (unsigned j = 0; j < i; ++j)
+        {
+            if (element->getNode(i)->getID() == element->getNode(j)->getID())
+            {
+                unique_node = false;
+                break;
+            }
+        }
+        if (unique_node)
+        {
+            new_nodes[count++] = nodes[element->getNode(i)->getID()];
+        };
+    }
+
+    // test if quad or tet
+    const bool isQuad(MathLib::isCoplanar(*new_nodes[0], *new_nodes[1],
+                                          *new_nodes[2], *new_nodes[3]));
+    if (isQuad && min_elem_dim < 3)
+    {
+        MeshLib::Element* elem(new MeshLib::Quad(new_nodes));
+        for (unsigned i = 1; i < 3; ++i)
+        {
+            if (elem->validate().none())
+            {
+                return elem;
+            }
+
+            // change node order if not convex
+            MeshLib::Node* tmp = new_nodes[i + 1];
+            new_nodes[i + 1] = new_nodes[i];
+            new_nodes[i] = tmp;
+        }
+        return elem;
+    }
+    if (!isQuad)
+    {
+        return new MeshLib::Tet(new_nodes);
+    }
+    // is quad but min elem dim == 3
+
+    return nullptr;
+}
+}  // namespace
+
 namespace MeshToolsLib
 {
 const std::array<unsigned, 8> MeshRevision::_hex_diametral_nodes = {
@@ -331,19 +547,19 @@ std::size_t MeshRevision::subdivideElement(
 {
     if (element->getGeomType() == MeshLib::MeshElemType::QUAD)
     {
-        return this->subdivideQuad(element, nodes, elements);
+        return subdivideQuad(element, nodes, elements);
     }
     if (element->getGeomType() == MeshLib::MeshElemType::HEXAHEDRON)
     {
-        return this->subdivideHex(element, nodes, elements);
+        return subdivideHex(element, nodes, elements);
     }
     if (element->getGeomType() == MeshLib::MeshElemType::PYRAMID)
     {
-        return this->subdividePyramid(element, nodes, elements);
+        return subdividePyramid(element, nodes, elements);
     }
     if (element->getGeomType() == MeshLib::MeshElemType::PRISM)
     {
-        return this->subdividePrism(element, nodes, elements);
+        return subdividePrism(element, nodes, elements);
     }
     return 0;
 }
@@ -361,7 +577,7 @@ std::size_t MeshRevision::reduceElement(
     if (element->getGeomType() == MeshLib::MeshElemType::TRIANGLE &&
         min_elem_dim == 1)
     {
-        elements.push_back(this->constructLine(element, nodes));
+        elements.push_back(constructLine(element, nodes));
         return 1;
     }
     if ((element->getGeomType() == MeshLib::MeshElemType::QUAD) ||
@@ -369,11 +585,11 @@ std::size_t MeshRevision::reduceElement(
     {
         if (n_unique_nodes == 3 && min_elem_dim < 3)
         {
-            elements.push_back(this->constructTri(element, nodes));
+            elements.push_back(constructTri(element, nodes));
         }
         else if (min_elem_dim == 1)
         {
-            elements.push_back(this->constructLine(element, nodes));
+            elements.push_back(constructLine(element, nodes));
         }
         return 1;
     }
@@ -396,104 +612,6 @@ std::size_t MeshRevision::reduceElement(
 
     ERR("Unknown element type.");
     return 0;
-}
-
-unsigned MeshRevision::subdivideQuad(
-    MeshLib::Element const* const quad,
-    std::vector<MeshLib::Node*> const& nodes,
-    std::vector<MeshLib::Element*>& new_elements) const
-{
-    std::array tri1_nodes{nodes[quad->getNode(0)->getID()],
-                          nodes[quad->getNode(1)->getID()],
-                          nodes[quad->getNode(2)->getID()]};
-    new_elements.push_back(new MeshLib::Tri(tri1_nodes));
-
-    std::array tri2_nodes{nodes[quad->getNode(0)->getID()],
-                          nodes[quad->getNode(2)->getID()],
-                          nodes[quad->getNode(3)->getID()]};
-    new_elements.push_back(new MeshLib::Tri(tri2_nodes));
-
-    return 2;
-}
-
-unsigned MeshRevision::subdivideHex(
-    MeshLib::Element const* const hex,
-    std::vector<MeshLib::Node*> const& nodes,
-    std::vector<MeshLib::Element*>& new_elements) const
-{
-    std::array<MeshLib::Node*, 6> prism1_nodes;
-    prism1_nodes[0] = nodes[hex->getNode(0)->getID()];
-    prism1_nodes[1] = nodes[hex->getNode(2)->getID()];
-    prism1_nodes[2] = nodes[hex->getNode(1)->getID()];
-    prism1_nodes[3] = nodes[hex->getNode(4)->getID()];
-    prism1_nodes[4] = nodes[hex->getNode(6)->getID()];
-    prism1_nodes[5] = nodes[hex->getNode(5)->getID()];
-    auto* prism1(new MeshLib::Prism(prism1_nodes));
-    this->subdividePrism(prism1, nodes, new_elements);
-    delete prism1;
-
-    std::array<MeshLib::Node*, 6> prism2_nodes;
-    prism2_nodes[0] = nodes[hex->getNode(4)->getID()];
-    prism2_nodes[1] = nodes[hex->getNode(6)->getID()];
-    prism2_nodes[2] = nodes[hex->getNode(7)->getID()];
-    prism2_nodes[3] = nodes[hex->getNode(0)->getID()];
-    prism2_nodes[4] = nodes[hex->getNode(2)->getID()];
-    prism2_nodes[5] = nodes[hex->getNode(3)->getID()];
-    auto* prism2(new MeshLib::Prism(prism2_nodes));
-    this->subdividePrism(prism2, nodes, new_elements);
-    delete prism2;
-
-    return 6;
-}
-
-unsigned MeshRevision::subdividePyramid(
-    MeshLib::Element const* const pyramid,
-    std::vector<MeshLib::Node*> const& nodes,
-    std::vector<MeshLib::Element*>& new_elements) const
-{
-    auto addTetrahedron =
-        [&pyramid, &nodes, &new_elements](std::size_t id0, std::size_t id1,
-                                          std::size_t id2, std::size_t id3)
-    {
-        std::array<MeshLib::Node*, 4> tet_nodes;
-        tet_nodes[0] = nodes[pyramid->getNode(id0)->getID()];
-        tet_nodes[1] = nodes[pyramid->getNode(id1)->getID()];
-        tet_nodes[2] = nodes[pyramid->getNode(id2)->getID()];
-        tet_nodes[3] = nodes[pyramid->getNode(id3)->getID()];
-        new_elements.push_back(new MeshLib::Tet(tet_nodes));
-    };
-
-    addTetrahedron(0, 1, 2, 4);
-
-    addTetrahedron(0, 2, 3, 4);
-
-    return 2;
-}
-
-unsigned MeshRevision::subdividePrism(
-    MeshLib::Element const* const prism,
-    std::vector<MeshLib::Node*> const& nodes,
-    std::vector<MeshLib::Element*>& new_elements) const
-{
-    auto addTetrahedron =
-        [&prism, &nodes, &new_elements](std::size_t id0, std::size_t id1,
-                                        std::size_t id2, std::size_t id3)
-    {
-        std::array<MeshLib::Node*, 4> tet_nodes;
-        tet_nodes[0] = nodes[prism->getNode(id0)->getID()];
-        tet_nodes[1] = nodes[prism->getNode(id1)->getID()];
-        tet_nodes[2] = nodes[prism->getNode(id2)->getID()];
-        tet_nodes[3] = nodes[prism->getNode(id3)->getID()];
-        new_elements.push_back(new MeshLib::Tet(tet_nodes));
-    };
-
-    addTetrahedron(0, 1, 2, 3);
-
-    addTetrahedron(3, 2, 4, 5);
-
-    addTetrahedron(2, 1, 3, 4);
-
-    return 3;
 }
 
 unsigned MeshRevision::reduceHex(MeshLib::Element const* const org_elem,
@@ -709,7 +827,7 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const* const org_elem,
     }
     else if (n_unique_nodes == 5)
     {
-        MeshLib::Element* tet1(this->constructFourNodeElement(org_elem, nodes));
+        MeshLib::Element* tet1(constructFourNodeElement(org_elem, nodes));
         std::array<std::size_t, 4> first_four_nodes = {
             {tet1->getNode(0)->getID(), tet1->getNode(1)->getID(),
              tet1->getNode(2)->getID(), tet1->getNode(3)->getID()}};
@@ -744,7 +862,7 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const* const org_elem,
     else if (n_unique_nodes == 4)
     {
         MeshLib::Element* elem(
-            this->constructFourNodeElement(org_elem, nodes, min_elem_dim));
+            constructFourNodeElement(org_elem, nodes, min_elem_dim));
         if (elem)
         {
             new_elements.push_back(elem);
@@ -753,12 +871,12 @@ unsigned MeshRevision::reduceHex(MeshLib::Element const* const org_elem,
     }
     else if (n_unique_nodes == 3 && min_elem_dim < 3)
     {
-        new_elements.push_back(this->constructTri(org_elem, nodes));
+        new_elements.push_back(constructTri(org_elem, nodes));
         return 1;
     }
     else if (min_elem_dim == 1)
     {
-        new_elements.push_back(this->constructLine(org_elem, nodes));
+        new_elements.push_back(constructLine(org_elem, nodes));
         return 1;
     }
     return 0;
@@ -773,7 +891,7 @@ void MeshRevision::reducePyramid(MeshLib::Element const* const org_elem,
     if (n_unique_nodes == 4)
     {
         MeshLib::Element* elem(
-            this->constructFourNodeElement(org_elem, nodes, min_elem_dim));
+            constructFourNodeElement(org_elem, nodes, min_elem_dim));
         if (elem)
         {
             new_elements.push_back(elem);
@@ -781,11 +899,11 @@ void MeshRevision::reducePyramid(MeshLib::Element const* const org_elem,
     }
     else if (n_unique_nodes == 3 && min_elem_dim < 3)
     {
-        new_elements.push_back(this->constructTri(org_elem, nodes));
+        new_elements.push_back(constructTri(org_elem, nodes));
     }
     else if (n_unique_nodes == 2 && min_elem_dim == 1)
     {
-        new_elements.push_back(this->constructLine(org_elem, nodes));
+        new_elements.push_back(constructLine(org_elem, nodes));
     }
 }
 
@@ -862,7 +980,7 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const* const org_elem,
     else if (n_unique_nodes == 4)
     {
         MeshLib::Element* elem(
-            this->constructFourNodeElement(org_elem, nodes, min_elem_dim));
+            constructFourNodeElement(org_elem, nodes, min_elem_dim));
         if (elem)
         {
             new_elements.push_back(elem);
@@ -870,124 +988,13 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const* const org_elem,
     }
     else if (n_unique_nodes == 3 && min_elem_dim < 3)
     {
-        new_elements.push_back(this->constructTri(org_elem, nodes));
+        new_elements.push_back(constructTri(org_elem, nodes));
     }
     else if (n_unique_nodes == 2 && min_elem_dim == 1)
     {
-        new_elements.push_back(this->constructLine(org_elem, nodes));
+        new_elements.push_back(constructLine(org_elem, nodes));
     }
     return 1;
-}
-
-MeshLib::Element* MeshRevision::constructLine(
-    MeshLib::Element const* const element,
-    const std::vector<MeshLib::Node*>& nodes) const
-{
-    std::array<MeshLib::Node*, 2> line_nodes;
-    line_nodes[0] = nodes[element->getNode(0)->getID()];
-    line_nodes[1] = nullptr;
-    for (unsigned i = 1; i < element->getNumberOfBaseNodes(); ++i)
-    {
-        if (element->getNode(i)->getID() != element->getNode(0)->getID())
-        {
-            line_nodes[1] = nodes[element->getNode(i)->getID()];
-            break;
-        }
-    }
-    assert(line_nodes[1] != nullptr);
-    return new MeshLib::Line(line_nodes);
-}
-
-MeshLib::Element* MeshRevision::constructTri(
-    MeshLib::Element const* const element,
-    const std::vector<MeshLib::Node*>& nodes) const
-{
-    // TODO?
-    // In theory three unique nodes could also be reduced to two lines e.g. with
-    // a quad where two diametral nodes collapse. This case is currently not
-    // implemented!
-    std::array<MeshLib::Node*, 3> tri_nodes;
-    tri_nodes[0] = nodes[element->getNode(0)->getID()];
-    tri_nodes[2] = nullptr;
-    for (unsigned i = 1; i < element->getNumberOfBaseNodes(); ++i)
-    {
-        if (element->getNode(i)->getID() != tri_nodes[0]->getID())
-        {
-            tri_nodes[1] = nodes[element->getNode(i)->getID()];
-            for (unsigned j = i + 1; j < element->getNumberOfBaseNodes(); ++j)
-            {
-                if (element->getNode(j)->getID() != tri_nodes[1]->getID())
-                {
-                    tri_nodes[2] = nodes[element->getNode(j)->getID()];
-                    break;
-                }
-            }
-            if (tri_nodes[2])
-            {
-                break;
-            }
-        }
-    }
-    assert(tri_nodes[2] != nullptr);
-    return new MeshLib::Tri(tri_nodes);
-}
-
-MeshLib::Element* MeshRevision::constructFourNodeElement(
-    MeshLib::Element const* const element,
-    std::vector<MeshLib::Node*> const& nodes,
-    unsigned min_elem_dim) const
-{
-    std::array<MeshLib::Node*, 4> new_nodes;
-    unsigned count(0);
-    new_nodes[count++] = nodes[element->getNode(0)->getID()];
-    for (unsigned i = 1; i < element->getNumberOfBaseNodes(); ++i)
-    {
-        if (count > 3)
-        {
-            break;
-        }
-        bool unique_node(true);
-        for (unsigned j = 0; j < i; ++j)
-        {
-            if (element->getNode(i)->getID() == element->getNode(j)->getID())
-            {
-                unique_node = false;
-                break;
-            }
-        }
-        if (unique_node)
-        {
-            new_nodes[count++] = nodes[element->getNode(i)->getID()];
-        };
-    }
-
-    // test if quad or tet
-    const bool isQuad(MathLib::isCoplanar(*new_nodes[0], *new_nodes[1],
-                                          *new_nodes[2], *new_nodes[3]));
-    if (isQuad && min_elem_dim < 3)
-    {
-        MeshLib::Element* elem(new MeshLib::Quad(new_nodes));
-        for (unsigned i = 1; i < 3; ++i)
-        {
-            if (elem->validate().none())
-            {
-                return elem;
-            }
-
-            // change node order if not convex
-            MeshLib::Node* tmp = new_nodes[i + 1];
-            new_nodes[i + 1] = new_nodes[i];
-            new_nodes[i] = tmp;
-        }
-        return elem;
-    }
-    if (!isQuad)
-    {
-        return new MeshLib::Tet(new_nodes);
-    }
-    // is quad but min elem dim == 3
-
-    return nullptr;
 }
 
 unsigned MeshRevision::findPyramidTopNode(

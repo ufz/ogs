@@ -601,9 +601,6 @@ SolidEhlers<DisplacementDim>::integrateStress(
             linear_solver;
 
         {
-            static int const KelvinVectorSize =
-                MathLib::KelvinVector::kelvin_vector_dimensions(
-                    DisplacementDim);
             using KelvinVector =
                 MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
             using ResidualVectorType =

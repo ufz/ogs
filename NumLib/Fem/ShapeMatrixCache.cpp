@@ -9,10 +9,12 @@
 
 #include "ShapeMatrixCache.h"
 
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
+
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/IntegrationMethodRegistry.h"
 #include "NumLib/Fem/ReferenceElement.h"
-
 namespace
 {
 template <typename ShapeFunction>
@@ -29,7 +31,6 @@ static auto initShapeMatrices(unsigned const integration_order,
 
     using ShapeMatrixPolicy =
         NumLib::detail::GetShapeMatrixPolicy<ShapeFunction>;
-    using ShapeMatrix_N = NumLib::detail::GetShapeMatrix_N<ShapeMatrixPolicy>;
 
     // The reference element will be used as dummy argument below. That's
     // sufficient, since we only want to compute the shape matrix N.
@@ -45,15 +46,9 @@ static auto initShapeMatrices(unsigned const integration_order,
         false /*is_axially_symmetric*/,
         integration_method);
 
-    std::vector<ShapeMatrix_N> Ns;
-    Ns.reserve(sms.size());
-
-    for (auto& sm : sms)
-    {
-        Ns.emplace_back(std::move(sm.N));
-    }
-
-    return Ns;
+    return sms |
+           ranges::views::transform([](auto& sm) { return std::move(sm.N); }) |
+           ranges::to<std::vector>;
 }
 }  // namespace
 

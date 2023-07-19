@@ -67,7 +67,7 @@ struct CurveScaledParameter final : public Parameter<T>
 
 private:
     MathLib::PiecewiseLinearInterpolation const& _curve;
-    Parameter<T> const* _parameter;
+    Parameter<T> const* _parameter = nullptr;
     std::string const _referenced_parameter_name;
 };
 

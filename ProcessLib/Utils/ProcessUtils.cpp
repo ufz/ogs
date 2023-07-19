@@ -66,7 +66,7 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
     if (variables.size() > tags.size())
         DBUG("Found multiple process variables with a same tag.");
 
-    for (auto& tag : tags)
+    for (auto const& tag : tags)
     {
         auto vars_per_tag = findProcessVariables(variables, pv_config, tag);
         vars.insert(vars.end(), vars_per_tag.begin(), vars_per_tag.end());

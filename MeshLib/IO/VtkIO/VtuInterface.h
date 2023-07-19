@@ -40,7 +40,7 @@ public:
     /// Provide the mesh to write and set if compression should be used.
     explicit VtuInterface(const MeshLib::Mesh* mesh,
                           int dataMode = vtkXMLWriter::Appended,
-                          bool compressed = false);
+                          bool compress = false);
 
     /// Read an unstructured grid from a VTU file.
     /// \return The converted mesh or a nullptr if reading failed

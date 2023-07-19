@@ -21,6 +21,82 @@
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Node.h"
 
+namespace
+{
+/**
+ * Check if a vector of node IDs includes all nodes of a given element
+ * \param vec_node_ids         a vector of Node IDs
+ * \param edge                 Edge object whose node IDs are checked
+ * \param edge_node_distances  a vector of distances of the edge nodes from the
+ * beginning of the given node ID vector
+ * \return true if all element nodes are included in the vector
+ */
+bool includesAllEdgeNodeIDs(std::vector<std::size_t> const& vec_node_ids,
+                            MeshLib::Element const& edge,
+                            std::vector<std::size_t>& edge_node_distances)
+{
+    unsigned j = 0;
+    for (; j < edge.getNumberOfBaseNodes(); j++)
+    {
+        auto itr = std::find(vec_node_ids.begin(), vec_node_ids.end(),
+                             getNodeIndex(edge, j));
+        if (itr != vec_node_ids.end())
+        {
+            edge_node_distances.push_back(
+                std::distance(vec_node_ids.begin(), itr));
+        }
+        else
+        {
+            break;
+        }
+    }
+    return j == edge.getNumberOfBaseNodes();
+}
+
+/**
+ * Modify node ordering of an edge so that its first node is closer to the
+ * beginning of a polyline than others
+ * \param edge                           Element object
+ * \param ply                            Polyline object
+ * \param edge_node_distances_along_ply  A vector of current edge node
+ * distances along poly
+ * \param node_ids_on_poly               A vector of node IDs along the polyine
+ * \return A pointer to the new modified edge object. A pointer to the original
+ * edge is returned if the modification is unnecessary.
+ */
+MeshLib::Element* modifyEdgeNodeOrdering(
+    const MeshLib::Element& edge, const GeoLib::Polyline& ply,
+    const std::vector<std::size_t>& edge_node_distances_along_ply,
+    const std::vector<std::size_t>& node_ids_on_poly)
+{
+    // The first node of the edge should be always closer to the beginning of
+    // the polyline than other nodes.
+    if (edge_node_distances_along_ply.front() >
+            edge_node_distances_along_ply.back() ||
+        (ply.isClosed() &&
+         edge_node_distances_along_ply.back() == node_ids_on_poly.size() - 1))
+    {  // Create a new element with reversed local node index
+        if (auto const* e = dynamic_cast<MeshLib::Line const*>(&edge))
+        {
+            std::array nodes = {const_cast<MeshLib::Node*>(e->getNode(1)),
+                                const_cast<MeshLib::Node*>(e->getNode(0))};
+            return new MeshLib::Line(nodes);
+        }
+        if (auto const* e = dynamic_cast<MeshLib::Line3 const*>(&edge))
+        {
+            std::array nodes = {const_cast<MeshLib::Node*>(e->getNode(1)),
+                                const_cast<MeshLib::Node*>(e->getNode(0)),
+                                const_cast<MeshLib::Node*>(e->getNode(2))};
+            return new MeshLib::Line3(nodes);
+        }
+        OGS_FATAL("Not implemented for element type {:s}", typeid(edge).name());
+    }
+
+    // Return the original edge otherwise.
+    return const_cast<MeshLib::Element*>(&edge);
+}
+}  // namespace
+
 namespace MeshGeoToolsLib
 {
 BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
@@ -101,61 +177,4 @@ BoundaryElementsAlongPolyline::~BoundaryElementsAlongPolyline()
     }
 }
 
-bool BoundaryElementsAlongPolyline::includesAllEdgeNodeIDs(
-    const std::vector<std::size_t>& vec_node_ids, const MeshLib::Element& edge,
-    std::vector<std::size_t>& edge_node_distances)
-{
-    unsigned j = 0;
-    for (; j < edge.getNumberOfBaseNodes(); j++)
-    {
-        auto itr = std::find(vec_node_ids.begin(), vec_node_ids.end(),
-                             getNodeIndex(edge, j));
-        if (itr != vec_node_ids.end())
-        {
-            edge_node_distances.push_back(
-                std::distance(vec_node_ids.begin(), itr));
-        }
-        else
-        {
-            break;
-        }
-    }
-    return (j == edge.getNumberOfBaseNodes());
-}
-
-MeshLib::Element* BoundaryElementsAlongPolyline::modifyEdgeNodeOrdering(
-    const MeshLib::Element& edge, const GeoLib::Polyline& ply,
-    const std::vector<std::size_t>& edge_node_distances_along_ply,
-    const std::vector<std::size_t>& node_ids_on_poly) const
-{
-    // The first node of the edge should be always closer to the beginning of
-    // the polyline than other nodes.
-    if (edge_node_distances_along_ply.front() >
-            edge_node_distances_along_ply.back() ||
-        (ply.isClosed() &&
-         edge_node_distances_along_ply.back() == node_ids_on_poly.size() - 1))
-    {  // Create a new element with reversed local node index
-        if (auto const* e = dynamic_cast<MeshLib::Line const*>(&edge))
-        {
-            std::array nodes = {const_cast<MeshLib::Node*>(e->getNode(1)),
-                                const_cast<MeshLib::Node*>(e->getNode(0))};
-            return new MeshLib::Line(nodes);
-        }
-        else if (auto const* e = dynamic_cast<MeshLib::Line3 const*>(&edge))
-        {
-            std::array nodes = {const_cast<MeshLib::Node*>(e->getNode(1)),
-                                const_cast<MeshLib::Node*>(e->getNode(0)),
-                                const_cast<MeshLib::Node*>(e->getNode(2))};
-            return new MeshLib::Line3(nodes);
-        }
-        else
-        {
-            OGS_FATAL("Not implemented for element type {:s}",
-                      typeid(edge).name());
-        }
-    }
-
-    // Return the original edge otherwise.
-    return const_cast<MeshLib::Element*>(&edge);
-}
 }  // end namespace MeshGeoToolsLib

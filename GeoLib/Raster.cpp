@@ -24,9 +24,8 @@ namespace GeoLib
 {
 void Raster::refineRaster(std::size_t scaling)
 {
-    std::vector<double> new_raster_data;
-    new_raster_data.reserve(_header.n_rows * _header.n_cols * scaling *
-                            scaling);
+    std::vector<double> new_raster_data(_header.n_rows * _header.n_cols *
+                                        scaling * scaling);
 
     for (std::size_t row(0); row < _header.n_rows; row++)
     {
