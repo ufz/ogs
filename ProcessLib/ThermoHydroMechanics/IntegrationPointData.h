@@ -37,18 +37,28 @@ struct IntegrationPointData final
         static const int kelvin_vector_size =
             MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
         sigma_eff.setZero(kelvin_vector_size);
+        sigma_eff_ice.setZero(kelvin_vector_size);
         eps.setZero(kelvin_vector_size);
         eps_prev.setZero(kelvin_vector_size);
+        eps0_prev.setZero(kelvin_vector_size);
+        eps0_prev2.setZero(kelvin_vector_size);
         eps_m.setZero(kelvin_vector_size);
         eps_m_prev.resize(kelvin_vector_size);
+        eps_m_ice.setZero(kelvin_vector_size);
+        eps_m_ice_prev.resize(kelvin_vector_size);
 
         // Previous time step values are not initialized and are set later.
         sigma_eff_prev.resize(kelvin_vector_size);
+        sigma_eff_ice_prev.resize(kelvin_vector_size);
     }
 
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
-    typename BMatricesType::KelvinVectorType eps, eps_prev;
+    typename BMatricesType::KelvinVectorType eps, eps_prev, eps0_prev,
+        eps0_prev2;
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
+
+    typename BMatricesType::KelvinVectorType sigma_eff_ice, sigma_eff_ice_prev;
+    typename BMatricesType::KelvinVectorType eps_m_ice, eps_m_ice_prev;
 
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
     typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
@@ -61,13 +71,20 @@ struct IntegrationPointData final
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
+
+    double phi_fr = 0;
+    double phi_fr_prev;
     double integration_weight;
 
     void pushBackState()
     {
+        phi_fr_prev = phi_fr;
+        eps0_prev2 = eps0_prev;
         eps_prev = eps;
         eps_m_prev = eps_m;
         sigma_eff_prev = sigma_eff;
+        sigma_eff_ice_prev = sigma_eff_ice;
+        eps_m_ice_prev = eps_m_ice;
         material_state_variables->pushBackState();
     }
 
@@ -141,6 +158,41 @@ struct IntegrationPointData final
         return C;
     }
 
+    typename BMatricesType::KelvinMatrixType updateConstitutiveRelationIce(
+        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
+            ice_constitutive_relation,
+        MaterialPropertyLib::VariableArray const& variable_array,
+        double const t,
+        ParameterLib::SpatialPosition const& x_position,
+        double const dt,
+        double const temperature_prev)
+    {
+        MaterialPropertyLib::VariableArray variable_array_prev;
+
+        variable_array_prev.stress
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                sigma_eff_ice_prev);
+        variable_array_prev.mechanical_strain
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_m_ice_prev);
+        variable_array_prev.temperature = temperature_prev;
+
+        // Extend for non-linear ice materials if necessary.
+        auto const null_state =
+            ice_constitutive_relation.createMaterialStateVariables();
+        auto&& solution = ice_constitutive_relation.integrateStress(
+            variable_array_prev, variable_array, t, x_position, dt,
+            *null_state);
+
+        if (!solution)
+            OGS_FATAL("Computation of local constitutive relation failed.");
+
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C_IR;
+        std::tie(sigma_eff_ice, material_state_variables, C_IR) =
+            std::move(*solution);
+
+        return C_IR;
+    }
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
@@ -180,6 +232,9 @@ struct ConstitutiveRelationsValues
 
     // Freezing related values.
     double J_TT_fr;
+    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> J_uu_fr;
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> J_uT_fr;
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> r_u_fr;
 };
 
 }  // namespace ThermoHydroMechanics

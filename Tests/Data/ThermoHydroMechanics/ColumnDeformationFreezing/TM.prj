@@ -1,14 +1,13 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!--units: kg, m, s, K and derived units: N, Pa=N/m^2, Da=m^2 -->
+<?xml version='1.0' encoding='iso-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh>mesh.vtu</mesh>
-        <mesh>mesh_left.vtu</mesh>
-        <mesh>mesh_right.vtu</mesh>
+        <mesh>bottom.vtu</mesh>
+        <mesh>top.vtu</mesh>
     </meshes>
     <processes>
         <process>
-            <name>HeatConduction</name>
+            <name>THERMO_HYDRO_MECHANICS</name>
             <type>THERMO_HYDRO_MECHANICS</type>
             <integration_order>2</integration_order>
             <dimension>2</dimension>
@@ -30,6 +29,8 @@
             <specific_body_force>0 0</specific_body_force>
             <secondary_variables>
                 <secondary_variable internal_name="sigma" output_name="sigma"/>
+                <secondary_variable internal_name="sigma_ice" output_name="sigma_ice"/>
+                <secondary_variable internal_name="ice_volume_fraction" output_name="ice_volume_fraction"/>
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
                 <secondary_variable internal_name="velocity" output_name="velocity"/>
             </secondary_variables>
@@ -45,12 +46,12 @@
                         <property>
                             <name>thermal_conductivity</name>
                             <type>Constant</type>
-                            <value>0.54</value> <!-- W/m/K-->
+                            <value>0.58</value> <!-- W/m/K-->
                         </property>
                         <property>
                             <name>specific_heat_capacity</name>
                             <type>Constant</type>
-                            <value>4186</value> <!-- J/kg/K-->
+                            <value>4190</value> <!-- J/kg/K-->
                         </property>
                         <property>
                             <name>density</name>
@@ -71,17 +72,17 @@
                         <property>
                             <name>thermal_conductivity</name>
                             <type>Constant</type>
-                            <value>2.37</value> <!-- W/m/K-->
+                            <value>2.2</value> <!-- W/m/K-->
                         </property>
                         <property>
                             <name>specific_heat_capacity</name>
                             <type>Constant</type>
-                            <value>2052</value> <!-- J/kg/K-->
+                            <value>2090</value> <!-- J/kg/K-->
                         </property>
                         <property>
                             <name>density</name>
                             <type>Constant</type>
-                            <value>900</value> <!--kg/m^3-->
+                            <value>920</value> <!--kg/m^3-->
                         </property>
                         <property>
                             <name>specific_latent_heat</name>
@@ -91,12 +92,12 @@
                         <property>
                             <name>thermal_expansivity</name>
                             <type>Constant</type>
-                            <value>0</value>
+                            <value>5.5e-5</value>
                         </property>
                         <property>
                             <name>phase_change_expansivity</name>
                             <type>Constant</type>
-                            <value>0</value>
+                            <value>0.03</value>
                         </property>
                     </properties>
                 </phase>
@@ -107,22 +108,22 @@
                         <property>
                             <name>thermal_conductivity</name>
                             <type>Constant</type>
-                            <value>0</value> <!-- W/m/K-->
+                            <value>1.1</value>
                         </property>
                         <property>
                             <name>specific_heat_capacity</name>
                             <type>Constant</type>
-                            <value>0</value> <!-- J/kg/K-->
+                            <value>900</value>
                         </property>
                         <property>
                             <name>density</name>
                             <type>Constant</type>
-                            <value>0</value> <!--kg/m^3-->
+                            <value>2000</value>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
                             <type>Constant</type>
-                            <value>0</value>
+                            <value>1.2e-5</value>
                         </property>
                     </properties>
                 </phase>
@@ -131,12 +132,12 @@
                 <property>
                     <name>porosity</name>
                     <type>Constant</type>
-                    <value>1.0</value> <!--no porous solid present-->
+                    <value>0.35</value>
                 </property>
                 <property>
                     <name>volume_fraction</name>
                     <type>TemperatureDependentFraction</type>
-                    <steepness>5</steepness> <!-- 1/K -->
+                    <steepness>20</steepness> <!-- coeff. k in the ice-indicator function; here, we can take it large -->
                     <characteristic_temperature>273.15</characteristic_temperature> <!-- K -->
                 </property>
                 <property>
@@ -150,12 +151,12 @@
                 <property>
                     <name>biot_coefficient</name>
                     <type>Constant</type>
-                    <value>0.0</value>
+                    <value>1.0</value>   <!-- alpha_B=1-beta_SR/beta_S -->
                 </property>
                 <property>
                     <name>permeability</name>
                     <type>Constant</type>
-                    <value>1.e-11</value>
+                    <value>1e-19</value>
                 </property>
             </properties>
         </medium>
@@ -164,60 +165,96 @@
         <parameter>
             <name>E</name>
             <type>Constant</type>
-            <value>1e10</value>
+            <value>3e10</value>
         </parameter>
         <parameter>
             <name>nu</name>
             <type>Constant</type>
-            <value>.3</value>
+            <value>0.2</value>
         </parameter>
         <parameter>
             <name>E_ice</name>
             <type>Constant</type>
-            <value>0</value>
+            <value>1e10</value>
         </parameter>
         <parameter>
             <name>nu_ice</name>
             <type>Constant</type>
-            <value>0</value>
+            <value>0.2</value>
         </parameter>
         <parameter>
-            <name>T0</name>
-            <type>Constant</type>
-            <value>272.25</value>
-        </parameter>
-        <parameter>
-            <name>TB</name>
-            <type>Constant</type>
-            <value>373.15</value>
-        </parameter>
-        <parameter>
-            <name>U0</name>
+            <name>displacement_IC</name>
             <type>Constant</type>
             <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>temperature</name> <!-- this will be imposed in the entire domain -->
+            <type>Function</type>
+            <!-- 277.15K = +4 °C -->
+            <expression>
+                if (t &lt;= 600, 277.15,
+                if ((t &gt; 600) and (t &lt;= 4200), -8/3600*(t-600)+277.15,
+                if ((t &gt; 4200) and (t &lt;= 4800), 269.15, 8/3600*(t-4800)+269.15)))
+            </expression>
         </parameter>
         <parameter>
             <name>zero</name>
             <type>Constant</type>
             <value>0</value>
         </parameter>
+        <parameter>
+            <name>displacement_top</name>
+            <type>Function</type>
+            <expression>
+                if (t &lt;= 600, 0.002/600*t,
+                if ((t &gt; 600) and (t &lt;= 4200), 0.002,
+                if ((t &gt; 4200) and (t &lt;= 4800), -0.002/600*(t-4800),0)))
+            </expression>
+        </parameter>
     </parameters>
     <process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <initial_condition>displacement_IC</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>bottom</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>bottom</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>top</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>top</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>displacement_top</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
         <process_variable>
             <name>temperature</name>
             <components>1</components>
             <order>1</order>
-            <initial_condition>T0</initial_condition>
+            <initial_condition>temperature</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>mesh_right</mesh>
+                    <mesh>mesh</mesh>   <!-- we need to prescribe evolution of T in the entire domain, using data in temperature_BC -->
                     <type>Dirichlet</type>
-                    <parameter>T0</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <mesh>mesh_left</mesh>
-                    <type>Dirichlet</type>
-                    <parameter>TB</parameter>
+                    <parameter>temperature</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
@@ -228,28 +265,8 @@
             <initial_condition>zero</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>mesh</mesh>
+                    <mesh>mesh</mesh>    <!-- pressure is kept 0 in the entire domain to exclude the H-process -->
                     <type>Dirichlet</type>
-                    <parameter>zero</parameter>
-                </boundary_condition>
-            </boundary_conditions>
-        </process_variable>
-        <process_variable>
-            <name>displacement</name>
-            <components>2</components>
-            <order>1</order>
-            <initial_condition>U0</initial_condition>
-            <boundary_conditions>
-                <boundary_condition>
-                    <mesh>mesh</mesh>
-                    <type>Dirichlet</type>
-                    <component>0</component>
-                    <parameter>zero</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <mesh>mesh</mesh>
-                    <type>Dirichlet</type>
-                    <component>1</component>
                     <parameter>zero</parameter>
                 </boundary_condition>
             </boundary_conditions>
@@ -257,24 +274,24 @@
     </process_variables>
     <time_loop>
         <processes>
-            <process ref="HeatConduction">
-                <nonlinear_solver>NLS</nonlinear_solver>
+            <process ref="THERMO_HYDRO_MECHANICS">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
                 <convergence_criterion>
-                    <type>PerComponentResidual</type>
+                    <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstols>1e-10 1e-16 1e-16 1e-16</abstols>
+                    <abstols>1e0 1e0 1e-12 1e-12</abstols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
-                    <t_initial>0.0</t_initial>
-                    <t_end>427000000</t_end> <!--427e6 s x 30780000 s/a ~ 13.5 a-->
+                    <t_initial>0</t_initial>
+                    <t_end>8400</t_end> <!-- 2h 20 min -->
                     <timesteps>
                         <pair>
-                            <repeat>427</repeat>
-                            <delta_t>1e6</delta_t>
+                            <repeat>280</repeat>
+                            <delta_t>30</delta_t>   <!-- s -->
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -282,27 +299,26 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>Stefan_problem</prefix>
+            <prefix>TM</prefix>
             <timesteps>
                 <pair>
-                    <repeat>10000</repeat>
-                    <each_steps>1</each_steps>
+                    <repeat>1</repeat>
+                    <each_steps>100000</each_steps>
                 </pair>
             </timesteps>
+            <fixed_output_times>
+                0 600 2100 2400 2600 4200 4800 6400 6600 6800 8400
+            </fixed_output_times>
             <variables>
-                <variable> temperature </variable>
-                <variable> heat_flux </variable>
-                <variable>HeatFlowRate</variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <suffix>_{:gtime}</suffix>
         </output>
     </time_loop>
     <nonlinear_solvers>
         <nonlinear_solver>
-            <name>NLS</name>
+            <name>basic_newton</name>
             <type>Newton</type>
-            <!-- Many iterations are needed for the first time step. -->
-            <max_iter>500</max_iter>
+            <max_iter>5</max_iter>
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>
     </nonlinear_solvers>
@@ -310,36 +326,78 @@
         <linear_solver>
             <name>general_linear_solver</name>
             <eigen>
-                <solver_type>SparseLU</solver_type>
-                <scaling>true</scaling>
+                <solver_type>BiCGSTAB</solver_type>
+                <precon_type>DIAGONAL</precon_type>
+                <max_iteration_step>1000</max_iteration_step>
+                <error_tolerance>1e-12</error_tolerance>
             </eigen>
         </linear_solver>
     </linear_solvers>
     <test_definition>
-        <!--primary field-->
         <vtkdiff>
-            <file>Stefan_problem_ts_46_t_46000000.000000.vtu</file>
+            <regex>TM_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>TM_.*.vtu</regex>
+            <field>epsilon</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>TM_.*.vtu</regex>
+            <field>sigma</field>
+            <absolute_tolerance>5e-6</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>TM_.*.vtu</regex>
+            <field>sigma_ice</field>
+            <absolute_tolerance>5e-6</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>TM_.*.vtu</regex>
+            <field>ice_volume_fraction</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>TM_.*.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>TM_.*.vtu</regex>
+            <field>velocity</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>TM_.*.vtu</regex>
             <field>temperature</field>
-            <absolute_tolerance>2e-11</absolute_tolerance>
+            <absolute_tolerance>0</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>Stefan_problem_ts_427_t_427000000.000000.vtu</file>
-            <field>temperature</field>
-            <absolute_tolerance>7e-11</absolute_tolerance>
+            <regex>TM_.*.vtu</regex>
+            <field>MassFlowRate</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
-        <!--secondary field-->
         <vtkdiff>
-            <file>Stefan_problem_ts_46_t_46000000.000000.vtu</file>
+            <regex>TM_.*.vtu</regex>
             <field>HeatFlowRate</field>
-            <absolute_tolerance>1e-10</absolute_tolerance>
+            <absolute_tolerance>6e-13</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>Stefan_problem_ts_427_t_427000000.000000.vtu</file>
-            <field>HeatFlowRate</field>
-            <absolute_tolerance>1e-10</absolute_tolerance>
+            <regex>TM_.*.vtu</regex>
+            <field>NodalForces</field>
+            <absolute_tolerance>6e-6</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>

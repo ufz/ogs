@@ -66,6 +66,7 @@ enum PropertyType : int
     molecular_diffusion,
     name,
     permeability,
+    phase_change_expansivity,
     phase_velocity,
     /// ion diffusivity in the porous medium with account of the effect of
     /// tortuosity and connectivity.
@@ -149,6 +150,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "molecular_diffusion",
                              "name",
                              "permeability",
+                             "phase_change_expansivity",
                              "phase_velocity",
                              "pore_diffusion",
                              "poissons_ratio",

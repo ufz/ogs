@@ -192,11 +192,23 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                          &LocalAssemblerInterface::getIntPtSigma));
 
     _secondary_variables.addSecondaryVariable(
+        "sigma_ice",
+        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
+                             DisplacementDim>::RowsAtCompileTime,
+                         getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtSigmaIce));
+
+    _secondary_variables.addSecondaryVariable(
         "epsilon",
         makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
                              DisplacementDim>::RowsAtCompileTime,
                          getExtrapolator(), _local_assemblers,
                          &LocalAssemblerInterface::getIntPtEpsilon));
+
+    _secondary_variables.addSecondaryVariable(
+        "ice_volume_fraction",
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtIceVolume));
 
     _secondary_variables.addSecondaryVariable(
         "velocity",
