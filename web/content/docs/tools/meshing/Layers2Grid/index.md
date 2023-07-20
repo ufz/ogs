@@ -7,7 +7,7 @@ author = "Julian Heinze"
 ## Description
 
 Reads a list of 2D unstructured mesh layers and samples them onto a structured grid of the same extent.
-The resulting mesh is referred to as voxelgrid.
+The resulting mesh is referred to as voxel grid.
 Voxel sizes are defines by x/y/z-parameters.
 Note that a large cube size may result in an undersampling of the original structure.
 For equilateral cubes, only the x-parameter needs to be set.
@@ -62,7 +62,7 @@ Layers2Grid -i layers.txt -o layers2grid.vtu -x 100 -y 200 -z 50
 ```
 
 The list must contain the paths of the input layers as well as their names.
-The voxelgrid is build in the same order as the names are listed from top to bottom.
+The voxel grid is build in the same order as the names are listed from top to bottom.
 
 Example list of 10 layers:
 
@@ -84,5 +84,5 @@ path/to/layers/10_layer.vtu
  <img src = layers2grid.png width = "80%" height = "60%">
 </p>
 <p align = "center">
-Fig.1 Voxelgrid composed of elements of size x=100, y=200 and z=50.
+Fig.1 The voxel grid composed of elements of size x=100, y=200 and z=50.
 </p>
