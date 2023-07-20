@@ -57,3 +57,4 @@ wellbore
 expansivity
 simplices
 orthotropic
+tetrahedralization
