@@ -3,7 +3,10 @@ Aluminol
 Alves
 Atteia
 Autolinks
+BC[s?]
 Beier
+BGR[a?]
+BHE[s?]
 Bincrafters
 biokinetic
 Biot
@@ -30,6 +33,7 @@ Eskilson
 Everton
 Fancybox
 FancyBox
+FEFLOW
 Feldspars
 fmt
 Forchheimer
@@ -69,6 +73,7 @@ Massmann
 Matplotlib
 meshio
 METIS
+MFront
 Mikelic
 Mises
 MODFLOW
