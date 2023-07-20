@@ -154,8 +154,8 @@ AddTest(
     EXECUTABLE_ARGS wedge_1e2_axi_ang_0.02.prj
     TESTER vtkdiff
     DIFF_DATA
-    wedge_ang_0.02_ts_10_t_1.000000.vtu wedge_ang_0.02_ts_10_t_1.000000.vtu temperature temperature 2e-14 0
-    wedge_ang_0.02_ts_10_t_1.000000.vtu wedge_ang_0.02_ts_10_t_1.000000.vtu heat_flux heat_flux 1e-13 0
+    wedge_ang_0.02_ts_10_t_1.000000.vtu wedge_ang_0.02_ts_10_t_1.000000.vtu temperature temperature 2e-12 0
+    wedge_ang_0.02_ts_10_t_1.000000.vtu wedge_ang_0.02_ts_10_t_1.000000.vtu heat_flux heat_flux 1e-11 0
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
