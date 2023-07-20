@@ -162,7 +162,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Expected Voxel: </string>
+    <string>Expected number of voxels: </string>
    </property>
   </widget>
  </widget>

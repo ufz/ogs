@@ -49,7 +49,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Meshes for voxel:&lt;/span&gt;&lt;br/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;WARNING: Meshes must be ordered top to bottom&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Meshes for Voxelgrid:&lt;/span&gt;&lt;br/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;NOTE: Mesh layers must be ordered top to bottom&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QGroupBox" name="VoxelSizeBox">
@@ -170,7 +170,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>order Meshes</string>
+    <string>Order meshes</string>
    </property>
   </widget>
   <widget class="QPushButton" name="deleteMeshButton">
@@ -183,7 +183,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>delete selected mesh</string>
+    <string>Delete selected mesh</string>
    </property>
   </widget>
   <widget class="QCheckBox" name="dilateBox">
@@ -196,7 +196,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>dilate</string>
+    <string>Dilate</string>
    </property>
   </widget>
   <widget class="QLabel" name="expectedVoxelLabel">
@@ -209,7 +209,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Expected Voxel: </string>
+    <string>Expected number of voxels: </string>
    </property>
   </widget>
  </widget>
