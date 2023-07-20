@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="model_triaxial_test.prj">
+    <remove sel="/*/time_loop/processes/process/time_stepping"/>
+    <add sel="/*/time_loop/processes/process/time_discretization" pos="after">
+        <time_stepping>
+            <type>IterationNumberBasedTimeStepping</type>
+            <t_initial>0</t_initial>
+            <t_end>0.34</t_end>
+            <initial_dt>1e-4</initial_dt>
+            <minimum_dt>1.e-6</minimum_dt>
+            <maximum_dt>1.e-2</maximum_dt>
+            <number_iterations>1   5   10   15</number_iterations>
+            <multiplier>1.2 1.05 0.8 0.6</multiplier>
+        </time_stepping>
+    </add>
+</OpenGeoSysProjectDiff>
