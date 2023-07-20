@@ -10,7 +10,7 @@ toc = true
 
 ## Data Explorer
 
-### XSDError: Loaded schema file is invalid
+### `XSDError`: Loaded schema file is invalid
 
 You may encountering the following error (or similar) on opening `.gml`, `.cnd`, `std` or `.prj` files in the Data Explorer or
 file conversion tools (e.g. `OGSFileConverter`):

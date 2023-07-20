@@ -61,6 +61,7 @@ Jacobian
 Johannsen
 Jong
 Jupyter
+Jupytext
 Juwels
 Kinzelbach
 Kitware
@@ -79,6 +80,7 @@ MFront
 Mikelic
 Mises
 MODFLOW
+MTest
 nbconvert
 nbdime
 Netbeans
@@ -133,6 +135,7 @@ TESPy
 Theis
 Thuringia
 Thuringian
+TODO[s?]
 Ucar
 Unlicense
 Unstrut

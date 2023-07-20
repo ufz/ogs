@@ -68,7 +68,7 @@ You can change the pipeline by editing the `.gitlab-ci.yml` and `scripts/ci/jobs
 These variables in `.gitlab-ci.yml` modify the pipeline:
 
 - `BUILD_TESTS`: Set this to `false` to disable unit tests.
-- `BUILD_CTEST`: Set this to `false` to disable ctest (benchmark) tests.
+- `BUILD_CTEST`: Set this to `false` to disable CTest (benchmark) tests.
 - `CTEST_ARGS`: Supply additional arguments to the `ctest`-command to select which benchmarks are run, e.g.:
   - `-R nb` would select all notebook-based tests and would disable all other benchmarks
   - `-LE large` would exclude all tests with label `large`

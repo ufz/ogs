@@ -17,7 +17,7 @@ Five tests are presented:
 {{< data-link >}}
 
 of which the last three have the same test program but use different implementations of the modified Cam clay model.
-The mfront-files can be found at [here](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/MaterialLib/SolidModels/MFront).
+The MFront-files can be found at [here](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/MaterialLib/SolidModels/MFront).
 
 ## Problem description
 

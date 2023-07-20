@@ -88,7 +88,7 @@ cmake --build --preset release-petsc
 ```
 
 The ```release-petsc``` preset is based on the ```release``` preset.
-It can be customized by passing additional variable with ```-D``` flags to cmake command.
+It can be customized by passing additional variable with ```-D``` flags to `cmake` command.
 
 If you want to install PETSc yourself, please see Section [Install PETSc](#install-petsc-manually).
 
@@ -134,7 +134,7 @@ Please note, that the PETSc package is usually build in release mode independent
 
 <div class='win'>
 
-PESTSc is recommended to use on Linux.
+PETSc is recommended to use on Linux.
 On Windows, it only runs on UNIX emulator Cygwin.
 A detailed description about how to use PETSc on Windows is available on this PETSc site: <https://petsc.org/release/install/windows/>.
 

@@ -13,7 +13,8 @@ It can be obtained by running script ```todo-check.sh``` from ```/web/content/do
 ## TODOs in userguide/basics
 
 ## TODOs in userguide/blocks
-```
+
+```bash
 blocks/curves.md-19-</div>
 blocks/curves.md-20-
 blocks/curves.md:21:TODO: Add general description
@@ -96,7 +97,8 @@ blocks/processes.md:159:The global non-linear equation system can be solved eith
 ```
 
 ## TODOs in userguide/features
-```
+
+```bash
 features/python_bc.md-31-## Using python boundary condition in project file
 features/python_bc.md-32-
 features/python_bc.md:33:TODO: add description of how to call python bc from the boundary condition tag
@@ -123,4 +125,3 @@ features/mfront.md:110:TODO: add content
 ```
 
 ## TODOs in userguide/troubleshooting
-

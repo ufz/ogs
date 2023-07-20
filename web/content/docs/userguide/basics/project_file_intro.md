@@ -8,7 +8,7 @@ weight = 3
 The main input taken by OpenGeoSys is a path to a project file. This file has a ".prj" extension and describes all aspects of
 the simulation that OpenGeoSys is expected to execute.
 
-The syntax of the project file follows the syntax of a typical xml file and can be edited with any editor capable of working
+The syntax of the project file follows the syntax of a typical XML file and can be edited with any editor capable of working
 with this kind of files.
 
 The structure of the project file is relatively flexible: as long as the semantics of the file is intact, the main blocks can be
@@ -18,14 +18,14 @@ Depending on the scope of the simulation, the content of the project file will d
 
 <div class="note">
 Please note, that this page is not a complete description of the XML standard. It only provides some information to interact
-with and understand OpenGeoSys "*.prj" files. More meta-information on xml can be found here: <a href="https://www.w3.org/standards/xml/">XML Standard</a>. <!-- TODO: Consider giving a direct link to an xml-tutorial. -->
+with and understand OpenGeoSys "*.prj" files. More meta-information on XML can be found here: <a href="https://www.w3.org/standards/xml/">XML Standard</a>. <!-- TODO: Consider giving a direct link to an xml-tutorial. -->
 </div>
 
 The XML files structure follows an abstract idea of a tree: i.e., here one starts from the roots and continues up to the
 leaves. As such the main tag within an XML file is called root. In OpenGeoSys project files the root tag looks like this: `<
 OpenGeoSysProject> </OpenGeoSysProject>`. Between opening and closing tags all the project relevant information is contained.
 Everything between those tags follows a hierarchical structure. There will be thematic blocks that cover specific aspects of
-the simulation. They define for example mesh files, or a process used in the simulation. The following xml-snippet shows a
+the simulation. They define for example mesh files, or a process used in the simulation. The following XML-snippet shows a
 small structure containing the two elementary blocks, which are empty for now:
 
 ```xml
