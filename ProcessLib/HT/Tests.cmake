@@ -380,6 +380,7 @@ endif()
 
 if (NOT (OGS_USE_MPI))
     OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/deactivated_subdomain/HT_DeactivatedSubdomain.prj)
+    OgsTest(PROJECTFILE Parabolic/HT/LowerDimensionalFracture/2D_single_fracture_HT.prj RUNTIME 55)
 endif()
 
 AddTest(

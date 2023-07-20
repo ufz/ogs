@@ -66,6 +66,11 @@ public:
             _integration_method.getNumberOfPoints();
         _ip_data.reserve(n_integration_points);
 
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        double const aperture_size = _process_data.aperture_size(0.0, pos)[0];
+
         auto const shape_matrices =
             NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                       GlobalDim>(element, is_axially_symmetric,
@@ -77,7 +82,7 @@ public:
                 shape_matrices[ip].N, shape_matrices[ip].dNdx,
                 _integration_method.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
-                    shape_matrices[ip].detJ);
+                    shape_matrices[ip].detJ * aperture_size);
         }
     }
 
@@ -147,7 +152,9 @@ public:
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::density)
                     .template value<double>(vars, pos, t, dt);
-            auto const b = this->_process_data.specific_body_force;
+            auto const b =
+                this->_process_data.projected_specific_body_force_vectors
+                    [this->_element.getID()];
             q += K_over_mu * rho_w * b;
         }
 
@@ -300,7 +307,9 @@ protected:
                     liquid_phase
                         .property(MaterialPropertyLib::PropertyType::density)
                         .template value<double>(vars, pos, t, dt);
-                auto const b = _process_data.specific_body_force;
+                auto const b =
+                    _process_data.projected_specific_body_force_vectors
+                        [_element.getID()];
                 // here it is assumed that the vector b is directed 'downwards'
                 cache_mat.col(ip).noalias() += K_over_mu * rho_w * b;
             }
