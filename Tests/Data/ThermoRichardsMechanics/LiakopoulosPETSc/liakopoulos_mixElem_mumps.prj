@@ -153,28 +153,96 @@
                     <t_end>7200</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>10</repeat>
-                            <delta_t>1</delta_t>
+                            <repeat>1</repeat>
+                            <delta_t>0.06</delta_t>
                         </pair>
                         <pair>
                             <repeat>9</repeat>
-                            <delta_t>10</delta_t>
+                            <delta_t>1</delta_t> <!-- time 9.06 -->
                         </pair>
                         <pair>
-                            <repeat>11</repeat>
-                            <delta_t>100</delta_t>
+                            <repeat>5</repeat>
+                            <delta_t>10</delta_t> <!-- time 59.06 -->
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.939999999999998</delta_t> <!-- time 60 -->
                         </pair>
                         <pair>
                             <repeat>3</repeat>
-                            <delta_t>200</delta_t>
+                            <delta_t>10</delta_t> <!-- time 90 -->
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>30</delta_t> <!-- time 120 -->
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>100</delta_t> <!-- time 220 -->
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>80</delta_t> <!-- time 300 -->
+                        </pair>
+                        <pair>
+                            <repeat>9</repeat>
+                            <delta_t>100</delta_t> <!-- time 1200 -->
+                        </pair>
+                        <pair>
+                            <repeat>2</repeat>
+                            <delta_t>200</delta_t> <!-- time 1600 -->
                         </pair>
                         <pair>
                             <repeat>3</repeat>
-                            <delta_t>400</delta_t>
+                            <delta_t>400</delta_t> <!-- time 2800 -->
                         </pair>
                         <pair>
-                            <repeat>7</repeat>
-                            <delta_t>600</delta_t>
+                            <repeat>3</repeat>
+                            <delta_t>600</delta_t> <!-- time 4600 -->
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>200</delta_t> <!-- time 4800 -->
+                        </pair>
+                        <pair>
+                            <repeat>3</repeat>
+                            <delta_t>600</delta_t> <!-- time 6600 -->
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.06</delta_t> <!-- time 6600.06 -->
+                        </pair>
+                        <pair>
+                            <repeat>9</repeat>
+                            <delta_t>1</delta_t> <!-- time 6609.06 -->
+                        </pair>
+                        <pair>
+                            <repeat>5</repeat>
+                            <delta_t>10</delta_t> <!-- time 6659.06 -->
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.939999999999998</delta_t> <!-- time 6660 -->
+                        </pair>
+                        <pair>
+                            <repeat>3</repeat>
+                            <delta_t>10</delta_t> <!-- time 6690 -->
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>30</delta_t> <!-- time 6720 -->
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>100</delta_t> <!-- time 6820 -->
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>80</delta_t> <!-- time 6900 -->
+                        </pair>
+                        <pair>
+                            <repeat>3</repeat>
+                            <delta_t>100</delta_t> <!-- time 7200 -->
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -200,6 +268,7 @@
             </variables>
             <fixed_output_times>
                 0.06
+                9.06
                 60.
                 120.
                 300.0
@@ -208,6 +277,8 @@
                 2400.0
                 4800.0
                 6000.0
+                6606.06
+                6670.0
                 7200.0
             </fixed_output_times>
         </output>
