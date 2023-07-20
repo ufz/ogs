@@ -37,7 +37,8 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     const Process& process,
     [[maybe_unused]] std::vector<std::reference_wrapper<ProcessVariable>> const&
         all_process_variables_for_this_process,
-    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& /*media*/)
+    std::map<int,
+             std::shared_ptr<MaterialPropertyLib::Medium>> const& /*media*/)
 {
     // Surface mesh and bulk mesh must have equal axial symmetry flags!
     if (config.boundary_mesh.isAxiallySymmetric() !=

@@ -258,13 +258,14 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 }
 
 template <int DisplacementDim>
-void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
+void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     if (_process_data.isMonolithicSchemeUsed())
     {
         const int process_id_of_hydromechanics = 0;
         initializeProcessBoundaryConditionsAndSourceTerms(
-            *_local_to_global_index_map, process_id_of_hydromechanics);
+            *_local_to_global_index_map, process_id_of_hydromechanics, media);
         return;
     }
 
@@ -272,12 +273,13 @@ void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
     // for the equations of pressure
     const int hydraulic_process_id = 0;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map_with_base_nodes, hydraulic_process_id);
+        *_local_to_global_index_map_with_base_nodes, hydraulic_process_id,
+        media);
 
     // for the equations of deformation.
     const int mechanical_process_id = 1;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map, mechanical_process_id);
+        *_local_to_global_index_map, mechanical_process_id, media);
 }
 
 template <int DisplacementDim>

@@ -261,14 +261,15 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 }
 
 template <int DisplacementDim>
-void ThermoHydroMechanicsProcess<
-    DisplacementDim>::initializeBoundaryConditions()
+void ThermoHydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     if (_use_monolithic_scheme)
     {
         const int process_id_of_thermohydromechancs = 0;
         initializeProcessBoundaryConditionsAndSourceTerms(
-            *_local_to_global_index_map, process_id_of_thermohydromechancs);
+            *_local_to_global_index_map, process_id_of_thermohydromechancs,
+            media);
         return;
     }
 
@@ -276,17 +277,18 @@ void ThermoHydroMechanicsProcess<
     // for the equations of heat transport
     const int thermal_process_id = 0;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map_with_base_nodes, thermal_process_id);
+        *_local_to_global_index_map_with_base_nodes, thermal_process_id, media);
 
     // for the equations of mass balance
     const int hydraulic_process_id = 1;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map_with_base_nodes, hydraulic_process_id);
+        *_local_to_global_index_map_with_base_nodes, hydraulic_process_id,
+        media);
 
     // for the equations of deformation.
     const int mechanical_process_id = 2;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map, mechanical_process_id);
+        *_local_to_global_index_map, mechanical_process_id, media);
 }
 
 template <int DisplacementDim>

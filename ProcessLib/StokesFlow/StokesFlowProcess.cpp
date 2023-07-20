@@ -101,13 +101,14 @@ void StokesFlowProcess<GlobalDim>::initializeConcreteProcess(
 }
 
 template <int GlobalDim>
-void StokesFlowProcess<GlobalDim>::initializeBoundaryConditions()
+void StokesFlowProcess<GlobalDim>::initializeBoundaryConditions(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     assert(_use_monolithic_scheme);
     {
         int const process_id = 0;
         initializeProcessBoundaryConditionsAndSourceTerms(
-            *_local_to_global_index_map, process_id);
+            *_local_to_global_index_map, process_id, media);
     }
 }
 

@@ -198,12 +198,14 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>
-void ThermoRichardsMechanicsProcess<
-    DisplacementDim, ConstitutiveTraits>::initializeBoundaryConditions()
+void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
+    initializeBoundaryConditions(
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media)
 {
     const int process_id = 0;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map, process_id);
+        *_local_to_global_index_map, process_id, media);
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>
