@@ -1,6 +1,7 @@
 stages:
   - build
   - release
+  - test
 
 workflow:
   rules:
@@ -23,6 +24,7 @@ workflow:
 
 include:
   - local: "scripts/ci/extends/*.yml"
+  - local: "scripts/ci/jobs/jupyter.yml"
 
 .wheels_template: &wheels_template
   stage: build
@@ -74,3 +76,17 @@ publish wheels:
       ${PYPI_REPO}
       ${PYPI_AUTH}
       wheelhouse/*
+
+test notebooks via wheel:
+  stage: test
+  needs: ["build wheels linux"]
+  rules:
+    - when: manual
+  before_script:
+    - cd Tests/Data
+    - python3.10 -m venv --upgrade-deps .venv
+    - source .venv/bin/activate
+    - pip install -r requirements.txt
+    - pip install --force-reinstall -r requirements-gmsh-nox.txt
+    - pip install -r requirements-dev.txt
+    - pip install ${CI_PROJECT_DIR}/wheelhouse/ogs-*-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl

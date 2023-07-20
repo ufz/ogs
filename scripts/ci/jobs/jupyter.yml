@@ -1,7 +1,7 @@
 test notebooks via wheel:
   stage: build
   tags: [envinf23, shell]
-  script:
+  before_script:
     - cd Tests/Data
     - python -m venv --upgrade-deps .venv
     - source .venv/bin/activate
@@ -9,6 +9,7 @@ test notebooks via wheel:
     - pip install --force-reinstall -r requirements-gmsh-nox.txt
     - pip install -r requirements-dev.txt
     - pip install -r requirements-ogs.txt
+  script:
     # TODO:
     #  - better timeout
     #  - run in parallel
