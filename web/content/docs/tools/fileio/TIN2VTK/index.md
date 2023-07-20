@@ -8,7 +8,7 @@ author = "Julian Heinze"
 
 This tool converts datasets in TIN-format, usually used in geographic information systems (GIS), into VTK-format.
 The TIN-format stores triangular irregular networks which can be considered a subclass of triangulated 2D meshes.
-VTK stores such irregular networks as unstructured grids in *.vtu-files.
+VTK stores such irregular networks as unstructured grids in `*.vtu`-files.
 
 ## Usage
 
