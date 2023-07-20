@@ -6,9 +6,9 @@ author = "Julian Heinze"
 
 ## Description
 
-This tool converts VTK unstructured grids (*.vtu) into TIN-format usable in geographic information systems (GIS).
+This tool converts VTK unstructured grids (`*.vtu`) into TIN-format usable in geographic information systems (GIS).
 The TIN-format stores triangular irregular networks which can be considered a subclass of triangulated 2D meshes.
-The vtu-format can store a large variety of unstructured mesh types, but only 2D triangle meshes can be converted using this tool.
+The VTU-format can store a large variety of unstructured mesh types, but only 2D triangle meshes can be converted using this tool.
 
 ## Usage
 
