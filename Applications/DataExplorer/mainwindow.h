@@ -50,6 +50,7 @@ protected:
     void closeEvent(QCloseEvent* event) override;
 
 protected slots:
+    void showAddFaultsToVoxelGridDialog();
     void showGeoDockWidget(bool show);
     void showStationDockWidget(bool show);
     void showMshDockWidget(bool show);

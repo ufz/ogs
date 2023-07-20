@@ -153,7 +153,9 @@ void markFaults(MeshLib::Mesh& mesh, MeshLib::Mesh const& fault,
         }
     }
 }
-// test if input mesh is voxel grid
+}  // namespace
+namespace MeshToolsLib::MeshGenerator::AddFaultToVoxelGrid
+{
 bool isVoxelGrid(MeshLib::Mesh const& mesh)
 {
     auto const& elements = mesh.getElements();
@@ -163,8 +165,6 @@ bool isVoxelGrid(MeshLib::Mesh const& mesh)
                                 MeshLib::MeshElemType::HEXAHEDRON);
                     }))
     {
-        ERR("Input mesh needs to be voxel grid (i.e. equally sized axis "
-            "aligned hexahedra).");
         return false;
     }
     auto is_voxel = [](auto const& e)
@@ -198,7 +198,9 @@ bool addFaultToVoxelGrid(MeshLib::Mesh* mesh,
     }
     if (!isVoxelGrid(*mesh))
     {
-        ERR("The input mesh is not a voxel grid.");
+        ERR("The input mesh is not a voxel grid. The input mesh must be "
+            "a voxel grid (i.e. an equally sized axis "
+            "aligned hexahedra mesh).");
         return false;
     }
 

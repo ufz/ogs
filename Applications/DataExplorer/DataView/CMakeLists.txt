@@ -1,4 +1,5 @@
 set(SOURCES
+    AddFaultsToVoxelGridDialog.cpp
     AddLayerToMeshDialog.cpp
     ColorTableModel.cpp
     ColorTableView.cpp
@@ -49,6 +50,7 @@ set(SOURCES
 )
 
 set(HEADERS
+    AddFaultsToVoxelGridDialog.h
     AddLayerToMeshDialog.h
     BaseItem.h
     ColorTableModel.h

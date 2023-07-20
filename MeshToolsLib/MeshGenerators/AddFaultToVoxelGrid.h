@@ -19,5 +19,6 @@ namespace MeshToolsLib::MeshGenerator::AddFaultToVoxelGrid
 bool addFaultToVoxelGrid(MeshLib::Mesh* mesh,
                          MeshLib::Mesh const* fault,
                          int const fault_id);
-
+// test if input mesh is voxel grid
+bool isVoxelGrid(MeshLib::Mesh const& mesh);
 }  // namespace MeshToolsLib::MeshGenerator::AddFaultToVoxelGrid
