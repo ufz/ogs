@@ -12,6 +12,7 @@ Boussinesq
 Brasileira
 Bruns
 CLion
+CMake
 Dalen
 Degener
 devguide
@@ -35,9 +36,9 @@ Forchheimer
 Fortran
 Francesco
 frontmatter
+Galerkin
 Genuchten
 Geoenergy
-Galerkin
 Giraldo
 gml
 GML
@@ -88,6 +89,7 @@ ParaView
 Parisio
 partmesh
 Péclet
+PETSc
 PHREEQC
 Pinheiro
 Prandtl
