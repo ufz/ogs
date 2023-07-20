@@ -28,7 +28,7 @@ respectively.
 Here, $Q$ in our formulation is an already integrated flux. Meaning it is typically a different quantity than the primary
 unknown of the `process` under consideration. It may be e.g. a secondary variable being a function of the primary unknown. This
 is for instance the case, if we consider prescribed fluxes of water in a porous medium on a Neumann boundary. Here, $Q$ would
-be a prescribed Dary velocity integrated over some area being a function of the pressure gradient.
+be a prescribed Darcy velocity integrated over some area being a function of the pressure gradient.
 For energy balances in OpenGeoSys the primary unknown is usually the temperature $T$,
 while corresponding fluxes $Q$ are usually expressed in terms of energy.
 

@@ -54,3 +54,6 @@ thermomechanics
 undeformed
 voxel
 wellbore
+expansivity
+simplices
+orthotropic

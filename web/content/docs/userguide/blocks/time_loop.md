@@ -48,7 +48,7 @@ In OpenGeoSys the following time step definitions are available:
 
 #### Single time step
 
-This is the simplest type of time steppings used for solution of elliptic pdes as in the `SteadyStateDiffusion` process.
+This is the simplest type of time steppings used for solution of elliptic PDEs as in the `SteadyStateDiffusion` process.
 It only requires its type to be given and is used for stead-state problems:
 
 ```xml
@@ -87,8 +87,8 @@ being $0.05$ time unit long.
 
 An arbitrary number of repeat-delta_t pairs can be provided (though at least one has to be defined).
 It is not required that sum of duration of all time steps perfectly matches the value of end time.
-If this is not the case, a time step at t_end will be added.
-The first time step of the simulation is always at t_initial.
+If this is not the case, a time step at `t_end` will be added.
+The first time step of the simulation is always at `t_initial`.
 
 The unit for time has to be consistent with the rest of the units used in the experiment.
 Following the SI system, second is the common choice as time unit.
@@ -141,7 +141,7 @@ especially for the solution of non-linear problems.
 ### Error tolerances
 
 Error tolerances will be applied to the solution vector
-There are two two ways of defining error tolerances:
+There are two ways of defining error tolerances:
 
 - relative `<reltosl> </reltols>`
 - absolute `<abstols> </abstols>`
@@ -180,7 +180,7 @@ In this part the selection of a convergence criterion is described. The followin
 - [Residual and PerComponentResidual](/docs/userguide/blocks/time_loop/#residual-and-percomponentresidual)
 
 All of the criteria mentioned above compare a value quantifying the error (a residual or a discrete change in time) with a
-userdefined tolerance.
+user-defined tolerance.
 
 There are three way how error tolerances can be set up:
 
@@ -297,7 +297,7 @@ In order to do so, block ```xml <timesteps> </timesteps>```has to be placed in `
 It can contain arbitrary number of blocks ```xml <pair> </pair>```, which define a cyclical pattern each.
 The block ```<pair>``` has to contain two tags: ```<repeat>``` and ```<each_steps>```.
 ```<repeat>``` defines how many outputs with spacing of ```<each_steps>``` time steps should be written.
-In a sequence of <pair> blocks the starting timestep for a pair is the last timestep from the previous one.
+In a sequence of <pair> blocks the starting time step for a pair is the last time step from the previous one.
 Following example illustrates this:
 
 ```xml
@@ -321,14 +321,14 @@ Using this block in the project file will result in the output being written at 
 The first file would be written as a result of the fist ```<pair>```.
 It will write output once (as the tag ```<repeat>``` has value of 1) after 10 time steps (10 is the value provided in the tag ```<each_steps>```).
 The second pair will write an output file after 90 time steps.
-However, the counting starts not at timestep 0, but at the last timestep resulting from the previous pair.
-In this cas this is timestep 10, hence second pair will write an output at 100 (10 time steps from first pair plus 90 time steps from second pair).
+However, the counting starts not at time step 0, but at the last time step resulting from the previous pair.
+In this cas this is time step 10, hence second pair will write an output at 100 (10 time steps from first pair plus 90 time steps from second pair).
 The same applies to the third pair.
 It will write an output at 1000 as 1000 is the result of addition of 10, 90, and 900 from first, second and third steps respectively.
 Note, that specifically in this case the values in ```<each_steps>``` tag can be summed directly, as each pair is repeated only once.
 
 Now, consider a more complicated pattern.
-Let's assume, that the output has to be written at every timestep for the range 1-10 time steps, every tenth in the range 10-100 time steps and every hundredth for the range 100-1000.
+Let's assume, that the output has to be written at every time step for the range 1-10 time steps, every tenth in the range 10-100 time steps and every hundredth for the range 100-1000.
 Block defining this pattern would be written as follows:
 
 ```xml
@@ -349,10 +349,10 @@ Block defining this pattern would be written as follows:
 ```
 
 This will result in output being written at time steps: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900 and 1000.
-Note, that since output at 10th timestep is the last one resulting from first pair, it will be the starting point for the second pair, therefore the second pair needs to be repeated only 9 times.
-Otherwise the last output from the second pair would be written at timestep 110.
+Note, that since output at 10th time step is the last one resulting from first pair, it will be the starting point for the second pair, therefore the second pair needs to be repeated only 9 times.
+Otherwise the last output from the second pair would be written at time step 110.
 The same principle applies to the third pair.
-Output at timestep 100 is written by the second pair, therefore to get to 1000, third pair only needs to be repeated 9 times.
+Output at time step 100 is written by the second pair, therefore to get to 1000, third pair only needs to be repeated 9 times.
 
 Regardless of the user defined output time steps, OpenGeoSys will write the output files at $t=0$ and $t=t_{end}$.
 
@@ -363,10 +363,10 @@ They should contain text strings.
 Variables can be used to allow those strings to vary between files.
 The following variables can be called:
 
-- meshname
-- timestep
-- time
-- iteration
+- `meshname`
+- `timestep`
+- `time`
+- `iteration`
 
 They can be used in the file name with the syntax illustrated by the following example:
 

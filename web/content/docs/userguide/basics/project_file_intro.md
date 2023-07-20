@@ -72,7 +72,7 @@ If a value is set between `<` and `>`, beside the tag, it is called attribute. F
 <planet satellite_name="Moon">
 ```
 
-The entity "planet" has the attribute "satellite_name", which is set to "Moon".
+The entity `planet` has the attribute `satellite_name`, which is set to `Moon`.
 
 In project files, attributes are used in some blocks to distinguished between multiple instances of the same entity. For
 example [media](/docs/userguide/blocks/media/#media) are identified by their attribute "id":

@@ -1,7 +1,7 @@
 +++
 author = "Feliks Kiszkurno, Wenqing Wang"
 date = "2023-01-10"
-title = "Thermo Richards Mechanics Process"
+title = "Thermo-Richards-Mechanics Process"
 weight = 2
 +++
 
@@ -74,7 +74,7 @@ $$
  $$
 
  with $\mathbf{\sigma}$ the effective stress tensor, $b(S)$ the Bishop model, $\mathbf f$ the body force, and $\mathbf I$ the identity.
- The primary unknowns of the momentum balance equation are the displacement $\mathbf u$, which is associated with the stress by the the generalized Hook's law as
+ The primary unknowns of the momentum balance equation are the displacement $\mathbf u$, which is associated with the stress by the generalized Hook's law as
  $$
  {\dot {\mathbf {\sigma}}} = C {\dot {\mathbf \epsilon}}^e
  = C ( {\dot {\mathbf \epsilon}} - {\dot {\mathbf \epsilon}}^T
@@ -158,9 +158,9 @@ TRM process has to be declared in the project file in the processes block. For e
 
 Following process variables are available in TRM process:
 
-- temperature
-- pressure
-- displacement
+- `temperature`
+- `pressure`
+- `displacement`
 
 For more details, see [Process variables]({{< ref "process_variables" >}}).
 

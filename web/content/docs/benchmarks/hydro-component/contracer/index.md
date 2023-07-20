@@ -93,9 +93,9 @@ Both models (1D and 2D) fit the experimental tracer breakthrough curves quite we
 The deviance at the peak and tail can be related to the fact that the simulations only consider conservative equilibrium transport (processes that may have occurred in the experimental system such as tracer sorption, non--equilibrium flow and evapotranspiration were not considered in the model).
 The differences between the OGS-6 and OGS-5 simulation were very low (RMSQE$=$1.37e-07).
 
-![Measured (tracer_exp) and simulated tracer breakthrough curves at the outlet (1D scenario)](ConTracer1d_results.png)
+![Measured and simulated tracer breakthrough curves at the outlet (1D scenario)](ConTracer1d_results.png)
 
-![Measured (tracer_exp} and simulated tracer breakthrough curves at the outlet (2D scenario)](ConTracer2d_results.png)
+![Measured and simulated tracer breakthrough curves at the outlet (2D scenario)](ConTracer2d_results.png)
 
 ## References
 

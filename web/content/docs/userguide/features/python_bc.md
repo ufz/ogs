@@ -91,7 +91,7 @@ The order in which those variables are provided is important.
 
 ### Neumann boundary condition
 
-OpenGeoSys will obtain values for a Neumann boundary condition by calling the method "getFlux".
+OpenGeoSys will obtain values for a Neumann boundary condition by calling the method `getFlux`.
 
 #### Input
 

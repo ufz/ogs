@@ -112,7 +112,7 @@ They can be used by the user to define the properties in a way, that is specific
 There are more general properties available.
 They are described in section [Other types of properties](/docs/userguide/blocks/media/#other-types-of-properties).
 
-Generally, it is most safe to use the "Constant" type for properties, if properties are not transient. If this is not
+Generally, it is most safe to use the `Constant` type for properties, if properties are not transient. If this is not
 sufficient, the type "Parameter" can be used. Still, there are some limitations to what types of parameter can be used in
 different processes.
 
@@ -121,32 +121,32 @@ In opposite to the parameters in the `parameter` block, in the `media` block par
 
 The types linear, function, and curve can depend on a set of variables listed in [MPL->VariableType.h](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/MaterialLib/MPL/VariableType.h):
 
-- capillary_pressure
-- concentration
-- density
-- displacement
-- effective_pore_pressure
-- enthalpy_of_evaporation
-- equivalent_plastic_strain
-- grain_compressibility
-- liquid_phase_pressure
-- liquid_saturation
-- mechanical_strain
-- molar_mass
-- molar_mass_derivative
-- molar_fraction
-- phase_pressure
-- porosity
-- solid_grain_pressure
-- stress
-- temperature
-- total_strain
-- total_stress
-- transport_porosity
-- vapour_pressure
-- volumetric_strain
+- `capillary_pressure`
+- `concentration`
+- `density`
+- `displacement`
+- `effective_pore_pressure`
+- `enthalpy_of_evaporation`
+- `equivalent_plastic_strain`
+- `grain_compressibility`
+- `liquid_phase_pressure`
+- `liquid_saturation`
+- `mechanical_strain`
+- `molar_mass`
+- `molar_mass_derivative`
+- `molar_fraction`
+- `phase_pressure`
+- `porosity`
+- `solid_grain_pressure`
+- `stress`
+- `temperature`
+- `total_strain`
+- `total_stress`
+- `transport_porosity`
+- `vapour_pressure`
+- `volumetric_strain`
 
-Keep in mind that not all of those variables will be available in all the processes. For example, in THM there is phase_pressure, but not liquid_phase_pressure.
+Keep in mind that not all of those variables will be available in all the processes. For example, in THM there is `phase_pressure`, but not `liquid_phase_pressure`.
 
 <!-- TODO: At best, give links and a little bit more information on the variables listed above. -->
 

@@ -1,3 +1,4 @@
+Alcolea
 Algolia
 Aluminol
 Alves
@@ -48,6 +49,7 @@ Giraldo
 gml
 GML
 Gmsh
+Gnielinski
 Goswami
 Guo
 Heidemann
@@ -97,6 +99,7 @@ parameteri[zs]ation
 ParaView
 Parisio
 partmesh
+PDE[s?]
 Péclet
 PETSc
 PHREEQC
@@ -124,9 +127,11 @@ Shao
 shortcode
 Snakemake
 Srivastava
+ST[s?]
 Stauffer
 Stauffer
 stdout
+stepping[s?]
 storativity
 Tarok
 Taucha
@@ -149,3 +154,4 @@ Xeon
 XPath
 Youngs
 Zenodo
+zlib
