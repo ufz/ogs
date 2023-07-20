@@ -58,3 +58,5 @@ expansivity
 simplices
 orthotropic
 tetrahedralization
+cmake
+ctest

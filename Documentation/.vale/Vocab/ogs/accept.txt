@@ -16,8 +16,6 @@ Boussinesq
 Brasileira
 Bruns
 CLion
-CMake
-CTest
 Dalen
 Degener
 DEM[s?]
@@ -56,7 +54,6 @@ Guo
 Heidemann
 Homebrew
 Horner
-HTTPS
 IPhreeqc
 ipynb
 ipyvtklink
@@ -148,7 +145,8 @@ Unstrut
 Vogel
 Vogels
 vtkdiff
-VTU
+VTK[s?]
+VTUinterface
 Witte
 Xcode
 Xeon
