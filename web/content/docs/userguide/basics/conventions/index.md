@@ -165,23 +165,29 @@ For hydro-mechanical processes the fixed-stress split has been implemented, sinc
 For the sake of brevity, we do not describe the scheme itself, but intend to provide guidance for its stabilization parameter.
 On this parameter depends how many coupling iterations are needed and thus how long it takes to obtain a solution.
 The optimal value of this parameter is not a-priori known, only that it lies within a certain interval is known (see [[2]](#2)):
-\begin{equation}
+
+$$
 \frac{1}{2}\frac{\alpha^2}{K_\mathrm{1D}} \le \beta_\mathrm{FS} \le \frac{\alpha^2}{K_\mathrm{ph}},
-\end{equation}
+$$
+
 where $\alpha$ denotes Biot's coefficient, and $K_\mathrm{1D}$ and $K_\mathrm{ph}$ are the bulk moduli described next.
 By $K_\mathrm{ph}$ we mean the bulk modulus adjusted to the spatial dimension, so in three dimensions it coincides with the
 drained bulk modulus, whereas in lower dimensions it becomes a constrained bulk modulus (2D plane strain, 1D uniaxial strain).
 Assuming isotropic, linear elasticity we have
-\begin{eqnarray}
+
+$$\begin{eqnarray}
 K_\mathrm{3D} &=& \lambda + \frac{2}{3}\mu, \\
 K_\mathrm{2D} &=& \lambda + \frac{2}{2}\mu, \\
 K_\mathrm{1D} &=& \lambda + \frac{2}{1}\mu. \\
-\end{eqnarray}
+\end{eqnarray}$$
+
 OGS sets the stabilization parameter, which corresponds to a coupling compressibility,
  via an optional tag `fixed_stress_stabilization_parameter` inside the tag `coupling_scheme`.
-\begin{equation}
+
+$$
 \beta_\mathrm{FS} = p_\mathrm{FS} \frac{\alpha^2}{K_\mathrm{3D}},
-\end{equation}
+$$
+
 by default to $p_\mathrm{FS}=\frac{1}{2}$.
 For isotropic, linear elasticity we provide the interval [[2]](#2) and the recommended value [[3]](#3) in dependence on
 Poisson's ratio $\nu$ (note $\frac{\lambda}{\mu}=\frac{2\nu}{1-2\nu}$).

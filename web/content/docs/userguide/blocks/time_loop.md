@@ -322,7 +322,7 @@ The first file would be written as a result of the fist ```<pair>```.
 It will write output once (as the tag ```<repeat>``` has value of 1) after 10 time steps (10 is the value provided in the tag ```<each_steps>```).
 The second pair will write an output file after 90 time steps.
 However, the counting starts not at time step 0, but at the last time step resulting from the previous pair.
-In this cas this is time step 10, hence second pair will write an output at 100 (10 time steps from first pair plus 90 time steps from second pair).
+In this case this is time step 10, hence second pair will write an output at 100 (10 time steps from first pair plus 90 time steps from second pair).
 The same applies to the third pair.
 It will write an output at 1000 as 1000 is the result of addition of 10, 90, and 900 from first, second and third steps respectively.
 Note, that specifically in this case the values in ```<each_steps>``` tag can be summed directly, as each pair is repeated only once.

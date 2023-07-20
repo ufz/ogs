@@ -85,7 +85,7 @@ mfront_behaviours_check_library(
 )
 ```
 
-To make the new "ModelName" available rerun CMake's "configure" and "generate" steps, and recompile OpenGeoSys.
+To make the new "ModelName" available rerun the "configure" and "generate" CMake-steps, and recompile OpenGeoSys.
 (This process should take less time than the first time, as only new code will be compiled.)
 
 <div class='note'>

@@ -23,7 +23,7 @@ Image `registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter` contains:
 - The latest OpenGeoSys application with MFront-support and tools
 - A set of Python packages:
   - [ogs6py](https://github.com/joergbuchwald/ogs6py) — OGS model manipulation
-  - [VTUInterface](https://github.com/joergbuchwald/VTUinterface) — VTU / PVD IO
+  - [VTUinterface](https://github.com/joergbuchwald/VTUinterface) — VTU / PVD IO
   - [ogstools](https://pypi.org/project/ogstools/) — OGS-related helper scripts, e.g. `msh2vtu`: Gmsh to VTU conversion
   - [h5py](https://docs.h5py.org/en/latest/index.html) — HDF5 IO
   - [MFront python bindings](http://tfel.sourceforge.net/mfront-python.html) – Material model manipulation

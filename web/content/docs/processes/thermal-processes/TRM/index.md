@@ -124,7 +124,7 @@ Those properties are defined on the phase level for each medium. See [phase prop
 | Vapour density | Yes | No | No | No | No | WaterVapourDensity |
 | Vapour diffusion | Yes | No | No | No | No | VapourDiffusionFEBEX |
 | Thermal expansivity | No | Yes | No | No | Yes | - |
-| Thermo osmosis coefficient | No | Yes | No | No | No | - |
+| Thermo-osmosis coefficient | No | Yes | No | No | No | - |
 
 ### Medium properties
 

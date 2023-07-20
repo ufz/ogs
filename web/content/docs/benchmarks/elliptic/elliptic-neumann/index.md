@@ -35,12 +35,22 @@ k\\;{\partial h(x,y) \over \partial n} = 0 &\quad \text{on } (x,y=1) \subset \Ga
 }$$
 
 The solution of this problem is
+
 $$
-\begin{equation}
 h(x,y) = 1 + \sum_{k=1}^\infty A_k \sin\bigg(C_k y\bigg) \sinh\bigg(C_k x\bigg),
-\end{equation}
 $$
-where $C_k = \frac{2k-1}{2} \pi$ and $A_k = 2 \Big/ \Big(C_k^2 \cosh\big(C_k\big)\Big)$.
+
+where
+
+$$
+C_k = \frac{2k-1}{2} \pi
+$$
+
+and
+
+$$
+A_k = 2 \Big/ \Big(C_k^2 \cosh\big(C_k\big)\Big).
+$$
 
 ## Input files
 
