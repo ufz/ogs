@@ -16,6 +16,7 @@ Brasileira
 Bruns
 CLion
 CMake
+CTest
 Dalen
 Degener
 devguide
@@ -62,6 +63,7 @@ Jong
 Jupyter
 Juwels
 Kinzelbach
+Kitware
 Kolditz
 Laloui
 Langergraber
@@ -105,6 +107,7 @@ pvpython
 PVTU
 Quadro
 Quirijn
+Ramey
 recondensation
 relref
 Revista
