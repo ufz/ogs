@@ -1,5 +1,4 @@
 /*! \defgroup ODESolver ODE Solver Library
- * \file
 
 This ODE solver library has been designed with an implicit first-order
 quasilinear ODE in mind. However, it is in principle not restricted to such a
