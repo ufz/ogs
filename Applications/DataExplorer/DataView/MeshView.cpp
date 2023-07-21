@@ -135,7 +135,7 @@ void MeshView::contextMenuEvent(QContextMenuEvent* event)
         {new QAction("Assign raster data to mesh...", this), 1, 2});
     connect(actions.back().action, SIGNAL(triggered()), this,
             SLOT(openRasterDataToMeshDialog()));
-    actions.push_back({new QAction("Edit mesh...", this), 2, 3});
+    actions.push_back({new QAction("Extend mesh to 3D...", this), 2, 3});
     connect(actions.back().action, SIGNAL(triggered()), this,
             SLOT(openMeshEditDialog()));
     actions.push_back({new QAction("Add layer...", this), 1, 3});

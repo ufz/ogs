@@ -50,7 +50,8 @@ Layers2GridDialog::Layers2GridDialog(MeshModel& mesh_model, QDialog* parent)
     if (MeshList.empty())
     {
         MeshList.append("[No Mesh available.]");
-        this->expectedVoxelLabel->setText("Expected Voxel: undefined");
+        this->expectedVoxelLabel->setText(
+            "Expected number of voxels: undefined");
     }
 
     _layeredMeshes.setStringList(MeshList);
