@@ -12,6 +12,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 namespace BaseLib
 {
@@ -22,8 +23,13 @@ namespace NumLib
 {
 class TimeStepAlgorithm;
 
+std::size_t findDeltatInterval(double const t_initial,
+                               std::vector<double> const& delta_ts,
+                               double const fixed_output_time);
+
 /// Create a FixedTimeStepping time stepper from the given
 /// configuration
 std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::vector<double> const& fixed_times_for_output);
 }  // end of namespace NumLib

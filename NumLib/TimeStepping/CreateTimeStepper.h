@@ -12,6 +12,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 namespace BaseLib
 {
@@ -22,5 +23,6 @@ namespace NumLib
 {
 class TimeStepAlgorithm;
 std::unique_ptr<TimeStepAlgorithm> createTimeStepper(
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::vector<double> const& fixed_times_for_output);
 };  // namespace NumLib

@@ -20,7 +20,8 @@ namespace NumLib
 {
 class TimeStepAlgorithm;
 std::unique_ptr<TimeStepAlgorithm> createIterationNumberBasedTimeStepping(
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::vector<double> const& fixed_times_for_output)
 {
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__type}
     config.checkConfigParameter("type", "IterationNumberBasedTimeStepping");
@@ -45,6 +46,7 @@ std::unique_ptr<TimeStepAlgorithm> createIterationNumberBasedTimeStepping(
 
     return std::make_unique<IterationNumberBasedTimeStepping>(
         t_initial, t_end, minimum_dt, maximum_dt, initial_dt,
-        std::move(number_iterations), std::move(multiplier));
+        std::move(number_iterations), std::move(multiplier),
+        fixed_times_for_output);
 }
 }  // namespace NumLib

@@ -12,6 +12,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 namespace BaseLib
 {
@@ -25,5 +26,6 @@ class TimeStepAlgorithm;
 /// Create an EvolutionaryPIDcontroller time stepper from the given
 /// configuration
 std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::vector<double> const& fixed_times_for_output);
 }  // end of namespace NumLib
