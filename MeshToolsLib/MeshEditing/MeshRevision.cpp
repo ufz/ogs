@@ -1256,7 +1256,7 @@ std::pair<unsigned, unsigned> MeshRevision::lutHexBackNodes(unsigned i,
 
 unsigned MeshRevision::lutPrismThirdNode(unsigned id1, unsigned id2)
 {
-    if ((id1 == 0 && id2 == 1) || (id1 == 1 && id2 == 2))
+    if ((id1 == 0 && id2 == 1) || (id1 == 1 && id2 == 0))
     {
         return 2;
     }
