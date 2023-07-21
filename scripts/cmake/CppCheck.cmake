@@ -9,10 +9,13 @@ elseif(DEFINED CMAKE_BUILD_PARALLEL_LEVEL)
     set(CPPCHECK_PARALLEL ${CMAKE_BUILD_PARALLEL_LEVEL})
 endif()
 if(DEFINED CPM_SOURCE_CACHE)
-    set(_cpp_check_ingore "-i${CPM_SOURCE_CACHE}")
+    set(_cpm_dir ${CPM_SOURCE_CACHE})
+elseif(DEFINED ENV{CPM_SOURCE_CACHE})
+    set(_cpm_dir $ENV{CPM_SOURCE_CACHE})
 else()
-    set(_cpp_check_ingore "-i${PROJECT_BINARY_DIR}/_deps")
+    set(_cpm_dir ${PROJECT_BINARY_DIR}/_deps)
 endif()
+set(_last_sed_expression [['x;${s/,$//;p;x;};1d']])
 
 configure_file(
     ${PROJECT_SOURCE_DIR}/scripts/test/cppcheck.in.sh
