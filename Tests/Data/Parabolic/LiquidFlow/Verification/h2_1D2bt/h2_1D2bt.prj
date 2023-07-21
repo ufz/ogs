@@ -118,8 +118,12 @@
                     <t_end> 7776 </t_end>
                     <timesteps>
                         <pair>
-                            <repeat>3000</repeat>
+                            <repeat>2999</repeat>
                             <delta_t>2.592</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>2.59200000039381120587</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>

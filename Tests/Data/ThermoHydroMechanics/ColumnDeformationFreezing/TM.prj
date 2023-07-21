@@ -290,7 +290,47 @@
                     <t_end>8400</t_end> <!-- 2h 20 min -->
                     <timesteps>
                         <pair>
-                            <repeat>280</repeat>
+                            <repeat>86</repeat>
+                            <delta_t>30</delta_t>   <!-- s -->
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>20</delta_t>   <!-- s -->
+                        </pair>
+                        <pair>
+                            <repeat>53</repeat>
+                            <delta_t>30</delta_t>   <!-- s -->
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>10</delta_t>   <!-- s -->
+                        </pair>
+                        <pair>
+                            <repeat>73</repeat>
+                            <delta_t>30</delta_t>   <!-- s -->
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>10</delta_t>   <!-- s -->
+                        </pair>
+                        <pair>
+                            <repeat>6</repeat>
+                            <delta_t>30</delta_t>   <!-- s -->
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>20</delta_t>   <!-- s -->
+                        </pair>
+                        <pair>
+                            <repeat>6</repeat>
+                            <delta_t>30</delta_t>   <!-- s -->
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>20</delta_t>   <!-- s -->
+                        </pair>
+                        <pair>
+                            <repeat>53</repeat>
                             <delta_t>30</delta_t>   <!-- s -->
                         </pair>
                     </timesteps>
