@@ -146,7 +146,7 @@ CC=mpicc CXX=mpic++ cmake ../ogs -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_P
 
 <div class='win'>
 
-CMake comes with a graphical tool called **cmake-gui**. You can find it in the **Windows Start Menu**. First you need to set the source and build directory. Then click **Configure**. Now choose the generator to be used (e.g. **Visual Studio {{< dataFile "versions.minimum_version.msvc.number" >}} {{< dataFile "versions.minimum_version.msvc.year" >}}** for Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}). Now choose your desired configuration options by toggling the corresponding checkboxes. Click **Configure** again. Click **Configure** often enough until the **Generate**-button becomes visible. Pressing **Generate** will finally generate the project files inside the chosen build directory.
+CMake comes with a graphical tool called `cmake-gui`. You can find it in the **Windows Start Menu**. First you need to set the source and build directory. Then click **Configure**. Now choose the generator to be used (e.g. **Visual Studio {{< dataFile "versions.minimum_version.msvc.number" >}} {{< dataFile "versions.minimum_version.msvc.year" >}}** for Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}). Now choose your desired configuration options by toggling the corresponding checkboxes. Click **Configure** again. Click **Configure** often enough until the **Generate**-button becomes visible. Pressing **Generate** will finally generate the project files inside the chosen build directory.
 
 </div>
 

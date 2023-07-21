@@ -1,7 +1,7 @@
 +++
 author = "Tymofiy Gerasimov, Dmitri Naumov"
 date = "2023-16-6"
-title = "Fully_saturated_column_deformation_and_freezing"
+title = "Fully saturated column deformation and freezing"
 project = ["ThermoHydroMechanics/ColumnDeformationFreezing/TM.prj"]
 image = "Column_setup.png"
 +++
@@ -44,7 +44,7 @@ To assess and analyse our simulation results, we calculate and record at each
 time step the vertical component $F_y$ of reaction force on the top boundary
 $\Gamma_\mathrm{top}$, namely,
 
-\begin{equation}
+$$
     \boldsymbol F^n=(F^n_x,F^n_y):=\int_{\Gamma_\mathrm{top}}
         \boldsymbol\sigma(\boldsymbol u^n)\cdot\boldsymbol n\\, \mathrm{d}s
     \quad\text{for $\boldsymbol\sigma \in
@@ -52,7 +52,7 @@ $\Gamma_\mathrm{top}$, namely,
              \boldsymbol\sigma_\mathrm{I},
              \boldsymbol\sigma_\mathrm{SI}
         \\\}$},
-\end{equation}
+$$
 
 where $\boldsymbol u^n:\Omega\rightarrow\mathbb{R}^2$ is the computed
 displacement solution vector, and $\boldsymbol n$ is an outward normal on

@@ -21,7 +21,7 @@ It was published in this state to make existing content available to users and h
 ## Setting up a project file
 
 The best starting point for setting your own project with OGS is to browse a catalogue of benchmarks (either at documentation
-page or gitlab).
+page or GitLab).
 
 ## Creating a new project file
 

@@ -1,19 +1,21 @@
 +++
-date = ""
+date = "2023-14-02"
 title = "MeshMapping"
 author = "Julian Heinze"
 +++
 
 ## Description
-MeshMapping is a tool to change the elevation of the nodes of a 2D mesh according to a raster file (*.asc, *.grd, *.xyz) or another 2D mesh. 
+
+MeshMapping is a tool to change the elevation of the nodes of a 2D mesh according to a raster file (`*.asc`, `*.grd`, `*.xyz`) or another 2D mesh.
 The x-y coordinates remain unchanged, while the z-coordinates of the input mesh are adjusted according to the raster used for mapping.
 
 ## Usage
+
 ```bash
-   MeshMapping  -i <string> -o <string> [-r <string>] [-m <string>] 
+   MeshMapping  -i <string> -o <string> [-r <string>] [-m <string>]
                 [-d <number>] [-s <number>] [--lowpass] [--] [--version] [-h]
 
-Where: 
+Where:
      (required)  Input mesh file (*.vtu, *.msh)
 
    -o <string>,  --output <string>
@@ -48,25 +50,27 @@ Where:
      Displays usage information and exits.
 ```
 
-## Example:
-Mapping the input mesh to a digital elevation model (DEM). 
+## Example
+
+Mapping the input mesh to a digital elevation model (DEM).
 <p align='center'>
  <img src = B-z.png width = "30%" height = "30%"> <img src = B-x.png width = "60%" height = "60%" >
 </p>
 <p align = "center">
-Fig.1 Both images show the INPUT mesh from two different point of views. The upper image shows the view along the z-axis. The lower image shows the view along the x-axis. 
+Fig. 1 Both images show the INPUT mesh from two different point of views. The upper image shows the view along the z-axis. The lower image shows the view along the x-axis.
  </p>
 
 ```bash
-MeshMapping -i Berlin.vtu -o Berlin_mapped.vtu -r DEM.asc 
+MeshMapping -i Berlin.vtu -o Berlin_mapped.vtu -r DEM.asc
 
 ```
-The command above maps the mesh 'Berlin.vtu' to the mesh 'Berlin_mapped.vtu' according to the elevation given in 'DEM.asc'. 
-Differences can be seen comparing Fig.1 and Fig.2, especially comparing the lower images. 
+
+The command above maps the mesh `Berlin.vtu` to the mesh `Berlin_mapped.vtu` according to the elevation given in `DEM.asc`.
+Differences can be seen comparing Fig.1 and Fig.2, especially comparing the lower images.
 
 <p align='center'>
-  <img src = B-map-z.png width = "30%" height = "30%" "test for caption">  <img src = B-map-x-scale10.png width = "60%" height = "60%" > 
+  <img src = B-map-z.png width = "30%" height = "30%" "test for caption">  <img src = B-map-x-scale10.png width = "60%" height = "60%" >
 </p>
 <p align = "center">
-Fig.2 Both images show the OUTPUT mesh from two different point of views. The upper image shows it viewing along the z-axis. The right image shows it viewing along the x-axis. To increase the visibility of the elevation, z-values are scaled by factor of 10. 
+Fig. 2 Both images show the OUTPUT mesh from two different point of views. The upper image shows it viewing along the z-axis. The right image shows it viewing along the x-axis. To increase the visibility of the elevation, z-values are scaled by factor of 10.
  </p>

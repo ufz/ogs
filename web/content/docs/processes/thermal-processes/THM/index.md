@@ -59,9 +59,9 @@ THM process has to be declared in project file in the processes block. For examp
 
 Following process variables are available in THM process:
 
-- temperature
-- pressure
-- displacement
+- `temperature`
+- `pressure`
+- `displacement`
 
 For more details, see [Process variables]({{< ref "process_variables" >}}).
 

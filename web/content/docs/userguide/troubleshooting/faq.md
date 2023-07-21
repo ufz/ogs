@@ -5,7 +5,7 @@ author = "Lars Bilke and Feliks Kiszkurno"
 weight = 1
 +++
 
-## "XSDError: Loaded schema file is invalid" error encountered when running DataExplorer
+## `XSDError: Loaded schema file is invalid` error encountered when running DataExplorer
 
 You may encounter the following error (or similar) on opening `.gml`, `.cnd`, `std` or `.prj` files in the Data Explorer or file
 conversion tools (e.g., `OGSFileConverter`):

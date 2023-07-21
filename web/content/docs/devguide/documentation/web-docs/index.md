@@ -88,7 +88,7 @@ We use [Markdown](https://commonmark.org/help/) for the actual content. Hugo use
 
 Use regular Markdown syntax:
 
-```md
+```markdown
 ![Alt text](square_1e2_neumann_gradients.png "Caption text")
 ```
 
@@ -96,7 +96,7 @@ The path to the image is the relative path to the current [page bundle](https://
 
 You can add size attributes to the filename with a `#`-character:
 
-```md
+```markdown
 ![Alt text](square_1e2_neumann_gradients.png#two-third "Caption text")
 ```
 

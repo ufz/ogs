@@ -5,19 +5,21 @@ author = "Julian Heinze"
 +++
 
 ## Description
+
 This tool converts a linear mesh to a mesh of quadratic order.
 The order of a mesh is equal to the highest order of elements within the mesh.
 The quadratic order mesh allows shape functions of quadratic order to be considered in the finite element methods of the simulation.
-More detailed information about the differences between a linear and quadratic mesh elements can be found in the [VTK book by kitware](https://kitware.github.io/vtk-examples/site/VTKBook/05Chapter5/).
+More detailed information about the differences between a linear and quadratic mesh elements can be found in the [VTK book by Kitware](https://kitware.github.io/vtk-examples/site/VTKBook/05Chapter5/).
 
 ## Usage
+
 ```bash
-USAGE: 
+USAGE:
    createQuadraticMesh  [-c] -o <string> -i <string> [--] [--version]
                             [-h]
 
 
-Where: 
+Where:
    -c,  --add-centre-node
      add centre node
 
@@ -37,7 +39,7 @@ Where:
      Displays usage information and exits.
 ```
 
-## Example:
+## Example
 
 ```bash
 createQuadraticMesh -i input_mesh.vtu -o quadratic_mesh.vtu

@@ -73,10 +73,10 @@ OpenGeoSys will obtain values for a Dirichlet boundary condition by calling the 
 The following variables are always passed as an input to the Dirichlet boundary condition method (in brackets the default
 variable name used in examples) is given:
 
-- time (t),
-- spatial coordinates (coords),
-- node id (node_id),
-- primary variables (primary_vars).
+- time (`t`),
+- spatial coordinates (`coords`),
+- node id (`node_id`),
+- primary variables (`primary_vars`).
 
 #### Output
 
@@ -91,15 +91,15 @@ The order in which those variables are provided is important.
 
 ### Neumann boundary condition
 
-OpenGeoSys will obtain values for a Neumann boundary condition by calling the method "getFlux".
+OpenGeoSys will obtain values for a Neumann boundary condition by calling the method `getFlux`.
 
 #### Input
 
 The following variables are always passed as an input to the Dirichlet boundary condition method (in brackets the default variable name used in examples is given):
 
-- time (t),
-- spatial coordinates (coords),
-- primary variables (primary_vars).
+- time (`t`),
+- spatial coordinates (`coords`),
+- primary variables (`primary_vars`).
 
 The order in which those variables are provided is important.
 

@@ -1,5 +1,5 @@
 +++
-date = ""
+date = "2023-06-22"
 title = "createTetgenSmeshFromRasters"
 author = "Julian Heinze"
 +++
@@ -11,7 +11,7 @@ The 2D input file is intended to define the upper surface of the resulting `*.sm
 The resulting `*.smesh` file is a *piecewise linear complex* (PLC) that describes a boundary representation for a layered 3D mesh.
 This PLC serves as input to TetGen's *Tetrahedral Mesh Generator* to create a 3D mesh.
 A more detailed explanation of the use and functionality of TetGen can be found in the manual.
-Supported raster formats are ArcGIS ascii raster (`*.asc`), Surfer grids (`*.grd`), and XYZ raster files (`*.xyz`).
+Supported raster formats are ArcGIS ASCII raster (`*.asc`), Surfer grids (`*.grd`), and XYZ raster files (`*.xyz`).
 Still, the list of raster files can be given in any text file format.
 
 ### Known limitations
@@ -79,4 +79,4 @@ It could be called like:
 tetgen -pkA mesh_layered.smesh
 ```
 
-The **p** takes care of the tetrahedralization, **k** takes care of the generation of a vtk output, and **A** writes cell properties for regions to the output mesh.
+The **p** takes care of the tetrahedralization, **k** takes care of the generation of a VTK output, and **A** writes cell properties for regions to the output mesh.

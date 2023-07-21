@@ -39,9 +39,11 @@ $$
 \end{equation}
 $$
 with the concentration $c_{\alpha}$ of the chemical component as the primary variable. $D$ [m$^2$/s] denotes the hydrodynamic dispersion tensor with the following relation
-\begin{equation}
+
+$$
 D = (\phi D_{p} + \beta_T  \lVert \textbf{q} \rVert) \textbf{I} + （ \beta_L - \beta_T ） \frac{\textbf{q} \textbf{q}^{T}}{\lVert \textbf{q} \rVert}
-\end{equation}
+$$
+
 implemented, where $D_p$ [m$^2$/s] is the pore diffusion coefficient, $\beta_L$ and $\beta_T$ [m] are the longitudinal and transversal dispersion coefficients. $R$ [-] is the retardation factor defined as
 $$
 R = 1 + \rho_{b} K_{D} / \phi

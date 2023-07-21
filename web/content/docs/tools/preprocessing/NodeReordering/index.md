@@ -1,28 +1,29 @@
 +++
-date = ""
+date = "2023-02-23"
 title = "NodeReordering"
 author = "Julian Heinze"
 +++
 
 ## Description
+
 This tool is to reorder nodes of a given mesh.
 Mostly it is applied to reorder the nodes of a mesh from an older OGS version to have a mesh compatible with the current OGS version.
 There are four different methods available, which define the reordering process:
 
 - Method 0: Reversing order of nodes for all elements.
-- Method 1: Reversing order of nodes unless it's perceived correct by OGS6 standards.
+- Method 1: Reversing order of nodes unless it's perceived correct by OGS-6 standards.
 This is the default selection.
-- Method 2: Fixing node ordering issues between VTK and OGS6 (only applies to prism-elements).
+- Method 2: Fixing node ordering issues between VTK and OGS-6 (only applies to prism-elements).
 - Method 3: Re-ordering of mesh node vector such that all base nodes are sorted before all nonlinear.nodes.
 
-
 ## Usage
+
 ```bash
-USAGE: 
+USAGE:
    NodeReordering  -i <filename> -o <filename> [-m <0|1|2|3>] [--]
                        [--version] [-h]
 
-Where: 
+Where:
    -i <filename>,  --input_mesh <filename>
      (required)  the name of the input mesh file
 
@@ -42,8 +43,10 @@ Where:
      Displays usage information and exits.
 ```
 
-## Example:
+## Example
+
 The following command is used to reorder a mesh according to the second method.
+
 ```bash
 NodeReordering -i input.vtu -o output.vtu -m 2
 ```

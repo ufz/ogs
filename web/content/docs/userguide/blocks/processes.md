@@ -90,7 +90,7 @@ For the process variables listed above, relative error tolerances can be defined
 The order can differ based on the order in which the processes are defined and on dimensionality of the process (e.g., number
 of components in displacement, or number of chemical constituents).
 Keep in mind that some process variables have more than one value like displacement in the example above.
-In such a case, a matching number of reltols has to be defined. <!-- TODO: Explain the matching number. -->
+In such a case, a matching number of `reltols` has to be defined. <!-- TODO: Explain the matching number. -->
 
 <!-- TODO: Explain the relative tolerance. -->
 
@@ -100,13 +100,13 @@ Constitutive relation can be one of the [existing relations](/docs/userguide/blo
 in OpenGeoSys or it can be defined by user using [MFront](/docs/userguide/features/mfront/).
 They are used with one of the following mechanical processes:
 
-* Hydro Mechanics
-* Phase Field
-* Richards Mechanics
+* Hydro-Mechanics
+* Phase-Field
+* Richards-Mechanics
 * Small Deformation
-* Thermo Mechanics
-* Thermo Hydro Mechanics
-* Thermo Richards Mechanics
+* Thermo-Mechanics
+* Thermo-Hydro-Mechanics
+* Thermo-Richards-Mechanics
 * TH2M
 
 To define constitutive relation, tags `<constitutive_relation> </constitutive_relation>` are used.

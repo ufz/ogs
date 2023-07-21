@@ -38,7 +38,7 @@ cd build-directory
 cmake --build . --config Release
 ```
 
-Please that with Visual Studio you have to provide the `--config`-paramter as Visual Studio is a [multi-configuration generator](https://cmake.org/cmake/help/latest/prop_gbl/GENERATOR_IS_MULTI_CONFIG.html) in CMake.
+Please that with Visual Studio you have to provide the `--config`-parameter as Visual Studio is a [multi-configuration generator](https://cmake.org/cmake/help/latest/prop_gbl/GENERATOR_IS_MULTI_CONFIG.html) in CMake.
 
 If you build with the help of a [CMake preset]({{< ref "build-configuration#available-cmake-presets" >}}) then you can omit the `--config`-parameter, e.g.:
 

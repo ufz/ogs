@@ -21,7 +21,7 @@ has many derivatives, e.g intelMPI) has to be installed as prerequisite.
 PETSc is not supported on Windows system.
 As an alternative you can follow the instructions in Section [Install PETSc manually](#install-petsc-manually) and run PETSc using Cygwin or use Windows Subsystem For Linux (WSL).
 The latter option is recommended - using WSL.
-The manual of setting up OpenGeoSys in WSL can be found in our [Windows Subsystem For Linux]({{<ref "wsl">}}) guide.
+The manual of setting up OpenGeoSys in WSL can be found in our [Windows Subsystem For Linux]({{< ref "wsl" >}}) guide.
 After setting up WSL, please follow the Linux tab in this guide.
 
 </div>
@@ -30,7 +30,7 @@ After setting up WSL, please follow the Linux tab in this guide.
 
 ## Set up prerequisites
 
-Before continuing with this guide, please follow all steps from the "Developer guide" articles: [Set Up Prerequisites]({{<ref "prerequisites">}}) and [Get the source code]({{<ref "get-the-source-code">}}).
+Before continuing with this guide, please follow all steps from the "Developer guide" articles: [Set Up Prerequisites]({{< ref "prerequisites" >}}) and [Get the source code]({{< ref "get-the-source-code" >}}).
 
 ### Install MPI
 
@@ -88,7 +88,7 @@ cmake --build --preset release-petsc
 ```
 
 The ```release-petsc``` preset is based on the ```release``` preset.
-It can be customized by passing additional variable with ```-D``` flags to cmake command.
+It can be customized by passing additional variable with ```-D``` flags to `cmake` command.
 
 If you want to install PETSc yourself, please see Section [Install PETSc](#install-petsc-manually).
 
@@ -134,7 +134,7 @@ Please note, that the PETSc package is usually build in release mode independent
 
 <div class='win'>
 
-PESTSc is recommended to use on Linux.
+PETSc is recommended to use on Linux.
 On Windows, it only runs on UNIX emulator Cygwin.
 A detailed description about how to use PETSc on Windows is available on this PETSc site: <https://petsc.org/release/install/windows/>.
 

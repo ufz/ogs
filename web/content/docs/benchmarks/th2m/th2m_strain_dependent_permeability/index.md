@@ -12,6 +12,6 @@ draft = true
 
 ## Problem description
 
-Todo
+TODO
 
 ## Results and evaluation

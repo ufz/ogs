@@ -8,12 +8,13 @@ weight = 1027
 
 This list was obtained using grep and added here to provide an  overview of what sections are missing the documentation. In the future it should be generated automatically.
 
-It can be obtained by running script ```todo-check.sh``` from ```/web/content/docs/userguide``` folder.
+It can be obtained by running script `todo-check.sh` from `web/content/docs/userguide` folder.
 
-## TODOs in userguide/basics
+## TODOs in `userguide/basics`
 
-## TODOs in userguide/blocks
-```
+## TODOs in `userguide/blocks`
+
+```bash
 blocks/curves.md-19-</div>
 blocks/curves.md-20-
 blocks/curves.md:21:TODO: Add general description
@@ -95,8 +96,9 @@ blocks/processes.md-158-
 blocks/processes.md:159:The global non-linear equation system can be solved either with Picard fix-point iterations or a Newton scheme. (TODO: Reference NLS scheme)
 ```
 
-## TODOs in userguide/features
-```
+## TODOs in `userguide/features`
+
+```bash
 features/python_bc.md-31-## Using python boundary condition in project file
 features/python_bc.md-32-
 features/python_bc.md:33:TODO: add description of how to call python bc from the boundary condition tag
@@ -122,5 +124,4 @@ features/mfront.md-109-
 features/mfront.md:110:TODO: add content
 ```
 
-## TODOs in userguide/troubleshooting
-
+## TODOs in `userguide/troubleshooting`

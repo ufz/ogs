@@ -1,12 +1,12 @@
 +++
-date = ""
+date = "2023-02-23"
 title = "AddFaultToVoxelGrid"
 author = "Julian Heinze"
 +++
 
 ## Description
 
-This tool marks all elements in a voxel-grid (i.e. a structured hex grid, for instance created with [Layers2Grid]({{< ref "Layers2Grid.md" >}}) or [Vtu2Grid]({{< ref "vtu2grid.md" >}})) that are intersected by a triangulated 2D mesh representing a fault or some other significant structure.
+This tool marks all elements in a voxel grid (i.e. a structured hex grid, for instance created with [Layers2Grid]({{< ref "Layers2Grid.md" >}}) or [Vtu2Grid]({{< ref "vtu2grid.md" >}})) that are intersected by a triangulated 2D mesh representing a fault or some other significant structure.
 The material group for those intersected elements can be explicitly specified.
 Otherwise the largest existing MaterialID will be increased by one and defined as MaterialID for those elements.
 
@@ -52,5 +52,5 @@ AddFaultToVoxelGrid -i grid.vtu -f fault.vtu -o grid_fault.vtu
  <img src = fault.png width = "100%" height = "100%">
 </p>
 <p align = "center">
-Fig.1 The left figure shows the input grid with the intersecting triangulated 2D mesh, which is highlighted in red. The center and right figure show the output voxelgrid.
+Fig. 1 The left figure shows the input grid with the intersecting triangulated 2D mesh, which is highlighted in red. The center and right figure show the output voxel grid.
  </p>
