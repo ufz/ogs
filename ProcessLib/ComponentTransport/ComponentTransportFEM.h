@@ -438,7 +438,7 @@ public:
 
     void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
-                  std::vector<double> const& /*local_xdot*/,
+                  std::vector<double> const& /*local_x_prev*/,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override
@@ -769,7 +769,7 @@ public:
 
     void assembleForStaggeredScheme(double const t, double const dt,
                                     Eigen::VectorXd const& local_x,
-                                    Eigen::VectorXd const& local_xdot,
+                                    Eigen::VectorXd const& local_x_prev,
                                     int const process_id,
                                     std::vector<double>& local_M_data,
                                     std::vector<double>& local_K_data,
@@ -777,13 +777,13 @@ public:
     {
         if (process_id == _process_data.hydraulic_process_id)
         {
-            assembleHydraulicEquation(t, dt, local_x, local_xdot, local_M_data,
-                                      local_K_data, local_b_data);
+            assembleHydraulicEquation(t, dt, local_x, local_x_prev,
+                                      local_M_data, local_K_data, local_b_data);
         }
         else
         {
             // Go for assembling in an order of transport process id.
-            assembleComponentTransportEquation(t, dt, local_x, local_xdot,
+            assembleComponentTransportEquation(t, dt, local_x, local_x_prev,
                                                local_M_data, local_K_data,
                                                local_b_data, process_id);
         }
@@ -792,7 +792,7 @@ public:
     void assembleHydraulicEquation(double const t,
                                    double const dt,
                                    Eigen::VectorXd const& local_x,
-                                   Eigen::VectorXd const& local_xdot,
+                                   Eigen::VectorXd const& local_x_prev,
                                    std::vector<double>& local_M_data,
                                    std::vector<double>& local_K_data,
                                    std::vector<double>& local_b_data)
@@ -801,8 +801,8 @@ public:
             local_x.template segment<pressure_size>(pressure_index);
         auto const local_C = local_x.template segment<concentration_size>(
             first_concentration_index);
-        auto const local_Cdot =
-            local_xdot.segment<concentration_size>(first_concentration_index);
+        auto const local_C_prev =
+            local_x_prev.segment<concentration_size>(first_concentration_index);
 
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, pressure_size, pressure_size);
@@ -914,7 +914,7 @@ public:
 
     void assembleComponentTransportEquation(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, std::vector<double>& local_M_data,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data,
         std::vector<double>& /*local_b_data*/, int const transport_process_id)
     {
@@ -923,8 +923,8 @@ public:
         auto const local_C = local_x.template segment<concentration_size>(
             first_concentration_index +
             (transport_process_id - 1) * concentration_size);
-        auto const local_pdot =
-            local_xdot.segment<pressure_size>(pressure_index);
+        auto const local_p_prev =
+            local_x_prev.segment<pressure_size>(pressure_index);
 
         NodalVectorType local_T;
         if (_process_data.temperature)
@@ -1115,7 +1115,7 @@ public:
 
     void assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, int const process_id,
+        Eigen::VectorXd const& local_x_prev, int const process_id,
         std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data,
@@ -1123,30 +1123,30 @@ public:
     {
         if (process_id == _process_data.hydraulic_process_id)
         {
-            assembleWithJacobianHydraulicEquation(t, dt, local_x, local_xdot,
+            assembleWithJacobianHydraulicEquation(t, dt, local_x, local_x_prev,
                                                   local_b_data, local_Jac_data);
         }
         else
         {
             int const component_id = process_id - 1;
             assembleWithJacobianComponentTransportEquation(
-                t, dt, local_x, local_xdot, local_b_data, local_Jac_data,
+                t, dt, local_x, local_x_prev, local_b_data, local_Jac_data,
                 component_id);
         }
     }
 
     void assembleWithJacobianHydraulicEquation(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data)
     {
         auto const p = local_x.template segment<pressure_size>(pressure_index);
         auto const c = local_x.template segment<concentration_size>(
             first_concentration_index);
 
-        auto const pdot = local_xdot.segment<pressure_size>(pressure_index);
-        auto const cdot =
-            local_xdot.segment<concentration_size>(first_concentration_index);
+        auto const p_prev = local_x_prev.segment<pressure_size>(pressure_index);
+        auto const c_prev =
+            local_x_prev.segment<concentration_size>(first_concentration_index);
 
         auto local_Jac = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_Jac_data, pressure_size, pressure_size);
@@ -1241,7 +1241,7 @@ public:
 
     void assembleWithJacobianComponentTransportEquation(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data, int const component_id)
     {
         auto const concentration_index =
@@ -1250,8 +1250,8 @@ public:
         auto const p = local_x.template segment<pressure_size>(pressure_index);
         auto const c =
             local_x.template segment<concentration_size>(concentration_index);
-        auto const cdot =
-            local_xdot.segment<concentration_size>(concentration_index);
+        auto const c_prev =
+            local_x_prev.segment<concentration_size>(concentration_index);
 
         NodalVectorType T;
         if (_process_data.temperature)
@@ -1647,7 +1647,7 @@ public:
         double const t,
         double const /*dt*/,
         Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& /*local_x_dot*/) override
+        Eigen::VectorXd const& /*local_x_prev*/) override
     {
         auto const local_p =
             local_x.template segment<pressure_size>(pressure_index);
@@ -1808,7 +1808,7 @@ public:
     }
 
     void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              Eigen::VectorXd const& /*local_x_dot*/,
+                              Eigen::VectorXd const& /*local_x_prev*/,
                               double const /*t*/, double const /*dt*/,
                               bool const /*use_monolithic_scheme*/,
                               int const /*process_id*/) override

@@ -171,7 +171,7 @@ void ComponentTransportProcess::setInitialConditionsConcreteProcess(
 
 void ComponentTransportProcess::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble ComponentTransportProcess.");
@@ -193,8 +193,8 @@ void ComponentTransportProcess::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot, process_id, M, K,
-        b);
+        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id, M,
+        K, b);
 
     MathLib::finalizeMatrixAssembly(M);
     MathLib::finalizeMatrixAssembly(K);
@@ -202,7 +202,7 @@ void ComponentTransportProcess::assembleConcreteProcess(
 
     if (_use_monolithic_scheme)
     {
-        auto const residuum = computeResiduum(*x[0], *xdot[0], M, K, b);
+        auto const residuum = computeResiduum(dt, *x[0], *x_prev[0], M, K, b);
         for (std::size_t variable_id = 0; variable_id < _residua.size();
              ++variable_id)
         {
@@ -214,7 +214,7 @@ void ComponentTransportProcess::assembleConcreteProcess(
     else
     {
         auto const residuum =
-            computeResiduum(*x[process_id], *xdot[process_id], M, K, b);
+            computeResiduum(dt, *x[process_id], *x_prev[process_id], M, K, b);
         transformVariableFromGlobalVector(residuum, 0, dof_tables[process_id],
                                           *_residua[process_id],
                                           std::negate<double>());
@@ -223,7 +223,7 @@ void ComponentTransportProcess::assembleConcreteProcess(
 
 void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian ComponentTransportProcess.");
@@ -246,8 +246,8 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        process_id, M, K, b, Jac);
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
+        x_prev, process_id, M, K, b, Jac);
 
     // b is the negated residumm used in the Newton's method.
     // Here negating b is to recover the primitive residuum.
@@ -391,7 +391,7 @@ void ComponentTransportProcess::computeSecondaryVariableConcrete(
     double const t,
     double const dt,
     std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_dot,
+    GlobalVector const& x_prev,
     int const process_id)
 {
     if (process_id != 0)
@@ -408,7 +408,7 @@ void ComponentTransportProcess::computeSecondaryVariableConcrete(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_dot, process_id);
+        x_prev, process_id);
 
     if (!_chemical_solver_interface)
     {
@@ -423,7 +423,7 @@ void ComponentTransportProcess::computeSecondaryVariableConcrete(
 
 void ComponentTransportProcess::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& x_dot,
+    std::vector<GlobalVector*> const& x_prev,
     const double t,
     const double dt,
     int const process_id)
@@ -441,7 +441,7 @@ void ComponentTransportProcess::postTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::postTimestep,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, x_dot, t,
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, x_prev, t,
         dt, _use_monolithic_scheme, process_id);
 
     if (!_surfaceflux)  // computing the surfaceflux is optional
