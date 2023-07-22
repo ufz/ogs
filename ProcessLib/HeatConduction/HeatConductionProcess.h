@@ -69,9 +69,6 @@ private:
     std::vector<std::unique_ptr<HeatConductionLocalAssemblerInterface>>
         _local_assemblers;
 
-    /// Solution of the previous time step
-    std::unique_ptr<GlobalVector> _x_previous_timestep = nullptr;
-
     MeshLib::PropertyVector<double>* _heat_flux = nullptr;
 };
 
