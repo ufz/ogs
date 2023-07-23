@@ -530,7 +530,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_dot, int const process_id)
+    GlobalVector const& x_prev, int const process_id)
 {
     DBUG("Compute the secondary variables for SmallDeformationProcess.");
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
@@ -542,7 +542,7 @@ void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &SmallDeformationLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_dot, process_id);
+        x_prev, process_id);
 }
 
 template <int DisplacementDim>
@@ -554,7 +554,7 @@ bool SmallDeformationProcess<DisplacementDim>::isLinear() const
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble SmallDeformationProcess.");
@@ -566,17 +566,15 @@ void SmallDeformationProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
+        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
         b);
 }
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::
-    assembleWithJacobianConcreteProcess(const double t, double const dt,
-                                        std::vector<GlobalVector*> const& x,
-                                        std::vector<GlobalVector*> const& xdot,
-                                        int const process_id, GlobalMatrix& M,
-                                        GlobalMatrix& K, GlobalVector& b,
-                                        GlobalMatrix& Jac)
+    assembleWithJacobianConcreteProcess(
+        const double t, double const dt, std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian SmallDeformationProcess.");
 
@@ -587,8 +585,8 @@ void SmallDeformationProcess<DisplacementDim>::
         dof_table = {std::ref(*_local_to_global_index_map)};
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
-        process_id, M, K, b, Jac);
+        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x,
+        x_prev, process_id, M, K, b, Jac);
 }
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(
