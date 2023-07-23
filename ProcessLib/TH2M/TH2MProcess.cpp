@@ -353,19 +353,19 @@ void TH2MProcess<DisplacementDim>::setInitialConditionsConcreteProcess(
 template <int DisplacementDim>
 void TH2MProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble the equations for TH2M");
 
-    AssemblyMixin<TH2MProcess<DisplacementDim>>::assemble(t, dt, x, xdot,
+    AssemblyMixin<TH2MProcess<DisplacementDim>>::assemble(t, dt, x, x_prev,
                                                           process_id, M, K, b);
 }
 
 template <int DisplacementDim>
 void TH2MProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     if (!_use_monolithic_scheme)
@@ -374,7 +374,7 @@ void TH2MProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
     }
 
     AssemblyMixin<TH2MProcess<DisplacementDim>>::assembleWithJacobian(
-        t, dt, x, xdot, process_id, M, K, b, Jac);
+        t, dt, x, x_prev, process_id, M, K, b, Jac);
 }
 
 template <int DisplacementDim>
@@ -402,7 +402,7 @@ void TH2MProcess<DisplacementDim>::preTimestepConcreteProcess(
 template <int DisplacementDim>
 void TH2MProcess<DisplacementDim>::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& x_dot, double const t, double const dt,
+    std::vector<GlobalVector*> const& x_prev, double const t, double const dt,
     const int process_id)
 {
     DBUG("PostTimestep TH2MProcess.");
@@ -410,14 +410,14 @@ void TH2MProcess<DisplacementDim>::postTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::postTimestep,
-        local_assemblers_, pv.getActiveElementIDs(), dof_tables, x, x_dot, t,
+        local_assemblers_, pv.getActiveElementIDs(), dof_tables, x, x_prev, t,
         dt, _use_monolithic_scheme, process_id);
 }
 
 template <int DisplacementDim>
 void TH2MProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_dot, const int process_id)
+    GlobalVector const& x_prev, const int process_id)
 {
     if (process_id != 0)
     {
@@ -431,7 +431,7 @@ void TH2MProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::computeSecondaryVariable,
         local_assemblers_, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_dot, process_id);
+        x_prev, process_id);
 }
 
 template <int DisplacementDim>

@@ -90,7 +90,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     updateConstitutiveVariables(Eigen::VectorXd const& local_x,
-                                Eigen::VectorXd const& local_x_dot,
+                                Eigen::VectorXd const& local_x_prev,
                                 double const t, double const dt)
 {
     [[maybe_unused]] auto const matrix_size =
@@ -107,8 +107,8 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
 
     auto const temperature =
         local_x.template segment<temperature_size>(temperature_index);
-    auto const temperature_dot =
-        local_x_dot.template segment<temperature_size>(temperature_index);
+    auto const temperature_prev =
+        local_x_prev.template segment<temperature_size>(temperature_index);
 
     auto const displacement =
         local_x.template segment<displacement_size>(displacement_index);
@@ -148,8 +148,7 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
                 _element, Nu);
 
         double const T = NT.dot(temperature);
-        double const T_dot = NT.dot(temperature_dot);
-        double const T_prev = T - T_dot * dt;
+        double const T_prev = NT.dot(temperature_prev);
         double const pGR = Np.dot(gas_pressure);
         double const pCap = Np.dot(capillary_pressure);
         double const pLR = pGR - pCap;
@@ -1005,7 +1004,7 @@ void TH2MLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::assemble(double const t, double const dt,
                                std::vector<double> const& local_x,
-                               std::vector<double> const& local_x_dot,
+                               std::vector<double> const& local_x_prev,
                                std::vector<double>& local_M_data,
                                std::vector<double>& local_K_data,
                                std::vector<double>& local_rhs_data)
@@ -1018,9 +1017,9 @@ void TH2MLocalAssembler<
         Eigen::Map<VectorType<capillary_pressure_size> const>(
             local_x.data() + capillary_pressure_index, capillary_pressure_size);
 
-    auto const capillary_pressure_dot =
+    auto const capillary_pressure_prev =
         Eigen::Map<VectorType<capillary_pressure_size> const>(
-            local_x_dot.data() + capillary_pressure_index,
+            local_x_prev.data() + capillary_pressure_index,
             capillary_pressure_size);
 
     // pointer to local_M_data vector
@@ -1105,8 +1104,8 @@ void TH2MLocalAssembler<
 
     auto const ip_constitutive_variables = updateConstitutiveVariables(
         Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
-        Eigen::Map<Eigen::VectorXd const>(local_x_dot.data(),
-                                          local_x_dot.size()),
+        Eigen::Map<Eigen::VectorXd const>(local_x_prev.data(),
+                                          local_x_prev.size()),
         t, dt);
 
     for (unsigned int_point = 0; int_point < n_integration_points; int_point++)
@@ -1154,7 +1153,7 @@ void TH2MLocalAssembler<
         auto const BuT = Bu.transpose().eval();
 
         double const pCap = Np.dot(capillary_pressure);
-        double const pCap_dot = Np.dot(capillary_pressure_dot);
+        double const pCap_prev = Np.dot(capillary_pressure_prev);
 
         auto& beta_T_SR = ip.beta_T_SR;
 
@@ -1414,7 +1413,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                         DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
-                         std::vector<double> const& local_xdot,
+                         std::vector<double> const& local_x_prev,
                          std::vector<double>& /*local_M_data*/,
                          std::vector<double>& /*local_K_data*/,
                          std::vector<double>& local_rhs_data,
@@ -1434,21 +1433,22 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         Eigen::Map<VectorType<capillary_pressure_size> const>(
             local_x.data() + capillary_pressure_index, capillary_pressure_size);
 
-    auto const gas_pressure_dot =
+    auto const gas_pressure_prev =
         Eigen::Map<VectorType<gas_pressure_size> const>(
-            local_xdot.data() + gas_pressure_index, gas_pressure_size);
+            local_x_prev.data() + gas_pressure_index, gas_pressure_size);
 
-    auto const capillary_pressure_dot =
+    auto const capillary_pressure_prev =
         Eigen::Map<VectorType<capillary_pressure_size> const>(
-            local_xdot.data() + capillary_pressure_index,
+            local_x_prev.data() + capillary_pressure_index,
             capillary_pressure_size);
 
-    auto const temperature_dot = Eigen::Map<VectorType<temperature_size> const>(
-        local_xdot.data() + temperature_index, temperature_size);
+    auto const temperature_prev =
+        Eigen::Map<VectorType<temperature_size> const>(
+            local_x_prev.data() + temperature_index, temperature_size);
 
-    auto const displacement_dot =
+    auto const displacement_prev =
         Eigen::Map<VectorType<displacement_size> const>(
-            local_xdot.data() + displacement_index, displacement_size);
+            local_x_prev.data() + displacement_index, displacement_size);
 
     auto local_Jac =
         MathLib::createZeroedMatrix<MatrixType<matrix_size, matrix_size>>(
@@ -1532,7 +1532,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     auto const ip_constitutive_variables = updateConstitutiveVariables(
         Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
-        Eigen::Map<Eigen::VectorXd const>(local_xdot.data(), local_xdot.size()),
+        Eigen::Map<Eigen::VectorXd const>(local_x_prev.data(),
+                                          local_x_prev.size()),
         t, dt);
 
     for (unsigned int_point = 0; int_point < n_integration_points; int_point++)
@@ -1586,9 +1587,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         GlobalDimVectorType const gradpCap = gradNp * capillary_pressure;
         GlobalDimVectorType const gradT = gradNT * temperature;
 
-        double const pGR_dot = Np.dot(gas_pressure_dot);
-        double const pCap_dot = Np.dot(capillary_pressure_dot);
-        double const T_dot = NT.dot(temperature_dot);
+        double const pGR_prev = Np.dot(gas_pressure_prev);
+        double const pCap_prev = Np.dot(capillary_pressure_prev);
+        double const T_prev = NT.dot(temperature_prev);
         auto& beta_T_SR = ip.beta_T_SR;
 
         auto const I =
@@ -2340,7 +2341,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                         DisplacementDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
-                                     Eigen::VectorXd const& local_x_dot)
+                                     Eigen::VectorXd const& local_x_prev)
 {
     auto const gas_pressure =
         local_x.template segment<gas_pressure_size>(gas_pressure_index);
@@ -2377,7 +2378,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     double saturation_avg = 0;
 
-    updateConstitutiveVariables(local_x, local_x_dot, t, dt);
+    updateConstitutiveVariables(local_x, local_x_prev, t, dt);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
