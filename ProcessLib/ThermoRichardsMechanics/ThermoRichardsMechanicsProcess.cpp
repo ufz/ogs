@@ -224,7 +224,7 @@ template <int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     assembleConcreteProcess(const double /*t*/, double const /*dt*/,
                             std::vector<GlobalVector*> const& /*x*/,
-                            std::vector<GlobalVector*> const& /*xdot*/,
+                            std::vector<GlobalVector*> const& /*x_prev*/,
                             int const /*process_id*/, GlobalMatrix& /*M*/,
                             GlobalMatrix& /*K*/, GlobalVector& /*b*/)
 {
@@ -236,16 +236,14 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 
 template <int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
-    assembleWithJacobianConcreteProcess(const double t, double const dt,
-                                        std::vector<GlobalVector*> const& x,
-                                        std::vector<GlobalVector*> const& xdot,
-                                        int const process_id, GlobalMatrix& M,
-                                        GlobalMatrix& K, GlobalVector& b,
-                                        GlobalMatrix& Jac)
+    assembleWithJacobianConcreteProcess(
+        const double t, double const dt, std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     AssemblyMixin<ThermoRichardsMechanicsProcess<
         DisplacementDim, ConstitutiveTraits>>::assembleWithJacobian(t, dt, x,
-                                                                    xdot,
+                                                                    x_prev,
                                                                     process_id,
                                                                     M, K, b,
                                                                     Jac);
@@ -283,7 +281,7 @@ ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 template <int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
-                                std::vector<GlobalVector*> const& x_dot,
+                                std::vector<GlobalVector*> const& x_prev,
                                 double const t, double const dt,
                                 const int process_id)
 {
@@ -294,7 +292,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, local_assemblers_,
-        pv.getActiveElementIDs(), dof_tables, x, x_dot, t, dt,
+        pv.getActiveElementIDs(), dof_tables, x, x_prev, t, dt,
         _use_monolithic_scheme, process_id);
 }
 
@@ -302,7 +300,7 @@ template <int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     computeSecondaryVariableConcrete(const double t, const double dt,
                                      std::vector<GlobalVector*> const& x,
-                                     GlobalVector const& x_dot,
+                                     GlobalVector const& x_prev,
                                      int const process_id)
 {
     DBUG("Compute the secondary variables for ThermoRichardsMechanicsProcess.");
@@ -313,7 +311,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, local_assemblers_,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_dot, process_id);
+        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>

@@ -100,7 +100,7 @@ template <int DisplacementDim>
 struct TemperatureData
 {
     double T;
-    double T_dot;
+    double T_prev;
     Eigen::Vector<double, DisplacementDim> grad_T;
 };
 
@@ -108,7 +108,7 @@ template <int DisplacementDim>
 struct CapillaryPressureData
 {
     double p_cap;
-    double p_cap_dot;
+    double p_cap_prev;
     Eigen::Vector<double, DisplacementDim> grad_p_cap;
 };
 

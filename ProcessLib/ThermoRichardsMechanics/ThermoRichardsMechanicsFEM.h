@@ -242,7 +242,7 @@ public:
 
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
+                              std::vector<double> const& local_x_prev,
                               std::vector<double>& /*local_M_data*/,
                               std::vector<double>& /*local_K_data*/,
                               std::vector<double>& local_rhs_data,
@@ -253,7 +253,7 @@ private:
         double const t, double const dt,
         ParameterLib::SpatialPosition const& x_position,
         std::vector<double> const& local_x,
-        std::vector<double> const& local_xdot, IpData const& ip_data,
+        std::vector<double> const& local_x_prev, IpData const& ip_data,
         typename ConstitutiveTraits::ConstitutiveSetting& CS,
         MaterialPropertyLib::Medium& medium, LocalMatrices& out,
         typename ConstitutiveTraits::StatefulData& current_state,
@@ -263,7 +263,7 @@ private:
 
     void addToLocalMatrixData(double const dt,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
+                              std::vector<double> const& local_x_prev,
                               LocalMatrices const& loc_mat,
                               std::vector<double>& local_rhs_data,
                               std::vector<double>& local_Jac_data) const;
@@ -334,7 +334,7 @@ public:
 
     void computeSecondaryVariableConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_x_dot) override;
+        Eigen::VectorXd const& local_x_prev) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
