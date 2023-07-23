@@ -154,7 +154,7 @@ template <typename ShapeFunction, int GlobalDim>
 void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
-                         std::vector<double> const& local_xdot,
+                         std::vector<double> const& local_x_prev,
                          std::vector<double>& /*local_M_data*/,
                          std::vector<double>& /*local_K_data*/,
                          std::vector<double>& local_rhs_data,
@@ -170,13 +170,13 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         typename ShapeMatricesType::template VectorType<pressure_size> const>(
         local_x.data() + pressure_index, pressure_size);
 
-    auto const T_dot =
+    auto const T_prev =
         Eigen::Map<typename ShapeMatricesType::template VectorType<
-            temperature_size> const>(local_xdot.data() + temperature_index,
+            temperature_size> const>(local_x_prev.data() + temperature_index,
                                      temperature_size);
-    auto const p_L_dot = Eigen::Map<
+    auto const p_L_prev = Eigen::Map<
         typename ShapeMatricesType::template VectorType<pressure_size> const>(
-        local_xdot.data() + pressure_index, pressure_size);
+        local_x_prev.data() + pressure_index, pressure_size);
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesType::template MatrixType<local_matrix_dim,
@@ -250,8 +250,8 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
 
-        double p_cap_dot_ip;
-        NumLib::shapeFunctionInterpolate(-p_L_dot, N, p_cap_dot_ip);
+        double p_cap_prev_ip;
+        NumLib::shapeFunctionInterpolate(-p_L_prev, N, p_cap_prev_ip);
 
         variables.capillary_pressure = p_cap_ip;
         variables.phase_pressure = -p_cap_ip;
@@ -687,7 +687,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
 template <typename ShapeFunction, int GlobalDim>
 void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
     double const t, double const dt, std::vector<double> const& local_x,
-    std::vector<double> const& local_xdot, std::vector<double>& local_M_data,
+    std::vector<double> const& local_x_prev, std::vector<double>& local_M_data,
     std::vector<double>& local_K_data, std::vector<double>& local_rhs_data)
 {
     auto const local_matrix_dim = pressure_size + temperature_size;
@@ -704,9 +704,9 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         Eigen::Map<typename ShapeMatricesType::template VectorType<
             temperature_size> const>(local_xdot.data() + temperature_index,
                                      temperature_size);
-    auto const p_L_dot = Eigen::Map<
+    auto const p_L_prev = Eigen::Map<
         typename ShapeMatricesType::template VectorType<pressure_size> const>(
-        local_xdot.data() + pressure_index, pressure_size);
+        local_x_prev.data() + pressure_index, pressure_size);
 
     auto local_K = MathLib::createZeroedMatrix<
         typename ShapeMatricesType::template MatrixType<local_matrix_dim,
@@ -753,8 +753,8 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
 
-        double p_cap_dot_ip;
-        NumLib::shapeFunctionInterpolate(-p_L_dot, N, p_cap_dot_ip);
+        double p_cap_prev_ip;
+        NumLib::shapeFunctionInterpolate(-p_L_prev, N, p_cap_prev_ip);
 
         variables.capillary_pressure = p_cap_ip;
         variables.phase_pressure = -p_cap_ip;
@@ -1204,7 +1204,7 @@ template <typename ShapeFunction, int GlobalDim>
 void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
-                                     Eigen::VectorXd const& local_x_dot)
+                                     Eigen::VectorXd const& local_x_prev)
 {
     auto const T =
         local_x.template segment<temperature_size>(temperature_index);
@@ -1214,7 +1214,8 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
     auto const p_L = local_x.template segment<pressure_size>(pressure_index);
 
-    auto p_L_dot = local_x_dot.template segment<pressure_size>(pressure_index);
+    auto p_L_prev =
+        local_x_prev.template segment<pressure_size>(pressure_index);
 
     auto const& medium = *_process_data.media_map->getMedium(_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
@@ -1246,8 +1247,8 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
 
-        double p_cap_dot_ip;
-        NumLib::shapeFunctionInterpolate(-p_L_dot, N, p_cap_dot_ip);
+        double p_cap_prev_ip;
+        NumLib::shapeFunctionInterpolate(-p_L_prev, N, p_cap_prev_ip);
 
         variables.capillary_pressure = p_cap_ip;
         variables.phase_pressure = -p_cap_ip;

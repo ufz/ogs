@@ -115,18 +115,18 @@ private:
 
     void assembleConcreteProcess(const double t, double const dt,
                                  std::vector<GlobalVector*> const& x,
-                                 std::vector<GlobalVector*> const& xdot,
+                                 std::vector<GlobalVector*> const& x_prev,
                                  int const process_id, GlobalMatrix& M,
                                  GlobalMatrix& K, GlobalVector& b) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, double const dt, std::vector<GlobalVector*> const& x,
-        std::vector<GlobalVector*> const& xdot, int const process_id,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
     void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
-                                     std::vector<GlobalVector*> const& x_dot,
+                                     std::vector<GlobalVector*> const& x_prev,
                                      double const t, double const dt,
                                      const int process_id) override;
 
@@ -145,7 +145,7 @@ private:
 
     void computeSecondaryVariableConcrete(double const t, double const dt,
                                           std::vector<GlobalVector*> const& x,
-                                          GlobalVector const& x_dot,
+                                          GlobalVector const& x_prev,
                                           int const process_id) override;
     std::vector<NumLib::LocalToGlobalIndexMap const*> getDOFTables(
         const int number_of_processes) const;

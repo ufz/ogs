@@ -127,7 +127,7 @@ void ThermoRichardsFlowProcess::setInitialConditionsConcreteProcess(
 
 void ThermoRichardsFlowProcess::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble the equations for ThermoRichardsFlowProcess.");
@@ -139,13 +139,13 @@ void ThermoRichardsFlowProcess::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
+        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
         b);
 }
 
 void ThermoRichardsFlowProcess::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
@@ -159,8 +159,8 @@ void ThermoRichardsFlowProcess::assembleWithJacobianConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     _pvma.assembleWithJacobian(_local_assemblers, pv.getActiveElementIDs(),
-                               dof_tables, t, dt, x, xdot, process_id, M, K, b,
-                               Jac);
+                               dof_tables, t, dt, x, x_prev, process_id, M, K,
+                               b, Jac);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {
@@ -174,7 +174,7 @@ void ThermoRichardsFlowProcess::assembleWithJacobianConcreteProcess(
 
 void ThermoRichardsFlowProcess::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& x_dot, double const t, double const dt,
+    std::vector<GlobalVector*> const& x_prev, double const t, double const dt,
     const int process_id)
 {
     if (process_id != 0)
@@ -189,13 +189,13 @@ void ThermoRichardsFlowProcess::postTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, x, x_dot, t, dt,
+        pv.getActiveElementIDs(), dof_tables, x, x_prev, t, dt,
         _use_monolithic_scheme, process_id);
 }
 
 void ThermoRichardsFlowProcess::computeSecondaryVariableConcrete(
     const double t, const double dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_dot, int const process_id)
+    GlobalVector const& x_prev, int const process_id)
 {
     if (process_id != 0)
     {
@@ -209,7 +209,7 @@ void ThermoRichardsFlowProcess::computeSecondaryVariableConcrete(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_dot, process_id);
+        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
 }
 
 std::vector<NumLib::LocalToGlobalIndexMap const*>
