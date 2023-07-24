@@ -103,42 +103,8 @@ private:
     void cleanUp(std::vector<MeshLib::Node*>& nodes,
                  std::vector<MeshLib::Element*>& new_elements) const;
 
-    /**
-     * Reduces a hexahedron element by removing collapsed nodes and constructing
-     * one or more new elements from the remaining nodes.
-     * @return The number of newly created elements
-     */
-    unsigned reduceHex(MeshLib::Element const* const org_elem,
-                       unsigned n_unique_nodes,
-                       const std::vector<MeshLib::Node*>& nodes,
-                       std::vector<MeshLib::Element*>& new_elements,
-                       unsigned min_elem_dim) const;
-
-    // In an element with 5 unique nodes, return the node that will be the top
-    // of the resulting pyramid
-    static unsigned findPyramidTopNode(
-        MeshLib::Element const& element,
-        std::array<std::size_t, 4> const& base_node_ids);
-
-    /// Lookup-table for returning the diametral node id of the given node id in
-    /// a Hex
-    static unsigned lutHexDiametralNode(unsigned id);
-
-    /// Lookup-table for returning four nodes connected to the two nodes (id1,
-    /// id2) forming an edge in a Hex
-    static std::array<unsigned, 4> lutHexCuttingQuadNodes(unsigned id1,
-                                                          unsigned id2);
-
-    /// When a hex is subdivided into two prisms, this returns the nodes of the
-    /// hex edge that will serve as the back of one of the prisms.
-    static std::pair<unsigned, unsigned> lutHexBackNodes(unsigned i, unsigned j,
-                                                         unsigned k,
-                                                         unsigned l);
-
     /// The original mesh used for constructing the class
     MeshLib::Mesh& _mesh;
-
-    static const std::array<unsigned, 8> _hex_diametral_nodes;
 };
 
 }  // namespace MeshToolsLib
