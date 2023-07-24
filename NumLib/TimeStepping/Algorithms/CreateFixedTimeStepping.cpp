@@ -121,6 +121,43 @@ void incorporateFixedTimesForOutput(
     }
 }
 
+/// Returns sum of the newly added time increments.
+double addTimeIncrement(std::vector<double>& delta_ts, std::size_t const repeat,
+                        double const delta_t, double const t_curr)
+{
+    auto const new_size = delta_ts.size() + repeat;
+    try
+    {
+        delta_ts.resize(new_size, delta_t);
+    }
+    catch (std::length_error const& e)
+    {
+        OGS_FATAL(
+            "Resize of the time steps vector failed for the requested "
+            "new size {:d}. Probably there is not enough memory ({:g} "
+            "GiB requested).\n"
+            "Thrown exception: {:s}",
+            new_size,
+            new_size * sizeof(double) / 1024. / 1024. / 1024.,
+            e.what());
+    }
+    catch (std::bad_alloc const& e)
+    {
+        OGS_FATAL(
+            "Resize of the time steps vector failed for the requested "
+            "new size {:d}. Probably there is not enough memory ({:g} "
+            "GiB requested).\n"
+            "Thrown exception: {:s}",
+            new_size, new_size * sizeof(double) / 1024. / 1024. / 1024.,
+            e.what());
+    }
+
+    // Multiplying dt * repeat is not the same as in the current
+    // implementation of the time loop, where the dt's are added.
+    // Therefore the sum of all dt is taken here.
+    return std::accumulate(end(delta_ts) - repeat, end(delta_ts), t_curr);
+}
+
 class TimeStepAlgorithm;
 std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
     BaseLib::ConfigTree const& config,
@@ -165,38 +202,7 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
 
         if (t_curr <= t_end)
         {
-            auto const new_size = delta_ts.size() + repeat;
-            try
-            {
-                delta_ts.resize(new_size, delta_t);
-            }
-            catch (std::length_error const& e)
-            {
-                OGS_FATAL(
-                    "Resize of the time steps vector failed for the requested "
-                    "new size {:d}. Probably there is not enough memory ({:g} "
-                    "GiB requested).\n"
-                    "Thrown exception: {:s}",
-                    new_size,
-                    new_size * sizeof(double) / 1024. / 1024. / 1024.,
-                    e.what());
-            }
-            catch (std::bad_alloc const& e)
-            {
-                OGS_FATAL(
-                    "Resize of the time steps vector failed for the requested "
-                    "new size {:d}. Probably there is not enough memory ({:g} "
-                    "GiB requested).\n"
-                    "Thrown exception: {:s}",
-                    new_size, new_size * sizeof(double) / 1024. / 1024. / 1024.,
-                    e.what());
-            }
-
-            // Multiplying dt * repeat is not the same as in the current
-            // implementation of the time loop, where the dt's are added.
-            // Therefore the sum of all dt is taken here.
-            t_curr =
-                std::accumulate(end(delta_ts) - repeat, end(delta_ts), t_curr);
+            t_curr = addTimeIncrement(delta_ts, repeat, delta_t, t_curr);
         }
     }
 
@@ -205,32 +211,7 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
     {
         auto const repeat =
             static_cast<std::size_t>(std::ceil((t_end - t_curr) / delta_t));
-        auto const new_size = delta_ts.size() + repeat;
-        try
-        {
-            delta_ts.resize(new_size, delta_t);
-        }
-        catch (std::length_error const& e)
-        {
-            OGS_FATAL(
-                "Resize of the time steps vector failed for the requested new "
-                "size {:d}. Probably there is not enough memory ({:g} GiB "
-                "requested).\n"
-                "Thrown exception: {:s}",
-                new_size,
-                new_size * sizeof(double) / 1024. / 1024. / 1024.,
-                e.what());
-        }
-        catch (std::bad_alloc const& e)
-        {
-            OGS_FATAL(
-                "Resize of the time steps vector failed for the requested new "
-                "size {:d}. Probably there is not enough memory ({:g} GiB "
-                "requested).\n"
-                "Thrown exception: {:s}",
-                new_size, new_size * sizeof(double) / 1024. / 1024. / 1024.,
-                e.what());
-        }
+        t_curr = addTimeIncrement(delta_ts, repeat, delta_t, t_curr);
     }
 
     incorporateFixedTimesForOutput(t_initial, t_end, delta_ts,
