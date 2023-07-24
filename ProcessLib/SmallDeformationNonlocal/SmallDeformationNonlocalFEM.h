@@ -311,7 +311,7 @@ public:
 
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& /*local_x*/,
-                  std::vector<double> const& /*local_xdot*/,
+                  std::vector<double> const& /*local_x_prev*/,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_b_data*/) override
@@ -439,7 +439,7 @@ public:
 
     void assembleWithJacobian(double const t, double const /*dt*/,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& /*local_xdot*/,
+                              std::vector<double> const& /*local_x_prev*/,
                               std::vector<double>& /*local_M_data*/,
                               std::vector<double>& /*local_K_data*/,
                               std::vector<double>& local_b_data,
@@ -543,7 +543,7 @@ public:
     }
 
     void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              Eigen::VectorXd const& /*local_x_dot*/,
+                              Eigen::VectorXd const& /*local_x_prev*/,
                               double const /*t*/, double const /*dt*/,
                               bool const /*use_monolithic_scheme*/,
                               int const /*process_id*/) override
