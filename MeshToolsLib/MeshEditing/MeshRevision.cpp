@@ -998,6 +998,131 @@ std::size_t reduceElement(MeshLib::Element const* const element,
     ERR("Unknown element type.");
     return 0;
 }
+/// Calculates the number of unique nodes in an element (i.e. uncollapsed
+/// nodes).
+unsigned getNumberOfUniqueNodes(MeshLib::Element const* const element)
+{
+    unsigned const nNodes(element->getNumberOfBaseNodes());
+    unsigned count(nNodes);
+
+    for (unsigned i = 0; i < nNodes - 1; ++i)
+    {
+        for (unsigned j = i + 1; j < nNodes; ++j)
+        {
+            if (element->getNode(i)->getID() == element->getNode(j)->getID())
+            {
+                count--;
+                break;
+            }
+        }
+    }
+    return count;
+}
+
+template <typename T>
+void fillNodeProperty(std::vector<T>& new_prop,
+                      std::vector<T> const& old_prop,
+                      std::vector<size_t>
+                          node_ids)
+{
+    std::size_t const n_nodes = node_ids.size();
+    for (std::size_t i = 0; i < n_nodes; ++i)
+    {
+        if (node_ids[i] != i)
+        {
+            continue;
+        }
+        new_prop.push_back(old_prop[i]);
+    }
+}
+
+template <typename T>
+void fillElemProperty(std::vector<T>& new_prop,
+                      std::vector<T> const& old_prop,
+                      std::vector<size_t>
+                          elem_ids)
+{
+    std::transform(elem_ids.cbegin(), elem_ids.cend(),
+                   std::back_inserter(new_prop),
+                   [&](std::size_t const i) { return old_prop[i]; });
+}
+
+/// Copies all scalar arrays according to the restructured Node- and
+/// Element-vectors after the mesh revision process (i.e. collapsed nodes, split
+/// elements, etc.)
+MeshLib::Properties copyProperties(MeshLib::Properties const& props,
+                                   std::vector<std::size_t> const& node_ids,
+                                   std::vector<std::size_t> const& elem_ids)
+{
+    auto const prop_names = props.getPropertyVectorNames();
+    MeshLib::Properties new_properties;
+
+    for (auto name : prop_names)
+    {
+        if (props.existsPropertyVector<int>(name, MeshLib::MeshItemType::Node,
+                                            1))
+        {
+            auto p = props.getPropertyVector<int>(
+                name, MeshLib::MeshItemType::Node, 1);
+            auto new_node_vec = new_properties.createNewPropertyVector<int>(
+                name, MeshLib::MeshItemType::Node, 1);
+            fillNodeProperty(*new_node_vec, *p, node_ids);
+            continue;
+        }
+        if (props.existsPropertyVector<float>(name, MeshLib::MeshItemType::Node,
+                                              1))
+        {
+            auto p = props.getPropertyVector<float>(
+                name, MeshLib::MeshItemType::Node, 1);
+            auto new_node_vec = new_properties.createNewPropertyVector<float>(
+                name, MeshLib::MeshItemType::Node, 1);
+            fillNodeProperty(*new_node_vec, *p, node_ids);
+            continue;
+        }
+        if (props.existsPropertyVector<double>(name,
+                                               MeshLib::MeshItemType::Node, 1))
+        {
+            auto p = props.getPropertyVector<double>(
+                name, MeshLib::MeshItemType::Node, 1);
+            auto new_node_vec = new_properties.createNewPropertyVector<double>(
+                name, MeshLib::MeshItemType::Node, 1);
+            fillNodeProperty(*new_node_vec, *p, node_ids);
+            continue;
+        }
+        if (props.existsPropertyVector<int>(name, MeshLib::MeshItemType::Cell,
+                                            1))
+        {
+            auto p = props.getPropertyVector<int>(
+                name, MeshLib::MeshItemType::Cell, 1);
+            auto new_cell_vec = new_properties.createNewPropertyVector<int>(
+                name, MeshLib::MeshItemType::Cell, 1);
+            fillElemProperty(*new_cell_vec, *p, elem_ids);
+            continue;
+        }
+        if (props.existsPropertyVector<float>(name, MeshLib::MeshItemType::Cell,
+                                              1))
+        {
+            auto p = props.getPropertyVector<float>(
+                name, MeshLib::MeshItemType::Cell, 1);
+            auto new_cell_vec = new_properties.createNewPropertyVector<float>(
+                name, MeshLib::MeshItemType::Cell, 1);
+            fillElemProperty(*new_cell_vec, *p, elem_ids);
+            continue;
+        }
+        if (props.existsPropertyVector<double>(name,
+                                               MeshLib::MeshItemType::Cell, 1))
+        {
+            auto p = props.getPropertyVector<double>(
+                name, MeshLib::MeshItemType::Cell, 1);
+            auto new_cell_vec = new_properties.createNewPropertyVector<double>(
+                name, MeshLib::MeshItemType::Cell, 1);
+            fillElemProperty(*new_cell_vec, *p, elem_ids);
+            continue;
+        }
+        WARN("PropertyVector {:s} not being converted.", name);
+    }
+    return new_properties;
+}
 }  // namespace
 
 namespace MeshToolsLib
@@ -1038,7 +1163,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string& new_mesh_name,
     for (std::size_t k(0); k < elements.size(); ++k)
     {
         MeshLib::Element const* const elem(elements[k]);
-        unsigned n_unique_nodes(this->getNumberOfUniqueNodes(elem));
+        unsigned const n_unique_nodes(getNumberOfUniqueNodes(elem));
         if (n_unique_nodes == elem->getNumberOfBaseNodes() &&
             elem->getDimension() >= min_elem_dim)
         {
@@ -1174,126 +1299,4 @@ std::vector<MeshLib::Node*> MeshRevision::constructNewNodesArray(
     return new_nodes;
 }
 
-unsigned MeshRevision::getNumberOfUniqueNodes(
-    MeshLib::Element const* const element)
-{
-    unsigned const nNodes(element->getNumberOfBaseNodes());
-    unsigned count(nNodes);
-
-    for (unsigned i = 0; i < nNodes - 1; ++i)
-    {
-        for (unsigned j = i + 1; j < nNodes; ++j)
-        {
-            if (element->getNode(i)->getID() == element->getNode(j)->getID())
-            {
-                count--;
-                break;
-            }
-        }
-    }
-    return count;
-}
-
-template <typename T>
-void fillNodeProperty(std::vector<T>& new_prop,
-                      std::vector<T> const& old_prop,
-                      std::vector<size_t>
-                          node_ids)
-{
-    std::size_t const n_nodes = node_ids.size();
-    for (std::size_t i = 0; i < n_nodes; ++i)
-    {
-        if (node_ids[i] != i)
-        {
-            continue;
-        }
-        new_prop.push_back(old_prop[i]);
-    }
-}
-
-template <typename T>
-void fillElemProperty(std::vector<T>& new_prop,
-                      std::vector<T> const& old_prop,
-                      std::vector<size_t>
-                          elem_ids)
-{
-    std::transform(elem_ids.cbegin(), elem_ids.cend(),
-                   std::back_inserter(new_prop),
-                   [&](std::size_t const i) { return old_prop[i]; });
-}
-
-MeshLib::Properties MeshRevision::copyProperties(
-    MeshLib::Properties const& props,
-    std::vector<std::size_t> const& node_ids,
-    std::vector<std::size_t> const& elem_ids) const
-{
-    auto const prop_names = props.getPropertyVectorNames();
-    MeshLib::Properties new_properties;
-
-    for (auto name : prop_names)
-    {
-        if (props.existsPropertyVector<int>(name, MeshLib::MeshItemType::Node,
-                                            1))
-        {
-            auto p = props.getPropertyVector<int>(
-                name, MeshLib::MeshItemType::Node, 1);
-            auto new_node_vec = new_properties.createNewPropertyVector<int>(
-                name, MeshLib::MeshItemType::Node, 1);
-            fillNodeProperty(*new_node_vec, *p, node_ids);
-            continue;
-        }
-        if (props.existsPropertyVector<float>(name, MeshLib::MeshItemType::Node,
-                                              1))
-        {
-            auto p = props.getPropertyVector<float>(
-                name, MeshLib::MeshItemType::Node, 1);
-            auto new_node_vec = new_properties.createNewPropertyVector<float>(
-                name, MeshLib::MeshItemType::Node, 1);
-            fillNodeProperty(*new_node_vec, *p, node_ids);
-            continue;
-        }
-        if (props.existsPropertyVector<double>(name,
-                                               MeshLib::MeshItemType::Node, 1))
-        {
-            auto p = props.getPropertyVector<double>(
-                name, MeshLib::MeshItemType::Node, 1);
-            auto new_node_vec = new_properties.createNewPropertyVector<double>(
-                name, MeshLib::MeshItemType::Node, 1);
-            fillNodeProperty(*new_node_vec, *p, node_ids);
-            continue;
-        }
-        if (props.existsPropertyVector<int>(name, MeshLib::MeshItemType::Cell,
-                                            1))
-        {
-            auto p = props.getPropertyVector<int>(
-                name, MeshLib::MeshItemType::Cell, 1);
-            auto new_cell_vec = new_properties.createNewPropertyVector<int>(
-                name, MeshLib::MeshItemType::Cell, 1);
-            fillElemProperty(*new_cell_vec, *p, elem_ids);
-            continue;
-        }
-        if (props.existsPropertyVector<float>(name, MeshLib::MeshItemType::Cell,
-                                              1))
-        {
-            auto p = props.getPropertyVector<float>(
-                name, MeshLib::MeshItemType::Cell, 1);
-            auto new_cell_vec = new_properties.createNewPropertyVector<float>(
-                name, MeshLib::MeshItemType::Cell, 1);
-            fillElemProperty(*new_cell_vec, *p, elem_ids);
-            continue;
-        }
-        if (props.existsPropertyVector<double>(name,
-                                               MeshLib::MeshItemType::Cell, 1))
-        {
-            auto p = props.getPropertyVector<double>(
-                name, MeshLib::MeshItemType::Cell, 1);
-            auto new_cell_vec = new_properties.createNewPropertyVector<double>(
-                name, MeshLib::MeshItemType::Cell, 1);
-            fillElemProperty(*new_cell_vec, *p, elem_ids);
-            continue;
-        }
-        WARN("PropertyVector {:s} not being converted.", name);
-    }
-    return new_properties;
-}
 }  // namespace MeshToolsLib

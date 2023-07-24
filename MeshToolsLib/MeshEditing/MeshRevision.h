@@ -76,21 +76,6 @@ private:
     std::vector<MeshLib::Node*> constructNewNodesArray(
         const std::vector<std::size_t>& id_map) const;
 
-    /// Calculates the number of unique nodes in an element (i.e. uncollapsed
-    /// nodes)
-    static unsigned getNumberOfUniqueNodes(
-        MeshLib::Element const* const element);
-
-    /**
-     * Copies all scalar arrays according to the restructured Node- and
-     * Element-vectors after the mesh revision process (i.e. collapsed nodes,
-     * split elements, etc.)
-     */
-    MeshLib::Properties copyProperties(
-        MeshLib::Properties const& props,
-        std::vector<std::size_t> const& node_ids,
-        std::vector<std::size_t> const& elem_ids) const;
-
     /// Cleans up all nodes and elements if something went wrong
     void cleanUp(std::vector<MeshLib::Node*>& nodes,
                  std::vector<MeshLib::Element*>& new_elements) const;
