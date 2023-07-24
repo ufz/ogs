@@ -22,6 +22,7 @@
 #include "MathLib/GeometricBasics.h"
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Properties.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
 
 namespace MeshToolsLib

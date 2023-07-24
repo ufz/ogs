@@ -19,14 +19,11 @@
 #include <string>
 #include <vector>
 
-#include "MeshLib/Properties.h"
-
 // forward declaration
 namespace MeshLib
 {
 class Mesh;
 class Node;
-class Element;
 }  // namespace MeshLib
 
 namespace MeshToolsLib
@@ -45,8 +42,6 @@ public:
      * implemented here are finished
      */
     explicit MeshRevision(MeshLib::Mesh& mesh);
-
-    virtual ~MeshRevision() = default;
 
     /// Returns the number of potentially collapsible nodes
     unsigned getNumberOfCollapsibleNodes(
