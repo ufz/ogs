@@ -356,7 +356,7 @@ void RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::assemble(double const t, double const dt,
                                std::vector<double> const& local_x,
-                               std::vector<double> const& local_xdot,
+                               std::vector<double> const& local_x_prev,
                                std::vector<double>& local_M_data,
                                std::vector<double>& local_K_data,
                                std::vector<double>& local_rhs_data)
@@ -373,14 +373,14 @@ void RichardsMechanicsLocalAssembler<
             displacement_size> const>(local_x.data() + displacement_index,
                                       displacement_size);
 
-    auto p_L_dot =
+    auto p_L_prev =
         Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_xdot.data() + pressure_index,
+            pressure_size> const>(local_x_prev.data() + pressure_index,
                                   pressure_size);
 
-    auto u_dot =
+    auto u_prev =
         Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_xdot.data() + displacement_index,
+            displacement_size> const>(local_x_prev.data() + displacement_index,
                                       displacement_size);
 
     auto K = MathLib::createZeroedMatrix<
@@ -448,8 +448,8 @@ void RichardsMechanicsLocalAssembler<
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
 
-        double p_cap_dot_ip;
-        NumLib::shapeFunctionInterpolate(-p_L_dot, N_p, p_cap_dot_ip);
+        double p_cap_prev_ip;
+        NumLib::shapeFunctionInterpolate(-p_L_prev, N_p, p_cap_prev_ip);
 
         variables.capillary_pressure = p_cap_ip;
         variables.phase_pressure = -p_cap_ip;
@@ -690,7 +690,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
-                         std::vector<double> const& local_xdot,
+                         std::vector<double> const& local_x_prev,
                          std::vector<double>& /*local_M_data*/,
                          std::vector<double>& /*local_K_data*/,
                          std::vector<double>& local_rhs_data,
@@ -708,13 +708,13 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             displacement_size> const>(local_x.data() + displacement_index,
                                       displacement_size);
 
-    auto p_L_dot =
+    auto p_L_prev =
         Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_xdot.data() + pressure_index,
+            pressure_size> const>(local_x_prev.data() + pressure_index,
                                   pressure_size);
-    auto u_dot =
+    auto u_prev =
         Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_xdot.data() + displacement_index,
+            displacement_size> const>(local_x_prev.data() + displacement_index,
                                       displacement_size);
 
     auto local_Jac = MathLib::createZeroedMatrix<
@@ -796,8 +796,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
 
-        double p_cap_dot_ip;
-        NumLib::shapeFunctionInterpolate(-p_L_dot, N_p, p_cap_dot_ip);
+        double p_cap_prev_ip;
+        NumLib::shapeFunctionInterpolate(-p_L_prev, N_p, p_cap_prev_ip);
 
         variables.capillary_pressure = p_cap_ip;
         variables.phase_pressure = -p_cap_ip;
@@ -1460,7 +1460,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     assembleWithJacobianForPressureEquations(
         const double /*t*/, double const /*dt*/,
         Eigen::VectorXd const& /*local_x*/,
-        Eigen::VectorXd const& /*local_xdot*/,
+        Eigen::VectorXd const& /*local_x_prev*/,
         std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& /*local_b_data*/,
@@ -1476,7 +1476,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     assembleWithJacobianForDeformationEquations(
         const double /*t*/, double const /*dt*/,
         Eigen::VectorXd const& /*local_x*/,
-        Eigen::VectorXd const& /*local_xdot*/,
+        Eigen::VectorXd const& /*local_x_prev*/,
         std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& /*local_b_data*/,
@@ -1491,21 +1491,21 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, int const process_id,
+        Eigen::VectorXd const& local_x_prev, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
 {
     // For the equations with pressure
     if (process_id == 0)
     {
-        assembleWithJacobianForPressureEquations(t, dt, local_x, local_xdot,
+        assembleWithJacobianForPressureEquations(t, dt, local_x, local_x_prev,
                                                  local_M_data, local_K_data,
                                                  local_b_data, local_Jac_data);
         return;
     }
 
     // For the equations with deformation
-    assembleWithJacobianForDeformationEquations(t, dt, local_x, local_xdot,
+    assembleWithJacobianForDeformationEquations(t, dt, local_x, local_x_prev,
                                                 local_M_data, local_K_data,
                                                 local_b_data, local_Jac_data);
 }
@@ -1516,14 +1516,15 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, DisplacementDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
-                                     Eigen::VectorXd const& local_x_dot)
+                                     Eigen::VectorXd const& local_x_prev)
 {
     auto p_L = local_x.template segment<pressure_size>(pressure_index);
     auto u = local_x.template segment<displacement_size>(displacement_index);
 
-    auto p_L_dot = local_x_dot.template segment<pressure_size>(pressure_index);
-    auto u_dot =
-        local_x_dot.template segment<displacement_size>(displacement_index);
+    auto p_L_prev =
+        local_x_prev.template segment<pressure_size>(pressure_index);
+    auto u_prev =
+        local_x_prev.template segment<displacement_size>(displacement_index);
 
     auto const& identity2 = MathLib::KelvinVector::Invariants<
         MathLib::KelvinVector::kelvin_vector_dimensions(
@@ -1567,8 +1568,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
 
-        double p_cap_dot_ip;
-        NumLib::shapeFunctionInterpolate(-p_L_dot, N_p, p_cap_dot_ip);
+        double p_cap_prev_ip;
+        NumLib::shapeFunctionInterpolate(-p_L_prev, N_p, p_cap_prev_ip);
 
         variables.capillary_pressure = p_cap_ip;
         variables.phase_pressure = -p_cap_ip;
