@@ -76,10 +76,6 @@ private:
     std::vector<MeshLib::Node*> constructNewNodesArray(
         const std::vector<std::size_t>& id_map) const;
 
-    /// Cleans up all nodes and elements if something went wrong
-    void cleanUp(std::vector<MeshLib::Node*>& nodes,
-                 std::vector<MeshLib::Element*>& new_elements) const;
-
     /// The original mesh used for constructing the class
     MeshLib::Mesh& _mesh;
 };
