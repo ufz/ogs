@@ -949,6 +949,55 @@ std::size_t subdivideElement(MeshLib::Element const* const element,
     return 0;
 }
 
+// Revises an element by removing collapsed nodes, using the nodes vector from
+// the result mesh.
+std::size_t reduceElement(MeshLib::Element const* const element,
+                          unsigned n_unique_nodes,
+                          std::vector<MeshLib::Node*> const& nodes,
+                          std::vector<MeshLib::Element*>& elements,
+                          unsigned min_elem_dim)
+{
+    /***************
+     * TODO: modify neighbouring elements if one elements has been subdivided
+     ***************/
+    if (element->getGeomType() == MeshLib::MeshElemType::TRIANGLE &&
+        min_elem_dim == 1)
+    {
+        elements.push_back(constructLine(element, nodes));
+        return 1;
+    }
+    if ((element->getGeomType() == MeshLib::MeshElemType::QUAD) ||
+        (element->getGeomType() == MeshLib::MeshElemType::TETRAHEDRON))
+    {
+        if (n_unique_nodes == 3 && min_elem_dim < 3)
+        {
+            elements.push_back(constructTri(element, nodes));
+        }
+        else if (min_elem_dim == 1)
+        {
+            elements.push_back(constructLine(element, nodes));
+        }
+        return 1;
+    }
+    if (element->getGeomType() == MeshLib::MeshElemType::HEXAHEDRON)
+    {
+        return reduceHex(element, n_unique_nodes, nodes, elements,
+                         min_elem_dim);
+    }
+    if (element->getGeomType() == MeshLib::MeshElemType::PYRAMID)
+    {
+        reducePyramid(element, n_unique_nodes, nodes, elements, min_elem_dim);
+        return 1;
+    }
+    if (element->getGeomType() == MeshLib::MeshElemType::PRISM)
+    {
+        return reducePrism(element, n_unique_nodes, nodes, elements,
+                           min_elem_dim);
+    }
+
+    ERR("Unknown element type.");
+    return 0;
+}
 }  // namespace
 
 namespace MeshToolsLib
@@ -1247,54 +1296,4 @@ MeshLib::Properties MeshRevision::copyProperties(
     }
     return new_properties;
 }
-
-std::size_t MeshRevision::reduceElement(
-    MeshLib::Element const* const element,
-    unsigned n_unique_nodes,
-    std::vector<MeshLib::Node*> const& nodes,
-    std::vector<MeshLib::Element*>& elements,
-    unsigned min_elem_dim) const
-{
-    /***************
-     * TODO: modify neighbouring elements if one elements has been subdivided
-     ***************/
-    if (element->getGeomType() == MeshLib::MeshElemType::TRIANGLE &&
-        min_elem_dim == 1)
-    {
-        elements.push_back(constructLine(element, nodes));
-        return 1;
-    }
-    if ((element->getGeomType() == MeshLib::MeshElemType::QUAD) ||
-        (element->getGeomType() == MeshLib::MeshElemType::TETRAHEDRON))
-    {
-        if (n_unique_nodes == 3 && min_elem_dim < 3)
-        {
-            elements.push_back(constructTri(element, nodes));
-        }
-        else if (min_elem_dim == 1)
-        {
-            elements.push_back(constructLine(element, nodes));
-        }
-        return 1;
-    }
-    if (element->getGeomType() == MeshLib::MeshElemType::HEXAHEDRON)
-    {
-        return reduceHex(element, n_unique_nodes, nodes, elements,
-                         min_elem_dim);
-    }
-    if (element->getGeomType() == MeshLib::MeshElemType::PYRAMID)
-    {
-        reducePyramid(element, n_unique_nodes, nodes, elements, min_elem_dim);
-        return 1;
-    }
-    if (element->getGeomType() == MeshLib::MeshElemType::PRISM)
-    {
-        return reducePrism(element, n_unique_nodes, nodes, elements,
-                           min_elem_dim);
-    }
-
-    ERR("Unknown element type.");
-    return 0;
-}
-
 }  // namespace MeshToolsLib
