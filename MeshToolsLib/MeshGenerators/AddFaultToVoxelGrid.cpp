@@ -167,22 +167,23 @@ bool isVoxelGrid(MeshLib::Mesh const& mesh)
             "aligned hexahedra).");
         return false;
     }
-
-    for (auto const& e : elements)
+    auto is_voxel = [](auto const& e)
     {
         auto const n = e->getNodes();
-        if ((*n[0])[2] != (*n[1])[2] || (*n[1])[2] != (*n[2])[2] ||
-            (*n[4])[2] != (*n[5])[2] || (*n[5])[2] != (*n[6])[2] ||
-            (*n[1])[0] != (*n[2])[0] || (*n[2])[0] != (*n[5])[0] ||
-            (*n[0])[0] != (*n[3])[0] || (*n[3])[0] != (*n[7])[0])
-        {
-            ERR("Input mesh needs to be voxel grid (i.e. equally sized axis "
-                "aligned hexahedra).");
-            return false;
-        }
+        return ((*n[0])[2] != (*n[1])[2] || (*n[1])[2] != (*n[2])[2] ||
+                (*n[4])[2] != (*n[5])[2] || (*n[5])[2] != (*n[6])[2] ||
+                (*n[1])[0] != (*n[2])[0] || (*n[2])[0] != (*n[5])[0] ||
+                (*n[0])[0] != (*n[3])[0] || (*n[3])[0] != (*n[7])[0]);
+    };
+
+    if (std::any_of(elements.cbegin(), elements.cend(), is_voxel))
+    {
+        ERR("Input mesh needs to be voxel grid (i.e. equally sized axis "
+            "aligned hexahedra).");
+        return false;
     }
     return true;
-}
+}  // namespace
 }  // namespace
 namespace MeshToolsLib::MeshGenerator::AddFaultToVoxelGrid
 {
