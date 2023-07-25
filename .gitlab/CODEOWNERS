@@ -1,4 +1,4 @@
-[CMake]
+^[CMake]
 *.cmake @bilke
 CMakeLists.txt @bilke
 
