@@ -81,6 +81,7 @@ test notebooks via wheel:
   stage: test
   needs: ["build wheels linux"]
   rules:
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::wheels only.*/
     - when: manual
   before_script:
     - cd Tests/Data
