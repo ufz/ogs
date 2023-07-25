@@ -44,40 +44,28 @@
 (define vcs-file?
   ;; Return true if the given file is under version control.
   (or (git-predicate "../..") ; (current-source-directory)
-      (const #t)))                                ;not in a Git checkout
+      (const #t)))            ;not in a Git checkout
 
 (define-public ogs
   (package
     (name "ogs")
-    ; (version "6.4.4")
-    ; (source (origin
-    ;           (method git-fetch)
-    ;           (uri (git-reference
-    ;                 (url "https://gitlab.opengeosys.org/ogs/ogs.git")
-    ;                 (commit "d4ca7e627f2fc012bfe434649b797e78e5c2a8f1")
-    ;                 (recursive? #t)))
-    ;           (file-name (git-file-name name version))
-    ;           (sha256
-    ;            ;; Update with `guix hash -rx .`, make sure to have submodules updated!
-    ;            (base32
-    ;             "1f6mcbjx76irf1g0xkh6hgpv4qn2swbiyvlazvlrhjfyxb9bckq9"))))
     (version "6.4.99-git")
     (source (local-file "../.." "ogs-checkout"
                       #:recursive? #t
                       #:select? vcs-file?
                       ))
-    ; (source (local-file %source-dir #:recursive? #t))
     (build-system cmake-build-system)
     (arguments
      `(#:build-type "Release"
        #:configure-flags (list
-                        ;   (string-append "-DOGS_VERSION=" version) ; does not work
+        ; passing variables works like this
+        ;                  ,(string-append "-DOGS_VERSION=" version)
+        ; TODO: but it is not overwritten in sub-packages...
                           "-DGUIX_BUILD=ON"
                           "-DOGS_BUILD_TESTING=OFF"
                           "-DOGS_USE_EIGEN_UNSUPPORTED=OFF" ; Eigen 3.4.0
                           "-DOGS_INSTALL_DEPENDENCIES=OFF"  ; handled by guix
                           "-DOGS_CPU_ARCHITECTURE=OFF"      ; enable guix --tune
-                          "-DOGS_VERSION=6.4.99"
                           )
        #:cmake ,cmake)) ;for newer CMake version
     (inputs (list boost
@@ -93,7 +81,7 @@
                   spdlog
                   zlib
                   vtk))
-    (native-inputs (list git ninja googletest nss-certs)) ; TODO: cpm,
+    (native-inputs (list git ninja googletest nss-certs)) ; TODO: cpm
     (synopsis "OpenGeoSys")
     (description
      "Simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media")
@@ -140,6 +128,44 @@
                 ,flags))))
     (synopsis "OGS with PETSc and SteadyStateDiffusion only (for faster build testing)")))
 
+; #### Releases ####
+(define-public ogs-6.4.4
+  (package
+    (inherit ogs)
+    (name "ogs")
+    (version "6.4.4")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://gitlab.opengeosys.org/ogs/ogs.git")
+                    (commit "d4ca7e627f2fc012bfe434649b797e78e5c2a8f1")
+                    (recursive? #t)))
+              (file-name (git-file-name name version))
+              (sha256
+               ;; Update with `guix hash -rx .`, make sure to have submodules updated!
+               (base32
+                "1f6mcbjx76irf1g0xkh6hgpv4qn2swbiyvlazvlrhjfyxb9bckq9"))))
+    (synopsis "OGS 6.4.4 release")))
+
+(define-public ogs-petsc-6.4.4
+  (package
+    (inherit ogs-petsc)
+    (name "ogs-petsc")
+    (version "6.4.4")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://gitlab.opengeosys.org/ogs/ogs.git")
+                    (commit "d4ca7e627f2fc012bfe434649b797e78e5c2a8f1")
+                    (recursive? #t)))
+              (file-name (git-file-name name version))
+              (sha256
+               ;; Update with `guix hash -rx .`, make sure to have submodules updated!
+               (base32
+                "1f6mcbjx76irf1g0xkh6hgpv4qn2swbiyvlazvlrhjfyxb9bckq9"))))
+    (synopsis "OGS 6.4.4 with PETSc release")))
+
+; #### Dependencies ####
 (define-public vtk-openmpi
   (package
     (inherit vtk)
@@ -168,3 +194,25 @@
                     "0rbcfvl7y472sykzdq3vrkw83kar0lpzhk3wq9yj9cdydl8cpfcz"))))))
 ;; return package
 ogs
+
+;; TODO: add this to web page
+;  ## Using the ogs repo as a Guix channel (as a user of ogs)
+;
+;  Add the following to `~/.config/guix/channels.scm`:
+;
+;  ```scheme
+;  (append (list (channel
+;                  (name 'ogs)
+;                  (url "https://gitlab.opengeosys.org/ogs/ogs.git")
+;                  (branch "master"))) %default-channels)
+;  ```
+;
+;  Run `guix pull`.
+;
+;  Then you can install the ogs package:
+;
+;  ```bash
+;  guix install ogs@6.4.4
+;  # OR, e.g.
+;  guix install ogs-petsc@6.4.4
+;  ```

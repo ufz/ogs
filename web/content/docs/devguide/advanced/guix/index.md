@@ -37,29 +37,9 @@ cmake --preset release -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
 cmake --build --preset release
 ```
 
-## Using the ogs repo as a Guix channel
-
-Add the following to `~/.config/guix/channels.scm`:
-
-```scheme
-(append (list (channel
-                (name 'ogs)
-                (url "https://gitlab.opengeosys.org/ogs/ogs.git")
-                (branch "master"))) %default-channels)
-```
-
-Run `guix pull`.
-
-Then you can install the ogs package (**WARNING:** currently this does not work yet):
-
-```bash
-guix build ogs@6.4.99-git
-# OR, e.g.
-guix build ogs-petsc@6.4.99-git
-```
-
 ## Links
 
 - [`guix build`](https://guix.gnu.org/manual/en/html_node/Invoking-guix-build.html)-reference
 - [`guix shell`](https://guix.gnu.org/manual/en/html_node/Invoking-guix-shell.html)-reference
+- [`guix install`](https://guix.gnu.org/manual/en/html_node/Invoking-guix-install.html)-reference
 - [Blog: The ultimate guide to software development with Guix](https://guix.gnu.org/en/blog/2023/from-development-environments-to-continuous-integrationthe-ultimate-guide-to-software-development-with-guix/)
