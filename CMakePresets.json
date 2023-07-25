@@ -9,7 +9,7 @@
     {
       "name": "_binary_dir",
       "hidden": true,
-      "binaryDir": "${sourceParentDir}/build/${presetName}"
+      "binaryDir": "${sourceParentDir}/build/$penv{CMAKE_PRESET_BUILD_DIR_PREFIX}${presetName}"
     },
     {
       "name": "_release",
