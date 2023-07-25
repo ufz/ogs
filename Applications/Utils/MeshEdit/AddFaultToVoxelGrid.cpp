@@ -81,7 +81,10 @@ int main(int argc, char* argv[])
     if (mesh == nullptr)
     {
         ERR("Input mesh not found...");
-        return false;
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
+        return EXIT_FAILURE;
     }
     auto const& mat_ids = MeshLib::materialIDs(*mesh);
     if (!mat_ids)
