@@ -128,12 +128,6 @@ public:
     //! assembled.
     virtual double getCurrentTimeIncrement() const = 0;
 
-    //! Returns \f$ \hat x \f$, i.e. the discretized approximation of \f$ \dot x
-    //! \f$.
-    void getXdot(GlobalVector const& x_at_new_timestep,
-                 GlobalVector const& x_old,
-                 GlobalVector& xdot) const;
-
     //! Returns \f$ x_O \f$.
     virtual void getWeightedOldX(
         GlobalVector& y, GlobalVector const& x_old) const = 0;  // = x_old
