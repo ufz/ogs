@@ -17,7 +17,7 @@ class Mesh;
 namespace MeshToolsLib::MeshGenerator::AddFaultToVoxelGrid
 {
 bool addFaultToVoxelGrid(MeshLib::Mesh* mesh,
-                         MeshLib::Mesh* fault,
+                         MeshLib::Mesh const* fault,
                          int const fault_id);
 
 }  // namespace MeshToolsLib::MeshGenerator::AddFaultToVoxelGrid

@@ -188,7 +188,7 @@ bool isVoxelGrid(MeshLib::Mesh const& mesh)
 namespace MeshToolsLib::MeshGenerator::AddFaultToVoxelGrid
 {
 bool addFaultToVoxelGrid(MeshLib::Mesh* mesh,
-                         MeshLib::Mesh* fault,
+                         MeshLib::Mesh const* fault,
                          int const fault_id)
 {
     if (mesh == nullptr)
