@@ -21,12 +21,12 @@
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
-#include "IntegrationPointDataTools.h"
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/IO/NodeData.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Utils/IntegrationPointWriter.h"
+#include "MeshToolsLib//IntegrationPointDataTools.h"
 
 namespace ApplicationUtils
 {
@@ -383,7 +383,8 @@ std::size_t copyFieldPropertyDataToPartitions(
         for (auto const element : elements)
         {
             int const number_of_element_field_data =
-                getNumberOfElementIntegrationPoints(ip_meta_data, *element) *
+                MeshToolsLib::getNumberOfElementIntegrationPoints(ip_meta_data,
+                                                                  *element) *
                 n_components;
             // The original element ID is not changed.
             auto const element_id = element->getID();
@@ -431,7 +432,8 @@ void setIntegrationPointNumberOfPartition(MeshLib::Properties const& properties,
             for (auto const element : elements)
             {
                 int const number_of_integration_points =
-                    getNumberOfElementIntegrationPoints(ip_meta_data, *element);
+                    MeshToolsLib::getNumberOfElementIntegrationPoints(
+                        ip_meta_data, *element);
                 counter += number_of_integration_points;
             }
             return counter;
@@ -476,8 +478,9 @@ bool copyPropertyVector(
             partitioned_pv_size = pv->size() * partitions.size();
         }
 
-        element_ip_data_offsets = getIntegrationPointDataOffsetsOfMeshElements(
-            global_mesh_elements, *pv, properties);
+        element_ip_data_offsets =
+            MeshToolsLib::getIntegrationPointDataOffsetsOfMeshElements(
+                global_mesh_elements, *pv, properties);
     }
 
     auto partitioned_pv = partitioned_properties.createNewPropertyVector<T>(
@@ -652,7 +655,8 @@ void checkFieldPropertyVectorSize(
         for (auto const element : global_mesh_elements)
         {
             int const number_of_integration_points =
-                getNumberOfElementIntegrationPoints(ip_meta_data, *element);
+                MeshToolsLib::getNumberOfElementIntegrationPoints(ip_meta_data,
+                                                                  *element);
             number_of_total_integration_points += number_of_integration_points;
         }
 

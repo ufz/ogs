@@ -18,7 +18,7 @@
 #include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
 
-namespace ApplicationUtils
+namespace MeshToolsLib
 {
 template <typename ElementType>
 int getNumberOfElementIntegrationPointsGeneral(
@@ -127,4 +127,4 @@ std::vector<std::size_t> getIntegrationPointDataOffsetsOfMeshElements(
     return element_ip_data_offsets;
 }
 
-}  // namespace ApplicationUtils
+}  // namespace MeshToolsLib

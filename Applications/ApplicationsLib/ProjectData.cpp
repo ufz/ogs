@@ -46,6 +46,7 @@
 #include "MeshGeoToolsLib/SearchLength.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Utils/SetMeshSpaceDimension.h"
+#include "MeshToolsLib/ZeroMeshFieldDataByMaterialIDs.h"
 #include "NumLib/ODESolver/ConvergenceCriterion.h"
 #include "ProcessLib/CreateJacobianAssembler.h"
 #include "ProcessLib/DeactivatedSubdomain.h"
@@ -248,6 +249,21 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
         {
             INFO("- {}", name);
         }
+    }
+
+    auto const zero_mesh_field_data_by_material_ids =
+        //! \ogs_file_param{prj__zero_mesh_field_data_by_material_ids}
+        config.getConfigParameterOptional<std::vector<int>>(
+            "zero_mesh_field_data_by_material_ids");
+    if (zero_mesh_field_data_by_material_ids)
+    {
+        WARN(
+            "Tag 'zero_mesh_field_data_by_material_ids` is experimental. Its "
+            "name may be changed, or it may be removed due to its "
+            "corresponding feature becomes a single tool. Please use it with "
+            "care!");
+        MeshToolsLib::zeroMeshFieldDataByMaterialIDs(
+            *meshes[0], *zero_mesh_field_data_by_material_ids);
     }
 
     MeshLib::setMeshSpaceDimension(meshes);
