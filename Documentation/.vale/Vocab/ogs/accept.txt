@@ -50,6 +50,7 @@ GML
 Gmsh
 Gnielinski
 Goswami
+Guix
 Guo
 Heidemann
 Homebrew
@@ -144,8 +145,8 @@ Unlicense
 Unstrut
 Vogel
 Vogels
-vtkdiff
 VTK[s?]
+vtkdiff
 VTUinterface
 Witte
 Xcode
