@@ -46,7 +46,7 @@ set(_mfront_behaviours
     ThermoPoroElasticity
 )
 
-if(OGS_BUILD_WHEEL)
+if(OGS_BUILD_WHEEL AND NOT APPLE_ARM)
     # Build behaviours lib with mfront executable
     foreach(behaviour ${_mfront_behaviours})
         list(APPEND _mfront_behaviour_files
