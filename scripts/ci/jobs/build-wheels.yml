@@ -30,6 +30,12 @@ include:
   stage: build
   script:
     - pipx run cibuildwheel
+  rules:
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::wheels only.*/
+      variables:
+        CIBW_BUILD: cp310*
+        GIT_DEPTH: 1000
+    - when: on_success
   artifacts:
     paths:
       - wheelhouse/
