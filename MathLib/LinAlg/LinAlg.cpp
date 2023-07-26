@@ -217,7 +217,7 @@ void axpy(EigenVector& y, double const a, EigenVector const& x)
     y.getRawVector() += a * x.getRawVector();
 }
 
-// y = a*x + y
+// y = a*x + b*y
 void axpby(EigenVector& y, double const a, double const b, EigenVector const& x)
 {
     // TODO: does that break anything?
