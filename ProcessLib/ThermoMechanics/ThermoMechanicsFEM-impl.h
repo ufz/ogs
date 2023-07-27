@@ -115,7 +115,7 @@ template <typename ShapeFunction, int DisplacementDim>
 void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
-                         std::vector<double> const& local_xdot,
+                         std::vector<double> const& local_x_prev,
                          std::vector<double>& /*local_M_data*/,
                          std::vector<double>& /*local_K_data*/,
                          std::vector<double>& local_rhs_data,
@@ -133,8 +133,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
                                   displacement_size);
     bool const is_u_non_zero = u.norm() > 0.0;
 
-    auto T_dot = Eigen::Map<typename ShapeMatricesType::template VectorType<
-        temperature_size> const>(local_xdot.data() + temperature_index,
+    auto T_prev = Eigen::Map<typename ShapeMatricesType::template VectorType<
+        temperature_size> const>(local_x_prev.data() + temperature_index,
                                  temperature_size);
 
     auto local_Jac = MathLib::createZeroedMatrix<JacobianMatrix>(
@@ -331,7 +331,7 @@ template <typename ShapeFunction, int DisplacementDim>
 void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         const double t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, int const process_id,
+        Eigen::VectorXd const& local_x_prev, int const process_id,
         std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
@@ -340,12 +340,12 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     if (process_id == _process_data.heat_conduction_process_id)
     {
         assembleWithJacobianForHeatConductionEquations(
-            t, dt, local_x, local_xdot, local_b_data, local_Jac_data);
+            t, dt, local_x, local_x_prev, local_b_data, local_Jac_data);
         return;
     }
 
     // For the equations with deformation
-    assembleWithJacobianForDeformationEquations(t, dt, local_x, local_xdot,
+    assembleWithJacobianForDeformationEquations(t, dt, local_x, local_x_prev,
                                                 local_b_data, local_Jac_data);
 }
 
@@ -353,14 +353,14 @@ template <typename ShapeFunction, int DisplacementDim>
 void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForDeformationEquations(
         const double t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data)
 {
     auto const local_T =
         local_x.template segment<temperature_size>(temperature_index);
 
-    auto const local_Tdot =
-        local_xdot.template segment<temperature_size>(temperature_index);
+    auto const local_T_prev =
+        local_x_prev.template segment<temperature_size>(temperature_index);
 
     auto const local_u =
         local_x.template segment<displacement_size>(displacement_index);
@@ -492,7 +492,7 @@ template <typename ShapeFunction, int DisplacementDim>
 void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForHeatConductionEquations(
         const double t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data)
 {
     auto const local_T =
