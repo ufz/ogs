@@ -22,11 +22,6 @@ class ConfigTree;
 namespace NumLib
 {
 class TimeStepAlgorithm;
-
-std::size_t findDeltatInterval(double const t_initial,
-                               std::vector<double> const& delta_ts,
-                               double const fixed_output_time);
-
 /// Create a FixedTimeStepping time stepper from the given
 /// configuration
 std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(

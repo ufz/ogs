@@ -11,13 +11,6 @@
 
 #include "CreateFixedTimeStepping.h"
 
-#include <fmt/ranges.h>
-
-#include <algorithm>
-#include <numeric>
-#include <string>
-
-#include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "FixedTimeStepping.h"
@@ -25,140 +18,6 @@
 
 namespace NumLib
 {
-std::size_t findDeltatInterval(double const t_initial,
-                               std::vector<double> const& delta_ts,
-                               double const fixed_output_time)
-{
-    if (fixed_output_time < t_initial)
-    {
-        return std::numeric_limits<std::size_t>::max();
-    }
-
-    auto timestepper_time = t_initial;
-    for (std::size_t k = 0; k < delta_ts.size(); ++k)
-    {
-        if (timestepper_time <= fixed_output_time &&
-            fixed_output_time < timestepper_time + delta_ts[k])
-        {
-            return k;
-        }
-        timestepper_time += delta_ts[k];
-    }
-    if (fixed_output_time == timestepper_time + delta_ts.back())
-    {
-        return std::numeric_limits<std::size_t>::max();
-    }
-    return std::numeric_limits<std::size_t>::max();
-}
-
-void incorporateFixedTimesForOutput(
-    double const t_initial, double const t_end, std::vector<double>& delta_ts,
-    std::vector<double> const& fixed_times_for_output)
-{
-    if (fixed_times_for_output.empty())
-    {
-        return;
-    }
-
-    if (auto lower_bound =
-            std::lower_bound(begin(fixed_times_for_output),
-                             end(fixed_times_for_output), t_initial);
-        lower_bound != begin(fixed_times_for_output))
-    {
-        WARN(
-            "Request for output at times {}, but the simulation's start time "
-            "is {}. Output will be skipped.",
-            fmt::join(begin(fixed_times_for_output), lower_bound, ", "),
-            t_initial);
-    }
-
-    if (auto upper_bound = std::upper_bound(begin(fixed_times_for_output),
-                                            end(fixed_times_for_output), t_end);
-        upper_bound != end(fixed_times_for_output))
-    {
-        WARN(
-            "Request for output at times {}, but simulation's end time is {}. "
-            "Output will be skipped.",
-            fmt::join(upper_bound, end(fixed_times_for_output), ", "),
-            t_end);
-    }
-
-    if (delta_ts.empty())
-    {
-        WARN("No timesteps specified.");
-        return;
-    }
-
-    // incorporate fixed output times into dts vector
-    for (auto const fixed_time_for_output : fixed_times_for_output)
-    {
-        auto const interval_number =
-            findDeltatInterval(t_initial, delta_ts, fixed_time_for_output);
-        if (interval_number == std::numeric_limits<std::size_t>::max())
-        {
-            WARN("Did not find interval for fixed output time {}",
-                 fixed_time_for_output);
-            continue;
-        }
-        auto const lower_bound = std::accumulate(
-            begin(delta_ts), begin(delta_ts) + interval_number, t_initial);
-        auto const upper_bound = std::accumulate(
-            begin(delta_ts), begin(delta_ts) + interval_number + 1, t_initial);
-        if (fixed_time_for_output - lower_bound <=
-            std::numeric_limits<double>::epsilon())
-        {
-            continue;
-        }
-        if (upper_bound - fixed_time_for_output <=
-            std::numeric_limits<double>::epsilon())
-        {
-            continue;
-        }
-        delta_ts[interval_number] = fixed_time_for_output - lower_bound;
-
-        delta_ts.insert(delta_ts.begin() + interval_number + 1,
-                        upper_bound - fixed_time_for_output);
-    }
-}
-
-/// Returns sum of the newly added time increments.
-double addTimeIncrement(std::vector<double>& delta_ts, std::size_t const repeat,
-                        double const delta_t, double const t_curr)
-{
-    auto const new_size = delta_ts.size() + repeat;
-    try
-    {
-        delta_ts.resize(new_size, delta_t);
-    }
-    catch (std::length_error const& e)
-    {
-        OGS_FATAL(
-            "Resize of the time steps vector failed for the requested "
-            "new size {:d}. Probably there is not enough memory ({:g} "
-            "GiB requested).\n"
-            "Thrown exception: {:s}",
-            new_size,
-            new_size * sizeof(double) / 1024. / 1024. / 1024.,
-            e.what());
-    }
-    catch (std::bad_alloc const& e)
-    {
-        OGS_FATAL(
-            "Resize of the time steps vector failed for the requested "
-            "new size {:d}. Probably there is not enough memory ({:g} "
-            "GiB requested).\n"
-            "Thrown exception: {:s}",
-            new_size, new_size * sizeof(double) / 1024. / 1024. / 1024.,
-            e.what());
-    }
-
-    // Multiplying dt * repeat is not the same as in the current
-    // implementation of the time loop, where the dt's are added.
-    // Therefore the sum of all dt is taken here.
-    return std::accumulate(end(delta_ts) - repeat, end(delta_ts), t_curr);
-}
-
-class TimeStepAlgorithm;
 std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
     BaseLib::ConfigTree const& config,
     std::vector<double> const& fixed_times_for_output)
@@ -173,9 +32,6 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__timesteps}
     auto const delta_ts_config = config.getConfigSubtree("timesteps");
 
-    std::vector<double> delta_ts;
-    double t_curr = t_initial;
-
     // TODO: consider adding call "listNonEmpty" to config tree
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__timesteps__pair}
     auto const range = delta_ts_config.getConfigSubtreeList("pair");
@@ -183,6 +39,7 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
     {
         OGS_FATAL("no timesteps have been given");
     }
+
     std::vector<std::pair<std::size_t, double>> repeat_dt_pairs;
     for (auto const pair : range)
     {
@@ -193,34 +50,7 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
             pair.getConfigParameter<double>("delta_t"));
     }
 
-    for (auto const& [repeat, delta_t] : repeat_dt_pairs)
-    {
-        if (repeat == 0)
-        {
-            OGS_FATAL("<repeat> is zero.");
-        }
-        if (delta_t <= 0.0)
-        {
-            OGS_FATAL("timestep <delta_t> is <= 0.0.");
-        }
-
-        if (t_curr <= t_end)
-        {
-            t_curr = addTimeIncrement(delta_ts, repeat, delta_t, t_curr);
-        }
-    }
-
-    // append last delta_t until t_end is reached
-    if (t_curr <= t_end)
-    {
-        auto const delta_t = repeat_dt_pairs.back().second;
-        auto const repeat =
-            static_cast<std::size_t>(std::ceil((t_end - t_curr) / delta_t));
-        t_curr = addTimeIncrement(delta_ts, repeat, delta_t, t_curr);
-    }
-
-    incorporateFixedTimesForOutput(t_initial, t_end, delta_ts,
-                                   fixed_times_for_output);
-    return std::make_unique<FixedTimeStepping>(t_initial, t_end, delta_ts);
+    return std::make_unique<FixedTimeStepping>(
+        t_initial, t_end, repeat_dt_pairs, fixed_times_for_output);
 }
 }  // end of namespace NumLib
