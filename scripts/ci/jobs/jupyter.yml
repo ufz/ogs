@@ -1,6 +1,6 @@
 test notebooks via wheel:
   stage: build
-  tags: [envinf23, shell]
+  tags: [envinf3, shell]
   before_script:
     - cd Tests/Data
     - python -m venv --upgrade-deps .venv
@@ -10,6 +10,9 @@ test notebooks via wheel:
     - pip install -r requirements-dev.txt
     - pip install -r requirements-ogs.txt
   script:
+    # Append mtest install directory to PYTHONPATH
+    - export PYTHONPATH=/opt/tfel-rliv-4.0/lib/python3.11/site-packages:$PYTHONPATH
+    - export LD_LIBRARY_PATH=/opt/tfel-rliv-4.0/lib:$LD_LIBRARY_PATH
     # TODO:
     #  - better timeout
     #  - run in parallel
