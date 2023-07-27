@@ -19,14 +19,11 @@
 #include <string>
 #include <vector>
 
-#include "MeshLib/Properties.h"
-
 // forward declaration
 namespace MeshLib
 {
 class Mesh;
 class Node;
-class Element;
 }  // namespace MeshLib
 
 namespace MeshToolsLib
@@ -45,8 +42,6 @@ public:
      * implemented here are finished
      */
     explicit MeshRevision(MeshLib::Mesh& mesh);
-
-    virtual ~MeshRevision() = default;
 
     /// Returns the number of potentially collapsible nodes
     unsigned getNumberOfCollapsibleNodes(
@@ -76,102 +71,8 @@ private:
     std::vector<MeshLib::Node*> constructNewNodesArray(
         const std::vector<std::size_t>& id_map) const;
 
-    /// Calculates the number of unique nodes in an element (i.e. uncollapsed
-    /// nodes)
-    static unsigned getNumberOfUniqueNodes(
-        MeshLib::Element const* const element);
-
-    /**
-     * Copies all scalar arrays according to the restructured Node- and
-     * Element-vectors after the mesh revision process (i.e. collapsed nodes,
-     * split elements, etc.)
-     */
-    MeshLib::Properties copyProperties(
-        MeshLib::Properties const& props,
-        std::vector<std::size_t> const& node_ids,
-        std::vector<std::size_t> const& elem_ids) const;
-
-    /// Subdivides an element if it has a face that is not coplanar
-    /// @param element the element that will be subdivided
-    /// @param nodes vector containing the nodes the elements originated by the
-    /// subdivision are based on
-    /// @param elements vector of MeshLib::Elements; the elements originated by
-    /// the subdivision will be inserted into elements
-    /// @return the number of elements originated by the subdivision
-    std::size_t subdivideElement(
-        MeshLib::Element const* const element,
-        std::vector<MeshLib::Node*> const& nodes,
-        std::vector<MeshLib::Element*>& elements) const;
-
-    // Revises an element by removing collapsed nodes, using the nodes vector
-    // from the result mesh.
-    std::size_t reduceElement(MeshLib::Element const* const element,
-                              unsigned n_unique_nodes,
-                              const std::vector<MeshLib::Node*>& nodes,
-                              std::vector<MeshLib::Element*>& elements,
-                              unsigned min_elem_dim) const;
-
-    /// Cleans up all nodes and elements if something went wrong
-    void cleanUp(std::vector<MeshLib::Node*>& nodes,
-                 std::vector<MeshLib::Element*>& new_elements) const;
-
-    /**
-     * Reduces a hexahedron element by removing collapsed nodes and constructing
-     * one or more new elements from the remaining nodes.
-     * @return The number of newly created elements
-     */
-    unsigned reduceHex(MeshLib::Element const* const org_elem,
-                       unsigned n_unique_nodes,
-                       const std::vector<MeshLib::Node*>& nodes,
-                       std::vector<MeshLib::Element*>& new_elements,
-                       unsigned min_elem_dim) const;
-    /// Reduces a pyramid element by removing collapsed nodes and constructing a
-    /// new elements from the remaining nodes.
-    void reducePyramid(MeshLib::Element const* const org_elem,
-                       unsigned n_unique_nodes,
-                       const std::vector<MeshLib::Node*>& nodes,
-                       std::vector<MeshLib::Element*>& new_elements,
-                       unsigned min_elem_dim) const;
-    /**
-     * Reduces a prism element by removing collapsed nodes and constructing one
-     * or two new elements from the remaining nodes.
-     * @return The number of newly created elements
-     */
-    unsigned reducePrism(MeshLib::Element const* const org_elem,
-                         unsigned n_unique_nodes,
-                         std::vector<MeshLib::Node*> const& nodes,
-                         std::vector<MeshLib::Element*>& new_elements,
-                         unsigned min_elem_dim) const;
-
-    // In an element with 5 unique nodes, return the node that will be the top
-    // of the resulting pyramid
-    static unsigned findPyramidTopNode(
-        MeshLib::Element const& element,
-        std::array<std::size_t, 4> const& base_node_ids);
-
-    /// Lookup-table for returning the diametral node id of the given node id in
-    /// a Hex
-    static unsigned lutHexDiametralNode(unsigned id);
-
-    /// Lookup-table for returning four nodes connected to the two nodes (id1,
-    /// id2) forming an edge in a Hex
-    static std::array<unsigned, 4> lutHexCuttingQuadNodes(unsigned id1,
-                                                          unsigned id2);
-
-    /// When a hex is subdivided into two prisms, this returns the nodes of the
-    /// hex edge that will serve as the back of one of the prisms.
-    static std::pair<unsigned, unsigned> lutHexBackNodes(unsigned i, unsigned j,
-                                                         unsigned k,
-                                                         unsigned l);
-
-    /// Lookup-table for returning the third node of bottom or top triangle
-    /// given the other two
-    static unsigned lutPrismThirdNode(unsigned id1, unsigned id2);
-
     /// The original mesh used for constructing the class
     MeshLib::Mesh& _mesh;
-
-    static const std::array<unsigned, 8> _hex_diametral_nodes;
 };
 
 }  // namespace MeshToolsLib

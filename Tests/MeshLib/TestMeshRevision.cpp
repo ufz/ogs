@@ -537,3 +537,41 @@ TEST(MeshEditing, Prism2Tri)
 
     delete result;
 }
+
+namespace MeshToolsLib
+{
+extern unsigned lutPrismThirdNode(unsigned, unsigned);
+}
+
+TEST(MeshEditing, PrismLutThirdNode)
+{
+    constexpr auto max = std::numeric_limits<unsigned>::max();
+    // clang-format off
+    // Expected results in a matrix 6x6 to cover all possible combinations
+    constexpr std::array<std::array<unsigned, 6>, 6> expected =
+        //   0    1    2    3    4    5
+        {{{{max, 2  , 1  , max, max, max}},     // 0
+          {{2  , max, 0  , max, max, max}},     // 1
+          {{1  , 0  , max, max, max, max}},     // 2
+          {{max, max, max, max, 5  , 4  }},     // 3
+          {{max, max, max, 5  , max, 3  }},     // 4
+          {{max, max, max, 4  , 3  , max}}}};   // 5
+    // clang-format on
+
+    for (unsigned i = 0; i < 6; ++i)
+    {
+        for (unsigned j = 0; j < 6; ++j)
+        {
+            EXPECT_EQ(MeshToolsLib::lutPrismThirdNode(i, j), expected[i][j])
+                << "for (i,j) = " << i << ", " << j;
+        }
+    }
+
+    // Test for outside values
+    EXPECT_EQ(MeshToolsLib::lutPrismThirdNode(-1, -1), max);
+    EXPECT_EQ(MeshToolsLib::lutPrismThirdNode(0, -1), max);
+    EXPECT_EQ(MeshToolsLib::lutPrismThirdNode(-1, 0), max);
+    EXPECT_EQ(MeshToolsLib::lutPrismThirdNode(5, 6), max);
+    EXPECT_EQ(MeshToolsLib::lutPrismThirdNode(6, 5), max);
+    EXPECT_EQ(MeshToolsLib::lutPrismThirdNode(6, 6), max);
+}
