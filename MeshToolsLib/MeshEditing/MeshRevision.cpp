@@ -398,177 +398,107 @@ unsigned reducePrism(MeshLib::Element const* const org_elem,
 /// forming an edge in a Hex.
 std::array<unsigned, 4> lutHexCuttingQuadNodes(unsigned id1, unsigned id2)
 {
-    std::array<unsigned, 4> nodes{};
     if (id1 == 0 && id2 == 1)
     {
-        nodes[0] = 3;
-        nodes[1] = 2;
-        nodes[2] = 5;
-        nodes[3] = 4;
+        return {3, 2, 5, 4};
     }
-    else if (id1 == 1 && id2 == 2)
+    if (id1 == 1 && id2 == 2)
     {
-        nodes[0] = 0;
-        nodes[1] = 3;
-        nodes[2] = 6;
-        nodes[3] = 5;
+        return {0, 3, 6, 5};
     }
-    else if (id1 == 2 && id2 == 3)
+    if (id1 == 2 && id2 == 3)
     {
-        nodes[0] = 1;
-        nodes[1] = 0;
-        nodes[2] = 7;
-        nodes[3] = 6;
+        return {1, 0, 7, 6};
     }
-    else if (id1 == 3 && id2 == 0)
+    if (id1 == 3 && id2 == 0)
     {
-        nodes[0] = 2;
-        nodes[1] = 1;
-        nodes[2] = 4;
-        nodes[3] = 7;
+        return {2, 1, 4, 7};
     }
-    else if (id1 == 4 && id2 == 5)
+    if (id1 == 4 && id2 == 5)
     {
-        nodes[0] = 0;
-        nodes[1] = 1;
-        nodes[2] = 6;
-        nodes[3] = 7;
+        return {0, 1, 6, 7};
     }
-    else if (id1 == 5 && id2 == 6)
+    if (id1 == 5 && id2 == 6)
     {
-        nodes[0] = 1;
-        nodes[1] = 2;
-        nodes[2] = 7;
-        nodes[3] = 4;
+        return {1, 2, 7, 4};
     }
-    else if (id1 == 6 && id2 == 7)
+    if (id1 == 6 && id2 == 7)
     {
-        nodes[0] = 2;
-        nodes[1] = 3;
-        nodes[2] = 4;
-        nodes[3] = 5;
+        return {2, 3, 4, 5};
     }
-    else if (id1 == 7 && id2 == 4)
+    if (id1 == 7 && id2 == 4)
     {
-        nodes[0] = 3;
-        nodes[1] = 0;
-        nodes[2] = 5;
-        nodes[3] = 6;
+        return {3, 0, 5, 6};
     }
-    else if (id1 == 0 && id2 == 4)
+    if (id1 == 0 && id2 == 4)
     {
-        nodes[0] = 3;
-        nodes[1] = 7;
-        nodes[2] = 5;
-        nodes[3] = 1;
+        return {3, 7, 5, 1};
     }
-    else if (id1 == 1 && id2 == 5)
+    if (id1 == 1 && id2 == 5)
     {
-        nodes[0] = 0;
-        nodes[1] = 4;
-        nodes[2] = 6;
-        nodes[3] = 2;
+        return {0, 4, 6, 2};
     }
-    else if (id1 == 2 && id2 == 6)
+    if (id1 == 2 && id2 == 6)
     {
-        nodes[0] = 1;
-        nodes[1] = 5;
-        nodes[2] = 7;
-        nodes[3] = 3;
+        return {1, 5, 7, 3};
     }
-    else if (id1 == 3 && id2 == 7)
+    if (id1 == 3 && id2 == 7)
     {
-        nodes[0] = 2;
-        nodes[1] = 6;
-        nodes[2] = 4;
-        nodes[3] = 0;
+        return {2, 6, 4, 0};
+    }
+    if (id1 == 1 && id2 == 0)
+    {
+        return {2, 3, 4, 5};
+    }
+    if (id1 == 2 && id2 == 1)
+    {
+        return {3, 0, 5, 6};
+    }
+    if (id1 == 3 && id2 == 2)
+    {
+        return {0, 1, 6, 7};
+    }
+    if (id1 == 0 && id2 == 3)
+    {
+        return {1, 2, 7, 4};
+    }
+    if (id1 == 5 && id2 == 4)
+    {
+        return {1, 0, 7, 6};
+    }
+    if (id1 == 6 && id2 == 5)
+    {
+        return {2, 1, 4, 7};
+    }
+    if (id1 == 7 && id2 == 6)
+    {
+        return {3, 2, 5, 4};
+    }
+    if (id1 == 4 && id2 == 7)
+    {
+        return {0, 3, 6, 5};
+    }
+    if (id1 == 4 && id2 == 0)
+    {
+        return {7, 3, 1, 5};
+    }
+    if (id1 == 5 && id2 == 1)
+    {
+        return {4, 0, 2, 6};
+    }
+    if (id1 == 6 && id2 == 2)
+    {
+        return {5, 1, 3, 7};
+    }
+    if (id1 == 7 && id2 == 3)
+    {
+        return {6, 2, 0, 4};
     }
 
-    else if (id1 == 1 && id2 == 0)
-    {
-        nodes[0] = 2;
-        nodes[1] = 3;
-        nodes[2] = 4;
-        nodes[3] = 5;
-    }
-    else if (id1 == 2 && id2 == 1)
-    {
-        nodes[0] = 3;
-        nodes[1] = 0;
-        nodes[2] = 5;
-        nodes[3] = 6;
-    }
-    else if (id1 == 3 && id2 == 2)
-    {
-        nodes[0] = 0;
-        nodes[1] = 1;
-        nodes[2] = 6;
-        nodes[3] = 7;
-    }
-    else if (id1 == 0 && id2 == 3)
-    {
-        nodes[0] = 1;
-        nodes[1] = 2;
-        nodes[2] = 7;
-        nodes[3] = 4;
-    }
-    else if (id1 == 5 && id2 == 4)
-    {
-        nodes[0] = 1;
-        nodes[1] = 0;
-        nodes[2] = 7;
-        nodes[3] = 6;
-    }
-    else if (id1 == 6 && id2 == 5)
-    {
-        nodes[0] = 2;
-        nodes[1] = 1;
-        nodes[2] = 4;
-        nodes[3] = 7;
-    }
-    else if (id1 == 7 && id2 == 6)
-    {
-        nodes[0] = 3;
-        nodes[1] = 2;
-        nodes[2] = 5;
-        nodes[3] = 4;
-    }
-    else if (id1 == 4 && id2 == 7)
-    {
-        nodes[0] = 0;
-        nodes[1] = 3;
-        nodes[2] = 6;
-        nodes[3] = 5;
-    }
-    else if (id1 == 4 && id2 == 0)
-    {
-        nodes[0] = 7;
-        nodes[1] = 3;
-        nodes[2] = 1;
-        nodes[3] = 5;
-    }
-    else if (id1 == 5 && id2 == 1)
-    {
-        nodes[0] = 4;
-        nodes[1] = 0;
-        nodes[2] = 2;
-        nodes[3] = 6;
-    }
-    else if (id1 == 6 && id2 == 2)
-    {
-        nodes[0] = 5;
-        nodes[1] = 1;
-        nodes[2] = 3;
-        nodes[3] = 7;
-    }
-    else if (id1 == 7 && id2 == 3)
-    {
-        nodes[0] = 6;
-        nodes[1] = 2;
-        nodes[2] = 0;
-        nodes[3] = 4;
-    }
-    return nodes;
+    OGS_FATAL(
+        "lutHexCuttingQuadNodes() for nodes {} and {} does not have a valid "
+        "return value.",
+        id1, id2);
 }
 
 /// Lookup-table for returning the diametral node id of the given node id in a
@@ -589,50 +519,43 @@ std::pair<unsigned, unsigned> lutHexBackNodes(unsigned const i,
                                               unsigned const l)
 {
     // collapsed edges are *not* connected
-    std::pair<unsigned, unsigned> back(std::numeric_limits<unsigned>::max(),
-                                       std::numeric_limits<unsigned>::max());
     if (lutHexDiametralNode(i) == k)
     {
-        back.first = i;
-        back.second = lutHexDiametralNode(l);
+        return {i, lutHexDiametralNode(l)};
     }
-    else if (lutHexDiametralNode(i) == l)
+    if (lutHexDiametralNode(i) == l)
     {
-        back.first = i;
-        back.second = lutHexDiametralNode(k);
+        return {i, lutHexDiametralNode(k)};
     }
-    else if (lutHexDiametralNode(j) == k)
+    if (lutHexDiametralNode(j) == k)
     {
-        back.first = j;
-        back.second = lutHexDiametralNode(l);
+        return {j, lutHexDiametralNode(l)};
     }
-    else if (lutHexDiametralNode(j) == l)
+    if (lutHexDiametralNode(j) == l)
     {
-        back.first = j;
-        back.second = lutHexDiametralNode(k);
+        return {j, lutHexDiametralNode(k)};
     }
+
     // collapsed edges *are* connected
-    else if (i == k)
+    if (i == k)
     {
-        back.first = lutHexDiametralNode(l);
-        back.second = j;
+        return {lutHexDiametralNode(l), j};
     }
-    else if (i == l)
+    if (i == l)
     {
-        back.first = lutHexDiametralNode(k);
-        back.second = j;
+        return {lutHexDiametralNode(k), j};
     }
-    else if (j == k)
+    if (j == k)
     {
-        back.first = lutHexDiametralNode(l);
-        back.second = i;
+        return {lutHexDiametralNode(l), i};
     }
-    else if (j == l)
+    if (j == l)
     {
-        back.first = lutHexDiametralNode(k);
-        back.second = i;
+        return {lutHexDiametralNode(k), i};
     }
-    return back;
+
+    return {std::numeric_limits<unsigned>::max(),
+            std::numeric_limits<unsigned>::max()};
 }
 
 // In an element with 5 unique nodes, return the node that will be the top of
