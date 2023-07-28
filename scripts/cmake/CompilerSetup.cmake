@@ -73,6 +73,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
                 $<$<COMPILE_LANGUAGE:CXX>:-Wno-dangling-reference>
                 $<$<COMPILE_LANGUAGE:CXX>:-Wno-array-bounds>
                 $<$<COMPILE_LANGUAGE:CXX>:-Wno-stringop-overflow>
+                $<$<COMPILE_LANGUAGE:CXX>:-Wno-stringop-overread>
             )
         endif()
     endif()
