@@ -41,5 +41,4 @@ cmake --build --preset release
 
 - [`guix build`](https://guix.gnu.org/manual/en/html_node/Invoking-guix-build.html)-reference
 - [`guix shell`](https://guix.gnu.org/manual/en/html_node/Invoking-guix-shell.html)-reference
-- [`guix install`](https://guix.gnu.org/manual/en/html_node/Invoking-guix-install.html)-reference
 - [Blog: The ultimate guide to software development with Guix](https://guix.gnu.org/en/blog/2023/from-development-environments-to-continuous-integrationthe-ultimate-guide-to-software-development-with-guix/)
