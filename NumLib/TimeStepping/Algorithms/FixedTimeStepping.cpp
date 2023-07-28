@@ -136,8 +136,7 @@ void incorporateFixedTimesForOutput(
         }
         auto const lower_bound = std::accumulate(
             begin(delta_ts), begin(delta_ts) + interval_number, t_initial);
-        auto const upper_bound = std::accumulate(
-            begin(delta_ts), begin(delta_ts) + interval_number + 1, t_initial);
+        auto const upper_bound = lower_bound + delta_ts[interval_number];
         if (fixed_time_for_output - lower_bound <=
             std::numeric_limits<double>::epsilon())
         {
