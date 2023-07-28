@@ -117,10 +117,10 @@ TEST_F(NumLibTimeSteppingFixed_TimeSteps, DtVectorLessThanSum)
 TEST_F(NumLibTimeSteppingFixed_TimeSteps, DtVectorGreaterThanSum)
 {
     std::vector<std::pair<std::size_t, double>> const repeat_dt = {{1, 5},
-                                                                   {2, 10}};
+                                                                   {3, 10}};
     NumLib::FixedTimeStepping algorithm(1, 31, repeat_dt, {});
 
-    checkExpectedTimes(algorithm, {1, 6, 16, 26});
+    checkExpectedTimes(algorithm, {1, 6, 16, 26, 31});
 }
 
 TEST(NumLibTimeSteppingFixed_FixedOutputTimes, incorporateFixedTimesForOutput_2)
