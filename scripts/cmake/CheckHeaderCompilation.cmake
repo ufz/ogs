@@ -45,7 +45,7 @@ function(_check_header_compilation target)
     get_target_property(LINK_LIBS ${target} LINK_LIBRARIES)
     # Transitive dependencies are not resolved
     foreach(lib ${LINK_LIBS} spdlog Boost::boost Eigen3::Eigen
-                nlohmann_json::nlohmann_json range-v3
+                nlohmann_json::nlohmann_json range-v3 petsc
     )
         # Ignore non-existing targets or interface libs
         if(NOT TARGET ${lib})

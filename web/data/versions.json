@@ -26,7 +26,7 @@
     "tfel-rliv": "4.0",
     "tfel-repo": "thelfer",
     "lis": "1.7.37",
-    "gtest": "1.11.0",
+    "gtest": "1.13.0",
     "pybind11": "2.10.4",
     "range-v3": "0.12.0",
     "json": "3.10.5",
@@ -38,7 +38,7 @@
     "cmake": "3.22.3",
     "hdf5": "1.12.2",
     "zlib": "1.2.11",
-    "gtest": "8d51dc50eb7e7698427fed81b85edad0e032112e"
+    "gtest": "1.13.0"
   },
   "ctest": {
     "large_runtime": 60
@@ -73,8 +73,8 @@
     }
   },
   "cpm": {
-    "package_file_id": 555,
-    "package_file_sha256": "e1f2bb31ba99c6becb4192c4ed5d500ba075c421cf550a99bb608c2f70a9982c"
+    "package_file_id": 749,
+    "package_file_sha256": "25862fd9b76d5c685cd60432396507822dd547e7ee2e87dffb1126603574efad"
   },
   "ext": {
     "cache_hash": "4ebd62e0ce484732dbf3cd9932f60b67762e156b"
