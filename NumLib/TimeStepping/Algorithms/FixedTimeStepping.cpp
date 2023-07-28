@@ -155,16 +155,6 @@ void incorporateFixedTimesForOutput(
     }
 }
 
-/// determine true end time
-double computeEnd(double t_initial,
-                  double t_end,
-                  const std::vector<double>& dt_vector)
-{
-    double t_sum =
-        t_initial + std::accumulate(dt_vector.begin(), dt_vector.end(), 0.);
-    return std::min(t_end, t_sum);
-}
-
 FixedTimeStepping::FixedTimeStepping(
     double t0, double tn,
     std::vector<std::pair<std::size_t, double>> const& repeat_dt_pairs,
