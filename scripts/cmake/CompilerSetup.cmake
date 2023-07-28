@@ -72,6 +72,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
             add_compile_options(
                 $<$<COMPILE_LANGUAGE:CXX>:-Wno-dangling-reference>
                 $<$<COMPILE_LANGUAGE:CXX>:-Wno-array-bounds>
+                $<$<COMPILE_LANGUAGE:CXX>:-Wno-stringop-overflow>
             )
         endif()
     endif()
