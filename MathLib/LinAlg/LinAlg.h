@@ -167,7 +167,7 @@ void aypx(PETScVector& y, PetscScalar const a, PETScVector const& x);
 // y = a*x + y
 void axpy(PETScVector& y, PetscScalar const a, PETScVector const& x);
 
-// y = a*x + y
+// y = a*x + b*y
 void axpby(PETScVector& y, PetscScalar const a, PetscScalar const b,
            PETScVector const& x);
 
@@ -234,7 +234,7 @@ void aypx(EigenVector& y, double const a, EigenVector const& x);
 // y = a*x + y
 void axpy(EigenVector& y, double const a, EigenVector const& x);
 
-// y = a*x + y
+// y = a*x + b*y
 void axpby(EigenVector& y, double const a, double const b, EigenVector const& x);
 
 

@@ -673,7 +673,7 @@ static NumLib::NonlinearSolverStatus solveMonolithicProcess(
     auto const nonlinear_solver_status = solveOneTimeStepOneProcess(
         x, x_prev, timestep_id, t, dt, process_data, outputs, xdot_id);
 
-    INFO("[time] Solving process #{:d} took {:g} s in time step #{:d} ",
+    INFO("[time] Solving process #{:d} took {:g} s in time step #{:d}",
          process_data.process_id, time_timestep_process.elapsed(), timestep_id);
 
     return nonlinear_solver_status;
