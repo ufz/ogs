@@ -64,20 +64,37 @@ unsigned lutPrismThirdNode(unsigned const id1, unsigned const id2)
 
 namespace
 {
+std::unique_ptr<MeshLib::Element> createTriangle(
+    std::span<MeshLib::Node* const> const element_nodes,
+    std::vector<MeshLib::Node*> const& nodes,
+    std::array<std::size_t, 3> const local_ids)
+{
+    using namespace MeshLib::views;
+    auto lookup_in = [](auto const& values)
+    {
+        return ranges::views::transform([&values](std::size_t const n)
+                                        { return values[n]; });
+    };
+
+    std::array<MeshLib::Node*, std::size(local_ids)> tri_nodes;
+    ranges::copy(local_ids | lookup_in(element_nodes) | ids | lookup_in(nodes),
+                 begin(tri_nodes));
+
+    return std::make_unique<MeshLib::Tri>(tri_nodes);
+}
+
 /// Subdivides a nonplanar quad into two triangles.
 unsigned subdivideQuad(MeshLib::Element const* const quad,
                        std::vector<MeshLib::Node*> const& nodes,
                        std::vector<MeshLib::Element*>& new_elements)
 {
-    std::array tri1_nodes{nodes[quad->getNode(0)->getID()],
-                          nodes[quad->getNode(1)->getID()],
-                          nodes[quad->getNode(2)->getID()]};
-    new_elements.push_back(new MeshLib::Tri(tri1_nodes));
+    std::array<std::size_t, 3> const tri1_nodes{0, 1, 2};
+    new_elements.push_back(
+        createTriangle(quad->nodes(), nodes, tri1_nodes).release());
 
-    std::array tri2_nodes{nodes[quad->getNode(0)->getID()],
-                          nodes[quad->getNode(2)->getID()],
-                          nodes[quad->getNode(3)->getID()]};
-    new_elements.push_back(new MeshLib::Tri(tri2_nodes));
+    std::array<std::size_t, 3> const tri2_nodes{0, 2, 3};
+    new_elements.push_back(
+        createTriangle(quad->nodes(), nodes, tri2_nodes).release());
 
     return 2;
 }
