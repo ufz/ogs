@@ -15,6 +15,9 @@
 #include "MeshRevision.h"
 
 #include <numeric>
+#include <range/v3/algorithm/copy.hpp>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/Logging.h"
@@ -79,28 +82,40 @@ unsigned subdivideQuad(MeshLib::Element const* const quad,
     return 2;
 }
 
+std::unique_ptr<MeshLib::Element> createTetrahedron(
+    std::span<MeshLib::Node* const> const element_nodes,
+    std::vector<MeshLib::Node*> const& nodes,
+    std::array<std::size_t, 4> const local_ids)
+{
+    using namespace MeshLib::views;
+    auto lookup_in = [](auto const& values)
+    {
+        return ranges::views::transform([&values](std::size_t const n)
+                                        { return values[n]; });
+    };
+
+    std::array<MeshLib::Node*, 4> tet_nodes;
+    ranges::copy(local_ids | lookup_in(element_nodes) | ids | lookup_in(nodes),
+                 begin(tet_nodes));
+
+    return std::make_unique<MeshLib::Tet>(tet_nodes);
+}
+
 /// Subdivides a prism with nonplanar quad faces into two tets.
 unsigned subdividePrism(MeshLib::Element const* const prism,
                         std::vector<MeshLib::Node*> const& nodes,
                         std::vector<MeshLib::Element*>& new_elements)
 {
-    auto addTetrahedron = [&prism, &nodes, &new_elements](
-                              std::size_t const id0, std::size_t const id1,
-                              std::size_t const id2, std::size_t const id3)
+    auto addTetrahedron =
+        [&prism, &nodes, &new_elements](std::array<std::size_t, 4> const ids)
     {
-        std::array<MeshLib::Node*, 4> const tet_nodes = {
-            nodes[prism->getNode(id0)->getID()],
-            nodes[prism->getNode(id1)->getID()],
-            nodes[prism->getNode(id2)->getID()],
-            nodes[prism->getNode(id3)->getID()]};
-        new_elements.push_back(new MeshLib::Tet(tet_nodes));
+        new_elements.push_back(
+            createTetrahedron(prism->nodes(), nodes, ids).release());
     };
 
-    addTetrahedron(0, 1, 2, 3);
-
-    addTetrahedron(3, 2, 4, 5);
-
-    addTetrahedron(2, 1, 3, 4);
+    addTetrahedron({0, 1, 2, 3});
+    addTetrahedron({3, 2, 4, 5});
+    addTetrahedron({2, 1, 3, 4});
 
     return 3;
 }
@@ -136,21 +151,15 @@ unsigned subdividePyramid(MeshLib::Element const* const pyramid,
                           std::vector<MeshLib::Node*> const& nodes,
                           std::vector<MeshLib::Element*>& new_elements)
 {
-    auto addTetrahedron = [&pyramid, &nodes, &new_elements](
-                              std::size_t const id0, std::size_t const id1,
-                              std::size_t const id2, std::size_t const id3)
+    auto addTetrahedron =
+        [&pyramid, &nodes, &new_elements](std::array<std::size_t, 4> const ids)
     {
-        std::array<MeshLib::Node*, 4> const tet_nodes = {
-            nodes[pyramid->getNode(id0)->getID()],
-            nodes[pyramid->getNode(id1)->getID()],
-            nodes[pyramid->getNode(id2)->getID()],
-            nodes[pyramid->getNode(id3)->getID()]};
-        new_elements.push_back(new MeshLib::Tet(tet_nodes));
+        new_elements.push_back(
+            createTetrahedron(pyramid->nodes(), nodes, ids).release());
     };
 
-    addTetrahedron(0, 1, 2, 4);
-
-    addTetrahedron(0, 2, 3, 4);
+    addTetrahedron({0, 1, 2, 4});
+    addTetrahedron({0, 2, 3, 4});
 
     return 2;
 }
@@ -306,15 +315,11 @@ unsigned reducePrism(MeshLib::Element const* const org_elem,
                      std::vector<MeshLib::Element*>& new_elements,
                      unsigned const min_elem_dim)
 {
-    auto addTetrahedron = [&org_elem, &nodes, &new_elements](
-                              std::size_t const id0, std::size_t const id1,
-                              std::size_t const id2, std::size_t const id3)
+    auto addTetrahedron =
+        [&org_elem, &nodes, &new_elements](std::array<std::size_t, 4> const ids)
     {
-        std::array const tet_nodes = {nodes[org_elem->getNode(id0)->getID()],
-                                      nodes[org_elem->getNode(id1)->getID()],
-                                      nodes[org_elem->getNode(id2)->getID()],
-                                      nodes[org_elem->getNode(id3)->getID()]};
-        new_elements.push_back(new MeshLib::Tet(tet_nodes));
+        new_elements.push_back(
+            createTetrahedron(org_elem->nodes(), nodes, ids).release());
     };
 
     // TODO?
@@ -336,10 +341,10 @@ unsigned reducePrism(MeshLib::Element const* const org_elem,
                     // non triangle edge collapsed
                     if (i % 3 == j % 3)
                     {
-                        addTetrahedron((i + 1) % 3, (i + 2) % 3, i,
-                                       (i + 1) % 3 + 3);
-                        addTetrahedron((i + 1) % 3 + 3, (i + 2) % 3, i,
-                                       (i + 2) % 3 + 3);
+                        addTetrahedron(
+                            {(i + 1) % 3, (i + 2) % 3, i, (i + 1) % 3 + 3});
+                        addTetrahedron(
+                            {(i + 1) % 3 + 3, (i + 2) % 3, i, (i + 2) % 3 + 3});
                         return 2;
                     }
 
@@ -354,7 +359,7 @@ unsigned reducePrism(MeshLib::Element const* const org_elem,
                     }
                     const unsigned k_offset = (i > 2) ? k - 3 : k + 3;
 
-                    addTetrahedron(i_offset, j_offset, k_offset, i);
+                    addTetrahedron({i_offset, j_offset, k_offset, i});
 
                     const unsigned l =
                         (MathLib::isCoplanar(*org_elem->getNode(i_offset),
@@ -364,7 +369,7 @@ unsigned reducePrism(MeshLib::Element const* const org_elem,
                             ? j
                             : i;
                     const unsigned l_offset = (i > 2) ? l - 3 : l + 3;
-                    addTetrahedron(l_offset, k_offset, i, k);
+                    addTetrahedron({l_offset, k_offset, i, k});
                     return 2;
                 }
             }
