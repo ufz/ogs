@@ -101,6 +101,25 @@ std::unique_ptr<MeshLib::Element> createTetrahedron(
     return std::make_unique<MeshLib::Tet>(tet_nodes);
 }
 
+std::unique_ptr<MeshLib::Element> createPrism(
+    std::span<MeshLib::Node* const> const element_nodes,
+    std::vector<MeshLib::Node*> const& nodes,
+    std::array<std::size_t, 6> const local_ids)
+{
+    using namespace MeshLib::views;
+    auto lookup_in = [](auto const& values)
+    {
+        return ranges::views::transform([&values](std::size_t const n)
+                                        { return values[n]; });
+    };
+
+    std::array<MeshLib::Node*, std::size(local_ids)> prism_nodes;
+    ranges::copy(local_ids | lookup_in(element_nodes) | ids | lookup_in(nodes),
+                 begin(prism_nodes));
+
+    return std::make_unique<MeshLib::Prism>(prism_nodes);
+}
+
 /// Subdivides a prism with nonplanar quad faces into two tets.
 unsigned subdividePrism(MeshLib::Element const* const prism,
                         std::vector<MeshLib::Node*> const& nodes,
@@ -125,23 +144,11 @@ unsigned subdivideHex(MeshLib::Element const* const hex,
                       std::vector<MeshLib::Node*> const& nodes,
                       std::vector<MeshLib::Element*>& new_elements)
 {
-    std::array<MeshLib::Node*, 6> const prism1_nodes = {
-        nodes[hex->getNode(0)->getID()], nodes[hex->getNode(2)->getID()],
-        nodes[hex->getNode(1)->getID()], nodes[hex->getNode(4)->getID()],
-        nodes[hex->getNode(6)->getID()], nodes[hex->getNode(5)->getID()]};
+    auto prism1 = createPrism(hex->nodes(), nodes, {0, 2, 1, 4, 6, 5});
+    subdividePrism(prism1.get(), nodes, new_elements);
 
-    auto* prism1(new MeshLib::Prism(prism1_nodes));
-    subdividePrism(prism1, nodes, new_elements);
-    delete prism1;
-
-    std::array<MeshLib::Node*, 6> const prism2_nodes = {
-        nodes[hex->getNode(4)->getID()], nodes[hex->getNode(6)->getID()],
-        nodes[hex->getNode(7)->getID()], nodes[hex->getNode(0)->getID()],
-        nodes[hex->getNode(2)->getID()], nodes[hex->getNode(3)->getID()]};
-
-    auto* prism2(new MeshLib::Prism(prism2_nodes));
-    subdividePrism(prism2, nodes, new_elements);
-    delete prism2;
+    auto prism2 = createPrism(hex->nodes(), nodes, {4, 6, 7, 0, 2, 3});
+    subdividePrism(prism2.get(), nodes, new_elements);
 
     return 6;
 }
@@ -621,16 +628,12 @@ unsigned reduceHex(MeshLib::Element const* const org_elem,
                     {
                         std::swap(i, j);
                     }
-                    std::array const prism_nodes{
-                        nodes[org_elem->getNode(base_nodes[0])->getID()],
-                        nodes[org_elem->getNode(base_nodes[3])->getID()],
-                        nodes[org_elem->getNode(lutHexDiametralNode(j))
-                                  ->getID()],
-                        nodes[org_elem->getNode(base_nodes[1])->getID()],
-                        nodes[org_elem->getNode(base_nodes[2])->getID()],
-                        nodes[org_elem->getNode(lutHexDiametralNode(i))
-                                  ->getID()]};
-                    new_elements.push_back(new MeshLib::Prism(prism_nodes));
+                    std::array<std::size_t, 6> const prism_nodes{
+                        base_nodes[0], base_nodes[3], lutHexDiametralNode(j),
+                        base_nodes[1], base_nodes[2], lutHexDiametralNode(i)};
+                    new_elements.push_back(
+                        createPrism(org_elem->nodes(), nodes, prism_nodes)
+                            .release());
                     return 2;
                 }
             }
@@ -645,64 +648,41 @@ unsigned reduceHex(MeshLib::Element const* const org_elem,
             if (face->getNode(0)->getID() == face->getNode(1)->getID() &&
                 face->getNode(2)->getID() == face->getNode(3)->getID())
             {
-                std::array const prism_nodes{
-                    nodes[org_elem
-                              ->getNode(lutHexDiametralNode(getNodeIDinElement(
-                                  *org_elem, face->getNode(0))))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(lutHexDiametralNode(getNodeIDinElement(
-                                  *org_elem, face->getNode(1))))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(getNodeIDinElement(*org_elem,
-                                                           face->getNode(2)))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(lutHexDiametralNode(getNodeIDinElement(
-                                  *org_elem, face->getNode(2))))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(lutHexDiametralNode(getNodeIDinElement(
-                                  *org_elem, face->getNode(3))))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(getNodeIDinElement(*org_elem,
-                                                           face->getNode(0)))
-                              ->getID()]};
-                new_elements.push_back(new MeshLib::Prism(prism_nodes));
+                std::array<std::size_t, 6> const prism_nodes{
+                    lutHexDiametralNode(
+                        getNodeIDinElement(*org_elem, face->getNode(0))),
+                    lutHexDiametralNode(
+                        getNodeIDinElement(*org_elem, face->getNode(1))),
+                    getNodeIDinElement(*org_elem, face->getNode(2)),
+                    lutHexDiametralNode(
+                        getNodeIDinElement(*org_elem, face->getNode(2))),
+                    lutHexDiametralNode(
+                        getNodeIDinElement(*org_elem, face->getNode(3))),
+                    getNodeIDinElement(*org_elem, face->getNode(0))};
+
+                new_elements.push_back(
+                    createPrism(org_elem->nodes(), nodes, prism_nodes)
+                        .release());
                 delete face;
                 return 1;
             }
             if (face->getNode(0)->getID() == face->getNode(3)->getID() &&
                 face->getNode(1)->getID() == face->getNode(2)->getID())
             {
-                std::array const prism_nodes{
-                    nodes[org_elem
-                              ->getNode(lutHexDiametralNode(getNodeIDinElement(
-                                  *org_elem, face->getNode(0))))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(lutHexDiametralNode(getNodeIDinElement(
-                                  *org_elem, face->getNode(3))))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(getNodeIDinElement(*org_elem,
-                                                           face->getNode(2)))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(lutHexDiametralNode(getNodeIDinElement(
-                                  *org_elem, face->getNode(1))))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(lutHexDiametralNode(getNodeIDinElement(
-                                  *org_elem, face->getNode(2))))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(getNodeIDinElement(*org_elem,
-                                                           face->getNode(0)))
-                              ->getID()]};
-                new_elements.push_back(new MeshLib::Prism(prism_nodes));
+                std::array<std::size_t, 6> const prism_nodes{
+                    lutHexDiametralNode(
+                        getNodeIDinElement(*org_elem, face->getNode(0))),
+                    lutHexDiametralNode(
+                        getNodeIDinElement(*org_elem, face->getNode(3))),
+                    getNodeIDinElement(*org_elem, face->getNode(2)),
+                    lutHexDiametralNode(
+                        getNodeIDinElement(*org_elem, face->getNode(1))),
+                    lutHexDiametralNode(
+                        getNodeIDinElement(*org_elem, face->getNode(2))),
+                    getNodeIDinElement(*org_elem, face->getNode(0))};
+                new_elements.push_back(
+                    createPrism(org_elem->nodes(), nodes, prism_nodes)
+                        .release());
                 delete face;
                 return 1;
             }
@@ -741,45 +721,28 @@ unsigned reduceHex(MeshLib::Element const* const org_elem,
                                 std::array<unsigned, 4> const cutting_plane(
                                     lutHexCuttingQuadNodes(back.first,
                                                            back.second));
-                                std::array const pris1_nodes{
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(back.first)),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(cutting_plane[0])),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(cutting_plane[3])),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(back.second)),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(cutting_plane[1])),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(cutting_plane[2]))};
-                                auto* prism1(new MeshLib::Prism(pris1_nodes));
+                                std::array<std::size_t, 6> const pris1_nodes{
+                                    back.first,       cutting_plane[0],
+                                    cutting_plane[3], back.second,
+                                    cutting_plane[1], cutting_plane[2]};
+                                auto prism1 = createPrism(org_elem->nodes(),
+                                                          nodes, pris1_nodes);
                                 unsigned nNewElements =
-                                    reducePrism(prism1, 5, nodes, new_elements,
-                                                min_elem_dim);
-                                delete prism1;
+                                    reducePrism(prism1.get(), 5, nodes,
+                                                new_elements, min_elem_dim);
 
-                                std::array const pris2_nodes{
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(
-                                            lutHexDiametralNode(back.first))),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(cutting_plane[0])),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(cutting_plane[3])),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(
-                                            lutHexDiametralNode(back.second))),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(cutting_plane[1])),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(cutting_plane[2]))};
-                                auto* prism2(new MeshLib::Prism(pris2_nodes));
+                                std::array<std::size_t, 6> const pris2_nodes{
+                                    lutHexDiametralNode(back.first),
+                                    cutting_plane[0],
+                                    cutting_plane[3],
+                                    lutHexDiametralNode(back.second),
+                                    cutting_plane[1],
+                                    cutting_plane[2]};
+                                auto prism2 = createPrism(org_elem->nodes(),
+                                                          nodes, pris2_nodes);
                                 nNewElements +=
-                                    reducePrism(prism2, 5, nodes, new_elements,
-                                                min_elem_dim);
-                                delete prism2;
+                                    reducePrism(prism2.get(), 5, nodes,
+                                                new_elements, min_elem_dim);
                                 return nNewElements;
                             }
                         }
