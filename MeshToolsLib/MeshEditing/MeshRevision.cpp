@@ -64,6 +64,25 @@ unsigned lutPrismThirdNode(unsigned const id1, unsigned const id2)
 
 namespace
 {
+std::unique_ptr<MeshLib::Element> createLine(
+    std::span<MeshLib::Node* const> const element_nodes,
+    std::vector<MeshLib::Node*> const& nodes,
+    std::array<std::size_t, 2> const local_ids)
+{
+    using namespace MeshLib::views;
+    auto lookup_in = [](auto const& values)
+    {
+        return ranges::views::transform([&values](std::size_t const n)
+                                        { return values[n]; });
+    };
+
+    std::array<MeshLib::Node*, std::size(local_ids)> prism_nodes;
+    ranges::copy(local_ids | lookup_in(element_nodes) | ids | lookup_in(nodes),
+                 begin(prism_nodes));
+
+    return std::make_unique<MeshLib::Line>(prism_nodes);
+}
+
 std::unique_ptr<MeshLib::Element> createTriangle(
     std::span<MeshLib::Node* const> const element_nodes,
     std::vector<MeshLib::Node*> const& nodes,
@@ -193,19 +212,17 @@ unsigned subdividePyramid(MeshLib::Element const* const pyramid,
 MeshLib::Element* constructLine(MeshLib::Element const* const element,
                                 const std::vector<MeshLib::Node*>& nodes)
 {
-    std::array<MeshLib::Node*, 2> line_nodes;
-    line_nodes[0] = nodes[element->getNode(0)->getID()];
-    line_nodes[1] = nullptr;
+    std::array<std::size_t, 2> line_nodes = {0, 0};
     for (unsigned i = 1; i < element->getNumberOfBaseNodes(); ++i)
     {
         if (element->getNode(i)->getID() != element->getNode(0)->getID())
         {
-            line_nodes[1] = nodes[element->getNode(i)->getID()];
+            line_nodes[1] = i;
             break;
         }
     }
-    assert(line_nodes[1] != nullptr);
-    return new MeshLib::Line(line_nodes);
+    assert(line_nodes[1] != 0);
+    return createLine(element->nodes(), nodes, line_nodes).release();
 }
 
 /// Creates a triangle element from the first three unique nodes found in the
