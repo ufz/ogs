@@ -28,25 +28,14 @@ double addTimeIncrement(std::vector<double>& delta_ts, std::size_t const repeat,
     {
         delta_ts.resize(new_size, delta_t);
     }
-    catch (std::length_error const& e)
+    catch (std::exception const& e)
     {
         OGS_FATAL(
-            "Resize of the time steps vector failed for the requested "
-            "new size {:d}. Probably there is not enough memory ({:g} "
-            "GiB requested).\n"
-            "Thrown exception: {:s}",
+            "Resize of the time steps vector failed for the requested new size "
+            "{:d}. Probably there is not enough memory ({:g} GiB "
+            "requested).\nThrown exception: {:s}",
             new_size,
             new_size * sizeof(double) / 1024. / 1024. / 1024.,
-            e.what());
-    }
-    catch (std::bad_alloc const& e)
-    {
-        OGS_FATAL(
-            "Resize of the time steps vector failed for the requested "
-            "new size {:d}. Probably there is not enough memory ({:g} "
-            "GiB requested).\n"
-            "Thrown exception: {:s}",
-            new_size, new_size * sizeof(double) / 1024. / 1024. / 1024.,
             e.what());
     }
 
