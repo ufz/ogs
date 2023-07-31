@@ -67,10 +67,7 @@ std::size_t findDeltatInterval(double const t_initial,
         }
         timestepper_time += delta_ts[k];
     }
-    if (fixed_output_time == timestepper_time + delta_ts.back())
-    {
-        return std::numeric_limits<std::size_t>::max();
-    }
+
     return std::numeric_limits<std::size_t>::max();
 }
 
