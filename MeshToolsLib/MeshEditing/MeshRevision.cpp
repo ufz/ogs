@@ -156,6 +156,25 @@ std::unique_ptr<MeshLib::Element> createPrism(
     return std::make_unique<MeshLib::Prism>(prism_nodes);
 }
 
+std::unique_ptr<MeshLib::Element> createPyramid(
+    std::span<MeshLib::Node* const> const element_nodes,
+    std::vector<MeshLib::Node*> const& nodes,
+    std::array<std::size_t, 5> const local_ids)
+{
+    using namespace MeshLib::views;
+    auto lookup_in = [](auto const& values)
+    {
+        return ranges::views::transform([&values](std::size_t const n)
+                                        { return values[n]; });
+    };
+
+    std::array<MeshLib::Node*, std::size(local_ids)> prism_nodes;
+    ranges::copy(local_ids | lookup_in(element_nodes) | ids | lookup_in(nodes),
+                 begin(prism_nodes));
+
+    return std::make_unique<MeshLib::Pyramid>(prism_nodes);
+}
+
 /// Subdivides a prism with nonplanar quad faces into two tets.
 unsigned subdividePrism(MeshLib::Element const* const prism,
                         std::vector<MeshLib::Node*> const& nodes,
@@ -650,13 +669,12 @@ unsigned reduceHex(MeshLib::Element const* const org_elem,
                 {
                     const std::array<unsigned, 4> base_nodes(
                         lutHexCuttingQuadNodes(i, j));
-                    std::array const pyr_nodes{
-                        nodes[org_elem->getNode(base_nodes[0])->getID()],
-                        nodes[org_elem->getNode(base_nodes[1])->getID()],
-                        nodes[org_elem->getNode(base_nodes[2])->getID()],
-                        nodes[org_elem->getNode(base_nodes[3])->getID()],
-                        nodes[org_elem->getNode(i)->getID()]};
-                    new_elements.push_back(new MeshLib::Pyramid(pyr_nodes));
+                    std::array<std::size_t, 5> const pyr_nodes = {
+                        base_nodes[0], base_nodes[1], base_nodes[2],
+                        base_nodes[3], i};
+                    new_elements.push_back(
+                        createPyramid(org_elem->nodes(), nodes, pyr_nodes)
+                            .release());
 
                     if (i < 4 && j >= 4)
                     {
