@@ -64,10 +64,11 @@ unsigned lutPrismThirdNode(unsigned const id1, unsigned const id2)
 
 namespace
 {
-std::unique_ptr<MeshLib::Element> createLine(
+template <typename ElementType>
+std::unique_ptr<MeshLib::Element> createElement(
     std::span<MeshLib::Node* const> const element_nodes,
     std::vector<MeshLib::Node*> const& nodes,
-    std::array<std::size_t, 2> const local_ids)
+    std::array<std::size_t, ElementType::n_all_nodes> const local_ids)
 {
     using namespace MeshLib::views;
     auto lookup_in = [](auto const& values)
@@ -76,30 +77,11 @@ std::unique_ptr<MeshLib::Element> createLine(
                                         { return values[n]; });
     };
 
-    std::array<MeshLib::Node*, std::size(local_ids)> prism_nodes;
+    std::array<MeshLib::Node*, ElementType::n_all_nodes> new_nodes;
     ranges::copy(local_ids | lookup_in(element_nodes) | ids | lookup_in(nodes),
-                 begin(prism_nodes));
+                 begin(new_nodes));
 
-    return std::make_unique<MeshLib::Line>(prism_nodes);
-}
-
-std::unique_ptr<MeshLib::Element> createTriangle(
-    std::span<MeshLib::Node* const> const element_nodes,
-    std::vector<MeshLib::Node*> const& nodes,
-    std::array<std::size_t, 3> const local_ids)
-{
-    using namespace MeshLib::views;
-    auto lookup_in = [](auto const& values)
-    {
-        return ranges::views::transform([&values](std::size_t const n)
-                                        { return values[n]; });
-    };
-
-    std::array<MeshLib::Node*, std::size(local_ids)> tri_nodes;
-    ranges::copy(local_ids | lookup_in(element_nodes) | ids | lookup_in(nodes),
-                 begin(tri_nodes));
-
-    return std::make_unique<MeshLib::Tri>(tri_nodes);
+    return std::make_unique<ElementType>(new_nodes);
 }
 
 /// Subdivides a nonplanar quad into two triangles.
@@ -109,70 +91,15 @@ unsigned subdivideQuad(MeshLib::Element const* const quad,
 {
     std::array<std::size_t, 3> const tri1_nodes{0, 1, 2};
     new_elements.push_back(
-        createTriangle(quad->nodes(), nodes, tri1_nodes).release());
+        createElement<MeshLib::Tri>(quad->nodes(), nodes, tri1_nodes)
+            .release());
 
     std::array<std::size_t, 3> const tri2_nodes{0, 2, 3};
     new_elements.push_back(
-        createTriangle(quad->nodes(), nodes, tri2_nodes).release());
+        createElement<MeshLib::Tri>(quad->nodes(), nodes, tri2_nodes)
+            .release());
 
     return 2;
-}
-
-std::unique_ptr<MeshLib::Element> createTetrahedron(
-    std::span<MeshLib::Node* const> const element_nodes,
-    std::vector<MeshLib::Node*> const& nodes,
-    std::array<std::size_t, 4> const local_ids)
-{
-    using namespace MeshLib::views;
-    auto lookup_in = [](auto const& values)
-    {
-        return ranges::views::transform([&values](std::size_t const n)
-                                        { return values[n]; });
-    };
-
-    std::array<MeshLib::Node*, 4> tet_nodes;
-    ranges::copy(local_ids | lookup_in(element_nodes) | ids | lookup_in(nodes),
-                 begin(tet_nodes));
-
-    return std::make_unique<MeshLib::Tet>(tet_nodes);
-}
-
-std::unique_ptr<MeshLib::Element> createPrism(
-    std::span<MeshLib::Node* const> const element_nodes,
-    std::vector<MeshLib::Node*> const& nodes,
-    std::array<std::size_t, 6> const local_ids)
-{
-    using namespace MeshLib::views;
-    auto lookup_in = [](auto const& values)
-    {
-        return ranges::views::transform([&values](std::size_t const n)
-                                        { return values[n]; });
-    };
-
-    std::array<MeshLib::Node*, std::size(local_ids)> prism_nodes;
-    ranges::copy(local_ids | lookup_in(element_nodes) | ids | lookup_in(nodes),
-                 begin(prism_nodes));
-
-    return std::make_unique<MeshLib::Prism>(prism_nodes);
-}
-
-std::unique_ptr<MeshLib::Element> createPyramid(
-    std::span<MeshLib::Node* const> const element_nodes,
-    std::vector<MeshLib::Node*> const& nodes,
-    std::array<std::size_t, 5> const local_ids)
-{
-    using namespace MeshLib::views;
-    auto lookup_in = [](auto const& values)
-    {
-        return ranges::views::transform([&values](std::size_t const n)
-                                        { return values[n]; });
-    };
-
-    std::array<MeshLib::Node*, std::size(local_ids)> prism_nodes;
-    ranges::copy(local_ids | lookup_in(element_nodes) | ids | lookup_in(nodes),
-                 begin(prism_nodes));
-
-    return std::make_unique<MeshLib::Pyramid>(prism_nodes);
 }
 
 /// Subdivides a prism with nonplanar quad faces into two tets.
@@ -184,7 +111,7 @@ unsigned subdividePrism(MeshLib::Element const* const prism,
         [&prism, &nodes, &new_elements](std::array<std::size_t, 4> const ids)
     {
         new_elements.push_back(
-            createTetrahedron(prism->nodes(), nodes, ids).release());
+            createElement<MeshLib::Tet>(prism->nodes(), nodes, ids).release());
     };
 
     addTetrahedron({0, 1, 2, 3});
@@ -199,10 +126,12 @@ unsigned subdivideHex(MeshLib::Element const* const hex,
                       std::vector<MeshLib::Node*> const& nodes,
                       std::vector<MeshLib::Element*>& new_elements)
 {
-    auto prism1 = createPrism(hex->nodes(), nodes, {0, 2, 1, 4, 6, 5});
+    auto prism1 =
+        createElement<MeshLib::Prism>(hex->nodes(), nodes, {0, 2, 1, 4, 6, 5});
     subdividePrism(prism1.get(), nodes, new_elements);
 
-    auto prism2 = createPrism(hex->nodes(), nodes, {4, 6, 7, 0, 2, 3});
+    auto prism2 =
+        createElement<MeshLib::Prism>(hex->nodes(), nodes, {4, 6, 7, 0, 2, 3});
     subdividePrism(prism2.get(), nodes, new_elements);
 
     return 6;
@@ -217,7 +146,8 @@ unsigned subdividePyramid(MeshLib::Element const* const pyramid,
         [&pyramid, &nodes, &new_elements](std::array<std::size_t, 4> const ids)
     {
         new_elements.push_back(
-            createTetrahedron(pyramid->nodes(), nodes, ids).release());
+            createElement<MeshLib::Tet>(pyramid->nodes(), nodes, ids)
+                .release());
     };
 
     addTetrahedron({0, 1, 2, 4});
@@ -241,7 +171,8 @@ MeshLib::Element* constructLine(MeshLib::Element const* const element,
         }
     }
     assert(line_nodes[1] != 0);
-    return createLine(element->nodes(), nodes, line_nodes).release();
+    return createElement<MeshLib::Line>(element->nodes(), nodes, line_nodes)
+        .release();
 }
 
 /// Creates a triangle element from the first three unique nodes found in the
@@ -379,7 +310,8 @@ unsigned reducePrism(MeshLib::Element const* const org_elem,
         [&org_elem, &nodes, &new_elements](std::array<std::size_t, 4> const ids)
     {
         new_elements.push_back(
-            createTetrahedron(org_elem->nodes(), nodes, ids).release());
+            createElement<MeshLib::Tet>(org_elem->nodes(), nodes, ids)
+                .release());
     };
 
     // TODO?
@@ -673,7 +605,8 @@ unsigned reduceHex(MeshLib::Element const* const org_elem,
                         base_nodes[0], base_nodes[1], base_nodes[2],
                         base_nodes[3], i};
                     new_elements.push_back(
-                        createPyramid(org_elem->nodes(), nodes, pyr_nodes)
+                        createElement<MeshLib::Pyramid>(org_elem->nodes(),
+                                                        nodes, pyr_nodes)
                             .release());
 
                     if (i < 4 && j >= 4)
@@ -684,7 +617,8 @@ unsigned reduceHex(MeshLib::Element const* const org_elem,
                         base_nodes[0], base_nodes[3], lutHexDiametralNode(j),
                         base_nodes[1], base_nodes[2], lutHexDiametralNode(i)};
                     new_elements.push_back(
-                        createPrism(org_elem->nodes(), nodes, prism_nodes)
+                        createElement<MeshLib::Prism>(org_elem->nodes(), nodes,
+                                                      prism_nodes)
                             .release());
                     return 2;
                 }
@@ -713,7 +647,8 @@ unsigned reduceHex(MeshLib::Element const* const org_elem,
                     getNodeIDinElement(*org_elem, face->getNode(0))};
 
                 new_elements.push_back(
-                    createPrism(org_elem->nodes(), nodes, prism_nodes)
+                    createElement<MeshLib::Prism>(org_elem->nodes(), nodes,
+                                                  prism_nodes)
                         .release());
                 delete face;
                 return 1;
@@ -733,7 +668,8 @@ unsigned reduceHex(MeshLib::Element const* const org_elem,
                         getNodeIDinElement(*org_elem, face->getNode(2))),
                     getNodeIDinElement(*org_elem, face->getNode(0))};
                 new_elements.push_back(
-                    createPrism(org_elem->nodes(), nodes, prism_nodes)
+                    createElement<MeshLib::Prism>(org_elem->nodes(), nodes,
+                                                  prism_nodes)
                         .release());
                 delete face;
                 return 1;
@@ -777,8 +713,8 @@ unsigned reduceHex(MeshLib::Element const* const org_elem,
                                     back.first,       cutting_plane[0],
                                     cutting_plane[3], back.second,
                                     cutting_plane[1], cutting_plane[2]};
-                                auto prism1 = createPrism(org_elem->nodes(),
-                                                          nodes, pris1_nodes);
+                                auto prism1 = createElement<MeshLib::Prism>(
+                                    org_elem->nodes(), nodes, pris1_nodes);
                                 unsigned nNewElements =
                                     reducePrism(prism1.get(), 5, nodes,
                                                 new_elements, min_elem_dim);
@@ -790,8 +726,8 @@ unsigned reduceHex(MeshLib::Element const* const org_elem,
                                     lutHexDiametralNode(back.second),
                                     cutting_plane[1],
                                     cutting_plane[2]};
-                                auto prism2 = createPrism(org_elem->nodes(),
-                                                          nodes, pris2_nodes);
+                                auto prism2 = createElement<MeshLib::Prism>(
+                                    org_elem->nodes(), nodes, pris2_nodes);
                                 nNewElements +=
                                     reducePrism(prism2.get(), 5, nodes,
                                                 new_elements, min_elem_dim);
