@@ -63,7 +63,6 @@ private:
     std::vector<double> _local_K_data;
     std::vector<double> _local_b_data;
     std::vector<double> _local_x_perturbed_data;
-    std::vector<double> _local_xdot_perturbed_data;
 };
 
 }  // namespace ProcessLib

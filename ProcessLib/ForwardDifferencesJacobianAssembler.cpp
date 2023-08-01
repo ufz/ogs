@@ -28,7 +28,7 @@ ForwardDifferencesJacobianAssembler::ForwardDifferencesJacobianAssembler(
 void ForwardDifferencesJacobianAssembler::assembleWithJacobian(
     LocalAssemblerInterface& local_assembler, const double t, double const dt,
     const std::vector<double>& local_x_data,
-    const std::vector<double>& local_xdot_data,
+    const std::vector<double>& local_x_prev_data,
     std::vector<double>& local_M_data, std::vector<double>& local_K_data,
     std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
 {
@@ -45,10 +45,9 @@ void ForwardDifferencesJacobianAssembler::assembleWithJacobian(
     auto const num_r_c =
         static_cast<Eigen::MatrixXd::Index>(local_x_data.size());
 
-    auto const local_x =
-        MathLib::toVector<Eigen::VectorXd>(local_x_data, num_r_c);
-    auto const local_xdot =
-        MathLib::toVector<Eigen::VectorXd>(local_xdot_data, num_r_c);
+    auto const x = MathLib::toVector<Eigen::VectorXd>(local_x_data, num_r_c);
+    auto const x_prev =
+        MathLib::toVector<Eigen::VectorXd>(local_x_prev_data, num_r_c);
 
     auto local_Jac =
         MathLib::createZeroedMatrix(local_Jac_data, num_r_c, num_r_c);
@@ -58,8 +57,8 @@ void ForwardDifferencesJacobianAssembler::assembleWithJacobian(
 
     // Assemble with unperturbed local x to get M0, K0, and b0 used in the
     // finite differences below.
-    local_assembler.assemble(t, dt, local_x_data, local_xdot_data, local_M_data,
-                             local_K_data, local_b_data);
+    local_assembler.assemble(t, dt, local_x_data, local_x_prev_data,
+                             local_M_data, local_K_data, local_b_data);
 
     // Residual  res := M xdot + K x - b
     // Computing Jac := dres/dx
@@ -76,13 +75,8 @@ void ForwardDifferencesJacobianAssembler::assembleWithJacobian(
         auto const x_p = MathLib::toVector<Eigen::VectorXd>(
             _local_x_perturbed_data, num_r_c);
 
-        _local_xdot_perturbed_data = local_xdot_data;
-        _local_xdot_perturbed_data[i] = local_xdot_data[i] + eps / dt;
-        auto const xdot_p = MathLib::toVector<Eigen::VectorXd>(
-            _local_xdot_perturbed_data, num_r_c);
-
         local_assembler.assemble(t, dt, _local_x_perturbed_data,
-                                 _local_xdot_perturbed_data, _local_M_data,
+                                 local_x_prev_data, _local_M_data,
                                  _local_K_data, _local_b_data);
 
         if (!local_M_data.empty() && !_local_M_data.empty())
@@ -92,7 +86,8 @@ void ForwardDifferencesJacobianAssembler::assembleWithJacobian(
             auto const local_M_p =
                 MathLib::toMatrix(_local_M_data, num_r_c, num_r_c);
             local_Jac.col(i).noalias() +=
-                (local_M_p * xdot_p - local_M_0 * local_xdot) / eps;
+                (local_M_p * (x_p - x_prev) - local_M_0 * (x - x_prev)) /
+                (dt * eps);
             _local_M_data.clear();
         }
         if (!local_K_data.empty() && !_local_K_data.empty())
@@ -102,7 +97,7 @@ void ForwardDifferencesJacobianAssembler::assembleWithJacobian(
             auto const local_K_p =
                 MathLib::toMatrix(_local_K_data, num_r_c, num_r_c);
             local_Jac.col(i).noalias() +=
-                (local_K_p * x_p - local_K_0 * local_x) / eps;
+                (local_K_p * x_p - local_K_0 * x) / eps;
             _local_K_data.clear();
         }
         if (!local_b_data.empty() && !_local_b_data.empty())
@@ -121,8 +116,8 @@ void ForwardDifferencesJacobianAssembler::assembleWithJacobian(
     local_b_data.clear();
     // Assemble with unperturbed local x to keep the internal assembler state
     // for next iteration or time step.
-    local_assembler.assemble(t, dt, local_x_data, local_xdot_data, local_M_data,
-                             local_K_data, local_b_data);
+    local_assembler.assemble(t, dt, local_x_data, local_x_prev_data,
+                             local_M_data, local_K_data, local_b_data);
 
     // Move the M and K contributions to the residuum for evaluation of nodal
     // forces, flow rates, and the like. Cleaning up the M's and K's storage so
@@ -140,14 +135,12 @@ void ForwardDifferencesJacobianAssembler::assembleWithJacobian(
     if (!local_M_data.empty())
     {
         auto M = MathLib::toMatrix(local_M_data, num_r_c, num_r_c);
-        auto x_dot = MathLib::toVector(local_xdot_data);
-        b -= M * x_dot;
+        b -= M * (x - x_prev) / dt;
         local_M_data.clear();
     }
     if (!local_K_data.empty())
     {
         auto K = MathLib::toMatrix(local_K_data, num_r_c, num_r_c);
-        auto x = MathLib::toVector(local_x_data);
         b -= K * x;
         local_K_data.clear();
     }
