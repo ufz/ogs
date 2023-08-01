@@ -110,18 +110,18 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int GlobalDim>
-void HydroMechanicsLocalAssemblerMatrix<
-    ShapeFunctionDisplacement, ShapeFunctionPressure,
-    GlobalDim>::assembleWithJacobianConcrete(double const t, double const dt,
-                                             Eigen::VectorXd const& local_x,
-                                             Eigen::VectorXd const& local_x_dot,
-                                             Eigen::VectorXd& local_rhs,
-                                             Eigen::MatrixXd& local_Jac)
+void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
+                                        ShapeFunctionPressure, GlobalDim>::
+    assembleWithJacobianConcrete(double const t, double const dt,
+                                 Eigen::VectorXd const& local_x,
+                                 Eigen::VectorXd const& local_x_prev,
+                                 Eigen::VectorXd& local_rhs,
+                                 Eigen::MatrixXd& local_Jac)
 {
     auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index,
                                                            pressure_size);
-    auto p_dot = const_cast<Eigen::VectorXd&>(local_x_dot)
-                     .segment(pressure_index, pressure_size);
+    auto p_prev = const_cast<Eigen::VectorXd&>(local_x_prev)
+                      .segment(pressure_index, pressure_size);
 
     if (_process_data.deactivate_matrix_in_flow)
     {
@@ -130,7 +130,7 @@ void HydroMechanicsLocalAssemblerMatrix<
     }
 
     auto u = local_x.segment(displacement_index, displacement_size);
-    auto u_dot = local_x_dot.segment(displacement_index, displacement_size);
+    auto u_prev = local_x_prev.segment(displacement_index, displacement_size);
 
     auto rhs_p = local_rhs.template segment<pressure_size>(pressure_index);
     auto rhs_u =
@@ -145,7 +145,7 @@ void HydroMechanicsLocalAssemblerMatrix<
     auto J_up = local_Jac.template block<displacement_size, pressure_size>(
         displacement_index, pressure_index);
 
-    assembleBlockMatricesWithJacobian(t, dt, p, p_dot, u, u_dot, rhs_p, rhs_u,
+    assembleBlockMatricesWithJacobian(t, dt, p, p_prev, u, u_prev, rhs_p, rhs_u,
                                       J_pp, J_pu, J_uu, J_up);
 }
 
@@ -156,9 +156,9 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     assembleBlockMatricesWithJacobian(
         double const t, double const dt,
         Eigen::Ref<const Eigen::VectorXd> const& p,
-        Eigen::Ref<const Eigen::VectorXd> const& p_dot,
+        Eigen::Ref<const Eigen::VectorXd> const& p_prev,
         Eigen::Ref<const Eigen::VectorXd> const& u,
-        Eigen::Ref<const Eigen::VectorXd> const& u_dot,
+        Eigen::Ref<const Eigen::VectorXd> const& u_prev,
         Eigen::Ref<Eigen::VectorXd> rhs_p, Eigen::Ref<Eigen::VectorXd> rhs_u,
         Eigen::Ref<Eigen::MatrixXd> J_pp, Eigen::Ref<Eigen::MatrixXd> J_pu,
         Eigen::Ref<Eigen::MatrixXd> J_uu, Eigen::Ref<Eigen::MatrixXd> J_up)

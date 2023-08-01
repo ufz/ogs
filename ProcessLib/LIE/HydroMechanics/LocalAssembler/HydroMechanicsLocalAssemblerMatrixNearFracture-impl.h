@@ -47,22 +47,23 @@ void HydroMechanicsLocalAssemblerMatrixNearFracture<
     ShapeFunctionDisplacement, ShapeFunctionPressure,
     GlobalDim>::assembleWithJacobianConcrete(double const t, double const dt,
                                              Eigen::VectorXd const& local_x,
-                                             Eigen::VectorXd const& local_x_dot,
+                                             Eigen::VectorXd const&
+                                                 local_x_prev,
                                              Eigen::VectorXd& local_b,
                                              Eigen::MatrixXd& local_J)
 {
     auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index,
                                                            pressure_size);
-    auto p_dot = const_cast<Eigen::VectorXd&>(local_x_dot)
-                     .segment(pressure_index, pressure_size);
+    auto p_prev = const_cast<Eigen::VectorXd&>(local_x_prev)
+                      .segment(pressure_index, pressure_size);
     if (_process_data.deactivate_matrix_in_flow)
     {
         Base::setPressureOfInactiveNodes(t, p);
         Base::setPressureDotOfInactiveNodes(p_dot);
     }
     auto const u = local_x.segment(displacement_index, displacement_size);
-    auto const u_dot =
-        local_x_dot.segment(displacement_index, displacement_size);
+    auto const u_prev =
+        local_x_prev.segment(displacement_index, displacement_size);
 
     auto rhs_p = local_b.segment(pressure_index, pressure_size);
     auto rhs_u = local_b.segment(displacement_index, displacement_size);
@@ -86,7 +87,7 @@ void HydroMechanicsLocalAssemblerMatrixNearFracture<
     {
         // no DoF exists for displacement jumps. do the normal assembly
         Base::assembleBlockMatricesWithJacobian(
-            t, dt, p, p_dot, u, u_dot, rhs_p, rhs_u, J_pp, J_pu, J_uu, J_up);
+            t, dt, p, p_prev, u, u_prev, rhs_p, rhs_u, J_pp, J_pu, J_uu, J_up);
         return;
     }
 
@@ -94,14 +95,14 @@ void HydroMechanicsLocalAssemblerMatrixNearFracture<
 
     // compute true displacements
     auto const g = local_x.segment(displacement_jump_index, displacement_size);
-    auto const g_dot =
-        local_x_dot.segment(displacement_jump_index, displacement_size);
+    auto const g_prev =
+        local_x_prev.segment(displacement_jump_index, displacement_size);
     Eigen::VectorXd const total_u = u + ele_levelset * g;
-    Eigen::VectorXd const total_u_dot = u_dot + ele_levelset * g_dot;
+    Eigen::VectorXd const total_u_prev = u_prev + ele_levelset * g_prev;
 
     // evaluate residuals and Jacobians for pressure and displacements
-    Base::assembleBlockMatricesWithJacobian(t, dt, p, p_dot, total_u,
-                                            total_u_dot, rhs_p, rhs_u, J_pp,
+    Base::assembleBlockMatricesWithJacobian(t, dt, p, p_prev, total_u,
+                                            total_u_prev, rhs_p, rhs_u, J_pp,
                                             J_pu, J_uu, J_up);
 
     // compute residuals and Jacobians for displacement jumps
