@@ -226,7 +226,7 @@ public:
         }
 
         local_Jac.noalias() += laplace + storage / dt;
-        local_rhs.noalias() -= laplace * x + storage * x_dot;
+        local_rhs.noalias() -= laplace * x + storage * (x - x_prev) / dt;
     }
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
