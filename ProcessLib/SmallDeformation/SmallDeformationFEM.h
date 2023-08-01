@@ -300,7 +300,7 @@ public:
                 sigma_prev);
         variables_prev.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                B * (u - u_dot * dt));
+                B * u_prev);
 
         double const T_ref =
             _process_data.reference_temperature
