@@ -273,12 +273,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const [T, p_L, u] = localDOF(local_x);
     auto const [T_prev, p_L_prev, u_prev] = localDOF(local_x_prev);
 
-    block_T(local_rhs).noalias() -= loc_mat.M_TT * T_dot + loc_mat.K_TT * T +
-                                    loc_mat.K_Tp * p_L + loc_mat.M_Tp * p_L_dot;
+    block_T(local_rhs).noalias() -= loc_mat.M_TT * (T - T_prev) / dt +
+                                    loc_mat.K_TT * T + loc_mat.K_Tp * p_L +
+                                    loc_mat.M_Tp * (p_L - p_L_prev) / dt;
     block_p(local_rhs).noalias() -=
         loc_mat.K_pp * p_L + loc_mat.K_pT * T +
-        (loc_mat.storage_p_a_p + loc_mat.storage_p_a_S) * p_L_dot +
-        loc_mat.M_pu * u_dot + loc_mat.M_pT * T_dot;
+        (loc_mat.storage_p_a_p + loc_mat.storage_p_a_S) * (p_L - p_L_prev) /
+            dt +
+        loc_mat.M_pu * (u - u_prev) / dt + loc_mat.M_pT * (T - T_prev) / dt;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
@@ -342,7 +344,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         KelvinVectorType eps = B * u;
         // TODO conceptual consistency check. introduced for volumetric strain
         // rate computation
-        KelvinVectorType eps_prev = eps - B * (u_dot * dt);
+        KelvinVectorType eps_prev = B * u_prev;
 
         CS.eval(models, t, dt, x_position,                 //
                 medium,                                    //
@@ -427,8 +429,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     block_pT(out.Jac).noalias() = CD.vap_data.J_pT_X_dNTdN * dNTdN;
     block_pp(out.Jac).noalias() =
         CD.storage_data.J_pp_X_NTN * NTN +
-        CD.eq_p_data.J_pp_X_BTI2NT_u_dot_N * BTI2N.transpose() * u_dot *
-            N  // TODO something with volumetric strain rate?
+        CD.eq_p_data.J_pp_X_BTI2NT_u_dot_N * BTI2N.transpose() * (u - u_prev) /
+            dt * N  // TODO something with volumetric strain rate?
         + dNdx.transpose() * CD.eq_p_data.J_pp_dNT_V_N * N;
 
     block_uT(out.Jac).noalias() =
@@ -521,14 +523,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         KelvinVectorType eps = B * u;
         // TODO conceptual consistency check. introduced for volumetric strain
         // rate computation
-        KelvinVectorType eps_prev = eps - B * (u_dot * dt);
+        KelvinVectorType eps_prev = B * u_prev;
 
         constitutive_setting.eval(
-            models,                                   //
-            t, dt, x_position,                        //
-            medium,                                   //
-            {T_ip, T_dot_ip, grad_T_ip},              //
-            {p_cap_ip, p_cap_dot_ip, grad_p_cap_ip},  //
+            models,                                    //
+            t, dt, x_position,                         //
+            medium,                                    //
+            {T_ip, T_prev_ip, grad_T_ip},              //
+            {p_cap_ip, p_cap_prev_ip, grad_p_cap_ip},  //
             eps, eps_prev, current_state, this->prev_states_[ip],
             this->material_states_[ip], tmp, output_data, CD);
 

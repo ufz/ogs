@@ -58,8 +58,7 @@ void TransportPorosityModel<DisplacementDim>::eval(
     // Used in MaterialLib/MPL/Properties/PorosityFromMassBalance.cpp
     // and MaterialLib/MPL/Properties/TransportPorosityFromMassBalance.cpp
     variables_prev.effective_pore_pressure =
-        -bishops_data_prev.chi_S_L *
-        (p_cap_data.p_cap - p_cap_data.p_cap_dot * x_t.dt);
+        -bishops_data_prev.chi_S_L * p_cap_data.p_cap_prev;
 
     transport_poro_data.phi =
         medium.property(MPL::PropertyType::transport_porosity)

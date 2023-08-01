@@ -36,8 +36,8 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
 
-    double const dT = T_data.T_dot * x_t.dt;
-    double const T_prev = T_data.T - dT;
+    double const T_prev = T_data.T_prev;
+    double const dT = T_data.T - T_prev;
 
     current_state.eps_m.noalias() =
         prev_state.eps_m + eps_data.eps - eps_prev_data.eps -
