@@ -159,8 +159,7 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
                     .template dValue<double>(
                         vars, MaterialPropertyLib::Variable::temperature, pos,
                         t, dt);
-            double Tdot_int_pt = 0.;
-            NumLib::shapeFunctionInterpolate(local_Tdot, N, Tdot_int_pt);
+            double const Tdot_int_pt = (T_int_pt - local_T_prev.dot(N)) / dt;
             auto const biot_constant = process_data.biot_constant(t, pos)[0];
             const double eff_thermal_expansion =
                 3.0 * (biot_constant - porosity) * solid_thermal_expansion -
