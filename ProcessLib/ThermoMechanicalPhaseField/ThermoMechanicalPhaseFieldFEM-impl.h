@@ -184,7 +184,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
 
         double const d_ip = N.dot(d);
         double const T_ip = N.dot(T);
-        double const T_dot_ip = N.dot(T_dot);
+        double const T_dot_ip = (T_ip - N.dot(T_prev)) / dt;
         double const delta_T = T_ip - T0;
         // calculate real density
         double const rho_s = rho_sr / (1 + 3 * alpha * delta_T);
