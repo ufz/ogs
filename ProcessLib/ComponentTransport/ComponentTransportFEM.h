@@ -903,11 +903,10 @@ public:
 
             // coupling term
             {
-                double dot_C_int_pt = 0.0;
-                NumLib::shapeFunctionInterpolate(local_Cdot, N, dot_C_int_pt);
+                double const C_dot = (C_int_pt - N.dot(local_C_prev)) / dt;
 
                 local_b.noalias() -=
-                    w * N.transpose() * porosity * drho_dC * dot_C_int_pt;
+                    w * N.transpose() * porosity * drho_dC * C_dot;
             }
         }
     }
@@ -1074,9 +1073,8 @@ public:
             // coupling term
             if (_process_data.non_advective_form)
             {
-                double dot_p_int_pt = 0.0;
+                double const p_dot = (p_int_pt - N.dot(local_p_prev)) / dt;
 
-                NumLib::shapeFunctionInterpolate(local_pdot, N, dot_p_int_pt);
                 const double drho_dp =
                     phase[MaterialPropertyLib::PropertyType::density]
                         .template dValue<double>(
@@ -1084,7 +1082,7 @@ public:
                             pos, t, dt);
 
                 local_K.noalias() +=
-                    N_t_N * ((R_times_phi * drho_dp * dot_p_int_pt) * w) -
+                    N_t_N * ((R_times_phi * drho_dp * p_dot) * w) -
                     dNdx.transpose() * velocity * N * (density * w);
             }
             else
@@ -1183,7 +1181,7 @@ public:
             double const p_ip = N.dot(p);
             double const c_ip = N.dot(c);
 
-            double const cdot_ip = N.dot(cdot);
+            double const cdot_ip = (c_ip - N.dot(c_prev)) / dt;
 
             vars.phase_pressure = p_ip;
             vars.concentration = c_ip;
@@ -1228,7 +1226,7 @@ public:
 
             local_rhs.noalias() -=
                 w * N.transpose() * phi *
-                    (drho_dp * N * pdot + drho_dc * cdot_ip) +
+                    (drho_dp * N * p_prev + drho_dc * cdot_ip) +
                 w * rho * dNdx.transpose() * k / mu * dNdx * p;
 
             if (_process_data.has_gravity)
@@ -1366,6 +1364,7 @@ public:
 
             KCC_Laplacian.noalias() += w * rho * dNdx.transpose() * D * dNdx;
 
+            auto const cdot = (c - c_prev) / dt;
             local_rhs.noalias() -=
                 w * rho * N.transpose() * phi * R * N * (cdot + alpha * c);
 
