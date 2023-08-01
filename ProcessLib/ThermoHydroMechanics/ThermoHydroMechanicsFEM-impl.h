@@ -181,7 +181,8 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     auto const& dNdx = ip_data.dNdx;
 
     auto const T_int_pt = N.dot(T);
-    double const dT_int_pt = N.dot(T_dot) * dt;
+    auto const T_prev_int_pt = N.dot(T_prev);
+    double const dT_int_pt = T_int_pt - T_prev_int_pt;
 
     auto const x_coord =
         NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -310,7 +311,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             eps_m);
 
     crv.C = ip_data.updateConstitutiveRelation(vars, t, x_position, dt,
-                                               T_int_pt - dT_int_pt);
+                                               T_prev_int_pt);
 
     crv.rho = solid_density * (1 - porosity) + porosity * fluid_density;
 
@@ -442,7 +443,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                 eps_m_ice);
         auto const C_IR = ip_data.updateConstitutiveRelationIce(
             *_process_data.ice_constitutive_relation, vars_ice, t, x_position,
-            dt, T_int_pt - dT_int_pt);
+            dt, T_prev_int_pt);
         crv.effective_volumetric_heat_capacity +=
             -phi_fr * fluid_density * crv.c_f + phi_fr * rho_fr * c_fr -
             l_fr * rho_fr * dphi_fr_dT;
@@ -468,7 +469,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
         crv.J_TT_fr = ((rho_fr * c_fr - fluid_density * crv.c_f) * dphi_fr_dT +
                        l_fr * rho_fr * d2phi_fr_dT2) *
-                      N.dot(T_dot);
+                      dT_int_pt / dt;
     }
     return crv;
 }
@@ -770,8 +771,8 @@ void ThermoHydroMechanicsLocalAssembler<
 
     // pressure equation (f_p)
     local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
-        laplace_p * p + laplace_T * T + storage_p * p_dot - storage_T * T_dot +
-        Kup.transpose() * u_dot;
+        laplace_p * p + laplace_T * T + storage_p * (p - p_prev) / dt -
+        storage_T * (T - T_prev) / dt + Kup.transpose() * (u - u_prev) / dt;
 
     // displacement equation (f_u)
     local_rhs.template segment<displacement_size>(displacement_index)
@@ -779,7 +780,7 @@ void ThermoHydroMechanicsLocalAssembler<
 
     // temperature equation (f_T)
     local_rhs.template segment<temperature_size>(temperature_index).noalias() -=
-        KTT * T + MTT * T_dot;
+        KTT * T + MTT * (T - T_prev) / dt;
 
     local_rhs.template segment<temperature_size>(temperature_index).noalias() -=
         KTp * p;
