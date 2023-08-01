@@ -280,7 +280,7 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         ip_data.beta_T_SR = Invariants::trace(ip_data.alpha_T_SR);
 
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dthermal_strain = ip_data.alpha_T_SR * T_dot * dt;
+            dthermal_strain = ip_data.alpha_T_SR * (T - T_prev);
 
         auto& eps_prev = ip_data.eps_prev;
         auto& eps_m = ip_data.eps_m;
@@ -988,8 +988,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 ? eps + C_el.inverse() * sigma_sw
                 : eps;
     }
-    updateConstitutiveVariables(local_x, Eigen::VectorXd::Zero(matrix_size), t,
-                                0);
+    // local_x_prev equal to local_x s.t. the local_x_dot is zero.
+    updateConstitutiveVariables(local_x, local_x, t, 0);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -1222,13 +1222,13 @@ void TH2MLocalAssembler<
 
         if (_process_data.apply_mass_lumping)
         {
-            if (pCap_dot != 0.)  // avoid division by Zero
+            if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
                 MCpC.noalias() +=
                     NpT *
                     (phi * (ip.rhoCLR - ip.rhoCGR) -
                      rho_C_FR * pCap * (alpha_B - phi) * beta_p_SR) *
-                    s_L_dot / pCap_dot * Np * w;
+                    s_L_dot * dt / (pCap - pCap_prev) * Np * w;
             }
         }
 
@@ -1298,13 +1298,13 @@ void TH2MLocalAssembler<
 
         if (_process_data.apply_mass_lumping)
         {
-            if (pCap_dot != 0.)  // avoid division by Zero
+            if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
                 MWpC.noalias() +=
                     NpT *
                     (phi * (ip.rhoWLR - ip.rhoWGR) -
                      rho_W_FR * pCap * (alpha_B - phi) * beta_p_SR) *
-                    s_L_dot / pCap_dot * Np * w;
+                    s_L_dot * dt / (pCap - pCap_prev) * Np * w;
             }
         }
 
@@ -1432,6 +1432,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     auto const capillary_pressure =
         Eigen::Map<VectorType<capillary_pressure_size> const>(
             local_x.data() + capillary_pressure_index, capillary_pressure_size);
+
+    auto const displacement = Eigen::Map<VectorType<displacement_size> const>(
+        local_x.data() + displacement_index, displacement_size);
 
     auto const gas_pressure_prev =
         Eigen::Map<VectorType<gas_pressure_size> const>(
@@ -1579,9 +1582,12 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto const BuT = Bu.transpose().eval();
 
-        double const div_u_dot = Invariants::trace(Bu * displacement_dot);
+        double const div_u_dot =
+            Invariants::trace(Bu * (displacement - displacement_prev) / dt);
 
+        double const pGR = Np.dot(gas_pressure);
         double const pCap = Np.dot(capillary_pressure);
+        double const T = NT.dot(temperature);
 
         GlobalDimVectorType const gradpGR = gradNp * gas_pressure;
         GlobalDimVectorType const gradpCap = gradNp * capillary_pressure;
@@ -1657,13 +1663,13 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         if (_process_data.apply_mass_lumping)
         {
-            if (pCap_dot != 0.)  // avoid division by Zero
+            if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
                 MCpC.noalias() +=
                     NpT *
                     (phi * (ip.rhoCLR - ip.rhoCGR) -
                      rho_C_FR * pCap * (alpha_B - phi) * beta_p_SR) *
-                    s_L_dot / pCap_dot * Np * w;
+                    s_L_dot * dt / (pCap - pCap_prev) * Np * w;
             }
         }
 
@@ -1672,7 +1678,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         local_Jac
             .template block<C_size, temperature_size>(C_index,
                                                       temperature_index)
-            .noalias() += NpT * ip_cv.dfC_4_MCT_dT * T_dot * NT * w;
+            .noalias() += NpT * ip_cv.dfC_4_MCT_dT * (T - T_prev) / dt * NT * w;
 
         MCu.noalias() += NpT * rho_C_FR * alpha_B * mT * Bu * w;
         // d (fC_4_MCu * u_dot)/d T
@@ -1724,13 +1730,14 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         // d (fC_4_MCpG * p_GR_dot)/d p_GR
         local_Jac.template block<C_size, C_size>(C_index, C_index).noalias() +=
-            NpT * ip_cv.dfC_4_MCpG_dp_GR * pGR_dot * Np * w;
+            NpT * ip_cv.dfC_4_MCpG_dp_GR * (pGR - pGR_prev) / dt * Np * w;
 
         // d (fC_4_MCpG * p_GR_dot)/d T
         local_Jac
             .template block<C_size, temperature_size>(C_index,
                                                       temperature_index)
-            .noalias() += NpT * ip_cv.dfC_4_MCpG_dT * pGR_dot * NT * w;
+            .noalias() +=
+            NpT * ip_cv.dfC_4_MCpG_dT * (pGR - pGR_prev) / dt * NT * w;
 
         LCpC.noalias() -=
             gradNpT * (advection_C_L + diffusion_C_L_p) * gradNp * w;
@@ -1824,13 +1831,13 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         if (_process_data.apply_mass_lumping)
         {
-            if (pCap_dot != 0.)  // avoid division by Zero
+            if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
                 MWpC.noalias() +=
                     NpT *
                     (phi * (ip.rhoWLR - ip.rhoWGR) -
                      rho_W_FR * pCap * (alpha_B - phi) * beta_p_SR) *
-                    s_L_dot / pCap_dot * Np * w;
+                    s_L_dot * dt / (pCap - pCap_prev) * Np * w;
             }
         }
 
@@ -2121,9 +2128,11 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     // --- Gas ---
     // fC_4
     fC.noalias() -= LCpG * gas_pressure + LCpC * capillary_pressure +
-                    LCT * temperature + MCpG * gas_pressure_dot +
-                    MCpC * capillary_pressure_dot + MCT * temperature_dot +
-                    MCu * displacement_dot;
+                    LCT * temperature +
+                    MCpG * (gas_pressure - gas_pressure_prev) / dt +
+                    MCpC * (capillary_pressure - capillary_pressure_prev) / dt +
+                    MCT * (temperature - temperature_prev) / dt +
+                    MCu * (displacement - displacement_prev) / dt;
 
     local_Jac.template block<C_size, C_size>(C_index, C_index).noalias() +=
         LCpG + MCpG / dt;
@@ -2139,9 +2148,11 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     // --- Capillary pressure ---
     // fW_4
     fW.noalias() -= LWpG * gas_pressure + LWpC * capillary_pressure +
-                    LWT * temperature + MWpG * gas_pressure_dot +
-                    MWpC * capillary_pressure_dot + MWT * temperature_dot +
-                    MWu * displacement_dot;
+                    LWT * temperature +
+                    MWpG * (gas_pressure - gas_pressure_prev) / dt +
+                    MWpC * (capillary_pressure - capillary_pressure_prev) / dt +
+                    MWT * (temperature - temperature_prev) / dt +
+                    MWu * (displacement - displacement_prev) / dt;
 
     local_Jac.template block<W_size, W_size>(W_index, W_index).noalias() +=
         LWpC + MWpC / dt;
@@ -2156,7 +2167,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     // --- Temperature ---
     // fT_4
-    fT.noalias() -= KTT * temperature + MTu * displacement_dot;
+    fT.noalias() -=
+        KTT * temperature + MTu * (displacement - displacement_prev) / dt;
 
     local_Jac
         .template block<temperature_size, temperature_size>(temperature_index,
