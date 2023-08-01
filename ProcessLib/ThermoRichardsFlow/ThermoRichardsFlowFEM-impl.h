@@ -244,8 +244,6 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
         double T_ip;
         NumLib::shapeFunctionInterpolate(T, N, T_ip);
-        double T_dot_ip;
-        NumLib::shapeFunctionInterpolate(T_dot, N, T_dot_ip);
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
@@ -296,8 +294,9 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         // secant derivative from time discretization for storage
         // use tangent, if secant is not available
         double const DeltaS_L_Deltap_cap =
-            (p_cap_dot_ip == 0) ? dS_L_dp_cap
-                                : (S_L - S_L_prev) / (dt * p_cap_dot_ip);
+            (p_cap_ip == p_cap_prev_ip)
+                ? dS_L_dp_cap
+                : (S_L - S_L_prev) / (p_cap_ip - p_cap_prev_ip);
 
         auto chi_S_L = S_L;
         auto chi_S_L_prev = S_L_prev;
@@ -325,8 +324,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         // variables.solid_grain_pressure = p_FR;
 
         variables.effective_pore_pressure = -chi_S_L * p_cap_ip;
-        variables_prev.effective_pore_pressure =
-            -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
+        variables_prev.effective_pore_pressure = -chi_S_L_prev * p_cap_prev_ip;
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update
@@ -417,8 +415,8 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
                                                           pressure_index)
-            .noalias() += N.transpose() * p_cap_dot_ip * rho_LR *
-                          dspecific_storage_a_p_dp_cap * N * w;
+            .noalias() += N.transpose() * (p_cap_ip - p_cap_prev_ip) / dt *
+                          rho_LR * dspecific_storage_a_p_dp_cap * N * w;
 
         storage_p_a_S_Jpp.noalias() -=
             N.transpose() * rho_LR *
@@ -662,14 +660,15 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
     //
     // temperature equation
     local_rhs.template segment<temperature_size>(temperature_index).noalias() -=
-        M_TT * T_dot + K_TT * T;
+        M_TT * (T - T_prev) / dt + K_TT * T;
     local_rhs.template segment<temperature_size>(temperature_index).noalias() -=
         K_Tp * p_L;
 
     // pressure equation
     local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
         laplace_p * p_L + laplace_T * T +
-        (storage_p_a_p + storage_p_a_S) * p_L_dot + M_pT * T_dot;
+        (storage_p_a_p + storage_p_a_S) * (p_L - p_L_prev) / dt +
+        M_pT * (T - T_prev) / dt;
     if (liquid_phase.hasProperty(MPL::PropertyType::vapour_diffusion) &&
         liquid_phase.hasProperty(MPL::PropertyType::latent_heat))
     {
@@ -680,7 +679,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
             .noalias() += M_Tp / dt;
         // RHS: temperature part
         local_rhs.template segment<temperature_size>(temperature_index)
-            .noalias() -= M_Tp * p_L_dot;
+            .noalias() -= M_Tp * (p_L - p_L_prev) / dt;
     }
 }
 
@@ -700,10 +699,6 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         typename ShapeMatricesType::template VectorType<pressure_size> const>(
         local_x.data() + pressure_index, pressure_size);
 
-    auto const T_dot =
-        Eigen::Map<typename ShapeMatricesType::template VectorType<
-            temperature_size> const>(local_xdot.data() + temperature_index,
-                                     temperature_size);
     auto const p_L_prev = Eigen::Map<
         typename ShapeMatricesType::template VectorType<pressure_size> const>(
         local_x_prev.data() + pressure_index, pressure_size);
@@ -747,8 +742,6 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
 
         double T_ip;
         NumLib::shapeFunctionInterpolate(T, N, T_ip);
-        double T_dot_ip;
-        NumLib::shapeFunctionInterpolate(T_dot, N, T_dot_ip);
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
@@ -798,8 +791,9 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         // secant derivative from time discretization for storage
         // use tangent, if secant is not available
         double const DeltaS_L_Deltap_cap =
-            (p_cap_dot_ip == 0) ? dS_L_dp_cap
-                                : (S_L - S_L_prev) / (dt * p_cap_dot_ip);
+            (p_cap_ip == p_cap_prev_ip)
+                ? dS_L_dp_cap
+                : (S_L - S_L_prev) / (p_cap_ip - p_cap_prev_ip);
 
         auto chi_S_L = S_L;
         auto chi_S_L_prev = S_L_prev;
@@ -821,8 +815,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         // variables.solid_grain_pressure = p_FR;
 
         variables.effective_pore_pressure = -chi_S_L * p_cap_ip;
-        variables_prev.effective_pore_pressure =
-            -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
+        variables_prev.effective_pore_pressure = -chi_S_L_prev * p_cap_prev_ip;
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update
@@ -1209,9 +1202,6 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
     auto const T =
         local_x.template segment<temperature_size>(temperature_index);
 
-    auto const T_dot =
-        local_x_dot.template segment<temperature_size>(temperature_index);
-
     auto const p_L = local_x.template segment<pressure_size>(pressure_index);
 
     auto p_L_prev =
@@ -1241,8 +1231,6 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
         double T_ip;
         NumLib::shapeFunctionInterpolate(T, N, T_ip);
-        double T_dot_ip;
-        NumLib::shapeFunctionInterpolate(T_dot, N, T_dot_ip);
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
@@ -1277,8 +1265,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
             chi_S_L_prev = chi(S_L_prev);
         }
         variables.effective_pore_pressure = -chi_S_L * p_cap_ip;
-        variables_prev.effective_pore_pressure =
-            -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
+        variables_prev.effective_pore_pressure = -chi_S_L_prev * p_cap_prev_ip;
 
         auto const alpha =
             medium[MPL::PropertyType::biot_coefficient].template value<double>(
