@@ -193,7 +193,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
         auto& state = _ip_data[ip].material_state_variables;
 
         const double T_ip = N.dot(T);  // T at integration point
-        double const dT = N.dot(T_dot) * dt;
+        double const T_prev_ip = N.dot(T_prev);
 
         // Consider also anisotropic thermal expansion.
         auto const solid_linear_thermal_expansivity_vector =
@@ -204,8 +204,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
                     .value(variables, x_position, t, dt));
 
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dthermal_strain =
-                solid_linear_thermal_expansivity_vector.eval() * dT;
+            dthermal_strain = solid_linear_thermal_expansivity_vector.eval() *
+                              (T_ip - T_prev_ip);
 
         //
         // displacement equation, displacement part
@@ -324,7 +324,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
         .noalias() -= KuT;
 
     local_rhs.template block<temperature_size, 1>(temperature_index, 0)
-        .noalias() -= KTT * T + DTT * T_dot;
+        .noalias() -= KTT * T + DTT * (T - T_prev) / dt;
 }
 
 template <typename ShapeFunction, int DisplacementDim>
@@ -413,8 +413,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
         auto& state = _ip_data[ip].material_state_variables;
 
         const double T_ip = N.dot(local_T);  // T at integration point
-        double const dT_ip = N.dot(local_Tdot) * dt;
         variables.temperature = T_ip;
+        double const dT_ip = T_ip - N.dot(local_T_prev);
 
         //
         // displacement equation, displacement part
@@ -498,8 +498,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     auto const local_T =
         local_x.template segment<temperature_size>(temperature_index);
 
-    auto const local_dT =
-        local_xdot.template segment<temperature_size>(temperature_index) * dt;
+    auto const local_T_prev =
+        local_x_prev.template segment<temperature_size>(temperature_index);
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesType::template MatrixType<temperature_size,
@@ -557,7 +557,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     }
     local_Jac.noalias() += laplace + mass / dt;
 
-    local_rhs.noalias() -= laplace * local_T + mass * local_dT / dt;
+    local_rhs.noalias() -=
+        laplace * local_T + mass * (local_T - local_T_prev) / dt;
 }
 
 template <typename ShapeFunction, int DisplacementDim>
