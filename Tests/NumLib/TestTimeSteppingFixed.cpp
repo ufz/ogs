@@ -99,26 +99,28 @@ TEST_F(NumLibTimeSteppingFixed_TimeSteps, HomogeneousDt)
 
 TEST_F(NumLibTimeSteppingFixed_TimeSteps, DtVectorEqualSum)
 {
-    std::vector<double> const fixed_dt = {10, 10, 10};
-    NumLib::FixedTimeStepping algorithm(1, 31, fixed_dt);
+    std::vector<std::pair<std::size_t, double>> const repeat_dt = {{3, 10}};
+    NumLib::FixedTimeStepping algorithm(1, 31, repeat_dt, {});
 
     checkExpectedTimes(algorithm, {1, 11, 21, 31});
 }
 
 TEST_F(NumLibTimeSteppingFixed_TimeSteps, DtVectorLessThanSum)
 {
-    std::vector<double> const fixed_dt = {5, 10, 20};
-    NumLib::FixedTimeStepping algorithm(1, 31, fixed_dt);
+    std::vector<std::pair<std::size_t, double>> const repeat_dt = {
+        {1, 5}, {1, 10}, {1, 20}};
+    NumLib::FixedTimeStepping algorithm(1, 31, repeat_dt, {});
 
     checkExpectedTimes(algorithm, {1, 6, 16, 31});
 }
 
 TEST_F(NumLibTimeSteppingFixed_TimeSteps, DtVectorGreaterThanSum)
 {
-    std::vector<double> const fixed_dt = {5, 10, 10};
-    NumLib::FixedTimeStepping algorithm(1, 31, fixed_dt);
+    std::vector<std::pair<std::size_t, double>> const repeat_dt = {{1, 5},
+                                                                   {3, 10}};
+    NumLib::FixedTimeStepping algorithm(1, 31, repeat_dt, {});
 
-    checkExpectedTimes(algorithm, {1, 6, 16, 26});
+    checkExpectedTimes(algorithm, {1, 6, 16, 26, 31});
 }
 
 TEST(NumLibTimeSteppingFixed_FixedOutputTimes, incorporateFixedTimesForOutput_2)
