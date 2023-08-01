@@ -372,7 +372,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     // pressure equation
     local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
-        laplace_p * p + storage_p * p_dot + Kpu * u_dot;
+        laplace_p * p + storage_p * (p - p_prev) / dt + Kpu * (u - u_prev) / dt;
 
     // displacement equation
     local_rhs.template segment<displacement_size>(displacement_index)
@@ -663,7 +663,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     }
     local_Jac.noalias() = laplace + storage / dt + add_p_derivative;
 
-    local_rhs.noalias() -= laplace * p + storage * p_dot;
+    local_rhs.noalias() -= laplace * p + storage * (p - p_prev) / dt;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -880,10 +880,15 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     {
         if (!staggered_scheme_ptr->fixed_stress_over_time_step)
         {
-            auto const p_dot =
+            auto const p =
                 Eigen::Map<typename ShapeMatricesTypePressure::
                                template VectorType<pressure_size> const>(
-                    local_xdot.data(), pressure_size);
+                    local_x.data(), pressure_size);
+
+            auto const p_prev =
+                Eigen::Map<typename ShapeMatricesTypePressure::
+                               template VectorType<pressure_size> const>(
+                    local_x_prev.data(), pressure_size);
 
             for (int ip = 0; ip < n_integration_points; ip++)
             {
@@ -891,7 +896,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
                 auto const& N_p = ip_data.N_p;
 
-                ip_data.strain_rate_variable = N_p.dot(p_dot);
+                ip_data.strain_rate_variable = N_p.dot(p - p_prev) / dt;
             }
         }
     }
@@ -967,8 +972,10 @@ void HydroMechanicsLocalAssembler<
             auto const fixed_stress_stabilization_parameter =
                 staggered_scheme_ptr->fixed_stress_stabilization_parameter;
 
-            auto const p_dot =
-                local_x_dot.template segment<pressure_size>(pressure_index);
+            auto const p =
+                local_x.template segment<pressure_size>(pressure_index);
+            auto const p_prev =
+                local_x_prev.template segment<pressure_size>(pressure_index);
 
             ParameterLib::SpatialPosition x_position;
             x_position.setElementID(_element.getID());
@@ -1011,7 +1018,7 @@ void HydroMechanicsLocalAssembler<
 
                 ip_data.strain_rate_variable =
                     eps_v_dot - fixed_stress_stabilization_parameter * alpha_b *
-                                    N_p.dot(p_dot) / K_S;
+                                    N_p.dot(p - p_prev) / dt / K_S;
             }
         }
     }
