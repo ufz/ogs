@@ -491,8 +491,9 @@ void RichardsMechanicsLocalAssembler<
         // secant derivative from time discretization for storage
         // use tangent, if secant is not available
         double const DeltaS_L_Deltap_cap =
-            (p_cap_dot_ip == 0) ? dS_L_dp_cap
-                                : (S_L - S_L_prev) / (dt * p_cap_dot_ip);
+            (p_cap_ip == p_cap_prev_ip)
+                ? dS_L_dp_cap
+                : (S_L - S_L_prev) / (p_cap_ip - p_cap_prev_ip);
 
         auto const chi = [medium, x_position, t, dt](double const S_L)
         {
@@ -506,13 +507,11 @@ void RichardsMechanicsLocalAssembler<
 
         double const p_FR = -chi_S_L * p_cap_ip;
         variables.effective_pore_pressure = p_FR;
-        variables_prev.effective_pore_pressure =
-            -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
+        variables_prev.effective_pore_pressure = -chi_S_L_prev * p_cap_prev_ip;
 
         // Set volumetric strain rate for the general case without swelling.
         variables.volumetric_strain = Invariants::trace(_ip_data[ip].eps);
-        variables_prev.volumetric_strain =
-            Invariants::trace(B * (u - u_dot * dt));
+        variables_prev.volumetric_strain = Invariants::trace(B * u_prev);
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update
@@ -845,8 +844,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // secant derivative from time discretization for storage
         // use tangent, if secant is not available
         double const DeltaS_L_Deltap_cap =
-            (p_cap_dot_ip == 0) ? dS_L_dp_cap
-                                : (S_L - S_L_prev) / (dt * p_cap_dot_ip);
+            (p_cap_ip == p_cap_prev_ip)
+                ? dS_L_dp_cap
+                : (S_L - S_L_prev) / (p_cap_ip - p_cap_prev_ip);
 
         auto const chi = [medium, x_position, t, dt](double const S_L)
         {
@@ -860,13 +860,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         double const p_FR = -chi_S_L * p_cap_ip;
         variables.effective_pore_pressure = p_FR;
-        variables_prev.effective_pore_pressure =
-            -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
+        variables_prev.effective_pore_pressure = -chi_S_L_prev * p_cap_prev_ip;
 
         // Set volumetric strain rate for the general case without swelling.
         variables.volumetric_strain = Invariants::trace(_ip_data[ip].eps);
-        variables_prev.volumetric_strain =
-            Invariants::trace(B * (u - u_dot * dt));
+        variables_prev.volumetric_strain = Invariants::trace(B * u_prev);
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update
@@ -1002,7 +1000,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // {
         //     -B.transpose() *
         //         dsigma_sw_dS_L_m* dS_L_m_dp_cap_m*(p_L_m - p_L_m_prev) /
-        //         p_cap_dot_ip / dt* N_p* w;
+        //         (p_cap_ip - p_cap_prev_ip) * N_p* w;
         // }
         if (!medium->hasProperty(MPL::PropertyType::saturation_micro) &&
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
@@ -1067,8 +1065,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
                                                           pressure_index)
-            .noalias() += N_p.transpose() * p_cap_dot_ip * rho_LR *
-                          dspecific_storage_a_p_dp_cap * N_p * w;
+            .noalias() += N_p.transpose() * (p_cap_ip - p_cap_prev_ip) / dt *
+                          rho_LR * dspecific_storage_a_p_dp_cap * N_p * w;
 
         storage_p_a_S_Jpp.noalias() -=
             N_p.transpose() * rho_LR *
@@ -1082,7 +1080,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template block<pressure_size, pressure_size>(pressure_index,
                                                               pressure_index)
                 .noalias() -= N_p.transpose() * rho_LR * dS_L_dp_cap * alpha *
-                              identity2.transpose() * B * u_dot * N_p * w;
+                              identity2.transpose() * B * (u - u_prev) / dt *
+                              N_p * w;
         }
 
         double const dk_rel_dS_l =
@@ -1120,15 +1119,15 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template block<pressure_size, pressure_size>(pressure_index,
                                                               pressure_index)
                 .noalias() += N_p.transpose() * alpha_bar / mu * N_p * w;
-            if (p_cap_dot_ip != 0)
+            if (p_cap_ip != p_cap_prev_ip)
             {
                 double const p_L_m_prev = _ip_data[ip].liquid_pressure_m_prev;
                 local_Jac
                     .template block<pressure_size, pressure_size>(
                         pressure_index, pressure_index)
                     .noalias() += N_p.transpose() * alpha_bar / mu *
-                                  (p_L_m - p_L_m_prev) / (dt * p_cap_dot_ip) *
-                                  N_p * w;
+                                  (p_L_m - p_L_m_prev) /
+                                  (p_cap_ip - p_cap_prev_ip) * N_p * w;
             }
         }
     }
@@ -1155,8 +1154,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     // pressure equation
     local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
-        laplace_p * p_L + (storage_p_a_p + storage_p_a_S) * p_L_dot +
-        Kpu * u_dot;
+        laplace_p * p_L +
+        (storage_p_a_p + storage_p_a_S) * (p_L - p_L_prev) / dt +
+        Kpu * (u - u_prev) / dt;
 
     // displacement equation
     local_rhs.template segment<displacement_size>(displacement_index)
@@ -1612,13 +1612,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables.grain_compressibility = beta_SR;
 
         variables.effective_pore_pressure = -chi_S_L * p_cap_ip;
-        variables_prev.effective_pore_pressure =
-            -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
+        variables_prev.effective_pore_pressure = -chi_S_L_prev * p_cap_prev_ip;
 
         // Set volumetric strain rate for the general case without swelling.
         variables.volumetric_strain = Invariants::trace(_ip_data[ip].eps);
-        variables_prev.volumetric_strain =
-            Invariants::trace(B * (u - u_dot * dt));
+        variables_prev.volumetric_strain = Invariants::trace(B * u_prev);
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update
