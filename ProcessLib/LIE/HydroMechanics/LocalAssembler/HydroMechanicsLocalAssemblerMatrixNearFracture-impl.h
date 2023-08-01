@@ -59,7 +59,6 @@ void HydroMechanicsLocalAssemblerMatrixNearFracture<
     if (_process_data.deactivate_matrix_in_flow)
     {
         Base::setPressureOfInactiveNodes(t, p);
-        Base::setPressureDotOfInactiveNodes(p_dot);
     }
     auto const u = local_x.segment(displacement_index, displacement_size);
     auto const u_prev =

@@ -126,7 +126,6 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     if (_process_data.deactivate_matrix_in_flow)
     {
         setPressureOfInactiveNodes(t, p);
-        setPressureDotOfInactiveNodes(p_dot);
     }
 
     auto u = local_x.segment(displacement_index, displacement_size);
@@ -290,8 +289,8 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     J_pu.noalias() += Kup.transpose() / dt;
 
     // pressure equation
-    rhs_p.noalias() -=
-        laplace_p * p + storage_p * p_dot + Kup.transpose() * u_dot;
+    rhs_p.noalias() -= laplace_p * p + storage_p * (p - p_prev) / dt +
+                       Kup.transpose() * (u - u_prev) / dt;
 
     // displacement equation
     rhs_u.noalias() -= -Kup * p;
@@ -462,23 +461,6 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         x_position.setNodeID(getNodeIndex(_element, i));
         auto const p0 = (*_process_data.p0)(t, x_position)[0];
         p[i] = p0;
-    }
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int GlobalDim>
-void HydroMechanicsLocalAssemblerMatrix<
-    ShapeFunctionDisplacement, ShapeFunctionPressure,
-    GlobalDim>::setPressureDotOfInactiveNodes(Eigen::Ref<Eigen::VectorXd> p_dot)
-{
-    for (unsigned i = 0; i < pressure_size; i++)
-    {
-        // only inactive nodes
-        if (_process_data.p_element_status->isActiveNode(_element.getNode(i)))
-        {
-            continue;
-        }
-        p_dot[i] = 0;
     }
 }
 

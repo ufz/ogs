@@ -293,7 +293,8 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
             identity2.transpose() * R * H_g;
         // velocity in global coordinates
         ip_data.darcy_velocity = -k * grad_head_over_mu;
-        J_pg.noalias() += N_p.transpose() * S * N_p * p_dot * mT_R_Hg * ip_w;
+        J_pg.noalias() +=
+            N_p.transpose() * S * N_p * (p - p_prev) / dt * mT_R_Hg * ip_w;
         J_pg.noalias() +=
             dNdx_p.transpose() * k * grad_head_over_mu * mT_R_Hg * ip_w;
         J_pg.noalias() += dNdx_p.transpose() * b_m * dk_db * grad_head_over_mu *
@@ -310,8 +311,8 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     J_pg.noalias() += Kgp.transpose() / dt;
 
     // pressure equation
-    rhs_p.noalias() -=
-        laplace_p * p + storage_p * p_dot + Kgp.transpose() * g_dot;
+    rhs_p.noalias() -= laplace_p * p + storage_p * (p - p_prev) / dt +
+                       Kgp.transpose() * (g - g_prev) / dt;
 
     // displacement equation
     rhs_g.noalias() -= -Kgp * p;
