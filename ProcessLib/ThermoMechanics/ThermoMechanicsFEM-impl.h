@@ -204,8 +204,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
                     .value(variables, x_position, t, dt));
 
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dthermal_strain = solid_linear_thermal_expansivity_vector.eval() *
-                              (T_ip - T_prev_ip);
+            dthermal_strain =
+                solid_linear_thermal_expansivity_vector * (T_ip - T_prev_ip);
 
         //
         // displacement equation, displacement part
@@ -275,8 +275,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
         // The computation of KuT can be ignored.
         auto const alpha_T_tensor =
             MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                solid_linear_thermal_expansivity_vector.eval());
-        KuT.noalias() += B.transpose() * (C * alpha_T_tensor.eval()) * N * w;
+                solid_linear_thermal_expansivity_vector);
+        KuT.noalias() += B.transpose() * (C * alpha_T_tensor) * N * w;
 
         if (_ip_data[ip].solid_material.getConstitutiveModel() ==
             MaterialLib::Solids::ConstitutiveModel::CreepBGRa)
@@ -436,8 +436,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
                     .value(variables, x_position, t, dt));
 
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dthermal_strain =
-                solid_linear_thermal_expansivity_vector.eval() * dT_ip;
+            dthermal_strain = solid_linear_thermal_expansivity_vector * dT_ip;
 
         eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
 
