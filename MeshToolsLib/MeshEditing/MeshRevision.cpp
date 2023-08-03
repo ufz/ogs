@@ -15,6 +15,9 @@
 #include "MeshRevision.h"
 
 #include <numeric>
+#include <range/v3/algorithm/copy.hpp>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/Logging.h"
@@ -29,7 +32,7 @@ namespace MeshToolsLib
 {
 /// Lookup-table for returning the third node of bottom or top triangle given
 /// the other two.
-unsigned lutPrismThirdNode(unsigned id1, unsigned id2)
+unsigned lutPrismThirdNode(unsigned const id1, unsigned const id2)
 {
     if ((id1 == 0 && id2 == 1) || (id1 == 1 && id2 == 0))
     {
@@ -61,20 +64,40 @@ unsigned lutPrismThirdNode(unsigned id1, unsigned id2)
 
 namespace
 {
+template <typename ElementType>
+std::unique_ptr<MeshLib::Element> createElement(
+    std::span<MeshLib::Node* const> const element_nodes,
+    std::vector<MeshLib::Node*> const& nodes,
+    std::array<std::size_t, ElementType::n_all_nodes> const local_ids)
+{
+    using namespace MeshLib::views;
+    auto lookup_in = [](auto const& values)
+    {
+        return ranges::views::transform([&values](std::size_t const n)
+                                        { return values[n]; });
+    };
+
+    std::array<MeshLib::Node*, ElementType::n_all_nodes> new_nodes;
+    ranges::copy(local_ids | lookup_in(element_nodes) | ids | lookup_in(nodes),
+                 begin(new_nodes));
+
+    return std::make_unique<ElementType>(new_nodes);
+}
+
 /// Subdivides a nonplanar quad into two triangles.
 unsigned subdivideQuad(MeshLib::Element const* const quad,
                        std::vector<MeshLib::Node*> const& nodes,
                        std::vector<MeshLib::Element*>& new_elements)
 {
-    std::array tri1_nodes{nodes[quad->getNode(0)->getID()],
-                          nodes[quad->getNode(1)->getID()],
-                          nodes[quad->getNode(2)->getID()]};
-    new_elements.push_back(new MeshLib::Tri(tri1_nodes));
+    std::array<std::size_t, 3> const tri1_node_ids{0, 1, 2};
+    new_elements.push_back(
+        createElement<MeshLib::Tri>(quad->nodes(), nodes, tri1_node_ids)
+            .release());
 
-    std::array tri2_nodes{nodes[quad->getNode(0)->getID()],
-                          nodes[quad->getNode(2)->getID()],
-                          nodes[quad->getNode(3)->getID()]};
-    new_elements.push_back(new MeshLib::Tri(tri2_nodes));
+    std::array<std::size_t, 3> const tri2_node_ids{0, 2, 3};
+    new_elements.push_back(
+        createElement<MeshLib::Tri>(quad->nodes(), nodes, tri2_node_ids)
+            .release());
 
     return 2;
 }
@@ -85,22 +108,15 @@ unsigned subdividePrism(MeshLib::Element const* const prism,
                         std::vector<MeshLib::Element*>& new_elements)
 {
     auto addTetrahedron =
-        [&prism, &nodes, &new_elements](std::size_t id0, std::size_t id1,
-                                        std::size_t id2, std::size_t id3)
+        [&prism, &nodes, &new_elements](std::array<std::size_t, 4> const ids)
     {
-        std::array<MeshLib::Node*, 4> tet_nodes;
-        tet_nodes[0] = nodes[prism->getNode(id0)->getID()];
-        tet_nodes[1] = nodes[prism->getNode(id1)->getID()];
-        tet_nodes[2] = nodes[prism->getNode(id2)->getID()];
-        tet_nodes[3] = nodes[prism->getNode(id3)->getID()];
-        new_elements.push_back(new MeshLib::Tet(tet_nodes));
+        new_elements.push_back(
+            createElement<MeshLib::Tet>(prism->nodes(), nodes, ids).release());
     };
 
-    addTetrahedron(0, 1, 2, 3);
-
-    addTetrahedron(3, 2, 4, 5);
-
-    addTetrahedron(2, 1, 3, 4);
+    addTetrahedron({0, 1, 2, 3});
+    addTetrahedron({3, 2, 4, 5});
+    addTetrahedron({2, 1, 3, 4});
 
     return 3;
 }
@@ -110,27 +126,13 @@ unsigned subdivideHex(MeshLib::Element const* const hex,
                       std::vector<MeshLib::Node*> const& nodes,
                       std::vector<MeshLib::Element*>& new_elements)
 {
-    std::array<MeshLib::Node*, 6> prism1_nodes;
-    prism1_nodes[0] = nodes[hex->getNode(0)->getID()];
-    prism1_nodes[1] = nodes[hex->getNode(2)->getID()];
-    prism1_nodes[2] = nodes[hex->getNode(1)->getID()];
-    prism1_nodes[3] = nodes[hex->getNode(4)->getID()];
-    prism1_nodes[4] = nodes[hex->getNode(6)->getID()];
-    prism1_nodes[5] = nodes[hex->getNode(5)->getID()];
-    auto* prism1(new MeshLib::Prism(prism1_nodes));
-    subdividePrism(prism1, nodes, new_elements);
-    delete prism1;
+    auto prism1 =
+        createElement<MeshLib::Prism>(hex->nodes(), nodes, {0, 2, 1, 4, 6, 5});
+    subdividePrism(prism1.get(), nodes, new_elements);
 
-    std::array<MeshLib::Node*, 6> prism2_nodes;
-    prism2_nodes[0] = nodes[hex->getNode(4)->getID()];
-    prism2_nodes[1] = nodes[hex->getNode(6)->getID()];
-    prism2_nodes[2] = nodes[hex->getNode(7)->getID()];
-    prism2_nodes[3] = nodes[hex->getNode(0)->getID()];
-    prism2_nodes[4] = nodes[hex->getNode(2)->getID()];
-    prism2_nodes[5] = nodes[hex->getNode(3)->getID()];
-    auto* prism2(new MeshLib::Prism(prism2_nodes));
-    subdividePrism(prism2, nodes, new_elements);
-    delete prism2;
+    auto prism2 =
+        createElement<MeshLib::Prism>(hex->nodes(), nodes, {4, 6, 7, 0, 2, 3});
+    subdividePrism(prism2.get(), nodes, new_elements);
 
     return 6;
 }
@@ -141,20 +143,15 @@ unsigned subdividePyramid(MeshLib::Element const* const pyramid,
                           std::vector<MeshLib::Element*>& new_elements)
 {
     auto addTetrahedron =
-        [&pyramid, &nodes, &new_elements](std::size_t id0, std::size_t id1,
-                                          std::size_t id2, std::size_t id3)
+        [&pyramid, &nodes, &new_elements](std::array<std::size_t, 4> const ids)
     {
-        std::array<MeshLib::Node*, 4> tet_nodes;
-        tet_nodes[0] = nodes[pyramid->getNode(id0)->getID()];
-        tet_nodes[1] = nodes[pyramid->getNode(id1)->getID()];
-        tet_nodes[2] = nodes[pyramid->getNode(id2)->getID()];
-        tet_nodes[3] = nodes[pyramid->getNode(id3)->getID()];
-        new_elements.push_back(new MeshLib::Tet(tet_nodes));
+        new_elements.push_back(
+            createElement<MeshLib::Tet>(pyramid->nodes(), nodes, ids)
+                .release());
     };
 
-    addTetrahedron(0, 1, 2, 4);
-
-    addTetrahedron(0, 2, 3, 4);
+    addTetrahedron({0, 1, 2, 4});
+    addTetrahedron({0, 2, 3, 4});
 
     return 2;
 }
@@ -164,19 +161,18 @@ unsigned subdividePyramid(MeshLib::Element const* const pyramid,
 MeshLib::Element* constructLine(MeshLib::Element const* const element,
                                 const std::vector<MeshLib::Node*>& nodes)
 {
-    std::array<MeshLib::Node*, 2> line_nodes;
-    line_nodes[0] = nodes[element->getNode(0)->getID()];
-    line_nodes[1] = nullptr;
+    std::array<std::size_t, 2> line_node_ids = {0, 0};
     for (unsigned i = 1; i < element->getNumberOfBaseNodes(); ++i)
     {
         if (element->getNode(i)->getID() != element->getNode(0)->getID())
         {
-            line_nodes[1] = nodes[element->getNode(i)->getID()];
+            line_node_ids[1] = i;
             break;
         }
     }
-    assert(line_nodes[1] != nullptr);
-    return new MeshLib::Line(line_nodes);
+    assert(line_node_ids[1] != 0);
+    return createElement<MeshLib::Line>(element->nodes(), nodes, line_node_ids)
+        .release();
 }
 
 /// Creates a triangle element from the first three unique nodes found in the
@@ -277,10 +273,10 @@ MeshLib::Element* constructFourNodeElement(
 /// Reduces a pyramid element by removing collapsed nodes and constructing a new
 /// elements from the remaining nodes.
 void reducePyramid(MeshLib::Element const* const org_elem,
-                   unsigned n_unique_nodes,
+                   unsigned const n_unique_nodes,
                    std::vector<MeshLib::Node*> const& nodes,
                    std::vector<MeshLib::Element*>& new_elements,
-                   unsigned min_elem_dim)
+                   unsigned const min_elem_dim)
 {
     if (n_unique_nodes == 4)
     {
@@ -305,20 +301,17 @@ void reducePyramid(MeshLib::Element const* const org_elem,
 /// two new elements from the remaining nodes.
 /// @return The number of newly created elements
 unsigned reducePrism(MeshLib::Element const* const org_elem,
-                     unsigned n_unique_nodes,
+                     unsigned const n_unique_nodes,
                      std::vector<MeshLib::Node*> const& nodes,
                      std::vector<MeshLib::Element*>& new_elements,
-                     unsigned min_elem_dim)
+                     unsigned const min_elem_dim)
 {
     auto addTetrahedron =
-        [&org_elem, &nodes, &new_elements](std::size_t id0, std::size_t id1,
-                                           std::size_t id2, std::size_t id3)
+        [&org_elem, &nodes, &new_elements](std::array<std::size_t, 4> const ids)
     {
-        std::array tet_nodes{nodes[org_elem->getNode(id0)->getID()],
-                             nodes[org_elem->getNode(id1)->getID()],
-                             nodes[org_elem->getNode(id2)->getID()],
-                             nodes[org_elem->getNode(id3)->getID()]};
-        new_elements.push_back(new MeshLib::Tet(tet_nodes));
+        new_elements.push_back(
+            createElement<MeshLib::Tet>(org_elem->nodes(), nodes, ids)
+                .release());
     };
 
     // TODO?
@@ -340,10 +333,10 @@ unsigned reducePrism(MeshLib::Element const* const org_elem,
                     // non triangle edge collapsed
                     if (i % 3 == j % 3)
                     {
-                        addTetrahedron((i + 1) % 3, (i + 2) % 3, i,
-                                       (i + 1) % 3 + 3);
-                        addTetrahedron((i + 1) % 3 + 3, (i + 2) % 3, i,
-                                       (i + 2) % 3 + 3);
+                        addTetrahedron(
+                            {(i + 1) % 3, (i + 2) % 3, i, (i + 1) % 3 + 3});
+                        addTetrahedron(
+                            {(i + 1) % 3 + 3, (i + 2) % 3, i, (i + 2) % 3 + 3});
                         return 2;
                     }
 
@@ -358,7 +351,7 @@ unsigned reducePrism(MeshLib::Element const* const org_elem,
                     }
                     const unsigned k_offset = (i > 2) ? k - 3 : k + 3;
 
-                    addTetrahedron(i_offset, j_offset, k_offset, i);
+                    addTetrahedron({i_offset, j_offset, k_offset, i});
 
                     const unsigned l =
                         (MathLib::isCoplanar(*org_elem->getNode(i_offset),
@@ -368,7 +361,7 @@ unsigned reducePrism(MeshLib::Element const* const org_elem,
                             ? j
                             : i;
                     const unsigned l_offset = (i > 2) ? l - 3 : l + 3;
-                    addTetrahedron(l_offset, k_offset, i, k);
+                    addTetrahedron({l_offset, k_offset, i, k});
                     return 2;
                 }
             }
@@ -376,7 +369,7 @@ unsigned reducePrism(MeshLib::Element const* const org_elem,
     }
     else if (n_unique_nodes == 4)
     {
-        MeshLib::Element* elem(
+        MeshLib::Element* const elem(
             constructFourNodeElement(org_elem, nodes, min_elem_dim));
         if (elem)
         {
@@ -398,187 +391,117 @@ unsigned reducePrism(MeshLib::Element const* const org_elem,
 /// forming an edge in a Hex.
 std::array<unsigned, 4> lutHexCuttingQuadNodes(unsigned id1, unsigned id2)
 {
-    std::array<unsigned, 4> nodes{};
     if (id1 == 0 && id2 == 1)
     {
-        nodes[0] = 3;
-        nodes[1] = 2;
-        nodes[2] = 5;
-        nodes[3] = 4;
+        return {3, 2, 5, 4};
     }
-    else if (id1 == 1 && id2 == 2)
+    if (id1 == 1 && id2 == 2)
     {
-        nodes[0] = 0;
-        nodes[1] = 3;
-        nodes[2] = 6;
-        nodes[3] = 5;
+        return {0, 3, 6, 5};
     }
-    else if (id1 == 2 && id2 == 3)
+    if (id1 == 2 && id2 == 3)
     {
-        nodes[0] = 1;
-        nodes[1] = 0;
-        nodes[2] = 7;
-        nodes[3] = 6;
+        return {1, 0, 7, 6};
     }
-    else if (id1 == 3 && id2 == 0)
+    if (id1 == 3 && id2 == 0)
     {
-        nodes[0] = 2;
-        nodes[1] = 1;
-        nodes[2] = 4;
-        nodes[3] = 7;
+        return {2, 1, 4, 7};
     }
-    else if (id1 == 4 && id2 == 5)
+    if (id1 == 4 && id2 == 5)
     {
-        nodes[0] = 0;
-        nodes[1] = 1;
-        nodes[2] = 6;
-        nodes[3] = 7;
+        return {0, 1, 6, 7};
     }
-    else if (id1 == 5 && id2 == 6)
+    if (id1 == 5 && id2 == 6)
     {
-        nodes[0] = 1;
-        nodes[1] = 2;
-        nodes[2] = 7;
-        nodes[3] = 4;
+        return {1, 2, 7, 4};
     }
-    else if (id1 == 6 && id2 == 7)
+    if (id1 == 6 && id2 == 7)
     {
-        nodes[0] = 2;
-        nodes[1] = 3;
-        nodes[2] = 4;
-        nodes[3] = 5;
+        return {2, 3, 4, 5};
     }
-    else if (id1 == 7 && id2 == 4)
+    if (id1 == 7 && id2 == 4)
     {
-        nodes[0] = 3;
-        nodes[1] = 0;
-        nodes[2] = 5;
-        nodes[3] = 6;
+        return {3, 0, 5, 6};
     }
-    else if (id1 == 0 && id2 == 4)
+    if (id1 == 0 && id2 == 4)
     {
-        nodes[0] = 3;
-        nodes[1] = 7;
-        nodes[2] = 5;
-        nodes[3] = 1;
+        return {3, 7, 5, 1};
     }
-    else if (id1 == 1 && id2 == 5)
+    if (id1 == 1 && id2 == 5)
     {
-        nodes[0] = 0;
-        nodes[1] = 4;
-        nodes[2] = 6;
-        nodes[3] = 2;
+        return {0, 4, 6, 2};
     }
-    else if (id1 == 2 && id2 == 6)
+    if (id1 == 2 && id2 == 6)
     {
-        nodes[0] = 1;
-        nodes[1] = 5;
-        nodes[2] = 7;
-        nodes[3] = 3;
+        return {1, 5, 7, 3};
     }
-    else if (id1 == 3 && id2 == 7)
+    if (id1 == 3 && id2 == 7)
     {
-        nodes[0] = 2;
-        nodes[1] = 6;
-        nodes[2] = 4;
-        nodes[3] = 0;
+        return {2, 6, 4, 0};
+    }
+    if (id1 == 1 && id2 == 0)
+    {
+        return {2, 3, 4, 5};
+    }
+    if (id1 == 2 && id2 == 1)
+    {
+        return {3, 0, 5, 6};
+    }
+    if (id1 == 3 && id2 == 2)
+    {
+        return {0, 1, 6, 7};
+    }
+    if (id1 == 0 && id2 == 3)
+    {
+        return {1, 2, 7, 4};
+    }
+    if (id1 == 5 && id2 == 4)
+    {
+        return {1, 0, 7, 6};
+    }
+    if (id1 == 6 && id2 == 5)
+    {
+        return {2, 1, 4, 7};
+    }
+    if (id1 == 7 && id2 == 6)
+    {
+        return {3, 2, 5, 4};
+    }
+    if (id1 == 4 && id2 == 7)
+    {
+        return {0, 3, 6, 5};
+    }
+    if (id1 == 4 && id2 == 0)
+    {
+        return {7, 3, 1, 5};
+    }
+    if (id1 == 5 && id2 == 1)
+    {
+        return {4, 0, 2, 6};
+    }
+    if (id1 == 6 && id2 == 2)
+    {
+        return {5, 1, 3, 7};
+    }
+    if (id1 == 7 && id2 == 3)
+    {
+        return {6, 2, 0, 4};
     }
 
-    else if (id1 == 1 && id2 == 0)
-    {
-        nodes[0] = 2;
-        nodes[1] = 3;
-        nodes[2] = 4;
-        nodes[3] = 5;
-    }
-    else if (id1 == 2 && id2 == 1)
-    {
-        nodes[0] = 3;
-        nodes[1] = 0;
-        nodes[2] = 5;
-        nodes[3] = 6;
-    }
-    else if (id1 == 3 && id2 == 2)
-    {
-        nodes[0] = 0;
-        nodes[1] = 1;
-        nodes[2] = 6;
-        nodes[3] = 7;
-    }
-    else if (id1 == 0 && id2 == 3)
-    {
-        nodes[0] = 1;
-        nodes[1] = 2;
-        nodes[2] = 7;
-        nodes[3] = 4;
-    }
-    else if (id1 == 5 && id2 == 4)
-    {
-        nodes[0] = 1;
-        nodes[1] = 0;
-        nodes[2] = 7;
-        nodes[3] = 6;
-    }
-    else if (id1 == 6 && id2 == 5)
-    {
-        nodes[0] = 2;
-        nodes[1] = 1;
-        nodes[2] = 4;
-        nodes[3] = 7;
-    }
-    else if (id1 == 7 && id2 == 6)
-    {
-        nodes[0] = 3;
-        nodes[1] = 2;
-        nodes[2] = 5;
-        nodes[3] = 4;
-    }
-    else if (id1 == 4 && id2 == 7)
-    {
-        nodes[0] = 0;
-        nodes[1] = 3;
-        nodes[2] = 6;
-        nodes[3] = 5;
-    }
-    else if (id1 == 4 && id2 == 0)
-    {
-        nodes[0] = 7;
-        nodes[1] = 3;
-        nodes[2] = 1;
-        nodes[3] = 5;
-    }
-    else if (id1 == 5 && id2 == 1)
-    {
-        nodes[0] = 4;
-        nodes[1] = 0;
-        nodes[2] = 2;
-        nodes[3] = 6;
-    }
-    else if (id1 == 6 && id2 == 2)
-    {
-        nodes[0] = 5;
-        nodes[1] = 1;
-        nodes[2] = 3;
-        nodes[3] = 7;
-    }
-    else if (id1 == 7 && id2 == 3)
-    {
-        nodes[0] = 6;
-        nodes[1] = 2;
-        nodes[2] = 0;
-        nodes[3] = 4;
-    }
-    return nodes;
+    OGS_FATAL(
+        "lutHexCuttingQuadNodes() for nodes {} and {} does not have a valid "
+        "return value.",
+        id1, id2);
 }
 
 /// Lookup-table for returning the diametral node id of the given node id in a
 /// Hex.
 unsigned lutHexDiametralNode(unsigned const id)
 {
-    constexpr std::array<unsigned, 8> hex_diametral_nodes = {
+    constexpr std::array<unsigned, 8> hex_diametral_node_ids = {
         {6, 7, 4, 5, 2, 3, 0, 1}};
 
-    return hex_diametral_nodes[id];
+    return hex_diametral_node_ids[id];
 }
 
 /// When a hex is subdivided into two prisms, this returns the nodes of the hex
@@ -589,50 +512,43 @@ std::pair<unsigned, unsigned> lutHexBackNodes(unsigned const i,
                                               unsigned const l)
 {
     // collapsed edges are *not* connected
-    std::pair<unsigned, unsigned> back(std::numeric_limits<unsigned>::max(),
-                                       std::numeric_limits<unsigned>::max());
     if (lutHexDiametralNode(i) == k)
     {
-        back.first = i;
-        back.second = lutHexDiametralNode(l);
+        return {i, lutHexDiametralNode(l)};
     }
-    else if (lutHexDiametralNode(i) == l)
+    if (lutHexDiametralNode(i) == l)
     {
-        back.first = i;
-        back.second = lutHexDiametralNode(k);
+        return {i, lutHexDiametralNode(k)};
     }
-    else if (lutHexDiametralNode(j) == k)
+    if (lutHexDiametralNode(j) == k)
     {
-        back.first = j;
-        back.second = lutHexDiametralNode(l);
+        return {j, lutHexDiametralNode(l)};
     }
-    else if (lutHexDiametralNode(j) == l)
+    if (lutHexDiametralNode(j) == l)
     {
-        back.first = j;
-        back.second = lutHexDiametralNode(k);
+        return {j, lutHexDiametralNode(k)};
     }
+
     // collapsed edges *are* connected
-    else if (i == k)
+    if (i == k)
     {
-        back.first = lutHexDiametralNode(l);
-        back.second = j;
+        return {lutHexDiametralNode(l), j};
     }
-    else if (i == l)
+    if (i == l)
     {
-        back.first = lutHexDiametralNode(k);
-        back.second = j;
+        return {lutHexDiametralNode(k), j};
     }
-    else if (j == k)
+    if (j == k)
     {
-        back.first = lutHexDiametralNode(l);
-        back.second = i;
+        return {lutHexDiametralNode(l), i};
     }
-    else if (j == l)
+    if (j == l)
     {
-        back.first = lutHexDiametralNode(k);
-        back.second = i;
+        return {lutHexDiametralNode(k), i};
     }
-    return back;
+
+    return {std::numeric_limits<unsigned>::max(),
+            std::numeric_limits<unsigned>::max()};
 }
 
 // In an element with 5 unique nodes, return the node that will be the top of
@@ -664,10 +580,10 @@ unsigned findPyramidTopNode(MeshLib::Element const& element,
 /// one or more new elements from the remaining nodes.
 /// @return The number of newly created elements
 unsigned reduceHex(MeshLib::Element const* const org_elem,
-                   unsigned n_unique_nodes,
+                   unsigned const n_unique_nodes,
                    std::vector<MeshLib::Node*> const& nodes,
                    std::vector<MeshLib::Element*>& new_elements,
-                   unsigned min_elem_dim)
+                   unsigned const min_elem_dim)
 {
     // TODO?
     // if two diametral nodes collapse, all kinds of bizarre (2D-)element
@@ -683,30 +599,28 @@ unsigned reduceHex(MeshLib::Element const* const org_elem,
                 if (org_elem->getNode(i)->getID() ==
                     org_elem->getNode(j)->getID())
                 {
-                    const std::array<unsigned, 4> base_nodes(
+                    const std::array<unsigned, 4> base_node_ids(
                         lutHexCuttingQuadNodes(i, j));
-                    std::array pyr_nodes{
-                        nodes[org_elem->getNode(base_nodes[0])->getID()],
-                        nodes[org_elem->getNode(base_nodes[1])->getID()],
-                        nodes[org_elem->getNode(base_nodes[2])->getID()],
-                        nodes[org_elem->getNode(base_nodes[3])->getID()],
-                        nodes[org_elem->getNode(i)->getID()]};
-                    new_elements.push_back(new MeshLib::Pyramid(pyr_nodes));
+                    std::array<std::size_t, 5> const pyr_node_ids = {
+                        base_node_ids[0], base_node_ids[1], base_node_ids[2],
+                        base_node_ids[3], i};
+                    new_elements.push_back(
+                        createElement<MeshLib::Pyramid>(org_elem->nodes(),
+                                                        nodes, pyr_node_ids)
+                            .release());
 
                     if (i < 4 && j >= 4)
                     {
                         std::swap(i, j);
                     }
-                    std::array prism_nodes{
-                        nodes[org_elem->getNode(base_nodes[0])->getID()],
-                        nodes[org_elem->getNode(base_nodes[3])->getID()],
-                        nodes[org_elem->getNode(lutHexDiametralNode(j))
-                                  ->getID()],
-                        nodes[org_elem->getNode(base_nodes[1])->getID()],
-                        nodes[org_elem->getNode(base_nodes[2])->getID()],
-                        nodes[org_elem->getNode(lutHexDiametralNode(i))
-                                  ->getID()]};
-                    new_elements.push_back(new MeshLib::Prism(prism_nodes));
+                    std::array<std::size_t, 6> const prism_node_ids{
+                        base_node_ids[0],       base_node_ids[3],
+                        lutHexDiametralNode(j), base_node_ids[1],
+                        base_node_ids[2],       lutHexDiametralNode(i)};
+                    new_elements.push_back(
+                        createElement<MeshLib::Prism>(org_elem->nodes(), nodes,
+                                                      prism_node_ids)
+                            .release());
                     return 2;
                 }
             }
@@ -721,64 +635,43 @@ unsigned reduceHex(MeshLib::Element const* const org_elem,
             if (face->getNode(0)->getID() == face->getNode(1)->getID() &&
                 face->getNode(2)->getID() == face->getNode(3)->getID())
             {
-                std::array prism_nodes{
-                    nodes[org_elem
-                              ->getNode(lutHexDiametralNode(getNodeIDinElement(
-                                  *org_elem, face->getNode(0))))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(lutHexDiametralNode(getNodeIDinElement(
-                                  *org_elem, face->getNode(1))))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(getNodeIDinElement(*org_elem,
-                                                           face->getNode(2)))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(lutHexDiametralNode(getNodeIDinElement(
-                                  *org_elem, face->getNode(2))))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(lutHexDiametralNode(getNodeIDinElement(
-                                  *org_elem, face->getNode(3))))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(getNodeIDinElement(*org_elem,
-                                                           face->getNode(0)))
-                              ->getID()]};
-                new_elements.push_back(new MeshLib::Prism(prism_nodes));
+                std::array<std::size_t, 6> const prism_node_ids{
+                    lutHexDiametralNode(
+                        getNodeIDinElement(*org_elem, face->getNode(0))),
+                    lutHexDiametralNode(
+                        getNodeIDinElement(*org_elem, face->getNode(1))),
+                    getNodeIDinElement(*org_elem, face->getNode(2)),
+                    lutHexDiametralNode(
+                        getNodeIDinElement(*org_elem, face->getNode(2))),
+                    lutHexDiametralNode(
+                        getNodeIDinElement(*org_elem, face->getNode(3))),
+                    getNodeIDinElement(*org_elem, face->getNode(0))};
+
+                new_elements.push_back(
+                    createElement<MeshLib::Prism>(org_elem->nodes(), nodes,
+                                                  prism_node_ids)
+                        .release());
                 delete face;
                 return 1;
             }
             if (face->getNode(0)->getID() == face->getNode(3)->getID() &&
                 face->getNode(1)->getID() == face->getNode(2)->getID())
             {
-                std::array prism_nodes{
-                    nodes[org_elem
-                              ->getNode(lutHexDiametralNode(getNodeIDinElement(
-                                  *org_elem, face->getNode(0))))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(lutHexDiametralNode(getNodeIDinElement(
-                                  *org_elem, face->getNode(3))))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(getNodeIDinElement(*org_elem,
-                                                           face->getNode(2)))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(lutHexDiametralNode(getNodeIDinElement(
-                                  *org_elem, face->getNode(1))))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(lutHexDiametralNode(getNodeIDinElement(
-                                  *org_elem, face->getNode(2))))
-                              ->getID()],
-                    nodes[org_elem
-                              ->getNode(getNodeIDinElement(*org_elem,
-                                                           face->getNode(0)))
-                              ->getID()]};
-                new_elements.push_back(new MeshLib::Prism(prism_nodes));
+                std::array<std::size_t, 6> const prism_node_ids{
+                    lutHexDiametralNode(
+                        getNodeIDinElement(*org_elem, face->getNode(0))),
+                    lutHexDiametralNode(
+                        getNodeIDinElement(*org_elem, face->getNode(3))),
+                    getNodeIDinElement(*org_elem, face->getNode(2)),
+                    lutHexDiametralNode(
+                        getNodeIDinElement(*org_elem, face->getNode(1))),
+                    lutHexDiametralNode(
+                        getNodeIDinElement(*org_elem, face->getNode(2))),
+                    getNodeIDinElement(*org_elem, face->getNode(0))};
+                new_elements.push_back(
+                    createElement<MeshLib::Prism>(org_elem->nodes(), nodes,
+                                                  prism_node_ids)
+                        .release());
                 delete face;
                 return 1;
             }
@@ -814,48 +707,31 @@ unsigned reduceHex(MeshLib::Element const* const org_elem,
                                     return 0;
                                 }
 
-                                std::array<unsigned, 4> cutting_plane(
+                                std::array<unsigned, 4> const cutting_plane(
                                     lutHexCuttingQuadNodes(back.first,
                                                            back.second));
-                                std::array pris1_nodes{
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(back.first)),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(cutting_plane[0])),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(cutting_plane[3])),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(back.second)),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(cutting_plane[1])),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(cutting_plane[2]))};
-                                auto* prism1(new MeshLib::Prism(pris1_nodes));
+                                std::array<std::size_t, 6> const pris1_node_ids{
+                                    back.first,       cutting_plane[0],
+                                    cutting_plane[3], back.second,
+                                    cutting_plane[1], cutting_plane[2]};
+                                auto prism1 = createElement<MeshLib::Prism>(
+                                    org_elem->nodes(), nodes, pris1_node_ids);
                                 unsigned nNewElements =
-                                    reducePrism(prism1, 5, nodes, new_elements,
-                                                min_elem_dim);
-                                delete prism1;
+                                    reducePrism(prism1.get(), 5, nodes,
+                                                new_elements, min_elem_dim);
 
-                                std::array pris2_nodes{
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(
-                                            lutHexDiametralNode(back.first))),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(cutting_plane[0])),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(cutting_plane[3])),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(
-                                            lutHexDiametralNode(back.second))),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(cutting_plane[1])),
-                                    const_cast<MeshLib::Node*>(
-                                        org_elem->getNode(cutting_plane[2]))};
-                                auto* prism2(new MeshLib::Prism(pris2_nodes));
+                                std::array<std::size_t, 6> const pris2_node_ids{
+                                    lutHexDiametralNode(back.first),
+                                    cutting_plane[0],
+                                    cutting_plane[3],
+                                    lutHexDiametralNode(back.second),
+                                    cutting_plane[1],
+                                    cutting_plane[2]};
+                                auto prism2 = createElement<MeshLib::Prism>(
+                                    org_elem->nodes(), nodes, pris2_node_ids);
                                 nNewElements +=
-                                    reducePrism(prism2, 5, nodes, new_elements,
-                                                min_elem_dim);
-                                delete prism2;
+                                    reducePrism(prism2.get(), 5, nodes,
+                                                new_elements, min_elem_dim);
                                 return nNewElements;
                             }
                         }
@@ -867,21 +743,21 @@ unsigned reduceHex(MeshLib::Element const* const org_elem,
     else if (n_unique_nodes == 5)
     {
         MeshLib::Element* tet1(constructFourNodeElement(org_elem, nodes));
-        std::array<std::size_t, 4> first_four_nodes = {
+        std::array<std::size_t, 4> const first_four_node_ids = {
             {tet1->getNode(0)->getID(), tet1->getNode(1)->getID(),
              tet1->getNode(2)->getID(), tet1->getNode(3)->getID()}};
-        unsigned fifth_node(findPyramidTopNode(*org_elem, first_four_nodes));
+        unsigned const fifth_node =
+            findPyramidTopNode(*org_elem, first_four_node_ids);
 
         bool tet_changed(false);
         if (tet1->getGeomType() == MeshLib::MeshElemType::QUAD)
         {
             delete tet1;
             tet_changed = true;
-            auto** tet1_nodes = new MeshLib::Node*[4];
-            tet1_nodes[0] = nodes[first_four_nodes[0]];
-            tet1_nodes[1] = nodes[first_four_nodes[1]];
-            tet1_nodes[2] = nodes[first_four_nodes[2]];
-            tet1_nodes[3] = nodes[org_elem->getNode(fifth_node)->getID()];
+            std::array const tet1_nodes = {
+                nodes[first_four_node_ids[0]], nodes[first_four_node_ids[1]],
+                nodes[first_four_node_ids[2]],
+                nodes[org_elem->getNode(fifth_node)->getID()]};
             new_elements.push_back(new MeshLib::Tet(tet1_nodes));
         }
         else
@@ -889,11 +765,11 @@ unsigned reduceHex(MeshLib::Element const* const org_elem,
             new_elements.push_back(tet1);
         }
 
-        std::array tet2_nodes = {(tet_changed) ? nodes[first_four_nodes[0]]
-                                               : nodes[first_four_nodes[1]],
-                                 nodes[first_four_nodes[2]],
-                                 nodes[first_four_nodes[3]],
-                                 nodes[org_elem->getNode(fifth_node)->getID()]};
+        std::array const tet2_nodes = {
+            (tet_changed) ? nodes[first_four_node_ids[0]]
+                          : nodes[first_four_node_ids[1]],
+            nodes[first_four_node_ids[2]], nodes[first_four_node_ids[3]],
+            nodes[org_elem->getNode(fifth_node)->getID()]};
         new_elements.push_back(new MeshLib::Tet(tet2_nodes));
         return 2;
     }
@@ -953,10 +829,10 @@ std::size_t subdivideElement(MeshLib::Element const* const element,
 // Revises an element by removing collapsed nodes, using the nodes vector from
 // the result mesh.
 std::size_t reduceElement(MeshLib::Element const* const element,
-                          unsigned n_unique_nodes,
+                          unsigned const n_unique_nodes,
                           std::vector<MeshLib::Node*> const& nodes,
                           std::vector<MeshLib::Element*>& elements,
-                          unsigned min_elem_dim)
+                          unsigned const min_elem_dim)
 {
     /***************
      * TODO: modify neighbouring elements if one elements has been subdivided
@@ -1023,8 +899,7 @@ unsigned getNumberOfUniqueNodes(MeshLib::Element const* const element)
 template <typename T>
 void fillNodeProperty(std::vector<T>& new_prop,
                       std::vector<T> const& old_prop,
-                      std::vector<size_t>
-                          node_ids)
+                      std::vector<size_t> const& node_ids)
 {
     std::size_t const n_nodes = node_ids.size();
     for (std::size_t i = 0; i < n_nodes; ++i)
@@ -1040,8 +915,7 @@ void fillNodeProperty(std::vector<T>& new_prop,
 template <typename T>
 void fillElemProperty(std::vector<T>& new_prop,
                       std::vector<T> const& old_prop,
-                      std::vector<size_t>
-                          elem_ids)
+                      std::vector<size_t> const& elem_ids)
 {
     std::transform(elem_ids.cbegin(), elem_ids.cend(),
                    std::back_inserter(new_prop),
@@ -1130,10 +1004,10 @@ namespace MeshToolsLib
 {
 MeshRevision::MeshRevision(MeshLib::Mesh& mesh) : _mesh(mesh) {}
 
-unsigned MeshRevision::getNumberOfCollapsibleNodes(double eps) const
+unsigned MeshRevision::getNumberOfCollapsibleNodes(double const eps) const
 {
-    std::vector<std::size_t> id_map(this->collapseNodeIndices(eps));
-    std::size_t nNodes(id_map.size());
+    std::vector<std::size_t> const id_map = collapseNodeIndices(eps);
+    std::size_t const nNodes = id_map.size();
     unsigned count(0);
     for (std::size_t i = 0; i < nNodes; ++i)
     {
@@ -1146,8 +1020,8 @@ unsigned MeshRevision::getNumberOfCollapsibleNodes(double eps) const
 }
 
 MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string& new_mesh_name,
-                                          double eps,
-                                          unsigned min_elem_dim) const
+                                          double const eps,
+                                          unsigned const min_elem_dim) const
 {
     if (this->_mesh.getNumberOfElements() == 0)
     {
@@ -1168,7 +1042,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string& new_mesh_name,
         if (n_unique_nodes == elem->getNumberOfBaseNodes() &&
             elem->getDimension() >= min_elem_dim)
         {
-            ElementErrorCode e(elem->validate());
+            ElementErrorCode const e = elem->validate();
             if (e[ElementErrorFlag::NonCoplanar])
             {
                 std::size_t const n_new_elements(
@@ -1216,7 +1090,8 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string& new_mesh_name,
     return nullptr;
 }
 
-std::vector<std::size_t> MeshRevision::collapseNodeIndices(double eps) const
+std::vector<std::size_t> MeshRevision::collapseNodeIndices(
+    double const eps) const
 {
     const std::vector<MeshLib::Node*>& nodes(_mesh.getNodes());
     const std::size_t nNodes(_mesh.getNumberOfNodes());
@@ -1234,7 +1109,7 @@ std::vector<std::size_t> MeshRevision::collapseNodeIndices(double eps) const
         {
             continue;
         }
-        std::vector<std::vector<MeshLib::Node*> const*> node_vectors(
+        std::vector<std::vector<MeshLib::Node*> const*> const node_vectors(
             grid.getPntVecsOfGridCellsIntersectingCube(*node, half_eps));
 
         const std::size_t nVectors(node_vectors.size());
