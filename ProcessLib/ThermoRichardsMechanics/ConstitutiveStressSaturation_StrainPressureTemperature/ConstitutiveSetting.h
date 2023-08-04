@@ -29,7 +29,7 @@ struct ConstitutiveSetting
               KelvinVector<DisplacementDim> const& eps_arg,
               KelvinVector<DisplacementDim> const& eps_prev_arg,
               StatefulData<DisplacementDim>& state,
-              StatefulData<DisplacementDim> const& prev_state,
+              StatefulDataPrev<DisplacementDim> const& prev_state,
               MaterialStateData<DisplacementDim>& mat_state,
               ConstitutiveTempData<DisplacementDim>& tmp,
               OutputData<DisplacementDim>& out,

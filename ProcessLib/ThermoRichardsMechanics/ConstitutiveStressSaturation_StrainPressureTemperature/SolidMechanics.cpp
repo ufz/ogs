@@ -40,8 +40,8 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     current_state.eps_m.noalias() = KVnan<DisplacementDim>();
 
     auto const& eps_total = eps_data.eps;
-    auto const& eps_total_prev = eps_prev_data.eps;
-    auto const& sigma_total_prev = total_stress_data_prev.sigma_total;
+    auto const& eps_total_prev = eps_prev_data->eps;
+    auto const& sigma_total_prev = total_stress_data_prev->sigma_total;
 
     // current state
     MPL::VariableArray variables;
@@ -60,7 +60,7 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     {
         // thermodynamic forces
         variables_prev.stress = sigma_total_prev;
-        variables_prev.liquid_saturation = S_L_prev_data.S_L;
+        variables_prev.liquid_saturation = S_L_prev_data->S_L;
 
         // gradients
         // TODO currently we always pass strain via mechanical_strain

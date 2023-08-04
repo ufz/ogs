@@ -24,7 +24,7 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     KelvinVector<DisplacementDim> const& eps_arg,
     KelvinVector<DisplacementDim> const& eps_prev_arg,
     StatefulData<DisplacementDim>& state,
-    StatefulData<DisplacementDim> const& prev_state,
+    StatefulDataPrev<DisplacementDim> const& prev_state,
     MaterialStateData<DisplacementDim>& mat_state,
     ConstitutiveTempData<DisplacementDim>& tmp,
     OutputData<DisplacementDim>& out,
@@ -79,8 +79,8 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     models.bishops_model.eval(x_t, media_data, S_L_data, bishops_data);
 
     // TODO why not ordinary state tracking?
-    models.bishops_model.eval(x_t, media_data, prev_state.S_L_data,
-                              bishops_data_prev);
+    models.bishops_model.eval(x_t, media_data, *prev_state.S_L_data,
+                              *bishops_data_prev);
 
     models.poro_model.eval(x_t, media_data, solid_compressibility_data,
                            S_L_data, prev_state.S_L_data, bishops_data,
