@@ -126,7 +126,7 @@ struct ConstitutiveTempData
     SaturationDataDeriv dS_L_data;
     BishopsData bishops_data;
     // TODO why not usual state tracking for that?
-    BishopsData bishops_data_prev;
+    PrevState<BishopsData> bishops_data_prev;
     SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
     PermeabilityData<DisplacementDim> perm_data;
     FluidThermalExpansionData f_therm_exp_data;

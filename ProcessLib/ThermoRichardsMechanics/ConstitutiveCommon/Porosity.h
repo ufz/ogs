@@ -33,13 +33,14 @@ struct PorosityModel
     void eval(SpaceTimeData const& x_t, MediaData const& media_data,
               SolidCompressibilityData const& solid_compressibility_data,
               SaturationData const& S_L_data,
-              SaturationData const& S_L_prev_data,
+              PrevState<SaturationData> const& S_L_prev_data,
               BishopsData const& bishops_data,
-              BishopsData const& bishops_data_prev,
+              PrevState<BishopsData> const& bishops_data_prev,
               CapillaryPressureData<DisplacementDim> const& p_cap_data,
               StrainData<DisplacementDim> const& eps_data,
-              StrainData<DisplacementDim> const& eps_prev_data,
-              PorosityData const& poro_prev_data, PorosityData& out) const;
+              PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
+              PrevState<PorosityData> const& poro_prev_data,
+              PorosityData& out) const;
 };
 
 extern template struct PorosityModel<2>;

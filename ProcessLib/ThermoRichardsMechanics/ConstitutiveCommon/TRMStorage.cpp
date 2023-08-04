@@ -17,7 +17,7 @@ void TRMStorageModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, BiotData const& biot_data,
     PorosityData const& poro_data, LiquidDensityData const& rho_L_data,
     SaturationData const& S_L_data, SaturationDataDeriv const& dS_L_data,
-    SaturationData const& S_L_prev_data,
+    PrevState<SaturationData> const& S_L_prev_data,
     CapillaryPressureData<DisplacementDim> const& p_cap_data,
     SolidCompressibilityData const& solid_compressibility_data,
     TRMStorageData& out) const

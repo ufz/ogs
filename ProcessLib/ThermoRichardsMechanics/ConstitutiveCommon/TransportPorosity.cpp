@@ -18,11 +18,12 @@ template <int DisplacementDim>
 void TransportPorosityModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, MediaData const& media_data,
     SolidCompressibilityData const& solid_compressibility_data,
-    BishopsData const& bishops_data, BishopsData const& bishops_data_prev,
+    BishopsData const& bishops_data,
+    PrevState<BishopsData> const& bishops_data_prev,
     CapillaryPressureData<DisplacementDim> const& p_cap_data,
     PorosityData const& poro_data, StrainData<DisplacementDim> const& eps_data,
-    StrainData<DisplacementDim> const& eps_prev_data,
-    TransportPorosityData const& transport_poro_data_prev,
+    PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
+    PrevState<TransportPorosityData> const& transport_poro_data_prev,
     TransportPorosityData& transport_poro_data) const
 {
     namespace MPL = MaterialPropertyLib;

@@ -16,12 +16,14 @@ template <int DisplacementDim>
 void PorosityModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, MediaData const& media_data,
     SolidCompressibilityData const& solid_compressibility_data,
-    SaturationData const& S_L_data, SaturationData const& S_L_prev_data,
-    BishopsData const& bishops_data, BishopsData const& bishops_data_prev,
+    SaturationData const& S_L_data,
+    PrevState<SaturationData> const& S_L_prev_data,
+    BishopsData const& bishops_data,
+    PrevState<BishopsData> const& bishops_data_prev,
     CapillaryPressureData<DisplacementDim> const& p_cap_data,
     StrainData<DisplacementDim> const& eps_data,
-    StrainData<DisplacementDim> const& eps_prev_data,
-    PorosityData const& poro_prev_data, PorosityData& out) const
+    PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
+    PrevState<PorosityData> const& poro_prev_data, PorosityData& out) const
 {
     static constexpr int kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
