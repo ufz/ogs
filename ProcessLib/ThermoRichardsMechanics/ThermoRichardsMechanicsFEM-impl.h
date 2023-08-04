@@ -129,7 +129,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         NumLib::shapeFunctionInterpolate(T, N, T_ip);
         variables.temperature = T_ip;
 
-        this->prev_states_[ip].S_L_data.S_L =
+        this->prev_states_[ip].S_L_data->S_L =
             medium->property(MPL::PropertyType::saturation)
                 .template value<double>(variables, x_position, t, dt);
 
@@ -145,7 +145,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             auto const& eps = this->current_states_[ip].eps_data.eps;
             auto const& sigma_sw =
                 this->current_states_[ip].swelling_data.sigma_sw;
-            this->prev_states_[ip].s_mech_data.eps_m.noalias() =
+            this->prev_states_[ip].s_mech_data->eps_m.noalias() =
                 solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
                     ? eps + C_el_data.C_el.inverse() * sigma_sw
                     : eps;
@@ -302,7 +302,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             ShapeFunctionDisplacement, ShapeFunction, DisplacementDim,
             ConstitutiveTraits>::LocalMatrices& out,
         typename ConstitutiveTraits::StatefulData& current_state,
-        typename ConstitutiveTraits::StatefulData const& prev_state,
+        typename ConstitutiveTraits::StatefulDataPrev const& prev_state,
         MaterialStateData<DisplacementDim>& mat_state,
         typename ConstitutiveTraits::OutputData& output_data) const
 {

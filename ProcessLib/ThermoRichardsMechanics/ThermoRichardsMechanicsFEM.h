@@ -257,7 +257,7 @@ private:
         typename ConstitutiveTraits::ConstitutiveSetting& CS,
         MaterialPropertyLib::Medium& medium, LocalMatrices& out,
         typename ConstitutiveTraits::StatefulData& current_state,
-        typename ConstitutiveTraits::StatefulData const& prev_state,
+        typename ConstitutiveTraits::StatefulDataPrev const& prev_state,
         MaterialStateData<DisplacementDim>& mat_state,
         typename ConstitutiveTraits::OutputData& output_data) const;
 
@@ -329,7 +329,10 @@ public:
             this->material_states_[ip].pushBackState();
         }
 
-        this->prev_states_ = this->current_states_;
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            this->prev_states_[ip] = this->current_states_[ip];
+        }
     }
 
     void computeSecondaryVariableConcrete(

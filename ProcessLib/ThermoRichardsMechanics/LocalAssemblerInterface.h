@@ -158,7 +158,10 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
             material_states_[ip].pushBackState();
         }
 
-        prev_states_ = current_states_;
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            prev_states_[ip] = current_states_[ip];
+        }
     }
 
     static auto getReflectionDataForOutput()
@@ -177,7 +180,7 @@ protected:
     std::vector<typename ConstitutiveTraits::StatefulData>
         current_states_;  // TODO maybe do not store but rather re-evaluate for
                           // state update
-    std::vector<typename ConstitutiveTraits::StatefulData> prev_states_;
+    std::vector<typename ConstitutiveTraits::StatefulDataPrev> prev_states_;
 
     // Material state is special, because it contains both the current and the
     // old state.
