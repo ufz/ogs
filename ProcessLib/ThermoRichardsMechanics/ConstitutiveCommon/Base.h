@@ -75,6 +75,36 @@ constexpr KelvinMatrix<DisplacementDim> KMzero()
     return KelvinMatrix<DisplacementDim>::Zero();
 }
 
+/// Represents a previous state of type T.
+template <typename T>
+struct PrevState
+{
+    PrevState() = default;
+    explicit PrevState(T const& t) : t{t} {}
+    explicit PrevState(T&& t) : t{std::move(t)} {}
+
+    PrevState<T>& operator=(T const& u)
+    {
+        t = u;
+        return *this;
+    }
+
+    PrevState<T>& operator=(T&& u)
+    {
+        t = std::move(u);
+        return *this;
+    }
+
+    T& operator*() { return t; }
+    T const& operator*() const { return t; }
+
+    T* operator->() { return &t; }
+    T const* operator->() const { return &t; }
+
+private:
+    T t;
+};
+
 struct SpaceTimeData
 {
     ParameterLib::SpatialPosition x;
