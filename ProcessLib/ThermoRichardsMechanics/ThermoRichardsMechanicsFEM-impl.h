@@ -342,16 +342,13 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         GlobalDimVectorType const grad_p_cap_ip = -dNdx * p_L;
 
         KelvinVectorType eps = B * u;
-        // TODO conceptual consistency check. introduced for volumetric strain
-        // rate computation
-        KelvinVectorType eps_prev = B * u_prev;
 
         CS.eval(models, t, dt, x_position,                 //
                 medium,                                    //
                 {T_ip, T_prev_ip, grad_T_ip},              //
                 {p_cap_ip, p_cap_prev_ip, grad_p_cap_ip},  //
-                eps, eps_prev, current_state, prev_state, mat_state, tmp,
-                output_data, CD);
+                eps, current_state, prev_state, mat_state, tmp, output_data,
+                CD);
     }
 
     using NodalMatrix = typename ShapeMatricesType::NodalMatrixType;
@@ -459,7 +456,6 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const T_prev = block_T(local_x_prev);
     auto const p_L_prev = block_p(local_x_prev);
-    auto const u_prev = block_u(local_x_prev);
 
     auto const e_id = this->element_.getID();
     auto const& process_data = this->process_data_;
@@ -521,18 +517,15 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         GlobalDimVectorType const grad_p_cap_ip = -dNdx * p_L;
 
         KelvinVectorType eps = B * u;
-        // TODO conceptual consistency check. introduced for volumetric strain
-        // rate computation
-        KelvinVectorType eps_prev = B * u_prev;
 
-        constitutive_setting.eval(
-            models,                                    //
-            t, dt, x_position,                         //
-            medium,                                    //
-            {T_ip, T_prev_ip, grad_T_ip},              //
-            {p_cap_ip, p_cap_prev_ip, grad_p_cap_ip},  //
-            eps, eps_prev, current_state, this->prev_states_[ip],
-            this->material_states_[ip], tmp, output_data, CD);
+        constitutive_setting.eval(models,                                    //
+                                  t, dt, x_position,                         //
+                                  medium,                                    //
+                                  {T_ip, T_prev_ip, grad_T_ip},              //
+                                  {p_cap_ip, p_cap_prev_ip, grad_p_cap_ip},  //
+                                  eps, current_state, this->prev_states_[ip],
+                                  this->material_states_[ip], tmp, output_data,
+                                  CD);
 
         saturation_avg += current_state.S_L_data.S_L;
         porosity_avg += current_state.poro_data.phi;

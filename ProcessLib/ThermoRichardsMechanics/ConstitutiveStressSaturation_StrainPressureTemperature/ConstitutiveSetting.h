@@ -27,7 +27,6 @@ struct ConstitutiveSetting
               TemperatureData<DisplacementDim> const& T_data,
               CapillaryPressureData<DisplacementDim> const& p_cap_data,
               KelvinVector<DisplacementDim> const& eps_arg,
-              KelvinVector<DisplacementDim> const& eps_prev_arg,
               StatefulData<DisplacementDim>& state,
               StatefulDataPrev<DisplacementDim> const& prev_state,
               MaterialStateData<DisplacementDim>& mat_state,
