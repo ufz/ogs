@@ -31,7 +31,7 @@ public:
             std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
             dof_tables,
         const double t, double const dt, std::vector<GlobalVector*> const& xs,
-        std::vector<GlobalVector*> const& xdots, int const process_id,
+        std::vector<GlobalVector*> const& x_prevs, int const process_id,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac);
 
 private:

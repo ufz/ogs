@@ -160,7 +160,7 @@ void HeatTransportBHEProcess::initializeConcreteProcess(
 
 void HeatTransportBHEProcess::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble HeatTransportBHE process.");
@@ -172,13 +172,13 @@ void HeatTransportBHEProcess::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
+        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
         b);
 }
 
 void HeatTransportBHEProcess::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian HeatTransportBHE process.");
@@ -190,13 +190,13 @@ void HeatTransportBHEProcess::assembleWithJacobianConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
-        process_id, M, K, b, Jac);
+        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x,
+        x_prev, process_id, M, K, b, Jac);
 }
 
 void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_dot, int const process_id)
+    GlobalVector const& x_prev, int const process_id)
 {
     DBUG("Compute heat flux for HeatTransportBHE process.");
 
@@ -209,7 +209,7 @@ void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HeatTransportBHELocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_dot, process_id);
+        x_prev, process_id);
 }
 
 NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
@@ -307,7 +307,7 @@ void HeatTransportBHEProcess::preTimestepConcreteProcess(
 
 void HeatTransportBHEProcess::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& /*x_dot*/, const double t,
+    std::vector<GlobalVector*> const& /*x_prev*/, const double t,
     const double dt, int const process_id)
 {
     if (_process_data.py_bc_object == nullptr ||

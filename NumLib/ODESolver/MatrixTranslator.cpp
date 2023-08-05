@@ -45,16 +45,20 @@ void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::
 
 void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::
     computeResidual(GlobalMatrix const& M, GlobalMatrix const& K,
-                    GlobalVector const& b, GlobalVector const& x_curr,
-                    GlobalVector const& xdot, GlobalVector& res) const
+                    GlobalVector const& b, double const dt,
+                    GlobalVector const& x_curr, GlobalVector const& x_prev,
+                    GlobalVector& res) const
 {
     namespace LinAlg = MathLib::LinAlg;
 
     // res = M * x_dot + K * x_curr - b
-    LinAlg::matMult(M, xdot, res);  // the local vector x_dot seems to be
-                                    // necessary because of this multiplication
-    LinAlg::matMultAdd(K, x_curr, res, res);
-    LinAlg::axpy(res, -1.0, b);
+    GlobalVector x_dot;
+    LinAlg::copy(x_curr, x_dot);              // x_dot = x
+    LinAlg::axpy(x_dot, -1., x_prev);         // x_dot = x - x_prev
+    LinAlg::scale(x_dot, 1. / dt);            // x_dot = (x - x_prev)/dt
+    LinAlg::matMult(M, x_dot, res);           // res = M*x_dot
+    LinAlg::matMultAdd(K, x_curr, res, res);  // res = M*x_dot + K*x
+    LinAlg::axpy(res, -1., b);                // res = M*x_dot + X*x - b
 }
 
 void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::

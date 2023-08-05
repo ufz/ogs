@@ -144,7 +144,7 @@ public:
     // cppcheck-suppress functionStatic
     void assemble(const double /*t*/, double const /*dt*/,
                   std::vector<GlobalVector*> const& /*x*/,
-                  std::vector<GlobalVector*> const& /*xdot*/,
+                  std::vector<GlobalVector*> const& /*x_prev*/,
                   int const /*process_id*/, GlobalMatrix& /*M*/,
                   GlobalMatrix& /*K*/, GlobalVector& /*b*/)
     {
@@ -153,14 +153,14 @@ public:
              process_id);
 
         assembleGeneric(&Assembly::ParallelVectorMatrixAssembler::assemble, t,
-        dt, x, xdot, process_id, M, K, b);
+        dt, x, x_prev, process_id, M, K, b);
         */
         OGS_FATAL("Not yet implemented.");
     }
 
     void assembleWithJacobian(const double t, double const dt,
                               std::vector<GlobalVector*> const& x,
-                              std::vector<GlobalVector*> const& xdot,
+                              std::vector<GlobalVector*> const& x_prev,
                               int const process_id, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac)
@@ -170,7 +170,7 @@ public:
 
         assembleGeneric(
             &Assembly::ParallelVectorMatrixAssembler::assembleWithJacobian, t,
-            dt, x, xdot, process_id, M, K, b, Jac);
+            dt, x, x_prev, process_id, M, K, b, Jac);
     }
 
 private:
@@ -185,7 +185,7 @@ private:
     template <typename Method, typename... Jac>
     void assembleGeneric(Method global_assembler_method, const double t,
                          double const dt, std::vector<GlobalVector*> const& x,
-                         std::vector<GlobalVector*> const& xdot,
+                         std::vector<GlobalVector*> const& x_prev,
                          int const process_id, GlobalMatrix& M, GlobalMatrix& K,
                          GlobalVector& b, Jac&... jac_or_not_jac)
     {
@@ -206,7 +206,7 @@ private:
 
                 (pvma_.*global_assembler_method)(
                     loc_asms, sad.active_element_ids, dof_tables, t, dt, x,
-                    xdot, process_id, M, K, b_submesh, jac_or_not_jac...);
+                    x_prev, process_id, M, K, b_submesh, jac_or_not_jac...);
 
                 MathLib::LinAlg::axpy(b, 1.0, b_submesh);
 
@@ -224,8 +224,8 @@ private:
                 derived().getProcessVariables(process_id)[0];
 
             (pvma_.*global_assembler_method)(
-                loc_asms, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-                process_id, M, K, b, jac_or_not_jac...);
+                loc_asms, pv.getActiveElementIDs(), dof_tables, t, dt, x,
+                x_prev, process_id, M, K, b, jac_or_not_jac...);
         }
 
         AssemblyMixinBase::copyResiduumVectorsToBulkMesh(

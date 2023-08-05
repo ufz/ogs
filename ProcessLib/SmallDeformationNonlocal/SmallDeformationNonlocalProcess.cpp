@@ -208,7 +208,7 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
 template <int DisplacementDim>
 void SmallDeformationNonlocalProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble SmallDeformationNonlocalProcess.");
@@ -221,7 +221,7 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
+        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
         b);
 }
 
@@ -245,12 +245,10 @@ void SmallDeformationNonlocalProcess<
 
 template <int DisplacementDim>
 void SmallDeformationNonlocalProcess<DisplacementDim>::
-    assembleWithJacobianConcreteProcess(const double t, double const dt,
-                                        std::vector<GlobalVector*> const& x,
-                                        std::vector<GlobalVector*> const& xdot,
-                                        int const process_id, GlobalMatrix& M,
-                                        GlobalMatrix& K, GlobalVector& b,
-                                        GlobalMatrix& Jac)
+    assembleWithJacobianConcreteProcess(
+        const double t, double const dt, std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian SmallDeformationNonlocalProcess.");
 
@@ -262,8 +260,8 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
-        process_id, M, K, b, Jac);
+        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x,
+        x_prev, process_id, M, K, b, Jac);
 
     b.copyValues(*_nodal_forces);
     std::transform(_nodal_forces->begin(), _nodal_forces->end(),
@@ -273,7 +271,7 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
 template <int DisplacementDim>
 void SmallDeformationNonlocalProcess<DisplacementDim>::
     postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
-                                std::vector<GlobalVector*> const& x_dot,
+                                std::vector<GlobalVector*> const& x_prev,
                                 double const t,
                                 double const dt,
                                 int const process_id)
@@ -287,7 +285,7 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, x, x_dot, t, dt,
+        pv.getActiveElementIDs(), dof_tables, x, x_prev, t, dt,
         _use_monolithic_scheme, process_id);
 }
 

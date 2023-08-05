@@ -112,7 +112,7 @@ public:
 
     void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
-                  std::vector<double> const& /*local_xdot*/,
+                  std::vector<double> const& /*local_x_prev*/,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override
@@ -239,7 +239,7 @@ public:
         double const /*t*/,
         double const /*dt*/,
         Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& /*local_x_dot*/) override
+        Eigen::VectorXd const& /*local_x_prev*/) override
     {
         auto const local_p =
             local_x.template segment<pressure_size>(pressure_index);

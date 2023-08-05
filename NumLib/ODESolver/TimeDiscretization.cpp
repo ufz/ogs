@@ -48,19 +48,6 @@ double computeRelativeChangeFromPreviousTimestep(GlobalVector const& x,
     return norm_dx / std::numeric_limits<double>::epsilon();
 }
 
-void TimeDiscretization::getXdot(GlobalVector const& x_at_new_timestep,
-                                 GlobalVector const& x_old,
-                                 GlobalVector& xdot) const
-{
-    namespace LinAlg = MathLib::LinAlg;
-
-    double const dt = getCurrentTimeIncrement();
-
-    // xdot = 1/dt * x_at_new_timestep - x_old
-    getWeightedOldX(xdot, x_old);
-    LinAlg::axpby(xdot, 1. / dt, -1.0, x_at_new_timestep);
-}
-
 void BackwardEuler::getWeightedOldX(GlobalVector& y,
                                     GlobalVector const& x_old) const
 {

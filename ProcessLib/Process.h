@@ -67,12 +67,12 @@ public:
 
     /// Postprocessing after a complete timestep.
     void postTimestep(std::vector<GlobalVector*> const& x,
-                      std::vector<GlobalVector*> const& x_dot, const double t,
+                      std::vector<GlobalVector*> const& x_prev, const double t,
                       const double delta_t, int const process_id);
 
     /// Calculates secondary variables, e.g. stress and strain for deformation
     /// analysis, only after nonlinear solver being successfully conducted.
-    void postNonLinearSolver(GlobalVector const& x, GlobalVector const& xdot,
+    void postNonLinearSolver(GlobalVector const& x, GlobalVector const& x_prev,
                              const double t, double const dt,
                              int const process_id);
 
@@ -82,7 +82,7 @@ public:
     void computeSecondaryVariable(double const t,
                                   double const dt,
                                   std::vector<GlobalVector*> const& x,
-                                  GlobalVector const& x_dot,
+                                  GlobalVector const& x_prev,
                                   int const process_id);
 
     NumLib::IterationResult postIteration(GlobalVector const& x) final;
@@ -127,12 +127,13 @@ public:
 
     void assemble(const double t, double const dt,
                   std::vector<GlobalVector*> const& x,
-                  std::vector<GlobalVector*> const& xdot, int const process_id,
-                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) final;
+                  std::vector<GlobalVector*> const& x_prev,
+                  int const process_id, GlobalMatrix& M, GlobalMatrix& K,
+                  GlobalVector& b) final;
 
     void assembleWithJacobian(const double t, double const dt,
                               std::vector<GlobalVector*> const& x,
-                              std::vector<GlobalVector*> const& xdot,
+                              std::vector<GlobalVector*> const& x_prev,
                               int const process_id, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) final;
@@ -230,15 +231,14 @@ private:
     {
     }
 
-    virtual void assembleConcreteProcess(const double t, double const dt,
-                                         std::vector<GlobalVector*> const& x,
-                                         std::vector<GlobalVector*> const& xdot,
-                                         int const process_id, GlobalMatrix& M,
-                                         GlobalMatrix& K, GlobalVector& b) = 0;
+    virtual void assembleConcreteProcess(
+        const double t, double const dt, std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) = 0;
 
     virtual void assembleWithJacobianConcreteProcess(
         const double t, double const dt, std::vector<GlobalVector*> const& x,
-        std::vector<GlobalVector*> const& xdot, int const process_id,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) = 0;
 
@@ -252,7 +252,7 @@ private:
 
     virtual void postTimestepConcreteProcess(
         std::vector<GlobalVector*> const& /*x*/,
-        std::vector<GlobalVector*> const& /*x_dot*/,
+        std::vector<GlobalVector*> const& /*x_prev*/,
         const double /*t*/,
         const double /*dt*/,
         int const /*process_id*/)
@@ -260,7 +260,7 @@ private:
     }
 
     virtual void postNonLinearSolverConcreteProcess(
-        GlobalVector const& /*x*/, GlobalVector const& /*xdot*/,
+        GlobalVector const& /*x*/, GlobalVector const& /*x_prev*/,
         const double /*t*/, double const /*dt*/, int const /*process_id*/)
     {
     }
@@ -274,7 +274,7 @@ private:
         double const /*t*/,
         double const /*dt*/,
         std::vector<GlobalVector*> const& /*x*/,
-        GlobalVector const& /*x_dot*/,
+        GlobalVector const& /*x_prev*/,
         int const /*process_id*/)
     {
     }

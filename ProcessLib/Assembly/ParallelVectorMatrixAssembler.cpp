@@ -26,7 +26,7 @@ void assembleWithJacobianOneElement(
     const std::size_t mesh_item_id,
     ProcessLib::LocalAssemblerInterface& local_assembler,
     const NumLib::LocalToGlobalIndexMap& dof_table, const double t,
-    const double dt, const GlobalVector& x, const GlobalVector& xdot,
+    const double dt, const GlobalVector& x, const GlobalVector& x_prev,
     std::vector<double>& local_M_data, std::vector<double>& local_K_data,
     std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
     std::vector<GlobalIndexType>& indices,
@@ -41,10 +41,10 @@ void assembleWithJacobianOneElement(
     local_Jac_data.clear();
 
     auto const local_x = x.get(indices);
-    auto const local_xdot = xdot.get(indices);
+    auto const local_x_prev = x_prev.get(indices);
     jacobian_assembler.assembleWithJacobian(
-        local_assembler, t, dt, local_x, local_xdot, local_M_data, local_K_data,
-        local_b_data, local_Jac_data);
+        local_assembler, t, dt, local_x, local_x_prev, local_M_data,
+        local_K_data, local_b_data, local_Jac_data);
 
     if (local_Jac_data.empty())
     {
@@ -121,7 +121,7 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
         dof_tables,
     const double t, double const dt, std::vector<GlobalVector*> const& xs,
-    std::vector<GlobalVector*> const& xdots, int const process_id,
+    std::vector<GlobalVector*> const& x_prevs, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     // checks //////////////////////////////////////////////////////////////////
@@ -142,11 +142,11 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
     }
     auto const& x = *xs.front();
 
-    if (xdots.size() != 1)
+    if (x_prevs.size() != 1)
     {
-        OGS_FATAL("More than 1 xdot vector");
+        OGS_FATAL("More than 1 x_prev vector");
     }
-    auto const& xdot = *xdots.front();
+    auto const& x_prev = *x_prevs.front();
 
     // algorithm ///////////////////////////////////////////////////////////////
 
@@ -204,7 +204,7 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
                 try
                 {
                     assembleWithJacobianOneElement(
-                        element_id, loc_asm, dof_table, t, dt, x, xdot,
+                        element_id, loc_asm, dof_table, t, dt, x, x_prev,
                         local_M_data, local_K_data, local_b_data,
                         local_Jac_data, indices, *jac_asm, cache);
                 }
@@ -242,7 +242,7 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
                 try
                 {
                     assembleWithJacobianOneElement(
-                        element_id, loc_asm, dof_table, t, dt, x, xdot,
+                        element_id, loc_asm, dof_table, t, dt, x, x_prev,
                         local_M_data, local_K_data, local_b_data,
                         local_Jac_data, indices, *jac_asm, cache);
                 }

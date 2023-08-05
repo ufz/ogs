@@ -83,7 +83,7 @@ public:
 
     void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
-                  std::vector<double> const& /*local_xdot*/,
+                  std::vector<double> const& /*local_x_prev*/,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
                   std::vector<double>& /*local_b_data*/) override
@@ -151,7 +151,7 @@ public:
 
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
+                              std::vector<double> const& local_x_prev,
                               std::vector<double>& /*local_M_data*/,
                               std::vector<double>& /*local_K_data*/,
                               std::vector<double>& local_rhs_data,
@@ -165,8 +165,8 @@ public:
         auto x = Eigen::Map<NodalVectorType const>(local_x.data(),
                                                    local_matrix_size);
 
-        auto x_dot = Eigen::Map<NodalVectorType const>(local_xdot.data(),
-                                                       local_matrix_size);
+        auto x_prev = Eigen::Map<NodalVectorType const>(local_x_prev.data(),
+                                                        local_matrix_size);
 
         auto local_Jac = MathLib::createZeroedMatrix<NodalMatrixType>(
             local_Jac_data, local_matrix_size, local_matrix_size);
@@ -226,7 +226,7 @@ public:
         }
 
         local_Jac.noalias() += laplace + storage / dt;
-        local_rhs.noalias() -= laplace * x + storage * x_dot;
+        local_rhs.noalias() -= laplace * x + storage * (x - x_prev) / dt;
     }
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(

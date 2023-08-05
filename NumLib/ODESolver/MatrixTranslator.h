@@ -54,9 +54,9 @@ public:
      * \ref concept_time_discretization "time discretization".
      */
     virtual void computeResidual(GlobalMatrix const& M, GlobalMatrix const& K,
-                                 GlobalVector const& b,
+                                 GlobalVector const& b, double dt,
                                  GlobalVector const& x_curr,
-                                 GlobalVector const& xdot,
+                                 GlobalVector const& x_prev,
                                  GlobalVector& res) const = 0;
 
     //! Computes the Jacobian of the residual and writes it to \c Jac_out.
@@ -107,8 +107,8 @@ public:
 
     //! Computes \f$ r = M \cdot \hat x + K \cdot x_C - b \f$.
     void computeResidual(GlobalMatrix const& M, GlobalMatrix const& K,
-                         GlobalVector const& b, GlobalVector const& x_curr,
-                         GlobalVector const& xdot,
+                         GlobalVector const& b, double dt,
+                         GlobalVector const& x_curr, GlobalVector const& x_prev,
                          GlobalVector& res) const override;
 
     //! Writes \c Jac_in to \c Jac_out.

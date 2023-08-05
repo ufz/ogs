@@ -95,7 +95,7 @@ public:
 
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& /*local_x*/,
-                  std::vector<double> const& /*local_xdot*/,
+                  std::vector<double> const& /*local_x_prev*/,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_rhs_data*/) override
@@ -107,7 +107,7 @@ public:
 
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
+                              std::vector<double> const& local_x_prev,
                               std::vector<double>& /*local_M_data*/,
                               std::vector<double>& /*local_K_data*/,
                               std::vector<double>& local_rhs_data,
@@ -164,7 +164,7 @@ public:
     }
 
     void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              Eigen::VectorXd const& /*local_x_dot*/,
+                              Eigen::VectorXd const& /*local_x_prev*/,
                               double const /*t*/, double const /*dt*/,
                               bool const /*use_monolithic_scheme*/,
                               int const /*process_id*/) override
@@ -180,7 +180,7 @@ public:
 
     void computeSecondaryVariableConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_x_dot) override;
+        Eigen::VectorXd const& local_x_prev) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
@@ -233,7 +233,7 @@ private:
 private:
     ConstitutiveRelationsValues<DisplacementDim> updateConstitutiveRelations(
         Eigen::Ref<Eigen::VectorXd const> const local_x,
-        Eigen::Ref<Eigen::VectorXd const> const local_xdot,
+        Eigen::Ref<Eigen::VectorXd const> const local_x_prev,
         ParameterLib::SpatialPosition const& x_position, double const t,
         double const dt, IpData& ip_data,
         IntegrationPointDataForOutput<DisplacementDim>& ip_data_output) const;

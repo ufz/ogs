@@ -30,7 +30,7 @@ CentralDifferencesJacobianAssembler::CentralDifferencesJacobianAssembler(
 void CentralDifferencesJacobianAssembler::assembleWithJacobian(
     LocalAssemblerInterface& local_assembler, const double t, double const dt,
     const std::vector<double>& local_x_data,
-    const std::vector<double>& local_xdot_data,
+    const std::vector<double>& local_x_prev_data,
     std::vector<double>& local_M_data, std::vector<double>& local_K_data,
     std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
 {
@@ -49,13 +49,13 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
 
     auto const local_x =
         MathLib::toVector<Eigen::VectorXd>(local_x_data, num_r_c);
-    auto const local_xdot =
-        MathLib::toVector<Eigen::VectorXd>(local_xdot_data, num_r_c);
+    auto const local_x_prev =
+        MathLib::toVector<Eigen::VectorXd>(local_x_prev_data, num_r_c);
+    Eigen::VectorXd const local_xdot = (local_x - local_x_prev) / dt;
 
     auto local_Jac =
         MathLib::createZeroedMatrix(local_Jac_data, num_r_c, num_r_c);
     _local_x_perturbed_data = local_x_data;
-    _local_xdot_perturbed_data = local_xdot_data;
 
     auto const num_dofs_per_component =
         local_x_data.size() / _absolute_epsilons.size();
@@ -75,19 +75,16 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
         auto const eps = _absolute_epsilons[component];
 
         _local_x_perturbed_data[i] += eps;
-        _local_xdot_perturbed_data[i] = local_xdot_data[i] + eps / dt;
         local_assembler.assemble(t, dt, _local_x_perturbed_data,
-                                 _local_xdot_perturbed_data, local_M_data,
-                                 local_K_data, local_b_data);
+                                 local_x_prev_data, local_M_data, local_K_data,
+                                 local_b_data);
 
         _local_x_perturbed_data[i] = local_x_data[i] - eps;
-        _local_xdot_perturbed_data[i] = local_xdot_data[i] - eps / dt;
         local_assembler.assemble(t, dt, _local_x_perturbed_data,
-                                 _local_xdot_perturbed_data, _local_M_data,
+                                 local_x_prev_data, _local_M_data,
                                  _local_K_data, _local_b_data);
 
         _local_x_perturbed_data[i] = local_x_data[i];
-        _local_xdot_perturbed_data[i] = local_xdot_data[i];
 
         if (!local_M_data.empty())
         {
@@ -128,8 +125,8 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
     }
 
     // Assemble with unperturbed local x.
-    local_assembler.assemble(t, dt, local_x_data, local_xdot_data, local_M_data,
-                             local_K_data, local_b_data);
+    local_assembler.assemble(t, dt, local_x_data, local_x_prev_data,
+                             local_M_data, local_K_data, local_b_data);
 
     // Compute remaining terms of the Jacobian.
     if (!local_M_data.empty())
@@ -159,15 +156,13 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
     if (!local_M_data.empty())
     {
         auto M = MathLib::toMatrix(local_M_data, num_r_c, num_r_c);
-        auto x_dot = MathLib::toVector(local_xdot_data);
-        b -= M * x_dot;
+        b -= M * local_xdot;
         local_M_data.clear();
     }
     if (!local_K_data.empty())
     {
         auto K = MathLib::toMatrix(local_K_data, num_r_c, num_r_c);
-        auto x = MathLib::toVector(local_x_data);
-        b -= K * x;
+        b -= K * local_x;
         local_K_data.clear();
     }
 }

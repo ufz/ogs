@@ -267,7 +267,7 @@ public:
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
     updateConstitutiveRelations(
         Eigen::Ref<Eigen::VectorXd const> const& u,
-        Eigen::Ref<Eigen::VectorXd const> const& u_dot,
+        Eigen::Ref<Eigen::VectorXd const> const& u_prev,
         ParameterLib::SpatialPosition const& x_position, double const t,
         double const dt,
         IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>&
@@ -300,7 +300,7 @@ public:
                 sigma_prev);
         variables_prev.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                B * (u - u_dot * dt));
+                B * u_prev);
 
         double const T_ref =
             _process_data.reference_temperature
@@ -329,7 +329,7 @@ public:
 
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& /*local_x*/,
-                  std::vector<double> const& /*local_xdot*/,
+                  std::vector<double> const& /*local_x_prev*/,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_b_data*/) override
@@ -341,7 +341,7 @@ public:
 
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& local_x_dot,
+                              std::vector<double> const& local_x_prev,
                               std::vector<double>& /*local_M_data*/,
                               std::vector<double>& /*local_K_data*/,
                               std::vector<double>& local_b_data,
@@ -356,7 +356,7 @@ public:
             local_b_data, local_matrix_size);
 
         auto [u] = localDOF(local_x);
-        auto [u_dot] = localDOF(local_x_dot);
+        auto [u_prev] = localDOF(local_x_prev);
 
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -383,7 +383,7 @@ public:
 
             auto const& sigma = _ip_data[ip].sigma;
 
-            auto const C = updateConstitutiveRelations(u, u_dot, x_position, t,
+            auto const C = updateConstitutiveRelations(u, u_prev, x_position, t,
                                                        dt, _ip_data[ip]);
 
             auto const rho = _process_data.solid_density(t, x_position)[0];
@@ -394,7 +394,7 @@ public:
     }
 
     void postTimestepConcrete(Eigen::VectorXd const& local_x,
-                              Eigen::VectorXd const& local_x_dot,
+                              Eigen::VectorXd const& local_x_prev,
                               double const t, double const dt,
                               bool const /*use_monolithic_scheme*/,
                               int const /*process_id*/) override
@@ -409,8 +409,8 @@ public:
         {
             x_position.setIntegrationPoint(ip);
 
-            updateConstitutiveRelations(local_x, local_x_dot, x_position, t, dt,
-                                        _ip_data[ip]);
+            updateConstitutiveRelations(local_x, local_x_prev, x_position, t,
+                                        dt, _ip_data[ip]);
 
             auto& eps = _ip_data[ip].eps;
             auto& sigma = _ip_data[ip].sigma;
@@ -529,7 +529,7 @@ public:
 
     void computeSecondaryVariableConcrete(
         double const /*t*/, double const /*dt*/, Eigen::VectorXd const& /*x*/,
-        Eigen::VectorXd const& /*x_dot*/) override
+        Eigen::VectorXd const& /*x_prev*/) override
     {
         int const elem_id = _element.getID();
         ParameterLib::SpatialPosition x_position;

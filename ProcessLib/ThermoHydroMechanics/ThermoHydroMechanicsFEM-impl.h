@@ -150,7 +150,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     updateConstitutiveRelations(
         Eigen::Ref<Eigen::VectorXd const> const local_x,
-        Eigen::Ref<Eigen::VectorXd const> const local_xdot,
+        Eigen::Ref<Eigen::VectorXd const> const local_x_prev,
         ParameterLib::SpatialPosition const& x_position, double const t,
         double const dt, IpData& ip_data,
         IntegrationPointDataForOutput<DisplacementDim>& ip_data_output) const
@@ -159,7 +159,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
            pressure_size + displacement_size + temperature_size);
 
     auto const [T, p, u] = localDOF(local_x);
-    auto const [T_dot, p_dot, u_dot] = localDOF(local_xdot);
+    auto const [T_prev, p_prev, u_prev] = localDOF(local_x_prev);
 
     auto const& solid_material =
         MaterialLib::Solids::selectSolidConstitutiveRelation(
@@ -181,7 +181,8 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     auto const& dNdx = ip_data.dNdx;
 
     auto const T_int_pt = N.dot(T);
-    double const dT_int_pt = N.dot(T_dot) * dt;
+    auto const T_prev_int_pt = N.dot(T_prev);
+    double const dT_int_pt = T_int_pt - T_prev_int_pt;
 
     auto const x_coord =
         NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -310,7 +311,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             eps_m);
 
     crv.C = ip_data.updateConstitutiveRelation(vars, t, x_position, dt,
-                                               T_int_pt - dT_int_pt);
+                                               T_prev_int_pt);
 
     crv.rho = solid_density * (1 - porosity) + porosity * fluid_density;
 
@@ -442,7 +443,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                 eps_m_ice);
         auto const C_IR = ip_data.updateConstitutiveRelationIce(
             *_process_data.ice_constitutive_relation, vars_ice, t, x_position,
-            dt, T_int_pt - dT_int_pt);
+            dt, T_prev_int_pt);
         crv.effective_volumetric_heat_capacity +=
             -phi_fr * fluid_density * crv.c_f + phi_fr * rho_fr * c_fr -
             l_fr * rho_fr * dphi_fr_dT;
@@ -468,7 +469,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
         crv.J_TT_fr = ((rho_fr * c_fr - fluid_density * crv.c_f) * dphi_fr_dT +
                        l_fr * rho_fr * d2phi_fr_dT2) *
-                      N.dot(T_dot);
+                      dT_int_pt / dt;
     }
     return crv;
 }
@@ -481,7 +482,7 @@ void ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
-                         std::vector<double> const& local_xdot,
+                         std::vector<double> const& local_x_prev,
                          std::vector<double>& /*local_M_data*/,
                          std::vector<double>& /*local_K_data*/,
                          std::vector<double>& local_rhs_data,
@@ -492,11 +493,11 @@ void ThermoHydroMechanicsLocalAssembler<
 
     auto const x =
         Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size());
-    auto const xdot =
-        Eigen::Map<Eigen::VectorXd const>(local_xdot.data(), local_xdot.size());
+    auto const x_prev = Eigen::Map<Eigen::VectorXd const>(local_x_prev.data(),
+                                                          local_x_prev.size());
 
     auto const [T, p, u] = localDOF(local_x);
-    auto const [T_dot, p_dot, u_dot] = localDOF(local_xdot);
+    auto const [T_prev, p_prev, u_prev] = localDOF(local_x_prev);
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesTypeDisplacement::template MatrixType<
@@ -560,7 +561,7 @@ void ThermoHydroMechanicsLocalAssembler<
                     _element, N_u))};
 
         auto const crv = updateConstitutiveRelations(
-            x, xdot, x_position, t, dt, _ip_data[ip], _ip_data_output[ip]);
+            x, x_prev, x_position, t, dt, _ip_data[ip], _ip_data_output[ip]);
 
         auto const& w = _ip_data[ip].integration_weight;
 
@@ -770,8 +771,8 @@ void ThermoHydroMechanicsLocalAssembler<
 
     // pressure equation (f_p)
     local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
-        laplace_p * p + laplace_T * T + storage_p * p_dot - storage_T * T_dot +
-        Kup.transpose() * u_dot;
+        laplace_p * p + laplace_T * T + storage_p * (p - p_prev) / dt -
+        storage_T * (T - T_prev) / dt + Kup.transpose() * (u - u_prev) / dt;
 
     // displacement equation (f_u)
     local_rhs.template segment<displacement_size>(displacement_index)
@@ -779,7 +780,7 @@ void ThermoHydroMechanicsLocalAssembler<
 
     // temperature equation (f_T)
     local_rhs.template segment<temperature_size>(temperature_index).noalias() -=
-        KTT * T + MTT * T_dot;
+        KTT * T + MTT * (T - T_prev) / dt;
 
     local_rhs.template segment<temperature_size>(temperature_index).noalias() -=
         KTp * p;
@@ -847,7 +848,7 @@ void ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
-                                     Eigen::VectorXd const& local_x_dot)
+                                     Eigen::VectorXd const& local_x_prev)
 {
     auto const p = local_x.template segment<pressure_size>(pressure_index);
     auto const T =
@@ -874,7 +875,7 @@ void ThermoHydroMechanicsLocalAssembler<
                                                ShapeMatricesTypeDisplacement>(
                     _element, N_u))};
 
-        updateConstitutiveRelations(local_x, local_x_dot, x_position, t, dt,
+        updateConstitutiveRelations(local_x, local_x_prev, x_position, t, dt,
                                     _ip_data[ip], _ip_data_output[ip]);
 
         fluid_density_avg += _ip_data_output[ip].fluid_density;

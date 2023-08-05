@@ -128,7 +128,7 @@ StokesFlowProcess<GlobalDim>::getMatrixSpecifications(
 template <int GlobalDim>
 void StokesFlowProcess<GlobalDim>::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble StokesFlowProcess.");
@@ -144,15 +144,15 @@ void StokesFlowProcess<GlobalDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot, process_id, M, K,
-        b);
+        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id, M,
+        K, b);
 }
 
 template <int GlobalDim>
 void StokesFlowProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
     const double /*t*/, double const /*dt*/,
     std::vector<GlobalVector*> const& /*x*/,
-    std::vector<GlobalVector*> const& /*xdot*/, int const /*process_id*/,
+    std::vector<GlobalVector*> const& /*x_prev*/, int const /*process_id*/,
     GlobalMatrix& /*M*/, GlobalMatrix& /*K*/, GlobalVector& /*b*/,
     GlobalMatrix& /*Jac*/)
 {
@@ -166,7 +166,7 @@ void StokesFlowProcess<GlobalDim>::computeSecondaryVariableConcrete(
     double const t,
     double const dt,
     std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_dot,
+    GlobalVector const& x_prev,
     int const process_id)
 {
     if (process_id != 0)
@@ -185,13 +185,13 @@ void StokesFlowProcess<GlobalDim>::computeSecondaryVariableConcrete(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &StokesFlowLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_dot, process_id);
+        x_prev, process_id);
 }
 
 template <int GlobalDim>
 void StokesFlowProcess<GlobalDim>::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& x_dot,
+    std::vector<GlobalVector*> const& x_prev,
     const double t,
     const double dt,
     int const process_id)
@@ -211,7 +211,7 @@ void StokesFlowProcess<GlobalDim>::postTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &StokesFlowLocalAssemblerInterface::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, x, x_dot, t, dt,
+        pv.getActiveElementIDs(), dof_tables, x, x_prev, t, dt,
         _use_monolithic_scheme, process_id);
 }
 

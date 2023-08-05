@@ -49,14 +49,14 @@ public:
 
     virtual void assemble(double const t, double const dt,
                           std::vector<double> const& local_x,
-                          std::vector<double> const& local_xdot,
+                          std::vector<double> const& local_x_prev,
                           std::vector<double>& local_M_data,
                           std::vector<double>& local_K_data,
                           std::vector<double>& local_b_data);
 
     virtual void assembleForStaggeredScheme(double const t, double const dt,
                                             Eigen::VectorXd const& local_x,
-                                            Eigen::VectorXd const& local_xdot,
+                                            Eigen::VectorXd const& local_x_prev,
                                             int const process_id,
                                             std::vector<double>& local_M_data,
                                             std::vector<double>& local_K_data,
@@ -64,7 +64,7 @@ public:
 
     virtual void assembleWithJacobian(double const t, double const dt,
                                       std::vector<double> const& local_x,
-                                      std::vector<double> const& local_xdot,
+                                      std::vector<double> const& local_x_prev,
                                       std::vector<double>& local_M_data,
                                       std::vector<double>& local_K_data,
                                       std::vector<double>& local_b_data,
@@ -72,7 +72,7 @@ public:
 
     virtual void assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, int const process_id,
+        Eigen::VectorXd const& local_x_prev, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data);
 
@@ -80,7 +80,7 @@ public:
         std::size_t const mesh_item_id,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
         double const t, double const dt, std::vector<GlobalVector*> const& x,
-        GlobalVector const& x_dot, int const process_id);
+        GlobalVector const& x_prev, int const process_id);
 
     virtual void preTimestep(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -91,13 +91,13 @@ public:
         std::size_t const mesh_item_id,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
         std::vector<GlobalVector*> const& x,
-        std::vector<GlobalVector*> const& x_dot, double const t,
+        std::vector<GlobalVector*> const& x_prev, double const t,
         double const dt, bool const use_monolithic_scheme,
         int const process_id);
 
     void postNonLinearSolver(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
-                             GlobalVector const& x, GlobalVector const& xdot,
+                             GlobalVector const& x, GlobalVector const& x_prev,
                              double const t, double const dt,
                              bool const use_monolithic_scheme,
                              int const process_id);
@@ -137,7 +137,7 @@ private:
     }
 
     virtual void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                                      Eigen::VectorXd const& /*local_x_dot*/,
+                                      Eigen::VectorXd const& /*local_x_prev*/,
                                       double const /*t*/, double const /*dt*/,
                                       bool const /*use_monolithic_scheme*/,
                                       int const /*process_id*/)
@@ -146,7 +146,7 @@ private:
 
     virtual void postNonLinearSolverConcrete(
         std::vector<double> const& /*local_x*/,
-        std::vector<double> const& /*local_xdot*/, double const /*t*/,
+        std::vector<double> const& /*local_x_prev*/, double const /*t*/,
         double const /*dt*/, bool const /*use_monolithic_scheme*/,
         int const /*process_id*/)
     {
@@ -156,7 +156,7 @@ private:
         double const /*t*/,
         double const /*dt*/,
         Eigen::VectorXd const& /*local_x*/,
-        Eigen::VectorXd const& /*local_x_dot*/)
+        Eigen::VectorXd const& /*local_x_prev*/)
     {
     }
 

@@ -60,16 +60,16 @@ public:
 protected:
     void assembleWithJacobianConcrete(double const t, double const dt,
                                       Eigen::VectorXd const& local_x,
-                                      Eigen::VectorXd const& local_x_dot,
+                                      Eigen::VectorXd const& local_x_prev,
                                       Eigen::VectorXd& local_rhs,
                                       Eigen::MatrixXd& local_Jac) override;
 
     void assembleBlockMatricesWithJacobian(
         double const t, double const dt,
         Eigen::Ref<const Eigen::VectorXd> const& p,
-        Eigen::Ref<const Eigen::VectorXd> const& p_dot,
+        Eigen::Ref<const Eigen::VectorXd> const& p_prev,
         Eigen::Ref<const Eigen::VectorXd> const& u,
-        Eigen::Ref<const Eigen::VectorXd> const& u_dot,
+        Eigen::Ref<const Eigen::VectorXd> const& u_prev,
         Eigen::Ref<Eigen::VectorXd> rhs_p, Eigen::Ref<Eigen::VectorXd> rhs_u,
         Eigen::Ref<Eigen::MatrixXd> J_pp, Eigen::Ref<Eigen::MatrixXd> J_pu,
         Eigen::Ref<Eigen::MatrixXd> J_uu, Eigen::Ref<Eigen::MatrixXd> J_up);
@@ -85,7 +85,6 @@ protected:
 
     void setPressureOfInactiveNodes(
         double const t, Eigen::Ref<Eigen::VectorXd> p);
-    void setPressureDotOfInactiveNodes(Eigen::Ref<Eigen::VectorXd> p_dot);
 
     // Types for displacement.
     using ShapeMatricesTypeDisplacement =

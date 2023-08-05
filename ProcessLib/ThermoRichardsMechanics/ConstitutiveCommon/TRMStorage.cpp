@@ -23,7 +23,7 @@ void TRMStorageModel<DisplacementDim>::eval(
     TRMStorageData& out) const
 {
     double const p_cap = p_cap_data.p_cap;
-    double const p_cap_dot = p_cap_data.p_cap_dot;
+    double const p_cap_prev = p_cap_data.p_cap_prev;
 
     double const phi = poro_data.phi;
     double const alphaB_minus_phi = biot_data() - phi;
@@ -44,15 +44,15 @@ void TRMStorageModel<DisplacementDim>::eval(
     // secant derivative from time discretization for storage
     // use tangent, if secant is not available
     double const DeltaS_L_Deltap_cap =
-        (p_cap_dot == 0)
+        (p_cap == p_cap_prev)
             ? dS_L_data.dS_L_dp_cap
-            : (S_L_data.S_L - S_L_prev_data.S_L) / (x_t.dt * p_cap_dot);
+            : (S_L_data.S_L - S_L_prev_data.S_L) / (p_cap - p_cap_prev);
 
     out.storage_p_a_p = rho_L_data.rho_LR * specific_storage_a_p;
     out.storage_p_a_S_X_NTN =
         -rho_L_data.rho_LR * specific_storage_a_S * DeltaS_L_Deltap_cap;
-    out.J_pp_X_NTN =
-        p_cap_dot * rho_L_data.rho_LR * dspecific_storage_a_p_dp_cap;
+    out.J_pp_X_NTN = (p_cap - p_cap_prev) / x_t.dt * rho_L_data.rho_LR *
+                     dspecific_storage_a_p_dp_cap;
     out.storage_p_a_S_Jpp_X_NTN =
         -rho_L_data.rho_LR *
         ((S_L_data.S_L - S_L_prev_data.S_L) * dspecific_storage_a_S_dp_cap +
