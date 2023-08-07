@@ -131,16 +131,7 @@ int main(int argc, char* argv[])
     {
         for (auto* surface : *surfaces)
         {
-            for (std::size_t i = 0; i < surface->getNumberOfTriangles(); ++i)
-            {
-                auto* triangle = (*surface)[i];
-                const_cast<std::size_t&>((*triangle)[0]) =
-                    mapping[(*triangle)[0]];
-                const_cast<std::size_t&>((*triangle)[1]) =
-                    mapping[(*triangle)[1]];
-                const_cast<std::size_t&>((*triangle)[2]) =
-                    mapping[(*triangle)[2]];
-            }
+            GeoLib::resetPointIDs(*surface, mapping);
         }
     }
 
