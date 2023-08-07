@@ -11,6 +11,8 @@
 #include <tclap/CmdLine.h>
 
 #include <memory>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
 #include <vector>
 
 #include "GeoLib/GEOObjects.h"
@@ -20,6 +22,15 @@
 #include "GeoLib/Surface.h"
 #include "GeoLib/Triangle.h"
 #include "InfoLib/GitInfo.h"
+
+auto createMapping(std::vector<bool> const& used_points)
+{
+    auto getCountOrMax = [cnt = 0u](bool used) mutable
+    { return used ? cnt++ : std::numeric_limits<std::size_t>::max(); };
+
+    return used_points | ranges::views::transform(getCountOrMax) |
+           ranges::to<std::vector>;
+}
 
 int main(int argc, char* argv[])
 {
@@ -105,17 +116,7 @@ int main(int argc, char* argv[])
         "surface",
         points->size() - number_of_used_points);
 
-    std::vector<std::size_t> mapping(points->size(),
-                                     std::numeric_limits<std::size_t>::max());
-    std::size_t cnt = 0;
-    for (std::size_t i = 0; i < points->size(); ++i)
-    {
-        if (used_points[i])
-        {
-            mapping[i] = cnt;
-            cnt++;
-        }
-    }
+    auto const mapping = createMapping(used_points);
 
     // reset point ids is polylines
     if (polylines)
