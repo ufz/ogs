@@ -11,6 +11,7 @@
 
 #include <map>
 #include <memory>
+#include <random>
 #include <vector>
 
 void createSetOfTestPointsAndAssociatedNames(GeoLib::GEOObjects& geo_objs,
@@ -41,4 +42,26 @@ void createSetOfTestPointsAndAssociatedNames(GeoLib::GEOObjects& geo_objs,
     }
 
     geo_objs.addPointVec(std::move(pnts), name, std::move(pnt_name_map));
+}
+
+std::vector<GeoLib::Point*> createRandomPoints(
+    std::size_t const number_of_random_points,
+    std::array<double, 6> const& limits)
+{
+    std::random_device rd;
+    std::mt19937 random_engine_mt19937(rd());
+    std::normal_distribution<> normal_dist_x(limits[0], limits[1]);
+    std::normal_distribution<> normal_dist_y(limits[2], limits[3]);
+    std::normal_distribution<> normal_dist_z(limits[4], limits[5]);
+
+    std::vector<GeoLib::Point*> random_points;
+
+    for (std::size_t k = 0; k < number_of_random_points; ++k)
+    {
+        random_points.push_back(new GeoLib::Point(
+            std::array{normal_dist_x(random_engine_mt19937),
+                       normal_dist_y(random_engine_mt19937),
+                       normal_dist_z(random_engine_mt19937)}));
+    }
+    return random_points;
 }
