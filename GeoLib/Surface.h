@@ -97,4 +97,5 @@ bool operator==(Surface const& lhs, Surface const& rhs);
 /// Resets the point IDs of the surface corresponding to the mapping.
 void resetPointIDs(Surface& surface, std::vector<std::size_t> const& mapping);
 
+void markUsedPoints(Surface const& surface, std::vector<bool>& used_points);
 }  // namespace GeoLib

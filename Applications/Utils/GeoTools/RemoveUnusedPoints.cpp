@@ -92,13 +92,7 @@ int main(int argc, char* argv[])
     {
         for (auto const* surface : *surfaces)
         {
-            for (std::size_t i = 0; i < surface->getNumberOfTriangles(); ++i)
-            {
-                auto const* triangle = (*surface)[i];
-                used_points[(*triangle)[0]] = true;
-                used_points[(*triangle)[1]] = true;
-                used_points[(*triangle)[2]] = true;
-            }
+            GeoLib::markUsedPoints(*surface, used_points);
         }
     }
 
