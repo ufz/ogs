@@ -85,10 +85,7 @@ int main(int argc, char* argv[])
     {
         for (auto const* polyline : *polylines)
         {
-            for (std::size_t i = 0; i < polyline->getNumberOfPoints(); ++i)
-            {
-                used_points[polyline->getPointID(i)] = true;
-            }
+            GeoLib::markUsedPoints(*polyline, used_points);
         }
     }
     if (surfaces)

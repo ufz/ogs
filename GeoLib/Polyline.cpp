@@ -494,6 +494,21 @@ void resetPointIDs(Polyline& polyline, std::vector<std::size_t> const& mapping)
     }
 }
 
+void markUsedPoints(Polyline const& polyline, std::vector<bool>& used_points)
+{
+    if (polyline.getPointsVec().size() != used_points.size())
+    {
+        OGS_FATAL(
+            "internal error in markUsedPoints(): polyline based on point "
+            "vector of size {}, given used_points has size {}",
+            polyline.getPointsVec().size(), used_points.size());
+    }
+    for (std::size_t i = 0; i < polyline.getNumberOfPoints(); ++i)
+    {
+        used_points[polyline.getPointID(i)] = true;
+    }
+}
+
 bool containsEdge(const Polyline& ply, std::size_t id0, std::size_t id1)
 {
     if (id0 == id1)
