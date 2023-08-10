@@ -65,3 +65,29 @@ std::vector<GeoLib::Point*> createRandomPoints(
     }
     return random_points;
 }
+
+std::vector<GeoLib::Point*> createPointsInGridArrangement(
+    std::array<unsigned, 3> const& number_of_subdivisions,
+    std::array<double, 3> const& distances,
+    MathLib::Point3d const& origin)
+{
+    std::vector<GeoLib::Point*> points;
+    points.reserve((number_of_subdivisions[0] + 1) *
+                   (number_of_subdivisions[1] + 1) *
+                   (number_of_subdivisions[2] + 1));
+
+    for (std::size_t i = 0; i < number_of_subdivisions[2] + 1; i++)
+    {
+        const double z = origin[2] + distances[2] * i;
+        for (std::size_t j = 0; j < number_of_subdivisions[1] + 1; j++)
+        {
+            const double y = origin[1] + distances[1] * j;
+            for (std::size_t k = 0; k < number_of_subdivisions[0] + 1; k++)
+            {
+                points.push_back(
+                    new GeoLib::Point(origin[0] + distances[0] * k, y, z));
+            }
+        }
+    }
+    return points;
+}

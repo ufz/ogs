@@ -22,3 +22,8 @@ void createSetOfTestPointsAndAssociatedNames(GeoLib::GEOObjects& geo_objs,
 std::vector<GeoLib::Point*> createRandomPoints(
     std::size_t const number_of_random_points,
     std::array<double, 6> const& limits);
+
+std::vector<GeoLib::Point*> createPointsInGridArrangement(
+    std::array<unsigned, 3> const& number_of_subdivisions,
+    std::array<double, 3> const& distances,
+    MathLib::Point3d const& origin);
