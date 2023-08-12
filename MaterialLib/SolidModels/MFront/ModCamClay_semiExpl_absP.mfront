@@ -182,7 +182,6 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
     // calculate the direction of plastic flow
     const auto f = q * q + M2 * p * (p - pc_new);
     const auto df_dp = M2 * (2 * p - pc_new);
-    const auto df_ds = 3 * s;
     const auto df_dpc = -M2 * p;
     const auto df_dsig = eval(3 * s - df_dp * id2 / 3);
     auto norm = std::sqrt(6 * q * q + df_dp * df_dp / 3);  // = std::sqrt(df_dsig|df_dsig);
