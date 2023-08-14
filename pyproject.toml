@@ -50,13 +50,16 @@ norecursedirs = ["Tests/Data"]
 
 [tool.cibuildwheel]
 archs = "auto64"
-build = "cp3*"
+build = ["cp3{8,9,10,11}-*"]
+skip = [
+  "*musllinux*",
+  "cp38-macosx_x86_64",
+] # otherwise error: 'is not a supported wheel on this platform'archs = "auto64"
 test-extras = "test"
 test-command = "pytest {project}/Tests/Python"
 build-verbosity = "1"
 
 [tool.cibuildwheel.linux]
-skip = ["*musllinux*", "cp36-*"]
 # See https://github.com/NixOS/patchelf/issues/446
 # quay.io/pypa/manylinux_2_28 works too
 manylinux-x86_64-image = "quay.io/pypa/manylinux2014_x86_64@sha256:005826a6fa94c97bd31fccf637a0f10621304da447ca2ab3963c13991dffa013"
@@ -72,12 +75,6 @@ environment-pass = [
 
 [tool.cibuildwheel.linux.config-settings]
 "cmake.define.OGS_CPU_ARCHITECTURE" = "sandybridge"
-
-[tool.cibuildwheel.macos]
-skip = ["cp36-*", "cp37-*", "cp38-*x86_64"]
-
-[tool.cibuildwheel.windows]
-skip = ["cp36-*", "cp37-*"]
 
 # maybe this should be moved to CMake logic, i.e. disabling both features on win
 [tool.cibuildwheel.windows.config-settings]
