@@ -28,6 +28,10 @@ struct ConstitutiveTraits
         ConstitutiveStressSaturation_StrainPressureTemperature::StatefulData<
             DisplacementDim>;
 
+    using StatefulDataPrev = ProcessLib::ThermoRichardsMechanics::
+        ConstitutiveStressSaturation_StrainPressureTemperature::
+            StatefulDataPrev<DisplacementDim>;
+
     using ConstitutiveData = ProcessLib::ThermoRichardsMechanics::
         ConstitutiveStressSaturation_StrainPressureTemperature::
             ConstitutiveData<DisplacementDim>;

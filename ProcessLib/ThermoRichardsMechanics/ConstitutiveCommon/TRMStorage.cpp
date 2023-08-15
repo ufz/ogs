@@ -17,7 +17,7 @@ void TRMStorageModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, BiotData const& biot_data,
     PorosityData const& poro_data, LiquidDensityData const& rho_L_data,
     SaturationData const& S_L_data, SaturationDataDeriv const& dS_L_data,
-    SaturationData const& S_L_prev_data,
+    PrevState<SaturationData> const& S_L_prev_data,
     CapillaryPressureData<DisplacementDim> const& p_cap_data,
     SolidCompressibilityData const& solid_compressibility_data,
     TRMStorageData& out) const
@@ -46,7 +46,7 @@ void TRMStorageModel<DisplacementDim>::eval(
     double const DeltaS_L_Deltap_cap =
         (p_cap == p_cap_prev)
             ? dS_L_data.dS_L_dp_cap
-            : (S_L_data.S_L - S_L_prev_data.S_L) / (p_cap - p_cap_prev);
+            : (S_L_data.S_L - S_L_prev_data->S_L) / (p_cap - p_cap_prev);
 
     out.storage_p_a_p = rho_L_data.rho_LR * specific_storage_a_p;
     out.storage_p_a_S_X_NTN =
@@ -55,7 +55,7 @@ void TRMStorageModel<DisplacementDim>::eval(
                      dspecific_storage_a_p_dp_cap;
     out.storage_p_a_S_Jpp_X_NTN =
         -rho_L_data.rho_LR *
-        ((S_L_data.S_L - S_L_prev_data.S_L) * dspecific_storage_a_S_dp_cap +
+        ((S_L_data.S_L - S_L_prev_data->S_L) * dspecific_storage_a_S_dp_cap +
          specific_storage_a_S * dS_L_data.dS_L_dp_cap) /
         x_t.dt;
 }

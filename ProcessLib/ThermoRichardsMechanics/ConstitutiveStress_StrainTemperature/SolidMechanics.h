@@ -67,9 +67,10 @@ struct SolidMechanicsModel
         BishopsData const& bishops_data,
         SaturationDataDeriv const& dS_L_data,
         StrainData<DisplacementDim> const& eps_data,
-        StrainData<DisplacementDim> const& eps_prev_data,
+        PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
         MaterialStateData<DisplacementDim>& mat_state,
-        SolidMechanicsDataStateful<DisplacementDim> const& prev_state,
+        PrevState<SolidMechanicsDataStateful<DisplacementDim>> const&
+            prev_state,
         SolidMechanicsDataStateful<DisplacementDim>& current_state,
         TotalStressData<DisplacementDim>& total_stress_data,
         EquivalentPlasticStrainData& equiv_plast_strain_data,

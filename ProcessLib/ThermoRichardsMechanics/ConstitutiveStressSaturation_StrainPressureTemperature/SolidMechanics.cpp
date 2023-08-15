@@ -19,15 +19,16 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, TemperatureData<DisplacementDim> const& T_data,
     CapillaryPressureData<DisplacementDim> const& p_cap_data,
     StrainData<DisplacementDim> const& eps_data,
-    StrainData<DisplacementDim> const& eps_prev_data,
+    PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
     MaterialStateData<DisplacementDim>& mat_state,
-    SolidMechanicsDataStateful<DisplacementDim> const& /*prev_state*/,
+    PrevState<
+        SolidMechanicsDataStateful<DisplacementDim>> const& /*prev_state*/,
     SolidMechanicsDataStateful<DisplacementDim>& current_state,
-    TotalStressData<DisplacementDim> const& total_stress_data_prev,
+    PrevState<TotalStressData<DisplacementDim>> const& total_stress_data_prev,
     TotalStressData<DisplacementDim>& total_stress_data,
     EquivalentPlasticStrainData& equiv_plast_strain_data,
     SolidMechanicsDataStateless<DisplacementDim>& current_stateless,
-    SaturationData const& S_L_prev_data, SaturationData& S_L_data,
+    PrevState<SaturationData> const& S_L_prev_data, SaturationData& S_L_data,
     SaturationDataDeriv& dS_L_data) const
 {
     namespace MPL = MaterialPropertyLib;
@@ -40,8 +41,8 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     current_state.eps_m.noalias() = KVnan<DisplacementDim>();
 
     auto const& eps_total = eps_data.eps;
-    auto const& eps_total_prev = eps_prev_data.eps;
-    auto const& sigma_total_prev = total_stress_data_prev.sigma_total;
+    auto const& eps_total_prev = eps_prev_data->eps;
+    auto const& sigma_total_prev = total_stress_data_prev->sigma_total;
 
     // current state
     MPL::VariableArray variables;
@@ -60,7 +61,7 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     {
         // thermodynamic forces
         variables_prev.stress = sigma_total_prev;
-        variables_prev.liquid_saturation = S_L_prev_data.S_L;
+        variables_prev.liquid_saturation = S_L_prev_data->S_L;
 
         // gradients
         // TODO currently we always pass strain via mechanical_strain

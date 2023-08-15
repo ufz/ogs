@@ -46,20 +46,23 @@ struct SolidMechanicsModel
     {
     }
 
-    void eval(SpaceTimeData const& x_t,
-              TemperatureData<DisplacementDim> const& T_data,
-              CapillaryPressureData<DisplacementDim> const& p_cap_data,
-              StrainData<DisplacementDim> const& eps_data,
-              StrainData<DisplacementDim> const& eps_prev_data,
-              MaterialStateData<DisplacementDim>& mat_state,
-              SolidMechanicsDataStateful<DisplacementDim> const& prev_state,
-              SolidMechanicsDataStateful<DisplacementDim>& current_state,
-              TotalStressData<DisplacementDim> const& total_stress_data_prev,
-              TotalStressData<DisplacementDim>& total_stress_data,
-              EquivalentPlasticStrainData& equiv_plast_strain_data,
-              SolidMechanicsDataStateless<DisplacementDim>& current_stateless,
-              SaturationData const& S_L_prev_data, SaturationData& S_L_data,
-              SaturationDataDeriv& dS_L_data) const;
+    void eval(
+        const SpaceTimeData& x_t,
+        TemperatureData<DisplacementDim> const& T_data,
+        CapillaryPressureData<DisplacementDim> const& p_cap_data,
+        StrainData<DisplacementDim> const& eps_data,
+        PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
+        MaterialStateData<DisplacementDim>& mat_state,
+        PrevState<
+            SolidMechanicsDataStateful<DisplacementDim>> const& /*prev_state*/,
+        SolidMechanicsDataStateful<DisplacementDim>& current_state,
+        PrevState<TotalStressData<DisplacementDim>> const&
+            total_stress_data_prev,
+        TotalStressData<DisplacementDim>& total_stress_data,
+        EquivalentPlasticStrainData& equiv_plast_strain_data,
+        SolidMechanicsDataStateless<DisplacementDim>& current_stateless,
+        PrevState<SaturationData> const& S_L_prev_data,
+        SaturationData& S_L_data, SaturationDataDeriv& dS_L_data) const;
 
 private:
     SolidConstitutiveRelation<DisplacementDim> const& solid_material_;

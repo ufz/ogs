@@ -55,6 +55,30 @@ struct StatefulData
     }
 };
 
+template <int DisplacementDim>
+struct StatefulDataPrev
+{
+    PrevState<SaturationData> S_L_data;
+    PrevState<PorosityData> poro_data;
+    PrevState<TransportPorosityData> transport_poro_data;
+    PrevState<StrainData<DisplacementDim>> eps_data;
+    PrevState<SwellingDataStateful<DisplacementDim>> swelling_data;
+    PrevState<SolidMechanicsDataStateful<DisplacementDim>> s_mech_data;
+
+    StatefulDataPrev<DisplacementDim>& operator=(
+        StatefulData<DisplacementDim> const& state)
+    {
+        S_L_data = state.S_L_data;
+        poro_data = state.poro_data;
+        transport_poro_data = state.transport_poro_data;
+        eps_data = state.eps_data;
+        swelling_data = state.swelling_data;
+        s_mech_data = state.s_mech_data;
+
+        return *this;
+    }
+};
+
 /// Data that is needed for output purposes, but not directly for the assembly.
 template <int DisplacementDim>
 struct OutputData
@@ -102,7 +126,7 @@ struct ConstitutiveTempData
     SaturationDataDeriv dS_L_data;
     BishopsData bishops_data;
     // TODO why not usual state tracking for that?
-    BishopsData bishops_data_prev;
+    PrevState<BishopsData> bishops_data_prev;
     SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
     PermeabilityData<DisplacementDim> perm_data;
     FluidThermalExpansionData f_therm_exp_data;
