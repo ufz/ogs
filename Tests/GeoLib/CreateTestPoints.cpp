@@ -48,21 +48,24 @@ std::vector<GeoLib::Point*> createRandomPoints(
     std::size_t const number_of_random_points,
     std::array<double, 6> const& limits)
 {
-    std::random_device rd;
-    std::mt19937 random_engine_mt19937(rd());
+    static std::random_device rd;
+    static std::mt19937 random_engine_mt19937(rd());
     std::normal_distribution<> normal_dist_x(limits[0], limits[1]);
     std::normal_distribution<> normal_dist_y(limits[2], limits[3]);
     std::normal_distribution<> normal_dist_z(limits[4], limits[5]);
 
-    std::vector<GeoLib::Point*> random_points;
+    std::vector<GeoLib::Point*> random_points(number_of_random_points);
 
-    for (std::size_t k = 0; k < number_of_random_points; ++k)
+    auto random_point_generator = [&]()
     {
-        random_points.push_back(new GeoLib::Point(
+        return new GeoLib::Point(
             std::array{normal_dist_x(random_engine_mt19937),
                        normal_dist_y(random_engine_mt19937),
-                       normal_dist_z(random_engine_mt19937)}));
-    }
+                       normal_dist_z(random_engine_mt19937)});
+    };
+    std::generate_n(random_points.begin(), number_of_random_points,
+                    random_point_generator);
+
     return random_points;
 }
 
