@@ -74,6 +74,10 @@ web_subsection = "small-deformations"
   # Run ogs; get input data from current directory; write to `out_dir`
   ! ogs my_project.prj -o {out_dir} > {out_dir}/log.txt
 
+  # OR with ogs6py:
+  # ... setup model ...
+  model.run_model(logfile=os.path.join(out_dir, "log.txt"), args=f"-o {out_dir}")
+
   # Verify results; on failure assert with:
   assert False
   # or
