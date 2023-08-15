@@ -13,7 +13,7 @@ image = "CB.png"
 This is an example to test the fixed stress splitting with the approach of fixed
  stress rate over time step (see the algorithms in
  [Injection and Production in 1D Linear Poroelastic
-  Medium with the Staggered Scheme]({{< relref "InjectionProduction" >}}})).
+  Medium with the Staggered Scheme]({{< relref "InjectionProduction" >}})).
 
 We consider a porous column bounded by rigid and impermeable walls, except on
 its top where a mechanical pressure load $\sigma_0$ is prescribed and which is free to
