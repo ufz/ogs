@@ -10,7 +10,9 @@
 
 #include <tclap/CmdLine.h>
 
+#include <algorithm>
 #include <memory>
+#include <range/v3/algorithm/for_each.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/map.hpp>
@@ -81,19 +83,17 @@ int main(int argc, char* argv[])
 
     // mark used points
     auto used_points = std::vector<bool>(points->size(), false);
+
+    auto mark = [&](auto const* const object)
+    { GeoLib::markUsedPoints(*object, used_points); };
+
     if (polylines)
     {
-        for (auto const* polyline : *polylines)
-        {
-            GeoLib::markUsedPoints(*polyline, used_points);
-        }
+        ranges::for_each(*polylines, mark);
     }
     if (surfaces)
     {
-        for (auto const* surface : *surfaces)
-        {
-            GeoLib::markUsedPoints(*surface, used_points);
-        }
+        ranges::for_each(*surfaces, mark);
     }
 
     auto const number_of_used_points = static_cast<std::size_t>(
