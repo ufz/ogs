@@ -605,12 +605,13 @@ AddTest(
 #    GLOB LF_constraint_bc_1e3_ts_*.vtu p p 1e-15 1e-14
 #)
 
-if (NOT (OGS_USE_MPI))
+if(NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC/cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_1.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC/cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_2.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC/cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_3.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/FunctionParameterTest.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/BlockingConductingFracture/block_conduct_frac.prj)
+    NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/BlockingConductingFracture/LiquidFlow.ipynb RUNTIME 6)
 endif()
 
 # inclined mesh
