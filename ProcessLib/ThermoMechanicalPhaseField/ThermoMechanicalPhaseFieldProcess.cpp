@@ -168,22 +168,24 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
 }
 
 template <int DisplacementDim>
-void ThermoMechanicalPhaseFieldProcess<
-    DisplacementDim>::initializeBoundaryConditions()
+void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
+    initializeBoundaryConditions(
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media)
 {
     // Staggered scheme:
     // for the equations of temperature-deformation.
     initializeProcessBoundaryConditionsAndSourceTerms(
         getDOFTableByProcessID(_mechanics_related_process_id),
-        _mechanics_related_process_id);
+        _mechanics_related_process_id, media);
     // for the phase field
     initializeProcessBoundaryConditionsAndSourceTerms(
         getDOFTableByProcessID(_phase_field_process_id),
-        _phase_field_process_id);
+        _phase_field_process_id, media);
     // for heat conduction
     initializeProcessBoundaryConditionsAndSourceTerms(
         getDOFTableByProcessID(_heat_conduction_process_id),
-        _heat_conduction_process_id);
+        _heat_conduction_process_id, media);
 }
 
 template <int DisplacementDim>

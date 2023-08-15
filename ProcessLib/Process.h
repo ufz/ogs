@@ -14,6 +14,7 @@
 #include <tuple>
 
 #include "AbstractJacobianAssembler.h"
+#include "MaterialLib/MPL/Medium.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
@@ -87,7 +88,9 @@ public:
 
     NumLib::IterationResult postIteration(GlobalVector const& x) final;
 
-    void initialize();
+    void initialize(
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media);
 
     void setInitialConditions(
         std::vector<GlobalVector*>& process_solutions,
@@ -205,7 +208,9 @@ protected:
      * initializeBoundaryConditions().
      */
     void initializeProcessBoundaryConditionsAndSourceTerms(
-        const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id);
+        const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id,
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media);
 
 private:
     /// Process specific initialization called by initialize().
@@ -216,7 +221,9 @@ private:
 
     /// Member function to initialize the boundary conditions for all coupled
     /// processes. It is called by initialize().
-    virtual void initializeBoundaryConditions();
+    virtual void initializeBoundaryConditions(
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media);
 
     virtual void setInitialConditionsConcreteProcess(
         std::vector<GlobalVector*>& /*x*/,

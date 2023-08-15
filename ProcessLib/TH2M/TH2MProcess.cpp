@@ -320,12 +320,13 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
 }
 
 template <int DisplacementDim>
-void TH2MProcess<DisplacementDim>::initializeBoundaryConditions()
+void TH2MProcess<DisplacementDim>::initializeBoundaryConditions(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     if (_use_monolithic_scheme)
     {
         initializeProcessBoundaryConditionsAndSourceTerms(
-            *_local_to_global_index_map, monolithic_process_id);
+            *_local_to_global_index_map, monolithic_process_id, media);
         return;
     }
 

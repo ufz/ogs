@@ -101,7 +101,7 @@ void Simulation::initializeDataStructures(
     INFO("Initialize processes.");
     for (auto& p : project_data->getProcesses())
     {
-        p->initialize();
+        p->initialize(project_data->getMedia());
     }
 
     // Check intermediately that config parsing went fine.

@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "BaseLib/ConfigTree-fwd.h"
+#include "MaterialLib/MPL/Medium.h"
 
 namespace MathLib
 {
@@ -98,7 +99,9 @@ public:
             parameters,
         Process const& process,
         std::vector<std::reference_wrapper<ProcessVariable>> const&
-            all_process_variables_for_this_process);
+            all_process_variables_for_this_process,
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media);
 
     std::vector<std::unique_ptr<SourceTerm>> createSourceTerms(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,

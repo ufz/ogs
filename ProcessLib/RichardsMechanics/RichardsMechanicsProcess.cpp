@@ -290,13 +290,14 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 }
 
 template <int DisplacementDim>
-void RichardsMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
+void RichardsMechanicsProcess<DisplacementDim>::initializeBoundaryConditions(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     if (_use_monolithic_scheme)
     {
         const int monolithic_process_id = 0;
         initializeProcessBoundaryConditionsAndSourceTerms(
-            *_local_to_global_index_map, monolithic_process_id);
+            *_local_to_global_index_map, monolithic_process_id, media);
         return;
     }
 
@@ -304,12 +305,13 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
     // for the equations of pressure
     const int hydraulic_process_id = 0;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map_with_base_nodes, hydraulic_process_id);
+        *_local_to_global_index_map_with_base_nodes, hydraulic_process_id,
+        media);
 
     // for the equations of deformation.
     const int mechanical_process_id = 1;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map, mechanical_process_id);
+        *_local_to_global_index_map, mechanical_process_id, media);
 }
 
 template <int DisplacementDim>

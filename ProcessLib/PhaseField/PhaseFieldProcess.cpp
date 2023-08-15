@@ -166,17 +166,19 @@ void PhaseFieldProcess<DisplacementDim>::initializeConcreteProcess(
 }
 
 template <int DisplacementDim>
-void PhaseFieldProcess<DisplacementDim>::initializeBoundaryConditions()
+void PhaseFieldProcess<DisplacementDim>::initializeBoundaryConditions(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     // Staggered scheme:
     // for the equations of deformation.
     const int mechanical_process_id = 0;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map, mechanical_process_id);
+        *_local_to_global_index_map, mechanical_process_id, media);
     // for the phase field
     const int phasefield_process_id = 1;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map_single_component, phasefield_process_id);
+        *_local_to_global_index_map_single_component, phasefield_process_id,
+        media);
 }
 
 template <int DisplacementDim>

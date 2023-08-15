@@ -225,7 +225,8 @@ ProcessVariable::createBoundaryConditions(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     Process const& process,
     std::vector<std::reference_wrapper<ProcessVariable>> const&
-        all_process_variables_for_this_process)
+        all_process_variables_for_this_process,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     std::vector<std::unique_ptr<BoundaryCondition>> bcs;
     bcs.reserve(_bc_configs.size());
@@ -235,7 +236,7 @@ ProcessVariable::createBoundaryConditions(
         auto bc = createBoundaryCondition(
             config, dof_table, _mesh, variable_id, integration_order,
             _shapefunction_order, parameters, process,
-            all_process_variables_for_this_process);
+            all_process_variables_for_this_process, media);
 #ifdef USE_PETSC
         if (bc == nullptr)
         {

@@ -65,7 +65,9 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override;
 
-    void initializeBoundaryConditions() override;
+    void initializeBoundaryConditions(
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media) override;
 
     void assembleConcreteProcess(const double t, double const dt,
                                  std::vector<GlobalVector*> const& x,

@@ -180,13 +180,14 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 }
 
 template <int DisplacementDim>
-void ThermoMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
+void ThermoMechanicsProcess<DisplacementDim>::initializeBoundaryConditions(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     if (_use_monolithic_scheme)
     {
         const int process_id_of_thermomechanics = 0;
         initializeProcessBoundaryConditionsAndSourceTerms(
-            *_local_to_global_index_map, process_id_of_thermomechanics);
+            *_local_to_global_index_map, process_id_of_thermomechanics, media);
         return;
     }
 
@@ -194,11 +195,11 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
     // for the equations of heat conduction
     initializeProcessBoundaryConditionsAndSourceTerms(
         *_local_to_global_index_map_single_component,
-        _process_data.heat_conduction_process_id);
+        _process_data.heat_conduction_process_id, media);
 
     // for the equations of deformation.
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map, _process_data.mechanics_process_id);
+        *_local_to_global_index_map, _process_data.mechanics_process_id, media);
 }
 
 template <int DisplacementDim>

@@ -84,7 +84,9 @@ public:
 private:
     void constructDofTable() override;
 
-    void initializeBoundaryConditions() override;
+    void initializeBoundaryConditions(
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media) override;
 
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
