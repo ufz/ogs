@@ -112,21 +112,18 @@ int main(int argc, char* argv[])
 
     auto const mapping = createMapping(used_points);
 
+    auto reset = [&mapping](auto* object)
+    { GeoLib::resetPointIDs(*object, mapping); };
+
     // reset point ids is polylines
     if (polylines)
     {
-        for (auto* polyline : *polylines)
-        {
-            GeoLib::resetPointIDs(*polyline, mapping);
-        }
+        ranges::for_each(*polylines, reset);
     }
     // reset point ids is surfaces
     if (surfaces)
     {
-        for (auto* surface : *surfaces)
-        {
-            GeoLib::resetPointIDs(*surface, mapping);
-        }
+        ranges::for_each(*surfaces, reset);
     }
 
     std::stringstream unused_points_info;
