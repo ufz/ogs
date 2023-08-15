@@ -36,7 +36,7 @@ endif()
 if(NOT TARGET fmt::fmt)
     CPMFindPackage(
         NAME fmt
-        GIT_TAG 9.1.0
+        GIT_TAG 10.1.0
         GITHUB_REPOSITORY fmtlib/fmt
         EXCLUDE_FROM_ALL YES
     )
@@ -44,7 +44,7 @@ endif()
 CPMFindPackage(
     NAME spdlog
     GITHUB_REPOSITORY gabime/spdlog
-    VERSION 1.11.0
+    VERSION 1.12.0
     OPTIONS "BUILD_SHARED_LIBS OFF" "SPDLOG_BUILD_SHARED OFF"
             "SPDLOG_FMT_EXTERNAL_HO 1"
 )
