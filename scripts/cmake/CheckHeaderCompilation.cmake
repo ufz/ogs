@@ -45,6 +45,7 @@ function(_check_header_compilation target)
         nlohmann_json::nlohmann_json
         range-v3
         petsc
+        fmt::fmt
     )
         # Ignore non-existing targets or interface libs
         if(NOT TARGET ${lib})
