@@ -34,6 +34,7 @@ target_link_libraries(
            $<$<BOOL:${OGS_USE_PETSC}>:petsc>
            Eigen3::Eigen
            $<$<TARGET_EXISTS:OpenMP::OpenMP_CXX>:OpenMP::OpenMP_CXX>
+           fmt::fmt
 )
 
 if(OGS_USE_LIS)
@@ -62,5 +63,7 @@ target_compile_definitions(
     PRIVATE $<$<BOOL:${OGS_USE_MKL}>:USE_MKL>
 )
 
-target_precompile_headers(MathLib PRIVATE [["BaseLib/Error.h"]]
-    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] <Eigen/Core>)
+target_precompile_headers(
+    MathLib PRIVATE [["BaseLib/Error.h"]] [["BaseLib/ConfigTree.h"]]
+    [["BaseLib/Logging.h"]] <Eigen/Core>
+)
