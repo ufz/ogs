@@ -4,18 +4,10 @@
 get_directory_property(INCLUDE_DIRS INCLUDE_DIRECTORIES)
 set(CMAKE_REQUIRED_FLAGS "-c -fPIC")
 
-add_custom_target(
-    check-header
-    COMMAND ${CMAKE_COMMAND} -E remove -f CMakeFiles/CMakeError.log
-    COMMAND ${CMAKE_COMMAND} . -DOGS_CHECK_HEADER_COMPILATION=ON
-    COMMAND ${CMAKE_COMMAND} . -DOGS_CHECK_HEADER_COMPILATION=OFF || true
-    COMMAND
-        if [ -f CMakeFiles/CMakeError.log ]\; then cat
-        CMakeFiles/CMakeError.log\; return 1\; else return 0\; fi\;
-        WORKING_DIRECTOY ${PROJECT_BINARY_DIR}
-    COMMENT "Checking header files"
-    USES_TERMINAL
-)
+set(_logfile CMakeFiles/CMakeError.log)
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.26)
+    set(_logfile CMakeFiles/CMakeConfigureLog.yaml)
+endif()
 
 # Checks header for standalone compilation
 function(_check_header_compilation target)
@@ -44,8 +36,15 @@ function(_check_header_compilation target)
     endif()
     get_target_property(LINK_LIBS ${target} LINK_LIBRARIES)
     # Transitive dependencies are not resolved
-    foreach(lib ${LINK_LIBS} spdlog Boost::boost Eigen3::Eigen
-                nlohmann_json::nlohmann_json range-v3 petsc
+    foreach(
+        lib
+        ${LINK_LIBS}
+        spdlog
+        Boost::boost
+        Eigen3::Eigen
+        nlohmann_json::nlohmann_json
+        range-v3
+        petsc
     )
         # Ignore non-existing targets or interface libs
         if(NOT TARGET ${lib})
@@ -156,6 +155,9 @@ function(check_header_compilation)
     if(NOT OGS_CHECK_HEADER_COMPILATION)
         return()
     endif()
+
+    execute_process(COMMAND ${CMAKE_COMMAND} -E remove -f ${_logfile})
+
     set(_HEADER_COMPILE_ERROR FALSE CACHE INTERNAL "")
 
     _check_header_compilation(BaseLib)
@@ -183,9 +185,33 @@ function(check_header_compilation)
     endif()
 
     if(_HEADER_COMPILE_ERROR)
-        message(
-            FATAL_ERROR
-                "... header compilation check failed, see CMakeFiles/CMakeError.log for details!"
-        )
+        if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.26)
+            find_program(YQ_TOOLPATH yq)
+            if(NOT YQ_TOOLPATH OR NOT EXISTS ${PROJECT_BINARY_DIR}/${_logfile})
+                message(
+                    FATAL_ERROR
+                        "... header compilation check failed, see ${_logfile} for details!"
+                )
+            endif()
+            execute_process(
+                COMMAND
+                    ${YQ_TOOLPATH}
+                    ".events[] | select(.kind == \"try_compile-v1\" and .buildResult.exitCode == 1 and .checks[] == \"*_COMPILES\")"
+                    ${PROJECT_BINARY_DIR}/${_logfile}
+                COMMAND grep stdout
+                COMMAND sed "s/\\\\n/\\n/g"
+                OUTPUT_VARIABLE _checkheader_out
+            )
+            message(STATUS "There were header compilation errors:\n")
+            list(APPEND CMAKE_MESSAGE_INDENT "  >  ")
+            message(STATUS "${_checkheader_out}")
+            list(POP_BACK CMAKE_MESSAGE_INDENT)
+            message(FATAL_ERROR "Header compilation failed, aborting.")
+        else()
+            message(
+                FATAL_ERROR
+                    "... header compilation check failed, see ${_logfile} for details!"
+            )
+        endif()
     endif()
 endfunction()
