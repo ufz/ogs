@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <concepts>
 #include <utility>
 
 namespace BaseLib
