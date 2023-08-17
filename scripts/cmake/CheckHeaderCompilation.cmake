@@ -44,7 +44,7 @@ function(_check_header_compilation target)
         Eigen3::Eigen
         nlohmann_json::nlohmann_json
         range-v3
-        petsc
+        # petsc; is given via ${PETSC_INCLUDES} below.
         fmt::fmt
     )
         # Ignore non-existing targets or interface libs
@@ -74,7 +74,7 @@ function(_check_header_compilation target)
     include(CheckCXXSourceCompiles)
 
     # cmake-lint: disable=C0103
-    set(CMAKE_REQUIRED_INCLUDES ${INCLUDE_DIRS} ${SOURCE_DIR})
+    set(CMAKE_REQUIRED_INCLUDES ${INCLUDE_DIRS} ${SOURCE_DIR} ${PETSC_INCLUDES})
     # HACK, maybe add Gui Widgets Xml XmlPatterns as well
     if(OGS_BUILD_GUI)
         set(CMAKE_REQUIRED_INCLUDES
