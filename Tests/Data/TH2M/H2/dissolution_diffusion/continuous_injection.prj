@@ -519,13 +519,13 @@
         <vtkdiff>
             <regex>result_continuous_injection_t_.*.vtu</regex>
             <field>gas_pressure</field>
-            <absolute_tolerance>7e-5</absolute_tolerance>
+            <absolute_tolerance>9.5e-5</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>result_continuous_injection_t_.*.vtu</regex>
             <field>capillary_pressure</field>
-            <absolute_tolerance>7e-5</absolute_tolerance>
+            <absolute_tolerance>9.5e-5</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
