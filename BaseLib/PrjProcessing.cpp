@@ -10,6 +10,7 @@
 
 #include "PrjProcessing.h"
 
+#include <fmt/core.h>
 #include <libxml/globals.h>
 #include <libxml/parser.h>
 #include <libxml/xmlstring.h>
@@ -23,6 +24,40 @@
 #include "Error.h"
 #include "FileTools.h"
 #include "Logging.h"
+
+namespace
+{
+std::string iostateToString(std::ios_base::iostate const state)
+{
+    std::string result;
+
+    if (state == std::ios_base::goodbit)
+    {
+        result = "goodbit";
+    }
+    else
+    {
+        if (state & std::ios_base::eofbit)
+        {
+            result += "eofbit ";
+        }
+        if (state & std::ios_base::failbit)
+        {
+            result += "failbit ";
+        }
+        if (state & std::ios_base::badbit)
+        {
+            result += "badbit";
+        }
+        // Remove trailing space if there is one
+        if (!result.empty() && result.back() == ' ')
+        {
+            result.pop_back();
+        }
+    }
+    return result;
+}
+}  // namespace
 
 namespace BaseLib
 {
@@ -274,7 +309,7 @@ void readAndPatchPrj(std::stringstream& prj_stream, std::string& prj_file,
         {
             ERR("File {:s} does not exist.", prj_file);
         }
-        DBUG("Stream state flags: {:b}.", file.rdstate());
+        DBUG("Stream state flags: {:s}.", iostateToString(file.rdstate()));
         OGS_FATAL("Could not open project file '{:s}' for reading.", prj_file);
     }
 
