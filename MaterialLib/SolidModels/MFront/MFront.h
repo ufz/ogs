@@ -118,11 +118,12 @@ public:
     }
 
 private:
-    OGSMFrontTangentOperatorBlocksView<DisplacementDim,
-                                       boost::mp11::mp_list<Strain>,
-                                       boost::mp11::mp_list<Stress>,
-                                       boost::mp11::mp_list<>>
-        blocks_view_{this->createTangentOperatorBlocksView()};
+    OGSMFrontTangentOperatorBlocksView<
+        DisplacementDim,
+        ForcesGradsCombinations<boost::mp11::mp_list<Strain>,
+                                boost::mp11::mp_list<Stress>,
+                                boost::mp11::mp_list<>>::type>
+        blocks_view_ = this->createTangentOperatorBlocksView();
 };
 
 extern template class MFront<2>;

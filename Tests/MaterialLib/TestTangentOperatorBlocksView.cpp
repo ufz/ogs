@@ -58,10 +58,9 @@ TYPED_TEST(MaterialLib_TangentOperatorBlocksView, Test1)
     using TDynForces = mp_list<Vector, MSM::Stress>;
     using ExtStateVars = mp_list<MSM::Temperature>;
 
-    MSM::OGSMFrontTangentOperatorBlocksView<dim,
-                                            Gradients,
-                                            TDynForces,
-                                            ExtStateVars>
+    MSM::OGSMFrontTangentOperatorBlocksView<
+        dim,
+        MSM::ForcesGradsCombinations<Gradients, TDynForces, ExtStateVars>::type>
         view(to_blocks);
 
     MSM::OGSMFrontTangentOperatorData data{};
@@ -162,10 +161,9 @@ TYPED_TEST(MaterialLib_TangentOperatorBlocksView, Test2)
     using TDynForces = mp_list<MSM::Saturation, MSM::Stress>;
     using ExtStateVars = mp_list<MSM::Temperature>;
 
-    MSM::OGSMFrontTangentOperatorBlocksView<dim,
-                                            Gradients,
-                                            TDynForces,
-                                            ExtStateVars>
+    MSM::OGSMFrontTangentOperatorBlocksView<
+        dim,
+        MSM::ForcesGradsCombinations<Gradients, TDynForces, ExtStateVars>::type>
         view(to_blocks);
 
     MSM::OGSMFrontTangentOperatorData data{};

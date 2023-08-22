@@ -596,16 +596,14 @@ public:
         return internal_variables;
     }
 
-    OGSMFrontTangentOperatorBlocksView<DisplacementDim,
-                                       Gradients,
-                                       TDynForces,
-                                       ExtStateVars>
+    template <typename ForcesGradsCombinations =
+                  typename ForcesGradsCombinations<Gradients, TDynForces,
+                                                   ExtStateVars>::type>
+    OGSMFrontTangentOperatorBlocksView<DisplacementDim, ForcesGradsCombinations>
     createTangentOperatorBlocksView() const
     {
         return OGSMFrontTangentOperatorBlocksView<DisplacementDim,
-                                                  Gradients,
-                                                  TDynForces,
-                                                  ExtStateVars>{
+                                                  ForcesGradsCombinations>{
             _behaviour.to_blocks};
     }
 
