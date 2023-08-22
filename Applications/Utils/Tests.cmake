@@ -1368,3 +1368,23 @@ AddTest(
     TESTER diff
     DIFF_DATA GrdTest.asc
 )
+
+AddTest(
+    NAME RemoveUnusedPoints_Cube
+    PATH FileIO/RemoveUnusedPoints
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO/RemoveUnusedPoints
+    EXECUTABLE RemoveUnusedPoints
+    EXECUTABLE_ARGS -i cube_1x1x1_with_additional_points.gml -o ${Data_BINARY_DIR}/FileIO/RemoveUnusedPoints/cube_1x1x1_with_additional_points_cleaned.gml
+    TESTER diff
+    DIFF_DATA cube_1x1x1_with_additional_points_cleaned.gml cube_1x1x1_with_additional_points_cleaned.gml
+)
+
+AddTest(
+    NAME RemoveUnusedPoints_WESSRivers
+    PATH FileIO/RemoveUnusedPoints
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO/RemoveUnusedPoints
+    EXECUTABLE RemoveUnusedPoints
+    EXECUTABLE_ARGS -i WESSRivers.gml -o ${Data_BINARY_DIR}/FileIO/RemoveUnusedPoints/WESSRivers_cleaned.gml
+    TESTER diff
+    DIFF_DATA WESSRivers_cleaned.gml WESSRivers_cleaned.gml
+)
