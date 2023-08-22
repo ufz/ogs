@@ -12,7 +12,10 @@
 
 #include <memory>
 #include <range/v3/range/conversion.hpp>
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/map.hpp>
 #include <range/v3/view/transform.hpp>
+#include <range/v3/view/zip.hpp>
 #include <vector>
 
 #include "GeoLib/GEOObjects.h"
@@ -135,29 +138,18 @@ int main(int argc, char* argv[])
         }
     }
 
-    auto const stations = createStations(*points, used_points);
-    if (!stations.empty())
-    {
-        std::stringstream stations_string;
-        stations_string << std::fixed;
-        for (auto const* station : stations)
-        {
-            stations_string << "point_id_" << station->getName() << " "
-                            << (*station)[0] << " " << (*station)[1] << " "
-                            << (*station)[2] << std::endl;
-        }
-        INFO("stations:\n{}", stations_string.str());
-    }
-    BaseLib::cleanupVectorElements(stations);
+    std::stringstream unused_points_info;
+    unused_points_info << std::fixed;
 
     // cleanup unused points
-    for (std::size_t i = 0; i < points->size(); ++i)
+    for (GeoLib::Point*& point :
+         ranges::views::zip(*points, used_points) |
+             ranges::views::filter([](auto&& pair) { return !pair.second; }) |
+             ranges::views::keys)
     {
-        if (!used_points[i])
-        {
-            delete (*points)[i];
-            (*points)[i] = nullptr;
-        }
+        unused_points_info << point->getID() << " " << *point << '\n';
+        delete point;
+        point = nullptr;
     }
 
     std::erase(*points, nullptr);
