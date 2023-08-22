@@ -57,7 +57,10 @@ include:
       - if: $CI_PIPELINE_SOURCE != "schedule" && $CI_MERGE_REQUEST_LABELS !~ /.*ci::\w* only.*/
   - local: "/scripts/ci/pipelines/web.yml"
     rules:
-      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only.*/
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only?($|,)/
+  - local: "/scripts/ci/pipelines/web-fast.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only \(fast.*/
   - local: "/scripts/ci/pipelines/scheduled.yml"
     rules:
       - if: '$CI_PIPELINE_SOURCE == "schedule"'
