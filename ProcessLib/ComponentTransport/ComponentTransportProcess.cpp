@@ -43,13 +43,15 @@ ComponentTransportProcess::ComponentTransportProcess(
     bool const use_monolithic_scheme,
     std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
     std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
-        chemical_solver_interface)
+        chemical_solver_interface,
+    bool const is_linear)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
       _process_data(std::move(process_data)),
       _surfaceflux(std::move(surfaceflux)),
-      _chemical_solver_interface(std::move(chemical_solver_interface))
+      _chemical_solver_interface(std::move(chemical_solver_interface)),
+      _asm_mat_cache{is_linear, use_monolithic_scheme}
 {
     _residua.push_back(MeshLib::getOrCreateMeshProperty<double>(
         mesh, "LiquidMassFlowRate", MeshLib::MeshItemType::Node, 1));
@@ -190,15 +192,13 @@ void ComponentTransportProcess::assembleConcreteProcess(
             std::back_inserter(dof_tables), _process_variables.size(),
             [&]() { return std::ref(*_local_to_global_index_map); });
     }
-    // Call global assembler for each local assembly item.
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id, M,
-        K, b);
 
-    MathLib::finalizeMatrixAssembly(M);
-    MathLib::finalizeMatrixAssembly(K);
-    MathLib::finalizeVectorAssembly(b);
+    _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, M, K, b, dof_tables,
+                            _global_assembler, _local_assemblers,
+                            pv.getActiveElementIDs());
+
+    BaseLib::RunTime time_residuum;
+    time_residuum.start();
 
     if (_use_monolithic_scheme)
     {
@@ -219,6 +219,9 @@ void ComponentTransportProcess::assembleConcreteProcess(
                                           *_residua[process_id],
                                           std::negate<double>());
     }
+
+    INFO("[time] Computing residuum flow rates took {:g} s",
+         time_residuum.elapsed());
 }
 
 void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
