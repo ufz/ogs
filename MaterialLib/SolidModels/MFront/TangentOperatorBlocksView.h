@@ -12,6 +12,10 @@
 
 #include <MGIS/Behaviour/Variable.hxx>
 #include <boost/mp11.hpp>
+#include <range/v3/view/enumerate.hpp>
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/map.hpp>
+#include <range/v3/view/zip.hpp>
 
 #include "BaseLib/cpp23.h"
 #include "MathLib/KelvinVector.h"
@@ -102,25 +106,52 @@ public:
     {
         offsets_.fill(invalid_offset_);
 
+        std::vector<bool> used_blocks(
+            to_blocks.size(), false);  // checked after creation of all offsets.
+
         boost::mp11::mp_for_each<ForcesGradsCombinations>(
-            [&to_blocks, this]<typename Force, typename GradOrExtStateVar>(
+            [&to_blocks,
+             &used_blocks,
+             this]<typename Force, typename GradOrExtStateVar>(
                 boost::mp11::mp_list<Force, GradOrExtStateVar>)
             {
                 std::size_t data_offset = 0;
-                for (auto const& [force, grad] : to_blocks)
+                for (auto [block, is_used] :
+                     ranges::views::zip(to_blocks, used_blocks))
                 {
+                    auto const& [force, grad] = block;
                     if (force.name == Force::name &&
                         grad.name == GradOrExtStateVar::name)
                     {
                         auto constexpr block_idx =
                             blockIndex<Force, GradOrExtStateVar>();
                         offsets_[block_idx] = data_offset;
+                        is_used = true;
                         return;
                     }
 
                     data_offset += size(force.type) * size(grad.type);
                 }
             });
+
+        // Indices of unused blocks.
+        auto indices = ranges::views::enumerate(used_blocks) |
+                       ranges::views::filter([](auto const& pair)
+                                             { return !pair.second; }) |
+                       ranges::views::keys;
+
+        if (!indices.empty())
+        {
+            ERR("There are unused tangent operator blocks provided by MFront. "
+                "Following blocks are unused:");
+
+            for (auto const i : indices)
+            {
+                auto const& [force, grad] = to_blocks[i];
+                ERR("\t{}/{}", force.name, grad.name);
+            }
+            OGS_FATAL("All tangent operator blocks must be used.");
+        }
     }
 
     /// Read access to the block dForce/dGradOrExtStateVar.
