@@ -789,6 +789,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/CationExchange/exchangeAndSurface.prj RUNTIME 33)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/1d_decay_chain_OS.prj RUNTIME 2000)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/1d_decay_chain_GIA.prj RUNTIME 40)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/1d_decay_chain_GIA_asm_only_once.xml RUNTIME 10)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ThermalDiffusion/TemperatureField_transport.prj RUNTIME 27)
 endif()
 
