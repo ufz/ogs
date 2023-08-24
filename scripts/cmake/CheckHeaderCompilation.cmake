@@ -45,7 +45,7 @@ function(_check_header_compilation target)
         nlohmann_json::nlohmann_json
         range-v3
         # petsc; is given via ${PETSC_INCLUDES} below.
-        fmt::fmt
+        fmt::fmt-header-only
     )
         # Ignore non-existing targets or interface libs
         if(NOT TARGET ${lib})

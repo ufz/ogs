@@ -33,7 +33,7 @@ endif()
 
 # Check spdlog release for compatible fmt release. fmt may be provided by vtk
 # _ext build.
-if(NOT TARGET fmt::fmt)
+if(NOT TARGET fmt::fmt-header-only)
     CPMFindPackage(
         NAME fmt
         GIT_TAG 10.1.0
