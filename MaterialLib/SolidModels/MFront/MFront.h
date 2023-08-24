@@ -22,13 +22,13 @@ template <int DisplacementDim>
 class MFront : private MFrontGeneric<DisplacementDim,
                                      boost::mp11::mp_list<Strain>,
                                      boost::mp11::mp_list<Stress>,
-                                     boost::mp11::mp_list<>>,
+                                     boost::mp11::mp_list<Temperature>>,
                public MechanicsBase<DisplacementDim>
 {
     using Base = MFrontGeneric<DisplacementDim,
                                boost::mp11::mp_list<Strain>,
                                boost::mp11::mp_list<Stress>,
-                               boost::mp11::mp_list<>>;
+                               boost::mp11::mp_list<Temperature>>;
     using KelvinVector = typename Base::KelvinVector;
     using KelvinMatrix = typename Base::KelvinMatrix;
 
@@ -122,7 +122,7 @@ private:
         DisplacementDim,
         ForcesGradsCombinations<boost::mp11::mp_list<Strain>,
                                 boost::mp11::mp_list<Stress>,
-                                boost::mp11::mp_list<>>::type>
+                                boost::mp11::mp_list<Temperature>>::type>
         blocks_view_ = this->createTangentOperatorBlocksView();
 };
 

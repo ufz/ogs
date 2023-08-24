@@ -20,6 +20,7 @@
 #include "ParameterLib/Parameter.h"
 #include "TangentOperatorBlocksView.h"
 #include "ThermodynamicForcesView.h"
+#include "Variable.h"
 
 namespace MaterialLib::Solids::MFront
 {
@@ -301,6 +302,10 @@ public:
         }
 
         auto const hypothesis = _behaviour.hypothesis;
+
+        static_assert(
+            std::is_same_v<ExtStateVars, boost::mp11::mp_list<Temperature>>,
+            "Temperature is the only allowed external state variable.");
 
         if (!_behaviour.esvs.empty())
         {
