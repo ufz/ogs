@@ -29,7 +29,8 @@ static hid_t meshPropertyType2HdfType(MeshPropertyDataType const ogs_data_type)
         {MeshPropertyDataType::uint32, H5T_NATIVE_UINT32},
         {MeshPropertyDataType::uint64, H5T_NATIVE_UINT64},
         {MeshPropertyDataType::int8, H5T_NATIVE_INT8},
-        {MeshPropertyDataType::uint8, H5T_NATIVE_UINT8}};
+        {MeshPropertyDataType::uint8, H5T_NATIVE_UINT8},
+        {MeshPropertyDataType::char_native, H5T_NATIVE_CHAR}};
     try
     {
         return ogs_to_hdf_type.at(ogs_data_type);
