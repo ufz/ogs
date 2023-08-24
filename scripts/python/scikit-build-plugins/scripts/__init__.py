@@ -14,10 +14,10 @@ def __dir__() -> list[str]:
 
 
 def dynamic_metadata(
-    fields: frozenset[str],
+    field: str,
     settings: dict[str, object] | None = None,
-) -> dict[str, str | dict[str, str | None]]:
-    if fields != {"scripts"}:
+) -> str:
+    if field != "scripts":
         msg = "Only the 'scripts' field is supported"
         raise ValueError(msg)
 
@@ -25,4 +25,4 @@ def dynamic_metadata(
         msg = "No inline configuration is supported"
         raise ValueError(msg)
 
-    return {"scripts": pyproject_get_binaries()}
+    return pyproject_get_binaries()
