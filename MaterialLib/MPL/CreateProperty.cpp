@@ -76,6 +76,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createClausiusClapeyron(config);
     }
 
+    if (boost::iequals(property_type, "CubicLawPermeability"))
+    {
+        return createCubicLawPermeability(config, parameters);
+    }
+
     if (boost::iequals(property_type, "Dupuit"))
     {
         return createDupuitPermeability(config, parameters);

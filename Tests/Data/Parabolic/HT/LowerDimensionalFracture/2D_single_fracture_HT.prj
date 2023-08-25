@@ -175,8 +175,8 @@
                 </property>
                 <property>
                     <name>permeability</name>
-                    <type>Constant</type>
-                    <value>8.3333e-10</value>
+                    <type>CubicLawPermeability</type>
+                    <fracture_aperture>fracture_thickness</fracture_aperture>
                 </property>
                 <property>
                     <name>porosity</name>
@@ -328,20 +328,20 @@
         <vtkdiff>
             <regex>2D_single_fracture_HT_ts_.*_t_.*.vtu</regex>
             <field>temperature</field>
-            <absolute_tolerance>6e-12</absolute_tolerance>
-            <relative_tolerance>3e-15</relative_tolerance>
+            <absolute_tolerance>1e-4</absolute_tolerance>
+            <relative_tolerance>3e-7</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>2D_single_fracture_HT_ts_.*_t_.*.vtu</regex>
             <field>pressure</field>
-            <absolute_tolerance>3e-6</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
+            <absolute_tolerance>4e-4</absolute_tolerance>
+            <relative_tolerance>8e-10</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>2D_single_fracture_HT_ts_.*_t_.*.vtu</regex>
             <field>darcy_velocity</field>
-            <absolute_tolerance>2e-14</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
+            <absolute_tolerance>2e-7</absolute_tolerance>
+            <relative_tolerance>5e-6</relative_tolerance>
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>
