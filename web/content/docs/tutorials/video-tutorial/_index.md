@@ -39,5 +39,22 @@ As a common programming language we use [Python](https://www.python.org).
 * [timeBCs_glacier.py](timeBCs_glacier.py)
 * [glacierclass.py](glacierclass.py)
 * [history.sh](history.sh)
-* [msh2vtu-project on GitHub](https://github.com/dominik-kern/msh2vtu)
+* [msh2vtu](https://gitlab.opengeosys.org/ogs/tools/ogstools) *-now integrated in ogstools*
 * *Transient hydrodynamics within intercratonic sedimentary basins during glacial cycles*, V. F. Bense  M. A. Person, DOI: [10.1029/2007JF000969](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2007JF000969)
+
+**_NOTE:_**  Due to ongoing development, msh2vtu.py was integrated in the ogs-repository for [ogstools](https://gitlab.opengeosys.org/ogs/tools/ogstools). 
+In order to work with the tutorial and apply msh2vtu on mesh_basin.msh, ogstools need to be installed at first.
+
+ogstools can be installed from PyPI using pip. 
+It is recommended to set up a virtual environment beforehand: 
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install ogstools
+```
+More detailed information about the usages and development of ogstools can be found in [ogstools Documentation](https://ogs.ogs.xyz/tools/ogstools/index.html).
+After installation the tool can be applied as described in the first video-tutorial. 
+To apply msh2vtu on the mesh_basin.msh the command should look like:
+```bash
+msh2vtu --ogs --rdcd mesh_basin.msh
+```
