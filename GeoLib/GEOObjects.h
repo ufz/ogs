@@ -323,9 +323,8 @@ private:
      * @param merged_geo_name The (new) name of the geometry resulting from
      * merging.
      * @param pnt_offsets offsets in the merged vector storing the points
-     * @return true, if merging the points succeeded, else false
      */
-    bool mergePoints(std::vector<std::string> const& geo_names,
+    void mergePoints(std::vector<std::string> const& geo_names,
                      std::string& merged_geo_name,
                      std::vector<std::size_t>& pnt_offsets);
 
