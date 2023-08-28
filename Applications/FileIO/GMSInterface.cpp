@@ -149,9 +149,8 @@ void GMSInterface::writeBoreholesToGMS(
     {
         auto const* station =
             static_cast<GeoLib::StationBorehole*>(station_as_point);
-        std::vector<GeoLib::Point*> profile = station->getProfile();
-        std::vector<std::string> soilNames = station->getSoilNames();
-        // std::size_t idx = 0;
+        std::vector<GeoLib::Point*> const& profile = station->getProfile();
+        std::vector<std::string> const& soilNames = station->getSoilNames();
         std::string current_soil_name;
 
         std::size_t nLayers = profile.size();
