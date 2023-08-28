@@ -144,10 +144,10 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     for (unsigned i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
     {
         auto node = mesh.getNode(vec_junction_nodeID_matIDs[i].first);
-        for (auto e : mesh.getElementsConnectedToNode(*node))
+        for (auto id :
+             mesh.getElementsConnectedToNode(*node) | MeshLib::views::ids)
         {
-            _process_data._vec_ele_connected_junctionIDs[e->getID()].push_back(
-                i);
+            _process_data._vec_ele_connected_junctionIDs[id].push_back(i);
         }
     }
 

@@ -214,9 +214,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
                                                 MaterialPropertyLib::density};
     std::array const requiredSolidProperties = {MaterialPropertyLib::density};
 
-    for (auto const& element : mesh.getElements())
+    for (auto const& element_id : mesh.getElements() | MeshLib::views::ids)
     {
-        auto const element_id = element->getID();
         media_map->checkElementHasMedium(element_id);
         auto const& medium = *media_map->getMedium(element_id);
         checkRequiredProperties(medium, requiredMediumProperties);

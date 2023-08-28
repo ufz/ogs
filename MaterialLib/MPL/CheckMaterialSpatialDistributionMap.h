@@ -28,10 +28,8 @@ void checkMaterialSpatialDistributionMap(
     ContainerLiquid const& required_properties_liquid_phase,
     ContainerGas const& required_properties_gas_phase)
 {
-    for (auto const& element : mesh.getElements())
+    for (auto const element_id : mesh.getElements() | MeshLib::views::ids)
     {
-        auto const element_id = element->getID();
-
         auto const& medium = *media_map.getMedium(element_id);
         if (!required_properties_medium.empty())
         {

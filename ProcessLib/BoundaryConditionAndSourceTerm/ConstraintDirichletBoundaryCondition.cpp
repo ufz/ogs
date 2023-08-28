@@ -114,15 +114,13 @@ void ConstraintDirichletBoundaryCondition::preTimestep(
     DBUG(
         "ConstraintDirichletBoundaryCondition::preTimestep: computing flux "
         "constraints");
-    for (auto const* boundary_element : _bc_mesh.getElements())
+    for (auto const id : _bc_mesh.getElements() | MeshLib::views::ids)
     {
-        _flux_values[boundary_element->getID()] =
-            _local_assemblers[boundary_element->getID()]->integrate(
-                x, t,
-                [this](std::size_t const element_id,
-                       MathLib::Point3d const& pnt, double const t,
-                       std::vector<GlobalVector*> const& x)
-                { return _getFlux(element_id, pnt, t, x); });
+        _flux_values[id] = _local_assemblers[id]->integrate(
+            x, t,
+            [this](std::size_t const element_id, MathLib::Point3d const& pnt,
+                   double const t, std::vector<GlobalVector*> const& x)
+            { return _getFlux(element_id, pnt, t, x); });
     }
 }
 
