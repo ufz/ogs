@@ -281,7 +281,7 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, DisplacementDim>::
         auto& C = ip_data.C;
         auto& state = *ip_data.material_state_variables;
         auto& b_m = ip_data.aperture;
-        auto& N = _secondary_data.N[ip];
+        auto const& N = _secondary_data.N[ip];
 
         auto const ip_physical_coords(computePhysicalCoordinates(_element, N));
         std::vector<double> const levelsets(duGlobalEnrichments(
@@ -328,7 +328,7 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, DisplacementDim>::
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto& ip_data = _ip_data[ip];
+        auto const& ip_data = _ip_data[ip];
         ele_b += ip_data.aperture;
         ele_w += ip_data.w;
         ele_sigma += ip_data.sigma;

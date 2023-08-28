@@ -89,19 +89,18 @@ public:
     double getGasDensity(const double p, const double T) const;
     double getGasViscosity(const double p, const double T) const;
     double getLiquidViscosity(const double p, const double T) const;
-    bool computeConstitutiveRelation(
-        double const t,
-        ParameterLib::SpatialPosition const& x_position,
-        const int material_id,
-        double const pg,
-        double const X,
-        double const T,
-        double& Sw,
-        double& X_m,
-        double& dsw_dpg,
-        double& dsw_dX,
-        double& dxm_dpg,
-        double& dxm_dX);
+    bool computeConstitutiveRelation(double const t,
+                                     ParameterLib::SpatialPosition const& x,
+                                     const int material_id,
+                                     double const pg,
+                                     double const X,
+                                     double const T,
+                                     double& Sw,
+                                     double& X_m,
+                                     double& dsw_dpg,
+                                     double& dsw_dX,
+                                     double& dxm_dpg,
+                                     double& dxm_dX);
 
 protected:
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> _liquid_density;

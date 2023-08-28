@@ -104,7 +104,7 @@ BHECommonCoaxial::pipeAdvectionVectors(
 
 std::array<double, BHECommonCoaxial::number_of_unknowns>
 BHECommonCoaxial::calcThermalResistances(double const Nu_inner_pipe,
-                                         double const Nu_annulus_pipe)
+                                         double const Nu_annulus_pipe) const
 {
     // thermal resistances due to advective flow of refrigerant in the pipes
     auto const R_advective = calculateAdvectiveThermalResistance(

@@ -120,7 +120,7 @@ std::vector<Element*> cloneElements(std::vector<Element*> const& elements)
     cloned_elements.reserve(elements.size());
     std::transform(begin(elements), end(elements),
                    std::back_inserter(cloned_elements),
-                   [](Element* const e) { return e->clone(); });
+                   [](Element const* const e) { return e->clone(); });
     return cloned_elements;
 }
 

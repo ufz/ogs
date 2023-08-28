@@ -355,7 +355,7 @@ bool parseNodes(std::ifstream& in,
 
 /// Parses the segments of the current line
 bool parseLineSegments(std::ifstream& in,
-                       std::vector<MeshLib::Node*>& nodes,
+                       std::vector<MeshLib::Node*> const& nodes,
                        std::vector<MeshLib::Element*>& elems,
                        std::map<std::size_t, std::size_t> const& node_id_map,
                        MeshLib::Properties& mesh_prop)

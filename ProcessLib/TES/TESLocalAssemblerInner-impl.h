@@ -34,7 +34,7 @@ TESLocalAssemblerInner<Traits>::TESLocalAssemblerInner(
 
 template <typename Traits>
 Eigen::Matrix3d TESLocalAssemblerInner<Traits>::getMassCoeffMatrix(
-    const unsigned int_pt)
+    const unsigned int_pt) const
 {
     // TODO: Dalton's law property
     const double dxn_dxm = Adsorption::AdsorptionReaction::dMolarFraction(
@@ -102,7 +102,7 @@ TESLocalAssemblerInner<Traits>::getLaplaceCoeffMatrix(const unsigned /*int_pt*/,
 
 template <typename Traits>
 Eigen::Matrix3d TESLocalAssemblerInner<Traits>::getAdvectionCoeffMatrix(
-    const unsigned /*int_pt*/)
+    const unsigned /*int_pt*/) const
 {
     const double A_pp = 0.0;
     const double A_pT = 0.0;
@@ -126,7 +126,7 @@ Eigen::Matrix3d TESLocalAssemblerInner<Traits>::getAdvectionCoeffMatrix(
 
 template <typename Traits>
 Eigen::Matrix3d TESLocalAssemblerInner<Traits>::getContentCoeffMatrix(
-    const unsigned /*int_pt*/)
+    const unsigned /*int_pt*/) const
 {
     const double C_pp = 0.0;
     const double C_pT = 0.0;

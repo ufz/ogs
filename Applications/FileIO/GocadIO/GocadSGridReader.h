@@ -74,7 +74,7 @@ private:
     void applySplitInformation(
         std::vector<MeshLib::Node*>& nodes,
         std::vector<MeshLib::Element*> const& elements) const;
-    static void modifyElement(MeshLib::Element* hex,
+    static void modifyElement(MeshLib::Element const* hex,
                               MeshLib::Node const* node2sub,
                               MeshLib::Node* substitute_node);
 

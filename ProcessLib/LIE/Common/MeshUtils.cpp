@@ -264,7 +264,7 @@ void getFractureMatrixDataInMesh(
             vec_fracture_elements[frac_id];
         std::copy_if(all_fracture_elements.begin(), all_fracture_elements.end(),
                      std::back_inserter(vec_elements),
-                     [&](MeshLib::Element* e)
+                     [&](MeshLib::Element const* const e)
                      { return (*material_ids)[e->getID()] == frac_mat_id; });
         DBUG("-> found {:d} elements on the fracture {:d}", vec_elements.size(),
              frac_id);
@@ -275,7 +275,7 @@ void getFractureMatrixDataInMesh(
     for (unsigned frac_id = 0; frac_id < vec_fracture_mat_IDs.size(); frac_id++)
     {
         std::vector<MeshLib::Node*>& vec_nodes = vec_fracture_nodes[frac_id];
-        for (MeshLib::Element* e : vec_fracture_elements[frac_id])
+        for (MeshLib::Element const* const e : vec_fracture_elements[frac_id])
         {
             for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
             {
@@ -307,7 +307,7 @@ void getFractureMatrixDataInMesh(
         auto const& fracture_elements = vec_fracture_elements[fid];
         std::vector<MeshLib::Element*> vec_ele;
         // first, collect matrix elements
-        for (MeshLib::Element* e : fracture_elements)
+        for (MeshLib::Element const* const e : fracture_elements)
         {
             // it is sufficient to iterate over base nodes, because they are
             // already connected to all neighbours

@@ -222,9 +222,9 @@ const PolylineVec* GEOObjects::getPolylineVecObj(const std::string& name) const
 bool GEOObjects::removePolylineVec(std::string const& name)
 {
     _callbacks->removePolylineVec(name);
-    auto it =
-        std::find_if(_ply_vecs.begin(), _ply_vecs.end(),
-                     [&name](PolylineVec* v) { return v->getName() == name; });
+    auto it = std::find_if(_ply_vecs.begin(), _ply_vecs.end(),
+                           [&name](PolylineVec const* const v)
+                           { return v->getName() == name; });
     if (it != _ply_vecs.end())
     {
         delete *it;
@@ -342,7 +342,7 @@ void GEOObjects::getStationVectorNames(std::vector<std::string>& names) const
 std::vector<std::string> GEOObjects::getGeometryNames() const
 {
     std::vector<std::string> names;
-    for (auto point : _pnt_vecs)
+    for (auto const point : _pnt_vecs)
     {
         if (point->getType() == PointVec::PointType::POINT)
         {

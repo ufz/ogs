@@ -146,7 +146,7 @@ bool checkDyncast(MeshLib::Mesh& mesh,
 }
 
 void mapMeshArraysOntoGrid(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
-                           std::unique_ptr<MeshLib::Mesh>& grid)
+                           std::unique_ptr<MeshLib::Mesh> const& grid)
 {
     assert(mesh != nullptr);
     assert(grid != nullptr);

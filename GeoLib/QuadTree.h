@@ -540,7 +540,7 @@ private:
         _is_leaf = false;
     }
 
-    static bool needToRefine (QuadTree<POINT>* node)
+    static bool needToRefine(QuadTree<POINT> const* const node)
     {
         QuadTree<POINT>* north_neighbor (node->getNorthNeighbor ());
         if (north_neighbor != nullptr)

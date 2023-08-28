@@ -461,7 +461,7 @@ void GMSHPolygonTree::writeAdditionalPointData(std::size_t& pnt_id_offset,
                                                std::size_t sfc_number,
                                                std::ostream& out) const
 {
-    if (auto* adaptive_mesh_density =
+    if (auto const* adaptive_mesh_density =
             dynamic_cast<GMSHAdaptiveMeshDensity*>(&_mesh_density_strategy))
     {
         std::vector<GeoLib::Point*> steiner_pnts;

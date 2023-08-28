@@ -36,7 +36,7 @@ std::vector<std::size_t> filter(Container const& container, Predicate const& p)
 
 std::size_t ElementSearch::searchByElementType(MeshElemType eleType)
 {
-    auto matchedIDs = filter(_mesh.getElements(), [&](MeshLib::Element* e)
+    auto matchedIDs = filter(_mesh.getElements(), [&](MeshLib::Element const* e)
                              { return e->getGeomType() == eleType; });
 
     this->updateUnion(matchedIDs);
@@ -45,8 +45,9 @@ std::size_t ElementSearch::searchByElementType(MeshElemType eleType)
 
 std::size_t ElementSearch::searchByContent(double eps)
 {
-    auto matchedIDs = filter(_mesh.getElements(), [&eps](MeshLib::Element* e)
-                             { return e->getContent() < eps; });
+    auto matchedIDs =
+        filter(_mesh.getElements(), [&eps](MeshLib::Element const* e)
+               { return e->getContent() < eps; });
 
     this->updateUnion(matchedIDs);
     return matchedIDs.size();
@@ -56,7 +57,7 @@ std::size_t ElementSearch::searchByBoundingBox(GeoLib::AABB const& aabb)
 {
     auto matchedIDs =
         filter(_mesh.getElements(),
-               [&aabb](MeshLib::Element* e)
+               [&aabb](MeshLib::Element const* e)
                {
                    std::size_t const nElemNodes(e->getNumberOfBaseNodes());
                    for (std::size_t n = 0; n < nElemNodes; ++n)
