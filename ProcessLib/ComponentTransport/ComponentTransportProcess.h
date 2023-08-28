@@ -13,6 +13,7 @@
 #include "ComponentTransportFEM.h"
 #include "ComponentTransportProcessData.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
+#include "ProcessLib/ComponentTransport/AssembledMatrixCache.h"
 #include "ProcessLib/Process.h"
 
 namespace ChemistryLib
@@ -109,12 +110,13 @@ public:
         bool const use_monolithic_scheme,
         std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
         std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
-            chemical_solver_interface);
+            chemical_solver_interface,
+        bool const is_linear);
 
     //! \name ODESystem interface
     //! @{
 
-    bool isLinear() const override { return false; }
+    bool isLinear() const override { return _asm_mat_cache.isLinear(); }
     //! @}
 
     Eigen::Vector3d getFlux(std::size_t const element_id,
@@ -172,6 +174,8 @@ private:
         _chemical_solver_interface;
 
     std::vector<MeshLib::PropertyVector<double>*> _residua;
+
+    AssembledMatrixCache _asm_mat_cache;
 };
 
 }  // namespace ComponentTransport

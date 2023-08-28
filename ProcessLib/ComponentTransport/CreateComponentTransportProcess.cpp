@@ -254,6 +254,10 @@ std::unique_ptr<Process> createComponentTransportProcess(
             *aperture_config, "parameter", parameters, 1);
     }
 
+    auto const is_linear =
+        //! \ogs_file_param{prj__processes__process__ComponentTransport__is_linear}
+        config.getConfigParameter("is_linear", false);
+
     auto const rotation_matrices = MeshLib::getElementRotationMatrices(
         mesh_space_dimension, mesh.getDimension(), mesh.getElements());
     std::vector<Eigen::VectorXd> projected_specific_body_force_vectors;
@@ -296,7 +300,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
         use_monolithic_scheme, std::move(surfaceflux),
-        std::move(chemical_solver_interface));
+        std::move(chemical_solver_interface), is_linear);
 }
 
 }  // namespace ComponentTransport
