@@ -285,6 +285,9 @@
                 <solver_type>SparseLU</solver_type>
                 <scaling>true</scaling>
             </eigen>
+            <petsc>
+                <parameters>-ksp_type richardson -pc_type lu</parameters>
+            </petsc>
         </linear_solver>
     </linear_solvers>
     <test_definition>
