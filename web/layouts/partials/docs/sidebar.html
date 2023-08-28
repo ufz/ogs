@@ -13,6 +13,9 @@
 {{ end }}
 {{ $indexRelPermalink := .RelPermalink }}
 
+{{ $layout := .Page.CurrentSection.Params.layout }}
+{{ $parentLayout := .Page.Parent.CurrentSection.Params.layout }}
+
 {{ define "subpages" }}
 {{ $indexRelPermalink := .indexRelPermalink }}
   {{ if .context.Pages }}
@@ -52,48 +55,48 @@
       {{ end }}
     {{ end }}
     <hr class="mt-3">
+    {{ $drawRuler := false}}
     <ul>
       {{ $subsections := $baseSubsection.Sections }}
       {{ if .Params.sort_alphabetically }}
         {{ $subsections = sort $baseSubsection.Sections "Title" }}
       {{ end }}
       {{ range $subsections }}
-        {{ if .Params.collapsed }}
-          {{ if eq .RelPermalink $subSubsection.RelPermalink }}
-            <li class="tracking-wide font-bold mt-6">
-          {{ else }}
-            <li class="tracking-wide font-bold mt-3">
-          {{ end }}
-        {{ else }}
-          <li class="tracking-wide font-bold mt-6">
+        {{ $isListPage := eq .RelPermalink $subSubsection.RelPermalink }}
+        {{ $margin := "mt-6"}}
+        {{ if and (.Params.collapsed) (not $isListPage) }}
+          {{ $margin = "mt-3"}}
         {{ end }}
-          {{ if .Params.collapsed }}
-            {{ range first 1 .Pages }}
-              <a href="{{ .Permalink }}">
-            {{ end }}
-          {{ end }}
-          {{ if .Params.breadcrumbs }}
+        {{ if and (and (eq $layout "gallery") (not $isListPage)) (ne $parentLayout "subsections") }}
+          {{ continue }}
+        {{ end }}
+        {{ $drawRuler = true}}
+        <li class="{{ $margin }} tracking-wide font-bold">
+        {{ if .Params.collapsed }}
+          {{ range first 1 .Pages }}
             <a href="{{ .Permalink }}">
           {{ end }}
-              <span {{ if eq .RelPermalink $subSubsection.RelPermalink }} class="text-brand-500" {{end}}>
-                {{ .Title | upper }}
-                {{ if .Params.collapsed }}
-                  {{ if eq .RelPermalink $subSubsection.RelPermalink }}
-                    <i class="fal fa-caret-down"></i>
-                  {{ else }}
-                    <i class="fal fa-caret-right"></i>
-                  {{ end }}
-                {{ end }}
-              </span>
-          {{ if or .Params.breadcrumbs .Params.collapsed }}
-            </a>
-          {{ end }}
+        {{ end }}
+        {{ if .Params.breadcrumbs }}
+          <a href="{{ .Permalink }}">
+        {{ end }}
+            <span {{ if $isListPage }} class="text-brand-500" {{end}}>
+              {{ .Title | upper }}
+              {{ if .Params.collapsed }}
+                <i class="fal fa-caret-{{ if $isListPage }}down{{ else }}right{{ end }}"></i>
+              {{ end }}
+            </span>
+        {{ if or .Params.breadcrumbs .Params.collapsed }}
+          </a>
+        {{ end }}
         </li>
-        {{ if or (not .Params.collapsed) (eq .RelPermalink $subSubsection.RelPermalink) }}
+        {{ if or (not .Params.collapsed) ($isListPage) }}
           {{ template "subpages" (dict "indexRelPermalink" $indexRelPermalink "context" .)  }}
         {{ end }}
       {{ end }}
     </ul>
-    <hr class="mt-3">
+    {{ if $drawRuler}}
+      <hr class="mt-3">
+    {{ end }}
   </nav>
 </div>

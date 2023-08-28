@@ -9,7 +9,9 @@
     <img class="h-12 md:h-16 lg:h-20 float-right" src="/images/coupling-icons/{{.Params.coupling}}-tet.svg" alt="">
     {{ end }}
 
-    {{ partial "docs/breadcrumbs.html" . }}
+    {{ if .Page.Params.breadcrumbs }}
+      {{ partial "docs/breadcrumbs.html" . }}
+    {{ end }}
 
     <div class="mx-auto py-2 px-4 max-w-7xl sm:px-6 lg:px-8 lg:py-4">
       <div class="space-y-8">
