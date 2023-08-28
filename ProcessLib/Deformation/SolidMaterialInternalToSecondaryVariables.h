@@ -137,7 +137,7 @@ template <typename InternalVariable>
 class CollectIntegrationPointDataForExtrapolation final
 {
 public:
-    CollectIntegrationPointDataForExtrapolation(
+    explicit CollectIntegrationPointDataForExtrapolation(
         InternalVariablesCollection<InternalVariable>&&
             internal_variables_collection)
         : internal_variables_collection_(
@@ -228,7 +228,7 @@ template <typename InternalVariable>
 class CollectIntegrationPointDataForIpWriter final
 {
 public:
-    CollectIntegrationPointDataForIpWriter(
+    explicit CollectIntegrationPointDataForIpWriter(
         InternalVariablesCollection<InternalVariable>&&
             internal_variables_collection)
         : internal_variables_collection_(internal_variables_collection)
