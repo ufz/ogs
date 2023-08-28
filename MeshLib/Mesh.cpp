@@ -325,8 +325,7 @@ std::vector<std::vector<Node*>> calculateNodesConnectedByElements(
         // Make nodes unique and sorted by their ids.
         // This relies on the node's id being equivalent to it's address.
         std::sort(adjacent_nodes.begin(), adjacent_nodes.end(),
-                  [](Node const* const a, Node const* const b)
-                  { return a->getID() < b->getID(); });
+                  idsComparator<Node*>);
         auto const last =
             std::unique(adjacent_nodes.begin(), adjacent_nodes.end());
         adjacent_nodes.erase(last, adjacent_nodes.end());

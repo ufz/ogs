@@ -100,8 +100,8 @@ BHEMeshData getBHEDataInMesh(MeshLib::Mesh const& mesh)
             }
         }
         BaseLib::makeVectorUnique(vec_nodes,
-                                  [](MeshLib::Node* node1, MeshLib::Node* node2)
-                                  { return node1->getID() < node2->getID(); });
+                                  MeshLib::idsComparator<MeshLib::Node*>);
+
         DBUG("-> found {:d} nodes on the BHE_{:d}", vec_nodes.size(), bhe_id);
     }
 

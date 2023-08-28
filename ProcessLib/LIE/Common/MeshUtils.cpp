@@ -287,8 +287,7 @@ void getFractureMatrixDataInMesh(
             }
         }
         BaseLib::makeVectorUnique(vec_nodes,
-                                  [](MeshLib::Node* node1, MeshLib::Node* node2)
-                                  { return node1->getID() < node2->getID(); });
+                                  MeshLib::idsComparator<MeshLib::Node*>);
         DBUG("-> found {:d} nodes on the fracture {:d}", vec_nodes.size(),
              frac_id);
     }
@@ -334,8 +333,7 @@ void getFractureMatrixDataInMesh(
             }
         }
         BaseLib::makeVectorUnique(vec_ele,
-                                  [](MeshLib::Element* e1, MeshLib::Element* e2)
-                                  { return e1->getID() < e2->getID(); });
+                                  MeshLib::idsComparator<MeshLib::Element*>);
 
         // second, append fracture elements
         std::copy(fracture_elements.begin(), fracture_elements.end(),

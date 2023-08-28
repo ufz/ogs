@@ -195,6 +195,21 @@ bool isBaseNode(Node const& node,
 std::pair<double, double> minMaxEdgeLength(
     std::vector<Element*> const& elements);
 
+/// Lexicographic comparison of ids of two objects of type T. T can be a pointer
+/// or a value type.
+template <typename T>
+bool idsComparator(T const a, T const b)
+{
+    if constexpr (std::is_pointer_v<T>)
+    {
+        return a->getID() < b->getID();
+    }
+    else
+    {
+        return a.getID() < b.getID();
+    }
+}
+
 /// MeshLib specific, lazy, non-owning, non-mutating, composable range views.
 namespace views
 {
