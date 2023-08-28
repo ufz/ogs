@@ -3,8 +3,9 @@ title = "Tutorials"
 layout = "gallery"
 
 [cascade]
-breadcrumbs = true
+breadcrumbs = false
 sort_alphabetically = true
+collapsed = false
 
 [menu.docs]
 name = "Tutorials"
