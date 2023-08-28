@@ -170,13 +170,6 @@ LineSegment Polyline::getSegment(std::size_t i) const
                        _ply_pnts[_ply_pnt_ids[i + 1]], false);
 }
 
-LineSegment Polyline::getSegment(std::size_t i)
-{
-    assert(i < getNumberOfSegments());
-    return LineSegment(_ply_pnts[_ply_pnt_ids[i]],
-                       _ply_pnts[_ply_pnt_ids[i + 1]], false);
-}
-
 void Polyline::setPointID(std::size_t idx, std::size_t id)
 {
     assert(idx < _ply_pnt_ids.size());
