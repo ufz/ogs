@@ -132,7 +132,7 @@ name = "Python tools"
 url = "https://ogs.ogs.xyz/tools/ogstools"
 post = "<em>ogstools</em> is a collection of Python tools aimed at evolving into a modeling toolchain around OpenGeoSys."
 [menu.docs.params]
-category = "Beginner"
+category = "Advanced"
 
 [security.funcs]
 getenv = ['^HUGO_', '^CI_']
