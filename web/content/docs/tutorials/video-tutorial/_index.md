@@ -1,7 +1,7 @@
 +++
 date = "2018-02-27T11:00:13+01:00"
-layout = "subsections"
 title = "Video Tutorial"
+layout = "gallery"
 author = "Dominik Kern"
 weight = 1
 image = "video_tutorial_thumbnail.png"

@@ -1,6 +1,6 @@
 +++
 title = "Tutorials"
-layout = "subsections"
+layout = "gallery"
 
 [cascade]
 breadcrumbs = true
