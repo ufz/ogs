@@ -115,15 +115,11 @@ public:
             return false;
         }
 
-        if (!_is_leaf) {
-            for (auto& child : _children)
-            {
-                if (child->addPoint(pnt))
-                {
-                    return true;
-                }
-            }
-            return false;
+        if (!_is_leaf)
+        {
+            return std::any_of(begin(_children), end(_children),
+                               [&pnt](auto* child)
+                               { return child->addPoint(pnt); });
         }
 
         // check if point is already in quadtree
