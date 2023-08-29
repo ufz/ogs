@@ -24,7 +24,7 @@ The [Conan package manager](https://www.conan.io) helps to install all required 
 
 ### Build packages locally
 
-Per default when Conan is enabled it will try to fetch prebuilt binaries from the [OGS Conan repository](https://ogs.jfrog.io/ogs/conan/) at <https://ogs.jfrog.io/ogs/api/conan/conan>. With the CMake option `OGS_CONAN_BUILD` you define what gets build locally. This option can be set to:
+Per default when Conan is enabled it will try to fetch prebuilt binaries from the [OGS Conan repository](https://ogs.jfrog.io/ogs/conan/). With the CMake option `OGS_CONAN_BUILD` you define what gets build locally. This option can be set to:
 
 - `missing` - Default, only builds packages which are not available as a prebuilt binary for the current configuration
 - `all` - Builds all packages locally
