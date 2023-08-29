@@ -162,34 +162,49 @@ void GMSHAdaptiveMeshDensity::getSteinerPoints(
 }
 
 #ifndef NDEBUG
-void GMSHAdaptiveMeshDensity::getQuadTreeGeometry(
-    std::vector<GeoLib::Point*>& pnts,
-    std::vector<GeoLib::Polyline*>& plys) const
+std::string GMSHAdaptiveMeshDensity::getQuadTreeGeometry(
+    GeoLib::GEOObjects& geo_objs) const
 {
     std::list<GeoLib::QuadTree<GeoLib::Point>*> leaf_list;
     _quad_tree->getLeafs(leaf_list);
 
-    for (std::list<GeoLib::QuadTree<GeoLib::Point>*>::const_iterator it(
-             leaf_list.begin());
-         it != leaf_list.end();
-         ++it)
+    std::string quad_tree_geo("QuadTree");
     {
-        // fetch corner points from leaf
-        GeoLib::Point ll;
-        GeoLib::Point ur;
-        (*it)->getSquarePoints(ll, ur);
-        std::size_t const pnt_offset(pnts.size());
-        pnts.push_back(new GeoLib::Point(ll, pnt_offset));
-        pnts.push_back(new GeoLib::Point(ur[0], ll[1], 0.0, pnt_offset + 1));
-        pnts.push_back(new GeoLib::Point(ur, pnt_offset + 2));
-        pnts.push_back(new GeoLib::Point(ll[0], ur[1], 0.0, pnt_offset + 3));
-        plys.push_back(new GeoLib::Polyline(pnts));
-        plys[plys.size() - 1]->addPoint(pnt_offset);
-        plys[plys.size() - 1]->addPoint(pnt_offset + 1);
-        plys[plys.size() - 1]->addPoint(pnt_offset + 2);
-        plys[plys.size() - 1]->addPoint(pnt_offset + 3);
-        plys[plys.size() - 1]->addPoint(pnt_offset);
+        std::vector<GeoLib::Point*> points{};
+        for (auto const leaf : leaf_list)
+        {
+            // fetch corner points from leaf
+            GeoLib::Point ll;
+            GeoLib::Point ur;
+            leaf->getSquarePoints(ll, ur);
+            std::size_t const pnt_offset(points.size());
+            points.push_back(new GeoLib::Point(ll, pnt_offset));
+            points.push_back(
+                new GeoLib::Point(ur[0], ll[1], 0.0, pnt_offset + 1));
+            points.push_back(new GeoLib::Point(ur, pnt_offset + 2));
+            points.push_back(
+                new GeoLib::Point(ll[0], ur[1], 0.0, pnt_offset + 3));
+        }
+        geo_objs.addPointVec(std::move(points), quad_tree_geo,
+                             GeoLib::PointVec::NameIdMap{});
     }
+    auto& points = geo_objs.getPointVecObj(quad_tree_geo)->getVector();
+
+    std::vector<GeoLib::Polyline*> polylines{};
+    for (std::size_t l = 0; l < leaf_list.size(); ++l)
+    {
+        auto* polyline = new GeoLib::Polyline(points);
+        for (std::size_t p = 0; p < 4; ++p)
+        {
+            polyline->addPoint(4 * l + p);
+        }
+        polyline->closePolyline();
+        polylines.push_back(polyline);
+    }
+    geo_objs.addPolylineVec(std::move(polylines), quad_tree_geo,
+                            GeoLib::PolylineVec::NameIdMap{});
+
+    return quad_tree_geo;
 }
 #endif
 }  // namespace GMSH

@@ -227,6 +227,12 @@ private:
 
 bool containsEdge (const Polyline& ply, std::size_t id0, std::size_t id1);
 
+/// Resets the point IDs of the polyline corresponding to the mapping.
+void resetPointIDs(Polyline& polyline, std::vector<std::size_t> const& mapping);
+
+/// Resets the point IDs of the polyline corresponding to the mapping.
+void markUsedPoints(Polyline const& polyline, std::vector<bool>& used_points);
+
 /**
  * comparison operator
  * \param lhs first polyline

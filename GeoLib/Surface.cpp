@@ -111,4 +111,41 @@ bool operator==(Surface const& lhs, Surface const& rhs)
     return &lhs == &rhs;
 }
 
+void resetPointIDs(Surface& surface, std::vector<std::size_t> const& mapping)
+{
+    if (surface.getPointVec()->size() != mapping.size())
+    {
+        OGS_FATAL(
+            "internal error in resetPointIDs(): surface based on point vector "
+            "of size {}, given mapping vector has size {}",
+            surface.getPointVec()->size(), mapping.size());
+    }
+    for (std::size_t i = 0; i < surface.getNumberOfTriangles(); ++i)
+    {
+        auto& triangle = *surface[i];
+        const_cast<std::size_t&>(triangle[0]) = mapping[triangle[0]];
+        const_cast<std::size_t&>(triangle[1]) = mapping[triangle[1]];
+        const_cast<std::size_t&>(triangle[2]) = mapping[triangle[2]];
+    }
+}
+
+void markUsedPoints(Surface const& surface, std::vector<bool>& used_points)
+{
+    if (surface.getPointVec()->size() != used_points.size())
+    {
+        OGS_FATAL(
+            "internal error in markUsedPoints(): surface based on point vector "
+            "of size {}, given used_points has size {}",
+            surface.getPointVec()->size(), used_points.size());
+    }
+    for (std::size_t i = 0; i < surface.getNumberOfTriangles(); ++i)
+    {
+        auto const& triangle = *surface[i];
+        for (std::size_t k = 0; k < 3; ++k)
+        {
+            used_points[triangle[k]] = true;
+        }
+    }
+}
+
 }  // namespace GeoLib
