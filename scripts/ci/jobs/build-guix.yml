@@ -13,3 +13,17 @@ build guix:
   script:
     - guix time-machine --commit=${GUIX_COMMIT} -- build -L $PWD/.guix/modules ogs-ssd
     - guix time-machine --commit=${GUIX_COMMIT} -- build -L $PWD/.guix/modules ogs-petsc-ssd
+
+deploy guix container eve:
+  stage: build
+  tags: [guix]
+  needs: []
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+  script:
+    - image=$( guix time-machine --commit=${GUIX_COMMIT} -- pack --no-substitutes -L $PWD/.guix/modules -S /bin=bin -RR --format=squashfs bash ogs-petsc-ssd | tee | tail -1 )
+    - echo "Image $image"
+    - ssh sonjenk@frontend2.eve.ufz.de rm -f /data/ogs/apptainer/guix/ogs-petsc-ssd_head.squashfs
+    - scp $image sonjenk@frontend2.eve.ufz.de:/data/ogs/apptainer/guix/ogs-petsc-ssd_head.squashfs
