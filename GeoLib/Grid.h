@@ -204,10 +204,9 @@ Grid<POINT>::Grid(InputIterator first, InputIterator last,
         {max[0] - min[0], max[1] - min[1], max[2] - min[2]}};
 
     // enlarge delta
-    for (auto& d : delta)
-    {
-        d = std::nextafter(d, std::numeric_limits<double>::max());
-    }
+    constexpr double direction = std::numeric_limits<double>::max();
+    std::transform(begin(delta), end(delta), begin(delta),
+                   [](double const d) { return std::nextafter(d, direction); });
 
     assert(n_pnts > 0);
     initNumberOfSteps(max_num_per_grid_cell, static_cast<std::size_t>(n_pnts),

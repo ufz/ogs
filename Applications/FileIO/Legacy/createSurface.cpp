@@ -95,7 +95,7 @@ bool createSurface(GeoLib::Polyline const& ply,
         WARN("Call to '{:s}' returned non-zero value {:d}.", gmsh_command,
              gmsh_return_value);
     }
-    auto surface_mesh = MeshLib::IO::readMeshFromFile(msh_file.string());
+    auto const* surface_mesh = MeshLib::IO::readMeshFromFile(msh_file.string());
     if (!surface_mesh)
     {
         WARN("The surface mesh could not be created.");

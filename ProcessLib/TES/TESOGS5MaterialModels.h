@@ -237,7 +237,7 @@ struct FluidHeatConductivityN2
                             loop1_term<2>(T) + loop1_term<3>(T) +
                             loop1_term<4>(T) + loop1_term<5>(T) +
                             loop1_term<6>(T);
-        const double temp(std::exp((f[8] / T)) - 1);
+        const double temp = std::expm1(f[8] / T);
         const double c_v0 =
             R *
             (sum1 + ((f[7] * (f[8] / T) * (f[8] / T) * (std::exp((f[8] / T)))) /

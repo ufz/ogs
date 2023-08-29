@@ -222,7 +222,6 @@ private:
     std::vector<std::size_t> _ply_pnt_ids;
 
     LineSegment getSegment(std::size_t i) const;
-    LineSegment getSegment(std::size_t i);
 };
 
 bool containsEdge (const Polyline& ply, std::size_t id0, std::size_t id1);

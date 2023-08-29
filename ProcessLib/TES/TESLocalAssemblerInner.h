@@ -51,11 +51,11 @@ public:
     TESFEMReactionAdaptor& getReactionAdaptor() { return *_d.reaction_adaptor; }
     TESLocalAssemblerData const& getData() const { return _d; }
 private:
-    Eigen::Matrix3d getMassCoeffMatrix(const unsigned int_pt);
+    Eigen::Matrix3d getMassCoeffMatrix(const unsigned int_pt) const;
     typename Traits::LaplaceMatrix getLaplaceCoeffMatrix(const unsigned int_pt,
                                                          const unsigned dim);
-    Eigen::Matrix3d getAdvectionCoeffMatrix(const unsigned int_pt);
-    Eigen::Matrix3d getContentCoeffMatrix(const unsigned int_pt);
+    Eigen::Matrix3d getAdvectionCoeffMatrix(const unsigned int_pt) const;
+    Eigen::Matrix3d getContentCoeffMatrix(const unsigned int_pt) const;
     Eigen::Vector3d getRHSCoeffVector(const unsigned int_pt);
 
     void preEachAssembleIntegrationPoint(

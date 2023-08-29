@@ -22,12 +22,13 @@
 
 namespace GeoLib
 {
-Station::Station(double x, double y, double z, std::string name)
+Station::Station(double const x, double const y, double const z,
+                 std::string name)
     : Point(x, y, z), _name(std::move(name))
 {
 }
 
-Station::Station(Point* coords, std::string name)
+Station::Station(Point const* const coords, std::string name)
     : Point(*coords), _name(std::move(name))
 {
 }

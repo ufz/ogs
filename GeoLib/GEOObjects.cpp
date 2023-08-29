@@ -222,9 +222,9 @@ const PolylineVec* GEOObjects::getPolylineVecObj(const std::string& name) const
 bool GEOObjects::removePolylineVec(std::string const& name)
 {
     _callbacks->removePolylineVec(name);
-    auto it =
-        std::find_if(_ply_vecs.begin(), _ply_vecs.end(),
-                     [&name](PolylineVec* v) { return v->getName() == name; });
+    auto it = std::find_if(_ply_vecs.begin(), _ply_vecs.end(),
+                           [&name](PolylineVec const* const v)
+                           { return v->getName() == name; });
     if (it != _ply_vecs.end())
     {
         delete *it;
@@ -342,7 +342,7 @@ void GEOObjects::getStationVectorNames(std::vector<std::string>& names) const
 std::vector<std::string> GEOObjects::getGeometryNames() const
 {
     std::vector<std::string> names;
-    for (auto point : _pnt_vecs)
+    for (auto const point : _pnt_vecs)
     {
         if (point->getType() == PointVec::PointType::POINT)
         {
@@ -385,10 +385,7 @@ int GEOObjects::mergeGeometries(std::vector<std::string> const& geo_names,
 
     std::vector<std::size_t> pnt_offsets(n_geo_names, 0);
 
-    if (!mergePoints(geo_names, merged_geo_name, pnt_offsets))
-    {
-        return 1;
-    }
+    mergePoints(geo_names, merged_geo_name, pnt_offsets);
 
     mergePolylines(geo_names, merged_geo_name, pnt_offsets);
 
@@ -397,7 +394,7 @@ int GEOObjects::mergeGeometries(std::vector<std::string> const& geo_names,
     return 0;
 }
 
-bool GEOObjects::mergePoints(std::vector<std::string> const& geo_names,
+void GEOObjects::mergePoints(std::vector<std::string> const& geo_names,
                              std::string& merged_geo_name,
                              std::vector<std::size_t>& pnt_offsets)
 {
@@ -442,7 +439,6 @@ bool GEOObjects::mergePoints(std::vector<std::string> const& geo_names,
 
     addPointVec(std::move(merged_points), merged_geo_name,
                 std::move(merged_pnt_names), 1e-6);
-    return true;
 }
 
 void GEOObjects::mergePolylines(std::vector<std::string> const& geo_names,

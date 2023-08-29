@@ -186,7 +186,7 @@ std::pair<double, double> minMaxEdgeLength(
     using limits = std::numeric_limits<double>;
     auto const bounds = ranges::accumulate(
         elements, std::pair{limits::infinity(), -limits::infinity()}, min_max,
-        [](Element* const e) { return computeSqrEdgeLengthRange(*e); });
+        [](Element const* const e) { return computeSqrEdgeLengthRange(*e); });
 
     return {std::sqrt(bounds.first), std::sqrt(bounds.second)};
 }
@@ -325,7 +325,7 @@ std::vector<std::vector<Node*>> calculateNodesConnectedByElements(
         // Make nodes unique and sorted by their ids.
         // This relies on the node's id being equivalent to it's address.
         std::sort(adjacent_nodes.begin(), adjacent_nodes.end(),
-                  [](Node* a, Node* b) { return a->getID() < b->getID(); });
+                  idsComparator<Node*>);
         auto const last =
             std::unique(adjacent_nodes.begin(), adjacent_nodes.end());
         adjacent_nodes.erase(last, adjacent_nodes.end());

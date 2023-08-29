@@ -636,7 +636,7 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
     return os;
 }
 
-void PhreeqcIO::callPhreeqc()
+void PhreeqcIO::callPhreeqc() const
 {
     INFO("Phreeqc: Executing chemical calculation.");
     if (RunFile(phreeqc_instance_id, _phreeqc_input_file.c_str()) != IPQ_OK)
@@ -826,11 +826,12 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                     auto const& secondary_variables =
                         user_punch->secondary_variables;
                     // Update values of secondary variables
-                    auto& secondary_variable = BaseLib::findElementOrError(
-                        secondary_variables.begin(), secondary_variables.end(),
-                        compare_by_name,
-                        "Could not find secondary variable '" + item_name +
-                            "'.");
+                    auto const& secondary_variable =
+                        BaseLib::findElementOrError(
+                            secondary_variables.begin(),
+                            secondary_variables.end(), compare_by_name,
+                            "Could not find secondary variable '" + item_name +
+                                "'.");
                     (*secondary_variable.value)[chemical_system_id] =
                         accepted_items[item_id];
                     break;
@@ -896,13 +897,14 @@ void PhreeqcIO::computeSecondaryVariable(
     std::size_t const ele_id,
     std::vector<GlobalIndexType> const& chemical_system_indices)
 {
-    for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
+    for (auto const& kinetic_reactant : _chemical_system->kinetic_reactants)
     {
         (*kinetic_reactant.mesh_prop_molality)[ele_id] =
             averageReactantMolality(kinetic_reactant, chemical_system_indices);
     }
 
-    for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
+    for (auto const& equilibrium_reactant :
+         _chemical_system->equilibrium_reactants)
     {
         (*equilibrium_reactant.mesh_prop_molality)[ele_id] =
             averageReactantMolality(equilibrium_reactant,

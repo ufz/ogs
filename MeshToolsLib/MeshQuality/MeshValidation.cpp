@@ -171,7 +171,7 @@ MeshValidation::ElementErrorCodeOutput(
 {
     const auto nErrorFlags(
         static_cast<std::size_t>(ElementErrorFlag::MaxValue));
-    ElementErrorFlag flags[nErrorFlags] = {
+    const ElementErrorFlag flags[nErrorFlags] = {
         ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar,
         ElementErrorFlag::NonConvex, ElementErrorFlag::NodeOrder};
     const std::size_t nElements(error_codes.size());

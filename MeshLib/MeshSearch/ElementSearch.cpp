@@ -10,6 +10,11 @@
 
 #include "ElementSearch.h"
 
+#include <range/v3/algorithm/any_of.hpp>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/take.hpp>
+
 #include "BaseLib/Algorithm.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
@@ -21,22 +26,13 @@ ElementSearch::ElementSearch(const MeshLib::Mesh& mesh) : _mesh(mesh) {}
 template <typename Container, typename Predicate>
 std::vector<std::size_t> filter(Container const& container, Predicate const& p)
 {
-    std::vector<std::size_t> matchedIDs;
-    std::size_t i = 0;
-    for (auto value : container)
-    {
-        if (p(value))
-        {
-            matchedIDs.push_back(i);
-        }
-        i++;
-    }
-    return matchedIDs;
+    return ranges::views::filter(container, p) | views::ids |
+           ranges::to<std::vector>;
 }
 
 std::size_t ElementSearch::searchByElementType(MeshElemType eleType)
 {
-    auto matchedIDs = filter(_mesh.getElements(), [&](MeshLib::Element* e)
+    auto matchedIDs = filter(_mesh.getElements(), [&](MeshLib::Element const* e)
                              { return e->getGeomType() == eleType; });
 
     this->updateUnion(matchedIDs);
@@ -45,8 +41,9 @@ std::size_t ElementSearch::searchByElementType(MeshElemType eleType)
 
 std::size_t ElementSearch::searchByContent(double eps)
 {
-    auto matchedIDs = filter(_mesh.getElements(), [&eps](MeshLib::Element* e)
-                             { return e->getContent() < eps; });
+    auto matchedIDs =
+        filter(_mesh.getElements(), [&eps](MeshLib::Element const* e)
+               { return e->getContent() < eps; });
 
     this->updateUnion(matchedIDs);
     return matchedIDs.size();
@@ -54,20 +51,15 @@ std::size_t ElementSearch::searchByContent(double eps)
 
 std::size_t ElementSearch::searchByBoundingBox(GeoLib::AABB const& aabb)
 {
-    auto matchedIDs =
-        filter(_mesh.getElements(),
-               [&aabb](MeshLib::Element* e)
-               {
-                   std::size_t const nElemNodes(e->getNumberOfBaseNodes());
-                   for (std::size_t n = 0; n < nElemNodes; ++n)
-                   {
-                       if (aabb.containsPoint(*e->getNode(n), 0))
-                       {
-                           return true;  // any node of element is in aabb.
-                       }
-                   }
-                   return false;  // no nodes of element are in aabb.
-               });
+    auto matchedIDs = filter(
+        _mesh.getElements(),
+        [&aabb](MeshLib::Element const* e)
+        {
+            // any node of element is in aabb.
+            return ranges::any_of(
+                e->nodes() | ranges::views::take(e->getNumberOfBaseNodes()),
+                [&aabb](auto const* n) { return aabb.containsPoint(*n, 0); });
+        });
 
     this->updateUnion(matchedIDs);
     return matchedIDs.size();

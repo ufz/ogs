@@ -380,7 +380,7 @@ bool Polygon::getNextIntersectionPointPolygonLine(
     }
     else
     {
-        for (auto polygon : _simple_polygon_list)
+        for (auto const* polygon : _simple_polygon_list)
         {
             for (auto seg_it(polygon->begin()); seg_it != polygon->end();
                  ++seg_it)

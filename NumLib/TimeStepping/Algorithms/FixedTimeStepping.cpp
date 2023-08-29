@@ -171,7 +171,7 @@ FixedTimeStepping::FixedTimeStepping(
         auto const delta_t = repeat_dt_pairs.back().second;
         auto const repeat =
             static_cast<std::size_t>(std::ceil((_t_end - t_curr) / delta_t));
-        t_curr = addTimeIncrement(_dt_vector, repeat, delta_t, t_curr);
+        addTimeIncrement(_dt_vector, repeat, delta_t, t_curr);
     }
 
     incorporateFixedTimesForOutput(_t_initial, _t_end, _dt_vector,

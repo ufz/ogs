@@ -24,9 +24,9 @@ std::vector<MeshLib::Element*> extractOneDimensionalElements(
 {
     std::vector<MeshLib::Element*> one_dimensional_elements;
 
-    copy_if(begin(elements), end(elements),
-            back_inserter(one_dimensional_elements),
-            [](MeshLib::Element* e) { return e->getDimension() == 1; });
+    copy_if(
+        begin(elements), end(elements), back_inserter(one_dimensional_elements),
+        [](MeshLib::Element const* const e) { return e->getDimension() == 1; });
 
     return one_dimensional_elements;
 }
@@ -80,7 +80,7 @@ BHEMeshData getBHEDataInMesh(MeshLib::Mesh const& mesh)
         std::vector<MeshLib::Element*>& vec_elements = bhe_elements[bhe_id];
         copy_if(begin(all_bhe_elements), end(all_bhe_elements),
                 back_inserter(vec_elements),
-                [&](MeshLib::Element* e)
+                [&](MeshLib::Element const* const e)
                 { return material_ids[e->getID()] == bhe_mat_id; });
         DBUG("-> found {:d} elements on the BHE_{:d}", vec_elements.size(),
              bhe_id);
@@ -100,8 +100,8 @@ BHEMeshData getBHEDataInMesh(MeshLib::Mesh const& mesh)
             }
         }
         BaseLib::makeVectorUnique(vec_nodes,
-                                  [](MeshLib::Node* node1, MeshLib::Node* node2)
-                                  { return node1->getID() < node2->getID(); });
+                                  MeshLib::idsComparator<MeshLib::Node*>);
+
         DBUG("-> found {:d} nodes on the BHE_{:d}", vec_nodes.size(), bhe_id);
     }
 

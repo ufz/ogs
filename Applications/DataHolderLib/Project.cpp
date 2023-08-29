@@ -77,7 +77,7 @@ bool Project::getUniqueName(std::string& name) const
             cpName = cpName + "-" + std::to_string(count);
         }
 
-        for (auto& mesh : _mesh_vec)
+        for (auto const& mesh : _mesh_vec)
         {
             if (cpName == mesh->getName())
             {

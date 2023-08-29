@@ -33,9 +33,8 @@ void checkMPLProperties(
     std::array const required_properties_medium = {
         MaterialPropertyLib::PropertyType::permeability};
 
-    for (auto const& element : mesh.getElements())
+    for (auto const element_id : mesh.getElements() | MeshLib::views::ids)
     {
-        auto const element_id = element->getID();
         auto const& medium = *media_map.getMedium(element_id);
 
         if (use_stokes_brinkman_form)

@@ -97,10 +97,10 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     }
 
     // set branches
-    for (auto& vec_branch_nodeID_matID : vec_branch_nodeID_matIDs)
+    for (auto const& [vec_branch_nodeID, matID] : vec_branch_nodeID_matIDs)
     {
-        auto master_matId = vec_branch_nodeID_matID.second[0];
-        auto slave_matId = vec_branch_nodeID_matID.second[1];
+        auto master_matId = matID[0];
+        auto slave_matId = matID[1];
         auto& master_frac =
             _process_data.fracture_properties
                 [_process_data._map_materialID_to_fractureID[master_matId]];
@@ -108,13 +108,11 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
             _process_data.fracture_properties
                 [_process_data._map_materialID_to_fractureID[slave_matId]];
 
-        master_frac.branches_master.push_back(
-            createBranchProperty(*mesh.getNode(vec_branch_nodeID_matID.first),
-                                 master_frac, slave_frac));
+        master_frac.branches_master.push_back(createBranchProperty(
+            *mesh.getNode(vec_branch_nodeID), master_frac, slave_frac));
 
-        slave_frac.branches_slave.push_back(
-            createBranchProperty(*mesh.getNode(vec_branch_nodeID_matID.first),
-                                 master_frac, slave_frac));
+        slave_frac.branches_slave.push_back(createBranchProperty(
+            *mesh.getNode(vec_branch_nodeID), master_frac, slave_frac));
     }
 
     // set junctions
@@ -146,10 +144,10 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     for (unsigned i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
     {
         auto node = mesh.getNode(vec_junction_nodeID_matIDs[i].first);
-        for (auto e : mesh.getElementsConnectedToNode(*node))
+        for (auto id :
+             mesh.getElementsConnectedToNode(*node) | MeshLib::views::ids)
         {
-            _process_data._vec_ele_connected_junctionIDs[e->getID()].push_back(
-                i);
+            _process_data._vec_ele_connected_junctionIDs[id].push_back(i);
         }
     }
 
@@ -205,7 +203,7 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
     std::vector<MeshLib::MeshSubset> all_mesh_subsets;
     std::generate_n(std::back_inserter(all_mesh_subsets), DisplacementDim,
                     [&]() { return *_mesh_subset_matrix_nodes; });
-    for (auto& ms : _mesh_subset_fracture_nodes)
+    for (auto const& ms : _mesh_subset_fracture_nodes)
     {
         std::generate_n(std::back_inserter(all_mesh_subsets),
                         DisplacementDim,

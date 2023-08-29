@@ -192,6 +192,7 @@ static bool isHydrogen(std::string_view const element)
 void PhreeqcKernel::setAqueousSolutions(
     std::vector<GlobalVector*> const& process_solutions)
 {
+    assert(!process_solutions.empty());
     // Loop over chemical systems
     std::size_t const num_chemical_systems = process_solutions[0]->size();
     for (std::size_t chemical_system_id = 0;

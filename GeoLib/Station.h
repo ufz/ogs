@@ -48,7 +48,7 @@ public:
     explicit Station(double x = 0.0, double y = 0.0, double z = 0.0,
                      std::string name = "");
 
-    explicit Station(Point* coords, std::string name = "");
+    explicit Station(Point const* coords, std::string name = "");
 
     /**
      * Constructor copies the source object

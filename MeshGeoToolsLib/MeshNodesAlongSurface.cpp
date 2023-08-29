@@ -35,7 +35,7 @@ MeshNodesAlongSurface::MeshNodesAlongSurface(MeshLib::Mesh const& mesh,
     // loop over all nodes
     for (std::size_t i = 0; i < n_nodes; i++)
     {
-        auto* node = mesh_nodes[i];
+        auto const* const node = mesh_nodes[i];
         if (!sfc.isPntInBoundingVolume(*node, epsilon_radius))
         {
             continue;
