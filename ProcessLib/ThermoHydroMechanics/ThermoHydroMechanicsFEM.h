@@ -174,6 +174,10 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
+            _ip_data[ip].eps0 =
+                _ip_data[ip].eps0_prev +
+                (1 - _ip_data[ip].phi_fr_prev / _ip_data[ip].porosity) *
+                    (_ip_data[ip].eps_prev - _ip_data[ip].eps0_prev);
             _ip_data[ip].pushBackState();
         }
     }

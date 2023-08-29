@@ -40,8 +40,8 @@ struct IntegrationPointData final
         sigma_eff_ice.setZero(kelvin_vector_size);
         eps.setZero(kelvin_vector_size);
         eps_prev.setZero(kelvin_vector_size);
+        eps0.setZero(kelvin_vector_size);
         eps0_prev.setZero(kelvin_vector_size);
-        eps0_prev2.setZero(kelvin_vector_size);
         eps_m.setZero(kelvin_vector_size);
         eps_m_prev.resize(kelvin_vector_size);
         eps_m_ice.setZero(kelvin_vector_size);
@@ -53,8 +53,7 @@ struct IntegrationPointData final
     }
 
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
-    typename BMatricesType::KelvinVectorType eps, eps_prev, eps0_prev,
-        eps0_prev2;
+    typename BMatricesType::KelvinVectorType eps, eps_prev, eps0, eps0_prev;
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
 
     typename BMatricesType::KelvinVectorType sigma_eff_ice, sigma_eff_ice_prev;
@@ -81,7 +80,7 @@ struct IntegrationPointData final
     void pushBackState()
     {
         phi_fr_prev = phi_fr;
-        eps0_prev2 = eps0_prev;
+        eps0_prev = eps0;
         eps_prev = eps;
         eps_m_prev = eps_m;
         sigma_eff_prev = sigma_eff;
