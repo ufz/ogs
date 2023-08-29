@@ -4,11 +4,12 @@ build guix:
   needs: []
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
+    GUIX_COMMIT: v1.4.0
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
       allow_failure: true
     - when: manual
       allow_failure: true
   script:
-    - guix time-machine --commit=v1.4.0 -- build -L $PWD/.guix/modules ogs-ssd
-    - guix time-machine --commit=v1.4.0 -- build -L $PWD/.guix/modules ogs-petsc-ssd
+    - guix time-machine --commit=${GUIX_COMMIT} -- build -L $PWD/.guix/modules ogs-ssd
+    - guix time-machine --commit=${GUIX_COMMIT} -- build -L $PWD/.guix/modules ogs-petsc-ssd
