@@ -213,7 +213,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
         medium->property(MaterialPropertyLib::PropertyType::porosity)
             .template value<double>(vars, x_position, t, dt);
     vars.porosity = porosity;
-    crv.porosity = porosity;
+    ip_data.porosity = porosity;
 
     crv.alpha_biot =
         medium->property(MaterialPropertyLib::PropertyType::biot_coefficient)
@@ -633,10 +633,11 @@ void ThermoHydroMechanicsLocalAssembler<
         //
         laplace_p.noalias() += dNdx.transpose() * crv.K_over_mu * dNdx * w;
 
-        storage_p.noalias() += N.transpose() *
-                               (crv.porosity * crv.fluid_compressibility +
-                                (crv.alpha_biot - crv.porosity) * crv.beta_SR) *
-                               N * w;
+        storage_p.noalias() +=
+            N.transpose() *
+            (_ip_data[ip].porosity * crv.fluid_compressibility +
+             (crv.alpha_biot - _ip_data[ip].porosity) * crv.beta_SR) *
+            N * w;
 
         laplace_T.noalias() +=
             dNdx.transpose() * crv.K_pT_thermal_osmosis * dNdx * w;

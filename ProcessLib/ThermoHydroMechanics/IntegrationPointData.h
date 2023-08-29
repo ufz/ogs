@@ -76,6 +76,8 @@ struct IntegrationPointData final
     double phi_fr_prev;
     double integration_weight;
 
+    double porosity;
+
     void pushBackState()
     {
         phi_fr_prev = phi_fr;
@@ -229,7 +231,6 @@ struct ConstitutiveRelationsValues
     double c_f;
     double effective_volumetric_heat_capacity;
     double fluid_compressibility;
-    double porosity;
     double rho;
 
     // Freezing related values.
