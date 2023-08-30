@@ -17,7 +17,7 @@ Members of the Department Environmental Informatics of the Helmholtz Centre for 
 
 ## Run OGS within a container
 
-Eve has [Singularity](https://www.sylabs.io/singularity) container runtime installed so you can simply download a prebuilt container and run OGS inside it. See the [user guide]({{< ref "container" >}}) for more information.
+Eve has the [Apptainer/Singularity](https://apptainer.org) container runtime installed so you can simply download a prebuilt container and run OGS inside it. See the [user guide]({{< ref "container" >}}) for more information.
 
 ## Build OGS-6
 

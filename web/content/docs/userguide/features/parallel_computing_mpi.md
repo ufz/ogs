@@ -159,19 +159,17 @@ Here is an example of a job script for the SLURM system on EVE:
 #SBATCH --mail-user=wenqing.wang@ufz.de
 #SBATCH --mail-type=BEGIN,END
 
-###source /etc/profile.d/000-modules.sh
 export MODULEPATH="/software/easybuild-broadwell/modules/all/Core:/software/modulefiles"
 module load  foss/2020b   petsc-bilke/3.16.5_foss2020b
 module load  OpenMPI/4.0.5  HDF5/1.10.7  GMP/6.2.0
 
 APP="/home/wwang/code/ogs6/exe_petsc/bin/ogs"
+PRJ_FILE="/home/wwang/data_D/project/AREHS/HM_3D/simHM_glaciation.prj"
 /bin/echo In directory: `pwd`
 /bin/echo Number of CPUs: $SLURM_CPUS_PER_TASK
 /bin/echo File name: $1
 
-##load $APP
-
-srun -n "$SLURM_NTASKS"  $APP /home/wwang/data_D/project/AREHS/HM_3D/simHM_glaciation.prj -o /home/wwang/data_D/project/AREHS/HM_3D/output
+srun $APP $PRJ_FILE -o /home/wwang/data_D/project/AREHS/HM_3D/output
 ```
 
 In the job script for EVE, `module load  foss/2020b` must be presented, and
@@ -189,6 +187,22 @@ Once the job script is ready, you can
 
 For the detailed syntax of job script of SLURM for EVE, please visit <https://wiki.ufz.de/eve/>
 (user login required).
+
+### 2a. Use a container to launch MPI OGS
+
+A prebuilt container with `ogs` (current master) is available at:
+
+* `/data/ogs/apptainer/guix/ogs-petsc-ssd_head.squashfs`
+
+You need to modify your submit script, e.g.:
+
+```bash
+...
+#SBATCH ...
+
+module load GCC/12.2.0 OpenMPI/4.1.4
+srun apptainer exec /data/ogs/apptainer/guix/ogs-petsc-ssd_head.squashfs ogs $PRJ_FILE
+```
 
 ### 3. Check results
 
