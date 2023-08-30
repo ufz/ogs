@@ -1,5 +1,6 @@
 variables:
   GUIX_PETSC_CONTAINER: /data/ogs/apptainer/guix/ogs-petsc-ssd_head.squashfs
+  GUIX_COMMIT: v1.4.0
 
 build guix:
   stage: build
@@ -14,6 +15,7 @@ build guix:
     - when: manual
       allow_failure: true
   script:
+    # SteadyStateDiffusion only!
     - guix time-machine --commit=${GUIX_COMMIT} -- build -L $PWD/.guix/modules ogs-ssd
     - guix time-machine --commit=${GUIX_COMMIT} -- build -L $PWD/.guix/modules ogs-petsc-ssd
 
@@ -26,7 +28,8 @@ deploy guix container eve:
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
   script:
-    - image=$( guix time-machine --commit=${GUIX_COMMIT} -- pack --no-substitutes -L $PWD/.guix/modules -S /bin=bin -RR --format=squashfs bash ogs-petsc-ssd | tee | tail -1 )
+    # All processes.
+    - image=$( guix time-machine --commit=${GUIX_COMMIT} -- pack --no-substitutes -L $PWD/.guix/modules -S /bin=bin -RR --format=squashfs bash ogs-petsc | tee | tail -1 )
     - echo "Image $image"
     - ssh sonjenk@frontend2.eve.ufz.de rm -f ${GUIX_PETSC_CONTAINER}
     - scp $image sonjenk@frontend2.eve.ufz.de:${GUIX_PETSC_CONTAINER}
@@ -34,7 +37,9 @@ deploy guix container eve:
 test guix container eve:
   stage: build
   tags: [frontend2]
-  needs: ["build guix"]
+  needs: ["deploy guix container eve"]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
   script:
     - export work_dir=/work/$USER/builds/$CI_JOB_ID
     - echo "Working directory is ${work_dir}"
