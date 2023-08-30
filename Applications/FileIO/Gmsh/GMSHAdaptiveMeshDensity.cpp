@@ -19,6 +19,7 @@
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
 #ifndef NDEBUG
+#include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polyline.h"
 #endif
 #include "GeoLib/QuadTree.h"

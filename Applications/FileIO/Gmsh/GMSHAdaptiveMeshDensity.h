@@ -11,6 +11,10 @@
 
 #pragma once
 
+#ifndef NDEBUG
+#include <string>
+#endif
+
 #include "GMSHMeshDensityStrategy.h"
 
 namespace GeoLib
