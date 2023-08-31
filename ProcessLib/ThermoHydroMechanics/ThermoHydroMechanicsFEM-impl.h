@@ -213,7 +213,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
         medium->property(MaterialPropertyLib::PropertyType::porosity)
             .template value<double>(vars, x_position, t, dt);
     vars.porosity = porosity;
-    crv.porosity = porosity;
+    ip_data.porosity = porosity;
 
     crv.alpha_biot =
         medium->property(MaterialPropertyLib::PropertyType::biot_coefficient)
@@ -413,29 +413,21 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                                        phase_change_expansivity)
                         .value(vars, x_position, t, dt));
 
-        // Heaviside(S_I - 0.5) = Heaviside(phi_I / phi - 0.5)
-        auto heaviside_I = [porosity](double const phi_fr)
-        { return phi_fr >= 0.5 * porosity ? 1. : 0.; };
-
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dphase_change_strain =
-                phase_change_expansion_coefficient *
-                (heaviside_I(phi_fr) - heaviside_I(phi_fr_prev));
+            dphase_change_strain = phase_change_expansion_coefficient *
+                                   (phi_fr - phi_fr_prev) / porosity;
 
         // eps0 ia a 'history variable' -- a solid matrix strain accrued
         // prior to the onset of ice forming
-        auto& eps0_prev = ip_data.eps0_prev;
-        auto const& eps0_prev2 = ip_data.eps0_prev2;
-        // definition of eps_m_ice
-        eps0_prev = eps0_prev2 +
-                    (1 - heaviside_I(phi_fr_prev)) * (eps_prev - eps0_prev2);
+        auto& eps0 = ip_data.eps0;
+        auto const& eps0_prev = ip_data.eps0_prev;
 
-        // ice
+        // definition of eps_m_ice
         auto& eps_m_ice = ip_data.eps_m_ice;
         auto const& eps_m_ice_prev = ip_data.eps_m_ice_prev;
 
         eps_m_ice.noalias() = eps_m_ice_prev + eps - eps_prev -
-                              (eps0_prev - eps0_prev2) - dthermal_strain_ice -
+                              (eps0 - eps0_prev) - dthermal_strain_ice -
                               dphase_change_strain;
 
         vars_ice.mechanical_strain
@@ -456,16 +448,12 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                     MaterialPropertyLib::Variable::temperature, x_position, t,
                     dt);
 
-        crv.J_uu_fr = heaviside_I(phi_fr) * porosity * C_IR;
+        crv.J_uu_fr = phi_fr * C_IR;
 
         auto const& sigma_eff_ice = ip_data.sigma_eff_ice;
-        crv.r_u_fr = heaviside_I(phi_fr) * porosity * sigma_eff_ice;
-        crv.J_uT_fr =
-            dphi_fr_dT * sigma_eff_ice +  // here, there must be a Dirac-delta
-            heaviside_I(phi_fr) * porosity * C_IR *
-                (ice_linear_thermal_expansion_coefficient +
-                 phase_change_expansion_coefficient * dphi_fr_dT /
-                     porosity);  // here, there must be a Dirac-delta
+        crv.r_u_fr = phi_fr * sigma_eff_ice;
+
+        crv.J_uT_fr = phi_fr * C_IR * ice_linear_thermal_expansion_coefficient;
 
         crv.J_TT_fr = ((rho_fr * c_fr - fluid_density * crv.c_f) * dphi_fr_dT +
                        l_fr * rho_fr * d2phi_fr_dT2) *
@@ -633,10 +621,11 @@ void ThermoHydroMechanicsLocalAssembler<
         //
         laplace_p.noalias() += dNdx.transpose() * crv.K_over_mu * dNdx * w;
 
-        storage_p.noalias() += N.transpose() *
-                               (crv.porosity * crv.fluid_compressibility +
-                                (crv.alpha_biot - crv.porosity) * crv.beta_SR) *
-                               N * w;
+        storage_p.noalias() +=
+            N.transpose() *
+            (_ip_data[ip].porosity * crv.fluid_compressibility +
+             (crv.alpha_biot - _ip_data[ip].porosity) * crv.beta_SR) *
+            N * w;
 
         laplace_T.noalias() +=
             dNdx.transpose() * crv.K_pT_thermal_osmosis * dNdx * w;

@@ -40,8 +40,8 @@ struct IntegrationPointData final
         sigma_eff_ice.setZero(kelvin_vector_size);
         eps.setZero(kelvin_vector_size);
         eps_prev.setZero(kelvin_vector_size);
+        eps0.setZero(kelvin_vector_size);
         eps0_prev.setZero(kelvin_vector_size);
-        eps0_prev2.setZero(kelvin_vector_size);
         eps_m.setZero(kelvin_vector_size);
         eps_m_prev.resize(kelvin_vector_size);
         eps_m_ice.setZero(kelvin_vector_size);
@@ -53,8 +53,7 @@ struct IntegrationPointData final
     }
 
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
-    typename BMatricesType::KelvinVectorType eps, eps_prev, eps0_prev,
-        eps0_prev2;
+    typename BMatricesType::KelvinVectorType eps, eps_prev, eps0, eps0_prev;
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
 
     typename BMatricesType::KelvinVectorType sigma_eff_ice, sigma_eff_ice_prev;
@@ -76,10 +75,12 @@ struct IntegrationPointData final
     double phi_fr_prev;
     double integration_weight;
 
+    double porosity;
+
     void pushBackState()
     {
         phi_fr_prev = phi_fr;
-        eps0_prev2 = eps0_prev;
+        eps0_prev = eps0;
         eps_prev = eps;
         eps_m_prev = eps_m;
         sigma_eff_prev = sigma_eff;
@@ -180,6 +181,8 @@ struct IntegrationPointData final
         // Extend for non-linear ice materials if necessary.
         auto const null_state =
             ice_constitutive_relation.createMaterialStateVariables();
+        ice_constitutive_relation.initializeInternalStateVariables(
+            t, x_position, *null_state);
         auto&& solution = ice_constitutive_relation.integrateStress(
             variable_array_prev, variable_array, t, x_position, dt,
             *null_state);
@@ -227,7 +230,6 @@ struct ConstitutiveRelationsValues
     double c_f;
     double effective_volumetric_heat_capacity;
     double fluid_compressibility;
-    double porosity;
     double rho;
 
     // Freezing related values.
