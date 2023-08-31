@@ -39,19 +39,21 @@ bool isConvertibleToDouble(std::string const& s)
     }
     catch (...)
     {
-        OGS_FATAL("The given string '{:s}' is not convertible to double.", s);
+        ERR("The given string '{:s}' is not convertible to double.", s);
+        return false;
     }
     if (pos != s.size())
     {
-        OGS_FATAL(
-            "Only {:d} characters were used for double conversion of string "
+        ERR("Only {:d} characters were used for double conversion of string "
             "'{:s}'",
             pos, s);
+        return false;
     }
 
     if (std::isnan(value))
     {
-        OGS_FATAL("The given string '{:s}' results in a NaN value.", s);
+        ERR("The given string '{:s}' results in a NaN value.", s);
+        return false;
     }
     return true;
 }
