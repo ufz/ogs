@@ -16,8 +16,8 @@ build guix:
       allow_failure: true
   script:
     # SteadyStateDiffusion only!
-    - guix time-machine --commit=${GUIX_COMMIT} -- build -L $PWD/.guix/modules ogs-ssd
-    - guix time-machine --commit=${GUIX_COMMIT} -- build -L $PWD/.guix/modules ogs-petsc-ssd
+    - guix time-machine --commit=${GUIX_COMMIT} -- build --no-substitutes -L $PWD/.guix/modules ogs-ssd
+    - guix time-machine --commit=${GUIX_COMMIT} -- build --no-substitutes -L $PWD/.guix/modules ogs-petsc-ssd
 
 deploy guix container eve:
   stage: build
