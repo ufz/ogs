@@ -208,11 +208,6 @@ include(packaging/Pack)
 
 # ---- Subdirectories ----
 include_directories(${PROJECT_SOURCE_DIR})
-# xdmfdiff
-if(OGS_BUILD_TESTING)
-    add_subdirectory(Tests/xdmfdiff)
-endif()
-
 include(scripts/cmake/CheckHeaderCompilation.cmake)
 
 add_subdirectory(Applications)
@@ -233,6 +228,7 @@ if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR OGS_BUILD_TESTING)
     add_subdirectory(ParameterLib)
     add_subdirectory(MaterialLib)
     add_subdirectory(ProcessLib)
+    add_subdirectory(Tests/xdmfdiff)
 endif()
 if(OGS_BUILD_TESTING AND NOT _IS_SUBPROJECT)
     add_subdirectory(Tests)

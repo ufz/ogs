@@ -315,7 +315,7 @@ if(OGS_USE_PETSC)
     endif()
 endif()
 
-if(OGS_BUILD_TESTING)
+if(OGS_BUILD_TESTING OR OGS_BUILD_CLI OR OGS_BUILD_UTILS)
     set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
     CPMAddPackage(
         NAME xdmf

@@ -27,6 +27,10 @@ To **build** OGS with the help of a container go to the [Developer Guide]({{< re
 
 ### Get a container image
 
+#### Recommended option on EVE: use prebuilt images
+
+On the EVE cluster system (UFZ) you can use prebuilt images which can be used for [PETSc-based cluster jobs]({{< ref "parallel_computing_mpi.md#2a-use-a-container-to-launch-mpi-ogs" >}}).
+
 #### Option: Download a release image (preferred)
 
 Simply download an image from the [releases]({{< ref "/releases" >}}) page.
