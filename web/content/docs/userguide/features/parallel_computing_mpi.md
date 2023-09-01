@@ -200,7 +200,6 @@ You need to modify your submit script, e.g.:
 ...
 #SBATCH ...
 
-module load GCC/12.2.0 OpenMPI/4.1.4
 srun apptainer exec /data/ogs/apptainer/guix/ogs-petsc-ssd_head.squashfs ogs $PRJ_FILE
 ```
 
