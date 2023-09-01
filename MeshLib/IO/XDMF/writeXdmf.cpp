@@ -64,6 +64,8 @@ static auto meshPropertyDatatypeString()
     ogs_to_xdmf_type[to_underlying(MeshPropertyDataType::uint64)] = "UInt";
     ogs_to_xdmf_type[to_underlying(MeshPropertyDataType::int8)] = "Int";
     ogs_to_xdmf_type[to_underlying(MeshPropertyDataType::uint8)] = "UInt";
+    ogs_to_xdmf_type[to_underlying(MeshPropertyDataType::char_native)] = "Char";
+    ogs_to_xdmf_type[to_underlying(MeshPropertyDataType::uchar)] = "UChar";
     return ogs_to_xdmf_type;
 }
 
