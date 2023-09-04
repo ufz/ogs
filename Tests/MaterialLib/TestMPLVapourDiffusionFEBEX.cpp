@@ -25,6 +25,8 @@ TEST(MaterialPropertyLib, VapourDiffusionFEBEX)
         "   <name>vapour_diffusion</name>"
         "   <type>VapourDiffusionFEBEX</type>"
         "   <tortuosity>0.8</tortuosity>"
+        "   <base_diffusion_coefficient>2.16e-5</base_diffusion_coefficient>"
+        "   <exponent>1.8</exponent>"
         "</property>";
 
     std::unique_ptr<MaterialPropertyLib::Property> const property_ptr =
