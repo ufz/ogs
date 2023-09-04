@@ -53,6 +53,19 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
     PetscMemoryGetCurrentUsage(&mem1);
 #endif
 
+    KSPNormType norm_type;
+    KSPGetNormType(solver_, &norm_type);
+    const char* ksp_type;
+    const char* pc_type;
+    KSPGetType(solver_, &ksp_type);
+    PCGetType(pc_, &pc_type);
+
+    PetscPrintf(PETSC_COMM_WORLD,
+                "\n================================================");
+    PetscPrintf(PETSC_COMM_WORLD,
+                "\nLinear solver %s with %s preconditioner using %s", ksp_type,
+                pc_type, KSPNormTypes[norm_type]);
+
     KSPSetOperators(solver_, A.getRawMatrix(), A.getRawMatrix());
 
     KSPSolve(solver_, b.getRawVector(), x.getRawVector());
@@ -63,17 +76,6 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
     bool converged = true;
     if (reason > 0)
     {
-        const char* ksp_type;
-        const char* pc_type;
-        KSPGetType(solver_, &ksp_type);
-        PCGetType(pc_, &pc_type);
-
-        PetscPrintf(PETSC_COMM_WORLD,
-                    "\n================================================");
-        PetscPrintf(PETSC_COMM_WORLD,
-                    "\nLinear solver %s with %s preconditioner", ksp_type,
-                    pc_type);
-
         PetscInt its;
         KSPGetIterationNumber(solver_, &its);
         PetscPrintf(PETSC_COMM_WORLD, "\nconverged in %d iterations", its);
@@ -96,13 +98,6 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
     }
     else if (reason == KSP_DIVERGED_ITS)
     {
-        const char* ksp_type;
-        const char* pc_type;
-        KSPGetType(solver_, &ksp_type);
-        PCGetType(pc_, &pc_type);
-        PetscPrintf(PETSC_COMM_WORLD,
-                    "\nLinear solver %s with %s preconditioner", ksp_type,
-                    pc_type);
         PetscPrintf(PETSC_COMM_WORLD,
                     "\nWarning: maximum number of iterations reached.\n");
     }
