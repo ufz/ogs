@@ -1,6 +1,6 @@
 variables:
-  GUIX_PETSC_CONTAINER: /data/ogs/apptainer/guix/ogs-petsc-ssd_head.squashfs
-  GUIX_COMMIT: v1.4.0
+  GUIX_PETSC_CONTAINER: /data/ogs/apptainer/guix/ogs-petsc_head.squashfs
+  GUIX_COMMIT: 8d70ff3a49f7cdf0eab93b3a1c54ec2f016afc4a
 
 build guix:
   stage: build
@@ -8,7 +8,6 @@ build guix:
   needs: []
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
-    GUIX_COMMIT: v1.4.0
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
       allow_failure: true
