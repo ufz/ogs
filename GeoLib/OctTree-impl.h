@@ -303,12 +303,11 @@ void OctTree<POINT, MAX_POINTS>::splitNode(POINT* pnt)
     const std::size_t n_pnts(_pnts.size());
     for (std::size_t j(0); j < n_pnts; j++)
     {
-        for (auto c : _children)
+        if (std::any_of(begin(_children), end(_children),
+                        [&](auto* child)
+                        { return child->addPointToChild(_pnts[j]); }))
         {
-            if (c->addPointToChild(_pnts[j]))
-            {
-                break;
-            }
+            continue;
         }
     }
     _is_leaf = false;
