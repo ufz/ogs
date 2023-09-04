@@ -23,11 +23,15 @@ class Phase;
  *  The vapour diffusion can be described by
  *   \cite moldrup1997modeling, \cite moldrup2000predicting,
  *  \f[
- * 	D_v=2.16\cdot 10^{-5} \left(\frac{T}{273.15}\right)^{1.8}
+ * 	D_v=D_0 \left(\frac{T}{273.15}\right)^{n}
  * 	D_{vr},
  *  \f]
- *  where \f$D_{vr}\f$ is the the relative diffusion coefficient,
- *  and \f$T\f$ is the temperature.
+ *  where \f$D_{0}\f$ is the base diffusion coefficient with default value
+ *  \f$2.16\cdot 10^{-5}\f$ \f${\text m}^2
+ * \text{Pa}/(\text{s}\text{K}^{n})\f$,
+ *  \f$n\f$ is the exponent with default value 1.8,
+ *  \f$D_{vr}\f$ is the the relative
+ * diffusion coefficient, and \f$T\f$ is the temperature.
  *
  *  The Penman–Millington–Quirk (PMQ) model \cite moldrup1997modeling is given
  *  as
@@ -55,7 +59,14 @@ class Phase;
 class VapourDiffusionPMQ final : public Property
 {
 public:
-    explicit VapourDiffusionPMQ(std::string name) { name_ = std::move(name); }
+    explicit VapourDiffusionPMQ(std::string name,
+                                double const base_diffusion_coefficient,
+                                double const exponent)
+        : base_diffusion_coefficient_(base_diffusion_coefficient),
+          exponent_(exponent)
+    {
+        name_ = std::move(name);
+    }
 
     void checkScale() const override
     {
@@ -79,6 +90,8 @@ public:
 
 private:
     static double constexpr tortuosity_ = 0.66;
+    double const base_diffusion_coefficient_;
+    double const exponent_;
 };
 
 }  // namespace MaterialPropertyLib

@@ -27,9 +27,9 @@ PropertyDataType VapourDiffusionFEBEX::value(
 {
     const double T = variable_array.temperature;
 
-    return 2.16e-5 *
+    return base_diffusion_coefficient_ *
            std::pow(T / MaterialLib::PhysicalConstant::CelsiusZeroInKelvin,
-                    1.8) *
+                    exponent_) *
            tortuosity_;
 }
 
@@ -42,9 +42,9 @@ PropertyDataType VapourDiffusionFEBEX::dValue(
 
     if (variable == Variable::temperature)
     {
-        return 1.8 * 2.16e-5 *
+        return exponent_ * base_diffusion_coefficient_ *
                std::pow(T / MaterialLib::PhysicalConstant::CelsiusZeroInKelvin,
-                        0.8) *
+                        exponent_ - 1.0) *
                tortuosity_ / MaterialLib::PhysicalConstant::CelsiusZeroInKelvin;
     }
     if (variable == Variable::liquid_saturation)
