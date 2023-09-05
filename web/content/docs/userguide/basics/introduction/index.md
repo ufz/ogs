@@ -104,7 +104,7 @@ You could also use [`pipx`](https://pypa.github.io/pipx/) for installation into 
 The following command will download the latest development version:
 
 ```bash
-pip install --index-url https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple ogs
+pip install --pre --index-url https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple ogs
 ```
 
 ### Limitations of the `pip`-based installation

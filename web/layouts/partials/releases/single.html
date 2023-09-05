@@ -2,6 +2,7 @@
 {{ $gh_download := print "https://github.com/ufz/ogs/releases/download/" .Params.tag }}
 {{ $benchmarks_url := print "https://github.com/ufz/ogs-data/archive/" .Params.tag ".zip" }}
 {{ $type := "GitHub"}}
+{{ $pypi_url := print "https://pypi.org/project/ogs/" .Params.tag }}
 {{/* comparison only works for two version parts, strip out 6. */}}
 {{ if gt (slicestr .Params.tag 2) "3.1" }}
 {{ $gh_release = print "https://gitlab.opengeosys.org/ogs/ogs/-/releases/" .Params.tag }}
@@ -43,6 +44,24 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
+              {{ if .Params.downloads.pip }}
+              <tr>
+                <td class="text-center">All</td>
+                <td><a style="text-decoration: none" href="{{ $pypi_url }}">OpenGeoSys + Utilities (Release on
+                    PyPI)</a><br> <span class="text-xs"><b>Note:</b> <a
+                      href="/docs/userguide/basics/introduction#alternative-install-via-pip">Recommended install
+                      method</a> for
+                    users on all platforms.
+                  </span></td>
+                <td><span
+                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    Python bindings</i>
+                  </span></td>
+                <td>
+                  <a href="{{ $pypi_url }}">PyPI release page</a>
+                </td>
+              </tr>
+              {{ end }}
 
               {{ range .Params.downloads.binary }}
               <tr>
