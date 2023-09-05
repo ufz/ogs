@@ -9,7 +9,7 @@ aliases = ["/downloads", "/download"] # Redirect for Hydrology II tutorial
 
 [[head_downloads]]
 name = "Latest pip-installable package"
-url = "/docs/userguide/basics/introduction#get-current-development-version-with-pip"
+url = "/docs/userguide/basics/introduction#installation"
 note = "All platforms: `pip install --pre --index-url https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple ogs`"
 icon = "far fa-arrow-right"
 

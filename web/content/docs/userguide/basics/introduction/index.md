@@ -26,76 +26,27 @@ want to use prebuild version of OGS for easy use (or just to get started), or if
 your specific application, or even become an active development member. However, all kinds of installation will provide you
 with a modelling platform including all physical processes available in OGS.
 
-<div class='win'>
-
-One easy way to obtain your running version is
-to just download the latest stable or development release of OpenGeoSys from the [Releases](/releases)-page. Be sure to pick
-the correct file for your operating system.
-
-By downloading from the release page you will get a bunch of folders and files. However, OGS itself will come as a simple
-executable file, which you will find in the `bin` sub-folder. You can put the executable wherever you like. For convenience you
-may put it into a location which is in your `PATH`-environment variable which allows you to start the executable without
-specifying its full file path just calling `ogs` from the terminal of your machine.
-
-<div class="note">
-
-### Alternative: Install via `pip`
-
-Currently, we are actively developing a Python-interface for manipulating OGS-models, which greatly speeds up the modelling
-workflow using OGS. Following this spirit, you can also install OGS via Python's [`pip`-tool](https://packaging.python.org/en/latest/tutorials/installing-packages/):
-
-```bash
-pip install ogs
-```
-
-We recommend using Python within a [virtual environment](https://docs.python.org/3/library/venv.html) to keep possible
-conflicts of different Python-packages localised. If you use `pip` for installation of OGS in a virtual environment and you
-activate the virtual environment, then OGS and its tools are automatically also in the `PATH`. If the virtual environment is
-not activated you may still use OGS, but either have to give the full path to `ogs` being located in the `bin` folder of the
-virtual environment, or add this path to your `PATH`-environment. Moreover, `pip` may print instructions which directory needs
-to be added to the `PATH`.
-
-</div>
-
-</div>
-
-<div class='linux'>
+---
 
 A straightforward way of installing a running build of OGS is via Python's [`pip`-tool](https://packaging.python.org/en/latest/tutorials/installing-packages/):
 
 ```bash
+# Optional: create a Python virtual environment, see below
+python -m venv .venv
+source .venv/bin/activate # Linux / macOS; for Windows: .\venv\Scripts\activate
+
+# Install ogs' pip package
 pip install ogs
 ```
 
 We recommend using Python within a [virtual environment](https://docs.python.org/3/library/venv.html) to keep possible
 conflicts of different Python-packages localised. If you use `pip` for installation of OGS in a virtual environment and you
 activate the virtual environment, then OGS and its tools are automatically also in the `PATH`. If the virtual environment is
-not activated you may still use OGS, but either have to give the full path to `ogs` being located in the `bin` folder of the
+not activated you may still use OGS, but either have to give the full path to `ogs` being located in the `bin` folder (or `Scripts` folder on Windows) of the
 virtual environment, or add this path to your `PATH`-environment. Moreover, `pip` may print instructions which directory needs
  to be added to the `PATH`.
 
 You could also use [`pipx`](https://pypa.github.io/pipx/) for installation into an isolated environment.
-
-</div>
-
-<div class='mac'>
-
-A straightforward way of installing a running build of OGS is via Python's [`pip`-tool](https://packaging.python.org/en/latest/tutorials/installing-packages/):
-
-```bash
-pip install ogs
-```
-
-We recommend using Python within a [virtual environment](https://docs.python.org/3/library/venv.html) to keep possible
-conflicts of different Python-packages localised. If you use `pip` for installation of OGS in a virtual environment and you
-activate the virtual environment, then OGS and its tools are automatically also in the `PATH`. If the virtual environment is
-not activated you may still use OGS, but either have to give the full path to `ogs` being located in the `bin` folder of the
-virtual environment, or add this path to your `PATH`-environment. Moreover, `pip` may print instructions which directory needs
-to be added to the `PATH`.
-
-You could also use [`pipx`](https://pypa.github.io/pipx/) for installation into an isolated environment.
-
-</div>
 
 <div class="note">
 
@@ -113,6 +64,32 @@ pip install --pre --index-url https://gitlab.opengeosys.org/api/v4/projects/120/
 source code, PETSc is required. For PETSc-support please use a [Singularity container]({{< relref "container" >}}). <!-- TODO: The
 link is outdated. Please replace Singularity by Apptainer. -->
 - A Python (3.8 - 3.11) installation with `pip` is required.
+
+</div>
+
+<div class='win'>
+
+<div class="note">
+
+### Alternative: Install via binary downloads
+
+Another way to obtain a running version is
+to just download the latest stable or development release of OpenGeoSys from the [Releases](/releases)-page.
+
+By downloading from the release page you will get a bunch of folders and files. However, OGS itself will come as a simple
+executable file, which you will find in the `bin` sub-folder. You can put the executable wherever you like. For convenience you
+may put it into a location which is in your `PATH`-environment variable which allows you to start the executable without
+specifying its full file path just calling `ogs` from the terminal of your machine.
+
+</div>
+
+</div>
+
+<div class='linux'>
+
+</div>
+
+<div class='mac'>
 
 </div>
 
