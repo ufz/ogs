@@ -24,7 +24,13 @@ operating systems including Windows, Linux, and macOS. Most of the functionality
 however, for parallel execution of OGS we recommend to set up OGS either under Linux or macOS. It is your choice, if you just
 want to use prebuild version of OGS for easy use (or just to get started), or if you would like to customize your OGS-build for
 your specific application, or even become an active development member. However, all kinds of installation will provide you
-with a modelling platform including all physical processes available in OGS.
+with a modelling platform including the following operating system specific features:
+
+| Operating system                    | [Processes](/docs/userguide/blocks/processes/)                                    | [MFront](/docs/userguide/features/mfront/) | [PETSc](docs/userguide/features/parallel_computing_mpi/)
+| ----------------------------------- | :-------------------------------------------------------------------------------: | :----------------------------------------: | :------------------------------------------------------:
+| <i class="fab fa-windows"/> Windows | `TH2M` disabled, [see issue](https://gitlab.opengeosys.org/ogs/ogs/-/issues/3197) |                     ❌                      |                            ❌
+| <i class="fab fa-linux"/> Linux     |                                        All                                        |                     ✅                      |                            ✅
+| <i class="fab fa-apple"/> macOS     |                                        All                                        |                     ✅                      |                            ✅
 
 ---
 
