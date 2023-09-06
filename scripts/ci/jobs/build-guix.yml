@@ -27,6 +27,7 @@ deploy guix container eve:
     GIT_SUBMODULE_STRATEGY: recursive
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
+      allow_failure: true
   script:
     # All processes.
     - image=$( guix time-machine --commit=${GUIX_COMMIT} -- pack --fallback -L $PWD/.guix/modules -S /bin=bin -RR --format=squashfs bash ogs-petsc | tee | tail -1 )
