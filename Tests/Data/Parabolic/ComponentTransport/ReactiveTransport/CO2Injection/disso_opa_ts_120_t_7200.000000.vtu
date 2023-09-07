@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="Float64" Name="CO2(g)" NumberOfTuples="2" format="appended" RangeMin="8.9657232879"         RangeMax="8.9657232879"         offset="0"                   />
+      <DataArray type="Float64" Name="CO2(g)_prev" NumberOfTuples="2" format="appended" RangeMin="8.9657232881"         RangeMax="8.9657232881"         offset="72"                  />
+      <DataArray type="Float64" Name="Calcite" NumberOfTuples="2" format="appended" RangeMin="11.451749362"         RangeMax="11.451749362"         offset="144"                 />
+      <DataArray type="Float64" Name="Calcite_prev" NumberOfTuples="2" format="appended" RangeMin="11.451749362"         RangeMax="11.451749362"         offset="216"                 />
+      <DataArray type="Float64" Name="Dolomite-dis" NumberOfTuples="2" format="appended" RangeMin="2.1757574687"         RangeMax="2.1757574687"         offset="288"                 />
+      <DataArray type="Float64" Name="Dolomite-dis_prev" NumberOfTuples="2" format="appended" RangeMin="2.1757574688"         RangeMax="2.1757574688"         offset="360"                 />
+      <DataArray type="Float64" Name="Illite" NumberOfTuples="2" format="appended" RangeMin="14.385767356"         RangeMax="14.385767356"         offset="428"                 />
+      <DataArray type="Float64" Name="Illite_prev" NumberOfTuples="2" format="appended" RangeMin="14.385767356"         RangeMax="14.385767356"         offset="500"                 />
+      <DataArray type="Float64" Name="Kaolinite" NumberOfTuples="2" format="appended" RangeMin="13.657429059"         RangeMax="13.657429059"         offset="572"                 />
+      <DataArray type="Float64" Name="Kaolinite_prev" NumberOfTuples="2" format="appended" RangeMin="13.657429059"         RangeMax="13.657429059"         offset="644"                 />
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="20" format="appended" RangeMin="45"                   RangeMax="103"                  offset="716"                 />
+      <DataArray type="Float64" Name="pe" NumberOfTuples="2" format="appended" RangeMin="13.088332365"         RangeMax="13.220527997"         offset="800"                 />
+      <DataArray type="Float64" Name="phi_CO2(g)" NumberOfTuples="2" format="appended" RangeMin="0"                    RangeMax="0"                    offset="876"                 />
+      <DataArray type="Float64" Name="phi_CO2(g)_prev" NumberOfTuples="2" format="appended" RangeMin="0"                    RangeMax="0"                    offset="936"                 />
+      <DataArray type="Float64" Name="phi_Calcite" NumberOfTuples="2" format="appended" RangeMin="0.06359039487"        RangeMax="0.06359039487"        offset="996"                 />
+      <DataArray type="Float64" Name="phi_Calcite_prev" NumberOfTuples="2" format="appended" RangeMin="0.06359039487"        RangeMax="0.06359039487"        offset="1068"                />
+      <DataArray type="Float64" Name="phi_Dolomite-dis" NumberOfTuples="2" format="appended" RangeMin="0.021063098113"       RangeMax="0.021063098113"       offset="1140"                />
+      <DataArray type="Float64" Name="phi_Dolomite-dis_prev" NumberOfTuples="2" format="appended" RangeMin="0.021063098114"       RangeMax="0.021063098114"       offset="1212"                />
+      <DataArray type="Float64" Name="phi_Illite" NumberOfTuples="2" format="appended" RangeMin="0.306"                RangeMax="0.306"                offset="1284"                />
+      <DataArray type="Float64" Name="phi_Illite_prev" NumberOfTuples="2" format="appended" RangeMin="0.306"                RangeMax="0.306"                offset="1356"                />
+      <DataArray type="Float64" Name="phi_Kaolinite" NumberOfTuples="2" format="appended" RangeMin="0.204"                RangeMax="0.204"                offset="1428"                />
+      <DataArray type="Float64" Name="phi_Kaolinite_prev" NumberOfTuples="2" format="appended" RangeMin="0.204"                RangeMax="0.204"                offset="1500"                />
+    </FieldData>
+    <Piece NumberOfPoints="2"                    NumberOfCells="1"                   >
+      <PointData>
+        <DataArray type="Float64" Name="Al" format="appended" RangeMin="2.5419499911e-10"     RangeMax="2.5419500375e-10"     offset="1572"                />
+        <DataArray type="Float64" Name="AlFlowRate" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1648"                />
+        <DataArray type="Float64" Name="C(4)" format="appended" RangeMin="1.1044593409"         RangeMax="1.1044593409"         offset="1708"                />
+        <DataArray type="Float64" Name="C(4)FlowRate" format="appended" RangeMin="-9.2732307645e-17"    RangeMax="9.2732307645e-17"     offset="1780"                />
+        <DataArray type="Float64" Name="Ca" format="appended" RangeMin="0.067071110266"       RangeMax="0.067071110266"       offset="1852"                />
+        <DataArray type="Float64" Name="CaFlowRate" format="appended" RangeMin="5.7957692278e-18"     RangeMax="1.1591538456e-17"     offset="1924"                />
+        <DataArray type="Float64" Name="Cl" format="appended" RangeMin="0.32706873662"        RangeMax="0.32706873662"        offset="1996"                />
+        <DataArray type="Float64" Name="ClFlowRate" format="appended" RangeMin="-2.3183076911e-17"    RangeMax="2.3183076911e-17"     offset="2068"                />
+        <DataArray type="Float64" Name="H" format="appended" RangeMin="6.8221747248e-06"     RangeMax="6.8221747248e-06"     offset="2140"                />
+        <DataArray type="Float64" Name="HFlowRate" format="appended" RangeMin="-1.0612370412e-21"    RangeMax="-1.0612370412e-21"    offset="2212"                />
+        <DataArray type="Float64" Name="K" format="appended" RangeMin="0.0019223435729"      RangeMax="0.0019223435729"      offset="2284"                />
+        <DataArray type="Float64" Name="KFlowRate" format="appended" RangeMin="-1.8111778837e-19"    RangeMax="1.8111778837e-19"     offset="2356"                />
+        <DataArray type="Float64" Name="LiquidMassFlowRate" format="appended" RangeMin="0"                    RangeMax="0"                    offset="2428"                />
+        <DataArray type="Float64" Name="Mg" format="appended" RangeMin="0.041329708303"       RangeMax="0.041329708303"       offset="2488"                />
+        <DataArray type="Float64" Name="MgFlowRate" format="appended" RangeMin="2.8978846139e-18"     RangeMax="5.7957692278e-18"     offset="2560"                />
+        <DataArray type="Float64" Name="Na" format="appended" RangeMin="0.28101258857"        RangeMax="0.28101258857"        offset="2632"                />
+        <DataArray type="Float64" Name="NaFlowRate" format="appended" RangeMin="2.3183076911e-17"     RangeMax="4.6366153823e-17"     offset="2704"                />
+        <DataArray type="Float64" Name="S(6)" format="appended" RangeMin="0.016810494039"       RangeMax="0.016810494039"       offset="2776"                />
+        <DataArray type="Float64" Name="S(6)FlowRate" format="appended" RangeMin="-1.448942307e-18"     RangeMax="1.448942307e-18"      offset="2848"                />
+        <DataArray type="Float64" Name="Si" format="appended" RangeMin="1.7020778712e-05"     RangeMax="1.7020778712e-05"     offset="2920"                />
+        <DataArray type="Float64" Name="SiFlowRate" format="appended" RangeMin="0"                    RangeMax="0"                    offset="2992"                />
+        <DataArray type="Float64" Name="Sr" format="appended" RangeMin="4.6056148053e-05"     RangeMax="4.6056148053e-05"     offset="3052"                />
+        <DataArray type="Float64" Name="SrFlowRate" format="appended" RangeMin="-5.6599308865e-21"    RangeMax="-2.8299654433e-21"    offset="3124"                />
+        <DataArray type="Float64" Name="darcy_velocity" format="appended" RangeMin="0"                    RangeMax="0"                    offset="3196"                />
+        <DataArray type="Float64" Name="pressure" format="appended" RangeMin="-0"                   RangeMax="-0"                   offset="3256"                />
+      </PointData>
+      <CellData>
+        <DataArray type="Float64" Name="CO2(g)_avg" format="appended" RangeMin="8.9657232879"         RangeMax="8.9657232879"         offset="3320"                />
+        <DataArray type="Float64" Name="Calcite_avg" format="appended" RangeMin="11.451749362"         RangeMax="11.451749362"         offset="3388"                />
+        <DataArray type="Float64" Name="Dolomite-dis_avg" format="appended" RangeMin="2.1757574687"         RangeMax="2.1757574687"         offset="3456"                />
+        <DataArray type="Float64" Name="Illite_avg" format="appended" RangeMin="14.385767356"         RangeMax="14.385767356"         offset="3524"                />
+        <DataArray type="Float64" Name="Kaolinite_avg" format="appended" RangeMin="13.657429059"         RangeMax="13.657429059"         offset="3592"                />
+        <DataArray type="Float64" Name="porosity_avg" format="appended" RangeMin="0.15034650702"        RangeMax="0.15034650702"        offset="3660"                />
+        <DataArray type="Float64" Name="velocity" format="appended" RangeMin="-0"                   RangeMax="-0"                   offset="3728"                />
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="1"                    offset="3788"                />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="3856"                />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="3920"                />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="3980"                />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAFAAAAAAAAAA=eF6bmZLqUfxO0WFGPoQGADx5BuM=AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAFAAAAAAAAAA=eF67MyfNo/idosPt5RAaAEelB9s=AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF67fc9uo/dzNYfbUBoATpAIgQ==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF6zuGG30fu5moMFlAYAPsQHLw==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF5jPqjQ8Tmd0YEZSgMANFwGDw==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEgAAAAAAAAA=eF4r7Vbp+JzO6FAKpQE6uAaPAQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF6rmdXm03xUx6EGSgMAQEIHOQ==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF5LW9jm03xUxyENSgMAPswHGw==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF6zT1rdNStA28EeSgMAN/gGVw==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF7TT1jdNStA20EfSgMANkwGMw==AQAAAAAAAAAAgAAAAAAAABQAAAAAAAAAHAAAAAAAAAA=eF4z0zPRM9E1NDQ31E1PTjEyNjdPSQMALjgE6g==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAGAAAAAAAAAA=eF7T8w1+Zqmr5XDr0UbulwVaDgA3DQbAAQAAAAAAAAAAgAAAAAAAABAAAAAAAAAACwAAAAAAAAA=eF5jYEAFAAAQAAE=AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAACwAAAAAAAAA=eF5jYEAFAAAQAAE=AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF7b3OV3qtR9g/1mKA0ARugIAQ==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF773ep3qtR9g/1vKA0ATToIhw==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF5LOmcwbcLEqfZJUBoAQ6AH1w==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF573mA6bcLEqfbPoTQAScgITw==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF5j36zC1jj1sj07lAYAL+YGGQ==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF7bs12FrXHqZfs9UBoAQTYHiw==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF5LiDfkWCNzyj4BSgMALdQFkw==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF5LjzXkWCNzyj4dSgMALlAFnQ==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAFgAAAAAAAAA=eF5zEdVvu1H+0XZDwLUGEA0AP88IXw==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAACwAAAAAAAAA=eF5jYEAFAAAQAAE=AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF57se5C393VH+2fQWkAY9wLVw==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAFAAAAAAAAAA=eF5z1ZM8kr9r1h5XCG0DADlkBx8=AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAFAAAAAAAAAA=eF7jXSPZOEl7o/3rDRAaADheBuM=AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAFQAAAAAAAAA=eF6z1ZM8kr8rysYRTGfZAAAxZAYjAQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF5renpl68Z3V+yboDQAYbILRQ==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAFAAAAAAAAAA=eF5z1ZM8kr+rao8rhLYBADfkBt8=AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF7T4Pgk7Tj3jp0GlAYAMrAGaw==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF7b8Ejo8mXuKbs3QGkAUEIJSQ==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAFAAAAAAAAAA=eF7T7N678UldvH3kKggNAEl3CJQ=AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAFAAAAAAAAAA=eF5z1ZM8kr+La48rhLYBADKkBf8=AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAACwAAAAAAAAA=eF5jYEAFAAAQAAE=AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAFAAAAAAAAAA=eF7r+MT+WEtzqf3ZFxAaAEMQB3I=AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAFQAAAAAAAAA=eF6z1ZM8kr/Ly8YRTEfZAAAwpAYDAQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF4zEM6ylPlz0d4ASgMALkYGHQ==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAFQAAAAAAAAA=eF5z1JM8kr+ry8YWTFfZAAAzhAZjAQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAFAAAAAAAAAA=eF4zPNOscdRsor3+ZwgNADzDBww=AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAFAAAAAAAAAA=eF5z1ZM8kr/LysYVQu8BADDkBl8=AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF7zqdrO+PvGRztfKA0ASUoJAg==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAACwAAAAAAAAA=eF5jYEAFAAAQAAE=AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAEwAAAAAAAAA=eF5jYmg16lXlsP/DCaEBI+MEaA==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAAFQAAAAAAAAA=eF5z1JM8kr9r125bML1qNwA6ugfBAQAAAAAAAAAAgAAAAAAAABAAAAAAAAAACwAAAAAAAAA=eF5jYEAFAAAQAAE=AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAADwAAAAAAAAA=eF5jYACDBgYoAAAEkACBAQAAAAAAAAAAgAAAAAAAAAgAAAAAAAAAEAAAAAAAAAA=eF6TyEr1KH6n6AAADIwC8g==AQAAAAAAAAAAgAAAAAAAAAgAAAAAAAAAEAAAAAAAAAA=eF67fc9uo/dzNQcAFkgEQQ==AQAAAAAAAAAAgAAAAAAAAAgAAAAAAAAAEAAAAAAAAAA=eF5jPqjQ8Tmd0QEADhIDCA==AQAAAAAAAAAAgAAAAAAAAAgAAAAAAAAAEAAAAAAAAAA=eF6rmdXm03xUxwEAEbEDnQ==AQAAAAAAAAAAgAAAAAAAAAgAAAAAAAAAEAAAAAAAAAA=eF6zT1rdNStA2wEAD1ADLA==AQAAAAAAAAAAgAAAAAAAAAgAAAAAAAAAEAAAAAAAAAA=eF47nhX1stfusD0AFIIEQg==AQAAAAAAAAAAgAAAAAAAAAgAAAAAAAAADAAAAAAAAAA=eF5jYACDBgAAiACBAQAAAAAAAAAAgAAAAAAAADAAAAAAAAAAEAAAAAAAAAA=eF5jYMAHPtijiwAAFT8BMA==AQAAAAAAAAAAgAAAAAAAABAAAAAAAAAADgAAAAAAAAA=eF5jYIAARigNAAAYAAI=AQAAAAAAAAAAgAAAAAAAAAgAAAAAAAAACwAAAAAAAAA=eF5jYoAAAAAYAAM=AQAAAAAAAAAAgAAAAAAAAAEAAAAAAAAACQAAAAAAAAA=eF5jBgAABAAE
+  </AppendedData>
+</VTKFile>

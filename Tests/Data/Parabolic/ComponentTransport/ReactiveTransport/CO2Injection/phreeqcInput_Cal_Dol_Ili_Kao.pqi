@@ -1,0 +1,224 @@
+DATABASE C:\Program Files (x86)\USGS\Phreeqc Interactive 3.7.3-15968\database\llnl.dat
+KNOBS
+-iterations 100
+-convergence_tolerance 1.000000000000000e-12
+-tolerance 1.000000000000000e-15
+-step_size 100
+-diagonal_scale 0
+
+SELECTED_OUTPUT
+-file calcite_pwp_phreeqc.out
+-high_precision true
+-simulation false
+-state true
+-distance false
+-time false
+-step false
+-totals C(4) Ca Mg Cl K Na S(6) Al Si Sr
+-equilibrium_phases CO2(g)
+-kinetic_reactants Calcite Dolomite-dis Illite Kaolinite
+
+RATES
+Calcite
+-start
+1 if (M <= 0) then goto 25
+2 R = 8.314472
+3 deltaT = 1/TK - 1/298.15
+4 logK25 = -0.30
+5 Ea = 14400
+6 ny = 1.0
+7 mech_a = (10^logK25) * ACT("H+")^ny * EXP(- Ea / R * deltaT)
+8 logK25 = -5.81
+9 Ea = 23500
+10 mech_b = (10^logK25) * EXP(- Ea / R * deltaT)
+11 logK25 = -3.48
+12 Ea = 35400
+13 ny = 1.0
+14 mech_c = (10^logK25) * SR("CO2(g)")^ny * EXP(- Ea / R * deltaT)
+15 K_temp = mech_a + mech_b + mech_c
+16 teta = 1
+17 eta = 1
+18 molar_volume = 3.692e-05
+19 bulk_volume = molar_volume * M
+20 specific_surface_area = 20
+21 surface_area = specific_surface_area * bulk_volume
+22 rate = surface_area * K_temp * (1 - SR("Calcite")^teta)^eta
+23 if rate < 0 then rate = 0
+24 moles = rate * time
+25 save moles
+-end
+Dolomite-dis
+-start
+1 if (M <= 0) then goto 25
+2 R = 8.314472
+3 deltaT = 1/TK - 1/298.15
+4 logK25 = -3.19
+5 Ea = 36100
+6 ny = 0.5
+7 mech_a = (10^logK25) * ACT("H+")^ny * EXP(- Ea / R * deltaT)
+8 logK25 = -7.53
+9 Ea = 52200
+10 mech_b = (10^logK25) * EXP(- Ea / R * deltaT)
+11 logK25 = -5.11
+12 Ea = 34800
+13 ny = 0.5
+14 mech_c = (10^logK25) * SR("CO2(g)")^ny * EXP(- Ea / R * deltaT)
+15 K_temp = mech_a + mech_b + mech_c
+16 teta = 1
+17 eta = 1
+18 molar_volume = 6.439e-5
+19 bulk_volume = molar_volume * M
+20 specific_surface_area = 3000
+21 surface_area = specific_surface_area * bulk_volume
+22 rate = surface_area * K_temp * (1 - SR("Dolomite-dis")^teta)^eta
+23 if rate < 0 then rate = 0
+24 moles = rate * time
+25 save moles
+-end
+Illite
+-start
+1 if (M <= 0) then goto 25
+2 R = 8.314472
+3 deltaT = 1/TK - 1/298.15
+4 logK25 = -12.71
+5 Ea = 48000
+6 ny = 0.22
+7 mech_a = (10^logK25) * ACT("H+")^ny * EXP(- Ea / R * deltaT)
+8 logK25 = -14.41
+9 Ea = 48000
+10 mech_b = (10^logK25) * EXP(- Ea / R * deltaT)
+11 logK25 = -14.41
+12 Ea = 48000
+13 ny = 0.13
+14 mech_c = (10^logK25) * SR("CO2(g)")^ny * EXP(- Ea / R * deltaT)
+15 K_temp = mech_a + mech_b + mech_c
+16 teta = 1
+17 eta = 1
+18 molar_volume = 6.439e-5
+19 bulk_volume = molar_volume * M
+20 specific_surface_area = 20
+21 surface_area = specific_surface_area * bulk_volume
+22 rate = surface_area * K_temp * (1 - SR("Illite")^teta)^eta
+23 if rate < 0 then rate = 0
+24 moles = rate * time
+25 save moles
+-end
+Kaolinite
+-start
+1 if (M <= 0) then goto 25
+2 R = 8.314472
+3 deltaT = 1/TK - 1/298.15
+4 logK25 = -11.31
+5 Ea = 65900
+6 ny = 0.777
+7 mech_a = (10^logK25) * ACT("H+")^ny * EXP(- Ea / R * deltaT)
+8 logK25 = -13.18
+9 Ea = 22200
+10 mech_b = (10^logK25) * EXP(- Ea / R * deltaT)
+11 logK25 = -17.05
+12 Ea = 17900
+13 ny = 0.472
+14 mech_c = (10^logK25) * SR("CO2(g)")^ny * EXP(- Ea / R * deltaT)
+15 K_temp = mech_a + mech_b + mech_c
+16 teta = 1
+17 eta = 1
+18 molar_volume = 6.439e-5
+19 bulk_volume = molar_volume * M
+20 specific_surface_area = 20
+21 surface_area = specific_surface_area * bulk_volume
+22 rate = surface_area * K_temp * (1 - SR("Kaolinite")^teta)^eta
+23 if rate < 0 then rate = 0
+24 moles = rate * time
+25 save moles
+-end
+
+USER_PRINT
+-start
+10 PRINT "SA_Calcite =    ", SR("Calcite")
+-end
+
+SOLUTION 1
+temp 2.500000000000000e+01
+pressure 1.000000000000000e+00
+pH 7e+00 charge
+pe 4
+units mol/kgw
+C(4) 3.89e-3
+Ca 1.89e-2
+Mg 2.197e-2
+Cl 3.2667e-1
+K 1.92e-3
+Na 2.8067e-1
+S(6) 1.679e-2
+Al 2.295e-10
+Si 1.7e-5
+Sr 4.6e-5
+
+
+USE solution none
+END
+
+USE solution 1
+
+EQUILIBRIUM_PHASES 1
+CO2(g) 1.5
+
+KINETICS 1
+Calcite
+-m  11.507
+Dolomite-dis
+-m  2.2
+Illite
+-m  14.419
+Kaolinite
+-m  13.689
+
+-step 7200 in 120
+# -step 172800 in 24
+INCREMENTAL_REACTIONS
+
+USER_PRINT
+-start
+10 PRINT "SA_Calcite =    ", SR("Calcite")
+20 PRINT "SA_Dolomite =    ", SR("Dolomite-dis")
+30 PRINT "SA_Illite =    ", SR("Illite")
+40 PRINT "SA_Kaolinite =    ", SR("Kaolinite")
+-end
+
+USER_GRAPH 1
+ -initial_solutions false
+ -headings time Ca Mg Cl K Na S(6) Al Si
+ -axis_titles "Time [s] " "mMol" 
+ -start
+ 10 graph_x total_time; 
+ 20 graph_y tot("Ca")*1e3; 
+ 30 graph_y tot("Mg")*1e3;  
+ 50 graph_y tot("K")*1e3; 
+ 70 graph_y tot("S(6)")*1e3; 
+ 80 graph_y tot("Al")*1e3; 
+ 90 graph_y tot("Si")*1e3;
+ -end
+
+
+USER_GRAPH 2
+ -initial_solutions false
+ -headings time Calcite Dolomite Illite Kaolinite
+ -axis_titles "Time [s] " "Mol" 
+ -start
+ 10 graph_x total_time; 
+ 20 graph_y KIN_DELTA("Calcite");
+ 30 graph_y KIN_DELTA("Dolomite-dis");
+ 40 graph_y KIN_DELTA("Illite");
+ 50 graph_y KIN_DELTA("Kaolinite");
+ -end
+
+USER_GRAPH 3
+ -initial_solutions false
+ -headings time Calcite Dolomite Illite Kaolinite
+ -axis_titles "Time [s] " "SR" 
+ -start
+ 10 graph_x total_time; 
+ 20 graph_y SR("Calcite");
+ 30 graph_y SR("Dolomite-dis");
+ -end
+END

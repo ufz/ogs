@@ -846,6 +846,21 @@ AddTest(
 )
 
 AddTest(
+    NAME 1D_ReactiveMassTransport_Phreeqc_CO2Injection
+    PATH Parabolic/ComponentTransport/ReactiveTransport/CO2Injection
+    RUNTIME 2
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS calcite_pwp.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    calcite_pwp_ts_43_t_30000.000000_expected.vtu calcite_pwp_ts_43_t_30000.000000.vtu pressure pressure 1e-6 1e-10
+    calcite_pwp_ts_43_t_30000.000000_expected.vtu calcite_pwp_ts_43_t_30000.000000.vtu Ca Ca 1e-10 1e-16
+    calcite_pwp_ts_43_t_30000.000000_expected.vtu calcite_pwp_ts_43_t_30000.000000.vtu H H 1e-10 1e-16
+)
+
+AddTest(
     NAME 1D_ReactiveMassTransport_Wetland
     PATH Parabolic/ComponentTransport/ReactiveTransport/Wetland
     EXECUTABLE ogs
