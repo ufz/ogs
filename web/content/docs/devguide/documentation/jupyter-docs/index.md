@@ -10,16 +10,78 @@ parent = "development-workflows"
 
 ## The big picture
 
-[Jupyter notebooks](https://jupyter.org) are interactive computing environments where prose and code can be combined. In the OGS project notebooks can be used to define complex benchmark workflows and its results can be converted to be shown on the OGS web page (see an [example here](/docs/benchmarks/small-deformations/linear_disc_with_hole/)).
+[Jupyter notebooks](https://jupyter.org) are interactive computing environments where prose and code can be combined. In the OGS project notebooks can be used to define complex benchmark workflows and its results can be converted to be shown on the OGS web page (see an [example here](/docs/benchmarks/small-deformations/linear_disc_with_hole/)). Notebooks can be used in two ways:
 
-## Create a new notebook
+1. To [directly generate a web page](#1-direct-conversion) (direct conversion from notebook to web page).
+2. To be [executed during CI](#2-executed-notebooks) whose results are converted to a web page.
+
+## 1. Direct conversion
+
+Consider direct conversion for the following use cases:
+
+- Execution of the notebook is very time-consuming (too long for regular CI tests).
+- The notebook uses Python packages which are not part of the testing environment (see `Tests/Data/requirements*.txt` for available packages).
+- The notebooks needs other custom tools or environment.
+- The shown functionality is not required to be regularly tested.
+
+### Create a new notebook
+
+Create a new notebook file in `web/contents/docs/[some-section]/my-page/my-page.ipynb`. It is important that the notebook filename is the same as the containing folder name!
+
+If you use additional images put them into the `my-page`-folder.
+
+### Add web meta information
+
+If the notebook result should appear as a page on the web documentation a frontmatter with some meta information (similar to [regular web pages]({{< ref "web-docs.md" >}})) is required as the first cell in the notebook:
+
+- Add a new cell and move it to the first position in the notebook
+- Change the cell type to `raw`!
+- Add meta information, conclude with a end-of-file marker (`<!--eofm-->`) e.g.:
+
+  ```md
+  title = "BHE Meshing"
+  date = "2023-08-18"
+  author = "Joy Brato Shil, Haibing Shao"
+  <!--eofm-->
+  ```
+
+---
+
+Make sure that you execute the cells in the notebook and save the notebook (with generated outputs).
+
+### Preview locally
+
+To get a preview of the web page run the `convert_notebooks`-script:
+
+```bash
+# You need the converter-tool nb2hugo installed. Recommended way is to
+# create and activate a virtual environment and install it there:
+python -m venv .venv  # or `python3 -m ...` on some systems
+pip install git+https://github.com/bilke/nb2hugo@ogs
+
+python web/scripts/convert_notebooks.py
+
+cd web
+hugo server
+# open http://localhost:1313
+```
+
+The notebook needs some meta information (only `title`, `date` and `author` is required) as [outlined below](#add-web-meta-information).
+
+Also make sure that you also provide necessary data files and please don't use machine specific paths (e.g. assume that `ogs` and other tools are in the `PATH`).
+
+## 2. Executed notebooks
+
+These notebooks are part of the regular CI testing. Please try to keep the notebook execution time low.
+
+### Create a new notebook
 
 Create a new notebook file in `Tests/Data` (either as regular `.ipynb`-files or as Markdown-based notebooks via [Jupytext](https://jupytext.readthedocs.io/en/latest)). See examples:
 
 - [SimpleMechanics.ipynb](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Mechanics/Linear/SimpleMechanics.ipynb) (regular `.ipynb`-notebook)
 - [Linear_Disc_with_hole.md](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.md) (Jupytext-based notebook in Markdown)
 
-## Add web meta information
+### Add web meta information
 
 If the notebook result should appear as a page on the web documentation a frontmatter with some meta information (similar to [regular web pages]({{< ref "web-docs.md" >}})) is required as the first cell in the notebook:
 
@@ -36,6 +98,8 @@ If the notebook result should appear as a page on the web documentation a frontm
   <!--eofm-->
   ```
 
+`web_subsection` needs to be set to a sub-folder in [web/content/docs/benchmarks](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/web/content/docs/benchmarks) (if not set the notebook page will not be linked from navigation bar / benchmark gallery on the web page).
+
 <div class='note'>
 
 In Jupytext-based notebooks you can add the frontmatter within the `<!-- #raw -->`- and `<!-- #endraw -->`-markers:
@@ -50,13 +114,11 @@ web_subsection = "small-deformations"
 <!-- #endraw -->
 ```
 
-`web_subsection` needs to be set to a sub-folder in [web/content/docs/benchmarks](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/web/content/docs/benchmarks) (if not set the notebook page will not be linked from navigation bar / benchmark gallery on the web page).
-
 </div>
 
-## Notebook setup
+### Notebook setup
 
-### Python cells
+#### Python cells
 
 - Do not use machine-specific or absolute paths! See the following example to set up notebook output paths:
 
@@ -87,7 +149,7 @@ web_subsection = "small-deformations"
 - Do not write anything into the source directories. Use an `out_dir` as above.
 - Assume that `ogs` and other tools are in the `PATH`.
 
-### Markdown cells
+#### Markdown cells
 
 - Do not use HTML inside Markdown blocks.
 - Static images e.g. for the gallery image or to be used in Markdown cells have to be located in either `images`- or `figures`-subdirectories beneath the Notebook file! Otherwise they will not show up in the web site.
@@ -99,7 +161,7 @@ web_subsection = "small-deformations"
 
   - Please note that in merge request web previews static images are not shown at all.
 
-## Execution environment
+### Execution environment
 
 In CI the notebooks are executed with all dependencies installed into a virtual environment in the build directory. The installed packages are defined in `Test/Data/requirements.txt`. The same setup can be enabled locally by setting the CMake option `OGS_USE_PIP=ON`. E.g.
 
@@ -109,9 +171,9 @@ source ../build/release/.venv/bin/activate # Activates the virtual environment
 jupyter lab                                # Starts Jupyter Lab
 ```
 
-## Register with CTest
+### Register with CTest
 
-Add the notebook to CTest with e.g.:
+Add the notebook to CTest ([example](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/ProcessLib/SmallDeformation/Tests.cmake#L272-281)) with e.g.:
 
 ```cmake
 if(NOT OGS_USE_PETSC)
@@ -127,9 +189,9 @@ source .venv/bin/activate # Is created with OGS_USE_PIP=ON, see above note on en
 ctest -R nb -j 4 --output-on-failure
 ```
 
-## Advanced topics
+### Advanced topics
 
-### Jupytext usage
+#### Jupytext usage
 
 If you use the [execution environment](#execution-environment) [Jupytext](https://jupytext.readthedocs.io/en/latest) is already configured and its usage is transparent:
 
@@ -137,7 +199,7 @@ If you use the [execution environment](#execution-environment) [Jupytext](https:
 - Upon saving or executing a linked `.ipynb`-file is created in the background which stores outputs
 - You still edit the Markdown file but don't notice the difference to regular notebooks in the Lab UI
 
-### Run a notebook in BinderHub
+#### Run a notebook in BinderHub
 
 On the web site or MR web previews on pages generated by a notebook there is a new banner:
 
@@ -147,7 +209,7 @@ On the web site or MR web previews on pages generated by a notebook there is a n
 - The environment running in BinderHub is defined in [`bilke/binder-ogs-requirements` at GitHub](https://github.com/bilke/binder-ogs-requirements)
 - When clicking the link it launches a Jupyter Lab instance pre-configured with ogs [via wheel](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/requirements-ogs.txt#L2), clones the current ogs repo in it and opens the respective notebook ready to run. Please note that startup times may be several minutes and the computing resources are limited (1 core, 2GB RAM). For improved performance we would need to setup own infrastructure. Also currently only works for serial ogs configurations.
 
-### PyVista notebooks on headless Linux systems
+#### PyVista notebooks on headless Linux systems
 
 PyVista (or VTK) requires a windowing environment for rendering. You can provide a virtual window with `xvfb-run`:
 

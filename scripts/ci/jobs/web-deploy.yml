@@ -21,6 +21,7 @@ deploy web site:
     # Copy notebook pages
     - cp -rl build/*/web/content web/
     - cd web
+    - python scripts/convert_notebooks.py
     - yarn
     - yarn build
     - netlify deploy --prod --dir=public --site=$OGS_NETLIFY_SITE_ID
