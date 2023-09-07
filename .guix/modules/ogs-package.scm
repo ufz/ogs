@@ -192,6 +192,17 @@
                   (sha256
                    (base32
                     "0rbcfvl7y472sykzdq3vrkw83kar0lpzhk3wq9yj9cdydl8cpfcz"))))))
+(define-public openmpi-pmix
+  (package
+    (inherit openmpi)
+    (name "openmpi-pmix")
+    (arguments
+     (substitute-keyword-arguments (package-arguments openmpi)
+       ((#:configure-flags flags)
+        #~(append '("--with-pmix=internal")
+                #$flags))))
+    (synopsis "OpenMPI with PMIx")))
+
 ;; return package
 ogs
 
