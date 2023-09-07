@@ -326,6 +326,14 @@ static std::set<std::string> addPrimaryVariablesToMesh(
                 // per node ordering of components
                 auto const out_index = node_id * n_components + component_id;
 
+                // request for index of linear quantities at higher order nodes
+                // results in returning NumLib::MeshComponentMap::nop
+                if (in_index == NumLib::MeshComponentMap::nop)
+                {
+                    output_data[out_index] = 0;
+                    continue;
+                }
+
                 output_data[out_index] = x_copy[in_index];
             }
         }
