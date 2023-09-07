@@ -19,83 +19,52 @@ category = "Beginner"
 
 ## Installation
 
-There are various ways to obtain a running version of OpenGeoSys (OGS) on your machine. You can have OGS for different
-operating systems including Windows, Linux, and macOS. Most of the functionality is available for all operating systems,
-however, for parallel execution of OGS we recommend to set up OGS either under Linux or macOS. It is your choice, if you just
-want to use prebuild version of OGS for easy use (or just to get started), or if you would like to customize your OGS-build for
-your specific application, or even become an active development member. However, all kinds of installation will provide you
-with a modelling platform including all physical processes available in OGS.
+There are various ways to obtain a (pre-built) running version of OpenGeoSys (OGS) on your machine. You can have OGS for different
+operating systems including Windows, Linux, and macOS. The basic modelling platform is available for all operating systems.
+The different operating systems and installation methods give you the feature matrix:
 
-<div class='win'>
-
-One easy way to obtain your running version is
-to just download the latest stable or development release of OpenGeoSys from the [Releases](/releases)-page. Be sure to pick
-the correct file for your operating system.
-
-By downloading from the release page you will get a bunch of folders and files. However, OGS itself will come as a simple
-executable file, which you will find in the `bin` sub-folder. You can put the executable wherever you like. For convenience you
-may put it into a location which is in your `PATH`-environment variable which allows you to start the executable without
-specifying its full file path just calling `ogs` from the terminal of your machine.
+| Operating system / Installation method                                                                                       | [Processes](/docs/userguide/blocks/processes/)                                    | [MFront](/docs/userguide/features/mfront/) | [PETSc]({{< ref "parallel_computing_mpi" >}})
+| ---------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------: | :----------------------------------------: | :-------------------------------------------:
+| <i class="fab fa-windows"/> Windows / [pip](#install-via-pip) & [binary download](#alternative-install-via-binary-downloads) | `TH2M` disabled, [see issue](https://gitlab.opengeosys.org/ogs/ogs/-/issues/3197) |                     ❌                      |                       ❌
+| <i class="fab fa-apple"/> macOS / [pip](#install-via-pip)                                                                    |                                        All                                        |                     ✅                      |                       ❌
+| <i class="fab fa-linux"/> Linux / [pip](#install-via-pip) & [Serial Container]({{< ref "container.md" >}})                   |                                        All                                        |                     ✅                      |                       ❌
+| <i class="fab fa-linux"/> Linux / [PETSc Container]({{< ref "container.md" >}})                                              |                                        All                                        |                     ✅                      |                       ✅
 
 <div class="note">
 
-### Alternative: Install via `pip`
+### Using Linux binaries on other operating systems
 
-Currently, we are actively developing a Python-interface for manipulating OGS-models, which greatly speeds up the modelling
-workflow using OGS. Following this spirit, you can also install OGS via Python's [`pip`-tool](https://packaging.python.org/en/latest/tutorials/installing-packages/):
+Please note that you can use Linux binaries installed via `pip` or in the form of a container also on other operating systems.
+
+For Windows we recommend the [Windows Subsystem for Linux (WSL)]({{< ref "wsl" >}}).
+
+On macOS you can use either a virtual machine (e.g. via [UTM](https://docs.getutm.app/installation/macos/)) or run a [Docker container]({{< ref "container.md#with-docker" >}}).
+
+</div>
+
+## Install via pip
+
+A straightforward way of installing OGS is via Python's [`pip`-tool](https://packaging.python.org/en/latest/tutorials/installing-packages/):
 
 ```bash
+# Optional: create a Python virtual environment, see below
+python -m venv .venv      # or `python3 -m venv .venv`
+source .venv/bin/activate # Linux / macOS; for Windows: .\venv\Scripts\activate
+
+# Install ogs' pip package
 pip install ogs
 ```
+
+Please note that this requires a Python installation (version 3.8 - 3.11) with the `pip`-tool.
 
 We recommend using Python within a [virtual environment](https://docs.python.org/3/library/venv.html) to keep possible
 conflicts of different Python-packages localised. If you use `pip` for installation of OGS in a virtual environment and you
 activate the virtual environment, then OGS and its tools are automatically also in the `PATH`. If the virtual environment is
-not activated you may still use OGS, but either have to give the full path to `ogs` being located in the `bin` folder of the
-virtual environment, or add this path to your `PATH`-environment. Moreover, `pip` may print instructions which directory needs
-to be added to the `PATH`.
-
-</div>
-
-</div>
-
-<div class='linux'>
-
-A straightforward way of installing a running build of OGS is via Python's [`pip`-tool](https://packaging.python.org/en/latest/tutorials/installing-packages/):
-
-```bash
-pip install ogs
-```
-
-We recommend using Python within a [virtual environment](https://docs.python.org/3/library/venv.html) to keep possible
-conflicts of different Python-packages localised. If you use `pip` for installation of OGS in a virtual environment and you
-activate the virtual environment, then OGS and its tools are automatically also in the `PATH`. If the virtual environment is
-not activated you may still use OGS, but either have to give the full path to `ogs` being located in the `bin` folder of the
+not activated you may still use OGS, but either have to give the full path to `ogs` being located in the `bin` folder (or `Scripts` folder on Windows) of the
 virtual environment, or add this path to your `PATH`-environment. Moreover, `pip` may print instructions which directory needs
  to be added to the `PATH`.
 
 You could also use [`pipx`](https://pypa.github.io/pipx/) for installation into an isolated environment.
-
-</div>
-
-<div class='mac'>
-
-A straightforward way of installing a running build of OGS is via Python's [`pip`-tool](https://packaging.python.org/en/latest/tutorials/installing-packages/):
-
-```bash
-pip install ogs
-```
-
-We recommend using Python within a [virtual environment](https://docs.python.org/3/library/venv.html) to keep possible
-conflicts of different Python-packages localised. If you use `pip` for installation of OGS in a virtual environment and you
-activate the virtual environment, then OGS and its tools are automatically also in the `PATH`. If the virtual environment is
-not activated you may still use OGS, but either have to give the full path to `ogs` being located in the `bin` folder of the
-virtual environment, or add this path to your `PATH`-environment. Moreover, `pip` may print instructions which directory needs
-to be added to the `PATH`.
-
-You could also use [`pipx`](https://pypa.github.io/pipx/) for installation into an isolated environment.
-
-</div>
 
 <div class="note">
 
@@ -104,15 +73,34 @@ You could also use [`pipx`](https://pypa.github.io/pipx/) for installation into 
 The following command will download the latest development version:
 
 ```bash
-pip install --index-url https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple ogs
+pip install --pre --index-url https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple ogs
 ```
 
-### Limitations of the `pip`-based installation
+</div>
 
-- Please note that via the `pip`-based installation only the serial configuration is available! For parallel execution of the
-source code, PETSc is required. For PETSc-support please use a [Singularity container]({{< relref "container" >}}). <!-- TODO: The
-link is outdated. Please replace Singularity by Apptainer. -->
-- A Python (3.8 - 3.11) installation with `pip` is required.
+<div class='win'>
+
+<div class="note">
+
+### Alternative: Install via binary downloads
+
+Another way to obtain a running version is
+to just download the latest stable or development release of OpenGeoSys from the [Releases](/releases)-page.
+
+By downloading from the release page you will get a bunch of folders and files. However, OGS itself will come as a simple
+executable file, which you will find in the `bin` sub-folder. You can put the executable wherever you like. For convenience you
+may put it into a location which is in your `PATH`-environment variable which allows you to start the executable without
+specifying its full file path just calling `ogs` from the terminal of your machine.
+
+</div>
+
+</div>
+
+<div class='linux'>
+
+</div>
+
+<div class='mac'>
 
 </div>
 

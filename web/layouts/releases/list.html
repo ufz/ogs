@@ -58,7 +58,7 @@
     <div class="bg-green-50 py-1 px-4 rounded-lg shadow mb-12">
       <h3><i class="far fa-download"></i> Downloads</h3>
       <ul>
-        {{ range $.Params.head_downloads }}
+        {{ range after 1 $.Params.head_downloads }} <!-- skip pip download -->
         <li>
           <i class="{{ .icon }}"></i>
           <a href='{{ replace .url "master" $vtag }}'>{{ replace .name "Latest" $vtag }}</a>
