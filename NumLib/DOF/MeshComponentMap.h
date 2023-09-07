@@ -137,7 +137,8 @@ public:
 
     /// A value returned if no global index was found for the requested
     /// location/component. The value is implementation dependent.
-    static NUMLIB_EXPORT GlobalIndexType const nop;
+    static constexpr NUMLIB_EXPORT GlobalIndexType const nop =
+        std::numeric_limits<GlobalIndexType>::max();
 
 #ifndef NDEBUG
     const detail::ComponentGlobalIndexDict& getDictionary() const
