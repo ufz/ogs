@@ -127,8 +127,8 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     assertEvalArgsUnique(models.perm_model);
     models.perm_model.eval(x_t, media_data, S_L_data, p_cap_data, T_data,
                            mu_L_data, state.transport_poro_data,
-                           state.total_stress_data, tmp.equiv_plast_strain_data,
-                           perm_data);
+                           state.total_stress_data, state.eps_data,
+                           tmp.equiv_plast_strain_data, perm_data);
 
     assertEvalArgsUnique(models.th_osmosis_model);
     models.th_osmosis_model.eval(x_t, media_data, T_data, rho_L_data,

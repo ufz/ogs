@@ -28,6 +28,7 @@ struct PermeabilityModel
               LiquidViscosityData const& mu_L_data,
               TransportPorosityData const& transport_poro_data,
               TotalStressData<DisplacementDim> const& total_stress_data,
+              StrainData<DisplacementDim> const& eps_data,
               EquivalentPlasticStrainData const& equiv_plast_strain_data,
               PermeabilityData<DisplacementDim>& out) const;
 };
