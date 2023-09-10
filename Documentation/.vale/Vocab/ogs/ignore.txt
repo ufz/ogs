@@ -21,6 +21,7 @@ hydrosystems
 millimolar
 mmol
 mol
+molality
 nonisothermal
 nonlinearly
 nonlocal
