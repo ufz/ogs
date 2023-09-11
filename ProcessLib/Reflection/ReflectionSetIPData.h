@@ -64,6 +64,8 @@ void setIPData(double const* values,
             {
                 accessor(ip_data_vector[ip]) = values_mat.col(ip);
             }
+
+            // TODO input of matrix valued properties
         }
     }
 }

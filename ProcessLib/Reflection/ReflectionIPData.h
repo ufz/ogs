@@ -70,17 +70,56 @@ struct is_raw_data<Eigen::Matrix<double, N, 1, Eigen::ColMajor, N, 1>>
 {
 };
 
+template <int N, int M>
+struct is_raw_data<Eigen::Matrix<double, N, M, Eigen::RowMajor, N, M>>
+    : std::true_type
+{
+};
+
 template <typename T>
-struct NumberOfComponents;
+struct NumberOfRows;
 
 template <>
-struct NumberOfComponents<double> : std::integral_constant<unsigned, 1>
+struct NumberOfRows<double> : std::integral_constant<unsigned, 1>
 {
 };
 
 template <int N>
-struct NumberOfComponents<Eigen::Matrix<double, N, 1, Eigen::ColMajor, N, 1>>
+struct NumberOfRows<Eigen::Matrix<double, N, 1, Eigen::ColMajor, N, 1>>
     : std::integral_constant<unsigned, N>
+{
+};
+
+template <int N, int M>
+struct NumberOfRows<Eigen::Matrix<double, N, M, Eigen::RowMajor, N, M>>
+    : std::integral_constant<unsigned, N>
+{
+};
+
+template <typename T>
+struct NumberOfColumns;
+
+template <>
+struct NumberOfColumns<double> : std::integral_constant<unsigned, 1>
+{
+};
+
+template <int N>
+struct NumberOfColumns<Eigen::Matrix<double, N, 1, Eigen::ColMajor, N, 1>>
+    : std::integral_constant<unsigned, 1>
+{
+};
+
+template <int N, int M>
+struct NumberOfColumns<Eigen::Matrix<double, N, M, Eigen::RowMajor, N, M>>
+    : std::integral_constant<unsigned, M>
+{
+};
+
+template <typename T>
+struct NumberOfComponents
+    : std::integral_constant<unsigned,
+                             NumberOfRows<T>::value * NumberOfColumns<T>::value>
 {
 };
 
@@ -166,7 +205,9 @@ struct GetFlattenedIPDataFromLocAsm
                       "This method only deals with raw data. The given "
                       "ConcreteIPData is not raw data.");
 
-        constexpr unsigned num_comp = NumberOfComponents<ConcreteIPData>::value;
+        constexpr unsigned num_rows = NumberOfRows<ConcreteIPData>::value;
+        constexpr unsigned num_cols = NumberOfColumns<ConcreteIPData>::value;
+        constexpr unsigned num_comp = num_rows * num_cols;
         auto const& ip_data_vector = accessor_ip_data_vec_in_loc_asm(loc_asm);
         auto const num_ips = ip_data_vector.size();
 
@@ -181,12 +222,14 @@ struct GetFlattenedIPDataFromLocAsm
 
             if constexpr (num_comp == 1)
             {
+                // scalar
                 result[ip] = ip_data;
             }
-            else if constexpr (num_comp ==
-                               MathLib::KelvinVector::kelvin_vector_dimensions(
-                                   Dim))
+            else if constexpr (num_rows == MathLib::KelvinVector::
+                                               kelvin_vector_dimensions(Dim) &&
+                               num_cols == 1)
             {
+                // Kelvin vector
                 auto const converted =
                     MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                         ip_data);
@@ -196,11 +239,25 @@ struct GetFlattenedIPDataFromLocAsm
                     result[ip * num_comp + comp] = converted[comp];
                 }
             }
-            else
+            else if constexpr (num_rows == 1 || num_cols == 1)
             {
+                // row or column vector
                 for (unsigned comp = 0; comp < num_comp; ++comp)
                 {
                     result[ip * num_comp + comp] = ip_data[comp];
+                }
+            }
+            else
+            {
+                // matrix
+                // row-major traversal
+                for (unsigned row = 0; row < num_rows; ++row)
+                {
+                    for (unsigned col = 0; col < num_cols; ++col)
+                    {
+                        result[ip * num_comp + row * num_cols + col] =
+                            ip_data(row, col);
+                    }
                 }
             }
         }
