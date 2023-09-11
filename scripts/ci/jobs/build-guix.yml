@@ -17,8 +17,8 @@ build guix:
     - which guix
     - guix describe
     # SteadyStateDiffusion only!
-    - guix time-machine --commit=${GUIX_COMMIT} -- build --fallback -L $PWD/.guix/modules ogs-ssd
-    - guix time-machine --commit=${GUIX_COMMIT} -- build --fallback -L $PWD/.guix/modules --with-input=openmpi=openmpi-pmix --without-tests=hdf5-parallel-openmpi ogs-petsc-ssd
+    - guix build --fallback -L $PWD/.guix/modules ogs-ssd
+    - guix build --fallback -L $PWD/.guix/modules --with-input=openmpi=openmpi-pmix --without-tests=hdf5-parallel-openmpi ogs-petsc-ssd
 
 deploy guix container eve:
   stage: build
@@ -33,7 +33,7 @@ deploy guix container eve:
     - which guix
     - guix describe
     # All processes.
-    - image=$( guix time-machine --commit=${GUIX_COMMIT} -- pack --fallback -L $PWD/.guix/modules -RR --format=squashfs --with-input=openmpi=openmpi-pmix --without-tests=hdf5-parallel-openmpi bash ogs-petsc | tee | tail -1 )
+    - image=$( guix pack --fallback -L $PWD/.guix/modules -RR --format=squashfs --with-input=openmpi=openmpi-pmix --without-tests=hdf5-parallel-openmpi bash ogs-petsc | tee | tail -1 )
     - echo "Image $image"
     - ssh sonjenk@frontend2.eve.ufz.de rm -f ${GUIX_PETSC_CONTAINER}
     - scp $image sonjenk@frontend2.eve.ufz.de:${GUIX_PETSC_CONTAINER}
