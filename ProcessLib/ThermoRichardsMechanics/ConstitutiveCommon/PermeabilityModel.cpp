@@ -20,7 +20,6 @@ void PermeabilityModel<DisplacementDim>::eval(
     SaturationData const& S_L_data,
     CapillaryPressureData<DisplacementDim> const& p_cap_data,
     TemperatureData<DisplacementDim> const& T_data,
-    LiquidViscosityData const& mu_L_data,
     TransportPorosityData const& transport_poro_data,
     TotalStressData<DisplacementDim> const& total_stress_data,
     StrainData<DisplacementDim> const& eps_data,
@@ -68,7 +67,7 @@ void PermeabilityModel<DisplacementDim>::eval(
         medium.property(MPL::PropertyType::permeability)
             .value(variables, x_t.x, x_t.t, x_t.dt));
 
-    out.Ki_over_mu = K_intrinsic / mu_L_data.viscosity;
+    out.Ki = K_intrinsic;
 }
 
 template struct PermeabilityModel<2>;

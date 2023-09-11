@@ -87,6 +87,7 @@ struct OutputData
     LiquidDensityData rho_L_data;
     LiquidViscosityData mu_L_data;
     SolidDensityData rho_S_data;
+    PermeabilityData<DisplacementDim> perm_data;
 
     static auto reflect()
     {
@@ -95,7 +96,8 @@ struct OutputData
         return Reflection::reflectWithoutName(&Self::darcy_data,
                                               &Self::rho_L_data,
                                               &Self::mu_L_data,
-                                              &Self::rho_S_data);
+                                              &Self::rho_S_data,
+                                              &Self::perm_data);
     }
 };
 
@@ -128,7 +130,6 @@ struct ConstitutiveTempData
     // TODO why not usual state tracking for that?
     PrevState<BishopsData> bishops_data_prev;
     SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
-    PermeabilityData<DisplacementDim> perm_data;
     FluidThermalExpansionData f_therm_exp_data;
     EquivalentPlasticStrainData equiv_plast_strain_data;
 };

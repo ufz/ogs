@@ -38,6 +38,7 @@ struct TRMHeatStorageAndFluxModel
               SaturationData const& S_L_data,
               SaturationDataDeriv const& dS_L_data,
               PorosityData const& poro_data,
+              LiquidViscosityData const& mu_L_data,
               PermeabilityData<DisplacementDim> const& perm,
               TemperatureData<DisplacementDim> const& T_data,
               DarcyLawData<DisplacementDim> const& darcy_data,
