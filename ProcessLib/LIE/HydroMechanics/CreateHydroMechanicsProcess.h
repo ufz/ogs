@@ -43,7 +43,7 @@ namespace HydroMechanics
 {
 template <int GlobalDim>
 std::unique_ptr<Process> createHydroMechanicsProcess(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

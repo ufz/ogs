@@ -48,7 +48,7 @@ namespace ThermoMechanics
 {
 template <int DisplacementDim>
 std::unique_ptr<Process> createThermoMechanicsProcess(
-    std::string name, MeshLib::Mesh& mesh,
+    std::string const& name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
@@ -58,7 +58,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 extern template std::unique_ptr<Process> createThermoMechanicsProcess<2>(
-    std::string name, MeshLib::Mesh& mesh,
+    std::string const& name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
@@ -68,7 +68,7 @@ extern template std::unique_ptr<Process> createThermoMechanicsProcess<2>(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 extern template std::unique_ptr<Process> createThermoMechanicsProcess<3>(
-    std::string name, MeshLib::Mesh& mesh,
+    std::string const& name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,

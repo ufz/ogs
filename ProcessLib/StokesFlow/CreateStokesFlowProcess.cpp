@@ -52,7 +52,7 @@ void checkMPLProperties(
 
 template <int GlobalDim>
 std::unique_ptr<Process> createStokesFlowProcess(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -166,7 +166,7 @@ std::unique_ptr<Process> createStokesFlowProcess(
 }
 
 template std::unique_ptr<Process> createStokesFlowProcess<2>(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

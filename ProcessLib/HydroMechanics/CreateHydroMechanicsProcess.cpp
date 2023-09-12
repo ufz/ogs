@@ -81,7 +81,7 @@ CouplingScheme parseCouplingScheme(
 
 template <int DisplacementDim>
 std::unique_ptr<Process> createHydroMechanicsProcess(
-    std::string name, MeshLib::Mesh& mesh,
+    std::string const& name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
@@ -259,7 +259,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 }
 
 template std::unique_ptr<Process> createHydroMechanicsProcess<2>(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -271,7 +271,7 @@ template std::unique_ptr<Process> createHydroMechanicsProcess<2>(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 template std::unique_ptr<Process> createHydroMechanicsProcess<3>(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

@@ -29,7 +29,7 @@ namespace SmallDeformation
 {
 template <int DisplacementDim>
 std::unique_ptr<Process> createSmallDeformationProcess(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -197,7 +197,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
 }
 
 template std::unique_ptr<Process> createSmallDeformationProcess<2>(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -208,7 +208,7 @@ template std::unique_ptr<Process> createSmallDeformationProcess<2>(
     BaseLib::ConfigTree const& config);
 
 template std::unique_ptr<Process> createSmallDeformationProcess<3>(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
