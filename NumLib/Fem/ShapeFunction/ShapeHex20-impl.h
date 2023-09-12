@@ -89,7 +89,7 @@ void ShapeHex20::computeShapeFunction(const T_X& rst, T_N& N)
 }
 
 template <class T_X, class T_N>
-void ShapeHex20::computeGradShapeFunction(const T_X& rst, T_N& dNdr)
+void ShapeHex20::computeGradShapeFunction(const T_X& rst, T_N& dN)
 {
     const double r = rst[0];
     const double s = rst[1];
@@ -99,44 +99,44 @@ void ShapeHex20::computeGradShapeFunction(const T_X& rst, T_N& dNdr)
     const static double sign3[] = {1.0, 1.0, -1.0};
     for (int i = 0; i < 3; i++)
     {
-        dNdr[20 * i + 0] = dShapeFunctionHexHQ_Corner(r, s, t, i);
-        dNdr[20 * i + 1] = sign1[i] * dShapeFunctionHexHQ_Corner(-r, s, t, i);
-        dNdr[20 * i + 2] =
+        dN[20 * i + 0] = dShapeFunctionHexHQ_Corner(r, s, t, i);
+        dN[20 * i + 1] = sign1[i] * dShapeFunctionHexHQ_Corner(-r, s, t, i);
+        dN[20 * i + 2] =
             sign1[i] * sign2[i] * dShapeFunctionHexHQ_Corner(-r, -s, t, i);
-        dNdr[20 * i + 3] = sign2[i] * dShapeFunctionHexHQ_Corner(r, -s, t, i);
-        dNdr[20 * i + 4] = sign3[i] * dShapeFunctionHexHQ_Corner(r, s, -t, i);
-        dNdr[20 * i + 5] =
+        dN[20 * i + 3] = sign2[i] * dShapeFunctionHexHQ_Corner(r, -s, t, i);
+        dN[20 * i + 4] = sign3[i] * dShapeFunctionHexHQ_Corner(r, s, -t, i);
+        dN[20 * i + 5] =
             sign1[i] * sign3[i] * dShapeFunctionHexHQ_Corner(-r, s, -t, i);
-        dNdr[20 * i + 6] = sign1[i] * sign2[i] * sign3[i] *
-                           dShapeFunctionHexHQ_Corner(-r, -s, -t, i);
-        dNdr[20 * i + 7] =
+        dN[20 * i + 6] = sign1[i] * sign2[i] * sign3[i] *
+                         dShapeFunctionHexHQ_Corner(-r, -s, -t, i);
+        dN[20 * i + 7] =
             sign2[i] * sign3[i] * dShapeFunctionHexHQ_Corner(r, -s, -t, i);
 
-        dNdr[20 * i + 8] = dShapeFunctionHexHQ_Middle(r, s, t, i);
-        dNdr[20 * i + 10] = sign2[i] * dShapeFunctionHexHQ_Middle(r, -s, t, i);
-        dNdr[20 * i + 14] =
+        dN[20 * i + 8] = dShapeFunctionHexHQ_Middle(r, s, t, i);
+        dN[20 * i + 10] = sign2[i] * dShapeFunctionHexHQ_Middle(r, -s, t, i);
+        dN[20 * i + 14] =
             sign2[i] * sign3[i] * dShapeFunctionHexHQ_Middle(r, -s, -t, i);
-        dNdr[20 * i + 12] = sign3[i] * dShapeFunctionHexHQ_Middle(r, s, -t, i);
+        dN[20 * i + 12] = sign3[i] * dShapeFunctionHexHQ_Middle(r, s, -t, i);
 
         {
             int const co = (i + 2) % 3;
-            dNdr[20 * i + 11] = dShapeFunctionHexHQ_Middle(s, t, r, co);
-            dNdr[20 * i + 15] =
+            dN[20 * i + 11] = dShapeFunctionHexHQ_Middle(s, t, r, co);
+            dN[20 * i + 15] =
                 sign3[i] * dShapeFunctionHexHQ_Middle(s, -t, r, co);
-            dNdr[20 * i + 13] =
+            dN[20 * i + 13] =
                 sign1[i] * sign3[i] * dShapeFunctionHexHQ_Middle(s, -t, -r, co);
-            dNdr[20 * i + 9] =
+            dN[20 * i + 9] =
                 sign1[i] * dShapeFunctionHexHQ_Middle(s, t, -r, co);
         }
 
         {
             int const co = (i + 1) % 3;
-            dNdr[20 * i + 16] = dShapeFunctionHexHQ_Middle(t, r, s, co);
-            dNdr[20 * i + 17] =
+            dN[20 * i + 16] = dShapeFunctionHexHQ_Middle(t, r, s, co);
+            dN[20 * i + 17] =
                 sign1[i] * dShapeFunctionHexHQ_Middle(t, -r, s, co);
-            dNdr[20 * i + 18] =
+            dN[20 * i + 18] =
                 sign1[i] * sign2[i] * dShapeFunctionHexHQ_Middle(t, -r, -s, co);
-            dNdr[20 * i + 19] =
+            dN[20 * i + 19] =
                 sign2[i] * dShapeFunctionHexHQ_Middle(t, r, -s, co);
         }
     }

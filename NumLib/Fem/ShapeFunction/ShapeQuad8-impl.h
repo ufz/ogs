@@ -25,32 +25,32 @@ void ShapeQuad8::computeShapeFunction(const T_X& r, T_N& N)
 }
 
 template <class T_X, class T_N>
-void ShapeQuad8::computeGradShapeFunction(const T_X& rs, T_N& dNdr)
+void ShapeQuad8::computeGradShapeFunction(const T_X& rs, T_N& dN)
 {
     const double r = rs[0];
     const double s = rs[1];
 
     // dN/dr
-    dNdr[0] = (1 + s) * (2 * r + s) * 0.25;
-    dNdr[1] = (1 + s) * (2 * r - s) * 0.25;
-    dNdr[2] = (1 - s) * (2 * r + s) * 0.25;
-    dNdr[3] = (1 - s) * (2 * r - s) * 0.25;
+    dN[0] = (1 + s) * (2 * r + s) * 0.25;
+    dN[1] = (1 + s) * (2 * r - s) * 0.25;
+    dN[2] = (1 - s) * (2 * r + s) * 0.25;
+    dN[3] = (1 - s) * (2 * r - s) * 0.25;
 
-    dNdr[4] = -r * (1 + s);
-    dNdr[5] = -(1 - s * s) * 0.5;
-    dNdr[6] = -r * (1 - s);
-    dNdr[7] = (1 - s * s) * 0.5;
+    dN[4] = -r * (1 + s);
+    dN[5] = -(1 - s * s) * 0.5;
+    dN[6] = -r * (1 - s);
+    dN[7] = (1 - s * s) * 0.5;
 
     // dN/ds
-    dNdr[8] = (1 + r) * (r + 2 * s) * 0.25;
-    dNdr[9] = -(1 - r) * (r - 2 * s) * 0.25;
-    dNdr[10] = (1 - r) * (r + 2 * s) * 0.25;
-    dNdr[11] = -(1 + r) * (r - 2 * s) * 0.25;
+    dN[8] = (1 + r) * (r + 2 * s) * 0.25;
+    dN[9] = -(1 - r) * (r - 2 * s) * 0.25;
+    dN[10] = (1 - r) * (r + 2 * s) * 0.25;
+    dN[11] = -(1 + r) * (r - 2 * s) * 0.25;
 
-    dNdr[12] = (1 - r * r) * 0.5;
-    dNdr[13] = -(1 - r) * s;
-    dNdr[14] = -(1 - r * r) * 0.5;
-    dNdr[15] = -(1 + r) * s;
+    dN[12] = (1 - r * r) * 0.5;
+    dN[13] = -(1 - r) * s;
+    dN[14] = -(1 - r * r) * 0.5;
+    dN[15] = -(1 + r) * s;
 }
 
 }  // namespace NumLib
