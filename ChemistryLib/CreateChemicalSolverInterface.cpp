@@ -91,7 +91,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     auto const ls_name =
         //! \ogs_file_param{prj__chemical_system__linear_solver}
         config.getConfigParameter<std::string>("linear_solver");
-    auto& linear_solver = BaseLib::getOrError(
+    auto const& linear_solver = BaseLib::getOrError(
         linear_solvers, ls_name,
         "A linear solver with the given name does not exist.");
 

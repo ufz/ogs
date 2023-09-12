@@ -315,7 +315,7 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
         _integration_method.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto& ip_data = _ip_data[ip];
+        auto const& ip_data = _ip_data[ip];
 
         ele_stress += ip_data._sigma;
         ele_strain += ip_data._eps;

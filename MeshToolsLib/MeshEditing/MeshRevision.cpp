@@ -937,7 +937,7 @@ MeshLib::Properties copyProperties(MeshLib::Properties const& props,
         if (props.existsPropertyVector<int>(name, MeshLib::MeshItemType::Node,
                                             1))
         {
-            auto p = props.getPropertyVector<int>(
+            auto const* p = props.getPropertyVector<int>(
                 name, MeshLib::MeshItemType::Node, 1);
             auto new_node_vec = new_properties.createNewPropertyVector<int>(
                 name, MeshLib::MeshItemType::Node, 1);
@@ -947,7 +947,7 @@ MeshLib::Properties copyProperties(MeshLib::Properties const& props,
         if (props.existsPropertyVector<float>(name, MeshLib::MeshItemType::Node,
                                               1))
         {
-            auto p = props.getPropertyVector<float>(
+            auto const* p = props.getPropertyVector<float>(
                 name, MeshLib::MeshItemType::Node, 1);
             auto new_node_vec = new_properties.createNewPropertyVector<float>(
                 name, MeshLib::MeshItemType::Node, 1);
@@ -957,7 +957,7 @@ MeshLib::Properties copyProperties(MeshLib::Properties const& props,
         if (props.existsPropertyVector<double>(name,
                                                MeshLib::MeshItemType::Node, 1))
         {
-            auto p = props.getPropertyVector<double>(
+            auto const* p = props.getPropertyVector<double>(
                 name, MeshLib::MeshItemType::Node, 1);
             auto new_node_vec = new_properties.createNewPropertyVector<double>(
                 name, MeshLib::MeshItemType::Node, 1);
@@ -967,7 +967,7 @@ MeshLib::Properties copyProperties(MeshLib::Properties const& props,
         if (props.existsPropertyVector<int>(name, MeshLib::MeshItemType::Cell,
                                             1))
         {
-            auto p = props.getPropertyVector<int>(
+            auto const* p = props.getPropertyVector<int>(
                 name, MeshLib::MeshItemType::Cell, 1);
             auto new_cell_vec = new_properties.createNewPropertyVector<int>(
                 name, MeshLib::MeshItemType::Cell, 1);
@@ -977,7 +977,7 @@ MeshLib::Properties copyProperties(MeshLib::Properties const& props,
         if (props.existsPropertyVector<float>(name, MeshLib::MeshItemType::Cell,
                                               1))
         {
-            auto p = props.getPropertyVector<float>(
+            auto const* p = props.getPropertyVector<float>(
                 name, MeshLib::MeshItemType::Cell, 1);
             auto new_cell_vec = new_properties.createNewPropertyVector<float>(
                 name, MeshLib::MeshItemType::Cell, 1);
@@ -987,7 +987,7 @@ MeshLib::Properties copyProperties(MeshLib::Properties const& props,
         if (props.existsPropertyVector<double>(name,
                                                MeshLib::MeshItemType::Cell, 1))
         {
-            auto p = props.getPropertyVector<double>(
+            auto const* p = props.getPropertyVector<double>(
                 name, MeshLib::MeshItemType::Cell, 1);
             auto new_cell_vec = new_properties.createNewPropertyVector<double>(
                 name, MeshLib::MeshItemType::Cell, 1);

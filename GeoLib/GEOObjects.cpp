@@ -330,7 +330,7 @@ bool GEOObjects::isPntVecUsed(const std::string& name) const
 
 void GEOObjects::getStationVectorNames(std::vector<std::string>& names) const
 {
-    for (auto point : _pnt_vecs)
+    for (auto const* point : _pnt_vecs)
     {
         if (point->getType() == PointVec::PointType::STATION)
         {
@@ -342,7 +342,7 @@ void GEOObjects::getStationVectorNames(std::vector<std::string>& names) const
 std::vector<std::string> GEOObjects::getGeometryNames() const
 {
     std::vector<std::string> names;
-    for (auto const point : _pnt_vecs)
+    for (auto const* point : _pnt_vecs)
     {
         if (point->getType() == PointVec::PointType::POINT)
         {

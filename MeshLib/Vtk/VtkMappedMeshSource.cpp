@@ -123,54 +123,59 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
         {
             continue;
         }
-        if (auto p = dynamic_cast<PropertyVector<double>*>(property))
+        if (auto const* p = dynamic_cast<PropertyVector<double>*>(property))
         {
             addProperty(*p);
         }
-        else if (auto p = dynamic_cast<PropertyVector<float>*>(property))
+        else if (auto const* p = dynamic_cast<PropertyVector<float>*>(property))
         {
             addProperty(*p);
         }
-        else if (auto p = dynamic_cast<PropertyVector<int>*>(property))
+        else if (auto const* p = dynamic_cast<PropertyVector<int>*>(property))
         {
             addProperty(*p);
         }
-        else if (auto p = dynamic_cast<PropertyVector<unsigned>*>(property))
+        else if (auto const* p =
+                     dynamic_cast<PropertyVector<unsigned>*>(property))
         {
             addProperty(*p);
         }
-        else if (auto p = dynamic_cast<PropertyVector<long>*>(property))
+        else if (auto const* p = dynamic_cast<PropertyVector<long>*>(property))
         {
             addProperty(*p);
         }
-        else if (auto p = dynamic_cast<PropertyVector<long long>*>(property))
+        else if (auto const* p =
+                     dynamic_cast<PropertyVector<long long>*>(property))
         {
             addProperty(*p);
         }
-        else if (auto p =
+        else if (auto const* p =
                      dynamic_cast<PropertyVector<unsigned long>*>(property))
         {
             addProperty(*p);
         }
-        else if (auto p = dynamic_cast<PropertyVector<unsigned long long>*>(
-                     property))
+        else if (auto const* p =
+                     dynamic_cast<PropertyVector<unsigned long long>*>(
+                         property))
         {
             addProperty(*p);
         }
-        else if (auto p = dynamic_cast<PropertyVector<std::size_t>*>(property))
+        else if (auto const* p =
+                     dynamic_cast<PropertyVector<std::size_t>*>(property))
         {
             addProperty(*p);
         }
-        else if (auto p = dynamic_cast<PropertyVector<char>*>(property))
+        else if (auto const* p = dynamic_cast<PropertyVector<char>*>(property))
         {
             addProperty(*p);
         }
-        else if (auto p =
+        else if (auto const* p =
                      dynamic_cast<PropertyVector<unsigned char>*>(property))
         {
             addProperty(*p);
         }
-        else if (auto p = dynamic_cast<PropertyVector<uint8_t>*>(property))
+        else if (auto const* p =
+                     dynamic_cast<PropertyVector<uint8_t>*>(property))
         {
             addProperty(*p);
         }

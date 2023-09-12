@@ -77,51 +77,56 @@ void MeshInformation::writePropertyVectorInformation(const MeshLib::Mesh& mesh)
 
     for (auto [name, property] : properties)
     {
-        if (auto p = dynamic_cast<MeshLib::PropertyVector<double>*>(property))
+        if (auto const* p =
+                dynamic_cast<MeshLib::PropertyVector<double>*>(property))
         {
             printBounds(*p);
         }
-        else if (auto p =
+        else if (auto const* p =
                      dynamic_cast<MeshLib::PropertyVector<float>*>(property))
         {
             printBounds(*p);
         }
-        else if (auto p = dynamic_cast<MeshLib::PropertyVector<int>*>(property))
+        else if (auto const* p =
+                     dynamic_cast<MeshLib::PropertyVector<int>*>(property))
         {
             printBounds(*p);
         }
-        else if (auto p =
+        else if (auto const* p =
                      dynamic_cast<MeshLib::PropertyVector<unsigned>*>(property))
         {
             printBounds(*p);
         }
-        else if (auto p =
+        else if (auto const* p =
                      dynamic_cast<MeshLib::PropertyVector<long>*>(property))
         {
             printBounds(*p);
         }
-        else if (auto p = dynamic_cast<MeshLib::PropertyVector<long long>*>(
-                     property))
+        else if (auto const* p =
+                     dynamic_cast<MeshLib::PropertyVector<long long>*>(
+                         property))
         {
             printBounds(*p);
         }
-        else if (auto p = dynamic_cast<MeshLib::PropertyVector<unsigned long>*>(
-                     property))
+        else if (auto const* p =
+                     dynamic_cast<MeshLib::PropertyVector<unsigned long>*>(
+                         property))
         {
             printBounds(*p);
         }
-        else if (auto p =
+        else if (auto const* p =
                      dynamic_cast<MeshLib::PropertyVector<unsigned long long>*>(
                          property))
         {
             printBounds(*p);
         }
-        else if (auto p = dynamic_cast<MeshLib::PropertyVector<std::size_t>*>(
-                     property))
+        else if (auto const* p =
+                     dynamic_cast<MeshLib::PropertyVector<std::size_t>*>(
+                         property))
         {
             printBounds(*p);
         }
-        else if (auto p =
+        else if (auto const* p =
                      dynamic_cast<MeshLib::PropertyVector<char>*>(property))
         {
             printBounds(*p);

@@ -206,7 +206,7 @@ struct HdfWriter::HdfMesh final
     std::vector<HdfData> const variable_attributes;
 };
 
-HdfWriter::HdfWriter(std::vector<MeshHdfData> meshes,
+HdfWriter::HdfWriter(std::vector<MeshHdfData> const& meshes,
                      unsigned long long const initial_step,
                      std::filesystem::path const& filepath,
                      bool const use_compression,

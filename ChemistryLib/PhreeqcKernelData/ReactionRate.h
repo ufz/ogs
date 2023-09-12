@@ -21,7 +21,7 @@ class ReactionRate
 {
 public:
     ReactionRate(std::string kinetic_reactant_,
-                 std::vector<std::string> statements);
+                 std::vector<std::string> const& statements);
 
     std::string const& commands() const { return _commands; }
 

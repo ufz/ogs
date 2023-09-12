@@ -212,51 +212,56 @@ PostProcessTool::PostProcessTool(
 
     for (auto [name, property] : _org_mesh.getProperties())
     {
-        if (auto p = dynamic_cast<MeshLib::PropertyVector<double>*>(property))
+        if (auto const* p =
+                dynamic_cast<MeshLib::PropertyVector<double>*>(property))
         {
             copyPropertyValues(*p, createProperty(*p));
         }
-        else if (auto p =
+        else if (auto const* p =
                      dynamic_cast<MeshLib::PropertyVector<float>*>(property))
         {
             copyPropertyValues(*p, createProperty(*p));
         }
-        else if (auto p = dynamic_cast<MeshLib::PropertyVector<int>*>(property))
+        else if (auto const* p =
+                     dynamic_cast<MeshLib::PropertyVector<int>*>(property))
         {
             copyPropertyValues(*p, createProperty(*p));
         }
-        else if (auto p =
+        else if (auto const* p =
                      dynamic_cast<MeshLib::PropertyVector<unsigned>*>(property))
         {
             copyPropertyValues(*p, createProperty(*p));
         }
-        else if (auto p =
+        else if (auto const* p =
                      dynamic_cast<MeshLib::PropertyVector<long>*>(property))
         {
             copyPropertyValues(*p, createProperty(*p));
         }
-        else if (auto p = dynamic_cast<MeshLib::PropertyVector<long long>*>(
-                     property))
+        else if (auto const* p =
+                     dynamic_cast<MeshLib::PropertyVector<long long>*>(
+                         property))
         {
             copyPropertyValues(*p, createProperty(*p));
         }
-        else if (auto p = dynamic_cast<MeshLib::PropertyVector<unsigned long>*>(
-                     property))
+        else if (auto const* p =
+                     dynamic_cast<MeshLib::PropertyVector<unsigned long>*>(
+                         property))
         {
             copyPropertyValues(*p, createProperty(*p));
         }
-        else if (auto p =
+        else if (auto const* p =
                      dynamic_cast<MeshLib::PropertyVector<unsigned long long>*>(
                          property))
         {
             copyPropertyValues(*p, createProperty(*p));
         }
-        else if (auto p = dynamic_cast<MeshLib::PropertyVector<std::size_t>*>(
-                     property))
+        else if (auto const* p =
+                     dynamic_cast<MeshLib::PropertyVector<std::size_t>*>(
+                         property))
         {
             copyPropertyValues(*p, createProperty(*p));
         }
-        else if (auto p =
+        else if (auto const* p =
                      dynamic_cast<MeshLib::PropertyVector<char>*>(property))
         {
             copyPropertyValues(*p, createProperty(*p));
