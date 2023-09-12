@@ -321,9 +321,7 @@ void EarClippingTriangulation::clipEars()
                     _ear_list.remove(*next);
                     if (orientation == GeoLib::COLLINEAR)
                     {
-                        next = _vertex_list.erase(next);
-                        if (next == _vertex_list.end())
-                            next = _vertex_list.begin();
+                        _vertex_list.erase(next);
                     }
                 }
             }
