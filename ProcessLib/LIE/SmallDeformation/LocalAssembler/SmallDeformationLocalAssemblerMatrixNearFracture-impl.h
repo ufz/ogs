@@ -13,7 +13,6 @@
 #include <Eigen/Core>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/transform.hpp>
-#include <valarray>
 #include <vector>
 
 #include "IntegrationPointDataMatrix.h"
