@@ -9,6 +9,7 @@ repos:
         args: [--maxkb 1024]
       - id: check-merge-conflict
       - id: check-xml
+        exclude: '^Tests/Data/.*\.xml'
       - id: check-yaml
         exclude: "^scripts/ci/.*|.cmake-format.yaml"
       - id: check-toml
