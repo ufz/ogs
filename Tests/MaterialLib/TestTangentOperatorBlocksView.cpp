@@ -58,10 +58,9 @@ TYPED_TEST(MaterialLib_TangentOperatorBlocksView, Test1)
     using TDynForces = mp_list<Vector, MSM::Stress>;
     using ExtStateVars = mp_list<MSM::Temperature>;
 
-    MSM::OGSMFrontTangentOperatorBlocksView<dim,
-                                            Gradients,
-                                            TDynForces,
-                                            ExtStateVars>
+    MSM::OGSMFrontTangentOperatorBlocksView<
+        dim,
+        MSM::ForcesGradsCombinations<Gradients, TDynForces, ExtStateVars>::type>
         view(to_blocks);
 
     MSM::OGSMFrontTangentOperatorData data{};
@@ -162,10 +161,9 @@ TYPED_TEST(MaterialLib_TangentOperatorBlocksView, Test2)
     using TDynForces = mp_list<MSM::Saturation, MSM::Stress>;
     using ExtStateVars = mp_list<MSM::Temperature>;
 
-    MSM::OGSMFrontTangentOperatorBlocksView<dim,
-                                            Gradients,
-                                            TDynForces,
-                                            ExtStateVars>
+    MSM::OGSMFrontTangentOperatorBlocksView<
+        dim,
+        MSM::ForcesGradsCombinations<Gradients, TDynForces, ExtStateVars>::type>
         view(to_blocks);
 
     MSM::OGSMFrontTangentOperatorData data{};
@@ -239,4 +237,65 @@ TYPED_TEST(MaterialLib_TangentOperatorBlocksView, Test2)
     }
 }
 
+TYPED_TEST(MaterialLib_TangentOperatorBlocksView, UnusedMFrontBlock)
+{
+    namespace MB = mgis::behaviour;
+    using Var = MB::Variable;
+    using namespace boost::mp11;
+    namespace MSM = MaterialLib::Solids::MFront;
+
+    constexpr int dim = TypeParam::value;
+
+    const std::vector to_blocks{
+        // dsigma/dtensor
+        std::pair{Var{"Stress", Var::STENSOR}, Var{"tensor", Var::TENSOR}},
+        // dvector/dp
+        std::pair{Var{"Saturation", Var::VECTOR},
+                  Var{"LiquidPressure", Var::SCALAR}}};
+
+    using Gradients = mp_list<MSM::LiquidPressure>;
+    using TDynForces = mp_list<MSM::Saturation, MSM::Stress>;
+    using ExtStateVars = mp_list<MSM::Temperature>;
+
+    using View = MSM::OGSMFrontTangentOperatorBlocksView<
+        dim,
+        MSM::ForcesGradsCombinations<Gradients, TDynForces, ExtStateVars>::
+            type>;
+    ASSERT_ANY_THROW({ View view(to_blocks); });
+    // The constructor of View calls OGS_FATAL if MFront provides a tangent
+    // operator block for which there is no entry in ForcesGradsCombinations,
+    // i.e., that cannot be accessed in OGS through the view.
+    // In this test dStress/dtensor is such an inaccessible block.
+}
+
+TYPED_TEST(MaterialLib_TangentOperatorBlocksView, OverspecifiedMFrontBlock)
+{
+    namespace MB = mgis::behaviour;
+    using Var = MB::Variable;
+    using namespace boost::mp11;
+    namespace MSM = MaterialLib::Solids::MFront;
+
+    constexpr int dim = TypeParam::value;
+
+    const std::vector to_blocks{
+        // dsigma/dtensor
+        std::pair{Var{"Stress", Var::STENSOR}, Var{"tensor", Var::TENSOR}},
+        std::pair{Var{"Stress", Var::STENSOR}, Var{"Temperature", Var::SCALAR}},
+        // dvector/dp
+        std::pair{Var{"Saturation", Var::VECTOR},
+                  Var{"LiquidPressure", Var::SCALAR}}};
+
+    using Gradients = mp_list<MSM::LiquidPressure, Tensor, Vector>;
+    using TDynForces = mp_list<MSM::Saturation, MSM::Stress>;
+    using ExtStateVars = mp_list<MSM::Temperature>;
+
+    using View = MSM::OGSMFrontTangentOperatorBlocksView<
+        dim,
+        MSM::ForcesGradsCombinations<Gradients, TDynForces, ExtStateVars>::
+            type>;
+    ASSERT_NO_THROW(View{to_blocks});
+    // to_blocks covers only a subset of all of the ForcesGradsCombinations, but
+    // that's OK, since not all MFront models might provide all blocks.
+    ASSERT_NO_THROW(View{to_blocks});
+}
 #endif

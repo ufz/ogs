@@ -25,7 +25,7 @@ struct ElasticTangentStiffnessModel
         SolidConstitutiveRelation<DisplacementDim> const& solid_material)
         : solid_material_(solid_material),
           tangent_operator_blocks_view_{
-              solid_material.createTangentOperatorBlocksView()}
+              solid_material.template createTangentOperatorBlocksView()}
     {
     }
 
@@ -38,9 +38,10 @@ private:
 
     MSM::OGSMFrontTangentOperatorBlocksView<
         DisplacementDim,
-        boost::mp11::mp_list<MSM::Strain, MSM::LiquidPressure>,
-        boost::mp11::mp_list<MSM::Stress, MSM::Saturation>,
-        boost::mp11::mp_list<MSM::Temperature>>
+        MSM::ForcesGradsCombinations<
+            boost::mp11::mp_list<MSM::Strain, MSM::LiquidPressure>,
+            boost::mp11::mp_list<MSM::Stress, MSM::Saturation>,
+            boost::mp11::mp_list<MSM::Temperature>>::type>
         tangent_operator_blocks_view_;
 };
 

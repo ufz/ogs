@@ -12,6 +12,10 @@
 
 #include <MGIS/Behaviour/Variable.hxx>
 #include <boost/mp11.hpp>
+#include <range/v3/view/enumerate.hpp>
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/map.hpp>
+#include <range/v3/view/zip.hpp>
 
 #include "BaseLib/cpp23.h"
 #include "MathLib/KelvinVector.h"
@@ -34,10 +38,10 @@ struct OGSMFrontTangentOperatorData
 };
 
 /**
- * Provides convenient access to the individual blocks of MFront's tangent
- * operator data.
+ * A list of MFront's tangent operator blocks. The list consists of pairs of
+ * types, first a thermodynamic force, and second a gradient or external state
+ * variable.
  *
- * \tparam DisplacementDim the displacement dimension
  * \tparam Gradients a list (of types) of gradients driving the MFront behaviour
  * \tparam TDynForces a list (of types) of thermodynamic forces
  * \tparam ExtStateVars a list (of types) of external state variables
@@ -54,15 +58,9 @@ struct OGSMFrontTangentOperatorData
  * these lists is expected to behave like Strain and the other classes in
  * Variable.h.
  *
- * MFront's tangent operator blocks are stored in a single vector of double
- * values. The implementer of an MFront behaviour can decide which blocks she
- * wants to provide and in which order.
  */
-template <int DisplacementDim,
-          typename Gradients,
-          typename TDynForces,
-          typename ExtStateVars>
-class OGSMFrontTangentOperatorBlocksView
+template <typename Gradients, typename TDynForces, typename ExtStateVars>
+struct ForcesGradsCombinations
 {
     static_assert(boost::mp11::mp_is_set<Gradients>::value);
     static_assert(boost::mp11::mp_is_set<TDynForces>::value);
@@ -73,8 +71,27 @@ class OGSMFrontTangentOperatorBlocksView
 
     static_assert(boost::mp11::mp_is_set<GradientsAndExtStateVars>::value);
 
-    using ForcesGradsCombinations = boost::mp11::
+    using type = boost::mp11::
         mp_product<boost::mp11::mp_list, TDynForces, GradientsAndExtStateVars>;
+};
+
+/**
+ * Provides convenient access to the individual blocks of MFront's tangent
+ * operator data.
+ *
+ * \tparam DisplacementDim the displacement dimension
+ * \tparam ForcesGradsCombinations a list of pairs types corresponding to the
+ * tangent operator blocks' variables. See ForcesGradsCombinations template for
+ * details.
+ *
+ * MFront's tangent operator blocks are stored in a single vector of double
+ * values. The implementer of an MFront behaviour can decide which blocks she
+ * wants to provide and in which order.
+ */
+template <int DisplacementDim, typename ForcesGradsCombinations>
+class OGSMFrontTangentOperatorBlocksView
+{
+    static_assert(boost::mp11::mp_is_set<ForcesGradsCombinations>::value);
 
     /// Indicates that the associated tangent operator block is not present in
     /// the data.
@@ -89,25 +106,52 @@ public:
     {
         offsets_.fill(invalid_offset_);
 
+        std::vector<bool> used_blocks(
+            to_blocks.size(), false);  // checked after creation of all offsets.
+
         boost::mp11::mp_for_each<ForcesGradsCombinations>(
-            [&to_blocks, this]<typename Force, typename GradOrExtStateVar>(
+            [&to_blocks,
+             &used_blocks,
+             this]<typename Force, typename GradOrExtStateVar>(
                 boost::mp11::mp_list<Force, GradOrExtStateVar>)
             {
                 std::size_t data_offset = 0;
-                for (auto const& [force, grad] : to_blocks)
+                for (auto [block, is_used] :
+                     ranges::views::zip(to_blocks, used_blocks))
                 {
+                    auto const& [force, grad] = block;
                     if (force.name == Force::name &&
                         grad.name == GradOrExtStateVar::name)
                     {
-                        auto const block_idx =
+                        auto constexpr block_idx =
                             blockIndex<Force, GradOrExtStateVar>();
                         offsets_[block_idx] = data_offset;
+                        is_used = true;
                         return;
                     }
 
                     data_offset += size(force.type) * size(grad.type);
                 }
             });
+
+        // Indices of unused blocks.
+        auto indices = ranges::views::enumerate(used_blocks) |
+                       ranges::views::filter([](auto const& pair)
+                                             { return !pair.second; }) |
+                       ranges::views::keys;
+
+        if (!indices.empty())
+        {
+            ERR("There are unused tangent operator blocks provided by MFront. "
+                "Following blocks are unused:");
+
+            for (auto const i : indices)
+            {
+                auto const& [force, grad] = to_blocks[i];
+                ERR("\t{}/{}", force.name, grad.name);
+            }
+            OGS_FATAL("All tangent operator blocks must be used.");
+        }
     }
 
     /// Read access to the block dForce/dGradOrExtStateVar.
@@ -121,9 +165,12 @@ public:
                GradOrExtStateVar,
                OGSMFrontTangentOperatorData const& data) const
     {
-        static_assert(boost::mp11::mp_contains<TDynForces, Force>::value);
-        static_assert(boost::mp11::mp_contains<GradientsAndExtStateVars,
-                                               GradOrExtStateVar>::value);
+        static_assert(
+            boost::mp11::mp_contains<
+                ForcesGradsCombinations,
+                boost::mp11::mp_list<Force, GradOrExtStateVar>>::value,
+            "Requested tangent block was not created in the "
+            "OGSMFrontTangentOperatorBlocksView.");
 
         constexpr auto index = blockIndex<Force, GradOrExtStateVar>();
         const auto offset = offsets_[index];
@@ -184,15 +231,9 @@ private:
     template <typename Force, typename GradOrExtStateVar>
     static constexpr std::size_t blockIndex()
     {
-        constexpr auto force_idx =
-            boost::mp11::mp_find<TDynForces, Force>::value;
-        constexpr auto grad_idx =
-            boost::mp11::mp_find<GradientsAndExtStateVars,
-                                 GradOrExtStateVar>::value;
-        constexpr auto stride =
-            boost::mp11::mp_size<GradientsAndExtStateVars>::value;
-
-        return force_idx * stride + grad_idx;
+        return boost::mp11::mp_find<
+            ForcesGradsCombinations,
+            boost::mp11::mp_list<Force, GradOrExtStateVar>>::value;
     }
 
     /// Stores the data offsets of each tangent operator block.

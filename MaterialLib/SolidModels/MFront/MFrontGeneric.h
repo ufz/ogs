@@ -20,6 +20,7 @@
 #include "ParameterLib/Parameter.h"
 #include "TangentOperatorBlocksView.h"
 #include "ThermodynamicForcesView.h"
+#include "Variable.h"
 
 namespace MaterialLib::Solids::MFront
 {
@@ -301,6 +302,10 @@ public:
         }
 
         auto const hypothesis = _behaviour.hypothesis;
+
+        static_assert(
+            std::is_same_v<ExtStateVars, boost::mp11::mp_list<Temperature>>,
+            "Temperature is the only allowed external state variable.");
 
         if (!_behaviour.esvs.empty())
         {
@@ -596,16 +601,14 @@ public:
         return internal_variables;
     }
 
-    OGSMFrontTangentOperatorBlocksView<DisplacementDim,
-                                       Gradients,
-                                       TDynForces,
-                                       ExtStateVars>
+    template <typename ForcesGradsCombinations =
+                  typename ForcesGradsCombinations<Gradients, TDynForces,
+                                                   ExtStateVars>::type>
+    OGSMFrontTangentOperatorBlocksView<DisplacementDim, ForcesGradsCombinations>
     createTangentOperatorBlocksView() const
     {
         return OGSMFrontTangentOperatorBlocksView<DisplacementDim,
-                                                  Gradients,
-                                                  TDynForces,
-                                                  ExtStateVars>{
+                                                  ForcesGradsCombinations>{
             _behaviour.to_blocks};
     }
 
