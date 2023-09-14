@@ -43,20 +43,9 @@ struct ProcessData
     {
     }
 
-    ProcessData(ProcessData&& pd)
-        : timestep_previous(pd.timestep_previous),
-          timestep_current(pd.timestep_current),
-          timestep_algorithm(std::move(pd.timestep_algorithm)),
-          nonlinear_solver_tag(pd.nonlinear_solver_tag),
-          nonlinear_solver(pd.nonlinear_solver),
-          nonlinear_solver_status(pd.nonlinear_solver_status),
-          conv_crit(std::move(pd.conv_crit)),
-          time_disc(std::move(pd.time_disc)),
-          tdisc_ode_sys(std::move(pd.tdisc_ode_sys)),
-          process_id(pd.process_id),
-          process(pd.process)
-    {
-    }
+    ProcessData(ProcessData&& pd) = delete;
+    ProcessData& operator=(ProcessData const& pd) = delete;
+    ProcessData& operator=(ProcessData&& pd) = delete;
 
     NumLib::TimeStep timestep_previous;
     NumLib::TimeStep timestep_current;
