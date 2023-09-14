@@ -222,8 +222,10 @@ public:
                 // TODO allow reordering of gradients and thermodynamic forces?
                 if (grads[i].name != Grad::name)
                 {
-                    OGS_FATAL("The behaviour's {}th driver must be {}.", i,
-                              Grad::name);
+                    OGS_FATAL(
+                        "OGS expects the {}th gradient to be {} but MFront "
+                        "provides {}.",
+                        i, Grad::name, grads[i].name);
                 }
 
                 if (grads[i].type != Grad::type)
@@ -264,16 +266,16 @@ public:
                 if (tdfs[i].name != TDF::name)
                 {
                     OGS_FATAL(
-                        "The behaviour's {}th thermodynamic force must be {}.",
-                        i, TDF::name);
+                        "OGS expects the {}th thermodynamic force to be {} but "
+                        "MFront provides {}.",
+                        i, TDF::name, tdfs[i].name);
                 }
 
                 if (tdfs[i].type != TDF::type)
                 {
                     OGS_FATAL(
                         "The behaviour's {}th thermodynamic force ({}) must be "
-                        "of "
-                        "type {}.",
+                        "of type {}.",
                         i, tdfs[i].name, varTypeToString(TDF::type));
                 }
 
@@ -282,8 +284,7 @@ public:
                 {
                     OGS_FATAL(
                         "The behaviour's {}th thermodynamic force ({}) must "
-                        "have "
-                        "size {} instead of {}.",
+                        "have size {} instead of {}.",
                         i, tdfs[i].name, TDF::template size<DisplacementDim>(),
                         mgis::behaviour::getVariableSize(tdfs[i], hyp));
                 }
