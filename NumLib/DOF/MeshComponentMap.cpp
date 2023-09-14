@@ -24,9 +24,6 @@ namespace NumLib
 {
 using namespace detail;
 
-GlobalIndexType const MeshComponentMap::nop =
-    std::numeric_limits<GlobalIndexType>::max();
-
 #ifdef USE_PETSC
 MeshComponentMap::MeshComponentMap(
     std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)

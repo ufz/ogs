@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProjectDiff base_file="flow_fully_saturated_gas.prj">
     <remove msel="/*/*/process/jacobian_assembler"/>
-    <replace sel="/*/time_loop/output/prefix/text()">flow_fully_saturated_gas_newton</replace>
+    <replace msel="/*/time_loop/outputs/output[1]/prefix/text()">flow_fully_saturated_gas_newton</replace>
+    <replace msel="/*/time_loop/outputs/output[2]/prefix/text()">flow_fully_saturated_gas_{:meshname}_newton</replace>
+    <replace msel="/*/time_loop/outputs/output[3]/prefix/text()">empty_variables_flow_fully_saturated_gas_{:meshname}_newton</replace>
+
     <replace msel="/*/test_definition/vtkdiff/regex/text()">flow_fully_saturated_gas_newton_ts_.*.vtu</replace>
+
+    <replace msel="/*/test_definition/vtkdiff[last()-3]/regex/text()">flow_fully_saturated_gas_square_1x1_quad8_1e2_bottom_newton_ts_.*.vtu</replace>
+    <replace msel="/*/test_definition/vtkdiff[last()-2]/regex/text()">flow_fully_saturated_gas_square_1x1_quad8_1e2_bottom_newton_ts_.*.vtu</replace>
+    <replace msel="/*/test_definition/vtkdiff[last()-1]/regex/text()">empty_variables_flow_fully_saturated_gas_square_1x1_quad8_1e2_bottom_newton_ts_.*.vtu</replace>
+    <replace msel="/*/test_definition/vtkdiff[last()]/regex/text()">empty_variables_flow_fully_saturated_gas_square_1x1_quad8_1e2_bottom_newton_ts_.*.vtu</replace>
 </OpenGeoSysProjectDiff>
