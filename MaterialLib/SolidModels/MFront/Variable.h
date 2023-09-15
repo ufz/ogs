@@ -90,6 +90,26 @@ struct Strain : Variable<Strain>
 /// Instance that can be used for overload resolution/template type deduction.
 static constexpr Strain strain;
 
+/// Meta data for Green-Lagrange strain.
+struct GreenLagrangeStrain : Variable<GreenLagrangeStrain>
+{
+    /// The name of the variable in MFront.
+    constexpr static const char* name = "GreenLagrangeStrain";
+
+    /// The type of the variable in MFront.
+    constexpr static mgis::behaviour::Variable::Type type =
+        mgis::behaviour::Variable::Type::STENSOR;
+
+    /// The VariableArray entry that holds this variable in OGS.
+    ///
+    /// \note Currently we always pass strain via mechanical_strain.
+    constexpr static auto mpl_var =
+        &MaterialPropertyLib::VariableArray::mechanical_strain;
+};
+
+/// Instance that can be used for overload resolution/template type deduction.
+static constexpr GreenLagrangeStrain green_lagrange_strain;
+
 /// Meta data for deformation gradient.
 struct DeformationGradient : Variable<DeformationGradient>
 {
