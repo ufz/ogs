@@ -65,24 +65,16 @@ private:
         nan;  //!< mass fraction of dehydration (CaO) in the solid phase
     double _X_H = nan;  //!< mass fraction of hydration in the solid phase
 
-    //! reaction enthalpy in J/mol; negative for exothermic composition reaction
-    static const double _reaction_enthalpy;
-    static const double _reaction_entropy; //!< reaction entropy in J/mol/K
-    static const double _M_carrier;        //!< inert component molar mass
-    static const double _M_react;          //!< reactive component molar mass
-
-    static const double _tol_l;
-    static const double _tol_u;
-    static const double _tol_rho;
-
     const BaseLib::ConfigTree _ode_solver_config;
 
     template<typename>
     friend class ProcessLib::TESFEMReactionAdaptorCaOH2;
 
 public:
-    static MATERIALLIB_EXPORT const double rho_low; //! lower density limit
-    static MATERIALLIB_EXPORT const double rho_up;  //! upper density limit
+    static MATERIALLIB_EXPORT constexpr double rho_low =
+        1656.0;  //!< lower density limit
+    static MATERIALLIB_EXPORT constexpr double rho_up =
+        2200.0;  //!< upper density limit
 };
 
 }  // namespace Adsorption
