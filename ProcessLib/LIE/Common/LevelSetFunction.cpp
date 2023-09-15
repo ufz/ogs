@@ -63,7 +63,7 @@ std::vector<double> uGlobalEnrichments(
             std::accumulate(cbegin(frac->branches_slave),
                             cend(frac->branches_slave), levelsets[i],
                             [&](bool const enrich, auto const& branch)
-                            { return enrich & levelsetBranch(branch, x); }));
+                            { return enrich && levelsetBranch(branch, x); }));
     }
 
     // junctions
