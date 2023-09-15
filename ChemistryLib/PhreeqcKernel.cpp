@@ -144,9 +144,7 @@ void PhreeqcKernel::loadDatabase(std::string const& database)
 
 void PhreeqcKernel::reinitializeRates()
 {
-    count_rates = _reaction_rates.size();
-    rates = (struct rate*)realloc(
-        rates, (std::size_t)(count_rates) * sizeof(struct rate));
+    std::vector<struct rate> rates(_reaction_rates.size());
     int rate_id = 0;
     for (auto const& reaction_rate : _reaction_rates)
     {
