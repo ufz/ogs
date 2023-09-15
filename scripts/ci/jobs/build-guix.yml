@@ -18,7 +18,7 @@ build guix:
     - guix describe
     # SteadyStateDiffusion only!
     - guix build --fallback -L $PWD/.guix/modules ogs-ssd
-    - guix build --fallback -L $PWD/.guix/modules --with-input=openmpi=openmpi-pmix --without-tests=hdf5-parallel-openmpi ogs-petsc-ssd
+    - guix build --fallback -L $PWD/.guix/modules ogs-petsc-ssd
 
 deploy guix container eve:
   stage: build
@@ -33,7 +33,7 @@ deploy guix container eve:
     - which guix
     - guix describe
     # All processes.
-    - image=$( guix pack --fallback -L $PWD/.guix/modules -RR --format=squashfs --with-input=openmpi=openmpi-pmix --without-tests=hdf5-parallel-openmpi bash ogs-petsc | tee | tail -1 )
+    - image=$( guix pack --no-substitutes -L $PWD/.guix/modules -RR --format=squashfs bash ogs-petsc | tee | tail -1 )
     - echo "Image $image"
     - ssh sonjenk@frontend2.eve.ufz.de rm -f ${GUIX_PETSC_CONTAINER}
     - scp $image sonjenk@frontend2.eve.ufz.de:${GUIX_PETSC_CONTAINER}
@@ -50,7 +50,7 @@ test guix container eve:
     - mkdir -p $work_dir
     - cp -r ${CI_PROJECT_DIR}/Tests/Data/EllipticPETSc $work_dir/
     - export prj_file=${work_dir}/EllipticPETSc/cube_1e3_XDMF_np3.prj
-    - jid=$(sbatch --chdir=${work_dir} --job-name=test-guix-container --mem-per-cpu=1G --ntasks=3 --output=/work/%u/%x_%j.out --parsable --time=1 --partition=rocky-9 --wrap="srun apptainer exec ${GUIX_PETSC_CONTAINER} ogs ${prj_file}")
+    - jid=$(sbatch --chdir=${work_dir} --job-name=test-guix-container --mem-per-cpu=1G --ntasks=3 --output=/work/%u/%x_%j.out --parsable --time=5 --partition=rocky-9 --wrap="srun apptainer exec ${GUIX_PETSC_CONTAINER} ogs ${prj_file}")
     # - touch /work/$USER/ci_log_$jid.out # required on frontend1, tail -F does not recognize file created
     - while true; do grep "$jid" < <(squeue -hj "$jid") || break; sleep 10; done &> /dev/null & tail -F /work/$USER/test-guix-container_$jid.out --pid="$!" || true
     - exit_code=$(sacct -j $jid.0 --format=ExitCode --noheader | cut -d':' -f1)
