@@ -129,8 +129,12 @@
                 </property>
                 <property>
                     <name>permeability</name>
-                    <type>Constant</type>
-                    <value>2e-20</value>
+                    <type>Function</type>
+                    <value>
+                        <!-- If volumetric strain is not set by OGS, it will be NaN.
+                             Hence, the entire expression will be NaN and OGS will fail. -->
+                        <expression>2e-20 + volumetric_strain - volumetric_strain</expression>
+                    </value>
                 </property>
                 <property>
                     <name>porosity</name>
