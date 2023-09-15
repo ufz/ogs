@@ -743,16 +743,16 @@ GeoLib::GeoObject const* GEOObjects::getGeoObject(
 
 std::size_t GEOObjects::exists(const std::string& geometry_name) const
 {
-    std::size_t const size(_pnt_vecs.size());
-    auto const it = findVectorByName(_pnt_vecs, geometry_name);
-    if (it != _pnt_vecs.end())
+    if (auto const it = findVectorByName(_pnt_vecs, geometry_name);
+        it != _pnt_vecs.end())
     {
         return std::distance(_pnt_vecs.begin(), it);
     }
 
     // HACK for enabling conversion of files without loading the associated
     // geometry
-    if (size > 0 && _pnt_vecs[0]->getName() == "conversionTestRun#1")
+    if (_pnt_vecs.size() > 0 &&
+        _pnt_vecs[0]->getName() == "conversionTestRun#1")
     {
         return 1;
     }
