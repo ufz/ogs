@@ -153,6 +153,18 @@ struct Stress : Variable<Stress>
 
 static constexpr Stress stress;
 
+struct SecondPiolaKirchhoffStress : Variable<SecondPiolaKirchhoffStress>
+{
+    constexpr static const char* name = "SecondPiolaKirchhoffStress";
+
+    constexpr static mgis::behaviour::Variable::Type type =
+        mgis::behaviour::Variable::Type::STENSOR;
+
+    constexpr static auto mpl_var = &MaterialPropertyLib::VariableArray::stress;
+};
+
+static constexpr SecondPiolaKirchhoffStress second_piola_kirchhoff_stress;
+
 struct Saturation : Variable<Saturation>
 {
     constexpr static const char* name = "Saturation";
