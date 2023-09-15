@@ -51,16 +51,19 @@ private:
     void setChemicalEquilibrium();
     double CaHydration();
 
-    double _rho_s;           //!< solid phase density
-    double _p_gas;           //!< gas phase pressure in unit bar
-    double _p_r_g;           //!< pressure of H2O on gas phase
-    double _p_eq = 1.0;      //!< equilibrium pressure in bar
-    double _T_eq;            //!< equilibrium temperature
-    double _T_s;             //!< solid phase temperature
-    double _qR;              //!< rate of solid density change
-    double _x_react;         //!< mass fraction of water in gas phase
-    double _X_D;             //!< mass fraction of dehydration (CaO) in the solid phase
-    double _X_H;             //!< mass fraction of hydration in the solid phase
+    static constexpr double nan = std::numeric_limits<double>::quiet_NaN();
+
+    double _rho_s = nan;    //!< solid phase density
+    double _p_gas = nan;    //!< gas phase pressure in unit bar
+    double _p_r_g = nan;    //!< pressure of H2O on gas phase
+    double _p_eq = 1.0;     //!< equilibrium pressure in bar
+    double _T_eq = nan;     //!< equilibrium temperature
+    double _T_s = nan;      //!< solid phase temperature
+    double _qR = nan;       //!< rate of solid density change
+    double _x_react = nan;  //!< mass fraction of water in gas phase
+    double _X_D =
+        nan;  //!< mass fraction of dehydration (CaO) in the solid phase
+    double _X_H = nan;  //!< mass fraction of hydration in the solid phase
 
     //! reaction enthalpy in J/mol; negative for exothermic composition reaction
     static const double _reaction_enthalpy;
