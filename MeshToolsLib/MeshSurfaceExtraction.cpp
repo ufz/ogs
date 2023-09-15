@@ -277,10 +277,9 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
     std::for_each(sfc_elements.begin(), sfc_elements.end(),
                   [](MeshLib::Element* e) { delete e; });
 
-    std::vector<std::size_t> id_map;
-    id_map.reserve(sfc_nodes.size());
-    std::transform(begin(sfc_nodes), end(sfc_nodes), std::back_inserter(id_map),
-                   [](MeshLib::Node* const n) { return n->getID(); });
+    auto sfc_node_ids = sfc_nodes | MeshLib::views::ids;
+    std::vector<std::size_t> const id_map(sfc_node_ids.begin(),
+                                          sfc_node_ids.end());
 
     MeshLib::Mesh* result(new MeshLib::Mesh(subsfc_mesh.getName() + "-Surface",
                                             sfc_nodes, new_elements));
@@ -500,11 +499,10 @@ std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
         delete e;
     }
 
-    std::vector<std::size_t> nodes_to_bulk_nodes_id_map;
-    nodes_to_bulk_nodes_id_map.reserve(boundary_nodes.size());
-    std::transform(begin(boundary_nodes), end(boundary_nodes),
-                   std::back_inserter(nodes_to_bulk_nodes_id_map),
-                   [](MeshLib::Node* const n) { return n->getID(); });
+    auto boundary_node_ids = boundary_nodes | MeshLib::views::ids;
+
+    std::vector<std::size_t> const nodes_to_bulk_nodes_id_map(
+        boundary_node_ids.begin(), boundary_node_ids.end());
 
     std::unique_ptr<MeshLib::Mesh> boundary_mesh(new MeshLib::Mesh(
         bulk_mesh.getName() + "-boundary", boundary_nodes, new_elements));
