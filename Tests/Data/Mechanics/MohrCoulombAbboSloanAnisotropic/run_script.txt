@@ -34,7 +34,7 @@ import numpy as np import os as os import pyvista as pv import matplotlib.pyplot
 #In[2]:
 
 #Some plot settings
-    plt.style.use('seaborn-deep') plt.rcParams['lines.linewidth'] = 2.0 plt.rcParams['lines.color'] = 'black' plt.rcParams['legend.frameon'] = True plt.rcParams['font.family'] = 'serif' plt.rcParams['legend.fontsize'] = 14 plt.rcParams['font.size'] = 14 plt.rcParams['axes.spines.right'] = False plt.rcParams['axes.spines.top'] = False plt.rcParams['axes.spines.left'] = True plt.rcParams['axes.spines.bottom'] = True plt.rcParams['axes.axisbelow'] = True plt.rcParams['figure.figsize'] =(12, 6)
+    plt.style.use('seaborn-v0_8-deep') plt.rcParams['lines.linewidth'] = 2.0 plt.rcParams['lines.color'] = 'black' plt.rcParams['legend.frameon'] = True plt.rcParams['font.family'] = 'serif' plt.rcParams['legend.fontsize'] = 14 plt.rcParams['font.size'] = 14 plt.rcParams['axes.spines.right'] = False plt.rcParams['axes.spines.top'] = False plt.rcParams['axes.spines.left'] = True plt.rcParams['axes.spines.bottom'] = True plt.rcParams['axes.axisbelow'] = True plt.rcParams['figure.figsize'] =(12, 6)
 
 #In[3]:
 
