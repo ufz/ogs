@@ -62,7 +62,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 
 # Some plot settings
-plt.style.use("seaborn-deep")
+plt.style.use("seaborn-v0_8-deep")
 plt.rcParams["lines.linewidth"] = 2.0
 plt.rcParams["lines.color"] = "black"
 plt.rcParams["legend.frameon"] = True
