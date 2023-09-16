@@ -45,7 +45,7 @@ void checkMPLProperties(
     std::array const required_solid_properties = {MaterialPropertyLib::density};
 
     // Thermal properties are not checked because they can be phase property or
-    // meduim property (will be enabled later).
+    // medium property (will be enabled later).
     for (auto const& m : media)
     {
         checkRequiredProperties(*m.second, required_medium_properties);
