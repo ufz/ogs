@@ -807,6 +807,10 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ThermalDiffusion/TemperatureField_transport.prj RUNTIME 27)
 endif()
 
+if(NOT OGS_USE_PETSC)
+    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/performance_measurements.ipynb RUNTIME 200)
+endif()
+
 AddTest(
     NAME 2D_ReactiveMassTransport_Phreeqc_KineticReactantBlockTest_AllAsComponents
     PATH Parabolic/ComponentTransport/ReactiveTransport/KineticReactant_AllAsComponents
