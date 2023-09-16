@@ -24,6 +24,67 @@
 
 namespace NumLib
 {
+namespace detail
+{
+#if !defined(USE_PETSC) && !defined(USE_LIS)
+bool solvePicard(GlobalLinearSolver& linear_solver, GlobalMatrix& A,
+                 GlobalVector& rhs, GlobalVector& x,
+                 bool const compute_necessary)
+{
+    BaseLib::RunTime time_linear_solver;
+    time_linear_solver.start();
+
+    if (compute_necessary)
+    {
+        if (!linear_solver.compute(A))
+        {
+            ERR("Picard: The linear solver failed in the compute() step.");
+            return false;
+        }
+    }
+
+    bool const iteration_succeeded = linear_solver.solve(rhs, x);
+
+    INFO("[time] Linear solver took {:g} s.", time_linear_solver.elapsed());
+
+    if (iteration_succeeded)
+    {
+        return true;
+    }
+
+    ERR("Picard: The linear solver failed in the solve() step.");
+    return false;
+}
+#else
+bool solvePicard(GlobalLinearSolver& linear_solver, GlobalMatrix& A,
+                 GlobalVector& rhs, GlobalVector& x,
+                 bool const compute_necessary)
+{
+    if (!compute_necessary)
+    {
+        WARN(
+            "The performance optimization to skip the linear solver compute() "
+            "step is not implemented for PETSc or LIS linear solvers.");
+    }
+
+    BaseLib::RunTime time_linear_solver;
+    time_linear_solver.start();
+
+    bool const iteration_succeeded = linear_solver.solve(A, rhs, x);
+
+    INFO("[time] Linear solver took {:g} s.", time_linear_solver.elapsed());
+
+    if (iteration_succeeded)
+    {
+        return true;
+    }
+
+    ERR("Picard: The linear solver failed in the solve() step.");
+    return false;
+}
+#endif
+}  // namespace detail
+
 void NonlinearSolver<NonlinearSolverTag::Picard>::
     calculateNonEquilibriumInitialResiduum(
         std::vector<GlobalVector*> const& x,
@@ -128,17 +189,11 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
             _convergence_criterion->checkResidual(res);
         }
 
-        BaseLib::RunTime time_linear_solver;
-        time_linear_solver.start();
         bool iteration_succeeded =
-            _linear_solver.solve(A, rhs, *x_new[process_id]);
-        INFO("[time] Linear solver took {:g} s.", time_linear_solver.elapsed());
+            detail::solvePicard(_linear_solver, A, rhs, x_new_process,
+                                sys.linearSolverNeedsToCompute());
 
-        if (!iteration_succeeded)
-        {
-            ERR("Picard: The linear solver failed.");
-        }
-        else
+        if (iteration_succeeded)
         {
             if (postIterationCallback)
             {
