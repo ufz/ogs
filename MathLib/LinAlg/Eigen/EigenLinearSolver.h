@@ -46,6 +46,24 @@ public:
      */
     EigenOption& getOption() { return option_; }
 
+    /**
+     * Performs the compute() step of the Eigen linear solver.
+     *
+     * I.e., computes the (LU) decomposition in case of a direct solver, or
+     * computes the preconditioner of an iterative solver.
+     */
+    bool compute(EigenMatrix& A);
+
+    /**
+     * Solves the linear system for the given right-hand side \c b and initial
+     * guess \c x.
+     *
+     * \pre compute() must have been called before. (Not necessarily for every
+     * \c x and \c b separately, but for every new/changed matrix A.
+     */
+    bool solve(EigenVector& b, EigenVector& x);
+
+    /// Computes and solves in a single call.
     bool solve(EigenMatrix& A, EigenVector& b, EigenVector& x);
 
 protected:
