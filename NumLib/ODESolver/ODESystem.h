@@ -77,6 +77,14 @@ public:
     virtual void updateConstraints(GlobalVector& /*lower*/,
                                    GlobalVector& /*upper*/,
                                    int const /*process_id*/){};
+
+    //! Indicates whether the assembled matrices change only upon timestep
+    //! change. This enables some optimizations in the linear solver, but the
+    //! user must be 100 % sure that she uses this option correctly.
+    virtual bool shouldLinearSolverComputeOnlyUponTimestepChange() const
+    {
+        return false;
+    }
 };
 
 /*! Interface for a first-order implicit quasi-linear ODE.

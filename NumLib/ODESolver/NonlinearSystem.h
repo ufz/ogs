@@ -126,6 +126,10 @@ public:
     //! \pre computeKnownSolutions() must have been called before.
     virtual void applyKnownSolutionsPicard(GlobalMatrix& A, GlobalVector& rhs,
                                            GlobalVector& x) const = 0;
+
+    //! Returns whether the assembled matrix \f$A\f$ has changed and the linear
+    //! solver must perform the MathLib::EigenLinearSolver::compute() step.
+    virtual bool linearSolverNeedsToCompute() const = 0;
 };
 
 //! @}
