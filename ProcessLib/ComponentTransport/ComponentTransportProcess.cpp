@@ -44,15 +44,37 @@ ComponentTransportProcess::ComponentTransportProcess(
     std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
     std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
         chemical_solver_interface,
-    bool const is_linear)
+    bool const is_linear,
+    bool const ls_compute_only_upon_timestep_change)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
       _process_data(std::move(process_data)),
       _surfaceflux(std::move(surfaceflux)),
       _chemical_solver_interface(std::move(chemical_solver_interface)),
-      _asm_mat_cache{is_linear, use_monolithic_scheme}
+      _asm_mat_cache{is_linear, use_monolithic_scheme},
+      _ls_compute_only_upon_timestep_change{
+          ls_compute_only_upon_timestep_change}
 {
+    if (ls_compute_only_upon_timestep_change)
+    {
+        if (!is_linear)
+        {
+            OGS_FATAL(
+                "Using the linear solver compute() method only upon timestep "
+                "change only makes sense for linear model equations.");
+        }
+
+        WARN(
+            "You specified that the ComponentTransport linear solver will do "
+            "the compute() step only upon timestep change. This is an expert "
+            "option. It is your responsibility to ensure that "
+            "the conditions for the correct use of this feature are met! "
+            "Otherwise OGS might compute garbage without being recognized. "
+            "There is no "
+            "safety net!");
+    }
+
     _residua.push_back(MeshLib::getOrCreateMeshProperty<double>(
         mesh, "LiquidMassFlowRate", MeshLib::MeshItemType::Node, 1));
 

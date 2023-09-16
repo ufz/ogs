@@ -111,7 +111,8 @@ public:
         std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
         std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
             chemical_solver_interface,
-        bool const is_linear);
+        bool const is_linear,
+        bool const ls_compute_only_upon_timestep_change);
 
     //! \name ODESystem interface
     //! @{
@@ -140,6 +141,11 @@ public:
                                      const double t,
                                      const double dt,
                                      int const process_id) override;
+
+    bool shouldLinearSolverComputeOnlyUponTimestepChange() const override
+    {
+        return _ls_compute_only_upon_timestep_change;
+    }
 
 private:
     void initializeConcreteProcess(
@@ -176,6 +182,8 @@ private:
     std::vector<MeshLib::PropertyVector<double>*> _residua;
 
     AssembledMatrixCache _asm_mat_cache;
+
+    bool const _ls_compute_only_upon_timestep_change;
 };
 
 }  // namespace ComponentTransport
