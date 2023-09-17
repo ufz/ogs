@@ -33,7 +33,8 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "SMALL_DEFORMATION");
@@ -141,7 +142,8 @@ template std::unique_ptr<Process> createSmallDeformationProcess<2>(
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 template std::unique_ptr<Process> createSmallDeformationProcess<3>(
     std::string const& name,
@@ -152,7 +154,8 @@ template std::unique_ptr<Process> createSmallDeformationProcess<3>(
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 }  // namespace SmallDeformation
 }  // namespace ProcessLib
