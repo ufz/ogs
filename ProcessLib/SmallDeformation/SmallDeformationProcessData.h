@@ -14,6 +14,7 @@
 #include <memory>
 #include <utility>
 
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
@@ -33,6 +34,9 @@ struct SmallDeformationProcessData
 {
     MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
+    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
+        media_map = nullptr;
+
     std::map<
         int,
         std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
@@ -41,9 +45,6 @@ struct SmallDeformationProcessData
     /// Optional, initial stress field. A symmetric tensor, short vector
     /// representation of length 4 or 6, ParameterLib::Parameter<double>.
     ParameterLib::Parameter<double> const* const initial_stress;
-
-    /// Solid's density. A scalar quantity, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const& solid_density;
 
     /// Specific body forces applied to the solid.
     /// It is usually used to apply gravitational forces.

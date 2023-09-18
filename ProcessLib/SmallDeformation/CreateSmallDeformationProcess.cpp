@@ -12,6 +12,7 @@
 
 #include <cassert>
 
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
@@ -23,6 +24,16 @@ namespace ProcessLib
 {
 namespace SmallDeformation
 {
+void checkMPLProperties(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
+{
+    for (auto const& m : media)
+    {
+        checkRequiredProperties(m.second->phase("Solid"),
+                                {{MaterialPropertyLib::density}});
+    }
+}
+
 template <int DisplacementDim>
 std::unique_ptr<Process> createSmallDeformationProcess(
     std::string const& name,
@@ -73,12 +84,13 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, local_coordinate_system, config);
 
-    // Solid density
-    auto const& solid_density = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION__solid_density}
-        "solid_density", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as solid density parameter.", solid_density.name);
+    //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__solid_density}
+    if (config.getConfigParameterOptional<std::string>("solid_density"))
+    {
+        OGS_FATAL(
+            "The <solid_density> tag has been removed. Use <media> definitions "
+            "to specify solid's density.");
+    }
 
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
@@ -98,6 +110,14 @@ std::unique_ptr<Process> createSmallDeformationProcess(
 
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
+
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+    DBUG(
+        "Check the media properties of SmallDeformation process "
+        "...");
+    checkMPLProperties(media);
+    DBUG("Media properties verified.");
 
     // Reference temperature
     auto const reference_temperature = ParameterLib::findOptionalTagParameter<
@@ -119,9 +139,12 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         &mesh);
 
     SmallDeformationProcessData<DisplacementDim> process_data{
-        materialIDs(mesh),   std::move(solid_constitutive_relations),
-        initial_stress,      solid_density,
-        specific_body_force, reference_temperature};
+        materialIDs(mesh),
+        std::move(media_map),
+        std::move(solid_constitutive_relations),
+        initial_stress,
+        specific_body_force,
+        reference_temperature};
 
     SecondaryVariableCollection secondary_variables;
 
