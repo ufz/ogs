@@ -29,16 +29,16 @@ SaturationVolStrain::SaturationVolStrain(
     double const residual_gas_saturation,
     double const exponent,
     double const p_b,
-    double const b11,
-    double const b22,
-    double const b33)
+    double const e_0,
+    double const e_m,
+    double const a)
     : S_L_res_(residual_liquid_saturation),
       S_L_max_(1. - residual_gas_saturation),
       m_(exponent),
       p_b_(p_b),
-      b11_(b11),
-      b22_(b22),
-      b33_(b33)
+      e_0_(e_0),
+      e_m_(e_m),
+      a_(a)
 {
     name_ = std::move(name);
 
@@ -67,8 +67,8 @@ PropertyDataType SaturationVolStrain::value(
     /*double const e_vol_pls = variable_array.equivalent_plastic_strain;*/
 
     double const n = 1. / (1. - m_);
-    double const ten_base_exponent = e_vol > 0.0 ? b33_ * e_vol : b22_ * e_vol;
-    double const factor = /*std::exp(b11_ * e_vol_pls)*/ std::pow(10.0, ten_base_exponent) ;
+    double const ten_base_exponent = e_vol > 0.0 ? a_ * e_vol : e_m_ * e_vol;
+    double const factor = /*std::exp(e_0_ * e_vol_pls)*/ std::pow(10.0, ten_base_exponent) ;
 
     double const p = (p_cap * factor) / p_b_;
     double const p_to_n = std::pow(p, n);
@@ -102,9 +102,9 @@ PropertyDataType SaturationVolStrain::dValue(
 
 
     double const n = 1. / (1. - m_);
-    double const ten_base_exponent = e_vol > 0.0 ? b33_ * e_vol : b22_ * e_vol;
+    double const ten_base_exponent = e_vol > 0.0 ? a_ * e_vol : e_m_ * e_vol;
     double const factor =
-        std::pow(10.0, ten_base_exponent) /*std::exp(b11_ e_vol_pls)*/;
+        std::pow(10.0, ten_base_exponent) /*std::exp(e_0_ e_vol_pls)*/;
     double const factorn =
         std::pow(10.0, ten_base_exponent * n); 
     double const p_f = (p_cap * factor) / p_b_;
