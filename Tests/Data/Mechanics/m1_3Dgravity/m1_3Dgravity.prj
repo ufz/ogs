@@ -67,7 +67,7 @@
         </output>
     </time_loop>
     <media>
-        <medium>
+        <medium id="0, 1, 2, 3">
             <phases>
                 <phase>
                     <type>Solid</type>
