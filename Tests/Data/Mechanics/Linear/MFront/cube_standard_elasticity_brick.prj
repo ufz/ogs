@@ -15,7 +15,6 @@
                     <material_property name="PoissonRatio" parameter="nu"/>
                 </material_properties>
             </constitutive_relation>
-            <solid_density>rho_sr</solid_density>
             <specific_body_force>0 0 0</specific_body_force>
             <reference_temperature>T_ref</reference_temperature>
             <process_variables>
@@ -67,6 +66,22 @@
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
     <parameters>
         <parameter>
             <name>T_ref</name>
@@ -107,11 +122,6 @@
             <name>TensionCutOffParameter</name>
             <type>Constant</type>
             <value>0</value>
-        </parameter>
-        <parameter>
-            <name>rho_sr</name>
-            <type>Constant</type>
-            <value>1</value>
         </parameter>
         <parameter>
             <name>displacement0</name>

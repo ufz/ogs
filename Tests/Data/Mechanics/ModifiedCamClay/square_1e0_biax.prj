@@ -24,7 +24,6 @@
                     <state_variable name="VolumeRatio" parameter="InitialVolumeRatio"/>
                 </initial_values>
             </constitutive_relation>
-            <solid_density>rho_sr</solid_density>
             <specific_body_force>0 0</specific_body_force>
             <process_variables>
                 <process_variable>displacement</process_variable>
@@ -81,6 +80,22 @@
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
     <parameters>
         <!--Modified Cam clay parameters-->
         <parameter>
@@ -119,11 +134,6 @@
             <value>1.78571428571428571429</value> <!--= 1/(1-0.44)-->
         </parameter>
         <!-- Initial and boundary values -->
-        <parameter>
-            <name>rho_sr</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
         <parameter>
             <name>displacement0</name>
             <type>Constant</type>

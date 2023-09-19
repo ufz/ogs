@@ -17,7 +17,6 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-            <solid_density>rho_sr</solid_density>
             <specific_body_force>0 0</specific_body_force>
             <process_variables>
                 <process_variable>displacement</process_variable>
@@ -82,6 +81,22 @@
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2300.0</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
     <parameters>
         <parameter>
             <name>E</name>
@@ -92,11 +107,6 @@
             <name>nu</name>
             <type>Constant</type>
             <value>.21</value>
-        </parameter>
-        <parameter>
-            <name>rho_sr</name>
-            <type>Constant</type>
-            <value>2300.0</value>
         </parameter>
         <parameter>
             <name>displacement0</name>

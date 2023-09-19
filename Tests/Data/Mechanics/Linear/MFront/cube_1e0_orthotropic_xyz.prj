@@ -22,7 +22,6 @@
                     <material_property name="ShearModulus13" parameter="G13"/>
                 </material_properties>
             </constitutive_relation>
-            <solid_density>rho_sr</solid_density>
             <specific_body_force>0 0 0</specific_body_force>
             <reference_temperature>T_ref</reference_temperature>
             <process_variables>
@@ -82,6 +81,22 @@
         <basis_vector_1>e1</basis_vector_1>
         <basis_vector_2>e2</basis_vector_2>
     </local_coordinate_system>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
     <parameters>
         <parameter>
             <name>T_ref</name>
@@ -147,11 +162,6 @@
             <name>G13</name>
             <type>Constant</type>
             <values>1</values>
-        </parameter>
-        <parameter>
-            <name>rho_sr</name>
-            <type>Constant</type>
-            <value>1</value>
         </parameter>
         <parameter>
             <name>displacement0</name>

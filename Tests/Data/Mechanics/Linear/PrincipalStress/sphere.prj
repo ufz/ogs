@@ -24,7 +24,6 @@
                 <secondary_variable internal_name="sigma" output_name="sigma"/>
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
             </secondary_variables>
-            <solid_density>rho_sr</solid_density>
             <specific_body_force>0 0</specific_body_force>
         </process>
     </processes>
@@ -72,6 +71,22 @@
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
     <parameters>
         <!-- Mechanics -->
         <parameter>
@@ -117,11 +132,6 @@
             <mesh>sphere_out</mesh>
             <type>Function</type>
             <expression>-x*1.01325e5/0.225</expression>
-        </parameter>
-        <parameter>
-            <name>rho_sr</name>
-            <type>Constant</type>
-            <value>1</value>
         </parameter>
         <parameter>
             <name>p_out_y</name>

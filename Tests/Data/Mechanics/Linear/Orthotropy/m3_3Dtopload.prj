@@ -14,7 +14,6 @@
                 <shear_moduli>G</shear_moduli>
                 <poissons_ratios>nu</poissons_ratios>
             </constitutive_relation>
-            <solid_density>rho</solid_density>
             <specific_body_force>0 0 -9.81</specific_body_force>
             <process_variables>
                 <process_variable>displacement</process_variable>
@@ -69,6 +68,22 @@
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2.45e+3</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
     <parameters>
         <!-- Transversal anisotropic along z-axis -->
         <!-- Stresses in Pa -->
@@ -92,11 +107,6 @@
             <!-- nu_{12} nu_{23} nu_{13} -->
             <!-- nu nu_{ia} nu_{ia} -->
             <values>.33 .24 .24</values>
-        </parameter>
-        <parameter>
-            <name>rho</name>
-            <type>Constant</type>
-            <value>2.45e+3</value>
         </parameter>
         <parameter>
             <name>zero</name>
