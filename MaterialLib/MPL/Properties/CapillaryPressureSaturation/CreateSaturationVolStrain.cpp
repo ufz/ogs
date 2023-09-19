@@ -36,18 +36,18 @@ std::unique_ptr<SaturationVolStrain> createSaturationVolStrain(
         config.getConfigParameter<double>("exponent");
     //! \ogs_file_param{properties__property__SaturationVolStrain__p_b}
     auto const p_b = config.getConfigParameter<double>("p_b");
-    auto const b11 =
+    auto const e_0 =
         //! \ogs_file_param{properties__property__SaturationVolStrain__b1}
-        config.getConfigParameter<double>("b11");
-    auto const b22 =
+        config.getConfigParameter<double>("e_0");
+    auto const e_m =
         //! \ogs_file_param{properties__property__SaturationVolStrain__b2}
-        config.getConfigParameter<double>("b22");
-    auto const b33 =
+        config.getConfigParameter<double>("e_m");
+    auto const a =
         //! \ogs_file_param{properties__property__SaturationVolStrain__b3}
-        config.getConfigParameter<double>("b33");
+        config.getConfigParameter<double>("a");
 
     return std::make_unique<SaturationVolStrain>(
         std::move(property_name), residual_liquid_saturation,
-        residual_gas_saturation, exponent, p_b,b11,b22,b33);
+        residual_gas_saturation, exponent, p_b,e_0,e_m,a);
 }
 }  // namespace MaterialPropertyLib
