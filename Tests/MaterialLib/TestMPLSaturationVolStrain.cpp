@@ -22,13 +22,13 @@ TEST(MaterialPropertyLib, SaturationVolStrain)
     double const residual_gas_saturation = 0.05;
     double const exponent = 0.79;
     double const p_b = 5000;
-    double const b11 = 300;
-    double const b22 = 100;
-    double const b33 = 50;
+    double const e_0 = 300;
+    double const e_m = 100;
+    double const a = 50;
 
     MPL::Property const& pressure_saturation =
         MPL::SaturationVolStrain{"saturation", residual_liquid_saturation,
-                                    residual_gas_saturation, exponent, p_b, b11, b22, b33};
+                                    residual_gas_saturation, exponent, p_b, e_0, e_m, a};
 
     MPL::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
