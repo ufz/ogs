@@ -51,9 +51,9 @@ public:
                            double const residual_gas_saturation,
                            double const exponent,
                            double const p_b,
-                           double const b11,
-                           double const b22,
-                           double const b33);
+                           double const e_0,
+                           double const e_m,
+                           double const a);
 
     void checkScale() const override
     {
@@ -82,8 +82,8 @@ private:
     double const S_L_max_;
     double const m_;
     double const p_b_;
-    double const b11_;
-    double const b22_;
-    double const b33_;
+    double const e_0_;
+    double const e_m_;
+    double const a_;
 };
 }  // namespace MaterialPropertyLib
