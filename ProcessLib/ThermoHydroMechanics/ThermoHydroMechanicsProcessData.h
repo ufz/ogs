@@ -43,6 +43,11 @@ struct ThermoHydroMechanicsProcessData
                       MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
 
+    /// The constitutive relation for the mechanical part of ice. When no
+    /// freezing is configured, this is a nullptr.
+    std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
+        ice_constitutive_relation;
+
     /// Optional, initial stress field. A symmetric tensor, short vector
     /// representation of length 4 or 6, ParameterLib::Parameter<double>.
     ParameterLib::Parameter<double> const* const initial_stress;
@@ -52,8 +57,11 @@ struct ThermoHydroMechanicsProcessData
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
 
-    std::unique_ptr<NumLib::NumericalStabilization> stabilizer;
+    NumLib::NumericalStabilization stabilizer;
 
+    MeshLib::PropertyVector<double>* element_fluid_density = nullptr;
+    MeshLib::PropertyVector<double>* element_viscosity = nullptr;
+    MeshLib::PropertyVector<double>* element_stresses = nullptr;
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
     MeshLib::PropertyVector<double>* temperature_interpolated = nullptr;
 

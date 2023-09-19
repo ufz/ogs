@@ -170,13 +170,6 @@ LineSegment Polyline::getSegment(std::size_t i) const
                        _ply_pnts[_ply_pnt_ids[i + 1]], false);
 }
 
-LineSegment Polyline::getSegment(std::size_t i)
-{
-    assert(i < getNumberOfSegments());
-    return LineSegment(_ply_pnts[_ply_pnt_ids[i]],
-                       _ply_pnts[_ply_pnt_ids[i + 1]], false);
-}
-
 void Polyline::setPointID(std::size_t idx, std::size_t id)
 {
     assert(idx < _ply_pnt_ids.size());
@@ -477,6 +470,36 @@ Polyline::SegmentIterator Polyline::SegmentIterator::operator-(
     Polyline::SegmentIterator t(*this);
     t -= n;
     return t;
+}
+
+void resetPointIDs(Polyline& polyline, std::vector<std::size_t> const& mapping)
+{
+    if (polyline.getPointsVec().size() != mapping.size())
+    {
+        OGS_FATAL(
+            "internal error in resetPointIDs(): polyline based on point vector "
+            "of size {}, given mapping has size {}",
+            polyline.getPointsVec().size(), mapping.size());
+    }
+    for (std::size_t i = 0; i < polyline.getNumberOfPoints(); ++i)
+    {
+        polyline.setPointID(i, mapping[polyline.getPointID(i)]);
+    }
+}
+
+void markUsedPoints(Polyline const& polyline, std::vector<bool>& used_points)
+{
+    if (polyline.getPointsVec().size() != used_points.size())
+    {
+        OGS_FATAL(
+            "internal error in markUsedPoints(): polyline based on point "
+            "vector of size {}, given used_points has size {}",
+            polyline.getPointsVec().size(), used_points.size());
+    }
+    for (std::size_t i = 0; i < polyline.getNumberOfPoints(); ++i)
+    {
+        used_points[polyline.getPointID(i)] = true;
+    }
 }
 
 bool containsEdge(const Polyline& ply, std::size_t id0, std::size_t id1)

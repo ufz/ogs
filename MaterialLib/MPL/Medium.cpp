@@ -13,6 +13,7 @@
 #include "Medium.h"
 
 #include "BaseLib/Algorithm.h"
+#include "BaseLib/Error.h"
 #include "Properties/Properties.h"
 
 namespace MaterialPropertyLib
@@ -79,6 +80,21 @@ std::size_t Medium::numberOfPhases() const
 std::string Medium::description() const
 {
     return "medium " + std::to_string(material_id_);
+}
+
+void checkRequiredProperties(
+    Medium const& medium,
+    std::span<PropertyType const> const required_properties)
+{
+    for (auto const& p : required_properties)
+    {
+        if (!medium.hasProperty(p))
+        {
+            OGS_FATAL(
+                "The property '{:s}' is missing in the medium definition.",
+                property_enum_to_string[p]);
+        }
+    }
 }
 
 Phase const& fluidPhase(Medium const& medium)

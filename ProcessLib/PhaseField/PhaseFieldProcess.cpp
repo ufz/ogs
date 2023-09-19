@@ -12,6 +12,7 @@
 
 #include <cassert>
 
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "PhaseFieldFEM.h"
 #include "ProcessLib/Process.h"
@@ -165,23 +166,25 @@ void PhaseFieldProcess<DisplacementDim>::initializeConcreteProcess(
 }
 
 template <int DisplacementDim>
-void PhaseFieldProcess<DisplacementDim>::initializeBoundaryConditions()
+void PhaseFieldProcess<DisplacementDim>::initializeBoundaryConditions(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     // Staggered scheme:
     // for the equations of deformation.
     const int mechanical_process_id = 0;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map, mechanical_process_id);
+        *_local_to_global_index_map, mechanical_process_id, media);
     // for the phase field
     const int phasefield_process_id = 1;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map_single_component, phasefield_process_id);
+        *_local_to_global_index_map_single_component, phasefield_process_id,
+        media);
 }
 
 template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble PhaseFieldProcess.");
@@ -210,14 +213,14 @@ void PhaseFieldProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot, process_id, M, K,
-        b);
+        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id, M,
+        K, b);
 }
 
 template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
@@ -244,8 +247,8 @@ void PhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        process_id, M, K, b, Jac);
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
+        x_prev, process_id, M, K, b, Jac);
 
     if (process_id == 0)
     {
@@ -277,7 +280,8 @@ void PhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
-    std::vector<GlobalVector*> const& x, const double t,
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& /*x_prev*/, const double t,
     const double /*delta_t*/, int const process_id)
 {
     if (isPhaseFieldProcess(process_id))
@@ -303,6 +307,18 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
             _process_data.elastic_energy, _process_data.surface_energy,
             _process_data.pressure_work, _coupled_solutions);
 
+#ifdef USE_PETSC
+        double const elastic_energy = _process_data.elastic_energy;
+        MPI_Allreduce(&elastic_energy, &_process_data.elastic_energy, 1,
+                      MPI_DOUBLE, MPI_SUM, PETSC_COMM_WORLD);
+        double const surface_energy = _process_data.surface_energy;
+        MPI_Allreduce(&surface_energy, &_process_data.surface_energy, 1,
+                      MPI_DOUBLE, MPI_SUM, PETSC_COMM_WORLD);
+        double const pressure_work = _process_data.pressure_work;
+        MPI_Allreduce(&pressure_work, &_process_data.pressure_work, 1,
+                      MPI_DOUBLE, MPI_SUM, PETSC_COMM_WORLD);
+#endif
+
         INFO(
             "Elastic energy: {:g} Surface energy: {:g} Pressure work: {:g}  at "
             "time: {:g} ",
@@ -317,7 +333,7 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
-    GlobalVector const& x, GlobalVector const& /*xdot*/, const double t,
+    GlobalVector const& x, GlobalVector const& /*x_prev*/, const double t,
     double const /*dt*/, const int process_id)
 {
     _process_data.crack_volume = 0.0;

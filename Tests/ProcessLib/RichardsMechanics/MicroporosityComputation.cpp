@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -37,6 +38,7 @@ computeElasticTangentStiffness(
     MPL::VariableArray variable_array_prev;
 
     auto const null_state = solid_material.createMaterialStateVariables();
+    solid_material.initializeInternalStateVariables(t, x_position, *null_state);
 
     using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 

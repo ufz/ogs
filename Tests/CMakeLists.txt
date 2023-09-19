@@ -24,9 +24,7 @@ append_source_files(TEST_SOURCES GeoLib/IO)
 append_source_files(TEST_SOURCES MaterialLib)
 append_source_files(TEST_SOURCES MathLib)
 append_source_files(TEST_SOURCES MeshLib)
-if(NOT OGS_BUILD_WHEEL)
-    append_source_files(TEST_SOURCES ApplicationsLib)
-endif()
+append_source_files(TEST_SOURCES MeshToolsLib)
 append_source_files(TEST_SOURCES MeshGeoToolsLib)
 append_source_files(TEST_SOURCES_NUMLIB NumLib)
 # Disable Unity build for some files
@@ -79,6 +77,7 @@ endif()
 
 if(OGS_USE_MFRONT)
     add_subdirectory(MaterialLib/MFront)
+    append_source_files(TEST_SOURCES MaterialLib/MFront)
 endif()
 
 ogs_add_executable(testrunner ${TEST_SOURCES})
@@ -90,10 +89,12 @@ target_link_libraries(
             autocheck
             gmock
             gtest
+            MeshToolsLib
             MeshGeoToolsLib
             MaterialLib
             MathLib
             MeshLib
+            MeshToolsLib
             NumLib
             ParameterLib
             $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:ProcessLib>
@@ -101,7 +102,8 @@ target_link_libraries(
             TestInfoLib
             VTK::FiltersGeneral
             VTK::FiltersSources
-            Boost::mp11 # TODO move OGSMFrontThermodynamicForcesView to MathLib?
+            Boost::boost # TODO move OGSMFrontThermodynamicForcesView to
+                         # MathLib?
             $<$<TARGET_EXISTS:Threads::Threads>:Threads::Threads>
             $<$<TARGET_EXISTS:LIE>:LIE>
             $<$<TARGET_EXISTS:TH2M>:TH2M>

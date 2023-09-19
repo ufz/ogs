@@ -19,8 +19,8 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes],
 {
     std::copy_n(nodes, n_all_nodes, std::begin(_nodes));
     delete[] nodes;
-    this->_neighbors = new Element*[getNumberOfNeighbors()];
-    std::fill(this->_neighbors, this->_neighbors + getNumberOfNeighbors(),
+    this->_neighbors = new Element*[ELEMENT_RULE::n_neighbors];
+    std::fill(this->_neighbors, this->_neighbors + ELEMENT_RULE::n_neighbors,
               nullptr);
 
     this->space_dimension_ = ELEMENT_RULE::dimension;
@@ -31,8 +31,9 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(
     std::array<Node*, n_all_nodes> const& nodes, std::size_t id)
     : Element(id), _nodes{nodes}
 {
-    this->_neighbors = new Element*[getNumberOfNeighbors()];
-    std::fill(this->_neighbors, this->_neighbors + getNumberOfNeighbors(), nullptr);
+    this->_neighbors = new Element*[ELEMENT_RULE::n_neighbors];
+    std::fill(this->_neighbors, this->_neighbors + ELEMENT_RULE::n_neighbors,
+              nullptr);
 
     this->space_dimension_ = ELEMENT_RULE::dimension;
 }
@@ -42,8 +43,8 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(
     TemplateElement<ELEMENT_RULE> const& e)
     : Element(e.getID()), _nodes{e._nodes}
 {
-    this->_neighbors = new Element*[getNumberOfNeighbors()];
-    for (unsigned i = 0; i < getNumberOfNeighbors(); i++)
+    this->_neighbors = new Element*[ELEMENT_RULE::n_neighbors];
+    for (unsigned i = 0; i < ELEMENT_RULE::n_neighbors; i++)
     {
         this->_neighbors[i] = e._neighbors[i];
     }

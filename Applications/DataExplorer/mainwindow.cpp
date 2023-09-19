@@ -36,7 +36,6 @@
 #include <vtkRenderer.h>
 #include <vtkVRMLExporter.h>
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "Applications/FileIO/FEFLOW/FEFLOWGeoInterface.h"
 #include "Applications/FileIO/FEFLOW/FEFLOWMeshInterface.h"
 #include "Applications/FileIO/GMSInterface.h"
@@ -51,6 +50,7 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Histogram.h"
 #include "GeoLib/DuplicateGeometry.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
 #include "GeoLib/Raster.h"
@@ -60,11 +60,11 @@
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshQuality/ElementQualityInterface.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
-#include "MeshLib/convertMeshToGeo.h"
+#include "MeshToolsLib/MeshQuality/ElementQualityInterface.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
+#include "MeshToolsLib/convertMeshToGeo.h"
 
 // Dialogs
 #include "DataView/CreateStructuredGridDialog.h"
@@ -72,12 +72,15 @@
 #include "DataView/DiagramView/DiagramPrefsDialog.h"
 #include "DataView/GMSHPrefsDialog.h"
 #include "DataView/GeoOnMeshMappingDialog.h"
+#include "DataView/Layers2GridDialog.h"
 #include "DataView/LicenseDialog.h"
 #include "DataView/LineEditDialog.h"
 #include "DataView/MergeGeometriesDialog.h"
 #include "DataView/MeshAnalysisDialog.h"
 #include "DataView/MeshElementRemovalDialog.h"
 #include "DataView/MeshQualitySelectionDialog.h"
+#include "DataView/TranslateDataDialog.h"
+#include "DataView/Vtu2GridDialog.h"
 #ifdef OGS_USE_NETCDF
 #include "VtkVis/NetCdfConfigureDialog.h"
 #endif  // OGS_USE_NETCDF
@@ -1109,7 +1112,7 @@ void MainWindow::mapGeometry(const std::string& geo_name)
 
 void MainWindow::convertMeshToGeometry(const MeshLib::Mesh* mesh)
 {
-    MeshLib::convertMeshToGeo(*mesh, _project.getGEOObjects());
+    MeshToolsLib::convertMeshToGeo(*mesh, _project.getGEOObjects());
 }
 
 void MainWindow::exportBoreholesToGMS(std::string listName,
@@ -1345,6 +1348,33 @@ void MainWindow::showMeshAnalysisDialog()
     dlg->exec();
 }
 
+void MainWindow::showTranslateDataDialog()
+{
+    auto dlg = TranslateDataDialog(_meshModel.get(), _geo_model.get());
+    dlg.exec();
+}
+
+void MainWindow::showLayers2GridDialog()
+{
+    if (_meshModel == nullptr)
+    {
+        OGSError::box("The given mesh model does not exist.");
+    }
+
+    auto dlg = Layers2GridDialog(*_meshModel);
+    dlg.exec();
+}
+
+void MainWindow::showVtu2GridDialog()
+{
+    if (_meshModel == nullptr)
+    {
+        OGSError::box("The given mesh model does not exist.");
+    }
+    auto dlg = Vtu2GridDialog(*_meshModel);
+    dlg.exec();
+}
+
 void MainWindow::convertPointsToStations(std::string const& geo_name)
 {
     std::string stn_name = geo_name + " Stations";
@@ -1412,8 +1442,8 @@ void MainWindow::showMeshQualitySelectionDialog(
         return;
     }
     MeshLib::MeshQualityType const type(dlg.getSelectedMetric());
-    MeshLib::ElementQualityInterface quality_interface(*mshSource->GetMesh(),
-                                                       type);
+    MeshToolsLib::ElementQualityInterface quality_interface(
+        *mshSource->GetMesh(), type);
     _vtkVisPipeline->showMeshElementQuality(
         mshSource, type, quality_interface.getQualityVector());
 

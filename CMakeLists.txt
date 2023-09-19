@@ -3,8 +3,6 @@ cmake_minimum_required(VERSION 3.22)
 
 project(OGS-6)
 
-option(OGS_USE_PYTHON "Interface with Python" ON)
-option(OGS_BUILD_PYTHON_MODULE "Should the OGS Python module be built?" ON)
 option(OGS_BUILD_WHEEL "Build Python wheels of OGS" OFF)
 
 include(CMakeDependentOption)
@@ -75,6 +73,11 @@ if(OGS_USE_MKL)
     )
 endif()
 
+# Eigen
+option(OGS_USE_EIGEN_UNSUPPORTED "Use Eigen unsupported modules" ON)
+option(OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN "" ON)
+option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
+
 # ---- CMake includes ----
 include(Versions)
 include(GitSetup)
@@ -112,11 +115,6 @@ option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
 option(OGS_USE_INSITU "Builds OGS with insitu visualization capabilities." OFF)
 option(OGS_USE_LIS "Use Lis" OFF)
 option(OGS_USE_NETCDF "Add NetCDF support." OFF)
-
-# Eigen
-option(OGS_USE_EIGEN_UNSUPPORTED "Use Eigen unsupported modules" ON)
-option(OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN "" ON)
-option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 
 # We assume that it's save to use vectorization with Eigen < 3.3 (strictly
 # smaller than 3.3.!). At least we only observed vectorization issues with Eigen
@@ -210,11 +208,6 @@ include(packaging/Pack)
 
 # ---- Subdirectories ----
 include_directories(${PROJECT_SOURCE_DIR})
-# xdmfdiff
-if(OGS_BUILD_TESTING AND TARGET OgsXdmf)
-    add_subdirectory(Tests/xdmfdiff)
-endif()
-
 include(scripts/cmake/CheckHeaderCompilation.cmake)
 
 add_subdirectory(Applications)
@@ -223,6 +216,7 @@ add_subdirectory(GeoLib)
 add_subdirectory(InfoLib)
 add_subdirectory(MathLib)
 add_subdirectory(MeshLib)
+add_subdirectory(MeshToolsLib)
 add_subdirectory(MeshGeoToolsLib)
 add_subdirectory(NumLib)
 
@@ -234,6 +228,7 @@ if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR OGS_BUILD_TESTING)
     add_subdirectory(ParameterLib)
     add_subdirectory(MaterialLib)
     add_subdirectory(ProcessLib)
+    add_subdirectory(Tests/xdmfdiff)
 endif()
 if(OGS_BUILD_TESTING AND NOT _IS_SUBPROJECT)
     add_subdirectory(Tests)
@@ -253,8 +248,15 @@ if(OGS_WRITE_BENCHMARK_COMMANDS)
     )
     unset(_benchmark_run_commands CACHE)
 endif()
-file(WRITE ${PROJECT_BINARY_DIR}/disabled-tests.log "${DISABLED_TESTS_LOG}")
-unset(DISABLED_TESTS_LOG CACHE) # Don't write to CMakeCache.txt
+
+# cmake-lint: disable=E1126
+file(
+    CONFIGURE
+    OUTPUT
+    .envrc
+    CONTENT
+    "PATH_add ${CMAKE_INSTALL_BINDIR}\n[ -d \".venv\" ] && source .venv/bin/activate"
+)
 
 check_header_compilation()
 

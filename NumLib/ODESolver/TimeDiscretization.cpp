@@ -1,11 +1,11 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  *  Created on March 31, 2017, 10:30 AM
  */
 
@@ -46,19 +46,6 @@ double computeRelativeChangeFromPreviousTimestep(GlobalVector const& x,
 
     // Only norm_x is close to zero
     return norm_dx / std::numeric_limits<double>::epsilon();
-}
-
-void TimeDiscretization::getXdot(GlobalVector const& x_at_new_timestep,
-                                 GlobalVector const& x_old,
-                                 GlobalVector& xdot) const
-{
-    namespace LinAlg = MathLib::LinAlg;
-
-    double const dt = getCurrentTimeIncrement();
-
-    // xdot = 1/dt * x_at_new_timestep - x_old
-    getWeightedOldX(xdot, x_old);
-    LinAlg::axpby(xdot, 1. / dt, -1.0, x_at_new_timestep);
 }
 
 void BackwardEuler::getWeightedOldX(GlobalVector& y,

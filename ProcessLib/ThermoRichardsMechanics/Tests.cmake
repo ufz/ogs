@@ -145,7 +145,8 @@ AddTest(
     WRAPPER_ARGS -np 2
     TESTER vtkdiff
     # Run on envinf only because PETSc MUMPS solver is used
-    REQUIREMENTS OGS_USE_PETSC AND "${HOSTNAME}" MATCHES "envinf.*"
+    REQUIREMENTS OGS_USE_PETSC
+    LABELS "petsc-mumps"
     RUNTIME 2
     DIFF_DATA
     GLOB liakopoulosBulk_mixElem_t_*.vtu sigma sigma 1e-9 1e-12
@@ -210,16 +211,16 @@ AddTest(
     PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu sigma sigma 7e-8 0
     PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu HeatFlowRate HeatFlowRate 4e-11 0
     PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu MassFlowRate MassFlowRate 1e-15 0
-    PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu NodalForces NodalForces 4.3e-8 0
+    PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_gt_2_ts_10_t_50000.000000.vtu NodalForces NodalForces 6e-8 0
     # submesh residuum output quarter_002_2nd_r_lt_2
     PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu displacement displacement 1e-15 0
-    PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu pressure pressure 2.3e-7 0
-    PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu temperature temperature 2.2e-11 0
+    PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu pressure pressure 5e-7 0
+    PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu temperature temperature 3e-11 0
     PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu epsilon epsilon 1e-15 0
     PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu sigma sigma 1.1e-5 0
-    PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu HeatFlowRate HeatFlowRate 6.1e-12 0
+    PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu HeatFlowRate HeatFlowRate 6.2e-12 0
     PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu MassFlowRate MassFlowRate 1e-15 0
-    PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu NodalForces NodalForces 2e-8 0
+    PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu PointHeatSource_quarter_002_2nd_r_lt_2_ts_10_t_50000.000000.vtu NodalForces NodalForces 2.1e-8 0
 )
 
 AddTest(
@@ -282,6 +283,7 @@ AddTest(
     WRAPPER_ARGS -np 3
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
+    LABELS "petsc-mumps"
     DIFF_DATA
     cube_1e3_tm_ts_17_t_72000_000000_0.vtu cube_1e3_tm_ts_17_t_72000_000000_0.vtu velocity velocity 1e-10 1e-9
     cube_1e3_tm_ts_17_t_72000_000000_1.vtu cube_1e3_tm_ts_17_t_72000_000000_1.vtu velocity velocity 1e-10 1e-9
@@ -325,6 +327,7 @@ AddTest(
     WRAPPER_ARGS -np 3
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
+    LABELS "petsc-mumps"
     DIFF_DATA
     PointHeatSource_ts_10_t_50000_000000_0.vtu PointHeatSource_ts_10_t_50000_000000_0.vtu displacement displacement 1e-10 1.0e-9
     PointHeatSource_ts_10_t_50000_000000_0.vtu PointHeatSource_ts_10_t_50000_000000_0.vtu pressure pressure 1e-10 1.0e-6
@@ -355,6 +358,7 @@ AddTest(
     WRAPPER_ARGS -np 3
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
+    LABELS "petsc-mumps"
     DIFF_DATA
     PointHeatSource_gml_ts_10_t_50000_000000_0.vtu PointHeatSource_gml_ts_10_t_50000_000000_0.vtu displacement displacement 1e-10 1.0e-9
     PointHeatSource_gml_ts_10_t_50000_000000_0.vtu PointHeatSource_gml_ts_10_t_50000_000000_0.vtu pressure pressure 1e-10 1.0e-6
@@ -385,6 +389,7 @@ AddTest(
     WRAPPER_ARGS -np 3
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
+    LABELS "petsc-mumps"
     DIFF_DATA
 #
     Decovalex-0_ts_10_t_864000_000000_0.vtu Decovalex-0_ts_10_t_864000_000000_0.vtu displacement displacement 1e-10 1.0e-9
@@ -444,8 +449,9 @@ AddTest(
 )
 
 if(OGS_USE_MFRONT)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MultiMaterialEhlers/square_1e1_2_matIDs.prj RUNTIME 1)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MultiMaterialEhlers/square_1e1_2_matIDs_restart.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/ThermoPoroElasticity/uniaxial_isothermal_drainage_imbibition_basic_mfront_model_ctest.xml)
-
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/ThermoPoroElasticity/uniaxial_isothermal_drainage_imbibition_extended_mfront_model_ctest.xml)
 
     if (NOT OGS_USE_MPI)

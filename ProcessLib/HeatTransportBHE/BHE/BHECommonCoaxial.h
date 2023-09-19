@@ -43,7 +43,7 @@ public:
     double updateFlowRateAndTemperature(double T_out, double current_time);
 
     std::array<double, number_of_unknowns> calcThermalResistances(
-        double const Nu_inner_pipe, double const Nu_annulus_pipe);
+        double const Nu_inner_pipe, double const Nu_annulus_pipe) const;
 
     std::array<double, number_of_unknowns> pipeHeatCapacities() const;
 

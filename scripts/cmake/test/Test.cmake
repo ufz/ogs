@@ -3,25 +3,13 @@ find_program(DIFF_TOOL_PATH diff)
 find_program(TIME_TOOL_PATH time)
 find_program(GREP_TOOL_PATH grep)
 find_program(BASH_TOOL_PATH bash)
-find_program(VALGRIND_TOOL_PATH valgrind)
 find_program(MPIRUN_TOOL_PATH mpirun)
+find_program(NUMDIFF_TOOL_PATH numdiff)
 
 if(NOT TIME_TOOL_PATH)
     message(
         STATUS
             "time-command is required for time wrapper but was not found! All corresponding tests are disabled."
-    )
-endif()
-if(NOT VALGRIND_TOOL_PATH)
-    message(
-        STATUS
-            "Valgrind is required for memcheck wrapper but was not found! All corresponding tests are disabled."
-    )
-endif()
-if(NOT VALGRIND_TOOL_PATH)
-    message(
-        STATUS
-            "Valgrind is required for callgrind wrapper but was not found! All corresponding tests are disabled."
     )
 endif()
 if(NOT MPIRUN_TOOL_PATH)
@@ -46,7 +34,6 @@ endif()
 enable_testing() # Enable CTest
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/MeshTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/OgsTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/NotebookTest.cmake)
 
@@ -71,7 +58,7 @@ add_custom_target(ctest-cleanup ${CMAKE_COMMAND} -E remove -f Tests/ctest.log)
 add_custom_target(
     ctest
     COMMAND ${CMAKE_CTEST_COMMAND} ${_ctest_parameter} --output-log
-            Tests/ctest.log -LE large
+            Tests/ctest.log -L default -LE large
     DEPENDS ${test_dependencies} ctest-cleanup
     USES_TERMINAL
 )
@@ -83,7 +70,7 @@ add_custom_target(
 add_custom_target(
     ctest-large
     COMMAND ${CMAKE_CTEST_COMMAND} ${_ctest_parameter} --output-log
-            Tests/ctest-large.log -L large
+            Tests/ctest-large.log -L default -L large
     DEPENDS ${test_dependencies} ctest-large-cleanup
     USES_TERMINAL
 )

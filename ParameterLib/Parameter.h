@@ -81,7 +81,7 @@ protected:
         // Don't rotate isotropic/scalar values.
         if (values.size() == 1)
         {
-            return values;
+            return {values[0]};
         }
         if (values.size() == 2)
         {

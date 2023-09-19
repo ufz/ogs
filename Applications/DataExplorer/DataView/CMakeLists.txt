@@ -16,6 +16,7 @@ set(SOURCES
     GeoTreeModel.cpp
     GeoTreeView.cpp
     GMSHPrefsDialog.cpp
+    Layers2GridDialog.cpp
     LicenseDialog.cpp
     LinearEditDialog.cpp
     LineEditDialog.cpp
@@ -43,6 +44,8 @@ set(SOURCES
     StationTreeModel.cpp
     StationTreeView.cpp
     SurfaceExtractionDialog.cpp
+    TranslateDataDialog.cpp
+    Vtu2GridDialog.cpp
 )
 
 set(HEADERS
@@ -67,6 +70,7 @@ set(HEADERS
     GeoTreeModel.h
     GeoTreeView.h
     GMSHPrefsDialog.h
+    Layers2GridDialog.h
     LicenseDialog.h
     LinearEditDialog.h
     LineEditDialog.h
@@ -95,6 +99,7 @@ set(HEADERS
     StationTreeModel.h
     StationTreeView.h
     SurfaceExtractionDialog.h
+    Vtu2GridDialog.h
 )
 
 # Visual Studio folder

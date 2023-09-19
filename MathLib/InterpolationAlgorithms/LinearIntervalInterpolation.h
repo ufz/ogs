@@ -19,12 +19,12 @@
 namespace MathLib {
 
 /**
- * @brief Class (template) LinearIntervalInterpolation is a functional object performing
- * an interval mapping \f$f: [a,b] \to [c,d]\f$.
+ * \brief Class (template) LinearIntervalInterpolation is a functional object
+ * performing an interval mapping \f$f: [a,b] \to [c,d]\f$.
  *
- * Input numeric type has to be a floating point type and must behave well under the
- * operations addition, subtraction, multiplication and division. Let \f$a, b, c, d\f$
- * objects supporting the mentioned operations. Under the condition
+ * Input numeric type has to be a floating point type and must behave well under
+ * the operations addition, subtraction, multiplication and division. Let \f$a,
+ * b, c, d\f$ objects supporting the mentioned operations. Under the condition
  * \f$a \neq b\f$ an instance of the class computes a value within the interval
  * \f$[c, d]\f$, i.e., \f$f: [a,b] \to [c,d]\f$.
  */
@@ -35,16 +35,17 @@ public:
      * Constructor of class template for a linear map \f$y = m \cdot x + n\f$.
      * Under the prerequisite \f$a \neq b\f$ it initializes the coefficients
      * \f$m\f$ and \f$n\f$ in a correct way.
-     * @param a first endpoint of the first interval
-     * @param b second endpoint of the first interval
-     * @param c first endpoint of the second interval
-     * @param d second endpoint of the second interval
+     * \param a first endpoint of the first interval
+     * \param b second endpoint of the first interval
+     * \param c first endpoint of the second interval
+     * \param d second endpoint of the second interval
      */
     LinearIntervalInterpolation(NUMERIC_TYPE a, NUMERIC_TYPE b, NUMERIC_TYPE c, NUMERIC_TYPE d);
     /**
-     * Method computes the value at point \f$x\f$ obtained by linear interpolation.
-     * @param x the point the interpolation value is searched for
-     * @return the interpolation value at point \f$x\f$
+     * Method computes the value at point \f$x\f$ obtained by linear
+     * interpolation.
+     * \param x the point the interpolation value is searched for
+     * \return the interpolation value at point \f$x\f$
      */
     inline NUMERIC_TYPE operator() (NUMERIC_TYPE x) const;
 

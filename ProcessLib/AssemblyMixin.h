@@ -12,7 +12,7 @@
 
 #include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
-#include "NumLib/NumericsConfig.h"
+#include "ProcessLib/Assembly/ParallelVectorMatrixAssembler.h"
 #include "ProcessLib/ProcessVariable.h"
 #include "VectorMatrixAssembler.h"
 
@@ -46,6 +46,9 @@ class AssemblyMixinBase
     };
 
 protected:
+    explicit AssemblyMixinBase(AbstractJacobianAssembler& jacobian_assembler)
+        : pvma_{jacobian_assembler} {};
+
     void initializeAssemblyOnSubmeshes(
         const int process_id,
         MeshLib::Mesh& bulk_mesh,
@@ -74,7 +77,10 @@ protected:
     std::vector<std::reference_wrapper<MeshLib::PropertyVector<double>>>
         residuum_vectors_bulk_;
 
+    /// ID of the b vector on submeshes, cf. NumLib::VectorProvider.
     std::size_t b_submesh_id_ = 0;
+
+    Assembly::ParallelVectorMatrixAssembler pvma_;
 
 private:
     ActiveElementIDsState ids_state_ = ActiveElementIDsState::UNINITIALIZED;
@@ -90,7 +96,7 @@ class AssemblyMixin : private AssemblyMixinBase
 {
     // Enforce correct use of CRTP, i.e., that Process is derived from
     // AssemblyMixin<Process>.
-    AssemblyMixin() = default;
+    using AssemblyMixinBase::AssemblyMixinBase;
     friend Process;
 
 public:
@@ -135,21 +141,26 @@ public:
         AssemblyMixinBase::updateActiveElements(pv);
     }
 
-    void assemble(const double t, double const dt,
-                  std::vector<GlobalVector*> const& x,
-                  std::vector<GlobalVector*> const& xdot, int const process_id,
-                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
+    // cppcheck-suppress functionStatic
+    void assemble(const double /*t*/, double const /*dt*/,
+                  std::vector<GlobalVector*> const& /*x*/,
+                  std::vector<GlobalVector*> const& /*x_prev*/,
+                  int const /*process_id*/, GlobalMatrix& /*M*/,
+                  GlobalMatrix& /*K*/, GlobalVector& /*b*/)
     {
+        /*
         DBUG("AssemblyMixin assemble(t={}, dt={}, process_id={}).", t, dt,
              process_id);
 
-        assembleGeneric(&VectorMatrixAssembler::assemble, t, dt, x, xdot,
-                        process_id, M, K, b);
+        assembleGeneric(&Assembly::ParallelVectorMatrixAssembler::assemble, t,
+        dt, x, x_prev, process_id, M, K, b);
+        */
+        OGS_FATAL("Not yet implemented.");
     }
 
     void assembleWithJacobian(const double t, double const dt,
                               std::vector<GlobalVector*> const& x,
-                              std::vector<GlobalVector*> const& xdot,
+                              std::vector<GlobalVector*> const& x_prev,
                               int const process_id, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac)
@@ -157,8 +168,9 @@ public:
         DBUG("AssemblyMixin assembleWithJacobian(t={}, dt={}, process_id={}).",
              t, dt, process_id);
 
-        assembleGeneric(&VectorMatrixAssembler::assembleWithJacobian, t, dt, x,
-                        xdot, process_id, M, K, b, Jac);
+        assembleGeneric(
+            &Assembly::ParallelVectorMatrixAssembler::assembleWithJacobian, t,
+            dt, x, x_prev, process_id, M, K, b, Jac);
     }
 
 private:
@@ -173,13 +185,15 @@ private:
     template <typename Method, typename... Jac>
     void assembleGeneric(Method global_assembler_method, const double t,
                          double const dt, std::vector<GlobalVector*> const& x,
-                         std::vector<GlobalVector*> const& xdot,
+                         std::vector<GlobalVector*> const& x_prev,
                          int const process_id, GlobalMatrix& M, GlobalMatrix& K,
                          GlobalVector& b, Jac&... jac_or_not_jac)
     {
         // TODO why not getDOFTables(x.size()); ?
         std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const
             dof_tables{*derived()._local_to_global_index_map};
+
+        auto const& loc_asms = derived().local_assemblers_;
 
         if (!submesh_assembly_data_.empty())
         {
@@ -190,11 +204,9 @@ private:
             {
                 b_submesh.setZero();
 
-                GlobalExecutor::executeSelectedMemberDereferenced(
-                    derived()._global_assembler, global_assembler_method,
-                    derived().local_assemblers_, sad.active_element_ids,
-                    dof_tables, t, dt, x, xdot, process_id, M, K, b_submesh,
-                    jac_or_not_jac...);
+                (pvma_.*global_assembler_method)(
+                    loc_asms, sad.active_element_ids, dof_tables, t, dt, x,
+                    x_prev, process_id, M, K, b_submesh, jac_or_not_jac...);
 
                 MathLib::LinAlg::axpy(b, 1.0, b_submesh);
 
@@ -206,16 +218,14 @@ private:
         }
         else
         {
-            // convention: process variable 0 governs where assembly takes place
-            // (active element IDs)
+            // convention: process variable 0 governs where assembly takes
+            // place (active element IDs)
             ProcessLib::ProcessVariable const& pv =
                 derived().getProcessVariables(process_id)[0];
 
-            GlobalExecutor::executeSelectedMemberDereferenced(
-                derived()._global_assembler, global_assembler_method,
-                derived().local_assemblers_, pv.getActiveElementIDs(),
-                dof_tables, t, dt, x, xdot, process_id, M, K, b,
-                jac_or_not_jac...);
+            (pvma_.*global_assembler_method)(
+                loc_asms, pv.getActiveElementIDs(), dof_tables, t, dt, x,
+                x_prev, process_id, M, K, b, jac_or_not_jac...);
         }
 
         AssemblyMixinBase::copyResiduumVectorsToBulkMesh(

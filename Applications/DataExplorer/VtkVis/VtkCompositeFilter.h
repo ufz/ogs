@@ -19,7 +19,7 @@
 class vtkAlgorithm;
 
 /**
- * @brief Is used to combine several filter in one VtkVisPipelineItem. You can
+ * \brief Is used to combine several filter in one VtkVisPipelineItem. You can
  * use vtk filter and custom filter. To subclass this you have to implement the
  * init() function. There you combine the filters. Make sure to set the members
  * _inputDataObjectType, _outputDataObjectType and _outputAlgorithm. Make also
@@ -33,10 +33,10 @@ class vtkAlgorithm;
  *     ...(do something here)
  *     _outputAlgorithm = lastFilter;
  *
- * Create user properties with `ogsUserPropertyMacro` or `ogsUserVecxPropertyMacro`
- * and initialize these properties inside the constructor with
- * `this->Set[Property Name](value)`.
- * See VtkCompositeThresholdFilter for an example.
+ * Create user properties with `ogsUserPropertyMacro` or
+ * `ogsUserVecxPropertyMacro` and initialize these properties inside the
+ * constructor with `this->Set[Property Name](value)`. See
+ * VtkCompositeThresholdFilter for an example.
  */
 class VtkCompositeFilter : public VtkAlgorithmProperties
 {

@@ -24,5 +24,7 @@ enum class MeshPropertyDataType
     uint64,
     int8,
     uint8,
+    char_native,
+    uchar,
     enum_length
 };

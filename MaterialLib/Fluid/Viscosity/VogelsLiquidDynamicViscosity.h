@@ -1,4 +1,5 @@
 /**
+ * \file
  *  \brief Declaration of class for the pressure dependent viscosity model.
  *
  *  \copyright
@@ -7,7 +8,6 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  */
 
 #pragma once

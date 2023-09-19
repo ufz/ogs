@@ -15,9 +15,9 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshQuality/ElementQualityInterface.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshQuality/ElementQualityInterface.h"
 
 class PyramidElementQuality : public ::testing::Test
 {
@@ -43,9 +43,9 @@ public:
         }
 
         std::unique_ptr<MeshLib::Mesh> mesh(
-            MeshLib::MeshGenerator::generateRegularPyramidMesh(
+            MeshToolsLib::MeshGenerator::generateRegularPyramidMesh(
                 *vec_div[0], *vec_div[1], *vec_div[2]));
-        MeshLib::ElementQualityInterface element_quality(*mesh, type);
+        MeshToolsLib::ElementQualityInterface element_quality(*mesh, type);
         return element_quality.getQualityVector();
     }
 

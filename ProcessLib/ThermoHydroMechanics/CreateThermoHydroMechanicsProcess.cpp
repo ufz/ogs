@@ -15,7 +15,9 @@
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
+#include "MaterialLib/SolidModels/CreateConstitutiveRelationIce.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
+#include "NumLib/NumericalStability/CreateNumericalStabilization.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -144,6 +146,10 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, local_coordinate_system, config);
 
+    auto ice_constitutive_relation =
+        MaterialLib::Solids::createConstitutiveRelationIce<DisplacementDim>(
+            parameters, local_coordinate_system, config);
+
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
     {
@@ -180,6 +186,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
         materialIDs(mesh),
         std::move(media_map),
         std::move(solid_constitutive_relations),
+        std::move(ice_constitutive_relation),
         initial_stress,
         specific_body_force,
         std::move(stabilizer)};

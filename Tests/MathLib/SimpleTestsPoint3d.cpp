@@ -1,6 +1,6 @@
 /**
- * @file TestPoint3d.cpp
- * @date Mar 13, 2014
+ * \file
+ * \date Mar 13, 2014
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)

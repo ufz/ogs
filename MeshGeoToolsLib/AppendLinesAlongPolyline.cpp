@@ -16,9 +16,9 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
 
 namespace MeshGeoToolsLib
 {
@@ -45,7 +45,7 @@ std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
     // for each polyline
     for (std::size_t k(0); k < n_ply; k++)
     {
-        auto* ply = ply_vec.getVector()[k];
+        auto const* const ply = ply_vec.getVector()[k];
 
         // search nodes on the polyline
         MeshGeoToolsLib::MeshNodesAlongPolyline mshNodesAlongPoly(

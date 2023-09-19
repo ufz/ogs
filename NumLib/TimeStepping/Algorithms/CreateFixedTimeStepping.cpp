@@ -1,17 +1,15 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  *  Created on June 26, 2017, 5:03 PM
  */
 
 #include "CreateFixedTimeStepping.h"
-
-#include <string>
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
@@ -20,9 +18,9 @@
 
 namespace NumLib
 {
-class TimeStepAlgorithm;
 std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::vector<double> const& fixed_times_for_output)
 {
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__type}
     config.checkConfigParameter("type", "FixedTimeStepping");
@@ -32,101 +30,27 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__t_end}
     auto const t_end = config.getConfigParameter<double>("t_end");
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__timesteps}
-    auto const delta_ts = config.getConfigSubtree("timesteps");
-
-    std::vector<double> timesteps;
-    double t_curr = t_initial;
-    double delta_t = 0.0;
+    auto const delta_ts_config = config.getConfigSubtree("timesteps");
 
     // TODO: consider adding call "listNonEmpty" to config tree
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__timesteps__pair}
-    auto const range = delta_ts.getConfigSubtreeList("pair");
+    auto const range = delta_ts_config.getConfigSubtreeList("pair");
     if (range.begin() == range.end())
     {
         OGS_FATAL("no timesteps have been given");
     }
+
+    std::vector<std::pair<std::size_t, double>> repeat_dt_pairs;
     for (auto const pair : range)
     {
-        //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__timesteps__pair__repeat}
-        auto const repeat = pair.getConfigParameter<std::size_t>("repeat");
-        //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__timesteps__pair__delta_t}
-        delta_t = pair.getConfigParameter<double>("delta_t");
-
-        if (repeat == 0)
-        {
-            OGS_FATAL("<repeat> is zero.");
-        }
-        if (delta_t <= 0.0)
-        {
-            OGS_FATAL("timestep <delta_t> is <= 0.0.");
-        }
-
-        if (t_curr <= t_end)
-        {
-            auto const new_size = timesteps.size() + repeat;
-            try
-            {
-                timesteps.resize(new_size, delta_t);
-            }
-            catch (std::length_error const& e)
-            {
-                OGS_FATAL(
-                    "Resize of the time steps vector failed for the requested "
-                    "new size {:d}. Probably there is not enough memory ({:g} "
-                    "GiB requested).\n"
-                    "Thrown exception: {:s}",
-                    new_size,
-                    new_size * sizeof(double) / 1024. / 1024. / 1024.,
-                    e.what());
-            }
-            catch (std::bad_alloc const& e)
-            {
-                OGS_FATAL(
-                    "Resize of the time steps vector failed for the requested "
-                    "new size {:d}. Probably there is not enough memory ({:g} "
-                    "GiB requested).\n"
-                    "Thrown exception: {:s}",
-                    new_size, new_size * sizeof(double) / 1024. / 1024. / 1024.,
-                    e.what());
-            }
-
-            t_curr += repeat * delta_t;
-        }
+        repeat_dt_pairs.emplace_back(
+            //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__timesteps__pair__repeat}
+            pair.getConfigParameter<std::size_t>("repeat"),
+            //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__timesteps__pair__delta_t}
+            pair.getConfigParameter<double>("delta_t"));
     }
 
-    // append last delta_t until t_end is reached
-    if (t_curr <= t_end)
-    {
-        auto const repeat =
-            static_cast<std::size_t>(std::ceil((t_end - t_curr) / delta_t));
-        auto const new_size = timesteps.size() + repeat;
-        try
-        {
-            timesteps.resize(new_size, delta_t);
-        }
-        catch (std::length_error const& e)
-        {
-            OGS_FATAL(
-                "Resize of the time steps vector failed for the requested new "
-                "size {:d}. Probably there is not enough memory ({:g} GiB "
-                "requested).\n"
-                "Thrown exception: {:s}",
-                new_size,
-                new_size * sizeof(double) / 1024. / 1024. / 1024.,
-                e.what());
-        }
-        catch (std::bad_alloc const& e)
-        {
-            OGS_FATAL(
-                "Resize of the time steps vector failed for the requested new "
-                "size {:d}. Probably there is not enough memory ({:g} GiB "
-                "requested).\n"
-                "Thrown exception: {:s}",
-                new_size, new_size * sizeof(double) / 1024. / 1024. / 1024.,
-                e.what());
-        }
-    }
-
-    return std::make_unique<FixedTimeStepping>(t_initial, t_end, timesteps);
+    return std::make_unique<FixedTimeStepping>(
+        t_initial, t_end, repeat_dt_pairs, fixed_times_for_output);
 }
 }  // end of namespace NumLib

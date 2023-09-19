@@ -312,11 +312,27 @@
                             <delta_t>1000</delta_t>
                         </pair>
                         <pair>
-                            <repeat>20</repeat>
+                            <repeat>3</repeat>
                             <delta_t>10000</delta_t>
                         </pair>
                         <pair>
-                            <repeat>20</repeat>
+                            <repeat>1</repeat>
+                            <delta_t>9000</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>16</repeat>
+                            <delta_t>10000</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>14</repeat>
+                            <delta_t>20000</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>10000</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>5</repeat>
                             <delta_t>20000</delta_t>
                         </pair>
                         <pair>
@@ -378,6 +394,7 @@
                 <variable>rhoL_hL_dot</variable>
                 <variable>k_rel_G</variable>
                 <variable>k_rel_L</variable>
+                <variable>xnCG</variable>
             </variables>
         </output>
     </time_loop>

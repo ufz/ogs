@@ -188,6 +188,7 @@
                 <variable>temperature</variable>
                 <variable>velocity</variable>
                 <variable>saturation</variable>
+                <variable>MassFlowRate</variable>
             </variables>
         </output>
     </time_loop>

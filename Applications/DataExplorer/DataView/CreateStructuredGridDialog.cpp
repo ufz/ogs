@@ -19,7 +19,7 @@
 #include "Base/OGSError.h"
 #include "Base/StrictDoubleValidator.h"
 #include "GeoLib/Point.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 CreateStructuredGridDialog::CreateStructuredGridDialog(QDialog* parent)
     : QDialog(parent)
@@ -194,13 +194,13 @@ void CreateStructuredGridDialog::accept()
     {
         if (this->meshExtentButton->isChecked())
         {
-            mesh = MeshLib::MeshGenerator::generateLineMesh(
+            mesh = MeshToolsLib::MeshGenerator::generateLineMesh(
                 this->xLengthEdit->text().toDouble(),
                 this->xElemEdit->text().toInt(), origin, name);
         }
         else
         {
-            mesh = MeshLib::MeshGenerator::generateLineMesh(
+            mesh = MeshToolsLib::MeshGenerator::generateLineMesh(
                 this->xElemEdit->text().toInt(),
                 this->xLengthEdit->text().toDouble(), origin, name);
         }
@@ -209,7 +209,7 @@ void CreateStructuredGridDialog::accept()
     {
         if (this->meshExtentButton->isChecked())
         {
-            mesh = MeshLib::MeshGenerator::generateRegularTriMesh(
+            mesh = MeshToolsLib::MeshGenerator::generateRegularTriMesh(
                 this->xLengthEdit->text().toDouble(),
                 this->yLengthEdit->text().toDouble(),
                 this->xElemEdit->text().toInt(),
@@ -217,7 +217,7 @@ void CreateStructuredGridDialog::accept()
         }
         else
         {
-            mesh = MeshLib::MeshGenerator::generateRegularTriMesh(
+            mesh = MeshToolsLib::MeshGenerator::generateRegularTriMesh(
                 this->xElemEdit->text().toInt(),
                 this->yElemEdit->text().toInt(),
                 this->xLengthEdit->text().toDouble(),
@@ -228,7 +228,7 @@ void CreateStructuredGridDialog::accept()
     {
         if (this->meshExtentButton->isChecked())
         {
-            mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(
+            mesh = MeshToolsLib::MeshGenerator::generateRegularQuadMesh(
                 this->xLengthEdit->text().toDouble(),
                 this->yLengthEdit->text().toDouble(),
                 this->xElemEdit->text().toInt(),
@@ -236,7 +236,7 @@ void CreateStructuredGridDialog::accept()
         }
         else
         {
-            mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(
+            mesh = MeshToolsLib::MeshGenerator::generateRegularQuadMesh(
                 this->xElemEdit->text().toInt(),
                 this->yElemEdit->text().toInt(),
                 this->xLengthEdit->text().toDouble(),
@@ -247,7 +247,7 @@ void CreateStructuredGridDialog::accept()
     {
         if (this->meshExtentButton->isChecked())
         {
-            mesh = MeshLib::MeshGenerator::generateRegularPrismMesh(
+            mesh = MeshToolsLib::MeshGenerator::generateRegularPrismMesh(
                 this->xLengthEdit->text().toDouble(),
                 this->yLengthEdit->text().toDouble(),
                 this->zLengthEdit->text().toDouble(),
@@ -257,7 +257,7 @@ void CreateStructuredGridDialog::accept()
         }
         else
         {
-            mesh = MeshLib::MeshGenerator::generateRegularPrismMesh(
+            mesh = MeshToolsLib::MeshGenerator::generateRegularPrismMesh(
                 this->xLengthEdit->text().toDouble(),
                 this->yLengthEdit->text().toDouble(),
                 this->zLengthEdit->text().toDouble(),
@@ -270,7 +270,7 @@ void CreateStructuredGridDialog::accept()
     {
         if (this->meshExtentButton->isChecked())
         {
-            mesh = MeshLib::MeshGenerator::generateRegularHexMesh(
+            mesh = MeshToolsLib::MeshGenerator::generateRegularHexMesh(
                 this->xLengthEdit->text().toDouble(),
                 this->yLengthEdit->text().toDouble(),
                 this->zLengthEdit->text().toDouble(),
@@ -280,7 +280,7 @@ void CreateStructuredGridDialog::accept()
         }
         else
         {
-            mesh = MeshLib::MeshGenerator::generateRegularHexMesh(
+            mesh = MeshToolsLib::MeshGenerator::generateRegularHexMesh(
                 this->xElemEdit->text().toInt(),
                 this->yElemEdit->text().toInt(),
                 this->zElemEdit->text().toInt(),

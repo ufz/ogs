@@ -1,11 +1,11 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  *  Created on October 11, 2017, 2:33 PM
  */
 
@@ -24,6 +24,8 @@
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "NumLib/NumericalStability/AdvectionMatrixAssembler.h"
+#include "NumLib/NumericalStability/HydrodynamicDispersion.h"
 #include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
@@ -66,7 +68,7 @@ public:
 
     void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
-                  std::vector<double> const& /*local_xdot*/,
+                  std::vector<double> const& /*local_x_prev*/,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override
@@ -93,19 +95,7 @@ public:
             pressure_index, pressure_index);
         auto Bp = local_b.template block<pressure_size, 1>(pressure_index, 0);
 
-        typename ShapeMatricesType::NodalMatrixType K_TT_advection =
-            ShapeMatricesType::NodalMatrixType::Zero(temperature_size,
-                                                     temperature_size);
-
         auto const& process_data = this->_process_data;
-        NodalVectorType node_flux_q;
-        node_flux_q.setZero(temperature_size);
-
-        bool const apply_full_upwind =
-            process_data.stabilizer &&
-            (typeid(*process_data.stabilizer) == typeid(NumLib::FullUpwind));
-
-        double max_velocity_magnitude = 0.;
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(this->_element.getID());
@@ -118,15 +108,18 @@ public:
         auto const& liquid_phase = medium.phase("AqueousLiquid");
         auto const& solid_phase = medium.phase("Solid");
 
-        auto const& b = process_data.specific_body_force;
-
-        GlobalDimMatrixType const& I(
-            GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
+        auto const& b =
+            process_data
+                .projected_specific_body_force_vectors[this->_element.getID()];
 
         MaterialPropertyLib::VariableArray vars;
 
         unsigned const n_integration_points =
             this->_integration_method.getNumberOfPoints();
+
+        std::vector<GlobalDimVectorType> ip_flux_vector;
+        double average_velocity_norm = 0.0;
+        ip_flux_vector.reserve(n_integration_points);
 
         for (unsigned ip(0); ip < n_integration_points; ip++)
         {
@@ -193,23 +186,14 @@ public:
             GlobalDimMatrixType const thermal_conductivity_dispersivity =
                 this->getThermalConductivityDispersivity(
                     vars, fluid_density, specific_heat_capacity_fluid, velocity,
-                    I, pos, t, dt);
+                    pos, t, dt);
 
             KTT.noalias() +=
                 dNdx.transpose() * thermal_conductivity_dispersivity * dNdx * w;
 
-            K_TT_advection.noalias() += N.transpose() * velocity.transpose() *
-                                        dNdx * fluid_density *
-                                        specific_heat_capacity_fluid * w;
-
-            if (apply_full_upwind)
-            {
-                node_flux_q.noalias() -= fluid_density *
-                                         specific_heat_capacity_fluid *
-                                         velocity.transpose() * dNdx * w;
-                max_velocity_magnitude =
-                    std::max(max_velocity_magnitude, velocity.norm());
-            }
+            ip_flux_vector.emplace_back(velocity * fluid_density *
+                                        specific_heat_capacity_fluid);
+            average_velocity_norm += velocity.norm();
 
             Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
             MTT.noalias() += w *
@@ -226,16 +210,10 @@ public:
              * in buoyancy effects */
         }
 
-        if (apply_full_upwind &&
-            max_velocity_magnitude >
-                process_data.stabilizer->getCutoffVelocity())
-        {
-            NumLib::applyFullUpwind(node_flux_q, KTT);
-        }
-        else
-        {
-            KTT.noalias() += K_TT_advection;
-        }
+        NumLib::assembleAdvectionMatrix(
+            process_data.stabilizer, this->_ip_data, ip_flux_vector,
+            average_velocity_norm / static_cast<double>(n_integration_points),
+            KTT);
     }
 
     std::vector<double> const& getIntPtDarcyVelocity(

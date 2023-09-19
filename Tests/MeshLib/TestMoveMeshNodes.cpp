@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -14,8 +15,8 @@
 #include <numeric>
 #include <vector>
 
-#include "MeshLib/MeshEditing/moveMeshNodes.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/moveMeshNodes.h"
 
 TEST(MeshLib, moveMeshNodes)
 {
@@ -42,13 +43,13 @@ TEST(MeshLib, moveMeshNodes)
                                  static_cast<double>(rand())};
 
     /* move the mesh node */
-    MeshLib::moveMeshNodes(nodes.begin(), nodes.end(), displacement);
+    MeshToolsLib::moveMeshNodes(nodes.begin(), nodes.end(), displacement);
 
     /* reverse the direction of displacement */
     displacement *= -1.0;
 
     /* move the mesh node back */
-    MeshLib::moveMeshNodes(nodes.begin(), nodes.end(), displacement);
+    MeshToolsLib::moveMeshNodes(nodes.begin(), nodes.end(), displacement);
 
     /* check the result */
     double const eps(std::numeric_limits<double>::epsilon());

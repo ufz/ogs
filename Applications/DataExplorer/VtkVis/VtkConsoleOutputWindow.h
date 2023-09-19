@@ -1,4 +1,5 @@
 /**
+ * \file
  * \brief  VtkWin32ConsoleOutputWindow is used to suppress message boxes on
  * Windows.
  *

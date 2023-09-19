@@ -11,14 +11,14 @@
 #pragma once
 
 #include <vector>
-#include "NumLib/NumericsConfig.h"
+
 #include "AbstractJacobianAssembler.h"
-#include "CoupledSolutionsForStaggeredScheme.h"
+#include "Assembly/MatrixOutput.h"
 
 namespace NumLib
 {
 class LocalToGlobalIndexMap;
-}  // NumLib
+}  // namespace NumLib
 
 namespace ProcessLib
 {
@@ -34,7 +34,7 @@ class VectorMatrixAssembler final
 {
 public:
     explicit VectorMatrixAssembler(
-        std::unique_ptr<AbstractJacobianAssembler>&& jacobian_assembler);
+        AbstractJacobianAssembler& jacobian_assembler);
 
     void preAssemble(const std::size_t mesh_item_id,
                      LocalAssemblerInterface& local_assembler,
@@ -49,8 +49,9 @@ public:
                       NumLib::LocalToGlobalIndexMap>> const& dof_tables,
                   double const t, double const dt,
                   std::vector<GlobalVector*> const& x,
-                  std::vector<GlobalVector*> const& xdot, int const process_id,
-                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b);
+                  std::vector<GlobalVector*> const& x_prev,
+                  int const process_id, GlobalMatrix& M, GlobalMatrix& K,
+                  GlobalVector& b);
 
     //! Assembles \c M, \c K, \c b, and the Jacobian \c Jac of the residual.
     //! \note The Jacobian must be assembled.
@@ -61,7 +62,7 @@ public:
             std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
             dof_tables,
         const double t, double const dt, std::vector<GlobalVector*> const& x,
-        std::vector<GlobalVector*> const& xdot, int const process_id,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac);
 
 private:
@@ -73,7 +74,9 @@ private:
     std::vector<double> _local_Jac_data;
 
     //! Used to assemble the Jacobian.
-    std::unique_ptr<AbstractJacobianAssembler> _jacobian_assembler;
+    AbstractJacobianAssembler& _jacobian_assembler;
+
+    Assembly::LocalMatrixOutput _local_output;
 };
 
 }  // namespace ProcessLib

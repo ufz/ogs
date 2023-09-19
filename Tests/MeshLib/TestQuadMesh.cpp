@@ -15,14 +15,15 @@
 
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 class MeshLibQuadMesh : public ::testing::Test
 {
 public:
     MeshLibQuadMesh()
     {
-        mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(1.0, n_elements);
+        mesh = MeshToolsLib::MeshGenerator::generateRegularQuadMesh(1.0,
+                                                                    n_elements);
     }
 
     ~MeshLibQuadMesh() override { delete mesh; }

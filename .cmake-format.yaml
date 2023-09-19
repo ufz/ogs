@@ -57,28 +57,6 @@ parse:
         RUNTIME: 1
         WRAPPER: +
 
-    meshtest:
-      pargs:
-        nargs: "*"
-        flags:
-          - NONE
-      spelling: MeshTest
-      kwargs:
-        EXECUTABLE: 1
-        PATH: 1
-        NAME: 1
-        WRAPPER: 1
-        RUNTIME: 1
-        WORKING_DIRECTORY: 1
-        EXECUTABLE_ARGS: +
-        DATA: +
-        DIFF_DATA:
-          pargs:
-            tags:
-              - cmdline
-        WRAPPER_ARGS: +
-        REQUIREMENTS: +
-
     cpmaddpackage:
       pargs:
         nargs: "*"

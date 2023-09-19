@@ -9,6 +9,12 @@ weight = 1043
     parent = "packages"
 +++
 
+<div class='note'>
+
+Please note that MFront is not available on Windows! You can use [WSL]({{< ref "wsl.md" >}}) to compile ogs with MFront-support on Windows.
+
+</div>
+
 MFront / TFEL support is enabled by the CMake-option `-DOGS_USE_MFRONT=ON` and can be installed
 
 - system-wide,

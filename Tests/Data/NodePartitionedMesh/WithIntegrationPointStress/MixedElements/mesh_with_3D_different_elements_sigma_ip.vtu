@@ -210,7 +210,7 @@
       </PointData>
       <CellData>
         <DataArray type="Int32" Name="MaterialIDs" format="ascii" RangeMin="0" RangeMax="0">
-          0 0 0 0
+          0 1 2 3
         </DataArray>
         <DataArray type="Float64" Name="principal_stress_values" NumberOfComponents="3" format="ascii" RangeMin="746876.7140374054" RangeMax="8563642.874201544">
           775662.0908265365 2096726.3156216582 8266684.120921587 -262334.9319597766 100289.96169613367 692060.0646099729

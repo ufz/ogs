@@ -1,0 +1,7 @@
+^[CMake]
+*.cmake @bilke
+CMakeLists.txt @bilke
+
+[Documentation] @ogs/docs-team
+Documentation
+web/content

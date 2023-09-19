@@ -407,6 +407,9 @@
                 <variable>H</variable>
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
+                <variable>Calcite_avg</variable>
+                <variable>Dolomite(dis)_avg</variable>
+                <variable>porosity_avg</variable>
             </variables>
         </output>
     </time_loop>

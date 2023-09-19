@@ -10,17 +10,15 @@
 
 #pragma once
 
-#include "MeshLib/MeshEnums.h"
-#include "Element.h"
 #include "EdgeReturn.h"
-#include "HexRule8.h"
+#include "HexRule.h"
 
 namespace MeshLib
 {
 
 /**
  * A 20-nodes Hexahedron Element.
- * @code
+ * \code
  *
  *  Hex:
  *                14
@@ -41,9 +39,9 @@ namespace MeshLib
  *    0-----------1
  *          8
  *
- * @endcode
+ * \endcode
  */
-class HexRule20 : public HexRule8
+class HexRule20 : public HexRule
 {
 public:
     /// Constant: The number of all nodes for this element
@@ -64,6 +62,12 @@ public:
     /// Returns the i-th face of the element.
     static const Element* getFace(const Element* e, unsigned i);
 
+    /// Returns the ID of a face given an array of nodes.
+    static unsigned identifyFace(Node const* const* element_nodes,
+                                 Node const* nodes[3])
+    {
+        return CellRule::identifyFace<HexRule20>(element_nodes, nodes);
+    }
 }; /* class */
 
 }  // namespace MeshLib

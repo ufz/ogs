@@ -16,6 +16,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "KineticReactant.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 
 namespace ChemistryLib
 {
@@ -42,7 +43,7 @@ std::unique_ptr<Kinetics> createKineticReactants(
             //! \ogs_file_param{prj__chemical_system__kinetic_reactants__kinetic_reactant__initial_amount}
             reactant_config.getConfigParameter<double>("initial_amount");
 
-        auto amount = MeshLib::getOrCreateMeshProperty<double>(
+        auto* const amount = MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh),
             name,
             MeshLib::MeshItemType::Node,

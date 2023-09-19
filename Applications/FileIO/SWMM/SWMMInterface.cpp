@@ -1,5 +1,6 @@
 /**
- * @copyright
+ * \file
+ * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
@@ -27,6 +28,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 
 namespace FileIO
 {
@@ -605,7 +607,7 @@ bool SwmmInterface::readSubcatchments(
     std::ifstream& in, std::map<std::string, std::size_t> const& name_id_map)
 {
     std::string line;
-    while (getline(in, line))
+    while (std::getline(in, line))
     {
         if (isSectionFinished(line))
             return true;
@@ -674,7 +676,7 @@ bool SwmmInterface::readSwmmInputToLineMesh()
     _id_nodename_map.clear();
     std::vector<MeshLib::Node*> nodes;
     std::string line;
-    while (getline(in, line))
+    while (std::getline(in, line))
     {
         if (line == "[COORDINATES]")
         {
@@ -722,7 +724,7 @@ bool SwmmInterface::readSwmmInputToLineMesh()
     std::vector<double> max_depth(n_nodes);
     std::size_t const n_types = 3;
     std::array<std::size_t, n_types> n_elem_types{{0, 0, 0}};
-    while (getline(in, line))
+    while (std::getline(in, line))
     {
         if (line == "[RAINGAGES]")
         {
@@ -1227,7 +1229,7 @@ std::string SwmmInterface::getArrayName(SwmmObject obj_type,
 bool SwmmInterface::addRainGaugeTimeSeriesLocations(std::ifstream& in)
 {
     std::string line;
-    while (getline(in, line))
+    while (std::getline(in, line))
     {
         if (isSectionFinished(line))
             break;
@@ -1259,7 +1261,7 @@ bool SwmmInterface::addRainGaugeTimeSeriesLocations(std::ifstream& in)
 bool SwmmInterface::readPollutants(std::ifstream& in)
 {
     std::string line;
-    while (getline(in, line))
+    while (std::getline(in, line))
     {
         if (isSectionFinished(line))
             return true;

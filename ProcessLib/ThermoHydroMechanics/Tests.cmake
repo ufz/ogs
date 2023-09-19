@@ -4,6 +4,9 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoHydroMechanics/A2/A2.prj RUNTIME 23)
     OgsTest(PROJECTFILE ThermoHydroMechanics/A2/A2_heating.prj RUNTIME 23)
     OgsTest(PROJECTFILE ThermoHydroMechanics/1D_freezing_column_Stefan/Stefan_problem.prj RUNTIME 15)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/ColumnDeformationFreezing/TM.prj RUNTIME 13)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/HeatingHomogeneousDomain/hex_THM.prj RUNTIME 30)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/9percentWaterFreezingExpansion/UnitSquare.prj RUNTIME 1)
 endif()
 
 AddTest(
@@ -305,4 +308,35 @@ AddTest(
     classical_transport_example_full_upwind_t_7200.00.vtu classical_transport_example_full_upwind_t_7200.00.vtu C C 1.e-9 1.0e-12
     classical_transport_example_full_upwind_t_7200.00.vtu classical_transport_example_full_upwind_t_7200.00.vtu pressure pressure 1.e-9 1.0e-12
     classical_transport_example_full_upwind_t_7200.00.vtu classical_transport_example_full_upwind_t_7200.00.vtu velocity velocity 1.e-12 1.0e-12
+)
+
+AddTest(
+    NAME ParallelFEM_HeatingHomogeneousDomain
+    PATH ThermoHydroMechanics/HeatingHomogeneousDomain
+    RUNTIME 5
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS hex_THM.prj -m partitioned_mesh
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 3
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+#
+    hex_ts_5_t_864000_000000_0.vtu hex_ts_5_t_864000_000000_0.vtu displacement displacement 1e-10 1.0e-9
+    hex_ts_5_t_864000_000000_0.vtu hex_ts_5_t_864000_000000_0.vtu pressure pressure 1e-10 1.0e-7
+    hex_ts_5_t_864000_000000_0.vtu hex_ts_5_t_864000_000000_0.vtu temperature temperature 1e-10 1.0e-9
+    hex_ts_5_t_864000_000000_0.vtu hex_ts_5_t_864000_000000_0.vtu epsilon epsilon 1e-10 1.0e-9
+    hex_ts_5_t_864000_000000_0.vtu hex_ts_5_t_864000_000000_0.vtu sigma sigma 1e-8 1.0e-7
+#
+    hex_ts_5_t_864000_000000_1.vtu hex_ts_5_t_864000_000000_1.vtu displacement displacement 1e-10 1.0e-9
+    hex_ts_5_t_864000_000000_1.vtu hex_ts_5_t_864000_000000_1.vtu pressure pressure 1e-10 1.0e-7
+    hex_ts_5_t_864000_000000_1.vtu hex_ts_5_t_864000_000000_1.vtu temperature temperature 1e-10 1.0e-9
+    hex_ts_5_t_864000_000000_1.vtu hex_ts_5_t_864000_000000_1.vtu epsilon epsilon 1e-10 1.0e-9
+    hex_ts_5_t_864000_000000_1.vtu hex_ts_5_t_864000_000000_1.vtu sigma sigma 1e-8 1.0e-7
+#
+    hex_ts_5_t_864000_000000_2.vtu hex_ts_5_t_864000_000000_2.vtu displacement displacement 1e-10 1.0e-9
+    hex_ts_5_t_864000_000000_2.vtu hex_ts_5_t_864000_000000_2.vtu pressure pressure 1e-10 1.0e-7
+    hex_ts_5_t_864000_000000_2.vtu hex_ts_5_t_864000_000000_2.vtu temperature temperature 1e-10 1.0e-9
+    hex_ts_5_t_864000_000000_2.vtu hex_ts_5_t_864000_000000_2.vtu epsilon epsilon 1e-10 1.0e-9
+    hex_ts_5_t_864000_000000_2.vtu hex_ts_5_t_864000_000000_2.vtu sigma sigma 1e-8 1.0e-7
 )

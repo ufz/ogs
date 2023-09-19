@@ -1,8 +1,8 @@
 /**
+ * \file
  * \author Norihiro Watanabe
  * \date   2013-04-16
  *
- * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -23,9 +23,6 @@
 namespace NumLib
 {
 using namespace detail;
-
-GlobalIndexType const MeshComponentMap::nop =
-    std::numeric_limits<GlobalIndexType>::max();
 
 #ifdef USE_PETSC
 MeshComponentMap::MeshComponentMap(
@@ -76,18 +73,18 @@ MeshComponentMap MeshComponentMap::getSubset(
     }
 
     // Mapping of the nodes in the new_mesh_subset to the bulk mesh nodes
-    auto const& new_mesh_properties = new_mesh_subset.getMesh().getProperties();
-    if (!new_mesh_properties.template existsPropertyVector<std::size_t>(
-            getBulkIDString(MeshLib::MeshItemType::Node)))
+    auto bulk_node_ids = [](auto const& mesh)
     {
-        OGS_FATAL(
-            "Bulk node ids map expected in the construction of the mesh "
-            "subset.");
-    }
-    auto const& bulk_node_ids_map =
-        *new_mesh_properties.template getPropertyVector<std::size_t>(
-            getBulkIDString(MeshLib::MeshItemType::Node),
-            MeshLib::MeshItemType::Node, 1);
+        auto const* bulk_node_ids_ptr = MeshLib::bulkNodeIDs(mesh);
+        if (bulk_node_ids_ptr == nullptr)
+        {
+            OGS_FATAL(
+                "Bulk node ids map expected in the construction of the mesh "
+                "subset.");
+        }
+        return *bulk_node_ids_ptr;
+    };
+    auto const& bulk_node_ids_map = bulk_node_ids(new_mesh_subset.getMesh());
 
     // New dictionary for the subset.
     ComponentGlobalIndexDict subset_dict;
@@ -165,14 +162,6 @@ std::vector<int> MeshComponentMap::getComponentIDs(const Location& l) const
         vec_compID.push_back(itr->comp_id);
     }
     return vec_compID;
-}
-
-Line MeshComponentMap::getLine(Location const& l, int const comp_id) const
-{
-    auto const& m = _dict.get<ByLocationAndComponent>();
-    auto const itr = m.find(Line(l, comp_id));
-    assert(itr != m.end());  // The line must exist in the current dictionary.
-    return *itr;
 }
 
 GlobalIndexType MeshComponentMap::getGlobalIndex(Location const& l,
@@ -339,10 +328,10 @@ GlobalIndexType getGlobalIndexWithTaylorHoodElement(
     int const partition_id = partitioned_mesh.getPartitionID(global_node_id);
 
     auto const n_total_active_base_nodes_before_this_rank =
-        partitioned_mesh.getNumberOfActiveBaseNodesAtRank(partition_id);
+        partitioned_mesh.getNumberOfRegularBaseNodesAtRank(partition_id);
 
     auto const n_total_active_high_order_nodes_before_this_rank =
-        partitioned_mesh.getNumberOfActiveHighOrderNodesAtRank(partition_id);
+        partitioned_mesh.getNumberOfRegularHighOrderNodesAtRank(partition_id);
 
     auto const node_id_offset =
         n_total_active_base_nodes_before_this_rank +
@@ -362,7 +351,7 @@ GlobalIndexType getGlobalIndexWithTaylorHoodElement(
     }
 
     int const n_active_base_nodes_of_this_partition =
-        partitioned_mesh.getNumberOfActiveBaseNodesAtRank(partition_id + 1) -
+        partitioned_mesh.getNumberOfRegularBaseNodesAtRank(partition_id + 1) -
         n_total_active_base_nodes_before_this_rank;
 
     /*
@@ -370,13 +359,13 @@ GlobalIndexType getGlobalIndexWithTaylorHoodElement(
         assuming that the base node has three components and the high order node
         has two components:
 
-        Partition    |       0       |      1       |   ...
-                     --------------------------------
-        Active nodes | Base | higher | Base | higher|   ...
-                     --------------------------------
-                 c0  x      x         x      x          ...
-                 c1  x      x         x      x          ...
-                 c2  x                x                 ...
+        Partition     |       0       |      1       |   ...
+                      --------------------------------
+        Regular nodes | Base | higher | Base | higher|   ...
+                      --------------------------------
+                  c0  x      x         x      x          ...
+                  c1  x      x         x      x          ...
+                  c2  x                x                 ...
     */
     return static_cast<GlobalIndexType>(
                index_offset +

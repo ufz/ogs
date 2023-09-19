@@ -75,7 +75,8 @@ TYPED_TEST(NumLibReferenceElementTest, Prerequisite)
     using MeshElementType = TypeParam;
 
     auto const element_node_natural_coords =
-        NumLib::getNodeCoordsOfReferenceElement<MeshElementType>();
+        ReferenceElementUtils::getNodeCoordsOfReferenceElement<
+            MeshElementType>();
 
     ASSERT_EQ(MeshElementType::n_all_nodes, element_node_natural_coords.size())
         << "Number of nodes and natural coordinates do not match for this "
@@ -101,14 +102,15 @@ TYPED_TEST(NumLibReferenceElementTest, ElementNodes)
     using MeshElementType = TypeParam;
 
     auto const all_element_node_natural_coords =
-        NumLib::getNodeCoordsOfReferenceElement<MeshElementType>();
+        ReferenceElementUtils::getNodeCoordsOfReferenceElement<
+            MeshElementType>();
 
     // For pyramid 13 some higher order nodes would not pass this unit test.
     auto const element_node_natural_coords =
         !std::is_same_v<MeshElementType, MeshLib::Pyramid13>
             ? all_element_node_natural_coords
-            : BaseLib::DynamicSpan{all_element_node_natural_coords.data,
-                                   MeshLib::Pyramid13::n_base_nodes};
+            : std::span{all_element_node_natural_coords.data(),
+                        MeshLib::Pyramid13::n_base_nodes};
 
     interpolateNodeCoordsAndCheckTheResult(this->element,
                                            element_node_natural_coords);

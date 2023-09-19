@@ -12,8 +12,8 @@ weight = 8
 
 OpenGeoSys has implemented certain numerical integration/quadrature rules for
 each mesh element type. Currently, all of the implemented quadrature rules are
-Gauss-Legendre quadrature or schemes in that spirit. I.e., integration points
-are located inside the elements, not at its faces, edges or corners.
+Gauss-Legendre quadrature schemes or related schemes in that spirit. I.e., integration points
+are located inside the elements, not at its faces, edges, or corners.
 
 The table below gives an overview over the implemented schemes and which
 polynomials can be integrated exactly with the respective schemes. The data are
@@ -49,9 +49,12 @@ The columns contain the following data:
 | 3-sided prism       | 1       | 0     | **1** | 6       | 1     | **3** | 21      | 2     | *3*   | 28      | 2     | *5*   |
 | Pyramid             | 1       | 1     | **1** | 5       | 1     | **3** | 13      | 3     | *3*   | 13      | 3     | *3*   |
 
-Note, that on pyramids det($J$) varies over the mesh element, even for linear
-elements. Therefore, for pyramids we are actually integrating a polynomial of
-higher degree than the degrees P and Q given in the table above.
+Note, that on pyramids the determinant of the Jacobian originating from mapping the unit element to the physical one, det($J$),
+varies over the mesh element, even for linear elements. This is because a pyramid is neither a simplex, nor a direct
+superposition of simplices, implying that it is deformed by construction. Therefore, for pyramids we are actually integrating a
+polynomial of higher degree than the degrees P and Q given in the table above. Moreover, please note, that det($J$) also varies
+for all deformed direct superpositions of linear elements. This implies that det($J$) will vary on deformed bi-linear elements
+like quadrilaterals (quads) and 3-sided prisms as well as on deformed hexahedra, which are tri-linear.
 
 ## Extrapolation of integration point data to mesh nodes
 
@@ -69,13 +72,13 @@ The columns contain the following data:
 
 * #IP: The number of integration points of the integration method.
 * L:
-  Whether extrapolation can be performed on the *linear* elements (e.g. Quad4) of the
+  Whether extrapolation can be performed on the *(multi-)linear* elements (e.g. Quad4) of the
   respective type with the given integration order.
 * Q:
-  Whether extrapolation can be performed on the *quadratic* elements (e.g.
+  Whether extrapolation can be performed on the *(multi-)quadratic* elements (e.g.
   Hex20) of the respective type with the given integration order.
 
-As you can see, for integration order ≥ 2 extrapolation works for all linear
+As you can see, for integration order ≥ 2 extrapolation works for all (multi-)linear
 elements and for integration order ≥ 3 extrapolation works for all element types
 implemented in OpenGeoSys.
 

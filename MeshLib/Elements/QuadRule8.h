@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include "MeshLib/MeshEnums.h"
-#include "QuadRule4.h"
 #include "EdgeReturn.h"
+#include "MeshLib/MeshEnums.h"
+#include "QuadRule.h"
 
 namespace MeshLib
 {
@@ -20,8 +20,8 @@ namespace MeshLib
 /**
  * This class represents a 2d quadrilateral element with 8 nodes.
  * The following sketch shows the node and edge numbering.
- * @anchor Quad8NodeAndEdgeNumbering
- * @code
+ * \anchor Quad8NodeAndEdgeNumbering
+ * \code
  *              2
  *        3-----6-----2
  *        |           |
@@ -31,9 +31,9 @@ namespace MeshLib
  *        |           |
  *        0-----4-----1
  *              0
- * @endcode
+ * \endcode
  */
-class QuadRule8 : public QuadRule4
+class QuadRule8 : public QuadRule
 {
 public:
     /// Constant: The number of all nodes for this element
@@ -48,6 +48,11 @@ public:
     /// Returns the i-th edge of the element.
     using EdgeReturn = MeshLib::QuadraticEdgeReturn;
 
+    static unsigned identifyFace(Node const* const* element_nodes,
+                                 Node const* nodes[3])
+    {
+        return FaceRule::identifyFace<QuadRule8>(element_nodes, nodes);
+    }
 }; /* class */
 
 }  // namespace MeshLib

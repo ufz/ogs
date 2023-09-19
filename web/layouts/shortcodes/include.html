@@ -1,0 +1,10 @@
+{# file path has to be relative to current file #}
+{# TODO: `hugo server` does not re-generate the included content on change #}
+{{$file := .Get 0}}
+{{$file := (path.Join (path.Dir .Page.File.Path) (.Get 0))}}
+
+{{ if not (os.FileExists $file)}}
+{{ errorf "Failed to include file %q in %q!" $file .Page.File.Path }}
+{{ end }}
+
+{{ $file | readFile | markdownify }}

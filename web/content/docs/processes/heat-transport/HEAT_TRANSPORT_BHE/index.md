@@ -37,10 +37,10 @@ Here, $\Lambda_s$ denotes the tensor of thermal hydrodynamic dispersion and $H_s
 
 In the configuration of `HEAT_TRANSPORT_BHE` process, it is generally configured as follows.
 
-* < name >: should be `HeatTransportBHE`.
-* < type >: should be `HEAT_TRANSPORT_BHE`.
-* < integration_order >: It is the order of the integration method for element-wise integration, normally set to 2.
-* < process_variables >: The primary variables of the `HEAT_TRANSPORT_BHE` process are `temperature_soil` and `temperature_BHE1`. For multiple boreholes, the name `temperature_BHE2`, `temperature_BHE3` etc can be added.
+* `<name>`: should be `HeatTransportBHE`.
+* `<type>`: should be `HEAT_TRANSPORT_BHE`.
+* `<integration_order>`: It is the order of the integration method for element-wise integration, normally set to 2.
+* `<process_variables>`: The primary variables of the `HEAT_TRANSPORT_BHE` process are `temperature_soil` and `temperature_BHE1`. For multiple boreholes, the name `temperature_BHE2`, `temperature_BHE3` etc can be added.
 
 ```xml
 <name>HeatTransportBHE</name>

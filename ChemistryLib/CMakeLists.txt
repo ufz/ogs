@@ -9,7 +9,8 @@ append_source_files(SOURCES Common)
 ogs_add_library(ChemistryLib ${SOURCES})
 
 target_link_libraries(
-    ChemistryLib PUBLIC Eigen3::Eigen iphreeqc PRIVATE BaseLib MaterialLib NumLib
+    ChemistryLib PUBLIC Eigen3::Eigen iphreeqc PRIVATE BaseLib MaterialLib
+                                                       MathLib MeshLib NumLib
 )
 
 # See https://github.com/ufz/ogs/pull/2982#issuecomment-641086788
@@ -18,5 +19,7 @@ set_source_files_properties(
     PROPERTIES SKIP_UNITY_BUILD_INCLUSION TRUE
 )
 
-target_precompile_headers(ChemistryLib PRIVATE [["BaseLib/Error.h"]]
-    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]])
+target_precompile_headers(
+    ChemistryLib PRIVATE [["BaseLib/Error.h"]] [["BaseLib/ConfigTree.h"]]
+    [["BaseLib/Logging.h"]]
+)

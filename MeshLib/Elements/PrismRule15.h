@@ -10,18 +10,18 @@
 
 #pragma once
 
-#include "MeshLib/MeshEnums.h"
-#include "Element.h"
 #include "EdgeReturn.h"
-#include "PrismRule6.h"
+#include "Element.h"
+#include "PrismRule.h"
 
 namespace MeshLib
 {
 
 /**
- * This class represents a 3d prism element with 15 nodes. The following sketch shows the node and edge numbering.
- * @anchor PrismNodeAndEdgeNumbering
- * @code
+ * This class represents a 3d prism element with 15 nodes. The following sketch
+ * shows the node and edge numbering.
+ * \anchor PrismNodeAndEdgeNumbering
+ * \code
  *            5
  *           / \
  *          / : \
@@ -39,9 +39,9 @@ namespace MeshLib
  *      0-----------1
  *            6
  *
- * @endcode
+ * \endcode
  */
-class PrismRule15 : public PrismRule6
+class PrismRule15 : public PrismRule
 {
 public:
     /// Constant: The number of all nodes for this element
@@ -65,6 +65,12 @@ public:
     /// Returns the i-th face of the element.
     static const Element* getFace(const Element* e, unsigned i);
 
+    /// Returns the ID of a face given an array of nodes.
+    static unsigned identifyFace(Node const* const* element_nodes,
+                                 Node const* nodes[3])
+    {
+        return CellRule::identifyFace<PrismRule15>(element_nodes, nodes);
+    }
 }; /* class */
 
 }  // namespace MeshLib

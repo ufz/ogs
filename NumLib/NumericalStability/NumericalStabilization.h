@@ -12,18 +12,8 @@
 #pragma once
 
 #include <Eigen/Core>
-#include <memory>
+#include <variant>
 #include <vector>
-
-namespace MeshLib
-{
-class Mesh;
-}
-
-namespace BaseLib
-{
-class ConfigTree;
-}
 
 namespace NumLib
 {
@@ -38,27 +28,8 @@ namespace NumLib
  *  with \f$u\f$ the primary variable,  \f$\mathbf v\f$ the fluid velocity,
  *  \f$\mathbf{K}\f$ the diffusion coefficient.
  */
-class NumericalStabilization
+struct NoStabilization final
 {
-public:
-    explicit NumericalStabilization(double const cutoff_velocity)
-        : cutoff_velocity_(cutoff_velocity)
-    {
-    }
-
-    virtual ~NumericalStabilization() = 0;
-
-    double getCutoffVelocity() const { return cutoff_velocity_; }
-    virtual double computeArtificialDiffusion(
-        std::size_t const /*elemend_id*/, double const /*velocity_norm*/) const
-    {
-        return 0.0;
-    };
-
-protected:
-    /// The cutoff velocity. The stabilization is not applied
-    /// if the velocity magnitude is below the cutoff velocity.
-    double const cutoff_velocity_ = 0.0;
 };
 
 /**
@@ -75,18 +46,21 @@ protected:
  *  size (e.g. the maximum edge length of element), and \f$\mathbf I\f$ the
  * identity matrix.
  */
-class IsotropicDiffusionStabilization final : public NumericalStabilization
+class IsotropicDiffusionStabilization final
 {
 public:
     IsotropicDiffusionStabilization(double const cutoff_velocity,
                                     double const tuning_parameter,
-                                    std::vector<double>&& element_sizes_vector);
+                                    std::vector<double>&& element_sizes);
 
-    double computeArtificialDiffusion(
-        std::size_t const elemend_id,
-        double const velocity_norm) const override;
+    double computeArtificialDiffusion(std::size_t const element_id,
+                                      double const velocity_norm) const;
 
 private:
+    /// The cutoff velocity. The stabilization is not applied
+    /// if the velocity magnitude is below the cutoff velocity.
+    double const cutoff_velocity_;
+
     /// The tuning parameter in the range [0,1].
     double const tuning_parameter_ = 0.5;
 
@@ -180,18 +154,22 @@ private:
  * which means the nodal mass balance of element is guaranteed.
  *
  */
-class FullUpwind final : public NumericalStabilization
+class FullUpwind final
 {
 public:
-    using NumericalStabilization::NumericalStabilization;
+    explicit FullUpwind(double const cutoff_velocity)
+        : cutoff_velocity_(cutoff_velocity)
+    {
+    }
+
+    double getCutoffVelocity() const { return cutoff_velocity_; }
+
+private:
+    /// The cutoff velocity. The stabilization is not applied
+    /// if the velocity magnitude is below the cutoff velocity.
+    double const cutoff_velocity_;
 };
 
-std::unique_ptr<NumericalStabilization> createNumericalStabilization(
-    MeshLib::Mesh const& mesh, BaseLib::ConfigTree const& config);
-
-template <typename Derived>
-void applyFullUpwind(Eigen::VectorXd const& quasi_nodal_flux,
-                     Eigen::EigenBase<Derived>& diffusion_matrix);
+using NumericalStabilization =
+    std::variant<NoStabilization, IsotropicDiffusionStabilization, FullUpwind>;
 }  // namespace NumLib
-
-#include "NumericalStabilization_impl.h"

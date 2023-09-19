@@ -15,6 +15,7 @@
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
@@ -36,36 +37,55 @@ struct IntegrationPointData final
         static const int kelvin_vector_size =
             MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
         sigma_eff.setZero(kelvin_vector_size);
+        sigma_eff_ice.setZero(kelvin_vector_size);
         eps.setZero(kelvin_vector_size);
         eps_prev.setZero(kelvin_vector_size);
+        eps0.setZero(kelvin_vector_size);
+        eps0_prev.setZero(kelvin_vector_size);
         eps_m.setZero(kelvin_vector_size);
         eps_m_prev.resize(kelvin_vector_size);
+        eps_m_ice.setZero(kelvin_vector_size);
+        eps_m_ice_prev.resize(kelvin_vector_size);
 
         // Previous time step values are not initialized and are set later.
         sigma_eff_prev.resize(kelvin_vector_size);
+        sigma_eff_ice_prev.resize(kelvin_vector_size);
     }
 
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
-    typename BMatricesType::KelvinVectorType eps, eps_prev;
+    typename BMatricesType::KelvinVectorType eps, eps_prev, eps0, eps0_prev;
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
+
+    typename BMatricesType::KelvinVectorType sigma_eff_ice, sigma_eff_ice_prev;
+    typename BMatricesType::KelvinVectorType eps_m_ice, eps_m_ice_prev;
 
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
     typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
 
-    typename ShapeMatricesTypePressure::NodalRowVectorType N_p;
-    typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
+    // Scalar shape matrices for pressure and temperature.
+    typename ShapeMatricesTypePressure::NodalRowVectorType N;
+    typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx;
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
+
+    double phi_fr = 0;
+    double phi_fr_prev;
     double integration_weight;
+
+    double porosity;
 
     void pushBackState()
     {
+        phi_fr_prev = phi_fr;
+        eps0_prev = eps0;
         eps_prev = eps;
         eps_m_prev = eps_m;
         sigma_eff_prev = sigma_eff;
+        sigma_eff_ice_prev = sigma_eff_ice;
+        eps_m_ice_prev = eps_m_ice;
         material_state_variables->pushBackState();
     }
 
@@ -82,6 +102,8 @@ struct IntegrationPointData final
         MPL::VariableArray variable_array_prev;
 
         auto const null_state = solid_material.createMaterialStateVariables();
+        solid_material.initializeInternalStateVariables(t, x_position,
+                                                        *null_state);
 
         using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
@@ -137,7 +159,84 @@ struct IntegrationPointData final
         return C;
     }
 
+    typename BMatricesType::KelvinMatrixType updateConstitutiveRelationIce(
+        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
+            ice_constitutive_relation,
+        MaterialPropertyLib::VariableArray const& variable_array,
+        double const t,
+        ParameterLib::SpatialPosition const& x_position,
+        double const dt,
+        double const temperature_prev)
+    {
+        MaterialPropertyLib::VariableArray variable_array_prev;
+
+        variable_array_prev.stress
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                sigma_eff_ice_prev);
+        variable_array_prev.mechanical_strain
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_m_ice_prev);
+        variable_array_prev.temperature = temperature_prev;
+
+        // Extend for non-linear ice materials if necessary.
+        auto const null_state =
+            ice_constitutive_relation.createMaterialStateVariables();
+        ice_constitutive_relation.initializeInternalStateVariables(
+            t, x_position, *null_state);
+        auto&& solution = ice_constitutive_relation.integrateStress(
+            variable_array_prev, variable_array, t, x_position, dt,
+            *null_state);
+
+        if (!solution)
+            OGS_FATAL("Computation of local constitutive relation failed.");
+
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C_IR;
+        std::tie(sigma_eff_ice, material_state_variables, C_IR) =
+            std::move(*solution);
+
+        return C_IR;
+    }
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+};
+
+template <int DisplacementDim>
+struct IntegrationPointDataForOutput
+{
+    using DimVector = MatrixPolicyType::VectorType<DisplacementDim>;
+    // Darcy velocity for output. Care must be taken for the deactivated
+    // elements.
+    DimVector velocity = DimVector::Constant(
+        DisplacementDim, std::numeric_limits<double>::quiet_NaN());
+
+    double fluid_density = std::numeric_limits<double>::quiet_NaN();
+    double viscosity = std::numeric_limits<double>::quiet_NaN();
+};
+
+template <int DisplacementDim>
+struct ConstitutiveRelationsValues
+{
+    using DimMatrix =
+        typename MatrixPolicyType::MatrixType<DisplacementDim, DisplacementDim>;
+
+    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim>
+        solid_linear_thermal_expansion_coefficient;
+    DimMatrix K_over_mu;
+    DimMatrix K_pT_thermal_osmosis;
+    DimMatrix effective_thermal_conductivity;
+    double alpha_biot;
+    double beta;
+    double beta_SR;
+    double c_f;
+    double effective_volumetric_heat_capacity;
+    double fluid_compressibility;
+    double rho;
+
+    // Freezing related values.
+    double J_TT_fr;
+    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> J_uu_fr;
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> J_uT_fr;
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> r_u_fr;
 };
 
 }  // namespace ThermoHydroMechanics

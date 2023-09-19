@@ -1,11 +1,11 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  *  Created on January 8, 2018, 3:00 PM
  */
 #pragma once
@@ -21,7 +21,7 @@ template <typename ShapeFunction, int DisplacementDim>
 void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& /*local_xdot*/, int const process_id,
+        Eigen::VectorXd const& /*local_x_prev*/, int const process_id,
         std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)

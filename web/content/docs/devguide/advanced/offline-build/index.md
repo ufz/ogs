@@ -47,7 +47,7 @@ $ jq -r '.ext.cache_hash' web/data/versions.json
 {{< dataFile "versions.ext.cache_hash" >}} # <-- current version on master
 ```
 
-On the [external dependencies package page](https://gitlab.opengeosys.org/ogs/ogs/-/packages/14) download the file `ext.tar.gz` with the specified version.
+On the [external dependencies package page](https://gitlab.opengeosys.org/ogs/ogs/-/packages) download the file `ext.tar.gz` of the package `external-dependencies` with the specified version.
 
 Extract the external dependencies cache into a directory. Configure OGS as usual but point to the extracted external dependencies cache:
 

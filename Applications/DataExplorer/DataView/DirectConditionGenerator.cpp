@@ -19,12 +19,12 @@
 #include <limits>
 #include <memory>
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/Logging.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
 
 const std::vector<std::pair<std::size_t, double>>&
 DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh& mesh,
@@ -43,7 +43,8 @@ DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh& mesh,
 
         Eigen::Vector3d const dir = -Eigen::Vector3d::UnitZ();
         const std::vector<MeshLib::Node*> surface_nodes(
-            MeshLib::MeshSurfaceExtraction::getSurfaceNodes(mesh, dir, 90));
+            MeshToolsLib::MeshSurfaceExtraction::getSurfaceNodes(mesh, dir,
+                                                                 90));
         const double no_data(raster->getHeader().no_data);
         _direct_values.reserve(surface_nodes.size());
         for (auto const* surface_node : surface_nodes)
@@ -88,11 +89,12 @@ DirectConditionGenerator::directWithSurfaceIntegration(
     double const angle(90);
     auto prop_name = MeshLib::getBulkIDString(MeshLib::MeshItemType::Node);
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
-        MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir, angle,
-                                                       prop_name));
+        MeshToolsLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir, angle,
+                                                            prop_name));
 
     std::vector<double> node_area_vec =
-        MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(*surface_mesh);
+        MeshToolsLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(
+            *surface_mesh);
     const std::vector<MeshLib::Node*>& surface_nodes(surface_mesh->getNodes());
     const std::size_t nNodes(surface_mesh->getNumberOfNodes());
     const double no_data(raster->getHeader().no_data);

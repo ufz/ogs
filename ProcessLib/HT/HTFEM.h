@@ -23,6 +23,7 @@
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "NumLib/NumericalStability/HydrodynamicDispersion.h"
 #include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
@@ -65,6 +66,11 @@ public:
             _integration_method.getNumberOfPoints();
         _ip_data.reserve(n_integration_points);
 
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        double const aperture_size = _process_data.aperture_size(0.0, pos)[0];
+
         auto const shape_matrices =
             NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                       GlobalDim>(element, is_axially_symmetric,
@@ -76,7 +82,7 @@ public:
                 shape_matrices[ip].N, shape_matrices[ip].dNdx,
                 _integration_method.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
-                    shape_matrices[ip].detJ);
+                    shape_matrices[ip].detJ * aperture_size);
         }
     }
 
@@ -146,7 +152,9 @@ public:
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::density)
                     .template value<double>(vars, pos, t, dt);
-            auto const b = this->_process_data.specific_body_force;
+            auto const b =
+                this->_process_data.projected_specific_body_force_vectors
+                    [this->_element.getID()];
             q += K_over_mu * rho_w * b;
         }
 
@@ -193,7 +201,7 @@ protected:
     GlobalDimMatrixType getThermalConductivityDispersivity(
         MaterialPropertyLib::VariableArray const& vars,
         const double fluid_density, const double specific_heat_capacity_fluid,
-        const GlobalDimVectorType& velocity, const GlobalDimMatrixType& I,
+        const GlobalDimVectorType& velocity,
         ParameterLib::SpatialPosition const& pos, double const t,
         double const dt)
     {
@@ -207,41 +215,28 @@ protected:
                         MaterialPropertyLib::PropertyType::thermal_conductivity)
                     .value(vars, pos, t, dt));
 
-        if (_process_data.stabilizer)
-        {
-            thermal_conductivity.noalias() +=
-                fluid_density * specific_heat_capacity_fluid *
-                _process_data.stabilizer->computeArtificialDiffusion(
-                    _element.getID(), velocity.norm()) *
-                I;
-        }
-
-        auto const thermal_dispersivity_longitudinal =
-            medium
-                .property(MaterialPropertyLib::PropertyType::
-                              thermal_longitudinal_dispersivity)
-                .template value<double>();
         auto const thermal_dispersivity_transversal =
             medium
                 .property(MaterialPropertyLib::PropertyType::
                               thermal_transversal_dispersivity)
                 .template value<double>();
 
-        double const velocity_magnitude = velocity.norm();
+        auto const thermal_dispersivity_longitudinal =
+            medium
+                .property(MaterialPropertyLib::PropertyType::
+                              thermal_longitudinal_dispersivity)
+                .template value<double>();
 
-        if (velocity_magnitude < std::numeric_limits<double>::epsilon())
-        {
-            return thermal_conductivity;
-        }
-
-        GlobalDimMatrixType const thermal_dispersivity =
-            fluid_density * specific_heat_capacity_fluid *
-            (thermal_dispersivity_transversal * velocity_magnitude * I +
-             (thermal_dispersivity_longitudinal -
-              thermal_dispersivity_transversal) /
-                 velocity_magnitude * velocity * velocity.transpose());
-
-        return thermal_conductivity + thermal_dispersivity;
+        // Thermal conductivity is moved outside and zero matrix is passed
+        // instead due to multiplication with fluid's density times specific
+        // heat capacity.
+        return thermal_conductivity +
+               fluid_density * specific_heat_capacity_fluid *
+                   NumLib::computeHydrodynamicDispersion(
+                       _process_data.stabilizer, _element.getID(),
+                       GlobalDimMatrixType::Zero(GlobalDim, GlobalDim),
+                       velocity, 0 /* phi */, thermal_dispersivity_transversal,
+                       thermal_dispersivity_longitudinal);
     }
 
     std::vector<double> const& getIntPtDarcyVelocityLocal(
@@ -312,7 +307,9 @@ protected:
                     liquid_phase
                         .property(MaterialPropertyLib::PropertyType::density)
                         .template value<double>(vars, pos, t, dt);
-                auto const b = _process_data.specific_body_force;
+                auto const b =
+                    _process_data.projected_specific_body_force_vectors
+                        [_element.getID()];
                 // here it is assumed that the vector b is directed 'downwards'
                 cache_mat.col(ip).noalias() += K_over_mu * rho_w * b;
             }

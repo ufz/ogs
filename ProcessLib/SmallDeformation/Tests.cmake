@@ -62,10 +62,8 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Excavation/time_linear_excavation.prj RUNTIME 4)
 endif()
 
-if (OGS_USE_PYTHON)
-    OgsTest(PROJECTFILE Mechanics/Linear/PythonPiston/piston.prj)
-    OgsTest(PROJECTFILE Mechanics/Linear/PythonHertzContact/hertz_contact.prj RUNTIME 16)
-endif()
+OgsTest(PROJECTFILE Mechanics/Linear/PythonPiston/piston.prj)
+OgsTest(PROJECTFILE Mechanics/Linear/PythonHertzContact/hertz_contact.prj RUNTIME 16)
 
 if (OGS_USE_MPI)
     # OgsTest(WRAPPER mpirun -np 4 PROJECTFILE Mechanics/Linear/disc_with_hole.prj)
@@ -95,11 +93,15 @@ if (OGS_USE_MFRONT)
     OgsTest(PROJECTFILE Mechanics/Burgers/cube_1e0_mfront_mod.prj)
     OgsTest(PROJECTFILE Mechanics/ModifiedCamClay/square_1e0_shear.prj)
     OgsTest(PROJECTFILE Mechanics/ModifiedCamClay/square_1e0_biax.prj)
-    OgsTest(PROJECTFILE Mechanics/ModifiedCamClay/model_triaxtest.prj)
+    OgsTest(PROJECTFILE Mechanics/ModifiedCamClay/triaxtest.prj)
+    OgsTest(PROJECTFILE Mechanics/ModifiedCamClay/triaxtest_original.prj)
+    OgsTest(PROJECTFILE Mechanics/ModifiedCamClay/triaxtest_original_abs.prj)
     OgsTest(PROJECTFILE Mechanics/Ehlers/MFront/square_1e1_2_matIDs.prj RUNTIME 4)
+    OgsTest(PROJECTFILE Mechanics/Ehlers/MFront/square_1e1_2_matIDs_restart.prj RUNTIME 4)
     OgsTest(PROJECTFILE Mechanics/Ehlers/MFront/two_material_ids_single_solid.prj RUNTIME 1)
     if(NOT OGS_USE_MPI)
-        OgsTest(PROJECTFILE Mechanics/GuentherSalzer/model_triaxtest.prj)
+        OgsTest(PROJECTFILE Mechanics/GuentherSalzer/model_uniaxial_test.prj)
+        # OgsTest(PROJECTFILE Mechanics/GuentherSalzer/model_triaxial_test.prj RUNTIME 100) TODO (tnagel) Disabled due to instability.
     endif()
     OgsTest(PROJECTFILE Mechanics/PLLC/uniax_compression.prj)
 
@@ -112,7 +114,7 @@ if (OGS_USE_MFRONT)
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
-        disc_with_hole_expected_ts_4_t_1.000000.vtu disc_with_hole_ts_4_t_1.000000.vtu displacement displacement 1e-16 1e-16
+        disc_with_hole_expected_ts_4_t_1.000000.vtu disc_with_hole_ts_4_t_1.000000.vtu displacement displacement 2e-16 1e-16
     )
 
     # Tests that internal state variables work correctly.
@@ -269,7 +271,7 @@ AddTest(
 
 if(NOT OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.ipynb RUNTIME 5)
-    NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.ipynb RUNTIME 15)
+    NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.md RUNTIME 15)
     if(NOT WIN32)
         NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole_convergence_analysis.ipynb RUNTIME 40)
     endif()

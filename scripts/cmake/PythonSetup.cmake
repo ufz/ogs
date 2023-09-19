@@ -1,17 +1,16 @@
 # cmake-lint: disable=C0103
 
-if(OGS_USE_PYTHON)
-    set(_python_version_max "...<3.12")
-    if(WIN32 AND NOT OGS_BUILD_WHEEL)
-        # 3.11 crashes at initialization on Windows.
-        set(_python_version_max "...<3.11")
-    endif()
+set(_python_version_max "...<3.12")
+if(WIN32 AND NOT OGS_BUILD_WHEEL)
+    # 3.11 crashes at initialization on Windows.
+    set(_python_version_max "...<3.11")
 endif()
 
 if(OGS_USE_PIP)
-    set(Python_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
+    set(LOCAL_VIRTUALENV_DIR ${PROJECT_BINARY_DIR}/.venv CACHE INTERNAL "")
+    set(Python_ROOT_DIR ${LOCAL_VIRTUALENV_DIR})
     set(CMAKE_REQUIRE_FIND_PACKAGE_Python TRUE)
-    if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
+    if(NOT EXISTS ${LOCAL_VIRTUALENV_DIR})
         execute_process(
             COMMAND
                 ${CMAKE_COMMAND} -DPROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}
@@ -35,13 +34,28 @@ if(OGS_USE_PIP)
     if(MSVC)
         set(_venv_bin_dir "Scripts")
     endif()
-    set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/${_venv_bin_dir}
+    set(LOCAL_VIRTUALENV_BIN_DIR ${LOCAL_VIRTUALENV_DIR}/${_venv_bin_dir}
         CACHE INTERNAL ""
     )
     # Fixes macOS install issues
     execute_process(
         COMMAND ${LOCAL_VIRTUALENV_BIN_DIR}/pip install wheel
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    )
+    # Create jupytext config
+    file(
+        WRITE
+        ${LOCAL_VIRTUALENV_DIR}/etc/jupyter/labconfig/default_setting_overrides.json
+        [=[
+{
+  "@jupyterlab/docmanager-extension:plugin": {
+    "defaultViewers": {
+      "markdown": "Jupytext Notebook",
+      "myst": "Jupytext Notebook"
+    }
+  }
+}
+]=]
     )
 else()
     # Prefer unix location over frameworks (Apple-only)
@@ -51,20 +65,14 @@ else()
     set(Python_FIND_STRATEGY VERSION)
 endif()
 
-set(_python_componets Interpreter)
-if(OGS_USE_PYTHON AND NOT OGS_BUILD_WHEEL)
+set(_python_componets Interpreter Development.Module)
+if(NOT OGS_BUILD_WHEEL)
     list(APPEND _python_componets Development.Embed)
-endif()
-if(OGS_BUILD_PYTHON_MODULE OR OGS_USE_PYTHON)
-    list(APPEND _python_componets Development.Module)
-endif()
-if(OGS_USE_PYTHON OR OGS_BUILD_PYTHON_MODULE)
-    set(CMAKE_REQUIRE_FIND_PACKAGE_Python TRUE)
 endif()
 
 find_package(
     Python ${ogs.minimum_version.python}${_python_version_max}
-    COMPONENTS ${_python_componets}
+    COMPONENTS ${_python_componets} REQUIRED
 )
 
 if(OGS_USE_PIP)
@@ -77,7 +85,7 @@ if(OGS_USE_PIP)
     set(OGS_PYTHON_PACKAGES ""
         CACHE INTERNAL "List of Python packages to be installed via pip."
     )
-    set(Python_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
+    set(Python_ROOT_DIR ${LOCAL_VIRTUALENV_DIR})
     if(MSVC)
         set(Python_EXECUTABLE ${Python_ROOT_DIR}/Scripts/python.exe)
     else()
@@ -141,14 +149,15 @@ function(setup_venv)
             OUTPUT_VARIABLE _out
             ERROR_VARIABLE _err
         )
-        if(DEFINED ENV{CI_JOB_IMAGE})
-            # Install gmsh package without X11 dependencies in Docker CI builds
+        if(DEFINED ENV{CI} AND UNIX AND NOT APPLE)
             execute_process(
-                COMMAND
-                    ${LOCAL_VIRTUALENV_BIN_DIR}/pip install -i
-                    https://gmsh.info/python-packages-dev-nox --force-reinstall
-                    --no-cache-dir gmsh
+                COMMAND ${_apple_env} ${LOCAL_VIRTUALENV_BIN_DIR}/pip install
+                    --force-reinstall
+                    -r ${PROJECT_SOURCE_DIR}/Tests/Data/requirements-gmsh-nox.txt
                 WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+                RESULT_VARIABLE _return_code
+                OUTPUT_VARIABLE _out
+                ERROR_VARIABLE _err
             )
         endif()
         if(${_return_code} EQUAL 0)

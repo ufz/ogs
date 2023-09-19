@@ -10,19 +10,19 @@
 
 #pragma once
 
-#include "MeshLib/MeshEnums.h"
-#include "LineRule2.h"
+#include "EdgeReturn.h"
+#include "LineRule.h"
 
 namespace MeshLib
 {
 
 /**
  * A 1d Edge or Line element with 3 nodes.
- * @code
+ * \code
  *  0----2----1
- * @endcode
+ * \endcode
  */
-class LineRule3 : public LineRule2
+class LineRule3 : public LineRule
 {
 public:
     /// Constant: The number of all nodes for this element

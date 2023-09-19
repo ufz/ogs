@@ -20,7 +20,7 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/QuadraticMeshGenerator.h"
 
 int main(int argc, char* argv[])
 {
@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
     }
 
     INFO("Create a quadratic order mesh");
-    auto new_mesh(MeshLib::createQuadraticOrderMesh(
+    auto new_mesh(MeshToolsLib::createQuadraticOrderMesh(
         *mesh, add_centre_node_arg.getValue()));
 
     INFO("Save the new mesh into a file");

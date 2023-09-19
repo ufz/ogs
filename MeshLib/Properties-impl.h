@@ -148,6 +148,23 @@ PropertyVector<T>* Properties::getPropertyVector(std::string_view name)
 }
 
 template <typename T>
+bool Properties::hasPropertyVector(std::string const& name,
+                                   MeshItemType const item_type) const
+{
+    auto const it = _properties.find(name);
+
+    if (it == _properties.end())
+    {
+        return false;
+    }
+
+    auto property = dynamic_cast<PropertyVector<T>*>(it->second);
+
+    return (property == nullptr) ? false
+                                 : property->getMeshItemType() == item_type;
+}
+
+template <typename T>
 PropertyVector<T> const* Properties::getPropertyVector(
     std::string_view name, MeshItemType const item_type,
     int const n_components) const

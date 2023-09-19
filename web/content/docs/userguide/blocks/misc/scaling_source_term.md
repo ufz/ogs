@@ -11,27 +11,30 @@ Consider a heat source defined as boundary in following mesh:
 |:--:|
 | *The "dent" in the right side of the mesh is a 2D, rectangular source* |
 
-With height alongside Y-axis defined as $h=8$ metres and width alongside X-axis as $r=0.095$ metre. Since Boundary parallel to Y-axis is [axially symmetrical](/docs/userguide/blocks/meshes/#axial-symmetry), the two dimensional rectangle will turn into a three dimensional cylinder after the mesh has been rotated by $360°$ with Y-axis boundary as rotation axis.
+With height alongside Y-axis defined as $h=8$ meters and width alongside X-axis as $r=0.095$ meters.
+Since the boundary parallel to Y-axis is [axially symmetrical](/docs/userguide/blocks/meshes/#axial-symmetry), the two dimensional rectangle will turn into a three dimensional cylinder after the mesh has been rotated by $360°$ with Y-axis boundary as rotation axis.
 
-The source term has to take this into account. Therefore its power has to be scaled - divided by the surface on which it will be delivered to the system.
+The source term has to take this into account.
+Therefore its power has to be scaled - divided by the surface on which it will be delivered to the system.
 
-Following this example. Surface of the cylinder is defined as follows:
+Following this example. The surface of the cylinder is defined as follows:
 
 $$A=2\pi r(h+r)$$
 
 which will result in following surface:
 
-$$A = 2\pi * 0.095 * (8 + 0.095) = 4.83$$
+$$A = 2\pi \cdot 0.095 \cdot (8 + 0.095) = 4.83$$
 
 in $m^2$.
 
-Let's assume that the heat supply is defined as 900W. Than we need to scale this value by the surface obtained from the previous equation:
+Let's assume that the heat supply is defined as 900 W.
+Than we need to scale this value by the surface obtained from the previous equation:
 
 $$S_{scaled}=900/4.83=186.34$$
 
 and this is the value that has to be provided in the project file.
 
-In this example heat source is introduced as [Neumann boundary condition](/docs/userguide/blocks/boundary_conditions/#neumann) at part of the mesh. First we can define parameter called "heater" in the [parameters](/docs/userguide/blocks/parameters/) block:
+In this example the heat source is introduced as [Neumann boundary condition](/docs/userguide/blocks/boundary_conditions/#neumann) at part of the mesh. First, we can define a parameter called "heater" in the [parameters](/docs/userguide/blocks/parameters/) block:
 
 ```xml
 <parameter>
@@ -68,4 +71,5 @@ Now we can refer to this value in the [process variables](/docs/userguide/blocks
 </process_variable>
 ```
 
-Notice how different type of boundary condition is used for the heat source and rest of the boundary. More details on boundary conditions can be found [here](/docs/userguide/blocks/boundary_conditions/).
+Notice how different type of boundary conditions are used for the heat source and rest of the boundary.
+More details on boundary conditions can be found [here](/docs/userguide/blocks/boundary_conditions/).

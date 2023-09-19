@@ -18,11 +18,11 @@ It was published in this state to make existing content available to users and h
 
 </div>
 
-TODO: Add general description
+<!-- TODO: Add general description -->
 
 This block can be used to define one or more ...
 
-They can be accessed from within `<type>Curve</type>` or `<type>CurveScaled</type>` parameters (more details on [curves](/docs/userguide/blocks/parameters/#curve) and [curves scales](/docs/userguide/blocks/parameters/#curvescaled)).
+They can be accessed from within `<type>Curve</type>` or `<type>CurveScaled</type>` parameters (more details on [curves](/docs/userguide/blocks/parameters/#curve) and [curves scaled](/docs/userguide/blocks/parameters/#curvescaled)).
 
 Following variables are accessible from CurveScaled:
 
@@ -62,9 +62,10 @@ In the `<expression>`s using curves, time $t$ and global coordinate $x$, $y$, an
 ```
 
 Curves can be useful to include information on variation of time dependent parameters.
-Those values can be called from 'equation' tag in 'parameter' if 'type' 'formula' is selected.
+Those values can be called from the 'equation' tag in 'parameter' if 'type' 'formula' is selected.
 
 ## Interpolation
 
-Curve represents a piece-wise linear function---the values between coordinates are interpolated linearly.
-Outside of the curve's range of definition the curve becomes a constant using first value on the left and last value on the right.
+Curve represents a piece-wise linear function -- the values between coordinates are interpolated linearly though.
+Outside of the curve's range of definition the curve becomes a constant using the first value on the left and last value on the
+right.

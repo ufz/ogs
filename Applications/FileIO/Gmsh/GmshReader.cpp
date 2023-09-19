@@ -1,4 +1,5 @@
 /**
+ * \file
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
@@ -26,8 +27,8 @@
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/ElementValueModification.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/ElementValueModification.h"
 
 namespace FileIO
 {
@@ -49,8 +50,8 @@ bool isGMSHMeshFile(const std::string& fname)
     {
         // read version
         std::string version;
-        getline(input, version);
-        getline(input, version);
+        std::getline(input, version);
+        std::getline(input, version);
         INFO("isGMSHMeshFile(): Found GMSH mesh file version: {:s}.", version);
         input.close();
         return true;
@@ -277,7 +278,7 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
         return nullptr;
     }
 
-    getline(in, line);  // $MeshFormat keyword
+    std::getline(in, line);  // $MeshFormat keyword
     if (line.find("$MeshFormat") == std::string::npos)
     {
         in.close();
@@ -285,7 +286,7 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
         return nullptr;
     }
 
-    getline(in, line);  // version-number file-type data-size
+    std::getline(in, line);  // version-number file-type data-size
     if (line.substr(0, 3) != "2.2")
     {
         WARN("Wrong gmsh file format version '{:s}'.", line.substr(0, 3));
@@ -297,7 +298,7 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
         WARN("Currently reading gmsh binary file type is not supported.");
         return nullptr;
     }
-    getline(in, line);  //$EndMeshFormat
+    std::getline(in, line);  //$EndMeshFormat
 
     std::vector<MeshLib::Node*> nodes;
     std::vector<MeshLib::Element*> elements;
@@ -306,7 +307,7 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
     while (line.find("$EndElements") == std::string::npos)
     {
         // Node data
-        getline(in, line);  //$Nodes Keywords
+        std::getline(in, line);  //$Nodes Keywords
         if (line.find("$Nodes") != std::string::npos)
         {
             std::size_t n_nodes(0);
@@ -322,7 +323,7 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
                 id_map.insert(std::map<unsigned, unsigned>::value_type(id, i));
                 nodes[i] = new MeshLib::Node(x, y, z, id);
             }
-            getline(in, line);  // End Node keyword $EndNodes
+            std::getline(in, line);  // End Node keyword $EndNodes
         }
 
         // Element data
@@ -347,7 +348,7 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
                     materials.push_back(mat_id);
                 }
             }
-            getline(in, line);  // END keyword
+            std::getline(in, line);  // END keyword
         }
 
         if (line.find("PhysicalNames") != std::string::npos)
@@ -356,9 +357,9 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
             in >> n_lines >> std::ws;  // number-of-lines
             for (std::size_t i = 0; i < n_lines; i++)
             {
-                getline(in, line);
+                std::getline(in, line);
             }
-            getline(in, line);  // END keyword
+            std::getline(in, line);  // END keyword
         }
     }
     in.close();
@@ -387,7 +388,7 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
                              materials.cend());
     }
 
-    MeshLib::ElementValueModification::condense(*mesh);
+    MeshToolsLib::ElementValueModification::condense(*mesh);
 
     INFO("\t... finished.");
     INFO("Nr. Nodes: {:d}.", nodes.size());

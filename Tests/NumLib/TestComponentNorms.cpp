@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -22,7 +23,7 @@
 #ifdef USE_PETSC
 #include "MeshLib/IO/readMeshFromFile.h"
 #else
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #endif
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
@@ -50,7 +51,7 @@ struct DOFTableData
               TestInfoLib::TestInfo::data_path +
               "/EllipticPETSc/quad_20x10_GroundWaterFlow.")),
 #else
-        : mesh(MeshLib::MeshGenerator::generateRegularHexMesh(
+        : mesh(MeshToolsLib::MeshGenerator::generateRegularHexMesh(
               mesh_length, mesh_elements_in_each_direction)),
 #endif
           mesh_subset_all_nodes(*mesh, mesh->getNodes()),

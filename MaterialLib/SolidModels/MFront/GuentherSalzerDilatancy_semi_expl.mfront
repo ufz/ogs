@@ -1,0 +1,193 @@
+
+@DSL Implicit;
+@Behaviour GuentherSalzerDilatancy_semi_expl;
+@Author Thomas Nagel;
+@Description
+{
+Günther Salzer model for rock salt.
+Semi-explicit treatment of damage/dilatancy. Requires very small time
+steps, otherwise neither robust nor accurate.
+Fully implicit treatment WIP.
+
+Günther, R., & Salzer, K. (2012). Advanced strain-hardening approach.
+In Mechanical Behaviour of Salt VII (Issue December 2016).
+CRC Press. https://doi.org/10.1201/b12041-4
+
+Günther, R.-M., Salzer, K., Popp, T., & Lüdeling, C. (2015).
+Steady-State Creep of Rock Salt: Improved Approaches for Lab Determination
+and Modelling. Rock Mechanics and Rock Engineering,
+48(6), 2603–2613. https://doi.org/10.1007/s00603-015-0839-2
+
+Fixed parameter set: Asse.
+Units: MPa d
+};
+
+@Algorithm NewtonRaphson;
+@MaximumNumberOfIterations 100;
+//@CompareToNumericalJacobian true;
+//@PerturbationValueForNumericalJacobianComputation 1.e-8;
+//@JacobianComparisonCriterion 1e-7;
+
+@Epsilon 1.e-14;
+@Theta 1.0;
+
+@ModellingHypotheses{".+"};
+@Brick StandardElasticity;
+
+// Activation energies in input files in J/mol
+@Parameter real Ru = 8.314472;  // J/(Kmol)
+Ru.setEntryName("UniversalGasConstant");
+
+// Units: MPa, d
+
+// Reference stress
+@Parameter real sig0 = 1.;
+
+// initial hardenging -- can be critical for initial convergence!
+@Parameter real epsV0 = 1.e-8;
+
+// secondary power law
+@Parameter real As1 = 0.001;
+@Parameter real ns1 = 4.0;
+@Parameter real Q1 = 40.e3;
+@Parameter real As2 = 0.001;
+@Parameter real ns2 = 1.0;
+@Parameter real Q2 = 65.e3;
+
+// primary power law and stress/dilatancy dependence
+@Parameter real Ap = 3.98e-29;
+@Parameter real mup = 3.0;
+@Parameter real np0 = 15.18;
+@Parameter real n1 = 0.8;
+@Parameter real n2 = -0.33;
+@Parameter real n3 = 2000.;
+@Parameter real n4 = 0.5;
+
+// Dilatancy boundary
+@Parameter real D1 = 8.;
+@Parameter real D2 = 0.25;
+@Parameter real D3 = 4.8;
+
+// dilatancy strain evolution
+@Parameter real a1 = 5.e-3;
+@Parameter real a2 = 0.0135;
+@Parameter real a3 = -0.4;
+
+@Parameter real a4 = 1.e-6;
+@Parameter real a5 = 2.5e-4;
+@Parameter real a6 = -6.25;
+
+@Parameter real a7 = 0.;
+@Parameter real a8 = 5.13;
+@Parameter real a9 = -0.3;
+
+// Hardening strain
+@StateVariable real epsCrV;
+epsCrV.setEntryName("HardeningStrain");
+
+// Dilatancy strain
+@StateVariable real eps_vol;
+eps_vol.setEntryName("DilatancyStrain");
+
+@AuxiliaryStateVariable stress Udil;
+Udil.setEntryName("DilatancyWork");
+
+// Recovery strain increment
+@LocalVariable real deps_cr_E;
+// Creep strain increment
+@LocalVariable Stensor deps_cr;
+
+@LocalVariable real np;  // corrected stress exponents
+
+//! Second Lamé coefficient
+@LocalVariable stress mu;
+//! First Lamé coefficient
+@LocalVariable stress lambda;
+
+@LocalVariable real As1T, As2T, s3_prev, seq_prev_Dil;
+
+@InitLocalVariables
+{
+mu = computeMu(young, nu);
+lambda = computeLambda(young, nu);
+// Compute initial elastic strain
+eel = 1. / (2. * mu) * sig - nu / young * trace(sig) * Stensor::Id();
+As1T = As1 * std::exp(-Q1 / (Ru * (T + dT)));
+As2T = As2 * std::exp(-Q2 / (Ru * (T + dT)));
+
+const Stensor eps_prev = eel - deel;
+const Stensor sig_prev =
+    lambda * trace(eps_prev) * Stensor::Id() + 2. * mu * eps_prev;
+const auto sig_p = sig_prev.computeEigenValues(Stensor::DESCENDING);
+s3_prev = -sig_p(0);  // sign change for compression convention
+seq_prev_Dil = s3_prev * (D1 / (D2 + s3_prev) + D3);
+
+np = (np0 + n1 * std::exp(n2 * s3_prev) * (1. - std::exp(-n3 * eps_vol))) /
+     std::pow(1. - eps_vol, n4);
+}
+
+@Integrator
+{
+const auto eeps = real(1e-16);
+const auto seps = eeps * young;
+const auto s = deviator(sig);
+const auto seq = std::max(sigmaeq(s), seps);
+const auto norm_s = seq / std::sqrt(3. / 2.);
+
+constexpr auto Pdev = Stensor4::K();
+const auto A1sig = a1 + a2 * std::exp(a3 * s3_prev);
+const auto A2sig = a4 + a5 * std::exp(a6 * s3_prev);
+const auto A3sig = a7 + a8 * std::exp(a9 * s3_prev);
+
+// secondary (recovery)
+const auto b =
+    As1T * std::pow(seq / sig0, ns1) + As2T * std::pow(seq / sig0, ns2);
+const auto db_dseq = ns1 / sig0 * As1T * std::pow(seq / sig0, ns1 - 1) +
+                     ns2 / sig0 * As2T * std::pow(seq / sig0, ns2 - 1);
+
+deps_cr_E = b * dt;
+const auto epsCrV_new = epsCrV + depsCrV;
+const auto seq_to_np = std::pow(seq / sig0, np);
+const auto dseq_ddeel = 3. * s / (2. * seq) * 2. * mu;
+
+const auto deps_cr_tot = depsCrV + deps_cr_E + deps_vol;
+
+fepsCrV =
+    deps_cr_tot - dt * (Ap * seq_to_np / std::pow(epsV0 + epsCrV_new, mup));
+dfepsCrV_ddepsCrV =
+    1. + dt * mup * Ap * seq_to_np / std::pow(epsV0 + epsCrV_new, mup + 1);
+const auto dfepsCrV_dseq = -dt * (Ap * np * std::pow(seq / sig0, np - 1) /
+                                  std::pow(epsV0 + epsCrV_new, mup)) +
+                           db_dseq * dt;
+dfepsCrV_ddeel = dfepsCrV_dseq * dseq_ddeel;
+dfepsCrV_ddeps_vol = 1.;
+deps_cr = eval(std::sqrt(3. / 2.) * deps_cr_tot * s / norm_s);
+feel += deps_cr;
+dfeel_ddepsCrV = std::sqrt(3. / 2.) / norm_s * s;
+dfeel_ddeps_vol = std::sqrt(3. / 2.) / norm_s * s;
+dfeel_ddeel += 2. * mu * std::sqrt(3. / 2.) / norm_s *
+               (deps_cr_tot * (Pdev - (s ^ s) / norm_s / norm_s) +
+                db_dseq * dt * 3. / (2. * seq) * (s ^ s));
+
+const auto s_m_sdil = seq - seq_prev_Dil;
+if (s_m_sdil > 0.)
+{
+    const auto Ai_Udil = A1sig + A2sig * std::exp(A3sig * Udil);
+    const auto s_m_sdil_Ai_Udil = Ai_Udil * s_m_sdil;
+    feps_vol = deps_vol - s_m_sdil_Ai_Udil * deps_cr_tot;
+    dfeps_vol_ddeps_vol = 1. - s_m_sdil_Ai_Udil;
+    dfeps_vol_ddepsCrV = -s_m_sdil_Ai_Udil;
+    dfeps_vol_ddeel =
+        -(s_m_sdil_Ai_Udil * dt * db_dseq + Ai_Udil * deps_cr_tot) * dseq_ddeel;
+}
+}
+
+@UpdateAuxiliaryStateVariables
+{
+const auto seq = sigmaeq(sig);
+if (seq - seq_prev_Dil > 0.)
+{
+    const auto dUdil = (seq - seq_prev_Dil) * (depsCrV + deps_cr_E + deps_vol);
+    Udil += dUdil;
+}
+}

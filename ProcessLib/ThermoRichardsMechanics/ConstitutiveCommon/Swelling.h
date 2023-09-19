@@ -40,16 +40,16 @@ struct SwellingDataStateless
 template <int DisplacementDim>
 struct SwellingModel
 {
-    void eval(SpaceTimeData const& x_t, MediaData const& media_data,
-              ElasticTangentStiffnessData<DisplacementDim> const& C_el_data,
-              StrainData<DisplacementDim> const& eps_data,
-              StrainData<DisplacementDim> const& eps_prev_data,
-              SaturationData const& S_L_data,
-              SaturationDataDeriv const& dS_L_data,
-              SaturationData const& S_L_prev_data,
-              SwellingDataStateful<DisplacementDim> const& prev_state,
-              SwellingDataStateful<DisplacementDim>& state,
-              SwellingDataStateless<DisplacementDim>& out) const;
+    void eval(
+        SpaceTimeData const& x_t, MediaData const& media_data,
+        ElasticTangentStiffnessData<DisplacementDim> const& C_el_data,
+        StrainData<DisplacementDim> const& eps_data,
+        PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
+        SaturationData const& S_L_data, SaturationDataDeriv const& dS_L_data,
+        PrevState<SaturationData> const& S_L_prev_data,
+        PrevState<SwellingDataStateful<DisplacementDim>> const& prev_state,
+        SwellingDataStateful<DisplacementDim>& state,
+        SwellingDataStateless<DisplacementDim>& out) const;
 };
 
 extern template struct SwellingModel<2>;

@@ -1,8 +1,8 @@
 /**
+ * \file
  * \author Norihiro Watanabe
  * \date   2013-04-16
  *
- * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -137,7 +137,8 @@ public:
 
     /// A value returned if no global index was found for the requested
     /// location/component. The value is implementation dependent.
-    static NUMLIB_EXPORT GlobalIndexType const nop;
+    static constexpr NUMLIB_EXPORT GlobalIndexType const nop =
+        std::numeric_limits<GlobalIndexType>::max();
 
 #ifndef NDEBUG
     const detail::ComponentGlobalIndexDict& getDictionary() const
@@ -160,12 +161,6 @@ private:
         : _dict(dict)
     {
     }
-
-    /// Looks up if a line is already stored in the dictionary.
-    /// \attention The line for the location l and component id must exist,
-    /// the behaviour is undefined otherwise.
-    /// \return a copy of the line.
-    detail::Line getLine(Location const& l, int const comp_id) const;
 
     void renumberByLocation(GlobalIndexType offset = 0);
 

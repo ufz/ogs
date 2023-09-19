@@ -31,6 +31,7 @@ enum class Variable : int
     concentration,
     density,
     effective_pore_pressure,
+    enthalpy,
     enthalpy_of_evaporation,
     equivalent_plastic_strain,
     grain_compressibility,
@@ -59,6 +60,7 @@ static const std::array<std::string,
                              "concentration",
                              "density",
                              "effective_pore_pressure",
+                             "enthalpy",
                              "enthalpy_of_evaporation",
                              "equivalent_plastic_strain",
                              "grain_compressibility",
@@ -104,6 +106,8 @@ public:
                 return density;
             case Variable::effective_pore_pressure:
                 return effective_pore_pressure;
+            case Variable::enthalpy:
+                return enthalpy;
             case Variable::enthalpy_of_evaporation:
                 return enthalpy_of_evaporation;
             case Variable::equivalent_plastic_strain:
@@ -154,6 +158,7 @@ public:
     double concentration = nan_;
     double density = nan_;
     double effective_pore_pressure = nan_;
+    double enthalpy = nan_;
     double enthalpy_of_evaporation = nan_;
     double equivalent_plastic_strain = nan_;
     double grain_compressibility = nan_;

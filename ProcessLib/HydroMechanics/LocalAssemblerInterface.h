@@ -30,6 +30,8 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
 
     virtual std::vector<double> getEpsilon() const = 0;
 
+    virtual std::vector<double> getStrainRateVariable() const = 0;
+
     virtual std::vector<double> const& getIntPtSigma(
         const double t,
         std::vector<GlobalVector*> const& x,

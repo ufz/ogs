@@ -1,4 +1,5 @@
 /**
+ * \file
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
@@ -23,6 +24,7 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/scaleMeshPropertyVector.h"
 
 int main(int argc, char* argv[])
 {

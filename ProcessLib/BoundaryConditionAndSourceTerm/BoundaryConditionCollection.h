@@ -11,6 +11,7 @@
 #pragma once
 
 #include "BoundaryCondition.h"
+#include "MaterialLib/MPL/Medium.h"
 #include "NumLib/IndexValueVector.h"
 #include "ProcessLib/ProcessVariable.h"
 
@@ -47,7 +48,9 @@ public:
         std::vector<std::reference_wrapper<ProcessVariable>> const&
             process_variables,
         NumLib::LocalToGlobalIndexMap const& dof_table,
-        unsigned const integration_order, Process const& process);
+        unsigned const integration_order, Process const& process,
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media);
 
     void addBoundaryCondition(std::unique_ptr<BoundaryCondition>&& bc)
     {

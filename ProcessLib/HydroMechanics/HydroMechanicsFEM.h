@@ -64,9 +64,10 @@ struct IntegrationPointData final
         material_state_variables;
     double integration_weight;
 
-    // TODO disable in monolithic scheme to save memory
-    double coupling_pressure = std::numeric_limits<double>::quiet_NaN(); /**<
-    needed for staggered scheme to store value from last coupling iteration */
+    // previous pressure rate for the fixed stress splitting
+    // approach in the staggered scheme.
+    // TODO: disable in monolithic scheme to save memory.
+    double strain_rate_variable = 0.0;
 
     void pushBackState()
     {
@@ -88,6 +89,8 @@ struct IntegrationPointData final
         MPL::VariableArray variable_array_prev;
 
         auto const null_state = solid_material.createMaterialStateVariables();
+        solid_material.initializeInternalStateVariables(t, x_position,
+                                                        *null_state);
 
         using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
@@ -199,7 +202,7 @@ public:
 
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& /*local_x*/,
-                  std::vector<double> const& /*local_xdot*/,
+                  std::vector<double> const& /*local_x_prev*/,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_rhs_data*/) override
@@ -211,7 +214,7 @@ public:
 
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
+                              std::vector<double> const& local_x_prev,
                               std::vector<double>& /*local_M_data*/,
                               std::vector<double>& /*local_K_data*/,
                               std::vector<double>& local_rhs_data,
@@ -219,7 +222,7 @@ public:
 
     void assembleWithJacobianForStaggeredScheme(
         const double t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, int const process_id,
+        Eigen::VectorXd const& local_x_prev, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data) override;
@@ -233,16 +236,16 @@ public:
         {
             auto& ip_data = _ip_data[ip];
 
+            ParameterLib::SpatialPosition const x_position{
+                std::nullopt, _element.getID(), ip,
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunctionPressure,
+                                                   ShapeMatricesTypePressure>(
+                        _element, ip_data.N_p))};
+
             /// Set initial stress from parameter.
             if (_process_data.initial_stress != nullptr)
             {
-                ParameterLib::SpatialPosition const x_position{
-                    std::nullopt, _element.getID(), ip,
-                    MathLib::Point3d(NumLib::interpolateCoordinates<
-                                     ShapeFunctionDisplacement,
-                                     ShapeMatricesTypeDisplacement>(
-                        _element, ip_data.N_u))};
-
                 ip_data.sigma_eff =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
                         DisplacementDim>((*_process_data.initial_stress)(
@@ -251,29 +254,26 @@ public:
                         x_position));
             }
 
+            double const t = 0;  // TODO (naumov) pass t from top
+            ip_data.solid_material.initializeInternalStateVariables(
+                t, x_position, *ip_data.material_state_variables);
+
             ip_data.pushBackState();
         }
     }
 
-    void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              double const /*t*/,
-                              double const /*dt*/) override
-    {
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            _ip_data[ip].pushBackState();
-        }
-    }
+    void postTimestepConcrete(Eigen::VectorXd const& local_x,
+                              Eigen::VectorXd const& local_x_prev,
+                              double const t, double const dt,
+                              bool const use_monolithic_scheme,
+                              int const process_id) override;
 
     void computeSecondaryVariableConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_xs,
-        Eigen::VectorXd const& local_x_dot) override;
+        Eigen::VectorXd const& local_x_prev) override;
 
     void postNonLinearSolverConcrete(std::vector<double> const& local_x,
-                                     std::vector<double> const& local_xdot,
+                                     std::vector<double> const& local_x_prev,
                                      double const t, double const dt,
                                      bool const use_monolithic_scheme,
                                      int const process_id) override;
@@ -298,6 +298,8 @@ public:
     std::vector<double> getSigma() const override;
 
     std::vector<double> getEpsilon() const override;
+
+    std::vector<double> getStrainRateVariable() const override;
 
     std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
@@ -365,7 +367,7 @@ private:
      * @param dt              Time increment
      * @param local_x         Nodal values of \f$x\f$ of an element  of all
      * coupled processes.
-     * @param local_xdot      Nodal values of \f$\dot{x}\f$ of an element  of
+     * @param local_x_prev    Nodal values of \f$x^{t-1}\f$ of an element  of
      * all coupled processes.
      * @param local_b_data    Right hand side vector of an element.
      * @param local_Jac_data  Element Jacobian matrix for the Newton-Raphson
@@ -373,7 +375,7 @@ private:
      */
     void assembleWithJacobianForPressureEquations(
         const double t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data);
 
     unsigned getNumberOfIntegrationPoints() const override;

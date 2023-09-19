@@ -12,6 +12,7 @@
 
 #include "Component.h"
 
+#include "BaseLib/Error.h"
 #include "Components/Components.h"
 #include "Properties/Properties.h"
 
@@ -55,4 +56,18 @@ std::string Component::description() const
 {
     return "component '" + name + "'";
 }
+
+void checkRequiredProperties(
+    Component const& c, std::span<PropertyType const> const required_properties)
+{
+    for (auto const& p : required_properties)
+    {
+        if (!c.hasProperty(p))
+        {
+            OGS_FATAL("The property '{:s}' is missing in the component '{:s}'.",
+                      property_enum_to_string[p], c.name);
+        }
+    }
+}
+
 }  // namespace MaterialPropertyLib

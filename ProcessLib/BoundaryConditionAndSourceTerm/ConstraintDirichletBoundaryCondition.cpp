@@ -70,14 +70,8 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
     _local_assemblers.resize(bc_elements.size());
     _flux_values.resize(bc_elements.size());
     // create _bulk_ids vector
-    auto const* bulk_element_ids =
-        _bc_mesh.getProperties().getPropertyVector<std::size_t>(
-            MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
-            MeshLib::MeshItemType::Cell, 1);
-    auto const* bulk_node_ids =
-        _bc_mesh.getProperties().getPropertyVector<std::size_t>(
-            MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
-            MeshLib::MeshItemType::Node, 1);
+    auto const* bulk_element_ids = MeshLib::bulkElementIDs(_bc_mesh);
+    auto const* bulk_node_ids = MeshLib::bulkNodeIDs(_bc_mesh);
     auto const& bulk_nodes = bulk_mesh.getNodes();
 
     auto get_bulk_element_face_id =
@@ -120,15 +114,13 @@ void ConstraintDirichletBoundaryCondition::preTimestep(
     DBUG(
         "ConstraintDirichletBoundaryCondition::preTimestep: computing flux "
         "constraints");
-    for (auto const* boundary_element : _bc_mesh.getElements())
+    for (auto const id : _bc_mesh.getElements() | MeshLib::views::ids)
     {
-        _flux_values[boundary_element->getID()] =
-            _local_assemblers[boundary_element->getID()]->integrate(
-                x, t,
-                [this](std::size_t const element_id,
-                       MathLib::Point3d const& pnt, double const t,
-                       std::vector<GlobalVector*> const& x)
-                { return _getFlux(element_id, pnt, t, x); });
+        _flux_values[id] = _local_assemblers[id]->integrate(
+            x, t,
+            [this](std::size_t const element_id, MathLib::Point3d const& pnt,
+                   double const t, std::vector<GlobalVector*> const& x)
+            { return _getFlux(element_id, pnt, t, x); });
     }
 }
 

@@ -72,17 +72,19 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override;
 
-    void initializeBoundaryConditions() override;
+    void initializeBoundaryConditions(
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media) override;
 
     void assembleConcreteProcess(const double t, double const dt,
                                  std::vector<GlobalVector*> const& x,
-                                 std::vector<GlobalVector*> const& xdot,
+                                 std::vector<GlobalVector*> const& x_prev,
                                  int const process_id, GlobalMatrix& M,
                                  GlobalMatrix& K, GlobalVector& b) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, double const dt, std::vector<GlobalVector*> const& x,
-        std::vector<GlobalVector*> const& xdot, int const process_id,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
@@ -91,13 +93,9 @@ private:
                                     const int process_id) override;
 
     void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                     std::vector<GlobalVector*> const& x_prev,
                                      const double t, const double dt,
                                      int const process_id) override;
-
-    void postNonLinearSolverConcreteProcess(GlobalVector const& x,
-                                            GlobalVector const& xdot,
-                                            const double t, double const dt,
-                                            int const process_id) override;
 
     NumLib::LocalToGlobalIndexMap const& getDOFTable(
         const int process_id) const override;
@@ -123,7 +121,7 @@ private:
 
     void computeSecondaryVariableConcrete(double const t, double const dt,
                                           std::vector<GlobalVector*> const& x,
-                                          GlobalVector const& x_dot,
+                                          GlobalVector const& x_prev,
                                           const int process_id) override;
     /**
      * @copydoc ProcessLib::Process::getDOFTableForExtrapolatorData()

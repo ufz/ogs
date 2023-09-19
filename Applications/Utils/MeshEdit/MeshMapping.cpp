@@ -19,19 +19,19 @@
 #include <mpi.h>
 #endif
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/FileTools.h"
 #include "GeoLib/AABB.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/GitInfo.h"
 #include "MathLib/MathTools.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/ProjectPointOnMesh.h"
-#include "MeshLib/MeshGenerators/MeshLayerMapper.h"
 #include "MeshLib/MeshSearch/MeshElementGrid.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/ProjectPointOnMesh.h"
+#include "MeshToolsLib/MeshGenerators/MeshLayerMapper.h"
 
 double getClosestPointElevation(MeshLib::Node const& p,
                                 std::vector<MeshLib::Node*> const& nodes,
@@ -136,8 +136,8 @@ int main(int argc, char* argv[])
     // Maps the elevation of mesh nodes to static value
     if (map_static_arg.isSet())
     {
-        MeshLib::MeshLayerMapper::mapToStaticValue(*mesh,
-                                                   map_static_arg.getValue());
+        MeshToolsLib::MeshLayerMapper::mapToStaticValue(
+            *mesh, map_static_arg.getValue());
     }
 
     // Maps the elevation of mesh nodes according to raster
@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
 
         std::unique_ptr<GeoLib::Raster> const raster(
             FileIO::AsciiRasterInterface::readRaster(raster_path));
-        MeshLib::MeshLayerMapper::layerMapping(*mesh, *raster, 0, true);
+        MeshToolsLib::MeshLayerMapper::layerMapping(*mesh, *raster, 0, true);
     }
 
     // Maps the elevation of mesh nodes according to a ground truth mesh
@@ -191,11 +191,12 @@ int main(int argc, char* argv[])
             std::vector<const MeshLib::Element*> const& elems =
                 grid.getElementsInVolume(min_vol, max_vol);
             auto const* element =
-                MeshLib::ProjectPointOnMesh::getProjectedElement(elems, *node);
+                MeshToolsLib::ProjectPointOnMesh::getProjectedElement(elems,
+                                                                      *node);
             if (element != nullptr)
             {
-                (*node)[2] =
-                    MeshLib::ProjectPointOnMesh::getElevation(*element, *node);
+                (*node)[2] = MeshToolsLib::ProjectPointOnMesh::getElevation(
+                    *element, *node);
             }
             else
             {

@@ -1,16 +1,19 @@
 +++
-date = "2018-11-14T11:00:13+01`:00"
+date = "2018-11-14T11:00:13+01:00"
 title = "General"
 author = "Lars Bilke"
 weight = 2
 toc = true
 +++
 
+<!-- TODO: This part so far is only repetition. It could be deleted. -->
+
 ## Data Explorer
 
-### XSDError: Loaded schema file is invalid
+### `XSDError`: Loaded schema file is invalid
 
-You may encountering the following error (or similar) on opening `.gml`, `.cnd`, `std` or `.prj` files in the Data Explorer or file conversion tools (e.g. `OGSFileConverter`):
+You may encountering the following error (or similar) on opening `.gml`, `.cnd`, `std` or `.prj` files in the Data Explorer or
+file conversion tools (e.g. `OGSFileConverter`):
 
 <i class="far fa-exclamation-triangle"></i> Error message:
 
@@ -23,7 +26,8 @@ Error XSDError in http://www.opengeosys.org/images/xsd/OpenGeoSysCND.xsd, at lin
 
 <i class="far fa-arrow-right"></i> Solution:
 
-Open the affected file (e.g. `well.cnd` in this case) in a text editor and remove the following parameter of the XML root element (the first element in `< >`-brackets in the element, e.g. `<OpenGeoSysCND>`):
+Open the affected file (e.g. `well.cnd` in this case) in a text editor and remove the following parameter of the XML root
+element (the first element in `< >`-brackets in the element, e.g. `<OpenGeoSysCND>`):
 
 ```xml
 xsi:noNamespaceSchemaLocation="http://www.opengeosys.org/images/xsd/OpenGeoSysXXX.xsd"

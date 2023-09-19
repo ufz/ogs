@@ -1,11 +1,11 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  *  Created on January 8, 2018, 3:00 PM
  */
 #pragma once
@@ -22,7 +22,7 @@ template <typename ShapeFunction, int DisplacementDim>
 void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, int const process_id,
+        Eigen::VectorXd const& local_x_prev, int const process_id,
         std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
@@ -37,7 +37,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     if (process_id == _heat_conduction_process_id)
     {
         assembleWithJacobianForHeatConductionEquations(
-            t, dt, local_x, local_xdot, local_b_data, local_Jac_data);
+            t, dt, local_x, local_x_prev, local_b_data, local_Jac_data);
         return;
     }
 
@@ -138,7 +138,7 @@ template <typename ShapeFunction, int DisplacementDim>
 void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForHeatConductionEquations(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data)
 {
     assert(local_x.size() ==
@@ -147,8 +147,8 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     auto const d = local_x.template segment<phasefield_size>(phasefield_index);
     auto const T =
         local_x.template segment<temperature_size>(temperature_index);
-    auto const T_dot =
-        local_xdot.template segment<temperature_size>(temperature_index);
+    auto const T_prev =
+        local_x_prev.template segment<temperature_size>(temperature_index);
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesType::template MatrixType<temperature_size,
                                                         temperature_size>>(
@@ -184,7 +184,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
 
         double const d_ip = N.dot(d);
         double const T_ip = N.dot(T);
-        double const T_dot_ip = N.dot(T_dot);
+        double const T_dot_ip = (T_ip - N.dot(T_prev)) / dt;
         double const delta_T = T_ip - T0;
         // calculate real density
         double const rho_s = rho_sr / (1 + 3 * alpha * delta_T);

@@ -27,9 +27,9 @@ namespace MaterialPropertyLib
  * three element vector or a 3 x 3 matrix for anisotropic properties, to
  * get a Kelvin vector for strain or stress.
  *
- * @param values: e.g., Thermal expansivity, which can be scalar number, a three
+ * \param values: e.g., Thermal expansivity, which can be scalar number, a three
  *                element vector or a 3 x 3 matrix.
- * @return        Kelvin vector type property.
+ * \return        Kelvin vector type property.
  */
 template <int GlobalDim>
 MathLib::KelvinVector::KelvinVectorType<GlobalDim> formKelvinVector(

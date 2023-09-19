@@ -1,10 +1,10 @@
 /**
- * @file CsvInterface.h
- * @author Karsten Rink
- * @date 2015-03-25
- * @brief Definition of the CsvInterface class.
+ * \file
+ * \author Karsten Rink
+ * \date 2015-03-25
+ * \brief Definition of the CsvInterface class.
  *
- * @copyright
+ * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
@@ -203,7 +203,7 @@ private:
         std::vector<T> data_array;
         std::string line;
         std::size_t line_count(0);
-        std::size_t error_count(0);
+        int error_count(0);
         while (std::getline(in, line))
         {
             line_count++;

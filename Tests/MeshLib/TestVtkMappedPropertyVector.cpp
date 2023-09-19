@@ -21,7 +21,7 @@
 #include <numeric>
 
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 // Creates a PropertyVector<double> and maps it into a vtkDataArray-equivalent
 TEST(MeshLibMappedPropertyVector, Double)
@@ -30,7 +30,7 @@ TEST(MeshLibMappedPropertyVector, Double)
     const double length = 1.0;
 
     MeshLib::Mesh* mesh =
-        MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
 
     ASSERT_TRUE(mesh != nullptr);
     const std::size_t number_of_tuples(mesh_size * mesh_size * mesh_size);
@@ -65,7 +65,7 @@ TEST(MeshLibMappedPropertyVector, Int)
     const double length = 1.0;
 
     MeshLib::Mesh* mesh =
-        MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
 
     ASSERT_TRUE(mesh != nullptr);
     const std::size_t number_of_tuples(mesh_size * mesh_size * mesh_size);
@@ -100,7 +100,7 @@ TEST(MeshLibMappedPropertyVector, Unsigned)
     const double length = 1.0;
 
     MeshLib::Mesh* mesh =
-        MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
 
     ASSERT_TRUE(mesh != nullptr);
     const std::size_t number_of_tuples(mesh_size * mesh_size * mesh_size);

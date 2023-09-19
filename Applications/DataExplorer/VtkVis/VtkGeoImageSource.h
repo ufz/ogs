@@ -14,8 +14,17 @@
 
 #pragma once
 
-#include "VtkAlgorithmProperties.h"
 #include <vtkSimpleImageToImageFilter.h>
+
+#include <optional>
+
+#include "GeoLib/Raster.h"
+#include "VtkAlgorithmProperties.h"
+
+namespace GeoLib
+{
+class Raster;
+}
 
 class QString;
 class QPointF;
@@ -51,6 +60,10 @@ public:
     void setImage(vtkImageAlgorithm* image, const QString& name);
 
     void SetUserProperty(QString name, QVariant value) override;
+
+    // @brief Converts the source object into a Raster object
+    static std::optional<GeoLib::Raster> convertToRaster(
+        VtkGeoImageSource* const source);
 
 protected:
     /// @brief Constructor.

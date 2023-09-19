@@ -1,4 +1,5 @@
 /*
+ * \file
  * \date 2015-04-20
  * \brief Map geometric objects to the surface of the given mesh.
  *

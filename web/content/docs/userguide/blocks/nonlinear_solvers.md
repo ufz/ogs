@@ -26,10 +26,10 @@ Following non-linear solvers are available in OpenGeoSys:
 
 ## Newton
 
-TODO: add content
+<!-- TODO: add content -->
 
-The nonlinear solver of "Newton" type is the implementation of the Newton-Raphson method.
-Basic definition of non-linear solver follows this template:
+The nonlinear solver of "Newton" type is an implementation of the Newton-Raphson method.
+The basic definition of the non-linear solver follows this template:
 
 ```xml
 <nonlinear_solver>
@@ -42,4 +42,4 @@ Basic definition of non-linear solver follows this template:
 
 ## Picard
 
-TODO: add content
+<!-- TODO: add content -->

@@ -18,6 +18,7 @@
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MeshLib/Utils/GetElementRotationMatrices.h"
 #include "MeshLib/Utils/GetSpaceDimension.h"
+#include "NumLib/NumericalStability/CreateNumericalStabilization.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
@@ -46,10 +47,8 @@ void checkMPLProperties(
         MaterialPropertyLib::PropertyType::decay_rate,
         MaterialPropertyLib::PropertyType::pore_diffusion};
 
-    for (auto const& element : mesh.getElements())
+    for (auto const& element_id : mesh.getElements() | MeshLib::views::ids)
     {
-        auto const element_id = element->getID();
-
         auto const& medium = *media_map.getMedium(element_id);
         checkRequiredProperties(medium, required_properties_medium);
 
@@ -253,6 +252,10 @@ std::unique_ptr<Process> createComponentTransportProcess(
             *aperture_config, "parameter", parameters, 1);
     }
 
+    auto const is_linear =
+        //! \ogs_file_param{prj__processes__process__ComponentTransport__is_linear}
+        config.getConfigParameter("is_linear", false);
+
     auto const rotation_matrices = MeshLib::getElementRotationMatrices(
         mesh_space_dimension, mesh.getDimension(), mesh.getElements());
     std::vector<Eigen::VectorXd> projected_specific_body_force_vectors;
@@ -295,7 +298,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
         use_monolithic_scheme, std::move(surfaceflux),
-        std::move(chemical_solver_interface));
+        std::move(chemical_solver_interface), is_linear);
 }
 
 }  // namespace ComponentTransport

@@ -11,7 +11,8 @@
  */
 #pragma once
 
-#include "BaseLib/Error.h"
+#include <span>
+
 #include "Property.h"
 
 namespace MaterialPropertyLib
@@ -92,18 +93,8 @@ protected:
 std::unique_ptr<Component> newComponent(std::string const& component_name,
                                         bool& isCustomComponent);
 
-template <typename Container>
-void checkRequiredProperties(Component const& c,
-                             Container const& required_properties)
-{
-    for (auto const& p : required_properties)
-    {
-        if (!c.hasProperty(p))
-        {
-            OGS_FATAL("The property '{:s}' is missing in the component '{:s}'.",
-                      property_enum_to_string[p], c.name);
-        }
-    }
-}
+void checkRequiredProperties(
+    Component const& c,
+    std::span<PropertyType const> const required_properties);
 
 }  // namespace MaterialPropertyLib

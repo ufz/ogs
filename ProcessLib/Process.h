@@ -14,6 +14,7 @@
 #include <tuple>
 
 #include "AbstractJacobianAssembler.h"
+#include "MaterialLib/MPL/Medium.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
@@ -66,12 +67,13 @@ public:
                      const double delta_t, const int process_id);
 
     /// Postprocessing after a complete timestep.
-    void postTimestep(std::vector<GlobalVector*> const& x, const double t,
+    void postTimestep(std::vector<GlobalVector*> const& x,
+                      std::vector<GlobalVector*> const& x_prev, const double t,
                       const double delta_t, int const process_id);
 
     /// Calculates secondary variables, e.g. stress and strain for deformation
     /// analysis, only after nonlinear solver being successfully conducted.
-    void postNonLinearSolver(GlobalVector const& x, GlobalVector const& xdot,
+    void postNonLinearSolver(GlobalVector const& x, GlobalVector const& x_prev,
                              const double t, double const dt,
                              int const process_id);
 
@@ -81,12 +83,14 @@ public:
     void computeSecondaryVariable(double const t,
                                   double const dt,
                                   std::vector<GlobalVector*> const& x,
-                                  GlobalVector const& x_dot,
+                                  GlobalVector const& x_prev,
                                   int const process_id);
 
     NumLib::IterationResult postIteration(GlobalVector const& x) final;
 
-    void initialize();
+    void initialize(
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media);
 
     void setInitialConditions(
         std::vector<GlobalVector*>& process_solutions,
@@ -105,7 +109,10 @@ public:
 
     void updateDeactivatedSubdomains(double const time, const int process_id);
 
-    bool isMonolithicSchemeUsed() const { return _use_monolithic_scheme; }
+    virtual bool isMonolithicSchemeUsed() const
+    {
+        return _use_monolithic_scheme;
+    }
     virtual void setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
         int const /*process_id*/)
     {
@@ -123,12 +130,13 @@ public:
 
     void assemble(const double t, double const dt,
                   std::vector<GlobalVector*> const& x,
-                  std::vector<GlobalVector*> const& xdot, int const process_id,
-                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) final;
+                  std::vector<GlobalVector*> const& x_prev,
+                  int const process_id, GlobalMatrix& M, GlobalMatrix& K,
+                  GlobalVector& b) final;
 
     void assembleWithJacobian(const double t, double const dt,
                               std::vector<GlobalVector*> const& x,
-                              std::vector<GlobalVector*> const& xdot,
+                              std::vector<GlobalVector*> const& x_prev,
                               int const process_id, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) final;
@@ -200,7 +208,9 @@ protected:
      * initializeBoundaryConditions().
      */
     void initializeProcessBoundaryConditionsAndSourceTerms(
-        const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id);
+        const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id,
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media);
 
 private:
     /// Process specific initialization called by initialize().
@@ -211,7 +221,9 @@ private:
 
     /// Member function to initialize the boundary conditions for all coupled
     /// processes. It is called by initialize().
-    virtual void initializeBoundaryConditions();
+    virtual void initializeBoundaryConditions(
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media);
 
     virtual void setInitialConditionsConcreteProcess(
         std::vector<GlobalVector*>& /*x*/,
@@ -226,15 +238,14 @@ private:
     {
     }
 
-    virtual void assembleConcreteProcess(const double t, double const dt,
-                                         std::vector<GlobalVector*> const& x,
-                                         std::vector<GlobalVector*> const& xdot,
-                                         int const process_id, GlobalMatrix& M,
-                                         GlobalMatrix& K, GlobalVector& b) = 0;
+    virtual void assembleConcreteProcess(
+        const double t, double const dt, std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b) = 0;
 
     virtual void assembleWithJacobianConcreteProcess(
         const double t, double const dt, std::vector<GlobalVector*> const& x,
-        std::vector<GlobalVector*> const& xdot, int const process_id,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) = 0;
 
@@ -248,6 +259,7 @@ private:
 
     virtual void postTimestepConcreteProcess(
         std::vector<GlobalVector*> const& /*x*/,
+        std::vector<GlobalVector*> const& /*x_prev*/,
         const double /*t*/,
         const double /*dt*/,
         int const /*process_id*/)
@@ -255,7 +267,7 @@ private:
     }
 
     virtual void postNonLinearSolverConcreteProcess(
-        GlobalVector const& /*x*/, GlobalVector const& /*xdot*/,
+        GlobalVector const& /*x*/, GlobalVector const& /*x_prev*/,
         const double /*t*/, double const /*dt*/, int const /*process_id*/)
     {
     }
@@ -269,7 +281,7 @@ private:
         double const /*t*/,
         double const /*dt*/,
         std::vector<GlobalVector*> const& /*x*/,
-        GlobalVector const& /*x_dot*/,
+        GlobalVector const& /*x_prev*/,
         int const /*process_id*/)
     {
     }
@@ -301,7 +313,7 @@ protected:
      * member of this class, @c _local_to_global_index_map.
      */
     void constructDofTableOfSpecifiedProcessStaggeredScheme(
-        const int specified_prosess_id);
+        const int specified_process_id);
 
     /**
      * Get the address of a LocalToGlobalIndexMap, and the status of its memory.
@@ -337,6 +349,9 @@ protected:
 
     SecondaryVariableCollection _secondary_variables;
 
+    // TODO (CL) switch to the parallel vector matrix assembler here, once
+    // feature complete, or use the assembly mixin and remove these two members.
+    std::unique_ptr<ProcessLib::AbstractJacobianAssembler> _jacobian_assembler;
     VectorMatrixAssembler _global_assembler;
 
     const bool _use_monolithic_scheme;

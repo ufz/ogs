@@ -1,13 +1,9 @@
 /**
  * \file
  * \author Lars Bilke
+ * \author Wenqing Wang
  * \date   2014-09-25
  * \brief  Implementation of the VtuInterface class.
- *
- * \author Wenqing Wang
- * \date   2015-10-19
- * \brief  Added parallel output of vtu pieces, and visualisation
- *         of the vtu picess via pvtu.
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
@@ -21,6 +17,7 @@
 #include <vtkUnstructuredGrid.h>
 
 #include "BaseLib/Logging.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 #include "VtuInterface.h"
 
@@ -47,6 +44,26 @@ bool VtuInterface::writeVTU(std::string const& file_name,
         ERR("VtuInterface::write(): No mesh specified.");
         return false;
     }
+
+#ifdef USE_PETSC
+    if (_mesh->getProperties().existsPropertyVector<unsigned char>(
+            "vtkGhostType", MeshLib::MeshItemType::Cell, 1))
+    {
+        auto* ghost_cell_property =
+            _mesh->getProperties().getPropertyVector<unsigned char>(
+                "vtkGhostType", MeshLib::MeshItemType::Cell, 1);
+        if (ghost_cell_property)
+        {
+            const_cast<MeshLib::PropertyVector<unsigned char>*>(
+                ghost_cell_property)
+                ->is_for_output = true;
+        }
+    }
+    else
+    {
+        DBUG("No vtkGhostType data in mesh '{}'.", _mesh->getName());
+    }
+#endif
 
     vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
     vtkSource->SetMesh(_mesh);

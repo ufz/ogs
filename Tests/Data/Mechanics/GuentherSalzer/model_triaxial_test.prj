@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- units: kg, m, s, N -->
+<OpenGeoSysProject>
+    <meshes>
+        <mesh axially_symmetric="true">model.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_left.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_right.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_top.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_bottom.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>SD</name>
+            <type>SMALL_DEFORMATION</type>
+            <integration_order>2</integration_order>
+            <constitutive_relation>
+                <type>MFront</type>
+                <behaviour>GuentherSalzerDilatancy_semi_expl</behaviour>
+                <material_properties>
+                    <material_property name="YoungModulus" parameter="YoungModulus"/>
+                    <material_property name="PoissonRatio" parameter="PoissonRatio"/>
+                </material_properties>
+            </constitutive_relation>
+            <solid_density>rho_sr</solid_density>
+            <specific_body_force>0 0</specific_body_force>
+            <process_variables>
+                <process_variable>displacement</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="sigma" output_name="sigma"/>
+                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable internal_name="ElasticStrain" output_name="ElasticStrain"/>
+                <secondary_variable internal_name="HardeningStrain" output_name="HardeningStrain"/>
+                <secondary_variable internal_name="DilatancyStrain" output_name="DilatancyStrain"/>
+                <secondary_variable internal_name="DilatancyWork" output_name="DilatancyWork"/>
+            </secondary_variables>
+            <reference_temperature>T_ref</reference_temperature>
+            <initial_stress>sig0</initial_stress>
+        </process>
+    </processes>
+    <time_loop>
+        <processes>
+            <process ref="SD">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1e-8</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>IterationNumberBasedTimeStepping</type>
+                    <t_initial>0</t_initial>
+                    <t_end>0.34</t_end>
+                    <initial_dt>1e-2</initial_dt>
+                    <minimum_dt>1.e-6</minimum_dt>
+                    <maximum_dt>1.e-2</maximum_dt>
+                    <number_iterations>1   5   10   15</number_iterations>
+                    <multiplier>1.2 1.05 0.8 0.6</multiplier>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>triaxial_test_output</prefix>
+            <suffix>_t_{:time}</suffix>
+            <timesteps>
+                <pair>
+                    <repeat>10000</repeat>
+                    <each_steps>100</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+            </variables>
+        </output>
+    </time_loop>
+    <parameters>
+        <parameter>
+            <name>sig0</name>
+            <type>Function</type>
+            <expression>-1</expression>
+            <expression>-1</expression>
+            <expression>-1</expression>
+            <expression>0</expression>
+        </parameter>
+        <parameter>
+            <name>YoungModulus</name>
+            <type>Constant</type>
+            <value>25e4</value>
+        </parameter>
+        <parameter>
+            <name>PoissonRatio</name>
+            <type>Constant</type>
+            <value>0.27</value>
+        </parameter>
+        <parameter>
+            <name>T_ref</name>
+            <type>Constant</type>
+            <value>293.15</value>
+        </parameter>
+        <parameter>
+            <name>rho_sr</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>displacement0</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>zero</name>
+            <type>Constant</type>
+            <value>0.0</value>
+        </parameter>
+        <parameter>
+            <name>sig_conf</name>
+            <type>Constant</type>
+            <value>-1.0</value>
+        </parameter>
+        <parameter>
+            <name>axial_compression</name>
+            <type>CurveScaled</type>
+            <curve>ax_loading_curve</curve>
+            <parameter>disp_top</parameter>
+        </parameter>
+        <parameter>
+            <name>disp_top</name>
+            <type>Constant</type>
+            <value>-1</value>
+        </parameter>
+    </parameters>
+    <curves>
+        <curve>
+            <name>ax_loading_curve</name>
+            <coords>0.0 0.34</coords>
+            <values>0.0 20.0</values>
+        </curve>
+    </curves>
+    <process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <initial_condition>displacement0</initial_condition>
+            <boundary_conditions>
+                <!--fix left in radial direction-->
+                <boundary_condition>
+                    <mesh>geometry_left</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <!--fix bottom in axial direction-->
+                <boundary_condition>
+                    <mesh>geometry_bottom</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <!--compression in axial direction -->
+                <boundary_condition>
+                    <mesh>geometry_top</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>axial_compression</parameter>
+                </boundary_condition>
+                <!--confining pressure-->
+                <boundary_condition>
+                    <mesh>geometry_right</mesh>
+                    <type>Neumann</type>
+                    <component>0</component>
+                    <parameter>sig_conf</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>60</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <scaling>true</scaling>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+    <test_definition>
+        <!--primary field-->
+        <vtkdiff>
+            <file>triaxial_test_output_t_0.340000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>3e-8</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <!--secondary field-->
+        <vtkdiff>
+            <file>triaxial_test_output_t_0.340000.vtu</file>
+            <field>sigma</field>
+            <absolute_tolerance>9e-2</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>

@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -6,7 +7,6 @@
  *              http://www.opengeosys.org/project/license
  *
  * \author wenqing
- * \file
  *
  * Created on August 4, 2016, 10:15 AM
  */

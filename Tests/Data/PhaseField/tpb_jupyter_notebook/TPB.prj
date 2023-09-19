@@ -111,6 +111,7 @@
                 <variable>phasefield</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
+                <variable>NodalForces</variable>
             </variables>
             <type>VTK</type>
             <prefix>TPB_</prefix>

@@ -11,7 +11,9 @@
         <process>
             <name>HM</name>
             <type>HYDRO_MECHANICS</type>
-            <coupling_scheme>staggered</coupling_scheme>
+            <coupling_scheme>
+                <type>staggered</type>
+            </coupling_scheme>
             <integration_order>3</integration_order>
             <dimension>2</dimension>
             <constitutive_relation>
@@ -168,6 +170,7 @@
             </timesteps>
             <variables>
                 <variable>pressure</variable>
+                <variable>q</variable>
                 <variable>displacement</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>

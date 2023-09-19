@@ -15,6 +15,7 @@
 #include "Mesh.h"
 
 #include <memory>
+#include <range/v3/algorithm/contains.hpp>
 #include <range/v3/numeric.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/enumerate.hpp>
@@ -31,10 +32,8 @@
 #include "Elements/Quad.h"
 #include "Elements/Tet.h"
 #include "Elements/Tri.h"
-
-#ifdef USE_PETSC
-#include "MeshLib/NodePartitionedMesh.h"
-#endif
+#include "Utils/DuplicateMeshComponents.h"
+#include "Utils/getMeshElementsForMaterialIDs.h"
 
 /// Mesh counter used to uniquely identify meshes by id.
 static std::size_t global_mesh_counter = 0;
@@ -187,7 +186,7 @@ std::pair<double, double> minMaxEdgeLength(
     using limits = std::numeric_limits<double>;
     auto const bounds = ranges::accumulate(
         elements, std::pair{limits::infinity(), -limits::infinity()}, min_max,
-        [](Element* const e) { return computeSqrEdgeLengthRange(*e); });
+        [](Element const* const e) { return computeSqrEdgeLengthRange(*e); });
 
     return {std::sqrt(bounds.first), std::sqrt(bounds.second)};
 }
@@ -256,20 +255,6 @@ std::vector<MeshLib::Element const*> const& Mesh::getElementsConnectedToNode(
     return _elements_connected_to_nodes[node.getID()];
 }
 
-void scaleMeshPropertyVector(MeshLib::Mesh& mesh,
-                             std::string const& property_name,
-                             double factor)
-{
-    if (!mesh.getProperties().existsPropertyVector<double>(property_name))
-    {
-        WARN("Did not find PropertyVector '{:s}' for scaling.", property_name);
-        return;
-    }
-    auto& pv = *mesh.getProperties().getPropertyVector<double>(property_name);
-    std::transform(pv.begin(), pv.end(), pv.begin(),
-                   [factor](auto const& v) { return v * factor; });
-}
-
 PropertyVector<int> const* materialIDs(Mesh const& mesh)
 {
     auto const& properties = mesh.getProperties();
@@ -288,68 +273,26 @@ PropertyVector<int> const* materialIDs(Mesh const& mesh)
     return nullptr;
 }
 
-std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
-    std::string mesh_name, std::vector<MeshLib::Element*> const& elements)
+PropertyVector<int>* materialIDs(Mesh& mesh)
 {
-    auto ids_vector = views::ids | to<std::vector>();
+    return const_cast<PropertyVector<int>*>(
+        MeshLib::materialIDs(std::as_const(mesh)));
+}
 
-    DBUG("Found {:d} elements in the mesh", elements.size());
+PropertyVector<std::size_t> const* bulkNodeIDs(Mesh const& mesh)
+{
+    auto const& properties = mesh.getProperties();
+    return properties.getPropertyVector<std::size_t>(
+        MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+        MeshLib::MeshItemType::Node, 1);
+}
 
-    // Store bulk element ids for each of the new elements.
-    auto bulk_element_ids = elements | ids_vector;
-
-    // original node ids to newly created nodes.
-    std::unordered_map<std::size_t, MeshLib::Node*> id_node_hash_map;
-    id_node_hash_map.reserve(
-        elements.size());  // There will be at least one node per element.
-
-    for (auto& e : elements)
-    {
-        // For each node find a cloned node in map or create if there is none.
-        unsigned const n_nodes = e->getNumberOfNodes();
-        for (unsigned i = 0; i < n_nodes; ++i)
-        {
-            const MeshLib::Node* n = e->getNode(i);
-            auto const it = id_node_hash_map.find(n->getID());
-            if (it == id_node_hash_map.end())
-            {
-                auto new_node_in_map = id_node_hash_map[n->getID()] =
-                    new MeshLib::Node(*n);
-                e->setNode(i, new_node_in_map);
-            }
-            else
-            {
-                e->setNode(i, it->second);
-            }
-        }
-    }
-
-    std::map<std::size_t, MeshLib::Node*> nodes_map;
-    for (const auto& n : id_node_hash_map)
-    {
-        nodes_map[n.first] = n.second;
-    }
-
-    // Copy the unique nodes pointers.
-    auto element_nodes = nodes_map | ranges::views::values | to<std::vector>;
-
-    // Store bulk node ids for each of the new nodes.
-    auto bulk_node_ids = nodes_map | ranges::views::keys | to<std::vector>;
-
-    auto mesh = std::make_unique<MeshLib::Mesh>(
-        std::move(mesh_name), std::move(element_nodes), std::move(elements));
-    assert(mesh != nullptr);
-
-    addPropertyToMesh(*mesh, getBulkIDString(MeshLib::MeshItemType::Cell),
-                      MeshLib::MeshItemType::Cell, 1, bulk_element_ids);
-    addPropertyToMesh(*mesh, getBulkIDString(MeshLib::MeshItemType::Node),
-                      MeshLib::MeshItemType::Node, 1, bulk_node_ids);
-
-#ifdef USE_PETSC
-    return std::make_unique<MeshLib::NodePartitionedMesh>(*mesh);
-#else
-    return mesh;
-#endif
+PropertyVector<std::size_t> const* bulkElementIDs(Mesh const& mesh)
+{
+    auto const& properties = mesh.getProperties();
+    return properties.getPropertyVector<std::size_t>(
+        MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
+        MeshLib::MeshItemType::Cell, 1);
 }
 
 std::vector<std::vector<Node*>> calculateNodesConnectedByElements(
@@ -382,7 +325,7 @@ std::vector<std::vector<Node*>> calculateNodesConnectedByElements(
         // Make nodes unique and sorted by their ids.
         // This relies on the node's id being equivalent to it's address.
         std::sort(adjacent_nodes.begin(), adjacent_nodes.end(),
-                  [](Node* a, Node* b) { return a->getID() < b->getID(); });
+                  idsComparator<Node*>);
         auto const last =
             std::unique(adjacent_nodes.begin(), adjacent_nodes.end());
         adjacent_nodes.erase(last, adjacent_nodes.end());
@@ -406,4 +349,5 @@ bool isBaseNode(Node const& node,
     auto const local_index = getNodeIDinElement(*e, &node);
     return local_index < n_base_nodes;
 }
+
 }  // namespace MeshLib

@@ -1,17 +1,17 @@
-if [ ! -f ~/.easybuild-yes ]; then
-    echo "ERROR: Easybuild modules not enabled but required!\n"
-    echo "Run 'touch ~/.easybuild-yes' and re-login to enable."
-    echo "For more details see:\n  https://www.opengeosys.org/docs/devguide/advanced/working-on-eve"
-    return 1
-fi
+export CMAKE_BUILD_PARALLEL_LEVEL="${CMAKE_BUILD_PARALLEL_LEVEL:-8}"
 
 module use /global/apps/modulefiles
 
-module load foss/2020b
+module load foss/2022b
 module load cmake/3.22.4-1
-module load Ninja/1.10.1
+module load Ninja/1.11.1
 
 # Tools
 module load ccache/3.3.3
 module load git-lfs
-module load Python/3.8.6
+module load Python/3.10.8
+
+# Python dependencies
+virtualenv .venv
+source .venv/bin/activate
+pip install numpy

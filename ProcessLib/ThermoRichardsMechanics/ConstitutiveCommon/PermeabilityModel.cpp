@@ -23,10 +23,15 @@ void PermeabilityModel<DisplacementDim>::eval(
     LiquidViscosityData const& mu_L_data,
     TransportPorosityData const& transport_poro_data,
     TotalStressData<DisplacementDim> const& total_stress_data,
+    StrainData<DisplacementDim> const& eps_data,
     EquivalentPlasticStrainData const& equiv_plast_strain_data,
     PermeabilityData<DisplacementDim>& out) const
 {
     namespace MPL = MaterialPropertyLib;
+
+    static constexpr int kelvin_vector_size =
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+    using Invariants = MathLib::KelvinVector::Invariants<kelvin_vector_size>;
 
     auto const& medium = media_data.medium;
 
@@ -56,6 +61,8 @@ void PermeabilityModel<DisplacementDim>::eval(
 
     variables.equivalent_plastic_strain =
         equiv_plast_strain_data.equivalent_plastic_strain;
+
+    variables.volumetric_strain = Invariants::trace(eps_data.eps);
 
     auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
         medium.property(MPL::PropertyType::permeability)

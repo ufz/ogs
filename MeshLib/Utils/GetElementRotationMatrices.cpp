@@ -24,7 +24,7 @@ std::vector<Eigen::MatrixXd> getElementRotationMatrices(
 {
     std::vector<Eigen::MatrixXd> element_rotation_matrices;
     element_rotation_matrices.reserve(elements.size());
-    for (auto const& element : elements)
+    for (auto const* const element : elements)
     {
         int const element_dimension = static_cast<int>(element->getDimension());
         if (element_dimension == space_dimension)

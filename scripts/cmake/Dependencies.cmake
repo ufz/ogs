@@ -7,11 +7,15 @@ if(OGS_BUILD_TESTING)
         NAME googletest
         GITHUB_REPOSITORY google/googletest
         VERSION ${ogs.minimum_version.gtest}
-        GIT_TAG ${ogs.tested_version.gtest}
+        GIT_TAG v${ogs.tested_version.gtest}
         OPTIONS "INSTALL_GTEST OFF" "gtest_force_shared_crt ON"
                 "BUILD_SHARED_LIBS OFF"
         EXCLUDE_FROM_ALL YES
     )
+    if(googletest_ADDED AND WIN32)
+        target_compile_options(gtest PRIVATE /EHsc)
+        target_compile_options(gmock PRIVATE /EHsc)
+    endif()
 
     CPMAddPackage(
         NAME autocheck
@@ -29,10 +33,10 @@ endif()
 
 # Check spdlog release for compatible fmt release. fmt may be provided by vtk
 # _ext build.
-if(NOT TARGET fmt::fmt)
+if(NOT TARGET fmt::fmt-header-only)
     CPMFindPackage(
         NAME fmt
-        GIT_TAG 9.1.0
+        GIT_TAG 10.1.0
         GITHUB_REPOSITORY fmtlib/fmt
         EXCLUDE_FROM_ALL YES
     )
@@ -40,7 +44,7 @@ endif()
 CPMFindPackage(
     NAME spdlog
     GITHUB_REPOSITORY gabime/spdlog
-    VERSION 1.11.0
+    VERSION 1.12.0
     OPTIONS "BUILD_SHARED_LIBS OFF" "SPDLOG_BUILD_SHARED OFF"
             "SPDLOG_FMT_EXTERNAL_HO 1"
 )
@@ -75,11 +79,10 @@ if(tetgen_ADDED)
     list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
 endif()
 
-if(OGS_USE_PYTHON OR OGS_BUILD_PYTHON_MODULE)
-    CPMAddPackage(
-        NAME pybind11 GITHUB_REPOSITORY pybind/pybind11 VERSION 2.10.3
-    )
-endif()
+CPMFindPackage(
+    NAME pybind11 GITHUB_REPOSITORY pybind/pybind11
+    VERSION ${ogs.minimum_version.pybind11}
+)
 
 if(_build_chemistry_lib)
     CPMAddPackage(
@@ -94,13 +97,24 @@ if(_build_chemistry_lib)
     endif()
 endif()
 
+set(_eigen_version ${ogs.minimum_version.eigen})
+set(_eigen_url
+    https://gitlab.com/libeigen/eigen/-/archive/${_eigen_version}/eigen-${_eigen_version}.tar.gz
+)
+if(OGS_USE_EIGEN_UNSUPPORTED)
+    set(_eigen_version 3.4.90)
+    set(_eigen_url
+        https://gitlab.com/libeigen/eigen/-/archive/${ogs.minimum_version.eigen-unsupported}/eigen-${ogs.minimum_version.eigen-unsupported}.tar.gz
+    )
+endif()
+
 CPMFindPackage(
     NAME Eigen3
     # Error as in
     # https://gitlab.com/gitlab-com/gl-infra/reliability/-/issues/8475
     # GITLAB_REPOSITORY libeigen/eigen
-    URL https://gitlab.com/libeigen/eigen/-/archive/${ogs.minimum_version.eigen}/eigen-${ogs.minimum_version.eigen}.tar.gz
-    GIT_TAG ${ogs.minimum_version.eigen}
+    URL ${_eigen_url}
+    VERSION ${_eigen_version}
     DOWNLOAD_ONLY YES
 )
 if(Eigen3_ADDED)
@@ -129,7 +143,7 @@ endif()
 CPMFindPackage(
     NAME Boost
     VERSION ${ogs.minimum_version.boost}
-    URL https://gitlab.opengeosys.org/ogs/libs/boost-subset/-/jobs/187805/artifacts/raw/ogs-boost-${ogs.minimum_version.boost}.tar.gz
+    URL https://gitlab.opengeosys.org/ogs/libs/boost-subset/-/jobs/303158/artifacts/raw/ogs-boost-${ogs.minimum_version.boost}.tar.gz
 )
 if(Boost_ADDED)
     add_library(Boost::boost INTERFACE IMPORTED)
@@ -182,17 +196,17 @@ endif()
 
 CPMFindPackage(
     NAME nlohmann_json
-    VERSION 3.6.1
+    VERSION ${ogs.minimum_version.json}
     # the git repo is incredibly large, so we download the archived include
     # directory
-    URL https://github.com/nlohmann/json/releases/download/v3.6.1/include.zip
-    URL_HASH
-        SHA256=69cc88207ce91347ea530b227ff0776db82dcb8de6704e1a3d74f4841bc651cf
+    URL https://github.com/nlohmann/json/releases/download/v${ogs.minimum_version.json}/include.zip
+    URL_HASH SHA256=${ogs.minimum_version.json_sha}
 )
 if(nlohmann_json_ADDED)
     add_library(nlohmann_json::nlohmann_json INTERFACE IMPORTED)
     target_include_directories(
-        nlohmann_json::nlohmann_json INTERFACE ${nlohmann_json_SOURCE_DIR}
+        nlohmann_json::nlohmann_json
+        INTERFACE ${nlohmann_json_SOURCE_DIR}/include
     )
 endif()
 
@@ -269,26 +283,20 @@ if(exprtk_ADDED)
     target_include_directories(exprtk SYSTEM INTERFACE ${exprtk_SOURCE_DIR})
 endif()
 
-CPMAddPackage(
-    NAME range-v3
-    GITHUB_REPOSITORY ericniebler/range-v3
-    VERSION 0.12.0
-    GIT_TAG 0.12.0
-    EXCLUDE_FROM_ALL YES
-)
-
-CPMFindPackage(
-    NAME boost_mp11
-    VERSION 1.79.0
-    GITHUB_REPOSITORY boostorg/mp11
-    GIT_TAG boost-1.79.0
-)
+if(GUIX_BUILD)
+    find_package(range-v3 REQUIRED)
+else()
+    CPMFindPackage(
+        NAME range-v3
+        GITHUB_REPOSITORY ericniebler/range-v3
+        VERSION ${ogs.minimum_version.range-v3}
+        GIT_TAG ${ogs.minimum_version.range-v3}
+        EXCLUDE_FROM_ALL YES
+    )
+endif()
 
 if(OGS_BUILD_TESTING OR OGS_BUILD_UTILS)
-    CPMAddPackage(
-        NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
-        GIT_TAG 788100291f73e472febf7e5550eea36ec4be518b
-    )
+    CPMAddPackage(NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff GIT_TAG master)
     if(vtkdiff_ADDED)
         install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)
     endif()
@@ -307,8 +315,7 @@ if(OGS_USE_PETSC)
     endif()
 endif()
 
-# Does not compile in Debug-mode, see #3175.
-if(CMAKE_BUILD_TYPE MATCHES "Rel" AND OGS_BUILD_TESTING)
+if(OGS_BUILD_TESTING OR OGS_BUILD_CLI OR OGS_BUILD_UTILS)
     set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
     CPMAddPackage(
         NAME xdmf
@@ -402,14 +409,56 @@ if(CLANG_FORMAT_PROGRAM OR CMAKE_FORMAT_PROGRAM)
 endif()
 
 # Third-party licenses
-CPMAddPackage(
-    NAME CPMLicenses.cmake GITHUB_REPOSITORY cpm-cmake/CPMLicenses.cmake
-    VERSION 0.0.5
-)
-cpm_licenses_create_disclaimer_target(
-    write-licenses "${PROJECT_BINARY_DIR}/third_party_licenses.txt"
-    "${CPM_PACKAGES}"
-)
+set(_licenses_file ${PROJECT_BINARY_DIR}/third_party_licenses.txt)
+if(NOT EXISTS ${_licenses_file})
+    set(_licenses_string "")
+    # Adapted from https://github.com/cpm-cmake/CPMLicenses.cmake:
+    set(_print_delimiter OFF)
+    foreach(package ${CPM_PACKAGES} ${_EXT_LIBS})
+        file(
+            GLOB
+            licenses
+            "${${package}_SOURCE_DIR}/LICENSE*"
+            "${${package}_SOURCE_DIR}/LICENCE*"
+            "${${package}_SOURCE_DIR}/COPYING*"
+            "${${package}_SOURCE_DIR}/Copyright*"
+        )
+        list(LENGTH licenses LICENSE_COUNT)
+        if(LICENSE_COUNT GREATER_EQUAL 1)
+            if(_print_delimiter)
+                set(_licenses_string
+                    "${_licenses_string}\n----------------------------------------------------------------------------\n\n"
+                )
+            endif()
+
+            list(GET licenses 0 _license)
+            file(READ ${_license} license_TEXT)
+            set(_licenses_string
+                "${_licenses_string}The following software may be included in this product: **${package}**.\nThis software contains the following license and notice below:\n\n${license_TEXT}\n"
+            )
+            set(_print_delimiter ON)
+        else()
+            message(
+                VERBOSE
+                "WARNING: no license files found for package \"${package}\" in ${${package}_SOURCE_DIR} ."
+            )
+        endif()
+        if(LICENSE_COUNT GREATER 1)
+            message(
+                VERBOSE
+                "WARNING: multiple license files found for package \"${package}\": ${licenses}. Only first file will be used."
+            )
+        endif()
+    endforeach()
+
+    file(READ
+         ${PROJECT_SOURCE_DIR}/scripts/cmake/packaging/additional-licenses.txt
+         _additional_licenses
+    )
+
+    file(WRITE ${_licenses_file} "${_licenses_string}\n${_additional_licenses}")
+    message(STATUS "Wrote licenses to ${_licenses_file}")
+endif()
 
 unset(CMAKE_FOLDER)
 list(POP_BACK CMAKE_MESSAGE_INDENT)

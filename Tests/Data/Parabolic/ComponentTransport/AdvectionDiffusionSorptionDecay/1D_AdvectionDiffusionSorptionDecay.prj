@@ -172,7 +172,8 @@
             </timesteps>
             <variables>
                 <variable>Cs</variable>
-                <variable>pressure</variable>
+                <variable>LiquidMassFlowRate</variable>
+                <variable>CsFlowRate</variable>
             </variables>
         </output>
     </time_loop>

@@ -7,6 +7,9 @@ build mac:
     - .test-artifacts
   needs: [meta]
   rules:
+    - if: '$ARCHITECTURE == "amd64"'
+      variables:
+        CTEST_ARGS: "-E LARGE" # disable large notebook tests
     - if: '$ARCHITECTURE == "arm64"'
     - if: '$CI_COMMIT_BRANCH == "master"'
     - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
@@ -20,21 +23,3 @@ build mac:
   parallel:
     matrix:
       - ARCHITECTURE: ["amd64", "arm64"]
-
-build mac petsc:
-  tags:
-    - mac
-    - amd64
-  extends:
-    - .template-build-linux
-    - .test-artifacts
-  needs: [meta]
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
-    - when: manual
-      allow_failure: true
-  variables:
-    CMAKE_PRESET: release-petsc
-    CMAKE_ARGS: >-
-      -DOGS_BUILD_PROCESSES=SteadyStateDiffusion

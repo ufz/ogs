@@ -19,7 +19,7 @@
     </process>
   </processes>
   <media>
-    <medium id="0">
+    <medium id="0,1,2,3,4">
       <properties>
         <property>
           <name>diffusion</name>
@@ -57,6 +57,7 @@
       <suffix>_ts_{:timestep}_t_{:time}</suffix>
       <meshes>
         <mesh>cube_1x1x1_hex_1e2</mesh>
+        <mesh material_ids="0, 1">cube_1x1x1_hex_1e2</mesh>
       </meshes>
       <geometrical_sets>
         <!-- points -->

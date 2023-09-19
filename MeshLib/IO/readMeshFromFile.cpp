@@ -9,10 +9,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
- * @file readMeshFromFile.cpp
- * @date 2012-09-27
- * @author Karsten Rink
  */
 
 #include "readMeshFromFile.h"

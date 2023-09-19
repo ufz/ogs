@@ -21,7 +21,7 @@
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
 
 MeshLib::Mesh* extractMatGroup(MeshLib::Mesh const& mesh, int const mat_id)
 {
@@ -42,7 +42,7 @@ MeshLib::Mesh* extractMatGroup(MeshLib::Mesh const& mesh, int const mat_id)
         return nullptr;
     }
 
-    return MeshLib::removeElements(mesh, elem_list, "matgroup");
+    return MeshToolsLib::removeElements(mesh, elem_list, "matgroup");
 }
 
 int main(int argc, char* argv[])

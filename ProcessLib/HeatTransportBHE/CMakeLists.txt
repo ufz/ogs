@@ -10,9 +10,6 @@ target_link_libraries(
     PRIVATE ParameterLib
             $<$<TARGET_EXISTS:pybind11::pybind11>:pybind11::pybind11>
 )
-target_compile_definitions(
-    HeatTransportBHE PRIVATE $<$<BOOL:${OGS_USE_PYTHON}>:OGS_USE_PYTHON>
-)
 
 target_precompile_headers(HeatTransportBHE PRIVATE [["BaseLib/Error.h"]]
     [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]]

@@ -1,22 +1,30 @@
 preview web site:
   stage: build
   image: $WEB_IMAGE
-  needs: [ci_images, "build linux arch", "build linux petsc"]
+  needs:
+    - job: ci_images
+    - job: "build linux arch"
+      optional: true
+    - job: "build mac petsc arm64"
+      optional: true
   variables:
     HUGO_ENVIRONMENT: "staging"
   script:
     # Copy notebook pages
-    - cp -rl build/*/web/content web/
+    - cp -rl build/*/web/content web/ || true
     - cd web
     # Symlink for prj link checks (data-link shortcode)
     - ln -s ../Tests .
+    - python scripts/convert_notebooks.py
     - yarn
     - yarn build
   rules:
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only.*/
     - if: $CI_MERGE_REQUEST_ID
       changes:
         - web/**/*
         - scripts/ci/jobs/web.yml
+        - scripts/ci/jobs/web-preview.yml
         - Tests/Data/**/*.ipynb
   artifacts:
     paths:

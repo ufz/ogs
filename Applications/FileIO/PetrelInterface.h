@@ -9,10 +9,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
- * @file PetrelInterface.h
- * @date 2010-02-16
- * @author Thomas Fischer
  */
 
 #pragma once
@@ -51,6 +47,5 @@ private:
     std::string _unique_name;
     std::vector<GeoLib::Point*> pnt_vec;
     std::vector<GeoLib::Point*> well_vec;
-    static const std::size_t MAX_COLS_PER_ROW = 256;
 };
 } // end namespace FileIO

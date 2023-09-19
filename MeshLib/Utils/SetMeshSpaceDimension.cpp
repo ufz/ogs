@@ -11,6 +11,8 @@
 
 #include "SetMeshSpaceDimension.h"
 
+#include <range/v3/algorithm/for_each.hpp>
+
 #include "GetSpaceDimension.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
@@ -20,14 +22,11 @@ namespace MeshLib
 void setMeshSpaceDimension(std::vector<std::unique_ptr<Mesh>> const& meshes)
 {
     // Get the space dimension from the bulk mesh:
-    auto const space_dimension = getSpaceDimension(meshes[0]->getNodes());
-    for (auto& mesh : meshes)
+    auto const d = getSpaceDimension(meshes[0]->getNodes());
+    for (auto const& mesh : meshes)
     {
-        auto elements = mesh->getElements();
-        for (auto element : elements)
-        {
-            element->space_dimension_ = space_dimension;
-        }
+        ranges::for_each(mesh->getElements(),
+                         [d](Element* const e) { e->space_dimension_ = d; });
     }
 }
 };  // namespace MeshLib

@@ -72,6 +72,7 @@
             <variables>
                 <variable>displacement</variable>
                 <variable>displacement_jump1</variable>
+                <variable>aperture</variable>
                 <variable>sigma_xx</variable>
                 <variable>sigma_yy</variable>
                 <variable>sigma_xy</variable>

@@ -107,8 +107,7 @@ struct OutputXDMFHDF5Format final : public OutputFormat
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
         std::set<std::string> const& output_variables) const override
     {
-        outputMeshXdmf(output_variables, std::move(meshes), timestep, t,
-                       iteration);
+        outputMeshXdmf(output_variables, meshes, timestep, t, iteration);
     }
 
     std::string constructFilename(std::string const& mesh_name,
@@ -121,7 +120,7 @@ struct OutputXDMFHDF5Format final : public OutputFormat
 
     void outputMeshXdmf(
         std::set<std::string> const& output_variables,
-        std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+        std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
         int const timestep, double const t, int const iteration) const;
 };
 

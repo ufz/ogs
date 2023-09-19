@@ -9,6 +9,7 @@ repos:
         args: [--maxkb 1024]
       - id: check-merge-conflict
       - id: check-xml
+        exclude: '^Tests/Data/.*\.xml'
       - id: check-yaml
         exclude: "^scripts/ci/.*|.cmake-format.yaml"
       - id: check-toml
@@ -24,6 +25,15 @@ repos:
     hooks:
       - id: black
         exclude: "ThirdParty|LinearMFront/generate_ref.py"
+  # Run black on markdown notebooks
+  - repo: https://github.com/mwouts/jupytext
+    rev: v1.14.5
+    hooks:
+      - id: jupytext
+        args: [--pipe, black]
+        additional_dependencies:
+          - black==23.1.0 # Matches black hook
+        exclude: "web/.*"
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.2
     hooks:
@@ -68,3 +78,16 @@ repos:
         entry: bash -c 'if command -v vale &> /dev/null; then vale sync; VALE_MIN_ALERT_LEVEL=error scripts/ci/helper/run-vale; else exit 0; fi'
         pass_filenames: false
         language: system
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.0.262"
+    hooks:
+      - id: ruff
+        files: "Applications/Python/.*"
+  # Enable on demand, run with
+  #     pre-commit run --all-files clang-format
+  #
+  # - repo: https://github.com/pocc/pre-commit-hooks
+  #   rev: master
+  #   hooks:
+  #     - id: clang-format
+  #       args: ["-i"]

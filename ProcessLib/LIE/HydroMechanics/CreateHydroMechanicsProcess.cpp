@@ -64,7 +64,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     for (std::string const& pv_name : range)
     {
         if (pv_name != "pressure" && pv_name != "displacement" &&
-            pv_name.find("displacement_jump") != 0)
+            !pv_name.starts_with("displacement_jump"))
         {
             OGS_FATAL(
                 "Found a process variable name '{}'. It should be "

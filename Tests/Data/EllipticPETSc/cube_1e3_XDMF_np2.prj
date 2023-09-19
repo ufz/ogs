@@ -49,6 +49,12 @@
                     <t_initial>0.0</t_initial>
                     <t_end>1e-1</t_end>
                     <timesteps>
+                        <!-- Testing precision of the time step value output. -->
+                        <pair>
+                            <repeat>1</repeat>
+                            <!-- 0.1 - 1e-15 -->
+                            <delta_t>.099999999999999</delta_t>
+                        </pair>
                         <pair>
                             <repeat>1</repeat>
                             <delta_t>1e-1</delta_t>
@@ -65,6 +71,12 @@
                 <variable> v      </variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <timesteps>
+                <pair>
+                    <repeat>2</repeat>
+                    <each_steps>1</each_steps>
+                </pair>
+            </timesteps>
         </output>
     </time_loop>
     <parameters>

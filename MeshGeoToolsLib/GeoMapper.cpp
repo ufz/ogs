@@ -29,8 +29,8 @@
 #include "MeshLib/Elements/FaceRule.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSearch/MeshElementGrid.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
 
 namespace MeshGeoToolsLib
 {
@@ -92,7 +92,7 @@ void GeoMapper::mapOnMesh(MeshLib::Mesh const* const mesh)
     {
         Eigen::Vector3d const dir(0, 0, -1);
         _surface_mesh =
-            MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 90);
+            MeshToolsLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 90);
     }
 
     // init grid
@@ -624,7 +624,7 @@ void GeoMapper::advancedMapOnMesh(MeshLib::Mesh const& mesh)
     else
     {
         Eigen::Vector3d const dir({0, 0, -1});
-        _surface_mesh = MeshLib::MeshSurfaceExtraction::getMeshSurface(
+        _surface_mesh = MeshToolsLib::MeshSurfaceExtraction::getMeshSurface(
             mesh, dir, 90 + 1e-6);
     }
 

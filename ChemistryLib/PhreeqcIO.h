@@ -97,7 +97,7 @@ public:
 private:
     void writeInputsToFile(double const dt);
 
-    void callPhreeqc();
+    void callPhreeqc() const;
 
     void readOutputsFromFile();
 

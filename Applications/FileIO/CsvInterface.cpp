@@ -1,10 +1,10 @@
 /**
- * @file CsvInterface.cpp
- * @author Karsten Rink
- * @date 2015-03-25
- * @brief Implementation of the CsvInterface class.
+ * \file
+ * \author Karsten Rink
+ * \date 2015-03-25
+ * \brief Implementation of the CsvInterface class.
  *
- * @copyright
+ * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or

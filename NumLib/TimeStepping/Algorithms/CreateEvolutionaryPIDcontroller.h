@@ -1,17 +1,18 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  *  Created on June 26, 2017, 4:43 PM
  */
 
 #pragma once
 
 #include <memory>
+#include <vector>
 
 namespace BaseLib
 {
@@ -25,5 +26,6 @@ class TimeStepAlgorithm;
 /// Create an EvolutionaryPIDcontroller time stepper from the given
 /// configuration
 std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::vector<double> const& fixed_times_for_output);
 }  // end of namespace NumLib

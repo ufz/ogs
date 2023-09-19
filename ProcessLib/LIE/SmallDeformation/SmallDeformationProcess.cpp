@@ -13,6 +13,7 @@
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Properties.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/LIE/Common/BranchProperty.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
@@ -96,10 +97,10 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     }
 
     // set branches
-    for (auto& vec_branch_nodeID_matID : vec_branch_nodeID_matIDs)
+    for (auto const& [vec_branch_nodeID, matID] : vec_branch_nodeID_matIDs)
     {
-        auto master_matId = vec_branch_nodeID_matID.second[0];
-        auto slave_matId = vec_branch_nodeID_matID.second[1];
+        auto master_matId = matID[0];
+        auto slave_matId = matID[1];
         auto& master_frac =
             _process_data.fracture_properties
                 [_process_data._map_materialID_to_fractureID[master_matId]];
@@ -107,13 +108,11 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
             _process_data.fracture_properties
                 [_process_data._map_materialID_to_fractureID[slave_matId]];
 
-        master_frac.branches_master.push_back(
-            createBranchProperty(*mesh.getNode(vec_branch_nodeID_matID.first),
-                                 master_frac, slave_frac));
+        master_frac.branches_master.push_back(createBranchProperty(
+            *mesh.getNode(vec_branch_nodeID), master_frac, slave_frac));
 
-        slave_frac.branches_slave.push_back(
-            createBranchProperty(*mesh.getNode(vec_branch_nodeID_matID.first),
-                                 master_frac, slave_frac));
+        slave_frac.branches_slave.push_back(createBranchProperty(
+            *mesh.getNode(vec_branch_nodeID), master_frac, slave_frac));
     }
 
     // set junctions
@@ -145,10 +144,10 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     for (unsigned i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
     {
         auto node = mesh.getNode(vec_junction_nodeID_matIDs[i].first);
-        for (auto e : mesh.getElementsConnectedToNode(*node))
+        for (auto id :
+             mesh.getElementsConnectedToNode(*node) | MeshLib::views::ids)
         {
-            _process_data._vec_ele_connected_junctionIDs[e->getID()].push_back(
-                i);
+            _process_data._vec_ele_connected_junctionIDs[id].push_back(i);
         }
     }
 
@@ -204,7 +203,7 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
     std::vector<MeshLib::MeshSubset> all_mesh_subsets;
     std::generate_n(std::back_inserter(all_mesh_subsets), DisplacementDim,
                     [&]() { return *_mesh_subset_matrix_nodes; });
-    for (auto& ms : _mesh_subset_fracture_nodes)
+    for (auto const& ms : _mesh_subset_fracture_nodes)
     {
         std::generate_n(std::back_inserter(all_mesh_subsets),
                         DisplacementDim,
@@ -529,7 +528,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_dot, int const process_id)
+    GlobalVector const& x_prev, int const process_id)
 {
     DBUG("Compute the secondary variables for SmallDeformationProcess.");
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
@@ -541,7 +540,7 @@ void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &SmallDeformationLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_dot, process_id);
+        x_prev, process_id);
 }
 
 template <int DisplacementDim>
@@ -553,7 +552,7 @@ bool SmallDeformationProcess<DisplacementDim>::isLinear() const
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble SmallDeformationProcess.");
@@ -565,17 +564,15 @@ void SmallDeformationProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
+        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
         b);
 }
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::
-    assembleWithJacobianConcreteProcess(const double t, double const dt,
-                                        std::vector<GlobalVector*> const& x,
-                                        std::vector<GlobalVector*> const& xdot,
-                                        int const process_id, GlobalMatrix& M,
-                                        GlobalMatrix& K, GlobalVector& b,
-                                        GlobalMatrix& Jac)
+    assembleWithJacobianConcreteProcess(
+        const double t, double const dt, std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian SmallDeformationProcess.");
 
@@ -586,8 +583,8 @@ void SmallDeformationProcess<DisplacementDim>::
         dof_table = {std::ref(*_local_to_global_index_map)};
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
-        process_id, M, K, b, Jac);
+        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x,
+        x_prev, process_id, M, K, b, Jac);
 }
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(

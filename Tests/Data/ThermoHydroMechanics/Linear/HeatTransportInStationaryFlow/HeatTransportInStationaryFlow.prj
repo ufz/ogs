@@ -149,7 +149,9 @@
             </timesteps>
             <variables>
                 <variable>temperature</variable>
+                <variable>temperature_interpolated</variable>
                 <variable>pressure</variable>
+                <variable>pressure_interpolated</variable>
                 <variable>velocity</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>

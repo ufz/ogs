@@ -88,6 +88,7 @@
                 <variable>displacement_jump2</variable>
                 <variable>displacement_jump3</variable>
                 <variable>displacement_jump4</variable>
+                <variable>f_stress_n</variable>
                 <!--
                 <variable>sigma_xx</variable>
                 <variable>sigma_yy</variable>

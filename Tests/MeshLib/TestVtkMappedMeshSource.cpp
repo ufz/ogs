@@ -27,11 +27,11 @@
 #include "BaseLib/StringTools.h"
 #include "InfoLib/TestInfo.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/IO/VtkIO/VtkMeshConverter.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 // Creates a mesh with different types of data (double, int, etc.) and point,
 // cell, or integration point properties.
@@ -40,7 +40,7 @@ class InSituMesh : public ::testing::Test
 public:
     InSituMesh()
     {
-        mesh = MeshLib::MeshGenerator::generateRegularHexMesh(
+        mesh = MeshToolsLib::MeshGenerator::generateRegularHexMesh(
             this->length, this->subdivisions);
 
         std::string const point_prop_name("PointDoubleProperty");

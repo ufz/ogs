@@ -1,4 +1,5 @@
 /**
+ * \file
  * \brief  Implementation of the createMeshElemPropertiesFromASCRaster tool.
  *
  * \copyright
@@ -20,20 +21,20 @@
 #include <memory>
 #include <numeric>
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/quicksort.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/GitInfo.h"
 #include "MathLib/MathTools.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/IO/VtkIO/VtkMeshConverter.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/Mesh2MeshPropertyInterpolation.h"
 #include "MeshLib/MeshEnums.h"
-#include "MeshLib/MeshGenerators/RasterToMesh.h"
-#include "MeshLib/MeshGenerators/VtkMeshConverter.h"
+#include "MeshToolsLib/MeshEditing/Mesh2MeshPropertyInterpolation.h"
+#include "MeshToolsLib/MeshGenerators/RasterToMesh.h"
 
 int main(int argc, char* argv[])
 {
@@ -122,13 +123,13 @@ int main(int argc, char* argv[])
     }
 
     std::unique_ptr<MeshLib::Mesh> src_mesh(
-        MeshLib::RasterToMesh::convert(*raster,
-                                       MeshLib::MeshElemType::QUAD,
-                                       MeshLib::UseIntensityAs::DATAVECTOR,
-                                       property_arg.getValue()));
+        MeshToolsLib::RasterToMesh::convert(*raster,
+                                            MeshLib::MeshElemType::QUAD,
+                                            MeshLib::UseIntensityAs::DATAVECTOR,
+                                            property_arg.getValue()));
 
     // do the interpolation
-    MeshLib::Mesh2MeshPropertyInterpolation mesh_interpolation(
+    MeshToolsLib::Mesh2MeshPropertyInterpolation mesh_interpolation(
         *src_mesh, property_arg.getValue());
     mesh_interpolation.setPropertiesForMesh(*dest_mesh);
 

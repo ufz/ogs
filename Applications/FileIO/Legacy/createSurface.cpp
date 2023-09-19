@@ -1,4 +1,5 @@
 /**
+ * \file
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
@@ -25,7 +26,7 @@
 #include "GeoLib/Triangle.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/convertMeshToGeo.h"
+#include "MeshToolsLib/convertMeshToGeo.h"
 
 namespace FileIO
 {
@@ -94,7 +95,7 @@ bool createSurface(GeoLib::Polyline const& ply,
         WARN("Call to '{:s}' returned non-zero value {:d}.", gmsh_command,
              gmsh_return_value);
     }
-    auto surface_mesh = MeshLib::IO::readMeshFromFile(msh_file.string());
+    auto const* surface_mesh = MeshLib::IO::readMeshFromFile(msh_file.string());
     if (!surface_mesh)
     {
         WARN("The surface mesh could not be created.");
@@ -107,8 +108,8 @@ bool createSurface(GeoLib::Polyline const& ply,
     }
 
     // convert the surface mesh into a geometric surface
-    if (!MeshLib::convertMeshToGeo(*surface_mesh, geometries,
-                                   std::numeric_limits<double>::epsilon()))
+    if (!MeshToolsLib::convertMeshToGeo(*surface_mesh, geometries,
+                                        std::numeric_limits<double>::epsilon()))
     {
         WARN("The surface mesh could not be converted to a geometry.");
         return false;

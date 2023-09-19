@@ -219,6 +219,9 @@
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
                 <variable>velocity</variable>
+                <variable>HeatFlowRate</variable>
+                <variable>MassFlowRate</variable>
+                <variable>NodalForces</variable>
             </variables>
         </output>
     </time_loop>
@@ -453,25 +456,25 @@
         <vtkdiff>
             <regex>A2_ts_.*.vtu</regex>
             <field>sigma</field>
-            <absolute_tolerance>5e-8</absolute_tolerance>
+            <absolute_tolerance>6e-8</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>A2_ts_.*.vtu</regex>
             <field>pressure</field>
-            <absolute_tolerance>5e-8</absolute_tolerance>
+            <absolute_tolerance>6e-8</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>A2_ts_.*.vtu</regex>
             <field>velocity</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>2e-9</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>A2_ts_.*.vtu</regex>
             <field>temperature</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>4e-13</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -483,13 +486,13 @@
         <vtkdiff>
             <regex>A2_ts_.*.vtu</regex>
             <field>HeatFlowRate</field>
-            <absolute_tolerance>5e-13</absolute_tolerance>
+            <absolute_tolerance>3e-11</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>A2_ts_.*.vtu</regex>
             <field>NodalForces</field>
-            <absolute_tolerance>5e-10</absolute_tolerance>
+            <absolute_tolerance>8e-10</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>

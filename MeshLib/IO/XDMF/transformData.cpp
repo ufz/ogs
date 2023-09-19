@@ -149,15 +149,13 @@ std::optional<XdmfHdfData> transformAttribute(
         }
         else if constexpr (std::is_same_v<char, decltype(basic_type)>)
         {
-            static_assert((std::numeric_limits<char>::digits == 7),
-                          "Signed char has 8-1 bits");
-            data_type = MeshPropertyDataType::int8;
+            data_type = MeshPropertyDataType::char_native;
         }
         else if constexpr (std::is_same_v<unsigned char, decltype(basic_type)>)
         {
             static_assert((std::numeric_limits<unsigned char>::digits == 8),
                           "Unsigned char has 8 bits");
-            data_type = MeshPropertyDataType::uint8;
+            data_type = MeshPropertyDataType::uchar;
         }
         else
         {
@@ -212,6 +210,11 @@ std::vector<XdmfHdfData> transformAttributes(MeshLib::Mesh const& mesh,
     for (auto const& [name, property_base] : properties)
     {
         if (name == GitInfoLib::GitInfo::OGS_VERSION)
+        {
+            continue;
+        }
+
+        if (!property_base->is_for_output)
         {
             continue;
         }

@@ -22,10 +22,10 @@ namespace NumLib
  * Compute and return the relative change of solutions between two
  * successive time steps by \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
  *
- * @param x         The current solution
- * @param x_old     The previous solution
- * @param norm_type The norm type of global vector
- * @return          \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
+ * \param x         The current solution
+ * \param x_old     The previous solution
+ * \param norm_type The norm type of global vector
+ * \return          \f$ e_n = \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
  *
  */
 double computeRelativeChangeFromPreviousTimestep(
@@ -127,12 +127,6 @@ public:
     //! Returns \f$ \Delta t_C \f$, i.e., the time at which the equation will be
     //! assembled.
     virtual double getCurrentTimeIncrement() const = 0;
-
-    //! Returns \f$ \hat x \f$, i.e. the discretized approximation of \f$ \dot x
-    //! \f$.
-    void getXdot(GlobalVector const& x_at_new_timestep,
-                 GlobalVector const& x_old,
-                 GlobalVector& xdot) const;
 
     //! Returns \f$ x_O \f$.
     virtual void getWeightedOldX(

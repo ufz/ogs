@@ -13,6 +13,7 @@
 #include "ComponentTransportFEM.h"
 #include "ComponentTransportProcessData.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
+#include "ProcessLib/ComponentTransport/AssembledMatrixCache.h"
 #include "ProcessLib/Process.h"
 
 namespace ChemistryLib
@@ -109,12 +110,13 @@ public:
         bool const use_monolithic_scheme,
         std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
         std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
-            chemical_solver_interface);
+            chemical_solver_interface,
+        bool const is_linear);
 
     //! \name ODESystem interface
     //! @{
 
-    bool isLinear() const override { return false; }
+    bool isLinear() const override { return _asm_mat_cache.isLinear(); }
     //! @}
 
     Eigen::Vector3d getFlux(std::size_t const element_id,
@@ -130,10 +132,11 @@ public:
     void computeSecondaryVariableConcrete(double const /*t*/,
                                           double const /*dt*/,
                                           std::vector<GlobalVector*> const& x,
-                                          GlobalVector const& /*x_dot*/,
+                                          GlobalVector const& /*x_prev*/,
                                           int const /*process_id*/) override;
 
     void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                     std::vector<GlobalVector*> const& x_prev,
                                      const double t,
                                      const double dt,
                                      int const process_id) override;
@@ -150,13 +153,13 @@ private:
 
     void assembleConcreteProcess(const double t, double const dt,
                                  std::vector<GlobalVector*> const& x,
-                                 std::vector<GlobalVector*> const& xdot,
+                                 std::vector<GlobalVector*> const& x_prev,
                                  int const process_id, GlobalMatrix& M,
                                  GlobalMatrix& K, GlobalVector& b) override;
 
     void assembleWithJacobianConcreteProcess(
         const double t, double const dt, std::vector<GlobalVector*> const& x,
-        std::vector<GlobalVector*> const& xdot, int const process_id,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
@@ -171,6 +174,8 @@ private:
         _chemical_solver_interface;
 
     std::vector<MeshLib::PropertyVector<double>*> _residua;
+
+    AssembledMatrixCache _asm_mat_cache;
 };
 
 }  // namespace ComponentTransport

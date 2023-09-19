@@ -119,6 +119,10 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
     // Arrays
     for (auto [name, property] : _mesh->getProperties())
     {
+        if (!property->is_for_output)
+        {
+            continue;
+        }
         if (auto p = dynamic_cast<PropertyVector<double>*>(property))
         {
             addProperty(*p);
@@ -166,6 +170,10 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
         {
             addProperty(*p);
         }
+        else if (auto p = dynamic_cast<PropertyVector<uint8_t>*>(property))
+        {
+            addProperty(*p);
+        }
         else
         {
             OGS_FATAL(
@@ -180,7 +188,8 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
                 "\n\t long long,"
                 "\n\t unsigned long long,"
                 "\n\t char,",
-                "\n\t unsigned char.",
+                "\n\t unsigned char,",
+                "\n\t uint8_t.",
                 property->getPropertyName(),
                 typeid(*property).name());
         }

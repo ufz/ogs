@@ -42,7 +42,7 @@ if(NOT COMMAND cpm_message)
   endfunction()
 endif()
 
-set(CURRENT_CPM_VERSION 0.37.0)
+set(CURRENT_CPM_VERSION 0.38.2)
 
 get_filename_component(CPM_CURRENT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}" REALPATH)
 if(CPM_DIRECTORY)
@@ -513,8 +513,8 @@ function(CPMAddPackage)
   if(argnLength EQUAL 1)
     cpm_parse_add_package_single_arg("${ARGN}" ARGN)
 
-    # The shorthand syntax implies EXCLUDE_FROM_ALL
-    set(ARGN "${ARGN};EXCLUDE_FROM_ALL;YES")
+    # The shorthand syntax implies EXCLUDE_FROM_ALL and SYSTEM
+    set(ARGN "${ARGN};EXCLUDE_FROM_ALL;YES;SYSTEM;YES;")
   endif()
 
   set(oneValueArgs
@@ -531,6 +531,7 @@ function(CPMAddPackage)
       DOWNLOAD_COMMAND
       FIND_PACKAGE_ARGUMENTS
       NO_CACHE
+      SYSTEM
       GIT_SHALLOW
       EXCLUDE_FROM_ALL
       SOURCE_SUBDIR
@@ -626,6 +627,7 @@ function(CPMAddPackage)
       NAME "${CPM_ARGS_NAME}"
       SOURCE_DIR "${PACKAGE_SOURCE}"
       EXCLUDE_FROM_ALL "${CPM_ARGS_EXCLUDE_FROM_ALL}"
+      SYSTEM "${CPM_ARGS_SYSTEM}"
       OPTIONS "${CPM_ARGS_OPTIONS}"
       SOURCE_SUBDIR "${CPM_ARGS_SOURCE_SUBDIR}"
       DOWNLOAD_ONLY "${DOWNLOAD_ONLY}"
@@ -646,19 +648,21 @@ function(CPMAddPackage)
     return()
   endif()
 
-  if(CPM_USE_LOCAL_PACKAGES OR CPM_LOCAL_PACKAGES_ONLY)
-    cpm_find_package(${CPM_ARGS_NAME} "${CPM_ARGS_VERSION}" ${CPM_ARGS_FIND_PACKAGE_ARGUMENTS})
+  if(NOT CPM_ARGS_FORCE)
+    if(CPM_USE_LOCAL_PACKAGES OR CPM_LOCAL_PACKAGES_ONLY)
+      cpm_find_package(${CPM_ARGS_NAME} "${CPM_ARGS_VERSION}" ${CPM_ARGS_FIND_PACKAGE_ARGUMENTS})
 
-    if(CPM_PACKAGE_FOUND)
-      cpm_export_variables(${CPM_ARGS_NAME})
-      return()
-    endif()
+      if(CPM_PACKAGE_FOUND)
+        cpm_export_variables(${CPM_ARGS_NAME})
+        return()
+      endif()
 
-    if(CPM_LOCAL_PACKAGES_ONLY)
-      message(
-        SEND_ERROR
-          "${CPM_INDENT} ${CPM_ARGS_NAME} not found via find_package(${CPM_ARGS_NAME} ${CPM_ARGS_VERSION})"
-      )
+      if(CPM_LOCAL_PACKAGES_ONLY)
+        message(
+          SEND_ERROR
+            "${CPM_INDENT} ${CPM_ARGS_NAME} not found via find_package(${CPM_ARGS_NAME} ${CPM_ARGS_VERSION})"
+        )
+      endif()
     endif()
   endif()
 
@@ -713,9 +717,15 @@ function(CPMAddPackage)
     get_filename_component(download_directory ${download_directory} ABSOLUTE)
     list(APPEND CPM_ARGS_UNPARSED_ARGUMENTS SOURCE_DIR ${download_directory})
 
-    file(LOCK ${download_directory}/../cmake.lock)
+    if(CPM_SOURCE_CACHE)
+      file(LOCK ${download_directory}/../cmake.lock)
+    endif()
 
     if(EXISTS ${download_directory})
+      if(CPM_SOURCE_CACHE)
+        file(LOCK ${download_directory}/../cmake.lock RELEASE)
+      endif()
+
       cpm_store_fetch_properties(
         ${CPM_ARGS_NAME} "${download_directory}"
         "${CPM_FETCHCONTENT_BASE_DIR}/${lower_case_name}-build"
@@ -733,9 +743,13 @@ function(CPMAddPackage)
       endif()
 
       cpm_add_subdirectory(
-        "${CPM_ARGS_NAME}" "${DOWNLOAD_ONLY}"
-        "${${CPM_ARGS_NAME}_SOURCE_DIR}/${CPM_ARGS_SOURCE_SUBDIR}" "${${CPM_ARGS_NAME}_BINARY_DIR}"
-        "${CPM_ARGS_EXCLUDE_FROM_ALL}" "${CPM_ARGS_OPTIONS}"
+        "${CPM_ARGS_NAME}"
+        "${DOWNLOAD_ONLY}"
+        "${${CPM_ARGS_NAME}_SOURCE_DIR}/${CPM_ARGS_SOURCE_SUBDIR}"
+        "${${CPM_ARGS_NAME}_BINARY_DIR}"
+        "${CPM_ARGS_EXCLUDE_FROM_ALL}"
+        "${CPM_ARGS_SYSTEM}"
+        "${CPM_ARGS_OPTIONS}"
       )
       set(PACKAGE_INFO "${PACKAGE_INFO} at ${download_directory}")
 
@@ -783,18 +797,21 @@ function(CPMAddPackage)
       "${CPM_ARGS_NAME}" "${CPM_ARGS_VERSION}" "${PACKAGE_INFO}" "${CPM_ARGS_UNPARSED_ARGUMENTS}"
     )
     cpm_fetch_package("${CPM_ARGS_NAME}" populated)
+    if(CPM_SOURCE_CACHE AND download_directory)
+      file(LOCK ${download_directory}/../cmake.lock RELEASE)
+    endif()
     if(${populated})
       cpm_add_subdirectory(
-        "${CPM_ARGS_NAME}" "${DOWNLOAD_ONLY}"
-        "${${CPM_ARGS_NAME}_SOURCE_DIR}/${CPM_ARGS_SOURCE_SUBDIR}" "${${CPM_ARGS_NAME}_BINARY_DIR}"
-        "${CPM_ARGS_EXCLUDE_FROM_ALL}" "${CPM_ARGS_OPTIONS}"
+        "${CPM_ARGS_NAME}"
+        "${DOWNLOAD_ONLY}"
+        "${${CPM_ARGS_NAME}_SOURCE_DIR}/${CPM_ARGS_SOURCE_SUBDIR}"
+        "${${CPM_ARGS_NAME}_BINARY_DIR}"
+        "${CPM_ARGS_EXCLUDE_FROM_ALL}"
+        "${CPM_ARGS_SYSTEM}"
+        "${CPM_ARGS_OPTIONS}"
       )
     endif()
     cpm_get_fetch_properties("${CPM_ARGS_NAME}")
-  endif()
-
-  if(EXISTS ${download_directory}/../cmake.lock)
-    file(LOCK ${download_directory}/../cmake.lock RELEASE)
   endif()
 
   set(${CPM_ARGS_NAME}_ADDED YES)
@@ -942,13 +959,18 @@ function(
   SOURCE_DIR
   BINARY_DIR
   EXCLUDE
+  SYSTEM
   OPTIONS
 )
+
   if(NOT DOWNLOAD_ONLY AND EXISTS ${SOURCE_DIR}/CMakeLists.txt)
+    set(addSubdirectoryExtraArgs "")
     if(EXCLUDE)
-      set(addSubdirectoryExtraArgs EXCLUDE_FROM_ALL)
-    else()
-      set(addSubdirectoryExtraArgs "")
+      list(APPEND addSubdirectoryExtraArgs EXCLUDE_FROM_ALL)
+    endif()
+    if("${SYSTEM}" AND "${CMAKE_VERSION}" VERSION_GREATER_EQUAL "3.25")
+      # https://cmake.org/cmake/help/latest/prop_dir/SYSTEM.html#prop_dir:SYSTEM
+      list(APPEND addSubdirectoryExtraArgs SYSTEM)
     endif()
     if(OPTIONS)
       foreach(OPTION ${OPTIONS})
@@ -1079,6 +1101,7 @@ function(cpm_prettify_package_arguments OUT_VAR IS_IN_COMMENT)
       DOWNLOAD_COMMAND
       FIND_PACKAGE_ARGUMENTS
       NO_CACHE
+      SYSTEM
       GIT_SHALLOW
   )
   set(multiValueArgs OPTIONS)

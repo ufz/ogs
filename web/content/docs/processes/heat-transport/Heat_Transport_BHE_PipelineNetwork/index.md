@@ -172,7 +172,7 @@ The work flow of the PipeNetwork feature is illustrated in Figure 2. To explicit
 
 ### BHE data container
 
-In order to use the PipeNetwork feature, the pre-built and saved TESPy network model in the above section is required. A CSV file `bhe_network.csv` which containing all the OGS-TESPy transferred BHE's information needs to be created. The PipeNetwork feature will access this CSV file to initialize the exchange data container between OGS and TESPy during the simulation. All BHEs have to be included in this CSV file. Please take notice that all BHE names located in the data_index column have to be identical with the BHE names defined in the corresponding TESPy network model.
+In order to use the PipeNetwork feature, the pre-built and saved TESPy network model in the above section is required. A CSV file `bhe_network.csv` which contains all the OGS-TESPy transferred BHE information needs to be created. The PipeNetwork feature will access this CSV file to initialize the exchange data container between OGS and TESPy during the simulation. All BHEs have to be included in this CSV file. Please take notice that all BHE names located in the `data_index` column have to be identical with the BHE names defined in the corresponding TESPy network model.
 
 ```bash
 data_index;BHE_id;Tin_val;Tout_val;Tout_node_id;flowrate

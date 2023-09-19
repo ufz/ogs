@@ -1,4 +1,5 @@
 /**
+ * \file
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
@@ -20,8 +21,8 @@
 #include <memory>
 #include <numeric>
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "GeoLib/AABB.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/GitInfo.h"

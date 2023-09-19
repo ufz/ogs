@@ -53,34 +53,32 @@ if(OGS_USE_MFRONT)
         endif()
     endif()
     if(NOT MFRONT)
-        if(OGS_USE_PYTHON)
-            set(_py_version_major_minor
-                "${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}"
+        set(_py_version_major_minor
+            "${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}"
+        )
+        set(_py_boost_comp
+            "python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}"
+        )
+        find_package(Boost COMPONENTS ${_py_boost_comp})
+        if(Boost_${_py_boost_comp}_FOUND)
+            set(_tfel_cmake_args
+                "-DPython_ADDITIONAL_VERSIONS=${_py_version_major_minor}"
+                "-Denable-python-bindings=ON"
             )
-            set(_py_boost_comp
-                "python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}"
+            message(
+                STATUS
+                    "TFEL build with Python bindings. To use them:\n "
+                    "  export PYTHONPATH=${PROJECT_BINARY_DIR}/_ext/TFEL/lib/python"
+                    "${_py_version_major_minor}/site-packages:$PYTHONPATH"
             )
-            find_package(Boost COMPONENTS ${_py_boost_comp})
-            if(Boost_${_py_boost_comp}_FOUND)
-                set(_tfel_cmake_args
-                    "-DPython_ADDITIONAL_VERSIONS=${_py_version_major_minor}"
-                    "-Denable-python-bindings=ON"
-                )
-                message(
-                    STATUS
-                        "TFEL build with Python bindings. To use them:\n "
-                        "  export PYTHONPATH=${PROJECT_BINARY_DIR}/_ext/TFEL/lib/python"
-                        "${_py_version_major_minor}/site-packages:$PYTHONPATH"
-                )
-            else()
-                # Cleanup variables from previous find_package()-call
-                unset(Boost_INCLUDE_DIR)
-                unset(Boost_INCLUDE_DIRS)
-                message(
-                    STATUS
-                        "TFEL Python bindings disabled as Boosts Python library was not found."
-                )
-            endif()
+        else()
+            # Cleanup variables from previous find_package()-call
+            unset(Boost_INCLUDE_DIR)
+            unset(Boost_INCLUDE_DIRS)
+            message(
+                STATUS
+                    "TFEL Python bindings disabled as Boosts Python library was not found."
+            )
         endif()
         BuildExternalProject(
             TFEL ${_tfel_source}
@@ -118,6 +116,11 @@ if(OGS_USE_PETSC)
     set(_petsc_source_file
         ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/petsc-v${ogs.minimum_version.petsc}.zip
     )
+    if(DEFINED ENV{OGS_PETSC_CONFIG_OPTIONS} AND "${OGS_PETSC_CONFIG_OPTIONS}"
+                                                 STREQUAL ""
+    )
+        set(OGS_PETSC_CONFIG_OPTIONS "$ENV{OGS_PETSC_CONFIG_OPTIONS}")
+    endif()
     if(EXISTS ${_petsc_source_file})
         set(_petsc_source URL ${_petsc_source_file})
     elseif(NOT (OGS_PETSC_CONFIG_OPTIONS OR OGS_BUILD_PETSC))
@@ -126,7 +129,7 @@ if(OGS_USE_PETSC)
 
     if(NOT PETSC_FOUND)
         set(_configure_opts "")
-        if(NOT "--download-fc=1" IN_LIST OGS_PETSC_CONFIG_OPTIONS)
+        if(NOT "--download-fc" IN_LIST OGS_PETSC_CONFIG_OPTIONS)
             list(APPEND _configure_opts --with-fc=0)
         endif()
         if(ENV{CC})
@@ -149,8 +152,8 @@ if(OGS_USE_PETSC)
                 ${_configure_opts}
                 ${OGS_PETSC_CONFIG_OPTIONS}
             BUILD_IN_SOURCE ON
-            BUILD_COMMAND make -j all
-            INSTALL_COMMAND make -j install
+            BUILD_COMMAND make -j$ENV{CMAKE_BUILD_PARALLEL_LEVEL} all
+            INSTALL_COMMAND make -j$ENV{CMAKE_BUILD_PARALLEL_LEVEL} install
         )
         message(
             STATUS
@@ -162,7 +165,11 @@ if(OGS_USE_PETSC)
 
     add_library(petsc SHARED IMPORTED)
     target_include_directories(petsc INTERFACE ${PETSC_INCLUDES})
-    set_target_properties(petsc PROPERTIES IMPORTED_LOCATION ${PETSC_LIBRARIES})
+    # Get first petsc lib as import location
+    list(GET PETSC_LIBRARIES 0 _first_petsc_lib)
+    set_target_properties(
+        petsc PROPERTIES IMPORTED_LOCATION ${_first_petsc_lib}
+    )
     target_compile_definitions(petsc INTERFACE USE_PETSC)
 endif()
 
@@ -190,8 +197,8 @@ if(OGS_USE_LIS)
             CONFIGURE_COMMAND ./configure --enable-omp --prefix=<INSTALL_DIR>
                               ${_lis_config_args}
             BUILD_IN_SOURCE ON
-            BUILD_COMMAND make -j
-            INSTALL_COMMAND make -j install
+            BUILD_COMMAND make -j$ENV{CMAKE_BUILD_PARALLEL_LEVEL}
+            INSTALL_COMMAND make -j$ENV{CMAKE_BUILD_PARALLEL_LEVEL} install
         )
         message(
             STATUS
@@ -279,7 +286,7 @@ if(EXISTS ${_hdf5_source_file})
 elseif(NOT OGS_BUILD_HDF5)
     find_package(HDF5 ${ogs.minimum_version.hdf5})
 endif()
-if(NOT HDF5_FOUND)
+if(NOT _HDF5_FOUND AND NOT HDF5_FOUND)
     BuildExternalProject(
         HDF5 ${_hdf5_source} CMAKE_ARGS ${_hdf5_options} ${_defaultCMakeArgs}
                                         ${_cmake_generator}
@@ -288,6 +295,10 @@ if(NOT HDF5_FOUND)
         STATUS
             "ExternalProject_Add(): added package HDF5@${ogs.tested_version.hdf5}"
     )
+    set(_EXT_LIBS ${_EXT_LIBS} HDF5 CACHE INTERNAL "")
+    set(_HDF5_FOUND ON CACHE INTERNAL "")
+endif()
+if(_HDF5_FOUND)
     BuildExternalProject_find_package(HDF5)
 endif()
 
@@ -366,12 +377,16 @@ if(NOT VTK_FOUND)
         STATUS
             "ExternalProject_Add(): added package VTK@${ogs.minimum_version.vtk}"
     )
+    set(_EXT_LIBS ${_EXT_LIBS} VTK CACHE INTERNAL "")
     BuildExternalProject_find_package(VTK)
 endif()
+
+# cmake-lint: disable=C0103
 
 # append RPATHs
 foreach(lib ${_EXT_LIBS})
     set(CMAKE_BUILD_RPATH ${CMAKE_BUILD_RPATH} ${build_dir_${lib}}/lib
-                          {build_dir_${lib}}/lib64
+                          ${build_dir_${lib}}/lib64
     )
+    set(${lib}_SOURCE_DIR ${build_dir_${lib}}/src/${lib})
 endforeach()

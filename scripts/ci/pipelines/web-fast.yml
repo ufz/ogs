@@ -1,0 +1,4 @@
+include:
+  - local: "/scripts/ci/jobs/ci_images.yml"
+  - local: "/scripts/ci/jobs/pre-commit.yml"
+  - local: "/scripts/ci/jobs/web-preview.yml"

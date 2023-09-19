@@ -169,7 +169,7 @@ public:
 
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& /*local_x*/,
-                  std::vector<double> const& /*local_xdot*/,
+                  std::vector<double> const& /*local_x_prev*/,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_rhs_data*/) override
@@ -181,14 +181,14 @@ public:
 
     void assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, int const process_id,
+        Eigen::VectorXd const& local_x_prev, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data) override;
 
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
+                              std::vector<double> const& local_x_prev,
                               std::vector<double>& local_M_data,
                               std::vector<double>& local_K_data,
                               std::vector<double>& local_rhs_data,
@@ -202,16 +202,16 @@ public:
         {
             auto& ip_data = _ip_data[ip];
 
+            ParameterLib::SpatialPosition const x_position{
+                std::nullopt, _element.getID(), ip,
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(
+                        _element, ip_data.N))};
+
             /// Set initial stress from parameter.
             if (_process_data.initial_stress != nullptr)
             {
-                ParameterLib::SpatialPosition const x_position{
-                    std::nullopt, _element.getID(), ip,
-                    MathLib::Point3d(
-                        NumLib::interpolateCoordinates<ShapeFunction,
-                                                       ShapeMatricesType>(
-                            _element, ip_data.N))};
-
                 ip_data.sigma =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
                         DisplacementDim>((*_process_data.initial_stress)(
@@ -220,12 +220,19 @@ public:
                         x_position));
             }
 
+            double const t = 0;  // TODO (naumov) pass t from top
+            ip_data.solid_material.initializeInternalStateVariables(
+                t, x_position, *ip_data.material_state_variables);
+
             ip_data.pushBackState();
         }
     }
 
     void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              double const /*t*/, double const /*dt*/) override
+                              Eigen::VectorXd const& /*local_x_prev*/,
+                              double const /*t*/, double const /*dt*/,
+                              bool const /*use_monolithic_scheme*/,
+                              int const /*process_id*/) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -261,7 +268,7 @@ private:
      * @param dt              Time increment
      * @param local_x         Nodal values of \f$x\f$ of all processes of an
      * element.
-     * @param local_xdot      Nodal values of \f$\dot{x}\f$ of all processes of
+     * @param local_x_prev    Nodal values of \f$x_{prev}\f$ of all processes of
      * an element.
      * @param local_b_data    Right hand side vector of an element.
      * @param local_Jac_data  Element Jacobian matrix for the Newton-Raphson
@@ -270,7 +277,7 @@ private:
 
     void assembleWithJacobianForDeformationEquations(
         const double t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data);
 
     /**
@@ -287,7 +294,7 @@ private:
      * @param dt              Time increment
      * @param local_x         Nodal values of \f$x\f$ of all processes of an
      * element.
-     * @param local_xdot      Nodal values of \f$\dot{x}\f$ of all processes of
+     * @param local_x_prev    Nodal values of \f$x_{prev}\f$ of all processes of
      * an element.
      * @param local_b_data    Right hand side vector of an element.
      * @param local_Jac_data  Element Jacobian matrix for the Newton-Raphson
@@ -295,7 +302,7 @@ private:
      */
     void assembleWithJacobianForHeatConductionEquations(
         const double t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data);
 
     std::size_t setSigma(double const* values);

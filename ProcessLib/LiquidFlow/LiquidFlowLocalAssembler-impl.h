@@ -1,11 +1,11 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file
  *
  * Created on August 19, 2016, 2:28 PM
  */
@@ -25,7 +25,7 @@ namespace LiquidFlow
 template <typename ShapeFunction, int GlobalDim>
 void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
     double const t, double const dt, std::vector<double> const& local_x,
-    std::vector<double> const& /*local_xdot*/,
+    std::vector<double> const& /*local_x_prev*/,
     std::vector<double>& local_M_data, std::vector<double>& local_K_data,
     std::vector<double>& local_b_data)
 {

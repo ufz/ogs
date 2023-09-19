@@ -5,7 +5,11 @@ author = "Lars Bilke"
 weight = 6
 +++
 
-[Jupyter Notebooks](https://jupyter.org) are documents which can contain live (Python) code, equations, visualizations and narrative text and can be used as an intuitive interface for OGS projects. The following video gives an introduction to using OpenGeoSys with Jupyter Notebooks:
+<!-- TODO: Consider to move this section out of **BASICS** and to devote an extra first-order section to the Python-bindings of OGS and how to operate OGS via Python and Jupyter Notebooks.-->
+
+[Jupyter Notebooks](https://jupyter.org) are documents which can contain live (Python) code, equations, visualizations and
+narrative text and can be used as an intuitive interface for OGS projects. The following video gives an introduction to using
+OpenGeoSys with Jupyter Notebooks:
 
 {{< youtube eihNKjK-I-s >}}
 
@@ -19,7 +23,7 @@ Image `registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter` contains:
 - The latest OpenGeoSys application with MFront-support and tools
 - A set of Python packages:
   - [ogs6py](https://github.com/joergbuchwald/ogs6py) — OGS model manipulation
-  - [VTUInterface](https://github.com/joergbuchwald/VTUinterface) — VTU / PVD IO
+  - [VTUinterface](https://github.com/joergbuchwald/VTUinterface) — VTU / PVD IO
   - [ogstools](https://pypi.org/project/ogstools/) — OGS-related helper scripts, e.g. `msh2vtu`: Gmsh to VTU conversion
   - [h5py](https://docs.h5py.org/en/latest/index.html) — HDF5 IO
   - [MFront python bindings](http://tfel.sourceforge.net/mfront-python.html) – Material model manipulation
@@ -90,7 +94,8 @@ You may have to modify the IP address if this is running on a remote machine.
 
 #### <i class="fab fa-windows"></i> Specific OGS version
 
-You can append a version number to the image name (applies both to Docker and Singularity) to get an image for a specific OGS release (starting with 6.4.1):
+You can append a version number to the image name (applies both to Docker and Singularity) to get an image for a specific OGS
+release (starting with 6.4.1):
 
 ```bash
 singularity run docker://registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter:6.4.1
@@ -102,7 +107,9 @@ Available images are [listed on GitLab](https://gitlab.opengeosys.org/ogs/ogs/co
 
 ### Browsing notebooks on GitLab
 
-In the file browser on the left-hand side of the Jupyter Lab interface there is a GitLab-tab which allows for browsing and opening notebooks from the [`ogs/ogs`](https://gitlab.opengeosys.org/ogs/ogs)-repository. You can directly modify and execute a notebook, but the notebook is not saved back to GitLab. You can change the browsed repository by typing into the top text field.
+In the file browser on the left-hand side of the Jupyter Lab interface there is a GitLab-tab which allows for browsing and
+opening notebooks from the [`ogs/ogs`](https://gitlab.opengeosys.org/ogs/ogs)-repository. You can directly modify and execute a
+notebook, but the notebook is not saved back to GitLab. You can change the browsed repository by typing into the top text field.
 
 If you would like to us this with private repositories you have to supply an [access token](https://gitlab.opengeosys.org/-/profile/personal_access_tokens) at container start-up:
 

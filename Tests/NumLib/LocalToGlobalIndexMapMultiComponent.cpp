@@ -1,4 +1,5 @@
 /*
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -17,10 +18,11 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Location.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshSubset.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
+#include "MeshLib/Utils/createMeshFromElementSelection.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace NL = NumLib;
@@ -33,8 +35,8 @@ public:
     static const std::size_t mesh_subdivs = 4;
     NumLibLocalToGlobalIndexMapMultiDOFTest()
     {
-        mesh.reset(
-            MeL::MeshGenerator::generateRegularQuadMesh(2.0, mesh_subdivs));
+        mesh.reset(MeshToolsLib::MeshGenerator::generateRegularQuadMesh(
+            2.0, mesh_subdivs));
         mesh_items_all_nodes =
             std::make_unique<MeL::MeshSubset>(*mesh, mesh->getNodes());
 

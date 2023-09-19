@@ -1,4 +1,5 @@
 /**
+ * \file
  * \author Karsten Rink
  * \date   2010-08-25
  * \brief  Implementation of the project data class.
@@ -13,17 +14,16 @@
 
 #include "ProjectData.h"
 
+#include <pybind11/eval.h>
+
 #include <algorithm>
 #include <boost/algorithm/string/predicate.hpp>
 #include <cctype>
 #include <range/v3/action/sort.hpp>
 #include <range/v3/action/unique.hpp>
+#include <range/v3/algorithm/contains.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <set>
-
-#ifdef OGS_USE_PYTHON
-#include <pybind11/eval.h>
-#endif
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
@@ -46,6 +46,7 @@
 #include "MeshGeoToolsLib/SearchLength.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Utils/SetMeshSpaceDimension.h"
+#include "MeshToolsLib/ZeroMeshFieldDataByMaterialIDs.h"
 #include "NumLib/ODESolver/ConvergenceCriterion.h"
 #include "ProcessLib/CreateJacobianAssembler.h"
 #include "ProcessLib/DeactivatedSubdomain.h"
@@ -57,6 +58,10 @@
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/CreateTimeLoop.h"
 #include "ProcessLib/TimeLoop.h"
+
+#ifdef OGS_EMBED_PYTHON_INTERPRETER
+#include "Applications/CLI/ogs_embedded_python.h"
+#endif
 
 #ifdef OGS_BUILD_PROCESS_COMPONENTTRANSPORT
 #include "ChemistryLib/CreateChemicalSolverInterface.h"
@@ -246,6 +251,21 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
         }
     }
 
+    auto const zero_mesh_field_data_by_material_ids =
+        //! \ogs_file_param{prj__zero_mesh_field_data_by_material_ids}
+        config.getConfigParameterOptional<std::vector<int>>(
+            "zero_mesh_field_data_by_material_ids");
+    if (zero_mesh_field_data_by_material_ids)
+    {
+        WARN(
+            "Tag 'zero_mesh_field_data_by_material_ids` is experimental. Its "
+            "name may be changed, or it may be removed due to its "
+            "corresponding feature becomes a single tool. Please use it with "
+            "care!");
+        MeshToolsLib::zeroMeshFieldDataByMaterialIDs(
+            *meshes[0], *zero_mesh_field_data_by_material_ids);
+    }
+
     MeshLib::setMeshSpaceDimension(meshes);
 
     return meshes;
@@ -322,8 +342,11 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
             //! \ogs_file_param{prj__python_script}
         project_config.getConfigParameterOptional<std::string>("python_script"))
     {
-#ifdef OGS_USE_PYTHON
         namespace py = pybind11;
+
+#ifdef OGS_EMBED_PYTHON_INTERPRETER
+        _py_scoped_interpreter.emplace(ApplicationsLib::setupEmbeddedPython());
+#endif
 
         // Append to python's module search path
         auto py_path = py::module::import("sys").attr("path");
@@ -343,9 +366,6 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         globals["ogs_mesh_directory"] = mesh_directory;
         globals["ogs_script_directory"] = script_directory;
         py::eval_file(script_path, scope);
-#else
-        OGS_FATAL("OpenGeoSys has not been built with Python support.");
-#endif  // OGS_USE_PYTHON
     }
 
     //! \ogs_file_param{prj__curves}
@@ -509,7 +529,7 @@ void ProjectData::parseMedia(
             medium_config.getConfigAttribute<std::string>("id", "0");
 
         auto const material_ids_of_this_medium =
-            splitMaterialIdString(material_id_string);
+            BaseLib::splitMaterialIdString(material_id_string);
 
         for (auto const& id : material_ids_of_this_medium)
         {
@@ -636,7 +656,7 @@ void ProjectData::parseProcesses(
             //! \ogs_file_param{prj__processes__process__name}
             process_config.getConfigParameter<std::string>("name");
 
-        auto const integration_order =
+        [[maybe_unused]] auto const integration_order =
             //! \ogs_file_param{prj__processes__process__integration_order}
             process_config.getConfigParameter<int>("integration_order");
 
@@ -1155,10 +1175,9 @@ void ProjectData::parseProcesses(
             OGS_FATAL("Unknown process type: {:s}", type);
         }
 
-        if (BaseLib::containsIf(
-                _processes,
-                [&name](std::unique_ptr<ProcessLib::Process> const& p)
-                { return p->name == name; }))
+        if (ranges::contains(_processes, name,
+                             [](std::unique_ptr<ProcessLib::Process> const& p)
+                             { return p->name; }))
         {
             OGS_FATAL("The process name '{:s}' is not unique.", name);
         }
@@ -1220,7 +1239,7 @@ void ProjectData::parseNonlinearSolvers(BaseLib::ConfigTree const& config)
         auto const ls_name =
             //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__linear_solver}
             conf.getConfigParameter<std::string>("linear_solver");
-        auto& linear_solver = BaseLib::getOrError(
+        auto const& linear_solver = BaseLib::getOrError(
             _linear_solvers, ls_name,
             "A linear solver with the given name does not exist.");
 
@@ -1257,53 +1276,12 @@ void ProjectData::parseCurves(std::optional<BaseLib::ConfigTree> const& config)
     }
 }
 
-std::vector<int> splitMaterialIdString(std::string const& material_id_string)
+MeshLib::Mesh* ProjectData::getMesh(std::string const& mesh_name) const
 {
-    auto const material_ids_strings =
-        BaseLib::splitString(material_id_string, ',');
-
-    std::vector<int> material_ids;
-    for (auto& mid_str : material_ids_strings)
-    {
-        std::size_t num_chars_processed = 0;
-        int material_id;
-        try
-        {
-            material_id = std::stoi(mid_str, &num_chars_processed);
-        }
-        catch (std::invalid_argument&)
-        {
-            OGS_FATAL(
-                "Could not parse material ID from '{}' to a valid "
-                "integer.",
-                mid_str);
-        }
-        catch (std::out_of_range&)
-        {
-            OGS_FATAL(
-                "Could not parse material ID from '{}'. The integer value "
-                "of the given string exceeds the permitted range.",
-                mid_str);
-        }
-
-        if (num_chars_processed != mid_str.size())
-        {
-            // Not the whole string has been parsed. Check the rest.
-            if (auto const it = std::find_if_not(
-                    begin(mid_str) + num_chars_processed, end(mid_str),
-                    [](unsigned char const c) { return std::isspace(c); });
-                it != end(mid_str))
-            {
-                OGS_FATAL(
-                    "Could not parse material ID from '{}'. Please "
-                    "separate multiple material IDs by comma only. "
-                    "Invalid character: '{}' at position {}.",
-                    mid_str, *it, distance(begin(mid_str), it));
-            }
-        }
-
-        material_ids.push_back(material_id);
-    };
-
-    return material_ids;
+    return BaseLib::findElementOrError(
+               begin(_mesh_vec), end(_mesh_vec),
+               [&mesh_name](auto const& m)
+               { return m->getName() == mesh_name; },
+               "Expected to find a mesh named " + mesh_name + ".")
+        .get();
 }

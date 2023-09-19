@@ -23,21 +23,21 @@
 #include <memory>
 
 #include "AddLayerToMeshDialog.h"
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "Applications/FileIO/SHPInterface.h"
 #include "Applications/FileIO/TetGenInterface.h"
 #include "Base/ImportFileTypes.h"
 #include "Base/LastSavedFileDirectory.h"
 #include "Base/OGSError.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "MeshItem.h"
 #include "MeshLayerEditDialog.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/AddLayerToMesh.h"
-#include "MeshLib/MeshEditing/RasterDataToMesh.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
 #include "MeshMapping2DDialog.h"
 #include "MeshModel.h"
+#include "MeshToolsLib/MeshEditing/AddLayerToMesh.h"
+#include "MeshToolsLib/MeshEditing/RasterDataToMesh.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
 #include "MeshValueEditDialog.h"
 #include "RasterDataToMeshDialog.h"
 #include "SaveMeshDialog.h"
@@ -135,7 +135,7 @@ void MeshView::contextMenuEvent(QContextMenuEvent* event)
         {new QAction("Assign raster data to mesh...", this), 1, 2});
     connect(actions.back().action, SIGNAL(triggered()), this,
             SLOT(openRasterDataToMeshDialog()));
-    actions.push_back({new QAction("Edit mesh...", this), 2, 3});
+    actions.push_back({new QAction("Extend mesh to 3D...", this), 2, 3});
     connect(actions.back().action, SIGNAL(triggered()), this,
             SLOT(openMeshEditDialog()));
     actions.push_back({new QAction("Add layer...", this), 1, 3});
@@ -201,9 +201,9 @@ void MeshView::openMap2dMeshDialog()
                 dlg.getRasterPath()));
             return;
         }
-        if (!MeshLib::MeshLayerMapper::layerMapping(*result, *raster,
-                                                    dlg.getNoDataReplacement(),
-                                                    dlg.getIgnoreNoData()))
+        if (!MeshToolsLib::MeshLayerMapper::layerMapping(
+                *result, *raster, dlg.getNoDataReplacement(),
+                dlg.getIgnoreNoData()))
         {
             OGSError::box("Error mapping mesh.");
             return;
@@ -211,8 +211,8 @@ void MeshView::openMap2dMeshDialog()
     }
     else
     {
-        MeshLib::MeshLayerMapper::mapToStaticValue(*result,
-                                                   dlg.getStaticValue());
+        MeshToolsLib::MeshLayerMapper::mapToStaticValue(*result,
+                                                        dlg.getStaticValue());
     }
     static_cast<MeshModel*>(this->model())->addMesh(std::move(result));
 }
@@ -245,12 +245,12 @@ void MeshView::openRasterDataToMeshDialog()
     }
     if (dlg.createNodeArray())
     {
-        MeshLib::RasterDataToMesh::projectToNodes(
+        MeshToolsLib::RasterDataToMesh::projectToNodes(
             *result, *raster, dlg.getNoDataReplacement(), dlg.getArrayName());
     }
     else
     {
-        MeshLib::RasterDataToMesh::projectToElements(
+        MeshToolsLib::RasterDataToMesh::projectToElements(
             *result, *raster, dlg.getNoDataReplacement(), dlg.getArrayName());
     }
     static_cast<MeshModel*>(this->model())->addMesh(std::move(result));
@@ -303,7 +303,7 @@ void MeshView::openAddLayerDialog()
 
     bool const copy_material_ids = false;
     double const thickness(dlg.getThickness());
-    std::unique_ptr<MeshLib::Mesh> result(MeshLib::addLayerToMesh(
+    std::unique_ptr<MeshLib::Mesh> result(MeshToolsLib::addLayerToMesh(
         *mesh, thickness, dlg.getName(), dlg.isTopLayer(), copy_material_ids));
 
     if (result)
@@ -335,7 +335,7 @@ void MeshView::extractSurfaceMesh()
     Eigen::Vector3d const& dir(dlg.getNormal());
     int const tolerance(dlg.getTolerance());
     std::unique_ptr<MeshLib::Mesh> sfc_mesh(
-        MeshLib::MeshSurfaceExtraction::getMeshSurface(
+        MeshToolsLib::MeshSurfaceExtraction::getMeshSurface(
             *mesh, dir, tolerance, "Bulk Mesh Node IDs",
             "Bulk Mesh Element IDs", "Bulk Mesh Face IDs"));
     if (sfc_mesh)

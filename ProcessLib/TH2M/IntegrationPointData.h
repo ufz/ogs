@@ -171,6 +171,8 @@ struct IntegrationPointData final
 
     // solid phase linear thermal expansivity
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> alpha_T_SR;
+
+    // Intrinsic permeability
     GlobalDimMatrixType k_S;
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
@@ -213,6 +215,8 @@ struct IntegrationPointData final
         MPL::VariableArray variable_array_prev;
 
         auto const null_state = solid_material.createMaterialStateVariables();
+        solid_material.initializeInternalStateVariables(t, x_position,
+                                                        *null_state);
 
         using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 

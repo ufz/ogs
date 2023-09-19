@@ -9,9 +9,8 @@
  */
 
 #pragma once
-#ifdef OGS_USE_PYTHON
 #include <pybind11/pybind11.h>
-#endif  // OGS_USE_PYTHON
+
 #include <algorithm>
 #include <vector>
 

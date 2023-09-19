@@ -1,0 +1,34 @@
+build mac petsc arm64:
+  tags:
+    - mac
+    - arm64
+  extends:
+    - .template-build-linux
+    - .test-artifacts
+  needs: [meta]
+  timeout: 3h
+  allow_failure: true
+  variables:
+    BUILD_CTEST_LARGE_ON_MASTER: "true"
+    CMAKE_PRESET: release-petsc
+    CMAKE_ARGS: >-
+      -DOGS_USE_PIP=ON
+    CTEST_ARGS: -L default|Notebook
+
+build mac petsc amd64:
+  tags:
+    - mac
+    - amd64
+  extends:
+    - .template-build-linux
+    - .test-artifacts
+  needs: [meta]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+    - when: manual
+      allow_failure: true
+  variables:
+    CMAKE_PRESET: release-petsc
+    CMAKE_ARGS: >-
+      -DOGS_BUILD_PROCESSES=SteadyStateDiffusion

@@ -22,8 +22,8 @@
 
 #include "Applications/DataExplorer/VtkVis/VtkGeoImageSource.h"
 #include "Applications/DataExplorer/VtkVis/VtkImageDataToPointCloudFilter.h"
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/FileTools.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "InfoLib/GitInfo.h"
 
 int main(int argc, char* argv[])

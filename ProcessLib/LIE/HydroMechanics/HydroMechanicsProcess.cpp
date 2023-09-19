@@ -18,8 +18,9 @@
 #include "MeshLib/ElementStatus.h"
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshInformation.h"
 #include "MeshLib/Properties.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
+#include "MeshToolsLib/MeshInformation.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ParameterLib/MeshElementParameter.h"
@@ -99,7 +100,7 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     else
     {
         auto const range =
-            MeshLib::MeshInformation::getValueBounds(*materialIDs(mesh));
+            MeshToolsLib::MeshInformation::getValueBounds(*materialIDs(mesh));
         if (!range)
         {
             OGS_FATAL(
@@ -449,7 +450,8 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
 
 template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
-    std::vector<GlobalVector*> const& x, const double t, double const dt,
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_prev, const double t, double const dt,
     int const process_id)
 {
     if (process_id == 0)
@@ -467,7 +469,8 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
             getProcessVariables(process_id)[0];
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &HydroMechanicsLocalAssemblerInterface::postTimestep,
-            _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt);
+            _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, x_prev,
+            t, dt, _use_monolithic_scheme, process_id);
     }
 
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
@@ -571,7 +574,7 @@ bool HydroMechanicsProcess<GlobalDim>::isLinear() const
 template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble HydroMechanicsProcess.");
@@ -581,13 +584,13 @@ void HydroMechanicsProcess<GlobalDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_table, t, dt, x, xdot, process_id, M, K, b);
+        dof_table, t, dt, x, x_prev, process_id, M, K, b);
 }
 
 template <int GlobalDim>
 void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian HydroMechanicsProcess.");
@@ -599,8 +602,8 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
         dof_table = {std::ref(*_local_to_global_index_map)};
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
-        process_id, M, K, b, Jac);
+        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x,
+        x_prev, process_id, M, K, b, Jac);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {

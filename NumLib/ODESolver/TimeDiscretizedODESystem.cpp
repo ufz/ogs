@@ -82,44 +82,19 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     auto const dt = _time_disc.getCurrentTimeIncrement();
     auto const& x_curr = *x_new_timestep[process_id];
 
-    std::vector<GlobalVector*> xdot(x_new_timestep.size());
-    _xdot_ids.resize(x_new_timestep.size());
-    for (std::size_t i = 0; i < xdot.size(); i++)
-    {
-        xdot[i] =
-            &NumLib::GlobalVectorProvider::provider.getVector(_xdot_ids[i]);
-        _time_disc.getXdot(*x_new_timestep[i], *x_prev[i], *xdot[i]);
-    }
-
     _M->setZero();
     _K->setZero();
     _b->setZero();
     _Jac->setZero();
 
     _ode.preAssemble(t, dt, x_curr);
-    try
-    {
-        _ode.assembleWithJacobian(t, dt, x_new_timestep, xdot, process_id, *_M,
-                                  *_K, *_b, *_Jac);
-    }
-    catch (AssemblyException const&)
-    {
-        for (auto& v : xdot)
-        {
-            NumLib::GlobalVectorProvider::provider.releaseVector(*v);
-        }
-        throw;
-    }
+    _ode.assembleWithJacobian(t, dt, x_new_timestep, x_prev, process_id, *_M,
+                              *_K, *_b, *_Jac);
 
     LinAlg::finalizeAssembly(*_M);
     LinAlg::finalizeAssembly(*_K);
     LinAlg::finalizeAssembly(*_b);
     MathLib::LinAlg::finalizeAssembly(*_Jac);
-
-    for (auto& v : xdot)
-    {
-        NumLib::GlobalVectorProvider::provider.releaseVector(*v);
-    }
 }
 
 void TimeDiscretizedODESystem<
@@ -128,15 +103,8 @@ void TimeDiscretizedODESystem<
                                              GlobalVector const& x_prev,
                                              GlobalVector& res) const
 {
-    // TODO Maybe the duplicate calculation of xdot here and in assembleJacobian
-    //      can be optimized. However, that would make the interface a bit more
-    //      fragile.
-    auto& xdot = NumLib::GlobalVectorProvider::provider.getVector(_xdot_id);
-    _time_disc.getXdot(x_new_timestep, x_prev, xdot);
-
-    _mat_trans->computeResidual(*_M, *_K, *_b, x_new_timestep, xdot, res);
-
-    NumLib::GlobalVectorProvider::provider.releaseVector(xdot);
+    double const dt = _time_disc.getCurrentTimeIncrement();
+    _mat_trans->computeResidual(*_M, *_K, *_b, dt, x_new_timestep, x_prev, res);
 }
 
 void TimeDiscretizedODESystem<
@@ -220,31 +188,17 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     auto const t = _time_disc.getCurrentTime();
     auto const dt = _time_disc.getCurrentTimeIncrement();
     auto const& x_curr = *x_new_timestep[process_id];
-    std::vector<GlobalVector*> xdot(x_new_timestep.size());
-    _xdot_ids.resize(x_new_timestep.size());
-
-    for (std::size_t i = 0; i < xdot.size(); i++)
-    {
-        xdot[i] =
-            &NumLib::GlobalVectorProvider::provider.getVector(_xdot_ids[i]);
-        _time_disc.getXdot(*x_new_timestep[i], *x_prev[i], *xdot[i]);
-    }
 
     _M->setZero();
     _K->setZero();
     _b->setZero();
 
     _ode.preAssemble(t, dt, x_curr);
-    _ode.assemble(t, dt, x_new_timestep, xdot, process_id, *_M, *_K, *_b);
+    _ode.assemble(t, dt, x_new_timestep, x_prev, process_id, *_M, *_K, *_b);
 
     LinAlg::finalizeAssembly(*_M);
     LinAlg::finalizeAssembly(*_K);
     LinAlg::finalizeAssembly(*_b);
-
-    for (auto& v : xdot)
-    {
-        NumLib::GlobalVectorProvider::provider.releaseVector(*v);
-    }
 }
 
 void TimeDiscretizedODESystem<

@@ -11,12 +11,13 @@
 #pragma once
 
 #include <memory>
+
 #include "AbstractJacobianAssembler.h"
 
 namespace BaseLib
 {
 class ConfigTree;
-}  // BaseLib
+}  // namespace BaseLib
 
 namespace ProcessLib
 {
@@ -53,11 +54,13 @@ public:
     void assembleWithJacobian(LocalAssemblerInterface& local_assembler,
                               double const t, double const dt,
                               std::vector<double> const& local_x_data,
-                              std::vector<double> const& local_xdot_data,
+                              std::vector<double> const& local_x_prev_data,
                               std::vector<double>& local_M_data,
                               std::vector<double>& local_K_data,
                               std::vector<double>& local_b_data,
                               std::vector<double>& local_Jac_data) override;
+
+    std::unique_ptr<AbstractJacobianAssembler> copy() const override;
 
 private:
     std::vector<double> const _absolute_epsilons;
@@ -68,7 +71,6 @@ private:
     std::vector<double> _local_K_data;
     std::vector<double> _local_b_data;
     std::vector<double> _local_x_perturbed_data;
-    std::vector<double> _local_xdot_perturbed_data;
 };
 
 std::unique_ptr<CentralDifferencesJacobianAssembler>

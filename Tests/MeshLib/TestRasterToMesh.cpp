@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -13,17 +14,18 @@
 #include <cstdio>
 #include <memory>
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/TestInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/RasterToMesh.h"
-#include "MeshLib/MeshInformation.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshGenerators/RasterToMesh.h"
+#include "MeshToolsLib/MeshInformation.h"
 
 #ifdef OGS_BUILD_GUI
 #include <vtkImageData.h>
+#include <vtkSmartPointer.h>
 
 #include "Applications/DataExplorer/VtkVis/VtkGeoImageSource.h"
 #include "Applications/DataExplorer/VtkVis/VtkRaster.h"
@@ -49,7 +51,7 @@ protected:
 
 TEST_F(RasterToMeshTest, convertRasterToTriMeshElevation)
 {
-    auto const mesh = MeshLib::RasterToMesh::convert(
+    auto const mesh = MeshToolsLib::RasterToMesh::convert(
         *_raster, MeshLib::MeshElemType::TRIANGLE,
         MeshLib::UseIntensityAs::ELEVATION, "test");
     ASSERT_TRUE(mesh != nullptr);
@@ -60,10 +62,11 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshElevation)
     ASSERT_EQ(0, mesh->getProperties().size());
 
     auto const& n_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*mesh);
     ASSERT_EQ(2 * _n_pix, n_types.at(MeshLib::MeshElemType::TRIANGLE));
 
-    GeoLib::AABB const aabb = MeshLib::MeshInformation::getBoundingBox(*mesh);
+    GeoLib::AABB const aabb =
+        MeshToolsLib::MeshInformation::getBoundingBox(*mesh);
     ASSERT_NEAR(aabb.getMinPoint()[2], 0,
                 std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(aabb.getMaxPoint()[2], 0.07,
@@ -72,7 +75,7 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshElevation)
 
 TEST_F(RasterToMeshTest, convertRasterToQuadMeshElevation)
 {
-    auto const mesh = MeshLib::RasterToMesh::convert(
+    auto const mesh = MeshToolsLib::RasterToMesh::convert(
         *_raster, MeshLib::MeshElemType::QUAD,
         MeshLib::UseIntensityAs::ELEVATION, "test");
     ASSERT_TRUE(mesh != nullptr);
@@ -82,10 +85,11 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshElevation)
     ASSERT_EQ(0, mesh->getProperties().size());
 
     auto const& n_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*mesh);
     ASSERT_EQ(_n_pix, n_types.at(MeshLib::MeshElemType::QUAD));
 
-    GeoLib::AABB const aabb = MeshLib::MeshInformation::getBoundingBox(*mesh);
+    GeoLib::AABB const aabb =
+        MeshToolsLib::MeshInformation::getBoundingBox(*mesh);
     ASSERT_NEAR(aabb.getMinPoint()[2], 0,
                 std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(aabb.getMaxPoint()[2], 0.07,
@@ -94,12 +98,12 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshElevation)
 
 TEST_F(RasterToMeshTest, convertRasterTo3DMeshElevation)
 {
-    auto const mesh = MeshLib::RasterToMesh::convert(
+    auto const mesh = MeshToolsLib::RasterToMesh::convert(
         *_raster, MeshLib::MeshElemType::PRISM,
         MeshLib::UseIntensityAs::ELEVATION, "test");
     ASSERT_TRUE(mesh == nullptr);
 
-    auto const mesh2 = MeshLib::RasterToMesh::convert(
+    auto const mesh2 = MeshToolsLib::RasterToMesh::convert(
         *_raster, MeshLib::MeshElemType::HEXAHEDRON,
         MeshLib::UseIntensityAs::ELEVATION, "test");
     ASSERT_TRUE(mesh2 == nullptr);
@@ -107,7 +111,7 @@ TEST_F(RasterToMeshTest, convertRasterTo3DMeshElevation)
 
 TEST_F(RasterToMeshTest, convertRasterToTriMeshValue)
 {
-    auto const mesh = MeshLib::RasterToMesh::convert(
+    auto const mesh = MeshToolsLib::RasterToMesh::convert(
         *_raster, MeshLib::MeshElemType::TRIANGLE,
         MeshLib::UseIntensityAs::DATAVECTOR, "test");
     ASSERT_TRUE(mesh != nullptr);
@@ -121,7 +125,7 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshValue)
     ASSERT_TRUE(prop != nullptr);
     ASSERT_EQ(2 * _n_pix, prop->size());
 
-    auto const& bounds = MeshLib::MeshInformation::getValueBounds(*prop);
+    auto const& bounds = MeshToolsLib::MeshInformation::getValueBounds(*prop);
     ASSERT_TRUE(bounds.has_value());
     ASSERT_NEAR(0, bounds->first, std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.07, bounds->second, std::numeric_limits<double>::epsilon());
@@ -132,13 +136,13 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshValue)
     }
 
     auto const& n_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*mesh);
     ASSERT_EQ(2 * _n_pix, n_types.at(MeshLib::MeshElemType::TRIANGLE));
 }
 
 TEST_F(RasterToMeshTest, convertRasterToQuadMeshValue)
 {
-    auto const mesh = MeshLib::RasterToMesh::convert(
+    auto const mesh = MeshToolsLib::RasterToMesh::convert(
         *_raster, MeshLib::MeshElemType::QUAD,
         MeshLib::UseIntensityAs::DATAVECTOR, "test");
     ASSERT_TRUE(mesh != nullptr);
@@ -152,7 +156,7 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshValue)
     ASSERT_TRUE(prop != nullptr);
     ASSERT_EQ(_n_pix, prop->size());
 
-    auto const& bounds = MeshLib::MeshInformation::getValueBounds(*prop);
+    auto const& bounds = MeshToolsLib::MeshInformation::getValueBounds(*prop);
     ASSERT_TRUE(bounds.has_value());
     ASSERT_NEAR(0, bounds->first, std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.07, bounds->second, std::numeric_limits<double>::epsilon());
@@ -163,13 +167,13 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshValue)
     }
 
     auto const& n_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*mesh);
     ASSERT_EQ(_n_pix, n_types.at(MeshLib::MeshElemType::QUAD));
 }
 
 TEST_F(RasterToMeshTest, convertRasterToPrismMeshValue)
 {
-    auto const mesh = MeshLib::RasterToMesh::convert(
+    auto const mesh = MeshToolsLib::RasterToMesh::convert(
         *_raster, MeshLib::MeshElemType::PRISM,
         MeshLib::UseIntensityAs::DATAVECTOR, "test");
     ASSERT_TRUE(mesh != nullptr);
@@ -183,7 +187,7 @@ TEST_F(RasterToMeshTest, convertRasterToPrismMeshValue)
     ASSERT_TRUE(prop != nullptr);
     ASSERT_EQ(2 * _n_pix, prop->size());
 
-    auto const& bounds = MeshLib::MeshInformation::getValueBounds(*prop);
+    auto const& bounds = MeshToolsLib::MeshInformation::getValueBounds(*prop);
     ASSERT_TRUE(bounds.has_value());
     ASSERT_NEAR(0, bounds->first, std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.07, bounds->second, std::numeric_limits<double>::epsilon());
@@ -194,13 +198,13 @@ TEST_F(RasterToMeshTest, convertRasterToPrismMeshValue)
     }
 
     auto const& n_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*mesh);
     ASSERT_EQ(2 * _n_pix, n_types.at(MeshLib::MeshElemType::PRISM));
 }
 
 TEST_F(RasterToMeshTest, convertRasterToHexMeshValue)
 {
-    auto const mesh = MeshLib::RasterToMesh::convert(
+    auto const mesh = MeshToolsLib::RasterToMesh::convert(
         *_raster, MeshLib::MeshElemType::HEXAHEDRON,
         MeshLib::UseIntensityAs::MATERIALS, "MaterialIDs");
     ASSERT_TRUE(mesh != nullptr);
@@ -214,7 +218,7 @@ TEST_F(RasterToMeshTest, convertRasterToHexMeshValue)
     ASSERT_TRUE(prop != nullptr);
     ASSERT_EQ(_n_pix, prop->size());
 
-    auto const& bounds = MeshLib::MeshInformation::getValueBounds(*prop);
+    auto const& bounds = MeshToolsLib::MeshInformation::getValueBounds(*prop);
     ASSERT_TRUE(bounds.has_value());
     ASSERT_NEAR(0, bounds->first, std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0, bounds->second, std::numeric_limits<double>::epsilon());
@@ -225,15 +229,15 @@ TEST_F(RasterToMeshTest, convertRasterToHexMeshValue)
     }
 
     auto const& n_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*mesh);
     ASSERT_EQ(_n_pix, n_types.at(MeshLib::MeshElemType::HEXAHEDRON));
 }
 
 TEST_F(RasterToMeshTest, convertRasterToQuadMeshNone)
 {
-    auto const mesh =
-        MeshLib::RasterToMesh::convert(*_raster, MeshLib::MeshElemType::QUAD,
-                                       MeshLib::UseIntensityAs::NONE, "test");
+    auto const mesh = MeshToolsLib::RasterToMesh::convert(
+        *_raster, MeshLib::MeshElemType::QUAD, MeshLib::UseIntensityAs::NONE,
+        "test");
     ASSERT_TRUE(mesh != nullptr);
 
     ASSERT_EQ(_n_nodes, mesh->computeNumberOfBaseNodes());
@@ -246,20 +250,23 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshNone)
     }
 
     auto const& n_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*mesh);
     ASSERT_EQ(_n_pix, n_types.at(MeshLib::MeshElemType::QUAD));
 }
 
 #ifdef OGS_BUILD_GUI
 TEST_F(RasterToMeshTest, vtkImage)
 {
-    double const spacing = std::numeric_limits<double>::quiet_NaN();
-    vtkImageAlgorithm* const raster = VtkRaster::loadImage(_file_name);
-    double origin[3];
-    raster->GetOutput()->GetOrigin(origin);
+    vtkSmartPointer<vtkImageAlgorithm> const vtk_raster =
+        VtkRaster::loadImage(_file_name);
+    vtkSmartPointer<VtkGeoImageSource> geoImage = VtkGeoImageSource::New();
+    geoImage->setImage(vtk_raster, "vtkImage");
+    geoImage->Update();
+    auto const ascii_raster = VtkGeoImageSource::convertToRaster(geoImage);
 
-    auto const mesh = MeshLib::RasterToMesh::convert(
-        raster->GetOutput(), origin, spacing, MeshLib::MeshElemType::TRIANGLE,
+    ASSERT_TRUE(ascii_raster != std::nullopt);
+    auto const mesh = MeshToolsLib::RasterToMesh::convert(
+        *ascii_raster, MeshLib::MeshElemType::TRIANGLE,
         MeshLib::UseIntensityAs::DATAVECTOR, "test");
     ASSERT_TRUE(mesh != nullptr);
 
@@ -272,7 +279,7 @@ TEST_F(RasterToMeshTest, vtkImage)
     ASSERT_TRUE(prop != nullptr);
     ASSERT_EQ(2 * _n_pix, prop->size());
 
-    auto const& bounds = MeshLib::MeshInformation::getValueBounds(*prop);
+    auto const& bounds = MeshToolsLib::MeshInformation::getValueBounds(*prop);
     ASSERT_TRUE(bounds.has_value());
     ASSERT_NEAR(0, bounds->first, std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.07, bounds->second, std::numeric_limits<float>::epsilon());
@@ -283,7 +290,7 @@ TEST_F(RasterToMeshTest, vtkImage)
     }
 
     auto const& n_types =
-        MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
+        MeshToolsLib::MeshInformation::getNumberOfElementTypes(*mesh);
     ASSERT_EQ(2 * _n_pix, n_types.at(MeshLib::MeshElemType::TRIANGLE));
 }
 #endif

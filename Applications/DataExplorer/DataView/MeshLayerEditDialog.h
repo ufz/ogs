@@ -14,11 +14,11 @@
 
 #pragma once
 
-#include "ui_MeshLayerEdit.h"
 #include <QDialog>
 #include <QLineEdit>
 
-#include "MeshLib/MeshGenerators/MeshLayerMapper.h"
+#include "MeshToolsLib/MeshGenerators/MeshLayerMapper.h"
+#include "ui_MeshLayerEdit.h"
 
 class QPushButton;
 class QCheckBox;

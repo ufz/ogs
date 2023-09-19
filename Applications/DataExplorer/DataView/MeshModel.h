@@ -18,7 +18,7 @@
 
 #include "MeshLib/MeshEnums.h"
 
-#include "Base/TreeModel.h"
+#include "Applications/DataExplorer/Base/TreeModel.h"
 
 namespace DataHolderLib
 {

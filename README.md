@@ -1,5 +1,4 @@
-OpenGeoSys 6
-============
+# OpenGeoSys 6
 
 [![Modified BSD License](http://img.shields.io/badge/license-BSD-blue.svg?style=flat-square)](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/LICENSE.txt)
 [![DOI](https://zenodo.org/badge/1701384.svg)](https://zenodo.org/badge/latestdoi/1701384)
@@ -15,13 +14,13 @@ waste deposition. OGS is comprised of the THMC-simulator (simply referred to as
 *OGS*) and a visualization tool (*Data Explorer*). OGS is developed by the
 [OpenGeoSys Community][ogs].
 
-## Software development ##
+## Software development
 
 - Good starting point for users as well as for developers is the [documentation][documentation]
 - Check your code against our [styleguide](http://ufz.github.io/styleguide/cppguide.xml)
 - Have a look at the [source code documentation for the current master-branch build][docs-master] or [for the latest release][docs-release]
 
-## License ##
+## License
 
 OpenGeoSys is distributed under the Modified BSD License. See the
 [LICENSE.txt][license-source] for the license text.
@@ -29,5 +28,5 @@ OpenGeoSys is distributed under the Modified BSD License. See the
 [ogs]: https://www.opengeosys.org
 [documentation]: https://www.opengeosys.org/docs/
 [docs-master]: https://doxygen.opengeosys.org/
-[docs-release]: https://doxygen.opengeosys.org/v6.4.3
+[docs-release]: https://doxygen.opengeosys.org/v6.4.4
 [license-source]: https://github.com/ufz/ogs/blob/master/LICENSE.txt

@@ -1,17 +1,18 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  *  Created on May 2, 2017, 12:18 PM
  */
 
 #pragma once
 
 #include <memory>
+#include <vector>
 
 namespace BaseLib
 {
@@ -22,5 +23,6 @@ namespace NumLib
 {
 class TimeStepAlgorithm;
 std::unique_ptr<TimeStepAlgorithm> createTimeStepper(
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::vector<double> const& fixed_times_for_output);
 };  // namespace NumLib

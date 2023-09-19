@@ -86,17 +86,8 @@ public:
 
     std::vector<Partition> partitionOtherMesh(MeshLib::Mesh const& mesh) const;
 
-    /// Renumber the bulk_node_ids property for each partition to match the
-    /// partitioned bulk mesh nodes.
-    void renumberBulkNodeIdsProperty(
-        MeshLib::PropertyVector<std::size_t>* const bulk_node_ids,
-        std::vector<Partition> const& local_partitions) const;
-
-    /// Renumber the bulk_element_ids property for each partition to match the
-    /// partitioned bulk mesh elements.
-    void renumberBulkElementIdsProperty(
-        MeshLib::PropertyVector<std::size_t>* const bulk_element_ids_pv,
-        std::vector<Partition> const& local_partitions) const;
+    void renumberBulkIdsProperty(std::vector<Partition> const& partitions,
+                                 MeshLib::Properties& partitioned_properties);
 
     /// Write the partitions into binary files
     /// \param file_name_base The prefix of the file name.
@@ -135,6 +126,18 @@ private:
     void renumberNodeIndices();
 
     void processPartition(std::size_t const part_id);
+
+    /// Renumber the bulk_node_ids property for each partition to match the
+    /// partitioned bulk mesh nodes.
+    void renumberBulkNodeIdsProperty(
+        MeshLib::PropertyVector<std::size_t>* const bulk_node_ids,
+        std::vector<Partition> const& local_partitions) const;
+
+    /// Renumber the bulk_element_ids property for each partition to match the
+    /// partitioned bulk mesh elements.
+    void renumberBulkElementIdsProperty(
+        MeshLib::PropertyVector<std::size_t>* const bulk_element_ids_pv,
+        std::vector<Partition> const& local_partitions) const;
 };
 
 }  // namespace ApplicationUtils

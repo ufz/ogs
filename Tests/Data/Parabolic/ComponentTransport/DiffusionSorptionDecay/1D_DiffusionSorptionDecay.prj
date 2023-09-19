@@ -173,6 +173,7 @@
             <variables>
                 <variable>Cs</variable>
                 <variable>pressure</variable>
+                <variable>CsFlowRate</variable>
             </variables>
         </output>
     </time_loop>

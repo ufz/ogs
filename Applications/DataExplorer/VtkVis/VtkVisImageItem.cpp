@@ -26,8 +26,14 @@
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 
+#include <QFileDialog>
+
+#include "Base/LastSavedFileDirectory.h"
+#include "Base/OGSError.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
+#include "GeoLib/Raster.h"
 #include "VtkAlgorithmProperties.h"
 #include "VtkGeoImageSource.h"
 
@@ -178,4 +184,29 @@ void VtkVisImageItem::setTranslation(double x, double y, double z) const
 vtkAlgorithm* VtkVisImageItem::transformFilter() const
 {
     return _transformFilter;
+}
+
+bool VtkVisImageItem::writeAsRaster()
+{
+    vtkSmartPointer<VtkGeoImageSource> imageSource =
+        VtkGeoImageSource::SafeDownCast(_algorithm);
+
+    auto const raster = VtkGeoImageSource::convertToRaster(imageSource);
+
+    if (!raster)
+    {
+        OGSError::box("Image could not be converted to a raster.");
+        return false;
+    }
+
+    QFileInfo const info(this->data(0).toString());
+    QString const rastername = info.completeBaseName() + ".asc";
+    QString const filetype("ESRI ASCII raster file (*.asc)");
+    QString const filename = QFileDialog::getSaveFileName(
+        nullptr, "Save raster as",
+        LastSavedFileDirectory::getDir() + rastername, filetype);
+    LastSavedFileDirectory::setDir(filename);
+    FileIO::AsciiRasterInterface::writeRasterAsASC(*raster,
+                                                   filename.toStdString());
+    return true;
 }

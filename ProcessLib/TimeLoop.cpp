@@ -59,29 +59,8 @@ void postTimestepForAllProcesses(
     double const t, double const dt,
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
     std::vector<GlobalVector*> const& process_solutions,
-    std::vector<GlobalVector*> const& process_solutions_prev,
-    std::vector<std::size_t>& xdot_vector_ids)
+    std::vector<GlobalVector*> const& process_solutions_prev)
 {
-    std::vector<GlobalVector*> x_dots;
-    x_dots.reserve(per_process_data.size());
-    xdot_vector_ids.resize(per_process_data.size());
-
-    std::size_t cnt = 0;
-    for (auto& process_data : per_process_data)
-    {
-        auto const process_id = process_data->process_id;
-        auto const& ode_sys = *process_data->tdisc_ode_sys;
-        auto const& time_discretization = *process_data->time_disc;
-
-        x_dots.emplace_back(&NumLib::GlobalVectorProvider::provider.getVector(
-            ode_sys.getMatrixSpecifications(process_id), xdot_vector_ids[cnt]));
-        cnt++;
-
-        time_discretization.getXdot(*process_solutions[process_id],
-                                    *process_solutions_prev[process_id],
-                                    *x_dots[process_id]);
-    }
-
     // All _per_process_data share the first process.
     bool const is_staggered_coupling =
         !isMonolithicProcess(*per_process_data[0]);
@@ -97,14 +76,11 @@ void postTimestepForAllProcesses(
                 process_solutions);
             pcs.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
         }
-        auto& x_dot = *x_dots[process_id];
-        pcs.computeSecondaryVariable(t, dt, process_solutions, x_dot,
+        pcs.computeSecondaryVariable(t, dt, process_solutions,
+                                     *process_solutions_prev[process_id],
                                      process_id);
-        pcs.postTimestep(process_solutions, t, dt, process_id);
-    }
-    for (auto& x_dot : x_dots)
-    {
-        NumLib::GlobalVectorProvider::provider.releaseVector(*x_dot);
+        pcs.postTimestep(process_solutions, process_solutions_prev, t, dt,
+                         process_id);
     }
 }
 
@@ -205,8 +181,7 @@ setInitialConditions(
 
 void calculateNonEquilibriumInitialResiduum(
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
-    std::vector<GlobalVector*>
-        process_solutions,
+    std::vector<GlobalVector*> const& process_solutions,
     std::vector<GlobalVector*> const& process_solutions_prev)
 {
     for (auto& process_data : per_process_data)
@@ -223,13 +198,11 @@ void calculateNonEquilibriumInitialResiduum(
 NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     std::vector<GlobalVector*>& x, std::vector<GlobalVector*> const& x_prev,
     std::size_t const timestep, double const t, double const delta_t,
-    ProcessData const& process_data, std::vector<Output> const& outputs,
-    std::size_t& xdot_id)
+    ProcessData const& process_data, std::vector<Output> const& outputs)
 {
     auto& process = process_data.process;
     int const process_id = process_data.process_id;
     auto& time_disc = *process_data.time_disc;
-    auto& ode_sys = *process_data.tdisc_ode_sys;
     auto& nonlinear_solver = process_data.nonlinear_solver;
 
     setEquationSystem(process_data);
@@ -259,13 +232,8 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
         return nonlinear_solver_status;
     }
 
-    GlobalVector& x_dot = NumLib::GlobalVectorProvider::provider.getVector(
-        ode_sys.getMatrixSpecifications(process_id), xdot_id);
-
-    time_disc.getXdot(*x[process_id], *x_prev[process_id], x_dot);
-
-    process.postNonLinearSolver(*x[process_id], x_dot, t, delta_t, process_id);
-    NumLib::GlobalVectorProvider::provider.releaseVector(x_dot);
+    process.postNonLinearSolver(*x[process_id], *x_prev[process_id], t, delta_t,
+                                process_id);
 
     return nonlinear_solver_status;
 }
@@ -441,19 +409,14 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
     // Update the solution of the previous time step.
     for (std::size_t i = 0; i < _per_process_data.size(); i++)
     {
-        auto& ppd = *_per_process_data[i];
-        auto& timestep_algorithm = ppd.timestep_algorithm;
         if (all_process_steps_accepted)
         {
+            auto& ppd = *_per_process_data[i];
             NumLib::updateTimeSteps(dt, ppd.timestep_previous,
                                     ppd.timestep_current);
+            auto& timestep_algorithm = ppd.timestep_algorithm;
             timestep_algorithm->resetCurrentTimeStep(dt, ppd.timestep_previous,
                                                      ppd.timestep_current);
-        }
-
-        if (t == timestep_algorithm->begin())
-        {
-            continue;
         }
 
         auto& x = *_process_solutions[i];
@@ -476,22 +439,6 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
     }
 
     return {dt, last_step_rejected};
-}
-
-std::vector<double> calculateUniqueFixedTimesForAllOutputs(
-    std::vector<Output> const& outputs)
-{
-    std::vector<double> fixed_times;
-    for (auto const& output : outputs)
-    {
-        auto const& output_fixed_times = output.getFixedOutputTimes();
-        fixed_times.insert(fixed_times.end(), output_fixed_times.begin(),
-                           output_fixed_times.end());
-    }
-    std::sort(fixed_times.begin(), fixed_times.end());
-    auto const it = std::unique(fixed_times.begin(), fixed_times.end());
-    fixed_times.erase(it, fixed_times.end());
-    return fixed_times;
 }
 
 std::vector<std::function<double(double, double)>>
@@ -550,6 +497,8 @@ void TimeLoop::initialize()
         setCoupledSolutions();
     }
 
+    updateDeactivatedSubdomains(_per_process_data, _start_time);
+
     // Output initial conditions
     {
         const bool output_initial_condition = true;
@@ -564,8 +513,6 @@ void TimeLoop::initialize()
         computeTimeStepping(0.0, _current_time, _accepted_steps,
                             _rejected_steps, time_step_constraints);
 
-    updateDeactivatedSubdomains(_per_process_data, _start_time);
-
     calculateNonEquilibriumInitialResiduum(
         _per_process_data, _process_solutions, _process_solutions_prev);
 }
@@ -579,8 +526,10 @@ bool TimeLoop::executeTimeStep()
 
     const std::size_t timesteps = _accepted_steps + 1;
     // TODO(wenqing): , input option for time unit.
-    INFO("=== Time stepping at step #{:d} and time {:g} with step size {:g}",
-         timesteps, _current_time, _dt);
+    INFO(
+        "=== Time stepping at step #{:d} and time {:.15g} with step size "
+        "{:.15g}",
+        timesteps, _current_time, _dt);
 
     updateDeactivatedSubdomains(_per_process_data, _current_time);
 
@@ -675,8 +624,8 @@ bool TimeLoop::doNonlinearIteration(double const t, double const dt,
     if (nonlinear_solver_status.error_norms_met)
     {
         postTimestepForAllProcesses(t, dt, _per_process_data,
-                                    _process_solutions, _process_solutions_prev,
-                                    _xdot_vector_ids);
+                                    _process_solutions,
+                                    _process_solutions_prev);
     }
     return nonlinear_solver_status.error_norms_met;
 }
@@ -685,15 +634,15 @@ static NumLib::NonlinearSolverStatus solveMonolithicProcess(
     const double t, const double dt, const std::size_t timestep_id,
     ProcessData const& process_data, std::vector<GlobalVector*>& x,
     std::vector<GlobalVector*> const& x_prev,
-    std::vector<Output> const& outputs, std::size_t& xdot_id)
+    std::vector<Output> const& outputs)
 {
     BaseLib::RunTime time_timestep_process;
     time_timestep_process.start();
 
     auto const nonlinear_solver_status = solveOneTimeStepOneProcess(
-        x, x_prev, timestep_id, t, dt, process_data, outputs, xdot_id);
+        x, x_prev, timestep_id, t, dt, process_data, outputs);
 
-    INFO("[time] Solving process #{:d} took {:g} s in time step #{:d} ",
+    INFO("[time] Solving process #{:d} took {:g} s in time step #{:d}",
          process_data.process_id, time_timestep_process.elapsed(), timestep_id);
 
     return nonlinear_solver_status;
@@ -707,16 +656,12 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
 {
     NumLib::NonlinearSolverStatus nonlinear_solver_status;
 
-    _xdot_vector_ids.resize(_per_process_data.size());
-    std::size_t cnt = 0;
-
     for (auto& process_data : _per_process_data)
     {
         auto const process_id = process_data->process_id;
         nonlinear_solver_status = solveMonolithicProcess(
             t, dt, timestep_id, *process_data, _process_solutions,
-            _process_solutions_prev, _outputs, _xdot_vector_ids[cnt]);
-        cnt++;
+            _process_solutions_prev, _outputs);
 
         process_data->nonlinear_solver_status = nonlinear_solver_status;
         if (!nonlinear_solver_status.error_norms_met)
@@ -776,9 +721,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     {
         // TODO(wenqing): use process name
         coupling_iteration_converged = true;
-        _xdot_vector_ids.resize(_per_process_data.size());
-        std::size_t cnt = 0;
-        for (auto& process_data : _per_process_data)
+        for (auto const& process_data : _per_process_data)
         {
             auto const process_id = process_data->process_id;
             BaseLib::RunTime time_timestep_process;
@@ -796,8 +739,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
 
             nonlinear_solver_status = solveOneTimeStepOneProcess(
                 _process_solutions, _process_solutions_prev, timestep_id, t, dt,
-                *process_data, _outputs, _xdot_vector_ids[cnt]);
-            cnt++;
+                *process_data, _outputs);
             process_data->nonlinear_solver_status = nonlinear_solver_status;
 
             INFO(
@@ -898,23 +840,17 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
 
         if (!is_staggered_coupling && output_initial_condition)
         {
-            auto const& ode_sys = *process_data->tdisc_ode_sys;
             // dummy value to handle the time derivative terms more or less
             // correctly, i.e. to ignore them.
             double const dt = 1;
             process_data->time_disc->nextTimestep(t, dt);
 
-            auto& x_dot = NumLib::GlobalVectorProvider::provider.getVector(
-                ode_sys.getMatrixSpecifications(process_id));
-            x_dot.setZero();
-
             pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
             // Update secondary variables, which might be uninitialized, before
             // output.
             pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,
-                                         x_dot, process_id);
-
-            NumLib::GlobalVectorProvider::provider.releaseVector(x_dot);
+                                         *_process_solutions_prev[process_id],
+                                         process_id);
         }
         if (is_staggered_coupling && output_initial_condition)
         {
@@ -927,23 +863,17 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
                 .setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
                     process_id);
 
-            auto const& ode_sys = *process_data->tdisc_ode_sys;
             // dummy value to handle the time derivative terms more or less
             // correctly, i.e. to ignore them.
             double const dt = 1;
             process_data->time_disc->nextTimestep(t, dt);
 
-            auto& x_dot = NumLib::GlobalVectorProvider::provider.getVector(
-                ode_sys.getMatrixSpecifications(process_id));
-            x_dot.setZero();
-
             pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
             // Update secondary variables, which might be uninitialized, before
             // output.
             pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,
-                                         x_dot, process_id);
-
-            NumLib::GlobalVectorProvider::provider.releaseVector(x_dot);
+                                         *_process_solutions_prev[process_id],
+                                         process_id);
         }
         for (auto const& output_object : _outputs)
         {

@@ -28,6 +28,7 @@ weight = 1080
 - Issue a scan on [Software Heritage Archive](https://archive.softwareheritage.org/browse/origin/directory/?origin_url=https://gitlab.opengeosys.org/ogs/ogs.git)
 - Update `CITATION.cff` and `web/content/publications/_index.md` with new Zenodo DOI
 - Update `CITATION.cff` author list (`git shortlog -sne 6.4.3...6.4.2`) and corresponding bibtex-entry in publications web page
+- Update Zenodo entry with correct authors
 - Create bugfix branch
   - Create new netlify site (in an empty directory)
     <!-- vale off -->

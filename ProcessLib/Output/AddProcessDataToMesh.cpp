@@ -12,6 +12,7 @@
 
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Utils/IntegrationPointWriter.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "ProcessLib/Output/SecondaryVariable.h"
 #include "ProcessLib/ProcessVariable.h"
 #ifdef USE_PETSC
@@ -288,7 +289,8 @@ static std::set<std::string> addPrimaryVariablesToMesh(
         int global_component_offset = global_component_offset_next;
         global_component_offset_next += n_components;
 
-        if (output_variables.find(pv.getName()) == output_variables.cend())
+        if (!output_variables.empty() &&
+            !output_variables.contains(pv.getName()))
         {
             continue;
         }
@@ -323,6 +325,14 @@ static std::set<std::string> addPrimaryVariablesToMesh(
 
                 // per node ordering of components
                 auto const out_index = node_id * n_components + component_id;
+
+                // request for index of linear quantities at higher order nodes
+                // results in returning NumLib::MeshComponentMap::nop
+                if (in_index == NumLib::MeshComponentMap::nop)
+                {
+                    output_data[out_index] = 0;
+                    continue;
+                }
 
                 output_data[out_index] = x_copy[in_index];
             }

@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (https://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -17,7 +18,7 @@
 #include "GeoLib/Raster.h"
 #include "MathLib/Point3d.h"
 #include "MeshLib/MeshEnums.h"
-#include "MeshLib/MeshGenerators/RasterToMesh.h"
+#include "MeshToolsLib/MeshGenerators/RasterToMesh.h"
 #include "VtkVis/VtkGeoImageSource.h"
 #include "VtkVis/VtkRaster.h"
 
@@ -49,7 +50,10 @@ NetCdfConfigureDialog::NetCdfConfigureDialog(std::string const& fileName,
     this->radioMesh->setChecked(true);
 }
 
-NetCdfConfigureDialog::~NetCdfConfigureDialog() = default;
+NetCdfConfigureDialog::~NetCdfConfigureDialog()
+{
+    _currentMesh.release();
+}
 
 // Instructions if the OK-Button has been pressed.
 void NetCdfConfigureDialog::accept()
@@ -348,7 +352,7 @@ void NetCdfConfigureDialog::createDataObject()
         {
             useIntensity = MeshLib::UseIntensityAs::DATAVECTOR;
         }
-        _currentMesh = MeshLib::RasterToMesh::convert(
+        _currentMesh = MeshToolsLib::RasterToMesh::convert(
             data_array.data(), header, meshElemType, useIntensity,
             _currentVar.getName());
     }

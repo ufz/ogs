@@ -14,8 +14,9 @@ endif()
 
 target_link_libraries(
     simulator PRIVATE ApplicationsLib BaseLib CMakeInfoLib GitInfoLib tclap
+                      _python_mesh
 )
 target_include_directories(simulator PRIVATE ../../CLI)
 
-# Install into root dir (in Python module, enables 'import ogs.simulator')
-install(TARGETS simulator LIBRARY DESTINATION .)
+# Install into Python module root dir (enables 'import ogs.simulator')
+install(TARGETS simulator LIBRARY DESTINATION ogs)

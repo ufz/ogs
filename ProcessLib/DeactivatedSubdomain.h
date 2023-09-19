@@ -16,10 +16,10 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
-#include "MathLib/Point3d.h"
 #include "MeshLib/Mesh.h"
 #include "processlib_export.h"
 
@@ -41,7 +41,7 @@ struct DeactivatedSubdomainMesh
     /// A mesh created from material ids (independent of time) for the
     /// deactivated subdomain.
     MeshLib::Mesh mesh;
-    std::vector<std::size_t> bulk_element_ids;
+    std::unordered_set<std::size_t> bulk_element_ids;
 
     /// Inner nodes owned only by elements of the deactivated subdomain.
     /// \see ProcessLib::createDeactivatedSubdomainMesh()

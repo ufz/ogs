@@ -26,8 +26,8 @@ namespace ProcessLib
 {
 /**
  * Get a reference to the PVDFile corresponding to the given filename
- * @param mesh_name the name of the mesh the PVD file is searched for
- * @return Reference to a PVDFile object
+ * \param mesh_name the name of the mesh the PVD file is searched for
+ * \return Reference to a PVDFile object
  */
 MeshLib::IO::PVDFile& OutputVTKFormat::findOrCreatePVDFile(
     std::string const& mesh_name) const
@@ -112,7 +112,7 @@ std::string OutputXDMFHDF5Format::constructFilename(
 
 void OutputXDMFHDF5Format::outputMeshXdmf(
     std::set<std::string> const& output_variables,
-    std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+    std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
     int const timestep, double const t, int const iteration) const
 {
     // \TODO The XdmfOutput will create on construction the XdmfHdfWriter
@@ -122,8 +122,7 @@ void OutputXDMFHDF5Format::outputMeshXdmf(
                                       iteration);
         std::filesystem::path path(BaseLib::joinPaths(directory, name));
         mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
-            std::move(meshes), path, timestep, t, output_variables, compression,
-            n_files);
+            meshes, path, timestep, t, output_variables, compression, n_files);
     }
     else
     {

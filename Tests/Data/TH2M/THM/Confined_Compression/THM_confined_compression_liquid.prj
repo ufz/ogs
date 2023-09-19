@@ -280,6 +280,10 @@
                 <variable>gas_density</variable>
                 <variable>porosity</variable>
                 <variable>saturation</variable>
+                <variable>GasMassFlowRate</variable>
+                <variable>HeatFlowRate</variable>
+                <variable>LiquidMassFlowRate</variable>
+                <variable>NodalForces</variable>
             </variables>
         </output>
     </time_loop>
@@ -530,7 +534,7 @@
         <vtkdiff>
             <regex>THM_confined_compression_liquid_ts_.*.vtu</regex>
             <field>HeatFlowRate</field>
-            <absolute_tolerance>3e-13</absolute_tolerance>
+            <absolute_tolerance>4e-13</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

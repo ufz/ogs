@@ -22,7 +22,7 @@
 #include "MeshLib/NodePartitionedMesh.h"
 #endif
 
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "Tests/GeoLib/CreateTestPoints.h"
 
 TEST(ConstructAdditionalMeshesFromGeoObjects, PointMesh)
@@ -34,11 +34,12 @@ TEST(ConstructAdditionalMeshesFromGeoObjects, PointMesh)
 #ifdef USE_PETSC
     std::unique_ptr<MeshLib::NodePartitionedMesh> mesh =
         std::make_unique<MeshLib::NodePartitionedMesh>(
-            *MeshLib::MeshGenerator::generateRegularHexMesh(length,
-                                                            n_subdivisions));
+            *MeshToolsLib::MeshGenerator::generateRegularHexMesh(
+                length, n_subdivisions));
 #else
     std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::MeshGenerator::generateRegularHexMesh(length, n_subdivisions));
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(length,
+                                                            n_subdivisions));
 #endif
 
     // create geometry: for every mesh node exactly one point
@@ -72,11 +73,12 @@ TEST(ConstructAdditionalMeshesFromGeoObjects, PointMeshLargeSearchRadius)
 
     std::unique_ptr<MeshLib::NodePartitionedMesh> mesh =
         std::make_unique<MeshLib::NodePartitionedMesh>(
-            *MeshLib::MeshGenerator::generateRegularHexMesh(length,
-                                                            n_subdivisions));
+            *MeshToolsLib::MeshGenerator::generateRegularHexMesh(
+                length, n_subdivisions));
 #else
     std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::MeshGenerator::generateRegularHexMesh(length, n_subdivisions));
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(length,
+                                                            n_subdivisions));
 #endif
 
     // create geometry: for every mesh node exactly one point

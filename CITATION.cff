@@ -9,9 +9,12 @@ license: BSD-3-Clause
 # DOI representing all versions, do not change:
 doi: 10.5281/zenodo.591265
 # The following needs to be adapted on releases:
-version: "6.4.3"
-date-released: "2022-09-19"
+version: "6.4.4"
+date-released: "2023-03-10"
 identifiers:
+    - type: doi
+      description: "Zenodo DOI for 6.4.4"
+      value: 10.5281/zenodo.7716938
     - type: doi
       description: "Zenodo DOI for 6.4.3"
       value: 10.5281/zenodo.7092676
@@ -155,4 +158,46 @@ authors:
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Zhang
       family-names: Ning
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Mostafa
+      family-names: Mollaali
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Feliks K.
+      family-names: Kiszkurno
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Tymofiy
+      family-names: Gerasimov
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Vahid Ziaei
+      family-names: Rad
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Kata
+      family-names: Kurgyis
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Julian
+      family-names: Heinze
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Falko
+      family-names: Vehling
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Aqeel
+      family-names: Chaudhry
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Linda
+      family-names: Günther
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Matthes
+      family-names: Kantzenbach
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Robert
+      family-names: Habel
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Sophie
+      family-names: Einspänner
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Jakob
+      family-names: Randow
+      affiliation: Hochschule für Technik, Wirtschaft und Kultur Leipzig
+    - given-names: Tao
+      family-names: You
       affiliation: Helmholtz Centre for Environmental Research -- UFZ

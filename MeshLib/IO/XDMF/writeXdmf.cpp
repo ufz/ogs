@@ -64,6 +64,8 @@ static auto meshPropertyDatatypeString()
     ogs_to_xdmf_type[to_underlying(MeshPropertyDataType::uint64)] = "UInt";
     ogs_to_xdmf_type[to_underlying(MeshPropertyDataType::int8)] = "Int";
     ogs_to_xdmf_type[to_underlying(MeshPropertyDataType::uint8)] = "UInt";
+    ogs_to_xdmf_type[to_underlying(MeshPropertyDataType::char_native)] = "Char";
+    ogs_to_xdmf_type[to_underlying(MeshPropertyDataType::uchar)] = "UChar";
     return ogs_to_xdmf_type;
 }
 
@@ -214,10 +216,12 @@ std::function<std::string(std::vector<double>)> write_xdmf(
         [](double const& time_value, auto const& geometry, auto const& topology,
            auto const& constant_attributes, auto const& variable_attributes)
     {
+        // Output of "Time Value" with sufficient precision.
+        static_assert(15 == std::numeric_limits<double>::digits10);
         return fmt::format(
             R"(
 <Grid Name="Grid" GridType="Uniform">
-    <Time Value="{time_value:g}"/>
+    <Time Value="{time_value:.15g}"/>
 {geometry}
 {topology}
 {fix_attributes}

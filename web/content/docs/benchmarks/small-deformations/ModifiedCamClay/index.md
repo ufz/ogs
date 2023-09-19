@@ -1,6 +1,10 @@
 +++
 author = "Christian Silbermann, Thomas Nagel"
-project = ["Mechanics/ModifiedCamClay/square_1e0_shear.prj", "Mechanics/ModifiedCamClay/square_1e0_biax.prj", "Mechanics/ModifiedCamClay/model_triaxtest.prj"]
+project = ["Mechanics/ModifiedCamClay/square_1e0_shear.prj",
+           "Mechanics/ModifiedCamClay/square_1e0_biax.prj",
+           "Mechanics/ModifiedCamClay/triaxtest.prj",
+           "Mechanics/ModifiedCamClay/triaxtest_original.prj",
+           "Mechanics/ModifiedCamClay/triaxtest_original_abs.prj"]
 date = "2020-12-14T14:39:39+01:00"
 title = "Modified Cam clay model"
 image = ""
@@ -8,9 +12,12 @@ image = ""
 
 ## Test cases
 
-Three tests are presented:
+Five tests are presented:
 
 {{< data-link >}}
+
+of which the last three have the same test program but use different implementations of the modified Cam clay model.
+The MFront-files can be found at [here](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/MaterialLib/SolidModels/MFront).
 
 ## Problem description
 

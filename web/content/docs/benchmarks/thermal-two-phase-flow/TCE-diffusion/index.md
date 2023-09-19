@@ -27,9 +27,11 @@ Table 1: Parameters used in the numerical model.
 | van Genuchten parameter                        | $m_{\mathrm{vG}}$          | 0.8                  | -       |
 
 Atteia and Höhener [[1]](#1) developed a semianalytical solution for the TCE concentration profile at steady state. In their original solution, the effect of hydrodynamic dispersion is also considered. Here, we briefly derive a simplified semianalytical solution for the case without groundwater flow. By using the classical Millington [[2]](#2) formulation for tortuosity, the diffusive flux in either phase $\alpha$ ($\alpha\in \{a, w\}$) can be written as
-\begin{equation}
+
+$$
     J_{\alpha}=-nS_{\alpha}\tau_{\alpha}D_{0\alpha}\frac{dx^c_{\alpha}}{dz}=-n^{4/3}S_{\alpha}^{10/3}D_{0\alpha}\frac{dx^c_{\alpha}}{dz}
-\end{equation}
+$$
+
 in which $\tau_{\alpha}$ is the tortuosity of phase $\alpha$ and $x^c_{\alpha}$ is molar fraction of TCE in phase $\alpha$. Assuming equilibrium of contaminant concentrations between the liquid and gas phases, we have
 \begin{equation}
     \frac{N_wx^c_w}{P_gx^c_a}=H

@@ -22,7 +22,8 @@
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEnums.h"
-#include "MeshLib/MeshQuality/ElementQualityInterface.h"
+#include "MeshLib/Utils/addPropertyToMesh.h"
+#include "MeshToolsLib/MeshQuality/ElementQualityInterface.h"
 
 int main(int argc, char* argv[])
 {
@@ -73,7 +74,7 @@ int main(int argc, char* argv[])
     // Geometric information
     MeshLib::MeshQualityType const type =
         MeshLib::String2MeshQualityType(criterion_arg.getValue());
-    MeshLib::ElementQualityInterface element_quality(*mesh, type);
+    MeshToolsLib::ElementQualityInterface element_quality(*mesh, type);
     auto const element_quality_vector = element_quality.getQualityVector();
     MeshLib::addPropertyToMesh(*mesh, criterion_arg.getValue(),
                                MeshLib::MeshItemType::Cell, 1,

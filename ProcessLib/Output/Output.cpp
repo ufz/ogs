@@ -13,6 +13,8 @@
 #include <cassert>
 #include <exception>
 #include <fstream>
+#include <range/v3/algorithm/transform.hpp>
+#include <range/v3/range/conversion.hpp>
 #include <vector>
 
 #include "AddProcessDataToMesh.h"
@@ -20,6 +22,7 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/RunTime.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "ProcessLib/Process.h"
 
 namespace ProcessLib
@@ -174,6 +177,35 @@ void Output::outputMeshes(
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes)
     const
 {
+    if (_output_data_specification.output_variables.empty())
+    {
+        // special case: no output properties specified => output all properties
+        for (auto const& mesh : meshes)
+        {
+            for (auto [name, property] : mesh.get().getProperties())
+            {
+                property->is_for_output = true;
+            }
+        }
+    }
+    else
+    {
+        for (auto const& mesh : meshes)
+        {
+            for (auto [name, property] : mesh.get().getProperties())
+            {
+                // special case: always output OGS_VERSION
+                if (name == "OGS_VERSION")
+                {
+                    property->is_for_output = true;
+                    continue;
+                }
+
+                property->is_for_output =
+                    _output_data_specification.output_variables.contains(name);
+            }
+        }
+    }
     _output_format->outputMeshes(timestep, t, iteration, meshes,
                                  _output_data_specification.output_variables);
 }
@@ -387,13 +419,26 @@ void Output::doOutputNonlinearIteration(
 
 std::vector<std::string> Output::getFileNamesForOutput() const
 {
-    std::vector<std::string> output_names;
-    for (auto const& output_name : _mesh_names_for_output)
+    auto construct_filename = ranges::views::transform(
+        [&](auto const& output_name)
+        { return _output_format->constructFilename(output_name, 0, 0, 0); });
+
+    return _mesh_names_for_output | construct_filename |
+           ranges::to<std::vector>;
+}
+
+std::vector<double> calculateUniqueFixedTimesForAllOutputs(
+    std::vector<Output> const& outputs)
+{
+    std::vector<double> fixed_times;
+    for (auto const& output : outputs)
     {
-        output_names.push_back(
-            _output_format->constructFilename(output_name, 0, 0, 0));
+        auto const& output_fixed_times = output.getFixedOutputTimes();
+        fixed_times.insert(fixed_times.end(), output_fixed_times.begin(),
+                           output_fixed_times.end());
     }
-    return output_names;
+    BaseLib::makeVectorUnique(fixed_times);
+    return fixed_times;
 }
 
 std::ostream& operator<<(std::ostream& os, Output const& output)

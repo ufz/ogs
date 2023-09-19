@@ -1,11 +1,11 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  *  Created on November 29, 2017, 2:03 PM
  */
 
@@ -129,7 +129,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         NumLib::shapeFunctionInterpolate(T, N, T_ip);
         variables.temperature = T_ip;
 
-        this->prev_states_[ip].S_L_data.S_L =
+        this->prev_states_[ip].S_L_data->S_L =
             medium->property(MPL::PropertyType::saturation)
                 .template value<double>(variables, x_position, t, dt);
 
@@ -145,7 +145,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             auto const& eps = this->current_states_[ip].eps_data.eps;
             auto const& sigma_sw =
                 this->current_states_[ip].swelling_data.sigma_sw;
-            this->prev_states_[ip].s_mech_data.eps_m.noalias() =
+            this->prev_states_[ip].s_mech_data->eps_m.noalias() =
                 solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
                     ? eps + C_el_data.C_el.inverse() * sigma_sw
                     : eps;
@@ -160,7 +160,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                            ConstitutiveTraits>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
-                         std::vector<double> const& local_xdot,
+                         std::vector<double> const& local_x_prev,
                          std::vector<double>& /*local_M_data*/,
                          std::vector<double>& /*local_K_data*/,
                          std::vector<double>& local_rhs_data,
@@ -187,8 +187,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     this->element_, ip_data_[ip].N_u))};
 
         assembleWithJacobianSingleIP(
-            t, dt, x_position,    //
-            local_x, local_xdot,  //
+            t, dt, x_position,      //
+            local_x, local_x_prev,  //
             ip_data_[ip], constitutive_setting,
             medium,              //
             loc_mat_current_ip,  //
@@ -199,7 +199,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     massLumping(loc_mat);
 
-    addToLocalMatrixData(dt, local_x, local_xdot, loc_mat, local_rhs_data,
+    addToLocalMatrixData(dt, local_x, local_x_prev, loc_mat, local_rhs_data,
                          local_Jac_data);
 }
 
@@ -231,7 +231,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     addToLocalMatrixData(
         double const dt,
         std::vector<double> const& local_x,
-        std::vector<double> const& local_xdot,
+        std::vector<double> const& local_x_prev,
         typename ThermoRichardsMechanicsLocalAssembler<
             ShapeFunctionDisplacement, ShapeFunction, DisplacementDim,
             ConstitutiveTraits>::LocalMatrices const& loc_mat,
@@ -271,14 +271,16 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     // -- Residual
     //
     auto const [T, p_L, u] = localDOF(local_x);
-    auto const [T_dot, p_L_dot, u_dot] = localDOF(local_xdot);
+    auto const [T_prev, p_L_prev, u_prev] = localDOF(local_x_prev);
 
-    block_T(local_rhs).noalias() -= loc_mat.M_TT * T_dot + loc_mat.K_TT * T +
-                                    loc_mat.K_Tp * p_L + loc_mat.M_Tp * p_L_dot;
+    block_T(local_rhs).noalias() -= loc_mat.M_TT * (T - T_prev) / dt +
+                                    loc_mat.K_TT * T + loc_mat.K_Tp * p_L +
+                                    loc_mat.M_Tp * (p_L - p_L_prev) / dt;
     block_p(local_rhs).noalias() -=
         loc_mat.K_pp * p_L + loc_mat.K_pT * T +
-        (loc_mat.storage_p_a_p + loc_mat.storage_p_a_S) * p_L_dot +
-        loc_mat.M_pu * u_dot + loc_mat.M_pT * T_dot;
+        (loc_mat.storage_p_a_p + loc_mat.storage_p_a_S) * (p_L - p_L_prev) /
+            dt +
+        loc_mat.M_pu * (u - u_prev) / dt + loc_mat.M_pT * (T - T_prev) / dt;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
@@ -290,7 +292,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const t, double const dt,
         ParameterLib::SpatialPosition const& x_position,
         std::vector<double> const& local_x,
-        std::vector<double> const& local_xdot,
+        std::vector<double> const& local_x_prev,
         typename ThermoRichardsMechanicsLocalAssembler<
             ShapeFunctionDisplacement, ShapeFunction, DisplacementDim,
             ConstitutiveTraits>::IpData const& ip_data,
@@ -300,7 +302,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             ShapeFunctionDisplacement, ShapeFunction, DisplacementDim,
             ConstitutiveTraits>::LocalMatrices& out,
         typename ConstitutiveTraits::StatefulData& current_state,
-        typename ConstitutiveTraits::StatefulData const& prev_state,
+        typename ConstitutiveTraits::StatefulDataPrev const& prev_state,
         MaterialStateData<DisplacementDim>& mat_state,
         typename ConstitutiveTraits::OutputData& output_data) const
 {
@@ -322,7 +324,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             dNdx_u, N_u, x_coord, this->is_axially_symmetric_);
 
     auto const [T, p_L, u] = localDOF(local_x);
-    auto const [T_dot, p_L_dot, u_dot] = localDOF(local_xdot);
+    auto const [T_prev, p_L_prev, u_prev] = localDOF(local_x_prev);
 
     GlobalDimVectorType const grad_T_ip = dNdx * T;
 
@@ -333,23 +335,20 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     {
         double const T_ip = N * T;
-        double const T_dot_ip = N * T_dot;
+        double const T_prev_ip = N * T_prev;
 
         double const p_cap_ip = -N * p_L;
-        double const p_cap_dot_ip = -N * p_L_dot;
+        double const p_cap_prev_ip = -N * p_L_prev;
         GlobalDimVectorType const grad_p_cap_ip = -dNdx * p_L;
 
         KelvinVectorType eps = B * u;
-        // TODO conceptual consistency check. introduced for volumetric strain
-        // rate computation
-        KelvinVectorType eps_prev = eps - B * (u_dot * dt);
 
-        CS.eval(models, t, dt, x_position,                //
-                medium,                                   //
-                {T_ip, T_dot_ip, grad_T_ip},              //
-                {p_cap_ip, p_cap_dot_ip, grad_p_cap_ip},  //
-                eps, eps_prev, current_state, prev_state, mat_state, tmp,
-                output_data, CD);
+        CS.eval(models, t, dt, x_position,                 //
+                medium,                                    //
+                {T_ip, T_prev_ip, grad_T_ip},              //
+                {p_cap_ip, p_cap_prev_ip, grad_p_cap_ip},  //
+                eps, current_state, prev_state, mat_state, tmp, output_data,
+                CD);
     }
 
     using NodalMatrix = typename ShapeMatricesType::NodalMatrixType;
@@ -427,8 +426,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     block_pT(out.Jac).noalias() = CD.vap_data.J_pT_X_dNTdN * dNTdN;
     block_pp(out.Jac).noalias() =
         CD.storage_data.J_pp_X_NTN * NTN +
-        CD.eq_p_data.J_pp_X_BTI2NT_u_dot_N * BTI2N.transpose() * u_dot *
-            N  // TODO something with volumetric strain rate?
+        CD.eq_p_data.J_pp_X_BTI2NT_u_dot_N * BTI2N.transpose() * (u - u_prev) /
+            dt * N  // TODO something with volumetric strain rate?
         + dNdx.transpose() * CD.eq_p_data.J_pp_dNT_V_N * N;
 
     block_uT(out.Jac).noalias() =
@@ -449,15 +448,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                            ConstitutiveTraits>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
-                                     Eigen::VectorXd const& local_x_dot)
+                                     Eigen::VectorXd const& local_x_prev)
 {
     auto const T = block_T(local_x);
     auto const p_L = block_p(local_x);
     auto const u = block_u(local_x);
 
-    auto const T_dot = block_T(local_x_dot);
-    auto const p_L_dot = block_p(local_x_dot);
-    auto const u_dot = block_u(local_x_dot);
+    auto const T_prev = block_T(local_x_prev);
+    auto const p_L_prev = block_p(local_x_prev);
 
     auto const e_id = this->element_.getID();
     auto const& process_data = this->process_data_;
@@ -511,26 +509,23 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 dNdx_u, N_u, x_coord, this->is_axially_symmetric_);
 
         double const T_ip = N * T;
-        double const T_dot_ip = N * T_dot;
+        double const T_prev_ip = N * T_prev;
         GlobalDimVectorType const grad_T_ip = dNdx * T;
 
         double const p_cap_ip = -N * p_L;
-        double const p_cap_dot_ip = -N * p_L_dot;
+        double const p_cap_prev_ip = -N * p_L_prev;
         GlobalDimVectorType const grad_p_cap_ip = -dNdx * p_L;
 
         KelvinVectorType eps = B * u;
-        // TODO conceptual consistency check. introduced for volumetric strain
-        // rate computation
-        KelvinVectorType eps_prev = eps - B * (u_dot * dt);
 
-        constitutive_setting.eval(
-            models,                                   //
-            t, dt, x_position,                        //
-            medium,                                   //
-            {T_ip, T_dot_ip, grad_T_ip},              //
-            {p_cap_ip, p_cap_dot_ip, grad_p_cap_ip},  //
-            eps, eps_prev, current_state, this->prev_states_[ip],
-            this->material_states_[ip], tmp, output_data, CD);
+        constitutive_setting.eval(models,                                    //
+                                  t, dt, x_position,                         //
+                                  medium,                                    //
+                                  {T_ip, T_prev_ip, grad_T_ip},              //
+                                  {p_cap_ip, p_cap_prev_ip, grad_p_cap_ip},  //
+                                  eps, current_state, this->prev_states_[ip],
+                                  this->material_states_[ip], tmp, output_data,
+                                  CD);
 
         saturation_avg += current_state.S_L_data.S_L;
         porosity_avg += current_state.poro_data.phi;

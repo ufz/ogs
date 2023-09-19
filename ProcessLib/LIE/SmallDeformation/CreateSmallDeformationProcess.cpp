@@ -55,7 +55,8 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     std::size_t n_var_du = 0;
     for (std::string const& pv_name : range)
     {
-        if (pv_name != "displacement" && pv_name.find("displacement_jump") != 0)
+        if (pv_name != "displacement" &&
+            !pv_name.starts_with("displacement_jump"))
         {
             OGS_FATAL(
                 "Found a process variable name '{:s}'. It should be "
@@ -63,7 +64,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
                 "'displacement_junctionN'",
                 pv_name);
         }
-        if (pv_name.find("displacement_jump") == 0)
+        if (pv_name.starts_with("displacement_jump"))
         {
             n_var_du++;
         }

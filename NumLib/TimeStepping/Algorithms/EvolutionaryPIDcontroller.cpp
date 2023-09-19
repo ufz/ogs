@@ -1,11 +1,11 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  *  Created on March 31, 2017, 4:13 PM
  */
 
@@ -100,8 +100,6 @@ std::tuple<bool, double> EvolutionaryPIDcontroller::next(
 
         return std::make_tuple(timestep_current.isAccepted(), h_new);
     }
-
-    return {};
 }
 
 double EvolutionaryPIDcontroller::limitStepSize(
@@ -136,6 +134,34 @@ double EvolutionaryPIDcontroller::limitStepSize(
         if (limited_h > timestep_current.dt())
         {
             limited_h = std::max(_h_min, 0.5 * timestep_current.dt());
+        }
+    }
+
+    if (_fixed_times_for_output.empty())
+    {
+        return limited_h;
+    }
+
+    // find first fixed timestep for output larger than the current time, i.e.,
+    // current time < fixed output time
+    auto fixed_output_time_it = std::find_if(
+        std::begin(_fixed_times_for_output), std::end(_fixed_times_for_output),
+        [&timestep_current](auto const fixed_output_time)
+        { return timestep_current.current() < fixed_output_time; });
+
+    if (fixed_output_time_it != _fixed_times_for_output.end())
+    {
+        // check if the fixed output time is in the interval
+        // (current time, current time + limited_h)
+        if (*fixed_output_time_it < timestep_current.current() + limited_h)
+        {
+            // check if the potential adjusted time step is larger than zero
+            if (std::abs(*fixed_output_time_it - timestep_current.current()) >
+                std::numeric_limits<double>::epsilon() *
+                    timestep_current.current())
+            {
+                return *fixed_output_time_it - timestep_current.current();
+            }
         }
     }
     return limited_h;

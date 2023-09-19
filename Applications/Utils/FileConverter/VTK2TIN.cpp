@@ -32,7 +32,7 @@
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
-#include "MeshLib/convertMeshToGeo.h"
+#include "MeshToolsLib/convertMeshToGeo.h"
 
 int main(int argc, char* argv[])
 {
@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 
     INFO("Converting the mesh to TIN");
     GeoLib::GEOObjects geo_objects;
-    if (MeshLib::convertMeshToGeo(*mesh, geo_objects))
+    if (MeshToolsLib::convertMeshToGeo(*mesh, geo_objects))
     {
         INFO("Writing TIN into the file");
         GeoLib::IO::TINInterface::writeSurfaceAsTIN(

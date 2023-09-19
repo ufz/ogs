@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <Eigen/Core>
 #include <memory>
 
 #include "ChemistryLib/ChemicalSolverInterface.h"
@@ -70,7 +71,7 @@ struct ComponentTransportProcessData
     ChemistryLib::ChemicalSolverInterface* const chemical_solver_interface;
     std::unique_ptr<LookupTable> lookup_table;
 
-    std::unique_ptr<NumLib::NumericalStabilization> stabilizer;
+    NumLib::NumericalStabilization stabilizer;
 
     /// Projected specific body force vector: R * R^T * b.
     std::vector<Eigen::VectorXd> const projected_specific_body_force_vectors;

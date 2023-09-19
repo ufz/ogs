@@ -18,6 +18,7 @@
 #include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryCondition.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryConditionConfig.h"
@@ -93,18 +94,6 @@ MeshLib::Mesh const& findMeshInConfig(
 
 namespace ProcessLib
 {
-bool parseCompensateNonEquilibriumInitialResiduum(
-    BaseLib::ConfigTree const& config)
-{
-    auto const compensate_non_equilibrium_initial_residuum_ptr =
-        //! \ogs_file_param{prj__process_variables__process_variable__compensate_non_equilibrium_initial_residuum}
-        config.getConfigParameterOptional<bool>(
-            "compensate_non_equilibrium_initial_residuum");
-
-    return (compensate_non_equilibrium_initial_residuum_ptr &&
-            *compensate_non_equilibrium_initial_residuum_ptr);
-}
-
 ProcessVariable::ProcessVariable(
     BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
@@ -126,7 +115,9 @@ ProcessVariable::ProcessVariable(
           config.getConfigParameter<std::string>("initial_condition"),
           parameters, _n_components, &mesh)),
       _compensate_non_equilibrium_initial_residuum(
-          parseCompensateNonEquilibriumInitialResiduum(config))
+          //! \ogs_file_param{prj__process_variables__process_variable__compensate_non_equilibrium_initial_residuum}
+          config.getConfigParameter<bool>(
+              "compensate_non_equilibrium_initial_residuum", false))
 {
     DBUG("Constructing process variable {:s}", _name);
 
@@ -224,17 +215,18 @@ ProcessVariable::createBoundaryConditions(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     Process const& process,
     std::vector<std::reference_wrapper<ProcessVariable>> const&
-        all_process_variables_for_this_process)
+        all_process_variables_for_this_process,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     std::vector<std::unique_ptr<BoundaryCondition>> bcs;
     bcs.reserve(_bc_configs.size());
 
-    for (auto& config : _bc_configs)
+    for (auto const& config : _bc_configs)
     {
         auto bc = createBoundaryCondition(
             config, dof_table, _mesh, variable_id, integration_order,
             _shapefunction_order, parameters, process,
-            all_process_variables_for_this_process);
+            all_process_variables_for_this_process, media);
 #ifdef USE_PETSC
         if (bc == nullptr)
         {

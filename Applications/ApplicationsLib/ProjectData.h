@@ -1,4 +1,5 @@
 /**
+ * \file
  * \author Karsten Rink
  * \date   2010-08-25
  *
@@ -18,6 +19,7 @@
 #include <string>
 
 #include "BaseLib/ConfigTree-fwd.h"
+#include "BaseLib/ExportSymbol.h"
 #include "ChemistryLib/ChemicalSolverInterface.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
@@ -25,6 +27,10 @@
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/ProcessVariable.h"
+
+#ifdef OGS_EMBED_PYTHON_INTERPRETER
+#include <pybind11/embed.h>
+#endif
 
 namespace MeshLib
 {
@@ -82,6 +88,14 @@ public:
     }
 
     ProcessLib::TimeLoop& getTimeLoop() { return *_time_loop; }
+
+    MeshLib::Mesh* getMesh(std::string const& mesh_name) const;
+
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+    getMedia() const
+    {
+        return _media;
+    }
 
 private:
     /// Parses the process variables configuration and creates new variables for
@@ -144,9 +158,8 @@ private:
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
         _curves;
-};
 
-/// Parses a comma separated list of integers.
-/// Such lists occur in the medium definition in the OGS prj file.
-/// Error messages in this function refer to this specific purpose.
-std::vector<int> splitMaterialIdString(std::string const& material_id_string);
+#ifdef OGS_EMBED_PYTHON_INTERPRETER
+    std::optional<pybind11::scoped_interpreter> _py_scoped_interpreter;
+#endif
+};

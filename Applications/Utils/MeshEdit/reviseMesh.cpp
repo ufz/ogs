@@ -24,8 +24,8 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/MeshRevision.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/MeshRevision.h"
 
 int main(int argc, char* argv[])
 {
@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
 
     // revise the mesh
     INFO("Simplifying the mesh...");
-    MeshLib::MeshRevision const rev(const_cast<MeshLib::Mesh&>(*org_mesh));
+    MeshToolsLib::MeshRevision const rev(const_cast<MeshLib::Mesh&>(*org_mesh));
     unsigned int minDim =
         (minDim_arg.isSet() ? minDim_arg.getValue() : org_mesh->getDimension());
     std::unique_ptr<MeshLib::Mesh> new_mesh(

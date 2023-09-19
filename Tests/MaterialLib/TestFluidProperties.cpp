@@ -1,4 +1,5 @@
 /**
+ * \file
  *  \brief Test the creator of FluidProperties
  *
  *  \copyright
@@ -7,7 +8,6 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  *
  */
 

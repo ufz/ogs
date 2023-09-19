@@ -101,14 +101,14 @@ public:
 
     void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
-                  std::vector<double> const& local_xdot,
+                  std::vector<double> const& local_x_prev,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_rhs_data) override;
 
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
+                              std::vector<double> const& local_x_prev,
                               std::vector<double>& /*local_M_data*/,
                               std::vector<double>& /*local_K_data*/,
                               std::vector<double>& local_rhs_data,
@@ -116,7 +116,7 @@ public:
 
     void assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, int const process_id,
+        Eigen::VectorXd const& local_x_prev, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data) override;
@@ -130,16 +130,16 @@ public:
         {
             auto& ip_data = _ip_data[ip];
 
+            ParameterLib::SpatialPosition const x_position{
+                std::nullopt, _element.getID(), ip,
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<
+                        ShapeFunctionDisplacement,
+                        ShapeMatricesTypeDisplacement>(_element, ip_data.N_u))};
+
             /// Set initial stress from parameter.
             if (_process_data.initial_stress != nullptr)
             {
-                ParameterLib::SpatialPosition const x_position{
-                    std::nullopt, _element.getID(), ip,
-                    MathLib::Point3d(NumLib::interpolateCoordinates<
-                                     ShapeFunctionDisplacement,
-                                     ShapeMatricesTypeDisplacement>(
-                        _element, ip_data.N_u))};
-
                 ip_data.sigma_eff =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
                         DisplacementDim>((*_process_data.initial_stress)(
@@ -148,13 +148,19 @@ public:
                         x_position));
             }
 
+            double const t = 0;  // TODO (naumov) pass t from top
+            ip_data.solid_material.initializeInternalStateVariables(
+                t, x_position, *ip_data.material_state_variables);
+
             ip_data.pushBackState();
         }
     }
 
     void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              double const /*t*/,
-                              double const /*dt*/) override
+                              Eigen::VectorXd const& /*local_x_prev*/,
+                              double const /*t*/, double const /*dt*/,
+                              bool const /*use_monolithic_scheme*/,
+                              int const /*process_id*/) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -167,7 +173,7 @@ public:
 
     void computeSecondaryVariableConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_x_dot) override;
+        Eigen::VectorXd const& local_x_prev) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
@@ -244,7 +250,7 @@ public:
     int getMaterialID() const override;
 
     std::vector<double> getMaterialStateVariableInternalState(
-        std::function<BaseLib::DynamicSpan<double>(
+        std::function<std::span<double>(
             typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
                 MaterialStateVariables&)> const& get_values_span,
         int const& n_components) const override;
@@ -269,7 +275,7 @@ private:
      * @param t               Time
      * @param dt              Time increment
      * @param local_x         Nodal values of \f$x\f$ of an element.
-     * @param local_xdot      Nodal values of \f$\dot{x}\f$ of an element.
+     * @param local_x_prev    Nodal values of \f$x_{prev}\f$ of an element.
      * @param local_M_data    Mass matrix of an element, which takes the form of
      *                        \f$ \int N^T N\mathrm{d}\Omega\f$. Not used.
      * @param local_K_data    Laplacian matrix of an element, which takes the
@@ -281,7 +287,7 @@ private:
      */
     void assembleWithJacobianForDeformationEquations(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, std::vector<double>& local_M_data,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data);
 
@@ -301,7 +307,7 @@ private:
      * @param t               Time
      * @param dt              Time increment
      * @param local_x         Nodal values of \f$x\f$ of an element.
-     * @param local_xdot      Nodal values of \f$\dot{x}\f$ of an element.
+     * @param local_x_prev    Nodal values of \f$x_{prev}\f$ of an element.
      * @param local_M_data    Mass matrix of an element, which takes the form of
      *                        \f$ \int N^T N\mathrm{d}\Omega\f$. Not used.
      * @param local_K_data    Laplacian matrix of an element, which takes the
@@ -313,7 +319,7 @@ private:
      */
     void assembleWithJacobianForPressureEquations(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, std::vector<double>& local_M_data,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data);
 

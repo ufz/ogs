@@ -1,0 +1,233 @@
+@DSL Implicit;
+@Behaviour ModCamClay_semiExpl;
+@Author Christian Silbermann, Eric Simo, Miguel Mánica, Thomas Helfer, Thomas Nagel;
+@Date 10/01/2023;
+@Description{
+    The modified cam-clay model according to Callari (1998):
+    "A finite-strain cam-clay model in the framework of multiplicative elasto-plasticity"
+    but here in a consistent geometrically linear form (linearized volume ratio evolution)
+    semi-explicit due to explicit volume ratio update at the end of time step,
+    nonlinear hypoelastic behavior: pressure-dependent bulk modulus, constant Poisson ratio,
+    incremental formulation assuming constant elastic parameters over the time step,
+    normalized plastic flow direction, lower limit for a minimal pre-consolidation pressure,
+}
+
+/* Domain variables:  dt (time increment)
+  (Input)             theta (implicit time integration parameter)
+                      eto, deto (total strain (increment))
+                      eel, deel (elastic strain (increment))
+                      sig (stress)
+                      dlp (plastic increment)
+                      dpc (pre-consolidation pressure increment)
+
+   Output:            feel (strain residual depending on deel, dlp, dpc)
+                      flp  (yield function residual depending on deel, dpc)
+                      fpc  (pc evolution residual depending on deel, dlp, dpc, dphi)
+                      df..._dd... partial derivatives of the residuals
+ */
+
+@Theta 1.0;                     // time integration scheme
+@Epsilon 1e-14;                 // tolerance of local stress integration algorithm
+@MaximumNumberOfIterations 20;  // for local local stress integration algorithm
+@ModellingHypotheses{".+"};     // supporting all stress and strain states
+@Algorithm NewtonRaphson;       //_NumericalJacobian;_LevenbergMarquardt
+
+// material parameters
+@MaterialProperty real nu;
+@PhysicalBounds nu in [-1:0.5];
+nu.setGlossaryName("PoissonRatio");
+
+@MaterialProperty real M;
+@PhysicalBounds M in [0:*[;
+M.setEntryName("CriticalStateLineSlope");
+
+@MaterialProperty real ka;
+@PhysicalBounds ka in [0:*[;
+ka.setEntryName("SwellingLineSlope");
+
+@MaterialProperty real la;
+@PhysicalBounds la in [0:*[;
+la.setEntryName("VirginConsolidationLineSlope");
+
+@MaterialProperty stress pc_char;
+pc_char.setEntryName("CharacteristicPreConsolidationPressure");
+@PhysicalBounds pc_char in [0:*[;
+
+// Initial value of the volume ratio represents the operating point for the linearization.
+@MaterialProperty real v0;
+@PhysicalBounds v0 in [1:*[;
+v0.setEntryName("InitialVolumeRatio");
+
+// state variables (beside eel):
+// A "standard" state variable is a persistent state variable and an integration variable.
+@StateVariable real lp;
+lp.setGlossaryName("EquivalentPlasticStrain");
+
+// Reduced (normalized) pre-consolidation pressure for better integration performance
+@IntegrationVariable strain rpc;
+
+// An auxiliary state variable is a persistent variable but not an integration variable.
+@AuxiliaryStateVariable stress pc;
+pc.setEntryName("PreConsolidationPressure");
+
+@AuxiliaryStateVariable real epl_V;
+epl_V.setEntryName("PlasticVolumetricStrain");
+
+@AuxiliaryStateVariable real v;
+@PhysicalBounds v in [1:*[;
+v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - porosity)
+
+// local variables
+@LocalVariable StressStensor sig0;
+@LocalVariable StiffnessTensor dsig_deel;
+@LocalVariable bool withinElasticRange;
+@LocalVariable real M2;
+@LocalVariable real young;
+@LocalVariable real pc_min;
+@LocalVariable real rpc_min;
+
+@InitLocalVariables
+{
+    tfel::raise_if(la < ka, "Invalid parameters: la<ka");
+    M2 = M * M;
+
+    // update sig0
+    sig0 = sig;
+
+    // compute elastic stiffness (constant during time step)
+    const auto p = -trace(sig) / 3;
+    const auto K = v0 / ka * p;
+    const auto E = 3.0 * K * (1.0 - 2*nu);
+
+    young = E;
+    rpc = pc / young;
+    pc_min = 0.5e-8 * pc_char;
+    rpc_min = pc_min / young;
+
+    // stress derivative
+    dsig_deel = E / (1.0 + nu) * Stensor4::K() + K * Stensor4::IxI();
+
+    // elastic trial stress
+    const auto sig_el = sig0 + dsig_deel * deto;
+
+    // elastic estimators
+    const auto s_el = deviator(sig_el);
+    const auto q_el = std::sqrt(1.5 * s_el | s_el);
+    const auto p_el = -trace(sig_el) / 3;
+
+    const auto pc_el = pc;
+    const auto f_el = q_el * q_el + M2 * p_el * (p_el - pc_el);
+    withinElasticRange = f_el < 0;
+}
+
+@ComputeStress {
+    sig = sig0 + theta * dsig_deel * deel;
+}
+
+@Integrator
+{
+    constexpr const auto id2 = Stensor::Id();
+    constexpr const auto Pr4 = Stensor4::K();
+    const auto the = v0 / (la - ka);
+
+    // elastic range:
+    if (withinElasticRange)
+    {
+        feel -= deto;
+        return true;
+    }
+    // plastic range:
+    const auto epsr = strain(1.e-12);
+    // calculate invariants from current stress sig
+    const auto s = deviator(sig);
+    const auto q = std::sqrt(1.5 * s | s);
+    const auto p = -trace(sig) / 3;
+    // update the internal (state) variables (rpc holds the old value!)
+    const auto rpc_new = rpc + theta * drpc;
+    const auto pc_new = rpc_new * young;
+    // calculate the direction of plastic flow
+    const auto f = q * q + M2 * p * (p - pc_new);
+    const auto df_dp = M2 * (2 * p - pc_new);
+    const auto df_dsig = eval(3 * s - df_dp * id2 / 3);
+    auto norm = std::sqrt(6 * q * q + df_dp * df_dp / 3);  // = std::sqrt(df_dsig|df_dsig);
+    norm = std::max(norm, epsr * young);
+    const auto n = df_dsig / norm;
+    const auto ntr = -df_dp / norm;
+    // plastic strain and volumetric part
+    const auto depl = eval(dlp * n);
+    const auto deplV = trace(depl);
+
+    const auto fchar = pc_char * young;
+
+    // residual
+    feel = deel + depl - deto;
+    flp = f / fchar;
+    frpc = drpc + deplV * the * (rpc_new - rpc_min);
+
+    // auxiliary derivatives
+    const auto dnorm_dsig = (9 * s - 2 * M2 / 9 * df_dp * id2) / norm;
+    const auto dn_ddeel = (3 * Pr4 + 2 * M2 / 9 * (id2 ^ id2) - (n ^ dnorm_dsig)) / norm * dsig_deel * theta;
+    const auto dn_ddrpc = (id2 + df_dp * n / norm) * M2 / (3 * norm) * theta * young;
+    const auto dfrpc_ddeplV = the * (rpc_new - rpc_min);
+
+    // jacobian (all other parts are zero)
+    dfeel_ddeel += dlp * dn_ddeel;
+    dfeel_ddlp = n;
+    dfeel_ddrpc = dlp * dn_ddrpc;
+
+    dflp_ddeel = (df_dsig | dsig_deel) * theta / fchar;    // in case of problems with zero use:
+    dflp_ddlp  = strain(0);                         // (q<epsr) ? strain(1) : strain(0);
+    dflp_ddrpc = -M2 * p * theta / fchar * young;
+
+    dfrpc_ddlp = dfrpc_ddeplV * ntr;
+    dfrpc_ddeel = dfrpc_ddeplV * dlp * (id2 | dn_ddeel);
+    dfrpc_ddrpc = 1 + deplV * the * theta + dfrpc_ddeplV * dlp * trace(dn_ddrpc);
+}
+
+@ComputeFinalStress {
+    // updating the stress at the end of the time step
+    sig = sig0 + dsig_deel * deel;
+}
+
+// explicit treatment as long as change of v (or e) during time increment is small
+@UpdateAuxiliaryStateVariables
+{
+    pc += drpc * young;
+    const auto deelV = trace(deel);
+    const auto detoV = trace(deto);
+    epl_V += detoV - deelV;
+    v += v0 * detoV;
+}
+
+@AdditionalConvergenceChecks
+{
+    if (converged)
+    {
+        if (!withinElasticRange)
+        {
+            if (dlp < 0)
+            {
+                converged = false;
+                withinElasticRange = true;
+            }
+        }
+    }
+}
+
+@TangentOperator // because no Brick StandardElasticity
+{
+    if ((smt == ELASTIC) || (smt == SECANTOPERATOR))
+    {
+        Dt = dsig_deel;
+    }
+    else if (smt == CONSISTENTTANGENTOPERATOR)
+    {
+        Stensor4 Je;
+        getPartialJacobianInvert(Je);
+        Dt = dsig_deel * Je;
+    }
+    else
+    {
+        return false;
+    }
+}

@@ -33,9 +33,8 @@ struct SolidCompressibilityModel
               ElasticTangentStiffnessData<DisplacementDim> const& C_el_data,
               SolidCompressibilityData& out) const
     {
-        out.beta_SR =
-            (1 - biot_data.alpha) /
-            solid_material_.getBulkModulus(x_t.t, x_t.x, &C_el_data.C_el);
+        out.beta_SR = (1 - biot_data()) / solid_material_.getBulkModulus(
+                                              x_t.t, x_t.x, &C_el_data.C_el);
     }
 
 private:

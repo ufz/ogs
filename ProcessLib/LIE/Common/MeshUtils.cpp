@@ -264,7 +264,7 @@ void getFractureMatrixDataInMesh(
             vec_fracture_elements[frac_id];
         std::copy_if(all_fracture_elements.begin(), all_fracture_elements.end(),
                      std::back_inserter(vec_elements),
-                     [&](MeshLib::Element* e)
+                     [&](MeshLib::Element const* const e)
                      { return (*material_ids)[e->getID()] == frac_mat_id; });
         DBUG("-> found {:d} elements on the fracture {:d}", vec_elements.size(),
              frac_id);
@@ -275,7 +275,7 @@ void getFractureMatrixDataInMesh(
     for (unsigned frac_id = 0; frac_id < vec_fracture_mat_IDs.size(); frac_id++)
     {
         std::vector<MeshLib::Node*>& vec_nodes = vec_fracture_nodes[frac_id];
-        for (MeshLib::Element* e : vec_fracture_elements[frac_id])
+        for (MeshLib::Element const* const e : vec_fracture_elements[frac_id])
         {
             for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
             {
@@ -287,8 +287,7 @@ void getFractureMatrixDataInMesh(
             }
         }
         BaseLib::makeVectorUnique(vec_nodes,
-                                  [](MeshLib::Node* node1, MeshLib::Node* node2)
-                                  { return node1->getID() < node2->getID(); });
+                                  MeshLib::idsComparator<MeshLib::Node*>);
         DBUG("-> found {:d} nodes on the fracture {:d}", vec_nodes.size(),
              frac_id);
     }
@@ -307,7 +306,7 @@ void getFractureMatrixDataInMesh(
         auto const& fracture_elements = vec_fracture_elements[fid];
         std::vector<MeshLib::Element*> vec_ele;
         // first, collect matrix elements
-        for (MeshLib::Element* e : fracture_elements)
+        for (MeshLib::Element const* const e : fracture_elements)
         {
             // it is sufficient to iterate over base nodes, because they are
             // already connected to all neighbours
@@ -334,8 +333,7 @@ void getFractureMatrixDataInMesh(
             }
         }
         BaseLib::makeVectorUnique(vec_ele,
-                                  [](MeshLib::Element* e1, MeshLib::Element* e2)
-                                  { return e1->getID() < e2->getID(); });
+                                  MeshLib::idsComparator<MeshLib::Element*>);
 
         // second, append fracture elements
         std::copy(fracture_elements.begin(), fracture_elements.end(),

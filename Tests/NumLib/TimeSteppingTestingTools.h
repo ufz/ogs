@@ -1,4 +1,5 @@
 /**
+ * \file
  * \author Norihiro Watanabe
  * \date   2012-08-03
  *

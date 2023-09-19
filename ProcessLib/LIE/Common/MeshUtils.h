@@ -25,20 +25,20 @@ namespace LIE
 /**
  * get data about fracture and matrix elements/nodes from a mesh
  *
- * @param mesh  A mesh which includes fracture elements, i.e. lower-dimensional
+ * \param mesh  A mesh which includes fracture elements, i.e. lower-dimensional
  * elements. It is assumed that elements forming a fracture have a distinct
  * material ID.
- * @param vec_matrix_elements  a vector of matrix elements
- * @param vec_fracture_mat_IDs  fracture material IDs found in the mesh
- * @param vec_fracture_elements  a vector of fracture elements (grouped by
+ * \param vec_matrix_elements  a vector of matrix elements
+ * \param vec_fracture_mat_IDs  fracture material IDs found in the mesh
+ * \param vec_fracture_elements  a vector of fracture elements (grouped by
  * fracture IDs)
- * @param vec_fracture_matrix_elements  a vector of fracture elements and matrix
+ * \param vec_fracture_matrix_elements  a vector of fracture elements and matrix
  * elements connecting to the fracture (grouped by fracture IDs)
- * @param vec_fracture_nodes  a vector of fracture element nodes (grouped by
+ * \param vec_fracture_nodes  a vector of fracture element nodes (grouped by
  * fracture IDs)
- * @param vec_branch_nodeID_matIDs  a vector of branch node IDs found in the
+ * \param vec_branch_nodeID_matIDs  a vector of branch node IDs found in the
  * mesh (and corresponding fracture material IDs)
- * @param vec_junction_nodeID_matIDs  a vector of junction node IDs found in the
+ * \param vec_junction_nodeID_matIDs  a vector of junction node IDs found in the
  * mesh (and corresponding fracture material IDs)
  */
 void getFractureMatrixDataInMesh(

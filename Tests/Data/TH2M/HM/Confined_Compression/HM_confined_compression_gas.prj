@@ -274,6 +274,10 @@
                 <variable>gas_density</variable>
                 <variable>porosity</variable>
                 <variable>saturation</variable>
+                <variable>GasMassFlowRate</variable>
+                <variable>HeatFlowRate</variable>
+                <variable>LiquidMassFlowRate</variable>
+                <variable>NodalForces</variable>
             </variables>
         </output>
     </time_loop>

@@ -241,8 +241,8 @@ void TwoPhaseFlowWithPrhoMaterialProperties::calculateResidual(
     const double rho_h2_nonwet = pg * H2 / IdealGasConstant / T;
 
     // calculating residual
-    res(0) = calculateEquilibiumRhoWetLight(pg, Sw, rho_h2_wet);
-    res(1) = calculateSaturation(pl, X, Sw, rho_h2_wet, rho_h2_nonwet, T);
+    res[0] = calculateEquilibiumRhoWetLight(pg, Sw, rho_h2_wet);
+    res[1] = calculateSaturation(pl, X, Sw, rho_h2_wet, rho_h2_nonwet, T);
 }
 
 void TwoPhaseFlowWithPrhoMaterialProperties::calculateJacobian(

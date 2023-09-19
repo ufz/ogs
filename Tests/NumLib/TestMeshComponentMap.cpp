@@ -1,4 +1,5 @@
 /**
+ * \file
  * \author Norihiro Watanabe
  * \date   2013-04-16
  *
@@ -15,8 +16,9 @@
 #include <memory>
 #include <vector>
 
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSubset.h"
+#include "MeshLib/Utils/addPropertyToMesh.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "NumLib/DOF/MeshComponentMap.h"
 
 class NumLibMeshComponentMapTest : public ::testing::Test
@@ -40,7 +42,7 @@ public:
 
     static std::size_t const mesh_size = 9;
     std::unique_ptr<MeshLib::Mesh> const mesh{
-        MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size)};
+        MeshToolsLib::MeshGenerator::generateLineMesh(1.0, mesh_size)};
 
     // data component 0 and 1 are assigned to all nodes in the mesh
     static std::size_t const comp0_id = 0;

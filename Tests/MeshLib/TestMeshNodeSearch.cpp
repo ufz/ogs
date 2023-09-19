@@ -19,8 +19,8 @@
 #include "MeshGeoToolsLib/HeuristicSearchLength.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 using namespace MeshLib;
 
@@ -28,7 +28,7 @@ class MeshLibMeshNodeSearchInSimpleQuadMesh : public testing::Test
 {
 public:
     MeshLibMeshNodeSearchInSimpleQuadMesh()
-        : _quad_mesh(MeshGenerator::generateRegularQuadMesh(
+        : _quad_mesh(MeshToolsLib::MeshGenerator::generateRegularQuadMesh(
               _geometric_size, _number_of_subdivisions_per_direction))
     {
     }
@@ -45,7 +45,7 @@ class MeshLibMeshNodeSearchInSimpleHexMesh : public testing::Test
 {
 public:
     MeshLibMeshNodeSearchInSimpleHexMesh()
-        : _hex_mesh(MeshGenerator::generateRegularHexMesh(
+        : _hex_mesh(MeshToolsLib::MeshGenerator::generateRegularHexMesh(
               _geometric_size, _number_of_subdivisions_per_direction))
     {
     }

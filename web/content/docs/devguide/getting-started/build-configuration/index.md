@@ -11,7 +11,7 @@ weight = 4
 
 ## Overview
 
-Before compiling the developer has to choose a configuration of the software. OGS comes in lots of different flavours (e.g. serial / parallelized), can be build with optional features (e.g. with Python scripting support) or modules (e.g. MFront material models).
+Before compiling the developer has to choose a configuration of the software. OGS comes in lots of different flavours (e.g. serial / parallelized), can be build with optional features or modules (e.g. MFront material models).
 
 To separate source code from generated files such as compiled libraries, executables, test outputs and IDE projects we create build-directories. They can be placed arbitrarily. You can have as many build-directories as you like for e.g. different configurations but they will all use one source code directory. A typically directory structure:
 
@@ -48,7 +48,7 @@ We provide CMake configuration presets defined in [CMakePresets.json](https://gi
 In the source directory run `cmake` with a preset:
 
 ```bash
-# Usage: cmake --preset=[preset-name]
+# Usage: cmake --preset [preset-name]
 cmake --preset release
 ```
 
@@ -97,16 +97,16 @@ You can create a `CMakeUserPresets.json` file in the root source directory with 
 To use the Ninja build tool you need to configure in the Visual Studio command line. In the Start menu under *Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}* you find a application link to *x64 Native Tools Command Prompt for VS {{< dataFile "versions.minimum_version.msvc.year" >}}*. This starts a command line setup for Visual Studio 64-bit. Now you can use a Ninja preset:
 
 ```bash
-cmake --preset=release
+cmake --preset release
 ```
 
-#### <i class="far fa-exclamation-triangle"></i> Multi-configuration with Conan and Visual Studio
+#### <i class="far fa-exclamation-triangle"></i> Multi-configuration with Visual Studio
 
-With Conan one build directory corresponds to one configuration. If you want to have e.g. a release and a debug build you need to create two build directories. This is nothing new to Linux / GCC user but differs to Visual Studios default behavior having just one build-folder / project with different configurations. A typical Visual Studio setup with both Release and Debug configurations would be initialized as follows:
+OGS requires you to have one build directory which corresponds to one configuration. If you want to have e.g. a release and a debug build you need to create two build directories. This is nothing new to Linux / GCC user but differs to Visual Studios default behavior having just one build-folder / project with different configurations. A typical Visual Studio setup with both Release and Debug configurations would be initialized as follows:
 
-```bash
-cmake --preset=msvc-release
-cmake --preset=msvc-debug
+```powershell
+cmake --preset msvc-release # creates ../build/msvc-release/OGS.sln
+cmake --preset msvc-debug   # creates ../build/msvc-debug/OGS.sln
 ```
 
 Please also note that in Visual Studio you have to choose the correct configuration (i.e. when opening the solution-file in the release-folder you have to switch the Visual Studio configuration to **Release**)!
@@ -146,7 +146,7 @@ CC=mpicc CXX=mpic++ cmake ../ogs -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_P
 
 <div class='win'>
 
-CMake comes with a graphical tool called **cmake-gui**. You can find it in the **Windows Start Menu**. First you need to set the source and build directory. Then click **Configure**. Now choose the generator to be used (e.g. **Visual Studio {{< dataFile "versions.minimum_version.msvc.number" >}} {{< dataFile "versions.minimum_version.msvc.year" >}}** for Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}). Now choose your desired configuration options by toggling the corresponding checkboxes. Click **Configure** again. Click **Configure** often enough until the **Generate**-button becomes visible. Pressing **Generate** will finally generate the project files inside the chosen build directory.
+CMake comes with a graphical tool called `cmake-gui`. You can find it in the **Windows Start Menu**. First you need to set the source and build directory. Then click **Configure**. Now choose the generator to be used (e.g. **Visual Studio {{< dataFile "versions.minimum_version.msvc.number" >}} {{< dataFile "versions.minimum_version.msvc.year" >}}** for Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}). Now choose your desired configuration options by toggling the corresponding checkboxes. Click **Configure** again. Click **Configure** often enough until the **Generate**-button becomes visible. Pressing **Generate** will finally generate the project files inside the chosen build directory.
 
 </div>
 
@@ -155,7 +155,7 @@ CMake comes with a graphical tool called **cmake-gui**. You can find it in the *
 A more convenient way of running CMake on the command line is to use the `ccmake` tool. This is a shell tool but with some graphical user interface. To use it just run `ccmake` instead of `cmake`:
 
 ```bash
-ccmake --preset=release
+ccmake --preset release
 ```
 
 First press <kbd>C</kbd> to **Configure**. You are now presented the available configuration options. You can navigate in the list with the cursor keys and toggle / alter options with <kbd>Enter</kbd>. You may also press <kbd>T</kbd> to toggle (previously hidden) advanced options. Press <kbd>C</kbd> again until the **Generate**-option becomes visible. Press <kbd>G</kbd> to generate the project files and exit `ccmake`.

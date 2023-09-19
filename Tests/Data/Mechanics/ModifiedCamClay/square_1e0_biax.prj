@@ -10,16 +10,19 @@
             <integration_order>2</integration_order>
             <constitutive_relation>
                 <type>MFront</type>
-                <behaviour>ModCamClay_semiExplParaInit</behaviour>
+                <behaviour>ModCamClay_semiExpl_constE</behaviour>
                 <material_properties>
                     <material_property name="YoungModulus" parameter="YoungModulus"/>
                     <material_property name="PoissonRatio" parameter="PoissonRatio"/>
                     <material_property name="CriticalStateLineSlope" parameter="CriticalStateLineSlope"/>
                     <material_property name="SwellingLineSlope" parameter="SwellingLineSlope"/>
                     <material_property name="VirginConsolidationLineSlope" parameter="VirginConsolidationLineSlope"/>
-                    <material_property name="InitialPreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
-                    <material_property name="InitialPorosity" parameter="InitialPorosity"/>
+                    <material_property name="CharacteristicPreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
                 </material_properties>
+                <initial_values>
+                    <state_variable name="PreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
+                    <state_variable name="VolumeRatio" parameter="InitialVolumeRatio"/>
+                </initial_values>
             </constitutive_relation>
             <solid_density>rho_sr</solid_density>
             <specific_body_force>0 0</specific_body_force>
@@ -33,7 +36,6 @@
                 <secondary_variable internal_name="EquivalentPlasticStrain" output_name="EquivalentPlasticStrain"/>
                 <secondary_variable internal_name="PreConsolidationPressure" output_name="PreConsolidationPressure"/>
                 <secondary_variable internal_name="VolumeRatio" output_name="VolumeRatio"/>
-                <secondary_variable internal_name="Porosity" output_name="Porosity"/>
                 <secondary_variable internal_name="PlasticVolumetricStrain" output_name="PlasticVolumetricStrain"/>
             </secondary_variables>
         </process>
@@ -74,6 +76,7 @@
             <variables>
                 <variable>displacement</variable>
                 <variable>sigma</variable>
+                <variable>PreConsolidationPressure</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
@@ -111,9 +114,9 @@
             <value>30e6</value><!--Pa-->
         </parameter>
         <parameter>
-            <name>InitialPorosity</name>
+            <name>InitialVolumeRatio</name>
             <type>Constant</type>
-            <value>0.44</value>
+            <value>1.78571428571428571429</value> <!--= 1/(1-0.44)-->
         </parameter>
         <!-- Initial and boundary values -->
         <parameter>
@@ -224,26 +227,26 @@
         <vtkdiff>
             <file>square_1e0_biax_ts_59_t_0.508497.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>6e-6</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
+            <absolute_tolerance>5e-4</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>square_1e0_biax_ts_109_t_1.000000.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>2e-5</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
+            <absolute_tolerance>5e-4</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <!--material-specific internal variable-->
         <vtkdiff>
             <file>square_1e0_biax_ts_59_t_0.508497.vtu</file>
             <field>PreConsolidationPressure</field>
-            <absolute_tolerance>1e-14</absolute_tolerance>
+            <absolute_tolerance>5e-4</absolute_tolerance>
             <relative_tolerance>2e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>square_1e0_biax_ts_109_t_1.000000.vtu</file>
             <field>PreConsolidationPressure</field>
-            <absolute_tolerance>1e-14</absolute_tolerance>
+            <absolute_tolerance>5e-4</absolute_tolerance>
             <relative_tolerance>2e-15</relative_tolerance>
         </vtkdiff>
     </test_definition>

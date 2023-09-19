@@ -4,15 +4,14 @@ import matplotlib.pyplot as plt
 
 
 # Material constants
-E = 150.0e3  # Young's modulus
+E = 150.0e3  # Young's modulus in MPa
 nu = 0.3  # Poisson ratio
 la = 0.0077  # slope of the virgin consolidation line
 ka = 0.00066  # slope of the swelling line
 M = 1.5  # slope of the critical state line (CSL)
-v0 = 1.788  # initial volume ratio
-pamb = 1e-3  # Ambient pressure
-pc0 = 30  # Initial pre-consolidation pressure
-phi0 = 1 - 1 / v0  # Initial porosity
+v0 = 1.788  # initial volume ratio => initial porosity = 1 - 1/v0
+pamb = 1e-3  # Ambient pressure in MPa
+pc0 = 30  # Initial pre-consolidation pressure in MPa
 
 # Loading constants
 p = pc0 / 2  # Mpa, prescribed hydrostatic pressure
@@ -69,7 +68,7 @@ for k in range(runs):
     m = mtest.MTest()
     mtest.setVerboseMode(mtest.VerboseLevel.VERBOSE_QUIET)
     m.setMaximumNumberOfSubSteps(10)
-    m.setBehaviour("generic", "src/libBehaviour.so", "ModCamClay_semiExplParaInit")
+    m.setBehaviour("generic", "src/libBehaviour.so", "ModCamClay_semiExpl_constE")
 
     m.setExternalStateVariable("Temperature", 293.15)
     m.setImposedStress("SXX", {0: 0, 0.5: -p})
@@ -84,12 +83,9 @@ for k in range(runs):
     m.setMaterialProperty("CriticalStateLineSlope", M)
     m.setMaterialProperty("SwellingLineSlope", ka)
     m.setMaterialProperty("VirginConsolidationLineSlope", la)
-    # only for the ParaInit code version!
-    m.setMaterialProperty("InitialPreConsolidationPressure", pc0)
-    m.setMaterialProperty("InitialPorosity", phi0)
+    m.setMaterialProperty("CharacteristicPreConsolidationPressure", pc0)
 
     m.setInternalStateVariableInitialValue("PreConsolidationPressure", pc0)
-    m.setInternalStateVariableInitialValue("Porosity", phi0)
     m.setInternalStateVariableInitialValue("VolumeRatio", v0)
 
     s = mtest.MTestCurrentState()
@@ -100,7 +96,7 @@ for k in range(runs):
 
     # initialize output lists (other than zero)
     results[2][k][0] = v0
-    results[3][k][0] = phi0
+    results[3][k][0] = 1 - 1 / v0
     results[6][k][0] = pc0
 
     # calculate the initial yield surface in the p-q-space
@@ -120,8 +116,8 @@ for k in range(runs):
         shearStrain = s.e1[3]
         shearStress = s.s1[3]
         eplEquiv = s.getInternalStateVariableValue("EquivalentPlasticStrain")
-        porosity = s.getInternalStateVariableValue("Porosity")
         volRatio = s.getInternalStateVariableValue("VolumeRatio")
+        porosity = 1 - 1 / volRatio
         pc = s.getInternalStateVariableValue("PreConsolidationPressure")
         eplV = s.getInternalStateVariableValue("PlasticVolumetricStrain")
 
@@ -155,7 +151,7 @@ ax.set_ylabel("volume ratio")
 # ax.set_ylim(1.7875,1.788)
 ax.grid()
 ax.legend()
-fig.savefig("out/ModCamClay_ParamStudy_VolumeRatio.pdf")
+fig.savefig("ModCamClay_ParamStudy_VolumeRatio.pdf")
 
 fig, ax = plt.subplots()
 ax.set_title("Porosity over time")
@@ -165,7 +161,7 @@ ax.set_xlabel("$t$ / s")
 ax.set_ylabel("$\phi$")
 ax.grid()
 ax.legend()
-fig.savefig("out/ModCamClay_ParamStudy_Porosity.pdf")
+fig.savefig("ModCamClay_ParamStudy_Porosity.pdf")
 
 fig, ax = plt.subplots()
 # ax.set_title('Shear stress over shear strain')
@@ -175,7 +171,7 @@ ax.set_xlabel("$\epsilon_{xy}$")
 ax.set_ylabel("$\sigma_{xy}$ / MPa")
 ax.grid()
 ax.legend()
-fig.savefig("out/ModCamClay_ParamStudy_ShearCurves.pdf")
+fig.savefig("ModCamClay_ParamStudy_ShearCurves.pdf")
 
 fig, ax = plt.subplots()
 # ax.set_title('Plastic volumetric strain over shear strain')
@@ -187,7 +183,7 @@ ax.set_xlabel("$\epsilon_{xy}$")
 ax.set_ylabel("${\epsilon}_p^V$ / %")
 ax.grid()
 ax.legend()
-fig.savefig("out/ModCamClay_ParamStudy_eplVCurves.pdf")
+fig.savefig("ModCamClay_ParamStudy_eplVCurves.pdf")
 
 fig, ax = plt.subplots()
 ax.set_title("Hydrostatic pressure and von-Mises stress over time")
@@ -202,7 +198,7 @@ for k in range(runs):
 ax.set_xlabel("$t$ / s")
 ax.set_ylabel("$q, p$ / MPa")
 ax.grid()
-fig.savefig("out/ModCamClay_ParamStudy_qpCurves.pdf")
+fig.savefig("ModCamClay_ParamStudy_qpCurves.pdf")
 
 fig, ax = plt.subplots()
 ax.set_title("Hydrostatic pressure and pre-consolidation pressure over time")
@@ -218,7 +214,7 @@ ax.set_xlabel("$t$ / s")
 ax.set_ylabel("$p, p_c$ / MPa")
 ax.grid()
 ax.legend(loc="upper left")
-fig.savefig("out/ModCamClay_ParamStudy_PressCurves.pdf")
+fig.savefig("ModCamClay_ParamStudy_PressCurves.pdf")
 
 fig, ax = plt.subplots()
 # ax.set_title('Values of p and q at the initial and final yield surfaces')
@@ -238,7 +234,7 @@ ax.set_position([chartBox.x0, chartBox.y0, chartBox.width * 0.85, chartBox.heigh
 ax.legend(loc="upper center", bbox_to_anchor=(1.15, 0.80))
 # ax.legend()
 # ax.legend(loc='upper left')
-fig.savefig("out/ModCamClay_ParamStudy_YieldSurface.pdf")
+fig.savefig("ModCamClay_ParamStudy_YieldSurface.pdf")
 
 if variedParameter == "p":
     fig, ax = plt.subplots()
@@ -250,7 +246,7 @@ if variedParameter == "p":
     ax.set_ylabel("$q$ / MPa")
     ax.grid()
     ax.legend()
-    fig.savefig("out/ModCamClay_ParamStudy_CSL.pdf")
+    fig.savefig("ModCamClay_ParamStudy_CSL.pdf")
 
 
 plt.show()

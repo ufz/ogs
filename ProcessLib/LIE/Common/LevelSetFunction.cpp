@@ -11,8 +11,8 @@
 
 #include <boost/math/special_functions/sign.hpp>
 #include <numeric>
+#include <range/v3/algorithm/contains.hpp>
 
-#include "BaseLib/Algorithm.h"
 #include "BranchProperty.h"
 #include "FractureProperty.h"
 #include "JunctionProperty.h"
@@ -126,7 +126,7 @@ std::vector<double> duGlobalEnrichments(
     for (unsigned i = 0; i < junction_props.size(); i++)
     {
         auto const* junction = junction_props[i];
-        if (!BaseLib::contains(junction->fracture_ids, this_frac.fracture_id))
+        if (!ranges::contains(junction->fracture_ids, this_frac.fracture_id))
         {
             continue;
         }

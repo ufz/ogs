@@ -21,30 +21,15 @@
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
-#include "IntegrationPointDataTools.h"
 #include "MeshLib/Elements/Elements.h"
+#include "MeshLib/IO/NodeData.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Utils/IntegrationPointWriter.h"
+#include "MeshToolsLib//IntegrationPointDataTools.h"
 
 namespace ApplicationUtils
 {
-struct NodeStruct
-{
-    NodeStruct(NodeWiseMeshPartitioner::IntegerType const id_,
-               double const x_,
-               double const y_,
-               double const z_)
-        : id(id_), x(x_), y(y_), z(z_)
-    {
-    }
-
-    NodeWiseMeshPartitioner::IntegerType id;
-    double x;
-    double y;
-    double z;
-};
-
 std::size_t Partition::numberOfMeshItems(
     MeshLib::MeshItemType const item_type) const
 {
@@ -68,7 +53,7 @@ std::size_t Partition::numberOfMeshItems(
 std::ostream& Partition::writeNodes(
     std::ostream& os, std::vector<std::size_t> const& global_node_ids) const
 {
-    std::vector<NodeStruct> nodes_buffer;
+    std::vector<MeshLib::IO::NodeData> nodes_buffer;
     nodes_buffer.reserve(nodes.size());
 
     for (const auto* node : nodes)
@@ -78,7 +63,7 @@ std::ostream& Partition::writeNodes(
                                   coords[1], coords[2]);
     }
     return os.write(reinterpret_cast<const char*>(nodes_buffer.data()),
-                    sizeof(NodeStruct) * nodes_buffer.size());
+                    sizeof(MeshLib::IO::NodeData) * nodes_buffer.size());
 }
 
 /// Calculate the total number of integer variables of an element vector. Each
@@ -398,7 +383,8 @@ std::size_t copyFieldPropertyDataToPartitions(
         for (auto const element : elements)
         {
             int const number_of_element_field_data =
-                getNumberOfElementIntegrationPoints(ip_meta_data, *element) *
+                MeshToolsLib::getNumberOfElementIntegrationPoints(ip_meta_data,
+                                                                  *element) *
                 n_components;
             // The original element ID is not changed.
             auto const element_id = element->getID();
@@ -446,7 +432,8 @@ void setIntegrationPointNumberOfPartition(MeshLib::Properties const& properties,
             for (auto const element : elements)
             {
                 int const number_of_integration_points =
-                    getNumberOfElementIntegrationPoints(ip_meta_data, *element);
+                    MeshToolsLib::getNumberOfElementIntegrationPoints(
+                        ip_meta_data, *element);
                 counter += number_of_integration_points;
             }
             return counter;
@@ -491,8 +478,9 @@ bool copyPropertyVector(
             partitioned_pv_size = pv->size() * partitions.size();
         }
 
-        element_ip_data_offsets = getIntegrationPointDataOffsetsOfMeshElements(
-            global_mesh_elements, *pv, properties);
+        element_ip_data_offsets =
+            MeshToolsLib::getIntegrationPointDataOffsetsOfMeshElements(
+                global_mesh_elements, *pv, properties);
     }
 
     auto partitioned_pv = partitioned_properties.createNewPropertyVector<T>(
@@ -667,7 +655,8 @@ void checkFieldPropertyVectorSize(
         for (auto const element : global_mesh_elements)
         {
             int const number_of_integration_points =
-                getNumberOfElementIntegrationPoints(ip_meta_data, *element);
+                MeshToolsLib::getNumberOfElementIntegrationPoints(ip_meta_data,
+                                                                  *element);
             number_of_total_integration_points += number_of_integration_points;
         }
 
@@ -702,6 +691,34 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
     checkFieldPropertyVectorSize(_mesh->getElements(), _mesh->getProperties());
 
     _partitioned_properties = partitionProperties(_mesh, _partitions);
+
+    renumberBulkIdsProperty(_partitions, _partitioned_properties);
+}
+
+void NodeWiseMeshPartitioner::renumberBulkIdsProperty(
+    std::vector<Partition> const& partitions,
+    MeshLib::Properties& partitioned_properties)
+{
+    auto const bulk_node_ids_string =
+        MeshLib::getBulkIDString(MeshLib::MeshItemType::Node);
+    if (partitioned_properties.hasPropertyVector(bulk_node_ids_string))
+    {
+        renumberBulkNodeIdsProperty(
+            partitioned_properties.getPropertyVector<std::size_t>(
+                bulk_node_ids_string, MeshLib::MeshItemType::Node, 1),
+            partitions);
+    }
+    auto const bulk_element_ids_string =
+        MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell);
+    if (partitioned_properties.hasPropertyVector<std::size_t>(
+            static_cast<std::string>(bulk_element_ids_string),
+            MeshLib::MeshItemType::Cell))
+    {
+        renumberBulkElementIdsProperty(
+            partitioned_properties.getPropertyVector<std::size_t>(
+                bulk_element_ids_string, MeshLib::MeshItemType::Cell, 1),
+            partitions);
+    }
 }
 
 void NodeWiseMeshPartitioner::renumberBulkNodeIdsProperty(
@@ -1008,7 +1025,7 @@ ConfigOffsets incrementConfigOffsets(ConfigOffsets const& oldConfig,
 {
     return {
         static_cast<long>(oldConfig.node_rank_offset +
-                          offsets.node * sizeof(NodeStruct)),
+                          offsets.node * sizeof(MeshLib::IO::NodeData)),
         // Offset the ending entry of the element integer variables of
         // the non-ghost elements of this partition in the vector of elem_info.
         static_cast<long>(oldConfig.element_rank_offset +

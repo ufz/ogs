@@ -13,7 +13,14 @@
 #include "BaseLib/ConfigTree-fwd.h"
 #include "OutputConfig.h"
 
+namespace MeshLib
+{
+class Mesh;
+}
+
 namespace ProcessLib
 {
-OutputConfig createOutputConfig(const BaseLib::ConfigTree& config);
+OutputConfig createOutputConfig(
+    const BaseLib::ConfigTree& config,
+    std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes);
 }

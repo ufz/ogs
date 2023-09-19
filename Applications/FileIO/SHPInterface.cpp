@@ -9,10 +9,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
- * @file SHPInterface.cpp
- * @date 25/01/2010
- * @author Karsten Rink
  */
 
 #include "SHPInterface.h"
@@ -23,6 +19,7 @@
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polyline.h"
+#include "GeoLib/Station.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tri.h"

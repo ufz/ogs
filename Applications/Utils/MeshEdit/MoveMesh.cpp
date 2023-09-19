@@ -1,7 +1,6 @@
 /**
- * @file MoveMesh.cpp
- * @date Jan 17, 2014
- * @brief
+ * \file
+ * \date Jan 17, 2014
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
@@ -24,8 +23,8 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/moveMeshNodes.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/moveMeshNodes.h"
 
 int main(int argc, char* argv[])
 {
@@ -96,8 +95,8 @@ int main(int argc, char* argv[])
          displacement[0],
          displacement[1],
          displacement[2]);
-    MeshLib::moveMeshNodes(mesh->getNodes().begin(), mesh->getNodes().end(),
-                           displacement);
+    MeshToolsLib::moveMeshNodes(mesh->getNodes().begin(),
+                                mesh->getNodes().end(), displacement);
 
     std::string out_fname(mesh_out_arg.getValue());
     if (out_fname.empty())

@@ -1,8 +1,8 @@
 /**
+ * \file
  * \author Norihiro Watanabe
  * \date   2014-03-14
  *
- * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -35,7 +35,7 @@ MeshNodesAlongSurface::MeshNodesAlongSurface(MeshLib::Mesh const& mesh,
     // loop over all nodes
     for (std::size_t i = 0; i < n_nodes; i++)
     {
-        auto* node = mesh_nodes[i];
+        auto const* const node = mesh_nodes[i];
         if (!sfc.isPntInBoundingVolume(*node, epsilon_radius))
         {
             continue;

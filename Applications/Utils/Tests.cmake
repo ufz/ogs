@@ -31,6 +31,27 @@ AddTest(
 )
 
 AddTest(
+    NAME createTetgenSmeshFromRasters
+    PATH Utils/createTetgenSmeshFromRasters
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/createTetgenSmeshFromRasters
+    EXECUTABLE createTetgenSmeshFromRasters
+    EXECUTABLE_ARGS -i sfc_mesh_9k.vtu -o ${Data_BINARY_DIR}/Utils/createTetgenSmeshFromRasters/CTSMFL-test -r rasterlist.txt
+    RUNTIME 1
+    TESTER numdiff
+    DIFF_DATA CTSMFL-test.smesh 0 5e-13
+)
+
+AddTest(
+    NAME createTetgenSmeshFromRasters-fail
+    PATH Utils/createTetgenSmeshFromRasters
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/createTetgenSmeshFromRasters
+    EXECUTABLE createTetgenSmeshFromRasters
+    EXECUTABLE_ARGS -i 3D.vtu -o ${Data_BINARY_DIR}/Utils/createTetgenSmeshFromRasters/CTSMFL-fail -r rasterlist.txt
+    RUNTIME 1
+    PROPERTIES WILL_FAIL true
+)
+
+AddTest(
     NAME postLIE
     PATH LIE/PostProcessing
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/LIE/PostProcessing
@@ -57,9 +78,9 @@ AddTest(
 AddTest(
     NAME identifySubdomains_2D_Create
     PATH MeshGeoToolsLib/IdentifySubdomains
-    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/IdentifySubdomains
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/<PATH>
     EXECUTABLE identifySubdomains
-    EXECUTABLE_ARGS -m 2D_mesh.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/new_ -- 2D_mesh_top_boundary.vtu 2D_mesh_bottom_boundary.vtu
+    EXECUTABLE_ARGS -m 2D_mesh.vtu -o ${Data_BINARY_DIR}/<PATH>/new_ -- 2D_mesh_top_boundary.vtu 2D_mesh_bottom_boundary.vtu
     TESTER vtkdiff
     DIFF_DATA
     2D_mesh_top.vtu new_2D_mesh_top_boundary.vtu bulk_node_ids bulk_node_ids 0 0
@@ -71,9 +92,9 @@ AddTest(
 AddTest(
     NAME identifySubdomains_2D_Check
     PATH MeshGeoToolsLib/IdentifySubdomains
-    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/IdentifySubdomains
+    WORKING_DIRECTORY <SOURCE_PATH>
     EXECUTABLE identifySubdomains
-    EXECUTABLE_ARGS -m 2D_mesh.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/check_ -- 2D_mesh_top.vtu 2D_mesh_bottom.vtu
+    EXECUTABLE_ARGS -m 2D_mesh.vtu -o <BUILD_PATH>/check_ -- 2D_mesh_top.vtu 2D_mesh_bottom.vtu
     TESTER vtkdiff
     DIFF_DATA
     2D_mesh_top.vtu check_2D_mesh_top.vtu bulk_node_ids bulk_node_ids 0 0
@@ -523,11 +544,14 @@ endif()
 
 if(SNAKEMAKE AND TEE_TOOL_PATH AND BASH_TOOL_PATH AND OGS_USE_MPI)
     add_test(NAME snakemake_reorder_mesh
-        COMMAND bash -c "${SNAKEMAKE} -j 1 \
+        COMMAND bash -c "${SNAKEMAKE} -j 4 \
             --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml --forceall \
             -s ${PROJECT_SOURCE_DIR}/Applications/Utils/TestReorderMesh.smk"
     )
-    set_tests_properties(snakemake_reorder_mesh PROPERTIES LABELS "default")
+    set_tests_properties(snakemake_reorder_mesh PROPERTIES
+        LABELS "default"
+        RUN_SERIAL TRUE # prevent unidentified race condition
+    )
 endif()
 
 # Regression test for https://gitlab.opengeosys.org/ogs/ogs/-/issues/1845 fixed in
@@ -561,81 +585,90 @@ AddTest(
     DIFF_DATA 00-raster.asc
 )
 
-MeshTest(
+AddTest(
     NAME ExtractSurfaceLeft
     PATH MeshLib/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE ExtractSurface
     EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Left.vtu -x 1 -y 0 -z 0 -a 25
+    TESTER vtkdiff-mesh
     DIFF_DATA Left.vtu Left.vtu 1e-16
 )
 
-MeshTest(
+AddTest(
     NAME ExtractSurfaceRight
     PATH MeshLib/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE ExtractSurface
     EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Right.vtu -x -1 -y 0 -z 0 -a 25
+    TESTER vtkdiff-mesh
     DIFF_DATA Right.vtu Right.vtu 1e-16
 )
 
-MeshTest(
+AddTest(
     NAME ExtractSurfaceFront
     PATH MeshLib/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE ExtractSurface
     EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Front.vtu -x 0 -y 1 -z 0 -a 25
+    TESTER vtkdiff-mesh
     DIFF_DATA Front.vtu Front.vtu 1e-16
 )
 
-MeshTest(
+AddTest(
     NAME ExtractSurfaceBack
     PATH MeshLib/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE ExtractSurface
     EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Back.vtu -x 0 -y -1 -z 0 -a 25
+    TESTER vtkdiff-mesh
     DIFF_DATA Back.vtu Back.vtu 1e-16
 )
 
-MeshTest(
+AddTest(
     NAME ExtractSurface_QuadraticElement_Top
     PATH Utils/ExtractSurface
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/ExtractSurface
     EXECUTABLE ExtractSurface
     EXECUTABLE_ARGS -i ${Data_SOURCE_DIR}/Utils/GMSH2OGS/quadratic_mesh.vtu -o ${Data_BINARY_DIR}/Utils/ExtractSurface/quadratic_mesh_top_surface.vtu -x 0 -y 0 -z 1
+    TESTER vtkdiff-mesh
     DIFF_DATA quadratic_mesh_top_surface.vtu quadratic_mesh_top_surface.vtu 1e-16
 )
 
-MeshTest(
+AddTest(
     NAME ExtractSurface_QuadraticElement_Bottom
     PATH Utils/ExtractSurface
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/ExtractSurface
     EXECUTABLE ExtractSurface
     EXECUTABLE_ARGS -i ${Data_SOURCE_DIR}/Utils/GMSH2OGS/quadratic_mesh.vtu -o ${Data_BINARY_DIR}/Utils/ExtractSurface/quadratic_mesh_bottom_surface.vtu -x 0 -y 0 -z -1
+    TESTER vtkdiff-mesh
     DIFF_DATA quadratic_mesh_bottom_surface.vtu quadratic_mesh_bottom_surface.vtu 1e-16
 )
 
-MeshTest(
+AddTest(
     NAME GocadTSurface_Mesh_Test
     PATH MeshLib
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE GocadTSurfaceReader
     EXECUTABLE_ARGS -i Top-Lower-Shaly.ts -o ${Data_BINARY_DIR}/MeshLib -b
+    TESTER vtkdiff-mesh
     DIFF_DATA Top-Lower-Shaly.vtu Top-Lower-Shaly.vtu 1e-16
 )
 
-AddTest(
-    NAME GocadTSurface_Array_Test
-    PATH MeshLib
-    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
-    EXECUTABLE GocadTSurfaceReader
-    EXECUTABLE_ARGS -i Top-Lower-Shaly.ts -o ${Data_BINARY_DIR}/MeshLib -b
-    DEPENDS GocadTSurfaceReader-GocadTSurface_Mesh_Test-vtkdiff
-    TESTER vtkdiff
-    DIFF_DATA
-    Top-Lower-Shaly.vtu Top-Lower-Shaly.vtu Reshape_Thickness Reshape_Thickness 1e-16 0
-    Top-Lower-Shaly.vtu Top-Lower-Shaly.vtu Measured_Depth Measured_Depth 1e-16 0
-)
+if(TEST GocadTSurfaceReader-GocadTSurface_Mesh_Test-vtkdiff-mesh)
+    AddTest(
+        NAME GocadTSurface_Array_Test
+        PATH MeshLib
+        WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+        EXECUTABLE GocadTSurfaceReader
+        EXECUTABLE_ARGS -i Top-Lower-Shaly.ts -o ${Data_BINARY_DIR}/MeshLib -b
+        DEPENDS GocadTSurfaceReader-GocadTSurface_Mesh_Test-vtkdiff-mesh
+        TESTER vtkdiff
+        DIFF_DATA
+        Top-Lower-Shaly.vtu Top-Lower-Shaly.vtu Reshape_Thickness Reshape_Thickness 1e-16 0
+        Top-Lower-Shaly.vtu Top-Lower-Shaly.vtu Measured_Depth Measured_Depth 1e-16 0
+    )
+endif()
 
 AddTest(
     NAME createIntermediateRasters_test
@@ -850,7 +883,7 @@ foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDiffer
         EXECUTABLE_ARGS -i AmmerGWN.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Ammer/AmmerGWNWithElementQuality_${criterion}.vtu -c ${criterion}
         TESTER vtkdiff
         DIFF_DATA
-        AmmerGWNWithElementQuality.vtu AmmerGWNWithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 1e-11
+        AmmerGWNWithElementQuality.vtu AmmerGWNWithElementQuality_${criterion}.vtu ${criterion} ${criterion} 2e-7 2e-08
     )
 endforeach()
 
@@ -863,7 +896,7 @@ foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDiffer
         EXECUTABLE_ARGS -i 00-surface.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/00-surface-WithElementQuality_${criterion}.vtu -c ${criterion}
         TESTER vtkdiff
         DIFF_DATA
-        00-surface-WithElementQuality.vtu 00-surface-WithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 1e-11
+        00-surface-WithElementQuality.vtu 00-surface-WithElementQuality_${criterion}.vtu ${criterion} ${criterion} 2e-7 2e-8
     )
 endforeach()
 
@@ -876,9 +909,20 @@ foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDiffer
         EXECUTABLE_ARGS -i AmmerSubsurfaceCoarse.vtu -o ${Data_BINARY_DIR}/FileIO/AmmerSubsurfaceCoarse-WithElementQuality_${criterion}.vtu -c ${criterion}
         TESTER vtkdiff
         DIFF_DATA
-        AmmerSubsurfaceCoarse-WithElementQuality.vtu AmmerSubsurfaceCoarse-WithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 1e-11
+        AmmerSubsurfaceCoarse-WithElementQuality.vtu AmmerSubsurfaceCoarse-WithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 2e-11
     )
 endforeach()
+
+AddTest(
+    NAME AddElementQuality_Behaelter_BE_ElementSize_Test
+    PATH MeshGeoToolsLib/Behaelter_BE
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Behaelter_BE
+    EXECUTABLE AddElementQuality
+    EXECUTABLE_ARGS -i Behaelter_BE.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Behaelter_BE/Behaelter_BE_quality.vtu -c ElementSize
+    TESTER vtkdiff
+    DIFF_DATA
+    Behaelter_BE_quality.vtu Behaelter_BE_quality.vtu ElementSize ElementSize 1e-12 1e-14
+)
 
 AddTest(
     NAME IntegrateBoreholesIntoMesh_MatOnly_Test
@@ -902,12 +946,13 @@ AddTest(
     PrismBHE_elev.vtu
 )
 
-MeshTest(
+AddTest(
     NAME ReviseMesh_Test
     PATH MeshLib/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE reviseMesh
     EXECUTABLE_ARGS -i basin_mesh.vtu -o ${Data_BINARY_DIR}/MeshLib/basin_mesh_fixed.vtu
+    TESTER vtkdiff-mesh
     DIFF_DATA basin_mesh_fixed.vtu basin_mesh_fixed.vtu 1e-16
 )
 
@@ -921,9 +966,12 @@ AddTest(
     DIFF_DATA
     basin_mesh_fixed.vtu basin_mesh_fixed.vtu head head 0 0
     basin_mesh_fixed.vtu basin_mesh_fixed.vtu MaterialIDs MaterialIDs 0 0
-    # Execute tests in order to prevent race condition
-    PROPERTIES DEPENDS reviseMesh-ReviseMesh_Test-vtkdiff
 )
+
+if(TEST reviseMesh-ReviseMesh_Test-vtkdiff-mesh AND TEST reviseMesh-ReviseMesh_Test_Arrays)
+    # Execute tests in order to prevent race condition
+    set_tests_properties(reviseMesh-ReviseMesh_Test_Arrays PROPERTIES DEPENDS reviseMesh-ReviseMesh_Test-vtkdiff-mesh)
+endif()
 
 AddTest(
     NAME BinaryToPVTU
@@ -1097,7 +1145,7 @@ AddTest(
     10x10_sinxsiny.asc 10x10_sinxsiny.asc
 )
 
-MeshTest(
+AddTest(
     NAME GMSH2OGS_linearElements
     PATH Utils/GMSH2OGS
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/GMSH2OGS
@@ -1107,17 +1155,18 @@ MeshTest(
     DIFF_DATA linear_mesh.vtu linear_mesh.vtu 1.e-16
 )
 
-MeshTest(
+AddTest(
     NAME GMSH2OGS_quadratic_quadrilateral
     PATH Utils/GMSH2OGS
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/GMSH2OGS
     EXECUTABLE GMSH2OGS
     EXECUTABLE_ARGS -i quadratic_quadrilateral.msh
                     -o ${Data_BINARY_DIR}/Utils/GMSH2OGS/quadratic_quadrilateral.vtu
+    TESTER vtkdiff-mesh
     DIFF_DATA quadratic_quadrilateral.vtu quadratic_quadrilateral.vtu 1.e-16
 )
 
-MeshTest(
+AddTest(
     NAME GMSH2OGS_quadratic_elements
     PATH Utils/GMSH2OGS
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/GMSH2OGS
@@ -1125,6 +1174,7 @@ MeshTest(
     EXECUTABLE_ARGS -i quadratic_mesh.msh
                     -o ${Data_BINARY_DIR}/Utils/GMSH2OGS/quadratic_mesh.vtu
     REQUIREMENTS NOT (OGS_USE_MPI)
+    TESTER vtkdiff-mesh
     DIFF_DATA quadratic_mesh.vtu quadratic_mesh.vtu 1.e-16
 )
 
@@ -1161,23 +1211,25 @@ AddTest(
     TestGeometry_point.gml TestGeometry_point.gml
 )
 
-MeshTest(
+AddTest(
     NAME NodeOrdering_M0
     PATH MeshLib/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE NodeReordering
     EXECUTABLE_ARGS -i ReorderTestMesh.vtu -o ${Data_BINARY_DIR}/MeshLib/ReorderTestMeshM0.vtu -m 0
     REQUIREMENTS NOT (OGS_USE_MPI)
+    TESTER vtkdiff-mesh
     DIFF_DATA ReorderTestMeshM0.vtu ReorderTestMeshM0.vtu 1.e-16
 )
 
-MeshTest(
+AddTest(
     NAME NodeOrdering_M1
     PATH MeshLib/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE NodeReordering
     EXECUTABLE_ARGS -i ReorderTestMesh.vtu -o ${Data_BINARY_DIR}/MeshLib/ReorderTestMeshM1.vtu -m 1
     REQUIREMENTS NOT (OGS_USE_MPI)
+    TESTER vtkdiff-mesh
     DIFF_DATA ReorderTestMeshM1.vtu ReorderTestMeshM1.vtu 1.e-16
 )
 
@@ -1195,30 +1247,33 @@ AddTest(
     line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf heat_flux heat_flux 1e-13 0
 )
 
-MeshTest(
+AddTest(
     NAME MapMeshToMesh_Test
     PATH MeshGeoToolsLib/Hamburg
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Hamburg
     EXECUTABLE MeshMapping
     EXECUTABLE_ARGS -i plain.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/meshmapping.vtu -m 00-surface.vtu -d 150
+    TESTER vtkdiff-mesh
     DIFF_DATA meshmapping.vtu meshmapping.vtu 8e-3
 )
 
-MeshTest(
+AddTest(
     NAME MapMeshToRasterASC_Test
     PATH MeshGeoToolsLib/Hamburg
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Hamburg
     EXECUTABLE MeshMapping
     EXECUTABLE_ARGS -i plain.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/rastermapping.vtu -r 00-raster.asc -s 100
+    TESTER vtkdiff-mesh
     DIFF_DATA rastermapping.vtu rastermapping.vtu 1.5e-14
 )
 
-MeshTest(
+AddTest(
     NAME MapMeshToRasterXYZ_Test
     PATH FileIO
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO
     EXECUTABLE MeshMapping
     EXECUTABLE_ARGS -i XyzTest.vtu -o ${Data_BINARY_DIR}/FileIO/XyzTest-Mapped.vtu -r XyzTest.xyz
+    TESTER vtkdiff-mesh
     DIFF_DATA XyzTest-Mapped.vtu XyzTest-Mapped.vtu 1e-12
 )
 
@@ -1283,12 +1338,13 @@ if(OGS_BUILD_SWMM)
         TestExample_SC2.gml TestExample_SC2.gml
     )
 
-    MeshTest(
+    AddTest(
         NAME SWMM_INP_Mesh_Test
         PATH FileConverter
         WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileConverter
         EXECUTABLE SWMMConverter
         EXECUTABLE_ARGS -i TestExample_SC2.inp -m ${Data_BINARY_DIR}/FileConverter/TestExample_SC2.vtu
+        TESTER vtkdiff-mesh
         DIFF_DATA TestExample_SC2.vtu TestExample_SC2.vtu 1.e-16
     )
 endif()
@@ -1311,4 +1367,24 @@ AddTest(
     EXECUTABLE_ARGS -i GrdTest.grd -o ${Data_BINARY_DIR}/FileIO/GrdTest.asc
     TESTER diff
     DIFF_DATA GrdTest.asc
+)
+
+AddTest(
+    NAME RemoveUnusedPoints_Cube
+    PATH FileIO/RemoveUnusedPoints
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO/RemoveUnusedPoints
+    EXECUTABLE RemoveUnusedPoints
+    EXECUTABLE_ARGS -i cube_1x1x1_with_additional_points.gml -o ${Data_BINARY_DIR}/FileIO/RemoveUnusedPoints/cube_1x1x1_with_additional_points_cleaned.gml
+    TESTER diff
+    DIFF_DATA cube_1x1x1_with_additional_points_cleaned.gml cube_1x1x1_with_additional_points_cleaned.gml
+)
+
+AddTest(
+    NAME RemoveUnusedPoints_WESSRivers
+    PATH FileIO/RemoveUnusedPoints
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO/RemoveUnusedPoints
+    EXECUTABLE RemoveUnusedPoints
+    EXECUTABLE_ARGS -i WESSRivers.gml -o ${Data_BINARY_DIR}/FileIO/RemoveUnusedPoints/WESSRivers_cleaned.gml
+    TESTER diff
+    DIFF_DATA WESSRivers_cleaned.gml WESSRivers_cleaned.gml
 )

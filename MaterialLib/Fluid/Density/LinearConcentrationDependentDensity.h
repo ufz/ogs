@@ -1,5 +1,6 @@
 /**
- * @copyright
+ * \file
+ * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
@@ -28,9 +29,9 @@ class LinearConcentrationDependentDensity final : public FluidProperty
 {
 public:
     /**
-     * @param reference_density  \f$\rho_0\f$
-     * @param reference_concentration \f$C_0\f$
-     * @param fluid_density_difference_ratio  \f$ \bar \alpha \f$ in reference
+     * \param reference_density  \f$\rho_0\f$
+     * \param reference_concentration \f$C_0\f$
+     * \param fluid_density_difference_ratio  \f$ \bar \alpha \f$ in reference
      * Coupled groundwater flow and transport: 2. Thermohaline and 3D convection
      * systems
      */

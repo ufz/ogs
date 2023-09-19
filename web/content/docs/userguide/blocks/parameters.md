@@ -21,7 +21,8 @@ It was published in this state to make existing content available to users and h
 
 This block contains various parameters which are used by other blocks within the project file.
 
-The possible content of this block in not limited to physical properties of materials used in the experiment but also to values of [boundary](/docs/userguide/blocks/process_variables/#boundary-conditions) and [initial conditions](/docs/userguide/blocks/process_variables/#initial-conditions) or [source terms](/docs/userguide/blocks/process_variables/#sources), physical constants, etc.
+The possible content of this block in not limited to physical properties of materials used in the experiment but also to values
+of [boundary](/docs/userguide/blocks/process_variables/#boundary-conditions) and [initial conditions](/docs/userguide/blocks/process_variables/#initial-conditions) or [source terms](/docs/userguide/blocks/process_variables/#sources), physical constants, etc.
 
 ## Where can the parameters be used?
 
@@ -32,7 +33,7 @@ The parameters defined in this block can be used in blocks:
 
 ## Parameters vs properties
 
-TODO: describe differences in access to parameters and properties
+<!-- TODO: describe differences in access to parameters and properties -->
 
 ## How to define a parameter?
 
@@ -45,20 +46,21 @@ To create a parameter within the `<parameters> </parameters>` tag, following tem
 </parameter>
 ```
 
-Tags `<name> </name>` and `<type> </type>` are mandatory and define human-readable name of specific parameter and declare one of available types with which it will be defined.
+Tags `<name> </name>` and `<type> </type>` are mandatory and define a human-readable name of a specific parameter and declare
+one of the available types with which it will be defined.
 Other tags depend on what is the content of `<type> </type>`.
-There are following types available:
+There are the following types available:
 
 - [Constant](/docs/userguide/blocks/parameters/#constant)
 - [CurveScaled](/docs/userguide/blocks/parameters/#curvescaled)
 
 Each of them will be discussed below.
-The same types can be used to define media properties in the [media block](/docs/userguide/blocks/media/).
+The same type can be used to define media properties in the [media block](/docs/userguide/blocks/media/).
 
 ### Constant
 
 This is the most basic type.
-It only requires `<value> </value>` tag additionally where the value of the parameter is provided as a number.
+It only requires the `<value> </value>` tag additionally where the value of the parameter is provided as a number.
 It will not change throughout the experiment.
 For example:
 
@@ -70,7 +72,8 @@ For example:
 </parameter>
 ```
 
-For vectorial quantities use plural, `<values>0.5 1 2</values>`, for example will be interpreted as a 3d vector:
+For vectorial quantities, the individual entries need to be listed, e.g., `<values>0.5 1 2</values>`.
+This example will be interpreted as a 3D vector.
 
 ```xml
 <parameter>
@@ -80,11 +83,13 @@ For vectorial quantities use plural, `<values>0.5 1 2</values>`, for example wil
 </parameter>
 ```
 
+<!-- TODO: This is already (partially) described in the section **Media** -->
+
 ### CurveScaled
 
-It requires tags: `<curve> </curve>` and `<parameter> </parameter>`.
-The first one contains name of a curve defined in the `<curves> </curves>` block (for more detail see [curves](/docs/userguide/blocks/curves/)).
-It is not the same type as [Curve](/docs/userguide/blocks/media/#curve) discussed in Media block.
+It requires the tags `<curve> </curve>` and `<parameter> </parameter>`.
+The first one contains the name of a curve defined in the `<curves> </curves>` block (for more detail see [curves](/docs/userguide/blocks/curves/)).
+Note that this is not the exact same type as [Curve](/docs/userguide/blocks/media/#curve) discussed in Media block.
 
 Following variables are accessible from CurveScaled:
 

@@ -6,14 +6,17 @@ weight = 1
 +++
 
 ## Description
+
 This tool can be used to check the validity of the input mesh and optionally output mesh properties (specifically MaterialIDs).
+
 ## Usage
+
 ```bash
-USAGE: 
+USAGE:
    checkMesh  [-p] [-v] [--] [--version] [-h] <string>
 
 
-Where: 
+Where:
    -p,  --print_properties
      print properties stored in the mesh
 
@@ -34,35 +37,44 @@ Where:
 
 ```
 
-## Example:
-In this example we use a 3D mesh from a previous examples ([createLayeredMeshfromRaster](/docs/tools/preprocessing/createLayeredMeshFromRasters/index.md)).
+## Example
+
+In this example we use a 3D mesh from another example ([createLayeredMeshfromRasters]({{< ref "createLayeredMeshfromRasters.md" >}})).
 
 ```bash
-checkMesh mesh_layerd.vtu -p -v
+checkMesh mesh_layered.vtu -p -v
 ```
 
  **general output:**
  At first there are some general information given.
+
  ```bash
 [2023-02-10 11:44:56.551] [ogs] [info] Memory size: 1 MiB
 [2023-02-10 11:44:56.551] [ogs] [info] Time for reading: 0.056879 s
-[2023-02-10 11:44:56.552] [ogs] [info] Axis aligned bounding box: 	x [394412, 395388) (extent 976.525)
-	y [5.82349e+06, 5.82454e+06) (extent 1052.17)
-	z [-120, 57.5427) (extent 177.543)
+[2023-02-10 11:44:56.552] [ogs] [info] Axis aligned bounding box:  x [394412, 395388) (extent 976.525)
+ y [5.82349e+06, 5.82454e+06) (extent 1052.17)
+ z [-120, 57.5427) (extent 177.543)
 [2023-02-10 11:44:56.552] [ogs] [info] Min/max edge lengths: [0.0123914, 97.0344]
 [2023-02-10 11:44:56.552] [ogs] [info] Number of elements in the mesh:
-[2023-02-10 11:44:56.552] [ogs] [info] 	Tetrahedrons: 88
-[2023-02-10 11:44:56.552] [ogs] [info] 	Pyramids: 95
-[2023-02-10 11:44:56.552] [ogs] [info] 	Prisms: 4426
+[2023-02-10 11:44:56.552] [ogs] [info]  Tetrahedrons: 88
+[2023-02-10 11:44:56.552] [ogs] [info]  Pyramids: 95
+[2023-02-10 11:44:56.552] [ogs] [info]  Prisms: 4426
  ```
+
  **-p output:**
- The properties output refers to material properties. The bounds of the materialID vector are [0,6].
+ The properties output refers to material properties.
+ The bounds of the materialID vector are [0,6].
+ Also, the corresponding list is given as: MaterialID-list: [0, 1, 2, 3, 4, 5, 6].
+
  ```bash
-[2023-02-10 11:39:56.092] [ogs] [info] There are 1 properties in the mesh:
-[2023-02-10 11:39:56.092] [ogs] [info] 	MaterialIDs: (4609 values) [0, 6]
+[2023-02-23 16:16:02.680] [ogs] [info] There are 1 properties in the mesh:
+[2023-02-23 16:16:02.680] [ogs] [info]  MaterialIDs: (4609 values) [0, 6]
+[2023-02-23 16:16:02.681] [ogs] [info] MaterialID-list: [0, 1, 2, 3, 4, 5, 6]
  ```
+
  **-v output:**
  The quality of the underlying mesh is checked and no errors are found.
+
   ```bash
 [2023-02-10 11:57:51.477] [ogs] [info] Mesh Quality Control:
 [2023-02-10 11:57:51.477] [ogs] [info] Looking for unused nodes...

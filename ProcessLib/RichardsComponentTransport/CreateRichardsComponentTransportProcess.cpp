@@ -46,10 +46,8 @@ void checkMPLProperties(
         MaterialPropertyLib::PropertyType::decay_rate,
         MaterialPropertyLib::PropertyType::pore_diffusion};
 
-    for (auto const& element : mesh.getElements())
+    for (auto const element_id : mesh.getElements() | MeshLib::views::ids)
     {
-        auto const element_id = element->getID();
-
         auto const& medium = *media_map.getMedium(element_id);
         checkRequiredProperties(medium, required_properties_medium);
 

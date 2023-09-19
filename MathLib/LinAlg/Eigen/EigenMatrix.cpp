@@ -32,7 +32,7 @@ void EigenMatrix::write(std::ostream& os) const
     {
         for (RawMatrixType::InnerIterator it(mat_, k); it; ++it)
         {
-            os << it.row() << " " << it.col() << ": " << it.value() << "\n";
+            os << it.row() << " " << it.col() << " " << it.value() << "\n";
         }
     }
     os << std::endl;

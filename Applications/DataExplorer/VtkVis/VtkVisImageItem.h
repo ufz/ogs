@@ -55,6 +55,9 @@ public:
 
     vtkAlgorithm* transformFilter() const override;
 
+    /// @brief Allows writing this item's source object as an ASCII raster file
+    bool writeAsRaster();
+
 protected:
     /// Selects the appropriate VTK-Writer object and writes the object to a file with the given name.
     int callVTKWriter(vtkAlgorithm* algorithm,

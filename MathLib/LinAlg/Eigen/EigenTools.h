@@ -22,10 +22,10 @@ class EigenVector;
 /**
  * apply known solutions to a system of linear equations
  *
- * @param A                 Coefficient matrix
- * @param b                 RHS vector
- * @param vec_knownX_id    a vector of known solution entry IDs
- * @param vec_knownX_x     a vector of known solutions
+ * \param A                 Coefficient matrix
+ * \param b                 RHS vector
+ * \param vec_knownX_id    a vector of known solution entry IDs
+ * \param vec_knownX_x     a vector of known solutions
  */
 void applyKnownSolution(
     EigenMatrix& A, EigenVector& b, EigenVector& /*x*/,

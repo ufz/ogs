@@ -13,6 +13,7 @@
 #include <memory>
 #include <vector>
 
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 namespace MeshLib
 {
 class Mesh;
@@ -41,6 +42,7 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     const Process& process,
     std::vector<std::reference_wrapper<ProcessVariable>> const&
-        all_process_variables_for_this_process);
+        all_process_variables_for_this_process,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 }  // namespace ProcessLib

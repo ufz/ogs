@@ -12,6 +12,7 @@
 #pragma once
 
 #include <memory>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -71,17 +72,8 @@ private:
     PropertyArray properties_;
 };
 
-template <typename Container>
-void checkRequiredProperties(Phase const& phase, Container const& required_properties)
-{
-    for (auto const& p : required_properties)
-    {
-        if (!phase.hasProperty(p))
-        {
-            OGS_FATAL("The property '{:s}' is missing in the {:s} phase.",
-                      property_enum_to_string[p], phase.name);
-        }
-    }
-}
+void checkRequiredProperties(
+    Phase const& phase,
+    std::span<PropertyType const> const required_properties);
 
 }  // namespace MaterialPropertyLib

@@ -55,5 +55,7 @@ private:
     /// Multiple expressions are representing vector-valued functions.
     std::vector<std::pair<Variable, std::vector<Expression>>>
         dvalue_expressions_;
+
+    mutable std::mutex mutex_;
 };
 }  // namespace MaterialPropertyLib

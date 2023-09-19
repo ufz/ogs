@@ -34,7 +34,8 @@ Process::Process(
     : name(std::move(name_)),
       _mesh(mesh),
       _secondary_variables(std::move(secondary_variables)),
-      _global_assembler(std::move(jacobian_assembler)),
+      _jacobian_assembler(std::move(jacobian_assembler)),
+      _global_assembler(*_jacobian_assembler),
       _use_monolithic_scheme(use_monolithic_scheme),
       _coupled_solutions(nullptr),
       _integration_order(integration_order),
@@ -67,20 +68,22 @@ Process::Process(
 }
 
 void Process::initializeProcessBoundaryConditionsAndSourceTerms(
-    const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id)
+    const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     auto const& per_process_variables = _process_variables[process_id];
     auto& per_process_BCs = _boundary_conditions[process_id];
 
     per_process_BCs.addBCsForProcessVariables(per_process_variables, dof_table,
-                                              _integration_order, *this);
+                                              _integration_order, *this, media);
 
     auto& per_process_sts = _source_term_collections[process_id];
     per_process_sts.addSourceTermsForProcessVariables(
         per_process_variables, dof_table, _integration_order);
 }
 
-void Process::initializeBoundaryConditions()
+void Process::initializeBoundaryConditions(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     // The number of processes is identical to the size of _process_variables,
     // the vector contains variables for different processes. See the
@@ -89,11 +92,12 @@ void Process::initializeBoundaryConditions()
     for (std::size_t pcs_id = 0; pcs_id < number_of_processes; pcs_id++)
     {
         initializeProcessBoundaryConditionsAndSourceTerms(
-            *_local_to_global_index_map, pcs_id);
+            *_local_to_global_index_map, pcs_id, media);
     }
 }
 
-void Process::initialize()
+void Process::initialize(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     DBUG("Initialize process.");
 
@@ -110,7 +114,7 @@ void Process::initialize()
                               _integration_order);
 
     DBUG("Initialize boundary conditions.");
-    initializeBoundaryConditions();
+    initializeBoundaryConditions(media);
 }
 
 void Process::setInitialConditions(
@@ -210,18 +214,18 @@ void Process::preAssemble(const double t, double const dt,
 
 void Process::assemble(const double t, double const dt,
                        std::vector<GlobalVector*> const& x,
-                       std::vector<GlobalVector*> const& xdot,
+                       std::vector<GlobalVector*> const& x_prev,
                        int const process_id, GlobalMatrix& M, GlobalMatrix& K,
                        GlobalVector& b)
 {
-    assert(x.size() == xdot.size());
+    assert(x.size() == x_prev.size());
     for (std::size_t i = 0; i < x.size(); i++)
     {
         MathLib::LinAlg::setLocalAccessibleVector(*x[i]);
-        MathLib::LinAlg::setLocalAccessibleVector(*xdot[i]);
+        MathLib::LinAlg::setLocalAccessibleVector(*x_prev[i]);
     }
 
-    assembleConcreteProcess(t, dt, x, xdot, process_id, M, K, b);
+    assembleConcreteProcess(t, dt, x, x_prev, process_id, M, K, b);
 
     // the last argument is for the jacobian, nullptr is for a unused jacobian
     _boundary_conditions[process_id].applyNaturalBC(t, x, process_id, K, b,
@@ -234,19 +238,19 @@ void Process::assemble(const double t, double const dt,
 
 void Process::assembleWithJacobian(const double t, double const dt,
                                    std::vector<GlobalVector*> const& x,
-                                   std::vector<GlobalVector*> const& xdot,
+                                   std::vector<GlobalVector*> const& x_prev,
                                    int const process_id, GlobalMatrix& M,
                                    GlobalMatrix& K, GlobalVector& b,
                                    GlobalMatrix& Jac)
 {
-    assert(x.size() == xdot.size());
+    assert(x.size() == x_prev.size());
     for (std::size_t i = 0; i < x.size(); i++)
     {
         MathLib::LinAlg::setLocalAccessibleVector(*x[i]);
-        MathLib::LinAlg::setLocalAccessibleVector(*xdot[i]);
+        MathLib::LinAlg::setLocalAccessibleVector(*x_prev[i]);
     }
 
-    assembleWithJacobianConcreteProcess(t, dt, x, xdot, process_id, M, K, b,
+    assembleWithJacobianConcreteProcess(t, dt, x, x_prev, process_id, M, K, b,
                                         Jac);
 
     // TODO: apply BCs to Jacobian.
@@ -393,36 +397,45 @@ void Process::preTimestep(std::vector<GlobalVector*> const& x, const double t,
     _boundary_conditions[process_id].preTimestep(t, x, process_id);
 }
 
-void Process::postTimestep(std::vector<GlobalVector*> const& x, const double t,
-                           const double delta_t, int const process_id)
+void Process::postTimestep(std::vector<GlobalVector*> const& x,
+                           std::vector<GlobalVector*> const& x_prev,
+                           const double t, const double delta_t,
+                           int const process_id)
 {
     for (auto* const solution : x)
+    {
         MathLib::LinAlg::setLocalAccessibleVector(*solution);
-    postTimestepConcreteProcess(x, t, delta_t, process_id);
+    }
+    for (auto* const solution : x_prev)
+    {
+        MathLib::LinAlg::setLocalAccessibleVector(*solution);
+    }
+
+    postTimestepConcreteProcess(x, x_prev, t, delta_t, process_id);
 
     _boundary_conditions[process_id].postTimestep(t, x, process_id);
 }
 
 void Process::postNonLinearSolver(GlobalVector const& x,
-                                  GlobalVector const& xdot, const double t,
+                                  GlobalVector const& x_prev, const double t,
                                   double const dt, int const process_id)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
-    MathLib::LinAlg::setLocalAccessibleVector(xdot);
-    postNonLinearSolverConcreteProcess(x, xdot, t, dt, process_id);
+    MathLib::LinAlg::setLocalAccessibleVector(x_prev);
+    postNonLinearSolverConcreteProcess(x, x_prev, t, dt, process_id);
 }
 
 void Process::computeSecondaryVariable(double const t,
                                        double const dt,
                                        std::vector<GlobalVector*> const& x,
-                                       GlobalVector const& x_dot,
+                                       GlobalVector const& x_prev,
                                        int const process_id)
 {
     for (auto const* solution : x)
         MathLib::LinAlg::setLocalAccessibleVector(*solution);
-    MathLib::LinAlg::setLocalAccessibleVector(x_dot);
+    MathLib::LinAlg::setLocalAccessibleVector(x_prev);
 
-    computeSecondaryVariableConcrete(t, dt, x, x_dot, process_id);
+    computeSecondaryVariableConcrete(t, dt, x, x_prev, process_id);
 }
 
 void Process::preIteration(const unsigned iter, const GlobalVector& x)

@@ -10,7 +10,7 @@ function(OgsTest)
 
     set(options DISABLED)
     set(oneValueArgs PROJECTFILE RUNTIME)
-    set(multiValueArgs WRAPPER PROPERTIES)
+    set(multiValueArgs WRAPPER PROPERTIES LABELS)
     cmake_parse_arguments(
         OgsTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
     )
@@ -54,10 +54,6 @@ function(OgsTest)
     endif()
 
     set(OgsTest_SOURCE_DIR "${Data_SOURCE_DIR}/${OgsTest_DIR}")
-    set(OgsTest_BINARY_DIR "${Data_BINARY_DIR}/${OgsTest_DIR}")
-    file(MAKE_DIRECTORY ${OgsTest_BINARY_DIR})
-    file(TO_NATIVE_PATH "${OgsTest_BINARY_DIR}" OgsTest_BINARY_DIR_NATIVE)
-
     set(TEST_NAME "ogs-${OgsTest_DIR}/${OgsTest_NAME_WE}")
     # Add wrapper postfix (-mpi for mpirun).
     if(OgsTest_WRAPPER)
@@ -70,8 +66,40 @@ function(OgsTest)
     set(_exe_args -r ${OgsTest_SOURCE_DIR}
                   ${OgsTest_SOURCE_DIR}/${OgsTest_NAME}
     )
-    string(REPLACE "/" "_" TEST_NAME_UNDERSCORE ${TEST_NAME})
 
+    current_dir_as_list(ProcessLib labels)
+    if(${AddTest_LABELS})
+        list(APPEND labels ${AddTest_LABELS})
+    else()
+        list(APPEND labels default)
+    endif()
+
+    if(${OgsTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
+        list(APPEND labels small)
+    else()
+        list(APPEND labels large)
+    endif()
+
+    _ogs_add_test(${TEST_NAME})
+
+    # OpenMP tests for specific processes only. TODO (CL) Once all processes can
+    # be assembled OpenMP parallel, the condition should be removed.
+    if("${labels}" MATCHES "TH2M|ThermoRichards")
+        _ogs_add_test(${TEST_NAME}-omp)
+        _set_omp_test_properties()
+    endif()
+endfunction()
+
+# Add a ctest and sets properties
+macro(_ogs_add_test TEST_NAME)
+    if("${TEST_NAME}" MATCHES "-omp")
+        set(OgsTest_BINARY_DIR "${Data_BINARY_DIR}/${OgsTest_DIR}-omp")
+    else()
+        set(OgsTest_BINARY_DIR "${Data_BINARY_DIR}/${OgsTest_DIR}")
+    endif()
+    file(MAKE_DIRECTORY ${OgsTest_BINARY_DIR})
+    file(TO_NATIVE_PATH "${OgsTest_BINARY_DIR}" OgsTest_BINARY_DIR_NATIVE)
+    string(REPLACE "/" "_" TEST_NAME_UNDERSCORE ${TEST_NAME})
     add_test(
         NAME ${TEST_NAME}
         COMMAND
@@ -82,18 +110,6 @@ function(OgsTest)
             -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME_UNDERSCORE}.txt
             -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/OgsTestWrapper.cmake
     )
-
-    # For debugging: message("Adding test with NAME ${TEST_NAME}
-    # WORKING_DIRECTORY ${OgsTest_BINARY_DIR} COMMAND ${OgsTest_WRAPPER}
-    # $<TARGET_FILE:ogs> -r ${OgsTest_SOURCE_DIR}
-    # ${OgsTest_SOURCE_DIR}/${OgsTest_NAME})
-
-    current_dir_as_list(ProcessLib labels)
-    if(${OgsTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
-        list(APPEND labels default)
-    else()
-        list(APPEND labels large)
-    endif()
 
     set_tests_properties(
         ${TEST_NAME}
@@ -107,7 +123,6 @@ function(OgsTest)
                    LABELS
                    "${labels}"
     )
-    # Disabled for the moment, does not work with CI under load if(NOT
-    # OGS_COVERAGE) set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT
-    # ${timeout}) endif()
-endfunction()
+endmacro()
+
+# macro(_set_omp_test_properties) defined in AddTest.cmake

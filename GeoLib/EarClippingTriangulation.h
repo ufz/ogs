@@ -44,6 +44,7 @@ private:
     inline void initVertexList();
     inline void initLists();
     inline void clipEars();
+    void addLastTriangle();
 
     /**
      * a copy of the polygon points

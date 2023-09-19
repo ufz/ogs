@@ -21,6 +21,7 @@
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "NumLib/DOF/LocalDOF.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -94,7 +95,7 @@ public:
 
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& /*local_x*/,
-                  std::vector<double> const& /*local_xdot*/,
+                  std::vector<double> const& /*local_x_prev*/,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_rhs_data*/) override
@@ -106,7 +107,7 @@ public:
 
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
+                              std::vector<double> const& local_x_prev,
                               std::vector<double>& /*local_M_data*/,
                               std::vector<double>& /*local_K_data*/,
                               std::vector<double>& local_rhs_data,
@@ -121,16 +122,16 @@ public:
         {
             auto& ip_data = _ip_data[ip];
 
+            ParameterLib::SpatialPosition const x_position{
+                std::nullopt, _element.getID(), ip,
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<
+                        ShapeFunctionDisplacement,
+                        ShapeMatricesTypeDisplacement>(_element, ip_data.N_u))};
+
             /// Set initial stress from parameter.
             if (_process_data.initial_stress != nullptr)
             {
-                ParameterLib::SpatialPosition const x_position{
-                    std::nullopt, _element.getID(), ip,
-                    MathLib::Point3d(NumLib::interpolateCoordinates<
-                                     ShapeFunctionDisplacement,
-                                     ShapeMatricesTypeDisplacement>(
-                        _element, ip_data.N_u))};
-
                 ip_data.sigma_eff =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
                         DisplacementDim>((*_process_data.initial_stress)(
@@ -141,32 +142,49 @@ public:
                         x_position));
             }
 
+            double const t = 0;  // TODO (naumov) pass t from top
+            ip_data.solid_material.initializeInternalStateVariables(
+                t, x_position, *ip_data.material_state_variables);
+
             ip_data.pushBackState();
         }
     }
 
-    void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              double const /*t*/,
-                              double const /*dt*/) override
+    void preTimestepConcrete(std::vector<double> const& /*local_x*/,
+                             double const /*t*/, double const /*dt*/) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
+            _ip_data_output[ip].velocity.setConstant(
+                DisplacementDim, std::numeric_limits<double>::quiet_NaN());
+        }
+    }
+
+    void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
+                              Eigen::VectorXd const& /*local_x_prev*/,
+                              double const /*t*/, double const /*dt*/,
+                              bool const /*use_monolithic_scheme*/,
+                              int const /*process_id*/) override
+    {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            _ip_data[ip].eps0 =
+                _ip_data[ip].eps0_prev +
+                (1 - _ip_data[ip].phi_fr_prev / _ip_data[ip].porosity) *
+                    (_ip_data[ip].eps_prev - _ip_data[ip].eps0_prev);
             _ip_data[ip].pushBackState();
         }
     }
 
     void computeSecondaryVariableConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_x_dot) override;
-
-    void postNonLinearSolverConcrete(std::vector<double> const& local_x,
-                                     std::vector<double> const& local_xdot,
-                                     double const t, double const dt,
-                                     bool const use_monolithic_scheme,
-                                     int const process_id) override;
+        Eigen::VectorXd const& local_x_prev) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
@@ -196,7 +214,34 @@ public:
             { return getIntPtSigma(0, {}, {}, values); });
     }
 
+    std::vector<double> const& getIntPtFluidDensity(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override;
+
+    std::vector<double> const& getIntPtViscosity(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override;
+
 private:
+    using BMatricesType =
+        BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
+    using IpData =
+        IntegrationPointData<BMatricesType, ShapeMatricesTypeDisplacement,
+                             ShapeMatricesTypePressure, DisplacementDim,
+                             ShapeFunctionDisplacement::NPOINTS>;
+
+private:
+    ConstitutiveRelationsValues<DisplacementDim> updateConstitutiveRelations(
+        Eigen::Ref<Eigen::VectorXd const> const local_x,
+        Eigen::Ref<Eigen::VectorXd const> const local_x_prev,
+        ParameterLib::SpatialPosition const& x_position, double const t,
+        double const dt, IpData& ip_data,
+        IntegrationPointDataForOutput<DisplacementDim>& ip_data_output) const;
+
     std::size_t setSigma(double const* values)
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
@@ -211,6 +256,16 @@ private:
     {
         return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
             _ip_data, &IpData::sigma_eff, cache);
+    }
+
+    std::vector<double> const& getIntPtSigmaIce(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+            _ip_data, &IpData::sigma_eff_ice, cache);
     }
 
     std::vector<double> getEpsilon() const override
@@ -233,16 +288,32 @@ private:
             _ip_data, &IpData::eps, cache);
     }
 
+    std::vector<double> const& getIntPtIceVolume(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        return ProcessLib::getIntegrationPointScalarData(
+            _ip_data, &IpData::phi_fr, cache);
+    }
+
 private:
+    template <typename SolutionVector>
+    static constexpr auto localDOF(SolutionVector const& x)
+    {
+        return NumLib::localDOF<
+            ShapeFunctionPressure, ShapeFunctionPressure,
+            NumLib::Vectorial<ShapeFunctionDisplacement, DisplacementDim>>(x);
+    }
+
     ThermoHydroMechanicsProcessData<DisplacementDim>& _process_data;
 
-    using BMatricesType =
-        BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
-    using IpData =
-        IntegrationPointData<BMatricesType, ShapeMatricesTypeDisplacement,
-                             ShapeMatricesTypePressure, DisplacementDim,
-                             ShapeFunctionDisplacement::NPOINTS>;
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
+    std::vector<IntegrationPointDataForOutput<DisplacementDim>,
+                Eigen::aligned_allocator<
+                    IntegrationPointDataForOutput<DisplacementDim>>>
+        _ip_data_output;
 
     NumLib::GenericIntegrationMethod const& _integration_method;
     MeshLib::Element const& _element;

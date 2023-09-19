@@ -37,7 +37,7 @@ public:
      * @param n_files number of hdf5 output files
      */
     XdmfHdfWriter(
-        std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
+        std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
         std::filesystem::path const& filepath, unsigned long long time_step,
         double initial_time, std::set<std::string> const& variable_output_names,
         bool use_compression, unsigned int n_files);

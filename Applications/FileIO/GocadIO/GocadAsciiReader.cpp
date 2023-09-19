@@ -207,7 +207,7 @@ bool parseProperties(std::ifstream& in,
     // related keywords is found.
     std::streampos pos = in.tellg();
     std::string line;
-    while (getline(in, line))
+    while (std::getline(in, line))
     {
         std::string const key = propertyCheck(line);
         // This is the intended way to exit this method:
@@ -355,7 +355,7 @@ bool parseNodes(std::ifstream& in,
 
 /// Parses the segments of the current line
 bool parseLineSegments(std::ifstream& in,
-                       std::vector<MeshLib::Node*>& nodes,
+                       std::vector<MeshLib::Node*> const& nodes,
                        std::vector<MeshLib::Element*>& elems,
                        std::map<std::size_t, std::size_t> const& node_id_map,
                        MeshLib::Properties& mesh_prop)
@@ -446,7 +446,7 @@ bool parseLine(std::ifstream& in,
 
 /// Parses the element data for the current mesh
 bool parseElements(std::ifstream& in,
-                   std::vector<MeshLib::Node*>& nodes,
+                   std::vector<MeshLib::Node*> const& nodes,
                    std::vector<MeshLib::Element*>& elems,
                    std::map<std::size_t, std::size_t> const& node_id_map,
                    MeshLib::Properties& mesh_prop)

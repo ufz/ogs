@@ -155,8 +155,12 @@
                             <delta_t>.01</delta_t>
                         </pair>
                         <pair>
-                            <repeat>8</repeat>
+                            <repeat>7</repeat>
                             <delta_t>.1</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.10000000000001</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -179,6 +183,7 @@
                 <variable>velocity</variable>
                 <variable>saturation</variable>
                 <variable>porosity</variable>
+                <variable>porosity_avg</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

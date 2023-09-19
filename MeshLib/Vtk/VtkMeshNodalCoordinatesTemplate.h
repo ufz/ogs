@@ -95,7 +95,7 @@ public:
 
     Scalar& GetValueReference(vtkIdType idx) const;
     Scalar GetValue(vtkIdType idx) const override;
-    void GetTypedTuple(vtkIdType tupleId, Scalar* t) const override;
+    void GetTypedTuple(vtkIdType tupleId, Scalar* tuple) const override;
     void SetTypedTuple(vtkIdType i, const Scalar* t) override;
     void InsertTypedTuple(vtkIdType i, const Scalar* t) override;
     vtkIdType InsertNextTypedTuple(const Scalar* t) override;
@@ -111,7 +111,7 @@ protected:
     const std::vector<Node*>* _nodes{nullptr};
 
 private:
-    vtkIdType Lookup(const Scalar& val, vtkIdType startIndex);
+    vtkIdType Lookup(const Scalar& val, vtkIdType index);
     double* TempDoubleArray{nullptr};
 };
 

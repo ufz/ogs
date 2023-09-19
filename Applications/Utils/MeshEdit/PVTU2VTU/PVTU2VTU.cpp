@@ -21,7 +21,6 @@
 #include <unordered_set>
 #include <vector>
 
-#include "Applications/Utils/ModelPreparation/PartitionMesh/IntegrationPointDataTools.h"
 #include "BaseLib/FileTools.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
@@ -31,6 +30,8 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
 #include "MeshLib/Utils/IntegrationPointWriter.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
+#include "MeshToolsLib/IntegrationPointDataTools.h"
 
 struct MeshEntityMapInfo
 {
@@ -124,7 +125,7 @@ bool createPropertyVector(
         for (auto const& mesh : partitioned_meshes)
         {
             partition_element_offsets.emplace_back(
-                ApplicationUtils::getIntegrationPointDataOffsetsOfMeshElements(
+                MeshToolsLib::getIntegrationPointDataOffsetsOfMeshElements(
                     mesh->getElements(), *pv, properties));
         }
 
@@ -139,14 +140,14 @@ bool createPropertyVector(
         for (auto const element : merged_mesh.getElements())
         {
             int const number_of_integration_points =
-                ApplicationUtils::getNumberOfElementIntegrationPoints(
-                    ip_meta_data, *element);
+                MeshToolsLib::getNumberOfElementIntegrationPoints(ip_meta_data,
+                                                                  *element);
             counter += number_of_integration_points;
         }
         new_pv->resize(counter * pv_num_components);
 
         auto const global_ip_offsets =
-            ApplicationUtils::getIntegrationPointDataOffsetsOfMeshElements(
+            MeshToolsLib::getIntegrationPointDataOffsetsOfMeshElements(
                 merged_mesh.getElements(), *pv, properties);
 
         std::size_t element_counter = 0;

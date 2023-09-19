@@ -26,8 +26,8 @@
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
 
 static void writeToFile(
     std::string const& id_area_fname, std::string const& csv_fname,
@@ -128,7 +128,8 @@ int main(int argc, char* argv[])
     }
 
     std::vector<double> areas(
-        MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(*surface_mesh));
+        MeshToolsLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(
+            *surface_mesh));
 
     // pack area and node id together
     std::vector<std::pair<std::size_t, double>> ids_and_areas;

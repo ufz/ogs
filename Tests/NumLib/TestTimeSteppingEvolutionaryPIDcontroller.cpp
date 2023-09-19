@@ -1,11 +1,11 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  *  Created on April 5, 2017, 12:09 PM
  */
 
@@ -28,7 +28,7 @@ std::unique_ptr<NumLib::TimeStepAlgorithm> createTestTimeStepper(
     BaseLib::ConfigTree conf(std::move(ptree), "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("time_stepping");
-    return NumLib::createEvolutionaryPIDcontroller(sub_config);
+    return NumLib::createEvolutionaryPIDcontroller(sub_config, {});
 }
 
 TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)

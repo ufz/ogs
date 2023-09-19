@@ -1,11 +1,11 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  *  Created on November 29, 2017, 2:03 PM
  */
 
@@ -356,7 +356,7 @@ void RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::assemble(double const t, double const dt,
                                std::vector<double> const& local_x,
-                               std::vector<double> const& local_xdot,
+                               std::vector<double> const& local_x_prev,
                                std::vector<double>& local_M_data,
                                std::vector<double>& local_K_data,
                                std::vector<double>& local_rhs_data)
@@ -373,14 +373,14 @@ void RichardsMechanicsLocalAssembler<
             displacement_size> const>(local_x.data() + displacement_index,
                                       displacement_size);
 
-    auto p_L_dot =
+    auto p_L_prev =
         Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_xdot.data() + pressure_index,
+            pressure_size> const>(local_x_prev.data() + pressure_index,
                                   pressure_size);
 
-    auto u_dot =
+    auto u_prev =
         Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_xdot.data() + displacement_index,
+            displacement_size> const>(local_x_prev.data() + displacement_index,
                                       displacement_size);
 
     auto K = MathLib::createZeroedMatrix<
@@ -448,8 +448,8 @@ void RichardsMechanicsLocalAssembler<
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
 
-        double p_cap_dot_ip;
-        NumLib::shapeFunctionInterpolate(-p_L_dot, N_p, p_cap_dot_ip);
+        double p_cap_prev_ip;
+        NumLib::shapeFunctionInterpolate(-p_L_prev, N_p, p_cap_prev_ip);
 
         variables.capillary_pressure = p_cap_ip;
         variables.phase_pressure = -p_cap_ip;
@@ -491,8 +491,9 @@ void RichardsMechanicsLocalAssembler<
         // secant derivative from time discretization for storage
         // use tangent, if secant is not available
         double const DeltaS_L_Deltap_cap =
-            (p_cap_dot_ip == 0) ? dS_L_dp_cap
-                                : (S_L - S_L_prev) / (dt * p_cap_dot_ip);
+            (p_cap_ip == p_cap_prev_ip)
+                ? dS_L_dp_cap
+                : (S_L - S_L_prev) / (p_cap_ip - p_cap_prev_ip);
 
         auto const chi = [medium, x_position, t, dt](double const S_L)
         {
@@ -506,13 +507,11 @@ void RichardsMechanicsLocalAssembler<
 
         double const p_FR = -chi_S_L * p_cap_ip;
         variables.effective_pore_pressure = p_FR;
-        variables_prev.effective_pore_pressure =
-            -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
+        variables_prev.effective_pore_pressure = -chi_S_L_prev * p_cap_prev_ip;
 
         // Set volumetric strain rate for the general case without swelling.
         variables.volumetric_strain = Invariants::trace(_ip_data[ip].eps);
-        variables_prev.volumetric_strain =
-            Invariants::trace(B * (u - u_dot * dt));
+        variables_prev.volumetric_strain = Invariants::trace(B * u_prev);
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update
@@ -690,7 +689,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
-                         std::vector<double> const& local_xdot,
+                         std::vector<double> const& local_x_prev,
                          std::vector<double>& /*local_M_data*/,
                          std::vector<double>& /*local_K_data*/,
                          std::vector<double>& local_rhs_data,
@@ -708,13 +707,13 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             displacement_size> const>(local_x.data() + displacement_index,
                                       displacement_size);
 
-    auto p_L_dot =
+    auto p_L_prev =
         Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_xdot.data() + pressure_index,
+            pressure_size> const>(local_x_prev.data() + pressure_index,
                                   pressure_size);
-    auto u_dot =
+    auto u_prev =
         Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_xdot.data() + displacement_index,
+            displacement_size> const>(local_x_prev.data() + displacement_index,
                                       displacement_size);
 
     auto local_Jac = MathLib::createZeroedMatrix<
@@ -796,8 +795,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
 
-        double p_cap_dot_ip;
-        NumLib::shapeFunctionInterpolate(-p_L_dot, N_p, p_cap_dot_ip);
+        double p_cap_prev_ip;
+        NumLib::shapeFunctionInterpolate(-p_L_prev, N_p, p_cap_prev_ip);
 
         variables.capillary_pressure = p_cap_ip;
         variables.phase_pressure = -p_cap_ip;
@@ -845,8 +844,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // secant derivative from time discretization for storage
         // use tangent, if secant is not available
         double const DeltaS_L_Deltap_cap =
-            (p_cap_dot_ip == 0) ? dS_L_dp_cap
-                                : (S_L - S_L_prev) / (dt * p_cap_dot_ip);
+            (p_cap_ip == p_cap_prev_ip)
+                ? dS_L_dp_cap
+                : (S_L - S_L_prev) / (p_cap_ip - p_cap_prev_ip);
 
         auto const chi = [medium, x_position, t, dt](double const S_L)
         {
@@ -860,13 +860,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         double const p_FR = -chi_S_L * p_cap_ip;
         variables.effective_pore_pressure = p_FR;
-        variables_prev.effective_pore_pressure =
-            -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
+        variables_prev.effective_pore_pressure = -chi_S_L_prev * p_cap_prev_ip;
 
         // Set volumetric strain rate for the general case without swelling.
         variables.volumetric_strain = Invariants::trace(_ip_data[ip].eps);
-        variables_prev.volumetric_strain =
-            Invariants::trace(B * (u - u_dot * dt));
+        variables_prev.volumetric_strain = Invariants::trace(B * u_prev);
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update
@@ -1002,7 +1000,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // {
         //     -B.transpose() *
         //         dsigma_sw_dS_L_m* dS_L_m_dp_cap_m*(p_L_m - p_L_m_prev) /
-        //         p_cap_dot_ip / dt* N_p* w;
+        //         (p_cap_ip - p_cap_prev_ip) * N_p* w;
         // }
         if (!medium->hasProperty(MPL::PropertyType::saturation_micro) &&
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
@@ -1067,8 +1065,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
                                                           pressure_index)
-            .noalias() += N_p.transpose() * p_cap_dot_ip * rho_LR *
-                          dspecific_storage_a_p_dp_cap * N_p * w;
+            .noalias() += N_p.transpose() * (p_cap_ip - p_cap_prev_ip) / dt *
+                          rho_LR * dspecific_storage_a_p_dp_cap * N_p * w;
 
         storage_p_a_S_Jpp.noalias() -=
             N_p.transpose() * rho_LR *
@@ -1082,7 +1080,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template block<pressure_size, pressure_size>(pressure_index,
                                                               pressure_index)
                 .noalias() -= N_p.transpose() * rho_LR * dS_L_dp_cap * alpha *
-                              identity2.transpose() * B * u_dot * N_p * w;
+                              identity2.transpose() * B * (u - u_prev) / dt *
+                              N_p * w;
         }
 
         double const dk_rel_dS_l =
@@ -1120,15 +1119,15 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template block<pressure_size, pressure_size>(pressure_index,
                                                               pressure_index)
                 .noalias() += N_p.transpose() * alpha_bar / mu * N_p * w;
-            if (p_cap_dot_ip != 0)
+            if (p_cap_ip != p_cap_prev_ip)
             {
                 double const p_L_m_prev = _ip_data[ip].liquid_pressure_m_prev;
                 local_Jac
                     .template block<pressure_size, pressure_size>(
                         pressure_index, pressure_index)
                     .noalias() += N_p.transpose() * alpha_bar / mu *
-                                  (p_L_m - p_L_m_prev) / (dt * p_cap_dot_ip) *
-                                  N_p * w;
+                                  (p_L_m - p_L_m_prev) /
+                                  (p_cap_ip - p_cap_prev_ip) * N_p * w;
             }
         }
     }
@@ -1155,8 +1154,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     // pressure equation
     local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
-        laplace_p * p_L + (storage_p_a_p + storage_p_a_S) * p_L_dot +
-        Kpu * u_dot;
+        laplace_p * p_L +
+        (storage_p_a_p + storage_p_a_S) * (p_L - p_L_prev) / dt +
+        Kpu * (u - u_prev) / dt;
 
     // displacement equation
     local_rhs.template segment<displacement_size>(displacement_index)
@@ -1278,7 +1278,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 std::vector<double> RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getMaterialStateVariableInternalState(
-        std::function<BaseLib::DynamicSpan<double>(
+        std::function<std::span<double>(
             typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
                 MaterialStateVariables&)> const& get_values_span,
         int const& n_components) const
@@ -1460,7 +1460,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     assembleWithJacobianForPressureEquations(
         const double /*t*/, double const /*dt*/,
         Eigen::VectorXd const& /*local_x*/,
-        Eigen::VectorXd const& /*local_xdot*/,
+        Eigen::VectorXd const& /*local_x_prev*/,
         std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& /*local_b_data*/,
@@ -1476,7 +1476,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     assembleWithJacobianForDeformationEquations(
         const double /*t*/, double const /*dt*/,
         Eigen::VectorXd const& /*local_x*/,
-        Eigen::VectorXd const& /*local_xdot*/,
+        Eigen::VectorXd const& /*local_x_prev*/,
         std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& /*local_b_data*/,
@@ -1491,21 +1491,21 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, int const process_id,
+        Eigen::VectorXd const& local_x_prev, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
 {
     // For the equations with pressure
     if (process_id == 0)
     {
-        assembleWithJacobianForPressureEquations(t, dt, local_x, local_xdot,
+        assembleWithJacobianForPressureEquations(t, dt, local_x, local_x_prev,
                                                  local_M_data, local_K_data,
                                                  local_b_data, local_Jac_data);
         return;
     }
 
     // For the equations with deformation
-    assembleWithJacobianForDeformationEquations(t, dt, local_x, local_xdot,
+    assembleWithJacobianForDeformationEquations(t, dt, local_x, local_x_prev,
                                                 local_M_data, local_K_data,
                                                 local_b_data, local_Jac_data);
 }
@@ -1516,14 +1516,15 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, DisplacementDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
-                                     Eigen::VectorXd const& local_x_dot)
+                                     Eigen::VectorXd const& local_x_prev)
 {
     auto p_L = local_x.template segment<pressure_size>(pressure_index);
     auto u = local_x.template segment<displacement_size>(displacement_index);
 
-    auto p_L_dot = local_x_dot.template segment<pressure_size>(pressure_index);
-    auto u_dot =
-        local_x_dot.template segment<displacement_size>(displacement_index);
+    auto p_L_prev =
+        local_x_prev.template segment<pressure_size>(pressure_index);
+    auto u_prev =
+        local_x_prev.template segment<displacement_size>(displacement_index);
 
     auto const& identity2 = MathLib::KelvinVector::Invariants<
         MathLib::KelvinVector::kelvin_vector_dimensions(
@@ -1567,8 +1568,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
 
-        double p_cap_dot_ip;
-        NumLib::shapeFunctionInterpolate(-p_L_dot, N_p, p_cap_dot_ip);
+        double p_cap_prev_ip;
+        NumLib::shapeFunctionInterpolate(-p_L_prev, N_p, p_cap_prev_ip);
 
         variables.capillary_pressure = p_cap_ip;
         variables.phase_pressure = -p_cap_ip;
@@ -1611,13 +1612,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables.grain_compressibility = beta_SR;
 
         variables.effective_pore_pressure = -chi_S_L * p_cap_ip;
-        variables_prev.effective_pore_pressure =
-            -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
+        variables_prev.effective_pore_pressure = -chi_S_L_prev * p_cap_prev_ip;
 
         // Set volumetric strain rate for the general case without swelling.
         variables.volumetric_strain = Invariants::trace(_ip_data[ip].eps);
-        variables_prev.volumetric_strain =
-            Invariants::trace(B * (u - u_dot * dt));
+        variables_prev.volumetric_strain = Invariants::trace(B * u_prev);
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update

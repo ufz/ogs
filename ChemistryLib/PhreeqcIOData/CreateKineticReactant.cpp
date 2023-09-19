@@ -15,6 +15,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "KineticReactant.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 
 namespace ChemistryLib
 {

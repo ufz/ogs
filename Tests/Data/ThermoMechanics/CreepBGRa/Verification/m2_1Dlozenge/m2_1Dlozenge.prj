@@ -85,7 +85,15 @@
                             <delta_t>1.0e-10</delta_t>
                         </pair>
                         <pair>
-                            <repeat>105</repeat>
+                            <repeat>4</repeat>
+                            <delta_t>1.0e-1</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.099999999899999969522</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>100</repeat>
                             <delta_t>1.0e-1</delta_t>
                         </pair>
                     </timesteps>

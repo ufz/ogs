@@ -76,6 +76,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createClausiusClapeyron(config);
     }
 
+    if (boost::iequals(property_type, "CubicLawPermeability"))
+    {
+        return createCubicLawPermeability(config, parameters);
+    }
+
     if (boost::iequals(property_type, "Dupuit"))
     {
         return createDupuitPermeability(config, parameters);
@@ -267,6 +272,42 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     if (boost::iequals(property_type, "WaterDensityIAPWSIF97Region1"))
     {
         return createWaterDensityIAPWSIF97Region1(config);
+    }
+
+    if (boost::iequals(property_type,
+                       "WaterSaturationTemperatureIAPWSIF97Region4"))
+    {
+        return createWaterSaturationTemperatureIAPWSIF97Region4(config);
+    }
+
+    if (boost::iequals(property_type, "WaterEnthalpyIAPWSIF97Region1"))
+    {
+        return createWaterEnthalpyIAPWSIF97Region1(config);
+    }
+
+    if (boost::iequals(property_type, "WaterLiquidDensityIAPWSIF97Region4"))
+    {
+        return createWaterLiquidDensityIAPWSIF97Region4(config);
+    }
+
+    if (boost::iequals(property_type, "WaterVapourDensityIAPWSIF97Region4"))
+    {
+        return createWaterVapourDensityIAPWSIF97Region4(config);
+    }
+
+    if (boost::iequals(property_type, "WaterLiquidEnthalpyIAPWSIF97Region4"))
+    {
+        return createWaterLiquidEnthalpyIAPWSIF97Region4(config);
+    }
+
+    if (boost::iequals(property_type, "WaterVapourEnthalpyIAPWSIF97Region4"))
+    {
+        return createWaterVapourEnthalpyIAPWSIF97Region4(config);
+    }
+
+    if (boost::iequals(property_type, "WaterTemperatureIAPWSIF97Region1"))
+    {
+        return createWaterTemperatureIAPWSIF97Region1(config);
     }
 
     if (boost::iequals(property_type, "WaterVapourDensity"))

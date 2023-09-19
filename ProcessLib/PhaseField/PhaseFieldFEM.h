@@ -61,7 +61,7 @@ struct IntegrationPointData final
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
 
-    typename BMatricesType::KelvinMatrixType D;
+    typename BMatricesType::KelvinMatrixType D, C_tensile, C_compressive;
 
     double integration_weight;
     double history_variable, history_variable_prev;
@@ -95,23 +95,26 @@ struct IntegrationPointData final
             case EnergySplitModel::Isotropic:
             {
                 std::tie(sigma, sigma_tensile, D, strain_energy_tensile,
-                         elastic_energy) = MaterialLib::Solids::Phasefield::
-                    calculateIsotropicDegradedStress<DisplacementDim>(
-                        degradation, bulk_modulus, mu, eps);
+                         elastic_energy, C_tensile, C_compressive) =
+                    MaterialLib::Solids::Phasefield::
+                        calculateIsotropicDegradedStress<DisplacementDim>(
+                            degradation, bulk_modulus, mu, eps);
                 break;
             }
             case EnergySplitModel::VolDev:
             {
                 std::tie(sigma, sigma_tensile, D, strain_energy_tensile,
-                         elastic_energy) = MaterialLib::Solids::Phasefield::
-                    calculateVolDevDegradedStress<DisplacementDim>(
-                        degradation, bulk_modulus, mu, eps);
+                         elastic_energy, C_tensile, C_compressive) =
+                    MaterialLib::Solids::Phasefield::
+                        calculateVolDevDegradedStress<DisplacementDim>(
+                            degradation, bulk_modulus, mu, eps);
                 break;
             }
             case EnergySplitModel::EffectiveStress:
             {
                 std::tie(sigma, sigma_tensile, D, strain_energy_tensile,
-                         elastic_energy) = MaterialLib::Solids::Phasefield::
+                         elastic_energy, C_tensile,
+                         C_compressive) = MaterialLib::Solids::Phasefield::
                     calculateIsotropicDegradedStressWithRankineEnergy<
                         DisplacementDim>(degradation, bulk_modulus, mu, eps);
                 break;
@@ -126,10 +129,10 @@ struct IntegrationPointData final
                                   .getElasticTensor(t, x, temperature);
 
                 std::tie(eps_tensile, sigma, sigma_tensile, sigma_compressive,
-                         D, strain_energy_tensile, elastic_energy) =
-                    MaterialLib::Solids::Phasefield::
-                        calculateOrthoVolDevDegradedStress<DisplacementDim>(
-                            degradation, eps, C_ortho);
+                         D, strain_energy_tensile, elastic_energy, C_tensile,
+                         C_compressive) = MaterialLib::Solids::Phasefield::
+                    calculateOrthoVolDevDegradedStress<DisplacementDim>(
+                        degradation, eps, C_ortho);
                 break;
             }
             case EnergySplitModel::OrthoMasonry:
@@ -142,10 +145,10 @@ struct IntegrationPointData final
                                   .getElasticTensor(t, x, temperature);
 
                 std::tie(eps_tensile, sigma, sigma_tensile, D,
-                         strain_energy_tensile, elastic_energy) =
-                    MaterialLib::Solids::Phasefield::
-                        calculateOrthoMasonryDegradedStress<DisplacementDim>(
-                            degradation, eps, C_ortho);
+                         strain_energy_tensile, elastic_energy, C_tensile,
+                         C_compressive) = MaterialLib::Solids::Phasefield::
+                    calculateOrthoMasonryDegradedStress<DisplacementDim>(
+                        degradation, eps, C_ortho);
                 break;
             }
         }
@@ -261,7 +264,7 @@ public:
 
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& /*local_x*/,
-                  std::vector<double> const& /*local_xdot*/,
+                  std::vector<double> const& /*local_x_prev*/,
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_rhs_data*/) override
@@ -273,7 +276,7 @@ public:
 
     void assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, int const process_id,
+        Eigen::VectorXd const& local_x_prev, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data) override;
@@ -290,8 +293,10 @@ public:
     }
 
     void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              double const /*t*/,
-                              double const /*dt*/) override
+                              Eigen::VectorXd const& /*local_x_prev*/,
+                              double const /*t*/, double const /*dt*/,
+                              bool const /*use_monolithic_scheme*/,
+                              int const /*process_id*/) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();

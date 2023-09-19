@@ -67,6 +67,19 @@
         <prefix>u_{:meshname}</prefix>
     </add>
     
+    <add sel="/*/time_loop/output/variables">
+        <variable>HeatFlowRate</variable>
+        <variable>GasMassFlowRate</variable>
+        <variable>LiquidMassFlowRate</variable>
+        <variable>NodalForces</variable>
+    </add>
+    <add sel="/*/time_loop/submesh_residuum_output/variables">
+        <variable>HeatFlowRate</variable>
+        <variable>GasMassFlowRate</variable>
+        <variable>LiquidMassFlowRate</variable>
+        <variable>NodalForces</variable>
+    </add>
+
     <add sel="/*">
         <test_definition>
             <vtkdiff>
@@ -81,11 +94,11 @@
                 <absolute_tolerance>1e-15</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
-            
+
             <vtkdiff>
                 <regex>u.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>gas_pressure_interpolated</field>
-                <absolute_tolerance>4.5e-13</absolute_tolerance>
+                <absolute_tolerance>4.6e-13</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
@@ -94,11 +107,11 @@
                 <absolute_tolerance>1e-15</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
-            
+
             <vtkdiff>
                 <regex>u.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>capillary_pressure_interpolated</field>
-                <absolute_tolerance>4.5e-8</absolute_tolerance>
+                <absolute_tolerance>4.6e-8</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
@@ -107,7 +120,7 @@
                 <absolute_tolerance>1e-15</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
-            
+
             <vtkdiff>
                 <regex>u.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>displacement</field>

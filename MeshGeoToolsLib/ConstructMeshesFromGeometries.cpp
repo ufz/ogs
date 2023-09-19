@@ -11,14 +11,18 @@
 
 #ifdef USE_PETSC
 #include <mpi.h>
+
+#include "MeshLib/NodePartitionedMesh.h"
+#include "MeshLib/Utils/transformMeshToNodePartitionedMesh.h"
 #endif
 
 #include "BaseLib/Logging.h"
 #include "BoundaryElementsSearcher.h"
 #include "GeoLib/GEOObjects.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
+#include "MeshLib/Utils/createMeshFromElementSelection.h"
 #include "MeshNodeSearcher.h"
 
 namespace MeshGeoToolsLib
@@ -64,14 +68,29 @@ constructAdditionalMeshesFromGeometries(
             DBUG("Creating mesh from geometry {:s} {:s}.", vec_name,
                  geometry_name);
 
+#ifdef USE_PETSC
+            // this mesh isn't yet a NodePartitionedMesh
+            auto subdomain_mesh = createMeshFromElementSelection(
+                meshNameFromGeometry(vec_name, geometry_name),
+                MeshLib::cloneElements(
+                    boundary_element_searcher.getBoundaryElements(
+                        geometry, multiple_nodes_allowed)));
+
+            // the bulk_mesh, that is a NodePartitionedMesh, is needed to
+            // construct the subdomain NodePartitionedMesh
+            auto const* bulk_mesh =
+                dynamic_cast<MeshLib::NodePartitionedMesh const*>(
+                    &boundary_element_searcher._mesh);
+
+            additional_meshes.push_back(
+                MeshLib::transformMeshToNodePartitionedMesh(
+                    bulk_mesh, subdomain_mesh.get()));
+#else
             additional_meshes.emplace_back(createMeshFromElementSelection(
                 meshNameFromGeometry(vec_name, geometry_name),
                 MeshLib::cloneElements(
                     boundary_element_searcher.getBoundaryElements(
                         geometry, multiple_nodes_allowed))));
-
-#ifdef USE_PETSC
-            MPI_Barrier(MPI_COMM_WORLD);
 #endif
         }
     }

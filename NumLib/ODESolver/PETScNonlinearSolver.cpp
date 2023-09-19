@@ -12,10 +12,29 @@
 
 #include "PETScNonlinearSolver.h"
 
+#include <fmt/core.h>
 #include <petscmat.h>
 #include <petscvec.h>
 
 #include "BaseLib/RunTime.h"
+
+template <>
+struct fmt::formatter<SNESConvergedReason>
+{
+    constexpr auto parse(format_parse_context& ctx) { return ctx.end(); }
+
+    template <typename FormatContext>
+    auto format(SNESConvergedReason const reason, FormatContext& ctx)
+    {
+        if (reason < 0)
+        {
+            return fmt::format_to(ctx.out(), "DIVERGED: {}",
+                                  SNESConvergedReasons[-reason]);
+        }
+        return fmt::format_to(ctx.out(), "CONVERGED: {}",
+                              SNESConvergedReasons[reason]);
+    }
+};
 
 namespace
 {

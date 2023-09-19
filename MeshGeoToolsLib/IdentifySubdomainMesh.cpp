@@ -13,6 +13,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/addPropertyToMesh.h"
 #include "MeshNodeSearcher.h"
 
 namespace
@@ -98,10 +99,7 @@ std::vector<std::size_t> findElementsInMesh(
 std::vector<std::vector<std::size_t>> identifySubdomainMeshElements(
     MeshLib::Mesh const& subdomain_mesh, MeshLib::Mesh const& bulk_mesh)
 {
-    auto& properties = subdomain_mesh.getProperties();
-    auto const& bulk_node_ids = *properties.getPropertyVector<std::size_t>(
-        MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
-        MeshLib::MeshItemType::Node, 1);
+    auto const& bulk_node_ids = *MeshLib::bulkNodeIDs(subdomain_mesh);
 
     // Allocate space for all elements for random insertion.
     std::vector<std::vector<std::size_t>> bulk_element_ids_map(

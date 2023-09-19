@@ -13,7 +13,7 @@ weight = 1068
 
 Python wheel builds are driven by [scikit-build](https://scikit-build.readthedocs.io/en/latest/) which basically is a `setuptools`-wrapper for CMake-based projects.
 
-The entry point is `setup.py` in the root directory. It uses the `wheel` CMake preset (or `wheel-win` on Windows).
+The entry point is `setup.py` in the root directory. It uses the `wheel` CMake preset. The preset can be overridden and even other CMake options can be passed via the environment variable `CMAKE_ARGS`.
 
 You can locally develop and test with the following setup:
 
@@ -26,9 +26,18 @@ source .venv/bin/activate
 pip install -v .[test]
 ...
 Successfully installed ogs-6.4.2.dev1207
+
+# To build with additional CMake arguments, e.g.:
+CMAKE_ARGS="-DOGS_BUILD_PROCESSES=SteadyStateDiffusion" pip install -v .[test]
+# OR
+pip install -v .[test] --config-settings=cmake.args="-DOGS_BUILD_PROCESSES=SteadyStateDiffusion"
 ```
 
-The `pip install`-step starts a new CMake-based ogs build in `_skbuild`-subdirectory (inside the source code) using the `wheel`-preset. When the CMake build is done it installs the wheel into the activated virtual environment and you can interact with it, e.g.:
+The `pip install`-step starts a new CMake-based ogs build in `_skbuild`-subdirectory (inside the source code) using the `wheel`-preset. When the CMake build is done it installs the wheel into the activated virtual environment and you can interact with it.
+
+The contents of `_skbuild/[platform-specific]/cmake-install` will make up the wheel.
+
+### Testing
 
 ```bash
 # Run python tests
@@ -49,9 +58,19 @@ python3
 >>> sim.initialize(["", "--help"])
 ```
 
-If you make modifications you need to run `pip install .[test]` again (or for temporary modifications you can directly edit inside the virtual environment, e.g. in `.venv/lib/python3.10/site-packages/ogs`).
+If you make modifications on the C++ side you need to run `pip install .[test]` again. Modifications on the Python tests are immediately available to `pytest`.
 
-The contents of `_skbuild/[platform-specific]/cmake-install` will make up the wheel.
+To get the output of a specific test:
+
+```bash
+pytest --capture=tee-sys ./Tests/Python/test_simulator_mesh_interface.py
+```
+
+### Module structure
+
+Python modules added in CMake via `pybind11_add_module()` should only contain the binding code and other (helper code) which is used by that module only! If you need helper code which is used by several modules (e.g. `OGSMesh`-class used in `mesh`- and `simulator`-module) it needs to be defined in a regular library and linked to the modules.
+
+If you don't do this you will get unresolved externals between the modules and when you try to link them together you will get runtime errors or it doesn't link at all (at least on Windows, because of the `.pyd` library format).
 
 ## CI
 

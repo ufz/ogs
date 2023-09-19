@@ -1,10 +1,10 @@
 /**
- * @file TemplateVec.h
- * @date 2010-02-26
- * @author Thomas Fischer
- * @brief Definition of the GeoLib::TemplateVec class.
+ * \file
+ * \date 2010-02-26
+ * \author Thomas Fischer
+ * \brief Definition of the GeoLib::TemplateVec class.
  *
- * @copyright
+ * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
@@ -45,13 +45,13 @@ public:
 
     /**
      * Constructor of class TemlateVec.
-     * @param name unique name of the project the elements belonging to.
+     * \param name unique name of the project the elements belonging to.
      * In order to access the data elements a unique name is required.
-     * @param data_vec Vector of data elements.
-     * @attention{TemplateVec will take the ownership of the vector
+     * \param data_vec Vector of data elements.
+     * \attention{TemplateVec will take the ownership of the vector
      * and also its elements,
      * i.e. delete its elements and delete the vector itself!}
-     * @param elem_name_map Names of data elements can be given by a
+     * \param elem_name_map Names of data elements can be given by a
      * std::map<std::string, std::size_t>. Here the std::string is the name
      * of the element and the value for std::size_t stands for an index in
      * the data_vec.
@@ -81,7 +81,7 @@ public:
     void setName(const std::string& n) { _name = n; }
     /**
      * the name, the data element belonging to
-     * @return the name of the object
+     * \return the name of the object
      */
     std::string getName() const { return _name; }
 
@@ -98,21 +98,21 @@ public:
     }
 
     /**
-     * @return the number of data elements
+     * \return the number of data elements
      */
     std::size_t size() const { return _data_vec.size(); }
 
     /**
      * get a pointer to a standard vector containing the data elements
-     * @return the data elements
+     * \return the data elements
      */
     std::vector<T*> const& getVector() const { return _data_vec; }
 
     /**
      * search the vector of names for the ID of the geometric element with the
      * given name
-     * @param name the name of the geometric element
-     * @param id the id of the geometric element
+     * \param name the name of the geometric element
+     * \param id the id of the geometric element
      */
     bool getElementIDByName(const std::string& name, std::size_t& id) const
     {
@@ -142,10 +142,10 @@ public:
     /**
      * The method returns true if there is a name associated
      * with the given id, else method returns false.
-     * @param id the id
-     * @param element_name if a name associated with the id
+     * \param id the id
+     * \param element_name if a name associated with the id
      * is found name is assigned to element_name
-     * @return if there is name associated with the given id:
+     * \return if there is name associated with the given id:
      * true, else false
      */
     bool getNameOfElementByID(std::size_t id, std::string& element_name) const
@@ -169,10 +169,10 @@ public:
     /**
      * The method returns true if the given element of type T
      * can be found and the element has a name, else method returns false.
-     * @param data the data element, one wants to know the name
-     * @param name the name of the data element (if the data element is
+     * \param data the data element, one wants to know the name
+     * \param name the name of the data element (if the data element is
      * found and the data element has a name)
-     * @return if element is found and has a name: true, else false
+     * \return if element is found and has a name: true, else false
      */
     bool getNameOfElement(const T* data, std::string& name) const
     {

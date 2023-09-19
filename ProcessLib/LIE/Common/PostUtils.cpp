@@ -10,8 +10,9 @@
 #include "PostUtils.h"
 
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/DuplicateMeshComponents.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 
 namespace ProcessLib
 {
@@ -79,7 +80,7 @@ PostProcessTool::PostProcessTool(
         }
     }
     // at a junction, generate one more duplicated node (total 4 nodes)
-    for (auto& entry : vec_junction_nodeID_matIDs)
+    for (auto const& entry : vec_junction_nodeID_matIDs)
     {
         auto* org_node = org_mesh.getNode(entry.first);
         auto duplicated_node =
@@ -160,7 +161,7 @@ PostProcessTool::PostProcessTool(
                         // index of this fracture
                         pos = BaseLib::findIndex(br_matids, frac_matid);
                     }
-                    else if ((*prop_levelset2)[eid] > 0)
+                    else
                     {
                         // index of the other fracture
                         pos = BaseLib::findIndex(br_matids, *frac2_matid);
@@ -192,7 +193,7 @@ PostProcessTool::PostProcessTool(
                         assert(pos != std::numeric_limits<std::size_t>::max());
                         new_node_id = dup_newNodeIDs[pos];
                     }
-                    else if ((*prop_levelset2)[eid] > 0)
+                    else
                     {
                         // set the last duplicated node
                         new_node_id = dup_newNodeIDs.back();

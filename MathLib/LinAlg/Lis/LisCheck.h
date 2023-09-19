@@ -2,7 +2,6 @@
  * \file
  * \author Norihiro Watanabe
  * \date   2013-04-16
- * \brief
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
@@ -26,8 +25,8 @@ namespace MathLib
 /**
  * check Lis error codes
  *
- * @param err   Lis error code
- * @return success or not
+ * \param err   Lis error code
+ * \return success or not
  */
 inline bool checkLisError(int err)
 {

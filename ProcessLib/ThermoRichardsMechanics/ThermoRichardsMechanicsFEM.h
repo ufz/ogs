@@ -17,6 +17,7 @@
 #include "LocalAssemblerInterface.h"
 #include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/KelvinVector.h"
+#include "NumLib/DOF/LocalDOF.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -241,7 +242,7 @@ public:
 
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
+                              std::vector<double> const& local_x_prev,
                               std::vector<double>& /*local_M_data*/,
                               std::vector<double>& /*local_K_data*/,
                               std::vector<double>& local_rhs_data,
@@ -252,42 +253,22 @@ private:
         double const t, double const dt,
         ParameterLib::SpatialPosition const& x_position,
         std::vector<double> const& local_x,
-        std::vector<double> const& local_xdot, IpData const& ip_data,
+        std::vector<double> const& local_x_prev, IpData const& ip_data,
         typename ConstitutiveTraits::ConstitutiveSetting& CS,
         MaterialPropertyLib::Medium& medium, LocalMatrices& out,
         typename ConstitutiveTraits::StatefulData& current_state,
-        typename ConstitutiveTraits::StatefulData const& prev_state,
+        typename ConstitutiveTraits::StatefulDataPrev const& prev_state,
         MaterialStateData<DisplacementDim>& mat_state,
         typename ConstitutiveTraits::OutputData& output_data) const;
 
     void addToLocalMatrixData(double const dt,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
+                              std::vector<double> const& local_x_prev,
                               LocalMatrices const& loc_mat,
                               std::vector<double>& local_rhs_data,
                               std::vector<double>& local_Jac_data) const;
 
     void massLumping(LocalMatrices& loc_mat) const;
-
-    //! Makes local d.o.f.s more accessible.
-    //! Order of the returned Eigen vectors: T, p_L, u.
-    auto localDOF(std::vector<double> const& local_dof_data) const
-    {
-        static_assert(temperature_size == pressure_size);
-
-        using NodalTOrPVec =
-            typename ShapeMatricesType::template VectorType<temperature_size>;
-        using NodalDispVec =
-            typename ShapeMatricesTypeDisplacement::template VectorType<
-                displacement_size>;
-
-        return std::tuple<Eigen::Map<NodalTOrPVec const>,
-                          Eigen::Map<NodalTOrPVec const>,
-                          Eigen::Map<NodalDispVec const>>(
-            {local_dof_data.data() + temperature_index, temperature_size},
-            {local_dof_data.data() + pressure_index, pressure_size},
-            {local_dof_data.data() + displacement_index, displacement_size});
-    };
 
 public:
     void initializeConcrete() override
@@ -336,6 +317,11 @@ public:
                 current_state.transport_poro_data.phi =
                     current_state.poro_data.phi;
             }
+
+            double const t = 0;  // TODO (naumov) pass t from top
+            this->solid_material_.initializeInternalStateVariables(
+                t, x_position,
+                *this->material_states_[ip].material_state_variables);
         }
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -343,12 +329,15 @@ public:
             this->material_states_[ip].pushBackState();
         }
 
-        this->prev_states_ = this->current_states_;
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            this->prev_states_[ip] = this->current_states_[ip];
+        }
     }
 
     void computeSecondaryVariableConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_x_dot) override;
+        Eigen::VectorXd const& local_x_prev) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
@@ -361,6 +350,13 @@ public:
 
 private:
     std::vector<IpData> ip_data_;
+
+    static constexpr auto localDOF(std::vector<double> const& x)
+    {
+        return NumLib::localDOF<
+            ShapeFunction, ShapeFunction,
+            NumLib::Vectorial<ShapeFunctionDisplacement, DisplacementDim>>(x);
+    }
 
     static auto block_uu(auto& mat)
     {

@@ -45,12 +45,14 @@ static void print(double const t,
     namespace MPL = MaterialPropertyLib;
     using KV = MathLib::KelvinVector::KelvinVectorType<3>;
 
-    auto const strain = MaterialLib::Solids::MFront::MFrontToOGS(
-        std::get<KV>(vars.mechanical_strain));
+    auto const strain = MaterialLib::Solids::MFront::eigenSwap45View(
+                            std::get<KV>(vars.mechanical_strain))
+                            .eval();
     auto const p = vars.liquid_phase_pressure;
 
     auto const stress =
-        MaterialLib::Solids::MFront::MFrontToOGS(std::get<KV>(vars.stress));
+        MaterialLib::Solids::MFront::eigenSwap45View(std::get<KV>(vars.stress))
+            .eval();
     auto const S_L = vars.liquid_saturation;
 
     std::cout << t  //
@@ -128,8 +130,8 @@ static auto createMFront(
     return MSM::createMFrontGeneric<
         3, boost::mp11::mp_list<MSM::Strain, MSM::LiquidPressure>,
         boost::mp11::mp_list<MSM::Stress, MSM::Saturation>,
-        boost::mp11::mp_list<>>(parameters, local_coordinate_system,
-                                config_tree, false);
+        boost::mp11::mp_list<MSM::Temperature>>(
+        parameters, local_coordinate_system, config_tree, false);
 }
 
 TEST(MaterialLib_ThermoPoroElasticityMFront, IsochoricDrainedHeating)

@@ -24,6 +24,7 @@ void ElasticTangentStiffnessModel<DisplacementDim>::eval(
     namespace MPL = MaterialPropertyLib;
 
     auto const null_state = solid_material_.createMaterialStateVariables();
+    solid_material_.initializeInternalStateVariables(x_t.t, x_t.x, *null_state);
 
     using KV = KelvinVector<DisplacementDim>;
 
@@ -48,9 +49,7 @@ void ElasticTangentStiffnessModel<DisplacementDim>::eval(
         variable_array_prev.liquid_phase_pressure = 0.0;
 
         // external state variables
-        // Compute previous temperature by linearly following T_dot over the
-        // past timestep.
-        variable_array_prev.temperature = T_data.T - T_data.T_dot * x_t.dt;
+        variable_array_prev.temperature = T_data.T_prev;
     }
 
     auto&& solution = solid_material_.integrateStress(

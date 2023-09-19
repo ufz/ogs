@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -9,15 +10,16 @@
 #include <gtest/gtest.h>
 
 #include <Eigen/Core>
-#include <cmath>
+#include <map>
 #include <memory>
+#include <vector>
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/FileTools.h"
 #include "InfoLib/TestInfo.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/ComponentTransport/CreateLookupTable.h"
 #include "ProcessLib/ComponentTransport/LookupTable.h"
@@ -38,7 +40,8 @@ std::unique_ptr<LookupTable> createTestLookupTable(const char xml[])
     {
         std::size_t const n_elements = 4;
         auto mesh = std::unique_ptr<MeshLib::Mesh>(
-            MeshLib::MeshGenerator::generateRegularQuadMesh(1.0, n_elements));
+            MeshToolsLib::MeshGenerator::generateRegularQuadMesh(1.0,
+                                                                 n_elements));
         meshes.push_back(std::move(mesh));
     }
 
@@ -150,4 +153,76 @@ TEST(ComponentTransport, checkLookupTable)
     ASSERT_EQ(1.e-8, tabular_data.at("Ra")[0]);
     ASSERT_EQ(1.e-12, tabular_data.at("Ra_prev")[0]);
     ASSERT_EQ(9.977098263915e-13, tabular_data.at("Ra_new")[0]);
+}
+
+class ComponentTransport_FieldGetBoundingSeedPointsTests
+    : public ::testing::Test
+{
+protected:
+    ProcessLib::ComponentTransport::Field createField(
+        std::vector<double> seed_points)
+    {
+        return ProcessLib::ComponentTransport::Field{{}, seed_points, "", 0};
+    }
+};
+
+TEST_F(ComponentTransport_FieldGetBoundingSeedPointsTests,
+       TestLowerBoundWarning)
+{
+    auto const field = createField({1.0, 2.0, 3.0, 4.0, 5.0});
+    double const value = 0.5;
+    auto const pair = field.getBoundingSeedPoints(value);
+    EXPECT_DOUBLE_EQ(pair.first, 1.0);
+    EXPECT_DOUBLE_EQ(pair.second, 2.0);
+}
+
+TEST_F(ComponentTransport_FieldGetBoundingSeedPointsTests,
+       TestUpperBoundWarning)
+{
+    auto const field = createField({1.0, 2.0, 3.0, 4.0, 5.0});
+    double const value = 5.5;
+    auto pair = field.getBoundingSeedPoints(value);
+    EXPECT_DOUBLE_EQ(pair.first, 4.0);
+    EXPECT_DOUBLE_EQ(pair.second, 5.0);
+}
+
+TEST_F(ComponentTransport_FieldGetBoundingSeedPointsTests, TestMiddleValue)
+{
+    auto const field = createField({1.0, 2.0, 3.0, 4.0, 5.0});
+    double const value = 3.5;
+    auto pair = field.getBoundingSeedPoints(value);
+    EXPECT_DOUBLE_EQ(pair.first, 3.0);
+    EXPECT_DOUBLE_EQ(pair.second, 4.0);
+}
+
+TEST_F(ComponentTransport_FieldGetBoundingSeedPointsTests, TestExactValue)
+{
+    auto const field = createField({1.0, 2.0, 3.0, 4.0, 5.0});
+    double const value = 3.0;
+    auto pair = field.getBoundingSeedPoints(value);
+    EXPECT_DOUBLE_EQ(pair.first, 2.0);
+    EXPECT_DOUBLE_EQ(pair.second, 3.0);
+}
+
+TEST_F(ComponentTransport_FieldGetBoundingSeedPointsTests, TestTwoElementVector)
+{
+    auto const field = createField({2.0, 3.0});
+    double const value = 3.0;
+    auto pair = field.getBoundingSeedPoints(value);
+    EXPECT_DOUBLE_EQ(pair.first, 2.0);
+    EXPECT_DOUBLE_EQ(pair.second, 3.0);
+}
+
+TEST_F(ComponentTransport_FieldGetBoundingSeedPointsTests, TestOneElementVector)
+{
+    auto const field = createField({3.0});
+    double const value = 3.0;
+    ASSERT_THROW(field.getBoundingSeedPoints(value), std::runtime_error);
+}
+
+TEST_F(ComponentTransport_FieldGetBoundingSeedPointsTests, TestEmptyVector)
+{
+    auto const field = createField({});
+    double const value = 3.0;
+    ASSERT_THROW(field.getBoundingSeedPoints(value), std::runtime_error);
 }

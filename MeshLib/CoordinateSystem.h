@@ -9,9 +9,10 @@
 
 #pragma once
 
-#include <cmath>
-
-#include "GeoLib/AABB.h"
+namespace GeoLib
+{
+class AABB;
+}
 
 namespace MeshLib
 {
@@ -45,10 +46,7 @@ public:
     explicit CoordinateSystem(const Element& ele);
 
     /// Decides a coordinate system from a bounding box
-    explicit CoordinateSystem(const GeoLib::AABB& bbox)
-        : _type(getCoordinateSystem(bbox))
-    {
-    }
+    explicit CoordinateSystem(const GeoLib::AABB& bbox);
 
     /// get this coordinate type
     unsigned char getType() const { return _type; }
@@ -78,8 +76,6 @@ public:
     bool hasZ() const { return (_type & CoordinateSystemType::type::Z) != 0; }
 
 private:
-    unsigned char getCoordinateSystem(const GeoLib::AABB& bbox) const;
-
     unsigned char _type;
 };
 

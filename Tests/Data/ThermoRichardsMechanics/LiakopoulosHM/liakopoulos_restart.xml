@@ -5,9 +5,47 @@
 
     <replace sel="/*/time_loop/processes/process/time_stepping/t_initial/text()">600</replace>
 
-    <remove sel="/*/time_loop/processes/process/time_stepping/timesteps/pair[1]" />
-    <remove sel="/*/time_loop/processes/process/time_stepping/timesteps/pair[1]" />
-    <replace sel="/*/time_loop/processes/process/time_stepping/timesteps/pair[1]/repeat/text()">6</replace>
+    <remove sel="/*/time_loop/processes/process/time_stepping/timesteps" />
+    <add sel="/*/time_loop/processes/process/time_stepping">
+        <timesteps>
+            <pair>
+                <repeat>6</repeat>
+                <delta_t>100</delta_t>
+            </pair>
+            <pair>
+                <repeat>3</repeat>
+                <delta_t>200</delta_t>
+            </pair>
+            <pair>
+                <repeat>1</repeat>
+                <delta_t>400</delta_t>
+            </pair>
+            <pair>
+                <repeat>1</repeat>
+                <delta_t>200</delta_t>
+            </pair>
+            <pair>
+                <repeat>1</repeat>
+                <delta_t>400</delta_t>
+            </pair>
+            <pair>
+                <repeat>3</repeat>
+                <delta_t>600</delta_t>
+            </pair>
+            <pair>
+                <repeat>1</repeat>
+                <delta_t>200</delta_t>
+            </pair>
+            <pair>
+                <repeat>3</repeat>
+                <delta_t>600</delta_t>
+            </pair>
+            <pair>
+                <repeat>6</repeat>
+                <delta_t>100</delta_t>
+            </pair>
+        </timesteps>
+    </add>
 
     <replace sel="/*/time_loop/output/prefix/text()">liakopoulos_restart_{:meshname}</replace>
 

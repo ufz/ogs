@@ -21,10 +21,10 @@ void SwellingModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, MediaData const& media_data,
     ElasticTangentStiffnessData<DisplacementDim> const& C_el_data,
     StrainData<DisplacementDim> const& eps_data,
-    StrainData<DisplacementDim> const& eps_prev_data,
+    PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
     SaturationData const& S_L_data, SaturationDataDeriv const& dS_L_data,
-    SaturationData const& S_L_prev_data,
-    SwellingDataStateful<DisplacementDim> const& prev_state,
+    PrevState<SaturationData> const& S_L_prev_data,
+    PrevState<SwellingDataStateful<DisplacementDim>> const& prev_state,
     SwellingDataStateful<DisplacementDim>& state,
     SwellingDataStateless<DisplacementDim>& out) const
 {
@@ -47,7 +47,7 @@ void SwellingModel<DisplacementDim>::eval(
     variables.liquid_saturation = S_L_data.S_L;
 
     MPL::VariableArray variables_prev;
-    variables_prev.liquid_saturation = S_L_prev_data.S_L;
+    variables_prev.liquid_saturation = S_L_prev_data->S_L;
 
     auto const& identity2 = MathLib::KelvinVector::Invariants<
         MathLib::KelvinVector::kelvin_vector_dimensions(
@@ -57,7 +57,7 @@ void SwellingModel<DisplacementDim>::eval(
 
     // If there is swelling, compute it. Update volumetric strain rate,
     // s.t. it corresponds to the mechanical part only.
-    state.sigma_sw = prev_state.sigma_sw;
+    state.sigma_sw = prev_state->sigma_sw;
 
     auto const sigma_sw_dot =
         MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
@@ -74,10 +74,10 @@ void SwellingModel<DisplacementDim>::eval(
         Invariants::trace(eps_data.eps) +
         identity2.transpose() * C_el_inv * state.sigma_sw;
     variables_prev.volumetric_strain =
-        Invariants::trace(eps_prev_data.eps) +
-        identity2.transpose() * C_el_inv * prev_state.sigma_sw;
+        Invariants::trace(eps_prev_data->eps) +
+        identity2.transpose() * C_el_inv * prev_state->sigma_sw;
 
-    out.eps_m.noalias() = C_el_inv * (state.sigma_sw - prev_state.sigma_sw);
+    out.eps_m.noalias() = C_el_inv * (state.sigma_sw - prev_state->sigma_sw);
 
     using DimMatrix = Eigen::Matrix<double, 3, 3>;
     auto const dsigma_sw_dS_L =

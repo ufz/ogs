@@ -13,19 +13,24 @@
     "git": "2.14",
     "cmake": "3.22",
     "hugo": "0.64.1",
-    "boost": "1.69.0",
-    "eigen": "9441d94dccccd5db8d64179516fdc5b53994a047",
+    "boost": "1.73.0",
+    "eigen": "3.4.0",
+    "eigen-unsupported": "9441d94dccccd5db8d64179516fdc5b53994a047",
     "vtk": "9.1.0",
-    "petsc": "3.16.3",
+    "petsc": "3.16.1",
     "qt": "5.14.2",
     "python": "3.6",
     "snakemake": "7.20.0",
-    "hdf5": "1.12.1",
+    "hdf5": "1.10.7",
     "libxml2": "2.9.12",
     "tfel-rliv": "4.0",
     "tfel-repo": "thelfer",
     "lis": "1.7.37",
-    "gtest": "1.11.0"
+    "gtest": "1.13.0",
+    "pybind11": "2.10.4",
+    "range-v3": "0.12.0",
+    "json": "3.10.5",
+    "json_sha": "b94997df68856753b72f0d7a3703b7d484d4745c567f3584ef97c96c25a5798e"
   },
   "tested_version": {
     "ubuntu": "22.04",
@@ -33,7 +38,7 @@
     "cmake": "3.22.3",
     "hdf5": "1.12.2",
     "zlib": "1.2.11",
-    "gtest": "8d51dc50eb7e7698427fed81b85edad0e032112e"
+    "gtest": "1.13.0"
   },
   "ctest": {
     "large_runtime": 60
@@ -68,8 +73,8 @@
     }
   },
   "cpm": {
-    "package_file_id": 331,
-    "package_file_sha256": "ad08aadcf77407ad66ade082d100780e51c97e7c023837f8cf72b8d817d5ca11"
+    "package_file_id": 749,
+    "package_file_sha256": "25862fd9b76d5c685cd60432396507822dd547e7ee2e87dffb1126603574efad"
   },
   "ext": {
     "cache_hash": "4ebd62e0ce484732dbf3cd9932f60b67762e156b"

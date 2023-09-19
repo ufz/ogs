@@ -17,8 +17,8 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Hex.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 using namespace MeshLib;
 
@@ -28,7 +28,7 @@ TEST(MeshLib, MeshGeneratorRegularHex)
     const std::size_t n_subdivisions = 9;
     const double dL = L / static_cast<double>(n_subdivisions);
     std::unique_ptr<Mesh> msh(
-        MeshGenerator::generateRegularHexMesh(L, n_subdivisions));
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(L, n_subdivisions));
 
     ASSERT_EQ(std::pow(n_subdivisions, 3), msh->getNumberOfElements());
     ASSERT_EQ(std::pow(n_subdivisions + 1, 3), msh->getNumberOfNodes());
@@ -83,8 +83,10 @@ TEST(MeshLib, MeshGeneratorRegularHex)
     ASSERT_EQ(offset_zn1 + offset_yn1 + n_subdivisions - 1,
               getNodeIndex(ele_n, 7));
 
-    std::unique_ptr<Mesh> msh2(MeshGenerator::generateRegularHexMesh(
-        n_subdivisions, n_subdivisions, n_subdivisions, L / n_subdivisions));
+    std::unique_ptr<Mesh> msh2(
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(
+            n_subdivisions, n_subdivisions, n_subdivisions,
+            L / n_subdivisions));
     ASSERT_EQ(msh->getNumberOfNodes(), msh2->getNumberOfNodes());
     ASSERT_DOUBLE_EQ(
         0, MathLib::sqrDist(*(msh->getNode(msh->getNumberOfNodes() - 1)),
@@ -95,7 +97,8 @@ TEST(MeshLib, MeshGeneratorRegularHex)
     unsigned n_z(2);
     double delta(1.2);
     std::unique_ptr<Mesh> hex_mesh(
-        MeshGenerator::generateRegularHexMesh(n_x, n_y, n_z, delta));
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(n_x, n_y, n_z,
+                                                            delta));
     ASSERT_EQ(n_x * n_y * n_z, hex_mesh->getNumberOfElements());
     ASSERT_EQ((n_x + 1) * (n_y + 1) * (n_z + 1), hex_mesh->getNumberOfNodes());
     const MeshLib::Node* node(
@@ -111,7 +114,7 @@ TEST(MeshLib, MeshGeneratorRegularQuad)
     unsigned n_y(5);
     double delta(1.2);
     std::unique_ptr<Mesh> quad_mesh(
-        MeshGenerator::generateRegularQuadMesh(n_x, n_y, delta));
+        MeshToolsLib::MeshGenerator::generateRegularQuadMesh(n_x, n_y, delta));
     ASSERT_EQ(n_x * n_y, quad_mesh->getNumberOfElements());
     ASSERT_EQ((n_x + 1) * (n_y + 1), quad_mesh->getNumberOfNodes());
     const MeshLib::Node* node(
@@ -123,7 +126,8 @@ TEST(MeshLib, MeshGeneratorRegularQuad)
     const double L = 10.0;
     const std::size_t n_subdivisions = 9;
     std::unique_ptr<Mesh> quad_mesh2(
-        MeshGenerator::generateRegularQuadMesh(L, n_subdivisions));
+        MeshToolsLib::MeshGenerator::generateRegularQuadMesh(L,
+                                                             n_subdivisions));
     ASSERT_EQ(n_subdivisions * n_subdivisions,
               quad_mesh2->getNumberOfElements());
     node = quad_mesh2->getNode(quad_mesh2->getNumberOfNodes() - 1);
@@ -140,7 +144,8 @@ TEST(MeshLib, MeshGeneratorRegularPrism)
     unsigned n_y(5);
     unsigned n_z(4);
     std::unique_ptr<Mesh> mesh(
-        MeshGenerator::generateRegularPrismMesh(l_x, l_y, l_z, n_x, n_y, n_z));
+        MeshToolsLib::MeshGenerator::generateRegularPrismMesh(l_x, l_y, l_z,
+                                                              n_x, n_y, n_z));
     ASSERT_EQ(2 * n_x * n_y * n_z, mesh->getNumberOfElements());
     ASSERT_EQ((n_x + 1) * (n_y + 1) * (n_z + 1), mesh->getNumberOfNodes());
 
@@ -172,8 +177,9 @@ TEST(MeshLib, MeshGeneratorRegularPyramid)
         vec_div.emplace_back(
             new BaseLib::UniformSubdivision(L, n_subdivisions));
     }
-    std::unique_ptr<Mesh> msh(MeshGenerator::generateRegularPyramidMesh(
-        *vec_div[0], *vec_div[1], *vec_div[2]));
+    std::unique_ptr<Mesh> msh(
+        MeshToolsLib::MeshGenerator::generateRegularPyramidMesh(
+            *vec_div[0], *vec_div[1], *vec_div[2]));
 
     // check number of generates nodes and elements
     ASSERT_EQ(6 * std::pow(n_subdivisions, 3), msh->getNumberOfElements());

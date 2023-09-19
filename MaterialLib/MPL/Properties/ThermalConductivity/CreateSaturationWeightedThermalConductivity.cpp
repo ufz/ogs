@@ -102,13 +102,10 @@ std::unique_ptr<Property> createSaturationWeightedThermalConductivity(
             [&map_dim_and_mean_to_creator]<typename Dim, typename Mean>(
                 mp_list<Dim, Mean>)
             {
-                constexpr int dim = Dim::value;
-                constexpr MeanType mean_type = Mean::value;
-
                 map_dim_and_mean_to_creator.emplace(
-                    std::pair{mean_type, dim},
-                    &::createSaturationWeightedThermalConductivity<mean_type,
-                                                                   dim>);
+                    std::pair{Mean::value, Dim::value},
+                    &::createSaturationWeightedThermalConductivity<Mean::value,
+                                                                   Dim::value>);
             });
     }
 

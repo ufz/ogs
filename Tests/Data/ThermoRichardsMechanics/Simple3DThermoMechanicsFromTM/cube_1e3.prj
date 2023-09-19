@@ -161,6 +161,7 @@
                 <variable>temperature</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
+                <variable>velocity</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

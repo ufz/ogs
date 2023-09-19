@@ -1,4 +1,4 @@
-import mtest
+import mtest as mtest
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -6,48 +6,84 @@ m = mtest.MTest()
 mtest.setVerboseMode(mtest.VerboseLevel.VERBOSE_QUIET)
 m.setMaximumNumberOfSubSteps(20)
 m.setModellingHypothesis("Axisymmetrical")
-m.setBehaviour("generic", "src/libBehaviour.so", "ModCamClay_semiExplParaInit")
+
+mcc_models = [
+    "ModCamClay_semiExpl",
+    "ModCamClay_semiExpl_absP",
+    "ModCamClay_semiExpl_constE",
+]
+controls = ["stress", "strain"]
+
+# Set MCC material model implementation and path
+lib_path = "./src/libBehaviour.so"
+mcc_model = mcc_models[0]
+control = controls[0]
+
+m.setBehaviour("generic", lib_path, mcc_model)
 
 # Material constants (according to Modified Cam clay model Report)
 nu = 0.3  # Poisson ratio
-E = 2 * (1 + nu) * 20.0e6  # Young's modulus in Pa
-la = 7.7e-2  # slope of the virgin consolidation line
-ka = 6.6e-3  # slope of the swelling line
-M = 1.2  # slope of the critical state line (CSL)
-v0 = 1.788  # initial volume ratio
-phi0 = 1 - 1 / v0  # Initial porosity
+la = 7.7e-2  # Slope of the virgin consolidation line
+ka = 6.6e-3  # Slope of the swelling line
+M = 1.2  # Slope of the critical state line (CSL)
+v0 = 1.7857  # Initial volume ratio
 pc0 = 200.0e3  # Initial pre-consolidation pressure in Pa
-pamb = 1.0e3  # Ambient pressure in Pa
+phi0 = 1 - 1 / v0  # Initial porosity
+pamb = 0.0  # Ambient pressure in Pa
 
 # Loading programme
 tMax = 1.0  # s , total time
 nTime = 200
 ltime = np.linspace(0.0, tMax, nTime)
 
+p_con = pc0  # confining pressure
 p_axi = 587387  # axial pressure, +12614 for reaching CSL
-p_con = 200000  # confining pressure
-e_con = p_con * (1 - 2 * nu) / E
-m.setImposedStress("SRR", {0: 0, 0.02: -p_con, 1.0: -p_con})
-m.setImposedStress("STT", {0: 0, 0.02: -p_con, 1.0: -p_con})
-# stress-controlled: works only until reaching the CSL
-m.setImposedStress("SZZ", {0: 0, 0.02: -p_con, 1.0: -p_axi})
-# strain-controlled: works, CSL reached asymptotically for EYY->inf
-# m.setImposedStrain('EZZ', {0:0, 0.02:-e_con, 1.0:-130*e_con})
+
+# Young's modulus: consistent initial value for the models
+E0 = 3 * (1 - 2 * nu) / (1 - phi0) * p_con / ka
+
+e_con = p_con * (1 - 2 * nu) / E0
+e_axi = 16 * e_con
 
 # Environment parameters
 m.setExternalStateVariable("Temperature", 293.15)
-m.setParameter("AmbientPressure", pamb)
 
 # Material parameters
-m.setMaterialProperty("YoungModulus", E)
+if mcc_model == "ModCamClay_semiExpl_constE":
+    m.setMaterialProperty("YoungModulus", E0)
+    m.setParameter("AmbientPressure", pamb)
+    print("Young Modulus set to E =", E0 / 1e6, " MPa")
+if mcc_model in (
+    "ModCamClay_semiExpl",
+    "ModCamClay_semiExpl_absP",
+):
+    m.setMaterialProperty("InitialVolumeRatio", v0)
 m.setMaterialProperty("PoissonRatio", nu)
 m.setMaterialProperty("CriticalStateLineSlope", M)
 m.setMaterialProperty("SwellingLineSlope", ka)
 m.setMaterialProperty("VirginConsolidationLineSlope", la)
+m.setMaterialProperty("CharacteristicPreConsolidationPressure", pc0)
 
-# Initial values (only for the ParaInit code version!)
-m.setMaterialProperty("InitialPreConsolidationPressure", pc0)
-m.setMaterialProperty("InitialPorosity", phi0)
+# Initial values
+m.setInternalStateVariableInitialValue("PreConsolidationPressure", pc0)
+m.setInternalStateVariableInitialValue("VolumeRatio", v0)
+
+# Set initial stress and strain state
+eps_init = [-e_con, -e_con, -e_con, 0.0]
+sig_init = [-p_con, -p_con, -p_con, 0.0]
+m.setStress(sig_init)
+m.setStrain(eps_init)
+
+m.setImposedStress("SRR", {0: -p_con, 0.02: -p_con, 1.0: -p_con})
+m.setImposedStress("STT", {0: -p_con, 0.02: -p_con, 1.0: -p_con})
+
+if control == "stress":
+    # stress-controlled: works only until reaching the CSL
+    m.setImposedStress("SZZ", {0: -p_con, 0.02: -p_con, 1.0: -p_axi})
+if control == "strain":
+    # Strain-controlled: works, CSL reached asymptotically for EZZ->inf
+    m.setImposedStrain("EZZ", {0: -e_con, 0.02: -e_con, 1.0: -e_axi})
+    print("confining strain in z direction: ", e_con)
 
 s = mtest.MTestCurrentState()
 wk = mtest.MTestWorkSpace()
@@ -56,15 +92,22 @@ m.initializeCurrentState(s)
 m.initializeWorkSpace(wk)
 
 # initialize output lists
-pCurve = np.array([pamb])
+pCurve = np.array([pamb + p_con])
 qCurve = np.array([0.0])
 eVCurve = np.array([0.0])
 eQCurve = np.array([0.0])
 lpCurve = np.array([0.0])
 pcCurve = np.array([pc0])
 phiCurve = np.array([phi0])
-strains = np.empty(shape=(6, nTime))
-stresses = np.empty(shape=(6, nTime))
+strains = np.empty(shape=(4, nTime))
+stresses = np.empty(shape=(4, nTime))
+
+# stresses[0][:] = sig_init
+for k in range(4):
+    strains[k][0] = eps_init[k]
+
+for k in range(4):
+    stresses[k][0] = sig_init[k]
 
 # initialize yield functions
 nPoints = 1000
@@ -93,14 +136,14 @@ for i in range(nTime - 1):
             s.e1[0] ** 2
             + s.e1[1] ** 2
             + s.e1[2] ** 2
-            - epsilonV ** 2 / 3
+            - epsilonV**2 / 3
             + 2 * s.e1[3] ** 2
         )
         / 3
     )
     vMstrain = np.sqrt(max(argument, 0))
     eplEquiv = s.getInternalStateVariableValue("EquivalentPlasticStrain")
-    porosity = s.getInternalStateVariableValue("Porosity")
+    porosity = 1 - 1 / s.getInternalStateVariableValue("VolumeRatio")
     pc = s.getInternalStateVariableValue("PreConsolidationPressure")
     eplV = s.getInternalStateVariableValue("PlasticVolumetricStrain")
 
@@ -150,18 +193,17 @@ print("final normal stress in z direction: ", s.s1[1], "Pa")
 print("final von Mises stress: ", vMstress, "Pa")
 print("final hydrostatic pressure: ", pressure, "Pa")
 print("final pre-consolidation pressure: ", pc, "Pa")
-print("confining strain in z direction: ", e_con)
 
 # plots
 fig, ax = plt.subplots()
 ax.set_title("Numerical solution versus analytical solution (Peric, 2006)")
-ax.scatter(v0xEpsQ / v0, qRangeAna / 1e3, label="analytical")
-ax.plot(eQCurve, qCurve / 1e3, color="black", label="numerical")
+ax.plot(eQCurve, qCurve / 1e3, "+", markersize=14, markevery=4, label="numerical")
+ax.plot(v0xEpsQ / v0, qRangeAna / 1e3, linewidth=2, label="analytical")
 ax.set_xlabel("$\epsilon_{q}$")
 ax.set_ylabel("q / kPa")
 ax.grid()
 ax.legend()
-fig.savefig("out/ModCamClay_TriaxStudy_NumVsAnal.pdf")
+fig.savefig("ModCamClay_TriaxStudy_NumVsAnal.pdf")
 
 fig, ax = plt.subplots()
 ax.set_title("Loading trajectories in the stress space")
@@ -183,7 +225,8 @@ ax.set_xlabel("$p$ / Pa")
 ax.set_ylabel("$q$ / Pa")
 ax.grid()
 ax.legend()
-fig.savefig("out/ModCamClay_TriaxStudy_YieldSurface.pdf")
+fig.tight_layout()
+fig.savefig("ModCamClay_TriaxStudy_YieldSurface.pdf")
 
 fig, ax = plt.subplots()
 ax.plot(ltime, pCurve, label="$p$ / Pa")
@@ -213,7 +256,7 @@ ax.set_xlabel("$t$ / s")
 ax.set_ylabel("strain")
 ax.grid()
 ax.legend(loc="lower left")
-fig.savefig("out/ModCamClay_TriaxStudy_Strains.pdf")
+fig.savefig("ModCamClay_TriaxStudy_Strains.pdf")
 
 fig, ax = plt.subplots()
 ax.plot(ltime, phiCurve - phi0, label="$\phi-\phi_0$")

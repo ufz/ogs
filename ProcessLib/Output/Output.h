@@ -31,7 +31,7 @@ class Process;
 class Output
 {
 public:
-    Output(std::unique_ptr<OutputFormat>&& output_file,
+    Output(std::unique_ptr<OutputFormat>&& output_format,
            bool const output_nonlinear_iteration_results,
            OutputDataSpecification&& output_data_specification,
            std::vector<std::string>&& mesh_names_for_output,
@@ -125,5 +125,8 @@ private:
     std::set<std::pair<std::string, MeshLib::MeshItemType>>
         _do_not_project_from_bulk_mesh_to_submeshes;
 };
+
+std::vector<double> calculateUniqueFixedTimesForAllOutputs(
+    std::vector<Output> const& outputs);
 
 }  // namespace ProcessLib

@@ -2,7 +2,6 @@
  * \file
  * \author Norihiro Watanabe
  * \date   2013-04-16
- * \brief
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
@@ -79,7 +78,9 @@ struct EigenIsNear
             {
                 auto const diff_comp = diff(r, c);
 
-                if (std::abs(diff_comp) > abstol)
+                if (!(std::abs(diff_comp) <= abstol)
+                    // writing the comparison in this way also works with NaN
+                )
                 {
                     return testing::AssertionFailure()
                            << a_expr << " and " << b_expr << " differ by |"

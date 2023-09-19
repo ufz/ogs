@@ -23,7 +23,7 @@ See the [docs](https://docs.docker.com/get-docker/) for installation instruction
 
 ## Images
 
-Docker images can be created by [Dockerfiles](https://docs.docker.com/reference/builder/) which can be stacked and thus form a directed graph. OGS-6 image definitions are created with [`ufz/ogs-container-maker`](https://github.com/ufz/ogs-container-maker). Built images can be found at the [GitLab Container Registry](https://gitlab.opengeosys.org/ogs/ogs/container_registry). You can also [create images from your local source code](https://github.com/ufz/ogs-container-maker#build-ogs-from-local-git-repo).
+Docker images can be created by [Dockerfiles](https://docs.docker.com/engine/reference/builder/) which can be stacked and thus form a directed graph. OGS-6 image definitions are created with [`ufz/ogs-container-maker`](https://github.com/ufz/ogs-container-maker). Built images can be found at the [GitLab Container Registry](https://gitlab.opengeosys.org/ogs/ogs/container_registry). You can also [create images from your local source code](https://github.com/ufz/ogs-container-maker#build-ogs-from-local-git-repo).
 
 To build an image by yourself create a Dockerfile:
 

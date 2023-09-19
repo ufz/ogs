@@ -7,7 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "MeshLib/MeshEditing/ConvertToLinearMesh.h"
+#include "MeshToolsLib/MeshEditing/ConvertToLinearMesh.h"
 
 #include <tclap/CmdLine.h>
 
@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 
     INFO("Converting to a linear order mesh");
     std::unique_ptr<MeshLib::Mesh> new_mesh(
-        MeshLib::convertToLinearMesh(*mesh, mesh->getName() + "_linear"));
+        MeshToolsLib::convertToLinearMesh(*mesh, mesh->getName() + "_linear"));
 
     INFO("Save the new mesh into a file");
     MeshLib::IO::writeMeshToFile(*new_mesh, output_arg.getValue());

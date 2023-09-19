@@ -19,6 +19,7 @@
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/LinAlg/FinalizeVectorAssembly.h"
 #include "MathLib/LinAlg/LinAlg.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFlux.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
@@ -42,13 +43,15 @@ ComponentTransportProcess::ComponentTransportProcess(
     bool const use_monolithic_scheme,
     std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
     std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
-        chemical_solver_interface)
+        chemical_solver_interface,
+    bool const is_linear)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
       _process_data(std::move(process_data)),
       _surfaceflux(std::move(surfaceflux)),
-      _chemical_solver_interface(std::move(chemical_solver_interface))
+      _chemical_solver_interface(std::move(chemical_solver_interface)),
+      _asm_mat_cache{is_linear, use_monolithic_scheme}
 {
     _residua.push_back(MeshLib::getOrCreateMeshProperty<double>(
         mesh, "LiquidMassFlowRate", MeshLib::MeshItemType::Node, 1));
@@ -170,7 +173,7 @@ void ComponentTransportProcess::setInitialConditionsConcreteProcess(
 
 void ComponentTransportProcess::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble ComponentTransportProcess.");
@@ -189,19 +192,17 @@ void ComponentTransportProcess::assembleConcreteProcess(
             std::back_inserter(dof_tables), _process_variables.size(),
             [&]() { return std::ref(*_local_to_global_index_map); });
     }
-    // Call global assembler for each local assembly item.
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot, process_id, M, K,
-        b);
 
-    MathLib::finalizeMatrixAssembly(M);
-    MathLib::finalizeMatrixAssembly(K);
-    MathLib::finalizeVectorAssembly(b);
+    _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, M, K, b, dof_tables,
+                            _global_assembler, _local_assemblers,
+                            pv.getActiveElementIDs());
+
+    BaseLib::RunTime time_residuum;
+    time_residuum.start();
 
     if (_use_monolithic_scheme)
     {
-        auto const residuum = computeResiduum(*x[0], *xdot[0], M, K, b);
+        auto const residuum = computeResiduum(dt, *x[0], *x_prev[0], M, K, b);
         for (std::size_t variable_id = 0; variable_id < _residua.size();
              ++variable_id)
         {
@@ -213,16 +214,19 @@ void ComponentTransportProcess::assembleConcreteProcess(
     else
     {
         auto const residuum =
-            computeResiduum(*x[process_id], *xdot[process_id], M, K, b);
+            computeResiduum(dt, *x[process_id], *x_prev[process_id], M, K, b);
         transformVariableFromGlobalVector(residuum, 0, dof_tables[process_id],
                                           *_residua[process_id],
                                           std::negate<double>());
     }
+
+    INFO("[time] Computing residuum flow rates took {:g} s",
+         time_residuum.elapsed());
 }
 
 void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian ComponentTransportProcess.");
@@ -245,8 +249,8 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        process_id, M, K, b, Jac);
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
+        x_prev, process_id, M, K, b, Jac);
 
     // b is the negated residumm used in the Newton's method.
     // Here negating b is to recover the primitive residuum.
@@ -390,7 +394,7 @@ void ComponentTransportProcess::computeSecondaryVariableConcrete(
     double const t,
     double const dt,
     std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_dot,
+    GlobalVector const& x_prev,
     int const process_id)
 {
     if (process_id != 0)
@@ -407,7 +411,7 @@ void ComponentTransportProcess::computeSecondaryVariableConcrete(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_dot, process_id);
+        x_prev, process_id);
 
     if (!_chemical_solver_interface)
     {
@@ -422,6 +426,7 @@ void ComponentTransportProcess::computeSecondaryVariableConcrete(
 
 void ComponentTransportProcess::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_prev,
     const double t,
     const double dt,
     int const process_id)
@@ -439,7 +444,8 @@ void ComponentTransportProcess::postTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::postTimestep,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt);
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, x_prev, t,
+        dt, _use_monolithic_scheme, process_id);
 
     if (!_surfaceflux)  // computing the surfaceflux is optional
     {

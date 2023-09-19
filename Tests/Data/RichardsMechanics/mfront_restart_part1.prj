@@ -18,16 +18,19 @@
             </jacobian_assembler>
             <constitutive_relation>
                 <type>MFront</type>
-                <behaviour>ModCamClay_semiExplParaInit</behaviour>
+                <behaviour>ModCamClay_semiExpl_constE</behaviour>
                 <material_properties>
                     <material_property name="YoungModulus" parameter="YoungModulus"/>
                     <material_property name="PoissonRatio" parameter="PoissonRatio"/>
                     <material_property name="CriticalStateLineSlope" parameter="CriticalStateLineSlope"/>
                     <material_property name="SwellingLineSlope" parameter="SwellingLineSlope"/>
                     <material_property name="VirginConsolidationLineSlope" parameter="VirginConsolidationLineSlope"/>
-                    <material_property name="InitialPreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
-                    <material_property name="InitialPorosity" parameter="InitialPorosity"/>
+                    <material_property name="CharacteristicPreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
                 </material_properties>
+                <initial_values>
+                    <state_variable name="PreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
+                    <state_variable name="VolumeRatio" parameter="InitialVolumeRatio"/>
+                </initial_values>
             </constitutive_relation>
             <process_variables>
                 <pressure>pressure</pressure>
@@ -41,7 +44,7 @@
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
                 <secondary_variable internal_name="velocity" output_name="velocity"/>
                 <secondary_variable internal_name="saturation" output_name="saturation"/>
-                <secondary_variable internal_name="porosity" output_name="porosity"/>
+                <secondary_variable internal_name="VolumeRatio" output_name="VolumeRatio"/>
                 <secondary_variable internal_name="transport_porosity" output_name="transport_porosity"/>
                 <secondary_variable internal_name="dry_density_solid" output_name="dry_density_solid"/>
             </secondary_variables>
@@ -169,6 +172,8 @@
                 <variable>velocity</variable>
                 <variable>saturation</variable>
                 <variable>porosity</variable>
+                <variable>MassFlowRate</variable>
+                <variable>NodalForces</variable>
             </variables>
         </output>
     </time_loop>
@@ -216,6 +221,11 @@
             <name>InitialPorosity</name>
             <type>Constant</type>
             <value>0.44</value>
+        </parameter>
+        <parameter>
+            <name>InitialVolumeRatio</name>
+            <type>Constant</type>
+            <value>1.78571428571428571429</value>
         </parameter>
         <!-- Initial and boundary values -->
         <parameter>

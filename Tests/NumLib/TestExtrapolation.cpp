@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -11,7 +12,7 @@
 
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MeshLib/IO/writeMeshToFile.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/MatrixProvider.h"
 #include "NumLib/DOF/VectorProvider.h"
@@ -267,7 +268,7 @@ TEST(NumLib, DISABLED_Extrapolation)
 
     // generate mesh
     std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::MeshGenerator::generateRegularHexMesh(
+        MeshToolsLib::MeshGenerator::generateRegularHexMesh(
             mesh_length, mesh_elements_in_each_direction));
 
     for (unsigned integration_order : {2, 3, 4})

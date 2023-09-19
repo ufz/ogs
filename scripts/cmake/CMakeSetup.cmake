@@ -9,6 +9,20 @@ if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
     )
 endif()
 
+message(STATUS "Generator: ${CMAKE_GENERATOR}")
+if(WIN32 AND (NOT "${CMAKE_GENERATOR}" MATCHES "Visual Studio")
+   AND "$ENV{CIBUILDWHEEL}"
+)
+    message(FATAL_ERROR "Wheels only build in Visual Studio!")
+endif()
+
+set(_collection ${PROJECT_SOURCE_DIR}/ThirdParty/collection)
+# If submodules in ThirdParty/collection are initialized and this is a Guix
+# build use submodule as CPM sources.
+if(EXISTS ${_collection}/ufz/vtkdiff/CMakeLists.txt AND GUIX_BUILD)
+    include(${_collection}/Setup.cmake)
+endif()
+
 # Set additional CMake modules path
 CPMAddPackage(
     NAME cmake-modules
@@ -67,11 +81,9 @@ endif()
 # Get the hostname
 site_name(HOSTNAME)
 
-if(BUILD_SHARED_LIBS OR OGS_BUILD_PYTHON_MODULE)
-    # When static libraries are used in some shared libraries it is required
-    # that also the static libraries have position independent code.
-    set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+# When static libraries are used in some shared libraries it is required that
+# also the static libraries have position independent code.
+set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
-    # Enable Windows DLL support.
-    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
-endif()
+# Enable Windows DLL support.
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)

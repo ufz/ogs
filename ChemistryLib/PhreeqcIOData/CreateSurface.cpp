@@ -12,6 +12,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "Surface.h"
 
 namespace ChemistryLib

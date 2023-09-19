@@ -18,7 +18,7 @@
 #include <QStringList>
 #include <QVariant>
 
-#include "Base/TreeItem.h"
+#include "Applications/DataExplorer/Base/TreeItem.h"
 
 /**
  * A model for the QTreeView implementing the tree as a double-linked list.

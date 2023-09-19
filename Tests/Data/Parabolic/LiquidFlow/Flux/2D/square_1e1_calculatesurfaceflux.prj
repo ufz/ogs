@@ -62,6 +62,7 @@
             <variables>
                 <variable> pressure </variable>
                 <variable> v </variable>
+                <variable> specific_flux </variable>
             </variables>
             <meshes>
                 <mesh>square_1x1_quad_1e1</mesh>

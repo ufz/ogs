@@ -309,6 +309,7 @@
                 <variable>Syntheticb</variable>
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
+                <variable>Productc_avg</variable>
             </variables>
         </output>
     </time_loop>

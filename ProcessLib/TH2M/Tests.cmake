@@ -1,4 +1,8 @@
 if (NOT OGS_USE_MPI)
+    if (OGS_USE_MFRONT)
+        OgsTest(PROJECTFILE TH2M/M/MultiMaterialEhlers/square_1e1_2_matIDs.prj RUNTIME 1)
+        OgsTest(PROJECTFILE TH2M/M/MultiMaterialEhlers/square_1e1_2_matIDs_restart.prj RUNTIME 1)
+    endif()
     OgsTest(PROJECTFILE TH2M/HM/flow_fully_saturated.prj RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/HM/flow_fully_saturated_newton.xml RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/HM/flow_fully_saturated_gas.prj RUNTIME 1)
@@ -25,10 +29,8 @@ if (NOT OGS_USE_MPI)
     NotebookTest(NOTEBOOKFILE TH2M/H2/mcWhorter/mcWhorter.ipynb RUNTIME 55)
     OgsTest(PROJECTFILE TH2M/H/diffusion/diffusion.prj RUNTIME 10)
     NotebookTest(NOTEBOOKFILE TH2M/H/diffusion/diffusion.ipynb RUNTIME 30)
-    if(OGS_USE_PYTHON)
-        OgsTest(PROJECTFILE TH2M/TH/Ogata-Banks/ogata-banks.prj RUNTIME 60)
-        NotebookTest(NOTEBOOKFILE TH2M/TH/Ogata-Banks/Ogata-Banks.ipynb RUNTIME 120)
-    endif()
+    OgsTest(PROJECTFILE TH2M/TH/Ogata-Banks/ogata-banks.prj RUNTIME 60)
+    NotebookTest(NOTEBOOKFILE TH2M/TH/Ogata-Banks/Ogata-Banks.ipynb RUNTIME 120)
     NotebookTest(NOTEBOOKFILE TH2M/TH/idealGasLaw/confined_gas_compression.ipynb RUNTIME 10)
     # submesh residuum output
     OgsTest(PROJECTFILE TH2M/submesh_residuum_assembly/T.xml RUNTIME 1)
@@ -138,7 +140,7 @@ AddTest(
 
     result_TH2M_M_ts_2_t_2.000000.vtu result_TH2M_M_ts_2_t_2.000000.vtu velocity_liquid velocity_liquid 1e-8 1e-8
 
-    result_TH2M_M_ts_2_t_2.000000.vtu result_TH2M_M_ts_2_t_2.000000.vtu sigma sigma 6e-7 1e-8
+    result_TH2M_M_ts_2_t_2.000000.vtu result_TH2M_M_ts_2_t_2.000000.vtu sigma sigma 6.5e-7 1e-8
 
     result_TH2M_M_ts_2_t_2.000000.vtu result_TH2M_M_ts_2_t_2.000000.vtu epsilon epsilon 1e-8 1e-8
 

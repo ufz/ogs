@@ -27,9 +27,9 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshInformation.h"
-#include "MeshLib/MeshQuality/MeshValidation.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshInformation.h"
+#include "MeshToolsLib/MeshQuality/MeshValidation.h"
 
 int main(int argc, char* argv[])
 {
@@ -81,7 +81,8 @@ int main(int argc, char* argv[])
     INFO("Time for reading: {:g} s", run_time.elapsed());
 
     // Geometric information
-    const GeoLib::AABB aabb(MeshLib::MeshInformation::getBoundingBox(*mesh));
+    const GeoLib::AABB aabb(
+        MeshToolsLib::MeshInformation::getBoundingBox(*mesh));
     INFO("Axis aligned bounding box: {}", aabb);
 
     auto const [min, max] = minMaxEdgeLength(mesh->getElements());
@@ -89,20 +90,21 @@ int main(int argc, char* argv[])
 
     // Element information
 
-    MeshLib::MeshInformation::writeAllNumbersOfElementTypes(*mesh);
+    MeshToolsLib::MeshInformation::writeAllNumbersOfElementTypes(*mesh);
 
     if (print_properties_arg.isSet())
     {
-        MeshLib::MeshInformation::writePropertyVectorInformation(*mesh);
+        MeshToolsLib::MeshInformation::writePropertyVectorInformation(*mesh);
         INFO("MaterialID-list: [{}]",
-             fmt::join(MeshLib::MeshInformation::getMaterialIDs(*mesh), ", "));
+             fmt::join(MeshToolsLib::MeshInformation::getMaterialIDs(*mesh),
+                       ", "));
     }
 
     if (valid_arg.isSet())
     {
         // MeshValidation outputs error messages
         // Remark: MeshValidation can modify the original mesh
-        MeshLib::MeshInformation::writeMeshValidationResults(*mesh);
+        MeshToolsLib::MeshInformation::writeMeshValidationResults(*mesh);
     }
 #ifdef USE_PETSC
     MPI_Finalize();

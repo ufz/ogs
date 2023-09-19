@@ -11,8 +11,8 @@
 
 #include "GetSpaceDimension.h"
 
+#include <Eigen/Core>
 #include <algorithm>
-#include <array>
 #include <limits>
 
 #include "BaseLib/Error.h"
@@ -22,16 +22,13 @@ namespace MeshLib
 {
 int getSpaceDimension(std::vector<Node*> const& nodes)
 {
-    std::array x_magnitude = {0.0, 0.0, 0.0};
+    Eigen::Vector3d x_magnitude = Eigen::Vector3d::Zero();
+    auto const x_ref = nodes[0]->asEigenVector3d();
 
-    double const* const x_ref = nodes[0]->data();
     for (auto const& node : nodes)
     {
-        auto const x = node->data();
-        for (int i = 0; i < 3; i++)
-        {
-            x_magnitude[i] += std::fabs(x[i] - x_ref[i]);
-        }
+        auto const x = node->asEigenVector3d();
+        x_magnitude += (x - x_ref).cwiseAbs();
     }
 
     // Z coordinate norm is not zero whichever 1D, 2D or 3D mesh:

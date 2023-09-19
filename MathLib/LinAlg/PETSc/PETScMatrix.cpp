@@ -105,11 +105,11 @@ void PETScMatrix::setRowsColumnsZero(std::vector<PetscInt> const& row_pos)
 
     if (nrows > 0)
     {
-        MatZeroRows(A_, nrows, &row_pos[0], one, PETSC_NULL, PETSC_NULL);
+        MatZeroRows(A_, nrows, &row_pos[0], one, PETSC_NULLPTR, PETSC_NULLPTR);
     }
     else
     {
-        MatZeroRows(A_, 0, PETSC_NULL, one, PETSC_NULL, PETSC_NULL);
+        MatZeroRows(A_, 0, PETSC_NULLPTR, one, PETSC_NULLPTR, PETSC_NULLPTR);
     }
 }
 
@@ -127,7 +127,7 @@ void PETScMatrix::viewer(const std::string& file_name,
 
 // This preprocessor is only for debugging, e.g. dump the matrix and exit the
 // program.
-//#define EXIT_TEST
+// #define EXIT_TEST
 #ifdef EXIT_TEST
     MatDestroy(A_);
     PetscFinalize();
@@ -143,8 +143,8 @@ void PETScMatrix::create(const PetscInt d_nz, const PetscInt o_nz)
     MatSetType(A_, MATAIJ);
     MatSetFromOptions(A_);
 
-    MatSeqAIJSetPreallocation(A_, d_nz, PETSC_NULL);
-    MatMPIAIJSetPreallocation(A_, d_nz, PETSC_NULL, o_nz, PETSC_NULL);
+    MatSeqAIJSetPreallocation(A_, d_nz, PETSC_NULLPTR);
+    MatMPIAIJSetPreallocation(A_, d_nz, PETSC_NULLPTR, o_nz, PETSC_NULLPTR);
     // If pre-allocation does not work one can use MatSetUp(A_), which is much
     // slower.
 

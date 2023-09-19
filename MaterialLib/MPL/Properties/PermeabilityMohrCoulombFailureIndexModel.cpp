@@ -120,10 +120,9 @@ PermeabilityMohrCoulombFailureIndexModel<DisplacementDim>::value(
     if (f >= 1.0)
     {
         const double exp_value = std::exp(b_ * f);
-        for (auto& k_i : k_data)
-        {
-            k_i = std::min(k_i + kr_ * exp_value, k_max_);
-        }
+        std::transform(begin(k_data), end(k_data), begin(k_data),
+                       [&](double const k_i)
+                       { return std::min(k_i + kr_ * exp_value, k_max_); });
     }
 
     // Local coordinate transformation is only applied for the case that the

@@ -48,33 +48,34 @@ void HTProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
+    int const mesh_space_dimension = _process_data.mesh_space_dimension;
+
     if (_use_monolithic_scheme)
     {
         ProcessLib::createLocalAssemblers<MonolithicHTFEM>(
-            mesh.getDimension(), mesh.getElements(), dof_table,
+            mesh_space_dimension, mesh.getElements(), dof_table,
             _local_assemblers, NumLib::IntegrationOrder{integration_order},
             mesh.isAxiallySymmetric(), _process_data);
     }
     else
     {
         ProcessLib::createLocalAssemblers<StaggeredHTFEM>(
-            mesh.getDimension(), mesh.getElements(), dof_table,
+            mesh_space_dimension, mesh.getElements(), dof_table,
             _local_assemblers, NumLib::IntegrationOrder{integration_order},
             mesh.isAxiallySymmetric(), _process_data);
     }
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",
-        makeExtrapolator(mesh.getDimension(), getExtrapolator(),
+        makeExtrapolator(mesh_space_dimension, getExtrapolator(),
                          _local_assemblers,
                          &HTLocalAssemblerInterface::getIntPtDarcyVelocity));
 }
 
-void HTProcess::assembleConcreteProcess(const double t, double const dt,
-                                        std::vector<GlobalVector*> const& x,
-                                        std::vector<GlobalVector*> const& xdot,
-                                        int const process_id, GlobalMatrix& M,
-                                        GlobalMatrix& K, GlobalVector& b)
+void HTProcess::assembleConcreteProcess(
+    const double t, double const dt, std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
+    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
@@ -105,13 +106,13 @@ void HTProcess::assembleConcreteProcess(const double t, double const dt,
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot, process_id, M, K,
-        b);
+        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id, M,
+        K, b);
 }
 
 void HTProcess::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian HTProcess.");
@@ -132,8 +133,8 @@ void HTProcess::assembleWithJacobianConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        process_id, M, K, b, Jac);
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
+        x_prev, process_id, M, K, b, Jac);
 }
 
 void HTProcess::setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
@@ -189,10 +190,12 @@ Eigen::Vector3d HTProcess::getFlux(std::size_t element_id,
 }
 
 // this is almost a copy of the implementation in the GroundwaterFlow
-void HTProcess::postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
-                                            const double t,
-                                            const double /*delta_t*/,
-                                            int const process_id)
+void HTProcess::postTimestepConcreteProcess(
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& /*x_prev*/,
+    const double t,
+    const double /*delta_t*/,
+    int const process_id)
 {
     // For the monolithic scheme, process_id is always zero.
     if (_use_monolithic_scheme && process_id != 0)

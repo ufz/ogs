@@ -1,17 +1,36 @@
 test notebooks via wheel:
   stage: build
-  tags: [envinf23, shell]
-  script:
+  tags: [envinf3, shell]
+  before_script:
     - cd Tests/Data
     - python -m venv --upgrade-deps .venv
     - source .venv/bin/activate
     - pip install -r requirements.txt
+    - pip install --force-reinstall -r requirements-gmsh-nox.txt
     - pip install -r requirements-dev.txt
     - pip install -r requirements-ogs.txt
+  script:
+    # Append mtest install directory to PYTHONPATH
+    - export PYTHONPATH=/opt/tfel-rliv-4.0/lib/python3.11/site-packages:$PYTHONPATH
+    - export LD_LIBRARY_PATH=/opt/tfel-rliv-4.0/lib:$LD_LIBRARY_PATH
     # TODO:
     #  - better timeout
     #  - run in parallel
-    - find . -type f -iname '*.ipynb' | grep -vP '\.ipynb_checkpoints|\.ci-skip.ipynb$|_out|.venv|PhaseField' | xargs xvfb-run -a python Notebooks/testrunner.py --out _out
+    - |
+      status_file="`mktemp --tmpdir`"
+      echo 0 >"$status_file"  # success if no Notebooks are found
+      # status file and sh -c to workaround xvfb-run problems:
+      # /usr/bin/xvfb-run: line 186: kill: (<PID>) - No such process"
+      find . -type f -iname '*.ipynb' \
+          | grep -vP '\.ipynb_checkpoints|\.ci-skip\.ipynb$|_out|\.venv|PhaseField' \
+          | xargs xvfb-run -a \
+              sh -c 'statf="$1"; shift; "$@" || echo "$?" >"$statf"' \
+              -- "$status_file" \
+              python Notebooks/testrunner.py --out _out \
+          || true
+      status="`cat "$status_file"`"
+      rm "$status_file"
+      [ 0 = "$status" ]
   artifacts:
     when: always
     paths:

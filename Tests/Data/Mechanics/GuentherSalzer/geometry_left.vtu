@@ -1,34 +1,25 @@
 <?xml version="1.0"?>
-<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
-<!--This file was created by meshio v4.3.5-->
-<UnstructuredGrid>
-<Piece NumberOfPoints="20" NumberOfCells="19">
-<Points>
-<DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary">
-AQAAAACAAADgAQAAoQAAAA==eJxjYCAGRDqgi1ipnsrWWB+OIV7iNeV6QFwYhvi6/DjnSt5QDPEXUzTWL9wTjCGutOuT1KnsIAzxmPt72j5JBWKIa7PzPTWd4o8hLmi7CKjBB0P8S5EZ0KFeGOK3V4D85Y4hvv8eyP2uGOJLRT4D3emEIf47H+QeewzxJZtA9lphiPt/BZlviiH+AWyOPoa4O1i9Koa4A1hcFC4OACQZPiE=
-</DataArray>
-</Points>
-<Cells>
-<DataArray type="Int64" Name="connectivity" format="binary">
-AQAAAACAAAAwAQAANQAAAA==eJxdxTcSgCAAADDEgiBY8P9/ZfBckiVT+ESeeeGVN068c+bCB1dufPLFNz/c+eXfAKwoAXw=
-</DataArray>
-<DataArray type="Int64" Name="offsets" format="binary">
-AQAAAACAAACYAAAANQAAAA==eJwtxdEGgDAAAMDJTDLJZCbJTPr/T+xhdy+3hCk6efXm7N2Hi09XN1++/bh7+PXnH1O4AX0=
-</DataArray>
-<DataArray type="Int64" Name="types" format="binary">
-AQAAAACAAACYAAAADwAAAA==eJxjZoAA5kFGAwASaAA6
-</DataArray>
-</Cells>
-<PointData>
-<DataArray type="UInt64" Name="bulk_node_ids" format="binary">
-AQAAAACAAACgAAAAMwAAAA==eJwtxckNgCAAADAS10AFQcFr//V40H4awrQ4evXm3cnZh4urT19u7r79+PXn3wO2UAKV
-</DataArray>
-</PointData>
-<CellData>
-<DataArray type="UInt64" Name="bulk_elem_ids" format="binary">
-AQAAAACAAACYAAAAMQAAAA==eJxVxUkCgBAAAECpiKLl/4/tYC7mMl8YXj++3d18+XR18eHs5N2bV0cvYfYDR9gArA==
-</DataArray>
-</CellData>
-</Piece>
-</UnstructuredGrid>
+<VTKFile type="UnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="20"                   NumberOfCells="19"                  >
+      <PointData>
+        <DataArray type="UInt64" Name="bulk_node_ids" format="appended" RangeMin="0"                    RangeMax="45"                   offset="0"                   />
+      </PointData>
+      <CellData>
+        <DataArray type="UInt64" Name="bulk_elem_ids" format="appended" RangeMin="0"                    RangeMax="18"                   offset="224"                 />
+        <DataArray type="UInt64" Name="bulk_element_ids" format="appended" RangeMin="0"                    RangeMax="18"                   offset="440"                 />
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="100"                  offset="656"                 />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="1308"                />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="1724"                />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="1940"                />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _oAAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAHAAAAAAAAAAdAAAAAAAAAB4AAAAAAAAAHwAAAAAAAAAgAAAAAAAAACEAAAAAAAAAIgAAAAAAAAAjAAAAAAAAACQAAAAAAAAAJQAAAAAAAAAmAAAAAAAAACcAAAAAAAAAKAAAAAAAAAApAAAAAAAAACoAAAAAAAAAKwAAAAAAAAAsAAAAAAAAAC0AAAAAAAAAmAAAAAAAAAASAAAAAAAAABEAAAAAAAAAEAAAAAAAAAAPAAAAAAAAAA4AAAAAAAAADQAAAAAAAAAMAAAAAAAAAAsAAAAAAAAACgAAAAAAAAAJAAAAAAAAAAgAAAAAAAAABwAAAAAAAAAGAAAAAAAAAAUAAAAAAAAABAAAAAAAAAADAAAAAAAAAAIAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA==mAAAAAAAAAASAAAAAAAAABEAAAAAAAAAEAAAAAAAAAAPAAAAAAAAAA4AAAAAAAAADQAAAAAAAAAMAAAAAAAAAAsAAAAAAAAACgAAAAAAAAAJAAAAAAAAAAgAAAAAAAAABwAAAAAAAAAGAAAAAAAAAAUAAAAAAAAABAAAAAAAAAADAAAAAAAAAAIAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA==4AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFlAAAAAAAAAAAAAAAAAAAAAADolymsor1dAAAAAAAAAAAAAAAAAAAAAAHRKlNdQXlZAAAAAAAAAAAAAAAAAAAAAAK5vXkN5DVVAAAAAAAAAAAAAAAAAAAAAAOiUKK+hvFNAAAAAAAAAAAAAAAAAAAAAACK68hrKa1JAAAAAAAAAAAAAAAAAAAAAAFzfvIbyGlFAAAAAAAAAAAAAAAAAAAAAACsHDuU1lE9AAAAAAAAAAAAAAAAAAAAAABE9oryG8kxAAAAAAAAAAAAAAAAAAAAAAPRyNpTXUEpAAAAAAAAAAAAAAAAAAAAAANuoymsor0dAAAAAAAAAAAAAAAAAAAAAAL/eXkN5DUVAAAAAAAAAAAAAAAAAAAAAAKUU8xrKa0JAAAAAAAAAAAAAAAAAAAAAAPtvDuU1lD9AAAAAAAAAAAAAAAAAAAAAAKSyNpTXUDpAAAAAAAAAAAAAAAAAAAAAAE/1XkN5DTVAAAAAAAAAAAAAAAAAAAAAAPBvDuU1lC9AAAAAAAAAAAAAAAAAAAAAAEf1XkN5DSVAAAAAAAAAAAAAAAAAAAAAAED1XkN5DRVAAAAAAAAAAAA=MAEAAAAAAAABAAAAAAAAAAIAAAAAAAAAAgAAAAAAAAADAAAAAAAAAAMAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAUAAAAAAAAABQAAAAAAAAAGAAAAAAAAAAYAAAAAAAAABwAAAAAAAAAHAAAAAAAAAAgAAAAAAAAACAAAAAAAAAAJAAAAAAAAAAkAAAAAAAAACgAAAAAAAAAKAAAAAAAAAAsAAAAAAAAACwAAAAAAAAAMAAAAAAAAAAwAAAAAAAAADQAAAAAAAAANAAAAAAAAAA4AAAAAAAAADgAAAAAAAAAPAAAAAAAAAA8AAAAAAAAAEAAAAAAAAAAQAAAAAAAAABEAAAAAAAAAEQAAAAAAAAASAAAAAAAAABIAAAAAAAAAEwAAAAAAAAATAAAAAAAAAAAAAAAAAAAAmAAAAAAAAAACAAAAAAAAAAQAAAAAAAAABgAAAAAAAAAIAAAAAAAAAAoAAAAAAAAADAAAAAAAAAAOAAAAAAAAABAAAAAAAAAAEgAAAAAAAAAUAAAAAAAAABYAAAAAAAAAGAAAAAAAAAAaAAAAAAAAABwAAAAAAAAAHgAAAAAAAAAgAAAAAAAAACIAAAAAAAAAJAAAAAAAAAAmAAAAAAAAAA==EwAAAAAAAAADAwMDAwMDAwMDAwMDAwMDAwMD
+  </AppendedData>
 </VTKFile>

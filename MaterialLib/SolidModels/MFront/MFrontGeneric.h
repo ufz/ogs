@@ -20,67 +20,31 @@
 #include "ParameterLib/Parameter.h"
 #include "TangentOperatorBlocksView.h"
 #include "ThermodynamicForcesView.h"
+#include "Variable.h"
 
 namespace MaterialLib::Solids::MFront
 {
 namespace MPL = MaterialPropertyLib;
 
-/// Converts between OGSes and MFront's Kelvin vector indices.
-std::ptrdiff_t OGSToMFront(std::ptrdiff_t i);
-
-/// Converts between OGSes and MFront's Kelvin vector indices.
-std::ptrdiff_t MFrontToOGS(std::ptrdiff_t i);
-
-/// Converts between OGSes and MFront's Kelvin vectors and matrices.
+/// Converts between OGS' and MFront's Kelvin vectors and matrices and vice
+/// versa. Numbering of the Kelvin vectors and matrices in the two cases is:
+/// MFront: 11 22 33 12 13 23
+/// OGS:    11 22 33 12 23 13
+/// The function swaps the 4th and 5th row and column of a matrix.
 template <typename Derived>
-typename Derived::PlainObject OGSToMFront(Eigen::DenseBase<Derived> const& m)
+constexpr auto eigenSwap45View(Eigen::MatrixBase<Derived> const& matrix)
 {
-    static_assert(Derived::RowsAtCompileTime != Eigen::Dynamic, "Error");
-    static_assert(Derived::ColsAtCompileTime != Eigen::Dynamic, "Error");
+    using Matrix =
+        Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime,
+                      Derived::ColsAtCompileTime>;
 
-    typename Derived::PlainObject n;
-
-    // optimal for row-major storage order
-    for (std::ptrdiff_t r = 0; r < Eigen::DenseBase<Derived>::RowsAtCompileTime;
-         ++r)
-    {
-        auto const R = OGSToMFront(r);
-        for (std::ptrdiff_t c = 0;
-             c < Eigen::DenseBase<Derived>::ColsAtCompileTime;
-             ++c)
+    return Matrix::NullaryExpr(
+        matrix.rows(), matrix.cols(),
+        [&m = matrix.derived()](Eigen::Index const row, Eigen::Index const col)
         {
-            auto const C = OGSToMFront(c);
-            n(R, C) = m(r, c);
-        }
-    }
-
-    return n;
-}
-
-/// Converts between OGSes and MFront's Kelvin vectors and matrices.
-template <typename Derived>
-typename Derived::PlainObject MFrontToOGS(Eigen::DenseBase<Derived> const& m)
-{
-    static_assert(Derived::RowsAtCompileTime != Eigen::Dynamic, "Error");
-    static_assert(Derived::ColsAtCompileTime != Eigen::Dynamic, "Error");
-
-    typename Derived::PlainObject n;
-
-    // optimal for row-major storage order
-    for (std::ptrdiff_t r = 0; r < Eigen::DenseBase<Derived>::RowsAtCompileTime;
-         ++r)
-    {
-        auto const R = MFrontToOGS(r);
-        for (std::ptrdiff_t c = 0;
-             c < Eigen::DenseBase<Derived>::ColsAtCompileTime;
-             ++c)
-        {
-            auto const C = MFrontToOGS(c);
-            n(R, C) = m(r, c);
-        }
-    }
-
-    return n;
+            constexpr std::ptrdiff_t result[6] = {0, 1, 2, 3, 5, 4};
+            return m(result[row], result[col]);
+        });
 }
 
 const char* varTypeToString(int v);
@@ -191,8 +155,9 @@ struct SetGradient
             auto const& grad_ogs =
                 std::get<MPLType>(variable_array.*Grad::mpl_var);
 
-            auto const grad_mfront = Q ? OGSToMFront(Q->transpose() * grad_ogs)
-                                       : OGSToMFront(grad_ogs);
+            auto const grad_mfront =
+                Q ? eigenSwap45View(Q->transpose() * grad_ogs).eval()
+                  : eigenSwap45View(grad_ogs).eval();
             std::copy_n(grad_mfront.data(), num_comp, target);
         }
         else
@@ -228,16 +193,23 @@ public:
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
     using KelvinMatrix =
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
+    using InternalVariable =
+        typename MechanicsBase<DisplacementDim>::InternalVariable;
 
-    MFrontGeneric(mgis::behaviour::Behaviour&& behaviour,
-                  std::vector<ParameterLib::Parameter<double> const*>&&
-                      material_properties,
-                  std::optional<ParameterLib::CoordinateSystem> const&
-                      local_coordinate_system)
+    MFrontGeneric(
+        mgis::behaviour::Behaviour&& behaviour,
+        std::vector<ParameterLib::Parameter<double> const*>&&
+            material_properties,
+        std::map<std::string, ParameterLib::Parameter<double> const*>&&
+            state_variables_initial_properties,
+        std::optional<ParameterLib::CoordinateSystem> const&
+            local_coordinate_system)
         : _behaviour(std::move(behaviour)),
           equivalent_plastic_strain_offset_(
               getEquivalentPlasticStrainOffset(_behaviour)),
           _material_properties(std::move(material_properties)),
+          _state_variables_initial_properties(
+              std::move(state_variables_initial_properties)),
           _local_coordinate_system(local_coordinate_system
                                        ? &local_coordinate_system.value()
                                        : nullptr)
@@ -331,6 +303,10 @@ public:
 
         auto const hypothesis = _behaviour.hypothesis;
 
+        static_assert(
+            std::is_same_v<ExtStateVars, boost::mp11::mp_list<Temperature>>,
+            "Temperature is the only allowed external state variable.");
+
         if (!_behaviour.esvs.empty())
         {
             if (_behaviour.esvs[0].name != "Temperature")
@@ -370,6 +346,45 @@ public:
             equivalent_plastic_strain_offset_, _behaviour);
     }
 
+    void initializeInternalStateVariables(
+        double const t,
+        ParameterLib::SpatialPosition const& x,
+        typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
+            material_state_variables) const
+    {
+        assert(dynamic_cast<MaterialStateVariablesMFront<DisplacementDim>*>(
+            &material_state_variables));
+
+        auto& state =
+            static_cast<MaterialStateVariablesMFront<DisplacementDim>&>(
+                material_state_variables);
+
+        auto const& ivs = getInternalVariables();
+
+        for (auto& [name, parameter] : _state_variables_initial_properties)
+        {
+            // find corresponding internal variable
+            auto const& iv = BaseLib::findElementOrError(
+                begin(ivs),
+                end(ivs),
+                [name = name](InternalVariable const& iv)
+                { return iv.name == name; },
+                fmt::format("Internal variable `{:s}' not found.", name));
+
+            // evaluate parameter
+            std::vector<double> values = (*parameter)(t, x);
+
+            // copy parameter data into iv
+            auto const values_span = iv.reference(state);
+            assert(values.size() == values_span.size());
+            std::copy_n(begin(values), values_span.size(), values_span.begin());
+        }
+
+        auto const& s1 = state._behaviour_data.s1.internal_state_variables;
+        auto& s0 = state._behaviour_data.s0.internal_state_variables;
+        std::copy(begin(s1), end(s1), begin(s0));
+    }
+
     std::optional<std::tuple<OGSMFrontThermodynamicForcesData,
                              std::unique_ptr<typename MechanicsBase<
                                  DisplacementDim>::MaterialStateVariables>,
@@ -403,13 +418,25 @@ public:
 
         // evaluate parameters at (t, x)
         {
-            auto out = behaviour_data.s1.material_properties.begin();
-            for (auto* param : _material_properties)
             {
-                auto const& vals = (*param)(t, x);
-                out = std::copy(vals.begin(), vals.end(), out);
+                auto out = behaviour_data.s0.material_properties.begin();
+                for (auto* param : _material_properties)
+                {
+                    auto const& vals = (*param)(t - dt, x);
+                    out = std::copy(vals.begin(), vals.end(), out);
+                }
+                assert(out == behaviour_data.s0.material_properties.end());
             }
-            assert(out == behaviour_data.s1.material_properties.end());
+
+            {
+                auto out = behaviour_data.s1.material_properties.begin();
+                for (auto* param : _material_properties)
+                {
+                    auto const& vals = (*param)(t, x);
+                    out = std::copy(vals.begin(), vals.end(), out);
+                }
+                assert(out == behaviour_data.s1.material_properties.end());
+            }
         }
 
         // TODO unify with gradient handling? Make gradient and external state
@@ -464,7 +491,7 @@ public:
         if (status != 1)
         {
             throw NumLib::AssemblyException(
-                "MFront: integration failed with status" +
+                "MFront: integration failed with status " +
                 std::to_string(status) + ".");
         }
 
@@ -487,12 +514,12 @@ public:
                     if (Q)
                     {
                         view.block(tdf, out_data) =
-                            *Q * MFrontToOGS(view.block(tdf, in_data));
+                            *Q * eigenSwap45View(view.block(tdf, in_data));
                     }
                     else
                     {
                         view.block(tdf, out_data) =
-                            MFrontToOGS(view.block(tdf, in_data));
+                            eigenSwap45View(view.block(tdf, in_data));
                     }
                 }
                 else if constexpr (TDF::type ==
@@ -516,9 +543,6 @@ public:
                 tangentOperatorDataMFrontToOGS<DisplacementDim>(
                     behaviour_data.K, Q, _behaviour)));
     }
-
-    using InternalVariable =
-        typename MechanicsBase<DisplacementDim>::InternalVariable;
 
     std::vector<InternalVariable> getInternalVariables() const
     {
@@ -559,7 +583,7 @@ public:
                 },
                 [offset, size](typename MechanicsBase<
                                DisplacementDim>::MaterialStateVariables& state)
-                    -> BaseLib::DynamicSpan<double>
+                    -> std::span<double>
                 {
                     assert(dynamic_cast<MaterialStateVariablesMFront<
                                DisplacementDim> const*>(&state) != nullptr);
@@ -577,16 +601,14 @@ public:
         return internal_variables;
     }
 
-    OGSMFrontTangentOperatorBlocksView<DisplacementDim,
-                                       Gradients,
-                                       TDynForces,
-                                       ExtStateVars>
+    template <typename ForcesGradsCombinations =
+                  typename ForcesGradsCombinations<Gradients, TDynForces,
+                                                   ExtStateVars>::type>
+    OGSMFrontTangentOperatorBlocksView<DisplacementDim, ForcesGradsCombinations>
     createTangentOperatorBlocksView() const
     {
         return OGSMFrontTangentOperatorBlocksView<DisplacementDim,
-                                                  Gradients,
-                                                  TDynForces,
-                                                  ExtStateVars>{
+                                                  ForcesGradsCombinations>{
             _behaviour.to_blocks};
     }
 
@@ -630,6 +652,8 @@ private:
     mgis::behaviour::Behaviour _behaviour;
     int const equivalent_plastic_strain_offset_;
     std::vector<ParameterLib::Parameter<double> const*> _material_properties;
+    std::map<std::string, ParameterLib::Parameter<double> const*>
+        _state_variables_initial_properties;
     ParameterLib::CoordinateSystem const* const _local_coordinate_system;
 };
 }  // namespace MaterialLib::Solids::MFront

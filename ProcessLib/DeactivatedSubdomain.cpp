@@ -12,6 +12,8 @@
  */
 #include "DeactivatedSubdomain.h"
 
+#include <range/v3/algorithm/contains.hpp>
+
 #include "BaseLib/Error.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
@@ -32,7 +34,7 @@ bool DeactivatedSubdomain::isDeactivated(MeshLib::Element const& element,
                                          double const time) const
 {
     auto const& bulk_element_ids = deactivated_subdomain_mesh.bulk_element_ids;
-    if (!BaseLib::contains(bulk_element_ids, element.getID()))
+    if (!bulk_element_ids.contains(element.getID()))
     {
         return false;
     }

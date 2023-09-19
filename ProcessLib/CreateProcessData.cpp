@@ -74,7 +74,8 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
     std::vector<std::unique_ptr<Process>> const& processes,
     std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>> const&
         nonlinear_solvers,
-    bool const compensate_non_equilibrium_initial_residuum)
+    bool const compensate_non_equilibrium_initial_residuum,
+    std::vector<double> const& fixed_times_for_output)
 {
     std::vector<std::unique_ptr<ProcessData>> per_process_data;
     int process_id = 0;
@@ -103,7 +104,8 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
 
         auto timestepper = NumLib::createTimeStepper(
             //! \ogs_file_param{prj__time_loop__processes__process__time_stepping}
-            pcs_config.getConfigSubtree("time_stepping"));
+            pcs_config.getConfigSubtree("time_stepping"),
+            fixed_times_for_output);
 
         auto conv_crit = NumLib::createConvergenceCriterion(
             //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion}

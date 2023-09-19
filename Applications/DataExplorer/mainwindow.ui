@@ -81,7 +81,7 @@
      <x>0</x>
      <y>0</y>
      <width>801</width>
-     <height>26</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -109,24 +109,23 @@
    </widget>
    <widget class="QMenu" name="menuWindows">
     <property name="title">
-     <string>Windows</string>
+     <string>&amp;Windows</string>
     </property>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
-     <string>Settings</string>
+     <string>&amp;Settings</string>
     </property>
     <addaction name="actionData_Explorer_Settings"/>
     <addaction name="action_VisualisationSettings"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
-     <string>Tools</string>
+     <string>&amp;Tools</string>
     </property>
-    <addaction name="actionMesh_Generation"/>
-    <addaction name="actionCreate_Structured_Mesh"/>
     <addaction name="actionAnalyze_Mesh"/>
     <addaction name="actionRemove_Mesh_Elements"/>
+    <addaction name="actionTranslating_Data"/>
     <addaction name="actionMerge_Geometries"/>
     <addaction name="actionFile_Converter"/>
     <addaction name="actionDiagram_Viewer"/>
@@ -134,12 +133,22 @@
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="actionLicense"/>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuMesh_Generation">
+    <property name="title">
+     <string>&amp;Mesh Generation</string>
+    </property>
+    <addaction name="actionCreate_Structured_Mesh"/>
+    <addaction name="actionMesh_Generation"/>
+    <addaction name="actionCreate_a_voxelgrid"/>
+    <addaction name="action3D_mesh_to_voxelgrid"/>
+   </widget>
    <addaction name="menu_File"/>
+   <addaction name="menuMesh_Generation"/>
    <addaction name="menuTools"/>
    <addaction name="menuWindows"/>
    <addaction name="menuSettings"/>
@@ -163,7 +172,16 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2">
     <layout class="QVBoxLayout" name="verticalLayout_2">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>1</number>
+     </property>
+     <property name="topMargin">
+      <number>1</number>
+     </property>
+     <property name="rightMargin">
+      <number>1</number>
+     </property>
+     <property name="bottomMargin">
       <number>1</number>
      </property>
      <item>
@@ -181,7 +199,16 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_3">
     <layout class="QVBoxLayout" name="verticalLayout_3">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>1</number>
+     </property>
+     <property name="topMargin">
+      <number>1</number>
+     </property>
+     <property name="rightMargin">
+      <number>1</number>
+     </property>
+     <property name="bottomMargin">
       <number>1</number>
      </property>
      <item>
@@ -199,7 +226,16 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_7">
     <layout class="QVBoxLayout" name="verticalLayout_6">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>1</number>
+     </property>
+     <property name="topMargin">
+      <number>1</number>
+     </property>
+     <property name="rightMargin">
+      <number>1</number>
+     </property>
+     <property name="bottomMargin">
       <number>1</number>
      </property>
      <item>
@@ -217,7 +253,16 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout_7">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>1</number>
+     </property>
+     <property name="topMargin">
+      <number>1</number>
+     </property>
+     <property name="rightMargin">
+      <number>1</number>
+     </property>
+     <property name="bottomMargin">
       <number>1</number>
      </property>
      <item>
@@ -235,7 +280,16 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_5">
     <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>1</number>
+     </property>
+     <property name="topMargin">
+      <number>1</number>
+     </property>
+     <property name="rightMargin">
+      <number>1</number>
+     </property>
+     <property name="bottomMargin">
       <number>1</number>
      </property>
      <item>
@@ -368,7 +422,7 @@
   </action>
   <action name="actionMesh_Generation">
    <property name="text">
-    <string>Create Mesh From Input Data...</string>
+    <string>Create 2D Mesh From Input Data...</string>
    </property>
    <property name="toolTip">
     <string>Generates a mesh from a geometry.</string>
@@ -422,6 +476,21 @@
   <action name="actionCreate_Structured_Mesh">
    <property name="text">
     <string>Create Structured Mesh...</string>
+   </property>
+  </action>
+  <action name="actionTranslating_Data">
+   <property name="text">
+    <string>Translate Data...</string>
+   </property>
+  </action>
+  <action name="action3D_mesh_to_voxelgrid">
+   <property name="text">
+    <string>3D Mesh to Voxelgrid...</string>
+   </property>
+  </action>
+  <action name="actionCreate_a_voxelgrid">
+   <property name="text">
+    <string>Create 3D Voxelgrid from 2D Layers...</string>
    </property>
   </action>
  </widget>
@@ -679,6 +748,54 @@
    <signal>triggered()</signal>
    <receiver>MainWindowClass</receiver>
    <slot>showMeshAnalysisDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>372</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionTranslating_Data</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>showTranslateDataDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>372</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionCreate_a_voxelgrid</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>showLayers2GridDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>372</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action3D_mesh_to_voxelgrid</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>showVtu2GridDialog()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>

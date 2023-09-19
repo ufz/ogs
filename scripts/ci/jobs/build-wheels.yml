@@ -1,12 +1,14 @@
 stages:
   - build
   - release
+  - test
 
 workflow:
   rules:
     - if: $CI_COMMIT_TAG
       variables:
         PYPI_REPO: --repository pypi
+        # TODO: does not work:
         PYPI_AUTH: --username __token__ --password "${PYPI_TOKEN}"
         GIT_DEPTH: 1000
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
@@ -17,16 +19,23 @@ workflow:
         GIT_DEPTH: 1000
     - if: $CI_MERGE_REQUEST_ID
       variables:
-        CIBW_BUILD: cp39* cp310*
+        CIBW_BUILD: cp310*
         GIT_DEPTH: 1000
 
 include:
   - local: "scripts/ci/extends/*.yml"
+  - local: "scripts/ci/jobs/jupyter.yml"
 
 .wheels_template: &wheels_template
   stage: build
   script:
     - pipx run cibuildwheel
+  rules:
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::wheels only.*/
+      variables:
+        CIBW_BUILD: cp310*
+        GIT_DEPTH: 1000
+    - when: on_success
   artifacts:
     paths:
       - wheelhouse/
@@ -55,10 +64,7 @@ build wheels win:
   extends:
     - .vs2019-environment
   variables:
-    SKBUILD_BUILD_OPTIONS: "/m"
-    SKBUILD_GENERATOR: "Visual Studio 16 2019"
-    # Does not work as it does not select the host64 compiler:
-    # SKBUILD_GENERATOR: "Ninja"
+    SKBUILD_BUILD_OPTIONS: "/m" # TODO not supported yet in scikit-build-core
   <<: *wheels_template
 
 publish wheels:
@@ -76,3 +82,18 @@ publish wheels:
       ${PYPI_REPO}
       ${PYPI_AUTH}
       wheelhouse/*
+
+test notebooks via wheel:
+  stage: test
+  needs: ["build wheels linux"]
+  rules:
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::wheels only.*/
+    - when: manual
+  before_script:
+    - cd Tests/Data
+    - python3.10 -m venv --upgrade-deps .venv
+    - source .venv/bin/activate
+    - pip install -r requirements.txt
+    - pip install --force-reinstall -r requirements-gmsh-nox.txt
+    - pip install -r requirements-dev.txt
+    - pip install ${CI_PROJECT_DIR}/wheelhouse/ogs-*-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl

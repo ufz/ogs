@@ -16,8 +16,8 @@
 #include <memory>
 #include <string>
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/FileTools.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/GitInfo.h"
 

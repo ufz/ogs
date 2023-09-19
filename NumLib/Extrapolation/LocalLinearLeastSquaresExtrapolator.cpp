@@ -98,6 +98,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolate(
                            *counts);
     }
     MathLib::LinAlg::finalizeAssembly(*_nodal_values);
+    MathLib::LinAlg::finalizeAssembly(*counts);
 
     MathLib::LinAlg::componentwiseDivide(*_nodal_values, *_nodal_values,
                                          *counts);

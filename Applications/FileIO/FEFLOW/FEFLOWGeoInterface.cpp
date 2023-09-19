@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -46,12 +47,12 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
     std::stringstream line_stream;
     while (!in.eof())
     {
-        getline(in, line_string);
+        std::getline(in, line_string);
         //....................................................................
         // CLASS: the version number follows afterward, e.g. CLASS (v.5.313)
         if (line_string.find("CLASS") != std::string::npos)
         {
-            getline(in, line_string);
+            std::getline(in, line_string);
             line_stream.str(line_string);
             // problem class, time mode, problem orientation, dimension, ...
             unsigned dummy = 0;
@@ -66,7 +67,7 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
         // GRAVITY
         else if (line_string == "GRAVITY")
         {
-            getline(in, line_string);
+            std::getline(in, line_string);
             line_stream.str(line_string);
             double vec[3] = {};
             line_stream >> vec[0] >> vec[1] >> vec[2];
@@ -153,7 +154,7 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
     std::string line_string;
     while (true)
     {
-        getline(in, line_string);
+        std::getline(in, line_string);
         BaseLib::trim(line_string);
         oss << line_string << "\n";
         if (line_string.find("</supermesh>") != std::string::npos)

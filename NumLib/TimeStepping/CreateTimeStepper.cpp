@@ -1,11 +1,11 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  *  Created on May 2, 2017, 12:18 PM
  */
 
@@ -24,7 +24,8 @@
 namespace NumLib
 {
 std::unique_ptr<TimeStepAlgorithm> createTimeStepper(
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::vector<double> const& fixed_times_for_output)
 {
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__type}
     auto const type = config.peekConfigParameter<std::string>("type");
@@ -37,15 +38,17 @@ std::unique_ptr<TimeStepAlgorithm> createTimeStepper(
     }
     if (type == "FixedTimeStepping")
     {
-        return NumLib::createFixedTimeStepping(config);
+        return NumLib::createFixedTimeStepping(config, fixed_times_for_output);
     }
     if (type == "EvolutionaryPIDcontroller")
     {
-        return NumLib::createEvolutionaryPIDcontroller(config);
+        return NumLib::createEvolutionaryPIDcontroller(config,
+                                                       fixed_times_for_output);
     }
     if (type == "IterationNumberBasedTimeStepping")
     {
-        return NumLib::createIterationNumberBasedTimeStepping(config);
+        return NumLib::createIterationNumberBasedTimeStepping(
+            config, fixed_times_for_output);
     }
     OGS_FATAL(
         "Unknown time stepping type: '{:s}'. The available types are: "

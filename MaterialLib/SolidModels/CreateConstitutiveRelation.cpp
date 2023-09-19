@@ -1,11 +1,11 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- *  \file
  *  Created on July 10, 2018, 12:09 PM
  */
 
@@ -81,6 +81,20 @@ createConstitutiveRelation(
     OGS_FATAL("Cannot construct constitutive relation of given type '{:s}'.",
               type);
 }
+
+template std::unique_ptr<MaterialLib::Solids::MechanicsBase<2>>
+createConstitutiveRelation(
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    std::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
+    BaseLib::ConfigTree const& config);
+
+template std::unique_ptr<MaterialLib::Solids::MechanicsBase<3>>
+createConstitutiveRelation(
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    std::optional<ParameterLib::CoordinateSystem> const&
+        local_coordinate_system,
+    BaseLib::ConfigTree const& config);
 
 template <int DisplacementDim>
 std::map<int,

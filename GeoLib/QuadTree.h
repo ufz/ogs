@@ -115,15 +115,11 @@ public:
             return false;
         }
 
-        if (!_is_leaf) {
-            for (auto& child : _children)
-            {
-                if (child->addPoint(pnt))
-                {
-                    return true;
-                }
-            }
-            return false;
+        if (!_is_leaf)
+        {
+            return std::any_of(begin(_children), end(_children),
+                               [&pnt](auto* child)
+                               { return child->addPoint(pnt); });
         }
 
         // check if point is already in quadtree
@@ -540,7 +536,7 @@ private:
         _is_leaf = false;
     }
 
-    static bool needToRefine (QuadTree<POINT>* node)
+    static bool needToRefine(QuadTree<POINT> const* const node)
     {
         QuadTree<POINT>* north_neighbor (node->getNorthNeighbor ());
         if (north_neighbor != nullptr)

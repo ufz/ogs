@@ -43,7 +43,7 @@ struct BHEMeshData
 /**
  * get data about fracture and matrix elements/nodes from a mesh
  *
- * @param mesh  A mesh which includes BHE elements, i.e. 1-dimensional
+ * \param mesh  A mesh which includes BHE elements, i.e. 1-dimensional
  * elements. It is assumed that elements forming a BHE have a distinct
  * material ID.
  */

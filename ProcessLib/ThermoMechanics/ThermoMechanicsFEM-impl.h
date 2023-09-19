@@ -1,11 +1,11 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * \file
  *
  * Created on July 2, 2019, 2:12 PM
  */
@@ -115,7 +115,7 @@ template <typename ShapeFunction, int DisplacementDim>
 void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
-                         std::vector<double> const& local_xdot,
+                         std::vector<double> const& local_x_prev,
                          std::vector<double>& /*local_M_data*/,
                          std::vector<double>& /*local_K_data*/,
                          std::vector<double>& local_rhs_data,
@@ -133,8 +133,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
                                   displacement_size);
     bool const is_u_non_zero = u.norm() > 0.0;
 
-    auto T_dot = Eigen::Map<typename ShapeMatricesType::template VectorType<
-        temperature_size> const>(local_xdot.data() + temperature_index,
+    auto T_prev = Eigen::Map<typename ShapeMatricesType::template VectorType<
+        temperature_size> const>(local_x_prev.data() + temperature_index,
                                  temperature_size);
 
     auto local_Jac = MathLib::createZeroedMatrix<JacobianMatrix>(
@@ -193,7 +193,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
         auto& state = _ip_data[ip].material_state_variables;
 
         const double T_ip = N.dot(T);  // T at integration point
-        double const dT = N.dot(T_dot) * dt;
+        double const T_prev_ip = N.dot(T_prev);
 
         // Consider also anisotropic thermal expansion.
         auto const solid_linear_thermal_expansivity_vector =
@@ -205,7 +205,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
 
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
             dthermal_strain =
-                solid_linear_thermal_expansivity_vector.eval() * dT;
+                solid_linear_thermal_expansivity_vector * (T_ip - T_prev_ip);
 
         //
         // displacement equation, displacement part
@@ -275,8 +275,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
         // The computation of KuT can be ignored.
         auto const alpha_T_tensor =
             MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                solid_linear_thermal_expansivity_vector.eval());
-        KuT.noalias() += B.transpose() * (C * alpha_T_tensor.eval()) * N * w;
+                solid_linear_thermal_expansivity_vector);
+        KuT.noalias() += B.transpose() * (C * alpha_T_tensor) * N * w;
 
         if (_ip_data[ip].solid_material.getConstitutiveModel() ==
             MaterialLib::Solids::ConstitutiveModel::CreepBGRa)
@@ -324,14 +324,14 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
         .noalias() -= KuT;
 
     local_rhs.template block<temperature_size, 1>(temperature_index, 0)
-        .noalias() -= KTT * T + DTT * T_dot;
+        .noalias() -= KTT * T + DTT * (T - T_prev) / dt;
 }
 
 template <typename ShapeFunction, int DisplacementDim>
 void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         const double t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, int const process_id,
+        Eigen::VectorXd const& local_x_prev, int const process_id,
         std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
@@ -340,12 +340,12 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     if (process_id == _process_data.heat_conduction_process_id)
     {
         assembleWithJacobianForHeatConductionEquations(
-            t, dt, local_x, local_xdot, local_b_data, local_Jac_data);
+            t, dt, local_x, local_x_prev, local_b_data, local_Jac_data);
         return;
     }
 
     // For the equations with deformation
-    assembleWithJacobianForDeformationEquations(t, dt, local_x, local_xdot,
+    assembleWithJacobianForDeformationEquations(t, dt, local_x, local_x_prev,
                                                 local_b_data, local_Jac_data);
 }
 
@@ -353,14 +353,14 @@ template <typename ShapeFunction, int DisplacementDim>
 void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForDeformationEquations(
         const double t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data)
 {
     auto const local_T =
         local_x.template segment<temperature_size>(temperature_index);
 
-    auto const local_Tdot =
-        local_xdot.template segment<temperature_size>(temperature_index);
+    auto const local_T_prev =
+        local_x_prev.template segment<temperature_size>(temperature_index);
 
     auto const local_u =
         local_x.template segment<displacement_size>(displacement_index);
@@ -413,8 +413,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
         auto& state = _ip_data[ip].material_state_variables;
 
         const double T_ip = N.dot(local_T);  // T at integration point
-        double const dT_ip = N.dot(local_Tdot) * dt;
         variables.temperature = T_ip;
+        double const dT_ip = T_ip - N.dot(local_T_prev);
 
         //
         // displacement equation, displacement part
@@ -436,8 +436,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
                     .value(variables, x_position, t, dt));
 
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dthermal_strain =
-                solid_linear_thermal_expansivity_vector.eval() * dT_ip;
+            dthermal_strain = solid_linear_thermal_expansivity_vector * dT_ip;
 
         eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
 
@@ -492,14 +491,14 @@ template <typename ShapeFunction, int DisplacementDim>
 void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobianForHeatConductionEquations(
         const double t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data)
 {
     auto const local_T =
         local_x.template segment<temperature_size>(temperature_index);
 
-    auto const local_dT =
-        local_xdot.template segment<temperature_size>(temperature_index) * dt;
+    auto const local_T_prev =
+        local_x_prev.template segment<temperature_size>(temperature_index);
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesType::template MatrixType<temperature_size,
@@ -557,7 +556,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     }
     local_Jac.noalias() += laplace + mass / dt;
 
-    local_rhs.noalias() -= laplace * local_T + mass * local_dT / dt;
+    local_rhs.noalias() -=
+        laplace * local_T + mass * (local_T - local_T_prev) / dt;
 }
 
 template <typename ShapeFunction, int DisplacementDim>

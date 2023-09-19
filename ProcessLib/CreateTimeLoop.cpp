@@ -26,7 +26,7 @@ std::unique_ptr<TimeLoop> createTimeLoop(
     const std::vector<std::unique_ptr<Process>>& processes,
     const std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>>&
         nonlinear_solvers,
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+    std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes,
     bool const compensate_non_equilibrium_initial_residuum)
 {
     auto const& coupling_config
@@ -46,16 +46,15 @@ std::unique_ptr<TimeLoop> createTimeLoop(
             //! \ogs_file_param{prj__time_loop__global_process_coupling__convergence_criteria}
             coupling_config->getConfigSubtree("convergence_criteria");
 
-        for (
-            auto coupling_convergence_criterion_config :
+        auto coupling_convergence_criterion_config =
             //! \ogs_file_param{prj__time_loop__global_process_coupling__convergence_criteria__convergence_criterion}
             coupling_convergence_criteria_config.getConfigSubtreeList(
-                "convergence_criterion"))
-        {
-            global_coupling_conv_criteria.push_back(
-                NumLib::createConvergenceCriterion(
-                    coupling_convergence_criterion_config));
-        }
+                "convergence_criterion");
+        std::transform(coupling_convergence_criterion_config.begin(),
+                       coupling_convergence_criterion_config.end(),
+                       std::back_inserter(global_coupling_conv_criteria),
+                       [](BaseLib::ConfigTree const& c)
+                       { return NumLib::createConvergenceCriterion(c); });
     }
 
     //! \ogs_file_param{prj__time_loop__output}
@@ -70,6 +69,8 @@ std::unique_ptr<TimeLoop> createTimeLoop(
             //! \ogs_file_param{prj__time_loop__outputs}
             : createOutputs(config.getConfigSubtree("outputs"),
                             output_directory, meshes);
+    auto const fixed_times_for_output =
+        calculateUniqueFixedTimesForAllOutputs(outputs);
 
     if (auto const submesh_residuum_output_config_tree =
             //! \ogs_file_param{prj__time_loop__submesh_residuum_output}
@@ -84,7 +85,7 @@ std::unique_ptr<TimeLoop> createTimeLoop(
             auto const& residuum_vector_names =
                 process->initializeAssemblyOnSubmeshes(smroc.meshes);
 
-            for (auto& name : residuum_vector_names)
+            for (auto const& name : residuum_vector_names)
             {
                 smroc.output.doNotProjectFromBulkMeshToSubmeshes(
                     name, MeshLib::MeshItemType::Node);
@@ -105,7 +106,7 @@ std::unique_ptr<TimeLoop> createTimeLoop(
     auto per_process_data = createPerProcessData(
         //! \ogs_file_param{prj__time_loop__processes}
         config.getConfigSubtree("processes"), processes, nonlinear_solvers,
-        compensate_non_equilibrium_initial_residuum);
+        compensate_non_equilibrium_initial_residuum, fixed_times_for_output);
 
     const bool use_staggered_scheme =
         ranges::any_of(processes.begin(), processes.end(),

@@ -92,7 +92,7 @@ public:
     explicit Polyline(const std::vector<Point*>& pnt_vec);
     /**
      * Copy constructor
-     * @param ply Polyline
+     * \param ply Polyline
      */
     Polyline(const Polyline& ply);
     Polyline& operator=(Polyline const& other) = delete;
@@ -106,7 +106,7 @@ public:
      * Adds an id of a point at the end of the polyline if and only if the
      * resulting segment won't be empty. The id have to be inside the (internal)
      * \c _ply_pnts vector the polyline is based on.
-     * @return If the point could be added the return value is \c true. If the
+     * \return If the point could be added the return value is \c true. If the
      * addition of the point would result in empty line segment \c false is
      * returned.
      */
@@ -116,19 +116,19 @@ public:
      * Method inserts a new point (that have to be inside the _ply_pnts vector)
      * at the given position in the polyline if and only if the resulting
      * segments won't be empty.
-     * @param pos the position in the polyline, pos have to be a value into the
+     * \param pos the position in the polyline, pos have to be a value into the
      * interval [0, number of points)
-     * @param pnt_id the id of the new point in the vector of points the
+     * \param pnt_id the id of the new point in the vector of points the
      * polyline is based on
-     * @return true if the point could be inserted, else false (if empty line
+     * \return true if the point could be inserted, else false (if empty line
      * segments would be created).
      */
     virtual bool insertPoint(std::size_t pos, std::size_t pnt_id);
 
     /**
-     * Method removes a point from the polyline. The connecting line segments will
-     * be removed and the length of the polyline will be changed.
-     * @param pos a valid position within the polyline
+     * Method removes a point from the polyline. The connecting line segments
+     * will be removed and the length of the polyline will be changed.
+     * \param pos a valid position within the polyline
      */
     void removePoint(std::size_t pos);
 
@@ -157,10 +157,10 @@ public:
     bool isCoplanar() const;
 
     /**
-     * Method tests if the given id of a point (within the vector of points the polyline is
-     * based on) is inside the polyline.
-     * @param pnt_id the id of the point
-     * @return true if the point is part of the polyline, else false
+     * Method tests if the given id of a point (within the vector of points the
+     * polyline is based on) is inside the polyline.
+     * \param pnt_id the id of the point
+     * \return true if the point is part of the polyline, else false
      */
     bool isPointIDInPolyline(std::size_t pnt_id) const;
 
@@ -172,8 +172,8 @@ public:
 
     /**
      * Changes a point index for one point in a line
-     * @param idx Index of point in line
-     * @param id ID of point in PointVec object
+     * \param idx Index of point in line
+     * \param id ID of point in PointVec object
      */
     void setPointID(std::size_t idx, std::size_t id);
 
@@ -195,11 +195,13 @@ public:
     std::vector<Point*> const& getPointsVec () const;
 
     /**
-     * returns the distance along the polyline from the beginning of the polyline
-     * @param pnt the point on the polyline
-     * @param epsilon_radius the epsilon
-     * @return the distance along the polyline between the given point and the beginning of the polyline.
-     * If the given point is not on the polyine, negative value is returned.
+     * returns the distance along the polyline from the beginning of the
+     * polyline
+     * \param pnt the point on the polyline
+     * \param epsilon_radius the epsilon
+     * \return the distance along the polyline between the given point and the
+     * beginning of the polyline. If the given point is not on the
+     * polyine, negative value is returned.
      */
     double getDistanceAlongPolyline(const MathLib::Point3d& pnt,
         const double epsilon_radius) const;
@@ -220,16 +222,21 @@ private:
     std::vector<std::size_t> _ply_pnt_ids;
 
     LineSegment getSegment(std::size_t i) const;
-    LineSegment getSegment(std::size_t i);
 };
 
 bool containsEdge (const Polyline& ply, std::size_t id0, std::size_t id1);
 
+/// Resets the point IDs of the polyline corresponding to the mapping.
+void resetPointIDs(Polyline& polyline, std::vector<std::size_t> const& mapping);
+
+/// Resets the point IDs of the polyline corresponding to the mapping.
+void markUsedPoints(Polyline const& polyline, std::vector<bool>& used_points);
+
 /**
  * comparison operator
- * @param lhs first polyline
- * @param rhs second polyline
- * @return true, if the polylines consists of the same sequence of line segments
+ * \param lhs first polyline
+ * \param rhs second polyline
+ * \return true, if the polylines consists of the same sequence of line segments
  */
 bool operator==(Polyline const& lhs, Polyline const& rhs);
 

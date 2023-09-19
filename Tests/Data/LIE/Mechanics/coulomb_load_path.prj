@@ -83,6 +83,7 @@
                 <variable>sigma_xx</variable>
                 <variable>sigma_yy</variable>
                 <variable>sigma_xy</variable>
+                <variable>aperture</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

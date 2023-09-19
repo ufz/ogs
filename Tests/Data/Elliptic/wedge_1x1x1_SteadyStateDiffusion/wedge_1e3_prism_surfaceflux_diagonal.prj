@@ -47,6 +47,7 @@
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>
+                <variable>specific_flux</variable>
             </variables>
             <meshes>
                 <mesh>wedge_1x1x1_1e3_prism</mesh>

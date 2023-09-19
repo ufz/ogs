@@ -27,8 +27,8 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEnums.h"
-#include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshGenerators/QuadraticMeshGenerator.h"
 
 const unsigned* getEdgeNodeLocalIDs(MeshLib::Element const& element,
                                     unsigned const edge_id)
@@ -104,8 +104,8 @@ TEST(MeshLib, createQuadraticOrderMesh)
                   file_name);
     }
 
-    auto const quadratic_mesh =
-        MeshLib::createQuadraticOrderMesh(*mesh, false /* add centre node*/);
+    auto const quadratic_mesh = MeshToolsLib::createQuadraticOrderMesh(
+        *mesh, false /* add centre node*/);
 
     runCreateQuadraticOrderMeshTest(*mesh, *quadratic_mesh);
 }
@@ -125,7 +125,7 @@ TEST(MeshLib, createQuadraticOrderMesh_Quad9)
         "test_mesh", std::vector(begin(nodes), end(nodes)), elements);
 
     auto const quadratic_mesh =
-        MeshLib::createQuadraticOrderMesh(mesh, true /* add centre node*/);
+        MeshToolsLib::createQuadraticOrderMesh(mesh, true /* add centre node*/);
 
     runCreateQuadraticOrderMeshTest(mesh, *quadratic_mesh);
 

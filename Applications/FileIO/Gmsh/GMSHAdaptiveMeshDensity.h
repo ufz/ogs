@@ -1,4 +1,5 @@
 /**
+ * \file
  *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
@@ -10,17 +11,20 @@
 
 #pragma once
 
+#ifndef NDEBUG
+#include <string>
+#endif
+
 #include "GMSHMeshDensityStrategy.h"
 
 namespace GeoLib
 {
-class Polygon;
 class Point;
 template <typename T> class QuadTree;
 #ifndef NDEBUG
-class Polyline;
+class GEOObjects;
 #endif
-}
+}  // namespace GeoLib
 
 namespace FileIO
 {
@@ -42,8 +46,7 @@ public:
     void getSteinerPoints (std::vector<GeoLib::Point*> & pnts,
                            std::size_t additional_levels = 0) const;
 #ifndef NDEBUG
-    void getQuadTreeGeometry(std::vector<GeoLib::Point*> &pnts,
-                             std::vector<GeoLib::Polyline*> &plys) const;
+    std::string getQuadTreeGeometry(GeoLib::GEOObjects& geo_objs) const;
 #endif
 
 private:

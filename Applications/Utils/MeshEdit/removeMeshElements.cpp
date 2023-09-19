@@ -24,10 +24,10 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
 
 template <typename PROPERTY_TYPE>
 void searchByPropertyValue(std::string const& property_name,
@@ -302,7 +302,7 @@ int main(int argc, char* argv[])
     }
 
     // remove the elements and create a new mesh object.
-    std::unique_ptr<MeshLib::Mesh const> new_mesh(MeshLib::removeElements(
+    std::unique_ptr<MeshLib::Mesh const> new_mesh(MeshToolsLib::removeElements(
         *mesh, searcher.getSearchedElementIDs(), mesh->getName()));
 
     if (new_mesh == nullptr)

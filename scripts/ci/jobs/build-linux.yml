@@ -5,25 +5,15 @@ build linux:
     - .test-artifacts
   tags: [docker]
   needs: [meta, ci_images]
-  rules:
-    - if: "$USE_PYTHON =~ /ON$/"
-    - if: '$CI_COMMIT_BRANCH == "master"'
-    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
-    - when: manual
-      allow_failure: true
   timeout: 3h
   variables:
     CMAKE_PRESET: release-all
-    CMAKE_ARGS: >-
-      -DOGS_$USE_PYTHON
-  parallel:
-    matrix:
-      - USE_PYTHON: ["USE_PYTHON=ON", "USE_PYTHON=OFF"]
 
 linux ctest large:
   image: $CONTAINER_GCC_IMAGE
   extends:
     - .template-build-linux
+    - .test-artifacts
   tags: [docker, envinf2]
   needs: [meta, ci_images]
   rules:
@@ -34,14 +24,11 @@ linux ctest large:
     BUILD_TESTS: "false"
     BUILD_CTEST_LARGE: "true"
     CMAKE_PRESET: release-all
-    CMAKE_ARGS: >-
-      -DOGS_USE_PYTHON=ON
 
 build linux (no unity):
-  image: $CONTAINER_GCC_IMAGE
   extends:
     - .template-build-linux
-  tags: [docker]
+  tags: [shell, envinf]
   needs: [meta, ci_images]
   timeout: 3h
   variables:
@@ -81,7 +68,6 @@ build linux debug with sanitizers:
       -DOGS_ADDRESS_SANITIZER=ON
       -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON
       -DOGS_CTEST_MAX_RUNTIME=5
-      -DOGS_BUILD_PYTHON_MODULE=OFF
       -DOGS_USE_PIP=ON
     UBSAN_OPTIONS: "print_stacktrace=1"
     LSAN_OPTIONS: "suppressions=$CI_PROJECT_DIR/scripts/test/leak_sanitizer.suppressions"

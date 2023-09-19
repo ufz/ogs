@@ -344,6 +344,7 @@
                 <variable>rhoL_hL_dot</variable>
                 <variable>k_rel_G</variable>
                 <variable>k_rel_L</variable>
+                <variable>xnCG</variable>
             </variables>
             <fixed_output_times>
                 6500

@@ -2,9 +2,13 @@
 
 ## Unreleased
 
-[Please see the wiki-page](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.4.4)
+[Please see the wiki-page](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/6.5.0)
 
 ----
+
+## 6.4.4
+
+[Changelog for OpenGeoSys 6.4.4](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.4.4)
 
 ## 6.4.3
 

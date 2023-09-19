@@ -11,10 +11,6 @@ add_feature_info(
     MFront OGS_USE_MFRONT "MFront material models (OGS_USE_MFRONT)"
 )
 add_feature_info(
-    Python-interface OGS_USE_PYTHON
-    "Python boundary conditions and source terms (OGS_USE_PYTHON)"
-)
-add_feature_info(
     Python-environment
     OGS_USE_PIP
     "Automatic Python dependency handling with a virtual environment (OGS_USE_PIP)"

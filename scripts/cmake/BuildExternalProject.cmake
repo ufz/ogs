@@ -36,6 +36,7 @@ function(BuildExternalProject target)
         if(NOT _is_inside_build)
             string(SHA256 _hash "${CMAKE_GENERATOR};${ARGN_STRING}")
             set(build_dir "${CPM_SOURCE_CACHE}/_ext/${target}/${_hash}")
+            file(LOCK ${build_dir}/cmake.lock)
         endif()
     endif()
 
@@ -87,6 +88,9 @@ function(BuildExternalProject target)
         STATUS
             "Finished building ${target}. Logs in ${build_dir}/src/${target}-stamp"
     )
+    if(EXISTS ${build_dir}/cmake.lock)
+        file(LOCK ${build_dir}/cmake.lock RELEASE)
+    endif()
     list(POP_BACK CMAKE_MESSAGE_INDENT)
     message(STATUS "└─ End BuildExternalProject ${_target}")
 endfunction()

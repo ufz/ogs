@@ -17,6 +17,7 @@ The minimum prerequisites to build OGS are:
 - Git (version control tool, at least version {{< dataFile "versions.minimum_version.git" >}})
 - CMake (build configuration tool, at least version {{< dataFile "versions.minimum_version.cmake" >}})
 - A compiler with [C++20](http://en.wikipedia.org/wiki/C%2B%2B20)-support
+- Python interpreter and libraries
 - *Optional (but recommended)*: [Ninja](https://ninja-build.org) build tool
 - *Optional*: [Conan package manager](https://www.conan.io/) (at least version {{< dataFile "versions.minimum_version.conan" >}}) for some optional dependencies.
 
@@ -255,11 +256,11 @@ brew install ninja
 
 </div>
 
-## Optional: Install Python 3
+## Install Python 3
 
 <div class='win'>
 
-- [Download the Python 3 installer](https://www.python.org/ftp/python/3.9.1/python-3.9.1-amd64.exe)
+- [Download the Python 3 installer](https://www.python.org/ftp/python/3.10.10/python-3.10.10-amd64.exe)
 - Install with the following options
   - Check *Add Python 3.X to PATH*
   - *Customize installation*
@@ -306,7 +307,7 @@ This will install Qt to `[your-directory]/qt/{{< dataFile "versions.tested_versi
 
 To finish add `[your-directory]/qt/{{< dataFile "versions.tested_version.qt" >}}/msvc2019_64/bin` bin to the `PATH` environment variable.
 
-## Install Conan package manager (for NetCDF)
+## Optional: Install Conan package manager (for NetCDF)
 
 Install Conan (>= {{< dataFile "versions.minimum_version.conan" >}}) with Python's pip:
 
@@ -314,7 +315,7 @@ Install Conan (>= {{< dataFile "versions.minimum_version.conan" >}}) with Python
 pip3 install --user conan
 ```
 
-This installed `conan` to `C:\Users\[username]\AppData\Roaming\Python\Python39\Scripts` in your home directory. Make sure to have this directory in your `PATH`!
+This installed `conan` to `C:\Users\[username]\AppData\Roaming\Python\Python310\Scripts` in your home directory. Make sure to have this directory in your `PATH`!
 
 Check on a newly opened command line if Conan was installed successfully:
 

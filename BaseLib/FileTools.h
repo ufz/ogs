@@ -85,6 +85,9 @@ double swapEndianness(double const& v);
 template <typename T>
 T readBinaryValue(std::istream& in);
 
+extern template float readBinaryValue<float>(std::istream&);
+extern template double readBinaryValue<double>(std::istream&);
+
 template <typename T>
 std::vector<T> readBinaryArray(std::string const& filename,
                                std::size_t const n);

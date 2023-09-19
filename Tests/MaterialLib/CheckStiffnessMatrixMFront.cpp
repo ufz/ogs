@@ -18,6 +18,8 @@
 #include "MaterialLib/SolidModels/MFront/Variable.h"
 #include "Tests/TestTools.h"
 
+namespace MSM = MaterialLib::Solids::MFront;
+
 template <typename ExtStateVars>
 auto createMFront(std::string const& behaviour)
 {
@@ -35,8 +37,6 @@ auto createMFront(std::string const& behaviour)
     BaseLib::ConfigTree config_tree(std::move(ptree), "FILENAME",
                                     &BaseLib::ConfigTree::onerror,
                                     &BaseLib::ConfigTree::onwarning);
-
-    namespace MSM = MaterialLib::Solids::MFront;
 
     return MSM::createMFrontGeneric<
         3, boost::mp11::mp_list<MSM::Strain, MSM::LiquidPressure>,
@@ -81,7 +81,7 @@ struct TestDataBase
 class MaterialLib_CheckStiffnessMatrixMFront : public ::testing::Test
 {
 protected:
-    template <typename ExtStateVars = boost::mp11::mp_list<>>
+    template <typename ExtStateVars = boost::mp11::mp_list<MSM::Temperature>>
     void run(std::string const& behaviour, TestDataBase const& data) const
     {
         run<ExtStateVars>(behaviour, data,
@@ -92,8 +92,6 @@ protected:
     void run(std::string const& behaviour, TestDataBase const& data,
              AdditionalChecks&& checks) const
     {
-        namespace MSM = MaterialLib::Solids::MFront;
-
         // Create MFront behaviour
         // /////////////////////////////////////////////////
 
@@ -173,8 +171,6 @@ protected:
                                    {2301, 2302, 2303, 2304, 2305, 2306}));
             EXPECT_DOUBLE_EQ(2307, S_L);
 
-            namespace MSM = MaterialLib::Solids::MFront;
-
             auto const blocks_view =
                 mfront_model->createTangentOperatorBlocksView();
 
@@ -238,8 +234,6 @@ TEST_F(MaterialLib_CheckStiffnessMatrixMFront, SomeBlocksMissing)
 
 TEST_F(MaterialLib_CheckStiffnessMatrixMFront, DSigmaDTBlock)
 {
-    namespace MSM = MaterialLib::Solids::MFront;
-
     run<boost::mp11::mp_list<MSM::Temperature>>(
         "CheckStiffnessMatrixExcessBlocks", TestDataBase{},
         [](auto const& blocks_view, auto const& tangent_operator_data)

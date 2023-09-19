@@ -14,6 +14,7 @@
 
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/LinAlg/FinalizeVectorAssembly.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Utils/ComputeResiduum.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
@@ -62,7 +63,7 @@ void HeatConductionProcess::initializeConcreteProcess(
 
 void HeatConductionProcess::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble HeatConductionProcess.");
@@ -74,14 +75,14 @@ void HeatConductionProcess::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
+        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
         b);
 
     MathLib::finalizeMatrixAssembly(M);
     MathLib::finalizeMatrixAssembly(K);
     MathLib::finalizeVectorAssembly(b);
 
-    auto const residuum = computeResiduum(*x[0], *xdot[0], M, K, b);
+    auto const residuum = computeResiduum(dt, *x[0], *x_prev[0], M, K, b);
     transformVariableFromGlobalVector(residuum, 0 /*variable id*/,
                                       *_local_to_global_index_map, *_heat_flux,
                                       std::negate<double>());
@@ -89,7 +90,7 @@ void HeatConductionProcess::assembleConcreteProcess(
 
 void HeatConductionProcess::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian HeatConductionProcess.");
@@ -101,8 +102,8 @@ void HeatConductionProcess::assembleWithJacobianConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
-        process_id, M, K, b, Jac);
+        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x,
+        x_prev, process_id, M, K, b, Jac);
 
     transformVariableFromGlobalVector(b, 0 /*variable id*/,
                                       *_local_to_global_index_map, *_heat_flux,
@@ -111,7 +112,7 @@ void HeatConductionProcess::assembleWithJacobianConcreteProcess(
 
 void HeatConductionProcess::computeSecondaryVariableConcrete(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_dot, int const process_id)
+    GlobalVector const& x_prev, int const process_id)
 {
     DBUG("Compute heat flux for HeatConductionProcess.");
 
@@ -124,7 +125,7 @@ void HeatConductionProcess::computeSecondaryVariableConcrete(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HeatConductionLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_dot, process_id);
+        x_prev, process_id);
 }
 
 }  // namespace HeatConduction

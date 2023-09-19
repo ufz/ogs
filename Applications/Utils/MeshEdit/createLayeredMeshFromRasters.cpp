@@ -1,4 +1,5 @@
 /*
+ * \file
  * \date 2016-02-11
  * \brief Creates a layered mesh from a 2D mesh and a bunch of raster files.
  *
@@ -21,21 +22,22 @@
 #include <mpi.h>
 #endif
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/IO/readStringListFromFile.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshLayerMapper.h"
+#include "MeshToolsLib/MeshGenerators/MeshLayerMapper.h"
 
 int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Creates a layered 3D OGS mesh from an existing 2D OGS mesh and a list "
         "of raster files representing subsurface layers. Supported raster "
-        "formats are ArcGIS ascii rasters (*.asc) and Surfer Grids (*.grd). "
+        "formats are ArcGIS ascii rasters (*.asc), Surfer Grids (*.grd), or "
+        "gridded XYZ rasters (*.xyz)."
         "Only input meshes consisting of line and triangle elements are "
         "currently supported as mapping of quads might result in invalid mesh "
         "elements.\n\n"
@@ -127,7 +129,7 @@ int main(int argc, char* argv[])
     }
     std::reverse(raster_paths.begin(), raster_paths.end());
 
-    MeshLib::MeshLayerMapper mapper;
+    MeshToolsLib::MeshLayerMapper mapper;
     if (auto const rasters = FileIO::readRasters(raster_paths))
     {
         if (!mapper.createLayers(*sfc_mesh, *rasters, min_thickness))

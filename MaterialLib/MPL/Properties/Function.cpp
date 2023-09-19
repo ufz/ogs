@@ -77,13 +77,18 @@ static void updateVariableValues(
 static PropertyDataType evaluateExpressions(
     std::vector<std::pair<Variable, double*>> const& symbol_values,
     VariableArray const& variable_array,
-    std::vector<exprtk::expression<double>> const& expressions)
+    std::vector<exprtk::expression<double>> const& expressions,
+    std::mutex& mutex)
 {
-    updateVariableValues(symbol_values, variable_array);
-
     std::vector<double> result(expressions.size());
-    std::transform(begin(expressions), end(expressions), begin(result),
-                   [](auto const& e) { return e.value(); });
+
+    {
+        std::lock_guard lock_guard(mutex);
+        updateVariableValues(symbol_values, variable_array);
+
+        std::transform(begin(expressions), end(expressions), begin(result),
+                       [](auto const& e) { return e.value(); });
+    }
 
     switch (result.size())
     {
@@ -187,7 +192,7 @@ PropertyDataType Function::value(VariableArray const& variable_array,
                                  double const /*t*/, double const /*dt*/) const
 {
     return evaluateExpressions(symbol_values_, variable_array,
-                               value_expressions_);
+                               value_expressions_, mutex_);
 }
 
 PropertyDataType Function::dValue(VariableArray const& variable_array,
@@ -208,7 +213,8 @@ PropertyDataType Function::dValue(VariableArray const& variable_array,
             variable_enum_to_string[static_cast<int>(variable)], name_);
     }
 
-    return evaluateExpressions(symbol_values_, variable_array, it->second);
+    return evaluateExpressions(symbol_values_, variable_array, it->second,
+                               mutex_);
 }
 
 }  // namespace MaterialPropertyLib

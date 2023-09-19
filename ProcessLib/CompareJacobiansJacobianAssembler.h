@@ -13,6 +13,7 @@
 #include <fstream>
 #include <limits>
 #include <memory>
+
 #include "AbstractJacobianAssembler.h"
 
 namespace BaseLib
@@ -54,11 +55,13 @@ public:
     void assembleWithJacobian(LocalAssemblerInterface& local_assembler,
                               double const t, double const dt,
                               std::vector<double> const& local_x,
-                              std::vector<double> const& local_xdot,
+                              std::vector<double> const& local_x_prev,
                               std::vector<double>& local_M_data,
                               std::vector<double>& local_K_data,
                               std::vector<double>& local_b_data,
                               std::vector<double>& local_Jac_data) override;
+
+    std::unique_ptr<AbstractJacobianAssembler> copy() const override;
 
 private:
     std::unique_ptr<AbstractJacobianAssembler> _asm1;

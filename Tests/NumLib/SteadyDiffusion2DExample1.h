@@ -1,4 +1,5 @@
 /**
+ * \file
  * \author Norihiro Watanabe
  * \date   2013-04-18
  *
@@ -18,8 +19,8 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 template<typename IndexType>struct SteadyDiffusion2DExample1
 {
@@ -86,7 +87,8 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
     SteadyDiffusion2DExample1()
         : _localA(4, 4), _localRhs(4)
     {
-        msh = MeshLib::MeshGenerator::generateRegularQuadMesh(2.0, mesh_subdivs);
+        msh = MeshToolsLib::MeshGenerator::generateRegularQuadMesh(
+            2.0, mesh_subdivs);
         for (auto* node : msh->getNodes())
         {
             vec_nodeIDs.push_back(node->getID());

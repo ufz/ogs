@@ -15,6 +15,7 @@
 #include "BaseLib/Error.h"
 #include "CreateThermoRichardsMechanicsLocalAssemblers.h"
 #include "MeshLib/Elements/Utils.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Reflection/ReflectionForExtrapolation.h"
@@ -44,6 +45,9 @@ ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
+      AssemblyMixin<
+          ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>>{
+          *_jacobian_assembler},
       process_data_(std::move(process_data))
 {
     ProcessLib::Reflection::addReflectedIntegrationPointWriters<
@@ -146,6 +150,11 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
         LocalAssemblerIF>(process_data_.solid_materials,
                           add_secondary_variable);
 
+    ProcessLib::Deformation::
+        solidMaterialInternalVariablesToIntegrationPointWriter(
+            process_data_.solid_materials, local_assemblers_,
+            _integration_point_writer, integration_order);
+
     process_data_.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "saturation_avg",
         MeshLib::MeshItemType::Cell, 1);
@@ -189,12 +198,14 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>
-void ThermoRichardsMechanicsProcess<
-    DisplacementDim, ConstitutiveTraits>::initializeBoundaryConditions()
+void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
+    initializeBoundaryConditions(
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media)
 {
     const int process_id = 0;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map, process_id);
+        *_local_to_global_index_map, process_id, media);
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>
@@ -215,7 +226,7 @@ template <int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     assembleConcreteProcess(const double /*t*/, double const /*dt*/,
                             std::vector<GlobalVector*> const& /*x*/,
-                            std::vector<GlobalVector*> const& /*xdot*/,
+                            std::vector<GlobalVector*> const& /*x_prev*/,
                             int const /*process_id*/, GlobalMatrix& /*M*/,
                             GlobalMatrix& /*K*/, GlobalVector& /*b*/)
 {
@@ -227,16 +238,14 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 
 template <int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
-    assembleWithJacobianConcreteProcess(const double t, double const dt,
-                                        std::vector<GlobalVector*> const& x,
-                                        std::vector<GlobalVector*> const& xdot,
-                                        int const process_id, GlobalMatrix& M,
-                                        GlobalMatrix& K, GlobalVector& b,
-                                        GlobalMatrix& Jac)
+    assembleWithJacobianConcreteProcess(
+        const double t, double const dt, std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     AssemblyMixin<ThermoRichardsMechanicsProcess<
         DisplacementDim, ConstitutiveTraits>>::assembleWithJacobian(t, dt, x,
-                                                                    xdot,
+                                                                    x_prev,
                                                                     process_id,
                                                                     M, K, b,
                                                                     Jac);
@@ -274,6 +283,7 @@ ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 template <int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                std::vector<GlobalVector*> const& x_prev,
                                 double const t, double const dt,
                                 const int process_id)
 {
@@ -284,14 +294,15 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, local_assemblers_,
-        pv.getActiveElementIDs(), dof_tables, x, t, dt);
+        pv.getActiveElementIDs(), dof_tables, x, x_prev, t, dt,
+        _use_monolithic_scheme, process_id);
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     computeSecondaryVariableConcrete(const double t, const double dt,
                                      std::vector<GlobalVector*> const& x,
-                                     GlobalVector const& x_dot,
+                                     GlobalVector const& x_prev,
                                      int const process_id)
 {
     DBUG("Compute the secondary variables for ThermoRichardsMechanicsProcess.");
@@ -302,7 +313,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, local_assemblers_,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_dot, process_id);
+        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>

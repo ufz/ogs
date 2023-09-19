@@ -228,34 +228,95 @@
                 </time_stepping>
             </process>
         </processes>
-        <output>
-            <type>VTK</type>
-            <prefix>flow_fully_saturated_gas</prefix>
-            <timesteps>
-                <pair>
-                    <repeat>10000</repeat>
-                    <each_steps>1</each_steps>
-                </pair>
-            </timesteps>
-            <variables>
-                <variable>gas_pressure</variable>
-                <variable>gas_pressure_interpolated</variable>
-                <variable>capillary_pressure</variable>
-                <variable>capillary_pressure_interpolated</variable>
-                <variable>temperature</variable>
-                <variable>temperature_interpolated</variable>
-                <variable>displacement</variable>
-                <variable>sigma</variable>
-                <variable>epsilon</variable>
-                <variable>velocity_gas</variable>
-                <variable>velocity_liquid</variable>
-                <variable>liquid_density</variable>
-                <variable>gas_density</variable>
-                <variable>porosity</variable>
-                <variable>saturation</variable>
-            </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
-        </output>
+        <outputs>
+            <output>
+                <type>VTK</type>
+                <prefix>flow_fully_saturated_gas</prefix>
+                <suffix>_ts_{:timestep}_t_{:time}</suffix>
+                <timesteps>
+                    <pair>
+                        <repeat>10000</repeat>
+                        <each_steps>1</each_steps>
+                    </pair>
+                </timesteps>
+                <variables>
+                    <variable>gas_pressure</variable>
+                    <variable>gas_pressure_interpolated</variable>
+                    <variable>capillary_pressure</variable>
+                    <variable>capillary_pressure_interpolated</variable>
+                    <variable>temperature</variable>
+                    <variable>temperature_interpolated</variable>
+                    <variable>displacement</variable>
+                    <variable>sigma</variable>
+                    <variable>epsilon</variable>
+                    <variable>velocity_gas</variable>
+                    <variable>velocity_liquid</variable>
+                    <variable>liquid_density</variable>
+                    <variable>gas_density</variable>
+                    <variable>porosity</variable>
+                    <variable>saturation</variable>
+                    <variable>GasMassFlowRate</variable>
+                    <variable>HeatFlowRate</variable>
+                    <variable>LiquidMassFlowRate</variable>
+                    <variable>NodalForces</variable>
+                    <variable>liquid_pressure_interpolated</variable>
+                </variables>
+            </output>
+            <!-- test output configuration with sub-domain mesh and output of linear primary variables -->
+            <output>
+                <type>VTK</type>
+                <prefix>flow_fully_saturated_gas_{:meshname}</prefix>
+                <timesteps>
+                    <pair>
+                        <repeat>10000</repeat>
+                        <each_steps>1</each_steps>
+                    </pair>
+                </timesteps>
+                <meshes>
+                    <mesh>square_1x1_quad8_1e2_bottom</mesh>
+                </meshes>
+                <variables>
+                    <variable>gas_pressure</variable>
+                    <variable>gas_pressure_interpolated</variable>
+                    <variable>capillary_pressure</variable>
+                    <variable>capillary_pressure_interpolated</variable>
+                    <variable>temperature</variable>
+                    <variable>temperature_interpolated</variable>
+                    <variable>displacement</variable>
+                    <variable>sigma</variable>
+                    <variable>epsilon</variable>
+                    <variable>velocity_gas</variable>
+                    <variable>velocity_liquid</variable>
+                    <variable>liquid_density</variable>
+                    <variable>gas_density</variable>
+                    <variable>porosity</variable>
+                    <variable>saturation</variable>
+                    <variable>GasMassFlowRate</variable>
+                    <variable>HeatFlowRate</variable>
+                    <variable>LiquidMassFlowRate</variable>
+                    <variable>NodalForces</variable>
+                    <variable>liquid_pressure_interpolated</variable>
+                </variables>
+                <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            </output>
+            <!-- test output configuration with sub-domain mesh and empty variables section -->
+            <output>
+                <type>VTK</type>
+                <prefix>empty_variables_flow_fully_saturated_gas_{:meshname}</prefix>
+                <suffix>_ts_{:timestep}_t_{:time}</suffix>
+                <timesteps>
+                    <pair>
+                        <repeat>10000</repeat>
+                        <each_steps>1</each_steps>
+                    </pair>
+                </timesteps>
+                <meshes>
+                    <mesh>square_1x1_quad8_1e2_bottom</mesh>
+                </meshes>
+                <variables>
+                </variables>
+            </output>
+        </outputs>
     </time_loop>
     <parameters>
         <!-- Mechanics -->
@@ -496,6 +557,30 @@
             <field>NodalForces</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>flow_fully_saturated_gas_square_1x1_quad8_1e2_bottom_ts_.*.vtu</regex>
+            <field>gas_pressure</field>
+            <absolute_tolerance>2e-15</absolute_tolerance>
+            <relative_tolerance>2e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>flow_fully_saturated_gas_square_1x1_quad8_1e2_bottom_ts_.*.vtu</regex>
+            <field>capillary_pressure</field>
+            <absolute_tolerance>2e-15</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>empty_variables_flow_fully_saturated_gas_square_1x1_quad8_1e2_bottom_ts_.*.vtu</regex>
+            <field>gas_pressure</field>
+            <absolute_tolerance>2e-15</absolute_tolerance>
+            <relative_tolerance>2e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>empty_variables_flow_fully_saturated_gas_square_1x1_quad8_1e2_bottom_ts_.*.vtu</regex>
+            <field>capillary_pressure</field>
+            <absolute_tolerance>2e-15</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>

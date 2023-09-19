@@ -19,25 +19,21 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, TemperatureData<DisplacementDim> const& T_data,
     CapillaryPressureData<DisplacementDim> const& p_cap_data,
     StrainData<DisplacementDim> const& eps_data,
-    StrainData<DisplacementDim> const& eps_prev_data,
+    PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
     MaterialStateData<DisplacementDim>& mat_state,
-    SolidMechanicsDataStateful<DisplacementDim> const& /*prev_state*/,
+    PrevState<
+        SolidMechanicsDataStateful<DisplacementDim>> const& /*prev_state*/,
     SolidMechanicsDataStateful<DisplacementDim>& current_state,
-    TotalStressData<DisplacementDim> const& total_stress_data_prev,
+    PrevState<TotalStressData<DisplacementDim>> const& total_stress_data_prev,
     TotalStressData<DisplacementDim>& total_stress_data,
     EquivalentPlasticStrainData& equiv_plast_strain_data,
     SolidMechanicsDataStateless<DisplacementDim>& current_stateless,
-    SaturationData const& S_L_prev_data, SaturationData& S_L_data,
+    PrevState<SaturationData> const& S_L_prev_data, SaturationData& S_L_data,
     SaturationDataDeriv& dS_L_data) const
 {
     namespace MPL = MaterialPropertyLib;
 
-    double const dT = T_data.T_dot * x_t.dt;
-    double const T_prev = T_data.T - dT;
-
-    double const dp_cap = p_cap_data.p_cap_dot * x_t.dt;
-    double const p_cap_prev = p_cap_data.p_cap - dp_cap;
-    double const p_L_prev = -p_cap_prev;
+    double const T_prev = T_data.T_prev;
 
     // This constitutive setting does not need eps_m. But eps_m is there,
     // because it is set in setInitialConditionsConcrete()
@@ -45,8 +41,8 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     current_state.eps_m.noalias() = KVnan<DisplacementDim>();
 
     auto const& eps_total = eps_data.eps;
-    auto const& eps_total_prev = eps_prev_data.eps;
-    auto const& sigma_total_prev = total_stress_data_prev.sigma_total;
+    auto const& eps_total_prev = eps_prev_data->eps;
+    auto const& sigma_total_prev = total_stress_data_prev->sigma_total;
 
     // current state
     MPL::VariableArray variables;
@@ -65,12 +61,12 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     {
         // thermodynamic forces
         variables_prev.stress = sigma_total_prev;
-        variables_prev.liquid_saturation = S_L_prev_data.S_L;
+        variables_prev.liquid_saturation = S_L_prev_data->S_L;
 
         // gradients
         // TODO currently we always pass strain via mechanical_strain
         variables_prev.mechanical_strain = eps_total_prev;
-        variables_prev.liquid_phase_pressure = p_L_prev;
+        variables_prev.liquid_phase_pressure = -p_cap_data.p_cap_prev;
 
         // external state variables
         variables_prev.temperature = T_prev;

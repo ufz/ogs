@@ -37,10 +37,10 @@ double calcProjPntToLineAndDists(MathLib::Point3d const& pp,
 /**
  * Let \f$p_0, p_1, p_2 \in R^3\f$. The function getAngle
  * computes the angle between the edges \f$(p_0,p_1)\f$ and \f$(p_1,p_2)\f$
- * @param p0 start point of edge 0
- * @param p1 end point of edge 0 and start point of edge 1
- * @param p2 end point of edge 1
- * @return the angle between the edges
+ * \param p0 start point of edge 0
+ * \param p1 end point of edge 0 and start point of edge 1
+ * \param p2 end point of edge 1
+ * \return the angle between the edges
  */
 double getAngle(Point3d const& p0, Point3d const& p1, Point3d const& p2);
 }  // namespace MathLib

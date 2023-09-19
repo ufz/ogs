@@ -1,5 +1,6 @@
 if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/InclinedElements/Inclined2DMesh/inclined_2D_mesh_HC.prj RUNTIME 10)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ClassicalTransportExample/classical_transport_example_full_upwind.prj RUNTIME 1)
 endif()
 
 AddTest(
@@ -561,7 +562,7 @@ AddTest(
     EXECUTABLE_ARGS elder-python.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS OGS_USE_PYTHON AND NOT OGS_USE_MPI
+    REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     elder_ts_0_t_0.000000_reference.vtu            elder_python_ts_0_t_0.000000.vtu            pressure  pressure  1e-1  1e-5
     elder_ts_100_t_26298000.000000_reference.vtu   elder_python_ts_100_t_26298000.000000.vtu   pressure  pressure  1e-1  1e-5
@@ -788,6 +789,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/CationExchange/exchangeAndSurface.prj RUNTIME 33)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/1d_decay_chain_OS.prj RUNTIME 2000)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/1d_decay_chain_GIA.prj RUNTIME 40)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/1d_decay_chain_GIA_asm_only_once.xml RUNTIME 10)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ThermalDiffusion/TemperatureField_transport.prj RUNTIME 27)
 endif()
 

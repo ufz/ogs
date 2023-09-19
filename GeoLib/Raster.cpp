@@ -1,10 +1,10 @@
 /**
- * @file Raster.cpp
- * @author Thomas Fischer
- * @date 2011-09-07
- * @brief Implementation of the GeoLib::Raster class.
+ * \file
+ * \author Thomas Fischer
+ * \date 2011-09-07
+ * \brief Implementation of the GeoLib::Raster class.
  *
- * @copyright
+ * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
@@ -24,8 +24,8 @@ namespace GeoLib
 {
 void Raster::refineRaster(std::size_t scaling)
 {
-    auto* new_raster_data(
-        new double[_header.n_rows * _header.n_cols * scaling * scaling]);
+    std::vector<double> new_raster_data(_header.n_rows * _header.n_cols *
+                                        scaling * scaling);
 
     for (std::size_t row(0); row < _header.n_rows; row++)
     {
@@ -51,13 +51,6 @@ void Raster::refineRaster(std::size_t scaling)
     _header.cell_size /= scaling;
     _header.n_cols *= scaling;
     _header.n_rows *= scaling;
-
-    delete[] new_raster_data;
-}
-
-Raster::~Raster()
-{
-    delete[] _raster_data;
 }
 
 double Raster::getValueAtPoint(const MathLib::Point3d& pnt) const

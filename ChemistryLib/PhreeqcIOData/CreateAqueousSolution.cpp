@@ -15,6 +15,7 @@
 #include "ChemistryLib/Common/CreateChargeBalance.h"
 #include "CreateSolutionComponent.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 
 namespace ChemistryLib
 {

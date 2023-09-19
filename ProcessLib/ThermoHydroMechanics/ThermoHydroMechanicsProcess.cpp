@@ -13,6 +13,7 @@
 #include <cassert>
 
 #include "MeshLib/Elements/Utils.h"
+#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"
@@ -191,6 +192,13 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                          &LocalAssemblerInterface::getIntPtSigma));
 
     _secondary_variables.addSecondaryVariable(
+        "sigma_ice",
+        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
+                             DisplacementDim>::RowsAtCompileTime,
+                         getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtSigmaIce));
+
+    _secondary_variables.addSecondaryVariable(
         "epsilon",
         makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
                              DisplacementDim>::RowsAtCompileTime,
@@ -198,10 +206,40 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                          &LocalAssemblerInterface::getIntPtEpsilon));
 
     _secondary_variables.addSecondaryVariable(
+        "ice_volume_fraction",
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtIceVolume));
+
+    _secondary_variables.addSecondaryVariable(
         "velocity",
         makeExtrapolator(mesh.getDimension(), getExtrapolator(),
                          _local_assemblers,
                          &LocalAssemblerInterface::getIntPtDarcyVelocity));
+
+    _secondary_variables.addSecondaryVariable(
+        "fluid_density",
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtFluidDensity));
+
+    _secondary_variables.addSecondaryVariable(
+        "viscosity",
+        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+                         &LocalAssemblerInterface::getIntPtViscosity));
+
+    _process_data.element_fluid_density =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "fluid_density_avg",
+            MeshLib::MeshItemType::Cell, 1);
+
+    _process_data.element_viscosity = MeshLib::getOrCreateMeshProperty<double>(
+        const_cast<MeshLib::Mesh&>(mesh), "viscosity_avg",
+        MeshLib::MeshItemType::Cell, 1);
+
+    _process_data.element_stresses = MeshLib::getOrCreateMeshProperty<double>(
+        const_cast<MeshLib::Mesh&>(mesh), "stress_avg",
+        MeshLib::MeshItemType::Cell,
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim>::RowsAtCompileTime);
 
     _process_data.pressure_interpolated =
         MeshLib::getOrCreateMeshProperty<double>(
@@ -223,14 +261,15 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 }
 
 template <int DisplacementDim>
-void ThermoHydroMechanicsProcess<
-    DisplacementDim>::initializeBoundaryConditions()
+void ThermoHydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     if (_use_monolithic_scheme)
     {
         const int process_id_of_thermohydromechancs = 0;
         initializeProcessBoundaryConditionsAndSourceTerms(
-            *_local_to_global_index_map, process_id_of_thermohydromechancs);
+            *_local_to_global_index_map, process_id_of_thermohydromechancs,
+            media);
         return;
     }
 
@@ -238,23 +277,24 @@ void ThermoHydroMechanicsProcess<
     // for the equations of heat transport
     const int thermal_process_id = 0;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map_with_base_nodes, thermal_process_id);
+        *_local_to_global_index_map_with_base_nodes, thermal_process_id, media);
 
     // for the equations of mass balance
     const int hydraulic_process_id = 1;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map_with_base_nodes, hydraulic_process_id);
+        *_local_to_global_index_map_with_base_nodes, hydraulic_process_id,
+        media);
 
     // for the equations of deformation.
     const int mechanical_process_id = 2;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map, mechanical_process_id);
+        *_local_to_global_index_map, mechanical_process_id, media);
 }
 
 template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, int const process_id,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble the equations for ThermoHydroMechanics");
@@ -266,18 +306,16 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
+        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
         b);
 }
 
 template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<DisplacementDim>::
-    assembleWithJacobianConcreteProcess(const double t, double const dt,
-                                        std::vector<GlobalVector*> const& x,
-                                        std::vector<GlobalVector*> const& xdot,
-                                        int const process_id, GlobalMatrix& M,
-                                        GlobalMatrix& K, GlobalVector& b,
-                                        GlobalMatrix& Jac)
+    assembleWithJacobianConcreteProcess(
+        const double t, double const dt, std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
@@ -319,8 +357,8 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
 
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        process_id, M, K, b, Jac);
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
+        x_prev, process_id, M, K, b, Jac);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {
@@ -360,19 +398,16 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 
     if (hasMechanicalProcess(process_id))
     {
-        ProcessLib::ProcessVariable const& pv =
-            getProcessVariables(process_id)[0];
-
-        GlobalExecutor::executeSelectedMemberOnDereferenced(
+        GlobalExecutor::executeMemberOnDereferenced(
             &LocalAssemblerInterface::preTimestep, _local_assemblers,
-            pv.getActiveElementIDs(), *_local_to_global_index_map,
-            *x[process_id], t, dt);
+            *_local_to_global_index_map, *x[process_id], t, dt);
     }
 }
 
 template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
-    std::vector<GlobalVector*> const& x, double const t, double const dt,
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_prev, double const t, double const dt,
     const int process_id)
 {
     if (process_id != 0)
@@ -393,28 +428,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, x, t, dt);
-}
-
-template <int DisplacementDim>
-void ThermoHydroMechanicsProcess<DisplacementDim>::
-    postNonLinearSolverConcreteProcess(GlobalVector const& x,
-                                       GlobalVector const& xdot, const double t,
-                                       double const dt, const int process_id)
-{
-    if (!hasMechanicalProcess(process_id))
-    {
-        return;
-    }
-
-    DBUG("PostNonLinearSolver ThermoHydroMechanicsProcess.");
-    // Calculate strain, stress or other internal variables of mechanics.
-
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
-    GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), x, xdot, t, dt,
+        pv.getActiveElementIDs(), dof_tables, x, x_prev, t, dt,
         _use_monolithic_scheme, process_id);
 }
 
@@ -422,7 +436,7 @@ template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<DisplacementDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      std::vector<GlobalVector*> const& x,
-                                     GlobalVector const& x_dot,
+                                     GlobalVector const& x_prev,
                                      const int process_id)
 {
     if (process_id != 0)
@@ -442,7 +456,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_dot, process_id);
+        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
 }
 
 template <int DisplacementDim>

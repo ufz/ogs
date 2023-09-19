@@ -26,6 +26,29 @@ The reason for this is that you can have only one sub-project of your Visual Stu
 ### How to work with CMake and Visual Studio
 
 You can work normally in Visual Studio but remember that you have to make project changes in the `CMakeLists.txt`-file and not inside Visual Studio. You can add a new source file within Visual Studios File menu but you have to add that file also to the CMake file. Every time you change a `CMakeLists.txt` and you build the project a new CMake run is automatically invoked. After that Visual Studio informs you that the project files were changed and it reloads them.
+
+<div class="note">
+
+### <i class="fal fa-exclamation-triangle"></i> Building from the command line
+
+You can also build from the command line:
+
+```bat
+cd build-directory
+cmake --build . --config Release
+```
+
+Please that with Visual Studio you have to provide the `--config`-parameter as Visual Studio is a [multi-configuration generator](https://cmake.org/cmake/help/latest/prop_gbl/GENERATOR_IS_MULTI_CONFIG.html) in CMake.
+
+If you build with the help of a [CMake preset]({{< ref "build-configuration#available-cmake-presets" >}}) then you can omit the `--config`-parameter, e.g.:
+
+```bat
+cd source-directory
+cmake --build --preset msvc-release
+```
+
+</div>
+
 </div>
 
 <div class='linux'>

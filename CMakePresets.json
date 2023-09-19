@@ -9,7 +9,7 @@
     {
       "name": "_binary_dir",
       "hidden": true,
-      "binaryDir": "${sourceParentDir}/build/${presetName}"
+      "binaryDir": "${sourceParentDir}/build/$penv{CMAKE_PRESET_BUILD_DIR_PREFIX}${presetName}"
     },
     {
       "name": "_release",
@@ -178,15 +178,16 @@
       "name": "ci-simplest",
       "inherits": "release",
       "cacheVariables": {
-        "OGS_BUILD_UTILS": "OFF",
-        "OGS_USE_PYTHON": "OFF"
+        "OGS_BUILD_UTILS": "OFF"
       }
     },
     {
       "name": "ci-no-unity",
-      "inherits": "release-all",
+      "inherits": [
+        "release-all",
+        "release-petsc"
+      ],
       "cacheVariables": {
-        "OGS_USE_PYTHON": "OFF",
         "OGS_USE_UNITY_BUILDS": "OFF"
       }
     },
@@ -208,32 +209,12 @@
       "cacheVariables": {
         "HDF5_USE_STATIC_LIBRARIES": "ON",
         "OGS_BUILD_HDF5": "ON",
-        "OGS_USE_PYTHON": "ON",
-        "OGS_BUILD_PYTHON_MODULE": "ON",
         "OGS_BUILD_WHEEL": "ON",
         "OGS_BUILD_TESTING": "OFF",
         "OGS_INSTALL_DEPENDENCIES": "OFF",
         "OGS_USE_PIP": "OFF",
         "OGS_USE_MFRONT": "ON",
         "BUILD_SHARED_LIBS": "ON"
-      },
-      "condition": {
-        "type": "notEquals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
-      }
-    },
-    {
-      "name": "wheel-win",
-      "inherits": "wheel",
-      "cacheVariables": {
-        "OGS_USE_MFRONT": "OFF",
-        "OGS_BUILD_PROCESS_TH2M": "OFF"
-      },
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
       }
     }
   ],
@@ -334,10 +315,6 @@
     {
       "name": "wheel",
       "configurePreset": "wheel"
-    },
-    {
-      "name": "wheel-win",
-      "configurePreset": "wheel-win"
     }
   ],
   "testPresets": [
@@ -349,7 +326,7 @@
       },
       "filter": {
         "include": {
-          "label": "default|Notebook"
+          "label": "default"
         }
       },
       "execution": {

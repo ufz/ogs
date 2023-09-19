@@ -1,13 +1,48 @@
 [build-system]
-requires = [
-  "setuptools>=42",
-  "scikit-build @ git+https://github.com/bilke/scikit-build/@disable-cmake-install-check#egg=scikit-build ; platform_system == 'Windows'",
-  "scikit-build>=0.15.0 ; platform_system != 'Windows'",
-  "cmake>=3.22",
-  "ninja ; platform_system != 'Windows'",
-  "setuptools_scm[toml]>=7.0",
-]
-build-backend = "setuptools.build_meta"
+requires = ["scikit-build-core"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "ogs"
+dynamic = ["version", "scripts"]
+description = "OpenGeoSys Python wheel"
+readme = "README.md"
+license = { file = "LICENSE.txt" }
+authors = [{ email = "info@opengeosys.org" }, { name = "OpenGeoSys Community" }]
+requires-python = ">=3.8"
+
+[project.urls]
+homepage = "https://opengeosys.org"
+documentation = "https://opengeosys.org/docs"
+repository = "https://gitlab.opengeosys.org/ogs/ogs"
+changelog = "https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/CHANGELOG.md"
+
+[project.optional-dependencies]
+test = ["pytest", "numpy"]
+
+[tool.scikit-build]
+build-dir = "_skbuild/{wheel_tag}"
+cmake.args = ["--preset", "wheel"]
+cmake.minimum-version = "3.22.0"
+experimental = true
+metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
+minimum-version = "0.5.0"
+ninja.make-fallback = false
+wheel.packages = ["Applications/Python/ogs"]
+
+[tool.scikit-build.metadata.scripts]
+provider = "scripts"
+provider-path = "scripts/python/scikit-build-plugins"
+
+[tool.setuptools_scm]
+write_to = "Applications/Python/_version.py"
+write_to_template = '__version__ = "{version}"'
+version_scheme = "guess-next-dev"
+git_describe_command = 'git describe --dirty --tags --long --match "*[0-9]*" --abbrev=8'
+# local_scheme should be node-and-date by default and no-local-version in CI.
+# Unfortunately setting via env var does not work.
+# See https://github.com/pypa/setuptools_scm/issues/455.
+local_scheme = "no-local-version"
 
 [tool.pytest.ini_options]
 testpaths = ["Tests"]
@@ -15,27 +50,86 @@ norecursedirs = ["Tests/Data"]
 
 [tool.cibuildwheel]
 archs = "auto64"
-build = "cp3*"
+build = ["cp3{8,9,10,11}-*"]
+skip = [
+  "*musllinux*",
+  "cp38-macosx_x86_64",
+] # otherwise error: 'is not a supported wheel on this platform'archs = "auto64"
 test-extras = "test"
 test-command = "pytest {project}/Tests/Python"
 build-verbosity = "1"
 
 [tool.cibuildwheel.linux]
-skip = ["*musllinux*", "cp36-*"]
-# See https://github.com/NixOS/patchelf/issues/446
 # quay.io/pypa/manylinux_2_28 works too
-manylinux-x86_64-image = "quay.io/pypa/manylinux2014_x86_64@sha256:005826a6fa94c97bd31fccf637a0f10621304da447ca2ab3963c13991dffa013"
-manylinux-aarch64-image = "quay.io/pypa/manylinux2014_x86_64@sha256:005826a6fa94c97bd31fccf637a0f10621304da447ca2ab3963c13991dffa013"
+manylinux-x86_64-image = "quay.io/pypa/manylinux2014_x86_64"
+manylinux-aarch64-image = "quay.io/pypa/manylinux2014_x86_64"
 before-all = "yum install -y ccache"
+# See https://github.com/NixOS/patchelf/issues/446, wait for patchelf 0.19
+before-build = "pipx install --force 'patchelf<0.17'"
 environment-pass = [
   "SETUPTOOLS_SCM_LOCAL_SCHEME",
   "CPM_SOURCE_CACHE",
   "CCACHE_DIR",
   "CCACHE_MAXSIZE",
+  "CMAKE_ARGS",
 ]
 
-[tool.cibuildwheel.macos]
-skip = ["cp36-*", "cp37-*", "cp38-*x86_64"]
+[tool.cibuildwheel.linux.config-settings]
+"cmake.define.OGS_CPU_ARCHITECTURE" = "sandybridge"
 
-[tool.cibuildwheel.windows]
-skip = ["cp36-*", "cp37-*"]
+# maybe this should be moved to CMake logic, i.e. disabling both features on win
+[tool.cibuildwheel.windows.config-settings]
+"cmake.define.OGS_USE_MFRONT" = "OFF"
+"cmake.define.OGS_BUILD_PROCESS_TH2M" = "OFF"
+# Generator needs to be set here, CMAKE_GENERATOR env var does not work.
+# Ninja generator does not select  the host64 compiler.
+"cmake.args" = "-G;Visual Studio 16 2019;--preset;wheel"
+
+[tool.ruff]
+select = [
+  "E",
+  "F",
+  "W",    # flake8
+  "B",
+  "B904", # flake8-bugbear
+  "I",    # isort
+  "ARG",  # flake8-unused-arguments
+  "C4",   # flake8-comprehensions
+  "EM",   # flake8-errmsg
+  "ICN",  # flake8-import-conventions
+  "ISC",  # flake8-implicit-str-concat
+  "G",    # flake8-logging-format
+  "PGH",  # pygrep-hooks
+  "PIE",  # flake8-pie
+  "PL",   # pylint
+  "PT",   # flake8-pytest-style
+  "PTH",  # flake8-use-pathlib
+  "RET",  # flake8-return
+  "RUF",  # Ruff-specific
+  "SIM",  # flake8-simplify
+  "UP",   # pyupgrade
+  "YTT",  # flake8-2020
+  "EXE",  # flake8-executable
+  "NPY",  # NumPy specific rules
+  "PD",   # pandas-vet
+]
+extend-ignore = [
+  "PLR",   # Design related pylint codes
+  "E501",  # Line too long
+  "PT004", # Use underscore for non-returning fixture (use usefixture instead)
+  # RUF005 should be disabled when using numpy, see
+  # https://github.com/charliermarsh/ruff/issues/2142:
+  "RUF005",
+]
+target-version = "py39"
+typing-modules = ["mypackage._compat.typing"]
+unfixable = [
+  "T20",  # Removes print statements
+  "F841", # Removes unused variables
+]
+exclude = []
+flake8-unused-arguments.ignore-variadic-names = true
+line-length = 80
+
+[tool.ruff.per-file-ignores]
+"tests/**" = ["T20"]

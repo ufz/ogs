@@ -9,7 +9,10 @@
 
 #pragma once
 
+#include <fmt/ranges.h>
+
 #include <map>
+#include <range/v3/view/map.hpp>
 
 #include "MeshLib/PropertyVector.h"
 
@@ -22,11 +25,13 @@ namespace Solids
 ///
 /// Only two possibilities yield a valid result and result in OGS_FATAL call
 /// otherwise.
-/// 1. There is only one constitutive relation in the set of
-/// constitutive_relations, then the material and element ids are ignored and
-/// the only constitutive relation (under id 0) is returned.
-/// 2. For each material id chosen for the given element id there exists a
-/// constitutive relation in the set.
+/// 1. If the material id is not defined then search for a constitutive
+/// relation with id 0 (the default value if not specified).
+/// 2. There is only one constitutive relation with id 0 then the material and
+/// element ids are ignored and the only constitutive relation (under id 0) is
+/// returned.
+/// 3. If material ids are defined then search for a constitutive relation
+/// corresponding to the material id of the current element.
 template <typename SolidMaterialsMap>
 auto& selectSolidConstitutiveRelation(
     SolidMaterialsMap const& constitutive_relations,
@@ -42,23 +47,21 @@ auto& selectSolidConstitutiveRelation(
             constitutive_relations.size());
     }
 
-    int material_id;
-    if (constitutive_relations.size() == 1 || material_ids == nullptr)
-    {
-        material_id = 0;
-    }
-    else
-    {
-        material_id = (*material_ids)[element_id];
-    }
+    int const material_id = ((constitutive_relations.size() == 1 &&
+                              constitutive_relations.begin()->first == 0) ||
+                             material_ids == nullptr)
+                                ? 0
+                                : (*material_ids)[element_id];
 
     auto const constitutive_relation = constitutive_relations.find(material_id);
     if (constitutive_relation == end(constitutive_relations))
     {
         OGS_FATAL(
             "No constitutive relation found for material id {:d} and element "
-            "{:d}. There are {:d} constitutive relations available.",
-            material_id, element_id, constitutive_relations.size());
+            "{:d}. There are {:d} constitutive relations available, "
+            "corresponding to the ids: {}",
+            material_id, element_id, constitutive_relations.size(),
+            fmt::join(constitutive_relations | ranges::views::keys, " "));
     }
 
     if (constitutive_relation->second == nullptr)
