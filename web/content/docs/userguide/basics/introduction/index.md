@@ -46,14 +46,42 @@ On macOS you can use either a virtual machine (e.g. via [UTM](https://docs.getut
 
 A straightforward way of installing OGS is via Python's [`pip`-tool](https://packaging.python.org/en/latest/tutorials/installing-packages/):
 
-```bash
+<div class='win'>
+
+```powershell
 # Optional: create a Python virtual environment, see below
-python -m venv .venv      # or `python3 -m venv .venv`
-source .venv/bin/activate # Linux / macOS; for Windows: .\venv\Scripts\activate
+python -m venv .venv
+.\venv\Scripts\Activate.ps1
 
 # Install ogs' pip package
 pip install ogs
 ```
+
+If you get errors when calling the `Activate.ps1` script you have to run the following command once:
+
+```powershell
+Set-Execution-Policy Unrestricted -Scope CurrentUser
+```
+
+</div>
+
+<div class='linux'>
+
+```bash
+# Optional: create a Python virtual environment, see below
+python -m venv .venv      # or `python3 -m venv .venv`
+source .venv/bin/activate
+
+# Install ogs' pip package
+pip install ogs
+
+```
+
+</div>
+
+<div class='mac'>
+See Linux-tab!
+</div>
 
 Please note that this requires a Python installation (version 3.8 - 3.11) with the `pip`-tool.
 
@@ -89,8 +117,8 @@ to just download the latest stable or development release of OpenGeoSys from the
 
 By downloading from the release page you will get a bunch of folders and files. However, OGS itself will come as a simple
 executable file, which you will find in the `bin` sub-folder. You can put the executable wherever you like. For convenience you
-may put it into a location which is in your `PATH`-environment variable which allows you to start the executable without
-specifying its full file path just calling `ogs` from the terminal of your machine.
+may put it into a location which is in your `PATH`-environment variable or [modify](https://stackoverflow.com/a/714918/80480) the `PATH` environment variable which allows you to start the executable without
+specifying its full file path. Then just calling `ogs` from the terminal is sufficient.
 
 </div>
 
