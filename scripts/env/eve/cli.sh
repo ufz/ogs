@@ -1,4 +1,5 @@
 export CMAKE_BUILD_PARALLEL_LEVEL="${CMAKE_BUILD_PARALLEL_LEVEL:-8}"
+export CTEST_PARALLEL_LEVEL="${CTEST_PARALLEL_LEVEL:-4}"
 
 module use /global/apps/modulefiles
 
