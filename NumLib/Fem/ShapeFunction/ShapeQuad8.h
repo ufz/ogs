@@ -32,11 +32,11 @@ public:
     /**
      * Evaluate derivatives of the shape function at the given point
      *
-     * @param [in]  r    point coordinates
+     * @param [in]  rs   point coordinates
      * @param [out] dN  a matrix of the derivatives
      */
     template <class T_X, class T_N>
-    static void computeGradShapeFunction(const T_X& r, T_N& dN);
+    static void computeGradShapeFunction(const T_X& rs, T_N& dN);
 
     using MeshElement = MeshLib::Quad8;
     static const unsigned DIM = MeshElement::dimension;

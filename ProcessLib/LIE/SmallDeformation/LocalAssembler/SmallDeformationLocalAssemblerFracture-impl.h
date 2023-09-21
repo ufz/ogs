@@ -11,6 +11,8 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
 
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
@@ -62,10 +64,11 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, DisplacementDim>::
         _fracture_props.push_back(&_process_data.fracture_properties[fid]);
     }
 
-    for (auto jid : process_data._vec_ele_connected_junctionIDs[e.getID()])
-    {
-        _junction_props.push_back(&_process_data.junction_properties[jid]);
-    }
+    _junction_props = process_data._vec_ele_connected_junctionIDs[e.getID()] |
+                      ranges::views::transform(
+                          [&](auto const jid)
+                          { return &_process_data.junction_properties[jid]; }) |
+                      ranges::to<std::vector>;
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -184,7 +187,7 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, DisplacementDim>::
         auto const& w_prev = ip_data.w_prev;
         auto& C = ip_data.C;
         auto& state = *ip_data.material_state_variables;
-        auto& N = _secondary_data.N[ip];
+        auto const& N = _secondary_data.N[ip];
 
         auto const ip_physical_coords(computePhysicalCoordinates(_element, N));
         std::vector<double> const levelsets(duGlobalEnrichments(

@@ -151,7 +151,7 @@ setInitialConditions(
     std::vector<GlobalVector*> process_solutions;
     std::vector<GlobalVector*> process_solutions_prev;
 
-    for (auto& process_data : per_process_data)
+    for (auto const& process_data : per_process_data)
     {
         auto const process_id = process_data->process_id;
         auto& ode_sys = *process_data->tdisc_ode_sys;
@@ -165,7 +165,7 @@ setInitialConditions(
                 ode_sys.getMatrixSpecifications(process_id)));
     }
 
-    for (auto& process_data : per_process_data)
+    for (auto const& process_data : per_process_data)
     {
         auto& pcs = process_data->process;
         auto const process_id = process_data->process_id;
@@ -184,7 +184,7 @@ void calculateNonEquilibriumInitialResiduum(
     std::vector<GlobalVector*> const& process_solutions,
     std::vector<GlobalVector*> const& process_solutions_prev)
 {
-    for (auto& process_data : per_process_data)
+    for (auto const& process_data : per_process_data)
     {
         auto& nonlinear_solver = process_data->nonlinear_solver;
 
@@ -255,7 +255,7 @@ TimeLoop::TimeLoop(std::vector<Output>&& outputs,
 
 void TimeLoop::setCoupledSolutions()
 {
-    for (auto& process_data : _per_process_data)
+    for (auto const& process_data : _per_process_data)
     {
         auto const& x = *_process_solutions[process_data->process_id];
 
@@ -465,7 +465,7 @@ TimeLoop::generateOutputTimeStepConstraints(
 /// initialize output, convergence criterion, etc.
 void TimeLoop::initialize()
 {
-    for (auto& process_data : _per_process_data)
+    for (auto const& process_data : _per_process_data)
     {
         auto& pcs = process_data->process;
         for (auto& output : _outputs)
@@ -656,7 +656,7 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
 {
     NumLib::NonlinearSolverStatus nonlinear_solver_status;
 
-    for (auto& process_data : _per_process_data)
+    for (auto const& process_data : _per_process_data)
     {
         auto const process_id = process_data->process_id;
         nonlinear_solver_status = solveMonolithicProcess(
@@ -796,7 +796,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     }
 
     {
-        for (auto& process_data : _per_process_data)
+        for (auto const& process_data : _per_process_data)
         {
             auto& pcs = process_data->process;
             int const process_id = process_data->process_id;
@@ -826,7 +826,7 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
     bool const is_staggered_coupling =
         !isMonolithicProcess(*_per_process_data[0]);
 
-    for (auto& process_data : _per_process_data)
+    for (auto const& process_data : _per_process_data)
     {
         // If nonlinear solver diverged, the solution has already been
         // saved.

@@ -11,7 +11,8 @@
 #pragma once
 
 #include <Eigen/Core>
-#include <valarray>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
 #include <vector>
 
 #include "IntegrationPointDataMatrix.h"
@@ -107,10 +108,11 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
         _fracture_props.push_back(&_process_data.fracture_properties[fid]);
     }
 
-    for (auto jid : process_data._vec_ele_connected_junctionIDs[e.getID()])
-    {
-        _junction_props.push_back(&_process_data.junction_properties[jid]);
-    }
+    _junction_props = process_data._vec_ele_connected_junctionIDs[e.getID()] |
+                      ranges::views::transform(
+                          [&](auto const jid)
+                          { return &_process_data.junction_properties[jid]; }) |
+                      ranges::to<std::vector>;
 }
 
 template <typename ShapeFunction, int DisplacementDim>
@@ -315,7 +317,7 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
         _integration_method.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto& ip_data = _ip_data[ip];
+        auto const& ip_data = _ip_data[ip];
 
         ele_stress += ip_data._sigma;
         ele_strain += ip_data._eps;

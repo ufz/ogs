@@ -191,10 +191,10 @@ void PetrelInterface::readPetrelWellTrace(std::istream& in)
 
 void PetrelInterface::readPetrelWellTraceData(std::istream& in)
 {
-    std::string line = readLine(in);
+    readLine(in);
 
     // read yet another header line
-    line = readLine(in);
+    std::string line = readLine(in);
     while (line[0] == '#')
     {
         line = readLine(in);

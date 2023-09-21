@@ -371,17 +371,16 @@ void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster,
 /// Checks if all raster files actually exist
 static bool allRastersExist(std::vector<std::string> const& raster_paths)
 {
-    for (const auto& raster_path : raster_paths)
-    {
-        std::ifstream file_stream(raster_path, std::ifstream::in);
-        if (!file_stream.good())
-        {
-            ERR("Opening raster file {} failed.", raster_path);
-            return false;
-        }
-        file_stream.close();
-    }
-    return true;
+    return std::all_of(raster_paths.begin(), raster_paths.end(),
+                       [](std::string const& raster_path)
+                       {
+                           if (BaseLib::IsFileExisting(raster_path))
+                           {
+                               return true;
+                           }
+                           ERR("Opening raster file {} failed.", raster_path);
+                           return false;
+                       });
 }
 
 std::optional<std::vector<GeoLib::Raster const*>> readRasters(

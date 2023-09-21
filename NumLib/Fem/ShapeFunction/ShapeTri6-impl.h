@@ -22,25 +22,25 @@ void ShapeTri6::computeShapeFunction(const T_X& r, T_N& N)
 }
 
 template <class T_X, class T_N>
-void ShapeTri6::computeGradShapeFunction(const T_X& r, T_N& dNdr)
+void ShapeTri6::computeGradShapeFunction(const T_X& r, T_N& dN)
 {
-    dNdr[0] = 4. * (r[0] + r[1]) - 3.;  // dN1/dL1
-    dNdr[6] = dNdr[0];                  // dN1/dL2
+    dN[0] = 4. * (r[0] + r[1]) - 3.;  // dN1/dL1
+    dN[6] = dN[0];                    // dN1/dL2
 
-    dNdr[1] = 4. * r[0] - 1.;  // dN2/dL1
-    dNdr[7] = 0.;              // dN2/dL2
+    dN[1] = 4. * r[0] - 1.;  // dN2/dL1
+    dN[7] = 0.;              // dN2/dL2
 
-    dNdr[2] = 0.;              // dN3/dL1
-    dNdr[8] = 4. * r[1] - 1.;  // dN3/dL2
+    dN[2] = 0.;              // dN3/dL1
+    dN[8] = 4. * r[1] - 1.;  // dN3/dL2
 
-    dNdr[3] = 4. * (1 - 2. * r[0] - r[1]);  // dN4/dL1
-    dNdr[9] = -4. * r[0];                   // dN4/dL2
+    dN[3] = 4. * (1 - 2. * r[0] - r[1]);  // dN4/dL1
+    dN[9] = -4. * r[0];                   // dN4/dL2
 
-    dNdr[4] = 4. * r[1];  // dN5/dL1
-    dNdr[10] = -dNdr[9];  // dN5/dL2
+    dN[4] = 4. * r[1];  // dN5/dL1
+    dN[10] = -dN[9];    // dN5/dL2
 
-    dNdr[5] = -dNdr[4];                      // dN6/dL1
-    dNdr[11] = 4. * (1 - r[0] - 2. * r[1]);  // dN6/dL2
+    dN[5] = -dN[4];                        // dN6/dL1
+    dN[11] = 4. * (1 - r[0] - 2. * r[1]);  // dN6/dL2
 }
 
 }  // namespace NumLib

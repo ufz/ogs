@@ -17,25 +17,25 @@
 
 namespace Adsorption
 {
-const double ReactionCaOH2::_reaction_enthalpy = -1.12e+05;
-const double ReactionCaOH2::_reaction_entropy = -143.5;
-const double ReactionCaOH2::_M_carrier =
-    MaterialLib::PhysicalConstant::MolarMass::N2;
-const double ReactionCaOH2::_M_react =
-    MaterialLib::PhysicalConstant::MolarMass::Water;
 
-const double ReactionCaOH2::_tol_l = 1e-4;
-const double ReactionCaOH2::_tol_u = 1.0 - 1e-4;
-const double ReactionCaOH2::_tol_rho = 0.1;
+//! reaction enthalpy in J/mol; negative for exothermic composition reaction
+constexpr double reaction_enthalpy = -1.12e+05;
+//! reaction entropy in J/mol/K
+constexpr double reaction_entropy = -143.5;
+//! inert component molar mass
+constexpr double M_carrier = MaterialLib::PhysicalConstant::MolarMass::N2;
+//! reactive component molar mass
+constexpr double M_react = MaterialLib::PhysicalConstant::MolarMass::Water;
 
-const double ReactionCaOH2::rho_low = 1656.0;
-const double ReactionCaOH2::rho_up = 2200.0;
+constexpr double tol_l = 1e-4;
+constexpr double tol_u = 1.0 - 1e-4;
+constexpr double tol_rho = 0.1;
 
 double ReactionCaOH2::getEnthalpy(const double /*p_Ads*/,
                                   const double /*T_Ads*/,
                                   const double /*M_Ads*/) const
 {
-    return -_reaction_enthalpy / _M_react;
+    return -reaction_enthalpy / M_react;
 }
 
 double ReactionCaOH2::getReactionRate(const double /*p_Ads*/,
@@ -68,7 +68,7 @@ void ReactionCaOH2::calculateQR()
 {
     // Convert mass fraction into mole fraction
     const double mol_frac_react =
-        AdsorptionReaction::getMolarFraction(_x_react, _M_react, _M_carrier);
+        AdsorptionReaction::getMolarFraction(_x_react, M_react, M_carrier);
 
     _p_r_g = std::max(mol_frac_react * _p_gas, 1.0e-3);  // avoid illdefined log
     setChemicalEquilibrium();
@@ -81,19 +81,19 @@ void ReactionCaOH2::setChemicalEquilibrium()
 {
     const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
 
-    _X_D = (_rho_s - rho_up - _tol_rho) / (rho_low - rho_up - 2.0 * _tol_rho);
+    _X_D = (_rho_s - rho_up - tol_rho) / (rho_low - rho_up - 2.0 * tol_rho);
     _X_D = (_X_D < 0.5)
-               ? std::max(_tol_l, _X_D)
-               : std::min(_X_D, _tol_u);  // constrain to interval [tol_l;tol_u]
+               ? std::max(tol_l, _X_D)
+               : std::min(_X_D, tol_u);  // constrain to interval [tol_l;tol_u]
 
     _X_H = 1.0 - _X_D;
 
     // calculate equilibrium
     // using the p_eq to calculate the T_eq - Clausius-Clapeyron
-    _T_eq = (_reaction_enthalpy / R) /
-            ((_reaction_entropy / R) + std::log(_p_r_g));  // unit of p in bar
+    _T_eq = (reaction_enthalpy / R) /
+            ((reaction_entropy / R) + std::log(_p_r_g));  // unit of p in bar
     // Alternative: Use T_s as T_eq and calculate p_eq - for Schaube kinetics
-    _p_eq = std::exp((_reaction_enthalpy / R) / _T_s - (_reaction_entropy / R));
+    _p_eq = std::exp((reaction_enthalpy / R) / _T_s - (reaction_entropy / R));
 }
 
 double ReactionCaOH2::CaHydration()
@@ -114,7 +114,7 @@ double ReactionCaOH2::CaHydration()
         dXdt = -1.0 * (1.0 - X_H) * (T_s - T_eq) / T_eq * 0.2 *
                conversion_rate::x_react;
 #else  // this is from Schaube
-        if (_X_H == _tol_u || _rho_s == rho_up)
+        if (_X_H == tol_u || _rho_s == rho_up)
         {
             dXdt = 0.0;
         }
@@ -139,7 +139,7 @@ double ReactionCaOH2::CaHydration()
 #ifdef SIMPLE_KINETICS  // this is from P. Schmidt
         dXdt = -1.0 * (1.0 - X_D) * (T_s - T_eq) / T_eq * 0.05;
 #else
-        if (_X_D == _tol_u || _rho_s == rho_low)
+        if (_X_D == tol_u || _rho_s == rho_low)
         {
             dXdt = 0.0;
         }

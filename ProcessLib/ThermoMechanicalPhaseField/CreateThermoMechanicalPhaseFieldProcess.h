@@ -41,7 +41,7 @@ namespace ThermoMechanicalPhaseField
 {
 template <int DisplacementDim>
 std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -53,7 +53,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
 
 extern template std::unique_ptr<Process>
 createThermoMechanicalPhaseFieldProcess<2>(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -65,7 +65,7 @@ createThermoMechanicalPhaseFieldProcess<2>(
 
 extern template std::unique_ptr<Process>
 createThermoMechanicalPhaseFieldProcess<3>(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

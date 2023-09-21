@@ -54,7 +54,7 @@ void checkMPLProperties(
 
 template <int DisplacementDim>
 std::unique_ptr<Process> createRichardsMechanicsProcess(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -218,7 +218,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
 }
 
 template std::unique_ptr<Process> createRichardsMechanicsProcess<2>(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -230,7 +230,7 @@ template std::unique_ptr<Process> createRichardsMechanicsProcess<2>(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 template std::unique_ptr<Process> createRichardsMechanicsProcess<3>(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

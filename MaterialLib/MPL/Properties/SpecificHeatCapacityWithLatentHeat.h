@@ -38,9 +38,9 @@ class SpecificHeatCapacityWithLatentHeat final : public Property
 {
     struct PhaseProperties
     {
-        const Property* liquid;
-        const Property* frozen;
-        const Property* porous;
+        Property const* liquid = nullptr;
+        Property const* frozen = nullptr;
+        Property const* porous = nullptr;
     };
 
 public:

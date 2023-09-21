@@ -45,7 +45,7 @@ void checkMPLProperties(
     std::array const required_solid_properties = {MaterialPropertyLib::density};
 
     // Thermal properties are not checked because they can be phase property or
-    // meduim property (will be enabled later).
+    // medium property (will be enabled later).
     for (auto const& m : media)
     {
         checkRequiredProperties(*m.second, required_medium_properties);
@@ -69,7 +69,7 @@ void checkProcessVariableComponents(ProcessVariable const& variable)
 }
 
 std::unique_ptr<Process> createThermoRichardsFlowProcess(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

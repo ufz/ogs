@@ -53,7 +53,7 @@ std::unique_ptr<PhaseTransitionModel> createPhaseTransitionModel(
 
 template <int DisplacementDim>
 std::unique_ptr<Process> createTH2MProcess(
-    std::string name, MeshLib::Mesh& mesh,
+    std::string const& name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
@@ -249,7 +249,7 @@ std::unique_ptr<Process> createTH2MProcess(
 }
 
 template std::unique_ptr<Process> createTH2MProcess<2>(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -261,7 +261,7 @@ template std::unique_ptr<Process> createTH2MProcess<2>(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 template std::unique_ptr<Process> createTH2MProcess<3>(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

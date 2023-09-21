@@ -45,7 +45,7 @@ public:
      * @param is_file_manager True if process (in parallel execution) is
      * @param n_files Number of output files
      */
-    HdfWriter(std::vector<MeshHdfData> meshes,
+    HdfWriter(std::vector<MeshHdfData> const& meshes,
               unsigned long long initial_step,
               std::filesystem::path const& filepath,
               bool use_compression,

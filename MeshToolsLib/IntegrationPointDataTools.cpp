@@ -115,7 +115,7 @@ std::vector<std::size_t> getIntegrationPointDataOffsetsOfMeshElements(
         MeshLib::getIntegrationPointMetaData(properties, pv.getPropertyName());
     for (std::size_t i = 0; i < mesh_elements.size(); i++)
     {
-        auto const element = mesh_elements[i];
+        auto const* const element = mesh_elements[i];
 
         // Assuming that the order of elements in mesh_elements is not touched.
         element_ip_data_offsets[i] = counter;

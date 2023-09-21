@@ -145,7 +145,7 @@ std::vector<ElementErrorCode> MeshValidation::testElementGeometry(
         std::accumulate(error_count, error_count + nErrorCodes, 0.0)));
     if (error_sum != 0)
     {
-        ElementErrorFlag flags[nErrorCodes] = {
+        ElementErrorFlag const flags[nErrorCodes] = {
             ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar,
             ElementErrorFlag::NonConvex, ElementErrorFlag::NodeOrder};
         for (std::size_t i = 0; i < nErrorCodes; ++i)

@@ -46,7 +46,7 @@ void checkMPLProperties(
     std::array const required_solid_properties = {MaterialPropertyLib::density};
 
     // Thermal properties are not checked because they can be phase property or
-    // meduim property (will be enabled later).
+    // medium property (will be enabled later).
     for (auto const& m : media)
     {
         checkRequiredProperties(*m.second, required_medium_properties);
@@ -77,7 +77,7 @@ void checkProcessVariableComponents(ProcessVariable const& variable,
 template <int DisplacementDim, typename ConstitutiveTraits,
           typename CreateConstitutiveSetting>
 std::unique_ptr<Process> createThermoRichardsMechanicsProcessStage2(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -209,7 +209,7 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcessStage2(
 
     return std::make_unique<
         ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>>(
-        std::move(name), mesh, std::move(jacobian_assembler), parameters,
+        name, mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
         use_monolithic_scheme);
@@ -217,7 +217,7 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcessStage2(
 
 template <int DisplacementDim>
 std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -272,7 +272,7 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
 }
 
 template std::unique_ptr<Process> createThermoRichardsMechanicsProcess<2>(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -284,7 +284,7 @@ template std::unique_ptr<Process> createThermoRichardsMechanicsProcess<2>(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 template std::unique_ptr<Process> createThermoRichardsMechanicsProcess<3>(
-    std::string name,
+    std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,

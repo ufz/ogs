@@ -20,25 +20,25 @@ void ShapeTet4::computeShapeFunction(const T_X& r, T_N& N)
 }
 
 template <class T_X, class T_N>
-void ShapeTet4::computeGradShapeFunction(const T_X& /*r*/, T_N& dNdr)
+void ShapeTet4::computeGradShapeFunction(const T_X& /*r*/, T_N& dN)
 {
     // dr
-    dNdr[0] = -1.0;
-    dNdr[1] = 1.0;
-    dNdr[2] = 0.0;
-    dNdr[3] = 0.0;
+    dN[0] = -1.0;
+    dN[1] = 1.0;
+    dN[2] = 0.0;
+    dN[3] = 0.0;
 
     // ds
-    dNdr[4] = -1.0;
-    dNdr[5] = 0.0;
-    dNdr[6] = 1.0;
-    dNdr[7] = 0.0;
+    dN[4] = -1.0;
+    dN[5] = 0.0;
+    dN[6] = 1.0;
+    dN[7] = 0.0;
 
     // dt
-    dNdr[8] = -1.0;
-    dNdr[9] = 0.0;
-    dNdr[10] = 0.0;
-    dNdr[11] = 1.0;
+    dN[8] = -1.0;
+    dN[9] = 0.0;
+    dN[10] = 0.0;
+    dN[11] = 1.0;
 }
 
 }  // namespace NumLib
