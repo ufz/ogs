@@ -17,14 +17,12 @@
 
 #include "LocalAssemblerInterface.h"
 #include "MaterialLib/PhysicalConstant.h"
-#include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/LocalDOF.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
-#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
@@ -33,7 +31,6 @@
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
-#include "SmallDeformationProcessData.h"
 
 namespace ProcessLib
 {
@@ -48,8 +45,7 @@ struct IntegrationPointData final
     explicit IntegrationPointData(
         MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
             solid_material)
-        : solid_material(solid_material),
-          material_state_variables(
+        : material_state_variables(
               solid_material.createMaterialStateVariables())
     {
     }
@@ -58,7 +54,6 @@ struct IntegrationPointData final
     typename BMatricesType::KelvinVectorType eps;
     double free_energy_density = 0;
 
-    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
@@ -121,35 +116,27 @@ public:
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
         SmallDeformationProcessData<DisplacementDim>& process_data)
-        : _process_data(process_data),
-          _integration_method(integration_method),
-          _element(e),
-          _is_axially_symmetric(is_axially_symmetric)
+        : SmallDeformationLocalAssemblerInterface<DisplacementDim>(
+              e, integration_method, is_axially_symmetric, process_data)
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            this->integration_method_.getNumberOfPoints();
 
         _ip_data.reserve(n_integration_points);
         _secondary_data.N.resize(n_integration_points);
 
         auto const shape_matrices =
             NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                      DisplacementDim>(e, is_axially_symmetric,
-                                                       _integration_method);
-
-        auto& solid_material =
-            MaterialLib::Solids::selectSolidConstitutiveRelation(
-                _process_data.solid_materials,
-                _process_data.material_ids,
-                e.getID());
+                                      DisplacementDim>(
+                e, is_axially_symmetric, this->integration_method_);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data.emplace_back(solid_material);
+            _ip_data.emplace_back(this->solid_material_);
             auto& ip_data = _ip_data[ip];
             auto const& sm = shape_matrices[ip];
             _ip_data[ip].integration_weight =
-                _integration_method.getWeightedPoint(ip).getWeight() *
+                this->integration_method_.getWeightedPoint(ip).getWeight() *
                 sm.integralMeasure * sm.detJ;
 
             ip_data.N = sm.N;
@@ -175,24 +162,24 @@ public:
                                            int const integration_order) override
     {
         if (integration_order !=
-            static_cast<int>(_integration_method.getIntegrationOrder()))
+            static_cast<int>(this->integration_method_.getIntegrationOrder()))
         {
             OGS_FATAL(
                 "Setting integration point initial conditions; The integration "
                 "order of the local assembler for element {:d} is different "
                 "from the integration order in the initial condition.",
-                _element.getID());
+                this->element_.getID());
         }
 
         if (name == "sigma_ip")
         {
-            if (_process_data.initial_stress != nullptr)
+            if (this->process_data_.initial_stress != nullptr)
             {
                 OGS_FATAL(
                     "Setting initial conditions for stress from integration "
                     "point data and from a parameter '{:s}' is not possible "
                     "simultaneously.",
-                    _process_data.initial_stress->name);
+                    this->process_data_.initial_stress->name);
             }
             return setSigma(values);
         }
@@ -203,10 +190,8 @@ public:
                 name.substr(24, name.size() - 24 - 3);
             DBUG("Setting material state variable '{:s}'", variable_name);
 
-            // Using first ip data for solid material. TODO (naumov) move solid
-            // material into element, store only material state in IPs.
             auto const& internal_variables =
-                _ip_data[0].solid_material.getInternalVariables();
+                this->solid_material_.getInternalVariables();
             if (auto const iv = std::find_if(
                     begin(internal_variables), end(internal_variables),
                     [&variable_name](auto const& iv)
@@ -231,31 +216,31 @@ public:
     void initializeConcrete() override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            this->integration_method_.getNumberOfPoints();
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             auto& ip_data = _ip_data[ip];
 
             ParameterLib::SpatialPosition const x_position{
-                std::nullopt, _element.getID(), ip,
+                std::nullopt, this->element_.getID(), ip,
                 MathLib::Point3d(
                     NumLib::interpolateCoordinates<ShapeFunction,
                                                    ShapeMatricesType>(
-                        _element, ip_data.N))};
+                        this->element_, ip_data.N))};
 
             /// Set initial stress from parameter.
-            if (_process_data.initial_stress != nullptr)
+            if (this->process_data_.initial_stress != nullptr)
             {
                 ip_data.sigma =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
-                        DisplacementDim>((*_process_data.initial_stress)(
+                        DisplacementDim>((*this->process_data_.initial_stress)(
                         std::numeric_limits<
                             double>::quiet_NaN() /* time independent */,
                         x_position));
             }
 
             double const t = 0;  // TODO (naumov) pass t from top
-            ip_data.solid_material.initializeInternalStateVariables(
+            this->solid_material_.initializeInternalStateVariables(
                 t, x_position, *ip_data.material_state_variables);
 
             ip_data.pushBackState();
@@ -274,7 +259,7 @@ public:
             ip_data) const
     {
         auto const& solid_phase =
-            this->_process_data.media_map.getMedium(this->_element.getID())
+            this->process_data_.media_map.getMedium(this->element_.getID())
                 ->phase("Solid");
 
         MPL::VariableArray variables_prev;
@@ -290,12 +275,12 @@ public:
         auto const& dNdx = ip_data.dNdx;
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                _element, N);
+                this->element_, N);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunction::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx, N, x_coord, _is_axially_symmetric);
+                dNdx, N, x_coord, this->is_axially_symmetric_);
 
         eps.noalias() = B * u;
 
@@ -307,8 +292,8 @@ public:
                 B * u_prev);
 
         double const T_ref =
-            _process_data.reference_temperature
-                ? (*_process_data.reference_temperature)(t, x_position)[0]
+            this->process_data_.reference_temperature
+                ? (*this->process_data_.reference_temperature)(t, x_position)[0]
                 : std::numeric_limits<double>::quiet_NaN();
 
         variables_prev.temperature = T_ref;
@@ -321,7 +306,7 @@ public:
             solid_phase[MPL::PropertyType::density].template value<double>(
                 variables, x_position, t, dt);
 
-        auto&& solution = ip_data.solid_material.integrateStress(
+        auto&& solution = this->solid_material_.integrateStress(
             variables_prev, variables, t, x_position, dt, *state);
 
         if (!solution)
@@ -367,12 +352,12 @@ public:
         auto [u_prev] = localDOF(local_x_prev);
 
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            this->integration_method_.getNumberOfPoints();
 
         ParameterLib::SpatialPosition x_position;
-        x_position.setElementID(_element.getID());
+        x_position.setElementID(this->element_.getID());
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = this->process_data_.specific_body_force;
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
@@ -383,11 +368,12 @@ public:
 
             auto const x_coord =
                 NumLib::interpolateXCoordinate<ShapeFunction,
-                                               ShapeMatricesType>(_element, N);
+                                               ShapeMatricesType>(
+                    this->element_, N);
             auto const B = LinearBMatrix::computeBMatrix<
                 DisplacementDim, ShapeFunction::NPOINTS,
-                typename BMatricesType::BMatrixType>(dNdx, N, x_coord,
-                                                     _is_axially_symmetric);
+                typename BMatricesType::BMatrixType>(
+                dNdx, N, x_coord, this->is_axially_symmetric_);
 
             auto const& sigma = _ip_data[ip].sigma;
 
@@ -407,10 +393,10 @@ public:
                               int const /*process_id*/) override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            this->integration_method_.getNumberOfPoints();
 
         ParameterLib::SpatialPosition x_position;
-        x_position.setElementID(_element.getID());
+        x_position.setElementID(this->element_.getID());
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
@@ -425,7 +411,7 @@ public:
 
             // Update free energy density needed for material forces.
             _ip_data[ip].free_energy_density =
-                _ip_data[ip].solid_material.computeFreeEnergyDensity(
+                this->solid_material_.computeFreeEnergyDensity(
                     t, x_position, dt, eps, sigma, *state);
 
             _ip_data[ip].pushBackState();
@@ -440,8 +426,9 @@ public:
             DisplacementDim, ShapeFunction, ShapeMatricesType,
             typename BMatricesType::NodalForceVectorType,
             NodalDisplacementVectorType, GradientVectorType,
-            GradientMatrixType>(local_x, nodal_values, _integration_method,
-                                _ip_data, _element, _is_axially_symmetric);
+            GradientMatrixType>(local_x, nodal_values,
+                                this->integration_method_, _ip_data,
+                                this->element_, this->is_axially_symmetric_);
     }
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
@@ -506,14 +493,15 @@ public:
 
     unsigned getNumberOfIntegrationPoints() const override
     {
-        return _integration_method.getNumberOfPoints();
+        return this->integration_method_.getNumberOfPoints();
     }
 
     int getMaterialID() const override
     {
-        return _process_data.material_ids == nullptr
+        return this->process_data_.material_ids == nullptr
                    ? 0
-                   : (*_process_data.material_ids)[_element.getID()];
+                   : (*this->process_data_
+                           .material_ids)[this->element_.getID()];
     }
 
     std::vector<double> getMaterialStateVariableInternalState(
@@ -538,11 +526,11 @@ public:
         double const /*t*/, double const /*dt*/, Eigen::VectorXd const& /*x*/,
         Eigen::VectorXd const& /*x_prev*/) override
     {
-        int const elem_id = _element.getID();
+        int const elem_id = this->element_.getID();
         ParameterLib::SpatialPosition x_position;
         x_position.setElementID(elem_id);
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            this->integration_method_.getNumberOfPoints();
 
         auto sigma_sum = MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
             Eigen::Matrix<double, 3, 3>::Zero());
@@ -562,7 +550,7 @@ public:
             sigma_avg);
 
         Eigen::Map<Eigen::Vector3d>(
-            &(*_process_data.principal_stress_values)[elem_id * 3], 3) =
+            &(*this->process_data_.principal_stress_values)[elem_id * 3], 3) =
             e_s.eigenvalues();
 
         auto eigen_vectors = e_s.eigenvectors();
@@ -570,8 +558,8 @@ public:
         for (auto i = 0; i < 3; i++)
         {
             Eigen::Map<Eigen::Vector3d>(
-                &(*_process_data.principal_stress_vector[i])[elem_id * 3], 3) =
-                eigen_vectors.col(i);
+                &(*this->process_data_.principal_stress_vector[i])[elem_id * 3],
+                3) = eigen_vectors.col(i);
         }
     }
 
@@ -583,14 +571,9 @@ private:
     }
 
 private:
-    SmallDeformationProcessData<DisplacementDim>& _process_data;
-
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
 
-    NumLib::GenericIntegrationMethod const& _integration_method;
-    MeshLib::Element const& _element;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
-    bool const _is_axially_symmetric;
 };
 
 }  // namespace SmallDeformation

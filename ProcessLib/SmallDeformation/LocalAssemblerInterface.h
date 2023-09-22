@@ -13,9 +13,12 @@
 #include <vector>
 
 #include "MaterialLib/SolidModels/MechanicsBase.h"
+#include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "ProcessLib/Deformation/MaterialForces.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
+#include "SmallDeformationProcessData.h"
 
 namespace ProcessLib
 {
@@ -27,6 +30,20 @@ struct SmallDeformationLocalAssemblerInterface
       public MaterialForcesInterface,
       public NumLib::ExtrapolatableElement
 {
+    SmallDeformationLocalAssemblerInterface(
+        MeshLib::Element const& e,
+        NumLib::GenericIntegrationMethod const& integration_method,
+        bool const is_axially_symmetric,
+        SmallDeformationProcessData<DisplacementDim>& process_data)
+        : process_data_(process_data),
+          integration_method_(integration_method),
+          element_(e),
+          is_axially_symmetric_(is_axially_symmetric),
+          solid_material_(MaterialLib::Solids::selectSolidConstitutiveRelation(
+              process_data_.solid_materials, process_data_.material_ids,
+              element_.getID()))
+    {
+    }
     virtual std::size_t setIPDataInitialConditions(
         std::string const& name, double const* values,
         int const integration_order) = 0;
@@ -64,6 +81,13 @@ struct SmallDeformationLocalAssemblerInterface
     virtual typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables const&
     getMaterialStateVariablesAt(unsigned /*integration_point*/) const = 0;
+
+protected:
+    SmallDeformationProcessData<DisplacementDim>& process_data_;
+    NumLib::GenericIntegrationMethod const& integration_method_;
+    MeshLib::Element const& element_;
+    bool const is_axially_symmetric_;
+    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material_;
 };
 
 }  // namespace SmallDeformation
