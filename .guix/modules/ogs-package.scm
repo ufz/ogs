@@ -175,9 +175,9 @@
     (arguments
      (substitute-keyword-arguments (package-arguments vtk)
        ((#:configure-flags flags)
-        `(cons* "-DVTK_MODULE_ENABLE_VTK_IOParallelXML=YES"
-                "-DVTK_MODULE_ENABLE_VTK_ParallelMPI=YES" "-DVTK_USE_MPI=ON"
-                ,flags))))
+        #~(append '("-DVTK_MODULE_ENABLE_VTK_IOParallelXML=YES"
+                "-DVTK_MODULE_ENABLE_VTK_ParallelMPI=YES" "-DVTK_USE_MPI=ON")
+                #$flags))))
     (synopsis "VTK with OpenMPI support")))
 
 (define pybind11-2.10.4

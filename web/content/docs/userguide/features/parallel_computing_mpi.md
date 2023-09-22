@@ -192,7 +192,7 @@ For the detailed syntax of job script of SLURM for EVE, please visit <https://wi
 
 A prebuilt container with `ogs` (current master) is available at:
 
-* `/data/ogs/apptainer/guix/ogs-petsc-ssd_head.squashfs`
+* `/data/ogs/apptainer/guix/ogs-petsc_head.squashfs`
 
 You need to modify your submit script, e.g.:
 
@@ -200,7 +200,7 @@ You need to modify your submit script, e.g.:
 ...
 #SBATCH ...
 
-srun apptainer exec /data/ogs/apptainer/guix/ogs-petsc-ssd_head.squashfs ogs $PRJ_FILE
+srun apptainer exec /data/ogs/apptainer/guix/ogs-petsc_head.squashfs ogs $PRJ_FILE
 ```
 
 ### 3. Check results
