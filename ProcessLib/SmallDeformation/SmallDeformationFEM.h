@@ -30,7 +30,6 @@
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
-#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 
 namespace ProcessLib
 {
@@ -42,31 +41,15 @@ template <typename BMatricesType, typename ShapeMatricesType,
           int DisplacementDim>
 struct IntegrationPointData final
 {
-    explicit IntegrationPointData(
-        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
-            solid_material)
-        : material_state_variables(
-              solid_material.createMaterialStateVariables())
-    {
-    }
-
     typename BMatricesType::KelvinVectorType sigma, sigma_prev;
     typename BMatricesType::KelvinVectorType eps;
     double free_energy_density = 0;
-
-    std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
-        DisplacementDim>::MaterialStateVariables>
-        material_state_variables;
 
     double integration_weight;
     typename ShapeMatricesType::NodalRowVectorType N;
     typename ShapeMatricesType::GlobalDimNodalMatrixType dNdx;
 
-    void pushBackState()
-    {
-        sigma_prev = sigma;
-        material_state_variables->pushBackState();
-    }
+    void pushBackState() { sigma_prev = sigma; }
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
@@ -122,7 +105,7 @@ public:
         unsigned const n_integration_points =
             this->integration_method_.getNumberOfPoints();
 
-        _ip_data.reserve(n_integration_points);
+        _ip_data.resize(n_integration_points);
         _secondary_data.N.resize(n_integration_points);
 
         auto const shape_matrices =
@@ -132,7 +115,6 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data.emplace_back(this->solid_material_);
             auto& ip_data = _ip_data[ip];
             auto const& sm = shape_matrices[ip];
             _ip_data[ip].integration_weight =
@@ -200,7 +182,9 @@ public:
             {
                 return ProcessLib::
                     setIntegrationPointDataMaterialStateVariables(
-                        values, _ip_data, &IpData::material_state_variables,
+                        values, this->material_states_,
+                        &MaterialStateData<
+                            DisplacementDim>::material_state_variables,
                         iv->reference);
             }
 
@@ -240,10 +224,12 @@ public:
             }
 
             double const t = 0;  // TODO (naumov) pass t from top
+            auto& material_state = this->material_states_[ip];
             this->solid_material_.initializeInternalStateVariables(
-                t, x_position, *ip_data.material_state_variables);
+                t, x_position, *material_state.material_state_variables);
 
             ip_data.pushBackState();
+            material_state.pushBackState();
         }
     }
 
@@ -256,7 +242,8 @@ public:
         ParameterLib::SpatialPosition const& x_position, double const t,
         double const dt,
         IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>&
-            ip_data) const
+            ip_data,
+        MaterialStateData<DisplacementDim>& material_state) const
     {
         auto const& solid_phase =
             this->process_data_.media_map.getMedium(this->element_.getID())
@@ -269,7 +256,6 @@ public:
 
         auto& eps = ip_data.eps;
         auto& sigma = ip_data.sigma;
-        auto& state = ip_data.material_state_variables;
 
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
@@ -307,7 +293,8 @@ public:
                 variables, x_position, t, dt);
 
         auto&& solution = this->solid_material_.integrateStress(
-            variables_prev, variables, t, x_position, dt, *state);
+            variables_prev, variables, t, x_position, dt,
+            *material_state.material_state_variables);
 
         if (!solution)
         {
@@ -315,7 +302,8 @@ public:
         }
 
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
-        std::tie(sigma, state, C) = std::move(*solution);
+        std::tie(sigma, material_state.material_state_variables, C) =
+            std::move(*solution);
 
         return {C, rho};
     }
@@ -378,7 +366,8 @@ public:
             auto const& sigma = _ip_data[ip].sigma;
 
             auto const [C, rho] = updateConstitutiveRelations(
-                u, u_prev, x_position, t, dt, _ip_data[ip]);
+                u, u_prev, x_position, t, dt, _ip_data[ip],
+                this->material_states_[ip]);
 
             local_b.noalias() -=
                 (B.transpose() * sigma - N_u_op(N).transpose() * rho * b) * w;
@@ -403,18 +392,20 @@ public:
             x_position.setIntegrationPoint(ip);
 
             updateConstitutiveRelations(local_x, local_x_prev, x_position, t,
-                                        dt, _ip_data[ip]);
+                                        dt, _ip_data[ip],
+                                        this->material_states_[ip]);
 
             auto& eps = _ip_data[ip].eps;
             auto& sigma = _ip_data[ip].sigma;
-            auto& state = _ip_data[ip].material_state_variables;
+            auto& state = *this->material_states_[ip].material_state_variables;
 
             // Update free energy density needed for material forces.
             _ip_data[ip].free_energy_density =
                 this->solid_material_.computeFreeEnergyDensity(
-                    t, x_position, dt, eps, sigma, *state);
+                    t, x_position, dt, eps, sigma, state);
 
             _ip_data[ip].pushBackState();
+            this->material_states_[ip].pushBackState();
         }
     }
 
@@ -489,37 +480,6 @@ public:
     {
         return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
             _ip_data, &IpData::eps, cache);
-    }
-
-    unsigned getNumberOfIntegrationPoints() const override
-    {
-        return this->integration_method_.getNumberOfPoints();
-    }
-
-    int getMaterialID() const override
-    {
-        return this->process_data_.material_ids == nullptr
-                   ? 0
-                   : (*this->process_data_
-                           .material_ids)[this->element_.getID()];
-    }
-
-    std::vector<double> getMaterialStateVariableInternalState(
-        std::function<std::span<double>(
-            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
-                MaterialStateVariables&)> const& get_values_span,
-        int const& n_components) const override
-    {
-        return ProcessLib::getIntegrationPointDataMaterialStateVariables(
-            _ip_data, &IpData::material_state_variables, get_values_span,
-            n_components);
-    }
-
-    typename MaterialLib::Solids::MechanicsBase<
-        DisplacementDim>::MaterialStateVariables const&
-    getMaterialStateVariablesAt(unsigned integration_point) const override
-    {
-        return *_ip_data[integration_point].material_state_variables;
     }
 
     void computeSecondaryVariableConcrete(
