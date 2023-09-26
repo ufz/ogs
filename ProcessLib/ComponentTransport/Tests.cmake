@@ -808,7 +808,11 @@ if (NOT OGS_USE_MPI)
 endif()
 
 if(NOT OGS_USE_PETSC)
-    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/performance_measurements.ipynb RUNTIME 200)
+    NotebookTest(
+        NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/performance_measurements.ipynb
+        RUNTIME 200
+        SKIP_WEB
+    )
 endif()
 
 AddTest(
