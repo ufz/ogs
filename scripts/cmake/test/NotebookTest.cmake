@@ -5,7 +5,7 @@ function(NotebookTest)
         return()
     endif()
 
-    set(options DISABLED)
+    set(options DISABLED SKIP_WEB)
     set(oneValueArgs NOTEBOOKFILE RUNTIME)
     set(multiValueArgs WRAPPER RESOURCE_LOCK PROPERTIES LABELS)
     cmake_parse_arguments(
@@ -54,9 +54,12 @@ function(NotebookTest)
 
     set(TEST_NAME "nb-${NotebookTest_DIR}/${NotebookTest_NAME_WE}")
 
-    set(_exe_args Notebooks/testrunner.py --hugo --out ${Data_BINARY_DIR})
-    if(DEFINED ENV{CI})
-        list(APPEND _exe_args --hugo-out ${PROJECT_BINARY_DIR}/web)
+    set(_exe_args Notebooks/testrunner.py --out ${Data_BINARY_DIR})
+    if(NOT NotebookTest_SKIP_WEB)
+        list(APPEND _exe_args --hugo)
+        if(DEFINED ENV{CI})
+            list(APPEND _exe_args --hugo-out ${PROJECT_BINARY_DIR}/web)
+        endif()
     endif()
     list(APPEND _exe_args ${NotebookTest_SOURCE_DIR}/${NotebookTest_NAME})
 

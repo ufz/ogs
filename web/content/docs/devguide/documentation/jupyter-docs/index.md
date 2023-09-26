@@ -181,6 +181,12 @@ if(NOT OGS_USE_PETSC)
 endif()
 ```
 
+<div class='note'>
+
+If your notebook should **not** appear on the website add the `SKIP_WEB`-option to `NotebookTest()`. This may be useful if the notebook serves as CI test only, e.g. comparing multiple simulation runs or doing performance measurements. But please also note that there will be no artifact produced (except for notebook errors which get reported as usual).
+
+</div>
+
 Then e.g. run all notebook test (`-R nb`) in parallel (`-j 4`) with:
 
 ```bash
