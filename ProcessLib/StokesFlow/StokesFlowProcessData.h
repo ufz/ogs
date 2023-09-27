@@ -11,14 +11,8 @@
 #pragma once
 
 #include <Eigen/Core>
-#include <memory>
 
 #include "MeshLib/PropertyVector.h"
-
-namespace MaterialPropertyLib
-{
-class MaterialSpatialDistributionMap;
-}
 
 namespace ProcessLib
 {
@@ -26,8 +20,7 @@ namespace StokesFlow
 {
 struct StokesFlowProcessData
 {
-    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
-        media_map;
+    MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
     /// an external force that applies in the bulk of the fluid, like gravity.
     Eigen::VectorXd const specific_body_force;
 

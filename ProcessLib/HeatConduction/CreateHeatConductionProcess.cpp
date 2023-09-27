@@ -71,7 +71,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     DBUG("Check the media properties of heat conduction process ...");
-    checkMPLProperties(mesh, *media_map);
+    checkMPLProperties(mesh, media_map);
     DBUG("Media properties verified.");
 
     /// \section parametersheatconduction Process Parameters

@@ -268,7 +268,7 @@ public:
                                       GlobalDim>(element, is_axially_symmetric,
                                                  _integration_method);
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data.emplace_back(
@@ -314,7 +314,7 @@ public:
         assert(_process_data.chemical_solver_interface);
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
@@ -355,7 +355,7 @@ public:
         assert(_process_data.chemical_solver_interface);
 
         auto const& medium =
-            _process_data.media_map->getMedium(_element.getID());
+            _process_data.media_map.getMedium(_element.getID());
 
         MaterialPropertyLib::VariableArray vars;
         MaterialPropertyLib::VariableArray vars_prev;
@@ -417,7 +417,7 @@ public:
             return;
         }
 
-        auto const& medium = *_process_data.media_map->getMedium(ele_id);
+        auto const& medium = *_process_data.media_map.getMedium(ele_id);
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(ele_id);
@@ -566,7 +566,7 @@ public:
 
         // Get material properties
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         // Select the only valid for component transport liquid phase.
         auto const& phase = medium.phase("AqueousLiquid");
 
@@ -738,7 +738,7 @@ public:
         MaterialPropertyLib::VariableArray vars;
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
         auto const& component = phase.component(
             _transport_process_variables[component_id].get().getName());
@@ -822,7 +822,7 @@ public:
                 .projected_specific_body_force_vectors[_element.getID()];
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
 
         MaterialPropertyLib::VariableArray vars;
@@ -961,7 +961,7 @@ public:
         MaterialPropertyLib::VariableArray vars_prev;
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
         // Hydraulic process id is 0 and thus transport process id starts
         // from 1.
@@ -1161,7 +1161,7 @@ public:
                 .projected_specific_body_force_vectors[_element.getID()];
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
 
         MaterialPropertyLib::VariableArray vars;
@@ -1283,7 +1283,7 @@ public:
         MaterialPropertyLib::VariableArray vars_prev;
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
         auto const& component = phase.component(
             _transport_process_variables[component_id].get().getName());
@@ -1409,7 +1409,7 @@ public:
         MaterialPropertyLib::VariableArray vars_prev;
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         auto const component_id = transport_process_id - 1;
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
@@ -1525,7 +1525,7 @@ public:
         MaterialPropertyLib::VariableArray vars;
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
@@ -1607,7 +1607,7 @@ public:
         MaterialPropertyLib::VariableArray vars;
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
 
         // local_x contains the local concentration and pressure values
@@ -1676,7 +1676,7 @@ public:
 
         if (_process_data.chemically_induced_porosity_change)
         {
-            auto const& medium = *_process_data.media_map->getMedium(ele_id);
+            auto const& medium = *_process_data.media_map.getMedium(ele_id);
 
             for (auto& ip_data : _ip_data)
             {
@@ -1748,7 +1748,7 @@ public:
         MaterialPropertyLib::VariableArray vars;
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
 
         int const component_id = 0;

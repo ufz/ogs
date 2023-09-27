@@ -28,8 +28,7 @@ struct TH2MProcessData
 {
     MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
-    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
-        media_map = nullptr;
+    MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
     /// The constitutive relation for the mechanical part.
     std::map<int, std::unique_ptr<

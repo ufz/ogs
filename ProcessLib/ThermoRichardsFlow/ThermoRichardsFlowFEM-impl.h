@@ -52,7 +52,7 @@ ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType, GlobalDim>(
             e, is_axially_symmetric, _integration_method);
 
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -120,7 +120,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         typename ShapeMatricesType::template VectorType<pressure_size> const>(
         local_x.data() + pressure_index, pressure_size);
 
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     MPL::VariableArray variables;
 
     unsigned const n_integration_points =
@@ -219,7 +219,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
     typename ShapeMatricesType::NodalMatrixType storage_p_a_S =
         ShapeMatricesType::NodalMatrixType::Zero(pressure_size, pressure_size);
 
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
     MPL::Phase const* gas_phase =
@@ -717,7 +717,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         typename ShapeMatricesType::template VectorType<local_matrix_dim>>(
         local_rhs_data, local_matrix_dim);
 
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
     MPL::Phase const* gas_phase =
@@ -1207,7 +1207,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
     auto p_L_prev =
         local_x_prev.template segment<pressure_size>(pressure_index);
 
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
     MPL::VariableArray variables;

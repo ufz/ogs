@@ -10,12 +10,9 @@
 
 #pragma once
 
-#include <memory>
+#include <Eigen/Core>
 
-namespace MaterialPropertyLib
-{
-class MaterialSpatialDistributionMap;
-}
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 
 namespace ProcessLib
 {
@@ -23,8 +20,7 @@ namespace RichardsFlow
 {
 struct RichardsFlowProcessData
 {
-    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
-        media_map;
+    MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
     bool const has_mass_lumping;

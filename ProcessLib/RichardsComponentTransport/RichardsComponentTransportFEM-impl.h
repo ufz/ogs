@@ -94,7 +94,7 @@ void LocalAssemblerData<ShapeFunction, GlobalDim>::assemble(
         GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
 
     // Get material properties
-    auto const& medium = *_process_data.media_map->getMedium(_element_id);
+    auto const& medium = *_process_data.media_map.getMedium(_element_id);
     auto const& phase = medium.phase("AqueousLiquid");
     auto const& component =
         phase.component(_transport_process_variable.getName());
@@ -254,7 +254,7 @@ LocalAssemblerData<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
     MaterialPropertyLib::VariableArray vars;
 
     // Get material properties
-    auto const& medium = *_process_data.media_map->getMedium(_element_id);
+    auto const& medium = *_process_data.media_map.getMedium(_element_id);
     auto const& phase = medium.phase("AqueousLiquid");
 
     auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
@@ -329,7 +329,7 @@ LocalAssemblerData<ShapeFunction, GlobalDim>::getIntPtSaturation(
 
     MaterialPropertyLib::VariableArray vars;
 
-    auto const& medium = *_process_data.media_map->getMedium(_element_id);
+    auto const& medium = *_process_data.media_map.getMedium(_element_id);
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();

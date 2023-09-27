@@ -10,15 +10,13 @@
 
 #pragma once
 
-#include <memory>
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 
 namespace ProcessLib::HeatConduction
 {
 struct HeatConductionProcessData
 {
-    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
-        media_map;
+    MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
     /// If set mass lumping will be applied to the equation.
     bool const mass_lumping;

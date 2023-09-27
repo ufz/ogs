@@ -182,7 +182,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         _integration_method.getNumberOfPoints();
 
     auto const& b = _process_data.specific_body_force;
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& solid = medium->phase("Solid");
     auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
@@ -408,7 +408,7 @@ std::vector<double> const& HydroMechanicsLocalAssembler<
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
 
@@ -530,7 +530,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
 
@@ -691,7 +691,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& solid = medium->phase("Solid");
     auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
@@ -908,7 +908,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         x_position.setElementID(_element.getID());
 
         auto const& medium =
-            _process_data.media_map->getMedium(_element.getID());
+            _process_data.media_map.getMedium(_element.getID());
 
         auto const T_ref =
             medium->property(MPL::PropertyType::reference_temperature)
@@ -986,7 +986,7 @@ void HydroMechanicsLocalAssembler<
                     _element.getID());
 
             auto const& medium =
-                _process_data.media_map->getMedium(_element.getID());
+                _process_data.media_map.getMedium(_element.getID());
             MPL::VariableArray vars;
 
             auto const T_ref =
@@ -1156,7 +1156,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    auto const& medium = _process_data.media_map->getMedium(elem_id);
+    auto const& medium = _process_data.media_map.getMedium(elem_id);
     MPL::VariableArray vars;
 
     SymmetricTensor k_sum = SymmetricTensor::Zero(KelvinVectorSize);

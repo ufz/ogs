@@ -277,7 +277,7 @@ public:
             this->integration_method_.getNumberOfPoints();
         auto const time_independent = std::numeric_limits<double>::quiet_NaN();
         auto const& medium =
-            *this->process_data_.media_map->getMedium(this->element_.getID());
+            *this->process_data_.media_map.getMedium(this->element_.getID());
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {

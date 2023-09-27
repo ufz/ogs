@@ -85,7 +85,7 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction>::assemble(
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element_id);
 
-    auto const& medium = *_process_data.media_map->getMedium(_element_id);
+    auto const& medium = *_process_data.media_map.getMedium(_element_id);
     auto const& solid_phase = medium.phase("Solid");
     auto const& liquid_phase = medium.phase("AqueousLiquid");
 

@@ -13,6 +13,8 @@
 #include <Eigen/Core>
 #include <memory>
 
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+
 namespace ProcessLib
 {
 namespace ThermoRichardsFlow
@@ -21,19 +23,13 @@ struct SimplifiedElasticityModel;
 }
 }
 
-namespace MaterialPropertyLib
-{
-class MaterialSpatialDistributionMap;
-}
-
 namespace ProcessLib
 {
 namespace ThermoRichardsFlow
 {
 struct ThermoRichardsFlowProcessData
 {
-    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
-        media_map = nullptr;
+    MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
     /// Specific body forces applied to solid and fluid.
     /// It is usually used to apply gravitational forces.

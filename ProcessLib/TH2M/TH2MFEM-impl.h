@@ -113,7 +113,7 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
     auto const displacement =
         local_x.template segment<displacement_size>(displacement_index);
 
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& gas_phase = medium.phase("Gas");
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
@@ -942,7 +942,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         local_x.template segment<temperature_size>(temperature_index);
 
     constexpr double dt = std::numeric_limits<double>::quiet_NaN();
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& solid_phase = medium.phase("Solid");
 
     unsigned const n_integration_points =

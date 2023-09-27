@@ -102,7 +102,7 @@ public:
             _integration_method.getNumberOfPoints();
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         MaterialPropertyLib::VariableArray vars;
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -185,7 +185,7 @@ public:
         pos.setElementID(_element.getID());
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         MaterialPropertyLib::VariableArray vars;
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -260,7 +260,7 @@ public:
         pos.setElementID(_element.getID());
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         MaterialPropertyLib::VariableArray vars;
 
         double const dt = std::numeric_limits<double>::quiet_NaN();

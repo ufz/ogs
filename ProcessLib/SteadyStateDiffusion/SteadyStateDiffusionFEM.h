@@ -100,7 +100,7 @@ public:
         pos.setElementID(_element.getID());
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         MaterialPropertyLib::VariableArray vars;
         vars.temperature =
             medium
@@ -149,7 +149,7 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
 
         MaterialPropertyLib::VariableArray vars;
         vars.temperature =
@@ -213,7 +213,7 @@ public:
         pos.setElementID(_element.getID());
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
 
         MaterialPropertyLib::VariableArray vars;
         vars.temperature =

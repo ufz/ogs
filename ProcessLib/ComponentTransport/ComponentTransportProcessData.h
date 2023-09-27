@@ -15,7 +15,7 @@
 
 #include "ChemistryLib/ChemicalSolverInterface.h"
 #include "LookupTable.h"
-#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/NumericalStability/NumericalStabilization.h"
 #include "ParameterLib/ConstantParameter.h"
@@ -38,8 +38,7 @@ namespace ComponentTransport
 {
 struct ComponentTransportProcessData
 {
-    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
-        media_map;
+    MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
     bool const has_gravity;
     bool const non_advective_form;
     /// This optional tag provides a simple means of considering the temperature

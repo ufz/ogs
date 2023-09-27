@@ -11,7 +11,6 @@
 #pragma once
 
 #include <Eigen/Core>
-#include <memory>
 #include <utility>
 
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
@@ -25,8 +24,7 @@ namespace HT
 {
 struct HTProcessData final
 {
-    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
-        media_map;
+    MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
     bool const has_fluid_thermal_expansion;
     ParameterLib::Parameter<double> const& solid_thermal_expansion;
     ParameterLib::Parameter<double> const& biot_constant;

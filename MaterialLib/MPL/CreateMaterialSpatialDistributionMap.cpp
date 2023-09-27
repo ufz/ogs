@@ -15,8 +15,7 @@
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<MaterialSpatialDistributionMap>
-createMaterialSpatialDistributionMap(
+MaterialSpatialDistributionMap createMaterialSpatialDistributionMap(
     std::map<int, std::shared_ptr<Medium>> const& media,
     MeshLib::Mesh const& mesh)
 {
@@ -45,7 +44,6 @@ createMaterialSpatialDistributionMap(
             "in the mesh.",
             media.size(), max_material_id - 1);
     }
-    return std::make_unique<MaterialSpatialDistributionMap>(media,
-                                                            material_ids);
+    return {media, material_ids};
 }
 }  // namespace MaterialPropertyLib

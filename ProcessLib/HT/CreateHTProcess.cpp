@@ -181,7 +181,7 @@ std::unique_ptr<Process> createHTProcess(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     DBUG("Check the media properties of HT process ...");
-    checkMPLProperties(mesh, *media_map);
+    checkMPLProperties(mesh, media_map);
     DBUG("Media properties verified.");
 
     auto stabilizer = NumLib::createNumericalStabilization(mesh, config);

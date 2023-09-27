@@ -170,7 +170,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::
         vars.phase_pressure = pg_int_pt;
 
         auto const& medium =
-            *_process_data.media_map->getMedium(this->_element.getID());
+            *_process_data.media_map.getMedium(this->_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
         auto const& solid_phase = medium.phase("Solid");
         auto const& gas_phase = medium.phase("Gas");

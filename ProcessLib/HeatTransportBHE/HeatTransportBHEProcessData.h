@@ -26,22 +26,20 @@ namespace ProcessLib::HeatTransportBHE
 struct HeatTransportBHEProcessData final
 {
     HeatTransportBHEProcessData(
-        std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>&&
-            media_map_,
+        MaterialPropertyLib::MaterialSpatialDistributionMap media_map_,
         std::vector<BHE::BHETypes>&& vec_BHEs_,
         BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object_ =
             nullptr,
         const bool use_tespy = false,
         const bool use_server_communication = false)
-        : media_map(std::move(media_map_)),
+        : media_map(media_map_),
           _vec_BHE_property(std::move(vec_BHEs_)),
           py_bc_object(py_bc_object_),
           _use_tespy(use_tespy),
           _use_server_communication(use_server_communication)
     {
     }
-    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
-        media_map;
+    MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
     std::vector<BHE::BHETypes> _vec_BHE_property;
 
