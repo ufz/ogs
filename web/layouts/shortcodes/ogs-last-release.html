@@ -1,0 +1,4 @@
+{{- $mysection := site.GetPage "/releases/" -}}
+{{- range first 1 $mysection.Pages -}}
+{{- .Params.tag -}}
+{{- end -}}

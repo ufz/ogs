@@ -53,8 +53,11 @@ A straightforward way of installing OGS is via Python's [`pip`-tool](https://pac
 python -m venv .venv
 .\venv\Scripts\Activate.ps1
 
-# Install ogs' pip package
+# Install latest ogs release ({{< ogs-last-release >}}) via pip:
 pip install ogs
+
+# OR: Install latest ogs master (weekly) via pip:
+pip install --pre --index-url https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple ogs
 ```
 
 If you get errors when calling the `Activate.ps1` script you have to run the following command once:
@@ -72,9 +75,11 @@ Set-Execution-Policy Unrestricted -Scope CurrentUser
 python -m venv .venv      # or `python3 -m venv .venv`
 source .venv/bin/activate
 
-# Install ogs' pip package
+# Install latest ogs release ({{< ogs-last-release >}}) via pip:
 pip install ogs
 
+# OR: Install latest ogs master (weekly) via pip:
+pip install --pre --index-url https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple ogs
 ```
 
 </div>
@@ -93,18 +98,6 @@ virtual environment, or add this path to your `PATH`-environment. Moreover, `pip
  to be added to the `PATH`.
 
 You could also use [`pipx`](https://pypa.github.io/pipx/) for installation into an isolated environment.
-
-<div class="note">
-
-### Get current development version with `pip`
-
-The following command will download the latest development version:
-
-```bash
-pip install --pre --index-url https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple ogs
-```
-
-</div>
 
 <div class='win'>
 
