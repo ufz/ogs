@@ -256,6 +256,11 @@ std::unique_ptr<Process> createComponentTransportProcess(
         //! \ogs_file_param{prj__processes__process__ComponentTransport__is_linear}
         config.getConfigParameter("is_linear", false);
 
+    auto const ls_compute_only_upon_timestep_change =
+        //! \ogs_file_param{prj__processes__process__ComponentTransport__linear_solver_compute_only_upon_timestep_change}
+        config.getConfigParameter(
+            "linear_solver_compute_only_upon_timestep_change", false);
+
     auto const rotation_matrices = MeshLib::getElementRotationMatrices(
         mesh_space_dimension, mesh.getDimension(), mesh.getElements());
     std::vector<Eigen::VectorXd> projected_specific_body_force_vectors;
@@ -298,7 +303,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
         use_monolithic_scheme, std::move(surfaceflux),
-        std::move(chemical_solver_interface), is_linear);
+        std::move(chemical_solver_interface), is_linear,
+        ls_compute_only_upon_timestep_change);
 }
 
 }  // namespace ComponentTransport

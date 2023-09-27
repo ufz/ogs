@@ -788,9 +788,31 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/CationExchange/exchange.prj RUNTIME 60)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/CationExchange/exchangeAndSurface.prj RUNTIME 33)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/1d_decay_chain_OS.prj RUNTIME 2000)
+
+    # several variations of 1d_decay_chain_GIA
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/1d_decay_chain_GIA.prj RUNTIME 40)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/1d_decay_chain_GIA_asm_only_once.xml RUNTIME 10)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/is_linear/1d_decay_chain_GIA.xml RUNTIME 10)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/is_linear_compute_only_on_dt_change/1d_decay_chain_GIA.xml RUNTIME 4)
+
+    # further variations of 1d_decay_chain_GIA with Eigen's SparseLU solver
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/SparseLU/1d_decay_chain_GIA.xml RUNTIME 40)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/SparseLU_is_linear/1d_decay_chain_GIA.xml RUNTIME 10)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/SparseLU_is_linear_compute_only_on_dt_change/1d_decay_chain_GIA.xml RUNTIME 4)
+
+    # variation with changing timestep size
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/varying_dt/1d_decay_chain_GIA.xml RUNTIME 40)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/varying_dt_is_linear/1d_decay_chain_GIA.xml RUNTIME 10)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/varying_dt_is_linear_compute_only_on_dt_change/1d_decay_chain_GIA.xml RUNTIME 4)
+
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ThermalDiffusion/TemperatureField_transport.prj RUNTIME 27)
+endif()
+
+if(NOT OGS_USE_PETSC)
+    NotebookTest(
+        NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/performance_measurements.ipynb
+        RUNTIME 200
+        SKIP_WEB
+    )
 endif()
 
 AddTest(

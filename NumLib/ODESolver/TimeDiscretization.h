@@ -128,6 +128,9 @@ public:
     //! assembled.
     virtual double getCurrentTimeIncrement() const = 0;
 
+    //! Returns the value of \f$\Delta t\f$ from the previous time step.
+    virtual double getPreviousTimeIncrement() const = 0;
+
     //! Returns \f$ x_O \f$.
     virtual void getWeightedOldX(
         GlobalVector& y, GlobalVector const& x_old) const = 0;  // = x_old
@@ -142,12 +145,14 @@ public:
     void setInitialState(const double t0) override { _t = t0; }
     void nextTimestep(const double t, const double delta_t) override
     {
+        _delta_t_prev = _delta_t;
         _t = t;
         _delta_t = delta_t;
     }
 
     double getCurrentTime() const override { return _t; }
     double getCurrentTimeIncrement() const override { return _delta_t; }
+    double getPreviousTimeIncrement() const override { return _delta_t_prev; }
     void getWeightedOldX(GlobalVector& y,
                          GlobalVector const& x_old) const override;
 
@@ -155,6 +160,9 @@ private:
     double _t = std::numeric_limits<double>::quiet_NaN();  //!< \f$ t_C \f$
     double _delta_t =
         std::numeric_limits<double>::quiet_NaN();  //!< the timestep size
+
+    //! The timestep size of the previous timestep.
+    double _delta_t_prev = std::numeric_limits<double>::quiet_NaN();
 };
 
 //! @}

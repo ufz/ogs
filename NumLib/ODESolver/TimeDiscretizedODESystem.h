@@ -234,6 +234,13 @@ public:
         return _ode.getMatrixSpecifications(process_id);
     }
 
+    bool linearSolverNeedsToCompute() const override
+    {
+        return !_ode.shouldLinearSolverComputeOnlyUponTimestepChange() ||
+               _time_disc.getCurrentTimeIncrement() !=
+                   _time_disc.getPreviousTimeIncrement();
+    }
+
 private:
     ODE& _ode;             //!< ode the ODE being wrapped
     TimeDisc& _time_disc;  //!< the time discretization to being used
