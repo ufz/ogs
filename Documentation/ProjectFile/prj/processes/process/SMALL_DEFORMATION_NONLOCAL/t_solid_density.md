@@ -1,1 +1,1 @@
-\copydoc ProcessLib::SmallDeformation::SmallDeformationProcessData::solid_density
+\copydoc ProcessLib::SmallDeformationNonlocal::SmallDeformationNonlocalProcessData::solid_density

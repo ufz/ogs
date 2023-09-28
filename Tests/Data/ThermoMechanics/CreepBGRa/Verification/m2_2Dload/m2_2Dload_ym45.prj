@@ -21,7 +21,6 @@
                     <increment_tolerance>0</increment_tolerance>
                 </nonlinear_solver>
             </constitutive_relation>
-            <solid_density>rho_sr</solid_density>
             <reference_temperature>T_ref</reference_temperature>
             <process_variables>
                 <process_variable>displacement</process_variable>
@@ -83,6 +82,22 @@
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>0.</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
     <parameters>
         <parameter>
             <name>T_ref</name>
@@ -118,11 +133,6 @@
             <name>Q</name>
             <type>Constant</type>
             <value>54000</value>
-        </parameter>
-        <parameter>
-            <name>rho_sr</name>
-            <type>Constant</type>
-            <value>0.</value>
         </parameter>
         <parameter>
             <name>temperature_ic</name>

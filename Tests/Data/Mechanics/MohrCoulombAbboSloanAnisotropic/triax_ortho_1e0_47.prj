@@ -30,7 +30,6 @@
                     <material_property name="TensionCutOffParameter" parameter="TensionCutOffParameter"/>
                 </material_properties>
             </constitutive_relation>
-            <solid_density>rho_sr</solid_density>
             <specific_body_force>0 0</specific_body_force>
             <process_variables>
                 <process_variable>displacement</process_variable>
@@ -87,6 +86,22 @@
         <basis_vector_0>e0</basis_vector_0>
         <basis_vector_1>e1</basis_vector_1>
     </local_coordinate_system>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
     <parameters>
         <parameter>
             <name>e0</name>
@@ -182,11 +197,6 @@
             <name>TensionCutOffParameter</name>
             <type>Constant</type>
             <value>1e3</value>
-        </parameter>
-        <parameter>
-            <name>rho_sr</name>
-            <type>Constant</type>
-            <value>1</value>
         </parameter>
         <parameter>
             <name>displacement0</name>

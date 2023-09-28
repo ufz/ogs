@@ -262,9 +262,9 @@ public:
         }
     }
 
-    // Updates sigma, eps, and state through passed integration point data
-    // Returns tangent stiffness.
-    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
+    /// Updates sigma, eps, and state through passed integration point data.
+    /// \returns tangent stiffness and density.
+    std::tuple<MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>, double>
     updateConstitutiveRelations(
         Eigen::Ref<Eigen::VectorXd const> const& u,
         Eigen::Ref<Eigen::VectorXd const> const& u_prev,
@@ -273,6 +273,10 @@ public:
         IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>&
             ip_data) const
     {
+        auto const& solid_phase =
+            this->_process_data.media_map->getMedium(this->_element.getID())
+                ->phase("Solid");
+
         MPL::VariableArray variables_prev;
         MPL::VariableArray variables;
 
@@ -313,6 +317,10 @@ public:
                 eps);
         variables.temperature = T_ref;
 
+        auto const rho =
+            solid_phase[MPL::PropertyType::density].template value<double>(
+                variables, x_position, t, dt);
+
         auto&& solution = ip_data.solid_material.integrateStress(
             variables_prev, variables, t, x_position, dt, *state);
 
@@ -324,7 +332,7 @@ public:
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
         std::tie(sigma, state, C) = std::move(*solution);
 
-        return C;
+        return {C, rho};
     }
 
     void assemble(double const /*t*/, double const /*dt*/,
@@ -383,10 +391,9 @@ public:
 
             auto const& sigma = _ip_data[ip].sigma;
 
-            auto const C = updateConstitutiveRelations(u, u_prev, x_position, t,
-                                                       dt, _ip_data[ip]);
+            auto const [C, rho] = updateConstitutiveRelations(
+                u, u_prev, x_position, t, dt, _ip_data[ip]);
 
-            auto const rho = _process_data.solid_density(t, x_position)[0];
             local_b.noalias() -=
                 (B.transpose() * sigma - N_u_op(N).transpose() * rho * b) * w;
             local_Jac.noalias() += B.transpose() * C * B * w;

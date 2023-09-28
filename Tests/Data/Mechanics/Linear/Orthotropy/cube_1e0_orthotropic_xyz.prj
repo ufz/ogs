@@ -13,7 +13,6 @@
                 <shear_moduli>G</shear_moduli>
                 <poissons_ratios>nu</poissons_ratios>
             </constitutive_relation>
-            <solid_density>rho_sr</solid_density>
             <specific_body_force>0 0 0</specific_body_force>
             <process_variables>
                 <process_variable>displacement</process_variable>
@@ -72,6 +71,22 @@
         <basis_vector_1>e1</basis_vector_1>
         <basis_vector_2>e2</basis_vector_2>
     </local_coordinate_system>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
     <parameters>
         <parameter>
             <name>e0</name>
@@ -102,11 +117,6 @@
             <name>nu</name>
             <type>Constant</type>
             <values>.2 .3 .4</values>
-        </parameter>
-        <parameter>
-            <name>rho_sr</name>
-            <type>Constant</type>
-            <value>1</value>
         </parameter>
         <parameter>
             <name>displacement0</name>

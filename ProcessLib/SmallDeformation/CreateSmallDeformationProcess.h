@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <map>
 #include <memory>
 #include <optional>
 #include <string>
@@ -18,6 +19,10 @@
 namespace BaseLib
 {
 class ConfigTree;
+}
+namespace MaterialPropertyLib
+{
+class Medium;
 }
 namespace MeshLib
 {
@@ -49,7 +54,8 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 extern template std::unique_ptr<Process> createSmallDeformationProcess<2>(
     std::string const& name,
@@ -60,7 +66,8 @@ extern template std::unique_ptr<Process> createSmallDeformationProcess<2>(
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 extern template std::unique_ptr<Process> createSmallDeformationProcess<3>(
     std::string const& name,
@@ -71,7 +78,8 @@ extern template std::unique_ptr<Process> createSmallDeformationProcess<3>(
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 }  // namespace SmallDeformation
 }  // namespace ProcessLib

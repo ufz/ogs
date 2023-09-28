@@ -1,1 +1,1 @@
-\copydoc ProcessLib::SmallDeformation::SmallDeformationProcessData::specific_body_force
+\copydoc ProcessLib::SmallDeformationNonlocal::SmallDeformationNonlocalProcessData::specific_body_force
