@@ -31,28 +31,14 @@ if(OGS_BUILD_TESTING)
     endif()
 endif()
 
-# Check spdlog release for compatible fmt release. fmt may be provided by vtk
-# _ext build.
-if(NOT TARGET fmt::fmt-header-only)
-    CPMFindPackage(
-        NAME fmt
-        GIT_TAG 10.1.0
-        GITHUB_REPOSITORY fmtlib/fmt
-        EXCLUDE_FROM_ALL YES
-    )
-endif()
-CPMFindPackage(
-    NAME spdlog
-    GITHUB_REPOSITORY gabime/spdlog
-    VERSION 1.12.0
-    OPTIONS "BUILD_SHARED_LIBS OFF" "SPDLOG_BUILD_SHARED OFF"
-            "SPDLOG_FMT_EXTERNAL_HO 1"
-)
-if(spdlog_ADDED)
-    set_target_properties(
-        spdlog
-        PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES
-                   $<TARGET_PROPERTY:spdlog,INTERFACE_INCLUDE_DIRECTORIES>
+if(GUIX_BUILD)
+    find_package(spdlog REQUIRED)
+else()
+    CPMAddPackage(
+        NAME spdlog
+        GITHUB_REPOSITORY gabime/spdlog
+        VERSION 1.12.0
+        OPTIONS "BUILD_SHARED_LIBS OFF"
     )
 endif()
 
