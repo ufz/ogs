@@ -62,7 +62,7 @@ public:
     double endTime() const { return _end_time; }
     double currentTime() const { return _current_time; }
     bool successful_time_step = false;
-    void outputSolutions(bool const output_initial_condition) const;
+    void outputSolutions() const;
 
 private:
     bool preTsNonlinearSolvePostTs(double const t, double const dt,
@@ -124,7 +124,7 @@ private:
             time_step_constraints);
 
     template <typename OutputClassMember>
-    void outputSolutions(bool const output_initial_condition, unsigned timestep,
+    void outputSolutions(unsigned timestep,
                          const double t,
                          OutputClassMember output_class_member) const;
 
@@ -133,6 +133,7 @@ private:
     generateOutputTimeStepConstraints(std::vector<double>&& fixed_times) const;
     double computeRelativeSolutionChangeFromPreviousTimestep(
         double const t, std::size_t process_index) const;
+    void preOutputInitialConditions(const double t) const;
     std::vector<GlobalVector*> _process_solutions;
     std::vector<GlobalVector*> _process_solutions_prev;
     std::vector<Output> _outputs;
