@@ -52,10 +52,12 @@ public:
 
         auto const success = solveImpl(b, x, opt);
 
+#ifdef USE_EIGEN_UNSUPPORTED
         if (scaling_)
         {
             x = scaling_->RightScaling().cwiseProduct(x);
         }
+#endif
 
         return success;
     }
