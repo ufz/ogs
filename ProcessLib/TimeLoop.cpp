@@ -533,7 +533,8 @@ bool TimeLoop::executeTimeStep()
 
     updateDeactivatedSubdomains(_per_process_data, _current_time);
 
-    successful_time_step = doNonlinearIteration(_current_time, _dt, timesteps);
+    successful_time_step =
+        preTsNonlinearSolvePostTs(_current_time, _dt, timesteps);
     INFO("[time] Time step #{:d} took {:g} s.", timesteps,
          time_timestep.elapsed());
     return successful_time_step;
@@ -597,8 +598,8 @@ void TimeLoop::outputLastTimeStep() const
     }
 }
 
-bool TimeLoop::doNonlinearIteration(double const t, double const dt,
-                                    std::size_t const timesteps)
+bool TimeLoop::preTsNonlinearSolvePostTs(double const t, double const dt,
+                                         std::size_t const timesteps)
 {
     preTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
 
