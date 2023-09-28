@@ -49,7 +49,16 @@ public:
     ~TimeLoop();
 
     bool executeTimeStep();
+
+    /// Computes and sets the next timestep.
+    ///
+    /// \attention The timestepper might reject the current timestep and repeat
+    /// it (with a reduced timestep size).
+    ///
+    /// \returns true if the simulation (time) has not finished, yet, false
+    /// otherwise.
     bool calculateNextTimeStep();
+
     double endTime() const { return _end_time; }
     double currentTime() const { return _current_time; }
     bool successful_time_step = false;
