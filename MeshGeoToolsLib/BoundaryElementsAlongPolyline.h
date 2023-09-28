@@ -46,9 +46,6 @@ public:
     /// destructor
     virtual ~BoundaryElementsAlongPolyline();
 
-    /// return the mesh object
-    MeshLib::Mesh const& getMesh() const { return _mesh; }
-
     /**
      * Deploying this method the user can get access to the underlying
      * GeoLib::Polyline.
@@ -67,7 +64,6 @@ public:
     }
 
 private:
-    MeshLib::Mesh const& _mesh;
     GeoLib::Polyline const& _ply;
     std::vector<MeshLib::Element*> _boundary_elements;
 };

@@ -20,18 +20,18 @@ namespace MeshGeoToolsLib
 BoundaryElementsOnSurface::BoundaryElementsOnSurface(
     MeshLib::Mesh const& mesh, MeshNodeSearcher const& mshNodeSearcher,
     GeoLib::Surface const& sfc)
-    : _mesh(mesh), _sfc(sfc)
+    : _sfc(sfc)
 {
     // search elements near the surface
     auto node_ids_on_sfc = mshNodeSearcher.getMeshNodeIDs(sfc);
-    MeshLib::ElementSearch es(_mesh);
+    MeshLib::ElementSearch es(mesh);
     es.searchByNodeIDs(node_ids_on_sfc);
     auto& ele_ids_near_sfc = es.getSearchedElementIDs();
 
     // get a list of faces made of the nodes
     for (auto ele_id : ele_ids_near_sfc)
     {
-        auto* e = _mesh.getElement(ele_id);
+        auto* e = mesh.getElement(ele_id);
         // skip internal elements
         if (!e->isBoundaryElement())
         {
