@@ -25,7 +25,7 @@ namespace MeshGeoToolsLib
 {
 BoundaryElementsSearcher::BoundaryElementsSearcher(
     MeshLib::Mesh const& mesh, MeshNodeSearcher const& mshNodeSearcher)
-    : _mesh(mesh), _mshNodeSearcher(mshNodeSearcher)
+    : mesh(mesh), _mshNodeSearcher(mshNodeSearcher)
 {
 }
 
@@ -86,7 +86,7 @@ BoundaryElementsSearcher::getBoundaryElements(GeoLib::GeoObject const& geoObj,
                 get_cached_item = &BoundaryElementsAtPoint::getPoint;
             return MeshGeoToolsLib::getBoundaryElements(
                 _boundary_elements_at_point, get_cached_item,
-                *dynamic_cast<const GeoLib::Point*>(&geoObj), _mesh,
+                *dynamic_cast<const GeoLib::Point*>(&geoObj), mesh,
                 _mshNodeSearcher, multiple_nodes_allowed);
         }
         break;
@@ -97,7 +97,7 @@ BoundaryElementsSearcher::getBoundaryElements(GeoLib::GeoObject const& geoObj,
                 get_cached_item = &BoundaryElementsAlongPolyline::getPolyline;
             return MeshGeoToolsLib::getBoundaryElements(
                 _boundary_elements_along_polylines, get_cached_item,
-                *dynamic_cast<const GeoLib::Polyline*>(&geoObj), _mesh,
+                *dynamic_cast<const GeoLib::Polyline*>(&geoObj), mesh,
                 _mshNodeSearcher, false);
         }
         break;
@@ -107,7 +107,7 @@ BoundaryElementsSearcher::getBoundaryElements(GeoLib::GeoObject const& geoObj,
                 get_cached_item = &BoundaryElementsOnSurface::getSurface;
             return MeshGeoToolsLib::getBoundaryElements(
                 _boundary_elements_along_surfaces, get_cached_item,
-                *dynamic_cast<const GeoLib::Surface*>(&geoObj), _mesh,
+                *dynamic_cast<const GeoLib::Surface*>(&geoObj), mesh,
                 _mshNodeSearcher, false);
         }
         break;
