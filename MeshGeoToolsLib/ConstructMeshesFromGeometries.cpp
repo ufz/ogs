@@ -80,7 +80,7 @@ constructAdditionalMeshesFromGeometries(
             // construct the subdomain NodePartitionedMesh
             auto const* bulk_mesh =
                 dynamic_cast<MeshLib::NodePartitionedMesh const*>(
-                    &boundary_element_searcher._mesh);
+                    &boundary_element_searcher.mesh);
 
             additional_meshes.push_back(
                 MeshLib::transformMeshToNodePartitionedMesh(
