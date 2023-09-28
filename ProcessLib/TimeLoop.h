@@ -62,7 +62,6 @@ public:
     double endTime() const { return _end_time; }
     double currentTime() const { return _current_time; }
     bool successful_time_step = false;
-    void outputSolutions() const;
 
 private:
     bool preTsNonlinearSolvePostTs(double const t, double const dt,
