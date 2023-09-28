@@ -284,40 +284,13 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
                     [](auto const& ppd) -> bool
                     { return ppd->timestep_current.timeStepNumber() == 0; });
 
-    auto computeSolutionError = [this, t](auto const i) -> double
-    {
-        auto const& ppd = *_per_process_data[i];
-        const auto& timestep_algorithm = ppd.timestep_algorithm;
-        if (!timestep_algorithm->isSolutionErrorComputationNeeded())
-        {
-            return 0.0;
-        }
-        if (t == timestep_algorithm->begin())
-        {
-            // Always accepts the zeroth step
-            return 0.0;
-        }
-
-        auto const& x = *_process_solutions[i];
-        auto const& x_prev = *_process_solutions_prev[i];
-
-        auto const& conv_crit = ppd.conv_crit;
-        const MathLib::VecNormType norm_type =
-            (conv_crit) ? conv_crit->getVectorNormType()
-                        : MathLib::VecNormType::NORM2;
-
-        const double solution_error =
-            NumLib::computeRelativeChangeFromPreviousTimestep(x, x_prev,
-                                                              norm_type);
-        return solution_error;
-    };
-
     for (std::size_t i = 0; i < _per_process_data.size(); i++)
     {
         auto& ppd = *_per_process_data[i];
         const auto& timestep_algorithm = ppd.timestep_algorithm;
 
-        const double solution_error = computeSolutionError(i);
+        const double solution_error =
+            computeRelativeSolutionChangeFromPreviousTimestep(t, i);
 
         ppd.timestep_current.setAccepted(
             ppd.nonlinear_solver_status.error_norms_met);
@@ -903,4 +876,31 @@ TimeLoop::~TimeLoop()
     }
 }
 
+double TimeLoop::computeRelativeSolutionChangeFromPreviousTimestep(
+    double const t, std::size_t process_index) const
+{
+    auto const& ppd = *_per_process_data[process_index];
+    const auto& timestep_algorithm = ppd.timestep_algorithm;
+    if (!timestep_algorithm->isSolutionErrorComputationNeeded())
+    {
+        return 0.0;
+    }
+    if (t == timestep_algorithm->begin())
+    {
+        // Always accepts the zeroth step
+        return 0.0;
+    }
+
+    auto const& x = *_process_solutions[process_index];
+    auto const& x_prev = *_process_solutions_prev[process_index];
+
+    auto const& conv_crit = ppd.conv_crit;
+    const MathLib::VecNormType norm_type = (conv_crit)
+                                               ? conv_crit->getVectorNormType()
+                                               : MathLib::VecNormType::NORM2;
+
+    const double solution_error =
+        NumLib::computeRelativeChangeFromPreviousTimestep(x, x_prev, norm_type);
+    return solution_error;
+};
 }  // namespace ProcessLib
