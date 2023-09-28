@@ -169,6 +169,11 @@ private:
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
+    void preOutputConcreteProcess(const double t, double const dt,
+                                  std::vector<GlobalVector*> const& x,
+                                  std::vector<GlobalVector*> const& x_prev,
+                                  int const process_id) override;
+
     ComponentTransportProcessData _process_data;
 
     std::vector<std::unique_ptr<ComponentTransportLocalAssemblerInterface>>

@@ -136,6 +136,17 @@ public:
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) final;
 
+    /* Computes data necessary for output.
+     *
+     * \pre Must be called before postTimestep() since the latter will overwrite
+     * previous states with current ones possibly affecting the data computed by
+     * this method.
+     */
+    void preOutput(const double t, double const dt,
+                   std::vector<GlobalVector*> const& x,
+                   std::vector<GlobalVector*> const& x_prev,
+                   int const process_id);
+
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
     getKnownSolutions(double const t, GlobalVector const& x,
                       int const process_id) const final
@@ -285,6 +296,13 @@ private:
         GlobalVector const& /*x*/)
     {
         return NumLib::IterationResult::SUCCESS;
+    }
+
+    virtual void preOutputConcreteProcess(
+        const double /*t*/, double const /*dt*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<GlobalVector*> const& /*x_prev*/, int const /*process_id*/)
+    {
     }
 
 protected:
