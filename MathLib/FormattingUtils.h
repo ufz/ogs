@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <fmt/ostream.h>
+#include <spdlog/fmt/bundled/ostream.h>
 
 #include <Eigen/Core>
 #include <concepts>

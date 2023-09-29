@@ -9,9 +9,9 @@
 
 #ifdef OGS_USE_MFRONT
 
-#include <fmt/format.h>
 #include <gmock/gmock-matchers.h>
 #include <gtest/gtest.h>
+#include <spdlog/fmt/bundled/format.h>
 
 #include "BaseLib/ConfigTree.h"
 #include "MaterialLib/SolidModels/MFront/CreateMFrontGeneric.h"
