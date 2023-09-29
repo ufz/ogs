@@ -70,7 +70,6 @@
        #:cmake ,cmake)) ;for newer CMake version
     (inputs (list boost
                   eigen
-                  fmt
                   googletest
                   hdf5
                   json-modern-cxx
