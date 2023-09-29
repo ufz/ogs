@@ -876,6 +876,10 @@ void TimeLoop::preOutputInitialConditions(const double t) const
             process_data->time_disc->nextTimestep(t, dt);
 
             pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
+
+            pcs.preOutput(_start_time, dt, _process_solutions,
+                          _process_solutions_prev, process_id);
+
             // Update secondary variables, which might be uninitialized, before
             // output.
             pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,
@@ -899,6 +903,10 @@ void TimeLoop::preOutputInitialConditions(const double t) const
             process_data->time_disc->nextTimestep(t, dt);
 
             pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
+
+            pcs.preOutput(_start_time, dt, _process_solutions,
+                          _process_solutions_prev, process_id);
+
             // Update secondary variables, which might be uninitialized, before
             // output.
             pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,
