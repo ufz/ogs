@@ -23,8 +23,7 @@ namespace SteadyStateDiffusion
 {
 struct SteadyStateDiffusionData final
 {
-    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
-        media_map;
+    MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 };
 
 } // namespace SteadyStateDiffusion

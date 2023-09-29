@@ -129,7 +129,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     }
 
     DBUG("Check the media properties of LiquidFlow process ...");
-    checkMPLProperties(mesh, *media_map);
+    checkMPLProperties(mesh, media_map);
     DBUG("Media properties verified.");
 
     auto const* aperture_size_parameter = &ParameterLib::findParameter<double>(

@@ -147,7 +147,7 @@ std::unique_ptr<Process> createStokesFlowProcess(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     DBUG("Check the media properties of StokesFlow process ...");
-    checkMPLProperties(mesh, *media_map, use_stokes_brinkman_form);
+    checkMPLProperties(mesh, media_map, use_stokes_brinkman_form);
     DBUG("Media properties verified.");
 
     StokesFlowProcessData process_data{std::move(media_map),

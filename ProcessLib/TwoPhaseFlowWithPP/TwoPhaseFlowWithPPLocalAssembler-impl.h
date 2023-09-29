@@ -88,7 +88,7 @@ void TwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::assemble(
     auto Bl =
         local_b.template segment<cap_pressure_size>(cap_pressure_matrix_index);
 
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& gas_phase = medium.phase("Gas");
 

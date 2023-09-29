@@ -66,7 +66,7 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
 
     auto const& process_data = this->_process_data;
     auto const& medium =
-        *this->_process_data.media_map->getMedium(this->_element.getID());
+        *this->_process_data.media_map.getMedium(this->_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
 
@@ -192,7 +192,7 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHeatTransportEquation(
 
     auto const& process_data = this->_process_data;
     auto const& medium =
-        *process_data.media_map->getMedium(this->_element.getID());
+        *process_data.media_map.getMedium(this->_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     auto const& b =

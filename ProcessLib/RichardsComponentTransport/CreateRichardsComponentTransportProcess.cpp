@@ -152,7 +152,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
 
     DBUG(
         "Check the media properties of RichardsComponentTransport process ...");
-    checkMPLProperties(mesh, *media_map);
+    checkMPLProperties(mesh, media_map);
     DBUG("Media properties verified.");
 
     RichardsComponentTransportProcessData process_data{

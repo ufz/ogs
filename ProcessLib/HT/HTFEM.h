@@ -125,7 +125,7 @@ public:
         vars.phase_pressure = p_int_pt;
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
 
         // TODO (naumov) Temporary value not used by current material models.
@@ -181,7 +181,7 @@ protected:
         double const dt)
     {
         auto const& medium =
-            *_process_data.media_map->getMedium(this->_element.getID());
+            *_process_data.media_map.getMedium(this->_element.getID());
         auto const& solid_phase = medium.phase("Solid");
 
         auto const specific_heat_capacity_solid =
@@ -206,7 +206,7 @@ protected:
         double const dt)
     {
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
 
         auto thermal_conductivity =
             MaterialPropertyLib::formEigenTensor<GlobalDim>(
@@ -267,7 +267,7 @@ protected:
             &local_p[0], ShapeFunction::NPOINTS);
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)

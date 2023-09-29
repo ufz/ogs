@@ -34,8 +34,7 @@ struct SmallDeformationProcessData
 {
     MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
-    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
-        media_map = nullptr;
+    MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
     std::map<
         int,

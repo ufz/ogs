@@ -162,7 +162,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& solid_phase = medium->phase("Solid");
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -382,7 +382,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     MPL::VariableArray variables_prev;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& solid_phase = medium->phase("Solid");
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -520,7 +520,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray variables;
 

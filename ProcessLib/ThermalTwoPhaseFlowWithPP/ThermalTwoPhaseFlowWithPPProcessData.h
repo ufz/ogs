@@ -21,8 +21,7 @@ namespace ThermalTwoPhaseFlowWithPP
 {
 struct ThermalTwoPhaseFlowWithPPProcessData
 {
-    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
-        media_map;
+    MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
     Eigen::VectorXd const specific_body_force;
 
     bool const has_gravity;

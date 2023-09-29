@@ -235,7 +235,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
         process_variables);
 
     DBUG("Check the media properties of ComponentTransport process ...");
-    checkMPLProperties(mesh, *media_map);
+    checkMPLProperties(mesh, media_map);
     DBUG("Media properties verified.");
 
     auto stabilizer = NumLib::createNumericalStabilization(mesh, config);

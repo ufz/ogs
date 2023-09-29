@@ -101,7 +101,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     constexpr double dt = std::numeric_limits<double>::quiet_NaN();
     auto const& medium =
-        this->process_data_.media_map->getMedium(this->element_.getID());
+        this->process_data_.media_map.getMedium(this->element_.getID());
     MPL::VariableArray variables;
 
     auto const& solid_phase = medium->phase("Solid");
@@ -167,7 +167,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                          std::vector<double>& local_Jac_data)
 {
     auto& medium =
-        *this->process_data_.media_map->getMedium(this->element_.getID());
+        *this->process_data_.media_map.getMedium(this->element_.getID());
 
     LocalMatrices loc_mat;
     loc_mat.setZero();
@@ -459,7 +459,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const e_id = this->element_.getID();
     auto const& process_data = this->process_data_;
-    auto& medium = *process_data.media_map->getMedium(e_id);
+    auto& medium = *process_data.media_map.getMedium(e_id);
 
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();

@@ -274,7 +274,7 @@ public:
             ip_data) const
     {
         auto const& solid_phase =
-            this->_process_data.media_map->getMedium(this->_element.getID())
+            this->_process_data.media_map.getMedium(this->_element.getID())
                 ->phase("Solid");
 
         MPL::VariableArray variables_prev;

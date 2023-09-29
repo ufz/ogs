@@ -11,14 +11,9 @@
 #pragma once
 
 #include <Eigen/Core>
-#include <memory>
 
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "ParameterLib/Parameter.h"
-
-namespace MaterialPropertyLib
-{
-class MaterialSpatialDistributionMap;
-}
 
 namespace ProcessLib
 {
@@ -26,8 +21,7 @@ namespace LiquidFlow
 {
 struct LiquidFlowData final
 {
-    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
-        media_map;
+    MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
     /// A vector of the rotation matrices for all elements.
     std::vector<Eigen::MatrixXd> const element_rotation_matrices;

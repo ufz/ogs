@@ -24,8 +24,7 @@ class MaterialSpatialDistributionMap;
 
 class Medium;
 
-std::unique_ptr<MaterialSpatialDistributionMap>
-createMaterialSpatialDistributionMap(
+MaterialSpatialDistributionMap createMaterialSpatialDistributionMap(
     std::map<int, std::shared_ptr<Medium>> const& media,
     MeshLib::Mesh const& mesh);
 }  // namespace MaterialPropertyLib

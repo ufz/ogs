@@ -72,7 +72,7 @@ std::unique_ptr<Process> createSteadyStateDiffusion(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     DBUG("Check the media properties of steady state diffusion process ...");
-    checkMPLProperties(mesh, *media_map);
+    checkMPLProperties(mesh, media_map);
     DBUG("Media properties verified.");
 
     SteadyStateDiffusionData process_data{std::move(media_map)};

@@ -216,8 +216,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 
     for (auto const& element_id : mesh.getElements() | MeshLib::views::ids)
     {
-        media_map->checkElementHasMedium(element_id);
-        auto const& medium = *media_map->getMedium(element_id);
+        media_map.checkElementHasMedium(element_id);
+        auto const& medium = *media_map.getMedium(element_id);
         checkRequiredProperties(medium, requiredMediumProperties);
         checkRequiredProperties(fluidPhase(medium), requiredFluidProperties);
         checkRequiredProperties(medium.phase("Solid"), requiredSolidProperties);

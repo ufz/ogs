@@ -104,7 +104,7 @@ public:
             &local_x[pressure_index], pressure_size);
 
         auto const& medium =
-            *process_data.media_map->getMedium(this->_element.getID());
+            *process_data.media_map.getMedium(this->_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
         auto const& solid_phase = medium.phase("Solid");
 

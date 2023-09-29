@@ -71,7 +71,7 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     // Consistency check: if frozen liquid phase is given, then the constitutive
     // relation for ice must also be given, and vice versa.
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
     if (medium->hasPhase("FrozenLiquid") !=
         (_process_data.ice_constitutive_relation != nullptr))
     {
@@ -166,7 +166,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             _process_data.solid_materials, _process_data.material_ids,
             _element.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
     auto* const frozen_liquid_phase = medium->hasPhase("FrozenLiquid")
@@ -528,7 +528,7 @@ void ThermoHydroMechanicsLocalAssembler<
         Kup;
     Kup.setZero(displacement_size, pressure_size);
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
     bool const has_frozen_liquid_phase = medium->hasPhase("FrozenLiquid");
 
     unsigned const n_integration_points =

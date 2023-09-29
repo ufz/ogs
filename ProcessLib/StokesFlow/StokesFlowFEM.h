@@ -166,7 +166,7 @@ public:
 
         // Get material properties
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map.getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)

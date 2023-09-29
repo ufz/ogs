@@ -106,7 +106,7 @@ std::unique_ptr<Process> createRichardsFlowProcess(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     DBUG("Check the media properties of RichardsFlow process ...");
-    checkMPLProperties(mesh, *media_map);
+    checkMPLProperties(mesh, media_map);
     DBUG("Media properties verified.");
 
     RichardsFlowProcessData process_data{

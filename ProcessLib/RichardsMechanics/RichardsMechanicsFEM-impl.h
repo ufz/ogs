@@ -149,7 +149,7 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             _process_data.solid_materials, _process_data.material_ids,
             e.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -293,7 +293,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   pressure_size);
 
     constexpr double dt = std::numeric_limits<double>::quiet_NaN();
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
     MPL::VariableArray variables;
 
     ParameterLib::SpatialPosition x_position;
@@ -406,7 +406,7 @@ void RichardsMechanicsLocalAssembler<
         MathLib::KelvinVector::kelvin_vector_dimensions(
             DisplacementDim)>::identity2;
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray variables;
@@ -760,7 +760,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             pressure_size, displacement_size>::Zero(pressure_size,
                                                     displacement_size);
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray variables;
@@ -1530,7 +1530,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         MathLib::KelvinVector::kelvin_vector_dimensions(
             DisplacementDim)>::identity2;
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray variables;

@@ -32,7 +32,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
 
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     MaterialPropertyLib::VariableArray vars;
     vars.temperature =
         medium[MaterialPropertyLib::PropertyType::reference_temperature]
@@ -80,7 +80,7 @@ Eigen::Vector3d LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::getFlux(
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
 
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     MaterialPropertyLib::VariableArray vars;
@@ -130,7 +130,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
 
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     MaterialPropertyLib::VariableArray vars;
@@ -235,7 +235,7 @@ LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
 
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     MaterialPropertyLib::VariableArray vars;
     vars.temperature =
         medium[MaterialPropertyLib::PropertyType::reference_temperature]
@@ -279,7 +279,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     MaterialPropertyLib::VariableArray vars;
