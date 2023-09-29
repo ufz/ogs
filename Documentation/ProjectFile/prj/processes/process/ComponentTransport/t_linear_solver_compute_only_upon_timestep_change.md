@@ -4,13 +4,13 @@ the linear solver will only do the `compute()`<sup>\*</sup> step if the timestep
 changes.
 
 This flag is a further optimization on top of the
-[\<is_linear\>](@ref ogs_file_param__prj__processes__process__ComponentTransport__is_linear)
+[\<linear\>](@ref ogs_file_param__prj__processes__process__ComponentTransport__linear)
 flag.
-So the requirements of `<is_linear>` apply to this flag, too!
+So the requirements of `<linear>` apply to this flag, too!
 
 \attention
 This is an expert option. It comes with a number of further **requirements above
-those of `<is_linear>`**. These are:
+those of `<linear>`**. These are:
 
 - The linear solver used to solve the process equations must be exclusively used
   for a single process (or for a single `process_id` in the case of staggered

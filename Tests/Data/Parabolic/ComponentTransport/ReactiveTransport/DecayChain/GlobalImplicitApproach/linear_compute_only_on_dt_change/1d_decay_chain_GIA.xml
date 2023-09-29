@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProjectDiff base_file="../1d_decay_chain_GIA.prj">
     <add sel="/*/processes/process">
-        <is_linear>true</is_linear>
+        <linear>true</linear>
         <linear_solver_compute_only_upon_timestep_change>true</linear_solver_compute_only_upon_timestep_change>
     </add>
 </OpenGeoSysProjectDiff>
