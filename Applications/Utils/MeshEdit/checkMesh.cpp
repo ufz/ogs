@@ -13,7 +13,7 @@
 #include <mpi.h>
 #endif
 
-#include <fmt/ranges.h>
+#include <spdlog/fmt/bundled/ranges.h>
 
 #include <array>
 #include <string>

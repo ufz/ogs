@@ -12,9 +12,9 @@
 
 #include "PETScNonlinearSolver.h"
 
-#include <fmt/core.h>
 #include <petscmat.h>
 #include <petscvec.h>
+#include <spdlog/fmt/bundled/core.h>
 
 #include "BaseLib/RunTime.h"
 

@@ -14,7 +14,7 @@
 
 #include "FileTools.h"
 
-#include <fmt/core.h>
+#include <spdlog/fmt/bundled/core.h>
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <filesystem>

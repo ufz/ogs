@@ -9,7 +9,8 @@ append_source_files(SOURCES MeshQuality)
 ogs_add_library(MeshToolsLib ${SOURCES})
 
 target_link_libraries(
-    MeshToolsLib PUBLIC MeshLib
+    MeshToolsLib PUBLIC GeoLib
+                        MeshLib
                         range-v3
                         VTK::IOXML
                         VTK::IOLegacy

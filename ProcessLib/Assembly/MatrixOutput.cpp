@@ -10,7 +10,7 @@
 
 #include "MatrixOutput.h"
 
-#include <fmt/ostream.h>
+#include <spdlog/fmt/bundled/ostream.h>
 
 #include <optional>
 #include <unordered_set>
