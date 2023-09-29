@@ -342,7 +342,7 @@ void Output::doOutput(Process const& process,
                       int const iteration,
                       std::vector<GlobalVector*> const& xs) const
 {
-    if (_output_data_specification.isOutputStep(timestep, t))
+    if (isOutputStep(timestep, t))
     {
         doOutputAlways(process, process_id, timestep, t, iteration, xs);
     }
@@ -361,7 +361,7 @@ void Output::doOutputLastTimestep(Process const& process,
                                   int const iteration,
                                   std::vector<GlobalVector*> const& xs) const
 {
-    if (!_output_data_specification.isOutputStep(timestep, t))
+    if (!isOutputStep(timestep, t))
     {
         doOutputAlways(process, process_id, timestep, t, iteration, xs);
     }
@@ -415,6 +415,11 @@ void Output::doOutputNonlinearIteration(
         DBUG("non-linear iterations can only written in Vtk/VTU format.");
     }
     INFO("[time] Output took {:g} s.", time_output.elapsed());
+}
+
+bool Output::isOutputStep(int const timestep, double const t) const
+{
+    return _output_data_specification.isOutputStep(timestep, t);
 }
 
 std::vector<std::string> Output::getFileNamesForOutput() const

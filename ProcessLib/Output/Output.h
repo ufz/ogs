@@ -80,6 +80,9 @@ public:
                                     const double t, const int iteration,
                                     std::vector<GlobalVector*> const& xs) const;
 
+    //! Tells if output will be written at the specified timestep/time.
+    bool isOutputStep(int const timestep, double const t) const;
+
     std::vector<double> const& getFixedOutputTimes() const
     {
         return _output_data_specification.fixed_output_times;
