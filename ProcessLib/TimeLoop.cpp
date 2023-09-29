@@ -217,6 +217,9 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     auto const post_iteration_callback =
         [&](int iteration, std::vector<GlobalVector*> const& x)
     {
+        // Note: We don't call the postNonLinearSolver(), preOutput(),
+        // computeSecondaryVariable() and postTimestep() hooks here. This might
+        // lead to some inconsistencies in the data compared to regular output.
         for (auto const& output : outputs)
         {
             output.doOutputNonlinearIteration(process, process_id, timestep, t,
