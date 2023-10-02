@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+\copydoc ProcessLib::OutputConfig::repeats_each_steps

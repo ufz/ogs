@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+A variable name for output. See parent tag `variables` for details.
