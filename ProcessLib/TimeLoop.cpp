@@ -284,40 +284,13 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
                     [](auto const& ppd) -> bool
                     { return ppd->timestep_current.timeStepNumber() == 0; });
 
-    auto computeSolutionError = [this, t](auto const i) -> double
-    {
-        auto const& ppd = *_per_process_data[i];
-        const auto& timestep_algorithm = ppd.timestep_algorithm;
-        if (!timestep_algorithm->isSolutionErrorComputationNeeded())
-        {
-            return 0.0;
-        }
-        if (t == timestep_algorithm->begin())
-        {
-            // Always accepts the zeroth step
-            return 0.0;
-        }
-
-        auto const& x = *_process_solutions[i];
-        auto const& x_prev = *_process_solutions_prev[i];
-
-        auto const& conv_crit = ppd.conv_crit;
-        const MathLib::VecNormType norm_type =
-            (conv_crit) ? conv_crit->getVectorNormType()
-                        : MathLib::VecNormType::NORM2;
-
-        const double solution_error =
-            NumLib::computeRelativeChangeFromPreviousTimestep(x, x_prev,
-                                                              norm_type);
-        return solution_error;
-    };
-
     for (std::size_t i = 0; i < _per_process_data.size(); i++)
     {
         auto& ppd = *_per_process_data[i];
         const auto& timestep_algorithm = ppd.timestep_algorithm;
 
-        const double solution_error = computeSolutionError(i);
+        const double solution_error =
+            computeRelativeSolutionChangeFromPreviousTimestep(t, i);
 
         ppd.timestep_current.setAccepted(
             ppd.nonlinear_solver_status.error_norms_met);
@@ -501,9 +474,8 @@ void TimeLoop::initialize()
 
     // Output initial conditions
     {
-        const bool output_initial_condition = true;
-        outputSolutions(output_initial_condition, 0, _start_time,
-                        &Output::doOutput);
+        preOutputInitialConditions(_start_time);
+        outputSolutions(0, _start_time, &Output::doOutput);
     }
 
     auto const time_step_constraints = generateOutputTimeStepConstraints(
@@ -533,7 +505,8 @@ bool TimeLoop::executeTimeStep()
 
     updateDeactivatedSubdomains(_per_process_data, _current_time);
 
-    successful_time_step = doNonlinearIteration(_current_time, _dt, timesteps);
+    successful_time_step =
+        preTsNonlinearSolvePostTs(_current_time, _dt, timesteps);
     INFO("[time] Time step #{:d} took {:g} s.", timesteps,
          time_timestep.elapsed());
     return successful_time_step;
@@ -556,9 +529,7 @@ bool TimeLoop::calculateNextTimeStep()
 
     if (!_last_step_rejected)
     {
-        const bool output_initial_condition = false;
-        outputSolutions(output_initial_condition, timesteps, current_time,
-                        &Output::doOutput);
+        outputSolutions(timesteps, current_time, &Output::doOutput);
     }
 
     if (std::abs(_current_time - _end_time) <
@@ -590,15 +561,13 @@ void TimeLoop::outputLastTimeStep() const
     // output last time step
     if (successful_time_step)
     {
-        const bool output_initial_condition = false;
-        outputSolutions(output_initial_condition,
-                        _accepted_steps + _rejected_steps, _current_time,
+        outputSolutions(_accepted_steps + _rejected_steps, _current_time,
                         &Output::doOutputLastTimestep);
     }
 }
 
-bool TimeLoop::doNonlinearIteration(double const t, double const dt,
-                                    std::size_t const timesteps)
+bool TimeLoop::preTsNonlinearSolvePostTs(double const t, double const dt,
+                                         std::size_t const timesteps)
 {
     preTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
 
@@ -810,22 +779,10 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     return nonlinear_solver_status;
 }
 
-void TimeLoop::outputSolutions(bool const output_initial_condition) const
-{
-    const std::size_t timesteps = _accepted_steps + 1;
-    outputSolutions(output_initial_condition, timesteps, _current_time,
-                    &Output::doOutput);
-}
-
 template <typename OutputClassMember>
-void TimeLoop::outputSolutions(bool const output_initial_condition,
-                               unsigned timestep, const double t,
+void TimeLoop::outputSolutions(unsigned timestep, const double t,
                                OutputClassMember output_class_member) const
 {
-    // All _per_process_data share the first process.
-    bool const is_staggered_coupling =
-        !isMonolithicProcess(*_per_process_data[0]);
-
     for (auto const& process_data : _per_process_data)
     {
         // If nonlinear solver diverged, the solution has already been
@@ -836,45 +793,8 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
         }
 
         auto const process_id = process_data->process_id;
-        auto& pcs = process_data->process;
+        auto const& pcs = process_data->process;
 
-        if (!is_staggered_coupling && output_initial_condition)
-        {
-            // dummy value to handle the time derivative terms more or less
-            // correctly, i.e. to ignore them.
-            double const dt = 1;
-            process_data->time_disc->nextTimestep(t, dt);
-
-            pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
-            // Update secondary variables, which might be uninitialized, before
-            // output.
-            pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,
-                                         *_process_solutions_prev[process_id],
-                                         process_id);
-        }
-        if (is_staggered_coupling && output_initial_condition)
-        {
-            CoupledSolutionsForStaggeredScheme coupled_solutions(
-                _process_solutions);
-
-            process_data->process.setCoupledSolutionsForStaggeredScheme(
-                &coupled_solutions);
-            process_data->process
-                .setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
-                    process_id);
-
-            // dummy value to handle the time derivative terms more or less
-            // correctly, i.e. to ignore them.
-            double const dt = 1;
-            process_data->time_disc->nextTimestep(t, dt);
-
-            pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
-            // Update secondary variables, which might be uninitialized, before
-            // output.
-            pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,
-                                         *_process_solutions_prev[process_id],
-                                         process_id);
-        }
         for (auto const& output_object : _outputs)
         {
             (output_object.*output_class_member)(
@@ -902,4 +822,89 @@ TimeLoop::~TimeLoop()
     }
 }
 
+double TimeLoop::computeRelativeSolutionChangeFromPreviousTimestep(
+    double const t, std::size_t process_index) const
+{
+    auto const& ppd = *_per_process_data[process_index];
+    const auto& timestep_algorithm = ppd.timestep_algorithm;
+    if (!timestep_algorithm->isSolutionErrorComputationNeeded())
+    {
+        return 0.0;
+    }
+    if (t == timestep_algorithm->begin())
+    {
+        // Always accepts the zeroth step
+        return 0.0;
+    }
+
+    auto const& x = *_process_solutions[process_index];
+    auto const& x_prev = *_process_solutions_prev[process_index];
+
+    auto const& conv_crit = ppd.conv_crit;
+    const MathLib::VecNormType norm_type = (conv_crit)
+                                               ? conv_crit->getVectorNormType()
+                                               : MathLib::VecNormType::NORM2;
+
+    const double solution_error =
+        NumLib::computeRelativeChangeFromPreviousTimestep(x, x_prev, norm_type);
+    return solution_error;
+}
+
+void TimeLoop::preOutputInitialConditions(const double t) const
+{
+    // All _per_process_data share the first process.
+    bool const is_staggered_coupling =
+        !isMonolithicProcess(*_per_process_data[0]);
+
+    for (auto const& process_data : _per_process_data)
+    {
+        // If nonlinear solver diverged, the solution has already been
+        // saved.
+        if (!process_data->nonlinear_solver_status.error_norms_met)
+        {
+            continue;
+        }
+
+        auto const process_id = process_data->process_id;
+        auto& pcs = process_data->process;
+
+        if (!is_staggered_coupling)
+        {
+            // dummy value to handle the time derivative terms more or less
+            // correctly, i.e. to ignore them.
+            double const dt = 1;
+            process_data->time_disc->nextTimestep(t, dt);
+
+            pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
+            // Update secondary variables, which might be uninitialized, before
+            // output.
+            pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,
+                                         *_process_solutions_prev[process_id],
+                                         process_id);
+        }
+        else
+        {
+            CoupledSolutionsForStaggeredScheme coupled_solutions(
+                _process_solutions);
+
+            process_data->process.setCoupledSolutionsForStaggeredScheme(
+                &coupled_solutions);
+            process_data->process
+                .setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
+                    process_id);
+
+            // dummy value to handle the time derivative terms more or less
+            // correctly, i.e. to ignore them.
+            double const dt = 1;
+            process_data->time_disc->nextTimestep(t, dt);
+
+            pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
+            // Update secondary variables, which might be uninitialized, before
+            // output.
+            pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,
+                                         *_process_solutions_prev[process_id],
+                                         process_id);
+        }
+    }
+}
 }  // namespace ProcessLib

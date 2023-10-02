@@ -49,15 +49,23 @@ public:
     ~TimeLoop();
 
     bool executeTimeStep();
+
+    /// Computes and sets the next timestep.
+    ///
+    /// \attention The timestepper might reject the current timestep and repeat
+    /// it (with a reduced timestep size).
+    ///
+    /// \returns true if the simulation (time) has not finished, yet, false
+    /// otherwise.
     bool calculateNextTimeStep();
+
     double endTime() const { return _end_time; }
     double currentTime() const { return _current_time; }
     bool successful_time_step = false;
-    void outputSolutions(bool const output_initial_condition) const;
 
 private:
-    bool doNonlinearIteration(double const t, double const dt,
-                              std::size_t const timesteps);
+    bool preTsNonlinearSolvePostTs(double const t, double const dt,
+                                   std::size_t const timesteps);
     /**
      * This function fills the vector of solutions of coupled processes of
      * processes, _solutions_of_coupled_processes, and initializes the vector
@@ -115,13 +123,16 @@ private:
             time_step_constraints);
 
     template <typename OutputClassMember>
-    void outputSolutions(bool const output_initial_condition, unsigned timestep,
+    void outputSolutions(unsigned timestep,
                          const double t,
                          OutputClassMember output_class_member) const;
 
 private:
     std::vector<std::function<double(double, double)>>
     generateOutputTimeStepConstraints(std::vector<double>&& fixed_times) const;
+    double computeRelativeSolutionChangeFromPreviousTimestep(
+        double const t, std::size_t process_index) const;
+    void preOutputInitialConditions(const double t) const;
     std::vector<GlobalVector*> _process_solutions;
     std::vector<GlobalVector*> _process_solutions_prev;
     std::vector<Output> _outputs;
