@@ -6,8 +6,12 @@
     pressure being one lower then the order of displacement.
 -->
 <OpenGeoSysProject>
-    <mesh>square_1x1_quad8_1e2.vtu</mesh>
-    <geometry>square_1x1.gml</geometry>
+    <meshes>
+        <mesh>square_1x1_quad8_1e2.vtu</mesh>
+        <mesh>square_1x1_geometry_bottom.vtu</mesh>
+        <mesh>square_1x1_geometry_left.vtu</mesh>
+        <mesh>square_1x1_geometry_top.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>RM</name>
@@ -167,27 +171,45 @@
                 </time_stepping>
             </process>
         </processes>
-        <output>
-            <type>VTK</type>
-            <prefix>mechanics_linear</prefix>
-            <timesteps>
-                <pair>
-                    <repeat>1</repeat>
-                    <each_steps>10000000</each_steps>
-                </pair>
-            </timesteps>
-            <variables>
-                <variable>temperature</variable>
-                <variable>displacement</variable>
-                <variable>pressure</variable>
-                <variable>sigma</variable>
-                <variable>epsilon</variable>
-                <variable>velocity</variable>
-                <variable>saturation</variable>
-                <variable>NodalForces</variable>
-            </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
-        </output>
+        <outputs>
+            <output>
+                <type>VTK</type>
+                <prefix>mechanics_linear</prefix>
+                <timesteps>
+                    <pair>
+                        <repeat>1</repeat>
+                        <each_steps>10000000</each_steps>
+                    </pair>
+                </timesteps>
+                <variables>
+                    <variable>temperature</variable>
+                    <variable>displacement</variable>
+                    <variable>pressure</variable>
+                    <variable>sigma</variable>
+                    <variable>epsilon</variable>
+                    <variable>velocity</variable>
+                    <variable>saturation</variable>
+                    <variable>NodalForces</variable>
+                </variables>
+                <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            </output>
+            <output>
+                <type>VTK</type>
+                <prefix>mechanics_linear_{:meshname}</prefix>
+                <meshes>
+                    <mesh>square_1x1_geometry_left</mesh>
+                </meshes>
+                <timesteps>
+                    <pair>
+                        <repeat>1</repeat>
+                        <each_steps>10000000</each_steps>
+                    </pair>
+                </timesteps>
+                <variables>
+                </variables>
+                <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            </output>
+        </outputs>
     </time_loop>
     <parameters>
         <!-- Mechanics -->
@@ -246,8 +268,7 @@
             <initial_condition>T_ref</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>top</geometry>
+                    <mesh>square_1x1_geometry_top</mesh>
                     <type>Dirichlet</type>
                     <parameter>T_ref</parameter>
                 </boundary_condition>
@@ -260,8 +281,7 @@
             <initial_condition>pressure_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>top</geometry>
+                    <mesh>square_1x1_geometry_top</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet_p</parameter>
@@ -275,22 +295,19 @@
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>square_1x1_geometry_left</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>bottom</geometry>
+                    <mesh>square_1x1_geometry_bottom</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>top</geometry>
+                    <mesh>square_1x1_geometry_top</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet1</parameter>
@@ -320,25 +337,25 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <regex>mechanics_linear_ts_.*.vtu</regex>
+            <regex>mechanics_linear.*_ts_.*.vtu</regex>
             <field>displacement</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>mechanics_linear_ts_.*.vtu</regex>
+            <regex>mechanics_linear.*_ts_.*.vtu</regex>
             <field>sigma</field>
             <absolute_tolerance>5e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>mechanics_linear_ts_.*.vtu</regex>
+            <regex>mechanics_linear.*_ts_.*.vtu</regex>
             <field>epsilon</field>
             <absolute_tolerance>5e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>mechanics_linear_ts_.*.vtu</regex>
+            <regex>mechanics_linear.*_ts_.*.vtu</regex>
             <field>NodalForces</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>

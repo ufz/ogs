@@ -91,7 +91,6 @@ public:
             {
                 auto const [r, c] = rc;
 
-                assert(r >= 0);  // rows must not be ghost indices
                 auto const c_no_ghost =
                     detail::transformToNonGhostIndex(c, n_cols);
 

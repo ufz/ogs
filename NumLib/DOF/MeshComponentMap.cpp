@@ -250,6 +250,13 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
     std::size_t const range_end) const
 {
     GlobalIndexType const global_index = getGlobalIndex(l, comp_id);
+    // request for index of linear quantities at higher order nodes
+    // results in returning nop
+    // That index shall not be modified like a usual global index.
+    if (global_index == nop)
+    {
+        return nop;
+    }
 #ifndef USE_PETSC
     (void)range_begin;
     (void)range_end;
