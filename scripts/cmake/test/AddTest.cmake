@@ -518,7 +518,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
         math(EXPR DiffDataLengthMod3 "${DiffDataLength} % 3")
         if(${DiffDataLengthMod3} EQUAL 0)
             math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
-            foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 4)
+            foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 3)
                 list(GET AddTest_DIFF_DATA "${DiffDataIndex}"
                      REFERENCE_VTK_FILE
                 )

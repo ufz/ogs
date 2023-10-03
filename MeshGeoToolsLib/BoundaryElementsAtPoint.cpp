@@ -26,7 +26,7 @@ namespace MeshGeoToolsLib
 BoundaryElementsAtPoint::BoundaryElementsAtPoint(
     MeshLib::Mesh const& mesh, MeshNodeSearcher const& mshNodeSearcher,
     GeoLib::Point const& point, const bool multiple_nodes_allowed)
-    : _mesh(mesh), _point(point)
+    : _point(point)
 {
     auto const node_ids = mshNodeSearcher.getMeshNodeIDs(_point);
 
@@ -62,7 +62,7 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
     if (node_ids.size() == 1)
     {
         std::array<MeshLib::Node*, 1> const nodes = {
-            {const_cast<MeshLib::Node*>(_mesh.getNode(node_ids[0]))}};
+            {const_cast<MeshLib::Node*>(mesh.getNode(node_ids[0]))}};
 
         _boundary_elements.push_back(new MeshLib::Point{nodes, node_ids[0]});
         return;
@@ -103,7 +103,7 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
         MathLib::sqrDist(*mesh_nodes[nearest_node_id], point));
 
     std::array<MeshLib::Node*, 1> const nodes = {
-        {const_cast<MeshLib::Node*>(_mesh.getNode(nearest_node_id))}};
+        {const_cast<MeshLib::Node*>(mesh.getNode(nearest_node_id))}};
 
     _boundary_elements.push_back(new MeshLib::Point{nodes, nearest_node_id});
 }

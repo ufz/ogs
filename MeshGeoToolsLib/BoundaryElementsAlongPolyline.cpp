@@ -80,14 +80,14 @@ MeshLib::Element* modifyEdgeNodeOrdering(
         {
             std::array nodes = {const_cast<MeshLib::Node*>(e->getNode(1)),
                                 const_cast<MeshLib::Node*>(e->getNode(0))};
-            return new MeshLib::Line(nodes);
+            return new MeshLib::Line(nodes, e->getID());
         }
         if (auto const* e = dynamic_cast<MeshLib::Line3 const*>(&edge))
         {
             std::array nodes = {const_cast<MeshLib::Node*>(e->getNode(1)),
                                 const_cast<MeshLib::Node*>(e->getNode(0)),
                                 const_cast<MeshLib::Node*>(e->getNode(2))};
-            return new MeshLib::Line3(nodes);
+            return new MeshLib::Line3(nodes, e->getID());
         }
         OGS_FATAL("Not implemented for element type {:s}", typeid(edge).name());
     }
@@ -102,18 +102,18 @@ namespace MeshGeoToolsLib
 BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
     MeshLib::Mesh const& mesh, MeshNodeSearcher const& mshNodeSearcher,
     GeoLib::Polyline const& ply)
-    : _mesh(mesh), _ply(ply)
+    : _ply(ply)
 {
     // search nodes and elements located along the polyline
     auto node_ids_on_poly = mshNodeSearcher.getMeshNodeIDs(ply);
-    MeshLib::ElementSearch es(_mesh);
+    MeshLib::ElementSearch es(mesh);
     es.searchByNodeIDs(node_ids_on_poly);
     auto const& ele_ids_near_ply = es.getSearchedElementIDs();
 
     // check all edges of the elements near the polyline
     for (auto ele_id : ele_ids_near_ply)
     {
-        auto* e = _mesh.getElement(ele_id);
+        auto* e = mesh.getElement(ele_id);
         // skip line elements
         if (e->getDimension() == 1)
         {

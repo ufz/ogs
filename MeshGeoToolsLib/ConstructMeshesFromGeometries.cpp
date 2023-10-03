@@ -68,29 +68,26 @@ constructAdditionalMeshesFromGeometries(
             DBUG("Creating mesh from geometry {:s} {:s}.", vec_name,
                  geometry_name);
 
-#ifdef USE_PETSC
-            // this mesh isn't yet a NodePartitionedMesh
             auto subdomain_mesh = createMeshFromElementSelection(
                 meshNameFromGeometry(vec_name, geometry_name),
                 MeshLib::cloneElements(
                     boundary_element_searcher.getBoundaryElements(
                         geometry, multiple_nodes_allowed)));
 
-            // the bulk_mesh, that is a NodePartitionedMesh, is needed to
+#ifdef USE_PETSC
+            // The subdomain_mesh is not yet a NodePartitionedMesh.
+            // The bulk_mesh, which is a NodePartitionedMesh, is needed to
             // construct the subdomain NodePartitionedMesh
             auto const* bulk_mesh =
                 dynamic_cast<MeshLib::NodePartitionedMesh const*>(
-                    &boundary_element_searcher._mesh);
+                    &boundary_element_searcher.mesh);
 
             additional_meshes.push_back(
                 MeshLib::transformMeshToNodePartitionedMesh(
                     bulk_mesh, subdomain_mesh.get()));
 #else
-            additional_meshes.emplace_back(createMeshFromElementSelection(
-                meshNameFromGeometry(vec_name, geometry_name),
-                MeshLib::cloneElements(
-                    boundary_element_searcher.getBoundaryElements(
-                        geometry, multiple_nodes_allowed))));
+            // Nothing special to be done in the serial case.
+            additional_meshes.emplace_back(std::move(subdomain_mesh));
 #endif
         }
     }

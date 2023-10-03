@@ -1388,3 +1388,18 @@ AddTest(
     TESTER diff
     DIFF_DATA WESSRivers_cleaned.gml WESSRivers_cleaned.gml
 )
+
+AddTest(
+    NAME ConstructMeshesFromGeometry_square_lines_and_points
+    PATH MeshGeoToolsLib/ConstructMeshesFromGeometry
+    WORKING_DIRECTORY ${Data_BINARY_DIR}/<PATH>
+    EXECUTABLE constructMeshesFromGeometry
+    EXECUTABLE_ARGS -m ${Data_SOURCE_DIR}/<PATH>/square_1x1_quad8_1e2.vtu -g ${Data_SOURCE_DIR}/<PATH>/square_1x1.gml
+    TESTER vtkdiff-mesh
+    DIFF_DATA
+    square_1x1_geometry_origin.vtu square_1x1_geometry_origin.vtu 1e-16
+    square_1x1_geometry_left.vtu   square_1x1_geometry_left.vtu 1e-16
+    square_1x1_geometry_right.vtu  square_1x1_geometry_right.vtu 1e-16
+    square_1x1_geometry_bottom.vtu square_1x1_geometry_bottom.vtu 1e-16
+    square_1x1_geometry_top.vtu    square_1x1_geometry_top.vtu 1e-16
+)

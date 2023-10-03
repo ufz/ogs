@@ -45,9 +45,6 @@ public:
     /// destructor
     virtual ~BoundaryElementsOnSurface();
 
-    /// return the mesh object
-    MeshLib::Mesh const& getMesh() const {return _mesh;}
-
     /**
      * Deploying this method the user can get access to the underlying
      * GeoLib::Surface.
@@ -61,7 +58,6 @@ public:
     std::vector<MeshLib::Element*> const& getBoundaryElements() const {return _boundary_elements;}
 
 private:
-    MeshLib::Mesh const& _mesh;
     GeoLib::Surface const& _sfc;
     std::vector<MeshLib::Element*> _boundary_elements;
 };

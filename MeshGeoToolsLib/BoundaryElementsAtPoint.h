@@ -46,11 +46,6 @@ public:
 
     ~BoundaryElementsAtPoint();
 
-    MeshLib::Mesh const& getMesh() const
-    {
-        return _mesh;
-    }
-
     GeoLib::Point const& getPoint() const
     {
         return _point;
@@ -63,7 +58,6 @@ public:
     }
 
 private:
-    MeshLib::Mesh const& _mesh;
     GeoLib::Point const& _point;
     std::vector<MeshLib::Element*> _boundary_elements;
 };

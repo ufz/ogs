@@ -60,7 +60,7 @@ public:
     std::vector<MeshLib::Element*> const& getBoundaryElements(
         GeoLib::GeoObject const& geoObj, bool const multiple_nodes_allowed);
 
-    MeshLib::Mesh const& _mesh;
+    MeshLib::Mesh const& mesh;
 
 private:
     MeshNodeSearcher const& _mshNodeSearcher;
