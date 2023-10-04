@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="cuboid_1x1x1_hex_27_Dirichlet_Dirichlet.prj">
+    <add sel="/*/time_loop/output" pos="after">
+        <outputs>
+            <output>
+                <type>VTK</type>
+                <prefix>empty_output_timesteps_only_fixed_output_times_config_{:meshname}</prefix>
+                <suffix>_ts_{:timestep}_t_{:time}</suffix>
+                <fixed_output_times>
+                43200
+                </fixed_output_times>
+                <variables>
+                </variables>
+                <meshes>
+                    <mesh>cuboid_1x1x1_hex_27</mesh>
+                </meshes>
+            </output>
+            <output>
+                <type>VTK</type>
+                <prefix>empty_output_timesteps_and_empty_fixed_output_times_config_{:meshname}</prefix>
+                <suffix>_ts_{:timestep}_t_{:time}</suffix>
+                <variables>
+                </variables>
+                <meshes>
+                    <mesh>cuboid_1x1x1_hex_27</mesh>
+                </meshes>
+            </output>
+        </outputs>
+    </add>
+    <remove sel="/*/time_loop/processes/process/time_stepping/timesteps"/>
+    <add sel="/*/time_loop/processes/process/time_stepping/t_end" pos="after">
+                    <timesteps>
+                        <pair>
+                            <repeat>10</repeat>
+                            <delta_t>8640</delta_t>
+                        </pair>
+                    </timesteps>
+    </add>
+    <remove sel="/*/time_loop/output"/>
+    <add sel="/*/linear_solvers" pos="after">
+        <test_definition>
+            <vtkdiff>
+                <regex>empty_output_timesteps_only_fixed_output_times_config_cuboid_1x1x1_hex_27.*.vtu</regex>
+                <field>pressure</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>empty_output_timesteps_only_fixed_output_times_config_cuboid_1x1x1_hex_27.*.vtu</regex>
+                <field>v</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>empty_output_timesteps_only_fixed_output_times_config_cuboid_1x1x1_hex_27.*.vtu</regex>
+                <field>VolumetricFlowRate</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
+</OpenGeoSysProjectDiff>
