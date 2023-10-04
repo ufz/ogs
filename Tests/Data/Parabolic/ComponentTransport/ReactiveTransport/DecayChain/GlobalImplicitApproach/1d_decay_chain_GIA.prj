@@ -240,6 +240,7 @@
                 <variable>pressure</variable>
                 <variable>LiquidMassFlowRate</variable>
                 <variable>[Cm-247]FlowRate</variable>
+                <variable>[Am-243]FlowRate</variable>
                 <variable>[Pu-239]FlowRate</variable>
                 <variable>[U-235]FlowRate</variable>
                 <variable>[Pa-231]FlowRate</variable>
@@ -497,7 +498,7 @@
         </vtkdiff>
         <vtkdiff>
             <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
-            <field>[Cm-247]FlowRate</field>
+            <field>[Am-243]FlowRate</field>
             <absolute_tolerance>1e-10</absolute_tolerance>
             <relative_tolerance>1e-16</relative_tolerance>
         </vtkdiff>
