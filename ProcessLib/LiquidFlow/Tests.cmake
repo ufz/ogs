@@ -524,6 +524,7 @@ if(NOT OGS_USE_MPI)
     )
 
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Flux/3D/Hex/MultipleOutputsDifferentVariablesSections/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_multiple_outputs_different_variables.xml)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/Flux/3D/Hex/MultipleOutputsDifferentVariablesSections/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_empty_output_timesteps_only_fixed_output.xml)
 endif()
 
 AddTest(

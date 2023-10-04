@@ -57,6 +57,25 @@
                 <absolute_tolerance>1e-10</absolute_tolerance>
                 <relative_tolerance>1e-15</relative_tolerance>
             </vtkdiff>
+
+            <vtkdiff>
+                <regex>empty_output_timesteps_and_empty_fixed_output_times_config_cuboid_1x1x1_hex_27.*.vtu</regex>
+                <field>pressure</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>empty_output_timesteps_and_empty_fixed_output_times_config_cuboid_1x1x1_hex_27.*.vtu</regex>
+                <field>v</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>empty_output_timesteps_and_empty_fixed_output_times_config_cuboid_1x1x1_hex_27.*.vtu</regex>
+                <field>VolumetricFlowRate</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
         </test_definition>
     </add>
 </OpenGeoSysProjectDiff>
