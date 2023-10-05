@@ -183,8 +183,8 @@ bool isVoxelGrid(MeshLib::Mesh const& mesh)
         return false;
     }
     return true;
-}  // namespace
-}  // namespace
+}
+}  // namespace MeshToolsLib::MeshGenerator::AddFaultToVoxelGrid
 namespace MeshToolsLib::MeshGenerator::AddFaultToVoxelGrid
 {
 bool addFaultToVoxelGrid(MeshLib::Mesh* mesh,

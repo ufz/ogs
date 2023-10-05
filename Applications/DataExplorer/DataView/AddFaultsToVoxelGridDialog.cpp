@@ -19,20 +19,10 @@
 #include <string>
 
 #include "Base/OGSError.h"
+#include "Base/Utils.h"
 #include "MeshLib/Mesh.h"
 #include "MeshModel.h"
 #include "MeshToolsLib/MeshGenerators/AddFaultToVoxelGrid.h"
-
-namespace
-{
-std::vector<std::string> getSelectedObjects(QStringList const& list)
-{
-    std::vector<std::string> indexList;
-    std::transform(list.begin(), list.end(), std::back_inserter(indexList),
-                   [](auto const& index) { return index.toStdString(); });
-    return indexList;
-}
-}  // namespace
 
 QString no_voxel_str = "[No voxel grid available.]";
 
@@ -131,7 +121,7 @@ void AddFaultsToVoxelGridDialog::accept()
     }
 
     std::vector<std::string> const selected_faults =
-        getSelectedObjects(_selFaults.stringList());
+        Utils::getSelectedObjects(_selFaults.stringList());
 
     if (this->_selFaults.rowCount() == 0)
     {

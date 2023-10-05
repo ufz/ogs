@@ -1,5 +1,6 @@
 # Source files
 set(SOURCES
+    Utils.cpp
     OGSError.cpp
     QNonScalableGraphicsTextItem.cpp
     RecentFiles.cpp
@@ -14,6 +15,7 @@ set(SOURCES
 # Header files
 set(HEADERS
     LastSavedFileDirectory.h
+    Utils.h
     OGSError.h
     QNonScalableGraphicsTextItem.h
     TreeItem.h

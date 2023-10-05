@@ -16,23 +16,13 @@
 #include <QStringListModel>
 
 #include "Base/StrictDoubleValidator.h"
+#include "Base/Utils.h"
 #include "GeoLib/AABB.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshModel.h"
 #include "MeshToolsLib/MeshGenerators/VoxelGridFromLayeredMeshes.h"
-
-namespace
-{
-std::vector<std::string> getSelectedObjects(QStringList const& list)
-{
-    std::vector<std::string> indexList;
-    std::transform(list.begin(), list.end(), std::back_inserter(indexList),
-                   [](auto const& index) { return index.toStdString(); });
-    return indexList;
-}
-}  // namespace
 
 Layers2GridDialog::Layers2GridDialog(MeshModel& mesh_model, QDialog* parent)
     : QDialog(parent), _mesh_model(mesh_model)
@@ -127,7 +117,7 @@ void Layers2GridDialog::updateExpectedVoxel()
     }
 
     std::vector<std::string> layered_meshes =
-        getSelectedObjects(_layeredMeshes.stringList());
+        Utils::getSelectedObjects(_layeredMeshes.stringList());
     auto* const mesh_top = _mesh_model.getMesh(layered_meshes.front());
     auto* const mesh_bottom = _mesh_model.getMesh(layered_meshes.back());
     auto const& nodes_top = mesh_top->getNodes();
@@ -194,7 +184,7 @@ void Layers2GridDialog::accept()
     double const zinput = (zin.toDouble(&ok)) ? zin.toDouble() : xin.toDouble();
 
     std::vector<std::string> layered_meshes =
-        getSelectedObjects(_layeredMeshes.stringList());
+        Utils::getSelectedObjects(_layeredMeshes.stringList());
 
     std::vector<const MeshLib::Mesh*> layers;
     layers.reserve(layered_meshes.size());

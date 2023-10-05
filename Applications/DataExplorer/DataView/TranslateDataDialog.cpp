@@ -17,24 +17,13 @@
 #include <QStringList>
 
 #include "Base/StrictDoubleValidator.h"
+#include "Base/Utils.h"
 #include "GEOModels.h"
 #include "GeoLib/AABB.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshModel.h"
 #include "MeshToolsLib/MeshEditing/moveMeshNodes.h"
-
-namespace
-{
-std::vector<std::string> getSelectedObjects(
-    QStringList const& list)
-{
-    std::vector<std::string> indexList;
-    std::transform(list.begin(), list.end(), std::back_inserter(indexList),
-                   [](auto const& index) { return index.toStdString(); });
-    return indexList;
-}
-}  // namespace
 
 TranslateDataDialog::TranslateDataDialog(MeshModel* mesh_model,
                                          GEOModels* geo_models,
@@ -163,7 +152,7 @@ void TranslateDataDialog::accept()
          displacement[2]);
 
     std::vector<std::string> const selectedData =
-        getSelectedObjects(_selData.stringList());
+        Utils::getSelectedObjects(_selData.stringList());
 
     auto const geoNames = _geo_models->getGeometryNames();
 
