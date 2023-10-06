@@ -19,32 +19,23 @@
 
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
-#include "MathLib/LinAlg/EigenLis/EigenLisLinearSolver.h"
 
 using GlobalVector = MathLib::EigenVector;
 using GlobalMatrix = MathLib::EigenMatrix;
 
-using GlobalLinearSolver = MathLib::EigenLisLinearSolver;
-
 #elif defined(USE_PETSC)
-#include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
 
 using GlobalVector = MathLib::PETScVector;
 using GlobalMatrix = MathLib::PETScMatrix;
 
-using GlobalLinearSolver = MathLib::PETScLinearSolver;
-
 #else
-#include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
 
 using GlobalVector = MathLib::EigenVector;
 using GlobalMatrix = MathLib::EigenMatrix;
-
-using GlobalLinearSolver = MathLib::EigenLinearSolver;
 
 #endif
 
