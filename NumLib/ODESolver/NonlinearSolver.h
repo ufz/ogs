@@ -14,6 +14,7 @@
 #include <utility>
 
 #include "ConvergenceCriterion.h"
+#include "MathLib/LinAlg/GlobalLinearSolverType.h"
 #include "NonlinearSolverStatus.h"
 #include "NonlinearSystem.h"
 #include "Types.h"

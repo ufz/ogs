@@ -13,6 +13,7 @@
 #include <Eigen/Sparse>
 
 #include "MaterialLib/MPL/VariableType.h"
+#include "MathLib/LinAlg/GlobalLinearSolverType.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MeshLib/Mesh.h"
 
