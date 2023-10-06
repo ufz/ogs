@@ -71,15 +71,14 @@ struct IntegrationPointData final
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
 
-    double phi_fr = 0;
-    double phi_fr_prev;
+    double phi_fr = std::numeric_limits<double>::quiet_NaN();
+    double phi_fr_prev = std::numeric_limits<double>::quiet_NaN();
     double integration_weight;
 
     double porosity;
 
     void pushBackState()
     {
-        phi_fr_prev = phi_fr;
         eps0_prev = eps0;
         eps_prev = eps;
         eps_m_prev = eps_m;

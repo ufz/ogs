@@ -7,6 +7,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoHydroMechanics/ColumnDeformationFreezing/TM.prj RUNTIME 13)
     OgsTest(PROJECTFILE ThermoHydroMechanics/HeatingHomogeneousDomain/hex_THM.prj RUNTIME 30)
     OgsTest(PROJECTFILE ThermoHydroMechanics/9percentWaterFreezingExpansion/UnitSquare.prj RUNTIME 1)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow/WithFreezingPhase.prj RUNTIME 1)
 endif()
 
 AddTest(

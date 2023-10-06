@@ -389,7 +389,15 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                     vars, MaterialPropertyLib::Variable::temperature,
                     x_position, t, dt);
 
-        double const& phi_fr_prev = ip_data.phi_fr_prev;
+        double const phi_fr_prev = [&]()
+        {
+            MaterialPropertyLib::VariableArray vars_prev;
+            vars_prev.temperature = T_prev_int_pt;
+            return (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
+                .template value<double>(vars_prev, x_position, t, dt);
+        }();
+        ip_data.phi_fr_prev = phi_fr_prev;
+
         // alpha_T^I
         MathLib::KelvinVector::KelvinVectorType<
             DisplacementDim> const ice_linear_thermal_expansion_coefficient =
