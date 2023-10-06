@@ -15,7 +15,6 @@
 #include <numeric>
 
 #include "MathLib/LinAlg/LinAlg.h"
-#include "Process.h"
 
 namespace ProcessLib
 {
