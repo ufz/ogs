@@ -17,9 +17,7 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MeshLib/Utils/IntegrationPointWriter.h"
-#include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/ODESolver/ODESystem.h"
-#include "NumLib/ODESolver/TimeDiscretization.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryConditionCollection.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/SourceTermCollection.h"
@@ -47,9 +45,6 @@ class Process
 {
 public:
     PROCESSLIB_EXPORT static const std::string constant_one_parameter_name;
-
-    using NonlinearSolver = NumLib::NonlinearSolverBase;
-    using TimeDiscretization = NumLib::TimeDiscretization;
 
     Process(std::string name_,
             MeshLib::Mesh& mesh,
