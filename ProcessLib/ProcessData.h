@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "CoupledSolutionsForStaggeredScheme.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
 #include "NumLib/ODESolver/Types.h"
