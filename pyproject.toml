@@ -78,7 +78,6 @@ environment-pass = [
 # maybe this should be moved to CMake logic, i.e. disabling both features on win
 [tool.cibuildwheel.windows.config-settings]
 "cmake.define.OGS_USE_MFRONT" = "OFF"
-"cmake.define.OGS_BUILD_PROCESS_TH2M" = "OFF"
 # Generator needs to be set here, CMAKE_GENERATOR env var does not work.
 # Ninja generator does not select  the host64 compiler.
 "cmake.args" = "-G;Visual Studio 16 2019;--preset;wheel"
