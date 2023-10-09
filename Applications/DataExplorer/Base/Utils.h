@@ -8,11 +8,17 @@
  *
  */
 
+#include <QListView>
 #include <QStringList>
+#include <QStringListModel>
 #include <string>
 #include <vector>
 
 namespace Utils
 {
 std::vector<std::string> getSelectedObjects(QStringList const& list);
-}
+
+void moveSelectedItems(QListView* sourceView,
+                       QStringListModel& sourceModel,
+                       QStringListModel& targetModel);
+}  // namespace Utils

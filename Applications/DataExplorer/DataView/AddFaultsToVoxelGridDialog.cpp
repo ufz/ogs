@@ -68,32 +68,12 @@ AddFaultsToVoxelGridDialog::AddFaultsToVoxelGridDialog(MeshModel& mesh_model,
 
 void AddFaultsToVoxelGridDialog::on_selectDataButton_pressed()
 {
-    QModelIndexList const selected =
-        this->all2Dmeshes->selectionModel()->selectedIndexes();
-    QStringList list = _selFaults.stringList();
-
-    for (auto& index : selected)
-    {
-        list.append(index.data().toString());
-
-        _meshes2D.removeRow(index.row());
-    }
-    _selFaults.setStringList(list);
+    Utils::moveSelectedItems(this->all2Dmeshes, _meshes2D, _selFaults);
 }
 
 void AddFaultsToVoxelGridDialog::on_deselectDataButton_pressed()
 {
-    QModelIndexList selected =
-        this->selectedFaults->selectionModel()->selectedIndexes();
-    QStringList list = _meshes2D.stringList();
-
-    for (auto& index : selected)
-    {
-        list.append(index.data().toString());
-
-        _selFaults.removeRow(index.row());
-    }
-    _meshes2D.setStringList(list);
+    Utils::moveSelectedItems(this->selectedFaults, _selFaults, _meshes2D);
 }
 
 void AddFaultsToVoxelGridDialog::accept()

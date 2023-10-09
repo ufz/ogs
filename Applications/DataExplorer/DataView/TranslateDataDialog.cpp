@@ -63,32 +63,12 @@ TranslateDataDialog::TranslateDataDialog(MeshModel* mesh_model,
 
 void TranslateDataDialog::on_selectDataButton_pressed()
 {
-    QModelIndexList const selected =
-        this->allDataView->selectionModel()->selectedIndexes();
-    QStringList list = _selData.stringList();
-
-    for (auto& index : selected)
-    {
-        list.append(index.data().toString());
-
-        _allData.removeRow(index.row());
-    }
-    _selData.setStringList(list);
+    Utils::moveSelectedItems(this->allDataView, _allData, _selData);
 }
 
 void TranslateDataDialog::on_deselectDataButton_pressed()
 {
-    QModelIndexList selected =
-        this->selectedDataView->selectionModel()->selectedIndexes();
-    QStringList list = _allData.stringList();
-
-    for (auto& index : selected)
-    {
-        list.append(index.data().toString());
-
-        _selData.removeRow(index.row());
-    }
-    _allData.setStringList(list);
+    Utils::moveSelectedItems(this->selectedDataView, _selData, _allData);
 }
 
 void TranslateDataDialog::moveGeometry(Eigen::Vector3d const& displacement,
