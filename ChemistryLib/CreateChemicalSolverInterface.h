@@ -16,7 +16,7 @@
 #include <vector>
 
 #include "ChemicalSolverType.h"
-#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
+#include "MathLib/LinAlg/GlobalLinearSolverType.h"
 
 namespace BaseLib
 {

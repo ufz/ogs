@@ -21,6 +21,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
+#include "MathLib/LinAlg/GlobalLinearSolverType.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MathLib/LinAlg/MatrixSpecifications.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
