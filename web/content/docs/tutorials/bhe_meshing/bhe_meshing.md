@@ -24,7 +24,7 @@ image = "bhe3d1.png"
 
 This tutorial is made to illustrate the procedure of creating an OGS mesh file with Borehole Heat Exchangers (BHEs) in it.
 Such mesh uses prism elements for the soil part, and line elements for the BHEs.
-The produced mesh file is made explicitly for the HEAT_TRANSPORT_BHE module in OGS and will NOT work with other modules.
+The produced mesh file is made explicitly for the `HEAT_TRANSPORT_BHE` module in OGS and will NOT work with other modules.
 Please refer to the [documentation](https://www.opengeosys.org/docs/processes/heat-transport/heat_transport_bhe/) of the HEAT_TRANSPORT_BHE process for more details of the project file configuration.
 For a better understanding of the mesh needed for this process, the following snapshot illustrates a 3D model domain with several BHEs in it.
 ![1bhe1d.png](attachment:1bhe1d.png)
@@ -57,7 +57,7 @@ In this tutorial, we will use tags for all the borehole points so that we can id
 The first step is to create the surface 1 with all the necessary points.
 These points regulate the borehole locations, as well as the mesh size.
 Now we define the basic geometry of the BHEs, as well as the element sizes around them.
-For better optimal accuracy and better spatial discretizations, the mesh around the borehole point is designed according to relation (delta = alpha * bhe_radius) derived from Diersch et al. 2011 Part 2 (DOI:10.1016/j.cageo.2010.08.002)  where alpha = 6.134 for 6 surrounding nodes.
+For better optimal accuracy and better spatial discretizations, the mesh around the borehole point is designed according to relation (`delta = alpha * bhe_radius`) derived from Diersch et al. 2011 Part 2 (DOI: [10.1016/j.cageo.2010.08.002](https://doi.org/10.1016/j.cageo.2010.08.002)) where alpha = 6.134 for 6 surrounding nodes.
 
 ```python
 #environment variable for output path
@@ -194,13 +194,13 @@ for i in range(len(x)):
     d = d+1
 ```
 
-Now, the 'gmsh.model.geo.extrude' command extrudes the surface 1 along the z axis and automatically creates a new volume (as well as all the needed points, curves and surfaces). The function takes a vector of (dim, tag) pairs as input as well as the translation vector, and returns a vector of (dim, tag) pairs as output.
+Now, the `gmsh.model.geo.extrude` command extrudes the surface 1 along the z axis and automatically creates a new volume (as well as all the needed points, curves and surfaces). The function takes a vector of (dim, tag) pairs as input as well as the translation vector, and returns a vector of (dim, tag) pairs as output.
 
-The 2D mesh extrusion is done with the same 'extrude()' function, but by specifying element 'Layers' (Here, one layer each with 12 subdivisions with a total height of 120). The number of elements for each layer and the (end) height of each layer are specified in two vectors.
-The last (optional) argument for the extrude() function specifies whether the extruded mesh should be recombined or not.
-In this case, it is 'True' since we want to recombine and produce prism mesh elements.
+The 2D mesh extrusion is done with the same `extrude()` function, but by specifying element `Layers` (Here, one layer each with 12 subdivisions with a total height of 120). The number of elements for each layer and the (end) height of each layer are specified in two vectors.
+The last (optional) argument for the `extrude()` function specifies whether the extruded mesh should be recombined or not.
+In this case, it is `True` since we want to recombine and produce prism mesh elements.
 
-Later 'gmsh.model.addPhysicalGroup' command used to group elementary geometrical entities into more meaningful groups, e.g. to define some mathematical ("domain", "boundary"), functional ("left wing", "fuselage") or material ("steel", "carbon") properties. Gmsh will export in output files only mesh elements that belong to at least one physical group. Physical groups are also identified by tags, i.e. strictly positive integers, that should be unique per dimension (0D, 1D, 2D or 3D).
+Later `gmsh.model.addPhysicalGroup` command used to group elementary geometrical entities into more meaningful groups, e.g. to define some mathematical ("domain", "boundary"), functional ("left wing", "fuselage") or material ("steel", "carbon") properties. Gmsh will export in output files only mesh elements that belong to at least one physical group. Physical groups are also identified by tags, i.e. strictly positive integers, that should be unique per dimension (0D, 1D, 2D or 3D).
 
 ```python
 gmsh.model.geo.synchronize()
@@ -209,7 +209,7 @@ gmsh.model.addPhysicalGroup(3, [R[1][1]], 1)
 
 ```
 
-In this step, all bhe point will be extruded up to bhe_depth and each bhe line will be assigned unique physical group.
+In this step, all BHE points will be extruded up to `bhe_depth` and each BHE line will be assigned unique physical group.
 
 ```python
 k= 2
@@ -226,7 +226,7 @@ Meshes generated with Gmsh must be converted to VTU file format later. Currently
 gmsh.option.setNumber("Mesh.MshFileVersion", 2.2)
 ```
 
-Then We can then generate a 3D mesh and save it to disk
+We can then generate a 3D mesh and save it to disk
 
 ```python
 gmsh.model.mesh.generate(3)
@@ -236,7 +236,7 @@ gmsh.model.mesh.removeDuplicateNodes()
 gmsh.write(f"{out_dir}/{bhe_mesh_file_name}.msh")
 ```
 
-Launch the GUI to see the results. Later gmsh.finalize() will be called when done using GMSH Python API
+Launch the GUI to see the results. Later `gmsh.finalize()` will be called when done using Gmsh Python API
 
 ```python
 if '-nopopup' not in sys.argv:
@@ -281,9 +281,9 @@ else:
 ```
 
 Finally, the mesh file which has been created using the Python interface of Gmsh, will be converted to OGS mesh, in particular to VTU file format.
-Please, add the executable GMSH2OGS to the directory of this example file, or add the path to the OGS binary folder into the running environment.
-Here, option -v (--validation) validates the mesh and shows crucial information about the mesh.
-Option -i takes gmsh input file name as a string and -o is the output file name as a string as well
+Please, add the executable `GMSH2OGS` to the directory of this example file, or add the path to the OGS binary folder into the running environment.
+Here, option `-v` (`--validation`) validates the mesh and shows crucial information about the mesh.
+Option `-i` takes gmsh input file name as a string and `-o` is the output file name as a string as well
 
 ```python
 !GMSH2OGS -i {out_dir}/{bhe_mesh_file_name}.msh -o {out_dir}/{bhe_mesh_file_name}.vtu -v
