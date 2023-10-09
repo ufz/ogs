@@ -146,6 +146,7 @@
     <addaction name="actionMesh_Generation"/>
     <addaction name="actionCreate_a_voxelgrid"/>
     <addaction name="action3D_mesh_to_voxelgrid"/>
+    <addaction name="actionAdd_faults_to_voxelgrid"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menuMesh_Generation"/>
@@ -493,6 +494,11 @@
     <string>Create 3D Voxelgrid from 2D Layers...</string>
    </property>
   </action>
+  <action name="actionAdd_faults_to_voxelgrid">
+   <property name="text">
+    <string>Add faults to voxelgrid</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -796,6 +802,22 @@
    <signal>triggered()</signal>
    <receiver>MainWindowClass</receiver>
    <slot>showVtu2GridDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>372</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAdd_faults_to_voxelgrid</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindowClass</receiver>
+   <slot>showAddFaultsToVoxelGridDialog()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>

@@ -22,6 +22,7 @@
 #include "Base/OGSError.h"
 #include "Base/StrictDoubleValidator.h"
 #include "Base/StrictIntValidator.h"
+#include "Base/Utils.h"
 #include "GMSHPrefsDialog.h"
 #include "GeoLib/GEOObjects.h"
 
@@ -147,7 +148,7 @@ void GMSHPrefsDialog::accept()
     }
 
     std::vector<std::string> selectedObjects =
-        this->getSelectedObjects(_selGeo->stringList());
+        Utils::getSelectedObjects(_selGeo->stringList());
     unsigned max_number_of_points_in_quadtree_leaf(10);
     double mesh_density_scaling_pnts(0.5);
     double mesh_density_scaling_stations(0.05);
@@ -191,12 +192,4 @@ void GMSHPrefsDialog::accept()
 void GMSHPrefsDialog::reject()
 {
     this->done(QDialog::Rejected);
-}
-
-std::vector<std::string> GMSHPrefsDialog::getSelectedObjects(QStringList list)
-{
-    std::vector<std::string> indexList;
-    std::transform(list.begin(), list.end(), std::back_inserter(indexList),
-                   [](auto const& index) { return index.toStdString(); });
-    return indexList;
 }

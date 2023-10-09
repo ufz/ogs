@@ -17,24 +17,13 @@
 #include <QStringList>
 
 #include "Base/StrictDoubleValidator.h"
+#include "Base/Utils.h"
 #include "GEOModels.h"
 #include "GeoLib/AABB.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshModel.h"
 #include "MeshToolsLib/MeshEditing/moveMeshNodes.h"
-
-namespace
-{
-std::vector<std::string> getSelectedObjects(
-    QStringList const& list)
-{
-    std::vector<std::string> indexList;
-    std::transform(list.begin(), list.end(), std::back_inserter(indexList),
-                   [](auto const& index) { return index.toStdString(); });
-    return indexList;
-}
-}  // namespace
 
 TranslateDataDialog::TranslateDataDialog(MeshModel* mesh_model,
                                          GEOModels* geo_models,
@@ -74,32 +63,12 @@ TranslateDataDialog::TranslateDataDialog(MeshModel* mesh_model,
 
 void TranslateDataDialog::on_selectDataButton_pressed()
 {
-    QModelIndexList const selected =
-        this->allDataView->selectionModel()->selectedIndexes();
-    QStringList list = _selData.stringList();
-
-    for (auto& index : selected)
-    {
-        list.append(index.data().toString());
-
-        _allData.removeRow(index.row());
-    }
-    _selData.setStringList(list);
+    Utils::moveSelectedItems(this->allDataView, _allData, _selData);
 }
 
 void TranslateDataDialog::on_deselectDataButton_pressed()
 {
-    QModelIndexList selected =
-        this->selectedDataView->selectionModel()->selectedIndexes();
-    QStringList list = _allData.stringList();
-
-    for (auto& index : selected)
-    {
-        list.append(index.data().toString());
-
-        _selData.removeRow(index.row());
-    }
-    _allData.setStringList(list);
+    Utils::moveSelectedItems(this->selectedDataView, _selData, _allData);
 }
 
 void TranslateDataDialog::moveGeometry(Eigen::Vector3d const& displacement,
@@ -163,7 +132,7 @@ void TranslateDataDialog::accept()
          displacement[2]);
 
     std::vector<std::string> const selectedData =
-        getSelectedObjects(_selData.stringList());
+        Utils::getSelectedObjects(_selData.stringList());
 
     auto const geoNames = _geo_models->getGeometryNames();
 

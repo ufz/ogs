@@ -67,6 +67,7 @@
 #include "MeshToolsLib/convertMeshToGeo.h"
 
 // Dialogs
+#include "DataView/AddFaultsToVoxelGridDialog.h"
 #include "DataView/CreateStructuredGridDialog.h"
 #include "DataView/DataExplorerSettingsDialog.h"
 #include "DataView/DiagramView/DiagramPrefsDialog.h"
@@ -1363,6 +1364,15 @@ void MainWindow::showLayers2GridDialog()
 
     auto dlg = Layers2GridDialog(*_meshModel);
     dlg.exec();
+}
+
+void MainWindow::showAddFaultsToVoxelGridDialog()
+{
+    if (_meshModel == nullptr)
+    {
+        OGSError::box("The given mesh model does not exist.");
+    }
+    AddFaultsToVoxelGridDialog(*_meshModel).exec();
 }
 
 void MainWindow::showVtu2GridDialog()
