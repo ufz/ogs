@@ -16,6 +16,12 @@ target = 'static'
 [[module.mounts]]
 source = 'dist'
 target = 'static'
+[[module.mounts]]
+source = '../../build/release/web/content'
+target = 'content'
+[[module.mounts]]
+source = '../../build/release-petsc/web/content'
+target = 'content'
 
 [markup.goldmark.renderer]
 unsafe = true
