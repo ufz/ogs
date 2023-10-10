@@ -19,7 +19,7 @@ def save_to_website(exec_notebook_file, web_path):
     output_path = "docs/benchmarks"
     notebook = nbformat.read(exec_notebook_file, as_version=4)
     first_cell = notebook.cells[0]
-    if jupytext:
+    if is_jupytext:
         output_path = str(Path(exec_notebook_file).parent.parent)
     elif first_cell.cell_type == "raw":
         lines = first_cell.source.splitlines()
@@ -91,9 +91,9 @@ success = True
 
 for notebook_file_path in args.notebooks:
     notebook_success = True
-    juyptext = False
+    is_jupytext = False
     if Path(notebook_file_path).suffix in [".md", ".py"]:
-        juyptext = True
+        is_jupytext = True
     notebook_file_path_relative = (
         Path(notebook_file_path).absolute().relative_to(ogs_source_path)
     )
@@ -110,13 +110,13 @@ for notebook_file_path in args.notebooks:
         os.environ["OGS_TESTRUNNER_OUT_DIR"] = notebook_output_path
         notebook_filename = os.path.basename(notebook_file_path)
         convert_notebook_file = notebook_output_path
-        if not jupytext:
+        if not is_jupytext:
             convert_notebook_file = os.path.join(
                 convert_notebook_file, Path(notebook_filename).stem
             )
         convert_notebook_file += ".ipynb"
 
-        if juyptext:
+        if is_jupytext:
             nb = jupytext.read(notebook_file_path)
             convert_notebook_file = convert_notebook_file.replace("notebook-", "")
             jupytext.write(nb, convert_notebook_file)
@@ -166,7 +166,7 @@ for notebook_file_path in args.notebooks:
             # Modify metadata
             meta_cell = nb["cells"][0]
             if meta_cell.cell_type == "raw":
-                if jupytext:
+                if is_jupytext:
                     meta_cell.source = meta_cell.source.replace(
                         "---\n", "---\nnotebook: True\n", 1
                     )
@@ -181,7 +181,7 @@ for notebook_file_path in args.notebooks:
         <img style="margin-top: 0; margin-bottom: 0; height: 2em;" class="inline-block mr-2 no-fancybox"
             src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" alt="">
         This page is based on a Jupyter notebook."""
-            if jupytext:
+            if is_jupytext:
                 download_file_name = (
                     Path(convert_notebook_file)
                     .rename(Path(convert_notebook_file).with_suffix(".ipynb"))
