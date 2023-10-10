@@ -214,7 +214,6 @@ gmsh.option.setNumber("Mesh.MshFileVersion", 2.2)
 
 We can then generate a 3D mesh and save it to disk
 
-<!-- vale off -->
 ```python
 gmsh.model.mesh.generate(3)
 
@@ -222,7 +221,6 @@ gmsh.model.mesh.removeDuplicateNodes()
 
 gmsh.write(f"{out_dir}/{bhe_mesh_file_name}.msh")
 ```
-<!-- vale on -->
 
 Launch the GUI to see the results. Later `gmsh.finalize()` will be called when done using Gmsh Python API
 
@@ -272,7 +270,7 @@ print("Material ID", Material_ID)
 Finally, the mesh file which has been created using the Python interface of Gmsh, will be converted to OGS mesh, in particular to VTU file format.
 Please, add the executable `GMSH2OGS` to the directory of this example file, or add the path to the OGS binary folder into the running environment.
 Here, option `-v` (`--validation`) validates the mesh and shows crucial information about the mesh.
-Option `-i` takes gmsh input file name as a string and `-o` is the output file name as a string as well
+Option `-i` takes Gmsh input file name as a string and `-o` is the output file name as a string as well
 
 ```python
 !GMSH2OGS -i {out_dir}/{bhe_mesh_file_name}.msh -o {out_dir}/{bhe_mesh_file_name}.vtu -v
