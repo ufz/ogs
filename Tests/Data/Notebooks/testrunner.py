@@ -19,7 +19,9 @@ def save_to_website(exec_notebook_file, web_path):
     output_path = "docs/benchmarks"
     notebook = nbformat.read(exec_notebook_file, as_version=4)
     first_cell = notebook.cells[0]
-    if first_cell.cell_type == "raw":
+    if jupytext:
+        output_path = str(Path(exec_notebook_file).parent.parent)
+    elif first_cell.cell_type == "raw":
         lines = first_cell.source.splitlines()
         last_line = lines[-1]
         if "<!--eofm-->" not in last_line:
@@ -89,7 +91,9 @@ success = True
 
 for notebook_file_path in args.notebooks:
     notebook_success = True
-    convert_notebook_file = notebook_file_path
+    juyptext = False
+    if Path(notebook_file_path).suffix in [".md", ".py"]:
+        juyptext = True
     notebook_file_path_relative = (
         Path(notebook_file_path).absolute().relative_to(ogs_source_path)
     )
@@ -105,13 +109,16 @@ for notebook_file_path in args.notebooks:
         os.makedirs(notebook_output_path, exist_ok=True)
         os.environ["OGS_TESTRUNNER_OUT_DIR"] = notebook_output_path
         notebook_filename = os.path.basename(notebook_file_path)
-        convert_notebook_file = os.path.join(
-            notebook_output_path, Path(notebook_filename).stem
-        )
+        convert_notebook_file = notebook_output_path
+        if not jupytext:
+            convert_notebook_file = os.path.join(
+                convert_notebook_file, Path(notebook_filename).stem
+            )
         convert_notebook_file += ".ipynb"
 
-        if Path(notebook_file_path).suffix == ".md":
+        if juyptext:
             nb = jupytext.read(notebook_file_path)
+            convert_notebook_file = convert_notebook_file.replace("notebook-", "")
         else:
             with open(notebook_file_path, mode="r", encoding="utf-8") as f:
                 nb = nbformat.read(f, as_version=4)
@@ -173,7 +180,12 @@ for notebook_file_path in args.notebooks:
             """
             meta_cell = nb["cells"][0]
             if meta_cell.cell_type == "raw":
-                meta_cell.source = f"notebook = true\n{meta_cell.source}"
+                if jupytext:
+                    meta_cell.source = meta_cell.source.replace(
+                        "---\n", "---\nnotebook: True\n", 1
+                    )
+                else:
+                    meta_cell.source = f"notebook = true\n{meta_cell.source}"
             nb["cells"].insert(1, nbformat.v4.new_markdown_cell(text))
             nbformat.write(nb, f)
 
