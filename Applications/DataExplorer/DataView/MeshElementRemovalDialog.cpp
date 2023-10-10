@@ -145,7 +145,8 @@ void MeshElementRemovalDialog::accept()
         std::vector<Eigen::Vector3d, Eigen::aligned_allocator<Eigen::Vector3d>>
             extent{minAABB, maxAABB};
         const GeoLib::AABB updated_aabb(extent.begin(), extent.end());
-        ex.searchByBoundingBox(updated_aabb);
+        ex.searchByBoundingBox(updated_aabb,
+                               this->invertBoundingBoxCheckBox->isChecked());
         anything_checked = true;
     }
 
@@ -234,6 +235,7 @@ void MeshElementRemovalDialog::on_insideButton_toggled(bool /*is_checked*/)
 
 void MeshElementRemovalDialog::on_boundingBoxCheckBox_toggled(bool is_checked)
 {
+    this->invertBoundingBoxCheckBox->setEnabled(is_checked);
     this->xMinEdit->setEnabled(is_checked);
     this->xMaxEdit->setEnabled(is_checked);
     this->yMinEdit->setEnabled(is_checked);
@@ -258,6 +260,23 @@ void MeshElementRemovalDialog::on_boundingBoxCheckBox_toggled(bool is_checked)
         this->zMinEdit->setText(QString::number(minAABB[2], 'f'));
         this->zMaxEdit->setText(QString::number(maxAABB[2], 'f'));
         aabb_edits.fill(false);
+    }
+}
+
+void MeshElementRemovalDialog::on_invertBoundingBoxCheckBox_toggled(
+    bool is_checked)
+{
+    if (is_checked == true)
+    {
+        this->xOutsideLabel->setText("X between");
+        this->yOutsideLabel->setText("Y between");
+        this->zOutsideLabel->setText("Z between");
+    }
+    else
+    {
+        this->xOutsideLabel->setText("X outside of");
+        this->yOutsideLabel->setText("Y outside of");
+        this->zOutsideLabel->setText("Z outside of");
     }
 }
 
