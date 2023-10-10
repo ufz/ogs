@@ -5,6 +5,10 @@ buildDrafts = false
 buildFuture = true
 enableGitInfo = true
 staticDir = ["dist", "static"]
+[module]
+[[module.mounts]]
+excludeFiles = '**/notebook-*.md'
+source = 'content'
 
 [markup.goldmark.renderer]
 unsafe = true
