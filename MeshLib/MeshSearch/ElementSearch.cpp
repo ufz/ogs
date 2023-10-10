@@ -49,16 +49,18 @@ std::size_t ElementSearch::searchByContent(double eps)
     return matchedIDs.size();
 }
 
-std::size_t ElementSearch::searchByBoundingBox(GeoLib::AABB const& aabb)
+std::size_t ElementSearch::searchByBoundingBox(GeoLib::AABB const& aabb,
+                                               bool invert)
 {
     auto matchedIDs = filter(
         _mesh.getElements(),
-        [&aabb](MeshLib::Element const* e)
+        [&aabb, invert](MeshLib::Element const* e)
         {
             // any node of element is in aabb.
             return ranges::any_of(
                 e->nodes() | ranges::views::take(e->getNumberOfBaseNodes()),
-                [&aabb](auto const* n) { return aabb.containsPoint(*n, 0); });
+                [&aabb, invert](auto const* n)
+                { return (aabb.containsPoint(*n, 0) != invert); });
         });
 
     this->updateUnion(matchedIDs);

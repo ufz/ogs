@@ -122,8 +122,11 @@ public:
     /// Marks all elements with a volume smaller than eps.
     std::size_t searchByContent(double eps = std::numeric_limits<double>::epsilon());
 
-    /// Marks all elements with at least one node outside the bounding box spanned by x1 and x2;
-    std::size_t searchByBoundingBox(GeoLib::AABB const& aabb);
+    /// Marks all elements with at least one node outside the bounding box AABB.
+    /// If the invert-flag is set, all elements with at least one node inside
+    /// AABB are marked instead.
+    std::size_t searchByBoundingBox(GeoLib::AABB const& aabb,
+                                    bool invert = false);
 
     /// Marks all elements connecting to any of the given nodes
     std::size_t searchByNodeIDs(const std::vector<std::size_t>& nodes);
