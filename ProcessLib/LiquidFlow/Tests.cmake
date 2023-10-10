@@ -611,7 +611,7 @@ if(NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC/cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_3.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/FunctionParameterTest.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/BlockingConductingFracture/block_conduct_frac.prj)
-    NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/BlockingConductingFracture/LiquidFlow.ipynb RUNTIME 6)
+    NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/BlockingConductingFracture/BlockingConductingFracture.ipynb RUNTIME 6)
 endif()
 
 # inclined mesh
