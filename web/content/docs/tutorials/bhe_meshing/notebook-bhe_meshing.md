@@ -1,5 +1,5 @@
 ---
-title: "Tutorial of Creating OpenGeoSys Mesh with Borehole Heat Exchangers"
+title: "Creating Mesh with integrated Borehole Heat Exchangers"
 date: "2023-10-03"
 author: "Joy Brato Shil, Haibing Shao"
 ---
@@ -14,7 +14,7 @@ For a better understanding of the mesh needed for this process, the following sn
 
 This tutorial contains two files,
 
-- [bhe_meshing.md](./bhe_meshing.md): This tutorial itself.
+- <a href="./bhe_meshing.ipynb" download="bhe_meshing.ipynb">bhe_meshing.ipynb</a>: This tutorial itself.
 - [bhe_coordinates.xlsx](./bhe_coordinates.xlsx) :The spreadsheet file containing parameters of the BHEs.
 
 First, we import external packages, including Gmsh.
@@ -214,6 +214,7 @@ gmsh.option.setNumber("Mesh.MshFileVersion", 2.2)
 
 We can then generate a 3D mesh and save it to disk
 
+<!-- vale off -->
 ```python
 gmsh.model.mesh.generate(3)
 
@@ -221,6 +222,7 @@ gmsh.model.mesh.removeDuplicateNodes()
 
 gmsh.write(f"{out_dir}/{bhe_mesh_file_name}.msh")
 ```
+<!-- vale on -->
 
 Launch the GUI to see the results. Later `gmsh.finalize()` will be called when done using Gmsh Python API
 
