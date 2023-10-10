@@ -73,11 +73,15 @@ repos:
         language: system
         pass_filenames: false
         files: \.(h|cpp)$
+  - repo: https://github.com/errata-ai/vale
+    rev: v2.24.4
+    hooks:
       - id: vale
-        name: Check spelling with vale
-        entry: bash -c 'if command -v vale &> /dev/null; then vale sync; VALE_MIN_ALERT_LEVEL=error scripts/ci/helper/run-vale; else exit 0; fi'
+        name: vale sync
         pass_filenames: false
-        language: system
+        args: [sync]
+      - id: vale
+        args: [--output=line, --minAlertLevel=error]
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: "v0.0.262"
     hooks:
