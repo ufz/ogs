@@ -4,11 +4,18 @@ theme = "ogs"
 buildDrafts = false
 buildFuture = true
 enableGitInfo = true
-staticDir = ["dist", "static"]
+
 [module]
 [[module.mounts]]
 excludeFiles = '**/notebook-*.md'
 source = 'content'
+target = 'content'
+[[module.mounts]]
+source = 'static'
+target = 'static'
+[[module.mounts]]
+source = 'dist'
+target = 'static'
 
 [markup.goldmark.renderer]
 unsafe = true
