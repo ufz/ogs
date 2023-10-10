@@ -36,6 +36,7 @@ def save_to_website(exec_notebook_file, web_path):
                 "'web_subsection'!"
             )
         output_path = os.path.join(output_path, parsed_frontmatter["web_subsection"])
+        output_path = Path(build_dir) / (Path("web/content") / Path(output_path))
     else:
         print(
             f"Warning: {exec_notebook_file} does not contain a RAW cell as its first "
@@ -87,6 +88,7 @@ ogs_source_path = os.path.abspath(os.path.join(testrunner_script_path, "../../..
 if "OGS_DATA_DIR" not in os.environ:
     os.environ["OGS_DATA_DIR"] = os.path.join(ogs_source_path, "Tests/Data")
 os.makedirs(args.out, exist_ok=True)
+build_dir = Path(args.out).parent.parent
 success = True
 
 for notebook_file_path in args.notebooks:
