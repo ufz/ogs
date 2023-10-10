@@ -36,12 +36,13 @@ struct MaterialForcesInterface
 template <int DisplacementDim, typename ShapeFunction,
           typename ShapeMatricesType, typename NodalForceVectorType,
           typename NodalDisplacementVectorType, typename GradientVectorType,
-          typename GradientMatrixType, typename IPData,
+          typename GradientMatrixType, typename IPData, typename StressData,
           typename IntegrationMethod>
 std::vector<double> const& getMaterialForces(
     std::vector<double> const& local_x, std::vector<double>& nodal_values,
     IntegrationMethod const& _integration_method, IPData const& _ip_data,
-    MeshLib::Element const& element, bool const is_axially_symmetric)
+    StressData const& stress_data, MeshLib::Element const& element,
+    bool const is_axially_symmetric)
 {
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -52,7 +53,7 @@ std::vector<double> const& getMaterialForces(
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& sigma = _ip_data[ip].sigma;
+        auto const& sigma = stress_data[ip].stress_data.sigma;
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
 

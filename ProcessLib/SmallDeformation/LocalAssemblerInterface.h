@@ -12,6 +12,8 @@
 
 #include <vector>
 
+#include "ConstitutiveRelations/ConstitutiveData.h"
+#include "ConstitutiveRelations/ConstitutiveSetting.h"
 #include "ConstitutiveRelations/MaterialState.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
@@ -54,25 +56,16 @@ struct SmallDeformationLocalAssemblerInterface
             material_states_.emplace_back(
                 solid_material_.createMaterialStateVariables());
         }
+
+        current_states_.resize(n_integration_points);
+        prev_states_.resize(n_integration_points);
+        output_data_.resize(n_integration_points);
     }
     virtual std::size_t setIPDataInitialConditions(
         std::string const& name, double const* values,
         int const integration_order) = 0;
 
     virtual std::vector<double> const& getIntPtFreeEnergyDensity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> getSigma() const = 0;
-    virtual std::vector<double> const& getIntPtSigma(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilon(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
@@ -110,17 +103,35 @@ struct SmallDeformationLocalAssemblerInterface
         return *material_states_[integration_point].material_state_variables;
     }
 
+    static auto getReflectionDataForOutput()
+    {
+        using Self = SmallDeformationLocalAssemblerInterface<DisplacementDim>;
+
+        return ProcessLib::Reflection::reflectWithoutName(
+            &Self::current_states_, &Self::output_data_);
+    }
+
 protected:
     SmallDeformationProcessData<DisplacementDim>& process_data_;
 
     // Material state is special, because it contains both the current and the
     // old state.
     std::vector<MaterialStateData<DisplacementDim>> material_states_;
+    std::vector<typename ConstitutiveRelations::StatefulData<DisplacementDim>>
+        current_states_;  // TODO maybe do not store but rather re-evaluate for
+                          // state update
+    std::vector<
+        typename ConstitutiveRelations::StatefulDataPrev<DisplacementDim>>
+        prev_states_;
+    std::vector<typename ConstitutiveRelations::OutputData<DisplacementDim>>
+        output_data_;
 
     NumLib::GenericIntegrationMethod const& integration_method_;
     MeshLib::Element const& element_;
     bool const is_axially_symmetric_;
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material_;
+    typename ConstitutiveRelations::ConstitutiveSetting<DisplacementDim>
+        constitutive_setting;
 };
 
 }  // namespace SmallDeformation
