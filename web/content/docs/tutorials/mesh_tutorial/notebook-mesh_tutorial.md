@@ -13,7 +13,7 @@ In this tutorial the user will learn to use some of the tools provided with Open
 ## Requirements
 
 Running version of OpenGeoSys.  
-Can be pip installed, container or CLI with utils.  
+Can be pip installed, container or CLI with utilities.  
 It is assumed, that regardless of how OGS is installed, it is added to the environment variables and is accessible from CLI (command line interface).  
 In case of a problem, please consult [installation](https://www.opengeosys.org/docs/userguide/basics/introduction/) and [troubleshooting](https://www.opengeosys.org/docs/userguide/troubleshooting/get-support/).
 
@@ -21,7 +21,7 @@ For viewing a mesh with PyVista, Python is required.
 To run the Jupyter notebook that accompanies this tutorial, the Python environment with Jupyter, PyVista, NumPy and Matplotlib packages is needed.  
 Note: this tutorial doesn't cover Python.  
 The user is expected to have basic understanding of it.  
-Alternatively, other tools capable of reading mesh files can be used (for example: [Paraview](https://www.paraview.org/)).  
+Alternatively, other tools capable of reading mesh files can be used (for example: [ParaView](https://www.paraview.org/)).  
 
 Basic understanding of meshes would make following this tutorial easier but is not required.
 
@@ -40,7 +40,7 @@ Next, users can verify their understanding with a couple of exercises.
 
 At the end, answers will be provided for the exercises with explanations.
 
-`!` is used to run shell commands from within the jupyter notebook.
+`!` is used to run shell commands from within the Jupyter notebook.
 
 ## Jupyter notebook  
 
@@ -185,7 +185,7 @@ The complete command can be written as follows:
 generateStructuredMesh -e quad -o out/quads.vtu --lx 3 --ly 4 --nx 4 --ny 5
 ```  
 
-The created mesh can be viewed with any software supporting vtu file format and should look as in the following figure.
+The created mesh can be viewed with any software supporting `.vtu`-file format and should look as in the following figure.
 
 Let's create the mesh with the above command and visualize it:
 
