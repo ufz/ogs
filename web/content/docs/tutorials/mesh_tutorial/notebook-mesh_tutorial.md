@@ -1,24 +1,10 @@
----
-jupyter:
-  jupytext:
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.15.2
-  kernelspec:
-    display_name: Python 3 (ipykernel)
-    language: python
-    name: python3
----
-
-<!-- #raw -->
++++
 date = "2018-02-27T11:00:13+01:00"
 title = "Mesh Tutorial"
 author = "Christoph Lehmann, Feliks Kiszkurno, Frieder Loer"
 weight = 2
-<!--eofm-->
-<!-- #endraw -->
++++
+
 
 ## Goals
 
@@ -52,7 +38,7 @@ This doesn't apply to code snippets, there the parameters will be written explic
 
 Next, users can verify their understanding with a couple of exercises.  
 
-At the end, answers will be provided for the exercises with explanations.    
+At the end, answers will be provided for the exercises with explanations.
 
 `!` is used to run shell commands from within the jupyter notebook.
 
@@ -60,9 +46,9 @@ At the end, answers will be provided for the exercises with explanations.
 
 This tutorial will be available in the following Jupyter notebook.
 
-# 1 Learn tools 
+## 1 Learn tools
 
-## Outline  
+### Outline  
 
 In this step you will get familiar with basic tools used for working with meshes, that are provided as part of the OpenGeoSys platform:
 
@@ -71,7 +57,7 @@ In this step you will get familiar with basic tools used for working with meshes
 * [ExtractBoundary](/docs/tools/meshing-submeshes/extract-boundary/)
 * [removeMeshElements](/docs/tools/meshing/remove-mesh-elements/)
 
-## Useful links  
+### Useful links  
 
 It is not mandatory to read the following articles before starting with the tutorial, but they can provide some expansion and additional explanation to the content presented here.
 
@@ -81,12 +67,7 @@ It is not mandatory to read the following articles before starting with the tuto
 * [Removing mesh elements](/docs/tools/meshing/remove-mesh-elements/)
 * [PyVista documentation](https://docs.pyvista.org/)
 
-
-
-
-
-We first set an output directory and import some required libraries. This tutorial uses PyVista for visualization of the meshes. 
-
+We first set an output directory and import some required libraries. This tutorial uses PyVista for visualization of the meshes.
 
 ```python
 import os
@@ -112,26 +93,18 @@ import numpy as np
 
 def show_mesh(mesh):
     plotter = pv.Plotter()
-    
     plotter.add_mesh(mesh, show_edges=True)
-    
     plotter.view_xy()
     plotter.add_axes()
     plotter.show_bounds(mesh, xtitle="x", ytitle="y")
-    
     plotter.window_size = [800, 400]
-    
     plotter.show()
-    
+
 def show_mesh_3D(mesh):
     plotter = pv.Plotter()
-    
     plotter.add_mesh(mesh, show_edges=True)
-    
     plotter.add_axes()
-    
     plotter.window_size = [800, 400]
-    
     plotter.show()
 
 def show_cell_sizes_x(mesh):
@@ -153,12 +126,9 @@ def show_cell_sizes_x(mesh):
     ax.set_yscale("log")
 ```
 
-## Structured mesh generation
+### Structured mesh generation
 
 You can start by checking the version of the generateStructuredMesh tool, it will test whether your OpenGeoSys is correctly installed and available:
-
-
-
 
 ```python
 ! generateStructuredMesh --version
@@ -172,7 +142,6 @@ This command should deliver the following output:
 generateStructuredMesh  version: - some version -
 ```
 
-
 <!-- #endregion -->
 
 You can view basic documentation using this command:
@@ -183,7 +152,7 @@ assert _exit_code == 0
 ```
 
 <!-- #region -->
-## Quadrilateral mesh
+### Quadrilateral mesh
 
 In this step a simple rectangular mesh of size 3 by 4 units, with 4 and 5 cells respectively will be created and written to a `quad.vtu` file in folder `output`.  
 Please follow the folder and file names provided in each step, as some files will be reused later.  
@@ -231,7 +200,7 @@ show_mesh(mesh)
 ```
 
 <!-- #region -->
-## Triangle mesh
+### Triangle mesh
 
 In this step a mesh using triangular cells will be created.  
 The size and number of cells will remain the same as in previous example.  
@@ -244,7 +213,6 @@ generateStructuredMesh -e quad -o out/quads.vtu --lx 3 --ly 4 --nx 4 --ny 5
 ```  
 
 after changing element type `quad` to `tri` and file name `quad.vtu` to `triangle.vtu`:
-
 
 <!-- #endregion -->
 
@@ -260,15 +228,13 @@ mesh = pv.read("out/triangle.vtu")
 show_mesh(mesh)
 ```
 
-## Shifting the reference point of the mesh
+### Shifting the reference point of the mesh
 
 By adding parameter `--o$direction $value`, the reference point of the created mesh can be shifted.  
 
-In this example, the mesh from the step [Quadrilateral mesh](#Quadrilateral-mesh), will be created again but with the reference point shifted from (0,0) to (2,5) (in (x,y) format).  
+In this example, the mesh from the step [Quadrilateral mesh](#quadrilateral-mesh), will be created again but with the reference point shifted from (0,0) to (2,5) (in (x,y) format).  
 
 In order to do this, the final command from that step will be expanded by `--ox 2 --oy 5`:
-
-
 
 ```python
 ! generateStructuredMesh -e quad -o out/quads.vtu --lx 3 --ly 4 --nx 4 --ny 5 --ox 2 --oy 5
@@ -282,10 +248,9 @@ mesh = pv.read("out/quads.vtu")
 show_mesh(mesh)
 ```
 
-Compare the values on X and Y axis with the ones in the figure in step [Quadrilateral mesh](#Quadrilateral-mesh).
+Compare the values on X and Y axis with the ones in the figure in step [Quadrilateral mesh](#quadrilateral-mesh).
 
-
-## Quadrilateral graded mesh with automatically computed cell sizes  
+### Quadrilateral graded mesh with automatically computed cell sizes  
 
 In this step a quadrilateral mesh with size of 7 in x-direction and 4 in y-direction (10 and 5 cells respectively) will be created.  
 However, this time an additional parameter will be passed.  
@@ -311,14 +276,12 @@ mesh = pv.read("out/quads_graded.vtu")
 show_mesh(mesh)
 ```
 
-## Quadrilateral graded mesh with automatically computed cell sizes with given initial cell size
+### Quadrilateral graded mesh with automatically computed cell sizes with given initial cell size
 
 The command from previous step can be expanded with parameter `--d$direction0 $value` to define initial cell size, alongside `$direction` (x, y, or z).  
 Let's say that the initial cell size is 1.  
 For this case following parameter should be appended: `--dx0 1`.  
 Expanded command from previous step:
-
-
 
 ```python
 ! generateStructuredMesh -e quad -o out/quads_graded_init_size.vtu --lx 7 --ly 4 --ny 5 \
@@ -335,7 +298,7 @@ mesh = pv.read("out/quads_graded_init_size.vtu")
 show_mesh(mesh)
 ```
 
-## Quadrilateral graded mesh with automatically computed cell sizes with given initial cell size and maximum cell size
+### Quadrilateral graded mesh with automatically computed cell sizes with given initial cell size and maximum cell size
 
 In many cases it may be useful to set a maximal cell size.
 That can be achieved via the `--d$direction-max $value` parameter.
@@ -358,15 +321,13 @@ mesh = pv.read("out/quads_graded_max_size.vtu")
 show_mesh(mesh)
 ```
 
-## Structured mesh in 3D
+### Structured mesh in 3D
 
 In previous examples only 2D meshes were created.  
 `createStructuredMesh` is capable of creating 3D meshes, too.
 
 In order to create one, the element type has to be changed to a 3D one and parameters `--lz` and `--nz` need to be passed additionally.  
 In 3D, the quadrilateral element type has to be replaced by hexahedral one.
-
-
 
 ```python
 ! generateStructuredMesh -e hex -o out/hexes.vtu --lx 7 --ly 4 --lz 3 --nx 10 --ny 5 --nz 3
@@ -385,13 +346,13 @@ plotter.add_axes()
 plotter.show()
 ```
 
-## Surface extraction
+### Surface extraction
 
 The following was mainly taken from https://www.opengeosys.org/docs/tools/meshing-submeshes/submeshes/  
 
 For Finite Element simulations, we need to specify subdomains e.g. for boundary conditions.  
 One possibility is to precompute the subdomains as meshes by extracting them from our domain.  
-This way the subdomains additionally contain information to identify the corresponding bulk mesh enities like nodes, elements, and faces of elements.
+This way the subdomains additionally contain information to identify the corresponding bulk mesh entities like nodes, elements, and faces of elements.
 
 We can extract subdomains using the OGS tool [ExtractSurface](https://www.opengeosys.org/docs/tools/meshing-submeshes/extract-surface/).  
 Type `! ExtractBoundary --help` for a basic documentation.
@@ -401,7 +362,7 @@ Type `! ExtractBoundary --help` for a basic documentation.
 assert _exit_code == 0
 ```
 
-### In 2D
+#### In 2D
 
 We start with extracting the boundary of a 2D mesh.  
 Let's remind ourselves of the mesh by visualizing it once more.
@@ -412,7 +373,7 @@ show_mesh(mesh)
 ```
 
 From above we can see the required arguments for using the `ExtractBoundary` tool.  
-We pass in the mesh to extract the boundary from `quads.vtu` and save the boundary to `quads_boundary.vtu`. 
+We pass in the mesh to extract the boundary from `quads.vtu` and save the boundary to `quads_boundary.vtu`.
 
 ```python
 ! ExtractBoundary -i "out/quads.vtu" -o "out/quads_boundary.vtu"
@@ -426,10 +387,9 @@ boundary_mesh = pv.read("out/quads_boundary.vtu")
 show_mesh(boundary_mesh)
 ```
 
-As shown above, the boundary of a 2D mesh is just a set of lines. 
+As shown above, the boundary of a 2D mesh is just a set of lines.
 
-
-### In 3D
+#### In 3D
 
 We can use the same command to extract the boundary of a 3D mesh.
 
@@ -446,13 +406,11 @@ boundary_mesh = pv.read("out/hexes_boundary.vtu")
 show_mesh_3D(boundary_mesh.shrink(0.8))
 ```
 
-## Mesh clipping
+### Mesh clipping
 
 The tool `removeMeshElements` removes those elements from a given input mesh that fulfill a user specified criterion.  
 The resulting mesh will be written to the specified output file.  
 Type `! removeMeshElements --help` for a basic documentation.
-
-
 
 ```python
 ! removeMeshElements --help
@@ -466,8 +424,6 @@ The user can choose between 4 different removal criteria:
 3. Remove elements that have zero volume.  
 4. Remove elements by axis aligned bounding box criterion.  
 
-
-
 Let's load the boundary mesh that we have extracted in the last step:
 
 ```python
@@ -478,7 +434,7 @@ xmin, xmax, ymin, ymax, zmin, zmax = boundary_mesh.bounds
 boundary_mesh.bounds
 ```
 
-We remove all mesh elements except for the ones at the minimum z-value i.e. the plane at the minimum z-value. 
+We remove all mesh elements except for the ones at the minimum z-value i.e. the plane at the minimum z-value.
 
 ```python
 ! removeMeshElements -i "out/hexes_boundary.vtu" -o "out/hexes_zmin.vtu" --z-min {zmin + 1e-8}
@@ -487,7 +443,7 @@ mesh = pv.read("out/hexes_zmin.vtu")
 show_mesh_3D(mesh.shrink(0.8))
 ```
 
-We can also remove all other bounding planes and plot them. 
+We can also remove all other bounding planes and plot them.
 
 ```python
 ! removeMeshElements -i "out/hexes_boundary.vtu" -o "out/hexes_zmax.vtu" --z-max {zmax - 1e-8}
@@ -515,13 +471,11 @@ plotter.window_size = [800,400]
 plotter.show()
 ```
 
-## Next step
+### Next step
 
 If you are comfortable with the use of the tools discussed on this page, please proceed to the Exercises.
 
-
 ## Exercises
-
 
 ### Exercise 1
 
@@ -531,18 +485,15 @@ The mesh shall be 3 units wide and 4 units tall.
 Its origin shall be at (5, 1).  
 The result can be visualized with `show_mesh()`.
 
-
-```python
+<!-- markdownlint-disable code-fence-style -->
+~~~python
 # Put your solution here
 
-```
-
-```python
 # Visualize your result
 mesh_name = "" # Put your mesh name inside the ""
 mesh = pv.read(f"out/{mesh_name}")
 show_mesh(mesh)
-```
+~~~
 
 <!-- #region -->
 ### Exercise 2
@@ -556,24 +507,22 @@ Consider the mesh from the beginning of the previous step:
 Remove all elements from this mesh that are not at the mesh boundary.
 <!-- #endregion -->
 
-```python
+~~~python
 # Put your solution here
-```
 
-```python
+
 # Visualize your result
 mesh_name = "" # Put your mesh name inside the brackets
 mesh = pv.read(f"out/{mesh_name}")
 show_mesh(mesh)
-```
+~~~
+<!-- markdownlint-enable code-fence-style -->
 
 ## Next Step
 
-Once all exercises are completed, or if any of them is challenging, the solutions and their explanations can be found in section [Solutions](#Solutions).
-
+Once all exercises are completed, or if any of them is challenging, the solutions and their explanations can be found in section [Solutions](#solutions).
 
 ## Solutions
-
 
 ### Exercise 1
 
@@ -602,7 +551,6 @@ show_mesh(mesh)
 
 ## Which data do the created meshes contain?
 
-
 ## Bulk mesh
 
 ```python
@@ -614,8 +562,7 @@ mesh
 ```
 
 From the above cell's output we see that 'N Arrays == 0'.  
-This means there is no data contained. 
-
+This means there is no data contained.
 
 ## Boundary mesh
 
