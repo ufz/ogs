@@ -1,26 +1,12 @@
----
-jupyter:
-  jupytext:
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.14.5
-  kernelspec:
-    display_name: Python 3 (ipykernel)
-    language: python
-    name: python3
----
-
-<!-- #raw -->
++++
 title = "Linear elasticity: disc with hole"
 date = "2022-04-27"
 author = "Linda Günther, Sophia Einspänner, Robert Habel, Christoph Lehmann and Thomas Nagel"
 web_subsection = "small-deformations"
-<!--eofm-->
-<!-- #endraw -->
++++
 
-|<div style="width:330px"><img src="https://www.ufz.de/static/custom/weblayout/DefaultInternetLayout/img/logos/ufz_transparent_de_blue.png" width="300"/></div>|<div style="width:330px"><img src="https://discourse.opengeosys.org/uploads/default/original/1X/a288c27cc8f73e6830ad98b8729637a260ce3490.png" width="300"/></div>|<div style="width:330px"><img src="https://tubaf.org/_nuxt/img/logo_de.c04ca6f.svg" width="300"/></div>|
+
+|<div style="width:330px"><img src="https://www.ufz.de/static/custom/weblayout/DefaultInternetLayout/img/logos/ufz_transparent_de_blue.png" width="300"/></div>|<div style="width:330px"><img src="https://discourse.opengeosys.org/uploads/default/original/1X/a288c27cc8f73e6830ad98b8729637a260ce3490.png" width="300"/></div>|<div style="width:330px"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/TUBAF_Logo.svg" width="300"/></div>|
 |---|---|--:|
 
 In this benchmark example we consider a linear elastic small deformation problem. More specifically, a plate with a central hole that is put under tension on its top boundary is simulated. By exploiting symmetries, below we evaluate this problem just for the top right quarter of this disc.
@@ -119,7 +105,7 @@ def kirsch_sig_rt(sig, r, theta, a):
 
 ### Stress distribution along the $x$-axis ($\theta= -90°$, orthogonal to the load)
 
-At larger distances from the hole the stresses are approximately distibuted as if the plate had no hole ($\sigma_{rr} \equiv \sigma_{xx} \approx 0$, $\sigma_{r\theta} \equiv \sigma_{xy} = 0$, $\sigma_{\theta\theta} \equiv \sigma_{yy} = 10\,\text{kPa}$).
+At larger distances from the hole the stresses are approximately distributed as if the plate had no hole ($\sigma_{rr} \equiv \sigma_{xx} \approx 0$, $\sigma_{r\theta} \equiv \sigma_{xy} = 0$, $\sigma_{\theta\theta} \equiv \sigma_{yy} = 10\,\text{kPa}$).
 As the hole is approached, the tangential stress increases until it reaches its maximum value directly at the contour.
 Interestingly, that value is three times as high as the applied traction. It can be concluded that the hole leads to a **threefold stress concentration**.
 
@@ -244,7 +230,7 @@ $$
 
 For the simulation of the numerical model, some assumptions have to be made:
 
-* The analytical solution is stricty correct only for an infinitely extended plate.
+* The analytical solution is strictly correct only for an infinitely extended plate.
     This requirement can only be approximated in the numerical method. The dimensions of the considered plate must be much larger than the hole. With a hole diameter of $4\, \text{cm}$ and a size of $20\times20\, \text{cm}$ the plate can be considered as infinitely extended. Indeed, a general rule implied that the range of borders should be about five times the size of the cavity.
 * For numerical simulations, it is necessary to specify the mesh resolution with which the model is calculated. A finer mesh provides more detailed gradients but takes more time for calculation, whereas a coarser mesh yields less accurate values, but in a shorter time.
 * Another assumption that enables us to work with a two-dimensional plate model is the plain strain condition. That means that deformations only occur in one plane.

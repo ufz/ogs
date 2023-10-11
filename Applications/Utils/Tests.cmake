@@ -1403,3 +1403,9 @@ AddTest(
     square_1x1_geometry_bottom.vtu square_1x1_geometry_bottom.vtu 1e-16
     square_1x1_geometry_top.vtu    square_1x1_geometry_top.vtu 1e-16
 )
+
+if(NOT OGS_USE_PETSC)
+    NotebookTest(NOTEBOOKFILE ../../web/content/docs/tutorials/bhe_meshing/notebook-bhe_meshing.md
+                 PYTHON_PACKAGES openpyxl
+                 RUNTIME 10)
+endif()

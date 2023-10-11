@@ -4,8 +4,8 @@ ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends clang-format git gcc g++ python3-pip wget xz-utils \
+    && apt-get install -y --no-install-recommends clang-format git gcc g++ golang python3-pip wget xz-utils \
     && rm -rf /var/lib/apt/lists/*
-RUN pip install pre-commit==2.20.0
+RUN pip install pre-commit==3.4.0
 
 RUN ln -s /usr/bin/python3 /usr/bin/python

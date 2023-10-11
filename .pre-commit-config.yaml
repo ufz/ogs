@@ -38,7 +38,7 @@ repos:
     rev: v2.2.2
     hooks:
       - id: codespell
-        exclude: 'ThirdParty/.*|Tests/Data/.*|.*\.ya?ml|.*\.bib|^web/content/imprint.md|^GeoLib/IO/XmlIO/OpenGeoSysSTN.xsd|^Applications/FileIO/Legacy/OGSIOVer4.cpp|^scripts/cmake/CPM.cmake|Documentation/.vale/.*'
+        exclude: 'ThirdParty/.*|Tests/Data/.*|.*\.ya?ml|.*\.bib|^web/content/imprint.md|^GeoLib/IO/XmlIO/OpenGeoSysSTN.xsd|^Applications/FileIO/Legacy/OGSIOVer4.cpp|^scripts/cmake/CPM.cmake|Documentation/.vale/.*|.*\.ipynb|.*\.svg'
   - repo: https://github.com/cheshirekow/cmake-format-precommit
     rev: v0.6.13
     hooks:
@@ -73,11 +73,15 @@ repos:
         language: system
         pass_filenames: false
         files: \.(h|cpp)$
+  - repo: https://github.com/errata-ai/vale
+    rev: v2.24.4
+    hooks:
       - id: vale
-        name: Check spelling with vale
-        entry: bash -c 'if command -v vale &> /dev/null; then vale sync; VALE_MIN_ALERT_LEVEL=error scripts/ci/helper/run-vale; else exit 0; fi'
+        name: vale sync
         pass_filenames: false
-        language: system
+        args: [sync]
+      - id: vale
+        args: [--output=line, --minAlertLevel=error]
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: "v0.0.262"
     hooks:

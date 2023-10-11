@@ -7,7 +7,7 @@ function(NotebookTest)
 
     set(options DISABLED SKIP_WEB)
     set(oneValueArgs NOTEBOOKFILE RUNTIME)
-    set(multiValueArgs WRAPPER RESOURCE_LOCK PROPERTIES LABELS)
+    set(multiValueArgs WRAPPER RESOURCE_LOCK PROPERTIES LABELS PYTHON_PACKAGES)
     cmake_parse_arguments(
         NotebookTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
     )
@@ -63,6 +63,26 @@ function(NotebookTest)
     endif()
     list(APPEND _exe_args ${NotebookTest_SOURCE_DIR}/${NotebookTest_NAME})
 
+    if(NotebookTest_PYTHON_PACKAGES)
+        list(APPEND labels python_modules)
+        if(OGS_USE_PIP)
+            # Info has to be passed by global property because it is not
+            # possible to set cache variables from inside a function.
+            set_property(
+                GLOBAL APPEND PROPERTY AddTest_PYTHON_PACKAGES
+                                       ${NotebookTest_PYTHON_PACKAGES}
+            )
+        else()
+            message(
+                STATUS
+                    "Warning: Benchmark ${NotebookTest_NAME} requires these "
+                    "Python packages: ${NotebookTest_PYTHON_PACKAGES}!\n Make sure to "
+                    "have them installed in your current Python environment OR "
+                    "set OGS_USE_PIP=ON!"
+            )
+        endif()
+    endif()
+
     add_test(
         NAME ${TEST_NAME}
         COMMAND
@@ -84,9 +104,14 @@ function(NotebookTest)
         list(APPEND labels default)
     endif()
 
-    list(APPEND _props ENVIRONMENT_MODIFICATION
-         PATH=path_list_prepend:$<TARGET_FILE_DIR:ogs>
-         ${NotebookTest_PROPERTIES}
+    list(
+        APPEND
+        _props
+        ENVIRONMENT_MODIFICATION
+        PATH=path_list_prepend:$<TARGET_FILE_DIR:ogs>
+        ${NotebookTest_PROPERTIES}
+        ENVIRONMENT
+        CI=1
     )
 
     set_tests_properties(
