@@ -31,7 +31,7 @@ struct ConstitutiveModels
     }
 
     SolidMechanicsModel<DisplacementDim> s_mech_model;
-    SolidDensityModel<DisplacementDim> rho_S_model;
+    SolidDensityModel rho_S_model;
     GravityModel<DisplacementDim> grav_model;
 };
 }  // namespace ConstitutiveRelations

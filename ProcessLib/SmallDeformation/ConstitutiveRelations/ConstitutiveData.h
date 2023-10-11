@@ -75,7 +75,7 @@ template <int DisplacementDim>
 struct ConstitutiveTempData
 {
     PrevState<StrainData<DisplacementDim>> eps_data_prev;
-    SolidDensityData rho_S_data;
+    SolidDensity rho_SR;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::SmallDeformation

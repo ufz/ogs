@@ -35,7 +35,7 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     eps_data.eps = eps;
     auto& eps_data_prev = tmp.eps_data_prev;
     eps_data_prev->eps = eps_prev;
-    auto& rho_S_data = tmp.rho_S_data;
+    auto& rho_SR = tmp.rho_SR;
 
     auto& s_mech_data = cd.s_mech_data;
     auto& grav_data = cd.grav_data;
@@ -50,10 +50,10 @@ void ConstitutiveSetting<DisplacementDim>::eval(
                              s_mech_data);
 
     assertEvalArgsUnique(models.rho_S_model);
-    models.rho_S_model.eval(x_t, media_data, T_data, rho_S_data);
+    models.rho_S_model.eval(x_t, media_data, T_data, rho_SR);
 
     assertEvalArgsUnique(models.grav_model);
-    models.grav_model.eval(rho_S_data, grav_data);
+    models.grav_model.eval(rho_SR, grav_data);
 }
 
 template struct ConstitutiveSetting<2>;

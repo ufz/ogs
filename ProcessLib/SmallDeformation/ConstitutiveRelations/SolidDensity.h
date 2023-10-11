@@ -10,22 +10,16 @@
 #pragma once
 
 #include "Base.h"
+#include "BaseLib/StrongType.h"
 
 namespace ProcessLib::SmallDeformation
 {
-struct SolidDensityData
-{
-    double rho_SR;
-};
+using SolidDensity = BaseLib::StrongType<double, struct SolidDensityTag>;
 
-template <int DisplacementDim>
 struct SolidDensityModel
 {
     void eval(SpaceTimeData const& x_t, MediaData const& media_data,
               TemperatureData<DisplacementDim> const& T_data,
-              SolidDensityData& out) const;
+              SolidDensity& out) const;
 };
-
-extern template struct SolidDensityModel<2>;
-extern template struct SolidDensityModel<3>;
 }  // namespace ProcessLib::SmallDeformation

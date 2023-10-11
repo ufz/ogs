@@ -28,7 +28,7 @@ struct GravityModel
     {
     }
 
-    void eval(SolidDensityData const& rho_S_data,
+    void eval(SolidDensity const& rho_SR,
               GravityData<DisplacementDim>& out) const;
 
 private:
