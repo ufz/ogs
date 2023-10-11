@@ -10,6 +10,7 @@ image = "figures/results_comparision_sce1.png"
 $$\require{mhchem}$$
 
 ## Overview
+
 The present numerical work is motivated by the CO2LPIE project (shortened as CL-experiment) [1], which is an in-situ experiment that is being conducted at the Mont Terri
 rock laboratory.
 In the experiment, carbon dioxide ($\ce{CO2}$) is injected into the Opalinus Clay leading to changes in its hydraulic, mechanical and chemical properties.
@@ -20,7 +21,6 @@ In the first scenario, the pure $\ce{CO2}$ gas induced Calcite dissolution is si
 A comprehensive information regarding the computational procedure of OGS6-IPhreeqc can be found in Lu et al. [3].
 In the second scenario, the simulation considers a more accurate representation of chemical environments based on the CL Project.
 This includes the incorporation of primary minerals typically found in Opalinus Clay and the relevant composition of species present in the pore water.
-
 
 ## Scenario #1: Kinetics of $\ce{CO2}$ induced calcite dissolution
 
@@ -54,7 +54,6 @@ The Fig. 1 depicts the comparison between the computed results obtained from the
 good agreement with each other.
 Preparation of the simulation and results evaluation are presented in what follows.
 
-
 ### 1) Solve the numerical model
 
 ```python
@@ -65,7 +64,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import time
 ```
-
 
 ```python
 out_dir = os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out")
@@ -287,7 +285,7 @@ ax.legend(loc="best", fontsize=11)
 
 Fig. 2:  L2 relative difference norm between the obtained results from OGS-6 and PHREEQC for the scenario with the PWP rate.
 
-<!-- #region -->
+
 ## Scenario #2: Modelling of the $\ce{CO2}$ injection into Opalinus Clay
 
 ### Model description
@@ -323,7 +321,6 @@ where $a$ denotes the activity of the ion, and $\mathrm{SR}$ is the abbreviation
 In the simulation, the main species composition within the Opalinus Clay pore water are considered and the corresponding values are listed in table 2, following the
 work of Wersin et al. [8].
 
-
 | Minerals     |    Volume fraction [-]  | Molar volume in [$\mathrm{m^3/mol}$] | Molality in [$\mathrm{mol/kgw}$]      |
 |:--------------:|:-------------------------:|:--------------------------------------:|:---------------------------------------:|
 | Calcite      | 0.06375                 | 3.6934e-5                            | 11.507                                |
@@ -332,7 +329,6 @@ work of Wersin et al. [8].
 | Kaolinite    | 0.204                   | 9.935e-5                             | 13.689                                |
 
 Table 1: Parameter of the Opalinus Clay minerals used in the modeling
-
 
 | Species | Value in [mol/kgw]      |
 |:---------:|:-------------------------:|
@@ -364,15 +360,13 @@ When the SR value of calcite and dolomite reaches 1, the dissolution process of 
 
 **Note:**
 The scenario #2 is not directly calculated in the notebook due to the lack of the large input file `llnl.dat` database in the commit. Also the post-processing of the scenario #2 is similar to which is showed in the scenario #1.
-<!-- #endregion -->
+
 
 ![Figure 3](figures/results_cl_comparision_sce2.png)
 Fig. 3: a) evolution of the calcium and magnesium molality during the $\ce{CO2}$ injection; b) L2 relative difference norm between the results computed by OGS-6 and PHREEQC.
 
-
 ![Figure 4](figures/results_disso_SR.png)
 Fig. 4: Evolution of the dissoluted minearals molality and the related saturation ratio of calcite and dolomite over the time.
-
 
 ## Literature
 
@@ -398,4 +392,3 @@ kinetics for application to geochemical modeling.
 [8] Wersin, P., Mazurek, M., and Gimmi, T. (2022). Porewater chemistry of Opalinus Clay revisited:
 Findings from 25 years of data collection at the Mont Terri Rock Laboratory. Applied Geochemistry,
 138(November 2021):105234. URL: https://doi.org/10.1016/j.apgeochem.2022.105234.
-
