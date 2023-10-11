@@ -76,45 +76,32 @@ These notebooks are part of the regular CI testing. Please try to keep the noteb
 
 ### Create a new notebook
 
-Create a new notebook file in `Tests/Data` (either as regular `.ipynb`-files or as Markdown-based notebooks via [Jupytext](https://jupytext.readthedocs.io/en/latest)). See examples:
+Create a new notebook file in `Tests/Data` (if it should appear in the benchmark gallery) or in `web/content/docs` (e.g. for tutorials). Create it as a regular Markdown-file with Python code blocks. The notebook execution and conversion is done via [Jupytext](https://jupytext.readthedocs.io/en/latest). See examples:
 
-- [SimpleMechanics.ipynb](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Mechanics/Linear/SimpleMechanics.ipynb) (regular `.ipynb`-notebook)
-- [Linear_Disc_with_hole.md](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.md) (Jupytext-based notebook in Markdown)
+- [Linear_Disc_with_hole.md](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.md) (Jupytext-based benchmark notebook in Markdown)
+- [notebook-bhe_meshing.md](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/web/content/docs/tutorials/bhe_meshing/notebook-bhe_meshing.md) (Jupytext-based tutorial notebook in Markdown)
+- [SimpleMechanics.ipynb](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Mechanics/Linear/SimpleMechanics.ipynb) (regular `.ipynb`-notebook are also possible but Markdown-based notebooks are preferred)
 
 ### Add web meta information
 
 If the notebook result should appear as a page on the web documentation a frontmatter with some meta information (similar to [regular web pages]({{< ref "web-docs.md" >}})) is required as the first cell in the notebook:
 
-- Add a new cell and move it to the first position in the notebook
-- Change the cell type to `raw`!
-- Add meta information, conclude with a end-of-file marker (`<!--eofm-->`) e.g.:
-
-  ```md
-  title = "SimplePETSc"
-  date = "2021-11-09"
-  author = "Lars Bilke"
-  image = "optional_gallery_image.png"
-  web_subsection = "small-deformations"
-  <!--eofm-->
-  ```
-
-`web_subsection` needs to be set to a sub-folder in [web/content/docs/benchmarks](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/web/content/docs/benchmarks) (if not set the notebook page will not be linked from navigation bar / benchmark gallery on the web page).
-
-<div class='note'>
-
-In Jupytext-based notebooks you can add the frontmatter within the `<!-- #raw -->`- and `<!-- #endraw -->`-markers:
-
-```md
-<!-- #raw -->
-title = "Linear elasticity: disc with hole"
-date = "2022-04-27"
-author = "Linda Günther, Sophia Einspänner, Robert Habel, Christoph Lehmann and Thomas Nagel"
-web_subsection = "small-deformations"
-<!--eofm-->
-<!-- #endraw -->
+```markdown
++++
+title = "SimplePETSc"
+date = "2021-11-09"
+author = "Lars Bilke"
+image = "optional_gallery_image.png"
+web_subsection = "small-deformations" # required for notebooks in Tests/Data only
++++
+  <-- Add Two newlines here to separate -->
+  <-- the frontmatter as its own cell   -->
 ```
 
-</div>
+- Frontmatter needs to be in [TOML](https://toml.io)-format.
+- For notebooks describing benchmarks `web_subsection` needs to be set to a sub-folder in [web/content/docs/benchmarks](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/web/content/docs/benchmarks) (if not set the notebook page will not be linked from navigation bar / benchmark gallery on the web page).
+- If you edit a Markdown-based notebook with Jupyter and the Jupytext extension please don't add the two newlines but make sure that the frontmatter has its own cell (not mixed with markdown content).
+- For (deprecated) `.ipynb`-based notebooks the frontmatter has to given as a `raw`-cell containing a special `<!--eofm-->`-marker. See existing notebooks (e.g. [SimpleMechanics.ipynb](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Mechanics/Linear/SimpleMechanics.ipynb)) for reference.
 
 ### Notebook setup
 
@@ -178,8 +165,17 @@ Add the notebook to CTest ([example](https://gitlab.opengeosys.org/ogs/ogs/-/blo
 ```cmake
 if(NOT OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.ipynb RUNTIME 10)
+
+    # Notebooks in web/content need to be prefixed with 'notebook-'!
+    NotebookTest(NOTEBOOKFILE ../../web/content/docs/tutorials/bhe_meshing/notebook-bhe_meshing.md
+                 PYTHON_PACKAGES openpyxl
+                 RUNTIME 10)
 endif()
 ```
+
+- `NOTEBOOKFILE` is relative to `Tests/Data`.
+- If your notebook requires additional dependencies add them with `PYTHON_PACKAGES`.
+- If the notebook is in `web/content` it is important to prefix the notebook file name with `notebook-`! The prefix is required to indicate Hugo that this is a notebook and not a regular markdown page.
 
 <div class='note'>
 
