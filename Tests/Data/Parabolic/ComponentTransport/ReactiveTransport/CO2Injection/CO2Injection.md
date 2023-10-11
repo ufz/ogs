@@ -17,8 +17,8 @@ In the experiment, carbon dioxide ($\ce{CO2}$) is injected into the Opalinus Cla
 In general, these processes are of great interest in the evaluation of barrier integrity.
 
 Two scenarios are considered in this benchmark.
-In the first scenario, the pure $\ce{CO2}$ gas induced Calcite dissolution is simulated by OGS6-IPhreeqc and the results are verified with the related PHREEQC example presented by Appelo and Postma [2].
-A comprehensive information regarding the computational procedure of OGS6-IPhreeqc can be found in Lu et al. [3].
+In the first scenario, the pure $\ce{CO2}$ gas induced Calcite dissolution is simulated by OGS-6-IPhreeqc and the results are verified with the related PHREEQC example presented by Appelo and Postma [2].
+A comprehensive information regarding the computational procedure of OGS-6-IPhreeqc can be found in Lu et al. [3].
 In the second scenario, the simulation considers a more accurate representation of chemical environments based on the CL Project.
 This includes the incorporation of primary minerals typically found in Opalinus Clay and the relevant composition of species present in the pore water.
 
@@ -39,7 +39,7 @@ Two kinetic rates are adopted to describe the calcite dissolution.
 The first approach involves a simplified rate calculation derived directly from the current concentration of calcium,
 employing the following formula: $\text{rate} = 10^{-6.91} - 10^{-1.52} * (c_{\ce{Ca}})^2$, with $c_{\ce{Ca}}$ in $\mathrm{mol/kgw}$.
 And another one is the well known PWP rate, which is proposed by Plummer, Wigley and Parkhurst (denoted further as “PWP”) in 1978 for calcite dissolution based on three dissolution reactions [4].
-The formulae of the PWP approach is available to be found in the PHREEQC database e.g. phreeqc.dat.
+The formulae of the PWP approach is available to be found in the PHREEQC database e.g. `phreeqc.dat`.
 In the numerical experiment, the total simulation time is 30 000 $\mathrm{s}$.
 Details about the case study is described in the example 5.9 from Appelo and Postma [2].
 The related PHREEQC script is available online to be found [5].
@@ -47,10 +47,10 @@ The related PHREEQC script is available online to be found [5].
 ### Model and results
 
 A simple 1D line-element model with one element is constructed in this work.
-The coupled Hydraulic-Chemical (HC) Process is adopted for the OGS6-IPhreeqc simulation.
+The coupled Hydraulic-Chemical (HC) Process is adopted for the OGS-6-IPhreeqc simulation.
 To match the PHREEQC example, the advection and diffusion have been set to zero in the modelling.
 The initial conditions and chemical parameters are provided as outlined in the associated example.
-The Fig. 1 depicts the comparison between the computed results obtained from the OGS6-IPhreeqc model and the results derived from PHREEQC, which shows a very
+The Fig. 1 depicts the comparison between the computed results obtained from the OGS-6-IPhreeqc model and the results derived from PHREEQC, which shows a very
 good agreement with each other.
 Preparation of the simulation and results evaluation are presented in what follows.
 
@@ -111,11 +111,9 @@ else:
 ### Read OGS-6 simulation results
 
 # simple
-# pvdfile_simple = vtuIO.PVDIO("./sce1_results_simple/calcite_simple.pvd", dim=1)
 pvdfile_simple = vtuIO.PVDIO(f"{out_dir}/calcite_simple.pvd", dim=1)
 
 # pwp
-# pvdfile_pwp = vtuIO.PVDIO("./sce1_results_pwp/calcite_pwp.pvd", dim=1)
 pvdfile_pwp = vtuIO.PVDIO(f"{out_dir}/calcite_pwp.pvd", dim=1)
 
 # Read PHREEQC results
@@ -277,7 +275,7 @@ ax.set_xticks(np.arange(0, 30001, 5000))
 ax.set_ylim([-5, 0])
 ax.set_xlabel("Time [s]")
 ax.set_ylabel(
-    r"Log($\frac{|| \mathbf{c}^\mathrm{OGS6} - \mathbf{c}^{\mathrm{PHREEQC}}||_{2}}{\mathbf{c}^{\mathrm{PHREEQC}}}$)"
+    r"Log($\frac{|| \mathbf{c}^\mathrm{OGS-6} - \mathbf{c}^{\mathrm{PHREEQC}}||_{2}}{\mathbf{c}^{\mathrm{PHREEQC}}}$)"
 )
 ax.grid(color="gray", linestyle="dashed")
 ax.legend(loc="best", fontsize=11)
@@ -285,18 +283,17 @@ ax.legend(loc="best", fontsize=11)
 
 Fig. 2:  L2 relative difference norm between the obtained results from OGS-6 and PHREEQC for the scenario with the PWP rate.
 
-
 ## Scenario #2: Modelling of the $\ce{CO2}$ injection into Opalinus Clay
 
 ### Model description
 
-The identical 1D line-element model as in scenario #1 is used in the OGS6-IPhreeqc simulation.
+The identical 1D line-element model as in scenario #1 is used in the OGS-6-IPhreeqc simulation.
 In the model, the initial porosity is set to 0.15. Similarly to the scenario #1, hydraulic advection and diffusion are excluded from the simulation.
 In this case, chemical environments based on the CL-experiment are considered.
 For the porous medium in the OGS-6 model, in terms of the solid component, the following mineral composition is assumed in this work: 36% illite, 24% kaolinite, 7.5% calcite and 2.5% dolomite-dis (namely sedimentary (disordered) dolomite).
 The remaining 30% of the mineral is mostly quartz and is not considered in this simulation scenario.
 A more detailed description of the mineral composition of Opalinus Clay can be found in the work of Thury [6].
-In OGS6-IPhreeqc, the molar amount of each reactive solid component per kilogram of water ${b_m}$ [$\mathrm{mol/kgw}$] is calculated by
+In OGS-6-IPhreeqc, the molar amount of each reactive solid component per kilogram of water ${b_m}$ [$\mathrm{mol/kgw}$] is calculated by
 
 $$ {b_m} = \frac{\phi_m}{\rho^{l}\phi V_m},$$
 
@@ -361,14 +358,15 @@ When the SR value of calcite and dolomite reaches 1, the dissolution process of 
 **Note:**
 The scenario #2 is not directly calculated in the notebook due to the lack of the large input file `llnl.dat` database in the commit. Also the post-processing of the scenario #2 is similar to which is showed in the scenario #1.
 
-
 ![Figure 3](figures/results_cl_comparision_sce2.png)
 Fig. 3: a) evolution of the calcium and magnesium molality during the $\ce{CO2}$ injection; b) L2 relative difference norm between the results computed by OGS-6 and PHREEQC.
 
 ![Figure 4](figures/results_disso_SR.png)
-Fig. 4: Evolution of the dissoluted minearals molality and the related saturation ratio of calcite and dolomite over the time.
+Fig. 4: Evolution of the dissoluted minerals molality and the related saturation ratio of calcite and dolomite over the time.
 
 ## Literature
+
+<!-- vale off -->
 
 [1] BGR, CO2LPIE project, 2023. URL: [https://www.bgr.bund.de/DE/Themen/Endlagerung/Projekte/Wirtsgesteine_geotechnische_Barrieren/laufend/Nur-Deutsch/mont_terri_experimente.html?nn=1542156](https://www.bgr.bund.de/DE/Themen/Endlagerung/Projekte/Wirtsgesteine_geotechnische_Barrieren/laufend/Nur-Deutsch/mont_terri_experimente.html?nn=1542156).
 

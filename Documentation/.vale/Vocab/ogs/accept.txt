@@ -1,7 +1,9 @@
+[Ff]rontmatter
 Alcolea
 Algolia
 Aluminol
 Alves
+Appelo
 Atteia
 Autolinks
 BC[s?]
@@ -40,7 +42,6 @@ fmt
 Forchheimer
 Fortran
 Francesco
-[Ff]rontmatter
 Galerkin
 Genuchten
 Geoenergy
@@ -97,12 +98,14 @@ pacman
 parameteri[zs]ation
 ParaView
 Parisio
+Parkhurst
 partmesh
 PDE[s?]
 Péclet
 PETSc
 PHREEQC
 Pinheiro
+Postma
 Prandtl
 Prho
 prj
@@ -155,3 +158,6 @@ XPath
 Youngs
 Zenodo
 zlib
+Thury
+Kharaka
+Palandri
