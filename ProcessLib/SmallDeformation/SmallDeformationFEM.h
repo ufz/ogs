@@ -278,7 +278,7 @@ public:
                 this->output_data_[ip]);
 
             auto const& sigma = this->current_states_[ip].stress_data.sigma;
-            auto const& b = CD.grav_data.volumetric_body_force;
+            auto const& b = *CD.volumetric_body_force;
             auto const& C = CD.s_mech_data.stiffness_tensor;
 
             local_b.noalias() -=

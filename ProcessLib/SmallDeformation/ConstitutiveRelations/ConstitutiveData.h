@@ -66,7 +66,7 @@ template <int DisplacementDim>
 struct ConstitutiveData
 {
     SolidMechanicsDataStateless<DisplacementDim> s_mech_data;
-    GravityData<DisplacementDim> grav_data;
+    VolumetricBodyForce<DisplacementDim> volumetric_body_force;
 };
 
 /// Data that stores intermediate values, which are not needed outside the

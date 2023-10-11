@@ -13,11 +13,9 @@ namespace ProcessLib::SmallDeformation
 {
 template <int DisplacementDim>
 void GravityModel<DisplacementDim>::eval(
-    SolidDensity const& rho_SR, GravityData<DisplacementDim>& out) const
+    SolidDensity const& rho_SR, VolumetricBodyForce<DisplacementDim>& out) const
 {
-    auto const b = specific_body_force_;
-
-    out.volumetric_body_force = *rho_SR * b;
+    *out = *rho_SR * specific_body_force_;
 }
 
 template struct GravityModel<2>;

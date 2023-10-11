@@ -38,7 +38,7 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     auto& rho_SR = tmp.rho_SR;
 
     auto& s_mech_data = cd.s_mech_data;
-    auto& grav_data = cd.grav_data;
+    auto& volumetric_body_force = cd.volumetric_body_force;
 
     TemperatureData<DisplacementDim> const T_data{T_ref};
     SpaceTimeData const x_t{x_position, t, dt};
@@ -52,8 +52,8 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     assertEvalArgsUnique(models.rho_S_model);
     models.rho_S_model.eval(x_t, media_data, T_data, rho_SR);
 
-    assertEvalArgsUnique(models.grav_model);
-    models.grav_model.eval(rho_SR, grav_data);
+    assertEvalArgsUnique(models.gravity_model);
+    models.gravity_model.eval(rho_SR, volumetric_body_force);
 }
 
 template struct ConstitutiveSetting<2>;

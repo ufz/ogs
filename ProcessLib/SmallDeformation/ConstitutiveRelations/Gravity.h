@@ -9,15 +9,14 @@
 
 #pragma once
 
+#include "BaseLib/StrongType.h"
 #include "SolidDensity.h"
 
 namespace ProcessLib::SmallDeformation
 {
 template <int DisplacementDim>
-struct GravityData
-{
-    GlobalDimVector<DisplacementDim> volumetric_body_force;
-};
+using VolumetricBodyForce =
+    BaseLib::StrongType<GlobalDimVector<DisplacementDim>, struct GravityTag>;
 
 template <int DisplacementDim>
 struct GravityModel
@@ -29,7 +28,7 @@ struct GravityModel
     }
 
     void eval(SolidDensity const& rho_SR,
-              GravityData<DisplacementDim>& out) const;
+              VolumetricBodyForce<DisplacementDim>& out) const;
 
 private:
     // TODO (naumov) Do we need to store this for each integration point?

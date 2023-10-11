@@ -26,13 +26,13 @@ struct ConstitutiveModels
         TRMProcessData const& process_data,
         SolidConstitutiveRelation<DisplacementDim> const& solid_material)
         : s_mech_model(solid_material),
-          grav_model(process_data.specific_body_force)
+          gravity_model(process_data.specific_body_force)
     {
     }
 
     SolidMechanicsModel<DisplacementDim> s_mech_model;
     SolidDensityModel rho_S_model;
-    GravityModel<DisplacementDim> grav_model;
+    GravityModel<DisplacementDim> gravity_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::SmallDeformation
