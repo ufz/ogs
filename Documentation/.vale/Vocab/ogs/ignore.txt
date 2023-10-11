@@ -21,6 +21,7 @@ hydrosystems
 millimolar
 mmol
 mol
+molality
 nonisothermal
 nonlinearly
 nonlocal
@@ -60,3 +61,5 @@ orthotropic
 tetrahedralization
 cmake
 ctest
+illite
+dissoluted

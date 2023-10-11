@@ -1,0 +1,832 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProject>
+    <meshes>
+        <mesh>cl_bulk.vtu</mesh>
+        <mesh>cl_ReactiveDomain.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>hc</name>
+            <type>ComponentTransport</type>
+            <integration_order>2</integration_order>
+            <coupling_scheme>staggered</coupling_scheme>
+            <process_variables>
+                <concentration>C(4)</concentration>
+                <concentration>Ca</concentration>
+                <concentration>Mg</concentration>
+                <concentration>Cl</concentration>
+                <concentration>K</concentration>
+                <concentration>Na</concentration>
+                <concentration>S(6)</concentration>
+                <concentration>Al</concentration>
+                <concentration>Si</concentration>
+                <concentration>Sr</concentration>               
+                <concentration>H</concentration>
+                <pressure>pressure</pressure>
+            </process_variables>
+            <specific_body_force>0</specific_body_force>
+            <chemically_induced_porosity_change>true</chemically_induced_porosity_change>
+            <secondary_variables>
+                <secondary_variable internal_name="darcy_velocity" output_name="darcy_velocity"/>
+            </secondary_variables>
+        </process>
+    </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <components>
+                        <component>
+                            <name>C(4)</name>
+                            <properties>
+                                <property>
+                                    <name>pore_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Ca</name>
+                            <properties>
+                                <property>
+                                    <name>pore_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Mg</name>
+                            <properties>
+                                <property>
+                                    <name>pore_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Cl</name>
+                            <properties>
+                                <property>
+                                    <name>pore_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>K</name>
+                            <properties>
+                                <property>
+                                    <name>pore_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Na</name>
+                            <properties>
+                                <property>
+                                    <name>pore_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>S(6)</name>
+                            <properties>
+                                <property>
+                                    <name>pore_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Al</name>
+                            <properties>
+                                <property>
+                                    <name>pore_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Si</name>
+                            <properties>
+                                <property>
+                                    <name>pore_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                            <component>
+                            <name>Sr</name>
+                            <properties>
+                                <property>
+                                    <name>pore_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>H</name>
+                            <properties>
+                                <property>
+                                    <name>pore_diffusion</name>
+                                    <type>Constant</type>
+                                    <value>0</value>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Constant</type>
+                                    <value>1</value>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1e3</value>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <components>
+                        <component>
+                            <name>Calcite</name>
+                            <properties>
+                                <property>
+                                    <name>volume_fraction</name>
+                                    <type>Constant</type>
+                                    <value>0.06375</value> 
+                                </property>
+                                <property>
+                                    <name>molar_volume</name>
+                                    <type>Constant</type>
+                                    <value>3.6934e-5</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Dolomite-dis</name>
+                            <properties>
+                                <property>
+                                    <name>volume_fraction</name>
+                                    <type>Constant</type>
+                                    <value>0.02125</value> 
+                                </property>
+                                <property>
+                                    <name>molar_volume</name>
+                                    <type>Constant</type>
+                                    <value>6.439e-5</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Illite</name>
+                            <properties>
+                                <property>
+                                    <name>volume_fraction</name>
+                                    <type>Constant</type>
+                                    <value>0.306</value> 
+                                </property>
+                                <property>
+                                    <name>molar_volume</name>
+                                    <type>Constant</type>
+                                    <value>1.4148e-4</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Kaolinite</name>
+                            <properties>
+                                <property>
+                                    <name>volume_fraction</name>
+                                    <type>Constant</type>
+                                    <value>0.204</value> 
+                                </property>
+                                <property>
+                                    <name>molar_volume</name>
+                                    <type>Constant</type>
+                                    <value>9.935e-5</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>CO2(g)</name>
+                            <properties>
+                                <property>
+                                    <name>molality</name>
+                                    <type>Constant</type>
+                                    <value>10</value> <!-- phreeqc: Moles of the phase in the phase assemblage or moles of the alternative reaction, default 10 mol -->
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Parameter</type>
+                    <parameter_name>kappa</parameter_name>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Parameter</type>
+                    <parameter_name>porosity</parameter_name>
+                </property>
+                <property>
+                    <name>longitudinal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0</value>
+                </property>
+                <property>
+                    <name>transversal_dispersivity</name>
+                    <type>Constant</type>
+                    <value>0</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
+    <time_loop>
+        <include file="./01_timestepping_cl.xml"/>
+        <output>
+            <type>VTK</type>
+            <prefix>disso_opa</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <timesteps>
+                <pair>
+                    <repeat>1</repeat>
+                    <each_steps>1</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+            </variables>
+        </output>
+    </time_loop>
+    <chemical_system chemical_solver="Phreeqc">
+        <mesh>cl_ReactiveDomain</mesh>
+        <linear_solver>general_linear_solver</linear_solver>
+        <database>llnl.dat</database>
+        <use_high_precision>true</use_high_precision>
+        <solution>
+            <temperature>25</temperature>
+            <pressure>1</pressure>
+            <pe>4</pe>
+            <components>
+                <component>C(4)</component>
+                <component>Ca</component>
+                <component>Mg</component>
+                <component>Cl</component>
+                <component>K</component>
+                <component>Na</component>
+                <component>S(6)</component>
+                <component>Al</component>
+                <component>Si</component>
+                <component>Sr</component>
+            </components>
+            <charge_balance>pH</charge_balance>
+        </solution>
+        <equilibrium_reactants>
+            <phase_component>
+                <name>CO2(g)</name>
+                <saturation_index>1.5</saturation_index>
+            </phase_component>
+        </equilibrium_reactants>
+        <kinetic_reactants>
+            <kinetic_reactant>
+                <name>Calcite</name>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Dolomite-dis</name>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Illite</name>
+            </kinetic_reactant>
+            <kinetic_reactant>
+                <name>Kaolinite</name>
+            </kinetic_reactant>
+        </kinetic_reactants>
+        <rates>
+            <rate>
+                <kinetic_reactant>Calcite</kinetic_reactant>
+                <expression>
+                    <statement>if (M &lt;= 0) then goto 25</statement>
+                    <!--acidic mechanism-->
+                    <!--mech_a = (10^logK25) * (e^(-Ea/R*deltaT)) * ACT("H+")^ny-->
+                    <statement>R = 8.314472</statement>
+                    <statement>deltaT = 1/TK - 1/298.15</statement>
+                    <statement>logK25 = -0.30</statement>
+                    <statement>Ea = 14400</statement>
+                    <statement>ny = 1.0</statement>
+                    <statement>mech_a = (10^logK25) * ACT("H+")^ny * EXP(- Ea / R * deltaT)</statement>
+                    <!--neutral mechanism-->
+                    <!--mech_b = (10^logK25) * (e^(-Ea/R*deltaT))-->
+                    <statement>logK25 = -5.81</statement>
+                    <statement>Ea = 23500</statement>
+                    <statement>mech_b = (10^logK25) * EXP(- Ea / R * deltaT)</statement>
+                    <!--carbonate mechanism-->
+                    <!--mech_c = (10^logK25) * (e^(-Ea/R*deltaT)) * ACT("H+")^ny-->
+                    <statement>logK25 = -3.48</statement>
+                    <statement>Ea = 35400</statement>
+                    <statement>ny = 1.0</statement>
+                    <statement>mech_c = (10^logK25) * SR("CO2(g)")^ny  * EXP(- Ea / R * deltaT)</statement>
+                    <!--dissoltuion [mol/m2/s]-->
+                    <statement>K_temp = mech_a + mech_b + mech_c</statement>
+                    <statement>teta = 1</statement>
+                    <statement>eta = 1</statement>
+                    <statement>molar_volume = 3.692e-05</statement>
+                    <!--PARM(1): molality of the reactive solid [mol/kgw]-->
+                    <statement>bulk_volume = molar_volume * PARM(1)</statement>
+                    <statement>specific_surface_area = 20</statement>
+                    <statement>surface_area = specific_surface_area * bulk_volume</statement>
+                    <statement>rate = surface_area * K_temp * (1 - SR("Calcite")^teta)^eta</statement>
+                    <!-- <statement>rate = surface_area * K_temp * (1 - (ACT("Ca+")*ACT("HCO3-")/10^1.8487)^teta)^eta</statement> -->
+                    <statement>if rate &lt; 0 then rate = 0</statement>
+                    <statement>moles = rate * time</statement>
+                    <statement>save moles</statement>
+                </expression>  
+            </rate>
+            <rate>
+                <kinetic_reactant>Dolomite-dis</kinetic_reactant>
+                <!--Palandri2004, Tabelle 33-->
+                <expression>
+                    <statement>if (M &lt;= 0) then goto 25</statement>
+                    <!--acidic mechanism-->
+                    <!--mech_a = (10^logK25) * (e^(-Ea/R*deltaT)) * ACT("H+")^ny-->
+                    <statement>R = 8.314472</statement>
+                    <statement>deltaT = 1/TK - 1/298.15</statement>
+                    <statement>logK25 = -3.19</statement>
+                    <statement>Ea = 36100</statement>
+                    <statement>ny = 0.5</statement>
+                    <statement>mech_a = (10^logK25) * ACT("H+")^ny * EXP(- Ea / R * deltaT)</statement>
+                    <!--neutral mechanism-->
+                    <!--mech_b = (10^logK25) * (e^(-Ea/R*deltaT))-->
+                    <statement>logK25 = -7.53</statement>
+                    <statement>Ea = 52200</statement>
+                    <statement>mech_b = (10^logK25) * EXP(- Ea / R * deltaT)</statement>
+                    <!--carbonate mechanism-->
+                    <!--mech_c = (10^logK25) * (e^(-Ea/R*deltaT)) * ACT("H+")^ny-->
+                    <statement>logK25 = -5.11</statement>
+                    <statement>Ea = 34800</statement>
+                    <statement>ny = 0.5</statement>
+                    <statement>mech_c = (10^logK25) * SR("CO2(g)")^ny  * EXP(- Ea / R * deltaT)</statement>
+                    <!--dissoltuion [mol/m2/s]-->
+                    <statement>K_temp = mech_a + mech_b + mech_c</statement>
+                    <statement>teta = 1</statement>
+                    <statement>eta = 1</statement>
+                    <statement>molar_volume = 6.439e-5</statement>
+                    <!--PARM(1): molality of the reactive solid [mol/kgw]-->
+                    <statement>bulk_volume = molar_volume * PARM(1)</statement>
+                    <statement>specific_surface_area = 3000</statement>
+                    <statement>surface_area = specific_surface_area * bulk_volume</statement>
+                    <statement>rate = surface_area * K_temp * (1 - SR("Dolomite-dis")^teta)^eta</statement>
+                    <statement>if rate &lt; 0 then rate = 0</statement>
+                    <statement>moles = rate * time</statement>
+                    <statement>save moles</statement>
+                </expression>  
+            </rate>
+            <rate>
+                <kinetic_reactant>Illite</kinetic_reactant>
+                <!--Palandri2004, Tabelle 29-->
+                <expression>
+                    <statement>if (M &lt;= 0) then goto 25</statement>
+                    <!--acidic mechanism-->
+                    <!--mech_a = (10^logK25) * (e^(-Ea/R*deltaT)) * ACT("H+")^ny-->
+                    <statement>R = 8.314472</statement>
+                    <statement>deltaT = 1/TK - 1/298.15</statement>
+                    <statement>logK25 = -12.71</statement>
+                    <statement>Ea = 48000</statement>
+                    <statement>ny = 0.22</statement>
+                    <statement>mech_a = (10^logK25) * ACT("H+")^ny * EXP(- Ea / R * deltaT)</statement>
+                    <!--neutral mechanism-->
+                    <!--mech_b = (10^logK25) * (e^(-Ea/R*deltaT))-->
+                    <statement>logK25 = -14.41</statement>
+                    <statement>Ea = 48000</statement>
+                    <statement>mech_b = (10^logK25) * EXP(- Ea / R * deltaT)</statement>
+                    <!--carbonate mechanism-->
+                    <!--mech_c = (10^logK25) * (e^(-Ea/R*deltaT)) * ACT("H+")^ny-->
+                    <statement>logK25 = -14.41</statement>
+                    <statement>Ea = 48000</statement>
+                    <statement>ny = 0.13</statement>
+                    <statement>mech_c = (10^logK25) * SR("CO2(g)")^ny  * EXP(- Ea / R * deltaT)</statement>
+                    <!--dissoltuion [mol/m2/s]-->
+                    <statement>K_temp = mech_a + mech_b + mech_c</statement>
+                    <statement>teta = 1</statement>
+                    <statement>eta = 1</statement>
+                    <statement>molar_volume = 6.439e-5</statement>
+                    <!--PARM(1): molality of the reactive solid [mol/kgw]-->
+                    <statement>bulk_volume = molar_volume * PARM(1)</statement>
+                    <statement>specific_surface_area = 20</statement>
+                    <statement>surface_area = specific_surface_area * bulk_volume</statement>
+                    <statement>rate = surface_area * K_temp * (1 - SR("Illite")^teta)^eta</statement>
+                    <statement>if rate &lt; 0 then rate = 0</statement>
+                    <statement>moles = rate * time</statement>
+                    <statement>save moles</statement>
+                </expression>  
+            </rate>
+            <rate>
+                <kinetic_reactant>Kaolinite</kinetic_reactant>
+                <!--Palandri2004, Tabelle 29-->
+                <expression>
+                    <statement>if (M &lt;= 0) then goto 25</statement>
+                    <!--acidic mechanism-->
+                    <!--mech_a = (10^logK25) * (e^(-Ea/R*deltaT)) * ACT("H+")^ny-->
+                    <statement>R = 8.314472</statement>
+                    <statement>deltaT = 1/TK - 1/298.15</statement>
+                    <statement>logK25 = -11.31</statement>
+                    <statement>Ea = 65900</statement>
+                    <statement>ny = 0.777</statement>
+                    <statement>mech_a = (10^logK25) * ACT("H+")^ny * EXP(- Ea / R * deltaT)</statement>
+                    <!--neutral mechanism-->
+                    <!--mech_b = (10^logK25) * (e^(-Ea/R*deltaT))-->
+                    <statement>logK25 = -13.18</statement>
+                    <statement>Ea = 22200</statement>
+                    <statement>mech_b = (10^logK25) * EXP(- Ea / R * deltaT)</statement>
+                    <!--carbonate mechanism-->
+                    <!--mech_c = (10^logK25) * (e^(-Ea/R*deltaT)) * ACT("H+")^ny-->
+                    <statement>logK25 = -17.05</statement>
+                    <statement>Ea = 17900</statement>
+                    <statement>ny = 0.472</statement>
+                    <statement>mech_c = (10^logK25) * SR("CO2(g)")^ny  * EXP(- Ea / R * deltaT)</statement>
+                    <!--dissoltuion [mol/m2/s]-->
+                    <statement>K_temp = mech_a + mech_b + mech_c</statement>
+                    <statement>teta = 1</statement>
+                    <statement>eta = 1</statement>
+                    <statement>molar_volume = 6.439e-5</statement>
+                    <!--PARM(1): molality of the reactive solid [mol/kgw]-->
+                    <statement>bulk_volume = molar_volume * PARM(1)</statement>
+                    <statement>specific_surface_area = 20</statement>
+                    <statement>surface_area = specific_surface_area * bulk_volume</statement>
+                    <statement>rate = surface_area * K_temp * (1 - SR("Kaolinite")^teta)^eta</statement>
+                    <statement>if rate &lt; 0 then rate = 0</statement>
+                    <statement>moles = rate * time</statement>
+                    <statement>save moles</statement>
+                </expression>  
+            </rate>
+        </rates>
+        <knobs>
+            <max_iter>100</max_iter>
+            <relative_convergence_tolerance>1e-12</relative_convergence_tolerance>
+            <tolerance>1e-15</tolerance>
+            <step_size>100</step_size>
+            <scaling>0</scaling>
+        </knobs>
+    </chemical_system>
+    <parameters>
+        <parameter>
+            <name>kappa</name>
+            <type>Constant</type>
+            <values>1.157e-12</values>
+        </parameter>
+        <parameter>
+            <name>porosity</name>
+            <type>Constant</type>
+            <value>0.15</value>
+        </parameter>
+        <parameter>
+            <name>retardation</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>decay</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>p0</name>
+            <type>Constant</type>
+            <value>1e5</value>
+        </parameter>
+        <parameter>
+            <name>c0_H</name>
+            <type>Constant</type>
+            <!--pH=7-->
+            <value>1e-7</value>
+        </parameter>
+        <parameter>
+            <name>c0_c4</name>
+            <type>Constant</type>
+            <value>3.89e-3</value>
+            <!--<value>3.89e-3</value>--> <!--Wersin 2022 Tab 1 -->
+        </parameter>
+        <parameter>
+            <name>c0_ca</name>
+            <type>Constant</type>
+            <value>1.89e-2</value> 
+            <!--<value>1.89e-2</value>--> <!--Wersin 2022 Tab 1 -->
+        </parameter>
+        <parameter>
+            <name>c0_mg</name>
+            <type>Constant</type>
+            <value>2.197e-2</value> 
+            <!--<value>2.197e-2</value>--> <!--Wersin 2022 Tab 1 -->
+        </parameter>
+        <parameter>
+            <name>c0_Cl</name>
+            <type>Constant</type>
+            <value>3.2667e-1</value> 
+            <!--<value>3.2667e-1</value>--> <!--Wersin 2022 Tab 1 -->
+        </parameter>
+        <parameter>
+            <name>c0_K</name>
+            <type>Constant</type>
+            <value>1.92e-3</value> 
+            <!--<value>1.92e-3</value>--> <!--Wersin 2022 Tab 1 -->
+        </parameter>
+        <parameter>
+            <name>c0_Na</name>
+            <type>Constant</type>
+            <value>2.8067e-1</value>
+            <!--<value>2.8067e-1</value> --> <!--Wersin 2022 Tab 1 -->
+        </parameter>
+        <parameter>
+            <name>c0_S(6)</name>
+            <type>Constant</type>
+            <value>1.679e-2</value> 
+            <!--<value>1.679e-2</value>--> <!--Wersin 2022 Tab 1 -->
+        </parameter>
+        <parameter>
+            <name>c0_Al</name>
+            <type>Constant</type>
+            <value>2.295e-10</value> 
+            <!--<value>2.295e-10</value>--> <!--Idiart2019 Tab4-5 -->
+        </parameter>
+        <parameter>
+            <name>c0_Si</name>
+            <type>Constant</type>
+            <value>1.7e-5</value> 
+            <!--<value>1.7e-5</value>--> <!--Wersin 2022 Tab 1-->
+        </parameter>
+        <parameter>
+            <name>c0_Sr</name>
+            <type>Constant</type>
+            <value>4.6e-5</value> 
+            <!--<value>4.6e-5</value>--> <!--Wersin 2022 Tab 1 -->
+        </parameter>
+    </parameters>
+    <process_variables>
+        <process_variable>
+            <name>pressure</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>p0</initial_condition>
+            <boundary_conditions>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>C(4)</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_c4</initial_condition>
+            <boundary_conditions>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Ca</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_ca</initial_condition>
+            <boundary_conditions>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Mg</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_mg</initial_condition>
+            <boundary_conditions>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Cl</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_Cl</initial_condition>
+            <boundary_conditions>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>K</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_K</initial_condition>
+            <boundary_conditions>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Na</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_Na</initial_condition>
+            <boundary_conditions>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>S(6)</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_S(6)</initial_condition>
+            <boundary_conditions>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Al</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_Al</initial_condition>
+            <boundary_conditions>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Si</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_Si</initial_condition>
+            <boundary_conditions>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>Sr</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_Sr</initial_condition>
+            <boundary_conditions>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>H</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>c0_H</initial_condition>
+            <boundary_conditions>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_picard</name>
+            <type>Picard</type>
+            <max_iter>100</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>PardisoLU</solver_type>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>disso_opa_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>1e-6</absolute_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>disso_opa_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>Ca</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>disso_opa_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>Mg</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>disso_opa_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>H</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>
