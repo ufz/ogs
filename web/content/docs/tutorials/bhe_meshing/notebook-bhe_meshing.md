@@ -1,8 +1,9 @@
----
-title: "Creating Mesh with integrated Borehole Heat Exchangers"
-date: "2023-10-03"
-author: "Joy Brato Shil, Haibing Shao"
----
++++
+title = "Creating Mesh with integrated Borehole Heat Exchangers"
+date = "2023-10-03"
+author = "Joy Brato Shil, Haibing Shao"
++++
+
 
 This tutorial is made to illustrate the procedure of creating an OGS mesh file with Borehole Heat Exchangers (BHEs) in it.
 Such mesh uses prism elements for the soil part, and line elements for the BHEs.
