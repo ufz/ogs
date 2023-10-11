@@ -279,3 +279,10 @@ if(NOT OGS_USE_PETSC)
         NotebookTest(NOTEBOOKFILE Mechanics/PLLC/PLLC.ipynb RUNTIME 7)
     endif()
 endif()
+
+NotebookTest(
+    NOTEBOOKFILE Mechanics/Linear/test_ip_data/2D-clamped-gravity.ipynb
+    RUNTIME 10
+    SKIP_WEB
+)
+OgsTest(PROJECTFILE Mechanics/Linear/test_ip_data/square_1e2_test_ip_data.prj)
