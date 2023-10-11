@@ -27,8 +27,8 @@
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Node.h"
-#include "MeshToolsLib/MeshInformation.h"
 #include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshToolsLib/MeshInformation.h"
 
 template <typename PROPERTY_TYPE>
 void searchByPropertyValue(std::string const& property_name,

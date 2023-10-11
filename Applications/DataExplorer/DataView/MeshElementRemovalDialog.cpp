@@ -264,7 +264,7 @@ void MeshElementRemovalDialog::on_boundingBoxCheckBox_toggled(bool is_checked)
 }
 
 void MeshElementRemovalDialog::on_invertBoundingBoxCheckBox_toggled(
-    bool is_checked)
+    bool const is_checked)
 {
     if (is_checked == true)
     {

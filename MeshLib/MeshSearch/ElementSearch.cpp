@@ -50,7 +50,7 @@ std::size_t ElementSearch::searchByContent(double eps)
 }
 
 std::size_t ElementSearch::searchByBoundingBox(GeoLib::AABB const& aabb,
-                                               bool invert)
+                                               bool const invert)
 {
     auto matchedIDs = filter(
         _mesh.getElements(),
