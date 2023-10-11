@@ -38,7 +38,7 @@ struct SolidMechanicsModel
 
     void eval(
         SpaceTimeData const& x_t,
-        TemperatureData<DisplacementDim> const& T_data,
+        Temperature const& temperature,
         StrainData<DisplacementDim> const& eps_data,
         PrevState<StrainData<DisplacementDim>> const& eps_data_prev,
         MaterialStateData<DisplacementDim>& mat_state,

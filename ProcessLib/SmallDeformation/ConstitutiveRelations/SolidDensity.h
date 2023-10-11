@@ -19,7 +19,6 @@ using SolidDensity = BaseLib::StrongType<double, struct SolidDensityTag>;
 struct SolidDensityModel
 {
     void eval(SpaceTimeData const& x_t, MediaData const& media_data,
-              TemperatureData<DisplacementDim> const& T_data,
-              SolidDensity& out) const;
+              Temperature const& temperature, SolidDensity& out) const;
 };
 }  // namespace ProcessLib::SmallDeformation

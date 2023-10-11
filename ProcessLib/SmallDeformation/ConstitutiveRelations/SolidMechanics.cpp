@@ -16,7 +16,7 @@ namespace ConstitutiveRelations
 template <int DisplacementDim>
 void SolidMechanicsModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t,
-    TemperatureData<DisplacementDim> const& T_data,
+    Temperature const& temperature,
     StrainData<DisplacementDim> const& eps_data,
     PrevState<StrainData<DisplacementDim>> const& eps_data_prev,
     MaterialStateData<DisplacementDim>& mat_state,
@@ -34,7 +34,7 @@ void SolidMechanicsModel<DisplacementDim>::eval(
         variables.mechanical_strain = eps_data.eps;
 
         // external state variables
-        variables.temperature = T_data.T;
+        variables.temperature = *temperature;
     }
 
     // previous state
@@ -45,7 +45,7 @@ void SolidMechanicsModel<DisplacementDim>::eval(
         variables_prev.mechanical_strain = eps_data_prev->eps;
 
         // external state variables
-        variables_prev.temperature = T_data.T;
+        variables_prev.temperature = *temperature;
     }
 
     auto solution = solid_material_.integrateStress(

@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "BaseLib/StrongType.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MathLib/KelvinVector.h"
 #include "ParameterLib/SpatialPosition.h"
@@ -97,11 +98,7 @@ struct MediaData
     MaterialPropertyLib::Phase const& solid;
 };
 
-template <int DisplacementDim>
-struct TemperatureData
-{
-    double T;
-};
+using Temperature = BaseLib::StrongType<double, struct TemperatureTag>;
 
 template <int DisplacementDim>
 struct StrainData
