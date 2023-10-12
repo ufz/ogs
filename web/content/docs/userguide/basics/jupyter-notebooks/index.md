@@ -38,7 +38,6 @@ Image `registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter` contains:
 - Jupyter-related tools:
   - [nbconvert](https://nbconvert.readthedocs.io) — Format conversion
   - [nbdime](https://nbdime.readthedocs.io) — Diffs for notebooks
-  - [nb2hugo](https://github.com/bilke/nb2hugo/tree/ogs) — Notebook to website markdown conversion
 - [Gmsh](https://gmsh.info) — Mesh generator (incl. Python bindings)
 
 Image `registry.opengeosys.org/ogs/ogs/ogs-petsc-jupyter` additionally contains:

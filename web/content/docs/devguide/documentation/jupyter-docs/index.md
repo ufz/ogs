@@ -55,10 +55,10 @@ Make sure that you execute the cells in the notebook and save the notebook (with
 To get a preview of the web page run the `convert_notebooks`-script:
 
 ```bash
-# You need the converter-tool nb2hugo installed. Recommended way is to
+# You need the converter-tool nbconvert installed. Recommended way is to
 # create and activate a virtual environment and install it there:
 python -m venv .venv  # or `python3 -m ...` on some systems
-pip install git+https://github.com/bilke/nb2hugo@ogs
+pip install nbconvert
 
 python web/scripts/convert_notebooks.py
 
