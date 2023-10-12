@@ -47,7 +47,8 @@ def save_to_website(exec_notebook_file, web_path):
             "--output=index",
             output_path_arg,
             exec_notebook_file,
-        ]
+        ],
+        check=True,
     )
 
     if not "Tests/Data" in exec_notebook_file:

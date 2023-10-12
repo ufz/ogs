@@ -29,7 +29,8 @@ for notebook in notebooks:
             f"--template-file={template}",
             "--output=index",
             notebook,
-        ]
+        ],
+        check=True,
     )
 
 sys.exit(exit_code)
