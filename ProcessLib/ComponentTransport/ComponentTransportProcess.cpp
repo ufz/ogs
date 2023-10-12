@@ -219,32 +219,6 @@ void ComponentTransportProcess::assembleConcreteProcess(
     _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, M, K, b, dof_tables,
                             _global_assembler, _local_assemblers,
                             pv.getActiveElementIDs());
-
-    BaseLib::RunTime time_residuum;
-    time_residuum.start();
-
-    if (_use_monolithic_scheme)
-    {
-        auto const residuum = computeResiduum(dt, *x[0], *x_prev[0], M, K, b);
-        for (std::size_t variable_id = 0; variable_id < _residua.size();
-             ++variable_id)
-        {
-            transformVariableFromGlobalVector(
-                residuum, variable_id, dof_tables[0], *_residua[variable_id],
-                std::negate<double>());
-        }
-    }
-    else
-    {
-        auto const residuum =
-            computeResiduum(dt, *x[process_id], *x_prev[process_id], M, K, b);
-        transformVariableFromGlobalVector(residuum, 0, dof_tables[process_id],
-                                          *_residua[process_id],
-                                          std::negate<double>());
-    }
-
-    INFO("[time] Computing residuum flow rates took {:g} s",
-         time_residuum.elapsed());
 }
 
 void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
@@ -476,6 +450,69 @@ void ComponentTransportProcess::postTimestepConcreteProcess(
     }
     _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh,
                             pv.getActiveElementIDs());
+}
+
+void ComponentTransportProcess::preOutputConcreteProcess(
+    const double t,
+    double const dt,
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_prev,
+    int const process_id)
+{
+    auto const matrix_specification = getMatrixSpecifications(process_id);
+
+    std::size_t matrix_id = 0u;
+    auto& M = NumLib::GlobalMatrixProvider::provider.getMatrix(
+        matrix_specification, matrix_id);
+    auto& K = NumLib::GlobalMatrixProvider::provider.getMatrix(
+        matrix_specification, matrix_id);
+    auto& b =
+        NumLib::GlobalVectorProvider::provider.getVector(matrix_specification);
+
+    M.setZero();
+    K.setZero();
+    b.setZero();
+
+    assembleConcreteProcess(t, dt, x, x_prev, process_id, M, K, b);
+
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+        dof_tables;
+    if (_use_monolithic_scheme)
+    {
+        dof_tables.push_back(std::ref(*_local_to_global_index_map));
+    }
+    else
+    {
+        std::generate_n(
+            std::back_inserter(dof_tables), _process_variables.size(),
+            [&]() { return std::ref(*_local_to_global_index_map); });
+    }
+
+    BaseLib::RunTime time_residuum;
+    time_residuum.start();
+
+    if (_use_monolithic_scheme)
+    {
+        auto const residuum = computeResiduum(dt, *x[0], *x_prev[0], M, K, b);
+        for (std::size_t variable_id = 0; variable_id < _residua.size();
+             ++variable_id)
+        {
+            transformVariableFromGlobalVector(
+                residuum, variable_id, dof_tables[0], *_residua[variable_id],
+                std::negate<double>());
+        }
+    }
+    else
+    {
+        auto const residuum =
+            computeResiduum(dt, *x[process_id], *x_prev[process_id], M, K, b);
+        transformVariableFromGlobalVector(residuum, 0, dof_tables[process_id],
+                                          *_residua[process_id],
+                                          std::negate<double>());
+    }
+
+    INFO("[time] Computing residuum flow rates took {:g} s",
+         time_residuum.elapsed());
 }
 
 }  // namespace ComponentTransport

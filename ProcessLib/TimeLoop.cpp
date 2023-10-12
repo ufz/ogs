@@ -10,6 +10,8 @@
 
 #include "TimeLoop.h"
 
+#include <range/v3/algorithm/any_of.hpp>
+
 #include "BaseLib/Error.h"
 #include "BaseLib/RunTime.h"
 #include "CoupledSolutionsForStaggeredScheme.h"
@@ -38,6 +40,35 @@ void updateDeactivatedSubdomains(
     }
 }
 
+bool isOutputStep(std::vector<ProcessLib::Output> const& outputs,
+                  const int timestep, const double t)
+{
+    return ranges::any_of(outputs, [timestep, t](auto const& output)
+                          { return output.isOutputStep(timestep, t); });
+}
+
+void preOutputForAllProcesses(
+    int const timestep, double const t, double const dt,
+    std::vector<std::unique_ptr<ProcessLib::ProcessData>> const&
+        per_process_data,
+    std::vector<GlobalVector*> const& process_solutions,
+    std::vector<GlobalVector*> const& process_solutions_prev,
+    std::vector<ProcessLib::Output> const& outputs)
+{
+    if (!isOutputStep(outputs, timestep, t))
+    {
+        return;
+    }
+
+    for (auto& process_data : per_process_data)
+    {
+        auto const process_id = process_data->process_id;
+        auto& pcs = process_data->process;
+
+        pcs.preOutput(t, dt, process_solutions, process_solutions_prev,
+                      process_id);
+    }
+}
 }  // namespace
 
 namespace ProcessLib
@@ -217,6 +248,9 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     auto const post_iteration_callback =
         [&](int iteration, std::vector<GlobalVector*> const& x)
     {
+        // Note: We don't call the postNonLinearSolver(), preOutput(),
+        // computeSecondaryVariable() and postTimestep() hooks here. This might
+        // lead to some inconsistencies in the data compared to regular output.
         for (auto const& output : outputs)
         {
             output.doOutputNonlinearIteration(process, process_id, timestep, t,
@@ -592,6 +626,13 @@ bool TimeLoop::preTsNonlinearSolvePostTs(double const t, double const dt,
     // iteration, an exception thrown in assembly, for example.
     if (nonlinear_solver_status.error_norms_met)
     {
+        // Later on, the timestep_algorithm might reject the timestep. We assume
+        // that this is a rare case, so still, we call preOutput() here. We
+        // don't expect a large overhead from it.
+        preOutputForAllProcesses(timesteps, t, dt, _per_process_data,
+                                 _process_solutions, _process_solutions_prev,
+                                 _outputs);
+
         postTimestepForAllProcesses(t, dt, _per_process_data,
                                     _process_solutions,
                                     _process_solutions_prev);
@@ -876,6 +917,10 @@ void TimeLoop::preOutputInitialConditions(const double t) const
             process_data->time_disc->nextTimestep(t, dt);
 
             pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
+
+            pcs.preOutput(_start_time, dt, _process_solutions,
+                          _process_solutions_prev, process_id);
+
             // Update secondary variables, which might be uninitialized, before
             // output.
             pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,
@@ -899,6 +944,10 @@ void TimeLoop::preOutputInitialConditions(const double t) const
             process_data->time_disc->nextTimestep(t, dt);
 
             pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
+
+            pcs.preOutput(_start_time, dt, _process_solutions,
+                          _process_solutions_prev, process_id);
+
             // Update secondary variables, which might be uninitialized, before
             // output.
             pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,

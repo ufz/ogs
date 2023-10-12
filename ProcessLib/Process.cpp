@@ -450,6 +450,17 @@ NumLib::IterationResult Process::postIteration(const GlobalVector& x)
     return postIterationConcreteProcess(x);
 }
 
+void Process::preOutput(const double t, double const dt,
+                        std::vector<GlobalVector*> const& x,
+                        std::vector<GlobalVector*> const& x_prev,
+                        int const process_id)
+{
+    for (auto const* solution : x)
+        MathLib::LinAlg::setLocalAccessibleVector(*solution);
+
+    preOutputConcreteProcess(t, dt, x, x_prev, process_id);
+}
+
 std::vector<GlobalIndexType>
 Process::getIndicesOfResiduumWithoutInitialCompensation() const
 {
