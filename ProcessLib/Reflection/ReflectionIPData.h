@@ -160,7 +160,6 @@ struct GetFlattenedIPDataFromLocAsm
 
             if constexpr (num_comp == 1)
             {
-                // TODO optimization if nothing needs to be copied?
                 result[ip] = ip_data;
             }
             else if constexpr (num_comp ==
