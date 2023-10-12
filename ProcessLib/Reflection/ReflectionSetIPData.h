@@ -27,6 +27,11 @@ void setIPData(double const* values,
 {
     using AccessorResult = std::invoke_result_t<Accessor, IPData&>;
     using AccessorResultStripped = std::remove_cvref_t<AccessorResult>;
+
+    static_assert(is_raw_data<AccessorResultStripped>::value,
+                  "This method only deals with raw data. The given "
+                  "AccessorResultStripped is not raw data.");
+
     constexpr auto num_comp = NumberOfComponents<AccessorResultStripped>::value;
 
     auto constexpr kv_size =
@@ -86,6 +91,10 @@ bool setIPDataIfNameMatches(std::string const& name, double const* values,
     }
     else
     {
+        static_assert(detail::is_raw_data<Member>::value,
+                      "The current member is not reflectable, so we "
+                      "expect it to be raw data.");
+
         if (refl_data.name != name)
         {
             return false;

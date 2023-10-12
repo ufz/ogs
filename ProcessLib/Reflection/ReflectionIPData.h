@@ -118,6 +118,9 @@ struct GetFlattenedIPDataFromLocAsm
         using ConcreteIPData = std::remove_cvref_t<
             std::invoke_result_t<Accessor_CurrentLevelFromIPDataVecElement,
                                  IPDataVectorElement const&>>;
+        static_assert(is_raw_data<ConcreteIPData>::value,
+                      "This method only deals with raw data. The given "
+                      "ConcreteIPData is not raw data.");
 
         constexpr unsigned num_comp = NumberOfComponents<ConcreteIPData>::value;
         auto const& ip_data_vector = accessor_ip_data_vec_in_loc_asm(loc_asm);
@@ -238,6 +241,10 @@ void forEachReflectedFlattenedIPDataAccessor(
             }
             else
             {
+                static_assert(is_raw_data<Member>::value,
+                              "The current member is not reflectable, so we "
+                              "expect it to be raw data.");
+
                 constexpr unsigned num_comp = NumberOfComponents<Member>::value;
 
                 callback(refl_data.name, num_comp,
@@ -298,6 +305,10 @@ void forEachReflectedFlattenedIPDataAccessor(ReflData const& reflection_data,
             }
             else
             {
+                static_assert(detail::is_raw_data<Member>::value,
+                              "The current member is not reflectable, so we "
+                              "expect it to be raw data.");
+
                 constexpr unsigned num_comp =
                     detail::NumberOfComponents<Member>::value;
 
