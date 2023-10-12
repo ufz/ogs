@@ -73,7 +73,9 @@ We first set an output directory and import some required libraries. This tutori
 import os
 
 # All generated files will be put there
-os.makedirs("out", exist_ok=True)
+out_dir = os.environ.get('OGS_TESTRUNNER_OUT_DIR', '_out')
+if not os.path.exists(out_dir):
+    os.makedirs(out_dir)
 ```
 
 ```python
@@ -182,7 +184,7 @@ In order to create 4 cells in x-direction and 5 cells in y-direction.
 The complete command can be written as follows:
 
 ```bash
-generateStructuredMesh -e quad -o out/quads.vtu --lx 3 --ly 4 --nx 4 --ny 5
+generateStructuredMesh -e quad -o {out_dir}/quads.vtu --lx 3 --ly 4 --nx 4 --ny 5
 ```  
 
 The created mesh can be viewed with any software supporting `.vtu`-file format and should look as in the following figure.
@@ -192,9 +194,9 @@ Let's create the mesh with the above command and visualize it:
 <!-- #endregion -->
 
 ```python
-! generateStructuredMesh -e quad -o out/quad.vtu --lx 3 --ly 4 --nx 4 --ny 5
+! generateStructuredMesh -e quad -o {out_dir}/quad.vtu --lx 3 --ly 4 --nx 4 --ny 5
 assert _exit_code == 0
-mesh = pv.read("out/quad.vtu")
+mesh = pv.read(f"{out_dir}/quad.vtu")
 show_mesh(mesh)
 
 ```
@@ -217,14 +219,14 @@ after changing element type `quad` to `tri` and file name `quad.vtu` to `triangl
 <!-- #endregion -->
 
 ```python
-! generateStructuredMesh -e tri -o out/triangle.vtu --lx 3 --ly 4 --nx 4 --ny 5
+! generateStructuredMesh -e tri -o {out_dir}/triangle.vtu --lx 3 --ly 4 --nx 4 --ny 5
 assert _exit_code == 0
 ```
 
 Running this command should create following mesh:
 
 ```python
-mesh = pv.read("out/triangle.vtu")
+mesh = pv.read(f"{out_dir}/triangle.vtu")
 show_mesh(mesh)
 ```
 
@@ -237,14 +239,14 @@ In this example, the mesh from the step [Quadrilateral mesh](#quadrilateral-mesh
 In order to do this, the final command from that step will be expanded by `--ox 2 --oy 5`:
 
 ```python
-! generateStructuredMesh -e quad -o out/quads.vtu --lx 3 --ly 4 --nx 4 --ny 5 --ox 2 --oy 5
+! generateStructuredMesh -e quad -o {out_dir}/quads.vtu --lx 3 --ly 4 --nx 4 --ny 5 --ox 2 --oy 5
 assert _exit_code == 0
 ```
 
 Running this command should create following mesh:
 
 ```python
-mesh = pv.read("out/quads.vtu")
+mesh = pv.read(f"{out_dir}/quads.vtu")
 show_mesh(mesh)
 ```
 
@@ -262,7 +264,7 @@ Value below zero will make cells smaller than the previous ones.
 The command to create this mesh:
 
 ```python
-! generateStructuredMesh -e quad -o out/quads_graded.vtu --lx 7 --ly 4 --nx 10 --ny 5 \
+! generateStructuredMesh -e quad -o {out_dir}/quads_graded.vtu --lx 7 --ly 4 --nx 10 --ny 5 \
     --mx 1.2
 assert _exit_code == 0
 ```
@@ -272,7 +274,7 @@ The `\` allows to break the line and split command into more than one line to im
 Running it produces following mesh:
 
 ```python
-mesh = pv.read("out/quads_graded.vtu")
+mesh = pv.read(f"{out_dir}/quads_graded.vtu")
 show_mesh(mesh)
 ```
 
@@ -284,7 +286,7 @@ For this case following parameter should be appended: `--dx0 1`.
 Expanded command from previous step:
 
 ```python
-! generateStructuredMesh -e quad -o out/quads_graded_init_size.vtu --lx 7 --ly 4 --ny 5 \
+! generateStructuredMesh -e quad -o {out_dir}/quads_graded_init_size.vtu --lx 7 --ly 4 --ny 5 \
     --mx 1.2 --dx0 1
 assert _exit_code == 0
 ```
@@ -294,7 +296,7 @@ Note, that output file name has been changed, too.
 The mesh produced by that command can be seen in this figure:
 
 ```python
-mesh = pv.read("out/quads_graded_init_size.vtu")
+mesh = pv.read(f"{out_dir}/quads_graded_init_size.vtu")
 show_mesh(mesh)
 ```
 
@@ -306,7 +308,7 @@ That can be achieved via the `--d$direction-max $value` parameter.
 The command from the previous step can be expanded by: `--dx-max 2`:
 
 ```python
-! generateStructuredMesh -e quad -o out/quads_graded_max_size.vtu --lx 7 --ly 4 --ny 5 \
+! generateStructuredMesh -e quad -o {out_dir}/quads_graded_max_size.vtu --lx 7 --ly 4 --ny 5 \
     --mx 1.2 --dx0 1 --dx-max 2
 assert _exit_code == 0
 
@@ -317,7 +319,7 @@ Note that the length of mesh and numbers of cells has been modified compared to 
 The mesh produced by that command can be seen in this figure:
 
 ```python
-mesh = pv.read("out/quads_graded_max_size.vtu")
+mesh = pv.read(f"{out_dir}/quads_graded_max_size.vtu")
 show_mesh(mesh)
 ```
 
@@ -330,7 +332,7 @@ In order to create one, the element type has to be changed to a 3D one and param
 In 3D, the quadrilateral element type has to be replaced by hexahedral one.
 
 ```python
-! generateStructuredMesh -e hex -o out/hexes.vtu --lx 7 --ly 4 --lz 3 --nx 10 --ny 5 --nz 3
+! generateStructuredMesh -e hex -o {out_dir}/hexes.vtu --lx 7 --ly 4 --lz 3 --nx 10 --ny 5 --nz 3
 assert _exit_code == 0
 
 ```
@@ -338,7 +340,7 @@ assert _exit_code == 0
 The command above will create the following mesh:
 
 ```python
-mesh = pv.read("out/hexes.vtu")
+mesh = pv.read(f"{out_dir}/hexes.vtu")
 plotter = pv.Plotter()
 plotter.add_mesh(mesh, show_edges=True)
 plotter.window_size = [800, 400]
@@ -368,7 +370,7 @@ We start with extracting the boundary of a 2D mesh.
 Let's remind ourselves of the mesh by visualizing it once more.
 
 ```python
-mesh = pv.read("out/quads.vtu")
+mesh = pv.read(f"{out_dir}/quads.vtu")
 show_mesh(mesh)
 ```
 
@@ -376,14 +378,14 @@ From above we can see the required arguments for using the `ExtractBoundary` too
 We pass in the mesh to extract the boundary from `quads.vtu` and save the boundary to `quads_boundary.vtu`.
 
 ```python
-! ExtractBoundary -i "out/quads.vtu" -o "out/quads_boundary.vtu"
+! ExtractBoundary -i "{out_dir}/quads.vtu" -o "{out_dir}/quads_boundary.vtu"
 assert _exit_code == 0
 ```
 
 Visualize the output mesh:
 
 ```python
-boundary_mesh = pv.read("out/quads_boundary.vtu")
+boundary_mesh = pv.read(f"{out_dir}/quads_boundary.vtu")
 show_mesh(boundary_mesh)
 ```
 
@@ -395,14 +397,14 @@ We can use the same command to extract the boundary of a 3D mesh.
 
 ```python
 # Using a previously generated mesh
-! ExtractBoundary -i "out/hexes.vtu" -o "out/hexes_boundary.vtu"
+! ExtractBoundary -i "{out_dir}/hexes.vtu" -o "{out_dir}/hexes_boundary.vtu"
 assert _exit_code == 0
 ```
 
 And visualize it:
 
 ```python
-boundary_mesh = pv.read("out/hexes_boundary.vtu")
+boundary_mesh = pv.read(f"{out_dir}/hexes_boundary.vtu")
 show_mesh_3D(boundary_mesh.shrink(0.8))
 ```
 
@@ -427,7 +429,7 @@ The user can choose between 4 different removal criteria:
 Let's load the boundary mesh that we have extracted in the last step:
 
 ```python
-boundary_mesh = pv.read("out/hexes_boundary.vtu")
+boundary_mesh = pv.read(f"{out_dir}/hexes_boundary.vtu")
 show_mesh_3D(boundary_mesh.shrink(0.8))
 
 xmin, xmax, ymin, ymax, zmin, zmax = boundary_mesh.bounds
@@ -437,35 +439,35 @@ boundary_mesh.bounds
 We remove all mesh elements except for the ones at the minimum z-value i.e. the plane at the minimum z-value.
 
 ```python
-! removeMeshElements -i "out/hexes_boundary.vtu" -o "out/hexes_zmin.vtu" --z-min {zmin + 1e-8}
+! removeMeshElements -i "{out_dir}/hexes_boundary.vtu" -o "{out_dir}/hexes_zmin.vtu" --z-min {zmin + 1e-8}
 assert _exit_code == 0
-mesh = pv.read("out/hexes_zmin.vtu")
+mesh = pv.read(f"{out_dir}/hexes_zmin.vtu")
 show_mesh_3D(mesh.shrink(0.8))
 ```
 
 We can also remove all other bounding planes and plot them.
 
 ```python
-! removeMeshElements -i "out/hexes_boundary.vtu" -o "out/hexes_zmax.vtu" --z-max {zmax - 1e-8}
+! removeMeshElements -i "{out_dir}/hexes_boundary.vtu" -o "{out_dir}/hexes_zmax.vtu" --z-max {zmax - 1e-8}
 assert _exit_code == 0
-! removeMeshElements -i "out/hexes_boundary.vtu" -o "out/hexes_xmin.vtu" --x-min {xmin + 1e-8}
+! removeMeshElements -i "{out_dir}/hexes_boundary.vtu" -o "{out_dir}/hexes_xmin.vtu" --x-min {xmin + 1e-8}
 assert _exit_code == 0
-! removeMeshElements -i "out/hexes_boundary.vtu" -o "out/hexes_xmax.vtu" --x-max {xmax - 1e-8}
+! removeMeshElements -i "{out_dir}/hexes_boundary.vtu" -o "{out_dir}/hexes_xmax.vtu" --x-max {xmax - 1e-8}
 assert _exit_code == 0
-! removeMeshElements -i "out/hexes_boundary.vtu" -o "out/hexes_ymin.vtu" --y-min {ymin + 1e-8}
+! removeMeshElements -i "{out_dir}/hexes_boundary.vtu" -o "{out_dir}/hexes_ymin.vtu" --y-min {ymin + 1e-8}
 assert _exit_code == 0
-! removeMeshElements -i "out/hexes_boundary.vtu" -o "out/hexes_ymax.vtu" --y-max {ymax - 1e-8}
+! removeMeshElements -i "{out_dir}/hexes_boundary.vtu" -o "{out_dir}/hexes_ymax.vtu" --y-max {ymax - 1e-8}
 assert _exit_code == 0
 ```
 
 ```python
 plotter = pv.Plotter()
-plotter.add_mesh(pv.read("out/hexes_xmin.vtu").shrink(0.8), lighting=False, color="red")
-plotter.add_mesh(pv.read("out/hexes_xmax.vtu").shrink(0.8), lighting=False, color="orange")
-plotter.add_mesh(pv.read("out/hexes_ymin.vtu").shrink(0.8), lighting=False, color="green")
-plotter.add_mesh(pv.read("out/hexes_ymax.vtu").shrink(0.8), lighting=False, color="yellow")
-plotter.add_mesh(pv.read("out/hexes_zmin.vtu").shrink(0.8), lighting=False, color="blue")
-plotter.add_mesh(pv.read("out/hexes_zmax.vtu").shrink(0.8), lighting=False, color="cyan")
+plotter.add_mesh(pv.read(f"{out_dir}/hexes_xmin.vtu").shrink(0.8), lighting=False, color="red")
+plotter.add_mesh(pv.read(f"{out_dir}/hexes_xmax.vtu").shrink(0.8), lighting=False, color="orange")
+plotter.add_mesh(pv.read(f"{out_dir}/hexes_ymin.vtu").shrink(0.8), lighting=False, color="green")
+plotter.add_mesh(pv.read(f"{out_dir}/hexes_ymax.vtu").shrink(0.8), lighting=False, color="yellow")
+plotter.add_mesh(pv.read(f"{out_dir}/hexes_zmin.vtu").shrink(0.8), lighting=False, color="blue")
+plotter.add_mesh(pv.read(f"{out_dir}/hexes_zmax.vtu").shrink(0.8), lighting=False, color="cyan")
 plotter.add_axes()
 plotter.window_size = [800,400]
 plotter.show()
@@ -501,7 +503,7 @@ show_mesh(mesh)
 Consider the mesh from the beginning of the previous step:  
 
 ```bash
-! generateStructuredMesh -e quad -o out/quads.vtu --lx 3 --ly 4 --nx 4 --ny 5
+! generateStructuredMesh -e quad -o {out_dir}/quads.vtu --lx 3 --ly 4 --nx 4 --ny 5
 ```  
 
 Remove all elements from this mesh that are not at the mesh boundary.
@@ -513,7 +515,7 @@ Remove all elements from this mesh that are not at the mesh boundary.
 
 # Visualize your result
 mesh_name = "" # Put your mesh name inside the brackets
-mesh = pv.read(f"out/{mesh_name}")
+mesh = pv.read(f"{out_dir}/{mesh_name}")
 show_mesh(mesh)
 ~~~
 <!-- markdownlint-enable code-fence-style -->
@@ -527,12 +529,12 @@ Once all exercises are completed, or if any of them is challenging, the solution
 ### Exercise 1
 
 ```python
-! generateStructuredMesh -e tri -o out/ex1_triangle.vtu --lx 3 --ly 4 --nx 7 --ny 6 --ox 5 --oy 1
+! generateStructuredMesh -e tri -o {out_dir}/ex1_triangle.vtu --lx 3 --ly 4 --nx 7 --ny 6 --ox 5 --oy 1
 assert _exit_code == 0
 
 # Visualize the result
 mesh_name = "ex1_triangle.vtu" # Put your mesh name inside the brackets
-mesh = pv.read(f"out/{mesh_name}")
+mesh = pv.read(f"{out_dir}/{mesh_name}")
 show_mesh(mesh)
 ```
 
@@ -540,12 +542,12 @@ show_mesh(mesh)
 
 ```python
 # Extract boundary
-! ExtractBoundary -i "out/quads.vtu" -o "out/ex2quads_boundary.vtu"
+! ExtractBoundary -i "{out_dir}/quads.vtu" -o "{out_dir}/ex2quads_boundary.vtu"
 assert _exit_code == 0
 
 # Visualize result
 mesh_name = "ex2quads_boundary.vtu" # Put your mesh name inside the brackets
-mesh = pv.read(f"out/{mesh_name}")
+mesh = pv.read(f"{out_dir}/{mesh_name}")
 show_mesh(mesh)
 ```
 
@@ -557,7 +559,7 @@ show_mesh(mesh)
 import pyvista as pv
 
 # Created with: ! generateStructuredMesh -e hex -o out/hexes.vtu --lx 7 --ly 4 --lz 3 --nx 10 --ny 5 --nz 3
-mesh = pv.read("out/hexes.vtu")
+mesh = pv.read(f"{out_dir}/hexes.vtu")
 mesh
 ```
 
@@ -567,12 +569,12 @@ This means there is no data contained.
 ## Boundary mesh
 
 ```python
-mesh = pv.read("out/hexes_boundary.vtu") # Created by ExtractBoundary tool
+mesh = pv.read(f"{out_dir}/hexes_boundary.vtu") # Created by ExtractBoundary tool
 mesh
 ```
 
 ```python
-mesh = pv.read("out/hexes_xmax.vtu") # Created by ExtractBoundary tool and processed by removeMeshElements
+mesh = pv.read(f"{out_dir}/hexes_xmax.vtu") # Created by ExtractBoundary tool and processed by removeMeshElements
 mesh
 ```
 
@@ -584,10 +586,10 @@ What is this data used for?
 OGS will complain if the needed data is missing for BC or ST meshes.
 
 ```python
-bulk_mesh = pv.read("out/hexes.vtu")
+bulk_mesh = pv.read(f"{out_dir}/hexes.vtu")
 bulk_mesh.point_data["bulk_node_ids"] = np.arange(bulk_mesh.n_points)
 
-boundary_mesh = pv.read("out/hexes_xmax.vtu")
+boundary_mesh = pv.read(f"{out_dir}/hexes_xmax.vtu")
 
 # move the mesh a bit for better visualization
 boundary_mesh.points[:,0] += 1
@@ -601,10 +603,10 @@ plotter.show()
 ```
 
 ```python
-bulk_mesh = pv.read("out/hexes.vtu")
+bulk_mesh = pv.read(f"{out_dir}/hexes.vtu")
 bulk_mesh.cell_data["bulk_element_ids"] = np.arange(bulk_mesh.n_cells)
 
-boundary_mesh = pv.read("out/hexes_xmax.vtu")
+boundary_mesh = pv.read(f"{out_dir}/hexes_xmax.vtu")
 
 # Move the mesh a bit for better visualization
 boundary_mesh.points[:,0] += 1
@@ -615,8 +617,4 @@ plotter.add_mesh(boundary_mesh, scalars="bulk_element_ids", show_edges=True, lig
 plotter.window_size = [800,400]
 plotter.add_axes()
 plotter.show()
-```
-
-```python
-
 ```
