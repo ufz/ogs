@@ -58,13 +58,4 @@ inline DefaultIntegrationMethodProvider getIntegrationMethodProvider(
     return DefaultIntegrationMethodProvider{integration_order};
 }
 
-/// Overload for <tt>IntegrationMethodProvider</tt>s returning the provider
-/// itself.
-template <IntegrationMethodProvider IntegrationMethodProvider_>
-IntegrationMethodProvider_ const& getIntegrationMethodProvider(
-    IntegrationMethodProvider_ const& integration_method_provider)
-{
-    return integration_method_provider;
-}
-
 }  // namespace NumLib
