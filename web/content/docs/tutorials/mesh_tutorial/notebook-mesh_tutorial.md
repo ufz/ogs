@@ -12,22 +12,20 @@ In this tutorial the user will learn to use some of the tools provided with Open
 
 ## Requirements
 
-Running version of OpenGeoSys.  
-Can be pip installed, container or CLI with utilities.  
-It is assumed, that regardless of how OGS is installed, it is added to the environment variables and is accessible from CLI (command line interface).  
-In case of a problem, please consult [installation](https://www.opengeosys.org/docs/userguide/basics/introduction/) and [troubleshooting](https://www.opengeosys.org/docs/userguide/troubleshooting/get-support/).
+- A running version of OpenGeoSys (it be installed via pip, as a container or as 'CLI with utilities' binary download
+- It is assumed, that regardless of how OGS is installed, it is added to the environment variables and is accessible from the shell.
+- In case of a problem, please consult the [installation](https://www.opengeosys.org/docs/userguide/basics/introduction/) and [troubleshooting](https://www.opengeosys.org/docs/userguide/troubleshooting/get-support/) pages.
+- For viewing a mesh with PyVista, Python is required.
+- To run the Jupyter notebook that accompanies this tutorial, a Python environment with Jupyter, PyVista, NumPy and Matplotlib packages is needed.
 
-For viewing a mesh with PyVista, Python is required.  
-To run the Jupyter notebook that accompanies this tutorial, the Python environment with Jupyter, PyVista, NumPy and Matplotlib packages is needed.  
-Note: this tutorial doesn't cover Python.  
-The user is expected to have basic understanding of it.  
-Alternatively, other tools capable of reading mesh files can be used (for example: [ParaView](https://www.paraview.org/)).  
+Please note that this tutorial doesn't cover Python. The user is expected to have basic understanding of it. Alternatively, other tools capable of reading mesh files can be used (for example: [ParaView](https://www.paraview.org/)).
 
-Basic understanding of meshes would make following this tutorial easier but is not required.
+A basic understanding of meshes would make following this tutorial easier but is not required.
 
 ## Conventions
 
-If parameters can take different values (for example to apply them in different directions) variable part of command will be indicated by `$` sign followed by name.  
+If parameters can take different values (for example to apply them in different directions) variable part of command will be indicated by `$` sign followed by name.
+
 For example directional parameters set `-dx -dy -dz` will be indicated by `-d$direction $value`.  
 This doesn't apply to code snippets, there the parameters will be written explicitly.
 
@@ -42,30 +40,26 @@ At the end, answers will be provided for the exercises with explanations.
 
 `!` is used to run shell commands from within the Jupyter notebook.
 
-## Jupyter notebook  
-
-This tutorial will be available in the following Jupyter notebook.
-
 ## 1 Learn tools
 
 ### Outline  
 
 In this step you will get familiar with basic tools used for working with meshes, that are provided as part of the OpenGeoSys platform:
 
-* **TODO should all links also include the domain?**
-* [generateStructuredMesh](/docs/tools/meshing/structured-mesh-generation/)
-* [ExtractBoundary](/docs/tools/meshing-submeshes/extract-boundary/)
-* [removeMeshElements](/docs/tools/meshing/remove-mesh-elements/)
+- **TODO should all links also include the domain?**
+- [generateStructuredMesh](/docs/tools/meshing/structured-mesh-generation/)
+- [ExtractBoundary](/docs/tools/meshing-submeshes/extract-boundary/)
+- [removeMeshElements](/docs/tools/meshing/remove-mesh-elements/)
 
 ### Useful links  
 
 It is not mandatory to read the following articles before starting with the tutorial, but they can provide some expansion and additional explanation to the content presented here.
 
-* [OpenGeoSys tools documentation](/docs/tools/getting-started/overview/)
-* [Structured mesh generation](/docs/tools/meshing/structured-mesh-generation/)
-* [Extracting surfaces](/docs/tools/meshing-submeshes/extract-surface/)
-* [Removing mesh elements](/docs/tools/meshing/remove-mesh-elements/)
-* [PyVista documentation](https://docs.pyvista.org/)
+- [OpenGeoSys tools documentation](/docs/tools/getting-started/overview/)
+- [Structured mesh generation](/docs/tools/meshing/structured-mesh-generation/)
+- [Extracting surfaces](/docs/tools/meshing-submeshes/extract-surface/)
+- [Removing mesh elements](/docs/tools/meshing/remove-mesh-elements/)
+- [PyVista documentation](https://docs.pyvista.org/)
 
 We first set an output directory and import some required libraries. This tutorial uses PyVista for visualization of the meshes.
 
@@ -580,8 +574,8 @@ mesh
 
 What is this data used for?
 
-* `bulk_node_ids` identify where the contributions of BCs and STs will go in the global equation system  
-* `bulk_element_ids`, `bulk_face_ids` used with some advanced features, e.g. special BCs and surface flux computation  
+- `bulk_node_ids` identify where the contributions of BCs and STs will go in the global equation system
+- `bulk_element_ids`, `bulk_face_ids` used with some advanced features, e.g. special BCs and surface flux computation
 
 OGS will complain if the needed data is missing for BC or ST meshes.
 
