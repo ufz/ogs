@@ -11,61 +11,48 @@ from datetime import timedelta
 import toml
 from pathlib import Path
 import jupytext
+import subprocess
 
 
 def save_to_website(exec_notebook_file, web_path):
-    from nb2hugo.writer import HugoWriter
-
-    output_path = "docs/benchmarks"
+    output_path_arg = ""
     notebook = nbformat.read(exec_notebook_file, as_version=4)
     first_cell = notebook.cells[0]
-    if is_jupytext:
-        if "Tests/Data" not in exec_notebook_file:
-            output_path = str(Path(exec_notebook_file).parent.parent)
-        else:
-            lines = first_cell.source.splitlines()
-            toml_begin = lines.index("+++")
-            toml_end = max(loc for loc, val in enumerate(lines) if val == "+++")
-            toml_lines = lines[toml_begin + 1 : toml_end]
-            parsed_frontmatter = toml.loads("\n".join(toml_lines))
-            output_path = (
-                Path(build_dir)
-                / Path("web/content")
-                / Path(output_path)
-                / Path(parsed_frontmatter["web_subsection"])
-            )
-    elif first_cell.cell_type == "raw":
+    if "Tests/Data" in exec_notebook_file:
         lines = first_cell.source.splitlines()
-        last_line = lines[-1]
-        if "<!--eofm-->" not in last_line:
-            print(
-                f"Warning: {exec_notebook_file} does not contain '<!--eofm-->' as the "
-                "last line in the RAW cell!"
-            )
-        parsed_frontmatter = toml.loads("\n".join(lines[:-1]))
-        if "web_subsection" not in parsed_frontmatter:
-            print(
-                f"Error: {exec_notebook_file} frontmatter does not contain "
-                "'web_subsection'!"
-            )
-        output_path = os.path.join(output_path, parsed_frontmatter["web_subsection"])
-        output_path = Path(build_dir) / (Path("web/content") / Path(output_path))
-    else:
-        print(
-            f"Warning: {exec_notebook_file} does not contain a RAW cell as its first "
-            "cell!"
+        toml_begin = lines.index("+++")
+        toml_end = max(loc for loc, val in enumerate(lines) if val == "+++")
+        toml_lines = lines[toml_begin + 1 : toml_end]
+        parsed_frontmatter = toml.loads("\n".join(toml_lines))
+        output_path = (
+            Path(build_dir)
+            / Path("web/content/docs/benchmarks")
+            / Path(parsed_frontmatter["web_subsection"])
         )
-        output_path = os.path.join(output_path, "notebooks")
-    writer = HugoWriter()
-    writer.convert(
-        exec_notebook_file,
-        web_path,
-        output_path,
-        os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            "nbconvert_templates/collapsed.md.j2",
-        ),
+        output_path_arg = (
+            f"--output-dir={Path(output_path) / Path(exec_notebook_file).stem}"
+        )
+
+    template = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "nbconvert_templates/collapsed.md.j2",
     )
+    subprocess.run(
+        [
+            "jupyter",
+            "nbconvert",
+            "--to",
+            "markdown",
+            f"--template-file={template}",
+            "--output=index",
+            output_path_arg,
+            exec_notebook_file,
+        ]
+    )
+
+    if not "Tests/Data" in exec_notebook_file:
+        return
+
     for subfolder in ["figures", "images"]:
         figures_path = os.path.abspath(
             os.path.join(os.path.dirname(notebook_file_path), subfolder)
@@ -140,7 +127,7 @@ for notebook_file_path in args.notebooks:
                 nb = nbformat.read(f, as_version=4)
         ep = ExecutePreprocessor(kernel_name="python3")
 
-        # 1. Run the notebook
+        # Run the notebook
         print(f"[Start]  {notebook_filename}")
         start = timer()
         try:
@@ -162,15 +149,7 @@ for notebook_file_path in args.notebooks:
             pass
         end = timer()
 
-        # 2. Instantiate the exporter. We use the `classic` template for now; we'll get
-        # into more details later about how to customize the exporter further.
-        html_exporter = HTMLExporter()
-        html_exporter.template_name = "classic"
-
-        # 3. Process the notebook we loaded earlier
-        (body, resources) = html_exporter.from_notebook_node(nb)
-
-        # 4. Write new notebook
+        # Write new notebook
         with open(convert_notebook_file, "w", encoding="utf-8") as f:
             repo = "https://gitlab.opengeosys.org/ogs/ogs"
             branch = "master"
@@ -180,17 +159,14 @@ for notebook_file_path in args.notebooks:
 
             # Modify metadata
             meta_cell = nb["cells"][0]
-            if is_jupytext:
-                if meta_cell.source.startswith("---"):
-                    print(
-                        f"Error: {notebook_filename} frontmatter is not in TOML format! Use +++ delimitiers!"
-                    )
-                    success = False
-                meta_cell.source = meta_cell.source.replace(
-                    "+++\n", "+++\nnotebook = true\n", 1
+            if meta_cell.source.startswith("---"):
+                print(
+                    f"Error: {notebook_filename} frontmatter is not in TOML format! Use +++ delimitiers!"
                 )
-            else:
-                meta_cell.source = f"notebook = true\n{meta_cell.source}"
+                success = False
+            meta_cell.source = meta_cell.source.replace(
+                "+++\n", "+++\nnotebook = true\n", 1
+            )
 
             # Insert Jupyter header with notebook source and binderhub link
             binder_link = f"https://mybinder.org/v2/gh/bilke/binder-ogs-requirements/master?urlpath=git-pull%3Frepo={repo}%26urlpath=lab/tree/ogs/{notebook_file_path_relative}%26branch={branch}"
@@ -235,21 +211,6 @@ for notebook_file_path in args.notebooks:
 
             first_markdown_cell.source = text + first_markdown_cell.source
             nbformat.write(nb, f)
-
-        # 5. Symlink images or figures subfolder
-        for subfolder in ["figures", "images"]:
-            figures_path = os.path.abspath(
-                os.path.join(os.path.dirname(notebook_file_path), subfolder)
-            )
-            symlink_figures_path = os.path.join(notebook_output_path, subfolder)
-            if os.path.exists(figures_path) and not os.path.exists(
-                symlink_figures_path
-            ):
-                print(
-                    f"{subfolder} folder detected, symlink {figures_path} to "
-                    f"{symlink_figures_path}"
-                )
-                os.symlink(figures_path, symlink_figures_path)
 
     status_string = ""
     if notebook_success:
