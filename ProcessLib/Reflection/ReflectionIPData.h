@@ -26,6 +26,29 @@ constexpr bool has_reflect = requires
     T::reflect();
 };
 
+/**
+ * Raw data is data that will be read or written, e.g., double values or Eigen
+ * vectors.
+ *
+ * Non-raw data is data for which further reflection will be performed (to find
+ * out the members).
+ */
+template <typename T>
+struct is_raw_data : std::false_type
+{
+};
+
+template <>
+struct is_raw_data<double> : std::true_type
+{
+};
+
+template <int N>
+struct is_raw_data<Eigen::Matrix<double, N, 1, Eigen::ColMajor, N, 1>>
+    : std::true_type
+{
+};
+
 template <typename T>
 struct NumberOfComponents;
 
