@@ -1,6 +1,5 @@
 /**
  * \file
- *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -182,7 +181,8 @@ void writeMaterialForces(
            LocalAssemblerInterface& local_assembler,
            const NumLib::LocalToGlobalIndexMap& dof_table,
            GlobalVector const& x,
-           GlobalVector& node_values) {
+           GlobalVector& node_values)
+        {
             auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
             std::vector<double> local_data;
             auto const local_x = x.get(indices);
