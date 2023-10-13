@@ -226,7 +226,12 @@ for notebook_file_path in args.notebooks:
             )
     else:
         status_string += "[Failed] "
-        # Save to html
+
+        # Create and write HTML file
+        html_exporter = HTMLExporter()
+        html_exporter.template_name = "classic"
+        (body, resources) = html_exporter.from_notebook_node(nb)
+
         html_file = convert_notebook_file + ".html"
         with open(html_file, "w", encoding="utf-8") as fh:
             fh.write(body)
