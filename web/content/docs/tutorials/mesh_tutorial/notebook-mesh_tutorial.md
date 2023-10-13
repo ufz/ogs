@@ -1,5 +1,5 @@
 +++
-date = "2018-02-27T11:00:13+01:00"
+date = "2023-010-13T11:00:13+01:00"
 title = "Mesh Tutorial"
 author = "Christoph Lehmann, Feliks Kiszkurno, Frieder Loer"
 weight = 2
@@ -14,7 +14,7 @@ In this tutorial the user will learn to use some of the tools provided with Open
 
 - A running version of OpenGeoSys (it be installed via pip, as a container or as 'CLI with utilities' binary download
 - It is assumed, that regardless of how OGS is installed, it is added to the environment variables and is accessible from the shell.
-- In case of a problem, please consult the [installation](https://www.opengeosys.org/docs/userguide/basics/introduction/) and [troubleshooting](https://www.opengeosys.org/docs/userguide/troubleshooting/get-support/) pages.
+- In case of a problem, please consult the [installation]({{< ref "/docs/userguide/basics/introduction" >}}) and [troubleshooting]({{< ref "/docs/userguide/troubleshooting/get-support" >}}) pages.
 - For viewing a mesh with PyVista, Python is required.
 - To run the Jupyter notebook that accompanies this tutorial, a Python environment with Jupyter, PyVista, NumPy and Matplotlib packages is needed.
 
@@ -31,8 +31,7 @@ This doesn't apply to code snippets, there the parameters will be written explic
 
 ## Flow
 
-**TODO: Where will the following link ultimately point to?**  
-[In the first](/docs/tutorials/mesh_ogs_tools/1_learn_tools/), some tools that can be used to create a mesh will be presented with a short description and an example.  
+[In the first](#1-learn-tools), some tools that can be used to create a mesh will be presented with a short description and an example.  
 
 Next, users can verify their understanding with a couple of exercises.  
 
@@ -46,19 +45,18 @@ At the end, answers will be provided for the exercises with explanations.
 
 In this step you will get familiar with basic tools used for working with meshes, that are provided as part of the OpenGeoSys platform:
 
-- **TODO should all links also include the domain?**
-- [generateStructuredMesh](/docs/tools/meshing/structured-mesh-generation/)
-- [ExtractBoundary](/docs/tools/meshing-submeshes/extract-boundary/)
-- [removeMeshElements](/docs/tools/meshing/remove-mesh-elements/)
+- [generateStructuredMesh]({{< ref "structured-mesh-generation" >}})
+- [ExtractBoundary]({{< ref "extract-boundary" >}})
+- [removeMeshElements]({{< ref "remove-mesh-elements" >}})
 
 ### Useful links  
 
 It is not mandatory to read the following articles before starting with the tutorial, but they can provide some expansion and additional explanation to the content presented here.
 
-- [OpenGeoSys tools documentation](/docs/tools/getting-started/overview/)
-- [Structured mesh generation](/docs/tools/meshing/structured-mesh-generation/)
-- [Extracting surfaces](/docs/tools/meshing-submeshes/extract-surface/)
-- [Removing mesh elements](/docs/tools/meshing/remove-mesh-elements/)
+- [OpenGeoSys tools documentation]({{< ref "/docs/tools/getting-started/overview" >}})
+- [Structured mesh generation]({{< ref "structured-mesh-generation" >}})
+- [Extracting surfaces]({{< ref "extract-surface" >}})
+- [Removing mesh elements]({{< ref "remove-mesh-elements" >}})
 - [PyVista documentation](https://docs.pyvista.org/)
 
 We first set an output directory and import some required libraries. This tutorial uses PyVista for visualization of the meshes.
@@ -263,7 +261,7 @@ The command to create this mesh:
 assert _exit_code == 0
 ```
 
-Note that the name of the output file, values in `--l` and `--n` were changed compared to the command in [Quadrilateral mesh](/docs/tutorials/mesh_ogs_tools/1_learn_tools/#Quadrilateral-mesh) step.  
+Note that the name of the output file, values in `--l` and `--n` were changed compared to the command in [Quadrilateral mesh](#quadrilateral-mesh) step.  
 The `\` allows to break the line and split command into more than one line to improve its readability.  
 Running it produces following mesh:
 
@@ -350,7 +348,7 @@ For Finite Element simulations, we need to specify subdomains e.g. for boundary 
 One possibility is to precompute the subdomains as meshes by extracting them from our domain.  
 This way the subdomains additionally contain information to identify the corresponding bulk mesh entities like nodes, elements, and faces of elements.
 
-We can extract subdomains using the OGS tool [ExtractSurface](https://www.opengeosys.org/docs/tools/meshing-submeshes/extract-surface/).  
+We can extract subdomains using the OGS tool [ExtractSurface]({{< ref "extract-surface" >}}).
 Type `! ExtractBoundary --help` for a basic documentation.
 
 ```python
@@ -475,11 +473,11 @@ If you are comfortable with the use of the tools discussed on this page, please 
 
 ### Exercise 1
 
-Create a 2D mesh consisting of triangles.  
-There shall be 7 cells in x direction and 6 cells in y direction.  
-The mesh shall be 3 units wide and 4 units tall.  
-Its origin shall be at (5, 1).  
-The result can be visualized with `show_mesh()`.
+- Create a 2D mesh consisting of triangles.
+- There shall be 7 cells in x direction and 6 cells in y direction.
+- The mesh shall be 3 units wide and 4 units tall.
+- Its origin shall be at (5, 1).
+- The result can be visualized with `show_mesh()`.
 
 <!-- markdownlint-disable code-fence-style -->
 ~~~python
@@ -557,8 +555,7 @@ mesh = pv.read(f"{out_dir}/hexes.vtu")
 mesh
 ```
 
-From the above cell's output we see that 'N Arrays == 0'.  
-This means there is no data contained.
+From the above cell's output we see that 'N Arrays == 0'. This means there is no data contained.
 
 ## Boundary mesh
 
