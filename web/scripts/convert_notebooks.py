@@ -16,10 +16,20 @@ for notebook in notebooks:
         )
         exit_code = 1
         continue
-    print(f"Converting {notebook} ...")
+    template = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "../../Tests/Data/Notebooks/nbconvert_templates/collapsed.md.j2",
+    )
     subprocess.run(
-        f"nb2hugo --site-dir .. --section {nb.parent.parent} {notebook}",
-        shell=True,
+        [
+            "jupyter",
+            "nbconvert",
+            "--to",
+            "markdown",
+            f"--template-file={template}",
+            "--output=index",
+            notebook,
+        ],
         check=True,
     )
 

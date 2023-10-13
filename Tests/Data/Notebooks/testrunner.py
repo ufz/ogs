@@ -11,61 +11,49 @@ from datetime import timedelta
 import toml
 from pathlib import Path
 import jupytext
+import subprocess
 
 
 def save_to_website(exec_notebook_file, web_path):
-    from nb2hugo.writer import HugoWriter
-
-    output_path = "docs/benchmarks"
+    output_path_arg = ""
     notebook = nbformat.read(exec_notebook_file, as_version=4)
     first_cell = notebook.cells[0]
-    if is_jupytext:
-        if "Tests/Data" not in exec_notebook_file:
-            output_path = str(Path(exec_notebook_file).parent.parent)
-        else:
-            lines = first_cell.source.splitlines()
-            toml_begin = lines.index("+++")
-            toml_end = max(loc for loc, val in enumerate(lines) if val == "+++")
-            toml_lines = lines[toml_begin + 1 : toml_end]
-            parsed_frontmatter = toml.loads("\n".join(toml_lines))
-            output_path = (
-                Path(build_dir)
-                / Path("web/content")
-                / Path(output_path)
-                / Path(parsed_frontmatter["web_subsection"])
-            )
-    elif first_cell.cell_type == "raw":
+    if "Tests/Data" in exec_notebook_file:
         lines = first_cell.source.splitlines()
-        last_line = lines[-1]
-        if "<!--eofm-->" not in last_line:
-            print(
-                f"Warning: {exec_notebook_file} does not contain '<!--eofm-->' as the "
-                "last line in the RAW cell!"
-            )
-        parsed_frontmatter = toml.loads("\n".join(lines[:-1]))
-        if "web_subsection" not in parsed_frontmatter:
-            print(
-                f"Error: {exec_notebook_file} frontmatter does not contain "
-                "'web_subsection'!"
-            )
-        output_path = os.path.join(output_path, parsed_frontmatter["web_subsection"])
-        output_path = Path(build_dir) / (Path("web/content") / Path(output_path))
-    else:
-        print(
-            f"Warning: {exec_notebook_file} does not contain a RAW cell as its first "
-            "cell!"
+        toml_begin = lines.index("+++")
+        toml_end = max(loc for loc, val in enumerate(lines) if val == "+++")
+        toml_lines = lines[toml_begin + 1 : toml_end]
+        parsed_frontmatter = toml.loads("\n".join(toml_lines))
+        output_path = (
+            Path(build_dir)
+            / Path("web/content/docs/benchmarks")
+            / Path(parsed_frontmatter["web_subsection"])
         )
-        output_path = os.path.join(output_path, "notebooks")
-    writer = HugoWriter()
-    writer.convert(
-        exec_notebook_file,
-        web_path,
-        output_path,
-        os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            "nbconvert_templates/collapsed.md.j2",
-        ),
+        output_path_arg = (
+            f"--output-dir={Path(output_path) / Path(exec_notebook_file).stem}"
+        )
+
+    template = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "nbconvert_templates/collapsed.md.j2",
     )
+    subprocess.run(
+        [
+            "jupyter",
+            "nbconvert",
+            "--to",
+            "markdown",
+            f"--template-file={template}",
+            "--output=index",
+            output_path_arg,
+            exec_notebook_file,
+        ],
+        check=True,
+    )
+
+    if not "Tests/Data" in exec_notebook_file:
+        return
+
     for subfolder in ["figures", "images"]:
         figures_path = os.path.abspath(
             os.path.join(os.path.dirname(notebook_file_path), subfolder)
@@ -140,7 +128,7 @@ for notebook_file_path in args.notebooks:
                 nb = nbformat.read(f, as_version=4)
         ep = ExecutePreprocessor(kernel_name="python3")
 
-        # 1. Run the notebook
+        # Run the notebook
         print(f"[Start]  {notebook_filename}")
         start = timer()
         try:
@@ -162,15 +150,7 @@ for notebook_file_path in args.notebooks:
             pass
         end = timer()
 
-        # 2. Instantiate the exporter. We use the `classic` template for now; we'll get
-        # into more details later about how to customize the exporter further.
-        html_exporter = HTMLExporter()
-        html_exporter.template_name = "classic"
-
-        # 3. Process the notebook we loaded earlier
-        (body, resources) = html_exporter.from_notebook_node(nb)
-
-        # 4. Write new notebook
+        # Write new notebook
         with open(convert_notebook_file, "w", encoding="utf-8") as f:
             repo = "https://gitlab.opengeosys.org/ogs/ogs"
             branch = "master"
@@ -178,19 +158,36 @@ for notebook_file_path in args.notebooks:
                 repo = os.environ["CI_MERGE_REQUEST_SOURCE_PROJECT_URL"]
                 branch = os.environ["CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"]
 
-            # Modify metadata
-            meta_cell = nb["cells"][0]
-            if is_jupytext:
-                if meta_cell.source.startswith("---"):
-                    print(
-                        f"Error: {notebook_filename} frontmatter is not in TOML format! Use +++ delimitiers!"
-                    )
-                    success = False
-                meta_cell.source = meta_cell.source.replace(
-                    "+++\n", "+++\nnotebook = true\n", 1
+            # Check frontmatter has its own cell
+            first_cell = nb["cells"][0]
+            if (
+                first_cell.cell_type == "markdown"
+                and first_cell.source.startswith("+++")
+                and not first_cell.source.endswith("+++")
+            ):
+                print(
+                    f"Error: {notebook_filename} notebook metadata is not a separate cell (in markdown: separate by two newlines)!"
                 )
-            else:
-                meta_cell.source = f"notebook = true\n{meta_cell.source}"
+                success = False
+
+            # Check second cell is markdown
+            second_cell = nb["cells"][1]
+            if second_cell.cell_type != "markdown":
+                print(
+                    f"Error: {notebook_filename} first cell after the frontmatter needs to be a markdown cell! Move the first Python cell below."
+                )
+                success = False
+
+            # Modify metadata
+            first_cell = nb["cells"][0]
+            if first_cell.source.startswith("---"):
+                print(
+                    f"Error: {notebook_filename} frontmatter is not in TOML format! Use +++ delimitiers!"
+                )
+                success = False
+            first_cell.source = first_cell.source.replace(
+                "+++\n", "+++\nnotebook = true\n", 1
+            )
 
             # Insert Jupyter header with notebook source and binderhub link
             binder_link = f"https://mybinder.org/v2/gh/bilke/binder-ogs-requirements/master?urlpath=git-pull%3Frepo={repo}%26urlpath=lab/tree/ogs/{notebook_file_path_relative}%26branch={branch}"
@@ -216,40 +213,9 @@ for notebook_file_path in args.notebooks:
         src="https://img.shields.io/static/v1?label=&message=Launch notebook&color=5c5c5c&logo=data:image/png;base64,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" />
 </a>"""
             text += f"""</p></div>\n\n"""
+            second_cell.source = text + second_cell.source
 
-            for cell in nb["cells"]:
-                # Check frontmatter has its own cell
-                if (
-                    cell.cell_type == "markdown"
-                    and cell.source.startswith("+++")
-                    and not cell.source.endswith("+++")
-                ):
-                    print(
-                        f"Error: {notebook_filename} notebook metadata is not a separate cell (in markdown: separate by two newlines)!"
-                    )
-                    success = False
-                # Get first regular markdown cell
-                if cell.cell_type == "markdown" and not cell.source.startswith("+++"):
-                    first_markdown_cell = cell
-                    break
-
-            first_markdown_cell.source = text + first_markdown_cell.source
             nbformat.write(nb, f)
-
-        # 5. Symlink images or figures subfolder
-        for subfolder in ["figures", "images"]:
-            figures_path = os.path.abspath(
-                os.path.join(os.path.dirname(notebook_file_path), subfolder)
-            )
-            symlink_figures_path = os.path.join(notebook_output_path, subfolder)
-            if os.path.exists(figures_path) and not os.path.exists(
-                symlink_figures_path
-            ):
-                print(
-                    f"{subfolder} folder detected, symlink {figures_path} to "
-                    f"{symlink_figures_path}"
-                )
-                os.symlink(figures_path, symlink_figures_path)
 
     status_string = ""
     if notebook_success:

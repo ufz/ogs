@@ -76,6 +76,10 @@
             ctest_arguments="${ctest_arguments} -LE large"
           fi
 
+          if [[ "$CI_MERGE_REQUEST_LABELS" =~ [.*web\ only.*] ]]; then
+            ctest_arguments="${ctest_arguments} -R nb-"
+          fi
+
           if [[ ! -z "$CTEST_TIMEOUT" ]]; then
             ctest_timeout="$CTEST_TIMEOUT"
           fi

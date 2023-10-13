@@ -35,14 +35,15 @@ If you use additional images put them into the `my-page`-folder.
 If the notebook result should appear as a page on the web documentation a frontmatter with some meta information (similar to [regular web pages]({{< ref "web-docs.md" >}})) is required as the first cell in the notebook:
 
 - Add a new cell and move it to the first position in the notebook
-- Change the cell type to `raw`!
-- Add meta information, conclude with a end-of-file marker (`<!--eofm-->`) e.g.:
+- Cell type needs to be `markdown` or `raw`
+- Add meta information e.g.:
 
   ```md
+  +++
   title = "BHE Meshing"
   date = "2023-08-18"
   author = "Joy Brato Shil, Haibing Shao"
-  <!--eofm-->
+  +++
   ```
 
 ---
@@ -54,10 +55,10 @@ Make sure that you execute the cells in the notebook and save the notebook (with
 To get a preview of the web page run the `convert_notebooks`-script:
 
 ```bash
-# You need the converter-tool nb2hugo installed. Recommended way is to
+# You need the converter-tool nbconvert installed. Recommended way is to
 # create and activate a virtual environment and install it there:
 python -m venv .venv  # or `python3 -m ...` on some systems
-pip install git+https://github.com/bilke/nb2hugo@ogs
+pip install nbconvert
 
 python web/scripts/convert_notebooks.py
 
@@ -101,9 +102,23 @@ web_subsection = "small-deformations" # required for notebooks in Tests/Data onl
 - Frontmatter needs to be in [TOML](https://toml.io)-format.
 - For notebooks describing benchmarks `web_subsection` needs to be set to a sub-folder in [web/content/docs/benchmarks](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/web/content/docs/benchmarks) (if not set the notebook page will not be linked from navigation bar / benchmark gallery on the web page).
 - If you edit a Markdown-based notebook with Jupyter and the Jupytext extension please don't add the two newlines but make sure that the frontmatter has its own cell (not mixed with markdown content).
-- For (deprecated) `.ipynb`-based notebooks the frontmatter has to given as a `raw`-cell containing a special `<!--eofm-->`-marker. See existing notebooks (e.g. [SimpleMechanics.ipynb](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Mechanics/Linear/SimpleMechanics.ipynb)) for reference.
+- For (deprecated) `.ipynb`-based notebooks the frontmatter needs to be given in the first cell. See existing notebooks (e.g. [SimpleMechanics.ipynb](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Mechanics/Linear/SimpleMechanics.ipynb)) for reference.
 
 ### Notebook setup
+
+The first cell after the frontmatter needs to be a `markdown`-cell!
+
+#### Markdown cells
+
+- HTML inside Markdown cells may be used for specific reasons (e.g. better image formatting).
+- For notebooks in `Tests/Data` only: Static images e.g. for the gallery image or to be used in Markdown cells have to be located in either `images`- or `figures`-subdirectories beneath the Notebook file! Otherwise they will not show up on the web site.
+  - For image captions add a title in quotation marks after the image path, e.g.
+
+    ```md
+    ![Alt text](figures/my_image.png "This will be the image caption.")
+    ```
+
+  - Please note that in merge request web previews static images are not shown at all.
 
 #### Python cells
 
@@ -135,18 +150,6 @@ web_subsection = "small-deformations" # required for notebooks in Tests/Data onl
 
 - Do not write anything into the source directories. Use an `out_dir` as above.
 - Assume that `ogs` and other tools are in the `PATH`.
-
-#### Markdown cells
-
-- Do not use HTML inside Markdown blocks.
-- Static images e.g. for the gallery image or to be used in Markdown cells have to be located in either `images`- or `figures`-subdirectories beneath the Notebook file! Otherwise they will not show up in the web site.
-  - For image captions add a title in quotation marks after the image path, e.g.
-
-    ```md
-    ![Alt text](figures/my_image.png "This will be the image caption.")
-    ```
-
-  - Please note that in merge request web previews static images are not shown at all.
 
 ### Execution environment
 
