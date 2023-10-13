@@ -104,10 +104,6 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
                              std::move(get_ip_values_function)));
     };
 
-    add_secondary_variable("free_energy_density",
-                           1,
-                           &LocalAssemblerInterface::getIntPtFreeEnergyDensity);
-
     ProcessLib::Reflection::addReflectedSecondaryVariables<DisplacementDim>(
         SmallDeformationLocalAssemblerInterface<
             DisplacementDim>::getReflectionDataForOutput(),

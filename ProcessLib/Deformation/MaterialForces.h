@@ -37,12 +37,12 @@ template <int DisplacementDim, typename ShapeFunction,
           typename ShapeMatricesType, typename NodalForceVectorType,
           typename NodalDisplacementVectorType, typename GradientVectorType,
           typename GradientMatrixType, typename IPData, typename StressData,
-          typename IntegrationMethod>
+          typename OutputData, typename IntegrationMethod>
 std::vector<double> const& getMaterialForces(
     std::vector<double> const& local_x, std::vector<double>& nodal_values,
     IntegrationMethod const& _integration_method, IPData const& _ip_data,
-    StressData const& stress_data, MeshLib::Element const& element,
-    bool const is_axially_symmetric)
+    StressData const& stress_data, OutputData const& output_data,
+    MeshLib::Element const& element, bool const is_axially_symmetric)
 {
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -57,7 +57,8 @@ std::vector<double> const& getMaterialForces(
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
 
-        auto const& psi = _ip_data[ip].free_energy_density;
+        auto const& psi =
+            output_data[ip].free_energy_density_data.free_energy_density;
 
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(

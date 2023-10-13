@@ -40,8 +40,6 @@ template <typename BMatricesType, typename ShapeMatricesType,
           int DisplacementDim>
 struct IntegrationPointData final
 {
-    double free_energy_density = 0;
-
     double integration_weight;
     typename ShapeMatricesType::NodalRowVectorType N;
     typename ShapeMatricesType::GlobalDimNodalMatrixType dNdx;
@@ -315,15 +313,6 @@ public:
                 this->prev_states_[ip], this->material_states_[ip],
                 this->output_data_[ip]);
 
-            auto const& eps = this->output_data_[ip].eps_data.eps;
-            auto const& sigma = this->current_states_[ip].stress_data.sigma;
-            auto& state = *this->material_states_[ip].material_state_variables;
-
-            // Update free energy density needed for material forces.
-            _ip_data[ip].free_energy_density =
-                this->solid_material_.computeFreeEnergyDensity(
-                    t, x_position, dt, eps, sigma, state);
-
             this->material_states_[ip].pushBackState();
         }
 
@@ -341,9 +330,10 @@ public:
             DisplacementDim, ShapeFunction, ShapeMatricesType,
             typename BMatricesType::NodalForceVectorType,
             NodalDisplacementVectorType, GradientVectorType,
-            GradientMatrixType>(
-            local_x, nodal_values, this->integration_method_, _ip_data,
-            this->current_states_, this->element_, this->is_axially_symmetric_);
+            GradientMatrixType>(local_x, nodal_values,
+                                this->integration_method_, _ip_data,
+                                this->current_states_, this->output_data_,
+                                this->element_, this->is_axially_symmetric_);
     }
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
@@ -353,22 +343,6 @@ public:
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
-    }
-
-    std::vector<double> const& getIntPtFreeEnergyDensity(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        cache.clear();
-        cache.reserve(_ip_data.size());
-
-        transform(
-            cbegin(_ip_data), cend(_ip_data), back_inserter(cache),
-            [](auto const& ip_data) { return ip_data.free_energy_density; });
-
-        return cache;
     }
 
 private:

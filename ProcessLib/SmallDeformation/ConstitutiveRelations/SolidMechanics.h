@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "FreeEnergyDensity.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MaterialState.h"
 #include "StressData.h"
@@ -36,15 +37,15 @@ struct SolidMechanicsModel
     {
     }
 
-    void eval(
-        SpaceTimeData const& x_t,
-        Temperature const& temperature,
-        StrainData<DisplacementDim> const& eps_data,
-        PrevState<StrainData<DisplacementDim>> const& eps_data_prev,
-        MaterialStateData<DisplacementDim>& mat_state,
-        PrevState<StressData<DisplacementDim>> const& stress_data_prev,
-        StressData<DisplacementDim>& stress_data,
-        SolidMechanicsDataStateless<DisplacementDim>& current_stateless) const;
+    void eval(SpaceTimeData const& x_t,
+              Temperature const& temperature,
+              StrainData<DisplacementDim> const& eps_data,
+              PrevState<StrainData<DisplacementDim>> const& eps_data_prev,
+              MaterialStateData<DisplacementDim>& mat_state,
+              PrevState<StressData<DisplacementDim>> const& stress_data_prev,
+              StressData<DisplacementDim>& stress_data,
+              SolidMechanicsDataStateless<DisplacementDim>& current_stateless,
+              FreeEnergyDensityData& free_energy_density_data) const;
 
     auto getInternalVariables() const
     {

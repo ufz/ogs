@@ -40,6 +40,8 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     auto& s_mech_data = cd.s_mech_data;
     auto& volumetric_body_force = cd.volumetric_body_force;
 
+    auto& free_energy_density_data = out.free_energy_density_data;
+
     Temperature const T{T_ref};
     SpaceTimeData const x_t{x_position, t, dt};
     MediaData const media_data{medium};
@@ -47,7 +49,7 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     assertEvalArgsUnique(models.s_mech_model);
     models.s_mech_model.eval(x_t, T, eps_data, eps_data_prev, mat_state,
                              prev_state.stress_data, state.stress_data,
-                             s_mech_data);
+                             s_mech_data, free_energy_density_data);
 
     assertEvalArgsUnique(models.rho_S_model);
     models.rho_S_model.eval(x_t, media_data, T, rho_SR);

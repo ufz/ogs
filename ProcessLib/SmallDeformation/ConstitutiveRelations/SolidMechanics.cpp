@@ -22,7 +22,8 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     MaterialStateData<DisplacementDim>& mat_state,
     PrevState<StressData<DisplacementDim>> const& stress_data_prev,
     StressData<DisplacementDim>& stress_data,
-    SolidMechanicsDataStateless<DisplacementDim>& current_stateless) const
+    SolidMechanicsDataStateless<DisplacementDim>& current_stateless,
+    FreeEnergyDensityData& free_energy_density_data) const
 {
     namespace MPL = MaterialPropertyLib;
 
@@ -59,6 +60,11 @@ void SolidMechanicsModel<DisplacementDim>::eval(
 
     std::tie(stress_data.sigma, mat_state.material_state_variables,
              current_stateless.stiffness_tensor) = std::move(*solution);
+
+    free_energy_density_data.free_energy_density =
+        solid_material_.computeFreeEnergyDensity(
+            x_t.t, x_t.x, x_t.dt, eps_data.eps, stress_data.sigma,
+            *mat_state.material_state_variables);
 }
 
 template struct SolidMechanicsModel<2>;

@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "FreeEnergyDensity.h"
 #include "Gravity.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
 #include "SolidDensity.h"
@@ -52,12 +53,14 @@ template <int DisplacementDim>
 struct OutputData
 {
     StrainData<DisplacementDim> eps_data;
+    FreeEnergyDensityData free_energy_density_data;
 
     static auto reflect()
     {
         using Self = OutputData<DisplacementDim>;
 
-        return Reflection::reflectWithoutName(&Self::eps_data);
+        return Reflection::reflectWithoutName(&Self::eps_data,
+                                              &Self::free_energy_density_data);
     }
 };
 
