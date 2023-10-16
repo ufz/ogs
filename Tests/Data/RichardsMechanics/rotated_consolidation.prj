@@ -29,7 +29,6 @@
             <name>RM</name>
             <type>RICHARDS_MECHANICS</type>
             <integration_order>4</integration_order>
-            <dimension>2</dimension>
             <constitutive_relation>
                 <type>LinearElasticOrthotropic</type>
                 <youngs_moduli>E</youngs_moduli>

@@ -12,7 +12,6 @@
             <name>RM</name>
             <type>RICHARDS_MECHANICS</type>
             <integration_order>2</integration_order>
-            <dimension>2</dimension>
             <jacobian_assembler>
                 <type>Analytical</type>
             </jacobian_assembler>

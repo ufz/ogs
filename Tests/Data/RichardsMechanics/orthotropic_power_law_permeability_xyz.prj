@@ -7,7 +7,6 @@
             <name>RM</name>
             <type>RICHARDS_MECHANICS</type>
             <integration_order>3</integration_order>
-            <dimension>2</dimension>
             <!-- Keep for testing
             <jacobian_assembler>
                 <type>CentralDifferences</type>

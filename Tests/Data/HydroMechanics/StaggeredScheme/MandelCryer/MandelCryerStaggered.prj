@@ -16,7 +16,6 @@
                 <fixed_stress_stabilization_parameter>0.7774</fixed_stress_stabilization_parameter>
             </coupling_scheme>
             <integration_order>3</integration_order>
-            <dimension>3</dimension>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>

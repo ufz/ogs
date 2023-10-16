@@ -6,7 +6,6 @@
         <process>
             <name>process</name>
             <type>HYDRO_MECHANICS</type>
-            <dimension>2</dimension>
             <integration_order>3</integration_order>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>

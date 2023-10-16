@@ -15,7 +15,6 @@
             <name>THM</name>
             <type>THERMO_HYDRO_MECHANICS</type>
             <integration_order>3</integration_order>
-            <dimension>3</dimension>
             <constitutive_relation id="0">
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>

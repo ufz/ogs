@@ -13,7 +13,6 @@
         <process>
             <name>THM</name>
             <type>THERMO_HYDRO_MECHANICS</type>
-            <dimension>2</dimension>
             <integration_order>4</integration_order>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
