@@ -779,8 +779,19 @@ void ProjectData::parseProcesses(
 #ifdef OGS_BUILD_PROCESS_HYDROMECHANICS
             if (type == "HYDRO_MECHANICS")
         {
-            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__dimension}
-            switch (process_config.getConfigParameter<int>("dimension"))
+            if (  //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__dimension}
+                process_config.getConfigParameterOptional<int>("dimension"))
+            {
+                OGS_FATAL(
+                    "The 'dimension' tag has been removed in the merge-request "
+                    "!4766."
+                    "The dimension is now taken from the main mesh and the tag "
+                    "must be"
+                    "removed. There is a python script in the merge-request "
+                    "description"
+                    "for automatic conversion.");
+            }
+            switch (_mesh_vec[0]->getDimension())
             {
                 case 2:
                     process =
@@ -811,8 +822,19 @@ void ProjectData::parseProcesses(
 #ifdef OGS_BUILD_PROCESS_LIE
             if (type == "HYDRO_MECHANICS_WITH_LIE")
         {
-            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__dimension}
-            switch (process_config.getConfigParameter<int>("dimension"))
+            if (  //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__dimension}
+                process_config.getConfigParameterOptional<int>("dimension"))
+            {
+                OGS_FATAL(
+                    "The 'dimension' tag has been removed in the merge-request "
+                    "!4766."
+                    "The dimension is now taken from the main mesh and the tag "
+                    "must be"
+                    "removed. There is a python script in the merge-request "
+                    "description"
+                    "for automatic conversion.");
+            }
+            switch (_mesh_vec[0]->getDimension())
             {
                 case 2:
                     process = ProcessLib::LIE::HydroMechanics::
@@ -958,8 +980,19 @@ void ProjectData::parseProcesses(
 #ifdef OGS_BUILD_PROCESS_LIE
             if (type == "SMALL_DEFORMATION_WITH_LIE")
         {
-            //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__dimension}
-            switch (process_config.getConfigParameter<int>("dimension"))
+            if (  //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__dimension}
+                process_config.getConfigParameterOptional<int>("dimension"))
+            {
+                OGS_FATAL(
+                    "The 'dimension' tag has been removed in the merge-request "
+                    "!4766."
+                    "The dimension is now taken from the main mesh and the tag "
+                    "must be"
+                    "removed. There is a python script in the merge-request "
+                    "description"
+                    "for automatic conversion.");
+            }
+            switch (_mesh_vec[0]->getDimension())
             {
                 case 2:
                     process = ProcessLib::LIE::SmallDeformation::
@@ -988,8 +1021,19 @@ void ProjectData::parseProcesses(
 #ifdef OGS_BUILD_PROCESS_THERMOHYDROMECHANICS
             if (type == "THERMO_HYDRO_MECHANICS")
         {
-            //! \ogs_file_param{prj__processes__process__THERMO_HYDRO_MECHANICS__dimension}
-            switch (process_config.getConfigParameter<int>("dimension"))
+            if (  //! \ogs_file_param{prj__processes__process__THERMO_HYDRO_MECHANICS__dimension}
+                process_config.getConfigParameterOptional<int>("dimension"))
+            {
+                OGS_FATAL(
+                    "The 'dimension' tag has been removed in the merge-request "
+                    "!4766."
+                    "The dimension is now taken from the main mesh and the tag "
+                    "must be"
+                    "removed. There is a python script in the merge-request "
+                    "description"
+                    "for automatic conversion.");
+            }
+            switch (_mesh_vec[0]->getDimension())
             {
                 case 2:
                     process = ProcessLib::ThermoHydroMechanics::
@@ -1078,8 +1122,19 @@ void ProjectData::parseProcesses(
 #ifdef OGS_BUILD_PROCESS_RICHARDSMECHANICS
             if (type == "RICHARDS_MECHANICS")
         {
-            //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__dimension}
-            switch (process_config.getConfigParameter<int>("dimension"))
+            if (  //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__dimension}
+                process_config.getConfigParameterOptional<int>("dimension"))
+            {
+                OGS_FATAL(
+                    "The 'dimension' tag has been removed in the merge-request "
+                    "!4766."
+                    "The dimension is now taken from the main mesh and the tag "
+                    "must be"
+                    "removed. There is a python script in the merge-request "
+                    "description"
+                    "for automatic conversion.");
+            }
+            switch (_mesh_vec[0]->getDimension())
             {
                 case 2:
                     process = ProcessLib::RichardsMechanics::
