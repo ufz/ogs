@@ -26,6 +26,8 @@ preview web site:
         - scripts/ci/jobs/web.yml
         - scripts/ci/jobs/web-preview.yml
         - Tests/Data/**/*.ipynb
+        - Tests/Data/**/*.md
+        - Tests/Data/Notebooks/testrunner.py
   artifacts:
     paths:
       - web/public
