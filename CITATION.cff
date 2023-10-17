@@ -1,76 +1,14 @@
-# YAML 1.2
-# Metadata for citation of this software according to the CFF format (https://citation-file-format.github.io/)
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
 cff-version: 1.2.0
-message: "If you use this software, please cite it using these metadata."
 title: OpenGeoSys
-url: https://www.opengeosys.org
-repository-code: https://github.com/ufz/ogs
-license: BSD-3-Clause
-# DOI representing all versions, do not change:
-doi: 10.5281/zenodo.591265
-# The following needs to be adapted on releases:
-version: "6.4.4"
-date-released: "2023-03-10"
-identifiers:
-    - type: doi
-      description: "Zenodo DOI for 6.4.4"
-      value: 10.5281/zenodo.7716938
-    - type: doi
-      description: "Zenodo DOI for 6.4.3"
-      value: 10.5281/zenodo.7092676
-    - type: doi
-      description: "Zenodo DOI for 6.4.2"
-      value: 10.5281/zenodo.6405711
-    - type: doi
-      description: "Zenodo DOI for 6.4.1"
-      value: 10.5281/zenodo.5562297
-    - type: doi
-      description: "Zenodo DOI for 6.4.0"
-      value: 10.5281/zenodo.4657103
-    - type: doi
-      description: "Zenodo DOI for 6.3.3"
-      value: 10.5281/zenodo.4360614
-    - type: doi
-      description: "Zenodo DOI for 6.3.2"
-      value: 10.5281/zenodo.3948324
-    - type: doi
-      description: "Zenodo DOI for 6.3.1"
-      value: 10.5281/zenodo.3901385
-    - type: doi
-      description: "Zenodo DOI for 6.3.0"
-      value: 10.5281/zenodo.3706901
-    - type: doi
-      description: "Zenodo DOI for 6.2.2"
-      value: 10.5281/zenodo.3597561
-    - type: doi
-      description: "Zenodo DOI for 6.2.1"
-      value: 10.5281/zenodo.3367100
-    - type: doi
-      description: "Zenodo DOI for 6.2.0"
-      value: 10.5281/zenodo.2600045
-    - type: doi
-      description: "Zenodo DOI for 6.1.0"
-      value: 10.5281/zenodo.1145843
-    - type: doi
-      description: "Zenodo DOI for 6.0.8"
-      value: 10.5281/zenodo.444838
-    - type: doi
-      description: "Zenodo DOI for 6.0.6"
-      value: 10.5281/zenodo.57062
-    - type: doi
-      description: "Zenodo DOI for 6.0.5"
-      value: 10.5281/zenodo.49710
-    - type: doi
-      description: "Zenodo DOI for 6.0.4"
-      value: 10.5281/zenodo.44344
-    - type: doi
-      description: "Zenodo DOI for 6.0.3"
-      value: 10.5281/zenodo.31273
-    - type: doi
-      description: "Zenodo DOI for 6.0.2"
-      value: 10.5281/zenodo.27429
+message: >-
+    If you use this software, please cite it using these
+    metadata.
+type: software
 authors:
-    - given-names: Dmitry
+    - given-names: Dmitri
       family-names: Naumov
       name-particle: Yu.
       affiliation: TU Bergakademie Freiberg
@@ -79,6 +17,9 @@ authors:
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Thomas
       family-names: Fischer
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Christoph
+      family-names: Lehmann
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Karsten
       family-names: Rink
@@ -95,109 +36,242 @@ authors:
     - given-names: Norbert
       family-names: Grunwald
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Florian
-      family-names: Zill
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Jörg
       family-names: Buchwald
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Tobias
+      family-names: Meisel
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Florian
+      family-names: Zill
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Chaofan
+      family-names: Chen
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Thomas
+      family-names: Nagel
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Christian
+      family-names: Silbermann
+      affiliation: TU Bergakademie Freiberg
     - given-names: Yonghui
       family-names: Huang
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Boyan
+      family-names: Meng
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Jasper
       family-names: Bathmann
       affiliation: TU Bergakademie Freiberg
-    - given-names: Chaofan
-      family-names: Chen
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Shuang
       family-names: Chen
-      affiliation: Bundesanstalt für Geowissenschaften und Rohstoffe -- BGR
-    - given-names: Boyan
-      family-names: Meng
+      affiliation: >-
+          Bundesanstalt für Geowissenschaften und Rohstoffe -- BGR
+    - given-names: Julian
+      family-names: Heinze
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Haibing
       family-names: Shao
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Dominik
-      family-names: Kern
-      affiliation: TU Bergakademie Freiberg
+    - given-names: Feliks K.
+      family-names: Kiszkurno
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Keita
       family-names: Yoshioka
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Dominik
+      family-names: Kern
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Francesco
+      family-names: Parisio
+      affiliation: CSIC
+    - given-names: Jan
+      family-names: Thiedau
+      affiliation: >-
+          Bundesanstalt für Geowissenschaften und Rohstoffe --
+          BGR
     - given-names: Jaime
       family-names: Rodriguez
       name-particle: Garibay
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Mostafa
+      family-names: Mollaali
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Xingyuan
       family-names: Miao
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Francesco
-      family-names: Parisio
-      affiliation: CSIC
-    - given-names: Christian
-      family-names: Silbermann
-      affiliation: TU Bergakademie Freiberg
-    - given-names: Jan
-      family-names: Thiedau
-      affiliation: Bundesanstalt für Geowissenschaften und Rohstoffe -- BGR
+    - given-names: Tymofiy
+      family-names: Gerasimov
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Johannes
+      family-names: Boog
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Marc
       family-names: Walther
       affiliation: TU Dresden
     - given-names: Sonja
       family-names: Kaiser
       affiliation: TU Bergakademie Freiberg
-    - given-names: Johannes
-      family-names: Boog
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Tianyuan
       family-names: Zheng
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Tobias
-      family-names: Meisel
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Jakob
+      family-names: Randow
+      affiliation: "Hochschule für Technik, Wirtschaft und Kultur Leipzig"
+    - given-names: Robert
+      family-names: Habel
+      affiliation: TU Bergakademie Freiberg
     - given-names: Zhang
       family-names: Ning
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Mostafa
-      family-names: Mollaali
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Feliks K.
-      family-names: Kiszkurno
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Tymofiy
-      family-names: Gerasimov
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Vahid Ziaei
-      family-names: Rad
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Jérémie
+      family-names: Lagraviere
+      affiliation: Helmholtz Centre for Environmental Research – UFZ
     - given-names: Kata
       family-names: Kurgyis
-      affiliation: TU Bergakademie Freiberg
-    - given-names: Julian
-      family-names: Heinze
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Falko
-      family-names: Vehling
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Aqeel
-      family-names: Chaudhry
       affiliation: TU Bergakademie Freiberg
     - given-names: Linda
       family-names: Günther
       affiliation: TU Bergakademie Freiberg
-    - given-names: Matthes
-      family-names: Kantzenbach
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Robert
-      family-names: Habel
-      affiliation: TU Bergakademie Freiberg
-    - given-names: Sophie
-      family-names: Einspänner
-      affiliation: TU Bergakademie Freiberg
-    - given-names: Jakob
-      family-names: Randow
-      affiliation: Hochschule für Technik, Wirtschaft und Kultur Leipzig
+    - given-names: Steffen
+      family-names: Beese
+      affiliation: >-
+          Bundesanstalt für Geowissenschaften und Rohstoffe --
+          BGR
     - given-names: Tao
       family-names: You
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Vahid Ziaei
+      family-names: Rad
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Eric
+      family-names: Simo
+      affiliation: BGE TECHNOLOGY GmbH
+    - given-names: Vanessa
+      family-names: Montoya
+      affiliation: Helmholtz Centre for Environmental Research – UFZ
+    - given-names: Falko
+      family-names: Vehling
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Sophie
+      family-names: Einspänner
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Aqeel
+      family-names: Chaudhry
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Carolin
+      family-names: Helbig
+      affiliation: Helmholtz Centre for Environmental Research – UFZ
+    - given-names: Francesco
+      family-names: Witte
+      affiliation: Hochschule Flensburg
+    - given-names: Olaf
+      family-names: Kolditz
+      affiliation: Helmholtz Centre for Environmental Research – UFZ
+    - given-names: Philipp
+      family-names: Selzer
+      affiliation: Helmholtz Centre for Environmental Research – UFZ
+    - given-names: Reza
+      family-names: Taher Dang Koo
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Thomas
+      family-names: Kalbacher
+      affiliation: Helmholtz Centre for Environmental Research – UFZ
+    - given-names: Wanlong
+      family-names: Cai
+    - given-names: Alireza
+      family-names: Hassanzadegan
+    - given-names: Johannes
+      family-names: Herfurth
+      affiliation: >-
+          Bundesanstalt für Geowissenschaften und Rohstoffe --
+          BGR
+    - given-names: Kristof
+      family-names: Kessler
+      affiliation: >-
+          Bundesanstalt für Geowissenschaften und Rohstoffe --
+          BGR
+    - given-names: Matthes
+      family-names: Kantzenbach
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Mehran
+      family-names: Ghasabeh
+      affiliation: Helmholtz Centre for Environmental Research – UFZ
+    - given-names: Michael
+      family-names: Pitz
+      affiliation: >-
+          Bundesanstalt für Geowissenschaften und Rohstoffe --
+          BGR
+    - given-names: Myles
+      family-names: English
+    - given-names: Tuanny
+      family-names: Cajuhi
+      affiliation: >-
+          Bundesanstalt für Geowissenschaften und Rohstoffe --
+          BGR
+    - given-names: Luca
+      family-names: Urpi
+identifiers:
+    - type: doi
+      value: 10.5281/zenodo.7716938
+      description: Zenodo DOI for 6.4.4
+    - type: doi
+      value: 10.5281/zenodo.7092676
+      description: Zenodo DOI for 6.4.3
+    - type: doi
+      value: 10.5281/zenodo.6405711
+      description: Zenodo DOI for 6.4.2
+    - type: doi
+      value: 10.5281/zenodo.5562297
+      description: Zenodo DOI for 6.4.1
+    - type: doi
+      value: 10.5281/zenodo.4657103
+      description: Zenodo DOI for 6.4.0
+    - type: doi
+      value: 10.5281/zenodo.4360614
+      description: Zenodo DOI for 6.3.3
+    - type: doi
+      value: 10.5281/zenodo.3948324
+      description: Zenodo DOI for 6.3.2
+    - type: doi
+      value: 10.5281/zenodo.3901385
+      description: Zenodo DOI for 6.3.1
+    - type: doi
+      value: 10.5281/zenodo.3706901
+      description: Zenodo DOI for 6.3.0
+    - type: doi
+      value: 10.5281/zenodo.3597561
+      description: Zenodo DOI for 6.2.2
+    - type: doi
+      value: 10.5281/zenodo.3367100
+      description: Zenodo DOI for 6.2.1
+    - type: doi
+      value: 10.5281/zenodo.2600045
+      description: Zenodo DOI for 6.2.0
+    - type: doi
+      value: 10.5281/zenodo.1145843
+      description: Zenodo DOI for 6.1.0
+    - type: doi
+      value: 10.5281/zenodo.444838
+      description: Zenodo DOI for 6.0.8
+    - type: doi
+      value: 10.5281/zenodo.57062
+      description: Zenodo DOI for 6.0.6
+    - type: doi
+      value: 10.5281/zenodo.49710
+      description: Zenodo DOI for 6.0.5
+    - type: doi
+      value: 10.5281/zenodo.44344
+      description: Zenodo DOI for 6.0.4
+    - type: doi
+      value: 10.5281/zenodo.31273
+      description: Zenodo DOI for 6.0.3
+    - type: doi
+      value: 10.5281/zenodo.27429
+      description: Zenodo DOI for 6.0.2
+repository-code: "https://github.com/ufz/ogs"
+url: "https://www.opengeosys.org"
+license: BSD-3-Clause
+version: 6.4.4
+date-released: "2023-03-10"
+doi: 10.5281/zenodo.591265
