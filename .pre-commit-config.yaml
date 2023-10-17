@@ -86,7 +86,7 @@ repos:
     rev: "v0.1.0"
     hooks:
       - id: ruff
-        files: "Applications/Python/.*"
+        types_or: [python, pyi, jupyter]
   # Enable on demand, run with
   #     pre-commit run --all-files clang-format
   #
