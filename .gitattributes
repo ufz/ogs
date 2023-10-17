@@ -8,3 +8,7 @@
 *.h   hooks.style=uncrustify
 *.cpp hooks.style=uncrustify
 *.hpp hooks.style=uncrustify
+
+# git archive ignores
+Tests/Data export-ignore
+web/content export-ignore
