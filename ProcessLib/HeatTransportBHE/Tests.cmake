@@ -160,3 +160,7 @@ AddTest(
     BHE_1P_newton_ts_10_t_600.000000.vtu BHE_1P_newton_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
     BHE_1P_newton_ts_10_t_600.000000.vtu BHE_1P_newton_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
 )
+
+if(NOT OGS_USE_PETSC)
+    NotebookTest(NOTEBOOKFILE Parabolic/T/BHE_1P/pipe_flow_ebhe.md RUNTIME 600)
+endif()
