@@ -16,6 +16,17 @@ cppcheck:
     paths:
       - build/cppcheck.json
 
+ruff:
+  stage: check
+  needs: []
+  tags: [envinf]
+  script:
+    - pipx run ruff --exit-zero .
+    - pipx run ruff --exit-zero --output-format gitlab . > ruff-report.json
+  artifacts:
+    reports:
+      codequality: ruff-report.json
+
 # Disabled, see !3053
 .code_quality:
   stage: check
