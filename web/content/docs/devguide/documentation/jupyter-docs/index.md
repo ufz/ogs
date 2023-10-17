@@ -58,6 +58,7 @@ To get a preview of the web page run the `convert_notebooks`-script:
 # You need the converter-tool nbconvert installed. Recommended way is to
 # create and activate a virtual environment and install it there:
 python -m venv .venv  # or `python3 -m ...` on some systems
+source .venv/bin/activate # .\.venv\Scripts\Activate.ps1 on Windows
 pip install nbconvert
 
 python web/scripts/convert_notebooks.py
