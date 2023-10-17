@@ -281,7 +281,7 @@ if(NOT OGS_USE_PETSC)
 endif()
 
 NotebookTest(
-    NOTEBOOKFILE Mechanics/Linear/test_ip_data/2D-clamped-gravity.ipynb
+    NOTEBOOKFILE Mechanics/Linear/test_ip_data/2D-clamped-gravity.py
     RUNTIME 10
     SKIP_WEB
 )
