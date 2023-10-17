@@ -83,10 +83,10 @@ repos:
       - id: vale
         args: [--output=line, --minAlertLevel=error]
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.262"
+    rev: "v0.1.0"
     hooks:
       - id: ruff
-        files: "Applications/Python/.*"
+        types_or: [python, pyi, jupyter]
   # Enable on demand, run with
   #     pre-commit run --all-files clang-format
   #
