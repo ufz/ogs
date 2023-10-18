@@ -12,7 +12,6 @@
             <name>RM</name>
             <type>RICHARDS_MECHANICS</type>
             <integration_order>3</integration_order>
-            <dimension>2</dimension>
             <mass_lumping>true</mass_lumping>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>

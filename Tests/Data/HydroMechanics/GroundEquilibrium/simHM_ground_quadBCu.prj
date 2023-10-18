@@ -22,7 +22,6 @@
             <!--(polynomial degree to which exact integration is possible) -->
             <!--for the displacement element order = 2 it has to be chosen:-->
             <integration_order>3</integration_order>
-            <dimension>2</dimension>
             <!--define the constitutive behavior:  the material group IDs will be defined in parameters. -->
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>

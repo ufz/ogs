@@ -1,7 +1,6 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProjectDiff base_file="../../RichardsMechanics/orthotropic_swelling_xyz.prj">
     <replace sel="/*/processes/process/type/text()">THERMO_RICHARDS_MECHANICS</replace>
-    <remove sel="/*/processes/process/dimension" />
     <remove sel="/*/processes/process/explicit_hm_coupling_in_unsaturated_zone" />
     <add sel="/*/processes/process/process_variables">
         <temperature>temperature</temperature>

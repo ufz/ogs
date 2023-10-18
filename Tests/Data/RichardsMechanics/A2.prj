@@ -13,7 +13,6 @@
         <process>
             <name>RM</name>
             <type>RICHARDS_MECHANICS</type>
-            <dimension>3</dimension>
             <integration_order>3</integration_order>
             <constitutive_relation id="0">
                 <type>LinearElasticIsotropic</type>

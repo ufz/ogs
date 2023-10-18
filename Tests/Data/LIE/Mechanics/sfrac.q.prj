@@ -7,7 +7,6 @@
             <name>SD</name>
             <type>SMALL_DEFORMATION_WITH_LIE</type>
             <integration_order>3</integration_order>
-            <dimension>2</dimension>
             <process_variables>
                 <process_variable>displacement</process_variable>
                 <process_variable>displacement_jump1</process_variable>

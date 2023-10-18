@@ -28,7 +28,6 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
             <name>HM</name>
             <type>HYDRO_MECHANICS</type>
             <integration_order>3</integration_order>
-            <dimension>2</dimension>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>
