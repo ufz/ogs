@@ -76,11 +76,11 @@ from ogs6py.ogs import OGS
 
 # Initiate an OGS-object
 # Pass it the project file and set an output file 
-model=OGS(INPUT_FILE="MandelCryerStaggered.prj", PROJECT_FILE=f"{out_dir}/modified.prj")
+model = OGS(INPUT_FILE="MandelCryerStaggered.prj", PROJECT_FILE=f"{out_dir}/MandelCryerStaggered_modified.prj")
 
-
-# Write every timestep
-model.replace_text(1, xpath="./time_loop/output/timesteps/pair/each_steps")
+# Increase end time
+t_end = 1.5
+model.replace_text(t_end, xpath="./time_loop/processes/process/time_stepping/t_end")
 model.write_input()
 
 # Run OGS
@@ -117,8 +117,8 @@ fig, ax1 = plt.subplots(figsize=(10, 8))
 ax1.plot(time, pressure['center'], color="tab:orange")
 ax1.set_ylabel('Pressure (Pa)', fontsize=20)
 ax1.set_xlabel('Time (s)', fontsize=20)
-ax1.set_xlim(0,1.5)
-ax1.set_ylim(0,1500)
+ax1.set_xlim(0, t_end)
+ax1.set_ylim(0, 1500)
 ax1.grid()
 fig.supxlabel('Pressure at center of sphere')
 plt.show()
