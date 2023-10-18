@@ -11,4 +11,3 @@ build linux arch:
     CMAKE_ARGS: >-
       -DBUILD_SHARED_LIBS=ON
       -DOGS_USE_MKL=ON
-    CTEST_ARGS: -L default|Notebook
