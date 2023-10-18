@@ -4,56 +4,51 @@ title = "Mandel-Cryer Effect"
 weight = 151
 project = ["HydroMechanics/StaggeredScheme/MandelCryer/MandelCryerStaggered.prj"]
 author = "Dominik Kern, Frieder Loer"
-image = "figures/MandelCryer_mesh.png"
+image = "./figures/MandelCryer_mesh.png"
+web_subsection = "hydro-mechanics"
 +++
 
 
 <!-- #region -->
 ## Mandel-Cryer Effect
 
-This is a classical example to demonstrate the effect of hydromechanical coupling in a poroelastic medium.  
-For more details we refer to a textbook [[1]](#1), in which also the analytical solution is derived.  
+This is a classical example to demonstrate the effect of hydromechanical coupling in a poroelastic medium.
+For more details we refer to a textbook (Verruijt, 2009), in which also the analytical solution is derived.
 As domain we consider a sphere, by symmetry we need to simulate only an octant.
 
-![Domain Mesh](./figures/MandelCryer_mesh.png)
-_Mesh_
+![Domain Mesh](./figures/MandelCryer_mesh.png "Mesh")
 
-The boundary conditions of hydraulics are atmospheric pressure on the sphere surface and impermeable elsewhere.  
-The boundary conditions of mechanics are an overburden (Neumann) applied as step load on the sphere surface at initial time $t=0$.  
+The boundary conditions of hydraulics are atmospheric pressure on the sphere surface and impermeable elsewhere.
+The boundary conditions of mechanics are an overburden (Neumann) applied as step load on the sphere surface at initial time $t=0$.
 The remaining sides are fixed in normal direction (Dirichlet).
 
-![Hydraulic and mechanics boundary conditions](./figures/MandelCryer_model.png)
-_Boundary conditions_
+![Hydraulic and mechanics boundary conditions](./figures/MandelCryer_model.png "Boundary conditions")
 
-The material is isotropic, linear elastic.  
-Solid and fluid are assumed to be incompressible.  
-In its initial state the sphere is not deformed and there is ambient pressure everywhere.  
-A sudden load increase on the surface is instantly transferred on the pore pressure, whereas the solid needs time to deform, until it carries the load.  
-Since the pore fluid is squeezed out of the outer layers first, they act like a tightening belt and consequently the pressure in the center rises, it may even exceed the value of the applied load.  
-Finally the pore pressure approaches to ambient pressure.  
+The material is isotropic, linear elastic.
+Solid and fluid are assumed to be incompressible.
+In its initial state the sphere is not deformed and there is ambient pressure everywhere.
+A sudden load increase on the surface is instantly transferred on the pore pressure, whereas the solid needs time to deform, until it carries the load.
+Since the pore fluid is squeezed out of the outer layers first, they act like a tightening belt and consequently the pressure in the center rises, it may even exceed the value of the applied load.
+Finally the pore pressure approaches to ambient pressure.
 
 All parameters are concluded in the following tables.
 
-
-**Material Properties**
+### Material Properties
 
 | Property                  | Value          | Unit         |
 | ------------------------- | -------------- | ------------ |
 | Fluid density             | $10^3$         | kg/m$^3$     |
 | Viscosity                 | $10^{-3}$      | Pa$\cdot$s   |
 | Porosity                  | $0.2$          | -            |
-| Permeability              | $10\cdot 10^{-12}$ | m$^2$     |
+| Permeability              | $10\cdot 10^{-12}$ | m$^2$    |
 | Young’s modulus (bulk)    | $10\cdot 10^6$ | Pa           |
 | Poisson ratio (bulk)      | $0.1$          | -            |
 | Biot coefficient          | $1.0$          | -            |
 | Solid density             | $2.5\cdot 10^3$| kg/m$^3$     |
 | Overburden                | $1000$         | Pa           |
-| Atmospheric pressure     | $0$            | Pa           |
+| Atmospheric pressure      | $0$            | Pa           |
 
-
-
-
-**Dimensions and Discretization**
+### Dimensions and Discretization
 
 | Property                   | Value    | Unit                    |
 | -------------------------- | -------- | ----------------------- |
@@ -61,9 +56,6 @@ All parameters are concluded in the following tables.
 | Finite Elements            | $8741$   | Taylor-Hood tetrahedra  |
 | Time step                  | $10^{-2}$| s                       |
 | Coupling scheme parameter  | $0.7774$ | -                       |
-
-
-
 
 <!-- #endregion -->
 
@@ -128,24 +120,14 @@ ax1.set_xlabel('Time (s)', fontsize=20)
 ax1.set_xlim(0,1.5)
 ax1.set_ylim(0,1500)
 ax1.grid()
+fig.supxlabel('Pressure at center of sphere')
 plt.show()
-
-
-
 ```
 
-_Pressure at center of sphere_
+As predicted, the pressure in the center exceeds the applied load and then levels out.
 
-
-As predicted, the pressure in the center exceeds the applied load and then levels out.  
-
-For more details about the staggered scheme we refer to the [user guide - conventions](https://www.opengeosys.org/docs/userguide/basics/conventions/#staggered-scheme).
-
-
+For more details about the staggered scheme we refer to the [user guide - conventions]({{< ref "conventions" >}}#staggered-scheme).
 
 ## References
 
-[1] Verruijt, A. (2009): _An introduction to soil dynamics_. Springer Science and Business Media, DOI:https://doi.org/10.1007/978-90-481-3441-0 https://link.springer.com/book/10.1007/978-90-481-3441-0
-
-
-
+[1] Verruijt, A. (2009): _An introduction to soil dynamics_. Springer Science and Business Media, DOI: <https://doi.org/10.1007/978-90-481-3441-0>, <https://link.springer.com/book/10.1007/978-90-481-3441-0>
