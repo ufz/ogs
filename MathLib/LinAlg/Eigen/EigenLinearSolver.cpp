@@ -480,8 +480,6 @@ bool EigenLinearSolver::solve(EigenVector& b, EigenVector& x)
     INFO("*** Eigen solver solve()");
 
     return solver_->solve(b.getRawVector(), x.getRawVector(), option_);
-
-    INFO("------------------------------------------------------------------");
 }
 
 bool EigenLinearSolver::solve(EigenMatrix& A, EigenVector& b, EigenVector& x)
