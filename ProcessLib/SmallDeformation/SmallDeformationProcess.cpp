@@ -16,6 +16,8 @@
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
+#include "ProcessLib/Reflection/ReflectionForExtrapolation.h"
+#include "ProcessLib/Reflection/ReflectionForIPWriters.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
 #include "SmallDeformationFEM.h"
@@ -66,15 +68,11 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
             const_cast<MeshLib::Mesh&>(mesh), "principal_stress_values",
             MeshLib::MeshItemType::Cell, 3);
 
-    // TODO (naumov) remove ip suffix. Probably needs modification of the mesh
-    // properties, s.t. there is no "overlapping" with cell/point data.
-    // See getOrCreateMeshProperty.
-    _integration_point_writer.emplace_back(
-        std::make_unique<MeshLib::IntegrationPointWriter>(
-            "sigma_ip",
-            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, _local_assemblers,
-            &LocalAssemblerInterface::getSigma));
+    ProcessLib::Reflection::addReflectedIntegrationPointWriters<
+        DisplacementDim>(SmallDeformationLocalAssemblerInterface<
+                             DisplacementDim>::getReflectionDataForOutput(),
+                         _integration_point_writer, integration_order,
+                         _local_assemblers);
 }
 
 template <int DisplacementDim>
@@ -106,19 +104,10 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
                              std::move(get_ip_values_function)));
     };
 
-    add_secondary_variable("free_energy_density",
-                           1,
-                           &LocalAssemblerInterface::getIntPtFreeEnergyDensity);
-
-    add_secondary_variable("sigma",
-                           MathLib::KelvinVector::KelvinVectorType<
-                               DisplacementDim>::RowsAtCompileTime,
-                           &LocalAssemblerInterface::getIntPtSigma);
-
-    add_secondary_variable("epsilon",
-                           MathLib::KelvinVector::KelvinVectorType<
-                               DisplacementDim>::RowsAtCompileTime,
-                           &LocalAssemblerInterface::getIntPtEpsilon);
+    ProcessLib::Reflection::addReflectedSecondaryVariables<DisplacementDim>(
+        SmallDeformationLocalAssemblerInterface<
+            DisplacementDim>::getReflectionDataForOutput(),
+        _secondary_variables, getExtrapolator(), _local_assemblers);
 
     //
     // enable output of internal variables defined by material models
@@ -132,8 +121,9 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             _process_data.solid_materials, _local_assemblers,
             _integration_point_writer, integration_order);
 
+    bool const remove_name_suffix = true;
     setIPDataInitialConditions(_integration_point_writer, mesh.getProperties(),
-                               _local_assemblers);
+                               _local_assemblers, remove_name_suffix);
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(

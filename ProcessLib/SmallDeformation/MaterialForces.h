@@ -1,6 +1,5 @@
 /**
  * \file
- *
  * \copyright
  * Copyright (c) 2012-2023, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -36,11 +35,12 @@ struct MaterialForcesInterface
 template <int DisplacementDim, typename ShapeFunction,
           typename ShapeMatricesType, typename NodalForceVectorType,
           typename NodalDisplacementVectorType, typename GradientVectorType,
-          typename GradientMatrixType, typename IPData,
-          typename IntegrationMethod>
+          typename GradientMatrixType, typename IPData, typename StressData,
+          typename OutputData, typename IntegrationMethod>
 std::vector<double> const& getMaterialForces(
     std::vector<double> const& local_x, std::vector<double>& nodal_values,
     IntegrationMethod const& _integration_method, IPData const& _ip_data,
+    StressData const& stress_data, OutputData const& output_data,
     MeshLib::Element const& element, bool const is_axially_symmetric)
 {
     unsigned const n_integration_points =
@@ -52,11 +52,12 @@ std::vector<double> const& getMaterialForces(
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& sigma = _ip_data[ip].sigma;
+        auto const& sigma = stress_data[ip].stress_data.sigma;
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
 
-        auto const& psi = _ip_data[ip].free_energy_density;
+        auto const& psi =
+            output_data[ip].free_energy_density_data.free_energy_density;
 
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
@@ -180,7 +181,8 @@ void writeMaterialForces(
            LocalAssemblerInterface& local_assembler,
            const NumLib::LocalToGlobalIndexMap& dof_table,
            GlobalVector const& x,
-           GlobalVector& node_values) {
+           GlobalVector& node_values)
+        {
             auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
             std::vector<double> local_data;
             auto const local_x = x.get(indices);
