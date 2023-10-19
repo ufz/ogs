@@ -4,6 +4,6 @@ through OGS_USE_EIGEN_UNSUPPORTED CMake option.
 
 See following links for detail description:
 
-- "Note" in <https://eigen.tuxfamily.org/dox/classEigen_1_1SparseLU.html>
-- "Detailed Description" in <https://eigen.tuxfamily.org/dox/unsupported/namespaceEigen.html>
+- "Note" in <https://libeigen.gitlab.io/docs/classEigen_1_1SparseLU.html>
+- "Detailed Description" in <https://libeigen.gitlab.io/docs/unsupported/namespaceEigen.html>
 - References : D. Ruiz and B. Ucar, A Symmetry Preserving Algorithm for Matrix Scaling, INRIA Research report RR-7552

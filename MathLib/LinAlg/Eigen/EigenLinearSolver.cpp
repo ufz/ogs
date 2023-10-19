@@ -259,7 +259,7 @@ public:
 
         // matrix must be copied, because Eigen's linear solver stores a
         // reference to it cf.
-        // https://eigen.tuxfamily.org/dox/classEigen_1_1IterativeSolverBase.html#a7dfa55c55e82d697bde227696a630914
+        // https://libeigen.gitlab.io/docs/classEigen_1_1IterativeSolverBase.html#a7dfa55c55e82d697bde227696a630914
         A_ = A;
 
         if (!A_.isCompressed())
@@ -339,7 +339,7 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
         case EigenOption::PreconType::ILUT:
             // TODO for this preconditioner further options can be passed.
             // see
-            // https://eigen.tuxfamily.org/dox/classEigen_1_1IncompleteLUT.html
+            // https://libeigen.gitlab.io/docs/classEigen_1_1IncompleteLUT.html
             return createIterativeSolver<Solver,
                                          Eigen::IncompleteLUT<double>>();
         default:

@@ -26,7 +26,7 @@ namespace ODE
  * \tparam N number of rows
  * \tparam M number of columns
  *
- * \see https://eigen.tuxfamily.org/dox/classEigen_1_1Map.html
+ * \see https://libeigen.gitlab.io/docs/classEigen_1_1Map.html
  */
 template <int N, int M>
 using MappedMatrix = Eigen::Map<Eigen::Matrix<double, N, M, Eigen::ColMajor>>;
