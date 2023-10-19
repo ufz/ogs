@@ -42,7 +42,9 @@ function(NotebookTest)
             return()
         endif()
     endif()
-    if(${NotebookTest_RUNTIME} GREATER ${ogs.ctest.large_runtime})
+    # Notebooks are allowed to run longer than usual benchmarks
+    math(EXPR _notebook_large_runtime "10 * ${ogs.ctest.large_runtime}")
+    if(${NotebookTest_RUNTIME} GREATER ${_notebook_large_runtime})
         string(APPEND NotebookTest_NAME_WE "-LARGE")
     endif()
 

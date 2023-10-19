@@ -13,4 +13,4 @@ build linux petsc:
     CMAKE_PRESET: release-petsc
     CMAKE_ARGS: >-
       -DOGS_USE_PIP=ON
-    CTEST_ARGS: -L default|Notebook|petsc-mumps
+    CTEST_ARGS: -L default|petsc-mumps
