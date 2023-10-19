@@ -10,12 +10,12 @@ preview web site:
   variables:
     HUGO_ENVIRONMENT: "staging"
   script:
-    # Copy notebook pages
-    - cp -rl build/*/web/content web/ || true
     - cd web
+    - python scripts/convert_notebooks.py
+    # Copy notebook pages
+    - cp -rl ../build/*/web/content ./ || true
     # Symlink for prj link checks (data-link shortcode)
     - ln -s ../Tests .
-    - python scripts/convert_notebooks.py
     - yarn
     - yarn build
   rules:

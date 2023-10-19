@@ -10,6 +10,7 @@
       - build/*/*.tar.gz
       # Notebook testrunner:
       - build/**/*.ipynb.html
+      - build/**/*.ipynb
       - build/**/*out.txt
       - build/**/web/content
     expire_in: 1 week

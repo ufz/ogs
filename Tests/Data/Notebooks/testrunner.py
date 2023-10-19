@@ -16,6 +16,7 @@ import subprocess
 
 def save_to_website(exec_notebook_file, web_path):
     output_path_arg = ""
+    output_path = ""
     notebook = nbformat.read(exec_notebook_file, as_version=4)
     first_cell = notebook.cells[0]
     if "Tests/Data" in exec_notebook_file:
@@ -28,10 +29,9 @@ def save_to_website(exec_notebook_file, web_path):
             Path(build_dir)
             / Path("web/content/docs/benchmarks")
             / Path(parsed_frontmatter["web_subsection"])
+            / Path(exec_notebook_file).stem.lower()
         )
-        output_path_arg = (
-            f"--output-dir={Path(output_path) / Path(exec_notebook_file).stem}"
-        )
+        output_path_arg = f"--output-dir={Path(output_path)}"
 
     template = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
@@ -54,17 +54,19 @@ def save_to_website(exec_notebook_file, web_path):
     if not "Tests/Data" in exec_notebook_file:
         return
 
+    Path(output_path).mkdir(parents=True, exist_ok=True)
+
+    to_copy_path = Path(output_path) / "."
+
+    if is_jupytext:
+        shutil.copy(exec_notebook_file, to_copy_path)
+        print(f"Copying ${exec_notebook_file} to {to_copy_path}")
+
     for subfolder in ["figures", "images"]:
         figures_path = os.path.abspath(
             os.path.join(os.path.dirname(notebook_file_path), subfolder)
         )
-        symlink_figures_path = os.path.join(
-            web_path,
-            "content",
-            output_path,
-            os.path.splitext(os.path.basename(exec_notebook_file))[0].lower(),
-            subfolder,
-        )
+        symlink_figures_path = to_copy_path / subfolder
         if os.path.exists(figures_path) and not os.path.exists(symlink_figures_path):
             print(
                 f"{subfolder} folder detected, copying {figures_path} to "

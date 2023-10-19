@@ -5,4 +5,4 @@ through OGS_USE_EIGEN_UNSUPPORTED CMake option.
 
 See following links for detail description:
 
-- "Detailed Description" in <https://eigen.tuxfamily.org/dox/unsupported/>
+- "Detailed Description" in <https://libeigen.gitlab.io/docs/unsupported/>
