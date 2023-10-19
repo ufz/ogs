@@ -702,3 +702,56 @@ AddTest(
     DIFF_DATA
     quadratic_mesh_assembly_test_ts_1_t_1.000000.vtu quadratic_mesh_assembly_test_ts_1_t_1.000000.vtu pressure pressure 1e-8 1e-12
 )
+
+AddTest(
+    NAME LiquidFlow_CoarseRaster_HomogeneousValues
+    PATH Parabolic/LiquidFlow/RasterParameter
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS CoarseRasterHomogeneous.xml
+    RUNTIME 1
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    Subsurface.vtu coarse_raster_homogeneous_Subsurface_ts_02_t_2.000000.vtu pressure_constant_1e_minus5 p 1e-14 1e-14
+)
+
+AddTest(
+    NAME LiquidFlow_FineRaster_HomogeneousValues
+    PATH Parabolic/LiquidFlow/RasterParameter
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS FineRasterHomogeneous.xml
+    RUNTIME 1
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    Subsurface.vtu fine_raster_homogeneous_Subsurface_ts_02_t_2.000000.vtu pressure_constant_1e_minus5 p 1e-14 1e-14
+)
+
+# fine raster and coarse raster input should produce exactly the same output
+AddTest(
+    NAME LiquidFlow_CoarseRaster_HeterogeneousValues
+    PATH Parabolic/LiquidFlow/RasterParameter
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS CoarseRasterHeterogeneous.xml
+    RUNTIME 1
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    fine_raster_heterogeneous_Subsurface_ts_02_t_2.000000.vtu coarse_raster_heterogeneous_Subsurface_ts_02_t_2.000000.vtu p p 1e-14 1e-14
+)
+
+AddTest(
+    NAME LiquidFlow_FineRaster_HeterogeneousValues
+    PATH Parabolic/LiquidFlow/RasterParameter
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS FineRasterHeterogeneous.xml
+    RUNTIME 1
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    fine_raster_heterogeneous_Subsurface_ts_02_t_2.000000.vtu fine_raster_heterogeneous_Subsurface_ts_02_t_2.000000.vtu p p 1e-14 1e-14
+)
