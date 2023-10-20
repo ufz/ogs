@@ -18,10 +18,10 @@ deploy web site:
       when: manual
       allow_failure: true
   script:
-    # Copy notebook pages
-    - cp -rl build/*/web/content web/
     - cd web
     - python scripts/convert_notebooks.py
+    # Copy notebook pages
+    - cp -rl ../build/*/web/content ./
     - yarn
     - yarn build
     - netlify deploy --prod --dir=public --site=$OGS_NETLIFY_SITE_ID
