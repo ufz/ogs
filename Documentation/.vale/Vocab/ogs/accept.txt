@@ -65,6 +65,7 @@ Jong
 Jupyter
 Jupytext
 Juwels
+Kharaka
 Kinzelbach
 Kitware
 Kolditz
@@ -95,6 +96,7 @@ Opalinus
 opengeosys
 OpenGeoSys
 pacman
+Palandri
 parameteri[zs]ation
 ParaView
 Parisio
@@ -142,10 +144,12 @@ TESPy
 Theis
 Thuringia
 Thuringian
+Thury
 TODO[s?]
 Ucar
 Unlicense
 Unstrut
+Verruijt
 Vogel
 Vogels
 VTK[s?]
@@ -158,6 +162,3 @@ XPath
 Youngs
 Zenodo
 zlib
-Thury
-Kharaka
-Palandri

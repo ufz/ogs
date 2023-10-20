@@ -644,6 +644,10 @@ AddTest(
     reference_results_MandelCryerStaggered_ts_1_t_0.010000.vtu results_MandelCryerStaggered_ts_1_t_0.010000.vtu epsilon epsilon 1e-4 0
     reference_results_MandelCryerStaggered_ts_1_t_0.010000.vtu results_MandelCryerStaggered_ts_1_t_0.010000.vtu sigma sigma 1e-1 0
 )
+if(NOT OGS_USE_MPI)
+    NotebookTest(NOTEBOOKFILE HydroMechanics/StaggeredScheme/MandelCryer/mandelcryer.md
+                 RUNTIME 800)
+endif()
 
 AddTest(
     NAME HydroMechanics_hm1_1Dbeam

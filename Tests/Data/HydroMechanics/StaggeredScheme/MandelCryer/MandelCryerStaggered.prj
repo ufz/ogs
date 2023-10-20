@@ -87,7 +87,7 @@
         </medium>
     </media>
     <time_loop>
-            <global_process_coupling>
+        <global_process_coupling>
             <max_iter> 250 </max_iter>
             <convergence_criteria>
                 <!-- convergence criterion for the first process -->
@@ -122,8 +122,12 @@
                     <t_end>1e-2</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>1</repeat>
+                            <repeat>10</repeat>
                             <delta_t>1e-2</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>1e-1</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -145,8 +149,12 @@
                     <t_end>1e-2</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>1</repeat>
+                            <repeat>10</repeat>
                             <delta_t>1e-2</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>1e-1</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
