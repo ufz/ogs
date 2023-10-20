@@ -33,14 +33,14 @@ std::string getSeparatorAfterFilenamePrefix(std::string const& filenamePrefix)
 #ifndef USE_PETSC
 static void outputGlobalMatrix(GlobalMatrix const& mat, std::ostream& os)
 {
-    os << "(" << mat.getNumberOfRows() << " x " << mat.getNumberOfColumns()
-       << ")\n";
+    os << std::setprecision(16) << "(" << mat.getNumberOfRows() << " x "
+       << mat.getNumberOfColumns() << ")\n";
     mat.write(os);
 }
 
 static void outputGlobalVector(GlobalVector const& vec, std::ostream& os)
 {
-    os << "(" << vec.size() << ")\n";
+    os << std::setprecision(16) << "(" << vec.size() << ")\n";
     os << vec.getRawVector() << '\n';
 }
 
