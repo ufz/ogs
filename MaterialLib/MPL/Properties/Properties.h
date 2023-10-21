@@ -53,6 +53,7 @@
 #include "TemperatureDependentFraction.h"
 #include "ThermalConductivity/SaturationWeightedThermalConductivity.h"
 #include "TransportPorosityFromMassBalance.h"
+#include "VapourDiffusion/VapourDiffusionDeVries.h"
 #include "VapourDiffusion/VapourDiffusionFEBEX.h"
 #include "VapourDiffusion/VapourDiffusionPMQ.h"
 #include "Viscosity/LiquidViscosityVogels.h"

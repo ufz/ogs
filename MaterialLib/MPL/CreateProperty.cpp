@@ -333,6 +333,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createVapourDiffusionFEBEX(config);
     }
 
+    if (boost::iequals(property_type, "VapourDiffusionDeVries"))
+    {
+        return createVapourDiffusionDeVries(config);
+    }
+
     if (boost::iequals(property_type, "VapourDiffusionPMQ"))
     {
         return createVapourDiffusionPMQ(config);
