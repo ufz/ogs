@@ -62,6 +62,8 @@
 #include "Enthalpy/CreateWaterVapourLatentHeatWithCriticalTemperature.h"
 #include "RelativePermeability/CreateRelPermBrooksCorey.h"
 #include "RelativePermeability/CreateRelPermBrooksCoreyNonwettingPhase.h"
+#include "RelativePermeability/CreateRelPermGeneralizedPower.h"
+#include "RelativePermeability/CreateRelPermGeneralizedPowerNonwettingPhase.h"
 #include "RelativePermeability/CreateRelPermLiakopoulos.h"
 #include "RelativePermeability/CreateRelPermNonWettingPhaseVanGenuchtenMualem.h"
 #include "RelativePermeability/CreateRelPermUdell.h"

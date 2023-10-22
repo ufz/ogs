@@ -40,6 +40,8 @@
 #include "PorosityFromMassBalance.h"
 #include "RelativePermeability/RelPermBrooksCorey.h"
 #include "RelativePermeability/RelPermBrooksCoreyNonwettingPhase.h"
+#include "RelativePermeability/RelPermGeneralizedPower.h"
+#include "RelativePermeability/RelPermGeneralizedPowerNonwettingPhase.h"
 #include "RelativePermeability/RelPermLiakopoulos.h"
 #include "RelativePermeability/RelPermNonWettingPhaseVanGenuchtenMualem.h"
 #include "RelativePermeability/RelPermUdell.h"
