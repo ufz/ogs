@@ -135,7 +135,17 @@ OutputConfig createOutputConfig(
         //! \ogs_file_param{prj__time_loop__output__data_mode}
         config.getConfigParameter<std::string>("data_mode", "Appended");
 
+    //
     // Construction of output times
+    //
+
+    output_config.fixed_output_times =
+        //! \ogs_file_param{prj__time_loop__output__fixed_output_times}
+        config.getConfigParameter<std::vector<double>>("fixed_output_times",
+                                                       {});
+    // Remove possible duplicated elements and sort.
+    BaseLib::makeVectorUnique(output_config.fixed_output_times);
+
     auto& repeats_each_steps = output_config.repeats_each_steps;
 
     //! \ogs_file_param{prj__time_loop__output__timesteps}
@@ -161,7 +171,10 @@ OutputConfig createOutputConfig(
                 "Aborting.");
         }
     }
-    else
+    // In case nothing was specified, i.e. no explicit time steps or fixed
+    // output times, every time step will be written.
+    if (output_config.fixed_output_times.empty() &&
+        output_config.repeats_each_steps.empty())
     {
         repeats_each_steps.emplace_back(1, 1);
     }
@@ -233,14 +246,6 @@ OutputConfig createOutputConfig(
                                             geometry_name);
         }
     }
-
-    output_config.fixed_output_times =
-        //! \ogs_file_param{prj__time_loop__output__fixed_output_times}
-        config.getConfigParameter<std::vector<double>>("fixed_output_times",
-                                                       {});
-
-    // Remove possible duplicated elements and sort.
-    BaseLib::makeVectorUnique(output_config.fixed_output_times);
 
     output_config.output_iteration_results =
         //! \ogs_file_param{prj__time_loop__output__output_iteration_results}

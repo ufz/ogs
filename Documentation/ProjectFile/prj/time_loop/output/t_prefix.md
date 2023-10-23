@@ -1,14 +1,11 @@
 Template for the prefix which will be prepended to the output files. Allowed
-template expressions are:
+template expressions are: `{:meshname}`, `{:timestep}`, `{:time}`,
+`{:iteration}`.
 
-- {:meshname}
-- {:timestep}
-- {:time}
-- {:iteration}.
+Default value is `{:meshname}`.
 
-Default value: {:meshname}
-
-Remark: The name of the PVD-file will be constructed out of the prefix.
+Remark: The name of the output files will be constructed out of the prefix and
+the suffix.
 
 Furthermore, it is possible to specify the format of the expressions above. For
 instance {:0>3timestep} results in a 3-digit output, if necessary with preceding

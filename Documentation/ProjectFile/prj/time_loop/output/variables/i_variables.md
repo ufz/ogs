@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+\copydoc ProcessLib::OutputConfig::output_variables

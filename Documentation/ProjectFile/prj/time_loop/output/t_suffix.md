@@ -1,13 +1,10 @@
 Template for the suffix which will be appended to the output files. Allowed
-template expressions are:
-- {:meshname}
-- {:timestep}
-- {:time}
-- {:iteration}.
+template expressions are: `{:meshname}`, `{:timestep}`, `{:time}`,
+`{:iteration}`.
 
-Default value: _ts_{:timestep}_t_{:time}
+Default value is `_ts_{:timestep}_t_{:time}`.
 
-Remark: The name of the result files will be constructed out of the prefix and
+Remark: The name of the output files will be constructed out of the prefix and
 the suffix.
 
 Furthermore, it is possible to specify the format of the expressions above. For
