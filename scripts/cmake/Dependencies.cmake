@@ -350,20 +350,32 @@ CPMAddPackage(
 )
 
 if(OGS_BUILD_UTILS)
-    CPMAddPackage(
-        NAME GKlib
-        GIT_REPOSITORY https://github.com/KarypisLab/GKlib
-        GIT_TAG 8bd6bad750b2b0d90800c632cf18e8ee93ad72d7
-        VERSION 5.1.1
-        DOWNLOAD_ONLY YES
-    )
-    CPMAddPackage(
-        NAME metis
-        GIT_REPOSITORY https://github.com/KarypisLab/METIS
-        VERSION 5.2.1
-        DOWNLOAD_ONLY YES
-    )
-    include(${PROJECT_SOURCE_DIR}/scripts/cmake/MetisSetup.cmake)
+    if(NOT GUIX_BUILD)
+        CPMFindPackage(
+            NAME GKlib
+            GIT_REPOSITORY https://github.com/KarypisLab/GKlib
+            GIT_TAG 8bd6bad750b2b0d90800c632cf18e8ee93ad72d7
+            VERSION 5.1.1
+            EXCLUDE_FROM_ALL YES
+        )
+        CPMFindPackage(
+            NAME metis
+            GIT_REPOSITORY https://github.com/KarypisLab/METIS
+            VERSION 5.2.1
+            EXCLUDE_FROM_ALL YES
+        )
+        if(GKlib_ADDED AND metis_ADDED)
+            target_include_directories(
+                metis PUBLIC ${GKlib_SOURCE_DIR} ${metis_SOURCE_DIR}/include
+                             ${metis_SOURCE_DIR}/libmetis
+            )
+            target_compile_definitions(
+                metis PUBLIC IDXTYPEWIDTH=64 REALTYPEWIDTH=32
+            )
+        endif()
+    else()
+        find_package(metis REQUIRED)
+    endif()
 endif()
 
 # Disable warnings
