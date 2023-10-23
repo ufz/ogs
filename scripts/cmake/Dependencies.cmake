@@ -351,10 +351,16 @@ CPMAddPackage(
 
 if(OGS_BUILD_UTILS)
     CPMAddPackage(
+        NAME GKlib
+        GIT_REPOSITORY https://github.com/KarypisLab/GKlib
+        GIT_TAG 8bd6bad750b2b0d90800c632cf18e8ee93ad72d7
+        VERSION 5.1.1
+        DOWNLOAD_ONLY YES
+    )
+    CPMAddPackage(
         NAME metis
-        GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/metis.git
-        GIT_TAG d98094f42d0faf9d0e06eb149c870fb714623ecc
-        VERSION 5.1.0
+        GIT_REPOSITORY https://github.com/KarypisLab/METIS
+        VERSION 5.2.1
         DOWNLOAD_ONLY YES
     )
     include(${PROJECT_SOURCE_DIR}/scripts/cmake/MetisSetup.cmake)

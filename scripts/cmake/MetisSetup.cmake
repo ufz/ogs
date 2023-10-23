@@ -8,7 +8,7 @@ message(
 
 # Metis library
 file(GLOB _metis_sources ${metis_SOURCE_DIR}/libmetis/*.c)
-file(GLOB GKlib_sources ${metis_SOURCE_DIR}/GKlib/*.c)
+file(GLOB GKlib_sources ${GKlib_SOURCE_DIR}/*.c)
 if(WIN32)
     set(_metis_static STATIC)
 endif()
@@ -18,7 +18,7 @@ target_compile_definitions(
                      $<$<CXX_COMPILER_ID:MSVC>:__thread=__declspec\(thread\)>
 )
 target_include_directories(
-    ogs_metis PUBLIC ${metis_SOURCE_DIR}/GKlib ${metis_SOURCE_DIR}/include
+    ogs_metis PUBLIC ${GKlib_SOURCE_DIR} ${metis_SOURCE_DIR}/include
                      ${metis_SOURCE_DIR}/libmetis
 )
 if(OpenMP_FOUND)
@@ -31,6 +31,7 @@ target_compile_options(
     ogs_metis PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-w>
                       $<$<CXX_COMPILER_ID:MSVC>:/W0>
 )
+target_compile_definitions(ogs_metis PUBLIC IDXTYPEWIDTH=64 REALTYPEWIDTH=32)
 set_property(TARGET ogs_metis PROPERTY C_STANDARD 90)
 
 # mpmetis binary
