@@ -1,0 +1,63 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a15d19a..7a505dc 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -37,7 +37,7 @@ include(./conf/gkbuild.cmake)
+ 
+ # Add include directories.
+ # i.e., the -I equivalent
+-include_directories(build/xinclude)
++#include_directories(build/xinclude)
+ include_directories(${GKLIB_PATH}/include)
+ include_directories(${CMAKE_INSTALL_PREFIX}/include)
+ 
+@@ -47,6 +47,6 @@ link_directories(${GKLIB_PATH}/lib)
+ link_directories(${CMAKE_INSTALL_PREFIX}/lib)
+ 
+ # Recursively look for CMakeLists.txt in subdirs.
+-add_subdirectory("build/xinclude")
++#add_subdirectory("build/xinclude")
+ add_subdirectory("libmetis")
+ add_subdirectory("programs")
+diff --git a/conf/gkbuild.cmake b/conf/gkbuild.cmake
+index 0e70a8e..3ce5ae7 100644
+--- a/conf/gkbuild.cmake
++++ b/conf/gkbuild.cmake
+@@ -126,7 +126,7 @@ if(MSVC)
+   if("${HAVE_THREADLOCALSTORAGE}" MATCHES "^${HAVE_THREADLOCALSTORAGE}$")
+     try_compile(HAVE_THREADLOCALSTORAGE
+       ${CMAKE_BINARY_DIR}
+-      ${CMAKE_SOURCE_DIR}/conf/check_thread_storage.c)
++      ${PROJECT_SOURCE_DIR}/conf/check_thread_storage.c)
+     if(HAVE_THREADLOCALSTORAGE)
+       message(STATUS "checking for thread-local storage - found")
+     else()
+diff --git a/programs/CMakeLists.txt b/programs/CMakeLists.txt
+index baf40ad..67e93a2 100644
+--- a/programs/CMakeLists.txt
++++ b/programs/CMakeLists.txt
+@@ -11,7 +11,10 @@ add_executable(cmpfillin cmpfillin.c io.c smbfactor.c)
+ 
+ # Link with the required libraries
+ foreach(prog gpmetis ndmetis mpmetis m2gmetis graphchk cmpfillin)
+-  target_link_libraries(${prog} metis GKlib m)
++  target_link_libraries(${prog} metis GKlib)
++  if(NOT WIN32)
++    target_link_libraries(${prog} m)
++  endif()
+ endforeach(prog)
+ 
+ if(METIS_INSTALL)
+diff --git a/programs/mpmetis.c b/programs/mpmetis.c
+index 04a6a1b..af74de9 100644
+--- a/programs/mpmetis.c
++++ b/programs/mpmetis.c
+@@ -188,7 +188,7 @@ void MPReportResults(params_t *params, mesh_t *mesh, idx_t *epart, idx_t *npart,
+   printf("\nMemory Information ----------------------------------------------------------\n");
+   printf("  Max memory used:\t\t %7.3"PRREAL" MB\n", (real_t)(params->maxmemory/(1024.0*1024.0)));
+ 
+-#ifndef MACOS
++#if !defined(MACOS) && !defined(WIN32) && !defined(__MINGW32__)
+   {
+     struct rusage usage;
+     getrusage(RUSAGE_SELF, &usage);
