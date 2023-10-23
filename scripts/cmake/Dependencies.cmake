@@ -351,31 +351,37 @@ CPMAddPackage(
 
 if(OGS_BUILD_UTILS)
     if(NOT GUIX_BUILD)
+        set(_win_metis_options "MSVC FALSE")
+        if(WIN32)
+            set(_win_metis_options "MSVC TRUE")
+        endif()
         CPMFindPackage(
             NAME GKlib
             GIT_REPOSITORY https://github.com/KarypisLab/GKlib
             GIT_TAG 8bd6bad750b2b0d90800c632cf18e8ee93ad72d7
             VERSION 5.1.1
-            OPTIONS "CMAKE_POLICY_DEFAULT_CMP0042 NEW"
+            OPTIONS "CMAKE_POLICY_DEFAULT_CMP0042 NEW" ${_win_metis_options}
             EXCLUDE_FROM_ALL YES
         )
         CPMFindPackage(
             NAME metis
             GIT_REPOSITORY https://github.com/KarypisLab/METIS
             VERSION 5.2.1
-            EXCLUDE_FROM_ALL
-                YES PATCH_COMMAND git apply
-                    ${PROJECT_SOURCE_DIR}/scripts/cmake/metis.patch
+            EXCLUDE_FROM_ALL YES
+            PATCH_COMMAND git apply
+                          ${PROJECT_SOURCE_DIR}/scripts/cmake/metis.patch
+            OPTIONS ${_win_metis_options}
         )
         if(GKlib_ADDED AND metis_ADDED)
             target_include_directories(
-                metis PUBLIC ${GKlib_SOURCE_DIR} ${metis_SOURCE_DIR}/include
-                             ${metis_SOURCE_DIR}/libmetis
+                metis SYSTEM
+                PUBLIC ${GKlib_SOURCE_DIR} ${metis_SOURCE_DIR}/include
+                       ${metis_SOURCE_DIR}/libmetis
             )
             target_compile_definitions(
                 metis PUBLIC IDXTYPEWIDTH=64 REALTYPEWIDTH=32
             )
-            list(APPEND DISABLE_WARNINGS_TARGETS metis)
+            list(APPEND DISABLE_WARNINGS_TARGETS metis GKlib)
         endif()
     else()
         find_package(metis REQUIRED)
