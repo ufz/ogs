@@ -12,6 +12,7 @@
 
 #include <MGIS/Behaviour/Variable.hxx>
 
+#include "MaterialLib/MPL/Utils/Tensor.h"
 #include "MaterialLib/MPL/VariableType.h"
 #include "MathLib/KelvinVector.h"
 
@@ -47,7 +48,7 @@ struct Variable
                 return MathLib::KelvinVector::kelvin_vector_dimensions(
                     DisplacementDim);
             case T::TENSOR:
-                return DisplacementDim;
+                return MaterialPropertyLib::tensorSize(DisplacementDim);
         }
     }
 
@@ -65,7 +66,7 @@ struct Variable
             case T::STENSOR:
                 return 1;
             case T::TENSOR:
-                return DisplacementDim;
+                return 1;
         }
     }
 };
