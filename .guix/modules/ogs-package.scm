@@ -74,6 +74,7 @@
                   hdf5
                   json-modern-cxx
                   libxml2
+                  metis
                   pybind11-2.10.4
                   python
                   range-v3
