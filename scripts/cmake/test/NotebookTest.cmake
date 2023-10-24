@@ -42,9 +42,22 @@ function(NotebookTest)
             return()
         endif()
     endif()
+
+    if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/ProcessLib)
+        current_dir_as_list(ProcessLib labels)
+    endif()
+    list(APPEND labels Notebook)
+    if(DEFINED NotebookTest_LABELS)
+        list(APPEND labels ${NotebookTest_LABELS})
+    else()
+        list(APPEND labels default)
+    endif()
     # Notebooks are allowed to run longer than usual benchmarks
     math(EXPR _notebook_large_runtime "10 * ${ogs.ctest.large_runtime}")
-    if(${NotebookTest_RUNTIME} GREATER ${_notebook_large_runtime})
+    if(${NotebookTest_RUNTIME} LESS_EQUAL ${_notebook_large_runtime})
+        list(APPEND labels small)
+    else()
+        list(APPEND labels large)
         string(APPEND NotebookTest_NAME_WE "-LARGE")
     endif()
 
@@ -95,16 +108,6 @@ function(NotebookTest)
             -DWORKING_DIRECTORY=${Data_SOURCE_DIR} -DCAT_LOG=TRUE -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/OgsTestWrapper.cmake
     )
-
-    if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/ProcessLib)
-        current_dir_as_list(ProcessLib labels)
-    endif()
-    list(APPEND labels Notebook)
-    if(DEFINED NotebookTest_LABELS)
-        list(APPEND labels ${NotebookTest_LABELS})
-    else()
-        list(APPEND labels default)
-    endif()
 
     list(
         APPEND
