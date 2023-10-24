@@ -17,6 +17,8 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <string>
+#include <string_view>
 #include <typeindex>
 #include <utility>
 #include <vector>
@@ -464,12 +466,8 @@ public:
      * Convenience method combining getConfigParameter(std::string const&) with
      * a check.
      */
-    template <typename T>
-    void checkConfigParameter(std::string const& param, T const& value) const;
-
-    //! Make checkConfigParameter() work for string literals.
-    template <typename Ch>
-    void checkConfigParameter(std::string const& param, Ch const* value) const;
+    void checkConfigParameter(std::string const& param,
+                              std::string_view const value) const;
 
     //!\}
 

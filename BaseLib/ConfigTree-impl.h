@@ -146,26 +146,6 @@ T ConfigTree::peekConfigParameter(std::string const& param) const
 }
 
 template <typename T>
-void ConfigTree::checkConfigParameter(std::string const& param,
-                                      T const& value) const
-{
-    if (getConfigParameter<T>(param) != value)
-    {
-        error("The value of key <" + param + "> is not the expected one.");
-    }
-}
-
-template <typename Ch>
-void ConfigTree::checkConfigParameter(std::string const& param,
-                                      Ch const* value) const
-{
-    if (getConfigParameter<std::string>(param) != value)
-    {
-        error("The value of key <" + param + "> is not the expected one.");
-    }
-}
-
-template <typename T>
 T ConfigTree::getValue() const
 {
     if (have_read_data_)
