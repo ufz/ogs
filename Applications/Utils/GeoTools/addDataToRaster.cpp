@@ -198,8 +198,9 @@ int main(int argc, char* argv[])
     {
         for (std::size_t c = 0; c < header.n_cols; c++)
         {
-            GeoLib::Point const p{{origin[0] + header.cell_size * c,
-                                   origin[1] + header.cell_size * r, 0.0}};
+            GeoLib::Point const p{{origin[0] + header.cell_size * (c + 0.5),
+                                   origin[1] + header.cell_size * (r + 0.5),
+                                   0.0}};
             if (!aabb.containsPoint(p, std::numeric_limits<double>::epsilon()))
             {
                 continue;
