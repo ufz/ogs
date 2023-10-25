@@ -63,7 +63,7 @@ The TESPy version 0.3.2 is used in this benchmark.
 
 Two different pipe network setup were constructed for this benchmark.
 
-* A one-way pipe network (see Figure 1a)
+#### A one-way pipe network (see Figure 1)
 
 In this setup, the refrigerant mass flow rate is given in $kg/s$, as this is the default setting in the TESPy model (see `./pre/3bhes.py`).
 After being lifted by the pump, the refrigerant inflow will be divided into 3 branches by the splitter and then flow into each BHEs.
@@ -76,57 +76,43 @@ During the calculation of the TESPy solver, the flow density and the related spe
 To check their concrete value under specific temperature and pressure conditions, interested readers may refer to e.g. the 'PropsSI' function introduced in the webpage of CoolProp.
 For the fast execution of this benchmark, the total simulation time is shorten to 600 seconds. If the reader wishes to reproduce the same results, a full simulation of 6 months needs to be performed.
 
-{{< figure src="BHE_network.png" width="200">}}
+{{< figure src="BHE_network.png" caption="One-way pipeline network model" >}}
 
-Figure 1a: One-way pipeline network model
-
-* A closed-loop pipe network (see Figure 1b)
+#### A closed-loop pipe network (see Figure 2)
 
 The setup for a closed-loop network model is illustrated in Figure 1b.
 Compared to the configuration in the one-way network, the refrigerant in the closed loop network is circulating through the entire system.
 In this case, the flow rate will be automatically adjusted by the water pump in each time step, as its pressure head is directly linked to the flow rate. Subsequently, the flow rate is determined by the pressure losses in the BHE array.
 
-{{< figure src="BHE_network_closedloop.png" width="200">}}
-
-Figure 1b: Closed-loop pipeline network model
+{{< figure src="BHE_network_closedloop.png" caption="Closed-loop pipeline network model" >}}
 
 ## Results
 
-The evolution of the soil temperature at 1 m distance away from the 3 BHEs are shown in Figure 2.
+The evolution of the soil temperature at 1 m distance away from the 3 BHEs are shown in Figure 3.
 Compared with the BHE \#1 and BHE \#3, the soil temperature near the BHE located at the centre (BHE \#2) shows a deeper draw-down.
 It indicates that a thermal imbalance is occurring in the center of the BHE array.
-This imbalance leads to a lower outflow temperature from the BHE \#2, which is shown in Figure 3.
-Figure 4 depicts the evolution of the heat extraction rate of each BHE over the time.
+This imbalance leads to a lower outflow temperature from the BHE \#2, which is shown in Figure 4.
+Figure 5 depicts the evolution of the heat extraction rate of each BHE over the time.
 Compared to the decrease of the heat extraction rate on the centre BHE \#2, the rates on the other two BHEs located at the out sides was gradually increasing.
 It indicates that the heat extraction rate is shifting from the centre BHE towards the outer BHEs over the heating season.
 In this figure, the difference between the total heat extraction rate of all BHEs and the preset 3750 $W$ imposed on the heat pump is due to the hydraulic loss within each pipe in the pipe network.
 
 In comparison to the one-way setup, the closed-loop network shows a slightly different behaviour.
-The evolution of inflow refrigerant temperature and flow rate entering the BHE array is shown in Figure 5.
+The evolution of inflow refrigerant temperature and flow rate entering the BHE array is shown in Figure 6.
 With the decreasing of the working fluid temperature over the time, the system flow rate decreases gradually.
-Figure 6 depicts the thermal load shifting phenomenon with the closed-loop model.
+Figure 7 depicts the thermal load shifting phenomenon with the closed-loop model.
 Except for the thermal shifting behavior among the BHEs, the averaged heat extraction rate of all BHEs (black line) increases slightly over the time.
 This is due to the fact that additional energy is required to compensate the hydraulic loss of the pipe.
 
-{{< figure src="Soil_temperature.png" width="200">}}
+{{< figure src="Soil_temperature.png" caption="Evolution of the soil temperature located at the 1 m distance away from each BHE" >}}
 
-Figure 2: Evolution of the soil temperature located at the 1 m distance away from each BHE
+{{< figure src="Inflow_and_outflow_temperature.png" caption="Evolution of the inflow and outflow refrigerant temperature of each BHE" >}}
 
-{{< figure src="Inflow_and_outflow_temperature.png" width="200">}}
+{{< figure src="Heat_extraction_rate.png" caption="Evolution of the heat extraction rate of each BHE">}}
 
-Figure 3: Evolution of the inflow and outflow refrigerant temperature of each BHE
+{{< figure src="Inflow_temperature_and_flow_rate.png" caption="Evolution of the inflow refrigerant temperature and flow rate entering the BHE array" >}}
 
-{{< figure src="Heat_extraction_rate.png" width="200">}}
-
-Figure 4: Evolution of the heat extraction rate of each BHE
-
-{{< figure src="Inflow_temperature_and_flow_rate.png" width="200">}}
-
-Figure 5: Evolution of the inflow refrigerant temperature and flow rate entering the BHE array
-
-{{< figure src="Heat_extraction_rate_closedloop.png" width="200">}}
-
-Figure 6: Evolution of the heat extraction rate of each BHE with close loop network model
+{{< figure src="Heat_extraction_rate_closedloop.png" caption="Evolution of the heat extraction rate of each BHE with close loop network model" >}}
 
 ## References
 

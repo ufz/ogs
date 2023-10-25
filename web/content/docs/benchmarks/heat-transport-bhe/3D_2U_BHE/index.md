@@ -34,7 +34,7 @@ For this benchmark, Two different scenarios were carried out by applying two dif
 
 The detailed input parameters can be seen from the 3D_2U_BHE.prj file. The inflow temperature of the BHE, which was imposed as boundary condition of the BHE is shown in Figure 1. All the initial temperatures are set as 22 $^{\circ}$C. The flow rate within each U-pipe is set to $2.0\times10^{-4}$ $\mathrm{m^{3} s^{-1}}$ during the whole simulation time.
 
-{{< figure src="In_out_temperature_comparison.png" width="200">}}
+{{< figure src="In_out_temperature_comparison.png" >}}
 
 Figure 1: Inflow temperature curve and outflow temperature comparison
 
@@ -58,7 +58,7 @@ The computed results from scenario by adopting the fixed inflow boundary conditi
 The OGS numerical outflow temperature over time was compared against results of the FEFLOW software as shown in the Figure 1. And the vertical distributed temperature of circulating water was presented in Figure 2 after operation for 3300 s.
 The comparison figures demonstrate that the OGS numerical results and FEFLOW results can match very well and the biggest absolute error of outflow temperature is 0.20 $^{\circ}$C after 360 s' operation, while such error decreases to 0.037 $^{\circ}$C after 3600 s' operation. The maximum relative error of vertical temperature is 0.019 \% after operation for 3300 s.
 
-{{< figure src="vertical_temperature_distribution.png" width="200">}}
+{{< figure src="vertical_temperature_distribution.png" >}}
 
 Figure 2: Comparison of vertical temperature distribution from scenario by adopting the fixed inflow boundary condition
 
@@ -71,7 +71,7 @@ Besides, by setting python bindings, the current OGS `Heat_Transport_BHE` proces
 In this way, the computed vertical distributed circulating fluid temperature is updated to the black and red solid line illustrated in the figure 3.
 It shows that in this case, the difference between the OGS and FEFLOW models is becoming much closer to each other, which is about 0.037 $^{\circ}$C.
 
-{{< figure src="vertical_temperature_distribution_powerBC.png" width="200">}}
+{{< figure src="vertical_temperature_distribution_powerBC.png" >}}
 
 Figure 3: Comparison of vertical temperature distribution from scenarios by adopting the power boundary conditions
 

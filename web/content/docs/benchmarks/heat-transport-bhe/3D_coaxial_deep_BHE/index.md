@@ -13,9 +13,7 @@ image = "numerical_geometry_model.png"
 
 In recent years, Borehole Heat Exchangers (BHE) are very widely utilized to extract geothermal energy for building heating. For coaxial type of BHEs, an inner pipe is installed inside of an outer pipe, allowing the downward and upward flow to be separated. In some projects, very long coaxial BHEs are installed down to a 2-km depth, in order to extract more energy from the deep subsurface (Kong et al., 2017). Based on the flow directions, there are two types of coaxial BHEs. When downward flow is located in the inner pipe, it is called Coaxial-Centred (CXC) type. On the contrary, if the inflow is introduced in the annular space, it is called a CXA type. Detailed schematization of the CXA-type BHE system is shown in Figure 1. In this benchmark, the numerical model in OGS-6 has been tested for the 2 coaxial types of BHEs. The simulation results are compared with previous OGS-5 results and also the analytical solution proposed by [Beier et al. (2014)](Analytical_coaxial_BHE.zip).
 
-{{< figure src="coaxial_deep_BHE.png" width="200">}}
-
-Figure 1: Coaxial BHE of CXA (Kong et al. (2017))
+{{< figure src="coaxial_deep_BHE.png" caption="Coaxial BHE of CXA (Kong et al. (2017))" >}}
 
 ## Model Setup
 
@@ -36,9 +34,7 @@ The implemented numerical model was established based on the dual continuum appr
 | Grout thermal conductivity                         | $\lambda_{g}$     | 0.73                | $\mathrm{W m^{-1} K^{-1}}$  |
 | Grout heat capacity                                | $(\rho c)_{g}$    | $3.8\times10^{6}$   | $\mathrm{Jm^{-3}K^{-1}}$    |
 
-{{< figure src="numerical_geometry_model.png" width="80">}}
-
-Figure 2: Geometry and mesh of the coaxial BHE model
+{{< figure src="numerical_geometry_model.png" caption="Geometry and mesh of the coaxial BHE model" >}}
 
 The boundary condition of a BHE is always imposed from the aspect of inflow temperature (Hein et al., 2016). At every time step, the initial inflow temperature was calculated according to the heat load on the BHE, previous outflow temperature and parameters of circulating fluid, which can be described by:
 $$
@@ -52,13 +48,9 @@ where $\rho^r c^r$ is heat capacity of circulating fluid and $Q^r$ is circulatin
 
 In Figure 3, the numerically simulated outflow temperature from OGS-6 was compared against the OGS-5 result, as well as the analytical solution by Beier et al. (2014). Also, the temperature distribution of circulating water inside of the BHE after 3000 seconds was presented in Figure 4. The comparison demonstrates that the numerical results and analytical solution can match very well and the biggest absolute error of outflow temperature is around 1.6 $^{\circ}$C at the starting up stage, while such error will decrease to around 0.5 $^{\circ}$C after 30 days' operation. The maximum relative error regarding temperature distribution of circulating water after operation for 3000 s is around 2 \%. The soil temperature verification can be seen in the Benchmark of 3D Beier sandbox.
 
-{{< figure src="outflow_temperature_over_time_long-term.png" width="120">}}
+{{< figure src="outflow_temperature_over_time_long-term.png" caption="Comparison with analytical solution and OGS-5 results" >}}
 
-Figure 3: Comparison with analytical solution and OGS-5 results
-
-{{< figure src="temperature_distribution_3000s.png" width="200">}}
-
-Figure 4: Distributed temperature of circulating water
+{{< figure src="temperature_distribution_3000s.png" caption="Distributed temperature of circulating water" >}}
 
 ## Discussion
 
