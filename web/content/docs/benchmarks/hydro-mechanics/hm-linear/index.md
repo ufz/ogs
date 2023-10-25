@@ -19,8 +19,8 @@ The analytical solution of the problem can be found in Mov et al. (1980) "Biphas
 
 The result showing initial pore pressure increase in the bottom of the domain due to applied displacement on the top and subsequent pressure drop after the displacement ramp finishes at time 100s:
 
-{{< img src="HM_confined_compression_analytical.png" >}}
+{{< figure src="HM_confined_compression_analytical.png" >}}
 
 Comparison with the numerical solution shows good agreement with the analytical solution:
 
-{{< img src="HM_confined_compression_simulation_error.png" >}}
+{{< figure src="HM_confined_compression_simulation_error.png" >}}

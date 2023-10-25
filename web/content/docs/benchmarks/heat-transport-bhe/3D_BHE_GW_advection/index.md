@@ -72,7 +72,7 @@ The BHE parameters are only relevant for the numerical model and are adopted
 from the [3D Beier sandbox
 benchmark]({{< ref "3D_Beier_sandbox.md" >}}).
 
-{{< img src="mesh.png" width="150">}}
+{{< figure src="mesh.png" width="150">}}
 
 Figure 1: Geometry and mesh of the BHE model
 
@@ -86,11 +86,11 @@ and analytical solution match very well as the maximum relative error of
 ground temperature is less than 0.2 \%. The largest difference is found near
 the BHE node towards which the analytical solution approaches infinity.
 
-{{< img src="temperature_soil_2years.png" width="150">}}
+{{< figure src="temperature_soil_2years.png" width="150">}}
 
 Figure 2: Ground temperature distribution after two years at $z=-7$ m.
 
-{{< img src="rel_err.png" width="150">}}
+{{< figure src="rel_err.png" width="150">}}
 
 Figure 3: Comparison of OGS-6 results and analytical solution. Note the
 singularity of the analytical solution at the BHE node.

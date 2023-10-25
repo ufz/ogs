@@ -19,9 +19,9 @@ The thermal expansion test was implemented by imposing a temperature increase to
 
 Results show Phase-Field evolution in the thermo-mechanical case can follow the mechanical case, and both solutions correspond to the analytical solution:
 
-{{< img src="uncon_com_bc.png" >}}
-{{< img src="therm_exp_bc.png" >}}
-{{< img src="t_pf.png" >}}
+{{< figure src="uncon_com_bc.png" >}}
+{{< figure src="therm_exp_bc.png" >}}
+{{< figure src="t_pf.png" >}}
 
 The analytical solution is: $$d = \dfrac{G\textrm{c}}{G\textrm{c}+4\epsilon \psi_\textrm{e}^+}$$
 where due to negative (elastic) volume strains only the deviatoric energy drives the phase field.

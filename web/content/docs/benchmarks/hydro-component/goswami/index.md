@@ -23,15 +23,15 @@ The Goswami-Clement benchmark is based on experiment observations for intruding 
 
 An example for the intruding salt front is shown below. The numerical results of OGS-6 coincide with those of OGS-5.
 
-{{< img src="goswami.gif" title="Results for numerical experiment. The steady state SS2 from the original experimental work is well reproduced.">}}
+{{< figure src="goswami.gif" title="Results for numerical experiment. The steady state SS2 from the original experimental work is well reproduced.">}}
 
 {{< data-link >}}
 
 A comparison of numerical and laboratory data is shown in the figure below. The numerical results of OGS-6 coincide with those of OGS-5 and likewise with the laboratory observations.
 
-{{< img src="Goswami_Exp_Num_Comp.png" title="Results for numerical (colored diamonds) and laboratory data (colored straight lines) on the steady state location of the concentration front (see original research paper).">}}
+{{< figure src="Goswami_Exp_Num_Comp.png" title="Results for numerical (colored diamonds) and laboratory data (colored straight lines) on the steady state location of the concentration front (see original research paper).">}}
 
-{{< img src="Goswami_Transient_States.png" title="Results for numerical (colored diamonds) and laboratory data (colored straight lines) on the transient state locations of the concentration front (see original research paper).">}}
+{{< figure src="Goswami_Transient_States.png" title="Results for numerical (colored diamonds) and laboratory data (colored straight lines) on the transient state locations of the concentration front (see original research paper).">}}
 
 ## Literature
 

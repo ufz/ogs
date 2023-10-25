@@ -27,7 +27,7 @@ Left side boundary conditions for these two setups are pressure $p=0$ and concen
 {{< data-link "The *Diffusion only* project file" "Parabolic/ComponentTransport/SimpleSynthetics/ConcentrationDiffusionOnly.prj" >}}  
 {{< data-link "The *Diffusion and Storage* project file" "Parabolic/ComponentTransport/SimpleSynthetics/ConcentrationDiffusionAndStorage.prj" >}}
 
-{{< img src="DiffusionAndStorage.gif" title="*Diffusion and Storage*">}}
+{{< figure src="DiffusionAndStorage.gif" title="*Diffusion and Storage*">}}
 
 #### Diffusion, Storage, and Advection
 
@@ -35,7 +35,7 @@ Left side boundary conditions for this setup are pressure $p=1$ and concentratio
 
 {{< data-link "The *Diffusion, Storage, and Advection* project file" "Parabolic/ComponentTransport/SimpleSynthetics/DiffusionAndStorageAndAdvection.prj" >}}
 
-{{< img src="DiffusionAndStorageAndAdvection.gif" title="*Diffusion, Storage, and Advection*">}}
+{{< figure src="DiffusionAndStorageAndAdvection.gif" title="*Diffusion, Storage, and Advection*">}}
 
 #### Diffusion, Storage, Advection, and Dispersion
 
@@ -44,8 +44,8 @@ Left side boundary conditions for these setups are pressure $p=1$ and concentrat
 {{< data-link "The *Diffusion, Storage, Advection, and Dispersion* project file" "Parabolic/ComponentTransport/SimpleSynthetics/DiffusionAndStorageAndAdvectionAndDispersion.prj" >}}  
 {{< data-link "The *Diffusion, Storage, Advection, and Dispersion Half* project file" "Parabolic/ComponentTransport/SimpleSynthetics/DiffusionAndStorageAndAdvectionAndDispersionHalf.prj" >}}
 
-{{< img src="DiffusionAndStorageAndAdvectionAndDispersion.gif" title="*Diffusion, Storage, Advection, and Dispersion*">}}
-{{< img src="DiffusionAndStorageAndAdvectionAndDispersionHalf.gif" title="*Diffusion, Storage, Advection, and Dispersion Half*">}}
+{{< figure src="DiffusionAndStorageAndAdvectionAndDispersion.gif" title="*Diffusion, Storage, Advection, and Dispersion*">}}
+{{< figure src="DiffusionAndStorageAndAdvectionAndDispersionHalf.gif" title="*Diffusion, Storage, Advection, and Dispersion Half*">}}
 
 #### Diffusion, Storage, Gravity, and Dispersion
 
@@ -53,7 +53,7 @@ Boundary condition for this setup is pressure $p=0$ for the top left corner and 
 
 {{< data-link "The *Diffusion, Storage, Gravity, and Dispersion* project file" "Parabolic/ComponentTransport/SimpleSynthetics/DiffusionAndStorageAndGravityAndDispersionHalf.prj" >}}
 
-{{< img src="DiffusionAndStorageAndGravityAndDispersionHalf.gif" title="*Diffusion, Storage, Gravity, and Dispersion Half*">}}
+{{< figure src="DiffusionAndStorageAndGravityAndDispersionHalf.gif" title="*Diffusion, Storage, Gravity, and Dispersion Half*">}}
 
 #### Diffusion, Storage, Advection, and Decay
 
@@ -61,7 +61,7 @@ Left side boundary conditions for this setup are pressure $p=1$ and concentratio
 
 {{< data-link "The *Diffusion, Storage, Advection, and Decay* project file" "Parabolic/ComponentTransport/SimpleSynthetics/DiffusionAndStorageAndAdvectionAndDecay.prj" >}}
 
-{{< img src="DiffusionAndStorageAndAdvectionAndDecay.gif" title="*Diffusion, Storage, Advection, and Decay*">}}
+{{< figure src="DiffusionAndStorageAndAdvectionAndDecay.gif" title="*Diffusion, Storage, Advection, and Decay*">}}
 
 #### Changes With Inclusion of Non Boussinesq-Effects
 

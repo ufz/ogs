@@ -12,7 +12,7 @@ In this benchmark, the steady-state diffusive transport of trichloroethylene (TC
 
 The model domain is 1-D in the vertical direction with a length of 1 m. The initial saturation profile is at steady state and shown in Fig. 1. The groundwater table is fixed at $z=0.407$ m by assigning a Dirichlet boundary condition of the gas pressure at $z=0$ m. The top boundary ($z=1$ m) is open with $P_g=101,325$ Pa. Initially, there is no TCE in the domain. A constant TCE molar fraction of $X^c=1\times10^{-6}$ is imposed below the water table (i.e. across the entire depth of the saturated zone), while null TCE concentration is assumed at the top boundary ($z=1$ m). A constant temperature of 298 K is maintained everywhere. The parameters of the numerical model are listed in Table 1.
 
-{{< img src="Fig1_Sw0.png" width="50" title="Fig.1: Initial saturation with depth.">}}
+{{< figure src="Fig1_Sw0.png" width="50" title="Fig.1: Initial saturation with depth.">}}
 
 Table 1: Parameters used in the numerical model.
 | Parameter                                          | Symbol             |  Value              | Unit                        |
@@ -48,9 +48,9 @@ where $I(z)$ is integrated w.r.t. $z$ in the unsaturated zone. Since at steady s
 
 Figure 2 compares the normalized gas phase TCE concentration profiles given by the numerical model and the above semianalytical solution at steady state. Figure 3 shows the absolute and relative errors between the two curves in Fig. 2. The maximum relative error is less than 1\% except one point. Thus, a very good agreement was obtained. It is interesting to note the sharp decline of the TCE concentration immediately above the water table, which is due to the several orders of magnitude difference between $D_{0a}$ and $D_{0w}$.
 
-{{< img src="compare.png" width="50" title="Fig.2: Comparison between numerical and semianalytical solutions.">}}
+{{< figure src="compare.png" width="50" title="Fig.2: Comparison between numerical and semianalytical solutions.">}}
 
-{{< img src="err.png" width="50" title="Fig.3: Absolute and relative errors.">}}
+{{< figure src="err.png" width="50" title="Fig.3: Absolute and relative errors.">}}
 
 ## References
 

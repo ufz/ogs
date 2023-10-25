@@ -17,7 +17,7 @@ Ramey et al. (1962) proposed the analytical solution concerning the wellbore hea
 
 In this benchmark, the length of the wellbore is 30 m as shown in Figure 1 and the cold water is injected into the inlet point of the wellbore with temperature of 20 $^{\circ}$C. The initial temperature of the fluid and grout in the wellbore is 20 $^{\circ}$C, and temperature of the surrounding rock is 55 $^{\circ}$C. The wellbore and pipe diameter are 0.28 m and 0.25826 m, respectively. And the flow rate is 0.0002 $m^3/s$.
 
-{{< img src="pipe_flow_3d_model.png" width="80">}}
+{{< figure src="pipe_flow_3d_model.png" width="80">}}
 
 Figure 1: Single pipe flow model
 
@@ -93,11 +93,11 @@ The outlet temperature change over time was compared against analytical solution
 
 In numerical model, the outlet temperature at beginning stage is affected by the initial temperature in the pipe inside the wellbore. The initial fluid temperature set in the benchmark means there is water with $20\ ^{\circ}$C filled in the wellbore already before injecting water into the wellbore. But in the analytical solution, no initial temperature is set and the temperature keeps equilibrium state at every moment. The impact of initial temperature condition in numerical model is decreasing with the increasing of the operational time as shown in Figure 2.
 
-{{< img src="T_out_comparison.png" width="120">}}
+{{< figure src="T_out_comparison.png" width="120">}}
 
 Figure 2: Comparison with analytical solution results
 
-{{< img src="absolute_error_fluid_T_30d.png" width="200">}}
+{{< figure src="absolute_error_fluid_T_30d.png" width="200">}}
 
 Figure 3: Distributed temperature of fluid and absolute error.
 

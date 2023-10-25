@@ -12,7 +12,7 @@ image = "Fig1_SchematicDiagram.png"
 
 This benchmark deals with fluid flow through an open parallel-plate channel. The figure below gives a pictorial view of the considered scenario.
 
-{{< img src="Fig1_SchematicDiagram.png" title="Schematic diagram of the parallel-plate flow channel in two-dimensional space.">}}
+{{< figure src="Fig1_SchematicDiagram.png" title="Schematic diagram of the parallel-plate flow channel in two-dimensional space.">}}
 
 The model parameters used in the simulation are summarized in the table below.
 
@@ -42,7 +42,7 @@ $$
 v \left(y\right) = \frac{1}{2\mu} \frac{P_{\mathrm{in}} - P_{\mathrm{out}}}{l} y \left( b - y\right).
 \end{equation}$$
 
-{{< img src="Fig2_SimulationResults.png" title="Simulation results: (a) Hydrualic pressure profile through the parallel-plate flow channel; (b) Transverse velocity component profile over the cross-section of the plane flow channel.">}}
+{{< figure src="Fig2_SimulationResults.png" title="Simulation results: (a) Hydrualic pressure profile through the parallel-plate flow channel; (b) Transverse velocity component profile over the cross-section of the plane flow channel.">}}
 
 ## References
 

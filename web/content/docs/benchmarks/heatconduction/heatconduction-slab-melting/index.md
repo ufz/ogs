@@ -19,15 +19,15 @@ In this note, we consider the so-called two-phase Stefan problem which describes
 The detailed Stefan problem description, geometric setup, material and model parameters used in the related OGS implementation can be found in this document [this PDF](Heat_conduction_phase_change_(ice_slab_melting).pdf). The figures below are taken from this documentation and serve for illustrative purposes to give a hint about the modeled process and simulations outcome.
 
 1. The sketch of a semi-infinite melting ice slab as a physical situation modeled be the two-phase Stefan problem:
-{{< img src="Melting_slab.png" >}}
+{{< figure src="Melting_slab.png" >}}
 2. Plots of the analytical solution of Stefan problem restricted to finite spatial interval at fixed time steps (the left figure):
-{{< img src="Melting_slab_Stefan_problem_(analytic).png" >}}
+{{< figure src="Melting_slab_Stefan_problem_(analytic).png" >}}
 This describes temperature evolution during the ice melting process within water and ice phases. The right figure zooms in at the solution in a smaller (in this case, unit) interval, which is to be used for comparison purposes. Temperature is given in degrees Celsius.
 3. Sketches the OGS solution (a 3d view) of the IBVP for the 'T+freezing' equation at different time steps:
-{{< img src="Melting_slab_Stefan_problem_(OGS_3d).png" >}}
+{{< figure src="Melting_slab_Stefan_problem_(OGS_3d).png" >}}
 Note that in these ParaView plots, we have tuned the color legend for temperature (here, given in kelvins) such that water and ice fractions can be identified more easily.
 4. Finally, the figure below presents comparison of the analytical solution of Stefan problem and the OGS solution of the IBVP for the T+freezing equation obtained in two cases of a model parameter $k$ (it controls the thickness of a transition zone in a regularized ice-fraction indicator function and has impact on the discretization accuracy):
-{{< img src="Melting_slab_Stefan_problem_(analytic_vs_OGS).png" >}}
+{{< figure src="Melting_slab_Stefan_problem_(analytic_vs_OGS).png" >}}
 In these plots, the temperature is given in kelvins as well.
 
 ## *Remark*

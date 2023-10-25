@@ -14,19 +14,19 @@ See [this PDF](pressure_bc.pdf) for detailed problem description.
 ## Results and evaluation
 
 Plain strain elastic cylinder comparison between numerical and analytical results:
-{{< img src="pipe_plane_strain.png" >}}
+{{< figure src="pipe_plane_strain.png" >}}
 
 Axisymmetric elastic cylinder comparison between numerical and analytical results.
-{{< img src="pipe_axisymmetric.png" >}}
+{{< figure src="pipe_axisymmetric.png" >}}
 
 Axisymmetric elastic sphere comparison between numerical and analytical results:
-{{< img src="sphere_axisymmetric.png" >}}
+{{< figure src="sphere_axisymmetric.png" >}}
 
 Tri-dimensional elastic sphere comparison between numerical and analytical results:
-{{< img src="sphere_3d.png" >}}
+{{< figure src="sphere_3d.png" >}}
 
 Axisymmetric plastic sphere comparison between numerical and analytical results:
-{{< img src="sphere_axisymmetric_pl.png" >}}
+{{< figure src="sphere_axisymmetric_pl.png" >}}
 
 Axisymmetric plastic sphere residuals of stress:
-{{< img src="sphere_axisymmetric_pl_residual_stress.png" >}}
+{{< figure src="sphere_axisymmetric_pl_residual_stress.png" >}}

@@ -28,7 +28,7 @@ The test is used to mainly verify the implementation of water vapour diffusion m
  Task C. The following figure shows the distribution of temperature in the domain,
  water saturation in the vicinity of the heater, and displacement magnitude
  in the domain after nearly 3 years' heating:
-{{< img src="decovalex_2023_c.png" >}}
+{{< figure src="decovalex_2023_c.png" >}}
 
 The following two figures show the temporal variations of temperature and water
  saturation, respectively, at a node near the heater:

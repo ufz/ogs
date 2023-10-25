@@ -39,7 +39,7 @@ is sketched. Furthermore, the mesh resolution is shown in the cylindrical domain
 within the first quadrant of the coordinate system. In the second quadrant the
 simulated temperature distribution is depicted.
 
-{{< img src="temperature_distribution_line_source_term_in_cylinder.png" >}}
+{{< figure src="temperature_distribution_line_source_term_in_cylinder.png" >}}
 
 The source term is defined along the line in the center of the cylinder:
 $$
@@ -70,18 +70,18 @@ if (coordsX^2<0.0001 & coordsY^2<0.0001, temperature, -1/(4*asin(1))*ln(sqrt(coo
 
 The following plot shows the temperature along the white line in the figure above.
 
-{{< img src="temperature_profile_line_source_term_in_cylinder.png" >}}
+{{< figure src="temperature_profile_line_source_term_in_cylinder.png" >}}
 
 - Comparison with analytical solution:
 
 The differences of analytical and computed solutions for two different domain
 discretizations are small outside of the center. In the finer mesh the error
 outside of the middle region is smaller than in the coarser mesh.
-{{< img src="comparison_plot_over_line_diff_analytical_solution_temperature_and_simulated_temperature_line_source_term_in_cylinder.png" >}}
+{{< figure src="comparison_plot_over_line_diff_analytical_solution_temperature_and_simulated_temperature_line_source_term_in_cylinder.png" >}}
 
 Due to the numerical evaluation of the relative error of the computed solution
 the error grows in the vicinity of the boundary and in the center.
-{{< img src="comparison_plot_over_line_rel_diff_analytical_solution_temperature_and_simulated_temperature_line_source_term_in_cylinder.png" >}}
+{{< figure src="comparison_plot_over_line_rel_diff_analytical_solution_temperature_and_simulated_temperature_line_source_term_in_cylinder.png" >}}
 
 #### Input files
 
@@ -101,16 +101,16 @@ $r=1$ is solved. The cylindrical domain is defined as axisymmetric.
 
 #### Results and evaluation
 
-{{< img src="simulated_temperature_distribution_line_source_term_in_axisymmetric_cylinder.png" >}}
+{{< figure src="simulated_temperature_distribution_line_source_term_in_axisymmetric_cylinder.png" >}}
 The above figure shows the computed temperature distribution.
 
 The following plot shows the temperature along the white line in the figure above.
-{{< img src="temperature_profile_line_source_term_in_axisymmetric_cylinder.png" >}}
+{{< figure src="temperature_profile_line_source_term_in_axisymmetric_cylinder.png" >}}
 
 The error and relative error shows the same behaviour like in the simulation
 models above. Outside of the center, that has a singularity in the analytical
 solution, the errors decreases very fast.
-{{< img src="plot_over_line_diff_and_rel_diff_analytical_solution_temperature_and_simulated_temperature_line_source_term_in_axisymmetric_cylinder.png" >}}
+{{< figure src="plot_over_line_diff_and_rel_diff_analytical_solution_temperature_and_simulated_temperature_line_source_term_in_axisymmetric_cylinder.png" >}}
 
 #### Input files
 

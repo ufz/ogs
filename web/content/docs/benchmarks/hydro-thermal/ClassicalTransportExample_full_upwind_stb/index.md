@@ -107,7 +107,7 @@ The example is described in [Classical transport example:
 
 The following two figures compare the example results with the analytical solution
  and that are obtained by using the isotropic diffusion stabilization.
-{{< img src="classical_transport_example_full_upwind.png" >}}
+{{< figure src="classical_transport_example_full_upwind.png" >}}
 
 From the figures we can see that the full upwind scheme adds more diffusion than the
  isotropic diffusion scheme does.

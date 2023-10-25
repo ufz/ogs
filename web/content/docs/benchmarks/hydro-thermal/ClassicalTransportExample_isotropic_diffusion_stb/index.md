@@ -90,11 +90,11 @@ To investigate such phenomenon, different spatial and temporal discretizations a
 The following figures show the benchmark results with two different spatial and temporal
  discretization sets. Both results show that the stabilization of `IsotropicDiffusion`
  eliminates the spatial oscillation.
-{{< img src="classical_transport_example.png" >}}
+{{< figure src="classical_transport_example.png" >}}
 
 The following figure compares the simulation results obtained  with $\alpha=0.15$ and its maximum value 1,
  respectively:
-{{< img src="classical_transport_example_alpha.png" >}}
+{{< figure src="classical_transport_example_alpha.png" >}}
 
 ### Reference
 

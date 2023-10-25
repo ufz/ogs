@@ -176,7 +176,7 @@ $$\begin{gathered}
  The comparison of the result of $\epsilon_z$
 obtained by the present multidimensional scheme with the analytical
 solution is shown in the following figure:
-{{< img src="bgra0.png" >}}
+{{< figure src="bgra0.png" >}}
 
 ### Python code
 

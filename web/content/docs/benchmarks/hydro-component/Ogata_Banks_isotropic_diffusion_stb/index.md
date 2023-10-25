@@ -12,4 +12,4 @@ image = "HC_stabilizier.png"
 See the detailed introduction in
  [Classical transport example: using the isotropic diffusion stabilization]({{< relref "ClassicalTransportExample_isotropic_diffusion_stb" >}}).
 
-{{< img src="HC_stabilizier.png" >}}
+{{< figure src="HC_stabilizier.png" >}}

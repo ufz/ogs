@@ -19,8 +19,8 @@ See [this PDF](Plasticity.pdf) for detailed problem description.
 
 Triaxial compression test:
 
-{{< img src="ss_load.png" >}}
+{{< figure src="ss_load.png" >}}
 
 Variations of the stress states and the plastic volumetric strain with a monotonic loading process:
 
-{{< img src="plasticity_ss.png" >}}
+{{< figure src="plasticity_ss.png" >}}

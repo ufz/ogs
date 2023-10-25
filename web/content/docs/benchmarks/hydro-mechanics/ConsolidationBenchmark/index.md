@@ -64,7 +64,7 @@ The mechanical load on the top boundary is 1000 Pa, i.e. $\sigma_0 = -1000$ Pa.
 In the following figures, the solutions at $t=10$ s obtained by using the staggered scheme
  with fixed stress rate over time step, the monolithic scheme, and analytic
  approach are compared.
-{{< img src="CB_HM_profile.png" >}}
+{{< figure src="CB_HM_profile.png" >}}
 The figures show that for the staggered scheme
  with fixed stress rate over time step, the solutions with $dt=0.5$ s are quite
  close to the analytical ones.

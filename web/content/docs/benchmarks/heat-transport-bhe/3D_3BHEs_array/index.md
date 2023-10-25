@@ -76,7 +76,7 @@ During the calculation of the TESPy solver, the flow density and the related spe
 To check their concrete value under specific temperature and pressure conditions, interested readers may refer to e.g. the 'PropsSI' function introduced in the webpage of CoolProp.
 For the fast execution of this benchmark, the total simulation time is shorten to 600 seconds. If the reader wishes to reproduce the same results, a full simulation of 6 months needs to be performed.
 
-{{< img src="BHE_network.png" width="200">}}
+{{< figure src="BHE_network.png" width="200">}}
 
 Figure 1a: One-way pipeline network model
 
@@ -86,7 +86,7 @@ The setup for a closed-loop network model is illustrated in Figure 1b.
 Compared to the configuration in the one-way network, the refrigerant in the closed loop network is circulating through the entire system.
 In this case, the flow rate will be automatically adjusted by the water pump in each time step, as its pressure head is directly linked to the flow rate. Subsequently, the flow rate is determined by the pressure losses in the BHE array.
 
-{{< img src="BHE_network_closedloop.png" width="200">}}
+{{< figure src="BHE_network_closedloop.png" width="200">}}
 
 Figure 1b: Closed-loop pipeline network model
 
@@ -108,23 +108,23 @@ Figure 6 depicts the thermal load shifting phenomenon with the closed-loop model
 Except for the thermal shifting behavior among the BHEs, the averaged heat extraction rate of all BHEs (black line) increases slightly over the time.
 This is due to the fact that additional energy is required to compensate the hydraulic loss of the pipe.
 
-{{< img src="Soil_temperature.png" width="200">}}
+{{< figure src="Soil_temperature.png" width="200">}}
 
 Figure 2: Evolution of the soil temperature located at the 1 m distance away from each BHE
 
-{{< img src="Inflow_and_outflow_temperature.png" width="200">}}
+{{< figure src="Inflow_and_outflow_temperature.png" width="200">}}
 
 Figure 3: Evolution of the inflow and outflow refrigerant temperature of each BHE
 
-{{< img src="Heat_extraction_rate.png" width="200">}}
+{{< figure src="Heat_extraction_rate.png" width="200">}}
 
 Figure 4: Evolution of the heat extraction rate of each BHE
 
-{{< img src="Inflow_temperature_and_flow_rate.png" width="200">}}
+{{< figure src="Inflow_temperature_and_flow_rate.png" width="200">}}
 
 Figure 5: Evolution of the inflow refrigerant temperature and flow rate entering the BHE array
 
-{{< img src="Heat_extraction_rate_closedloop.png" width="200">}}
+{{< figure src="Heat_extraction_rate_closedloop.png" width="200">}}
 
 Figure 6: Evolution of the heat extraction rate of each BHE with close loop network model
 
