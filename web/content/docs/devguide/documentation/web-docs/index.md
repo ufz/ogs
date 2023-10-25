@@ -102,6 +102,19 @@ You can add size attributes to the filename with a `#`-character:
 
 Possible size values are `one-third`, `one-half` and `two-third`.
 
+For even more flexible image handling you can use Hugo's [`figure`](https://gohugo.io/content-management/shortcodes/#figure)-shortcode, e.g.:
+
+```markdown
+{{</* figure src="elephant.jpg" width="50%" title="An elephant at sunset" */>}}
+```
+
+Or for two images side-by-side:
+
+```markdown
+{{</* figure src="image_left.png" class="w-1/2 float-left" */>}}
+{{</* figure src="image_right.png" class="w-1/2 float-left" */>}}
+```
+
 #### Equations
 
 Equations can be set with typical LaTeX syntax by using [MathJax](https://www.mathjax.org/). Blocks are defined by `$$` at the beginning and `$$` at the end of the block or by simply using a LaTex environment like `\begin{equation}...\end{equation}`. Inline math uses one `$` as the delimiter. For more usage instructions see the [MathJax LaTeX help](https://docs.mathjax.org/en/latest/input/tex/index.html).
