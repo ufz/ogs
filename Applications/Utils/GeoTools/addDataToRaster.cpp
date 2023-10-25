@@ -51,6 +51,24 @@ double computeSinXSinY(GeoLib::Point const& point, GeoLib::AABB const& aabb)
                     boost::math::double_constants::pi);
 }
 
+double computeStepFunction(GeoLib::Point const& point, GeoLib::AABB const& aabb)
+{
+    auto const aabb_size = aabb.getMaxPoint() - aabb.getMinPoint();
+    auto const min = aabb.getMinPoint();
+
+    if ((point[0] - min[0]) / aabb_size[0] < 0.5 &&
+        (point[1] - min[1]) / aabb_size[1] < 0.5)
+    {
+        return 1;
+    }
+    if ((point[0] - min[0]) / aabb_size[0] >= 0.5 &&
+        (point[1] - min[1]) / aabb_size[1] >= 0.5)
+    {
+        return 1;
+    }
+    return 0;
+}
+
 int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
@@ -122,7 +140,8 @@ int main(int argc, char* argv[])
                                      "double value");
 
     cmd.add(ur_y_arg);
-    std::vector<std::string> allowed_functions_vector{"sinxsiny", "exp"};
+    std::vector<std::string> allowed_functions_vector{"sinxsiny", "exp",
+                                                      "step"};
     TCLAP::ValuesConstraint<std::string> allowed_functions(
         allowed_functions_vector);
     TCLAP::ValueArg<std::string> function_arg(
@@ -154,10 +173,26 @@ int main(int argc, char* argv[])
     auto const& header = raster->getHeader();
     auto const& origin = header.origin;
 
+    auto function_selector = [](std::string const& function_string)
+        -> std::function<double(GeoLib::Point const& p,
+                                GeoLib::AABB const& aabb)>
+    {
+        if (function_string == "sinxsiny")
+        {
+            return computeSinXSinY;
+        }
+        if (function_string == "exp")
+        {
+            return compute2DGaussBellCurveValues;
+        }
+        if (function_string == "step")
+        {
+            return computeStepFunction;
+        }
+        OGS_FATAL("Function '{}' isn't implemented.", function_string);
+    };
     std::function<double(GeoLib::Point const& p, GeoLib::AABB const& aabb)>
-        computeFunctionValue = function_arg.getValue() == "sinxsiny"
-                                   ? computeSinXSinY
-                                   : compute2DGaussBellCurveValues;
+        computeFunctionValue = function_selector(function_arg.getValue());
 
     for (std::size_t r = 0; r < header.n_rows; r++)
     {
