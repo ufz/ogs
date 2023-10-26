@@ -228,7 +228,7 @@ if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR OGS_BUILD_TESTING)
     add_subdirectory(ProcessLib)
     add_subdirectory(Tests/xdmfdiff)
 endif()
-if(OGS_BUILD_TESTING AND NOT _IS_SUBPROJECT)
+if(OGS_BUILD_TESTING AND PROJECT_IS_TOP_LEVEL)
     add_subdirectory(Tests)
 endif()
 
