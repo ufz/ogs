@@ -1,8 +1,13 @@
+{{ $src := .Get "src" }}
+{{ with .Page.Resources.GetMatch $src }}
+  {{ $src = .Permalink }}
+{{ end }}
+
 <figure{{ with .Get "class" }} class="{{ . }}"{{ end }}>
     {{- if .Get "link" -}}
         <a href="{{ .Get "link" }}"{{ with .Get "target" }} target="{{ . }}"{{ end }}{{ with .Get "rel" }} rel="{{ . }}"{{ end }}>
     {{- end -}}
-    <img src="{{ .Get "src" }}"
+    <img src="{{ $src }}"
          {{- if or (.Get "alt") (.Get "caption") }}
          alt="{{ with .Get "alt" }}{{ . }}{{ else }}{{ .Get "caption" | markdownify| plainify }}{{ end }}"
          {{- end -}}
