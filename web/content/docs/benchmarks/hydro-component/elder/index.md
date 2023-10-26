@@ -23,7 +23,7 @@ The Elder benchmark describes free convection of a dense fluid in mixable, singl
 
 A comparison of the numerical data is shown in the figure below. The numerical results of OGS-6 coincide with those of OGS-5.
 
-{{< img src="elder.gif" title="Results for numerical (OGS-5 - green, OGS-6 - white) results together with concentration distribution in the domain and mesh resolution for different time steps.">}}
+{{< figure src="elder.gif" title="Results for numerical (OGS-5 - green, OGS-6 - white) results together with concentration distribution in the domain and mesh resolution for different time steps.">}}
 
 {{< data-link >}}
 

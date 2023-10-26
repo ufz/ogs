@@ -33,7 +33,7 @@ The unknown we solve for is the specimen displacement field $\boldsymbol u$.
 Notice that using the symmetry of the 3-dimensional domain, we effectively
 consider and solve the 2-dimensional problem in a diametrical cross-section.
 
-{{< img src="Column_setup.png" >}}
+{{< figure src="Column_setup.png" >}}
 **Figure 1:** Fully saturated poro-elastic column geometry and mechanical
 loading (on the left); plots of the prescribed displacement and thermal loading
 applied to the specimen (on the right).
@@ -62,7 +62,7 @@ the solid matrix stress $\boldsymbol\sigma_\mathrm{S}$,
 the pore ice fraction stress $\boldsymbol\sigma_\mathrm{I} := \phi_\mathrm{I}(T)\boldsymbol\sigma_\mathrm{IR}$, and
 the solid-ice mixture stress $\boldsymbol\sigma_\mathrm{SI}:=\boldsymbol\sigma_\mathrm{S}+\boldsymbol\sigma_\mathrm{I}$.
 
-{{< img src="Column_reaction.png" >}}
+{{< figure src="Column_reaction.png" >}}
 **Figure 2:** Plots of the vertical reaction force $F_y^n$ for the solid matrix,
 pore-ice and the solid-ice mixture.
 
@@ -147,5 +147,5 @@ $u_y$ have been exaggerated by factors 10 and 80, respectively).
 The deformation plots supplement and illustrate the above observations and
 conclusions drawn.
 
-{{< img src="Column_deformation.png" >}}
+{{< figure src="Column_deformation.png" >}}
 **Figure 3:** Specimen deformation plots at the corresponding time moments.

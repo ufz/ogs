@@ -18,13 +18,13 @@ See [this PDF](Heat_conduction_phase_change_(manufactured_solution).pdf) for the
 
 In the benchmark test, we restrict ourselves to the problem formulated in the unit square and on the unit time-interval. The manufactured solution is constructed in such a way that its evolution in time mimics the simultaneous ice melting-forming process in the domain, as in the following figure:
 
-{{< img src="ManSol_IceWaterMix_(maple_plots).png" >}}
+{{< figure src="ManSol_IceWaterMix_(maple_plots).png" >}}
 
 The plane in white color in figure represents zero (melting) temperature in Celsius, such that the zero-level set of $T$ mimics the interface between ice and water fractions which moves in time.
 
 Next figure depicts comparison of the manufactured solution and the numerical one at different time steps. The temperature given in Kelvins. Note that we have made the vertical range of the OGS solutions in the ParaView plots $10^{-1}$ rescaled, to make the comparison feasible. Also, we have tuned the color legend in the ParaView plots such that the ice and water fractions can be visible/identified.
 
-{{< img src="ManSol_IceWaterMix_(comparison).png" >}}
+{{< figure src="ManSol_IceWaterMix_(comparison).png" >}}
 
 The test is presented in:
 

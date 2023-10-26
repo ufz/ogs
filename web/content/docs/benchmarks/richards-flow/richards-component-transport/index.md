@@ -34,7 +34,7 @@ Initial conditions are $c = 0$ and hydrostatic pressure conditions with steady s
 
 The figure below shows breakthrough curves vs experimental result at the bottom of the simulation domain, together with averaged saturation values at the two observation points with distance of 0.075 cm from both ends of the column (as stated in Padilla et al., 1999) over pore volume.
 
-{{< img src="RichardsComponentTransport_Padilla.png" title="Comparison between numerical (lines) and experimental (squares) results for cases 'NaCl1' and 'NaCl6' from Padilla et al. (1999).">}}
+{{< figure src="RichardsComponentTransport_Padilla.png" title="Comparison between numerical (lines) and experimental (squares) results for cases 'NaCl1' and 'NaCl6' from Padilla et al. (1999).">}}
 
 It can be seen, that with decreasing saturation, breakthrough curves exhibit stronger dispersion through the decreased angle of the breakthrough curve. Both simulation results follow the experimental observations closely; deviations, especially in the unsaturated case, can be attributed to known tailing effects from secondary porosity.
 

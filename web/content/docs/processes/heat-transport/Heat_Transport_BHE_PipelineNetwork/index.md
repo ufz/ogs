@@ -30,7 +30,7 @@ Thermal Engineering Systems in Python (software paper: <https://doi.org/10.21105
 
 The coupled model that is going to be built is demonstrated in Figure 1. It consists of a pipeline network connected with 3 BHEs, a water pump, a virtual heat pump as the consumer, a splitter to split up the feeding fluid flow and a merge to returned flow. These devices are all defined as `components` in TESPy. A full list of available components can be found in the TESPy components module. In the pipeline network, these components are connected with each other through `connections` parts, which are illustrated by the black lines in the figure. With these two main parts, a completely TESPy pipeline network model can be set up.
 
-{{< img src="BHE_network.png" width="200" caption="Pipeline network model in TESPy" >}}
+{{< figure src="BHE_network.png" caption="Pipeline network model in TESPy" >}}
 
 ### < Network >
 
@@ -168,7 +168,7 @@ btes.save('tespy_nw')
 
 The work flow of the PipeNetwork feature is illustrated in Figure 2. To explicitly simulate both the BHE and the pipe network, OGS is coupled with the TESPy through a Python interface. Within every time step and each iteration, the outflow temperature `Tout` from each BHE is computed by OGS and transferred to TESPy via the interface. Then TESPy will use these `Tout` temperature and the current hydraulic state as the boundary condition imposed on the pipeline network to calculate the current inflow temperature `Tin` of each BHE and the currently flow rate, which satisfies the overall thermal load of the building. After the calculation, all data will be transferred back to OGS and update the inlet temperature and flow rate of each BHE for the next iteration. The convergence is set to be satisfied when the difference from the last two iteration results is smaller than a preset tolerance value. Additionally, OGS will transfer the currently time step 't' to TESPy within each iteration, which makes TESPy able to adjust its time dependent network boundary conditions according to the user's configuration.
 
-{{< img src="BHE_PipeNetwork_feature_workflow.png" width="100" caption="Work flow of the model with BHEs coupled with a pipe network" >}}
+{{< figure src="BHE_PipeNetwork_feature_workflow.png" caption="Work flow of the model with BHEs coupled with a pipe network" >}}
 
 ### BHE data container
 

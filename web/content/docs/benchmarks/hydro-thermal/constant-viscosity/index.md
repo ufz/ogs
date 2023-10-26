@@ -27,4 +27,4 @@ TODO 3 images
 
 ## Comparison with FEFLOW solution
 
-{{< img src="compare.png" >}}
+{{< figure src="compare.png" >}}

@@ -22,12 +22,12 @@ The one-sided incompressibility constraint for fracture models is described in
 
 Result showing sliding of the upper part of the domain along the fracture:
 
-{{< img src="LIE_SD_m_result_uy.png" >}}
+{{< figure src="LIE_SD_m_result_uy.png" >}}
 
 Same benchmark setup with plane strain conditions in 3D:
-{{< img src="single_joint_3D.png" >}}
+{{< figure src="single_joint_3D.png" >}}
 
 Comparison with 2D setup yields identical results (up to numerical differences
 in order of 1e-15); Resulting displacement on the left axis, and error on the
 right:
-{{< img src="single_joint_3D_2D_results.png" >}}
+{{< figure src="single_joint_3D_2D_results.png" >}}

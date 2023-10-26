@@ -14,4 +14,4 @@ We present the drainage of an excavation benchmark in [this PDF](drainage_Liquid
 
 Here's an impression of the problem and its results:
 
-{{< img src="drainage_excavation.png" >}}
+{{< figure src="drainage_excavation.png" >}}

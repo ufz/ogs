@@ -139,9 +139,10 @@ body {
   counter-reset: figcaption;
 }
 
-figcaption::before {
+figcaption p::before,
+figcaption h4::before {
   counter-increment: figcaption;
-  content: "Fig. "counter(figcaption) ": "
+  content: "Fig. " counter(figcaption) ": "
 }
 
 figcaption {

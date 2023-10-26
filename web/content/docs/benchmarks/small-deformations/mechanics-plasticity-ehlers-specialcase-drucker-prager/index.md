@@ -17,8 +17,8 @@ The Ehlers material model can be reduced to the well-known criteria, such as the
 
 Triaxial compression test:
 
-{{< img src="ss_load.png" >}}
+{{< figure src="ss_load.png" >}}
 
 Variations of the stress states and the plastic volumetric strain with a monotonic loading process:
 
-{{< img src="dp_test.png" >}}
+{{< figure src="dp_test.png" >}}

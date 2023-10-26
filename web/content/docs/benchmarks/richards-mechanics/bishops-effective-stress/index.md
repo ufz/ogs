@@ -26,4 +26,4 @@ displacement. In the test the medium is desaturated and then saturated again,
 which causes shrinkage and expansion of the domain. Power law with exponents 1,
 1/5, and 5 and saturation cut-off at maximum liquid saturation of 0.95 are
 compared.
-{{< img src="BishopsEffectiveStress.png" >}}
+{{< figure src="BishopsEffectiveStress.png" >}}

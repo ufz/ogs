@@ -61,7 +61,7 @@ The temperature $T$ is prescribed as a constant in $\Omega$ at each time step
 and decays linearly from $+4\\,^\circ \text{C}$ to $-4\\,^\circ \mathrm{C}$
 during one hour term, as depicted in Figure 2, left.
 
-{{< img src="Ice_strain_setup.png" >}}
+{{< figure src="Ice_strain_setup.png" >}}
 **Figure 1:** Fully saturated column expansion due to water-to-ice phase
 transition: geometry (on the left) and the 2d computational setup along with the
 expected deformed configuration (on the right).
@@ -80,7 +80,7 @@ since the setup implies no freezing front propagation within the domain).
 Finally, the FE approximation of the components of strain tensor
 $\boldsymbol\varepsilon$ uses the $Q_1$-quadrilaterals.
 
-{{< img src="Ice_strain_MaterTable.png" >}}
+{{< figure src="Ice_strain_MaterTable.png" >}}
 **Table:** Material properties and parameters.
 
 ## Simulation results and analysis
@@ -92,7 +92,7 @@ All three strains behave identically and, more importantly, as expected, they
 transit from 0 to the reference magnitude of 0.03 during the freezing, in
 accordance to the term $\alpha_{\phi_\mathrm{I}}S_\mathrm{I}(T)$.
 
-{{< img src="Ice_strain_3strains.png" >}}
+{{< figure src="Ice_strain_3strains.png" >}}
 **Figure 2:** The prescribed temperature loading applied to the specimen (on the
 left) and the induced strains evolution due to phase change (on the right).
 
@@ -113,7 +113,7 @@ $\varepsilon_{xx}$---specifically, the required transit during the phase
 change---for a fixed steepness-related parameter $k$ and varying time step size.
 All three computational results seem identical.
 
-{{< img src="Ice_strain_dt-k.png" >}}
+{{< figure src="Ice_strain_dt-k.png" >}}
 **Figure 3:** Parametric studies for the computed volumetric strain expansion in
 dependence on the time step size and parameter $k$ in $S_\mathrm{I}(T)$ that governs
 the thickness of the phase transition zone.

@@ -14,9 +14,9 @@ This benchmark simulates the Liakopoulos experiment
 {{< data-link >}}
 
 * Saturation profile:
-{{< img src="liak_S.png" >}}
+{{< figure src="liak_S.png" >}}
 * Vertical displacement profile:
-{{< img src="liak_uy.png" >}}
+{{< figure src="liak_uy.png" >}}
 
 ## References
 

@@ -26,7 +26,7 @@ Here, we verify pumping abstraction with Theis for the `ComponentTransport` proc
 
 The setup comprises a 1/8th slice of a full circle (see figure 1).
 
-{{< img src="BCs.png" title="Mesh and boundary conditions (BC); blue = outer Dirichlet pressure and concentration BC, red = inner Neumann abstraction BC.">}}
+{{< figure src="BCs.png" title="Mesh and boundary conditions (BC); blue = outer Dirichlet pressure and concentration BC, red = inner Neumann abstraction BC.">}}
 
 The outer boundary condition is set as Dirichlet with a hydrostatic pressure along the shell surface of the slice equivalent to a head of $h = 0 m$ (i.e. water level equals top of domain). For mass transport, a Dirichlet boundary conditions with concentration $c = 0$ is set at the outer shell. The inner boundary condition is equivalent to the eighth of a total abstraction rate of $Q_t = 15 m^3/d$ for a full cylinder. *NB: In the `ComponentTransport` process, the Neumann BC is given as mass flux and has to be calculated per area, such that the value for the project file is $Q = Q_t / 8 / A \cdot \rho_0 = 2.83542E-03 m^3/s/m^2 \cdot kg/m^3$ (units equal $\frac{kg}{s m^2}$) with fluid reference density $\rho_0 = 1000 kg/m^3$ and abstraction area $A = 7.65 m^2$.*
 
@@ -40,7 +40,7 @@ Initial conditions are $c = 0$ and hydrostatic pressure conditions.
 
 The figure below compares the analytical Theis solution vs. the simulated values from OGS.
 
-{{< img src="comparison.png" title="Comparison between numerical (crosses) and analytical (lines) values.">}}
+{{< figure src="comparison.png" title="Comparison between numerical (crosses) and analytical (lines) values.">}}
 
 The top figure shows drawdown (i.e. the difference in water level compared to an initial state) over time at distance $r = 30 m$: for a simulation time $t < 40000 s$, the differences between analytical and numerical solutions are marginal; at later simulation times, the drawdown shows lower values than predicted from the analytical solution, as it is influenced by the outer Dirichlet pressure boundary condition.
 

@@ -19,8 +19,8 @@ See [this PDF](lubby2.pdf) for detailed problem description.
 
 Result showing the displacement field and distortion relative to the initial configuration:
 
-{{< img src="lubby2.png" >}}
+{{< figure src="lubby2.png" >}}
 
 Displacement of the top surface in the direction of the shear traction over time showing the elastic and viscous deformations (creep):
 
-{{< img src="lubby2_creep_over_time.png" >}}
+{{< figure src="lubby2_creep_over_time.png" >}}

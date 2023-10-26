@@ -20,8 +20,8 @@ al. \cite Kolditz2012 for detailed problem description.
 Result showing temperature and stresses development with time in the centre node
 of the model:
 
-{{< img src="temperature.png" >}}
-{{< img src="stress.png" >}}
+{{< figure src="temperature.png" >}}
+{{< figure src="stress.png" >}}
 
 The analytical solution of stresses after heating is:
 $$\begin{equation}

@@ -66,4 +66,4 @@ The result, written in the `.vtu` file, can be visualized with ParaView, for exa
 
 Loading the `line_60_heat_pcs_0_ts_65_t_5078125.000000.vtu` file in ParaView and Plotting over line. Compared to the analytical solution `temperature_analytical.vtu`, the results are very good:
 
-{{< img src="validation-1.png" >}}
+{{< figure src="validation-1.png" >}}

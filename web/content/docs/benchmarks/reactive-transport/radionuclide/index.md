@@ -16,7 +16,7 @@ This benchmark is focused on the simulation of the migration of $U(VI)$ in a por
 
 The benchmark uses the `ComponentTransport` process in OGS-6 (see [`HC-Process.pdf`](/docs/benchmarks/hydro-component/saturated-mass-transport/HC-Process.pdf)) coupled with the IPhreeqc interface (Parkhurst et al, 2013) for the chemical speciation calculations. The porewater initial composition and injected for the first 10 000 s is shown in Table 1. The porewater solution is equilibrated with Calcite.
 
-{{< img src="domain.png" title="Spatial and temporal discretization of the 1D model. Solution concentrations with/without U(VI) are applied at the inflow boundary. Initial concentration of U(VI) in the domain is 0.">}}
+{{< figure src="domain.png" title="Spatial and temporal discretization of the 1D model. Solution concentrations with/without U(VI) are applied at the inflow boundary. Initial concentration of U(VI) in the domain is 0.">}}
 
 -----------------------------------------
 
@@ -57,13 +57,13 @@ Table 2: **Surface parameters and characterization used in the simulations.**
 
 Four different combinations can be simulated taking the albite and orthoclase phases of the Feldspars group and the goethite and hematite phases for the Fe(III)-oxids/-hydroxids group. Mineral combinations from 1 to 4 (see Fig. 2) are as follows: 1) albite-goethite, 2) albite-hematite, 3) orthoclase-goethite and 4) orthoclase-hematite. From the concentration profiles in Fig. 2, it is clear that the combination 2 approximates better the profile obtained with the ESTRAL database. We choose this combination for the next part of our simulations. Furthermore, this combination is written in the `RadionuclideSorption.prj` file of this benchmark.
 
-{{< img src="Fig1.png" title="Comparison of concentration profiles at final simulation time (115 000 s) for various representative minerals of the Feldspar and Fe(III)-oxids/-hydroxids groups. The mineral combinations profiles are obtained using the PSI/Nagra database version 12/07 and the dashed profile is obtained with the ESTRAL database.">}}
+{{< figure src="Fig1.png" title="Comparison of concentration profiles at final simulation time (115 000 s) for various representative minerals of the Feldspar and Fe(III)-oxids/-hydroxids groups. The mineral combinations profiles are obtained using the PSI/Nagra database version 12/07 and the dashed profile is obtained with the ESTRAL database.">}}
 
 The temporal evolution of the concentration profiles of the chosen mineral combination (albite-hematite) compared to the ESTRAL database is shown in Fig. 3. In addition, a simulation of the reactive transport treating $U(VI)$ as a non-sorbing radionuclide is presented. Recall that the contaminated solution with $U(VI)$ is injected only for the first 10 000 s of simulation. On the one hand, we note the difference between the profile with the augmented PSI/Nagra database and with the ESTRAL database. This is expected, since different reactions and significant differences in *log K* values are considered for each simulation. However, we note that the trend is similar enough to capture the relevant sorption process happening at the surface.
 
 On the other hand, the enormous difference between sorbing and non-sorbing reactive transport is evident from the resulting concentration profiles. Therefore, we highlight the importance of considering the impact of sorption in the transport of radionuclides, as this is paramount for the safety assessment in the design of nuclear waste repositories. Finally, the CPU time of the simulation taking into account surface complexation is roughly double of the simulation with only aqueous speciation. This posses the necessity of choosing a good compromise between accuracy (large number of reactions and chemical parameters) and performance.
 
-{{< img src="Fig2.gif" title="Time evolution of mineral combination 2 (albite/hematite) in comparison to the results obtained with the ESTRAL database. The green dotted line shows the temporal evolution of U(IV) as a non-sorbing radionuclide.">}}
+{{< figure src="Fig2.gif" title="Time evolution of mineral combination 2 (albite/hematite) in comparison to the results obtained with the ESTRAL database. The green dotted line shows the temporal evolution of U(IV) as a non-sorbing radionuclide.">}}
 
 {{< data-link >}}
 

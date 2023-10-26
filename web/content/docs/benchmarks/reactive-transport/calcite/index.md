@@ -51,7 +51,7 @@ where $\alpha_L$ (m) and $\alpha_T$ (m) are the longitudinal and transversal dis
 
 A one-dimensional (1D) model domain of 0.5 m discretised into 100 uniform elements has been selected for the spatial discretization of the system. Dirichlet (constant concentration) and Neumannn (no flux) boundary condition are defined for the upstream inflow and the downstream, respectively. A longitudinal dispersivity of 0.0067 m and a time step size of 100 s have been taken into account in the simulation. See Figure below:
 
-{{< img src="Scheme.png" title="Schematic representation of the model setup and parameters.">}}
+{{< figure src="Scheme.png" title="Schematic representation of the model setup and parameters.">}}
 
 Thermodynamic data for hydrolysis, aqueous speciation, and dissolution/precipitation reactions between Mg, Ca, Cl, and carbonate were selected from version 12/07 of the PSI/NAGRA chemical thermodynamic database (Thoenen et al. 2014). Although several other minerals containing Mg and Ca were available in the PSI/NAGRA database (*i.e.* magnesite), only two solids were allowed to precipitate or dissolve in the studied system (calcite and dolomite (CaMg(CO$_3$)$_2$)).
 
@@ -61,9 +61,9 @@ A comparison of the results obtained with OGS-6#IPhreeqc and OGS-5#IPhreeqc at t
 
 At the simulated time, it can be clearly seen that the MgCl$_2$ solution front has penetrated ~0.3m of the column resulting in the dissolution of calcite and dolomite precipitation. Total aqueous concentration and solid profiles obtained of OGS-6 are in good agreement with those of OGS-5. The absolute error in terms of component concentrations is $2.15\times10^{-5}$ (Cl), $1.13\times10^{-5}$ (Mg), and $4.57\times10^{-6}$ (Ca). Additionally, pH profiles calculated with both codes are in good agreement.
 
-{{< img src="ResultComparison.png" title="Total aqueous concentration and solid profiles obtained with OGS-6#IPhreeqc (empty triangle symbol) and OGS-5#IPhreeqc (empty circle symbol) at 350 min. (C(4) = total carbonate)">}}
+{{< figure src="ResultComparison.png" title="Total aqueous concentration and solid profiles obtained with OGS-6#IPhreeqc (empty triangle symbol) and OGS-5#IPhreeqc (empty circle symbol) at 350 min. (C(4) = total carbonate)">}}
 
-{{< img src="ResultComparisonPH.png" title="pH value profiles obtained with OGS-6#IPhreeqc (empty triangle symbol) and OGS-5#IPhreeqc (empty circle symbol) at 350 min.">}}
+{{< figure src="ResultComparisonPH.png" title="pH value profiles obtained with OGS-6#IPhreeqc (empty triangle symbol) and OGS-5#IPhreeqc (empty circle symbol) at 350 min.">}}
 
 {{< data-link >}}
 

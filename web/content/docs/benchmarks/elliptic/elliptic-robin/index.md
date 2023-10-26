@@ -104,7 +104,7 @@ The left figure shows the pressure along the line, in the right figure the
 difference between the analytical solution and the numerical calculated solution
 is plotted.
 
-{{< img src="line_1e1_robin_left.png" >}}
+{{< figure src="line_1e1_robin_left.png" >}}
 
 ## Second benchmark: Problem specification and analytical solution
 

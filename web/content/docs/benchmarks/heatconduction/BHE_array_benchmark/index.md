@@ -53,9 +53,7 @@ In this model, the quad element was adopted to compose the mesh. The initial tem
 | Heat extraction rate of the BHE  | $q$          | $35$                | $W/m$            |
 | Diameter of the BHE              | $D$          | $0.15$              | $m$              |
 
-{{< img src="figure_1.png" >}}
-
-Figure 1: Model geometry, BHE location, and the observation profile
+{{< figure src="figure_1.png" caption="Model geometry, BHE location, and the observation profile" >}}
 
 Different meshes were adopted to analyse the impact of mesh density on the numerical results. According to Diersch et al. (2011) the different element size can affect the accuracy of the numerical result significantly for such type of BHE simulation. The optimal element size $\triangle$ in a 2D model around the BHE node should have the following relationship with respect to the BHE diameter:
 
@@ -81,23 +79,15 @@ where $r_b$ is the BHE radius. n denotes the number of surrounding nodes. n = 8
 
 Figure 2 and 3 show the comparison of the temperature distribution along the observation profile (position see Figure 1) using analytical solution with the numerical results from OGS-5 and OGS-6 for every 4 months in the whole simulated time. It shows the numerical solution has a very good agreement with the analytical solution.
 
-{{< img src="figure_2.png" width="200">}}
+{{< figure src="figure_2.png" caption="The temperature evolution of the BHEs field along the observation profile" >}}
 
-Figure 2: The temperature evolution of the BHEs field along the observation profile
-
-{{< img src="figure_3.png" width="200">}}
-
-Figure 3: The temperature evolution of the BHEs field along the observation profile
+{{< figure src="figure_3.png" caption="The temperature evolution of the BHEs field along the observation profile" >}}
 
 In order to investigate the impact of mesh density on the accuracy of numerical result, the simulated temperature profile at the observation point A (53 m, 52.5 m) was plotted and compared against the analytical solution. Figure 3 shows the relative difference of the computed temperature between the analytical and numerical solution by using different mesh size (2.5 m, 1 m, 0.5 m, 0.25 m and 0.2 m). The results show that the difference becomes smaller when the mesh size is approaching 0.5 m, which is expected as the optimal mesh size mentioned in Diersch et al. (2011). From Figure 4, it can be found that the absolute error of temperature values at point A should be less than 2.5e-3 if the mesh size is kept denser than 0.5m.
 
-{{< img src="figure_4.png" width="200">}}
+{{< figure src="figure_4.png" caption="The relative difference of computed temperature at point A between the analytical and numerical solution using different mesh size" >}}
 
-Figure 4: The relative difference of computed temperature at point A between the analytical and numerical solution using different mesh size
-
-{{< img src="figure_5.png" width="200">}}
-
-Figure 5: The absolute difference of computed temperature along the diagonal profile between the analytical and numerical solution using different mesh size
+{{< figure src="figure_5.png" caption="The absolute difference of computed temperature along the diagonal profile between the analytical and numerical solution using different mesh size" >}}
 
 ## Summary
 
