@@ -14,8 +14,12 @@ which you can find [here](https://github.com/KeitaYoshioka/ogs/tree/H2M_phasefie
 
 We simulate two different fluid percolation experiments performed on rock salt samples with a true tri-axial loading system as described in [this PDF](./Yoshioka_percolation.pdf). The experiments were performed under two different stress configurations as below.
 
-{{< figure src="ME2_stress_state_1.pdf" class="w-1/2 float-left" >}}
-{{< figure src="ME2_stress_state_2.pdf" class="w-1/2 float-left" >}}
+{{< figure src="ME2_stress_state_1.jpg" class="w-1/2 float-left" >}}
+{{< figure src="ME2_stress_state_2.jpg" class="w-1/2 float-left" >}}
+
+<div>
+&nbsp;
+</div>
 
 ## Results and evaluation
 
