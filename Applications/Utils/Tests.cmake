@@ -1411,3 +1411,7 @@ if(NOT OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE ../../web/content/docs/tutorials/mesh_tutorial/notebook-mesh_tutorial.md
                  RUNTIME 10)
 endif()
+
+if(OGS_USE_PETSC)
+    NotebookTest(NOTEBOOKFILE Utils/partmesh/partmesh_roundtrip.md RUNTIME 10 SKIP_WEB)
+endif()

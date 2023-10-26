@@ -350,14 +350,48 @@ CPMAddPackage(
 )
 
 if(OGS_BUILD_UTILS)
-    CPMAddPackage(
-        NAME metis
-        GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/metis.git
-        GIT_TAG d98094f42d0faf9d0e06eb149c870fb714623ecc
-        VERSION 5.1.0
-        DOWNLOAD_ONLY YES
-    )
-    include(${PROJECT_SOURCE_DIR}/scripts/cmake/MetisSetup.cmake)
+    if(NOT GUIX_BUILD)
+        set(_win_metis_options "MSVC FALSE")
+        if(WIN32)
+            set(_win_metis_options "MSVC TRUE")
+        endif()
+        CPMFindPackage(
+            NAME GKlib
+            GIT_REPOSITORY https://github.com/KarypisLab/GKlib
+            GIT_TAG 8bd6bad750b2b0d90800c632cf18e8ee93ad72d7
+            VERSION 5.1.1
+            OPTIONS "CMAKE_POLICY_DEFAULT_CMP0042 NEW" ${_win_metis_options}
+            EXCLUDE_FROM_ALL YES
+        )
+        CPMFindPackage(
+            NAME metis
+            GIT_REPOSITORY https://github.com/KarypisLab/METIS
+            VERSION 5.2.1
+            EXCLUDE_FROM_ALL YES
+            PATCH_COMMAND git apply
+                          ${PROJECT_SOURCE_DIR}/scripts/cmake/metis.patch
+            OPTIONS ${_win_metis_options}
+        )
+        if(GKlib_ADDED AND metis_ADDED)
+            target_include_directories(
+                metis SYSTEM
+                PUBLIC ${GKlib_SOURCE_DIR} ${metis_SOURCE_DIR}/include
+                       ${metis_SOURCE_DIR}/libmetis
+            )
+            target_compile_definitions(
+                metis PUBLIC IDXTYPEWIDTH=64 REALTYPEWIDTH=32
+            )
+            list(APPEND DISABLE_WARNINGS_TARGETS metis GKlib)
+        endif()
+    else()
+        find_library(METIS_LIB metis REQUIRED)
+        find_path(METIS_INC "metis.h" REQUIRED)
+        find_program(MPMETIS_TOOL mpmetis REQUIRED)
+        message(STATUS "Metis: ${METIS_LIB} | ${METIS_INC} | ${MPMETIS_TOOL}")
+        add_library(metis INTERFACE IMPORTED)
+        target_include_directories(metis SYSTEM INTERFACE ${METIS_INC})
+        target_link_libraries(metis INTERFACE ${METIS_LIB})
+    endif()
 endif()
 
 # Disable warnings

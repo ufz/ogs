@@ -5,6 +5,8 @@ build docs:
   timeout: 30 minutes
   variables:
     DOX_WARNINGS_THRESHOLD: 18
+    # Applying PATCH_COMMAND in Docker volume does not work, therefore using local cache:
+    CPM_SOURCE_CACHE: $CI_PROJECT_DIR/build/_deps
   script:
     - mkdir -p build
     # cpp-dependencies
