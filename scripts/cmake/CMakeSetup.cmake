@@ -23,14 +23,7 @@ if(EXISTS ${_collection}/ufz/vtkdiff/CMakeLists.txt AND GUIX_BUILD)
     include(${_collection}/Setup.cmake)
 endif()
 
-# Set additional CMake modules path
-CPMAddPackage(
-    NAME cmake-modules
-    GITHUB_REPOSITORY bilke/cmake-modules
-    GIT_TAG d98828f54f6974717798e63195cfbf08fe2daad0
-    DOWNLOAD_ONLY YES
-)
-# To be replaced later. See
+# Set additional CMake modules path To be replaced later. See
 # https://gitlab.kitware.com/cmake/cmake/-/issues/22831
 CPMAddPackage(
     NAME findmkl_cmake
@@ -44,7 +37,6 @@ set(CMAKE_MODULE_PATH
     "${PROJECT_SOURCE_DIR}/scripts/cmake/jedbrown"
     "${PROJECT_SOURCE_DIR}/scripts/cmake/vector-of-bool"
     "${findmkl_cmake_SOURCE_DIR}/cmake"
-    "${cmake-modules_SOURCE_DIR}"
 )
 
 list(
