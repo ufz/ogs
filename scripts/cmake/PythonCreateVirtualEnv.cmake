@@ -2,11 +2,11 @@
 message(STATUS "┌─ PythonCreateVirtualEnv.cmake")
 list(APPEND CMAKE_MESSAGE_INDENT "│    ")
 
-# Prefer unix location over frameworks (Apple-only)
-set(Python_FIND_FRAMEWORK LAST)
-
 # Prefer more recent Python version
 set(Python_FIND_STRATEGY VERSION)
+
+# Don't use venv
+set(Python_FIND_VIRTUALENV STANDARD)
 
 find_package(Python ${python_version} COMPONENTS Interpreter REQUIRED)
 
