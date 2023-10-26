@@ -97,9 +97,7 @@ if(OGS_USE_CONAN AND OGS_USE_NETCDF)
 endif()
 include(DocumentationSetup)
 include(test/Test)
-if(OGS_COVERAGE AND NOT _IS_SUBPROJECT)
-    include(Coverage)
-endif()
+include(Coverage)
 include(CppCheck)
 
 # ---- More Options ----
