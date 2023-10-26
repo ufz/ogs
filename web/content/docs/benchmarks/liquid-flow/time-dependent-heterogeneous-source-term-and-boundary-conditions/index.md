@@ -51,7 +51,7 @@ This simple example should demonstrate the use of the time dependent
 heterogeneous parameter. We start with homogeneous parabolic problem:
 $$
 \begin{equation}
-s\\;\frac{\partial p}{\partial t} + k\; \Delta p = q(t,x) \quad \text{in }\Omega
+s\\;\frac{\partial p}{\partial t} + k\\; \Delta p = q(t,x) \quad \text{in }\Omega
 \end{equation}
 $$
 w.r.t boundary conditions
