@@ -291,7 +291,7 @@ else()
     )
 endif()
 
-if(OGS_BUILD_TESTING OR OGS_BUILD_UTILS)
+if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS) AND NOT GUIX_BUILD)
     CPMAddPackage(
         NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
         GIT_TAG 9754b4da43c6adfb65d201ed920b5f6ea27b38b9

@@ -19,7 +19,7 @@ endif()
 set(_collection ${PROJECT_SOURCE_DIR}/ThirdParty/collection)
 # If submodules in ThirdParty/collection are initialized and this is a Guix
 # build use submodule as CPM sources.
-if(EXISTS ${_collection}/ufz/vtkdiff/CMakeLists.txt AND GUIX_BUILD)
+if(EXISTS ${_collection}/ogs/libs/xdmf/CMakeLists.txt AND GUIX_BUILD)
     include(${_collection}/Setup.cmake)
 endif()
 
