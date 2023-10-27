@@ -42,18 +42,22 @@ else()
     )
 endif()
 
-CPMFindPackage(
-    NAME tclap
-    GITHUB_REPOSITORY ufz/tclap
-    VERSION 1.2.4
-    GIT_TAG 098dd0fe07a31618f3c2a9f8727bb01c8c5d61e2
-    DOWNLOAD_ONLY YES
-)
-if(tclap_ADDED)
-    add_library(tclap INTERFACE IMPORTED)
-    target_include_directories(
-        tclap SYSTEM INTERFACE ${tclap_SOURCE_DIR}/include
+if(GUIX_BUILD)
+    add_library(tclap INTERFACE IMPORTED) # header-only, nothing else to do
+else()
+    CPMFindPackage(
+        NAME tclap
+        GITHUB_REPOSITORY ufz/tclap
+        VERSION 1.2.4
+        GIT_TAG 098dd0fe07a31618f3c2a9f8727bb01c8c5d61e2
+        DOWNLOAD_ONLY YES
     )
+    if(tclap_ADDED)
+        add_library(tclap INTERFACE IMPORTED)
+        target_include_directories(
+            tclap SYSTEM INTERFACE ${tclap_SOURCE_DIR}/include
+        )
+    endif()
 endif()
 
 if(GUIX_BUILD)

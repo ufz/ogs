@@ -78,6 +78,7 @@
                   python
                   range-v3
                   spdlog
+                  tclap
                   tetgen
                   zlib
                   vtk))
@@ -209,6 +210,27 @@
                   (sha256
                    (base32
                     "1xp1qibm0q4z5qx0h178qpas3n7pqbladkxdalq9j4l98hdws46j"))))
+        (build-system cmake-build-system)
+        (arguments
+            `(#:tests? #f)
+        )))
+
+(define tclap
+      (package
+        (name "tclap")
+        (synopsis "Templatized Command Line Argument Parser")
+        (license license:expat)
+        (description "This is a simple C++ library that facilitates parsing command line arguments in a type independent manner.")
+        (home-page "https://sourceforge.net/p/tclap/discussion/")
+        (version "1.2.4-1")
+        (source (origin
+                  (method git-fetch)
+                  (uri (git-reference
+                    (url "https://github.com/ufz/tclap")
+                    (commit version)))
+                  (sha256
+                   (base32
+                    "0bijzfc9c8zny3m74y53i8m3f41kd8klcnmr9chy536syr9vdr5p"))))
         (build-system cmake-build-system)
         (arguments
             `(#:tests? #f)
