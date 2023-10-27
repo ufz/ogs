@@ -357,10 +357,12 @@ if(OGS_BUILD_TESTING OR OGS_BUILD_CLI OR OGS_BUILD_UTILS)
     endif()
 endif()
 
-CPMAddPackage(
-    NAME GroupSourcesByFolder.cmake
-    GITHUB_REPOSITORY TheLartians/GroupSourcesByFolder.cmake VERSION 1.0
-)
+if(MSVC)
+    CPMAddPackage(
+        NAME GroupSourcesByFolder.cmake
+        GITHUB_REPOSITORY TheLartians/GroupSourcesByFolder.cmake VERSION 1.0
+    )
+endif()
 
 if(OGS_BUILD_UTILS)
     if(NOT GUIX_BUILD)

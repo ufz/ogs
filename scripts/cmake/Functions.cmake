@@ -113,7 +113,9 @@ function(ogs_add_library targetName)
         endif()
     endif()
 
-    GroupSourcesByFolder(${targetName})
+    if(MSVC)
+        GroupSourcesByFolder(${targetName})
+    endif()
 endfunction()
 
 # Replacement for ogs_add_executable() for ogs executables
