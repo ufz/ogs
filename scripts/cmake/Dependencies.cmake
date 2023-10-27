@@ -56,13 +56,19 @@ if(tclap_ADDED)
     )
 endif()
 
-CPMAddPackage(
-    NAME tetgen GITHUB_REPOSITORY ufz/tetgen
-    GIT_TAG 603ba181ebfaed38eec88532720e282606009b73
-)
-if(tetgen_ADDED)
-    install(PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin)
-    list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
+if(GUIX_BUILD)
+    find_library(tet tet REQUIRED)
+    find_program(TETGEN_EXECUTABLE tetgen REQUIRED)
+    install(PROGRAMS ${TETGEN_EXECUTABLE} DESTINATION bin)
+else()
+    CPMAddPackage(
+        NAME tetgen GITHUB_REPOSITORY ufz/tetgen
+        GIT_TAG 603ba181ebfaed38eec88532720e282606009b73
+    )
+    if(tetgen_ADDED)
+        install(PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin)
+        list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
+    endif()
 endif()
 
 CPMFindPackage(

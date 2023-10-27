@@ -78,6 +78,7 @@
                   python
                   range-v3
                   spdlog
+                  tetgen
                   zlib
                   vtk))
     (native-inputs (list git ninja nss-certs)) ; TODO: cpm
@@ -191,6 +192,28 @@
                   (sha256
                    (base32
                     "0rbcfvl7y472sykzdq3vrkw83kar0lpzhk3wq9yj9cdydl8cpfcz"))))))
+
+(define tetgen
+      (package
+        (name "tetgen")
+        (synopsis "A Quality Tetrahedral Mesh Generator and a 3D Delaunay Triangulator")
+        (license license:agpl3)
+        (description "TetGen is a program to generate tetrahedral meshes of any 3D polyhedral domains. TetGen generates exact constrained Delaunay tetrahedralizations, boundary conforming Delaunay meshes, and Voronoi partitions.")
+        (home-page "http://www.tetgen.org/")
+        (version "1.5.1-1")
+        (source (origin
+                  (method git-fetch)
+                  (uri (git-reference
+                    (url "https://github.com/ufz/tetgen")
+                    (commit version)))
+                  (sha256
+                   (base32
+                    "1xp1qibm0q4z5qx0h178qpas3n7pqbladkxdalq9j4l98hdws46j"))))
+        (build-system cmake-build-system)
+        (arguments
+            `(#:tests? #f)
+        )))
+
 ;; return package
 ogs
 
