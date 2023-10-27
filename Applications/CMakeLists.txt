@@ -2,11 +2,11 @@ add_subdirectory(ApplicationsLib)
 add_subdirectory(DataHolderLib)
 add_subdirectory(FileIO)
 
-if(OGS_BUILD_UTILS AND NOT _IS_SUBPROJECT)
+if(OGS_BUILD_UTILS AND PROJECT_IS_TOP_LEVEL)
     add_subdirectory(Utils)
 elseif(OGS_BUILD_GUI)
     add_subdirectory(Utils/OGSFileConverter)
-endif() # OGS_BUILD_UTILS AND NOT _IS_SUBPROJECT
+endif()
 
 if(OGS_BUILD_GUI)
     add_subdirectory(DataExplorer)

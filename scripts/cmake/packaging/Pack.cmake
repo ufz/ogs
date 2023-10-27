@@ -1,4 +1,4 @@
-if(_IS_SUBPROJECT)
+if(NOT PROJECT_IS_TOP_LEVEL)
     include(CPack)
     return()
 endif()
