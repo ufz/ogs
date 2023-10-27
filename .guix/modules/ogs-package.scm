@@ -70,7 +70,6 @@
        #:cmake ,cmake)) ;for newer CMake version
     (inputs (list boost
                   eigen
-                  googletest
                   hdf5
                   json-modern-cxx
                   libxml2
@@ -81,7 +80,7 @@
                   spdlog
                   zlib
                   vtk))
-    (native-inputs (list git ninja googletest nss-certs)) ; TODO: cpm
+    (native-inputs (list git ninja nss-certs)) ; TODO: cpm
     (synopsis "OpenGeoSys")
     (description
      "Simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media")
