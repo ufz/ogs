@@ -54,3 +54,48 @@ AddTest(
     DIFF_DATA
     expected_slab_5_pcs_2_ts_1_t_1.000000.vtu slab_5_ts_1_t_1.000000.vtu phasefield phasefield 1e-6 0
 )
+
+AddTest(
+    NAME ThermoMechanicalPhaseField_3D_beam_local_coupling_temperature_displacement
+    PATH ThermoMechanicalPhaseField
+    RUNTIME 5
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS beam3d_local_coupling_temperature_displacement.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    DIFF_DATA
+    expected_beam3d_pcs_2_ts_1_t_10.000000.vtu beam3d_local_coupling_temperature_displacement_ts_1_t_10.000000.vtu displacement displacement 1e-5 0
+    expected_beam3d_pcs_2_ts_1_t_10.000000.vtu beam3d_local_coupling_temperature_displacement_ts_1_t_10.000000.vtu phasefield phasefield 1e-6 1e-4
+    expected_beam3d_pcs_2_ts_1_t_10.000000.vtu beam3d_local_coupling_temperature_displacement_ts_1_t_10.000000.vtu temperature temperature 1e-6 0
+)
+
+AddTest(
+    NAME ThermoMechanicalPhaseField_3D_beam_local_coupling_temperature_phasefield
+    PATH ThermoMechanicalPhaseField
+    RUNTIME 5
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS beam3d_local_coupling_temperature_phasefield.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    DIFF_DATA
+    expected_beam3d_pcs_2_ts_1_t_10.000000.vtu beam3d_local_coupling_temperature_phasefield_ts_1_t_10.000000.vtu displacement displacement 1e-5 0
+    expected_beam3d_pcs_2_ts_1_t_10.000000.vtu beam3d_local_coupling_temperature_phasefield_ts_1_t_10.000000.vtu phasefield phasefield 1e-6 1e-4
+    expected_beam3d_pcs_2_ts_1_t_10.000000.vtu beam3d_local_coupling_temperature_phasefield_ts_1_t_10.000000.vtu temperature temperature 1e-6 0
+)
+
+AddTest(
+    NAME ThermoMechanicalPhaseField_3D_beam_local_coupling_displacement_phasefield
+    PATH ThermoMechanicalPhaseField
+    RUNTIME 5
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS beam3d_local_coupling_displacement_phasefield.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    DIFF_DATA
+    expected_beam3d_pcs_2_ts_1_t_10.000000.vtu beam3d_local_coupling_displacement_phasefield_ts_1_t_10.000000.vtu displacement displacement 1e-5 0
+    expected_beam3d_pcs_2_ts_1_t_10.000000.vtu beam3d_local_coupling_displacement_phasefield_ts_1_t_10.000000.vtu phasefield phasefield 1e-6 1e-4
+    expected_beam3d_pcs_2_ts_1_t_10.000000.vtu beam3d_local_coupling_displacement_phasefield_ts_1_t_10.000000.vtu temperature temperature 1e-6 0
+)
