@@ -41,6 +41,7 @@ public:
              const int global_coupling_max_iterations,
              std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
                  global_coupling_conv_crit,
+             std::map<std::string, int>&& local_coupling_processes,
              const double start_time, const double end_time);
 
     void initialize();
@@ -152,6 +153,9 @@ private:
     /// Convergence criteria of processes for the global coupling iterations.
     std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>
         _global_coupling_conv_crit;
+
+    /// Processes that will be solved in a local iteration.
+    std::map<std::string, int> _local_coupling_processes;
 
     /// Solutions of the previous coupling iteration for the convergence
     /// criteria of the coupling iteration.

@@ -11,6 +11,7 @@
 #include "TimeLoop.h"
 
 #include <range/v3/algorithm/any_of.hpp>
+#include <range/v3/algorithm/contains.hpp>
 
 #include "BaseLib/Error.h"
 #include "BaseLib/RunTime.h"
@@ -265,13 +266,15 @@ TimeLoop::TimeLoop(std::vector<Output>&& outputs,
                    const int global_coupling_max_iterations,
                    std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
                        global_coupling_conv_crit,
+                   std::map<std::string, int>&& local_coupling_processes,
                    const double start_time, const double end_time)
     : _outputs{std::move(outputs)},
       _per_process_data(std::move(per_process_data)),
       _start_time(start_time),
       _end_time(end_time),
       _global_coupling_max_iterations(global_coupling_max_iterations),
-      _global_coupling_conv_crit(std::move(global_coupling_conv_crit))
+      _global_coupling_conv_crit(std::move(global_coupling_conv_crit)),
+      _local_coupling_processes(std::move(local_coupling_processes))
 {
 }
 
@@ -713,15 +716,28 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
 
     NumLib::NonlinearSolverStatus nonlinear_solver_status{false, -1};
     bool coupling_iteration_converged = true;
+    bool local_coupling_iteration_converged = true;
     for (int global_coupling_iteration = 0;
          global_coupling_iteration < _global_coupling_max_iterations;
          global_coupling_iteration++, resetCouplingConvergenceCriteria())
     {
         // TODO(wenqing): use process name
         coupling_iteration_converged = true;
+        bool local_iteration_converged = true;
         for (auto const& process_data : _per_process_data)
         {
             auto const process_id = process_data->process_id;
+
+            auto const isLocalCouplingProcess =
+                ranges::contains(_local_coupling_processes, process_id,
+                                 [](const auto& m) { return m.second; });
+
+            if (!local_coupling_iteration_converged && !isLocalCouplingProcess)
+            {
+                coupling_iteration_converged = false;
+                continue;
+            }
+
             BaseLib::RunTime time_timestep_process;
             time_timestep_process.start();
 
@@ -760,11 +776,19 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
                 coupling_iteration_converged =
                     coupling_iteration_converged &&
                     _global_coupling_conv_crit[process_id]->isSatisfied();
+                if (isLocalCouplingProcess)
+                {
+                    local_iteration_converged =
+                        local_iteration_converged &&
+                        _global_coupling_conv_crit[process_id]->isSatisfied();
+                }
             }
             MathLib::LinAlg::copy(x, x_old);
         }  // end of for (auto& process_data : _per_process_data)
 
-        if (coupling_iteration_converged && global_coupling_iteration > 0)
+        local_coupling_iteration_converged = local_iteration_converged;
+        if (local_coupling_iteration_converged &&
+            coupling_iteration_converged && global_coupling_iteration > 0)
         {
             break;
         }
@@ -775,7 +799,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         }
     }
 
-    if (!coupling_iteration_converged)
+    if (!coupling_iteration_converged || !local_coupling_iteration_converged)
     {
         WARN(
             "The coupling iterations reaches its maximum number in time step "
