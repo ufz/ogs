@@ -71,6 +71,7 @@
     (inputs (list boost
                   eigen
                   hdf5
+                  iphreeqc
                   json-modern-cxx
                   libxml2
                   metis
@@ -231,6 +232,27 @@
                   (sha256
                    (base32
                     "0bijzfc9c8zny3m74y53i8m3f41kd8klcnmr9chy536syr9vdr5p"))))
+        (build-system cmake-build-system)
+        (arguments
+            `(#:tests? #f)
+        )))
+
+(define iphreeqc
+      (package
+        (name "iphreeqc")
+        (synopsis "Modules Based on the Geochemical Model PHREEQC for use in scripting and programming languages")
+        (license license:public-domain)
+        (description "")
+        (home-page "https://www.usgs.gov/software/phreeqc-version-3")
+        (version "3.5.0-1")
+        (source (origin
+                  (method git-fetch)
+                  (uri (git-reference
+                    (url "https://github.com/ufz/iphreeqc")
+                    (commit version)))
+                  (sha256
+                   (base32
+                    "1liwp6hkl2dbrl8bki9gzsw77s3prv12sdikmwz5h8ffxwdrnwli"))))
         (build-system cmake-build-system)
         (arguments
             `(#:tests? #f)

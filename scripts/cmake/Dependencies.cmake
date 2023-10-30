@@ -81,15 +81,22 @@ CPMFindPackage(
 )
 
 if(_build_chemistry_lib)
-    CPMAddPackage(
-        NAME iphreeqc
-        GITHUB_REPOSITORY ufz/iphreeqc
-        GIT_TAG b1047d3eb03e7ef1b850231be35acb9c6a2cf345
-        DOWNLOAD_ONLY YES
-    )
-    if(iphreeqc_ADDED)
-        include(scripts/cmake/iphreeqc.cmake)
-        list(APPEND DISABLE_WARNINGS_TARGETS iphreeqc)
+    if(BUILD_GUIX)
+        find_library(IPhreeqc iphreeqc REQUIRED)
+    else()
+        CPMAddPackage(
+            NAME iphreeqc GITHUB_REPOSITORY ufz/iphreeqc GIT_TAG 3.5.0-1
+        )
+        if(iphreeqc_ADDED)
+            target_include_directories(
+                IPhreeqc
+                PUBLIC ${iphreeqc_SOURCE_DIR}/src
+                INTERFACE ${iphreeqc_SOURCE_DIR}/src/phreeqcpp/common
+                          ${iphreeqc_SOURCE_DIR}/src/phreeqcpp/PhreeqcKeywords
+                          ${iphreeqc_SOURCE_DIR}/src/phreeqcpp
+            )
+            list(APPEND DISABLE_WARNINGS_TARGETS IPhreeqc)
+        endif()
     endif()
 endif()
 
