@@ -219,10 +219,10 @@ The differences of analytical and computed solutions for two different domain di
 length_replaced = length.copy()
 length_replaced[100] = 1
 
-compare286 = t_analytical(length_replaced, 0)
-compare286[100] = temp_286k[100]  # Only the 100th point has x,y < 0.0001
-compare49 = t_analytical(length_replaced, 0)
-compare49[100] = temp_49k[100]
+analytical286 = t_analytical(length_replaced, 0)
+analytical286[100] = temp_286k[100]  # Only the 100th point has x,y < 0.0001
+analytical49 = t_analytical(length_replaced, 0)
+analytical49[100] = temp_49k[100]
 
 # Plot
 fig, ax = plt.subplots(1, 2, figsize=(10, 5), sharey=True)
