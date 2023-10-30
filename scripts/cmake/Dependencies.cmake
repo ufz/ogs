@@ -175,12 +175,19 @@ if(LibXml2_ADDED)
     list(APPEND DISABLE_WARNINGS_TARGETS LibXml2)
 endif()
 
-CPMAddPackage(
-    NAME xmlpatch
-    VERSION 0.4.2
-    GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/xmlpatch.git
-    OPTIONS "BUILD_SHARED_LIBS OFF"
-)
+if(GUIX_BUILD)
+    find_library(XMLPATCH_LIB xmlpatch REQUIRED)
+    add_library(xmlpatch INTERFACE)
+    find_package(LibXml2 REQUIRED)
+    target_link_libraries(xmlpatch INTERFACE ${XMLPATCH_LIB} LibXml2::LibXml2)
+else()
+    CPMAddPackage(
+        NAME xmlpatch
+        VERSION 0.4.2
+        GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/xmlpatch.git
+        OPTIONS "BUILD_SHARED_LIBS OFF"
+    )
+endif()
 
 if(OGS_BUILD_SWMM)
     CPMAddPackage(

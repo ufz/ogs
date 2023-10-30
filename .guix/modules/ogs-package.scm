@@ -82,7 +82,8 @@
                   tclap
                   tetgen
                   zlib
-                  vtk))
+                  vtk
+                  xmlpatch))
     (native-inputs (list git ninja nss-certs)) ; TODO: cpm
     (synopsis "OpenGeoSys")
     (description
@@ -254,6 +255,28 @@
                    (base32
                     "1liwp6hkl2dbrl8bki9gzsw77s3prv12sdikmwz5h8ffxwdrnwli"))))
         (build-system cmake-build-system)
+        (arguments
+            `(#:tests? #f)
+        )))
+
+(define xmlpatch
+      (package
+        (name "xmlpatch")
+        (synopsis "An XML Patch library")
+        (license license:lgpl2.1)
+        (description "")
+        (home-page "https://xmlpatch.sourceforge.net")
+        (version "0.4.3")
+        (source (origin
+                  (method git-fetch)
+                  (uri (git-reference
+                    (url "https://gitlab.opengeosys.org/ogs/libs/xmlpatch")
+                    (commit (string-append "v" version))))
+                  (sha256
+                   (base32
+                    "0872g9w1jd5r4c5a1s8ga4x1plg608b7rxyqjs6zv8ghjq9qlkvg"))))
+        (build-system cmake-build-system)
+        (inputs (list libxml2))
         (arguments
             `(#:tests? #f)
         )))
