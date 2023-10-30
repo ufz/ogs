@@ -41,7 +41,56 @@ Furthermore, the mesh resolution is shown in the cylindrical domain
 within the first quadrant of the coordinate system.
 In the second quadrant the simulated temperature distribution is depicted.
 
-![Cylindrical domain](./figures/temperature_distribution_line_source_term_in_cylinder.png)
+```python
+# Plot the cylindrical domain with pyvista
+
+import numpy as np
+import pyvista as pv
+pv.set_plot_theme("document")
+pv.set_jupyter_backend("static")
+
+mesh = pv.read("49k_prisms/Cylinder_r_1_h_1_prism_49k.vtu")
+plotter = pv.Plotter()
+
+# Create a dict for colorbar arguments
+sargs = dict(title = "Temperature", height=0.05, width=0.3, position_x=0.6, position_y=0.05)
+
+# Plot transparent part of mesh
+# Create clipping box
+clip_box0 = pv.Box([-1, 1, 0, 1, 0, 1])
+# Apply the clip filter to the mesh
+transparent_mesh = mesh.clip_box(clip_box0)
+# Add mesh to the plotter
+plotter.add_mesh(transparent_mesh, show_edges=False, opacity = 0.5, cmap="coolwarm", scalar_bar_args=sargs)
+
+# Plot Solid part of mesh
+clip_box = pv.Box([-1, 1, -1, 0, 0, 1])
+solid_mesh = mesh.clip_box(clip_box)
+plotter.add_mesh(solid_mesh, show_edges=False, cmap="coolwarm", opacity = 1, scalar_bar_args=sargs)
+
+# Plot grid lines in one quarter of cylinder
+clip_box1 = pv.Box([-1, 1, -1, 0, 0, 1])
+partial_mesh1 = mesh.clip_box(clip_box1)
+clip_box2 = pv.Box([-1, 0, -1, 1, 0, 1])
+partial_mesh2 = partial_mesh1.clip_box(clip_box2)
+plotter.add_mesh(partial_mesh2, show_edges=True, edge_color="mediumblue", cmap="coolwarm", scalar_bar_args=sargs)
+
+# Plot line 
+start_point = [-1, 0, 0.5]
+end_point = [1, 0, 0.5]
+line = pv.Line(start_point, end_point)
+plotter.add_mesh(line, show_edges=True, color = "white", line_width = 5)
+
+# Set the camera's field of view
+camera = plotter.camera
+plotter.camera.focal_point = (0, 0, 0.5)  # Set the focal point (where the camera is looking)
+plotter.camera.position = (-3, -4.5, 3.5)  # Set the camera position (-2, -3, 2.5) *0.5 = (-1, -1.5, 1.25)
+
+plotter.show_grid()
+plotter.add_axes()
+plotter.window_size = [1500,1000]
+plotter.show()
+```
 
 The source term is defined along the line in the center of the cylinder:
 $$
@@ -249,7 +298,32 @@ model.run_model(
 
 #### Results and evaluation
 
-![Simulated temperature distribution](./figures//simulated_temperature_distribution_line_source_term_in_axisymmetric_cylinder.png)
+```python
+# Plot cylinder cross-section
+
+# Load mesh and plot it
+mesh = pv.read("../3D_line_source_term_in_cylinder_axisymmetric/square_1x1_quad_100x100.vtu")
+plotter = pv.Plotter()
+sargs = dict(title = "Temperature", height=0.05, width=0.4, position_x=0.3, position_y=0.05)
+plotter.add_mesh(mesh, show_edges=False, cmap="coolwarm", scalar_bar_args=sargs)
+
+# Plot line 
+start_point = [0, 0.5, 0]
+end_point = [1, 0.5, 0]
+line = pv.Line(start_point, end_point)
+plotter.add_mesh(line, show_edges=True, color = "white", line_width = 1)
+
+plotter.add_axes()
+plotter.show_bounds(mesh, ticks = "both")
+plotter.window_size = [1500, 1000]
+plotter.view_xy()
+
+# Add text annotations for axis labels
+plotter.add_text("X", position=(1100, 140, 0), font_size=16, color="k")
+plotter.add_text("Y", position=(400, 850, 0), font_size=16, color="k")
+plotter.show()
+```
+
 The above figure shows the computed temperature distribution.
 
 The following plot shows the temperature along the white line in the figure above.
