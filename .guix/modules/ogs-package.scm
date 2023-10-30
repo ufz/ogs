@@ -19,6 +19,7 @@
   #:use-module (guix)
   #:use-module (guix packages)
   #:use-module (guix build-system cmake)
+  #:use-module (guix build-system copy)
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module ((guix licenses) #:prefix license:)
@@ -70,6 +71,7 @@
        #:cmake ,cmake)) ;for newer CMake version
     (inputs (list boost
                   eigen
+                  exprtk
                   hdf5
                   iphreeqc
                   json-modern-cxx
@@ -279,6 +281,27 @@
         (inputs (list libxml2))
         (arguments
             `(#:tests? #f)
+        )))
+
+(define exprtk
+      (package
+        (name "exprtk")
+        (home-page "https://www.partow.net/programming/exprtk/index.html")
+        (synopsis "C++ Mathematical Expression Parsing And Evaluation Library")
+        (description "")
+        (license license:expat)
+        (version "0.0.2")
+        (source (origin
+                  (method git-fetch)
+                  (uri (git-reference
+                    (url "https://github.com/ArashPartow/exprtk.git")
+                    (commit version)))
+                  (sha256
+                   (base32
+                    "1w92qlfjpcan38d88fak3avq81lkcpai5mqpbvrsfv04mi5nfpk5"))))
+        (build-system copy-build-system)
+        (arguments
+         '(#:install-plan '(("exprtk.hpp" "include/")))
         )))
 
 ;; return package

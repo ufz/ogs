@@ -282,15 +282,19 @@ endif()
 #     find_package(ParaView REQUIRED)
 # endif()
 # ~~~
-CPMAddPackage(
-    NAME exprtk
-    GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/exprtk.git
-    GIT_TAG 2a5c62b93c9661470e69be572f22d821308b6f61
-    DOWNLOAD_ONLY YES
-)
-if(exprtk_ADDED)
+if(GUIX_BUILD)
     add_library(exprtk INTERFACE IMPORTED)
-    target_include_directories(exprtk SYSTEM INTERFACE ${exprtk_SOURCE_DIR})
+else()
+    CPMAddPackage(
+        NAME exprtk
+        GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/exprtk.git
+        GIT_TAG 2a5c62b93c9661470e69be572f22d821308b6f61
+        DOWNLOAD_ONLY YES
+    )
+    if(exprtk_ADDED)
+        add_library(exprtk INTERFACE IMPORTED)
+        target_include_directories(exprtk SYSTEM INTERFACE ${exprtk_SOURCE_DIR})
+    endif()
 endif()
 
 if(GUIX_BUILD)
