@@ -17,7 +17,7 @@ A detailed analysis of an enhanced U-tube borehole heat exchanger (EUBHE) can be
 
 ## Model Setup
 
-In this benchmark, the length of the wellbore is 30 m as shown in Figure 1 and the cold water is injected into the inlet point of the wellbore with temperature of 20°C.  
+In this benchmark, the length of the wellbore is 30 m as shown in Figure 1 and the cold water is injected into the inlet point of the wellbore with the constant temperature of 20°C.  
 The initial temperature of the fluid and grout in the wellbore is 20 $^{\circ}$C, and temperature of the surrounding rock is 55 $^{\circ}$C.  
 The wellbore and pipe diameter are 0.28 m and 0.25826 m, respectively.  
 And the flow rate is 0.0002 $m^3/s$.
