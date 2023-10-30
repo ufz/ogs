@@ -130,6 +130,16 @@ OutputConfig createOutputConfig(
         }
         return 1;
     }();
+    output_config.chunk_size_bytes = [&hdf]() -> unsigned int
+    {
+        if (hdf)
+        {
+            //! \ogs_file_param{prj__time_loop__output__hdf__number_of_files}
+            return hdf->getConfigParameter<unsigned int>("chunk_size_bytes");
+        }
+        return 1048576;  // default chunk size in bytes according to
+                         // https://www.hdfgroup.org/2022/10/improve-hdf5-performance-using-caching/
+    }();
 
     output_config.data_mode =
         //! \ogs_file_param{prj__time_loop__output__data_mode}

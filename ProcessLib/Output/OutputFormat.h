@@ -95,10 +95,12 @@ struct OutputXDMFHDF5Format final : public OutputFormat
 {
     OutputXDMFHDF5Format(std::string const& directory, std::string prefix,
                          std::string suffix, bool const compression,
-                         unsigned int const n_files)
+                         unsigned int const n_files,
+                         unsigned int const chunk_size_bytes)
         : OutputFormat(directory, std::move(prefix), std::move(suffix),
                        compression),
-          n_files(n_files)
+          n_files(n_files),
+          chunk_size_bytes(chunk_size_bytes)
     {
     }
 
@@ -117,6 +119,8 @@ struct OutputXDMFHDF5Format final : public OutputFormat
     mutable std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;
     //! Specifies the number of hdf5 output files.
     unsigned int n_files;
+    //! Specifies the chunks size in bytes per hdf5 output file.
+    unsigned int const chunk_size_bytes;
 
     void outputMeshXdmf(
         std::set<std::string> const& output_variables,

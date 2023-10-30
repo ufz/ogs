@@ -35,12 +35,15 @@ public:
      * @param use_compression if true, zlib compression in HDFWriter component
      * is used
      * @param n_files number of hdf5 output files
+     * @param chunk_size_bytes Data will be split into chunks. The parameter
+     * specifies the size (in bytes) of the largest chunk.
      */
     XdmfHdfWriter(
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
         std::filesystem::path const& filepath, unsigned long long time_step,
         double initial_time, std::set<std::string> const& variable_output_names,
-        bool use_compression, unsigned int n_files);
+        bool use_compression, unsigned int n_files,
+        unsigned int chunk_size_bytes);
 
     /**
      * \brief Adds data for either lazy (xdmf) or eager (hdf) writing algorithm

@@ -28,29 +28,38 @@ namespace MeshLib::IO
  * \param mesh OGS mesh can be mesh or partitionedMesh
  * \param n_files specifies the number of files. If greater than 1 it groups the
  * data of each process to n_files
- * \return vector of meta data
+ * @param chunk_size_bytes Data will be split into chunks. The parameter
+ * specifies the size (in bytes) of the largest chunk.
+ * @return vector of meta data
  */
 std::vector<XdmfHdfData> transformAttributes(MeshLib::Mesh const& mesh,
-                                             unsigned int n_files);
+                                             unsigned int n_files,
+                                             unsigned int chunk_size_bytes);
 /**
  * \brief Create meta data for geometry used for hdf5 and xdmf
  * \param mesh OGS mesh can be mesh or partitionedMesh
  * \param data_ptr Memory location of geometry values.
  * \param n_files specifies the number of files. If greater than 1 it groups the
  * data of each process to n_files
+ * \param chunk_size_bytes Data will be split into chunks. The parameter
+ * specifies the size (in bytes) of the largest chunk.
  * \return Geometry meta data
  */
 XdmfHdfData transformGeometry(MeshLib::Mesh const& mesh, double const* data_ptr,
-                              unsigned int n_files);
+                              unsigned int n_files,
+                              unsigned int chunk_size_bytes);
 /**
  * \brief  Create meta data for topology used for HDF5 and XDMF
  * \param values actual topology values to get size and memory location
  * \param n_files specifies the number of files. If greater than 1 it groups the
  * data of each process to n_files
+ * \param chunk_size_bytes Data will be split into chunks. The parameter
+ * specifies the size (in bytes) of the largest chunk.
  * \return Topology meta data
  */
 XdmfHdfData transformTopology(std::vector<int> const& values,
-                              unsigned int n_files);
+                              unsigned int n_files,
+                              unsigned int chunk_size_bytes);
 /**
  * \brief Copies all node points into a new vector. Contiguous data used for
  * writing. Conform with XDMF standard in
