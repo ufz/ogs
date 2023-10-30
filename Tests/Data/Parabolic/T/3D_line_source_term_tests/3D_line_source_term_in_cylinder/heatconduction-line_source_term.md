@@ -174,10 +174,10 @@ pvdfile_49k = vtuIO.PVDIO(f"{out_dir}/3D_line_source_term_in_cylinder_49k.pvd", 
 
 # Get point field names
 fields = pvdfile_286k.get_point_field_names()
-print(fields)
 
 # Extract values along line
-length = np.linspace(-1, 1, 201)
+number_of_subdivisions = 201
+length = np.linspace(-1, 1, number_of_subdivisions)
 
 # Draws a line through the domain for sampling results
 z_axis = [(i, 0, 0.5) for i in length]
@@ -217,7 +217,7 @@ The differences of analytical and computed solutions for two different domain di
 
 # Replace 0 with 1 to prevent division by 0, the respective element will be replaced with the numerical solution anyway
 length_replaced = length.copy()
-length_replaced[100] = 1
+length_replaced[int((number_of_subdivisions-1)/2)] = 1
 
 analytical286 = t_analytical(length_replaced, 0)
 analytical286[100] = temp_286k[100]  # Only the 100th point has x,y < 0.0001
