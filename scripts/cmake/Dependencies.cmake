@@ -354,9 +354,9 @@ CPMAddPackage(
 
 if(OGS_BUILD_UTILS)
     if(NOT GUIX_BUILD)
-        set(_metis_options "MSVC FALSE")
+        set(_metis_options "MSVC ${WIN32}")
         if(WIN32)
-            set(_metis_options "MSVC TRUE" "BUILD_SHARED_LIBS OFF")
+            list(APPEND _metis_options "BUILD_SHARED_LIBS OFF")
         else()
             list(APPEND _metis_options
                  "CMAKE_C_FLAGS -D_POSIX_C_SOURCE=200809L"
@@ -377,7 +377,7 @@ if(OGS_BUILD_UTILS)
             EXCLUDE_FROM_ALL YES
             PATCH_COMMAND git apply
                           ${PROJECT_SOURCE_DIR}/scripts/cmake/metis.patch
-            OPTIONS ${_win_metis_options}
+            OPTIONS ${_metis_options}
         )
         if(GKlib_ADDED AND metis_ADDED)
             target_include_directories(
