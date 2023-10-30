@@ -279,7 +279,7 @@ model.run_model(logfile=os.path.join(out_dir, "log.txt"), args=f"-o {out_dir} -m
 
 ## Results and discussion
 
-The outlet temperature change over time was compared against analytical solution and presented in Figure 2.  
+The outlet temperature change over time was compared against the analytical solution and presented in Figure 2.  
 After 30 days, the fluid temperature distribution in the wellbore is shown in Figure 3.  
 The maximum relative error between the numerical model and Ramey's analytical solution is less than 0.15%.
 
