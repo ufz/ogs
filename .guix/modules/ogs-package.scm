@@ -45,7 +45,7 @@
 (define vcs-file?
   ;; Return true if the given file is under version control.
   (or (git-predicate "../..") ; (current-source-directory)
-      (const #t)))            ;not in a Git checkout
+      (const #t)))            ; not in a Git checkout
 
 (define-public ogs
   (package

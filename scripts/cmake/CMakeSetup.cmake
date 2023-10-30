@@ -16,13 +16,6 @@ if(WIN32 AND (NOT "${CMAKE_GENERATOR}" MATCHES "Visual Studio")
     message(FATAL_ERROR "Wheels only build in Visual Studio!")
 endif()
 
-set(_collection ${PROJECT_SOURCE_DIR}/ThirdParty/collection)
-# If submodules in ThirdParty/collection are initialized and this is a Guix
-# build use submodule as CPM sources.
-if(EXISTS ${_collection}/ogs/libs/xdmf/CMakeLists.txt AND GUIX_BUILD)
-    include(${_collection}/Setup.cmake)
-endif()
-
 # Set additional CMake modules path
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/scripts/cmake"

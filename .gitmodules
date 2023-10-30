@@ -7,6 +7,3 @@
 [submodule "ThirdParty/bilke/cmake-modules"]
 	path = ThirdParty/bilke/cmake-modules
 	url = https://github.com/bilke/cmake-modules.git
-[submodule "ThirdParty/collection"]
-	path = ThirdParty/collection
-	url = https://gitlab.opengeosys.org/ogs/libs/collection.git
