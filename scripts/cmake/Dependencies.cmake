@@ -354,16 +354,20 @@ CPMAddPackage(
 
 if(OGS_BUILD_UTILS)
     if(NOT GUIX_BUILD)
-        set(_win_metis_options "MSVC FALSE")
+        set(_metis_options "MSVC FALSE")
         if(WIN32)
-            set(_win_metis_options "MSVC TRUE")
+            set(_metis_options "MSVC TRUE" "BUILD_SHARED_LIBS OFF")
+        else()
+            list(APPEND _metis_options
+                 "CMAKE_C_FLAGS -D_POSIX_C_SOURCE=200809L"
+            )
         endif()
         CPMFindPackage(
             NAME GKlib
             GIT_REPOSITORY https://github.com/KarypisLab/GKlib
             GIT_TAG 8bd6bad750b2b0d90800c632cf18e8ee93ad72d7
             VERSION 5.1.1
-            OPTIONS "CMAKE_POLICY_DEFAULT_CMP0042 NEW" ${_win_metis_options}
+            OPTIONS "CMAKE_POLICY_DEFAULT_CMP0042 NEW" ${_metis_options}
             EXCLUDE_FROM_ALL YES
         )
         CPMFindPackage(
