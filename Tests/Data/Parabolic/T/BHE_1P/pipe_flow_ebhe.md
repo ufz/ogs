@@ -416,8 +416,6 @@ Figure 3: Distributed temperature of fluid and absolute error.
 
 [2] Chaofan Chen, Wanlong Cai, Dmitri Naumov, Kun Tu, Hongwei Zhou, Yuping Zhang, Olaf Kolditz, Haibing Shao (2021). Numerical investigation on the capacity and efficiency of a deep enhanced U-tube borehole heat exchanger system for building heating. Renewable Energy, 169, 557-572.
 
-[3] Gnielinski, V. (1975). New equations for heat and mass transfer in the turbulent flow in pipes and channels. NASA STI/recon technical report A, 75, 8-16.
-
-[4] Churchill, S. W. (1977). Comprehensive correlating equations for heat, mass and momentum transfer in fully developed flow in smooth tubes. Industrial & Engineering Chemistry Fundamentals, 16(1), 109-116.
+[3] Churchill, S. W. (1977). Comprehensive correlating equations for heat, mass and momentum transfer in fully developed flow in smooth tubes. Industrial & Engineering Chemistry Fundamentals, 16(1), 109-116.
 
 <!-- vale on -->
