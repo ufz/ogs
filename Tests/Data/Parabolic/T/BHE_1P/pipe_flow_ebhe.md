@@ -13,7 +13,7 @@ project = ["Parabolic/T/BHE_1P/BHE_1P.prj"]
 Ramey et al. (1962) proposed the analytical solution concerning the wellbore heat transmission, which can be used to quantify the fluid temperature change in the wellbore.  
 In order to verify the single pipe flow model in the OGS, the numerical results were compared with Ramey's analytical solution (Ramey et al. 1962).  
 The detailed calculation of the Ramey's analytical solution is given below.  
-A detailed analysis of an enhanced U.tube borehole heat exchanger (EUBHE) can be found in (Chen, C. et al. 2021).
+A detailed analysis of an enhanced U-tube borehole heat exchanger (EUBHE) can be found in Chen, C. et al. (2021).
 
 ## Model Setup
 
