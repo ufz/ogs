@@ -121,7 +121,7 @@ Since the analytical solution has a singularity at $(x, y) = (0, 0)$ the
 analytical solution in ParaView is generated as follows:
 
 ```none
-if (coordsX^2<0.0001 & coordsY^2<0.0001, temperature, -1/(4*asin(1))*ln(sqrt(coordsX^2+coordsY^2))
+if (coordsX^2<0.0001 & coordsY^2<0.0001, temperature, -1/(4*asin(1))*ln(sqrt(coordsX^2+coordsY^2)))
 ```
 
 ## Numerical simulation
