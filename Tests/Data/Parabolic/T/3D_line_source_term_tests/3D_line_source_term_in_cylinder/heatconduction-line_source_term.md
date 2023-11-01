@@ -1,11 +1,12 @@
-+++
+<!-- #raw -->
 author = "Thomas Fischer, Frieder Loer"
 date = "2019-10-01T11:54:02+01:00"
-title = "Heat conduction (Line Source Term)"
+title = "Heatconduction (Line Source Term)"
 weight = 121
-web_subsection = "heatconduction"
-+++
-
+project = ["Parabolic/T/1D_line_source_term_tests/line_source_term.prj"]
+image = "temperature_distribution_line_source_term_in_cylinder.png"
+<!--eofm-->
+<!-- #endraw -->
 
 ## Equations
 
@@ -124,11 +125,9 @@ analytical solution in ParaView is generated as follows:
 if (coordsX^2<0.0001 & coordsY^2<0.0001, temperature, -1/(4*asin(1))*ln(sqrt(coordsX^2+coordsY^2)))
 ```
 
-## Numerical simulation
+## Numerical simulation 286k mesh
 
-There are meshes with two different resolution (49k and 286k cells).
-
-### 49k
+The applied mesh has a resolution of 286k cells.
 
 ```python
 # Create output path if it doesn't exist yet
@@ -144,14 +143,6 @@ if not os.path.exists(out_dir):
 # Import OGS class
 from ogs6py.ogs import OGS
 
-# Initiate and run OGS
-model = OGS(PROJECT_FILE="49k_prisms/line_source_term_in_cylinder.prj")
-model.run_model(logfile=f"{out_dir}/49k_out.txt", args=f"-o {out_dir} -m 49k_prisms")
-```
-
-## 286k
-
-```python
 model = OGS(PROJECT_FILE="286k_prisms/line_source_term_in_cylinder.prj")
 model.run_model(logfile=f"{out_dir}/286k_out.txt", args=f"-o {out_dir} -m 286k_prisms")
 ```
@@ -170,13 +161,12 @@ import matplotlib.pyplot as plt
 
 # Load results
 pvdfile_286k = vtuIO.PVDIO(f"{out_dir}/3D_line_source_term_in_cylinder_286k.pvd", dim=3)
-pvdfile_49k = vtuIO.PVDIO(f"{out_dir}/3D_line_source_term_in_cylinder_49k.pvd", dim=3)
 
 # Get point field names
 fields = pvdfile_286k.get_point_field_names()
 
 # Extract values along line
-number_of_subdivisions = 201
+number_of_subdivisions = 801
 length = np.linspace(-1, 1, number_of_subdivisions)
 
 # Draws a line through the domain for sampling results
@@ -185,30 +175,19 @@ z_axis = [(i, 0, 0.5) for i in length]
 # Extract timestep
 timestep = 1
 temp_286k = pvdfile_286k.read_set_data(timestep, "temperature", pointsetarray=z_axis)
-temp_49k = pvdfile_49k.read_set_data(timestep, "temperature", pointsetarray=z_axis)
-
 
 # Plot
-fig, ax = plt.subplots(1, 2, figsize=(10, 5), sharey=True)
-
-# 49k
-ax[0].plot(length, temp_49k, label="49k prism", color="tab:blue")
-ax[0].set_title("49k Prism Temperature")
-ax[0].set_xlabel("x")
-ax[0].set_ylabel("Temperature (°C)")
-
-# 286k
-ax[1].plot(length, temp_286k, label="286k prism", color="tab:orange")
-ax[1].set_title("286k Prism Temperature")
-ax[1].set_xlabel("x")
+fig, ax = plt.subplots(1, 1, figsize=(10, 5), sharey=True)
+ax.plot(length, temp_286k, label="286k prism", color="tab:orange")
+ax.set_title("286k Prism Temperature")
+ax.set_xlabel("x")
 
 plt.show()
 ```
 
 ### Comparison with analytical solution
 
-The differences of analytical and computed solutions for two different domain discretizations are small outside of the center.
-(In the finer mesh the error outside of the middle region is smaller than in the coarser mesh.)
+The differences of analytical and computed solution are small outside of the center.
 
 ```python
 # Combine analytical solution with numerical solution at singularity in (x,y)=(0,0)
@@ -219,28 +198,20 @@ The differences of analytical and computed solutions for two different domain di
 length_replaced = length.copy()
 length_replaced[int((number_of_subdivisions-1)/2)] = 1
 
+
+# Replace diverging analytical solution in respective interval below a threshold of 0.01
+threshold = 0.01
+below_threshold = np.where(np.abs(length) < threshold)
 analytical286 = t_analytical(length_replaced, 0)
-analytical286[100] = temp_286k[100]  # Only the 100th point has x,y < 0.0001
-analytical49 = t_analytical(length_replaced, 0)
-analytical49[100] = temp_49k[100]
+analytical286[below_threshold[0][0]:(below_threshold[0][-1]+1)] = temp_286k[below_threshold[0][0]:(below_threshold[0][-1]+1)]
 
-# Plot
-fig, ax = plt.subplots(1, 2, figsize=(10, 5), sharey=True)
-
-# 49k Absolute error
-abs_error49 = temp_49k - compare49
-ax[0].plot(length, abs_error49)
-ax[0].grid(True)
-ax[0].set_title("49k Prism Absolute Error")
-ax[0].set_xlabel("x")
-ax[0].set_ylabel("Difference")
-
-# 286k Absolute error
-abs_error286 = temp_286k - compare286
-ax[1].plot(length, abs_error286)
-ax[1].grid(True)
-ax[1].set_title("286k Prism Absolute Error")
-ax[1].set_xlabel("x")
+# Plot absolute error
+fig, ax = plt.subplots(1, 1, figsize=(10, 5), sharey=True)
+abs_error286 = temp_286k - analytical286
+ax.plot(length, abs_error286)
+ax.grid(True)
+ax.set_title("286k Prism Absolute Error")
+ax.set_xlabel("x")
 
 plt.show()
 ```
@@ -248,40 +219,27 @@ plt.show()
 Due to the numerical evaluation of the relative error of the computed solution the error grows in the vicinity of the boundary and in the center.
 
 ```python
-fig, ax = plt.subplots(1, 2, figsize=(10, 5))
-
-# 49k Relative error, exclude first and last element to prevent division by zero
-rel_error49 = (compare49[1:-1] - temp_49k[1:-1]) / compare49[1:-1]
-ax[0].plot(length[1:-1], rel_error49)
-ax[0].grid(True)
-ax[0].set_title("49k Prism Relative Error")
-ax[0].set_xlabel("x")
-ax[0].set_ylabel("Relative Error")
-
-# 286k Relative error
-rel_error286 = (compare286[1:-1] - temp_286k[1:-1]) / compare286[1:-1]
-ax[1].plot(length[1:-1], rel_error286)
-ax[1].grid(True)
-ax[1].set_title("286k Prism Relative Error")
-ax[1].set_xlabel("x")
+# Relative error
+fig, ax = plt.subplots(1, 1, figsize=(10, 5))
+rel_error286 = (analytical286[1:-1] - temp_286k[1:-1]) / analytical286[1:-1]
+ax.plot(length[1:-1], rel_error286)
+ax.grid(True)
+ax.set_title("286k Prism Relative Error")
+ax.set_xlabel("x")
 
 plt.show()
 ```
 
 ### Input files
 
-The project files for the described models are
-[49k.prj](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/49k_prisms/line_source_term_in_cylinder.prj)
-and
-[286k.prj](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/286k_prisms/line_source_term_in_cylinder.prj).
-The project files describe the processes to be solved and the related process variables together with their initial and boundary conditions as well as the source terms.
+The project files for the described model is [286k.prj](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/286k_prisms/line_source_term_in_cylinder.prj).
+The project file describes the processes to be solved and the related process variables together with their initial and boundary conditions as well as the source terms.
 
-The input meshes are stored in the VTK file format and can be directly visualized in ParaView for example.
+The input mesh is stored in the VTK file format and can be directly visualized in ParaView for example.
 
 ### Cylindrical domain - axisymmetric example
 
-The Poisson equation on cylindrical domain of height $1$ and radius
-$r=1$ is solved.
+The Poisson equation on cylindrical domain of height $1$ and radius $r=1$ is solved.
 The cylindrical domain is defined as axisymmetric.
 
 #### Numerical simulation
