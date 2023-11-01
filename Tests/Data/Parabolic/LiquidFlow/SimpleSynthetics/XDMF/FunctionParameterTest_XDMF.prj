@@ -141,6 +141,10 @@ boundary meshes will be written as well -->
                     <each_steps>1</each_steps>
                 </pair>
             </timesteps>
+            <hdf>
+                <chunk_size_bytes>123456</chunk_size_bytes>
+                <number_of_files>1</number_of_files>
+            </hdf>
             <output_iteration_results>false</output_iteration_results>
             <variables>
                 <variable> pressure </variable>
