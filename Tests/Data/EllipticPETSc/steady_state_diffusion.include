@@ -1,0 +1,24 @@
+<processes>
+    <process ref="GW23">
+        <nonlinear_solver>basic_picard</nonlinear_solver>
+        <convergence_criterion>
+            <type>DeltaX</type>
+            <norm_type>NORM2</norm_type>
+            <abstol>1.e-6</abstol>
+        </convergence_criterion>
+        <time_discretization>
+            <type>BackwardEuler</type>
+        </time_discretization>
+        <time_stepping>
+            <type>FixedTimeStepping</type>
+            <t_initial>0.0</t_initial>
+            <t_end>1e-1</t_end>
+            <timesteps>
+                <pair>
+                    <repeat>1</repeat>
+                    <delta_t>1e-1</delta_t>
+                </pair>
+            </timesteps>
+        </time_stepping>
+    </process>
+</processes>
