@@ -1,5 +1,5 @@
 # Initial implementation from Professional CMake, 16th Edition, by Craig Scott
-option(ENABLE_ASAN "Enable AddressSanitizer" YES)
+option(ENABLE_ASAN "Enable AddressSanitizer" NO)
 if(MSVC)
     if(ENABLE_ASAN)
         string(REPLACE "/RTC1" "" CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
@@ -13,7 +13,7 @@ if(MSVC)
 elseif(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
     option(ENABLE_LSAN "Enable LeakSanitizer" NO)
     option(ENABLE_TSAN "Enable ThreadSanitizer" NO)
-    option(ENABLE_UBSAN "Enable UndefinedBehaviorSanitizer" YES)
+    option(ENABLE_UBSAN "Enable UndefinedBehaviorSanitizer" NO)
     if(NOT APPLE)
         option(ENABLE_MSAN "Enable MemorySanitizer" NO)
     endif()
@@ -30,19 +30,32 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
                 "  ENABLE_MSAN:  ${ENABLE_MSAN}"
         )
     endif()
+
+    if(CMAKE_C_COMPILER_ID MATCHES "GNU")
+        set(_ubsan_options
+            ",unreachable,integer-divide-by-zero,vla-bound,bounds,null"
+        )
+    endif()
+    if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+        set(_ubsan_options
+            ",integer;-fsanitize-blacklist=${CMAKE_CURRENT_SOURCE_DIR}/scripts/test/clang_sanitizer_blacklist.txt"
+        )
+    endif()
     add_compile_options(
         -fno-omit-frame-pointer
-        $<$<BOOL:${ENABLE_ASAN}>:-fsanitize=address>
+        $<$<BOOL:${ENABLE_ASAN}>:-fsanitize=address
+        -fno-omit-frame-pointer>
         $<$<BOOL:${ENABLE_LSAN}>:-fsanitize=leak>
         $<$<BOOL:${ENABLE_MSAN}>:-fsanitize=memory>
         $<$<BOOL:${ENABLE_TSAN}>:-fsanitize=thread>
-        $<$<BOOL:${ENABLE_UBSAN}>:-fsanitize=undefined>
+        $<$<BOOL:${ENABLE_UBSAN}>:-fsanitize=undefined${_ubsan_options}>
     )
     add_link_options(
-        $<$<BOOL:${ENABLE_ASAN}>:-fsanitize=address>
+        $<$<BOOL:${ENABLE_ASAN}>:-fsanitize=address
+        -fno-omit-frame-pointer>
         $<$<BOOL:${ENABLE_LSAN}>:-fsanitize=leak>
         $<$<BOOL:${ENABLE_MSAN}>:-fsanitize=memory>
         $<$<BOOL:${ENABLE_TSAN}>:-fsanitize=thread>
-        $<$<BOOL:${ENABLE_UBSAN}>:-fsanitize=undefined>
+        $<$<BOOL:${ENABLE_UBSAN}>:-fsanitize=undefined${_ubsan_options}>
     )
 endif()
