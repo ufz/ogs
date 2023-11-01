@@ -334,7 +334,7 @@ else()
     string(REGEX MATCHALL "[-/]D[^\ ]*" MKL_DEFINITIONS ${RESULT_OPTS})
 
     if(FINDMKL_DEBUG_MODE)
-        message(STATUS "Exectuted command: \n${MKL_LINK_TOOL_COMMAND}")
+        message(STATUS "Executed command: \n${MKL_LINK_TOOL_COMMAND}")
         message(STATUS "Found MKL_LIBRARIES:\n${MKL_LIBRARIES} ")
         message(STATUS "Found MKL_DEFINITIONS:\n${MKL_DEFINITIONS} ")
         message(STATUS "Found MKL_LIBRARY_DIR:\n${MKL_LIBRARY_DIR} ")

@@ -42,10 +42,10 @@ repos:
       - id: cmake-format
         additional_dependencies: ["cmakelang[YAML]"]
         args: [--config=.cmake-format.yaml]
-        exclude: "scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake|Tests.cmake"
+        exclude: "scripts/cmake/jedbrown/.*|conan.cmake|CPM.cmake|FindFilesystem.cmake|FindMKL.cmake|JSONParser.cmake|ConanSetup.cmake|Tests.cmake"
       - id: cmake-lint
         additional_dependencies: ["cmakelang[YAML]"]
-        exclude: "scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake|BuildExternalProject.cmake"
+        exclude: "scripts/cmake/jedbrown/.*|conan.cmake|CPM.cmake|FindFilesystem.cmake|FindMKL.cmake|JSONParser.cmake|ConanSetup.cmake|BuildExternalProject.cmake"
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.33.0
     hooks:
