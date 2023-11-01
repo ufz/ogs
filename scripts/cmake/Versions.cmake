@@ -1,10 +1,4 @@
-CPMAddPackage(
-    NAME json-cmake
-    GITHUB_REPOSITORY ufz/json-cmake
-    GIT_TAG 9708cb091f6b89b94d71ae98f8b9e68ea04c47dd
-    DOWNLOAD_ONLY YES
-)
-include("${json-cmake_SOURCE_DIR}/JSONParser.cmake")
+include(${PROJECT_SOURCE_DIR}/scripts/cmake/json-cmake/JSONParser.cmake)
 file(READ ${PROJECT_SOURCE_DIR}/web/data/versions.json jsonFileString)
 set_property(
     DIRECTORY . APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS

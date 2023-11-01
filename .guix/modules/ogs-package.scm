@@ -19,6 +19,7 @@
   #:use-module (guix)
   #:use-module (guix packages)
   #:use-module (guix build-system cmake)
+  #:use-module (guix build-system copy)
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module ((guix licenses) #:prefix license:)
@@ -44,7 +45,7 @@
 (define vcs-file?
   ;; Return true if the given file is under version control.
   (or (git-predicate "../..") ; (current-source-directory)
-      (const #t)))            ;not in a Git checkout
+      (const #t)))            ; not in a Git checkout
 
 (define-public ogs
   (package
@@ -70,8 +71,9 @@
        #:cmake ,cmake)) ;for newer CMake version
     (inputs (list boost
                   eigen
-                  googletest
+                  exprtk
                   hdf5
+                  iphreeqc
                   json-modern-cxx
                   libxml2
                   metis
@@ -79,9 +81,12 @@
                   python
                   range-v3
                   spdlog
+                  tclap
+                  tetgen
                   zlib
-                  vtk))
-    (native-inputs (list git ninja googletest nss-certs)) ; TODO: cpm
+                  vtk
+                  xmlpatch))
+    (native-inputs (list git ninja nss-certs)) ; TODO: cpm
     (synopsis "OpenGeoSys")
     (description
      "Simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media")
@@ -192,6 +197,113 @@
                   (sha256
                    (base32
                     "0rbcfvl7y472sykzdq3vrkw83kar0lpzhk3wq9yj9cdydl8cpfcz"))))))
+
+(define tetgen
+      (package
+        (name "tetgen")
+        (synopsis "A Quality Tetrahedral Mesh Generator and a 3D Delaunay Triangulator")
+        (license license:agpl3)
+        (description "TetGen is a program to generate tetrahedral meshes of any 3D polyhedral domains. TetGen generates exact constrained Delaunay tetrahedralizations, boundary conforming Delaunay meshes, and Voronoi partitions.")
+        (home-page "http://www.tetgen.org/")
+        (version "1.5.1-1")
+        (source (origin
+                  (method git-fetch)
+                  (uri (git-reference
+                    (url "https://github.com/ufz/tetgen")
+                    (commit version)))
+                  (sha256
+                   (base32
+                    "1xp1qibm0q4z5qx0h178qpas3n7pqbladkxdalq9j4l98hdws46j"))))
+        (build-system cmake-build-system)
+        (arguments
+            `(#:tests? #f)
+        )))
+
+(define tclap
+      (package
+        (name "tclap")
+        (synopsis "Templatized Command Line Argument Parser")
+        (license license:expat)
+        (description "This is a simple C++ library that facilitates parsing command line arguments in a type independent manner.")
+        (home-page "https://sourceforge.net/p/tclap/discussion/")
+        (version "1.2.4-1")
+        (source (origin
+                  (method git-fetch)
+                  (uri (git-reference
+                    (url "https://github.com/ufz/tclap")
+                    (commit version)))
+                  (sha256
+                   (base32
+                    "0bijzfc9c8zny3m74y53i8m3f41kd8klcnmr9chy536syr9vdr5p"))))
+        (build-system cmake-build-system)
+        (arguments
+            `(#:tests? #f)
+        )))
+
+(define iphreeqc
+      (package
+        (name "iphreeqc")
+        (synopsis "Modules Based on the Geochemical Model PHREEQC for use in scripting and programming languages")
+        (license license:public-domain)
+        (description "")
+        (home-page "https://www.usgs.gov/software/phreeqc-version-3")
+        (version "3.5.0-1")
+        (source (origin
+                  (method git-fetch)
+                  (uri (git-reference
+                    (url "https://github.com/ufz/iphreeqc")
+                    (commit version)))
+                  (sha256
+                   (base32
+                    "1liwp6hkl2dbrl8bki9gzsw77s3prv12sdikmwz5h8ffxwdrnwli"))))
+        (build-system cmake-build-system)
+        (arguments
+            `(#:tests? #f)
+        )))
+
+(define xmlpatch
+      (package
+        (name "xmlpatch")
+        (synopsis "An XML Patch library")
+        (license license:lgpl2.1)
+        (description "")
+        (home-page "https://xmlpatch.sourceforge.net")
+        (version "0.4.3")
+        (source (origin
+                  (method git-fetch)
+                  (uri (git-reference
+                    (url "https://gitlab.opengeosys.org/ogs/libs/xmlpatch")
+                    (commit (string-append "v" version))))
+                  (sha256
+                   (base32
+                    "0872g9w1jd5r4c5a1s8ga4x1plg608b7rxyqjs6zv8ghjq9qlkvg"))))
+        (build-system cmake-build-system)
+        (inputs (list libxml2))
+        (arguments
+            `(#:tests? #f)
+        )))
+
+(define exprtk
+      (package
+        (name "exprtk")
+        (home-page "https://www.partow.net/programming/exprtk/index.html")
+        (synopsis "C++ Mathematical Expression Parsing And Evaluation Library")
+        (description "")
+        (license license:expat)
+        (version "0.0.2")
+        (source (origin
+                  (method git-fetch)
+                  (uri (git-reference
+                    (url "https://github.com/ArashPartow/exprtk.git")
+                    (commit version)))
+                  (sha256
+                   (base32
+                    "1w92qlfjpcan38d88fak3avq81lkcpai5mqpbvrsfv04mi5nfpk5"))))
+        (build-system copy-build-system)
+        (arguments
+         '(#:install-plan '(("exprtk.hpp" "include/")))
+        )))
+
 ;; return package
 ogs
 

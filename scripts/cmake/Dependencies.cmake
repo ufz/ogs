@@ -42,27 +42,37 @@ else()
     )
 endif()
 
-CPMFindPackage(
-    NAME tclap
-    GITHUB_REPOSITORY ufz/tclap
-    VERSION 1.2.4
-    GIT_TAG 098dd0fe07a31618f3c2a9f8727bb01c8c5d61e2
-    DOWNLOAD_ONLY YES
-)
-if(tclap_ADDED)
-    add_library(tclap INTERFACE IMPORTED)
-    target_include_directories(
-        tclap SYSTEM INTERFACE ${tclap_SOURCE_DIR}/include
+if(GUIX_BUILD)
+    add_library(tclap INTERFACE IMPORTED) # header-only, nothing else to do
+else()
+    CPMFindPackage(
+        NAME tclap
+        GITHUB_REPOSITORY ufz/tclap
+        VERSION 1.2.4
+        GIT_TAG 098dd0fe07a31618f3c2a9f8727bb01c8c5d61e2
+        DOWNLOAD_ONLY YES
     )
+    if(tclap_ADDED)
+        add_library(tclap INTERFACE IMPORTED)
+        target_include_directories(
+            tclap SYSTEM INTERFACE ${tclap_SOURCE_DIR}/include
+        )
+    endif()
 endif()
 
-CPMAddPackage(
-    NAME tetgen GITHUB_REPOSITORY ufz/tetgen
-    GIT_TAG 603ba181ebfaed38eec88532720e282606009b73
-)
-if(tetgen_ADDED)
-    install(PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin)
-    list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
+if(GUIX_BUILD)
+    find_library(tet tet REQUIRED)
+    find_program(TETGEN_EXECUTABLE tetgen REQUIRED)
+    install(PROGRAMS ${TETGEN_EXECUTABLE} DESTINATION bin)
+else()
+    CPMAddPackage(
+        NAME tetgen GITHUB_REPOSITORY ufz/tetgen
+        GIT_TAG 603ba181ebfaed38eec88532720e282606009b73
+    )
+    if(tetgen_ADDED)
+        install(PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin)
+        list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
+    endif()
 endif()
 
 CPMFindPackage(
@@ -71,15 +81,22 @@ CPMFindPackage(
 )
 
 if(_build_chemistry_lib)
-    CPMAddPackage(
-        NAME iphreeqc
-        GITHUB_REPOSITORY ufz/iphreeqc
-        GIT_TAG b1047d3eb03e7ef1b850231be35acb9c6a2cf345
-        DOWNLOAD_ONLY YES
-    )
-    if(iphreeqc_ADDED)
-        include(scripts/cmake/iphreeqc.cmake)
-        list(APPEND DISABLE_WARNINGS_TARGETS iphreeqc)
+    if(BUILD_GUIX)
+        find_library(IPhreeqc iphreeqc REQUIRED)
+    else()
+        CPMAddPackage(
+            NAME iphreeqc GITHUB_REPOSITORY ufz/iphreeqc GIT_TAG 3.5.0-1
+        )
+        if(iphreeqc_ADDED)
+            target_include_directories(
+                IPhreeqc
+                PUBLIC ${iphreeqc_SOURCE_DIR}/src
+                INTERFACE ${iphreeqc_SOURCE_DIR}/src/phreeqcpp/common
+                          ${iphreeqc_SOURCE_DIR}/src/phreeqcpp/PhreeqcKeywords
+                          ${iphreeqc_SOURCE_DIR}/src/phreeqcpp
+            )
+            list(APPEND DISABLE_WARNINGS_TARGETS IPhreeqc)
+        endif()
     endif()
 endif()
 
@@ -158,12 +175,19 @@ if(LibXml2_ADDED)
     list(APPEND DISABLE_WARNINGS_TARGETS LibXml2)
 endif()
 
-CPMAddPackage(
-    NAME xmlpatch
-    VERSION 0.4.2
-    GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/xmlpatch.git
-    OPTIONS "BUILD_SHARED_LIBS OFF"
-)
+if(GUIX_BUILD)
+    find_library(XMLPATCH_LIB xmlpatch REQUIRED)
+    add_library(xmlpatch INTERFACE)
+    find_package(LibXml2 REQUIRED)
+    target_link_libraries(xmlpatch INTERFACE ${XMLPATCH_LIB} LibXml2::LibXml2)
+else()
+    CPMAddPackage(
+        NAME xmlpatch
+        VERSION 0.4.2
+        GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/xmlpatch.git
+        OPTIONS "BUILD_SHARED_LIBS OFF"
+    )
+endif()
 
 if(OGS_BUILD_SWMM)
     CPMAddPackage(
@@ -258,15 +282,19 @@ endif()
 #     find_package(ParaView REQUIRED)
 # endif()
 # ~~~
-CPMAddPackage(
-    NAME exprtk
-    GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/exprtk.git
-    GIT_TAG 2a5c62b93c9661470e69be572f22d821308b6f61
-    DOWNLOAD_ONLY YES
-)
-if(exprtk_ADDED)
+if(GUIX_BUILD)
     add_library(exprtk INTERFACE IMPORTED)
-    target_include_directories(exprtk SYSTEM INTERFACE ${exprtk_SOURCE_DIR})
+else()
+    CPMAddPackage(
+        NAME exprtk
+        GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/exprtk.git
+        GIT_TAG 2a5c62b93c9661470e69be572f22d821308b6f61
+        DOWNLOAD_ONLY YES
+    )
+    if(exprtk_ADDED)
+        add_library(exprtk INTERFACE IMPORTED)
+        target_include_directories(exprtk SYSTEM INTERFACE ${exprtk_SOURCE_DIR})
+    endif()
 endif()
 
 if(GUIX_BUILD)
@@ -281,7 +309,7 @@ else()
     )
 endif()
 
-if(OGS_BUILD_TESTING OR OGS_BUILD_UTILS)
+if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS) AND NOT GUIX_BUILD)
     CPMAddPackage(
         NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
         GIT_TAG 9754b4da43c6adfb65d201ed920b5f6ea27b38b9
@@ -304,7 +332,7 @@ if(OGS_USE_PETSC)
     endif()
 endif()
 
-if(OGS_BUILD_TESTING OR OGS_BUILD_CLI OR OGS_BUILD_UTILS)
+if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS) AND NOT GUIX_BUILD)
     set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
     CPMAddPackage(
         NAME xdmf
@@ -347,10 +375,12 @@ if(OGS_BUILD_TESTING OR OGS_BUILD_CLI OR OGS_BUILD_UTILS)
     endif()
 endif()
 
-CPMAddPackage(
-    NAME GroupSourcesByFolder.cmake
-    GITHUB_REPOSITORY TheLartians/GroupSourcesByFolder.cmake VERSION 1.0
-)
+if(MSVC)
+    CPMAddPackage(
+        NAME GroupSourcesByFolder.cmake
+        GITHUB_REPOSITORY TheLartians/GroupSourcesByFolder.cmake VERSION 1.0
+    )
+endif()
 
 if(OGS_BUILD_UTILS)
     if(NOT GUIX_BUILD)
