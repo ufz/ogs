@@ -19,11 +19,55 @@ namespace ProcessLib::Reflection
 {
 namespace detail
 {
-// Used in metaprogramming to check if the type T has a member "reflect".
 template <typename T>
-constexpr bool has_reflect = requires
+concept has_reflect = requires { T::reflect(); };
+
+template <typename... Ts>
+auto reflect(std::type_identity<std::tuple<Ts...>>)
 {
-    T::reflect();
+    using namespace boost::mp11;
+
+    // The types Ts... must be unique. Duplicate types are incompatible with the
+    // concept of "reflected" I/O: they would lead to duplicate names for the
+    // I/O data.
+    static_assert(mp_is_set<mp_list<Ts...>>::value);
+
+    return reflectWithoutName<std::tuple<Ts...>>(
+        [](auto& tuple_) -> auto& { return std::get<Ts>(tuple_); }...);
+}
+
+template <has_reflect T>
+auto reflect(std::type_identity<T>)
+{
+    return T::reflect();
+}
+
+template <typename T>
+concept is_reflectable = requires {
+    ProcessLib::Reflection::detail::reflect(std::type_identity<T>{});
+};
+
+/**
+ * Raw data is data that will be read or written, e.g., double values or Eigen
+ * vectors.
+ *
+ * Non-raw data is data for which further reflection will be performed (to find
+ * out the members).
+ */
+template <typename T>
+struct is_raw_data : std::false_type
+{
+};
+
+template <>
+struct is_raw_data<double> : std::true_type
+{
+};
+
+template <int N>
+struct is_raw_data<Eigen::Matrix<double, N, 1, Eigen::ColMajor, N, 1>>
+    : std::true_type
+{
 };
 
 template <typename T>
@@ -118,6 +162,9 @@ struct GetFlattenedIPDataFromLocAsm
         using ConcreteIPData = std::remove_cvref_t<
             std::invoke_result_t<Accessor_CurrentLevelFromIPDataVecElement,
                                  IPDataVectorElement const&>>;
+        static_assert(is_raw_data<ConcreteIPData>::value,
+                      "This method only deals with raw data. The given "
+                      "ConcreteIPData is not raw data.");
 
         constexpr unsigned num_comp = NumberOfComponents<ConcreteIPData>::value;
         auto const& ip_data_vector = accessor_ip_data_vec_in_loc_asm(loc_asm);
@@ -134,7 +181,6 @@ struct GetFlattenedIPDataFromLocAsm
 
             if constexpr (num_comp == 1)
             {
-                // TODO optimization if nothing needs to be copied?
                 result[ip] = ip_data;
             }
             else if constexpr (num_comp ==
@@ -216,28 +262,35 @@ void forEachReflectedFlattenedIPDataAccessor(
         reflection_data,
         [&accessor_ip_data_vec_in_loc_asm,
          &accessor_current_level_from_ip_data_vec_element,
-         &callback]<typename Class, typename Member>(
-            ReflectionData<Class, Member> const& refl_data)
+         &callback]<typename Class, typename Accessor>(
+            ReflectionData<Class, Accessor> const& refl_data)
         {
+            using MemberRef = std::invoke_result_t<Accessor, Class const&>;
+            using Member = std::remove_cvref_t<MemberRef>;
+
             auto accessor_member_from_ip_data_vec_element =
-                [level = refl_data.field,
+                [accessor_next_level = refl_data.accessor,
                  accessor_current_level_from_ip_data_vec_element](
                     auto const& ip_data_vec_element) -> Member const&
             {
-                return accessor_current_level_from_ip_data_vec_element(
-                           ip_data_vec_element).*
-                       level;
+                return accessor_next_level(
+                    accessor_current_level_from_ip_data_vec_element(
+                        ip_data_vec_element));
             };
 
-            if constexpr (has_reflect<Member>)
+            if constexpr (is_reflectable<Member>)
             {
                 forEachReflectedFlattenedIPDataAccessor<Dim>(
-                    callback, Member::reflect(),
+                    callback, detail::reflect(std::type_identity<Member>{}),
                     accessor_ip_data_vec_in_loc_asm,
                     accessor_member_from_ip_data_vec_element);
             }
             else
             {
+                static_assert(is_raw_data<Member>::value,
+                              "The current member is not reflectable, so we "
+                              "expect it to be raw data.");
+
                 constexpr unsigned num_comp = NumberOfComponents<Member>::value;
 
                 callback(refl_data.name, num_comp,
@@ -280,24 +333,50 @@ void forEachReflectedFlattenedIPDataAccessor(ReflData const& reflection_data,
 {
     boost::mp11::tuple_for_each(
         reflection_data,
-        [&callback]<typename Class, typename Member>(
-            ReflectionData<Class, std::vector<Member>> const& refl_data)
+        [&callback]<typename Class, typename Accessor>(
+            ReflectionData<Class, Accessor> const& refl_data)
         {
-            auto accessor_ip_data_vec_in_loc_asm = [ip_data_vector =
-                                                        refl_data.field](
-                LocAsmIF const& loc_asm) -> auto const&
-            {
-                return loc_asm.*ip_data_vector;
-            };
+            static_assert(std::is_same_v<Class, LocAsmIF>,
+                          "The currently processed reflection data is not for "
+                          "the given LocAsmIF but for a different class.");
 
-            if constexpr (detail::has_reflect<Member>)
+            using AccessorResultRef =
+                std::invoke_result_t<Accessor, Class const&>;
+            using AccessorResult = std::remove_cvref_t<AccessorResultRef>;
+
+            // AccessorResult must be a std::vector<SomeType, SomeAllocator>. We
+            // check that, now.
+            static_assert(boost::mp11::mp_is_list<AccessorResult>::
+                              value);  // std::vector<SomeType, SomeAllocator>
+                                       // is a list in the Boost MP11 sense
+            static_assert(
+                std::is_same_v<
+                    AccessorResult,
+                    boost::mp11::mp_rename<AccessorResult, std::vector>>,
+                "We expect a std::vector, here.");
+            // Now, we know that AccessorResult is std::vector<Member>. To be
+            // more specific, AccessorResult is a std::vector<IPData> and Member
+            // is IPData.
+            using Member = typename AccessorResult::value_type;
+
+            auto accessor_ip_data_vec_in_loc_asm =
+                [ip_data_vector_accessor =
+                     refl_data.accessor](LocAsmIF const& loc_asm) -> auto const&
+            { return ip_data_vector_accessor(loc_asm); };
+
+            if constexpr (detail::is_reflectable<Member>)
             {
                 detail::forEachReflectedFlattenedIPDataAccessor<Dim>(
-                    callback, Member::reflect(),
+                    callback,
+                    detail::reflect(std::type_identity<Member>{}),
                     accessor_ip_data_vec_in_loc_asm);
             }
             else
             {
+                static_assert(detail::is_raw_data<Member>::value,
+                              "The current member is not reflectable, so we "
+                              "expect it to be raw data.");
+
                 constexpr unsigned num_comp =
                     detail::NumberOfComponents<Member>::value;
 

@@ -27,6 +27,11 @@ void setIPData(double const* values,
 {
     using AccessorResult = std::invoke_result_t<Accessor, IPData&>;
     using AccessorResultStripped = std::remove_cvref_t<AccessorResult>;
+
+    static_assert(is_raw_data<AccessorResultStripped>::value,
+                  "This method only deals with raw data. The given "
+                  "AccessorResultStripped is not raw data.");
+
     constexpr auto num_comp = NumberOfComponents<AccessorResultStripped>::value;
 
     auto constexpr kv_size =
@@ -66,26 +71,33 @@ void setIPData(double const* values,
 // Sets IP data if the passed name equals the one in refl_data.
 // Returns true if IP have been set, false otherwise.
 template <int dim, typename IPData, typename Accessor_CurrentLevelFromIPData,
-          typename Class, typename Member>
+          typename Class, typename Accessor>
 bool setIPDataIfNameMatches(std::string const& name, double const* values,
                             std::vector<IPData>& ip_data_vector,
                             Accessor_CurrentLevelFromIPData const& accessor,
-                            ReflectionData<Class, Member> const& refl_data)
+                            ReflectionData<Class, Accessor> const& refl_data)
 {
-    auto const field = refl_data.field;
+    auto const accessor_next_level = refl_data.accessor;
 
-    auto const accessor_field_from_ip_data = [accessor,
-                                              field](IPData& ip_data) -> Member&
-    { return accessor(ip_data).*field; };
+    using MemberRef = std::invoke_result_t<Accessor, Class&>;
+    using Member = std::remove_cvref_t<MemberRef>;
 
-    if constexpr (detail::has_reflect<Member>)
+    auto const accessor_field_from_ip_data =
+        [accessor, accessor_next_level](IPData& ip_data) -> Member&
+    { return accessor_next_level(accessor(ip_data)); };
+
+    if constexpr (detail::is_reflectable<Member>)
     {
-        return reflectSetIPData<dim>(name, values, ip_data_vector,
-                                     accessor_field_from_ip_data,
-                                     Member::reflect());
+        return reflectSetIPData<dim>(
+            name, values, ip_data_vector, accessor_field_from_ip_data,
+            detail::reflect(std::type_identity<Member>{}));
     }
     else
     {
+        static_assert(detail::is_raw_data<Member>::value,
+                      "The current member is not reflectable, so we "
+                      "expect it to be raw data.");
+
         if (refl_data.name != name)
         {
             return false;
@@ -98,12 +110,12 @@ bool setIPDataIfNameMatches(std::string const& name, double const* values,
 }
 
 template <int dim, typename IPData, typename Accessor_CurrentLevelFromIPData,
-          typename... Class, typename... Member, std::size_t... Idcs>
+          typename... Classes, typename... Accessors, std::size_t... Idcs>
 bool reflectSetIPData(
     std::string const& name, double const* values,
     std::vector<IPData>& ip_data_vector,
     Accessor_CurrentLevelFromIPData const& accessor,
-    std::tuple<ReflectionData<Class, Member>...> const& refl_data,
+    std::tuple<ReflectionData<Classes, Accessors>...> const& refl_data,
     std::index_sequence<Idcs...>)
 {
     // uses short-circuit evaluation of the fold || ... to stop after the first
@@ -114,16 +126,16 @@ bool reflectSetIPData(
 }
 
 template <int dim, typename IPData, typename Accessor_CurrentLevelFromIPData,
-          typename... Class, typename... Member>
+          typename... Classes, typename... Accessors>
 bool reflectSetIPData(
     std::string const& name, double const* values,
     std::vector<IPData>& ip_data_vector,
     Accessor_CurrentLevelFromIPData const& accessor,
-    std::tuple<ReflectionData<Class, Member>...> const& refl_data)
+    std::tuple<ReflectionData<Classes, Accessors>...> const& refl_data)
 {
-    return reflectSetIPData<dim>(name, values, ip_data_vector, accessor,
-                                 refl_data,
-                                 std::make_index_sequence<sizeof...(Class)>{});
+    return reflectSetIPData<dim>(
+        name, values, ip_data_vector, accessor, refl_data,
+        std::make_index_sequence<sizeof...(Classes)>{});
 }
 }  // namespace detail
 
@@ -140,8 +152,9 @@ template <int dim, typename IPData>
 std::size_t reflectSetIPData(std::string const& name, double const* values,
                              std::vector<IPData>& ip_data_vector)
 {
-    detail::reflectSetIPData<dim>(name, values, ip_data_vector, std::identity{},
-                                  IPData::reflect());
+    detail::reflectSetIPData<dim>(
+        name, values, ip_data_vector, std::identity{},
+        detail::reflect(std::type_identity<IPData>{}));
 
     return ip_data_vector.size();
 }

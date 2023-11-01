@@ -27,9 +27,9 @@ struct Level3
     static auto reflect()
     {
         using namespace ProcessLib::Reflection;
-        return std::tuple{ReflectionData{"kelvin3", &Level3::kelvin3},
-                          ReflectionData{"vector3", &Level3::vector3},
-                          ReflectionData{"scalar3", &Level3::scalar3}};
+        return std::tuple{makeReflectionData("kelvin3", &Level3::kelvin3),
+                          makeReflectionData("vector3", &Level3::vector3),
+                          makeReflectionData("scalar3", &Level3::scalar3)};
     }
 };
 
@@ -41,23 +41,12 @@ struct Level3b
     static auto reflect()
     {
         using namespace ProcessLib::Reflection;
-        return std::tuple{ReflectionData{"scalar3b", &Level3b::scalar3b}};
+        return std::tuple{makeReflectionData("scalar3b", &Level3b::scalar3b)};
     }
 };
 
 template <int Dim>
-struct Level2
-{
-    Level3<Dim> level3;
-    Level3b<Dim> level3b;
-
-    static auto reflect()
-    {
-        using namespace ProcessLib::Reflection;
-        return std::tuple{ReflectionData{&Level2::level3},
-                          ReflectionData{&Level2::level3b}};
-    }
-};
+using Level2 = std::tuple<Level3<Dim>, Level3b<Dim>>;
 
 template <int Dim>
 struct Level2b
@@ -67,7 +56,7 @@ struct Level2b
     static auto reflect()
     {
         using namespace ProcessLib::Reflection;
-        return std::tuple{ReflectionData{"scalar2b", &Level2b::scalar2b}};
+        return std::tuple{makeReflectionData("scalar2b", &Level2b::scalar2b)};
     }
 };
 
@@ -83,11 +72,11 @@ struct Level1
     static auto reflect()
     {
         using namespace ProcessLib::Reflection;
-        return std::tuple{ReflectionData{"kelvin1", &Level1::kelvin1},
-                          ReflectionData{"vector1", &Level1::vector1},
-                          ReflectionData{"scalar1", &Level1::scalar1},
-                          ReflectionData{&Level1::level2},
-                          ReflectionData{&Level1::level2b}};
+        return std::tuple{makeReflectionData("kelvin1", &Level1::kelvin1),
+                          makeReflectionData("vector1", &Level1::vector1),
+                          makeReflectionData("scalar1", &Level1::scalar1),
+                          makeReflectionData(&Level1::level2),
+                          makeReflectionData(&Level1::level2b)};
     }
 };
 
@@ -99,7 +88,7 @@ struct Level1b
     static auto reflect()
     {
         using namespace ProcessLib::Reflection;
-        return std::tuple{ReflectionData{"scalar1b", &Level1b::scalar1b}};
+        return std::tuple{makeReflectionData("scalar1b", &Level1b::scalar1b)};
     }
 };
 
@@ -126,11 +115,12 @@ struct LocAsmIF
     static auto reflect()
     {
         using namespace ProcessLib::Reflection;
-        return std::tuple{ReflectionData{"scalar", &LocAsmIF::ip_data_scalar},
-                          ReflectionData{"vector", &LocAsmIF::ip_data_vector},
-                          ReflectionData{"kelvin", &LocAsmIF::ip_data_kelvin},
-                          ReflectionData{&LocAsmIF::ip_data_level1},
-                          ReflectionData{&LocAsmIF::ip_data_level1b}};
+        return std::tuple{
+            makeReflectionData("scalar", &LocAsmIF::ip_data_scalar),
+            makeReflectionData("vector", &LocAsmIF::ip_data_vector),
+            makeReflectionData("kelvin", &LocAsmIF::ip_data_kelvin),
+            makeReflectionData(&LocAsmIF::ip_data_level1),
+            makeReflectionData(&LocAsmIF::ip_data_level1b)};
     }
 };
 
@@ -355,21 +345,24 @@ struct ReferenceData
         ref.scalar3 = initScalar(
             loc_asm, start_value(),
             [](auto& loc_asm, unsigned const ip) -> auto& {
-                return loc_asm.ip_data_level1[ip].level2.level3.scalar3;
+                return std::get<Level3<dim>>(loc_asm.ip_data_level1[ip].level2)
+                    .scalar3;
             },
             for_read_test);
 
         ref.vector3 = initVector(
             loc_asm, start_value(),
             [](auto& loc_asm, unsigned const ip) -> auto& {
-                return loc_asm.ip_data_level1[ip].level2.level3.vector3;
+                return std::get<Level3<dim>>(loc_asm.ip_data_level1[ip].level2)
+                    .vector3;
             },
             for_read_test);
 
         ref.kelvin3 = initKelvin(
             loc_asm, start_value(),
             [](auto& loc_asm, unsigned const ip) -> auto& {
-                return loc_asm.ip_data_level1[ip].level2.level3.kelvin3;
+                return std::get<Level3<dim>>(loc_asm.ip_data_level1[ip].level2)
+                    .kelvin3;
             },
             for_read_test);
 
@@ -394,7 +387,8 @@ struct ReferenceData
         ref.scalar3b = initScalar(
             loc_asm, start_value(),
             [](auto& loc_asm, unsigned const ip) -> auto& {
-                return loc_asm.ip_data_level1[ip].level2.level3b.scalar3b;
+                return std::get<Level3b<dim>>(loc_asm.ip_data_level1[ip].level2)
+                    .scalar3b;
             },
             for_read_test);
 
