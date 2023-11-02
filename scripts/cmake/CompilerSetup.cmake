@@ -66,7 +66,6 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
             )
         endif()
         add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fext-numeric-literals>)
-        include(GCCSanitizer)
         if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 13.1.1
            OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 13.2.1
         )
@@ -101,7 +100,6 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
                 )
             endif()
         endif()
-        include(ClangSanitizer)
     endif()
 
     if(COMPILER_IS_INTEL)
@@ -180,6 +178,10 @@ if(MSVC)
     if(NOT CMAKE_VS_GLOBALS MATCHES "(^|;)EnforceProcessCountAcrossBuilds=")
         list(APPEND CMAKE_VS_GLOBALS EnforceProcessCountAcrossBuilds=true)
     endif()
+endif()
+
+if(PROJECT_IS_TOP_LEVEL)
+    include(Sanitizers)
 endif()
 
 add_compile_options(

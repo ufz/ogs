@@ -33,29 +33,28 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
 
     if(CMAKE_C_COMPILER_ID MATCHES "GNU")
         set(_ubsan_options
-            ",unreachable,integer-divide-by-zero,vla-bound,bounds,null"
+            "$<COMMA>unreachable$<COMMA>integer-divide-by-zero$<COMMA>vla-bound$<COMMA>bounds$<COMMA>null"
         )
     endif()
     if(CMAKE_C_COMPILER_ID MATCHES "Clang")
-        set(_ubsan_options
-            ",integer;-fsanitize-blacklist=${CMAKE_CURRENT_SOURCE_DIR}/scripts/test/clang_sanitizer_blacklist.txt"
-        )
+        set(_ubsan_options "$<COMMA>integer")
     endif()
     add_compile_options(
-        -fno-omit-frame-pointer
-        $<$<BOOL:${ENABLE_ASAN}>:-fsanitize=address
-        -fno-omit-frame-pointer>
+        $<$<BOOL:${ENABLE_ASAN}>:-fsanitize=address>
+        $<$<BOOL:${ENABLE_ASAN}>:-fno-omit-frame-pointer>
         $<$<BOOL:${ENABLE_LSAN}>:-fsanitize=leak>
         $<$<BOOL:${ENABLE_MSAN}>:-fsanitize=memory>
         $<$<BOOL:${ENABLE_TSAN}>:-fsanitize=thread>
         $<$<BOOL:${ENABLE_UBSAN}>:-fsanitize=undefined${_ubsan_options}>
+        $<$<AND:$<BOOL:${ENABLE_UBSAN}>,$<C_COMPILER_ID:Clang>>:-fsanitize-blacklist=${CMAKE_CURRENT_SOURCE_DIR}/scripts/test/clang_sanitizer_blacklist.txt>
     )
     add_link_options(
-        $<$<BOOL:${ENABLE_ASAN}>:-fsanitize=address
-        -fno-omit-frame-pointer>
+        $<$<BOOL:${ENABLE_ASAN}>:-fsanitize=address>
+        $<$<BOOL:${ENABLE_ASAN}>:-fno-omit-frame-pointer>
         $<$<BOOL:${ENABLE_LSAN}>:-fsanitize=leak>
         $<$<BOOL:${ENABLE_MSAN}>:-fsanitize=memory>
         $<$<BOOL:${ENABLE_TSAN}>:-fsanitize=thread>
         $<$<BOOL:${ENABLE_UBSAN}>:-fsanitize=undefined${_ubsan_options}>
+        $<$<AND:$<BOOL:${ENABLE_UBSAN}>,$<C_COMPILER_ID:Clang>>:-fsanitize-blacklist=${CMAKE_CURRENT_SOURCE_DIR}/scripts/test/clang_sanitizer_blacklist.txt>
     )
 endif()
