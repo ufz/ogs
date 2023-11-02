@@ -23,7 +23,6 @@ class LocalToGlobalIndexMap;
 namespace ProcessLib
 {
 struct CoupledSolutionsForStaggeredScheme;
-struct LocalCoupledSolutions;
 
 /*! Common interface for local assemblers
  * NumLib::ODESystemTag::FirstOrderImplicitQuasilinear ODE systems.
