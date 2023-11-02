@@ -92,21 +92,11 @@ void postTimestepForAllProcesses(
     std::vector<GlobalVector*> const& process_solutions,
     std::vector<GlobalVector*> const& process_solutions_prev)
 {
-    // All _per_process_data share the first process.
-    bool const is_staggered_coupling =
-        !isMonolithicProcess(*per_process_data[0]);
-
     for (auto& process_data : per_process_data)
     {
         auto const process_id = process_data->process_id;
         auto& pcs = process_data->process;
 
-        if (is_staggered_coupling)
-        {
-            CoupledSolutionsForStaggeredScheme coupled_solutions(
-                process_solutions);
-            pcs.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
-        }
         pcs.computeSecondaryVariable(t, dt, process_solutions,
                                      *process_solutions_prev[process_id],
                                      process_id);
@@ -737,16 +727,6 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             BaseLib::RunTime time_timestep_process;
             time_timestep_process.start();
 
-            // The following setting of coupled_solutions can be removed only if
-            // the CoupledSolutionsForStaggeredScheme and related functions are
-            // removed totally from the computation of the secondary variable
-            // and from post-time functions.
-            CoupledSolutionsForStaggeredScheme coupled_solutions(
-                _process_solutions);
-
-            process_data->process.setCoupledSolutionsForStaggeredScheme(
-                &coupled_solutions);
-
             nonlinear_solver_status = solveOneTimeStepOneProcess(
                 _process_solutions, _process_solutions_prev, timestep_id, t, dt,
                 *process_data, _outputs);
@@ -929,11 +909,6 @@ void TimeLoop::preOutputInitialConditions(const double t) const
         }
         else
         {
-            CoupledSolutionsForStaggeredScheme coupled_solutions(
-                _process_solutions);
-
-            process_data->process.setCoupledSolutionsForStaggeredScheme(
-                &coupled_solutions);
             process_data->process
                 .setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
                     process_id);
