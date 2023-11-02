@@ -312,17 +312,15 @@ public:
         std::vector<
             std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
             dof_tables,
-        GlobalVector const& x, double const t, double& crack_volume,
-        CoupledSolutionsForStaggeredScheme const* const cpl_xs) override;
+        std::vector<GlobalVector*> const& x, double const t,
+        double& crack_volume) override;
 
-    void computeEnergy(
-        std::size_t mesh_item_id,
-        std::vector<
-            std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
-            dof_tables,
-        GlobalVector const& x, double const t, double& elastic_energy,
-        double& surface_energy, double& pressure_work,
-        CoupledSolutionsForStaggeredScheme const* const cpl_xs) override;
+    void computeEnergy(std::size_t mesh_item_id,
+                       std::vector<std::reference_wrapper<
+                           NumLib::LocalToGlobalIndexMap>> const& dof_tables,
+                       std::vector<GlobalVector*> const& x, double const t,
+                       double& elastic_energy, double& surface_energy,
+                       double& pressure_work) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override

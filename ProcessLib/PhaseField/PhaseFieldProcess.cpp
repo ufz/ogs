@@ -303,9 +303,9 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
 
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerInterface::computeEnergy, _local_assemblers,
-            pv.getActiveElementIDs(), dof_tables, *x[process_id], t,
+            pv.getActiveElementIDs(), dof_tables, x, t,
             _process_data.elastic_energy, _process_data.surface_energy,
-            _process_data.pressure_work, _coupled_solutions);
+            _process_data.pressure_work);
 
 #ifdef USE_PETSC
         double const elastic_energy = _process_data.elastic_energy;
@@ -342,7 +342,7 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     {
         if (_process_data.propagating_pressurized_crack)
         {
-            auto& u = *_coupled_solutions->coupled_xs[0];
+            auto& u = *x[0];
             MathLib::LinAlg::scale(const_cast<GlobalVector&>(u),
                                    1 / _process_data.pressure);
         }
@@ -360,8 +360,7 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::computeCrackIntegral, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, x, t, _process_data.crack_volume,
-        _coupled_solutions);
+        pv.getActiveElementIDs(), dof_tables, x, t, _process_data.crack_volume);
 
 #ifdef USE_PETSC
     double const crack_volume = _process_data.crack_volume;
@@ -381,7 +380,8 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
             _process_data.pressure;
         INFO("Internal pressure: {:g} and Pressure error: {:.4e}",
              _process_data.pressure, _process_data.pressure_error);
-        auto& u = *_coupled_solutions->coupled_xs[0];
+
+        auto& u = *x[0];
         MathLib::LinAlg::scale(const_cast<GlobalVector&>(u),
                                _process_data.pressure);
     }
