@@ -102,10 +102,6 @@ public:
     {
         return _use_monolithic_scheme;
     }
-    virtual void setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
-        int const /*process_id*/)
-    {
-    }
 
     virtual void extrapolateIntegrationPointValuesToNodes(
         const double /*t*/,

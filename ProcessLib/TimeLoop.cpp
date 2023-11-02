@@ -907,10 +907,6 @@ void TimeLoop::preOutputInitialConditions(const double t) const
         }
         else
         {
-            process_data->process
-                .setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
-                    process_id);
-
             // dummy value to handle the time derivative terms more or less
             // correctly, i.e. to ignore them.
             double const dt = 1;
