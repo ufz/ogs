@@ -10,7 +10,6 @@
 
 #include "Process.h"
 
-#include "CoupledSolutionsForStaggeredScheme.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
@@ -37,7 +36,6 @@ Process::Process(
       _jacobian_assembler(std::move(jacobian_assembler)),
       _global_assembler(*_jacobian_assembler),
       _use_monolithic_scheme(use_monolithic_scheme),
-      _coupled_solutions(nullptr),
       _integration_order(integration_order),
       _process_variables(std::move(process_variables)),
       _boundary_conditions(

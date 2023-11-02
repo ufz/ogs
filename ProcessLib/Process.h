@@ -96,12 +96,6 @@ public:
     MathLib::MatrixSpecifications getMatrixSpecifications(
         const int process_id) const override;
 
-    void setCoupledSolutionsForStaggeredScheme(
-        CoupledSolutionsForStaggeredScheme* const coupled_solutions)
-    {
-        _coupled_solutions = coupled_solutions;
-    }
-
     void updateDeactivatedSubdomains(double const time, const int process_id);
 
     virtual bool isMonolithicSchemeUsed() const
@@ -368,10 +362,6 @@ protected:
     VectorMatrixAssembler _global_assembler;
 
     const bool _use_monolithic_scheme;
-
-    /// Pointer to CoupledSolutionsForStaggeredScheme, which contains the
-    /// references to the solutions of the coupled processes.
-    CoupledSolutionsForStaggeredScheme* _coupled_solutions;
 
     /// Order of the integration method for element-wise integration.
     /// The Gauss-Legendre integration method and available orders is
