@@ -12,7 +12,6 @@
 
 #include <cassert>
 
-#include "CoupledSolutionsForStaggeredScheme.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 

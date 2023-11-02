@@ -11,7 +11,6 @@
 #pragma once
 
 #include "NumLib/DOF/DOFTableUtil.h"
-#include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "ThermoMechanicalPhaseFieldFEM.h"
 
 namespace ProcessLib

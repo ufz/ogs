@@ -23,7 +23,6 @@
 #include "NumLib/Function/Interpolation.h"
 #include "NumLib/NumericalStability/AdvectionMatrixAssembler.h"
 #include "NumLib/NumericalStability/HydrodynamicDispersion.h"
-#include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "ThermoHydroMechanicsFEM.h"
 

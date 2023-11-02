@@ -15,6 +15,7 @@
 #include "MonolithicHTFEM.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "StaggeredHTFEM.h"

@@ -22,7 +22,6 @@ class LocalToGlobalIndexMap;
 
 namespace ProcessLib
 {
-struct CoupledSolutionsForStaggeredScheme;
 
 class LocalAssemblerInterface;
 

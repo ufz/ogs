@@ -18,7 +18,6 @@
 
 namespace ProcessLib
 {
-struct CoupledSolutionsForStaggeredScheme;
 
 namespace HT
 {
