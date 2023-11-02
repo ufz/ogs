@@ -306,8 +306,8 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
 
 template <int DisplacementDim>
 void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
-    postNonLinearSolverConcreteProcess(GlobalVector const& x,
-                                       GlobalVector const& x_prev,
+    postNonLinearSolverConcreteProcess(std::vector<GlobalVector*> const& x,
+                                       std::vector<GlobalVector*> const& x_prev,
                                        const double t, double const dt,
                                        const int process_id)
 {

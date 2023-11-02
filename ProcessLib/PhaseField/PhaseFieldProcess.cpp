@@ -333,7 +333,8 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
-    GlobalVector const& x, GlobalVector const& /*x_prev*/, const double t,
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& /*x_prev*/, const double t,
     double const /*dt*/, const int process_id)
 {
     _process_data.crack_volume = 0.0;

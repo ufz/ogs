@@ -256,8 +256,7 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
         return nonlinear_solver_status;
     }
 
-    process.postNonLinearSolver(*x[process_id], *x_prev[process_id], t, delta_t,
-                                process_id);
+    process.postNonLinearSolver(x, x_prev, t, delta_t, process_id);
 
     return nonlinear_solver_status;
 }

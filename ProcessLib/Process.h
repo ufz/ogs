@@ -68,7 +68,8 @@ public:
 
     /// Calculates secondary variables, e.g. stress and strain for deformation
     /// analysis, only after nonlinear solver being successfully conducted.
-    void postNonLinearSolver(GlobalVector const& x, GlobalVector const& x_prev,
+    void postNonLinearSolver(std::vector<GlobalVector*> const& x,
+                             std::vector<GlobalVector*> const& x_prev,
                              const double t, double const dt,
                              int const process_id);
 
@@ -267,8 +268,9 @@ private:
     }
 
     virtual void postNonLinearSolverConcreteProcess(
-        GlobalVector const& /*x*/, GlobalVector const& /*x_prev*/,
-        const double /*t*/, double const /*dt*/, int const /*process_id*/)
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<GlobalVector*> const& /*x_prev*/, const double /*t*/,
+        double const /*dt*/, int const /*process_id*/)
     {
     }
 

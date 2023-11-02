@@ -97,10 +97,10 @@ private:
                                      const double t, const double dt,
                                      int const process_id) override;
 
-    void postNonLinearSolverConcreteProcess(GlobalVector const& x,
-                                            GlobalVector const& x_prev,
-                                            const double t, double const dt,
-                                            int const process_id) override;
+    void postNonLinearSolverConcreteProcess(
+        std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, const double t,
+        double const dt, int const process_id) override;
 
     void setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
                                              double const t,

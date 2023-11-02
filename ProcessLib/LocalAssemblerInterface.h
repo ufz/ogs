@@ -97,7 +97,8 @@ public:
 
     void postNonLinearSolver(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
-                             GlobalVector const& x, GlobalVector const& x_prev,
+                             std::vector<GlobalVector*> const& x,
+                             std::vector<GlobalVector*> const& x_prev,
                              double const t, double const dt,
                              bool const use_monolithic_scheme,
                              int const process_id);
