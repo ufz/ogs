@@ -1,12 +1,11 @@
-<!-- #raw -->
++++
 author = "Thomas Fischer, Frieder Loer"
 date = "2019-10-01T11:54:02+01:00"
-title = "Heatconduction (Line Source Term)"
+title = "Heat conduction (Line Source Term)"
 weight = 121
 project = ["Parabolic/T/1D_line_source_term_tests/line_source_term.prj"]
 image = "temperature_distribution_line_source_term_in_cylinder.png"
-<!--eofm-->
-<!-- #endraw -->
++++
 
 ## Equations
 
