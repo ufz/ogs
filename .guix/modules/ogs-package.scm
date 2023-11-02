@@ -240,7 +240,7 @@
             `(#:tests? #f)
         )))
 
-(define iphreeqc
+(define-public iphreeqc
       (package
         (name "iphreeqc")
         (synopsis "Modules Based on the Geochemical Model PHREEQC for use in scripting and programming languages")
