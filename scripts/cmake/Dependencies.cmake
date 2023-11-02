@@ -81,7 +81,7 @@ CPMFindPackage(
 )
 
 if(_build_chemistry_lib)
-    if(BUILD_GUIX)
+    if(GUIX_BUILD)
         find_library(IPhreeqc iphreeqc REQUIRED)
     else()
         CPMAddPackage(
