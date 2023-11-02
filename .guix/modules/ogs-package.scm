@@ -247,7 +247,7 @@
         (license license:public-domain)
         (description "")
         (home-page "https://www.usgs.gov/software/phreeqc-version-3")
-        (version "3.5.0-1")
+        (version "3.5.0-3")
         (source (origin
                   (method git-fetch)
                   (uri (git-reference
@@ -255,7 +255,7 @@
                     (commit version)))
                   (sha256
                    (base32
-                    "1liwp6hkl2dbrl8bki9gzsw77s3prv12sdikmwz5h8ffxwdrnwli"))))
+                    "12wiqyzpzx89k9c7q07w4ypnppvi6s88k6jjsnlnvaxfafyvrbw3"))))
         (build-system cmake-build-system)
         (arguments
             `(#:tests? #f)
