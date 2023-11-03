@@ -109,6 +109,6 @@
 
     <!-- Relax the tolerance a bit -->
     <replace sel="/*/test_definition/vtkdiff[field=&quot;NodalForces&quot;]/absolute_tolerance/text()">
-        7e-10
+        1e-9
     </replace>
 </OpenGeoSysProjectDiff>

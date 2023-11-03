@@ -133,7 +133,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
 
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::assembleConcreteProcess(
-    const double t, double const dt, std::vector<GlobalVector*> const& x,
+    double const t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
@@ -155,7 +155,7 @@ void SmallDeformationProcess<DisplacementDim>::assembleConcreteProcess(
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::
     assembleWithJacobianConcreteProcess(
-        const double t, double const dt, std::vector<GlobalVector*> const& x,
+        double const t, double const dt, std::vector<GlobalVector*> const& x,
         std::vector<GlobalVector*> const& x_prev, int const process_id,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
@@ -180,7 +180,7 @@ void SmallDeformationProcess<DisplacementDim>::
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& x_prev, const double t, const double dt,
+    std::vector<GlobalVector*> const& x_prev, double const t, double const dt,
     int const process_id)
 {
     DBUG("PostTimestep SmallDeformationProcess.");
@@ -206,7 +206,7 @@ void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_prev, const int process_id)
+    GlobalVector const& x_prev, int const process_id)
 {
     DBUG("Compute the secondary variables for SmallDeformationProcess.");
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;

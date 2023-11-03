@@ -49,7 +49,7 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override;
 
-    void assembleConcreteProcess(const double t, double const dt,
+    void assembleConcreteProcess(double const t, double const dt,
                                  std::vector<GlobalVector*> const& x,
                                  std::vector<GlobalVector*> const& x_prev,
                                  int const process_id, GlobalMatrix& M,
@@ -63,13 +63,13 @@ private:
 
     void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                      std::vector<GlobalVector*> const& x_prev,
-                                     const double t, const double dt,
+                                     double const t, double const dt,
                                      int const process_id) override;
 
     void computeSecondaryVariableConcrete(double const t, double const dt,
                                           std::vector<GlobalVector*> const& x,
                                           GlobalVector const& x_prev,
-                                          const int process_id) override;
+                                          int const process_id) override;
 
 private:
     SmallDeformationProcessData<DisplacementDim> _process_data;
