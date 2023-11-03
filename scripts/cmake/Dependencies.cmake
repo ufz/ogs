@@ -82,7 +82,11 @@ CPMFindPackage(
 
 if(_build_chemistry_lib)
     if(GUIX_BUILD)
-        find_library(IPhreeqc NAMES iphreeqc IPhreeqcrwdi REQUIRED)
+        find_library(
+            IPhreeqc_LIBRARY NAMES iphreeqc IPhreeqc IPhreeqcrwdi REQUIRED
+        )
+        add_library(IPhreeqc INTERFACE IMPORTED)
+        target_link_libraries(IPhreeqc INTERFACE ${IPhreeqc_LIBRARY})
     else()
         CPMAddPackage(
             NAME iphreeqc GITHUB_REPOSITORY ufz/iphreeqc GIT_TAG 3.5.0-1
