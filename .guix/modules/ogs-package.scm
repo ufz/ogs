@@ -86,7 +86,7 @@
                   zlib
                   vtk
                   xmlpatch))
-    (native-inputs (list git ninja nss-certs)) ; TODO: cpm
+    (native-inputs (list git ninja nss-certs))
     (synopsis "OpenGeoSys")
     (description
      "Simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media")

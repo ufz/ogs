@@ -1,5 +1,6 @@
 variables:
   GUIX_PETSC_CONTAINER: /data/ogs/apptainer/guix/ogs-petsc_head.squashfs
+  XDMF_CONTAINER: /data/ogs/apptainer/ogscm/gcc-default-system-cmake-3491dc36-2457864993c8.sif
   GUIX_COMMIT: 8d70ff3a49f7cdf0eab93b3a1c54ec2f016afc4a
 
 build guix:
@@ -55,6 +56,6 @@ test guix container eve:
     - while true; do grep "$jid" < <(squeue -hj "$jid") || break; sleep 10; done &> /dev/null & tail -F /work/$USER/test-guix-container_$jid.out --pid="$!" || true
     - exit_code=$(sacct -j $jid.0 --format=ExitCode --noheader | cut -d':' -f1)
     - cd $work_dir
-    - apptainer exec ${GUIX_PETSC_CONTAINER} xdmfdiff -a pressure -b pressure --rel 1e-3 --abs 1e-3 EllipticPETSc/cube_1e3_np3.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf
-    - apptainer exec ${GUIX_PETSC_CONTAINER} xdmfdiff -a v -b v --rel 1e-3 --abs 1e-3 EllipticPETSc/cube_1e3_np3.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf
+    - apptainer exec ${XDMF_CONTAINER} xdmfdiff -a pressure -b pressure --rel 1e-3 --abs 1e-3 EllipticPETSc/cube_1e3_np3.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf
+    - apptainer exec ${XDMF_CONTAINER} xdmfdiff -a v -b v --rel 1e-3 --abs 1e-3 EllipticPETSc/cube_1e3_np3.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf
     - exit ${exit_code}
