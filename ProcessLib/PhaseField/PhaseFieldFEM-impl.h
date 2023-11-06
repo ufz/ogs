@@ -259,12 +259,9 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     computeCrackIntegral(std::size_t mesh_item_id,
                          std::vector<std::reference_wrapper<
                              NumLib::LocalToGlobalIndexMap>> const& dof_tables,
-                         GlobalVector const& /*x*/, double const /*t*/,
-                         double& crack_volume,
-                         CoupledSolutionsForStaggeredScheme const* const cpl_xs)
+                         std::vector<GlobalVector*> const& x,
+                         double const /*t*/, double& crack_volume)
 {
-    assert(cpl_xs != nullptr);
-
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
     indices_of_processes.reserve(dof_tables.size());
     std::transform(dof_tables.begin(), dof_tables.end(),
@@ -272,8 +269,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
                    [&](NumLib::LocalToGlobalIndexMap const& dof_table)
                    { return NumLib::getIndices(mesh_item_id, dof_table); });
 
-    auto local_coupled_xs =
-        getCoupledLocalSolutions(cpl_xs->coupled_xs, indices_of_processes);
+    auto local_coupled_xs = getCoupledLocalSolutions(x, indices_of_processes);
     assert(local_coupled_xs.size() == displacement_size + phasefield_size);
 
     auto const d = Eigen::Map<PhaseFieldVector const>(
@@ -314,12 +310,9 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::computeEnergy(
     std::size_t mesh_item_id,
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
         dof_tables,
-    GlobalVector const& /*x*/, double const t, double& elastic_energy,
-    double& surface_energy, double& pressure_work,
-    CoupledSolutionsForStaggeredScheme const* const cpl_xs)
+    std::vector<GlobalVector*> const& x, double const t, double& elastic_energy,
+    double& surface_energy, double& pressure_work)
 {
-    assert(cpl_xs != nullptr);
-
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
     indices_of_processes.reserve(dof_tables.size());
     std::transform(dof_tables.begin(), dof_tables.end(),
@@ -328,7 +321,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::computeEnergy(
                    { return NumLib::getIndices(mesh_item_id, dof_table); });
 
     auto const local_coupled_xs =
-        getCoupledLocalSolutions(cpl_xs->coupled_xs, indices_of_processes);
+        getCoupledLocalSolutions(x, indices_of_processes);
     assert(local_coupled_xs.size() == displacement_size + phasefield_size);
 
     auto const d = Eigen::Map<PhaseFieldVector const>(

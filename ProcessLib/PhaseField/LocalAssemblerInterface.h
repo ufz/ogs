@@ -58,17 +58,17 @@ struct PhaseFieldLocalAssemblerInterface
         std::vector<
             std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
             dof_tables,
-        GlobalVector const& x, double const t, double& crack_volume,
-        CoupledSolutionsForStaggeredScheme const* const cpl_xs) = 0;
+        std::vector<GlobalVector*> const& x, double const t,
+        double& crack_volume) = 0;
 
     virtual void computeEnergy(
         std::size_t mesh_item_id,
         std::vector<
             std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
             dof_tables,
-        GlobalVector const& x, double const t, double& elastic_energy,
-        double& surface_energy, double& pressure_work,
-        CoupledSolutionsForStaggeredScheme const* const cpl_xs) = 0;
+        std::vector<GlobalVector*> const& x, double const t,
+        double& elastic_energy, double& surface_energy,
+        double& pressure_work) = 0;
 };
 
 }  // namespace PhaseField

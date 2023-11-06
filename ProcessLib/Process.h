@@ -35,7 +35,6 @@ class Mesh;
 
 namespace ProcessLib
 {
-struct CoupledSolutionsForStaggeredScheme;
 
 class Process
     : public NumLib::ODESystem<  // TODO: later on use a simpler ODE system
@@ -68,7 +67,8 @@ public:
 
     /// Calculates secondary variables, e.g. stress and strain for deformation
     /// analysis, only after nonlinear solver being successfully conducted.
-    void postNonLinearSolver(GlobalVector const& x, GlobalVector const& x_prev,
+    void postNonLinearSolver(std::vector<GlobalVector*> const& x,
+                             std::vector<GlobalVector*> const& x_prev,
                              const double t, double const dt,
                              int const process_id);
 
@@ -96,21 +96,11 @@ public:
     MathLib::MatrixSpecifications getMatrixSpecifications(
         const int process_id) const override;
 
-    void setCoupledSolutionsForStaggeredScheme(
-        CoupledSolutionsForStaggeredScheme* const coupled_solutions)
-    {
-        _coupled_solutions = coupled_solutions;
-    }
-
     void updateDeactivatedSubdomains(double const time, const int process_id);
 
     virtual bool isMonolithicSchemeUsed() const
     {
         return _use_monolithic_scheme;
-    }
-    virtual void setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
-        int const /*process_id*/)
-    {
     }
 
     virtual void extrapolateIntegrationPointValuesToNodes(
@@ -273,8 +263,9 @@ private:
     }
 
     virtual void postNonLinearSolverConcreteProcess(
-        GlobalVector const& /*x*/, GlobalVector const& /*x_prev*/,
-        const double /*t*/, double const /*dt*/, int const /*process_id*/)
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<GlobalVector*> const& /*x_prev*/, const double /*t*/,
+        double const /*dt*/, int const /*process_id*/)
     {
     }
 
@@ -368,10 +359,6 @@ protected:
     VectorMatrixAssembler _global_assembler;
 
     const bool _use_monolithic_scheme;
-
-    /// Pointer to CoupledSolutionsForStaggeredScheme, which contains the
-    /// references to the solutions of the coupled processes.
-    CoupledSolutionsForStaggeredScheme* _coupled_solutions;
 
     /// Order of the integration method for element-wise integration.
     /// The Gauss-Legendre integration method and available orders is

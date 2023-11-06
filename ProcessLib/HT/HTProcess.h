@@ -77,9 +77,6 @@ public:
                             double const t,
                             std::vector<GlobalVector*> const& x) const override;
 
-    void setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
-        int const process_id) override;
-
     void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                      std::vector<GlobalVector*> const& x_prev,
                                      const double t,

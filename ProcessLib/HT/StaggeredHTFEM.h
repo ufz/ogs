@@ -24,7 +24,6 @@
 
 namespace ProcessLib
 {
-struct LocalCoupledSolutions;
 
 namespace HT
 {

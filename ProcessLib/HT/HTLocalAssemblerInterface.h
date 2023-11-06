@@ -18,7 +18,6 @@
 
 namespace ProcessLib
 {
-struct CoupledSolutionsForStaggeredScheme;
 
 namespace HT
 {
@@ -46,12 +45,6 @@ class HTLocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
 {
 public:
     HTLocalAssemblerInterface() = default;
-    void setStaggeredCoupledSolutions(
-        std::size_t const /*mesh_item_id*/,
-        CoupledSolutionsForStaggeredScheme* const coupling_term)
-    {
-        _coupled_solutions = coupling_term;
-    }
 
     virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double /*t*/,
@@ -63,18 +56,6 @@ public:
                             double const t,
                             std::vector<double> const& local_x) const override =
         0;
-
-protected:
-    // TODO: remove _coupled_solutions or move integration point data from
-    // local assembler class to a new class to make local assembler unique
-    // for each process.
-    /** Pointer to CoupledSolutionsForStaggeredScheme that is set in a
-     * member of Process class,
-     * setCoupledTermForTheStaggeredSchemeToLocalAssemblers. It is used for
-     * calculate the secondary variables like velocity for coupled
-     * processes.
-     */
-    CoupledSolutionsForStaggeredScheme* _coupled_solutions{nullptr};
 };
 
 }  // namespace HT

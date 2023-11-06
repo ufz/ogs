@@ -15,6 +15,7 @@
 #include "MonolithicHTFEM.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "StaggeredHTFEM.h"
@@ -135,17 +136,6 @@ void HTProcess::assembleWithJacobianConcreteProcess(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
         x_prev, process_id, M, K, b, Jac);
-}
-
-void HTProcess::setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
-    int const process_id)
-{
-    DBUG("Set the coupled term for the staggered scheme to local assemblers.");
-
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-    GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &HTLocalAssemblerInterface::setStaggeredCoupledSolutions,
-        _local_assemblers, pv.getActiveElementIDs(), _coupled_solutions);
 }
 
 std::tuple<NumLib::LocalToGlobalIndexMap*, bool>

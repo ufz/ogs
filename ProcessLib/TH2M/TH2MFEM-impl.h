@@ -20,7 +20,6 @@
 #include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
-#include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 
 namespace ProcessLib

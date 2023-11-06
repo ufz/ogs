@@ -18,7 +18,6 @@
 namespace ProcessLib
 {
 class LocalAssemblerInterface;
-struct LocalCoupledSolutions;
 
 //! Base class for Jacobian assemblers.
 class AbstractJacobianAssembler

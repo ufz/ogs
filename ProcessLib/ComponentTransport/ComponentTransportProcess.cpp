@@ -22,6 +22,7 @@
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/ODESolver/NonlinearSystem.h"
+#include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFlux.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/ComputeResiduum.h"

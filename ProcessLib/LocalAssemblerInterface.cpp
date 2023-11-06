@@ -12,7 +12,6 @@
 
 #include <cassert>
 
-#include "CoupledSolutionsForStaggeredScheme.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 
@@ -162,13 +161,14 @@ void LocalAssemblerInterface::postTimestep(
 
 void LocalAssemblerInterface::postNonLinearSolver(
     std::size_t const mesh_item_id,
-    NumLib::LocalToGlobalIndexMap const& dof_table, GlobalVector const& x,
-    GlobalVector const& x_prev, double const t, double const dt,
+    NumLib::LocalToGlobalIndexMap const& dof_table,
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_prev, double const t, double const dt,
     bool const use_monolithic_scheme, int const process_id)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
-    auto const local_x = x.get(indices);
-    auto const local_x_prev = x_prev.get(indices);
+    auto const local_x = x[process_id]->get(indices);
+    auto const local_x_prev = x_prev[process_id]->get(indices);
 
     postNonLinearSolverConcrete(local_x, local_x_prev, t, dt,
                                 use_monolithic_scheme, process_id);

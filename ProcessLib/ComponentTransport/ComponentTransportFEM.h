@@ -30,7 +30,6 @@
 #include "NumLib/NumericalStability/AdvectionMatrixAssembler.h"
 #include "NumLib/NumericalStability/HydrodynamicDispersion.h"
 #include "ParameterLib/Parameter.h"
-#include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/ProcessVariable.h"
 

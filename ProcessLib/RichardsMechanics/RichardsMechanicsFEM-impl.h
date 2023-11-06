@@ -22,7 +22,6 @@
 #include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
-#include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "ProcessLib/Utils/TransposeInPlace.h"
 

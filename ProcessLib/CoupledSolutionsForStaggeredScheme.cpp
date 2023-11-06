@@ -18,16 +18,6 @@
 
 namespace ProcessLib
 {
-CoupledSolutionsForStaggeredScheme::CoupledSolutionsForStaggeredScheme(
-    std::vector<GlobalVector*> const& coupled_xs_)
-    : coupled_xs(coupled_xs_)
-{
-    for (auto const* coupled_x : coupled_xs)
-    {
-        MathLib::LinAlg::setLocalAccessibleVector(*coupled_x);
-    }
-}
-
 std::vector<double> getCoupledLocalSolutions(
     std::vector<GlobalVector*> const& global_solutions,
     std::vector<std::vector<GlobalIndexType>> const& indices)

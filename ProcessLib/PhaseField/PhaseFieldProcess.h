@@ -82,10 +82,10 @@ private:
                                      const double t, const double delta_t,
                                      int const process_id) override;
 
-    void postNonLinearSolverConcreteProcess(GlobalVector const& x,
-                                            GlobalVector const& x_prev,
-                                            const double t, double const dt,
-                                            int const process_id) override;
+    void postNonLinearSolverConcreteProcess(
+        std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, const double t,
+        double const dt, int const process_id) override;
 
     void updateConstraints(GlobalVector& lower, GlobalVector& upper,
                            int const process_id) override;

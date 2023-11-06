@@ -421,8 +421,9 @@ void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
-    GlobalVector const& x, GlobalVector const& x_prev, const double t,
-    double const dt, const int process_id)
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_prev, const double t, double const dt,
+    const int process_id)
 {
     DBUG("PostNonLinearSolver HydroMechanicsProcess.");
 

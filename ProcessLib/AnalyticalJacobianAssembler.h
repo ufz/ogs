@@ -20,8 +20,6 @@ class ConfigTree;
 namespace ProcessLib
 {
 
-struct LocalCoupledSolutions;
-
 //! Assembles the Jacobian matrix using a provided "analytical" method from the
 //! local assembler.
 class AnalyticalJacobianAssembler final : public AbstractJacobianAssembler

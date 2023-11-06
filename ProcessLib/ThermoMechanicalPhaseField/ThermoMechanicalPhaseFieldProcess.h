@@ -114,10 +114,10 @@ private:
                                      double const t, double const dt,
                                      int const process_id) override;
 
-    void postNonLinearSolverConcreteProcess(GlobalVector const& x,
-                                            GlobalVector const& x_prev,
-                                            const double t, double const dt,
-                                            int const process_id) override;
+    void postNonLinearSolverConcreteProcess(
+        std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, const double t,
+        double const dt, int const process_id) override;
 
     // To be replaced.
     NumLib::LocalToGlobalIndexMap& getDOFTableByProcessID(

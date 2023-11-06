@@ -14,7 +14,6 @@
 
 #include "BaseLib/Error.h"
 #include "BaseLib/RunTime.h"
-#include "CoupledSolutionsForStaggeredScheme.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
 #include "NumLib/ODESolver/PETScNonlinearSolver.h"
@@ -92,21 +91,11 @@ void postTimestepForAllProcesses(
     std::vector<GlobalVector*> const& process_solutions,
     std::vector<GlobalVector*> const& process_solutions_prev)
 {
-    // All _per_process_data share the first process.
-    bool const is_staggered_coupling =
-        !isMonolithicProcess(*per_process_data[0]);
-
     for (auto& process_data : per_process_data)
     {
         auto const process_id = process_data->process_id;
         auto& pcs = process_data->process;
 
-        if (is_staggered_coupling)
-        {
-            CoupledSolutionsForStaggeredScheme coupled_solutions(
-                process_solutions);
-            pcs.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
-        }
         pcs.computeSecondaryVariable(t, dt, process_solutions,
                                      *process_solutions_prev[process_id],
                                      process_id);
@@ -266,8 +255,7 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
         return nonlinear_solver_status;
     }
 
-    process.postNonLinearSolver(*x[process_id], *x_prev[process_id], t, delta_t,
-                                process_id);
+    process.postNonLinearSolver(x, x_prev, t, delta_t, process_id);
 
     return nonlinear_solver_status;
 }
@@ -737,16 +725,6 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             BaseLib::RunTime time_timestep_process;
             time_timestep_process.start();
 
-            // The following setting of coupled_solutions can be removed only if
-            // the CoupledSolutionsForStaggeredScheme and related functions are
-            // removed totally from the computation of the secondary variable
-            // and from post-time functions.
-            CoupledSolutionsForStaggeredScheme coupled_solutions(
-                _process_solutions);
-
-            process_data->process.setCoupledSolutionsForStaggeredScheme(
-                &coupled_solutions);
-
             nonlinear_solver_status = solveOneTimeStepOneProcess(
                 _process_solutions, _process_solutions_prev, timestep_id, t, dt,
                 *process_data, _outputs);
@@ -893,10 +871,6 @@ double TimeLoop::computeRelativeSolutionChangeFromPreviousTimestep(
 
 void TimeLoop::preOutputInitialConditions(const double t) const
 {
-    // All _per_process_data share the first process.
-    bool const is_staggered_coupling =
-        !isMonolithicProcess(*_per_process_data[0]);
-
     for (auto const& process_data : _per_process_data)
     {
         // If nonlinear solver diverged, the solution has already been
@@ -909,8 +883,6 @@ void TimeLoop::preOutputInitialConditions(const double t) const
         auto const process_id = process_data->process_id;
         auto& pcs = process_data->process;
 
-        if (!is_staggered_coupling)
-        {
             // dummy value to handle the time derivative terms more or less
             // correctly, i.e. to ignore them.
             double const dt = 1;
@@ -926,34 +898,6 @@ void TimeLoop::preOutputInitialConditions(const double t) const
             pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,
                                          *_process_solutions_prev[process_id],
                                          process_id);
-        }
-        else
-        {
-            CoupledSolutionsForStaggeredScheme coupled_solutions(
-                _process_solutions);
-
-            process_data->process.setCoupledSolutionsForStaggeredScheme(
-                &coupled_solutions);
-            process_data->process
-                .setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
-                    process_id);
-
-            // dummy value to handle the time derivative terms more or less
-            // correctly, i.e. to ignore them.
-            double const dt = 1;
-            process_data->time_disc->nextTimestep(t, dt);
-
-            pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
-
-            pcs.preOutput(_start_time, dt, _process_solutions,
-                          _process_solutions_prev, process_id);
-
-            // Update secondary variables, which might be uninitialized, before
-            // output.
-            pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,
-                                         *_process_solutions_prev[process_id],
-                                         process_id);
-        }
     }
 }
 }  // namespace ProcessLib

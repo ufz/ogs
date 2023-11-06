@@ -10,7 +10,6 @@
 
 #include "Process.h"
 
-#include "CoupledSolutionsForStaggeredScheme.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
@@ -37,7 +36,6 @@ Process::Process(
       _jacobian_assembler(std::move(jacobian_assembler)),
       _global_assembler(*_jacobian_assembler),
       _use_monolithic_scheme(use_monolithic_scheme),
-      _coupled_solutions(nullptr),
       _integration_order(integration_order),
       _process_variables(std::move(process_variables)),
       _boundary_conditions(
@@ -416,12 +414,20 @@ void Process::postTimestep(std::vector<GlobalVector*> const& x,
     _boundary_conditions[process_id].postTimestep(t, x, process_id);
 }
 
-void Process::postNonLinearSolver(GlobalVector const& x,
-                                  GlobalVector const& x_prev, const double t,
-                                  double const dt, int const process_id)
+void Process::postNonLinearSolver(std::vector<GlobalVector*> const& x,
+                                  std::vector<GlobalVector*> const& x_prev,
+                                  const double t, double const dt,
+                                  int const process_id)
 {
-    MathLib::LinAlg::setLocalAccessibleVector(x);
-    MathLib::LinAlg::setLocalAccessibleVector(x_prev);
+    for (auto* const solution : x)
+    {
+        MathLib::LinAlg::setLocalAccessibleVector(*solution);
+    }
+    for (auto* const solution : x_prev)
+    {
+        MathLib::LinAlg::setLocalAccessibleVector(*solution);
+    }
+
     postNonLinearSolverConcreteProcess(x, x_prev, t, dt, process_id);
 }
 
