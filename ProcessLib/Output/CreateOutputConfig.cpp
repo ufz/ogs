@@ -134,7 +134,7 @@ OutputConfig createOutputConfig(
     {
         if (hdf)
         {
-            //! \ogs_file_param{prj__time_loop__output__hdf__number_of_files}
+            //! \ogs_file_param{prj__time_loop__output__hdf__chunk_size_bytes}
             return hdf->getConfigParameter<unsigned int>("chunk_size_bytes");
         }
         return 1048576;  // default chunk size in bytes according to
