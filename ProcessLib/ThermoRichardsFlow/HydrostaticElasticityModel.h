@@ -30,12 +30,13 @@ struct HydrostaticElasticityModel : SimplifiedElasticityModel
         ParameterLib::SpatialPosition const& pos, double const t,
         double const dt) override
     {
-        return bulkCompressibilityFromYoungsModulus(
-            solid_phase, variable_array, pos, t, dt);
+        return bulkCompressibilityFromYoungsModulus(solid_phase, variable_array,
+                                                    pos, t, dt);
     }
 
     double thermalExpansivityContribution(
-        Eigen::Matrix<double, 3, 3> const& solid_linear_thermal_expansion_coefficient,
+        Eigen::Matrix<double, 3, 3> const&
+            solid_linear_thermal_expansion_coefficient,
         MaterialPropertyLib::Phase const& /*solid_phase*/,
         MaterialPropertyLib::VariableArray const& /*variable_array*/,
         ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,

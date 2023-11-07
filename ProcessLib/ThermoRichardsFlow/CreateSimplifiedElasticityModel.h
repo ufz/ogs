@@ -17,13 +17,12 @@ namespace ThermoRichardsFlow
 {
 struct SimplifiedElasticityModel;
 }
-}
+}  // namespace ProcessLib
 
 namespace BaseLib
 {
 class ConfigTree;
 }
-
 
 namespace ProcessLib
 {
