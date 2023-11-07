@@ -387,3 +387,8 @@ AddTest(
         Cylinder_r_1_h_1_prism_286k.vtu 3D_line_source_term_in_cylinder_286k_ts_1_t_1.000000.vtu analytical_solution_temperature temperature 4e-3 0.0
         REQUIREMENTS NOT OGS_USE_MPI
 )
+
+if(NOT OGS_USE_PETSC)
+    # Both tests above are executed in this notebook (without diff check). Maybe remove regular tests later?
+    NotebookTest(NOTEBOOKFILE Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/heatconduction-line_source_term.md RUNTIME 10)
+endif()

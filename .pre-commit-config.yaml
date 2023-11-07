@@ -56,7 +56,7 @@ repos:
         name: Run git diff --check
         entry: git diff --check --cached -- ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
         language: system
-        exclude: "ThirdParty/*|Tests/Data/*|web/static/images/xsd"
+        exclude: "ThirdParty/.*|Tests/Data/.*|web/static/images/xsd"
         stages: [commit, manual]
       - id: file-extensions
         name: Check file extensions
