@@ -10,9 +10,8 @@
 
 #pragma once
 
-#include "ProcessLib/Process.h"
-
 #include "LocalAssemblerInterface.h"
+#include "ProcessLib/Process.h"
 #include "ThermoMechanicsProcessData.h"
 
 namespace ProcessLib
