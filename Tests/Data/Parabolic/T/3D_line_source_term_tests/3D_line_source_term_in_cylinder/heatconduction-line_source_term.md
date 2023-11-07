@@ -5,6 +5,7 @@ title = "Heat conduction (Line Source Term)"
 weight = 121
 project = ["Parabolic/T/1D_line_source_term_tests/line_source_term.prj"]
 image = "temperature_distribution_line_source_term_in_cylinder.png"
+web_subsection = "heatconduction"
 +++
 
 ## Equations
