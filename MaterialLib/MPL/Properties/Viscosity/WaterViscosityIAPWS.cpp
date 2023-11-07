@@ -38,7 +38,6 @@ static double computeBarMu1Factor(
 static double computedBarMu_dbarT(const double barT, double bar_rho);
 static double computedBarMu_dbarRho(const double barT, double bar_rho);
 
-
 PropertyDataType WaterViscosityIAPWS::value(
     VariableArray const& variable_array,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
@@ -73,8 +72,9 @@ PropertyDataType WaterViscosityIAPWS::dValue(
             return ref_mu_ * computedBarMu_dbarRho(bar_T, bar_rho) / ref_rho_;
         default:
             OGS_FATAL(
-            "WaterViscosityIAPWS::dValue is implemented for "
-            "derivatives with respect to temperature and liquid density only.");
+                "WaterViscosityIAPWS::dValue is implemented for "
+                "derivatives with respect to temperature and liquid density "
+                "only.");
     }
 }
 

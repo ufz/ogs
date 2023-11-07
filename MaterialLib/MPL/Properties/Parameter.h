@@ -11,7 +11,6 @@
 
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/VariableType.h"
-
 #include "ParameterLib/Parameter.h"
 
 namespace MaterialPropertyLib

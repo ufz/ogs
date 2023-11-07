@@ -23,6 +23,6 @@ class VolumeFractionAverage;
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<VolumeFractionAverage>
-createVolumeFractionAverage(BaseLib::ConfigTree const& config);
+std::unique_ptr<VolumeFractionAverage> createVolumeFractionAverage(
+    BaseLib::ConfigTree const& config);
 }  // namespace MaterialPropertyLib

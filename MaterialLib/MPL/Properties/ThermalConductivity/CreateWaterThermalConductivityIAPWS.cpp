@@ -29,6 +29,7 @@ std::unique_ptr<Property> createWaterThermalConductivityIAPWS(
     auto property_name = config.peekConfigParameter<std::string>("name");
 
     //! \ogs_file_param_special{properties__property__WaterThermalConductivityIAPWS}
-    return std::make_unique<WaterThermalConductivityIAPWS>(std::move(property_name));
+    return std::make_unique<WaterThermalConductivityIAPWS>(
+        std::move(property_name));
 }
 }  // namespace MaterialPropertyLib

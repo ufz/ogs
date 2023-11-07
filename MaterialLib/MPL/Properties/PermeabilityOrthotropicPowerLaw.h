@@ -14,7 +14,6 @@
 
 #include "MaterialLib/MPL/Property.h"
 
-
 namespace ParameterLib
 {
 struct CoordinateSystem;

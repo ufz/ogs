@@ -26,6 +26,5 @@ class Linear;
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<Linear> createLinear(
-    BaseLib::ConfigTree const& config);
+std::unique_ptr<Linear> createLinear(BaseLib::ConfigTree const& config);
 }  // namespace MaterialPropertyLib

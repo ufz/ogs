@@ -27,8 +27,9 @@ template <int GlobalDim>
 class EffectiveThermalConductivityPorosityMixing final : public Property
 {
 public:
-    EffectiveThermalConductivityPorosityMixing(std::string name,
-            ParameterLib::CoordinateSystem const* const local_coordinate_system);
+    EffectiveThermalConductivityPorosityMixing(
+        std::string name,
+        ParameterLib::CoordinateSystem const* const local_coordinate_system);
 
     void checkScale() const override;
 

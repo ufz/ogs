@@ -10,8 +10,8 @@
 
 #include "MaterialSpatialDistributionMap.h"
 #include "Medium.h"
-#include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
 #include "Phase.h"
 
 namespace MaterialPropertyLib

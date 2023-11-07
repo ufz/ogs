@@ -26,7 +26,10 @@ class LiquidViscosityVogels final : public Property
 {
 public:
     explicit LiquidViscosityVogels(std::string name, VogelsConstants constants)
-   : constants_(std::move(constants)) { name_ = std::move(name); };
+        : constants_(std::move(constants))
+    {
+        name_ = std::move(name);
+    };
 
     void checkScale() const override
     {
@@ -48,6 +51,7 @@ public:
                             Variable const variable,
                             ParameterLib::SpatialPosition const& pos,
                             double const t, double const dt) const override;
+
 private:
     const VogelsConstants constants_;
     // Coefficients Hi and Hij are given in two static arrays in the cpp file.

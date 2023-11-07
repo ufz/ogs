@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/Fluid/GibbsFreeEnergy/DimensionLessGibbsFreeEnergyRegion1.h"
+#include "MaterialLib/MPL/Property.h"
 
 namespace MaterialPropertyLib
 {
@@ -26,7 +26,11 @@ class WaterDensityIAPWSIF97Region1 final : public Property
 {
 public:
     explicit WaterDensityIAPWSIF97Region1(std::string name)
-        : gibbs_free_energy_(MaterialLib::Fluid::DimensionLessGibbsFreeEnergyRegion1())  { name_ = std::move(name); }
+        : gibbs_free_energy_(
+              MaterialLib::Fluid::DimensionLessGibbsFreeEnergyRegion1())
+    {
+        name_ = std::move(name);
+    }
     void checkScale() const override
     {
         if (!std::holds_alternative<Phase*>(scale_))
@@ -47,8 +51,10 @@ public:
                             Variable const variable,
                             ParameterLib::SpatialPosition const& pos,
                             double const t, double const dt) const override;
+
 private:
-    const MaterialLib::Fluid::DimensionLessGibbsFreeEnergyRegion1 gibbs_free_energy_;
+    const MaterialLib::Fluid::DimensionLessGibbsFreeEnergyRegion1
+        gibbs_free_energy_;
 
     static constexpr double ref_T_ = 1386;     ///< reference temperature in K.
     static constexpr double ref_p_ = 1.653e7;  ///< reference pressure in Pa.

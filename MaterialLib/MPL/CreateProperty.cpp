@@ -261,8 +261,8 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
 
     if (boost::iequals(property_type, "SaturationWeightedThermalConductivity"))
     {
-        return createSaturationWeightedThermalConductivity(
-            geometry_dimension, config, parameters);
+        return createSaturationWeightedThermalConductivity(geometry_dimension,
+                                                           config, parameters);
     }
 
     if (boost::iequals(property_type, "WaterDensityIAPWSIF97Region1"))

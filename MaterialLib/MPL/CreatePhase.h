@@ -26,7 +26,7 @@ namespace ParameterLib
 {
 struct ParameterBase;
 struct CoordinateSystem;
-}
+}  // namespace ParameterLib
 namespace MaterialPropertyLib
 {
 class Phase;
