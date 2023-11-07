@@ -12,13 +12,11 @@
 
 #include <vector>
 
-#include "NumLib/Fem/ShapeMatrixPolicy.h"
-
-#include "ProcessLib/LIE/Common/HMatrixUtils.h"
-#include "ProcessLib/LIE/HydroMechanics/HydroMechanicsProcessData.h"
-
 #include "HydroMechanicsLocalAssemblerInterface.h"
 #include "IntegrationPointDataFracture.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "ProcessLib/LIE/Common/HMatrixUtils.h"
+#include "ProcessLib/LIE/HydroMechanics/HydroMechanicsProcessData.h"
 
 namespace ProcessLib
 {
@@ -92,8 +90,7 @@ private:
     using IntegrationPointDataType =
         IntegrationPointDataFracture<HMatricesType,
                                      ShapeMatricesTypeDisplacement,
-                                     ShapeMatricesTypePressure,
-                                     GlobalDim>;
+                                     ShapeMatricesTypePressure, GlobalDim>;
 
     using GlobalDimVectorType = Eigen::Matrix<double, GlobalDim, 1>;
 

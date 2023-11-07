@@ -14,9 +14,7 @@
 #include <vector>
 
 #include "BaseLib/Error.h"
-
 #include "MeshLib/Elements/Element.h"
-
 #include "ProcessLib/LocalAssemblerInterface.h"
 
 namespace ProcessLib

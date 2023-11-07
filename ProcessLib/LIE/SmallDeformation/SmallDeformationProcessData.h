@@ -12,11 +12,9 @@
 
 #include <memory>
 
-#include "MeshLib/PropertyVector.h"
-
 #include "MaterialLib/FractureModels/FractureModelBase.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
-
+#include "MeshLib/PropertyVector.h"
 #include "ProcessLib/LIE/Common/FractureProperty.h"
 #include "ProcessLib/LIE/Common/JunctionProperty.h"
 

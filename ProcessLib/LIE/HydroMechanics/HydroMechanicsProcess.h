@@ -10,10 +10,9 @@
 
 #pragma once
 
-#include "ProcessLib/Process.h"
-
 #include "HydroMechanicsProcessData.h"
 #include "LocalAssembler/HydroMechanicsLocalAssemblerInterface.h"
+#include "ProcessLib/Process.h"
 
 namespace ProcessLib
 {
