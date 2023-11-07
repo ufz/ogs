@@ -21,6 +21,6 @@ namespace TestInfoLib
 
 namespace TestInfo
 {
-    extern TESTINFOLIB_EXPORT const std::string data_path;
-}  // namespace
-}  // namespace
+extern TESTINFOLIB_EXPORT const std::string data_path;
+}  // namespace TestInfo
+}  // namespace TestInfoLib
