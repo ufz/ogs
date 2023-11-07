@@ -11,6 +11,7 @@
 #pragma once
 
 #include <memory>
+
 #include "ProcessLib/Process.h"
 
 namespace MaterialPropertyLib
