@@ -76,7 +76,7 @@ clip_box2 = pv.Box([-1, 0, -1, 1, 0, 1])
 partial_mesh2 = partial_mesh1.clip_box(clip_box2)
 plotter.add_mesh(partial_mesh2, show_edges=True, edge_color="mediumblue", cmap="coolwarm", scalar_bar_args=sargs)
 
-# Plot line 
+# Plot line
 start_point = [-1, 0, 0.5]
 end_point = [1, 0, 0.5]
 line = pv.Line(start_point, end_point)
@@ -102,7 +102,7 @@ $$
 
 In the above figure the source term is the red vertical line in the origin of the coordinate system.
 
-The analytical solution for a line source in the cylinder is.
+The analytical solution for a line source in the cylinder is
 
 $$
 \begin{equation}
@@ -232,7 +232,7 @@ plt.show()
 
 ### Input files
 
-The project files for the described model is [286k.prj](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/286k_prisms/line_source_term_in_cylinder.prj).
+The project file for the described model is [286k.prj](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/286k_prisms/line_source_term_in_cylinder.prj).
 The project file describes the processes to be solved and the related process variables together with their initial and boundary conditions as well as the source terms.
 
 The input mesh is stored in the VTK file format and can be directly visualized in ParaView for example.
@@ -265,7 +265,7 @@ plotter = pv.Plotter()
 sargs = dict(title = "Temperature", height=0.05, width=0.4, position_x=0.3, position_y=0.05)
 plotter.add_mesh(mesh, show_edges=False, cmap="coolwarm", scalar_bar_args=sargs)
 
-# Plot line 
+# Plot line
 start_point = [0, 0.5, 0]
 end_point = [1, 0.5, 0]
 line = pv.Line(start_point, end_point)
