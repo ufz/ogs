@@ -49,10 +49,7 @@ public:
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
         TwoPhaseFlowWithPPProcessData&& process_data,
-        SecondaryVariableCollection&& secondary_variables,
-        std::map<std::string,
-                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-            curves);
+        SecondaryVariableCollection&& secondary_variables);
 
     bool isLinear() const override { return false; }
 

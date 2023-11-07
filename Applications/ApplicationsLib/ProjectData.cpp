@@ -1115,7 +1115,7 @@ void ProjectData::parseProcesses(
             process = ProcessLib::RichardsFlow::createRichardsFlowProcess(
                 name, *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
-                process_config, _curves, _media);
+                process_config, _media);
         }
         else
 #endif
@@ -1200,7 +1200,7 @@ void ProjectData::parseProcesses(
                 ProcessLib::TwoPhaseFlowWithPP::createTwoPhaseFlowWithPPProcess(
                     name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
-                    process_config, _curves, _media);
+                    process_config, _media);
         }
         else
 #endif
@@ -1211,7 +1211,7 @@ void ProjectData::parseProcesses(
                 createTwoPhaseFlowWithPrhoProcess(
                     name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
-                    process_config, _curves);
+                    process_config);
         }
         else
 #endif
@@ -1222,7 +1222,7 @@ void ProjectData::parseProcesses(
                 createThermalTwoPhaseFlowWithPPProcess(
                     name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
-                    process_config, _curves, _media);
+                    process_config, _media);
         }
         else
 #endif

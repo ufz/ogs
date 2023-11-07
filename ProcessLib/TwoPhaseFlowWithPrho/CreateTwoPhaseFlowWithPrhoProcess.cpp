@@ -30,10 +30,7 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "TWOPHASE_FLOW_PRHO");
@@ -112,8 +109,7 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     return std::make_unique<TwoPhaseFlowWithPrhoProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(process_data), std::move(secondary_variables), mat_config,
-        curves);
+        std::move(process_data), std::move(secondary_variables));
 }
 
 }  // namespace TwoPhaseFlowWithPrho

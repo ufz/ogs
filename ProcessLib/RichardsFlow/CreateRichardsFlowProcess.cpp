@@ -57,9 +57,6 @@ std::unique_ptr<Process> createRichardsFlowProcess(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-    /*curves*/,
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}

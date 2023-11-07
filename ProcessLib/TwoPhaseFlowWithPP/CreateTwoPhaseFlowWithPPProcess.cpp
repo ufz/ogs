@@ -30,9 +30,6 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
@@ -100,7 +97,7 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     return std::make_unique<TwoPhaseFlowWithPPProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(process_data), std::move(secondary_variables), curves);
+        std::move(process_data), std::move(secondary_variables));
 }
 
 }  // namespace TwoPhaseFlowWithPP
