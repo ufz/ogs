@@ -249,13 +249,6 @@
         </property>
        </spacer>
       </item>
-      <item row="4" column="0" colspan="3">
-       <widget class="QCheckBox" name="boundingBoxCheckBox">
-        <property name="text">
-         <string>Bounding Box, Nodes with</string>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="1">
        <widget class="QRadioButton" name="insideButton">
         <property name="enabled">
@@ -351,6 +344,20 @@
         </property>
         <property name="checked">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="QCheckBox" name="boundingBoxCheckBox">
+        <property name="text">
+         <string>Bounding Box, Nodes with</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QCheckBox" name="invertBoundingBoxCheckBox">
+        <property name="text">
+         <string>Invert Bounding Box</string>
         </property>
        </widget>
       </item>

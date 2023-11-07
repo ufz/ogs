@@ -1412,6 +1412,58 @@ if(NOT OGS_USE_PETSC)
                  RUNTIME 10)
 endif()
 
+AddTest(
+    NAME RemoveMeshElements_AABB_2D_regular
+    PATH MeshLib
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    EXECUTABLE removeMeshElements
+    EXECUTABLE_ARGS -i AREHS_Layer17.vtu
+                    -o ${Data_BINARY_DIR}/MeshLib/AREHS_2D_AABB_regular.vtu
+                    --x-min 12000 --x-max 15000 --y-min 12000
+    REQUIREMENTS NOT (OGS_USE_MPI)
+    TESTER vtkdiff-mesh
+    DIFF_DATA AREHS_2D_AABB_regular.vtu AREHS_2D_AABB_regular.vtu 1.e-16
+)
+
+AddTest(
+    NAME RemoveMeshElements_AABB_2D_inverted
+    PATH MeshLib
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    EXECUTABLE removeMeshElements
+    EXECUTABLE_ARGS -i AREHS_Layer17.vtu
+                    -o ${Data_BINARY_DIR}/MeshLib/AREHS_2D_AABB_inverted.vtu
+                    --x-min 12000 --x-max 15000 --y-min 12000 --invert
+    REQUIREMENTS NOT (OGS_USE_MPI)
+    TESTER vtkdiff-mesh
+    DIFF_DATA AREHS_2D_AABB_inverted.vtu AREHS_2D_AABB_inverted.vtu 1.e-16
+)
+
+AddTest(
+    NAME RemoveMeshElements_AABB_3D_regular
+    PATH MeshLib
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    EXECUTABLE removeMeshElements
+    EXECUTABLE_ARGS -i AREHS_test.vtu
+                    -o ${Data_BINARY_DIR}/MeshLib/AREHS_3D_AABB_regular.vtu
+                    --x-min 12000 --x-max 15000 --y-min 12000 --z-min -3000 --z-max -2000
+    REQUIREMENTS NOT (OGS_USE_MPI)
+    TESTER vtkdiff-mesh
+    DIFF_DATA AREHS_3D_AABB_regular.vtu AREHS_3D_AABB_regular.vtu 1.e-16
+)
+
+AddTest(
+    NAME RemoveMeshElements_AABB_3D_inverted
+    PATH MeshLib
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    EXECUTABLE removeMeshElements
+    EXECUTABLE_ARGS -i AREHS_test.vtu
+                    -o ${Data_BINARY_DIR}/MeshLib/AREHS_3D_AABB_inverted.vtu
+                    --x-min 12000 --x-max 15000 --y-min 12000 --z-min -3000 --z-max -2000 --invert
+    REQUIREMENTS NOT (OGS_USE_MPI)
+    TESTER vtkdiff-mesh
+    DIFF_DATA AREHS_3D_AABB_inverted.vtu AREHS_3D_AABB_inverted.vtu 1.e-16
+)
+
 if(OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Utils/partmesh/partmesh_roundtrip.md RUNTIME 10 SKIP_WEB)
 endif()

@@ -28,6 +28,7 @@
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Node.h"
 #include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshToolsLib/MeshInformation.h"
 
 template <typename PROPERTY_TYPE>
 void searchByPropertyValue(std::string const& property_name,
@@ -70,6 +71,17 @@ void searchByPropertyRange(std::string const& property_name,
          std::to_string(min_value), std::to_string(max_value));
 }
 
+void outputAABB(MeshLib::Mesh const& mesh)
+{
+    const auto aabb(MeshToolsLib::MeshInformation::getBoundingBox(mesh));
+    auto const [min, max] = aabb.getMinMaxPoints();
+
+    INFO(
+        "Bounding box of \"{:s}\" is\nx = [{:f},{:f}]\ny = [{:f},{:f}]\nz = "
+        "[{:f},{:f}]",
+        mesh.getName(), min.x(), max.x(), min.y(), max.y(), min.z(), max.z());
+}
+
 int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
@@ -85,6 +97,9 @@ int main(int argc, char* argv[])
         ' ', GitInfoLib::GitInfo::ogs_version);
 
     // Bounding box params
+    TCLAP::SwitchArg invert_bounding_box_arg(
+        "", "invert", "inverts the specified bounding box", false);
+    cmd.add(invert_bounding_box_arg);
     TCLAP::ValueArg<double> zLargeArg(
         "", "z-max", "largest allowed extent in z-dimension", false,
         std::numeric_limits<double>::max(), "value");
@@ -265,6 +280,7 @@ int main(int argc, char* argv[])
     if (xSmallArg.isSet() || xLargeArg.isSet() || ySmallArg.isSet() ||
         yLargeArg.isSet() || zSmallArg.isSet() || zLargeArg.isSet())
     {
+        outputAABB(*mesh);
         bool aabb_error(false);
         if (xSmallArg.getValue() >= xLargeArg.getValue())
         {
@@ -298,7 +314,8 @@ int main(int argc, char* argv[])
                    zLargeArg.getValue()}})}});
         INFO("{:d} elements found.",
              searcher.searchByBoundingBox(
-                 GeoLib::AABB(extent.begin(), extent.end())));
+                 GeoLib::AABB(extent.begin(), extent.end()),
+                 invert_bounding_box_arg.getValue()));
     }
 
     // remove the elements and create a new mesh object.

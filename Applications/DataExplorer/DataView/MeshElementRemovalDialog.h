@@ -45,6 +45,7 @@ public:
 
 private slots:
     void on_boundingBoxCheckBox_toggled(bool is_checked);
+    void on_invertBoundingBoxCheckBox_toggled(bool const is_checked);
     void on_elementTypeCheckBox_toggled(bool is_checked);
     void on_scalarArrayCheckBox_toggled(bool is_checked);
     void on_insideButton_toggled(bool is_checked);

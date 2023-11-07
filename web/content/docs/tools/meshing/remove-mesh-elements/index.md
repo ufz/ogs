@@ -8,12 +8,12 @@ author = "Thomas Fischer"
 
 The tool `removeMeshElements` removes those elements from a given input mesh that fulfills a user specified criterion. The resulting mesh will be written to the specified output file. The user can choose between 4 different removal criteria:
 
- 1. Remove elements by assigned properties, for instance material ids.
+ 1. Remove elements based on assigned properties, for instance material ids. Elements with properties outside of the given range are removed.
  2. Remove elements by element type, for instance remove line elements.
  3. Remove elements that have zero volume.
- 4. Remove elements by axis aligned bounding box criterion.
+ 4. Remove elements based on an axis aligned bounding box. Elements where at least one point is located outside the specified bounding box (or - if the "invert"-flag is set - inside the bounding box) are removed.
 
-One possible application is to cut out a smaller mesh out of a bigger one by marking the inner/outer region using the tool [SetPropertiesInPolygonalRegion]({{< ref "set-properties-in-polygonal-region" >}}).
+One possible application is to cut out a smaller mesh out of a bigger one either by specifying a bounding box or by marking the inner/outer region with a unique MaterialID using the tool [SetPropertiesInPolygonalRegion]({{< ref "set-properties-in-polygonal-region" >}}).
 
 Another application is to cut out patches of a (top) surface (tool [ExtractSurface]({{< ref "extract-surface" >}})) for assigning boundary conditions.
 
@@ -23,8 +23,8 @@ Another application is to cut out patches of a (top) surface (tool [ExtractSurfa
 removeMeshElements -i <input-mesh> -o <output-mesh>
  [-n <property_name>] [--int-property-value <number value>] ...
  [--element-type <element type>] ...
- [--zero-volume]
-    [--x-min <value>] [--x-max <value>] [--y-min <value>] [--y-max <value>] [--z-min <value>] [--z-max <value>]
+ [--zero-volume] ...
+ [--x-min <value>] [--x-max <value>] [--y-min <value>] [--y-max <value>] [--z-min <value>] [--z-max <value>] [--invert]
 ```
 
 Each particular line with optional arguments refers to one of the different removal criteria mentioned in the general section.
