@@ -11,6 +11,8 @@
 
 #include <cassert>
 
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/TwoPhaseFlowWithPrho/CreateTwoPhaseFlowPrhoMaterialProperties.h"
@@ -30,7 +32,8 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "TWOPHASE_FLOW_PRHO");
@@ -98,13 +101,17 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
         INFO("The twophase flow is in homogeneous porous media.");
     }
 
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
     std::unique_ptr<TwoPhaseFlowWithPrhoMaterialProperties> material =
         createTwoPhaseFlowPrhoMaterialProperties(mat_config, material_ids,
                                                  parameters);
 
     TwoPhaseFlowWithPrhoProcessData process_data{
-        specific_body_force, has_gravity, mass_lumping,       diff_coeff_b,
-        diff_coeff_a,        temperature, std::move(material)};
+        specific_body_force, has_gravity,         mass_lumping,
+        diff_coeff_b,        diff_coeff_a,        temperature,
+        std::move(material), std::move(media_map)};
 
     return std::make_unique<TwoPhaseFlowWithPrhoProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
