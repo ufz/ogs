@@ -12,7 +12,6 @@
 
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
-
 #include "RichardsFlowFEM.h"
 #include "RichardsFlowProcessData.h"
 
