@@ -34,10 +34,10 @@ public:
     LineSegment& operator=(LineSegment&& line_segment);
 
     GeoLib::Point const& getBeginPoint() const;
-    GeoLib::Point & getBeginPoint();
+    GeoLib::Point& getBeginPoint();
 
     GeoLib::Point const& getEndPoint() const;
-    GeoLib::Point & getEndPoint();
+    GeoLib::Point& getEndPoint();
 
 private:
     GeoLib::Point* _a = nullptr;
@@ -45,7 +45,7 @@ private:
     bool _point_mem_management_by_line_segment = false;
 };
 
-std::ostream& operator<< (std::ostream& os, LineSegment const& s);
+std::ostream& operator<<(std::ostream& os, LineSegment const& s);
 
 std::ostream& operator<<(std::ostream& os,
                          std::pair<GeoLib::LineSegment const&,

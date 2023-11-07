@@ -26,13 +26,13 @@ class Surface;
  */
 class DuplicateGeometry final
 {
-
 public:
     /**
      * Creates a copy of a geometry within GEOObjects
      * \param geo_objects The container for geometries
      * \param input_name  The geometry to be copied
-     * \param output_name The name of the copy (note: this might be modified by GEOObjects)
+     * \param output_name The name of the copy (note: this might be modified by
+     * GEOObjects)
      */
     DuplicateGeometry(GeoLib::GEOObjects& geo_objects,
                       std::string const& input_name,
@@ -62,6 +62,6 @@ private:
     std::string _output_name;
     GeoLib::GEOObjects& _geo_objects;
 
-}; // class
+};  // class
 
 }  // namespace GeoLib

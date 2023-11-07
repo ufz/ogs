@@ -14,10 +14,11 @@
 
 #pragma once
 
-#include "TemplateVec.h"
 #include "Polyline.h"
+#include "TemplateVec.h"
 
-namespace GeoLib {
+namespace GeoLib
+{
 
 /**
  * \ingroup GeoLib

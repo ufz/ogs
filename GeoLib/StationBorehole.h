@@ -14,11 +14,11 @@
 
 #pragma once
 
-#include "Station.h"
-
 #include <list>
 #include <string>
 #include <vector>
+
+#include "Station.h"
 
 namespace GeoLib
 {

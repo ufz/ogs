@@ -25,11 +25,13 @@ namespace GeoLib
 /**
  * \ingroup GeoLib
  *
- * \brief A Station (observation site) is basically a Point with some additional information.
+ * \brief A Station (observation site) is basically a Point with some additional
+ * information.
  *
- * Additional information is largely optional (except for a name, but even this may be empty).
- * It may include a name, a stratigraphy (only for the derived class StationBore),
- * time series data from data loggers (as a SensorData-object), etc.
+ * Additional information is largely optional (except for a name, but even this
+ * may be empty). It may include a name, a stratigraphy (only for the derived
+ * class StationBore), time series data from data loggers (as a
+ * SensorData-object), etc.
  *
  * \sa StationBorehole, SensorData
  */
@@ -61,17 +63,23 @@ public:
 
     void setName(std::string const& name) { _name = name; }
 
-    /// Creates a Station-object from information contained in a string (assuming the string has the right format)
-    static Station* createStation(const std::string &line);
+    /// Creates a Station-object from information contained in a string
+    /// (assuming the string has the right format)
+    static Station* createStation(const std::string& line);
 
     /// Creates a new station object based on the given parameters.
-    static Station* createStation(const std::string &name, double x, double y, double z);
+    static Station* createStation(const std::string& name, double x, double y,
+                                  double z);
 
     /// Returns the specific value for this station
     double getStationValue() const { return this->_station_value; }
 
-    /// Allows to set a specific value for this station (e.g. for classification)
-    void setStationValue(double station_value) { this->_station_value = station_value; }
+    /// Allows to set a specific value for this station (e.g. for
+    /// classification)
+    void setStationValue(double station_value)
+    {
+        this->_station_value = station_value;
+    }
 
     /// Allows to add sensor data from a CSV file to the observation site
     void addSensorDataFromCSV(const std::string& file_name)

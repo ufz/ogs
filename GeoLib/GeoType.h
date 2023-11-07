@@ -16,18 +16,20 @@
 
 #include <string>
 
-namespace GeoLib {
+namespace GeoLib
+{
 
 /**
  * \ingroup GeoLib
  */
 
-enum class GEOTYPE {
+enum class GEOTYPE
+{
     POINT,
     POLYLINE,
     SURFACE
 };
 
-std::string convertGeoTypeToString (GEOTYPE geo_type);
+std::string convertGeoTypeToString(GEOTYPE geo_type);
 
-} // end namespace GeoLib
+}  // end namespace GeoLib

@@ -22,9 +22,8 @@
 #include <utility>
 #include <vector>
 
-#include "BaseLib/Logging.h"
-
 #include "BaseLib/Error.h"
+#include "BaseLib/Logging.h"
 
 namespace GeoLib
 {

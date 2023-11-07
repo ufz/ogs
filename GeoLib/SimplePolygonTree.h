@@ -80,26 +80,25 @@ public:
     {
         return _children.begin();
     }
-    decltype(_children)::const_iterator end() const
-    {
-        return _children.end();
-    }
-
+    decltype(_children)::const_iterator end() const { return _children.end(); }
 };
 
 /**
  * creates from a list of simple polygons a list of trees (SimplePolygonTrees)
  */
 template <typename POLYGONTREETYPE>
-void createPolygonTrees (std::list<POLYGONTREETYPE*>& list_of_simple_polygon_hierarchies)
+void createPolygonTrees(
+    std::list<POLYGONTREETYPE*>& list_of_simple_polygon_hierarchies)
 {
     for (auto it0 = list_of_simple_polygon_hierarchies.begin();
          it0 != list_of_simple_polygon_hierarchies.end();
          ++it0)
     {
         auto it1 = list_of_simple_polygon_hierarchies.begin();
-        while (it1 != list_of_simple_polygon_hierarchies.end()) {
-            if (it0 == it1) { // don't check same polygons
+        while (it1 != list_of_simple_polygon_hierarchies.end())
+        {
+            if (it0 == it1)
+            {  // don't check same polygons
                 ++it1;
                 // skip test if it1 points to the end after increment
                 if (it1 == list_of_simple_polygon_hierarchies.end())
@@ -107,15 +106,17 @@ void createPolygonTrees (std::list<POLYGONTREETYPE*>& list_of_simple_polygon_hie
                     break;
                 }
             }
-            if ((*it0)->isPolygonInside(*it1)) {
+            if ((*it0)->isPolygonInside(*it1))
+            {
                 (*it0)->insertSimplePolygonTree(*it1);
                 it1 = list_of_simple_polygon_hierarchies.erase(it1);
-            } else {
+            }
+            else
+            {
                 ++it1;
             }
         }
     }
 }
 
-
-} // end namespace GeoLib
+}  // end namespace GeoLib

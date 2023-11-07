@@ -34,9 +34,9 @@ class PointVec;
  *
  * \brief Class Polyline consists mainly of a reference to a point vector and
  * a vector that stores the indices in the point vector.
- * A polyline consists of at least one line segment. The polyline is specified by the points
- * of the line segments. The class Polyline stores ids of pointers to the points in the
- * _ply_pnt_ids vector.
+ * A polyline consists of at least one line segment. The polyline is specified
+ * by the points of the line segments. The class Polyline stores ids of pointers
+ * to the points in the _ply_pnt_ids vector.
  * */
 class Polyline : public GeoObject
 {
@@ -72,13 +72,17 @@ public:
 
         bool operator!=(SegmentIterator const& other) const;
 
-        SegmentIterator& operator+=(std::vector<GeoLib::Point>::difference_type n);
+        SegmentIterator& operator+=(
+            std::vector<GeoLib::Point>::difference_type n);
 
-        SegmentIterator operator+(std::vector<GeoLib::Point>::difference_type n);
+        SegmentIterator operator+(
+            std::vector<GeoLib::Point>::difference_type n);
 
-        SegmentIterator& operator-=(std::vector<GeoLib::Point>::difference_type n);
+        SegmentIterator& operator-=(
+            std::vector<GeoLib::Point>::difference_type n);
 
-        SegmentIterator operator-(std::vector<GeoLib::Point>::difference_type n);
+        SegmentIterator operator-(
+            std::vector<GeoLib::Point>::difference_type n);
 
     private:
         GeoLib::Polyline const* _polyline;
@@ -133,14 +137,15 @@ public:
     void removePoint(std::size_t pos);
 
     /**
-     * Closes a polyline by adding a line segment that connects start- and end-point.
+     * Closes a polyline by adding a line segment that connects start- and
+     * end-point.
      */
     void closePolyline();
 
     /// Constructs one polyline from a vector of connected polylines.
     /// All polylines in this vector need to reference the same point vector.
-    static Polyline* constructPolylineFromSegments(const std::vector<Polyline*> &ply_vec,
-                                                   double prox = 0.0);
+    static Polyline* constructPolylineFromSegments(
+        const std::vector<Polyline*>& ply_vec, double prox = 0.0);
 
     /**
      * returns the number of points,
@@ -182,17 +187,14 @@ public:
      * */
     const Point* getPoint(std::size_t i) const;
 
-    SegmentIterator begin() const
-    {
-        return SegmentIterator(*this, 0);
-    }
+    SegmentIterator begin() const { return SegmentIterator(*this, 0); }
 
     SegmentIterator end() const
     {
         return SegmentIterator(*this, getNumberOfSegments());
     }
 
-    std::vector<Point*> const& getPointsVec () const;
+    std::vector<Point*> const& getPointsVec() const;
 
     /**
      * returns the distance along the polyline from the beginning of the
@@ -204,11 +206,11 @@ public:
      * polyine, negative value is returned.
      */
     double getDistanceAlongPolyline(const MathLib::Point3d& pnt,
-        const double epsilon_radius) const;
+                                    const double epsilon_radius) const;
 
 protected:
     /** a reference to the vector of pointers to the geometric points */
-    const std::vector<Point*> &_ply_pnts;
+    const std::vector<Point*>& _ply_pnts;
 
     void reverseOrientation();
 
@@ -224,7 +226,7 @@ private:
     LineSegment getSegment(std::size_t i) const;
 };
 
-bool containsEdge (const Polyline& ply, std::size_t id0, std::size_t id1);
+bool containsEdge(const Polyline& ply, std::size_t id0, std::size_t id1);
 
 /// Resets the point IDs of the polyline corresponding to the mapping.
 void resetPointIDs(Polyline& polyline, std::vector<std::size_t> const& mapping);
@@ -240,8 +242,8 @@ void markUsedPoints(Polyline const& polyline, std::vector<bool>& used_points);
  */
 bool operator==(Polyline const& lhs, Polyline const& rhs);
 
-bool pointsAreIdentical(const std::vector<Point*> &pnt_vec, std::size_t i, std::size_t j,
-                        double prox);
+bool pointsAreIdentical(const std::vector<Point*>& pnt_vec, std::size_t i,
+                        std::size_t j, double prox);
 
 /// Create a polyline from given point ids.
 std::unique_ptr<Polyline> createPolyline(GeoLib::PointVec const& points_vec,

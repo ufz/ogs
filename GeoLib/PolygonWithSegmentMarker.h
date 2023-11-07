@@ -11,7 +11,8 @@
 
 #include "Polygon.h"
 
-namespace GeoLib {
+namespace GeoLib
+{
 
 class PolygonWithSegmentMarker final : public GeoLib::Polygon
 {
@@ -40,8 +41,8 @@ public:
     bool addPoint(std::size_t pnt_id) override;
 
     /**
-     * Method calls the @see Polyline::insertPoint() and initializes the inserted line
-     * segment with the same value the previous line segment had.
+     * Method calls the @see Polyline::insertPoint() and initializes the
+     * inserted line segment with the same value the previous line segment had.
      * @see Polyline::insertPoint()
      */
     bool insertPoint(std::size_t pos, std::size_t pnt_id) override;
@@ -50,4 +51,4 @@ private:
     std::vector<bool> _marker;
 };
 
-} // end namespace GeoLib
+}  // end namespace GeoLib
