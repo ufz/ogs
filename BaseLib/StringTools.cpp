@@ -112,8 +112,8 @@ std::string randomString(std::size_t const length)
         0, sizeof(charset) - 2);
 
     std::string s(length, 0);
-    std::generate_n(
-        begin(s), length, [&]() { return charset[distribution(generator)]; });
+    std::generate_n(begin(s), length,
+                    [&]() { return charset[distribution(generator)]; });
 
     return s;
 }
