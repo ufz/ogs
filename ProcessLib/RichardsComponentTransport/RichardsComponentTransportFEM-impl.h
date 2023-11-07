@@ -8,12 +8,11 @@
  *
  */
 
-#include "RichardsComponentTransportFEM.h"
-
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "RichardsComponentTransportFEM.h"
 
 namespace ProcessLib
 {
