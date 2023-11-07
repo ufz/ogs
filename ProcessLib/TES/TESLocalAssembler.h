@@ -24,9 +24,8 @@ namespace ProcessLib
 {
 namespace TES
 {
-class TESLocalAssemblerInterface
-    : public ProcessLib::LocalAssemblerInterface,
-      public NumLib::ExtrapolatableElement
+class TESLocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
+                                   public NumLib::ExtrapolatableElement
 {
 public:
     ~TESLocalAssemblerInterface() override = default;

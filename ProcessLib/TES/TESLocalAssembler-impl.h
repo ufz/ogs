@@ -139,15 +139,16 @@ void TESLocalAssembler<ShapeFunction_, GlobalDim>::assemble(
     std::vector<double>& local_b_data)
 {
     auto const local_matrix_size = local_x.size();
-    // This assertion is valid only if all nodal d.o.f. use the same shape matrices.
+    // This assertion is valid only if all nodal d.o.f. use the same shape
+    // matrices.
     assert(local_matrix_size == ShapeFunction::NPOINTS * NODAL_DOF);
 
     auto local_M = MathLib::createZeroedMatrix<NodalMatrixType>(
         local_M_data, local_matrix_size, local_matrix_size);
     auto local_K = MathLib::createZeroedMatrix<NodalMatrixType>(
         local_K_data, local_matrix_size, local_matrix_size);
-    auto local_b = MathLib::createZeroedVector<NodalVectorType>(local_b_data,
-                                                            local_matrix_size);
+    auto local_b = MathLib::createZeroedVector<NodalVectorType>(
+        local_b_data, local_matrix_size);
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -285,8 +286,9 @@ TESLocalAssembler<ShapeFunction_, GlobalDim>::getIntPtDarcyVelocity(
 
         auto const& k = _d.getAssemblyParameters().solid_perm_tensor;
         cache_mat.col(i).noalias() =
-            k * (_shape_matrices[i].dNdx *
-                 local_x_mat.row(COMPONENT_ID_PRESSURE).transpose()) /
+            k *
+            (_shape_matrices[i].dNdx *
+             local_x_mat.row(COMPONENT_ID_PRESSURE).transpose()) /
             -eta_GR;
     }
 

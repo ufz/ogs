@@ -13,9 +13,7 @@
 
 #pragma once
 
-
 #include "NumLib/Function/Interpolation.h"
-
 #include "TESLocalAssemblerInner-fwd.h"
 #include "TESOGS5MaterialModels.h"
 #include "TESReactionAdaptor.h"
@@ -49,9 +47,8 @@ Eigen::Matrix3d TESLocalAssemblerInner<Traits>::getMassCoeffMatrix(
     const double M_Tp = -_d.ap.poro;
     const double M_TT =
         _d.ap.poro * _d.rho_GR * _d.ap.cpG  // TODO: vapour heat capacity
-        +
-        (1.0 - _d.ap.poro) * _d.solid_density[int_pt] *
-            _d.ap.cpS;  // TODO: adsorbate heat capacity
+        + (1.0 - _d.ap.poro) * _d.solid_density[int_pt] *
+              _d.ap.cpS;  // TODO: adsorbate heat capacity
     const double M_Tx = 0.0;
 
     const double M_xp = 0.0;
@@ -242,10 +239,10 @@ void TESLocalAssemblerInner<Traits>::assembleIntegrationPoint(
 
     auto const velocity =
         (Traits::blockDimDim(laplaceCoeffMat, 0, 0, D, D) *
-         (sm.dNdx * Eigen::Map<const typename Traits::Vector1Comp>(localX.data(),
-                                                                  N)  // grad_p
-          /
-          -_d.rho_GR))
+         (sm.dNdx *
+          Eigen::Map<const typename Traits::Vector1Comp>(localX.data(),
+                                                         N)  // grad_p
+          / -_d.rho_GR))
             .eval();
     assert(velocity.size() == D);
 
@@ -261,7 +258,8 @@ void TESLocalAssemblerInner<Traits>::assembleIntegrationPoint(
 
     auto const detJ_w_im_NT_vT_dNdx =
         (detJ_w_im_NT * velocity.transpose() * sm.dNdx).eval();
-    assert(detJ_w_im_NT_vT_dNdx.rows() == N && detJ_w_im_NT_vT_dNdx.cols() == N);
+    assert(detJ_w_im_NT_vT_dNdx.rows() == N &&
+           detJ_w_im_NT_vT_dNdx.cols() == N);
 
     for (unsigned r = 0; r < NODAL_DOF; ++r)
     {

@@ -200,10 +200,9 @@ inline double fluid_viscosity(const double p, const double T, const double x)
     const double M0_over_M1(M1 / M0);  // reactive over inert
     const double V0_over_V1(V0 / V1);
 
-    const double phi_12 =
-        mypow<2>(1.0 +
-                 std::sqrt(V0_over_V1) * std::pow(1.0 / M0_over_M1, 0.25)) /
-        std::sqrt(8.0 * (1.0 + M0_over_M1));
+    const double phi_12 = mypow<2>(1.0 + std::sqrt(V0_over_V1) *
+                                             std::pow(1.0 / M0_over_M1, 0.25)) /
+                          std::sqrt(8.0 * (1.0 + M0_over_M1));
 
     const double phi_21 = phi_12 * M0_over_M1 / V0_over_V1;
 
