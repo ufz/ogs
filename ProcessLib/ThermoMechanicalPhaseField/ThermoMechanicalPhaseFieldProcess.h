@@ -12,7 +12,6 @@
 
 #include "LocalAssemblerInterface.h"
 #include "ProcessLib/Process.h"
-
 #include "ThermoMechanicalPhaseFieldProcessData.h"
 
 namespace ProcessLib
