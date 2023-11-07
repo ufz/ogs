@@ -84,7 +84,6 @@ public:
                                      int const process_id) override;
 
 private:
-
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh,
@@ -106,7 +105,7 @@ private:
      * @copydoc ProcessLib::Process::getDOFTableForExtrapolatorData()
      */
     std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
-        getDOFTableForExtrapolatorData() const override;
+    getDOFTableForExtrapolatorData() const override;
 
     HTProcessData _process_data;
 
