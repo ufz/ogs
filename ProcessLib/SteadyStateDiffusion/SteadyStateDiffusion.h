@@ -12,9 +12,9 @@
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
-#include "SteadyStateDiffusionFEM.h"
-#include "SteadyStateDiffusionData.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
+#include "SteadyStateDiffusionData.h"
+#include "SteadyStateDiffusionFEM.h"
 
 namespace ProcessLib
 {
@@ -111,4 +111,4 @@ private:
 };
 
 }  // namespace SteadyStateDiffusion
-}   // namespace ProcessLib
+}  // namespace ProcessLib

@@ -11,6 +11,7 @@
 #pragma once
 
 #include <memory>
+
 #include "ProcessLib/Process.h"
 
 namespace MaterialPropertyLib
@@ -33,5 +34,5 @@ std::unique_ptr<Process> createSteadyStateDiffusion(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
-}   // namespace SteadyStateDiffusion
-}   // namespace ProcessLib
+}  // namespace SteadyStateDiffusion
+}  // namespace ProcessLib
