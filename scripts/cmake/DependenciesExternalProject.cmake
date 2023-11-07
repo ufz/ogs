@@ -80,6 +80,22 @@ if(OGS_USE_MFRONT)
                     "TFEL Python bindings disabled as Boosts Python library was not found."
             )
         endif()
+
+        if(ENABLE_ASAN)
+            list(APPEND _sanitize_flags -fsanitize=address)
+        endif()
+        if(ENABLE_UBSAN)
+            list(APPEND _sanitize_flags -fsanitize=undefined)
+        endif()
+        if(DEFINED _sanitize_flags)
+            list(JOIN _sanitize_flags " " _sanitize_flags_string)
+            foreach(var CXX EXE_LINKER SHARED_LINKER MODULE_LINKER)
+                list(APPEND _tfel_cmake_args
+                     "-DCMAKE_${var}_FLAGS_INIT=${_sanitize_flags_string}"
+                )
+            endforeach()
+        endif()
+
         BuildExternalProject(
             TFEL ${_tfel_source}
             CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
