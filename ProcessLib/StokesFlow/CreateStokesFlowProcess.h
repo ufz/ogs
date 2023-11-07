@@ -42,4 +42,4 @@ extern template std::unique_ptr<Process> createStokesFlowProcess<2>(
     BaseLib::ConfigTree const& config,
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
-}  // namespace StokesFlow
+}  // namespace ProcessLib::StokesFlow
