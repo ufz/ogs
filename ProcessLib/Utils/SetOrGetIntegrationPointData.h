@@ -29,9 +29,8 @@ std::vector<double> const& getIntegrationPointDimMatrixData(
 {
     return getIntegrationPointDimMatrixData<DisplacementDim>(
         ip_data_vector,
-        [member](IpData const& ip_data) -> auto const& {
-            return ip_data.*member;
-        },
+        [member](IpData const& ip_data) -> auto const&
+        { return ip_data.*member; },
         cache);
 }
 
@@ -72,9 +71,8 @@ std::vector<double> const& getIntegrationPointKelvinVectorData(
 {
     return getIntegrationPointKelvinVectorData<DisplacementDim>(
         ip_data_vector,
-        [member](IpData const& ip_data) -> auto const& {
-            return ip_data.*member;
-        },
+        [member](IpData const& ip_data) -> auto const&
+        { return ip_data.*member; },
         cache);
 }
 
@@ -138,9 +136,8 @@ std::size_t setIntegrationPointKelvinVectorData(
     MemberType IpData::*const member)
 {
     return setIntegrationPointKelvinVectorData<DisplacementDim>(
-        values, ip_data_vector, [member](IpData & ip_data) -> auto& {
-            return ip_data.*member;
-        });
+        values, ip_data_vector,
+        [member](IpData& ip_data) -> auto& { return ip_data.*member; });
 }
 
 template <int DisplacementDim, typename IntegrationPointDataVector,
@@ -182,9 +179,8 @@ std::vector<double> const& getIntegrationPointScalarData(
 {
     return getIntegrationPointScalarData(
         ip_data_vector,
-        [member](IpData const& ip_data) -> auto const& {
-            return ip_data.*member;
-        },
+        [member](IpData const& ip_data) -> auto const&
+        { return ip_data.*member; },
         cache);
 }
 
@@ -221,10 +217,9 @@ std::size_t setIntegrationPointScalarData(
     IntegrationPointDataVector& ip_data_vector,
     MemberType IpData::*const member)
 {
-    return setIntegrationPointScalarData(
-        values, ip_data_vector, [member](IpData & ip_data) -> auto& {
-            return ip_data.*member;
-        });
+    return setIntegrationPointScalarData(values, ip_data_vector,
+                                         [member](IpData& ip_data) -> auto&
+                                         { return ip_data.*member; });
 }
 
 template <typename IntegrationPointDataVector, typename Accessor>

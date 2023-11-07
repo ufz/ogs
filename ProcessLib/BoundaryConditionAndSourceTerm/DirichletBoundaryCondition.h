@@ -10,8 +10,9 @@
 
 #pragma once
 
-#include "BoundaryCondition.h"
 #include <memory>
+
+#include "BoundaryCondition.h"
 
 namespace BaseLib
 {

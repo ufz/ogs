@@ -18,7 +18,7 @@
 namespace NumLib
 {
 class LocalToGlobalIndexMap;
-}  // NumLib
+}  // namespace NumLib
 
 namespace ProcessLib
 {

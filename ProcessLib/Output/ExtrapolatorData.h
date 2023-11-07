@@ -11,6 +11,7 @@
 #pragma once
 
 #include <memory>
+
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/Extrapolation/Extrapolator.h"
 

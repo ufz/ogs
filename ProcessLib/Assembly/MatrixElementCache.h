@@ -113,8 +113,8 @@ private:
     GlobalMatOrVec& mat_or_vec_;
 };
 
-explicit ConcurrentMatrixView(GlobalVector&)->ConcurrentMatrixView<1>;
-explicit ConcurrentMatrixView(GlobalMatrix&)->ConcurrentMatrixView<2>;
+explicit ConcurrentMatrixView(GlobalVector&) -> ConcurrentMatrixView<1>;
+explicit ConcurrentMatrixView(GlobalMatrix&) -> ConcurrentMatrixView<2>;
 
 template <std::size_t Dim>
 class MatrixElementCache final
