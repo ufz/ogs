@@ -15,6 +15,7 @@
 #include "CreateEhlers.h"
 #include "CreateLinearElasticIsotropic.h"
 #include "CreateLinearElasticOrthotropic.h"
+#include "CreateLinearElasticTransverseIsotropic.h"
 #include "CreateLubby2.h"
 #ifdef OGS_USE_MFRONT
 #include "MFront/CreateMFront.h"
@@ -54,6 +55,13 @@ createConstitutiveRelation(
     {
         const bool skip_type_checking = false;
         return MaterialLib::Solids::createLinearElasticOrthotropic<
+            DisplacementDim>(
+            parameters, local_coordinate_system, config, skip_type_checking);
+    }
+    if (type == "LinearElasticTransverseIsotropic")
+    {
+        const bool skip_type_checking = false;
+        return MaterialLib::Solids::createLinearElasticTransverseIsotropic<
             DisplacementDim>(
             parameters, local_coordinate_system, config, skip_type_checking);
     }
