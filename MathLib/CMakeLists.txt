@@ -32,19 +32,13 @@ target_link_libraries(
            $<$<BOOL:${OGS_USE_LIS}>:${LIS_LIBRARIES}>
            $<$<BOOL:${OGS_USE_CVODE}>:CVODE::CVODE>
            $<$<BOOL:${OGS_USE_PETSC}>:petsc>
+           $<$<BOOL:${OGS_USE_MKL}>:MKL::MKL>
            Eigen3::Eigen
            $<$<TARGET_EXISTS:OpenMP::OpenMP_CXX>:OpenMP::OpenMP_CXX>
 )
 
 if(OGS_USE_LIS)
     target_include_directories(MathLib PUBLIC ${LIS_INCLUDE_DIR})
-endif()
-if(OGS_USE_MKL)
-    target_include_directories(MathLib PUBLIC ${MKL_INCLUDE_DIR})
-    target_link_libraries(MathLib PUBLIC ${MKL_LIBRARIES})
-    target_link_options(MathLib PUBLIC ${MKL_LINK_FLAGS})
-    target_compile_definitions(MathLib PUBLIC ${MKL_DEFINITIONS})
-    target_link_directories(MathLib PUBLIC ${MKL_LIBRARY_DIR})
 endif()
 
 target_compile_definitions(

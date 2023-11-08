@@ -82,23 +82,35 @@ if(NOT (OGS_USE_PETSC AND OGS_USE_MKL) OR OGS_USE_PETSC_MKL_EIGEN_OPENMP)
     find_package(OpenMP COMPONENTS C CXX)
 endif()
 
-# blas / lapack
+# blas / lapack / MKL
 if(OGS_USE_MKL)
-    if("${MKL_USE_interface}" STREQUAL "lp64")
+    if(NOT DEFINED ENV{MKLROOT} OR NOT "$ENV{LD_LIBRARY_PATH}" MATCHES "intel")
+        message(
+            FATAL_ERROR
+                "OGS_USE_MKL was used but it seems that you did not source the MKL environment. "
+                "Typically you can run `source /opt/intel/oneapi/setvars.sh` before running CMake."
+        )
+    endif()
+    set(MKL_INTERFACE
+        "lp64"
+        CACHE
+            STRING
+            "for Intel(R)64 compatible arch: ilp64/lp64 or for ia32 arch: cdecl/stdcall"
+    )
+    if("${MKL_INTERFACE}" STREQUAL "lp64")
         set(BLA_VENDOR Intel10_64lp)
-    elseif("${MKL_USE_interface}" STREQUAL "ilp64")
+    elseif("${MKL_INTERFACE}" STREQUAL "ilp64")
         set(BLA_VENDOR Intel10_64ilp)
     endif()
+    set(CMAKE_REQUIRE_FIND_PACKAGE_BLAS TRUE)
+    set(CMAKE_REQUIRE_FIND_PACKAGE_LAPACK TRUE)
 endif()
 find_package(BLAS)
 find_package(LAPACK)
 
 if(OGS_USE_MKL)
-    find_package(MKL REQUIRED)
-    find_file(MKL_SETVARS setvars.sh PATHS ${MKL_ROOT_DIR} ${MKL_ROOT_DIR}/..
-                                           ${MKL_ROOT_DIR}/../..
-              NO_DEFAULT_PATH
-    )
+    find_package(MKL CONFIG REQUIRED PATHS $ENV{MKLROOT})
+    find_file(MKL_SETVARS setvars.sh PATHS ${MKL_ROOT}/../.. NO_DEFAULT_PATH)
 endif()
 
 # Check MPI package
