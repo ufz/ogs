@@ -412,6 +412,7 @@ if(OGS_BUILD_UTILS)
             GIT_REPOSITORY https://github.com/KarypisLab/METIS
             VERSION 5.2.1
             EXCLUDE_FROM_ALL YES
+            UPDATE_DISCONNECTED ON
             PATCH_COMMAND git apply
                           ${PROJECT_SOURCE_DIR}/scripts/cmake/metis.patch
             OPTIONS ${_metis_options}
