@@ -1,7 +1,7 @@
 build win:
   extends:
     - .template-build-win
-    - .vs2019-environment
+    - .vs2019-mkl-environment
   variables:
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release

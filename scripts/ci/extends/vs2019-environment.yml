@@ -1,13 +1,22 @@
+.load_vs2019_env: &load_vs2019_env
+  - |
+    pushd $env:VS160COMNTOOLS
+    cmd /c "VsDevCmd.bat -arch=amd64 -host_arch=amd64&set" |
+    foreach {
+      if ($_ -match "=") {
+        $v = $_.split("=", 2); set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
+      }
+    }
+    popd
+    Write-Host "`nVisual Studio Command Prompt variables set." -ForegroundColor Yellow
+
 .vs2019-environment:
   before_script:
-    # Load VS environment
-    - |
-      pushd $env:VS160COMNTOOLS
-      cmd /c "VsDevCmd.bat -arch=amd64 -host_arch=amd64&set" |
-      foreach {
-        if ($_ -match "=") {
-          $v = $_.split("=", 2); set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])"
-        }
-      }
-      popd
-      Write-Host "`nVisual Studio Command Prompt variables set." -ForegroundColor Yellow
+    - *load_vs2019_env
+
+.vs2019-mkl-environment:
+  before_script:
+    - *load_vs2019_env
+    # Load MKL environment
+    - '& "C:\Program Files (x86)\Intel\oneAPI\setvars.bat"'
+    - $env:PATH += ";C:\Program Files (x86)\Intel\oneAPI\compiler\latest\windows\redist\intel64_win\compiler"

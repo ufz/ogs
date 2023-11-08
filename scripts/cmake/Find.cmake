@@ -84,7 +84,9 @@ endif()
 
 # blas / lapack / MKL
 if(OGS_USE_MKL)
-    if(NOT DEFINED ENV{MKLROOT} OR NOT "$ENV{LD_LIBRARY_PATH}" MATCHES "intel")
+    if(NOT DEFINED ENV{MKLROOT} OR (NOT "$ENV{LD_LIBRARY_PATH}" MATCHES "intel"
+                                    AND NOT WIN32)
+    )
         message(
             FATAL_ERROR
                 "OGS_USE_MKL was used but it seems that you did not source the MKL environment. "
@@ -102,8 +104,10 @@ if(OGS_USE_MKL)
     elseif("${MKL_INTERFACE}" STREQUAL "ilp64")
         set(BLA_VENDOR Intel10_64ilp)
     endif()
-    set(CMAKE_REQUIRE_FIND_PACKAGE_BLAS TRUE)
-    set(CMAKE_REQUIRE_FIND_PACKAGE_LAPACK TRUE)
+    if(NOT WIN32)
+        set(CMAKE_REQUIRE_FIND_PACKAGE_BLAS TRUE)
+        set(CMAKE_REQUIRE_FIND_PACKAGE_LAPACK TRUE)
+    endif()
 endif()
 find_package(BLAS)
 find_package(LAPACK)
@@ -146,7 +150,7 @@ function(printMKLUsage)
         if(WIN32)
             message(
                 STATUS
-                    "NOTE: Please add the MKL redist directory to your PATH environment variable!\nE.g. with: set PATH=%PATH%;${MKL_ROOT_DIR}/redist/intel64"
+                    "NOTE: In addition to loading the oneAPI setvars.bat file please also add this to your PATH C:\\Program Files (x86)\\Intel\\oneAPI\\compiler\\latest\\windows\\redist\\intel64_win\\compiler"
             )
         else()
             message(
