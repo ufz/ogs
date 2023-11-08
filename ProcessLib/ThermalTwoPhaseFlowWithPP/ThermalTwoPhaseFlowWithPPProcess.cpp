@@ -12,8 +12,6 @@
 
 #include <cassert>
 
-#include "MaterialLib/PorousMedium/Porosity/Porosity.h"
-#include "MaterialLib/PorousMedium/Storage/Storage.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MeshLib/PropertyVector.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
