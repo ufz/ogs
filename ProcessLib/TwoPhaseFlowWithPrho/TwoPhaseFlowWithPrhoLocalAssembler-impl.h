@@ -107,8 +107,8 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
                 .value(variables, pos, t, dt));
         double const rho_gas =
             _process_data._material->getGasDensity(pl_int_pt, temperature);
-        double const rho_h2o =
-            _process_data._material->getLiquidDensity(pl_int_pt, temperature);
+        auto const rho_h2o = liquid_phase.property(MPL::PropertyType::density)
+                                 .template value<double>(variables, pos, t, dt);
 
         double& Sw = _ip_data[ip].sw;
         /// Here only consider one component in gas phase

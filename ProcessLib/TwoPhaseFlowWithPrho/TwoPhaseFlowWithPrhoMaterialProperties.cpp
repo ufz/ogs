@@ -36,8 +36,6 @@ namespace TwoPhaseFlowWithPrho
 TwoPhaseFlowWithPrhoMaterialProperties::TwoPhaseFlowWithPrhoMaterialProperties(
     MeshLib::PropertyVector<int> const* const material_ids,
     std::unique_ptr<MaterialLib::Fluid::FluidProperty>
-        liquid_density,
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty>
         gas_density,
     std::vector<std::unique_ptr<
         MaterialLib::PorousMedium::CapillaryPressureSaturation>>&&
@@ -45,8 +43,7 @@ TwoPhaseFlowWithPrhoMaterialProperties::TwoPhaseFlowWithPrhoMaterialProperties(
     std::vector<
         std::unique_ptr<MaterialLib::PorousMedium::RelativePermeability>>&&
         relative_permeability_models)
-    : _liquid_density(std::move(liquid_density)),
-      _gas_density(std::move(gas_density)),
+    : _gas_density(std::move(gas_density)),
       _material_ids(material_ids),
       _capillary_pressure_models(std::move(capillary_pressure_models)),
       _relative_permeability_models(std::move(relative_permeability_models))
@@ -64,15 +61,6 @@ int TwoPhaseFlowWithPrhoMaterialProperties::getMaterialID(
 
     assert(element_id < _material_ids->size());
     return (*_material_ids)[element_id];
-}
-
-double TwoPhaseFlowWithPrhoMaterialProperties::getLiquidDensity(
-    const double p, const double T) const
-{
-    ArrayType vars;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _liquid_density->getValue(vars);
 }
 
 double TwoPhaseFlowWithPrhoMaterialProperties::getGasDensity(
