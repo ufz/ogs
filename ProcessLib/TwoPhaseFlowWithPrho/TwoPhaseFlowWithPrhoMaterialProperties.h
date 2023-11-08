@@ -20,6 +20,7 @@
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/RelativePermeability/CreateRelativePermeabilityModel.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/RelativePermeability/RelativePermeability.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "ParameterLib/SpatialPosition.h"
 
 namespace MeshLib
 {

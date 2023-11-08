@@ -105,8 +105,7 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     std::unique_ptr<TwoPhaseFlowWithPrhoMaterialProperties> material =
-        createTwoPhaseFlowPrhoMaterialProperties(mat_config, material_ids,
-                                                 parameters);
+        createTwoPhaseFlowPrhoMaterialProperties(mat_config, material_ids);
 
     TwoPhaseFlowWithPrhoProcessData process_data{
         specific_body_force, has_gravity,         mass_lumping,
