@@ -76,6 +76,8 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
+    auto const& gas_phase = medium.phase("Gas");
+
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
@@ -160,8 +162,9 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         double const k_rel_gas =
             _process_data._material->getNonwetRelativePermeability(
                 t, pos, _pressure_nonwetting[ip], temperature, Sw);
-        double const mu_gas = _process_data._material->getGasViscosity(
-            _pressure_nonwetting[ip], temperature);
+        double const mu_gas =
+            gas_phase.property(MPL::PropertyType::viscosity)
+                .template value<double>(variables, pos, t, dt);
         double const lambda_gas = k_rel_gas / mu_gas;
         double const diffusion_coeff_component_h2 =
             _process_data._diffusion_coeff_component_b(t, pos)[0];

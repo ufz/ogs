@@ -26,10 +26,6 @@
                         <type>IdealGasLaw</type>
                         <molar_mass> 0.002 </molar_mass>
                     </gas_density>
-                    <gas_viscosity>
-                        <type>Constant</type>
-                        <value> 2.8539e-13 </value>
-                    </gas_viscosity>
                 </fluid>
                 <porous_medium>
                     <porous_medium id="0">
@@ -82,6 +78,16 @@
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value>3.171e-11</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Gas</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>2.8539e-13</value>
                         </property>
                     </properties>
                 </phase>

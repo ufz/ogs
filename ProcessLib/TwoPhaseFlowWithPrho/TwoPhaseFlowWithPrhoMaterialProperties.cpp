@@ -39,8 +39,6 @@ TwoPhaseFlowWithPrhoMaterialProperties::TwoPhaseFlowWithPrhoMaterialProperties(
         liquid_density,
     std::unique_ptr<MaterialLib::Fluid::FluidProperty>
         gas_density,
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty>
-        gas_viscosity,
     std::vector<std::unique_ptr<
         MaterialLib::PorousMedium::CapillaryPressureSaturation>>&&
         capillary_pressure_models,
@@ -49,7 +47,6 @@ TwoPhaseFlowWithPrhoMaterialProperties::TwoPhaseFlowWithPrhoMaterialProperties(
         relative_permeability_models)
     : _liquid_density(std::move(liquid_density)),
       _gas_density(std::move(gas_density)),
-      _gas_viscosity(std::move(gas_viscosity)),
       _material_ids(material_ids),
       _capillary_pressure_models(std::move(capillary_pressure_models)),
       _relative_permeability_models(std::move(relative_permeability_models))
@@ -85,15 +82,6 @@ double TwoPhaseFlowWithPrhoMaterialProperties::getGasDensity(
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
     return _gas_density->getValue(vars);
-}
-
-double TwoPhaseFlowWithPrhoMaterialProperties::getGasViscosity(
-    const double p, const double T) const
-{
-    ArrayType vars;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _gas_viscosity->getValue(vars);
 }
 
 double TwoPhaseFlowWithPrhoMaterialProperties::getNonwetRelativePermeability(
