@@ -19,9 +19,11 @@ namespace ProcessLib
 {
 namespace TwoPhaseFlowWithPrho
 {
+namespace MPL = MaterialPropertyLib;
+
 template <typename ShapeFunction, int GlobalDim>
 void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
-    double const t, double const /*dt*/, std::vector<double> const& local_x,
+    double const t, double const dt, std::vector<double> const& local_x,
     std::vector<double> const& /*local_x_prev*/,
     std::vector<double>& local_M_data, std::vector<double>& local_K_data,
     std::vector<double>& local_b_data)
@@ -71,6 +73,7 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
     auto Bl =
         local_b.template segment<cap_pressure_size>(cap_pressure_matrix_index);
 
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
@@ -105,6 +108,8 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
 
         const double temperature = _process_data._temperature(t, pos)[0];
 
+        MPL::VariableArray variables;
+
         double const rho_gas =
             _process_data._material->getGasDensity(pl_int_pt, temperature);
         double const rho_h2o =
@@ -136,6 +141,8 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         }
         double const pc = _process_data._material->getCapillaryPressure(
             material_id, t, pos, pl_int_pt, temperature, Sw);
+        variables.capillary_pressure = pc;
+        variables.liquid_saturation = Sw;
 
         double const rho_wet = rho_h2o + rho_h2_wet;
         _saturation[ip] = Sw;
@@ -147,8 +154,9 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
             _process_data._material->getCapillaryPressureDerivative(
                 material_id, t, pos, pl_int_pt, temperature, Sw);
 
-        double const porosity = _process_data._material->getPorosity(
-            material_id, t, pos, pl_int_pt, temperature, 0);
+        double const porosity =
+            medium.property(MPL::PropertyType::porosity)
+                .template value<double>(variables, pos, t, dt);
 
         Mgx.noalias() += porosity * _ip_data[ip].massOperator;
 

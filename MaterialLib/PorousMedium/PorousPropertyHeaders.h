@@ -14,5 +14,4 @@
 #pragma once
 
 #include "Permeability/createPermeabilityModel.h"
-#include "Porosity/createPorosityModel.h"
 #include "Storage/createStorageModel.h"

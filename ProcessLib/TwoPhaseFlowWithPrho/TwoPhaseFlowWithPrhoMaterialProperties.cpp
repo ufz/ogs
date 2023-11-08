@@ -15,7 +15,6 @@
 
 #include "BaseLib/Logging.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
-#include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CapillaryPressureSaturation.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CreateCapillaryPressureModel.h"
@@ -47,8 +46,6 @@ TwoPhaseFlowWithPrhoMaterialProperties::TwoPhaseFlowWithPrhoMaterialProperties(
         gas_viscosity,
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
         intrinsic_permeability_models,
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
-        porosity_models,
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
         storage_models,
     std::vector<std::unique_ptr<
@@ -63,7 +60,6 @@ TwoPhaseFlowWithPrhoMaterialProperties::TwoPhaseFlowWithPrhoMaterialProperties(
       _gas_viscosity(std::move(gas_viscosity)),
       _material_ids(material_ids),
       _intrinsic_permeability_models(std::move(intrinsic_permeability_models)),
-      _porosity_models(std::move(porosity_models)),
       _storage_models(std::move(storage_models)),
       _capillary_pressure_models(std::move(capillary_pressure_models)),
       _relative_permeability_models(std::move(relative_permeability_models))
@@ -125,15 +121,6 @@ Eigen::MatrixXd TwoPhaseFlowWithPrhoMaterialProperties::getPermeability(
 {
     return _intrinsic_permeability_models[material_id]->getValue(t, pos, 0.0,
                                                                  0.0);
-}
-
-double TwoPhaseFlowWithPrhoMaterialProperties::getPorosity(
-    const int material_id, const double t,
-    const ParameterLib::SpatialPosition& pos, const double /*p*/,
-    const double T, const double porosity_variable) const
-{
-    return _porosity_models[material_id]->getValue(t, pos, porosity_variable,
-                                                   T);
 }
 
 double TwoPhaseFlowWithPrhoMaterialProperties::getNonwetRelativePermeability(

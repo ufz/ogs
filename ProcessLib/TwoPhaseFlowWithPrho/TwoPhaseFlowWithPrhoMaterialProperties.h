@@ -15,7 +15,6 @@
 
 #include "MaterialLib/Fluid/FluidPropertyHeaders.h"
 #include "MaterialLib/PhysicalConstant.h"
-#include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/PorousPropertyHeaders.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CapillaryPressureSaturation.h"
@@ -49,8 +48,6 @@ public:
             gas_viscosity,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
             intrinsic_permeability_models,
-        std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
-            porosity_models,
         std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
             storage_models,
         std::vector<std::unique_ptr<
@@ -66,10 +63,6 @@ public:
                                     const double t,
                                     const ParameterLib::SpatialPosition& pos,
                                     const int dim) const;
-
-    double getPorosity(const int material_id, const double t,
-                       const ParameterLib::SpatialPosition& pos, const double p,
-                       const double T, const double porosity_variable) const;
 
     double getNonwetRelativePermeability(
         const double t, const ParameterLib::SpatialPosition& pos,
@@ -116,8 +109,6 @@ protected:
 
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
         _intrinsic_permeability_models;
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
-        _porosity_models;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
         _storage_models;
     std::vector<

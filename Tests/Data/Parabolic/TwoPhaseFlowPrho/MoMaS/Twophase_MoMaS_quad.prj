@@ -41,10 +41,6 @@
                             <permeability_tensor_entries>kappa1</permeability_tensor_entries>
                             <type>Constant</type>
                         </permeability>
-                        <porosity>
-                            <type>Constant</type>
-                            <porosity_parameter>constant_porosity_parameter</porosity_parameter>
-                        </porosity>
                         <storage>
                             <type>Constant</type>
                             <value> 0.0 </value>
@@ -88,6 +84,17 @@
             <temperature> temp </temperature>
         </process>
     </processes>
+    <media>
+        <medium>
+            <properties>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.15</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <parameters>
         <parameter>
             <name>HEN0</name>
@@ -138,11 +145,6 @@
             <name>temp</name>
             <type>Constant</type>
             <value>303.15</value>
-        </parameter>
-        <parameter>
-            <name>constant_porosity_parameter</name>
-            <type>Constant</type>
-            <value>0.15</value>
         </parameter>
         <parameter>
             <name>kappa1</name>
