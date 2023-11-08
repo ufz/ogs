@@ -84,6 +84,7 @@ namespace Solids
  *   \f[
  *        D = \frac{(1+\nu_{ii})(1-\nu_{ii}-2\nu_{ia}\nu_{ai})}{E_{i}^2E_{a}}.
  *   \f]
+ *   (also see Chapter 9.1 in \cite kolditz2012thermo).
  *
  *   For plane strain problems, assuming the direction of anisotropy is defined
  *   by the basis vector \f$\mathbf{e}_1\f$, the plane of isotropy to be spanned
