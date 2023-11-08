@@ -15,7 +15,6 @@
 
 #include "BaseLib/Logging.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
-#include "MaterialLib/PorousMedium/Storage/Storage.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CapillaryPressureSaturation.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CreateCapillaryPressureModel.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/RelativePermeability/CreateRelativePermeabilityModel.h"
@@ -46,8 +45,6 @@ TwoPhaseFlowWithPrhoMaterialProperties::TwoPhaseFlowWithPrhoMaterialProperties(
         gas_viscosity,
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
         intrinsic_permeability_models,
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
-        storage_models,
     std::vector<std::unique_ptr<
         MaterialLib::PorousMedium::CapillaryPressureSaturation>>&&
         capillary_pressure_models,
@@ -60,7 +57,6 @@ TwoPhaseFlowWithPrhoMaterialProperties::TwoPhaseFlowWithPrhoMaterialProperties(
       _gas_viscosity(std::move(gas_viscosity)),
       _material_ids(material_ids),
       _intrinsic_permeability_models(std::move(intrinsic_permeability_models)),
-      _storage_models(std::move(storage_models)),
       _capillary_pressure_models(std::move(capillary_pressure_models)),
       _relative_permeability_models(std::move(relative_permeability_models))
 {
