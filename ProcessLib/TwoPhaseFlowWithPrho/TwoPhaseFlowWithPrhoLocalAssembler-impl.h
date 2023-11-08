@@ -75,6 +75,7 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         local_b.template segment<cap_pressure_size>(cap_pressure_matrix_index);
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
+    auto const& liquid_phase = medium.phase("AqueousLiquid");
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
@@ -96,6 +97,8 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         const double temperature = _process_data._temperature(t, pos)[0];
 
         MPL::VariableArray variables;
+
+        variables.temperature = temperature;
 
         auto const permeability = MPL::formEigenTensor<GlobalDim>(
             medium.property(MPL::PropertyType::permeability)
@@ -167,8 +170,8 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         double const k_rel_wet =
             _process_data._material->getWetRelativePermeability(
                 t, pos, pl_int_pt, temperature, Sw);
-        double const mu_wet =
-            _process_data._material->getLiquidViscosity(pl_int_pt, temperature);
+        auto const mu_wet = liquid_phase.property(MPL::PropertyType::viscosity)
+                                .template value<double>(variables, pos, t, dt);
         double const lambda_wet = k_rel_wet / mu_wet;
 
         laplace_operator.noalias() = sm.dNdx.transpose() * permeability *

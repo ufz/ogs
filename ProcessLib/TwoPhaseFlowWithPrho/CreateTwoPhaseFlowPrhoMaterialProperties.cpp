@@ -46,9 +46,6 @@ createTwoPhaseFlowPrhoMaterialProperties(
     auto const& rho_gas_conf = fluid_config.getConfigSubtree("gas_density");
     auto _gas_density =
         MaterialLib::Fluid::createFluidDensityModel(rho_gas_conf);
-    //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__material_property__liquid_viscosity}
-    auto const& mu_conf = fluid_config.getConfigSubtree("liquid_viscosity");
-    auto _viscosity = MaterialLib::Fluid::createViscosityModel(mu_conf);
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__material_property__gas_viscosity}
     auto const& mu_gas_conf = fluid_config.getConfigSubtree("gas_viscosity");
     auto _gas_viscosity = MaterialLib::Fluid::createViscosityModel(mu_gas_conf);
@@ -100,9 +97,8 @@ createTwoPhaseFlowPrhoMaterialProperties(
     }
 
     return std::make_unique<TwoPhaseFlowWithPrhoMaterialProperties>(
-        material_ids, std::move(_liquid_density), std::move(_viscosity),
-        std::move(_gas_density), std::move(_gas_viscosity),
-        std::move(_capillary_pressure_models),
+        material_ids, std::move(_liquid_density), std::move(_gas_density),
+        std::move(_gas_viscosity), std::move(_capillary_pressure_models),
         std::move(_relative_permeability_models));
 }
 

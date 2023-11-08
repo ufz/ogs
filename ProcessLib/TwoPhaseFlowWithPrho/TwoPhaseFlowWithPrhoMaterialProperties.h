@@ -40,8 +40,6 @@ public:
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>
             liquid_density,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>
-            viscosity,
-        std::unique_ptr<MaterialLib::Fluid::FluidProperty>
             gas_density,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>
             gas_viscosity,
@@ -72,7 +70,6 @@ public:
     double getLiquidDensity(const double p, const double T) const;
     double getGasDensity(const double p, const double T) const;
     double getGasViscosity(const double p, const double T) const;
-    double getLiquidViscosity(const double p, const double T) const;
     bool computeConstitutiveRelation(double const t,
                                      ParameterLib::SpatialPosition const& x,
                                      const int material_id,
@@ -88,7 +85,6 @@ public:
 
 protected:
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> _liquid_density;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> _viscosity;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> _gas_density;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> _gas_viscosity;
 
