@@ -59,8 +59,6 @@ createTwoPhaseFlowPrhoMaterialProperties(
     // Get porous properties
     std::vector<int> mat_ids;
     std::vector<int> mat_krel_ids;
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
-        _intrinsic_permeability_models;
     std::vector<
         std::unique_ptr<MaterialLib::PorousMedium::CapillaryPressureSaturation>>
         _capillary_pressure_models;
@@ -76,12 +74,6 @@ createTwoPhaseFlowPrhoMaterialProperties(
         //! \ogs_file_attr{prj__processes__process__TWOPHASE_FLOW_PRHO__material_property__porous_medium__porous_medium__id}
         auto const id = conf.getConfigAttributeOptional<int>("id");
         mat_ids.push_back(*id);
-
-        //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__material_property__porous_medium__porous_medium__permeability}
-        auto const& permeability_conf = conf.getConfigSubtree("permeability");
-        _intrinsic_permeability_models.emplace_back(
-            MaterialLib::PorousMedium::createPermeabilityModel(
-                permeability_conf, parameters));
 
         auto const& capillary_pressure_conf =
             //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__material_property__porous_medium__porous_medium__capillary_pressure}
@@ -110,12 +102,9 @@ createTwoPhaseFlowPrhoMaterialProperties(
         BaseLib::reorderVector(_relative_permeability_models, mat_krel_ids);
     }
 
-    BaseLib::reorderVector(_intrinsic_permeability_models, mat_ids);
-
     return std::make_unique<TwoPhaseFlowWithPrhoMaterialProperties>(
         material_ids, std::move(_liquid_density), std::move(_viscosity),
         std::move(_gas_density), std::move(_gas_viscosity),
-        std::move(_intrinsic_permeability_models),
         std::move(_capillary_pressure_models),
         std::move(_relative_permeability_models));
 }

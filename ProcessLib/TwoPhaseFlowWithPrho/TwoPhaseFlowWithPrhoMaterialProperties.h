@@ -15,7 +15,6 @@
 
 #include "MaterialLib/Fluid/FluidPropertyHeaders.h"
 #include "MaterialLib/PhysicalConstant.h"
-#include "MaterialLib/PorousMedium/PorousPropertyHeaders.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CapillaryPressureSaturation.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CreateCapillaryPressureModel.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/RelativePermeability/CreateRelativePermeabilityModel.h"
@@ -45,8 +44,6 @@ public:
             gas_density,
         std::unique_ptr<MaterialLib::Fluid::FluidProperty>
             gas_viscosity,
-        std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
-            intrinsic_permeability_models,
         std::vector<std::unique_ptr<
             MaterialLib::PorousMedium::CapillaryPressureSaturation>>&&
             capillary_pressure_models,
@@ -55,11 +52,6 @@ public:
             relative_permeability_models);
 
     int getMaterialID(const std::size_t element_id);
-
-    Eigen::MatrixXd getPermeability(const int material_id,
-                                    const double t,
-                                    const ParameterLib::SpatialPosition& pos,
-                                    const int dim) const;
 
     double getNonwetRelativePermeability(
         const double t, const ParameterLib::SpatialPosition& pos,
@@ -104,8 +96,6 @@ protected:
      */
     MeshLib::PropertyVector<int> const* const _material_ids;
 
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
-        _intrinsic_permeability_models;
     std::vector<
         std::unique_ptr<MaterialLib::PorousMedium::CapillaryPressureSaturation>>
         _capillary_pressure_models;

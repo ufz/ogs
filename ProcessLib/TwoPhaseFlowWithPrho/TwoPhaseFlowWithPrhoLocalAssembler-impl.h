@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "NumLib/Function/Interpolation.h"
 #include "TwoPhaseFlowWithPrhoLocalAssembler.h"
@@ -82,20 +83,6 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
     const int material_id =
         _process_data._material->getMaterialID(pos.getElementID().value());
 
-    const Eigen::MatrixXd& perm = _process_data._material->getPermeability(
-        material_id, t, pos, _element.getDimension());
-    assert(perm.rows() == _element.getDimension() || perm.rows() == 1);
-    GlobalDimMatrixType permeability = GlobalDimMatrixType::Zero(
-        _element.getDimension(), _element.getDimension());
-    if (perm.rows() == _element.getDimension())
-    {
-        permeability = perm;
-    }
-    else if (perm.rows() == 1)
-    {
-        permeability.diagonal().setConstant(perm(0, 0));
-    }
-
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& sm = _shape_matrices[ip];
@@ -110,6 +97,9 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
 
         MPL::VariableArray variables;
 
+        auto const permeability = MPL::formEigenTensor<GlobalDim>(
+            medium.property(MPL::PropertyType::permeability)
+                .value(variables, pos, t, dt));
         double const rho_gas =
             _process_data._material->getGasDensity(pl_int_pt, temperature);
         double const rho_h2o =
