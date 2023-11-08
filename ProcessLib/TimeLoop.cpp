@@ -12,6 +12,7 @@
 
 #include <range/v3/algorithm/any_of.hpp>
 #include <range/v3/algorithm/contains.hpp>
+#include <range/v3/view/map.hpp>
 
 #include "BaseLib/Error.h"
 #include "BaseLib/RunTime.h"
@@ -728,9 +729,8 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         {
             auto const process_id = process_data->process_id;
 
-            auto const isLocalCouplingProcess =
-                ranges::contains(_local_coupling_processes, process_id,
-                                 [](const auto& m) { return m.second; });
+            bool const isLocalCouplingProcess = ranges::contains(
+                _local_coupling_processes | ranges::views::values, process_id);
 
             if (!local_coupling_iteration_converged && !isLocalCouplingProcess)
             {
