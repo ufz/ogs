@@ -34,15 +34,6 @@ createTwoPhaseFlowPrhoMaterialProperties(
 {
     DBUG("Reading material properties of two-phase flow process.");
 
-    //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__material_property__fluid}
-    auto const& fluid_config = config.getConfigSubtree("fluid");
-
-    // Get fluid properties
-    //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__material_property__gas_density}
-    auto const& rho_gas_conf = fluid_config.getConfigSubtree("gas_density");
-    auto _gas_density =
-        MaterialLib::Fluid::createFluidDensityModel(rho_gas_conf);
-
     // Get porous properties
     std::vector<int> mat_ids;
     std::vector<int> mat_krel_ids;
@@ -90,7 +81,7 @@ createTwoPhaseFlowPrhoMaterialProperties(
     }
 
     return std::make_unique<TwoPhaseFlowWithPrhoMaterialProperties>(
-        material_ids, std::move(_gas_density),
+        material_ids,
         std::move(_capillary_pressure_models),
         std::move(_relative_permeability_models));
 }

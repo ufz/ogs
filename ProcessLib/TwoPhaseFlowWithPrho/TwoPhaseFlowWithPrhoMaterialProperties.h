@@ -37,8 +37,6 @@ public:
 
     TwoPhaseFlowWithPrhoMaterialProperties(
         MeshLib::PropertyVector<int> const* material_ids,
-        std::unique_ptr<MaterialLib::Fluid::FluidProperty>
-            gas_density,
         std::vector<std::unique_ptr<
             MaterialLib::PorousMedium::CapillaryPressureSaturation>>&&
             capillary_pressure_models,
@@ -63,7 +61,6 @@ public:
         const int material_id, const double t,
         const ParameterLib::SpatialPosition& pos, const double p,
         const double T, const double saturation) const;
-    double getGasDensity(const double p, const double T) const;
     bool computeConstitutiveRelation(double const t,
                                      ParameterLib::SpatialPosition const& x,
                                      const int material_id,
@@ -78,8 +75,6 @@ public:
                                      double& dxm_dX);
 
 protected:
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> _gas_density;
-
     /** Use two phase models for different material zones.
      *  Material IDs must be given as mesh element properties.
      */

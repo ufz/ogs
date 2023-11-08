@@ -100,13 +100,17 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
 
         MPL::VariableArray variables;
 
+        variables.phase_pressure = pl_int_pt;
         variables.temperature = temperature;
+        variables.molar_mass =
+            gas_phase.property(MPL::PropertyType::molar_mass)
+                .template value<double>(variables, pos, t, dt);
 
         auto const permeability = MPL::formEigenTensor<GlobalDim>(
             medium.property(MPL::PropertyType::permeability)
                 .value(variables, pos, t, dt));
-        double const rho_gas =
-            _process_data._material->getGasDensity(pl_int_pt, temperature);
+        auto const rho_gas = gas_phase.property(MPL::PropertyType::density)
+                                 .template value<double>(variables, pos, t, dt);
         auto const rho_h2o = liquid_phase.property(MPL::PropertyType::density)
                                  .template value<double>(variables, pos, t, dt);
 

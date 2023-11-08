@@ -17,12 +17,6 @@
                 <relative_epsilons>1e-6 1e-7</relative_epsilons>
             </jacobian_assembler>
             <material_property>
-                <fluid>
-                    <gas_density>
-                        <type>IdealGasLaw</type>
-                        <molar_mass> 0.002 </molar_mass>
-                    </gas_density>
-                </fluid>
                 <porous_medium>
                     <porous_medium id="0">
                         <capillary_pressure>
@@ -85,6 +79,15 @@
                 <phase>
                     <type>Gas</type>
                     <properties>
+                        <property>
+                            <name>density</name>
+                            <type>IdealGasLaw</type>
+                        </property>
+                        <property>
+                            <name>molar_mass</name>
+                            <type>Constant</type>
+                            <value>0.002</value>
+                        </property>
                         <property>
                             <name>viscosity</name>
                             <type>Constant</type>
