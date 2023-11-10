@@ -29,7 +29,7 @@ namespace ParameterLib
 {
 struct ParameterBase;
 struct CoordinateSystem;
-}
+}  // namespace ParameterLib
 namespace MathLib
 {
 class PiecewiseLinearInterpolation;

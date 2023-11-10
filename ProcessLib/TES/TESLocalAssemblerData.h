@@ -36,16 +36,18 @@ struct TESLocalAssemblerData
     // integration point values of unknowns -- temporary storage
     double p = std::numeric_limits<double>::quiet_NaN();  // gas pressure
     double T = std::numeric_limits<double>::quiet_NaN();  // temperature
-    double vapour_mass_fraction = std::numeric_limits<
-        double>::quiet_NaN();  // fluid mass fraction of the second component
+    double vapour_mass_fraction =
+        std::numeric_limits<double>::quiet_NaN();  // fluid mass fraction of the
+                                                   // second component
 
     // temporary storage for some properties
     // values do not change during the assembly of one integration point
     double rho_GR = std::numeric_limits<double>::quiet_NaN();
     double p_V =
         std::numeric_limits<double>::quiet_NaN();  // vapour partial pressure
-    double qR = std::numeric_limits<
-        double>::quiet_NaN();  // reaction rate, use this in assembly!!!
+    double qR =
+        std::numeric_limits<double>::quiet_NaN();  // reaction rate, use this in
+                                                   // assembly!!!
 
     std::unique_ptr<TESFEMReactionAdaptor> const reaction_adaptor;
 

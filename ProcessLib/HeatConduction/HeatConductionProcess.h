@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include "ProcessLib/Process.h"
 #include "HeatConductionFEM.h"
 #include "HeatConductionProcessData.h"
+#include "ProcessLib/Process.h"
 
 namespace ProcessLib
 {
@@ -20,7 +20,6 @@ namespace HeatConduction
 {
 class HeatConductionProcess final : public Process
 {
-
 public:
     HeatConductionProcess(
         std::string name,

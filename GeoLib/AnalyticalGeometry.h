@@ -197,24 +197,27 @@ bool lineSegmentIntersect(LineSegment const& s0, LineSegment const& s1,
 /// containing one point if the line segments intersect in a single point, a
 /// vector containing two points describing the line segment the original line
 /// segments are interfering.
-std::vector<MathLib::Point3d> lineSegmentIntersect2d(
-    LineSegment const& ab, LineSegment const& cd);
+std::vector<MathLib::Point3d> lineSegmentIntersect2d(LineSegment const& ab,
+                                                     LineSegment const& cd);
 
 /**
  * Calculates the intersection points of a line PQ and a triangle ABC.
  * This method requires ABC to be counterclockwise and PQ to point downward.
  * \return Intersection point or nullptr if there is no intersection.
  */
-std::unique_ptr<Point> triangleLineIntersection(
-    MathLib::Point3d const& a, MathLib::Point3d const& b,
-    MathLib::Point3d const& c, MathLib::Point3d const& p,
-    MathLib::Point3d const& q);
+std::unique_ptr<Point> triangleLineIntersection(MathLib::Point3d const& a,
+                                                MathLib::Point3d const& b,
+                                                MathLib::Point3d const& c,
+                                                MathLib::Point3d const& p,
+                                                MathLib::Point3d const& q);
 
 /**
- * Method first computes the intersection points of line segments of Polyline objects
- * (@see computeIntersectionPoints()) and pushes each intersection point in the PointVec
- * pnt_vec. For each intersection an id is returned.  This id is used to split the two
- * intersecting straight line segments in four straight line segments.
+ * Method first computes the intersection points of line segments of Polyline
+ * objects
+ * (@see computeIntersectionPoints()) and pushes each intersection point in the
+ * PointVec pnt_vec. For each intersection an id is returned.  This id is used
+ * to split the two intersecting straight line segments in four straight line
+ * segments.
  */
 void computeAndInsertAllIntersectionPoints(PointVec& pnt_vec,
                                            std::vector<Polyline*>& plys);
@@ -239,8 +242,8 @@ rotatePolygonPointsToXY(GeoLib::Polygon const& polygon_in);
 /// connectable. In order to obtain a unique result the segments are sorted such
 /// that the begin point of the first segment is \c seg_beg_pnt.
 void sortSegments(MathLib::Point3d const& seg_beg_pnt,
-    std::vector<LineSegment>& sub_segments);
+                  std::vector<LineSegment>& sub_segments);
 
-} // end namespace GeoLib
+}  // end namespace GeoLib
 
 #include "AnalyticalGeometry-impl.h"

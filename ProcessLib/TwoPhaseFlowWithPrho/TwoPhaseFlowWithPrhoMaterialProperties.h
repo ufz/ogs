@@ -12,6 +12,7 @@
 
 #include <memory>
 #include <vector>
+
 #include "MaterialLib/Fluid/FluidPropertyHeaders.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
@@ -109,8 +110,8 @@ protected:
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> _gas_viscosity;
 
     /** Use two phase models for different material zones.
-    *  Material IDs must be given as mesh element properties.
-    */
+     *  Material IDs must be given as mesh element properties.
+     */
     MeshLib::PropertyVector<int> const* const _material_ids;
 
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
@@ -136,49 +137,49 @@ private:
 
 private:
     /**
-    * Calculates the residual vector.
-    */
+     * Calculates the residual vector.
+     */
     void calculateResidual(const int material_id, double const pl,
                            double const X, double const T, double Sw,
                            double rho_h2_wet, ResidualVector& res);
     /**
-    * Calculates the Jacobian.
-    */
+     * Calculates the Jacobian.
+     */
     void calculateJacobian(const int material_id, double const t,
                            ParameterLib::SpatialPosition const& x,
                            double const pl, double const X, double const T,
                            JacobianMatrix& Jac, double Sw, double rho_h2_wet);
     /** Complementary condition 1
-    * for calculating molar fraction of light component in the liquid phase
-    */
+     * for calculating molar fraction of light component in the liquid phase
+     */
     static double calculateEquilibiumRhoWetLight(double const pg,
                                                  double const Sw,
                                                  double const rho_wet_h2);
     /** Complementary condition 2
-    * for calculating the saturation
-    */
+     * for calculating the saturation
+     */
     static double calculateSaturation(double /*PL*/, double X, double Sw,
                                       double rho_wet_h2, double rho_nonwet_h2,
                                       double /*T*/);
     /**
-    * Calculate the derivatives using the analytical way
-    */
+     * Calculate the derivatives using the analytical way
+     */
     double calculatedSwdP(double pl, double S, double rho_wet_h2,
                           double const T, int current_material_id) const;
     /**
-    * Calculate the derivatives using the analytical way
-    */
+     * Calculate the derivatives using the analytical way
+     */
     double calculatedSwdX(double const pl, const double /*X*/, const double S,
                           const double rho_wet_h2, double const T,
                           int current_material_id) const;
     /**
-    * Calculate the derivatives using the analytical way
-    */
+     * Calculate the derivatives using the analytical way
+     */
     double calculatedXmdX(double pl, double Sw, double rho_wet_h2, double dSwdX,
                           int current_material_id) const;
     /**
-    * Calculate the derivatives using the analytical way
-    */
+     * Calculate the derivatives using the analytical way
+     */
     double calculatedXmdP(double pl, double Sw, double rho_wet_h2, double dSwdP,
                           int current_material_id) const;
 };

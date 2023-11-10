@@ -29,6 +29,7 @@ std::unique_ptr<Property> createWaterDensityIAPWSIF97Region1(
     auto property_name = config.peekConfigParameter<std::string>("name");
 
     //! \ogs_file_param_special{properties__property__WaterDensityIAPWSIF97Region1}
-    return std::make_unique<WaterDensityIAPWSIF97Region1>(std::move(property_name));
+    return std::make_unique<WaterDensityIAPWSIF97Region1>(
+        std::move(property_name));
 }
 }  // namespace MaterialPropertyLib

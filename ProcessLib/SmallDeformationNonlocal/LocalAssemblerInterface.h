@@ -13,10 +13,9 @@
 #include <memory>
 #include <vector>
 
+#include "IntegrationPointDataNonlocalInterface.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
-
-#include "IntegrationPointDataNonlocalInterface.h"
 
 namespace ProcessLib
 {

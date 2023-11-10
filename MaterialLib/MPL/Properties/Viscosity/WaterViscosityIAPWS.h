@@ -56,9 +56,11 @@ public:
                             Variable const variable,
                             ParameterLib::SpatialPosition const& pos,
                             double const t, double const dt) const override;
+
 private:
     static constexpr double ref_T_ = 647.096;  ///< reference temperature in K
-    static constexpr double ref_rho_ = 322.0;  ///< reference density in `kg/m^3`
+    static constexpr double ref_rho_ =
+        322.0;  ///< reference density in `kg/m^3`
     static constexpr double ref_mu_ = 1.0e-6;  ///< reference viscosity in Pa.s
 
     // Coefficients Hi and Hij are given in two static arrays in the cpp file.

@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include "ProcessLib/Process.h"
 #include "HydroMechanicsProcessData.h"
 #include "LocalAssemblerInterface.h"
+#include "ProcessLib/Process.h"
 
 namespace ProcessLib
 {
@@ -141,7 +141,7 @@ private:
      * @copydoc ProcessLib::Process::getDOFTableForExtrapolatorData()
      */
     std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
-        getDOFTableForExtrapolatorData() const override;
+    getDOFTableForExtrapolatorData() const override;
 
     /// Check whether the process represented by \c process_id is/has
     /// mechanical process. In the present implementation, the mechanical

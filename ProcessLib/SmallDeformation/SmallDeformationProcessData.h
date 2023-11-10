@@ -24,7 +24,7 @@ namespace Solids
 template <int DisplacementDim>
 struct MechanicsBase;
 }
-}
+}  // namespace MaterialLib
 namespace ProcessLib
 {
 namespace SmallDeformation
@@ -36,9 +36,8 @@ struct SmallDeformationProcessData
 
     MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
-    std::map<
-        int,
-        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
+    std::map<int, std::unique_ptr<
+                      MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
 
     /// Optional, initial stress field. A symmetric tensor, short vector

@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include "ProcessLib/Deformation/BMatrixPolicy.h"
-
 #include <cmath>
+
+#include "ProcessLib/Deformation/BMatrixPolicy.h"
 
 namespace ProcessLib
 {

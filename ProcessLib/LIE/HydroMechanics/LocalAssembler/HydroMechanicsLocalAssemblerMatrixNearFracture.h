@@ -13,10 +13,9 @@
 #include <unordered_map>
 #include <vector>
 
+#include "HydroMechanicsLocalAssemblerMatrix.h"
 #include "ProcessLib/LIE/Common/FractureProperty.h"
 #include "ProcessLib/LIE/Common/JunctionProperty.h"
-
-#include "HydroMechanicsLocalAssemblerMatrix.h"
 
 namespace ProcessLib
 {

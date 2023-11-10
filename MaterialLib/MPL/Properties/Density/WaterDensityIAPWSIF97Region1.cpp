@@ -31,7 +31,7 @@ PropertyDataType WaterDensityIAPWSIF97Region1::value(
     const double pi = p / ref_p_;
 
     return ref_p_ /
-            (MaterialLib::PhysicalConstant::SpecificGasConstant::WaterVapour *
+           (MaterialLib::PhysicalConstant::SpecificGasConstant::WaterVapour *
             T * gibbs_free_energy_.get_dgamma_dpi(tau, pi));
 }
 
@@ -54,19 +54,21 @@ PropertyDataType WaterDensityIAPWSIF97Region1::dValue(
             return -(ref_p_ -
                      tau * ref_p_ *
                          gibbs_free_energy_.get_dgamma_dtau_dpi(tau, pi) /
-                          dgamma_dpi) /
-                    (MaterialLib::PhysicalConstant::SpecificGasConstant::WaterVapour *
-                     T * T * dgamma_dpi);
+                         dgamma_dpi) /
+                   (MaterialLib::PhysicalConstant::SpecificGasConstant::
+                        WaterVapour *
+                    T * T * dgamma_dpi);
         case Variable::phase_pressure:
             return -gibbs_free_energy_.get_dgamma_dpi_dpi(tau, pi) /
-                       (MaterialLib::PhysicalConstant::SpecificGasConstant::WaterVapour
-                        * T * dgamma_dpi * dgamma_dpi);
+                   (MaterialLib::PhysicalConstant::SpecificGasConstant::
+                        WaterVapour *
+                    T * dgamma_dpi * dgamma_dpi);
         default:
             OGS_FATAL(
-        "WaterDensityIAPWSIF97Region1::dValue is implemented for derivatives with "
-        "respect to temperature or phase_pressure only.");
+                "WaterDensityIAPWSIF97Region1::dValue is implemented for "
+                "derivatives with "
+                "respect to temperature or phase_pressure only.");
     }
-
 }
 
 }  // namespace MaterialPropertyLib

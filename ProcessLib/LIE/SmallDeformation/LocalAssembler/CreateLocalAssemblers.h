@@ -12,10 +12,8 @@
 #include <vector>
 
 #include "BaseLib/Logging.h"
-
-#include "NumLib/DOF/LocalToGlobalIndexMap.h"
-
 #include "LocalDataInitializer.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace ProcessLib
 {

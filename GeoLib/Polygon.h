@@ -28,7 +28,8 @@ namespace GeoLib
  */
 
 /**
- * A polygon is a (closed) polyline. Thus class Polygon is derived from class Polyline.
+ * A polygon is a (closed) polyline. Thus class Polygon is derived from class
+ * Polyline.
  */
 class Polygon : public Polyline
 {
@@ -46,7 +47,7 @@ public:
 
     ~Polygon() override;
 
-    bool initialise ();
+    bool initialise();
 
     /**
      * Method checks if the given point is inside the polygon.
@@ -69,7 +70,7 @@ public:
      * polygon.
      * \param ply the polyline that should be checked
      */
-    bool isPolylineInPolygon (const Polyline& ply) const;
+    bool isPolylineInPolygon(const Polyline& ply) const;
     /**
      * Method checks first if at least one (end!) point of a line segment of the
      * polyline is inside of the polygon. If this test fails each line segment
@@ -78,7 +79,7 @@ public:
      * \param ply the polyline that should be checked
      * \return true if a part of the polyline is within the polygon
      */
-    bool isPartOfPolylineInPolygon (const Polyline& ply) const;
+    bool isPartOfPolylineInPolygon(const Polyline& ply) const;
 
     /**
      * Calculates the next intersection point between the line segment \c seg
@@ -99,13 +100,14 @@ public:
     std::list<Polygon*> const& computeListOfSimplePolygons();
 
     friend bool operator==(Polygon const& lhs, Polygon const& rhs);
+
 private:
-    void ensureCCWOrientation ();
+    void ensureCCWOrientation();
 
     void splitPolygonAtIntersection(
         const std::list<Polygon*>::const_iterator& polygon_it);
 
-    void splitPolygonAtPoint (const std::list<Polygon*>::iterator& polygon_it);
+    void splitPolygonAtPoint(const std::list<Polygon*>::iterator& polygon_it);
     std::list<Polygon*> _simple_polygon_list;
     AABB _aabb;
 };
@@ -118,4 +120,4 @@ private:
  */
 bool operator==(Polygon const& lhs, Polygon const& rhs);
 
-} // end namespace GeoLib
+}  // end namespace GeoLib

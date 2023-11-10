@@ -29,7 +29,7 @@ struct IntegrationPointDataNonlocalInterface
 
     std::vector<NonlocalIP> non_local_assemblers;
 
-    double kappa_d = 0;      ///< damage driving variable.
+    double kappa_d = 0;  ///< damage driving variable.
     double integration_weight;
     double nonlocal_internal_length;
     Eigen::Vector3d coordinates;

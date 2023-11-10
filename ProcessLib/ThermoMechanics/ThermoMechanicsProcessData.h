@@ -24,7 +24,7 @@ namespace Solids
 template <int DisplacementDim>
 struct MechanicsBase;
 }
-}
+}  // namespace MaterialLib
 namespace ProcessLib
 {
 namespace ThermoMechanics

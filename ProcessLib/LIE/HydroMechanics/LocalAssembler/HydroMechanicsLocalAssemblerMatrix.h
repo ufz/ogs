@@ -97,10 +97,8 @@ protected:
         ShapeMatrixPolicyType<ShapeFunctionPressure, GlobalDim>;
 
     using IntegrationPointDataType =
-        IntegrationPointDataMatrix<BMatricesType,
-                                   ShapeMatricesTypeDisplacement,
-                                   ShapeMatricesTypePressure,
-                                   GlobalDim,
+        IntegrationPointDataMatrix<BMatricesType, ShapeMatricesTypeDisplacement,
+                                   ShapeMatricesTypePressure, GlobalDim,
                                    ShapeFunctionDisplacement::NPOINTS>;
 
     using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;

@@ -10,10 +10,9 @@
 
 #pragma once
 
+#include "ProcessLib/Process.h"
 #include "StokesFlowFEM.h"
 #include "StokesFlowProcessData.h"
-
-#include "ProcessLib/Process.h"
 
 namespace ProcessLib
 {

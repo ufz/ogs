@@ -9,14 +9,15 @@
 
 #pragma once
 
-#include <vector>
 #include <memory>
+#include <vector>
 
+#include "AABB.h"
 #include "GeoObject.h"
 #include "Point.h"
-#include "AABB.h"
 
-namespace GeoLib {
+namespace GeoLib
+{
 
 class Polyline;
 
@@ -37,9 +38,9 @@ public:
     Surface(Surface const& src);
     ~Surface() override;
 
-    Surface(Surface && src) = delete;
+    Surface(Surface&& src) = delete;
     Surface& operator=(Surface const& src) = delete;
-    Surface& operator=(Surface && src) = delete;
+    Surface& operator=(Surface&& src) = delete;
 
     /// return a geometry type
     GEOTYPE getGeoType() const override { return GEOTYPE::SURFACE; }
@@ -55,7 +56,7 @@ public:
 
     /** \brief const access operator for the access to the i-th Triangle of the
      * surface.
-    */
+     */
     const Triangle* operator[](std::size_t i) const;
 
     /**

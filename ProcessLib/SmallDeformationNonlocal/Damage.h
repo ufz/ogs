@@ -60,7 +60,8 @@ double calculateDamageKappaD(
     double const r_s = prod_stress / tensile_strength - 1.;
 
     // Compute normalizing strain.
-    double const x_s = [](double const h_d, double const r_s) {
+    double const x_s = [](double const h_d, double const r_s)
+    {
         if (r_s < 0)
         {
             return 1.;

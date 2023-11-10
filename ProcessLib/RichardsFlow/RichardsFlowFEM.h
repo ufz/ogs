@@ -186,15 +186,13 @@ public:
                     .template value<double>(vars, pos, t, dt);
 
             double const Sw =
-                medium
-                    .property(MaterialPropertyLib::PropertyType::saturation)
+                medium.property(MaterialPropertyLib::PropertyType::saturation)
                     .template value<double>(vars, pos, t, dt);
             _saturation[ip] = Sw;
             vars.liquid_saturation = Sw;
 
             double const dSw_dpc =
-                medium
-                    .property(MaterialPropertyLib::PropertyType::saturation)
+                medium.property(MaterialPropertyLib::PropertyType::saturation)
                     .template dValue<double>(
                         vars, MaterialPropertyLib::Variable::capillary_pressure,
                         pos, t, dt);
@@ -319,8 +317,7 @@ public:
             vars.capillary_pressure = -p_int_pt;
 
             double const Sw =
-                medium
-                    .property(MaterialPropertyLib::PropertyType::saturation)
+                medium.property(MaterialPropertyLib::PropertyType::saturation)
                     .template value<double>(vars, pos, t, dt);
             vars.liquid_saturation = Sw;
 

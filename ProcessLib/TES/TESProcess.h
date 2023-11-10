@@ -12,7 +12,6 @@
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
-
 #include "TESAssemblyParams.h"
 #include "TESLocalAssembler.h"
 
@@ -22,7 +21,7 @@ class Element;
 class Mesh;
 template <typename PROP_VAL_TYPE>
 class PropertyVector;
-}
+}  // namespace MeshLib
 
 namespace ProcessLib
 {

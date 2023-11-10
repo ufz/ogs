@@ -13,7 +13,8 @@
 
 #include "MathLib/Point3d.h"
 
-namespace GeoLib {
+namespace GeoLib
+{
 
 class Point;
 
@@ -36,10 +37,10 @@ public:
 
     /** \brief const access operator to access the index
      * of the i-th triangle point
-    */
+     */
     const std::size_t& operator[](std::size_t i) const
     {
-        assert (i < 3);
+        assert(i < 3);
         return _pnt_ids[i];
     }
 
@@ -48,12 +49,13 @@ public:
      */
     const Point* getPoint(std::size_t i) const
     {
-        assert (i < 3);
+        assert(i < 3);
         return _pnts[_pnt_ids[i]];
     }
 
     /**
-     * Checks if point q is within the triangle, uses GeoLib::isPointInTriangle().
+     * Checks if point q is within the triangle, uses
+     * GeoLib::isPointInTriangle().
      * @param q The input point.
      * @param eps Checks the 'epsilon'-neighbourhood
      * @return true, if point is in triangle, else false

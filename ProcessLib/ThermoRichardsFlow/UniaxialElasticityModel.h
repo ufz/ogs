@@ -48,7 +48,8 @@ struct UniaxialElasticityModel : SimplifiedElasticityModel
     }
 
     double thermalExpansivityContribution(
-        Eigen::Matrix<double, 3, 3> const& solid_linear_thermal_expansion_coefficient,
+        Eigen::Matrix<double, 3, 3> const&
+            solid_linear_thermal_expansion_coefficient,
         MaterialPropertyLib::Phase const& solid_phase,
         MaterialPropertyLib::VariableArray const& variables,
         ParameterLib::SpatialPosition const& x_position, double const t,

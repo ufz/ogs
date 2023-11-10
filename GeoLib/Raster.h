@@ -20,17 +20,18 @@
 #include "BaseLib/Error.h"
 #include "MathLib/Point3d.h"
 
-namespace GeoLib {
+namespace GeoLib
+{
 
 /// Contains the relevant information when storing a geoscientific raster data
 struct RasterHeader final
 {
-    std::size_t n_cols; // width
-    std::size_t n_rows; // height
-    std::size_t n_depth; // depth (for 3d image)
-    MathLib::Point3d origin; // lower left corner
-    double cell_size; // edge length of each pixel
-    double no_data; // no data value
+    std::size_t n_cols;       // width
+    std::size_t n_rows;       // height
+    std::size_t n_depth;      // depth (for 3d image)
+    MathLib::Point3d origin;  // lower left corner
+    double cell_size;         // edge length of each pixel
+    double no_data;           // no data value
 
     bool operator==(RasterHeader const&) const = default;
 };

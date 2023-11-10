@@ -17,6 +17,6 @@ namespace TestInfoLib
 
 namespace TestInfo
 {
-    const std::string data_path("@Data_SOURCE_DIR@");
+const std::string data_path("@Data_SOURCE_DIR@");
 }
-}
+}  // namespace TestInfoLib

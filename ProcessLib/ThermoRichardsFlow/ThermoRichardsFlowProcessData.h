@@ -21,7 +21,7 @@ namespace ThermoRichardsFlow
 {
 struct SimplifiedElasticityModel;
 }
-}
+}  // namespace ProcessLib
 
 namespace ProcessLib
 {

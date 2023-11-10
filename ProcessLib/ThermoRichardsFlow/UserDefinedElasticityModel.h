@@ -30,8 +30,9 @@ struct UserDefinedElasticityModel : SimplifiedElasticityModel
         ParameterLib::SpatialPosition const& x_position, double const t,
         double const dt) override
     {
-        return solid_phase[MaterialPropertyLib::PropertyType::storage_contribution]
-            .template value<double>(variables, x_position, t, dt);
+        return solid_phase
+            [MaterialPropertyLib::PropertyType::storage_contribution]
+                .template value<double>(variables, x_position, t, dt);
     }
     double thermalExpansivityContribution(
         Eigen::Matrix<double, 3,
@@ -42,7 +43,7 @@ struct UserDefinedElasticityModel : SimplifiedElasticityModel
         double const dt) override
     {
         return solid_phase[MaterialPropertyLib::PropertyType::
-                          thermal_expansivity_contribution]
+                               thermal_expansivity_contribution]
             .template value<double>(variables, x_position, t, dt);
     }
 };

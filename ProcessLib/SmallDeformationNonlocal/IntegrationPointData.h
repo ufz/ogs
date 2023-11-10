@@ -17,7 +17,8 @@ namespace ProcessLib
 {
 namespace SmallDeformationNonlocal
 {
-template <typename BMatricesType, typename ShapeMatricesType,
+template <typename BMatricesType,
+          typename ShapeMatricesType,
           int DisplacementDim>
 struct IntegrationPointData final : public IntegrationPointDataNonlocalInterface
 {
@@ -40,8 +41,8 @@ struct IntegrationPointData final : public IntegrationPointDataNonlocalInterface
     typename BMatricesType::KelvinVectorType sigma, sigma_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
     double free_energy_density = 0;
-    double damage = 0;       ///< isotropic damage
-    double damage_prev = 0;  ///< \copydoc damage
+    double damage = 0;        ///< isotropic damage
+    double damage_prev = 0;   ///< \copydoc damage
     double kappa_d_prev = 0;  ///< \copydoc kappa_d
 
     MaterialLib::Solids::Ehlers::SolidEhlers<DisplacementDim>& solid_material;

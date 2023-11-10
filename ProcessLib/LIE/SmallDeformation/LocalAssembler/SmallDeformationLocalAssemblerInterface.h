@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "BaseLib/Error.h"
-
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 

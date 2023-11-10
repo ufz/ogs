@@ -16,7 +16,6 @@
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/VariableTransformation.h"
-
 #include "TESLocalAssemblerData.h"
 
 namespace ProcessLib
@@ -50,6 +49,7 @@ public:
     }
     TESFEMReactionAdaptor& getReactionAdaptor() { return *_d.reaction_adaptor; }
     TESLocalAssemblerData const& getData() const { return _d; }
+
 private:
     Eigen::Matrix3d getMassCoeffMatrix(const unsigned int_pt) const;
     typename Traits::LaplaceMatrix getLaplaceCoeffMatrix(const unsigned int_pt,

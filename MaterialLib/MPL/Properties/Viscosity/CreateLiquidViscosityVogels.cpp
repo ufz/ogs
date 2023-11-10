@@ -12,8 +12,8 @@
 #include "CreateLiquidViscosityVogels.h"
 
 #include "BaseLib/ConfigTree.h"
-#include "MaterialLib/MPL/Property.h"
 #include "LiquidViscosityVogels.h"
+#include "MaterialLib/MPL/Property.h"
 
 namespace MaterialPropertyLib
 {
@@ -29,8 +29,8 @@ std::unique_ptr<Property> createLiquidViscosityVogels(
     auto property_name = config.peekConfigParameter<std::string>("name");
 
     auto const fluid_type =
-            //! \ogs_file_param{properties__property__LiquidViscosityVogels__liquid_type}
-            config.peekConfigParameter<std::string>("liquid_type");
+        //! \ogs_file_param{properties__property__LiquidViscosityVogels__liquid_type}
+        config.peekConfigParameter<std::string>("liquid_type");
 
     if (fluid_type == "Water")
     {

@@ -24,7 +24,7 @@ namespace MeshLib
 class Node;
 template <typename T>
 class PropertyVector;
-}
+}  // namespace MeshLib
 
 namespace ParameterLib
 {

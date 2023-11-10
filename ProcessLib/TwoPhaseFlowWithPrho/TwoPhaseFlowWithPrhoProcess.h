@@ -50,6 +50,7 @@ public:
         SecondaryVariableCollection&& secondary_variables);
 
     bool isLinear() const override { return false; }
+
 private:
     void initializeConcreteProcess(
         NumLib::LocalToGlobalIndexMap const& dof_table,

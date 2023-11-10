@@ -14,10 +14,11 @@
 
 #pragma once
 
-#include "TemplateVec.h"
 #include "Surface.h"
+#include "TemplateVec.h"
 
-namespace GeoLib {
+namespace GeoLib
+{
 
 /**
  * Class SurfaceVec encapsulate a std::vector of Surfaces
@@ -26,4 +27,4 @@ namespace GeoLib {
 
 using SurfaceVec = TemplateVec<GeoLib::Surface>;
 
-} // end namespace
+}  // namespace GeoLib

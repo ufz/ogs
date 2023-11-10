@@ -165,7 +165,8 @@ std::unique_ptr<Process> createPhaseFieldProcess(
 
     auto const crack_scheme =
         //! \ogs_file_param{prj__processes__process__PHASE_FIELD__pressurized_crack_scheme}
-        config.getConfigParameterOptional<std::string>("pressurized_crack_scheme");
+        config.getConfigParameterOptional<std::string>(
+            "pressurized_crack_scheme");
     if (crack_scheme &&
         ((*crack_scheme != "propagating") && (*crack_scheme != "static")))
     {
@@ -176,8 +177,10 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     }
 
     const bool pressurized_crack = crack_scheme.has_value();
-    const bool propagating_pressurized_crack = (crack_scheme && (*crack_scheme == "propagating"));
-    const bool static_pressurized_crack = (crack_scheme && (*crack_scheme == "static"));
+    const bool propagating_pressurized_crack =
+        (crack_scheme && (*crack_scheme == "propagating"));
+    const bool static_pressurized_crack =
+        (crack_scheme && (*crack_scheme == "static"));
 
     auto const irreversible_threshold =
         //! \ogs_file_param{prj__processes__process__PHASE_FIELD__irreversible_threshold}

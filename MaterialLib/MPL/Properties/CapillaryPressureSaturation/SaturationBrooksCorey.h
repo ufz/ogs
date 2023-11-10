@@ -13,6 +13,7 @@
 #pragma once
 
 #include <limits>
+
 #include "MaterialLib/MPL/Property.h"
 
 namespace MaterialPropertyLib

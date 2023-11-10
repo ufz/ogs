@@ -34,13 +34,13 @@ namespace ParameterLib
 {
 struct CoordinateSystem;
 struct ParameterBase;
-}
+}  // namespace ParameterLib
 namespace ProcessLib
 {
 class AbstractJacobianAssembler;
 class Process;
 class ProcessVariable;
-}
+}  // namespace ProcessLib
 
 namespace ProcessLib
 {

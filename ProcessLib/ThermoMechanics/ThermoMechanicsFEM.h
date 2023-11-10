@@ -347,7 +347,6 @@ private:
     getMaterialStateVariablesAt(unsigned integration_point) const override;
 
 private:
-
     ThermoMechanicsProcessData<DisplacementDim>& _process_data;
 
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;

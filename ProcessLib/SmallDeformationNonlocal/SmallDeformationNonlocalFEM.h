@@ -147,8 +147,8 @@ public:
     }
 
     std::size_t setIPDataInitialConditions(std::string const& name,
-                                    double const* values,
-                                    int const integration_order) override
+                                           double const* values,
+                                           int const integration_order) override
     {
         if (integration_order !=
             static_cast<int>(_integration_method.getIntegrationOrder()))
@@ -634,9 +634,9 @@ public:
         cache.clear();
         cache.reserve(_ip_data.size());
 
-        transform(
-            cbegin(_ip_data), cend(_ip_data), back_inserter(cache),
-            [](auto const& ip_data) { return ip_data.free_energy_density; });
+        transform(cbegin(_ip_data), cend(_ip_data), back_inserter(cache),
+                  [](auto const& ip_data)
+                  { return ip_data.free_energy_density; });
 
         return cache;
     }
@@ -790,8 +790,7 @@ private:
         return cache;
     }
 
-    IntegrationPointDataNonlocalInterface*
-    getIPDataPtr(int const ip) override
+    IntegrationPointDataNonlocalInterface* getIPDataPtr(int const ip) override
     {
         return &_ip_data[ip];
     }

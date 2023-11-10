@@ -16,13 +16,15 @@
 
 #include "Polyline.h"
 
-namespace GeoLib {
+namespace GeoLib
+{
 
 /**
  * This is a polyline with the possibility to mark some segments. Thus class
  * PolylineWithSegmentMarker is derived from class Polyline.
  */
-class PolylineWithSegmentMarker final : public GeoLib::Polyline {
+class PolylineWithSegmentMarker final : public GeoLib::Polyline
+{
 public:
     explicit PolylineWithSegmentMarker(GeoLib::Polyline const& polyline);
 
@@ -47,8 +49,8 @@ public:
     bool addPoint(std::size_t pnt_id) override;
 
     /**
-     * Method calls the @see Polyline::insertPoint() and initializes the inserted line segment with the same
-     * value the previous line segment had.
+     * Method calls the @see Polyline::insertPoint() and initializes the
+     * inserted line segment with the same value the previous line segment had.
      * @see Polyline::insertPoint()
      */
     bool insertPoint(std::size_t pos, std::size_t pnt_id) override;

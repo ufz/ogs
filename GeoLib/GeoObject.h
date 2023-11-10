@@ -24,4 +24,4 @@ struct GeoObject
     /// return a geometry type
     virtual GEOTYPE getGeoType() const = 0;
 };
-} // end namespace GeoLib
+}  // end namespace GeoLib

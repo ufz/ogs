@@ -10,7 +10,6 @@
 #pragma once
 
 #include "MaterialLib/MPL/Property.h"
-
 #include "ParameterLib/Parameter.h"
 
 namespace MaterialPropertyLib

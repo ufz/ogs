@@ -11,6 +11,7 @@
 #pragma once
 
 #include <memory>
+
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 
 namespace ProcessLib
@@ -26,5 +27,5 @@ struct SteadyStateDiffusionData final
     MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 };
 
-} // namespace SteadyStateDiffusion
-} // namespace ProcessLib
+}  // namespace SteadyStateDiffusion
+}  // namespace ProcessLib

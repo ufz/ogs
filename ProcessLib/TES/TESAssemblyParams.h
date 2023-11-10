@@ -39,16 +39,18 @@ struct AssemblyParams
 
     double fluid_specific_heat_source =
         std::numeric_limits<double>::quiet_NaN();
-    double cpG = std::numeric_limits<
-        double>::quiet_NaN();  // specific isobaric fluid heat capacity
+    double cpG =
+        std::numeric_limits<double>::quiet_NaN();  // specific isobaric fluid
+                                                   // heat capacity
 
     Eigen::MatrixXd solid_perm_tensor = Eigen::MatrixXd::Constant(
         3, 3, std::numeric_limits<double>::quiet_NaN());  // TODO get dimensions
     double solid_specific_heat_source =
         std::numeric_limits<double>::quiet_NaN();
     double solid_heat_cond = std::numeric_limits<double>::quiet_NaN();
-    double cpS = std::numeric_limits<
-        double>::quiet_NaN();  // specific isobaric solid heat capacity
+    double cpS =
+        std::numeric_limits<double>::quiet_NaN();  // specific isobaric solid
+                                                   // heat capacity
 
     double tortuosity = std::numeric_limits<double>::quiet_NaN();
     double diffusion_coefficient_component =

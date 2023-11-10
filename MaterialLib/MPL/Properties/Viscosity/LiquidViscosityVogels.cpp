@@ -27,8 +27,7 @@ PropertyDataType LiquidViscosityVogels<VogelsConstants>::value(
 {
     const double T = variable_array.temperature;
     // Note: the constant of 1.e-3 is for the SI unit conversion.
-    return 1.e-3 *
-               std::exp(constants_.A + constants_.B / (constants_.C + T));
+    return 1.e-3 * std::exp(constants_.A + constants_.B / (constants_.C + T));
 }
 
 template <typename VogelsConstants>
@@ -47,7 +46,7 @@ PropertyDataType LiquidViscosityVogels<VogelsConstants>::dValue(
     const double f_buff = constants_.B / (constants_.C + T);
     // Note: the constant of 1.e-3 is for the SI unit conversion.
     return -1.e-3 * f_buff * std::exp(constants_.A + f_buff) /
-               (constants_.C + T);
+           (constants_.C + T);
 }
 
 template class LiquidViscosityVogels<VogelsViscosityConstantsWater>;

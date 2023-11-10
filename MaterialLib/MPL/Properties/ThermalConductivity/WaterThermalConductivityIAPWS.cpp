@@ -18,26 +18,30 @@
 
 namespace MaterialPropertyLib
 {
-    // Li and Lij are coefficients from Tables 1 and 2 (Daucik and Dooley, 2011)
-static const double Li[5] = {2.443221e-3, 1.323095e-2, 6.770357e-3, -3.454586e-3, 4.096266e-4};
+// Li and Lij are coefficients from Tables 1 and 2 (Daucik and Dooley, 2011)
+static const double Li[5] = {2.443221e-3, 1.323095e-2, 6.770357e-3,
+                             -3.454586e-3, 4.096266e-4};
 static const double Lij[5][6] = {
-    {1.60397357, -0.646013523, 0.111443906, 0.102997357, -0.0504123634, 0.00609859258},
-    {2.33771842, -2.78843778, 1.53616167, -0.463045512, 0.0832827019, -0.00719201245},
-    {2.19650529, -4.54580785, 3.55777244, -1.40944978, 0.275418278, -0.0205938816},
+    {1.60397357, -0.646013523, 0.111443906, 0.102997357, -0.0504123634,
+     0.00609859258},
+    {2.33771842, -2.78843778, 1.53616167, -0.463045512, 0.0832827019,
+     -0.00719201245},
+    {2.19650529, -4.54580785, 3.55777244, -1.40944978, 0.275418278,
+     -0.0205938816},
     {-1.21051378, 1.60812989, -0.621178141, 0.0716373224, 0, 0},
     {-2.7203370, 4.57586331, -3.18369245, 1.1168348, -0.19268305, 0.012913842}};
 
 static double computeBarLambda0Factor(const double barT);
 
 static std::array<double, 5> computeSeriesFactorTForLambda1(const double barT);
-static std::array<double, 6> computeSeriesFactorRhoForLambda1(const double bar_rho);
+static std::array<double, 6> computeSeriesFactorRhoForLambda1(
+    const double bar_rho);
 static double computeBarLambda1Factor(
     const std::array<double, 5>& series_factorT,
     const std::array<double, 6>& series_factorRho);
 
 static double computedBarLambda_dbarT(const double barT, double bar_rho);
 static double computedBarLambda_dbarRho(const double barT, double bar_rho);
-
 
 PropertyDataType WaterThermalConductivityIAPWS::value(
     VariableArray const& variable_array,
@@ -68,13 +72,16 @@ PropertyDataType WaterThermalConductivityIAPWS::dValue(
     switch (variable)
     {
         case Variable::temperature:
-            return ref_lambda_ * computedBarLambda_dbarT(bar_T, bar_rho) / ref_T_;
+            return ref_lambda_ * computedBarLambda_dbarT(bar_T, bar_rho) /
+                   ref_T_;
         case Variable::density:
-            return ref_lambda_ * computedBarLambda_dbarRho(bar_T, bar_rho) / ref_rho_;
+            return ref_lambda_ * computedBarLambda_dbarRho(bar_T, bar_rho) /
+                   ref_rho_;
         default:
             OGS_FATAL(
-            "WaterThermalConductivityIAPWS::dValue is implemented for "
-            "derivatives with respect to temperature and liquid density only.");
+                "WaterThermalConductivityIAPWS::dValue is implemented for "
+                "derivatives with respect to temperature and liquid density "
+                "only.");
     }
 }
 
@@ -116,7 +123,7 @@ std::array<double, 6> computeSeriesFactorRhoForLambda1(const double bar_rho)
 }
 
 double computeBarLambda1Factor(const std::array<double, 5>& series_factorT,
-                           const std::array<double, 6>& series_factorRho)
+                               const std::array<double, 6>& series_factorRho)
 {
     double sum_val = 0.;
     for (int i = 0; i < 5; i++)
@@ -160,8 +167,9 @@ double computedBarLambda_dbarT(const double barT, double bar_rho)
         {
             sum_val_j += Lij[i][j] * series_factorRho[j];
         }
-        dlambda1_factor_dbarT -= static_cast<double>(i) * series_factorT[i - 1] *
-                             sum_val_j / (barT * barT);
+        dlambda1_factor_dbarT -= static_cast<double>(i) *
+                                 series_factorT[i - 1] * sum_val_j /
+                                 (barT * barT);
     }
 
     const double lambda1_factor =
