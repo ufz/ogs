@@ -58,16 +58,7 @@
     (build-system cmake-build-system)
     (arguments
      `(#:build-type "Release"
-       #:configure-flags (list
-        ; passing variables works like this
-        ;                  ,(string-append "-DOGS_VERSION=" version)
-        ; TODO: but it is not overwritten in sub-packages...
-                          "-DGUIX_BUILD=ON"
-                          "-DOGS_BUILD_TESTING=OFF"
-                          "-DOGS_USE_EIGEN_UNSUPPORTED=OFF" ; Eigen 3.4.0
-                          "-DOGS_INSTALL_DEPENDENCIES=OFF"  ; handled by guix
-                          "-DOGS_CPU_ARCHITECTURE=OFF"      ; enable guix --tune
-                          )
+       #:configure-flags (list "") ; empty list to be appended in inherited packages
        #:cmake ,cmake)) ;for newer CMake version
     (inputs (list boost
                   eigen
