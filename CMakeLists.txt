@@ -62,16 +62,6 @@ if(MSVC)
 endif()
 
 option(OGS_USE_MKL "Use Intel MKL" OFF)
-if(OGS_USE_MKL)
-    option(MKL_USE_parallel "Use MKL parallel" True)
-    option(MKL_USE_sdl "Single Dynamic Library or static/dynamic" False)
-    set(MKL_USE_interface
-        "lp64"
-        CACHE
-            STRING
-            "for Intel(R)64 compatible arch: ilp64/lp64 or for ia32 arch: cdecl/stdcall"
-    )
-endif()
 
 # Eigen
 option(OGS_USE_EIGEN_UNSUPPORTED "Use Eigen unsupported modules" ON)

@@ -82,23 +82,42 @@ if(NOT (OGS_USE_PETSC AND OGS_USE_MKL) OR OGS_USE_PETSC_MKL_EIGEN_OPENMP)
     find_package(OpenMP COMPONENTS C CXX)
 endif()
 
-# blas / lapack
+# blas / lapack / MKL
 if(OGS_USE_MKL)
-    if("${MKL_USE_interface}" STREQUAL "lp64")
+    if(APPLE)
+        set(_mac_ld_prefix "DY")
+    endif()
+    if(NOT DEFINED ENV{MKLROOT} OR (NOT "$ENV{${_mac_ld_prefix}LD_LIBRARY_PATH}"
+                                    MATCHES "intel" AND NOT WIN32)
+    )
+        message(
+            FATAL_ERROR
+                "OGS_USE_MKL was used but it seems that you did not source the MKL environment. "
+                "Typically you can run `source /opt/intel/oneapi/setvars.sh` before running CMake."
+        )
+    endif()
+    set(MKL_INTERFACE
+        "lp64"
+        CACHE
+            STRING
+            "for Intel(R)64 compatible arch: ilp64/lp64 or for ia32 arch: cdecl/stdcall"
+    )
+    if("${MKL_INTERFACE}" STREQUAL "lp64")
         set(BLA_VENDOR Intel10_64lp)
-    elseif("${MKL_USE_interface}" STREQUAL "ilp64")
+    elseif("${MKL_INTERFACE}" STREQUAL "ilp64")
         set(BLA_VENDOR Intel10_64ilp)
+    endif()
+    if(NOT WIN32 AND NOT APPLE)
+        set(CMAKE_REQUIRE_FIND_PACKAGE_BLAS TRUE)
+        set(CMAKE_REQUIRE_FIND_PACKAGE_LAPACK TRUE)
     endif()
 endif()
 find_package(BLAS)
 find_package(LAPACK)
 
 if(OGS_USE_MKL)
-    find_package(MKL REQUIRED)
-    find_file(MKL_SETVARS setvars.sh PATHS ${MKL_ROOT_DIR} ${MKL_ROOT_DIR}/..
-                                           ${MKL_ROOT_DIR}/../..
-              NO_DEFAULT_PATH
-    )
+    find_package(MKL CONFIG REQUIRED PATHS $ENV{MKLROOT})
+    find_file(MKL_SETVARS setvars.sh PATHS ${MKL_ROOT}/../.. NO_DEFAULT_PATH)
 endif()
 
 # Check MPI package
@@ -134,7 +153,7 @@ function(printMKLUsage)
         if(WIN32)
             message(
                 STATUS
-                    "NOTE: Please add the MKL redist directory to your PATH environment variable!\nE.g. with: set PATH=%PATH%;${MKL_ROOT_DIR}/redist/intel64"
+                    "NOTE: In addition to loading the oneAPI setvars.bat file please also add this to your PATH C:\\Program Files (x86)\\Intel\\oneAPI\\compiler\\latest\\windows\\redist\\intel64_win\\compiler"
             )
         else()
             message(
