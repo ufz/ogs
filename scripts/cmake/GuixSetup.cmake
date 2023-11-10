@@ -1,0 +1,13 @@
+if(NOT DEFINED ENV{GUIX_ENVIRONMENT} AND NOT DEFINED ENV{NIX_BUILD_TOP})
+    return()
+endif()
+
+message(STATUS "Guix environment detected: $ENV{GUIX_ENVIRONMENT}")
+
+set(GUIX_BUILD ON CACHE BOOL "" FORCE)
+set(OGS_BUILD_TESTING OFF CACHE BOOL "" FORCE) # TODO: not yet supported
+# TODO: create a newer eigen package:
+set(OGS_USE_EIGEN_UNSUPPORTED OFF CACHE BOOL "" FORCE)
+set(OGS_INSTALL_DEPENDENCIES OFF CACHE BOOL "" FORCE) # handled by guix
+set(OGS_CPU_ARCHITECTURE OFF CACHE BOOL "" FORCE) # enables guix --tune
+set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)

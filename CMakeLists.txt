@@ -71,6 +71,7 @@ option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 # ---- CMake includes ----
 include(Versions)
 include(GitSetup)
+include(GuixSetup)
 include(PythonSetup)
 include(ProcessesSetup)
 include(ProjectSetup)
