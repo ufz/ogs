@@ -84,8 +84,11 @@ endif()
 
 # blas / lapack / MKL
 if(OGS_USE_MKL)
-    if(NOT DEFINED ENV{MKLROOT} OR (NOT "$ENV{LD_LIBRARY_PATH}" MATCHES "intel"
-                                    AND NOT WIN32)
+    if(APPLE)
+        set(_mac_ld_prefix "DY")
+    endif()
+    if(NOT DEFINED ENV{MKLROOT} OR (NOT "$ENV{${_mac_ld_prefix}LD_LIBRARY_PATH}"
+                                    MATCHES "intel" AND NOT WIN32)
     )
         message(
             FATAL_ERROR
@@ -104,7 +107,7 @@ if(OGS_USE_MKL)
     elseif("${MKL_INTERFACE}" STREQUAL "ilp64")
         set(BLA_VENDOR Intel10_64ilp)
     endif()
-    if(NOT WIN32)
+    if(NOT WIN32 AND NOT APPLE)
         set(CMAKE_REQUIRE_FIND_PACKAGE_BLAS TRUE)
         set(CMAKE_REQUIRE_FIND_PACKAGE_LAPACK TRUE)
     endif()
