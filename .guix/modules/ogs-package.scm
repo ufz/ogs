@@ -216,7 +216,10 @@
                     "1xp1qibm0q4z5qx0h178qpas3n7pqbladkxdalq9j4l98hdws46j"))))
         (build-system cmake-build-system)
         (arguments
-            `(#:tests? #f)
+            `(#:tests? #f
+              #:configure-flags (list
+                               "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
+                               ))
         )))
 
 (define tclap
@@ -258,7 +261,10 @@
                     "12wiqyzpzx89k9c7q07w4ypnppvi6s88k6jjsnlnvaxfafyvrbw3"))))
         (build-system cmake-build-system)
         (arguments
-            `(#:tests? #f)
+            `(#:tests? #f
+              #:configure-flags (list
+                               "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
+                               ))
         )))
 
 (define xmlpatch
@@ -280,7 +286,10 @@
         (build-system cmake-build-system)
         (inputs (list libxml2))
         (arguments
-            `(#:tests? #f)
+            `(#:tests? #f
+              #:configure-flags (list
+                               "-DBUILD_SHARED_LIBS=ON"
+                               ))
         )))
 
 (define exprtk
