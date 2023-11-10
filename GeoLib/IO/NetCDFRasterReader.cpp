@@ -10,12 +10,17 @@
 #include "GeoLib/IO/NetCDFRasterReader.h"
 
 #include <filesystem>
+#ifdef OGS_USE_NETCDF
 #include <netcdf>
+#endif
 
 #include "BaseLib/ConfigTree.h"
 #include "GeoLib/AABB.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 
+namespace
+{
+#ifdef OGS_USE_NETCDF
 GeoLib::Raster readNetCDF(std::filesystem::path const& filepath,
                           std::string_view const var_name,
                           std::size_t const dimension_number,
@@ -148,18 +153,20 @@ GeoLib::Raster readNetCDF(std::filesystem::path const& filepath,
     }
     return GeoLib::Raster{header, raster_data.begin(), raster_data.end()};
 }
+#endif
 
 GeoLib::NamedRaster readRasterFromFile(
     std::filesystem::path const& path,
     std::filesystem::path filename,
     std::string const& var_name,
     std::size_t const dimension_number,
-    GeoLib::MinMaxPoints const& min_max_points)
+    [[maybe_unused]] GeoLib::MinMaxPoints const& min_max_points)
 {
     INFO("readRasterFromFile: '{}/{}'", path.string(), filename.string());
 
     if (filename.extension() == ".nc")
     {
+#ifdef OGS_USE_NETCDF
         auto raster = readNetCDF(path / filename, var_name, dimension_number,
                                  min_max_points);
 
@@ -167,6 +174,10 @@ GeoLib::NamedRaster readRasterFromFile(
                                        var_name + "_" +
                                        std::to_string(dimension_number),
                                    raster};
+#else
+        OGS_FATAL("OGS was not build with NetCDF support. Can not read {}",
+                  (path / filename).string());
+#endif
     }
     auto* raster =
         FileIO::AsciiRasterInterface::readRaster((path / filename).string());
@@ -180,6 +191,7 @@ GeoLib::NamedRaster readRasterFromFile(
                                    std::to_string(dimension_number),
                                *raster};
 }
+}  // anonymous namespace
 
 namespace GeoLib::IO
 {
