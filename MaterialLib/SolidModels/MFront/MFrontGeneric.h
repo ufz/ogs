@@ -239,8 +239,8 @@ public:
                     Grad::template size<DisplacementDim>())
                 {
                     OGS_FATAL(
-                        "The behaviour's {}th driver ({}) must have size {} "
-                        "instead of {}.",
+                        "The behaviour's {}th driver's ({}) size in OGS is {} "
+                        "but {} in MFront.",
                         i, grads[i].name,
                         Grad::template size<DisplacementDim>(),
                         mgis::behaviour::getVariableSize(grads[i], hyp));

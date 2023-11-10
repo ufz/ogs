@@ -26,11 +26,7 @@ TwoPhaseFlowWithPrhoProcess::TwoPhaseFlowWithPrhoProcess(
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
     TwoPhaseFlowWithPrhoProcessData&& process_data,
-    SecondaryVariableCollection&& secondary_variables,
-    BaseLib::ConfigTree const& /*config*/,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-    /*curves*/)
+    SecondaryVariableCollection&& secondary_variables)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),

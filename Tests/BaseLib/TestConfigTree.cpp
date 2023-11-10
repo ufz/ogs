@@ -220,7 +220,7 @@ TEST(BaseLibConfigTree, Get)
             EXPECT_EQ("Y", conf.peekConfigParameter<std::string>("x"));
             EXPECT_ERR_WARN(cbs, false, false);
         }
-        conf.checkConfigParameter<std::string>("x", "Y");
+        conf.checkConfigParameter("x", "Y");
         EXPECT_ERR_WARN(cbs, false, false);
 
         // Testing attributes
@@ -539,7 +539,7 @@ TEST(BaseLibConfigTree, BadKeynames)
 
             EXPECT_ANY_THROW(conf.peekConfigParameter<int>(tag));
             EXPECT_ERR_WARN(cbs, true, false);
-            EXPECT_ANY_THROW(conf.checkConfigParameter<int>(tag, 500));
+            EXPECT_ANY_THROW(conf.checkConfigParameter(tag, "500"));
             EXPECT_ERR_WARN(cbs, true, false);
 
             EXPECT_ANY_THROW(conf.getConfigSubtree(tag));

@@ -148,6 +148,17 @@ Range<ConfigTree::ParameterIterator> ConfigTree::getConfigParameterList(
                                     ParameterIterator(p.second, param, *this));
 }
 
+void ConfigTree::checkConfigParameter(std::string const& param,
+                                      std::string_view const value) const
+{
+    auto const parameter_value = getConfigParameter<std::string>(param);
+    if (parameter_value != value)
+    {
+        error("For the tag <" + param + "> expected to read value '" +
+              value.data() + "', but got '" + parameter_value + "'.");
+    }
+}
+
 ConfigTree ConfigTree::getConfigSubtree(std::string const& root) const
 {
     if (auto t = getConfigSubtreeOptional(root))

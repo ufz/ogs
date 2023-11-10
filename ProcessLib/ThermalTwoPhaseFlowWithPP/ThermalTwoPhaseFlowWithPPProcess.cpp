@@ -12,8 +12,6 @@
 
 #include <cassert>
 
-#include "MaterialLib/PorousMedium/Porosity/Porosity.h"
-#include "MaterialLib/PorousMedium/Storage/Storage.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MeshLib/PropertyVector.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
@@ -32,10 +30,7 @@ ThermalTwoPhaseFlowWithPPProcess::ThermalTwoPhaseFlowWithPPProcess(
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
     ThermalTwoPhaseFlowWithPPProcessData&& process_data,
-    SecondaryVariableCollection&& secondary_variables,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-    /*curves*/)
+    SecondaryVariableCollection&& secondary_variables)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),

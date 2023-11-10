@@ -59,9 +59,6 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+    BaseLib::ConfigTree const& config);
 }  // namespace TwoPhaseFlowWithPrho
 }  // namespace ProcessLib

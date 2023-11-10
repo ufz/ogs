@@ -83,8 +83,10 @@ std::string containsKeyword(std::string const& str, std::string const& keyword)
 }
 
 template <typename T>
-bool substituteKeyword(std::string& result, std::string& parenthesized_string,
-                       std::string::size_type begin, std::string::size_type end,
+bool substituteKeyword(std::string& result,
+                       std::string const& parenthesized_string,
+                       std::string::size_type const begin,
+                       std::string::size_type const end,
                        std::string const& keyword, T& data)
 {
     std::string precision_specification =
