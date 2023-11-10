@@ -23,9 +23,8 @@ namespace ProcessLib
 {
 static std::unique_ptr<ProcessData> makeProcessData(
     std::unique_ptr<NumLib::TimeStepAlgorithm>&& timestepper,
-    NumLib::NonlinearSolverBase& nonlinear_solver,
-    int const process_id,
-    Process& process,
+    NumLib::NonlinearSolverBase& nonlinear_solver, int const process_id,
+    std::string process_name, Process& process,
     std::unique_ptr<NumLib::TimeDiscretization>&& time_disc,
     std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit,
     bool const compensate_non_equilibrium_initial_residuum)
@@ -40,7 +39,8 @@ static std::unique_ptr<ProcessData> makeProcessData(
             compensate_non_equilibrium_initial_residuum);
         return std::make_unique<ProcessData>(
             std::move(timestepper), Tag::Picard, *nonlinear_solver_picard,
-            std::move(conv_crit), std::move(time_disc), process_id, process);
+            std::move(conv_crit), std::move(time_disc), process_id,
+            std::move(process_name), process);
     }
     if (auto* nonlinear_solver_newton =
             dynamic_cast<NumLib::NonlinearSolver<Tag::Newton>*>(
@@ -50,7 +50,8 @@ static std::unique_ptr<ProcessData> makeProcessData(
             compensate_non_equilibrium_initial_residuum);
         return std::make_unique<ProcessData>(
             std::move(timestepper), Tag::Newton, *nonlinear_solver_newton,
-            std::move(conv_crit), std::move(time_disc), process_id, process);
+            std::move(conv_crit), std::move(time_disc), process_id,
+            std::move(process_name), process);
     }
 #ifdef USE_PETSC
     if (auto* nonlinear_solver_petsc =
@@ -58,7 +59,8 @@ static std::unique_ptr<ProcessData> makeProcessData(
     {
         return std::make_unique<ProcessData>(
             std::move(timestepper), Tag::Newton, *nonlinear_solver_petsc,
-            std::move(conv_crit), std::move(time_disc), process_id, process);
+            std::move(conv_crit), std::move(time_disc), process_id,
+            std::move(process_name), process);
     }
 #endif  // USE_PETSC
 
@@ -71,8 +73,7 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
     std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>> const&
         nonlinear_solvers,
     bool const compensate_non_equilibrium_initial_residuum,
-    std::vector<double> const& fixed_times_for_output,
-    std::map<std::string, int>& local_coupling_processes)
+    std::vector<double> const& fixed_times_for_output)
 {
     std::vector<std::unique_ptr<ProcessData>> per_process_data;
     std::vector<std::string> process_names;
@@ -91,31 +92,20 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
 
         auto const process_name =
             //! \ogs_file_param{prj__time_loop__processes__process__process_name}
-            pcs_config.getConfigParameterOptional<std::string>("process_name");
-        if (process_name)
+            pcs_config.getConfigParameter<std::string>("process_name", "");
+        if (process_name != "")
         {
-            if (!local_coupling_processes.contains(*process_name))
+            if (ranges::contains(process_names, process_name))
             {
                 OGS_FATAL(
-                    "The given process name '{}' for the element "
-                    "'time_loop/processes/process/process_name' is not found "
-                    "in the element "
-                    "'time_loop/global_process_coupling/"
-                    "local_coupling_processes/process_name' in the project "
-                    "file.",
-                    *process_name);
+                    "The given process name is not unique! Please check the "
+                    "element "
+                    "'time_loop/process/name' in the project file. Found "
+                    "duplicate "
+                    "process name '{:s}'.",
+                    process_name);
             }
-
-            if (ranges::contains(process_names, *process_name))
-            {
-                OGS_FATAL(
-                    "The given process name '{}' for the element "
-                    "'time_loop/processes/process/process_name' is not unique! "
-                    "Please check this in the project file.",
-                    *process_name);
-            }
-            process_names.emplace_back(*process_name);
-            local_coupling_processes[*process_name] = process_id;
+            process_names.emplace_back(process_name);
         }
 
         auto const nl_slv_name =
@@ -152,10 +142,10 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
                 "in the current project file!");
         }
 
-        per_process_data.emplace_back(
-            makeProcessData(std::move(timestepper), nl_slv, process_id, pcs,
-                            std::move(time_disc), std::move(conv_crit),
-                            compensate_non_equilibrium_initial_residuum));
+        per_process_data.emplace_back(makeProcessData(
+            std::move(timestepper), nl_slv, process_id, std::move(process_name),
+            pcs, std::move(time_disc), std::move(conv_crit),
+            compensate_non_equilibrium_initial_residuum));
         ++process_id;
     }
 
@@ -173,16 +163,6 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
                 "The equations of the coupled processes will be solved by the "
                 "staggered scheme.");
         }
-    }
-
-    if (process_names.size() != local_coupling_processes.size())
-    {
-        OGS_FATAL(
-            "The number of the given process names for the element "
-            "'time_loop/processes/process/process_name' is not equal to that "
-            "in the element "
-            "'time_loop/global_process_coupling/local_coupling_processes/"
-            "process_name' in the project file.");
     }
 
     return per_process_data;

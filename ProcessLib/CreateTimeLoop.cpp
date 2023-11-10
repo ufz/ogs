@@ -150,8 +150,7 @@ std::unique_ptr<TimeLoop> createTimeLoop(
     auto per_process_data = createPerProcessData(
         //! \ogs_file_param{prj__time_loop__processes}
         config.getConfigSubtree("processes"), processes, nonlinear_solvers,
-        compensate_non_equilibrium_initial_residuum, fixed_times_for_output,
-        local_coupling_processes);
+        compensate_non_equilibrium_initial_residuum, fixed_times_for_output);
 
     const bool use_staggered_scheme =
         ranges::any_of(processes.begin(), processes.end(),
