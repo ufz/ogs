@@ -8,6 +8,8 @@
  *
  */
 
+#include <range/v3/algorithm/contains.hpp>
+
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
 #include "NumLib/ODESolver/TimeDiscretizationBuilder.h"
@@ -69,9 +71,11 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
     std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>> const&
         nonlinear_solvers,
     bool const compensate_non_equilibrium_initial_residuum,
-    std::vector<double> const& fixed_times_for_output)
+    std::vector<double> const& fixed_times_for_output,
+    std::map<std::string, int>& local_coupling_processes)
 {
     std::vector<std::unique_ptr<ProcessData>> per_process_data;
+    std::vector<std::string> process_names;
     int process_id = 0;
 
     //! \ogs_file_param{prj__time_loop__processes__process}
@@ -84,6 +88,35 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
             [&pcs_name](std::unique_ptr<Process> const& p)
             { return p->name == pcs_name; },
             "A process with the given name has not been defined.");
+
+        auto const process_name =
+            //! \ogs_file_param{prj__time_loop__processes__process__process_name}
+            pcs_config.getConfigParameterOptional<std::string>("process_name");
+        if (process_name)
+        {
+            if (!local_coupling_processes.contains(*process_name))
+            {
+                OGS_FATAL(
+                    "The given process name '{}' for the element "
+                    "'time_loop/processes/process/process_name' is not found "
+                    "in the element "
+                    "'time_loop/global_process_coupling/"
+                    "local_coupling_processes/process_name' in the project "
+                    "file.",
+                    *process_name);
+            }
+
+            if (ranges::contains(process_names, *process_name))
+            {
+                OGS_FATAL(
+                    "The given process name '{}' for the element "
+                    "'time_loop/processes/process/process_name' is not unique! "
+                    "Please check this in the project file.",
+                    *process_name);
+            }
+            process_names.emplace_back(*process_name);
+            local_coupling_processes[*process_name] = process_id;
+        }
 
         auto const nl_slv_name =
             //! \ogs_file_param{prj__time_loop__processes__process__nonlinear_solver}
@@ -140,6 +173,16 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
                 "The equations of the coupled processes will be solved by the "
                 "staggered scheme.");
         }
+    }
+
+    if (process_names.size() != local_coupling_processes.size())
+    {
+        OGS_FATAL(
+            "The number of the given process names for the element "
+            "'time_loop/processes/process/process_name' is not equal to that "
+            "in the element "
+            "'time_loop/global_process_coupling/local_coupling_processes/"
+            "process_name' in the project file.");
     }
 
     return per_process_data;

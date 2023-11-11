@@ -35,6 +35,7 @@ std::unique_ptr<TimeLoop> createTimeLoop(
 
     std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>
         global_coupling_conv_criteria;
+    std::map<std::string, int> local_coupling_processes;
     int max_coupling_iterations = 1;
     if (coupling_config)
     {
@@ -55,6 +56,49 @@ std::unique_ptr<TimeLoop> createTimeLoop(
                        std::back_inserter(global_coupling_conv_criteria),
                        [](BaseLib::ConfigTree const& c)
                        { return NumLib::createConvergenceCriterion(c); });
+
+        auto const& local_coupling_processes_config =
+            coupling_config
+                //! \ogs_file_param{prj__time_loop__global_process_coupling__local_coupling_processes}
+                ->getConfigSubtreeOptional("local_coupling_processes");
+        if (local_coupling_processes_config)
+        {
+            for (
+                auto name :
+                local_coupling_processes_config
+                    //! \ogs_file_param{prj__time_loop__global_process_coupling__local_coupling_processes__process_name}
+                    ->getConfigParameterList<std::string>("process_name"))
+            {
+                BaseLib::insertIfKeyUniqueElseError(
+                    local_coupling_processes, name, -1,
+                    "The name of locally coupled process is not unique.");
+            }
+
+            static std::string const error_info =
+                "Please check the number of elements in the tag "
+                "'time_loop/global_process_coupling/"
+                "local_coupling_processes' in the project file.";
+            if (local_coupling_processes.size() >
+                global_coupling_conv_criteria.size() - 1)
+            {
+                OGS_FATAL(
+                    "The number of the locally coupled processes is greater "
+                    "than or equal to the number of total coupled processes. "
+                    "{}",
+                    error_info);
+            }
+
+            INFO("There are {:d} locally coupled processes.",
+                 local_coupling_processes.size());
+
+            if (local_coupling_processes.size() < 2)
+            {
+                OGS_FATAL(
+                    "At least two locally coupled processes are required for "
+                    "the local iteration solution! {} ",
+                    error_info);
+            }
+        }
     }
 
     //! \ogs_file_param{prj__time_loop__output}
@@ -106,7 +150,8 @@ std::unique_ptr<TimeLoop> createTimeLoop(
     auto per_process_data = createPerProcessData(
         //! \ogs_file_param{prj__time_loop__processes}
         config.getConfigSubtree("processes"), processes, nonlinear_solvers,
-        compensate_non_equilibrium_initial_residuum, fixed_times_for_output);
+        compensate_non_equilibrium_initial_residuum, fixed_times_for_output,
+        local_coupling_processes);
 
     const bool use_staggered_scheme =
         ranges::any_of(processes.begin(), processes.end(),
@@ -153,6 +198,6 @@ std::unique_ptr<TimeLoop> createTimeLoop(
     return std::make_unique<TimeLoop>(
         std::move(outputs), std::move(per_process_data),
         max_coupling_iterations, std::move(global_coupling_conv_criteria),
-        start_time, end_time);
+        std::move(local_coupling_processes), start_time, end_time);
 }
 }  // namespace ProcessLib
