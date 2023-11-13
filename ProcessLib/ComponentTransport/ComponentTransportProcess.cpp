@@ -462,19 +462,18 @@ void ComponentTransportProcess::preOutputConcreteProcess(
 {
     auto const matrix_specification = getMatrixSpecifications(process_id);
 
-    std::size_t matrix_id = 0u;
-    auto& M = NumLib::GlobalMatrixProvider::provider.getMatrix(
-        matrix_specification, matrix_id);
-    auto& K = NumLib::GlobalMatrixProvider::provider.getMatrix(
-        matrix_specification, matrix_id);
-    auto& b =
-        NumLib::GlobalVectorProvider::provider.getVector(matrix_specification);
+    auto M = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(
+        matrix_specification);
+    auto K = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(
+        matrix_specification);
+    auto b = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
+        matrix_specification);
 
-    M.setZero();
-    K.setZero();
-    b.setZero();
+    M->setZero();
+    K->setZero();
+    b->setZero();
 
-    assembleConcreteProcess(t, dt, x, x_prev, process_id, M, K, b);
+    assembleConcreteProcess(t, dt, x, x_prev, process_id, *M, *K, *b);
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
@@ -494,7 +493,8 @@ void ComponentTransportProcess::preOutputConcreteProcess(
 
     if (_use_monolithic_scheme)
     {
-        auto const residuum = computeResiduum(dt, *x[0], *x_prev[0], M, K, b);
+        auto const residuum =
+            computeResiduum(dt, *x[0], *x_prev[0], *M, *K, *b);
         for (std::size_t variable_id = 0; variable_id < _residua.size();
              ++variable_id)
         {
@@ -505,8 +505,8 @@ void ComponentTransportProcess::preOutputConcreteProcess(
     }
     else
     {
-        auto const residuum =
-            computeResiduum(dt, *x[process_id], *x_prev[process_id], M, K, b);
+        auto const residuum = computeResiduum(dt, *x[process_id],
+                                              *x_prev[process_id], *M, *K, *b);
         transformVariableFromGlobalVector(residuum, 0, dof_tables[process_id],
                                           *_residua[process_id],
                                           std::negate<double>());
