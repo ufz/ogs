@@ -190,7 +190,8 @@ int main(int argc, char* argv[])
         mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
             std::vector{std::cref(*main_mesh)}, output_file_path,
             0 /*timestep*/, time, variable_output_names,
-            true /*output_file.compression*/, 1 /*output_file.n_files*/);
+            true /*output_file.compression*/, 1 /*output_file.n_files*/,
+            1048576 /*chunk_size_bytes*/);
     }
 
     for (std::size_t timestep = 1; timestep < timeseries.size(); ++timestep)

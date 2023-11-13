@@ -71,7 +71,7 @@ constexpr auto cellTypeOGS2XDMF(MeshLib::CellType const& cell_type)
 
 std::optional<XdmfHdfData> transformAttribute(
     std::pair<std::string, PropertyVectorBase*> const& property_pair,
-    unsigned int const n_files)
+    unsigned int const n_files, unsigned int const chunk_size_bytes)
 {
     // 3 data that will be captured and written by lambda f below
     MeshPropertyDataType data_type = MeshPropertyDataType::unknown;
@@ -189,8 +189,8 @@ std::optional<XdmfHdfData> transformAttribute(
 
     std::string const& name = property_base->getPropertyName();
 
-    HdfData hdf = {data_ptr, num_of_tuples, ui_global_components,
-                   name,     data_type,     n_files};
+    HdfData hdf = {data_ptr,  num_of_tuples, ui_global_components, name,
+                   data_type, n_files,       chunk_size_bytes};
 
     XdmfData xdmf = {num_of_tuples, ui_global_components, data_type,
                      name,          mesh_item_type,       0,
@@ -199,8 +199,9 @@ std::optional<XdmfHdfData> transformAttribute(
     return XdmfHdfData{std::move(hdf), std::move(xdmf)};
 }
 
-std::vector<XdmfHdfData> transformAttributes(MeshLib::Mesh const& mesh,
-                                             unsigned int const n_files)
+std::vector<XdmfHdfData> transformAttributes(
+    MeshLib::Mesh const& mesh, unsigned int const n_files,
+    unsigned int const chunk_size_bytes)
 {
     MeshLib::Properties const& properties = mesh.getProperties();
 
@@ -220,7 +221,10 @@ std::vector<XdmfHdfData> transformAttributes(MeshLib::Mesh const& mesh,
         }
 
         if (auto const attribute = transformAttribute(
-                std::pair(std::string(name), property_base), n_files))
+
+                std::pair(std::string(name), property_base), n_files,
+                chunk_size_bytes))
+
         {
             attributes.push_back(attribute.value());
         }
@@ -248,9 +252,9 @@ std::vector<double> transformToXDMFGeometry(MeshLib::Mesh const& mesh)
     return values;
 }
 
-XdmfHdfData transformGeometry(MeshLib::Mesh const& mesh,
-                              double const* data_ptr,
-                              unsigned int const n_files)
+XdmfHdfData transformGeometry(MeshLib::Mesh const& mesh, double const* data_ptr,
+                              unsigned int const n_files,
+                              unsigned int const chunk_size_bytes)
 {
     std::string const name = "geometry";
     std::vector<MeshLib::Node*> const& nodes = mesh.getNodes();
@@ -263,7 +267,8 @@ XdmfHdfData transformGeometry(MeshLib::Mesh const& mesh,
                          point_size,
                          name,
                          MeshPropertyDataType::float64,
-                         n_files};
+                         n_files,
+                         chunk_size_bytes};
     XdmfData const xdmf = {
         partition_dim, point_size,   MeshPropertyDataType::float64,
         name,          std::nullopt, 2,
@@ -300,12 +305,13 @@ std::vector<int> transformToXDMFTopology(MeshLib::Mesh const& mesh,
 }
 
 XdmfHdfData transformTopology(std::vector<int> const& values,
-                              unsigned int const n_files)
+                              unsigned int const n_files,
+                              unsigned int const chunk_size_bytes)
 {
     std::string const name = "topology";
     HdfData const hdf = {
-        values.data(), values.size(), 1, name, MeshPropertyDataType::int32,
-        n_files};
+        values.data(), values.size(),   1, name, MeshPropertyDataType::int32,
+        n_files,       chunk_size_bytes};
     XdmfData const xdmf = {
         values.size(), 1, MeshPropertyDataType::int32, name, std::nullopt, 3,
         n_files};

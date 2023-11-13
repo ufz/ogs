@@ -44,6 +44,8 @@ hid_t createFile(std::filesystem::path const& filepath,
     hid_t const plist_id = H5Pcreate(H5P_FILE_ACCESS);
 
     H5Pset_fapl_mpio(plist_id, comm, info);
+    H5Pset_coll_metadata_write(plist_id, true);
+
     std::filesystem::path const partition_filename =
         partitionFilename(filepath, communicator.color);
     hid_t file = H5Fcreate(partition_filename.string().c_str(), H5F_ACC_TRUNC,

@@ -122,7 +122,8 @@ void OutputXDMFHDF5Format::outputMeshXdmf(
                                       iteration);
         std::filesystem::path path(BaseLib::joinPaths(directory, name));
         mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
-            meshes, path, timestep, t, output_variables, compression, n_files);
+            meshes, path, timestep, t, output_variables, compression, n_files,
+            chunk_size_bytes);
     }
     else
     {

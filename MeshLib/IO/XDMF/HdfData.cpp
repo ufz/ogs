@@ -45,21 +45,34 @@ static hid_t meshPropertyType2HdfType(MeshPropertyDataType const ogs_data_type)
 HdfData::HdfData(void const* data_start, std::size_t const size_partitioned_dim,
                  std::size_t const size_tuple, std::string const& name,
                  MeshPropertyDataType const mesh_property_data_type,
-                 unsigned int const n_files)
+                 unsigned int const n_files,
+                 unsigned int const chunk_size_bytes)
     : data_start(data_start), name(name)
 {
+    data_type = meshPropertyType2HdfType(mesh_property_data_type);
+
     auto const& partition_info =
         getPartitionInfo(size_partitioned_dim, n_files);
     auto const& offset_partitioned_dim = partition_info.local_offset;
     offsets = {offset_partitioned_dim, 0};
 
-    std::size_t unified_length = partition_info.local_length;
+    std::size_t const unified_length = partition_info.local_length;
+    int const type_size = H5Tget_size(data_type);
+    std::size_t const space =
+        (chunk_size_bytes > 0)
+            ? std::min(std::size_t(std::lround(float(chunk_size_bytes) /
+                                                   (size_tuple * type_size) +
+                                               0.5)),
+                       partition_info.global_length)
+            : partition_info.longest_local_length;
 
-    chunk_space =
-        (size_tuple > 1)
-            ? std::vector<Hdf5DimType>{partition_info.longest_local_length,
-                                       size_tuple}
-            : std::vector<Hdf5DimType>{partition_info.longest_local_length};
+    if (chunk_size_bytes > 0 && space == partition_info.global_length)
+    {
+        INFO("HDF5: Using a single chunk for dataset {:s} .", name);
+    }
+
+    chunk_space = (size_tuple > 1) ? std::vector<Hdf5DimType>{space, size_tuple}
+                                   : std::vector<Hdf5DimType>{space};
 
     data_space = (size_tuple > 1)
                      ? std::vector<Hdf5DimType>{unified_length, size_tuple}
@@ -68,8 +81,6 @@ HdfData::HdfData(void const* data_start, std::size_t const size_partitioned_dim,
         (size_tuple > 1)
             ? std::vector<Hdf5DimType>{partition_info.global_length, size_tuple}
             : std::vector<Hdf5DimType>{partition_info.global_length};
-
-    data_type = meshPropertyType2HdfType(mesh_property_data_type);
 
     DBUG(
         "HDF: dataset name: {:s}, offset: {:d}, data_space: {:d}, chunk_space "

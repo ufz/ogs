@@ -38,6 +38,7 @@ struct OutputConfig
     std::string suffix;
     bool compress_output;
     unsigned int number_of_files;
+    unsigned int chunk_size_bytes;
     std::string data_mode;
     /// A list of repeat/step-count pairs. If the list is empty, and no
     /// fixed_output_times were specified, a default pair 1/1 will be inserted
