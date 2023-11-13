@@ -12,14 +12,21 @@ build guix:
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
       allow_failure: true
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::guix only.*/
     - when: manual
       allow_failure: true
   script:
     - which guix
     - guix describe
     # SteadyStateDiffusion only!
-    - guix build --fallback -L $PWD/.guix/modules ogs-ssd
-    - guix build --fallback -L $PWD/.guix/modules ogs-petsc-ssd
+    - |
+      if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*ci::guix\ only.* ]]; then
+        guix build --fallback -L $PWD/.guix/modules ogs
+        guix build --fallback -L $PWD/.guix/modules ogs-petsc
+      else
+        guix build --fallback -L $PWD/.guix/modules ogs-ssd
+        guix build --fallback -L $PWD/.guix/modules ogs-petsc-ssd
+      fi
 
 deploy guix container eve:
   stage: build
