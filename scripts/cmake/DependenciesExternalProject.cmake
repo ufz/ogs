@@ -80,6 +80,24 @@ if(OGS_USE_MFRONT)
                     "TFEL Python bindings disabled as Boosts Python library was not found."
             )
         endif()
+
+        # Only one flag supported, prefer ASAN
+        if(ENABLE_ASAN)
+            set(_sanitize_flag -fsanitize=address)
+        endif()
+        if(ENABLE_UBSAN AND NOT DEFINED _sanitize_flag)
+            set(_sanitize_flag -fsanitize=undefined)
+        elseif(ENABLE_UBSAN AND DEFINED _sanitize_flag)
+            message(STATUS "MFront: ASAN enabled only! UBSAN is off.")
+        endif()
+        if(DEFINED _sanitize_flag)
+            foreach(var CXX EXE_LINKER SHARED_LINKER MODULE_LINKER)
+                list(APPEND _tfel_cmake_args
+                     "-DCMAKE_${var}_FLAGS_INIT=${_sanitize_flag}"
+                )
+            endforeach()
+        endif()
+
         BuildExternalProject(
             TFEL ${_tfel_source}
             CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
@@ -87,7 +105,7 @@ if(OGS_USE_MFRONT)
                        "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
                        "-Denable-testing=OFF"
                        ${_defaultCMakeArgs}
-                       ${_tfel_cmake_args}
+                       "${_tfel_cmake_args}"
         )
         message(
             STATUS

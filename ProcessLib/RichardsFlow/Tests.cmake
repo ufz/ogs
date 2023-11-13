@@ -1,6 +1,6 @@
 if (NOT OGS_USE_MPI)
     # Comparison test for richards mechanics w/o deformations.
-    if(NOT OGS_ADDRESS_SANITIZER)
+    if(NOT ENABLE_ASAN)
         OgsTest(PROJECTFILE RichardsMechanics/RichardsFlow_2d_richardsflow.prj RUNTIME 2)
     endif()
     OgsTest(PROJECTFILE Parabolic/Richards/flow_fully_saturated.prj)
