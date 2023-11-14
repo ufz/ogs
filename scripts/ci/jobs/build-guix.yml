@@ -21,11 +21,11 @@ build guix:
     # SteadyStateDiffusion only!
     - |
       if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*ci::guix\ only.* ]]; then
-        guix build --fallback -L $PWD/.guix/modules ogs
-        guix build --fallback -L $PWD/.guix/modules ogs-petsc
+        guix time-machine -C scripts/guix/channels.scm -- build ogs --with-source=ogs@6.4.4-testing=$PWD
+        guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc --with-source=ogs-petsc@6.4.4-testing=$PWD
       else
-        guix build --fallback -L $PWD/.guix/modules ogs-ssd
-        guix build --fallback -L $PWD/.guix/modules ogs-petsc-ssd
+        guix time-machine -C scripts/guix/channels.scm -- build ogs-ssd --with-source=ogs-ssd@6.4.4-testing=$PWD
+        guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc-ssd --with-source=ogs-petsc-ssd@6.4.4-testing=$PWD
       fi
 
 deploy guix container eve:
@@ -41,7 +41,7 @@ deploy guix container eve:
     - which guix
     - guix describe
     # All processes.
-    - image=$( guix pack --no-substitutes -L $PWD/.guix/modules -RR --format=squashfs bash ogs-petsc | tee | tail -1 )
+    - image=$( guix time-machine -C scripts/guix/channels.scm -- pack --no-substitutes -RR --format=squashfs bash ogs-petsc --with-source=ogs-petsc@6.4.4-testing=$PWD | tee | tail -1 )
     - echo "Image $image"
     - ssh sonjenk@frontend2.eve.ufz.de rm -f ${GUIX_PETSC_CONTAINER}
     - scp $image sonjenk@frontend2.eve.ufz.de:${GUIX_PETSC_CONTAINER}
