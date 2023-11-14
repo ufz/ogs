@@ -1,20 +1,3 @@
-;; This file defines a Guix package.  It can be used to spawn an
-;; interactive development environment:
-;;
-;;   guix shell
-;;
-;; Or it can be used to build Guile from a checkout in an isolated
-;; environment:
-;;
-;;   guix build -f guix.scm
-;;
-;; Likewise, you may cross-compile it:
-;;
-;;   guix build -f guix.scm --target=x86_64-w64-mingw32
-;;
-;; Or may want to build a variant:
-;;   guix build -L $PWD/.guix/modules ogs-petsc-ssd
-
 (define-module (ogs-package)
   #:use-module (guix)
   #:use-module (guix packages)
@@ -26,7 +9,6 @@
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages boost)
   #:use-module (gnu packages check)
-  #:use-module (gnu packages certs) ; TODO: cpm
   #:use-module (gnu packages cmake)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cpp)
@@ -42,19 +24,20 @@
   #:use-module (gnu packages xml)
   )
 
-(define vcs-file?
-  ;; Return true if the given file is under version control.
-  (or (git-predicate "../..") ; (current-source-directory)
-      (const #t)))            ; not in a Git checkout
-
 (define-public ogs
   (package
     (name "ogs")
-    (version "6.4.99-git")
-    (source (local-file "../.." "ogs-checkout"
-                      #:recursive? #t
-                      #:select? vcs-file?
-                      ))
+    (version "6.4.4")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://gitlab.opengeosys.org/ogs/ogs.git")
+                    (commit "d4ca7e627f2fc012bfe434649b797e78e5c2a8f1")))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1f6mcbjx76irf1g0xkh6hgpv4qn2swbiyvlazvlrhjfyxb9bckq9"))
+                ))
     (build-system cmake-build-system)
     (arguments
      `(#:build-type "Release"
@@ -77,7 +60,7 @@
                   zlib
                   vtk
                   xmlpatch))
-    (native-inputs (list git ninja nss-certs))
+    (native-inputs (list git ninja))
     (synopsis "OpenGeoSys")
     (description
      "Simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media")
@@ -124,43 +107,6 @@
                 ,flags))))
     (synopsis "OGS with PETSc and SteadyStateDiffusion only (for faster build testing)")))
 
-; #### Releases ####
-(define-public ogs-6.4.4
-  (package
-    (inherit ogs)
-    (name "ogs")
-    (version "6.4.4")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url "https://gitlab.opengeosys.org/ogs/ogs.git")
-                    (commit "d4ca7e627f2fc012bfe434649b797e78e5c2a8f1")
-                    (recursive? #t)))
-              (file-name (git-file-name name version))
-              (sha256
-               ;; Update with `guix hash -rx .`, make sure to have submodules updated!
-               (base32
-                "1f6mcbjx76irf1g0xkh6hgpv4qn2swbiyvlazvlrhjfyxb9bckq9"))))
-    (synopsis "OGS 6.4.4 release")))
-
-(define-public ogs-petsc-6.4.4
-  (package
-    (inherit ogs-petsc)
-    (name "ogs-petsc")
-    (version "6.4.4")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url "https://gitlab.opengeosys.org/ogs/ogs.git")
-                    (commit "d4ca7e627f2fc012bfe434649b797e78e5c2a8f1")
-                    (recursive? #t)))
-              (file-name (git-file-name name version))
-              (sha256
-               ;; Update with `guix hash -rx .`, make sure to have submodules updated!
-               (base32
-                "1f6mcbjx76irf1g0xkh6hgpv4qn2swbiyvlazvlrhjfyxb9bckq9"))))
-    (synopsis "OGS 6.4.4 with PETSc release")))
-
 ; #### Dependencies ####
 (define-public vtk-openmpi
   (package
@@ -176,7 +122,7 @@
                 #$flags))))
     (synopsis "VTK with OpenMPI support")))
 
-(define pybind11-2.10.4
+(define-public pybind11-2.10.4
       (package
         (inherit pybind11)
         (version "2.10.4")
@@ -189,7 +135,7 @@
                    (base32
                     "0rbcfvl7y472sykzdq3vrkw83kar0lpzhk3wq9yj9cdydl8cpfcz"))))))
 
-(define tetgen
+(define-public tetgen
       (package
         (name "tetgen")
         (synopsis "A Quality Tetrahedral Mesh Generator and a 3D Delaunay Triangulator")
@@ -213,7 +159,7 @@
                                ))
         )))
 
-(define tclap
+(define-public tclap
       (package
         (name "tclap")
         (synopsis "Templatized Command Line Argument Parser")
@@ -258,7 +204,7 @@
                                ))
         )))
 
-(define xmlpatch
+(define-public xmlpatch
       (package
         (name "xmlpatch")
         (synopsis "An XML Patch library")
@@ -283,7 +229,7 @@
                                ))
         )))
 
-(define exprtk
+(define-public exprtk
       (package
         (name "exprtk")
         (home-page "https://www.partow.net/programming/exprtk/index.html")
@@ -306,25 +252,3 @@
 
 ;; return package
 ogs
-
-;; TODO: add this to web page
-;  ## Using the ogs repo as a Guix channel (as a user of ogs)
-;
-;  Add the following to `~/.config/guix/channels.scm`:
-;
-;  ```scheme
-;  (append (list (channel
-;                  (name 'ogs)
-;                  (url "https://gitlab.opengeosys.org/ogs/ogs.git")
-;                  (branch "master"))) %default-channels)
-;  ```
-;
-;  Run `guix pull`.
-;
-;  Then you can install the ogs package:
-;
-;  ```bash
-;  guix install ogs@6.4.4
-;  # OR, e.g.
-;  guix install ogs-petsc@6.4.4
-;  ```
