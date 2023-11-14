@@ -1,4 +1,8 @@
-import OpenGeoSys
+try:
+    import ogs.callbacks as OpenGeoSys
+except ModuleNotFoundError:
+    import OpenGeoSys
+
 import glacierclass as glc
 
 L_dom = 120000  # m

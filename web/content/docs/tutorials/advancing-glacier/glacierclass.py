@@ -3,6 +3,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 from math import pi, sin, cos, sinh, cosh, sqrt
 
@@ -31,7 +32,7 @@ class glacier:
             xi = (x - self.x_0) / l
             xi = np.array(xi)
             xi[xi > 1] = 1.0
-            return self.height(t) * np.sqrt(1 - xi ** 1)
+            return self.height(t) * np.sqrt(1 - xi**1)
 
     def height(self, t):
         return self.H_max * (t - self.t_0) / self.t_1
@@ -61,7 +62,8 @@ class glacier:
         fig.legend()
         fig.savefig("glacier.pdf")
 
-        plt.show()
+        if "CI" not in os.environ:
+            plt.show()
 
         fig, ax = plt.subplots()
         ax.plot(tRange, self.height(tRange))
