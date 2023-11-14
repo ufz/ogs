@@ -1,6 +1,7 @@
 test notebooks via wheel:
   stage: build
   tags: [envinf3, shell]
+  needs: []
   before_script:
     - cd Tests/Data
     - python -m venv --upgrade-deps .venv
@@ -10,6 +11,13 @@ test notebooks via wheel:
     - pip install -r requirements-dev.txt
     - pip install -r requirements-ogs.txt
   script:
+    # Glacier tutorial
+    - |
+      cd ../../web/content/docs/tutorials/advancing-glacier
+      python mesh_basin.py
+      msh2vtu mesh_basin.msh --ogs --rdcd
+      ogs OGSinput_basin.prj
+      cd -
     # Append mtest install directory to PYTHONPATH
     - export PYTHONPATH=/opt/tfel-rliv-4.0/lib/python3.11/site-packages:$PYTHONPATH
     - export LD_LIBRARY_PATH=/opt/tfel-rliv-4.0/lib:$LD_LIBRARY_PATH
@@ -36,3 +44,4 @@ test notebooks via wheel:
     paths:
       - Tests/Data/_out/**/*.html
       - Tests/Data/_out/**/*out.txt
+      - web/**/glacier.pdf
