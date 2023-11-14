@@ -47,22 +47,22 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>INFINITY_N</norm_type>
-                    <abstol>1.e-4</abstol>
-                    <reltol>1.e-6</reltol>
+                    <abstol>1.e-12</abstol>
+                    <reltol>1.e-14</reltol>
                 </convergence_criterion>
                 <!-- convergence criterion for the second process -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>INFINITY_N</norm_type>
-                    <abstol>1.e-2</abstol>
-                    <reltol>1.e-2</reltol>
+                    <abstol>1.e-10</abstol>
+                    <reltol>1.e-10</reltol>
                 </convergence_criterion>
                 <!-- convergence criterion for the third process -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>INFINITY_N</norm_type>
-                    <abstol>1.e-4</abstol>
-                    <reltol>1.e-6</reltol>
+                    <abstol>1.e-12</abstol>
+                    <reltol>1.e-14</reltol>
                 </convergence_criterion>
             </convergence_criteria>
         </global_process_coupling>
