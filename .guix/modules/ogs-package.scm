@@ -5,7 +5,8 @@
   #:use-module (guix build-system copy)
   #:use-module (guix download)
   #:use-module (guix git-download)
-  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module ((guix licenses)
+                #:prefix license:)
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages boost)
   #:use-module (gnu packages check)
@@ -21,8 +22,7 @@
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages python)
   #:use-module (gnu packages version-control)
-  #:use-module (gnu packages xml)
-  )
+  #:use-module (gnu packages xml))
 
 (define-public ogs
   (package
@@ -36,12 +36,11 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1f6mcbjx76irf1g0xkh6hgpv4qn2swbiyvlazvlrhjfyxb9bckq9"))
-                ))
+                "1f6mcbjx76irf1g0xkh6hgpv4qn2swbiyvlazvlrhjfyxb9bckq9"))))
     (build-system cmake-build-system)
     (arguments
      `(#:build-type "Release"
-       #:configure-flags (list "") ; empty list to be appended in inherited packages
+       #:configure-flags (list "") ;empty list to be appended in inherited packages
        #:cmake ,cmake)) ;for newer CMake version
     (inputs (list boost
                   eigen
@@ -90,8 +89,7 @@
     (arguments
      (substitute-keyword-arguments (package-arguments ogs)
        ((#:configure-flags flags)
-        `(cons* "-DOGS_USE_PETSC=ON"
-                "-DCMAKE_C_COMPILER=mpicc"
+        `(cons* "-DOGS_USE_PETSC=ON" "-DCMAKE_C_COMPILER=mpicc"
                 "-DCMAKE_CXX_COMPILER=mpic++"
                 ,flags))))
     (synopsis "OGS with PETSc")))
@@ -105,7 +103,8 @@
        ((#:configure-flags flags)
         `(cons* "-DOGS_BUILD_PROCESSES=SteadyStateDiffusion"
                 ,flags))))
-    (synopsis "OGS with PETSc and SteadyStateDiffusion only (for faster build testing)")))
+    (synopsis
+     "OGS with PETSc and SteadyStateDiffusion only (for faster build testing)")))
 
 ; #### Dependencies ####
 (define-public vtk-openmpi
@@ -118,137 +117,131 @@
      (substitute-keyword-arguments (package-arguments vtk)
        ((#:configure-flags flags)
         #~(append '("-DVTK_MODULE_ENABLE_VTK_IOParallelXML=YES"
-                "-DVTK_MODULE_ENABLE_VTK_ParallelMPI=YES" "-DVTK_USE_MPI=ON")
-                #$flags))))
+                    "-DVTK_MODULE_ENABLE_VTK_ParallelMPI=YES"
+                    "-DVTK_USE_MPI=ON")
+                  #$flags))))
     (synopsis "VTK with OpenMPI support")))
 
 (define-public pybind11-2.10.4
-      (package
-        (inherit pybind11)
-        (version "2.10.4")
-        (source (origin
-                  (method git-fetch)
-                  (uri (git-reference
+  (package
+    (inherit pybind11)
+    (version "2.10.4")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
                     (url "https://github.com/pybind/pybind11")
                     (commit (string-append "v" version))))
-                  (sha256
-                   (base32
-                    "0rbcfvl7y472sykzdq3vrkw83kar0lpzhk3wq9yj9cdydl8cpfcz"))))))
+              (sha256
+               (base32
+                "0rbcfvl7y472sykzdq3vrkw83kar0lpzhk3wq9yj9cdydl8cpfcz"))))))
 
 (define-public tetgen
-      (package
-        (name "tetgen")
-        (synopsis "A Quality Tetrahedral Mesh Generator and a 3D Delaunay Triangulator")
-        (license license:agpl3)
-        (description "TetGen is a program to generate tetrahedral meshes of any 3D polyhedral domains. TetGen generates exact constrained Delaunay tetrahedralizations, boundary conforming Delaunay meshes, and Voronoi partitions.")
-        (home-page "http://www.tetgen.org/")
-        (version "1.5.1-1")
-        (source (origin
-                  (method git-fetch)
-                  (uri (git-reference
+  (package
+    (name "tetgen")
+    (synopsis
+     "A Quality Tetrahedral Mesh Generator and a 3D Delaunay Triangulator")
+    (license license:agpl3)
+    (description
+     "TetGen is a program to generate tetrahedral meshes of any 3D polyhedral domains. TetGen generates exact constrained Delaunay tetrahedralizations, boundary conforming Delaunay meshes, and Voronoi partitions.")
+    (home-page "http://www.tetgen.org/")
+    (version "1.5.1-1")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
                     (url "https://github.com/ufz/tetgen")
                     (commit version)))
-                  (sha256
-                   (base32
-                    "1xp1qibm0q4z5qx0h178qpas3n7pqbladkxdalq9j4l98hdws46j"))))
-        (build-system cmake-build-system)
-        (arguments
-            `(#:tests? #f
-              #:configure-flags (list
-                               "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
-                               ))
-        )))
+              (sha256
+               (base32
+                "1xp1qibm0q4z5qx0h178qpas3n7pqbladkxdalq9j4l98hdws46j"))))
+    (build-system cmake-build-system)
+    (arguments
+     `(#:tests? #f
+       #:configure-flags (list "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")))))
 
 (define-public tclap
-      (package
-        (name "tclap")
-        (synopsis "Templatized Command Line Argument Parser")
-        (license license:expat)
-        (description "This is a simple C++ library that facilitates parsing command line arguments in a type independent manner.")
-        (home-page "https://sourceforge.net/p/tclap/discussion/")
-        (version "1.2.4-1")
-        (source (origin
-                  (method git-fetch)
-                  (uri (git-reference
+  (package
+    (name "tclap")
+    (synopsis "Templatized Command Line Argument Parser")
+    (license license:expat)
+    (description
+     "This is a simple C++ library that facilitates parsing command line arguments in a type independent manner.")
+    (home-page "https://sourceforge.net/p/tclap/discussion/")
+    (version "1.2.4-1")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
                     (url "https://github.com/ufz/tclap")
                     (commit version)))
-                  (sha256
-                   (base32
-                    "0bijzfc9c8zny3m74y53i8m3f41kd8klcnmr9chy536syr9vdr5p"))))
-        (build-system cmake-build-system)
-        (arguments
-            `(#:tests? #f)
-        )))
+              (sha256
+               (base32
+                "0bijzfc9c8zny3m74y53i8m3f41kd8klcnmr9chy536syr9vdr5p"))))
+    (build-system cmake-build-system)
+    (arguments
+     `(#:tests? #f))))
 
 (define-public iphreeqc
-      (package
-        (name "iphreeqc")
-        (synopsis "Modules Based on the Geochemical Model PHREEQC for use in scripting and programming languages")
-        (license license:public-domain)
-        (description "")
-        (home-page "https://www.usgs.gov/software/phreeqc-version-3")
-        (version "3.5.0-3")
-        (source (origin
-                  (method git-fetch)
-                  (uri (git-reference
+  (package
+    (name "iphreeqc")
+    (synopsis
+     "Modules Based on the Geochemical Model PHREEQC for use in scripting and programming languages")
+    (license license:public-domain)
+    (description "")
+    (home-page "https://www.usgs.gov/software/phreeqc-version-3")
+    (version "3.5.0-3")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
                     (url "https://github.com/ufz/iphreeqc")
                     (commit version)))
-                  (sha256
-                   (base32
-                    "12wiqyzpzx89k9c7q07w4ypnppvi6s88k6jjsnlnvaxfafyvrbw3"))))
-        (build-system cmake-build-system)
-        (arguments
-            `(#:tests? #f
-              #:configure-flags (list
-                               "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
-                               ))
-        )))
+              (sha256
+               (base32
+                "12wiqyzpzx89k9c7q07w4ypnppvi6s88k6jjsnlnvaxfafyvrbw3"))))
+    (build-system cmake-build-system)
+    (arguments
+     `(#:tests? #f
+       #:configure-flags (list "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")))))
 
 (define-public xmlpatch
-      (package
-        (name "xmlpatch")
-        (synopsis "An XML Patch library")
-        (license license:lgpl2.1)
-        (description "")
-        (home-page "https://xmlpatch.sourceforge.net")
-        (version "0.4.3")
-        (source (origin
-                  (method git-fetch)
-                  (uri (git-reference
+  (package
+    (name "xmlpatch")
+    (synopsis "An XML Patch library")
+    (license license:lgpl2.1)
+    (description "")
+    (home-page "https://xmlpatch.sourceforge.net")
+    (version "0.4.3")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
                     (url "https://gitlab.opengeosys.org/ogs/libs/xmlpatch")
                     (commit (string-append "v" version))))
-                  (sha256
-                   (base32
-                    "0872g9w1jd5r4c5a1s8ga4x1plg608b7rxyqjs6zv8ghjq9qlkvg"))))
-        (build-system cmake-build-system)
-        (inputs (list libxml2))
-        (arguments
-            `(#:tests? #f
-              #:configure-flags (list
-                               "-DBUILD_SHARED_LIBS=ON"
-                               ))
-        )))
+              (sha256
+               (base32
+                "0872g9w1jd5r4c5a1s8ga4x1plg608b7rxyqjs6zv8ghjq9qlkvg"))))
+    (build-system cmake-build-system)
+    (inputs (list libxml2))
+    (arguments
+     `(#:tests? #f
+       #:configure-flags (list "-DBUILD_SHARED_LIBS=ON")))))
 
 (define-public exprtk
-      (package
-        (name "exprtk")
-        (home-page "https://www.partow.net/programming/exprtk/index.html")
-        (synopsis "C++ Mathematical Expression Parsing And Evaluation Library")
-        (description "")
-        (license license:expat)
-        (version "0.0.2")
-        (source (origin
-                  (method git-fetch)
-                  (uri (git-reference
+  (package
+    (name "exprtk")
+    (home-page "https://www.partow.net/programming/exprtk/index.html")
+    (synopsis "C++ Mathematical Expression Parsing And Evaluation Library")
+    (description "")
+    (license license:expat)
+    (version "0.0.2")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
                     (url "https://github.com/ArashPartow/exprtk.git")
                     (commit version)))
-                  (sha256
-                   (base32
-                    "1w92qlfjpcan38d88fak3avq81lkcpai5mqpbvrsfv04mi5nfpk5"))))
-        (build-system copy-build-system)
-        (arguments
-         '(#:install-plan '(("exprtk.hpp" "include/")))
-        )))
+              (sha256
+               (base32
+                "1w92qlfjpcan38d88fak3avq81lkcpai5mqpbvrsfv04mi5nfpk5"))))
+    (build-system copy-build-system)
+    (arguments
+     '(#:install-plan '(("exprtk.hpp" "include/"))))))
 
 ;; return package
 ogs
