@@ -10,6 +10,7 @@
 # full documentation of all the functions in the API):
 import numpy
 import gmsh
+import os
 
 # Before using any functions in the Python API, Gmsh must be initialized:
 gmsh.initialize()
@@ -195,7 +196,8 @@ gmsh.write("mesh_basin.msh")
 # will save the mesh in the vtk, unv and stl format.
 
 # To visualize the model we can run the graphical user interface with:
-gmsh.fltk.run()
+if "CI" not in os.environ:
+    gmsh.fltk.run()
 
 
 # Note that starting with Gmsh 3.0, models can be built using other geometry
