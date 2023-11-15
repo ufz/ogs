@@ -907,21 +907,21 @@ void TimeLoop::preOutputInitialConditions(const double t) const
         auto const process_id = process_data->process_id;
         auto& pcs = process_data->process;
 
-            // dummy value to handle the time derivative terms more or less
-            // correctly, i.e. to ignore them.
-            double const dt = 1;
-            process_data->time_disc->nextTimestep(t, dt);
+        // dummy value to handle the time derivative terms more or less
+        // correctly, i.e. to ignore them.
+        double const dt = 1;
+        process_data->time_disc->nextTimestep(t, dt);
 
-            pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
+        pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
 
-            pcs.preOutput(_start_time, dt, _process_solutions,
-                          _process_solutions_prev, process_id);
+        pcs.preOutput(_start_time, dt, _process_solutions,
+                      _process_solutions_prev, process_id);
 
-            // Update secondary variables, which might be uninitialized, before
-            // output.
-            pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,
-                                         *_process_solutions_prev[process_id],
-                                         process_id);
+        // Update secondary variables, which might be uninitialized, before
+        // output.
+        pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,
+                                     *_process_solutions_prev[process_id],
+                                     process_id);
     }
 }
 }  // namespace ProcessLib
