@@ -1,0 +1,3 @@
+include:
+  - local: "/scripts/ci/extends/*.yml"
+  - local: "/scripts/ci/jobs/build-guix.yml"

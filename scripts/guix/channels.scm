@@ -1,12 +1,14 @@
 (list (channel
         (name 'guix-ogs)
-        (url "https://gitlab.opengeosys.org/ogs/inf/guix-ogs.git"))
+        (url "https://gitlab.opengeosys.org/ogs/inf/guix-ogs.git")
+        (branch "master")
+        (commit "f5f9b9c1a61527968c1848c3fbaef4a9bc44c891"))
       (channel
         (name 'guix)
         (url "https://git.savannah.gnu.org/git/guix.git")
-        (branch #f)
+        (branch "master")
         (commit
-          "8e2f32cee982d42a79e53fc1e9aa7b8ff0514714")
+          "0c1aa354048f82023e6d2043bfecc4fd58bc9b58")
         (introduction
           (make-channel-introduction
             "9edb3f66fd807b096b48283debdcddccfea34bad"

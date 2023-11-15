@@ -15,22 +15,7 @@ weight = 3
 
 </div>
 
-## Option: Download the source code
-
-To get the latest source code simply download it from [repository website](https://gitlab.opengeosys.org/ogs/ogs) and extract the archive:
-
-![Getting the zip download URL from the GitLab web interface](zip-download.png)
-
-You can also download and extract with the command line:
-
-```bash
-wget https://gitlab.opengeosys.org/ogs/ogs/-/archive/master/ogs-master.tar.gz
-tar xf ogs-master.tar.gz
-```
-
-----
-
-## Option: Clone the source code repository with Git
+## Clone the source code repository with Git
 
 First you need to get the clone URL:
 
