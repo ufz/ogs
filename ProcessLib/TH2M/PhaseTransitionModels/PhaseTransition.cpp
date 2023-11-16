@@ -98,7 +98,7 @@ PhaseTransitionModelVariables PhaseTransition::updateConstitutiveVariables(
     ParameterLib::SpatialPosition pos, double const t, const double dt) const
 {
     // primary variables
-    auto const pGR = variables.phase_pressure;
+    auto const pGR = variables.gas_phase_pressure;
     auto const pCap = variables.capillary_pressure;
     auto const T = variables.temperature;
     auto const pLR = pGR - pCap;
@@ -225,8 +225,8 @@ PhaseTransitionModelVariables PhaseTransition::updateConstitutiveVariables(
     cv.drho_GR_dp_GR =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(
-                variables, MaterialPropertyLib::Variable::phase_pressure, pos,
-                t, dt);
+                variables, MaterialPropertyLib::Variable::gas_phase_pressure,
+                pos, t, dt);
 
     auto const dMG_dpCap = dxnWG_dpCap * dMG;
     variables.molar_mass_derivative = dMG_dpCap;
@@ -331,8 +331,8 @@ PhaseTransitionModelVariables PhaseTransition::updateConstitutiveVariables(
         solute_component
             .property(MaterialPropertyLib::PropertyType::henry_coefficient)
             .template dValue<double>(
-                variables, MaterialPropertyLib::Variable::phase_pressure, pos,
-                t, dt);
+                variables, MaterialPropertyLib::Variable::gas_phase_pressure,
+                pos, t, dt);
 
     // Concentration of the dissolved gas as amount of substance of the
     // mixture component C related to the total volume of the liquid phase.

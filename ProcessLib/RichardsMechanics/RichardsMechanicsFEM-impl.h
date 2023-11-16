@@ -312,7 +312,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
 
         variables.capillary_pressure = p_cap_ip;
-        variables.phase_pressure = -p_cap_ip;
+        variables.liquid_phase_pressure = -p_cap_ip;
         _ip_data[ip].liquid_pressure_m_prev = -p_cap_ip;
         _ip_data[ip].liquid_pressure_m = -p_cap_ip;
 
@@ -451,7 +451,7 @@ void RichardsMechanicsLocalAssembler<
         NumLib::shapeFunctionInterpolate(-p_L_prev, N_p, p_cap_prev_ip);
 
         variables.capillary_pressure = p_cap_ip;
-        variables.phase_pressure = -p_cap_ip;
+        variables.liquid_phase_pressure = -p_cap_ip;
 
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)
@@ -636,11 +636,12 @@ void RichardsMechanicsLocalAssembler<
         //
         // pressure equation, pressure part.
         //
-        auto const beta_LR = 1 / rho_LR *
-                             liquid_phase.property(MPL::PropertyType::density)
-                                 .template dValue<double>(
-                                     variables, MPL::Variable::phase_pressure,
-                                     x_position, t, dt);
+        auto const beta_LR =
+            1 / rho_LR *
+            liquid_phase.property(MPL::PropertyType::density)
+                .template dValue<double>(variables,
+                                         MPL::Variable::liquid_phase_pressure,
+                                         x_position, t, dt);
 
         double const a0 = S_L * (alpha - phi) * beta_SR;
         // Volumetric average specific storage of the solid and fluid phases.
@@ -798,7 +799,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         NumLib::shapeFunctionInterpolate(-p_L_prev, N_p, p_cap_prev_ip);
 
         variables.capillary_pressure = p_cap_ip;
-        variables.phase_pressure = -p_cap_ip;
+        variables.liquid_phase_pressure = -p_cap_ip;
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)
                 .template value<double>(variables, x_position, t, dt);
@@ -1039,11 +1040,12 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         laplace_p.noalias() +=
             dNdx_p.transpose() * k_rel * rho_Ki_over_mu * dNdx_p * w;
 
-        auto const beta_LR = 1 / rho_LR *
-                             liquid_phase.property(MPL::PropertyType::density)
-                                 .template dValue<double>(
-                                     variables, MPL::Variable::phase_pressure,
-                                     x_position, t, dt);
+        auto const beta_LR =
+            1 / rho_LR *
+            liquid_phase.property(MPL::PropertyType::density)
+                .template dValue<double>(variables,
+                                         MPL::Variable::liquid_phase_pressure,
+                                         x_position, t, dt);
 
         double const a0 = (alpha - phi) * beta_SR;
         double const specific_storage_a_p = S_L * (phi * beta_LR + S_L * a0);
@@ -1571,7 +1573,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         NumLib::shapeFunctionInterpolate(-p_L_prev, N_p, p_cap_prev_ip);
 
         variables.capillary_pressure = p_cap_ip;
-        variables.phase_pressure = -p_cap_ip;
+        variables.liquid_phase_pressure = -p_cap_ip;
 
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)

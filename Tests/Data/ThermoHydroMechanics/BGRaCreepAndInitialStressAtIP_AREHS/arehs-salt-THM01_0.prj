@@ -81,7 +81,7 @@
                             <type>Linear</type>
                             <reference_value>1000.0</reference_value>
                             <independent_variable>
-                                <variable_name>phase_pressure
+                                <variable_name>liquid_phase_pressure
                                 </variable_name>
                                 <reference_condition>1e5
                                 </reference_condition>
@@ -169,7 +169,7 @@
                             <type>Linear</type>
                             <reference_value>1000.0</reference_value>
                             <independent_variable>
-                                <variable_name>phase_pressure
+                                <variable_name>liquid_phase_pressure
                                 </variable_name>
                                 <reference_condition>1e5
                                 </reference_condition>
@@ -257,7 +257,7 @@
                             <type>Linear</type>
                             <reference_value>1000.0</reference_value>
                             <independent_variable>
-                                <variable_name>phase_pressure
+                                <variable_name>liquid_phase_pressure
                                 </variable_name>
                                 <reference_condition>1e5
                                 </reference_condition>
@@ -350,7 +350,7 @@
                             <type>Linear</type>
                             <reference_value>1000.0</reference_value>
                             <independent_variable>
-                                <variable_name>phase_pressure
+                                <variable_name>liquid_phase_pressure
                                 </variable_name>
                                 <reference_condition>1e5
                                 </reference_condition>

@@ -48,7 +48,7 @@ TEST(Material, checkWaterEnthalpyIAPWSIF97Region1)
         double const T_i = temperatures[i];
         double const p_i = pressures[i];
 
-        variable_array.phase_pressure = p_i;
+        variable_array.liquid_phase_pressure = p_i;
         variable_array.temperature = T_i;
 
         ASSERT_NEAR(

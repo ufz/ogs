@@ -44,7 +44,7 @@ TEST(MaterialPropertyLib, GasPressureDependentPermeability)
     {
         double const p_gas = 2.5e6;
 
-        vars.phase_pressure = p_gas;
+        vars.gas_phase_pressure = p_gas;
         auto const k = MPL::formEigenTensor<3>(k_model.value(vars, pos, t, dt));
 
         double const k_expected = 1.312500000000000000e-20;
@@ -60,7 +60,7 @@ TEST(MaterialPropertyLib, GasPressureDependentPermeability)
     {
         double const p_gas = 4.5e6;
 
-        vars.phase_pressure = p_gas;
+        vars.gas_phase_pressure = p_gas;
         auto const k = MPL::formEigenTensor<3>(k_model.value(vars, pos, t, dt));
 
         double const k_expected = 1.990000000000000000000e-18;

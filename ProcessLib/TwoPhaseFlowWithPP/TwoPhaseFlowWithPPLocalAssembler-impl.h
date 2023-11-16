@@ -113,7 +113,7 @@ void TwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         _pressure_wet[ip] = pn_int_pt - pc_int_pt;
         MPL::VariableArray variables;
 
-        variables.phase_pressure = pn_int_pt;
+        variables.gas_phase_pressure = pn_int_pt;
         variables.capillary_pressure = pc_int_pt;
         variables.temperature = _process_data.temperature(t, pos)[0];
         variables.molar_mass =
@@ -142,7 +142,7 @@ void TwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         auto const drhononwet_dpn =
             gas_phase.property(MPL::PropertyType::density)
                 .template dValue<double>(
-                    variables, MPL::Variable::phase_pressure, pos, t, dt);
+                    variables, MPL::Variable::gas_phase_pressure, pos, t, dt);
 
         auto const k_rel_wet =
             medium.property(MPL::PropertyType::relative_permeability)

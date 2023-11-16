@@ -48,7 +48,7 @@ PropertyDataType WaterTemperatureIAPWSIF97Region1::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    double const p = std::max(0.0, variable_array.phase_pressure);
+    double const p = std::max(0.0, variable_array.liquid_phase_pressure);
     double const h = variable_array.enthalpy;
 
     static constexpr double ref_h_ = 2500e3;  ///< reference enthalpy in J/kg.

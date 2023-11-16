@@ -52,15 +52,15 @@
                             <name>density</name>
                             <type>Function</type>
                             <value>
-                                <expression>1002.6 * exp(4.5e-10 * (phase_pressure - 1.e+5)-2.0e-4*(temperature-273.15))</expression>
+                                <expression>1002.6 * exp(4.5e-10 * (liquid_phase_pressure - 1.e+5)-2.0e-4*(temperature-273.15))</expression>
                             </value>
                             <dvalue>
                                 <variable_name>temperature</variable_name>
-                                <expression>-0.20052 * exp(4.5e-10 * (phase_pressure - 1.e+5)-2.0e-4*(temperature-273.15))</expression>
+                                <expression>-0.20052 * exp(4.5e-10 * (liquid_phase_pressure - 1.e+5)-2.0e-4*(temperature-273.15))</expression>
                             </dvalue>
                             <dvalue>
-                                <variable_name>phase_pressure</variable_name>
-                                <expression>4.5117e-07 * exp(4.5e-10 * (phase_pressure - 1.e+5)-2.0e-4*(temperature-273.15))</expression>
+                                <variable_name>liquid_phase_pressure</variable_name>
+                                <expression>4.5117e-07 * exp(4.5e-10 * (liquid_phase_pressure - 1.e+5)-2.0e-4*(temperature-273.15))</expression>
                             </dvalue>
                         </property>
                         <property>
@@ -74,7 +74,7 @@
                                 <expression>-0.0037978499999999998 *  exp(1808.5 / temperature) / (temperature * temperature)</expression>
                             </dvalue>
                             <dvalue>
-                                <variable_name>phase_pressure</variable_name>
+                                <variable_name>liquid_phase_pressure</variable_name>
                                 <expression>0.0</expression>
                             </dvalue>
                         </property>

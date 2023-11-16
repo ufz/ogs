@@ -52,7 +52,7 @@
                                 <slope>-3.98e-4</slope>
                             </independent_variable>
                             <independent_variable>
-                                <variable_name>phase_pressure</variable_name>
+                                <variable_name>liquid_phase_pressure</variable_name>
                                 <reference_condition>1e5</reference_condition>
                                 <slope>4.5999999999999996e-10</slope>
                             </independent_variable>

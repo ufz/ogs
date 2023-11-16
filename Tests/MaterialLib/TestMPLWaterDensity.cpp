@@ -39,7 +39,7 @@ TEST(Material, checkWaterDensityIAPWSIF97Region1_)
     double const t = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
     variable_array.temperature = T;
-    variable_array.phase_pressure = p;
+    variable_array.liquid_phase_pressure = p;
 
     const double rho_expected = 890.98496087498256;
 
@@ -50,8 +50,8 @@ TEST(Material, checkWaterDensityIAPWSIF97Region1_)
     const double drho_dT = property.template dValue<double>(
         variable_array, MaterialPropertyLib::Variable::temperature, pos, t, dt);
     const double drho_dp = property.template dValue<double>(
-        variable_array, MaterialPropertyLib::Variable::phase_pressure, pos, t,
-        dt);
+        variable_array, MaterialPropertyLib::Variable::liquid_phase_pressure,
+        pos, t, dt);
 
     const double perturbation = 1.e-4;
 
@@ -62,7 +62,7 @@ TEST(Material, checkWaterDensityIAPWSIF97Region1_)
     ASSERT_NEAR((rho_T1 - rho_expected) / perturbation, drho_dT, 1.e-6);
 
     // Test the differentiation: with respect to pressure:
-    variable_array.phase_pressure += perturbation;
+    variable_array.liquid_phase_pressure += perturbation;
     const double rho_p1 =
         property.template value<double>(variable_array, pos, t, dt);
     ASSERT_NEAR((rho_p1 - rho_T1) / perturbation, drho_dp, 1.e-6);

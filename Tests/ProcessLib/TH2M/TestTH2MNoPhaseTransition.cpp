@@ -84,7 +84,7 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     double const pCap = 1000000.;
     double const T = 333.;
 
-    variable_array.phase_pressure = pGR;
+    variable_array.gas_phase_pressure = pGR;
     variable_array.capillary_pressure = pCap;
     variable_array.temperature = T;
 

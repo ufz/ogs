@@ -52,7 +52,7 @@
                             <type>Linear</type>
                             <reference_value>1</reference_value>
                             <independent_variable>
-                                <variable_name>phase_pressure</variable_name>
+                                <variable_name>liquid_phase_pressure</variable_name>
                                 <reference_condition>0</reference_condition>
                                 <slope>1</slope>
                             </independent_variable>

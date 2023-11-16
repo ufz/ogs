@@ -158,7 +158,7 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         MPL::VariableArray vars;
         MPL::VariableArray vars_prev;
         vars.temperature = T;
-        vars.phase_pressure = pGR;
+        vars.gas_phase_pressure = pGR;
         vars.capillary_pressure = pCap;
         vars.liquid_phase_pressure = pLR;
 

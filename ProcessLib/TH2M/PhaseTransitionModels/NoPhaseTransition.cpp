@@ -44,7 +44,7 @@ PhaseTransitionModelVariables NoPhaseTransition::updateConstitutiveVariables(
     ParameterLib::SpatialPosition pos, double const t, double const dt) const
 {
     // primary variables
-    auto const pGR = variables.phase_pressure;
+    auto const pGR = variables.gas_phase_pressure;
     auto const T = variables.temperature;
 
     auto const& liquid_phase = medium->phase("AqueousLiquid");
@@ -116,8 +116,8 @@ PhaseTransitionModelVariables NoPhaseTransition::updateConstitutiveVariables(
     cv.drho_GR_dp_GR =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(
-                variables, MaterialPropertyLib::Variable::phase_pressure, pos,
-                t, dt);
+                variables, MaterialPropertyLib::Variable::gas_phase_pressure,
+                pos, t, dt);
     cv.drho_LR_dp_LR =
         liquid_phase[MaterialPropertyLib::PropertyType::density]
             .template dValue<double>(

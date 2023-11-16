@@ -122,7 +122,7 @@ public:
                                          p_int_pt);
 
         vars.temperature = T_int_pt;
-        vars.phase_pressure = p_int_pt;
+        vars.liquid_phase_pressure = p_int_pt;
 
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
@@ -284,7 +284,7 @@ protected:
             NumLib::shapeFunctionInterpolate(local_T, N, T_int_pt);
 
             vars.temperature = T_int_pt;
-            vars.phase_pressure = p_int_pt;
+            vars.liquid_phase_pressure = p_int_pt;
 
             // TODO (naumov) Temporary value not used by current material
             // models. Need extension of secondary variables interface.

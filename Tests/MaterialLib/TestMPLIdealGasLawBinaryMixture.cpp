@@ -106,7 +106,7 @@ TEST(MaterialPropertyLib, IdealGasLawBinaryMixture)
         {
             for (double T = T_min; T <= T_max; T += 0.25)
             {
-                vars.phase_pressure = pGR;
+                vars.gas_phase_pressure = pGR;
                 vars.capillary_pressure = pCap;
                 vars.temperature = T;
 
@@ -129,7 +129,7 @@ TEST(MaterialPropertyLib, IdealGasLawBinaryMixture)
 
                 vars.molar_mass_derivative = dMG[gas_pressure];
                 auto const drhoGR_dpGR = std::get<double>(density_model.dValue(
-                    vars, MPL::Variable::phase_pressure, pos, t, dt));
+                    vars, MPL::Variable::gas_phase_pressure, pos, t, dt));
 
                 vars.molar_mass_derivative = dMG[capillary_pressure];
                 auto const drhoGR_dpCap = std::get<double>(density_model.dValue(
@@ -147,13 +147,13 @@ TEST(MaterialPropertyLib, IdealGasLawBinaryMixture)
                 // Perturbation of gas pressure
                 auto const eps_pGR = 10.;
 
-                vars.phase_pressure = pGR + eps_pGR;
+                vars.gas_phase_pressure = pGR + eps_pGR;
                 vars.molar_mass = molarMass(pGR + eps_pGR, pCap, T);
 
                 auto rhoGR_plus =
                     std::get<double>(density_model.value(vars, pos, t, dt));
 
-                vars.phase_pressure = pGR - eps_pGR;
+                vars.gas_phase_pressure = pGR - eps_pGR;
                 vars.molar_mass = molarMass(pGR - eps_pGR, pCap, T);
 
                 auto rhoGR_minus =
@@ -164,7 +164,7 @@ TEST(MaterialPropertyLib, IdealGasLawBinaryMixture)
                     central_difference(rhoGR_plus, rhoGR_minus, eps_pGR),
                     1.e-10);
 
-                vars.phase_pressure = pGR;
+                vars.gas_phase_pressure = pGR;
 
                 // Perturbation of capillary pressure
                 auto const eps_pCap = 1.;

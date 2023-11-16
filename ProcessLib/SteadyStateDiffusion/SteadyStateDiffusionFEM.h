@@ -116,7 +116,7 @@ public:
 
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, sm.N, p_int_pt);
-            vars.phase_pressure = p_int_pt;
+            vars.liquid_phase_pressure = p_int_pt;
             auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium.property(MaterialPropertyLib::PropertyType::diffusion)
                     .value(vars, pos, t, dt));
@@ -159,7 +159,7 @@ public:
                 .template value<double>(vars, pos, t, dt);
         double pressure = 0.0;
         NumLib::shapeFunctionInterpolate(local_x, shape_matrices.N, pressure);
-        vars.phase_pressure = pressure;
+        vars.liquid_phase_pressure = pressure;
 
         auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
             medium.property(MaterialPropertyLib::PropertyType::diffusion)
@@ -227,7 +227,7 @@ public:
             pos.setIntegrationPoint(i);
             NumLib::shapeFunctionInterpolate(local_x, _shape_matrices[i].N,
                                              pressure);
-            vars.phase_pressure = pressure;
+            vars.liquid_phase_pressure = pressure;
 
             auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium.property(MaterialPropertyLib::PropertyType::diffusion)

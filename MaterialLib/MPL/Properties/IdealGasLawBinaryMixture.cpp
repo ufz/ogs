@@ -28,7 +28,7 @@ PropertyDataType IdealGasLawBinaryMixture::value(
     double const /*dt*/) const
 {
     const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
-    const double pGR = variable_array.phase_pressure;
+    const double pGR = variable_array.gas_phase_pressure;
     const double T = variable_array.temperature;
     const double MG = variable_array.molar_mass;
 
@@ -41,14 +41,14 @@ PropertyDataType IdealGasLawBinaryMixture::dValue(
     double const /*dt*/) const
 {
     const double R = MaterialLib::PhysicalConstant::IdealGasConstant;
-    const double pGR = variable_array.phase_pressure;
+    const double pGR = variable_array.gas_phase_pressure;
     const double T = variable_array.temperature;
     const double MG = variable_array.molar_mass;
     const double dMG_dx = variable_array.molar_mass_derivative;
 
     switch (variable)
     {
-        case Variable::phase_pressure:
+        case Variable::gas_phase_pressure:
             return MG / R / T + pGR / R / T * dMG_dx;
         case Variable::capillary_pressure:
             return pGR / R / T * dMG_dx;

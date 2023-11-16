@@ -87,7 +87,7 @@ PropertyDataType AverageMolarMass::dValue(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
 {
-    if ((variable != Variable::phase_pressure) &&
+    if ((variable != Variable::gas_phase_pressure) &&
         (variable != Variable::temperature))
     {
         OGS_FATAL(

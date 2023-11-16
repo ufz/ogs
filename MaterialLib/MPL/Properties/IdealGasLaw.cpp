@@ -29,7 +29,7 @@ PropertyDataType IdealGasLaw::value(
     double const /*dt*/) const
 {
     const double gas_constant = MaterialLib::PhysicalConstant::IdealGasConstant;
-    const double pressure = variable_array.phase_pressure;
+    const double pressure = variable_array.gas_phase_pressure;
     const double temperature = variable_array.temperature;
     const double molar_mass = variable_array.molar_mass;
 
@@ -44,7 +44,7 @@ PropertyDataType IdealGasLaw::dValue(
     double const /*dt*/) const
 {
     const double gas_constant = MaterialLib::PhysicalConstant::IdealGasConstant;
-    const double pressure = variable_array.phase_pressure;
+    const double pressure = variable_array.gas_phase_pressure;
     const double temperature = variable_array.temperature;
     const double molar_mass = variable_array.molar_mass;
     // todo: add molar mass derivatives
@@ -56,7 +56,7 @@ PropertyDataType IdealGasLaw::dValue(
                temperature;
     }
 
-    if (variable == Variable::phase_pressure)
+    if (variable == Variable::gas_phase_pressure)
     {
         // extend to take pressure-dependent molar mass into account
         return molar_mass / gas_constant / temperature;
@@ -75,13 +75,13 @@ PropertyDataType IdealGasLaw::d2Value(
     double const /*t*/, double const /*dt*/) const
 {
     const double gas_constant = MaterialLib::PhysicalConstant::IdealGasConstant;
-    const double pressure = variable_array.phase_pressure;
+    const double pressure = variable_array.gas_phase_pressure;
     const double temperature = variable_array.temperature;
     const double molar_mass = variable_array.molar_mass;
     // todo: add molar mass derivatives
 
-    if ((variable1 == Variable::phase_pressure) &&
-        (variable2 == Variable::phase_pressure))
+    if ((variable1 == Variable::gas_phase_pressure) &&
+        (variable2 == Variable::gas_phase_pressure))
     {
         // d2rho_dp2
         // extend to take pressure-dependent molar mass into account
@@ -95,10 +95,10 @@ PropertyDataType IdealGasLaw::d2Value(
         return 2. * molar_mass * pressure / gas_constant / temperature /
                temperature / temperature;
     }
-    if (((variable1 == Variable::phase_pressure) &&
+    if (((variable1 == Variable::gas_phase_pressure) &&
          (variable2 == Variable::temperature)) ||
         ((variable1 == Variable::temperature) &&
-         (variable2 == Variable::phase_pressure)))
+         (variable2 == Variable::gas_phase_pressure)))
     {
         // d2rho_dpdT or d2rho_dTdp
         // extend to take pressure-temperature-dependent molar mass into account

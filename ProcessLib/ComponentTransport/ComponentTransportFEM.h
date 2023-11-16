@@ -602,7 +602,7 @@ public:
             NumLib::shapeFunctionInterpolate(p_nodal_values, N, p_int_pt);
 
             vars.concentration = C_int_pt;
-            vars.phase_pressure = p_int_pt;
+            vars.liquid_phase_pressure = p_int_pt;
 
             // update according to a particular porosity model
             porosity = medium[MaterialPropertyLib::PropertyType::porosity]
@@ -656,7 +656,8 @@ public:
             const double drho_dp =
                 phase[MaterialPropertyLib::PropertyType::density]
                     .template dValue<double>(
-                        vars, MaterialPropertyLib::Variable::phase_pressure,
+                        vars,
+                        MaterialPropertyLib::Variable::liquid_phase_pressure,
                         pos, t, dt);
 
             const double drho_dC =
@@ -845,7 +846,7 @@ public:
             NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);
 
             vars.concentration = C_int_pt;
-            vars.phase_pressure = p_int_pt;
+            vars.liquid_phase_pressure = p_int_pt;
 
             //  porosity
             {
@@ -881,7 +882,8 @@ public:
             const double drho_dp =
                 phase[MaterialPropertyLib::PropertyType::density]
                     .template dValue<double>(
-                        vars, MaterialPropertyLib::Variable::phase_pressure,
+                        vars,
+                        MaterialPropertyLib::Variable::liquid_phase_pressure,
                         pos, t, dt);
             const double drho_dC =
                 phase[MaterialPropertyLib::PropertyType::density]
@@ -986,7 +988,7 @@ public:
             NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);
 
             vars.concentration = C_int_pt;
-            vars.phase_pressure = p_int_pt;
+            vars.liquid_phase_pressure = p_int_pt;
 
             if (_process_data.temperature)
             {
@@ -1076,9 +1078,10 @@ public:
 
                 const double drho_dp =
                     phase[MaterialPropertyLib::PropertyType::density]
-                        .template dValue<double>(
-                            vars, MaterialPropertyLib::Variable::phase_pressure,
-                            pos, t, dt);
+                        .template dValue<double>(vars,
+                                                 MaterialPropertyLib::Variable::
+                                                     liquid_phase_pressure,
+                                                 pos, t, dt);
 
                 local_K.noalias() +=
                     N_t_N * ((R_times_phi * drho_dp * p_dot) * w) -
@@ -1182,7 +1185,7 @@ public:
 
             double const cdot_ip = (c_ip - N.dot(c_prev)) / dt;
 
-            vars.phase_pressure = p_ip;
+            vars.liquid_phase_pressure = p_ip;
             vars.concentration = c_ip;
 
             //  porosity
@@ -1211,7 +1214,8 @@ public:
             auto const drho_dp =
                 phase[MaterialPropertyLib::PropertyType::density]
                     .template dValue<double>(
-                        vars, MaterialPropertyLib::Variable::phase_pressure,
+                        vars,
+                        MaterialPropertyLib::Variable::liquid_phase_pressure,
                         pos, t, dt);
             auto const drho_dc =
                 phase[MaterialPropertyLib::PropertyType::density]
@@ -1301,7 +1305,7 @@ public:
             double const p_ip = N.dot(p);
             double const c_ip = N.dot(c);
 
-            vars.phase_pressure = p_ip;
+            vars.liquid_phase_pressure = p_ip;
             vars.concentration = c_ip;
 
             if (_process_data.temperature)
@@ -1543,7 +1547,7 @@ public:
             NumLib::shapeFunctionInterpolate(p_nodal_values, N, p_int_pt);
 
             vars.concentration = C_int_pt;
-            vars.phase_pressure = p_int_pt;
+            vars.liquid_phase_pressure = p_int_pt;
             vars.porosity = porosity;
 
             // TODO (naumov) Temporary value not used by current material
@@ -1616,7 +1620,7 @@ public:
 
         double p_int_pt;
         NumLib::shapeFunctionInterpolate(local_p, shape_matrices.N, p_int_pt);
-        vars.phase_pressure = p_int_pt;
+        vars.liquid_phase_pressure = p_int_pt;
 
         // TODO (naumov) Temporary value not used by current material models.
         // Need extension of secondary variables interface.
@@ -1767,7 +1771,7 @@ public:
             double const c_ip = N.dot(c);
 
             vars.concentration = c_ip;
-            vars.phase_pressure = p_ip;
+            vars.liquid_phase_pressure = p_ip;
             vars.porosity = phi;
 
             double const dt = std::numeric_limits<double>::quiet_NaN();

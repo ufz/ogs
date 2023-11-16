@@ -94,7 +94,7 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
         NumLib::shapeFunctionInterpolate(local_T, N, T_int_pt);
 
         vars.temperature = T_int_pt;
-        vars.phase_pressure = p_int_pt;
+        vars.liquid_phase_pressure = p_int_pt;
 
         vars.liquid_saturation = 1.0;
 
@@ -109,8 +109,8 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
         const double dfluid_density_dp =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template dValue<double>(
-                    vars, MaterialPropertyLib::Variable::phase_pressure, pos, t,
-                    dt);
+                    vars, MaterialPropertyLib::Variable::liquid_phase_pressure,
+                    pos, t, dt);
 
         // Use the viscosity model to compute the viscosity
         auto const viscosity =
@@ -223,7 +223,7 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHeatTransportEquation(
         NumLib::shapeFunctionInterpolate(local_T, N, T_at_xi);
 
         vars.temperature = T_at_xi;
-        vars.phase_pressure = p_at_xi;
+        vars.liquid_phase_pressure = p_at_xi;
 
         vars.liquid_saturation = 1.0;
 

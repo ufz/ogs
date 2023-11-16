@@ -101,7 +101,7 @@ PropertyDataType ClausiusClapeyron::dValue(
     {
         return 0.;
     }
-    if (variable == Variable::phase_pressure)
+    if (variable == Variable::gas_phase_pressure)
     {
         return 0.;
     }

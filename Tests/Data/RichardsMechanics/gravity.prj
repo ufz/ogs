@@ -48,7 +48,7 @@
                             <type>Linear</type>
                             <reference_value>1e3</reference_value>
                             <independent_variable>
-                                <variable_name>phase_pressure</variable_name>
+                                <variable_name>liquid_phase_pressure</variable_name>
                                 <reference_condition>10000</reference_condition>
                                 <slope>0.45454545454545454545e-9</slope>
                             </independent_variable>

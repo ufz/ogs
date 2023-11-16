@@ -25,7 +25,7 @@ PropertyDataType WaterDensityIAPWSIF97Region1::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    double const p = std::max(0.0, variable_array.phase_pressure);
+    double const p = std::max(0.0, variable_array.liquid_phase_pressure);
     double const T = variable_array.temperature;
     const double tau = ref_T_ / T;
     const double pi = p / ref_p_;
@@ -41,7 +41,7 @@ PropertyDataType WaterDensityIAPWSIF97Region1::dValue(
     double const /*dt*/) const
 {
     const double T = variable_array.temperature;
-    double const p = std::max(0.0, variable_array.phase_pressure);
+    double const p = std::max(0.0, variable_array.liquid_phase_pressure);
 
     const double tau = ref_T_ / T;
     const double pi = p / ref_p_;
@@ -58,7 +58,7 @@ PropertyDataType WaterDensityIAPWSIF97Region1::dValue(
                    (MaterialLib::PhysicalConstant::SpecificGasConstant::
                         WaterVapour *
                     T * T * dgamma_dpi);
-        case Variable::phase_pressure:
+        case Variable::liquid_phase_pressure:
             return -gibbs_free_energy_.get_dgamma_dpi_dpi(tau, pi) /
                    (MaterialLib::PhysicalConstant::SpecificGasConstant::
                         WaterVapour *
@@ -67,7 +67,7 @@ PropertyDataType WaterDensityIAPWSIF97Region1::dValue(
             OGS_FATAL(
                 "WaterDensityIAPWSIF97Region1::dValue is implemented for "
                 "derivatives with "
-                "respect to temperature or phase_pressure only.");
+                "respect to temperature or liquid_phase_pressure only.");
     }
 }
 

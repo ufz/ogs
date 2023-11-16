@@ -45,7 +45,7 @@ TEST(Material, checkSaturationTemperatureIAPWSIF97Region4)
 
     for (std::size_t i = 0; i < pressures.size(); i++)
     {
-        variable_array.phase_pressure = pressures[i];
+        variable_array.liquid_phase_pressure = pressures[i];
         ASSERT_NEAR(expected_Ts[i],
                     property.template value<double>(variable_array, pos, t, dt),
                     1.e-6);

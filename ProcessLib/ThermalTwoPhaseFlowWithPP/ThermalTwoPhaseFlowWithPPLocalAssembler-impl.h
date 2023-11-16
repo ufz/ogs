@@ -167,7 +167,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::
             IdealGasConstant * T_int_pt;
         vars.temperature = T_int_pt;
         vars.capillary_pressure = pc_int_pt;
-        vars.phase_pressure = pg_int_pt;
+        vars.gas_phase_pressure = pg_int_pt;
 
         auto const& medium =
             *_process_data.media_map.getMedium(this->_element.getID());
