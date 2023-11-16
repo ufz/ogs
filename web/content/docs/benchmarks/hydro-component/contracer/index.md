@@ -20,7 +20,7 @@ Hydraulic water influx was 0.768 $\textrm{m}^3~\textrm{d}^{-1}$ at the left side
 The tracer (40.26 g of $\textrm{Br}^-$) was diluted in 12 L of waste water and added as a single impulse event at $t=0$.
 Note, that only 89\% of the tracer was recovered at the outlet.
 
-![Top: Schematic representation of the experiment. Middle and bottom: Simulated domain and input parameters in 1D and 2D, respectively. Modified with permission from Boog et al. (2019).](ConTracer_domain.png)
+![Top: Schematic representation of the experiment. Middle and bottom: Simulated domain and input parameters in 1D and 2D, respectively. Modified with permission from Boog et al. (2019).](./ConTracer_domain.png)
 
 ## Problem description (1D)
 

@@ -6,20 +6,21 @@
 
   <div class="bg-white">
     {{ if isset .Params "coupling" }}
-    <img class="h-12 md:h-16 lg:h-20 float-right" src="/images/coupling-icons/{{.Params.coupling}}-tet.svg" alt="">
+    <img class="h-12 md:h-16 lg:h-20 float-right" data-pagefind-meta="image[src]"
+      src="/images/coupling-icons/{{.Params.coupling}}-tet.svg" alt="">
     {{ end }}
 
     {{ if .Page.Params.breadcrumbs }}
-      {{ partial "docs/breadcrumbs.html" . }}
+    {{ partial "docs/breadcrumbs.html" . }}
     {{ end }}
 
     <div class="mx-auto py-2 px-4 max-w-7xl sm:px-6 lg:px-8 lg:py-4">
       <div class="space-y-8">
         <div class="space-y-5 sm:space-y-4 md:max-w-xl lg:max-w-3xl xl:max-w-none">
 
-          <h2 class="text-3xl font-extrabold sm:text-4xl mb-8">
+          <h1 class="text-3xl font-extrabold sm:text-4xl mb-8">
             {{ .Title }}
-          </h2>
+          </h1>
           <div class="clear-both"></div>
           <div class="prose min-w-full">
             {{ .Content }}
