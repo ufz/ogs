@@ -577,12 +577,13 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
             //
             // Latent heat term
             //
-            if (gas_phase->hasProperty(MPL::PropertyType::latent_heat))
+            if (gas_phase->hasProperty(
+                    MPL::PropertyType::specific_latent_heat))
             {
                 double const factor = phi * (1 - S_L) / rho_LR;
                 // The volumetric latent heat of vaporization of liquid water
                 double const L0 =
-                    gas_phase->property(MPL::PropertyType::latent_heat)
+                    gas_phase->property(MPL::PropertyType::specific_latent_heat)
                         .template value<double>(variables, x_position, t, dt) *
                     rho_LR;
 
@@ -664,7 +665,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         M_pT * (T - T_prev) / dt;
     if (gas_phase)
     {
-        if (gas_phase->hasProperty(MPL::PropertyType::latent_heat))
+        if (gas_phase->hasProperty(MPL::PropertyType::specific_latent_heat))
         {
             // Jacobian: temperature equation, pressure part
             local_Jac
@@ -1043,12 +1044,12 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
             //
             // Latent heat term
             //
-            if (gas_phase->hasProperty(MPL::PropertyType::latent_heat))
+            if (gas_phase->hasProperty(MPL::PropertyType::specific_latent_heat))
             {
                 double const factor = phi * (1 - S_L) / rho_LR;
                 // The volumetric latent heat of vaporization of liquid water
                 double const L0 =
-                    gas_phase->property(MPL::PropertyType::latent_heat)
+                    gas_phase->property(MPL::PropertyType::specific_latent_heat)
                         .template value<double>(variables, x_position, t, dt) *
                     rho_LR;
 

@@ -43,7 +43,7 @@
                             <tortuosity>0.8</tortuosity>
                         </property>
                         <property>
-                            <name>latent_heat</name>
+                            <name>specific_latent_heat</name>
                             <type>LinearWaterVapourLatentHeat</type>
                         </property>
                         <property>
@@ -192,7 +192,7 @@
                             <tortuosity>0.8</tortuosity>
                         </property>
                         <property>
-                            <name>latent_heat</name>
+                            <name>specific_latent_heat</name>
                             <type>LinearWaterVapourLatentHeat</type>
                         </property>
                         <property>
@@ -343,7 +343,7 @@
                             <tortuosity>0.8</tortuosity>
                         </property>
                         <property>
-                            <name>latent_heat</name>
+                            <name>specific_latent_heat</name>
                             <type>LinearWaterVapourLatentHeat</type>
                         </property>
                         <property>
