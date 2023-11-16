@@ -220,41 +220,6 @@ img[src$='#two-third'] {
   align-items: center;
 }
 
-/* -------------------------------- Algolia---------------------------------- */
-.algolia-autocomplete .aa-input,
-.algolia-autocomplete .aa-hint {
-  width: 100%;
-}
-
-.algolia-autocomplete .aa-hint {
-  color: #999;
-}
-
-.algolia-autocomplete .aa-dropdown-menu {
-  @apply bg-gray-100;
-  @apply border-2;
-  @apply border-t-0;
-  @apply p-1;
-  @apply text-sm;
-  right: 0px;
-  width: 100%;
-  margin-top: -1px;
-}
-
-.algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
-  @apply cursor-pointer;
-  @apply p-1;
-}
-
-.algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
-  @apply bg-brand-200;
-}
-
-.algolia-autocomplete .aa-dropdown-menu .aa-suggestion em {
-  @apply font-bold;
-  @apply text-yellow-500;
-}
-
 /* ------------------------------- Jupyter --------------------------------- */
 .jupyter-input pre {
   @apply border-l-4;

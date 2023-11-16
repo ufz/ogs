@@ -25,7 +25,6 @@ deploy web site:
     - yarn
     - yarn build
     - netlify deploy --prod --dir=public --site=$OGS_NETLIFY_SITE_ID
-    - yarn upload-index
   cache:
     paths:
       - web/node_modules

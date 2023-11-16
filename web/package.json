@@ -4,14 +4,12 @@
     "build": "npx tailwindcss -o static/css/all.css -i assets/css/main.css -m && hugo",
     "watch": "npx tailwindcss -o static/css/all.css -i assets/css/main.css -m --watch",
     "server": "hugo server",
-    "index": "hugo-algolia -toml",
-    "upload-index": "hugo-algolia --toml -s"
+    "index": "TODO:"
   },
   "devDependencies": {
     "@tailwindcss/aspect-ratio": "^0.4.0",
     "@tailwindcss/line-clamp": "=0.3.1",
     "@tailwindcss/typography": "=0.5.2",
-    "hugo-algolia": "=1.2.14",
     "tailwindcss": "=3.1.6"
   }
 }

@@ -147,7 +147,7 @@ This yaml-file is then used by the shortcode.
 ### Update search index
 
 ```bash
-ALGOLIA_WRITE_KEY=XXX node_modules/.bin/hugo-algolia --toml -s
+TODO:
 ```
 
 ### Used components
@@ -156,4 +156,3 @@ ALGOLIA_WRITE_KEY=XXX node_modules/.bin/hugo-algolia --toml -s
 - [Tailwind](https://tailwindcss.com/docs/what-is-tailwind) - CSS framework
 - [FontAwesome](https://fontawesome.com) - Icons, see [icon search](https://fontawesome.com/icons?d=gallery)
 - [Slick Carousel](http://kenwheeler.github.io/slick/) & [FancyBox](https://fancyapps.com/fancybox/3/) for image galleries
-- [Algolia](https://github.com/algolia/algoliasearch-client-javascript) for site search
