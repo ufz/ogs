@@ -29,6 +29,7 @@ Benchmark documentation can also be given in form of Jupyter Notebooks, see [Jup
 
 - Inside the source-directory `ogs/web`:
   - Run `yarn` **and** `yarn build` once (this will install required CSS and JavaScript packages)
+  - Optionally run `yarn index` (for creating the search index) once
   - Run `hugo server`
   - Open [http://localhost:1313](http://localhost:1313)
 
@@ -139,16 +140,6 @@ pipx run --spec pybtex pybtex-convert Documentation/bibliography/other.bib web/d
 ```
 
 This yaml-file is then used by the shortcode.
-
----
-
-## Advanced topics
-
-### Update search index
-
-```bash
-TODO:
-```
 
 ### Used components
 
