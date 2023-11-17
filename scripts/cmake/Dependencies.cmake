@@ -136,17 +136,21 @@ if(Eigen3_ADDED)
 endif()
 
 if(OGS_USE_MFRONT)
-    set(CMAKE_REQUIRE_FIND_PACKAGE_TFEL TRUE)
-    CPMAddPackage(
-        NAME MGIS
-        GITHUB_REPOSITORY thelfer/MFrontGenericInterfaceSupport
-        GIT_TAG rliv-2.0
-        OPTIONS "enable-doxygen-doc OFF" "enable-fortran-bindings OFF"
-                "enable-website OFF"
-        EXCLUDE_FROM_ALL YES
-    )
-    if(MGIS_ADDED)
-        list(APPEND DISABLE_WARNINGS_TARGETS MFrontGenericInterface)
+    if(GUIX_BUILD)
+        find_package (MFrontGenericInterface REQUIRED)
+    else()
+        set(CMAKE_REQUIRE_FIND_PACKAGE_TFEL TRUE)
+        CPMAddPackage(
+            NAME MGIS
+            GITHUB_REPOSITORY thelfer/MFrontGenericInterfaceSupport
+            GIT_TAG rliv-2.0
+            OPTIONS "enable-doxygen-doc OFF" "enable-fortran-bindings OFF"
+                    "enable-website OFF"
+            EXCLUDE_FROM_ALL YES
+        )
+        if(MGIS_ADDED)
+            list(APPEND DISABLE_WARNINGS_TARGETS MFrontGenericInterface)
+        endif()
     endif()
 endif()
 
