@@ -1,17 +1,16 @@
 {
   "private": true,
   "scripts": {
-    "build": "npx tailwindcss -o static/css/all.css -i assets/css/main.css -m && hugo",
+    "build": "npx tailwindcss -o static/css/all.css -i assets/css/main.css -m && hugo && npm_config_yes=true npx pagefind --site 'public'",
     "watch": "npx tailwindcss -o static/css/all.css -i assets/css/main.css -m --watch",
     "server": "hugo server",
-    "index": "hugo-algolia -toml",
-    "upload-index": "hugo-algolia --toml -s"
+    "index": "hugo && npm_config_yes=true npx pagefind --site 'public' --output-subdir ../static/pagefind"
   },
   "devDependencies": {
     "@tailwindcss/aspect-ratio": "^0.4.0",
     "@tailwindcss/line-clamp": "=0.3.1",
     "@tailwindcss/typography": "=0.5.2",
-    "hugo-algolia": "=1.2.14",
     "tailwindcss": "=3.1.6"
-  }
+  },
+  "dependencies": {}
 }

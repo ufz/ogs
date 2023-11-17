@@ -29,6 +29,7 @@ Benchmark documentation can also be given in form of Jupyter Notebooks, see [Jup
 
 - Inside the source-directory `ogs/web`:
   - Run `yarn` **and** `yarn build` once (this will install required CSS and JavaScript packages)
+  - Optionally run `yarn index` (for creating the search index) once
   - Run `hugo server`
   - Open [http://localhost:1313](http://localhost:1313)
 
@@ -140,20 +141,9 @@ pipx run --spec pybtex pybtex-convert Documentation/bibliography/other.bib web/d
 
 This yaml-file is then used by the shortcode.
 
----
-
-## Advanced topics
-
-### Update search index
-
-```bash
-ALGOLIA_WRITE_KEY=XXX node_modules/.bin/hugo-algolia --toml -s
-```
-
 ### Used components
 
 - [Hugo](https://gohugo.io) - Web site generator
 - [Tailwind](https://tailwindcss.com/docs/what-is-tailwind) - CSS framework
 - [FontAwesome](https://fontawesome.com) - Icons, see [icon search](https://fontawesome.com/icons?d=gallery)
 - [Slick Carousel](http://kenwheeler.github.io/slick/) & [FancyBox](https://fancyapps.com/fancybox/3/) for image galleries
-- [Algolia](https://github.com/algolia/algoliasearch-client-javascript) for site search

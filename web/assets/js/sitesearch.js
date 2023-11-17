@@ -1,41 +1,31 @@
-// Roughly based on https://github.com/algolia/autocomplete.js#jquery
-// https://github.com/algolia/autocomplete.js/blob/master/LICENSE
+$(document).ready(function () {
+  MicroModal.init();
 
-var client = algoliasearch('4AHEU3QJQG', 'cda2754fe35733ffa31994a177725640')
-var index = client.initIndex('docs.opengeosys.org');
-$('#search-input').autocomplete({
-  autoselect: true,
-  hint: false,
-  keyboardShortcuts: ['s']
-}, [
-  {
-    source: $.fn.autocomplete.sources.hits(index, { hitsPerPage: 5 }),
-    displayKey: 'title',
-    debug: true,
-    templates: {
-      suggestion: function (suggestion) {
-        return suggestion._highlightResult.title.value;
-      }
-    }
-  }
-]).on('autocomplete:selected', function (event, suggestion, dataset) {
-  window.location = "/" + suggestion.uri.toLowerCase();
-});
+  $('#nav-link-search').click(function (ev) {
+    ev.preventDefault();
 
-$('#search-input-mobile').autocomplete({
-  autoselect: true,
-  hint: false,
-  keyboardShortcuts: ['s']
-}, [
-  {
-    source: $.fn.autocomplete.sources.hits(index, { hitsPerPage: 5 }),
-    displayKey: 'title',
-    templates: {
-      suggestion: function (suggestion) {
-        return suggestion._highlightResult.title.value;
-      }
+    MicroModal.show('modal-2', {
+      onClose: function () { $('.nav-link-contact').blur(); },
+      disableFocus: true
+    });
+
+    document.querySelector('.pagefind-ui__search-input').focus();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key == 'f') {
+
+      const modals = document.querySelectorAll('#modal-2');
+      modals.forEach(element => {
+        if (!element.classList.contains('is-open')) {
+          event.preventDefault();
+        }
+      });
+
+      MicroModal.show('modal-2', {
+        onClose: function () { $('.nav-link-contact').blur(); },
+        disableFocus: false
+      });
     }
-  }
-]).on('autocomplete:selected', function (event, suggestion, dataset) {
-  window.location = "/" + suggestion.uri.toLowerCase();
+  }, false);
 });
