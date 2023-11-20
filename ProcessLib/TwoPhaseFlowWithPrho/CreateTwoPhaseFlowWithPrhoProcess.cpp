@@ -25,6 +25,27 @@ namespace ProcessLib
 {
 namespace TwoPhaseFlowWithPrho
 {
+void checkMPLProperties(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
+{
+    std::array const required_medium_properties = {
+        MaterialPropertyLib::permeability, MaterialPropertyLib::porosity};
+    std::array const required_liquid_properties = {
+        MaterialPropertyLib::viscosity, MaterialPropertyLib::density};
+    std::array const required_gas_properties = {
+        MaterialPropertyLib::viscosity, MaterialPropertyLib::density,
+        MaterialPropertyLib::molar_mass};
+
+    for (auto const& m : media)
+    {
+        checkRequiredProperties(*m.second, required_medium_properties);
+        checkRequiredProperties(m.second->phase("AqueousLiquid"),
+                                required_liquid_properties);
+        checkRequiredProperties(m.second->phase("Gas"),
+                                required_gas_properties);
+    }
+}
+
 std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     std::string const& name,
     MeshLib::Mesh& mesh,
@@ -103,6 +124,7 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
 
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+    checkMPLProperties(media);
 
     std::unique_ptr<TwoPhaseFlowWithPrhoMaterialProperties> material =
         createTwoPhaseFlowPrhoMaterialProperties(mat_config, material_ids);
