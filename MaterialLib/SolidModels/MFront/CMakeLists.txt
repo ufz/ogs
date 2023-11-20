@@ -22,7 +22,10 @@ target_include_directories(
 target_compile_definitions(
     MaterialLib_SolidModels_MFront PRIVATE OGS_USE_MFRONT
 )
-install(TARGETS MFrontGenericInterface)
+if(NOT GUIX_BUILD)
+    install(TARGETS MFrontGenericInterface)
+endif()
+
 
 # Setup / build mfront behaviours lib
 set(_mfront_behaviours
@@ -46,7 +49,7 @@ set(_mfront_behaviours
     ThermoPoroElasticity
 )
 
-if(OGS_BUILD_WHEEL AND NOT APPLE_ARM)
+if((OGS_BUILD_WHEEL AND NOT APPLE_ARM) OR GUIX_BUILD)
     # Build behaviours lib with mfront executable
     foreach(behaviour ${_mfront_behaviours})
         list(APPEND _mfront_behaviour_files
