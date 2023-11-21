@@ -15,9 +15,9 @@
 
 namespace NumLib
 {
-double computeRelativeChangeFromPreviousTimestep(GlobalVector const& x,
-                                                 GlobalVector const& x_old,
-                                                 MathLib::VecNormType norm_type)
+double computeRelativeNorm(GlobalVector const& x,
+                           GlobalVector const& x_prev,
+                           MathLib::VecNormType norm_type)
 {
     if (norm_type == MathLib::VecNormType::INVALID)
     {
@@ -28,8 +28,8 @@ double computeRelativeChangeFromPreviousTimestep(GlobalVector const& x,
     GlobalVector dx;
     MathLib::LinAlg::copy(x, dx);  // copy x to dx.
 
-    // dx = x - x_old --> x - dx --> dx
-    MathLib::LinAlg::axpy(dx, -1.0, x_old);
+    // dx = x - x_prev --> x - dx --> dx
+    MathLib::LinAlg::axpy(dx, -1.0, x_prev);
     const double norm_dx = MathLib::LinAlg::norm(dx, norm_type);
 
     const double norm_x = MathLib::LinAlg::norm(x, norm_type);

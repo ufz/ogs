@@ -895,7 +895,7 @@ double TimeLoop::computeRelativeSolutionChangeFromPreviousTimestep(
                                                : MathLib::VecNormType::NORM2;
 
     const double solution_error =
-        NumLib::computeRelativeChangeFromPreviousTimestep(x, x_prev, norm_type);
+        NumLib::computeRelativeNorm(x, x_prev, norm_type);
     return solution_error;
 }
 
