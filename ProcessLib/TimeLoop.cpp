@@ -294,6 +294,18 @@ void TimeLoop::setCoupledSolutions()
     }
 }
 
+bool computationOfChangeNeeded(
+    NumLib::TimeStepAlgorithm const* timestep_algorithm, double const time)
+{
+    // for the first time step we can't compute the changes to the previous
+    // time step
+    if (time == timestep_algorithm->begin())
+    {
+        return false;
+    }
+    return timestep_algorithm->isSolutionErrorComputationNeeded();
+}
+
 std::pair<double, bool> TimeLoop::computeTimeStepping(
     const double prev_dt, double& t, std::size_t& accepted_steps,
     std::size_t& rejected_steps,
@@ -869,14 +881,8 @@ double TimeLoop::computeRelativeSolutionChangeFromPreviousTimestep(
     double const t, std::size_t process_index) const
 {
     auto const& ppd = *_per_process_data[process_index];
-    const auto& timestep_algorithm = ppd.timestep_algorithm;
-    if (!timestep_algorithm->isSolutionErrorComputationNeeded())
+    if (!computationOfChangeNeeded(ppd.timestep_algorithm.get(), t))
     {
-        return 0.0;
-    }
-    if (t == timestep_algorithm->begin())
-    {
-        // Always accepts the zeroth step
         return 0.0;
     }
 
