@@ -447,7 +447,7 @@ endif()
 if(OGS_USE_NETCDF)
     find_package(netCDF CONFIG REQUIRED)
     find_library(NETCDF_LIBRARIES_CXX NAMES netcdf_c++4 netcdf-cxx4)
-    if(NOT ${NETCDF_LIBRARIES_CXX})
+    if(NOT NETCDF_LIBRARIES_CXX)
         CPMAddPackage(
             NAME netcdf-cxx4
             GIT_REPOSITORY https://github.com/Unidata/netcdf-cxx4
