@@ -102,8 +102,8 @@ public:
             }
             else
             {
-                auto const value = _data.neumann_bc_parameter(t, position);
-                _local_rhs.noalias() += N * value[0] * w * integral_measure;
+                auto const value = _data.neumann_bc_parameter(t, position)[0];
+                _local_rhs.noalias() += N * value * w * integral_measure;
             }
         }
 
