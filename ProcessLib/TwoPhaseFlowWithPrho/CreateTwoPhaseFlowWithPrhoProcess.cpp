@@ -11,6 +11,8 @@
 
 #include <cassert>
 
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/TwoPhaseFlowWithPrho/CreateTwoPhaseFlowPrhoMaterialProperties.h"
@@ -23,6 +25,27 @@ namespace ProcessLib
 {
 namespace TwoPhaseFlowWithPrho
 {
+void checkMPLProperties(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
+{
+    std::array const required_medium_properties = {
+        MaterialPropertyLib::permeability, MaterialPropertyLib::porosity};
+    std::array const required_liquid_properties = {
+        MaterialPropertyLib::viscosity, MaterialPropertyLib::density};
+    std::array const required_gas_properties = {
+        MaterialPropertyLib::viscosity, MaterialPropertyLib::density,
+        MaterialPropertyLib::molar_mass};
+
+    for (auto const& m : media)
+    {
+        checkRequiredProperties(*m.second, required_medium_properties);
+        checkRequiredProperties(m.second->phase("AqueousLiquid"),
+                                required_liquid_properties);
+        checkRequiredProperties(m.second->phase("Gas"),
+                                required_gas_properties);
+    }
+}
+
 std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     std::string const& name,
     MeshLib::Mesh& mesh,
@@ -30,7 +53,8 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "TWOPHASE_FLOW_PRHO");
@@ -98,13 +122,17 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
         INFO("The twophase flow is in homogeneous porous media.");
     }
 
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+    checkMPLProperties(media);
+
     std::unique_ptr<TwoPhaseFlowWithPrhoMaterialProperties> material =
-        createTwoPhaseFlowPrhoMaterialProperties(mat_config, material_ids,
-                                                 parameters);
+        createTwoPhaseFlowPrhoMaterialProperties(mat_config, material_ids);
 
     TwoPhaseFlowWithPrhoProcessData process_data{
-        specific_body_force, has_gravity, mass_lumping,       diff_coeff_b,
-        diff_coeff_a,        temperature, std::move(material)};
+        specific_body_force, has_gravity,         mass_lumping,
+        diff_coeff_b,        diff_coeff_a,        temperature,
+        std::move(material), std::move(media_map)};
 
     return std::make_unique<TwoPhaseFlowWithPrhoProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,

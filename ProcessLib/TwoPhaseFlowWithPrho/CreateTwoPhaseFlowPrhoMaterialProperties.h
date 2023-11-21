@@ -25,9 +25,7 @@ namespace TwoPhaseFlowWithPrho
 std::unique_ptr<TwoPhaseFlowWithPrhoMaterialProperties>
 createTwoPhaseFlowPrhoMaterialProperties(
     BaseLib::ConfigTree const& config,
-    MeshLib::PropertyVector<int> const* material_ids,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
-        parameters);
+    MeshLib::PropertyVector<int> const* material_ids);
 
 }  // namespace TwoPhaseFlowWithPrho
 }  // namespace ProcessLib

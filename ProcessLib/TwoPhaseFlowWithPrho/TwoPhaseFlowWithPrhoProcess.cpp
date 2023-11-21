@@ -93,19 +93,6 @@ void TwoPhaseFlowWithPrhoProcess::assembleWithJacobianConcreteProcess(
         _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x,
         x_prev, process_id, M, K, b, Jac);
 }
-void TwoPhaseFlowWithPrhoProcess::preTimestepConcreteProcess(
-    std::vector<GlobalVector*> const& x, double const t, double const dt,
-    const int process_id)
-{
-    DBUG("PreTimestep TwoPhaseFlowWithPrhoProcess.");
-
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
-    GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::preTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
-        t, dt);
-}
 
 }  // namespace TwoPhaseFlowWithPrho
 }  // namespace ProcessLib

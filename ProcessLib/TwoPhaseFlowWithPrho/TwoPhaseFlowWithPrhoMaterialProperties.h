@@ -15,14 +15,12 @@
 
 #include "MaterialLib/Fluid/FluidPropertyHeaders.h"
 #include "MaterialLib/PhysicalConstant.h"
-#include "MaterialLib/PorousMedium/Porosity/Porosity.h"
-#include "MaterialLib/PorousMedium/PorousPropertyHeaders.h"
-#include "MaterialLib/PorousMedium/Storage/Storage.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CapillaryPressureSaturation.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CreateCapillaryPressureModel.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/RelativePermeability/CreateRelativePermeabilityModel.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/RelativePermeability/RelativePermeability.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "ParameterLib/SpatialPosition.h"
 
 namespace MeshLib
 {
@@ -39,20 +37,6 @@ public:
 
     TwoPhaseFlowWithPrhoMaterialProperties(
         MeshLib::PropertyVector<int> const* material_ids,
-        std::unique_ptr<MaterialLib::Fluid::FluidProperty>
-            liquid_density,
-        std::unique_ptr<MaterialLib::Fluid::FluidProperty>
-            viscosity,
-        std::unique_ptr<MaterialLib::Fluid::FluidProperty>
-            gas_density,
-        std::unique_ptr<MaterialLib::Fluid::FluidProperty>
-            gas_viscosity,
-        std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
-            intrinsic_permeability_models,
-        std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
-            porosity_models,
-        std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
-            storage_models,
         std::vector<std::unique_ptr<
             MaterialLib::PorousMedium::CapillaryPressureSaturation>>&&
             capillary_pressure_models,
@@ -61,15 +45,6 @@ public:
             relative_permeability_models);
 
     int getMaterialID(const std::size_t element_id);
-
-    Eigen::MatrixXd getPermeability(const int material_id,
-                                    const double t,
-                                    const ParameterLib::SpatialPosition& pos,
-                                    const int dim) const;
-
-    double getPorosity(const int material_id, const double t,
-                       const ParameterLib::SpatialPosition& pos, const double p,
-                       const double T, const double porosity_variable) const;
 
     double getNonwetRelativePermeability(
         const double t, const ParameterLib::SpatialPosition& pos,
@@ -86,10 +61,6 @@ public:
         const int material_id, const double t,
         const ParameterLib::SpatialPosition& pos, const double p,
         const double T, const double saturation) const;
-    double getLiquidDensity(const double p, const double T) const;
-    double getGasDensity(const double p, const double T) const;
-    double getGasViscosity(const double p, const double T) const;
-    double getLiquidViscosity(const double p, const double T) const;
     bool computeConstitutiveRelation(double const t,
                                      ParameterLib::SpatialPosition const& x,
                                      const int material_id,
@@ -104,22 +75,11 @@ public:
                                      double& dxm_dX);
 
 protected:
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> _liquid_density;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> _viscosity;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> _gas_density;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> _gas_viscosity;
-
     /** Use two phase models for different material zones.
      *  Material IDs must be given as mesh element properties.
      */
     MeshLib::PropertyVector<int> const* const _material_ids;
 
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
-        _intrinsic_permeability_models;
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
-        _porosity_models;
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
-        _storage_models;
     std::vector<
         std::unique_ptr<MaterialLib::PorousMedium::CapillaryPressureSaturation>>
         _capillary_pressure_models;

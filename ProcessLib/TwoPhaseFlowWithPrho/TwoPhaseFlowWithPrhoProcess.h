@@ -68,10 +68,6 @@ private:
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
-    void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
-                                    const double t, const double dt,
-                                    const int process_id) override;
-
     TwoPhaseFlowWithPrhoProcessData _process_data;
 
     std::vector<std::unique_ptr<TwoPhaseFlowWithPrhoLocalAssemblerInterface>>

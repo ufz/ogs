@@ -15,8 +15,6 @@
 
 #include "BaseLib/Logging.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
-#include "MaterialLib/PorousMedium/Porosity/Porosity.h"
-#include "MaterialLib/PorousMedium/Storage/Storage.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CapillaryPressureSaturation.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CreateCapillaryPressureModel.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/RelativePermeability/CreateRelativePermeabilityModel.h"
@@ -37,34 +35,13 @@ namespace TwoPhaseFlowWithPrho
 {
 TwoPhaseFlowWithPrhoMaterialProperties::TwoPhaseFlowWithPrhoMaterialProperties(
     MeshLib::PropertyVector<int> const* const material_ids,
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty>
-        liquid_density,
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty>
-        viscosity,
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty>
-        gas_density,
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty>
-        gas_viscosity,
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
-        intrinsic_permeability_models,
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>&&
-        porosity_models,
-    std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>&&
-        storage_models,
     std::vector<std::unique_ptr<
         MaterialLib::PorousMedium::CapillaryPressureSaturation>>&&
         capillary_pressure_models,
     std::vector<
         std::unique_ptr<MaterialLib::PorousMedium::RelativePermeability>>&&
         relative_permeability_models)
-    : _liquid_density(std::move(liquid_density)),
-      _viscosity(std::move(viscosity)),
-      _gas_density(std::move(gas_density)),
-      _gas_viscosity(std::move(gas_viscosity)),
-      _material_ids(material_ids),
-      _intrinsic_permeability_models(std::move(intrinsic_permeability_models)),
-      _porosity_models(std::move(porosity_models)),
-      _storage_models(std::move(storage_models)),
+    : _material_ids(material_ids),
       _capillary_pressure_models(std::move(capillary_pressure_models)),
       _relative_permeability_models(std::move(relative_permeability_models))
 {
@@ -81,59 +58,6 @@ int TwoPhaseFlowWithPrhoMaterialProperties::getMaterialID(
 
     assert(element_id < _material_ids->size());
     return (*_material_ids)[element_id];
-}
-
-double TwoPhaseFlowWithPrhoMaterialProperties::getLiquidDensity(
-    const double p, const double T) const
-{
-    ArrayType vars;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _liquid_density->getValue(vars);
-}
-
-double TwoPhaseFlowWithPrhoMaterialProperties::getGasDensity(
-    const double p, const double T) const
-{
-    ArrayType vars;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _gas_density->getValue(vars);
-}
-
-double TwoPhaseFlowWithPrhoMaterialProperties::getLiquidViscosity(
-    const double p, const double T) const
-{
-    ArrayType vars;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _viscosity->getValue(vars);
-}
-
-double TwoPhaseFlowWithPrhoMaterialProperties::getGasViscosity(
-    const double p, const double T) const
-{
-    ArrayType vars;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _gas_viscosity->getValue(vars);
-}
-
-Eigen::MatrixXd TwoPhaseFlowWithPrhoMaterialProperties::getPermeability(
-    const int material_id, const double t,
-    const ParameterLib::SpatialPosition& pos, const int /*dim*/) const
-{
-    return _intrinsic_permeability_models[material_id]->getValue(t, pos, 0.0,
-                                                                 0.0);
-}
-
-double TwoPhaseFlowWithPrhoMaterialProperties::getPorosity(
-    const int material_id, const double t,
-    const ParameterLib::SpatialPosition& pos, const double /*p*/,
-    const double T, const double porosity_variable) const
-{
-    return _porosity_models[material_id]->getValue(t, pos, porosity_variable,
-                                                   T);
 }
 
 double TwoPhaseFlowWithPrhoMaterialProperties::getNonwetRelativePermeability(

@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "NumLib/Function/Interpolation.h"
 #include "TwoPhaseFlowWithPrhoLocalAssembler.h"
@@ -19,9 +20,11 @@ namespace ProcessLib
 {
 namespace TwoPhaseFlowWithPrho
 {
+namespace MPL = MaterialPropertyLib;
+
 template <typename ShapeFunction, int GlobalDim>
 void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
-    double const t, double const /*dt*/, std::vector<double> const& local_x,
+    double const t, double const dt, std::vector<double> const& local_x,
     std::vector<double> const& /*local_x_prev*/,
     std::vector<double>& local_M_data, std::vector<double>& local_K_data,
     std::vector<double>& local_b_data)
@@ -71,6 +74,10 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
     auto Bl =
         local_b.template segment<cap_pressure_size>(cap_pressure_matrix_index);
 
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
+    auto const& liquid_phase = medium.phase("AqueousLiquid");
+    auto const& gas_phase = medium.phase("Gas");
+
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
@@ -78,20 +85,6 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
     pos.setElementID(_element.getID());
     const int material_id =
         _process_data._material->getMaterialID(pos.getElementID().value());
-
-    const Eigen::MatrixXd& perm = _process_data._material->getPermeability(
-        material_id, t, pos, _element.getDimension());
-    assert(perm.rows() == _element.getDimension() || perm.rows() == 1);
-    GlobalDimMatrixType permeability = GlobalDimMatrixType::Zero(
-        _element.getDimension(), _element.getDimension());
-    if (perm.rows() == _element.getDimension())
-    {
-        permeability = perm;
-    }
-    else if (perm.rows() == 1)
-    {
-        permeability.diagonal().setConstant(perm(0, 0));
-    }
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -105,10 +98,21 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
 
         const double temperature = _process_data._temperature(t, pos)[0];
 
-        double const rho_gas =
-            _process_data._material->getGasDensity(pl_int_pt, temperature);
-        double const rho_h2o =
-            _process_data._material->getLiquidDensity(pl_int_pt, temperature);
+        MPL::VariableArray variables;
+
+        variables.phase_pressure = pl_int_pt;
+        variables.temperature = temperature;
+        variables.molar_mass =
+            gas_phase.property(MPL::PropertyType::molar_mass)
+                .template value<double>(variables, pos, t, dt);
+
+        auto const permeability = MPL::formEigenTensor<GlobalDim>(
+            medium.property(MPL::PropertyType::permeability)
+                .value(variables, pos, t, dt));
+        auto const rho_gas = gas_phase.property(MPL::PropertyType::density)
+                                 .template value<double>(variables, pos, t, dt);
+        auto const rho_h2o = liquid_phase.property(MPL::PropertyType::density)
+                                 .template value<double>(variables, pos, t, dt);
 
         double& Sw = _ip_data[ip].sw;
         /// Here only consider one component in gas phase
@@ -136,6 +140,8 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         }
         double const pc = _process_data._material->getCapillaryPressure(
             material_id, t, pos, pl_int_pt, temperature, Sw);
+        variables.capillary_pressure = pc;
+        variables.liquid_saturation = Sw;
 
         double const rho_wet = rho_h2o + rho_h2_wet;
         _saturation[ip] = Sw;
@@ -147,8 +153,9 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
             _process_data._material->getCapillaryPressureDerivative(
                 material_id, t, pos, pl_int_pt, temperature, Sw);
 
-        double const porosity = _process_data._material->getPorosity(
-            material_id, t, pos, pl_int_pt, temperature, 0);
+        double const porosity =
+            medium.property(MPL::PropertyType::porosity)
+                .template value<double>(variables, pos, t, dt);
 
         Mgx.noalias() += porosity * _ip_data[ip].massOperator;
 
@@ -159,8 +166,9 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         double const k_rel_gas =
             _process_data._material->getNonwetRelativePermeability(
                 t, pos, _pressure_nonwetting[ip], temperature, Sw);
-        double const mu_gas = _process_data._material->getGasViscosity(
-            _pressure_nonwetting[ip], temperature);
+        double const mu_gas =
+            gas_phase.property(MPL::PropertyType::viscosity)
+                .template value<double>(variables, pos, t, dt);
         double const lambda_gas = k_rel_gas / mu_gas;
         double const diffusion_coeff_component_h2 =
             _process_data._diffusion_coeff_component_b(t, pos)[0];
@@ -169,8 +177,8 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         double const k_rel_wet =
             _process_data._material->getWetRelativePermeability(
                 t, pos, pl_int_pt, temperature, Sw);
-        double const mu_wet =
-            _process_data._material->getLiquidViscosity(pl_int_pt, temperature);
+        auto const mu_wet = liquid_phase.property(MPL::PropertyType::viscosity)
+                                .template value<double>(variables, pos, t, dt);
         double const lambda_wet = k_rel_wet / mu_wet;
 
         laplace_operator.noalias() = sm.dNdx.transpose() * permeability *

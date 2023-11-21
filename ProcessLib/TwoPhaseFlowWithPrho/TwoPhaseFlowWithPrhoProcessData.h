@@ -9,7 +9,7 @@
  */
 
 #pragma once
-
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "TwoPhaseFlowWithPrhoMaterialProperties.h"
 
 namespace ProcessLib
@@ -29,6 +29,7 @@ struct TwoPhaseFlowWithPrhoProcessData
     ParameterLib::Parameter<double> const& _diffusion_coeff_component_a;
     ParameterLib::Parameter<double> const& _temperature;
     std::unique_ptr<TwoPhaseFlowWithPrhoMaterialProperties> _material;
+    MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 };
 
 }  // namespace TwoPhaseFlowWithPrho

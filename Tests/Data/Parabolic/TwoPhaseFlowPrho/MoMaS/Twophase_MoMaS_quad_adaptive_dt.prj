@@ -17,38 +17,8 @@
                 <relative_epsilons>1e-8 1e-8</relative_epsilons>
             </jacobian_assembler>
             <material_property>
-                <fluid>
-                    <liquid_density>
-                        <type>Constant</type>
-                        <value> 1.e3 </value>
-                    </liquid_density>
-                    <gas_density>
-                        <type>IdealGasLaw</type>
-                        <molar_mass> 0.002 </molar_mass>
-                    </gas_density>
-                    <liquid_viscosity>
-                        <type>Constant</type>
-                        <value> 3.171e-11 </value>
-                    </liquid_viscosity>
-                    <gas_viscosity>
-                        <type>Constant</type>
-                        <value> 2.8539e-13 </value>
-                    </gas_viscosity>
-                </fluid>
                 <porous_medium>
                     <porous_medium id="0">
-                        <permeability>
-                            <permeability_tensor_entries>kappa1</permeability_tensor_entries>
-                            <type>Constant</type>
-                        </permeability>
-                        <porosity>
-                            <type>Constant</type>
-                            <porosity_parameter>constant_porosity_parameter</porosity_parameter>
-                        </porosity>
-                        <storage>
-                            <type>Constant</type>
-                            <value> 0.0 </value>
-                        </storage>
                         <capillary_pressure>
                             <type>vanGenuchten</type>
                             <pd> 2e+6 </pd>
@@ -88,6 +58,58 @@
             <temperature> temp </temperature>
         </process>
     </processes>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1e3</value>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>3.171e-11</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Gas</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>IdealGasLaw</type>
+                        </property>
+                        <property>
+                            <name>molar_mass</name>
+                            <type>Constant</type>
+                            <value>0.002</value>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>2.8539e-13</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>5e-20</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.15</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <parameters>
         <parameter>
             <name>HEN0</name>
@@ -138,16 +160,6 @@
             <name>temp</name>
             <type>Constant</type>
             <value>303.15</value>
-        </parameter>
-        <parameter>
-            <name>constant_porosity_parameter</name>
-            <type>Constant</type>
-            <value>0.15</value>
-        </parameter>
-        <parameter>
-            <name>kappa1</name>
-            <type>Constant</type>
-            <values>5.e-20</values>
         </parameter>
     </parameters>
     <time_loop>
