@@ -443,6 +443,34 @@ if(OGS_BUILD_UTILS)
     endif()
 endif()
 
+if(OGS_USE_NETCDF)
+    find_package(netCDF CONFIG REQUIRED)
+    find_library(
+        NETCDF_LIBRARIES_CXX
+        NAMES netcdf_c++4 netcdf-cxx4
+    )
+    if(NOT ${NETCDF_LIBRARIES_CXX})
+            CPMAddPackage(
+                NAME netcdf-cxx4
+                GIT_REPOSITORY https://github.com/Unidata/netcdf-cxx4
+                VERSION 4.3.1
+                EXCLUDE_FROM_ALL YES
+                SOURCE_SUBDIR cxx4
+                OPTIONS "NCXX_ENABLE_TESTS OFF"
+            )
+            set_target_properties(netCDF::netcdf PROPERTIES INTERFACE_LINK_LIBRARIES "") # fix win installed config
+            target_link_libraries(netcdf-cxx4 PUBLIC netCDF::netcdf)
+    else()
+        find_path(
+            NETCDF_INCLUDES_CXX
+            NAMES netcdf
+        )
+        add_library(netcdf-cxx4 INTERFACE IMPORTED)
+        target_include_directories(netcdf-cxx4 INTERFACE ${NETCDF_INCLUDES_CXX})
+        target_link_libraries(netcdf-cxx4 INTERFACE ${NETCDF_LIBRARIES_CXX} netCDF::netcdf)
+    endif()
+endif()
+
 # Disable warnings
 if(WIN32 AND VTK_ADDED)
     list(APPEND DISABLE_WARNINGS_TARGETS vtksys)
