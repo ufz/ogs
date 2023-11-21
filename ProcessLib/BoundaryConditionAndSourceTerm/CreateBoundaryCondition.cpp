@@ -54,6 +54,15 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     auto const type = config.config.peekConfigParameter<std::string>("type");
 
+    if (bool const component_id_required = type != "NormalTraction";
+        component_id_required && !config.component_id.has_value())
+    {
+        OGS_FATAL(
+            "Specifying the component id (<component>) for a boundary "
+            "condition of type {} is mandatory.",
+            type);
+    }
+
     if (type == "Dirichlet")
     {
         return ProcessLib::createDirichletBoundaryCondition(
