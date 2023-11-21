@@ -19,8 +19,7 @@ the following information:
   - **Full log output** as plain text (-file) (e.g., full compiler output including CMake run or output of a simulation run of
   OGS)! Please **do not** send screenshots of error messages! Instead copy and paste from your terminal application into the
   report!
-  - Information about your environment (e.g., did you used Conan for third-party dependencies or did you install them by
-  yourself, which library versions)
+  - Information about your environment (e.g. did you installed any OGS dependencies as system packages)
   - Information about the OGS configuration (e.g., debug or release, serial or parallel, MFront?, ...)
 
 Feel free to skip things from the list if you think they are not related to the issue but in general: the more information the

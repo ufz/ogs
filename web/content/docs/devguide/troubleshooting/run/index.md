@@ -34,8 +34,6 @@ More information can be found here:
 - <https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html>
 - <https://amir.rachum.com/blog/2016/09/17/shared-libraries/#runtime-search-path>
 
-If you use Conan you want to activate its [runtime environment]({{< relref "conan-package-manager.md#conan-environment" >}}).
-
 One can see with the `ldd` (macOS: `otool -L`) tool which dynamic libraries will be loaded at runtime.
 
 ### Windows

@@ -101,7 +101,9 @@ if(_build_chemistry_lib)
             )
             list(APPEND DISABLE_WARNINGS_TARGETS IPhreeqc)
             if(BUILD_SHARED_LIBS)
-                install(TARGETS IPhreeqc LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+                install(TARGETS IPhreeqc
+                        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                )
             endif()
         endif()
     endif()
@@ -415,8 +417,7 @@ if(OGS_BUILD_UTILS)
             NAME metis
             GIT_REPOSITORY https://github.com/KarypisLab/METIS
             VERSION 5.2.1
-            EXCLUDE_FROM_ALL YES
-            UPDATE_DISCONNECTED ON
+            EXCLUDE_FROM_ALL YES UPDATE_DISCONNECTED ON
             PATCH_COMMAND git apply
                           ${PROJECT_SOURCE_DIR}/scripts/cmake/metis.patch
             OPTIONS ${_metis_options}
@@ -445,29 +446,26 @@ endif()
 
 if(OGS_USE_NETCDF)
     find_package(netCDF CONFIG REQUIRED)
-    find_library(
-        NETCDF_LIBRARIES_CXX
-        NAMES netcdf_c++4 netcdf-cxx4
-    )
+    find_library(NETCDF_LIBRARIES_CXX NAMES netcdf_c++4 netcdf-cxx4)
     if(NOT ${NETCDF_LIBRARIES_CXX})
-            CPMAddPackage(
-                NAME netcdf-cxx4
-                GIT_REPOSITORY https://github.com/Unidata/netcdf-cxx4
-                VERSION 4.3.1
-                EXCLUDE_FROM_ALL YES
-                SOURCE_SUBDIR cxx4
-                OPTIONS "NCXX_ENABLE_TESTS OFF"
-            )
-            set_target_properties(netCDF::netcdf PROPERTIES INTERFACE_LINK_LIBRARIES "") # fix win installed config
-            target_link_libraries(netcdf-cxx4 PUBLIC netCDF::netcdf)
-    else()
-        find_path(
-            NETCDF_INCLUDES_CXX
-            NAMES netcdf
+        CPMAddPackage(
+            NAME netcdf-cxx4
+            GIT_REPOSITORY https://github.com/Unidata/netcdf-cxx4
+            VERSION 4.3.1
+            EXCLUDE_FROM_ALL YES SOURCE_SUBDIR cxx4
+            OPTIONS "NCXX_ENABLE_TESTS OFF"
         )
+        set_target_properties(
+            netCDF::netcdf PROPERTIES INTERFACE_LINK_LIBRARIES ""
+        ) # fix win installed config
+        target_link_libraries(netcdf-cxx4 PUBLIC netCDF::netcdf)
+    else()
+        find_path(NETCDF_INCLUDES_CXX NAMES netcdf)
         add_library(netcdf-cxx4 INTERFACE IMPORTED)
         target_include_directories(netcdf-cxx4 INTERFACE ${NETCDF_INCLUDES_CXX})
-        target_link_libraries(netcdf-cxx4 INTERFACE ${NETCDF_LIBRARIES_CXX} netCDF::netcdf)
+        target_link_libraries(
+            netcdf-cxx4 INTERFACE ${NETCDF_LIBRARIES_CXX} netCDF::netcdf
+        )
     endif()
 endif()
 
@@ -501,7 +499,7 @@ if(CLANG_FORMAT_PROGRAM OR CMAKE_FORMAT_PROGRAM)
         GITHUB_REPOSITORY TheLartians/Format.cmake
         OPTIONS
             ${_skip_cmake}
-            "CMAKE_FORMAT_EXCLUDE scripts/cmake/CPM.cmake|.*/Tests.cmake|scripts/cmake/jedbrown/.*|scripts/cmake/conan/conan.cmake|scripts/cmake/vector-of-bool/.*"
+            "CMAKE_FORMAT_EXCLUDE scripts/cmake/CPM.cmake|.*/Tests.cmake|scripts/cmake/jedbrown/.*|scripts/cmake/vector-of-bool/.*"
     )
 endif()
 

@@ -19,7 +19,6 @@ The minimum prerequisites to build OGS are:
 - A compiler with [C++20](http://en.wikipedia.org/wiki/C%2B%2B20)-support
 - Python interpreter and libraries
 - *Optional (but recommended)*: [Ninja](https://ninja-build.org) build tool
-- *Optional*: [Conan package manager](https://www.conan.io/) (at least version {{< dataFile "versions.minimum_version.conan" >}}) for some optional dependencies.
 
 <div class='note'>
 
@@ -306,29 +305,6 @@ aqt install-qt win desktop {{< dataFile "versions.tested_version.qt" >}} win64_m
 This will install Qt to `[your-directory]/qt/{{< dataFile "versions.tested_version.qt" >}}/msvc2019_64`.
 
 To finish add `[your-directory]/qt/{{< dataFile "versions.tested_version.qt" >}}/msvc2019_64/bin` bin to the `PATH` environment variable.
-
-## Optional: Install Conan package manager (for NetCDF)
-
-Install Conan (>= {{< dataFile "versions.minimum_version.conan" >}}) with Python's pip:
-
-```bash
-pip3 install --user conan
-```
-
-This installed `conan` to `C:\Users\[username]\AppData\Roaming\Python\Python310\Scripts` in your home directory. Make sure to have this directory in your `PATH`!
-
-Check on a newly opened command line if Conan was installed successfully:
-
-```bash
-$ conan --version
-Conan version {{< dataFile "versions.minimum_version.conan" >}}
-```
-
-<div class='note'>
-
-**Advanced usage:** You can also have Conan auto-installed when using the CMake-option `OGS_USE_CONAN=auto`. See the page on [Python environment]({{% ref "python-env.md" %}}) for details.
-
-</div>
 
 </div>
 

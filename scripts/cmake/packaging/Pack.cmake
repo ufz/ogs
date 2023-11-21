@@ -64,12 +64,9 @@ include(packaging/PackagingDependencies)
 
 include(CPack)
 
-if(OGS_USE_CONAN)
-    # Install Qt platform shared libraries
-    install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/platforms
-            DESTINATION bin OPTIONAL
-    )
-endif()
+install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/platforms DESTINATION bin
+        OPTIONAL
+)
 
 if(WIN32)
     file(GLOB PYTHON_RUNTIME_LIBS "${Python_RUNTIME_LIBRARY_DIRS}/*.dll")

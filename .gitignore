@@ -12,11 +12,6 @@ tags
 # Visual Studio Code project files
 .vscode
 
-# Conan package manager
-conanbuildinfo.cmake
-conaninfo.txt
-CMakeLists.txt.user*
-
 *.pyc
 .venv
 
