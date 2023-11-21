@@ -327,8 +327,14 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
         auto& ppd = *_per_process_data[i];
         const auto& timestep_algorithm = ppd.timestep_algorithm;
 
+        auto const& conv_crit = ppd.conv_crit;
+
+        auto const& x = *_process_solutions[i];
+        auto const& x_prev = *_process_solutions_prev[i];
+
         const double solution_error =
-            computeRelativeSolutionChangeFromPreviousTimestep(t, i);
+            computeRelativeSolutionChangeFromPreviousTimestep(
+                t, timestep_algorithm.get(), conv_crit.get(), x, x_prev);
 
         ppd.timestep_current.setAccepted(
             ppd.nonlinear_solver_status.error_norms_met);
@@ -878,18 +884,15 @@ TimeLoop::~TimeLoop()
 }
 
 double TimeLoop::computeRelativeSolutionChangeFromPreviousTimestep(
-    double const t, std::size_t process_index) const
+    double const t, NumLib::TimeStepAlgorithm const* timestep_algorithm,
+    NumLib::ConvergenceCriterion const* conv_crit, GlobalVector const& x,
+    GlobalVector const& x_prev) const
 {
-    auto const& ppd = *_per_process_data[process_index];
-    if (!computationOfChangeNeeded(ppd.timestep_algorithm.get(), t))
+    if (!computationOfChangeNeeded(timestep_algorithm, t))
     {
         return 0.0;
     }
 
-    auto const& x = *_process_solutions[process_index];
-    auto const& x_prev = *_process_solutions_prev[process_index];
-
-    auto const& conv_crit = ppd.conv_crit;
     const MathLib::VecNormType norm_type = (conv_crit)
                                                ? conv_crit->getVectorNormType()
                                                : MathLib::VecNormType::NORM2;

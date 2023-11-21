@@ -132,7 +132,9 @@ private:
     std::vector<std::function<double(double, double)>>
     generateOutputTimeStepConstraints(std::vector<double>&& fixed_times) const;
     double computeRelativeSolutionChangeFromPreviousTimestep(
-        double const t, std::size_t process_index) const;
+        double const t, NumLib::TimeStepAlgorithm const* timestep_algorithm,
+        NumLib::ConvergenceCriterion const* conv_crit, GlobalVector const& x,
+        GlobalVector const& x_prev) const;
     void preOutputInitialConditions(const double t) const;
     std::vector<GlobalVector*> _process_solutions;
     std::vector<GlobalVector*> _process_solutions_prev;
