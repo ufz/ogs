@@ -33,13 +33,13 @@ std::unique_ptr<SourceTerm> createSourceTerm(
     // check basic data consistency
     if (variable_id >=
             static_cast<int>(dof_table_bulk.getNumberOfVariables()) ||
-        *config.component_id >=
+        config.component_id >=
             dof_table_bulk.getNumberOfVariableComponents(variable_id))
     {
         OGS_FATAL(
             "Variable id or component id too high. Actual values: ({:d}, "
             "{:d}), maximum values: ({:d}, {:d}).",
-            variable_id, *config.component_id,
+            variable_id, config.component_id,
             dof_table_bulk.getNumberOfVariables(),
             dof_table_bulk.getNumberOfVariableComponents(variable_id));
     }
@@ -59,7 +59,7 @@ std::unique_ptr<SourceTerm> createSourceTerm(
         "Found {:d} nodes for source term at mesh '{:s}' for the variable {:d} "
         "and component {:d}",
         source_term_nodes.size(), source_term_mesh.getName(), variable_id,
-        *config.component_id);
+        config.component_id);
 
     MeshLib::MeshSubset source_term_mesh_subset(source_term_mesh,
                                                 source_term_nodes);
@@ -68,11 +68,11 @@ std::unique_ptr<SourceTerm> createSourceTerm(
     {
         auto dof_table_source_term =
             dof_table_bulk.deriveBoundaryConstrainedMap(
-                variable_id, {*config.component_id},
+                variable_id, {config.component_id},
                 std::move(source_term_mesh_subset));
         return ProcessLib::createNodalSourceTerm(
             config.config, config.mesh, std::move(dof_table_source_term),
-            source_term_mesh.getID(), variable_id, *config.component_id,
+            source_term_mesh.getID(), variable_id, config.component_id,
             parameters);
     }
 
@@ -80,10 +80,10 @@ std::unique_ptr<SourceTerm> createSourceTerm(
     {
         auto dof_table_source_term =
             dof_table_bulk.deriveBoundaryConstrainedMap(
-                variable_id, {*config.component_id},
+                variable_id, {config.component_id},
                 std::move(source_term_mesh_subset));
         auto const& bulk_mesh_dimension =
-            dof_table_bulk.getMeshSubset(variable_id, *config.component_id)
+            dof_table_bulk.getMeshSubset(variable_id, config.component_id)
                 .getMesh()
                 .getDimension();
         return ProcessLib::createVolumetricSourceTerm(
@@ -100,7 +100,7 @@ std::unique_ptr<SourceTerm> createSourceTerm(
 
         return ProcessLib::createPythonSourceTerm(
             config.config, config.mesh, std::move(dof_table_source_term),
-            variable_id, *config.component_id, integration_order,
+            variable_id, config.component_id, integration_order,
             shapefunction_order, source_term_mesh.getDimension(),
             all_process_variables_for_this_process);
     }
