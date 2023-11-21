@@ -36,6 +36,10 @@ target_link_libraries(
            Eigen3::Eigen
            $<$<TARGET_EXISTS:OpenMP::OpenMP_CXX>:OpenMP::OpenMP_CXX>
 )
+if(OGS_USE_MKL AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    # Otherwise required MKL libs get stripped out (don't show up in ldd):
+    target_link_options(MathLib PUBLIC "LINKER:--no-as-needed")
+endif()
 
 if(OGS_USE_LIS)
     target_include_directories(MathLib PUBLIC ${LIS_INCLUDE_DIR})
