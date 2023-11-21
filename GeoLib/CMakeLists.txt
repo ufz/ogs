@@ -25,6 +25,7 @@ if(OGS_USE_NETCDF)
         GeoLib
         PRIVATE ${NETCDF_LIBRARIES_CXX} ${NETCDF_LIBRARIES_C}
     )
+    target_compile_definitions(GeoLib PRIVATE OGS_USE_NETCDF)
 endif()
 
 foreach(xsd OpenGeoSysGLI.xsd OpenGeoSysSTN.xsd)
