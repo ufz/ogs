@@ -23,13 +23,8 @@ target_link_libraries(
 if(OGS_USE_NETCDF)
     target_link_libraries(
         GeoLib
-        PUBLIC ${NETCDF_LIBRARIES_CXX} ${NETCDF_LIBRARIES_C}
+        PRIVATE ${NETCDF_LIBRARIES_CXX} ${NETCDF_LIBRARIES_C}
     )
-    if(NOT OGS_USE_CONAN)
-        target_include_directories(
-            GeoLib SYSTEM PUBLIC ${NETCDF_INCLUDES_C} ${NETCDF_INCLUDES_CXX}
-        )
-    endif()
 endif()
 
 foreach(xsd OpenGeoSysGLI.xsd OpenGeoSysSTN.xsd)
