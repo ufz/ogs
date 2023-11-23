@@ -300,26 +300,25 @@ std::vector<GeoLib::NamedRaster> readRasters(
     return named_rasters;
 }
 
-#ifndef NDEBUG
-void writeRasters(std::vector<GeoLib::NamedRaster> const& named_rasters,
-                  std::string const& output_directory)
-{
-    for (auto const& named_raster : named_rasters)
-    {
-#if defined(USE_PETSC)
-        int my_mpi_rank;
-        MPI_Comm_rank(MPI_COMM_WORLD, &my_mpi_rank);
-#endif
-        FileIO::AsciiRasterInterface::writeRasterAsASC(
-            named_raster.raster, output_directory + "/" +
-                                     named_raster.raster_name +
-#if defined(USE_PETSC)
-                                     "_" + std::to_string(my_mpi_rank) +
-#endif
-                                     ".asc");
-    }
-}
-#endif
+// for debugging raster reading implementation
+// void writeRasters(std::vector<GeoLib::NamedRaster> const& named_rasters,
+//                  std::string const& output_directory)
+//{
+//    for (auto const& named_raster : named_rasters)
+//    {
+// #if defined(USE_PETSC)
+//        int my_mpi_rank;
+//        MPI_Comm_rank(MPI_COMM_WORLD, &my_mpi_rank);
+// #endif
+//        FileIO::AsciiRasterInterface::writeRasterAsASC(
+//            named_raster.raster, output_directory + "/" +
+//                                     named_raster.raster_name +
+// #if defined(USE_PETSC)
+//                                     "_" + std::to_string(my_mpi_rank) +
+// #endif
+//                                     ".asc");
+//    }
+//}
 
 std::optional<ParameterLib::CoordinateSystem> parseLocalCoordinateSystem(
     std::optional<BaseLib::ConfigTree> const& config,
@@ -392,9 +391,8 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
                                               _mesh_vec[0]->getNodes().end())
                                      .getMinMaxPoints()))
 {
-#ifndef NDEBUG
-    writeRasters(_named_rasters, output_directory);
-#endif
+    // for debugging raster reading implementation
+    // writeRasters(_named_rasters, output_directory);
     if (auto const python_script =
             //! \ogs_file_param{prj__python_script}
         project_config.getConfigParameterOptional<std::string>("python_script"))
