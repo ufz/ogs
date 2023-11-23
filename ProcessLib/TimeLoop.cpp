@@ -306,6 +306,17 @@ bool computationOfChangeNeeded(
     return timestep_algorithm->isSolutionErrorComputationNeeded();
 }
 
+double computeRelativeSolutionChange(
+    NumLib::ConvergenceCriterion const* conv_crit, GlobalVector const& x,
+    GlobalVector const& x_prev)
+{
+    const MathLib::VecNormType norm_type = (conv_crit)
+                                               ? conv_crit->getVectorNormType()
+                                               : MathLib::VecNormType::NORM2;
+
+    return NumLib::computeRelativeNorm(x, x_prev, norm_type);
+}
+
 std::pair<double, bool> TimeLoop::computeTimeStepping(
     const double prev_dt, double& t, std::size_t& accepted_steps,
     std::size_t& rejected_steps,
@@ -332,8 +343,7 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
 
         const double solution_error =
             computationOfChangeNeeded(timestep_algorithm.get(), t)
-                ? computeRelativeSolutionChangeFromPreviousTimestep(
-                      ppd.conv_crit.get(), x, x_prev)
+                ? computeRelativeSolutionChange(ppd.conv_crit.get(), x, x_prev)
                 : 0.0;
 
         ppd.timestep_current.setAccepted(
@@ -881,19 +891,6 @@ TimeLoop::~TimeLoop()
     {
         NumLib::GlobalVectorProvider::provider.releaseVector(*x);
     }
-}
-
-double TimeLoop::computeRelativeSolutionChangeFromPreviousTimestep(
-    NumLib::ConvergenceCriterion const* conv_crit, GlobalVector const& x,
-    GlobalVector const& x_prev) const
-{
-    const MathLib::VecNormType norm_type = (conv_crit)
-                                               ? conv_crit->getVectorNormType()
-                                               : MathLib::VecNormType::NORM2;
-
-    const double solution_error =
-        NumLib::computeRelativeNorm(x, x_prev, norm_type);
-    return solution_error;
 }
 
 void TimeLoop::preOutputInitialConditions(const double t) const
