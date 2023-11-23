@@ -100,7 +100,7 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
 
         MPL::VariableArray variables;
 
-        variables.phase_pressure = pl_int_pt;
+        variables.liquid_phase_pressure = pl_int_pt;
         variables.temperature = temperature;
         variables.molar_mass =
             gas_phase.property(MPL::PropertyType::molar_mass)
@@ -145,7 +145,8 @@ void TwoPhaseFlowWithPrhoLocalAssembler<ShapeFunction, GlobalDim>::assemble(
 
         double const rho_wet = rho_h2o + rho_h2_wet;
         _saturation[ip] = Sw;
-        _pressure_nonwetting[ip] = pl_int_pt + pc;
+        variables.gas_phase_pressure = _pressure_nonwetting[ip] =
+            pl_int_pt + pc;
 
         // Assemble M matrix
         // nonwetting
