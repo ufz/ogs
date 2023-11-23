@@ -21,27 +21,17 @@
 namespace
 {
 #ifdef OGS_USE_NETCDF
-GeoLib::Raster readNetCDF(std::filesystem::path const& filepath,
-                          std::string_view const var_name,
-                          std::size_t const dimension_number,
-                          GeoLib::MinMaxPoints const& min_max_points)
-{
-    netCDF::NcFile dataset(filepath.string(), netCDF::NcFile::read);
-    if (dataset.isNull())
-    {
-        OGS_FATAL("Error opening file '{}'.", filepath.string());
-    }
 
-    auto const& variables = dataset.getVars();
+GeoLib::RasterHeader readHeaderFromNetCDF(
+    std::multimap<std::string, netCDF::NcVar> const& variables)
+{
     GeoLib::RasterHeader header;
-    header.no_data = 0.0;  // replace no data values with this value
-    double fill_value;     // netcdf no data value aka _FillValue
 
     // remark: netcdf raster starts in the left upper corner
     double cell_size_y = 0;
     // first read:
     // - origin, cell_size from GeoTransform attribute
-    // - fill_value from _FillValue attribute
+    // - header.no_data from _FillValue attribute
     for (auto [variable_name, variable] : variables)
     {
         if (variable.isNull())
@@ -71,10 +61,27 @@ GeoLib::Raster readNetCDF(std::filesystem::path const& filepath,
             }
             if (name == "_FillValue")
             {
-                attribute.getValues(&fill_value);
+                attribute.getValues(&header.no_data);
             }
         }
     }
+
+    return header;
+}
+
+GeoLib::Raster readNetCDF(std::filesystem::path const& filepath,
+                          std::string_view const var_name,
+                          std::size_t const dimension_number,
+                          GeoLib::MinMaxPoints const& min_max_points)
+{
+    netCDF::NcFile dataset(filepath.string(), netCDF::NcFile::read);
+    if (dataset.isNull())
+    {
+        OGS_FATAL("Error opening file '{}'.", filepath.string());
+    }
+
+    auto const& variables = dataset.getVars();
+    GeoLib::RasterHeader header = readHeaderFromNetCDF(variables);
 
     // second read raster header values
     std::vector<double> raster_data;
@@ -147,8 +154,8 @@ GeoLib::Raster readNetCDF(std::filesystem::path const& filepath,
             raster_data.resize(total_length);
             variable.getVar(start, counts, raster_data.data());
 
-            std::replace(raster_data.begin(), raster_data.end(), fill_value,
-                         header.no_data);
+            std::replace(raster_data.begin(), raster_data.end(), header.no_data,
+                         0.0);
         }
     }
     return GeoLib::Raster{header, raster_data.begin(), raster_data.end()};
