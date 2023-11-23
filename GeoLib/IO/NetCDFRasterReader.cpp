@@ -69,20 +69,11 @@ GeoLib::RasterHeader readHeaderFromNetCDF(
     return header;
 }
 
-GeoLib::Raster readNetCDF(std::filesystem::path const& filepath,
-                          std::string_view const var_name,
-                          std::size_t const dimension_number,
-                          GeoLib::MinMaxPoints const& min_max_points)
+std::vector<double> readDataFromNetCDF(
+    std::multimap<std::string, netCDF::NcVar> const& variables,
+    std::string_view const var_name, std::size_t const dimension_number,
+    GeoLib::MinMaxPoints const& min_max_points, GeoLib::RasterHeader& header)
 {
-    netCDF::NcFile dataset(filepath.string(), netCDF::NcFile::read);
-    if (dataset.isNull())
-    {
-        OGS_FATAL("Error opening file '{}'.", filepath.string());
-    }
-
-    auto const& variables = dataset.getVars();
-    GeoLib::RasterHeader header = readHeaderFromNetCDF(variables);
-
     // second read raster header values
     std::vector<double> raster_data;
     for (auto [variable_name, variable] : variables)
@@ -158,6 +149,25 @@ GeoLib::Raster readNetCDF(std::filesystem::path const& filepath,
                          0.0);
         }
     }
+    return raster_data;
+}
+
+GeoLib::Raster readNetCDF(std::filesystem::path const& filepath,
+                          std::string_view const var_name,
+                          std::size_t const dimension_number,
+                          GeoLib::MinMaxPoints const& min_max_points)
+{
+    netCDF::NcFile dataset(filepath.string(), netCDF::NcFile::read);
+    if (dataset.isNull())
+    {
+        OGS_FATAL("Error opening file '{}'.", filepath.string());
+    }
+
+    auto const& variables = dataset.getVars();
+    GeoLib::RasterHeader header = readHeaderFromNetCDF(variables);
+    std::vector<double> raster_data = readDataFromNetCDF(
+        variables, var_name, dimension_number, min_max_points, header);
+
     return GeoLib::Raster{header, raster_data.begin(), raster_data.end()};
 }
 #endif
