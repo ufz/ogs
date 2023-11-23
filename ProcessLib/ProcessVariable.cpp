@@ -172,14 +172,24 @@ ProcessVariable::ProcessVariable(
                 //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__component}
                 st_config.getConfigParameterOptional<int>("component");
 
-            if (!component_id && _n_components == 1)
+            if (!component_id)
             {
-                // default value for single component vars.
-                component_id = 0;
+                if (_n_components == 1)
+                {
+                    // default value for single component vars.
+                    component_id = 0;
+                }
+                else
+                {
+                    OGS_FATAL(
+                        "Specifying the component id (<component>) for a "
+                        "source term for a non-scalar process variable is "
+                        "mandatory.");
+                }
             }
 
             _source_term_configs.emplace_back(std::move(st_config), st_mesh,
-                                              component_id);
+                                              *component_id);
         }
     }
     else

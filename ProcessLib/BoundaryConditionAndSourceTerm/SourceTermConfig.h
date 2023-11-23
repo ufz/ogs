@@ -19,7 +19,7 @@ struct SourceTermConfig final
 {
     SourceTermConfig(BaseLib::ConfigTree&& config_,
                      MeshLib::Mesh const& mesh_,
-                     std::optional<int> const component_id_)
+                     int component_id_)
         : config(std::move(config_)), mesh(mesh_), component_id(component_id_)
     {
     }
@@ -33,7 +33,7 @@ struct SourceTermConfig final
 
     BaseLib::ConfigTree config;
     MeshLib::Mesh const& mesh;
-    std::optional<int> const component_id;
+    int component_id;
 };
 
 }  // namespace ProcessLib
