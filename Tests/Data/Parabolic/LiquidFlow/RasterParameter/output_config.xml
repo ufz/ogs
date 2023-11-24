@@ -1,0 +1,23 @@
+        <outputs>
+            <output>
+                <type>VTK</type>
+                <prefix>fine_raster_homogeneous_{:meshname}</prefix>
+                <suffix>_ts_{:0>2timestep}_t_{:time}</suffix>
+                <timesteps>
+                    <pair>
+                        <repeat> 10 </repeat>
+                        <each_steps> 1 </each_steps>
+                    </pair>
+                </timesteps>
+                <meshes>
+                    <mesh>Subsurface</mesh>
+                </meshes>
+                <variables>
+                    <variable>p</variable>
+                    <variable>v</variable>
+                    <variable>VolumetricFlowRate</variable>
+                    <variable>MaterialIDs</variable>
+                    <variable>pressure_constant_1e_minus5</variable>
+                </variables>
+            </output>
+        </outputs>

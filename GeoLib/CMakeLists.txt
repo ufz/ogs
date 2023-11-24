@@ -20,6 +20,14 @@ target_link_libraries(
     PRIVATE range-v3 tet
 )
 
+if(OGS_USE_NETCDF)
+    target_link_libraries(
+        GeoLib
+        PRIVATE ${NETCDF_LIBRARIES_CXX} ${NETCDF_LIBRARIES_C}
+    )
+    target_compile_definitions(GeoLib PRIVATE OGS_USE_NETCDF)
+endif()
+
 foreach(xsd OpenGeoSysGLI.xsd OpenGeoSysSTN.xsd)
     # cmake-lint: disable=E1126
     file(COPY_FILE IO/XmlIO/${xsd} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${xsd}

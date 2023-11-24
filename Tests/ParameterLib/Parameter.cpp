@@ -17,6 +17,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Logging.h"
+#include "GeoLib/Raster.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/PropertyVector.h"
@@ -39,7 +40,7 @@ std::unique_ptr<Parameter<double>> constructParameterFromString(
     BaseLib::ConfigTree config_tree(std::move(xml_ptree), "",
                                     BaseLib::ConfigTree::onerror,
                                     BaseLib::ConfigTree::onwarning);
-    auto parameter_base = createParameter(config_tree, meshes, curves);
+    auto parameter_base = createParameter(config_tree, meshes, {}, curves);
     return std::unique_ptr<Parameter<double>>(
         static_cast<Parameter<double>*>(parameter_base.release()));
 }

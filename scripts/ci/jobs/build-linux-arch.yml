@@ -11,5 +11,6 @@ build linux arch:
     CMAKE_ARGS: >-
       -DBUILD_SHARED_LIBS=ON
       -DOGS_USE_MKL=ON
+      -DOGS_USE_NETCDF=ON
   before_script:
     - source /opt/intel/oneapi/setvars.sh

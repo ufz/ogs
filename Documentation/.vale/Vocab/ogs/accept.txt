@@ -90,6 +90,7 @@ MODFLOW
 MTest
 nbconvert
 nbdime
+NetCDF
 Netbeans
 NetBeans
 Neumann

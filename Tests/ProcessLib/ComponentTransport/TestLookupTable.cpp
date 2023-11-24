@@ -16,6 +16,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/FileTools.h"
+#include "GeoLib/Raster.h"
 #include "InfoLib/TestInfo.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MeshLib/Mesh.h"
@@ -52,7 +53,7 @@ std::unique_ptr<LookupTable> createTestLookupTable(const char xml[])
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> parameters;
     {
         auto const& para_config = conf.getConfigSubtree("parameter");
-        auto p = ParameterLib::createParameter(para_config, meshes, curves);
+        auto p = ParameterLib::createParameter(para_config, meshes, {}, curves);
         parameters.push_back(std::move(p));
     }
 

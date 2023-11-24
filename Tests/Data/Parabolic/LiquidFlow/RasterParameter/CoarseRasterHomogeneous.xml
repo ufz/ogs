@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="GroundwaterModelWithRasterBC.prj">
+    <replace sel="/*/rasters/raster/file/text()">coarse_raster_homogeneous.asc</replace>
+    <replace sel="/*/rasters/raster/variable/text()">values</replace>
+    <replace sel='/*/parameters/parameter[type="Raster"]/name/text()'>coarse_raster_homogeneous_values_1</replace>
+    <replace sel='/*/process_variables/process_variable/boundary_conditions/boundary_condition[type="Neumann"]/parameter/text()'>coarse_raster_homogeneous_values_1</replace>
+    <replace sel="/*/time_loop/outputs/output/prefix/text()" after_includes="true">coarse_raster_homogeneous_{:meshname}</replace>
+</OpenGeoSysProjectDiff>

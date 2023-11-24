@@ -151,4 +151,10 @@ private:
     std::vector<double> _raster_data;
 };
 
+struct NamedRaster
+{
+    std::string raster_name;
+    GeoLib::Raster raster;
+};
+
 }  // namespace GeoLib

@@ -31,6 +31,9 @@
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
 #include "GeoLib/GEOObjects.h"
+#include "GeoLib/IO/AsciiRasterInterface.h"
+#include "GeoLib/IO/NetCDFRasterReader.h"
+#include "GeoLib/Raster.h"
 #include "InfoLib/CMakeInfo.h"
 #include "MaterialLib/MPL/CreateMedium.h"
 #include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
@@ -271,6 +274,52 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
     return meshes;
 }
 
+std::vector<GeoLib::NamedRaster> readRasters(
+    BaseLib::ConfigTree const& config, std::string const& raster_directory,
+    GeoLib::MinMaxPoints const& min_max_points)
+{
+    INFO("readRasters ... ");
+    std::vector<GeoLib::NamedRaster> named_rasters;
+
+    //! \ogs_file_param{prj__rasters}
+    auto optional_rasters = config.getConfigSubtreeOptional("rasters");
+    if (optional_rasters)
+    {
+        INFO("Reading rasters.");
+        //! \ogs_file_param{prj__rasters__raster}
+        auto const configs = optional_rasters->getConfigSubtreeList("raster");
+        std::transform(
+            configs.begin(), configs.end(), std::back_inserter(named_rasters),
+            [&raster_directory, &min_max_points](auto const& raster_config)
+            {
+                return GeoLib::IO::readRaster(raster_config, raster_directory,
+                                              min_max_points);
+            });
+    }
+    INFO("readRasters done");
+    return named_rasters;
+}
+
+// for debugging raster reading implementation
+// void writeRasters(std::vector<GeoLib::NamedRaster> const& named_rasters,
+//                  std::string const& output_directory)
+//{
+//    for (auto const& named_raster : named_rasters)
+//    {
+// #if defined(USE_PETSC)
+//        int my_mpi_rank;
+//        MPI_Comm_rank(MPI_COMM_WORLD, &my_mpi_rank);
+// #endif
+//        FileIO::AsciiRasterInterface::writeRasterAsASC(
+//            named_raster.raster, output_directory + "/" +
+//                                     named_raster.raster_name +
+// #if defined(USE_PETSC)
+//                                     "_" + std::to_string(my_mpi_rank) +
+// #endif
+//                                     ".asc");
+//    }
+//}
+
 std::optional<ParameterLib::CoordinateSystem> parseLocalCoordinateSystem(
     std::optional<BaseLib::ConfigTree> const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
@@ -336,8 +385,14 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
                          std::string const& output_directory,
                          std::string const& mesh_directory,
                          [[maybe_unused]] std::string const& script_directory)
-    : _mesh_vec(readMeshes(project_config, mesh_directory))
+    : _mesh_vec(readMeshes(project_config, mesh_directory)),
+      _named_rasters(readRasters(project_config, project_directory,
+                                 GeoLib::AABB(_mesh_vec[0]->getNodes().begin(),
+                                              _mesh_vec[0]->getNodes().end())
+                                     .getMinMaxPoints()))
 {
+    // for debugging raster reading implementation
+    // writeRasters(_named_rasters, output_directory);
     if (auto const python_script =
             //! \ogs_file_param{prj__python_script}
         project_config.getConfigParameterOptional<std::string>("python_script"))
@@ -475,8 +530,8 @@ std::vector<std::string> ProjectData::parseParameters(
          //! \ogs_file_param{prj__parameters__parameter}
          parameters_config.getConfigSubtreeList("parameter"))
     {
-        auto p =
-            ParameterLib::createParameter(parameter_config, _mesh_vec, _curves);
+        auto p = ParameterLib::createParameter(parameter_config, _mesh_vec,
+                                               _named_rasters, _curves);
         if (!names.insert(p->name).second)
         {
             OGS_FATAL("A parameter with name `{:s}' already exists.", p->name);

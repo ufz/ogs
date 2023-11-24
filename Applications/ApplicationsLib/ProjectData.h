@@ -32,6 +32,11 @@
 #include <pybind11/embed.h>
 #endif
 
+namespace GeoLib
+{
+struct NamedRaster;
+}
+
 namespace MeshLib
 {
 class Mesh;
@@ -138,6 +143,7 @@ private:
         const std::string& output_directory);
 
     std::vector<std::unique_ptr<MeshLib::Mesh>> _mesh_vec;
+    std::vector<GeoLib::NamedRaster> _named_rasters;
     std::vector<std::unique_ptr<ProcessLib::Process>> _processes;
     std::vector<ProcessLib::ProcessVariable> _process_variables;
 
