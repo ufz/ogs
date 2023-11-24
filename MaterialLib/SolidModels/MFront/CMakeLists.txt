@@ -26,7 +26,6 @@ if(NOT GUIX_BUILD)
     install(TARGETS MFrontGenericInterface)
 endif()
 
-
 # Setup / build mfront behaviours lib
 set(_mfront_behaviours
     BDT
@@ -69,7 +68,7 @@ if((OGS_BUILD_WHEEL AND NOT APPLE_ARM) OR GUIX_BUILD)
             --interface=generic --silent-build=true # suppresses output
                                                     # (compiler warnings), does
                                                     # not work?
-            --obuild ${_mfront_behaviour_files} # TODO: check for debug?
+            --obuild=level0 ${_mfront_behaviour_files} # TODO: check for debug?
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_generated_mfront_lib}
                 ${_copied_mfront_lib}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}

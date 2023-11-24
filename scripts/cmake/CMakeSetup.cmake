@@ -33,9 +33,6 @@ list(
 
 # Load additional modules
 include(GNUInstallDirs)
-include(ProcessorCount)
-ProcessorCount(NUM_PROCESSORS)
-set(NUM_PROCESSORS ${NUM_PROCESSORS} CACHE STRING "Processor count")
 
 if(NOT PROJECT_IS_TOP_LEVEL)
     set(OGS_BUILD_CLI OFF CACHE BOOL "" FORCE)

@@ -22,9 +22,7 @@ mark_as_advanced(
     METIS_LIBRARY
     MODULE_CMD
     MPIRUN_TOOL_PATH
-    NUM_PROCESSORS
     ParaView_DIR
-    ProcessorCount_cmd_sysctl
     Qt5Core_DIR
     Qt5Gui_DIR
     Qt5Network_DIR
