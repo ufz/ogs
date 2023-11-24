@@ -31,3 +31,4 @@ build mac petsc amd64:
     CMAKE_PRESET: release-petsc
     CMAKE_ARGS: >-
       -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
+      -DOGS_BUILD_HDF5=ON
