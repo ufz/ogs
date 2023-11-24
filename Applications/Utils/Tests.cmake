@@ -1146,6 +1146,17 @@ AddTest(
 )
 
 AddTest(
+    NAME addDataToRaster_10x10_step_function
+    PATH GeoTools/addDataToRaster/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/GeoTools/addDataToRaster
+    EXECUTABLE addDataToRaster
+    EXECUTABLE_ARGS --ll_x 1000 --ll_y 100 --ur_x 1100 --ur_y 200 --function step --scaling_value 1 --offset_value 0 -i ${Data_SOURCE_DIR}/GeoTools/createRaster/10x10.asc -o ${Data_BINARY_DIR}/GeoTools/addDataToRaster/10x10_step.asc
+    TESTER diff
+    DIFF_DATA
+    10x10_step.asc 10x10_step.asc
+)
+
+AddTest(
     NAME GMSH2OGS_linearElements
     PATH Utils/GMSH2OGS
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/GMSH2OGS
