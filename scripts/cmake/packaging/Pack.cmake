@@ -87,6 +87,9 @@ endif()
 configure_file(Documentation/README.txt.in ${PROJECT_BINARY_DIR}/README.txt)
 install(FILES ${PROJECT_BINARY_DIR}/README.txt DESTINATION .)
 
-install(FILES ${PROJECT_BINARY_DIR}/CMakeCache.txt TYPE INFO)
+if(NOT GUIX_BUILD)
+    # May contain machine specific content, e.g. MPIEXEC_MAX_NUMPROCS
+    install(FILES ${PROJECT_BINARY_DIR}/CMakeCache.txt TYPE INFO)
+endif()
 install(FILES ${PROJECT_BINARY_DIR}/cmake_args TYPE INFO OPTIONAL)
 install(FILES ${PROJECT_BINARY_DIR}/third_party_licenses.txt TYPE INFO)
