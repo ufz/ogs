@@ -1,4 +1,21 @@
-{{ $prj_file := "" }}
+{{ if .Get 1 }}
+
+{{ $prj_file := .Get 1 }}
+
+{{ if os.FileExists "Tests" }}
+{{ $filePath := print "Tests/Data/" $prj_file }}
+{{ if os.FileExists $filePath }}
+{{ else }}
+{{ errorf "%q: Project file does not exist: %q" $.Page.File.Path . }}
+{{ end }}
+{{ end }}
+
+<a href="https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data{{ $prj_file }}">
+    <i class="far fa-arrow-right"></i>
+    {{ $prj_file }}
+</a>
+
+{{ else }}
 
 <ul>
     {{ with .Page.Params.project }}
@@ -21,3 +38,5 @@
     {{ end }}
     {{ end }}
 </ul>
+
+{{ end }}
