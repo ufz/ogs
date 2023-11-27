@@ -10,6 +10,8 @@ check web links:
     # Copy notebook pages
     - cp -rl build/*/web/content web/
     - cd web
+    - yarn
+    - yarn index
     - hugo server &
     - sleep 20
     - >
