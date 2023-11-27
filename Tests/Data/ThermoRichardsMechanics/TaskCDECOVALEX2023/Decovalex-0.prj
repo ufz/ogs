@@ -77,6 +77,11 @@
                             <type>Constant</type>
                             <value>1.0</value>
                         </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>0</value>
+                        </property>
                     </properties>
                 </phase>
                 <phase>
@@ -210,6 +215,11 @@
                             </name>
                             <type>Constant</type>
                             <value>1.0</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>0</value>
                         </property>
                     </properties>
                 </phase>
@@ -346,6 +356,11 @@
                             </name>
                             <type>Constant</type>
                             <value>1.0</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>0</value>
                         </property>
                     </properties>
                 </phase>

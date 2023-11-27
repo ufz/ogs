@@ -81,23 +81,20 @@ void TRMVaporDiffusionModel<DisplacementDim>::eval(
         out.J_pT_X_dNTdN = f_Tv * D_v * drho_wv_dT;
         out.K_pp_X_dNTdN = D_v * drho_wv_dp;
 
-        if (gas_phase->hasProperty(MPL::PropertyType::specific_heat_capacity))
-        {
-            // Vapour velocity
-            out.vapor_velocity = -(out.J_pT_X_dNTdN * T_data.grad_T -
-                                   out.K_pp_X_dNTdN * p_cap_data.grad_p_cap) /
-                                 rho_L_data.rho_LR;
-            double const specific_heat_capacity_vapor =
-                gas_phase
-                    ->property(MaterialPropertyLib::PropertyType::
-                                   specific_heat_capacity)
-                    .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
+        // Vapour velocity
+        out.vapor_velocity = -(out.J_pT_X_dNTdN * T_data.grad_T -
+                               out.K_pp_X_dNTdN * p_cap_data.grad_p_cap) /
+                             rho_L_data.rho_LR;
+        double const specific_heat_capacity_vapor =
+            gas_phase
+                ->property(
+                    MaterialPropertyLib::PropertyType::specific_heat_capacity)
+                .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
-            out.volumetric_heat_capacity_vapor =
-                rho_wv * specific_heat_capacity_vapor;
-            out.M_TT_X_NTN +=
-                out.volumetric_heat_capacity_vapor * (1 - S_L_data.S_L) * phi;
-        }
+        out.volumetric_heat_capacity_vapor =
+            rho_wv * specific_heat_capacity_vapor;
+        out.M_TT_X_NTN +=
+            out.volumetric_heat_capacity_vapor * (1 - S_L_data.S_L) * phi;
 
         out.storage_coefficient_by_water_vapor =
             phi *
