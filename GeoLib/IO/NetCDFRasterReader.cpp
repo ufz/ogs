@@ -152,10 +152,11 @@ std::vector<double> readDataFromNetCDF(
     return raster_data;
 }
 
-GeoLib::Raster readNetCDF(std::filesystem::path const& filepath,
-                          std::string_view const var_name,
-                          std::size_t const dimension_number,
-                          GeoLib::MinMaxPoints const& min_max_points)
+std::unique_ptr<GeoLib::Raster> readNetCDF(
+    std::filesystem::path const& filepath,
+    std::string_view const var_name,
+    std::size_t const dimension_number,
+    GeoLib::MinMaxPoints const& min_max_points)
 {
     netCDF::NcFile dataset(filepath.string(), netCDF::NcFile::read);
     if (dataset.isNull())
@@ -168,7 +169,8 @@ GeoLib::Raster readNetCDF(std::filesystem::path const& filepath,
     std::vector<double> raster_data = readDataFromNetCDF(
         variables, var_name, dimension_number, min_max_points, header);
 
-    return GeoLib::Raster{header, raster_data.begin(), raster_data.end()};
+    return std::make_unique<GeoLib::Raster>(header, raster_data.begin(),
+                                            raster_data.end());
 }
 #endif
 
@@ -190,14 +192,14 @@ GeoLib::NamedRaster readRasterFromFile(
         return GeoLib::NamedRaster{filename.replace_extension().string() + "_" +
                                        var_name + "_" +
                                        std::to_string(dimension_number),
-                                   raster};
+                                   std::move(raster)};
 #else
         OGS_FATAL("OGS was not build with NetCDF support. Can not read {}",
                   (path / filename).string());
 #endif
     }
-    auto* raster =
-        FileIO::AsciiRasterInterface::readRaster((path / filename).string());
+    auto raster = std::unique_ptr<GeoLib::Raster>(
+        FileIO::AsciiRasterInterface::readRaster((path / filename).string()));
     if (raster == nullptr)
     {
         OGS_FATAL("Could not read raster from file '{}'.",
@@ -206,7 +208,7 @@ GeoLib::NamedRaster readRasterFromFile(
     return GeoLib::NamedRaster{filename.replace_extension().string() + "_" +
                                    var_name + "_" +
                                    std::to_string(dimension_number),
-                               *raster};
+                               std::move(raster)};
 }
 }  // anonymous namespace
 

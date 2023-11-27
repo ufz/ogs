@@ -154,7 +154,7 @@ private:
 struct NamedRaster
 {
     std::string raster_name;
-    GeoLib::Raster raster;
+    std::unique_ptr<GeoLib::Raster> raster;
 };
 
 }  // namespace GeoLib
