@@ -29,6 +29,7 @@ enum class Variable : int
 {
     capillary_pressure,
     concentration,
+    deformation_gradient,
     density,
     effective_pore_pressure,
     enthalpy,
@@ -58,6 +59,7 @@ static const std::array<std::string,
                         static_cast<int>(Variable::number_of_variables)>
     variable_enum_to_string{{"capillary_pressure",
                              "concentration",
+                             "deformation_gradient",
                              "density",
                              "effective_pore_pressure",
                              "enthalpy",
@@ -86,7 +88,9 @@ static const std::array<std::string,
 using VariableType = std::variant<std::monostate,
                                   double,
                                   Eigen::Matrix<double, 4, 1>,
-                                  Eigen::Matrix<double, 6, 1>>;
+                                  Eigen::Matrix<double, 5, 1>,
+                                  Eigen::Matrix<double, 6, 1>,
+                                  Eigen::Matrix<double, 9, 1>>;
 
 class VariableArray
 {
@@ -102,6 +106,8 @@ public:
                 return capillary_pressure;
             case Variable::concentration:
                 return concentration;
+            case Variable::deformation_gradient:
+                return std::visit(identity, deformation_gradient);
             case Variable::density:
                 return density;
             case Variable::effective_pore_pressure:
@@ -156,6 +162,12 @@ public:
 
     double capillary_pressure = nan_;
     double concentration = nan_;
+    // Compare to GMatrixPolicy::GradientVectorType. The 1d case = Matrix<3, 1>
+    // is not used so far.
+    std::variant<std::monostate,
+                 Eigen::Matrix<double, 5, 1>,
+                 Eigen::Matrix<double, 9, 1>>
+        deformation_gradient;
     double density = nan_;
     double effective_pore_pressure = nan_;
     double enthalpy = nan_;

@@ -12,6 +12,7 @@
 
 #include <MGIS/Behaviour/Variable.hxx>
 
+#include "MaterialLib/MPL/Utils/Tensor.h"
 #include "MaterialLib/MPL/VariableType.h"
 #include "MathLib/KelvinVector.h"
 
@@ -47,7 +48,7 @@ struct Variable
                 return MathLib::KelvinVector::kelvin_vector_dimensions(
                     DisplacementDim);
             case T::TENSOR:
-                return DisplacementDim;
+                return MaterialPropertyLib::tensorSize(DisplacementDim);
         }
     }
 
@@ -65,7 +66,7 @@ struct Variable
             case T::STENSOR:
                 return 1;
             case T::TENSOR:
-                return DisplacementDim;
+                return 1;
         }
     }
 };
@@ -89,6 +90,44 @@ struct Strain : Variable<Strain>
 
 /// Instance that can be used for overload resolution/template type deduction.
 static constexpr Strain strain;
+
+/// Meta data for Green-Lagrange strain.
+struct GreenLagrangeStrain : Variable<GreenLagrangeStrain>
+{
+    /// The name of the variable in MFront.
+    constexpr static const char* name = "GreenLagrangeStrain";
+
+    /// The type of the variable in MFront.
+    constexpr static mgis::behaviour::Variable::Type type =
+        mgis::behaviour::Variable::Type::STENSOR;
+
+    /// The VariableArray entry that holds this variable in OGS.
+    ///
+    /// \note Currently we always pass strain via mechanical_strain.
+    constexpr static auto mpl_var =
+        &MaterialPropertyLib::VariableArray::mechanical_strain;
+};
+
+/// Instance that can be used for overload resolution/template type deduction.
+static constexpr GreenLagrangeStrain green_lagrange_strain;
+
+/// Meta data for deformation gradient.
+struct DeformationGradient : Variable<DeformationGradient>
+{
+    /// The name of the variable in MFront.
+    constexpr static const char* name = "DeformationGradient";
+
+    /// The type of the variable in MFront.
+    constexpr static mgis::behaviour::Variable::Type type =
+        mgis::behaviour::Variable::Type::TENSOR;
+
+    /// The VariableArray entry that holds this variable in OGS.
+    constexpr static auto mpl_var =
+        &MaterialPropertyLib::VariableArray::deformation_gradient;
+};
+
+/// Instance that can be used for overload resolution/template type deduction.
+static constexpr DeformationGradient deformation_gradient;
 
 struct LiquidPressure : Variable<LiquidPressure>
 {
@@ -114,6 +153,18 @@ struct Stress : Variable<Stress>
 };
 
 static constexpr Stress stress;
+
+struct SecondPiolaKirchhoffStress : Variable<SecondPiolaKirchhoffStress>
+{
+    constexpr static const char* name = "SecondPiolaKirchhoffStress";
+
+    constexpr static mgis::behaviour::Variable::Type type =
+        mgis::behaviour::Variable::Type::STENSOR;
+
+    constexpr static auto mpl_var = &MaterialPropertyLib::VariableArray::stress;
+};
+
+static constexpr SecondPiolaKirchhoffStress second_piola_kirchhoff_stress;
 
 struct Saturation : Variable<Saturation>
 {

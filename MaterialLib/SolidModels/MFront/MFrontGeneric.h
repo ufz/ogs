@@ -15,6 +15,7 @@
 #include <boost/mp11.hpp>
 
 #include "MaterialLib/MPL/Utils/GetSymmetricTensor.h"
+#include "MaterialLib/MPL/Utils/Tensor.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "NumLib/Exceptions.h"
 #include "ParameterLib/Parameter.h"
@@ -45,6 +46,45 @@ constexpr auto eigenSwap45View(Eigen::MatrixBase<Derived> const& matrix)
             constexpr std::ptrdiff_t result[6] = {0, 1, 2, 3, 5, 4};
             return m(result[row], result[col]);
         });
+}
+
+/// Converts between OGS' and MFront's tensors, which are represented as
+/// vectors. An OGS tensor
+/// 11 12 13  21 22 23  31 32 33
+/// 0  1  2   3  4  5   6  7  8
+/// is converted to MFront tensor
+/// 11 22 33 12 21 13 31 23 32
+/// 0  4  8  1  3  2  6  5  7.
+template <int DisplacementDim, typename Derived>
+constexpr auto ogsTensorToMFrontTensor(Eigen::MatrixBase<Derived> const& matrix)
+{
+    using Matrix =
+        Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime,
+                      Derived::ColsAtCompileTime>;
+
+    if constexpr (DisplacementDim == 2)
+    {
+        return Matrix::NullaryExpr(
+            matrix.rows(), matrix.cols(),
+            [&m = matrix.derived()](Eigen::Index const row,
+                                    Eigen::Index const col)
+            {
+                constexpr std::ptrdiff_t result[5] = {0, 3, 4, 1, 2};
+                return m(result[row], result[col]);
+            });
+    }
+    if constexpr (DisplacementDim == 3)
+    {
+        return Matrix::NullaryExpr(
+            matrix.rows(), matrix.cols(),
+            [&m = matrix.derived()](Eigen::Index const row,
+                                    Eigen::Index const col)
+            {
+                constexpr std::ptrdiff_t result[9] = {0, 4, 8, 1, 3,
+                                                      2, 6, 5, 7};
+                return m(result[row], result[col]);
+            });
+    }
 }
 
 const char* varTypeToString(int v);
@@ -121,6 +161,12 @@ struct MapToMPLType<DisplacementDim, mgis::behaviour::Variable::Type::STENSOR>
 };
 
 template <int DisplacementDim>
+struct MapToMPLType<DisplacementDim, mgis::behaviour::Variable::Type::TENSOR>
+{
+    using type = MaterialPropertyLib::Tensor<DisplacementDim>;
+};
+
+template <int DisplacementDim>
 struct MapToMPLType<DisplacementDim, mgis::behaviour::Variable::Type::SCALAR>
 {
     using type = double;
@@ -159,6 +205,21 @@ struct SetGradient
                 Q ? eigenSwap45View(Q->transpose() * grad_ogs).eval()
                   : eigenSwap45View(grad_ogs).eval();
             std::copy_n(grad_mfront.data(), num_comp, target);
+        }
+        else if constexpr (Grad::type ==
+                           mgis::behaviour::Variable::Type::TENSOR)
+        {
+            using MPLType = MapToMPLType_t<DisplacementDim, Grad::type>;
+            auto const& grad_ogs =
+                std::get<MPLType>(variable_array.*Grad::mpl_var);
+
+            if (Q.has_value())
+            {
+                OGS_FATAL("Rotations of tensors are not implemented.");
+            }
+
+            Eigen::Map<Eigen::Vector<double, num_comp>>{target} =
+                ogsTensorToMFrontTensor<DisplacementDim>(grad_ogs);
         }
         else
         {

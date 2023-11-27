@@ -14,6 +14,7 @@
 
 #include <numeric>
 
+#include "MaterialLib/MPL/Utils/Tensor.h"
 #include "MaterialLib/SolidModels/MFront/TangentOperatorBlocksView.h"
 #include "MaterialLib/SolidModels/MFront/Variable.h"
 #include "OGSMFrontTestVariables.h"
@@ -41,6 +42,7 @@ TYPED_TEST(MaterialLib_TangentOperatorBlocksView, Test1)
     constexpr int dim = TypeParam::value;
     constexpr int kv_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(dim);
+    constexpr int tensor_size = MaterialPropertyLib::tensorSize(dim);
 
     const std::vector to_blocks{
         // dsigma/dtensor
@@ -52,7 +54,8 @@ TYPED_TEST(MaterialLib_TangentOperatorBlocksView, Test1)
         std::pair{Var{"Stress", Var::STENSOR},
                   Var{"Temperature", Var::SCALAR}}};
 
-    const std::size_t total_data_size = kv_size * dim * dim + dim + kv_size;
+    const std::size_t total_data_size =
+        kv_size * tensor_size + dim * 1 + kv_size * 1;
 
     using Gradients = mp_list<MSM::LiquidPressure, Tensor>;
     using TDynForces = mp_list<Vector, MSM::Stress>;
@@ -70,7 +73,7 @@ TYPED_TEST(MaterialLib_TangentOperatorBlocksView, Test1)
     // dvector/dp != 0
     {
         using Vec = Eigen::Vector<double, dim>;
-        auto const offset = kv_size * dim * dim;
+        auto const offset = kv_size * tensor_size;
         Vec const expected = Vec::LinSpaced(offset, offset + dim - 1);
 
         auto const b = view.block(Vector{}, MSM::liquid_pressure, data);
@@ -80,7 +83,7 @@ TYPED_TEST(MaterialLib_TangentOperatorBlocksView, Test1)
 
     // dvector/dtensor = 0
     {
-        using Mat = Eigen::Matrix<double, dim, dim * dim>;
+        using Mat = Eigen::Matrix<double, dim, tensor_size>;
         Mat const zero = Mat::Zero();
 
         auto const b = view.block(Vector{}, Tensor{}, data);
@@ -110,13 +113,13 @@ TYPED_TEST(MaterialLib_TangentOperatorBlocksView, Test1)
 
     // dsigma/dtensor != 0
     {
-        using Mat = Eigen::Matrix<double, kv_size, dim * dim>;
+        using Mat = Eigen::Matrix<double, kv_size, tensor_size>;
         Mat expected = Mat::Zero();
         for (int r = 0; r < kv_size; ++r)
         {
-            for (int c = 0; c < dim * dim; ++c)
+            for (int c = 0; c < tensor_size; ++c)
             {
-                expected(r, c) = dim * dim * r + c;
+                expected(r, c) = tensor_size * r + c;
             }
         }
 
@@ -128,7 +131,7 @@ TYPED_TEST(MaterialLib_TangentOperatorBlocksView, Test1)
     // dsigma/dT != 0
     {
         using Vec = Eigen::Vector<double, kv_size>;
-        auto const offset = kv_size * dim * dim + dim;
+        auto const offset = kv_size * tensor_size + dim;
         Vec const expected = Vec::LinSpaced(offset, offset + kv_size - 1);
 
         auto const b = view.block(MSM::stress, MSM::temperature, data);
@@ -147,6 +150,7 @@ TYPED_TEST(MaterialLib_TangentOperatorBlocksView, Test2)
     constexpr int dim = TypeParam::value;
     constexpr int kv_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(dim);
+    constexpr int tensor_size = MaterialPropertyLib::tensorSize(dim);
 
     const std::vector to_blocks{
         // dsigma/dtensor
@@ -155,7 +159,7 @@ TYPED_TEST(MaterialLib_TangentOperatorBlocksView, Test2)
         std::pair{Var{"Saturation", Var::VECTOR},
                   Var{"LiquidPressure", Var::SCALAR}}};
 
-    const std::size_t total_data_size = kv_size * dim * dim + 1;
+    const std::size_t total_data_size = kv_size * tensor_size + dim * 1;
 
     using Gradients = mp_list<MSM::LiquidPressure, Tensor>;
     using TDynForces = mp_list<MSM::Saturation, MSM::Stress>;
@@ -172,7 +176,7 @@ TYPED_TEST(MaterialLib_TangentOperatorBlocksView, Test2)
 
     // dsat/dp != 0
     {
-        auto const offset = kv_size * dim * dim;
+        auto const offset = kv_size * tensor_size;
         auto const expected = offset;
 
         auto const b = view.block(MSM::saturation, MSM::liquid_pressure, data);
@@ -184,7 +188,7 @@ TYPED_TEST(MaterialLib_TangentOperatorBlocksView, Test2)
 
     // dsat/dtensor = 0
     {
-        using Vec = Eigen::RowVector<double, dim * dim>;
+        using Vec = Eigen::RowVector<double, tensor_size>;
         Vec const zero = Vec::Zero();
 
         auto const b = view.block(MSM::saturation, Tensor{}, data);
@@ -211,13 +215,13 @@ TYPED_TEST(MaterialLib_TangentOperatorBlocksView, Test2)
 
     // dsigma/dtensor != 0
     {
-        using Mat = Eigen::Matrix<double, kv_size, dim * dim>;
+        using Mat = Eigen::Matrix<double, kv_size, tensor_size>;
         Mat expected = Mat::Zero();
         for (int r = 0; r < kv_size; ++r)
         {
-            for (int c = 0; c < dim * dim; ++c)
+            for (int c = 0; c < tensor_size; ++c)
             {
-                expected(r, c) = dim * dim * r + c;
+                expected(r, c) = tensor_size * r + c;
             }
         }
 

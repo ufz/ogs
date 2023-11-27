@@ -18,6 +18,7 @@
 #include <range/v3/view/zip.hpp>
 
 #include "BaseLib/cpp23.h"
+#include "MaterialLib/MPL/Utils/Tensor.h"
 #include "MathLib/KelvinVector.h"
 
 namespace MaterialLib::Solids::MFront
@@ -221,7 +222,7 @@ private:
             case VT::VECTOR:
                 return DisplacementDim;
             case VT::TENSOR:
-                return DisplacementDim * DisplacementDim;
+                return MaterialPropertyLib::tensorSize(DisplacementDim);
         }
 
         OGS_FATAL("Unsupported variable type {}", BaseLib::to_underlying(vt));

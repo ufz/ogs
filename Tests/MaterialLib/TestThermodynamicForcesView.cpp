@@ -10,6 +10,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include "MaterialLib/MPL/Utils/Tensor.h"
 #include "MaterialLib/SolidModels/MFront/ThermodynamicForcesView.h"
 #include "MathLib/KelvinVector.h"
 #include "OGSMFrontTestVariables.h"
@@ -100,13 +101,13 @@ struct MockTensor
     template <int DisplacementDim>
     static constexpr std::size_t rows()
     {
-        return DisplacementDim;
+        return MaterialPropertyLib::tensorSize(DisplacementDim);
     }
 
     template <int DisplacementDim>
     static constexpr std::size_t cols()
     {
-        return DisplacementDim;
+        return 1;
     }
 };
 
@@ -156,8 +157,8 @@ test_MaterialLib_ThermodynamicForcesView_ReadAccess_VectorTensor_2D_impl()
     using TDynForces = boost::mp11::mp_list<Vector, Tensor>;
 
     MSM::OGSMFrontThermodynamicForcesData const data{{
-        1, 2,       // vector data
-        3, 4, 5, 6  // tensor data
+        1, 2,          // vector data
+        3, 4, 5, 6, 7  // tensor data
     }};
 
     MSM::OGSMFrontThermodynamicForcesView<2, TDynForces> view;
@@ -167,7 +168,8 @@ test_MaterialLib_ThermodynamicForcesView_ReadAccess_VectorTensor_2D_impl()
     EXPECT_THAT(vector, testing::Pointwise(testing::DoubleEq(), {1, 2}));
 
     auto const tensor = view.block(Tensor{}, data);
-    auto const tensor_expected = (Eigen::Matrix2d{} << 3, 4, 5, 6).finished();
+    auto const tensor_expected =
+        (Eigen::Matrix<double, 5, 1>{} << 3, 4, 5, 6, 7).finished();
 
     ASSERT_PRED_FORMAT2(Tests::EigenIsNear{}, tensor, tensor_expected);
 }
@@ -238,13 +240,15 @@ test_MaterialLib_ThermodynamicForcesView_WriteAccess_TensorSTensor_3D_impl()
 
     view.block(STensor{}, data).template segment<3>(1) =
         Eigen::Vector3d(21, 22, 23);
-    view.block(Tensor{}, data).template block<1, 2>(1, 1) =
+    view.block(Tensor{}, data).template segment<2>(1) =
         Eigen::RowVector2d(31, 32);
+    view.block(Tensor{}, data).template segment<2>(4) =
+        Eigen::RowVector2d(41, 42);
 
     EXPECT_THAT(data.data,
                 testing::Pointwise(
                     testing::DoubleEq(),
-                    {1, 2, 3, 4, 31, 32, 7, 8, 9, 10, 21, 22, 23, 14, 15}));
+                    {1, 31, 32, 4, 41, 42, 7, 8, 9, 10, 21, 22, 23, 14, 15}));
 }
 
 #ifdef OGS_USE_MFRONT
@@ -270,10 +274,10 @@ static void test_MaterialLib_ThermodynamicForcesView_DataSizes_impl()
         using TDynForces = boost::mp11::mp_list<Tensor, STensor>;
 
         static_assert(MSM::OGSMFrontThermodynamicForcesView<3, TDynForces>::
-                          data_size_all_forces == 3 * 3 + 6);
+                          data_size_all_forces == 9 + 6);
 
         static_assert(MSM::OGSMFrontThermodynamicForcesView<2, TDynForces>::
-                          data_size_all_forces == 2 * 2 + 4);
+                          data_size_all_forces == 5 + 4);
     }
 
     // same as above, order changed
@@ -281,10 +285,10 @@ static void test_MaterialLib_ThermodynamicForcesView_DataSizes_impl()
         using TDynForces = boost::mp11::mp_list<STensor, Tensor>;
 
         static_assert(MSM::OGSMFrontThermodynamicForcesView<3, TDynForces>::
-                          data_size_all_forces == 3 * 3 + 6);
+                          data_size_all_forces == 6 + 9);
 
         static_assert(MSM::OGSMFrontThermodynamicForcesView<2, TDynForces>::
-                          data_size_all_forces == 2 * 2 + 4);
+                          data_size_all_forces == 4 + 5);
     }
 
     {
