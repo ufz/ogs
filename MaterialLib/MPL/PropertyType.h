@@ -109,8 +109,6 @@ enum PropertyType : int
     /// used to compute the hydrodynamic dispersion tensor.
     transversal_dispersivity,
     vapour_pressure,
-    vapour_density,
-    vapour_diffusion,
     viscosity,
     volume_fraction,
     youngs_modulus,
@@ -184,8 +182,6 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "transport_porosity",
                              "transversal_dispersivity",
                              "vapour_pressure",
-                             "vapour_density",
-                             "vapour_diffusion",
                              "viscosity",
                              "volume_fraction",
                              "youngs_modulus"}};
