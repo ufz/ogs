@@ -104,7 +104,8 @@ std::vector<std::string> GEOModels::getGeometryNames() const
 {
     return _geo_objects.getGeometryNames();
 }
-const std::vector<GeoLib::Point*>* GEOModels::getPointVec(const std::string& name) const
+const std::vector<GeoLib::Point*>* GEOModels::getPointVec(
+    const std::string& name) const
 {
     return _geo_objects.getPointVec(name);
 }
