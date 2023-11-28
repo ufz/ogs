@@ -36,18 +36,33 @@
         <medium id="0">
             <phases>
                 <phase>
-                    <type>AqueousLiquid</type>
+                    <type>Gas</type>
                     <properties>
                         <property>
-                            <name>vapour_density</name>
+                            <name>density</name>
                             <type>WaterVapourDensity</type>
                         </property>
                         <property>
-                            <name>vapour_diffusion</name>
+                            <name>diffusion</name>
                             <type>VapourDiffusionFEBEX</type>
                             <!-- 1.0 * 86400 -->
                             <tortuosity>86400.0</tortuosity>
                         </property>
+                        <property>
+                            <name>thermal_diffusion_enhancement_factor</name>
+                            <type>Constant</type>
+                            <value>1.0</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>0</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
                         <property>
                             <name>specific_heat_capacity</name>
                             <type>Constant</type>
@@ -67,11 +82,6 @@
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value>1e-3</value>
-                        </property>
-                        <property>
-                            <name>thermal_diffusion_enhancement_factor</name>
-                            <type>Constant</type>
-                            <value>1.0</value>
                         </property>
                     </properties>
                 </phase>

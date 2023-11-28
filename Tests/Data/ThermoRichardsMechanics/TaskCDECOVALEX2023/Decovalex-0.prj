@@ -56,14 +56,14 @@
         <medium id="0"><!--Clay-->
             <phases>
                 <phase>
-                    <type>AqueousLiquid</type>
+                    <type>Gas</type>
                     <properties>
                         <property>
-                            <name>vapour_density</name>
+                            <name>density</name>
                             <type>WaterVapourDensity</type>
                         </property>
                         <property>
-                            <name>vapour_diffusion</name>
+                            <name>diffusion</name>
                             <type>VapourDiffusionFEBEX</type>
                             <tortuosity>0.8</tortuosity>
                         </property>
@@ -72,15 +72,25 @@
                             <type>LinearWaterVapourLatentHeat</type>
                         </property>
                         <property>
-                            <name>specific_heat_capacity</name>
-                            <type>Constant</type>
-                            <value>4181.3</value>
-                        </property>
-                        <property>
                             <name>thermal_diffusion_enhancement_factor
                             </name>
                             <type>Constant</type>
                             <value>1.0</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>0</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>4181.3</value>
                         </property>
                         <property>
                             <name>density</name>
@@ -185,14 +195,14 @@
         <medium id="1"><!--Bent-->
             <phases>
                 <phase>
-                    <type>AqueousLiquid</type>
+                    <type>Gas</type>
                     <properties>
                         <property>
-                            <name>vapour_density</name>
+                            <name>density</name>
                             <type>WaterVapourDensity</type>
                         </property>
                         <property>
-                            <name>vapour_diffusion</name>
+                            <name>diffusion</name>
                             <type>VapourDiffusionFEBEX</type>
                             <tortuosity>0.8</tortuosity>
                         </property>
@@ -201,15 +211,25 @@
                             <type>LinearWaterVapourLatentHeat</type>
                         </property>
                         <property>
-                            <name>specific_heat_capacity</name>
-                            <type>Constant</type>
-                            <value>4181.3</value>
-                        </property>
-                        <property>
                             <name>thermal_diffusion_enhancement_factor
                             </name>
                             <type>Constant</type>
                             <value>1.0</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>0</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>4181.3</value>
                         </property>
                         <property>
                             <name>density</name>
@@ -316,14 +336,14 @@
         <medium id="2"><!--Block-->
             <phases>
                 <phase>
-                    <type>AqueousLiquid</type>
+                    <type>Gas</type>
                     <properties>
                         <property>
-                            <name>vapour_density</name>
+                            <name>density</name>
                             <type>WaterVapourDensity</type>
                         </property>
                         <property>
-                            <name>vapour_diffusion</name>
+                            <name>diffusion</name>
                             <type>VapourDiffusionFEBEX</type>
                             <tortuosity>0.8</tortuosity>
                         </property>
@@ -332,15 +352,25 @@
                             <type>LinearWaterVapourLatentHeat</type>
                         </property>
                         <property>
-                            <name>specific_heat_capacity</name>
-                            <type>Constant</type>
-                            <value>4181.3</value>
-                        </property>
-                        <property>
                             <name>thermal_diffusion_enhancement_factor
                             </name>
                             <type>Constant</type>
                             <value>1.0</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>0</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>4181.3</value>
                         </property>
                         <property>
                             <name>density</name>

@@ -44,65 +44,57 @@ void TRMVaporDiffusionModel<DisplacementDim>::eval(
     variables.density = rho_L_data.rho_LR;
     variables.liquid_saturation = S_L_data.S_L;
 
-    auto const& liquid_phase = media_data.liquid;
+    auto const& medium = media_data.medium;
+
+    MPL::Phase const* gas_phase =
+        medium.hasPhase("Gas") ? &medium.phase("Gas") : nullptr;
 
     out.setZero();
 
-    if (liquid_phase.hasProperty(MPL::PropertyType::vapour_diffusion) &&
-        S_L_data.S_L < 1.0)
+    if (gas_phase && S_L_data.S_L < 1.0)
     {
         double const rho_wv =
-            liquid_phase.property(MaterialPropertyLib::vapour_density)
+            gas_phase->property(MaterialPropertyLib::density)
                 .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
         double const drho_wv_dT =
-            liquid_phase.property(MaterialPropertyLib::vapour_density)
+            gas_phase->property(MaterialPropertyLib::density)
                 .template dValue<double>(variables, MPL::Variable::temperature,
                                          x_t.x, x_t.t, x_t.dt);
         double const drho_wv_dp =
-            liquid_phase.property(MaterialPropertyLib::vapour_density)
+            gas_phase->property(MaterialPropertyLib::density)
                 .template dValue<double>(variables,
                                          MPL::Variable::phase_pressure, x_t.x,
                                          x_t.t, x_t.dt);
         auto const f_Tv =
-            liquid_phase
-                .property(
+            gas_phase
+                ->property(
                     MPL::PropertyType::thermal_diffusion_enhancement_factor)
                 .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
         double const phi = poro_data.phi;
         variables.porosity = phi;
         double const D_v =
-            liquid_phase.property(MPL::PropertyType::vapour_diffusion)
+            gas_phase->property(MPL::PropertyType::diffusion)
                 .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
         out.J_pT_X_dNTdN = f_Tv * D_v * drho_wv_dT;
         out.K_pp_X_dNTdN = D_v * drho_wv_dp;
 
-        if (auto const& medium = media_data.medium; medium.hasPhase("Gas"))
-        {
-            if (auto const& gas_phase = medium.phase("Gas");
-                gas_phase.hasProperty(
-                    MPL::PropertyType::specific_heat_capacity))
-            {
-                // Vapour velocity
-                out.vapor_velocity =
-                    -(out.J_pT_X_dNTdN * T_data.grad_T -
-                      out.K_pp_X_dNTdN * p_cap_data.grad_p_cap) /
-                    rho_L_data.rho_LR;
-                double const specific_heat_capacity_vapor =
-                    gas_phase
-                        .property(MaterialPropertyLib::PropertyType::
-                                      specific_heat_capacity)
-                        .template value<double>(variables, x_t.x, x_t.t,
-                                                x_t.dt);
+        // Vapour velocity
+        out.vapor_velocity = -(out.J_pT_X_dNTdN * T_data.grad_T -
+                               out.K_pp_X_dNTdN * p_cap_data.grad_p_cap) /
+                             rho_L_data.rho_LR;
+        double const specific_heat_capacity_vapor =
+            gas_phase
+                ->property(
+                    MaterialPropertyLib::PropertyType::specific_heat_capacity)
+                .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
-                out.volumetric_heat_capacity_vapor =
-                    rho_wv * specific_heat_capacity_vapor;
-                out.M_TT_X_NTN += out.volumetric_heat_capacity_vapor *
-                                  (1 - S_L_data.S_L) * phi;
-            }
-        }
+        out.volumetric_heat_capacity_vapor =
+            rho_wv * specific_heat_capacity_vapor;
+        out.M_TT_X_NTN +=
+            out.volumetric_heat_capacity_vapor * (1 - S_L_data.S_L) * phi;
 
         out.storage_coefficient_by_water_vapor =
             phi *
@@ -113,12 +105,12 @@ void TRMVaporDiffusionModel<DisplacementDim>::eval(
         //
         // Latent heat term
         //
-        if (liquid_phase.hasProperty(MPL::PropertyType::latent_heat))
+        if (gas_phase->hasProperty(MPL::PropertyType::latent_heat))
         {
             double const factor = phi * (1 - S_L_data.S_L) / rho_L_data.rho_LR;
             // The volumetric latent heat of vaporization of liquid water
             double const L0 =
-                liquid_phase.property(MPL::PropertyType::latent_heat)
+                gas_phase->property(MPL::PropertyType::latent_heat)
                     .template value<double>(variables, x_t.x, x_t.t, x_t.dt) *
                 rho_L_data.rho_LR;
 
