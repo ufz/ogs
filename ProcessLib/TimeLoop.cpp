@@ -295,15 +295,15 @@ void TimeLoop::setCoupledSolutions()
 }
 
 bool computationOfChangeNeeded(
-    NumLib::TimeStepAlgorithm const* timestep_algorithm, double const time)
+    NumLib::TimeStepAlgorithm const& timestep_algorithm, double const time)
 {
     // for the first time step we can't compute the changes to the previous
     // time step
-    if (time == timestep_algorithm->begin())
+    if (time == timestep_algorithm.begin())
     {
         return false;
     }
-    return timestep_algorithm->isSolutionErrorComputationNeeded();
+    return timestep_algorithm.isSolutionErrorComputationNeeded();
 }
 
 std::pair<double, bool> TimeLoop::computeTimeStepping(
@@ -325,13 +325,13 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
     for (std::size_t i = 0; i < _per_process_data.size(); i++)
     {
         auto& ppd = *_per_process_data[i];
-        const auto& timestep_algorithm = ppd.timestep_algorithm;
+        auto& timestep_algorithm = *ppd.timestep_algorithm.get();
 
         auto const& x = *_process_solutions[i];
         auto const& x_prev = *_process_solutions_prev[i];
 
         const double solution_error =
-            computationOfChangeNeeded(timestep_algorithm.get(), t)
+            computationOfChangeNeeded(timestep_algorithm, t)
                 ? NumLib::computeRelativeNorm(
                       x, x_prev,
                       ppd.conv_crit.get() ? ppd.conv_crit->getVectorNormType()
@@ -341,16 +341,15 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
         ppd.timestep_current.setAccepted(
             ppd.nonlinear_solver_status.error_norms_met);
 
-        auto [previous_step_accepted, timestepper_dt] =
-            timestep_algorithm->next(
-                solution_error, ppd.nonlinear_solver_status.number_iterations,
-                ppd.timestep_previous, ppd.timestep_current);
+        auto [previous_step_accepted, timestepper_dt] = timestep_algorithm.next(
+            solution_error, ppd.nonlinear_solver_status.number_iterations,
+            ppd.timestep_previous, ppd.timestep_current);
 
         if (!previous_step_accepted &&
             // In case of FixedTimeStepping, which makes
-            // timestep_algorithm->next(...) return false when the ending time
+            // timestep_algorithm.next(...) return false when the ending time
             // is reached.
-            t + eps < timestep_algorithm->end())
+            t + eps < timestep_algorithm.end())
         {
             // Not all processes have accepted steps.
             all_process_steps_accepted = false;
@@ -365,7 +364,7 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
         }
 
         if (timestepper_dt > eps ||
-            std::abs(t - timestep_algorithm->end()) < eps)
+            std::abs(t - timestep_algorithm.end()) < eps)
         {
             dt = std::min(timestepper_dt, dt);
         }
