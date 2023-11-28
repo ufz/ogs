@@ -22,7 +22,7 @@ class BC_Y(OpenGeoSys.BoundaryCondition):
         self.glacier.plotEvolution()
 
     def getFlux(
-        self, t, coords, primary_vars
+        self, t, coords, _primary_vars
     ):  # here Neumann BC: flux of linear momentum
         x, y, z = coords
 

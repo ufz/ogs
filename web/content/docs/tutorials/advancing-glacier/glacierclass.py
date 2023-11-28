@@ -24,14 +24,14 @@ class glacier:
 
     # analytical function for the glacier's shape
     def local_height(self, x, t):
-        l = self.length(t)
-        if l == 0:
+        length = self.length(t)
+        if length == 0:
             return 0 * x
-        else:
-            xi = (x - self.x_0) / l
-            xi = np.array(xi)
-            xi[xi > 1] = 1.0
-            return self.height(t) * np.sqrt(1 - xi**1)
+
+        xi = (x - self.x_0) / length
+        xi = np.array(xi)
+        xi[xi > 1] = 1.0
+        return self.height(t) * np.sqrt(1 - xi**1)
 
     def height(self, t):
         return self.H_max * (t - self.t_0) / self.t_1
