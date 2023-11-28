@@ -1,7 +1,9 @@
+from math import cos, cosh, pi, sin, sinh
+
 import OpenGeoSys
-from math import pi, sin, cos, sinh, cosh
 
 a = 2.0 * pi / 3.0
+
 
 # analytical solution used to set the Dirichlet BCs
 def solution(x, y):

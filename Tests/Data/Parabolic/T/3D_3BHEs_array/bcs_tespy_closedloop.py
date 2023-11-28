@@ -9,9 +9,10 @@ import sys
 
 print(sys.version)
 import os
+
 import numpy as np
-from pandas import read_csv
 import OpenGeoSys
+from pandas import read_csv
 from tespy.networks import load_network
 
 # User setting ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -26,6 +27,7 @@ switch_dyn_demand = "on"  # 'on','off'
 if switch_dyn_demand == "on":
     # give the consumer name defined by user in the network model
     consumer_name = "consumer"
+
 
 # network status setting
 def network_status(t):

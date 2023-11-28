@@ -1,9 +1,9 @@
-import tempfile
 import os
 import platform
+import tempfile
 
-import pytest
 import ogs.simulator as sim
+import pytest
 
 
 def run(prjpath, outdir, expect_successful):

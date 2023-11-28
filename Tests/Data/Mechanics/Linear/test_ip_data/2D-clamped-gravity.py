@@ -16,15 +16,15 @@
 # # Deformation of a linear elastic Material due to its own gravity
 
 # %%
-import pyvista as pv
 import numpy as np
+import pyvista as pv
 
 pv.set_jupyter_backend("static")
 
-import matplotlib.pyplot as plt
-import subprocess
 import os
-import sys
+import subprocess
+
+import matplotlib.pyplot as plt
 
 # %%
 outdir = os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out")
@@ -318,7 +318,7 @@ fig.set_size_inches(12, 4)
 # # Checks (Assertions)
 
 # %%
-from IPython.display import display, HTML
+from IPython.display import HTML, display
 
 
 def allclose(x, y, abstol):

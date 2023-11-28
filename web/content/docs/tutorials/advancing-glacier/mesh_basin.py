@@ -8,9 +8,9 @@
 
 # The Python API is entirely defined in the `gmsh.py' module (which contains the
 # full documentation of all the functions in the API):
-import numpy
-import gmsh
 import os
+
+import gmsh
 
 # Before using any functions in the Python API, Gmsh must be initialized:
 gmsh.initialize()

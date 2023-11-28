@@ -6,13 +6,19 @@
 ###
 
 # Execute this file to generate TESPy network csv files
+import numpy as np
+from tespy.components import (
+    heat_exchanger_simple,
+    merge,
+    pump,
+    sink,
+    source,
+    splitter,
+)
+from tespy.connections import bus, connection, ref
 from tespy.networks import network
-from tespy.components import sink, source, splitter, merge, pump, heat_exchanger_simple
-from tespy.connections import connection, ref, bus
 from tespy.tools.characteristics import char_line
 from tespy.tools.data_containers import dc_cc
-
-import numpy as np
 
 # %% network
 btes = network(

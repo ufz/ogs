@@ -1,7 +1,6 @@
+import matplotlib.pyplot as plt
 import mtest
 import numpy as np
-import matplotlib.pyplot as plt
-
 
 GM0 = 9.54e3
 KM0 = 2.78e4

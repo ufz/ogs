@@ -22,8 +22,8 @@ make_cinema_table = False
 # paraview version 5.8.0
 # --------------------------------------------------------------
 
-from paraview.simple import *
 from paraview import coprocessing
+from paraview.simple import *
 
 # ----------------------- CoProcessor definition -----------------------
 

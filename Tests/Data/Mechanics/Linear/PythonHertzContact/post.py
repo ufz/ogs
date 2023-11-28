@@ -1,12 +1,10 @@
 #!/usr/bin/vtkpython
 
-from __future__ import print_function
-import vtk
-from vtk.util.numpy_support import vtk_to_numpy, numpy_to_vtk
-import numpy as np
-from scipy.interpolate import interp1d
-
 import matplotlib.pyplot as plt
+import numpy as np
+import vtk
+from scipy.interpolate import interp1d
+from vtk.util.numpy_support import numpy_to_vtk, vtk_to_numpy
 
 pvd_file = "out/hertz_pcs_0.pvd"
 
@@ -29,7 +27,7 @@ C = lambda_ * np.matrix([1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0]).reshap
 
 
 def p_contact(r, r_contact):
-    return kappa * np.sqrt(r_contact ** 2 - r ** 2)
+    return kappa * np.sqrt(r_contact**2 - r**2)
 
 
 ### helpers ##############################################
@@ -37,7 +35,7 @@ def p_contact(r, r_contact):
 import os
 
 try:
-    import xml.etree.cElementTree as ET
+    import xml.etree.ElementTree as ET
 except:
     import xml.etree.ElementTree as ET
 
@@ -163,7 +161,7 @@ for t, fn in zip(ts, fns):
 
             for node in range(3):
                 l1, l2 = T_inv * (cell_pts[node, :].T - cell_pts[2, :].T)
-                assert -1e-15 < l1 and 1 + 1e-15 > l1 and -1e-15 < l2 and 1 + 1e-15 > l2
+                assert l1 > -1e-15 and 1 + 1e-15 > l1 and l2 > -1e-15 and 1 + 1e-15 > l2
 
             grad = np.empty((2, 2))
             for comp in range(2):
@@ -237,9 +235,7 @@ for t, fn in zip(ts, fns):
             grid.GetPointData().AddArray(stress_symm_tensor_vtk)
 
             writer.SetInputData(grid)
-            writer.SetFileName(
-                os.path.join(os.path.dirname(fn), "post_{:.0f}.vtu".format(t))
-            )
+            writer.SetFileName(os.path.join(os.path.dirname(fn), f"post_{t:.0f}.vtu"))
             writer.Write()
 
             return grid
@@ -281,9 +277,9 @@ for t, fn in zip(ts, fns):
         avg_stress = np.empty_like(rs_int)
 
         for i, r in enumerate(rs_int):
-            rho_max = np.sqrt(r_contact ** 2 - r ** 2)
+            rho_max = np.sqrt(r_contact**2 - r**2)
             rhos = np.linspace(0, rho_max, 100)
-            xis = np.sqrt(rhos ** 2 + r ** 2)
+            xis = np.sqrt(rhos**2 + r**2)
             try:
                 assert max(xis) <= r_contact + 1e-8
             except:
@@ -345,7 +341,7 @@ for t, fn in zip(ts, fns):
             avg_stress_yy,
             color=h.get_color(),
             ls="-",
-            label=r"$w_0 = {}$".format(w_0),
+            label=rf"$w_0 = {w_0}$",
         )
 
         if False:
@@ -357,7 +353,7 @@ for t, fn in zip(ts, fns):
                 rs,
                 avg_stress_yy,
                 color=h.get_color(),
-                label=r"$w_0 = {}$".format(2 * (1.0 - y_top)),
+                label=rf"$w_0 = {2 * (1.0 - y_top)}$",
             )
 
         ax.scatter([r_contact], [0], color=h.get_color())
@@ -397,7 +393,7 @@ fig, ax = plt.subplots()
 ax.scatter(rs_contact[1:], Fs, label="ogs")
 
 rs_ref = np.linspace(0, max(rs_contact), 200)
-Fs_ref = 8.0 * rs_ref ** 3 * kappa / 3.0
+Fs_ref = 8.0 * rs_ref**3 * kappa / 3.0
 
 ax.plot(rs_ref, Fs_ref, label="ref")
 

@@ -12,19 +12,20 @@
 # attributes are untested.
 
 # prevent broken pipe error
-from signal import signal, SIGPIPE, SIG_DFL
+from signal import SIG_DFL, SIGPIPE, signal
 
 signal(SIGPIPE, SIG_DFL)
 
-from print23 import print_
+import json
 import os
 import sys
-import xml.etree.cElementTree as ET
-import json
+import xml.etree.ElementTree as ET
+
+from print23 import print_
 
 if len(sys.argv) != 3:
     sys.stderr.write("Usage:\n")
-    sys.stderr.write("{0} DATADIR DOCAUXDIR\n".format(sys.argv[0]))
+    sys.stderr.write(f"{sys.argv[0]} DATADIR DOCAUXDIR\n")
     sys.exit(1)
 
 datadir = sys.argv[1]
@@ -47,7 +48,7 @@ indent = "&nbsp;" * 2
 
 def format_if_documented(is_doc, fmt, fullpagename, tag_attr, *args):
     if is_doc:
-        tag_attr_formatted = r'\ref {0} "{1}"'.format(fullpagename, tag_attr)
+        tag_attr_formatted = rf'\ref {fullpagename} "{tag_attr}"'
     else:
         tag_attr_formatted = (
             r'<span style="color: red;" title="undocumented: {0}">{1}</span>'.format(
@@ -60,7 +61,7 @@ def format_if_documented(is_doc, fmt, fullpagename, tag_attr, *args):
 
 def format_if_documented_nowarn(is_doc, fmt, fullpagename, tag_attr, *args):
     if is_doc:
-        tag_attr_formatted = r'\ref {0} "{1}"'.format(fullpagename, tag_attr)
+        tag_attr_formatted = rf'\ref {fullpagename} "{tag_attr}"'
     else:
         tag_attr_formatted = tag_attr
 
@@ -241,7 +242,7 @@ def dict_of_set_add(dos, key, value):
     dos[key].add(value)
 
 
-for (dirpath, dirnames, filenames) in os.walk(datadir, topdown=False):
+for dirpath, dirnames, filenames in os.walk(datadir, topdown=False):
     reldirpath = os.path.relpath(dirpath, datadir)
     outdirpath = os.path.join(outdir, reldirpath)
     print_(">", reldirpath)
@@ -308,15 +309,13 @@ for (dirpath, dirnames, filenames) in os.walk(datadir, topdown=False):
 
         with open(os.path.join(outdirpath, "index.dox"), "w") as fh:
             fh.write(
-                """/*! \page {0} {1}
+                rf"""/*! \page {pagename} {pagetitle}
 
-""".format(
-                    pagename, pagetitle
-                )
+"""
             )
 
             for sp in sorted(subpages):
-                fh.write("- \\subpage {0}\n".format(sp))
+                fh.write(f"- \\subpage {sp}\n")
 
             fh.write(
                 """

@@ -1,7 +1,4 @@
-from __future__ import print_function
-
 import OpenGeoSys
-
 
 SPHERE_RADIUS = 1.0
 START_TIME = 0.0
@@ -95,14 +92,14 @@ class HertzContactBC(OpenGeoSys.BoundaryCondition):
 
         try:
             # check that we are at the outer boundary
-            assert abs(x ** 2 + y ** 2 + z ** 2 - SPHERE_RADIUS ** 2) < 1e-15
+            assert abs(x**2 + y**2 + z**2 - SPHERE_RADIUS**2) < 1e-15
         except:
             print(
                 "assert abs(x**2 + y**2 + z**2 - 1.0) < 1e-15",
                 x,
                 y,
                 z,
-                x ** 2 + y ** 2 + z ** 2 - SPHERE_RADIUS ** 2,
+                x**2 + y**2 + z**2 - SPHERE_RADIUS**2,
             )
             raise
 

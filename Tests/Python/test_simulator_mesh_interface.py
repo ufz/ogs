@@ -1,12 +1,8 @@
-import tempfile
 import os
 import sys
+import tempfile
 
 import numpy as np
-
-import pytest
-
-import ogs.mesh as mesh
 from ogs import simulator
 
 
@@ -45,7 +41,7 @@ def comparePointCoordinates(points):
             if (
                 float(x) != points[cnt, 0]
                 or float(y) != points[cnt, 1]
-                or 1.0 != points[cnt, 2]
+                or points[cnt, 2] != 1.0
             ):
                 print(
                     "Python: error: expected point [["
@@ -65,7 +61,7 @@ def checkCells(cells, celltypes, points):
             print("Python: error: cell isn't a quad")
 
     # structured mesh with equal size cells
-    for c in range(0, len(celltypes)):
+    for c in range(len(celltypes)):
         area = computeQuadArea(
             points[cells[5 * c + 1]],
             points[cells[5 * c + 2]],
@@ -92,7 +88,7 @@ def test_simulator():
 
     try:
         print("Python: OpenGeoSys.init ...")
-        assert 0 == simulator.initialize(arguments)
+        assert simulator.initialize(arguments) == 0
 
         top_boundary_grid = simulator.getMesh("cuboid_1x1x1_hex_27_top_boundary")
         # compare grid point coordinates with expected point coordinates
@@ -107,7 +103,7 @@ def test_simulator():
         )
 
         print("Python: OpenGeoSys.executeSimulation ...")
-        assert 0 == simulator.executeTimeStep()
+        assert simulator.executeTimeStep() == 0
         print("Python: simulator.executeTimeStep() done")
         top_boundary_grid = simulator.getMesh("cuboid_1x1x1_hex_27_top_boundary")
 

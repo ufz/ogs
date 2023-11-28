@@ -6,20 +6,17 @@
 ###
 
 # Execute this file to generate TESPy network csv files
-from tespy.networks import network
-from tespy.connections import connection, ref
+import numpy as np
 from tespy.components import (
-    source,
-    sink,
+    cycle_closer,
+    heat_exchanger_simple,
+    merge,
     pump,
     splitter,
-    merge,
-    heat_exchanger_simple,
-    cycle_closer,
 )
+from tespy.connections import connection
+from tespy.networks import network
 from tespy.tools import char_line, dc_cc
-import numpy as np
-
 
 # %% network
 btes = network(fluids=["water"], T_unit="K", p_unit="bar", h_unit="kJ / kg")

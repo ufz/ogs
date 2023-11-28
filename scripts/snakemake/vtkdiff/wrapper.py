@@ -5,6 +5,7 @@ __copyright__ = "Copyright 2020, OpenGeoSys Community"
 __license__ = "BSD"
 
 import os
+
 from snakemake.shell import shell
 
 if os.path.exists(snakemake.output[0]):

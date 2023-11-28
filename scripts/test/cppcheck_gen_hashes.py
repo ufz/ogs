@@ -16,4 +16,4 @@ for entry in data:
 with open(sys.argv[1], "w") as outfile:
     json.dump(data, outfile)
 
-print("Added cppcheck fingerprints to {}.".format(sys.argv[1]))
+print(f"Added cppcheck fingerprints to {sys.argv[1]}.")

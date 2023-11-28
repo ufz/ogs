@@ -30,7 +30,7 @@ wk = mtest.MTestWorkSpace()
 m.completeInitialisation()
 m.initializeCurrentState(s)
 m.initializeWorkSpace(wk)
-ltime = [float((tmax / (npas - 1))) * i for i in range(npas)]
+ltime = [float(tmax / (npas - 1)) * i for i in range(npas)]
 for i in range(npas - 1):
     m.execute(s, wk, ltime[i], ltime[i + 1])
     print(

@@ -7,24 +7,23 @@
 # linked-xml-file.py
 
 # prevent broken pipe error
-from signal import signal, SIGPIPE, SIG_DFL
+from signal import SIG_DFL, SIGPIPE, signal
 
 signal(SIGPIPE, SIG_DFL)
 
+import json
 import os
 import sys
-import xml.etree.cElementTree as ET
-import json
-from print23 import print_
 
 import pandas as pd
+from print23 import print_
 
 github_src_url = "https://gitlab.opengeosys.org/ogs/ogs/-/tree/master"
 github_data_url = "https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data"
 
 if len(sys.argv) != 4:
     print_("Usage:")
-    print_("{0} EXT DATADIR DOCAUXDIR".format(sys.argv[0]))
+    print_(f"{sys.argv[0]} EXT DATADIR DOCAUXDIR")
     sys.exit(1)
 
 ext = sys.argv[1]
@@ -54,7 +53,7 @@ def write_parameter_type_info(fh, tagpath, tagpath_expanded, dict_tag_info):
             for info in dict_tag_info[tagpath]:
                 path = info[1]
                 line = info[2]
-                fh.write(("\n## From {0} line {1}\n\n").format(path, line))
+                fh.write(f"\n## From {path} line {line}\n\n")
 
                 method = info[6]
 
@@ -87,9 +86,9 @@ def write_parameter_type_info(fh, tagpath, tagpath_expanded, dict_tag_info):
 
                 datatype = info[5]
                 if datatype:
-                    fh.write("- Data type: <code>{0}</code>\n".format(datatype))
+                    fh.write(f"- Data type: <code>{datatype}</code>\n")
 
-                fh.write("- Expanded tag path: {0}\n".format(tagpath_expanded))
+                fh.write(f"- Expanded tag path: {tagpath_expanded}\n")
 
                 fh.write(
                     "- Go to source code: [&rarr; ogs/ogs/master]({2}/{0}#L{1})\n".format(
@@ -217,7 +216,7 @@ with open(os.path.join(docauxdir, "ctest-media-info.json")) as fh:
     df_n_t_p_pcst = pd.read_json(fh, orient="records")
 
 # traverse dox file hierarchy
-for (dirpath, _, filenames) in os.walk(docdir):
+for dirpath, _, filenames in os.walk(docdir):
     reldirpath = dirpath[len(docdir) + 1 :]
     istag = True
 

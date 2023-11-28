@@ -1,6 +1,5 @@
-from paraview.simple import *
 from paraview import coprocessing
-
+from paraview.simple import *
 
 # --------------------------------------------------------------
 # Code generated from cpstate.py to create the CoProcessor.

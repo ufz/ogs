@@ -1,11 +1,10 @@
 # model of the evolving glacier extensions (length and height)
 # parameterized, independent of concrete geometry
 
-import numpy as np
-import matplotlib.pyplot as plt
 import os
 
-from math import pi, sin, cos, sinh, cosh, sqrt
+import matplotlib.pyplot as plt
+import numpy as np
 
 gravity = 9.81  # m/s²
 
