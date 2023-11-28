@@ -142,7 +142,7 @@ Re = rho_f * v * (2 * r_pi) / mu_f
 
 ```
 
-The Nusselt number can be determined by the following equation (Diersch 2013):
+The Nusselt number can be determined by the following equation (Diersch, 2013):
 
 $$
     Nu = 4.364,\  Re < 2300
@@ -153,7 +153,7 @@ $$
 $$
 
 $$
-    Nu = (1-\gamma_{k})\  4.364 + \gamma_{k} \Bigg\{ \frac{(0.0308/8)10^{4}\mathrm{Pr}}{1+12.7\  \sqrt{0.0308/8}(\mathrm{Pr}^{2/3}-1)} \left[ 1+\left(\frac{d_{k}^{i}}{L}\right)^{2/3} \right] \Bigg\}, 2 300 \leq Re < 10^{4}
+    Nu = (1-\gamma_{k})\  4.364 + \gamma_{k} \Big\{ \frac{(0.0308/8)10^{4}\mathrm{Pr}}{1+12.7\  \sqrt{0.0308/8}(\mathrm{Pr}^{2/3}-1)} \left[ 1+\left(\frac{d_{k}^{i}}{L}\right)^{2/3} \right] \Big\}, 2 300 \leq Re < 10^{4}
 $$
 
 with
