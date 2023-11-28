@@ -4,12 +4,14 @@ __author__ = "Lars Bilke"
 __copyright__ = "Copyright 2020, OpenGeoSys Community"
 __license__ = "BSD"
 
-import os
+from pathlib import Path
 
 from snakemake.shell import shell
 
-if os.path.exists(snakemake.output[0]):
-    os.remove(snakemake.output[0])
+# ruff: noqa: F821
+output = Path(snakemake.output[0])
+if output.exists():
+    output.unlink()
 
 if snakemake.params.check_mesh:
     shell("vtkdiff {snakemake.input.a} {snakemake.input.b} -m > {snakemake.output[0]}")

@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
 import os
+from pathlib import Path
 
 # need to increase OGS_CTEST_MAX_RUNTIME to enable these:
 # ctests = ["SurfaceComplexation", "EquilibriumPhase", "KineticReactant"]
 ctests = ["SteadyState", "ComponentTransport", "ThermoHydroMechanics"]
 report_path = "./coverage_reports"
 
-os.makedirs(report_path, exist_ok=True)
+Path(report_path).mkdir(parents=True, exist_ok=True)
 
 for t in ctests:
     os.system("cmake --build . -t clean_coverage")

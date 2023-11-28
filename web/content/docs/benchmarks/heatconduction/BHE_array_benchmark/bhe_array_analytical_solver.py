@@ -13,7 +13,7 @@ of a BHE array system proposed by Bayer2014
 Bayer, P., de Paly, M., & Beck, M. (2014).
 Strategic optimization of borehole heat exchanger field
 for seasonal geothermal heating and cooling.
-Applied Energy, 136, 445–453.
+Applied Energy, 136, 445-453.
 https://doi.org/10.1016/j.apenergy.2014.09.029
 
 Author: Shuang Chen

@@ -3,6 +3,7 @@ import sys
 import tempfile
 
 import numpy as np
+import ogs.mesh as mesh  # noqa: F401
 from ogs import simulator
 
 
@@ -120,9 +121,9 @@ def test_simulator():
         if len(read_back_bc_values) != len(bc_values_for_second_time_step):
             print(
                 "Python: error: data array size mismatch: got "
-                + str(len(new_bc_values))
+                + str(len(read_back_bc_values))
                 + ", expected "
-                + str(len(bc_values))
+                + str(len(bc_values_for_second_time_step))
             )
         comparison = read_back_bc_values == bc_values_for_second_time_step
         if not comparison.all():

@@ -213,6 +213,7 @@
         "OGS_INSTALL_DEPENDENCIES": "OFF",
         "OGS_USE_PIP": "OFF",
         "OGS_USE_MFRONT": "ON",
+        "DOGS_BUILD_PROCESSES": "SteadyStateDiffusion",
         "BUILD_SHARED_LIBS": "ON"
       }
     }
