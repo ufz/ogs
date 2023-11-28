@@ -108,11 +108,11 @@ int main(int argc, char* argv[])
     MathLib::Point3d const max(
         std::array<double, 3>{bounds[1], bounds[3], bounds[5]});
     std::array<double, 3> ranges = {max[0] - min[0], max[1] - min[1],
-                                   max[2] - min[2]};
+                                    max[2] - min[2]};
     if (ranges[0] < 0 || ranges[1] < 0 || ranges[2] < 0)
     {
-        ERR("The range ({},{},{}) is not allowed to be < 0",
-            ranges[0], ranges[1], ranges[2]);
+        ERR("The range ({},{},{}) is not allowed to be < 0", ranges[0],
+            ranges[1], ranges[2]);
 #ifdef USE_PETSC
         MPI_Finalize();
 #endif
