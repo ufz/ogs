@@ -18,8 +18,8 @@ namespace ProcessLib::ThermoRichardsMechanics
 template <int DisplacementDim>
 struct TRMVaporDiffusionData
 {
-    double volumetric_heat_capacity_vapor;
-    GlobalDimVector<DisplacementDim> vapor_velocity;
+    double heat_capacity_vapor;
+    GlobalDimVector<DisplacementDim> vapor_flux;
     double storage_coefficient_by_water_vapor;
 
     double J_pT_X_dNTdN;

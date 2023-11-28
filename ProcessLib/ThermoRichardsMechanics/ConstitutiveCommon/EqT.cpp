@@ -20,9 +20,8 @@ void EqTModel<DisplacementDim>::eval(
 {
     out.M_TT_X_NTN = heat_data.M_TT_X_NTN + vap_data.M_TT_X_NTN;
 
-    out.K_TT_NT_V_dN =
-        heat_data.advective_heat_flux_contribution_to_K_liquid +
-        vap_data.vapor_velocity * vap_data.volumetric_heat_capacity_vapor;
+    out.K_TT_NT_V_dN = heat_data.advective_heat_flux_contribution_to_K_liquid +
+                       vap_data.vapor_flux * vap_data.heat_capacity_vapor;
 }
 
 template struct EqTModel<2>;
