@@ -19,14 +19,9 @@ author = "Joy Brato Shil, Haibing Shao"
 image = "inclined2DBHE.png"
 +++
 
-
 This tutorial is made to illustrate the procedure of creating an OGS mesh file with inclined Borehole Heat Exchangers (BHEs) in it. Such mesh uses prism elements for the soil part, and line elements for the BHEs. However, in this tutorial of inclined BHEs, a layer of hexagonal shape prism mesh is created around each BHE for optimal accuracy (Diersch et al. 2011) and all other parts of the geometry consist of tetrahedron mesh element to avoid complexity in mesh creation. The produced mesh file is made explicitly for the HEAT_TRANSPORT_BHE module in OGS and will NOT work with other modules. For better understanding, an image of 1D inclined BHEs is presented.
 
 ![inclined_bhe_1D-2.png](attachment:inclined_bhe_1D-2.png)
-
-
-
-
 
 First, External packages have  been imported and gmsh is initialized.
 
@@ -315,11 +310,8 @@ If everything runs well, you will see the following mesh with incline BHEs.
 
 ![inclined3DBHE.png](attachment:inclined3DBHE.png)
 
-
-
 2D version will look like this.
 ![inclined2DBHE.png](attachment:inclined2DBHE.png)
-
 
 Now checking whether the Gmsh format mesh file is properly created. If not give an error message.
 
