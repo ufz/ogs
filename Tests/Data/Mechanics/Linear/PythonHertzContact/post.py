@@ -161,7 +161,10 @@ for t, fn in zip(ts, fns):
 
             for node in range(3):
                 l1, l2 = T_inv * (cell_pts[node, :].T - cell_pts[2, :].T)
-                assert l1 > -1e-15 and 1 + 1e-15 > l1 and l2 > -1e-15 and 1 + 1e-15 > l2
+                assert l1 > -1e-15
+                assert 1 + 1e-15 > l1
+                assert l2 > -1e-15
+                assert 1 + 1e-15 > l2
 
             grad = np.empty((2, 2))
             for comp in range(2):
@@ -295,9 +298,7 @@ for t, fn in zip(ts, fns):
         rs_int = np.linspace(min(rs), max(rs), max(len(rs), 200))
         stress_int = interp1d(rs, stress, bounds_error=False, fill_value=0.0)
 
-        F = 2.0 * np.pi * np.trapz(x=rs_int, y=rs_int * stress_int(rs_int))
-
-        return F
+        return 2.0 * np.pi * np.trapz(x=rs_int, y=rs_int * stress_int(rs_int))
 
     def stress_at_contact_area():
         global add_leg

@@ -7,19 +7,17 @@ from ogs import simulator
 
 
 def crossProduct(v, w):
-    u = np.array(
+    return np.array(
         [
             v[1] * w[2] - v[2] * w[1],
             v[2] * w[0] - v[0] * w[2],
             v[0] * w[1] - v[1] * w[0],
         ]
     )
-    return u
 
 
 def computeVectorFromPoints(a, b):
-    v = np.array([b[0] - a[0], b[1] - a[1], b[2] - a[2]])
-    return v
+    return np.array([b[0] - a[0], b[1] - a[1], b[2] - a[2]])
 
 
 def computeTriArea(a, b, c):

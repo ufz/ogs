@@ -33,7 +33,7 @@ undocumented = []
 unneeded_comments = []
 wrong_input = []
 no_doc_page = []
-unneeded_md_files = dict()
+unneeded_md_files = {}
 good_tagpaths = set()
 wrong_status = False
 
@@ -90,7 +90,7 @@ for dirpath, _, filenames in os.walk(srcdocdir):
         filepath = os.path.join(reldirpath, f)
         tag_or_attr = "param"
 
-        if f.startswith("i_") or f.startswith("c_"):
+        if f.startswith(("i_", "c_")):
             tagpath = reldirpath
         elif f.startswith("t_"):
             tagpath = os.path.join(reldirpath, f[2 : -len(".md")])

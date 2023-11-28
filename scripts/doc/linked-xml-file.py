@@ -51,7 +51,7 @@ def format_if_documented(is_doc, fmt, fullpagename, tag_attr, *args):
         tag_attr_formatted = rf'\ref {fullpagename} "{tag_attr}"'
     else:
         tag_attr_formatted = (
-            r'<span style="color: red;" title="undocumented: {0}">{1}</span>'.format(
+            r'<span style="color: red;" title="undocumented: {}">{}</span>'.format(
                 fullpagename, tag_attr
             )
         )
@@ -223,17 +223,14 @@ with open(os.path.join(docauxdir, "documented-parameters-cache.txt")) as fh:
 
 
 def has_prj_file_in_subdirs(reldirpath):
-    for dn in dirs_with_prj_files:
-        if dn.startswith(reldirpath):
-            return True
-    return False
+    return any(dn.startswith(reldirpath) for dn in dirs_with_prj_files)
 
 
 dirs_with_prj_files = set()
 
 # maps tags/attributes to the set of prj files they appear in
-map_tag_to_prj_files = dict()
-map_attr_to_prj_files = dict()
+map_tag_to_prj_files = {}
+map_attr_to_prj_files = {}
 
 
 def dict_of_set_add(dos, key, value):
@@ -265,12 +262,11 @@ for dirpath, dirnames, filenames in os.walk(datadir, topdown=False):
 
             with open(outdoxfile, "w") as fh:
                 fh.write(
-                    r"""/*! \page %s %s
+                    rf"""/*! \page {pagename} {fn}
 
 \parblock
 <tt>
 """
-                    % (pagename, fn)
                 )
 
                 try:

@@ -84,10 +84,9 @@ def dyn_frate(t):
 # create network dataframe
 def create_dataframe():
     # return dataframe
-    df_nw = read_csv(
+    return read_csv(
         "./pre/bhe_network.csv", delimiter=";", index_col=[0], dtype={"data_index": str}
     )
-    return df_nw
 
 
 # TESPy calculation process

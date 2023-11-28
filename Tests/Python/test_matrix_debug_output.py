@@ -139,16 +139,16 @@ def test_local_matrix_debug_output(monkeypatch, prefix_parameter, elements_param
         # https://docs.pytest.org/en/6.2.x/reference.html#pytest.MonkeyPatch
         with monkeypatch.context() as ctx:
             # prepare environment
-            if prefix_setting == False:
+            if prefix_setting is False:
                 pass
-            elif prefix_setting == True:
+            elif prefix_setting is True:
                 ctx.setenv("OGS_LOCAL_MAT_OUT_PREFIX", tmpdirname + os.sep)
             elif prefix_setting == "" or prefix_setting.startswith("."):
                 ctx.setenv("OGS_LOCAL_MAT_OUT_PREFIX", prefix_setting)
                 # change to the temporary directory such that log files will be written there.
                 ctx.chdir(tmpdirname)
 
-            if elements_setting != False:
+            if elements_setting is not False:
                 ctx.setenv("OGS_LOCAL_MAT_OUT_ELEMENTS", elements_setting)
 
             # run and test
@@ -200,9 +200,9 @@ def test_global_matrix_debug_output(monkeypatch, prefix_parameter):
         # https://docs.pytest.org/en/6.2.x/reference.html#pytest.MonkeyPatch
         with monkeypatch.context() as ctx:
             # prepare environment
-            if prefix_setting == False:
+            if prefix_setting is False:
                 pass
-            elif prefix_setting == True:
+            elif prefix_setting is True:
                 ctx.setenv("OGS_GLOBAL_MAT_OUT_PREFIX", tmpdirname + os.sep)
             elif prefix_setting == "" or prefix_setting.startswith("."):
                 ctx.setenv("OGS_GLOBAL_MAT_OUT_PREFIX", prefix_setting)

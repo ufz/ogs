@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import mtest as mtest
+import mtest
 import numpy as np
 
 m = mtest.MTest()

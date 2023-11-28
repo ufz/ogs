@@ -6,7 +6,7 @@ START_TIME = 0.0
 
 class HertzContactBC(OpenGeoSys.BoundaryCondition):
     def __init__(self):
-        super(HertzContactBC, self).__init__()
+        super().__init__()
 
         self._first_node = None  # ID of the first node of this BC's geometry
         self._t_old = START_TIME - 1.0  # time of previous invocation of this BC
@@ -128,7 +128,7 @@ class HertzContactBC(OpenGeoSys.BoundaryCondition):
                 # set change for changing primary variables.
 
                 if x <= self._a_prev:
-                    assert False  # this case shouldn't happen
+                    raise AssertionError()  # this case shouldn't happen
                     res = (True, y_top - y)
                 elif self._boundary_x_coords_are_initialized(t):
                     idx = self._boundary_x_coords.index(x)

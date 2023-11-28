@@ -25,16 +25,14 @@ def parse_and_filter_prj_file(file_path):
             elif p == "OpenGeoSysProject/processes/process":
                 yield obj  # this is interesting, yield it
             elif p.startswith("OpenGeoSysProject/media/"):
-                if elem.tag in set(("type", "name")):
+                if elem.tag in {"type", "name"}:
                     parent = objs[-1]
                     parent[elem.tag] = elem.text
-                elif elem.tag in set(
-                    (
-                        "phase",
-                        # "component",
-                        "property",
-                    )
-                ):
+                elif elem.tag in {
+                    "phase",
+                    # "component",
+                    "property",
+                }:
                     yield obj  # this is interesting, yield it
 
 
@@ -42,7 +40,7 @@ def parse_all_prj_files(datadir):
     records = []
     map_file_path_to_pcs_type = {}
 
-    for i, (root, dirs, files) in enumerate(os.walk(datadir)):
+    for _i, (root, _dirs, files) in enumerate(os.walk(datadir)):
         for f in files:
             if not f.endswith(".prj"):
                 continue
@@ -75,7 +73,7 @@ def parse_all_prj_files(datadir):
     df_pcst = pd.DataFrame.from_dict(
         map_file_path_to_pcs_type, orient="index", columns=["pcs_type"]
     )
-    df_n_t_p_pcst = (
+    return (
         df_n_t_p.join(df_pcst)
         .drop_duplicates()
         .sort_values(["pcs_type", "path", "name"])
@@ -83,7 +81,6 @@ def parse_all_prj_files(datadir):
     )
 
     # columns: Name, Type, ~xml xPath, ProCeSs Type
-    return df_n_t_p_pcst
 
 
 def main(datadir, docauxdir):

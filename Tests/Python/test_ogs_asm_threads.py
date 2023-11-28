@@ -76,7 +76,7 @@ def test_ogs_asm_threads_env_var(monkeypatch, asm_threads_parameter):
         # https://docs.pytest.org/en/6.2.x/reference.html#pytest.MonkeyPatch
         with monkeypatch.context() as ctx:
             # prepare environment
-            if asm_threads_setting != False:
+            if asm_threads_setting is not False:
                 ctx.setenv("OGS_ASM_THREADS", asm_threads_setting)
 
             ctx.chdir(tmpdirname)

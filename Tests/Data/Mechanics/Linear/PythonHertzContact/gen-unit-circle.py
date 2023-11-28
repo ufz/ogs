@@ -30,10 +30,7 @@ def distribute_points_evenly(c2):
     for node, r in enumerate(r2):
         b = nbin[node]
         i = bins[b].index(node)
-        if len(bins[b]) == 1:
-            phi = 0.0
-        else:
-            phi = np.pi * 0.5 / (len(bins[b]) - 1) * i
+        phi = 0.0 if len(bins[b]) == 1 else np.pi * 0.5 / (len(bins[b]) - 1) * i
 
         c3[node, 0] = r * np.cos(phi)
         c3[node, 1] = r * np.sin(phi)

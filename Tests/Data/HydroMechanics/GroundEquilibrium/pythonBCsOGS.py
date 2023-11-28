@@ -30,9 +30,7 @@ T = 1e6  # s
 
 
 def ExternalDisplacement(x, t):
-    uy = u_max * (t / T) * (x / Lx) ** 2
-
-    return uy
+    return u_max * (t / T) * (x / Lx) ** 2
 
 
 # Hydraulic BCs

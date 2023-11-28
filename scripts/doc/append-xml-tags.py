@@ -91,8 +91,8 @@ def write_parameter_type_info(fh, tagpath, tagpath_expanded, dict_tag_info):
                 fh.write(f"- Expanded tag path: {tagpath_expanded}\n")
 
                 fh.write(
-                    "- Go to source code: [&rarr; ogs/ogs/master]({2}/{0}#L{1})\n".format(
-                        path, line, github_src_url
+                    "- Go to source code: [&rarr; ogs/ogs/master]({}/{}#L{})\n".format(
+                        github_src_url, path, line
                     )
                 )
         else:
@@ -199,7 +199,7 @@ def dict_of_list_append(dict_, key, value):
 
 
 # maps tags to additional parameter info obtained prior to this script
-dict_tag_info = dict()
+dict_tag_info = {}
 
 with open(os.path.join(docauxdir, "tested-parameters-cache.json")) as fh:
     tested_tags_attrs = json.load(fh)
@@ -224,7 +224,7 @@ for dirpath, _, filenames in os.walk(docdir):
         if not f.endswith(".dox"):
             continue
 
-        if f.startswith("i_") or f.startswith("c_"):
+        if f.startswith(("i_", "c_")):
             tagpath = reldirpath
         elif f.startswith("t_"):
             tagpath = os.path.join(reldirpath, f[2 : -len(".dox")])
