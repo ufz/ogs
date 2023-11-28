@@ -47,6 +47,34 @@ struct SecondaryData
     std::vector<ShapeMatrixType, Eigen::aligned_allocator<ShapeMatrixType>> N;
 };
 
+template <int DisplacementDim, typename ShapeMatricesType>
+Eigen::Matrix<double, MPL::tensorSize(DisplacementDim),
+              MPL::tensorSize(DisplacementDim)>
+computeSigmaGeom(Eigen::Matrix3d const& sigma_tensor)
+{
+    static constexpr auto& sigma_geom_op = MathLib::eigenBlockMatrixView<
+        DisplacementDim,
+        Eigen::Matrix<double, DisplacementDim, DisplacementDim>>;
+
+    using SigmaGeom = Eigen::Matrix<double, MPL::tensorSize(DisplacementDim),
+                                    MPL::tensorSize(DisplacementDim)>;
+    if constexpr (DisplacementDim == 2)
+    {
+        SigmaGeom sigma_geom = SigmaGeom::Zero(5, 5);
+        sigma_geom.template block<4, 4>(0, 0) =
+            sigma_geom_op(sigma_tensor.template block<2, 2>(0, 0).eval());
+        sigma_geom(4, 4) = sigma_tensor(2, 2);
+
+        return sigma_geom;
+    }
+
+    if constexpr (DisplacementDim == 3)
+    {
+        // Assuming sigma_geom_op is defined for 3D
+        return sigma_geom_op(sigma_tensor);
+    }
+}
+
 template <typename ShapeFunction, int DisplacementDim>
 class LargeDeformationLocalAssembler
     : public LargeDeformationLocalAssemblerInterface<DisplacementDim>
@@ -73,9 +101,6 @@ public:
 
     static constexpr auto& N_u_op = MathLib::eigenBlockMatrixView<
         DisplacementDim, typename ShapeMatricesType::NodalRowVectorType>;
-    static constexpr auto& sigma_geom_op = MathLib::eigenBlockMatrixView<
-        DisplacementDim,
-        Eigen::Matrix<double, DisplacementDim, DisplacementDim>>;
 
     LargeDeformationLocalAssembler(LargeDeformationLocalAssembler const&) =
         delete;
@@ -327,24 +352,12 @@ public:
             local_b.noalias() -=
                 (B.transpose() * sigma - N_u_op(N).transpose() * b) * w;
 
-            auto const sigma_tensor =
-                MathLib::KelvinVector::kelvinVectorToTensor(sigma);
-            if constexpr (DisplacementDim == 2)
-            {
-                using SigmaGeom =
-                    typename ShapeMatricesType::template MatrixType<5, 5>;
-                SigmaGeom sigma_geom = SigmaGeom::Zero(5, 5);
-                sigma_geom.template block<4, 4>(0, 0) = sigma_geom_op(
-                    sigma_tensor.template block<2, 2>(0, 0).eval());
-                sigma_geom(4, 4) = sigma_tensor(2, 2);
+            auto const sigma_geom =
+                computeSigmaGeom<DisplacementDim, ShapeMatricesType>(
+                    MathLib::KelvinVector::kelvinVectorToTensor(sigma));
 
-                local_Jac.noalias() += G.transpose() * sigma_geom * G * w;
-            }
-            if constexpr (DisplacementDim == 3)
-            {
-                local_Jac.noalias() +=
-                    G.transpose() * sigma_geom_op(sigma_tensor) * G * w;
-            }
+            local_Jac.noalias() += G.transpose() * sigma_geom * G * w;
+
             local_Jac.noalias() += B.transpose() * C * B * w;
         }
     }
