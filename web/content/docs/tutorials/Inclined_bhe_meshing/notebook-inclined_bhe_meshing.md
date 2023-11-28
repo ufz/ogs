@@ -1,23 +1,10 @@
----
-jupyter:
-  jupytext:
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.15.2
-  kernelspec:
-    display_name: Python 3 (ipykernel)
-    language: python
-    name: python3
----
-
 +++
 title = "Creating OpenGeoSys Mesh with Inclined Borehole Heat Exchangers"
 date = "2023-11-27"
 author = "Joy Brato Shil, Haibing Shao"
 image = "inclined2DBHE.png"
 +++
+
 
 This tutorial is made to illustrate the procedure of creating an OGS mesh file with inclined Borehole Heat Exchangers (BHEs) in it. Such mesh uses prism elements for the soil part, and line elements for the BHEs. However, in this tutorial of inclined BHEs, a layer of hexagonal shape prism mesh is created around each BHE for optimal accuracy (Diersch et al. 2011) and all other parts of the geometry consist of tetrahedron mesh element to avoid complexity in mesh creation. The produced mesh file is made explicitly for the HEAT_TRANSPORT_BHE module in OGS and will NOT work with other modules. For better understanding, an image of 1D inclined BHEs is presented.
 
@@ -299,9 +286,8 @@ gmsh.write(f"{out_dir}/{bhe_mesh_file_name}.msh")
 Launch the GUI to see the results. Later `gmsh.finalize()` will be called when done using Gmsh Python API
 
 ```python
-if "-nopopup" not in sys.argv:
+if "CI" not in os.environ:
     gmsh.fltk.run()
-
 
 gmsh.finalize()
 ```
