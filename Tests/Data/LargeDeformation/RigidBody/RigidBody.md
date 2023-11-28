@@ -6,7 +6,7 @@ web_subsection = "large-deformations"
 +++
 
 
-|<div style="width:330px"><img src="https://www.ufz.de/static/custom/weblayout/DefaultInternetLayout/img/logos/ufz_transparent_de_blue.png" width="300"/></div>|<div style="width:330px"><img src="https://discourse.opengeosys.org/uploads/default/original/1X/a288c27cc8f73e6830ad98b8729637a260ce3490.png" width="300"/></div>|<div style="width:330px"><img src="https://tu-freiberg.de/sites/default/files/media/freiberger-alumni-netzwerk-6127/wbm_orig_rgb_0.jpg" width="300"/></div>|
+|<div style="width:330px"><img src="https://www.ufz.de/static/custom/weblayout/DefaultInternetLayout/img/logos/ufz_transparent_de_blue.png" width="300"/></div>|<div style="width:330px"><img src="https://discourse.opengeosys.org/uploads/default/original/1X/a288c27cc8f73e6830ad98b8729637a260ce3490.png" width="300"/></div>|<div style="width:330px"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/TUBAF_Logo.svg" width="300"/></div>|
 |---|---|--:|
 
 In this benchmark we test a basic kinematic feature of the finite strain / large
@@ -86,8 +86,8 @@ if not os.path.exists(out_dir):
 ```
 
 ```python jupyter={"source_hidden": true}
-model_s = ogs.OGS(INPUT_FILE="square_1e0.prj", PROJECT_FILE="square_1e0_small.prj")
-model = ogs.OGS(INPUT_FILE="square_1e0.prj", PROJECT_FILE="square_1e0.prj")
+model_s = ogs.OGS(INPUT_FILE="square_1e0.prj", PROJECT_FILE=f"{out_dir}/square_1e0_small.prj")
+model = ogs.OGS(PROJECT_FILE="square_1e0.prj")
 ```
 
 ```python jupyter={"source_hidden": true}
@@ -99,7 +99,7 @@ model_s.write_input()
 
 ```python jupyter={"source_hidden": true}
 model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir}")
-model_s.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir}")
+model_s.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
 ```
 
 ```python jupyter={"source_hidden": true}

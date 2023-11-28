@@ -6,7 +6,7 @@ web_subsection = "large-deformations"
 +++
 
 
-|<div style="width:330px"><img src="https://www.ufz.de/static/custom/weblayout/DefaultInternetLayout/img/logos/ufz_transparent_de_blue.png" width="300"/></div>|<div style="width:330px"><img src="https://discourse.opengeosys.org/uploads/default/original/1X/a288c27cc8f73e6830ad98b8729637a260ce3490.png" width="300"/></div>|<div style="width:330px"><img src="https://tu-freiberg.de/sites/default/files/media/freiberger-alumni-netzwerk-6127/wbm_orig_rgb_0.jpg" width="300"/></div>|
+|<div style="width:330px"><img src="https://www.ufz.de/static/custom/weblayout/DefaultInternetLayout/img/logos/ufz_transparent_de_blue.png" width="300"/></div>|<div style="width:330px"><img src="https://discourse.opengeosys.org/uploads/default/original/1X/a288c27cc8f73e6830ad98b8729637a260ce3490.png" width="300"/></div>|<div style="width:330px"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/TUBAF_Logo.svg" width="300"/></div>|
 |---|---|--:|
 
 ## Convergence under large deformations (preliminary)
@@ -84,7 +84,7 @@ if not os.path.exists(out_dir):
 ```
 
 ```python jupyter={"source_hidden": true}
-model = ogs.OGS(INPUT_FILE="bar1to6_torsion.prj", PROJECT_FILE="bar1to6_torsion.prj")
+model = ogs.OGS(PROJECT_FILE="bar1to6_torsion.prj")
 ```
 
 ```python jupyter={"source_hidden": true}
