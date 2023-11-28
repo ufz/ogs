@@ -23,7 +23,7 @@ This tutorial is made to illustrate the procedure of creating an OGS mesh file w
 
 ![inclined_bhe_1D-2.png](attachment:inclined_bhe_1D-2.png)
 
-First, External packages have  been imported and gmsh is initialized.
+First, External packages have  been imported and Gmsh is initialized.
 
 ```python
 import os
@@ -64,7 +64,7 @@ elem_size = 0.5
 ```
 
 In this step, we are going to create the top surface using the python interface of Gmsh.
-To create a point with the built-in CAD kernel, the Python API function gmsh.model.geo.addPoint() is used.
+To create a point with the built-in CAD kernel, the Python API function `gmsh.model.geo.addPoint()` is used.
 The first 3 arguments are the point coordinates (x, y, z)
 The next (optional) argument is the target mesh size close to the point
 The last (optional) argument is the point tag (a strictly positive integer that uniquely identifies the point).
@@ -78,7 +78,7 @@ gmsh.model.geo.addPoint(width / 2.0, length, 0.0, elem_size, 3)
 gmsh.model.geo.addPoint(-width / 2.0, length, 0.0, elem_size, 4)
 ```
 
-Next, the API function gmsh.model.geo.addLine is used to create straight-line segments with the built-in kernel follows the same conventions:
+Next, the API function `gmsh.model.geo.addLine` is used to create straight-line segments with the built-in kernel follows the same conventions:
 the first 2 arguments are point tags (the start and end points of the line), and the last (optional) is the line tag. Note that curve tags are separate from point tags.
 Hence we can reuse tag '1' for our first curve. And as a general rule, elementary entity tags in Gmsh have to be unique per geometrical dimension.
 
@@ -97,10 +97,10 @@ gmsh.model.geo.addCurveLoop([1, 2, 3, 4], 1)
 ```
 
 In this step, the structure of the geometry is added.
-In order to create the structure, bottom surface and other surrounding sufaces have been created using similar method to the top surface.
+In order to create the structure, bottom surface and other surrounding surfaces have been created using similar method to the top surface.
 Hence, four points of the bottom surface have been added.
 Later, all necessary lines have been added to build the 3D geometry.
-Next, 5 curve loops (4 surroundings and 1 bottom) have been defined and corresponding plane surface is added using the API function gmsh.model.geo.addPlaneSurface.
+Next, 5 curve loops (4 surroundings and 1 bottom) have been defined and corresponding plane surface is added using the API function `gmsh.model.geo.addPlaneSurface`.
 
 ```python
 gmsh.model.geo.addPoint(-width / 2.0, 0.0, -depth, elem_size, 101)
@@ -199,17 +199,17 @@ gmsh.model.geo.addPlaneSurface([4], 4)
 gmsh.model.geo.synchronize()
 ```
 
-The 'gmsh.model.geo.extrude' command extrudes BHE surface 1, 2 and 3 along the z axis and automatically creates a new volume (as well as all the needed points, curves and surfaces).
+The `gmsh.model.geo.extrude` command extrudes BHE surface 1, 2 and 3 along the z axis and automatically creates a new volume (as well as all the needed points, curves and surfaces).
 The function takes a vector of (dim, tag) pairs as input as well as the translation vector, and returns a vector of (dim, tag) pairs as output.
 For the BHE 1 and 2 in translational vector, x-cordinate is set to 2 and -2 respectively in order to create inclined BHE along x-direction.
 As a result, the end point of BHEs will be deflected by 2 units along (+) and (-) x-direction.
 
-The 2D mesh extrusion is done with the same 'extrude()' function, but by specifying element 'Layers' (Here, one layer each with 10 subdivisions).
+The 2D mesh extrusion is done with the same `extrude()` function, but by specifying element 'Layers' (Here, one layer each with 10 subdivisions).
 The number of elements for each layer and the (end) height of each layer are specified in two vectors.
 The last (optional) argument for the extrude() function specifies whether the extruded mesh should be recombined or not.
-In this case, it is 'True' since we want to recombine and produce prism mesh elements.
+In this case, it is `True` since we want to recombine and produce prism mesh elements.
 
-Later, BHE points 5, 12 and 19 have been extruded in the same way to create line elements (Lr, Ll and Lm) which represent BHEs.
+Later, BHE points 5, 12 and 19 have been extruded in the same way to create line elements (`Lr`, `Ll` and `Lm`) which represent BHEs.
 
 ```python
 P = gmsh.model.geo.extrude([(2, 2)], 2, 0, -10, [10], [1], True)  # BHE surface 1
@@ -226,8 +226,8 @@ gmsh.model.geo.synchronize()
 Finally, geometry surface 1 is created by combining curve loop 1, 2, 3 and 4.
 Here, 2, 3, 4 are BHE curve loops and 1 is geometry curve loop.
 After that, 6 surfaces of geometry and 21 surfaces from 3 BHE hexagonal object is combined to create a surface loop.
-Later, volume is added to the surface loop using API function gmsh.model.geo.addVolume.
-Before creating mesh, gmsh.model.geo.synchronize is used to synchronize the CAD entities with the Gmsh model, which will create the relevant Gmsh data structures.
+Later, volume is added to the surface loop using API function `gmsh.model.geo.addVolume`.
+Before creating mesh, `gmsh.model.geo.synchronize` is used to synchronize the CAD entities with the Gmsh model, which will create the relevant Gmsh data structures.
 
 ```python
 gmsh.model.geo.addPlaneSurface([1, 2, 3, 4], 1)
@@ -268,9 +268,9 @@ v = gmsh.model.geo.addVolume([sl])
 gmsh.model.geo.synchronize()
 ```
 
-Later 'gmsh.model.addPhysicalGroup' command used to group elementary geometrical entities to define material properties.
+Later `gmsh.model.addPhysicalGroup` command used to group elementary geometrical entities to define material properties.
 Gmsh will export in output files only mesh elements that belong to at least one physical group.
-Physical groups are also identified by tags, i.e. stricly positive integers, that should be unique per dimension (0D, 1D, 2D or 3D).
+Physical groups are also identified by tags, i.e. strictly positive integers, that should be unique per dimension (0D, 1D, 2D or 3D).
 Here, BHE 1, 2 and 3 are tagged by 2, 3, 4 physical group respectively.
 
 ```python
@@ -296,7 +296,7 @@ gmsh.model.mesh.removeDuplicateNodes()
 gmsh.write(f"{out_dir}/{bhe_mesh_file_name}.msh")
 ```
 
-Launch the GUI to see the results. Later gmsh.finalize() will be called when done using GMSH Python API
+Launch the GUI to see the results. Later `gmsh.finalize()` will be called when done using Gmsh Python API
 
 ```python
 if "-nopopup" not in sys.argv:
@@ -323,7 +323,7 @@ else:
     print("Error! Gmsh file is not properly created in the BHE meshing tutorial.")
 ```
 
-Finally, the mesh file which has been created using the python interface of Gmsh, will be converted to OGS mesh, in particular to VTU file format. Please, add ogs.exe to the directory of this example file to run GMSH2OGS or give the full path of your ogs executable. Here, option -v (--validation) validate the mesh and shows crucial information of mesh. Option -i takes gmsh input file name as string and -o is output file name as string as well.
+Finally, the mesh file which has been created using the python interface of Gmsh, will be converted to OGS mesh, in particular to VTU file format. Please, add ogs.exe to the directory of this example file to run GMSH2OGS or give the full path of your ogs executable. Here, option -v (--validation) validate the mesh and shows crucial information of mesh. Option -i takes Gmsh input file name as string and -o is output file name as string as well.
 
 ```python
 !GMSH2OGS -i {out_dir}/{bhe_mesh_file_name}.msh -o {out_dir}/{bhe_mesh_file_name}.vtu -v
