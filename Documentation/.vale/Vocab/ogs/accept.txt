@@ -16,6 +16,7 @@ Biot
 Boog
 Boussinesq
 Brasileira
+Brato
 Bruns
 CLion
 Dalen
@@ -56,6 +57,7 @@ Gnielinski
 Goswami
 Guix
 Guo
+Haibing
 Heidemann
 Homebrew
 Horner
@@ -91,9 +93,9 @@ MODFLOW
 MTest
 nbconvert
 nbdime
-NetCDF
 Netbeans
 NetBeans
+NetCDF
 Neumann
 Nusselt
 ogs
@@ -134,6 +136,7 @@ Scheidegger
 semianalytical
 SGrid
 Shao
+Shil
 shortcode
 Snakemake
 Srivastava
