@@ -77,8 +77,9 @@ TEST(Material, checkWaterVapourEnthalpyIAPWSIF97Region4)
     for (int i = 0; i < 4; i++)
     {
         variable_array.phase_pressure = p[i];
-        ASSERT_NEAR(expected_h[i],
-                    property.template value<double>(variable_array, pos, t, dt) / 1e3,
-                    1.e-8);
+        ASSERT_NEAR(
+            expected_h[i],
+            property.template value<double>(variable_array, pos, t, dt) / 1e3,
+            1.e-8);
     }
 }

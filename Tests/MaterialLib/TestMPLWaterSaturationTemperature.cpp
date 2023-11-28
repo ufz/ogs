@@ -14,7 +14,6 @@
 #include <gtest/gtest.h>
 
 #include <array>
-
 #include <memory>
 
 #include "MaterialLib/MPL/Properties/CreateWaterSaturationTemperatureIAPWSIF97Region4.h"

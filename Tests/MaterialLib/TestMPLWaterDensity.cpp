@@ -43,27 +43,27 @@ TEST(Material, checkWaterDensityIAPWSIF97Region1_)
 
     const double rho_expected = 890.98496087498256;
 
-    ASSERT_NEAR(rho_expected, property.template value<double>(
-                variable_array, pos, t, dt), 1.e-10);
+    ASSERT_NEAR(rho_expected,
+                property.template value<double>(variable_array, pos, t, dt),
+                1.e-10);
 
     const double drho_dT = property.template dValue<double>(
-                variable_array, MaterialPropertyLib::Variable::temperature, pos,
-                t, dt);
+        variable_array, MaterialPropertyLib::Variable::temperature, pos, t, dt);
     const double drho_dp = property.template dValue<double>(
-                variable_array, MaterialPropertyLib::Variable::phase_pressure, pos,
-                t, dt);
+        variable_array, MaterialPropertyLib::Variable::phase_pressure, pos, t,
+        dt);
 
     const double perturbation = 1.e-4;
 
     // Test the differentiation: with respect to temperature:
     variable_array.temperature += perturbation;
-    const double rho_T1 = property.template value<double>(
-                variable_array, pos, t, dt);
+    const double rho_T1 =
+        property.template value<double>(variable_array, pos, t, dt);
     ASSERT_NEAR((rho_T1 - rho_expected) / perturbation, drho_dT, 1.e-6);
 
     // Test the differentiation: with respect to pressure:
     variable_array.phase_pressure += perturbation;
-    const double rho_p1 = property.template value<double>(
-                variable_array, pos, t, dt);
+    const double rho_p1 =
+        property.template value<double>(variable_array, pos, t, dt);
     ASSERT_NEAR((rho_p1 - rho_T1) / perturbation, drho_dp, 1.e-6);
 }
