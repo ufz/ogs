@@ -413,9 +413,10 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     out.dK_TT_dp.noalias() =
         N.transpose() * (CD.heat_data.K_Tp_NT_V_dN.transpose() * dNdx) +
-        CD.heat_data.K_Tp_X_NTN * NTN + CD.vap_data.K_Tp_X_dNTdN * dNTdN;
+        CD.heat_data.K_Tp_X_NTN * NTN;
     out.K_Tp.noalias() =
-        dNdx.transpose() * CD.th_osmosis_data.K_Tp_Laplace * dNdx;
+        dNdx.transpose() * CD.th_osmosis_data.K_Tp_Laplace * dNdx +
+        CD.vap_data.K_Tp_X_dNTdN * dNTdN;
 
     out.K_pp.noalias() = dNdx.transpose() * CD.eq_p_data.K_pp_Laplace * dNdx +
                          CD.vap_data.K_pp_X_dNTdN * dNTdN;
