@@ -22,6 +22,7 @@ make_cinema_table = False
 # paraview version 5.8.0
 # --------------------------------------------------------------
 
+# ruff: noqa
 from paraview import coprocessing
 from paraview.simple import *
 

@@ -1,3 +1,4 @@
+# ruff: noqa
 from paraview import coprocessing
 from paraview.simple import *
 
