@@ -17,7 +17,6 @@
 #include "CondItem.h"
 #include "ProcessModel.h"
 #include "ProcessVarItem.h"
-//#include "FEMConditionSetupDialog.h"
 #include "SelectMeshDialog.h"
 
 ProcessView::ProcessView(QWidget* parent) : QTreeView(parent) {}

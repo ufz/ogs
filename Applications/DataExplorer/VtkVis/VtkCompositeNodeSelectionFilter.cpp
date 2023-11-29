@@ -12,15 +12,14 @@
  *
  */
 
-// ** INCLUDES **
 #include "VtkCompositeNodeSelectionFilter.h"
 
-#include <memory>
-//#include "VtkCompositePointToGlyphFilter.h"
 #include <vtkDataSetAlgorithm.h>
 #include <vtkGlyph3D.h>
 #include <vtkSmartPointer.h>
 #include <vtkSphereSource.h>
+
+#include <memory>
 
 #include "VtkPointsSource.h"
 

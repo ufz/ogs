@@ -12,8 +12,6 @@
  *
  */
 
-// ** INCLUDES **
-//#include "ProcessModel.h"
 #include "ModellingTabWidget.h"
 
 ModellingTabWidget::ModellingTabWidget(QWidget* parent /*= 0*/)

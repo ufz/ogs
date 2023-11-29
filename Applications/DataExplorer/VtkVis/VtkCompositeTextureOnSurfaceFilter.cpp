@@ -12,7 +12,6 @@
  *
  */
 
-// ** INCLUDES **
 #include "VtkCompositeTextureOnSurfaceFilter.h"
 
 #include <vtkDataSetSurfaceFilter.h>
@@ -30,8 +29,6 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QSettings>
-
-//#include "VtkCompositeColormapToImageFilter.h"
 
 VtkCompositeTextureOnSurfaceFilter::VtkCompositeTextureOnSurfaceFilter(
     vtkAlgorithm* inputAlgorithm)
