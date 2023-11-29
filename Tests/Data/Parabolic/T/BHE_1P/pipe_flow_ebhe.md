@@ -123,11 +123,11 @@ def time_function(t_D):
 The Prandtl and Reynolds number can be calculated as follows
 
 $$
-    Pr = \frac{\mu_f c_{p,f}}{\lambda_f}
+    \mathrm{Pr} = \frac{\mu_f c_{p,f}}{\lambda_f}
 $$
 
 $$
-    Re = \frac{\rho_f v d_{pi}}{\mu_f}
+    \mathrm{Re} = \frac{\rho_f v d_{pi}}{\mu_f}
 $$
 
 where, $\mu_f, \rho_f$ and $\lambda_f$ is the fluid viscosity, density and thermal conductivity.
@@ -145,15 +145,17 @@ Re = rho_f * v * (2 * r_pi) / mu_f
 The Nusselt number can be determined by the following equation (Diersch, 2013):
 
 $$
-    Nu = 4.364,\  Re < 2300
+    \mathrm{Nu} = 4.364,\  \mathrm{Re} < 2300
 $$
 
 $$
-    Nu = \frac{(\xi_{k}/8)\  \mathrm{Re}_{k}\  \mathrm{Pr}}{1+12.7\sqrt{\xi_{k}/8}(\mathrm{Pr}^{2/3}-1)} \left[ 1+\left(\frac{d_{k}^{i}}{L}\right)^{2/3} \right],\   Re \geq 10^4
+    \mathrm{Nu} = \frac{(\xi_{k}/8)\  \mathrm{Re}_{k}\  \mathrm{Pr}}{1+12.7\sqrt{{\xi_k}/8}(\mathrm{Pr}^{2/3}-1)} [ 1+(\frac{{d_k}^{i}}{L})^{2/3}], Re \geq 10^4
 $$
 
 $$
-    Nu = (1-\gamma_{k})\  4.364 + \gamma_{k} ( \frac{(0.0308/8)10^{4}\mathrm{Pr}}{1+12.7\  \sqrt{0.0308/8}(\mathrm{Pr}^{2/3}-1)} \left[ 1+\left(\frac{d_{k}^{i}}{L}\right)^{2/3} \right] ), 2 300 \leq Re < 10^{4}
+
+$$
+    \mathrm{Nu} = (1-\gamma_{k})\  4.364 + \gamma_{k} ( \frac{(0.0308/8)10^{4}\mathrm{Pr}}{1+12.7\  \sqrt{0.0308/8}(\mathrm{Pr}^{2/3}-1)} \left[ 1+\left(\frac{d_{k}^{i}}{L}\right)^{2/3} \right] ), 2 300 \leq \mathrm{Re} < 10^{4}
 $$
 
 with
