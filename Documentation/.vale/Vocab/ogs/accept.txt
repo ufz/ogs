@@ -59,6 +59,7 @@ Guo
 Heidemann
 Homebrew
 Horner
+hyperelastic
 IPhreeqc
 ipynb
 ipyvtklink

@@ -26,6 +26,10 @@ set(_processes_list
     TwoPhaseFlowWithPP
     TwoPhaseFlowWithPrho
 )
+if(OGS_USE_MFRONT)
+    set(_processes_list ${_processes_list} LargeDeformation)
+endif()
+
 if(OGS_USE_PETSC)
     set(_processes_list ${_processes_list} PhaseField)
 endif()

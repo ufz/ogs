@@ -267,6 +267,55 @@ readStateVariablesInitialValueProperties(
 
     return state_variables_initial_properties;
 }
+
+mgis::behaviour::Behaviour loadBehaviour(
+    std::string const& lib_path, std::string behaviour_name,
+    mgis::behaviour::Hypothesis const hypothesis)
+{
+    // Fix for https://gitlab.opengeosys.org/ogs/ogs/-/issues/3073
+    // Pre-load dependencies of mfront lib
+#ifndef _WIN32
+    dlopen("libTFELNUMODIS.so", RTLD_NOW);
+    dlopen("libTFELUtilities.so", RTLD_NOW);
+    dlopen("libTFELException.so", RTLD_NOW);
+#endif
+
+    std::optional<std::runtime_error> small_strain_load_error;
+
+    // Try small strains first.
+    try
+    {
+        return mgis::behaviour::load(lib_path, behaviour_name, hypothesis);
+    }
+    catch (std::runtime_error const& e)
+    {
+        // Didn't work, store the exception and try finite strain.
+        small_strain_load_error = e;
+    }
+
+    try
+    {
+        auto o = mgis::behaviour::FiniteStrainBehaviourOptions{};
+        o.stress_measure = mgis::behaviour::FiniteStrainBehaviourOptions::PK2;
+        o.tangent_operator =
+            mgis::behaviour::FiniteStrainBehaviourOptions::DS_DEGL;
+
+        return mgis::behaviour::load(o, lib_path, behaviour_name, hypothesis);
+    }
+    catch (std::runtime_error const& e)
+    {
+        if (small_strain_load_error)
+        {
+            OGS_FATAL(
+                "Could not load the {} from {} neither for small strains "
+                "(error {}) nor for finite strains (error {}).",
+                behaviour_name, lib_path, small_strain_load_error->what(),
+                e.what());
+        }
+    }
+
+    OGS_FATAL("Could not load the {} from {}.", behaviour_name, lib_path);
+}
 }  // namespace
 
 namespace MaterialLib::Solids::MFront
@@ -293,10 +342,6 @@ MFrontConfig createMFrontConfig(
                             : *library_name)
                      : "libOgsMFrontBehaviour";
 
-    auto const behaviour_name =
-        //! \ogs_file_param{material__solid__constitutive_relation__MFront__behaviour}
-        config.getConfigParameter<std::string>("behaviour");
-
     mgis::behaviour::Hypothesis hypothesis;
     if (displacement_dim == 2)
     {
@@ -317,16 +362,11 @@ MFrontConfig createMFrontConfig(
         OGS_FATAL("Displacement dim {} is not supported.", displacement_dim);
     }
 
-    // Fix for https://gitlab.opengeosys.org/ogs/ogs/-/issues/3073
-    // Pre-load dependencies of mfront lib
-#ifndef _WIN32
-    dlopen("libTFELNUMODIS.so", RTLD_NOW);
-    dlopen("libTFELUtilities.so", RTLD_NOW);
-    dlopen("libTFELException.so", RTLD_NOW);
-#endif
-
-    auto behaviour =
-        mgis::behaviour::load(lib_path, behaviour_name, hypothesis);
+    auto behaviour = loadBehaviour(
+        lib_path,
+        //! \ogs_file_param{material__solid__constitutive_relation__MFront__behaviour}
+        config.getConfigParameter<std::string>("behaviour"),
+        hypothesis);
 
     INFO("Behaviour:      `{:s}'.", behaviour.behaviour);
     INFO("Hypothesis:     `{:s}'.", mgis::behaviour::toString(hypothesis));

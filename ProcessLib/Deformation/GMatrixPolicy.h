@@ -20,11 +20,11 @@ template <typename ShapeFunction, int DisplacementDim>
 class GMatrixPolicyType
 {
 private:
-    /// Reusing the ShapeMatrixPolicy vector type.
+    /// Fixed size vector type independent of the ShapeMatrixPolicy needed for
+    /// storage of gradient vector in the MPL VariableArray.
     template <int N>
-    using VectorType =
-        typename ShapeMatrixPolicyType<ShapeFunction,
-                                       DisplacementDim>::template VectorType<N>;
+    using VectorTypeFixedSize = typename EigenFixedShapeMatrixPolicy<
+        ShapeFunction, DisplacementDim>::template VectorType<N>;
 
     /// Reusing the ShapeMatrixPolicy matrix type.
     template <int N, int M>
@@ -40,7 +40,8 @@ public:
     using GradientMatrixType = MatrixType<DisplacementDim * DisplacementDim +
                                               (DisplacementDim == 2 ? 1 : 0),
                                           _number_of_dof>;
-    using GradientVectorType = VectorType<DisplacementDim * DisplacementDim +
-                                          (DisplacementDim == 2 ? 1 : 0)>;
+    using GradientVectorType =
+        VectorTypeFixedSize<DisplacementDim * DisplacementDim +
+                            (DisplacementDim == 2 ? 1 : 0)>;
 };
 }  // namespace ProcessLib

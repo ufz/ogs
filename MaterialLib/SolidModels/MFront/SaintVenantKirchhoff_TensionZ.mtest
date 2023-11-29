@@ -1,0 +1,22 @@
+@ModellingHypothesis 'Tridimensional';
+@Behaviour<generic> 'lib/libOgsMFrontBehaviour' 'SaintVenantKirchhoff';
+@ExternalStateVariable 'Temperature' 293.15;
+@MaterialProperty<constant> 'YoungModulus' 1;
+@MaterialProperty<constant> 'PoissonRatio' 0.4;
+@CompareToNumericalTangentOperator false;
+@OutputFilePrecision 16;
+@ResidualFilePrecision 16;
+
+@ImposedDeformationGradient 'FXY' 0.;
+@ImposedDeformationGradient 'FYX' 0.;
+@ImposedDeformationGradient 'FZY' 0.;
+@ImposedDeformationGradient 'FYZ' 0.;
+@ImposedDeformationGradient 'FXZ' 0.;
+@ImposedDeformationGradient 'FZX' 0.;
+//@ImposedDeformationGradient 'FXX' '1';
+//@ImposedDeformationGradient 'FYY' '1';
+@ImposedStress 'SXX' '0';
+@ImposedStress 'SYY' '0';
+@ImposedDeformationGradient<function> 'FZZ' '1 + t';
+
+@Times{0, 0.02 in 2};

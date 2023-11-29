@@ -6,7 +6,7 @@ git+https://github.com/joergbuchwald/heatsource_thm@bbd5bab17fc2ec228c773e087dc8
 jupyterlab==3.4.8
 matplotlib>=3.6
 numpy>=1.24
-git+https://github.com/joergbuchwald/ogs6py@71f49a896381152e648801740833450022115981#egg=ogs6py
+git+https://github.com/joergbuchwald/ogs6py@05acc329b90a002051104af8173384d41c63489c#egg=ogs6py
 pandas>=1.5
 ipywidgets
 pyvista[all,jupyter,trame]>=0.39

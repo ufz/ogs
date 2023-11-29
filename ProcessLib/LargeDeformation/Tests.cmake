@@ -1,0 +1,8 @@
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE LargeDeformation/RigidBody/square_1e0.prj RUNTIME 1)
+    if(OGS_BUILD_PROCESS_SmallDeformation)
+        NotebookTest(NOTEBOOKFILE LargeDeformation/RigidBody/RigidBody.md RUNTIME 15)
+    endif()
+    OgsTest(PROJECTFILE LargeDeformation/Torsion/bar1to6_torsion.prj RUNTIME 5)
+    NotebookTest(NOTEBOOKFILE LargeDeformation/Torsion/Torsion_robustness.md RUNTIME 15)
+endif()
