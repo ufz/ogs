@@ -6,11 +6,11 @@ image = "inclined2DBHE.png"
 +++
 
 
-This tutorial is made to illustrate the procedure of creating an OGS mesh file with inclined Borehole Heat Exchangers (BHEs) in it. Such mesh uses prism elements for the soil part, and line elements for the BHEs. However, in this tutorial of inclined BHEs, a layer of hexagonal shape prism mesh is created around each BHE for optimal accuracy (Diersch et al. 2011) and all other parts of the geometry consist of tetrahedron mesh element to avoid complexity in mesh creation. The produced mesh file is made explicitly for the HEAT_TRANSPORT_BHE module in OGS and will NOT work with other modules. For better understanding, an image of 1D inclined BHEs is presented.
+This tutorial is made to illustrate the procedure of creating an OGS mesh file with inclined Borehole Heat Exchangers (BHEs) in it. Such mesh uses prism, tetrahedron and pyramid elements for the soil part, and line elements for the BHEs. In this tutorial of inclined BHEs, a layer of hexagonal shape prism elements are created around each BHE for optimal accuracy (Diersch et al. 2011) and all other parts of the geometry consist of tetrahedron and pyramid elements. The produced mesh file is made explicitly for the HEAT_TRANSPORT_BHE module in OGS and will NOT work with other modules. For better understanding, an image of 1D inclined BHEs is presented.
 
 ![inclined_bhe_1D-2.png](./inclined_bhe_1D-2.png)
 
-First, External packages have  been imported and Gmsh is initialized.
+First, external packages have  been imported and Gmsh is initialized.
 
 ```python
 import os
@@ -22,7 +22,7 @@ import gmsh
 gmsh.initialize()
 ```
 
-The geometry is a 3D structure that has 3 boreholes (2 inclined and 1 vertical) in it. Similar to the previous tutorial of BHEs, the first step is to create the surface 1 with all the necessary points which regulate the borehole locations, as well as the mesh size. Now we define the basic geometry of the BHEs, as well as the element sizes around them.
+The geometry is a 3D structure that has 3 boreholes (2 inclined and 1 vertical) in it. Similar to the previous tutorial of BHEs, the first step is to create the surface 1 with all the necessary points which regulate the borehole locations, as well as the mesh size. Now, we define the basic geometry of the BHEs, as well as the element sizes around them.
 
 ```python
 # environment variable for output path
@@ -52,10 +52,10 @@ elem_size = 0.5
 
 In this step, we are going to create the top surface using the python interface of Gmsh.
 To create a point with the built-in CAD kernel, the Python API function `gmsh.model.geo.addPoint()` is used.
-The first 3 arguments are the point coordinates (x, y, z)
-The next (optional) argument is the target mesh size close to the point
+The first 3 arguments are the point coordinates (x, y, z).
+The next (optional) argument is the target mesh size close to the point.
 The last (optional) argument is the point tag (a strictly positive integer that uniquely identifies the point).
-Here, we have assigned 4 boundary points
+Here, we have assigned 4 boundary points.
 
 ```python
 # cube surface
@@ -188,7 +188,7 @@ gmsh.model.geo.synchronize()
 
 The `gmsh.model.geo.extrude` command extrudes BHE surface 1, 2 and 3 along the z axis and automatically creates a new volume (as well as all the needed points, curves and surfaces).
 The function takes a vector of (dim, tag) pairs as input as well as the translation vector, and returns a vector of (dim, tag) pairs as output.
-For the BHE 1 and 2 in translational vector, x-cordinate is set to 2 and -2 respectively in order to create inclined BHE along x-direction.
+For the BHE 1 and 2 in translational vector, x-coordinate is set to 2 and -2 respectively in order to create inclined BHE along x-direction.
 As a result, the end point of BHEs will be deflected by 2 units along (+) and (-) x-direction.
 
 The 2D mesh extrusion is done with the same `extrude()` function, but by specifying element 'Layers' (Here, one layer each with 10 subdivisions).
@@ -212,7 +212,7 @@ gmsh.model.geo.synchronize()
 
 Finally, geometry surface 1 is created by combining curve loop 1, 2, 3 and 4.
 Here, 2, 3, 4 are BHE curve loops and 1 is geometry curve loop.
-After that, 6 surfaces of geometry and 21 surfaces from 3 BHE hexagonal object is combined to create a surface loop.
+After that, 6 surfaces of geometry and 21 surfaces from 3 BHE hexagonal objects are combined to create a surface loop.
 Later, volume is added to the surface loop using API function `gmsh.model.geo.addVolume`.
 Before creating mesh, `gmsh.model.geo.synchronize` is used to synchronize the CAD entities with the Gmsh model, which will create the relevant Gmsh data structures.
 
