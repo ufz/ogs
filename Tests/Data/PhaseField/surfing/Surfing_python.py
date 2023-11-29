@@ -2,7 +2,7 @@ try:
     import ogs.callbacks as OpenGeoSys
 except ModuleNotFoundError:
     import OpenGeoSys
-from math import pi, sin, cos, atan2, sqrt
+from math import atan2, cos, pi, sin, sqrt
 
 a = 2.0  # Length
 b = 1.0  # Height

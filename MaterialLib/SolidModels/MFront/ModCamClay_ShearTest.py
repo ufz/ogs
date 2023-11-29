@@ -1,7 +1,6 @@
+import matplotlib.pyplot as plt
 import mtest
 import numpy as np
-import matplotlib.pyplot as plt
-
 
 # Material constants
 E = 150.0e3  # Young's modulus in MPa
@@ -158,7 +157,7 @@ ax.set_title("Porosity over time")
 for k in range(runs):
     ax.plot(ltime, results[3][k], label=prelabel + "%.2f" % (valueList[k]))
 ax.set_xlabel("$t$ / s")
-ax.set_ylabel("$\phi$")
+ax.set_ylabel(r"$\phi$")
 ax.grid()
 ax.legend()
 fig.savefig("ModCamClay_ParamStudy_Porosity.pdf")
@@ -167,8 +166,8 @@ fig, ax = plt.subplots()
 # ax.set_title('Shear stress over shear strain')
 for k in range(runs):
     ax.plot(results[4][k], results[5][k], label=prelabel + "%.2f" % (valueList[k]))
-ax.set_xlabel("$\epsilon_{xy}$")
-ax.set_ylabel("$\sigma_{xy}$ / MPa")
+ax.set_xlabel(r"$\epsilon_{xy}$")
+ax.set_ylabel(r"$\sigma_{xy}$ / MPa")
 ax.grid()
 ax.legend()
 fig.savefig("ModCamClay_ParamStudy_ShearCurves.pdf")
@@ -179,8 +178,8 @@ for k in range(runs):
     ax.plot(
         results[4][k], results[7][k] * 100, label=prelabel + "%.2f" % (valueList[k])
     )
-ax.set_xlabel("$\epsilon_{xy}$")
-ax.set_ylabel("${\epsilon}_p^V$ / %")
+ax.set_xlabel(r"$\epsilon_{xy}$")
+ax.set_ylabel(r"${\epsilon}_p^V$ / %")
 ax.grid()
 ax.legend()
 fig.savefig("ModCamClay_ParamStudy_eplVCurves.pdf")

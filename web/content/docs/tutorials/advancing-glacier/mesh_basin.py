@@ -8,9 +8,9 @@
 
 # The Python API is entirely defined in the `gmsh.py' module (which contains the
 # full documentation of all the functions in the API):
-import numpy
-import gmsh
 import os
+
+import gmsh
 
 # Before using any functions in the Python API, Gmsh must be initialized:
 gmsh.initialize()
@@ -118,8 +118,8 @@ gmsh.model.geo.addCurveLoop([2, 3, 4, 10, 13, 14], 4)
 # loop defines the exterior contour; additional curve loop define holes.
 # (only one here, representing the external contour, since there are no holes
 # --see `t4.py' for an example of a surface with a hole):
-for l in range(1, 5):
-    gmsh.model.geo.addPlaneSurface([l], l)
+for L in range(1, 5):
+    gmsh.model.geo.addPlaneSurface([L], L)
 
 # At this level, Gmsh knows everything to display the surfaces and
 # to mesh it. An optional step is needed if we want to group elementary

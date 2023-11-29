@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # Solution of heatequation in a semi-infinite domain.
 
-from vtk import *
 import numpy as np
 from scipy.special import erfc
+from vtk import *
 
 r = vtkXMLUnstructuredGridReader()
 r.SetFileName("mesh.vtu")
@@ -24,7 +24,7 @@ q = 2
 
 def temperature(x, t):
     return T_inf + 2 * q / lambda_coeff * (
-        np.sqrt(alpha * t / np.pi) * np.exp(-(x ** 2) / (4 * alpha * t))
+        np.sqrt(alpha * t / np.pi) * np.exp(-(x**2) / (4 * alpha * t))
         - x / 2 * erfc(x / (2 * np.sqrt(alpha * t)))
     )
 

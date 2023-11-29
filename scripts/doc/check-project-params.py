@@ -3,11 +3,12 @@
 # This script actually generates the QA page.
 # For its usage see generate-project-file-doc-qa.sh
 
-from print23 import print_
-import sys
-import re
-import os.path
 import json
+import os.path
+import re
+import sys
+
+from print23 import print_
 
 github_src_url = "https://gitlab.opengeosys.org/ogs/ogs/-/tree/master"
 
@@ -17,12 +18,12 @@ def debug(msg):
 
 
 if len(sys.argv) != 3:
-    print_("USAGE: {0} DOCAUXDIR SRCDIR".format(sys.argv[0]))
+    print_(f"USAGE: {sys.argv[0]} DOCAUXDIR SRCDIR")
     sys.exit(1)
 
 docauxdir = sys.argv[1]
 if not os.path.isdir(docauxdir):
-    print_("error: `{0}' is not a directory".format(docauxdir))
+    print_(f"error: `{docauxdir}' is not a directory")
     sys.exit(1)
 
 doxdir = os.path.join(docauxdir, "dox", "ProjectFile")
@@ -32,7 +33,7 @@ undocumented = []
 unneeded_comments = []
 wrong_input = []
 no_doc_page = []
-unneeded_md_files = dict()
+unneeded_md_files = {}
 good_tagpaths = set()
 wrong_status = False
 
@@ -75,12 +76,12 @@ with open(os.path.join(docauxdir, "documented-parameters-cache.txt")) as fh:
             debug("SPECIAL: " + " ".join(inline[1:]))  # TODO implement proper handling
             # unneeded.append(inline[1:])
         else:
-            debug("ERROR: unrecognized status {0}".format(status))
+            debug(f"ERROR: unrecognized status {status}")
             wrong_status = True
 
 # traverse dox file hierarchy
 srcdocdir = os.path.join(srcdir, "Documentation", "ProjectFile")
-for (dirpath, _, filenames) in os.walk(srcdocdir):
+for dirpath, _, filenames in os.walk(srcdocdir):
     reldirpath = dirpath[len(srcdocdir) + 1 :]
 
     for f in filenames:
@@ -89,7 +90,7 @@ for (dirpath, _, filenames) in os.walk(srcdocdir):
         filepath = os.path.join(reldirpath, f)
         tag_or_attr = "param"
 
-        if f.startswith("i_") or f.startswith("c_"):
+        if f.startswith(("i_", "c_")):
             tagpath = reldirpath
         elif f.startswith("t_"):
             tagpath = os.path.join(reldirpath, f[2 : -len(".md")])
@@ -97,7 +98,7 @@ for (dirpath, _, filenames) in os.walk(srcdocdir):
             tagpath = os.path.join(reldirpath, f[2 : -len(".md")])
             tag_or_attr = "attr"
         else:
-            debug("ERROR: Found md file with unrecognized name: {0}".format(filepath))
+            debug(f"ERROR: Found md file with unrecognized name: {filepath}")
             continue
 
         tagpath = tagpath.replace(os.sep, ".")
@@ -216,7 +217,7 @@ with open(os.path.join(docauxdir, "untested-parameters-cache.json")) as fh:
         print_("# Tags that do not occur in any CTest project file")
         for utag in sorted(utags):
             pagename = "ogs_file_param__" + utag.replace(".", "__")
-            print_(r'- \ref {0} "{1}"'.format(pagename, utag))
+            print_(rf'- \ref {pagename} "{utag}"')
 
     uattrs = [
         ua
@@ -229,7 +230,7 @@ with open(os.path.join(docauxdir, "untested-parameters-cache.json")) as fh:
         print_("# Attributes that do not occur in any CTest project file")
         for uattr in sorted(uattrs):
             pagename = "ogs_file_attr__" + uattr.replace(".", "__")
-            print_(r'- \ref {0} "{1}"'.format(pagename, uattr))
+            print_(rf'- \ref {pagename} "{uattr}"')
 
 # exit with error status if something was not documented/tested
 if qa_status_succeeded:

@@ -5,7 +5,6 @@ try:
 except ModuleNotFoundError:
     import OpenGeoSys
 
-import numpy as np
 
 s_a = 365.25 * 24 * 3600  # =31557600 seconds per year
 
@@ -31,9 +30,7 @@ T = 1e6  # s
 
 
 def ExternalDisplacement(x, t):
-    uy = u_max * (t / T) * (x / Lx) ** 2
-
-    return uy
+    return u_max * (t / T) * (x / Lx) ** 2
 
 
 # Hydraulic BCs

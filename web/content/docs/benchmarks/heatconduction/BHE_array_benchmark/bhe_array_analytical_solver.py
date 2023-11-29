@@ -13,18 +13,19 @@ of a BHE array system proposed by Bayer2014
 Bayer, P., de Paly, M., & Beck, M. (2014).
 Strategic optimization of borehole heat exchanger field
 for seasonal geothermal heating and cooling.
-Applied Energy, 136, 445–453.
+Applied Energy, 136, 445-453.
 https://doi.org/10.1016/j.apenergy.2014.09.029
 
 Author: Shuang Chen
 """
 
+import math
+
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import special as sp
-import math
 
-#%% input parameters
+# %% input parameters
 # source term coordinates
 po_x = np.array(
     [
@@ -174,15 +175,15 @@ T2 = np.zeros([numtemppoints, numtimesteps])
 
 coeff_all = np.zeros([numtemppoints, numtimesteps])
 
-for currstep in range(0, numtimesteps):
+for currstep in range(numtimesteps):
     Temp_po_to_referencepo = np.zeros([numtemppoints, numbhe])
     po_dist_to_referencepo = np.zeros([numtemppoints, numbhe])
     localcoeff_all = np.zeros([numtemppoints, 1])
     localcoeff = np.zeros([numtemppoints, numbhe])
     localcoeff1 = np.zeros([numtemppoints, numbhe])
-    for i in range(0, numbhe):
+    for i in range(numbhe):
         if time_trans * (currstep + 1) - time_trans * 0 > 0:
-            for j in range(0, numtemppoints):
+            for j in range(numtemppoints):
                 po_dist_to_referencepo[j, i] = (
                     abs(po_x[i] - point_x[j]) ** 2 + abs(po_y[i] - point_y[j]) ** 2
                 )
@@ -192,7 +193,7 @@ for currstep in range(0, numtimesteps):
                 n = sp.exp1(exp)
                 localcoeff[j, i] = 1 / (4 * math.pi * lamda_sp) * n
         if time_trans * (currstep + 1) - time_trans * 1 > 0:
-            for j in range(0, numtemppoints):
+            for j in range(numtemppoints):
                 po_dist_to_referencepo[j, i] = (
                     abs(po_x[i] - point_x[j]) ** 2 + abs(po_y[i] - point_y[j]) ** 2
                 )
@@ -206,7 +207,7 @@ for currstep in range(0, numtimesteps):
     coeff_all[:, 1:] = coeff_all[:, : numtimesteps - 1]
     coeff_all[:, :1] = localcoeff_all
 
-for currstep in range(0, numtimesteps):
+for currstep in range(numtimesteps):
     T2[:, currstep] = (
         np.sum(
             coeff_all[:, numtimesteps - 1 - currstep :] * qq_all[:, : currstep + 1],
@@ -220,7 +221,7 @@ T2 = np.concatenate((T2_ini, T2), axis=1)
 
 T2_trans = T2
 
-#%% plotting
+# %% plotting
 
 png_num = 1
 for i in range(png_num):
@@ -228,10 +229,10 @@ for i in range(png_num):
     plt.plot(point_x, T2[:, 4], "b", label="Analytical")
     plt.xlim([0, 100])
     plt.ylim([-10, 20])
-    plt.ylabel("Temperature [$^\circ$C]")
+    plt.ylabel(r"Temperature [$^\circ$C]")
     plt.xlabel("x [m]")
     plt.legend(loc="best", fontsize=8)
     plt.title(
-        f"Soil temperature distribution on A-A'section after 4 months", fontsize=12
+        "Soil temperature distribution on A-A'section after 4 months", fontsize=12
     )
-    plt.savefig("pngfile{}.png".format(i), dpi=300, transparent=False)
+    plt.savefig(f"pngfile{i}.png", dpi=300, transparent=False)

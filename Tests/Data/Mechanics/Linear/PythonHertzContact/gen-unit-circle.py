@@ -1,9 +1,10 @@
 #!/usr/bin/vtkpython
 
 import sys
+
 import numpy as np
-from vtk.util.numpy_support import vtk_to_numpy, numpy_to_vtk
 import vtk
+from vtk.util.numpy_support import numpy_to_vtk, vtk_to_numpy
 
 in_grid, out_grid, out_geom = sys.argv[1:]
 
@@ -29,10 +30,7 @@ def distribute_points_evenly(c2):
     for node, r in enumerate(r2):
         b = nbin[node]
         i = bins[b].index(node)
-        if len(bins[b]) == 1:
-            phi = 0.0
-        else:
-            phi = np.pi * 0.5 / (len(bins[b]) - 1) * i
+        phi = 0.0 if len(bins[b]) == 1 else np.pi * 0.5 / (len(bins[b]) - 1) * i
 
         c3[node, 0] = r * np.cos(phi)
         c3[node, 1] = r * np.sin(phi)
@@ -101,9 +99,7 @@ with open(out_geom, "w") as fh:
     )
 
     for i, (x, y, z) in enumerate(new_coords[idcs]):
-        fh.write(
-            '        <point id="{}" x="{}" y="{}" z="{}" />\n'.format(i + 3, x, y, z)
-        )
+        fh.write(f'        <point id="{i + 3}" x="{x}" y="{y}" z="{z}" />\n')
 
     fh.write(
         """
@@ -122,7 +118,7 @@ with open(out_geom, "w") as fh:
     )
 
     for i in range(len(idcs)):
-        fh.write("            <pnt>{}</pnt>\n".format(i + 3))
+        fh.write(f"            <pnt>{i + 3}</pnt>\n")
 
     fh.write(
         """</polyline>

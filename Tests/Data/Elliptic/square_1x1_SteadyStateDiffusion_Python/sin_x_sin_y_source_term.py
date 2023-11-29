@@ -1,5 +1,6 @@
-import OpenGeoSys
 from math import pi, sin
+
+import OpenGeoSys
 
 a = 2.0 * pi
 b = 2.0 * pi

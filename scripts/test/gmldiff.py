@@ -5,9 +5,9 @@
 #              See accompanying file LICENSE.txt or
 #              http://www.opengeosys.org/project/license
 
-from xml.dom import minidom
 import argparse
 import math
+from xml.dom import minidom
 
 parser = argparse.ArgumentParser(description="Diff OpenGeoSys GML files.")
 parser.add_argument(

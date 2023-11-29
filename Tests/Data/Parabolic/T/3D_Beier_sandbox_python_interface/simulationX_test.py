@@ -8,8 +8,8 @@
 import sys
 
 print(sys.version)
-from pandas import read_csv
 import OpenGeoSys
+from pandas import read_csv
 
 df_server = read_csv(
     "initial.csv", delimiter=";", index_col=[0], dtype={"data_index": str}

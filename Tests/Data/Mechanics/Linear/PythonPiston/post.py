@@ -1,13 +1,10 @@
 #!/usr/bin/vtkpython
 
-from __future__ import print_function
-import vtk
-from vtk.util.numpy_support import vtk_to_numpy, numpy_to_vtk
-import numpy as np
-from scipy.interpolate import interp1d
-
-import matplotlib.pyplot as plt
 import chamber as ch
+import matplotlib.pyplot as plt
+import numpy as np
+import vtk
+from vtk.util.numpy_support import vtk_to_numpy
 
 pvd_file = "out/piston_pcs_0.pvd"
 
@@ -17,7 +14,7 @@ pvd_file = "out/piston_pcs_0.pvd"
 import os
 
 try:
-    import xml.etree.cElementTree as ET
+    import xml.etree.ElementTree as ET
 except:
     import xml.etree.ElementTree as ET
 

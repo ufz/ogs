@@ -1,15 +1,13 @@
 #!/usr/bin/env python
 
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import temperature_analytical
-from matplotlib.legend import Legend
 from vtk import *
 from vtk.numpy_interface import dataset_adapter as dsa
 from vtk.util.numpy_support import vtk_to_numpy
-import matplotlib.pyplot as plt
-import numpy as np
-import os
-import pandas as pd
-import scipy.optimize as sp
 
 
 def probeFileAlongLine(filename):
@@ -131,13 +129,13 @@ def plotErrors(ax, data, with_labels=True):
             "column": ("newton", "error"),
             "color": "green",
             "ls": "-",
-            "label": "$e_\mathrm{newton}$",
+            "label": r"$e_\mathrm{newton}$",
         },
         {
             "column": ("newton_masslumping", "error"),
             "color": "blue",
             "ls": "-",
-            "label": "$e_\mathrm{newton}^\mathrm{ML}$",
+            "label": r"$e_\mathrm{newton}^\mathrm{ML}$",
         },
     ]
     lines = []
@@ -167,7 +165,7 @@ def plotCases(data, output):
         fig.tight_layout()
     fig.savefig(output + ".png", dpi=150)
     plt.close("all")
-    return None
+    return
 
 
 def plotPicardTemperature(ax, data, with_labels=True):
@@ -249,7 +247,7 @@ def plotNewtonVsPicard(data, output):
 
     lines += plotNewtonVsPicardErrors(axes[1], data, with_labels=True)
     axes[1].legend(loc="best", fontsize=12, ncol=1, bbox_to_anchor=(0.5, 0.5, 0.5, 0.5))
-    axes[1].set_ylabel("$T_\mathrm{diff}$ (newton - picard) / K", fontsize=18)
+    axes[1].set_ylabel(r"$T_\mathrm{diff}$ (newton - picard) / K", fontsize=18)
     axes[1].set_xlabel("$x$ / m", fontsize=16)
 
     for ax in axes:
@@ -259,7 +257,7 @@ def plotNewtonVsPicard(data, output):
         fig.tight_layout()
     fig.savefig(output + ".png", dpi=300)
     plt.close("all")
-    return None
+    return
 
 
 def singleTimeStep(ts):

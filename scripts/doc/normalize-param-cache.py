@@ -4,10 +4,10 @@
 # and transforms it into a tabular representation for further
 # processing.
 
-from print23 import print_
-import sys
 import re
-import os.path
+import sys
+
+from print23 import print_
 
 
 def debug(msg):
@@ -67,7 +67,7 @@ def merge_lines(it):
             msg = fn + m.group(2) + str(lno) + m.group(4) + line
 
             # remove non-doxygen comments
-            line = re.sub("/\*[^!*].*\*/|/\*\*/", "", line)
+            line = re.sub(r"/\*[^!*].*\*/|/\*\*/", "", line)
             line = re.sub("//[^!*].*|//$", "", line, 1)
 
             if buf_fn:
@@ -127,7 +127,7 @@ for inline in merge_lines(sys.stdin):
 
         param_or_attr_comment = m.group(1)
         tag_path_comment = m.group(2).replace("__", ".")
-        debug(" {0:>5}  //! {1}".format(lineno, tag_path_comment))
+        debug(f" {lineno:>5}  //! {tag_path_comment}")
         tag_name_comment = tag_path_comment.split(".")[-1]
 
         continue
@@ -175,7 +175,7 @@ for inline in merge_lines(sys.stdin):
                 default_value,
             )
         else:
-            debug(" {0:>5}  {1} {2} ".format(lineno, param, paramtype))
+            debug(f" {lineno:>5}  {param} {paramtype} ")
 
             if param != tag_name_comment:
                 debug(
@@ -199,7 +199,7 @@ for inline in merge_lines(sys.stdin):
             elif lineno != oldlineno + 1:
                 debug(
                     "error: the associated comment is not on the line preceding this one."
-                    + " line numbers {0} vs. {1}".format(oldlineno, lineno)
+                    + f" line numbers {oldlineno} vs. {lineno}"
                 )
                 write_out(
                     "NODOC",
@@ -287,7 +287,7 @@ for inline in merge_lines(sys.stdin):
             if lineno != oldlineno + 1:
                 debug(
                     "error: the associated comment is not on the line preceding this one."
-                    + " line numbers {0} vs. {1}".format(oldlineno, lineno)
+                    + f" line numbers {oldlineno} vs. {lineno}"
                 )
                 write_out(
                     "NODOC", path, lineno, "UNKNOWN", "UNKNOWN", paramtype, method

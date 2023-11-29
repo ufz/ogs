@@ -1,7 +1,6 @@
+import matplotlib.pyplot as plt
 import mtest
 import numpy as np
-import matplotlib.pyplot as plt
-
 
 GM0 = 9.54e3
 KM0 = 2.78e4
@@ -49,13 +48,12 @@ etaK = etaK0 * np.exp(mvK * sig_eff)
 etaM = etaM0 * np.exp(mvM * sig_eff)
 
 
-eps_xy = (
-    lambda t: (
+def eps_xy(t):
+    return (
         (1.0 / GM0 + t / etaM) * sig_xy
         + 1.0 / GK * (1.0 - np.exp(-GK / etaK * t)) * sig_xy
-    )
-    / 2.0
-)
+    ) / 2.0
+
 
 s = mtest.MTestCurrentState()
 wk = mtest.MTestWorkSpace()

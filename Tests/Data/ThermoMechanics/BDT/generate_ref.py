@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
+import numpy as np
 import vtk
 from vtk.util.numpy_support import numpy_to_vtk
-import numpy as np
 
 reader = vtk.vtkXMLUnstructuredGridReader()
 reader.SetFileName("cube_1x1x1_hex_1e0.vtu")

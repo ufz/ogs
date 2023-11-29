@@ -1,9 +1,9 @@
-import tempfile
 import os
 import platform
+import tempfile
 
-import pytest
 import ogs.simulator as sim
+import pytest
 
 
 def run(prjpath, outdir, expect_successful):
@@ -76,7 +76,7 @@ def test_ogs_asm_threads_env_var(monkeypatch, asm_threads_parameter):
         # https://docs.pytest.org/en/6.2.x/reference.html#pytest.MonkeyPatch
         with monkeypatch.context() as ctx:
             # prepare environment
-            if asm_threads_setting != False:
+            if asm_threads_setting is not False:
                 ctx.setenv("OGS_ASM_THREADS", asm_threads_setting)
 
             ctx.chdir(tmpdirname)

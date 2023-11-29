@@ -15,14 +15,14 @@ t_1 = 1.0000  # s
 
 class BC_Y(OpenGeoSys.BoundaryCondition):
     def __init__(self, L_dom, L_max, H_max, x_0, t_0, t_1):
-        super(BC_Y, self).__init__()
+        super().__init__()
         # instantiate the glacier member object
         self.glacier = glc.glacier(L_dom, L_max, H_max, x_0, t_0, t_1)
         self.glacier.printMaxLoads()
         self.glacier.plotEvolution()
 
     def getFlux(
-        self, t, coords, primary_vars
+        self, t, coords, _primary_vars
     ):  # here Neumann BC: flux of linear momentum
         x, y, z = coords
 

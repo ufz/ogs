@@ -1,10 +1,11 @@
-from math import pi, cos, sin, sqrt
-from tfel.material import projectOnPiPlane
+from math import cos, pi, sin
+
 import mtest
+from tfel.material import projectOnPiPlane
 
 divisions = 1000
 for theta in [
-    pi * (-1.0 + 2.0 * float(i) / (float(divisions) - 1.0)) for i in range(0, divisions)
+    pi * (-1.0 + 2.0 * float(i) / (float(divisions) - 1.0)) for i in range(divisions)
 ]:
     # for theta in [-1.3010636242139548]:
     em = 5.0e-3
@@ -35,7 +36,7 @@ for theta in [
     m.completeInitialisation()
     m.initializeCurrentState(s)
     m.initializeWorkSpace(wk)
-    ltime = [float((tmax / (npas - 1))) * i for i in range(npas)]
+    ltime = [float(tmax / (npas - 1)) * i for i in range(npas)]
     plas = 0
     plas_tol = 1e-10
     p = s.getInternalStateVariableValue("EquivalentPlasticStrain")

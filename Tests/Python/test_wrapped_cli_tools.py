@@ -1,5 +1,3 @@
-import pytest
-
 import os
 import tempfile
 
@@ -21,7 +19,7 @@ def test_generate_structured_mesh():
         outfile = os.path.join(tmpdirname, "test.vtu")
         assert not os.path.exists(outfile)
 
-        assert 0 == ogs.cli.generateStructuredMesh(e="line", lx=1, nx=10, o=outfile)
+        assert ogs.cli.generateStructuredMesh(e="line", lx=1, nx=10, o=outfile) == 0
 
         assert os.path.exists(outfile)
 

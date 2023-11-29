@@ -1,7 +1,9 @@
+from math import cos, cosh, pi, sin, sinh
+
 import OpenGeoSys
-from math import pi, sin, cos, sinh, cosh
 
 a = 2.0 * pi / 3.0
+
 
 # analytical solution used to set the Dirichlet BCs
 def solution(x, y):
@@ -17,7 +19,8 @@ def grad_solution(x, y):
 class BCTop(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, t, coords, node_id, primary_vars):
         x, y, z = coords
-        assert y == 1.0 and z == 0.0
+        assert y == 1.0
+        assert z == 0.0
         value = solution(x, y)
         return (True, value)
 
@@ -25,7 +28,8 @@ class BCTop(OpenGeoSys.BoundaryCondition):
 class BCLeft(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, t, coords, node_id, primary_vars):
         x, y, z = coords
-        assert x == 0.0 and z == 0.0
+        assert x == 0.0
+        assert z == 0.0
         value = solution(x, y)
         return (True, value)
 
@@ -33,7 +37,8 @@ class BCLeft(OpenGeoSys.BoundaryCondition):
 class BCBottom(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, t, coords, node_id, primary_vars):
         x, y, z = coords
-        assert y == 0.0 and z == 0.0
+        assert y == 0.0
+        assert z == 0.0
         value = solution(x, y)
         return (True, value)
 
@@ -42,7 +47,8 @@ class BCBottom(OpenGeoSys.BoundaryCondition):
 class BCRight(OpenGeoSys.BoundaryCondition):
     def getFlux(self, t, coords, primary_vars):
         x, y, z = coords
-        assert x == 1.0 and z == 0.0
+        assert x == 1.0
+        assert z == 0.0
         value = grad_solution(x, y)[0]
         Jac = [0.0]  # value does not depend on primary variable
         return (True, value, Jac)

@@ -1,8 +1,8 @@
 # mesh quarter of rectangle with circular hole
 # meshing strategy as FEM example in "Hoehere TM" by Kreissig and Benedix
 # Dominik Kern
-import numpy as np
 import gmsh
+import numpy as np
 
 
 def run(output_file, a=3.0, b=4.0, r=1.0, R=2.0, lc=0.5, Nx=4, Ny=5, NR=5, Nr=5, P=1.3):

@@ -1,6 +1,6 @@
-from paraview.simple import *
+# ruff: noqa
 from paraview import coprocessing
-
+from paraview.simple import *
 
 # --------------------------------------------------------------
 # Code generated from cpstate.py to create the CoProcessor.
@@ -94,7 +94,7 @@ coprocessor.EnableLiveVisualization(False, 1)
 def RequestDataDescription(datadescription):
     "Callback to populate the request for current timestep"
     global coprocessor
-    if datadescription.GetForceOutput() == True:
+    if datadescription.GetForceOutput() is True:
         # We are just going to request all fields and meshes from the simulation
         # code/adaptor.
         for i in range(datadescription.GetNumberOfInputDescriptions()):

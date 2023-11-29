@@ -4,7 +4,10 @@ import sys
 from pathlib import Path
 
 sys.path.append(str(Path("Applications").joinpath("Python").absolute()))
-from ogs._internal.provide_ogs_cli_tools_via_wheel import pyproject_get_binaries
+# ruff: noqa: E402
+from ogs._internal.provide_ogs_cli_tools_via_wheel import (
+    pyproject_get_binaries,
+)
 
 __all__ = ["dynamic_metadata"]
 

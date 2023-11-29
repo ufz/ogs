@@ -1,7 +1,6 @@
-import tempfile
 import os
+import tempfile
 
-import pytest
 import ogs.simulator as sim
 
 
@@ -14,9 +13,9 @@ def test_simulator():
 
     try:
         print("Python OpenGeoSys.init ...")
-        assert 0 == sim.initialize(arguments)
+        assert sim.initialize(arguments) == 0
         print("Python OpenGeoSys.executeSimulation ...")
-        assert 0 == sim.executeSimulation()
+        assert sim.executeSimulation() == 0
     finally:
         print("Python OpenGeoSys.finalize() ...")
         sim.finalize()

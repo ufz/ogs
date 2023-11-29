@@ -1,17 +1,18 @@
-import nbformat
-from nbconvert.preprocessors import ExecutePreprocessor, CellExecutionError
-from nbclient.exceptions import DeadKernelError
-from nbconvert import HTMLExporter
 import argparse
 import os
 import shutil
-import sys
-from timeit import default_timer as timer
-from datetime import timedelta
-import toml
-from pathlib import Path
-import jupytext
 import subprocess
+import sys
+from datetime import timedelta
+from pathlib import Path
+from timeit import default_timer as timer
+
+import jupytext
+import nbformat
+import toml
+from nbclient.exceptions import DeadKernelError
+from nbconvert import HTMLExporter
+from nbconvert.preprocessors import CellExecutionError, ExecutePreprocessor
 
 
 def save_to_website(exec_notebook_file, web_path):
@@ -51,7 +52,7 @@ def save_to_website(exec_notebook_file, web_path):
         check=True,
     )
 
-    if not "Tests/Data" in exec_notebook_file:
+    if "Tests/Data" not in exec_notebook_file:
         return
 
     Path(output_path).mkdir(parents=True, exist_ok=True)
@@ -104,7 +105,7 @@ def check_and_modify_frontmatter():
         repo = os.environ["CI_MERGE_REQUEST_SOURCE_PROJECT_URL"]
         branch = os.environ["CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"]
     binder_link = f"https://mybinder.org/v2/gh/bilke/binder-ogs-requirements/master?urlpath=git-pull%3Frepo={repo}%26urlpath=lab/tree/ogs/{notebook_file_path_relative}%26branch={branch}"
-    text = f"""
+    text = """
 <div class="note">
     <p style="margin-top: 0; margin-bottom: 0;">
         <img style="margin-top: 0; margin-bottom: 0; height: 2em;" class="inline-block mr-2 no-fancybox"
@@ -125,7 +126,7 @@ def check_and_modify_frontmatter():
     <img class="no-fancybox" style="display: inline; margin-top: 0; margin-bottom: 0; margin-left: 1em;"
         src="https://img.shields.io/static/v1?label=&message=Launch notebook&color=5c5c5c&logo=data:image/png;base64,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" />
 </a>"""
-    text += f"""</p></div>\n\n"""
+    text += """</p></div>\n\n"""
 
     second_cell = nb["cells"][1]
     if second_cell.cell_type == "markdown":
@@ -186,7 +187,7 @@ for notebook_file_path in args.notebooks:
             convert_notebook_file = convert_notebook_file.replace("notebook-", "")
             jupytext.write(nb, convert_notebook_file)
         else:
-            with open(notebook_file_path, mode="r", encoding="utf-8") as f:
+            with open(notebook_file_path, encoding="utf-8") as f:
                 nb = nbformat.read(f, as_version=4)
         ep = ExecutePreprocessor(kernel_name="python3")
 
@@ -209,7 +210,6 @@ for notebook_file_path in args.notebooks:
         except CellExecutionError:
             notebook_success = False
             success = False
-            pass
         end = timer()
 
         # Write new notebook
