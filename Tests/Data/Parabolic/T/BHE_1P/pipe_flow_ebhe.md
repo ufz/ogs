@@ -153,7 +153,7 @@ $$
 $$
 
 $$
-    Nu = (1-\gamma_{k})\  4.364 + \gamma_{k} \Big\{ \frac{(0.0308/8)10^{4}\mathrm{Pr}}{1+12.7\  \sqrt{0.0308/8}(\mathrm{Pr}^{2/3}-1)} \left[ 1+\left(\frac{d_{k}^{i}}{L}\right)^{2/3} \right] \Big\}, 2 300 \leq Re < 10^{4}
+    Nu = (1-\gamma_{k})\  4.364 + \gamma_{k} ( \frac{(0.0308/8)10^{4}\mathrm{Pr}}{1+12.7\  \sqrt{0.0308/8}(\mathrm{Pr}^{2/3}-1)} \left[ 1+\left(\frac{d_{k}^{i}}{L}\right)^{2/3} \right] ), 2 300 \leq Re < 10^{4}
 $$
 
 with
