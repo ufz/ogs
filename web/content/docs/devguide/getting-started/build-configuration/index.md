@@ -113,7 +113,7 @@ Please also note that in Visual Studio you have to choose the correct configurat
 
 #### <i class="far fa-check"></i> Pro Tip: Use a better terminal application
 
-Use the [Windows Terminal](https://www.microsoft.com/en-us/p/windows-terminal/9n0dx20hk701) for a better terminal experience. It offers modern terminal features such as multiple tabs and panes.
+Use the [Windows Terminal](https://apps.microsoft.com/detail/9N0DX20HK701?rtc=1&hl=de-de&gl=DE) for a better terminal experience. It offers modern terminal features such as multiple tabs and panes.
 
 </div>
 
