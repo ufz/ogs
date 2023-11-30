@@ -10,10 +10,10 @@ project = ["Parabolic/T/BHE_1P/BHE_1P.prj"]
 
 ## Problem description
 
-Ramey et al. (1962) proposed the analytical solution concerning the wellbore heat transmission, which can be used to quantify the fluid temperature change in the wellbore.  
-In order to verify the single pipe flow model in the OGS, the numerical results were compared with Ramey's analytical solution (Ramey et al. 1962).  
+(Ramey et al. (1962)) proposed the analytical solution concerning the wellbore heat transmission, which can be used to quantify the fluid temperature change in the wellbore.  
+In order to verify the single pipe flow model in the OGS, the numerical results were compared with Ramey's analytical solution (Ramey et al. (1962)).  
 The detailed calculation of the Ramey's analytical solution is given below.  
-A detailed analysis of an enhanced U-tube borehole heat exchanger (EUBHE) can be found in Chen, C. et al. (2021).
+A detailed analysis of an enhanced U-tube borehole heat exchanger (EUBHE) can be found in (Chen, C. et al. (2021)).
 
 ## Model Setup
 
@@ -142,7 +142,7 @@ Re = rho_f * v * (2 * r_pi) / mu_f
 
 ```
 
-The Nusselt number can be determined by the following equation (Diersch, 2013):
+The Nusselt number can be determined by the following equation (Diersch, (2011)):
 
 $$
     \mathrm{Nu} = 4.364,\  \mathrm{Re} < 2300
@@ -416,8 +416,10 @@ Figure 3: Distributed temperature of fluid and absolute error.
 
 [1] Ramey Jr, H. J. (1962). Wellbore heat transmission. Journal of petroleum Technology, 14(04), 427-435.
 
-[2] Chaofan Chen, Wanlong Cai, Dmitri Naumov, Kun Tu, Hongwei Zhou, Yuping Zhang, Olaf Kolditz, Haibing Shao (2021). Numerical investigation on the capacity and efficiency of a deep enhanced U-tube borehole heat exchanger system for building heating. Renewable Energy, 169, 557-572.
+[2] Diersch, H-JG, et al. (2011). "Finite element modeling of borehole heat exchanger systems: Part 1. Fundamentals." Computers & Geosciences 37.8, 1122-1135.
 
-[3] Churchill, S. W. (1977). Comprehensive correlating equations for heat, mass and momentum transfer in fully developed flow in smooth tubes. Industrial & Engineering Chemistry Fundamentals, 16(1), 109-116.
+[3] Chaofan Chen, Wanlong Cai, Dmitri Naumov, Kun Tu, Hongwei Zhou, Yuping Zhang, Olaf Kolditz, Haibing Shao (2021). Numerical investigation on the capacity and efficiency of a deep enhanced U-tube borehole heat exchanger system for building heating. Renewable Energy, 169, 557-572.
+
+[4] Churchill, S. W. (1977). Comprehensive correlating equations for heat, mass and momentum transfer in fully developed flow in smooth tubes. Industrial & Engineering Chemistry Fundamentals, 16(1), 109-116.
 
 <!-- vale on -->
