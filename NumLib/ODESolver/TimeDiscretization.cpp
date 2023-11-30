@@ -15,8 +15,9 @@
 
 namespace NumLib
 {
+
 double computeRelativeNorm(GlobalVector const& x,
-                           GlobalVector const& x_prev,
+                           GlobalVector const& y,
                            MathLib::VecNormType norm_type)
 {
     if (norm_type == MathLib::VecNormType::INVALID)
@@ -28,8 +29,8 @@ double computeRelativeNorm(GlobalVector const& x,
     GlobalVector dx;
     MathLib::LinAlg::copy(x, dx);  // copy x to dx.
 
-    // dx = x - x_prev --> x - dx --> dx
-    MathLib::LinAlg::axpy(dx, -1.0, x_prev);
+    // dx = x - y --> x - dx --> dx
+    MathLib::LinAlg::axpy(dx, -1.0, y);
     const double norm_dx = MathLib::LinAlg::norm(dx, norm_type);
 
     const double norm_x = MathLib::LinAlg::norm(x, norm_type);
