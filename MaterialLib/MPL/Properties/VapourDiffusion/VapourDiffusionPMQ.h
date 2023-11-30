@@ -70,11 +70,12 @@ public:
 
     void checkScale() const override
     {
-        if (!std::holds_alternative<Phase*>(scale_))
+        if (!(std::holds_alternative<Phase*>(scale_) ||
+              std::holds_alternative<Component*>(scale_)))
         {
             OGS_FATAL(
                 "The property 'VapourDiffusionPMQ' is "
-                "implemented on the 'phase' scale only.");
+                "implemented on the 'phase' and 'component' scale only.");
         }
     }
 
