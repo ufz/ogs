@@ -307,6 +307,7 @@ if check_file:
     print("Creation of BHE mesh in Gmsh format was successful.")
 else:
     print("Error! Gmsh file is not properly created in the BHE meshing tutorial.")
+    raise SystemExit()
 ```
 
 Finally, the mesh file which has been created using the python interface of Gmsh, will be converted to OGS mesh, in particular to VTU file format. Please, add ogs.exe to the directory of this example file to run GMSH2OGS or give the full path of your ogs executable. Here, option -v (--validation) validate the mesh and shows crucial information of mesh. Option -i takes Gmsh input file name as string and -o is output file name as string as well.
@@ -325,4 +326,5 @@ else:
     print(
         "Error! Gmsh file is not properly converted to VTU format in the BHE meshing tutorial."
     )
+    raise SystemExit()
 ```
