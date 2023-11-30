@@ -18,7 +18,15 @@ weight = 1080
 - Update `[docs-release]`-link in `README.md` to the new tag (with `v`-prefix)
 - Add a redirect in `scripts/doc/_redirects`
 - Update `CITATION.cff` (Zenodo DOI will be added later)
+- Create a commit and push
+- Wait for CI to be green (except for URL checker which will fail)
 - Create a tag and push
+
+  ```bash
+  git tag -s -m "OpenGeoSys 6.5.0" 6.5.0
+  git push --tags
+  ```
+
 - A new release is automatically created on GitLab
   - Fill in the release notes from the Wiki
   - Convert MR ids to URLs: replace `!([0-9][0-9][0-9][0-9])` with `[!$1](https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/$1)` and `#([0-9][0-9][0-9][0-9])` with `[#$1](https://gitlab.opengeosys.org/ogs/ogs/-/issues/$1)`
