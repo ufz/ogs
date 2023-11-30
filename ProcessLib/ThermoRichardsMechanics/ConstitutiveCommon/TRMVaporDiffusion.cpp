@@ -74,7 +74,10 @@ void TRMVaporDiffusionModel<DisplacementDim>::eval(
 
         double const phi = poro_data.phi;
         variables.porosity = phi;
+
+        double const S_g = 1.0 - S_L_data.S_L;
         double const D_v =
+            phi * S_g *
             gas_phase->property(MPL::PropertyType::diffusion)
                 .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
@@ -89,21 +92,19 @@ void TRMVaporDiffusionModel<DisplacementDim>::eval(
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
                 .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
-        out.M_TT_X_NTN +=
-            out.heat_capacity_vapor * rho_wv * (1 - S_L_data.S_L) * phi;
+        out.M_TT_X_NTN += out.heat_capacity_vapor * rho_wv * S_g * phi;
 
         out.storage_coefficient_by_water_vapor =
-            phi *
-            (rho_wv * dS_L_data.dS_L_dp_cap + (1 - S_L_data.S_L) * drho_wv_dp);
+            phi * (rho_wv * dS_L_data.dS_L_dp_cap + S_g * drho_wv_dp);
 
-        out.M_pT_X_NTN += phi * (1 - S_L_data.S_L) * drho_wv_dT;
+        out.M_pT_X_NTN += phi * S_g * drho_wv_dT;
 
         //
         // Latent heat term
         //
         if (gas_phase->hasProperty(MPL::PropertyType::specific_latent_heat))
         {
-            double const factor = phi * (1 - S_L_data.S_L) / rho_L_data.rho_LR;
+            double const factor = phi * S_g / rho_L_data.rho_LR;
             // The volumetric latent heat of vaporization of liquid water
             double const L0 =
                 gas_phase->property(MPL::PropertyType::specific_latent_heat)

@@ -33,7 +33,6 @@ TEST(MaterialPropertyLib, VapourDiffusionPMQ)
 
     const double T = 290.0;
     const double S = 0.5;
-    const double phi = 0.15;
 
     MaterialPropertyLib::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
@@ -41,14 +40,13 @@ TEST(MaterialPropertyLib, VapourDiffusionPMQ)
     double const dt = std::numeric_limits<double>::quiet_NaN();
     variable_array.temperature = T;
     variable_array.liquid_saturation = S;
-    variable_array.porosity = phi;
 
     // The derivative of the water vapour with respect of temperature
     {
         std::array const Ts = {273.0, 293.0, 393.0, 420.0, 500.0};
-        std::array const D_v_expected = {5.340717e-07, 6.065526e-07,
-                                         1.028995e-06, 1.159726e-06,
-                                         1.587277e-06};
+        std::array const D_v_expected = {
+            7.1209560000000006e-06, 8.087368e-06, 1.3719933333333336e-05,
+            1.5463013333333333e-05, 2.1163693333333336e-05};
 
         for (std::size_t i = 0; i < Ts.size(); ++i)
         {
@@ -90,9 +88,8 @@ TEST(MaterialPropertyLib, VapourDiffusionPMQ)
         std::array const S = {-1.0, 0.0, 0.2,  0.33, 0.45,
                               0.52, 0.6, 0.85, 1.0,  1.1};
         std::array const D_v_expected = {
-            2.381679e-06, 2.381679e-06, 1.524274e-06, 1.069136e-06,
-            7.204578e-07, 5.487388e-07, 3.810686e-07, 5.358777e-08,
-            0.000000e+00, 0.000000e+00};
+            1.58779e-05, 1.58779e-05, 1.27023e-05, 1.06382e-05, 8.73282e-06,
+            7.62137e-06, 6.35114e-06, 2.38168e-06, 0.0,         0.0};
         for (std::size_t i = 0; i < S.size(); ++i)
         {
             variable_array.temperature = T;
