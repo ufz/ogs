@@ -1,5 +1,4 @@
-# This CITATION.cff file was generated with cffinit.
-# Visit https://bit.ly/cffinit to generate yours today!
+# Update with `git shortlog -sne`
 
 cff-version: 1.2.0
 title: OpenGeoSys
@@ -126,7 +125,7 @@ authors:
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Jérémie
       family-names: Lagraviere
-      affiliation: Helmholtz Centre for Environmental Research – UFZ
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Kata
       family-names: Kurgyis
       affiliation: TU Bergakademie Freiberg
@@ -149,7 +148,7 @@ authors:
       affiliation: BGE TECHNOLOGY GmbH
     - given-names: Vanessa
       family-names: Montoya
-      affiliation: Helmholtz Centre for Environmental Research – UFZ
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Falko
       family-names: Vehling
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
@@ -161,22 +160,22 @@ authors:
       affiliation: TU Bergakademie Freiberg
     - given-names: Carolin
       family-names: Helbig
-      affiliation: Helmholtz Centre for Environmental Research – UFZ
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Francesco
       family-names: Witte
       affiliation: Hochschule Flensburg
     - given-names: Olaf
       family-names: Kolditz
-      affiliation: Helmholtz Centre for Environmental Research – UFZ
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Philipp
       family-names: Selzer
-      affiliation: Helmholtz Centre for Environmental Research – UFZ
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Reza
       family-names: Taher Dang Koo
       affiliation: TU Bergakademie Freiberg
     - given-names: Thomas
       family-names: Kalbacher
-      affiliation: Helmholtz Centre for Environmental Research – UFZ
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Wanlong
       family-names: Cai
     - given-names: Alireza
@@ -196,7 +195,7 @@ authors:
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Mehran
       family-names: Ghasabeh
-      affiliation: Helmholtz Centre for Environmental Research – UFZ
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Michael
       family-names: Pitz
       affiliation: >-
