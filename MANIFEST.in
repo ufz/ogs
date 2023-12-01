@@ -1,3 +1,0 @@
-prune Tests/Data
-prune web
-include web/data/versions.json
