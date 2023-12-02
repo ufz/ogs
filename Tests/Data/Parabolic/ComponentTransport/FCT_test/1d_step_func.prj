@@ -16,6 +16,7 @@
                 <pressure>pressure</pressure>
             </process_variables>
             <specific_body_force>0</specific_body_force>
+            <!-- remove the FCT stabilization scheme will produce oscillating concentration profile -->
             <numerical_stabilization>
                 <type>FluxCorrectedTransport</type>
             </numerical_stabilization>
