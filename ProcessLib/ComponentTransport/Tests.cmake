@@ -808,6 +808,10 @@ if (NOT OGS_USE_MPI)
 endif()
 
 if(NOT OGS_USE_PETSC)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/FCT_test/1d_step_func.prj RUNTIME 5)
+endif()
+
+if(NOT OGS_USE_PETSC)
     NotebookTest(
         NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/performance_measurements.ipynb
         RUNTIME 200
