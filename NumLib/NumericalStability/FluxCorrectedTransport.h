@@ -12,12 +12,24 @@
 #include <Eigen/Core>
 #include <Eigen/Sparse>
 
+#include "MathLib/LinAlg/MatrixSpecifications.h"
+#include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "NumericalStabilization.h"
 
 namespace NumLib
 {
 namespace detail
 {
+
+template <typename MatrixVectorType>
+std::unique_ptr<MatrixVectorType> newZeroedInstance(
+    MathLib::MatrixSpecifications const& matrix_specification)
+{
+    auto result = MathLib::MatrixVectorTraits<MatrixVectorType>::newInstance(
+        matrix_specification);
+    result->setZero();
+    return result;
+}
 
 void calculateFluxCorrectedTransport(
     [[maybe_unused]] const double t, [[maybe_unused]] const double dt,
@@ -29,14 +41,8 @@ void calculateFluxCorrectedTransport(
     [[maybe_unused]] GlobalVector& b)
 {
 #ifndef USE_PETSC
-    // declare and initialize the matrix D and F
-    std::size_t matrix_id = 0u;
-    auto& D = NumLib::GlobalMatrixProvider::provider.getMatrix(
-        matrix_specification, matrix_id);
-    auto& F = NumLib::GlobalMatrixProvider::provider.getMatrix(
-        matrix_specification, matrix_id);
-    D.setZero();
-    F.setZero();
+    auto D = newZeroedInstance<GlobalMatrix>(matrix_specification);
+    auto F = newZeroedInstance<GlobalMatrix>(matrix_specification);
 
     // compute artificial diffusion operator D
     using RawMatrixType = Eigen::SparseMatrix<double, Eigen::RowMajor>;
@@ -51,11 +57,11 @@ void calculateFluxCorrectedTransport(
                 double const kij = it.value();
                 double const kji = K.get(it.col(), it.row());
                 double const dij = std::max({-kij, 0., -kji});
-                D.setValue(it.row(), it.col(), dij);
+                D->setValue(it.row(), it.col(), dij);
             }
         }
     }
-    auto& D_raw = D.getRawMatrix();
+    auto& D_raw = D->getRawMatrix();
     D_raw -= (D_raw * Eigen::VectorXd::Ones(D_raw.cols())).eval().asDiagonal();
 
     // compute F
@@ -67,7 +73,7 @@ void calculateFluxCorrectedTransport(
             double const xj = x[process_id]->get(it.col());
             double const xi = x[process_id]->get(it.row());
             double const fij = -dij * (xj - xi);
-            F.setValue(it.row(), it.col(), fij);
+            F->setValue(it.row(), it.col(), fij);
         }
     }
 
@@ -84,31 +90,18 @@ void calculateFluxCorrectedTransport(
                                   x_prev[process_id]->get(it.row())) /
                                  dt;
             double const fij = -mij * (xdotj - xdoti);
-            F.add(it.row(), it.col(), fij);
+            F->add(it.row(), it.col(), fij);
         }
     }
 
-    auto& P_plus =
-        NumLib::GlobalVectorProvider::provider.getVector(matrix_specification);
-    auto& P_minus =
-        NumLib::GlobalVectorProvider::provider.getVector(matrix_specification);
-    auto& Q_plus =
-        NumLib::GlobalVectorProvider::provider.getVector(matrix_specification);
-    auto& Q_minus =
-        NumLib::GlobalVectorProvider::provider.getVector(matrix_specification);
-    auto& R_plus =
-        NumLib::GlobalVectorProvider::provider.getVector(matrix_specification);
-    auto& R_minus =
-        NumLib::GlobalVectorProvider::provider.getVector(matrix_specification);
+    auto P_plus = newZeroedInstance<GlobalVector>(matrix_specification);
+    auto P_minus = newZeroedInstance<GlobalVector>(matrix_specification);
+    auto Q_plus = newZeroedInstance<GlobalVector>(matrix_specification);
+    auto Q_minus = newZeroedInstance<GlobalVector>(matrix_specification);
+    auto R_plus = newZeroedInstance<GlobalVector>(matrix_specification);
+    auto R_minus = newZeroedInstance<GlobalVector>(matrix_specification);
 
-    P_plus.setZero();
-    P_minus.setZero();
-    Q_plus.setZero();
-    Q_minus.setZero();
-    R_plus.setZero();
-    R_minus.setZero();
-
-    auto& F_raw = F.getRawMatrix();
+    auto& F_raw = F->getRawMatrix();
     for (int k = 0; k < F_raw.outerSize(); ++k)
     {
         for (RawMatrixType::InnerIterator it(F_raw, k); it; ++it)
@@ -116,54 +109,52 @@ void calculateFluxCorrectedTransport(
             if (it.row() != it.col())
             {
                 double const fij = it.value();
-                P_plus.add(it.row(), std::max(0., fij));
-                P_minus.add(it.row(), std::min(0., fij));
+                P_plus->add(it.row(), std::max(0., fij));
+                P_minus->add(it.row(), std::min(0., fij));
 
                 double const x_prev_i = x_prev[process_id]->get(it.row());
                 double const x_prev_j = x_prev[process_id]->get(it.col());
 
-                double const Q_plus_i = Q_plus.get(it.row());
+                double const Q_plus_i = Q_plus->get(it.row());
                 double Q_plus_i_tmp =
                     std::max({Q_plus_i, 0., x_prev_j - x_prev_i});
-                Q_plus.set(it.row(), Q_plus_i_tmp);
+                Q_plus->set(it.row(), Q_plus_i_tmp);
 
-                double const Q_minus_i = Q_minus.get(it.row());
+                double const Q_minus_i = Q_minus->get(it.row());
                 double Q_minus_i_tmp =
                     std::min({Q_minus_i, 0., x_prev_j - x_prev_i});
-                Q_minus.set(it.row(), Q_minus_i_tmp);
+                Q_minus->set(it.row(), Q_minus_i_tmp);
             }
         }
     }
 
     Eigen::VectorXd const M_L =
         (M_raw * Eigen::VectorXd::Ones(M_raw.cols())).eval();
-    for (auto k = R_plus.getRangeBegin(); k < R_plus.getRangeEnd(); ++k)
+    for (auto k = R_plus->getRangeBegin(); k < R_plus->getRangeEnd(); ++k)
     {
         double const mi = M_L(k);
-        double const Q_plus_i = Q_plus.get(k);
-        double const P_plus_i = P_plus.get(k);
+        double const Q_plus_i = Q_plus->get(k);
+        double const P_plus_i = P_plus->get(k);
 
         double const tmp =
             P_plus_i == 0. ? 0.0 : std::min(1.0, mi * Q_plus_i / dt / P_plus_i);
 
-        R_plus.set(k, tmp);
+        R_plus->set(k, tmp);
     }
 
-    for (auto k = R_minus.getRangeBegin(); k < R_minus.getRangeEnd(); ++k)
+    for (auto k = R_minus->getRangeBegin(); k < R_minus->getRangeEnd(); ++k)
     {
         double const mi = M_L(k);
-        double const Q_minus_i = Q_minus.get(k);
-        double const P_minus_i = P_minus.get(k);
+        double const Q_minus_i = Q_minus->get(k);
+        double const P_minus_i = P_minus->get(k);
 
         double const tmp = P_minus_i == 0.
                                ? 0.0
                                : std::min(1.0, mi * Q_minus_i / dt / P_minus_i);
-        R_minus.set(k, tmp);
+        R_minus->set(k, tmp);
     }
 
-    auto& alpha = NumLib::GlobalMatrixProvider::provider.getMatrix(
-        matrix_specification, matrix_id);
-    alpha.setZero();
+    auto alpha = newZeroedInstance<GlobalMatrix>(matrix_specification);
     for (int k = 0; k < F_raw.outerSize(); ++k)
     {
         for (RawMatrixType::InnerIterator it(F_raw, k); it; ++it)
@@ -171,19 +162,19 @@ void calculateFluxCorrectedTransport(
             double const fij = it.value();
             if (fij > 0.)
             {
-                double const R_plus_i = R_plus.get(it.row());
-                double const R_minus_j = R_minus.get(it.col());
+                double const R_plus_i = R_plus->get(it.row());
+                double const R_minus_j = R_minus->get(it.col());
                 double const alpha_ij = std::min(R_plus_i, R_minus_j);
 
-                alpha.setValue(it.row(), it.col(), alpha_ij);
+                alpha->setValue(it.row(), it.col(), alpha_ij);
             }
             else
             {
-                double const R_minus_i = R_minus.get(it.row());
-                double const R_plus_j = R_plus.get(it.col());
+                double const R_minus_i = R_minus->get(it.row());
+                double const R_plus_j = R_plus->get(it.col());
                 double const alpha_ij = std::min(R_minus_i, R_plus_j);
 
-                alpha.setValue(it.row(), it.col(), alpha_ij);
+                alpha->setValue(it.row(), it.col(), alpha_ij);
             }
         }
     }
@@ -196,7 +187,7 @@ void calculateFluxCorrectedTransport(
             if (it.row() != it.col())
             {
                 double const fij = it.value();
-                double const alpha_ij = alpha.get(it.row(), it.col());
+                double const alpha_ij = alpha->get(it.row(), it.col());
 
                 b.add(it.row(), alpha_ij * fij);
             }
@@ -213,16 +204,6 @@ void calculateFluxCorrectedTransport(
     {
         M.setValue(k, k, M_L(k));
     }
-
-    NumLib::GlobalVectorProvider::provider.releaseVector(P_plus);
-    NumLib::GlobalVectorProvider::provider.releaseVector(P_minus);
-    NumLib::GlobalVectorProvider::provider.releaseVector(Q_plus);
-    NumLib::GlobalVectorProvider::provider.releaseVector(Q_minus);
-    NumLib::GlobalVectorProvider::provider.releaseVector(R_plus);
-    NumLib::GlobalVectorProvider::provider.releaseVector(R_minus);
-    NumLib::GlobalMatrixProvider::provider.releaseMatrix(alpha);
-    NumLib::GlobalMatrixProvider::provider.releaseMatrix(D);
-    NumLib::GlobalMatrixProvider::provider.releaseMatrix(F);
 #endif  // end of ifndef USE_PETSC
 }
 }  // namespace detail
